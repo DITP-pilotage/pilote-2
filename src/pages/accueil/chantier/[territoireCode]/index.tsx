@@ -82,8 +82,9 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   const filtresAlertes = {
     estEnAlerteTauxAvancementNonCalculé: query.estEnAlerteTauxAvancementNonCalculé === 'true',
     estEnAlerteÉcart: query.estEnAlerteÉcart === 'true',
-    estEnAlerteBaisseOuStagnation: query.estEnAlerteBaisseOuStagnation === 'true',
-    estEnAlerteDonnéesNonMàj: query.estEnAlerteDonnéesNonMàj === 'true',
+    estEnAlerteBaisse: query.estEnAlerteBaisse === 'true',
+    estEnAlerteMétéoNonRenseignée: query.estEnAlerteMétéoNonRenseignée === 'true',
+    estEnAlerteAbscenceTauxAvancementDepartemental: query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
   };
 
   const territoireCode = query.territoireCode as string;
@@ -114,15 +115,20 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     nomCritère: 'estEnAlerteÉcart',
     condition: (chantier) => Alerte.estEnAlerteÉcart(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.écart),
   }, {
-    nomCritère: 'estEnAlerteBaisseOuStagnation',
-    condition: (chantier) => Alerte.estEnAlerteBaisseOuStagnation(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.tendance),
-  }, {
-    nomCritère: 'estEnAlerteDonnéesNonMàj',
-    condition: (chantier) => Alerte.estEnAlerteDonnéesNonMàj(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.dateDeMàjDonnéesQualitatives, chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.dateDeMàjDonnéesQuantitatives),
+    nomCritère: 'estEnAlerteBaisse',
+    condition: (chantier) => Alerte.estEnAlerteBaisse(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.tendance),
   }, {
     nomCritère: 'estEnAlerteTauxAvancementNonCalculé',
     condition: (chantier) => Alerte.estEnAlerteTauxAvancementNonCalculé(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.avancement.global),
   }, {
+    nomCritère: 'estEnAlerteAbscenceTauxAvancementDepartemental',
+    condition: (chantier) => Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.mailles.départementale),
+  }, 
+  {
+    nomCritère: 'estEnAlerteMétéoNonRenseignée',
+    condition: (chantier) => Alerte.estEnAlerteMétéoNonRenseignée(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.météo), 
+  },
+  {
     nomCritère: 'orage',
     condition: (chantier) => (
       chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'ORAGE'
@@ -144,12 +150,13 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     ) ?? false,
   }]);
 
-  const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisseOuStagnation || filtresAlertes.estEnAlerteDonnéesNonMàj || filtresAlertes.estEnAlerteTauxAvancementNonCalculé ? chantiers.filter(chantier => {
+  const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisse || filtresAlertes.estEnAlerteTauxAvancementNonCalculé || filtresAlertes.estEnAlerteMétéoNonRenseignée || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? chantiers.filter(chantier => {
     const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][codeInseeSelectionne];
     return (filtresAlertes.estEnAlerteÉcart && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
-      || (filtresAlertes.estEnAlerteBaisseOuStagnation && Alerte.estEnAlerteBaisseOuStagnation(chantierDonnéesTerritoires.tendance))
-      || (filtresAlertes.estEnAlerteDonnéesNonMàj && Alerte.estEnAlerteDonnéesNonMàj(chantierDonnéesTerritoires.dateDeMàjDonnéesQualitatives, chantierDonnéesTerritoires.dateDeMàjDonnéesQuantitatives))
-      || (filtresAlertes.estEnAlerteTauxAvancementNonCalculé && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierDonnéesTerritoires.avancement.global));
+      || (filtresAlertes.estEnAlerteBaisse && Alerte.estEnAlerteBaisse(chantierDonnéesTerritoires.tendance))
+      || (filtresAlertes.estEnAlerteTauxAvancementNonCalculé && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierDonnéesTerritoires.avancement.global))
+      || (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental && Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.mailles.départementale))
+      || (filtresAlertes.estEnAlerteMétéoNonRenseignée && Alerte.estEnAlerteMétéoNonRenseignée(chantierDonnéesTerritoires.météo));
   }) : chantiers;
 
   const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository());

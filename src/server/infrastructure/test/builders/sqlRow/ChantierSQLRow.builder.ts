@@ -53,9 +53,9 @@ export default class ChantierRowBuilder {
 
   private _responsables_locaux_mails: chantier['responsables_locaux_mails'];
 
-  private _referents_territoriaux: chantier['referents_territoriaux'];
+  private _coordinateurs_territoriaux: chantier['coordinateurs_territoriaux'];
 
-  private _referents_territoriaux_mails: chantier['referents_territoriaux_mails'];
+  private _coordinateurs_territoriaux_mails: chantier['coordinateurs_territoriaux_mails'];
 
   private _estBaromètre: chantier['est_barometre'];
 
@@ -109,8 +109,8 @@ export default class ChantierRowBuilder {
     this._directeursProjetMails = chantierGénéré.responsables.directeursProjet.map(directeur => directeur.email ?? 'example@example.te');
     this._responsables_locaux = générerTableau(1, 3, () => (faker.name.fullName()));
     this._responsables_locaux_mails = générerTableau(1, 3, () => (faker.internet.email()));
-    this._referents_territoriaux = générerTableau(1, 3, () => (faker.name.fullName()));
-    this._referents_territoriaux_mails = générerTableau(1, 3, () => (faker.internet.email()));
+    this._coordinateurs_territoriaux = générerTableau(1, 3, () => (faker.name.fullName()));
+    this._coordinateurs_territoriaux_mails = générerTableau(1, 3, () => (faker.internet.email()));
     this._estBaromètre = générerPeutÊtreNull(0.2, chantierGénéré.estBaromètre);
     this._estTerritorialisé = générerPeutÊtreNull(0.2, chantierGénéré.estTerritorialisé);
     this._territoireCode = `${this._maille}-${this._codeInsee}`;
@@ -295,8 +295,8 @@ export default class ChantierRowBuilder {
       directeurs_projet_mails: this._directeursProjetMails,
       responsables_locaux: this._responsables_locaux,
       responsables_locaux_mails: this._responsables_locaux_mails,
-      referents_territoriaux: this._referents_territoriaux,
-      referents_territoriaux_mails: this._referents_territoriaux_mails,
+      coordinateurs_territoriaux: this._coordinateurs_territoriaux,
+      coordinateurs_territoriaux_mails: this._coordinateurs_territoriaux_mails,
       est_barometre: this._estBaromètre,
       est_territorialise: this._estTerritorialisé,
       territoire_code: this._territoireCode,

@@ -93,6 +93,7 @@ export const presenterEnChantierAccueilContrat = (territoireCode: string) => (ch
   const mailleChantier = maille === 'NAT' ? 'nationale' : maille === 'REG' ? 'régionale' : 'départementale';
 
   const mailles = presenterEnMailleAccueilContrat(chantier.mailles);
+
   return {
     id: chantier.id,
     nom: chantier.nom,

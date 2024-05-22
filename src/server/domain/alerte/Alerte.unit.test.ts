@@ -1,3 +1,4 @@
+import { ListeTerritoiresDonnéeAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
 import Alerte from '@/server/domain/alerte/Alerte';
 
 describe('Alerte', () => {
@@ -42,16 +43,16 @@ describe('Alerte', () => {
     });
   });
 
-  describe('estEnAlerteBaisseOuStagnation', () => {
+  describe('estEnAlerteBaisse', () => {
     test("le chantier n'est pas en alerte si la tendance est null", () => {
       // Given
       const tendance = null;
 
       // When
-      const estEnAlerteBaisseOuStagnation = Alerte.estEnAlerteBaisseOuStagnation(tendance);
+      const estEnAlerteBaisse = Alerte.estEnAlerteBaisse(tendance);
 
       // Then
-      expect(estEnAlerteBaisseOuStagnation).toBeFalsy();
+      expect(estEnAlerteBaisse).toBeFalsy();
     });
 
     test('le chantier est en alerte si la tendance est en baisse', () => {
@@ -59,10 +60,10 @@ describe('Alerte', () => {
       const tendance = 'BAISSE';
 
       // When
-      const estEnAlerteBaisseOuStagnation = Alerte.estEnAlerteBaisseOuStagnation(tendance);
+      const estEnAlerteBaisse = Alerte.estEnAlerteBaisse(tendance);
 
       // Then
-      expect(estEnAlerteBaisseOuStagnation).toBeTruthy();
+      expect(estEnAlerteBaisse).toBeTruthy();
     });
 
     test("le chantier n'est pas en alerte si la tendance est en hausse", () => {
@@ -70,95 +71,21 @@ describe('Alerte', () => {
       const tendance = 'HAUSSE';
 
       // When
-      const estEnAlerteBaisseOuStagnation = Alerte.estEnAlerteBaisseOuStagnation(tendance);
+      const estEnAlerteBaisse = Alerte.estEnAlerteBaisse(tendance);
 
       // Then
-      expect(estEnAlerteBaisseOuStagnation).toBeFalsy();
+      expect(estEnAlerteBaisse).toBeFalsy();
     });
 
-    test('le chantier est en alerte si la tendance est en stagnation', () => {
+    test("le chantier n'est pas en alerte si la tendance est en stagnation", () => {
       // Given
       const tendance = 'STAGNATION';
 
       // When
-      const estEnAlerteBaisseOuStagnation = Alerte.estEnAlerteBaisseOuStagnation(tendance);
+      const estEnAlerteBaisse = Alerte.estEnAlerteBaisse(tendance);
 
       // Then
-      expect(estEnAlerteBaisseOuStagnation).toBeTruthy();
-    });
-  });
-
-  describe('estEnAlerteDonnéesNonMàj', () => {
-    test('le chantier est en alerte quand la date des données qualitatives est antérieure à la date des données quantitatives', () => {
-      // Given
-      const dateDonnéesQualitatives = '2022-01-01';
-      const dateDonnéesQuantitatives = '2023-12-31';
-
-      // When
-      const estEnAlerteDonnéesNonMàj = Alerte.estEnAlerteDonnéesNonMàj(dateDonnéesQualitatives, dateDonnéesQuantitatives);
-
-      // Then
-      expect(estEnAlerteDonnéesNonMàj).toBeTruthy();
-    });
-
-    test("le chantier n'est pas en alerte quand la date des données qualitatives est égale à la date des données quantitatives", () => {
-      // Given
-      const dateDonnéesQualitatives = '2023-01-01';
-      const dateDonnéesQuantitatives = '2023-01-01';
-
-      // When
-      const estEnAlerteDonnéesNonMàj = Alerte.estEnAlerteDonnéesNonMàj(dateDonnéesQualitatives, dateDonnéesQuantitatives);
-
-      // Then
-      expect(estEnAlerteDonnéesNonMàj).toBeFalsy();
-    });
-
-    test("le chantier n'est pas en alerte quand la date des données qualitatives est postérieur à la date des données quantitatives", () => {
-      // Given
-      const dateDonnéesQualitatives = '2023-12-31';
-      const dateDonnéesQuantitatives = '2022-01-01';
-
-      // When
-      const estEnAlerteDonnéesNonMàj = Alerte.estEnAlerteDonnéesNonMàj(dateDonnéesQualitatives, dateDonnéesQuantitatives);
-
-      // Then
-      expect(estEnAlerteDonnéesNonMàj).toBeFalsy();
-    });
-
-    test('le chantier est en alerte quand la date des données qualitatives est inconnue et que la date des données quantitatives est renseignée', () => {
-      // Given
-      const dateDonnéesQualitatives = null;
-      const dateDonnéesQuantitatives = '2022-01-01';
-
-      // When
-      const estEnAlerteDonnéesNonMàj = Alerte.estEnAlerteDonnéesNonMàj(dateDonnéesQualitatives, dateDonnéesQuantitatives);
-
-      // Then
-      expect(estEnAlerteDonnéesNonMàj).toBeTruthy();
-    });
-
-    test("le chantier n'est pas en alerte quand la date des données qualitatives est renseignée et que la date des données quantitatives est inconnue", () => {
-      // Given
-      const dateDonnéesQualitatives = '2023-12-31';
-      const dateDonnéesQuantitatives = null;
-
-      // When
-      const estEnAlerteDonnéesNonMàj = Alerte.estEnAlerteDonnéesNonMàj(dateDonnéesQualitatives, dateDonnéesQuantitatives);
-
-      // Then
-      expect(estEnAlerteDonnéesNonMàj).toBeFalsy();
-    });
-
-    test("le chantier n'est pas en alerte quand la date des données qualitatives et quantitatives sont inconnues", () => {
-      // Given
-      const dateDonnéesQualitatives = null;
-      const dateDonnéesQuantitatives = null;
-
-      // When
-      const estEnAlerteDonnéesNonMàj = Alerte.estEnAlerteDonnéesNonMàj(dateDonnéesQualitatives, dateDonnéesQuantitatives);
-
-      // Then
-      expect(estEnAlerteDonnéesNonMàj).toBeFalsy();
+      expect(estEnAlerteBaisse).toBeFalsy();
     });
   });
 
@@ -185,4 +112,171 @@ describe('Alerte', () => {
       expect(estEnAlerteTauxAvancementNonCalculé).toBeFalsy();
     });
   });
+
+  describe('estEnAlerteMétéoNonRenseignée', () =>{
+    test('Le chantier est en alerte si la météo n est pas renseignée', () =>{
+      // Given
+      const meteo = 'NON_RENSEIGNEE';
+      // When
+      const estEnAlerteMétéoNonRenseignée = Alerte.estEnAlerteMétéoNonRenseignée(meteo);
+      // Then
+      expect(estEnAlerteMétéoNonRenseignée).toBeTruthy();
+    });
+
+    test('Le chantier n est pas en alerte si la météo est renseignée', () =>{
+      // Given
+      const meteo = 'SOLEIL';
+      // When
+      const estEnAlerteMétéoNonRenseignée = Alerte.estEnAlerteMétéoNonRenseignée(meteo);
+      // Then
+      expect(estEnAlerteMétéoNonRenseignée).toBeFalsy();
+    });
+  });
+
+  describe('estEnAlerteAbscenceTauxAvancementDepartemental', () => {
+    test('le chantier est en alerte si tous les départements applicables ont un avancement global null', () => {
+      // Given
+      const départementsDonnées: ListeTerritoiresDonnéeAccueilContrat = {
+        '01': {
+          estApplicable: true,
+          avancement: {
+            'global': null,
+            'annuel': null,
+          },
+          écart: null,
+          tendance: null,
+          dateDeMàjDonnéesQualitatives: null,
+          dateDeMàjDonnéesQuantitatives: null,
+          météo: 'NON_RENSEIGNEE',
+        },
+        '02': {
+          estApplicable: false,
+          avancement: {
+            'global': 12,
+            'annuel': null,
+          },
+          écart: null,
+          tendance: null,
+          dateDeMàjDonnéesQualitatives: null,
+          dateDeMàjDonnéesQuantitatives: null,
+          météo: 'NON_RENSEIGNEE',
+        },
+        '03': {
+          estApplicable: true,
+          avancement: {
+            'global': null,
+            'annuel': null,
+          },
+          écart: null,
+          tendance: null,
+          dateDeMàjDonnéesQualitatives: null,
+          dateDeMàjDonnéesQuantitatives: null,
+          météo: 'NON_RENSEIGNEE',
+        },
+      };
+      // When
+      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(départementsDonnées);
+
+      // Then
+      expect(estEnAlerteAbscenceTauxAvancementDepartemental).toBeTruthy();
+    });
+
+    test("le chantier n'est pas en alerte si aucun département est applicable", () => {
+      // Given
+      const départementsDonnées: ListeTerritoiresDonnéeAccueilContrat = {
+        '01': {
+          estApplicable: false,
+          avancement: {
+            'global': 12,
+            'annuel': null,
+          },
+          écart: null,
+          tendance: null,
+          dateDeMàjDonnéesQualitatives: null,
+          dateDeMàjDonnéesQuantitatives: null,
+          météo: 'NON_RENSEIGNEE',
+        },
+        '02': {
+          estApplicable: false,
+          avancement: {
+            'global': 12,
+            'annuel': null,
+          },
+          écart: null,
+          tendance: null,
+          dateDeMàjDonnéesQualitatives: null,
+          dateDeMàjDonnéesQuantitatives: null,
+          météo: 'NON_RENSEIGNEE',
+        },
+        '03': {
+          estApplicable: false,
+          avancement: {
+            'global': 12,
+            'annuel': null,
+          },
+          écart: null,
+          tendance: null,
+          dateDeMàjDonnéesQualitatives: null,
+          dateDeMàjDonnéesQuantitatives: null,
+          météo: 'NON_RENSEIGNEE',
+        },
+      };
+
+      // When
+      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(départementsDonnées);
+
+      // Then
+      expect(estEnAlerteAbscenceTauxAvancementDepartemental).toBeFalsy();
+    });
+
+    test("le chantier n'est pas en alerte si au moins un département applicable a un avancement global non null", () => {
+      // Given
+      const départementsDonnées: ListeTerritoiresDonnéeAccueilContrat = {
+        '01': {
+          estApplicable: true,
+          avancement: {
+            'global': 12,
+            'annuel': null,
+          },
+          écart: null,
+          tendance: null,
+          dateDeMàjDonnéesQualitatives: null,
+          dateDeMàjDonnéesQuantitatives: null,
+          météo: 'NON_RENSEIGNEE',
+        },
+        '02': {
+          estApplicable: false,
+          avancement: {
+            'global': null,
+            'annuel': null,
+          },
+          écart: null,
+          tendance: null,
+          dateDeMàjDonnéesQualitatives: null,
+          dateDeMàjDonnéesQuantitatives: null,
+          météo: 'NON_RENSEIGNEE',
+        },
+        '03': {
+          estApplicable: true,
+          avancement: {
+            'global': null,
+            'annuel': null,
+          },
+          écart: null,
+          tendance: null,
+          dateDeMàjDonnéesQualitatives: null,
+          dateDeMàjDonnéesQuantitatives: null,
+          météo: 'NON_RENSEIGNEE',
+        },
+      };
+
+      // When
+      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(départementsDonnées);
+
+      // Then
+      expect(estEnAlerteAbscenceTauxAvancementDepartemental).toBeFalsy();
+    });
+  });
+
 });
+

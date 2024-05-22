@@ -467,7 +467,7 @@ sources:
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocId: 5
                 pilote_edit_acceptedValues: >
-                  [{"order_id": 1, "value": "_", "name": "Non", "desc": "Valeurs déjà cumulées ou non cumulables."}, {"order_id": 2, "value": "from_year_start", "name": "Oui, cumul annuel", "desc": "Cumul des VA depuis janvier (01) de l'année en cours."}, {"order_id": 3, "value": "from_custom_date::2019-01-01", "name": "Oui, cumul global", "desc": "Cumul de toutes les VA."}]
+                  [{"order_id": 1, "value": "_", "name": "Non", "desc": "Valeurs déjà cumulées ou non cumulables."}, {"order_id": 2, "value": "from_year_start", "name": "Oui, cumul annuel", "desc": "Cumul des VA depuis janvier (01) de l'année en cours."}, {"order_id": 3, "value": "from_custom_date::2019-01-01", "name": "Oui, cumul global", "desc": "Cumul de toutes les VA."}, {"order_id": 4, "value": "from_previous_month::12", "name": "Oui, cumul en année glissante", "desc": "Cumul des VA des 12 derniers mois."}]
           - name: param_vaca_op
             data_type: text
             description: >
@@ -503,7 +503,7 @@ sources:
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocId: 5
                 pilote_edit_acceptedValues: >
-                  [{"order_id": 1, "value": "_", "name": "Non", "desc": "Valeurs déjà cumulées ou non cumulables."}, {"order_id": 2, "value": "from_year_start", "name": "Oui, cumul annuel", "desc": "Cumul des VA depuis janvier (01) de l'année en cours."}, {"order_id": 3, "value": "from_custom_date::2019-01-01", "name": "Oui, cumul global", "desc": "Cumul de toutes les VA."}]
+                  [{"order_id": 1, "value": "_", "name": "Non", "desc": "Valeurs déjà cumulées ou non cumulables."}, {"order_id": 2, "value": "from_year_start", "name": "Oui, cumul annuel", "desc": "Cumul des VA depuis janvier (01) de l'année en cours."}, {"order_id": 3, "value": "from_custom_date::2019-01-01", "name": "Oui, cumul global", "desc": "Cumul de toutes les VA."}, {"order_id": 4, "value": "from_previous_month::12", "name": "Oui, cumul en année glissante", "desc": "Cumul des VA des 12 derniers mois."}]
           - name: param_vacg_op
             data_type: text
             description: >

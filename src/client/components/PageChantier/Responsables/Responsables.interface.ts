@@ -1,12 +1,14 @@
 import {
-  ReferentTerritorialRapportDetailleContrat,
+  CoordinateurTerritorialRapportDetailleContrat,
   ResponsableLocalRapportDetailleContrat,
   ResponsableRapportDetailleContrat,
 } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
+import { Maille } from '@/server/domain/maille/Maille.interface';
 
 export default interface ResponsablesPageChantierProps {
   responsables: ResponsableRapportDetailleContrat
   responsablesLocal: ResponsableLocalRapportDetailleContrat[],
-  referentTerritorial: ReferentTerritorialRapportDetailleContrat[],
+  coordinateurTerritorial: CoordinateurTerritorialRapportDetailleContrat[],
   afficheResponsablesLocaux: boolean,
+  maille: Maille | null
 }

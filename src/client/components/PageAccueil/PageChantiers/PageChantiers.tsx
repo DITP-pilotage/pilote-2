@@ -268,18 +268,18 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
             <div className='fr-grid-row fr-mx-n1v fr-mx-md-n1w'>
               {
                 remontéesAlertes.map(({ nomCritère, libellé, nombre, estActivée, auClic }) => (
-                  (process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true' || nomCritère !== 'estEnAlerteBaisseOuStagnation') &&
-                  <div
-                    className='fr-col fr-px-1v fr-px-md-1w'
-                    key={libellé}
-                  >
-                    <RemontéeAlerte
-                      auClic={auClic}
-                      estActivée={estActivée}
-                      libellé={libellé}
-                      nombre={nombre}
-                    />
-                  </div>
+                  (process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true' || nomCritère !== 'estEnAlerteBaisse') &&
+                    <div
+                      className='fr-col fr-px-1v fr-px-md-1w'
+                      key={libellé}
+                    >
+                      <RemontéeAlerte
+                        auClic={auClic}
+                        estActivée={estActivée}
+                        libellé={libellé}
+                        nombre={nombre}
+                      />
+                    </div>
                 ))
               }
             </div>
