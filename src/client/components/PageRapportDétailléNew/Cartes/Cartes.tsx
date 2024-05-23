@@ -1,7 +1,7 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import CartographieAvancement
   from '@/components/_commons/Cartographie/CartographieAvancementNew/CartographieAvancement';
-import CartographieMétéo from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo';
+import CartographieMétéo from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo';
 import Titre from '@/components/_commons/Titre/Titre';
 import {
   ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
@@ -74,7 +74,9 @@ export default function Cartes({
                 <CartographieMétéo
                   auClicTerritoireCallback={() => {}}
                   données={donnéesCartographieMétéo}
+                  mailleSelectionnee={mailleSelectionnee}
                   options={{ estInteractif: false }}
+                  territoireCode={territoireCode}
                   élémentsDeLégende={ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS}
                 />
               </section>
