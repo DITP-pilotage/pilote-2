@@ -44,7 +44,8 @@ export default function SélecteurTerritoire({
   const { modifierTerritoireSélectionné } = actionsTerritoiresStore();
 
   const modifierTerritoireSélectionnéAuClic = async (territoireCodeSelectionne: string) => {
-    modifierTerritoireSélectionné(territoireCodeSelectionne);
+    modifierTerritoireSélectionné(territoireCodeSelectionne); // A supprimer lors du refacto de la page chantier avec code territoire dans l'url.
+
     if (router.query.territoireCode === 'NAT-FR' || territoireCodeSelectionne === 'NAT-FR') {
       delete router.query.estEnAlerteTauxAvancementNonCalculé;
       delete router.query.estEnAlerteÉcart;
