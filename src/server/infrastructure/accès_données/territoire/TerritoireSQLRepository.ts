@@ -11,15 +11,15 @@ class ErreurTerritoireNonTrouvé extends Error {
 export class TerritoireSQLRepository implements TerritoireRepository { 
   constructor(private _prisma: PrismaClient) {}
 
-  _mapperVersLeDomaine(t: TerritoirePrisma): Territoire {
+  _mapperVersLeDomaine(territoire: TerritoirePrisma): Territoire {
     return {
-      code: t.code,
-      nom: t.nom,
-      nomAffiché: t.nom_affiche,
-      codeInsee: t.code_insee,
-      tracéSvg: t.trace_svg,
-      codeParent: t.code_parent,
-      maille: NOMS_MAILLES[t.maille],
+      code: territoire.code,
+      nom: territoire.nom,
+      nomAffiché: territoire.nom_affiche,
+      codeInsee: territoire.code_insee,
+      tracéSvg: territoire.trace_svg,
+      codeParent: territoire.code_parent,
+      maille: NOMS_MAILLES[territoire.maille],
     }; 
   }
 
