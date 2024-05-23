@@ -1,7 +1,7 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
-import { territoiresAccessiblesEnLectureStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { actionsTerritoiresStore, territoiresAccessiblesEnLectureStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import SélecteurAvecRecherche from '@/components/_commons/SélecteurAvecRecherche/SélecteurAvecRecherche';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
@@ -41,8 +41,10 @@ export default function SélecteurTerritoire({
 }: SélecteurTerritoiresProps) {
   const { data: session } = useSession();
   const router = useRouter();
+  const { modifierTerritoireSélectionné } = actionsTerritoiresStore();
 
-  const modifierTerritoireSélectionné = async (territoireCodeSelectionne: string) => {
+  const modifierTerritoireSélectionnéAuClic = async (territoireCodeSelectionne: string) => {
+    modifierTerritoireSélectionné(territoireCodeSelectionne);
     if (router.query.territoireCode === 'NAT-FR' || territoireCodeSelectionne === 'NAT-FR') {
       delete router.query.estEnAlerteTauxAvancementNonCalculé;
       delete router.query.estEnAlerteÉcart;
@@ -63,7 +65,7 @@ export default function SélecteurTerritoire({
       htmlName='périmètre-géographique'
       libellé='Périmètre géographique'
       options={construireLaListeDOptions(territoiresAccessiblesEnLecture, session?.profil, mailleSelectionnee, chantierMailles)}
-      valeurModifiéeCallback={territoireCodeSelectionne => modifierTerritoireSélectionné(territoireCodeSelectionne)}
+      valeurModifiéeCallback={territoireCodeSelectionne => modifierTerritoireSélectionnéAuClic(territoireCodeSelectionne)}
       valeurSélectionnée={territoireCode}
     />
   );
