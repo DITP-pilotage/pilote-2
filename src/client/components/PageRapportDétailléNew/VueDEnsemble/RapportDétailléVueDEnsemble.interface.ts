@@ -12,4 +12,5 @@ export default interface RapportDétailléVueDEnsembleProps {
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   répartitionMétéos: RépartitionsMétéos
   territoireCode: string
+  mailleSelectionnee: 'départementale' | 'régionale'
 }

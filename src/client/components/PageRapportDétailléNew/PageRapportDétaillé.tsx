@@ -46,7 +46,7 @@ export default function PageRapportDétaillé({
 
   // le filtre devrait être fait en server side avant d'arriver au front
   const filtresActifs = filtresActifsStore();
-  const territoireSélectionné = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
+  const territoireSélectionné = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee, mailleSélectionnée);
   const [afficherLesChantiers, setAfficherLesChantiers] = useState(false);
 
   return (
@@ -101,6 +101,7 @@ export default function PageRapportDétaillé({
               avancementsGlobauxTerritoriauxMoyens={avancementsGlobauxTerritoriauxMoyens}
               chantiers={chantiersFiltrés}
               filtresComptesCalculés={filtresComptesCalculés}
+              mailleSelectionnee={mailleSélectionnée}
               répartitionMétéos={répartitionMétéos}
               territoireCode={territoireCode}
             />
