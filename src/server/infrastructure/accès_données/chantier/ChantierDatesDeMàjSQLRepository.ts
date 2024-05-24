@@ -7,7 +7,6 @@ import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDate
 type RowsDatesDeMàjDesDonnées = Array<{
   chantier_id: string,
   territoire_code: string,
-  date_donnees_quantitatives: Date,
   date_donnees_qualitatives: Date,
 }>;
 
@@ -60,23 +59,14 @@ export default class ChantierDatesDeMàjSQLRepository implements ChantierDatesDe
               from synthese_des_resultats
               group by chantier_id, maille, code_insee
             )
-          ),
-          dates_quantitatives as (
-            select chantier_id, maille, code_insee, MAX(date_valeur_actuelle) as date
-            from indicateur
-            group by chantier_id, maille, code_insee
           )
-
       select
           chantiers_temp.chantier_id as chantier_id,
           CONCAT(chantiers_temp.maille, '-', chantiers_temp.code_insee) as territoire_code,
-          MAX(d_quali.date) as date_donnees_qualitatives,
-          MAX(d_quanti.date) as date_donnees_quantitatives
+          MAX(d_quali.date) as date_donnees_qualitatives
       from chantiers_temp
           left join dates_qualitatives as d_quali
                     on chantiers_temp.chantier_id = d_quali.chantier_id and chantiers_temp.maille = d_quali.maille and chantiers_temp.code_insee = d_quali.code_insee
-          left join dates_quantitatives as d_quanti
-                    on chantiers_temp.chantier_id = d_quanti.chantier_id and chantiers_temp.maille = d_quanti.maille and chantiers_temp.code_insee = d_quanti.code_insee
       group by chantiers_temp.chantier_id, territoire_code;
     `;
   }
@@ -84,7 +74,6 @@ export default class ChantierDatesDeMàjSQLRepository implements ChantierDatesDe
   private construireLaRéponse(rows: Array<{
     chantier_id: string;
     territoire_code: string;
-    date_donnees_quantitatives: Date;
     date_donnees_qualitatives: Date
   }>) {
     let résultat: Record<Chantier['id'], Record<Territoire['code'], ChantierDatesDeMiseÀJour>> = {};
@@ -95,7 +84,6 @@ export default class ChantierDatesDeMàjSQLRepository implements ChantierDatesDe
       }
       résultat[row.chantier_id][row.territoire_code] = {
         dateDeMàjDonnéesQualitatives: row.date_donnees_qualitatives?.toISOString() ?? null,
-        dateDeMàjDonnéesQuantitatives: row.date_donnees_quantitatives?.toISOString() ?? null,
       };
     }
 
