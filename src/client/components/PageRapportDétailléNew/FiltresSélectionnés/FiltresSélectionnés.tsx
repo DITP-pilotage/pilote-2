@@ -45,7 +45,7 @@ export default function FiltresSélectionnés({ territoireSélectionné, minist�
     },
     {
       nom: 'Autres critères', filtresActifs: [
-        filtres.estBarometre ? 'Chantiers baromètre' : null,
+        filtres.estBarometre ? 'Chantiers du baromètre' : null,
         filtres.estTerritorialise ? 'Chantiers territorialisés' : null,
       ].filter(Boolean),
     },
