@@ -15,6 +15,7 @@ import { filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/us
 import PremièrePageImpressionRapportDétaillé
   from '@/components/PageRapportDétailléNew/PremièrePageImpression/PremièrePageImpressionRapportDétaillé';
 import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
+import { getFiltresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
 import FiltresSélectionnés from './FiltresSélectionnés/FiltresSélectionnés';
 
 export const htmlId = {
@@ -49,6 +50,9 @@ export default function PageRapportDétaillé({
   const territoireSélectionné = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee, mailleSélectionnée);
   const [afficherLesChantiers, setAfficherLesChantiers] = useState(false);
 
+  const queryParamString = new URLSearchParams(Object.entries(getFiltresActifs()).map(([key, value]) => (value && String(value).length > 0 ? [key, String(value)] : [])).filter(value => value.length > 0)).toString();
+  const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
+
   return (
     <>
       <PremièrePageImpressionRapportDétaillé
@@ -69,7 +73,7 @@ export default function PageRapportDétaillé({
               <div>
                 <Link
                   className='fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-go-back-fill fr-btn--icon-left fr-text--sm'
-                  href='/'
+                  href={hrefBoutonRetour}
                   title="Revenir à l'accueil"
                 >
                   Revenir à l'accueil
