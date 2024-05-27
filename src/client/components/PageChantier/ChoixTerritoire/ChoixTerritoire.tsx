@@ -9,6 +9,8 @@ import Cartographie from '@/components/_commons/Cartographie/Cartographie';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
+import { getFiltresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
+import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import useChoixTerritoire from './useChoixTerritoire';
 import ChoixTerritoireProps from './ChoixTerritoire.interface';
 
@@ -16,6 +18,12 @@ export default function ChoixTerritoire({ chantierId }: ChoixTerritoireProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const { chantier, donnéesCartographie } = useChoixTerritoire(chantierId);
   const { auClicTerritoireCallback } = useCartographie();
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+
+  const filtresActifs = getFiltresActifs();
+  const territoireCode = territoireSélectionné?.code;
+  const queryParamString = new URLSearchParams(Object.entries(filtresActifs).map(([key, value]) => (value && String(value).length > 0 ? [key, String(value)] : [])).filter(value => value.length > 0)).toString();
+  const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
 
   return (
     <div className='flex'>
@@ -38,7 +46,10 @@ export default function ChoixTerritoire({ chantierId }: ChoixTerritoireProps) {
         {
           chantier !== null ? (
             <>
-              <PageChantierEnTête chantier={chantier} />
+              <PageChantierEnTête 
+                chantier={chantier} 
+                hrefBoutonRetour={hrefBoutonRetour} 
+              />
               <div className='fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mt-5w fr-mx-1w'>
                 <div className='fr-col-12 fr-col-xl-6'>
                   <Bloc>

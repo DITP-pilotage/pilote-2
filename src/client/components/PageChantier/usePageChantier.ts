@@ -21,6 +21,8 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { IndicateurPondération } from '@/components/PageChantier/PageChantier.interface';
 import { comparerIndicateur, estAutoriséAImporterDesIndicateurs } from '@/client/utils/indicateur/indicateur';
 import { estAutoriséAConsulterLaFicheConducteur } from '@/client/utils/fiche-conducteur/fiche-conducteur';
+import { getFiltresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
+import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 
 export default function usePageChantier(chantierId: string, indicateurs: Indicateur[]) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
@@ -105,7 +107,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
     ? null
     : (
       calculerChantierAvancements(
-        chantier,
+        chantier as unknown as ChantierRapportDetailleContrat,
         mailleSélectionnée,
         territoireSélectionné!,
         territoireParent,
@@ -137,6 +139,11 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
   const responsableLocal = chantierTerritoireSélectionné?.responsableLocal ?? [];
   const coordinateurTerritorial = chantierTerritoireSélectionné?.coordinateurTerritorial ?? [];
 
+  const filtresActifs = getFiltresActifs();
+  const territoireCode = territoireSélectionné?.code;
+  const queryParamString = new URLSearchParams(Object.entries(filtresActifs).map(([key, value]) => (value && String(value).length > 0 ? [key, String(value)] : [])).filter(value => value.length > 0)).toString();
+  const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
+
   return {
     détailsIndicateurs: détailsIndicateurs ?? null,
     commentaires: commentaires ? commentaires[chantierId] as Commentaire[] : null,
@@ -155,5 +162,6 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
     afficheLeBoutonFicheConducteur: afficheLeBoutonFicheConducteur as boolean,
     responsableLocal,
     coordinateurTerritorial,
+    hrefBoutonRetour,
   };
 }

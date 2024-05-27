@@ -171,6 +171,21 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
           ) : null
         }
         {
+          filtres.estEnAlerteMétéoNonRenseignée ? (
+            <li>
+              <Tag
+                libellé='Chantier(s) avec météo et synthèse des résultats non renseignés'
+                suppressionCallback={() => {
+                  filtres.estEnAlerteMétéoNonRenseignée = false;
+
+                  sauvegarderFiltres({ estEnAlerteMétéoNonRenseignée: false });
+                  return setFiltres(filtres);
+                }}
+              />
+            </li>
+          ) : null
+        }
+        {
           filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? (
             <li>
               <Tag
@@ -202,7 +217,7 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
           ) : filtres.estBarometre ? (
             <li>
               <Tag
-                libellé='Chantiers baromètre'
+                libellé='Chantiers du baromètre'
                 suppressionCallback={() => {
                   filtres.estBarometre = false;
 
@@ -219,21 +234,6 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
                   filtres.estTerritorialise = false;
 
                   sauvegarderFiltres({ estTerritorialise: false });
-                  return setFiltres(filtres);
-                }}
-              />
-            </li>
-          ) : null
-        }
-        {
-          filtres.estEnAlerteMétéoNonRenseignée ? (
-            <li>
-              <Tag
-                libellé='Chantier(s) avec météo et synthèse des résultats non renseignés'
-                suppressionCallback={() => {
-                  filtres.estEnAlerteMétéoNonRenseignée = false;
-
-                  sauvegarderFiltres({ estEnAlerteMétéoNonRenseignée: false });
                   return setFiltres(filtres);
                 }}
               />
