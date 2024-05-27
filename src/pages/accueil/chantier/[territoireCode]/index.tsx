@@ -19,7 +19,6 @@ import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/Chantier
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import SélecteurTypeDeRéforme from '@/components/PageAccueil/SélecteurTypeDeRéformeNew/SélecteurTypeDeRéforme';
-import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
 import CompteurFiltre from '@/client/utils/filtres/CompteurFiltre';
 import Alerte from '@/server/domain/alerte/Alerte';
 import RécupérerStatistiquesAvancementChantiersUseCase
@@ -55,12 +54,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
 
   const territoireDept = session.habilitations.lecture.territoires.find(territoire => territoire.startsWith('DEPT'));
   const territoireReg = session.habilitations.lecture.territoires.find(territoire => territoire.startsWith('REG'));
-
-  const estNouvellePageAccueilDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL' });
-
-  if (!estNouvellePageAccueilDisponible && session.profil !== 'DITP_ADMIN') {
-    throw new Error('Not connected or not authorized ?');
-  }
 
   if ((query.territoireCode === 'NAT-FR' && !session.habilitations.lecture.territoires.includes('NAT-FR')) || !session.habilitations.lecture.territoires.includes(query.territoireCode as string)) {
     return {
@@ -123,10 +116,10 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   }, {
     nomCritère: 'estEnAlerteAbscenceTauxAvancementDepartemental',
     condition: (chantier) => Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.mailles.départementale),
-  }, 
+  },
   {
     nomCritère: 'estEnAlerteMétéoNonRenseignée',
-    condition: (chantier) => Alerte.estEnAlerteMétéoNonRenseignée(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.météo), 
+    condition: (chantier) => Alerte.estEnAlerteMétéoNonRenseignée(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.météo),
   },
   {
     nomCritère: 'orage',
@@ -185,7 +178,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   return {
     props: {
       chantiers: chantiersAvecAlertes.map(chantier => {
-        // @ts-ignore
+        // @ts-expect-error
         delete chantier.mailles;
         return chantier;
       }),

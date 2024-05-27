@@ -2,3 +2,5 @@ version: 2
 models:
   - name: metadata_indicateurs
     description: "Cette **table** contient les indicateurs Pilote qui ne sont **pas masqués**. Pour avoir l'ensemble des indicateurs **non masqués**, voir la table `metadata_indicateurs_hidden`."
+  - name: metadata_engagement
+    description: Table référentielle des engagements du gouvernement
