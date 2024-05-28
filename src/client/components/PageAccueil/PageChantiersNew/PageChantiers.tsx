@@ -74,13 +74,13 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     axes: parseAsString.withDefault(''),
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
+    maille: parseAsString.withDefault(''),
   });
 
   const [filtresAlertes] = useQueryStates({
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
-    estEnAlerteDonnéesNonMàj: parseAsBoolean.withDefault(false),
     estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
   });
@@ -92,10 +92,11 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     + (filtresAlertes.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
     + (filtresAlertes.estEnAlerteÉcart ? 1 : 0)
     + (filtresAlertes.estEnAlerteBaisse ? 1 : 0)
-    + (filtresAlertes.estEnAlerteDonnéesNonMàj ? 1 : 0)
     + (filtresAlertes.estEnAlerteMétéoNonRenseignée ? 1 : 0)
     + (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0);
 
+
+  const queryParamString = new URLSearchParams(Object.entries({ ...filtres, ...filtresAlertes }).map(([key, value]) => (value && String(value).length > 0 ? [key, String(value)] : [])).filter(value => value.length > 0)).toString();
 
   const {
     chantiersFiltrés,
@@ -154,7 +155,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
               <div>
                 <Link
                   className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
-                  href={`/rapport-detaille?territoireCode=${territoireCode}`}
+                  href={`${territoireCode}/rapport-detaille${queryParamString.length > 0 ? `?${queryParamString}` : ''}`}
                   title='Voir le rapport détaillé'
                 >
                   Voir le rapport détaillé
@@ -326,6 +327,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   <div
                     className='fr-col fr-px-1v fr-px-md-1w'
                     key={libellé}
+                    title={libellé}
                   >
                     <RemontéeAlerte
                       estActivée={estActivée}

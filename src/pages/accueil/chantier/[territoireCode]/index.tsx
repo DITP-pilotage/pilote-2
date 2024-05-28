@@ -19,7 +19,6 @@ import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/Chantier
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import SélecteurTypeDeRéforme from '@/components/PageAccueil/SélecteurTypeDeRéformeNew/SélecteurTypeDeRéforme';
-import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
 import CompteurFiltre from '@/client/utils/filtres/CompteurFiltre';
 import Alerte from '@/server/domain/alerte/Alerte';
 import RécupérerStatistiquesAvancementChantiersUseCase
@@ -56,12 +55,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   const territoireDept = session.habilitations.lecture.territoires.find(territoire => territoire.startsWith('DEPT'));
   const territoireReg = session.habilitations.lecture.territoires.find(territoire => territoire.startsWith('REG'));
 
-  const estNouvellePageAccueilDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL' });
-
-  if (!estNouvellePageAccueilDisponible && session.profil !== 'DITP_ADMIN') {
-    throw new Error('Not connected or not authorized ?');
-  }
-
   if ((query.territoireCode === 'NAT-FR' && !session.habilitations.lecture.territoires.includes('NAT-FR')) || !session.habilitations.lecture.territoires.includes(query.territoireCode as string)) {
     return {
       redirect: {
@@ -83,7 +76,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     estEnAlerteTauxAvancementNonCalculé: query.estEnAlerteTauxAvancementNonCalculé === 'true',
     estEnAlerteÉcart: query.estEnAlerteÉcart === 'true',
     estEnAlerteBaisse: query.estEnAlerteBaisse === 'true',
-    estEnAlerteDonnéesNonMàj: query.estEnAlerteDonnéesNonMàj === 'true',
     estEnAlerteMétéoNonRenseignée: query.estEnAlerteMétéoNonRenseignée === 'true',
     estEnAlerteAbscenceTauxAvancementDepartemental: query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
   };
@@ -119,18 +111,15 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     nomCritère: 'estEnAlerteBaisse',
     condition: (chantier) => Alerte.estEnAlerteBaisse(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.tendance),
   }, {
-    nomCritère: 'estEnAlerteDonnéesNonMàj',
-    condition: (chantier) => Alerte.estEnAlerteDonnéesNonMàj(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.dateDeMàjDonnéesQualitatives, chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.dateDeMàjDonnéesQuantitatives),
-  }, {
     nomCritère: 'estEnAlerteTauxAvancementNonCalculé',
     condition: (chantier) => Alerte.estEnAlerteTauxAvancementNonCalculé(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.avancement.global),
   }, {
     nomCritère: 'estEnAlerteAbscenceTauxAvancementDepartemental',
     condition: (chantier) => Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.mailles.départementale),
-  }, 
+  },
   {
     nomCritère: 'estEnAlerteMétéoNonRenseignée',
-    condition: (chantier) => Alerte.estEnAlerteMétéoNonRenseignée(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.météo), 
+    condition: (chantier) => Alerte.estEnAlerteMétéoNonRenseignée(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.météo),
   },
   {
     nomCritère: 'orage',
@@ -154,11 +143,10 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     ) ?? false,
   }]);
 
-  const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisse || filtresAlertes.estEnAlerteDonnéesNonMàj || filtresAlertes.estEnAlerteTauxAvancementNonCalculé || filtresAlertes.estEnAlerteMétéoNonRenseignée || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? chantiers.filter(chantier => {
+  const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisse || filtresAlertes.estEnAlerteTauxAvancementNonCalculé || filtresAlertes.estEnAlerteMétéoNonRenseignée || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? chantiers.filter(chantier => {
     const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][codeInseeSelectionne];
     return (filtresAlertes.estEnAlerteÉcart && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
       || (filtresAlertes.estEnAlerteBaisse && Alerte.estEnAlerteBaisse(chantierDonnéesTerritoires.tendance))
-      || (filtresAlertes.estEnAlerteDonnéesNonMàj && Alerte.estEnAlerteDonnéesNonMàj(chantierDonnéesTerritoires.dateDeMàjDonnéesQualitatives, chantierDonnéesTerritoires.dateDeMàjDonnéesQuantitatives))
       || (filtresAlertes.estEnAlerteTauxAvancementNonCalculé && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierDonnéesTerritoires.avancement.global))
       || (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental && Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.mailles.départementale))
       || (filtresAlertes.estEnAlerteMétéoNonRenseignée && Alerte.estEnAlerteMétéoNonRenseignée(chantierDonnéesTerritoires.météo));
@@ -190,7 +178,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   return {
     props: {
       chantiers: chantiersAvecAlertes.map(chantier => {
-        // @ts-ignore
+        // @ts-expect-error
         delete chantier.mailles;
         return chantier;
       }),

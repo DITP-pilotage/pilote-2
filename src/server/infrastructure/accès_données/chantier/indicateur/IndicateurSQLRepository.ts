@@ -234,6 +234,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
              t_d.nom                                    departement_nom,
              c.ministeres                               chantier_ministeres,
              c.ministeres_acronymes                     chantier_ministeres_acronymes,
+             c.axe                                      axe,
              c.nom                                      chantier_nom,
              c.id                                       chantier_id,
              c.statut                                   chantier_statut,
@@ -266,6 +267,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
                left outer join dernieres_syntheses s
                                on s.chantier_id = c.id and s.maille = c.maille and s.code_insee = c.code_insee
       where c.id is not null
+      and i.est_applicable
       order by
           c.nom,
           i.nom,
@@ -284,6 +286,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       régionNom: it.region_nom,
       départementNom: it.departement_nom,
       chantierMinistèreNom: it.chantier_ministeres_acronymes ? it.chantier_ministeres_acronymes[0] : null,
+      axe: it.axe,
       chantierNom: it.chantier_nom,
       chantierId: it.chantier_id,
       statut: it.chantier_statut,

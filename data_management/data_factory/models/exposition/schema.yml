@@ -12,6 +12,8 @@ models:
         description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
       - name: taux_avancement
         description: "source de données à date du 06/07/2023 : dfakto.fact_progress_chantier"
+      - name: taux_avancement_date
+        description: "Date du TA. C'est la date la plus récente de màj d'un indicateur du TA chantier."
       - name: territoire_nom
         description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_zone"
       - name: perimetre_ids

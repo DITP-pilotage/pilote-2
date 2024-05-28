@@ -8,6 +8,7 @@ const Alerte = {
     }
     return écart < -10;
   },
+
   estEnAlerteBaisse: (tendance: ChantierTendance | null) => {
     if (!tendance)
       return false;
@@ -15,18 +16,10 @@ const Alerte = {
     return tendance === 'BAISSE';
   },
 
-  estEnAlerteDonnéesNonMàj(dateDonnéesQualitatives: string | null, dateDonnéesQuantitatives: string | null) {
-    if (dateDonnéesQualitatives === null && dateDonnéesQuantitatives !== null) {
-      return true;
-    }
-    if (dateDonnéesQualitatives === null || dateDonnéesQuantitatives === null) {
-      return false;
-    }
-    return dateDonnéesQualitatives < dateDonnéesQuantitatives;
-  },
   estEnAlerteTauxAvancementNonCalculé(tauxAvancement: number | null) {
     return tauxAvancement === null;
   },
+
   estEnAlerteAbscenceTauxAvancementDepartemental(departementsDonnées: ListeTerritoiresDonnéeAccueilContrat) {
     const donnéesApplicables = Object.values(departementsDonnées).filter(donnée => donnée.estApplicable);
     return donnéesApplicables.length > 0 && donnéesApplicables.every(donnée => donnée.avancement.global === null);

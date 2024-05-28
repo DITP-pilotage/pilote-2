@@ -376,6 +376,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
                  left outer join dernieres_syntheses s
                                  on s.chantier_id = c.id and s.maille = c.maille and s.code_insee = c.code_insee
         where c.id is not null
+        and c.est_applicable
         order by
             c.nom,
             CASE c.maille
@@ -394,6 +395,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       régionNom: it.region_nom,
       départementNom: it.departement_nom,
       ministèreNom: it.ministeres_acronymes ? it.ministeres_acronymes[0] : null, // <-- en fait ce sont les porteurs
+      axe: it.axe,
       tauxDAvancementNational: it.taux_national,
       tauxDAvancementRégional: it.taux_regional,
       tauxDAvancementDépartemental: it.taux_departemental,

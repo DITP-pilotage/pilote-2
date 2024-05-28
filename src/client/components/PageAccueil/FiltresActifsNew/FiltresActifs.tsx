@@ -23,7 +23,6 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
-    estEnAlerteDonnéesNonMàj: parseAsBoolean.withDefault(false),
     estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
   }, {
@@ -43,7 +42,6 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
     + (filtres.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
     + (filtres.estEnAlerteÉcart ? 1 : 0)
     + (filtres.estEnAlerteBaisse ? 1 : 0)
-    + (filtres.estEnAlerteDonnéesNonMàj ? 1 : 0)
     + (filtres.estEnAlerteMétéoNonRenseignée ? 1 : 0)
     + (filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0);
 
@@ -70,7 +68,6 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
       estEnAlerteTauxAvancementNonCalculé: false,
       estEnAlerteÉcart: false,
       estEnAlerteBaisse: false,
-      estEnAlerteDonnéesNonMàj: false,
       estEnAlerteMétéoNonRenseignée: false,
       estEnAlerteAbscenceTauxAvancementDepartemental: false,
     });
@@ -174,14 +171,14 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
           ) : null
         }
         {
-          filtres.estEnAlerteDonnéesNonMàj ? (
+          filtres.estEnAlerteMétéoNonRenseignée ? (
             <li>
               <Tag
-                libellé='Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour'
+                libellé='Chantier(s) avec météo et synthèse des résultats non renseignés'
                 suppressionCallback={() => {
-                  filtres.estEnAlerteDonnéesNonMàj = false;
+                  filtres.estEnAlerteMétéoNonRenseignée = false;
 
-                  sauvegarderFiltres({ estEnAlerteDonnéesNonMàj: false });
+                  sauvegarderFiltres({ estEnAlerteMétéoNonRenseignée: false });
                   return setFiltres(filtres);
                 }}
               />
@@ -220,7 +217,7 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
           ) : filtres.estBarometre ? (
             <li>
               <Tag
-                libellé='Chantiers baromètre'
+                libellé='Chantiers du baromètre'
                 suppressionCallback={() => {
                   filtres.estBarometre = false;
 
@@ -243,25 +240,11 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
             </li>
           ) : null
         }
-        {
-          filtres.estEnAlerteMétéoNonRenseignée ? (
-            <li>
-              <Tag
-                libellé='Météo(s) et synthèse(s) des résultats non renseigné(s)'
-                suppressionCallback={() => {
-                  filtres.estEnAlerteMétéoNonRenseignée = false;
-
-                  sauvegarderFiltres({ estEnAlerteMétéoNonRenseignée: false });
-                  return setFiltres(filtres);
-                }}
-              />
-            </li>
-          ) : null
-        }
       </ul>
       <button
         className='boutons fr-btn fr-btn--tertiary fr-mt-1w'
         onClick={désactiverTousLesFiltres}
+        title='Réinitialiser les filtres'
         type='button'
       >
         Réinitialiser les filtres
