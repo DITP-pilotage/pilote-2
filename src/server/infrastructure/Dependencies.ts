@@ -173,6 +173,13 @@ import {
 import {
   PrismaSynthèseDesRésultatsRepository as PrismaFicheConducteurSynthèseDesRésultatsRepository,
 } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaSynthèseDesRésultatsRepository';
+import { TokenAPIInformationRepository } from '@/server/authentification/domain/ports/TokenAPIInformationRepository';
+import { TokenAPIService } from '@/server/authentification/domain/ports/TokenAPIService';
+import { TokenAPIJWTService } from '@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService';
+import { configuration } from '@/config';
+import {
+  PrismaTokenAPIInformationRepository,
+} from '@/server/authentification/infrastructure/adapters/PrismaTokenAPIInformationRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
 import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
 import ProjetStructurantSQLRepository from './accès_données/projetStructurant/ProjetStructurantSQLRepository';
@@ -276,6 +283,10 @@ class Dependencies {
 
   private readonly _importMasseMetadataIndicateurUseCase: ImportMasseMetadataIndicateurUseCase;
 
+  private readonly _tokenAPIService: TokenAPIService;
+
+  private readonly _tokenAPIInformationRepository: TokenAPIInformationRepository;
+
   constructor() {
     const prisma = globalForPrisma.prisma ?? new PrismaClient();
     if (process.env.NODE_ENV !== 'production') {
@@ -321,6 +332,8 @@ class Dependencies {
     this._informationMetadataIndicateurRepository = new YamlInformationMetadataIndicateurRepository();
     this._historisationModification = new HistorisationModificationSQLRepository(prisma);
     this._gestionContenuRepository = new PrismaGestionContenuRepository(prisma);
+    this._tokenAPIService = new TokenAPIJWTService({ secret: configuration.tokenAPI.secret });
+    this._tokenAPIInformationRepository = new PrismaTokenAPIInformationRepository(prisma);
 
     const httpClient = new FetchHttpClient();
     const fichierIndicateurValidationService = new ValidataFichierIndicateurValidationService({ httpClient });
@@ -507,6 +520,14 @@ class Dependencies {
 
   getIndicateurProjetStructurantRepository() {
     return this._indicateurProjetStructurantRepository;
+  }
+
+  getTokenAPIService() {
+    return this._tokenAPIService;
+  }
+
+  getTokenAPIInformationRepository() {
+    return this._tokenAPIInformationRepository;
   }
 
   getUtilisateurIAMRepository(): UtilisateurIAMRepository {
