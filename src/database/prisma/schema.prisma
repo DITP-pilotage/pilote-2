@@ -57,7 +57,7 @@ model chantier {
   nom                                String
   perimetre_ids                      String[]
   taux_avancement                    Float?
-  taux_avancement_date               DateTime?  @db.Date
+  taux_avancement_date               DateTime?   @db.Date
   taux_avancement_precedent          Float?
   taux_avancement_annuel             Float?
   territoire_nom                     String?
@@ -263,35 +263,35 @@ model metadata_indicateurs_hidden {
 }
 
 model metadata_parametrage_indicateurs {
-  indic_id                  String  @id
-  vi_dept_from              String?
-  vi_dept_op                String?
-  va_dept_from              String?
-  va_dept_op                String?
-  vc_dept_from              String?
-  vc_dept_op                String?
-  vi_reg_from               String?
-  vi_reg_op                 String?
-  va_reg_from               String?
-  va_reg_op                 String?
-  vc_reg_from               String?
-  vc_reg_op                 String?
-  vi_nat_from               String?
-  vi_nat_op                 String?
-  va_nat_from               String?
-  va_nat_op                 String?
-  vc_nat_from               String?
-  vc_nat_op                 String?
-  param_vaca_decumul_from   String?
-  param_vaca_partition_date String?
-  param_vaca_op             String?
-  param_vacg_decumul_from   String?
-  param_vacg_partition_date String?
-  param_vacg_op             String?
+  indic_id                     String  @id
+  vi_dept_from                 String?
+  vi_dept_op                   String?
+  va_dept_from                 String?
+  va_dept_op                   String?
+  vc_dept_from                 String?
+  vc_dept_op                   String?
+  vi_reg_from                  String?
+  vi_reg_op                    String?
+  va_reg_from                  String?
+  va_reg_op                    String?
+  vc_reg_from                  String?
+  vc_reg_op                    String?
+  vi_nat_from                  String?
+  vi_nat_op                    String?
+  va_nat_from                  String?
+  va_nat_op                    String?
+  vc_nat_from                  String?
+  vc_nat_op                    String?
+  param_vaca_decumul_from      String?
+  param_vaca_partition_date    String?
+  param_vaca_op                String?
+  param_vacg_decumul_from      String?
+  param_vacg_partition_date    String?
+  param_vacg_op                String?
   poids_pourcent_dept_declaree Float?
   poids_pourcent_reg_declaree  Float?
   poids_pourcent_nat_declaree  Float?
-  tendance                  String?
+  tendance                     String?
 
   @@schema("raw_data")
 }
@@ -564,6 +564,13 @@ model historisation_modification {
 model gestion_contenu {
   nom_variable_contenu    String @id
   valeur_variable_contenu String
+
+  @@schema("public")
+}
+
+model token_api_information {
+  email         String @id
+  date_creation String
 
   @@schema("public")
 }

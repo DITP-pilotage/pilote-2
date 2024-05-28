@@ -7,18 +7,28 @@ interface InputProps {
   type?: HTMLInputTypeAttribute,
   htmlName: string,
   texteAide?: string,
-  erreur?:  FieldError | Merge<FieldError, FieldErrorsImpl<any>>
+  erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>
   erreurMessage?: string,
   register: UseFormRegisterReturn
   disabled?: boolean
+  className?: string
 }
 
-export default function Input({ children, type = 'text', erreur, erreurMessage, htmlName, register, disabled }: PropsWithChildren<InputProps>) {
+export default function Input({
+  children,
+  type = 'text',
+  erreur,
+  erreurMessage,
+  htmlName,
+  register,
+  disabled,
+  className,
+}: PropsWithChildren<InputProps>) {
   return (
     <div className={`fr-input-group ${erreur !== undefined || erreurMessage ? 'fr-input-group--error' : ''}`}>
       {children}
       <input
-        className={`fr-input ${erreur !== undefined || erreurMessage ? 'fr-input-group--error' : ''}`}
+        className={`fr-input ${erreur !== undefined || erreurMessage ? 'fr-input-group--error' : ''} ${className !== undefined ? className : ''}`}
         disabled={disabled}
         id={htmlName}
         type={type}
@@ -26,11 +36,11 @@ export default function Input({ children, type = 'text', erreur, erreurMessage, 
       />
       {
         (erreurMessage !== undefined || erreur !== undefined) &&
-          <p
-            className='fr-error-text'
-          >
-            {erreurMessage}
-          </p>
+        <p
+          className='fr-error-text'
+        >
+          {erreurMessage}
+        </p>
       }
     </div>
   );

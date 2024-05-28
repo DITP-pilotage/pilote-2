@@ -208,6 +208,13 @@ const config = convict({
       env: 'NEXT_PUBLIC_RECORD_ANALYTICS',
     },
   },
+  tokenAPI: {
+    secret: {
+      format: String,
+      default: 'secret',
+      env: 'TOKEN_API_SECRET',
+    },
+  },
 });
 
 config.set('keycloak.tokenUrl', config.get('keycloak.issuer') + '/protocol/openid-connect/token');
