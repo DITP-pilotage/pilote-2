@@ -20,7 +20,7 @@ export const getServerSideProps: GetServerSideProps<{
   suppressionReussie: boolean
 }> = async ({ req, res, query }) => {
   const session = await getServerSession(req, res, authOptions);
-  if (!session || !estAutoriséAModifierLesTokensAPI(session.profil)) {
+  if (process.env.NEXT_PUBLIC_FF_GESTION_TOKEN_API !== 'true' || !session || !estAutoriséAModifierLesTokensAPI(session.profil)) {
     throw new Error('Not connected or not authorized ?');
   }
 
