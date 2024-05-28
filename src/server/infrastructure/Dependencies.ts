@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 import process from 'node:process';
-import assert from 'node:assert/strict';
 import ChantierSQLRepository from '@/server/infrastructure/accès_données/chantier/ChantierSQLRepository';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
@@ -532,12 +531,9 @@ class Dependencies {
 
   getUtilisateurIAMRepository(): UtilisateurIAMRepository {
     if (!this._utilisateurIAMRepository) {
-      const keycloakUrl = process.env.IMPORT_KEYCLOAK_URL;
-      assert.ok(keycloakUrl, 'IMPORT_KEYCLOAK_URL manquant.');
-      const clientId = process.env.IMPORT_CLIENT_ID;
-      assert.ok(clientId, 'IMPORT_CLIENT_ID manquant.');
-      const clientSecret = process.env.IMPORT_CLIENT_SECRET;
-      assert.ok(clientSecret, 'IMPORT_CLIENT_SECRET manquant.');
+      const keycloakUrl = configuration.import.keycloakUrl;
+      const clientId = configuration.import.clientId;
+      const clientSecret = configuration.import.clientSecret;
 
       this._utilisateurIAMRepository = new UtilisateurIAMKeycloakRepository(keycloakUrl, clientId, clientSecret);
     }
