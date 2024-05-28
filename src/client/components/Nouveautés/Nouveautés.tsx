@@ -43,31 +43,48 @@ const Nouveautés: FunctionComponent<{}> = () => {
                     <h3 className='fr-h5'>
                       Nouvelles fonctionnalités
                     </h3>
-                    <p>
-                      {ParametrageNouveautés[0].contenu}
-                    </p>
-                    <h3 className='fr-h5'>
-                      Correctifs
-                    </h3>
-                    <ul>
-                      {
-                        ParametrageNouveautés[0].correctifs.map((elementCorrectif, indexCorrectif) => {
-                          return (
-                            <li key={`correctif-0-${indexCorrectif}`}>
-                              {elementCorrectif}
+                    <div className='fr-mb-2w'>
+                      <ul>
+                        {
+                          ParametrageNouveautés[0].contenu.map((elementContenu, indexContenu) => (
+                            <li
+                              className='fr-m-0'
+                              key={`element-contenu-${ParametrageNouveautés[0].version}-${indexContenu}`}
+                            >
+                              {elementContenu}
                             </li>
-                          );
-                        },
-                        )
-                      }
-                    </ul>
+                          ))
+                        }
+                      </ul>
+                    </div>
+                    {
+                      ParametrageNouveautés[0].correctifs.length > 0 ? (
+                        <>
+                          <h3 className='fr-h5'>
+                            Correctifs
+                          </h3>
+                          <ul>
+                            {
+                              ParametrageNouveautés[0].correctifs.map((elementCorrectif, indexCorrectif) => {
+                                return (
+                                  <li key={`correctif-0-${indexCorrectif}`}>
+                                    {elementCorrectif}
+                                  </li>
+                                );
+                              },
+                              )
+                            }
+                          </ul>
+                        </>
+                      ) : null
+                    }
                   </div>
                 </div>
                 {
                   ParametrageNouveautés.slice(1, ParametrageNouveautés.length).map((element, index) => {
                     return (
                       <div
-                        className='fr-grid-row fr-mt-2w fr-mb-4w'
+                        className='fr-grid-row fr-mb-2w'
                         key={`nouveauté-${element.date}`}
                       >
                         <div className='fr-col-12'>
@@ -84,12 +101,6 @@ const Nouveautés: FunctionComponent<{}> = () => {
                               </Link>
                             ) : null}
                           </h2>
-                          <h3 className='fr-h5'>
-                            Nouvelles fonctionnalités
-                          </h3>
-                          <p>
-                            {element.contenu}
-                          </p>
                           <section className='fr-accordion'>
                             <h3 className='fr-accordion__title'>
                               <button
@@ -98,7 +109,7 @@ const Nouveautés: FunctionComponent<{}> = () => {
                                 className='fr-accordion__btn'
                                 type='button'
                               >
-                                Voir plus
+                                Voir le détail
                               </button>
                             </h3>
                             <div
@@ -106,20 +117,41 @@ const Nouveautés: FunctionComponent<{}> = () => {
                               id={`accordion-${index}`}
                             >
                               <h3 className='fr-h5'>
-                                Correctifs
+                                Nouvelles fonctionnalités
                               </h3>
-                              <ul>
+                              <ul className='fr-mb-2w'>
                                 {
-                                  element.correctifs.map((elementCorrectif, indexCorrectif) => {
-                                    return (
-                                      <li key={`correctif-${index}-${indexCorrectif}`}>
-                                        {elementCorrectif}
-                                      </li>
-                                    );
-                                  },
-                                  )
+                                  element.contenu.map((elementContenu, indexContenu) => (
+                                    <li
+                                      className='fr-m-0'
+                                      key={`element-contenu-${element.version}-${indexContenu}`}
+                                    >
+                                      {elementContenu}
+                                    </li>
+                                  ))
                                 }
                               </ul>
+                              {
+                                element.correctifs.length > 0 ? (
+                                  <>
+                                    <h3 className='fr-h5'>
+                                      Correctifs
+                                    </h3>
+                                    <ul>
+                                      {
+                                        element.correctifs.map((elementCorrectif, indexCorrectif) => {
+                                          return (
+                                            <li key={`correctif-${index}-${indexCorrectif}`}>
+                                              {elementCorrectif}
+                                            </li>
+                                          );
+                                        },
+                                        )
+                                      }
+                                    </ul>
+                                  </>
+                                ) : null
+                              }
                             </div>
                           </section>
                         </div>
