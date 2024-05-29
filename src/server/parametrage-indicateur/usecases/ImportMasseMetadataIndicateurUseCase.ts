@@ -62,7 +62,7 @@ const convertirEnImportMetadataIndicateur = (record: RecordCSVImport): ImportMet
   periodicite: record.periodicite,
   delaiDisponibilite: !Number.isNaN(record.delai_disponibilite) ? Number(record.delai_disponibilite) : 0,
   indicTerritorialise: record.indic_territorialise === 'true' || record.indic_territorialise === 'True',
-  frequenceTerritoriale: record.frequence_territoriale || null,
+  frequenceTerritoriale: !Number.isNaN(record.frequence_territoriale) ? Number(record.frequence_territoriale) : 0,
   mailles: record.mailles || null,
   adminSource: record.admin_source,
   methodeCollecte: record.methode_collecte,
