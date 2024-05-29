@@ -12,7 +12,7 @@ export const ParametrageNouveautés: Nouveautés[] = [
     date: '29 mai 2024',
     contenu : [
       'Bienvenue sur cette nouvelle page Nouveautés ! Dorénavant, vous retrouverez ici l\'ensemble des informations sur les évolutions de PILOTE et les dernières fonctionnalités disponibles !',
-      'La fonctionnalité Chantiers signalés est désormais disponible. Elle vous permet d\’identifier rapidement les Politiques prioritaires du Gouvernement nécessitant une attention particulière et, le cas échéant, la mise en place de mesures adéquates afin de garantir la réussite de leur déploiement sur votre territoire. Plus d\'informations à venir dans le centre d'aide prochainement.',
+      'La fonctionnalité Chantiers signalés est désormais disponible. Elle vous permet d\’identifier rapidement les Politiques prioritaires du Gouvernement nécessitant une attention particulière et, le cas échéant, la mise en place de mesures adéquates afin de garantir la réussite de leur déploiement sur votre territoire. Plus d\'informations à venir dans le centre d\'aide prochainement.',
     ],
     correctifs : [],
   }, {
