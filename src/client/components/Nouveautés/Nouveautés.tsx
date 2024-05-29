@@ -20,14 +20,14 @@ const Nouveautés: FunctionComponent<{}> = () => {
         <Bloc>
           {
             !ParametrageNouveautés || ParametrageNouveautés.length === 0 ? (
-              <h2 className='fr-h4'>
+              <h2 className='fr-h3'>
                 Aucune nouveautés sur le projet
               </h2>
             ) : (
               <>
                 <div className='fr-grid-row'>
                   <div className='fr-col-12'>
-                    <h2 className='fr-h4'>
+                    <h2 className='fr-h3'>
                       {`${ParametrageNouveautés[0].version} du ${ParametrageNouveautés[0].date}`}
                       {ParametrageNouveautés[0].lienCentreAide ? (
                         <Link
@@ -40,7 +40,7 @@ const Nouveautés: FunctionComponent<{}> = () => {
                         </Link>
                       ) : null}
                     </h2>
-                    <h3 className='fr-h5'>
+                    <h3 className='fr-h6'>
                       Nouvelles fonctionnalités
                     </h3>
                     <div className='fr-mb-2w'>
@@ -60,7 +60,7 @@ const Nouveautés: FunctionComponent<{}> = () => {
                     {
                       ParametrageNouveautés[0].correctifs.length > 0 ? (
                         <>
-                          <h3 className='fr-h5'>
+                          <h3 className='fr-h6'>
                             Correctifs
                           </h3>
                           <ul>
@@ -84,11 +84,11 @@ const Nouveautés: FunctionComponent<{}> = () => {
                   ParametrageNouveautés.slice(1, ParametrageNouveautés.length).map((element, index) => {
                     return (
                       <div
-                        className='fr-grid-row fr-mb-2w'
+                        className='fr-grid-row fr-mb-2w fr-mt-2w'
                         key={`nouveauté-${element.date}`}
                       >
                         <div className='fr-col-12'>
-                          <h2 className='fr-h4'>
+                          <h2 className='fr-h3'>
                             {`${element.version} du ${element.date}`}
                             {element.lienCentreAide ? (
                               <Link
@@ -116,7 +116,7 @@ const Nouveautés: FunctionComponent<{}> = () => {
                               className='fr-collapse'
                               id={`accordion-${index}`}
                             >
-                              <h3 className='fr-h5'>
+                              <h3 className='fr-h6'>
                                 Nouvelles fonctionnalités
                               </h3>
                               <ul className='fr-mb-2w'>
@@ -134,7 +134,7 @@ const Nouveautés: FunctionComponent<{}> = () => {
                               {
                                 element.correctifs.length > 0 ? (
                                   <>
-                                    <h3 className='fr-h5'>
+                                    <h3 className='fr-h6'>
                                       Correctifs
                                     </h3>
                                     <ul>
