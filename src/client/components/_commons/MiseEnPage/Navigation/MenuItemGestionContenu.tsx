@@ -14,6 +14,10 @@ export const MenuItemGestionContenu: FunctionComponent<{ urlActuelle: string }> 
       lien: '/admin/message-information',
       accessible: true,
     }, {
+      nom: 'Token API',
+      lien: '/admin/gestion-token-api',
+      accessible: process.env.NEXT_PUBLIC_FF_GESTION_TOKEN_API === 'true',
+    }, {
       nom: 'Nouveautés',
       lien: '/admin/nouveautes',
       accessible: false,
