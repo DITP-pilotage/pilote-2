@@ -3,22 +3,26 @@ import { TokenAPIService } from '@/server/authentification/domain/ports/TokenAPI
 import { TokenAPIInformationRepository } from '@/server/authentification/domain/ports/TokenAPIInformationRepository';
 import { CreerTokenAPIUseCase } from '@/server/authentification/usecases/CreerTokenAPIUseCase';
 import { TokenAPIInformationBuilder } from '@/server/authentification/app/builder/TokenAPIInformationBuilder';
+import { UtilisateurRepository } from '@/server/authentification/domain/ports/UtilisateurRepository';
 
 describe('CreerTokenAPIUseCase', () => {
   let tokenAPIService: MockProxy<TokenAPIService>;
   let tokenAPIInformationRepository: MockProxy<TokenAPIInformationRepository>;
+  let utilisateurRepository: MockProxy<UtilisateurRepository>;
   let creerTokenAPIUseCase: CreerTokenAPIUseCase;
 
   beforeEach(() => {
     tokenAPIService = mock<TokenAPIService>();
     tokenAPIInformationRepository = mock<TokenAPIInformationRepository>();
-    creerTokenAPIUseCase = new CreerTokenAPIUseCase({ tokenAPIService, tokenAPIInformationRepository });
+    utilisateurRepository = mock<UtilisateurRepository>();
+    creerTokenAPIUseCase = new CreerTokenAPIUseCase({ tokenAPIService, tokenAPIInformationRepository, utilisateurRepository });
   });
 
   it('doit creer un token api', async () => {
     // Given
     const email = 'test@example.com';
     tokenAPIService.creerTokenAPI.mockResolvedValue('tokenApi');
+    utilisateurRepository.estPresent.mockResolvedValue(true);
     // When
     const result = await creerTokenAPIUseCase.run({ email });
     // Then
@@ -31,7 +35,16 @@ describe('CreerTokenAPIUseCase', () => {
     // Given
     const email = 'test@example.com';
     const tokenAPIInformation = new TokenAPIInformationBuilder().withEmail('test@example.com').build();
+    utilisateurRepository.estPresent.mockResolvedValue(true);
     tokenAPIInformationRepository.recupererTokenAPIInformation.mockResolvedValue(tokenAPIInformation);
+    // Then
+    await expect(creerTokenAPIUseCase.run({ email })).toReject();
+  });
+
+  it('quand l\'email n\'appartient pas a un utilisateur connu', async () => {
+    // Given
+    const email = 'test@example.com';
+    utilisateurRepository.estPresent.mockResolvedValue(false);
     // Then
     await expect(creerTokenAPIUseCase.run({ email })).toReject();
   });
