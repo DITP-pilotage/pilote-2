@@ -1,7 +1,8 @@
 import Encart from '@/components/_commons/Encart/Encart';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
-import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
+import CartographieAvancement
+  from '@/components/_commons/Cartographie/CartographieAvancementNew/CartographieAvancement';
 import Avancements from '@/components/_commons/Avancements/Avancements';
 import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
 import RapportDétailléVueDEnsembleProps
@@ -27,6 +28,7 @@ export function RapportDétailléVueDEnsemble({
   avancementsAgrégés,
   territoireCode,
   filtresComptesCalculés,
+  mailleSelectionnee,
 }: RapportDétailléVueDEnsembleProps) {
   const {
     donnéesTableauChantiers,
@@ -88,7 +90,9 @@ export function RapportDétailléVueDEnsemble({
             <CartographieAvancement
               auClicTerritoireCallback={() => {}}
               données={donnéesCartographie}
+              mailleSelectionnee={mailleSelectionnee}
               options={{ estInteractif: false }}
+              territoireCode={territoireCode}
               élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
             />
           </section>

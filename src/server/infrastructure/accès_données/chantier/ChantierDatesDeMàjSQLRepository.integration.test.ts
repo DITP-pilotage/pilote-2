@@ -128,67 +128,6 @@ describe('ChantierDatesDeMàjSQLRepository', () => {
 
       // Then
       expect(result[chantierId][territoireCode].dateDeMàjDonnéesQualitatives).toStrictEqual(new Date('2023-02-02').toISOString());
-      expect(result[chantierId][territoireCode].dateDeMàjDonnéesQuantitatives).toStrictEqual(new Date('2023-02-02').toISOString());
-
-    });
-
-    test("renvoie date données quantitatives null, quand il n'y a pas de date valeur actuelle d'indicateur", async () => {
-      // Given
-      const chantierId = 'CH-001';
-      const maille = 'régionale';
-      const codeInsee = '01';
-      const territoireCode = 'REG-01';
-      const repository: ChantierDatesDeMàjRepository = new ChantierDatesDeMàjSQLRepository(prisma);
-
-      const chantiers: chantier[] = [
-        new ChantierSQLRowBuilder()
-          .avecId(chantierId)
-          .avecMaille(CODES_MAILLES[maille])
-          .avecCodeInsee(codeInsee)
-          .avecMétéo('ORAGE')
-          .build(),
-      ];
-      const commentaires = [
-        new CommentaireRowBuilder()
-          .avecChantierId(chantierId)
-          .avecDate(new Date('2023-02-02'))
-          .avecMaille(CODES_MAILLES[maille])
-          .avecCodeInsee(codeInsee)
-          .build(),
-      ];
-
-      const synthèses = [
-        new SyntheseDesResultatsRowBuilder()
-          .avecChantierId(chantierId)
-          .avecMaille(CODES_MAILLES[maille])
-          .avecCodeInsee(codeInsee)
-          .avecDateCommentaire(new Date('2023-01-01'))
-          .avecDateMétéo(new Date('2023-01-01'))
-          .build(),
-      ];
-
-      const indicateurs = [
-        new IndicateurRowBuilder()
-          .avecChantierId(chantierId)
-          .avecMaille(CODES_MAILLES[maille])
-          .avecCodeInsee(codeInsee)
-          .avecDateValeurActuelle(null)
-          .avecTerritoireCode(territoireCode)
-          .build(),
-      ];
-
-      await Promise.all([
-        prisma.chantier.createMany({ data: chantiers }),
-        prisma.commentaire.createMany({ data: commentaires }),
-        prisma.synthese_des_resultats.createMany({ data: synthèses }),
-        prisma.indicateur.createMany({ data: indicateurs }),
-      ]);
-
-      // When
-      const result = await repository.récupérerDatesDeMiseÀJour([chantierId], [territoireCode]);
-
-      // Then
-      expect(result[chantierId][territoireCode].dateDeMàjDonnéesQuantitatives).toBeNull();
     });
 
     test("renvoie date données qualitatives null, quand il n'y a pas de date pour une synthèse et pas de commentaire", async () => {
@@ -412,13 +351,11 @@ describe('ChantierDatesDeMàjSQLRepository', () => {
         [chantierId1]: {
           [territoireCode]: {
             dateDeMàjDonnéesQualitatives: new Date('2023-01-02').toISOString(),
-            dateDeMàjDonnéesQuantitatives: new Date('2023-02-02').toISOString(),
           },
         },
         [chantierId2]: {
           [territoireCode]: {
             dateDeMàjDonnéesQualitatives: null,
-            dateDeMàjDonnéesQuantitatives: new Date('2023-03-02').toISOString(),
           },
         },
       });

@@ -53,7 +53,6 @@ export type ChantierVueDEnsemble = {
 };
 
 export type ChantierDatesDeMiseÀJour = {
-  dateDeMàjDonnéesQuantitatives: string | null;
   dateDeMàjDonnéesQualitatives: string | null;
 };
 

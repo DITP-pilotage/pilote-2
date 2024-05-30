@@ -11,6 +11,7 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import { MenuItemGestionContenu } from '@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu';
 import api from '@/server/infrastructure/api/trpc/api';
 import { getFiltresActifs } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
+import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 
 const fermerLaModaleDuMenu = () => {
   if (typeof window.dsfr === 'function') {
@@ -52,7 +53,13 @@ export default function Navigation() {
 
   const filtresActifs = getFiltresActifs();
 
-  const territoireCode = session?.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : session?.habilitations.lecture.territoires[0];
+  const territoireCodeURL = router.query.territoireCode as string | undefined;
+
+  // Cas où le code territoire n'est pas dans l'url (page chantier), on utilise le store.
+  // A supprimer au moment du refacto de la page chantier.
+  const territoireCodeStore = territoireSélectionnéTerritoiresStore()?.code ?? (session?.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : session?.habilitations.lecture.territoires[0]);
+  const territoireCode = territoireCodeURL ?? territoireCodeStore;
+
   const queryParamString = new URLSearchParams(Object.entries(filtresActifs).map(([key, value]) => (value && String(value).length > 0 ? [key, String(value)] : [])).filter(value => value.length > 0)).toString();
 
   const pages = [

@@ -53,6 +53,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
     afficheLeBoutonFicheConducteur,
     responsableLocal,
     coordinateurTerritorial,
+    hrefBoutonRetour,
   } = usePageChantier(chantierId, indicateurs);
   // TODO Mettre dans getServerSideProps !
 
@@ -87,6 +88,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 afficheLeBoutonImpression
                 afficheLeBoutonMiseAJourDonnee={saisieIndicateurAutorisée}
                 chantier={chantier}
+                hrefBoutonRetour={hrefBoutonRetour}
               />
               <div className='fr-container--fluid fr-py-2w fr-px-md-2w'>
                 <div className={`grid-template ${territoireSélectionné!.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}>

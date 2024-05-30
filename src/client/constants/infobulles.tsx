@@ -43,10 +43,18 @@ const INFOBULLE_CONTENUS = {
           </ul>
         </li>
         <li>
-          La seconde alerte signale les chantiers pour lesquels le taux d’avancement a reculé ou n’a pas avancé lors de la dernière mise à jour des données quantitatives.
+          La seconde alerte signale :
+          <ul className='fr-text--sm liste-niveau2'>
+            <li>
+              lorsque le niveau national est sélectionné : les chantiers n'ayant aucun taux d'avancement au niveau départemental.             
+            </li>
+            <li>
+              lorsqu'un territoire est sélectionné : les chantiers pour lesquels le taux d’avancement a reculé lors de la dernière mise à jour des données quantitatives.  Pour qu’un résultat apparaisse sur cette alerte, il faut sélectionner une région ou un département.
+            </li>
+          </ul>
         </li>
         <li>
-          La dernière alerte signale les chantiers pour lesquels la date de mise à jour des données quantitatives est plus récente que celle des données qualitatives (météo, synthèse, commentaire). Les données qualitatives doivent donc être lues avec précaution et peuvent potentiellement être susceptibles de mises à jour.
+          La dernière alerte signale les chantiers pour lesquels la météo et la synthèse des résultats n'ont pas été renseignés.
         </li>
       </ul>
     ),

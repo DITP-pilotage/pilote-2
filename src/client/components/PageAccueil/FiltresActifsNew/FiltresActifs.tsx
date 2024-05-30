@@ -217,7 +217,7 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
           ) : filtres.estBarometre ? (
             <li>
               <Tag
-                libellé='Chantiers baromètre'
+                libellé='Chantiers du baromètre'
                 suppressionCallback={() => {
                   filtres.estBarometre = false;
 

@@ -1,4 +1,3 @@
-import assert from 'node:assert/strict';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 import logger from '@/server/infrastructure/Logger';
 import UtilisateurPourIAM from '@/server/domain/utilisateur/UtilisateurIAM.interface';
@@ -18,11 +17,7 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
     private readonly keycloakUrl: string,
     private readonly clientId: string,
     private readonly clientSecret: string,
-  ) {
-    assert(this.keycloakUrl);
-    assert(this.clientId);
-    assert(this.clientSecret);
-  }
+  ) {}
 
   async supprime(email: string): Promise<void> {
     await this.loginKcAdminClient();
