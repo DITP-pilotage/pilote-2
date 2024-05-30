@@ -29,7 +29,7 @@ export default function useMultiSelect(
   }, [valeursSélectionnées]);
 
   const trierLesOptions = useCallback(() => {
-    let optionsGroupéesTriées = structuredClone(optionsGroupées);
+    let optionsGroupéesTriées = JSON.parse(JSON.stringify(optionsGroupées)) as MultiSelectProps['optionsGroupées'];
 
     optionsGroupéesTriées.forEach((groupe, index) => {
       const optionsSélectionnées = groupe.options.filter(option => valeursSélectionnées.has(option.value));
@@ -41,7 +41,7 @@ export default function useMultiSelect(
   }, [optionsGroupées, valeursSélectionnées]);
 
   const filtrerLesOptions = useCallback(() => {
-    let optionsGroupéesQuiCorrespondentÀLaRecherche = structuredClone(optionsGroupées);
+    let optionsGroupéesQuiCorrespondentÀLaRecherche = JSON.parse(JSON.stringify(optionsGroupées)) as MultiSelectProps['optionsGroupées'];
 
     optionsGroupéesQuiCorrespondentÀLaRecherche.forEach((groupe, index) => {
       optionsGroupéesQuiCorrespondentÀLaRecherche[index].options = groupe.options.filter(option => rechercheUnTexteContenuDansUnContenant(recherche, option.label));
