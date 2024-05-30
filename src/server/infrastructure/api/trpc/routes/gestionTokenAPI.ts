@@ -12,6 +12,7 @@ export const gestionTokenAPIRouter = créerRouteurTRPC({
       return new CreerTokenAPIUseCase({
         tokenAPIService: dependencies.getTokenAPIService(),
         tokenAPIInformationRepository: dependencies.getTokenAPIInformationRepository(),
+        utilisateurRepository: dependencies.getAuthentificationUtilisateurRepository(),
       }).run({ email: input.email });
     }),
 
