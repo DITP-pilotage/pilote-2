@@ -56,3 +56,7 @@ export type DétailTerritoire = Territoire & {
   accèsSaisiePublication: boolean
   accèsSaisieIndicateur: boolean
 };
+
+export type TerritoireAvecNombreUtilisateurs = Territoire & {
+  nombreUtilisateur: number
+}

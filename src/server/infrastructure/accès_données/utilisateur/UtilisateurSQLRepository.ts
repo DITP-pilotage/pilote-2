@@ -10,6 +10,9 @@ import {
 } from '@prisma/client';
 import Utilisateur, {
   ProfilCode,
+  profilsCodes,
+  profilsDépartementaux,
+  profilsRégionaux,
   UtilisateurÀCréerOuMettreÀJourSansHabilitation,
 } from '@/server/domain/utilisateur/Utilisateur.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
@@ -21,6 +24,12 @@ import {
 } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { CODES_MAILLES } from '../maille/mailleSQLParser';
+
+export type RowsNombreUtilisateurs = Array<{
+  email: string
+}>;
 
 export const convertirEnModel = (utilisateurAConvertir: {
   email: string
@@ -258,6 +267,28 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     });
 
     return utilisateursExistants.map(u => u.email);
+  }
+
+  async récupérerNombreDeCompteSurLeTerritoire(territoireCode: string, maille: MailleInterne): Promise<RowsNombreUtilisateurs> {
+    // const profilsCodes = maille === 'départementale' ? profilsDépartementaux : profilsRégionaux;
+
+    const res = this._prisma.$queryRaw<RowsNombreUtilisateurs>`
+      with tmp as (
+        SELECT 
+          u.email, 
+          profil_code,
+          UNNEST(h.territoires) AS territoire_code
+        FROM 
+            habilitation h 
+            LEFT JOIN utilisateur u ON h.utilisateur_id = u.id
+        where 
+          profil_code in ('COORDINATEUR_REGION', 'PREFET_REGION', 'RESPONSABLE_REGION', 'SERVICES_DECONCENTRES_REGION')
+        AND h.scope_code = 'lecture'
+      )
+      select email from tmp where territoire_code = ${territoireCode};      
+    `
+
+    return res;
   }
 
   async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteur: string): Promise<void> {
