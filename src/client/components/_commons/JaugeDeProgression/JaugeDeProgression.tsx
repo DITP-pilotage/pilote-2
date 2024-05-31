@@ -23,7 +23,7 @@ export default function JaugeDeProgression({ couleur, libellé, pourcentage, tai
       <div className={`jauge-tracé jauge-tracé--${taille}`}>
         <JaugeDeProgressionSVG
           couleur={couleur}
-          pourcentage={pourcentage}
+          pourcentage={pourcentage !== undefined ? pourcentage : null}
           taille={taille}
         />
         <p className={`jauge-valeur jauge-valeur--${couleur} texte-centre ${classesÀPartirDeTaille[taille].valeur}`}>

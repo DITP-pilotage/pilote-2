@@ -1,9 +1,9 @@
 export type AvancementsStatistiques = {
   global: {
     moyenne: number | null,
-    médiane: number | null,
-    minimum: number | null,
-    maximum: number | null
+    médiane: number | null | undefined,
+    minimum: number | null | undefined,
+    maximum: number | null | undefined
   },
   annuel: {
     moyenne: number | null,
