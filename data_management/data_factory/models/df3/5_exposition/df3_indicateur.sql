@@ -71,6 +71,7 @@ get_evol_vaca as (
     last_update_indic.dernier_import_rapport_id_indic,
     last_update_indic.dernier_import_auteur_indic,
     date_pro_maj.prochaine_date_maj,
+    date_pro_maj.prochaine_date_maj_jours,
     date_pro_maj.est_a_jour,
     FALSE as a_supprimer
 	from public.territoire t 
