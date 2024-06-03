@@ -79,8 +79,8 @@ sort_mesures_vaca_last as (
     last_update_indic.dernier_import_date_indic,
     last_update_indic.dernier_import_rapport_id_indic,
     last_update_indic.dernier_import_auteur_indic,
-	indic_date_pro_maj.prochaine_date_maj,
-	indic_date_pro_maj.est_a_jour,
+    indic_date_pro_maj.prochaine_date_maj,
+    indic_date_pro_maj.est_a_jour,
     FALSE as a_supprimer
 	from public.territoire t 
 	cross join {{ ref('metadata_indicateurs') }} mi
