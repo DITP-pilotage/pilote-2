@@ -79,6 +79,9 @@ models:
         - Pour chaque [indicateur, zone, année] il s'agit de la VC ayant la `metric_date` la plus tardive dans l'année.
   - name: get_last_vaca
     description: "Pour chaque {indic_id, zone_id}, retourne la ligne avec la VACA la plus récente."
+    columns:
+      - name: date_valeur_actuelle
+        description: "Date de la dernière VA disponible."
   - name: get_vcg
     description: |
         Réalise les calculs pour déterminer la *VCG* (ie *Valeur Cible globale*). Règles:
