@@ -77,6 +77,8 @@ models:
         Réalise les calculs pour déterminer la *VCA* (ie *Valeur Cible annuelle*). Règles:
 
         - Pour chaque [indicateur, zone, année] il s'agit de la VC ayant la `metric_date` la plus tardive dans l'année.
+  - name: get_last_vaca
+    description: "Pour chaque {indic_id, zone_id}, retourne la ligne avec la VACA la plus récente."
   - name: get_vcg
     description: |
         Réalise les calculs pour déterminer la *VCG* (ie *Valeur Cible globale*). Règles:

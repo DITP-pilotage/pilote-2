@@ -29,15 +29,6 @@ get_evol_vaca as (
 	from {{ ref('compute_ta_indic') }}
 	where vaca is not null
 	group by indic_id, zone_id
-),
--- Pour chaque indicateur-zone, on choisit la ligne de la dernière VACA
-sort_mesures_vaca as (
-	select *,
-	rank() over (partition by indic_id, zone_id order by metric_date desc) as r
-	from {{ ref('compute_ta_indic') }}
-	where vaca is not null),
-sort_mesures_vaca_last as (
-	select * from sort_mesures_vaca where r=1
 )
 
 -- Jointure avec les tables référentielles	
@@ -84,7 +75,7 @@ sort_mesures_vaca_last as (
     FALSE as a_supprimer
 	from public.territoire t 
 	cross join {{ ref('metadata_indicateurs') }} mi
-	left join sort_mesures_vaca_last a on a.indic_id=mi.indic_id and a.zone_id=t.zone_id
+	left join {{ ref('get_last_vaca') }} a on a.indic_id=mi.indic_id and a.zone_id=t.zone_id
 	-- donc la liste des terr X liste des indic vont ressortir ici.
 	-- list_indic_terr list_indic left join sort_mesures_va a on t.indic_id = list_indic.indic_id and t.zone_id = list_indic.zone_id
 	left join get_evol_vaca b on mi.indic_id=b.indic_id and t.zone_id=b.zone_id
