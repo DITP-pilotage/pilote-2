@@ -218,7 +218,7 @@ models:
         description: la date max que l'on peut prendre en compte pour calculer le taa_courant du chantier aujourd'hui
       - name: max_date_taa_courant_previous
         description: la date max que l'on peut prendre en compte pour calculer le taa_courant du chantier précédemment
-  - name: indic_date_pro_maj
+  - name: get_date_pro_maj_indic
     description: |
       Pour chaque {indic_id, maille}, on va calculer si le TA est à jour par rapport à la périodicité déclarée de mise à jour des données.
     columns:
