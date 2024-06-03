@@ -213,4 +213,18 @@ models:
         description: la date max que l'on peut prendre en compte pour calculer le taa_courant du chantier aujourd'hui
       - name: max_date_taa_courant_previous
         description: la date max que l'on peut prendre en compte pour calculer le taa_courant du chantier précédemment
+  - name: indic_date_pro_maj
+    description: |
+      Pour chaque {indic_id, maille}, on va calculer si le TA est à jour par rapport à la périodicité déclarée de mise à jour des données.
+    columns:
+      - name: last_va_date
+        description: "Date de la VA la plus récente pour toutes les zones de cette maille pour cet indicateur."
+      - name: prochaine_date_maj
+        description: "Date de màj théorique des VA pour cet indicateur d'après la périodicité déclarée."
+      - name: prochaine_date_maj_jours
+        description: "Nombre de jours avant la prochaine date de màj théorique. Négatif si la donnée n'est pas à jour, çàd que la date de prochaine màj théorique est dans le passé."
+      - name: prochaine_date_va
+        description: "Prochaine date de VA qui sera théoriquement disponible"
+      - name: est_a_jour
+        description: "Indique si la donnée est à jour selon les données temporelles théoriques déclarées."
     
