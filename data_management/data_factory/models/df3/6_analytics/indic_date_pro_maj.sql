@@ -7,39 +7,43 @@
 WITH 
 -- Liste des chantiers territorialisés
 src_ch_territo AS (
-	SELECT chantier_id, ch_territo FROM raw_data.metadata_chantiers WHERE ch_territo
+	SELECT chantier_id, ch_territo FROM {{ ref('metadata_chantiers') }} WHERE ch_territo
 	ORDER BY chantier_id
 )
 -- Liste des indicateurs territo (via Trello)
 , src_indic_territo AS (
 	SELECT indic_id, indic_territorialise AS indic_territo
-	FROM raw_data.metadata_indicateurs_complementaire mic
+	FROM {{ source('parametrage_indicateurs', 'metadata_indicateurs_complementaire') }} mic
 	WHERE indic_territorialise
 )
 -- Base des indicateurs à étudier
 -- 	+ date de la VA dispo la + récente
 , src_indicateurs AS (
 SELECT 
-	i.id as indic_id, i.chantier_id, maille,
-	max(date_valeur_actuelle) AS last_va_date,
+	last_vaca.indic_id as indic_id, 
+	i.chantier_id, 
+	z.maille,
+	max(last_vaca.date_valeur_actuelle::date) AS last_va_date,
 	count(*) AS n
-FROM public.indicateur i 
-LEFT JOIN raw_data.metadata_chantiers c ON i.chantier_id =c.chantier_id
-LEFT JOIN src_indic_territo it ON i.id =it.indic_id
+FROM {{ ref('get_last_vaca') }} as last_vaca
+LEFT JOIN {{ ref('stg_ppg_metadata__indicateurs') }} i ON last_vaca.indic_id =i.id
+LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} z ON last_vaca.zone_id =z.id
+LEFT JOIN {{ ref('metadata_chantiers') }} c ON i.chantier_id =c.chantier_id
+LEFT JOIN src_indic_territo it ON last_vaca.indic_id =it.indic_id
 WHERE 
 -- Uniquement les chantiers territorialisés
 c.ch_territo AND
 -- Uniquement les indicateurs territorialisés
 it.indic_territo
-GROUP BY id, maille, i.chantier_id 
-ORDER BY id, maille)
+GROUP BY last_vaca.indic_id, z.maille, i.chantier_id 
+ORDER BY last_vaca.indic_id, z.maille)
 
 
 -- Récupération de la configuration temporelle
 , src_config_tempo AS (
 SELECT 
 	indic_id, periodicite, delai_disponibilite 
-FROM raw_data.metadata_indicateurs_complementaire 
+FROM {{ source('parametrage_indicateurs', 'metadata_indicateurs_complementaire') }} 
 ORDER BY indic_id)
 
 -- Calcul de la prochaine date de VA
