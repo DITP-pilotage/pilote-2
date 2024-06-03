@@ -228,6 +228,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       </Infobulle>
                     </TitreInfobulleConteneur>
                     <Objectifs
+                      estEtendu={false}
                       maille='nationale'
                       modeÉcriture={modeÉcritureObjectifs}
                       nomTerritoire='National'

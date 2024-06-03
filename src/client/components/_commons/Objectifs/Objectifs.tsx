@@ -1,9 +1,10 @@
+import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
 import { consignesDÉcritureObjectif, libellésTypesObjectif, TypeObjectif } from '@/client/constants/libellésObjectif';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Publication from '@/components/_commons/Publication/Publication';
 import { ObjectifsProps } from './Objectifs.interface';
 
-export default function Objectifs({ objectifs, réformeId, maille, nomTerritoire, typesObjectif, modeÉcriture = false, estInteractif = true }: ObjectifsProps) {
+export default function Objectifs({ objectifs, réformeId, maille, nomTerritoire, typesObjectif, estEtendu = true, modeÉcriture = false, estInteractif = true }: ObjectifsProps) {
   return (
     <Bloc 
       contenuClassesSupplémentaires=''
@@ -18,8 +19,9 @@ export default function Objectifs({ objectifs, réformeId, maille, nomTerritoire
               <h3 className='fr-accordion__title'>
                 <button 
                   aria-controls={`accordion-${type}`}
-                  aria-expanded='false'
+                  aria-expanded={estEtendu}
                   className='fr-accordion__btn'
+                  title={libellésTypesObjectif[type as TypeObjectif]}
                   type='button'
                 >
                   {libellésTypesObjectif[type as TypeObjectif]}
