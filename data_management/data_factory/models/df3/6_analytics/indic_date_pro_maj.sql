@@ -12,18 +12,9 @@ src_ch_territo AS (
 )
 -- Liste des indicateurs territo (via Trello)
 , src_indic_territo AS (
-	SELECT SUBSTRING("name", 11, 7) AS indic_id, id_card,
-	-- todo grepl
-	true AS indic_territo
-	FROM trello.cards_suivi
-	WHERE 
-	-- La carte contient le label "territo"
-	labels_ids like '%6475b4ac3bf5e6e416c96a5e%' AND
-	-- La carte contient bien un identifiant indic
-	name like '%IND%' AND 
-	-- La carte n'est pas un chantier
-	list_id <>'64786d6bcc8f81199a1cb447'
-	ORDER BY indic_id
+	SELECT indic_id, indic_territorialise AS indic_territo
+	FROM raw_data.metadata_indicateurs_complementaire mic
+	WHERE indic_territorialise
 )
 -- Base des indicateurs à étudier
 -- 	+ date de la VA dispo la + récente
