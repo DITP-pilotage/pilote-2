@@ -70,8 +70,8 @@ get_evol_vaca as (
     last_update_indic.dernier_import_date_indic,
     last_update_indic.dernier_import_rapport_id_indic,
     last_update_indic.dernier_import_auteur_indic,
-    indic_date_pro_maj.prochaine_date_maj,
-    indic_date_pro_maj.est_a_jour,
+    date_pro_maj.prochaine_date_maj,
+    date_pro_maj.est_a_jour,
     FALSE as a_supprimer
 	from public.territoire t 
 	cross join {{ ref('metadata_indicateurs') }} mi
@@ -95,6 +95,6 @@ get_evol_vaca as (
 	LEFT JOIN {{ ref('last_update_indic_zone') }} last_update_indic_zone ON mi.indic_id=last_update_indic_zone.indic_id AND t.code =last_update_indic_zone.territoire_code 
     LEFT JOIN {{ ref('last_update_indic') }} last_update_indic ON mi.indic_id=last_update_indic.indic_id
 	LEFT JOIN {{ ref('int_ponderation_reelle') }} pond_reelle ON pond_reelle.indic_id=mi.indic_id and pond_reelle.zone_id=t.zone_id
-	LEFT JOIN {{ ref('indic_date_pro_maj') }} as indic_date_pro_maj ON mi.indic_id=indic_date_pro_maj.indic_id and mz.zone_type =indic_date_pro_maj."maille"
+	LEFT JOIN {{ ref('get_date_pro_maj_indic') }} as date_pro_maj ON mi.indic_id=date_pro_maj.indic_id and mz.zone_type =date_pro_maj."maille"
 	--where a.r=1
 	order by mi.indic_id, terr.code
