@@ -23,13 +23,15 @@ SELECT
 FROM {{ ref('get_last_vaca') }} as last_vaca
 LEFT JOIN {{ ref('stg_ppg_metadata__indicateurs') }} i ON last_vaca.indic_id =i.id
 LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} z ON last_vaca.zone_id =z.id
-LEFT JOIN {{ ref('metadata_chantiers') }} c ON i.chantier_id =c.chantier_id
+LEFT JOIN {{ ref('stg_ppg_metadata__chantiers') }} cchantier ON i.chantier_id =cchantier.id
 LEFT JOIN src_indic_territo it ON last_vaca.indic_id =it.indic_id
 WHERE 
--- Uniquement les chantiers territorialisés
-c.ch_territo AND
--- Uniquement les indicateurs territorialisés
-it.indic_territo
+	-- Pour DEPT: les indics territo des chantiers territo + pilotés au DEPT
+	(z."maille"='DEPT' 	and cchantier.est_territorialise and it.indic_territo and maille_pilotage='DEPT') OR
+	-- Pour REG: les indics territo des chantiers territo + 
+	(z."maille"='REG' 	and cchantier.est_territorialise and it.indic_territo and maille_pilotage IN ('REG', 'DEPT')) OR
+	-- Pour NAT: Tous les indics
+	(z."maille"='NAT')
 GROUP BY last_vaca.indic_id, z.maille, i.chantier_id 
 ORDER BY last_vaca.indic_id, z.maille)
 
