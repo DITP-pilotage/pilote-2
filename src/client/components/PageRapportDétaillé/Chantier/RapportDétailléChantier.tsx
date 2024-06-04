@@ -122,27 +122,28 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
           )
         }
         {
-          objectifs !== null &&
-          <div className='fr-my-2w'>
-            <section className='rubrique objectifs'>
-              <div className='rubrique__conteneur'>
-                <Titre
-                  baliseHtml='h2'
-                  className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-                >
-                  Objectifs
-                </Titre>
-                <ObjectifsPageChantier
-                  estInteractif={false}
-                  maille='nationale'
-                  nomTerritoire='National'
-                  objectifs={objectifs}
-                  réformeId={chantier.id}
-                  typesObjectif={typesObjectif}
-                />
-              </div>
-            </section>
-          </div>
+          objectifs !== null && objectifs.length > 0 ? (
+            <div className='fr-my-2w'>
+              <section className='rubrique objectifs'>
+                <div className='rubrique__conteneur'>
+                  <Titre
+                    baliseHtml='h2'
+                    className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                  >
+                    Objectifs
+                  </Titre>
+                  <ObjectifsPageChantier
+                    estEtendu
+                    estInteractif={false}
+                    maille='nationale'
+                    nomTerritoire='National'
+                    objectifs={objectifs}
+                    réformeId={chantier.id}
+                    typesObjectif={typesObjectif}
+                  />
+                </div>
+              </section>
+            </div>) : null
         }
         {
           indicateurs.length > 0 &&
