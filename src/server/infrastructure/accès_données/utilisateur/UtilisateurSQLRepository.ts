@@ -10,6 +10,8 @@ import {
 } from '@prisma/client';
 import Utilisateur, {
   ProfilCode,
+  profilsDépartementaux,
+  profilsRégionaux,
   UtilisateurÀCréerOuMettreÀJourSansHabilitation,
 } from '@/server/domain/utilisateur/Utilisateur.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
@@ -21,6 +23,7 @@ import {
 } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 export const convertirEnModel = (utilisateurAConvertir: {
   email: string
@@ -258,6 +261,32 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     });
 
     return utilisateursExistants.map(u => u.email);
+  }
+
+  async récupérerNombreUtilisateursSurLeTerritoire(territoireCode: string, maille: MailleInterne): Promise<number> {
+    const profilsCodes = maille === 'départementale' ? profilsDépartementaux : profilsRégionaux;
+
+    const result = await this._prisma.utilisateur.findMany({
+      where: {
+        profilCode: {
+          in: profilsCodes,
+        },
+        habilitation: {
+          some: {
+            scopeCode: 'lecture',
+            territoires: {
+              has: territoireCode,
+            },
+          },
+        },
+      },
+      select: {
+        email: true,
+      },
+    });
+
+    return result.length;
+
   }
 
   async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteur: string): Promise<void> {
