@@ -11,29 +11,34 @@ src_indic_territo AS (
 	FROM {{ source('parametrage_indicateurs', 'metadata_indicateurs_complementaire') }} mic
 	WHERE indic_territorialise
 )
+-- Liste des mailles pour un CROSS JOIN à suivre
+, base_mailles as (
+SELECT * FROM (values ('DEPT'), ('REG'), ('NAT')) AS a ("maille")
+)
 -- Base des indicateurs à étudier
 -- 	+ date de la VA dispo la + récente
 , src_indicateurs AS (
 SELECT 
-	last_vaca.indic_id as indic_id, 
+	spmi.id as indic_id, 
 	i.chantier_id, 
-	z.maille,
+	base_mailles.maille,
 	max(last_vaca.date_valeur_actuelle::date) AS last_va_date,
 	count(*) AS n
-FROM {{ ref('get_last_vaca') }} as last_vaca
-LEFT JOIN {{ ref('stg_ppg_metadata__indicateurs') }} i ON last_vaca.indic_id =i.id
-LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} z ON last_vaca.zone_id =z.id
+FROM base_mailles
+CROSS JOIN {{ ref('stg_ppg_metadata__indicateurs') }} spmi
+LEFT JOIN {{ ref('get_last_vaca') }} as last_vaca ON last_vaca.indic_id = spmi.id
+LEFT JOIN {{ ref('stg_ppg_metadata__indicateurs') }} i ON i.id =spmi.id
 LEFT JOIN {{ ref('stg_ppg_metadata__chantiers') }} cchantier ON i.chantier_id =cchantier.id
 LEFT JOIN src_indic_territo it ON last_vaca.indic_id =it.indic_id
 WHERE 
 	-- Pour DEPT: les indics territo des chantiers territo + pilotés au DEPT
-	(z."maille"='DEPT' 	and cchantier.est_territorialise and it.indic_territo and maille_pilotage='DEPT') OR
+	(base_mailles."maille"='DEPT' 	and cchantier.est_territorialise and it.indic_territo and maille_pilotage='DEPT') OR
 	-- Pour REG: les indics territo des chantiers territo + 
-	(z."maille"='REG' 	and cchantier.est_territorialise and it.indic_territo and maille_pilotage IN ('REG', 'DEPT')) OR
+	(base_mailles."maille"='REG' 	and cchantier.est_territorialise and it.indic_territo and maille_pilotage IN ('REG', 'DEPT')) OR
 	-- Pour NAT: Tous les indics
-	(z."maille"='NAT')
-GROUP BY last_vaca.indic_id, z.maille, i.chantier_id 
-ORDER BY last_vaca.indic_id, z.maille)
+	(base_mailles."maille"='NAT')
+GROUP BY spmi.id, base_mailles.maille, i.chantier_id 
+ORDER BY spmi.id, base_mailles.maille)
 
 
 -- Récupération de la configuration temporelle
