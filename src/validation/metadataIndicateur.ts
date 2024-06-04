@@ -32,7 +32,7 @@ export const validationMetadataIndicateurFormulaire = z.object({
     .nullable(),
   indicDescr: z
     .string()
-    .max(1000, 'La limite maximale de 1000 caractères a été dépassée')
+    .max(2500, 'La limite maximale de 2500 caractères a été dépassée')
     .min(1, 'Ce champ ne peut pas être vide'),
   indicDescrBaro: z
     .string()
@@ -52,7 +52,7 @@ export const validationMetadataIndicateurFormulaire = z.object({
     .nullable(),
   indicSource: z
     .string()
-    .max(500, 'La limite maximale de 500 caractères a été dépassée')
+    .max(2500, 'La limite maximale de 2500 caractères a été dépassée')
     .min(0, 'Ce champ ne peut pas être vide')
     .nullable(),
   indicSourceUrl: z
