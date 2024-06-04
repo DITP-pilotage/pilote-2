@@ -1,25 +1,35 @@
 import MultiSelect from '@/client/components/_commons/MultiSelect/MultiSelect';
 import MultiSelectTerritoireProps from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire.interface';
-import { MultiSelectOptionGroupée, MultiSelectOptions, MultiSelectOptionsGroupées } from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
+import { MultiSelectOption, MultiSelectOptionGroupée, MultiSelectOptions, MultiSelectOptionsGroupées } from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
 import { trierParOrdreAlphabétique } from '@/client/utils/arrays';
 import api from '@/server/infrastructure/api/trpc/api';
-import { Territoire, TerritoireAvecNombreUtilisateurs } from '@/server/domain/territoire/Territoire.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
-const générerLesOptions = (nom: string, code: string, nombreUtilisateur: number) => ({
-  label: nom + ' ' + nombreUtilisateur,
+export const MAXIMUM_COMPTES_AUTORISE_PAR_REGION = 200;
+export const MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT = 150; 
+const MAXIMUM_COMPTES_AUTORISE_PAR_TERRITOIRE: Record<MailleInterne, number> = {
+  départementale: MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT,
+  régionale: MAXIMUM_COMPTES_AUTORISE_PAR_REGION,
+};
+
+const générerLesOptions = (nom: string, code: string, maille: MailleInterne, nombreUtilisateur: number, activerLaRestrictionDesTerritoires: boolean | undefined): MultiSelectOption => ({
+  label: nom,
   value: code,
+  disabled: activerLaRestrictionDesTerritoires ? nombreUtilisateur > MAXIMUM_COMPTES_AUTORISE_PAR_TERRITOIRE[maille] : false,
+  afficherIcone: activerLaRestrictionDesTerritoires ? nombreUtilisateur > MAXIMUM_COMPTES_AUTORISE_PAR_TERRITOIRE[maille] : false,
 });
 
-export default function MultiSelectTerritoire({ territoiresCodesSélectionnésParDéfaut, changementValeursSélectionnéesCallback, groupesÀAfficher, territoiresSélectionnables, afficherBoutonsSélection }: MultiSelectTerritoireProps) {
+export default function MultiSelectTerritoire({
+  territoiresCodesSélectionnésParDéfaut,
+  changementValeursSélectionnéesCallback, 
+  groupesÀAfficher, 
+  territoiresSélectionnables, 
+  afficherBoutonsSélection,
+  activerLaRestrictionDesTerritoires,
 
-  let territoires: TerritoireAvecNombreUtilisateurs[];
-  if (!territoiresSélectionnables) {
-    // const { data } = api.territoire.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
-    territoires = [] as TerritoireAvecNombreUtilisateurs[];
-  } else {
-    const { data } = api.territoire.récupérerListe.useQuery({ territoireCodes: territoiresSélectionnables }, { staleTime: Number.POSITIVE_INFINITY });
-    territoires = data as TerritoireAvecNombreUtilisateurs[];
-  }
+}: MultiSelectTerritoireProps) {
+
+  const { data : territoires } = api.territoire.récupérerListe.useQuery({ territoireCodes: territoiresSélectionnables || null }, { staleTime: Number.POSITIVE_INFINITY });
   
   const départements = territoires?.filter(territoire => territoire.maille === 'départementale') ?? [];
   const régions = territoires?.filter(territoire => territoire.maille === 'régionale') ?? [];
@@ -34,12 +44,12 @@ export default function MultiSelectTerritoire({ territoiresCodesSélectionnésPa
 
   const optionsRégions = {
     label: 'Régions',
-    options: trierParOrdreAlphabétique<MultiSelectOptions>(régions.map(d => générerLesOptions(d.nomAffiché, d.code, d.nombreUtilisateur)), 'label'),
+    options: trierParOrdreAlphabétique<MultiSelectOptions>(régions.map(d => générerLesOptions(d.nomAffiché, d.code, 'régionale', d.nombreUtilisateur, activerLaRestrictionDesTerritoires)), 'label'),
   };
 
   const optionsDépartements = {
     label: 'Départements',
-    options: trierParOrdreAlphabétique<MultiSelectOptions>(départements.map(d => générerLesOptions(d.nomAffiché, d.code, d.nombreUtilisateur)), 'label'),
+    options: trierParOrdreAlphabétique<MultiSelectOptions>(départements.map(d => générerLesOptions(d.nomAffiché, d.code, 'départementale', d.nombreUtilisateur, activerLaRestrictionDesTerritoires)), 'label'),
   };
 
   const options: MultiSelectOptionsGroupées = [

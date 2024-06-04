@@ -79,6 +79,16 @@ export default class TerritoireBuilder {
     return this;
   }
 
+  avecCode(code: Territoire['code']): TerritoireBuilder {
+    this._code = code;
+    return this;
+  }
+
+  avecMaille(maille: Territoire['maille']): TerritoireBuilder {
+    this._maille = maille;
+    return this;
+  }
+
   avecMailleNationale(): TerritoireBuilder {
     this._code = 'NAT-FR';
     this._codeParent = null;

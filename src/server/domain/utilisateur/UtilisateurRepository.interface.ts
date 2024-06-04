@@ -1,7 +1,7 @@
-import { RowsNombreUtilisateurs } from '@/server/infrastructure/accès_données/utilisateur/UtilisateurSQLRepository';
-import { MailleInterne } from '../maille/Maille.interface';
-import Utilisateur, { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from './Utilisateur.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { HabilitationsÀCréerOuMettreÀJourCalculées } from './habilitation/Habilitation.interface';
+import Utilisateur, { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from './Utilisateur.interface';
+
 
 export default interface UtilisateurRepository {
   récupérer(email: string): Promise<Utilisateur | null>
@@ -10,5 +10,5 @@ export default interface UtilisateurRepository {
   supprimer(email: string): Promise<void>
   créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurModification: string): Promise<void>
   récupérerExistants(utilisateurs: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[]): Promise<Utilisateur['email'][]>
-  récupérerNombreDeCompteSurLeTerritoire(territoireCode: string, maille: MailleInterne): Promise<RowsNombreUtilisateurs>
+  récupérerNombreUtilisateursSurLeTerritoire(territoireCode: string, maille: MailleInterne): Promise<number>
 }

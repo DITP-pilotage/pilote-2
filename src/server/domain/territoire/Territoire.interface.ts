@@ -59,4 +59,4 @@ export type DétailTerritoire = Territoire & {
 
 export type TerritoireAvecNombreUtilisateurs = Territoire & {
   nombreUtilisateur: number
-}
+};
