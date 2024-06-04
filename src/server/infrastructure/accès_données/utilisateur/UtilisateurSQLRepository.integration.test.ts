@@ -23,7 +23,7 @@ describe('UtilisateurSQLRepository', () => {
 
       const habilitationsTerritoires: Record<string, string[]> = {
         'prefet_herault@test.com': ['DEPT-34'],
-        'coordinateur_ara@test.com': ['REG-84', 'DEPT-69'],
+        'responsable_ara@test.com': ['REG-84', 'DEPT-69'],
         'sd_occ@test.com': ['REG-76', 'DEPT-34'],
         'sd_herault@test.com': ['DEPT-34'],
         'ditp_admin@test.com': ['REG-84'],
@@ -38,8 +38,8 @@ describe('UtilisateurSQLRepository', () => {
           },
           {
             ...randomUtilisateur, 
-            email: 'coordinateur_ara@test.com',
-            profilCode: 'COORDINATEUR_REGION',
+            email: 'responsable_ara@test.com',
+            profilCode: 'RESPONSABLE_REGION',
           },
           {
             ...randomUtilisateur, 
