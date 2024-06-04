@@ -5,13 +5,8 @@
 --	pour chaque {indic, maille}
 
 WITH 
--- Liste des chantiers territorialisés
-src_ch_territo AS (
-	SELECT chantier_id, ch_territo FROM {{ ref('metadata_chantiers') }} WHERE ch_territo
-	ORDER BY chantier_id
-)
--- Liste des indicateurs territo (via Trello)
-, src_indic_territo AS (
+-- Liste des indicateurs territo
+src_indic_territo AS (
 	SELECT indic_id, indic_territorialise AS indic_territo
 	FROM {{ source('parametrage_indicateurs', 'metadata_indicateurs_complementaire') }} mic
 	WHERE indic_territorialise
