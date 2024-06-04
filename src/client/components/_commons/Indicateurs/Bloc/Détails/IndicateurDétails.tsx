@@ -23,6 +23,9 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
   const { donnéesCartographieAvancement, donnéesCartographieValeurActuelle, donnéesCartographieAvancementTerritorialisées, donnéesCartographieValeurActuelleTerritorialisées } = useIndicateurDétails(indicateur.id, futOuvert, typeDeRéforme);
 
   const indicateurSiTypeDeReformeEstChantier = typeDeRéforme === 'chantier' && !!futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle;
+  const nomDefinitionDeLindicateur = "Définition de l'indicateur";
+  const nomRepartitionGeographiqueEtEvolution = 'Répartition géographique et évolution';
+  const nomSousIndicateurs = 'Sous indicateurs';
 
   return (
     <div className='fr-accordions-group'>
@@ -33,9 +36,10 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
             aria-expanded='false'
             className='fr-accordion__btn'
             onClick={() => setFutOuvert(true)}
+            title={nomDefinitionDeLindicateur}
             type='button'
           >
-            Définition de l'indicateur
+            {nomDefinitionDeLindicateur}
           </button>
         </h3>
         <div
@@ -66,9 +70,10 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
             aria-expanded='false'
             className='fr-accordion__btn'
             onClick={() => setFutOuvert(true)}
+            title={nomRepartitionGeographiqueEtEvolution}
             type='button'
           >
-            Répartition géographique et évolution
+            {nomRepartitionGeographiqueEtEvolution}
           </button>
         </h3>
         <div
@@ -132,9 +137,10 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
             aria-expanded='false'
             className='fr-accordion__btn'
             onClick={() => setFutOuvert(true)}
+            title={nomSousIndicateurs}
             type='button'
           >
-            Sous indicateurs
+            {nomSousIndicateurs}
           </button>
         </h3>
         <div
