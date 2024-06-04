@@ -31,12 +31,16 @@ LEFT JOIN {{ ref('stg_ppg_metadata__indicateurs') }} i ON i.id =spmi.id
 LEFT JOIN {{ ref('stg_ppg_metadata__chantiers') }} cchantier ON i.chantier_id =cchantier.id
 LEFT JOIN src_indic_territo it ON last_vaca.indic_id =it.indic_id
 WHERE 
+(
 	-- Pour DEPT: les indics territo des chantiers territo + pilotés au DEPT
 	(base_mailles."maille"='DEPT' 	and cchantier.est_territorialise and it.indic_territo and maille_pilotage='DEPT') OR
 	-- Pour REG: les indics territo des chantiers territo + 
 	(base_mailles."maille"='REG' 	and cchantier.est_territorialise and it.indic_territo and maille_pilotage IN ('REG', 'DEPT')) OR
 	-- Pour NAT: Tous les indics
 	(base_mailles."maille"='NAT')
+)
+	-- On ne conserve que les chantiers publiés
+	AND COALESCE(cchantier.statut::type_statut, 'PUBLIE')='PUBLIE'
 GROUP BY spmi.id, base_mailles.maille, i.chantier_id 
 ORDER BY spmi.id, base_mailles.maille)
 
