@@ -10,7 +10,7 @@ export interface ObjectifsProps {
   maille: Maille
   nomTerritoire: string
   typesObjectif: typeof typesObjectif | TypeObjectifProjetStructurant[]
-  estEtendu:boolean
+  estEtendu: boolean
   modeÉcriture?: boolean
   estInteractif?: boolean 
 }

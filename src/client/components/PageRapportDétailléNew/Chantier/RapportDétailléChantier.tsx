@@ -136,7 +136,7 @@ export default function RapportDétailléChantier({
           ) : null
         }
         {
-          objectifs !== null  &&  objectifs.length > 0 ? (
+          objectifs !== null && objectifs.length > 0 ? (
             <div className='fr-my-2w'>
               <section className='rubrique objectifs'>
                 <div className='rubrique__conteneur'>
