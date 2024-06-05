@@ -9,7 +9,7 @@ SELECT
         -- Si la tendance est ('HAUSSE', 'BAISSE') -> ('hausse', 'baisse')
         WHEN mpi.tendance IN ('HAUSSE', 'BAISSE') THEN lower(mpi.tendance)
         ELSE 'autre'
-    END as tendance
+    END as tendance,
     CASE 
         WHEN mpi.param_vacg_partition_date LIKE 'from_previous_month%' THEN 'glissant' 
         WHEN mpi.param_vacg_partition_date = 'from_year_start' AND mpi.param_vacg_op = 'sum' THEN 'cumul_annuel'
