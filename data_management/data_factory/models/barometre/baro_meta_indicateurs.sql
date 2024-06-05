@@ -16,7 +16,7 @@ SELECT
         WHEN mpi.param_vacg_partition_date = 'from_year_start' THEN 'annuel'
         WHEN mpi.param_vacg_partition_date LIKE 'from_custom_date%' AND mpi.param_vacg_op = 'sum' THEN 'cumul_non_annuel'
         ELSE 'random'
-    END AS indic_type
+    END AS indic_categorie_evolution
 FROM {{ ref('metadata_indicateurs') }} mi
 LEFT JOIN {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} mpi 
     ON mpi.indic_id = mi.indic_id
