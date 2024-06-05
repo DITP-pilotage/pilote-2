@@ -35,6 +35,9 @@ import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurReposi
 import {
   UtilisateurRepository as AuthentificationUtilisateurRepository,
 } from '@/server/authentification/domain/ports/UtilisateurRepository';
+import {
+  ProfilRepository as AuthentificationProfilRepository,
+} from '@/server/authentification/domain/ports/ProfilRepository';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import {
   ChantierRepository as FicheConducteurChantierRepository,
@@ -182,7 +185,10 @@ import { configuration } from '@/config';
 import {
   PrismaTokenAPIInformationRepository,
 } from '@/server/authentification/infrastructure/adapters/PrismaTokenAPIInformationRepository';
-import { PrismaUtilisateurRepository } from '@/server/authentification/infrastructure/PrismaUtilisateurRepository';
+import {
+  PrismaUtilisateurRepository,
+} from '@/server/authentification/infrastructure/adapters/PrismaUtilisateurRepository';
+import { PrismaProfilRepository } from '@/server/authentification/infrastructure/adapters/PrismaProfilRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
 import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
 import ProjetStructurantSQLRepository from './accès_données/projetStructurant/ProjetStructurantSQLRepository';
@@ -227,6 +233,8 @@ class Dependencies {
   private readonly _utilisateurRepository: UtilisateurRepository;
 
   private readonly _authentificationUtilisateurRepository: AuthentificationUtilisateurRepository;
+
+  private readonly _authentificationProfilRepository: AuthentificationProfilRepository;
 
   private readonly _territoireRepository: TerritoireRepository;
 
@@ -310,6 +318,7 @@ class Dependencies {
     this._décisionStratégiqueRepository = new DécisionStratégiqueSQLRepository(prisma);
     this._utilisateurRepository = new UtilisateurSQLRepository(prisma);
     this._authentificationUtilisateurRepository = new PrismaUtilisateurRepository(prisma);
+    this._authentificationProfilRepository = new PrismaProfilRepository(prisma);
     this._territoireRepository = new TerritoireSQLRepository(prisma);
     this._ficheConducteurChantierRepository = new PrismaFicheConducteurChantierRepository(prisma);
     this._ficheConducteurObjectifRepository = new PrismaFicheConducteurObjectifRepository(prisma);
@@ -454,6 +463,10 @@ class Dependencies {
 
   getAuthentificationUtilisateurRepository() {
     return this._authentificationUtilisateurRepository;
+  }
+
+  getAuthentificationProfilRepository() {
+    return this._authentificationProfilRepository;
   }
 
   getTerritoireRepository() {
