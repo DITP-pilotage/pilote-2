@@ -154,9 +154,6 @@ model indicateur {
   dernier_import_date_indic                DateTime?  @db.Date
   dernier_import_rapport_id_indic          String?    @db.Uuid
   dernier_import_auteur_indic              String?
-  prochaine_date_maj                       DateTime?  @db.Date
-  prochaine_date_maj_jours                 Int?
-  est_a_jour                               Boolean?
 
   @@id([id, code_insee, maille])
   @@schema("public")
