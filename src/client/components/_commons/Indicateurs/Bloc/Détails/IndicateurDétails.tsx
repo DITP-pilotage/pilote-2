@@ -25,7 +25,6 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
   const indicateurSiTypeDeReformeEstChantier = typeDeRéforme === 'chantier' && !!futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle;
   const nomDefinitionDeLindicateur = "Définition de l'indicateur";
   const nomRepartitionGeographiqueEtEvolution = 'Répartition géographique et évolution';
-  const nomSousIndicateurs = 'Sous indicateurs';
 
   return (
     <div className='fr-accordions-group'>
@@ -126,32 +125,6 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
                   />
                 </section>
                 : null}
-            </div>
-          </div>
-        </div>
-      </section>
-      <section className='fr-accordion'>
-        <h3 className='fr-accordion__title'>
-          <button
-            aria-controls={`sous-indicateurs-${indicateur.id}`}
-            aria-expanded='false'
-            className='fr-accordion__btn'
-            onClick={() => setFutOuvert(true)}
-            title={nomSousIndicateurs}
-            type='button'
-          >
-            {nomSousIndicateurs}
-          </button>
-        </h3>
-        <div
-          className='fr-collapse'
-          id={`sous-indicateurs-${indicateur.id}`}
-        >
-          <div className='fr-container'>
-            <div className='fr-grid-row fr-grid-row--gutters fr-mb-1w'>
-              <div className='fr-col-12'>
-                Information bientôt disponible
-              </div>
             </div>
           </div>
         </div>
