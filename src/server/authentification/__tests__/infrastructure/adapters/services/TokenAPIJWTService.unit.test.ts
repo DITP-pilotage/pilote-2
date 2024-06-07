@@ -6,7 +6,7 @@ describe('TokenAPIJWTService', () => {
   let tokenAPIJWTService: TokenAPIJWTService;
 
   beforeEach(() => {
-    tokenAPIJWTService = new TokenAPIJWTService({ secret: 'secret' });
+    tokenAPIJWTService = new TokenAPIJWTService({ secret: process.env.TOKEN_API_SECRET! });
   });
 
   describe('creerTokenAPI', () => {
@@ -17,7 +17,7 @@ describe('TokenAPIJWTService', () => {
       // When
       const result = await tokenAPIJWTService.creerTokenAPI(tokenAPIInformation);
       // Then
-      const tokenDecode = await decode({ token: result, secret: 'secret' });
+      const tokenDecode = await decode({ token: result, secret: process.env.TOKEN_API_SECRET! });
       expect(tokenDecode?.email).toEqual('test@example.com');
     });
   });
@@ -26,7 +26,7 @@ describe('TokenAPIJWTService', () => {
     it('doit générer un token api au format JWT', async () => {
       // Given
       const email = 'test@example.com';
-      const token = await encode({ token: { email }, secret: 'secret' });
+      const token = await encode({ token: { email }, secret: process.env.TOKEN_API_SECRET! });
       // When
       const result = await tokenAPIJWTService.decoderTokenAPI(token);
       // Then

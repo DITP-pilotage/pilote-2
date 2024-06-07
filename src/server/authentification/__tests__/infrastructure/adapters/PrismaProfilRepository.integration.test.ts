@@ -12,7 +12,7 @@ describe('PrismaProfilRepository', () => {
   describe('#estAutoriseAAccederAuxChantiersBrouillons', () => {
     it("quand le profil n'est pas autorisé, doit remonter false", async () => {
       // Given
-      const profilCodeChantierBrouillonNonAutorise: ProfilAPI = 'COORDINATEUR_DEPARTEMENT';
+      const profilCodeChantierBrouillonNonAutorise: ProfilAPI = 'PREFET_DEPARTEMENT';
       
       // When
       const result = await prismaProfilRepository.estAutoriseAAccederAuxChantiersBrouillons({ profilCode: profilCodeChantierBrouillonNonAutorise });

@@ -38,6 +38,10 @@ export class UtilisateurAuthentifie {
     return this._profilAAccèsAuxChantiersBrouillons;
   }
 
+  peutAccederAuChantier(chantierId: string): boolean {
+    return this.habilitations.lecture.chantiers.includes(chantierId);
+  }
+
   static creerUtilisateurAuthentifie({ email, profil, habilitations, profilAAccèsAuxChantiersBrouillons }: {
     email: string,
     profil: ProfilAPI,

@@ -124,6 +124,9 @@ import {
   IndicateurRepository as ImportIndicateurRepository,
 } from '@/server/import-indicateur/domain/ports/IndicateurRepository';
 import {
+  IndicateurRepository as ChantierIndicateurRepository,
+} from '@/server/chantiers/domain/ports/IndicateurRepository';
+import {
   PrismaMetadataParametrageIndicateurRepository,
 } from '@/server/parametrage-indicateur/infrastructure/adapters/PrismaMetadataParametrageIndicateurRepository';
 import {
@@ -175,6 +178,9 @@ import {
 import {
   PrismaIndicateurRepository as PrismaFicheConducteurIndicateurRepository,
 } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaIndicateurRepository';
+import {
+  PrismaIndicateurRepository as PrismaChantierIndicateurRepository,
+} from '@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository';
 import {
   PrismaSynthèseDesRésultatsRepository as PrismaFicheConducteurSynthèseDesRésultatsRepository,
 } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaSynthèseDesRésultatsRepository';
@@ -260,6 +266,8 @@ class Dependencies {
 
   private readonly _ficheTerritorialeMinistereRepository: FicheTerritorialeMinistereRepository;
 
+  private readonly _chantierIndicateurRepository: ChantierIndicateurRepository;
+
   private readonly _projetStructurantRepository: ProjetStructurantRepository;
 
   private readonly _profilRepository: ProfilRepository;
@@ -331,6 +339,7 @@ class Dependencies {
     this._ficheTerritorialeIndicateurRepository = new PrismaFicheTerritorialeIndicateurRepository(prisma);
     this._ficheTerritorialeSyntheseDesResultatsRepository = new PrismaSyntheseDesResultatsRepository(prisma);
     this._ficheTerritorialeMinistereRepository = new PrismaMinistereRepository(prisma);
+    this._chantierIndicateurRepository = new PrismaChantierIndicateurRepository(prisma);
     this._projetStructurantRepository = new ProjetStructurantSQLRepository(prisma);
     this._profilRepository = new ProfilSQLRepository(prisma);
     this._objectifProjetStructurantRepository = new ObjectifProjetStructurantSQLRepository(prisma);
@@ -515,6 +524,10 @@ class Dependencies {
 
   getFicheTerritorialeMinistereRepository() {
     return this._ficheTerritorialeMinistereRepository;
+  }
+
+  getChantierIndicateurRepository() {
+    return this._chantierIndicateurRepository;
   }
 
   getProjetStructurantRepository() {

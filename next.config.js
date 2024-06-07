@@ -2,11 +2,6 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  logging: {
-    fetches: {
-      fullUrl: true,
-    },
-  },
   async rewrites() {
     return [
       {
