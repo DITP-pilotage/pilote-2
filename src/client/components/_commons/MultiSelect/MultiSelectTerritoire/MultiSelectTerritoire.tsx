@@ -6,7 +6,7 @@ import api from '@/server/infrastructure/api/trpc/api';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 export const MAXIMUM_COMPTES_AUTORISE_PAR_REGION = 200;
-export const MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT = 150; 
+export const MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT = 22; 
 const MAXIMUM_COMPTES_AUTORISE_PAR_TERRITOIRE: Record<MailleInterne, number> = {
   départementale: MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT,
   régionale: MAXIMUM_COMPTES_AUTORISE_PAR_REGION,

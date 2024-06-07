@@ -18,12 +18,16 @@ export class RécupérerTerritoiresAvecNombreUtilisateursUseCase {
       ? await this.territoireRepository.récupérerListe(territoireCodes)
       : await this.territoireRepository.récupérerTous();
     
-    return Promise.all(territoires.map(async territoire => {
+    // eslint-disable-next-line sonarjs/prefer-immediate-return
+    const territoiresAvecNombreUtilisateur = await Promise.all(territoires.map(async territoire => {
       const nombreUtilisateur = await this.utilisateurRepository.récupérerNombreUtilisateursSurLeTerritoire(territoire.code, territoire.maille as MailleInterne);
       return {
         ...territoire,
         nombreUtilisateur,
       };
     }));
+
+    return territoiresAvecNombreUtilisateur;
+
   }
 }

@@ -24,10 +24,13 @@ export const territoireRouter = créerRouteurTRPC({
   récupérerListe: procédureProtégée
     .input(validation)
     .query(async ({ input }): Promise<TerritoireAvecNombreUtilisateurs[]> => {
-      return new RécupérerTerritoiresAvecNombreUtilisateursUseCase({
+      // eslint-disable-next-line sonarjs/prefer-immediate-return
+      const territoires =  await new RécupérerTerritoiresAvecNombreUtilisateursUseCase({
         territoireRepository: dependencies.getTerritoireRepository(),
         utilisateurRepository: dependencies.getUtilisateurRepository(),
       })
         .run({ territoireCodes: input.territoireCodes });
+      
+      return territoires;
     }),
 });
