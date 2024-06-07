@@ -1,7 +1,7 @@
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
-import { UtilisateurSQLRepository } from './UtilisateurSQLRepository';
 import TerritoireBuilder from '@/server/domain/territoire/Territoire.builder';
+import { UtilisateurSQLRepository } from './UtilisateurSQLRepository';
 
 describe('UtilisateurSQLRepository', () => {
   let utilisateurRepository: UtilisateurRepository;

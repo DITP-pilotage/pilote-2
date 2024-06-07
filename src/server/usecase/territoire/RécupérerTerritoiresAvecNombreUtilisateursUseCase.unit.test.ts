@@ -71,7 +71,7 @@ describe('RécupérerTerritoiresAvecNombreUtilisateursUseCase', () => {
     utilisateurRepository.récupérerNombreUtilisateursParTerritoires.mockResolvedValue({
       'DEPT-01': 2,
       'REG-84': 4,
-      'DEPT-34': 1
+      'DEPT-34': 1,
     });
     // When
     const territoiresResults = await récupérerTerritoiresAvecNombreUtilisateursUseCase.run({ territoireCodes : null });
