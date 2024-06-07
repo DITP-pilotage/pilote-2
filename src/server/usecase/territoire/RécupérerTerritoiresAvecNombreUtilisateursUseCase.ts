@@ -1,4 +1,3 @@
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { TerritoireAvecNombreUtilisateurs } from '@/server/domain/territoire/Territoire.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
@@ -18,12 +17,14 @@ export class RécupérerTerritoiresAvecNombreUtilisateursUseCase {
       ? await this.territoireRepository.récupérerListe(territoireCodes)
       : await this.territoireRepository.récupérerTous();
     
-    return Promise.all(territoires.map(async territoire => {
-      const nombreUtilisateur = await this.utilisateurRepository.récupérerNombreUtilisateursSurLeTerritoire(territoire.code, territoire.maille as MailleInterne);
+    const nombresUtilisateur = await this.utilisateurRepository.récupérerNombreUtilisateursParTerritoires(territoires);
+
+    return territoires.map(territoire => {
       return {
         ...territoire,
-        nombreUtilisateur,
+        nombreUtilisateur: nombresUtilisateur[territoire.code],
       };
-    }));
+    });
+
   }
 }

@@ -27,16 +27,18 @@ describe('RécupérerTerritoiresAvecNombreUtilisateursUseCase', () => {
       new TerritoireBuilder().avecCode('REG-84').avecMaille('régionale').build(),
     ];
     territoireRepository.récupérerListe.mockResolvedValue(territoires);
-    utilisateurRepository.récupérerNombreUtilisateursSurLeTerritoire.mockResolvedValue(4);
+    utilisateurRepository.récupérerNombreUtilisateursParTerritoires.mockResolvedValue({
+      'DEPT-01': 2,
+      'REG-84': 4,
+    });
 
     // When
     const territoiresResults = await récupérerTerritoiresAvecNombreUtilisateursUseCase.run({ territoireCodes : ['DEPT-01', 'REG-84'] });
 
     // Then
     expect(territoireRepository.récupérerListe).toHaveBeenNthCalledWith(1, ['DEPT-01', 'REG-84']);
-    expect(utilisateurRepository.récupérerNombreUtilisateursSurLeTerritoire).toHaveBeenCalledTimes(2);
-    expect(utilisateurRepository.récupérerNombreUtilisateursSurLeTerritoire).toHaveBeenNthCalledWith(1, 'DEPT-01', 'départementale');
-    expect(utilisateurRepository.récupérerNombreUtilisateursSurLeTerritoire).toHaveBeenNthCalledWith(2, 'REG-84', 'régionale');
+    expect(utilisateurRepository.récupérerNombreUtilisateursParTerritoires).toHaveBeenCalledTimes(1);
+    expect(utilisateurRepository.récupérerNombreUtilisateursParTerritoires).toHaveBeenNthCalledWith(1, territoires);
     expect(territoiresResults).toHaveLength(2);
     expect(territoiresResults[0]).toHaveProperty('nombreUtilisateur');
 
@@ -46,14 +48,14 @@ describe('RécupérerTerritoiresAvecNombreUtilisateursUseCase', () => {
     // Given
     const territoires = [] as Territoire[];
     territoireRepository.récupérerListe.mockResolvedValue(territoires);
-    utilisateurRepository.récupérerNombreUtilisateursSurLeTerritoire.mockResolvedValue(4);
-
+    utilisateurRepository.récupérerNombreUtilisateursParTerritoires.mockResolvedValue({});
     // When
     const territoiresResults = await récupérerTerritoiresAvecNombreUtilisateursUseCase.run({ territoireCodes : [] });
 
     // Then
     expect(territoireRepository.récupérerListe).toHaveBeenNthCalledWith(1, []);
-    expect(utilisateurRepository.récupérerNombreUtilisateursSurLeTerritoire).toHaveBeenCalledTimes(0);
+    expect(utilisateurRepository.récupérerNombreUtilisateursParTerritoires).toHaveBeenNthCalledWith(1, territoires);
+    expect(utilisateurRepository.récupérerNombreUtilisateursParTerritoires).toHaveBeenCalledTimes(1);
     expect(territoiresResults).toHaveLength(0);
 
   });
@@ -66,18 +68,18 @@ describe('RécupérerTerritoiresAvecNombreUtilisateursUseCase', () => {
       new TerritoireBuilder().avecCode('DEPT-34').avecMaille('départementale').build(),
     ];
     territoireRepository.récupérerTous.mockResolvedValue(territoires);
-    utilisateurRepository.récupérerNombreUtilisateursSurLeTerritoire.mockResolvedValue(4);
-
+    utilisateurRepository.récupérerNombreUtilisateursParTerritoires.mockResolvedValue({
+      'DEPT-01': 2,
+      'REG-84': 4,
+      'DEPT-34': 1,
+    });
     // When
     const territoiresResults = await récupérerTerritoiresAvecNombreUtilisateursUseCase.run({ territoireCodes : null });
 
     // Then
     expect(territoireRepository.récupérerTous).toHaveBeenCalledTimes(1);
-    expect(utilisateurRepository.récupérerNombreUtilisateursSurLeTerritoire).toHaveBeenCalledTimes(3);
-    expect(utilisateurRepository.récupérerNombreUtilisateursSurLeTerritoire).toHaveBeenNthCalledWith(1, 'DEPT-01', 'départementale');
-    expect(utilisateurRepository.récupérerNombreUtilisateursSurLeTerritoire).toHaveBeenNthCalledWith(2, 'REG-84', 'régionale');
-    expect(utilisateurRepository.récupérerNombreUtilisateursSurLeTerritoire).toHaveBeenNthCalledWith(3, 'DEPT-34', 'départementale');
-
+    expect(utilisateurRepository.récupérerNombreUtilisateursParTerritoires).toHaveBeenCalledTimes(1);
+    expect(utilisateurRepository.récupérerNombreUtilisateursParTerritoires).toHaveBeenNthCalledWith(1, territoires);
     expect(territoiresResults).toHaveLength(3);
     expect(territoiresResults[0]).toHaveProperty('nombreUtilisateur');
 
