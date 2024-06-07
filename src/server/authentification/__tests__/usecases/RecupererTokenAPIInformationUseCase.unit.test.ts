@@ -20,12 +20,14 @@ describe('recupererTokenAPIInformation', () => {
 
   it('doit récupérer le token associé à l\'email si ce dernier existe', async () => {
     // Given
-    const tokenAPIInformation = new TokenAPIInformationBuilder().withEmail(email).build();
+    new TokenAPIInformationBuilder().withEmail(email).build();
     utilisateurRepository.estPresent.mockResolvedValue(true);
-    tokenAPIInformationRepository.recupererTokenAPIInformation.mockResolvedValue(tokenAPIInformation);
-  
+   
+    // When
+    await recupererTokenAPIInformationUseCase.run({ email });
+    
     // Then
-    await expect(recupererTokenAPIInformationUseCase.run({ email })).toHaveBeenCalled;
+    await expect(tokenAPIInformationRepository.recupererTokenAPIInformation).toHaveBeenNthCalledWith(1, { email });
   });
   
 
