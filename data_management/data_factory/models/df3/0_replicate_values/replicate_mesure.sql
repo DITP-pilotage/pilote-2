@@ -48,6 +48,6 @@ cross join src_chantier_zones_to_replicate b
 
 --select indic_id, zone_id, count(*) as n from replicated_values group by indic_id, zone_id
 
-select * from replicated_values
+select *, 1 as r from replicated_values
 
 
