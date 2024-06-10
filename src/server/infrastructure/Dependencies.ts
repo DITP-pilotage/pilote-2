@@ -110,7 +110,7 @@ import ProfilSQLRepository from '@/server/infrastructure/accès_données/profil/
 import ProfilRepository from '@/server/domain/profil/ProfilRepository';
 import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
 import ChantierDatesDeMàjSQLRepository
-  from '@/server/infrastructure/accès_données/chantier/ChantierDatesDeMàjSQLRepository';
+  from '@/server/infrastructure/accès_données/chantier/ChantierDateDeMàjMeteoSQLRepository';
 import {
   ErreurValidationFichierRepository,
 } from '@/server/import-indicateur/domain/ports/ErreurValidationFichierRepository';

@@ -1,6 +1,6 @@
 import { chantier as ChantierPrisma } from '@prisma/client';
 import { Territoire, TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
-import Chantier, { ChantierDatesDeMiseÀJour } from '@/server/domain/chantier/Chantier.interface';
+import Chantier, { ChantierDateMajMeteo } from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 
@@ -42,7 +42,7 @@ function créerDonnéesTerritoires(
   territoires: Territoire[],
   chantierRows: ChantierPrisma[],
   chantierNational: ChantierPrisma,
-  chantiersRowsDatesDeMàj: Record<Chantier['id'], Record<Territoire['code'], ChantierDatesDeMiseÀJour>>,
+  chantiersRowsDatesDeMàj: Record<Chantier['id'], Record<Territoire['code'], ChantierDateMajMeteo>>,
 ) {
   let donnéesTerritoires: TerritoiresDonnées = {};
 
@@ -59,7 +59,7 @@ function créerDonnéesTerritoires(
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
       écart: écart,
       tendance: tendance,
-      dateDeMàjDonnéesQualitatives: chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code]?.dateDeMàjDonnéesQualitatives ?? null : null,
+      dateDeMàjDonnéesQualitatives: chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code] ?? null : null,
       dateDeMàjDonnéesQuantitatives: chantierRow?.taux_avancement_date?.toISOString()  ?? null,
       responsableLocal: [],
       coordinateurTerritorial: [],
@@ -87,7 +87,7 @@ export function parseChantier(
   chantierRows: ChantierPrisma[],
   territoires: Territoire[],
   ministères: Ministère[],
-  chantiersRowsDatesDeMàj: Record<Chantier['id'], Record<Territoire['code'], ChantierDatesDeMiseÀJour>>,
+  chantiersRowsDatesDeMàj: Record<Chantier['id'], Record<Territoire['code'], ChantierDateMajMeteo>>,
 ): Chantier {
   const chantierMailleNationale = chantierRows.find(c => c.maille === 'NAT');
   const chantierMailleDépartementale = chantierRows.filter(c => c.maille === 'DEPT');
@@ -116,7 +116,7 @@ export function parseChantier(
           météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
           écart: null,
           tendance: tendance,
-          dateDeMàjDonnéesQualitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.['NAT-FR']?.dateDeMàjDonnéesQualitatives ?? null,
+          dateDeMàjDonnéesQualitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.['NAT-FR'] ?? null,
           dateDeMàjDonnéesQuantitatives: chantierMailleNationale.taux_avancement_date?.toISOString() ?? null,
           estApplicable: chantierMailleNationale.est_applicable,
           responsableLocal: [],

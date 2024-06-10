@@ -60,7 +60,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
     const [chantiersRowsMaille, territoires, chantiersRowsDatesDeMàj ] = await Promise.all([
       this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLecture, territoiresLecture, profil, maille, filtresPourChantier),
       this.territoireRepository.récupérerTousNew(maille),
-      this.chantierDatesDeMàjRepository.récupérerDatesDeMiseÀJour(chantiersLecture, territoiresLecture),
+      this.chantierDatesDeMàjRepository.récupérerDateDeMiseÀJourMeteo(chantiersLecture, territoiresLecture),
     ]);
 
     const chantiersGroupésParId = groupBy<chantierPrisma>(chantiersRowsMaille, chantier => chantier.id);
