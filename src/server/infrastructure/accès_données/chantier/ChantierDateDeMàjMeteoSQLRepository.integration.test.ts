@@ -1,4 +1,4 @@
-import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
+import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDateDeMàjMeteoRepository.interface';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import SyntheseDesResultatsRowBuilder
   from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';

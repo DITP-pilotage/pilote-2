@@ -2,7 +2,7 @@ import { Prisma, PrismaClient } from '@prisma/client';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import Chantier, { ChantierDateMajMeteo } from '@/server/domain/chantier/Chantier.interface';
-import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
+import ChantierDateDeMàjMeteoRepository from '@/server/domain/chantier/ChantierDateDeMàjMeteoRepository.interface';
 
 type RowsDatesDeMàjDesDonnées = Array<(
   Prisma.PickArray<Prisma.Synthese_des_resultatsGroupByOutputType, ('chantier_id' | 'maille' | 'code_insee')[]> & 
@@ -12,7 +12,7 @@ type RowsDatesDeMàjDesDonnées = Array<(
     }
   })>;
 
-export default class ChantierDatesDeMàjSQLRepository implements ChantierDatesDeMàjRepository {
+export default class ChantierDateDeMàjMeteoSQLRepository implements ChantierDateDeMàjMeteoRepository {
   private prisma: PrismaClient;
 
   constructor(prisma: PrismaClient) {

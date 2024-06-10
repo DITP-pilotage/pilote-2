@@ -5,7 +5,7 @@ import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilita
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import { parseChantier } from '@/server/infrastructure/accès_données/chantier/ChantierSQLParser';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
-import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
+import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDateDeMàjMeteoRepository.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 export default class RécupérerChantierUseCase {

@@ -108,9 +108,8 @@ import IndicateurProjetStructurantRepository
   from '@/server/domain/indicateur/IndicateurProjetStructurantRepository.interface';
 import ProfilSQLRepository from '@/server/infrastructure/accès_données/profil/ProfilSQLRepository';
 import ProfilRepository from '@/server/domain/profil/ProfilRepository';
-import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
-import ChantierDatesDeMàjSQLRepository
-  from '@/server/infrastructure/accès_données/chantier/ChantierDateDeMàjMeteoSQLRepository';
+import ChantierDateDeMàjMeteoRepository from '@/server/domain/chantier/ChantierDateDeMàjMeteoRepository.interface';
+import ChantierDateDeMàjMeteoSQLRepository from '@/server/infrastructure/accès_données/chantier/ChantierDateDeMàjMeteoSQLRepository';
 import {
   ErreurValidationFichierRepository,
 } from '@/server/import-indicateur/domain/ports/ErreurValidationFichierRepository';
@@ -214,7 +213,7 @@ const globalForPrisma = globalThis as unknown as {
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
 
-  private readonly _chantierDatesDeMàjRepository: ChantierDatesDeMàjRepository;
+  private readonly _chantierDateDeMàjMeteoRepository: ChantierDateDeMàjMeteoRepository;
 
   private readonly _axeRepository: AxeRepository;
 
@@ -315,7 +314,7 @@ class Dependencies {
     }
 
     this._chantierRepository = new ChantierSQLRepository(prisma);
-    this._chantierDatesDeMàjRepository = new ChantierDatesDeMàjSQLRepository(prisma);
+    this._chantierDateDeMàjMeteoRepository = new ChantierDateDeMàjMeteoSQLRepository(prisma);
     this._axeRepository = new AxeSQLRepository(prisma);
     this._ppgRepository = new PpgSQLRepository(prisma);
     this._ministèreRepository = new MinistèreSQLRepository(prisma);
@@ -398,8 +397,8 @@ class Dependencies {
     return this._chantierRepository;
   }
 
-  getChantierDatesDeMàjRepository(): ChantierDatesDeMàjRepository {
-    return this._chantierDatesDeMàjRepository;
+  getChantierDateDeMàjMeteoRepository(): ChantierDateDeMàjMeteoRepository {
+    return this._chantierDateDeMàjMeteoRepository;
   }
 
   getAxeRepository(): AxeRepository {

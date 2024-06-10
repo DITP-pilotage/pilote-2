@@ -37,7 +37,7 @@ export async function getServerSideProps({ req, res, params }: GetServerSideProp
   try {
     chantier = await new RécupérerChantierUseCase(
       dependencies.getChantierRepository(),
-      dependencies.getChantierDatesDeMàjRepository(),
+      dependencies.getChantierDateDeMàjMeteoRepository(),
       dependencies.getMinistèreRepository(),
       dependencies.getTerritoireRepository(),
     ).run(params.id, session.habilitations, session.profil);

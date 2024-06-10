@@ -113,7 +113,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
 
   const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
     dependencies.getChantierRepository(),
-    dependencies.getChantierDatesDeMàjRepository(),
+    dependencies.getChantierDateDeMàjMeteoRepository(),
     territoireRepository,
   )
     .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', codeInseeSelectionne, ministères, axes, filtres);
