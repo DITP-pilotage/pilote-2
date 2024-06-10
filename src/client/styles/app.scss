@@ -18,6 +18,14 @@
   position: relative !important;
 }
 
+.absolute {
+  position: absolute !important;
+}
+
+.fr-top-1v {
+  top: 0.5rem !important;
+}
+
 .justify-end {
   justify-content: end;
 }
@@ -159,6 +167,6 @@
   page-break-after: always;
 }
 
-.fr-icon-red {
+.fr-icon-red, .fr-text-red {
   color: red;
 }

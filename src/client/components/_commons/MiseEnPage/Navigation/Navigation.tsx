@@ -6,12 +6,15 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
+
 import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { MenuItemGestionContenu } from '@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu';
 import api from '@/server/infrastructure/api/trpc/api';
 import { getFiltresActifs } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { récupérerUnCookie } from '@/client/utils/cookies';
+import { derniereVersionNouveaute } from '../../../../../../public/nouveautés/ParametrageNouveautés';
 
 const fermerLaModaleDuMenu = () => {
   if (typeof window.dsfr === 'function') {
@@ -61,6 +64,8 @@ export default function Navigation() {
   const territoireCode = territoireCodeURL ?? territoireCodeStore;
 
   const queryParamString = new URLSearchParams(Object.entries(filtresActifs).map(([key, value]) => (value && String(value).length > 0 ? [key, String(value)] : [])).filter(value => value.length > 0)).toString();
+
+  const aConsulteLaDerniereNouveaute = récupérerUnCookie('derniereVersionNouveauteConsulte') === derniereVersionNouveaute;
 
   const pages = [
     {
@@ -133,12 +138,19 @@ export default function Navigation() {
                     >
                       <Link
                         aria-current={page.matcher === urlActuelle ? 'true' : undefined}
-                        className='fr-nav__link'
+                        className='fr-nav__link relative'
                         href={page.lien}
                         onClick={fermerLaModaleDuMenu}
                         target={page.target}
                       >
                         {page.nom}
+                        {
+                          page.matcher === '/nouveautes' && !aConsulteLaDerniereNouveaute ? (
+                            <span className='fr-text-red fr-pl-1v absolute fr-top-1v'>
+                              ●
+                            </span>
+                          ) : null
+                        }
                       </Link>
                     </li>
                   ))
