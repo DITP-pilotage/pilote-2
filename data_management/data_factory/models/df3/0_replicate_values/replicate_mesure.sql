@@ -15,7 +15,7 @@ left join df3.zone_parent b on a.replicate_maille_from=b.zone_parent_type and a.
 )
 -- Valeurs de la maille sup (X)
 , valeurs_region_src as (
-select b.chantier_id , a.*  from df3.mesure_last a
+select b.chantier_id , a.*  from df3.mesure_last_null_erase_keep_lastvalmonth a
 left join raw_data.stg_ppg_metadata__indicateurs b on a.indic_id =b.id
 inner join src_chantier_zones_to_replicate c on c.zone_id_parent=a.zone_id and c.chantier_id=b.chantier_id
 --where b.chantier_id ='CH-006' and a.zone_id = 'R84'
