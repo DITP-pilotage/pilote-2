@@ -10,6 +10,8 @@ import {
 } from '@prisma/client';
 import Utilisateur, {
   ProfilCode,
+  profilsDépartementaux,
+  profilsRégionaux,
   UtilisateurÀCréerOuMettreÀJourSansHabilitation,
 } from '@/server/domain/utilisateur/Utilisateur.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
@@ -21,6 +23,8 @@ import {
 } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 
 export const convertirEnModel = (utilisateurAConvertir: {
   email: string
@@ -258,6 +262,92 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     });
 
     return utilisateursExistants.map(u => u.email);
+  }
+
+  async récupérerNombreUtilisateursSurLeTerritoire(territoireCode: string, maille: MailleInterne): Promise<number> {
+    const profilsCodes = maille === 'départementale' ? profilsDépartementaux : profilsRégionaux;
+
+    const result = await this._prisma.utilisateur.findMany({
+      where: {
+        profilCode: {
+          in: profilsCodes,
+        },
+        habilitation: {
+          some: {
+            scopeCode: 'lecture',
+            territoires: {
+              has: territoireCode,
+            },
+          },
+        },
+      },
+      select: {
+        email: true,
+      },
+    });
+
+    return result.length;
+
+  }
+
+  async récupérerNombreUtilisateursParTerritoires(territoires: Territoire[]): Promise<Record<string, number>> {
+
+    const territoireCodes = territoires.map(territoireElement => territoireElement.code);
+    const utilisateurs = await this._prisma.utilisateur.findMany({
+      where: {
+        OR: [
+          {
+            profilCode: {
+              in: profilsDépartementaux,
+            },
+            habilitation: {
+              some: {
+                scopeCode: 'lecture',
+                territoires: {
+                  hasSome: territoireCodes,
+                },
+              },
+            },
+          },
+          {
+            profilCode: {
+              in: profilsRégionaux,
+            },
+            habilitation: {
+              some: {
+                scopeCode: 'lecture',
+                territoires: {
+                  hasSome: territoireCodes,
+                },
+              },
+            },
+          },
+        ],
+      },
+      select: {
+        email: true,
+        profilCode: true,
+        habilitation: {
+          select: {
+            territoires: true,
+          },
+          where: {
+            scopeCode: 'lecture',
+          },
+        },
+      },
+    });
+
+    return territoires.reduce((acc: { [key: string]: number }, { code, maille }: Territoire) => {
+      const profilsCodes = maille === 'départementale' ? profilsDépartementaux : profilsRégionaux;
+  
+      acc[code] = utilisateurs.filter(({ habilitation: habilitationUtilisateur, profilCode }) =>
+        habilitationUtilisateur.some(h => h.territoires.includes(code)) && profilsCodes.includes(profilCode),
+      ).length;
+  
+      return acc;
+    }, {});
+
   }
 
   async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteur: string): Promise<void> {

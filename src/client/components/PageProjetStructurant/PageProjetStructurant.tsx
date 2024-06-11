@@ -124,6 +124,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
               </Infobulle>
             </TitreInfobulleConteneur>
             <Objectifs
+              estEtendu={false}
               maille={projetStructurant.territoire.maille}
               modeÉcriture={modeÉcriture}
               nomTerritoire={projetStructurant.territoire.nomAffiché}

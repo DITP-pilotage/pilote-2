@@ -32,7 +32,15 @@ export default function MultiSelectGroupe({ groupeOptions, changementÉtatCallba
                   htmlFor={`${option.value} ${id}`}
                 >
                   {option.label}
+                  {
+                    !!option.afficherIcone && 
+                    <span 
+                      aria-hidden='true'
+                      className='fr-icon-close-circle-fill fr-icon--sm fr-icon-red fr-ml-1w' 
+                    />
+                  }
                 </label>
+                
               </div>
             </div>
           </Fragment>

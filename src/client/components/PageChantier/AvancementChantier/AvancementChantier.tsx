@@ -82,7 +82,7 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
                           couleur='orange'
                           libellé='Minimum'
                           noWrap
-                          pourcentage={avancements.nationale?.global.minimum || null}
+                          pourcentage={avancements.nationale ? avancements.nationale.global.minimum : null}
                           taille='sm'
                         />
                       </div>
@@ -91,7 +91,7 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
                           couleur='violet'
                           libellé='Médiane'
                           noWrap
-                          pourcentage={avancements.nationale?.global.médiane || null}
+                          pourcentage={avancements.nationale ? avancements.nationale.global.médiane : null}
                           taille='sm'
                         />
                       </div>
@@ -100,7 +100,7 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
                           couleur='vert'
                           libellé='Maximum'
                           noWrap
-                          pourcentage={avancements.nationale?.global.maximum || null}
+                          pourcentage={avancements.nationale ? avancements.nationale.global.maximum : null}
                           taille='sm'
                         />
                       </div>
