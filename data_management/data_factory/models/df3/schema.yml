@@ -25,13 +25,13 @@ models:
         - **Cas particulier:** si on ne peut pas déterminer la *`metric_date` la plus tardive* (règle précédente inefficace), càd que 2 valeurs sont importées lorsque 2 valeurs sont importées au même mois lors du même import, **avec la `metric_date`** -> C'est **impossible**, car le schema validata d'import des données empêche cela ([cf schema validata](https://github.com/DITP-pilotage/pilote-2/blob/43832f300e3b1ef97a35cc197388c23b49928333/public/schema/sans-contraintes.json#L114-L119))
 
         *Bug corrigé [PIL-88](https://data-ditp.atlassian.net/browse/PIL-88):* Ce bug est survenu car avant ce correctif, pour déterminer la "valeur importée le plus récemment" (dans *1.*), on triait les *dates d'import* et non les *timestamp complets*. Donc si deux valeurs étaient importées le même jour, elles apparaissaient toutes deux au *rang=1* donc impossible de les départager.
-  - name: mesure_last_null_erase_keep_lastvalmonth_replicate
+  - name: agg_all_replicate
     description: |
         [en dev] Ces mesures sont répliquées depuis la maille supérieure spécifiée *(PIL-246)*. Règles:
 
-        - les données répliquées est `df3.mesure_last_null_erase_keep_lastvalmonth`. En effet, dans cette table, les opérations de dédupplication ont déjà été réalisées
-        - On fait également ici l'union avec `df3.mesure_last_null_erase_keep_lastvalmonth`. 
-        - [en dev] Pour l'instant, seules les données **saisies** et non **aggrégées** sont répliquées.
+        - les données répliquées sont `df3.agg_all`. En effet, cette table contient toutes les valeurs aggrégées à toutes les mailles.
+        - On fait également ici l'union avec `df3.agg_all`. 
+        - Les données **saisies** et **aggrégées** sont répliquées. Par exemple, si on veut répliquer le NAT->DEPT et que la valeur NAT provient d'une aggrégation REG->NAT, çàd aucune donnée NAT n'a été saisie par l'utilisateur mais cette valeur provient d'un calcul d'aggrégation, cela va bien fonctionner.
         - [en dev] Réplication de REG -> DEPT uniquement
   - name: agg_dept
     description: |

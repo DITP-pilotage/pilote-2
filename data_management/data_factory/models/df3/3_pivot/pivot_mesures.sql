@@ -3,19 +3,19 @@ WITH
 pivot_vi as (
     select id, date_import, indic_id, zone_id, metric_date,
     metric_value as vi
-    from {{ ref('agg_all') }} where metric_type ='vi'
+    from {{ ref('agg_all_replicate') }} where metric_type ='vi'
 ),
 -- Pivot des va
 pivot_va as (
     select id, date_import, indic_id, zone_id, metric_date,
     metric_value as va
-    from {{ ref('agg_all') }} where metric_type ='va'
+    from {{ ref('agg_all_replicate') }} where metric_type ='va'
 ),
 -- Pivot des vc
 pivot_vc as (
     select id, date_import, indic_id, zone_id, metric_date,
     metric_value as vc
-    from {{ ref('agg_all') }} where metric_type ='vc'
+    from {{ ref('agg_all_replicate') }} where metric_type ='vc'
 ),
 
 -- Jointure des 2 tables pivotées: vi X va => u_vi_va
