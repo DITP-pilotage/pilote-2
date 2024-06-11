@@ -5,16 +5,19 @@ import SyntheseDesResultatsRowBuilder
 import ChantierDatesDeMàjSQLRepository from './ChantierDateDeMàjMeteoSQLRepository';
 
 describe('ChantierDatesDeMàjSQLRepository', () => {
+  let chantierDateDeMàjMeteoRepository: ChantierDatesDeMàjRepository;
 
-  describe('récupérerDatesDeMiseÀJour', () => {
+  beforeEach(() => {
+    chantierDateDeMàjMeteoRepository = new ChantierDatesDeMàjSQLRepository(prisma);
+  });
 
-    test('retourne les dernières dates météos des chantiers et territoires demandés', async () => {
+  describe('#récupérerDateDeMiseÀJourMeteo', () => {
+    test('quand il existe plusieurs chantiers, doit retourner les dernières dates météos des chantiers et territoires demandés', async () => {
       // Given
       const chantiersId = ['CH-001', 'CH-002'];
       const territoiresCode = ['DEPT-34', 'REG-84'];
-      const repository: ChantierDatesDeMàjRepository = new ChantierDatesDeMàjSQLRepository(prisma);
 
-      const synthèses = [
+      const listeSynthèsesDesResultats = [
         new SyntheseDesResultatsRowBuilder()
           .avecChantierId('CH-001')
           .avecMaille('DEPT')
@@ -53,13 +56,13 @@ describe('ChantierDatesDeMàjSQLRepository', () => {
           .build(),
       ];
 
-      await prisma.synthese_des_resultats.createMany({ data: synthèses });
+      await prisma.synthese_des_resultats.createMany({ data: listeSynthèsesDesResultats });
 
       // When
-      const result = await repository.récupérerDateDeMiseÀJourMeteo(chantiersId, territoiresCode);
+      const result = await chantierDateDeMàjMeteoRepository.récupérerDateDeMiseÀJourMeteo(chantiersId, territoiresCode);
 
       // Then
-      const resultatAttendu = {
+      expect(result).toStrictEqual({
         'CH-001': {
           'DEPT-34': new Date('2023-12-31').toISOString(),
           'REG-84': new Date('2022-12-31').toISOString(),
@@ -68,17 +71,15 @@ describe('ChantierDatesDeMàjSQLRepository', () => {
           'DEPT-34': new Date('2024-05-06').toISOString(),
           'REG-84': new Date('2022-03-03').toISOString(),
         },
-      };
-      expect(result).toStrictEqual(resultatAttendu);
+      });
     });
 
-    test('ne retourne pas de date météo pour un chantier sans synthèse de résultat', async () => {
+    test('quand il n\'existe pas de synthèse de résultat pour le chantier, ne doit pas retourner de date météo', async () => {
       // Given
       const chantiersId = ['CH-001', 'CH-002'];
       const territoiresCode = ['DEPT-34'];
-      const repository: ChantierDatesDeMàjRepository = new ChantierDatesDeMàjSQLRepository(prisma);
 
-      const synthèses = [
+      const listeSynthèsesDesResultats = [
         new SyntheseDesResultatsRowBuilder()
           .avecChantierId('CH-001')
           .avecMaille('DEPT')
@@ -93,10 +94,10 @@ describe('ChantierDatesDeMàjSQLRepository', () => {
           .build(),
       ];
 
-      await prisma.synthese_des_resultats.createMany({ data: synthèses });
+      await prisma.synthese_des_resultats.createMany({ data: listeSynthèsesDesResultats });
 
       // When
-      const result = await repository.récupérerDateDeMiseÀJourMeteo(chantiersId, territoiresCode);
+      const result = await chantierDateDeMàjMeteoRepository.récupérerDateDeMiseÀJourMeteo(chantiersId, territoiresCode);
 
       // Then
       expect(result).toStrictEqual({
@@ -107,13 +108,12 @@ describe('ChantierDatesDeMàjSQLRepository', () => {
 
     });
 
-    test('ne retourne pas de date météo pour un territoire sans synthèse de résultat', async () => {
+    test('quand il n\'existe pas de synthèse de résultat pour un territoire, ne doit pas retourner de date météo', async () => {
       // Given
       const chantiersId = ['CH-001'];
       const territoiresCode = ['DEPT-34', 'REG-84'];
-      const repository: ChantierDatesDeMàjRepository = new ChantierDatesDeMàjSQLRepository(prisma);
 
-      const synthèses = [
+      const listeSynthèsesDesResultats = [
         new SyntheseDesResultatsRowBuilder()
           .avecChantierId('CH-001')
           .avecMaille('DEPT')
@@ -128,10 +128,10 @@ describe('ChantierDatesDeMàjSQLRepository', () => {
           .build(),
       ];
 
-      await prisma.synthese_des_resultats.createMany({ data: synthèses });
+      await prisma.synthese_des_resultats.createMany({ data: listeSynthèsesDesResultats });
 
       // When
-      const result = await repository.récupérerDateDeMiseÀJourMeteo(chantiersId, territoiresCode);
+      const result = await chantierDateDeMàjMeteoRepository.récupérerDateDeMiseÀJourMeteo(chantiersId, territoiresCode);
 
       // Then
       expect(result).toStrictEqual({
@@ -139,6 +139,93 @@ describe('ChantierDatesDeMàjSQLRepository', () => {
           'DEPT-34': new Date('2023-12-31').toISOString(),
         },
       });
+    });
+
+    test('quand la liste de chantier est vide, doit retourner un objet vide', async () => {
+      // Given
+      const chantiersId: string[] = [];
+      const territoiresCode = ['DEPT-34', 'REG-84'];
+
+      const listeSynthèsesDesResultats = [
+        new SyntheseDesResultatsRowBuilder()
+          .avecChantierId('CH-001')
+          .avecMaille('DEPT')
+          .avecCodeInsee('34')
+          .avecDateMétéo(new Date('2023-12-31'))
+          .build(),
+        new SyntheseDesResultatsRowBuilder()
+          .avecChantierId('CH-001')
+          .avecMaille('DEPT')
+          .avecCodeInsee('34')
+          .avecDateMétéo(new Date('2021-01-31'))
+          .build(),
+      ];
+
+      await prisma.synthese_des_resultats.createMany({ data: listeSynthèsesDesResultats });
+
+      // When
+      const result = await chantierDateDeMàjMeteoRepository.récupérerDateDeMiseÀJourMeteo(chantiersId, territoiresCode);
+
+      // Then
+      expect(result).toStrictEqual({});
+    });
+
+    test('quand la liste des territoires est vide, doit retourner un objet vide', async () => {
+      // Given
+      const chantiersId = ['CH-001'];
+      const territoiresCode: string[] = [];
+
+      const listeSynthèsesDesResultats = [
+        new SyntheseDesResultatsRowBuilder()
+          .avecChantierId('CH-001')
+          .avecMaille('DEPT')
+          .avecCodeInsee('34')
+          .avecDateMétéo(new Date('2023-12-31'))
+          .build(),
+        new SyntheseDesResultatsRowBuilder()
+          .avecChantierId('CH-001')
+          .avecMaille('DEPT')
+          .avecCodeInsee('34')
+          .avecDateMétéo(new Date('2021-01-31'))
+          .build(),
+      ];
+
+      await prisma.synthese_des_resultats.createMany({ data: listeSynthèsesDesResultats });
+
+      // When
+      const result = await chantierDateDeMàjMeteoRepository.récupérerDateDeMiseÀJourMeteo(chantiersId, territoiresCode);
+
+      // Then
+      expect(result).toStrictEqual({});
+    });
+
+    test('quand la liste des territoires est vide et la liste de chantier est vide, doit retourner un objet vide', async () => {
+      // Given
+      const chantiersId: string[] = [];
+      const territoiresCode: string[] = [];
+
+      const listeSynthèsesDesResultats = [
+        new SyntheseDesResultatsRowBuilder()
+          .avecChantierId('CH-001')
+          .avecMaille('DEPT')
+          .avecCodeInsee('34')
+          .avecDateMétéo(new Date('2023-12-31'))
+          .build(),
+        new SyntheseDesResultatsRowBuilder()
+          .avecChantierId('CH-001')
+          .avecMaille('DEPT')
+          .avecCodeInsee('34')
+          .avecDateMétéo(new Date('2021-01-31'))
+          .build(),
+      ];
+
+      await prisma.synthese_des_resultats.createMany({ data: listeSynthèsesDesResultats });
+
+      // When
+      const result = await chantierDateDeMàjMeteoRepository.récupérerDateDeMiseÀJourMeteo(chantiersId, territoiresCode);
+
+      // Then
+      expect(result).toStrictEqual({});
     });
   });
 });
