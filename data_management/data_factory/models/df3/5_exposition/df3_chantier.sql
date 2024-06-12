@@ -139,6 +139,15 @@ select
     ch_has_meteo.has_meteo_dept as a_meteo_departemental,
     ch_has_meteo.has_meteo_reg as a_meteo_regional,
     COALESCE (chantier_za.zone_est_applicable, true) AND COALESCE (mailles_applicables.maille_est_applicable, false) AS est_applicable,
+    CASE
+        -- values replicated REG->DEPT
+        WHEN upper(replicate_val_reg_to)='DEPT' and z.zone_type='DEPT' then 'reg'::maille
+        -- values replicated NAT->DEPT
+        WHEN upper(replicate_val_nat_to)='DEPT' and z.zone_type='DEPT' then 'nat'::maille
+        -- values replicated NAT->REG
+        WHEN upper(replicate_val_nat_to)='REG' and z.zone_type='REG' then 'reg'::maille
+        ELSE NULL
+    END as values_replicated_from,
     false as a_supprimer
 from {{ ref('stg_ppg_metadata__chantiers') }} mc
 -- On dupplique les lignes chantier pour chaque territoire
