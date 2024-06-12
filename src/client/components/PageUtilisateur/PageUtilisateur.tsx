@@ -7,16 +7,26 @@ import PageUtilisateurStyled from '@/components/PageUtilisateur/PageUtilisateur.
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import FicheUtilisateur from '@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur';
+import Alerte from '@/components/_commons/Alerte/Alerte';
 import Modale from '@/client/components/_commons/Modale/Modale';
 import Bouton from '@/client/components/_commons/Bouton/Bouton';
 import { BandeauInformation } from '@/client/components/_commons/BandeauInformation';
+import { useGestionTokenAPI } from '@/components/PageAdminGestionTokenAPI/useGestionTokenAPI';
 import usePageUtilisateur from './usePageUtilisateur';
 
-export default function PageUtilisateur({ utilisateur }: PageUtilisateurProps) {
-  const { supprimerUtilisateur, fermerLaModaleDeSuppressionUtilisateur, modificationEstImpossible, donnneContenuBandeau } = usePageUtilisateur(utilisateur);
+export default function PageUtilisateur({ utilisateur, tokenAPIInformation  }: PageUtilisateurProps) {
+  const { supprimerUtilisateur, fermerLaModaleDeSuppressionUtilisateur, modificationEstImpossible, donnneContenuBandeau, habilitationsAGenererUnTokenDAuthentification } = usePageUtilisateur(utilisateur);
   const chemin = [{ nom:'Gestion des comptes', lien:'/admin/utilisateurs' }];
   const { data : session } = useSession();
-
+  const { creerTokenAPI, alerte } = useGestionTokenAPI();
+  const date = new Date();
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth();
+  const day = date.getUTCDate();
+  const hours = date.getUTCHours();
+  const minutes = date.getUTCMinutes();
+  const millisecondes = date.getUTCMilliseconds();
+  const expirationDate = new Date(year + 1, month, day, hours, minutes, millisecondes);
   return (
     <PageUtilisateurStyled className='fr-pt-2w'>
       <main className='fr-container'>
@@ -60,7 +70,19 @@ export default function PageUtilisateur({ utilisateur }: PageUtilisateurProps) {
                     href={`/admin/utilisateur/${utilisateur.id}/modifier`}
                   >
                     Modifier
-                  </Link>
+                  </Link>          
+                  {
+                    habilitationsAGenererUnTokenDAuthentification(session, utilisateur.profil) ? 
+                      <button
+                        className='fr-btn fr-btn--secondary fr-mr-2w'
+                        onClick={() => creerTokenAPI({ email : utilisateur.email })}
+                        title='Générer un token d’authentification'
+                        type='submit'
+                      >
+                        Générer un token d’authentification
+                      </button>
+                      : null
+                  }
                   <button
                     aria-controls='supprimer-compte'
                     className='fr-text supprimer'
@@ -69,6 +91,23 @@ export default function PageUtilisateur({ utilisateur }: PageUtilisateurProps) {
                   >
                     Supprimer le compte
                   </button>
+                  {
+                    alerte ? (
+                      <div className='fr-my-2w'>
+                        <Alerte
+                          message={alerte.message}
+                          titre={alerte.titre}
+                          type={alerte.type}
+                        />
+                      </div>
+                    ) : null
+                  } 
+                  {tokenAPIInformation ? 
+                    <div className='fr-alert fr-alert--info fr-alert--sm fr-mt-2w'>
+                      <p className='fr-text--sm'>
+                        Information : Le token d’authentification est généré pour cet utilisateur et est sauvegardé dans votre presse-papier. Ce token est valable jusqu’au                      
+                      </p>
+                    </div> : null}
                   <Modale
                     idHtml='supprimer-compte'
                     titre='Suppression de compte'

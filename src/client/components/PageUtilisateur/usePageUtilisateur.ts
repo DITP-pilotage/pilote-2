@@ -56,10 +56,21 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
     }
   };  
 
+  const habilitationsAGenererUnTokenDAuthentification = (session: Session | null, utilisateurProfil: ProfilCode) => {
+    if (!session || process.env.NEXT_PUBLIC_FF_GESTION_TOKEN_API !== 'true' || !['DITP_ADMIN'].includes(session.profil) || !['DIR_PROJET', 'EQUIPE_DIR_PROJET', 'SECRETARIAT_GENERAL'].includes(utilisateurProfil) ) {
+      return false;
+    }
+    
+    if (['DITP_ADMIN'].includes(session.profil)) {
+      return true;
+    }
+  };
+
   return {
     fermerLaModaleDeSuppressionUtilisateur,
     supprimerUtilisateur,
     modificationEstImpossible,
     donnneContenuBandeau,
+    habilitationsAGenererUnTokenDAuthentification,
   };
 }
