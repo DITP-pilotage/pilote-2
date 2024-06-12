@@ -7,7 +7,7 @@ import MinistèreSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRo
 import PérimètreMinistérielSQLRowBuilder
   from '@/server/infrastructure/test/builders/sqlRow/PérimètreMinistérielSQLRow.builder';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
+import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDateDeMàjMeteoRepository.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
@@ -21,7 +21,7 @@ describe('RécupérerChantierUseCase', () => {
 
   beforeEach(() => {
     chantierRepository = dependencies.getChantierRepository();
-    chantierDatesDeMàjRepository = dependencies.getChantierDatesDeMàjRepository();
+    chantierDatesDeMàjRepository = dependencies.getChantierDateDeMàjMeteoRepository();
     ministèreRepository = dependencies.getMinistèreRepository();
     territoireRepository = dependencies.getTerritoireRepository();
     récupérerChantierUseCase = new RécupérerChantierUseCase(chantierRepository, chantierDatesDeMàjRepository, ministèreRepository, territoireRepository);
