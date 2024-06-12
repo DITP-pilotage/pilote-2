@@ -165,7 +165,7 @@ const credentialsProvider = CredentialsProvider({
     }
     const utilisateurRepository = dependencies.getUtilisateurRepository();
     const utilisateur = await utilisateurRepository.récupérer(username);
-    
+
     if (!utilisateur) {
       return null;
     }
@@ -199,7 +199,10 @@ export const authOptions: AuthOptions = {
     maxAge: configuration.nextAuth.sessionMaxAge,
   },
   callbacks: {
-    async jwt({ token, account, user, profile, isNewUser }: any & { token: JWT | PiloteJWTPayload, account: Account }): Promise<PiloteJWTPayload> {
+    async jwt({ token, account, user, profile, isNewUser }: any & {
+      token: JWT | PiloteJWTPayload,
+      account: Account
+    }): Promise<PiloteJWTPayload> {
       if (_isLogingIn(account, user)) {
         logger.info({ userId: user.id }, 'NextAuth JWT callback called from login');
         logger.debug({ token, user, account, profile, isNewUser });
