@@ -28,11 +28,16 @@ export const useGestionTokenAPI = () => {
   });
 
   const mutationCreerTokenAPI = api.gestionTokenAPI.creerTokenAPI.useMutation({
-    onSuccess: (result) => {
-      setAlerte({
+    onSuccess: async (result) => {
+      try {
+        await navigator.clipboard.writeText(result);
+      } catch (error) {
+        return error;
+      }
+
+      await setAlerte({
         type: 'succès',
         titre : `Le token d’authentification est généré pour cet utilisateur et est sauvegardé dans votre presse-papier. Ce token est valable jusqu’au ${expirationDate}`,
-        message: result,
       });
     },
     onError: error => {
@@ -64,7 +69,7 @@ export const useGestionTokenAPI = () => {
       csrf: récupérerUnCookie('csrf') ?? '',
       ...data,
     };
-    
+
     mutationCreerTokenAPI.mutate(inputs);
   };
 

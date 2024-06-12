@@ -19,14 +19,7 @@ export default function PageUtilisateur({ utilisateur, tokenAPIInformation  }: P
   const chemin = [{ nom:'Gestion des comptes', lien:'/admin/utilisateurs' }];
   const { data : session } = useSession();
   const { creerTokenAPI, alerte } = useGestionTokenAPI();
-  const date = new Date();
-  const year = date.getUTCFullYear();
-  const month = date.getUTCMonth();
-  const day = date.getUTCDate();
-  const hours = date.getUTCHours();
-  const minutes = date.getUTCMinutes();
-  const millisecondes = date.getUTCMilliseconds();
-  const expirationDate = new Date(year + 1, month, day, hours, minutes, millisecondes);
+
   return (
     <PageUtilisateurStyled className='fr-pt-2w'>
       <main className='fr-container'>
@@ -95,7 +88,6 @@ export default function PageUtilisateur({ utilisateur, tokenAPIInformation  }: P
                     alerte ? (
                       <div className='fr-my-2w'>
                         <Alerte
-                          message={alerte.message}
                           titre={alerte.titre}
                           type={alerte.type}
                         />
@@ -105,7 +97,7 @@ export default function PageUtilisateur({ utilisateur, tokenAPIInformation  }: P
                   {tokenAPIInformation ? 
                     <div className='fr-alert fr-alert--info fr-alert--sm fr-mt-2w'>
                       <p className='fr-text--sm'>
-                        Information : Le token d’authentification est généré pour cet utilisateur et est sauvegardé dans votre presse-papier. Ce token est valable jusqu’au                      
+                        Information : Un token est déjà actif pour cet utilisateur. La génération d’un nouveau token supprimera ce token actif.                      
                       </p>
                     </div> : null}
                   <Modale
