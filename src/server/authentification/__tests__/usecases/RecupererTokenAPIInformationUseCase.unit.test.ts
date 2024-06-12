@@ -1,43 +1,41 @@
 import { mock, MockProxy } from 'jest-mock-extended';
 import { TokenAPIInformationRepository } from '@/server/authentification/domain/ports/TokenAPIInformationRepository';
 import { TokenAPIInformationBuilder } from '@/server/authentification/app/builder/TokenAPIInformationBuilder';
-import { UtilisateurRepository } from '@/server/authentification/domain/ports/UtilisateurRepository';
 import { RecupererTokenAPIInformationUseCase } from '@/server/authentification/usecases/RecupererTokenAPIInformationUseCase';
 
-describe('recupererTokenAPIInformation', () => {
+describe('#recupererTokenAPIInformation', () => {
   let tokenAPIInformationRepository: MockProxy<TokenAPIInformationRepository>;
-  let utilisateurRepository: MockProxy<UtilisateurRepository>;
   let recupererTokenAPIInformationUseCase: RecupererTokenAPIInformationUseCase;
 
   beforeEach(() => {
     tokenAPIInformationRepository = mock<TokenAPIInformationRepository>();
-    utilisateurRepository = mock<UtilisateurRepository>();
     recupererTokenAPIInformationUseCase = new RecupererTokenAPIInformationUseCase({ tokenAPIInformationRepository });
-
   });
 
   const email = 'test@example.com';
 
-  it('doit récupérer le token associé à l\'email si ce dernier existe', async () => {
+  it('s\'il existe un token associé à l\'email retourn le token api', async () => {
     // Given
-    new TokenAPIInformationBuilder().withEmail(email).build();
-    utilisateurRepository.estPresent.mockResolvedValue(true);
+    const tokenInformation = new TokenAPIInformationBuilder().withEmail(email).build();
+    tokenAPIInformationRepository.recupererTokenAPIInformation.mockResolvedValue(tokenInformation);
    
     // When
-    await recupererTokenAPIInformationUseCase.run({ email });
+    const result = await recupererTokenAPIInformationUseCase.run({ email });
     
     // Then
-    await expect(tokenAPIInformationRepository.recupererTokenAPIInformation).toHaveBeenNthCalledWith(1, { email });
+    expect(tokenAPIInformationRepository.recupererTokenAPIInformation).toHaveBeenNthCalledWith(1, { email });
+    expect(result).toStrictEqual(tokenInformation);
   });
   
-
-  it('doit retourner null s\'il ne trouve pas d\'email correspondant', async () => {
+  it('s\'il n\'existe pas de token associé à l\'email retourne null', async () => {
     // Given
-    const tokenAPIInformation = new TokenAPIInformationBuilder().withEmail(email).build();
-    utilisateurRepository.estPresent.mockResolvedValue(false);
-    tokenAPIInformationRepository.recupererTokenAPIInformation.mockRejectedValue(tokenAPIInformation);
+    tokenAPIInformationRepository.recupererTokenAPIInformation.mockResolvedValue(null);
+
+    // When
+    const result = await recupererTokenAPIInformationUseCase.run({ email });
    
     // Then
-    await expect(recupererTokenAPIInformationUseCase.run({ email })).toReject();
+    expect(tokenAPIInformationRepository.recupererTokenAPIInformation).toHaveBeenNthCalledWith(1, { email });
+    expect(result).toStrictEqual(null);
   });
 });
