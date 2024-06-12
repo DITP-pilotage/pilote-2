@@ -1,0 +1,15 @@
+meta {
+  name: GET CH-047
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/open-api/chantier/CH-047/indicateur/IND-804/donnees
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{api_token}}
+}
