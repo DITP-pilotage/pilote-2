@@ -32,6 +32,7 @@ const Sélecteur = <T extends string>({
         </span>
       }
       <select
+        aria-label={libellé}
         className={`fr-select fr-mt-1w ${erreur !== undefined || errorMessage ? 'fr-select--error' : ''}`}
         name={htmlName}
         onChange={(événement) => valeurModifiéeCallback && valeurModifiéeCallback(événement.currentTarget.value as T)}
