@@ -31,9 +31,9 @@ export default function calculerChantierAvancements(
     nationale: {
       global: {
         moyenne: donnéesTerritoiresAgrégées.nationale.répartition.avancements.global.moyenne,
-        médiane: avancementsAgrégés?.global.médiane ?? null,
-        minimum: avancementsAgrégés?.global.minimum ?? null,
-        maximum: avancementsAgrégés?.global.maximum ?? null,
+        médiane: avancementsAgrégés?.global.médiane,
+        minimum: avancementsAgrégés?.global.minimum,
+        maximum: avancementsAgrégés?.global.maximum,
       },
       annuel: {
         moyenne: donnéesTerritoiresAgrégées.nationale.répartition.avancements.annuel.moyenne,

@@ -4,7 +4,7 @@ import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import useSaisieDesInformationsUtilisateur from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
 import Titre from '@/components/_commons/Titre/Titre';
-import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
+import MultiSelectTerritoire, { MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT, MAXIMUM_COMPTES_AUTORISE_PAR_REGION } from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
 import MultiSelectChantier from '@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier';
 import MultiSelectPérimètreMinistériel from '@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
 import { UtilisateurFormulaireProps } from '@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
@@ -97,7 +97,10 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           Droits de lecture
         </Titre>
         <p className='fr-text--xs texte-gris fr-mb-4w'>
-          Afin de paramétrer l’espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
+          {
+            `Afin de paramétrer l’espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
+             Le nombre d'utilisateurs est limité à ${MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT} comptes à la maille départementale et ${MAXIMUM_COMPTES_AUTORISE_PAR_REGION} comptes à la maille régionale.`
+          }
         </p>
         <div className={`${!!afficherChampLectureTerritoires ? '' : 'fr-hidden'}`}>
           <div className='fr-mb-4w'>
@@ -106,6 +109,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
               name='habilitations.lecture.territoires'
               render={() => (
                 <MultiSelectTerritoire
+                  activerLaRestrictionDesTerritoires={!['DITP_ADMIN', 'DITP_PILOTAGE'].includes(session?.profil)}
                   afficherBoutonsSélection
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesTerritoires}
                   groupesÀAfficher={groupesTerritoiresÀAfficher}

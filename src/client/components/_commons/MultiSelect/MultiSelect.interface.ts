@@ -12,6 +12,7 @@ export type MultiSelectOption = {
   label: string 
   value: string,
   disabled?: boolean
+  afficherIcone?: boolean
 };
 
 export type MultiSelectOptionGroupée = { 

@@ -4,7 +4,7 @@ WITH chantiers_zone_applicables AS (
         zg.child_zone_id AS zone_id,
         true AS est_applicable
     FROM
-        raw_data.stg_ppg_metadata__chantiers chantiers
+        {{ ref('stg_ppg_metadata__chantiers') }} chantiers
         LEFT JOIN raw_data.stg_ppg_metadata__zonegroup_unnest zg ON chantiers.zone_groupe_applicable = zg.zone_group_id
     WHERE
         zone_groupe_applicable IS NOT NULL
@@ -16,7 +16,7 @@ chantiers_za_toutes_zone AS (
         zones.maille
     FROM
         chantiers_zone_applicables chantiers
-        CROSS JOIN raw_data.stg_ppg_metadata__zones zones
+        CROSS JOIN {{ ref('stg_ppg_metadata__zones') }} zones
 )
 SELECT
     chantiers_za_toutes_zone.chantier_id,

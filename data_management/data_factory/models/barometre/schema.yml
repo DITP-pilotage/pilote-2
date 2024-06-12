@@ -32,6 +32,10 @@ models:
           description: Nom de l'indicateur dans le baromètre
         - name: indic_descr_baro
           description: Description de l'indicateur dans le baromètre
+        - name: tendance
+          description: Tendance attendue de variation de l'indicateur. Dans `{hausse, baisse, autre}`.
+        - name: indic_categorie_evolution
+          description: Catégorie d'évolution de l'indicateur. Dans `{glissant, cumul_annuel, annuel, cumul_non_annuel}`
   - name: baro_meta_chantiers
     description: Informations des chantiers utiles pour le baromètre
     columns:

@@ -8,4 +8,5 @@ export default interface MultiSelectTerritoireProps {
   },
   territoiresSélectionnables?: string[],
   afficherBoutonsSélection?: boolean,
+  activerLaRestrictionDesTerritoires?: boolean
 }

@@ -24,13 +24,13 @@ export type AvancementsGlobauxRépartitionsMétéosContrat = { valeur: number | 
 export const presenterEnAvancementsStatistiquesAccueilContrat = (avancementsStatistiques: AvancementsStatistiques): AvancementsStatistiquesAccueilContrat => {
   return {
     global: {
-      moyenne: avancementsStatistiques?.global.moyenne || null,
-      médiane: avancementsStatistiques?.global.médiane || null,
-      minimum: avancementsStatistiques?.global.minimum || null,
-      maximum: avancementsStatistiques?.global.maximum || null,
+      moyenne: avancementsStatistiques?.global.moyenne != undefined ? avancementsStatistiques?.global.moyenne :  null,
+      médiane: avancementsStatistiques?.global.médiane != undefined ? avancementsStatistiques?.global.médiane :  null,
+      minimum: avancementsStatistiques?.global.minimum != undefined ? avancementsStatistiques?.global.minimum : null,
+      maximum: avancementsStatistiques?.global.maximum != undefined ? avancementsStatistiques?.global.maximum : null,
     },
     annuel: {
-      moyenne: avancementsStatistiques?.annuel.moyenne || null,
+      moyenne: avancementsStatistiques?.annuel.moyenne !== undefined ? avancementsStatistiques?.annuel.moyenne : null,
     },
   };
 };
