@@ -28,7 +28,10 @@ renamed as (
         ch_saisie_ate as ate,
         ch_state as statut,
         CAST(zg_applicable as TEXT) as zone_groupe_applicable,
-        string_to_array(maille_applicable, ' | ') as maille_applicable,
+        -- Maille applicable déclarée
+        string_to_array(maille_applicable, ' | ') as maille_applicable_declaree,
+        replicate_val_reg_to, 
+        replicate_val_nat_to,
         case
             when ch_territo and maille_applicable = 'REG | NAT' 	then 'REG'
             when ch_territo and maille_applicable is null 			then 'DEPT'
@@ -39,4 +42,27 @@ renamed as (
 
 )
 
-select * from renamed
+-- Calcul des mailles applicables en fonction des réplications de données configurées
+, get_maille_applicable as (
+
+    select *,
+    case 
+        -- [enabled] REG -> DEPT
+        when upper(replicate_val_reg_to)='DEPT' and maille_applicable_declaree=array['REG','NAT'] then array['DEPT', 'REG','NAT']
+        when upper(replicate_val_reg_to)='DEPT' and maille_applicable_declaree=array['REG'] then array['DEPT', 'REG']
+
+        -- [disabled] NAT -> REG
+        --when upper(replicate_val_nat_to)='REG' and maille_applicable_declaree=array['DEPT','NAT'] then array['DEPT', 'REG','NAT']
+        --when upper(replicate_val_nat_to)='REG' and maille_applicable_declaree=array['NAT'] then array['REG','NAT']
+        
+        -- [disabled] NAT -> DEPT
+        --when upper(replicate_val_nat_to)='DEPT' and maille_applicable_declaree=array['REG','NAT'] then array['DEPT', 'REG','NAT']
+        --when upper(replicate_val_nat_to)='DEPT' and maille_applicable_declaree=array['NAT'] then array['DEPT', 'NAT']
+
+        else maille_applicable_declaree
+    end as maille_applicable
+    from renamed
+
+)
+
+select * from get_maille_applicable

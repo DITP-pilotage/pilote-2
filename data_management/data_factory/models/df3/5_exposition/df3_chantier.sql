@@ -70,7 +70,7 @@ group by chantier_id
 
 -- On récupère les directeurs des directions porteuses de chaque chantier
 ch_unnest_porteurs_dac as (
-select chantier_id, unnest(string_to_array("porteur_ids_DAC", ' | ')) as pi from {{ ref('metadata_chantiers') }} mc 
+select mc.id as chantier_id, unnest(mc.directeurs_administration_centrale_ids) as pi from {{ ref('stg_ppg_metadata__chantiers') }} mc 
 ), ch_unnest_porteurs_dac_pnames as (
 select a.*, mp.porteur_directeur, mp.porteur_short from ch_unnest_porteurs_dac a
 left join {{ ref('metadata_porteurs') }} mp on a.pi=mp.porteur_id 
@@ -102,20 +102,20 @@ mailles_applicables AS (
 
 
 select 
-    mc.chantier_id as id,
-    ch_nom as nom,
+    mc.id,
+    mc.nom,
     t.code_insee as code_insee,
     ta_ch_today.tag_ch as taux_avancement,
     ta_ch_today.date_ta::date as taux_avancement_date,
     ta_ch_today.taa_courant_ch as taux_avancement_annuel,
     ta_ch_prev_month.tag_ch as taux_avancement_precedent,
     t.nom as territoire_nom,
-    string_to_array(ch_per, ' | ') as perimetre_ids, 
+    mc.perimetre_ids, 
     z.zone_type as "maille",
     -- coalesce with empty array
     coalesce(p_names.p_directeurs, string_to_array('','')) as directeurs_administration_centrale, 
-    string_to_array("porteur_ids_noDAC" , ' | ') as ministeres,
-    string_to_array("porteur_shorts_noDAC" , ' | ') as ministeres_acronymes,
+    mc.ministeres_ids as ministeres,
+    mc.ministeres_polygrammes as ministeres_acronymes,
     -- coalesce with empty array
     coalesce(p_names.p_shorts, string_to_array('','')) as directions_administration_centrale, 
     dir_projets.nom as directeurs_projet,
@@ -128,43 +128,43 @@ select
     resp_locaux.email as responsables_locaux_mails,
     coord_territoriaux.email as coordinateurs_territoriaux_mails,
     chantier_est_barometre.est_barometre,
-    mc.ch_territo as est_territorialise,
+    mc.est_territorialise,
     -- Si ch_cible_attendue=NULL -> on le considère TRUE
     COALESCE(mc.ch_cible_attendue, TRUE) as cible_attendue,
     t.code as territoire_code,
-	LOWER(mc.ch_saisie_ate)::type_ate as ate,
-    COALESCE(ch_state::type_statut, 'PUBLIE') as statut,
+	LOWER(mc.ate)::type_ate as ate,
+    COALESCE(mc.statut::type_statut, 'PUBLIE') as statut,
     has_ta.has_ta_dept as a_taux_avancement_departemental,
     has_ta.has_ta_reg as a_taux_avancement_regional,
     ch_has_meteo.has_meteo_dept as a_meteo_departemental,
     ch_has_meteo.has_meteo_reg as a_meteo_regional,
     COALESCE (chantier_za.zone_est_applicable, true) AND COALESCE (mailles_applicables.maille_est_applicable, false) AS est_applicable,
     false as a_supprimer
-from {{ ref('metadata_chantiers') }} mc
+from {{ ref('stg_ppg_metadata__chantiers') }} mc
 -- On dupplique les lignes chantier pour chaque territoire
 cross join {{ source('db_schema_public', 'territoire') }} t
-left join {{ ref('int_directeurs_projets')}} dir_projets on dir_projets.chantier_id = mc.chantier_id
-left join {{ ref('int_responsables_locaux')}} resp_locaux on resp_locaux.chantier_id = mc.chantier_id and resp_locaux.territoire_code = t.code
+left join {{ ref('int_directeurs_projets')}} dir_projets on dir_projets.chantier_id = mc.id
+left join {{ ref('int_responsables_locaux')}} resp_locaux on resp_locaux.chantier_id = mc.id and resp_locaux.territoire_code = t.code
 left join {{ ref('int_coordinateurs_territoriaux')}} coord_territoriaux on coord_territoriaux.territoire_code = t.code
 left join {{ ref('metadata_zones') }} z on z.zone_id=t.zone_id
-left join {{ ref('metadata_porteurs') }} po on mc."porteur_ids_DAC"=po.porteur_id
-left join ch_unnest_porteurs_dac_pnames_agg p_names on mc.chantier_id=p_names.chantier_id
+--left join {{ ref('metadata_porteurs') }} po on mc."porteur_ids_DAC"=po.porteur_id
+left join ch_unnest_porteurs_dac_pnames_agg p_names on mc.id=p_names.chantier_id
 left join 
     (select * from synthese_triee_par_date where row_id_by_date_meteo_desc=1) sr
-	    ON sr.chantier_id =mc.chantier_id AND
+	    ON sr.chantier_id =mc.id AND
 	    sr.maille = z.zone_type AND
 	    sr.code_insee = t.code_insee
-left join {{ ref('metadata_ppgs') }} ppg on mc.ch_ppg =ppg.ppg_id
+left join {{ ref('metadata_ppgs') }} ppg on mc.ppg_id =ppg.ppg_id
 left join {{ ref('metadata_axes') }} ax on ppg.ppg_axe =ax.axe_id
-LEFT JOIN chantier_est_barometre on mc.chantier_id = chantier_est_barometre.chantier_id
-left join ch_maille_has_ta_pivot_clean as has_ta on has_ta.chantier_id=mc.chantier_id
-left join ch_has_meteo on ch_has_meteo.chantier_id=mc.chantier_id 
+LEFT JOIN chantier_est_barometre on mc.id = chantier_est_barometre.chantier_id
+left join ch_maille_has_ta_pivot_clean as has_ta on has_ta.chantier_id=mc.id
+left join ch_has_meteo on ch_has_meteo.chantier_id=mc.id 
 left join 
-	(select * from {{ ref('compute_ta_ch') }} where valid_on='today') as ta_ch_today on ta_ch_today.chantier_id=mc.chantier_id and ta_ch_today.zone_id=z.zone_id 
+	(select * from {{ ref('compute_ta_ch') }} where valid_on='today') as ta_ch_today on ta_ch_today.chantier_id=mc.id and ta_ch_today.zone_id=z.zone_id 
 left join 
-	(select * from {{ ref('compute_ta_ch') }} where valid_on='prev_month') as ta_ch_prev_month on ta_ch_prev_month.chantier_id=mc.chantier_id and ta_ch_prev_month.zone_id=z.zone_id
-LEFT JOIN mailles_applicables ON mailles_applicables.chantier_id = mc.chantier_id AND mailles_applicables.maille_applicable = z.zone_type
-LEFT JOIN {{ ref('int_chantiers_zone_applicables')}} chantier_za ON chantier_za.chantier_id = mc.chantier_id AND chantier_za.zone_id = z.zone_id
-order by mc.chantier_id, t.zone_id
+	(select * from {{ ref('compute_ta_ch') }} where valid_on='prev_month') as ta_ch_prev_month on ta_ch_prev_month.chantier_id=mc.id and ta_ch_prev_month.zone_id=z.zone_id
+LEFT JOIN mailles_applicables ON mailles_applicables.chantier_id = mc.id AND mailles_applicables.maille_applicable = z.zone_type
+LEFT JOIN {{ ref('int_chantiers_zone_applicables')}} chantier_za ON chantier_za.chantier_id = mc.id AND chantier_za.zone_id = z.zone_id
+order by mc.id, t.zone_id
 
 
