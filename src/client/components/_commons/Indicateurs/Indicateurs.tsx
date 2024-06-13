@@ -4,16 +4,41 @@ import IndicateurBloc from '@/components/_commons/Indicateurs/Bloc/IndicateurBlo
 import IndicateursStyled from '@/components/_commons/Indicateurs/Indicateurs.styled';
 import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import Alerte from '@/components/_commons/Alerte/Alerte';
 
 
-export default function Indicateurs({ indicateurs, détailsIndicateurs, listeRubriquesIndicateurs, territoireProjetStructurant, typeDeRéforme, chantierEstTerritorialisé, estDisponibleALImport = false, estInteractif = true }: IndicateursProps) {
+export default function Indicateurs({
+  indicateurs,
+  détailsIndicateurs,
+  listeRubriquesIndicateurs,
+  territoireProjetStructurant,
+  typeDeRéforme,
+  chantierEstTerritorialisé,
+  estDisponibleALImport = false,
+  estInteractif = true,
+}: IndicateursProps) {
   const CodeInseeSélectionnée = territoireSélectionnéTerritoiresStore()?.codeInsee;
+
+  const alerteMiseAJourIndicateur = Object.values(détailsIndicateurs).flatMap(values => Object.values(values)).reduce((acc, val) => {
+    return val.estAJour === false || val.prochaineDateMaj === null && val.dateValeurActuelle !== null ? true : acc;
+  }, false);
+
   if (indicateurs.length === 0) {
     return null;
   }
 
   return (
     <IndicateursStyled>
+      {
+        alerteMiseAJourIndicateur ? (
+          <div className='fr-mb-2w'>
+            <Alerte
+              titre='Mise à jour des données requises'
+              type='warning'
+            />
+          </div>
+        ) : null
+      }
       {
         listeRubriquesIndicateurs.map(rubriqueIndicateur => {
           const indicateursDeCetteRubrique = indicateurs.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);

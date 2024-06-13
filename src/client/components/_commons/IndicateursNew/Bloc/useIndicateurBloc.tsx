@@ -36,6 +36,9 @@ const indicateurDétailsVide = {
     est_applicable: false,
     dateImport: null,
     pondération: null,
+    prochaineDateMaj: null,
+    prochaineDateMajJours: null,
+    estAJour: null,
   },
 };
 

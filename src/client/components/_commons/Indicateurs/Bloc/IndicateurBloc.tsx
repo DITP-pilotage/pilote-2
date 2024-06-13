@@ -15,6 +15,7 @@ import ResultatValidationFichier
   from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { IndicateurPondération } from '@/components/_commons/Indicateurs/Bloc/Pondération/IndicateurPondération';
+import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 
@@ -35,8 +36,11 @@ export default function IndicateurBloc({
     indicateurDétailsParTerritoires,
     tableau,
     dateDeMiseAJourIndicateur,
+    dateProchaineDateMaj,
   } = useIndicateurBloc(détailsIndicateur, typeDeRéforme, territoireProjetStructurant);
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
+
+  const estIndicateurEnAlerte = détailsIndicateur[territoireSélectionné!.codeInsee].estAJour === false && détailsIndicateur[territoireSélectionné!.codeInsee]?.prochaineDateMaj !== null;
 
   return (
     <IndicateurBlocStyled
@@ -51,11 +55,21 @@ export default function IndicateurBloc({
                 baliseHtml='h4'
                 className='fr-text--xl fr-mb-1w'
               >
+
                 {
-                  !!indicateur.estIndicateurDuBaromètre &&
-                  <span className='fr-mr-1v'>
-                    <PictoBaromètre />
-                  </span>
+                  estIndicateurEnAlerte ? (
+                    <span className='fr-mr-1v'>
+                      <BadgeIcône type='warning' />
+                    </span>
+                  ) : null
+                }
+                {
+                  indicateur.estIndicateurDuBaromètre ? (
+                    <span className='fr-mr-1v'>
+                      <PictoBaromètre />
+                    </span>
+                  )
+                    : null
                 }
                 {indicateur.nom + (indicateur.unité === null || indicateur.unité === '' ? '' : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
               </Titre>
@@ -67,6 +81,19 @@ export default function IndicateurBloc({
                     {dateDeMiseAJourIndicateur}
                   </span>
                 </p>
+                {
+                  !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] ? (
+                    <p
+                      className={`fr-mb-0 fr-text--xs${estIndicateurEnAlerte ? ' fr-text-warning' : ''}`}
+                    >
+                      Date prévisionnelle de la prochaine date de mise à jour des données (de l'indicateur) :
+                      {' '}
+                      <span className='fr-text--bold'>
+                        {dateProchaineDateMaj}
+                      </span>
+                    </p>
+                  ) : null
+                }
                 {
                   !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] ? (
                     <IndicateurPondération

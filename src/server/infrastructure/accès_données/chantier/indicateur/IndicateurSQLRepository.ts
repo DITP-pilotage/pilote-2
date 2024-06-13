@@ -77,6 +77,9 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         est_applicable: indic.est_applicable,
         dateImport: formatDate(indic.dernier_import_date_indic),
         pondération: indic.ponderation_zone_reel,
+        prochaineDateMaj: formatDate(indic.prochaine_date_maj),
+        prochaineDateMajJours: indic.prochaine_date_maj_jours,
+        estAJour: indic.est_a_jour,
       };
     }
 
@@ -197,7 +200,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     const indicateurs: IndicateurPrisma[] = await this.prisma.indicateur.findMany({
       where: {
         chantier_id: chantierId,
-        maille: maille,
+        maille,
         code_insee: { in: codesInsee },
         NOT: {
           type_id : null,
