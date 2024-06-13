@@ -190,6 +190,11 @@ const config = convict({
       default: false,
       env: 'NEXT_PUBLIC_FF_TA_ANNUEL',
     },
+    gestionTokenAPI: {
+      format: Boolean,
+      default: false,
+      env: 'NEXT_PUBLIC_FF_GESTION_TOKEN_API',
+    },
   },
   analytics: {
     matomoURL: {
