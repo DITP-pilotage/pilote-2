@@ -32,7 +32,7 @@ test('quand on a pas accès au chantier, doit remonter une erreur 403 Forbidden'
   });
 });
 
-test('quand on a accès au chantier, doit remonter une erreur 200 OK avec les données', async ({ playwright }) => {
+test("Quand on a accès au chantier, doit remonter une erreur 200 OK avec les données de l'indicateur", async ({ playwright }) => {
   await test.step('Création du context - Authorization Pilote - thierry.gentes@sarthe.gouv.fr - SERVICES_DECONCENTRES_DEPARTEMENT', async () => {
     apiContext = await playwright.request.newContext({
       baseURL: 'http://localhost:3000',
@@ -72,32 +72,32 @@ test('quand on a accès au chantier, doit remonter une erreur 200 OK avec les do
     donneeTerritoire = donneeIndicateur.donnees_territoires[0];
   });
 
-  await test.step("Vérification qu'une donnée territoire possède une maille, code insee et territoireCode", async () => {
+  await test.step("Vérification qu'une donnée territoire possède une 'maille', un 'code_insee' et un 'territoire_code'", async () => {
     expect(donneeTerritoire.maille).toBeDefined();
     expect(donneeTerritoire.code_insee).toBeDefined();
     expect(donneeTerritoire.territoire_code).toBeDefined();
   });
-  await test.step("Vérification qu'une donnée territoire possède une date et et une valeur actuelle", async () => {
-    expect(donneeTerritoire.valeur_actuelle).toBeDefined();
+  await test.step("Vérification qu'une donnée territoire possède une 'date_valeur_actuelle' et une 'valeur_actuelle'", async () => {
     expect(donneeTerritoire.date_valeur_actuelle).toBeDefined();
+    expect(donneeTerritoire.valeur_actuelle).toBeDefined();
   });
-  await test.step("Vérification qu'une donnée territoire possède une date et et une valeur cible", async () => {
-    expect(donneeTerritoire.valeur_cible).toBeDefined();
+  await test.step("Vérification qu'une donnée territoire possède une 'date_valeur_cible' et une 'valeur_cible'", async () => {
     expect(donneeTerritoire.date_valeur_cible).toBeDefined();
+    expect(donneeTerritoire.valeur_cible).toBeDefined();
   });
-  await test.step("Vérification qu'une donnée territoire possède une date et et une valeur cible annuelle", async () => {
+  await test.step("Vérification qu'une donnée territoire possède une 'date_valeur_cible_annuelle' et une 'valeur_cible_annuelle'", async () => {
     expect(donneeTerritoire.date_valeur_cible_annuelle).toBeDefined();
     expect(donneeTerritoire.valeur_cible_annuelle).toBeDefined();
   });
-  await test.step("Vérification qu'une donnée territoire possède une date et et une valeur initiale", async () => {
-    expect(donneeTerritoire.valeur_initiale).toBeDefined();
+  await test.step("Vérification qu'une donnée territoire possède une 'date_valeur_initiale' et une 'valeur_initiale'", async () => {
     expect(donneeTerritoire.date_valeur_initiale).toBeDefined();
+    expect(donneeTerritoire.valeur_initiale).toBeDefined();
   });
-  await test.step("Vérification qu'une donnée territoire possède un taux d'avancement et un taux d'avancement annuel", async () => {
+  await test.step("Vérification qu'une donnée territoire possède un 'taux_avancement' et un 'taux_avancement_annuel'", async () => {
     expect(donneeTerritoire.taux_avancement).toBeDefined();
     expect(donneeTerritoire.taux_avancement_annuel).toBeDefined();
   });
-  await test.step("Vérification qu'une donnée territoire possède une zone", async () => {
+  await test.step("Vérification qu'une donnée territoire possède une 'zone_id'", async () => {
     expect(donneeTerritoire.zone_id).toBeDefined();
   });
 });
