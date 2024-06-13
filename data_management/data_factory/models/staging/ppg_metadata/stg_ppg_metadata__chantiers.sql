@@ -28,7 +28,12 @@ renamed as (
         ch_saisie_ate as ate,
         ch_state as statut,
         CAST(zg_applicable as TEXT) as zone_groupe_applicable,
-        string_to_array(maille_applicable, ' | ') as maille_applicable
+        string_to_array(maille_applicable, ' | ') as maille_applicable,
+        case
+            when ch_territo and maille_applicable = 'REG | NAT' 	then 'REG'
+            when ch_territo and maille_applicable is null 			then 'DEPT'
+            else 'NAT'
+        end as "maille_pilotage"
 
     from source
 
