@@ -41,10 +41,10 @@ type MetadataIndicateurForm = MetadataParametrageIndicateurForm
 & MetadataSelectionIndicateurForm
 & MetadataParametrageParametrePonderationIndicateurForm
 & MetadataParametrageAutresIndicateurForm;
- 
+
 export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContrat) => {
   const router = useRouter();
-  const [alerte, setAlerte] = useState <AlerteProps | null>(null);
+  const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const [estEnCoursDeModification, setEstEnCoursDeModification] = useState<boolean>(false);
 
   const reactHookForm = useForm<MetadataIndicateurForm>(
@@ -53,17 +53,20 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
       defaultValues: {
         ...indicateur,
         indicHiddenPilote: indicateur.indicHiddenPilote ? 'false' : 'true',
-        indicIsBaro: !!indicateur.indicIsBaro,
-        indicIsPhare: !!indicateur.indicIsPhare,
-        indicIsPerseverant: !!indicateur.indicIsPerseverant,
-        indicTerritorialise: !!indicateur.indicTerritorialise,
-        donneeOuverte: !!indicateur.donneeOuverte,
-        projetAnnuelPerf: !!indicateur.projetAnnuelPerf,
+        indicIsBaro: indicateur.indicIsBaro,
+        indicIsPhare: indicateur.indicIsPhare,
+        indicIsPerseverant: indicateur.indicIsPerseverant,
+        indicTerritorialise: indicateur.indicTerritorialise,
+        donneeOuverte: indicateur.donneeOuverte,
+        projetAnnuelPerf: indicateur.projetAnnuelPerf,
         poidsPourcentNat: `${indicateur.poidsPourcentNat}`,
         poidsPourcentReg: `${indicateur.poidsPourcentReg}`,
         poidsPourcentDept: `${indicateur.poidsPourcentDept}`,
-        delaiDisponibilite: indicateur.delaiDisponibilite ? `${indicateur.delaiDisponibilite}` : '',
+        zgApplicable: indicateur.zgApplicable || '',
+        delaiDisponibilite: `${indicateur.delaiDisponibilite}`,
+        frequenceTerritoriale: `${indicateur.frequenceTerritoriale}`,
         indicParentIndic: indicateur.indicParentIndic === null ? 'Aucun indicateur selectionné' : indicateur.indicParentIndic,
+        indicParentCh: indicateur.indicParentCh ?? '_',
       },
     },
   );
@@ -78,7 +81,7 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
       if (error.data?.code === 'INTERNAL_SERVER_ERROR') {
         setAlerte({
           type: 'erreur',
-          titre : error.message,
+          titre: error.message,
         });
       }
     },
@@ -92,7 +95,7 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
       if (error.data?.code === 'INTERNAL_SERVER_ERROR') {
         setAlerte({
           type: 'erreur',
-          titre : error.message,
+          titre: error.message,
         });
       }
     },
@@ -104,6 +107,7 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
       ...data,
       indicParentIndic: data.indicParentIndic === 'Aucun indicateur selectionné' ? null : data.indicParentIndic,
     };
+
 
     mutationCreerMetadataIndicateur.mutate(inputs);
   };

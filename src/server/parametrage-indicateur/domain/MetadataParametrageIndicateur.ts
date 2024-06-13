@@ -52,7 +52,7 @@ interface InputMetadataParametrageIndicateur {
   periodicite: string;
   delaiDisponibilite: number;
   indicTerritorialise: boolean;
-  frequenceTerritoriale: string | null;
+  frequenceTerritoriale: number;
   mailles: string | null;
   adminSource: string;
   methodeCollecte: string | null;
@@ -173,7 +173,7 @@ export class MetadataParametrageIndicateur {
 
   private readonly _indicTerritorialise: boolean;
 
-  private readonly _frequenceTerritoriale: string | null;
+  private readonly _frequenceTerritoriale: number;
 
   private readonly _mailles: string | null;
 
@@ -543,7 +543,7 @@ export class MetadataParametrageIndicateur {
     return this._indicTerritorialise;
   }
 
-  get frequenceTerritoriale(): string | null {
+  get frequenceTerritoriale(): number {
     return this._frequenceTerritoriale;
   }
 

@@ -54,7 +54,7 @@ export interface MetadataParametrageIndicateurContrat {
   periodicite: string;
   delaiDisponibilite: number;
   indicTerritorialise: boolean;
-  frequenceTerritoriale: string | null;
+  frequenceTerritoriale: number;
   mailles: string | null;
   adminSource: string;
   methodeCollecte: string | null;

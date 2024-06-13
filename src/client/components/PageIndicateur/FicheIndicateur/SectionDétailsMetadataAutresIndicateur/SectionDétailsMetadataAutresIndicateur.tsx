@@ -12,12 +12,23 @@ import {
 import {
   MetadataIndicateurInterrupteur,
 } from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInterrupteur';
+import {
+  MetadataIndicateurSelecteur,
+} from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur';
+import {
+  mappingAcceptedValues,
+  mappingDisplayAcceptedValues,
+} from '@/components/PageIndicateur/FicheIndicateur/commons/utils';
 
-export default function SectionDétailsMetadataAutresIndicateur({ indicateur, estEnCoursDeModification, mapInformationMetadataIndicateur }: {
+export default function SectionDétailsMetadataAutresIndicateur({
+  indicateur,
+  estEnCoursDeModification,
+  mapInformationMetadataIndicateur,
+}: {
   indicateur: MetadataParametrageIndicateurContrat
   estEnCoursDeModification: boolean
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
-}) { 
+}) {
   const { register, getValues, errors } = useSectionDétailsMetadataAutresIndicateurForm();
   return (
     <SectionDétailsMetadataAutresIndicateurStyled>
@@ -73,13 +84,14 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
       </div>
       <div className='fr-grid-row fr-grid-row--gutters'>
         <div className='fr-col-12 fr-col-md-6'>
-          <MetadataIndicateurInput
+          <MetadataIndicateurSelecteur
             erreurMessage={errors.periodicite?.message}
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName='periodicite'
             informationMetadataIndicateur={mapInformationMetadataIndicateur.periodicite}
-            register={register('periodicite', { value: indicateur?.periodicite })}
-            valeurAffiché={indicateur.periodicite || '_'}
+            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'periodicite')}
+            register={register('periodicite')}
+            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'periodicite', 'periodicite')}
+            values={getValues('periodicite')}
           />
         </div>
         <div className='fr-col-12 fr-col-md-6'>
@@ -89,7 +101,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
             htmlName='delaiDisponibilite'
             informationMetadataIndicateur={mapInformationMetadataIndicateur.delai_disponibilite}
             register={register('delaiDisponibilite', { value: `${indicateur?.delaiDisponibilite}` })}
-            valeurAffiché={`${indicateur.delaiDisponibilite}` || '_'}
+            valeurAffiché={`${indicateur.delaiDisponibilite}`}
           />
         </div>
       </div>
@@ -110,8 +122,8 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName='frequenceTerritoriale'
             informationMetadataIndicateur={mapInformationMetadataIndicateur.frequence_territoriale}
-            register={register('frequenceTerritoriale', { value: indicateur?.frequenceTerritoriale })}
-            valeurAffiché={indicateur.frequenceTerritoriale || '_'}
+            register={register('frequenceTerritoriale', { value: `${indicateur?.frequenceTerritoriale}` })}
+            valeurAffiché={`${indicateur.frequenceTerritoriale}`}
           />
         </div>
       </div>

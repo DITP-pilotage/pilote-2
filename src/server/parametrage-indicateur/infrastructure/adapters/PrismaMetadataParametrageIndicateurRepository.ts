@@ -139,7 +139,7 @@ function convertirEnMetadataParametrageIndicateur(rawMetadataParametrageIndicate
     periodicite: rawMetadataParametrageIndicateur.periodicite,
     delaiDisponibilite: Number(rawMetadataParametrageIndicateur.delai_disponibilite),
     indicTerritorialise: rawMetadataParametrageIndicateur.indic_territorialise,
-    frequenceTerritoriale: rawMetadataParametrageIndicateur.frequence_territoriale,
+    frequenceTerritoriale: Number(rawMetadataParametrageIndicateur.frequence_territoriale),
     mailles: rawMetadataParametrageIndicateur.mailles,
     adminSource: rawMetadataParametrageIndicateur.admin_source,
     methodeCollecte: rawMetadataParametrageIndicateur.methode_collecte,
@@ -206,7 +206,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
 
   async modifier(inputs: MetadataParametrageIndicateur): Promise<MetadataParametrageIndicateur> {
     const queryIndicateur = `UPDATE raw_data.metadata_indicateurs_hidden
-                                 SET indic_parent_indic   = '${inputs.indicParentIndic}',
+                                 SET indic_parent_indic   = ${makeStrSafer(inputs.indicParentIndic)},
                                      indic_parent_ch   = '${inputs.indicParentCh}',
                                      indic_nom            = ${makeStrSafer(inputs.indicNom)},
                                      indic_nom_baro       = ${makeStrSafer(inputs.indicNomBaro)},
@@ -262,7 +262,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                              periodicite                = ${makeStrSafer(inputs.periodicite)},
                                              delai_disponibilite              = '${inputs.delaiDisponibilite}',
                                              indic_territorialise                = '${inputs.indicTerritorialise}',
-                                             frequence_territoriale               = ${makeStrSafer(inputs.frequenceTerritoriale)},
+                                             frequence_territoriale               = ${inputs.frequenceTerritoriale},
                                              mailles                 = ${makeStrSafer(inputs.mailles)},
                                              admin_source               = ${makeStrSafer(inputs.adminSource)},
                                              methode_collecte                 = ${makeStrSafer(inputs.methodeCollecte)},
@@ -307,7 +307,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                                             zg_applicable
                                                   )
                                  VALUES ('${inputs.indicId}',
-                                         '${inputs.indicParentIndic}',
+                                         ${makeStrSafer(inputs.indicParentIndic)},
                                          '${inputs.indicParentCh}',
                                          ${makeStrSafer(inputs.indicNom)},
                                          ${makeStrSafer(inputs.indicNomBaro)},
@@ -408,7 +408,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  ${makeStrSafer(inputs.periodicite)}, 
                                                  '${inputs.delaiDisponibilite}', 
                                                  '${inputs.indicTerritorialise}',
-                                                 ${makeStrSafer(inputs.frequenceTerritoriale)}, 
+                                                 ${inputs.frequenceTerritoriale}, 
                                                  ${makeStrSafer(inputs.mailles)},
                                                  ${makeStrSafer(inputs.adminSource)}, 
                                                  ${makeStrSafer(inputs.methodeCollecte)},
@@ -451,7 +451,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                                             indic_schema
                                                   )
                                  VALUES ('${indicateur.indicId}',
-                                         '${indicateur.indicParentIndic}',
+                                         ${makeStrSafer(indicateur.indicParentIndic)},
                                          '${indicateur.indicParentCh}',
                                          ${makeStrSafer(indicateur.indicNom)},
                                          ${makeStrSafer(indicateur.indicNomBaro)},
@@ -468,7 +468,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                          ${indicateur.indicHiddenPilote},
                                          ${makeStrSafer(indicateur.indicSchema)})
                                    ON CONFLICT (indic_id) DO UPDATE
-                                    SET indic_parent_indic = '${indicateur.indicParentIndic}',
+                                    SET indic_parent_indic = ${makeStrSafer(indicateur.indicParentIndic)},
                                        indic_parent_ch = '${indicateur.indicParentCh}',
                                        indic_nom = ${makeStrSafer(indicateur.indicNom)},
                                        indic_nom_baro = ${makeStrSafer(indicateur.indicNomBaro)},
@@ -603,7 +603,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  ${makeStrSafer(indicateur.periodicite)}, 
                                                  '${indicateur.delaiDisponibilite}', 
                                                  '${indicateur.indicTerritorialise}',
-                                                 ${makeStrSafer(indicateur.frequenceTerritoriale)}, 
+                                                 ${indicateur.frequenceTerritoriale}, 
                                                  ${makeStrSafer(indicateur.mailles)},
                                                  ${makeStrSafer(indicateur.adminSource)}, 
                                                  ${makeStrSafer(indicateur.methodeCollecte)},
@@ -623,7 +623,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  periodicite = ${makeStrSafer(indicateur.periodicite)}, 
                                                  delai_disponibilite = '${indicateur.delaiDisponibilite}', 
                                                  indic_territorialise = '${indicateur.indicTerritorialise}',
-                                                 frequence_territoriale = ${makeStrSafer(indicateur.frequenceTerritoriale)}, 
+                                                 frequence_territoriale = ${indicateur.frequenceTerritoriale}, 
                                                  mailles = ${makeStrSafer(indicateur.mailles)},
                                                  admin_source = ${makeStrSafer(indicateur.adminSource)}, 
                                                  methode_collecte = ${makeStrSafer(indicateur.methodeCollecte)},
