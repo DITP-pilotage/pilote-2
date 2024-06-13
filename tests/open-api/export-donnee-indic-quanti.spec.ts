@@ -27,12 +27,12 @@ test('quand on a pas accès au chantier, doit remonter une erreur 403 Forbidden'
 
   await test.step('Vérification message égal "Vous n\'êtes pas autorisé à acceder au chantier CH-039"', async () => {
     expect(await result.json()).toEqual({
-      message: "Vous n\'êtes pas autorisé à acceder au chantier CH-039",
+      message: "Vous n'êtes pas autorisé à acceder au chantier CH-039",
     });
   });
 });
 
-test("Quand on a accès au chantier, doit remonter une erreur 200 OK avec les données de l'indicateur", async ({ playwright }) => {
+test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les données de l'indicateur", async ({ playwright }) => {
   await test.step('Création du context - Authorization Pilote - thierry.gentes@sarthe.gouv.fr - SERVICES_DECONCENTRES_DEPARTEMENT', async () => {
     apiContext = await playwright.request.newContext({
       baseURL: 'http://localhost:3000',
