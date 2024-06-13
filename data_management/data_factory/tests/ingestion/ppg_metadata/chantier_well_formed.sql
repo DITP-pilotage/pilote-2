@@ -28,4 +28,8 @@ WHERE
     -- Etat de publication du chantier
     ch_state NOT IN ('PUBLIE', 'BROUILLON', 'NON_PUBLIE') OR
     -- Zone-groupe applicable
-    zg_applicable NOT SIMILAR TO 'ZG-\d{3}'
+    zg_applicable NOT SIMILAR TO 'ZG-\d{3}' OR
+    -- Mailles de réplication des données: REG->DEPT
+    upper(replicate_val_reg_to) NOT IN ('DEPT') OR
+    -- Mailles de réplication des données: NAT->REG ou NAT->DEPT
+    upper(replicate_val_nat_to) NOT IN ('REG', 'DEPT')
