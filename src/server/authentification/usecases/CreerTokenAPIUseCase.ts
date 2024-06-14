@@ -29,7 +29,7 @@ export class CreerTokenAPIUseCase {
     const tokenAPIInformation = await this.tokenAPIInformationRepository.recupererTokenAPIInformation({ email });
 
     if (tokenAPIInformation) {
-      throw new Error('Un token existe déjà pour cet email');
+      await this.tokenAPIInformationRepository.supprimerTokenAPIInformation({ email });
     }
 
     const token = await this.tokenAPIService.creerTokenAPI({ email });

@@ -14,12 +14,18 @@ import { BandeauInformation } from '@/client/components/_commons/BandeauInformat
 import { useGestionTokenAPI } from '@/components/PageAdminGestionTokenAPI/useGestionTokenAPI';
 import usePageUtilisateur from './usePageUtilisateur';
 
-export default function PageUtilisateur({ utilisateur, tokenAPIInformation  }: PageUtilisateurProps) {
-  const { supprimerUtilisateur, fermerLaModaleDeSuppressionUtilisateur, modificationEstImpossible, donnneContenuBandeau, habilitationsAGenererUnTokenDAuthentification } = usePageUtilisateur(utilisateur);
-  const chemin = [{ nom:'Gestion des comptes', lien:'/admin/utilisateurs' }];
-  const { data : session } = useSession();
+export default function PageUtilisateur({ utilisateur, tokenAPIInformation }: PageUtilisateurProps) {
+  const {
+    supprimerUtilisateur,
+    fermerLaModaleDeSuppressionUtilisateur,
+    modificationEstImpossible,
+    donnneContenuBandeau,
+    habilitationsAGenererUnTokenDAuthentification,
+    vérifierFFTokenAPIEstDisponible,
+  } = usePageUtilisateur(utilisateur);
+  const chemin = [{ nom: 'Gestion des comptes', lien: '/admin/utilisateurs' }];
+  const { data: session } = useSession();
   const { creerTokenAPI, alerte } = useGestionTokenAPI();
-
   return (
     <PageUtilisateurStyled className='fr-pt-2w'>
       <main className='fr-container'>
@@ -46,7 +52,7 @@ export default function PageUtilisateur({ utilisateur, tokenAPIInformation  }: P
               {
                 modificationEstImpossible(session, utilisateur.habilitations, utilisateur.profil) &&
                 <div className='fr-pb-4w'>
-                  <BandeauInformation 
+                  <BandeauInformation
                     bandeauType='INFO'
                     fermable={false}
                   >
@@ -56,19 +62,20 @@ export default function PageUtilisateur({ utilisateur, tokenAPIInformation  }: P
               }
               <FicheUtilisateur utilisateur={utilisateur} />
               {
-                !modificationEstImpossible(session, utilisateur.habilitations, utilisateur.profil) && 
+                !modificationEstImpossible(session, utilisateur.habilitations, utilisateur.profil) &&
                 <div className='fr-grid-row fr-mt-4w'>
                   <Link
                     className='fr-btn fr-mr-2w'
                     href={`/admin/utilisateur/${utilisateur.id}/modifier`}
                   >
                     Modifier
-                  </Link>          
+                  </Link>
                   {
-                    habilitationsAGenererUnTokenDAuthentification(session, utilisateur.profil) ? (
+                    // @ts-expect-error session est forcément not null içi
+                    vérifierFFTokenAPIEstDisponible && habilitationsAGenererUnTokenDAuthentification(session, utilisateur.profil) ? (
                       <button
                         className='fr-btn fr-btn--secondary fr-mr-2w'
-                        onClick={() => creerTokenAPI({ email : utilisateur.email })}
+                        onClick={() => creerTokenAPI({ email: utilisateur.email })}
                         title='Générer un token d’authentification'
                         type='submit'
                       >
@@ -94,14 +101,15 @@ export default function PageUtilisateur({ utilisateur, tokenAPIInformation  }: P
                         />
                       </div>
                     ) : null
-                  } 
-                  { 
+                  }
+                  {
                     tokenAPIInformation ? (
                       <div className='fr-alert fr-alert--info fr-alert--sm fr-mt-2w'>
                         <p className='fr-text--sm'>
-                          Information : Un token est déjà actif pour cet utilisateur. La génération d’un nouveau token supprimera ce token actif.                      
+                          Information : Un token est déjà actif pour cet utilisateur. La génération d’un nouveau token
+                          supprimera ce token actif.
                         </p>
-                      </div> 
+                      </div>
                     ) : null
                   }
                   <Modale
@@ -109,7 +117,7 @@ export default function PageUtilisateur({ utilisateur, tokenAPIInformation  }: P
                     titre='Suppression de compte'
                   >
                     <div>
-                      Vous êtes sur le point de supprimer le compte de 
+                      Vous êtes sur le point de supprimer le compte de
                       {' '}
                       <span className='prénom'>
                         {utilisateur.prénom}
@@ -136,7 +144,6 @@ export default function PageUtilisateur({ utilisateur, tokenAPIInformation  }: P
               }
             </div>
           </Bloc>
-          
         </div>
       </main>
     </PageUtilisateurStyled>
