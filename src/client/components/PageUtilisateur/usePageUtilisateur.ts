@@ -57,11 +57,13 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
   };  
 
   const habilitationsAGenererUnTokenDAuthentification = (session: Session | null, utilisateurProfil: ProfilCode) => {
-    if (!session || process.env.NEXT_PUBLIC_FF_GESTION_TOKEN_API !== 'true' || !['DITP_ADMIN'].includes(session.profil) || !['DIR_PROJET', 'EQUIPE_DIR_PROJET', 'SECRETARIAT_GENERAL'].includes(utilisateurProfil) ) {
+    const PROFIL_ADMIN_AUTORISE_A_MODIFIER = new Set(['DITP_ADMIN']);
+
+    if (!session || process.env.NEXT_PUBLIC_FF_GESTION_TOKEN_API !== 'true' || !PROFIL_ADMIN_AUTORISE_A_MODIFIER.has(session.profil) || !['DIR_PROJET', 'EQUIPE_DIR_PROJET', 'SECRETARIAT_GENERAL'].includes(utilisateurProfil) ) {
       return false;
     }
     
-    if (['DITP_ADMIN'].includes(session.profil)) {
+    if (PROFIL_ADMIN_AUTORISE_A_MODIFIER.has(session.profil)) {
       return true;
     }
   };

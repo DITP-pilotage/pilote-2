@@ -65,7 +65,7 @@ export default function PageUtilisateur({ utilisateur, tokenAPIInformation  }: P
                     Modifier
                   </Link>          
                   {
-                    habilitationsAGenererUnTokenDAuthentification(session, utilisateur.profil) ? 
+                    habilitationsAGenererUnTokenDAuthentification(session, utilisateur.profil) ? (
                       <button
                         className='fr-btn fr-btn--secondary fr-mr-2w'
                         onClick={() => creerTokenAPI({ email : utilisateur.email })}
@@ -74,7 +74,7 @@ export default function PageUtilisateur({ utilisateur, tokenAPIInformation  }: P
                       >
                         Générer un token d’authentification
                       </button>
-                      : null
+                    ) : null
                   }
                   <button
                     aria-controls='supprimer-compte'
@@ -88,18 +88,22 @@ export default function PageUtilisateur({ utilisateur, tokenAPIInformation  }: P
                     alerte ? (
                       <div className='fr-my-2w'>
                         <Alerte
+                          message={alerte.message}
                           titre={alerte.titre}
                           type={alerte.type}
                         />
                       </div>
                     ) : null
                   } 
-                  {tokenAPIInformation ? 
-                    <div className='fr-alert fr-alert--info fr-alert--sm fr-mt-2w'>
-                      <p className='fr-text--sm'>
-                        Information : Un token est déjà actif pour cet utilisateur. La génération d’un nouveau token supprimera ce token actif.                      
-                      </p>
-                    </div> : null}
+                  { 
+                    tokenAPIInformation ? (
+                      <div className='fr-alert fr-alert--info fr-alert--sm fr-mt-2w'>
+                        <p className='fr-text--sm'>
+                          Information : Un token est déjà actif pour cet utilisateur. La génération d’un nouveau token supprimera ce token actif.                      
+                        </p>
+                      </div> 
+                    ) : null
+                  }
                   <Modale
                     idHtml='supprimer-compte'
                     titre='Suppression de compte'

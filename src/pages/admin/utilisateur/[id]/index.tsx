@@ -34,12 +34,12 @@ export async function getServerSideProps({ req, res, params } :GetServerSideProp
     return redirigerVersPageAccueil;
   }
 
-  const recupererTokenAPIInformation = await new RecupererTokenAPIInformationUseCase({ tokenAPIInformationRepository: dependencies.getTokenAPIInformationRepository() }).run({ email : utilisateurDemandé.email });
-  const tokenAPIInformation = JSON.parse(JSON.stringify(recupererTokenAPIInformation));
+  const tokenAPIInformation = await new RecupererTokenAPIInformationUseCase({ tokenAPIInformationRepository: dependencies.getTokenAPIInformationRepository() }).run({ email : utilisateurDemandé.email });
+
   return {
     props: {
       utilisateur: utilisateurDemandé,
-      tokenAPIInformation : tokenAPIInformation,
+      tokenAPIInformation,
     },
   };
 }

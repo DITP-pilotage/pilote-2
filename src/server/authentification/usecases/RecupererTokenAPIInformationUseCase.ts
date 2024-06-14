@@ -1,6 +1,6 @@
 import { TokenAPIInformationRepository } from '@/server/authentification/domain/ports/TokenAPIInformationRepository';
 
-import { TokenAPIInformation } from '@/server/authentification/domain/TokenAPIInformation';
+import { TokenAPIInformationContrat, presenterEnTokenAPIInformationContrat } from '@/server/authentification/app/contrats/TokenAPIInformationContrat';
 
 export class RecupererTokenAPIInformationUseCase {
   private readonly tokenAPIInformationRepository: TokenAPIInformationRepository;
@@ -9,7 +9,8 @@ export class RecupererTokenAPIInformationUseCase {
     this.tokenAPIInformationRepository = tokenAPIInformationRepository;
   }
 
-  async run( { email }: { email:string }):Promise<TokenAPIInformation | null> {
-    return this.tokenAPIInformationRepository.recupererTokenAPIInformation({ email });
+  async run({ email }: { email:string }):Promise<TokenAPIInformationContrat | null> {
+    const tokenApiInformation = await this.tokenAPIInformationRepository.recupererTokenAPIInformation({ email });
+    return tokenApiInformation ? presenterEnTokenAPIInformationContrat(tokenApiInformation) : null ;
   }
 }

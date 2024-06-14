@@ -14,14 +14,6 @@ export type TokenAPIForm = {
 export const useGestionTokenAPI = () => {
   const router = useRouter();
   const [alerte, setAlerte] = useState <AlerteProps | null>(null);
-  const date = new Date();
-  const year = date.getUTCFullYear();
-  const month = date.getUTCMonth();
-  const day = date.getUTCDate();
-  const hours = date.getUTCHours();
-  const minutes = date.getUTCMinutes();
-  const millisecondes = date.getUTCMilliseconds();
-  const expirationDate = new Date(year + 1, month, day, hours, minutes, millisecondes);
 
   const reactHookForm = useForm<TokenAPIForm>({
     resolver: zodResolver(validationCreationTokenAPI),
@@ -35,9 +27,10 @@ export const useGestionTokenAPI = () => {
         return error;
       }
 
-      await setAlerte({
+      setAlerte({
         type: 'succès',
-        titre : `Le token d’authentification est généré pour cet utilisateur et est sauvegardé dans votre presse-papier. Ce token est valable jusqu’au ${expirationDate}`,
+        titre : 'Le token d’authentification est généré pour cet utilisateur et est sauvegardé dans votre presse-papier.',
+        message: result,
       });
     },
     onError: error => {
