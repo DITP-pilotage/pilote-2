@@ -174,6 +174,16 @@ Pour exécuter les datajobs via Docker, voir [run_datajobs_docker.sh](./run_data
 FORCE_ENVIRONMENT_DATAJOBS="" # PRODUCTION, DEV, PREPROD
 ```
 
+### Linting des données
+
+L'outil `SQLFluff` permet d'avoir une écriture consistente du code SQL. Pour lancer le linter sur un fichier:
+
+```sh
+# Lancer le linter
+pipenv run sqlfluff lint <path-to-file>
+# Corriger les erreurs
+pipenv run sqlfluff fix <path-to-file>
+```
 
 ## Hypothèses actuelles pour les transformations
 
