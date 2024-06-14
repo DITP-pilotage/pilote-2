@@ -18,6 +18,11 @@ synthese_triee_par_date AS (
     FROM {{ source('db_schema_public', 'synthese_des_resultats') }}
 ),
 
+-- Indique la date de météo la plus récente
+synthese_triee_par_date_last1 AS (
+    SELECT * FROM synthese_triee_par_date WHERE row_id_by_date_meteo_desc = 1
+),
+
 chantier_est_barometre AS (
     SELECT
         m_indicateurs.chantier_id,
@@ -26,49 +31,17 @@ chantier_est_barometre AS (
     GROUP BY m_indicateurs.chantier_id
 ),
 
-indicateurs_zones AS (
-    SELECT DISTINCT
-        spmi.id AS indic_id,
-        chantier_id,
-        zones.id AS zone_id
-    FROM {{ ref('stg_ppg_metadata__indicateurs') }} AS spmi
-    CROSS JOIN (
-        SELECT DISTINCT id
-        FROM {{ ref('stg_ppg_metadata__zones') }}
-    ) AS zones
-),
-
-indicateurs_zones_applicables AS (
-    SELECT DISTINCT
-        iz.indic_id,
-        iz.chantier_id,
-        iz.zone_id,
-        COALESCE(iiza.est_applicable, TRUE) AS est_applicable
-    FROM indicateurs_zones AS iz
-    LEFT JOIN {{ ref('int_indicateurs_zones_applicables') }} AS iiza
-        ON iz.indic_id = iiza.indic_id AND iz.zone_id = iiza.zone_id
-),
-
-chantiers_zones_applicables AS (
-    SELECT
-        chantier_id,
-        zone_id,
-        BOOL_OR(est_applicable) AS est_applicable
-    FROM indicateurs_zones_applicables
-    GROUP BY chantier_id, zone_id
-),
-
 -- Indique pour chaque chantier s'il existe un TA à chaque maille
 ch_maille_has_ta_pivot_clean AS (
     SELECT
         a.chantier_id,
-        BOOL_OR(tag_ch IS NOT NULL) FILTER (
+        BOOL_OR(a.tag_ch IS NOT NULL) FILTER (
             WHERE z.zone_type = 'DEPT'
         ) AS has_ta_dept,
-        BOOL_OR(tag_ch IS NOT NULL) FILTER (
+        BOOL_OR(a.tag_ch IS NOT NULL) FILTER (
             WHERE z.zone_type = 'REG'
         ) AS has_ta_reg,
-        BOOL_OR(tag_ch IS NOT NULL) FILTER (
+        BOOL_OR(a.tag_ch IS NOT NULL) FILTER (
             WHERE z.zone_type = 'NAT'
         ) AS has_ta_nat
     FROM {{ ref('compute_ta_ch') }} AS a
@@ -76,23 +49,23 @@ ch_maille_has_ta_pivot_clean AS (
         {{ source('db_schema_public', 'territoire') }} AS t
         ON a.territoire_code = t.code
     LEFT JOIN {{ ref('metadata_zones') }} AS z ON t.zone_id = z.zone_id
-    GROUP BY chantier_id
+    GROUP BY a.chantier_id
 ),
 
 -- Indique pour chaque chantier s'il existe une météo à chaque maille
 ch_has_meteo AS (
     SELECT
-        a.chantier_id,
+        chantier_id,
         BOOL_OR(meteo IS NOT NULL) FILTER (
-            WHERE a.maille = 'DEPT'
+            WHERE maille = 'DEPT'
         ) AS has_meteo_dept,
         BOOL_OR(meteo IS NOT NULL) FILTER (
-            WHERE a.maille = 'REG'
+            WHERE maille = 'REG'
         ) AS has_meteo_reg,
         BOOL_OR(meteo IS NOT NULL) FILTER (
-            WHERE a.maille = 'NAT'
+            WHERE maille = 'NAT'
         ) AS has_meteo_nat
-    FROM synthese_triee_par_date AS a
+    FROM synthese_triee_par_date
     GROUP BY chantier_id
 ),
 
@@ -191,15 +164,15 @@ SELECT
     CASE
         -- values replicated REG->DEPT
         WHEN
-            UPPER(replicate_val_reg_to) = 'DEPT' AND z.zone_type = 'DEPT'
+            UPPER(mc.replicate_val_reg_to) = 'DEPT' AND z.zone_type = 'DEPT'
             THEN 'reg'::maille
         -- values replicated NAT->DEPT
         WHEN
-            UPPER(replicate_val_nat_to) = 'DEPT' AND z.zone_type = 'DEPT'
+            UPPER(mc.replicate_val_nat_to) = 'DEPT' AND z.zone_type = 'DEPT'
             THEN 'nat'::maille
         -- values replicated NAT->REG
         WHEN
-            UPPER(replicate_val_nat_to) = 'REG' AND z.zone_type = 'REG'
+            UPPER(mc.replicate_val_nat_to) = 'REG' AND z.zone_type = 'REG'
             THEN 'reg'::maille
     END AS values_replicated_from
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS mc
@@ -215,16 +188,12 @@ LEFT JOIN
     {{ ref('int_coordinateurs_territoriaux') }} AS coord_territoriaux
     ON t.code = coord_territoriaux.territoire_code
 LEFT JOIN {{ ref('metadata_zones') }} AS z ON t.zone_id = z.zone_id
---left join {{ ref('metadata_porteurs') }} po on mc."porteur_ids_DAC"=po.porteur_id
+--LEFT JOIN {{ ref('metadata_porteurs') }} AS po 
+--  ON mc."porteur_ids_DAC" = po.porteur_id
 LEFT JOIN
     ch_unnest_porteurs_dac_pnames_agg AS p_names
     ON mc.id = p_names.chantier_id
-LEFT JOIN
-    (
-        SELECT *
-        FROM synthese_triee_par_date
-        WHERE row_id_by_date_meteo_desc = 1
-    ) AS sr
+LEFT JOIN synthese_triee_par_date_last1 AS sr
     ON
         mc.id = sr.chantier_id
         AND z.zone_type = sr.maille
