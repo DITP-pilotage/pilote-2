@@ -7,29 +7,33 @@
     meta={"is_demo": "false"}
 ) }}
 
-SELECT * FROM {{ref('metadata_chantiers')}} 
-WHERE 
+SELECT * FROM {{ ref('metadata_chantiers') }}
+WHERE
     -- ID match regex 'CH-XXX'
-    chantier_id NOT SIMILAR TO 'CH-\d\d\d' OR
+    chantier_id NOT SIMILAR TO 'CH-\d\d\d'
     -- le chantier a un nom
-    ch_nom is NULL OR
+    OR ch_nom IS NULL
     -- le dp n'est pas vide (meme si cette valeur n'est plus utilisée)
-    ch_dp is NULL OR
+    OR ch_dp IS NULL
     -- ID PPG bien formé
-    ch_ppg NOT SIMILAR TO 'PPG-(\d|[A-Z]){1,3}' OR
+    OR ch_ppg NOT SIMILAR TO 'PPG-(\d|[A-Z]){1,3}'
     -- Trigramme RP correct ou NULL
-    (ch_perseverant NOT SIMILAR TO '[A-Z]{3}' AND ch_perseverant IS NOT NULL) OR
+    OR (ch_perseverant NOT SIMILAR TO '[A-Z]{3}' AND ch_perseverant IS NOT NULL)
     -- ID périmètre
-    ch_per NOT SIMILAR TO 'PER-\d{3}' OR
+    OR ch_per NOT SIMILAR TO 'PER-\d{3}'
     -- engagement gouv OK
-    engagement_short NOT IN ('EMPLOI', 'TE', 'PROGRES', 'EMPLOI', 'ENGAG', 'TODO') OR
+    OR engagement_short NOT IN (
+        'EMPLOI', 'TE', 'PROGRES', 'EMPLOI', 'ENGAG', 'TODO'
+    )
     -- saisie ATE vérification
-    ch_saisie_ate NOT IN ('ATE', 'HORS_ATE_DECONCENTRE', 'HORS_ATE_CENTRALISE') OR
+    OR ch_saisie_ate NOT IN (
+        'ATE', 'HORS_ATE_DECONCENTRE', 'HORS_ATE_CENTRALISE'
+    )
     -- Etat de publication du chantier
-    ch_state NOT IN ('PUBLIE', 'BROUILLON', 'NON_PUBLIE') OR
+    OR ch_state NOT IN ('PUBLIE', 'BROUILLON', 'NON_PUBLIE')
     -- Zone-groupe applicable
-    zg_applicable NOT SIMILAR TO 'ZG-\d{3}' OR
+    OR zg_applicable NOT SIMILAR TO 'ZG-\d{3}'
     -- Mailles de réplication des données: REG->DEPT
-    upper(replicate_val_reg_to) NOT IN ('DEPT') OR
+    OR upper(replicate_val_reg_to) NOT IN ('DEPT')
     -- Mailles de réplication des données: NAT->REG ou NAT->DEPT
-    upper(replicate_val_nat_to) NOT IN ('REG', 'DEPT')
+    OR upper(replicate_val_nat_to) NOT IN ('REG', 'DEPT')
