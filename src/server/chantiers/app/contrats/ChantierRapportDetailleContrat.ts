@@ -195,7 +195,7 @@ export const presenterEnChantierRapportDetaille = (territoireCode: string) => (c
     responsableLocalTerritoireSélectionné:  mailles[mailleChantier][codeInsee].responsableLocal,
     coordinateurTerritorialTerritoireSélectionné:  mailles[mailleChantier][codeInsee].coordinateurTerritorial,
     dateDeMàjDonnéesQuantitatives: mailles[mailleChantier][codeInsee].dateDeMàjDonnéesQuantitatives,
-    dateDeMàjDonnéesQualitatives: mailles[mailleChantier][codeInsee].dateDeMàjDonnéesQuantitatives,
+    dateDeMàjDonnéesQualitatives: mailles[mailleChantier][codeInsee].dateDeMàjDonnéesQualitatives,
     écart: mailles[mailleChantier][codeInsee].écart,
     tendance: mailles[mailleChantier][codeInsee].tendance,
     météo: mailles[mailleChantier][codeInsee].météo,
