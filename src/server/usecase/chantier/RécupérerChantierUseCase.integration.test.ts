@@ -212,7 +212,7 @@ describe('RécupérerChantierUseCase', () => {
     expect(result.estBaromètre).toBe(true);
   });
 
-  test("Contient l'écart entre avec le taux d'avancement du territoire et celui du territoire national", async () => {
+  test("Contient l'écart entre avec le taux d'avancement du territoire et la médiane à la maille du territoire", async () => {
     // GIVEN
     const chantierId = 'CH-001';
 
@@ -224,20 +224,26 @@ describe('RécupérerChantierUseCase', () => {
           .avecId(chantierId).avecMaille('REG').avecCodeInsee('01').avecTauxAvancement(80).build(),
         new ChantierSQLRowBuilder()
           .avecId(chantierId).avecMaille('REG').avecCodeInsee('02').avecTauxAvancement(null).build(),
+        new ChantierSQLRowBuilder()
+          .avecId(chantierId).avecMaille('REG').avecCodeInsee('03').avecTauxAvancement(10).build(),
+        new ChantierSQLRowBuilder()
+          .avecId(chantierId).avecMaille('REG').avecCodeInsee('04').avecTauxAvancement(50).build(),
       ],
     });
 
     const habilitation = { lecture: {
       chantiers: ['CH-001'],
-      territoires: ['NAT-FR', 'REG-01', 'REG-02'],
+      territoires: ['NAT-FR', 'REG-01', 'REG-02', 'REG-03', 'REG-04'],
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
     const result = await récupérerChantierUseCase.run(chantierId, habilitation, profil);
 
     // THEN
-    expect(result.mailles.régionale['01'].écart).toEqual(5);
+    expect(result.mailles.régionale['01'].écart).toEqual(30);
     expect(result.mailles.régionale['02'].écart).toBeNull();
+    expect(result.mailles.régionale['03'].écart).toEqual(-40);
+    expect(result.mailles.régionale['04'].écart).toEqual(0);
   });
 
   test("Contient la tendance du taux d'avancement du chantier", async () => {

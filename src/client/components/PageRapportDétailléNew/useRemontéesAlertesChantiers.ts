@@ -29,7 +29,7 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
 
   const alerteEcart = {
     nomCritère: 'estEnAlerteÉcart',
-    libellé: 'Retard supérieur de 10 points par rapport à la moyenne nationale',
+    libellé: `Retard de 10 points par rapport à la médiane ${mailleChantier}`,
     nombre: filtresComptesCalculés.estEnAlerteÉcart.nombre,
     estActivée: filtresAlertes.estEnAlerteÉcart,
   };
