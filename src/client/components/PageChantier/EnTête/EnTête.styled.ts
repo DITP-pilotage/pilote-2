@@ -11,7 +11,7 @@ const PageChantierEnTêteStyled = styled.header`
     color: var(--text-title-blue-france);
   }
 
-  .sectionEnTeteReponsablesChantiers {
+  .section-responsables-chantiers {
     color: var(--text-title-blue-france);
   }
   

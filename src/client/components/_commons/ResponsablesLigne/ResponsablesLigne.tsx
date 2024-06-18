@@ -16,7 +16,7 @@ export default function ResponsablesLigne({ libellé, contenu, estEnTeteDePageCh
     <div>
       { estEnTeteDePageChantier ? 
         (
-          <p className='sectionEnTeteReponsablesChantiers fr-text--sm fr-mb-0'>
+          <p className='fr-text--sm fr-mb-0 section-responsables-chantiers'>
             <strong> 
               { libellé }            
             </strong>
