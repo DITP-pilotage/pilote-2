@@ -20,10 +20,16 @@ export const useGestionTokenAPI = () => {
   });
 
   const mutationCreerTokenAPI = api.gestionTokenAPI.creerTokenAPI.useMutation({
-    onSuccess: (result) => {
+    onSuccess: async (result) => {
+      try {
+        await navigator.clipboard.writeText(result);
+      } catch (error) {
+        return error;
+      }
+
       setAlerte({
         type: 'succès',
-        titre : 'Création réussie, vous pouvez copier le token API',
+        titre : 'Le token d’authentification est généré pour cet utilisateur et est sauvegardé dans votre presse-papier.',
         message: result,
       });
     },
