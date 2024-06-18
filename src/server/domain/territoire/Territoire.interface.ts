@@ -39,6 +39,7 @@ export type TerritoireDonnées = {
   estApplicable: boolean | null,
   responsableLocal: ResponsableLocal[],
   coordinateurTerritorial: CoordinateurTerritorial[],
+  mailleSourceDonnees: Maille | null;
 };
 
 export type Territoire = {

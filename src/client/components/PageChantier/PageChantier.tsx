@@ -21,6 +21,8 @@ import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import IndicateursChantier from '@/components/_commons/IndicateursChantier/IndicateursChantier';
 import { listeRubriquesChantier, listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
+import Alerte from '@/client/components/_commons/Alerte/Alerte';
+import { BandeauInformation } from '@/client/components/_commons/BandeauInformation';
 import ResponsablesPageChantier from '@/components/PageChantier/ResponsablesChantier/ResponsablesChantier';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
@@ -107,6 +109,8 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
   }, false);
 
 
+  const mailleSourceDonnees = chantier.mailles[territoireSélectionné.maille][territoireSélectionné.codeInsee].mailleSourceDonnees;
+
   return (
     <PageChantierStyled className='flex'>
       <BarreLatérale
@@ -168,6 +172,12 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
               titre='Mise à jour des données requises : '
             />
         }
+              <BandeauInformation 
+                bandeauType='INFO'
+                fermable={false}
+              >
+                Données régionales : cette politique prioritaire fait l’objet d’un pilotage régional avec des données régionales. Les valeurs des indicateurs régionaux sont reportés à la maille départementale.
+              </BandeauInformation>
         <div className='fr-container--fluid fr-py-2w fr-px-md-2w'>
           <div
             className={`grid-template ${territoireSélectionné.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}
@@ -284,6 +294,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     afficheCarteAvancement={!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSelectionnee] || chantier.estTerritorialisé}
                     afficheCarteMétéo={!!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] || chantier.estTerritorialisé}
                     chantierMailles={chantier.mailles}
+                          mailleSourceDonnees={mailleSourceDonnees}
                     mailleSelectionnee={mailleSelectionnee}
                     territoireCode={territoireCode}
                   />
@@ -333,6 +344,15 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   >
                     Indicateurs
                   </Titre>
+                        {
+                          mailleSourceDonnees === 'régionale' &&
+                            <Alerte
+                              classesSupplementaires='fr-mb-2w'
+                              message='Cette politique prioritaire fait l’objet d’un pilotage régional avec des données régionales. Les valeurs des indicateurs régionaux sont reportés à la maille départementale.'
+                              titre='Données régionales'
+                              type='info'
+                            />
+                        }
                   <IndicateursChantier
                     alerteMiseAJourIndicateur={alerteMiseAJourIndicateur}
                     chantierEstTerritorialisé={chantier.estTerritorialisé}
@@ -399,6 +419,15 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   }
                 </Infobulle>
               </TitreInfobulleConteneur>
+                    {
+                      mailleSourceDonnees === 'régionale' &&
+                        <Alerte
+                          classesSupplementaires='fr-mb-2w'
+                          message='Commentaires facultatifs mais souhaités pour apporter un éclairage départemental au pilotage régional.'
+                          titre='Données régionales'
+                          type='info'
+                        />
+                    }
               <Commentaires
                 commentaires={commentaires[chantier.id]}
                 maille={territoireSélectionné.maille}
