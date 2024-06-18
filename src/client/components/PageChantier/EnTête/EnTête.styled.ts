@@ -10,10 +10,6 @@ const PageChantierEnTêteStyled = styled.header`
   h1 {
     color: var(--text-title-blue-france);
   }
-
-  .section-responsables-chantiers {
-    color: var(--text-title-blue-france);
-  }
   
   @media print {
     margin-top: 1rem;
