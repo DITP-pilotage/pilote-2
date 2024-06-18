@@ -174,7 +174,7 @@ SELECT
         WHEN
             UPPER(mc.replicate_val_nat_to) = 'REG' AND z.zone_type = 'REG'
             THEN 'reg'::maille
-    END AS values_replicated_from
+    END AS donnees_maille_source
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS mc
 -- On dupplique les lignes chantier pour chaque territoire
 CROSS JOIN {{ source('db_schema_public', 'territoire') }} AS t

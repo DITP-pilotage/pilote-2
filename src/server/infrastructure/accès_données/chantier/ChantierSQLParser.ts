@@ -66,7 +66,7 @@ function créerDonnéesTerritoires(
       dateDeMàjDonnéesQuantitatives: chantierRow?.taux_avancement_date?.toISOString()  ?? null,
       responsableLocal: [],
       coordinateurTerritorial: [],
-      mailleSourceDonnees: chantierRow?.values_replicated_from ? NOMS_MAILLES[chantierRow.values_replicated_from] : null,
+      mailleSourceDonnees: chantierRow?.donnees_maille_source ? NOMS_MAILLES[chantierRow.donnees_maille_source] : null,
     };
 
     if (!!chantierRow) {
