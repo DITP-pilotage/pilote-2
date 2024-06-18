@@ -18,6 +18,7 @@ export const VARIABLE_CONTENU_DISPONIBLE_ENV = [
   'NEXT_PUBLIC_FF_FICHE_CONDUCTEUR',
   'NEXT_PUBLIC_FF_GESTION_TOKEN_API',
   'NEXT_PUBLIC_FF_TA_ANNUEL',
+  'NEXT_PUBLIC_FF_SUIVI_COMPLETUDE',
 ] as const;
 
 export type VariableContenuDisponibleEnv = {
@@ -34,4 +35,5 @@ export type VariableContenuDisponibleEnv = {
   NEXT_PUBLIC_FF_FICHE_CONDUCTEUR: boolean
   NEXT_PUBLIC_FF_GESTION_TOKEN_API: boolean
   NEXT_PUBLIC_FF_TA_ANNUEL: boolean
+  NEXT_PUBLIC_FF_SUIVI_COMPLETUDE: boolean
 };

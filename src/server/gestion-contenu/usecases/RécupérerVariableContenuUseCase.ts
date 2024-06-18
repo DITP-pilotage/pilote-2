@@ -44,6 +44,9 @@ export class RécupérerVariableContenuUseCase {
       case 'NEXT_PUBLIC_FF_TA_ANNUEL': {
         return configuration.featureFlip.taAnnuel as VariableContenuDisponibleEnv[T];
       }
+      case 'NEXT_PUBLIC_FF_SUIVI_COMPLETUDE': {
+        return configuration.featureFlip.suiviCompletude as VariableContenuDisponibleEnv[T];
+      }
     }
   }
 }
