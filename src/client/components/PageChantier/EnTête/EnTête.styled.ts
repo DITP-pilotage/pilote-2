@@ -10,6 +10,10 @@ const PageChantierEnTêteStyled = styled.header`
   h1 {
     color: var(--text-title-blue-france);
   }
+
+  .sectionEnTeteReponsablesChantiers {
+    color: var(--text-title-blue-france);
+  }
   
   @media print {
     margin-top: 1rem;
