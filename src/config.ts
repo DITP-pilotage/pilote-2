@@ -195,6 +195,11 @@ const config = convict({
       default: false,
       env: 'NEXT_PUBLIC_FF_GESTION_TOKEN_API',
     },
+    suiviCompletude: {
+      format: Boolean,
+      default: false,
+      env: 'NEXT_PUBLIC_FF_SUIVI_COMPLETUDE',
+    },
   },
   analytics: {
     matomoURL: {

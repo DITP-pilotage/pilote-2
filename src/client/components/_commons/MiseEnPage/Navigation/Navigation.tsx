@@ -35,11 +35,17 @@ const estAutoriséAAccéderALaGestionDesComptes = (session: Session | null) => {
   return habilitations.peutCréerEtModifierUnUtilisateur();
 };
 
+const estAdministrateurOuPilotage = (session: Session) => {
+  return ['DITP_ADMIN', 'DITP_PILOTAGE'].includes(session?.profil);
+};
+
 const useNavigation = () => {
   const { data: applicationEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE' });
+  const { data: suiviCompletudeEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_SUIVI_COMPLETUDE' });
 
   return {
     vérifierValeurApplicationEstIndisponible: applicationEstDisponible,
+    vérifierSuiviCompletudeEstDisponibleEstIndisponible: suiviCompletudeEstDisponible,
   };
 };
 
@@ -48,7 +54,10 @@ export default function Navigation() {
   const router = useRouter();
   const urlActuelle = router.pathname;
 
-  const { vérifierValeurApplicationEstIndisponible } = useNavigation();
+  const {
+    vérifierValeurApplicationEstIndisponible,
+    vérifierSuiviCompletudeEstDisponibleEstIndisponible,
+  } = useNavigation();
 
   if (vérifierValeurApplicationEstIndisponible && !estAutoriséAParcourirSiIndisponible(session) && urlActuelle !== '/503') {
     router.push('/503');
@@ -97,6 +106,14 @@ export default function Navigation() {
       lien: '/centreaide',
       matcher: '/centreaide',
       accessible: true,
+      prefetch: false,
+      target: '_blank',
+    },
+    {
+      nom: 'Suivi de la complétude',
+      lien: 'https://copilot-metabase.osc-secnum-fr1.scalingo.io/',
+      matcher: '/suivicompletude',
+      accessible: vérifierSuiviCompletudeEstDisponibleEstIndisponible && estAdministrateurOuPilotage(session!),
       prefetch: false,
       target: '_blank',
     },
