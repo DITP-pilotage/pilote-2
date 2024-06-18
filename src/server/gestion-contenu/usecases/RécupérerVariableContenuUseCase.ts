@@ -38,6 +38,9 @@ export class RécupérerVariableContenuUseCase {
       case 'NEXT_PUBLIC_FF_FICHE_CONDUCTEUR': {
         return configuration.featureFlip.ficheConducteur as VariableContenuDisponibleEnv[T];
       }
+      case 'NEXT_PUBLIC_FF_GESTION_TOKEN_API': {
+        return configuration.featureFlip.gestionTokenAPI as VariableContenuDisponibleEnv[T];
+      }
       case 'NEXT_PUBLIC_FF_TA_ANNUEL': {
         return configuration.featureFlip.taAnnuel as VariableContenuDisponibleEnv[T];
       }
