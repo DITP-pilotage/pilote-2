@@ -22,7 +22,6 @@ import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleContene
 import IndicateursChantier from '@/components/_commons/IndicateursChantier/IndicateursChantier';
 import { listeRubriquesChantier, listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
 import Alerte from '@/client/components/_commons/Alerte/Alerte';
-import { BandeauInformation } from '@/client/components/_commons/BandeauInformation';
 import ResponsablesPageChantier from '@/components/PageChantier/ResponsablesChantier/ResponsablesChantier';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
@@ -48,6 +47,7 @@ import Cartes from './Cartes/Cartes';
 import PageChantierStyled from './PageChantier.styled';
 import usePageChantier from './usePageChantier';
 import DécisionsStratégiques from './DécisionsStratégiques/DécisionsStratégiques';
+import BandeauInformation from '../_commons/BandeauInformation/BandeauInformation';
 
 interface PageChantierProps {
   indicateurs: Indicateur[]
@@ -172,12 +172,15 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
               titre='Mise à jour des données requises : '
             />
         }
-              <BandeauInformation 
-                bandeauType='INFO'
-                fermable={false}
-              >
-                Données régionales : cette politique prioritaire fait l’objet d’un pilotage régional avec des données régionales. Les valeurs des indicateurs régionaux sont reportés à la maille départementale.
-              </BandeauInformation>
+              {
+                mailleSourceDonnees === 'régionale' &&
+                <BandeauInformation 
+                  bandeauType='INFO'
+                  fermable={false}
+                >
+                  Données régionales : cette politique prioritaire fait l’objet d’un pilotage régional avec des données régionales. Les valeurs des indicateurs régionaux sont reportés à la maille départementale.
+                </BandeauInformation>
+              }
         <div className='fr-container--fluid fr-py-2w fr-px-md-2w'>
           <div
             className={`grid-template ${territoireSélectionné.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}
