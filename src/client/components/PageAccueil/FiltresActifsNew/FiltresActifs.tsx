@@ -145,7 +145,7 @@ export default function FiltresActifs({ ministères, axes, mailleSelectionnee }:
           filtres.estEnAlerteÉcart ? (
             <li>
               <Tag
-                libellé={`Retard de 10 points par rapport à la médiane ${mailleSelectionnee}`}
+                libellé={`Chantier(s) avec un retard de 10 points par rapport à leur médiane ${mailleSelectionnee}`}
                 suppressionCallback={() => {
                   filtres.estEnAlerteÉcart = false;
 
