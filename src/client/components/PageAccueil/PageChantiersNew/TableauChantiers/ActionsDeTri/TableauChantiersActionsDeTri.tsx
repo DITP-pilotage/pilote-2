@@ -11,6 +11,14 @@ const listeColonnesÀtrier = [
     libellé: 'Météo',
     colonneId: 'météo',
   },
+  {
+    libellé: 'Mise à jour des données',
+    colonneId: 'météo',
+  },
+  {
+    libellé: 'Mise à jour de la météo et synthèse des résultats',
+    colonneId: 'météo',
+  },
 ];
 
 export default function TableauChantiersActionsDeTri({

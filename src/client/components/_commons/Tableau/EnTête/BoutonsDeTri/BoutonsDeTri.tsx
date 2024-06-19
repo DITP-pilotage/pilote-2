@@ -9,6 +9,7 @@ export default function BoutonsDeTri({ nomColonneÀTrier, directionDeTri, change
         aria-label={`trier la colonne "${nomColonneÀTrier}" par ordre croissant`}
         className={`${directionDeTri === 'asc' ? 'actif' : ''} bouton-de-tri fr-mr-1v`}
         onClick={() => directionDeTri === 'asc' ? changementDirectionDeTriCallback(false) : changementDirectionDeTriCallback('asc')}
+        title='Tri par ordre croissant'
         type='button'
       >
         <FlècheDeTri
@@ -20,6 +21,7 @@ export default function BoutonsDeTri({ nomColonneÀTrier, directionDeTri, change
         aria-label={`trier la colonne "${nomColonneÀTrier}" par ordre décroissant`}
         className={`${directionDeTri === 'desc' ? 'actif' : ''} bouton-de-tri`}
         onClick={() => directionDeTri === 'desc' ? changementDirectionDeTriCallback(false) : changementDirectionDeTriCallback('desc')}
+        title='Tri par ordre décroissant'
         type='button'
       >
         <FlècheDeTri

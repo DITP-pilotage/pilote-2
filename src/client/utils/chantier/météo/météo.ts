@@ -10,8 +10,8 @@ export function comparerMétéo(a: Météo, b: Météo) {
   if (indexB === -1)
     return 1;
   if (indexA < indexB)
-    return -1;
-  if (indexA > indexB)
     return 1;
+  if (indexA > indexB)
+    return -1;
   return 0;
 }
