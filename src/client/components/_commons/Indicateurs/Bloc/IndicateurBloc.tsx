@@ -16,6 +16,7 @@ import ResultatValidationFichier
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { IndicateurPondération } from '@/components/_commons/Indicateurs/Bloc/Pondération/IndicateurPondération';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
+import api from '@/server/infrastructure/api/trpc/api';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 
@@ -40,7 +41,9 @@ export default function IndicateurBloc({
   } = useIndicateurBloc(détailsIndicateur, typeDeRéforme, territoireProjetStructurant);
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
 
-  const estIndicateurEnAlerte = détailsIndicateur[territoireSélectionné!.codeInsee].estAJour === false && détailsIndicateur[territoireSélectionné!.codeInsee]?.prochaineDateMaj !== null;
+  const { data: alerteMiseAJourIndicateurEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR' });
+
+  const estIndicateurEnAlerte = !!alerteMiseAJourIndicateurEstDisponible && détailsIndicateur[territoireSélectionné!.codeInsee].estAJour === false && détailsIndicateur[territoireSélectionné!.codeInsee]?.prochaineDateMaj !== null;
 
   return (
     <IndicateurBlocStyled

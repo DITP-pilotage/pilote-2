@@ -47,6 +47,9 @@ export class RécupérerVariableContenuUseCase {
       case 'NEXT_PUBLIC_FF_SUIVI_COMPLETUDE': {
         return configuration.featureFlip.suiviCompletude as VariableContenuDisponibleEnv[T];
       }
+      case 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR': {
+        return configuration.featureFlip.alerteMAJIndicateur as VariableContenuDisponibleEnv[T];
+      }
     }
   }
 }

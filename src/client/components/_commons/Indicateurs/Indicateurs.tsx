@@ -5,6 +5,7 @@ import IndicateursStyled from '@/components/_commons/Indicateurs/Indicateurs.sty
 import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import Alerte from '@/components/_commons/Alerte/Alerte';
+import api from '@/server/infrastructure/api/trpc/api';
 
 
 export default function Indicateurs({
@@ -19,7 +20,9 @@ export default function Indicateurs({
 }: IndicateursProps) {
   const CodeInseeSélectionnée = territoireSélectionnéTerritoiresStore()?.codeInsee;
 
-  const alerteMiseAJourIndicateur = Object.values(détailsIndicateurs).flatMap(values => Object.values(values)).reduce((acc, val) => {
+  const { data: alerteMiseAJourIndicateurEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR' });
+
+  const alerteMiseAJourIndicateur = !!alerteMiseAJourIndicateurEstDisponible && Object.values(détailsIndicateurs).flatMap(values => Object.values(values)).reduce((acc, val) => {
     return val.estAJour === false || val.prochaineDateMaj === null && val.dateValeurActuelle !== null ? true : acc;
   }, false);
 
