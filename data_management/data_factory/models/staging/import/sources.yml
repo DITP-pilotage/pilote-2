@@ -246,7 +246,8 @@ sources:
                 { "order_id": 18, "value": "ZG-018", "name": "Toutes zones sauf Mayotte", "desc": "Tous départements et régions Hexagone et OM, hors Mayotte" },
                 { "order_id": 19, "value": "ZG-019", "name": "Toutes zones métropole", "desc": "Tous départements et régions Hexagone" },
                 { "order_id": 20, "value": "ZG-020", "name": "50 sites + émetteurs", "desc": "Territoires des 50 sites industriels les plus émetteurs" },
-                { "order_id": 21, "value": "ZG-021", "name": "Force aux Frontières", "desc": "Territoires de la PPG « Force aux Frontières »" }
+                { "order_id": 21, "value": "ZG-021", "name": "Force aux Frontières", "desc": "Territoires de la PPG « Force aux Frontières »" },
+                { "order_id": 22, "value": "ZG-022", "name": "Stationnement vélo sécurisé en gare", "desc": "Territoires de l'indicateur Places de stationnement vélo sécurisé en gare (IND-215) de la PPG « Amplifier le plan vélo »" }
               ]
               pilote_create_mandatory: false
               pilote_create_defaultValue: ""
