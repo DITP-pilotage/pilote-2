@@ -28,6 +28,7 @@ export default function IndicateurBloc({
   typeDeRéforme,
   chantierEstTerritorialisé,
   estDisponibleALImport = false,
+  estAutoriseAVoirLesAlertesMAJIndicateurs = false,
 }: IndicateurBlocProps) {
   const router = useRouter();
   const réformeId = router.query.id as string;
@@ -43,7 +44,7 @@ export default function IndicateurBloc({
 
   const { data: alerteMiseAJourIndicateurEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR' });
 
-  const estIndicateurEnAlerte = !!alerteMiseAJourIndicateurEstDisponible && détailsIndicateur[territoireSélectionné!.codeInsee].estAJour === false && détailsIndicateur[territoireSélectionné!.codeInsee]?.prochaineDateMaj !== null;
+  const estIndicateurEnAlerte = estAutoriseAVoirLesAlertesMAJIndicateurs && !!alerteMiseAJourIndicateurEstDisponible && détailsIndicateur[territoireSélectionné!.codeInsee].estAJour === false && détailsIndicateur[territoireSélectionné!.codeInsee]?.prochaineDateMaj !== null;
 
   return (
     <IndicateurBlocStyled

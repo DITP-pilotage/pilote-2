@@ -7,7 +7,6 @@ import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerr
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import api from '@/server/infrastructure/api/trpc/api';
 
-
 export default function Indicateurs({
   indicateurs,
   détailsIndicateurs,
@@ -17,12 +16,13 @@ export default function Indicateurs({
   chantierEstTerritorialisé,
   estDisponibleALImport = false,
   estInteractif = true,
+  estAutoriseAVoirLesAlertesMAJIndicateurs = false,
 }: IndicateursProps) {
   const CodeInseeSélectionnée = territoireSélectionnéTerritoiresStore()?.codeInsee;
 
   const { data: alerteMiseAJourIndicateurEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR' });
 
-  const alerteMiseAJourIndicateur = !!alerteMiseAJourIndicateurEstDisponible && Object.values(détailsIndicateurs).flatMap(values => Object.values(values)).reduce((acc, val) => {
+  const alerteMiseAJourIndicateur = estAutoriseAVoirLesAlertesMAJIndicateurs && !!alerteMiseAJourIndicateurEstDisponible && Object.values(détailsIndicateurs).flatMap(values => Object.values(values)).reduce((acc, val) => {
     return val.estAJour === false || val.prochaineDateMaj === null && val.dateValeurActuelle !== null ? true : acc;
   }, false);
 
@@ -66,6 +66,7 @@ export default function Indicateurs({
                       <IndicateurBloc
                         chantierEstTerritorialisé={chantierEstTerritorialisé}
                         détailsIndicateur={détailsIndicateurs[indicateur.id]}
+                        estAutoriseAVoirLesAlertesMAJIndicateurs={estAutoriseAVoirLesAlertesMAJIndicateurs}
                         estDisponibleALImport={estDisponibleALImport}
                         estInteractif={estInteractif}
                         indicateur={indicateur}

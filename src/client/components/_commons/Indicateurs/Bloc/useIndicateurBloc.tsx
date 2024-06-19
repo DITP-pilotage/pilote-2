@@ -5,7 +5,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   territoiresComparésTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
@@ -54,7 +54,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
 
   const [indicateurDétailsParTerritoires, setIndicateurDétailsParTerritoires] = useState<IndicateurDétailsParTerritoire[]>([indicateurDétailsVide]);
 
-  const metÀJourDétailsParTerritoires = () => {
+  const metÀJourDétailsParTerritoires = useCallback(() => {
     if (typeDeRéforme === 'chantier') {
       if (territoiresComparés.length > 0) {
         setIndicateurDétailsParTerritoires(
@@ -74,21 +74,19 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
         données: détailsIndicateur[territoireProjetStructurant.codeInsee],
       }]);
     }
-  };
+  }, [détailsIndicateur, territoireProjetStructurant, territoireSélectionné, territoiresComparés, typeDeRéforme]);
 
   useEffect(() => {
     if (détailsIndicateur) {
       metÀJourDétailsParTerritoires();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [détailsIndicateur, typeDeRéforme]);
+  }, [détailsIndicateur, metÀJourDétailsParTerritoires, typeDeRéforme]);
 
   useEffect(() => {
     if (territoiresComparés.length === 0 && typeDeRéforme == 'chantier') {
       setIndicateurDétailsParTerritoires([indicateurDétailsVide]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [territoiresComparés]);
+  }, [territoiresComparés, typeDeRéforme]);
 
   const colonnes = typeDeRéforme === 'chantier' ? [
     reactTableColonnesHelper.accessor('territoireNom', {
