@@ -1,6 +1,7 @@
 import { indicateur_projet_structurant as IndicateurProjetStructurantPrisma, PrismaClient } from '@prisma/client';
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
-import IndicateurProjetStructurantRepository from '@/server/domain/indicateur/IndicateurProjetStructurantRepository.interface';
+import IndicateurProjetStructurantRepository
+  from '@/server/domain/indicateur/IndicateurProjetStructurantRepository.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 
 export default class IndicateurProjetStructurantSQLRepository implements IndicateurProjetStructurantRepository {
@@ -48,6 +49,9 @@ export default class IndicateurProjetStructurantSQLRepository implements Indicat
         est_applicable: null,
         dateImport: null,
         pondération: null,
+        prochaineDateMaj: null,
+        prochaineDateMajJours: null,
+        estAJour: null,
       };
     }
 

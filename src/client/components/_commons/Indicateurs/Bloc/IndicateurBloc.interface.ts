@@ -15,4 +15,5 @@ export default interface IndicateurBlocProps {
   estInteractif: boolean
   typeDeRéforme: TypeDeRéforme,
   chantierEstTerritorialisé: boolean,
+  estAutoriseAVoirLesAlertesMAJIndicateurs: boolean,
 }

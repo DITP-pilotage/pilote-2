@@ -200,6 +200,11 @@ const config = convict({
       default: false,
       env: 'NEXT_PUBLIC_FF_SUIVI_COMPLETUDE',
     },
+    alerteMAJIndicateur: {
+      format: Boolean,
+      default: false,
+      env: 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR',
+    },
   },
   analytics: {
     matomoURL: {

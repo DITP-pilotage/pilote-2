@@ -84,6 +84,12 @@ export default class IndicateurRowBuilder {
 
   private _ponderation_zone_reel: indicateur['ponderation_zone_reel'];
 
+  private _prochaine_date_maj: indicateur['prochaine_date_maj'];
+
+  private _prochaine_date_maj_jours: indicateur['prochaine_date_maj_jours'];
+
+  private _est_a_jour: indicateur['est_a_jour'];
+
   constructor() {
     const indicateurGénéré = new IndicateurBuilder().build();
     const détailsIndicateurGénéré = new DétailsIndicateurBuilder().build();
@@ -129,6 +135,9 @@ export default class IndicateurRowBuilder {
     this._dernier_import_rapport_id_indic = faker.datatype.uuid();
     this._ponderation_zone_declaree = détailsIndicateurGénéré.pondération;
     this._ponderation_zone_reel = détailsIndicateurGénéré.pondération;
+    this._prochaine_date_maj = null;
+    this._prochaine_date_maj_jours = null;
+    this._est_a_jour = false;
   }
 
   avecId(id: indicateur['id']): IndicateurRowBuilder {
@@ -311,6 +320,21 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
+  avecProchaineDateMaj(_prochaine_date_maj: indicateur['prochaine_date_maj']): IndicateurRowBuilder {
+    this._prochaine_date_maj = _prochaine_date_maj;
+    return this;
+  }
+
+  avecProchaineDateMajJours(_prochaine_date_maj_jours: indicateur['prochaine_date_maj_jours']): IndicateurRowBuilder {
+    this._prochaine_date_maj_jours = _prochaine_date_maj_jours;
+    return this;
+  }
+
+  avecEstAJour(_est_a_jour: indicateur['est_a_jour']): IndicateurRowBuilder {
+    this._est_a_jour = _est_a_jour;
+    return this;
+  }
+
   build(): indicateur {
     return {
       id: this._id,
@@ -350,6 +374,9 @@ export default class IndicateurRowBuilder {
       dernier_import_rapport_id_indic: this._dernier_import_rapport_id_indic,
       ponderation_zone_declaree: this._ponderation_zone_declaree,
       ponderation_zone_reel: this._ponderation_zone_reel,
+      prochaine_date_maj: this._prochaine_date_maj,
+      prochaine_date_maj_jours: this._prochaine_date_maj_jours,
+      est_a_jour: this._est_a_jour,
     };
   }
 }
