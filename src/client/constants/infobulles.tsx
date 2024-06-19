@@ -38,7 +38,7 @@ const INFOBULLE_CONTENUS = {
               lorsque le niveau national est sélectionné : les chantiers n’ayant pas de taux d’avancement au niveau national en raison de l’absence de valeurs pour les indicateurs du chantier ou de paramètres manquants pour la pondération.
             </li>
             <li>
-              lorsqu’un territoire est sélectionné : les chantiers pour lesquels le territoire sélectionné a un recul significatif vis-à-vis du taux d’avancement global national. Pour qu’un résultat apparaisse sur cette alerte, il faut sélectionner une région ou un département.
+              lorsqu’un territoire est sélectionné : les chantiers pour lesquels le territoire sélectionné a un retard significatif vis-à-vis de la médiane des taux d’avancement du chantier concerné pour les départements ou les régions. Pour qu’un résultat apparaisse sur cette alerte, il faut sélectionner une région ou un département.
             </li>
           </ul>
         </li>

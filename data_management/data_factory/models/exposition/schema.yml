@@ -139,6 +139,12 @@ models:
         description: "Auteur du dernier rapport qui modifie cet indicateur sur cette zone"
       - name: dernier_import_auteur_indic
         description: "Auteur du dernier rapport pour cet {indicateur} (sur n'importe quelle zone)"
+      - name: prochaine_date_maj
+        description: "Date attendue de prochaine date de mise à jour de l'indicateur. Peut être dans le passé si la mise à jour est en retard."
+      - name: prochaine_date_maj_jours
+        description: "Nombre de jours avant la prochaine mise à jour théorique de l'indicateur. Peut être négatif si la mise à jour est en retard."
+      - name: est_a_jour
+        description: "Indique si les données sont à jour par rapport à la périodicité théorique déclarée de mise à jour."
   - name: decision_strategique
     columns:
       - name: id

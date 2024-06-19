@@ -24,6 +24,8 @@ import { estAutoriséAConsulterLaFicheConducteur } from '@/client/utils/fiche-co
 import { getFiltresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 
+const PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS = new Set(['DITP_ADMIN', 'DITP_PILOTAGE', 'SECRETARIAT_GENERAL', 'DIR_PROJET', 'EQUIPE_DIR_PROJET']);
+
 export default function usePageChantier(chantierId: string, indicateurs: Indicateur[]) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
@@ -133,7 +135,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
   if (session && ['DIR_PROJET', 'EQUIPE_DIR_PROJET', 'SECRETARIAT_GENERAL'].includes(session.profil) && territoireSélectionné?.maille != 'nationale') {
     modeÉcriture = modeÉcriture && chantier?.ate === 'hors_ate_centralise';
   }
-  const modeÉcritureObjectifs = territoires.some(t => t.maille === 'nationale' && t.accèsSaisiePublication === true) && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantierId);    
+  const modeÉcritureObjectifs = territoires.some(t => t.maille === 'nationale' && t.accèsSaisiePublication) && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantierId);
 
   const chantierTerritoireSélectionné = chantier?.mailles[territoireSélectionné?.maille ?? 'nationale'][territoireSélectionné?.codeInsee ?? 'FR'];
   const responsableLocal = chantierTerritoireSélectionné?.responsableLocal ?? [];
@@ -143,6 +145,8 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
   const territoireCode = territoireSélectionné?.code;
   const queryParamString = new URLSearchParams(Object.entries(filtresActifs).map(([key, value]) => (value && String(value).length > 0 ? [key, String(value)] : [])).filter(value => value.length > 0)).toString();
   const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
+
+  const estAutoriseAVoirLesAlertesMAJIndicateurs = PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS.has(session!.profil);
 
   return {
     détailsIndicateurs: détailsIndicateurs ?? null,
@@ -163,5 +167,6 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
     responsableLocal,
     coordinateurTerritorial,
     hrefBoutonRetour,
+    estAutoriseAVoirLesAlertesMAJIndicateurs,
   };
 }

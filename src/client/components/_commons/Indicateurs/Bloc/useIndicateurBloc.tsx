@@ -5,7 +5,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   territoiresComparésTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
@@ -39,6 +39,9 @@ const indicateurDétailsVide = {
     est_applicable: false,
     dateImport: null,
     pondération: null,
+    prochaineDateMaj: null,
+    prochaineDateMajJours: null,
+    estAJour: null,
   },
 };
 
@@ -51,7 +54,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
 
   const [indicateurDétailsParTerritoires, setIndicateurDétailsParTerritoires] = useState<IndicateurDétailsParTerritoire[]>([indicateurDétailsVide]);
 
-  const metÀJourDétailsParTerritoires = () => {
+  const metÀJourDétailsParTerritoires = useCallback(() => {
     if (typeDeRéforme === 'chantier') {
       if (territoiresComparés.length > 0) {
         setIndicateurDétailsParTerritoires(
@@ -60,29 +63,33 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
             .sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) => indicateurDétailsTerritoire1.données.codeInsee.localeCompare(indicateurDétailsTerritoire2.données.codeInsee)),
         );
       } else {
-        setIndicateurDétailsParTerritoires([{ territoireNom: territoireSélectionné!.nomAffiché, données: détailsIndicateur[territoireSélectionné!.codeInsee] }]);
+        setIndicateurDétailsParTerritoires([{
+          territoireNom: territoireSélectionné!.nomAffiché,
+          données: détailsIndicateur[territoireSélectionné!.codeInsee],
+        }]);
       }
     } else if (typeDeRéforme === 'projet structurant' && territoireProjetStructurant) {
-      setIndicateurDétailsParTerritoires([{ territoireNom: territoireProjetStructurant.nomAffiché, données: détailsIndicateur[territoireProjetStructurant.codeInsee] }]);
+      setIndicateurDétailsParTerritoires([{
+        territoireNom: territoireProjetStructurant.nomAffiché,
+        données: détailsIndicateur[territoireProjetStructurant.codeInsee],
+      }]);
     }
-  };
-  
+  }, [détailsIndicateur, territoireProjetStructurant, territoireSélectionné, territoiresComparés, typeDeRéforme]);
+
   useEffect(() => {
     if (détailsIndicateur) {
       metÀJourDétailsParTerritoires();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [détailsIndicateur, typeDeRéforme]);
+  }, [détailsIndicateur, metÀJourDétailsParTerritoires, typeDeRéforme]);
 
   useEffect(() => {
     if (territoiresComparés.length === 0 && typeDeRéforme == 'chantier') {
       setIndicateurDétailsParTerritoires([indicateurDétailsVide]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [territoiresComparés]);  
-    
+  }, [territoiresComparés, typeDeRéforme]);
+
   const colonnes = typeDeRéforme === 'chantier' ? [
-    reactTableColonnesHelper.accessor( 'territoireNom', {
+    reactTableColonnesHelper.accessor('territoireNom', {
       header: 'Territoire(s)',
       id: 'territoire',
       enableSorting: false,
@@ -178,7 +185,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       enableGrouping: false,
     }),
   ] : [
-    reactTableColonnesHelper.accessor( 'territoireNom', {
+    reactTableColonnesHelper.accessor('territoireNom', {
       header: 'Territoire',
       id: 'territoire',
       enableSorting: false,
@@ -269,13 +276,18 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  const dateDeMiseAJourIndicateur = territoireSélectionné 
+  const dateDeMiseAJourIndicateur = territoireSélectionné
     ? formaterDate(détailsIndicateur[territoireSélectionné.codeInsee]?.dateImport, 'DD/MM/YYYY') ?? 'Non renseigné'
+    : 'Non renseigné';
+
+  const dateProchaineDateMaj = territoireSélectionné
+    ? formaterDate(détailsIndicateur[territoireSélectionné.codeInsee]?.prochaineDateMaj, 'DD/MM/YYYY') ?? 'Non renseigné'
     : 'Non renseigné';
 
   return {
     indicateurDétailsParTerritoires,
     tableau,
     dateDeMiseAJourIndicateur,
+    dateProchaineDateMaj,
   };
 }

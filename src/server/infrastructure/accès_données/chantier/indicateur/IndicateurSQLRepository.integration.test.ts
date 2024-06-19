@@ -165,6 +165,9 @@ describe('IndicateurSQLRepository', () => {
               est_applicable: false,
               dateImport: '2023-03-01T00:00:00.000Z',
               pondération: 51,
+              prochaineDateMaj: null,
+              prochaineDateMajJours: null,
+              estAJour: false,
             },
             '03': {
               codeInsee: '03',
@@ -186,6 +189,9 @@ describe('IndicateurSQLRepository', () => {
               est_applicable: false,
               dateImport: '2023-03-01T00:00:00.000Z',
               pondération: 51,
+              prochaineDateMaj: null,
+              prochaineDateMajJours: null,
+              estAJour: false,
             },
           },
         },
@@ -228,6 +234,9 @@ describe('IndicateurSQLRepository', () => {
           .avecEstApplicable(false)
           .avecDernierImportDateIndic(new Date('2023-03-01'))
           .avecPonderationZoneReel(51)
+          .avecProchaineDateMaj(new Date('2023-03-01'))
+          .avecProchaineDateMajJours(51)
+          .avecEstAJour(false)
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -248,6 +257,9 @@ describe('IndicateurSQLRepository', () => {
           .avecEstApplicable(false)
           .avecDernierImportDateIndic(new Date('2023-03-01'))
           .avecPonderationZoneReel(51)
+          .avecProchaineDateMaj(new Date('2023-03-01'))
+          .avecProchaineDateMajJours(51)
+          .avecEstAJour(false)
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -268,6 +280,9 @@ describe('IndicateurSQLRepository', () => {
           .avecEstApplicable(false)
           .avecDernierImportDateIndic(new Date('2023-03-01'))
           .avecPonderationZoneReel(51)
+          .avecProchaineDateMaj(new Date('2023-03-01'))
+          .avecProchaineDateMajJours(51)
+          .avecEstAJour(false)
           .build(),
       ];
 
@@ -300,6 +315,9 @@ describe('IndicateurSQLRepository', () => {
               est_applicable: false,
               dateImport: '2023-03-01T00:00:00.000Z',
               pondération: 51,
+              prochaineDateMaj: '2023-03-01T00:00:00.000Z',
+              prochaineDateMajJours: 51,
+              estAJour: false,
             },
           },
           'IND-002': {
@@ -323,6 +341,9 @@ describe('IndicateurSQLRepository', () => {
               est_applicable: false,
               dateImport: '2023-03-01T00:00:00.000Z',
               pondération: 51,
+              prochaineDateMaj: '2023-03-01T00:00:00.000Z',
+              prochaineDateMajJours: 51,
+              estAJour: false,
             },
             '03': {
               codeInsee: '03',
@@ -344,6 +365,9 @@ describe('IndicateurSQLRepository', () => {
               est_applicable: false,
               dateImport: '2023-03-01T00:00:00.000Z',
               pondération: 51,
+              prochaineDateMaj: '2023-03-01T00:00:00.000Z',
+              prochaineDateMajJours: 51,
+              estAJour: false,
             },
           },
         },
@@ -401,6 +425,9 @@ describe('IndicateurSQLRepository', () => {
           .avecEstApplicable(false)
           .avecDernierImportDateIndic(new Date('2023-03-01'))
           .avecPonderationZoneReel(51)
+          .avecProchaineDateMaj(new Date('2023-03-01'))
+          .avecProchaineDateMajJours(51)
+          .avecEstAJour(false)
           .build(),
       ];
 
@@ -433,6 +460,9 @@ describe('IndicateurSQLRepository', () => {
               est_applicable: false,
               dateImport: '2023-03-01T00:00:00.000Z',
               pondération: 51,
+              prochaineDateMaj: '2023-03-01T00:00:00.000Z',
+              prochaineDateMajJours: 51,
+              estAJour: false,
             },
           },
         },
@@ -681,6 +711,9 @@ describe('IndicateurSQLRepository', () => {
           .avecEstApplicable(false)
           .avecDernierImportDateIndic(new Date('2023-03-01'))
           .avecPonderationZoneReel(51)
+          .avecProchaineDateMaj(new Date('2023-03-01'))
+          .avecProchaineDateMajJours(51)
+          .avecEstAJour(false)
           .build(),
       ];
 
@@ -713,6 +746,9 @@ describe('IndicateurSQLRepository', () => {
               est_applicable: false,
               dateImport: '2023-03-01T00:00:00.000Z',
               pondération: 51,
+              prochaineDateMaj: '2023-03-01T00:00:00.000Z',
+              prochaineDateMajJours: 51,
+              estAJour: false,
             },
           },
         },
@@ -744,6 +780,9 @@ describe('IndicateurSQLRepository', () => {
           .avecEstApplicable(false)
           .avecDernierImportDateIndic(new Date('2023-03-01'))
           .avecPonderationZoneReel(51)
+          .avecProchaineDateMaj(new Date('2023-03-01'))
+          .avecProchaineDateMajJours(51)
+          .avecEstAJour(false)
           .build(),
       ];
 
@@ -776,6 +815,9 @@ describe('IndicateurSQLRepository', () => {
               est_applicable: false,
               dateImport: '2023-03-01T00:00:00.000Z',
               pondération: 51,
+              prochaineDateMaj: '2023-03-01T00:00:00.000Z',
+              prochaineDateMajJours: 51,
+              estAJour: false,
             },
           },
         },

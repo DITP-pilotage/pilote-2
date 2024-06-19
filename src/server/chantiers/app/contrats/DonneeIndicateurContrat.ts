@@ -1,6 +1,6 @@
 import { DonneeIndicateur } from '@/server/chantiers/domain/DonneeIndicateur';
 
-interface DonneeTerritoireContrat {
+export interface DonneeTerritoireContrat {
   valeur_cible: number | null;
   territoire_code: string;
   valeur_cible_annuelle: number | null;
@@ -17,7 +17,7 @@ interface DonneeTerritoireContrat {
   taux_avancement_annuel: number | null
 }
 
-interface DonneeIndicateurContrat {
+export interface DonneeIndicateurContrat {
   indic_id: string;
   est_barometre: boolean;
   chantier_id: string;
