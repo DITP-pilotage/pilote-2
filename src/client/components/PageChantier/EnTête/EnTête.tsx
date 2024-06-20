@@ -4,16 +4,19 @@ import '@gouvfr/dsfr/dist/dsfr.min.css';
 import Link from 'next/link';
 import BoutonImpression from '@/components/_commons/BoutonImpression/BoutonImpression';
 import Titre from '@/components/_commons/Titre/Titre';
+import ResponsablesLigne from '@/components/_commons/ResponsablesLigne/ResponsablesLigne';
 import PageChantierEnTêteProps from './EnTête.interface';
 import PageChantierEnTêteStyled from './EnTête.styled';
 
 export default function PageChantierEnTête({
   chantier,
+  responsables,
   afficheLeBoutonImpression = false,
   afficheLeBoutonMiseAJourDonnee = false,
   afficheLeBoutonFicheConducteur = false,
   hrefBoutonRetour = '',
 }: PageChantierEnTêteProps) {
+
   return (
     <PageChantierEnTêteStyled className='fr-px-2w fr-px-md-2w fr-py-2w'>
       <Link
@@ -25,16 +28,32 @@ export default function PageChantierEnTête({
       </Link>
       <Titre
         baliseHtml='h1'
-        className='fr-h2 fr-mb-0'
+        className='fr-h2 fr-mb-2w'
       >
         {chantier.nom}
       </Titre>
+      <ResponsablesLigne
+        contenu={responsables?.porteur ? [responsables.porteur.nom] : []}
+        estEnTeteDePageChantier
+        libellé='Ministère porteur'
+      />
+      <ResponsablesLigne
+        contenu={responsables?.coporteurs ? responsables?.coporteurs.map(coporteur => coporteur.nom) : []}
+        estEnTeteDePageChantier
+        libellé='Autres ministères co-porteurs'
+      />
+      <ResponsablesLigne
+        contenu={responsables?.directeursAdminCentrale ? responsables.directeursAdminCentrale.map(directeur => (`${directeur.nom} (${directeur.direction})`)) : []}
+        estEnTeteDePageChantier
+        libellé='Directeur(s) / directrice(s) d’Administration Centrale'
+      />
       <div className='flex align-center fr-mt-2w'>
         {
           !!afficheLeBoutonMiseAJourDonnee &&
             <Link
               className='fr-btn fr-btn--primary fr-mr-2w'
               href={`${chantier.id}/indicateurs`}
+              title='Mettre à jour les données'
             >
               Mettre à jour les données
             </Link>
@@ -47,6 +66,7 @@ export default function PageChantierEnTête({
             <Link
               className='fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left fr-px-1w fr-px-md-2w fr-ml-2w'
               href={`${chantier.id}/fiche-conducteur`}
+              title='Fiche conducteur'
             >
               Fiche conducteur
             </Link>

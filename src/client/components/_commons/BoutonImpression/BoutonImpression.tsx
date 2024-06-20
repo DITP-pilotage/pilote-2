@@ -5,6 +5,7 @@ export default function BoutonImpression() {
     <button
       className='fr-btn fr-btn--secondary fr-icon-printer-line fr-btn--icon-left no-wrap'
       onClick={() => window.print()}
+      title='Imprimer'
       type='button'
     >
       Imprimer
