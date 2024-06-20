@@ -22,7 +22,7 @@ import useIndicateurBloc from './useIndicateurBloc';
 
 export default function IndicateurBloc({
   indicateur,
-  détailsIndicateur,
+  détailsIndicateurs,
   estInteractif,
   territoireProjetStructurant,
   typeDeRéforme,
@@ -34,6 +34,7 @@ export default function IndicateurBloc({
   const router = useRouter();
   const réformeId = router.query.id as string;
 
+  const détailsIndicateur = détailsIndicateurs[indicateur.id];
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const {
     indicateurDétailsParTerritoires,
@@ -144,6 +145,7 @@ export default function IndicateurBloc({
               <IndicateurDétails
                 chantierEstTerritorialisé={chantierEstTerritorialisé}
                 dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
+                détailsIndicateurs={détailsIndicateurs}
                 indicateur={indicateur}
                 indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
                 listeSousIndicateurs={listeSousIndicateurs}

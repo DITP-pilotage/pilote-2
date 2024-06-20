@@ -67,7 +67,7 @@ export default function Indicateurs({
                     .map(indicateur => (
                       <IndicateurBloc
                         chantierEstTerritorialisé={chantierEstTerritorialisé}
-                        détailsIndicateur={détailsIndicateurs[indicateur.id]}
+                        détailsIndicateurs={détailsIndicateurs}
                         estAutoriseAVoirLesAlertesMAJIndicateurs={estAutoriseAVoirLesAlertesMAJIndicateurs}
                         estDisponibleALImport={estDisponibleALImport}
                         estInteractif={estInteractif}
