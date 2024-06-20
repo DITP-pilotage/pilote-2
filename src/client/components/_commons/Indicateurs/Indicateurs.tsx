@@ -30,6 +30,8 @@ export default function Indicateurs({
     return null;
   }
 
+  const listeIndicateursParent = indicateurs.filter(indicateur => !indicateur.parent_id);
+
   return (
     <IndicateursStyled>
       {
@@ -44,7 +46,7 @@ export default function Indicateurs({
       }
       {
         listeRubriquesIndicateurs.map(rubriqueIndicateur => {
-          const indicateursDeCetteRubrique = indicateurs.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
+          const indicateursDeCetteRubrique = listeIndicateursParent.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
 
           if (indicateursDeCetteRubrique.length > 0) {
             return (
@@ -71,6 +73,7 @@ export default function Indicateurs({
                         estInteractif={estInteractif}
                         indicateur={indicateur}
                         key={indicateur.id}
+                        listeSousIndicateurs={indicateurs.filter(ind => ind.parent_id === indicateur.id)}
                         territoireProjetStructurant={territoireProjetStructurant}
                         typeDeRéforme={typeDeRéforme}
                       />

@@ -13,7 +13,8 @@ export default interface IndicateurBlocProps {
   territoireProjetStructurant?: ProjetStructurant['territoire']
   estDisponibleALImport: boolean
   estInteractif: boolean
-  typeDeRéforme: TypeDeRéforme,
-  chantierEstTerritorialisé: boolean,
+  typeDeRéforme: TypeDeRéforme
+  chantierEstTerritorialisé: boolean
+  listeSousIndicateurs: Indicateur[]
   estAutoriseAVoirLesAlertesMAJIndicateurs: boolean,
 }

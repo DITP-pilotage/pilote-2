@@ -29,6 +29,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   typeDeRéforme,
   chantierEstTerritorialisé,
   estDisponibleALImport = false,
+  listeSousIndicateurs,
   estAutoriseAVoirLesAlertesMAJIndicateurs = false,
 }) => {
   const router = useRouter();
@@ -151,6 +152,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
                 indicateur={indicateur}
                 indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
+                listeSousIndicateurs={listeSousIndicateurs}
                 typeDeRéforme={typeDeRéforme}
               />
             ) : null
