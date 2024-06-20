@@ -14,10 +14,11 @@ import {
 import {
   ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE,
 } from '@/client/constants/légendes/élémentsDeLégendesCartographieValeurActuelle';
+import IndicateurBloc from '@/client/components/_commons/Indicateurs/Bloc/IndicateurBloc';
 import IndicateurDétailsProps from './IndicateurDétails.interface';
 import useIndicateurDétails from './useIndicateurDétails';
 
-export default function IndicateurDétails({ indicateur, indicateurDétailsParTerritoires, typeDeRéforme, chantierEstTerritorialisé, dateDeMiseAJourIndicateur, listeSousIndicateurs }: IndicateurDétailsProps) {
+export default function IndicateurDétails({ indicateur, indicateurDétailsParTerritoires, typeDeRéforme, chantierEstTerritorialisé, dateDeMiseAJourIndicateur, listeSousIndicateurs, détailsIndicateurs }: IndicateurDétailsProps) {
   const [futOuvert, setFutOuvert] = useState(false);
   const { auClicTerritoireMultiSélectionCallback } = useCartographie();
   const { donnéesCartographieAvancement, donnéesCartographieValeurActuelle, donnéesCartographieAvancementTerritorialisées, donnéesCartographieValeurActuelleTerritorialisées } = useIndicateurDétails(indicateur.id, futOuvert, typeDeRéforme);
@@ -149,11 +150,20 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
             className='fr-collapse'
             id={`sous-indicateurs-${indicateur.id}`}
           >
-            <div className='fr-container'>
-              <div className='fr-grid-row fr-grid-row--gutters fr-my-1w'>
-                {listeSousIndicateurs.map(indicateurElement => indicateurElement.id) + ' '}
-              </div>
-            </div>
+            {
+              listeSousIndicateurs.map(sousIndicateur => (
+                <IndicateurBloc
+                  chantierEstTerritorialisé={chantierEstTerritorialisé}
+                  détailsIndicateurs={détailsIndicateurs}
+                  estDisponibleALImport={false}
+                  estInteractif
+                  indicateur={sousIndicateur}
+                  key={sousIndicateur.id}
+                  listeSousIndicateurs={[]}
+                  typeDeRéforme={typeDeRéforme}
+                />   
+              ))
+            }             
           </div>
         </section>
       }

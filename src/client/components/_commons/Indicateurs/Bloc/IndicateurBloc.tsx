@@ -23,7 +23,7 @@ import IndicateurTendance from './Tendances/IndicateurTendance';
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   indicateur,
-  détailsIndicateur,
+  détailsIndicateurs,
   estInteractif,
   territoireProjetStructurant,
   typeDeRéforme,
@@ -35,6 +35,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   const router = useRouter();
   const réformeId = router.query.id as string;
 
+  const détailsIndicateur = détailsIndicateurs[indicateur.id];
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const {
     indicateurDétailsParTerritoires,
@@ -150,6 +151,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
               <IndicateurDétails
                 chantierEstTerritorialisé={chantierEstTerritorialisé}
                 dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
+                détailsIndicateurs={détailsIndicateurs}
                 indicateur={indicateur}
                 indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
                 listeSousIndicateurs={listeSousIndicateurs}
