@@ -22,7 +22,7 @@ const verifierOptionStatut = (optionsExport: OptionsExport, chantierStatut: stri
   return chantierStatut ? optionsExport.listeStatuts.length > 0 ? optionsExport.listeStatuts.includes(chantierStatut) : true : true;
 };
 
-export class ExportCsvDesChantiersSansFiltreUseCase {
+export class ExportCsvDesChantiersUseCase {
   public static readonly NOMS_COLONNES = [
     'Maille',
     'Région',
@@ -81,7 +81,7 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
   private transformer(chantierPourExport: ChantierPourExport, profil: ProfilCode): string[] {
-    return [
+    const donnees = [
       chantierPourExport.maille || NON_APPLICABLE,
       chantierPourExport.régionNom || NON_APPLICABLE,
       chantierPourExport.départementNom || NON_APPLICABLE,
@@ -113,5 +113,6 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
       chantierPourExport.commCommentairesSurLesDonnées || NON_APPLICABLE,
       chantierPourExport.commAutresRésultats || NON_APPLICABLE,
     ];
+    return profil === 'DITP_ADMIN' ? [...donnees, chantierPourExport.statut || NON_APPLICABLE] : donnees;
   }
 }
