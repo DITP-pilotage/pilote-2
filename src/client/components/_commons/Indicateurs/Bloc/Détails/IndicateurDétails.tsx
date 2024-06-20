@@ -17,7 +17,7 @@ import {
 import IndicateurDétailsProps from './IndicateurDétails.interface';
 import useIndicateurDétails from './useIndicateurDétails';
 
-export default function IndicateurDétails({ indicateur, indicateurDétailsParTerritoires, typeDeRéforme, chantierEstTerritorialisé, dateDeMiseAJourIndicateur }: IndicateurDétailsProps) {
+export default function IndicateurDétails({ indicateur, indicateurDétailsParTerritoires, typeDeRéforme, chantierEstTerritorialisé, dateDeMiseAJourIndicateur, listeSousIndicateurs }: IndicateurDétailsProps) {
   const [futOuvert, setFutOuvert] = useState(false);
   const { auClicTerritoireMultiSélectionCallback } = useCartographie();
   const { donnéesCartographieAvancement, donnéesCartographieValeurActuelle, donnéesCartographieAvancementTerritorialisées, donnéesCartographieValeurActuelleTerritorialisées } = useIndicateurDétails(indicateur.id, futOuvert, typeDeRéforme);
@@ -25,6 +25,7 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
   const indicateurSiTypeDeReformeEstChantier = typeDeRéforme === 'chantier' && !!futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle;
   const nomDefinitionDeLindicateur = "Définition de l'indicateur";
   const nomRepartitionGeographiqueEtEvolution = 'Répartition géographique et évolution';
+  const nomSousIndicateurs = 'Sous indicateurs';
 
   return (
     <div className='fr-accordions-group'>
@@ -129,6 +130,33 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
           </div>
         </div>
       </section>
+      {
+        listeSousIndicateurs.length > 0 &&
+        <section className='fr-accordion'>
+          <h3 className='fr-accordion__title'>
+            <button
+              aria-controls={`sous-indicateurs-${indicateur.id}`}
+              aria-expanded='false'
+              className='fr-accordion__btn'
+              onClick={() => setFutOuvert(true)}
+              title={nomSousIndicateurs}
+              type='button'
+            >
+              {nomSousIndicateurs}
+            </button>
+          </h3>
+          <div
+            className='fr-collapse'
+            id={`sous-indicateurs-${indicateur.id}`}
+          >
+            <div className='fr-container'>
+              <div className='fr-grid-row fr-grid-row--gutters fr-my-1w'>
+                {listeSousIndicateurs.map(indicateurElement => indicateurElement.id) + ' '}
+              </div>
+            </div>
+          </div>
+        </section>
+      }
     </div>
   );
 }

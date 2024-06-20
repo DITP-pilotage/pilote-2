@@ -28,6 +28,7 @@ export default function IndicateurBloc({
   typeDeRéforme,
   chantierEstTerritorialisé,
   estDisponibleALImport = false,
+  listeSousIndicateurs,
   estAutoriseAVoirLesAlertesMAJIndicateurs = false,
 }: IndicateurBlocProps) {
   const router = useRouter();
@@ -145,6 +146,7 @@ export default function IndicateurBloc({
                 dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
                 indicateur={indicateur}
                 indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
+                listeSousIndicateurs={listeSousIndicateurs}
                 typeDeRéforme={typeDeRéforme}
               />
             ) : null
