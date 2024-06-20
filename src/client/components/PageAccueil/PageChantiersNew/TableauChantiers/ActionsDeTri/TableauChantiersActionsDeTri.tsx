@@ -13,11 +13,11 @@ const listeColonnesÀtrier = [
   },
   {
     libellé: 'Mise à jour des données',
-    colonneId: 'météo',
+    colonneId: 'dateDeMàjDonnéesQuantitatives',
   },
   {
     libellé: 'Mise à jour de la météo et synthèse des résultats',
-    colonneId: 'météo',
+    colonneId: 'dateDeMàjDonnéesQualitatives',
   },
 ];
 
@@ -41,12 +41,14 @@ export default function TableauChantiersActionsDeTri({
           id='tri-tableau-chantiers'
           name='tri-tableau-chantiers'
           onChange={(événement) => changementColonneÀTrierCallback(événement.currentTarget.value)}
+          title='Trier par'
           value={colonneÀTrier}
         >
           {
             listeColonnesÀtrier.map(option => (
               <option
                 key={option.colonneId}
+                title={option.libellé}
                 value={option.colonneId}
               >
                 {option.libellé}
