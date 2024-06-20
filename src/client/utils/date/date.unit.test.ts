@@ -59,7 +59,7 @@ describe('comparerDateDeMàjDonnées', () => {
     expect(comparaison).toStrictEqual(0);
   });
 
-  test('retourne 1 si la date A est supérieure à la date B', () => {
+  test('retourne -1 si la date A est supérieure à la date B', () => {
     // GIVEN
     const météoA = '2024-06-20T15:42:20.000Z';
     const météoB = '2024-06-19T15:42:20.000Z';
@@ -68,10 +68,10 @@ describe('comparerDateDeMàjDonnées', () => {
     const comparaison = comparerDateDeMàjDonnées(météoA, météoB, [{ desc: true, id:'1' }]);
 
     // THEN
-    expect(comparaison).toStrictEqual(1);
+    expect(comparaison).toStrictEqual(-1);
   });
 
-  test('retourne -1 si la date A est inférieure la date B', () => {
+  test('retourne 1 si la date A est inférieure la date B', () => {
     // GIVEN
     const météoA = '2024-06-19T15:42:20.000Z';
     const météoB = '2024-06-20T15:42:20.000Z';
@@ -80,6 +80,6 @@ describe('comparerDateDeMàjDonnées', () => {
     const comparaison = comparerDateDeMàjDonnées(météoA, météoB,  [{ desc: true, id:'1' }]);
 
     // THEN
-    expect(comparaison).toStrictEqual(-1);
+    expect(comparaison).toStrictEqual(1);
   });
 });
