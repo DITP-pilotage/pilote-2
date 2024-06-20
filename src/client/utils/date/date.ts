@@ -1,8 +1,6 @@
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import { SortingState } from '@tanstack/react-table';
-
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -22,14 +20,13 @@ export function horodatage() {
   return dayjs.tz(new Date, dayjs.tz.guess()).format('YYYY-MM-DD-HH-mm-ss');
 }
 
-export const comparerDateDeMàjDonnées = (a: string | null, b: string | null, tri: SortingState | null) => {
-  const sensDeTriDesc = tri === null ? true : tri[0].desc;
+export const comparerDateDeMàjDonnées = (a: string | null, b: string | null) => {
   if (a === null && b === null)
     return 0;
   if (a === null)
-    return sensDeTriDesc ? -1 : 1;
+    return  1; 
   if (b === null)
-    return sensDeTriDesc ? 1 : -1;
+    return -1; 
   if (a < b)
     return 1;
   if (a > b)

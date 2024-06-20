@@ -53,7 +53,7 @@ describe('comparerDateDeMàjDonnées', () => {
     const météoB = '2024-06-20T15:42:20.000Z';
 
     // WHEN
-    const comparaison = comparerDateDeMàjDonnées(météoA, météoB, [{ desc: true, id:'1' }]);
+    const comparaison = comparerDateDeMàjDonnées(météoA, météoB);
 
     // THEN
     expect(comparaison).toStrictEqual(0);
@@ -65,7 +65,7 @@ describe('comparerDateDeMàjDonnées', () => {
     const météoB = '2024-06-19T15:42:20.000Z';
 
     // WHEN
-    const comparaison = comparerDateDeMàjDonnées(météoA, météoB, [{ desc: true, id:'1' }]);
+    const comparaison = comparerDateDeMàjDonnées(météoA, météoB);
 
     // THEN
     expect(comparaison).toStrictEqual(-1);
@@ -77,9 +77,33 @@ describe('comparerDateDeMàjDonnées', () => {
     const météoB = '2024-06-20T15:42:20.000Z';
 
     // WHEN
-    const comparaison = comparerDateDeMàjDonnées(météoA, météoB,  [{ desc: true, id:'1' }]);
+    const comparaison = comparerDateDeMàjDonnées(météoA, météoB);
 
     // THEN
     expect(comparaison).toStrictEqual(1);
+  });
+
+  test('retourne 1 si la date A est null', () => {
+    // GIVEN
+    const météoA = null;
+    const météoB = '2024-06-19T15:42:20.000Z';
+
+    // WHEN
+    const comparaison = comparerDateDeMàjDonnées(météoA, météoB);
+
+    // THEN
+    expect(comparaison).toStrictEqual(1);
+  });
+
+  test('retourne -1 si la date B est null', () => {
+    // GIVEN
+    const météoA = '2024-06-19T15:42:20.000Z';
+    const météoB = null;
+
+    // WHEN
+    const comparaison = comparerDateDeMàjDonnées(météoA, météoB);
+
+    // THEN
+    expect(comparaison).toStrictEqual(-1);
   });
 });
