@@ -28,6 +28,7 @@ import TableauChantiersTendance
   from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance';
 import TableauChantiersÉcart from '@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
+import { comparerDateDeMàjDonnées } from '@/client/utils/date/date';
 import TableauChantiersProps, { DonnéesTableauChantiers } from './TableauChantiers.interface';
 import TableauChantiersTuileChantier from './Tuile/Chantier/TableauChantiersTuileChantier';
 import TableauChantiersTuileMinistère from './Tuile/Ministère/TableauChantiersTuileMinistère';
@@ -110,13 +111,23 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
       sortingFn: (a, b, columnId) => (
         a.getIsGrouped() || b.getIsGrouped()
           ? 0
-          : comparerMétéo(a.getValue(columnId), b.getValue(columnId))
+          : comparerMétéo(a.getValue(columnId), b.getValue(columnId), tri)
       ),
       enableGrouping: false,
       meta: {
         width: '8rem',
         tabIndex: -1,
       },
+    }),
+    reactTableColonnesHelper.accessor('dateDeMàjDonnéesQualitatives', {
+      id: 'dateDeMàjDonnéesQualitatives',
+      cell: cellContext => cellContext.getValue(),
+      sortingFn: (a, b, columnId) => (
+        a.getIsGrouped() || b.getIsGrouped()
+          ? 0
+          : comparerDateDeMàjDonnées(a.getValue(columnId), b.getValue(columnId))
+      ),
+      enableGrouping: false,
     }),
     reactTableColonnesHelper.accessor('avancement', {
       header: 'Avancement 2026',
@@ -138,6 +149,16 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
         width: '8rem',
         tabIndex: -1,
       },
+    }),
+    reactTableColonnesHelper.accessor('dateDeMàjDonnéesQuantitatives', {
+      id: 'dateDeMàjDonnéesQuantitatives',
+      cell: cellContext => cellContext.getValue(),
+      sortingFn: (a, b, columnId) => (
+        a.getIsGrouped() || b.getIsGrouped()
+          ? 0
+          : comparerDateDeMàjDonnées(a.getValue(columnId), b.getValue(columnId))
+      ),
+      enableGrouping: false,
     }),
     ...(process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true' ? [
       reactTableColonnesHelper.accessor('tendance', {
@@ -241,7 +262,9 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
         porteur: false,
         nom: false,
         météo: false,
+        dateDeMàjDonnéesQualitatives: false,
         avancement: false,
+        dateDeMàjDonnéesQuantitatives: false,
         typologie: false,
         tendance: false,
         écart: false,
@@ -249,6 +272,8 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
       }) : ({
         porteur: false,
         'chantier-tuile': false,
+        dateDeMàjDonnéesQualitatives: false,
+        dateDeMàjDonnéesQuantitatives:false,
       }),
     },
     onSortingChange: setTri,

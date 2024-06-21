@@ -1,6 +1,7 @@
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
 import { météos } from '@/server/domain/météo/Météo.interface';
 
+
 describe('comparerMétéo', () => {
   test('retourne 0 si les météos sont identiques', () => {
     // GIVEN
@@ -8,7 +9,7 @@ describe('comparerMétéo', () => {
     const météoB = 'SOLEIL';
 
     // WHEN
-    const comparaison = comparerMétéo(météoA, météoB);
+    const comparaison = comparerMétéo(météoA, météoB, [{ desc: true, id:'1' }]);
 
     // THEN
     expect(comparaison).toStrictEqual(0);
@@ -20,7 +21,7 @@ describe('comparerMétéo', () => {
     const météoB = 'ORAGE';
 
     // WHEN
-    const comparaison = comparerMétéo(météoA, météoB);
+    const comparaison = comparerMétéo(météoA, météoB, [{ desc: true, id:'1' }]);
 
     // THEN
     expect(comparaison).toStrictEqual(1);
@@ -32,7 +33,7 @@ describe('comparerMétéo', () => {
     const météoB = 'SOLEIL';
 
     // WHEN
-    const comparaison = comparerMétéo(météoA, météoB);
+    const comparaison = comparerMétéo(météoA, météoB,  [{ desc: true, id:'1' }]);
 
     // THEN
     expect(comparaison).toStrictEqual(-1);
@@ -40,7 +41,7 @@ describe('comparerMétéo', () => {
 
   test('fonctionne pour tous les types de météo', () => {
     météos.forEach(météo => {
-      expect(() => comparerMétéo(météo, météo)).not.toThrowError();
+      expect(() => comparerMétéo(météo, météo, [{ desc: true, id:'1' }])).not.toThrowError();
     });
   });
 });

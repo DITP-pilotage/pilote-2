@@ -1,4 +1,4 @@
-import { formaterDate } from '@/client/utils/date/date';
+import { comparerDateDeMàjDonnées, formaterDate } from '@/client/utils/date/date';
 
 describe('formaterDate', () => {
 
@@ -44,4 +44,66 @@ describe('formaterDate', () => {
     });
   });
   
+});
+
+describe('comparerDateDeMàjDonnées', () => {
+  test('retourne 0 si les dates sont identiques', () => {
+    // GIVEN
+    const météoA = '2024-06-20T15:42:20.000Z';
+    const météoB = '2024-06-20T15:42:20.000Z';
+
+    // WHEN
+    const comparaison = comparerDateDeMàjDonnées(météoA, météoB);
+
+    // THEN
+    expect(comparaison).toStrictEqual(0);
+  });
+
+  test('retourne -1 si la date A est supérieure à la date B', () => {
+    // GIVEN
+    const météoA = '2024-06-20T15:42:20.000Z';
+    const météoB = '2024-06-19T15:42:20.000Z';
+
+    // WHEN
+    const comparaison = comparerDateDeMàjDonnées(météoA, météoB);
+
+    // THEN
+    expect(comparaison).toStrictEqual(-1);
+  });
+
+  test('retourne 1 si la date A est inférieure la date B', () => {
+    // GIVEN
+    const météoA = '2024-06-19T15:42:20.000Z';
+    const météoB = '2024-06-20T15:42:20.000Z';
+
+    // WHEN
+    const comparaison = comparerDateDeMàjDonnées(météoA, météoB);
+
+    // THEN
+    expect(comparaison).toStrictEqual(1);
+  });
+
+  test('retourne 1 si la date A est null', () => {
+    // GIVEN
+    const météoA = null;
+    const météoB = '2024-06-19T15:42:20.000Z';
+
+    // WHEN
+    const comparaison = comparerDateDeMàjDonnées(météoA, météoB);
+
+    // THEN
+    expect(comparaison).toStrictEqual(1);
+  });
+
+  test('retourne -1 si la date B est null', () => {
+    // GIVEN
+    const météoA = '2024-06-19T15:42:20.000Z';
+    const météoB = null;
+
+    // WHEN
+    const comparaison = comparerDateDeMàjDonnées(météoA, météoB);
+
+    // THEN
+    expect(comparaison).toStrictEqual(-1);
+  });
 });
