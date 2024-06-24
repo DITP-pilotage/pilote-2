@@ -147,46 +147,46 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       </section>
                       <section
                         className='rubrique'
-                        id='responsables'
+                        id='synthèse'
                       >
-                        <Titre
-                          baliseHtml='h2'
-                          className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-                        >
-                          Responsables
-                        </Titre>
-                        <ResponsablesPageChantier
-                          afficheResponsablesLocaux={territoireSélectionné?.maille !== 'nationale'}
-                          coordinateurTerritorial={coordinateurTerritorial}
-                          maille={territoireSélectionné?.maille ?? null}
-                          responsables={chantier.responsables}
-                          responsablesLocal={responsableLocal}
+                        <TitreInfobulleConteneur className='fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+                          <Titre
+                            baliseHtml='h2'
+                            className='fr-h4 fr-mb-0 fr-py-1v'
+                            estInline
+                          >
+                            Météo et synthèse des résultats
+                          </Titre>
+                          <Infobulle idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'>
+                            {INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats}
+                          </Infobulle>
+                        </TitreInfobulleConteneur>
+                        <SynthèseDesRésultats
+                          modeÉcriture={modeÉcriture}
+                          nomTerritoire={territoireSélectionné!.nomAffiché}
+                          rechargerRéforme={rechargerChantier}
+                          réformeId={chantier.id}
+                          synthèseDesRésultatsInitiale={synthèseDesRésultats}
                         />
                       </section>
                     </>
                   }
                   <section
                     className='rubrique'
-                    id='synthèse'
+                    id='responsables'
                   >
-                    <TitreInfobulleConteneur className='fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
-                      <Titre
-                        baliseHtml='h2'
-                        className='fr-h4 fr-mb-0 fr-py-1v'
-                        estInline
-                      >
-                        Météo et synthèse des résultats
-                      </Titre>
-                      <Infobulle idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'>
-                        {INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats}
-                      </Infobulle>
-                    </TitreInfobulleConteneur>
-                    <SynthèseDesRésultats
-                      modeÉcriture={modeÉcriture}
-                      nomTerritoire={territoireSélectionné!.nomAffiché}
-                      rechargerRéforme={rechargerChantier}
-                      réformeId={chantier.id}
-                      synthèseDesRésultatsInitiale={synthèseDesRésultats}
+                    <Titre
+                      baliseHtml='h2'
+                      className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                    >
+                      Responsables
+                    </Titre>
+                    <ResponsablesPageChantier
+                      afficheResponsablesLocaux={territoireSélectionné?.maille !== 'nationale'}
+                      coordinateurTerritorial={coordinateurTerritorial}
+                      maille={territoireSélectionné?.maille ?? null}
+                      responsables={chantier.responsables}
+                      responsablesLocal={responsableLocal}
                     />
                   </section>
                 </div>
