@@ -39,13 +39,14 @@ const RapportDétailléChantierStyled = styled.section`
   
   .rubrique {
     break-inside: avoid;
+    
     & .rubrique__conteneur > div {
       height: auto;
     }
   }
   
   .chantier-item {
-    content-visibility: auto
+    content-visibility: auto;
   }
   
   @media print {
