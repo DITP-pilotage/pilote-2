@@ -38,9 +38,7 @@ const RapportDétailléChantierStyled = styled.section`
   }
   
   .rubrique {
-    display: grid;
-    grid-template-rows: auto 1fr;
-
+    break-inside: avoid;
     & .rubrique__conteneur > div {
       height: auto;
     }
