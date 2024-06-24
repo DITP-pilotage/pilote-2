@@ -47,7 +47,7 @@ const RapportDétailléChantierStyled = styled.section`
   
   .chantier-item {
     content-visibility: auto;
-    break-before: always;
+    break-before: page;
   }
   
   @media print {
