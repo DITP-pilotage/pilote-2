@@ -80,7 +80,8 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
     if (détailsIndicateur) {
       metÀJourDétailsParTerritoires();
     }
-  }, [détailsIndicateur, metÀJourDétailsParTerritoires, typeDeRéforme]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [détailsIndicateur, typeDeRéforme]);
 
   useEffect(() => {
     if (territoiresComparés.length === 0 && typeDeRéforme == 'chantier') {
