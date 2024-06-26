@@ -49,6 +49,21 @@ export default function RapportDétailléChantier({
       className='fr-mt-4w fr-pb-4w chantier-item'
       id={htmlId.chantier(chantier.id)}
     >
+      <Link
+        className='fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-up-line fr-btn--icon-left fr-text--sm'
+        href={`#${htmlId.listeDesChantiers()}`}
+        title='Revenir à la liste des chantiers'
+      >
+        Haut de page
+      </Link>
+      <Encart>
+        <Titre
+          baliseHtml='h1'
+          className='fr-h2 fr-mb-1w'
+        >
+          {chantier.nom}
+        </Titre>
+      </Encart>
       <div className='fr-mt-2w'>
         <div
           className={`grid-template ${territoireSélectionné!.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}
@@ -57,21 +72,6 @@ export default function RapportDétailléChantier({
             avancements !== null &&
             <>
               <section className='rubrique avancement'>
-                <Link
-                  className='fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-up-line fr-btn--icon-left fr-text--sm'
-                  href={`#${htmlId.listeDesChantiers()}`}
-                  title='Revenir à la liste des chantiers'
-                >
-                  Haut de page
-                </Link>
-                <Encart>
-                  <Titre
-                    baliseHtml='h1'
-                    className='fr-h2 fr-mb-1w'
-                  >
-                    {chantier.nom}
-                  </Titre>
-                </Encart>
                 <Titre
                   baliseHtml='h2'
                   className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
