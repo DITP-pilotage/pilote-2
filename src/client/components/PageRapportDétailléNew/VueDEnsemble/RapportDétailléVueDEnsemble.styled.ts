@@ -33,6 +33,10 @@ const RapportDétailléVueDEnsembleStyled = styled.section`
     .avancements-météos-carto {
       grid-template-columns: 1fr 1fr;
     }
+    
+    .force-break-page {
+      height: 500px;
+    }
   }
 `;
 

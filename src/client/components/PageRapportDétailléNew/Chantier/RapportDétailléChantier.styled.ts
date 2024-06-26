@@ -38,16 +38,16 @@ const RapportDétailléChantierStyled = styled.section`
   }
   
   .rubrique {
-    break-inside: avoid;
-    
+    display: grid;
+    grid-template-rows: auto 1fr;
+
     & .rubrique__conteneur > div {
       height: auto;
     }
   }
   
   .chantier-item {
-    content-visibility: auto;
-    break-before: page;
+    content-visibility: auto
   }
   
   @media print {
