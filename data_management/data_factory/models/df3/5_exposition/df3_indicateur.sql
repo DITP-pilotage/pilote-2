@@ -29,15 +29,6 @@ get_evol_vaca as (
 	from {{ ref('compute_ta_indic') }}
 	where vaca is not null
 	group by indic_id, zone_id
-),
--- Pour chaque indicateur-zone, on choisit la ligne de la dernière VACA
-sort_mesures_vaca as (
-	select *,
-	rank() over (partition by indic_id, zone_id order by metric_date desc) as r
-	from {{ ref('compute_ta_indic') }}
-	where vaca is not null),
-sort_mesures_vaca_last as (
-	select * from sort_mesures_vaca where r=1
 )
 
 -- Jointure avec les tables référentielles	
@@ -46,12 +37,12 @@ sort_mesures_vaca_last as (
 	mi.indic_nom as nom,
 	mi.indic_parent_ch as chantier_id,
 	gvcg.vcg as objectif_valeur_cible,
-	tag as objectif_taux_avancement,
+	a.tag as objectif_taux_avancement,
 	mi.indic_type as type_id,
 	mit.indic_type_name as type_nom,
 	mi.indic_is_baro as est_barometre,
 	mi.indic_is_phare as est_phare,
-	a.metric_date::date as date_valeur_actuelle,
+	a.date_valeur_actuelle::date as date_valeur_actuelle,
 	gvig.vig_date::date as date_valeur_initiale,
 	a.vaca as valeur_actuelle,
 	gvig.vig as valeur_initiale,
@@ -69,7 +60,7 @@ sort_mesures_vaca_last as (
 	pond_reelle.poids_zone_declaree as ponderation_zone_declaree,
 	gvcg.vcg_date::date as objectif_date_valeur_cible,
 	gvca.vca as objectif_valeur_cible_intermediaire,
-	taa_courant as objectif_taux_avancement_intermediaire,
+	a.taa_courant as objectif_taux_avancement_intermediaire,
 	-- Ajouter taa_adate ? ou pas besoin
 	gvca.vca_date::date as objectif_date_valeur_cible_intermediaire,
     COALESCE(z_appl.est_applicable, true) AS est_applicable,
@@ -79,10 +70,13 @@ sort_mesures_vaca_last as (
     last_update_indic.dernier_import_date_indic,
     last_update_indic.dernier_import_rapport_id_indic,
     last_update_indic.dernier_import_auteur_indic,
+    date_pro_maj.prochaine_date_maj,
+    date_pro_maj.prochaine_date_maj_jours,
+    date_pro_maj.est_a_jour,
     FALSE as a_supprimer
 	from public.territoire t 
 	cross join {{ ref('metadata_indicateurs') }} mi
-	left join sort_mesures_vaca_last a on a.indic_id=mi.indic_id and a.zone_id=t.zone_id
+	left join {{ ref('get_last_vaca') }} a on a.indic_id=mi.indic_id and a.zone_id=t.zone_id
 	-- donc la liste des terr X liste des indic vont ressortir ici.
 	-- list_indic_terr list_indic left join sort_mesures_va a on t.indic_id = list_indic.indic_id and t.zone_id = list_indic.zone_id
 	left join get_evol_vaca b on mi.indic_id=b.indic_id and t.zone_id=b.zone_id
@@ -102,5 +96,6 @@ sort_mesures_vaca_last as (
 	LEFT JOIN {{ ref('last_update_indic_zone') }} last_update_indic_zone ON mi.indic_id=last_update_indic_zone.indic_id AND t.code =last_update_indic_zone.territoire_code 
     LEFT JOIN {{ ref('last_update_indic') }} last_update_indic ON mi.indic_id=last_update_indic.indic_id
 	LEFT JOIN {{ ref('int_ponderation_reelle') }} pond_reelle ON pond_reelle.indic_id=mi.indic_id and pond_reelle.zone_id=t.zone_id
+	LEFT JOIN {{ ref('get_date_pro_maj_indic') }} as date_pro_maj ON mi.indic_id=date_pro_maj.indic_id and mz.zone_type =date_pro_maj."maille"
 	--where a.r=1
 	order by mi.indic_id, terr.code

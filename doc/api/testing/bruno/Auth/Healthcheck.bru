@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: {{base_url}}/api/check
+  url: {{base_url}}/api/open-api/healthcheck
   body: none
   auth: bearer
 }
@@ -21,12 +21,12 @@ body:json {
 }
 
 tests {
-  test("should be able to login", function() {
+  test("should return 200", function() {
     const data = res.getBody();
     expect(res.getStatus()).to.equal(200);
   });
 }
 
 docs {
-  Endpoint de Healthcheck pour tester si l'API est en fonctionnement.
+  Endpoint de healthcheck pour tester si l'utilisateur est correctement authentifié auprès de l'API.
 }

@@ -31,14 +31,22 @@ describe('CreerTokenAPIUseCase', () => {
     expect(result).toEqual('tokenApi');
   });
 
-  it('quand un token existe déjà, doit remonter une erreur', async () => {
+  it('quand un token existe déjà, doit supprimer token existant et en créer un nouveau', async () => {
     // Given
     const email = 'test@example.com';
+    tokenAPIService.creerTokenAPI.mockResolvedValue('tokenApi');
     const tokenAPIInformation = new TokenAPIInformationBuilder().withEmail('test@example.com').build();
     utilisateurRepository.estPresent.mockResolvedValue(true);
     tokenAPIInformationRepository.recupererTokenAPIInformation.mockResolvedValue(tokenAPIInformation);
+
+    // When
+    const result = await creerTokenAPIUseCase.run({ email });
+    
     // Then
-    await expect(creerTokenAPIUseCase.run({ email })).toReject();
+    expect(tokenAPIInformationRepository.supprimerTokenAPIInformation).toHaveBeenNthCalledWith(1, { email } );
+    expect(tokenAPIService.creerTokenAPI).toHaveBeenNthCalledWith(1, { email });
+    expect(tokenAPIInformationRepository.sauvegarderTokenAPIInformation).toHaveBeenNthCalledWith(1, { email, dateCreation: anyString() });
+    expect(result).toEqual('tokenApi');
   });
 
   it('quand l\'email n\'appartient pas a un utilisateur connu', async () => {

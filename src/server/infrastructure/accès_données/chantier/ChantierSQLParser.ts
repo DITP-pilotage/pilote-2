@@ -1,8 +1,9 @@
 import { chantier as ChantierPrisma } from '@prisma/client';
 import { Territoire, TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
-import Chantier, { ChantierDatesDeMiseÀJour } from '@/server/domain/chantier/Chantier.interface';
+import Chantier, { ChantierDateMajMeteo } from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
+import { calculerMédiane } from '@/client/utils/statistiques/statistiques';
 
 class ErreurChantierSansMailleNationale extends Error {
   constructor(idChantier: string) {
@@ -10,12 +11,14 @@ class ErreurChantierSansMailleNationale extends Error {
   }
 }
 
-function calculÉcart(chantierNational: ChantierPrisma, chantier?: ChantierPrisma) {
-  if (!chantier || chantier.taux_avancement === null || chantierNational.taux_avancement === null) {
+function calculÉcart(listeChantiers: ChantierPrisma[], chantier?: ChantierPrisma) {
+  if (!chantier || chantier.taux_avancement === null) {
     return null;
   } 
 
-  return chantier.taux_avancement - chantierNational.taux_avancement;
+  const mediane = calculerMédiane(listeChantiers.filter(elementChantier => elementChantier.maille === chantier.maille).map(elementChantier => elementChantier.taux_avancement));
+
+  return mediane ? chantier.taux_avancement - mediane : null;
 }
 
 function calculerTendance(chantier?: ChantierPrisma) {
@@ -41,14 +44,13 @@ function calculerTendance(chantier?: ChantierPrisma) {
 function créerDonnéesTerritoires(
   territoires: Territoire[],
   chantierRows: ChantierPrisma[],
-  chantierNational: ChantierPrisma,
-  chantiersRowsDatesDeMàj: Record<Chantier['id'], Record<Territoire['code'], ChantierDatesDeMiseÀJour>>,
+  chantiersRowsDatesDeMàj: Record<Chantier['id'], Record<Territoire['code'], ChantierDateMajMeteo>>,
 ) {
   let donnéesTerritoires: TerritoiresDonnées = {};
 
   territoires.forEach(t => {
     const chantierRow = chantierRows.find(c => c.code_insee === t.codeInsee);
-    const écart = calculÉcart(chantierNational, chantierRow);
+    const écart = calculÉcart(chantierRows, chantierRow);
     const tendance = calculerTendance(chantierRow);
 
     donnéesTerritoires[t.codeInsee] = {
@@ -59,7 +61,7 @@ function créerDonnéesTerritoires(
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
       écart: écart,
       tendance: tendance,
-      dateDeMàjDonnéesQualitatives: chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code]?.dateDeMàjDonnéesQualitatives ?? null : null,
+      dateDeMàjDonnéesQualitatives: chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code] ?? null : null,
       dateDeMàjDonnéesQuantitatives: chantierRow?.taux_avancement_date?.toISOString()  ?? null,
       responsableLocal: [],
       coordinateurTerritorial: [],
@@ -87,7 +89,7 @@ export function parseChantier(
   chantierRows: ChantierPrisma[],
   territoires: Territoire[],
   ministères: Ministère[],
-  chantiersRowsDatesDeMàj: Record<Chantier['id'], Record<Territoire['code'], ChantierDatesDeMiseÀJour>>,
+  chantiersRowsDatesDeMàj: Record<Chantier['id'], Record<Territoire['code'], ChantierDateMajMeteo>>,
 ): Chantier {
   const chantierMailleNationale = chantierRows.find(c => c.maille === 'NAT');
   const chantierMailleDépartementale = chantierRows.filter(c => c.maille === 'DEPT');
@@ -116,15 +118,15 @@ export function parseChantier(
           météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
           écart: null,
           tendance: tendance,
-          dateDeMàjDonnéesQualitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.['NAT-FR']?.dateDeMàjDonnéesQualitatives ?? null,
+          dateDeMàjDonnéesQualitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.['NAT-FR'] ?? null,
           dateDeMàjDonnéesQuantitatives: chantierMailleNationale.taux_avancement_date?.toISOString() ?? null,
           estApplicable: chantierMailleNationale.est_applicable,
           responsableLocal: [],
           coordinateurTerritorial: [],
         },
       },
-      départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale, chantierMailleNationale, chantiersRowsDatesDeMàj),
-      régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'régionale'), chantierMailleRégionale, chantierMailleNationale, chantiersRowsDatesDeMàj),
+      départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale, chantiersRowsDatesDeMàj),
+      régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'régionale'), chantierMailleRégionale, chantiersRowsDatesDeMàj),
     },
     responsables: {
       porteur: ministères.find(m => m.id === chantierMailleNationale.ministeres[0]) ?? null,

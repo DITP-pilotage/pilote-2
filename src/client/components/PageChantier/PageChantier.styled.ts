@@ -7,23 +7,23 @@ const PageChantierStyled = styled.div`
     display: grid;
     grid-template-areas:
       "avancement"
-      "responsables"
-      "synthèse";
+      "synthèse"
+      "responsables";
     gap: 0.7rem;
   }
 
   @media (min-width: 48rem) {
     .layout--nat {
       grid-template-areas:
-        "avancement responsables"
-        "synthèse   synthèse";
+        "avancement synthèse"
+        "responsables   responsables";
       grid-template-columns: auto minmax(16.5rem, 1fr);
     }
   
     .layout--dept-reg {
       grid-template-areas:
         "avancement   avancement"
-        "responsables synthèse";
+        "synthèse responsables";
     }
   }  
   
@@ -77,15 +77,15 @@ const PageChantierStyled = styled.div`
     
     .layout--nat {
       grid-template-areas:
-        "avancement responsables"
-        "synthèse   synthèse";
+        "avancement synthèse"
+        "responsables   responsables";
       grid-template-columns: auto minmax(22.5rem, 1fr);
     }
 
     .layout--dept-reg {
       grid-template-areas:
         "avancement   avancement"
-        "responsables synthèse";
+        "synthèse responsables";
     }
 
     #avancement,

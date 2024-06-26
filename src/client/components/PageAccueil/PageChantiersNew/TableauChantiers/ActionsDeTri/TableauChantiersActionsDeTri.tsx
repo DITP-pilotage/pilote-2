@@ -6,10 +6,22 @@ const listeColonnesÀtrier = [
   {
     libellé: 'Taux d\'avancement',
     colonneId: 'avancement',
+    accessible: true,
   },
   {
     libellé: 'Météo',
     colonneId: 'météo',
+    accessible: true,
+  },
+  {
+    libellé: 'Mise à jour des données',
+    colonneId: 'dateDeMàjDonnéesQuantitatives',
+    accessible: process.env.NEXT_PUBLIC_FF_TRI_DATES === 'true',
+  },
+  {
+    libellé: 'Mise à jour de la météo et synthèse des résultats',
+    colonneId: 'dateDeMàjDonnéesQualitatives',
+    accessible: process.env.NEXT_PUBLIC_FF_TRI_DATES === 'true',
   },
 ];
 
@@ -33,12 +45,15 @@ export default function TableauChantiersActionsDeTri({
           id='tri-tableau-chantiers'
           name='tri-tableau-chantiers'
           onChange={(événement) => changementColonneÀTrierCallback(événement.currentTarget.value)}
+          title='Trier par'
           value={colonneÀTrier}
         >
           {
             listeColonnesÀtrier.map(option => (
+              option.accessible &&
               <option
                 key={option.colonneId}
+                title={option.libellé}
                 value={option.colonneId}
               >
                 {option.libellé}

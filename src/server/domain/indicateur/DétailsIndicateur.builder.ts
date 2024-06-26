@@ -1,6 +1,10 @@
 import { faker } from '@faker-js/faker/locale/fr';
 import { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { codesInseeDépartements, codesInseeRégions, codeInseeFrance } from '@/server/domain/territoire/Territoire.interface';
+import {
+  codeInseeFrance,
+  codesInseeDépartements,
+  codesInseeRégions,
+} from '@/server/domain/territoire/Territoire.interface';
 import AvancementBuilder from '@/server/domain/chantier/avancement/Avancement.builder';
 import { générerPeutÊtreNull, générerTableau } from '@/server/infrastructure/test/builders/utils';
 
@@ -154,6 +158,9 @@ export default class DétailsIndicateurBuilder {
       est_applicable: this._est_applicable,
       dateImport: this._dateImport,
       pondération: this._pondération,
+      prochaineDateMaj: null,
+      prochaineDateMajJours: null,
+      estAJour: false,
     };
   }
 

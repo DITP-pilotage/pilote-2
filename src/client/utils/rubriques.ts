@@ -24,8 +24,8 @@ export const listeRubriquesChantier = (typesIndicateurs: TypeIndicateur[], maill
 
   let rubriques = maille === 'nationale' ? [
     { nom: 'Avancement du chantier', ancre: 'avancement' },
-    { nom: 'Responsables', ancre: 'responsables' },
     { nom: 'Météo et synthèse des résultats', ancre: 'synthèse' },
+    { nom: 'Responsables', ancre: 'responsables' },
     { nom: 'Répartition géographique', ancre: 'cartes' },
     { nom: 'Objectifs', ancre: 'objectifs' },
     { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: rubriquesIndicateursNonVides },
@@ -33,8 +33,8 @@ export const listeRubriquesChantier = (typesIndicateurs: TypeIndicateur[], maill
     { nom: 'Commentaires', ancre: 'commentaires' },
   ] : [
     { nom: 'Avancement du chantier', ancre: 'avancement' },
-    { nom: 'Responsables', ancre: 'responsables' },
     { nom: 'Météo et synthèse des résultats', ancre: 'synthèse' },
+    { nom: 'Responsables', ancre: 'responsables' },
     { nom: 'Répartition géographique', ancre: 'cartes' },
     { nom: 'Objectifs', ancre: 'objectifs' },
     { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: rubriquesIndicateursNonVides },

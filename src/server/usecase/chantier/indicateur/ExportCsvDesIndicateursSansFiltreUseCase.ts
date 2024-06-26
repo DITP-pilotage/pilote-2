@@ -68,7 +68,7 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
       const indicateursPourExports = await this._indicateurRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
       yield indicateursPourExports
         .filter(ind => !this.masquerIndicateurPourProfilDROM(profil, ind) && verifierOptionPerimetreIds(optionsExport, ind.périmètreIds) && verifierOptionEstBarometre(optionsExport, ind.chantierEstBaromètre) && verifierOptionEstTerritorialise(optionsExport, ind.chantierEstTerritorialise) && verifierOptionStatut(optionsExport, ind.chantierStatut))
-        .map(ind => this.transformer(ind));
+        .map(ind => this.transformer(ind, profil));
     }
   }
 
@@ -76,8 +76,8 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
     return profil === 'DROM' && !indicateur.périmètreIds.includes('PER-018') && indicateur.maille === 'NAT';
   }
 
-  private transformer(indicateurPourExport: IndicateurPourExport): string[] {
-    return [
+  private transformer(indicateurPourExport: IndicateurPourExport, profil: string): string[] {
+    const donnees = [
       indicateurPourExport.maille || NON_APPLICABLE,
       indicateurPourExport.régionNom || NON_APPLICABLE,
       indicateurPourExport.départementNom || NON_APPLICABLE,
@@ -100,5 +100,7 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
       formaterDateHeure(indicateurPourExport.dateValeurCible),
       formaterNumérique(indicateurPourExport.avancementGlobal),
     ];
+
+    return profil === 'DITP_ADMIN' ? [...donnees, indicateurPourExport.chantierStatut || NON_APPLICABLE] : donnees;
   }
 }

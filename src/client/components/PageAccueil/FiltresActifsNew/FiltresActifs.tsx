@@ -10,11 +10,12 @@ import FiltresActifsStyled from './FiltresActifs.styled';
 
 interface FiltresActifsProps {
   ministères: Ministère[]
-  axes: Axe[],
+  axes: Axe[]
+  mailleSelectionnee: 'départementale' | 'régionale'
 }
 
 
-export default function FiltresActifs({ ministères, axes }: FiltresActifsProps) {
+export default function FiltresActifs({ ministères, axes, mailleSelectionnee }: FiltresActifsProps) {
   const [filtres, setFiltres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
     axes: parseAsString.withDefault(''),
@@ -31,7 +32,7 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
     history: 'push',
   });
   // Taux d’avancement non calculé en raison d’indicateurs non renseignés
-  // Retard supérieur de 10 points par rapport à la moyenne nationale
+  // Retard de 10 points par rapport à la médiane
   // Tendance(s) en baisse
   // Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour
 
@@ -144,7 +145,7 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
           filtres.estEnAlerteÉcart ? (
             <li>
               <Tag
-                libellé='Retard supérieur de 10 points par rapport à la moyenne nationale'
+                libellé={`Chantier(s) avec un retard de 10 points par rapport à leur médiane ${mailleSelectionnee}`}
                 suppressionCallback={() => {
                   filtres.estEnAlerteÉcart = false;
 

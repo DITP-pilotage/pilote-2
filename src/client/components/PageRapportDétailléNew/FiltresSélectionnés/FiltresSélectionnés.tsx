@@ -9,6 +9,7 @@ import FiltresSélectionnésCatégorie from './Catégorie/FiltresSélectionnésC
 import FiltresSélectionnésStyled from './FiltresSélectionnés.styled';
 
 export default function FiltresSélectionnés({ territoireSélectionné, ministères, axes }: FiltresSélectionnésProps) {
+
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
     axes: parseAsString.withDefault(''),
@@ -52,7 +53,7 @@ export default function FiltresSélectionnés({ territoireSélectionné, minist�
     {
       nom: 'Alertes', filtresActifs: [
         filtres.estEnAlerteTauxAvancementNonCalculé ? 'Taux d’avancement non calculé en raison d’indicateurs non renseignés' : null,
-        filtres.estEnAlerteÉcart ? 'Retard supérieur de 10 points par rapport à la moyenne nationale' : null,
+        filtres.estEnAlerteÉcart ? `Chantier(s) avec un retard de 10 points par rapport à leur médiane ${territoireSélectionné?.maille}` : null,
         filtres.estEnAlerteBaisse ? 'Chantier(s) avec tendance en baisse' : null,
         filtres.estEnAlerteMétéoNonRenseignée ? 'Chantier(s) avec météo et synthèse des résultats non renseignés' : null,
         filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 'Chantier(s) sans taux d’avancement au niveau départemental' : null,

@@ -1,46 +1,56 @@
 import { Controller } from 'react-hook-form';
 import InputAvecLabel from '@/components/_commons/InputAvecLabel/InputAvecLabel';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
-import useSaisieDesInformationsUtilisateur from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
+import useSaisieDesInformationsUtilisateur
+  from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
 import Titre from '@/components/_commons/Titre/Titre';
-import MultiSelectTerritoire, { MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT, MAXIMUM_COMPTES_AUTORISE_PAR_REGION } from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
+import MultiSelectTerritoire, {
+  MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT,
+  MAXIMUM_COMPTES_AUTORISE_PAR_REGION,
+} from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
 import MultiSelectChantier from '@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier';
-import MultiSelectPérimètreMinistériel from '@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
-import { UtilisateurFormulaireProps } from '@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
+import MultiSelectPérimètreMinistériel
+  from '@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
+import {
+  UtilisateurFormulaireProps,
+} from '@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
 import CaseACocher from '@/components/_commons/CaseACocher/CaseACocher';
 // import { DevTool } from '@hookform/devtools';
 
 
 export default function SaisieDesInformationsUtilisateur({ utilisateur }: UtilisateurFormulaireProps) {
   const {
-    listeProfils, 
+    listeProfils,
     profilSélectionné,
-    handleChangementValeursSélectionnéesTerritoires, 
-    handleChangementValeursSélectionnéesChantiers, 
-    handleChangementValeursSélectionnéesPérimètresMinistériels, 
-    chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés, 
-    register, 
-    errors, 
-    control, 
-    afficherChampLectureTerritoires, 
-    afficherChampLectureChantiers, 
-    afficherChampLecturePérimètres, 
-    territoiresSélectionnés, 
-    chantiersSélectionnés, 
-    périmètresMinistérielsSélectionnés, 
-    groupesTerritoiresÀAfficher, 
+    handleChangementValeursSélectionnéesTerritoires,
+    handleChangementValeursSélectionnéesChantiers,
+    handleChangementValeursSélectionnéesPérimètresMinistériels,
+    chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés,
+    register,
+    errors,
+    control,
+    afficherChampLectureTerritoires,
+    afficherChampLectureChantiers,
+    afficherChampLecturePérimètres,
+    territoiresSélectionnés,
+    chantiersSélectionnés,
+    périmètresMinistérielsSélectionnés,
+    groupesTerritoiresÀAfficher,
     chantiersAccessiblesPourLeProfil,
     afficherChampSaisieCommentaire,
     afficherChampSaisieIndicateur,
     afficherChampGestionCompte,
     session,
-  } = useSaisieDesInformationsUtilisateur(utilisateur);  
+  } = useSaisieDesInformationsUtilisateur(utilisateur);
 
   return (
     <>
       <p>
-        Il existe trois types de droits : les droits de lecture, les droits de saisie des données et les droits de saisie des commentaires. Des droits sont attribués par défaut selon le profil. Pour les profils n’ayant accès qu’à certains territoires, chantiers ou projets structurants, il faut spécifier lesquels dans la partie “périmètre”. Pour certains profils, les droits de saisie sont facultatifs et à préciser.
+        Il existe trois types de droits : les droits de lecture, les droits de saisie des données et les droits de
+        saisie des commentaires. Des droits sont attribués par défaut selon le profil. Pour les profils n’ayant accès
+        qu’à certains territoires, chantiers ou projets structurants, il faut spécifier lesquels dans la partie
+        “périmètre”. Pour certains profils, les droits de saisie sont facultatifs et à préciser.
       </p>
       <Titre
         baliseHtml='h2'
@@ -58,25 +68,25 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
         libellé='Adresse électronique'
         register={register('email', { value: utilisateur?.email })}
         texteAide='Format attendu : nom@domaine.fr'
-        type='email' 
+        type='email'
       />
       <InputAvecLabel
         erreur={errors.nom}
         htmlName='nom'
         libellé='Nom'
-        register={register('nom', { value: utilisateur?.nom })} 
+        register={register('nom', { value: utilisateur?.nom })}
       />
       <InputAvecLabel
         erreur={errors.prénom}
         htmlName='prénom'
         libellé='Prénom'
-        register={register('prénom', { value: utilisateur?.prénom })} 
+        register={register('prénom', { value: utilisateur?.prénom })}
       />
       <InputAvecLabel
         erreur={errors.fonction}
         htmlName='fonction'
         libellé='Fonction'
-        register={register('fonction', { value: utilisateur?.fonction })} 
+        register={register('fonction', { value: utilisateur?.fonction })}
       />
       <Sélecteur
         erreur={errors.profil}
@@ -86,9 +96,11 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
         register={register('profil', { value: utilisateur?.profil })}
         texteAide='Les droits attribués dépendent du profil sélectionné.'
         texteFantôme='Sélectionner un profil'
-        valeurSélectionnée={profilSélectionné?.code} 
+        valeurSélectionnée={profilSélectionné?.code}
       />
-      <div className={`${(!!afficherChampLectureTerritoires || !!afficherChampLecturePérimètres || !!afficherChampLectureChantiers) ? '' : 'fr-hidden'}`}>
+      <div
+        className={`${(!!afficherChampLectureTerritoires || !!afficherChampLecturePérimètres || !!afficherChampLectureChantiers) ? '' : 'fr-hidden'}`}
+      >
         <hr className='fr-hr' />
         <Titre
           baliseHtml='h2'
@@ -109,7 +121,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
               name='habilitations.lecture.territoires'
               render={() => (
                 <MultiSelectTerritoire
-                  activerLaRestrictionDesTerritoires={!['DITP_ADMIN', 'DITP_PILOTAGE'].includes(session?.profil)}
+                  activerLaRestrictionDesTerritoires={!['DITP_ADMIN', 'DITP_PILOTAGE'].includes(session?.profil || '')}
                   afficherBoutonsSélection
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesTerritoires}
                   groupesÀAfficher={groupesTerritoiresÀAfficher}
@@ -117,7 +129,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
                   territoiresSélectionnables={session?.habilitations.gestionUtilisateur.territoires}
                 />
               )}
-              rules={{ required: true }} 
+              rules={{ required: true }}
             />
           </div>
         </div>
@@ -130,10 +142,10 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
                 <MultiSelectPérimètreMinistériel
                   afficherBoutonsSélection
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesPérimètresMinistériels}
-                  périmètresMinistérielsIdsSélectionnésParDéfaut={périmètresMinistérielsSélectionnés} 
+                  périmètresMinistérielsIdsSélectionnésParDéfaut={périmètresMinistérielsSélectionnés}
                 />
               )}
-              rules={{ required: true }} 
+              rules={{ required: true }}
             />
           </div>
         </div>
@@ -164,7 +176,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
         >
           Droits de saisie des données quantitatives
         </Titre>
-        <CaseACocher 
+        <CaseACocher
           libellé='Accorder les droits de saisie des données quantitatives'
           register={register('saisieIndicateur')}
         />
@@ -177,7 +189,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
         >
           Droits de saisie des commentaires
         </Titre>
-        <CaseACocher 
+        <CaseACocher
           libellé='Accorder les droits de saisie des commentaires'
           register={register('saisieCommentaire')}
         />
@@ -190,7 +202,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
         >
           Droits de gestion des comptes utilisateurs
         </Titre>
-        <CaseACocher 
+        <CaseACocher
           libellé='Accorder les droits de gestion des comptes utilisateurs'
           register={register('gestionUtilisateur')}
         />
@@ -198,7 +210,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
       <div className='fr-grid-row fr-grid-row--right fr-mt-4w'>
         <SubmitBouton
           className='fr-btn--icon-right fr-icon-arrow-right-line'
-          label='Suivant' 
+          label='Suivant'
         />
       </div>
       {/* <DevTool control={control} /> */}

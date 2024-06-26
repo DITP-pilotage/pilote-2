@@ -114,7 +114,7 @@ export const presenterEnChantierAccueilContrat = (territoireCode: string) => (ch
     tauxAvancementDonnéeTerritorialisée: chantier.tauxAvancementDonnéeTerritorialisée,
     météoDonnéeTerritorialisée: chantier.météoDonnéeTerritorialisée,
     dateDeMàjDonnéesQuantitatives: mailles[mailleChantier][codeInsee].dateDeMàjDonnéesQuantitatives,
-    dateDeMàjDonnéesQualitatives: mailles[mailleChantier][codeInsee].dateDeMàjDonnéesQuantitatives,
+    dateDeMàjDonnéesQualitatives: mailles[mailleChantier][codeInsee].dateDeMàjDonnéesQualitatives,
     écart: mailles[mailleChantier][codeInsee].écart,
     tendance: mailles[mailleChantier][codeInsee].tendance,
     météo: mailles[mailleChantier][codeInsee].météo,

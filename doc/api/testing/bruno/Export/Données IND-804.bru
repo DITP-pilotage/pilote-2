@@ -1,0 +1,19 @@
+meta {
+  name: Données IND-804
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/open-api/chantier/CH-047/indicateur/IND-804/donnees
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{api_token}}
+}
+
+docs {
+  Cet endpoint permet d'exporter les données de l'indicateur *IND-804* qui fait partie du chantier *CH-047*.
+}

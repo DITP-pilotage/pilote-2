@@ -111,6 +111,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
         nombreFiltresActifs > 0 ? (
           <FiltresActifs
             axes={axes}
+            mailleSelectionnee={mailleSelectionnee}
             ministères={ministères}
           />
         ) : null

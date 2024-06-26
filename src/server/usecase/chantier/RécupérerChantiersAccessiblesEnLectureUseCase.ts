@@ -8,7 +8,7 @@ import { parseChantier } from '@/server/infrastructure/accès_données/chantier/
 import { groupBy } from '@/client/utils/arrays';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
+import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDateDeMàjMeteoRepository.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 export default class RécupérerChantiersAccessiblesEnLectureUseCase {
@@ -27,7 +27,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
     const ministères = await this.ministèreRepository.getListe();
     const territoires = await this.territoireRepository.récupérerTous();
     const chantiersRows = await this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilités(habilitation, profil);
-    const chantiersRowsDatesDeMàj = await this.chantierDatesDeMàjRepository.récupérerDatesDeMiseÀJour(chantiersLecture, territoiresLecture);
+    const chantiersRowsDatesDeMàj = await this.chantierDatesDeMàjRepository.récupérerDateDeMiseÀJourMeteo(chantiersLecture, territoiresLecture);
     const chantiersGroupésParId = groupBy<chantierPrisma>(chantiersRows, chantier => chantier.id);
     let chantiers = objectEntries(chantiersGroupésParId).map(([_, chantier]) => parseChantier(chantier, territoires, ministères, chantiersRowsDatesDeMàj));
 

@@ -5,7 +5,7 @@ import RécupérerChantiersAccessiblesEnLectureUseCase
   from '@/server/usecase/chantier/RécupérerChantiersAccessiblesEnLectureUseCase';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
+import ChantierDateDeMàjMeteoRepository from '@/server/domain/chantier/ChantierDateDeMàjMeteoRepository.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 
@@ -13,15 +13,15 @@ describe('RécupérerChantiersAccessiblesEnLectureUseCase', () => {
 
   let récupérerChantiersAccessiblesEnLectureUseCase: RécupérerChantiersAccessiblesEnLectureUseCase;
   let chantierRepository: ChantierRepository;
-  let chantierDatesDeMàjRepository: ChantierDatesDeMàjRepository;
+  let chantierDateDeMàjMeteoRepository: ChantierDateDeMàjMeteoRepository;
   let ministèreRepository: MinistèreRepository;
   let territoireRepository: TerritoireRepository;
   beforeEach(() => {
     chantierRepository = dependencies.getChantierRepository();
-    chantierDatesDeMàjRepository = dependencies.getChantierDatesDeMàjRepository();
+    chantierDateDeMàjMeteoRepository = dependencies.getChantierDateDeMàjMeteoRepository();
     ministèreRepository = dependencies.getMinistèreRepository();
     territoireRepository = dependencies.getTerritoireRepository();
-    récupérerChantiersAccessiblesEnLectureUseCase = new RécupérerChantiersAccessiblesEnLectureUseCase( chantierRepository, chantierDatesDeMàjRepository, ministèreRepository, territoireRepository);
+    récupérerChantiersAccessiblesEnLectureUseCase = new RécupérerChantiersAccessiblesEnLectureUseCase( chantierRepository, chantierDateDeMàjMeteoRepository, ministèreRepository, territoireRepository);
   });
 
   test('un chantier sans ministères est exclu du résultat', async () => {

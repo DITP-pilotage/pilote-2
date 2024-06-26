@@ -139,13 +139,14 @@ export default function SectionDétailsMetadataIndicateur({
           />
         </div>
         <div className='fr-col-12 fr-col-md-6'>
-          <MetadataIndicateurInput
+          <MetadataIndicateurSelecteur
             erreurMessage={errors.zgApplicable?.message}
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName='zgApplicable'
             informationMetadataIndicateur={mapInformationMetadataIndicateur.zg_applicable}
-            register={register('zgApplicable', { value: indicateur?.zgApplicable })}
-            valeurAffiché={indicateur.zgApplicable || '_'}
+            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'zg_applicable')}
+            register={register('zgApplicable')}
+            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'zg_applicable', 'zgApplicable')}
+            values={getValues('zgApplicable')}
           />
         </div>
       </div>
