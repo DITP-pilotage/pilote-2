@@ -30,7 +30,7 @@ export default function Indicateurs({
     return null;
   }
 
-  const listeIndicateursParent = indicateurs.filter(indicateur => !indicateur.parent_id);
+  const listeIndicateursParent = indicateurs.filter(indicateur => !indicateur.parentId);
 
   return (
     <IndicateursStyled>
@@ -73,7 +73,7 @@ export default function Indicateurs({
                         estInteractif={estInteractif}
                         indicateur={indicateur}
                         key={indicateur.id}
-                        listeSousIndicateurs={indicateurs.filter(ind => ind.parent_id === indicateur.id)}
+                        listeSousIndicateurs={indicateurs.filter(ind => ind.parentId === indicateur.id)}
                         territoireProjetStructurant={territoireProjetStructurant}
                         typeDeRéforme={typeDeRéforme}
                       />
