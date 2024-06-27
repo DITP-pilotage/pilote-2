@@ -1,19 +1,19 @@
 WITH 
 -- Pivot des vi
 pivot_vi as (
-    select indic_id, zone_id, metric_date,
+    select id, indic_id, zone_id, metric_date,
     metric_value as vi
     from {{ ref('agg_all') }} where metric_type ='vi'
 ),
 -- Pivot des va
 pivot_va as (
-    select indic_id, zone_id, metric_date,
+    select id, indic_id, zone_id, metric_date,
     metric_value as va
     from {{ ref('agg_all') }} where metric_type ='va'
 ),
 -- Pivot des vc
 pivot_vc as (
-    select indic_id, zone_id, metric_date,
+    select id, indic_id, zone_id, metric_date,
     metric_value as vc
     from {{ ref('agg_all') }} where metric_type ='vc'
 ),
@@ -21,6 +21,7 @@ pivot_vc as (
 -- Jointure des 2 tables pivotées: vi X va => u_vi_va
 --  pour construire les colonnes vi et va
 u_vi_va as (select 
+    coalesce(a.id, b.id) as id,
     coalesce(a.indic_id, b.indic_id) as indic_id,
     coalesce(a.zone_id, b.zone_id) as zone_id,
     coalesce(a.metric_date, b.metric_date) as metric_date,
@@ -33,6 +34,7 @@ ORDER BY indic_id, zone_id, metric_date asc
 -- Jointure des 2 tables pivotées: u_vi_va X vc => u_vi_va_vc
 --  pour ajouter la colonne vc
 u_vi_va_vc as (select 
+    coalesce(a.id, c.id) as id,
     coalesce(a.indic_id, c.indic_id) as indic_id,
     coalesce(a.zone_id, c.zone_id) as zone_id,
     coalesce(a.metric_date, c.metric_date) as metric_date,
