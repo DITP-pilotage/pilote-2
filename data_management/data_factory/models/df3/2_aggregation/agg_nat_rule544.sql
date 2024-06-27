@@ -8,7 +8,7 @@ with source as
 --	et on y ajoute les paramètres d'aggrégation NAT (cf agg_nat)
 mesure_last_params_nat as (
     select 
-        a.indic_id , metric_date, metric_type, metric_value , zone_id,
+        a.id, a.indic_id , metric_date, metric_type, metric_value , zone_id,
         b.vi_nat_from , b.vi_nat_op , b.va_nat_from, b.va_nat_op, b.vc_nat_from , b.vc_nat_op 
     from {{ ref('mesure_last_null_erase_keep_lastvalmonth') }} a
     left join {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} b 
@@ -32,6 +32,7 @@ mesure_last_params_nat_all_vi as (
 --	et de valeurs illegalement saisies en VC
 join_correct_and_illegal_values_vc as (
 select 
+    coalesce(a.id, b.id) as id,
     coalesce(a.indic_id, b.indic_id) as indic_id,
     coalesce(a.zone_id, b.zone_id) as zone_id,
     coalesce(a.metric_date, b.metric_date) as metric_date,
@@ -45,6 +46,7 @@ mesure_last_params_nat_all_vc b on a.indic_id=b.indic_id and a.zone_id=b.zone_id
 --	et de valeurs illegalement saisies en vi
 join_correct_and_illegal_values_vi as (
 select 
+    coalesce(a.id, b.id) as id,
     coalesce(a.indic_id, b.indic_id) as indic_id,
     coalesce(a.zone_id, b.zone_id) as zone_id,
     coalesce(a.metric_date, b.metric_date) as metric_date,
@@ -58,19 +60,19 @@ mesure_last_params_nat_all_vi b on a.indic_id=b.indic_id and a.zone_id=b.zone_id
 -- Jointure des VC+VI avec le reste des valeurs NAT aggrégées (VA)
 select * from 
 (select 
-    indic_id, zone_id, metric_date, metric_type,
+    id, indic_id, zone_id, metric_date, metric_type,
 	-- Si pas de computed_value, alors on prend la illegal_value
 	coalesce(computed_value, illegal_input_value::float) as metric_value 
     from join_correct_and_illegal_values_vc where metric_type='vc') as a
 union
 (select 
-    indic_id, zone_id, metric_date, metric_type,
+    id, indic_id, zone_id, metric_date, metric_type,
 	-- Si pas de computed_value, alors on prend la illegal_value
 	coalesce(computed_value, illegal_input_value::float) as metric_value 
     from join_correct_and_illegal_values_vi where metric_type='vi')
 union
 (select 
-    indic_id, zone_id, metric_date, metric_type, metric_value 
+    id, indic_id, zone_id, metric_date, metric_type, metric_value 
     from {{ ref('agg_nat') }}  where metric_type='va')
 
 
