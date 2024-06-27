@@ -58,11 +58,13 @@ mesure_last_params_reg_from_dept as (
 --	La sélection de la valeur correcte se fera ensuite en fonction des paramètres
 compute_op_sum_avg as (
 	select 
-		id, zone_parent, indic_id as indic_id1, metric_date, metric_type, 
+		-- On met id=NULL lorsque la valeur est générée par aggrégation et non issue d'une mesure saisie
+		null::uuid as id, 
+		zone_parent, indic_id as indic_id1, metric_date, metric_type, 
 		sum(metric_value::float) as op_sum,
 		avg(metric_value::float) as op_avg
 	from mesure_last_params_reg_from_dept
-	group by id, zone_parent, indic_id, metric_date, metric_type
+	group by zone_parent, indic_id, metric_date, metric_type
 ),
 
 -- On sélectionne le bon résultat de calcul de l'aggrégation 
