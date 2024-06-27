@@ -155,6 +155,7 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
                 <IndicateurBloc
                   chantierEstTerritorialisé={chantierEstTerritorialisé}
                   détailsIndicateurs={détailsIndicateurs}
+                  estAutoriseAVoirLesAlertesMAJIndicateurs={false}
                   estDisponibleALImport={false}
                   estInteractif
                   indicateur={sousIndicateur}

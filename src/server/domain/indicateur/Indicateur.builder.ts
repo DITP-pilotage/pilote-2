@@ -19,6 +19,8 @@ export default class IndicateurBuilder {
 
   private _unité: Indicateur['unité'];
 
+  private _parentId: Indicateur['parentId'];
+
   constructor() {
     this._id = générerUnIdentifiantUnique('IND');
     this._nom = `${this._id} ${faker.lorem.words()}`;
@@ -28,6 +30,7 @@ export default class IndicateurBuilder {
     this._source = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
     this._modeDeCalcul = générerPeutÊtreNull(0.2, faker.lorem.paragraph(5));
     this._unité = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
+    this._parentId = null;
   }
 
   avecId(id: Indicateur['id']): IndicateurBuilder {
@@ -65,6 +68,11 @@ export default class IndicateurBuilder {
     return this;
   }
 
+  avecParentId(parentId: Indicateur['parentId']): IndicateurBuilder {
+    this._parentId = parentId;
+    return this;
+  }
+
   build(): Indicateur {
     return {
       id: this._id,
@@ -75,6 +83,7 @@ export default class IndicateurBuilder {
       source: this._source,
       modeDeCalcul: this._modeDeCalcul,
       unité: this._unité,
+      parentId: this._parentId,
     };
   }
 }
