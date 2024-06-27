@@ -11,4 +11,5 @@ export default interface IndicateurDétailsProps {
   dateDeMiseAJourIndicateur: string
   listeSousIndicateurs: Indicateur[]
   détailsIndicateurs: DétailsIndicateurs
+  estSousIndicateur?: boolean
 }
