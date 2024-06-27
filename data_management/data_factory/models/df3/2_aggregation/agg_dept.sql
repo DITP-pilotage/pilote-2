@@ -7,7 +7,7 @@ with
 --	et on y ajoute les paramètres d'aggrégation DEPT 
 mesure_last_params_dept as (
     select 
-        a.indic_id , metric_date, metric_type, metric_value , zone_id,
+        a.id, a.indic_id , metric_date, metric_type, metric_value , zone_id,
         b.vi_dept_from , b.vi_dept_op , b.va_dept_from, b.va_dept_op, b.vc_dept_from , b.vc_dept_op 
     from {{ ref('mesure_last_null_erase_keep_lastvalmonth') }} a
     left join {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} b 
