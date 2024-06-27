@@ -152,6 +152,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 chantierEstTerritorialisé={chantierEstTerritorialisé}
                 dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
                 détailsIndicateurs={détailsIndicateurs}
+                estAutoriseAVoirLesAlertesMAJIndicateurs={estAutoriseAVoirLesAlertesMAJIndicateurs}
                 indicateur={indicateur}
                 indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
                 listeSousIndicateurs={listeSousIndicateurs}
