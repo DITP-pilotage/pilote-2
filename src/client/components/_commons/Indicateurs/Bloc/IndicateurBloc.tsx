@@ -146,6 +146,7 @@ export default function IndicateurBloc({
                 chantierEstTerritorialisé={chantierEstTerritorialisé}
                 dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
                 détailsIndicateurs={détailsIndicateurs}
+                estAutoriseAVoirLesAlertesMAJIndicateurs={estAutoriseAVoirLesAlertesMAJIndicateurs}
                 indicateur={indicateur}
                 indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
                 listeSousIndicateurs={listeSousIndicateurs}
