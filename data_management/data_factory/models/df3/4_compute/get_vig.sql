@@ -11,7 +11,7 @@ vi_non_null_sorted AS (
         metric_date,
         vi,
         rank()
-            OVER (PARTITION BY indic_id, zone_id ORDER BY metric_date ASC)
+            OVER (PARTITION BY indic_id, zone_id ORDER BY date_import DESC, metric_date ASC, random())
         AS r
     FROM {{ ref('pivot_mesures') }}
     -- vi NON NULL
