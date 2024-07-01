@@ -58,7 +58,9 @@ export default function SousIndicateurBloc({
               baliseHtml='h4'
               className='fr-text--xl fr-mb-1w fr-ml-1w'
             >
-
+              <span className='fr-mr-1v'>
+                <PictoSousIndicateur />
+              </span>         
               {
                 estIndicateurEnAlerte ? (
                   <span className='fr-mr-1v'>
@@ -73,10 +75,7 @@ export default function SousIndicateurBloc({
                   </span>
                 )
                   : null
-              }
-              <span className='fr-mr-1v'>
-                <PictoSousIndicateur />
-              </span>              
+              }    
               {indicateur.nom + (indicateur.unité === null || indicateur.unité === '' ? '' : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
             </Titre>
             <div className='fr-ml-2w fr-mb-3w'>
