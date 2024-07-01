@@ -92,11 +92,11 @@ models:
     description: |
         Réalise les calculs pour déterminer la *VIG* (ie *Valeur Initiale globale*). Règles:
 
-        - Pour chaque [indicateur, zone] il s'agit de la VI ayant la `metric_date` la plus lointaine dans le passé.
         - **Attention**, il existe une **date minimale** dans le projet dbt, et qui assure qu'aucune VIG ne sera antérieure celle-ci. Sa valeur est **{{ var('vig_min_date') }}**
 
         Règles **supprimées**:
-        - Si aucune VI n'est détectée, on prend la première VA. Cette première VA doit également satisfaire le critère suivant sur la *date_minimale* (cf `commit/a864d5eb18acdb478488a5aded4cb5c0ff942266`)
+        - [DELETED] Si aucune VI n'est détectée, on prend la première VA. Cette première VA doit également satisfaire le critère suivant sur la *date_minimale* (cf `commit/a864d5eb18acdb478488a5aded4cb5c0ff942266`)
+        - Pour chaque [indicateur, zone] il s'agit de la VI importée le plus récemment. Si deux VI importée dans le même import, on sélectionne celle avec la `metric_date` la plus lointaine dans le passé. Si toujours plusieurs VI candidates, **on sélectionne au hasard** un de ces dates. On fait cela car aucun moyen de les départager autrement.
   - name: compute_vaca
     description: |
         Calcule les VACA (*Valeur Actuelle comparable annuelle*) pour chaque mesure. Cette valeur est celle qui sera comparée à la VC pour le calcul du TA. Règles:
