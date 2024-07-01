@@ -111,7 +111,7 @@ export default function Navigation() {
     },
     {
       nom: 'Suivi de la complétude',
-      lien: 'https://copilot-metabase.osc-secnum-fr1.scalingo.io/',
+      lien: 'https://copilot-metabase.osc-secnum-fr1.scalingo.io/dashboard/39-tableau-de-bord-de-conformite-pilote',
       matcher: '/suivicompletude',
       accessible: vérifierSuiviCompletudeEstDisponibleEstIndisponible && estAdministrateurOuPilotage(session!),
       prefetch: false,

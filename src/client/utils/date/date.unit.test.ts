@@ -53,7 +53,7 @@ describe('comparerDateDeMàjDonnées', () => {
     const météoB = '2024-06-20T15:42:20.000Z';
 
     // WHEN
-    const comparaison = comparerDateDeMàjDonnées(météoA, météoB);
+    const comparaison = comparerDateDeMàjDonnées(météoA, météoB, [{ desc: true, id: '1' }]);
 
     // THEN
     expect(comparaison).toStrictEqual(0);
@@ -65,7 +65,7 @@ describe('comparerDateDeMàjDonnées', () => {
     const météoB = '2024-06-19T15:42:20.000Z';
 
     // WHEN
-    const comparaison = comparerDateDeMàjDonnées(météoA, météoB);
+    const comparaison = comparerDateDeMàjDonnées(météoA, météoB, [{ desc: true, id: '1' }]);
 
     // THEN
     expect(comparaison).toStrictEqual(-1);
@@ -77,33 +77,33 @@ describe('comparerDateDeMàjDonnées', () => {
     const météoB = '2024-06-20T15:42:20.000Z';
 
     // WHEN
-    const comparaison = comparerDateDeMàjDonnées(météoA, météoB);
+    const comparaison = comparerDateDeMàjDonnées(météoA, météoB, [{ desc: true, id: '1' }]);
 
     // THEN
     expect(comparaison).toStrictEqual(1);
   });
 
-  test('retourne 1 si la date A est null', () => {
+  test('retourne -1 si la date A est null et tri par ordre décroissant', () => {
     // GIVEN
     const météoA = null;
     const météoB = '2024-06-19T15:42:20.000Z';
 
     // WHEN
-    const comparaison = comparerDateDeMàjDonnées(météoA, météoB);
+    const comparaison = comparerDateDeMàjDonnées(météoA, météoB, [{ desc: true, id: '1' }]);
 
     // THEN
-    expect(comparaison).toStrictEqual(1);
+    expect(comparaison).toStrictEqual(-1);
   });
 
-  test('retourne -1 si la date B est null', () => {
+  test('retourne 1 si la date B est null et tri par ordre croissant', () => {
     // GIVEN
     const météoA = '2024-06-19T15:42:20.000Z';
     const météoB = null;
 
     // WHEN
-    const comparaison = comparerDateDeMàjDonnées(météoA, météoB);
+    const comparaison = comparerDateDeMàjDonnées(météoA, météoB, [{ desc: true, id: '1' }]);
 
     // THEN
-    expect(comparaison).toStrictEqual(-1);
+    expect(comparaison).toStrictEqual(1);
   });
 });
