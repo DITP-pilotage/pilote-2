@@ -8,6 +8,17 @@ interface Nouveautés {
 
 export const ParametrageNouveautés: Nouveautés[] = [
   {
+    version: 'Version 2.4.8',
+    date: '2 juillet 2024',
+    contenu : [
+      'Alertes et PPG signalées : modification du mode de calcul pour l\'alerte concernant les écarts à la moyenne nationale. Le calcul de cette alerte a été modifié, et prend en compte désormais les PPG ayant un écart égal ou supérieur à 10 points avec le taux d\'avancement territorial médian.',
+      'Page d’accueil : ajout de la date de mise à jour des météo et synthèse des résultats dans la liste des chantiers',
+      'Page PPG : les ministères porteurs sont dorénavant affichés sous le titre de chaque PPG, en haut de page pour simplifier la lecture',
+    ],
+    correctifs : [
+    ],
+  },
+  {
     version: 'Version 2.4.7',
     date: '11 juin 2024',
     contenu : [
@@ -23,7 +34,6 @@ export const ParametrageNouveautés: Nouveautés[] = [
     version: 'Version 2.4.6',
     date: '29 mai 2024',
     contenu : [
-      'Bienvenue sur cette nouvelle page Nouveautés ! Dorénavant, vous retrouverez ici l\'ensemble des informations sur les évolutions de PILOTE et les dernières fonctionnalités disponibles !',
       'La fonctionnalité Chantiers signalés est désormais disponible. Elle vous permet d\'identifier rapidement les Politiques prioritaires du Gouvernement nécessitant une attention particulière et, le cas échéant, la mise en place de mesures adéquates afin de garantir la réussite de leur déploiement sur votre territoire. Plus d\'informations à venir dans le centre d\'aide prochainement.',
     ],
     correctifs : [],

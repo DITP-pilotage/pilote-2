@@ -8,7 +8,7 @@ import PageRapportDétaillé from '@/components/PageRapportDétailléNew/PageRap
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { PublicationsGroupéesParChantier } from '@/components/PageRapportDétaillé/PageRapportDétaillé.interface';
+import { PublicationsGroupéesParChantier } from '@/components/PageRapportDétailléNew/PageRapportDétaillé.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase
   from '@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
@@ -113,7 +113,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
 
   const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
     dependencies.getChantierRepository(),
-    dependencies.getChantierDatesDeMàjRepository(),
+    dependencies.getChantierDateDeMàjMeteoRepository(),
     territoireRepository,
   )
     .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', codeInseeSelectionne, ministères, axes, filtres);

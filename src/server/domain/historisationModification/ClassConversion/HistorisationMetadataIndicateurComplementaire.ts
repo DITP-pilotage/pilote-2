@@ -15,7 +15,7 @@ export interface HistorisationMetadataIndicateurComplementaire {
 
   indic_territorialise: boolean;
 
-  frequence_territoriale: string | null;
+  frequence_territoriale: number;
 
   mailles: string | null;
 

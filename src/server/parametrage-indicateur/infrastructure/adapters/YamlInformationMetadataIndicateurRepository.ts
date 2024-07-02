@@ -24,7 +24,7 @@ interface YamlColumn {
     pilote_edit_regex: string
     pilote_edit_regexViolationMessage: string | null
     pilote_edit_boxType: 'text' | 'textarea' | 'boolean'
-    pilote_edit_acceptedValues: string
+    pilote_edit_acceptedValues: object
     pilote_create_defaultValue: string | number | null | boolean
     pilote_create_mandatory: boolean
     pilote_disp_dispDesc: boolean
@@ -44,7 +44,7 @@ export interface YamlResult {
   sources: YamlSource[]
 }
 const convertirEnInformationMetadataIndicateur = (yamlColumn: YamlColumn): InformationMetadataIndicateur   => {
-  const acceptedValues: YamlAcceptedValue[] = (yamlColumn.meta.pilote_edit_acceptedValues && JSON.parse(yamlColumn.meta.pilote_edit_acceptedValues) as YamlAcceptedValue[]) || [];
+  const acceptedValues: YamlAcceptedValue[] = (yamlColumn.meta.pilote_edit_acceptedValues as YamlAcceptedValue[]) || [];
   return InformationMetadataIndicateur.creerInformationMetadataIndicateur({
     name: yamlColumn.name,
     dataType: yamlColumn.data_type,

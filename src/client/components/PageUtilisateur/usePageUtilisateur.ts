@@ -6,9 +6,13 @@ import api from '@/server/infrastructure/api/trpc/api';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 
+const PROFIL_AUTORISE_A_POSSEDER_UN_TOKEN_API = new Set(['DITP_ADMIN', 'DIR_PROJET', 'EQUIPE_DIR_PROJET', 'SECRETARIAT_GENERAL']);
+
 export default function usePageUtilisateur(utilisateur: Utilisateur) {
 
   const router = useRouter();
+
+  const { data: tokenAPIEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_GESTION_TOKEN_API' });
 
   const mutationSupprimerUtilisateur = api.utilisateur.supprimer.useMutation({
     onSuccess: () => {
@@ -56,10 +60,18 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
     }
   };  
 
+  const habilitationsAGenererUnTokenDAuthentification = (session: Session, utilisateurProfil: ProfilCode) => {
+    const PROFIL_ADMIN_AUTORISE_A_MODIFIER = new Set(['DITP_ADMIN']);
+
+    return !(!session || !PROFIL_ADMIN_AUTORISE_A_MODIFIER.has(session.profil) || !PROFIL_AUTORISE_A_POSSEDER_UN_TOKEN_API.has(utilisateurProfil));
+  };
+
   return {
     fermerLaModaleDeSuppressionUtilisateur,
     supprimerUtilisateur,
     modificationEstImpossible,
     donnneContenuBandeau,
+    habilitationsAGenererUnTokenDAuthentification,
+    vérifierFFTokenAPIEstDisponible: tokenAPIEstDisponible,
   };
 }

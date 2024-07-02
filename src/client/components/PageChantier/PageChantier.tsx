@@ -54,6 +54,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
     responsableLocal,
     coordinateurTerritorial,
     hrefBoutonRetour,
+    estAutoriseAVoirLesAlertesMAJIndicateurs,
   } = usePageChantier(chantierId, indicateurs);
   // TODO Mettre dans getServerSideProps !
 
@@ -89,100 +90,103 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 afficheLeBoutonMiseAJourDonnee={saisieIndicateurAutorisée}
                 chantier={chantier}
                 hrefBoutonRetour={hrefBoutonRetour}
+                responsables={chantier.responsables}
               />
               <div className='fr-container--fluid fr-py-2w fr-px-md-2w'>
-                <div className={`grid-template ${territoireSélectionné!.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}>
+                <div
+                  className={`grid-template ${territoireSélectionné!.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}
+                >
                   {
                     avancements !== null &&
-                      <>
-                        <section
-                          className='rubrique'
-                          id='avancement'
-                        >
-                          <TitreInfobulleConteneur className='fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
-                            <Titre
-                              baliseHtml='h2'
-                              className='fr-h4 fr-mb-0 fr-py-1v'
-                              estInline
-                            >
-                              Avancement du chantier
-                            </Titre>
-                            {
-                              !!territoireSélectionné && process.env.NEXT_PUBLIC_FF_INFOBULLE_PONDERATION === 'true' && (
-                                indicateurPondérations.length === 0
-                                  ? (
-                                    <Infobulle
-                                      idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'
-                                    >
-                                      {INFOBULLE_CONTENUS.chantier.avancement.aucunIndicateur(territoireSélectionné.maille)}
-                                    </Infobulle>
-                                  ) : (
-                                    indicateurPondérations.length === 1
-                                      ? (
-                                        <Infobulle 
-                                          idHtml='infobulle-chantier-météoEtSynthèseDesRésultats' 
-                                        >
-                                          {INFOBULLE_CONTENUS.chantier.avancement.unSeulIndicateur(territoireSélectionné.maille, indicateurPondérations[0])}
-                                        </Infobulle>
-                                      )
-                                      : (
-                                        <Infobulle 
-                                          idHtml='infobulle-chantier-météoEtSynthèseDesRésultats' 
-                                        >
-                                          {INFOBULLE_CONTENUS.chantier.avancement.plusieursIndicateurs(territoireSélectionné.maille, indicateurPondérations)}
-                                        </Infobulle>
-                                      )
-                                  )
-                              )
-                            }
-                          </TitreInfobulleConteneur>
-                          <AvancementChantier
-                            avancements={avancements}
-                            chantierId={chantierId}
-                          />
-                        </section>
-                        <section
-                          className='rubrique'
-                          id='responsables'
-                        >
+                    <>
+                      <section
+                        className='rubrique'
+                        id='avancement'
+                      >
+                        <TitreInfobulleConteneur className='fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                           <Titre
                             baliseHtml='h2'
-                            className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                            className='fr-h4 fr-mb-0 fr-py-1v'
+                            estInline
                           >
-                            Responsables
+                            Avancement du chantier
                           </Titre>
-                          <ResponsablesPageChantier 
-                            afficheResponsablesLocaux={territoireSélectionné?.maille !== 'nationale'}
-                            coordinateurTerritorial={coordinateurTerritorial}
-                            maille={territoireSélectionné?.maille ?? null}
-                            responsables={chantier.responsables}
-                            responsablesLocal={responsableLocal}
-                          />
-                        </section>
-                      </>
+                          {
+                            !!territoireSélectionné && process.env.NEXT_PUBLIC_FF_INFOBULLE_PONDERATION === 'true' && (
+                              indicateurPondérations.length === 0
+                                ? (
+                                  <Infobulle
+                                    idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'
+                                  >
+                                    {INFOBULLE_CONTENUS.chantier.avancement.aucunIndicateur(territoireSélectionné.maille)}
+                                  </Infobulle>
+                                ) : (
+                                  indicateurPondérations.length === 1
+                                    ? (
+                                      <Infobulle
+                                        idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'
+                                      >
+                                        {INFOBULLE_CONTENUS.chantier.avancement.unSeulIndicateur(territoireSélectionné.maille, indicateurPondérations[0])}
+                                      </Infobulle>
+                                    )
+                                    : (
+                                      <Infobulle
+                                        idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'
+                                      >
+                                        {INFOBULLE_CONTENUS.chantier.avancement.plusieursIndicateurs(territoireSélectionné.maille, indicateurPondérations)}
+                                      </Infobulle>
+                                    )
+                                )
+                            )
+                          }
+                        </TitreInfobulleConteneur>
+                        <AvancementChantier
+                          avancements={avancements}
+                          chantierId={chantierId}
+                        />
+                      </section>
+                      <section
+                        className='rubrique'
+                        id='synthèse'
+                      >
+                        <TitreInfobulleConteneur className='fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+                          <Titre
+                            baliseHtml='h2'
+                            className='fr-h4 fr-mb-0 fr-py-1v'
+                            estInline
+                          >
+                            Météo et synthèse des résultats
+                          </Titre>
+                          <Infobulle idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'>
+                            {INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats}
+                          </Infobulle>
+                        </TitreInfobulleConteneur>
+                        <SynthèseDesRésultats
+                          modeÉcriture={modeÉcriture}
+                          nomTerritoire={territoireSélectionné!.nomAffiché}
+                          rechargerRéforme={rechargerChantier}
+                          réformeId={chantier.id}
+                          synthèseDesRésultatsInitiale={synthèseDesRésultats}
+                        />
+                      </section>
+                    </>
                   }
                   <section
                     className='rubrique'
-                    id='synthèse'
+                    id='responsables'
                   >
-                    <TitreInfobulleConteneur className='fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
-                      <Titre
-                        baliseHtml='h2'
-                        className='fr-h4 fr-mb-0 fr-py-1v'
-                        estInline
-                      >
-                        Météo et synthèse des résultats
-                      </Titre>
-                      <Infobulle idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'>
-                        {INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats}
-                      </Infobulle>
-                    </TitreInfobulleConteneur>
-                    <SynthèseDesRésultats
-                      modeÉcriture={modeÉcriture}
-                      nomTerritoire={territoireSélectionné!.nomAffiché}
-                      rechargerRéforme={rechargerChantier}
-                      réformeId={chantier.id}
-                      synthèseDesRésultatsInitiale={synthèseDesRésultats}
+                    <Titre
+                      baliseHtml='h2'
+                      className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                    >
+                      Responsables
+                    </Titre>
+                    <ResponsablesPageChantier
+                      afficheResponsablesLocaux={territoireSélectionné?.maille !== 'nationale'}
+                      coordinateurTerritorial={coordinateurTerritorial}
+                      maille={territoireSélectionné?.maille ?? null}
+                      responsables={chantier.responsables}
+                      responsablesLocal={responsableLocal}
                     />
                   </section>
                 </div>
@@ -201,13 +205,13 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                         >
                           Répartition géographique
                         </Titre>
-                        <Cartes 
-                          afficheCarteAvancement={!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSélectionnée] || !!chantier.estTerritorialisé}  
-                          afficheCarteMétéo={!!chantier.météoDonnéeTerritorialisée[mailleSélectionnée] || !!chantier.estTerritorialisé}  
+                        <Cartes
+                          afficheCarteAvancement={!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSélectionnée] || !!chantier.estTerritorialisé}
+                          afficheCarteMétéo={!!chantier.météoDonnéeTerritorialisée[mailleSélectionnée] || !!chantier.estTerritorialisé}
                           chantierMailles={chantier.mailles}
                         />
                       </section>
-                    </div>                   
+                    </div>
                   )
                 }
                 <div className='fr-my-2w'>
@@ -254,6 +258,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                         <Indicateurs
                           chantierEstTerritorialisé={chantier.estTerritorialisé}
                           détailsIndicateurs={détailsIndicateurs}
+                          estAutoriseAVoirLesAlertesMAJIndicateurs={estAutoriseAVoirLesAlertesMAJIndicateurs}
                           indicateurs={indicateurs}
                           listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
                           typeDeRéforme='chantier'
@@ -263,7 +268,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                   )
                 }
                 {
-                  territoireSélectionné!.maille === 'nationale' &&
+                  territoireSélectionné!.maille === 'nationale' ? (
                     <div className='fr-my-2w'>
                       <section
                         className='rubrique'
@@ -288,6 +293,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                         />
                       </section>
                     </div>
+                  ) : null
                 }
                 <div className='fr-my-2w'>
                   <section

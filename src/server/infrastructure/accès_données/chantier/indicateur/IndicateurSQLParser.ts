@@ -1,7 +1,7 @@
 import { indicateur, territoire } from '@prisma/client';
 import {
-  DétailsIndicateurTerritoire,
   DétailsIndicateurMailles,
+  DétailsIndicateurTerritoire,
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 
 function créerDonnéesTerritoires(territoires: territoire[], indicateurRows: indicateur[]) {
@@ -30,6 +30,9 @@ function créerDonnéesTerritoires(territoires: territoire[], indicateurRows: in
       est_applicable: indicateurRow?.est_applicable ?? null,
       dateImport: indicateurRow?.dernier_import_date_indic?.toLocaleString() ?? null,
       pondération: indicateurRow?.ponderation_zone_reel ?? null,
+      prochaineDateMaj: indicateurRow?.prochaine_date_maj_jours?.toLocaleString() ?? null,
+      prochaineDateMajJours: indicateurRow?.prochaine_date_maj_jours ?? null,
+      estAJour: indicateurRow?.est_a_jour ?? null,
     };
   });
 

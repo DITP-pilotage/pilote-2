@@ -55,7 +55,7 @@ export function EtapeSelectionIndicateur({
             />
             <Sélecteur
               htmlName='indicateurId'
-              libellé='Choix de l’indicateur'
+              libellé="Choix de l'indicateur"
               options={options}
               valeurModifiéeCallback={valeurModifiéeCallback}
               valeurSélectionnée={valeurSélectionnée}

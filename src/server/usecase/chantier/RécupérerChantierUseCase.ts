@@ -5,7 +5,7 @@ import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilita
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import { parseChantier } from '@/server/infrastructure/accès_données/chantier/ChantierSQLParser';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
-import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
+import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDateDeMàjMeteoRepository.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 export default class RécupérerChantierUseCase {
@@ -24,7 +24,7 @@ export default class RécupérerChantierUseCase {
     const ministères = await this.ministèreRepository.getListe();
     const territoires = await this.territoireRepository.récupérerTous();
     const chantierRows = await this.chantierRepository.récupérerLesEntréesDUnChantier(chantierId, habilitations, profil);
-    const chantiersRowsDatesDeMàj = await this.chantierDatesDeMàjRepository.récupérerDatesDeMiseÀJour([chantierId], territoireCodes);
+    const chantiersRowsDatesDeMàj = await this.chantierDatesDeMàjRepository.récupérerDateDeMiseÀJourMeteo([chantierId], territoireCodes);
     return parseChantier(chantierRows, territoires, ministères, chantiersRowsDatesDeMàj);
   }
 }

@@ -68,7 +68,7 @@ export default class InitialiserNouvelIndicateurUseCase {
       periodicite: listeInformation.periodicite.metaPiloteDefaultValue as string,
       delaiDisponibilite: listeInformation.delai_disponibilite.metaPiloteDefaultValue as number,
       indicTerritorialise: listeInformation.indic_territorialise.metaPiloteDefaultValue as boolean,
-      frequenceTerritoriale: listeInformation.frequence_territoriale.metaPiloteDefaultValue as string,
+      frequenceTerritoriale: listeInformation.frequence_territoriale.metaPiloteDefaultValue as number,
       mailles: listeInformation.mailles.metaPiloteDefaultValue as string,
       adminSource: listeInformation.admin_source.metaPiloteDefaultValue as string,
       methodeCollecte: listeInformation.methode_collecte.metaPiloteDefaultValue as string,

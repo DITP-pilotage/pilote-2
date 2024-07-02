@@ -1,5 +1,7 @@
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
-import { PrismaUtilisateurRepository } from '@/server/authentification/infrastructure/PrismaUtilisateurRepository';
+import {
+  PrismaUtilisateurRepository,
+} from '@/server/authentification/infrastructure/adapters/PrismaUtilisateurRepository';
 
 describe('PrismaUtilisateurRepository', () => {
   let prismaUtilisateurRepository: PrismaUtilisateurRepository;

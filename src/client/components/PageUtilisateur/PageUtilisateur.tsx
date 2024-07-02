@@ -7,16 +7,25 @@ import PageUtilisateurStyled from '@/components/PageUtilisateur/PageUtilisateur.
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import FicheUtilisateur from '@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur';
+import Alerte from '@/components/_commons/Alerte/Alerte';
 import Modale from '@/client/components/_commons/Modale/Modale';
 import Bouton from '@/client/components/_commons/Bouton/Bouton';
 import { BandeauInformation } from '@/client/components/_commons/BandeauInformation';
+import { useGestionTokenAPI } from '@/components/PageAdminGestionTokenAPI/useGestionTokenAPI';
 import usePageUtilisateur from './usePageUtilisateur';
 
-export default function PageUtilisateur({ utilisateur }: PageUtilisateurProps) {
-  const { supprimerUtilisateur, fermerLaModaleDeSuppressionUtilisateur, modificationEstImpossible, donnneContenuBandeau } = usePageUtilisateur(utilisateur);
-  const chemin = [{ nom:'Gestion des comptes', lien:'/admin/utilisateurs' }];
-  const { data : session } = useSession();
-
+export default function PageUtilisateur({ utilisateur, tokenAPIInformation }: PageUtilisateurProps) {
+  const {
+    supprimerUtilisateur,
+    fermerLaModaleDeSuppressionUtilisateur,
+    modificationEstImpossible,
+    donnneContenuBandeau,
+    habilitationsAGenererUnTokenDAuthentification,
+    vérifierFFTokenAPIEstDisponible,
+  } = usePageUtilisateur(utilisateur);
+  const chemin = [{ nom: 'Gestion des comptes', lien: '/admin/utilisateurs' }];
+  const { data: session } = useSession();
+  const { creerTokenAPI, alerte } = useGestionTokenAPI();
   return (
     <PageUtilisateurStyled className='fr-pt-2w'>
       <main className='fr-container'>
@@ -43,7 +52,7 @@ export default function PageUtilisateur({ utilisateur }: PageUtilisateurProps) {
               {
                 modificationEstImpossible(session, utilisateur.habilitations, utilisateur.profil) &&
                 <div className='fr-pb-4w'>
-                  <BandeauInformation 
+                  <BandeauInformation
                     bandeauType='INFO'
                     fermable={false}
                   >
@@ -53,7 +62,7 @@ export default function PageUtilisateur({ utilisateur }: PageUtilisateurProps) {
               }
               <FicheUtilisateur utilisateur={utilisateur} />
               {
-                !modificationEstImpossible(session, utilisateur.habilitations, utilisateur.profil) && 
+                !modificationEstImpossible(session, utilisateur.habilitations, utilisateur.profil) &&
                 <div className='fr-grid-row fr-mt-4w'>
                   <Link
                     className='fr-btn fr-mr-2w'
@@ -61,6 +70,19 @@ export default function PageUtilisateur({ utilisateur }: PageUtilisateurProps) {
                   >
                     Modifier
                   </Link>
+                  {
+                    // @ts-expect-error session est forcément not null içi
+                    vérifierFFTokenAPIEstDisponible && habilitationsAGenererUnTokenDAuthentification(session, utilisateur.profil) ? (
+                      <button
+                        className='fr-btn fr-btn--secondary fr-mr-2w'
+                        onClick={() => creerTokenAPI({ email: utilisateur.email })}
+                        title='Générer un token d’authentification'
+                        type='submit'
+                      >
+                        Générer un token d’authentification
+                      </button>
+                    ) : null
+                  }
                   <button
                     aria-controls='supprimer-compte'
                     className='fr-text supprimer'
@@ -69,12 +91,33 @@ export default function PageUtilisateur({ utilisateur }: PageUtilisateurProps) {
                   >
                     Supprimer le compte
                   </button>
+                  {
+                    alerte ? (
+                      <div className='fr-my-2w'>
+                        <Alerte
+                          message={alerte.message}
+                          titre={alerte.titre}
+                          type={alerte.type}
+                        />
+                      </div>
+                    ) : null
+                  }
+                  {
+                    tokenAPIInformation ? (
+                      <div className='fr-alert fr-alert--info fr-alert--sm fr-mt-2w'>
+                        <p className='fr-text--sm'>
+                          Information : Un token est déjà actif pour cet utilisateur. La génération d’un nouveau token
+                          supprimera ce token actif.
+                        </p>
+                      </div>
+                    ) : null
+                  }
                   <Modale
                     idHtml='supprimer-compte'
                     titre='Suppression de compte'
                   >
                     <div>
-                      Vous êtes sur le point de supprimer le compte de 
+                      Vous êtes sur le point de supprimer le compte de
                       {' '}
                       <span className='prénom'>
                         {utilisateur.prénom}
@@ -101,7 +144,6 @@ export default function PageUtilisateur({ utilisateur }: PageUtilisateurProps) {
               }
             </div>
           </Bloc>
-          
         </div>
       </main>
     </PageUtilisateurStyled>

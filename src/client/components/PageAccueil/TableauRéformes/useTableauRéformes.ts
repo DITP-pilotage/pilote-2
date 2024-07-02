@@ -1,10 +1,10 @@
 import { SortingState, Table } from '@tanstack/react-table';
 import { useCallback } from 'react';
 import { DirectionDeTri } from '@/client/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.interface';
-import { DonnéesTableauChantiers } from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléTableauChantiers/RapportDétailléTableauChantiers.interface';
 import {
-  ProjetStructurantVueDEnsemble,
-} from '@/server/domain/projetStructurant/ProjetStructurant.interface';
+  DonnéesTableauChantiers,
+} from '@/components/PageRapportDétailléNew/VueDEnsemble/RapportDétailléTableauChantiers/RapportDétailléTableauChantiers.interface';
+import { ProjetStructurantVueDEnsemble } from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 
 function transformerEnDirectionDeTri(tri: SortingState): DirectionDeTri {
   if (!tri[0]) return false;
@@ -20,6 +20,7 @@ function transformerEnSortingState(sélectionColonneÀTrier: string, directionDe
     }];
 }
 
+// TODO: C'est pas normal d'utilisé DonnéesTableauChantiers de PageRapportDétailléNew ici !!!!
 export default function useTableauRéformes(tableau: Table<DonnéesTableauChantiers> | Table<ProjetStructurantVueDEnsemble>) {
   const changementDePageCallback = useCallback((numéroDePage: number) => (
     tableau.setPageIndex(numéroDePage - 1)

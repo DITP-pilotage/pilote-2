@@ -109,31 +109,33 @@ export default function PageRapportDétaillé({
               répartitionMétéos={répartitionMétéos}
               territoireCode={territoireCode}
             />
-            <div className='force-break-page' />
             {
               afficherLesChantiers ? (
-                <div className='chantiers'>
-                  {
-                    chantiersFiltrés.map((chantier) => (
-                      <RapportDétailléChantier
-                        chantier={chantier}
-                        commentaires={publicationsGroupéesParChantier.commentaires[chantier.id] ?? []}
-                        donnéesCartographieAvancement={mapDonnéesCartographieAvancement.get(chantier.id)!}
-                        donnéesCartographieMétéo={mapDonnéesCartographieMétéo.get(chantier.id)!}
-                        décisionStratégique={publicationsGroupéesParChantier.décisionStratégique[chantier.id] ?? null}
-                        détailsIndicateurs={détailsIndicateursGroupésParChantier[chantier.id] ?? []}
-                        indicateurs={indicateursGroupésParChantier[chantier.id] ?? []}
-                        key={chantier.id}
-                        mailleSélectionnée={mailleSélectionnée}
-                        mapChantierStatistiques={mapChantierStatistiques}
-                        objectifs={publicationsGroupéesParChantier.objectifs[chantier.id] ?? []}
-                        synthèseDesRésultats={publicationsGroupéesParChantier.synthèsesDesRésultats[chantier.id] ?? null}
-                        territoireCode={territoireCode}
-                        territoireSélectionné={territoireSélectionné}
-                      />
-                    ))
-                  }
-                </div>
+                <>
+                  <div className='force-break-page' />
+                  <div className='chantiers'>
+                    {
+                      chantiersFiltrés.map((chantier) => (
+                        <RapportDétailléChantier
+                          chantier={chantier}
+                          commentaires={publicationsGroupéesParChantier.commentaires[chantier.id] ?? []}
+                          donnéesCartographieAvancement={mapDonnéesCartographieAvancement.get(chantier.id)!}
+                          donnéesCartographieMétéo={mapDonnéesCartographieMétéo.get(chantier.id)!}
+                          décisionStratégique={publicationsGroupéesParChantier.décisionStratégique[chantier.id] ?? null}
+                          détailsIndicateurs={détailsIndicateursGroupésParChantier[chantier.id] ?? []}
+                          indicateurs={indicateursGroupésParChantier[chantier.id] ?? []}
+                          key={chantier.id}
+                          mailleSélectionnée={mailleSélectionnée}
+                          mapChantierStatistiques={mapChantierStatistiques}
+                          objectifs={publicationsGroupéesParChantier.objectifs[chantier.id] ?? []}
+                          synthèseDesRésultats={publicationsGroupéesParChantier.synthèsesDesRésultats[chantier.id] ?? null}
+                          territoireCode={territoireCode}
+                          territoireSélectionné={territoireSélectionné}
+                        />
+                      ))
+                    }
+                  </div>
+                </>
               ) : null
             }
           </div>

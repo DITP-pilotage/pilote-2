@@ -1,7 +1,5 @@
 import { mock } from 'jest-mock-extended';
-import {
-  ExportCsvDesChantiersSansFiltreUseCase,
-} from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase';
+import { ExportCsvDesChantiersUseCase } from '@/server/usecase/chantier/ExportCsvDesChantiersUseCase';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { HabilitationBuilder } from '@/server/domain/utilisateur/habilitation/HabilitationBuilder';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
@@ -33,7 +31,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
       .mockResolvedValueOnce(chantierIds);
 
-    const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository);
+    const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersUseCase(chantierRepository);
     const habilitation = new HabilitationBuilder().build();
     const profil = 'DITP_ADMIN';
 
@@ -62,7 +60,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     chantierRepository.récupérerPourExports
       .mockResolvedValueOnce(chantierIds.map(_fakeChantierPourExport));
 
-    const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository);
+    const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersUseCase(chantierRepository);
     const territoireCodesLecture = ['NAT-FR'];
     const habilitation = new HabilitationBuilder()
       .avecTerritoireCodesLecture(territoireCodesLecture)
@@ -97,7 +95,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     chantierRepository.récupérerPourExports
       .mockResolvedValueOnce(chantierIds.map(_fakeChantierPourExport));
 
-    const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository);
+    const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersUseCase(chantierRepository);
     const habilitation = new HabilitationBuilder().build();
     const profil = 'DITP_ADMIN';
 
@@ -133,7 +131,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
       .mockResolvedValueOnce(firstChunk.map(_fakeChantierPourExport))
       .mockResolvedValueOnce(secondChunk.map(_fakeChantierPourExport));
 
-    const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository);
+    const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersUseCase(chantierRepository);
     const habilitation = new HabilitationBuilder().build();
     const profil = 'DITP_ADMIN';
 

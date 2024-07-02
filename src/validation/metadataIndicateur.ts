@@ -78,8 +78,7 @@ export const validationMetadataIndicateurFormulaire = z.object({
     .nullable(),
   zgApplicable: z
     .string()
-    .nullable()
-    .refine((value) => value === null || value === '' || new RegExp(metadata.zg_applicable.metaPiloteEditRegex).test(value), metadata.zg_applicable.metaPiloteEditRegexViolationMessage),
+    .nullable(),
   viDeptFrom: z
     .string(),
   viDeptOp: z
@@ -154,12 +153,13 @@ export const validationMetadataIndicateurFormulaire = z.object({
   periodicite: z
     .string(),
   delaiDisponibilite: z
-    .string(),
+    .string()
+    .refine((value) => new RegExp(metadata.delai_disponibilite.metaPiloteEditRegex).test(value), metadata.delai_disponibilite.metaPiloteEditRegexViolationMessage),
   indicTerritorialise: z
     .boolean(),
   frequenceTerritoriale: z
     .string()
-    .nullable(),
+    .refine((value) => new RegExp(metadata.frequence_territoriale.metaPiloteEditRegex).test(value), metadata.frequence_territoriale.metaPiloteEditRegexViolationMessage),
   mailles: z
     .string()
     .nullable(),

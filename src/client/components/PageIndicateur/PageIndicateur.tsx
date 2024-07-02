@@ -10,10 +10,25 @@ import FicheIndicateur from '@/components/PageIndicateur/FicheIndicateur/FicheIn
 import { usePageIndicateur } from '@/components/PageIndicateur/usePageIndicateur';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 
-export default function PageIndicateur({ indicateur, mapInformationMetadataIndicateur, estUneCréation, modificationReussie, creationReussie, chantiers }: PageIndicateurProps) {
-  const chemin = [{ nom:'Gestion des indicateurs', lien:'/admin/indicateurs' }];
+export default function PageIndicateur({
+  indicateur,
+  mapInformationMetadataIndicateur,
+  estUneCréation,
+  modificationReussie,
+  creationReussie,
+  chantiers,
+}: PageIndicateurProps) {
+  const chemin = [{ nom: 'Gestion des indicateurs', lien: '/admin/indicateurs' }];
 
-  const { reactHookForm, modifierIndicateur, creerIndicateur, estEnCoursDeModification, setEstEnCoursDeModification, alerte, reinitialiserIndicateur } = usePageIndicateur(indicateur);
+  const {
+    reactHookForm,
+    modifierIndicateur,
+    creerIndicateur,
+    estEnCoursDeModification,
+    setEstEnCoursDeModification,
+    alerte,
+    reinitialiserIndicateur,
+  } = usePageIndicateur(indicateur);
 
   return (
     <PageIndicateurStyled className='fr-pt-2w'>
@@ -52,32 +67,32 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                 Retour
               </Link>
               {
-                  !!modificationReussie &&
-                  <div className='fr-my-4w'>
-                    <Alerte
-                      message='Les modifications ont bien été prises en compte pour cet indicateur. Elles apparaitront dans PILOTE lors de la prochaine mise à jour de données'
-                      titre="Bravo, l'indicateur a bien été modifié !"
-                      type='succès'
-                    />
-                  </div>
+                !!modificationReussie &&
+                <div className='fr-my-4w'>
+                  <Alerte
+                    message='Les modifications ont bien été prises en compte pour cet indicateur. Elles apparaitront dans PILOTE lors de la prochaine mise à jour de données'
+                    titre="Bravo, l'indicateur a bien été modifié !"
+                    type='succès'
+                  />
+                </div>
               }
               {
-                  !!creationReussie &&
-                  <div className='fr-my-4w'>
-                    <Alerte
-                      message='La création a bien été prise en compte pour cet indicateur. Il apparaitra dans PILOTE lors de la prochaine mise à jour de données'
-                      titre="Bravo, l'indicateur a bien été crée !"
-                      type='succès'
-                    />
-                  </div>
+                !!creationReussie &&
+                <div className='fr-my-4w'>
+                  <Alerte
+                    message='La création a bien été prise en compte pour cet indicateur. Il apparaitra dans PILOTE lors de la prochaine mise à jour de données'
+                    titre="Bravo, l'indicateur a bien été crée !"
+                    type='succès'
+                  />
+                </div>
               }
               <Titre
                 baliseHtml='h1'
                 className='fr-h1 fr-mt-4w'
               >
-                Fiche de l'indicateur 
+                Fiche de l'indicateur
                 {' '}
-                { indicateur.indicId }
+                {indicateur.indicId}
                 <div className='fr-grid-row fr-mt-4w'>
                   {
                     estUneCréation ? (
@@ -169,7 +184,7 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
               </Bloc>
             </form>
           </FormProvider>
-          
+
         </div>
       </main>
     </PageIndicateurStyled>

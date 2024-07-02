@@ -28,7 +28,7 @@ export default function Input({
     <div className={`fr-input-group ${erreur !== undefined || erreurMessage ? 'fr-input-group--error' : ''}`}>
       {children}
       <input
-        className={`fr-input ${erreur !== undefined || erreurMessage ? 'fr-input-group--error' : ''} ${className !== undefined ? className : ''}`}
+        className={`fr-input fr-mt-1w ${erreur !== undefined || erreurMessage ? 'fr-input-group--error' : ''} ${className !== undefined ? className : ''}`}
         disabled={disabled}
         id={htmlName}
         type={type}

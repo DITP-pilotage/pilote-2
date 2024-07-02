@@ -5,7 +5,7 @@ import RécupérerChantiersAccessiblesEnLectureUseCase
   from '@/server/usecase/chantier/RécupérerChantiersAccessiblesEnLectureUseCase';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
+import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDateDeMàjMeteoRepository.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 
@@ -18,7 +18,7 @@ describe('RécupérerChantiersAccessiblesEnLectureUseCase', () => {
   let territoireRepository: TerritoireRepository;
   beforeEach(() => {
     chantierRepository = dependencies.getChantierRepository();
-    chantierDatesDeMàjRepository = dependencies.getChantierDatesDeMàjRepository();
+    chantierDatesDeMàjRepository = dependencies.getChantierDateDeMàjMeteoRepository();
     ministèreRepository = dependencies.getMinistèreRepository();
     territoireRepository = dependencies.getTerritoireRepository();
     récupérerChantiersAccessiblesEnLectureUseCase = new RécupérerChantiersAccessiblesEnLectureUseCase( chantierRepository, chantierDatesDeMàjRepository, ministèreRepository, territoireRepository);

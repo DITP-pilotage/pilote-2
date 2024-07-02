@@ -4,36 +4,22 @@ import { getServerAuthSession } from '@/server/infrastructure/api/auth/[...nexta
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import PageUtilisateur from '@/components/PageUtilisateur/PageUtilisateur';
 import RécupérerUnUtilisateurUseCase from '@/server/usecase/utilisateur/RécupérerUnUtilisateurUseCase';
+import {
+  RecupererTokenAPIInformationUseCase,
+} from '@/server/authentification/usecases/RecupererTokenAPIInformationUseCase';
+import {
+  presenterEnTokenAPIInformationContrat,
+  TokenAPIInformationContrat,
+} from '@/server/authentification/app/contrats/TokenAPIInformationContrat';
 import { commenceParUneVoyelle } from '@/client/utils/strings';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 
 export interface NextPageAdminUtilisateurProps {
   utilisateur: Utilisateur,
+  tokenAPIInformation: TokenAPIInformationContrat
 }
 
-export default function NextPageAdminUtilisateur({ utilisateur } : NextPageAdminUtilisateurProps) {
-  return (
-    <>
-      <Head>
-        <title>
-          Compte 
-          {' '}
-          {commenceParUneVoyelle(utilisateur.prénom) ? "d'" : 'de '}
-          {utilisateur.prénom}
-          {' '}
-          {utilisateur.nom.toUpperCase()}
-          {' '}
-          - PILOTE
-        </title>
-      </Head>
-      <PageUtilisateur
-        utilisateur={utilisateur}
-      />
-    </>
-  );
-}
-
-export async function getServerSideProps({ req, res, params } :GetServerSidePropsContext<{ id :Utilisateur['id'] }>) {
+export async function getServerSideProps({ req, res, params }: GetServerSidePropsContext<{ id: Utilisateur['id'] }>) {
   const redirigerVersPageAccueil = {
     redirect: {
       destination: '/',
@@ -53,9 +39,39 @@ export async function getServerSideProps({ req, res, params } :GetServerSideProp
     return redirigerVersPageAccueil;
   }
 
+  const tokenAPIInformation = await new RecupererTokenAPIInformationUseCase({ tokenAPIInformationRepository: dependencies.getTokenAPIInformationRepository() }).run({ email: utilisateurDemandé.email }).then(tokenAPI => {
+    return tokenAPI ? presenterEnTokenAPIInformationContrat(tokenAPI) : null;
+  });
+
   return {
     props: {
       utilisateur: utilisateurDemandé,
+      tokenAPIInformation,
     },
   };
 }
+
+export default function NextPageAdminUtilisateur({ utilisateur, tokenAPIInformation }: NextPageAdminUtilisateurProps) {
+  return (
+    <>
+      <Head>
+        <title>
+          Compte
+          {' '}
+          {commenceParUneVoyelle(utilisateur.prénom) ? 'd\'' : 'de '}
+          {utilisateur.prénom}
+          {' '}
+          {utilisateur.nom.toUpperCase()}
+          {' '}
+          - PILOTE
+        </title>
+      </Head>
+      <PageUtilisateur
+        tokenAPIInformation={tokenAPIInformation}
+        utilisateur={utilisateur}
+      />
+    </>
+  );
+}
+
+

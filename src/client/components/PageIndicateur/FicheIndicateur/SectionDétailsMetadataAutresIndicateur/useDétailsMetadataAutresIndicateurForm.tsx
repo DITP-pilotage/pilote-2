@@ -14,7 +14,7 @@ export type MetadataParametrageAutresIndicateurForm = {
   periodicite: string;
   delaiDisponibilite: string;
   indicTerritorialise: boolean;
-  frequenceTerritoriale: string | null;
+  frequenceTerritoriale: string;
   mailles: string | null;
   adminSource: string;
   methodeCollecte: string | null;
@@ -34,6 +34,7 @@ function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageAutresI
   watch('projetAnnuelPerf');
   watch('indicTerritorialise');
   watch('donneeOuverte');
+  watch('periodicite');
 }
 
 export default function useSectionDétailsMetadataAutresIndicateurForm() {

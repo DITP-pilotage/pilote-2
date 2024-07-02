@@ -31,8 +31,12 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
         { status: 401 },
       );
     }
+
     try {
       const token = request.headers.get('Authorization')!;
+      if (!/^Bearer \S+$/.test(token)) {
+        throw new Error('token null');
+      }
       await new TokenAPIJWTService({ secret: process.env.TOKEN_API_SECRET! }).decoderTokenAPI(token.split(' ')[1]);
     } catch {
       return Response.json(
