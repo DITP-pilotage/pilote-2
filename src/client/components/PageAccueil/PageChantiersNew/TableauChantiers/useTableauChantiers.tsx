@@ -125,7 +125,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
       sortingFn: (a, b, columnId) => (
         a.getIsGrouped() || b.getIsGrouped()
           ? 0
-          : comparerDateDeMàjDonnées(a.getValue(columnId), b.getValue(columnId))
+          : comparerDateDeMàjDonnées(a.getValue(columnId), b.getValue(columnId), tri)
       ),
       enableGrouping: false,
     }),
@@ -156,7 +156,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
       sortingFn: (a, b, columnId) => (
         a.getIsGrouped() || b.getIsGrouped()
           ? 0
-          : comparerDateDeMàjDonnées(a.getValue(columnId), b.getValue(columnId))
+          : comparerDateDeMàjDonnées(a.getValue(columnId), b.getValue(columnId), tri)
       ),
       enableGrouping: false,
     }),
