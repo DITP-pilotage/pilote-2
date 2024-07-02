@@ -14,12 +14,12 @@ const listeColonnesÀtrier = [
     accessible: true,
   },
   {
-    libellé: 'Mise à jour des données',
+    libellé: 'Date de mise à jour des données',
     colonneId: 'dateDeMàjDonnéesQuantitatives',
     accessible: process.env.NEXT_PUBLIC_FF_TRI_DATES === 'true',
   },
   {
-    libellé: 'Mise à jour de la météo et synthèse des résultats',
+    libellé: 'Date de mise à jour de la météo et de la synthèse des résultats',
     colonneId: 'dateDeMàjDonnéesQualitatives',
     accessible: process.env.NEXT_PUBLIC_FF_TRI_DATES === 'true',
   },
