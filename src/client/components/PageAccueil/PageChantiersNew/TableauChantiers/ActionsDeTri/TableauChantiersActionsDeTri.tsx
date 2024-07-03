@@ -45,7 +45,7 @@ export default function TableauChantiersActionsDeTri({
           htmlName='tri-tableau-chantiers'
           options={listeColonnesÀtrier}
           valeurModifiéeCallback={triSélectionné => changementColonneÀTrierCallback(triSélectionné)}
-          valeurSélectionnée='avancement'
+          valeurSélectionnée={colonneÀTrier}
         />
       </div>
       <div className='fr-mb-4w fr-ml-1w'>
