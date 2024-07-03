@@ -85,7 +85,7 @@ const INFOBULLE_CONTENUS = {
           La tendance correspond à la progression du taux d’avancement.
         </p>
         <p className='fr-text--sm'>
-          L’écart correspond à l’écart entre le taux d’avancement pour le territoire sélectionné et le taux d’avancement national.
+          L’écart correspond à l’écart entre le taux d’avancement pour le territoire sélectionné et le taux d’avancement territorial médian.
         </p>
       </>
     ),
