@@ -2,11 +2,15 @@ import nock from 'nock';
 import { createMocks } from 'node-mocks-http';
 import { anyString, mock } from 'jest-mock-extended';
 import PersistentFile from 'formidable/PersistentFile';
+import { NextApiRequest, NextApiResponse } from 'next';
 import handleVerifierFichierImportIndicateur
   from '@/server/import-indicateur/infrastructure/handlers/VerifierImportIndicateurHandler';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { ReportErrorTaskBuilder } from '@/server/import-indicateur/app/builder/ReportErrorTask.builder';
-import { ReportResourceTaskBuilder, ReportTaskBuilder } from '@/server/import-indicateur/app/builder/ReportTask.builder';
+import {
+  ReportResourceTaskBuilder,
+  ReportTaskBuilder,
+} from '@/server/import-indicateur/app/builder/ReportTask.builder';
 import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/ReportValidata.builder';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
 import { getNextAuthSessionTokenPourUtilisateurEmail } from '@/server/infrastructure/test/NextAuthHelper';
@@ -59,7 +63,7 @@ describe('VerifierImportIndicateurHandler', () => {
       const file = mock<File>();
       formData.append('file', file);
 
-      const { req, res } = createMocks({
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'POST',
         body: formData,
         cookies: {
@@ -107,7 +111,7 @@ describe('VerifierImportIndicateurHandler', () => {
       const formData = new FormData();
       const file = mock<File>();
       formData.append('file', file);
-      const { req, res } = createMocks({
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'POST',
         body: formData,
         cookies: {
@@ -163,7 +167,7 @@ describe('VerifierImportIndicateurHandler', () => {
       const formData = new FormData();
       const file = mock<File>();
       formData.append('file', file);
-      const { req, res } = createMocks({
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'POST',
         body: formData,
         cookies: {
@@ -233,7 +237,7 @@ describe('VerifierImportIndicateurHandler', () => {
     const file = mock<File>();
     formData.append('file', file);
 
-    const { req, res } = createMocks({
+    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
       method: 'POST',
       body: formData,
       cookies: {
@@ -321,7 +325,7 @@ describe('VerifierImportIndicateurHandler', () => {
     const file = mock<File>();
     formData.append('file', file);
 
-    const { req, res } = createMocks({
+    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
       method: 'POST',
       body: formData,
       cookies: {

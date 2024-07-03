@@ -42,6 +42,5 @@ export default async function handle(request: NextApiRequest, response: NextApiR
     default: {
       response.status(400).json({ message: 'Bad request 2' });
     }
-      return;
   }
 }
