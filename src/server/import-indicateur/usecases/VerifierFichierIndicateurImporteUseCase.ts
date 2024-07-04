@@ -131,7 +131,6 @@ export class VerifierFichierIndicateurImporteUseCase {
     await this.rapportRepository.sauvegarder(report);
 
     try {
-
       report.listeMesuresIndicateurTemporaire.forEach((mesureIndicateurTemporaire, index) => {
         correspondALIndicateurId(mesureIndicateurTemporaire, indicateurId, report.id, report.listeErreursValidation, index);
         verifierFormatDateValeur(mesureIndicateurTemporaire);

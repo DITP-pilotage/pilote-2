@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const SélecteurAvecRechercheStyled = styled.div`
+const SélecteurCustomStyled = styled.div`
   position: relative;
   
   div[role='menu'] {
@@ -45,10 +45,6 @@ const SélecteurAvecRechercheStyled = styled.div`
     color: white;
     background-color: var(--background-active-blue-france);
   }
-
-  .input-container {
-    background-color: white;
-  }
 `;
 
-export default SélecteurAvecRechercheStyled;
+export default SélecteurCustomStyled;
