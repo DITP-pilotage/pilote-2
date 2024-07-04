@@ -1,5 +1,7 @@
+export type typeAlerte = 'succès' | 'erreur' | 'info' | 'warning';
+
 export default interface AlerteProps {
-  type: 'succès' | 'erreur' | 'info' | 'warning'
+  type: typeAlerte
   titre?: string
   message?: string
   classesSupplementaires? : string

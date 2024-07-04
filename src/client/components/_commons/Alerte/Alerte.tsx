@@ -1,11 +1,18 @@
 import { FunctionComponent } from 'react';
-import AlerteProps from './Alerte.interface';
+import AlerteProps, { typeAlerte } from './Alerte.interface';
 import '@gouvfr/dsfr/dist/component/alert/alert.min.css';
+
+const classesAlerte: Record<typeAlerte, string> = {
+  'info': 'fr-alert--info',
+  'succès': 'fr-alert--success',
+  'warning': 'fr-alert--warning',
+  'erreur': 'fr-alert--error',
+};
 
 const Alerte: FunctionComponent<AlerteProps> = ({ type, titre, message, classesSupplementaires, classesMessagePolice }) => {
   return (
     <div
-      className={`${type === 'succès' ? 'fr-alert--success' : type === 'warning' ? 'fr-alert--warning' : (type === 'erreur' ? 'fr-alert--error' : 'fr-alert--info')} fr-alert ${classesSupplementaires}`}
+      className={`${classesAlerte[type]} fr-alert ${classesSupplementaires}`}
     >
       {
         !!titre && 
