@@ -1,41 +1,30 @@
 import { Fragment, useRef } from 'react';
-import SélecteurAvecRechercheStyled from './SélecteurAvecRecherche.styled';
-import SélecteurAvecRechercheProps from './SélecteurAvecRecherche.interface';
-import useSélecteurAvecRecherche from './useSélecteurAvecRecherche';
+import SélecteurCustomStyled from './SélecteurCustom.styled';
+import SélecteurCustomProps from './SélecteurCustom.interface';
+import useSélecteurCustom from './useSélecteurCustom';
 import '@gouvfr/dsfr/dist/component/radio/radio.css';
 import '@gouvfr/dsfr/dist/component/select/select.min.css';
 
 
-export default function SélecteurAvecRecherche<T extends string>({
+export default function SélecteurCustom<T extends string>({
   htmlName,
-  libellé,
   options,
   valeurSélectionnée,
   valeurModifiéeCallback,
-}: SélecteurAvecRechercheProps<T>) {
+}: SélecteurCustomProps<T>) {
   const ref = useRef(null);
   const {
     estOuvert,
     setEstOuvert,
     SélecteurBoutonProps,
     libelléValeurSélectionnée,
-    setRecherche,
-    recherche,
-    optionsFiltrées,
-  } = useSélecteurAvecRecherche(options, valeurSélectionnée);
+  } = useSélecteurCustom(options, valeurSélectionnée);
 
   return (
-    <SélecteurAvecRechercheStyled>
-      <label
-        className='fr-label'
-        htmlFor={htmlName}
-      >
-        {libellé}
-      </label>
+    <SélecteurCustomStyled>
       <button
         className='fr-select fr-ellipsis'
         id={htmlName}
-        title={libellé}
         type='button'
         {...SélecteurBoutonProps}
       >
@@ -46,17 +35,8 @@ export default function SélecteurAvecRecherche<T extends string>({
         ref={ref}
         role='menu'
       >
-        <div className='fr-p-2w input-container'>
-          <input
-            className='fr-input'
-            onChange={(e) => setRecherche(e.target.value)}
-            placeholder='Rechercher...'
-            type='text'
-            value={recherche}
-          />
-        </div>
         {
-          optionsFiltrées?.map(option => (
+          options?.map(option => (
             <Fragment key={`${option.valeur}`}>
               {
                 !option.désactivée ?
@@ -90,6 +70,6 @@ export default function SélecteurAvecRecherche<T extends string>({
           ))
         }
       </div>
-    </SélecteurAvecRechercheStyled>
+    </SélecteurCustomStyled>
   );
 }
