@@ -29,7 +29,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       const rawInformationIndicateur = await this.prismaClient.$queryRaw<RawInformationIndicateurModel[]>`SELECT indic_id, indic_schema
                                                                                                           FROM raw_data.metadata_indicateurs_hidden
                                                                                                           WHERE indic_id = ${indicId}`;
-      if (!rawInformationIndicateur) {
+      if (!rawInformationIndicateur || rawInformationIndicateur.length === 0) {
         return convertirEnInformationIndicateur({
           indic_id: indicId,
           indic_schema: 'sans-contraintes.json',
