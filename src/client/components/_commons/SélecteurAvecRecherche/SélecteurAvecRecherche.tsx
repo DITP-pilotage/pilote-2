@@ -46,20 +46,22 @@ export default function SélecteurAvecRecherche<T extends string>({
         ref={ref}
         role='menu'
       >
-        <input
-          className='fr-input fr-mb-2w'
-          onChange={(e) => setRecherche(e.target.value)}
-          placeholder='Rechercher...'
-          type='text'
-          value={recherche}
-        />
+        <div className='fr-p-2w input-container'>
+          <input
+            className='fr-input'
+            onChange={(e) => setRecherche(e.target.value)}
+            placeholder='Rechercher...'
+            type='text'
+            value={recherche}
+          />
+        </div>
         {
           optionsFiltrées?.map(option => (
             <Fragment key={`${option.valeur}`}>
               {
                 !option.désactivée ?
                   <div
-                    className='fr-option'
+                    className='fr-option fr-px-2w'
                     id={option.valeur}
                     onClick={(événement) => {
                       setEstOuvert(false);
@@ -77,7 +79,7 @@ export default function SélecteurAvecRecherche<T extends string>({
                   </div>
                   :
                   <div
-                    className='fr-option-disabled'
+                    className='fr-px-2w fr-option-disabled'
                     id={option.valeur}
                   >
                     {option.libellé}

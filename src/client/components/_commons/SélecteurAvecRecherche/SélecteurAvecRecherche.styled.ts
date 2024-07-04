@@ -13,9 +13,8 @@ const SélecteurAvecRechercheStyled = styled.div`
     display: block;
     width: 100%;
     max-height: 20rem;
-    padding: 1rem;
     overflow: auto;
-    background: white;
+    background: var(--background-contrast-grey);
     border: 1px solid grey;
   }
 
@@ -31,6 +30,10 @@ const SélecteurAvecRechercheStyled = styled.div`
     font-size: 1rem;
     line-height: 1.5rem;
   }
+ 
+  .fr-option:nth-of-type(even) {
+    background-color: var(--background-alt-grey);
+  }
 
   .fr-option-disabled {
     font-size: 1rem;
@@ -41,6 +44,10 @@ const SélecteurAvecRechercheStyled = styled.div`
   .fr-option:hover {
     color: white;
     background-color: var(--background-active-blue-france);
+  }
+
+  .input-container {
+    background-color: white;
   }
 `;
 

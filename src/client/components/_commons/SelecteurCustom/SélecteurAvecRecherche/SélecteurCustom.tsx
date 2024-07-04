@@ -41,7 +41,7 @@ export default function SélecteurCustom<T extends string>({
               {
                 !option.désactivée ?
                   <div
-                    className='fr-option'
+                    className='fr-option fr-px-2w'
                     id={option.valeur}
                     onClick={(événement) => {
                       setEstOuvert(false);
@@ -59,7 +59,7 @@ export default function SélecteurCustom<T extends string>({
                   </div>
                   :
                   <div
-                    className='fr-option-disabled'
+                    className='fr-px-2w fr-option-disabled'
                     id={option.valeur}
                   >
                     {option.libellé}

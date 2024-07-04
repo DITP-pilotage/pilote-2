@@ -13,9 +13,8 @@ const SélecteurCustomStyled = styled.div`
     display: block;
     width: 100%;
     max-height: 20rem;
-    padding: 1rem;
     overflow: auto;
-    background: white;
+    background: var(--background-contrast-grey);
     border: 1px solid grey;
   }
 
@@ -30,6 +29,10 @@ const SélecteurCustomStyled = styled.div`
   .fr-option {
     font-size: 1rem;
     line-height: 1.5rem;
+  }
+ 
+  .fr-option:nth-of-type(even) {
+    background-color: var(--background-alt-grey);
   }
 
   .fr-option-disabled {
