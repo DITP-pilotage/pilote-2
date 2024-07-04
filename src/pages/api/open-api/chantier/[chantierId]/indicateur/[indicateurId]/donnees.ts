@@ -26,16 +26,19 @@ export default async function handle(request: NextApiRequest, response: NextApiR
   }).recupererUtilisateurAuthentifie(token);
   logger.info('Export des données API', `Chantier : ${request.query.chantierId}`, `Indicateur : ${request.query.indicateurId}`);
 
-  if (!utilisateurAuthentifie.peutAccederAuChantier(request.query.chantierId as string)) {
-    response.status(403).json({ message: `Vous n'êtes pas autorisé à acceder au chantier ${request.query.chantierId}` });
-  }
 
   switch (request.method) {
     case 'GET': {
+      if (!utilisateurAuthentifie.peutAccederAuChantier(request.query.chantierId as string)) {
+        response.status(403).json({ message: `Vous n'êtes pas autorisé à acceder au chantier ${request.query.chantierId}` });
+      }
       await handleListerIndicateurs({ request, response });
       break;
     }
     case 'POST': {
+      if (!utilisateurAuthentifie.peutAccederEnEcritureAuChantier(request.query.chantierId as string)) {
+        response.status(403).json({ message: `Vous n'êtes pas autorisé à acceder au chantier ${request.query.chantierId}` });
+      }
       await handleImportDonneeIndicateurAPI({ request, response, email: utilisateurAuthentifie.email, profil: utilisateurAuthentifie.profil });
       break;
     }
