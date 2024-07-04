@@ -10,7 +10,7 @@ export class TokenAPIJWTService implements TokenAPIService {
   }
 
   async creerTokenAPI({ email }: TokenAPIInformation): Promise<string> {
-    return encode({ token: { email }, secret: this.secret });
+    return encode({ token: { email }, secret: this.secret, maxAge: 365 * 24 * 60 * 60 });
   }
 
   async decoderTokenAPI(token: string): Promise<TokenAPIInformation | undefined> {
