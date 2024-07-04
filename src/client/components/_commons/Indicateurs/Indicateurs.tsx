@@ -36,7 +36,7 @@ export default function Indicateurs({
         alerteMiseAJourIndicateur ? (
           <div className='fr-mb-2w'>
             <Alerte
-              titre='Mise à jour des données requises'
+              titre='Mise à jour des données requise'
               type='warning'
             />
           </div>
