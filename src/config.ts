@@ -215,6 +215,11 @@ const config = convict({
       default: false,
       env: 'NEXT_PUBLIC_FF_SOUS_INDICATEURS',
     },
+    docsAPI: {
+      format: Boolean,
+      default: false,
+      env: 'NEXT_PUBLIC_FF_DOCS_API',
+    },
   },
   analytics: {
     matomoURL: {

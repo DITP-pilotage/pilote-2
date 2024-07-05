@@ -196,7 +196,7 @@ components:
       x-stoplight:
         id: 0y8c3ohs6trzu
       type: string
-      pattern: '^IND-\d{3}$'
+      pattern: '^IND-\d{3,4}$'
       example: IND-624
       description: Identifiant unique d'un indicateur
     ChantierId:

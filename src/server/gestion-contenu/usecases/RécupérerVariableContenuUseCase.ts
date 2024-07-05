@@ -59,6 +59,9 @@ export class RécupérerVariableContenuUseCase {
       case 'NEXT_PUBLIC_FF_SOUS_INDICATEURS': {
         return configuration.featureFlip.sousIndicateurs as VariableContenuDisponibleEnv[T];
       }
+      case 'NEXT_PUBLIC_FF_DOCS_API': {
+        return configuration.featureFlip.docsAPI as VariableContenuDisponibleEnv[T];
+      }
     }
   }
 }
