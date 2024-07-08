@@ -1,5 +1,5 @@
 import ListeFiltresProps
-  from '@/components/PageRapportDétailléNew/PremièrePageImpression/ListeFiltres/ListeFiltres.interface';
+  from '@/components/PageRapportDétaillé/PremièrePageImpression/ListeFiltres/ListeFiltres.interface';
 
 export function ListeFiltres({ nom, enfants }: ListeFiltresProps) {
   return (

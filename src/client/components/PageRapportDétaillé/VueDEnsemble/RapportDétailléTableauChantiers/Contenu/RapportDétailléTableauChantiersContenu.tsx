@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import {
   DonnéesTableauChantiers,
 } from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
-import { htmlId } from '@/components/PageRapportDétailléNew/PageRapportDétaillé';
+import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import TableauChantiersContenuProps from './RapportDétailléTableauChantiersContenu.interface';
 
 export default function RapportDétailléTableauChantiersContenu({ tableau }: TableauChantiersContenuProps) {

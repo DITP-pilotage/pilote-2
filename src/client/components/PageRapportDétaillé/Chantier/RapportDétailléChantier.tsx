@@ -2,9 +2,8 @@ import Link from 'next/link';
 import Encart from '@/components/_commons/Encart/Encart';
 import { consignesDÉcritureObjectif, libellésTypesObjectif, TypeObjectif } from '@/client/constants/libellésObjectif';
 
-import { htmlId } from '@/components/PageRapportDétailléNew/PageRapportDétaillé';
-import RapportDétailléChantierProps
-  from '@/components/PageRapportDétailléNew/Chantier/RapportDétailléChantier.interface';
+import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
+import RapportDétailléChantierProps from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier.interface';
 import AvancementChantier from '@/components/PageChantier/AvancementChantierNew/AvancementChantier';
 import Responsables from '@/components/PageChantier/Responsables/Responsables';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
@@ -19,7 +18,7 @@ import {
   typesCommentaireMailleRégionaleOuDépartementale,
 } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import { listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
-import Cartes from '@/client/components/PageRapportDétailléNew/Cartes/Cartes';
+import Cartes from '@/client/components/PageRapportDétaillé/Cartes/Cartes';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import RapportDétailléChantierStyled from './RapportDétailléChantier.styled';
 
@@ -152,25 +151,25 @@ export default function RapportDétailléChantier({
                   </Titre>
                   <Bloc>
                     {
-                    typesObjectif.map((type) => (
-                      <Publication
-                        caractéristiques={{
-                          type: type,
-                          entité: 'objectifs',
-                          libelléType: libellésTypesObjectif[type as TypeObjectif],
-                          consigneDÉcriture: consignesDÉcritureObjectif[type as TypeObjectif],
-                        }}
-                        estInteractif={false}
-                        key={type}
-                        maille='nationale'
-                        modeÉcriture={false}
-                        publicationInitiale={objectifs?.find(objectif => objectif?.type === type) || null}
-                        réformeId={chantier.id}
-                      />
-                    ))
-                  }
+                      typesObjectif.map((type) => (
+                        <Publication
+                          caractéristiques={{
+                            type: type,
+                            entité: 'objectifs',
+                            libelléType: libellésTypesObjectif[type as TypeObjectif],
+                            consigneDÉcriture: consignesDÉcritureObjectif[type as TypeObjectif],
+                          }}
+                          estInteractif={false}
+                          key={type}
+                          maille='nationale'
+                          modeÉcriture={false}
+                          publicationInitiale={objectifs?.find(objectif => objectif?.type === type) || null}
+                          réformeId={chantier.id}
+                        />
+                      ))
+                    }
                   </Bloc>
-                  
+
                 </div>
               </section>
             </div>

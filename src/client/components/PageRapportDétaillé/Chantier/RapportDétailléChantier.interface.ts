@@ -8,7 +8,7 @@ import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import {
   AvancementChantierRapportDetaille,
-} from '@/components/PageRapportDétailléNew/avancement-chantier-rapport-detaille';
+} from '@/components/PageRapportDétaillé/avancement-chantier-rapport-detaille';
 import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';

@@ -16,7 +16,7 @@ import Axe from '@/server/domain/axe/Axe.interface';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import {
   AvancementChantierRapportDetaille,
-} from '@/components/PageRapportDétailléNew/avancement-chantier-rapport-detaille';
+} from '@/components/PageRapportDétaillé/avancement-chantier-rapport-detaille';
 import {
   CartographieDonnéesMétéo,
 } from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo.interface';

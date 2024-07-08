@@ -2,7 +2,7 @@ import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css';
 import useRapportDétailléTableauChantiers
-  from '@/components/PageRapportDétailléNew/VueDEnsemble/RapportDétailléTableauChantiers/useRapportDétailléTableauChantiers';
+  from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléTableauChantiers/useRapportDétailléTableauChantiers';
 import RapportDétailléTableauChantiersProps from './RapportDétailléTableauChantiers.interface';
 import RapportDétailléTableauChantiersStyled from './RapportDétailléTableauChantiers.styled';
 import RapportDétailléTableauChantiersEnTête from './EnTête/RapportDétailléTableauChantiersEnTête';

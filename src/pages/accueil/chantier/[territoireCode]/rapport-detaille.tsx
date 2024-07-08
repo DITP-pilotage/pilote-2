@@ -4,11 +4,11 @@ import { GetServerSideProps } from 'next';
 import assert from 'node:assert/strict';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import PageRapportDétaillé from '@/components/PageRapportDétailléNew/PageRapportDétaillé';
+import PageRapportDétaillé from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { PublicationsGroupéesParChantier } from '@/components/PageRapportDétailléNew/PageRapportDétaillé.interface';
+import { PublicationsGroupéesParChantier } from '@/components/PageRapportDétaillé/PageRapportDétaillé.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase
   from '@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
@@ -38,7 +38,7 @@ import {
 } from '@/client/utils/chantier/agrégateurRapportDetailleNew/agrégateur';
 import {
   AvancementChantierRapportDetaille,
-} from '@/components/PageRapportDétailléNew/avancement-chantier-rapport-detaille';
+} from '@/components/PageRapportDétaillé/avancement-chantier-rapport-detaille';
 import {
   CartographieDonnéesMétéo,
 } from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo.interface';

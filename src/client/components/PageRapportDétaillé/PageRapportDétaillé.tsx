@@ -3,17 +3,16 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-business/icons-business.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import Link from 'next/link';
 import { useState } from 'react';
-import PageRapportDétailléStyled from '@/components/PageRapportDétailléNew/PageRapportDétaillé.styled';
+import PageRapportDétailléStyled from '@/components/PageRapportDétaillé/PageRapportDétaillé.styled';
 import Titre from '@/components/_commons/Titre/Titre';
-import PageRapportDétailléProps from '@/components/PageRapportDétailléNew/PageRapportDétaillé.interface';
+import PageRapportDétailléProps from '@/components/PageRapportDétaillé/PageRapportDétaillé.interface';
 import {
   RapportDétailléVueDEnsemble,
-} from '@/components/PageRapportDétailléNew/VueDEnsemble/RapportDétailléVueDEnsemble';
-import RapportDétailléChantier from '@/components/PageRapportDétailléNew/Chantier/RapportDétailléChantier';
+} from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble';
+import RapportDétailléChantier from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
 import PremièrePageImpressionRapportDétaillé
-  from '@/components/PageRapportDétailléNew/PremièrePageImpression/PremièrePageImpressionRapportDétaillé';
+  from '@/components/PageRapportDétaillé/PremièrePageImpression/PremièrePageImpressionRapportDétaillé';
 import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
 import { getFiltresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
 import FiltresSélectionnés from './FiltresSélectionnés/FiltresSélectionnés';
@@ -46,7 +45,6 @@ export default function PageRapportDétaillé({
   } = actionsTerritoiresStore();
 
   // le filtre devrait être fait en server side avant d'arriver au front
-  const filtresActifs = filtresActifsStore();
   const territoireSélectionné = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee, mailleSélectionnée);
   const [afficherLesChantiers, setAfficherLesChantiers] = useState(false);
 
@@ -56,7 +54,7 @@ export default function PageRapportDétaillé({
   return (
     <>
       <PremièrePageImpressionRapportDétaillé
-        filtresActifs={filtresActifs}
+        axes={axes}
         ministères={ministères}
         territoireSélectionné={territoireSélectionné}
       />
