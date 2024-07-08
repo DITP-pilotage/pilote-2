@@ -18,12 +18,11 @@ import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 const verifierOptionPerimetreIds = (optionsExport: OptionsExport, perimetreIds: string[]) => {
   return optionsExport.perimetreIds.length > 0 ? optionsExport.perimetreIds.some(perimetreId => perimetreIds.includes(perimetreId)) : true;
 };
-const verifierOptionEstBarometre = (optionsExport: OptionsExport, estBaromètre: boolean | null) => {
-  return optionsExport.estBarometre ? !!estBaromètre : true;
+
+const verifierOptionEstBarometreEtEstTerritorialise = (optionsExport: OptionsExport, estBaromètre: boolean | null, estTerritorialisé: boolean | null) => {
+  return optionsExport.estBarometre && optionsExport.estTerritorialise ? estBaromètre || estTerritorialisé : optionsExport.estBarometre ? !!estBaromètre : optionsExport.estTerritorialise ? !!estTerritorialisé : true;
 };
-const verifierOptionEstTerritorialise = (optionsExport: OptionsExport, estTerritorialise: boolean | null) => {
-  return optionsExport.estTerritorialise ? !!estTerritorialise : true;
-};
+
 const verifierOptionStatut = (optionsExport: OptionsExport, chantierStatut: string | null) => {
   return chantierStatut ? optionsExport.listeStatuts.length > 0 ? optionsExport.listeStatuts.includes(chantierStatut) : true : true;
 };
@@ -67,7 +66,7 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
       const partialChantierIds = chantierIdsLecture.slice(i, i + indicateurChunkSize);
       const indicateursPourExports = await this._indicateurRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
       yield indicateursPourExports
-        .filter(ind => !this.masquerIndicateurPourProfilDROM(profil, ind) && verifierOptionPerimetreIds(optionsExport, ind.périmètreIds) && verifierOptionEstBarometre(optionsExport, ind.chantierEstBaromètre) && verifierOptionEstTerritorialise(optionsExport, ind.chantierEstTerritorialise) && verifierOptionStatut(optionsExport, ind.chantierStatut))
+        .filter(ind => !this.masquerIndicateurPourProfilDROM(profil, ind) && verifierOptionPerimetreIds(optionsExport, ind.périmètreIds) && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, ind.chantierEstBaromètre, ind.chantierEstTerritorialise) && verifierOptionStatut(optionsExport, ind.chantierStatut))
         .map(ind => this.transformer(ind, profil));
     }
   }

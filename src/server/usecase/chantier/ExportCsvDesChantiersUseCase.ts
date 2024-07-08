@@ -12,12 +12,11 @@ import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 const verifierOptionPerimetreIds = (optionsExport: OptionsExport, perimetreIds: string[]) => {
   return optionsExport.perimetreIds.length > 0 ? optionsExport.perimetreIds.some(perimetreId => perimetreIds.includes(perimetreId)) : true;
 };
-const verifierOptionEstBarometre = (optionsExport: OptionsExport, estBaromètre: boolean | null) => {
-  return optionsExport.estBarometre ? !!estBaromètre : true;
+
+const verifierOptionEstBarometreEtEstTerritorialise = (optionsExport: OptionsExport, estBaromètre: boolean | null, estTerritorialisé: boolean | null) => {
+  return optionsExport.estBarometre && optionsExport.estTerritorialise ? estBaromètre || estTerritorialisé : optionsExport.estBarometre ? !!estBaromètre : optionsExport.estTerritorialise ? !!estTerritorialisé : true;
 };
-const verifierOptionEstTerritorialise = (optionsExport: OptionsExport, estTerritorialise: boolean | null) => {
-  return optionsExport.estTerritorialise ? !!estTerritorialise : true;
-};
+
 const verifierOptionStatut = (optionsExport: OptionsExport, chantierStatut: string | null) => {
   return chantierStatut ? optionsExport.listeStatuts.length > 0 ? optionsExport.listeStatuts.includes(chantierStatut) : true : true;
 };
@@ -66,7 +65,7 @@ export class ExportCsvDesChantiersUseCase {
       const partialChantierIds = chantierIdsLecture.slice(i, i + chantierChunkSize);
       const partialResult = await this._chantierRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
       yield partialResult
-        .filter(chantier => !this.masquerChantierPourProfilDROM(profil, chantier) && verifierOptionPerimetreIds(optionsExport, chantier.périmètreIds) && verifierOptionEstBarometre(optionsExport, chantier.estBaromètre) && verifierOptionEstTerritorialise(optionsExport, chantier.estTerritorialisé) && verifierOptionStatut(optionsExport, chantier.statut))
+        .filter(chantier => !this.masquerChantierPourProfilDROM(profil, chantier) && verifierOptionPerimetreIds(optionsExport, chantier.périmètreIds) && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, chantier.estBaromètre, chantier.estTerritorialisé) && verifierOptionStatut(optionsExport, chantier.statut))
         .map(chantier => this.transformer(chantier, profil));
     }
   }
