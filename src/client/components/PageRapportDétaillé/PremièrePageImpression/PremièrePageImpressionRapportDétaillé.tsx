@@ -1,6 +1,6 @@
 import { formaterDate } from '@/client/utils/date/date';
 import PremièrePageImpressionRapportDétailléProps
-  from '@/components/PageRapportDétailléNew/PremièrePageImpression/PremièrePageImpressionRapportDétaillé.interface';
+  from '@/components/PageRapportDétaillé/PremièrePageImpression/PremièrePageImpressionRapportDétaillé.interface';
 import { groupBy } from '@/client/utils/arrays';
 import PremièrePageImpressionRapportDétailléStyled from './PremièrePageImpressionRapportDétaillé.styled';
 

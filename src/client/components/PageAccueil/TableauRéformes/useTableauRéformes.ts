@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { DirectionDeTri } from '@/client/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.interface';
 import {
   DonnéesTableauChantiers,
-} from '@/components/PageRapportDétailléNew/VueDEnsemble/RapportDétailléTableauChantiers/RapportDétailléTableauChantiers.interface';
+} from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléTableauChantiers/RapportDétailléTableauChantiers.interface';
 import { ProjetStructurantVueDEnsemble } from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 
 function transformerEnDirectionDeTri(tri: SortingState): DirectionDeTri {
@@ -20,7 +20,7 @@ function transformerEnSortingState(sélectionColonneÀTrier: string, directionDe
     }];
 }
 
-// TODO: C'est pas normal d'utilisé DonnéesTableauChantiers de PageRapportDétailléNew ici !!!!
+// TODO: C'est pas normal d'utilisé DonnéesTableauChantiers de PageRapportDétaillé ici !!!!
 export default function useTableauRéformes(tableau: Table<DonnéesTableauChantiers> | Table<ProjetStructurantVueDEnsemble>) {
   const changementDePageCallback = useCallback((numéroDePage: number) => (
     tableau.setPageIndex(numéroDePage - 1)
