@@ -11,7 +11,6 @@ import {
 } from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble';
 import RapportDétailléChantier from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
 import PremièrePageImpressionRapportDétaillé
   from '@/components/PageRapportDétaillé/PremièrePageImpression/PremièrePageImpressionRapportDétaillé';
 import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
@@ -46,7 +45,6 @@ export default function PageRapportDétaillé({
   } = actionsTerritoiresStore();
 
   // le filtre devrait être fait en server side avant d'arriver au front
-  const filtresActifs = filtresActifsStore();
   const territoireSélectionné = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee, mailleSélectionnée);
   const [afficherLesChantiers, setAfficherLesChantiers] = useState(false);
 
@@ -56,7 +54,7 @@ export default function PageRapportDétaillé({
   return (
     <>
       <PremièrePageImpressionRapportDétaillé
-        filtresActifs={filtresActifs}
+        axes={axes}
         ministères={ministères}
         territoireSélectionné={territoireSélectionné}
       />

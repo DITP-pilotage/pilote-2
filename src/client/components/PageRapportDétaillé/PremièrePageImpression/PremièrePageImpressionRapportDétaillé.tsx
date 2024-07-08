@@ -1,21 +1,80 @@
+import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
 import { formaterDate } from '@/client/utils/date/date';
-import PremièrePageImpressionRapportDétailléProps
-  from '@/components/PageRapportDétaillé/PremièrePageImpression/PremièrePageImpressionRapportDétaillé.interface';
-import { groupBy } from '@/client/utils/arrays';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import Axe from '@/server/domain/axe/Axe.interface';
+import Ppg from '@/server/domain/ppg/Ppg.interface';
+import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import PremièrePageImpressionRapportDétailléStyled from './PremièrePageImpressionRapportDétaillé.styled';
 
-export default function PremièrePageImpressionRapportDétaillé({
-  filtresActifs,
+interface PremièrePageImpressionRapportDétailléProps {
+  territoireSélectionné: DétailTerritoire | null,
+  ministères: Ministère[],
+  axes: Axe[],
+}
+
+const PremièrePageImpressionRapportDétaillé = ({
   territoireSélectionné,
   ministères,
-}: PremièrePageImpressionRapportDétailléProps) {
-  const filtresPérimètresGroupés = groupBy(filtresActifs.périmètresMinistériels, (p) => p.ministèreNom);
-  const filtresActifsMinistères = Object.entries(filtresPérimètresGroupés).map(([ministère, filtresPérimètres]) => ({
-    nom: ministère,
-    périmètresMinistériels: filtresPérimètres,
-  }));
+  axes,
+}: PremièrePageImpressionRapportDétailléProps) => {
+  const [filtres] = useQueryStates({
+    perimetres: parseAsString.withDefault(''),
+    axes: parseAsString.withDefault(''),
+    estBarometre: parseAsBoolean.withDefault(false),
+    estTerritorialise: parseAsBoolean.withDefault(false),
+    estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
+    estEnAlerteÉcart: parseAsBoolean.withDefault(false),
+    estEnAlerteBaisse: parseAsBoolean.withDefault(false),
+    estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
+    estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
+  });
 
-  const ministèresÀAfficher = filtresActifsMinistères.length > 0 ? filtresActifsMinistères : ministères;
+  const listePerimetres = ministères.flatMap(ministère => ministère.périmètresMinistériels);
+
+  const ministèresAvecUnSeulPérimètre = new Map(
+    ministères
+      .filter((ministère) => ministère.périmètresMinistériels.length === 1)
+      .map((ministère) => [ministère.id, ministère.périmètresMinistériels[0].id]),
+  );
+
+  const retrouverNomFiltre = (idItemRecherche: string, listItems: Ministère[] | PérimètreMinistériel[] | Axe[] | Ppg[]) => {
+    return listItems.find(item => item.id === idItemRecherche)!.nom;
+  };
+
+  const perimetreActif = filtres.perimetres.split(',').filter(Boolean);
+
+  const ministereAvecPerimetreActif = ministères.reduce((acc, ministere) => {
+    if (ministèresAvecUnSeulPérimètre.has(ministere.id) && perimetreActif.includes(ministèresAvecUnSeulPérimètre.get(ministere.id) || '')) {
+      acc.set(ministere.id, { nom: ministere.nom, perimetres: [{ id: ministere.id, nom: ministere.nom }] });
+    } else {
+      perimetreActif.forEach(perimetre => {
+        if (ministere.périmètresMinistériels.map(périmètresMinistériel => périmètresMinistériel.id).includes(perimetre)) {
+          acc.set(ministere.id, {
+            nom: ministere.nom,
+            perimetres: [...(acc.get(ministere.id)?.perimetres || []), {
+              id: perimetre,
+              nom: retrouverNomFiltre(perimetre, listePerimetres),
+            }],
+          });
+        }
+      });
+    }
+    return acc;
+  }, new Map<string, { nom: string, perimetres: { id: string, nom: string }[] }>);
+  const filtresTypologie = [
+    filtres.estBarometre ? 'Chantiers du baromètre' : null,
+    filtres.estTerritorialise ? 'Chantiers territorialisés' : null,
+  ].filter(Boolean);
+  const filtresAlertes = [
+    filtres.estEnAlerteTauxAvancementNonCalculé ? 'Taux d’avancement non calculé en raison d’indicateurs non renseignés' : null,
+    filtres.estEnAlerteÉcart ? `Chantier(s) avec un retard de 10 points par rapport à leur médiane ${territoireSélectionné?.maille}` : null,
+    filtres.estEnAlerteBaisse ? 'Chantier(s) avec tendance en baisse' : null,
+    filtres.estEnAlerteMétéoNonRenseignée ? 'Chantier(s) avec météo et synthèse des résultats non renseignés' : null,
+    filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 'Chantier(s) sans taux d’avancement au niveau départemental' : null,
+  ].filter(Boolean);
+
+  const filtresAxes = filtres.axes.split(',').filter(Boolean).map(axeId => retrouverNomFiltre(axeId, axes));
 
   return (
     <PremièrePageImpressionRapportDétailléStyled>
@@ -60,42 +119,45 @@ export default function PremièrePageImpressionRapportDétaillé({
             </ul>
           </li>
           {
-            ministèresÀAfficher.length > 0 &&
-            <li>
-              <span className='fr-text--bold'>
-                Ministère(s) ou périmètre(s) ministériel(s) sélectionné(s)
-              </span>
-              <ul>
-                {
-                  ministèresÀAfficher.map(ministère => (
-                    <li key={ministère.nom}>
-                      <span className='fr-text--bold'>
-                        {ministère.nom}
-                      </span>
-                      <ul>
-                        {ministère.périmètresMinistériels.map(périmètre => (
-                          <li key={périmètre.id}>
-                            {périmètre.nom}
-                          </li>
-                        ))}
-                      </ul>
-                    </li>
-                  ))
-                }
-              </ul>
-            </li>
+            [...ministereAvecPerimetreActif].length > 0 ? (
+              <li>
+                <span className='fr-text--bold'>
+                  Ministère(s) ou périmètre(s) ministériel(s) sélectionné(s)
+                </span>
+                <ul>
+                  {
+                    [...ministereAvecPerimetreActif].map(([, ministère]) => {
+                      return (
+                        <li key={ministère.nom}>
+                          <span className='fr-text--bold'>
+                            {ministère.nom}
+                          </span>
+                          <ul>
+                            {ministère.perimetres.map(périmètre => (
+                              <li key={périmètre.id}>
+                                {périmètre.nom}
+                              </li>
+                            ))}
+                          </ul>
+                        </li>
+                      );
+                    })
+                  }
+                </ul>
+              </li>
+            ) : null
           }
           {
-            filtresActifs.filtresTypologie.length > 0 &&
+            filtresTypologie.length > 0 &&
             <li>
               <span className='fr-text--bold'>
                 Type(s) de chantier sélectionné(s)
               </span>
               <ul>
                 {
-                  filtresActifs.filtresTypologie.map(typologie => (
-                    <li key={typologie.id}>
-                      {typologie.nom}
+                  filtresTypologie.map(typologie => (
+                    <li key={typologie}>
+                      {typologie}
                     </li>
                   ))
                 }
@@ -103,16 +165,33 @@ export default function PremièrePageImpressionRapportDétaillé({
             </li>
           }
           {
-            process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && filtresActifs.filtresAlerte.length > 0 &&
+            filtresAxes.length > 0 &&
+            <li>
+              <span className='fr-text--bold'>
+                Axe(s)
+              </span>
+              <ul>
+                {
+                  filtresAxes.map(axe => (
+                    <li key={axe}>
+                      {axe}
+                    </li>
+                  ))
+                }
+              </ul>
+            </li>
+          }
+          {
+            process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && filtresAlertes.length > 0 &&
             <li>
               <span className='fr-text--bold'>
                 Alerte(s) sélectionnée(s)
               </span>
               <ul>
                 {
-                  filtresActifs.filtresAlerte.map(alerte => (
-                    <li key={alerte.id}>
-                      {alerte.nom}
+                  filtresAlertes.map(alerte => (
+                    <li key={alerte}>
+                      {alerte}
                     </li>
                   ))
                 }
@@ -123,4 +202,6 @@ export default function PremièrePageImpressionRapportDétaillé({
       </div>
     </PremièrePageImpressionRapportDétailléStyled>
   );
-}
+};
+
+export default PremièrePageImpressionRapportDétaillé;
