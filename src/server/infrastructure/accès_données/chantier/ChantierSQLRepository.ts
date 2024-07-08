@@ -123,7 +123,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     }
 
     if (optionsExport.estTerritorialise) {
-      whereOptions.est_barometre = true;
+      whereOptions.est_territorialise = true;
     }
 
     if (optionsExport.listeStatuts && optionsExport.listeStatuts.length > 0) {
