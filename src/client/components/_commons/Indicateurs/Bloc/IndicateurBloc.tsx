@@ -81,7 +81,7 @@ export default function IndicateurBloc({
                 {
                   !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] ? (
                     <p className='fr-mb-0 fr-text--xs texte-gris'>
-                      Code de l'indicateur :
+                      Identifiant de l'indicateur :
                       {' '}
                       <strong>
                         {indicateur.id}
