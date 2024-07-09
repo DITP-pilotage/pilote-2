@@ -22,7 +22,7 @@ export function IndicateurPonderation({ indicateurPondération, mailleSélection
                   Cet indicateur représente
                   {' '}
                   <span className='fr-text--bold'>
-                    {indicateurPondération.toFixed(1)}
+                    {Number.isInteger(indicateurPondération) ? indicateurPondération.toFixed(0) : indicateurPondération.toFixed(1)}
                     %
                   </span>
                   {' '}
