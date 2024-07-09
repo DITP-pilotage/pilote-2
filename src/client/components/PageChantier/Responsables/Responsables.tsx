@@ -4,14 +4,6 @@ import ResponsablesLigne from '@/client/components/_commons/ResponsablesLigne/Re
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import ResponsablesPageChantierProps from './Responsables.interface';
 
-const mailTo = (label: string, mail: string | null) => (
-  mail ?
-    <a href={`mailto:${mail}`}>
-      {label}
-    </a>
-    : label
-);
-
 const adjectifReferent: Record<Maille, string> = {
   'nationale': 'national',
   'départementale': 'départemental',
@@ -22,27 +14,27 @@ export default function ResponsablesPageChantier({ responsables, responsablesLoc
    
   return (
     <Bloc titre='National'>
-      <ResponsablesLigne
-        contenu={responsables.directeursProjet.map(directeur => (mailTo(directeur.nom, directeur.email)))}
+      <ResponsablesLigne  
+        estEmailResponsable={responsables.directeursProjet.map(directeur => directeur.email)}
         estEnTeteDePageChantier={false}
-        libellé='Directeur(s) / directrice(s) du projet'
+        estNomResponsable={responsables.directeursProjet.map(directeur => directeur.nom)}
+        libellé='Directeur(s) / directrice(s) du projet' 
       />
       {
           !!afficheResponsablesLocaux && 
           <>
             <hr className='fr-hr fr-py-1w' />
             <ResponsablesLigne
-              contenu={
-                responsablesLocal?.map(responsable => 
-                  mailTo(responsable.nom, responsable.email))
-              }
+              estEmailResponsable={responsablesLocal.map(responsableLocal => responsableLocal.email)}
               estEnTeteDePageChantier={false}
+              estNomResponsable={responsablesLocal.map(responsableLocal => responsableLocal.nom)}
               libellé='Responsable local'
             />
             <hr className='fr-hr fr-py-1w' />
-            <ResponsablesLigne
-              contenu={coordinateurTerritorial?.map(coordinateur => mailTo(coordinateur.nom, coordinateur.email))}
+            <ResponsablesLigne          
+              estEmailResponsable={coordinateurTerritorial.map(coordinateur => coordinateur.email)}
               estEnTeteDePageChantier={false}
+              estNomResponsable={coordinateurTerritorial.map(coordinateur => coordinateur.nom)}
               libellé={`Coordinateur PILOTE ${maille ? adjectifReferent[maille] : ''}`}
             />
           </>

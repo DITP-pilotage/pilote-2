@@ -33,18 +33,18 @@ export default function PageChantierEnTête({
         {chantier.nom}
       </Titre>
       <ResponsablesLigne
-        contenu={responsables?.porteur ? [responsables.porteur.nom] : []}
         estEnTeteDePageChantier
+        estNomResponsable={responsables.porteur?.nom ? [responsables.porteur.nom] : []}
         libellé='Ministère porteur'
       />
       <ResponsablesLigne
-        contenu={responsables?.coporteurs ? responsables?.coporteurs.map(coporteur => coporteur.nom) : []}
         estEnTeteDePageChantier
+        estNomResponsable={responsables.coporteurs.map(coporteur => coporteur.nom)}
         libellé='Autres ministères co-porteurs'
       />
       <ResponsablesLigne
-        contenu={responsables?.directeursAdminCentrale ? responsables.directeursAdminCentrale.map(directeur => (`${directeur.nom} (${directeur.direction})`)) : []}
         estEnTeteDePageChantier
+        estNomResponsable={responsables.directeursAdminCentrale.map(directeur => (`${directeur.nom} (${directeur.direction})`))}
         libellé='Directeur(s) / directrice(s) d’Administration Centrale'
       />
       <div className='flex align-center fr-mt-2w'>

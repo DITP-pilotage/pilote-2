@@ -1,7 +1,8 @@
-import { Fragment } from 'react';
 import ResponsablesLigneProps from './ResponsablesLigne.interface';
 
-export default function ResponsablesLigne({ libellé, contenu, estEnTeteDePageChantier }: ResponsablesLigneProps) {
+export default function ResponsablesLigne({ libellé, estEnTeteDePageChantier, estNomResponsable, estEmailResponsable  }: ResponsablesLigneProps) {
+  const emailResponsable = estEmailResponsable && estEmailResponsable.length > 0 ? estEmailResponsable : null;
+  const nomResponsable = estNomResponsable.length > 0 ? estNomResponsable : 'Non renseigné';
   return (
     <div>
       { 
@@ -14,35 +15,29 @@ export default function ResponsablesLigne({ libellé, contenu, estEnTeteDePageCh
               {' '}
               :
               {' '}
-              { 
-                contenu.length > 0 ? 
-                  contenu.map((élément, i) => {
-                    return (
-                      <Fragment key={`responsable-${élément}-${i}`}>
-                        {élément}
-                        {contenu.length - 1 !== i ? ', ' : null}
-                      </Fragment>
-                    );
-                  }) : 'Non Renseigné'
-              }
+              { nomResponsable }    
             </p>           
           ) : (       
             <div className='ligne fr-grid-row fr-grid-row--gutters fr-pb-2w'>
-              <div className='fr-text--sm fr-text--bold fr-col-12 fr-col-md-6 fr-m-0 fr-pb-1v fr-py-md-1w'>
+              <div className='fr-text--sm fr-text--bold fr-col-4 fr-m-0 fr-pb-1v fr-py-md-1w'>
                 { libellé }
               </div>
-              <div className='fr-text--sm fr-col-12 fr-col-md-6 fr-m-0 fr-pt-0 fr-p-md-1w'>
-                { 
-                  contenu.length > 0 ? 
-                    contenu.map((élément, i) => {
-                      return (
-                        <Fragment key={`responsable-${élément}-${i}`}>
-                          {élément}
-                          {contenu.length - 1 !== i ? ', ' : null}
-                        </Fragment>
-                      );
-                    }) : 'Non Renseigné'
-                }   
+              <p className='fr-text--sm fr-col-4 fr-m-0 fr-pb-1v fr-p-md-1w'>
+                { nomResponsable }             
+              </p>
+              <div
+                className='fr-col-4'
+                hidden={!emailResponsable}
+              >
+                <button
+                  className='fr-btn'
+                  title={`Contacter ${ emailResponsable }`}
+                  type='button'
+                >
+                  <a href={`mailto:${ emailResponsable }`}>
+                    Contacter
+                  </a>
+                </button>
               </div>
             </div>
           )

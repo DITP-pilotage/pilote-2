@@ -1,7 +1,6 @@
-import { ReactNode } from 'react';
-
 export default interface ResponsablesLigneProps {
-  libellé: string
-  contenu: ReactNode[],
-  estEnTeteDePageChantier: boolean
+  estEnTeteDePageChantier: boolean,
+  libellé: string,
+  estNomResponsable: (string | undefined | null)[],
+  estEmailResponsable?: (string | null)[]
 }
