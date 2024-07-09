@@ -18,8 +18,7 @@ const TableauChantiersTuileChantierStyled = styled.div`
       align-self: flex-start;
       
       .météo-picto {
-        width: 28px;
-        height: 28px;
+        max-width: 100%;
       }
     }
     

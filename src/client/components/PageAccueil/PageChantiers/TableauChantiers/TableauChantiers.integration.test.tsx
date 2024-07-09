@@ -101,7 +101,6 @@ beforeEach(() => {
   // WHEN
   tableau.render();
 });
-
 describe.skip('TableauChantiers', () => {
   test('le tableau comporte le nombre de lignes adéquat', () => {
     // THEN
@@ -152,7 +151,7 @@ describe.skip('TableauChantiers', () => {
 
   describe('Les bons pictogrammes de typologie apparaissent dans la colonnes typologie', () => {
     test('Quand le chantier est territorialisé et du baromètre', () => {
-      // GIVEN
+      // GIVEN 
       const ligneDUnChantierTerritorialisé = tableau.récupérerUneLigneParLeNomDuChantier('Lutter contre la fraude fiscale');
       const pictoTerritorialisé = queryByText(ligneDUnChantierTerritorialisé, 'chantier territorialisé');
       const pictoBaromère = queryByText(ligneDUnChantierTerritorialisé, 'élément du baromètre');
@@ -166,7 +165,7 @@ describe.skip('TableauChantiers', () => {
     });
 
     test('Quand le chantier est territorialisé et n\'est pas du baromètre ni un chantier brouillon', () => {
-      // GIVEN
+      // GIVEN 
       const ligneDUnChantierTerritorialisé = tableau.récupérerUneLigneParLeNomDuChantier('Déployer le programme FR');
       const pictoTerritorialisé = queryByText(ligneDUnChantierTerritorialisé, 'chantier territorialisé');
       const pictoBaromère = queryByText(ligneDUnChantierTerritorialisé, 'élément du baromètre');
@@ -180,7 +179,7 @@ describe.skip('TableauChantiers', () => {
     });
 
     test('Quand le chantier n\'est ni territorialisé, ni du baromètre, ni un chantier brouillon', () => {
-      // GIVEN
+      // GIVEN 
       const ligneDUnChantierTerritorialisé = tableau.récupérerUneLigneParLeNomDuChantier('Elections du maire');
       const pictoTerritorialisé = queryByText(ligneDUnChantierTerritorialisé, 'chantier territorialisé');
       const pictoBaromère = queryByText(ligneDUnChantierTerritorialisé, 'élément du baromètre');

@@ -9,11 +9,13 @@ import PremièrePageImpressionRapportDétailléStyled from './PremièrePageImpre
 
 interface PremièrePageImpressionRapportDétailléProps {
   territoireSélectionné: DétailTerritoire | null,
+  estAutoriseAVoirLesBrouillons: boolean,
   ministères: Ministère[],
   axes: Axe[],
 }
 
 const PremièrePageImpressionRapportDétaillé = ({
+  estAutoriseAVoirLesBrouillons,
   territoireSélectionné,
   ministères,
   axes,
@@ -21,6 +23,7 @@ const PremièrePageImpressionRapportDétaillé = ({
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
     axes: parseAsString.withDefault(''),
+    brouillon: parseAsBoolean.withDefault(true),
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
@@ -65,6 +68,7 @@ const PremièrePageImpressionRapportDétaillé = ({
   const filtresTypologie = [
     filtres.estBarometre ? 'Chantiers du baromètre' : null,
     filtres.estTerritorialise ? 'Chantiers territorialisés' : null,
+    estAutoriseAVoirLesBrouillons ? filtres.brouillon ? 'Chantiers validés et en cours de publication' : 'Chantiers validés uniquement' : null,
   ].filter(Boolean);
   const filtresAlertes = [
     filtres.estEnAlerteTauxAvancementNonCalculé ? 'Taux d’avancement non calculé en raison d’indicateurs non renseignés' : null,

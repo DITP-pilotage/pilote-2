@@ -1,18 +1,22 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css';
+import { parseAsBoolean, useQueryState } from 'nuqs';
 import { useEffect } from 'react';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
 import useTableauChantiers from '@/components/PageAccueil/PageChantiers/TableauChantiers/useTableauChantiers';
-import TableauChantiersActionsDeTri from '@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
+import TableauChantiersActionsDeTri
+  from '@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
 import TableauRéformesEnTête from '@/client/components/PageAccueil/TableauRéformes/EnTête/TableauRéformesEnTête';
+import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
+import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import TableauChantiersProps from './TableauChantiers.interface';
 import TableauChantiersStyled from './TableauChantiers.styled';
 import TableauChantiersContenu from './Contenu/TableauChantiersContenu';
 
-export default function TableauChantiers({ données, ministèresDisponibles, setNombreChantiersDansLeTableau }: TableauChantiersProps) {
-  
+export default function TableauChantiers({ données, ministèresDisponibles }: TableauChantiersProps) {
+
   const {
     tableau,
     changementDeLaRechercheCallback,
@@ -24,17 +28,14 @@ export default function TableauChantiers({ données, ministèresDisponibles, set
     changementDirectionDeTriCallback,
     estVueTuile,
   } = useTableauChantiers(données, ministèresDisponibles);
-  
+
   useEffect(() => {
     tableau.setPageSize(50);
   }, [tableau]);
 
-  useEffect(() => {
-    if (setNombreChantiersDansLeTableau) {
-      setNombreChantiersDansLeTableau(tableau.getFilteredRowModel().rows.length);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tableau.getFilteredRowModel().rows.length]);
+  const [estGroupe, setEstGroupe] = useQueryState('groupeParMinistere', parseAsBoolean.withDefault(false).withOptions({
+    clearOnDefault: true,
+  }));
 
   return (
     <TableauChantiersStyled className='fr-table fr-m-0 fr-p-0'>
@@ -46,21 +47,17 @@ export default function TableauChantiers({ données, ministèresDisponibles, set
               valeur={valeurDeLaRecherche}
             />
           </div>
-          <div className='fr-toggle'>
-            <input
-              className='fr-toggle__input'
-              defaultChecked={ministèresDisponibles.length > 1}
-              id='interrupteur-grouper-par-ministères'
-              onChange={tableau.getColumn('porteur')?.getToggleGroupingHandler() ?? undefined}
-              type='checkbox'
-            />
-            <label
-              className='fr-toggle__label fr-pl-1w label'
-              htmlFor='interrupteur-grouper-par-ministères'
-            >
-              Grouper par ministère
-            </label>
-          </div>
+          <Interrupteur
+            auChangement={async () => {
+
+              sauvegarderFiltres({ groupeParMinistere: !estGroupe });
+              await setEstGroupe(!estGroupe);
+              return tableau.getColumn('porteur')?.getToggleGroupingHandler()() ?? undefined;
+            }}
+            checked={estGroupe}
+            id='interrupteur-grouper-par-ministères'
+            libellé='Grouper par ministère'
+          />
         </div>
         <div className='tableau-actions-droite'>
           <TableauChantiersActionsDeTri
@@ -90,8 +87,10 @@ export default function TableauChantiers({ données, ministèresDisponibles, set
                 Liste des chantiers
               </caption>
               {
-                !estVueTuile && <TableauRéformesEnTête tableau={tableau} />
-              }
+              !estVueTuile ? (
+                <TableauRéformesEnTête tableau={tableau} />
+              ) : null
+            }
               <TableauChantiersContenu tableau={tableau} />
             </table>
             <TableauPagination

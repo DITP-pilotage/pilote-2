@@ -43,6 +43,7 @@ export default interface PageRapportDétailléProps {
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   répartitionMétéos: RépartitionsMétéos
+  estAutoriseAVoirLesBrouillons: boolean
   mapDonnéesCartographieAvancement: Map<string, AvancementsGlobauxTerritoriauxMoyensContrat>
   mapDonnéesCartographieMétéo:Map<string, CartographieDonnéesMétéo>
 }

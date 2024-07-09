@@ -1,10 +1,10 @@
 import { flexRender, Row } from '@tanstack/react-table';
 import { useCallback } from 'react';
 import { useRouter } from 'next/router';
+import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import {
   DonnéesTableauChantiers,
 } from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
-import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import TableauChantiersContenuProps from './RapportDétailléTableauChantiersContenu.interface';
 
 export default function RapportDétailléTableauChantiersContenu({ tableau }: TableauChantiersContenuProps) {

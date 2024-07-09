@@ -2,32 +2,40 @@ import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';
 import Link from 'next/link';
-import { useState } from 'react';
+import { FunctionComponent } from 'react';
 import { useSession } from 'next-auth/react';
+import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
-import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
-import useCartographie from '@/components/_commons/Cartographie/useCartographie';
-import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import CartographieAvancement
+  from '@/components/_commons/Cartographie/CartographieAvancementNew/CartographieAvancement';
+import useCartographie from '@/components/_commons/Cartographie/useCartographieNew';
 import ExportDesDonnées, {
   ID_HTML_MODALE_EXPORT,
 } from '@/components/PageAccueil/PageChantiers/ExportDesDonnées/ExportDesDonnées';
 import {
   ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
 } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
-import FiltresActifs from '@/client/components/PageAccueil/FiltresActifs/FiltresActifs';
+import FiltresActifs from '@/client/components/PageAccueil/FiltresActifsNew/FiltresActifs';
 import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
-import RemontéeAlerte from '@/components/_commons/RemontéeAlerte/RemontéeAlerte';
+import RemontéeAlerte from '@/components/_commons/RemontéeAlerteNew/RemontéeAlerte';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
-import SélecteurVueStatuts from '@/components/PageAccueil/SélecteurVueStatuts/SélecteurVueStatuts';
+import SélecteurVueStatuts from '@/components/PageAccueil/SélecteurVueStatutsNew/SélecteurVueStatuts';
 import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
-import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
+import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
+import Axe from '@/server/domain/axe/Axe.interface';
+import {
+  AvancementsGlobauxTerritoriauxMoyensContrat,
+  AvancementsStatistiquesAccueilContrat,
+  RépartitionsMétéos,
+} from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
+import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
@@ -35,32 +43,79 @@ import usePageChantiers from './usePageChantiers';
 interface PageChantiersProps {
   chantiers: ChantierAccueilContrat[],
   ministères: Ministère[]
+  axes: Axe[],
+  territoireCode: string
+  mailleSelectionnee: 'départementale' | 'régionale'
+  brouillon: boolean
+  filtresComptesCalculés: Record<string, { nombre: number }>
+  avancementsAgrégés: AvancementsStatistiquesAccueilContrat
+  avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
+  répartitionMétéos: RépartitionsMétéos
 }
 
-export default function PageChantiers({ chantiers, ministères }: PageChantiersProps) {
+const PageChantiers: FunctionComponent<PageChantiersProps> = ({
+  chantiers,
+  ministères,
+  axes,
+  territoireCode,
+  mailleSelectionnee,
+  brouillon,
+  filtresComptesCalculés,
+  avancementsAgrégés,
+  avancementsGlobauxTerritoriauxMoyens,
+  répartitionMétéos,
+}) => {
 
   const { data: session } = useSession();
-  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
-  const [nombreChantiersDansLeTableau, setNombreChantiersDansLeTableau] = useState<number>();
-  const { auClicTerritoireCallback } = useCartographie();
+  const { auClicTerritoireCallback } = useCartographie(territoireCode, mailleSelectionnee);
+
+  const [filtres] = useQueryStates({
+    perimetres: parseAsString.withDefault(''),
+    axes: parseAsString.withDefault(''),
+    estBarometre: parseAsBoolean.withDefault(false),
+    estTerritorialise: parseAsBoolean.withDefault(false),
+    maille: parseAsString.withDefault(''),
+    brouillon: parseAsBoolean.withDefault(true),
+  });
+
+  const [filtresAlertes] = useQueryStates({
+    estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
+    estEnAlerteÉcart: parseAsBoolean.withDefault(false),
+    estEnAlerteBaisse: parseAsBoolean.withDefault(false),
+    estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
+    estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
+  });
+
+  const nombreFiltresActifs = filtres.axes.split(',').filter(Boolean).length
+    + filtres.perimetres.split(',').filter(Boolean).length
+    + (filtres.estBarometre ? 1 : 0)
+    + (filtres.estTerritorialise ? 1 : 0)
+    + (filtresAlertes.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
+    + (filtresAlertes.estEnAlerteÉcart ? 1 : 0)
+    + (filtresAlertes.estEnAlerteBaisse ? 1 : 0)
+    + (filtresAlertes.estEnAlerteMétéoNonRenseignée ? 1 : 0)
+    + (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0);
+
+  const queryParamString = getQueryParamString({ ...filtres, ...filtresAlertes });
 
   const {
-    nombreFiltresActifs,
     chantiersFiltrés,
-    avancementsAgrégés,
-    répartitionMétéos,
-    donnéesCartographieAvancement,
     donnéesTableauChantiers,
     remontéesAlertes,
     aDesDroitsDeLectureSurAuMoinsUnChantierBrouillon,
-  } = usePageChantiers(chantiers);
+  } = usePageChantiers(chantiers, territoireCode, filtresComptesCalculés, avancementsAgrégés);
 
   return (
     <PageChantiersStyled>
       {
-        nombreFiltresActifs > 0 &&
-        <FiltresActifs ministères={ministères} />
+        nombreFiltresActifs > 0 ? (
+          <FiltresActifs
+            axes={axes}
+            mailleSelectionnee={mailleSelectionnee}
+            ministères={ministères}
+          />
+        ) : null
       }
       <div className='fr-py-2w fr-px-md-2w fr-container--fluid'>
         <div className='fr-mb-2w titre flex align-center'>
@@ -75,7 +130,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
               process.env.NEXT_PUBLIC_FF_FICHE_TERRITORIALE === 'true' && estAutoriséAConsulterLaFicheTerritoriale(session?.profil || '') && (
                 <div>
                   {
-                    territoireSélectionné!.code === 'NAT-FR' ? (
+                    territoireCode === 'NAT-FR' ? (
                       <button
                         className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm'
                         disabled
@@ -87,7 +142,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                     ) : (
                       <Link
                         className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
-                        href={`/fiche-territoriale?territoireCode=${territoireSélectionné!.code}`}
+                        href={`/fiche-territoriale?territoireCode=${territoireCode}`}
                         title='Voir la fiche territoriale'
                       >
                         Fiche territoriale
@@ -102,7 +157,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
               <div>
                 <Link
                   className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
-                  href={`/rapport-detaille?territoireCode=${territoireSélectionné!.code}`}
+                  href={`${territoireCode}/rapport-detaille${queryParamString.length > 0 ? `?${queryParamString}` : ''}`}
                   title='Voir le rapport détaillé'
                 >
                   Voir le rapport détaillé
@@ -240,7 +295,9 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                 </Titre>
                 <CartographieAvancement
                   auClicTerritoireCallback={auClicTerritoireCallback}
-                  données={donnéesCartographieAvancement}
+                  données={avancementsGlobauxTerritoriauxMoyens}
+                  mailleSelectionnee={mailleSelectionnee}
+                  territoireCode={territoireCode}
                   élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
                 />
               </section>
@@ -267,19 +324,20 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
             </div>
             <div className='fr-grid-row fr-mx-n1v fr-mx-md-n1w'>
               {
-                remontéesAlertes.map(({ nomCritère, libellé, nombre, estActivée, auClic }) => (
+                remontéesAlertes.map(({ nomCritère, libellé, nombre, estActivée }) => (
                   (process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true' || nomCritère !== 'estEnAlerteBaisse') &&
-                    <div
-                      className='fr-col fr-px-1v fr-px-md-1w'
-                      key={libellé}
-                    >
-                      <RemontéeAlerte
-                        auClic={auClic}
-                        estActivée={estActivée}
-                        libellé={libellé}
-                        nombre={nombre}
-                      />
-                    </div>
+                  <div
+                    className='fr-col fr-px-1v fr-px-md-1w'
+                    key={libellé}
+                    title={libellé}
+                  >
+                    <RemontéeAlerte
+                      estActivée={estActivée}
+                      libellé={libellé}
+                      nomCritère={nomCritère}
+                      nombre={nombre}
+                    />
+                  </div>
                 ))
               }
             </div>
@@ -294,27 +352,24 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                   className='fr-text--lg fr-mb-0 fr-py-1v'
                   estInline
                 >
-                  Liste des chantiers (
-                  {nombreChantiersDansLeTableau}
-                  )
+                  {`Liste des chantiers (${chantiers.length})`}
                 </Titre>
                 <Infobulle idHtml='infobulle-chantiers-listeDesChantiers'>
                   {INFOBULLE_CONTENUS.chantiers.listeDesChantiers}
                 </Infobulle>
               </TitreInfobulleConteneur>
               {
-                (
-                  !!session?.profilAAccèsAuxChantiersBrouillons &&
-                  aDesDroitsDeLectureSurAuMoinsUnChantierBrouillon(session.habilitations.lecture.chantiers)
-                ) &&
-                <div className='fr-grid-row fr-my-2w fr-mb-md-0'>
-                  <SélecteurVueStatuts />
-                </div>
+                !!session?.profilAAccèsAuxChantiersBrouillons && (!brouillon || aDesDroitsDeLectureSurAuMoinsUnChantierBrouillon(session.habilitations.lecture.chantiers))
+                  ? (
+                    <div className='fr-grid-row fr-my-2w fr-mb-md-0'>
+                      <SélecteurVueStatuts />
+                    </div>
+                  )
+                  : null
               }
               <TableauChantiers
                 données={donnéesTableauChantiers}
                 ministèresDisponibles={ministères}
-                setNombreChantiersDansLeTableau={setNombreChantiersDansLeTableau}
               />
             </Bloc>
           </div>
@@ -322,4 +377,6 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
       </div>
     </PageChantiersStyled>
   );
-}
+};
+
+export default PageChantiers;

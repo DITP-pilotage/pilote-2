@@ -1,6 +1,12 @@
 import Badge from '@/components/_commons/Badge/Badge';
-import TableauChantiersÉcartProps from '@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart.interface';
 import { définirCouleurÉcartArrondi } from '@/client/utils/chantier/écart/écart';
+import {
+  DonnéesTableauChantiers,
+} from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
+
+interface TableauChantiersÉcartProps {
+  écart: DonnéesTableauChantiers['écart']
+}
 
 export default function TableauChantiersÉcart({ écart }: TableauChantiersÉcartProps) {
   const couleurÉcartArrondi = définirCouleurÉcartArrondi(écart);

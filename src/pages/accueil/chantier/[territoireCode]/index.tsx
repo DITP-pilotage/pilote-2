@@ -3,7 +3,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getServerSession } from 'next-auth/next';
 import Head from 'next/head';
 import assert from 'node:assert/strict';
-import PageChantiers from '@/components/PageAccueil/PageChantiersNew/PageChantiers';
+import PageChantiers from '@/components/PageAccueil/PageChantiers/PageChantiers';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import SélecteursMaillesEtTerritoires

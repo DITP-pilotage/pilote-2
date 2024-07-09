@@ -4,15 +4,28 @@ import Ministère from '@/server/domain/ministère/Ministère.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
-import { FiltresSélectionnésProps } from './FiltresSélectionnés.interface';
+import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import FiltresSélectionnésCatégorie from './Catégorie/FiltresSélectionnésCatégorie';
 import FiltresSélectionnésStyled from './FiltresSélectionnés.styled';
 
-export default function FiltresSélectionnés({ territoireSélectionné, ministères, axes }: FiltresSélectionnésProps) {
+interface FiltresSélectionnésProps {
+  estAutoriseAVoirLesBrouillons: boolean
+  territoireSélectionné: DétailTerritoire | null;
+  ministères: Ministère[]
+  axes: Axe[],
+}
+
+export default function FiltresSélectionnés({
+  estAutoriseAVoirLesBrouillons,
+  territoireSélectionné,
+  ministères,
+  axes,
+}: FiltresSélectionnésProps) {
 
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
     axes: parseAsString.withDefault(''),
+    brouillon: parseAsBoolean.withDefault(true),
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
@@ -48,6 +61,7 @@ export default function FiltresSélectionnés({ territoireSélectionné, minist�
       nom: 'Autres critères', filtresActifs: [
         filtres.estBarometre ? 'Chantiers du baromètre' : null,
         filtres.estTerritorialise ? 'Chantiers territorialisés' : null,
+        estAutoriseAVoirLesBrouillons ? filtres.brouillon ? 'Chantiers validés et en cours de publication' : 'Chantiers validés uniquement' : null,
       ].filter(Boolean),
     },
     {
