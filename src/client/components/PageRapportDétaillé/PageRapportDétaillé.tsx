@@ -15,6 +15,7 @@ import PremièrePageImpressionRapportDétaillé
   from '@/components/PageRapportDétaillé/PremièrePageImpression/PremièrePageImpressionRapportDétaillé';
 import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
 import { getFiltresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
+import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import FiltresSélectionnés from './FiltresSélectionnés/FiltresSélectionnés';
 
 export const htmlId = {
@@ -36,6 +37,7 @@ export default function PageRapportDétaillé({
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
   répartitionMétéos,
+  estAutoriseAVoirLesBrouillons,
   territoireCode,
   mapDonnéesCartographieAvancement,
   mapDonnéesCartographieMétéo,
@@ -48,13 +50,15 @@ export default function PageRapportDétaillé({
   const territoireSélectionné = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee, mailleSélectionnée);
   const [afficherLesChantiers, setAfficherLesChantiers] = useState(false);
 
-  const queryParamString = new URLSearchParams(Object.entries(getFiltresActifs()).map(([key, value]) => (value && String(value).length > 0 ? [key, String(value)] : [])).filter(value => value.length > 0)).toString();
+
+  const queryParamString = getQueryParamString(getFiltresActifs());
   const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
 
   return (
     <>
       <PremièrePageImpressionRapportDétaillé
         axes={axes}
+        estAutoriseAVoirLesBrouillons={estAutoriseAVoirLesBrouillons}
         ministères={ministères}
         territoireSélectionné={territoireSélectionné}
       />
@@ -87,6 +91,7 @@ export default function PageRapportDétaillé({
             </div>
             <FiltresSélectionnés
               axes={axes}
+              estAutoriseAVoirLesBrouillons={estAutoriseAVoirLesBrouillons}
               ministères={ministères}
               territoireSélectionné={territoireSélectionné}
             />

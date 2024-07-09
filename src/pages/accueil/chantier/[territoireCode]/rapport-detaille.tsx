@@ -58,6 +58,7 @@ interface NextPageRapportDétailléProps {
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   répartitionMétéos: RépartitionsMétéos
+  estAutoriseAVoirLesBrouillons: boolean
   listeDonnéesCartographieAvancement: {
     id: string,
     donnéesCartographieAvancement: AvancementsGlobauxTerritoriauxMoyensContrat
@@ -67,6 +68,8 @@ interface NextPageRapportDétailléProps {
     donnéesCartographieMétéo: CartographieDonnéesMétéo
   }[],
 }
+
+const PROFILS_AUTORISE_VOIR_BROUILLONS = new Set(['DITP_ADMIN', 'DITP_PILOTAGE', 'DIR_PROJET', 'EQUIPE_DIR_PROJET']);
 
 export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléProps> = async ({ req, res, query }) => {
   const session = await getServerSession(req, res, authOptions);
@@ -269,8 +272,8 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
       codeInsee: codeInsee,
       estApplicable: territoire.estApplicable,
     })),
-  }
-  ));
+  }));
+
   const listeDonnéesCartographieMétéo = chantiersAvecAlertes.map(chantier => ({
     id: chantier.id,
     donnéesCartographieMétéo: objectEntries(chantier.mailles[mailleSelectionnee]).map(([codeInsee, territoire]) => ({
@@ -278,8 +281,9 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
       codeInsee: codeInsee,
       estApplicable: territoire.estApplicable,
     })),
-  }
-  ));
+  }));
+
+  const estAutoriseAVoirLesBrouillons = PROFILS_AUTORISE_VOIR_BROUILLONS.has(session.profil);
 
   return {
     props: {
@@ -302,6 +306,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
       territoireCode,
       avancementsGlobauxTerritoriauxMoyens,
       répartitionMétéos,
+      estAutoriseAVoirLesBrouillons,
       publicationsGroupéesParChantier: {
         commentaires: commentairesGroupésParChantier,
         synthèsesDesRésultats: synthèsesDesRésultatsGroupéesParChantier,
@@ -326,6 +331,7 @@ export default function NextPageRapportDétaillé({
   territoireCode,
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
+  estAutoriseAVoirLesBrouillons,
   répartitionMétéos,
   listeDonnéesCartographieAvancement,
   listeDonnéesCartographieMétéo,
@@ -357,6 +363,7 @@ export default function NextPageRapportDétaillé({
         chantiers={chantiers}
         codeInsee={codeInsee}
         détailsIndicateursGroupésParChantier={détailsIndicateursGroupésParChantier}
+        estAutoriseAVoirLesBrouillons={estAutoriseAVoirLesBrouillons}
         filtresComptesCalculés={filtresComptesCalculés}
         indicateursGroupésParChantier={indicateursGroupésParChantier}
         mailleSélectionnée={mailleSélectionnée}

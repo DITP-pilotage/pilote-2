@@ -14,6 +14,7 @@ import api from '@/server/infrastructure/api/trpc/api';
 import { getFiltresActifs } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { récupérerUnCookie } from '@/client/utils/cookies';
+import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { derniereVersionNouveaute } from '../../../../../../public/nouveautés/ParametrageNouveautés';
 
 const fermerLaModaleDuMenu = () => {
@@ -72,7 +73,7 @@ export default function Navigation() {
   const territoireCodeStore = territoireSélectionnéTerritoiresStore()?.code ?? (session?.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : session?.habilitations.lecture.territoires[0]);
   const territoireCode = territoireCodeURL ?? territoireCodeStore;
 
-  const queryParamString = new URLSearchParams(Object.entries(filtresActifs).map(([key, value]) => (value && String(value).length > 0 ? [key, String(value)] : [])).filter(value => value.length > 0)).toString();
+  const queryParamString = getQueryParamString(filtresActifs);
 
   const aConsulteLaDerniereNouveaute = récupérerUnCookie('derniereVersionNouveauteConsulte') === derniereVersionNouveaute;
 

@@ -35,6 +35,7 @@ import {
   AvancementsStatistiquesAccueilContrat,
   RépartitionsMétéos,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
+import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
@@ -75,6 +76,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
     maille: parseAsString.withDefault(''),
+    brouillon: parseAsBoolean.withDefault(true),
   });
 
   const [filtresAlertes] = useQueryStates({
@@ -95,8 +97,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     + (filtresAlertes.estEnAlerteMétéoNonRenseignée ? 1 : 0)
     + (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0);
 
-
-  const queryParamString = new URLSearchParams(Object.entries({ ...filtres, ...filtresAlertes }).map(([key, value]) => (value && String(value).length > 0 ? [key, String(value)] : [])).filter(value => value.length > 0)).toString();
+  const queryParamString = getQueryParamString({ ...filtres, ...filtresAlertes });
 
   const {
     chantiersFiltrés,
