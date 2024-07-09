@@ -14,7 +14,7 @@ import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailVali
 import ResultatValidationFichier
   from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
-import { IndicateurPondération } from '@/components/_commons/Indicateurs/Bloc/Pondération/IndicateurPondération';
+import { IndicateurPonderation } from '@/components/_commons/Indicateurs/Bloc/Pondération/IndicateurPonderation';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import api from '@/server/infrastructure/api/trpc/api';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
@@ -100,7 +100,7 @@ export default function IndicateurBloc({
                 }
                 {
                   !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] ? (
-                    <IndicateurPondération
+                    <IndicateurPonderation
                       indicateurPondération={détailsIndicateur[territoireSélectionné.codeInsee]?.pondération ?? null}
                       mailleSélectionnée={territoireSélectionné.maille}
                     />
