@@ -2,13 +2,17 @@ import { useEffect } from 'react';
 import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
 import TableauRéformesEnTête from '@/client/components/PageAccueil/TableauRéformes/EnTête/TableauRéformesEnTête';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
-import TableauChantiersActionsDeTri from '@/client/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
+import TableauChantiersActionsDeTri
+  from '@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
 import TableauProjetsStructurantsProps from './TableauProjetsStructurants.interface';
 import useTableauProjetsStructurants from './useTableauProjetsStructurants';
 import TableauProjetsStructurantsContenu from './Contenu/TableauProjetsStructurantsContenu';
 import TableauProjetsStructurantsStyled from './TableauProjetsStructurants.styled';
 
-export default function TableauProjetsStructurants({ données, setNombreProjetsStructurantsDansLeTableau }: TableauProjetsStructurantsProps) {
+export default function TableauProjetsStructurants({
+  données,
+  setNombreProjetsStructurantsDansLeTableau,
+}: TableauProjetsStructurantsProps) {
   const {
     tableau,
     changementDeLaRechercheCallback,
@@ -69,8 +73,8 @@ export default function TableauProjetsStructurants({ données, setNombreProjetsS
                 Liste des chantiers
               </caption>
               {
-                !estVueTuile && <TableauRéformesEnTête tableau={tableau} />
-              }
+              !estVueTuile && <TableauRéformesEnTête tableau={tableau} />
+            }
               <TableauProjetsStructurantsContenu tableau={tableau} />
             </table>
             <TableauPagination

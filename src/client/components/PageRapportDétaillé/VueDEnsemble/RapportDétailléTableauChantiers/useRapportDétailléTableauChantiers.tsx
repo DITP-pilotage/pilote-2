@@ -2,13 +2,13 @@ import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/re
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
 import { comparerAvancementRéforme } from '@/client/utils/chantier/avancement/avancement';
 import TableauRéformesAvancement from '@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement';
+import TableauRéformesMétéo from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo';
+import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
 import TypologiesPictos
   from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
 import {
   DonnéesTableauChantiers,
 } from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
-import TableauRéformesMétéo from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo';
-import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
 import TableauChantiersTendance
   from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance';
 import TableauChantiersÉcart from '@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart';
