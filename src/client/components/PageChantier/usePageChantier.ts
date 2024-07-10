@@ -24,6 +24,7 @@ import { estAutoriséAConsulterLaFicheConducteur } from '@/client/utils/fiche-co
 import { getFiltresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
+import { convertitEnPondération } from '@/client/utils/ponderation/ponderation';
 
 const PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS = new Set(['DITP_ADMIN', 'DITP_PILOTAGE', 'SECRETARIAT_GENERAL', 'DIR_PROJET', 'EQUIPE_DIR_PROJET']);
 
@@ -124,7 +125,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
       indicateurs
         .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireSélectionné.codeInsee]?.pondération ?? null, détailsIndicateurs[b.id][territoireSélectionné.codeInsee]?.pondération ?? null))
         .map(indicateur => ({
-          pondération: détailsIndicateurs[indicateur.id][territoireSélectionné.codeInsee]?.pondération?.toFixed(0),
+          pondération: convertitEnPondération(détailsIndicateurs[indicateur.id][territoireSélectionné.codeInsee]?.pondération),
           nom: indicateur.nom,
           type: indicateur.type,
         }))

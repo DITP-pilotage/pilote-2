@@ -101,7 +101,7 @@ export default function IndicateurBloc({
                     <p
                       className={`fr-mb-0 fr-text--xs${estIndicateurEnAlerte ? ' fr-text-warning' : ''}`}
                     >
-                      Date prévisionnelle de la prochaine date de mise à jour des données (de l'indicateur) :
+                      Date prévisionnelle de mise à jour des données (de l'indicateur) :
                       {' '}
                       <span className='fr-text--bold'>
                         {dateProchaineDateMaj}

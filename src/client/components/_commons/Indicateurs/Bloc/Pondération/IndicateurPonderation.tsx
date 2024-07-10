@@ -1,3 +1,4 @@
+import { convertitEnPondération } from '@/client/utils/ponderation/ponderation';
 import IndicateurPondérationProps
   from '@/components/_commons/Indicateurs/Bloc/Pondération/IndicateurPonderation.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
@@ -22,7 +23,7 @@ export function IndicateurPonderation({ indicateurPondération, mailleSélection
                   Cet indicateur représente
                   {' '}
                   <span className='fr-text--bold'>
-                    {Number.isInteger(indicateurPondération) ? indicateurPondération.toFixed(0) : indicateurPondération.toFixed(1)}
+                    {convertitEnPondération(indicateurPondération)}
                     %
                   </span>
                   {' '}
