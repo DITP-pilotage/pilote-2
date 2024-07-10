@@ -11,14 +11,13 @@ const adjectifReferent: Record<Maille, string> = {
 }; 
 
 export default function ResponsablesPageChantier({ responsables, responsablesLocal, coordinateurTerritorial, afficheResponsablesLocaux, maille }: ResponsablesPageChantierProps) {
-   
   return (
     <Bloc titre='National'>
       <ResponsablesLigne  
         estEmailResponsable={responsables.directeursProjet.map(directeur => directeur.email)}
         estEnTeteDePageChantier={false}
         estNomResponsable={responsables.directeursProjet.map(directeur => directeur.nom)}
-        libellé='Directeur(s) / directrice(s) du projet' 
+        libellé='Directeur(s) / directrice(s) du projet'
       />
       {
           !!afficheResponsablesLocaux && 
@@ -27,14 +26,14 @@ export default function ResponsablesPageChantier({ responsables, responsablesLoc
             <ResponsablesLigne
               estEmailResponsable={responsablesLocal.map(responsableLocal => responsableLocal.email)}
               estEnTeteDePageChantier={false}
-              estNomResponsable={responsablesLocal.map(responsableLocal => responsableLocal.nom)}
+              estNomResponsable={responsablesLocal.map((responsableLocal) => responsableLocal.nom)}
               libellé='Responsable local'
             />
             <hr className='fr-hr fr-py-1w' />
             <ResponsablesLigne          
               estEmailResponsable={coordinateurTerritorial.map(coordinateur => coordinateur.email)}
               estEnTeteDePageChantier={false}
-              estNomResponsable={coordinateurTerritorial.map(coordinateur => coordinateur.nom)}
+              estNomResponsable={coordinateurTerritorial.map((coordinateur) => coordinateur.nom)}
               libellé={`Coordinateur PILOTE ${maille ? adjectifReferent[maille] : ''}`}
             />
           </>
