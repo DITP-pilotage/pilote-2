@@ -185,6 +185,7 @@ export const presenterEnChantierRapportDetaille = (territoireCode: string) => (c
       porteur: {
         nom: chantier.responsables.porteur?.nom,
         périmètresMinistériels: (chantier.responsables.porteur?.périmètresMinistériels || []).map(presenterEnPerimetresMinisterielRapportDetailleContrat),
+        icône: chantier.responsables.porteur?.icône,
       },
       coporteurs: chantier.responsables.coporteurs.map(presenterEnMinistereCoporteurRapportDetailleContrat),
       directeursAdminCentrale: chantier.responsables.directeursAdminCentrale.map(presenterEnDirecteurAdministrationCentraleRapportDetailleContrat),
