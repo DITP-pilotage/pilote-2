@@ -117,13 +117,18 @@ export default class ChantierSQLRepository implements ChantierRepository {
     const chantierIdsLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const whereOptions: Prisma.chantierWhereInput = {};
 
-
-    if (optionsExport.estBarometre) {
+    if (optionsExport.estBarometre && optionsExport.estTerritorialise) {
+      whereOptions.OR = [
+        {
+          est_barometre: true,
+        }, {
+          est_territorialise: true,
+        },
+      ];
+    } else if (optionsExport.estBarometre) {
       whereOptions.est_barometre = true;
-    }
-
-    if (optionsExport.estTerritorialise) {
-      whereOptions.est_barometre = true;
+    } else if (optionsExport.estTerritorialise) {
+      whereOptions.est_territorialise = true;
     }
 
     if (optionsExport.listeStatuts && optionsExport.listeStatuts.length > 0) {
@@ -137,7 +142,6 @@ export default class ChantierSQLRepository implements ChantierRepository {
         hasSome: optionsExport.perimetreIds,
       };
     }
-
 
     const chantiers = await this.prisma.chantier.findMany({
       distinct: ['id'],

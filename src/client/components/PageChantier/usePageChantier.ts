@@ -23,6 +23,8 @@ import { comparerIndicateur, estAutoriséAImporterDesIndicateurs } from '@/clien
 import { estAutoriséAConsulterLaFicheConducteur } from '@/client/utils/fiche-conducteur/fiche-conducteur';
 import { getFiltresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
+import { getQueryParamString } from '@/client/utils/getQueryParamString';
+import { convertitEnPondération } from '@/client/utils/ponderation/ponderation';
 
 const PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS = new Set(['DITP_ADMIN', 'DITP_PILOTAGE', 'SECRETARIAT_GENERAL', 'DIR_PROJET', 'EQUIPE_DIR_PROJET']);
 
@@ -123,7 +125,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
       indicateurs
         .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireSélectionné.codeInsee]?.pondération ?? null, détailsIndicateurs[b.id][territoireSélectionné.codeInsee]?.pondération ?? null))
         .map(indicateur => ({
-          pondération: détailsIndicateurs[indicateur.id][territoireSélectionné.codeInsee]?.pondération?.toFixed(0),
+          pondération: convertitEnPondération(détailsIndicateurs[indicateur.id][territoireSélectionné.codeInsee]?.pondération),
           nom: indicateur.nom,
           type: indicateur.type,
         }))
@@ -131,7 +133,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
     );
 
 
-  let modeÉcriture = !!territoireSélectionné!.accèsSaisiePublication && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantierId);
+  let modeÉcriture = territoireSélectionné!.accèsSaisiePublication && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantierId);
   if (session && ['DIR_PROJET', 'EQUIPE_DIR_PROJET', 'SECRETARIAT_GENERAL'].includes(session.profil) && territoireSélectionné?.maille != 'nationale') {
     modeÉcriture = modeÉcriture && chantier?.ate === 'hors_ate_centralise';
   }
@@ -141,9 +143,9 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
   const responsableLocal = chantierTerritoireSélectionné?.responsableLocal ?? [];
   const coordinateurTerritorial = chantierTerritoireSélectionné?.coordinateurTerritorial ?? [];
 
-  const filtresActifs = getFiltresActifs();
   const territoireCode = territoireSélectionné?.code;
-  const queryParamString = new URLSearchParams(Object.entries(filtresActifs).map(([key, value]) => (value && String(value).length > 0 ? [key, String(value)] : [])).filter(value => value.length > 0)).toString();
+
+  const queryParamString = getQueryParamString(getFiltresActifs());
   const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
 
   const estAutoriseAVoirLesAlertesMAJIndicateurs = PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS.has(session!.profil);
