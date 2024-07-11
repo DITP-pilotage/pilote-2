@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import FiltresSélectionMultiple
   from '@/components/PageAccueil/FiltresNew/FiltresSélectionMultiple/FiltresSélectionMultiple';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
@@ -21,16 +22,22 @@ interface FiltresProps {
   ministères: Ministère[],
   axes: Axe[],
   afficherToutLesFiltres: boolean
+  estProfilTerritorialise: boolean
 }
 
-export default function Filtres({ ministères, axes, afficherToutLesFiltres }: FiltresProps) {
+const Filtres: FunctionComponent<FiltresProps> = ({
+  ministères,
+  axes,
+  afficherToutLesFiltres,
+  estProfilTerritorialise,
+}) => {
   return (
     <>
       <section className='fr-px-3w'>
         <FiltresMinistères ministères={ministères} />
       </section>
       {
-        !!afficherToutLesFiltres ? (
+        afficherToutLesFiltres ? (
           <>
             <FiltresGroupe>
               <FiltresSélectionMultiple
@@ -41,10 +48,14 @@ export default function Filtres({ ministères, axes, afficherToutLesFiltres }: F
             </FiltresGroupe>
             <hr className='fr-hr fr-mt-3w fr-pb-2w' />
             <FiltresGroupe libellé='Autres critères'>
-              <FiltreTypologie
-                categorie='estTerritorialise'
-                filtre={filtreTerritorialisé}
-              />
+              {
+                estProfilTerritorialise ? (
+                  <FiltreTypologie
+                    categorie='estTerritorialise'
+                    filtre={filtreTerritorialisé}
+                  />
+                ) : null
+              }
               <FiltreTypologie
                 categorie='estBarometre'
                 filtre={filtreBaromètre}
@@ -55,4 +66,6 @@ export default function Filtres({ ministères, axes, afficherToutLesFiltres }: F
       }
     </>
   );
-}
+};
+
+export default Filtres;
