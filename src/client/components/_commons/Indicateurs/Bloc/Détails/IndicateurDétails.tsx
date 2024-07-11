@@ -14,11 +14,11 @@ import {
 import {
   ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE,
 } from '@/client/constants/légendes/élémentsDeLégendesCartographieValeurActuelle';
+import SousIndicateurs from '@/client/components/_commons/SousIndicateurs/SousIndicateurs';
 import IndicateurDétailsProps from './IndicateurDétails.interface';
 import useIndicateurDétails from './useIndicateurDétails';
-import SousIndicateurs from './SousIndicateurs/SousIndicateurs';
 
-export default function IndicateurDétails({ indicateur, indicateurDétailsParTerritoires, typeDeRéforme, chantierEstTerritorialisé, dateDeMiseAJourIndicateur, listeSousIndicateurs, détailsIndicateurs, estSousIndicateur = false, estAutoriseAVoirLesAlertesMAJIndicateurs = false }: IndicateurDétailsProps) {
+export default function IndicateurDétails({ indicateur, indicateurDétailsParTerritoires, typeDeRéforme, chantierEstTerritorialisé, dateDeMiseAJourIndicateur, listeSousIndicateurs, détailsIndicateurs, estSousIndicateur = false }: IndicateurDétailsProps) {
   const [futOuvert, setFutOuvert] = useState(false);
   const { auClicTerritoireMultiSélectionCallback } = useCartographie();
   const { donnéesCartographieAvancement, donnéesCartographieValeurActuelle, donnéesCartographieAvancementTerritorialisées, donnéesCartographieValeurActuelleTerritorialisées } = useIndicateurDétails(indicateur.id, futOuvert, typeDeRéforme);
@@ -153,7 +153,6 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
             <SousIndicateurs
               chantierEstTerritorialisé={chantierEstTerritorialisé}
               détailsIndicateurs={détailsIndicateurs}
-              estAutoriseAVoirLesAlertesMAJIndicateurs={estAutoriseAVoirLesAlertesMAJIndicateurs}
               listeSousIndicateurs={listeSousIndicateurs}
             />          
           </div>

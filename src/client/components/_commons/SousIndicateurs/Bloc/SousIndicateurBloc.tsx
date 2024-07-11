@@ -10,11 +10,11 @@ import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailVali
 import ResultatValidationFichier
   from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
-import { IndicateurPondération } from '@/components/_commons/Indicateurs/Bloc/Pondération/IndicateurPondération';
+import { IndicateurPonderation } from '@/components/_commons/Indicateurs/Bloc/Pondération/IndicateurPonderation';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
-import api from '@/server/infrastructure/api/trpc/api';
 import { IndicateurDétailsParTerritoire } from '@/client/components/_commons/Indicateurs/Bloc/IndicateurBloc.interface';
 import PictoSousIndicateur from '@/components/_commons/PictoSousIndicateur/PictoSousIndicateur';
+import useIndicateurAlerteDateMaj from '@/client/components/_commons/Indicateurs/Bloc/useIndicateurAlerteDateMaj';
 import useSousIndicateurBloc from './useSousIndicateurBloc';
 import SousIndicateurBlocProps from './SousIndicateurBloc.interface';
 import SousIndicateurBlocStyled from './SousIndicateurBloc.styled';
@@ -26,7 +26,6 @@ export default function SousIndicateurBloc({
   estInteractif,
   chantierEstTerritorialisé,
   estDisponibleALImport = false,
-  estAutoriseAVoirLesAlertesMAJIndicateurs = false,
   classeCouleurFond,
 }: SousIndicateurBlocProps) {
   const router = useRouter();
@@ -42,10 +41,8 @@ export default function SousIndicateurBloc({
   } = useSousIndicateurBloc(détailsIndicateur);
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
 
-  const { data: alerteMiseAJourIndicateurEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR' });
-
-  const estIndicateurEnAlerte = estAutoriseAVoirLesAlertesMAJIndicateurs && !!alerteMiseAJourIndicateurEstDisponible && détailsIndicateur[territoireSélectionné!.codeInsee]?.estAJour === false && détailsIndicateur[territoireSélectionné!.codeInsee]?.prochaineDateMaj !== null;
-
+  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(détailsIndicateur, territoireSélectionné);
+  
   return (
     <SousIndicateurBlocStyled
       className={`fr-pt-1w ${classeCouleurFond}`}
@@ -101,7 +98,7 @@ export default function SousIndicateurBloc({
               }
               {
                 !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] ? (
-                  <IndicateurPondération
+                  <IndicateurPonderation
                     indicateurPondération={détailsIndicateur[territoireSélectionné.codeInsee]?.pondération ?? null}
                     mailleSélectionnée={territoireSélectionné.maille}
                   />

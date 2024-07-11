@@ -13,5 +13,4 @@ export default interface RubriquesIndicateursProps {
   territoireProjetStructurant?: ProjetStructurant['territoire']
   estDisponibleALImport?: boolean
   estInteractif?: boolean
-  estAutoriseAVoirLesAlertesMAJIndicateurs?: boolean
 }
