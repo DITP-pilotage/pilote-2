@@ -1,5 +1,10 @@
 import { faker } from '@faker-js/faker/locale/fr';
-import { codesInseeDépartements, codesInseeRégions, codeInseeFrance, TerritoireDonnées } from '@/server/domain/territoire/Territoire.interface';
+import {
+  codeInseeFrance,
+  codesInseeDépartements,
+  codesInseeRégions,
+  TerritoireDonnées,
+} from '@/server/domain/territoire/Territoire.interface';
 import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 import AvancementBuilder from '@/server/domain/chantier/avancement/Avancement.builder';
 import { générerPeutÊtreNull, générerTableau } from '@/server/infrastructure/test/builders/utils';

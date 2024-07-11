@@ -23,9 +23,9 @@ import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleContene
 import Indicateurs from '@/client/components/_commons/Indicateurs/Indicateurs';
 import { listeRubriquesChantier, listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
 import { mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import ResponsablesPageChantier from '@/components/PageChantier/ResponsablesChantier/ResponsablesChantier';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import PageChantierProps from './PageChantier.interface';
-import ResponsablesPageChantier from './Responsables/Responsables';
 import PageChantierEnTête from './EnTête/EnTête';
 import Cartes from './Cartes/Cartes';
 import PageChantierStyled from './PageChantier.styled';
@@ -52,7 +52,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
     saisieIndicateurAutorisée,
     afficheLeBoutonFicheConducteur,
     responsableLocal,
-    coordinateurTerritorial,
+    listeCoordinateursTerritorials,
     hrefBoutonRetour,
     estAutoriseAVoirLesAlertesMAJIndicateurs,
   } = usePageChantier(chantierId, indicateurs);
@@ -183,11 +183,11 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     </Titre>
                     <ResponsablesPageChantier
                       afficheResponsablesLocaux={territoireSélectionné?.maille !== 'nationale'}
-                      coordinateurTerritorial={coordinateurTerritorial}
                       libelléChantier={chantier.nom}
+                      listeCoordinateursTerritorials={listeCoordinateursTerritorials}
+                      listeDirecteursProjet={chantier.responsables.directeursProjet}
+                      listeResponsablesLocal={responsableLocal}
                       maille={territoireSélectionné?.maille ?? null}
-                      responsables={chantier.responsables}
-                      responsablesLocal={responsableLocal}
                     />
                   </section>
                 </div>

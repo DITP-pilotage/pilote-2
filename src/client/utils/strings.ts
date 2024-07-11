@@ -20,13 +20,3 @@ export function commenceParUneVoyelle(chaîneDeCaractères: string) {
     normaliserChaîneDeCaractères(chaîneDeCaractères).charAt(0),
   );
 }
-
-export function normaliseNom(nom: string) {
-  return nom.charAt(0).toUpperCase() + nom.slice(1);
-}
-
-const INDEX_A_NE_PAS_METTRE_AVEC_VIRGULE = 0;
-
-export const ajoutVirguleAprèsIndex = (index: number) => {
-  return (index !== INDEX_A_NE_PAS_METTRE_AVEC_VIRGULE ? ', ' : '');
-};
