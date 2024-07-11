@@ -1,38 +1,36 @@
 import '@gouvfr/dsfr/dist/component/radio/radio.min.css';
 import { useState } from 'react';
+import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
 import Modale from '@/components/_commons/Modale/Modale';
 import { horodatage } from '@/client/utils/date/date';
-import { actions as actionsFiltreStore } from '@/stores/useFiltresStore/useFiltresStore';
-import { FiltreTypologieType } from '@/stores/useFiltresStore/useFiltresStore.interface';
-import { actionsStatutsStore } from '@/stores/useStatutsStore/useStatutsStore';
 
 const ressources = {
   'chantiers-sans-filtre': {
     libellé: 'Les chantiers sans filtre',
     id: 'chantiers-sans-filtre' as const,
     baseDuNomDeFichier: 'PILOTE-Chantiers-sans-filtre',
-    url: '/api/export/chantiers-sans-filtre',
+    url: '/api/export/chantiers',
     options: false,
   },
   'chantiers-avec-filtre': {
     libellé: 'Les chantiers avec filtre',
     id: 'chantiers-avec-filtre' as const,
     baseDuNomDeFichier: 'PILOTE-Chantiers-avec-filtre',
-    url: '/api/export/chantiers-sans-filtre',
+    url: '/api/export/chantiers',
     options: true,
   },
   'indicateurs-sans-filtre': {
     libellé: 'Les indicateurs sans filtre',
     id: 'indicateurs-sans-filtre' as const,
     baseDuNomDeFichier: 'PILOTE-Indicateurs-sans-filtre',
-    url: '/api/export/indicateurs-sans-filtre',
+    url: '/api/export/indicateurs',
     options: false,
   },
   'indicateurs-avec-filtre': {
     libellé: 'Les indicateurs avec filtre',
     id: 'indicateurs-avec-filtre' as const,
     baseDuNomDeFichier: 'PILOTE-Indicateurs-avec-filtre',
-    url: '/api/export/indicateurs-sans-filtre',
+    url: '/api/export/indicateurs',
     options: true,
   },
 };
@@ -43,29 +41,30 @@ export default function ExportDesDonnées() {
   const [ressourceÀExporter, setRessourceÀExporter] = useState<keyof typeof ressources | undefined>();
   const [estDésactivé, setEstDésactivé] = useState(false);
 
+  const [filtres] = useQueryStates({
+    perimetres: parseAsString.withDefault(''),
+    estBarometre: parseAsBoolean.withDefault(false),
+    estTerritorialise: parseAsBoolean.withDefault(false),
+    brouillon: parseAsBoolean.withDefault(true),
+  });
 
-  const {
-    récupérerFiltresActifsAvecLeursCatégories,
-  } = actionsFiltreStore();
-
-  const { recupérerLesStatutsSélectionnés } = actionsStatutsStore();
-
-  const filtresActifs = récupérerFiltresActifsAvecLeursCatégories();
-
-  const arrayOptionsExport: { name: string, value: string | boolean }[] = filtresActifs.filter(filtre => filtre.catégorie === 'périmètresMinistériels').map(filtrePerimetreMinisteriel => ({
+  const arrayOptionsExport: {
+    name: string,
+    value: string | boolean
+  }[] = filtres.perimetres.split(',').filter(Boolean).map(filtrePerimetreMinisteriel => ({
     name: 'perimetreIds',
-    value: filtrePerimetreMinisteriel.filtre.id,
+    value: filtrePerimetreMinisteriel,
   }));
 
-  if ((filtresActifs.filter(filtre => filtre.catégorie === 'filtresTypologie').find(filtreTypo => (filtreTypo.filtre as FiltreTypologieType).attribut === 'estBaromètre')?.filtre as FiltreTypologieType)?.attribut) {
+  if (filtres.estBarometre) {
     arrayOptionsExport.push({ name: 'estBarometre', value: true });
   }
 
-  if ((filtresActifs.filter(filtre => filtre.catégorie === 'filtresTypologie').find(filtreTypo => (filtreTypo.filtre as FiltreTypologieType).attribut === 'estTerritorialisé')?.filtre as FiltreTypologieType)?.attribut) {
+  if (filtres.estTerritorialise) {
     arrayOptionsExport.push({ name: 'estTerritorialise', value: true });
   }
 
-  recupérerLesStatutsSélectionnés().forEach(statut => {
+  (filtres.brouillon ? ['BROUILLON', 'PUBLIE'] : ['PUBLIE']).forEach(statut => {
     arrayOptionsExport.push({ name: 'statut', value: statut });
   });
 
@@ -93,7 +92,7 @@ export default function ExportDesDonnées() {
             setEstDésactivé(true);
             const a = window.document.createElement('a');
             const strOptionsExport = `${arrayOptionsExport.map(option => `${option.name}=${option.value}`).join('&')}`;
-            a.href = `${url}${ options && arrayOptionsExport.length > 0 ? `?${strOptionsExport}` : ''}`;
+            a.href = `${url}${options && arrayOptionsExport.length > 0 ? `?${strOptionsExport}` : ''}`;
             a.target = '_self';
             a.download = `${baseDuNomDeFichier}-${horodatage()}.csv`;
             document.body.append(a);
@@ -135,7 +134,7 @@ export default function ExportDesDonnées() {
                     className='fr-label'
                     htmlFor={ressource.id}
                   >
-                    { ressource.libellé }
+                    {ressource.libellé}
                   </label>
                 </div>
               </div>

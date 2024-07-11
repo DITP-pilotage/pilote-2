@@ -1,0 +1,392 @@
+openapi: 3.1.0
+x-stoplight:
+  id: x0ygm9j5iky4x
+info:
+  title: pilote-api
+  version: 0.1.0
+  summary: API Pilote.
+  description: |-
+    Cette API permet d'interagir avec Pilote. Via cette API, il est possible de récupérer les données de Pilote et d'importer de nouvelles données.
+
+    # Autorisations
+
+    Les autorisations sont identiques à celles de votre compte Pilote existant. Vous ne pourrez accéder et modifier que des données auxquelles vous avez déjà accès via Pilote.
+
+    # Détails techniques
+    ## Authentification
+
+    Pour utiliser l'API, vous devrez **récupérer un token d'API**. Celui-ci sera à demander par email à l'adresse [support.ditp@modernisation.gouv.fr](mailto:support.ditp@modernisation.gouv.fr?subject=[api.token]%20&cc=colin.dugeai@modernisation.gouv.fr&body=%0D%0A%0D%0A%0D%0A%0D%0A%0D%0A%20tag:api.token) avec en début d'objet *[api.token]*.
+
+    Ce token devra être inséré en *header* pour chaque requête envoyée vers l'API. `Authorization: Bearer <token>`.
+
+    Par exemple, pour obtenir les données  d'un indicateur:
+
+    ```
+    curl -X 'GET' \
+      'https://pilote.modernisation.gouv.fr/api/open-api/chantier/CH-047/indicateur/IND-123/donnees' \
+      -H 'accept: application/json' \
+      -H 'Authorization: Bearer <ACCESS_TOKEN>'
+    ```
+
+    ## Comprendre le fichier d’import
+
+    Pour mettre à jour vos données, vous devrez remplir un modèle d’import avec les champs suivants.
+
+    *   `identifiant_indic` • Identifiant unique de l’indicateur. Exemple : IND-001, IND-002, IND-003. (voir identifiant précisé plus haut sur la page)
+    *   `zone_id` • Identifiant du territoire pour lequel la donnée est renseignée. Il provient des référentiels INSEE et est interopérable. Exemple : D34, D20... (voir le référentiel ci-dessous)
+    *   `zone_nom` • Champ facultatif précisant les territoires auxquels correspondent les zone-id. Vous n’êtes pas obligé(e) d’inclure cette colonne.
+    *   `date_valeur` • Date à laquelle se réfère la valeur numérique. La date doit être renseignée selon le modèle suivant année-mois-jour. Exemple : 2023-02-26, 2023-01-17...
+    *   `type_valeur` • Type de données insérées : vi pour valeur initiale, va pour valeur actuelle, vc pour valeur cible
+    *   `valeur` • Valeur de l’indicateur. La valeur doit être numérique. Ne pas saisir de texte (par exemple “NC” ou “non renseigné”)
+
+    Les formats acceptés sont csv et xlsx
+
+    | identifiant_indic | zone_id | zone_nom (facultatif) | date_valeur | type_valeur | valeur |
+    |-------------------|---------|-----------------------|-------------|-------------|--------|
+    | IND-009           | D12     | Aveyron               | 2023-03-31  | va          | 5      |
+    | IND-009           | D13     | Bouches-du-Rhône      | 2023-01-17  | va          | 12     |
+    | IND-009           | D14     | Calvados              | 2023-02-26  | va          | 20     |
+
+    Ce fichier d'import sera envoyé à l'endpoint `POST: /indicateur/<ID-indicateur>/donnees` (voir documentation plus bas).
+
+    ## Référentiels
+
+    Consultez les référentiels pour retrouver les codes de tous les territoires (départements, régions, et national). Vous pourrez copier dans ce référentiel les valeurs à indiquer pour les champs zone-id et zone dans le modèle d’import fourni.
+
+    Il s'agit des codes INSEE des départements et régions précédés respectivement par `D` ou `R`. Pour désigner le niveau national, on utilise `FRANCE`.
+
+    [Télécharger le référentiel des territoires XLSX – 12 ko](https://github.com/DITP-pilotage/pilote-2/raw/dev/public/referentiel/referentiel_territoires.xlsx)
+
+    ## Comment bien remplir le fichier d’import ?
+
+    *   Si vous choisissez le format CSV pour importer les données, veuillez utiliser le point-virgule (;) pour délimiter les colonnes et les guillemets (") pour délimiter les chaines de caractères
+    *   Si vous saisissez un taux, la valeur saisie doit se trouver entre 1 et 100. Par exemple, pour 78%, renseignez la valeur 78.
+    *   L'encodage du fichier doit être en UTF-8
+    *   Si vous importez une cellule vide, la valeur précédente sera écrasée (si existante)
+    *   Toutes les zones du template d'import ne sont pas nécessaires. Certaines lignes du fichier d'import peuvent être supprimées. Il n’est ainsi pas nécessaire d’importer la totalité des départements pour chaque mise à jour.
+    *   Il n'est pas possible d'importer plusieurs valeurs pour la même zone, date, identifiant d'indicateur et type de valeur. Cela générerait une erreur.
+
+    **Si vous rencontrez des difficultés, merci de nous contacter à l’adresse suivante** (en mentionnant *[api]* dans l'objet de votre mail): [support.ditp@modernisation.gouv.fr](mailto:support.ditp@modernisation.gouv.fr?subject=[api]%20&cc=colin.dugeai@modernisation.gouv.fr&body=%0D%0A%0D%0A%0D%0A%0D%0A%0D%0A%20tag:api)
+  contact: {}
+servers:
+  - url: 'http://localhost:3000/api/open-api'
+    description: Local
+  - url: 'http://172.17.0.1:3000/api/open-api'
+    description: Docker local
+  - url: 'https://pilote.modernisation.gouv.fr/api/open-api'
+    description: 'Pilote:prod'
+  - url: 'https://{urlPiloteDev}/api/open-api'
+    description: 'Pilote:custom'
+    variables:
+      urlPiloteDev:
+        default: to-replace
+        description: URL de base personnalisée
+paths:
+  '/chantier/{chantier_id}/indicateur/{indicateur_id}/donnees':
+    parameters:
+      - schema:
+          type: string
+          pattern: '^IND-\d{3,4}$'
+        name: indicateur_id
+        in: path
+        required: true
+        description: ID de l'indicateur
+      - schema:
+          type: string
+          pattern: '^CH-\d{3}$'
+        name: chantier_id
+        in: path
+        required: true
+        description: Chantier de l'indicateur
+    get:
+      summary: Informations indicateur
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DonneeIndicateurContrat'
+        '403':
+          description: Vous n'êtes pas autorisé à acceder au chantier.
+          content: {}
+          headers: {}
+      operationId: get-donnees-indicateur
+      description: Obtenir les données de l'indicateur au format JSON.
+      parameters: []
+      tags:
+        - Indicateur
+      security:
+        - bearerAuth: []
+    post:
+      summary: Import données indicateur
+      operationId: post-donnees-indicateur
+      responses:
+        '200':
+          description: L'import de données a fonctionné.
+        '400':
+          description: Le fichier n'est pas valide.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Vous n'êtes pas autorisé à acceder au chantier.
+          content: {}
+      description: Ajout de données d'un indicateur. Le format d'entrée est un fichier CSV formaté comme sur Pilote (voir instructions ci-dessus) ou un format JSON.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  x-stoplight:
+                    id: cwvqhg1h40as2
+                  description: Fichier CSV ou Excel au format Pilote.
+              required:
+                - file
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataImportDonneeIndicateurAPIContrat'
+        description: |-
+          Données à importer. Dans un des formats suivants:
+          - JSON
+          - fichier CSV
+          - fichier Excel
+
+          La structure des données et les contraintes de valeurs sont identiques quelque soit le format utilisé.
+      tags:
+        - Indicateur
+      parameters: []
+      security:
+        - bearerAuth: []
+components:
+  schemas:
+    DonneeIndicateurContrat:
+      title: DonneeIndicateurContrat
+      x-stoplight:
+        id: w2cofnhohnhh9
+      type: object
+      description: Données indicateur retournées par les endpoints *données* de l'API.
+      properties:
+        indic_id:
+          $ref: '#/components/schemas/IndicateurId'
+          x-stoplight:
+            id: 11ska5g6ss0xb
+        est_barometre:
+          type: boolean
+          x-stoplight:
+            id: v67dtjvboqkau
+          description: Indicateur au baromètre ?
+        chantier_id:
+          $ref: '#/components/schemas/ChantierId'
+          x-stoplight:
+            id: pmkg85ce8vz3a
+        donnees_territoires:
+          type: array
+          x-stoplight:
+            id: 6s8rkoas7q30z
+          items:
+            $ref: '#/components/schemas/DonneeTerritoireContrat'
+            x-stoplight:
+              id: e7s3bxer5n30d
+    IndicateurId:
+      title: ID-Indicateur
+      x-stoplight:
+        id: 0y8c3ohs6trzu
+      type: string
+      pattern: '^IND-\d{3}$'
+      example: IND-624
+      description: Identifiant unique d'un indicateur
+    ChantierId:
+      title: ID-Chantier
+      x-stoplight:
+        id: 0jtb5etkjk3tr
+      type: string
+      pattern: '^CH-\d{3}$'
+      example: CH-123
+      description: Identifiant unique d'un chantier
+    DonneeTerritoireContrat:
+      title: DonneeTerritoireContrat
+      x-stoplight:
+        id: 59a7twyiu5xvx
+      type: object
+      description: Donnée pour un territoire
+      properties:
+        maille:
+          x-stoplight:
+            id: 6hiutbt4un2ad
+          type: string
+          description: Maille du territoire
+          enum:
+            - DEPT
+            - REG
+            - NAT
+          example: DEPT
+        code_insee:
+          type: string
+          x-stoplight:
+            id: y4cyqsyttnfgp
+          description: Code INSEE du territoire
+          example: '01'
+        territoire_code:
+          type: string
+          x-stoplight:
+            id: 9vs5ppb9ckwe8
+          description: Code Pilote du territoire
+          example: DEPT-01
+        zone_id:
+          type: string
+          x-stoplight:
+            id: vkctvltuqxu9e
+          description: Identifiant Pilote de la zone
+          example: D01
+          pattern: '^((R|D)\d{2,3}|FRANCE)$'
+        valeur_initiale:
+          type: string
+          x-stoplight:
+            id: kxnslwkx8c58f
+          format: date
+          example: '2022-12-01'
+          description: Date de la VI
+        valeur_actuelle:
+          type: number
+          x-stoplight:
+            id: monbziy7nf30t
+          example: 15.45
+        date_valeur_actuelle:
+          type: string
+          x-stoplight:
+            id: sijpmsct93j94
+          format: date
+          example: '2024-07-01'
+        valeur_cible:
+          type: number
+          x-stoplight:
+            id: gie4ecljjw3pe
+          example: 45
+        date_valeur_cible:
+          type: string
+          x-stoplight:
+            id: ss8wsjx5sfgha
+          format: date
+          example: '2026-12-01'
+        taux_avancement:
+          type: number
+          x-stoplight:
+            id: 1f1f2omwwe1e1
+          maximum: 100
+          minimum: 0
+          example: 95.4
+          description: Taux d'avancement global de l'indicateur. Entre 0 et 100.
+        valeur_cible_annuelle:
+          type: number
+          x-stoplight:
+            id: mfbtf6soss579
+          example: 46.4
+          description: Valeur cible en fin d'année.
+        date_valeur_cible_annuelle:
+          type: string
+          x-stoplight:
+            id: p2wgw7lzh6uxt
+          description: Date de la VC annuelle.
+          format: date
+          example: '2024-12-01'
+        taux_avancement_annuel:
+          type: number
+          x-stoplight:
+            id: n9q3xioxavyqc
+          description: Taux d'avancement annuel de l'indicateur. Entre 0 et 100.
+          minimum: 0
+          maximum: 100
+    DataImportDonneeIndicateurAPIContrat:
+      title: DataImportDonneeIndicateurAPIContrat
+      x-stoplight:
+        id: xx9nazzad85o8
+      type: object
+      description: Format d'import des données en JSON.
+      properties:
+        donnees:
+          type: array
+          x-stoplight:
+            id: x1yklvisxuaed
+          items:
+            x-stoplight:
+              id: 2gn0qqmi76jmy
+            type: object
+            properties:
+              identifiant_indic:
+                $ref: '#/components/schemas/IndicateurId'
+                x-stoplight:
+                  id: uv8bq50k5sru5
+              zone_id:
+                type: string
+                x-stoplight:
+                  id: ic2fyexv1hinx
+                pattern: '^((R|D)\d{2,3}|FRANCE)$'
+                example: D01
+                description: Identifiant Pilote de la zone concernée. Voir plus haut le référentiel des territoires.
+              zone_nom:
+                type: string
+                x-stoplight:
+                  id: 6yan9v808z33x
+                example: Aude
+              date_valeur:
+                type: string
+                x-stoplight:
+                  id: tnrfrj3avxn6c
+                format: date
+                example: '2024-07-01'
+                description: Date de la valeur au format préférentiel JJ-MM-AAAA.
+              type_valeur:
+                type: string
+                x-stoplight:
+                  id: 2fwct0ihwrth9
+                enum:
+                  - vi
+                  - va
+                  - vc
+                example: va
+                description: '`vi` pour Valeur Initiale.'
+              valeur:
+                type: number
+                x-stoplight:
+                  id: 893ku3l1rvmvf
+                example: 15.78
+                description: Valeur de l'indicateur.
+            required:
+              - identifiant_indic
+              - zone_id
+              - date_valeur
+              - type_valeur
+              - valeur
+      required:
+        - donnees
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Cette clé d'API vous permet de vous authentifier et d'accéder uniquement aux resources autorisées.
+      bearerFormat: JWT
+  parameters:
+    chantier_id:
+      name: chantier_id
+      in: query
+      schema:
+        type: string
+        pattern: bla
+      description: Identifiant de chantier
+      required: true
+tags:
+  - name: Chantier
+    description: Opérations sur les chantiers prioritaires
+  - name: Indicateur
+    description: Opérations sur les indicateurs des chantiers prioritaires
+  - name: PPG
+    description: Opérations sur les PPG (Politiques Prioritaires du Gouvernement)
+  - name: En test
+    description: Développements terminés. En test avant publication.
+  - name: WIP
+    description: Développements en cours
+x-internal: false

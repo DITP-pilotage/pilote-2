@@ -3,12 +3,14 @@ import styled from '@emotion/styled';
 const TableauChantiersActionsDeTriStyled = styled.div`
   display: flex;
   align-items: end;
+  width: 100%;
+  max-width: 22rem;
 
   .sélecteur-colonne-à-trier {
     flex-grow: 1;
 
-    .fr-select {
-      max-width: 18rem;
+    select {
+      background-color: var(--background-alt-blue-france);
     }
   }
 `;

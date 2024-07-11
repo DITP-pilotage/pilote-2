@@ -14,7 +14,7 @@ import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailVali
 import ResultatValidationFichier
   from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
-import { IndicateurPondération } from '@/components/_commons/Indicateurs/Bloc/Pondération/IndicateurPondération';
+import { IndicateurPonderation } from '@/components/_commons/Indicateurs/Bloc/Pondération/IndicateurPonderation';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import api from '@/server/infrastructure/api/trpc/api';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
@@ -78,6 +78,17 @@ export default function IndicateurBloc({
                 {indicateur.nom + (indicateur.unité === null || indicateur.unité === '' ? '' : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
               </Titre>
               <div className='fr-ml-2w fr-mb-3w'>
+                {
+                  !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] ? (
+                    <p className='fr-mb-0 fr-text--xs texte-gris'>
+                      Identifiant de l'indicateur :
+                      {' '}
+                      <strong>
+                        {indicateur.id}
+                      </strong> 
+                    </p>
+                  ) : null
+                }    
                 <p className='fr-mb-0 fr-text--xs texte-gris'>
                   Dernière mise à jour des données (de l'indicateur) :
                   {' '}
@@ -88,9 +99,9 @@ export default function IndicateurBloc({
                 {
                   !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] ? (
                     <p
-                      className={`fr-mb-0 fr-text--xs${estIndicateurEnAlerte ? ' fr-text-warning' : ''}`}
+                      className={`fr-mb-0 fr-text--xs${estIndicateurEnAlerte ? ' fr-text-warning' : ' texte-gris'}`}
                     >
-                      Date prévisionnelle de la prochaine date de mise à jour des données (de l'indicateur) :
+                      Date prévisionnelle de mise à jour des données (de l'indicateur) :
                       {' '}
                       <span className='fr-text--bold'>
                         {dateProchaineDateMaj}
@@ -100,7 +111,7 @@ export default function IndicateurBloc({
                 }
                 {
                   !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] ? (
-                    <IndicateurPondération
+                    <IndicateurPonderation
                       indicateurPondération={détailsIndicateur[territoireSélectionné.codeInsee]?.pondération ?? null}
                       mailleSélectionnée={territoireSélectionné.maille}
                     />

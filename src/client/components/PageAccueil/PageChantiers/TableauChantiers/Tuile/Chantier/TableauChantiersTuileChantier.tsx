@@ -1,13 +1,13 @@
-import TableauChantiersTuileChantierStyled
-  from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tuile/Chantier/TableauChantiersTuileChantier.styled';
-import TypologiesPictos
-  from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
 import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
 import PictoTendance from '@/components/_commons/PictoTendance/PictoTendance';
 import TexteColoré from '@/components/_commons/TexteColoré/TexteColoré';
 import { définirCouleurÉcartArrondi } from '@/client/utils/chantier/écart/écart';
 import TableauRéformesAvancement from '@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement';
 import TableauRéformesMétéo from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo';
+import TypologiesPictos
+  from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
+import TableauChantiersTuileChantierStyled
+  from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tuile/Chantier/TableauChantiersTuileChantier.styled';
 import TableauChantiersTuileChantierProps from './TableauChantiersTuileChantier.interface';
 
 export default function TableauChantiersTuileChantier({ chantier, afficherIcône }: TableauChantiersTuileChantierProps) {
