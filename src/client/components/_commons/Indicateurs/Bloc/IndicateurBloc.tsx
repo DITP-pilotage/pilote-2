@@ -99,7 +99,7 @@ export default function IndicateurBloc({
                 {
                   !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] ? (
                     <p
-                      className={`fr-mb-0 fr-text--xs${estIndicateurEnAlerte ? ' fr-text-warning' : ''}`}
+                      className={`fr-mb-0 fr-text--xs${estIndicateurEnAlerte ? ' fr-text-warning' : ' texte-gris'}`}
                     >
                       Date prévisionnelle de mise à jour des données (de l'indicateur) :
                       {' '}
