@@ -16,5 +16,4 @@ export default interface IndicateurBlocProps {
   typeDeRéforme: TypeDeRéforme
   chantierEstTerritorialisé: boolean
   listeSousIndicateurs: Indicateur[]
-  estAutoriseAVoirLesAlertesMAJIndicateurs: boolean,
 }

@@ -12,5 +12,4 @@ export default interface IndicateurDétailsProps {
   listeSousIndicateurs: Indicateur[]
   détailsIndicateurs: DétailsIndicateurs
   estSousIndicateur?: boolean
-  estAutoriseAVoirLesAlertesMAJIndicateurs?: boolean
 }
