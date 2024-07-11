@@ -11,8 +11,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
     version: 'Version 2.4.9',
     date: '11 juillet 2024',
     contenu : [
-      'Export des données : Pour faciliter les exports des données en format .csv, les filtres "Chantiers du baromètre" et "Chantiers territorialisés" sont désormais pris en compte séparément lors de la création d\'un export avec filtre. Il est désormais possible de télécharger un export appliquant les filtres séparément et permettant l\'export de l\'ensemble des chantiers du baromètre ou l\'ensemble des chantiers territorialisés (et non les chantiers correspondant à ces deux conditions, comme appliqué aupravant).',
-      'Page des PPG : Pour les indicateurs de chaque PPG, l\'identifiant de l\'indicateur et la date de mise à jour prévisionnelle sont désormais affichés',
+      'Export des données : Pour faciliter les exports des données au format .csv, les filtres "Chantiers du baromètre" et "Chantiers territorialisés" sont désormais pris en compte séparément lors de la création d\'un export avec filtre. Il est désormais possible de télécharger un export appliquant les filtres séparément et permettant l\'export de l\'ensemble des chantiers du baromètre ou l\'ensemble des chantiers territorialisés (et non les chantiers correspondant à ces deux conditions, comme appliqué aupravant).',
+      'Page PPG : Pour les indicateurs de chaque PPG, l\'identifiant de l\'indicateur et la date de mise à jour prévisionnelle sont désormais affichés',
     ],
     correctifs : [
       'Rapport détaillé : au format PDF, la page de garde prend désormais en compte l\'ensemble des filtres appliqués lors de la création ou de l\'impression du rapport. Une erreur empêchant l\'affichage de l\'ensemble des chantiers dans le rapport sous certaines versions du navigateur Mozilla Firefox a également été corrigée. De prochaines améliorations sont à venir',
