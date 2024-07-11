@@ -184,6 +184,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     <ResponsablesPageChantier
                       afficheResponsablesLocaux={territoireSélectionné?.maille !== 'nationale'}
                       coordinateurTerritorial={coordinateurTerritorial}
+                      libelléChantier={chantier.nom}
                       maille={territoireSélectionné?.maille ?? null}
                       responsables={chantier.responsables}
                       responsablesLocal={responsableLocal}

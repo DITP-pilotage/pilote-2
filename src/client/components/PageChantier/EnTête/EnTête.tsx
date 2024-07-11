@@ -4,10 +4,20 @@ import '@gouvfr/dsfr/dist/dsfr.min.css';
 import Link from 'next/link';
 import BoutonImpression from '@/components/_commons/BoutonImpression/BoutonImpression';
 import Titre from '@/components/_commons/Titre/Titre';
-import ResponsablesLigne from '@/components/_commons/ResponsablesLigne/ResponsablesLigne';
-import { virguleOuEspace } from '@/client/utils/strings';
-import PageChantierEnTêteProps from './EnTête.interface';
+import { ajoutVirguleAprèsIndex } from '@/client/utils/strings';
+import { DirecteurAdministrationCentraleRapportDetailleContrat, MinistereCoporteurRapportDetailleContrat, ResponsableRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 import PageChantierEnTêteStyled from './EnTête.styled';
+import ResponsableChantierEnTete from './EnTêteResponsables';
+
+interface PageChantierEnTêteProps {
+  chantier: Chantier
+  hrefBoutonRetour: string
+  responsables?: ResponsableRapportDetailleContrat
+  afficheLeBoutonImpression?: boolean
+  afficheLeBoutonMiseAJourDonnee?: boolean
+  afficheLeBoutonFicheConducteur?: boolean
+}
 
 export default function PageChantierEnTête({
   chantier,
@@ -18,22 +28,15 @@ export default function PageChantierEnTête({
   hrefBoutonRetour = '',
 }: PageChantierEnTêteProps) {
 
-  const nomCoporteur = () => (
-    responsables ? (
-      responsables.coporteurs.map((coporteur, index) => {
-        return (virguleOuEspace(index) + coporteur.nom);
-      })
-    ) : []
-  );
+  const ajouterVirguleAprèsIndexCoporteur = (coporteur: MinistereCoporteurRapportDetailleContrat, index: number) =>
+    (`${ajoutVirguleAprèsIndex(index)}${coporteur.nom}`);
 
-  const nomDirecteurAdminCentral = () => (
-    responsables ? (
-      responsables.directeursAdminCentrale.map((directeurAdminCentrale, index) => {
-        return (virguleOuEspace(index) +  (`${directeurAdminCentrale.nom} (${directeurAdminCentrale.direction})`));
-      })
-    ) : []
-  );
-    
+  const ajouterVirguleAprèsIndexDirecteurAdminCentral = (directeurAdminCentrale: DirecteurAdministrationCentraleRapportDetailleContrat, index: number ) => 
+    (`${ajoutVirguleAprèsIndex(index)}${directeurAdminCentrale.nom} (${directeurAdminCentrale.direction})`);
+  
+  const listeNomsResponsablesMinistèrePorteur = responsables?.porteur?.nom ? [responsables.porteur.nom] : [];
+  const listeNomsResponsablesAutresMinistèresCoPorteurs = responsables?.coporteurs.map(ajouterVirguleAprèsIndexCoporteur).filter(Boolean) || [];
+  const listesNomsDirecteursAdministrationCentrale = responsables?.directeursAdminCentrale.map(ajouterVirguleAprèsIndexDirecteurAdminCentral).filter(Boolean) || [];
 
   return (
     <PageChantierEnTêteStyled className='fr-px-2w fr-px-md-2w fr-py-2w'>
@@ -50,20 +53,19 @@ export default function PageChantierEnTête({
       >
         {chantier.nom}
       </Titre>
-      <ResponsablesLigne
-        estEnTeteDePageChantier
-        estNomResponsable={responsables?.porteur?.nom ? [responsables.porteur.nom] : []}
+      <ResponsableChantierEnTete 
         libellé='Ministère porteur'
+        listeNomsResponsables={listeNomsResponsablesMinistèrePorteur}
       />
-      <ResponsablesLigne
-        estEnTeteDePageChantier
-        estNomResponsable={nomCoporteur()}
+      <ResponsableChantierEnTete 
         libellé='Autres ministères co-porteurs'
+        listeNomsResponsables={
+          (listeNomsResponsablesAutresMinistèresCoPorteurs)
+        }
       />
-      <ResponsablesLigne
-        estEnTeteDePageChantier
-        estNomResponsable={nomDirecteurAdminCentral()}
+      <ResponsableChantierEnTete 
         libellé='Directeur(s) / directrice(s) d’Administration Centrale'
+        listeNomsResponsables={listesNomsDirecteursAdministrationCentrale}
       />
       <div className='flex align-center fr-mt-2w'>
         {
