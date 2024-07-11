@@ -5,6 +5,7 @@ import Link from 'next/link';
 import BoutonImpression from '@/components/_commons/BoutonImpression/BoutonImpression';
 import Titre from '@/components/_commons/Titre/Titre';
 import ResponsablesLigne from '@/components/_commons/ResponsablesLigne/ResponsablesLigne';
+import { virguleOuEspace } from '@/client/utils/strings';
 import PageChantierEnTêteProps from './EnTête.interface';
 import PageChantierEnTêteStyled from './EnTête.styled';
 
@@ -16,6 +17,23 @@ export default function PageChantierEnTête({
   afficheLeBoutonFicheConducteur = false,
   hrefBoutonRetour = '',
 }: PageChantierEnTêteProps) {
+
+  const nomCoporteur = () => (
+    responsables ? (
+      responsables.coporteurs.map((coporteur, index) => {
+        return (virguleOuEspace(index) + coporteur.nom);
+      })
+    ) : []
+  );
+
+  const nomDirecteurAdminCentral = () => (
+    responsables ? (
+      responsables.directeursAdminCentrale.map((directeurAdminCentrale, index) => {
+        return (virguleOuEspace(index) +  (`${directeurAdminCentrale.nom} (${directeurAdminCentrale.direction})`));
+      })
+    ) : []
+  );
+    
 
   return (
     <PageChantierEnTêteStyled className='fr-px-2w fr-px-md-2w fr-py-2w'>
@@ -39,12 +57,12 @@ export default function PageChantierEnTête({
       />
       <ResponsablesLigne
         estEnTeteDePageChantier
-        estNomResponsable={responsables ? responsables.coporteurs.map(coporteur => coporteur.nom) : []}
+        estNomResponsable={nomCoporteur()}
         libellé='Autres ministères co-porteurs'
       />
       <ResponsablesLigne
         estEnTeteDePageChantier
-        estNomResponsable={responsables ? responsables.directeursAdminCentrale.map(directeur => (`${directeur.nom} (${directeur.direction})`)) : []}
+        estNomResponsable={nomDirecteurAdminCentral()}
         libellé='Directeur(s) / directrice(s) d’Administration Centrale'
       />
       <div className='flex align-center fr-mt-2w'>

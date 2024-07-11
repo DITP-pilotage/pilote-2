@@ -24,3 +24,7 @@ export function commenceParUneVoyelle(chaîneDeCaractères: string) {
 export function normaliseNom(nom: string) {
   return nom.charAt(0).toUpperCase() + nom.slice(1);
 }
+
+export const virguleOuEspace = (index: number) => {
+  return (index ? ', ' : '');
+};
