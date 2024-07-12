@@ -7,7 +7,7 @@ import RapportDétailléChantierProps from '@/components/PageRapportDétaillé/C
 import AvancementChantier from '@/components/PageChantier/AvancementChantierNew/AvancementChantier';
 import Responsables from '@/components/PageChantier/ResponsablesChantier/ResponsablesChantier';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
-import Indicateurs from '@/components/_commons/IndicateursNew/Indicateurs';
+import IndicateursRapportDetaille from '@/components/_commons/IndicateursRapportDetaille/IndicateursRapportDetaille';
 import DécisionsStratégiques from '@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques';
 import Commentaires from '@/components/_commons/Commentaires/Commentaires';
 import Titre from '@/components/_commons/Titre/Titre';
@@ -187,7 +187,7 @@ export default function RapportDétailléChantier({
                   >
                     Indicateurs
                   </Titre>
-                  <Indicateurs
+                  <IndicateursRapportDetaille
                     chantierEstTerritorialisé={chantier.estTerritorialisé}
                     détailsIndicateurs={détailsIndicateurs}
                     estInteractif={false}

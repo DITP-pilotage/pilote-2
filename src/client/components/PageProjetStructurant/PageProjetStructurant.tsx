@@ -8,7 +8,7 @@ import { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant
 import { typesCommentaireProjetStructurant } from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
 import Titre from '@/client/components/_commons/Titre/Titre';
 import { listeRubriquesIndicateursProjetStructurant, listeRubriquesProjetStructurant } from '@/client/utils/rubriques';
-import Indicateurs from '@/client/components/_commons/Indicateurs/Indicateurs';
+import Indicateurs from '@/client/components/_commons/IndicateursProjetStructurant/Indicateurs';
 import TitreInfobulleConteneur from '@/client/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import Infobulle from '@/client/components/_commons/Infobulle/Infobulle';

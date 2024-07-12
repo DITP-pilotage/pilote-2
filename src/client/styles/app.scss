@@ -128,6 +128,10 @@
   color: var(--text-title-blue-france) !important;
 }
 
+.fr-background-action-low-blue-france {
+  background-color: var(--background-action-low-blue-france)!important
+}
+
 .border-t {
   border-top-width: 1px;
   border-top-color: var(--border-default-grey);
@@ -150,6 +154,10 @@
   border-left-width: 1px;
   border-left-color: var(--border-default-grey);
   border-left-style: solid;
+}
+
+.border-collapse {
+  border-collapse: collapse;
 }
 
 @media screen and (min-width: 48rem) {

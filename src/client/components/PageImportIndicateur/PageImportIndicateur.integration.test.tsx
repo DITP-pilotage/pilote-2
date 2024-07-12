@@ -14,7 +14,7 @@ jest.mock('@/components/_commons/Cartographie/Cartographie.tsx', () => function 
   );
 });
 // eslint-disable-next-line react/no-multi-comp
-jest.mock('@/components/_commons/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution.tsx', () => function IndicateurChart() {
+jest.mock('@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurÉvolution.tsx', () => function IndicateurChart() {
   return (
     <span>
       Indicateur Chart
@@ -27,7 +27,7 @@ jest.mock('next/router', () => require('next-router-mock'));
 
 describe('PageImportIndicateur', () => {
   describe('En tête', () => {
-    it("doit afficher un titre indiquant que l'on est sur la page indicateur", () => {
+    it('doit afficher un titre indiquant que l\'on est sur la page indicateur', () => {
       // GIVEN
       const chantierInformations: ChantierInformations = {
         id: 'chantierId',
@@ -51,7 +51,7 @@ describe('PageImportIndicateur', () => {
       expect(titre).toHaveTextContent(CHANTIER_NOM);
     });
 
-    it("doit afficher un fil d'Ariane indiquant l'indicateur, le chantier et le retour à l'accueil", () => {
+    it('doit afficher un fil d\'Ariane indiquant l\'indicateur, le chantier et le retour à l\'accueil', () => {
       // GIVEN
       const chantierInformation: ChantierInformations = {
         id: 'chantierId',

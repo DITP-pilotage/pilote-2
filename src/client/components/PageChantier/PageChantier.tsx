@@ -20,7 +20,7 @@ import {
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
-import Indicateurs from '@/client/components/_commons/Indicateurs/Indicateurs';
+import IndicateursChantier from '@/components/_commons/IndicateursChantier/IndicateursChantier';
 import { listeRubriquesChantier, listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
 import { mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import ResponsablesPageChantier from '@/components/PageChantier/ResponsablesChantier/ResponsablesChantier';
@@ -255,7 +255,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                         >
                           Indicateurs
                         </Titre>
-                        <Indicateurs
+                        <IndicateursChantier
                           chantierEstTerritorialisé={chantier.estTerritorialisé}
                           détailsIndicateurs={détailsIndicateurs}
                           indicateurs={indicateurs}

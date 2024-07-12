@@ -566,6 +566,22 @@ model historisation_modification {
   @@schema("public")
 }
 
+model proposition_valeur_actuelle {
+  id                           String    @id @db.Uuid
+  indic_id                     String
+  valeur_actuelle_proposee     Float
+  territoire_code              String
+  date_valeur_actuelle         DateTime? @db.Date
+  auteur_modification          String
+  id_auteur_modification       String
+  date_proposition             DateTime? @db.Date
+  motif_proposition            String
+  source_donnee_methode_calcul String
+  statut                       String
+
+  @@schema("public")
+}
+
 model gestion_contenu {
   nom_variable_contenu    String @id
   valeur_variable_contenu String

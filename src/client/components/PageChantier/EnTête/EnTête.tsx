@@ -61,14 +61,15 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
       />
       <div className='flex flex-direction-row justify-start align-center fr-mt-md-2w format-mobile'>
         {
-          !!afficheLeBoutonMiseAJourDonnee &&
+          afficheLeBoutonMiseAJourDonnee ? (
             <Link
               className='fr-btn fr-btn--primary fr-mr-md-2w format-mobile-bouton'
               href={`${chantier.id}/indicateurs`}
               title='Mettre à jour les données'
             >
               Mettre à jour les données
-            </Link>   
+            </Link>
+          ) : null
         }
         {
           !!afficheLeBoutonImpression && (
