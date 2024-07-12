@@ -2,6 +2,7 @@ import { FunctionComponent, useState } from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getServerSession } from 'next-auth/next';
 import Head from 'next/head';
+import { useSession } from 'next-auth/react';
 import assert from 'node:assert/strict';
 import PageChantiers from '@/components/PageAccueil/PageChantiers/PageChantiers';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
@@ -195,6 +196,20 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   };
 };
 
+const PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE = new Set([
+  'CABINET_MTFP',
+  'PM_ET_CABINET',
+  'PR',
+  'CABINET_MINISTERIEL',
+  'DIR_ADMIN_CENTRALE',
+  'DROM',
+  'SECRETARIAT_GENERAL',
+  'DIR_PROJET',
+  'EQUIPE_DIR_PROJET',
+  'DITP_ADMIN',
+  'DITP_PILOTAGE',
+]);
+
 const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   chantiers,
   axes,
@@ -207,6 +222,10 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   avancementsGlobauxTerritoriauxMoyens,
   répartitionMétéos,
 }) => {
+  const { data: session } = useSession();
+
+  const estProfilTerritorialise = PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE.has(session?.profil || '');
+
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
@@ -241,6 +260,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             <Filtres
               afficherToutLesFiltres
               axes={axes}
+              estProfilTerritorialise={estProfilTerritorialise}
               ministères={ministères}
             />
           </section>
