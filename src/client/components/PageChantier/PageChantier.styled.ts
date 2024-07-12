@@ -22,8 +22,9 @@ const PageChantierStyled = styled.div`
   
     .layout--dept-reg {
       grid-template-areas:
-        "avancement   avancement"
-        "synthèse responsables";
+        "avancement"
+        "synthèse" 
+        "responsables";
     }
   }  
   
@@ -84,8 +85,9 @@ const PageChantierStyled = styled.div`
 
     .layout--dept-reg {
       grid-template-areas:
-        "avancement   avancement"
-        "synthèse responsables";
+        "avancement"
+        "synthèse" 
+        "responsables";
     }
 
     #avancement,

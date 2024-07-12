@@ -5,7 +5,7 @@ import { consignesDÉcritureObjectif, libellésTypesObjectif, TypeObjectif } fro
 import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import RapportDétailléChantierProps from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier.interface';
 import AvancementChantier from '@/components/PageChantier/AvancementChantierNew/AvancementChantier';
-import Responsables from '@/components/PageChantier/Responsables/Responsables';
+import Responsables from '@/components/PageChantier/ResponsablesChantier/ResponsablesChantier';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
 import Indicateurs from '@/components/_commons/IndicateursNew/Indicateurs';
 import DécisionsStratégiques from '@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques';
@@ -39,7 +39,7 @@ export default function RapportDétailléChantier({
 }: RapportDétailléChantierProps) {
 
   const responsableLocal = chantier?.responsableLocalTerritoireSélectionné ?? [];
-  const coordinateurTerritorial = chantier?.coordinateurTerritorialTerritoireSélectionné ?? [];
+  const listeCoordinateursTerritorials = chantier?.coordinateurTerritorialTerritoireSélectionné ?? [];
 
   const avancements = mapChantierStatistiques.get(chantier.id)!;
 
@@ -91,10 +91,11 @@ export default function RapportDétailléChantier({
                 </Titre>
                 <Responsables
                   afficheResponsablesLocaux={territoireSélectionné?.maille !== 'nationale'}
-                  coordinateurTerritorial={coordinateurTerritorial}
+                  libelléChantier={chantier.nom}
+                  listeCoordinateursTerritorials={listeCoordinateursTerritorials}
+                  listeDirecteursProjet={chantier.responsables.directeursProjet}
+                  listeResponsablesLocal={responsableLocal}
                   maille={territoireSélectionné?.maille ?? null}
-                  responsables={chantier.responsables}
-                  responsablesLocal={responsableLocal}
                 />
               </section>
             </>

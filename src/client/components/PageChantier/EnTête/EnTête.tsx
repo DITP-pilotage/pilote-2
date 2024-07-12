@@ -4,9 +4,19 @@ import '@gouvfr/dsfr/dist/dsfr.min.css';
 import Link from 'next/link';
 import BoutonImpression from '@/components/_commons/BoutonImpression/BoutonImpression';
 import Titre from '@/components/_commons/Titre/Titre';
-import ResponsablesLigne from '@/components/_commons/ResponsablesLigne/ResponsablesLigne';
-import PageChantierEnTêteProps from './EnTête.interface';
+import { ResponsableRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 import PageChantierEnTêteStyled from './EnTête.styled';
+import ResponsableChantierEnTete from './EnTêteResponsables';
+
+interface PageChantierEnTêteProps {
+  chantier: Chantier
+  hrefBoutonRetour: string
+  responsables?: ResponsableRapportDetailleContrat
+  afficheLeBoutonImpression?: boolean
+  afficheLeBoutonMiseAJourDonnee?: boolean
+  afficheLeBoutonFicheConducteur?: boolean
+}
 
 export default function PageChantierEnTête({
   chantier,
@@ -16,6 +26,10 @@ export default function PageChantierEnTête({
   afficheLeBoutonFicheConducteur = false,
   hrefBoutonRetour = '',
 }: PageChantierEnTêteProps) {
+
+  const listeNomsResponsablesMinistèrePorteur: string[] = [responsables?.porteur?.nom].filter(Boolean);
+  const listeNomsResponsablesAutresMinistèresCoPorteurs = (responsables?.coporteurs || []).map(coporteur => coporteur.nom).filter(Boolean);
+  const listeNomsDirecteursAdministrationCentrale = (responsables?.directeursAdminCentrale || []).map(directeurAdminCentrale => (`${directeurAdminCentrale.nom}  (${directeurAdminCentrale.direction})`)).filter(Boolean);
 
   return (
     <PageChantierEnTêteStyled className='fr-px-2w fr-px-md-2w fr-py-2w'>
@@ -32,31 +46,28 @@ export default function PageChantierEnTête({
       >
         {chantier.nom}
       </Titre>
-      <ResponsablesLigne
-        contenu={responsables?.porteur ? [responsables.porteur.nom] : []}
-        estEnTeteDePageChantier
+      <ResponsableChantierEnTete
         libellé='Ministère porteur'
+        listeNomsResponsables={listeNomsResponsablesMinistèrePorteur}
       />
-      <ResponsablesLigne
-        contenu={responsables?.coporteurs ? responsables?.coporteurs.map(coporteur => coporteur.nom) : []}
-        estEnTeteDePageChantier
+      <ResponsableChantierEnTete
         libellé='Autres ministères co-porteurs'
+        listeNomsResponsables={listeNomsResponsablesAutresMinistèresCoPorteurs}
       />
-      <ResponsablesLigne
-        contenu={responsables?.directeursAdminCentrale ? responsables.directeursAdminCentrale.map(directeur => (`${directeur.nom} (${directeur.direction})`)) : []}
-        estEnTeteDePageChantier
+      <ResponsableChantierEnTete
         libellé='Directeur(s) / directrice(s) d’Administration Centrale'
+        listeNomsResponsables={listeNomsDirecteursAdministrationCentrale}
       />
       <div className='flex align-center fr-mt-2w'>
         {
           !!afficheLeBoutonMiseAJourDonnee &&
-            <Link
-              className='fr-btn fr-btn--primary fr-mr-2w'
-              href={`${chantier.id}/indicateurs`}
-              title='Mettre à jour les données'
-            >
-              Mettre à jour les données
-            </Link>
+          <Link
+            className='fr-btn fr-btn--primary fr-mr-2w'
+            href={`${chantier.id}/indicateurs`}
+            title='Mettre à jour les données'
+          >
+            Mettre à jour les données
+          </Link>
         }
         {
           !!afficheLeBoutonImpression && <BoutonImpression />

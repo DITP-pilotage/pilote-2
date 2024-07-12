@@ -46,16 +46,16 @@ export interface MinisterePorteurRapportDetailleContrat {
   }[];
 }
 
-interface MinistereCoporteurRapportDetailleContrat {
+export interface MinistereCoporteurRapportDetailleContrat {
   nom: string
 }
 
-interface DirecteurAdministrationCentraleRapportDetailleContrat {
+export interface DirecteurAdministrationCentraleRapportDetailleContrat {
   nom: string
   direction: string
 }
 
-interface DirecteurProjetRapportDetailleContrat {
+export interface DirecteurProjetRapportDetailleContrat {
   nom: string
   email: string | null
 }
