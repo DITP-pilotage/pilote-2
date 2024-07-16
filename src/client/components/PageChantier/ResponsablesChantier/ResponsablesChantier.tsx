@@ -36,34 +36,34 @@ const ResponsablesPageChantier: FunctionComponent<ResponsablesChantierProps> = (
   const libelleNomsResponsablesLocal = listeResponsablesLocal.map(responsableLocal => responsableLocal.nom).filter(Boolean).join(', ');
   const libelleNomsCoordinateurTerritorial = listeCoordinateursTerritorials.map(coordinateurTerritorial => coordinateurTerritorial.nom).filter(Boolean).join(', ');
 
-  const listeEmailsDirecteursProjets = listeDirecteursProjet.map(directeur => directeur.email).filter(Boolean);
-  const listeEmailsResponsablesLocal = listeResponsablesLocal.map(responsableLocal => responsableLocal.email).filter(Boolean);
-  const listeEmailsCoordinateursTerritorial = listeCoordinateursTerritorials.map(coordinateurTerritorial => coordinateurTerritorial.email).filter(Boolean);
+  const libelleEmailsDirecteursProjets = listeDirecteursProjet.map(directeur => directeur.email).filter(Boolean).join('; ');
+  const libelleEmailsResponsablesLocal = listeResponsablesLocal.map(responsableLocal => responsableLocal.email).filter(Boolean).join('; ');
+  const libelleEmailsCoordinateursTerritorial = listeCoordinateursTerritorials.map(coordinateurTerritorial => coordinateurTerritorial.email).filter(Boolean).join('; ');
 
   return (
     <Bloc titre='National'>
       <ResponsablesLigneChantier
+        libelleEmailsResponsables={libelleEmailsDirecteursProjets}
         libelleNomsResponsables={libelleNomsDirecteursProjets}
         libellé='Directeur(s) / directrice(s) du projet'
         libelléChantier={libelléChantier}
-        listeEmailsResponsables={listeEmailsDirecteursProjets}
       />
       {
         afficheResponsablesLocaux ? (
           <>
             <hr className='fr-hr fr-py-1w' />
             <ResponsablesLigneChantier
+              libelleEmailsResponsables={libelleEmailsResponsablesLocal}
               libelleNomsResponsables={libelleNomsResponsablesLocal}
               libellé='Responsable local'
               libelléChantier={libelléChantier}
-              listeEmailsResponsables={listeEmailsResponsablesLocal}
             />
             <hr className='fr-hr fr-py-1w' />
             <ResponsablesLigneChantier
+              libelleEmailsResponsables={libelleEmailsCoordinateursTerritorial}
               libelleNomsResponsables={libelleNomsCoordinateurTerritorial}
               libellé={`Coordinateur PILOTE ${maille ? adjectifReferent[maille] : ''}`}
               libelléChantier={libelléChantier}
-              listeEmailsResponsables={listeEmailsCoordinateursTerritorial}
             />
           </>
         ) : null
