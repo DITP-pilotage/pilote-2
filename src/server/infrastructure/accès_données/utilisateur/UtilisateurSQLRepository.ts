@@ -25,6 +25,7 @@ import { objectEntries } from '@/client/utils/objects/objects';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 export const convertirEnModel = (utilisateurAConvertir: {
   email: string
@@ -408,7 +409,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     }
 
     // eslint-disable-next-line unicorn/prefer-ternary
-    if (['COORDINATEUR_REGION', 'PREFET_REGION', 'COORDINATEUR_DEPARTEMENT', 'PREFET_DEPARTEMENT'].includes(profilUtilisateur.code)) {
+    if ([ProfilEnum.COORDINATEUR_REGION, ProfilEnum.PREFET_REGION, ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.PREFET_DEPARTEMENT].includes(profilUtilisateur.code)) {
       chantiersAccessiblesEnSaisieCommentaire = objectEntries(this._chantiers.groupésParId)
         .filter(([_, c]) => c.est_territorialise && c.ate === 'ate')
         .map(([_, c]) => c.id);
@@ -423,7 +424,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return {
       lecture: chantiersAccessibles,
       saisieCommentaire: chantiersAccessiblesEnSaisieCommentaire,
-      saisieIndicateur: ['DITP_PILOTAGE', 'DITP_ADMIN'].includes(profilUtilisateur.code) ? chantiersAccessibles : [],
+      saisieIndicateur: [ProfilEnum.DITP_PILOTAGE, ProfilEnum.DITP_ADMIN].includes(profilUtilisateur.code) ? chantiersAccessibles : [],
       gestionUtilisateur: profilUtilisateur.peut_modifier_les_utilisateurs ? chantiersAccessiblesEnSaisieCommentaire : [],
     };
   }
@@ -433,7 +434,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       lecture: profilUtilisateur.a_acces_tous_les_territoires_lecture ? this._territoires : [],
       saisieCommentaire: profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire ? this._territoires : [],
       saisieIndicateur: profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur ? this._territoires : [],
-      gestionUtilisateur: ['DITP_PILOTAGE', 'DITP_ADMIN'].includes(profilUtilisateur.code) ? this._territoires : [],
+      gestionUtilisateur: [ProfilEnum.DITP_PILOTAGE, ProfilEnum.DITP_ADMIN].includes(profilUtilisateur.code) ? this._territoires : [],
     };
   }
 
@@ -552,7 +553,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       const scopeCode = h.scopeCode as keyof Utilisateur['habilitations'];
       if (scopeCode !== 'projetsStructurants.lecture') {
         const listeChantier = 
-          scopeCode == 'saisieCommentaire' && ['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT'].includes(profilUtilisateur.code) ?
+          scopeCode == 'saisieCommentaire' && [ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, ProfilEnum.RESPONSABLE_REGION, ProfilEnum.RESPONSABLE_DEPARTEMENT].includes(profilUtilisateur.code) ?
             this._chantiers.donnéesBrutes.filter(c => c.ate !== 'hors_ate_centralise') :
             this._chantiers.donnéesBrutes;
 

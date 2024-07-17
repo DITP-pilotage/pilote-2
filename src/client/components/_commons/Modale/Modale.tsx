@@ -4,8 +4,21 @@ import ModaleProps from './Modale.interface';
 import ModaleStyled from './Modale.styled';
 import useModale from './useModale';
 
-export default function Modale({ children, titre, sousTitre, idHtml, ouvertureCallback, fermetureCallback }: ModaleProps) {
+export default function Modale({
+  children,
+  titre,
+  sousTitre,
+  idHtml,
+  ouvertureCallback,
+  fermetureCallback,
+  tailleModale = 'md',
+}: ModaleProps) {
   const { modaleRef } = useModale(ouvertureCallback, fermetureCallback);
+
+  const taillePossible = {
+    'md': 'fr-col-12 fr-col-md-10  fr-col-lg-9',
+    'lg': 'fr-col-12 fr-col-md-11 fr-col-lg-10',
+  };
 
   return (
     <ModaleStyled>
@@ -15,7 +28,7 @@ export default function Modale({ children, titre, sousTitre, idHtml, ouvertureCa
         ref={modaleRef}
       >
         <div className='fr-container fr-container--fluid fr-container-md'>
-          <div className='fr-modal__body fr-col-12 fr-col-md-10 fr-col-lg-9 fr-mx-auto modale-conteneur'>
+          <div className={`fr-modal__body ${taillePossible[tailleModale]} fr-mx-auto modale-conteneur`}>
             <div className='fr-modal__header fr-pb-0 fr-mr-2w fr-mr-md-0'>
               <button
                 aria-controls={idHtml}
@@ -27,12 +40,16 @@ export default function Modale({ children, titre, sousTitre, idHtml, ouvertureCa
               </button>
             </div>
             <div className='fr-mx-4w'>
-              <Titre
-                baliseHtml='h1'
-                className='fr-modal__title fr-mb-1w'
-              >
-                {titre}
-              </Titre>
+              {
+                titre ? (
+                  <Titre
+                    baliseHtml='h1'
+                    className='fr-modal__title fr-mb-1w'
+                  >
+                    {titre}
+                  </Titre>
+                ) : null
+              }
               {
                 !!sousTitre &&
                 <p className='fr-text--lg bold'>
@@ -41,7 +58,7 @@ export default function Modale({ children, titre, sousTitre, idHtml, ouvertureCa
               }
             </div>
             <div className='fr-modal__content fr-px-4w fr-mb-4w modale-contenu'>
-              { children }
+              {children}
             </div>
           </div>
         </div>

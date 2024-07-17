@@ -1,6 +1,7 @@
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import TerritoireBuilder from '@/server/domain/territoire/Territoire.builder';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { UtilisateurSQLRepository } from './UtilisateurSQLRepository';
 
 describe('UtilisateurSQLRepository', () => {
@@ -35,27 +36,27 @@ describe('UtilisateurSQLRepository', () => {
           {
             ...randomUtilisateur, 
             email: 'prefet_herault@test.com',
-            profilCode: 'PREFET_DEPARTEMENT',
+            profilCode: ProfilEnum.PREFET_DEPARTEMENT,
           },
           {
             ...randomUtilisateur, 
             email: 'responsable_ara@test.com',
-            profilCode: 'RESPONSABLE_REGION',
+            profilCode: ProfilEnum.RESPONSABLE_REGION,
           },
           {
             ...randomUtilisateur, 
             email: 'sd_occ@test.com',
-            profilCode: 'SERVICES_DECONCENTRES_REGION',
+            profilCode: ProfilEnum.SERVICES_DECONCENTRES_REGION,
           },
           {
             ...randomUtilisateur, 
             email: 'ditp_admin@test.com',
-            profilCode: 'DITP_ADMIN',
+            profilCode: ProfilEnum.DITP_ADMIN,
           },
           {
             ...randomUtilisateur, 
             email: 'sd_herault@test.com',
-            profilCode: 'SERVICES_DECONCENTRES_DEPARTEMENT',
+            profilCode: ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
           },
         ],
       });
@@ -116,27 +117,27 @@ describe('UtilisateurSQLRepository', () => {
           {
             ...randomUtilisateur, 
             email: 'prefet_herault@test.com',
-            profilCode: 'PREFET_DEPARTEMENT',
+            profilCode: ProfilEnum.PREFET_DEPARTEMENT,
           },
           {
             ...randomUtilisateur, 
             email: 'responsable_ara@test.com',
-            profilCode: 'RESPONSABLE_REGION',
+            profilCode: ProfilEnum.RESPONSABLE_REGION,
           },
           {
             ...randomUtilisateur, 
             email: 'sd_occ@test.com',
-            profilCode: 'SERVICES_DECONCENTRES_REGION',
+            profilCode: ProfilEnum.SERVICES_DECONCENTRES_REGION,
           },
           {
             ...randomUtilisateur, 
             email: 'ditp_admin@test.com',
-            profilCode: 'DITP_ADMIN',
+            profilCode: ProfilEnum.DITP_ADMIN,
           },
           {
             ...randomUtilisateur, 
             email: 'sd_herault@test.com',
-            profilCode: 'SERVICES_DECONCENTRES_DEPARTEMENT',
+            profilCode: ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
           },
         ],
       });
@@ -168,5 +169,3 @@ describe('UtilisateurSQLRepository', () => {
     });
   });
 });
-
-

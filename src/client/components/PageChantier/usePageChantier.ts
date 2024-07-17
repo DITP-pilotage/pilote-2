@@ -25,6 +25,9 @@ import { getFiltresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresS
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { convertitEnPondération } from '@/client/utils/ponderation/ponderation';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
+
+const PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE = new Set([ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE, ProfilEnum.SECRETARIAT_GENERAL, ProfilEnum.DIR_PROJET, ProfilEnum.EQUIPE_DIR_PROJET]);
 
 export default function usePageChantier(chantierId: string, indicateurs: Indicateur[]) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
@@ -132,7 +135,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
 
 
   let modeÉcriture = territoireSélectionné!.accèsSaisiePublication && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantierId);
-  if (session && ['DIR_PROJET', 'EQUIPE_DIR_PROJET', 'SECRETARIAT_GENERAL'].includes(session.profil) && territoireSélectionné?.maille != 'nationale') {
+  if (session && [ProfilEnum.DIR_PROJET, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.SECRETARIAT_GENERAL].includes(session.profil) && territoireSélectionné?.maille != 'nationale') {
     modeÉcriture = modeÉcriture && chantier?.ate === 'hors_ate_centralise';
   }
   const modeÉcritureObjectifs = territoires.some(t => t.maille === 'nationale' && t.accèsSaisiePublication) && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantierId);
@@ -145,6 +148,8 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
 
   const queryParamString = getQueryParamString(getFiltresActifs());
   const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
+
+  const estAutoriseAVoirLesPropositionsDeValeurActuelle = PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE.has(session!.profil);
 
   return {
     détailsIndicateurs: détailsIndicateurs ?? null,
@@ -165,5 +170,6 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
     responsableLocal,
     listeCoordinateursTerritorials,
     hrefBoutonRetour,
+    estAutoriseAVoirLesPropositionsDeValeurActuelle,
   };
 }

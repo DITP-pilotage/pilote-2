@@ -160,6 +160,10 @@
   border-collapse: collapse;
 }
 
+.border-spacing-1-0 {
+  border-spacing: 1rem 0;
+}
+
 @media screen and (min-width: 48rem) {
   .border-md-r {
     border-right-width: 1px;

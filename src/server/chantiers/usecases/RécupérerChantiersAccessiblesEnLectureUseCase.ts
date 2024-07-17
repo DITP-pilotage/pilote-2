@@ -16,9 +16,10 @@ import {
 } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 const masquerPourDROM = (sessionProfil: string, mailleChantier: MailleChantierContrat) => {
-  return sessionProfil === 'DROM' && mailleChantier === 'nationale';
+  return sessionProfil === ProfilEnum.DROM && mailleChantier === 'nationale';
 };
 const appliquerFiltreDrom = (chantier: ChantierAccueilContrat, sessionProfil: string, mailleChantier: MailleChantierContrat) => {
   return masquerPourDROM(sessionProfil, mailleChantier) ? chantier.périmètreIds.includes('PER-018') : true;
@@ -67,7 +68,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
     let chantiers = objectEntries(chantiersGroupésParId).map(([_, listeChantiers]) => presenterEnChantierAccueilContrat(territoireCode)(parseChantier(listeChantiers, territoires, ministères, chantiersRowsDatesDeMàj)))
       .filter(appliquerFiltre(mailleChantier, codeInseeSelectionne, profil));
 
-    if (profil === 'DROM') {
+    if (profil === ProfilEnum.DROM) {
       chantiers = chantiers.map(chantier => {
         if (!chantier.périmètreIds.includes('PER-018')) {
           chantier.mailles.nationale.FR.avancement.global = null;

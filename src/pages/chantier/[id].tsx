@@ -12,6 +12,7 @@ import RécupérerChantierUseCase from '@/server/usecase/chantier/RécupérerCha
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import ChoixTerritoire from '@/components/PageChantier/ChoixTerritoire/ChoixTerritoire';
 import { NonAutorisé } from '@/server/utils/errors';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 interface NextPageChantierProps {
   indicateurs: Indicateur[],
@@ -73,7 +74,7 @@ export default function NextPageChantier({ indicateurs, chantierInformations }: 
         </title>
       </Head>
       {
-        territoireSélectionné!.code === 'NAT-FR' && session?.profil === 'DROM' && !chantierInformations.estUnChantierDROM ? (
+        territoireSélectionné!.code === 'NAT-FR' && session?.profil === ProfilEnum.DROM && !chantierInformations.estUnChantierDROM ? (
           <ChoixTerritoire chantierId={chantierInformations.id} />
         ) : (
           <PageChantier

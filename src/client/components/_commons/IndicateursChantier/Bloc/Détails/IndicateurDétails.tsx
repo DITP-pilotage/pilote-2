@@ -28,7 +28,7 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
     donnéesCartographieValeurActuelleTerritorialisées,
   } = useIndicateurDétails(indicateur.id, futOuvert, typeDeRéforme);
 
-  const indicateurSiTypeDeReformeEstChantier = typeDeRéforme === 'chantier' && !!futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle;
+  const indicateurSiTypeDeReformeEstChantier = typeDeRéforme === 'chantier' && futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle;
   const nomDefinitionDeLindicateur = estSousIndicateur ? 'Description du sous-indicateur' : 'Description de l\'indicateur';
   const nomRepartitionGeographiqueEtEvolution = 'Répartition géographique et évolution';
   const nomSousIndicateurs = 'Sous indicateurs';

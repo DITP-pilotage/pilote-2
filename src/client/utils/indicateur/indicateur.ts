@@ -1,7 +1,8 @@
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
-const PROFIL_AUTORISE_A_IMPORTER  = new Set(['DITP_ADMIN', 'DITP_PILOTAGE', 'SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'DROM']);
-const PROFIL_AUTORISE_A_MODIFIER  = new Set(['DITP_ADMIN']);
+const PROFIL_AUTORISE_A_IMPORTER  = new Set([ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE, ProfilEnum.SECRETARIAT_GENERAL, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.DIR_PROJET, ProfilEnum.DROM]);
+const PROFIL_AUTORISE_A_MODIFIER  = new Set([ProfilEnum.DITP_ADMIN]);
 const ORDRE_DES_TYPES_INDICATEUR: TypeIndicateur[] = ['IMPACT', 'DEPL', 'Q_SERV', 'REBOND', 'CONTEXTE'];
 
 export function estAutoriséAImporterDesIndicateurs(profil: string): boolean {

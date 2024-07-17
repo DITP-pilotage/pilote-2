@@ -10,6 +10,7 @@ import { ProfilRepository } from '@/server/authentification/domain/ports/ProfilR
 import {
   UtilisateurAuthentifieJWTService,
 } from '@/server/authentification/infrastructure/adapters/services/UtilisateurAuthentifieJWTService';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 describe('UtilisateurAuthentifieJWTService', () => {
   let utilisateurAuthentifieJWTService: UtilisateurAuthentifieJWTService;
@@ -28,7 +29,7 @@ describe('UtilisateurAuthentifieJWTService', () => {
     const tokenAPIInformation = new TokenAPIInformationBuilder().withEmail('test@example.com').build();
     const tokenJWT = await new TokenAPIJWTService({ secret: process.env.TOKEN_API_SECRET! }).creerTokenAPI(tokenAPIInformation);
     const habilitationsAPI = new HabilitationAuthentitificationAPIBuilder().ajouterHabilitationLecture('chantiers', ['7a33ee55-b74c-4464-892b-b2b7fdc3bc58']).build();
-    const utilisateur = new UtilisateurBuilder().withEmail(email).withProfil('CABINET_MTFP').withHabilitations(habilitationsAPI).build();
+    const utilisateur = new UtilisateurBuilder().withEmail(email).withProfil(ProfilEnum.CABINET_MTFP).withHabilitations(habilitationsAPI).build();
 
     // @ts-expect-error Attention ici on n'utilise pas le bon utilisateur car il y trop d'action effectué pour retourner les habilitations, il faudrait simplifier tout cela.
     utilisateurRepository.récupérer.mockResolvedValue(utilisateur);
@@ -39,7 +40,7 @@ describe('UtilisateurAuthentifieJWTService', () => {
     profilRepository.estAutoriseAAccederAuxChantiersBrouillons.mockResolvedValue(true);
 
     // Then
-    expect(profilRepository.estAutoriseAAccederAuxChantiersBrouillons).toHaveBeenNthCalledWith(1, { profilCode: 'CABINET_MTFP' });
+    expect(profilRepository.estAutoriseAAccederAuxChantiersBrouillons).toHaveBeenNthCalledWith(1, { profilCode: ProfilEnum.CABINET_MTFP });
     expect(utilisateurAuthentifie.habilitations).toEqual({
       gestionUtilisateur: {
         chantiers: ['7a33ee55-b74c-4464-892b-b2b7fdc3bc58'],
@@ -66,7 +67,7 @@ describe('UtilisateurAuthentifieJWTService', () => {
       },
     });
     expect(utilisateurAuthentifie.email).toEqual('test@example.com');
-    expect(utilisateurAuthentifie.profil).toEqual('CABINET_MTFP');
+    expect(utilisateurAuthentifie.profil).toEqual(ProfilEnum.CABINET_MTFP);
     expect(utilisateurAuthentifie.profilAAccèsAuxChantiersBrouillons).toEqual(true);
   });
 

@@ -8,6 +8,7 @@ import ChantierRepository from '@/server/domain/chantier/ChantierRepository.inte
 import ChantierDateDeMàjMeteoRepository from '@/server/domain/chantier/ChantierDateDeMàjMeteoRepository.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 describe('RécupérerChantiersAccessiblesEnLectureUseCase', () => {
 
@@ -41,7 +42,7 @@ describe('RécupérerChantiersAccessiblesEnLectureUseCase', () => {
     });
 
     // WHEN
-    const result = await récupérerChantiersAccessiblesEnLectureUseCase.run(habilitation, 'DITP_ADMIN');
+    const result = await récupérerChantiersAccessiblesEnLectureUseCase.run(habilitation, ProfilEnum.DITP_ADMIN);
 
     // THEN
     expect(result).toStrictEqual([]);
@@ -66,7 +67,7 @@ describe('RécupérerChantiersAccessiblesEnLectureUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const chantiers = await récupérerChantiersAccessiblesEnLectureUseCase.run(habilitation, 'DITP_ADMIN');
+    const chantiers = await récupérerChantiersAccessiblesEnLectureUseCase.run(habilitation, ProfilEnum.DITP_ADMIN);
 
     // THEN
     const ids = chantiers.map(ch => ch.id);
@@ -91,7 +92,7 @@ describe('RécupérerChantiersAccessiblesEnLectureUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const chantiers = await récupérerChantiersAccessiblesEnLectureUseCase.run(habilitation, 'DITP_ADMIN');
+    const chantiers = await récupérerChantiersAccessiblesEnLectureUseCase.run(habilitation, ProfilEnum.DITP_ADMIN);
 
     // THEN
     expect(chantiers[0].mailles.départementale['974']).toBeDefined();

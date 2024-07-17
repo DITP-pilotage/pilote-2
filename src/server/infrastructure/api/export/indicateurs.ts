@@ -10,6 +10,7 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { configuration } from '@/config';
 import { NON_APPLICABLE } from '@/server/infrastructure/export_csv/valeurs';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 export default async function handleExportDesIndicateurs(request: NextApiRequest, response: NextApiResponse): Promise<void> {
   const session = await getServerSession(request, response, authOptions);
@@ -19,7 +20,7 @@ export default async function handleExportDesIndicateurs(request: NextApiRequest
 
   const stringifier = stringify({
     header: true,
-    columns: session.profil === 'DITP_ADMIN' ? [...ExportCsvDesIndicateursSansFiltreUseCase.NOMS_COLONNES, 'Chantier statut' || NON_APPLICABLE] : ExportCsvDesIndicateursSansFiltreUseCase.NOMS_COLONNES,
+    columns: session.profil === ProfilEnum.DITP_ADMIN ? [...ExportCsvDesIndicateursSansFiltreUseCase.NOMS_COLONNES, 'Chantier statut' || NON_APPLICABLE] : ExportCsvDesIndicateursSansFiltreUseCase.NOMS_COLONNES,
     delimiter: ';',
     bom: true,
     quoted_string: true,

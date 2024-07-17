@@ -21,9 +21,12 @@ import ValeurEtDate from '@/components/_commons/IndicateursChantier/Bloc/ValeurE
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import IndicateurBlocIndicateurTuile
   from '@/components/_commons/IndicateursChantier/Bloc/indicateurBlocIndicateurTuile';
+import ModalePropositonValeurActuelle
+  from '@/components/_commons/IndicateursChantier/Bloc/ModalePropositonValeurActuelle/ModalePropositonValeurActuelle';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 
+export const ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE = 'modale-proposition-valeur-actuelle';
 
 interface IndicateurBlocProps {
   indicateur: Indicateur
@@ -32,6 +35,7 @@ interface IndicateurBlocProps {
   typeDeRéforme: TypeDeRéforme,
   chantierEstTerritorialisé: boolean,
   estAutoriseAVoirLesAlertesMAJIndicateurs: boolean,
+  estAutoriseAVoirLesPropositionsDeValeurActuelle: boolean,
 }
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
@@ -41,6 +45,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   typeDeRéforme,
   chantierEstTerritorialisé,
   estAutoriseAVoirLesAlertesMAJIndicateurs = false,
+  estAutoriseAVoirLesPropositionsDeValeurActuelle = false,
 }) => {
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
   const territoiresComparés = territoiresComparésTerritoiresStore();
@@ -151,7 +156,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 </Fragment>
               ))
             ) : (
-              <table className='fr-table w-full border-collapse'>
+              <table className='fr-table w-full border-collapse fr-mb-0'>
                 <caption className='fr-sr-only'>
                   Un tableau de l'indicateur :'
                 </caption>
@@ -182,61 +187,83 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 </thead>
                 <tbody>
                   {
-                  informationsIndicateurs.map(value => (
-                    <tr key={value.territoireNom}>
-                      <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm'>
-                        {value.territoireNom}
-                      </td>
-                      <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
-                        <ValeurEtDate
-                          date={value.données.dateValeurInitiale}
-                          unité={value.données.unité}
-                          valeur={value.données.valeurInitiale}
-                        />
-                      </td>
-                      <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
-                        <ValeurEtDate
-                          date={value.données.dateValeurActuelle}
-                          unité={value.données.unité}
-                          valeur={value.données.valeurActuelle}
-                        />
-                      </td>
-                      <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
-                        <ValeurEtDate
-                          date={value.données.dateValeurCibleAnnuelle}
-                          unité={value.données.unité}
-                          valeur={value.données.valeurCibleAnnuelle}
-                        />
-                      </td>
-                      <td className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm'>
-                        <BarreDeProgression
-                          afficherTexte
-                          fond='gris-clair'
-                          positionTexte='dessus'
-                          taille='md'
-                          valeur={value.données.avancement.annuel}
-                          variante='secondaire'
-                        />
-                      </td>
-                      <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
-                        <ValeurEtDate
-                          date={value.données.dateValeurCible}
-                          unité={value.données.unité}
-                          valeur={value.données.valeurCible}
-                        />
-                      </td>
-                      <td className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm'>
-                        <BarreDeProgression
-                          afficherTexte
-                          fond='gris-clair'
-                          positionTexte='dessus'
-                          taille='md'
-                          valeur={value.données.avancement.global}
-                          variante='primaire'
-                        />
-                      </td>
-                    </tr>
-                  ))
+                  informationsIndicateurs.map(value => {
+                    return (
+                      <>
+                        <tr key={value.territoireNom}>
+                          <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm'>
+                            {value.territoireNom}
+                          </td>
+                          <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                            <ValeurEtDate
+                              date={value.données.dateValeurInitiale}
+                              unité={value.données.unité}
+                              valeur={value.données.valeurInitiale}
+                            />
+                          </td>
+                          <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                            <ValeurEtDate
+                              date={value.données.dateValeurActuelle}
+                              unité={value.données.unité}
+                              valeur={value.données.valeurActuelle}
+                            />
+                          </td>
+                          <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                            <ValeurEtDate
+                              date={value.données.dateValeurCibleAnnuelle}
+                              unité={value.données.unité}
+                              valeur={value.données.valeurCibleAnnuelle}
+                            />
+                          </td>
+                          <td className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm'>
+                            <BarreDeProgression
+                              afficherTexte
+                              fond='gris-clair'
+                              positionTexte='dessus'
+                              taille='md'
+                              valeur={value.données.avancement.annuel}
+                              variante='secondaire'
+                            />
+                          </td>
+                          <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                            <ValeurEtDate
+                              date={value.données.dateValeurCible}
+                              unité={value.données.unité}
+                              valeur={value.données.valeurCible}
+                            />
+                          </td>
+                          <td className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm'>
+                            <BarreDeProgression
+                              afficherTexte
+                              fond='gris-clair'
+                              positionTexte='dessus'
+                              taille='md'
+                              valeur={value.données.avancement.global}
+                              variante='primaire'
+                            />
+                          </td>
+                        </tr>
+                        {
+                          estAutoriseAVoirLesPropositionsDeValeurActuelle ? (
+                            <tr className='ligne-creation-proposition-valeur-actuelle'>
+                              <td colSpan={7}>
+                                <div className='flex w-full justify-end'>
+                                  <button
+                                    aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE}
+                                    className='fr-btn fr-btn--secondary'
+                                    data-fr-opened='false'
+                                    type='button'
+                                  >
+                                    Proposer une autre valeur actuelle
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ) : null
+                        }
+                      </>
+                    );
+                  })
                 }
                 </tbody>
               </table>
@@ -255,6 +282,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
           }
         </section>
       </Bloc>
+      <ModalePropositonValeurActuelle />
     </IndicateurBlocStyled>
   );
 };

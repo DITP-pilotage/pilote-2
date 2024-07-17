@@ -20,6 +20,7 @@ import { ProjetStructurantVueDEnsemble } from '@/server/domain/projetStructurant
 import RécupérerListeProjetsStructurantsVueDEnsembleUseCase
   from '@/server/usecase/projetStructurant/RécupérerListeProjetsStructurantsVueDEnsembleUseCase';
 import PageProjetsStructurants from '@/components/PageAccueil/PageProjetsStructurants/PageProjetsStructurants';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 interface ChantierAccueil {
   projetsStructurants: ProjetStructurantVueDEnsemble[]
@@ -37,7 +38,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
 
   const estNouvellePageAccueilDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL' });
 
-  if (!estNouvellePageAccueilDisponible && session.profil !== 'DITP_ADMIN') {
+  if (!estNouvellePageAccueilDisponible && session.profil !== ProfilEnum.DITP_ADMIN) {
     throw new Error('Not connected or not authorized ?');
   }
 

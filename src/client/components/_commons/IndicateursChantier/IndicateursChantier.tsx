@@ -20,6 +20,7 @@ interface IndicateursProps {
   chantierEstTerritorialisé: boolean,
   estInteractif?: boolean
   estAutoriseAVoirLesAlertesMAJIndicateurs?: boolean
+  estAutoriseAVoirLesPropositionsDeValeurActuelle?: boolean
 }
 
 const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
@@ -30,10 +31,12 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   chantierEstTerritorialisé,
   estInteractif = true,
   estAutoriseAVoirLesAlertesMAJIndicateurs = false,
+  estAutoriseAVoirLesPropositionsDeValeurActuelle = false,
 }) => {
   const CodeInseeSélectionnée = territoireSélectionnéTerritoiresStore()?.codeInsee;
 
   const { data: alerteMiseAJourIndicateurEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR' });
+  const { data: propositionValeurActuelleEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE' });
 
   const alerteMiseAJourIndicateur = estAutoriseAVoirLesAlertesMAJIndicateurs && !!alerteMiseAJourIndicateurEstDisponible && Object.values(détailsIndicateurs).flatMap(values => Object.values(values)).reduce((acc, val) => {
     return val.estAJour === false || val.prochaineDateMaj === null && val.dateValeurActuelle !== null && (val.pondération || 0) > 0 ? true : acc;
@@ -80,6 +83,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                         chantierEstTerritorialisé={chantierEstTerritorialisé}
                         détailsIndicateur={détailsIndicateurs[indicateur.id]}
                         estAutoriseAVoirLesAlertesMAJIndicateurs={estAutoriseAVoirLesAlertesMAJIndicateurs}
+                        estAutoriseAVoirLesPropositionsDeValeurActuelle={!!propositionValeurActuelleEstDisponible && estAutoriseAVoirLesPropositionsDeValeurActuelle}
                         estInteractif={estInteractif}
                         indicateur={indicateur}
                         key={indicateur.id}

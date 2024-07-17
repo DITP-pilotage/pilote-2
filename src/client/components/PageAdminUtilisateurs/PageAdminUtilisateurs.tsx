@@ -8,10 +8,12 @@ import TableauAdminUtilisateurs
   from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/TableauAdminUtilisateurs';
 import Alerte from '@/client/components/_commons/Alerte/Alerte';
 import AlerteProps from '@/client/components/_commons/Alerte/Alerte.interface';
-import AdminUtilisateursBarreLatérale from '@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale';
+import AdminUtilisateursBarreLatérale
+  from '@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale';
 import { réinitialiser } from '@/client/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
 import '@gouvfr/dsfr/dist/component/select/select.min.css';
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 export default function PageAdminUtilisateurs() {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
@@ -24,10 +26,10 @@ export default function PageAdminUtilisateurs() {
     if (!session) {
       return '/';
     }
-    
-    return ['DITP_ADMIN', 'DITP_PILOTAGE'].includes(session.profil) ? '/admin/utilisateur/creer' : '/admin/utilisateur/creer/aide';
+
+    return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session.profil) ? '/admin/utilisateur/creer' : '/admin/utilisateur/creer/aide';
   };
-  
+
   useEffect(() => {
     if (router.query['compteCréé']) {
       setAlerte({
@@ -52,7 +54,7 @@ export default function PageAdminUtilisateurs() {
       window.scroll(0, 0);
     }
   }, [router]);
-  
+
   useEffect(() => {
     réinitialiserFiltres();
   }, [réinitialiserFiltres]);
@@ -67,13 +69,13 @@ export default function PageAdminUtilisateurs() {
         <div className='fr-mt-4w fr-mx-4w fr-mb-3w'>
           {
             !!alerte &&
-              <div className='fr-my-4w'>
-                <Alerte
-                  message={alerte.message}
-                  titre={alerte.titre}
-                  type={alerte.type}
-                />
-              </div>
+            <div className='fr-my-4w'>
+              <Alerte
+                message={alerte.message}
+                titre={alerte.titre}
+                type={alerte.type}
+              />
+            </div>
           }
           <div className='fr-grid-row fr-grid-row--middle fr-mb-3w'>
             <div className='fr-col-12 fr-col-md-9'>

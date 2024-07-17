@@ -8,6 +8,7 @@ import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { configuration } from '@/config';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 
 export default async function handleExportDesChantiers(request: NextApiRequest, response: NextApiResponse): Promise<void> {
@@ -18,7 +19,7 @@ export default async function handleExportDesChantiers(request: NextApiRequest, 
 
   const stringifier = stringify({
     header: true,
-    columns: session.profil === 'DITP_ADMIN' ? [...ExportCsvDesChantiersUseCase.NOMS_COLONNES, 'statut'] : ExportCsvDesChantiersUseCase.NOMS_COLONNES,
+    columns: session.profil === ProfilEnum.DITP_ADMIN ? [...ExportCsvDesChantiersUseCase.NOMS_COLONNES, 'statut'] : ExportCsvDesChantiersUseCase.NOMS_COLONNES,
     delimiter: ';',
     bom: true,
     quoted_string: true,

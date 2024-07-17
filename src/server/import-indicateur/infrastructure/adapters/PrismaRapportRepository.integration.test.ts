@@ -2,11 +2,14 @@ import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichier.builder';
 import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
-import { MesureIndicateurTemporaireBuilder } from '@/server/import-indicateur/app/builder/MesureIndicateurTemporaire.builder';
+import {
+  MesureIndicateurTemporaireBuilder,
+} from '@/server/import-indicateur/app/builder/MesureIndicateurTemporaire.builder';
 import {
   PrismaMesureIndicateurTemporaireRepository,
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurTemporaireRepository';
 import { dependencies } from '@/server/infrastructure/Dependencies';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 describe('PrismaRapportRepository', () => {
   let prismaRapportRepository: PrismaRapportRepository;
@@ -21,7 +24,7 @@ describe('PrismaRapportRepository', () => {
       // GIVEN
       const now = new Date();
 
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
       await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
       const rapport = new DetailValidationFichierBuilder()
@@ -48,7 +51,7 @@ describe('PrismaRapportRepository', () => {
       // GIVEN
       const now = new Date();
 
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
       await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
       const listeMesuresIndicateurTemporaire = [

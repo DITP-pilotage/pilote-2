@@ -4,12 +4,13 @@ import {
   HabilitationAuthentitificationAPIBuilder,
 } from '@/server/authentification/app/builder/HabilitationAuthentitificationAPIBuilder';
 import { ProfilAPI } from '@/server/authentification/domain/ProfilAPI';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 
 export class UtilisateurBuilder {
   private email: string = 'test@test.com';
 
-  private profil: ProfilAPI = 'DITP_ADMIN';
+  private profil: ProfilAPI = ProfilEnum.DITP_ADMIN;
 
   private habilitations: HabilitationAuthentitificationAPI = new HabilitationAuthentitificationAPIBuilder().build();
 

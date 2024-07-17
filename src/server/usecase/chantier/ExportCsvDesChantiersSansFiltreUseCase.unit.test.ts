@@ -8,6 +8,7 @@ import {
   ChantierPourExportBuilder,
 } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 function _fakeChantierPourExport(cid: Chantier['id']): ChantierPourExport {
   return (new ChantierPourExportBuilder)
@@ -33,7 +34,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
 
     const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersUseCase(chantierRepository);
     const habilitation = new HabilitationBuilder().build();
-    const profil = 'DITP_ADMIN';
+    const profil = ProfilEnum.DITP_ADMIN;
 
     // WHEN
     let result: string[][] = [];
@@ -65,7 +66,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const habilitation = new HabilitationBuilder()
       .avecTerritoireCodesLecture(territoireCodesLecture)
       .build();
-    const profil = 'DITP_ADMIN';
+    const profil = ProfilEnum.DITP_ADMIN;
 
     // WHEN
     let result: string[][] = [];
@@ -97,7 +98,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
 
     const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersUseCase(chantierRepository);
     const habilitation = new HabilitationBuilder().build();
-    const profil = 'DITP_ADMIN';
+    const profil = ProfilEnum.DITP_ADMIN;
 
     // WHEN
     let result: string[][] = [];
@@ -133,7 +134,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
 
     const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersUseCase(chantierRepository);
     const habilitation = new HabilitationBuilder().build();
-    const profil = 'DITP_ADMIN';
+    const profil = ProfilEnum.DITP_ADMIN;
 
     // WHEN
     let result: string[][] = [];

@@ -21,6 +21,7 @@ import {
 } from '@/server/domain/historisationModification/HistorisationModificationRepository';
 import { Profil } from '@/server/domain/profil/Profil.interface';
 import { ProfilBuilder } from '@/server/domain/profil/Profil.builder';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import CréerOuMettreÀJourUnUtilisateurUseCase from './CréerOuMettreÀJourUnUtilisateurUseCase';
 
 describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
@@ -129,7 +130,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     it("ne créé pas l'utilisateur sur Keycloak", async () => {
       // GIVEN 
       process.env.IMPORT_KEYCLOAK_URL = undefined;
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecProfil('DITP_ADMIN').build();
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecProfil(ProfilEnum.DITP_ADMIN).build();
       const profil = new ProfilBuilder().build();
 
       //WHEN
@@ -142,47 +143,47 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
   
   describe("L'utilisateur a un profil DITP_ADMIN", () => {
     it("Crée l'utilisateur en base de données sans lui ajouter d'habilitations", async () => {
-      await testCasPassant('DITP_ADMIN', habilitationsVides, true, true, false);
+      await testCasPassant(ProfilEnum.DITP_ADMIN, habilitationsVides, true, true, false);
     });
   });
 
   describe("L'utilisateur a un profil DITP_PILOTAGE", () => {
     it("Crée l'utilisateur en base de données en lui ajoutant l'habilitation saisie commentaire pour la France", async () => {
       const habilitationsAttendues =  { ...habilitationsVides, 'saisieCommentaire': { territoires: ['NAT-FR'], chantiers: [], périmètres: [] } };
-      await testCasPassant('DITP_PILOTAGE', habilitationsAttendues, true, true, false);
+      await testCasPassant(ProfilEnum.DITP_PILOTAGE, habilitationsAttendues, true, true, false);
     });
   });
 
   describe("L'utilisateur a un profil PR", () => {
     it("Crée l'utilisateur en base de données sans lui ajouter d'habilitations", async () => {
-      await testCasPassant('PR', habilitationsVides, true, true, false);
+      await testCasPassant(ProfilEnum.PR, habilitationsVides, true, true, false);
     });
   });
 
 
   describe("L'utilisateur a un profil PM_ET_CABINET", () => {
     it("Crée l'utilisateur en base de données sans lui ajouter d'habilitations", async () => {
-      await testCasPassant('PM_ET_CABINET', habilitationsVides, true, true, false);
+      await testCasPassant(ProfilEnum.PM_ET_CABINET, habilitationsVides, true, true, false);
     });
   });
 
   describe("L'utilisateur a un profil CABINET_MTFP", () => {
     it("Crée l'utilisateur en base de données sans lui ajouter d'habilitations", async () => {
-      await testCasPassant('CABINET_MTFP', habilitationsVides, true, true, false);
+      await testCasPassant(ProfilEnum.CABINET_MTFP, habilitationsVides, true, true, false);
     });
   });
 
   describe("L'utilisateur a un profil CABINET_MINISTERIEL", () => {
     it("Crée l'utilisateur en base de données en prenant une liste de chantiers et une liste de périmètres en lecture sans accorder de droits de saisie", async () => {
       const habilitationsAttendues =  { ...habilitationsVides, lecture: { chantiers: ['123'], territoires: [], périmètres: [] } };
-      await testCasPassant('CABINET_MINISTERIEL', habilitationsAttendues, false, false, false, undefined, ['123'], []);
+      await testCasPassant(ProfilEnum.CABINET_MINISTERIEL, habilitationsAttendues, false, false, false, undefined, ['123'], []);
     });
   });
 
   describe("L'utilisateur a un profil DIR_ADMIN_CENTRALE", () => {
     it("Crée l'utilisateur en base de données en prenant une liste de chantiers et une liste de périmètres en lecture sans accorder des droits de saisie", async () => {
       const habilitationsAttendues =  { ...habilitationsVides, lecture: { chantiers: ['123'], territoires: [], périmètres: [] } };
-      await testCasPassant('DIR_ADMIN_CENTRALE', habilitationsAttendues, false, false, false, undefined, ['123'], []);
+      await testCasPassant(ProfilEnum.DIR_ADMIN_CENTRALE, habilitationsAttendues, false, false, false, undefined, ['123'], []);
     });
   });
 
@@ -194,7 +195,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
         'saisieCommentaire': { territoires: [], chantiers: ['123'], périmètres: [] },
         'saisieIndicateur': { territoires: [], chantiers: ['123'], périmètres: [] },
       };
-      await testCasPassant('SECRETARIAT_GENERAL', habilitationsAttendues, true, true, false, undefined, ['123'], []);
+      await testCasPassant(ProfilEnum.SECRETARIAT_GENERAL, habilitationsAttendues, true, true, false, undefined, ['123'], []);
     });
   });
 
@@ -206,7 +207,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
         'saisieCommentaire': { territoires: [], chantiers: ['123'], périmètres: [] },
         'saisieIndicateur': { territoires: [], chantiers: ['123'], périmètres: [] },
       };
-      await testCasPassant('EQUIPE_DIR_PROJET', habilitationsAttendues, true, true, false, undefined, ['123'], []);
+      await testCasPassant(ProfilEnum.EQUIPE_DIR_PROJET, habilitationsAttendues, true, true, false, undefined, ['123'], []);
     });
   });
 
@@ -218,7 +219,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
         'saisieCommentaire': { territoires: [], chantiers: ['123'], périmètres: [] },
         'saisieIndicateur': { territoires: [], chantiers: ['123'], périmètres: [] },
       };
-      await testCasPassant('DIR_PROJET', habilitationsAttendues, true, true, false, undefined, ['123'], []);
+      await testCasPassant(ProfilEnum.DIR_PROJET, habilitationsAttendues, true, true, false, undefined, ['123'], []);
     });
   });
 
@@ -230,11 +231,11 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
         'saisieCommentaire': { territoires: [], chantiers: [], périmètres: [] },
         'saisieIndicateur': { territoires: [], chantiers: [], périmètres: [] },
       };
-      await testCasPassant('DIR_PROJET', habilitationsAttendues, false, false, false, undefined, ['123'], []);
+      await testCasPassant(ProfilEnum.DIR_PROJET, habilitationsAttendues, false, false, false, undefined, ['123'], []);
     });
   });
 
-  describe("L'utilisateur a un profil COORDINATEUR_REGION", () => {
+  describe("L'utilisateur a un profil ProfilEnum.COORDINATEUR_REGION", () => {
     it("Crée l'utilisateur en base de données en prenant une liste de territoires contenant des régions et leurs départements enfants en lecture et en accordant les droits de saisie commentaires", async () => {
       const codeRégionParente = 'REG-11';
       const codesDépartementsEnfantsDeLaRégion = fakeTerritoires.filter(t => t.codeParent === codeRégionParente).map(t => t.code);
@@ -244,7 +245,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
         lecture: { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] }, 
         'saisieCommentaire':  { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] },
       };
-      await testCasPassant('COORDINATEUR_REGION', habilitationsAttendues, false, true, false, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion]);
+      await testCasPassant(ProfilEnum.COORDINATEUR_REGION, habilitationsAttendues, false, true, false, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion]);
     });
 
     it("Crée l'utilisateur en base de données en prenant une liste de territoires contenant des régions et leurs départements enfants en lecture et en accordant les droits de gestion des utilisateurs", async () => {
@@ -256,7 +257,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
         lecture: { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] }, 
         gestionUtilisateur: { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] },
       };
-      await testCasPassant('COORDINATEUR_REGION', habilitationsAttendues, false, false, true, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion]);
+      await testCasPassant(ProfilEnum.COORDINATEUR_REGION, habilitationsAttendues, false, false, true, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion]);
     });
   });
 
@@ -270,7 +271,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
         lecture: { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] }, 
         'saisieCommentaire':  { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] },
       };
-      await testCasPassant('PREFET_REGION', habilitationsAttendues, false, true, false, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion]);
+      await testCasPassant(ProfilEnum.PREFET_REGION, habilitationsAttendues, false, true, false, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion]);
     });
   });
 
@@ -284,7 +285,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
         lecture: { chantiers: ['123'], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: ['PER-13'] }, 
         'saisieCommentaire':  { chantiers: ['123'], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: ['PER-13'] },
       };
-      await testCasPassant('SERVICES_DECONCENTRES_REGION', habilitationsAttendues, false, true, false, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], ['123'], ['PER-13']);
+      await testCasPassant(ProfilEnum.SERVICES_DECONCENTRES_REGION, habilitationsAttendues, false, true, false, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], ['123'], ['PER-13']);
     });
   });
 
@@ -298,7 +299,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
         lecture: { chantiers: ['123'], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: ['PER-13'] }, 
         'saisieCommentaire':  { chantiers: ['123'], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: ['PER-13'] },
       };
-      await testCasPassant('RESPONSABLE_REGION', habilitationsAttendues, false, true, false, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], ['123'], ['PER-13']);
+      await testCasPassant(ProfilEnum.RESPONSABLE_REGION, habilitationsAttendues, false, true, false, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], ['123'], ['PER-13']);
     });
   });
 
@@ -309,7 +310,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
         lecture: { chantiers: [], territoires: ['DEPT-75'], périmètres: [] }, 
         'saisieCommentaire':  { chantiers: [], territoires: ['DEPT-75'], périmètres: [] },
       };
-      await testCasPassant('COORDINATEUR_DEPARTEMENT', habilitationsAttendues, false, true, false, ['DEPT-75']);
+      await testCasPassant(ProfilEnum.COORDINATEUR_DEPARTEMENT, habilitationsAttendues, false, true, false, ['DEPT-75']);
     });
   });
 
@@ -321,7 +322,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
         lecture: { chantiers: [], territoires: ['DEPT-75'], périmètres: [] }, 
         'saisieCommentaire':  { chantiers: [], territoires: ['DEPT-75'], périmètres: [] },
       };
-      await testCasPassant('PREFET_DEPARTEMENT', habilitationsAttendues, false, true, false, ['DEPT-75']);
+      await testCasPassant(ProfilEnum.PREFET_DEPARTEMENT, habilitationsAttendues, false, true, false, ['DEPT-75']);
     });
   });
 
@@ -332,7 +333,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
         lecture: { chantiers: ['123'], territoires: ['DEPT-75'], périmètres: [] }, 
         'saisieCommentaire':  { chantiers: ['123'], territoires: ['DEPT-75'], périmètres: [] },
       };
-      await testCasPassant('SERVICES_DECONCENTRES_DEPARTEMENT', habilitationsAttendues, false, true, false, ['DEPT-75'], ['123'], []);
+      await testCasPassant(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, habilitationsAttendues, false, true, false, ['DEPT-75'], ['123'], []);
     });
   });
 
@@ -343,7 +344,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
         lecture: { chantiers: ['123'], territoires: ['DEPT-75'], périmètres: [] }, 
         'saisieCommentaire':  { chantiers: ['123'], territoires: ['DEPT-75'], périmètres: [] },
       };
-      await testCasPassant('RESPONSABLE_DEPARTEMENT', habilitationsAttendues, false, true, false, ['DEPT-75'], ['123'], []);
+      await testCasPassant(ProfilEnum.RESPONSABLE_DEPARTEMENT, habilitationsAttendues, false, true, false, ['DEPT-75'], ['123'], []);
     });
   });
 
@@ -355,7 +356,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
         'saisieCommentaire':  { chantiers: [], territoires: ['NAT-FR'], périmètres: ['PER-018'] },
         'saisieIndicateur':  { chantiers: [], territoires: [], périmètres: ['PER-018'] },
       };
-      await testCasPassant('DROM', habilitationsAttendues, true, true, false);
+      await testCasPassant(ProfilEnum.DROM, habilitationsAttendues, true, true, false);
     });
   });
 
