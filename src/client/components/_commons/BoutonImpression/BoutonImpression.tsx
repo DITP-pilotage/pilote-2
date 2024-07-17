@@ -1,14 +1,20 @@
 import '@gouvfr/dsfr/dist/utility/icons/icons-business/icons-business.min.css';
+import { FunctionComponent } from 'react';
+import BoutonImpressionStyled from './BoutonImpression.styled';
 
-export default function BoutonImpression() {
+const BoutonImpression: FunctionComponent = () => {
   return (
-    <button
-      className='fr-btn fr-btn--secondary fr-icon-printer-line fr-btn--icon-left no-wrap'
-      onClick={() => window.print()}
-      title='Imprimer'
-      type='button'
-    >
-      Imprimer
-    </button>
+    <BoutonImpressionStyled>
+      <button
+        className='fr-btn fr-btn--secondary fr-icon-printer-line fr-btn--icon-left no-wrap boutonFormatMobile'
+        onClick={() => window.print()}
+        title='Imprimer'
+        type='button'
+      >
+        Imprimer
+      </button>
+    </BoutonImpressionStyled>
   );
-}
+};
+
+export default BoutonImpression;

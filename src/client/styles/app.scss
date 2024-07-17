@@ -10,6 +10,14 @@
   display: flex;
 }
 
+.flex-direction-row {
+  flex-direction: row;
+}
+
+.flex-direction-column {
+  flex-direction: column;
+}
+
 .flex-grow {
   flex-grow: 1;
 }
@@ -30,6 +38,10 @@
   justify-content: end;
 }
 
+.justify-start {
+  justify-content: flex-start;
+}
+
 .justify-between {
   justify-content: space-between;
 }
@@ -44,6 +56,10 @@
 
 .w-half-full {
   width: 50%;
+}
+
+.align-start {
+  align-items: flex-start;
 }
 
 .align-center {
@@ -150,6 +166,7 @@
     border-right-color: var(--border-default-grey);
     border-right-style: solid;
   }
+
   .border-lg-0 {
     border-right-width: 0;
   }
@@ -167,7 +184,8 @@
   page-break-after: always;
 }
 
-.fr-icon-red, .fr-text-red {
+.fr-icon-red,
+.fr-text-red {
   color: red;
 }
 

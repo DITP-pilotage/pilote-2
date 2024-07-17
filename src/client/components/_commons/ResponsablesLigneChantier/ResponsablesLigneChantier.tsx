@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useState } from 'react';
+import { FunctionComponent } from 'react';
 import ResponsablesLigneChantierStyled from './ResponsablesLigneChantier.styled';
 
 interface ResponsablesLigneProps {
@@ -14,67 +14,35 @@ const ResponsablesLigneChantier: FunctionComponent<ResponsablesLigneProps> = ({
   libelleEmailsResponsables,
   libelléChantier,
 }) => {
-  const [boutonContacterFormatDesktop, setBoutonContacterFormatDesktop] = useState(true);
   const objetCourriel = encodeURIComponent(`PILOTE - PPG - ${libelléChantier}`);
-
-  useEffect(() => {
-    const gererTailleEcran = () => {
-      if (window.innerWidth < 768) {
-        setBoutonContacterFormatDesktop(false);
-      } else {
-        setBoutonContacterFormatDesktop(true);
-      }
-    };
-
-    window.addEventListener('resize', gererTailleEcran);
-    return () => window.removeEventListener('reset', gererTailleEcran);
-  }, []);
 
   return (
     <ResponsablesLigneChantierStyled>
       <div className='fr-grid-row fr-grid-row--gutters fr-pb-2w'>
-        <div className='fr-text--sm fr-text--bold fr-col-4 fr-m-0 fr-pb-1v fr-py-md-1w'>
+        <div className='fr-text--sm fr-text--bold fr-col-8 fr-col-md-4 fr-col-xl-5 fr-m-0 fr-pb-1v fr-py-md-1w'>
           {libellé}
         </div>
-        <p className='fr-text--sm fr-col-4 fr-m-0 fr-pb-1v fr-p-md-1w'>
+        <p className='fr-text--sm fr-col-7 fr-col-md-4 fr-col-xl-5 fr-m-0 fr-pb-1v fr-p-md-1w'>
           {libelleNomsResponsables || 'Non renseigné'}
         </p>
         {
           libelleEmailsResponsables ? (
             <div
-              className='fr-col-4 centrer-bouton'
-            >
-              {
-                boutonContacterFormatDesktop ? (
-                  <button
-                    className='fr-btn'
-                    title={`Contacter ${libelleEmailsResponsables}`}
-                    type='button'
-                  >
-                    <a href={`mailto:${libelleEmailsResponsables}?subject=${objetCourriel}`}>
-                      <span
-                        aria-hidden='true'
-                        className='fr-icon-mail-fill'
-                      />
-                      {' '}
-                      Contacter
-                    </a>
-                  </button>
-                ) : (
-                  <button
-                    className='fr-btn'
-                    title={`Contacter ${libelleEmailsResponsables}`}
-                    type='button'
-                  >
-                    <a href={`mailto:${libelleEmailsResponsables}?subject=${objetCourriel}`}>
-                      <span
-                        aria-hidden='true'
-                        className='fr-icon-mail-fill'
-                      /> 
-                    </a>
-                  </button>
-                )
-              }
+              className='fr-col-5 fr-col-md-4 fr-col-xl-2 flex align-start justify-end boutonContacterFormatMobile'
+            >  
+              <div>
+                <span
+                  aria-hidden='true'
+                  className='fr-icon-mail-line fr-text-title--blue-france fr-mr-1w'
+                />
+                <a
+                  className='fr-link fr-link--sm'
+                  href={`mailto:${libelleEmailsResponsables}?subject=${objetCourriel}`}
+                  title={`Contacter ${libelleEmailsResponsables}`}
+                >  
+                  Contacter
+                </a>
+              </div>                
             </div>
           ) : null
         } 
