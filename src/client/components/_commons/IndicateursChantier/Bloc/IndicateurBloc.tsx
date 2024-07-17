@@ -189,7 +189,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   {
                   informationsIndicateurs.map(value => {
                     return (
-                      <>
+                      <Fragment key={value.territoireNom}>
                         <tr key={value.territoireNom}>
                           <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm'>
                             {value.territoireNom}
@@ -249,7 +249,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               <td colSpan={7}>
                                 <div className='flex w-full justify-end'>
                                   <button
-                                    aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE}
+                                    aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
                                     className='fr-btn fr-btn--secondary'
                                     data-fr-opened='false'
                                     type='button'
@@ -257,11 +257,16 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     Proposer une autre valeur actuelle
                                   </button>
                                 </div>
+                                <ModalePropositonValeurActuelle
+                                  detailIndicateur={value.données}
+                                  generatedHTMLID={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
+                                  indicateur={indicateur}
+                                />
                               </td>
                             </tr>
                           ) : null
                         }
-                      </>
+                      </Fragment>
                     );
                   })
                 }
@@ -282,7 +287,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
           }
         </section>
       </Bloc>
-      <ModalePropositonValeurActuelle />
     </IndicateurBlocStyled>
   );
 };

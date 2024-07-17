@@ -1,13 +1,31 @@
-import { FunctionComponent } from 'react';
-import {
-  ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE,
-} from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc';
+import { FunctionComponent, useState } from 'react';
 import Modale from '@/components/_commons/Modale/Modale';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import type { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 
-const ModalePropositonValeurActuelle: FunctionComponent<{}> = () => {
+import useModalePropositonValeurActuelle
+  from '@/components/_commons/IndicateursChantier/Bloc/ModalePropositonValeurActuelle/useModalePropositonValeurActuelle';
+import Input from '@/components/_commons/Input/Input';
+
+
+enum EtapePropositionValeurActuelle {
+  SAISIE_VALEUR_ACTUELLE = 'SAISIE_VALEUR_ACTUELLE',
+  VALIDATION_VALEUR_ACTUELLE = 'VALIDATION_VALEUR_ACTUELLE',
+}
+
+const ModalePropositonValeurActuelle: FunctionComponent<{
+  indicateur: Indicateur,
+  detailIndicateur: DétailsIndicateur
+  generatedHTMLID: string
+}> = ({ indicateur, detailIndicateur, generatedHTMLID }) => {
+
+  const reactHookForm = useModalePropositonValeurActuelle({ indicateur, detailIndicateur });
+
+  const [etapePropositionValeurActuelle, setEtapePropositionValeurActuelle] = useState<EtapePropositionValeurActuelle>(EtapePropositionValeurActuelle.SAISIE_VALEUR_ACTUELLE);
+
   return (
     <Modale
-      idHtml={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE}
+      idHtml={generatedHTMLID}
       tailleModale='lg'
     >
       <div className='fr-stepper'>
@@ -33,41 +51,65 @@ const ModalePropositonValeurActuelle: FunctionComponent<{}> = () => {
         </p>
       </div>
       <h2 className='fr-h4'>
-        Émissions totales annuelles de gaz à effet de serre du parc de voitures (en tonne équivalent CO2)
+        {indicateur.nom}
       </h2>
-      <span>
-        Proposition d’une autre valeur actuelle
-        La proposition de nouvelle valeur actuelle que vous éditez a été faite par François Pignon le 14/05/2024. Toute
-        modification apportée à cette proposition écrasera et remplacera celle-ci.
-      </span>
-      <table
-        className='fr-table w-full border-spacing-1-0'
-      >
-        <thead>
-          <tr className='fr-background-action-low-blue-france'>
-            <th className='w-half-full'>
-              <span className='w-full flex justify-center'>
-                Valeur actuelle importée par la direction de projet
-              </span>
-            </th>
-            <th>
-              <span className='w-full flex justify-center'>
-                Proposition de nouvelle valeur actuelle
-              </span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              hey 1
-            </td>
-            <td>
-              hey 2
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      {
+        etapePropositionValeurActuelle === EtapePropositionValeurActuelle.SAISIE_VALEUR_ACTUELLE ? (
+          <>
+            <table
+              className='fr-table w-full border-spacing-1-0'
+            >
+              <thead>
+                <tr className='fr-background-action-low-blue-france'>
+                  <th className='w-half-full'>
+                    <span className='w-full flex justify-center'>
+                      Valeur actuelle importée par la direction de projet
+                    </span>
+                  </th>
+                  <th>
+                    <span className='w-full flex justify-center'>
+                      Proposition de nouvelle valeur actuelle
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    {detailIndicateur.valeurActuelle}
+                  </td>
+                  <td>
+                    <div className='flex justify-center'>
+                      <div className='w-half-full'>
+                        <Input
+                          erreurMessage={reactHookForm.formState.errors.valeurActuelle?.message}
+                          htmlName='valeurActuelle'
+                          register={reactHookForm.register('valeurActuelle')}
+                          type='text'
+                        />
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div className='w-full flex justify-end'>
+              <button
+                className='fr-btn'
+                onClick={() => setEtapePropositionValeurActuelle(EtapePropositionValeurActuelle.VALIDATION_VALEUR_ACTUELLE)}
+                type='button'
+              >
+                Étape suivante
+              </button>
+            </div>
+          </>
+        ) : (
+          <span>
+            test
+            {reactHookForm.getValues('valeurActuelle')}
+          </span>
+        )
+      }
     </Modale>
   );
 };
