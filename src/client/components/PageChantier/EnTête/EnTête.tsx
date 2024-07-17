@@ -59,11 +59,11 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
         libellé='Directeur(s) / directrice(s) d’Administration Centrale'
         listeNomsResponsables={listeNomsDirecteursAdministrationCentrale}
       />
-      <div className='flex flex-direction-row justify-start align-center fr-mt-md-2w enTeteFormatMobile'>
+      <div className='flex flex-direction-row justify-start align-center fr-mt-md-2w format-mobile'>
         {
           !!afficheLeBoutonMiseAJourDonnee &&
             <Link
-              className='fr-btn fr-btn--primary fr-mr-md-2w enTeteFormatMobile__bouton'
+              className='fr-btn fr-btn--primary fr-mr-md-2w format-mobile__bouton'
               href={`${chantier.id}/indicateurs`}
               title='Mettre à jour les données'
             >
@@ -72,7 +72,7 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
         }
         {
           !!afficheLeBoutonImpression && (
-            <div className='enTeteFormatMobile__boutonImpression'> 
+            <div className='format-mobile__bouton-impression'> 
               <BoutonImpression />       
             </div>
           )
@@ -80,7 +80,7 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
         {
           afficheLeBoutonFicheConducteur ? (
             <Link
-              className='fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left fr-px-1w fr-px-md-2w fr-ml-md-2w enTeteFormatMobile__bouton'
+              className='fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left fr-px-1w fr-px-md-2w fr-ml-md-2w format-mobile__bouton'
               href={`${chantier.id}/fiche-conducteur`}
               title='Fiche conducteur'
             >

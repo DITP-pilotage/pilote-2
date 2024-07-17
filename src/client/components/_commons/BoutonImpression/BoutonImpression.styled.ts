@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 
 const BoutonImpressionStyled = styled.div`
-    .boutonFormatMobile {
+    .bouton-format-mobile {
         @media(max-width: 450px) {
-            width: 100%;
             display : flex;
             justify-content: center;
+            width: 100%;
         }
     }
 `;

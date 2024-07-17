@@ -28,7 +28,7 @@ const ResponsablesLigneChantier: FunctionComponent<ResponsablesLigneProps> = ({
         {
           libelleEmailsResponsables ? (
             <div
-              className='fr-col-5 fr-col-md-4 fr-col-xl-2 flex align-start justify-end boutonContacterFormatMobile'
+              className='fr-col-5 fr-col-md-4 fr-col-xl-2 flex align-start justify-end bouton-format-mobile'
             >  
               <div>
                 <span

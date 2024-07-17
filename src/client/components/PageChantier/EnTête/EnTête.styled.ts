@@ -11,7 +11,7 @@ const PageChantierEnTêteStyled = styled.header`
     color: var(--text-title-blue-france);
   }
 
-  .enTeteFormatMobile {
+  .format-mobile {
     @media(max-width: 450px) {
       display : flex;
       flex-direction : column; 
@@ -19,14 +19,14 @@ const PageChantierEnTêteStyled = styled.header`
 
     &__bouton {
       @media(max-width: 450px) {
-        width: 100%;
         display : flex;
         justify-content: center;
+         width: 100%;
         margin-top: 16px;
       }
     }
       
-    &__boutonImpression {
+    &__bouton-impression {
       @media(max-width: 450px) {
         width: 100%;
         margin-top: 16px;
