@@ -121,6 +121,7 @@ model indicateur {
   chantier_id                              String
   objectif_valeur_cible                    Float?
   objectif_taux_avancement                 Float?
+  objectif_taux_avancement_propose         Float?
   objectif_date_valeur_cible               DateTime?  @db.Date
   type_id                                  String?
   type_nom                                 String?
@@ -129,6 +130,7 @@ model indicateur {
   valeur_initiale                          Float?
   date_valeur_initiale                     DateTime?  @db.Date
   valeur_actuelle                          Float?
+  valeur_actuelle_propose                  Float?
   date_valeur_actuelle                     DateTime?  @db.Date
   territoire_nom                           String?
   code_insee                               String
@@ -145,6 +147,7 @@ model indicateur {
   ponderation_zone_reel                    Float?
   objectif_valeur_cible_intermediaire      Float?
   objectif_taux_avancement_intermediaire   Float?
+  objectif_taux_avancement_intermediaire_propose   Float?
   objectif_date_valeur_cible_intermediaire DateTime?  @db.Date
   est_applicable                           Boolean?
   a_supprimer                              Boolean    @default(true)

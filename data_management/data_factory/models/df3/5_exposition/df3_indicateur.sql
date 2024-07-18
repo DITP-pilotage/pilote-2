@@ -39,6 +39,7 @@ get_evol_vaca as (
 	mi.indic_parent_ch as chantier_id,
 	gvcg.vcg as objectif_valeur_cible,
 	a.tag as objectif_taux_avancement,
+	NULL::float as objectif_taux_avancement_propose,
 	mi.indic_type as type_id,
 	mit.indic_type_name as type_nom,
 	mi.indic_is_baro as est_barometre,
@@ -46,6 +47,7 @@ get_evol_vaca as (
 	a.date_valeur_actuelle::date as date_valeur_actuelle,
 	gvig.vig_date::date as date_valeur_initiale,
 	a.vaca as valeur_actuelle,
+	NULL::float as valeur_actuelle_propose,
 	gvig.vig as valeur_initiale,
 	terr.code_insee,
 	mz.zone_type as maille,
@@ -62,6 +64,7 @@ get_evol_vaca as (
 	gvcg.vcg_date::date as objectif_date_valeur_cible,
 	gvca.vca as objectif_valeur_cible_intermediaire,
 	a.taa_courant as objectif_taux_avancement_intermediaire,
+	NULL::float as objectif_taux_avancement_intermediaire_propose,
 	-- Ajouter taa_adate ? ou pas besoin
 	gvca.vca_date::date as objectif_date_valeur_cible_intermediaire,
     COALESCE(z_appl.est_applicable, true) AS est_applicable,
