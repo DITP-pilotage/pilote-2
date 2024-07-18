@@ -117,6 +117,14 @@ export default function IndicateurBloc({
                   ) : null
                 }
               </div>
+              <p className='fr-text--xs texte-gris fr-ml-2w fr-mb-2w'>
+                <span
+                  aria-hidden='true'
+                  className='fr-icon-arrow-right-fill'
+                />
+                {' '}               
+                Attention, cet indicateur a un objectif de baisse. La cible représente une valeur inférieure à la valeur initiale.
+              </p>
             </div>
             {
               estDisponibleALImport ? (
