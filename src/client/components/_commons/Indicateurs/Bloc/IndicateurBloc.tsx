@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { useRouter } from 'next/router';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
@@ -20,7 +20,7 @@ import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 import useIndicateurAlerteDateMaj from './useIndicateurAlerteDateMaj';
 
-export default function IndicateurBloc({
+const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   indicateur,
   détailsIndicateurs,
   estInteractif,
@@ -117,14 +117,18 @@ export default function IndicateurBloc({
                   ) : null
                 }
               </div>
-              <p className='fr-text--xs texte-gris fr-ml-2w fr-mb-2w'>
-                <span
-                  aria-hidden='true'
-                  className='fr-icon-arrow-right-fill'
-                />
-                {' '}               
-                Attention, cet indicateur a un objectif de baisse. La cible représente une valeur inférieure à la valeur initiale.
-              </p>
+              { 
+                territoireSélectionné && détailsIndicateur[territoireSélectionné.codeInsee]?.tendance === 'BAISSE' ? (
+                  <p className='fr-text--xs texte-gris fr-ml-2w fr-mb-2w'>
+                    <span
+                      aria-hidden='true'
+                      className='fr-icon-arrow-right-fill'
+                    />
+                    {' '}               
+                    Attention, cet indicateur a un objectif de baisse. La cible représente une valeur inférieure à la valeur initiale. 
+                  </p>
+                ) : null
+              }
             </div>
             {
               estDisponibleALImport ? (
@@ -162,4 +166,6 @@ export default function IndicateurBloc({
       </Bloc>
     </IndicateurBlocStyled>
   );
-}
+};
+
+export default IndicateurBloc;

@@ -27,4 +27,5 @@ export type DétailsIndicateur = {
   prochaineDateMaj: string | null,
   prochaineDateMajJours: number | null,
   estAJour: boolean | null,
+  tendance: string | null,
 };
