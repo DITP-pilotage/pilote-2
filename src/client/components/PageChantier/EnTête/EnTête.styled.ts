@@ -16,24 +16,24 @@ const PageChantierEnTêteStyled = styled.header`
       display : flex;
       flex-direction : column; 
     }
+  }
 
-    &__bouton {
-      @media(max-width: 450px) {
-        display : flex;
-        justify-content: center;
-         width: 100%;
-        margin-top: 16px;
-      }
-    }
-      
-    &__bouton-impression {
-      @media(max-width: 450px) {
-        width: 100%;
-        margin-top: 16px;
-      }
+  .format-mobile-bouton {
+    @media(max-width: 450px) {
+      display : flex;
+      justify-content: center;
+      width: 100%;
+      margin-top: 16px;
     }
   }
-  
+      
+  .format-mobile-bouton-impression {
+    @media(max-width: 450px) {
+      width: 100%;
+      margin-top: 16px;
+    }
+  }
+ 
   @media print {
     margin-top: 1rem;
   }

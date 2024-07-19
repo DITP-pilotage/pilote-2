@@ -63,7 +63,7 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
         {
           !!afficheLeBoutonMiseAJourDonnee &&
             <Link
-              className='fr-btn fr-btn--primary fr-mr-md-2w format-mobile__bouton'
+              className='fr-btn fr-btn--primary fr-mr-md-2w format-mobile-bouton'
               href={`${chantier.id}/indicateurs`}
               title='Mettre à jour les données'
             >
@@ -72,7 +72,7 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
         }
         {
           !!afficheLeBoutonImpression && (
-            <div className='format-mobile__bouton-impression'> 
+            <div className='format-mobile-bouton-impression'> 
               <BoutonImpression />       
             </div>
           )
@@ -80,7 +80,7 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
         {
           afficheLeBoutonFicheConducteur ? (
             <Link
-              className='fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left fr-px-1w fr-px-md-2w fr-ml-md-2w format-mobile__bouton'
+              className='fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left fr-px-1w fr-px-md-2w fr-ml-md-2w format-mobile-bouton'
               href={`${chantier.id}/fiche-conducteur`}
               title='Fiche conducteur'
             >
