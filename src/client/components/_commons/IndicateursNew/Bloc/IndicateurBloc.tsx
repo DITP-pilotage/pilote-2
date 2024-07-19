@@ -15,6 +15,7 @@ import ResultatValidationFichier
   from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
 import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { IndicateurPondération } from '@/components/_commons/IndicateursNew/Bloc/Pondération/IndicateurPondération';
+import IndicateurTendance from '@/client/components/_commons/IndicateursNew/Bloc/Tendance/IndicateurTendance';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 
@@ -80,14 +81,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 }
                 { 
                   territoireSélectionné && détailsIndicateur[territoireSélectionné.codeInsee]?.tendance === 'BAISSE' ? (
-                    <p className='fr-text--xs texte-gris fr-ml-2w fr-mb-2w'>
-                      <span
-                        aria-hidden='true'
-                        className='fr-icon-arrow-right-fill'
-                      />
-                      {' '}               
-                      Attention, cet indicateur a un objectif de baisse. La cible représente une valeur inférieure à la valeur initiale. 
-                    </p>
+                    <IndicateurTendance />
                   ) : null
                 }
               </div>

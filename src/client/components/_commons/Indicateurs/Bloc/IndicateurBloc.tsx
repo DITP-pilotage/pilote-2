@@ -19,6 +19,7 @@ import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 import useIndicateurAlerteDateMaj from './useIndicateurAlerteDateMaj';
+import IndicateurTendance from './Tendances/IndicateurTendance';
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   indicateur,
@@ -119,14 +120,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
               </div>
               { 
                 territoireSélectionné && détailsIndicateur[territoireSélectionné.codeInsee]?.tendance === 'BAISSE' ? (
-                  <p className='fr-text--xs texte-gris fr-ml-2w fr-mb-2w'>
-                    <span
-                      aria-hidden='true'
-                      className='fr-icon-arrow-right-fill'
-                    />
-                    {' '}               
-                    Attention, cet indicateur a un objectif de baisse. La cible représente une valeur inférieure à la valeur initiale. 
-                  </p>
+                  <IndicateurTendance />
                 ) : null
               }
             </div>
