@@ -103,7 +103,7 @@ const colonnesTableauChantiers = [
 export default function useRapportDétailléTableauChantiers(données: RapportDétailléTableauChantiersProps['données']) {
 
   const tableau = useReactTable({
-    data: données,
+    data: données.sort((a, b) => comparerAvancementRéforme(a.avancement, b.avancement, [{ id: 'avancement', desc: false }])),
     columns: colonnesTableauChantiers,
     getCoreRowModel: getCoreRowModel(),
   });
