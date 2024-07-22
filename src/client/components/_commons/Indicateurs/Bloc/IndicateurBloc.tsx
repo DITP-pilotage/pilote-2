@@ -16,23 +16,24 @@ import ResultatValidationFichier
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { IndicateurPonderation } from '@/components/_commons/Indicateurs/Bloc/Pondération/IndicateurPonderation';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
-import api from '@/server/infrastructure/api/trpc/api';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
+import useIndicateurAlerteDateMaj from './useIndicateurAlerteDateMaj';
 
 export default function IndicateurBloc({
   indicateur,
-  détailsIndicateur,
+  détailsIndicateurs,
   estInteractif,
   territoireProjetStructurant,
   typeDeRéforme,
   chantierEstTerritorialisé,
   estDisponibleALImport = false,
-  estAutoriseAVoirLesAlertesMAJIndicateurs = false,
+  listeSousIndicateurs,
 }: IndicateurBlocProps) {
   const router = useRouter();
   const réformeId = router.query.id as string;
 
+  const détailsIndicateur = détailsIndicateurs[indicateur.id];
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const {
     indicateurDétailsParTerritoires,
@@ -42,9 +43,7 @@ export default function IndicateurBloc({
   } = useIndicateurBloc(détailsIndicateur, typeDeRéforme, territoireProjetStructurant);
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
 
-  const { data: alerteMiseAJourIndicateurEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR' });
-
-  const estIndicateurEnAlerte = estAutoriseAVoirLesAlertesMAJIndicateurs && !!alerteMiseAJourIndicateurEstDisponible && détailsIndicateur[territoireSélectionné!.codeInsee]?.estAJour === false && détailsIndicateur[territoireSélectionné!.codeInsee]?.prochaineDateMaj !== null;
+  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(détailsIndicateur, territoireSélectionné);
 
   return (
     <IndicateurBlocStyled
@@ -143,8 +142,10 @@ export default function IndicateurBloc({
               <IndicateurDétails
                 chantierEstTerritorialisé={chantierEstTerritorialisé}
                 dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
+                détailsIndicateurs={détailsIndicateurs}
                 indicateur={indicateur}
                 indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
+                listeSousIndicateurs={listeSousIndicateurs}
                 typeDeRéforme={typeDeRéforme}
               />
             ) : null
