@@ -30,7 +30,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   chantierEstTerritorialisé,
   estDisponibleALImport = false,
   listeSousIndicateurs,
-}: IndicateurBlocProps) {
+}) => {
   const router = useRouter();
   const réformeId = router.query.id as string;
 
