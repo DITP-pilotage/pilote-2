@@ -7,7 +7,7 @@ interface Nouveautés {
 }
 
 export const ParametrageNouveautés: Nouveautés[] = [
- {
+  {
     version: 'Version 2.5.5',
     date: '23 juillet 2024',
     contenu : [
@@ -17,7 +17,6 @@ export const ParametrageNouveautés: Nouveautés[] = [
       'Centre d\'aide : Dans le but de favoriser une meilleure prise en main de l\'outil, la structure des articles et leur organisation ont été revues.',
     ],
     correctifs : [
-      ,
     ],
   },
   {
