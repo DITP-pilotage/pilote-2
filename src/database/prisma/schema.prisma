@@ -157,6 +157,7 @@ model indicateur {
   prochaine_date_maj                       DateTime?  @db.Date
   prochaine_date_maj_jours                 Int?
   est_a_jour                               Boolean?
+  tendance                                 String?
 
   @@id([id, code_insee, maille])
   @@schema("public")

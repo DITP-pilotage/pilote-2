@@ -90,6 +90,8 @@ export default class IndicateurRowBuilder {
 
   private _est_a_jour: indicateur['est_a_jour'];
 
+  private _tendance: indicateur['tendance'];
+
   constructor() {
     const indicateurGénéré = new IndicateurBuilder().build();
     const détailsIndicateurGénéré = new DétailsIndicateurBuilder().build();
@@ -138,6 +140,7 @@ export default class IndicateurRowBuilder {
     this._prochaine_date_maj = null;
     this._prochaine_date_maj_jours = null;
     this._est_a_jour = false;
+    this._tendance = détailsIndicateurGénéré.tendance;
   }
 
   avecId(id: indicateur['id']): IndicateurRowBuilder {
@@ -335,6 +338,11 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
+  avecTendance(tendance: indicateur['tendance']): IndicateurRowBuilder {
+    this._tendance = tendance;
+    return this;
+  }
+
   build(): indicateur {
     return {
       id: this._id,
@@ -377,6 +385,7 @@ export default class IndicateurRowBuilder {
       prochaine_date_maj: this._prochaine_date_maj,
       prochaine_date_maj_jours: this._prochaine_date_maj_jours,
       est_a_jour: this._est_a_jour,
+      tendance: this._tendance,
     };
   }
 }

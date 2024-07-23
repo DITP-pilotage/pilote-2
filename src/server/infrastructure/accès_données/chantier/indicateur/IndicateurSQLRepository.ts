@@ -80,6 +80,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         prochaineDateMaj: formatDate(indic.prochaine_date_maj),
         prochaineDateMajJours: indic.prochaine_date_maj_jours,
         estAJour: indic.est_a_jour,
+        tendance: indic.tendance,
       };
     }
 

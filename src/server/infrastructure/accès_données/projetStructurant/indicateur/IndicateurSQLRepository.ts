@@ -52,6 +52,7 @@ export default class IndicateurProjetStructurantSQLRepository implements Indicat
         prochaineDateMaj: null,
         prochaineDateMajJours: null,
         estAJour: null,
+        tendance: null,
       };
     }
 
