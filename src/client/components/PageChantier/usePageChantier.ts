@@ -141,7 +141,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
 
   const chantierTerritoireSélectionné = chantier?.mailles[territoireSélectionné?.maille ?? 'nationale'][territoireSélectionné?.codeInsee ?? 'FR'];
   const responsableLocal = chantierTerritoireSélectionné?.responsableLocal ?? [];
-  const coordinateurTerritorial = chantierTerritoireSélectionné?.coordinateurTerritorial ?? [];
+  const listeCoordinateursTerritorials = chantierTerritoireSélectionné?.coordinateurTerritorial ?? [];
 
   const territoireCode = territoireSélectionné?.code;
 
@@ -167,7 +167,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
     saisieIndicateurAutorisée,
     afficheLeBoutonFicheConducteur: afficheLeBoutonFicheConducteur as boolean,
     responsableLocal,
-    coordinateurTerritorial,
+    listeCoordinateursTerritorials,
     hrefBoutonRetour,
     estAutoriseAVoirLesAlertesMAJIndicateurs,
   };

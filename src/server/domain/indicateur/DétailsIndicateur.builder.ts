@@ -41,6 +41,8 @@ export default class DétailsIndicateurBuilder {
 
   private _pondération: DétailsIndicateur['pondération'];
 
+  private _tendance: DétailsIndicateur['tendance'];
+
   constructor() {
     const nombreDeValeurs = faker.datatype.number({ min: 28, max: 35 });
 
@@ -57,6 +59,7 @@ export default class DétailsIndicateurBuilder {
     this._est_applicable = générerPeutÊtreNull(0.2, faker.datatype.boolean());
     this._dateImport = new Date('2023-05-01T00:00:00.000Z').toISOString();
     this._pondération = faker.datatype.number({ min: 0, max: 100 });
+    this._tendance = générerPeutÊtreNull(0.1, faker.datatype.string(6).toUpperCase());
 
     const valeursEtDates = this.générerValeursEtDates(nombreDeValeurs, this._valeurInitiale, this._valeurCible);
 
@@ -140,6 +143,11 @@ export default class DétailsIndicateurBuilder {
     return this;
   }
 
+  avecTendance(tendance: DétailsIndicateur['tendance']): DétailsIndicateurBuilder {
+    this._tendance = tendance;
+    return this;
+  }
+
   build(): DétailsIndicateur {
     return {
       codeInsee: this._codeInsee,
@@ -161,6 +169,7 @@ export default class DétailsIndicateurBuilder {
       prochaineDateMaj: null,
       prochaineDateMajJours: null,
       estAJour: false,
+      tendance: this._tendance,
     };
   }
 

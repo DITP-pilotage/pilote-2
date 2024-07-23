@@ -13,16 +13,25 @@ import TitreInfobulleConteneur from '@/client/components/_commons/TitreInfobulle
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import Infobulle from '@/client/components/_commons/Infobulle/Infobulle';
 import BoutonSousLigné from '@/client/components/_commons/BoutonSousLigné/BoutonSousLigné';
-import ResponsablesPageProjetStructurant from './Responsables/Responsables';
+import ResponsablesProjetStructurant from './Responsables/ResponsablesProjetStructurant';
 import PageProjetStructurantProps from './PageProjetStructurant.interface';
 import PageProjetStructurantEnTête from './EnTête/EnTête';
 import PageProjetStructurantStyled from './PageProjetStructurant.styled';
 import AvancementPageProjetStructurant from './Avancement/Avancement';
 import usePageProjetStructurant from './usePageProjetStructurant';
 
-export default function PageProjetStructurant({ projetStructurant, indicateurs, détailsIndicateurs }: PageProjetStructurantProps) {
-  const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);  
-  const { synthèseDesRésultats, objectif, commentaires, modeÉcriture } = usePageProjetStructurant(projetStructurant.id, projetStructurant.territoire.code);
+export default function PageProjetStructurant({
+  projetStructurant,
+  indicateurs,
+  détailsIndicateurs,
+}: PageProjetStructurantProps) {
+  const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
+  const {
+    synthèseDesRésultats,
+    objectif,
+    commentaires,
+    modeÉcriture,
+  } = usePageProjetStructurant(projetStructurant.id, projetStructurant.territoire.code);
 
   return (
     <PageProjetStructurantStyled className='flex'>
@@ -59,7 +68,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
                   Avancement du projet
                 </Titre>
                 <Infobulle idHtml='infobulle-projetStructurant-avancement'>
-                  { INFOBULLE_CONTENUS.projetStructurant.avancements }
+                  {INFOBULLE_CONTENUS.projetStructurant.avancements}
                 </Infobulle>
               </TitreInfobulleConteneur>
               <AvancementPageProjetStructurant
@@ -77,7 +86,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
               >
                 Responsables
               </Titre>
-              <ResponsablesPageProjetStructurant 
+              <ResponsablesProjetStructurant
                 nomTerritoire={projetStructurant.territoire.nomAffiché}
                 responsables={projetStructurant.responsables}
               />
@@ -135,25 +144,25 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
           </section>
           {
             !!détailsIndicateurs && indicateurs.length > 0 &&
-              <section
-                className='rubrique fr-pb-4w'
-                id='indicateurs'
+            <section
+              className='rubrique fr-pb-4w'
+              id='indicateurs'
+            >
+              <Titre
+                baliseHtml='h2'
+                className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
               >
-                <Titre
-                  baliseHtml='h2'
-                  className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-                >
-                  Indicateurs
-                </Titre>
-                <Indicateurs
-                  chantierEstTerritorialisé={false}
-                  détailsIndicateurs={détailsIndicateurs}
-                  indicateurs={indicateurs}
-                  listeRubriquesIndicateurs={listeRubriquesIndicateursProjetStructurant}
-                  territoireProjetStructurant={projetStructurant.territoire}
-                  typeDeRéforme='projet structurant'
-                />
-              </section>
+                Indicateurs
+              </Titre>
+              <Indicateurs
+                chantierEstTerritorialisé={false}
+                détailsIndicateurs={détailsIndicateurs}
+                indicateurs={indicateurs}
+                listeRubriquesIndicateurs={listeRubriquesIndicateursProjetStructurant}
+                territoireProjetStructurant={projetStructurant.territoire}
+                typeDeRéforme='projet structurant'
+              />
+            </section>
           }
           <section
             className='rubrique fr-pb-4w'
