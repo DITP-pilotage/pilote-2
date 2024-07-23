@@ -73,6 +73,7 @@ get_evol_vaca as (
     date_pro_maj.prochaine_date_maj,
     date_pro_maj.prochaine_date_maj_jours,
     date_pro_maj.est_a_jour,
+	mpi.tendance,
     FALSE as a_supprimer
 	from public.territoire t 
 	cross join {{ ref('metadata_indicateurs') }} mi

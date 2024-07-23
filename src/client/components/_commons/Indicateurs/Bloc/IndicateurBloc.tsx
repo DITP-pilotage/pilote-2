@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { useRouter } from 'next/router';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
@@ -19,8 +19,9 @@ import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import api from '@/server/infrastructure/api/trpc/api';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
+import IndicateurTendance from './Tendances/IndicateurTendance';
 
-export default function IndicateurBloc({
+const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   indicateur,
   détailsIndicateur,
   estInteractif,
@@ -29,7 +30,7 @@ export default function IndicateurBloc({
   chantierEstTerritorialisé,
   estDisponibleALImport = false,
   estAutoriseAVoirLesAlertesMAJIndicateurs = false,
-}: IndicateurBlocProps) {
+}) => {
   const router = useRouter();
   const réformeId = router.query.id as string;
 
@@ -118,6 +119,11 @@ export default function IndicateurBloc({
                   ) : null
                 }
               </div>
+              { 
+                territoireSélectionné && détailsIndicateur[territoireSélectionné.codeInsee]?.tendance === 'BAISSE' ? (
+                  <IndicateurTendance />
+                ) : null
+              }
             </div>
             {
               estDisponibleALImport ? (
@@ -153,4 +159,6 @@ export default function IndicateurBloc({
       </Bloc>
     </IndicateurBlocStyled>
   );
-}
+};
+
+export default IndicateurBloc;

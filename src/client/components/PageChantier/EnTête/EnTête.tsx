@@ -2,20 +2,35 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';
 import '@gouvfr/dsfr/dist/dsfr.min.css';
 import Link from 'next/link';
+import { FunctionComponent } from 'react';
 import BoutonImpression from '@/components/_commons/BoutonImpression/BoutonImpression';
 import Titre from '@/components/_commons/Titre/Titre';
-import ResponsablesLigne from '@/components/_commons/ResponsablesLigne/ResponsablesLigne';
-import PageChantierEnTêteProps from './EnTête.interface';
+import { ResponsableRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 import PageChantierEnTêteStyled from './EnTête.styled';
+import ResponsableChantierEnTete from './EnTêteResponsables';
 
-export default function PageChantierEnTête({
+interface PageChantierEnTêteProps {
+  chantier: Chantier
+  hrefBoutonRetour: string
+  responsables?: ResponsableRapportDetailleContrat
+  afficheLeBoutonImpression?: boolean
+  afficheLeBoutonMiseAJourDonnee?: boolean
+  afficheLeBoutonFicheConducteur?: boolean
+}
+
+const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
   chantier,
   responsables,
   afficheLeBoutonImpression = false,
   afficheLeBoutonMiseAJourDonnee = false,
   afficheLeBoutonFicheConducteur = false,
   hrefBoutonRetour = '',
-}: PageChantierEnTêteProps) {
+}) => {
+
+  const listeNomsResponsablesMinistèrePorteur: string[] = [responsables?.porteur?.nom].filter(Boolean);
+  const listeNomsResponsablesAutresMinistèresCoPorteurs = (responsables?.coporteurs || []).map(coporteur => coporteur.nom).filter(Boolean);
+  const listeNomsDirecteursAdministrationCentrale = (responsables?.directeursAdminCentrale || []).map(directeurAdminCentrale => (`${directeurAdminCentrale.nom}  (${directeurAdminCentrale.direction})`)).filter(Boolean);
 
   return (
     <PageChantierEnTêteStyled className='fr-px-2w fr-px-md-2w fr-py-2w'>
@@ -32,39 +47,40 @@ export default function PageChantierEnTête({
       >
         {chantier.nom}
       </Titre>
-      <ResponsablesLigne
-        contenu={responsables?.porteur ? [responsables.porteur.nom] : []}
-        estEnTeteDePageChantier
+      <ResponsableChantierEnTete
         libellé='Ministère porteur'
+        listeNomsResponsables={listeNomsResponsablesMinistèrePorteur}
       />
-      <ResponsablesLigne
-        contenu={responsables?.coporteurs ? responsables?.coporteurs.map(coporteur => coporteur.nom) : []}
-        estEnTeteDePageChantier
+      <ResponsableChantierEnTete
         libellé='Autres ministères co-porteurs'
+        listeNomsResponsables={listeNomsResponsablesAutresMinistèresCoPorteurs}
       />
-      <ResponsablesLigne
-        contenu={responsables?.directeursAdminCentrale ? responsables.directeursAdminCentrale.map(directeur => (`${directeur.nom} (${directeur.direction})`)) : []}
-        estEnTeteDePageChantier
+      <ResponsableChantierEnTete
         libellé='Directeur(s) / directrice(s) d’Administration Centrale'
+        listeNomsResponsables={listeNomsDirecteursAdministrationCentrale}
       />
-      <div className='flex align-center fr-mt-2w'>
+      <div className='flex flex-direction-row justify-start align-center fr-mt-md-2w format-mobile'>
         {
           !!afficheLeBoutonMiseAJourDonnee &&
             <Link
-              className='fr-btn fr-btn--primary fr-mr-2w'
+              className='fr-btn fr-btn--primary fr-mr-md-2w format-mobile-bouton'
               href={`${chantier.id}/indicateurs`}
               title='Mettre à jour les données'
             >
               Mettre à jour les données
-            </Link>
+            </Link>   
         }
         {
-          !!afficheLeBoutonImpression && <BoutonImpression />
+          !!afficheLeBoutonImpression && (
+            <div className='format-mobile-bouton-impression'> 
+              <BoutonImpression />       
+            </div>
+          )
         }
         {
           afficheLeBoutonFicheConducteur ? (
             <Link
-              className='fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left fr-px-1w fr-px-md-2w fr-ml-2w'
+              className='fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left fr-px-1w fr-px-md-2w fr-ml-md-2w format-mobile-bouton'
               href={`${chantier.id}/fiche-conducteur`}
               title='Fiche conducteur'
             >
@@ -75,4 +91,6 @@ export default function PageChantierEnTête({
       </div>
     </PageChantierEnTêteStyled>
   );
-}
+};
+
+export default PageChantierEnTête;

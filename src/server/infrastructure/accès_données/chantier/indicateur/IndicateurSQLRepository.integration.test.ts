@@ -113,6 +113,7 @@ describe('IndicateurSQLRepository', () => {
           .avecEstApplicable(false)
           .avecDernierImportDateIndic(new Date('2023-03-01'))
           .avecPonderationZoneReel(51)
+          .avecTendance('HAUSSE')
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -133,6 +134,7 @@ describe('IndicateurSQLRepository', () => {
           .avecEstApplicable(false)
           .avecDernierImportDateIndic(new Date('2023-03-01'))
           .avecPonderationZoneReel(51)
+          .avecTendance('HAUSSE')
           .build(),
       ];
 
@@ -168,6 +170,7 @@ describe('IndicateurSQLRepository', () => {
               prochaineDateMaj: null,
               prochaineDateMajJours: null,
               estAJour: false,
+              tendance: 'HAUSSE',
             },
             '03': {
               codeInsee: '03',
@@ -192,6 +195,7 @@ describe('IndicateurSQLRepository', () => {
               prochaineDateMaj: null,
               prochaineDateMajJours: null,
               estAJour: false,
+              tendance: 'HAUSSE',
             },
           },
         },
@@ -237,6 +241,7 @@ describe('IndicateurSQLRepository', () => {
           .avecProchaineDateMaj(new Date('2023-03-01'))
           .avecProchaineDateMajJours(51)
           .avecEstAJour(false)
+          .avecTendance('HAUSSE')
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -260,6 +265,7 @@ describe('IndicateurSQLRepository', () => {
           .avecProchaineDateMaj(new Date('2023-03-01'))
           .avecProchaineDateMajJours(51)
           .avecEstAJour(false)
+          .avecTendance('HAUSSE')
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -283,6 +289,7 @@ describe('IndicateurSQLRepository', () => {
           .avecProchaineDateMaj(new Date('2023-03-01'))
           .avecProchaineDateMajJours(51)
           .avecEstAJour(false)
+          .avecTendance('HAUSSE')
           .build(),
       ];
 
@@ -318,6 +325,7 @@ describe('IndicateurSQLRepository', () => {
               prochaineDateMaj: '2023-03-01T00:00:00.000Z',
               prochaineDateMajJours: 51,
               estAJour: false,
+              tendance: 'HAUSSE',
             },
           },
           'IND-002': {
@@ -344,6 +352,7 @@ describe('IndicateurSQLRepository', () => {
               prochaineDateMaj: '2023-03-01T00:00:00.000Z',
               prochaineDateMajJours: 51,
               estAJour: false,
+              tendance: 'HAUSSE',
             },
             '03': {
               codeInsee: '03',
@@ -368,6 +377,7 @@ describe('IndicateurSQLRepository', () => {
               prochaineDateMaj: '2023-03-01T00:00:00.000Z',
               prochaineDateMajJours: 51,
               estAJour: false,
+              tendance: 'HAUSSE',
             },
           },
         },
@@ -387,6 +397,7 @@ describe('IndicateurSQLRepository', () => {
           .avecUnité('cm')
           .avecEstApplicable(false)
           .avecPonderationZoneReel(51)
+          .avecTendance('HAUSSE')
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -405,6 +416,7 @@ describe('IndicateurSQLRepository', () => {
           .avecEstApplicable(false)
           .avecDernierImportDateIndic(new Date('2023-03-01'))
           .avecPonderationZoneReel(51)
+          .avecTendance('HAUSSE')
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -428,6 +440,7 @@ describe('IndicateurSQLRepository', () => {
           .avecProchaineDateMaj(new Date('2023-03-01'))
           .avecProchaineDateMajJours(51)
           .avecEstAJour(false)
+          .avecTendance('HAUSSE')
           .build(),
       ];
 
@@ -463,6 +476,7 @@ describe('IndicateurSQLRepository', () => {
               prochaineDateMaj: '2023-03-01T00:00:00.000Z',
               prochaineDateMajJours: 51,
               estAJour: false,
+              tendance: 'HAUSSE',
             },
           },
         },
@@ -714,6 +728,7 @@ describe('IndicateurSQLRepository', () => {
           .avecProchaineDateMaj(new Date('2023-03-01'))
           .avecProchaineDateMajJours(51)
           .avecEstAJour(false)
+          .avecTendance('HAUSSE')
           .build(),
       ];
 
@@ -749,6 +764,7 @@ describe('IndicateurSQLRepository', () => {
               prochaineDateMaj: '2023-03-01T00:00:00.000Z',
               prochaineDateMajJours: 51,
               estAJour: false,
+              tendance: 'HAUSSE',
             },
           },
         },
@@ -783,6 +799,7 @@ describe('IndicateurSQLRepository', () => {
           .avecProchaineDateMaj(new Date('2023-03-01'))
           .avecProchaineDateMajJours(51)
           .avecEstAJour(false)
+          .avecTendance('HAUSSE')
           .build(),
       ];
 
@@ -818,6 +835,7 @@ describe('IndicateurSQLRepository', () => {
               prochaineDateMaj: '2023-03-01T00:00:00.000Z',
               prochaineDateMajJours: 51,
               estAJour: false,
+              tendance: 'HAUSSE',
             },
           },
         },

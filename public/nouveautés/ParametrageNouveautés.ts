@@ -8,7 +8,19 @@ interface Nouveautés {
 
 export const ParametrageNouveautés: Nouveautés[] = [
   {
-    version: 'Version 2.4.9',
+    version: 'Version 2.5.5',
+    date: '23 juillet 2024',
+    contenu : [
+      'Page PPG : Amélioration de la prise de contact dans PILOTE. Après plusieurs retours de la part des utilisateurs, nous avons décidé d\'améliorer la fonctionnalité permettant d\'entrer en contact avec les responsables de chaque PPG. Un nouveau bouton "Contacter" vous permet de générer un courrier électronique directement à destination du directeur de projet, du responsable local ou du coordinateur PILOTE du territoire.',
+      'Page PPG : Pour les indicateurs de chaque PPG, dans le cas où l\'objectif d\'un indicateur doit tendre vers une baisse, cela est désormais précisé sous le titre de chaque indicateur avec une icône flèche spécifique.',
+      'Rapport détaillé : Le rapport détaillé poursuit sa mue ! Les PPG sont dorénavant triées par ordre décroissant, à l\'instar de la page d\'accueil de PILOTE. Les filtres apparaissent également désormais sur la page de couverture de la version PDF du rapport. De plus, les icônes des ministères ont également été ajoutées. De futures améliorations sont également à venir concernant la disposition des pages.', 
+      'Centre d\'aide : Dans le but de favoriser une meilleure prise en main de l\'outil, la structure des articles et leur organisation ont été revues.',
+    ],
+    correctifs : [
+    ],
+  },
+  {
+    version: 'Version 2.5.4',
     date: '11 juillet 2024',
     contenu : [
       'Export des données : Pour faciliter les exports des données au format .csv, les filtres "Chantiers du baromètre" et "Chantiers territorialisés" sont désormais pris en compte séparément lors de la création d\'un export avec filtre. Il est désormais possible de télécharger un export appliquant les filtres séparément et permettant l\'export de l\'ensemble des chantiers du baromètre ou l\'ensemble des chantiers territorialisés (et non les chantiers correspondant à ces deux conditions, comme appliqué auparavant).',
@@ -19,7 +31,7 @@ export const ParametrageNouveautés: Nouveautés[] = [
     ],
   },
   {
-    version: 'Version 2.4.8',
+    version: 'Version 2.5.3',
     date: '2 juillet 2024',
     contenu : [
       'Alertes et PPG signalées : modification du mode de calcul pour l\'alerte concernant les écarts à la moyenne nationale. Le calcul de cette alerte a été modifié, et prend en compte désormais les PPG ayant un écart égal ou supérieur à 10 points avec le taux d\'avancement territorial médian.',
@@ -31,7 +43,7 @@ export const ParametrageNouveautés: Nouveautés[] = [
     ],
   },
   {
-    version: 'Version 2.4.7',
+    version: 'Version 2.5.2',
     date: '11 juin 2024',
     contenu : [
       'Bienvenue sur cette nouvelle page Nouveautés ! Dorénavant, vous retrouverez ici l\'ensemble des informations sur les évolutions de PILOTE et les dernières fonctionnalités disponibles ! Une pastille rouge visible depuis la page d\'accueil vous indique lorsque des mises à jour de cette page ont été réalisées',
@@ -43,7 +55,7 @@ export const ParametrageNouveautés: Nouveautés[] = [
       'Rapport détaillé : correction de l\'affichage des objectifs des PPG.',
     ],
   }, {
-    version: 'Version 2.4.6',
+    version: 'Version 2.5.1',
     date: '29 mai 2024',
     contenu : [
       'La fonctionnalité Chantiers signalés est désormais disponible. Elle vous permet d\'identifier rapidement les Politiques prioritaires du Gouvernement nécessitant une attention particulière et, le cas échéant, la mise en place de mesures adéquates afin de garantir la réussite de leur déploiement sur votre territoire. Plus d\'informations à venir dans le centre d\'aide prochainement.',

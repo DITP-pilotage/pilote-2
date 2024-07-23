@@ -36,6 +36,7 @@ import TableauChantiersTuileMinistèreProps from './Tuile/Ministère/TableauChan
 
 
 export default function useTableauChantiers(données: TableauChantiersProps['données'], ministèresDisponibles: Ministère[]) {
+    
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
   const [tri, setTri] = useState<SortingState>([{ id: 'avancement', desc: false }]);
   const [sélectionColonneÀTrier, setSélectionColonneÀTrier] = useState<string>('avancement');

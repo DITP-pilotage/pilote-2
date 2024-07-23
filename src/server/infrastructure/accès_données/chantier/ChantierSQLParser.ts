@@ -138,8 +138,8 @@ export function parseChantier(
       directeursAdminCentrale: [],
       directeursProjet: [],
     },
-    estBaromètre: Boolean(chantierMailleNationale.est_barometre),
-    estTerritorialisé: Boolean(chantierMailleNationale.est_territorialise),
+    estBaromètre: !!chantierMailleNationale.est_barometre,
+    estTerritorialisé: !!chantierMailleNationale.est_territorialise,
     tauxAvancementDonnéeTerritorialisée: {
       'départementale': !!chantierMailleNationale.a_taux_avancement_departemental,
       'régionale': !!chantierMailleNationale.a_taux_avancement_regional,

@@ -145,6 +145,8 @@ models:
         description: "Nombre de jours avant la prochaine mise à jour théorique de l'indicateur. Peut être négatif si la mise à jour est en retard."
       - name: est_a_jour
         description: "Indique si les données sont à jour par rapport à la périodicité théorique déclarée de mise à jour."
+      - name: tendance
+        description : "Indique si l'indicateur a une tendance en hausse ou en baisse (valeur HAUSSE / BAISSE)"
   - name: decision_strategique
     columns:
       - name: id

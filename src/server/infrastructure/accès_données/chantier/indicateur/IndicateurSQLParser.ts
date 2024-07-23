@@ -33,6 +33,7 @@ function créerDonnéesTerritoires(territoires: territoire[], indicateurRows: in
       prochaineDateMaj: indicateurRow?.prochaine_date_maj_jours?.toLocaleString() ?? null,
       prochaineDateMajJours: indicateurRow?.prochaine_date_maj_jours ?? null,
       estAJour: indicateurRow?.est_a_jour ?? null,
+      tendance: indicateurRow?.tendance ?? null,
     };
   });
 

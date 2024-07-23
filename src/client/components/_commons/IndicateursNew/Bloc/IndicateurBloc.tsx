@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { useRouter } from 'next/router';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
@@ -15,10 +15,11 @@ import ResultatValidationFichier
   from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
 import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { IndicateurPondération } from '@/components/_commons/IndicateursNew/Bloc/Pondération/IndicateurPondération';
+import IndicateurTendance from '@/client/components/_commons/IndicateursNew/Bloc/Tendance/IndicateurTendance';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 
-export default function IndicateurBloc({
+const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   indicateur,
   détailsIndicateur,
   estInteractif,
@@ -27,7 +28,7 @@ export default function IndicateurBloc({
   typeDeRéforme,
   chantierEstTerritorialisé,
   estDisponibleALImport = false,
-}: IndicateurBlocProps) {
+}) => {
   const router = useRouter();
   const réformeId = router.query.id as string;
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
@@ -78,6 +79,11 @@ export default function IndicateurBloc({
                     />
                   ) : null
                 }
+                { 
+                  territoireSélectionné && détailsIndicateur[territoireSélectionné.codeInsee]?.tendance === 'BAISSE' ? (
+                    <IndicateurTendance />
+                  ) : null
+                }
               </div>
             </div>
             {
@@ -114,4 +120,6 @@ export default function IndicateurBloc({
       </Bloc>
     </IndicateurBlocStyled>
   );
-}
+};
+
+export default IndicateurBloc;

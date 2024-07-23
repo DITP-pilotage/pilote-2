@@ -39,6 +39,7 @@ const indicateurDétailsVide = {
     prochaineDateMaj: null,
     prochaineDateMajJours: null,
     estAJour: null,
+    tendance: null,
   },
 };
 
