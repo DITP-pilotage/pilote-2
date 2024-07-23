@@ -1,4 +1,3 @@
-import { useSession } from 'next-auth/react';
 import Titre from '@/components/_commons/Titre/Titre';
 import IndicateursProps from '@/components/_commons/Indicateurs/Indicateurs.interface';
 import IndicateurBloc from '@/components/_commons/Indicateurs/Bloc/IndicateurBloc';
@@ -7,7 +6,6 @@ import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import api from '@/server/infrastructure/api/trpc/api';
-import { PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS } from './Bloc/useIndicateurAlerteDateMaj';
 
 export default function Indicateurs({
   indicateurs,
@@ -18,13 +16,11 @@ export default function Indicateurs({
   chantierEstTerritorialisé,
   estDisponibleALImport = false,
   estInteractif = true,
+  estAutoriseAVoirLesAlertesMAJIndicateurs = false,
 }: IndicateursProps) {
   const CodeInseeSélectionnée = territoireSélectionnéTerritoiresStore()?.codeInsee;
 
   const { data: alerteMiseAJourIndicateurEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR' });
-  const { data: session } = useSession();
-  
-  const estAutoriseAVoirLesAlertesMAJIndicateurs = PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS.has(session!.profil);
 
   const alerteMiseAJourIndicateur = estAutoriseAVoirLesAlertesMAJIndicateurs && !!alerteMiseAJourIndicateurEstDisponible && Object.values(détailsIndicateurs).flatMap(values => Object.values(values)).reduce((acc, val) => {
     return val.estAJour === false || val.prochaineDateMaj === null && val.dateValeurActuelle !== null && (val.pondération || 0) > 0 ? true : acc;
@@ -33,8 +29,6 @@ export default function Indicateurs({
   if (indicateurs.length === 0) {
     return null;
   }
-
-  const listeIndicateursParent = indicateurs.filter(indicateur => !indicateur.parentId);
 
   return (
     <IndicateursStyled>
@@ -50,7 +44,7 @@ export default function Indicateurs({
       }
       {
         listeRubriquesIndicateurs.map(rubriqueIndicateur => {
-          const indicateursDeCetteRubrique = listeIndicateursParent.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
+          const indicateursDeCetteRubrique = indicateurs.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
 
           if (indicateursDeCetteRubrique.length > 0) {
             return (
@@ -71,12 +65,12 @@ export default function Indicateurs({
                     .map(indicateur => (
                       <IndicateurBloc
                         chantierEstTerritorialisé={chantierEstTerritorialisé}
-                        détailsIndicateurs={détailsIndicateurs}
+                        détailsIndicateur={détailsIndicateurs[indicateur.id]}
+                        estAutoriseAVoirLesAlertesMAJIndicateurs={estAutoriseAVoirLesAlertesMAJIndicateurs}
                         estDisponibleALImport={estDisponibleALImport}
                         estInteractif={estInteractif}
                         indicateur={indicateur}
                         key={indicateur.id}
-                        listeSousIndicateurs={indicateurs.filter(ind => ind.parentId === indicateur.id)}
                         territoireProjetStructurant={territoireProjetStructurant}
                         typeDeRéforme={typeDeRéforme}
                       />

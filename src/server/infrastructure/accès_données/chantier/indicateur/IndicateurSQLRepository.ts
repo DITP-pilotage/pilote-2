@@ -43,7 +43,6 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       source: indicateur.source,
       modeDeCalcul: indicateur.mode_de_calcul,
       unité: indicateur.unite_mesure,
-      parentId: indicateur.parent_id,
     });
   }
 

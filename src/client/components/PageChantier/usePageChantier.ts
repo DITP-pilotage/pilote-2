@@ -26,6 +26,8 @@ import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { convertitEnPondération } from '@/client/utils/ponderation/ponderation';
 
+const PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS = new Set(['DITP_ADMIN', 'DITP_PILOTAGE', 'SECRETARIAT_GENERAL', 'DIR_PROJET', 'EQUIPE_DIR_PROJET']);
+
 export default function usePageChantier(chantierId: string, indicateurs: Indicateur[]) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
@@ -146,6 +148,8 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
   const queryParamString = getQueryParamString(getFiltresActifs());
   const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
 
+  const estAutoriseAVoirLesAlertesMAJIndicateurs = PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS.has(session!.profil);
+
   return {
     détailsIndicateurs: détailsIndicateurs ?? null,
     commentaires: commentaires ? commentaires[chantierId] as Commentaire[] : null,
@@ -165,5 +169,6 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
     responsableLocal,
     listeCoordinateursTerritorials,
     hrefBoutonRetour,
+    estAutoriseAVoirLesAlertesMAJIndicateurs,
   };
 }

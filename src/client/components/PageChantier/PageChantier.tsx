@@ -54,6 +54,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
     responsableLocal,
     listeCoordinateursTerritorials,
     hrefBoutonRetour,
+    estAutoriseAVoirLesAlertesMAJIndicateurs,
   } = usePageChantier(chantierId, indicateurs);
   // TODO Mettre dans getServerSideProps !
 
@@ -258,6 +259,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                         <Indicateurs
                           chantierEstTerritorialisé={chantier.estTerritorialisé}
                           détailsIndicateurs={détailsIndicateurs}
+                          estAutoriseAVoirLesAlertesMAJIndicateurs={estAutoriseAVoirLesAlertesMAJIndicateurs}
                           indicateurs={indicateurs}
                           listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
                           typeDeRéforme='chantier'

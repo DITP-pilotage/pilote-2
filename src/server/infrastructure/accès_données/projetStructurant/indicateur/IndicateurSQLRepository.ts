@@ -21,7 +21,6 @@ export default class IndicateurProjetStructurantSQLRepository implements Indicat
       source: indicateur.source,
       modeDeCalcul: indicateur.mode_de_calcul,
       unité: null,
-      parentId: null,
     };
   }
 

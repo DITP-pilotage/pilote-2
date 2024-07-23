@@ -34,7 +34,6 @@ get_evol_vaca as (
 -- Jointure avec les tables référentielles	
 	select 
 	mi.indic_id as id,
-	mi.indic_parent_indic as parent_id, 
 	mi.indic_nom as nom,
 	mi.indic_parent_ch as chantier_id,
 	gvcg.vcg as objectif_valeur_cible,

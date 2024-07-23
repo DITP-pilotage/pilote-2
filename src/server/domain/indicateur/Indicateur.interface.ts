@@ -12,5 +12,4 @@ export default interface Indicateur {
   source: string | null;
   modeDeCalcul: string | null;
   unité: string | null;
-  parentId: string | null;
 }
