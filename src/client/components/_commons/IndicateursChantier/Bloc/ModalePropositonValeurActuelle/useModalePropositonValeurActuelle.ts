@@ -17,20 +17,40 @@ interface PropositionValeurActuelleForm {
   territoireCode: string
 }
 
+export enum EtapePropositionValeurActuelle {
+  SAISIE_VALEUR_ACTUELLE = 'SAISIE_VALEUR_ACTUELLE',
+  VALIDATION_VALEUR_ACTUELLE = 'VALIDATION_VALEUR_ACTUELLE',
+}
+
+export const Stepper: Record<EtapePropositionValeurActuelle[keyof EtapePropositionValeurActuelle & number], {
+  numeroEtape: number,
+  titre: string,
+  etapeSuivante: string | null
+}> = {
+  [EtapePropositionValeurActuelle.SAISIE_VALEUR_ACTUELLE]: {
+    numeroEtape: 1,
+    titre: 'Saisie de la proposition',
+    etapeSuivante: 'Validation de la proposition',
+  },
+  [EtapePropositionValeurActuelle.VALIDATION_VALEUR_ACTUELLE]: {
+    numeroEtape: 2,
+    titre: 'Validation de la proposition',
+    etapeSuivante: null,
+  },
+};
+
 const useModalePropositonValeurActuelle = ({ detailIndicateur, indicateur }: {
   indicateur: Indicateur,
   detailIndicateur: DétailsIndicateur
 }) => {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
-  const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
+  const [etapePropositionValeurActuelle, setEtapePropositionValeurActuelle] = useState<EtapePropositionValeurActuelle | null>(EtapePropositionValeurActuelle.SAISIE_VALEUR_ACTUELLE);
+
 
   const mutationCreerPropositonValeurActuelle = api.propositionValeurActuelle.creer.useMutation({
     onSuccess: () => {
-      setSubmitSuccess(true);
-    },
-    onError: error => {
-      console.log(error);
+      setEtapePropositionValeurActuelle(null);
     },
   });
 
@@ -51,10 +71,17 @@ const useModalePropositonValeurActuelle = ({ detailIndicateur, indicateur }: {
   const reactHookForm = useForm<PropositionValeurActuelleForm>({
     mode: 'all',
     resolver: zodResolver(validationPropositionValeurActuelle),
-    defaultValues: {
+    defaultValues: detailIndicateur.proposition === null ? {
       valeurActuelle: `${detailIndicateur.valeurActuelle}`,
       motifProposition: '',
       sourceDonneeEtMethodeCalcul: '',
+      dateValeurActuelle: detailIndicateur.dateValeurActuelle!,
+      indicId: indicateur.id,
+      territoireCode: territoireSélectionné?.code!,
+    } : {
+      valeurActuelle: `${detailIndicateur.proposition.valeurActuelle}`,
+      motifProposition: detailIndicateur.proposition.motif || '',
+      sourceDonneeEtMethodeCalcul: detailIndicateur.proposition.sourceDonneeEtMethodeCalcul || '',
       dateValeurActuelle: detailIndicateur.dateValeurActuelle!,
       indicId: indicateur.id,
       territoireCode: territoireSélectionné?.code!,
@@ -64,7 +91,8 @@ const useModalePropositonValeurActuelle = ({ detailIndicateur, indicateur }: {
   return {
     reactHookForm,
     creerPropositonValeurActuelle,
-    submitSuccess,
+    etapePropositionValeurActuelle,
+    setEtapePropositionValeurActuelle,
   };
 };
 

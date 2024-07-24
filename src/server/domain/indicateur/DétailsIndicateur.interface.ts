@@ -7,6 +7,16 @@ export type DétailsIndicateurTerritoire = Record<CodeInsee, DétailsIndicateur>
 export type DétailsIndicateurMailles = Record<Maille, DétailsIndicateurTerritoire>;
 export type DétailsIndicateurs = Record<Indicateur['id'], DétailsIndicateurTerritoire>;
 
+interface DetailIndicateurPropositionValeurActuelle {
+  valeurActuelle: number
+  tauxAvancement: number | null
+  tauxAvancementIntermediaire: number | null
+  auteur: string | null
+  dateProposition: Date | null
+  motif: string | null
+  sourceDonneeEtMethodeCalcul: string | null
+}
+
 export type DétailsIndicateur = {
   codeInsee: string,
   valeurInitiale: number | null,
@@ -14,13 +24,13 @@ export type DétailsIndicateur = {
   valeurs: number[],
   dateValeurs: string[],
   valeurActuelle: number | null,
-  valeurActuelleProposee: number | null,
   dateValeurActuelle: string | null,
   valeurCible: number | null,
   dateValeurCible: string | null,
   valeurCibleAnnuelle: number | null,
   dateValeurCibleAnnuelle: string | null,
   avancement: Avancement,
+  proposition: DetailIndicateurPropositionValeurActuelle | null,
   unité: string | null,
   est_applicable: boolean | null,
   dateImport: string | null,

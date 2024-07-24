@@ -23,6 +23,8 @@ import IndicateurBlocIndicateurTuile
   from '@/components/_commons/IndicateursChantier/Bloc/indicateurBlocIndicateurTuile';
 import ModalePropositonValeurActuelle
   from '@/components/_commons/IndicateursChantier/Bloc/ModalePropositonValeurActuelle/ModalePropositonValeurActuelle';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import { formaterDate } from '@/client/utils/date/date';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 
@@ -50,8 +52,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
   const territoiresComparés = territoiresComparésTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-
-  console.log(détailsIndicateur)
 
   const {
     dateDeMiseAJourIndicateur,
@@ -189,32 +189,32 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 </thead>
                 <tbody>
                   {
-                  informationsIndicateurs.map(value => {
+                  informationsIndicateurs.map(informationIndicateur => {
                     return (
-                      <Fragment key={value.territoireNom}>
-                        <tr key={value.territoireNom}>
+                      <Fragment key={informationIndicateur.territoireNom}>
+                        <tr key={informationIndicateur.territoireNom}>
                           <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm'>
-                            {value.territoireNom}
+                            {informationIndicateur.territoireNom}
                           </td>
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
                             <ValeurEtDate
-                              date={value.données.dateValeurInitiale}
-                              unité={value.données.unité}
-                              valeur={value.données.valeurInitiale}
+                              date={informationIndicateur.données.dateValeurInitiale}
+                              unité={informationIndicateur.données.unité}
+                              valeur={informationIndicateur.données.valeurInitiale}
                             />
                           </td>
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
                             <ValeurEtDate
-                              date={value.données.dateValeurActuelle}
-                              unité={value.données.unité}
-                              valeur={value.données.valeurActuelle}
+                              date={informationIndicateur.données.dateValeurActuelle}
+                              unité={informationIndicateur.données.unité}
+                              valeur={informationIndicateur.données.valeurActuelle}
                             />
                           </td>
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
                             <ValeurEtDate
-                              date={value.données.dateValeurCibleAnnuelle}
-                              unité={value.données.unité}
-                              valeur={value.données.valeurCibleAnnuelle}
+                              date={informationIndicateur.données.dateValeurCibleAnnuelle}
+                              unité={informationIndicateur.données.unité}
+                              valeur={informationIndicateur.données.valeurCibleAnnuelle}
                             />
                           </td>
                           <td className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm'>
@@ -223,15 +223,15 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               fond='gris-clair'
                               positionTexte='dessus'
                               taille='md'
-                              valeur={value.données.avancement.annuel}
+                              valeur={informationIndicateur.données.avancement.annuel}
                               variante='secondaire'
                             />
                           </td>
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
                             <ValeurEtDate
-                              date={value.données.dateValeurCible}
-                              unité={value.données.unité}
-                              valeur={value.données.valeurCible}
+                              date={informationIndicateur.données.dateValeurCible}
+                              unité={informationIndicateur.données.unité}
+                              valeur={informationIndicateur.données.valeurCible}
                             />
                           </td>
                           <td className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm'>
@@ -240,19 +240,19 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               fond='gris-clair'
                               positionTexte='dessus'
                               taille='md'
-                              valeur={value.données.avancement.global}
+                              valeur={informationIndicateur.données.avancement.global}
                               variante='primaire'
                             />
                           </td>
                         </tr>
                         {
-                          estAutoriseAVoirLesPropositionsDeValeurActuelle ? (
+                          estAutoriseAVoirLesPropositionsDeValeurActuelle && informationIndicateur.données.proposition === null ? (
                             <tr className='ligne-creation-proposition-valeur-actuelle'>
                               <td colSpan={7}>
                                 <div className='flex w-full justify-end'>
                                   <button
                                     aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
-                                    className='fr-btn fr-btn--secondary'
+                                    className='fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary'
                                     data-fr-opened='false'
                                     type='button'
                                   >
@@ -260,12 +260,110 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   </button>
                                 </div>
                                 <ModalePropositonValeurActuelle
-                                  detailIndicateur={value.données}
+                                  detailIndicateur={informationIndicateur.données}
                                   generatedHTMLID={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
                                   indicateur={indicateur}
                                 />
                               </td>
                             </tr>
+                          ) : informationIndicateur.données.proposition !== null ? (
+                            <>
+                              <tr
+                                className='ligne-modification-proposition-valeur-actuelle'
+                                key={informationIndicateur.territoireNom}
+                              >
+                                <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm flex align-center'>
+                                  <span className='texte-proposition'>
+                                    Proposition du territoire
+                                  </span>
+                                  <Infobulle idHtml='infobulle-chantiers-jauges'>
+                                    <p className='texte-proposition'>
+                                      Valeur actuelle proposée
+                                      le
+                                      {' '}
+                                      {formaterDate(informationIndicateur.données.proposition.dateProposition?.toISOString(), 'DD/MM/YYYY')}
+                                      {' '}
+                                      par
+                                      {' '}
+                                      {informationIndicateur.données.proposition.auteur}
+                                    </p>
+                                    <p>
+                                      {informationIndicateur.données.proposition.motif}
+                                    </p>
+                                    <p>
+                                      {informationIndicateur.données.proposition.sourceDonneeEtMethodeCalcul}
+                                    </p>
+                                  </Infobulle>
+                                </td>
+                                <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                                  <ValeurEtDate
+                                    date={informationIndicateur.données.dateValeurInitiale}
+                                    unité={informationIndicateur.données.unité}
+                                    valeur={informationIndicateur.données.valeurInitiale}
+                                  />
+                                </td>
+                                <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition'>
+                                  <ValeurEtDate
+                                    date={informationIndicateur.données.dateValeurActuelle}
+                                    unité={informationIndicateur.données.unité}
+                                    valeur={informationIndicateur.données.proposition.valeurActuelle}
+                                  />
+                                </td>
+                                <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                                  <ValeurEtDate
+                                    date={informationIndicateur.données.dateValeurCibleAnnuelle}
+                                    unité={informationIndicateur.données.unité}
+                                    valeur={informationIndicateur.données.valeurCibleAnnuelle}
+                                  />
+                                </td>
+                                <td className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm texte-proposition'>
+                                  <BarreDeProgression
+                                    afficherTexte
+                                    fond='gris-clair'
+                                    positionTexte='dessus'
+                                    taille='md'
+                                    valeur={informationIndicateur.données.proposition.tauxAvancementIntermediaire}
+                                    variante='primaire-light'
+                                  />
+                                </td>
+                                <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                                  <ValeurEtDate
+                                    date={informationIndicateur.données.dateValeurCible}
+                                    unité={informationIndicateur.données.unité}
+                                    valeur={informationIndicateur.données.valeurCible}
+                                  />
+                                </td>
+                                <td className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm texte-proposition'>
+                                  <BarreDeProgression
+                                    afficherTexte
+                                    fond='gris-clair'
+                                    positionTexte='dessus'
+                                    taille='md'
+                                    valeur={informationIndicateur.données.proposition.tauxAvancement}
+                                    variante='primaire-light'
+                                  />
+                                </td>
+                              </tr>
+                              <tr className='ligne-modification-proposition-valeur-actuelle'>
+                                <td colSpan={7}>
+                                  <div className='flex w-full justify-end'>
+                                    <button
+                                      aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
+                                      className='fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary'
+                                      data-fr-opened='false'
+                                      type='button'
+                                    >
+                                      Editer la proposition
+                                    </button>
+                                  </div>
+                                  <ModalePropositonValeurActuelle
+                                    detailIndicateur={informationIndicateur.données}
+                                    generatedHTMLID={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
+                                    indicateur={indicateur}
+                                  />
+                                </td>
+                              </tr>
+                            </>
                           ) : null
                         }
                       </Fragment>

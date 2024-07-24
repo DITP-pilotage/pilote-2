@@ -92,6 +92,16 @@ const BarreDeProgressionStyled = styled.div`
         }
       }
 
+      &.progress--primaire-light {
+        &::-moz-progress-bar {
+          background-color: var(--text-default-info);
+        } 
+        
+        &::-webkit-progress-value {
+          background-color: var(--text-default-info);
+        }
+      }
+
       &.progress--secondaire {
         &::-moz-progress-bar {
           background-color: var(--grey-625-425);

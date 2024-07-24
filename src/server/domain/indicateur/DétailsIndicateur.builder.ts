@@ -164,6 +164,7 @@ export default class DétailsIndicateurBuilder {
       avancement: this._avancement,
       unité: this._unité,
       est_applicable: this._est_applicable,
+      proposition: null,
       dateImport: this._dateImport,
       pondération: this._pondération,
       prochaineDateMaj: null,
