@@ -51,6 +51,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   const territoiresComparés = territoiresComparésTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
+  console.log(détailsIndicateur)
+
   const {
     dateDeMiseAJourIndicateur,
     dateProchaineDateMaj,
@@ -146,12 +148,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
           </div>
           {
             estVueTuile ? (
-              informationsIndicateurs.map(value => (
-                <Fragment key={value.territoireNom}>
+              informationsIndicateurs.map(informationIndicateur => (
+                <Fragment key={informationIndicateur.territoireNom}>
                   <IndicateurBlocIndicateurTuile
-                    indicateurDétailsParTerritoire={value}
+                    indicateurDétailsParTerritoire={informationIndicateur}
                     typeDeRéforme='chantier'
-                    unité={value.données.unité}
+                    unité={informationIndicateur.données.unité}
                   />
                 </Fragment>
               ))

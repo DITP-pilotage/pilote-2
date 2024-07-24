@@ -14,6 +14,7 @@ export type DétailsIndicateur = {
   valeurs: number[],
   dateValeurs: string[],
   valeurActuelle: number | null,
+  valeurActuelleProposee: number | null,
   dateValeurActuelle: string | null,
   valeurCible: number | null,
   dateValeurCible: string | null,

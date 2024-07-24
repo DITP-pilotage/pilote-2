@@ -65,6 +65,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         valeurs: indic.evolution_valeur_actuelle ?? [],
         dateValeurs: indic.evolution_date_valeur_actuelle.map((date) => date.toISOString()) ?? [],
         valeurActuelle: indic.valeur_actuelle,
+        valeurActuelleProposee: indic.valeur_actuelle_propose,
         dateValeurActuelle: formatDate(indic.date_valeur_actuelle),
         valeurCible: indic.objectif_valeur_cible,
         dateValeurCible: formatDate(indic.objectif_date_valeur_cible),
@@ -72,7 +73,9 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         dateValeurCibleAnnuelle: IntermediaireEstAnnéeEnCours ? formatDate(indic.objectif_date_valeur_cible_intermediaire) : null,
         avancement: {
           global: indic.objectif_taux_avancement,
+          globalPropose: indic.objectif_taux_avancement_propose,
           annuel: IntermediaireEstAnnéeEnCours ? indic.objectif_taux_avancement_intermediaire : null,
+          annuelPropose: IntermediaireEstAnnéeEnCours ? indic.objectif_taux_avancement_intermediaire_propose : null,
         },
         unité: indic.unite_mesure,
         est_applicable: indic.est_applicable,

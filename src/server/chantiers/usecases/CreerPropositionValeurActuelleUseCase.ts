@@ -2,6 +2,7 @@ import {
   PropositionValeurActuelleRepository,
 } from '@/server/chantiers/domain/ports/PropositionValeurActuelleRepository';
 import { PropositionValeurActuelle } from '@/server/chantiers/domain/PropositionValeurActuelle';
+import { StatutProposition } from '@/server/chantiers/domain/StatutProposition';
 
 interface Dependencies {
   propositionValeurActuelleRepository: PropositionValeurActuelleRepository
@@ -35,7 +36,7 @@ export class CreerPropositionValeurActuelleUseCase {
     dateProposition: Date,
     motifProposition: string,
     sourceDonneeEtMethodeCalcul: string,
-    statut: string
+    statut: StatutProposition
   }) {
     const propositionValeurActuelle = PropositionValeurActuelle.creerPropositionValeurActuelle({
       indicId,

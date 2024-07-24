@@ -40,8 +40,8 @@ export const MetadataIndicateurChamp = ({
       {
         estEnCoursDeModification
           ? (
-            <div>
-              { children }
+            <div className='fr-mt-1w'>
+              {children}
             </div>
           )
           : (
