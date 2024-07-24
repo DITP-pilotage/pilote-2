@@ -153,6 +153,7 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
             <SousIndicateurs
               chantierEstTerritorialisé={chantierEstTerritorialisé}
               détailsIndicateurs={détailsIndicateurs}
+              estInteractif
               listeSousIndicateurs={listeSousIndicateurs}
             />          
           </div>

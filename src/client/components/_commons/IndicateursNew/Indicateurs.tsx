@@ -20,11 +20,13 @@ export default function Indicateurs({
     return null;
   }
 
+  const listeIndicateursParent = indicateurs.filter(indicateur => !indicateur.parentId);
+
   return (
     <IndicateursStyled>
       {
         listeRubriquesIndicateurs.map(rubriqueIndicateur => {
-          const indicateursDeCetteRubrique = indicateurs.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
+          const indicateursDeCetteRubrique = listeIndicateursParent.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
 
           if (indicateursDeCetteRubrique.length > 0) {
             return (
@@ -45,11 +47,12 @@ export default function Indicateurs({
                     .map(indicateur => (
                       <IndicateurBloc
                         chantierEstTerritorialisé={chantierEstTerritorialisé}
-                        détailsIndicateur={détailsIndicateurs[indicateur.id]}
+                        détailsIndicateurs={détailsIndicateurs}
                         estDisponibleALImport={estDisponibleALImport}
                         estInteractif={estInteractif}
                         indicateur={indicateur}
                         key={indicateur.id}
+                        listeSousIndicateurs={indicateurs.filter(ind => ind.parentId === indicateur.id)}
                         territoireCode={territoireCode}
                         territoireProjetStructurant={territoireProjetStructurant}
                         typeDeRéforme={typeDeRéforme}
