@@ -15,6 +15,7 @@ import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import { IndicateurDétailsParTerritoire } from '@/client/components/_commons/Indicateurs/Bloc/IndicateurBloc.interface';
 import PictoSousIndicateur from '@/components/_commons/PictoSousIndicateur/PictoSousIndicateur';
 import useIndicateurAlerteDateMaj from '@/client/components/_commons/Indicateurs/Bloc/useIndicateurAlerteDateMaj';
+import IndicateurTendance from '@/client/components/_commons/Indicateurs/Bloc/Tendances/IndicateurTendance';
 import useSousIndicateurBloc from './useSousIndicateurBloc';
 import SousIndicateurBlocProps from './SousIndicateurBloc.interface';
 import SousIndicateurBlocStyled from './SousIndicateurBloc.styled';
@@ -105,6 +106,11 @@ export default function SousIndicateurBloc({
                 ) : null
               }
             </div>
+            { 
+              territoireSélectionné && détailsIndicateur[territoireSélectionné.codeInsee]?.tendance === 'BAISSE' ? (
+                <IndicateurTendance />
+              ) : null
+            }
           </div>
           {
             estDisponibleALImport ? (
