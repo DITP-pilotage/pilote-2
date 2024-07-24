@@ -90,6 +90,8 @@ export default class IndicateurRowBuilder {
 
   private _est_a_jour: indicateur['est_a_jour'];
 
+  private _parent_id: indicateur['parent_id'];
+
   private _tendance: indicateur['tendance'];
 
   constructor() {
@@ -140,6 +142,7 @@ export default class IndicateurRowBuilder {
     this._prochaine_date_maj = null;
     this._prochaine_date_maj_jours = null;
     this._est_a_jour = false;
+    this._parent_id = null;
     this._tendance = détailsIndicateurGénéré.tendance;
   }
 
@@ -338,6 +341,11 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
+  avecParentId(parent_id: indicateur['parent_id']): IndicateurRowBuilder {
+    this._parent_id = parent_id;
+    return this;
+  }
+
   avecTendance(tendance: indicateur['tendance']): IndicateurRowBuilder {
     this._tendance = tendance;
     return this;
@@ -385,6 +393,7 @@ export default class IndicateurRowBuilder {
       prochaine_date_maj: this._prochaine_date_maj,
       prochaine_date_maj_jours: this._prochaine_date_maj_jours,
       est_a_jour: this._est_a_jour,
+      parent_id: this._parent_id,
       tendance: this._tendance,
     };
   }

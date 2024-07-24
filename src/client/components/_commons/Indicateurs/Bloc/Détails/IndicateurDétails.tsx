@@ -14,17 +14,19 @@ import {
 import {
   ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE,
 } from '@/client/constants/légendes/élémentsDeLégendesCartographieValeurActuelle';
+import SousIndicateurs from '@/client/components/_commons/SousIndicateurs/SousIndicateurs';
 import IndicateurDétailsProps from './IndicateurDétails.interface';
 import useIndicateurDétails from './useIndicateurDétails';
 
-export default function IndicateurDétails({ indicateur, indicateurDétailsParTerritoires, typeDeRéforme, chantierEstTerritorialisé, dateDeMiseAJourIndicateur }: IndicateurDétailsProps) {
+export default function IndicateurDétails({ indicateur, indicateurDétailsParTerritoires, typeDeRéforme, chantierEstTerritorialisé, dateDeMiseAJourIndicateur, listeSousIndicateurs, détailsIndicateurs, estSousIndicateur = false }: IndicateurDétailsProps) {
   const [futOuvert, setFutOuvert] = useState(false);
   const { auClicTerritoireMultiSélectionCallback } = useCartographie();
   const { donnéesCartographieAvancement, donnéesCartographieValeurActuelle, donnéesCartographieAvancementTerritorialisées, donnéesCartographieValeurActuelleTerritorialisées } = useIndicateurDétails(indicateur.id, futOuvert, typeDeRéforme);
 
   const indicateurSiTypeDeReformeEstChantier = typeDeRéforme === 'chantier' && !!futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle;
-  const nomDefinitionDeLindicateur = "Définition de l'indicateur";
+  const nomDefinitionDeLindicateur = estSousIndicateur ? 'Description du sous-indicateur' : 'Description de l\'indicateur';
   const nomRepartitionGeographiqueEtEvolution = 'Répartition géographique et évolution';
+  const nomSousIndicateurs = 'Sous indicateurs';
 
   return (
     <div className='fr-accordions-group'>
@@ -129,6 +131,33 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
           </div>
         </div>
       </section>
+      {
+        listeSousIndicateurs.length > 0 &&
+        <section className='fr-accordion'>
+          <h3 className='fr-accordion__title'>
+            <button
+              aria-controls={`sous-indicateurs-${indicateur.id}`}
+              aria-expanded='false'
+              className='fr-accordion__btn'
+              onClick={() => setFutOuvert(true)}
+              title={nomSousIndicateurs}
+              type='button'
+            >
+              {nomSousIndicateurs}
+            </button>
+          </h3>
+          <div
+            className='fr-collapse fr-m-0 fr-p-0'
+            id={`sous-indicateurs-${indicateur.id}`}
+          >
+            <SousIndicateurs
+              chantierEstTerritorialisé={chantierEstTerritorialisé}
+              détailsIndicateurs={détailsIndicateurs}
+              listeSousIndicateurs={listeSousIndicateurs}
+            />          
+          </div>
+        </section>
+      }
     </div>
   );
 }
