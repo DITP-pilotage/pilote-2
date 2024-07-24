@@ -16,23 +16,26 @@ import ResultatValidationFichier
 import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { IndicateurPondération } from '@/components/_commons/IndicateursNew/Bloc/Pondération/IndicateurPondération';
 import IndicateurTendance from '@/client/components/_commons/IndicateursNew/Bloc/Tendance/IndicateurTendance';
+import SousIndicateurs from '@/client/components/_commons/SousIndicateurs/SousIndicateurs';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   indicateur,
-  détailsIndicateur,
+  détailsIndicateurs,
   estInteractif,
   territoireProjetStructurant,
   territoireCode,
   typeDeRéforme,
   chantierEstTerritorialisé,
   estDisponibleALImport = false,
+  listeSousIndicateurs,
 }) => {
   const router = useRouter();
   const réformeId = router.query.id as string;
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
+  const détailsIndicateur = détailsIndicateurs[indicateur.id];
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const {
     indicateurDétailsParTerritoires,
@@ -114,7 +117,14 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
                 typeDeRéforme={typeDeRéforme}
               />
-            ) : null
+            ) : (
+              <SousIndicateurs
+                chantierEstTerritorialisé={chantierEstTerritorialisé}
+                détailsIndicateurs={détailsIndicateurs}
+                estInteractif={estInteractif}
+                listeSousIndicateurs={listeSousIndicateurs}
+              />    
+            )
           }
         </section>
       </Bloc>
