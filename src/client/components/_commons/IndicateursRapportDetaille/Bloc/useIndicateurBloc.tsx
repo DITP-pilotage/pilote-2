@@ -33,6 +33,7 @@ const indicateurDétailsVide = {
     valeurCibleAnnuelle: null,
     dateValeurCibleAnnuelle: null,
     avancement: { global: null, annuel: null },
+    proposition: null,
     unité: null,
     est_applicable: false,
     dateImport: null,

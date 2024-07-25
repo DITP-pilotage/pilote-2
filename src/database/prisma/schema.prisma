@@ -116,56 +116,56 @@ model perimetre {
 }
 
 model indicateur {
-  id                                                    String
-  nom                                                   String
-  chantier_id                                           String
-  objectif_valeur_cible                                 Float?
-  objectif_taux_avancement                              Float?
-  objectif_date_valeur_cible                            DateTime?  @db.Date
-  type_id                                               String?
-  type_nom                                              String?
-  est_barometre                                         Boolean?
-  est_phare                                             Boolean?
-  valeur_initiale                                       Float?
-  date_valeur_initiale                                  DateTime?  @db.Date
-  valeur_actuelle                                       Float?
-  date_valeur_actuelle                                  DateTime?  @db.Date
-  territoire_nom                                        String?
-  code_insee                                            String
-  maille                                                String
-  evolution_valeur_actuelle                             Float[]
-  evolution_date_valeur_actuelle                        DateTime[] @db.Date
-  description                                           String?
-  source                                                String?
-  mode_de_calcul                                        String?
-  unite_mesure                                          String?
-  territoire                                            territoire @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  territoire_code                                       String
-  ponderation_zone_declaree                             Float?
-  ponderation_zone_reel                                 Float?
-  objectif_valeur_cible_intermediaire                   Float?
-  objectif_taux_avancement_intermediaire                Float?
-  objectif_date_valeur_cible_intermediaire              DateTime?  @db.Date
-  est_applicable                                        Boolean?
-  a_supprimer                                           Boolean    @default(true)
-  dernier_import_date                                   DateTime?  @db.Date
-  dernier_import_rapport_id                             String?    @db.Uuid
-  dernier_import_auteur                                 String?
-  dernier_import_date_indic                             DateTime?  @db.Date
-  dernier_import_rapport_id_indic                       String?    @db.Uuid
-  dernier_import_auteur_indic                           String?
-  prochaine_date_maj                                    DateTime?  @db.Date
-  prochaine_date_maj_jours                              Int?
-  est_a_jour                                            Boolean?
-  tendance                                 String?
-  parent_id                                String?
-  valeur_actuelle_proposition                           Float?
-  objectif_taux_avancement_intermediaire_proposition    Float?
-  objectif_taux_avancement_proposition                  Float?
-  date_proposition                                      DateTime? @db.Date
-  motif_proposition                                     String?
-  source_donnee_methode_calcul_proposition              String?
-  auteur_proposition                                    String?
+  id                                                 String
+  nom                                                String
+  chantier_id                                        String
+  objectif_valeur_cible                              Float?
+  objectif_taux_avancement                           Float?
+  objectif_date_valeur_cible                         DateTime?  @db.Date
+  type_id                                            String?
+  type_nom                                           String?
+  est_barometre                                      Boolean?
+  est_phare                                          Boolean?
+  valeur_initiale                                    Float?
+  date_valeur_initiale                               DateTime?  @db.Date
+  valeur_actuelle                                    Float?
+  date_valeur_actuelle                               DateTime?  @db.Date
+  territoire_nom                                     String?
+  code_insee                                         String
+  maille                                             String
+  evolution_valeur_actuelle                          Float[]
+  evolution_date_valeur_actuelle                     DateTime[] @db.Date
+  description                                        String?
+  source                                             String?
+  mode_de_calcul                                     String?
+  unite_mesure                                       String?
+  territoire                                         territoire @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  territoire_code                                    String
+  ponderation_zone_declaree                          Float?
+  ponderation_zone_reel                              Float?
+  objectif_valeur_cible_intermediaire                Float?
+  objectif_taux_avancement_intermediaire             Float?
+  objectif_date_valeur_cible_intermediaire           DateTime?  @db.Date
+  est_applicable                                     Boolean?
+  a_supprimer                                        Boolean    @default(true)
+  dernier_import_date                                DateTime?  @db.Date
+  dernier_import_rapport_id                          String?    @db.Uuid
+  dernier_import_auteur                              String?
+  dernier_import_date_indic                          DateTime?  @db.Date
+  dernier_import_rapport_id_indic                    String?    @db.Uuid
+  dernier_import_auteur_indic                        String?
+  prochaine_date_maj                                 DateTime?  @db.Date
+  prochaine_date_maj_jours                           Int?
+  est_a_jour                                         Boolean?
+  tendance                                           String?
+  parent_id                                          String?
+  valeur_actuelle_proposition                        Float?
+  objectif_taux_avancement_intermediaire_proposition Float?
+  objectif_taux_avancement_proposition               Float?
+  date_proposition                                   DateTime?  @db.Date
+  motif_proposition                                  String?
+  source_donnee_methode_calcul_proposition           String?
+  auteur_proposition                                 String?
 
   @@id([id, code_insee, maille])
   @@schema("public")

@@ -94,11 +94,11 @@ const BarreDeProgressionStyled = styled.div`
 
       &.progress--primaire-light {
         &::-moz-progress-bar {
-          background-color: var(--text-default-info);
+          background-color: var(--blue-france-sun-113-625);
         } 
         
         &::-webkit-progress-value {
-          background-color: var(--text-default-info);
+          background-color: var(--blue-france-sun-113-625);
         }
       }
 

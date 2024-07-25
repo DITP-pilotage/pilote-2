@@ -25,6 +25,7 @@ export default function IndicateurDétails({
   chantierEstTerritorialisé,
   dateDeMiseAJourIndicateur,
 }: IndicateurDétailsProps) {
+
   const [futOuvert, setFutOuvert] = useState(false);
   const { auClicTerritoireMultiSélectionCallback } = useCartographie();
   const {

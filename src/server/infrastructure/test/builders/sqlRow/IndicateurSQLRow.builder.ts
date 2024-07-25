@@ -395,6 +395,13 @@ export default class IndicateurRowBuilder {
       est_a_jour: this._est_a_jour,
       parent_id: this._parent_id,
       tendance: this._tendance,
+      date_proposition: null,
+      source_donnee_methode_calcul_proposition: null,
+      motif_proposition: null,
+      auteur_proposition: null,
+      valeur_actuelle_proposition: null,
+      objectif_taux_avancement_intermediaire_proposition: null,
+      objectif_taux_avancement_proposition: null,
     };
   }
 }

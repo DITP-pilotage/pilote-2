@@ -2,8 +2,9 @@ import { useSession } from 'next-auth/react';
 import api from '@/server/infrastructure/api/trpc/api';
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
-export const PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS = new Set(['DITP_ADMIN', 'DITP_PILOTAGE', 'SECRETARIAT_GENERAL', 'DIR_PROJET', 'EQUIPE_DIR_PROJET']);
+export const PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS = new Set([ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE, ProfilEnum.SECRETARIAT_GENERAL, ProfilEnum.DIR_PROJET, ProfilEnum.EQUIPE_DIR_PROJET]);
 
 export default function useIndicateurAlerteDateMaj(
   détailsIndicateur: DétailsIndicateurTerritoire,

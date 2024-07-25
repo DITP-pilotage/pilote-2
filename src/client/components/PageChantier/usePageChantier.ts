@@ -27,7 +27,14 @@ import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { convertitEnPondération } from '@/client/utils/ponderation/ponderation';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
-const PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE = new Set([ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE, ProfilEnum.SECRETARIAT_GENERAL, ProfilEnum.DIR_PROJET, ProfilEnum.EQUIPE_DIR_PROJET]);
+const PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE = new Set([
+  ProfilEnum.PREFET_DEPARTEMENT,
+  ProfilEnum.PREFET_REGION,
+  ProfilEnum.COORDINATEUR_REGION,
+  ProfilEnum.COORDINATEUR_DEPARTEMENT,
+  ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+  ProfilEnum.SERVICES_DECONCENTRES_REGION,
+]);
 
 export default function usePageChantier(chantierId: string, indicateurs: Indicateur[]) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
@@ -48,7 +55,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
   const saisieIndicateurAutorisée = estAutoriséAImporterDesIndicateurs(session!.profil) && !!session?.habilitations['saisieIndicateur'].chantiers.includes(chantierId);
   const { data: variableContenuFFFicheConducteur } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_FICHE_CONDUCTEUR' });
 
-  const afficheLeBoutonFicheConducteur = (variableContenuFFFicheConducteur as boolean) && estAutoriséAConsulterLaFicheConducteur(session!.profil);
+  const afficheLeBoutonFicheConducteur = !!variableContenuFFFicheConducteur && estAutoriséAConsulterLaFicheConducteur(session!.profil);
 
   const { data: synthèseDesRésultats } = api.synthèseDesRésultats.récupérerLaPlusRécente.useQuery(
     {

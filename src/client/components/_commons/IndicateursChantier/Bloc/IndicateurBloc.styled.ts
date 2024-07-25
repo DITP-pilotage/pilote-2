@@ -20,13 +20,13 @@ const IndicateurBlocStyled = styled.div`
   }
   
   tr.ligne-modification-proposition-valeur-actuelle {
-    background-color: var(--background-contrast-info)!important;
+    background-color: var(--blue-france-975-75)!important;
     
     & .texte-proposition {
-      color: var(--text-default-info)!important;
+      color: var(--blue-france-sun-113-625)!important;
       
       & .indicateur-valeur, & .pourcentage {
-        color: var(--text-default-info)!important;
+        color: var(--blue-france-sun-113-625)!important;
       }
     }
   }

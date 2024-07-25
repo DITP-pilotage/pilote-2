@@ -14,7 +14,7 @@ import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import api from '@/server/infrastructure/api/trpc/api';
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { TypeDeRéforme } from '@/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import ValeurEtDate from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate';
@@ -25,6 +25,7 @@ import ModalePropositonValeurActuelle
   from '@/components/_commons/IndicateursChantier/Bloc/ModalePropositonValeurActuelle/ModalePropositonValeurActuelle';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import { formaterDate } from '@/client/utils/date/date';
+import IndicateurTendance from '@/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 
@@ -32,26 +33,31 @@ export const ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE = 'modale-proposition-va
 
 interface IndicateurBlocProps {
   indicateur: Indicateur
-  détailsIndicateur: DétailsIndicateurTerritoire
+  détailsIndicateurs: DétailsIndicateurs
   estInteractif: boolean
   typeDeRéforme: TypeDeRéforme,
   chantierEstTerritorialisé: boolean,
   estAutoriseAVoirLesAlertesMAJIndicateurs: boolean,
   estAutoriseAVoirLesPropositionsDeValeurActuelle: boolean,
+  listeSousIndicateurs: Indicateur[]
 }
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   indicateur,
-  détailsIndicateur,
+  détailsIndicateurs,
   estInteractif,
   typeDeRéforme,
   chantierEstTerritorialisé,
   estAutoriseAVoirLesAlertesMAJIndicateurs = false,
   estAutoriseAVoirLesPropositionsDeValeurActuelle = false,
+  listeSousIndicateurs,
 }) => {
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
   const territoiresComparés = territoiresComparésTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+  const détailsIndicateur = détailsIndicateurs[indicateur.id];
+
+  const { data: variableContenuFFPropositionValeurActuelle } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE' });
 
   const {
     dateDeMiseAJourIndicateur,
@@ -144,6 +150,11 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   ) : null
                 }
               </div>
+              {
+                territoireSélectionné && détailsIndicateur[territoireSélectionné.codeInsee]?.tendance === 'BAISSE' ? (
+                  <IndicateurTendance />
+                ) : null
+              }
             </div>
           </div>
           {
@@ -190,7 +201,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 <tbody>
                   {
                   informationsIndicateurs.map(informationIndicateur => {
-                    return (
+                    return informationIndicateur.données ? ( // TODO supprimer une fois le refacto fait ! A cause de la react query y'a quelques frames où informationIndicateur.données est undefined
                       <Fragment key={informationIndicateur.territoireNom}>
                         <tr key={informationIndicateur.territoireNom}>
                           <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm'>
@@ -246,7 +257,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           </td>
                         </tr>
                         {
-                          estAutoriseAVoirLesPropositionsDeValeurActuelle && informationIndicateur.données.proposition === null ? (
+                          variableContenuFFPropositionValeurActuelle ? estAutoriseAVoirLesPropositionsDeValeurActuelle && informationIndicateur.données.valeurActuelle !== null && informationIndicateur.données.proposition === null ? (
                             <tr className='ligne-creation-proposition-valeur-actuelle'>
                               <td colSpan={7}>
                                 <div className='flex w-full justify-end'>
@@ -272,28 +283,30 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 className='ligne-modification-proposition-valeur-actuelle'
                                 key={informationIndicateur.territoireNom}
                               >
-                                <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm flex align-center'>
-                                  <span className='texte-proposition'>
-                                    Proposition du territoire
-                                  </span>
-                                  <Infobulle idHtml='infobulle-chantiers-jauges'>
-                                    <p className='texte-proposition'>
-                                      Valeur actuelle proposée
-                                      le
-                                      {' '}
-                                      {formaterDate(informationIndicateur.données.proposition.dateProposition?.toISOString(), 'DD/MM/YYYY')}
-                                      {' '}
-                                      par
-                                      {' '}
-                                      {informationIndicateur.données.proposition.auteur}
-                                    </p>
-                                    <p>
-                                      {informationIndicateur.données.proposition.motif}
-                                    </p>
-                                    <p>
-                                      {informationIndicateur.données.proposition.sourceDonneeEtMethodeCalcul}
-                                    </p>
-                                  </Infobulle>
+                                <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm'>
+                                  <div className='flex align-center'>
+                                    <span className='texte-proposition'>
+                                      Proposition du territoire
+                                    </span>
+                                    <Infobulle idHtml='infobulle-chantiers-jauges'>
+                                      <p className='texte-proposition'>
+                                        Valeur actuelle proposée
+                                        le
+                                        {' '}
+                                        {formaterDate(informationIndicateur.données.proposition.dateProposition?.toISOString(), 'DD/MM/YYYY')}
+                                        {' '}
+                                        par
+                                        {' '}
+                                        {informationIndicateur.données.proposition.auteur}
+                                      </p>
+                                      <p>
+                                        {informationIndicateur.données.proposition.motif}
+                                      </p>
+                                      <p>
+                                        {informationIndicateur.données.proposition.sourceDonneeEtMethodeCalcul}
+                                      </p>
+                                    </Infobulle>
+                                  </div>
                                 </td>
                                 <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
                                   <ValeurEtDate
@@ -344,30 +357,35 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   />
                                 </td>
                               </tr>
-                              <tr className='ligne-modification-proposition-valeur-actuelle'>
-                                <td colSpan={7}>
-                                  <div className='flex w-full justify-end'>
-                                    <button
-                                      aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
-                                      className='fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary'
-                                      data-fr-opened='false'
-                                      type='button'
-                                    >
-                                      Editer la proposition
-                                    </button>
-                                  </div>
-                                  <ModalePropositonValeurActuelle
-                                    detailIndicateur={informationIndicateur.données}
-                                    generatedHTMLID={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
-                                    indicateur={indicateur}
-                                  />
-                                </td>
-                              </tr>
+                              {
+                                  estAutoriseAVoirLesPropositionsDeValeurActuelle ? (
+                                    <tr className='ligne-modification-proposition-valeur-actuelle'>
+                                      <td colSpan={7}>
+                                        <div className='flex w-full justify-end'>
+                                          <button
+                                            aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
+                                            className='fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary'
+                                            data-fr-opened='false'
+                                            type='button'
+                                          >
+                                            Editer la proposition
+                                          </button>
+                                        </div>
+                                        <ModalePropositonValeurActuelle
+                                          detailIndicateur={informationIndicateur.données}
+                                          generatedHTMLID={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
+                                          indicateur={indicateur}
+                                        />
+                                      </td>
+                                    </tr>
+                                  ) : null
+                                }
                             </>
                           ) : null
+                            : null
                         }
                       </Fragment>
-                    );
+                    ) : null;
                   })
                 }
                 </tbody>
@@ -379,8 +397,10 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
               <IndicateurDétails
                 chantierEstTerritorialisé={chantierEstTerritorialisé}
                 dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
+                détailsIndicateurs={détailsIndicateurs}
                 indicateur={indicateur}
                 indicateurDétailsParTerritoires={informationsIndicateurs}
+                listeSousIndicateurs={listeSousIndicateurs}
                 typeDeRéforme={typeDeRéforme}
               />
             ) : null

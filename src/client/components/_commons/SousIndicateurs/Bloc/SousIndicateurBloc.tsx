@@ -3,19 +3,24 @@ import { useRouter } from 'next/router';
 import Titre from '@/components/_commons/Titre/Titre';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
-import IndicateurDétails from '@/components/_commons/Indicateurs/Bloc/Détails/IndicateurDétails';
+import IndicateurDétails from '@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
 import FormulaireIndicateur
   from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/FormulaireIndicateur/FormulaireIndicateur';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import ResultatValidationFichier
   from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
-import { IndicateurPonderation } from '@/components/_commons/Indicateurs/Bloc/Pondération/IndicateurPonderation';
+import {
+  IndicateurPonderation,
+} from '@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
-import { IndicateurDétailsParTerritoire } from '@/client/components/_commons/Indicateurs/Bloc/IndicateurBloc.interface';
+import {
+  IndicateurDétailsParTerritoire,
+} from '@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface';
 import PictoSousIndicateur from '@/components/_commons/PictoSousIndicateur/PictoSousIndicateur';
-import useIndicateurAlerteDateMaj from '@/client/components/_commons/Indicateurs/Bloc/useIndicateurAlerteDateMaj';
-import IndicateurTendance from '@/client/components/_commons/Indicateurs/Bloc/Tendances/IndicateurTendance';
+import useIndicateurAlerteDateMaj
+  from '@/client/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj';
+import IndicateurTendance from '@/client/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance';
 import useSousIndicateurBloc from './useSousIndicateurBloc';
 import SousIndicateurBlocProps from './SousIndicateurBloc.interface';
 import SousIndicateurBlocStyled from './SousIndicateurBloc.styled';
@@ -43,7 +48,7 @@ export default function SousIndicateurBloc({
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
 
   const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(détailsIndicateur, territoireSélectionné);
-  
+
   return (
     <SousIndicateurBlocStyled
       className={`fr-pt-1w ${classeCouleurFond}`}
@@ -58,7 +63,7 @@ export default function SousIndicateurBloc({
             >
               <span className='fr-mr-1v'>
                 <PictoSousIndicateur />
-              </span>         
+              </span>
               {
                 estIndicateurEnAlerte ? (
                   <span className='fr-mr-1v'>
@@ -73,7 +78,7 @@ export default function SousIndicateurBloc({
                   </span>
                 )
                   : null
-              }    
+              }
               {indicateur.nom + (indicateur.unité === null || indicateur.unité === '' ? '' : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
             </Titre>
             <div className='fr-ml-2w fr-mb-3w'>
@@ -106,7 +111,7 @@ export default function SousIndicateurBloc({
                 ) : null
               }
             </div>
-            { 
+            {
               territoireSélectionné && détailsIndicateur[territoireSélectionné.codeInsee]?.tendance === 'BAISSE' ? (
                 <IndicateurTendance />
               ) : null

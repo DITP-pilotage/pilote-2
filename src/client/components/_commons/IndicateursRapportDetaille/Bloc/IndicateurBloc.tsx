@@ -11,8 +11,9 @@ import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/use
 import {
   IndicateurPondération,
 } from '@/components/_commons/IndicateursRapportDetaille/Bloc/Pondération/IndicateurPondération';
-import IndicateurTendance from '@/client/components/_commons/IndicateursRapportDetaille/Bloc/Tendance/IndicateurTendance';
-import SousIndicateurs from '@/client/components/_commons/IndicateursRapportDetaille/SousIndicateurs';
+import IndicateurTendance
+  from '@/client/components/_commons/IndicateursRapportDetaille/Bloc/Tendance/IndicateurTendance';
+import SousIndicateurs from '@/client/components/_commons/SousIndicateurs/SousIndicateurs';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 

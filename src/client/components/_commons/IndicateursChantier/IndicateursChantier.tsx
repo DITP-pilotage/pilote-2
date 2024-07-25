@@ -36,7 +36,6 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   const CodeInseeSélectionnée = territoireSélectionnéTerritoiresStore()?.codeInsee;
 
   const { data: alerteMiseAJourIndicateurEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR' });
-  const { data: propositionValeurActuelleEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE' });
 
   const alerteMiseAJourIndicateur = estAutoriseAVoirLesAlertesMAJIndicateurs && !!alerteMiseAJourIndicateurEstDisponible && Object.values(détailsIndicateurs).flatMap(values => Object.values(values)).reduce((acc, val) => {
     return val.estAJour === false || val.prochaineDateMaj === null && val.dateValeurActuelle !== null && (val.pondération || 0) > 0 ? true : acc;
@@ -45,6 +44,8 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   if (indicateurs.length === 0) {
     return null;
   }
+
+  const listeIndicateursParent = indicateurs.filter(indicateur => !indicateur.parentId);
 
   return (
     <IndicateursChantierStyled>
@@ -60,7 +61,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
       }
       {
         listeRubriquesIndicateurs.map(rubriqueIndicateur => {
-          const indicateursDeCetteRubrique = indicateurs.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
+          const indicateursDeCetteRubrique = listeIndicateursParent.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
 
           if (indicateursDeCetteRubrique.length > 0) {
             return (
@@ -81,12 +82,13 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                     .map(indicateur => (
                       <IndicateurBloc
                         chantierEstTerritorialisé={chantierEstTerritorialisé}
-                        détailsIndicateur={détailsIndicateurs[indicateur.id]}
+                        détailsIndicateurs={détailsIndicateurs}
                         estAutoriseAVoirLesAlertesMAJIndicateurs={estAutoriseAVoirLesAlertesMAJIndicateurs}
-                        estAutoriseAVoirLesPropositionsDeValeurActuelle={!!propositionValeurActuelleEstDisponible && estAutoriseAVoirLesPropositionsDeValeurActuelle}
+                        estAutoriseAVoirLesPropositionsDeValeurActuelle={estAutoriseAVoirLesPropositionsDeValeurActuelle}
                         estInteractif={estInteractif}
                         indicateur={indicateur}
                         key={indicateur.id}
+                        listeSousIndicateurs={indicateurs.filter(ind => ind.parentId === indicateur.id)}
                         typeDeRéforme={typeDeRéforme}
                       />
                     ))

@@ -12,11 +12,14 @@ import {
 } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
-import IndicateurBlocIndicateurTuile from '@/components/_commons/Indicateurs/Bloc/indicateurBlocIndicateurTuile';
+import IndicateurBlocIndicateurTuile
+  from '@/components/_commons/IndicateursChantier/Bloc/indicateurBlocIndicateurTuile';
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { formaterDate } from '@/client/utils/date/date';
-import { IndicateurDétailsParTerritoire } from '@/client/components/_commons/Indicateurs/Bloc/IndicateurBloc.interface';
-import ValeurEtDate from '@/client/components/_commons/Indicateurs/Bloc/ValeurEtDate/ValeurEtDate';
+import {
+  IndicateurDétailsParTerritoire,
+} from '@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface';
+import ValeurEtDate from '@/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate';
 
 const indicateurDétailsVide: IndicateurDétailsParTerritoire = {
   territoireNom: '',
@@ -33,6 +36,7 @@ const indicateurDétailsVide: IndicateurDétailsParTerritoire = {
     valeurCibleAnnuelle: null,
     dateValeurCibleAnnuelle: null,
     avancement: { global: null, annuel: null },
+    proposition: null,
     unité: null,
     est_applicable: false,
     dateImport: null,

@@ -143,7 +143,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     
     let chantiersAccessibles = chantiers.filter(chantier => session?.habilitations.gestionUtilisateur.chantiers.includes(chantier.id));
 
-    if ([ProfilEnum.RESPONSABLE_DEPARTEMENT, 'RESPONSABLE_REGION', ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, ProfilEnum.SERVICES_DECONCENTRES_REGION].includes(profilSélectionné.code)) {
+    if ([ProfilEnum.RESPONSABLE_DEPARTEMENT, ProfilEnum.RESPONSABLE_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, ProfilEnum.SERVICES_DECONCENTRES_REGION].includes(profilSélectionné.code)) {
       chantiersAccessibles = chantiersAccessibles.filter(chantier => chantier.estTerritorialisé);
     } 
 

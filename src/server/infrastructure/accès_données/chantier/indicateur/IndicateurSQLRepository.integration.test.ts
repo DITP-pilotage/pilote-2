@@ -159,6 +159,7 @@ describe('IndicateurSQLRepository', () => {
               valeurCibleAnnuelle: null,
               dateValeurCibleAnnuelle: null,
               valeurActuelle: 1500,
+              proposition: null,
               avancement: {
                 global: 40,
                 annuel: null,
@@ -184,6 +185,7 @@ describe('IndicateurSQLRepository', () => {
               valeurCibleAnnuelle: null,
               dateValeurCibleAnnuelle: null,
               valeurActuelle: 1503,
+              proposition: null,
               avancement: {
                 global: 40,
                 annuel: null,
@@ -313,7 +315,8 @@ describe('IndicateurSQLRepository', () => {
               dateValeurActuelle: '2023-03-01T00:00:00.000Z',
               valeurCibleAnnuelle: null,
               dateValeurCibleAnnuelle: null,
-              valeurActuelle: 1500,           
+              valeurActuelle: 1500,
+              proposition: null,
               avancement: {
                 global: 20,
                 annuel: null,
@@ -340,7 +343,8 @@ describe('IndicateurSQLRepository', () => {
               valeurCibleAnnuelle: null,
               dateValeurCibleAnnuelle: null,
               dateValeurActuelle: '2023-03-01T00:00:00.000Z',
-              valeurActuelle: 1501,       
+              valeurActuelle: 1501,
+              proposition: null,
               avancement: {
                 global: 40,
                 annuel: null,
@@ -365,7 +369,8 @@ describe('IndicateurSQLRepository', () => {
               valeurCibleAnnuelle: null,
               dateValeurCibleAnnuelle: null,
               dateValeurActuelle: '2023-03-01T00:00:00.000Z',
-              valeurActuelle: 1502,       
+              valeurActuelle: 1502,
+              proposition: null,
               avancement: {
                 global: 40,
                 annuel: null,
@@ -465,6 +470,7 @@ describe('IndicateurSQLRepository', () => {
               dateValeurActuelle: '2023-03-01T00:00:00.000Z',
               valeurCibleAnnuelle: null,
               dateValeurCibleAnnuelle: null,
+              proposition: null,
               avancement: {
                 global: 30,
                 annuel: null,
@@ -752,7 +758,8 @@ describe('IndicateurSQLRepository', () => {
               dateValeurActuelle: '2023-03-01T00:00:00.000Z',
               valeurCibleAnnuelle: 1000,
               dateValeurCibleAnnuelle: (new Date().getFullYear()).toString() + '-12-31T00:00:00.000Z',
-              valeurActuelle: 1500,           
+              valeurActuelle: 1500,
+              proposition: null,
               avancement: {
                 global: 20,
                 annuel: 70,
@@ -823,7 +830,8 @@ describe('IndicateurSQLRepository', () => {
               dateValeurActuelle: '2023-03-01T00:00:00.000Z',
               valeurCibleAnnuelle: null,
               dateValeurCibleAnnuelle: null,
-              valeurActuelle: 1500,           
+              valeurActuelle: 1500,
+              proposition: null,
               avancement: {
                 global: 20,
                 annuel: null,
