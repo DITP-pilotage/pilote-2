@@ -17,8 +17,6 @@ import {
 } from '@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
 import CaseACocher from '@/components/_commons/CaseACocher/CaseACocher';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-// import { DevTool } from '@hookform/devtools';
-
 
 export default function SaisieDesInformationsUtilisateur({ utilisateur }: UtilisateurFormulaireProps) {
   const {

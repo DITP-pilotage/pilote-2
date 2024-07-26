@@ -56,13 +56,12 @@ export const AAccesATousLesUtilisateurs = (profil: Profil | null) => {
 
 export default function useSaisieDesInformationsUtilisateur(utilisateur?: UtilisateurFormulaireProps['utilisateur']) {
   const { data: session } = useSession();
-  const { register, watch, formState: { errors }, control, setValue, getValues, resetField, unregister } = useFormContext<UtilisateurFormInputs>();
+  const { register, watch, formState: { errors }, control, setValue, getValues, resetField } = useFormContext<UtilisateurFormInputs>();
   const profilCodeSélectionné = watch('profil');
   const territoiresSélectionnés = watch('habilitations.lecture.territoires');
   const chantiersSélectionnés = watch('habilitations.lecture.chantiers');
   const périmètresMinistérielsSélectionnés = watch('habilitations.lecture.périmètres');
 
-  const [ancienProfilCodeSélectionné, setAncienProfilCodeSélectionné] = useState<string | undefined>();
   const [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés, setChantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés] = useState<string[]>([]);
   const [profilSélectionné, setProfilSélectionné] = useState<Profil | undefined>();
   const [listeProfils, setListeProfils] = useState<{ libellé: string, valeur: string }[]>([]);
@@ -170,11 +169,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
       if (utilisateur.habilitations?.lecture.périmètres && afficherChampLecturePérimètres) 
         setValue('habilitations.lecture.périmètres', utilisateur.habilitations?.lecture.périmètres);
     }
-
-    setAncienProfilCodeSélectionné(profilCodeSélectionné);
-  }, [ancienProfilCodeSélectionné, profilCodeSélectionné, chantiersAccessiblesPourLeProfil, resetField, setValue,
-    unregister, utilisateur, profils, handleChangementValeursSélectionnéesChantiers, chantiers,
-    afficherChampLectureChantiers, afficherChampLecturePérimètres, afficherChampLectureTerritoires]);
+  }, [afficherChampLectureChantiers, afficherChampLecturePérimètres, afficherChampLectureTerritoires, profilCodeSélectionné, resetField, setValue, utilisateur]);
 
   useEffect(() => {
     if (profils) {
