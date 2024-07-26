@@ -7,9 +7,10 @@ import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { statutsSélectionnésStore } from '@/stores/useStatutsStore/useStatutsStore';
 import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 const masquerPourDROM = (sessionProfil: string, territoireCode: string) => {
-  return sessionProfil === 'DROM' && territoireCode === 'NAT-FR';
+  return sessionProfil === ProfilEnum.DROM && territoireCode === 'NAT-FR';
 };
 
 export default function useChantiersFiltrés(chantiers: (ChantierAccueilContrat | ChantierRapportDetailleContrat)[]) {

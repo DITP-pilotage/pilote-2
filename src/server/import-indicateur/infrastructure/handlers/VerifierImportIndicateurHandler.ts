@@ -9,6 +9,7 @@ import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailVali
 import { parseForm } from '@/server/import-indicateur/infrastructure/handlers/ParseForm';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { configuration } from '@/config';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 const présenterEnContrat = (report: DetailValidationFichier): DetailValidationFichierContrat => {
   return {
@@ -50,7 +51,7 @@ export default async function handleVerifierFichierImportIndicateur(
       baseSchemaUrl,
       indicateurId: request.query.indicateurId as string,
       utilisateurAuteurDeLimportEmail: (sessionToken.user as { email: string }).email,
-      isAdmin: session?.profil === 'DITP_ADMIN',
+      isAdmin: session?.profil === ProfilEnum.DITP_ADMIN,
     },
   );
 

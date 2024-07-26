@@ -10,39 +10,40 @@ import { Profil } from '@/server/domain/profil/Profil.interface';
 import { profilsDépartementaux, profilsRégionaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { auMoinsUneValeurDuTableauEstContenueDansLAutreTableau } from '@/client/utils/arrays';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 export const PROFILS_POSSIBLES_COORDINATEURS_MODIFICATION = {
   COORDINATEUR_REGION: [
-    'PREFET_REGION',
-    'PREFET_DEPARTEMENT',
-    'SERVICES_DECONCENTRES_REGION',
-    'SERVICES_DECONCENTRES_DEPARTEMENT',
-    'RESPONSABLE_REGION',
-    'RESPONSABLE_DEPARTEMENT',
+    ProfilEnum.PREFET_REGION,
+    ProfilEnum.PREFET_DEPARTEMENT,
+    ProfilEnum.SERVICES_DECONCENTRES_REGION,
+    ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+    ProfilEnum.RESPONSABLE_REGION,
+    ProfilEnum.RESPONSABLE_DEPARTEMENT,
   ],
   COORDINATEUR_DEPARTEMENT: [
-    'PREFET_DEPARTEMENT',
-    'SERVICES_DECONCENTRES_DEPARTEMENT',
-    'RESPONSABLE_DEPARTEMENT',
+    ProfilEnum.PREFET_DEPARTEMENT,
+    ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+    ProfilEnum.RESPONSABLE_DEPARTEMENT,
   ],
 };
 
 export const PROFILS_POSSIBLES_COORDINATEURS_LECTURE = {
   COORDINATEUR_REGION: [
-    'PREFET_REGION',
-    'PREFET_DEPARTEMENT',
-    'SERVICES_DECONCENTRES_REGION',
-    'SERVICES_DECONCENTRES_DEPARTEMENT',
-    'RESPONSABLE_REGION',
-    'RESPONSABLE_DEPARTEMENT',
-    'COORDINATEUR_DEPARTEMENT',
-    'COORDINATEUR_REGION',
+    ProfilEnum.PREFET_REGION,
+    ProfilEnum.PREFET_DEPARTEMENT,
+    ProfilEnum.SERVICES_DECONCENTRES_REGION,
+    ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+    ProfilEnum.RESPONSABLE_REGION,
+    ProfilEnum.RESPONSABLE_DEPARTEMENT,
+    ProfilEnum.COORDINATEUR_DEPARTEMENT,
+    ProfilEnum.COORDINATEUR_REGION,
   ],
   COORDINATEUR_DEPARTEMENT: [
-    'PREFET_DEPARTEMENT',
-    'SERVICES_DECONCENTRES_DEPARTEMENT',
-    'RESPONSABLE_DEPARTEMENT',
-    'COORDINATEUR_DEPARTEMENT',
+    ProfilEnum.PREFET_DEPARTEMENT,
+    ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+    ProfilEnum.RESPONSABLE_DEPARTEMENT,
+    ProfilEnum.COORDINATEUR_DEPARTEMENT,
   ],
 };
 
@@ -93,7 +94,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     setAfficherChampLectureTerritoires(!!profilSélectionné && (profilsDépartementaux.includes(profilSélectionné.code) || profilsRégionaux.includes(profilSélectionné.code)));
     setAfficherChampLectureChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
     
-    if (['DITP_ADMIN', 'DITP_PILOTAGE'].includes(session!.profil)) {
+    if ([ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session!.profil)) {
       setAfficherChampLecturePérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
     } else {
       setAfficherChampLecturePérimètres(false);
@@ -142,7 +143,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     
     let chantiersAccessibles = chantiers.filter(chantier => session?.habilitations.gestionUtilisateur.chantiers.includes(chantier.id));
 
-    if (['RESPONSABLE_DEPARTEMENT', 'RESPONSABLE_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'SERVICES_DECONCENTRES_REGION'].includes(profilSélectionné.code)) {
+    if ([ProfilEnum.RESPONSABLE_DEPARTEMENT, ProfilEnum.RESPONSABLE_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, ProfilEnum.SERVICES_DECONCENTRES_REGION].includes(profilSélectionné.code)) {
       chantiersAccessibles = chantiersAccessibles.filter(chantier => chantier.estTerritorialisé);
     } 
 
@@ -180,7 +181,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
       const profilAssociéAuProfilCodeSélectionné = profils.find(p => p.code === profilCodeSélectionné)!;
       setProfilSélectionné(profilAssociéAuProfilCodeSélectionné);
       let profilsFiltrés = profils;
-      if (['COORDINATEUR_DEPARTEMENT', 'COORDINATEUR_REGION'].includes(session!.profil)) {
+      if ([ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.COORDINATEUR_REGION].includes(session!.profil)) {
         profilsFiltrés = profilsFiltrés.filter(profil => PROFILS_POSSIBLES_COORDINATEURS_MODIFICATION[session?.profil as keyof typeof PROFILS_POSSIBLES_COORDINATEURS_MODIFICATION].includes(profil.code));
       }
       setListeProfils(profilsFiltrés.map(profil => ({ libellé: profil.nom, valeur: profil.code })));

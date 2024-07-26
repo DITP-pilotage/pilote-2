@@ -1,8 +1,9 @@
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { Profil } from './Profil.interface';
 
 export class ProfilBuilder {
 
-  private code: Profil['code'] = 'DITP_ADMIN';
+  private code: Profil['code'] = ProfilEnum.DITP_ADMIN;
 
   private nom: Profil['nom'] = 'ditp admin';
 

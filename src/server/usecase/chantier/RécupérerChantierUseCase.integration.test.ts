@@ -11,6 +11,7 @@ import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDate
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 describe('RécupérerChantierUseCase', () => {
   let récupérerChantierUseCase: RécupérerChantierUseCase;
@@ -28,7 +29,7 @@ describe('RécupérerChantierUseCase', () => {
   });
 
 
-  const profil = 'DITP_ADMIN';
+  const profil = ProfilEnum.DITP_ADMIN;
 
   test('Accède à un chantier par son id, vérification de quelques champs', async () => {
     // GIVEN

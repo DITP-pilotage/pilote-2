@@ -32,6 +32,7 @@ import {
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateurNew/agrégateur';
 import { objectEntries } from '@/client/utils/objects/objects';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 interface ChantierAccueil {
   chantiers: ChantierAccueilContrat[]
@@ -197,17 +198,17 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
 };
 
 const PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE = new Set([
-  'CABINET_MTFP',
-  'PM_ET_CABINET',
-  'PR',
-  'CABINET_MINISTERIEL',
-  'DIR_ADMIN_CENTRALE',
-  'DROM',
-  'SECRETARIAT_GENERAL',
-  'DIR_PROJET',
-  'EQUIPE_DIR_PROJET',
-  'DITP_ADMIN',
-  'DITP_PILOTAGE',
+  ProfilEnum.CABINET_MTFP,
+  ProfilEnum.PM_ET_CABINET,
+  ProfilEnum.PR,
+  ProfilEnum.CABINET_MINISTERIEL,
+  ProfilEnum.DIR_ADMIN_CENTRALE,
+  ProfilEnum.DROM,
+  ProfilEnum.SECRETARIAT_GENERAL,
+  ProfilEnum.DIR_PROJET,
+  ProfilEnum.EQUIPE_DIR_PROJET,
+  ProfilEnum.DITP_ADMIN,
+  ProfilEnum.DITP_PILOTAGE,
 ]);
 
 const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({

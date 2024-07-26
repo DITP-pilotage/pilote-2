@@ -42,6 +42,7 @@ import {
 import {
   CartographieDonnéesMétéo,
 } from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo.interface';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 interface NextPageRapportDétailléProps {
   chantiers: ChantierRapportDetailleContrat[]
@@ -69,7 +70,7 @@ interface NextPageRapportDétailléProps {
   }[],
 }
 
-const PROFILS_AUTORISE_VOIR_BROUILLONS = new Set(['DITP_ADMIN', 'DITP_PILOTAGE', 'DIR_PROJET', 'EQUIPE_DIR_PROJET']);
+const PROFILS_AUTORISE_VOIR_BROUILLONS = new Set([ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE, ProfilEnum.DIR_PROJET, ProfilEnum.EQUIPE_DIR_PROJET]);
 
 export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléProps> = async ({ req, res, query }) => {
   const session = await getServerSession(req, res, authOptions);

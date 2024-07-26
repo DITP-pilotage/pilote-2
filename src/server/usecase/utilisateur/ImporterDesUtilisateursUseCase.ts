@@ -3,7 +3,10 @@ import TerritoireRepository from '@/server/domain/territoire/TerritoireRepositor
 import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
-import { HabilitationsÀCréerOuMettreÀJourCalculées } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import {
+  HabilitationsÀCréerOuMettreÀJourCalculées,
+} from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 export default class ImporterDesUtilisateursUseCase {
   constructor(
@@ -25,7 +28,7 @@ export default class ImporterDesUtilisateursUseCase {
 
       for (const habilitation of objectEntries(utilisateur.habilitations)) {
         // AJOUTER LE PERIMETRE OUTRE MER POUR LES PROFILS DROM
-        if (utilisateur.profil === 'DROM' && !utilisateur.habilitations[habilitation[0]].périmètres.includes('PER-018')) {
+        if (utilisateur.profil === ProfilEnum.DROM && !utilisateur.habilitations[habilitation[0]].périmètres.includes('PER-018')) {
           utilisateur.habilitations[habilitation[0]].périmètres = [...utilisateur.habilitations[habilitation[0]].périmètres, 'PER-018'];
         } 
 

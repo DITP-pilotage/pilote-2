@@ -23,9 +23,19 @@ function créerDonnéesTerritoires(territoires: territoire[], indicateurRows: in
       valeurInitiale: indicateurRow?.valeur_initiale ?? null,
       valeurActuelle: indicateurRow?.valeur_actuelle ?? null,
       valeurCibleAnnuelle: IntermediaireEstAnnéeEnCours ? indicateurRow?.objectif_valeur_cible_intermediaire ?? null : null,
-      avancement: { 
+      avancement: {
         annuel: IntermediaireEstAnnéeEnCours ? indicateurRow?.objectif_taux_avancement_intermediaire ?? null : null, 
-        global: indicateurRow?.objectif_taux_avancement ?? null },
+        global: indicateurRow?.objectif_taux_avancement ?? null,
+      },
+      proposition: indicateurRow?.valeur_actuelle_proposition !== null && indicateurRow?.valeur_actuelle_proposition !== undefined ? { // Pour autoriser une valeur actuelle proposé à 0
+        valeurActuelle: indicateurRow?.valeur_actuelle_proposition,
+        tauxAvancement: indicateurRow?.objectif_taux_avancement_proposition,
+        tauxAvancementIntermediaire: IntermediaireEstAnnéeEnCours ? indicateurRow?.objectif_taux_avancement_intermediaire_proposition : null,
+        auteur: indicateurRow?.auteur_proposition,
+        motif: indicateurRow?.motif_proposition,
+        sourceDonneeEtMethodeCalcul: indicateurRow?.source_donnee_methode_calcul_proposition,
+        dateProposition: indicateurRow?.date_proposition,
+      } : null,
       unité: indicateurRow?.unite_mesure ?? null,
       est_applicable: indicateurRow?.est_applicable ?? null,
       dateImport: indicateurRow?.dernier_import_date_indic?.toLocaleString() ?? null,
@@ -45,11 +55,9 @@ export function parseDétailsIndicateur(indicateurRows: indicateur[], territoire
   const indicateurMailleDépartementale = indicateurRows.filter(c => c.maille === 'DEPT');
   const indicateurMailleRégionale = indicateurRows.filter(c => c.maille === 'REG');
 
-  const result: DétailsIndicateurMailles = {
-    nationale:  créerDonnéesTerritoires(territoires.filter(t => t.maille === 'NAT'), indicateurMailleNationale),
+  return {
+    nationale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'NAT'), indicateurMailleNationale),
     départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'DEPT'), indicateurMailleDépartementale),
     régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'REG'), indicateurMailleRégionale),
   };
-
-  return result;
 }

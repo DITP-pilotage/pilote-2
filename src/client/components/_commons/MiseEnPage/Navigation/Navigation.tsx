@@ -15,6 +15,7 @@ import { getFiltresActifs } from '@/stores/useFiltresStoreNew/useFiltresStoreNew
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { récupérerUnCookie } from '@/client/utils/cookies';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { derniereVersionNouveaute } from '../../../../../../public/nouveautés/ParametrageNouveautés';
 
 const fermerLaModaleDuMenu = () => {
@@ -22,10 +23,10 @@ const fermerLaModaleDuMenu = () => {
     window.dsfr(document.querySelector<HTMLElement>('#modale-menu-principal'))?.modal?.conceal();
   }
 };
-const estAutoriséAParcourirSiIndisponible = (session: Session | null) => session?.profil === 'DITP_ADMIN';
+const estAutoriséAParcourirSiIndisponible = (session: Session | null) => session?.profil === ProfilEnum.DITP_ADMIN;
 
 function estAdministrateur(session: Session | null) {
-  return session?.profil === 'DITP_ADMIN';
+  return session?.profil === ProfilEnum.DITP_ADMIN;
 }
 
 const estAutoriséAAccéderALaGestionDesComptes = (session: Session | null) => {
@@ -37,7 +38,7 @@ const estAutoriséAAccéderALaGestionDesComptes = (session: Session | null) => {
 };
 
 const estAdministrateurOuPilotage = (session: Session) => {
-  return ['DITP_ADMIN', 'DITP_PILOTAGE'].includes(session?.profil);
+  return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session?.profil);
 };
 
 const useNavigation = () => {

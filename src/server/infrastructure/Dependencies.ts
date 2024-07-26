@@ -109,7 +109,8 @@ import IndicateurProjetStructurantRepository
 import ProfilSQLRepository from '@/server/infrastructure/accès_données/profil/ProfilSQLRepository';
 import ProfilRepository from '@/server/domain/profil/ProfilRepository';
 import ChantierDateDeMàjMeteoRepository from '@/server/domain/chantier/ChantierDateDeMàjMeteoRepository.interface';
-import ChantierDateDeMàjMeteoSQLRepository from '@/server/infrastructure/accès_données/chantier/ChantierDateDeMàjMeteoSQLRepository';
+import ChantierDateDeMàjMeteoSQLRepository
+  from '@/server/infrastructure/accès_données/chantier/ChantierDateDeMàjMeteoSQLRepository';
 import {
   ErreurValidationFichierRepository,
 } from '@/server/import-indicateur/domain/ports/ErreurValidationFichierRepository';
@@ -194,6 +195,12 @@ import {
   PrismaUtilisateurRepository,
 } from '@/server/authentification/infrastructure/adapters/PrismaUtilisateurRepository';
 import { PrismaProfilRepository } from '@/server/authentification/infrastructure/adapters/PrismaProfilRepository';
+import {
+  PropositionValeurActuelleRepository,
+} from '@/server/chantiers/domain/ports/PropositionValeurActuelleRepository';
+import {
+  PrismaPropositionValeurActuelleRepository,
+} from '@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurActuelleRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
 import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
 import ProjetStructurantSQLRepository from './accès_données/projetStructurant/ProjetStructurantSQLRepository';
@@ -307,6 +314,8 @@ class Dependencies {
 
   private readonly _tokenAPIInformationRepository: TokenAPIInformationRepository;
 
+  private readonly _propositionValeurActuelleRepository: PropositionValeurActuelleRepository;
+
   constructor() {
     const prisma = globalForPrisma.prisma ?? new PrismaClient();
     if (process.env.NODE_ENV !== 'production') {
@@ -357,6 +366,7 @@ class Dependencies {
     this._gestionContenuRepository = new PrismaGestionContenuRepository(prisma);
     this._tokenAPIService = new TokenAPIJWTService({ secret: configuration.tokenAPI.secret });
     this._tokenAPIInformationRepository = new PrismaTokenAPIInformationRepository(prisma);
+    this._propositionValeurActuelleRepository = new PrismaPropositionValeurActuelleRepository(prisma);
 
     const httpClient = new FetchHttpClient();
     const fichierIndicateurValidationService = new ValidataFichierIndicateurValidationService({ httpClient });
@@ -563,6 +573,10 @@ class Dependencies {
 
   getTokenAPIInformationRepository() {
     return this._tokenAPIInformationRepository;
+  }
+
+  getPropositionValeurActuelleRepository() {
+    return this._propositionValeurActuelleRepository;
   }
 
   getUtilisateurIAMRepository(): UtilisateurIAMRepository {

@@ -41,8 +41,9 @@ export const listeRubriquesChantier = (typesIndicateurs: TypeIndicateur[], maill
     { nom: 'Commentaires', ancre: 'commentaires' },
   ];
 
-  if (rubriquesIndicateursNonVides.length === 0)
+  if (rubriquesIndicateursNonVides.length === 0) {
     rubriques = rubriques.filter(rubrique => rubrique.nom != 'Indicateurs');
+  }
 
   return rubriques;
 };
@@ -67,8 +68,9 @@ export const listeRubriquesProjetStructurant = (typesIndicateurs: TypeIndicateur
     { nom: 'Commentaires', ancre: 'commentaires' },
   ];
 
-  if (rubriquesIndicateursNonVides.length === 0)
+  if (rubriquesIndicateursNonVides.length === 0) {
     rubriques = rubriques.filter(rubrique => rubrique.nom != 'Indicateurs');
+  }
 
   return rubriques;
 };

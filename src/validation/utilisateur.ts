@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ProfilCode, profilsCodes } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 const customErrorMail = 'Vous essayez de créer un compte pour une adresse dont le domaine n’est pas en .gouv.fr. Veuillez contacter support.ditp@modernisation.gouv.fr pour plus d’informations.';
 
@@ -73,5 +74,5 @@ export const validationSupprimerUtilisateur = z.object({
 export const codesTerritoiresDROM = ['NAT-FR', 'REG-01', 'REG-02', 'REG-03', 'REG-04', 'REG-06', 'DEPT-971', 'DEPT-972', 'DEPT-973', 'DEPT-974', 'DEPT-976'];
 
 export const donneValidationInfosBaseUtilisateur = (profil: ProfilCode) => {
-  return ['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profil) ? validationInfosBaseUtilisateur : validationInfosBaseUtilisateurCoordinateurs;
+  return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(profil) ? validationInfosBaseUtilisateur : validationInfosBaseUtilisateurCoordinateurs;
 };

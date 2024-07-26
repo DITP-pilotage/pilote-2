@@ -8,6 +8,7 @@ import SyntheseDesResultatsRowBuilder
   from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import ObjectifSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifSQLRow.builder';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {
@@ -27,7 +28,7 @@ describe('ChantierSQLRepository', () => {
         territoires: ['NAT-FR'],
       } } as unknown as Utilisateur['habilitations'];
 
-      const profil = 'DITP_ADMIN';
+      const profil = ProfilEnum.DITP_ADMIN;
 
       // WHEN
       const request = async () => {

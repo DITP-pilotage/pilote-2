@@ -10,6 +10,7 @@ import {
   IndicateurPourExport,
 } from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 function _fakeIndicateurPourExport(cid: Indicateur['id']): IndicateurPourExport {
   return {
@@ -38,7 +39,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
 
     const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository);
     const habilitation = new HabilitationBuilder().build();
-    const profil = 'DITP_ADMIN';
+    const profil = ProfilEnum.DITP_ADMIN;
 
     // WHEN
     let result: string[][] = [];
@@ -68,7 +69,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     const habilitation = new HabilitationBuilder()
       .avecTerritoireCodesLecture(territoireCodesLecture)
       .build();
-    const profil = 'DITP_ADMIN';
+    const profil = ProfilEnum.DITP_ADMIN;
 
     // WHEN
     let result: string[][] = [];
@@ -98,7 +99,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
 
     const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository);
     const habilitation = new HabilitationBuilder().build();
-    const profil = 'DITP_ADMIN';
+    const profil = ProfilEnum.DITP_ADMIN;
 
     // WHEN
     let result: string[][] = [];
@@ -132,7 +133,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
 
     const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository);
     const habilitation = new HabilitationBuilder().build();
-    const profil = 'DITP_ADMIN';
+    const profil = ProfilEnum.DITP_ADMIN;
 
     // WHEN
     let result: string[][] = [];
@@ -170,7 +171,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
 
     const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository);
     const habilitation = new HabilitationBuilder().build();
-    const profil = 'DROM';
+    const profil = ProfilEnum.DROM;
 
     // WHEN
     let result: string[][] = [];

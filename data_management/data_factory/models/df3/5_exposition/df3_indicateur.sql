@@ -34,7 +34,7 @@ get_evol_vaca as (
 -- Jointure avec les tables référentielles	
 	select 
 	mi.indic_id as id,
-	mi.indic_parent_indic as parent_id, 
+	mi.indic_parent_indic as parent_id,
 	mi.indic_nom as nom,
 	mi.indic_parent_ch as chantier_id,
 	gvcg.vcg as objectif_valeur_cible,
@@ -75,6 +75,13 @@ get_evol_vaca as (
     date_pro_maj.prochaine_date_maj_jours,
     date_pro_maj.est_a_jour,
 	mpi.tendance,
+	NULL::float as objectif_taux_avancement_proposition,
+	NULL::float as objectif_taux_avancement_intermediaire_proposition,
+	NULL::float as valeur_actuelle_proposition,
+	NULL::date as date_proposition,
+	NULL as motif_proposition,
+	NULL as source_donnee_methode_calcul_proposition,
+	NULL as auteur_proposition,
     FALSE as a_supprimer
 	from public.territoire t 
 	cross join {{ ref('metadata_indicateurs') }} mi

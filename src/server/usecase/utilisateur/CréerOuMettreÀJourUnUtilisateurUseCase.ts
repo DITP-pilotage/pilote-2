@@ -23,6 +23,7 @@ import {
 } from '@/server/domain/historisationModification/HistorisationModificationRepository';
 import { HistorisationModification } from '@/server/domain/historisationModification/HistorisationModification';
 import { Profil } from '@/server/domain/profil/Profil.interface';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   constructor(
@@ -87,11 +88,11 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
       chantiers,
     );
 
-    if (['SERVICES_DECONCENTRES_DEPARTEMENT', 'SERVICES_DECONCENTRES_REGION', 'RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT'].includes(utilisateur.profil)) {
+    if ([ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.RESPONSABLE_REGION, ProfilEnum.RESPONSABLE_DEPARTEMENT].includes(utilisateur.profil)) {
       return chantiersPasEnDoublonsAvecLesPérimètres.filter(chantierId => touslesChantiersTerritorialisésIds.has(chantierId));
     }
 
-    if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET'].includes(utilisateur.profil))
+    if ([ProfilEnum.SECRETARIAT_GENERAL, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.DIR_PROJET].includes(utilisateur.profil))
       return chantiersPasEnDoublonsAvecLesPérimètres.filter(chantierId => touslesChantiersIds.has(chantierId));
 
     return chantiersPasEnDoublonsAvecLesPérimètres;
@@ -109,7 +110,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     if (utilisateur.saisieCommentaire) {
       const chantiersIdsAccessiblesEnLecture = this._déterminerChantiersAccessiblesEnLecture(utilisateur, chantiers);
 
-      if (['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT'].includes(utilisateur.profil)) {
+      if ([ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(utilisateur.profil)) {
         return chantiers.filter(c => c.ate !== 'hors_ate_centralise' && chantiersIdsAccessiblesEnLecture.includes(c.id)).map(c => c.id);
       }
 
@@ -128,7 +129,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   }
 
   private _déterminerTerritoiresAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[]): string[] {
-    if (utilisateur.profil === 'DROM') 
+    if (utilisateur.profil === ProfilEnum.DROM)
       return codesTerritoiresDROM;
 
     if (profilsRégionaux.includes(utilisateur.profil)) {
@@ -146,7 +147,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
 
   private _déterminerTerritoiresAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[]): string[] {
     if (utilisateur.saisieCommentaire) {
-      if (['DITP_PILOTAGE', 'DROM'].includes(utilisateur.profil))
+      if ([ProfilEnum.DITP_PILOTAGE, ProfilEnum.DROM].includes(utilisateur.profil))
         return ['NAT-FR'];
 
       return this._déterminerTerritoiresAccessiblesEnLecture(utilisateur, territoires);
@@ -167,10 +168,10 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   private _déterminerPérimètresAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
     const tousLesPérimètresIds = new Set(périmètres.map(p => p.id));
 
-    if (utilisateur.profil === 'DROM') 
+    if (utilisateur.profil === ProfilEnum.DROM)
       return ['PER-018'];
     
-    if (['CABINET_MINISTERIEL', 'DIR_ADMIN_CENTRALE', 'SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'DROM', 'RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT'].includes(utilisateur.profil))
+    if ([ProfilEnum.CABINET_MINISTERIEL, ProfilEnum.DIR_ADMIN_CENTRALE, ProfilEnum.SECRETARIAT_GENERAL, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.DIR_PROJET, ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, ProfilEnum.DROM, ProfilEnum.RESPONSABLE_REGION, ProfilEnum.RESPONSABLE_DEPARTEMENT].includes(utilisateur.profil))
       return utilisateur.habilitations.lecture.périmètres.filter(p => tousLesPérimètresIds.has(p));
 
     return [];
