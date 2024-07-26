@@ -31,6 +31,24 @@ const IndicateurBlocStyled = styled.div`
     }
   }
   
+  .fr-text-warning .infobulle-date-previsionnelle {
+    color: var(--border-plain-warning)!important;
+  }
+  
+  .texte-gris .infobulle-date-previsionnelle {
+    color: var(--text-mention-grey)!important;
+  }
+  
+  .infobulle-date-previsionnelle {
+    position: relative;
+    min-height: 0;
+    padding: 0;
+    
+    button::before {
+      --icon-size: 1.3rem!important;
+    }
+  }
+  
   .indicateur-date-valeur {
     height: 1rem;
     font-size: 0.625rem;

@@ -83,7 +83,6 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                       <IndicateurBloc
                         chantierEstTerritorialisé={chantierEstTerritorialisé}
                         détailsIndicateurs={détailsIndicateurs}
-                        estAutoriseAVoirLesAlertesMAJIndicateurs={estAutoriseAVoirLesAlertesMAJIndicateurs}
                         estAutoriseAVoirLesPropositionsDeValeurActuelle={estAutoriseAVoirLesPropositionsDeValeurActuelle}
                         estInteractif={estInteractif}
                         indicateur={indicateur}
