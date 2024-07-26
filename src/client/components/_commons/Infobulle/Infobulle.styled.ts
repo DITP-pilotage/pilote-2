@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 const InfobulleStyled = styled.div`
   display: inline-block;
+  height: 1.4rem;
   color: var(--text-title-grey);
   vertical-align: -0.3em;
   
@@ -15,6 +16,7 @@ const InfobulleStyled = styled.div`
     right: 0;
     left: 0;
     z-index: 2;
+    min-width: 25rem;
     max-width: 30rem;
     padding: 0.5rem;
     background-color: var(--background-alt-blue-france);

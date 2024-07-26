@@ -28,6 +28,7 @@ import { formaterDate } from '@/client/utils/date/date';
 import IndicateurTendance from '@/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
+import useIndicateurAlerteDateMaj from './useIndicateurAlerteDateMaj';
 
 export const ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE = 'modale-proposition-valeur-actuelle';
 
@@ -37,7 +38,6 @@ interface IndicateurBlocProps {
   estInteractif: boolean
   typeDeRéforme: TypeDeRéforme,
   chantierEstTerritorialisé: boolean,
-  estAutoriseAVoirLesAlertesMAJIndicateurs: boolean,
   estAutoriseAVoirLesPropositionsDeValeurActuelle: boolean,
   listeSousIndicateurs: Indicateur[]
 }
@@ -48,7 +48,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   estInteractif,
   typeDeRéforme,
   chantierEstTerritorialisé,
-  estAutoriseAVoirLesAlertesMAJIndicateurs = false,
   estAutoriseAVoirLesPropositionsDeValeurActuelle = false,
   listeSousIndicateurs,
 }) => {
@@ -74,9 +73,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     }]).sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) => indicateurDétailsTerritoire1.données.codeInsee.localeCompare(indicateurDétailsTerritoire2.données.codeInsee))
   );
 
-  const { data: alerteMiseAJourIndicateurEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR' });
-
-  const estIndicateurEnAlerte = estAutoriseAVoirLesAlertesMAJIndicateurs && !!alerteMiseAJourIndicateurEstDisponible && détailsIndicateur[territoireSélectionné!.codeInsee]?.estAJour === false && détailsIndicateur[territoireSélectionné!.codeInsee]?.prochaineDateMaj !== null;
+  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(détailsIndicateur, territoireSélectionné);
 
   return (
     <IndicateurBlocStyled
@@ -130,15 +127,30 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 </p>
                 {
                   !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] ? (
-                    <p
-                      className={`fr-mb-0 fr-text--xs${estIndicateurEnAlerte ? ' fr-text-warning' : ' texte-gris'}`}
+                    <div
+                      className={`flex align-center relative${estIndicateurEnAlerte ? ' fr-text-warning' : ' texte-gris'}`}
                     >
-                      Date prévisionnelle de mise à jour des données (de l'indicateur) :
-                      {' '}
-                      <span className='fr-text--bold'>
-                        {dateProchaineDateMaj}
-                      </span>
-                    </p>
+                      <p className='fr-mb-0 fr-text--xs'>
+                        Date prévisionnelle de la prochaine mise à jour des données (de l’indicateur) :
+                        {' '}
+                        <span className='fr-text--bold'>
+                          {dateProchaineDateMaj}
+                        </span>
+                      </p>
+                      <Infobulle
+                        className='infobulle-date-previsionnelle'
+                        idHtml='infobulle-date-previsionnelle'
+                      >
+                        <p className='fr-text-title--blue-france'>
+                          Date prévisionnelle de mise à jour de l’indicateur :
+                        </p>
+                        <p>
+                          Elle dépend de la date de valeur actuelle, de la période de mise à jour et du délai de
+                          disponibilité des données. Plus d'informations dans l'accordéon "définition de l’indicateur et
+                          calendrier de mise à jour".
+                        </p>
+                      </Infobulle>
+                    </div>
                   ) : null
                 }
                 {
@@ -288,7 +300,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     <span className='texte-proposition'>
                                       Proposition du territoire
                                     </span>
-                                    <Infobulle idHtml='infobulle-chantiers-jauges'>
+                                    <Infobulle idHtml='infobulle-proposition-valeur-actuelle'>
                                       <p className='texte-proposition'>
                                         Valeur actuelle proposée
                                         le
