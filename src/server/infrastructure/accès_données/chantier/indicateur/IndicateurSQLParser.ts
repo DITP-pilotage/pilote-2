@@ -34,7 +34,7 @@ function créerDonnéesTerritoires(territoires: territoire[], indicateurRows: in
         auteur: indicateurRow?.auteur_proposition,
         motif: indicateurRow?.motif_proposition,
         sourceDonneeEtMethodeCalcul: indicateurRow?.source_donnee_methode_calcul_proposition,
-        dateProposition: indicateurRow?.date_proposition,
+        dateProposition: indicateurRow?.date_proposition?.toLocaleString() ?? null,
       } : null,
       unité: indicateurRow?.unite_mesure ?? null,
       est_applicable: indicateurRow?.est_applicable ?? null,

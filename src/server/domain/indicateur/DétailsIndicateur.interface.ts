@@ -12,7 +12,7 @@ interface DetailIndicateurPropositionValeurActuelle {
   tauxAvancement: number | null
   tauxAvancementIntermediaire: number | null
   auteur: string | null
-  dateProposition: Date | null
+  dateProposition: string | null
   motif: string | null
   sourceDonneeEtMethodeCalcul: string | null
 }

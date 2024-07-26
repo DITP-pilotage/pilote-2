@@ -7,13 +7,15 @@ export default function useSélecteurVueStatut() {
   const { modifierLaVueSélectionnéeEtLesStatutsAssociés } = actionsStatutsStore();
 
   const optionsParDéfaut: optionChoixVueStatuts[] = useMemo(() => [
-    { valeur: 'BROUILLON_ET_PUBLIE', libellé: 'Chantiers validés et en cours de publication' },
-    { valeur: 'PUBLIE', libellé: 'Chantiers validés uniquement' },
+    { valeur: 'PUBLIE', libellé: 'Chantiers validés' },
+    { valeur: 'BROUILLON', libellé: 'Chantiers en cours de publication' },
+    { valeur: 'BROUILLON_ET_PUBLIE', libellé: 'Tous' },
   ], []);
 
   const optionsMobile: optionChoixVueStatuts[] = useMemo(() => [
-    { valeur: 'BROUILLON_ET_PUBLIE', libellé: 'Non validés' },
-    { valeur: 'PUBLIE', libellé: 'Validés' },    
+    { valeur: 'PUBLIE', libellé: 'Validés' },
+    { valeur: 'BROUILLON', libellé: 'Brouillons' },
+    { valeur: 'BROUILLON_ET_PUBLIE', libellé: 'Tous' },
   ], []);
 
   const [options, setOptions] = useState(optionsParDéfaut);

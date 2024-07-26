@@ -40,7 +40,6 @@ interface ChantierAccueil {
   axes: Axe[],
   territoireCode: string
   mailleSelectionnee: 'départementale' | 'régionale',
-  brouillon: boolean
   filtresComptesCalculés: Record<string, { nombre: number }>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
@@ -69,7 +68,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   const filtres = {
     perimetres: query.perimetres ? (query.perimetres as string).split(',').filter(Boolean) : [],
     axes: query.axes ? (query.axes as string).split(',').filter(Boolean) : [],
-    statut: query.brouillon === 'false' ? ['PUBLIE'] : ['BROUILLON', 'PUBLIE'],
+    statut: query.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : query.statut === 'BROUILLON' ? ['BROUILLON'] : ['PUBLIE'],
     estTerritorialise: query.estTerritorialise === 'true',
     estBarometre: query.estBarometre === 'true',
   };
@@ -188,7 +187,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
       axes,
       territoireCode,
       mailleSelectionnee: mailleSelectionnee || 'départementale',
-      brouillon: query.brouillon !== 'false',
       filtresComptesCalculés,
       avancementsAgrégés,
       avancementsGlobauxTerritoriauxMoyens,
@@ -217,7 +215,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   ministères,
   territoireCode,
   mailleSelectionnee,
-  brouillon,
   filtresComptesCalculés,
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
@@ -278,7 +275,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             avancementsAgrégés={avancementsAgrégés}
             avancementsGlobauxTerritoriauxMoyens={avancementsGlobauxTerritoriauxMoyens}
             axes={axes}
-            brouillon={brouillon}
             chantiers={chantiers}
             filtresComptesCalculés={filtresComptesCalculés}
             mailleSelectionnee={mailleSelectionnee}

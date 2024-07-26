@@ -305,7 +305,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                         Valeur actuelle proposée
                                         le
                                         {' '}
-                                        {formaterDate(informationIndicateur.données.proposition.dateProposition?.toISOString(), 'DD/MM/YYYY')}
+                                        {formaterDate(informationIndicateur.données.proposition.dateProposition, 'DD/MM/YYYY')}
                                         {' '}
                                         par
                                         {' '}
