@@ -1,4 +1,4 @@
-import { parseAsBoolean, useQueryState } from 'nuqs';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import ContrôleSegmenté from '@/components/_commons/ContrôleSegmentéNew/ContrôleSegmenté';
 import { TypeVueStatuts } from '@/stores/useStatutsStore/useStatutStore.interface';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
@@ -8,23 +8,23 @@ export default function SélecteurVueStatuts() {
 
   const { options } = useSélecteurVueStatut();
 
-  const [brouillon, setBrouillon] = useQueryState('brouillon', parseAsBoolean.withDefault(true).withOptions({
+  const [statut, setStatut] = useQueryState('statut', parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE']).withDefault('PUBLIE').withOptions({
     shallow: false,
     clearOnDefault: true,
     history: 'push',
   }));
 
   const auChangement = (vueStatuts: TypeVueStatuts) => {
-    sauvegarderFiltres({ brouillon: vueStatuts === 'BROUILLON_ET_PUBLIE' });
+    sauvegarderFiltres({ statut: vueStatuts });
 
-    return setBrouillon(vueStatuts === 'BROUILLON_ET_PUBLIE');
+    return setStatut(vueStatuts);
   };
 
   return (
     <ContrôleSegmenté
       options={options}
       valeurModifiéeCallback={auChangement}
-      valeurSélectionnée={brouillon ? 'BROUILLON_ET_PUBLIE' : 'PUBLIE'}
+      valeurSélectionnée={statut}
     />
   );
 }

@@ -84,7 +84,7 @@ const ModalePropositonValeurActuelle: FunctionComponent<{
                             {' '}
                             le
                             {' '}
-                            {formaterDate(detailIndicateur.proposition.dateProposition?.toISOString(), 'DD/MM/YYYY')}
+                            {formaterDate(detailIndicateur.proposition.dateProposition, 'DD/MM/YYYY')}
                             .
                             Toute modification apportée à cette proposition écrasera et remplacera celle-ci.
                           </p>

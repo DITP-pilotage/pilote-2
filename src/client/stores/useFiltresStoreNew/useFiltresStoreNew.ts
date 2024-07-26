@@ -4,7 +4,7 @@ interface FiltreAccueil {
   perimetres: string[]
   axes: string[]
   maille: string
-  brouillon: boolean
+  statut: string
   groupeParMinistere: boolean
   estBarometre: boolean
   estTerritorialise: boolean
@@ -28,7 +28,7 @@ const etatInitial = {
   perimetres: [] as string[],
   axes: [] as string[],
   maille: '',
-  brouillon: true,
+  statut: 'PUBLIE',
   groupeParMinistere: false,
   estBarometre: false,
   estTerritorialise: false,

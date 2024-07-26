@@ -81,7 +81,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
           auteur: indic.auteur_proposition,
           motif: indic.motif_proposition,
           sourceDonneeEtMethodeCalcul: indic.source_donnee_methode_calcul_proposition,
-          dateProposition: indic.date_proposition,
+          dateProposition: formatDate(indic.date_proposition),
         } : null,
         unité: indic.unite_mesure,
         est_applicable: indic.est_applicable,

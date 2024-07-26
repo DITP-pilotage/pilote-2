@@ -4,7 +4,7 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';
 import Link from 'next/link';
 import { FunctionComponent } from 'react';
 import { useSession } from 'next-auth/react';
-import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
+import { parseAsBoolean, parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import CartographieAvancement
@@ -46,7 +46,6 @@ interface PageChantiersProps {
   axes: Axe[],
   territoireCode: string
   mailleSelectionnee: 'départementale' | 'régionale'
-  brouillon: boolean
   filtresComptesCalculés: Record<string, { nombre: number }>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
@@ -59,7 +58,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   axes,
   territoireCode,
   mailleSelectionnee,
-  brouillon,
   filtresComptesCalculés,
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
@@ -76,7 +74,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
     maille: parseAsString.withDefault(''),
-    brouillon: parseAsBoolean.withDefault(true),
+    statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE']),
   });
 
   const [filtresAlertes] = useQueryStates({
@@ -103,7 +101,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     chantiersFiltrés,
     donnéesTableauChantiers,
     remontéesAlertes,
-    aDesDroitsDeLectureSurAuMoinsUnChantierBrouillon,
   } = usePageChantiers(chantiers, territoireCode, filtresComptesCalculés, avancementsAgrégés);
 
   return (
@@ -359,13 +356,11 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 </Infobulle>
               </TitreInfobulleConteneur>
               {
-                !!session?.profilAAccèsAuxChantiersBrouillons && (!brouillon || aDesDroitsDeLectureSurAuMoinsUnChantierBrouillon(session.habilitations.lecture.chantiers))
-                  ? (
-                    <div className='fr-grid-row fr-my-2w fr-mb-md-0'>
-                      <SélecteurVueStatuts />
-                    </div>
-                  )
-                  : null
+                !!session?.profilAAccèsAuxChantiersBrouillons ? (
+                  <div className='fr-grid-row fr-my-2w fr-mb-md-0'>
+                    <SélecteurVueStatuts />
+                  </div>
+                ) : null
               }
               <TableauChantiers
                 données={donnéesTableauChantiers}
