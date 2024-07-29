@@ -41,7 +41,7 @@ describe('UtilisateurSQLRepository', () => {
           {
             ...randomUtilisateur, 
             email: 'responsable_ara@test.com',
-            profilCode: ProfilEnum.RESPONSABLE_REGION,
+            profilCode: ProfilEnum.SERVICES_DECONCENTRES_REGION,
           },
           {
             ...randomUtilisateur, 
@@ -122,7 +122,7 @@ describe('UtilisateurSQLRepository', () => {
           {
             ...randomUtilisateur, 
             email: 'responsable_ara@test.com',
-            profilCode: ProfilEnum.RESPONSABLE_REGION,
+            profilCode: ProfilEnum.SERVICES_DECONCENTRES_REGION,
           },
           {
             ...randomUtilisateur, 

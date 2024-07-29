@@ -25,6 +25,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
     handleChangementValeursSélectionnéesTerritoires,
     handleChangementValeursSélectionnéesChantiers,
     handleChangementValeursSélectionnéesPérimètresMinistériels,
+    handleChangementValeursSélectionnéesChantiersResponsabilite,
     chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés,
     register,
     errors,
@@ -32,11 +33,14 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
     afficherChampLectureTerritoires,
     afficherChampLectureChantiers,
     afficherChampLecturePérimètres,
+    afficherChampResponsabiliteChantiers,
     territoiresSélectionnés,
     chantiersSélectionnés,
+    chantiersSélectionnésResponsabilite,
     périmètresMinistérielsSélectionnés,
     groupesTerritoiresÀAfficher,
     chantiersAccessiblesPourLeProfil,
+    chantiersAccessibleResponsabilite,
     afficherChampSaisieCommentaire,
     afficherChampSaisieIndicateur,
     afficherChampGestionCompte,
@@ -160,6 +164,37 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
                   chantiers={chantiersAccessiblesPourLeProfil}
                   chantiersIdsSélectionnésParDéfaut={chantiersSélectionnés}
                   valeursDésactivées={chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés}
+                />
+              )}
+              rules={{ required: true }}
+            />
+          </div>
+        </div>
+        <div
+          className={`${afficherChampResponsabiliteChantiers ? '' : 'fr-hidden'}`}
+        >
+          <hr className='fr-hr' />
+          <Titre
+            baliseHtml='h2'
+            className='fr-text--md  fr-mb-2w'
+          >
+            Responsabilités
+          </Titre>
+          <p className='fr-text--xs texte-gris fr-mb-4w'>
+            Parmi les chantiers autorisés en lecture, merci d\'indiquer celles pour lesquelles l\'utilisateur est désigné responsable local.
+            L'utilisateur apparaîtra nominativement comme responsable local de ces chantiers sur les pages concernés de PILOTE. 
+          </p>
+          <div className='fr-mb-4w'>
+            <Controller
+              control={control}
+              name='habilitations.responsabilite.chantiers'
+              render={() => (
+                <MultiSelectChantier
+                  afficherBoutonsSélection
+                  changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesChantiersResponsabilite}
+                  chantiers={chantiersAccessibleResponsabilite}
+                  chantiersIdsSélectionnésParDéfaut={chantiersSélectionnésResponsabilite}
+                  desactive={chantiersAccessibleResponsabilite.length === 0}
                 />
               )}
               rules={{ required: true }}

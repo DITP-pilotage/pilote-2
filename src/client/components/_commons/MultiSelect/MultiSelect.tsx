@@ -6,7 +6,7 @@ import MultiSelectStyled from './MultiSelect.styled';
 import useMultiSelect from './useMultiSelect';
 
 
-export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeursSélectionnéesParDéfaut, changementValeursSélectionnéesCallback, label, afficherBoutonsSélection }: MultiSelectProps) {
+export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeursSélectionnéesParDéfaut, changementValeursSélectionnéesCallback, label, afficherBoutonsSélection, desactive }: MultiSelectProps) {
   const id = useId();
   const ref = useRef(null);
   const {
@@ -40,6 +40,7 @@ export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeurs
       }
       <button
         className='fr-select fr-ellipsis'
+        disabled={desactive}
         id={id}
         title={libellé}
         type='button'

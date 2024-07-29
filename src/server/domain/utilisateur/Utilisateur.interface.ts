@@ -15,11 +15,9 @@ export const profilsCodes = [
   ProfilEnum.COORDINATEUR_REGION,
   ProfilEnum.PREFET_REGION,
   ProfilEnum.SERVICES_DECONCENTRES_REGION,
-  ProfilEnum.RESPONSABLE_REGION,
   ProfilEnum.COORDINATEUR_DEPARTEMENT,
   ProfilEnum.PREFET_DEPARTEMENT,
   ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-  ProfilEnum.RESPONSABLE_DEPARTEMENT,
   ProfilEnum.DROM,
 ] as const;
 
@@ -29,16 +27,14 @@ export const profilsTerritoriaux = [
   ProfilEnum.COORDINATEUR_REGION,
   ProfilEnum.PREFET_REGION,
   ProfilEnum.SERVICES_DECONCENTRES_REGION,
-  ProfilEnum.RESPONSABLE_REGION,
   ProfilEnum.COORDINATEUR_DEPARTEMENT,
   ProfilEnum.PREFET_DEPARTEMENT,
   ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-  ProfilEnum.RESPONSABLE_DEPARTEMENT,
   ProfilEnum.DROM,
 ] as const;
 
-export const profilsDépartementaux = [ProfilEnum.PREFET_DEPARTEMENT, ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, ProfilEnum.RESPONSABLE_DEPARTEMENT];
-export const profilsRégionaux = [ProfilEnum.PREFET_REGION, ProfilEnum.COORDINATEUR_REGION, ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.RESPONSABLE_REGION];
+export const profilsDépartementaux = [ProfilEnum.PREFET_DEPARTEMENT, ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT];
+export const profilsRégionaux = [ProfilEnum.PREFET_REGION, ProfilEnum.COORDINATEUR_REGION, ProfilEnum.SERVICES_DECONCENTRES_REGION];
 
 type Utilisateur = {
   id: string

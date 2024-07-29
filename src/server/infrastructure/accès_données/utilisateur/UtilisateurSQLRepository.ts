@@ -426,6 +426,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       saisieCommentaire: chantiersAccessiblesEnSaisieCommentaire,
       saisieIndicateur: [ProfilEnum.DITP_PILOTAGE, ProfilEnum.DITP_ADMIN].includes(profilUtilisateur.code) ? chantiersAccessibles : [],
       gestionUtilisateur: profilUtilisateur.peut_modifier_les_utilisateurs ? chantiersAccessiblesEnSaisieCommentaire : [],
+      responsabilite: [],
     };
   }
 
@@ -435,6 +436,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       saisieCommentaire: profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire ? this._territoires : [],
       saisieIndicateur: profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur ? this._territoires : [],
       gestionUtilisateur: [ProfilEnum.DITP_PILOTAGE, ProfilEnum.DITP_ADMIN].includes(profilUtilisateur.code) ? this._territoires : [],
+      responsabilite: [],
     };
   }
 
@@ -445,6 +447,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       saisieCommentaire: [],
       saisieIndicateur: [],
       gestionUtilisateur: [],
+      responsabilite: [],
     };
   }
 
@@ -547,13 +550,18 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       'projetsStructurants.lecture': {
         projetsStructurants: [],
       },
+      responsabilite: {
+        chantiers: [],
+        territoires: [],
+        périmètres: [],
+      },
     };
 
     for await (const h of habilitations) {
       const scopeCode = h.scopeCode as keyof Utilisateur['habilitations'];
       if (scopeCode !== 'projetsStructurants.lecture') {
         const listeChantier = 
-          scopeCode == 'saisieCommentaire' && [ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, ProfilEnum.RESPONSABLE_REGION, ProfilEnum.RESPONSABLE_DEPARTEMENT].includes(profilUtilisateur.code) ?
+          scopeCode == 'saisieCommentaire' && [ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(profilUtilisateur.code) ?
             this._chantiers.donnéesBrutes.filter(c => c.ate !== 'hors_ate_centralise') :
             this._chantiers.donnéesBrutes;
 

@@ -46,10 +46,12 @@ export default class UtilisateurBuilder {
     this._gestionUtilisateur = faker.datatype.boolean();
     this._habilitations = {
       lecture: { chantiers: [], territoires: [], périmètres: [] },
-      'saisieCommentaire': { chantiers: [], territoires: [], périmètres: [] },
-      'saisieIndicateur': { chantiers: [], territoires: [], périmètres: [] },
-      'gestionUtilisateur': { chantiers: [], territoires:[], périmètres: [] },
+      saisieCommentaire: { chantiers: [], territoires: [], périmètres: [] },
+      saisieIndicateur: { chantiers: [], territoires: [], périmètres: [] },
+      gestionUtilisateur: { chantiers: [], territoires:[], périmètres: [] },
+      responsabilite: { chantiers: [], territoires: [], périmètres: [] },
       'projetsStructurants.lecture': { projetsStructurants: [] },
+
     };
   }
 

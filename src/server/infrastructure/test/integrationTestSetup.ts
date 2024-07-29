@@ -1,8 +1,15 @@
 import { PrismaClient } from '@prisma/client';
+import logger from '@/server/infrastructure/Logger';
 
 export const prisma = new PrismaClient();
 
 beforeEach(async () => {
+  try {
+    await prisma.$executeRawUnsafe("INSERT INTO scope VALUES ('responsabilite', 'Responsabilité');");
+  } catch {
+    logger.info('Le scope responsabilité existe déjà');
+  }
+
   const tablenames = await prisma.$queryRaw<Array<{ tablename: string }>>`SELECT tablename
                                                                           FROM pg_tables
                                                                           WHERE schemaname = 'public'`;

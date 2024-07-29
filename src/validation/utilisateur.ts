@@ -54,6 +54,9 @@ export const validationInfosHabilitationsUtilisateur = z.object({
       territoires: z.string().array(),
       périmètres: z.string().array(),
     }),
+    responsabilite: z.object({
+      chantiers: z.string().array(),
+    }),
   }),
 });
 

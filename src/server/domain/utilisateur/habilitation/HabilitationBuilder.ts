@@ -12,6 +12,7 @@ export class HabilitationBuilder {
       saisieCommentaire: { chantiers: [], territoires: [], périmètres: [] },
       saisieIndicateur: { chantiers: [], territoires: [], périmètres: [] },
       gestionUtilisateur: { chantiers: [], territoires:[], périmètres: [] },
+      responsabilite: { chantiers: [], territoires: [], périmètres: [] },
       'projetsStructurants.lecture': { projetsStructurants: [] },
     };
 

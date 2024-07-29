@@ -42,6 +42,10 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
           chantiers: [],
           territoires: [],
         },
+        responsabilite: {
+          chantiers: [],
+          territoires: [],
+        },
       });
 
   const déterminerLesNomÀAfficherPourLesTerritoiresLecture = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
@@ -74,6 +78,11 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
 
     return u.habilitations?.lecture?.chantiers?.map(chantierId => chantiers?.find(c => c.id === chantierId)?.nom ?? '') ?? [];
   }, [profil, chantiers]);
+
+  const déterminerLesNomÀAfficherPourLesChantiersResponsabilite = (u: FicheUtilisateurProps['utilisateur']) => {
+    
+    return u.habilitations?.responsabilite?.chantiers?.map(chantierId => chantiers?.find(c => c.id === chantierId)?.nom ?? '') ?? [];
+  };
 
   const déterminerLesNomÀAfficherPourLesTerritoiresSaisieIndicateur = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
 
@@ -113,7 +122,7 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
       if ([ProfilEnum.COORDINATEUR_REGION, ProfilEnum.PREFET_REGION, ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.PREFET_DEPARTEMENT].includes(profil?.code ?? ''))
         return ['Tous les chantiers ATE territorialisés'];
 
-      if ([ProfilEnum.RESPONSABLE_REGION, ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.RESPONSABLE_DEPARTEMENT, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(profil?.code ?? '')) {
+      if ([ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(profil?.code ?? '')) {
         const chantiersFiltrés = chantiers
           ?.filter(c => u.habilitations?.lecture?.chantiers?.includes(c.id) && c.ate !== 'hors_ate_centralise')
           .map(chantier => chantier.nom);
@@ -164,6 +173,10 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
         chantiers: déterminerLesNomÀAfficherPourLesChantiersGestionDesUtilisateurs(utilisateur),
         territoires: déterminerLesNomÀAfficherPourLesTerritoiresGestionUtilisateur(utilisateur),
       },
+      responsabilite: {
+        chantiers: déterminerLesNomÀAfficherPourLesChantiersResponsabilite(utilisateur),
+        territoires: déterminerLesNomÀAfficherPourLesTerritoiresLecture(utilisateur),
+      },      
     };
 
     setScopes(nouveauScopes);

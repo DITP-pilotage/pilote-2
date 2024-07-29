@@ -88,7 +88,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
       chantiers,
     );
 
-    if ([ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.RESPONSABLE_REGION, ProfilEnum.RESPONSABLE_DEPARTEMENT].includes(utilisateur.profil)) {
+    if ([ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, ProfilEnum.SERVICES_DECONCENTRES_REGION].includes(utilisateur.profil)) {
       return chantiersPasEnDoublonsAvecLesPérimètres.filter(chantierId => touslesChantiersTerritorialisésIds.has(chantierId));
     }
 
@@ -96,6 +96,10 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
       return chantiersPasEnDoublonsAvecLesPérimètres.filter(chantierId => touslesChantiersIds.has(chantierId));
 
     return chantiersPasEnDoublonsAvecLesPérimètres;
+  }
+
+  private _déterminerChantiersResponsabilite(utilisateur: UtilisateurÀCréerOuMettreÀJour): string[] {
+    return utilisateur.habilitations.responsabilite.chantiers;
   }
 
   private _déterminerChantiersAccessiblesEnSaisieIndicateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
@@ -145,6 +149,10 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return [];
   }
 
+  private _déterminerTerritoiresResponsabilite(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[], chantiersResponsabilite: string[]): string[] {
+    return chantiersResponsabilite.length > 0 ? this._déterminerTerritoiresAccessiblesEnLecture(utilisateur, territoires) : [];
+  }
+
   private _déterminerTerritoiresAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[]): string[] {
     if (utilisateur.saisieCommentaire) {
       if ([ProfilEnum.DITP_PILOTAGE, ProfilEnum.DROM].includes(utilisateur.profil))
@@ -171,7 +179,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     if (utilisateur.profil === ProfilEnum.DROM)
       return ['PER-018'];
     
-    if ([ProfilEnum.CABINET_MINISTERIEL, ProfilEnum.DIR_ADMIN_CENTRALE, ProfilEnum.SECRETARIAT_GENERAL, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.DIR_PROJET, ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, ProfilEnum.DROM, ProfilEnum.RESPONSABLE_REGION, ProfilEnum.RESPONSABLE_DEPARTEMENT].includes(utilisateur.profil))
+    if ([ProfilEnum.CABINET_MINISTERIEL, ProfilEnum.DIR_ADMIN_CENTRALE, ProfilEnum.SECRETARIAT_GENERAL, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.DIR_PROJET, ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, ProfilEnum.DROM].includes(utilisateur.profil))
       return utilisateur.habilitations.lecture.périmètres.filter(p => tousLesPérimètresIds.has(p));
 
     return [];
@@ -202,6 +210,8 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     const chantiers = await this.chantierRepository.récupérerChantiersSynthétisés();
     const territoires = await this.territoireRepository.récupérerTous();
     const périmètres = await this.périmètreMinistérielRepository.récupérerTous();
+
+    const chantiersResponsabilite = this._déterminerChantiersResponsabilite(utilisateur);
       
     return {
       lecture: {
@@ -209,12 +219,12 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
         territoires: this._déterminerTerritoiresAccessiblesEnLecture(utilisateur, territoires),
         périmètres: this._déterminerPérimètresAccessiblesEnLecture(utilisateur, périmètres),
       },
-      'saisieIndicateur': {
+      saisieIndicateur: {
         chantiers: this._déterminerChantiersAccessiblesEnSaisieIndicateur(utilisateur, chantiers),
         territoires: [],
         périmètres: this._déterminerPérimètresAccessiblesEnSaisieIndicateur(utilisateur, périmètres),
       },
-      'saisieCommentaire': {
+      saisieCommentaire: {
         chantiers: this._déterminerChantiersAccessiblesEnSaisieCommentaire(utilisateur, chantiers),
         territoires: this._déterminerTerritoiresAccessiblesEnSaisieCommentaire(utilisateur, territoires),
         périmètres: this._déterminerPérimètresAccessiblesEnSaisieCommentaire(utilisateur, périmètres),
@@ -223,6 +233,11 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
         chantiers: this._déterminerChantierAccessiblesEnGestionUtilisateur(utilisateur, chantiers),
         territoires: this._déterminerTerritoiresAccessiblesEnGestionUtilisateur(utilisateur, territoires),
         périmètres: this._déterminerPérimètresAccessiblesEnGestionUtilisateur(utilisateur, périmètres),
+      },
+      responsabilite: {
+        chantiers: chantiersResponsabilite,
+        territoires: this._déterminerTerritoiresResponsabilite(utilisateur, territoires, chantiersResponsabilite),
+        périmètres: [],
       },
     };
   }
