@@ -62,6 +62,11 @@ describe('UtilisateurAuthentifieJWTService', () => {
         territoires: [],
         périmètres: [],
       },
+      responsabilite: {
+        chantiers: [],
+        territoires: [],
+        périmètres: [],        
+      },
       'projetsStructurants.lecture': {
         projetsStructurants: [],
       },
