@@ -4,7 +4,7 @@ import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructura
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 
 export const scopesUtilisateurs = ['gestionUtilisateur'] as const;
-export const scopesChantiers = ['lecture', 'saisieCommentaire', 'saisieIndicateur'] as const;
+export const scopesChantiers = ['lecture', 'saisieCommentaire', 'saisieIndicateur', 'responsabilite'] as const;
 export const scopesProjetsStructurants = ['projetsStructurants.lecture'] as const;
 export const scopes = [...scopesChantiers, ...scopesProjetsStructurants, ...scopesUtilisateurs] as const;
 
@@ -42,6 +42,9 @@ export type HabilitationsÀCréerOuMettreÀJour = {
     chantiers: Chantier['id'][]
     territoires: Territoire['code'][]
     périmètres: PérimètreMinistériel['id'][]
+  },
+  responsabilite: {
+    chantiers: Chantier['id'][]
   }
 };
 

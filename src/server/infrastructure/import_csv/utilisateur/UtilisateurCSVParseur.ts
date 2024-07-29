@@ -79,6 +79,7 @@ export default class UtilisateurCSVParseur {
         saisieCommentaire: this._générerUneHabilitation(),
         saisieIndicateur: this._générerUneHabilitation(),
         gestionUtilisateur: this._générerUneHabilitation(),
+        responsabilite: this._générerUneHabilitation(),
       },
     };
   }

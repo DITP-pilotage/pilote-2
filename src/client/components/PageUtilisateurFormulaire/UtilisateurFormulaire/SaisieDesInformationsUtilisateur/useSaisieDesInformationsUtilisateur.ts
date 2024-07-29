@@ -18,13 +18,10 @@ export const PROFILS_POSSIBLES_COORDINATEURS_MODIFICATION = {
     ProfilEnum.PREFET_DEPARTEMENT,
     ProfilEnum.SERVICES_DECONCENTRES_REGION,
     ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-    ProfilEnum.RESPONSABLE_REGION,
-    ProfilEnum.RESPONSABLE_DEPARTEMENT,
   ],
   COORDINATEUR_DEPARTEMENT: [
     ProfilEnum.PREFET_DEPARTEMENT,
     ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-    ProfilEnum.RESPONSABLE_DEPARTEMENT,
   ],
 };
 
@@ -34,18 +31,25 @@ export const PROFILS_POSSIBLES_COORDINATEURS_LECTURE = {
     ProfilEnum.PREFET_DEPARTEMENT,
     ProfilEnum.SERVICES_DECONCENTRES_REGION,
     ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-    ProfilEnum.RESPONSABLE_REGION,
-    ProfilEnum.RESPONSABLE_DEPARTEMENT,
     ProfilEnum.COORDINATEUR_DEPARTEMENT,
     ProfilEnum.COORDINATEUR_REGION,
   ],
   COORDINATEUR_DEPARTEMENT: [
     ProfilEnum.PREFET_DEPARTEMENT,
     ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-    ProfilEnum.RESPONSABLE_DEPARTEMENT,
     ProfilEnum.COORDINATEUR_DEPARTEMENT,
   ],
 };
+
+export const PROFILS_POSSIBLES_RESPONSABLES = new Set([
+  ProfilEnum.PREFET_REGION,
+  ProfilEnum.PREFET_DEPARTEMENT,
+  ProfilEnum.SERVICES_DECONCENTRES_REGION,
+  ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+  ProfilEnum.COORDINATEUR_DEPARTEMENT,
+  ProfilEnum.COORDINATEUR_REGION,  
+  ProfilEnum.EQUIPE_DIR_PROJET,
+]);
 
 export const AAccesATousLesUtilisateurs = (profil: Profil | null) => {
   if (profil)
@@ -60,6 +64,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   const profilCodeSélectionné = watch('profil');
   const territoiresSélectionnés = watch('habilitations.lecture.territoires');
   const chantiersSélectionnés = watch('habilitations.lecture.chantiers');
+  const chantiersSélectionnésResponsabilite = watch('habilitations.responsabilite.chantiers');
   const périmètresMinistérielsSélectionnés = watch('habilitations.lecture.périmètres');
 
   const [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés, setChantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés] = useState<string[]>([]);
@@ -67,12 +72,16 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   const [listeProfils, setListeProfils] = useState<{ libellé: string, valeur: string }[]>([]);
   const [afficherChampLectureTerritoires, setAfficherChampLectureTerritoires] = useState(false);
   const [afficherChampLectureChantiers, setAfficherChampLectureChantiers] = useState(false);
+  const [afficherChampResponsabiliteChantiers, setAfficherChampResponsabiliteChantiers] = useState(false);
   const [afficherChampLecturePérimètres, setAfficherChampLecturePérimètres] = useState(false);
   const [afficherChampSaisieCommentaire, setAfficherChampSaisieCommentaire] = useState(false);
   const [afficherChampSaisieIndicateur, setAfficherChampSaisieIndicateur] = useState(false);
   const [afficherChampGestionCompte, setAfficherChampGestionCompte] = useState(false);
 
   const [chantiersAccessiblesPourLeProfil, setChantiersAccessiblesPourLeProfil] = useState<ChantierSynthétisé[]>([]);
+  const [chantiersAccessibleResponsabilite, setChantiersAccessibleResponsabilite] = useState<ChantierSynthétisé[]>([]);
+
+  
 
   const [groupesTerritoiresÀAfficher, setGroupesTerritoiresÀAfficher] = useState<{ nationale: boolean, régionale: boolean, départementale: boolean }>({
     nationale: false, 
@@ -88,11 +97,16 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     setValue('habilitations.lecture.chantiers', valeursSélectionnées);
   }, [setValue]);
 
+  const handleChangementValeursSélectionnéesChantiersResponsabilite = useCallback((valeursSélectionnées: string[]) => {    
+    setValue('habilitations.responsabilite.chantiers', valeursSélectionnées);
+  }, [setValue]);
+
   useEffect(() => {
     // Lecture
     setAfficherChampLectureTerritoires(!!profilSélectionné && (profilsDépartementaux.includes(profilSélectionné.code) || profilsRégionaux.includes(profilSélectionné.code)));
     setAfficherChampLectureChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
-    
+    setAfficherChampResponsabiliteChantiers(!!profilCodeSélectionné && PROFILS_POSSIBLES_RESPONSABLES.has(profilCodeSélectionné));
+
     if ([ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session!.profil)) {
       setAfficherChampLecturePérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
     } else {
@@ -142,7 +156,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     
     let chantiersAccessibles = chantiers.filter(chantier => session?.habilitations.gestionUtilisateur.chantiers.includes(chantier.id));
 
-    if ([ProfilEnum.RESPONSABLE_DEPARTEMENT, ProfilEnum.RESPONSABLE_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, ProfilEnum.SERVICES_DECONCENTRES_REGION].includes(profilSélectionné.code)) {
+    if ([ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, ProfilEnum.SERVICES_DECONCENTRES_REGION].includes(profilSélectionné.code)) {
       chantiersAccessibles = chantiersAccessibles.filter(chantier => chantier.estTerritorialisé);
     } 
 
@@ -158,6 +172,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     resetField('habilitations.lecture.chantiers', { defaultValue: [] });
     resetField('habilitations.lecture.territoires', { defaultValue: [] });
     resetField('habilitations.lecture.périmètres', { defaultValue: [] });
+    resetField('habilitations.responsabilite.chantiers', { defaultValue: [] });
 
     if (utilisateur) {
       if (utilisateur.habilitations?.lecture.chantiers && afficherChampLectureChantiers) 
@@ -168,8 +183,11 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
 
       if (utilisateur.habilitations?.lecture.périmètres && afficherChampLecturePérimètres) 
         setValue('habilitations.lecture.périmètres', utilisateur.habilitations?.lecture.périmètres);
+
+      if (utilisateur.habilitations?.responsabilite.chantiers && afficherChampResponsabiliteChantiers) 
+        setValue('habilitations.responsabilite.chantiers', utilisateur.habilitations?.responsabilite.chantiers);
     }
-  }, [afficherChampLectureChantiers, afficherChampLecturePérimètres, afficherChampLectureTerritoires, profilCodeSélectionné, resetField, setValue, utilisateur]);
+  }, [afficherChampLectureChantiers, afficherChampLecturePérimètres, afficherChampLectureTerritoires, profilCodeSélectionné, resetField, setValue, utilisateur, afficherChampResponsabiliteChantiers]);
 
   useEffect(() => {
     if (profils) {
@@ -211,6 +229,17 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chantiersAccessiblesPourLeProfil]);
 
+  useEffect(() => {
+    if (!afficherChampResponsabiliteChantiers) {
+      setChantiersAccessibleResponsabilite([]);
+    } else if (afficherChampLectureChantiers) {
+      setChantiersAccessibleResponsabilite(chantiersAccessiblesPourLeProfil.filter(chantier => chantiersSélectionnés.includes(chantier.id)));
+    } else {
+      setChantiersAccessibleResponsabilite(chantiersAccessiblesPourLeProfil);
+    }
+  }, [chantiersAccessiblesPourLeProfil, chantiersSélectionnés, afficherChampResponsabiliteChantiers, afficherChampLectureChantiers, chantiers]);
+  
+
   // GESTION DES TERRITOIRES
   useEffect(() => {
     if (!profilSélectionné) return;
@@ -227,11 +256,13 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   }, [setValue]);
 
   return {
+    chantiers,
     listeProfils,
     profilSélectionné,
     handleChangementValeursSélectionnéesTerritoires,
     handleChangementValeursSélectionnéesChantiers,
     handleChangementValeursSélectionnéesPérimètresMinistériels,
+    handleChangementValeursSélectionnéesChantiersResponsabilite,
     chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés,
     register,
     errors,
@@ -240,11 +271,14 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     afficherChampLectureTerritoires,
     afficherChampLectureChantiers,
     afficherChampLecturePérimètres,
+    afficherChampResponsabiliteChantiers,
     territoiresSélectionnés,
     chantiersSélectionnés,
+    chantiersSélectionnésResponsabilite,
     périmètresMinistérielsSélectionnés,
     groupesTerritoiresÀAfficher,
     chantiersAccessiblesPourLeProfil,
+    chantiersAccessibleResponsabilite,
     afficherChampSaisieCommentaire,
     afficherChampSaisieIndicateur,
     afficherChampGestionCompte,

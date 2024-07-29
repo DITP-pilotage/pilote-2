@@ -93,7 +93,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       },
     });
 
-    if (scope == 'saisieCommentaire' && [ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, ProfilEnum.RESPONSABLE_REGION, ProfilEnum.RESPONSABLE_DEPARTEMENT].includes(profilUtilisateur)) {
+    if (scope == 'saisieCommentaire' && [ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(profilUtilisateur)) {
       chantiers = chantiers.filter(c => c.ate !== 'hors_ate_centralise');
     }
 

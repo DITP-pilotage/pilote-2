@@ -7,7 +7,7 @@ import DétailsDroitsUtilisateurStyled
 import AucunÉlément from '@/components/PageUtilisateur/Élément/AucunÉlément';
 import ÉlémentAccessible from '@/components/PageUtilisateur/Élément/ÉlémentAccessible';
 
-export default function DétailsDroitsUtilisateur({ titre, territoires, chantiers }: DétailsDroitsUtilisateurProps) {
+export default function DétailsDroitsUtilisateur({ titre, territoires, chantiers, labelTerritoires = 'Droits ouverts pour les territoires', labelChantiers = 'Droits ouverts pour les chantiers' }: DétailsDroitsUtilisateurProps) {
   const id = useId();
 
   return (
@@ -21,7 +21,7 @@ export default function DétailsDroitsUtilisateur({ titre, territoires, chantier
       <div className='fr-grid-row'>
         <div className='fr-col-12 fr-col-md-6'>
           <p className='fr-text--md bold fr-mb-1v'>
-            Droits ouverts pour les territoires
+            {labelTerritoires}
           </p>
           {
             territoires.length === 0
@@ -39,7 +39,7 @@ export default function DétailsDroitsUtilisateur({ titre, territoires, chantier
         </div>
         <div className='fr-col-12 fr-col-md-6'>
           <p className='fr-text--md bold fr-mb-1v'>
-            Droits ouverts pour les chantiers
+            {labelChantiers}
           </p>
           {
             chantiers.length === 0

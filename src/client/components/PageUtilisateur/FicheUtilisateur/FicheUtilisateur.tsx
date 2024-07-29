@@ -24,6 +24,13 @@ export default function FicheUtilisateur({ utilisateur }: FicheUtilisateurProps)
         titre='Droits de lecture'
       />
       <DétailsDroitsUtilisateur
+        chantiers={scopes.responsabilite.chantiers}
+        labelChantiers='Responsabilité pour les chantiers'
+        labelTerritoires='Responsabilité pour les territoires'
+        territoires={scopes.responsabilite.territoires}
+        titre='Responsabilité'
+      />
+      <DétailsDroitsUtilisateur
         chantiers={scopes['saisieIndicateur'].chantiers}
         territoires={scopes['saisieIndicateur'].territoires}
         titre='Droits de saisie des données quantitatives'

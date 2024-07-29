@@ -6,6 +6,7 @@ export default interface MultiSelectProps {
   changementValeursSélectionnéesCallback: (valeursSélectionnées: string[]) => void
   label: string,
   afficherBoutonsSélection?: boolean
+  desactive?: boolean
 }
 
 export type MultiSelectOption = { 

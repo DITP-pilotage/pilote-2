@@ -35,6 +35,12 @@ export class HabilitationAuthentitificationAPIBuilder {
     périmètres: [],
   };
 
+  private responsabilite: HabilitationDisponible = {
+    chantiers: [],
+    territoires: [],
+    périmètres: [],
+  };
+
   private projetStructurantLecture: HabilitationProjetStructurantDisponible = {
     projetsStructurants: [],
   };
@@ -45,17 +51,22 @@ export class HabilitationAuthentitificationAPIBuilder {
   }
 
   ajouterHabilitationSaisieCommentaire(categorie: 'chantiers' | 'territoires' | 'périmètres', listeHabilitations: string[]) {
-    this.gestionUtilisateur[categorie] = listeHabilitations;
+    this.saisieCommentaire[categorie] = listeHabilitations;
     return this;
   }
 
   ajouterHabilitationSaisieIndicateur(categorie: 'chantiers' | 'territoires' | 'périmètres', listeHabilitations: string[]) {
-    this.gestionUtilisateur[categorie] = listeHabilitations;
+    this.saisieIndicateur[categorie] = listeHabilitations;
     return this;
   }
 
   ajouterHabilitationLecture(categorie: 'chantiers' | 'territoires' | 'périmètres', listeHabilitations: string[]) {
     this.gestionUtilisateur[categorie] = listeHabilitations;
+    return this;
+  }
+
+  ajouterHabilitationResponsabilite(categorie: 'chantiers' | 'territoires' | 'périmètres', listeHabilitations: string[]) {
+    this.responsabilite[categorie] = listeHabilitations;
     return this;
   }
 
@@ -71,6 +82,7 @@ export class HabilitationAuthentitificationAPIBuilder {
       saisieIndicateur: this.saisieIndicateur,
       lecture: this.lecture,
       'projetsStructurants.lecture': this.projetStructurantLecture,
+      responsabilite: this.responsabilite,
     };
   }
 }

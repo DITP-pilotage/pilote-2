@@ -78,6 +78,11 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
       périmètres: [],
       territoires: [],
     },
+    responsabilite: {
+      chantiers: [],
+      périmètres: [],
+      territoires: [],
+    },
   };
 
   const stubUtilisateurRepository = mock<UtilisateurRepository>();
@@ -108,9 +113,9 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     process.env = oldEnv;
   });
 
-  async function testCasPassant(profilCode: ProfilCode, habilitationsAttendues: HabilitationsÀCréerOuMettreÀJourCalculées, saisieIndicateur: boolean, saisieCommentaire: boolean, gestionUtilisateur: boolean, territoiresCodes?: string[], chantiersIds?: string[], périmètresIds?: string[], profilGestionUtilisateur?: Profil['utilisateurs']) {
+  async function testCasPassant(profilCode: ProfilCode, habilitationsAttendues: HabilitationsÀCréerOuMettreÀJourCalculées, saisieIndicateur: boolean, saisieCommentaire: boolean, gestionUtilisateur: boolean, territoiresCodes?: string[], chantiersIds?: string[], périmètresIds?: string[], chantiersIdsResponsabilite?: string[], profilGestionUtilisateur?: Profil['utilisateurs']) {
     //GIVEN
-    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecSaisieCommentaire(saisieCommentaire).avecSaisieIndicateur(saisieIndicateur).avecGestionUtilisateur(gestionUtilisateur).avecProfil(profilCode).avecHabilitationsLecture(territoiresCodes, chantiersIds, périmètresIds).build();
+    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecSaisieCommentaire(saisieCommentaire).avecSaisieIndicateur(saisieIndicateur).avecGestionUtilisateur(gestionUtilisateur).avecProfil(profilCode).avecHabilitationsLecture(territoiresCodes, chantiersIds, périmètresIds).avecResponsabiliteChantiers(chantiersIdsResponsabilite).build();
     let profilBuilder = new ProfilBuilder().withCode(profilCode);
     if (profilGestionUtilisateur) {
       profilBuilder.withUtilisateurs(profilGestionUtilisateur);
@@ -289,8 +294,8 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     });
   });
 
-  describe("L'utilisateur a un profil RESPONSABLE_REGION", () => {
-    it("Crée l'utilisateur en base de données en prenant une liste de terrioires contenant des régions et leurs départements enfants en lecture et une liste de chantiers territorialisés et une liste de périmètres et en accordant les droits de saisie commentaires", async () => {
+  describe("L'utilisateur a un profil SERVICES_DECONCENTRES_REGION et a des responsabilités sur des chantiers", () => {
+    it("Crée l'utilisateur en base de données en prenant une liste de terrioires contenant des régions et leurs départements enfants en lecture et une liste de chantiers territorialisés et une liste de périmètres et en accordant les droits de saisie commentaires et des responsabilités sur des chantiers", async () => {
       const codeRégionParente = 'REG-11';
       const codesDépartementsEnfantsDeLaRégion = fakeTerritoires.filter(t => t.codeParent === codeRégionParente).map(t => t.code);
 
@@ -298,8 +303,9 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
         ...habilitationsVides, 
         lecture: { chantiers: ['123'], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: ['PER-13'] }, 
         'saisieCommentaire':  { chantiers: ['123'], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: ['PER-13'] },
+        responsabilite: { chantiers : ['123'], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] },
       };
-      await testCasPassant(ProfilEnum.RESPONSABLE_REGION, habilitationsAttendues, false, true, false, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], ['123'], ['PER-13']);
+      await testCasPassant(ProfilEnum.SERVICES_DECONCENTRES_REGION, habilitationsAttendues, false, true, false, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], ['123'], ['PER-13'], ['123']);
     });
   });
 
@@ -337,14 +343,15 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     });
   });
 
-  describe("L'utilisateur a un profil RESPONSABLE_DEPARTEMENT", () => {
-    it("Crée l'utilisateur en base de données en prenant une liste de territoires contenant des départements, une liste de chantiers et une liste de périmètres en lecture et en accordant les droits de saisie commentaires", async () => {
+  describe("L'utilisateur a un profil SERVICES_DECONCENTRES_DEPARTEMENT et a des responsabilités sur des chantiers", () => {
+    it("Crée l'utilisateur en base de données en prenant une liste de territoires contenant des départements, une liste de chantiers et une liste de périmètres en lecture et en accordant les droits de saisie commentaires et une responsabilite sur un chantier", async () => {
       const habilitationsAttendues = {
         ...habilitationsVides, 
         lecture: { chantiers: ['123'], territoires: ['DEPT-75'], périmètres: [] }, 
         'saisieCommentaire':  { chantiers: ['123'], territoires: ['DEPT-75'], périmètres: [] },
+        responsabilite: { chantiers: ['123'], territoires: ['DEPT-75'], périmètres: [] },
       };
-      await testCasPassant(ProfilEnum.RESPONSABLE_DEPARTEMENT, habilitationsAttendues, false, true, false, ['DEPT-75'], ['123'], []);
+      await testCasPassant(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, habilitationsAttendues, false, true, false, ['DEPT-75'], ['123'], [], ['123']);
     });
   });
 

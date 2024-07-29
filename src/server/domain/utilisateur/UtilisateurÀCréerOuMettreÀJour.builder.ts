@@ -39,6 +39,9 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
         périmètres: [],
         territoires: [],
       },
+      responsabilite: {
+        chantiers: [],
+      },
     };
   }
 
@@ -92,6 +95,13 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
     if (périmètresIds)
       this._avecHabilitationLecturePérimètres(périmètresIds);
     
+    return this;
+  }
+
+  avecResponsabiliteChantiers(chantierIds?: Chantier['id'][]): UtilisateurÀCréerOuMettreÀJourBuilder {
+    if (chantierIds) {
+      this._habilitations.responsabilite.chantiers = chantierIds;
+    }
     return this;
   }
 

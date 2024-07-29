@@ -41,7 +41,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
       new UtilisateurBuilder()
         .avecId('ID-USER-1')
         .avecTerritoireCodesLecture(['DEPT-69'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-2')
@@ -51,7 +51,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
       new UtilisateurBuilder()
         .avecId('ID-USER-3')
         .avecTerritoireCodesLecture(['DEPT-34'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-4')
@@ -87,7 +87,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
       new UtilisateurBuilder()
         .avecId('ID-USER-1')
         .avecTerritoireCodesLecture(['DEPT-69'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-2')
@@ -97,7 +97,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
       new UtilisateurBuilder()
         .avecId('ID-USER-3')
         .avecTerritoireCodesLecture(['DEPT-01'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-4')
@@ -210,7 +210,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
       new UtilisateurBuilder()
         .avecId('ID-USER-1')
         .avecTerritoireCodesLecture(['DEPT-69'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-2')
@@ -220,7 +220,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
       new UtilisateurBuilder()
         .avecId('ID-USER-3')
         .avecTerritoireCodesLecture(['DEPT-34'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-4')
@@ -255,7 +255,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
       new UtilisateurBuilder()
         .avecId('ID-USER-1')
         .avecTerritoireCodesLecture(['DEPT-69', 'DEPT-01'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-2')
@@ -265,7 +265,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
       new UtilisateurBuilder()
         .avecId('ID-USER-3')
         .avecTerritoireCodesLecture(['DEPT-01'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-4')
@@ -374,7 +374,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         .avecId('ID-USER-1')
         .avecTerritoireCodesLecture(['DEPT-69'])
         .avecChantierIdsLecture(['CH-002'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-2')
@@ -385,7 +385,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
       new UtilisateurBuilder()
         .avecId('ID-USER-3')
         .avecTerritoireCodesLecture(['DEPT-34'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-4')
@@ -421,7 +421,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         .avecId('ID-USER-1')
         .avecTerritoireCodesLecture(['DEPT-69'])
         .avecChantierIdsLecture(['CH-002'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-2')
@@ -432,7 +432,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
       new UtilisateurBuilder()
         .avecId('ID-USER-3')
         .avecTerritoireCodesLecture(['DEPT-34'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-4')
@@ -443,13 +443,13 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         .avecId('ID-USER-5')
         .avecTerritoireCodesLecture(['DEPT-01'])
         .avecChantierIdsLecture(['CH-001'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-6')
         .avecTerritoireCodesLecture(['DEPT-01'])
         .avecChantierIdsLecture(['CH-002'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
     ];
 
@@ -610,7 +610,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
       new UtilisateurBuilder()
         .avecId('ID-USER-1')
         .avecTerritoireCodesLecture(['DEPT-69'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-2')
@@ -620,7 +620,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
       new UtilisateurBuilder()
         .avecId('ID-USER-3')
         .avecTerritoireCodesLecture(['DEPT-34'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-4')
@@ -655,7 +655,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
       new UtilisateurBuilder()
         .avecId('ID-USER-1')
         .avecTerritoireCodesLecture(['DEPT-01'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-2')
@@ -665,7 +665,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
       new UtilisateurBuilder()
         .avecId('ID-USER-3')
         .avecTerritoireCodesLecture(['DEPT-34'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.PREFET_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-4')
@@ -673,9 +673,9 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         .avecProfil(ProfilEnum.DITP_ADMIN)
         .build(),
       new UtilisateurBuilder()
-        .avecId('ID-USER-1')
+        .avecId('ID-USER-5')
         .avecTerritoireCodesLecture(['DEPT-01'])
-        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
+        .avecProfil(ProfilEnum.PREFET_DEPARTEMENT)
         .build(),
     ];
 
@@ -687,7 +687,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiers: [],
         périmètresMinistériels: [],
         chantiersAssociésAuxPérimètres: [],
-        profils: [ProfilEnum.RESPONSABLE_DEPARTEMENT],
+        profils: [ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT],
       },
       ProfilEnum.COORDINATEUR_DEPARTEMENT,
       habilitationCoordinateurDepartement,
@@ -746,7 +746,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         .avecId('ID-USER-1')
         .avecTerritoireCodesLecture(['DEPT-69'])
         .avecPérimètreIdsLecture(['PER-001'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-2')
@@ -757,7 +757,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
       new UtilisateurBuilder()
         .avecId('ID-USER-3')
         .avecTerritoireCodesLecture(['DEPT-34'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-4')
@@ -793,7 +793,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         .avecId('ID-USER-1')
         .avecTerritoireCodesLecture(['DEPT-69'])
         .avecPérimètreIdsLecture(['PER-001'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-2')
@@ -804,7 +804,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
       new UtilisateurBuilder()
         .avecId('ID-USER-3')
         .avecTerritoireCodesLecture(['DEPT-34'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-4')
@@ -815,13 +815,13 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         .avecId('ID-USER-5')
         .avecTerritoireCodesLecture(['DEPT-01'])
         .avecPérimètreIdsLecture(['PER-001'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-6')
         .avecTerritoireCodesLecture(['DEPT-01'])
         .avecPérimètreIdsLecture(['PER-002'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
     ];
 
@@ -897,7 +897,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         .avecId('ID-USER-1')
         .avecTerritoireCodesLecture(['DEPT-69'])
         .avecPérimètreIdsLecture(['PER-001'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.PREFET_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-2')
@@ -909,7 +909,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
       new UtilisateurBuilder()
         .avecId('ID-USER-3')
         .avecTerritoireCodesLecture(['DEPT-34'])
-        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
+        .avecProfil(ProfilEnum.PREFET_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-4')
@@ -920,7 +920,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         .avecId('ID-USER-5')
         .avecTerritoireCodesLecture(['DEPT-69'])
         .avecPérimètreIdsLecture(['PER-001'])
-        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
+        .avecProfil(ProfilEnum.PREFET_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-6')
@@ -934,7 +934,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         .avecTerritoireCodesLecture(['DEPT-69'])
         .avecChantierIdsLecture(['CH-001'])
         .avecPérimètreIdsLecture(['PER-001'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.PREFET_DEPARTEMENT)
         .build(),
     ];
 
@@ -965,7 +965,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         .avecId('ID-USER-1')
         .avecTerritoireCodesLecture(['DEPT-69'])
         .avecPérimètreIdsLecture(['PER-001'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-2')
@@ -1002,14 +1002,14 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         .avecTerritoireCodesLecture(['DEPT-69'])
         .avecChantierIdsLecture(['CH-001'])
         .avecPérimètreIdsLecture(['PER-001'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-8')
         .avecTerritoireCodesLecture(['DEPT-01', 'DEPT-69'])
         .avecChantierIdsLecture(['CH-001'])
         .avecPérimètreIdsLecture(['PER-001'])
-        .avecProfil(ProfilEnum.RESPONSABLE_DEPARTEMENT)
+        .avecProfil(ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT)
         .build(),
     ];
 
@@ -1021,7 +1021,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiers: ['CH-001'],
         périmètresMinistériels: ['PER-001'],
         chantiersAssociésAuxPérimètres: [],
-        profils: [ProfilEnum.RESPONSABLE_DEPARTEMENT],
+        profils: [ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT],
       },
       ProfilEnum.COORDINATEUR_DEPARTEMENT,
       habilitationCoordinateurDepartement,

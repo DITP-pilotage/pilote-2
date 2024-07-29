@@ -6,4 +6,5 @@ export default interface MultiSelectChantierProps {
   chantiersIdsSélectionnésParDéfaut?: string[]
   valeursDésactivées?: string[]
   afficherBoutonsSélection?: boolean
+  desactive?: boolean
 }
