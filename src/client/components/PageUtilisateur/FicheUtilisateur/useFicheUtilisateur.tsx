@@ -42,10 +42,10 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
           chantiers: [],
           territoires: [],
         },
-    responsabilite: {
-      chantiers: [],
-      territoires: [],
-    },
+        responsabilite: {
+          chantiers: [],
+          territoires: [],
+        },
       });
 
   const déterminerLesNomÀAfficherPourLesTerritoiresLecture = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
