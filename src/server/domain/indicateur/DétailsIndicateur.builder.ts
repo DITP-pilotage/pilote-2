@@ -43,6 +43,8 @@ export default class DétailsIndicateurBuilder {
 
   private _tendance: DétailsIndicateur['tendance'];
 
+  private _prochaineDateValeurActuelle: DétailsIndicateur['prochaineDateValeurActuelle'];
+
   constructor() {
     const nombreDeValeurs = faker.datatype.number({ min: 28, max: 35 });
 
@@ -54,6 +56,7 @@ export default class DétailsIndicateurBuilder {
     this._dateValeurCible = faker.date.future(3, '2025-01-01T00:00:00.000Z').toISOString();
     this._dateValeurActuelle = new Date('2023-03-01T00:00:00.000Z').toISOString();
     this._dateValeurCibleAnnuelle = faker.date.future(2, '2025-03-01T00:00:00.000Z').toISOString();
+    this._prochaineDateValeurActuelle = faker.date.future(2, '2023-03-01T00:00:00.000Z').toISOString();
     this._valeurCibleAnnuelle = faker.datatype.number({ min: this._valeurInitiale ?? 42, max: this._valeurCible ?? 39, precision: 0.01 });
     this._unité = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
     this._est_applicable = générerPeutÊtreNull(0.2, faker.datatype.boolean());
@@ -148,6 +151,11 @@ export default class DétailsIndicateurBuilder {
     return this;
   }
 
+  avecProchaineDateValeurActuelle(prochaineDateValeurActuelle: DétailsIndicateur['prochaineDateValeurActuelle']): DétailsIndicateurBuilder {
+    this._prochaineDateValeurActuelle = prochaineDateValeurActuelle;
+    return this;
+  }
+
   build(): DétailsIndicateur {
     return {
       codeInsee: this._codeInsee,
@@ -169,6 +177,7 @@ export default class DétailsIndicateurBuilder {
       pondération: this._pondération,
       prochaineDateMaj: null,
       prochaineDateMajJours: null,
+      prochaineDateValeurActuelle: this._prochaineDateValeurActuelle,
       estAJour: false,
       tendance: this._tendance,
     };

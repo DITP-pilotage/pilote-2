@@ -21,6 +21,10 @@ export default class IndicateurBuilder {
 
   private _parentId: Indicateur['parentId'];
 
+  private _periodicite: Indicateur['periodicite'];
+
+  private _delaiDisponibilite: Indicateur['delaiDisponibilite'];
+
   constructor() {
     this._id = générerUnIdentifiantUnique('IND');
     this._nom = `${this._id} ${faker.lorem.words()}`;
@@ -31,6 +35,8 @@ export default class IndicateurBuilder {
     this._modeDeCalcul = générerPeutÊtreNull(0.2, faker.lorem.paragraph(5));
     this._unité = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
     this._parentId = null;
+    this._periodicite = faker.helpers.arrayElement(['Annuelle', 'Mensuelle', '3 ans']);
+    this._delaiDisponibilite = faker.datatype.bigInt({ min: 10, max: 100 }).toString();
   }
 
   avecId(id: Indicateur['id']): IndicateurBuilder {
@@ -73,6 +79,16 @@ export default class IndicateurBuilder {
     return this;
   }
 
+  avecPeriodicite(periodicite: Indicateur['periodicite']): IndicateurBuilder {
+    this._periodicite = periodicite;
+    return this;
+  }
+
+  avecDelaiDisponibilite(delaiDisponibilite: Indicateur['delaiDisponibilite']): IndicateurBuilder {
+    this._delaiDisponibilite = delaiDisponibilite;
+    return this;
+  }
+
   build(): Indicateur {
     return {
       id: this._id,
@@ -84,6 +100,8 @@ export default class IndicateurBuilder {
       modeDeCalcul: this._modeDeCalcul,
       unité: this._unité,
       parentId: this._parentId,
+      periodicite: this._periodicite,
+      delaiDisponibilite: this._delaiDisponibilite,
     };
   }
 }

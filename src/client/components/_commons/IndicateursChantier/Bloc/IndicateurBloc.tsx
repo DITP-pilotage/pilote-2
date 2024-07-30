@@ -61,6 +61,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   const {
     dateDeMiseAJourIndicateur,
     dateProchaineDateMaj,
+    dateProchaineDateValeurActuelle,
+    dateValeurActuelle,
   } = useIndicateurBloc(détailsIndicateur, territoireSélectionné);
 
   const informationsIndicateurs = (
@@ -122,7 +124,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   Dernière mise à jour des données (de l'indicateur) :
                   {' '}
                   <span className='fr-text--bold'>
-                    {dateDeMiseAJourIndicateur}
+                    {dateDeMiseAJourIndicateur ?? 'Non renseignée'}
                   </span>
                 </p>
                 {
@@ -134,7 +136,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                         Date prévisionnelle de la prochaine mise à jour des données (de l’indicateur) :
                         {' '}
                         <span className='fr-text--bold'>
-                          {dateProchaineDateMaj}
+                          {dateProchaineDateMaj ?? 'Non renseignée'}
                         </span>
                       </p>
                       <Infobulle
@@ -409,6 +411,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
               <IndicateurDétails
                 chantierEstTerritorialisé={chantierEstTerritorialisé}
                 dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
+                dateProchaineDateMaj={dateProchaineDateMaj}
+                dateProchaineDateValeurActuelle={dateProchaineDateValeurActuelle}
+                dateValeurActuelle={dateValeurActuelle}
                 détailsIndicateurs={détailsIndicateurs}
                 indicateur={indicateur}
                 indicateurDétailsParTerritoires={informationsIndicateurs}

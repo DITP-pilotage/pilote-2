@@ -44,6 +44,8 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       modeDeCalcul: indicateur.mode_de_calcul,
       unité: indicateur.unite_mesure,
       parentId: indicateur.parent_id,
+      periodicite: indicateur.periodicite ?? 'Non renseignée',
+      delaiDisponibilite: indicateur.delai_disponibilite?.toString() ?? 'Non renseignée',
     });
   }
 
@@ -87,6 +89,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         est_applicable: indic.est_applicable,
         dateImport: formatDate(indic.dernier_import_date_indic),
         pondération: indic.ponderation_zone_reel,
+        prochaineDateValeurActuelle: formatDate(indic.prochaine_date_valeur_actuelle),
         prochaineDateMaj: formatDate(indic.prochaine_date_maj),
         prochaineDateMajJours: indic.prochaine_date_maj_jours,
         estAJour: indic.est_a_jour,

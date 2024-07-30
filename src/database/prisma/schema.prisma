@@ -156,6 +156,9 @@ model indicateur {
   dernier_import_auteur_indic                        String?
   prochaine_date_maj                                 DateTime?  @db.Date
   prochaine_date_maj_jours                           Int?
+  prochaine_date_valeur_actuelle                     DateTime? @db.Date
+  periodicite                                        String?
+  delai_disponibilite                                Int?
   est_a_jour                                         Boolean?
   tendance                                           String?
   parent_id                                          String?
