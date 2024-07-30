@@ -18,7 +18,7 @@ import SousIndicateurs from '@/client/components/_commons/SousIndicateurs/SousIn
 import IndicateurDétailsProps from './IndicateurDétails.interface';
 import useIndicateurDétails from './useIndicateurDétails';
 
-export default function IndicateurDétails({ indicateur, indicateurDétailsParTerritoires, typeDeRéforme, chantierEstTerritorialisé, dateDeMiseAJourIndicateur, listeSousIndicateurs, détailsIndicateurs, estSousIndicateur = false }: IndicateurDétailsProps) {
+export default function IndicateurDétails({ indicateur, indicateurDétailsParTerritoires, typeDeRéforme, chantierEstTerritorialisé, dateDeMiseAJourIndicateur, listeSousIndicateurs, détailsIndicateurs, dateValeurActuelle, dateProchaineDateMaj, dateProchaineDateValeurActuelle, estSousIndicateur = false }: IndicateurDétailsProps) {
   const [futOuvert, setFutOuvert] = useState(false);
   const { auClicTerritoireMultiSélectionCallback } = useCartographie();
   const {
@@ -58,8 +58,13 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
                 {
                   ((typeDeRéforme === 'projet structurant') || (indicateurSiTypeDeReformeEstChantier)) ?
                     <IndicateurSpécifications
+                      dateProchaineDateMaj={dateProchaineDateMaj}
+                      dateProchaineDateValeurActuelle={dateProchaineDateValeurActuelle}
+                      dateValeurActuelle={dateValeurActuelle}
+                      delaiDisponibilite={indicateur.delaiDisponibilite}
                       description={indicateur.description}
                       modeDeCalcul={indicateur.modeDeCalcul}
+                      periodicite={indicateur.periodicite}
                       source={indicateur.source}
                     />
                     : null
@@ -126,7 +131,7 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
               {indicateurSiTypeDeReformeEstChantier ?
                 <section className='fr-col-12'>
                   <IndicateurÉvolution
-                    dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
+                    dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur ?? 'Non renseignée'}
                     indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
                     source={indicateur.source}
                   />

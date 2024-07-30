@@ -35,6 +35,7 @@ export type DétailsIndicateur = {
   est_applicable: boolean | null,
   dateImport: string | null,
   pondération: number | null,
+  prochaineDateValeurActuelle: string | null,
   prochaineDateMaj: string | null,
   prochaineDateMajJours: number | null,
   estAJour: boolean | null,

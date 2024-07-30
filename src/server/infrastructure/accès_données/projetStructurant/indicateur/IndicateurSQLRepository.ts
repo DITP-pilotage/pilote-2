@@ -22,6 +22,8 @@ export default class IndicateurProjetStructurantSQLRepository implements Indicat
       modeDeCalcul: indicateur.mode_de_calcul,
       unité: null,
       parentId: null,
+      periodicite: null,
+      delaiDisponibilite: null,
     };
   }
 
@@ -53,6 +55,7 @@ export default class IndicateurProjetStructurantSQLRepository implements Indicat
         pondération: null,
         prochaineDateMaj: null,
         prochaineDateMajJours: null,
+        prochaineDateValeurActuelle: null,
         estAJour: null,
         tendance: null,
       };

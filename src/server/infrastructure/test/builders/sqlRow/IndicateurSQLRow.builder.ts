@@ -94,6 +94,12 @@ export default class IndicateurRowBuilder {
 
   private _tendance: indicateur['tendance'];
 
+  private _prochaine_date_valeur_actuelle: indicateur['prochaine_date_valeur_actuelle'];
+
+  private _periodicite: indicateur['periodicite'];
+
+  private _delai_disponibilite: indicateur['delai_disponibilite'];
+
   constructor() {
     const indicateurGénéré = new IndicateurBuilder().build();
     const détailsIndicateurGénéré = new DétailsIndicateurBuilder().build();
@@ -144,6 +150,9 @@ export default class IndicateurRowBuilder {
     this._est_a_jour = false;
     this._parent_id = null;
     this._tendance = détailsIndicateurGénéré.tendance;
+    this._prochaine_date_valeur_actuelle = new Date('2025-01-01T00:00:00.000Z');
+    this._periodicite = faker.helpers.arrayElement(['Annuelle', 'Mensuelle', '3 ans']);
+    this._delai_disponibilite = faker.datatype.number({ min: 10, max: 100 });
   }
 
   avecId(id: indicateur['id']): IndicateurRowBuilder {
@@ -351,6 +360,21 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
+  avecProchaineDateValeurActuelle(prochaine_date_valeur_actuelle: indicateur['prochaine_date_valeur_actuelle']): IndicateurRowBuilder {
+    this._prochaine_date_valeur_actuelle = prochaine_date_valeur_actuelle;
+    return this;
+  }
+
+  avecPeriodicite(periodicite: indicateur['periodicite']): IndicateurRowBuilder {
+    this._periodicite = periodicite;
+    return this;
+  }
+
+  avecDelaiDisponibilite(delai_disponibilite: indicateur['delai_disponibilite']): IndicateurRowBuilder {
+    this._delai_disponibilite = delai_disponibilite;
+    return this;
+  }
+
   build(): indicateur {
     return {
       id: this._id,
@@ -402,6 +426,9 @@ export default class IndicateurRowBuilder {
       valeur_actuelle_proposition: null,
       objectif_taux_avancement_intermediaire_proposition: null,
       objectif_taux_avancement_proposition: null,
+      prochaine_date_valeur_actuelle: this._prochaine_date_valeur_actuelle,
+      periodicite: this._periodicite,
+      delai_disponibilite: this._delai_disponibilite,
     };
   }
 }

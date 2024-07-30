@@ -10,8 +10,11 @@ export default interface IndicateurDétailsProps {
   indicateurDétailsParTerritoires: IndicateurDétailsParTerritoire[]
   typeDeRéforme: TypeDeRéforme
   chantierEstTerritorialisé: boolean
-  dateDeMiseAJourIndicateur: string
+  dateDeMiseAJourIndicateur: string | null
   listeSousIndicateurs: Indicateur[]
   détailsIndicateurs: DétailsIndicateurs
   estSousIndicateur?: boolean
+  dateValeurActuelle: string | null
+  dateProchaineDateMaj: string | null
+  dateProchaineDateValeurActuelle: string | null
 }

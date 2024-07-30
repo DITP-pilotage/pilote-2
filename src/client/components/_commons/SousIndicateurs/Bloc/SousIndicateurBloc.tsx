@@ -44,6 +44,8 @@ export default function SousIndicateurBloc({
     tableau,
     dateDeMiseAJourIndicateur,
     dateProchaineDateMaj,
+    dateProchaineDateValeurActuelle,
+    dateValeurActuelle,
   } = useSousIndicateurBloc(détailsIndicateur);
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
 
@@ -86,7 +88,7 @@ export default function SousIndicateurBloc({
                 Dernière mise à jour des données (de l'indicateur) :
                 {' '}
                 <span className='fr-text--bold'>
-                  {dateDeMiseAJourIndicateur}
+                  {dateDeMiseAJourIndicateur ?? 'Non renseignée'}
                 </span>
               </p>
               {
@@ -97,7 +99,7 @@ export default function SousIndicateurBloc({
                     Date prévisionnelle de la prochaine date de mise à jour des données (de l'indicateur) :
                     {' '}
                     <span className='fr-text--bold'>
-                      {dateProchaineDateMaj}
+                      {dateProchaineDateMaj ?? 'Non renseignée'}
                     </span>
                   </p>
                 ) : null
@@ -141,6 +143,9 @@ export default function SousIndicateurBloc({
             <IndicateurDétails
               chantierEstTerritorialisé={chantierEstTerritorialisé}
               dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
+              dateProchaineDateMaj={dateProchaineDateMaj}
+              dateProchaineDateValeurActuelle={dateProchaineDateValeurActuelle}
+              dateValeurActuelle={dateValeurActuelle}
               détailsIndicateurs={détailsIndicateurs}
               estSousIndicateur
               indicateur={indicateur}

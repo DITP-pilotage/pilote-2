@@ -21,7 +21,7 @@ import { formaterDate } from '@/client/utils/date/date';
 import ValeurEtDate from './ValeurEtDate/ValeurEtDate';
 import { IndicateurDétailsParTerritoire } from './IndicateurBloc.interface';
 
-const indicateurDétailsVide = {
+const indicateurDétailsVide: IndicateurDétailsParTerritoire = {
   territoireNom: '',
   données: {
     codeInsee: '',
@@ -43,6 +43,7 @@ const indicateurDétailsVide = {
     pondération: null,
     prochaineDateMaj: null,
     prochaineDateMajJours: null,
+    prochaineDateValeurActuelle: null,
     estAJour: null,
     tendance: null,
   },

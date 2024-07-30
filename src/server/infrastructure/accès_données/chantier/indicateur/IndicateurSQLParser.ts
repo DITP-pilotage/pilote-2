@@ -42,6 +42,7 @@ function créerDonnéesTerritoires(territoires: territoire[], indicateurRows: in
       pondération: indicateurRow?.ponderation_zone_reel ?? null,
       prochaineDateMaj: indicateurRow?.prochaine_date_maj_jours?.toLocaleString() ?? null,
       prochaineDateMajJours: indicateurRow?.prochaine_date_maj_jours ?? null,
+      prochaineDateValeurActuelle: indicateurRow?.prochaine_date_valeur_actuelle?.toLocaleString() ?? null,
       estAJour: indicateurRow?.est_a_jour ?? null,
       tendance: indicateurRow?.tendance ?? null,
     };
