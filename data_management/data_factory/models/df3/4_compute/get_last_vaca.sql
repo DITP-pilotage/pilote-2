@@ -10,7 +10,13 @@ sort_mesures_vaca_last as (
 )
 
 SELECT 
-indic_id, zone_id, 
-metric_date as date_valeur_actuelle,
-vaca, tag, taa_courant
+	indic_id,
+	zone_id, 
+	metric_date as date_valeur_actuelle,
+	vaca,
+	tag,
+	taa_courant,
+	vacp,
+	tap_global,
+	tap_courant
 FROM sort_mesures_vaca_last

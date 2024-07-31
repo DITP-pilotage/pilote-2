@@ -987,3 +987,5 @@ sources:
         description: "Habilitations des utilisateurs"
       - name: utilisateur
         description: "Table des utilisateurs de la webapp"
+      - name: proposition_valeur_actuelle
+        description: "Table des propositions de valeurs actuelles saisies dans la webapp"
