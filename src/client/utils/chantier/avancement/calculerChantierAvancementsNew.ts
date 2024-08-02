@@ -1,32 +1,34 @@
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateurNew/agrégateur';
+import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
-import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
-
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
 export default function calculerChantierAvancements(
   chantier: ChantierRapportDetailleContrat,
   mailleSélectionnée: MailleInterne,
-  territoireSélectionné: DétailTerritoire,
-  territoireParent: DétailTerritoire | null,
+  territoireCode: string,
+  territoireCodeParent: string | null,
   avancementsAgrégés: AvancementsStatistiques,
 ) {
-  const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire([chantier], mailleSélectionnée).agréger();
+
+  const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire([chantier]).agréger();
 
   const avancementRégional = ( typeTauxAvancement: 'global' | 'annuel' ) => {
-    if (territoireSélectionné.maille === 'régionale') {
-      return donnéesTerritoiresAgrégées.régionale.territoires[territoireSélectionné.codeInsee].répartition.avancements[typeTauxAvancement].moyenne;
-    }
+    const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+    const codeInseeTerritoireParent = territoireCodeParent ? territoireCodeVersMailleCodeInsee(territoireCodeParent).codeInsee : null;
 
-    if (territoireSélectionné.maille === 'départementale' && territoireParent) {
-      return donnéesTerritoiresAgrégées.régionale.territoires[territoireParent.codeInsee].répartition.avancements[typeTauxAvancement].moyenne;
-    }
+    return maille === 'REG'
+      ? donnéesTerritoiresAgrégées.régionale.territoires[codeInsee].répartition.avancements[typeTauxAvancement].moyenne
+      : maille === 'DEPT' && codeInseeTerritoireParent
+        ? donnéesTerritoiresAgrégées.régionale.territoires[codeInseeTerritoireParent].répartition.avancements[typeTauxAvancement].moyenne
+        : null;
   };
 
   const avancementDépartemental = ( typeTauxAvancement: 'global' | 'annuel' ) => {
-    if (territoireSélectionné.maille === 'départementale')
-      return donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[territoireSélectionné.codeInsee].répartition.avancements[typeTauxAvancement].moyenne;
+    const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+
+    return maille === 'DEPT' ? donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[codeInsee].répartition.avancements[typeTauxAvancement].moyenne : null;
   };
 
   return {

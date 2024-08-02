@@ -1,32 +1,33 @@
-import { useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
 import Loader from '@/components/_commons/Loader/Loader';
 import SélecteursMaillesEtTerritoires
   from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
-import PageChantierEnTête from '@/client/components/PageChantier/EnTête/EnTête';
-import Cartographie from '@/components/_commons/Cartographie/Cartographie';
+import PageChantierEnTête from '@/components/PageChantier/EnTête/EnTête';
+import Cartographie from '@/components/_commons/Cartographie/CartographieNew';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
-import { getFiltresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
-import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
-import { getQueryParamString } from '@/client/utils/getQueryParamString';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import useChoixTerritoire from './useChoixTerritoire';
-import ChoixTerritoireProps from './ChoixTerritoire.interface';
 
-export default function ChoixTerritoire({ chantierId }: ChoixTerritoireProps) {
+interface ChoixTerritoireProps {
+  chantierId: Chantier['id']
+  territoireCode: string
+  mailleSélectionnée: MailleInterne
+}
+
+const ChoixTerritoire: FunctionComponent<ChoixTerritoireProps> = ({
+  chantierId,
+  territoireCode,
+  mailleSélectionnée,
+}) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const { chantier, donnéesCartographie } = useChoixTerritoire(chantierId);
+  const { chantier, donnéesCartographie } = useChoixTerritoire(chantierId, mailleSélectionnée);
   const { auClicTerritoireCallback } = useCartographie();
-  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-
-  const filtresActifs = getFiltresActifs();
-  const territoireCode = territoireSélectionné?.code;
-
-  const queryParamString = getQueryParamString(filtresActifs);
-  const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
 
   return (
     <div className='flex'>
@@ -51,7 +52,7 @@ export default function ChoixTerritoire({ chantierId }: ChoixTerritoireProps) {
             <>
               <PageChantierEnTête
                 chantier={chantier}
-                hrefBoutonRetour={hrefBoutonRetour}
+                territoireCode={territoireCode}
               />
               <div className='fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mt-5w fr-mx-1w'>
                 <div className='fr-col-12 fr-col-xl-6'>
@@ -66,6 +67,9 @@ export default function ChoixTerritoire({ chantierId }: ChoixTerritoireProps) {
                       <Cartographie
                         auClicTerritoireCallback={auClicTerritoireCallback}
                         données={donnéesCartographie}
+                        mailleSelectionnee={mailleSélectionnée}
+                        pathname='/chantier/[id]/[territoireCode]'
+                        territoireCode={territoireCode}
                       />
                     </section>
                   </Bloc>
@@ -79,4 +83,6 @@ export default function ChoixTerritoire({ chantierId }: ChoixTerritoireProps) {
       </main>
     </div>
   );
-}
+};
+
+export default ChoixTerritoire;

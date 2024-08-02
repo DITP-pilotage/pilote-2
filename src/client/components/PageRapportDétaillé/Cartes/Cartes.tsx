@@ -46,6 +46,7 @@ export default function Cartes({
                   données={donnéesCartographieAvancement}
                   mailleSelectionnee={mailleSelectionnee}
                   options={{ estInteractif: false }}
+                  pathname={null}
                   territoireCode={territoireCode}
                   élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
                 />
@@ -76,6 +77,7 @@ export default function Cartes({
                   données={donnéesCartographieMétéo}
                   mailleSelectionnee={mailleSelectionnee}
                   options={{ estInteractif: false }}
+                  pathname={null}
                   territoireCode={territoireCode}
                   élémentsDeLégende={ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS}
                 />

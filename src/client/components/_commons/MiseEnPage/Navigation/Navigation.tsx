@@ -12,7 +12,6 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import { MenuItemGestionContenu } from '@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu';
 import api from '@/server/infrastructure/api/trpc/api';
 import { getFiltresActifs } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
-import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { récupérerUnCookie } from '@/client/utils/cookies';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
@@ -69,12 +68,10 @@ export default function Navigation() {
 
   const territoireCodeURL = router.query.territoireCode as string | undefined;
 
-  // Cas où le code territoire n'est pas dans l'url (page chantier), on utilise le store.
-  // A supprimer au moment du refacto de la page chantier.
-  const territoireCodeStore = territoireSélectionnéTerritoiresStore()?.code ?? (session?.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : session?.habilitations.lecture.territoires[0]);
+  const territoireCodeStore = filtresActifs?.territoireCode ?? (session?.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : session?.habilitations.lecture.territoires[0]);
   const territoireCode = territoireCodeURL ?? territoireCodeStore;
 
-  const queryParamString = getQueryParamString(filtresActifs);
+  const queryParamString = getQueryParamString(filtresActifs, new Set(['territoireCode']));
 
   const aConsulteLaDerniereNouveaute = récupérerUnCookie('derniereVersionNouveauteConsulte') === derniereVersionNouveaute;
 

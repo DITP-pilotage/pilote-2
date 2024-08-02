@@ -74,7 +74,7 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
       }
 
       const _mailleSelectionnee = mailleSelectionnee || get().mailleSélectionnée;
-      
+
       if (_mailleSelectionnee === 'régionale') {
         return get().actions.récupérerDétailsSurUnTerritoire(`REG-${codeInsee}`);
       }

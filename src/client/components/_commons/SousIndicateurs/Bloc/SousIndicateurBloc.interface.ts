@@ -8,5 +8,6 @@ export default interface SousIndicateurBlocProps {
   estDisponibleALImport: boolean
   estInteractif: boolean
   chantierEstTerritorialisé: boolean
-  classeCouleurFond: string 
+  classeCouleurFond: string
+  territoireCode: string
 }

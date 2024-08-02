@@ -1,11 +1,36 @@
 import Cartographie from '@/components/_commons/Cartographie/Cartographie';
-import CartographieValeurActuelleProps from '@/components/_commons/Cartographie/CartographieValeurActuelle/CartographieValeurActuelle.interface';
 import CartographieLégendeDégradé from '@/components/_commons/Cartographie/Légende/Dégradé/CartographieLégendeDégradé';
 import CartographieLégendeListe from '@/client/components/_commons/Cartographie/Légende/Liste/CartographieLégendeListe';
+import { CartographieOptions } from '@/components/_commons/Cartographie/useCartographie.interface';
+import {
+  CartographieÉlémentsDeLégende,
+} from '@/components/_commons/Cartographie/Légende/CartographieLégende.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import {
+  CartographieDonnéesValeurActuelle,
+} from '@/components/_commons/Cartographie/CartographieValeurActuelleNew/CartographieValeurActuelle.interface';
 import useCartographieValeurActuelle from './useCartographieValeurActuelle';
 
-export default function CartographieValeurActuelle({ données, options, unité, auClicTerritoireCallback, élémentsDeLégende }: CartographieValeurActuelleProps) {
-  const { donnéesCartographie, légende, légendeAdditionnelle } = useCartographieValeurActuelle(données, élémentsDeLégende, unité);
+interface CartographieValeurActuelleProps {
+  données: CartographieDonnéesValeurActuelle,
+  options?: Partial<CartographieOptions>,
+  unité?: string | null,
+  élémentsDeLégende: CartographieÉlémentsDeLégende,
+  auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void
+}
+
+export default function CartographieValeurActuelle({
+  données,
+  options,
+  unité,
+  auClicTerritoireCallback,
+  élémentsDeLégende,
+}: CartographieValeurActuelleProps) {
+  const {
+    donnéesCartographie,
+    légende,
+    légendeAdditionnelle,
+  } = useCartographieValeurActuelle(données, élémentsDeLégende, unité);
 
   return (
     <Cartographie

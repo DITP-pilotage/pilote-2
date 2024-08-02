@@ -6,4 +6,5 @@ export default interface SousIndicateursProps {
   détailsIndicateurs: DétailsIndicateurs
   chantierEstTerritorialisé: boolean
   estInteractif: boolean
+  territoireCode: string
 }

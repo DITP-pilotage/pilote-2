@@ -6,9 +6,7 @@ import { Commentaire } from '@/server/domain/chantier/commentaire/Commentaire.in
 import Objectif from '@/server/domain/chantier/objectif/Objectif.interface';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
-import {
-  AvancementChantierRapportDetaille,
-} from '@/components/PageRapportDétaillé/avancement-chantier-rapport-detaille';
+import { AvancementChantierRapportDetaille } from '@/components/PageRapportDétaillé/AvancementChantierRapportDetaille';
 import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';

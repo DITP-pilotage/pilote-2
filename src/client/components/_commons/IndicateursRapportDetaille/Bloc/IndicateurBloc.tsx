@@ -102,6 +102,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 détailsIndicateurs={détailsIndicateurs}
                 estInteractif={estInteractif}
                 listeSousIndicateurs={listeSousIndicateurs}
+                territoireCode={territoireCode}
               />
             )
           }

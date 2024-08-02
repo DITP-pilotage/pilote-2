@@ -4,14 +4,13 @@ import { consignesDÉcritureObjectif, libellésTypesObjectif, TypeObjectif } fro
 
 import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import RapportDétailléChantierProps from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier.interface';
-import AvancementChantier from '@/components/PageChantier/AvancementChantierNew/AvancementChantier';
 import Responsables from '@/components/PageChantier/ResponsablesChantier/ResponsablesChantier';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
 import IndicateursRapportDetaille from '@/components/_commons/IndicateursRapportDetaille/IndicateursRapportDetaille';
 import DécisionsStratégiques from '@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques';
-import Commentaires from '@/components/_commons/Commentaires/Commentaires';
+import Commentaires from '@/components/_commons/CommentairesNew/Commentaires';
 import Titre from '@/components/_commons/Titre/Titre';
-import Publication from '@/components/_commons/Publication/Publication';
+import Publication from '@/components/_commons/PublicationNew/Publication';
 import { typesObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
 import {
   typesCommentaireMailleNationale,
@@ -20,6 +19,7 @@ import {
 import { listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
 import Cartes from '@/client/components/PageRapportDétaillé/Cartes/Cartes';
 import Bloc from '@/components/_commons/Bloc/Bloc';
+import AvancementChantier from '@/components/PageChantier/AvancementChantier/AvancementChantier';
 import RapportDétailléChantierStyled from './RapportDétailléChantier.styled';
 
 export default function RapportDétailléChantier({
@@ -38,7 +38,7 @@ export default function RapportDétailléChantier({
   donnéesCartographieMétéo,
 }: RapportDétailléChantierProps) {
 
-  const responsableLocal = chantier?.responsableLocalTerritoireSélectionné ?? [];
+  const listeResponsablesLocaux = chantier?.responsableLocalTerritoireSélectionné ?? [];
   const listeCoordinateursTerritorials = chantier?.coordinateurTerritorialTerritoireSélectionné ?? [];
 
   const avancements = mapChantierStatistiques.get(chantier.id)!;
@@ -79,7 +79,7 @@ export default function RapportDétailléChantier({
                 </Titre>
                 <AvancementChantier
                   avancements={avancements}
-                  chantierId={chantier.id}
+                  territoireCode={territoireCode}
                 />
               </section>
               <section className='rubrique responsables'>
@@ -93,8 +93,8 @@ export default function RapportDétailléChantier({
                   afficheResponsablesLocaux={territoireSélectionné?.maille !== 'nationale'}
                   libelléChantier={chantier.nom}
                   listeCoordinateursTerritorials={listeCoordinateursTerritorials}
-                  listeDirecteursProjet={chantier.responsables.directeursProjet}
-                  listeResponsablesLocal={responsableLocal}
+                  listeDirecteursProjets={chantier.responsables.directeursProjet}
+                  listeResponsablesLocaux={listeResponsablesLocaux}
                   maille={territoireSélectionné?.maille ?? null}
                 />
               </section>
@@ -166,6 +166,7 @@ export default function RapportDétailléChantier({
                           modeÉcriture={false}
                           publicationInitiale={objectifs?.find(objectif => objectif?.type === type) || null}
                           réformeId={chantier.id}
+                          territoireCode={territoireCode}
                         />
                       ))
                     }
@@ -217,6 +218,7 @@ export default function RapportDétailléChantier({
                   chantierId={chantier.id}
                   décisionStratégique={décisionStratégique}
                   estInteractif={false}
+                  territoireCode={territoireCode}
                 />
               </div>
             </section>
@@ -239,6 +241,7 @@ export default function RapportDétailléChantier({
                     maille={territoireSélectionné!.maille}
                     nomTerritoire={territoireSélectionné!.nomAffiché}
                     réformeId={chantier.id}
+                    territoireCode={territoireCode}
                     typesCommentaire={territoireSélectionné!.maille === 'nationale' ? typesCommentaireMailleNationale : typesCommentaireMailleRégionaleOuDépartementale}
                   />
                 </div>

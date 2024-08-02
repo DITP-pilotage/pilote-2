@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 interface FiltreAccueil {
+  territoireCode: string
   perimetres: string[]
   axes: string[]
   maille: string
@@ -27,6 +28,7 @@ interface FiltresStore {
 const etatInitial = {
   perimetres: [] as string[],
   axes: [] as string[],
+  territoireCode: '',
   maille: '',
   statut: 'PUBLIE',
   groupeParMinistere: false,

@@ -33,6 +33,7 @@ import {
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateurNew/agrégateur';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
 interface ChantierAccueil {
   chantiers: ChantierAccueilContrat[]
@@ -52,11 +53,12 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   assert(query.territoireCode, 'Le territoire code est obligatoire pour afficher la page d\'accueil');
   assert(session, 'Vous devez être authentifié pour accéder a cette page');
   assert(session.habilitations, 'La session ne dispose d\'aucune habilitation');
+  const territoireCode = query.territoireCode as string;
 
   const territoireDept = session.habilitations.lecture.territoires.find(territoire => territoire.startsWith('DEPT'));
   const territoireReg = session.habilitations.lecture.territoires.find(territoire => territoire.startsWith('REG'));
 
-  if ((query.territoireCode === 'NAT-FR' && !session.habilitations.lecture.territoires.includes('NAT-FR')) || !session.habilitations.lecture.territoires.includes(query.territoireCode as string)) {
+  if ((territoireCode === 'NAT-FR' && !session.habilitations.lecture.territoires.includes('NAT-FR')) || !session.habilitations.lecture.territoires.includes(territoireCode)) {
     return {
       redirect: {
         statusCode: 302,
@@ -81,8 +83,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     estEnAlerteAbscenceTauxAvancementDepartemental: query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
   };
 
-  const territoireCode = query.territoireCode as string;
-  const [maille, codeInseeSelectionne] = territoireCode.split('-');
+  const { maille, codeInsee: codeInseeSelectionne } = territoireCodeVersMailleCodeInsee(territoireCode);
   const mailleSelectionnee = query.maille as 'départementale' | 'régionale' ?? (maille === 'REG' ? 'régionale' : 'départementale');
 
   const mailleChantier = maille === 'NAT' ? 'nationale' : mailleSelectionnee;
@@ -245,6 +246,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             />
             <SélecteursMaillesEtTerritoires
               mailleSelectionnee={mailleSelectionnee}
+              pathname='/accueil/chantier/[territoireCode]'
               territoireCode={territoireCode}
             />
           </BarreLatéraleEncart>

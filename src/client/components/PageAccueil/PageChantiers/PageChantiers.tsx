@@ -23,7 +23,7 @@ import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import RemontéeAlerte from '@/components/_commons/RemontéeAlerteNew/RemontéeAlerte';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
-import SélecteurVueStatuts from '@/components/PageAccueil/SélecteurVueStatutsNew/SélecteurVueStatuts';
+import SélecteurVueStatuts from '@/components/PageAccueil/SélecteurVueStatuts/SélecteurVueStatuts';
 import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
@@ -66,7 +66,8 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
 
   const { data: session } = useSession();
 
-  const { auClicTerritoireCallback } = useCartographie(territoireCode, mailleSelectionnee);
+  const pathname = '/accueil/chantier/[territoireCode]';
+  const { auClicTerritoireCallback } = useCartographie(territoireCode, mailleSelectionnee, pathname);
 
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
@@ -294,6 +295,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   auClicTerritoireCallback={auClicTerritoireCallback}
                   données={avancementsGlobauxTerritoriauxMoyens}
                   mailleSelectionnee={mailleSelectionnee}
+                  pathname='/accueil/chantier/[territoireCode]'
                   territoireCode={territoireCode}
                   élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
                 />
@@ -365,6 +367,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
               <TableauChantiers
                 données={donnéesTableauChantiers}
                 ministèresDisponibles={ministères}
+                territoireCode={territoireCode}
               />
             </Bloc>
           </div>

@@ -3,39 +3,39 @@ import Titre from '@/components/_commons/Titre/Titre';
 import IndicateurBloc from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc';
 import IndicateursChantierStyled from '@/components/_commons/IndicateursChantier/IndicateursChantier.styled';
 import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
-import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import api from '@/server/infrastructure/api/trpc/api';
-
-import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 import { ÉlémentPageIndicateursType } from '@/client/utils/rubriques';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
 interface IndicateursProps {
   indicateurs: Indicateur[];
   détailsIndicateurs: DétailsIndicateurs
   listeRubriquesIndicateurs: ÉlémentPageIndicateursType[]
-  typeDeRéforme: TypeDeRéforme,
   chantierEstTerritorialisé: boolean,
   estInteractif?: boolean
   estAutoriseAVoirLesAlertesMAJIndicateurs?: boolean
   estAutoriseAVoirLesPropositionsDeValeurActuelle?: boolean
+  territoireCode: string
+  territoiresCompares: string[]
 }
 
 const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   indicateurs,
   détailsIndicateurs,
   listeRubriquesIndicateurs,
-  typeDeRéforme,
   chantierEstTerritorialisé,
   estInteractif = true,
   estAutoriseAVoirLesAlertesMAJIndicateurs = false,
   estAutoriseAVoirLesPropositionsDeValeurActuelle = false,
+  territoireCode,
+  territoiresCompares,
 }) => {
-  const CodeInseeSélectionnée = territoireSélectionnéTerritoiresStore()?.codeInsee;
-
   const { data: alerteMiseAJourIndicateurEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR' });
+
+  const { codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
 
   const alerteMiseAJourIndicateur = estAutoriseAVoirLesAlertesMAJIndicateurs && !!alerteMiseAJourIndicateurEstDisponible && Object.values(détailsIndicateurs).flatMap(values => Object.values(values)).reduce((acc, val) => {
     return val.estAJour === false || val.prochaineDateMaj === null && val.dateValeurActuelle !== null && (val.pondération || 0) > 0 ? true : acc;
@@ -77,8 +77,8 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                   {rubriqueIndicateur.nom}
                 </Titre>
                 {
-                  !!CodeInseeSélectionnée && indicateursDeCetteRubrique
-                    .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][CodeInseeSélectionnée]?.pondération, détailsIndicateurs[b.id][CodeInseeSélectionnée]?.pondération))
+                  indicateursDeCetteRubrique
+                    .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][codeInsee]?.pondération, détailsIndicateurs[b.id][codeInsee]?.pondération))
                     .map(indicateur => (
                       <IndicateurBloc
                         chantierEstTerritorialisé={chantierEstTerritorialisé}
@@ -88,7 +88,8 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                         indicateur={indicateur}
                         key={indicateur.id}
                         listeSousIndicateurs={indicateurs.filter(ind => ind.parentId === indicateur.id)}
-                        typeDeRéforme={typeDeRéforme}
+                        territoireCode={territoireCode}
+                        territoiresCompares={territoiresCompares}
                       />
                     ))
                 }

@@ -18,8 +18,8 @@ import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/Détail
 import { formaterDate } from '@/client/utils/date/date';
 import {
   IndicateurDétailsParTerritoire,
-} from '@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface';
-import ValeurEtDate from '@/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate';
+} from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface';
+import ValeurEtDate from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate';
 
 const indicateurDétailsVide: IndicateurDétailsParTerritoire = {
   territoireNom: '',

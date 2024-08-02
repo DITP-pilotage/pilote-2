@@ -13,5 +13,6 @@ export default interface CartographieMétéoProps {
   élémentsDeLégende: CartographieÉlémentsDeLégende,
   auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
   territoireCode: string,
+  pathname: '/accueil/chantier/[territoireCode]' | '/chantier/[id]/[territoireCode]' | null,
   mailleSelectionnee: 'départementale' | 'régionale',
 }
