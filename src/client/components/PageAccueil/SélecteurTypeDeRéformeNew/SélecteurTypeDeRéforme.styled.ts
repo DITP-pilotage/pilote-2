@@ -26,8 +26,8 @@ const SélecteurRTypeDeéformeStyled = styled.div`
     border-radius: 0.25rem;
 
       @media screen and (max-width: ${breakpointL}) {
-        border-radius: 0;
         margin: 0.2rem;
+        border-radius: 0;  
       }
 
       &.sélectionné {

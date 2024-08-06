@@ -26,7 +26,7 @@ const BarreLatéraleStyled = styled.div<BarreLatéraleStyledProps>`
     }
   }
 
-  .boutonFermer{
+  .bouton-fermer{
     background-color: #ececfe;
   }
 

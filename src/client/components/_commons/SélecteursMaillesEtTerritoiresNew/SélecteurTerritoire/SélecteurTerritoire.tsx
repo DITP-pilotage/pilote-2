@@ -9,12 +9,12 @@ import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 
 interface SélecteurTerritoiresProps {
-  chantierMailles?: Chantier['mailles'];
-  territoireCode: string
-  mailleSelectionnee: 'départementale' | 'régionale'
+  chantierMailles?: Chantier['mailles'],
+  territoireCode: string,
+  mailleSelectionnee: 'départementale' | 'régionale',
   pathname: string
   estVueMobile: boolean,
-  estVisibleEnMobile: boolean
+  estVisibleEnMobile: boolean,
 }
 
 const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerritoire[], profil: ProfilCode | undefined, mailleSelectionnee: 'départementale' | 'régionale', chantierMailles?: Chantier['mailles']) => {
