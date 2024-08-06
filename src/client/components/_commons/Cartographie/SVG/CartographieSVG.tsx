@@ -5,7 +5,13 @@ import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoo
 import CartographieSVGStyled from './CartographieSVG.styled';
 import CartographieTerritoireSélectionné from './CartographieTerritoireSélectionné';
 
-function CartographieSVG({ options, territoires, frontières, setInfoBulle, auClicTerritoireCallback }: CartographieSVGProps) {
+function CartographieSVG({
+  options,
+  territoires,
+  frontières,
+  setInfoBulle,
+  auClicTerritoireCallback,
+}: CartographieSVGProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [viewbox, setViewbox] = useState<Viewbox>({
     x: 0,
@@ -23,11 +29,14 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle, auCl
 
   return (
     <CartographieSVGStyled>
-      {!!options.estInteractif &&
-      <CartographieZoomEtDéplacement
-        svgRef={svgRef}
-        viewbox={viewbox}
-      />}
+      {
+        options.estInteractif ? (
+          <CartographieZoomEtDéplacement
+            svgRef={svgRef}
+            viewbox={viewbox}
+          />
+        ) : null
+      }
       <div className='carte'>
         <svg
           ref={svgRef}
@@ -41,7 +50,7 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle, auCl
           xmlns='http://www.w3.org/2000/svg'
         >
           <defs>
-            { hachuresGrisBlanc.patternSVG }
+            {hachuresGrisBlanc.patternSVG}
           </defs>
           <g
             className='canvas'
@@ -80,7 +89,14 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle, auCl
                 />
               ))
             }
-            {options.territoireSélectionnable ? <CartographieTerritoireSélectionné multiséléction={options.multiséléction} /> : null}
+            {
+              options.territoireSélectionnable ? (
+                <CartographieTerritoireSélectionné
+                  multiséléction={options.multiséléction}
+                  territoires={territoires}
+                />
+              ) : null
+            }
           </g>
         </svg>
       </div>

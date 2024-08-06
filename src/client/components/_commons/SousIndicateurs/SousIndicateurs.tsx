@@ -7,6 +7,7 @@ export default function SousIndicateurs({
   chantierEstTerritorialisé,
   détailsIndicateurs,
   estInteractif,
+  territoireCode,
 }: SousIndicateursProps) {
 
   const listeClassesCouleursFond = [
@@ -26,7 +27,8 @@ export default function SousIndicateurs({
             estInteractif={estInteractif}
             indicateur={sousIndicateur}
             key={sousIndicateur.id}
-          />   
+            territoireCode={territoireCode}
+          />
         ))
       }
     </>

@@ -6,21 +6,20 @@ import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromèt
 import IndicateurDétails from '@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
 import FormulaireIndicateur
   from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/FormulaireIndicateur/FormulaireIndicateur';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import ResultatValidationFichier
   from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
-import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import {
   IndicateurPonderation,
 } from '@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import {
   IndicateurDétailsParTerritoire,
-} from '@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface';
+} from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface';
 import PictoSousIndicateur from '@/components/_commons/PictoSousIndicateur/PictoSousIndicateur';
-import useIndicateurAlerteDateMaj
-  from '@/client/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj';
-import IndicateurTendance from '@/client/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance';
+import useIndicateurAlerteDateMaj from '@/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj';
+import IndicateurTendance from '@/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance';
 import useSousIndicateurBloc from './useSousIndicateurBloc';
 import SousIndicateurBlocProps from './SousIndicateurBloc.interface';
 import SousIndicateurBlocStyled from './SousIndicateurBloc.styled';
@@ -33,12 +32,15 @@ export default function SousIndicateurBloc({
   chantierEstTerritorialisé,
   estDisponibleALImport = false,
   classeCouleurFond,
+  territoireCode,
 }: SousIndicateurBlocProps) {
   const router = useRouter();
   const réformeId = router.query.id as string;
 
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
-  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+
+  const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+
   const {
     indicateurDétailsParTerritoires,
     tableau,
@@ -49,7 +51,7 @@ export default function SousIndicateurBloc({
   } = useSousIndicateurBloc(détailsIndicateur);
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
 
-  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(détailsIndicateur, territoireSélectionné);
+  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(détailsIndicateur, codeInsee);
 
   return (
     <SousIndicateurBlocStyled
@@ -92,7 +94,7 @@ export default function SousIndicateurBloc({
                 </span>
               </p>
               {
-                !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] ? (
+                !!détailsIndicateur[codeInsee] ? (
                   <p
                     className={`fr-mb-0 fr-text--xs${estIndicateurEnAlerte ? ' fr-text-warning' : ''}`}
                   >
@@ -105,16 +107,16 @@ export default function SousIndicateurBloc({
                 ) : null
               }
               {
-                !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] ? (
+                !!détailsIndicateur[codeInsee] ? (
                   <IndicateurPonderation
-                    indicateurPondération={détailsIndicateur[territoireSélectionné.codeInsee]?.pondération ?? null}
-                    mailleSélectionnée={territoireSélectionné.maille}
+                    indicateurPondération={détailsIndicateur[codeInsee]?.pondération ?? null}
+                    mailleSélectionnée={maille}
                   />
                 ) : null
               }
             </div>
             {
-              territoireSélectionné && détailsIndicateur[territoireSélectionné.codeInsee]?.tendance === 'BAISSE' ? (
+              détailsIndicateur[codeInsee]?.tendance === 'BAISSE' ? (
                 <IndicateurTendance />
               ) : null
             }
@@ -151,7 +153,7 @@ export default function SousIndicateurBloc({
               indicateur={indicateur}
               indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
               listeSousIndicateurs={[]}
-              typeDeRéforme='chantier'
+              territoireCode={territoireCode}
             />
           ) : null
         }

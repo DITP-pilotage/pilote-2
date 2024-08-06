@@ -92,6 +92,7 @@ export function RapportDétailléVueDEnsemble({
               données={donnéesCartographie}
               mailleSelectionnee={mailleSelectionnee}
               options={{ estInteractif: false }}
+              pathname={null}
               territoireCode={territoireCode}
               élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
             />

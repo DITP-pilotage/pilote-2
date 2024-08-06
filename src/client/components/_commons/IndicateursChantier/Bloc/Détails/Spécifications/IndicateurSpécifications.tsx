@@ -2,7 +2,16 @@ import IndicateurSpécificationsProps
   from '@/components/_commons/IndicateursChantier/Bloc/Détails/Spécifications/IndicateurSpécifications.interface';
 import IndicateurSpécificationsStyled from './IndicateurSpécifications.styled';
 
-export default function IndicateurSpécifications({ description, modeDeCalcul, source, periodicite, delaiDisponibilite, dateProchaineDateMaj, dateProchaineDateValeurActuelle, dateValeurActuelle }: IndicateurSpécificationsProps) {
+export default function IndicateurSpécifications({
+  description,
+  modeDeCalcul,
+  source,
+  periodicite,
+  delaiDisponibilite,
+  dateProchaineDateMaj,
+  dateProchaineDateValeurActuelle,
+  dateValeurActuelle,
+}: IndicateurSpécificationsProps) {
   const libelléValeurNull = 'Non renseignée';
 
   return (

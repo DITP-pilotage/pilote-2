@@ -1,9 +1,4 @@
-/* eslint-disable sonarjs/no-duplicate-string */
-import {
-  créerRouteurTRPC,
-  procédureProtégée,
-  vérifierSiLeCSRFEstValide,
-} from '@/server/infrastructure/api/trpc/trpc';
+import { créerRouteurTRPC, procédureProtégée, vérifierSiLeCSRFEstValide } from '@/server/infrastructure/api/trpc/trpc';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import CréerUnCommentaireUseCase from '@/server/usecase/chantier/commentaire/CréerUnCommentaireUseCase';
 import {
@@ -13,27 +8,41 @@ import {
   zodValidateurEntité,
   zodValidateurEntitéType,
 } from 'validation/publication';
-import RécupérerCommentaireLePlusRécentUseCase from '@/server/usecase/chantier/commentaire/RécupérerCommentaireLePlusRécentUseCase';
-import RécupérerHistoriqueCommentaireUseCase from '@/server/usecase/chantier/commentaire/RécupérerHistoriqueCommentaireUseCase';
+import RécupérerCommentaireLePlusRécentUseCase
+  from '@/server/usecase/chantier/commentaire/RécupérerCommentaireLePlusRécentUseCase';
+import RécupérerHistoriqueCommentaireUseCase
+  from '@/server/usecase/chantier/commentaire/RécupérerHistoriqueCommentaireUseCase';
 import CréerUnObjectifUseCase from '@/server/usecase/chantier/objectif/CréerUnObjectifUseCase';
-import RécupérerObjectifLePlusRécentUseCase from '@/server/usecase/chantier/objectif/RécupérerObjectifLePlusRécentUseCase';
+import RécupérerObjectifLePlusRécentUseCase
+  from '@/server/usecase/chantier/objectif/RécupérerObjectifLePlusRécentUseCase';
 import RécupérerHistoriqueObjectifUseCase from '@/server/usecase/chantier/objectif/RécupérerHistoriqueObjectifUseCase';
-import RécupérerDécisionStratégiqueLaPlusRécenteUseCase from '@/server/usecase/chantier/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase';
+import RécupérerDécisionStratégiqueLaPlusRécenteUseCase
+  from '@/server/usecase/chantier/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase';
 import CréerUneDécisionStratégiqueUseCase from '@/server/usecase/chantier/décision/CréerUneDécisionStratégiqueUseCase';
-import RécupérerHistoriqueDécisionStratégiqueUseCase from '@/server/usecase/chantier/décision/RécupérerHistoriqueDécisionStratégiqueUseCase';
-import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
-import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase';
-import RécupérerObjectifProjetStructurantLePlusRécentUseCase from '@/server/usecase/projetStructurant/objectif/RécupérerObjectifLePlusRécentUseCase';
+import RécupérerHistoriqueDécisionStratégiqueUseCase
+  from '@/server/usecase/chantier/décision/RécupérerHistoriqueDécisionStratégiqueUseCase';
+import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase
+  from '@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
+import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase
+  from '@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase';
+import RécupérerObjectifProjetStructurantLePlusRécentUseCase
+  from '@/server/usecase/projetStructurant/objectif/RécupérerObjectifLePlusRécentUseCase';
 import { TypeObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
-import RécupérerCommentaireProjetStructurantLePlusRécentUseCase from '@/server/usecase/projetStructurant/commentaire/RécupérerCommentaireLePlusRécentUseCase';
+import RécupérerCommentaireProjetStructurantLePlusRécentUseCase
+  from '@/server/usecase/projetStructurant/commentaire/RécupérerCommentaireLePlusRécentUseCase';
 import { TypeCommentaireChantier } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import { TypeCommentaireProjetStructurant } from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
-import RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase from '@/server/usecase/projetStructurant/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase';
-import CréerUnCommentaireProjetStructurantUseCase from '@/server/usecase/projetStructurant/commentaire/CréerUnCommentaireProjetStructurantUseCase';
-import RécupérerHistoriqueCommentaireProjetStructurantUseCase from '@/server/usecase/projetStructurant/commentaire/RécupérerHistoriqueCommentaireProjetStructurantUseCase';
-import CréerUnObjectifProjetStructurantUseCase from '@/server/usecase/projetStructurant/objectif/CréerUnObjectifProjetStructurantUseCase';
+import RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase
+  from '@/server/usecase/projetStructurant/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase';
+import CréerUnCommentaireProjetStructurantUseCase
+  from '@/server/usecase/projetStructurant/commentaire/CréerUnCommentaireProjetStructurantUseCase';
+import RécupérerHistoriqueCommentaireProjetStructurantUseCase
+  from '@/server/usecase/projetStructurant/commentaire/RécupérerHistoriqueCommentaireProjetStructurantUseCase';
+import CréerUnObjectifProjetStructurantUseCase
+  from '@/server/usecase/projetStructurant/objectif/CréerUnObjectifProjetStructurantUseCase';
 import { TypeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
-import RécupérerHistoriqueObjectifProjetStructurantUseCase from '@/server/usecase/projetStructurant/objectif/RécupérerHistoriqueObjectifProjetStructurantUseCase';
+import RécupérerHistoriqueObjectifProjetStructurantUseCase
+  from '@/server/usecase/projetStructurant/objectif/RécupérerHistoriqueObjectifProjetStructurantUseCase';
 
 export const publicationRouter = créerRouteurTRPC({
   créer: procédureProtégée

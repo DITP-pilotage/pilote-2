@@ -52,9 +52,9 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
   private _mapDétailsToDomain(indicateurs: IndicateurPrisma[]): DétailsIndicateurs {
     const détailsIndicateurs: DétailsIndicateurs = {};
 
-    let IntermediaireEstAnnéeEnCours: boolean;
+    let intermediaireEstAnnéeEnCours: boolean;
     for (const indic of indicateurs) {
-      IntermediaireEstAnnéeEnCours = indic.objectif_date_valeur_cible_intermediaire?.getFullYear() === new Date().getFullYear();
+      intermediaireEstAnnéeEnCours = indic.objectif_date_valeur_cible_intermediaire?.getFullYear() === new Date().getFullYear();
 
       if (!détailsIndicateurs[indic.id]) {
         détailsIndicateurs[indic.id] = {};
@@ -70,16 +70,16 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         dateValeurActuelle: formatDate(indic.date_valeur_actuelle),
         valeurCible: indic.objectif_valeur_cible,
         dateValeurCible: formatDate(indic.objectif_date_valeur_cible),
-        valeurCibleAnnuelle: IntermediaireEstAnnéeEnCours ? indic.objectif_valeur_cible_intermediaire : null,
-        dateValeurCibleAnnuelle: IntermediaireEstAnnéeEnCours ? formatDate(indic.objectif_date_valeur_cible_intermediaire) : null,
+        valeurCibleAnnuelle: intermediaireEstAnnéeEnCours ? indic.objectif_valeur_cible_intermediaire : null,
+        dateValeurCibleAnnuelle: intermediaireEstAnnéeEnCours ? formatDate(indic.objectif_date_valeur_cible_intermediaire) : null,
         avancement: {
           global: indic.objectif_taux_avancement,
-          annuel: IntermediaireEstAnnéeEnCours ? indic.objectif_taux_avancement_intermediaire : null,
+          annuel: intermediaireEstAnnéeEnCours ? indic.objectif_taux_avancement_intermediaire : null,
         },
         proposition: indic.valeur_actuelle_proposition !== null && indic.valeur_actuelle_proposition !== undefined ? { // Pour autoriser une valeur actuelle proposé à 0
           valeurActuelle: indic.valeur_actuelle_proposition,
           tauxAvancement: indic.objectif_taux_avancement_proposition,
-          tauxAvancementIntermediaire: IntermediaireEstAnnéeEnCours ? indic.objectif_taux_avancement_intermediaire_proposition : null,
+          tauxAvancementIntermediaire: intermediaireEstAnnéeEnCours ? indic.objectif_taux_avancement_intermediaire_proposition : null,
           auteur: indic.auteur_proposition,
           motif: indic.motif_proposition,
           sourceDonneeEtMethodeCalcul: indic.source_donnee_methode_calcul_proposition,

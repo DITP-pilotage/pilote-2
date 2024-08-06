@@ -45,12 +45,13 @@ export default function IndicateurBlocIndicateurTuile({
                 {valeurInitiale !== null && valeurInitiale !== undefined ? valeurInitiale?.toLocaleString() + unitéAffichée : ''}
               </span>
               {
-              dateValeurInitiale !== null &&
-              <span className='texte-gris'>
-                (
-                {formaterDate(dateValeurInitiale, 'MM/YYYY')}
-                )
-              </span>
+              dateValeurInitiale !== null ? (
+                <span className='texte-gris'>
+                  (
+                  {formaterDate(dateValeurInitiale, 'MM/YYYY')}
+                  )
+                </span>
+              ) : null
             }
             </td>
           </tr>
@@ -63,12 +64,13 @@ export default function IndicateurBlocIndicateurTuile({
                 {valeurActuelle !== null && valeurActuelle !== undefined ? valeurActuelle?.toLocaleString() + unitéAffichée : ''}
               </span>
               {
-              dateValeurActuelle !== null &&
-              <span className='texte-gris'>
-                (
-                {formaterDate(dateValeurActuelle, 'MM/YYYY')}
-                )
-              </span>
+              dateValeurActuelle !== null ? (
+                <span className='texte-gris'>
+                  (
+                  {formaterDate(dateValeurActuelle, 'MM/YYYY')}
+                  )
+                </span>
+              ) : null
             }
             </td>
           </tr>
@@ -81,12 +83,13 @@ export default function IndicateurBlocIndicateurTuile({
                 {valeurCibleAnnuelle !== null && valeurCibleAnnuelle !== undefined ? valeurCibleAnnuelle?.toLocaleString() + unitéAffichée : ''}
               </span>
               {
-              dateValeurCible !== null &&
-              <span className='texte-gris'>
-                (
-                {formaterDate(dateValeurCibleAnnuelle, 'MM/YYYY')}
-                )
-              </span>
+              dateValeurCible !== null ? (
+                <span className='texte-gris'>
+                  (
+                  {formaterDate(dateValeurCibleAnnuelle, 'MM/YYYY')}
+                  )
+                </span>
+              ) : null
             }
             </td>
           </tr>
@@ -114,12 +117,13 @@ export default function IndicateurBlocIndicateurTuile({
                 {Boolean(valeurCible) ? valeurCible?.toLocaleString() + unitéAffichée : ''}
               </span>
               {
-              dateValeurCible !== null &&
-              <span className='texte-gris'>
-                (
-                {formaterDate(dateValeurCible, 'MM/YYYY')}
-                )
-              </span>
+              dateValeurCible !== null ? (
+                <span className='texte-gris'>
+                  (
+                  {formaterDate(dateValeurCible, 'MM/YYYY')}
+                  )
+                </span>
+              ) : null
             }
             </td>
           </tr>

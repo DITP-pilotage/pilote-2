@@ -36,13 +36,12 @@ import Axe from '@/server/domain/axe/Axe.interface';
 import {
   AgrégateurChantierRapportDetailleParTerritoire,
 } from '@/client/utils/chantier/agrégateurRapportDetailleNew/agrégateur';
-import {
-  AvancementChantierRapportDetaille,
-} from '@/components/PageRapportDétaillé/avancement-chantier-rapport-detaille';
+import { AvancementChantierRapportDetaille } from '@/components/PageRapportDétaillé/AvancementChantierRapportDetaille';
 import {
   CartographieDonnéesMétéo,
 } from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
 interface NextPageRapportDétailléProps {
   chantiers: ChantierRapportDetailleContrat[]
@@ -78,6 +77,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   assert(query.territoireCode, 'Le territoire code est manquant');
   assert(session, 'Vous devez être authentifié pour accéder a cette page');
   assert(session.habilitations, 'La session ne dispose d\'aucune habilitation');
+  const territoireCode = query.territoireCode as string;
 
   const filtres = {
     perimetres: query.perimetres ? (query.perimetres as string).split(',').filter(Boolean) : [],
@@ -95,8 +95,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     estEnAlerteAbscenceTauxAvancementDepartemental: query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
   };
 
-  const territoireCode = query.territoireCode as string;
-  const [maille, codeInseeSelectionne] = territoireCode.split('-');
+  const { maille, codeInsee: codeInseeSelectionne } = territoireCodeVersMailleCodeInsee(territoireCode);
   const mailleSelectionnee = query.maille as 'départementale' | 'régionale' ?? (maille === 'REG' ? 'régionale' : 'départementale');
 
   const mailleChantier = maille === 'NAT' ? 'nationale' : mailleSelectionnee;

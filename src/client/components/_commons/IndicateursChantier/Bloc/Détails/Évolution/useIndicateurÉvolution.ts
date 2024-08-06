@@ -1,4 +1,4 @@
-import { ChartOptions, ChartDataset, ChartData } from 'chart.js';
+import { ChartData, ChartDataset, ChartOptions } from 'chart.js';
 import { formaterDate } from '@/client/utils/date/date';
 import { générerCouleursAléatoiresEntreDeuxCouleurs } from '@/client/utils/couleur/couleur';
 import IndicateurÉvolutionProps from './IndicateurÉvolution.interface';
@@ -23,7 +23,7 @@ export default function useIndicateurÉvolution(indicateurDétailsParTerritoires
       },
     },
   };
-  
+
   const libellés = indicateurDétailsPourUnTerritoire.données.dateValeurs.map(date => formaterDate(date, 'MM/YYYY'));
 
   const évolutions: ChartDataset<'line'>[] = indicateurDétailsParTerritoires.map((détailsParTerritoire, index) => ({

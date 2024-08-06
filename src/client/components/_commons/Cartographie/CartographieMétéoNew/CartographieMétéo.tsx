@@ -9,6 +9,7 @@ export default function CartographieMétéo({
   auClicTerritoireCallback,
   élémentsDeLégende,
   territoireCode,
+  pathname,
   mailleSelectionnee,
 }: CartographieMétéoProps) {
   const { donnéesCartographie, légende } = useCartographieMétéo(données, élémentsDeLégende);
@@ -19,6 +20,7 @@ export default function CartographieMétéo({
       données={donnéesCartographie}
       mailleSelectionnee={mailleSelectionnee}
       options={options}
+      pathname={pathname}
       territoireCode={territoireCode}
     >
       <CartographieLégendeListe contenu={légende} />

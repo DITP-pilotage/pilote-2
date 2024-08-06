@@ -6,6 +6,7 @@ import useCartographieAvancement from './useCartographieAvancement';
 export default function CartographieAvancement({
   données,
   options,
+  pathname,
   auClicTerritoireCallback,
   élémentsDeLégende,
   territoireCode,
@@ -19,6 +20,7 @@ export default function CartographieAvancement({
       données={donnéesCartographie}
       mailleSelectionnee={mailleSelectionnee}
       options={options}
+      pathname={pathname}
       territoireCode={territoireCode}
     >
       <CartographieLégendeListe contenu={légende} />

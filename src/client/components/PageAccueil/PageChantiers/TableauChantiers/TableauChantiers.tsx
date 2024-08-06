@@ -15,7 +15,7 @@ import TableauChantiersProps from './TableauChantiers.interface';
 import TableauChantiersStyled from './TableauChantiers.styled';
 import TableauChantiersContenu from './Contenu/TableauChantiersContenu';
 
-export default function TableauChantiers({ données, ministèresDisponibles }: TableauChantiersProps) {
+export default function TableauChantiers({ données, ministèresDisponibles, territoireCode }: TableauChantiersProps) {
 
   const {
     tableau,
@@ -91,7 +91,10 @@ export default function TableauChantiers({ données, ministèresDisponibles }: T
                 <TableauRéformesEnTête tableau={tableau} />
               ) : null
             }
-              <TableauChantiersContenu tableau={tableau} />
+              <TableauChantiersContenu
+                tableau={tableau}
+                territoireCode={territoireCode}
+              />
             </table>
             <TableauPagination
               changementDePageCallback={changementDePageCallback}

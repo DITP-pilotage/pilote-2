@@ -1,7 +1,8 @@
 import { parseAsBoolean, useQueryStates } from 'nuqs';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
 export function useRemontéesAlertesChantiers(territoireCode: string, filtresComptesCalculés: Record<string, { nombre: number }>) {
-  const [maille] = territoireCode.split('-');
+  const { maille } = territoireCodeVersMailleCodeInsee(territoireCode);
 
   const mailleChantier = maille === 'NAT' ? 'nationale' : maille === 'REG' ? 'régionale' : 'départementale';
 
@@ -55,3 +56,4 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
     remontéesAlertes: mailleChantier === 'nationale' ? alertesNationales : alertesTerritoriales,
   };
 }
+

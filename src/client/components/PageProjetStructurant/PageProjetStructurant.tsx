@@ -144,27 +144,27 @@ export default function PageProjetStructurant({
             />
           </section>
           {
-                        !!détailsIndicateurs && indicateurs.length > 0 &&
-                        <section
-                          className='rubrique fr-pb-4w'
-                          id='indicateurs'
-                        >
-                          <Titre
-                            baliseHtml='h2'
-                            className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-                          >
-                            Indicateurs
-                          </Titre>
-                          <IndicateursProjetStructurant
-                            chantierEstTerritorialisé={false}
-                            détailsIndicateurs={détailsIndicateurs}
-                            indicateurs={indicateurs}
-                            listeRubriquesIndicateurs={listeRubriquesIndicateursProjetStructurant}
-                            territoireProjetStructurant={projetStructurant.territoire}
-                            typeDeRéforme='projet structurant'
-                          />
-                        </section>
-                    }
+            !!détailsIndicateurs && indicateurs.length > 0 &&
+            <section
+              className='rubrique fr-pb-4w'
+              id='indicateurs'
+            >
+              <Titre
+                baliseHtml='h2'
+                className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+              >
+                Indicateurs
+              </Titre>
+              <IndicateursProjetStructurant
+                chantierEstTerritorialisé={false}
+                détailsIndicateurs={détailsIndicateurs}
+                indicateurs={indicateurs}
+                listeRubriquesIndicateurs={listeRubriquesIndicateursProjetStructurant}
+                territoireProjetStructurant={projetStructurant.territoire}
+                typeDeRéforme='projet structurant'
+              />
+            </section>
+          }
           <section
             className='rubrique fr-pb-4w'
             id='commentaires'

@@ -1,12 +1,12 @@
 import { convertitEnPondération } from '@/client/utils/ponderation/ponderation';
 import IndicateurPondérationProps
   from '@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import { MailleTerritoireSelectionne } from '@/server/domain/maille/Maille.interface';
 
-const adjectifÀPartirDeLaMaille: Record<Maille, string> = {
-  nationale: 'national',
-  régionale: 'régional',
-  départementale: 'départemental',
+const adjectifÀPartirDeLaMaille: Record<MailleTerritoireSelectionne, string> = {
+  NAT: 'national',
+  DEPT: 'régional',
+  REG: 'départemental',
 };
 
 export function IndicateurPonderation({ indicateurPondération, mailleSélectionnée }: IndicateurPondérationProps) {

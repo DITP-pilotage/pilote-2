@@ -3,10 +3,7 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
 import IndicateurDétails from '@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
-import {
-  territoiresComparésTerritoiresStore,
-  territoireSélectionnéTerritoiresStore,
-} from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import {
   IndicateurPonderation,
 } from '@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation';
@@ -15,17 +12,17 @@ import api from '@/server/infrastructure/api/trpc/api';
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { TypeDeRéforme } from '@/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import ValeurEtDate from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import IndicateurBlocIndicateurTuile
   from '@/components/_commons/IndicateursChantier/Bloc/indicateurBlocIndicateurTuile';
-import ModalePropositonValeurActuelle
-  from '@/components/_commons/IndicateursChantier/Bloc/ModalePropositonValeurActuelle/ModalePropositonValeurActuelle';
+import ModalePropositionValeurActuelle
+  from '@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurActuelle/ModalePropositionValeurActuelle';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import { formaterDate } from '@/client/utils/date/date';
 import IndicateurTendance from '@/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 import useIndicateurAlerteDateMaj from './useIndicateurAlerteDateMaj';
@@ -36,24 +33,33 @@ interface IndicateurBlocProps {
   indicateur: Indicateur
   détailsIndicateurs: DétailsIndicateurs
   estInteractif: boolean
-  typeDeRéforme: TypeDeRéforme,
   chantierEstTerritorialisé: boolean,
   estAutoriseAVoirLesPropositionsDeValeurActuelle: boolean,
-  listeSousIndicateurs: Indicateur[]
+  listeSousIndicateurs: Indicateur[],
+  territoireCode: string,
+  territoiresCompares: string[],
 }
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   indicateur,
   détailsIndicateurs,
   estInteractif,
-  typeDeRéforme,
   chantierEstTerritorialisé,
   estAutoriseAVoirLesPropositionsDeValeurActuelle = false,
   listeSousIndicateurs,
+  territoireCode,
+  territoiresCompares,
 }) => {
+  const {
+    maille: mailleTerritoireSelectionnee,
+    codeInsee: codeInseeTerritoireSelectionne,
+  } = territoireCodeVersMailleCodeInsee(territoireCode);
+  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
-  const territoiresComparés = territoiresComparésTerritoiresStore();
-  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+  const detailTerritoiresCompares = territoiresCompares.map(récupérerDétailsSurUnTerritoire);
+  const détailTerritoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
+
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
 
   const { data: variableContenuFFPropositionValeurActuelle } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE' });
@@ -63,19 +69,19 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     dateProchaineDateMaj,
     dateProchaineDateValeurActuelle,
     dateValeurActuelle,
-  } = useIndicateurBloc(détailsIndicateur, territoireSélectionné);
+  } = useIndicateurBloc(détailsIndicateur, territoireCode);
 
   const informationsIndicateurs = (
-    territoiresComparés.map(territoireCompare => ({
+    detailTerritoiresCompares.length > 0 ? detailTerritoiresCompares.map(territoireCompare => ({
       territoireNom: territoireCompare.nomAffiché,
       données: détailsIndicateur[territoireCompare.codeInsee],
-    }) || [{
-      territoireNom: territoireSélectionné!.nomAffiché,
-      données: détailsIndicateur[territoireSélectionné!.codeInsee],
-    }]).sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) => indicateurDétailsTerritoire1.données.codeInsee.localeCompare(indicateurDétailsTerritoire2.données.codeInsee))
-  );
+    })) : [{
+      territoireNom: détailTerritoireSélectionné.nomAffiché,
+      données: détailsIndicateur[codeInseeTerritoireSelectionne],
+    }]
+  ).sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) => indicateurDétailsTerritoire1.données.codeInsee.localeCompare(indicateurDétailsTerritoire2.données.codeInsee));
 
-  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(détailsIndicateur, territoireSélectionné);
+  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(détailsIndicateur, codeInseeTerritoireSelectionne);
 
   return (
     <IndicateurBlocStyled
@@ -90,7 +96,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 baliseHtml='h4'
                 className='fr-text--xl fr-mb-1w'
               >
-
                 {
                   estIndicateurEnAlerte ? (
                     <span className='fr-mr-1v'>
@@ -103,14 +108,13 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <span className='fr-mr-1v'>
                       <PictoBaromètre />
                     </span>
-                  )
-                    : null
+                  ) : null
                 }
                 {indicateur.nom + (indicateur.unité === null || indicateur.unité === '' ? '' : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
               </Titre>
               <div className='fr-ml-2w fr-mb-3w'>
                 {
-                  !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] ? (
+                  !!détailsIndicateur[codeInseeTerritoireSelectionne] ? (
                     <p className='fr-mb-0 fr-text--xs texte-gris'>
                       Identifiant de l'indicateur :
                       {' '}
@@ -128,7 +132,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   </span>
                 </p>
                 {
-                  !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] ? (
+                  !!détailsIndicateur[codeInseeTerritoireSelectionne] ? (
                     <div
                       className={`flex align-center relative${estIndicateurEnAlerte ? ' fr-text-warning' : ' texte-gris'}`}
                     >
@@ -156,16 +160,16 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   ) : null
                 }
                 {
-                  !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] ? (
+                  !!détailsIndicateur[codeInseeTerritoireSelectionne] ? (
                     <IndicateurPonderation
-                      indicateurPondération={détailsIndicateur[territoireSélectionné.codeInsee]?.pondération ?? null}
-                      mailleSélectionnée={territoireSélectionné.maille}
+                      indicateurPondération={détailsIndicateur[codeInseeTerritoireSelectionne]?.pondération ?? null}
+                      mailleSélectionnée={mailleTerritoireSelectionnee}
                     />
                   ) : null
                 }
               </div>
               {
-                territoireSélectionné && détailsIndicateur[territoireSélectionné.codeInsee]?.tendance === 'BAISSE' ? (
+                détailsIndicateur[codeInseeTerritoireSelectionne]?.tendance === 'BAISSE' ? (
                   <IndicateurTendance />
                 ) : null
               }
@@ -284,10 +288,11 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     Proposer une autre valeur actuelle
                                   </button>
                                 </div>
-                                <ModalePropositonValeurActuelle
+                                <ModalePropositionValeurActuelle
                                   detailIndicateur={informationIndicateur.données}
                                   generatedHTMLID={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
                                   indicateur={indicateur}
+                                  territoireCode={territoireCode}
                                 />
                               </td>
                             </tr>
@@ -385,10 +390,11 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                             Editer la proposition
                                           </button>
                                         </div>
-                                        <ModalePropositonValeurActuelle
+                                        <ModalePropositionValeurActuelle
                                           detailIndicateur={informationIndicateur.données}
                                           generatedHTMLID={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
                                           indicateur={indicateur}
+                                          territoireCode={territoireCode}
                                         />
                                       </td>
                                     </tr>
@@ -418,7 +424,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 indicateur={indicateur}
                 indicateurDétailsParTerritoires={informationsIndicateurs}
                 listeSousIndicateurs={listeSousIndicateurs}
-                typeDeRéforme={typeDeRéforme}
+                territoireCode={territoireCode}
               />
             ) : null
           }

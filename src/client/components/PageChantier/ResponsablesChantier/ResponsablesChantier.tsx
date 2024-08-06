@@ -10,8 +10,8 @@ import {
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 
 interface ResponsablesChantierProps {
-  listeDirecteursProjet: DirecteurProjetRapportDetailleContrat[],
-  listeResponsablesLocal: ResponsableLocalRapportDetailleContrat[],
+  listeDirecteursProjets: DirecteurProjetRapportDetailleContrat[],
+  listeResponsablesLocaux: ResponsableLocalRapportDetailleContrat[],
   listeCoordinateursTerritorials: CoordinateurTerritorialRapportDetailleContrat[],
   afficheResponsablesLocaux: boolean,
   maille: Maille | null,
@@ -25,19 +25,19 @@ const adjectifReferent: Record<Maille, string> = {
 };
 
 const ResponsablesPageChantier: FunctionComponent<ResponsablesChantierProps> = ({
-  listeDirecteursProjet,
-  listeResponsablesLocal,
+  listeDirecteursProjets,
+  listeResponsablesLocaux,
   listeCoordinateursTerritorials,
   afficheResponsablesLocaux,
   maille,
   libelléChantier,
 }) => {
-  const libelleNomsDirecteursProjets = listeDirecteursProjet.map(directeurProjet => directeurProjet.nom).filter(Boolean).join(', ');
-  const libelleNomsResponsablesLocal = listeResponsablesLocal.map(responsableLocal => responsableLocal.nom).filter(Boolean).join(', ');
+  const libelleNomsDirecteursProjets = listeDirecteursProjets.map(directeurProjet => directeurProjet.nom).filter(Boolean).join(', ');
+  const libelleNomsResponsablesLocal = listeResponsablesLocaux.map(responsableLocal => responsableLocal.nom).filter(Boolean).join(', ');
   const libelleNomsCoordinateurTerritorial = listeCoordinateursTerritorials.map(coordinateurTerritorial => coordinateurTerritorial.nom).filter(Boolean).join(', ');
 
-  const libelleEmailsDirecteursProjets = listeDirecteursProjet.map(directeur => directeur.email).filter(Boolean).join('; ');
-  const libelleEmailsResponsablesLocal = listeResponsablesLocal.map(responsableLocal => responsableLocal.email).filter(Boolean).join('; ');
+  const libelleEmailsDirecteursProjets = listeDirecteursProjets.map(directeur => directeur.email).filter(Boolean).join('; ');
+  const libelleEmailsResponsablesLocal = listeResponsablesLocaux.map(responsableLocal => responsableLocal.email).filter(Boolean).join('; ');
   const libelleEmailsCoordinateursTerritorial = listeCoordinateursTerritorials.map(coordinateurTerritorial => coordinateurTerritorial.email).filter(Boolean).join('; ');
 
   return (

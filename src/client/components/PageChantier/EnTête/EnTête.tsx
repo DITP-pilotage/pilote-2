@@ -7,16 +7,18 @@ import BoutonImpression from '@/components/_commons/BoutonImpression/BoutonImpre
 import Titre from '@/components/_commons/Titre/Titre';
 import { ResponsableRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { getQueryParamString } from '@/client/utils/getQueryParamString';
+import { getFiltresActifs } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import PageChantierEnTêteStyled from './EnTête.styled';
 import ResponsableChantierEnTete from './EnTêteResponsables';
 
 interface PageChantierEnTêteProps {
   chantier: Chantier
-  hrefBoutonRetour: string
   responsables?: ResponsableRapportDetailleContrat
   afficheLeBoutonImpression?: boolean
   afficheLeBoutonMiseAJourDonnee?: boolean
   afficheLeBoutonFicheConducteur?: boolean
+  territoireCode: string
 }
 
 const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
@@ -25,12 +27,15 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
   afficheLeBoutonImpression = false,
   afficheLeBoutonMiseAJourDonnee = false,
   afficheLeBoutonFicheConducteur = false,
-  hrefBoutonRetour = '',
+  territoireCode,
 }) => {
 
   const listeNomsResponsablesMinistèrePorteur: string[] = [responsables?.porteur?.nom].filter(Boolean);
   const listeNomsResponsablesAutresMinistèresCoPorteurs = (responsables?.coporteurs || []).map(coporteur => coporteur.nom).filter(Boolean);
   const listeNomsDirecteursAdministrationCentrale = (responsables?.directeursAdminCentrale || []).map(directeurAdminCentrale => (`${directeurAdminCentrale.nom}  (${directeurAdminCentrale.direction})`)).filter(Boolean);
+
+  const queryParamString = getQueryParamString(getFiltresActifs());
+  const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
 
   return (
     <PageChantierEnTêteStyled className='fr-px-2w fr-px-md-2w fr-py-2w'>
@@ -64,7 +69,7 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
           afficheLeBoutonMiseAJourDonnee ? (
             <Link
               className='fr-btn fr-btn--primary fr-mr-md-2w format-mobile-bouton'
-              href={`${chantier.id}/indicateurs`}
+              href={`/chantier/${chantier.id}/indicateurs`}
               title='Mettre à jour les données'
             >
               Mettre à jour les données
@@ -72,17 +77,17 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
           ) : null
         }
         {
-          !!afficheLeBoutonImpression && (
-            <div className='format-mobile-bouton-impression'> 
-              <BoutonImpression />       
+          afficheLeBoutonImpression ? (
+            <div className='format-mobile-bouton-impression'>
+              <BoutonImpression />
             </div>
-          )
+          ) : null
         }
         {
           afficheLeBoutonFicheConducteur ? (
             <Link
               className='fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left fr-px-1w fr-px-md-2w fr-ml-md-2w format-mobile-bouton'
-              href={`${chantier.id}/fiche-conducteur`}
+              href={`/chantier/${chantier.id}/fiche-conducteur`}
               title='Fiche conducteur'
             >
               Fiche conducteur

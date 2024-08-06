@@ -13,6 +13,7 @@ import {
 } from '@/server/domain/territoire/Territoire.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
 
 export type MailleChantierContrat = 'nationale' | 'régionale' | 'départementale';
@@ -166,7 +167,7 @@ const presenterEnDirecteurProjetRapportDetailleContrat = (directeurProjet: Direc
 };
 
 export const presenterEnChantierRapportDetaille = (territoireCode: string) => (chantier: Chantier): ChantierRapportDetailleContrat => {
-  const [maille, codeInsee] = territoireCode.split('-');
+  const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
   const mailleChantier = maille === 'NAT' ? 'nationale' : maille === 'REG' ? 'régionale' : 'départementale';
 
   const mailles = presenterEnMailleRapportDetailleContrat(chantier.mailles);

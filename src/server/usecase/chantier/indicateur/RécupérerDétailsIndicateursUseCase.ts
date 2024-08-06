@@ -12,7 +12,7 @@ export default class RécupérerDétailsIndicateursUseCase {
     territoireCodes.forEach(territoireCode => {
       habilitation.vérifierLesHabilitationsEnLecture(chantierId, territoireCode);
     });
-    
+
     return this.indicateurRepository.récupererDétailsParChantierIdEtTerritoire(chantierId, territoireCodes);
   }
 }

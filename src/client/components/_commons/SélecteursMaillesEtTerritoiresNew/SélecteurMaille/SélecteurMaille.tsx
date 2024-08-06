@@ -6,8 +6,9 @@ import { objectEntries } from '@/client/utils/objects/objects';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import SélecteurMailleStyled from './SélecteurMaille.styled';
 
-export default function SélecteurMaille({ mailleSelectionnee }: {
-  mailleSelectionnee: 'départementale' | 'régionale'
+export default function SélecteurMaille({ mailleSelectionnee, pathname }: {
+  mailleSelectionnee: 'départementale' | 'régionale',
+  pathname: string;
 }) {
   const maillesAccessiblesEnLecture = maillesAccessiblesEnLectureStore();
   const router = useRouter();
@@ -27,12 +28,11 @@ export default function SélecteurMaille({ mailleSelectionnee }: {
   const territoireDept = session!.habilitations.lecture.territoires.find(territoire => territoire.startsWith('DEPT'));
   const territoireReg = session!.habilitations.lecture.territoires.find(territoire => territoire.startsWith('REG'));
 
-
   const changerMaille = (maille: MailleInterne) => {
     sauvegarderFiltres({ maille });
     const territoireCode = session?.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : maille === 'régionale' ? territoireReg : maille === 'départementale' ? territoireDept : session?.habilitations.lecture.territoires[0];
     return router.push({
-      pathname: '/accueil/chantier/[territoireCode]',
+      pathname,
       query: { ...router.query, territoireCode, maille },
     },
     undefined,
