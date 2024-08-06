@@ -20,9 +20,14 @@ const BarreLatéraleStyled = styled.div<BarreLatéraleStyledProps>`
       position: fixed;
       left: 0;
       z-index: 10000;
+      width: 100%;
       transition: 500ms;
-      transform: ${props => props.estOuvert ? 'translateX(0)' : 'translateX(-20rem)'};
+      transform: ${props => props.estOuvert ? 'translateY(0)' : 'translateY(-40rem)'};
     }
+  }
+
+  .boutonFermer{
+    background-color: #ececfe;
   }
 
   .arrière-plan {

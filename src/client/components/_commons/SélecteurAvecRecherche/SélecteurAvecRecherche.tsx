@@ -1,4 +1,5 @@
 import { Fragment, useRef } from 'react';
+import Titre from '@/client/components/_commons/Titre/Titre';
 import SélecteurAvecRechercheStyled from './SélecteurAvecRecherche.styled';
 import SélecteurAvecRechercheProps from './SélecteurAvecRecherche.interface';
 import useSélecteurAvecRecherche from './useSélecteurAvecRecherche';
@@ -9,6 +10,8 @@ import '@gouvfr/dsfr/dist/component/select/select.min.css';
 export default function SélecteurAvecRecherche<T extends string>({
   htmlName,
   libellé,
+  estVueMobile,
+  estVisibleEnMobile,
   options,
   valeurSélectionnée,
   valeurModifiéeCallback,
@@ -26,12 +29,23 @@ export default function SélecteurAvecRecherche<T extends string>({
 
   return (
     <SélecteurAvecRechercheStyled>
-      <label
-        className='fr-label'
-        htmlFor={htmlName}
-      >
-        {libellé}
-      </label>
+      {
+        estVueMobile && estVisibleEnMobile ? (
+          <Titre
+            baliseHtml='h2'
+            className='fr-h6 fr-my-2w fr-col-8'
+          >
+            {libellé}
+          </Titre>
+        ) : (
+          <label
+            className='fr-label'
+            htmlFor={htmlName}
+          >
+            {libellé}
+          </label>
+        )
+      }
       <button
         className='fr-select fr-ellipsis'
         id={htmlName}

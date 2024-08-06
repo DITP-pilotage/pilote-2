@@ -6,7 +6,9 @@ import SélecteurTerritoire from './SélecteurTerritoire/SélecteurTerritoire';
 interface SélecteursMaillesEtTerritoiresProps {
   chantierMailles?: Chantier['mailles'];
   territoireCode: string
-  mailleSelectionnee: 'départementale' | 'régionale'
+  mailleSelectionnee: 'départementale' | 'régionale',
+  estVueMobile: boolean,
+  estVisibleEnMobile: boolean
   pathname: string
 }
 
@@ -14,6 +16,8 @@ const SélecteursMaillesEtTerritoires: FunctionComponent<SélecteursMaillesEtTer
   chantierMailles,
   territoireCode,
   mailleSelectionnee,
+  estVueMobile, 
+  estVisibleEnMobile,
   pathname,
 }: SélecteursMaillesEtTerritoiresProps) => {
   return (
@@ -24,6 +28,8 @@ const SélecteursMaillesEtTerritoires: FunctionComponent<SélecteursMaillesEtTer
       />
       <SélecteurTerritoire
         chantierMailles={chantierMailles}
+        estVisibleEnMobile={estVisibleEnMobile}
+        estVueMobile={estVueMobile}
         mailleSelectionnee={mailleSelectionnee}
         pathname={pathname}
         territoireCode={territoireCode}
