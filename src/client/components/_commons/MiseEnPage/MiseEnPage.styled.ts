@@ -31,7 +31,7 @@ const MiseEnPageStyled = styled.div`
     background:  var(--background-alt-blue-france);
 
       @media screen and (max-width: ${breakpointL}) {
-        background: #ececfe;
+        background: #e3e3fd;
       }
 
     h1 {

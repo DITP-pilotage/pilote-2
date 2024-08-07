@@ -1,9 +1,15 @@
+import { FunctionComponent } from 'react';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore, maillesAccessiblesEnLectureStore  } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { objectEntries } from '@/client/utils/objects/objects';
 import SélecteurMailleStyled from './SélecteurMaille.styled';
 
-export default function SélecteurMaille() {
+interface SelecteurMailleProps {
+  estVisibleEnMobile: boolean;
+  estVueMobile: boolean;
+}
+
+const SélecteurMaille: FunctionComponent<SelecteurMailleProps> = ({ estVisibleEnMobile, estVueMobile }) => {
   const { modifierMailleSélectionnée } = actionsTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const maillesAccessiblesEnLecture = maillesAccessiblesEnLectureStore();
@@ -37,4 +43,6 @@ export default function SélecteurMaille() {
       }
     </SélecteurMailleStyled>
   );
-}
+};
+
+export default SélecteurMaille;

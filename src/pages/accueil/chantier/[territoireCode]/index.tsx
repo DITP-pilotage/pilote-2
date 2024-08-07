@@ -46,7 +46,6 @@ interface ChantierAccueil {
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   répartitionMétéos: RépartitionsMétéos
-  estVisibleEnMobile: boolean
 }
 
 export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ req, res, query }) => {
@@ -179,8 +178,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     SOLEIL: filtresComptesCalculés.soleil.nombre,
   };
 
-  const estVisibleEnMobile = true;
-
   return {
     props: {
       chantiers: chantiersAvecAlertes.map(chantier => {
@@ -196,7 +193,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
       avancementsAgrégés,
       avancementsGlobauxTerritoriauxMoyens,
       répartitionMétéos,
-      estVisibleEnMobile,
     },
   };
 };
@@ -225,12 +221,12 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
   répartitionMétéos,
-  estVisibleEnMobile,
 }) => {
   const { data: session } = useSession();
 
   const estProfilTerritorialise = PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE.has(session?.profil || '');
   const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('md');
+  const [estVisibleEnMobile, setEstVisibleEnMobile] = useState(true);
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
@@ -299,7 +295,10 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
           <div className='bouton-filtrer fr-hidden-lg fr-py-1w fr-px-1v'>
             <button
               className='fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-equalizer-fill fr-text-title--blue-france'
-              onClick={() => setEstOuverteBarreLatérale(true)}
+              onClick={() => {
+                setEstOuverteBarreLatérale(true); 
+                setEstVisibleEnMobile(estVisibleEnMobile);
+              }}
               title='Explorer'
               type='button'
             >
