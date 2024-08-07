@@ -53,7 +53,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
   return (
     <CartesStyled>
       {
-        !!afficheCarteAvancement && (
+        afficheCarteAvancement ? (
           <div className='carte'>
             <Bloc>
               <section>
@@ -81,10 +81,10 @@ const Cartes: FunctionComponent<CartesProps> = ({
               </section>
             </Bloc>
           </div>
-        )
+        ) : null
       }
       {
-        !!afficheCarteMétéo && (
+        afficheCarteMétéo ? (
           <div className='carte'>
             <Bloc>
               <section>
@@ -112,7 +112,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
               </section>
             </Bloc>
           </div>
-        )
+        ) : null
       }
     </CartesStyled>
   );

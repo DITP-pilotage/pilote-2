@@ -56,20 +56,17 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({ avance
           </div>
         </Bloc>
       }
-      {
-        ((avancements.régionale.global.moyenne) !== null && avancements.régionale.annuel.moyenne !== null) &&
-        <Bloc
-          titre={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
-        >
-          <div className='fr-py-1w jauge'>
-            <AvancementsTerritoire
-              avancementAnnuel={avancements.régionale.annuel.moyenne}
-              avancementGlobal={avancements.régionale.global.moyenne}
-              territoireNom={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
-            />
-          </div>
-        </Bloc>
-      }
+      <Bloc
+        titre={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
+      >
+        <div className='fr-py-1w jauge'>
+          <AvancementsTerritoire
+            avancementAnnuel={avancements.régionale.annuel.moyenne}
+            avancementGlobal={avancements.régionale.global.moyenne}
+            territoireNom={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
+          />
+        </div>
+      </Bloc>
       <div className='avancement-national'>
         <Bloc
           contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'

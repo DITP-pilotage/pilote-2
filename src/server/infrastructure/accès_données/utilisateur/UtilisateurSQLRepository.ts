@@ -400,7 +400,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
   private async _récupérerChantiersParDéfaut(profilUtilisateur: profil): Promise<Record<ScopeChantiers | ScopeUtilisateurs, chantier['id'][]>> {
     let chantiersAccessibles: chantier['id'][] = [];
-    let chantiersAccessiblesEnSaisieCommentaire: chantier['id'][] = [];
+    let chantiersAccessiblesEnSaisieCommentaire: chantier['id'][];
 
     if (profilUtilisateur.a_acces_tous_chantiers) {
       chantiersAccessibles = this._chantiers.ids;

@@ -25,7 +25,7 @@ export default function Cartes({
   return (
     <CartesStyled>
       {
-        !!afficheCarteAvancement && (
+        afficheCarteAvancement ? (
           <div className='carte'>
             <Bloc>
               <section>
@@ -53,10 +53,10 @@ export default function Cartes({
               </section>
             </Bloc>
           </div>
-        )
+        ) : null
       }
       {
-        !!afficheCarteMétéo && (
+        afficheCarteMétéo ? (
           <div className='carte'>
             <Bloc>
               <section>
@@ -84,7 +84,7 @@ export default function Cartes({
               </section>
             </Bloc>
           </div>
-        )
+        ) : null
       }
     </CartesStyled>
   );

@@ -14,15 +14,14 @@ export default class PpgSQLRepository implements PpgRepository {
   }
 
   async getListePourChantiers(chantierIds: string[]): Promise<Ppg[]> {
-    const queryResults: Ppg[] = await this.prisma.$queryRaw`
-    WITH ppg_liste AS (
-      select DISTINCT c.ppg as ppg_id from chantier c where  c.id IN (${Prisma.join(chantierIds)})
-    )
-    select p.*
-    from ppg p
-    JOIN ppg_liste pl ON pl.ppg_id = p.nom
+    return this.prisma.$queryRaw`
+      WITH ppg_liste AS (select DISTINCT c.ppg as ppg_id
+                         from chantier c
+                         where c.id IN (${Prisma.join(chantierIds)}))
+      select p.*
+      from ppg p
+             JOIN ppg_liste pl ON pl.ppg_id = p.nom
     `;
-    return queryResults;
   }
 }
 

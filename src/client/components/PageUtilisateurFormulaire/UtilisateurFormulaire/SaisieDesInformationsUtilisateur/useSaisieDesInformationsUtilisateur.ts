@@ -127,14 +127,14 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
       const valeurParDéfautCaseCommentaire = 
         afficherChoixCommentaire
           ? false
-          : (profilSélectionné?.chantiers.saisieCommentaire.saisiePossible ? true : false);
+          : (!!profilSélectionné?.chantiers.saisieCommentaire.saisiePossible);
       setValue('saisieCommentaire', valeurParDéfautCaseCommentaire);
   
       // Saisie Indicateur
       const valeurParDéfautCaseIndicateur = 
       afficherChoixIndicateur
         ? false
-        : (profilSélectionné?.chantiers.saisieIndicateur.tousTerritoires ? true : false);
+        : (!!profilSélectionné?.chantiers.saisieIndicateur.tousTerritoires);
       setValue('saisieIndicateur', valeurParDéfautCaseIndicateur);
 
       // Gestion des comptes
