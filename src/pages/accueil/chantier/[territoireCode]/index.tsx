@@ -316,7 +316,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             répartitionMétéos={répartitionMétéos}
             territoireCode={territoireCode}
           />
-   
         </IndexStyled>
       </div>
     </>

@@ -124,9 +124,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
           />
         </BarreLatéraleEncart>
         <Sommaire
-          auClic={() => {
-            setEstOuverteBarreLatérale(false);
-          }}
+          auClic={() => setEstOuverteBarreLatérale(false)}
           rubriques={listeRubriques}
         />
       </BarreLatérale>
