@@ -1,4 +1,5 @@
 import { useSession } from 'next-auth/react';
+import { FunctionComponent } from 'react';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import {
   actionsTerritoiresStore,
@@ -12,7 +13,9 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 interface SélecteurTerritoiresProps {
-  chantierMailles?: Chantier['mailles'];
+  chantierMailles?: Chantier['mailles'],
+  estVueMobile: boolean,
+  estVisibleEnMobile: boolean,
 }
 
 const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerritoire[], profil: ProfilCode | undefined, chantierMailles?: Chantier['mailles']) => {
@@ -38,7 +41,7 @@ const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerri
   ];
 };
 
-export default function SélecteurTerritoire({ chantierMailles }: SélecteurTerritoiresProps) {
+const SélecteurTerritoire: FunctionComponent<SélecteurTerritoiresProps> = ({ chantierMailles, estVueMobile, estVisibleEnMobile }) => {
   const { data: session } = useSession();
   const { modifierTerritoireSélectionné } = actionsTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
@@ -46,11 +49,15 @@ export default function SélecteurTerritoire({ chantierMailles }: SélecteurTerr
 
   return (
     <SélecteurAvecRecherche
-      htmlName='périmètre-géographique'
-      libellé='Périmètre géographique'
+      estVisibleEnMobile={estVisibleEnMobile}
+      estVueMobile={estVueMobile}
+      htmlName={estVueMobile && estVisibleEnMobile ? 'Territoire' : 'périmètre-géographique'}
+      libellé={estVueMobile && estVisibleEnMobile ? 'Territoire' : 'Périmètre géographique'}
       options={construireLaListeDOptions(territoiresAccessiblesEnLecture, session?.profil, chantierMailles)}
       valeurModifiéeCallback={territoireCode => modifierTerritoireSélectionné(territoireCode)}
       valeurSélectionnée={territoireSélectionné?.code}
     />
   );
-}
+};
+
+export default SélecteurTerritoire;

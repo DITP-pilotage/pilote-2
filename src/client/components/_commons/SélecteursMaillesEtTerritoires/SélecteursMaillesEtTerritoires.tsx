@@ -4,18 +4,15 @@ import SélecteurMaille from './SélecteurMaille/SélecteurMaille';
 import SélecteurTerritoire from './SélecteurTerritoire/SélecteurTerritoire';
 
 interface SélecteursMaillesEtTerritoiresProps {
-  chantierMailles?: Chantier['mailles'];
-  estVisibleEnMobile: boolean;
-  estVueMobile: boolean;
+  chantierMailles?: Chantier['mailles'],
+  estVisibleEnMobile: boolean,
+  estVueMobile: boolean,
 }
 
 const SélecteursMaillesEtTerritoires: FunctionComponent<SélecteursMaillesEtTerritoiresProps> = ({ chantierMailles, estVisibleEnMobile, estVueMobile }) => {
   return (
     <>
-      <SélecteurMaille
-        estVisibleEnMobile={estVisibleEnMobile}
-        estVueMobile={estVueMobile}
-      />
+      <SélecteurMaille />
       <SélecteurTerritoire 
         chantierMailles={chantierMailles}
         estVisibleEnMobile={estVisibleEnMobile}

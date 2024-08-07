@@ -32,7 +32,7 @@ export default function SélecteurAvecRecherche<T extends string>({
       {
         estVueMobile && estVisibleEnMobile ? (
           <Titre
-            baliseHtml='h2'
+            baliseHtml='h3'
             className='fr-h6 fr-my-2w fr-col-8'
           >
             {libellé}

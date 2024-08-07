@@ -81,7 +81,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
 }: PageChantierProps) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('md');
-  const [estVisibleEnMobile, setEstVisibleEnMobile] = useState(true);
+  const [estVisibleEnMobile, setEstVisibleEnMobile] = useState(false);
 
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
@@ -104,6 +104,16 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
+          {
+            estVueMobile && estVisibleEnMobile ? (
+              <Titre
+                baliseHtml='h3'
+                className='fr-h6 fr-mb-2w fr-mt-0 fr-col-8'
+              >
+                Maille géographique
+              </Titre>
+            ) : null
+          }        
           <SélecteursMaillesEtTerritoires
             chantierMailles={chantier.mailles}
             estVisibleEnMobile={estVisibleEnMobile}
@@ -126,7 +136,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
             className='fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-equalizer-fill fr-text-title--blue-france'
             onClick={() => {
               setEstOuverteBarreLatérale(true);
-              setEstVisibleEnMobile(estVisibleEnMobile);
+              setEstVisibleEnMobile(true);
             }}
             title='Explorer'
             type='button'

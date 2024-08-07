@@ -9,7 +9,6 @@ import SélecteursMaillesEtTerritoires
   from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
 import Titre from '@/components/_commons/Titre/Titre';
 import Filtres from '@/components/PageAccueil/Filtres/Filtres';
-import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
@@ -21,6 +20,8 @@ import RécupérerListeProjetsStructurantsVueDEnsembleUseCase
   from '@/server/usecase/projetStructurant/RécupérerListeProjetsStructurantsVueDEnsembleUseCase';
 import PageProjetsStructurants from '@/components/PageAccueil/PageProjetsStructurants/PageProjetsStructurants';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
+import IndexStyled from './Index.styled';
 
 interface ChantierAccueil {
   projetsStructurants: ProjetStructurantVueDEnsemble[]
@@ -77,6 +78,8 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   estProjetStructurantDisponible,
 }) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
+  const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('md');
+  const [estVisibleEnMobile, setEstVisibleEnMobile] = useState(false);
   const router = useRouter();
 
   return (
@@ -87,6 +90,16 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
       >
         <BarreLatéraleEncart>
           {
+            estProjetStructurantDisponible && estVueMobile && estVisibleEnMobile ? (
+              <Titre
+                baliseHtml='h3'
+                className='fr-h6 fr-mb-2w fr-mt-0 fr-col-8'
+              >
+                Type de projets
+              </Titre>
+            ) : null
+          }
+          {
             estProjetStructurantDisponible ? (
               <SélecteurTypeDeRéforme
                 modifierTypeDeRéformeSélectionné={() => {
@@ -96,7 +109,20 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
               />
             ) : null
           }
-          <SélecteursMaillesEtTerritoires />
+          {
+            estVueMobile && estVisibleEnMobile ? (
+              <Titre
+                baliseHtml='h3'
+                className='fr-h6 fr-my-2w fr-col-8'
+              >
+                Maille géographique
+              </Titre>
+            ) : null
+          }       
+          <SélecteursMaillesEtTerritoires
+            estVisibleEnMobile={estVisibleEnMobile}
+            estVueMobile={estVueMobile}
+          />
         </BarreLatéraleEncart>
         <section>
           <Titre
@@ -112,19 +138,25 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
           />
         </section>
       </BarreLatérale>
-      <div className='w-full'>
-        <BoutonSousLigné
-          classNameSupplémentaires='fr-link--icon-left fr-fi-arrow-right-line fr-hidden-lg fr-m-2w'
-          onClick={() => setEstOuverteBarreLatérale(true)}
-          type='button'
-        >
-          Filtres
-        </BoutonSousLigné>
+      <IndexStyled className='w-full'>
+        <div className='bouton-filtrer fr-hidden-lg fr-py-1w fr-px-1v'>
+          <button
+            className='fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-equalizer-fill fr-text-title--blue-france'
+            onClick={() => {
+              setEstOuverteBarreLatérale(true); 
+              setEstVisibleEnMobile(true);
+            }}
+            title='Explorer'
+            type='button'
+          >
+            Explorer
+          </button>
+        </div>
         <PageProjetsStructurants
           ministères={ministères}
           projetsStructurants={projetsStructurants}
         />
-      </div>
+      </IndexStyled>
     </div>
   );
 };

@@ -226,7 +226,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
 
   const estProfilTerritorialise = PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE.has(session?.profil || '');
   const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('md');
-  const [estVisibleEnMobile, setEstVisibleEnMobile] = useState(true);
+  const [estVisibleEnMobile, setEstVisibleEnMobile] = useState(false);
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
@@ -245,7 +245,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             {
               estVueMobile && estVisibleEnMobile ? (
                 <Titre
-                  baliseHtml='h2'
+                  baliseHtml='h3'
                   className='fr-h6 fr-mb-2w fr-mt-0 fr-col-8'
                 >
                   Type de projets
@@ -259,7 +259,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             {
                estVueMobile && estVisibleEnMobile ? (
                  <Titre
-                   baliseHtml='h2'
+                   baliseHtml='h3'
                    className='fr-h6 fr-my-2w fr-col-8'
                  >
                    Maille géographique
@@ -297,7 +297,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
               className='fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-equalizer-fill fr-text-title--blue-france'
               onClick={() => {
                 setEstOuverteBarreLatérale(true); 
-                setEstVisibleEnMobile(estVisibleEnMobile);
+                setEstVisibleEnMobile(true);
               }}
               title='Explorer'
               type='button'
