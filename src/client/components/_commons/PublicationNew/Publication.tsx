@@ -57,35 +57,38 @@ export default function Publication({
           <>
             <PublicationAffichage publication={publication} />
             {
-              !!estInteractif &&
-              <div className='fr-grid-row fr-grid-row--right'>
-                <div className='fr-col-12 actions fr-mt-1w'>
-                  {
-                    !!publication &&
-                    <PublicationHistorique
-                      entité={caractéristiques.entité}
-                      maille={maille}
-                      réformeId={réformeId}
-                      type={caractéristiques.type}
-                    />
-                  }
-                  {
-                    !!modeÉcriture &&
-                    <button
-                      className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
-                      onClick={activerLeModeÉdition}
-                      type='button'
-                    >
-                      <span
-                        aria-hidden='true'
-                        className='fr-icon-edit-line fr-mr-1w'
+              estInteractif ? (
+
+                <div className='fr-grid-row fr-grid-row--right'>
+                  <div className='fr-col-12 actions fr-mt-1w'>
+                    {
+                      !!publication &&
+                      <PublicationHistorique
+                        entité={caractéristiques.entité}
+                        maille={maille}
+                        réformeId={réformeId}
+                        type={caractéristiques.type}
                       />
-                      {}
-                      Modifier
-                    </button>
-                  }
+                    }
+                    {
+                      modeÉcriture ? (
+                        <button
+                          className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
+                          onClick={activerLeModeÉdition}
+                          type='button'
+                        >
+                          <span
+                            aria-hidden='true'
+                            className='fr-icon-edit-line fr-mr-1w'
+                          />
+                          {}
+                          Modifier
+                        </button>
+                      ) : null
+                    }
+                  </div>
                 </div>
-              </div>
+              ) : null
             }
           </>
       }

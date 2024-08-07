@@ -7,7 +7,14 @@ import PublicationProps from './Publication.interface';
 import PublicationHistorique from './PublicationHistorique/PublicationHistorique';
 import PublicationAffichage from './PublicationAffichage/PublicationAffichage';
 
-export default function Publication({ caractéristiques, publicationInitiale, réformeId, maille, modeÉcriture, estInteractif }: PublicationProps) {
+export default function Publication({
+  caractéristiques,
+  publicationInitiale,
+  réformeId,
+  maille,
+  modeÉcriture,
+  estInteractif,
+}: PublicationProps) {
   const {
     publication,
     modeÉdition,
@@ -24,7 +31,7 @@ export default function Publication({ caractéristiques, publicationInitiale, r�
         baliseHtml='h3'
         className='fr-h5 fr-mb-1w'
       >
-        { modeÉdition ? `Modifier : ${caractéristiques.libelléType}` : caractéristiques.libelléType }
+        {modeÉdition ? `Modifier : ${caractéristiques.libelléType}` : caractéristiques.libelléType}
       </Titre>
       {
         !!alerte &&
@@ -48,20 +55,20 @@ export default function Publication({ caractéristiques, publicationInitiale, r�
           <>
             <PublicationAffichage publication={publication} />
             {
-              !!estInteractif &&
+              estInteractif ? (
                 <div className='fr-grid-row fr-grid-row--right'>
                   <div className='fr-col-12 actions fr-mt-1w'>
                     {
-                        !!publication &&
-                          <PublicationHistorique
-                            entité={caractéristiques.entité}
-                            maille={maille}
-                            réformeId={réformeId}
-                            type={caractéristiques.type}
-                          />
-                      }
+                      !!publication &&
+                      <PublicationHistorique
+                        entité={caractéristiques.entité}
+                        maille={maille}
+                        réformeId={réformeId}
+                        type={caractéristiques.type}
+                      />
+                    }
                     {
-                      !!modeÉcriture &&
+                      modeÉcriture ? (
                         <button
                           className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
                           onClick={activerLeModeÉdition}
@@ -74,9 +81,11 @@ export default function Publication({ caractéristiques, publicationInitiale, r�
                           {}
                           Modifier
                         </button>
-                     }
+                      ) : null
+                    }
                   </div>
                 </div>
+              ) : null
             }
           </>
       }

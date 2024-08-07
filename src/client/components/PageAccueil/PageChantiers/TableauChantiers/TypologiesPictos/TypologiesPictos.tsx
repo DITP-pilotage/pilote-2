@@ -14,20 +14,23 @@ export default function TypologiesPictos({ typologies }: TypologiesPictosProps) 
     <TypologiesPictosStyled className='flex fr-m-0 fr-p-0'>
       <li className='fr-mr-1v'>
         {
-          !!typologies.estBaromètre &&
-          <PictoBaromètre />
+          typologies.estBaromètre ? (
+            <PictoBaromètre />
+          ) : null
         }
       </li>
       <li>
         {
-          !!typologies.estTerritorialisé &&
-          <PictoTerritorialisé />
+          typologies.estTerritorialisé ? (
+            <PictoTerritorialisé />
+          ) : null
         }
       </li>
       <li>
         {
-          !!typologies.estBrouillon &&
-          <PictoChantierBrouillon />
+          typologies.estBrouillon ? (
+            <PictoChantierBrouillon />
+          ) : null
         }
       </li>
     </TypologiesPictosStyled>

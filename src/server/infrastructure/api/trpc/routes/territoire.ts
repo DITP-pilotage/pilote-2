@@ -3,7 +3,9 @@ import { DétailTerritoire, TerritoireAvecNombreUtilisateurs } from '@/server/do
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { créerRouteurTRPC, procédureProtégée } from '@/server/infrastructure/api/trpc/trpc';
-import { RécupérerTerritoiresAvecNombreUtilisateursUseCase } from '@/server/usecase/territoire/RécupérerTerritoiresAvecNombreUtilisateursUseCase';
+import {
+  RécupérerTerritoiresAvecNombreUtilisateursUseCase,
+} from '@/server/usecase/territoire/RécupérerTerritoiresAvecNombreUtilisateursUseCase';
 
 const validation = z.object({
   territoireCodes: z.array(z.string()).nullable(),
@@ -24,13 +26,10 @@ export const territoireRouter = créerRouteurTRPC({
   récupérerListe: procédureProtégée
     .input(validation)
     .query(async ({ input }): Promise<TerritoireAvecNombreUtilisateurs[]> => {
-      // eslint-disable-next-line sonarjs/prefer-immediate-return
-      const territoires =  await new RécupérerTerritoiresAvecNombreUtilisateursUseCase({
+      return new RécupérerTerritoiresAvecNombreUtilisateursUseCase({
         territoireRepository: dependencies.getTerritoireRepository(),
         utilisateurRepository: dependencies.getUtilisateurRepository(),
       })
         .run({ territoireCodes: input.territoireCodes });
-      
-      return territoires;
     }),
 });

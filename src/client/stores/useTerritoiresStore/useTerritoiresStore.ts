@@ -23,7 +23,7 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
         return;
       }
 
-      const territoiresAccessiblesEnLecture = territoires.filter(territoire => territoire.accèsLecture === true);
+      const territoiresAccessiblesEnLecture = territoires.filter(territoire => territoire.accèsLecture);
 
       set({
         territoires,

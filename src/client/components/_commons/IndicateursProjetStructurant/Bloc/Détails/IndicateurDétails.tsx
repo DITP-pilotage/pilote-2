@@ -35,7 +35,7 @@ export default function IndicateurDétails({
     donnéesCartographieValeurActuelleTerritorialisées,
   } = useIndicateurDétails(indicateur.id, futOuvert, typeDeRéforme);
 
-  const indicateurSiTypeDeReformeEstChantier = typeDeRéforme === 'chantier' && !!futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle;
+  const indicateurSiTypeDeReformeEstChantier = typeDeRéforme === 'chantier' && futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle;
   const nomDefinitionDeLindicateur = 'Définition de l\'indicateur';
   const nomRepartitionGeographiqueEtEvolution = 'Répartition géographique et évolution';
 
@@ -95,7 +95,7 @@ export default function IndicateurDétails({
           <div className='fr-container'>
             <div className='fr-grid-row fr-grid-row--gutters fr-my-1w'>
               {
-                (indicateurSiTypeDeReformeEstChantier) && (!!donnéesCartographieAvancementTerritorialisées || !!chantierEstTerritorialisé) ?
+                indicateurSiTypeDeReformeEstChantier && (donnéesCartographieAvancementTerritorialisées || chantierEstTerritorialisé) ? (
                   <section className='fr-col-12 fr-col-xl-6'>
                     <Titre
                       baliseHtml='h5'
@@ -109,10 +109,11 @@ export default function IndicateurDétails({
                       options={{ multiséléction: true }}
                       élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
                     />
-                  </section> : null
+                  </section>
+                ) : null
               }
               {
-                (indicateurSiTypeDeReformeEstChantier) && (!!donnéesCartographieValeurActuelleTerritorialisées || !!chantierEstTerritorialisé) ?
+                (indicateurSiTypeDeReformeEstChantier) && (donnéesCartographieValeurActuelleTerritorialisées || chantierEstTerritorialisé) ? (
                   <section className='fr-col-12 fr-col-xl-6'>
                     <Titre
                       baliseHtml='h5'
@@ -127,17 +128,20 @@ export default function IndicateurDétails({
                       unité={indicateur.unité}
                       élémentsDeLégende={ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE}
                     />
-                  </section> : null
+                  </section>
+                ) : null
               }
-              {indicateurSiTypeDeReformeEstChantier ?
-                <section className='fr-col-12'>
-                  <IndicateurÉvolution
-                    dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
-                    indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
-                    source={indicateur.source}
-                  />
-                </section>
-                : null}
+              {
+                indicateurSiTypeDeReformeEstChantier ? (
+                  <section className='fr-col-12'>
+                    <IndicateurÉvolution
+                      dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
+                      indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
+                      source={indicateur.source}
+                    />
+                  </section>
+                ) : null
+              }
             </div>
           </div>
         </div>

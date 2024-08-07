@@ -1,7 +1,16 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee, Territoire } from '@/server/domain/territoire/Territoire.interface';
-import { ChantierNonAutoriséErreur, ChantiersNonAutorisésCreationModificationUtilisateurErreur, ChantiersNonAutorisésSuppressionUtilisateurErreur, ProfilNonAutorisésSuppressionUtilisateurErreur, ProjetStructurantNonAutoriséErreur, TerritoireNonAutoriséErreur, TerritoiresNonAutorisésCreationModificationUtilisateurErreur, TerritoiresNonAutorisésSuppressionUtilisateurErreur } from '@/server/utils/errors';
+import {
+  ChantierNonAutoriséErreur,
+  ChantiersNonAutorisésCreationModificationUtilisateurErreur,
+  ChantiersNonAutorisésSuppressionUtilisateurErreur,
+  ProfilNonAutorisésSuppressionUtilisateurErreur,
+  ProjetStructurantNonAutoriséErreur,
+  TerritoireNonAutoriséErreur,
+  TerritoiresNonAutorisésCreationModificationUtilisateurErreur,
+  TerritoiresNonAutorisésSuppressionUtilisateurErreur,
+} from '@/server/utils/errors';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { toutesLesValeursDuTableauSontContenuesDansLAutreTableau } from '@/client/utils/arrays';
 import { Profil } from '@/server/domain/profil/Profil.interface';
@@ -97,15 +106,15 @@ export default class Habilitation {
   }
 
   peutAccéderAuChantier(chantierId: Chantier['id'], territoireCode: string): boolean {
-    return this._habilitations.lecture.chantiers.includes(chantierId) && this._habilitations.lecture.territoires.includes(territoireCode) ? true : false;
+    return this._habilitations.lecture.chantiers.includes(chantierId) && this._habilitations.lecture.territoires.includes(territoireCode);
   }
 
   peutModifierLeChantier(chantierId: Chantier['id'], territoireCode: string): boolean {
-    return this._habilitations['saisieCommentaire'].chantiers.includes(chantierId) && this._habilitations['saisieCommentaire'].territoires.includes(territoireCode) ? true : false;
+    return this._habilitations['saisieCommentaire'].chantiers.includes(chantierId) && this._habilitations['saisieCommentaire'].territoires.includes(territoireCode);
   }
 
   peutSaisirLesIndicateursDuChantier(chantierId: Chantier['id'], territoireCode: string): boolean {
-    return this._habilitations['saisieIndicateur'].chantiers.includes(chantierId) && this._habilitations['saisieIndicateur'].territoires.includes(territoireCode) ? true : false;
+    return this._habilitations['saisieIndicateur'].chantiers.includes(chantierId) && this._habilitations['saisieIndicateur'].territoires.includes(territoireCode);
   }
 
   peutAccéderAuTerritoire(territoireCode: string): boolean {
@@ -122,11 +131,11 @@ export default class Habilitation {
   }
 
   peutSaisirDesPublicationsPourUnTerritoire(territoireCode: string): boolean {
-    return this._habilitations['saisieCommentaire'].territoires.includes(territoireCode) ? true : false;
+    return this._habilitations['saisieCommentaire'].territoires.includes(territoireCode);
   }
 
   peutSaisirDesIndicateursPourUnTerritoire(territoireCode: string): boolean {
-    return this._habilitations['saisieIndicateur'].territoires.includes(territoireCode) ? true : false;
+    return this._habilitations['saisieIndicateur'].territoires.includes(territoireCode);
   }
 
   récupérerListeChantiersIdsAccessiblesEnLecture(): Chantier['id'][] {

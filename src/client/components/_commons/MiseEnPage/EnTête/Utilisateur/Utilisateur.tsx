@@ -36,16 +36,17 @@ export default function Utilisateur() {
         }
       </span>
       {
-        !!estDéplié &&
-        <span className='fr-col-12'>
-          <button
-            className='fr-p-0'
-            onClick={() => signOut()}
-            type='button'
-          >
-            Déconnexion
-          </button>
-        </span>
+        estDéplié ? (
+          <span className='fr-col-12'>
+            <button
+              className='fr-p-0'
+              onClick={() => signOut()}
+              type='button'
+            >
+              Déconnexion
+            </button>
+          </span>
+        ) : null
       }
     </UtilisateurStyled>
   );

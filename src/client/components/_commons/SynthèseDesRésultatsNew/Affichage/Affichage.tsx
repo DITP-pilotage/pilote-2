@@ -38,13 +38,14 @@ export default function SynthèseDesRésultatsAffichage({
         }}
       />
       {
-        (!!afficherBoutonsAffichage) &&
-        <BoutonsAffichage
-          afficherVoirMoins={afficherContenuComplet}
-          afficherVoirPlus={!afficherContenuComplet}
-          déplierLeContenu={déplierLeContenu}
-          replierLeContenu={replierLeContenu}
-        />
+        afficherBoutonsAffichage ? (
+          <BoutonsAffichage
+            afficherVoirMoins={afficherContenuComplet}
+            afficherVoirPlus={!afficherContenuComplet}
+            déplierLeContenu={déplierLeContenu}
+            replierLeContenu={replierLeContenu}
+          />
+        ) : null
       }
     </>
 

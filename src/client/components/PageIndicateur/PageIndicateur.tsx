@@ -67,24 +67,26 @@ export default function PageIndicateur({
                 Retour
               </Link>
               {
-                !!modificationReussie &&
-                <div className='fr-my-4w'>
-                  <Alerte
-                    message='Les modifications ont bien été prises en compte pour cet indicateur. Elles apparaitront dans PILOTE lors de la prochaine mise à jour de données'
-                    titre="Bravo, l'indicateur a bien été modifié !"
-                    type='succès'
-                  />
-                </div>
+                modificationReussie ? (
+                  <div className='fr-my-4w'>
+                    <Alerte
+                      message='Les modifications ont bien été prises en compte pour cet indicateur. Elles apparaitront dans PILOTE lors de la prochaine mise à jour de données'
+                      titre="Bravo, l'indicateur a bien été modifié !"
+                      type='succès'
+                    />
+                  </div>
+                ) : null
               }
               {
-                !!creationReussie &&
-                <div className='fr-my-4w'>
-                  <Alerte
-                    message='La création a bien été prise en compte pour cet indicateur. Il apparaitra dans PILOTE lors de la prochaine mise à jour de données'
-                    titre="Bravo, l'indicateur a bien été crée !"
-                    type='succès'
-                  />
-                </div>
+                creationReussie ? (
+                  <div className='fr-my-4w'>
+                    <Alerte
+                      message='La création a bien été prise en compte pour cet indicateur. Il apparaitra dans PILOTE lors de la prochaine mise à jour de données'
+                      titre="Bravo, l'indicateur a bien été crée !"
+                      type='succès'
+                    />
+                  </div>
+                ) : null
               }
               <Titre
                 baliseHtml='h1'

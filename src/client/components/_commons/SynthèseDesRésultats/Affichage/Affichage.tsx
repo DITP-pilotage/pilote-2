@@ -4,16 +4,16 @@ import BoutonsAffichage from '@/components/_commons/SynthèseDesRésultats/Bouto
 import SynthèseDesRésultatsAffichageProps from './Affichage.interface';
 import useAffichage from './useAffichage';
 
-export default function SynthèseDesRésultatsAffichage({ 
-  synthèseDesRésultats, 
+export default function SynthèseDesRésultatsAffichage({
+  synthèseDesRésultats,
 }: SynthèseDesRésultatsAffichageProps) {
 
   const {
-    contenuAAfficher, 
+    contenuAAfficher,
     afficherBoutonsAffichage,
     afficherContenuComplet,
     déplierLeContenu,
-    replierLeContenu,    
+    replierLeContenu,
   } = useAffichage(synthèseDesRésultats);
 
   if (!synthèseDesRésultats) {
@@ -32,19 +32,20 @@ export default function SynthèseDesRésultatsAffichage({
       </p>
       <p
         className='fr-text--sm fr-mb-0'
-    // eslint-disable-next-line react/no-danger
+        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{
           __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(contenuAAfficher),
         }}
       />
       {
-        (!!afficherBoutonsAffichage) && 
-        <BoutonsAffichage 
-          afficherVoirMoins={afficherContenuComplet}
-          afficherVoirPlus={!afficherContenuComplet}
-          déplierLeContenu={déplierLeContenu}
-          replierLeContenu={replierLeContenu}
-        />
+        afficherBoutonsAffichage ? (
+          <BoutonsAffichage
+            afficherVoirMoins={afficherContenuComplet}
+            afficherVoirPlus={!afficherContenuComplet}
+            déplierLeContenu={déplierLeContenu}
+            replierLeContenu={replierLeContenu}
+          />
+        ) : null
       }
     </>
 

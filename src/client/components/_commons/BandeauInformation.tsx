@@ -20,34 +20,38 @@ const getBandeauTypeClass = (bandeauType: string) => {
     case 'WARNING': {
       return 'fr-notice--info fr-notice--warning';
     }
-    default:  {
+    default: {
       return 'fr-notice--info fr-notice--warning';
     }
   }
 };
 
-export const BandeauInformation: FunctionComponent<PropsWithChildren<{ bandeauType: string, fermable?: boolean }>> = ({ children, bandeauType, fermable = true }) => {
+export const BandeauInformation: FunctionComponent<PropsWithChildren<{
+  bandeauType: string,
+  fermable?: boolean
+}>> = ({ children, bandeauType, fermable = true }) => {
   return (
     <BandeauInformationStyled>
       <div className={`fr-notice ${getBandeauTypeClass(bandeauType)}`}>
         <div className='fr-container'>
           <div className='fr-notice__body flex'>
-            <p className='fr-notice__title'>              
+            <p className='fr-notice__title'>
               {children}
             </p>
             {
-              !!fermable &&
-              <button
-                className='fr-btn--close fr-btn'
-                onClick={(event) => {
-                  const notice = event.currentTarget?.parentNode?.parentNode?.parentNode;
-                  notice?.parentNode?.removeChild(notice);
-                }}
-                title='Masquer le message'
-                type='button'
-              >
-                Masquer le message
-              </button>
+              fermable ? (
+                <button
+                  className='fr-btn--close fr-btn'
+                  onClick={(event) => {
+                    const notice = event.currentTarget?.parentNode?.parentNode?.parentNode;
+                    notice?.parentNode?.removeChild(notice);
+                  }}
+                  title='Masquer le message'
+                  type='button'
+                >
+                  Masquer le message
+                </button>
+              ) : null
             }
           </div>
         </div>

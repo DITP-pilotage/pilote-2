@@ -83,10 +83,10 @@ function ecrireCsvUtilisateurs(outputName: string, utilisateurFormatCsv: CsvReco
   
   csvWriter.writeRecords(utilisateurFormatCsv)
     .then(() => {
-      console.log('Écriture CSV terminée');
+      logger.info('Écriture CSV terminée');
     })
     .catch((error) => {
-      console.error('Erreur lors de l\'écriture CSV', error);
+      logger.error('Erreur lors de l\'écriture CSV', error);
     });
 }
 

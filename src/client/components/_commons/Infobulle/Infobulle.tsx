@@ -29,13 +29,14 @@ export default function Infobulle({ idHtml, children, className }: InfobulleProp
         type='button'
       />
       {
-        !!estVisible &&
-        <div
-          className='fr-p-1w fr-p-md-3v infobulle-texte'
-          id={idHtml}
-        >
-          {children}
-        </div>
+        estVisible ? (
+          <div
+            className='fr-p-1w fr-p-md-3v infobulle-texte'
+            id={idHtml}
+          >
+            {children}
+          </div>
+        ) : null
       }
     </InfobulleStyled>
   );

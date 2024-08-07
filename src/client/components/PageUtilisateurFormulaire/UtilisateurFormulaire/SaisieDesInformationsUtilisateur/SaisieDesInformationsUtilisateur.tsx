@@ -102,7 +102,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
         valeurSélectionnée={profilSélectionné?.code}
       />
       <div
-        className={`${(!!afficherChampLectureTerritoires || !!afficherChampLecturePérimètres || !!afficherChampLectureChantiers) ? '' : 'fr-hidden'}`}
+        className={`${(afficherChampLectureTerritoires || afficherChampLecturePérimètres || afficherChampLectureChantiers) ? '' : 'fr-hidden'}`}
       >
         <hr className='fr-hr' />
         <Titre
@@ -117,7 +117,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
              Le nombre d'utilisateurs est limité à ${MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT} comptes à la maille départementale et ${MAXIMUM_COMPTES_AUTORISE_PAR_REGION} comptes à la maille régionale.`
           }
         </p>
-        <div className={`${!!afficherChampLectureTerritoires ? '' : 'fr-hidden'}`}>
+        <div className={`${afficherChampLectureTerritoires ? '' : 'fr-hidden'}`}>
           <div className='fr-mb-4w'>
             <Controller
               control={control}
@@ -136,7 +136,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
             />
           </div>
         </div>
-        <div className={`${!!afficherChampLecturePérimètres ? '' : 'fr-hidden'}`}>
+        <div className={`${afficherChampLecturePérimètres ? '' : 'fr-hidden'}`}>
           <div className='fr-mb-4w'>
             <Controller
               control={control}
@@ -152,7 +152,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
             />
           </div>
         </div>
-        <div className={`${!!afficherChampLectureChantiers ? '' : 'fr-hidden'}`}>
+        <div className={`${afficherChampLectureChantiers ? '' : 'fr-hidden'}`}>
           <div className='fr-mb-4w'>
             <Controller
               control={control}
@@ -181,8 +181,10 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
             Responsabilités
           </Titre>
           <p className='fr-text--xs texte-gris fr-mb-4w'>
-            Parmi les chantiers autorisés en lecture, merci d\'indiquer celles pour lesquelles l\'utilisateur est désigné responsable local.
-            L'utilisateur apparaîtra nominativement comme responsable local de ces chantiers sur les pages concernés de PILOTE. 
+            Parmi les chantiers autorisés en lecture, merci d\'indiquer celles pour lesquelles l\'utilisateur est
+            désigné responsable local.
+            L'utilisateur apparaîtra nominativement comme responsable local de ces chantiers sur les pages concernés de
+            PILOTE.
           </p>
           <div className='fr-mb-4w'>
             <Controller
@@ -202,7 +204,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           </div>
         </div>
       </div>
-      <div className={`${!!afficherChampSaisieIndicateur ? '' : 'fr-hidden'}`}>
+      <div className={`${afficherChampSaisieIndicateur ? '' : 'fr-hidden'}`}>
         <hr className='fr-hr' />
         <Titre
           baliseHtml='h2'
@@ -215,7 +217,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           register={register('saisieIndicateur')}
         />
       </div>
-      <div className={`${!!afficherChampSaisieCommentaire ? '' : 'fr-hidden'}`}>
+      <div className={`${afficherChampSaisieCommentaire ? '' : 'fr-hidden'}`}>
         <hr className='fr-hr' />
         <Titre
           baliseHtml='h2'
@@ -228,7 +230,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           register={register('saisieCommentaire')}
         />
       </div>
-      <div className={`${!!afficherChampGestionCompte ? '' : 'fr-hidden'}`}>
+      <div className={`${afficherChampGestionCompte ? '' : 'fr-hidden'}`}>
         <hr className='fr-hr' />
         <Titre
           baliseHtml='h2'
