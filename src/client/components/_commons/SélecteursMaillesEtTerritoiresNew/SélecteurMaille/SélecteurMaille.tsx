@@ -1,15 +1,16 @@
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { FunctionComponent } from 'react';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { maillesAccessiblesEnLectureStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import SélecteurMailleStyled from './SélecteurMaille.styled';
 
-export default function SélecteurMaille({ mailleSelectionnee, pathname }: {
+const SélecteurMaille: FunctionComponent<{
   mailleSelectionnee: 'départementale' | 'régionale',
   pathname: string;
-}) {
+}> = ({ mailleSelectionnee, pathname }) => {
   const maillesAccessiblesEnLecture = maillesAccessiblesEnLectureStore();
   const router = useRouter();
   const { data: session } = useSession();
@@ -59,4 +60,6 @@ export default function SélecteurMaille({ mailleSelectionnee, pathname }: {
       }
     </SélecteurMailleStyled>
   );
-}
+};
+
+export default SélecteurMaille;

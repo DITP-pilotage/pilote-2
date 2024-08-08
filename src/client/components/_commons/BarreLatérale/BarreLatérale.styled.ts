@@ -1,6 +1,9 @@
 import styled from '@emotion/styled';
 import { breakpointL } from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
-import { BarreLatéraleStyledProps } from './BarreLatérale.interface';
+
+type BarreLatéraleStyledProps = {
+  estOuvert: boolean
+};
 
 const BarreLatéraleStyled = styled.div<BarreLatéraleStyledProps>`
   .barre-latérale {

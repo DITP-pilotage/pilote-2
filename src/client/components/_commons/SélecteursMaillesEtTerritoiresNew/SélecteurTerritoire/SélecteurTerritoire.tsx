@@ -1,5 +1,6 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { FunctionComponent } from 'react';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import { territoiresAccessiblesEnLectureStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
@@ -39,7 +40,7 @@ const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerri
   ];
 };
 
-export default function SélecteurTerritoire({
+const SélecteurTerritoire: FunctionComponent<SélecteurTerritoiresProps> = ({
   chantierMailles,
   territoireCode,
   mailleSelectionnee,
@@ -79,4 +80,6 @@ export default function SélecteurTerritoire({
       valeurSélectionnée={territoireCode}
     />
   );
-}
+};
+
+export default SélecteurTerritoire;

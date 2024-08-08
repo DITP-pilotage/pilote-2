@@ -1,4 +1,5 @@
 import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
+import { FunctionComponent } from 'react';
 import Tag from '@/components/_commons/Tag/Tag';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
@@ -7,15 +8,13 @@ import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/Pé
 import { reinitialiserFiltres, sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import FiltresActifsStyled from './FiltresActifs.styled';
 
-
 interface FiltresActifsProps {
   ministères: Ministère[]
   axes: Axe[]
   mailleSelectionnee: 'départementale' | 'régionale'
 }
 
-
-export default function FiltresActifs({ ministères, axes, mailleSelectionnee }: FiltresActifsProps) {
+const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axes, mailleSelectionnee }) => {
   const [filtres, setFiltres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
     axes: parseAsString.withDefault(''),
@@ -252,4 +251,6 @@ export default function FiltresActifs({ ministères, axes, mailleSelectionnee }:
       </button>
     </FiltresActifsStyled>
   );
-}
+};
+
+export default FiltresActifs;

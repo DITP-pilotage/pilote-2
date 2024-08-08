@@ -2,7 +2,7 @@ import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
 import Head from 'next/head';
 import { GetServerSidePropsContext } from 'next';
 import { getServerSession } from 'next-auth/next';
-import { PageMessageInformation } from '@/components/PageAdminGestionContenus/PageMessageInformation';
+import PageMessageInformation from '@/components/PageAdminGestionContenus/PageMessageInformation';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { estAutoriséAModifierDesIndicateurs } from '@/client/utils/indicateur/indicateur';
 import {

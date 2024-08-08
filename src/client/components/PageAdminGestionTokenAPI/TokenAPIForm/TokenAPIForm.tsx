@@ -1,7 +1,8 @@
+import { FunctionComponent } from 'react';
 import Input from '@/components/_commons/Input/Input';
 import { useTokenAPIForm } from '@/components/PageAdminGestionTokenAPI/TokenAPIForm/useTokenAPIForm';
 
-export const TokenAPIForm = () => {
+const TokenAPIForm: FunctionComponent<{}> = () => {
   const { errors, register } = useTokenAPIForm();
   return (
     <div className='fr-container'>
@@ -30,3 +31,5 @@ export const TokenAPIForm = () => {
     </div>
   );
 };
+
+export default TokenAPIForm;

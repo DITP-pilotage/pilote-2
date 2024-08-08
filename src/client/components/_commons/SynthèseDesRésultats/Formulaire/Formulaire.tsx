@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { FunctionComponent } from 'react';
 import CompteurCaractères from '@/components/_commons/CompteurCaractères/CompteurCaractères';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import { libellésMétéos, MétéoSaisissable, météosSaisissables } from '@/server/domain/météo/Météo.interface';
@@ -11,7 +12,7 @@ import SynthèseDesRésultatsFormulaireStyled from './Formulaire.styled';
 import SynthèseDesRésultatsFormulaireProps, { SynthèseDesRésultatsFormulaireInputs } from './Formulaire.interface';
 import useSynthèseDesRésultatsFormulaire from './useSynthèseDesRésultatsFormulaire';
 
-export default function SynthèseDesRésultatsFormulaire({ contenuInitial, météoInitiale, synthèseDesRésultatsCrééeCallback, annulationCallback }: SynthèseDesRésultatsFormulaireProps) {
+const SynthèseDesRésultatsFormulaire: FunctionComponent<SynthèseDesRésultatsFormulaireProps> = ({ contenuInitial, météoInitiale, synthèseDesRésultatsCrééeCallback, annulationCallback }) => {
   const { créerSynthèseDesRésultats, alerte } = useSynthèseDesRésultatsFormulaire(synthèseDesRésultatsCrééeCallback);  
   
   const { register, handleSubmit, formState: { errors, isValid }, watch, getValues } = useForm<SynthèseDesRésultatsFormulaireInputs>({
@@ -102,4 +103,6 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
       }
     </SynthèseDesRésultatsFormulaireStyled>
   );
-}
+};
+
+export default SynthèseDesRésultatsFormulaire;

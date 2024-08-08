@@ -1,9 +1,14 @@
+import { FunctionComponent } from 'react';
 import { formaterDate } from '@/client/utils/date/date';
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
 import Badge from '@/client/components/_commons/Badge/Badge';
-import PublicationAffichageProps from './PublicationAffichage.interface';
+import PublicationProps from '@/client/components/_commons/Publication/Publication.interface';
 
-export default function PublicationAffichage({ publication }: PublicationAffichageProps) {
+interface PublicationAffichageProps {
+  publication: PublicationProps['publicationInitiale']
+}
+
+const PublicationAffichage: FunctionComponent<PublicationAffichageProps> = ({ publication }) => {
   if (!publication) {
     return (
       <Badge type='gris'>
@@ -30,4 +35,6 @@ export default function PublicationAffichage({ publication }: PublicationAfficha
       />
     </>
   );
-}
+};
+
+export default PublicationAffichage;

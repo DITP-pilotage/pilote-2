@@ -1,12 +1,16 @@
 import '@gouvfr/dsfr/dist/component/badge/badge.min.css';
 import ovoidBackground from '@gouvfr/dsfr/dist/artwork/background/ovoid.svg';
 import technicalError from '@gouvfr/dsfr/dist/artwork/pictograms/system/technical-error.svg';
+import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import PageVideStyled from './PageVideStyled';
-import PageVideProps from './PageVide.interface';
 
-export default function PageVide({ titre }: PageVideProps) {
+interface PageVideProps {
+  titre: string
+}
+
+const PageVide: FunctionComponent<PageVideProps> = ({ titre }) => {
   return (
     <PageVideStyled>
       <main>
@@ -80,4 +84,6 @@ export default function PageVide({ titre }: PageVideProps) {
       </main>
     </PageVideStyled>
   );
-}
+};
+
+export default PageVide;

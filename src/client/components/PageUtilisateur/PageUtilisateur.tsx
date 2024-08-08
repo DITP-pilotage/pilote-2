@@ -10,7 +10,7 @@ import FicheUtilisateur from '@/components/PageUtilisateur/FicheUtilisateur/Fich
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import Modale from '@/client/components/_commons/Modale/Modale';
 import Bouton from '@/client/components/_commons/Bouton/Bouton';
-import { BandeauInformation } from '@/client/components/_commons/BandeauInformation';
+import BandeauInformation from '@/components/_commons/BandeauInformation/BandeauInformation';
 import { useGestionTokenAPI } from '@/components/PageAdminGestionTokenAPI/useGestionTokenAPI';
 import usePageUtilisateur from './usePageUtilisateur';
 

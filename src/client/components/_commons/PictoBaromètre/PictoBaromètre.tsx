@@ -1,6 +1,7 @@
+import { FunctionComponent } from 'react';
 import PictoBaromètreStyled from '@/components/_commons/PictoBaromètre/PictoBaromètre.styled';
 
-export default function PictoBaromètre() {
+const PictoBaromètre: FunctionComponent<{}> = () => {
   return (
     <>
       <PictoBaromètreStyled
@@ -11,4 +12,6 @@ export default function PictoBaromètre() {
       </span>
     </>
   );
-}
+};
+
+export default PictoBaromètre;

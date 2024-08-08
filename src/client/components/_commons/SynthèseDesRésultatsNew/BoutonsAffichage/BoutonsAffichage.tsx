@@ -1,12 +1,19 @@
+import { FunctionComponent, MouseEventHandler } from 'react';
 import Bouton from '@/components/_commons/Bouton/Bouton';
-import BoutonsAffichageProps from './BoutonsAffichage.interface';
 
-export default function BoutonsAffichage({
+interface BoutonsAffichageProps {
+  afficherVoirPlus: boolean
+  afficherVoirMoins: boolean
+  déplierLeContenu: MouseEventHandler<HTMLButtonElement>
+  replierLeContenu: MouseEventHandler<HTMLButtonElement>
+}
+
+const BoutonsAffichage: FunctionComponent<BoutonsAffichageProps> = ({
   afficherVoirPlus,
   afficherVoirMoins,
   déplierLeContenu,
   replierLeContenu,
-}: BoutonsAffichageProps) {
+}) => {
 
   return (
     <>
@@ -30,4 +37,6 @@ export default function BoutonsAffichage({
       }
     </>
   );
-}
+};
+
+export default BoutonsAffichage;

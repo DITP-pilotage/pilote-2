@@ -1,7 +1,8 @@
+import { FunctionComponent } from 'react';
 import PictoSousIndicateurStyled from './PictoSousIndicateur.styled';
 import '@gouvfr/dsfr/dist/utility/icons/icons-development/icons-development.min.css';
 
-export default function PictoSousIndicateur() {
+const PictoSousIndicateur: FunctionComponent<{}> = () => {
   return (
     <>
       <PictoSousIndicateurStyled
@@ -12,4 +13,6 @@ export default function PictoSousIndicateur() {
       </span>
     </>
   );
-}
+};
+
+export default PictoSousIndicateur;

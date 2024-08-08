@@ -1,7 +1,14 @@
+import { FunctionComponent } from 'react';
 import RemontéeAlerteStyled from '@/components/_commons/RemontéeAlerte/RemontéeAlerte.styled';
-import RemontéeAlerteProps from '@/components/_commons/RemontéeAlerte/RemontéeAlerte.interface';
 
-export default function RemontéeAlerte({ nombre, libellé, auClic, estActivée }: RemontéeAlerteProps) {
+interface RemontéeAlerteProps {
+  nombre: number | null;
+  libellé: string;
+  auClic?: () => void;
+  estActivée: boolean;
+}
+
+const RemontéeAlerte: FunctionComponent<RemontéeAlerteProps> = ({ nombre, libellé, auClic, estActivée }) => {
   return (
     <RemontéeAlerteStyled
       className={`fr-p-3v fr-p-md-3w ${estActivée ? 'est-activée' : ''}`}
@@ -16,4 +23,5 @@ export default function RemontéeAlerte({ nombre, libellé, auClic, estActivée 
       </span>
     </RemontéeAlerteStyled>
   );
-}
+};
+export default RemontéeAlerte;

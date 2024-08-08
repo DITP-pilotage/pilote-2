@@ -5,7 +5,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/client/components/_commons/Bloc/Bloc';
 import { useGestionTokenAPI } from '@/components/PageAdminGestionTokenAPI/useGestionTokenAPI';
 import Alerte from '@/components/_commons/Alerte/Alerte';
-import { TokenAPIForm } from '@/components/PageAdminGestionTokenAPI/TokenAPIForm/TokenAPIForm';
+import TokenAPIForm  from '@/components/PageAdminGestionTokenAPI/TokenAPIForm/TokenAPIForm';
 import { TokenAPIInformationContrat } from '@/server/authentification/app/contrats/TokenAPIInformationContrat';
 
 const PageAdminGestionTokenAPI: FunctionComponent<{

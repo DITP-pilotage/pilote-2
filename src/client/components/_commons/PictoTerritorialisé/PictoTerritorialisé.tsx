@@ -1,6 +1,7 @@
+import { FunctionComponent } from 'react';
 import PictoTerritorialiséstyled from '@/components/_commons/PictoTerritorialisé/PictoTerritorialisé.styled';
 
-export default function PictoTerritorialisé() {
+const PictoTerritorialisé: FunctionComponent<{}> = () => {
   return (
     <>
       <PictoTerritorialiséstyled
@@ -11,4 +12,6 @@ export default function PictoTerritorialisé() {
       </span>
     </>
   );
-}
+};
+
+export default PictoTerritorialisé;

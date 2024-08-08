@@ -296,7 +296,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                 objectifs={objectifs[chantier.id]}
                 réformeId={chantier.id}
                 territoireCode={territoireCode}
-                typesObjectif={typesObjectif}
+                tousLesTypesDObjectif={typesObjectif}
               />
             </section>
           </div>

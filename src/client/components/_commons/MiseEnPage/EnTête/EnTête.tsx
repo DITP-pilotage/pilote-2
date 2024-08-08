@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import { FunctionComponent } from 'react';
 import Navigation from '@/components/_commons/MiseEnPage/Navigation/Navigation';
 import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
-import { BandeauInformation } from '@/components/_commons/BandeauInformation';
+import BandeauInformation from '@/components/_commons/BandeauInformation/BandeauInformation';
 import api from '@/server/infrastructure/api/trpc/api';
 
 const useEntete = () => {

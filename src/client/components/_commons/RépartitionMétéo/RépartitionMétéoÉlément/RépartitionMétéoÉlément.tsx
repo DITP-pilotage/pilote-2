@@ -1,10 +1,15 @@
+import { FunctionComponent } from 'react';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
-import { libellésMétéos } from '@/server/domain/météo/Météo.interface';
+import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
 import { typeDeRéformeSélectionnéeStore } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
-import RépartitionMétéoÉlémentProps from './RépartitionMétéoÉlément.interface';
 import RépartitionMétéoÉlémentStyled from './RépartitionMétéoÉlément.styled';
 
-export default function RépartitionMétéoÉlément({ météo, nombreDeChantiers }: RépartitionMétéoÉlémentProps) {
+interface RépartitionMétéoÉlémentProps {
+  météo: Météo
+  nombreDeChantiers: string
+}
+
+const RépartitionMétéoÉlément: FunctionComponent<RépartitionMétéoÉlémentProps> = ({ météo, nombreDeChantiers }) => {
   const typeDeRéforme = typeDeRéformeSélectionnéeStore();
   return (
     <RépartitionMétéoÉlémentStyled typeDeRéforme={typeDeRéforme}>
@@ -21,4 +26,6 @@ export default function RépartitionMétéoÉlément({ météo, nombreDeChantier
       </p>
     </RépartitionMétéoÉlémentStyled>
   );
-}
+};
+
+export default RépartitionMétéoÉlément;

@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import Titre from '@/components/_commons/Titre/Titre';
 import PublicationStyled from './Publication.styled';
@@ -7,14 +8,14 @@ import PublicationProps from './Publication.interface';
 import PublicationHistorique from './PublicationHistorique/PublicationHistorique';
 import PublicationAffichage from './PublicationAffichage/PublicationAffichage';
 
-export default function Publication({
+const Publication: FunctionComponent<PublicationProps> = ({
   caractéristiques,
   publicationInitiale,
   réformeId,
   maille,
   modeÉcriture,
   estInteractif,
-}: PublicationProps) {
+}) => {
   const {
     publication,
     modeÉdition,
@@ -91,4 +92,6 @@ export default function Publication({
       }
     </PublicationStyled>
   );
-}
+};
+
+export default Publication;

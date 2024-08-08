@@ -1,7 +1,14 @@
+import { FunctionComponent } from 'react';
 import PictoTendanceStyled from '@/components/_commons/PictoTendance/PictoTendance.styled';
-import PictoTendanceProps from '@/components/_commons/PictoTendance/PictoTendance.interface';
+import { ChantierTendance } from '@/server/domain/chantier/Chantier.interface';
 
-export default function PictoTendance({ tendance }: PictoTendanceProps) {
+type Tendance = ChantierTendance;
+
+interface PictoTendanceProps {
+  tendance: Tendance | null;
+}
+
+const PictoTendance: FunctionComponent<PictoTendanceProps> = ({ tendance }) => {
   if (tendance === null) {
     return (
       <span aria-hidden='true' />
@@ -20,4 +27,6 @@ export default function PictoTendance({ tendance }: PictoTendanceProps) {
       />
     )
   );
-}
+};
+
+export default PictoTendance;

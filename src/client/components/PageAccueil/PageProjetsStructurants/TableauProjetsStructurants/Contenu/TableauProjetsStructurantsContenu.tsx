@@ -1,9 +1,13 @@
-import { flexRender } from '@tanstack/react-table';
+import { flexRender, Table } from '@tanstack/react-table';
 import Link from 'next/link';
-import TableauProjetsStructurantsContenuProps from './TableauProjetsStructurantsContenu.interface';
+import { FunctionComponent } from 'react';
+import { ProjetStructurantVueDEnsemble } from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 
+interface TableauProjetsStructurantsContenuProps {
+  tableau: Table<ProjetStructurantVueDEnsemble>
+}
 
-export default function TableauProjetsStructurantsContenu({ tableau }: TableauProjetsStructurantsContenuProps) {
+const TableauProjetsStructurantsContenu: FunctionComponent<TableauProjetsStructurantsContenuProps> = ({ tableau }) => {
   return (
     <tbody>
       {
@@ -33,4 +37,6 @@ export default function TableauProjetsStructurantsContenu({ tableau }: TableauPr
       }
     </tbody>
   );    
-}
+};
+
+export default TableauProjetsStructurantsContenu;

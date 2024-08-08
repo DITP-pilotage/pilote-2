@@ -1,6 +1,6 @@
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
 import { parseAsString, useQueryState } from 'nuqs';
-import { useCallback } from 'react';
+import { FunctionComponent, useCallback } from 'react';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Icône from '@/components/_commons/Icône/Icône';
@@ -15,8 +15,8 @@ interface FiltresMinistèresProps {
 
 const catégorieDeFiltre: 'périmètresMinistériels' = 'périmètresMinistériels';
 
-export default function FiltresMinistères({ ministères, estVueMobile,
-  estVisibleEnMobile }: FiltresMinistèresProps) {
+const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({ ministères, estVueMobile,
+  estVisibleEnMobile }) => {
   const [perimetres, setPerimetres] = useQueryState('perimetres', parseAsString.withDefault('').withOptions({
     shallow: false,
     clearOnDefault: true,
@@ -137,4 +137,6 @@ export default function FiltresMinistères({ ministères, estVueMobile,
       </div>
     </FiltresMinistèresStyled>
   );
-}
+};
+
+export default FiltresMinistères;

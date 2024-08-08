@@ -1,4 +1,5 @@
 import { parseAsBoolean, useQueryState } from 'nuqs';
+import { FunctionComponent } from 'react';
 import RemontéeAlerteStyled from '@/components/_commons/RemontéeAlerte/RemontéeAlerte.styled';
 
 interface RemontéeAlerteProps {
@@ -9,7 +10,7 @@ interface RemontéeAlerteProps {
 }
 
 
-export default function RemontéeAlerte({ nombre, libellé, nomCritère, estActivée }: RemontéeAlerteProps) {
+const RemontéeAlerte: FunctionComponent<RemontéeAlerteProps> = ({ nombre, libellé, nomCritère, estActivée }) => {
   const [filtreAlerte, setFiltreAlerte] = useQueryState(nomCritère, parseAsBoolean.withDefault(false).withOptions({
     shallow: false,
     clearOnDefault: true,
@@ -32,4 +33,6 @@ export default function RemontéeAlerte({ nombre, libellé, nomCritère, estActi
       </span>
     </RemontéeAlerteStyled>
   );
-}
+};
+
+export default RemontéeAlerte;

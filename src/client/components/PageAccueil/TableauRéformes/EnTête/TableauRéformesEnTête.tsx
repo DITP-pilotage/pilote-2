@@ -1,6 +1,10 @@
-import { flexRender, SortDirection } from '@tanstack/react-table';
-import TableauRéformesEnTêteProps from './TableauRéformesEnTête.interface';
+import { flexRender, SortDirection, Table } from '@tanstack/react-table';
+import { FunctionComponent } from 'react';
 import TableauRéformesEnTêteStyled from './TableauRéformesEnTête.styled';
+
+interface TableauRéformesEnTêteProps {
+  tableau: Table<any>
+}
 
 function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
   if (!typeDeTri)
@@ -14,7 +18,7 @@ function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
   return tupleTriAttributAriaSort[typeDeTri];
 }
 
-export default function TableauRéformesEnTête({ tableau }: TableauRéformesEnTêteProps) {
+const TableauRéformesEnTête: FunctionComponent<TableauRéformesEnTêteProps> = ({ tableau }) => {
   return (
     <TableauRéformesEnTêteStyled>
       {
@@ -39,4 +43,6 @@ export default function TableauRéformesEnTête({ tableau }: TableauRéformesEnT
       }
     </TableauRéformesEnTêteStyled>
   );
-}
+};
+
+export default TableauRéformesEnTête;

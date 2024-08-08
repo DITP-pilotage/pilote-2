@@ -1,9 +1,16 @@
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/component/input/input.min.css';
-import { PropsWithChildren } from 'react';
+import { FunctionComponent, PropsWithChildren } from 'react';
 import { FieldError, FieldErrorsImpl, Merge, UseFormRegisterReturn } from 'react-hook-form';
 
-const TextArea = ({
+const TextArea: FunctionComponent<PropsWithChildren<{
+  htmlName: string,
+  erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>
+  erreurMessage?: string
+  register: UseFormRegisterReturn
+  disabled?: boolean,
+  className?: string
+}>> = ({
   children,
   erreur,
   erreurMessage,
@@ -11,14 +18,7 @@ const TextArea = ({
   register,
   disabled = false,
   className = '',
-}: PropsWithChildren<{
-  htmlName: string,
-  erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>
-  erreurMessage?: string
-  register: UseFormRegisterReturn
-  disabled?: boolean,
-  className?: string
-}>) => {
+}) => {
   return (
     <div className={`fr-input-group ${erreur !== undefined || erreurMessage ? 'fr-input-group--error' : ''}`}>
       {children}

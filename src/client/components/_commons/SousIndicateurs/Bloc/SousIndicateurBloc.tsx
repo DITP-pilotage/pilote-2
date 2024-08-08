@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { useRouter } from 'next/router';
 import Titre from '@/components/_commons/Titre/Titre';
 import Tableau from '@/components/_commons/Tableau/Tableau';
@@ -8,6 +8,9 @@ import FormulaireIndicateur
   from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/FormulaireIndicateur/FormulaireIndicateur';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
+import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import ResultatValidationFichier
   from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
 import IndicateurPonderation from '@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation';
@@ -19,11 +22,22 @@ import PictoSousIndicateur from '@/components/_commons/PictoSousIndicateur/Picto
 import useIndicateurAlerteDateMaj from '@/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj';
 import IndicateurTendance from '@/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance';
 import useSousIndicateurBloc from './useSousIndicateurBloc';
-import SousIndicateurBlocProps from './SousIndicateurBloc.interface';
 import SousIndicateurBlocStyled from './SousIndicateurBloc.styled';
 import '@gouvfr/dsfr/dist/utility/colors/colors.css';
 
-export default function SousIndicateurBloc({
+interface SousIndicateurBlocProps {
+  indicateur: Indicateur
+  détailsIndicateurs: DétailsIndicateurs
+  detailsIndicateursTerritoire: DétailsIndicateurs
+  estDisponibleALImport: boolean
+  estInteractif: boolean
+  chantierEstTerritorialisé: boolean
+  classeCouleurFond: string
+  territoireCode: string
+  mailleSelectionnee: MailleInterne
+}
+
+const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
   indicateur,
   détailsIndicateurs,
   detailsIndicateursTerritoire,
@@ -33,7 +47,7 @@ export default function SousIndicateurBloc({
   classeCouleurFond,
   territoireCode,
   mailleSelectionnee,
-}: SousIndicateurBlocProps) {
+}) => {
   const router = useRouter();
   const réformeId = router.query.id as string;
 
@@ -162,4 +176,6 @@ export default function SousIndicateurBloc({
       </section>
     </SousIndicateurBlocStyled>
   );
-}
+};
+
+export default SousIndicateurBloc;
