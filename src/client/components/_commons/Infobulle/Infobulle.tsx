@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { FunctionComponent, ReactNode, useState } from 'react';
 import InfobulleStyled from '@/components/_commons/Infobulle/Infobulle.styled';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 
@@ -8,7 +8,7 @@ interface InfobulleProps {
   children: ReactNode;
 }
 
-export default function Infobulle({ idHtml, children, className }: InfobulleProps) {
+const Infobulle: FunctionComponent<InfobulleProps> = ({ idHtml, children, className }) => {
   const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
   const [estVisible, setEstVisible] = useState(false);
 
@@ -40,4 +40,6 @@ export default function Infobulle({ idHtml, children, className }: InfobulleProp
       }
     </InfobulleStyled>
   );
-}
+};
+
+export default Infobulle;

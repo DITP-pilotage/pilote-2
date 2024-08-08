@@ -1,7 +1,12 @@
 import '@gouvfr/dsfr/dist/component/stepper/stepper.min.css';
-import IndicateurDEtapesProps from './IndicateurDEtapes.interface';
+import { FunctionComponent } from 'react';
 
-export default function IndicateurDEtapes({ étapes, étapeCourante }: IndicateurDEtapesProps) {
+interface IndicateurDEtapesProps {
+  étapes: string[],
+  étapeCourante: number
+}
+
+const IndicateurDEtapes: FunctionComponent<IndicateurDEtapesProps> = ({ étapes, étapeCourante }) => {
   const nombreDEtapes = étapes.length;
   const indexEtape = étapeCourante - 1;
 
@@ -30,4 +35,5 @@ export default function IndicateurDEtapes({ étapes, étapeCourante }: Indicateu
       }
     </div>
   );
-}
+};
+export default IndicateurDEtapes;

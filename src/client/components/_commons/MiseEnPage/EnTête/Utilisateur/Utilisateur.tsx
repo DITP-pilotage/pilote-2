@@ -1,8 +1,8 @@
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import UtilisateurStyled from './Utilisateur.styled';
 
-export default function Utilisateur() {
+const Utilisateur: FunctionComponent<{}> = () => {
   const [estDéplié, setEstDéplié] = useState<boolean>(false);
   const { data: session } = useSession();
 
@@ -50,4 +50,6 @@ export default function Utilisateur() {
       }
     </UtilisateurStyled>
   );
-}
+};
+
+export default Utilisateur;

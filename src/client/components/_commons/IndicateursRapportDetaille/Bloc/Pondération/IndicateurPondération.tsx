@@ -1,6 +1,10 @@
-import IndicateurPondérationProps
-  from '@/components/_commons/IndicateursRapportDetaille/Bloc/Pondération/IndicateurPondération.interface';
+import { FunctionComponent } from 'react';
 import { Maille } from '@/server/domain/maille/Maille.interface';
+
+interface IndicateurPondérationProps {
+  indicateurPondération: number | null;
+  mailleSélectionnée: Maille;
+}
 
 const adjectifÀPartirDeLaMaille: Record<Maille, string> = {
   nationale: 'national',
@@ -8,7 +12,7 @@ const adjectifÀPartirDeLaMaille: Record<Maille, string> = {
   départementale: 'départemental',
 };
 
-export function IndicateurPondération({ indicateurPondération, mailleSélectionnée }: IndicateurPondérationProps) {
+const IndicateurPondération: FunctionComponent<IndicateurPondérationProps> = ({ indicateurPondération, mailleSélectionnée }) => {
   return (
     <p className='fr-text--xs texte-gris'>
       {
@@ -37,4 +41,6 @@ export function IndicateurPondération({ indicateurPondération, mailleSélectio
       }
     </p>
   );
-}
+};
+
+export default IndicateurPondération;

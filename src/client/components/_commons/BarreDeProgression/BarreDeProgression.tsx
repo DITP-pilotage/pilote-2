@@ -1,5 +1,22 @@
-import BarreDeProgressionProps from '@/components/_commons/BarreDeProgression/BarreDeProgression.interface';
+import { FunctionComponent } from 'react';
 import BarreDeProgressionStyled from './BarreDeProgression.styled';
+
+type BarreDeProgressionTaille = 'xxs' | 'xs' | 'sm' | 'md' | 'lg';
+type BarreDeProgressionVariante = 'primaire' | 'primaire-light' | 'secondaire' | 'rose';
+type BarreDeProgressionFond = 'bleu' | 'blanc' | 'gris-moyen' | 'gris-clair';
+type BarreDeProgressionBordure = 'bleu' | 'gris-moyen' | null;
+type BarreDeProgressionPositionTexte = 'côté' | 'dessus';
+
+
+interface BarreDeProgressionProps {
+  taille: BarreDeProgressionTaille,
+  variante: BarreDeProgressionVariante,
+  fond?: BarreDeProgressionFond,
+  bordure?: BarreDeProgressionBordure,
+  valeur: number | null,
+  positionTexte? : BarreDeProgressionPositionTexte,
+  afficherTexte?: boolean,
+}
 
 const dimensions = {
   xxs: {  classNameDsfr: 'fr-text--xs' },
@@ -9,7 +26,7 @@ const dimensions = {
   lg: { classNameDsfr: 'fr-h1' },
 };
 
-export default function BarreDeProgression({
+const BarreDeProgression : FunctionComponent<BarreDeProgressionProps> = ({
   taille,
   variante,
   fond = 'gris-moyen',
@@ -17,7 +34,7 @@ export default function BarreDeProgression({
   positionTexte = 'côté',
   valeur,
   afficherTexte = true,
-}: BarreDeProgressionProps) {
+}) => {
   const pourcentageAffiché = valeur === null ? '- %' : `${valeur.toFixed(0)} %`;
 
   return (
@@ -46,4 +63,6 @@ export default function BarreDeProgression({
       }
     </BarreDeProgressionStyled>
   );
-}
+};
+
+export default BarreDeProgression;

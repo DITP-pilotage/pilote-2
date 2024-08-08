@@ -1,7 +1,14 @@
+import { FunctionComponent } from 'react';
 import BulleDInfoStyled from './BulleDInfo.styled';
-import BulleDInfoProps from './BulleDInfo.interface';
 
-export default function BulleDInfo({ x, y, titre, contenu }: BulleDInfoProps) {
+interface BulleDInfoProps {
+  x: number,
+  y: number,
+  titre: string,
+  contenu: string,
+}
+
+const BulleDInfo: FunctionComponent<BulleDInfoProps> = ({ x, y, titre, contenu }) => {
   return (
     <BulleDInfoStyled
       style={{
@@ -17,4 +24,6 @@ export default function BulleDInfo({ x, y, titre, contenu }: BulleDInfoProps) {
       </div>
     </BulleDInfoStyled>
   );
-}
+};
+
+export default BulleDInfo;

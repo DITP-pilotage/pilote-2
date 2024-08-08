@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
 import IndicateurÉvolution
   from '@/components/_commons/IndicateursProjetStructurant/Bloc/Détails/Évolution/IndicateurÉvolution';
@@ -15,16 +15,28 @@ import {
 import {
   ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE,
 } from '@/client/constants/légendes/élémentsDeLégendesCartographieValeurActuelle';
-import IndicateurDétailsProps from './IndicateurDétails.interface';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import {
+  IndicateurDétailsParTerritoire,
+} from '@/components/_commons/IndicateursProjetStructurant/Bloc/IndicateurBloc.interface';
+import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 import useIndicateurDétails from './useIndicateurDétails';
 
-export default function IndicateurDétails({
+interface IndicateurDétailsProps {
+  indicateur: Indicateur
+  indicateurDétailsParTerritoires: IndicateurDétailsParTerritoire[]
+  typeDeRéforme: TypeDeRéforme,
+  chantierEstTerritorialisé: boolean,
+  dateDeMiseAJourIndicateur: string
+}
+
+const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   indicateur,
   indicateurDétailsParTerritoires,
   typeDeRéforme,
   chantierEstTerritorialisé,
   dateDeMiseAJourIndicateur,
-}: IndicateurDétailsProps) {
+}) => {
 
   const [futOuvert, setFutOuvert] = useState(false);
   const { auClicTerritoireMultiSélectionCallback } = useCartographie();
@@ -148,4 +160,6 @@ export default function IndicateurDétails({
       </section>
     </div>
   );
-}
+};
+
+export default IndicateurDétails;

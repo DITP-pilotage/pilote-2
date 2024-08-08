@@ -1,13 +1,27 @@
+import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
-import IndicateursProps
-  from '@/components/_commons/IndicateursProjetStructurant/IndicateursProjetStructurant.interface';
 import IndicateurBloc from '@/components/_commons/IndicateursProjetStructurant/Bloc/IndicateurBloc';
 import IndicateursProjetStructurantStyled
   from '@/components/_commons/IndicateursProjetStructurant/IndicateursProjetStructurant.styled';
 import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
+import { ÉlémentPageIndicateursType } from '@/client/utils/rubriques';
+import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 
-export default function IndicateursProjetStructurant({
+interface RubriquesIndicateursProps {
+  indicateurs: Indicateur[];
+  détailsIndicateurs: DétailsIndicateurs
+  listeRubriquesIndicateurs: ÉlémentPageIndicateursType[]
+  typeDeRéforme: TypeDeRéforme,
+  chantierEstTerritorialisé: boolean,
+  territoireProjetStructurant?: ProjetStructurant['territoire']
+  estInteractif?: boolean
+}
+
+const IndicateursProjetStructurant: FunctionComponent<RubriquesIndicateursProps> = ({
   indicateurs,
   détailsIndicateurs,
   listeRubriquesIndicateurs,
@@ -15,7 +29,7 @@ export default function IndicateursProjetStructurant({
   typeDeRéforme,
   chantierEstTerritorialisé,
   estInteractif = true,
-}: IndicateursProps) {
+}) => {
   const CodeInseeSélectionnée = territoireSélectionnéTerritoiresStore()?.codeInsee;
 
   if (indicateurs.length === 0) {
@@ -53,7 +67,6 @@ export default function IndicateursProjetStructurant({
                         estInteractif={estInteractif}
                         indicateur={indicateur}
                         key={indicateur.id}
-                        listeSousIndicateurs={indicateurs.filter(ind => ind.parentId === indicateur.id)}
                         territoireProjetStructurant={territoireProjetStructurant}
                         typeDeRéforme={typeDeRéforme}
                       />
@@ -66,4 +79,6 @@ export default function IndicateursProjetStructurant({
       }
     </IndicateursProjetStructurantStyled>
   );
-}
+};
+
+export default IndicateursProjetStructurant;

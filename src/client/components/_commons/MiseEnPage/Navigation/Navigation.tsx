@@ -7,9 +7,10 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
 
+import { FunctionComponent } from 'react';
 import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { MenuItemGestionContenu } from '@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu';
+import MenuItemGestionContenu from '@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu';
 import api from '@/server/infrastructure/api/trpc/api';
 import { getFiltresActifs } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import { récupérerUnCookie } from '@/client/utils/cookies';
@@ -50,7 +51,7 @@ const useNavigation = () => {
   };
 };
 
-export default function Navigation() {
+const Navigation: FunctionComponent<{}> = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const urlActuelle = router.pathname;
@@ -183,4 +184,6 @@ export default function Navigation() {
       </div>
     </div>
   );
-}
+};
+
+export default Navigation;

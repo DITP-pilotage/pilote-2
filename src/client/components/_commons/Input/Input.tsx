@@ -1,6 +1,6 @@
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/component/input/input.min.css';
-import { HTMLInputTypeAttribute, PropsWithChildren } from 'react';
+import { FunctionComponent, HTMLInputTypeAttribute, PropsWithChildren } from 'react';
 import { FieldError, FieldErrorsImpl, Merge, UseFormRegisterReturn } from 'react-hook-form';
 
 interface InputProps {
@@ -14,7 +14,7 @@ interface InputProps {
   className?: string
 }
 
-export default function Input({
+const Input: FunctionComponent<PropsWithChildren<InputProps>> = ({
   children,
   type = 'text',
   erreur,
@@ -23,7 +23,7 @@ export default function Input({
   register,
   disabled,
   className,
-}: PropsWithChildren<InputProps>) {
+}) => {
   return (
     <div className={`fr-input-group ${erreur !== undefined || erreurMessage ? 'fr-input-group--error' : ''}`}>
       {children}
@@ -44,4 +44,6 @@ export default function Input({
       }
     </div>
   );
-}
+};
+
+export default Input;

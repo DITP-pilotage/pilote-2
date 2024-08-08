@@ -1,15 +1,16 @@
 import { useRouter } from 'next/router';
 import { parseAsString, useQueryState } from 'nuqs';
+import { FunctionComponent } from 'react';
 import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { CartographieTerritoires } from '@/components/_commons/Cartographie/useCartographie.interface';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
-const CartographieTerritoireSélectionné = ({
-  multiséléction,
-  territoires,
-}: {
+const CartographieTerritoireSélectionné: FunctionComponent<{
   multiséléction: boolean,
   territoires: CartographieTerritoires['territoires']
+}> = ({
+  multiséléction,
+  territoires,
 }) => {
   const router = useRouter();
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();

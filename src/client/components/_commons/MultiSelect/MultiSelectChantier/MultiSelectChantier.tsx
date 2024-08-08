@@ -1,10 +1,19 @@
-import { useEffect, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import MultiSelect from '@/client/components/_commons/MultiSelect/MultiSelect';
 import { MultiSelectOptions, MultiSelectOptionsGroupées } from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
 import { deuxTableauxSontIdentiques, trierParOrdreAlphabétique } from '@/client/utils/arrays';
-import MultiSelectChantierProps from './MultiSelectChantier.interface';
+import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 
-export default function MultiSelectChantier({ chantiersIdsSélectionnésParDéfaut, changementValeursSélectionnéesCallback, valeursDésactivées, chantiers, afficherBoutonsSélection, desactive }: MultiSelectChantierProps) {
+interface MultiSelectChantierProps {
+  changementValeursSélectionnéesCallback: (chantiersIdsSélectionnés: string[]) => void
+  chantiers: ChantierSynthétisé[]
+  chantiersIdsSélectionnésParDéfaut?: string[]
+  valeursDésactivées?: string[]
+  afficherBoutonsSélection?: boolean
+  desactive?: boolean
+}
+
+const MultiSelectChantier: FunctionComponent<MultiSelectChantierProps> = ({ chantiersIdsSélectionnésParDéfaut, changementValeursSélectionnéesCallback, valeursDésactivées, chantiers, afficherBoutonsSélection, desactive }) => {
   const [valeursSélectionnéesParDéfaut, setValeursSélectionnéesParDéfaut] = useState(chantiersIdsSélectionnésParDéfaut);
   const [optionsGroupées, setOptionsGroupées] = useState<MultiSelectOptionsGroupées>([]);
 
@@ -39,4 +48,6 @@ export default function MultiSelectChantier({ chantiersIdsSélectionnésParDéfa
       valeursSélectionnéesParDéfaut={valeursSélectionnéesParDéfaut}
     />
   );
-}
+};
+
+export default MultiSelectChantier;

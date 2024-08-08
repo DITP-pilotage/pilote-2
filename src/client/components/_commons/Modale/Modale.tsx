@@ -1,10 +1,11 @@
 import '@gouvfr/dsfr/dist/component/modal/modal.min.css';
+import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import ModaleProps from './Modale.interface';
 import ModaleStyled from './Modale.styled';
 import useModale from './useModale';
 
-export default function Modale({
+const Modale: FunctionComponent<ModaleProps> = ({
   children,
   titre,
   sousTitre,
@@ -12,7 +13,7 @@ export default function Modale({
   ouvertureCallback,
   fermetureCallback,
   tailleModale = 'md',
-}: ModaleProps) {
+}) => {
   const { modaleRef } = useModale(ouvertureCallback, fermetureCallback);
 
   const taillePossible = {
@@ -65,4 +66,6 @@ export default function Modale({
       </dialog>
     </ModaleStyled>
   );
-}
+};
+
+export default Modale;

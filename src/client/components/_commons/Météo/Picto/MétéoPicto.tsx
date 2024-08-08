@@ -3,8 +3,13 @@ import pictoCouvert from '/public/img/météo/couvert.svg';
 import pictoNuage from '/public/img/météo/nuage.svg';
 import pictoOrage from '/public/img/météo/orage.svg';
 import Image from 'next/image';
-import MétéoPictoProps from './MétéoPicto.interface';
 import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
+import { FunctionComponent } from 'react';
+
+interface MétéoPictoProps {
+  météo: Météo,
+  estVisibleParLecteurDÉcran?: boolean,
+}
 
 export const météosPictos: Record<Météo, any> = {
   'ORAGE': pictoOrage,
@@ -15,7 +20,7 @@ export const météosPictos: Record<Météo, any> = {
   'NON_NECESSAIRE': null,
 };
 
-export default function MétéoPicto({ météo, estVisibleParLecteurDÉcran = false }: MétéoPictoProps) {
+const MétéoPicto: FunctionComponent<MétéoPictoProps> = ({ météo, estVisibleParLecteurDÉcran = false }) => {
   return météosPictos[météo] !== null ? (
     <Image
       alt={estVisibleParLecteurDÉcran ? libellésMétéos[météo] : ''}
@@ -24,4 +29,6 @@ export default function MétéoPicto({ météo, estVisibleParLecteurDÉcran = fa
       src={météosPictos[météo]}
     />
   ) : null;
-}
+};
+
+export default MétéoPicto;

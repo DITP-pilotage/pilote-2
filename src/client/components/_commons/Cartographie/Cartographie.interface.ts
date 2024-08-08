@@ -1,5 +1,3 @@
-import { ReactNode } from 'react';
-import { CartographieOptions } from '@/components/_commons/Cartographie/useCartographie.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 export type CartographieDonnées = {
@@ -10,9 +8,3 @@ export type CartographieDonnées = {
   }
 };
 
-export default interface CartographieProps {
-  options?: Partial<CartographieOptions>,
-  données: CartographieDonnées,
-  children?: ReactNode,
-  auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
-}

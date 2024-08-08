@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, FunctionComponent } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Publication from '@/components/_commons/PublicationNew/Publication';
 import {
@@ -6,9 +6,24 @@ import {
   libellésTypesCommentaire,
   TypeCommentaire,
 } from '@/client/constants/libellésCommentaire';
-import CommentairesProps from './Commentaires.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { Commentaire, typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/chantier/commentaire/Commentaire.interface';
+import { Maille } from '@/server/domain/maille/Maille.interface';
+import CommentaireProjetStructurant, { typesCommentaireProjetStructurant } from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
+import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 
-export default function Commentaires({
+interface CommentairesProps {
+  commentaires: (Commentaire | CommentaireProjetStructurant)[] | null
+  réformeId: Chantier['id'] | ProjetStructurant['id']
+  maille: Maille
+  nomTerritoire: string
+  typesCommentaire: typeof typesCommentaireMailleNationale | typeof typesCommentaireMailleRégionaleOuDépartementale | typeof typesCommentaireProjetStructurant
+  modeÉcriture?: boolean
+  estInteractif?: boolean
+  territoireCode: string
+}
+
+const Commentaires: FunctionComponent<CommentairesProps> = ({
   commentaires,
   réformeId,
   maille,
@@ -17,7 +32,7 @@ export default function Commentaires({
   modeÉcriture = false,
   estInteractif = true,
   territoireCode,
-}: CommentairesProps) {
+}) => {
   
   return (
     <Bloc titre={nomTerritoire}>
@@ -48,4 +63,6 @@ export default function Commentaires({
       }
     </Bloc>
   );
-}
+};
+
+export default Commentaires;

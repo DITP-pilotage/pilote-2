@@ -7,7 +7,7 @@ interface PageGestionContenu {
   accessible: boolean
 }
 
-export const MenuItemGestionContenu: FunctionComponent<{ urlActuelle: string }> = ({ urlActuelle }) => {
+const MenuItemGestionContenu: FunctionComponent<{ urlActuelle: string }> = ({ urlActuelle }) => {
   const pagesGestionContenu: PageGestionContenu[] = [
     {
       nom: 'Message d\'information',
@@ -80,3 +80,5 @@ export const MenuItemGestionContenu: FunctionComponent<{ urlActuelle: string }> 
     </li>
   );
 };
+
+export default MenuItemGestionContenu;
