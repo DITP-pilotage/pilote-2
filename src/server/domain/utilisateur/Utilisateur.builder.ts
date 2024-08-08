@@ -65,43 +65,8 @@ export default class UtilisateurBuilder {
     return this;
   }
 
-  avecPrénom(prénom: Utilisateur['prénom']) {
-    this._prénom = prénom;
-    return this;
-  }
-
-  avecEmail(email: Utilisateur['email']) {
-    this._email = email;
-    return this;
-  }
-
   avecProfil(profil: Utilisateur['profil']) {
     this._profil = profil;
-    return this;
-  }
-
-  avecDateModification(dateModification: Utilisateur['dateModification']) {
-    this._dateModification = dateModification;
-    return this;
-  }
-
-  avecAuteurModification(auteurModification: Utilisateur['auteurModification']) {
-    this._auteurModification = auteurModification;
-    return this;
-  }
-
-  avecDateCreation(dateCreation: Utilisateur['dateCreation']) {
-    this._dateCreation = dateCreation;
-    return this;
-  }
-
-  avecAuteurCreation(auteurCreation: Utilisateur['auteurCreation']) {
-    this._auteurCreation = auteurCreation;
-    return this;
-  }
-
-  avecFonction(fonction: Utilisateur['fonction']) {
-    this._fonction = fonction;
     return this;
   }
 
@@ -118,18 +83,6 @@ export default class UtilisateurBuilder {
   avecPérimètreIdsLecture(périmètresIds: string[]) {
     this._habilitations.lecture.périmètres = périmètresIds;
     return this;
-  }
-
-  avecSaisieIndicateur(saisieIndicateur: boolean) {
-    this._saisieIndicateur = saisieIndicateur;
-  }
-
-  avecSaisieCommentaire(saisieCommentaire: boolean) {
-    this._saisieCommentaire = saisieCommentaire;
-  }
-
-  avecGestionUtilisateur(gestionUtilisateur: boolean) {
-    this._gestionUtilisateur = gestionUtilisateur;
   }
 
   build(): Utilisateur {

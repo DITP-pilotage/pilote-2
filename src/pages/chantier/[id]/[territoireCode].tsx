@@ -32,7 +32,10 @@ import RécupérerDécisionStratégiqueLaPlusRécenteUseCase
   from '@/server/usecase/chantier/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase';
 import RécupérerDétailsIndicateursUseCase
   from '@/server/usecase/chantier/indicateur/RécupérerDétailsIndicateursUseCase';
-import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import {
+  DétailsIndicateurs,
+  DétailsIndicateurTerritoire,
+} from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import RécupérerStatistiquesAvancementChantiersUseCase
   from '@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase';
 import {
@@ -42,6 +45,9 @@ import { AvancementChantierContrat } from '@/components/PageChantier/AvancementC
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { CoordinateurTerritorial, ResponsableLocal } from '@/server/domain/territoire/Territoire.interface';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
+import {
+  ListerDétailsIndicateurTerritoireUseCase,
+} from '@/server/usecase/chantier/indicateur/ListerDétailsIndicateurTerritoireUseCase';
 
 interface NextPageChantierProps {
   indicateurs: Indicateur[],
@@ -55,6 +61,7 @@ interface NextPageChantierProps {
   objectifs: ObjectifChantierContrat
   décisionStratégique: DecisionStrategiqueChantierContrat
   détailsIndicateurs: DétailsIndicateurs
+  detailsIndicateursTerritoire: Record<string, DétailsIndicateurTerritoire>
   avancements: AvancementChantierContrat
   indicateurPondérations: IndicateurPondération[]
   chantier: Chantier
@@ -123,7 +130,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
       ? []
       : (
         indicateurs
-          .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireSélectionné.codeInsee]?.pondération ?? null, détailsIndicateurs[b.id][territoireSélectionné.codeInsee]?.pondération ?? null))
+          .sort((indicateurA, indicateurB) => comparerIndicateur(indicateurA, indicateurB, détailsIndicateurs[indicateurA.id][territoireSélectionné.codeInsee]?.pondération ?? null, détailsIndicateurs[indicateurB.id][territoireSélectionné.codeInsee]?.pondération ?? null))
           .map(indicateur => ({
             pondération: convertitEnPondération(détailsIndicateurs[indicateur.id][territoireSélectionné.codeInsee]?.pondération),
             nom: indicateur.nom,
@@ -135,6 +142,10 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
     const chantierTerritoireSélectionné = chantier?.mailles[territoireSélectionné?.maille ?? 'nationale'][territoireSélectionné?.codeInsee ?? 'FR'];
     const listeResponsablesLocaux = chantierTerritoireSélectionné?.responsableLocal ?? [];
     const listeCoordinateursTerritorials = chantierTerritoireSélectionné?.coordinateurTerritorial ?? [];
+
+    const listeIndicateurId = indicateurs.map(indicateur => indicateur.id);
+
+    const detailsIndicateursTerritoire = await new ListerDétailsIndicateurTerritoireUseCase(dependencies.getIndicateurRepository()).run(listeIndicateurId, chantierId, mailleSelectionnee, session.habilitations, session.profil);
 
     return {
       props: {
@@ -153,6 +164,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
         objectifs,
         décisionStratégique,
         détailsIndicateurs,
+        detailsIndicateursTerritoire,
         avancements,
         indicateurPondérations,
         chantier,
@@ -181,6 +193,7 @@ const NextPageChantier: FunctionComponent<InferGetServerSidePropsType<typeof get
   objectifs,
   décisionStratégique,
   détailsIndicateurs,
+  detailsIndicateursTerritoire,
   avancements,
   indicateurPondérations,
   chantier,
@@ -209,6 +222,7 @@ const NextPageChantier: FunctionComponent<InferGetServerSidePropsType<typeof get
             avancements={avancements}
             chantier={chantier}
             commentaires={commentaires}
+            detailsIndicateursTerritoire={detailsIndicateursTerritoire}
             décisionStratégique={décisionStratégique as DecisionStrategiqueChantierContrat}
             détailsIndicateurs={détailsIndicateurs}
             indicateurPondérations={indicateurPondérations}

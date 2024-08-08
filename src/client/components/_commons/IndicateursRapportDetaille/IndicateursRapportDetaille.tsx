@@ -12,6 +12,7 @@ export default function IndicateursRapportDetaille({
   territoireProjetStructurant,
   typeDeRéforme,
   chantierEstTerritorialisé,
+  mailleSelectionnee,
   estInteractif = true,
 }: IndicateursProps) {
   const codeInseeSélectionnée = territoireCode?.split('-')[1];
@@ -51,6 +52,7 @@ export default function IndicateursRapportDetaille({
                         indicateur={indicateur}
                         key={indicateur.id}
                         listeSousIndicateurs={indicateurs.filter(ind => ind.parentId === indicateur.id)}
+                        mailleSelectionnee={mailleSelectionnee}
                         territoireCode={territoireCode}
                         territoireProjetStructurant={territoireProjetStructurant}
                         typeDeRéforme={typeDeRéforme}

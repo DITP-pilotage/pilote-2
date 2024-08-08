@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker/locale/fr';
-import Objectif, { typesObjectif }  from '@/server/domain/chantier/objectif/Objectif.interface';
+import Objectif, { typesObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
 
 export default class ObjectifBuilder {
   private _objectif: Objectif;
@@ -16,11 +16,6 @@ export default class ObjectifBuilder {
       date: faker.date.recent(60, '2023-05-01T00:00:00.000Z').toISOString(),
       auteur: faker.helpers.arrayElement(['', faker.name.fullName()]),
     };
-  }
-
-  avecObjectif(objectif: Objectif): ObjectifBuilder {
-    this._objectif = objectif;
-    return this;
   }
 
   build(): Objectif {

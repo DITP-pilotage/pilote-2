@@ -2,8 +2,12 @@ import { indicateur as IndicateurPrisma, Prisma, PrismaClient } from '@prisma/cl
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
-import { DétailsIndicateurMailles, DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import {
+  DétailsIndicateurMailles,
+  DétailsIndicateurs,
+  DétailsIndicateurTerritoire,
+} from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { groupByAndTransform } from '@/client/utils/arrays';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
@@ -12,7 +16,10 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import {
   IndicateurPourExport,
 } from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
-import { parseDétailsIndicateur } from '@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLParser';
+import {
+  parseDétailsIndicateur,
+  parseDétailsIndicateurNew,
+} from '@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLParser';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 
@@ -108,6 +115,34 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     });
 
     return indicateur!.chantier_id;
+  }
+
+  async récupérerDétailsTerritoire(id: string, maille: MailleInterne, habilitations: Habilitations, profil: ProfilCode): Promise<DétailsIndicateurTerritoire> {
+    const habilitation = new Habilitation(habilitations);
+    const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+
+    let paramètresRequête : Prisma.indicateurFindManyArgs = {
+      where: {
+        id,
+        chantier_id: { in: chantiersLecture },
+      },
+    } ;
+
+    if (!profilsTerritoriaux.includes(profil)) {
+      const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
+
+      paramètresRequête.where!.territoire_code = { in: territoiresLecture };
+    }
+
+    const indicateur = await this.prisma.indicateur.findMany(paramètresRequête);
+
+    if (!indicateur || indicateur.length === 0) {
+      throw new ErreurIndicateurNonTrouvé(id);
+    }
+
+    const territoires = await this.prisma.territoire.findMany();
+
+    return parseDétailsIndicateurNew(indicateur, territoires, maille);
   }
 
   async récupérerDétailsParMailles(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<DétailsIndicateurMailles> {

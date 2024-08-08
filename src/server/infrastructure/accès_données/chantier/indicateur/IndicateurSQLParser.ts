@@ -1,18 +1,19 @@
-import { indicateur, territoire } from '@prisma/client';
+import { indicateur as PrismaIndicateur, territoire as PrismaTerritoire } from '@prisma/client';
 import {
   DétailsIndicateurMailles,
   DétailsIndicateurTerritoire,
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
-function créerDonnéesTerritoires(territoires: territoire[], indicateurRows: indicateur[]) {
+function créerDonnéesTerritoires(territoires: PrismaTerritoire[], indicateurRows: PrismaIndicateur[]) {
   let donnéesTerritoires: DétailsIndicateurTerritoire = {};
   let IntermediaireEstAnnéeEnCours: boolean;
-  territoires.forEach(t => {
-    const indicateurRow = indicateurRows.find(c => c.code_insee === t.code_insee);
+  territoires.forEach(territoire => {
+    const indicateurRow = indicateurRows.find(indicateur => indicateur.code_insee === territoire.code_insee);
     IntermediaireEstAnnéeEnCours = indicateurRow?.objectif_date_valeur_cible_intermediaire?.getFullYear() === new Date().getFullYear();
 
-    donnéesTerritoires[t.code_insee] = {
-      codeInsee: t.code_insee,
+    donnéesTerritoires[territoire.code_insee] = {
+      codeInsee: territoire.code_insee,
       dateValeurCible: indicateurRow?.objectif_date_valeur_cible?.toLocaleString() ?? null,
       dateValeurInitiale: indicateurRow?.date_valeur_initiale?.toLocaleString() ?? null,
       dateValeurActuelle: indicateurRow?.date_valeur_actuelle?.toLocaleString() ?? null,
@@ -24,7 +25,7 @@ function créerDonnéesTerritoires(territoires: territoire[], indicateurRows: in
       valeurActuelle: indicateurRow?.valeur_actuelle ?? null,
       valeurCibleAnnuelle: IntermediaireEstAnnéeEnCours ? indicateurRow?.objectif_valeur_cible_intermediaire ?? null : null,
       avancement: {
-        annuel: IntermediaireEstAnnéeEnCours ? indicateurRow?.objectif_taux_avancement_intermediaire ?? null : null, 
+        annuel: IntermediaireEstAnnéeEnCours ? indicateurRow?.objectif_taux_avancement_intermediaire ?? null : null,
         global: indicateurRow?.objectif_taux_avancement ?? null,
       },
       proposition: indicateurRow?.valeur_actuelle_proposition !== null && indicateurRow?.valeur_actuelle_proposition !== undefined ? { // Pour autoriser une valeur actuelle proposé à 0
@@ -51,7 +52,7 @@ function créerDonnéesTerritoires(territoires: territoire[], indicateurRows: in
   return donnéesTerritoires;
 }
 
-export function parseDétailsIndicateur(indicateurRows: indicateur[], territoires: territoire[]): DétailsIndicateurMailles {
+export function parseDétailsIndicateur(indicateurRows: PrismaIndicateur[], territoires: PrismaTerritoire[]): DétailsIndicateurMailles {
   const indicateurMailleNationale = indicateurRows.filter(c => c.maille === 'NAT');
   const indicateurMailleDépartementale = indicateurRows.filter(c => c.maille === 'DEPT');
   const indicateurMailleRégionale = indicateurRows.filter(c => c.maille === 'REG');
@@ -61,4 +62,13 @@ export function parseDétailsIndicateur(indicateurRows: indicateur[], territoire
     départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'DEPT'), indicateurMailleDépartementale),
     régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'REG'), indicateurMailleRégionale),
   };
+}
+
+export function parseDétailsIndicateurNew(indicateurRows: PrismaIndicateur[], territoires: PrismaTerritoire[], mailleInterne: MailleInterne): DétailsIndicateurTerritoire {
+  const maille = mailleInterne === 'départementale' ? 'DEPT' : mailleInterne === 'régionale' ? 'REG' : 'NAT';
+
+  const listeIndicateurTerritoire = indicateurRows.filter(c => c.maille === maille);
+  const listeTerritoires = territoires.filter(t => t.maille === maille);
+
+  return créerDonnéesTerritoires(listeTerritoires, listeIndicateurTerritoire);
 }

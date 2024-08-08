@@ -191,9 +191,9 @@ export default function RapportDétailléChantier({
                   <IndicateursRapportDetaille
                     chantierEstTerritorialisé={chantier.estTerritorialisé}
                     détailsIndicateurs={détailsIndicateurs}
-                    estInteractif={false}
                     indicateurs={indicateurs}
                     listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
+                    mailleSelectionnee={mailleSélectionnée}
                     territoireCode={territoireCode}
                     typeDeRéforme='chantier'
                   />

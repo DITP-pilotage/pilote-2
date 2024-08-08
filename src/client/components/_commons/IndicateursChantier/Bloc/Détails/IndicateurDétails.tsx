@@ -1,6 +1,5 @@
 import { FunctionComponent, useState } from 'react';
 import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
-import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import IndicateurÉvolution from '@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurÉvolution';
 import Titre from '@/components/_commons/Titre/Titre';
 import CartographieAvancement
@@ -23,7 +22,8 @@ import {
   IndicateurDétailsParTerritoire,
 } from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import useIndicateurDétails from './useIndicateurDétails';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { useIndicateurDétails } from './useIndicateurDétails';
 
 interface IndicateurDétailsProps {
   indicateur: Indicateur
@@ -32,11 +32,13 @@ interface IndicateurDétailsProps {
   dateDeMiseAJourIndicateur: string | null
   listeSousIndicateurs: Indicateur[]
   détailsIndicateurs: DétailsIndicateurs
+  detailsIndicateursTerritoire: DétailsIndicateurs
   estSousIndicateur?: boolean
   dateValeurActuelle: string | null
   dateProchaineDateMaj: string | null
   dateProchaineDateValeurActuelle: string | null
   territoireCode: string
+  mailleSelectionnee: MailleInterne
 }
 
 const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
@@ -46,15 +48,15 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   dateDeMiseAJourIndicateur,
   listeSousIndicateurs,
   détailsIndicateurs,
+  detailsIndicateursTerritoire,
   dateValeurActuelle,
   dateProchaineDateMaj,
   dateProchaineDateValeurActuelle,
   estSousIndicateur = false,
   territoireCode,
+  mailleSelectionnee,
 }) => {
   const [futOuvert, setFutOuvert] = useState(false);
-
-  const [mailleSelectionnee] = useQueryState('maille', parseAsStringLiteral(['départementale', 'régionale']).withDefault('départementale'));
 
   const { auClicTerritoireMultiSélectionCallback } = useCartographie(territoireCode, mailleSelectionnee, '/chantier/[id]/[territoireCode]');
 
@@ -63,7 +65,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
     donnéesCartographieValeurActuelle,
     donnéesCartographieAvancementTerritorialisées,
     donnéesCartographieValeurActuelleTerritorialisées,
-  } = useIndicateurDétails(indicateur.id, futOuvert, mailleSelectionnee);
+  } = useIndicateurDétails(indicateur.id, futOuvert, mailleSelectionnee, detailsIndicateursTerritoire[indicateur.id]);
 
   const indicateurSiTypeDeReformeEstChantier = futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle;
   const nomDefinitionDeLindicateur = estSousIndicateur ? 'Description du sous-indicateur' : 'Description de l\'indicateur';
@@ -208,9 +210,11 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
           >
             <SousIndicateurs
               chantierEstTerritorialisé={chantierEstTerritorialisé}
+              detailsIndicateursTerritoire={detailsIndicateursTerritoire}
               détailsIndicateurs={détailsIndicateurs}
               estInteractif
               listeSousIndicateurs={listeSousIndicateurs}
+              mailleSelectionnee={mailleSelectionnee}
               territoireCode={territoireCode}
             />
           </div>

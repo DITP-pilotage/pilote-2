@@ -56,16 +56,6 @@ export default class MinistèreBuilder {
     return this;
   }
 
-  avecPérimètresMinistériels(périmètresMinistériels: Ministère['périmètresMinistériels']): MinistèreBuilder {
-    this._périmètresMinistériels = périmètresMinistériels;
-    return this;
-  }
-
-  avecIcône(icône: Ministère['icône']): MinistèreBuilder {
-    this._icône = icône;
-    return this;
-  }
-
   build(): Ministère {
     return {
       id: this._id,

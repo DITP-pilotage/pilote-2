@@ -1,6 +1,6 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import { CodeInsee, Territoire } from '@/server/domain/territoire/Territoire.interface';
+import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import {
   ChantierNonAutoriséErreur,
   ChantiersNonAutorisésCreationModificationUtilisateurErreur,
@@ -14,7 +14,7 @@ import {
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { toutesLesValeursDuTableauSontContenuesDansLAutreTableau } from '@/client/utils/arrays';
 import { Profil } from '@/server/domain/profil/Profil.interface';
-import { Habilitations, TerritoiresFiltre } from './Habilitation.interface';
+import { Habilitations } from './Habilitation.interface';
 
 export default class Habilitation {
   constructor(private _habilitations: Habilitations) {}
@@ -101,22 +101,6 @@ export default class Habilitation {
     return true;
   }
 
-  peutAccéderAuProjetStructurant(projetStructurantId: ProjetStructurant['id']): boolean {
-    return this._habilitations['projetsStructurants.lecture'].projetsStructurants.includes(projetStructurantId);
-  }
-
-  peutAccéderAuChantier(chantierId: Chantier['id'], territoireCode: string): boolean {
-    return this._habilitations.lecture.chantiers.includes(chantierId) && this._habilitations.lecture.territoires.includes(territoireCode);
-  }
-
-  peutModifierLeChantier(chantierId: Chantier['id'], territoireCode: string): boolean {
-    return this._habilitations['saisieCommentaire'].chantiers.includes(chantierId) && this._habilitations['saisieCommentaire'].territoires.includes(territoireCode);
-  }
-
-  peutSaisirLesIndicateursDuChantier(chantierId: Chantier['id'], territoireCode: string): boolean {
-    return this._habilitations['saisieIndicateur'].chantiers.includes(chantierId) && this._habilitations['saisieIndicateur'].territoires.includes(territoireCode);
-  }
-
   peutAccéderAuTerritoire(territoireCode: string): boolean {
     return this._habilitations.lecture.territoires.includes(territoireCode);
   }
@@ -150,26 +134,6 @@ export default class Habilitation {
     return [...this._habilitations.lecture.territoires];
   }
 
-  récupérerMailleEtCodeEnLecture() : TerritoiresFiltre {
-    const territoires = this.récupérerListeTerritoireCodesAccessiblesEnLecture();
-    const result = {
-      REG: { maille: 'régionale', territoires: [] as string[] },
-      DEPT: { maille: 'départementale', territoires: [] as string[] },
-      NAT: { maille: 'nationale', territoires: [] as string[] },
-    };
-
-    for (const codeTerritoire of territoires) {
-      if (codeTerritoire.startsWith('REG')) {
-        result.REG.territoires.push(codeTerritoire);
-      } else if (codeTerritoire.startsWith('DEPT')) {
-        result.DEPT.territoires.push(codeTerritoire);
-      } else if (codeTerritoire.startsWith('NAT')) {
-        result.NAT.territoires.push(codeTerritoire);
-      }
-    }
-    return result;
-  }
-
   recupererListeMailleEnLectureDisponible(): MailleInterne[] {
     const territoires = this.récupérerListeTerritoireCodesAccessiblesEnLecture();
     let result: MailleInterne[] = [];
@@ -183,17 +147,4 @@ export default class Habilitation {
     }
     return result;
   }
-
-  recupererListeCodeInseeEnLectureDisponible(maille: string) : CodeInsee[] {
-    let result = [];
-    const territoires = this.récupérerListeTerritoireCodesAccessiblesEnLecture();
-    const codeMaille = (maille == 'régionale') ? 'REG' : 'DEPT';
-
-    for (const territoire of territoires) {
-      if (territoire.startsWith(codeMaille) || territoire.startsWith('NAT'))
-        result.push(territoire.split('-')[1]);
-    }
-    return result;
-  }
-  
 }

@@ -23,6 +23,7 @@ import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import { formaterDate } from '@/client/utils/date/date';
 import IndicateurTendance from '@/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 import useIndicateurAlerteDateMaj from './useIndicateurAlerteDateMaj';
@@ -32,23 +33,27 @@ export const ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE = 'modale-proposition-va
 interface IndicateurBlocProps {
   indicateur: Indicateur
   détailsIndicateurs: DétailsIndicateurs
+  detailsIndicateursTerritoire: DétailsIndicateurs
   estInteractif: boolean
   chantierEstTerritorialisé: boolean,
   estAutoriseAVoirLesPropositionsDeValeurActuelle: boolean,
   listeSousIndicateurs: Indicateur[],
   territoireCode: string,
   territoiresCompares: string[],
+  mailleSelectionnee: MailleInterne,
 }
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   indicateur,
   détailsIndicateurs,
+  detailsIndicateursTerritoire,
   estInteractif,
   chantierEstTerritorialisé,
   estAutoriseAVoirLesPropositionsDeValeurActuelle = false,
   listeSousIndicateurs,
   territoireCode,
   territoiresCompares,
+  mailleSelectionnee,
 }) => {
   const {
     maille: mailleTerritoireSelectionnee,
@@ -420,10 +425,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 dateProchaineDateMaj={dateProchaineDateMaj}
                 dateProchaineDateValeurActuelle={dateProchaineDateValeurActuelle}
                 dateValeurActuelle={dateValeurActuelle}
+                detailsIndicateursTerritoire={detailsIndicateursTerritoire}
                 détailsIndicateurs={détailsIndicateurs}
                 indicateur={indicateur}
                 indicateurDétailsParTerritoires={informationsIndicateurs}
                 listeSousIndicateurs={listeSousIndicateurs}
+                mailleSelectionnee={mailleSelectionnee}
                 territoireCode={territoireCode}
               />
             ) : null

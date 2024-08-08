@@ -54,41 +54,6 @@ export default class IndicateurBuilder {
     return this;
   }
 
-  avecEstIndicateurDuBaromètre(estIndicateurDuBaromètre: Indicateur['estIndicateurDuBaromètre']): IndicateurBuilder {
-    this._estIndicateurDuBaromètre = estIndicateurDuBaromètre;
-    return this;
-  }
-
-  avecDescription(description: Indicateur['description']): IndicateurBuilder {
-    this._description = description;
-    return this;
-  }
-
-  avecSource(source: Indicateur['source']): IndicateurBuilder {
-    this._source = source;
-    return this;
-  }
-
-  avecModeDeCalcul(modeDeCalcul: Indicateur['modeDeCalcul']): IndicateurBuilder {
-    this._modeDeCalcul = modeDeCalcul;
-    return this;
-  }
-
-  avecParentId(parentId: Indicateur['parentId']): IndicateurBuilder {
-    this._parentId = parentId;
-    return this;
-  }
-
-  avecPeriodicite(periodicite: Indicateur['periodicite']): IndicateurBuilder {
-    this._periodicite = periodicite;
-    return this;
-  }
-
-  avecDelaiDisponibilite(delaiDisponibilite: Indicateur['delaiDisponibilite']): IndicateurBuilder {
-    this._delaiDisponibilite = delaiDisponibilite;
-    return this;
-  }
-
   build(): Indicateur {
     return {
       id: this._id,
