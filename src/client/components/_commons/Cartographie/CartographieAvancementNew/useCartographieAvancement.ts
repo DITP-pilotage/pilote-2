@@ -18,7 +18,6 @@ function déterminerValeurAffichée(valeur: number | null, estApplicable: boolea
   return valeur.toFixed(0) + '%';
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
 function déterminerRemplissage(valeur: number | null, élémentsDeLégende: CartographieÉlémentsDeLégende, estApplicable: boolean | null) {
 
   if (estApplicable === false) {
@@ -71,21 +70,18 @@ export default function useCartographieAvancement(données: CartographieDonnées
 
   }, [élémentsDeLégende, données]);
 
-  const donnéesCartographie = useMemo(() => {
-    const donnéesFormatées: CartographieDonnées = {};
+  const donnéesCartographie = données.reduce((acc, val) => {
+    const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(val.codeInsee, mailleSelectionnee);
 
-    données.forEach(({ valeur, codeInsee, estApplicable }) => {
-      const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee, mailleSelectionnee);
-
-      donnéesFormatées[codeInsee] = {
-        valeurAffichée: déterminerValeurAffichée(valeur, estApplicable),
-        remplissage: déterminerRemplissage(valeur, élémentsDeLégende, estApplicable),
+    return {
+      ...acc,
+      [val.codeInsee]: {
+        valeurAffichée: déterminerValeurAffichée(val.valeur, val.estApplicable),
+        remplissage: déterminerRemplissage(val.valeur, élémentsDeLégende, val.estApplicable),
         libellé: territoireGéographique.nomAffiché,
-      };
-    });
-
-    return donnéesFormatées;
-  }, [données, mailleSelectionnee, récupérerDétailsSurUnTerritoireAvecCodeInsee, élémentsDeLégende]);
+      },
+    };
+  }, {} as CartographieDonnées);
 
   return {
     légende,

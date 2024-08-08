@@ -27,11 +27,6 @@ export default class PérimètreMinistérielBuilder {
     return this;
   }
 
-  avecMinistèreNom(ministèreNom: PérimètreMinistériel['ministèreNom']): PérimètreMinistérielBuilder {
-    this._ministèreNom = ministèreNom;
-    return this;
-  }
-
   build(): PérimètreMinistériel {
     return {
       id: this._id,

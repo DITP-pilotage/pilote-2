@@ -1,10 +1,8 @@
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 
 export class HabilitationBuilder {
-  private _habilitations: Habilitations;
+  private readonly _habilitations: Habilitations;
 
   constructor() {
     this._habilitations = {
@@ -18,18 +16,8 @@ export class HabilitationBuilder {
 
   }
 
-  avecChantierIdsLecture(chantierIds: Chantier['id'][]) {
-    this._habilitations.lecture.chantiers = chantierIds;
-    return this;
-  }
-
   avecTerritoireCodesLecture(territoireCodes: string[]) {
     this._habilitations.lecture.territoires = territoireCodes;
-    return this;
-  }
-
-  avecPérimètreIdsLecture(périmètresIds: PérimètreMinistériel['id'][]) {
-    this._habilitations.lecture.périmètres = périmètresIds;
     return this;
   }
 

@@ -13,12 +13,6 @@ export type ScopeChantiers = typeof scopesChantiers[number];
 export type ScopeProjetsStructurants = typeof scopesProjetsStructurants[number];
 export type Scope = typeof scopes[number];
 
-export type TerritoiresFiltre =  {
-  DEPT: { maille: string, territoires: string[] },
-  REG: { maille: string, territoires: string[] },
-  NAT: { maille: string, territoires: string[] }
-};
-
 export type HabilitationChantiers = {
   chantiers: Chantier['id'][]
   territoires: string[]

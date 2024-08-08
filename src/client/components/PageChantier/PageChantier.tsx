@@ -31,7 +31,10 @@ import { SynthèseDesRésultatsContrat } from '@/server/chantiers/app/contrats/S
 import { CommentaireChantierContrat } from '@/server/chantiers/app/contrats/CommentaireChantierContrat';
 import { ObjectifChantierContrat } from '@/server/chantiers/app/contrats/ObjectifChantierContrat';
 import { DecisionStrategiqueChantierContrat } from '@/server/chantiers/app/contrats/DecisionStrategiqueChantierContrat';
-import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import {
+  DétailsIndicateurs,
+  DétailsIndicateurTerritoire,
+} from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { AvancementChantierContrat } from '@/components/PageChantier/AvancementChantier';
 import { CoordinateurTerritorial, ResponsableLocal } from '@/server/domain/territoire/Territoire.interface';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
@@ -52,6 +55,7 @@ interface PageChantierProps {
   objectifs: ObjectifChantierContrat
   décisionStratégique: DecisionStrategiqueChantierContrat
   détailsIndicateurs: DétailsIndicateurs
+  detailsIndicateursTerritoire: Record<string, DétailsIndicateurTerritoire>
   avancements: AvancementChantierContrat
   indicateurPondérations: IndicateurPondération[]
   listeResponsablesLocaux: ResponsableLocal[]
@@ -67,6 +71,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
   synthèseDesRésultats,
   commentaires,
   détailsIndicateurs,
+  detailsIndicateursTerritoire,
   objectifs,
   décisionStratégique,
   avancements,
@@ -290,10 +295,12 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   </Titre>
                   <IndicateursChantier
                     chantierEstTerritorialisé={chantier.estTerritorialisé}
+                    detailsIndicateursTerritoire={detailsIndicateursTerritoire}
                     détailsIndicateurs={détailsIndicateurs}
                     estAutoriseAVoirLesPropositionsDeValeurActuelle={estAutoriseAVoirLesPropositionsDeValeurActuelle}
                     indicateurs={indicateurs}
                     listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
+                    mailleSelectionnee={mailleSelectionnee}
                     territoireCode={territoireCode}
                     territoiresCompares={territoiresCompares}
                   />

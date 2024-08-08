@@ -53,7 +53,6 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
 
   const [indicateurDétailsParTerritoires, setIndicateurDétailsParTerritoires] = useState<IndicateurDétailsParTerritoire[]>([indicateurDétailsVide]);
 
-
   const metÀJourDétailsParTerritoires = useCallback(() => {
     if (typeDeRéforme === 'chantier') {
       setIndicateurDétailsParTerritoires([{
@@ -267,7 +266,6 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
     : 'Non renseigné';
 
   return {
-    indicateurDétailsParTerritoires,
     tableau,
     dateDeMiseAJourIndicateur,
   };

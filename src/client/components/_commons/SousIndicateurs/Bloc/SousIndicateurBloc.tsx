@@ -28,11 +28,13 @@ import '@gouvfr/dsfr/dist/utility/colors/colors.css';
 export default function SousIndicateurBloc({
   indicateur,
   détailsIndicateurs,
+  detailsIndicateursTerritoire,
   estInteractif,
   chantierEstTerritorialisé,
   estDisponibleALImport = false,
   classeCouleurFond,
   territoireCode,
+  mailleSelectionnee,
 }: SousIndicateurBlocProps) {
   const router = useRouter();
   const réformeId = router.query.id as string;
@@ -148,11 +150,13 @@ export default function SousIndicateurBloc({
               dateProchaineDateMaj={dateProchaineDateMaj}
               dateProchaineDateValeurActuelle={dateProchaineDateValeurActuelle}
               dateValeurActuelle={dateValeurActuelle}
+              detailsIndicateursTerritoire={detailsIndicateursTerritoire}
               détailsIndicateurs={détailsIndicateurs}
               estSousIndicateur
               indicateur={indicateur}
               indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
               listeSousIndicateurs={[]}
+              mailleSelectionnee={mailleSelectionnee}
               territoireCode={territoireCode}
             />
           ) : null

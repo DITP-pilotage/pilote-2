@@ -89,16 +89,6 @@ export default class TerritoireBuilder {
     return this;
   }
 
-  avecMailleNationale(): TerritoireBuilder {
-    this._code = 'NAT-FR';
-    this._codeParent = null;
-    this._nom = 'France';
-    this._codeInsee = 'FR';
-    this._maille = 'nationale';
-    this._nomAffiché = this._nom;
-    return this;
-  }
-
   build(): Territoire {
     return {
       code: this._code,

@@ -3,7 +3,6 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
-import IndicateurDétails from '@/components/_commons/IndicateursRapportDetaille/Bloc/Détails/IndicateurDétails';
 import IndicateurBlocProps, {
   IndicateurDétailsParTerritoire,
 } from '@/components/_commons/IndicateursRapportDetaille/Bloc/IndicateurBloc.interface';
@@ -25,6 +24,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   territoireCode,
   typeDeRéforme,
   chantierEstTerritorialisé,
+  mailleSelectionnee,
   listeSousIndicateurs,
 }) => {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
@@ -32,7 +32,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const {
-    indicateurDétailsParTerritoires,
     tableau,
     dateDeMiseAJourIndicateur,
   } = useIndicateurBloc(détailsIndicateur, typeDeRéforme, territoireSélectionné, territoireProjetStructurant);
@@ -87,25 +86,15 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
             tableau={tableau}
             titre={`Tableau de l'indicateur : ${indicateur.nom}`}
           />
-          {
-            estInteractif ? (
-              <IndicateurDétails
-                chantierEstTerritorialisé={chantierEstTerritorialisé}
-                dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
-                indicateur={indicateur}
-                indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
-                typeDeRéforme={typeDeRéforme}
-              />
-            ) : (
-              <SousIndicateurs
-                chantierEstTerritorialisé={chantierEstTerritorialisé}
-                détailsIndicateurs={détailsIndicateurs}
-                estInteractif={estInteractif}
-                listeSousIndicateurs={listeSousIndicateurs}
-                territoireCode={territoireCode}
-              />
-            )
-          }
+          <SousIndicateurs
+            chantierEstTerritorialisé={chantierEstTerritorialisé}
+            detailsIndicateursTerritoire={{}}
+            détailsIndicateurs={détailsIndicateurs}
+            estInteractif={estInteractif}
+            listeSousIndicateurs={listeSousIndicateurs}
+            mailleSelectionnee={mailleSelectionnee}
+            territoireCode={territoireCode}
+          />
         </section>
       </Bloc>
     </IndicateurBlocStyled>

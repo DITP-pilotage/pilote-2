@@ -6,13 +6,18 @@ import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import api from '@/server/infrastructure/api/trpc/api';
 import { ÉlémentPageIndicateursType } from '@/client/utils/rubriques';
-import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import {
+  DétailsIndicateurs,
+  DétailsIndicateurTerritoire,
+} from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 interface IndicateursProps {
   indicateurs: Indicateur[];
   détailsIndicateurs: DétailsIndicateurs
+  detailsIndicateursTerritoire: Record<string, DétailsIndicateurTerritoire>
   listeRubriquesIndicateurs: ÉlémentPageIndicateursType[]
   chantierEstTerritorialisé: boolean,
   estInteractif?: boolean
@@ -20,11 +25,13 @@ interface IndicateursProps {
   estAutoriseAVoirLesPropositionsDeValeurActuelle?: boolean
   territoireCode: string
   territoiresCompares: string[]
+  mailleSelectionnee: MailleInterne
 }
 
 const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   indicateurs,
   détailsIndicateurs,
+  detailsIndicateursTerritoire,
   listeRubriquesIndicateurs,
   chantierEstTerritorialisé,
   estInteractif = true,
@@ -32,6 +39,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   estAutoriseAVoirLesPropositionsDeValeurActuelle = false,
   territoireCode,
   territoiresCompares,
+  mailleSelectionnee,
 }) => {
   const { data: alerteMiseAJourIndicateurEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR' });
 
@@ -82,12 +90,14 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                     .map(indicateur => (
                       <IndicateurBloc
                         chantierEstTerritorialisé={chantierEstTerritorialisé}
+                        detailsIndicateursTerritoire={detailsIndicateursTerritoire}
                         détailsIndicateurs={détailsIndicateurs}
                         estAutoriseAVoirLesPropositionsDeValeurActuelle={estAutoriseAVoirLesPropositionsDeValeurActuelle}
                         estInteractif={estInteractif}
                         indicateur={indicateur}
                         key={indicateur.id}
                         listeSousIndicateurs={indicateurs.filter(ind => ind.parentId === indicateur.id)}
+                        mailleSelectionnee={mailleSelectionnee}
                         territoireCode={territoireCode}
                         territoiresCompares={territoiresCompares}
                       />

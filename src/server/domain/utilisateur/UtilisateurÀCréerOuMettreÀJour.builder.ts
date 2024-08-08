@@ -2,20 +2,20 @@ import { faker } from '@faker-js/faker/locale/fr';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
-import { UtilisateurÀCréerOuMettreÀJour, profilsCodes } from './Utilisateur.interface';
+import { profilsCodes, UtilisateurÀCréerOuMettreÀJour } from './Utilisateur.interface';
 
 export default class UtilisateurÀCréerOuMettreÀJourBuilder {
-  private _nom: UtilisateurÀCréerOuMettreÀJour['nom'];
+  private readonly _nom: UtilisateurÀCréerOuMettreÀJour['nom'];
 
-  private _prénom: UtilisateurÀCréerOuMettreÀJour['prénom'];
+  private readonly _prénom: UtilisateurÀCréerOuMettreÀJour['prénom'];
 
   private _email: UtilisateurÀCréerOuMettreÀJour['email'];
 
   private _profil: UtilisateurÀCréerOuMettreÀJour['profil'];
 
-  private _habilitations: UtilisateurÀCréerOuMettreÀJour['habilitations'];
+  private readonly _habilitations: UtilisateurÀCréerOuMettreÀJour['habilitations'];
 
-  private _fonction: UtilisateurÀCréerOuMettreÀJour['fonction'];
+  private readonly _fonction: UtilisateurÀCréerOuMettreÀJour['fonction'];
 
   private _saisieIndicateur: UtilisateurÀCréerOuMettreÀJour['saisieIndicateur'];
 
