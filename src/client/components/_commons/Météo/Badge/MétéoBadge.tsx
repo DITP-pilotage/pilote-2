@@ -1,7 +1,11 @@
-import MétéoBadgeProps from '@/components/_commons/Météo/Badge/MétéoBadge.interface';
+import { FunctionComponent } from 'react';
 import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
 import Badge from '@/components/_commons/Badge/Badge';
 import { BadgeType } from '@/components/_commons/Badge/Badge.interface';
+
+interface MétéoBadgeProps {
+  météo: Météo,
+}
 
 const badgeÀPartirDeLaMétéo: Record<Météo, BadgeType> = {
   'ORAGE': 'rouge',
@@ -12,10 +16,12 @@ const badgeÀPartirDeLaMétéo: Record<Météo, BadgeType> = {
   'NON_RENSEIGNEE': 'gris',
 };
 
-export default function MétéoBadge({ météo }: MétéoBadgeProps) {
+const MétéoBadge: FunctionComponent<MétéoBadgeProps> = ({ météo }) => {
   return (
     <Badge type={badgeÀPartirDeLaMétéo[météo]}>
       {libellésMétéos[météo]}
     </Badge>
   );
-}
+};
+
+export default MétéoBadge; 

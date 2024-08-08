@@ -1,8 +1,19 @@
-import IndicateurSpécificationsProps
-  from '@/components/_commons/IndicateursChantier/Bloc/Détails/Spécifications/IndicateurSpécifications.interface';
+import { FunctionComponent } from 'react';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import IndicateurSpécificationsStyled from './IndicateurSpécifications.styled';
 
-export default function IndicateurSpécifications({
+interface IndicateurSpécificationsProps {
+  description: Indicateur['description']
+  modeDeCalcul: Indicateur['modeDeCalcul']
+  source: Indicateur['source']
+  periodicite: Indicateur['periodicite']
+  delaiDisponibilite: Indicateur['delaiDisponibilite']
+  dateValeurActuelle: string | null
+  dateProchaineDateMaj: string | null
+  dateProchaineDateValeurActuelle: string | null
+}
+
+const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProps> = ({
   description,
   modeDeCalcul,
   source,
@@ -11,7 +22,7 @@ export default function IndicateurSpécifications({
   dateProchaineDateMaj,
   dateProchaineDateValeurActuelle,
   dateValeurActuelle,
-}: IndicateurSpécificationsProps) {
+}) => {
   const libelléValeurNull = 'Non renseignée';
 
   return (
@@ -92,4 +103,6 @@ export default function IndicateurSpécifications({
 
     </IndicateurSpécificationsStyled>
   );
-}
+};
+
+export default IndicateurSpécifications;

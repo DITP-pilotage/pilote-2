@@ -10,9 +10,7 @@ import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import ResultatValidationFichier
   from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
-import {
-  IndicateurPonderation,
-} from '@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation';
+import IndicateurPonderation from '@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import {
   IndicateurDétailsParTerritoire,

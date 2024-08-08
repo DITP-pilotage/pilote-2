@@ -1,7 +1,13 @@
+import { FunctionComponent } from 'react';
 import { formaterDate } from '@/client/utils/date/date';
-import ValeurEtDateProps from './ValeuretDate.interface';
 
-export default function ValeurEtDate({ valeur, date, unité }: ValeurEtDateProps) {
+interface ValeurEtDateProps {
+  valeur: number | null, 
+  date?: string | null,
+  unité?: string | null,
+}
+
+const ValeurEtDate: FunctionComponent<ValeurEtDateProps> = ({ valeur, date, unité }) => {
   const dateFormatée = formaterDate(date, 'MM/YYYY');
   return (
     <>
@@ -17,4 +23,6 @@ export default function ValeurEtDate({ valeur, date, unité }: ValeurEtDateProps
         }
     </>
   );
-}
+};
+
+export default ValeurEtDate;

@@ -1,11 +1,16 @@
-import BarreLatéraleEncartProps
-  from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart.interface';
+import { FunctionComponent, ReactNode } from 'react';
 import BarreLatéraleEncartStyled from './BarreLatéraleEncart.styled';
 
-export default function BarreLatéraleEncart({ children }: BarreLatéraleEncartProps) {
+interface BarreLatéraleEncartProps {
+  children: ReactNode
+}
+
+const BarreLatéraleEncart: FunctionComponent<BarreLatéraleEncartProps> = ({ children }) => {
   return (
     <BarreLatéraleEncartStyled className='fr-p-3w'>
       { children }
     </BarreLatéraleEncartStyled>
   );
-}
+};
+
+export default BarreLatéraleEncart;

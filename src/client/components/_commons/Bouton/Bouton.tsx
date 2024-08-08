@@ -1,4 +1,4 @@
-import { MouseEventHandler } from 'react';
+import { FunctionComponent, MouseEventHandler } from 'react';
 
 interface BoutonProps {
   label: string
@@ -6,7 +6,7 @@ interface BoutonProps {
   className?: string
 }  
 
-export default function Bouton({ label, onClick, className }: BoutonProps) {
+const Bouton: FunctionComponent<BoutonProps> = ({ label, onClick, className }) =>{
   return (
     <button
       className={`fr-btn${className ? ' ' + className : ''}`}
@@ -16,8 +16,10 @@ export default function Bouton({ label, onClick, className }: BoutonProps) {
       {label}
     </button>
   );
-}
+};
 
 Bouton.defaultProps = {
   className: '',
 };
+
+export default Bouton;

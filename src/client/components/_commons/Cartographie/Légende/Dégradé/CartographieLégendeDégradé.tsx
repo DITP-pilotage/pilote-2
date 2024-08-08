@@ -1,7 +1,12 @@
+import { FunctionComponent } from 'react';
 import CartographieLégendeDégradéStyled from './CartographieLégendeDégradé.styled';
-import CartographieLégendeDégradéProps from './CartographieLégendeDégradé.interface';
+import { CartographieLégendeDégradéContenu } from './CartographieLégendeDégradé.interface';
 
-export default function CartographieLégendeDégradé({ contenu }: CartographieLégendeDégradéProps) {
+interface CartographieLégendeDégradéProps {
+  contenu: CartographieLégendeDégradéContenu,
+}
+
+const CartographieLégendeDégradé: FunctionComponent<CartographieLégendeDégradéProps> = ({ contenu }) => {
   return (
     <CartographieLégendeDégradéStyled
       className='fr-mt-1w'
@@ -22,4 +27,6 @@ export default function CartographieLégendeDégradé({ contenu }: CartographieL
       </div>
     </CartographieLégendeDégradéStyled>
   );
-}
+};
+
+export default CartographieLégendeDégradé;

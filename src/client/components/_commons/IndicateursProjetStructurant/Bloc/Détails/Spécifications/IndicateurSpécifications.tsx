@@ -1,8 +1,14 @@
-import IndicateurSpécificationsProps
-  from '@/components/_commons/IndicateursProjetStructurant/Bloc/Détails/Spécifications/IndicateurSpécifications.interface';
+import { FunctionComponent } from 'react';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import IndicateurSpécificationsStyled from './IndicateurSpécifications.styled';
 
-export default function IndicateurSpécifications({ description, modeDeCalcul, source }: IndicateurSpécificationsProps) {
+interface IndicateurSpécificationsProps {
+  description: Indicateur['description']
+  modeDeCalcul: Indicateur['modeDeCalcul']
+  source: Indicateur['source']
+}
+
+const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProps> = ({ description, modeDeCalcul, source }) => {
   const libelléValeurNull = 'Non renseignée';
 
   return (
@@ -31,4 +37,6 @@ export default function IndicateurSpécifications({ description, modeDeCalcul, s
       </p>
     </IndicateurSpécificationsStyled>
   );
-}
+};
+
+export default IndicateurSpécifications;

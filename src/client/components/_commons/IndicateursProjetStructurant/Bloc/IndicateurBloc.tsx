@@ -4,16 +4,28 @@ import Titre from '@/components/_commons/Titre/Titre';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
 import IndicateurDétails from '@/components/_commons/IndicateursProjetStructurant/Bloc/Détails/IndicateurDétails';
-import IndicateurBlocProps, {
+import {
   IndicateurDétailsParTerritoire,
 } from '@/components/_commons/IndicateursProjetStructurant/Bloc/IndicateurBloc.interface';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
-import {
-  IndicateurPonderation,
-} from '@/components/_commons/IndicateursProjetStructurant/Bloc/Pondération/IndicateurPonderation';
-import IndicateurBlocStyled from './IndicateurBloc.styled';
-import useIndicateurBloc from './useIndicateurBloc';
+import IndicateurPonderation from '@/components/_commons/IndicateursProjetStructurant/Bloc/Pondération/IndicateurPonderation';
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
+import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
+import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
+import useIndicateurBloc from './useIndicateurBloc';
+import IndicateurBlocStyled from './IndicateurBloc.styled';
+
+interface IndicateurBlocProps {
+  indicateur: Indicateur
+  détailsIndicateurs: DétailsIndicateurs
+  territoireProjetStructurant?: ProjetStructurant['territoire']
+  estInteractif: boolean
+  typeDeRéforme: TypeDeRéforme
+  chantierEstTerritorialisé: boolean
+}
+
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   indicateur,

@@ -1,7 +1,8 @@
 import 'material-symbols/index.css';
 import 'material-icons/iconfont/material-icons.css';
+import { FunctionComponent } from 'react';
 
-const IndicateurTendance = () => {
+const IndicateurTendance: FunctionComponent<{}> = () => {
  
   return (
     <div className='flex flex-direction-row fr-ml-2w fr-mr-1w'>

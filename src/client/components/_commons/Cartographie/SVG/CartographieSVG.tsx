@@ -1,17 +1,31 @@
-import { memo, useEffect, useRef, useState } from 'react';
+import { FunctionComponent, memo, useEffect, useRef, useState } from 'react';
 import hachuresGrisBlanc from '@/client/constants/légendes/hachure/hachuresGrisBlanc';
-import CartographieSVGProps, { Viewbox } from './CartographieSVG.interface';
+import {
+  CartographieOptions,
+  CartographieTerritoires,
+  CartographieInfoBulle,
+} from '@/components/_commons/Cartographie/useCartographie.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { Viewbox } from './CartographieSVG.interface';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
 import CartographieTerritoireSélectionné from './CartographieTerritoireSélectionné';
 
-function CartographieSVG({
+interface CartographieSVGProps {
+  options: CartographieOptions,
+  territoires: CartographieTerritoires['territoires'],
+  frontières: CartographieTerritoires['frontières'],
+  setInfoBulle:  (state: CartographieInfoBulle | null) => void,
+  auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
+}
+
+const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
   options,
   territoires,
   frontières,
   setInfoBulle,
   auClicTerritoireCallback,
-}: CartographieSVGProps) {
+}) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [viewbox, setViewbox] = useState<Viewbox>({
     x: 0,
@@ -102,7 +116,7 @@ function CartographieSVG({
       </div>
     </CartographieSVGStyled>
   );
-}
+};
 
 export default memo(CartographieSVG, (prevProps, nextProps) => (
   prevProps.territoires === nextProps.territoires &&

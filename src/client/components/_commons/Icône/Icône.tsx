@@ -18,9 +18,12 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-user/icons-user.min.css';
 import 'material-symbols/index.css';
 import 'material-icons/iconfont/material-icons.css';
 import 'remixicon/fonts/remixicon.css';
-import { useMemo } from 'react';
-import IcôneProps from '@/components/_commons/Icône/Icône.interface';
+import { FunctionComponent, useMemo } from 'react';
 import IcôneStyled from '@/components/_commons/Icône/Icône.styled';
+
+interface IcôneProps {
+  id: string 
+}
 
 const MATERIAL_SYMBOLS_CLASSES_CSS_À_PARTIR_DE_LA_VARIANTE: Record<string, string> = {
   'outlined': 'material-symbols-outlined',
@@ -39,7 +42,7 @@ const MATERIAL_ICONS_CLASSES_CSS_À_PARTIR_DE_LA_VARIANTE: Record<string, string
 const DSFR_ICONS_VARIANTES = new Set(['fill', 'line']);
 const REMIX_ICONS_VARIANTES = new Set(['fill', 'line']);
 
-export default function Icône({ id }: IcôneProps) {
+const Icône: FunctionComponent<IcôneProps> = ({ id }) => {
   const identifiantIcône = useMemo(() => id.split('::'), [id]);
   if (identifiantIcône === null) {
     return null;
@@ -88,4 +91,6 @@ export default function Icône({ id }: IcôneProps) {
   }
 
   return null;
-}
+};
+
+export default Icône;

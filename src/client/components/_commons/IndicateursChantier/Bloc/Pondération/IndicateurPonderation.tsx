@@ -1,7 +1,11 @@
+import { FunctionComponent } from 'react';
 import { convertitEnPondération } from '@/client/utils/ponderation/ponderation';
-import IndicateurPondérationProps
-  from '@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation.interface';
 import { MailleTerritoireSelectionne } from '@/server/domain/maille/Maille.interface';
+
+interface IndicateurPondérationProps {
+  indicateurPondération: number | null;
+  mailleSélectionnée: 'NAT' | 'REG' | 'DEPT';
+}
 
 const adjectifÀPartirDeLaMaille: Record<MailleTerritoireSelectionne, string> = {
   NAT: 'national',
@@ -9,7 +13,7 @@ const adjectifÀPartirDeLaMaille: Record<MailleTerritoireSelectionne, string> = 
   REG: 'départemental',
 };
 
-export function IndicateurPonderation({ indicateurPondération, mailleSélectionnée }: IndicateurPondérationProps) {
+const IndicateurPonderation: FunctionComponent<IndicateurPondérationProps> = ({ indicateurPondération, mailleSélectionnée }) => {
   return (
     <p className='fr-text--xs texte-gris'>
       {
@@ -38,4 +42,6 @@ export function IndicateurPonderation({ indicateurPondération, mailleSélection
       }
     </p>
   );
-}
+};
+
+export default IndicateurPonderation;

@@ -1,7 +1,8 @@
+import { FunctionComponent } from 'react';
 import BarreLatéraleProps from './BarreLatérale.interface';
 import BarreLatéraleStyled from './BarreLatérale.styled';
 
-export default function BarreLatérale({ estOuvert, setEstOuvert, children }: BarreLatéraleProps) {
+const BarreLatérale: FunctionComponent<BarreLatéraleProps> = ({ estOuvert, setEstOuvert, children }) => {
   return (
     <BarreLatéraleStyled estOuvert={estOuvert}>
       <div className='barre-latérale'>
@@ -28,4 +29,5 @@ export default function BarreLatérale({ estOuvert, setEstOuvert, children }: Ba
       }
     </BarreLatéraleStyled>
   );
-}
+};
+export default BarreLatérale;

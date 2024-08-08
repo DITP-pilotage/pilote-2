@@ -1,5 +1,6 @@
 import { CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Tooltip } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import IndicateurÉvolutionProps
   from '@/components/_commons/IndicateursProjetStructurant/Bloc/Détails/Évolution/IndicateurÉvolution.interface';
@@ -15,11 +16,11 @@ ChartJS.register(
   Legend,
 );
 
-export default function IndicateurÉvolution({
+const IndicateurÉvolution: FunctionComponent<IndicateurÉvolutionProps> = ({
   indicateurDétailsParTerritoires,
   dateDeMiseAJourIndicateur,
   source,
-}: IndicateurÉvolutionProps) {
+}) => {
   const { options, donnéesParTerritoire } = useIndicateurÉvolution(indicateurDétailsParTerritoires);
 
   return (
@@ -51,4 +52,6 @@ export default function IndicateurÉvolution({
       }
     </IndicateurÉvolutionStyled>
   );
-}
+};
+
+export default IndicateurÉvolution;

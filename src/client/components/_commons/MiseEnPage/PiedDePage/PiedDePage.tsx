@@ -1,7 +1,8 @@
 import '@gouvfr/dsfr/dist/component/footer/footer.min.css';
 import Link from 'next/link';
+import { FunctionComponent } from 'react';
 
-export default function PiedDePage() {
+const PiedDePage: FunctionComponent<{}> = () => {
   return (
     <footer
       className='fr-footer'
@@ -66,4 +67,6 @@ export default function PiedDePage() {
       </div>
     </footer>
   );
-}
+};
+
+export default PiedDePage;

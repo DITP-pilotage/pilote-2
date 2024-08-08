@@ -1,18 +1,25 @@
+import { FunctionComponent } from 'react';
 import MultiSelect from '@/client/components/_commons/MultiSelect/MultiSelect';
-import MultiSelectTerritoireProps
-  from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire.interface';
-import {
-  MultiSelectOption,
-  MultiSelectOptionGroupée,
-  MultiSelectOptions,
-  MultiSelectOptionsGroupées,
-} from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
+import { MultiSelectOption, MultiSelectOptionGroupée, MultiSelectOptions, MultiSelectOptionsGroupées } from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
 import { trierParOrdreAlphabétique } from '@/client/utils/arrays';
 import api from '@/server/infrastructure/api/trpc/api';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
+interface MultiSelectTerritoireProps {
+  changementValeursSélectionnéesCallback: (territoiresCodesSélectionnés: string[]) => void
+  territoiresCodesSélectionnésParDéfaut?: string[]
+  groupesÀAfficher: {
+    nationale: boolean
+    régionale: boolean
+    départementale: boolean
+  },
+  territoiresSélectionnables?: string[],
+  afficherBoutonsSélection?: boolean,
+  activerLaRestrictionDesTerritoires?: boolean
+}
+
 export const MAXIMUM_COMPTES_AUTORISE_PAR_REGION = 200;
-export const MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT = 150;
+export const MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT = 150; 
 const MAXIMUM_COMPTES_AUTORISE_PAR_TERRITOIRE: Record<MailleInterne, number> = {
   départementale: MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT,
   régionale: MAXIMUM_COMPTES_AUTORISE_PAR_REGION,
@@ -25,18 +32,18 @@ const générerLesOptions = (nom: string, code: string, maille: MailleInterne, n
   afficherIcone: activerLaRestrictionDesTerritoires ? nombreUtilisateur > MAXIMUM_COMPTES_AUTORISE_PAR_TERRITOIRE[maille] : false,
 });
 
-export default function MultiSelectTerritoire({
+const MultiSelectTerritoire: FunctionComponent<MultiSelectTerritoireProps> = ({
   territoiresCodesSélectionnésParDéfaut,
-  changementValeursSélectionnéesCallback,
-  groupesÀAfficher,
-  territoiresSélectionnables,
+  changementValeursSélectionnéesCallback, 
+  groupesÀAfficher, 
+  territoiresSélectionnables, 
   afficherBoutonsSélection,
   activerLaRestrictionDesTerritoires,
 
-}: MultiSelectTerritoireProps) {
+}) => {
 
   const { data: territoires } = api.territoire.récupérerListe.useQuery({ territoireCodes: territoiresSélectionnables || null }, { staleTime: Number.POSITIVE_INFINITY });
-
+  
   const départements = territoires?.filter(territoire => territoire.maille === 'départementale') ?? [];
   const régions = territoires?.filter(territoire => territoire.maille === 'régionale') ?? [];
 
@@ -46,7 +53,7 @@ export default function MultiSelectTerritoire({
       label: 'France',
       value: 'NAT-FR',
     }],
-  };
+  };    
 
   const optionsRégions = {
     label: 'Régions',
@@ -64,15 +71,18 @@ export default function MultiSelectTerritoire({
     groupesÀAfficher.départementale ? optionsDépartements : null,
   ].filter((option): option is MultiSelectOptionGroupée => option !== null);
 
+  const optionsGroupées = options;
+
   return (
     <MultiSelect
       afficherBoutonsSélection={afficherBoutonsSélection}
       changementValeursSélectionnéesCallback={(valeursSélectionnées: string[]) => changementValeursSélectionnéesCallback(valeursSélectionnées)}
       label='Territoire(s)'
-      optionsGroupées={options}
+      optionsGroupées={optionsGroupées}
       suffixeLibellé='territoire(s) sélectionné(s)'
       valeursSélectionnéesParDéfaut={territoiresCodesSélectionnésParDéfaut}
     />
   );
-}
+};
 
+export default MultiSelectTerritoire;

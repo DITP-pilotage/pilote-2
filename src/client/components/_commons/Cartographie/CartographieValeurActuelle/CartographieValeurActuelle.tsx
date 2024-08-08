@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import Cartographie from '@/components/_commons/Cartographie/Cartographie';
 import CartographieLégendeDégradé from '@/components/_commons/Cartographie/Légende/Dégradé/CartographieLégendeDégradé';
 import CartographieLégendeListe from '@/client/components/_commons/Cartographie/Légende/Liste/CartographieLégendeListe';
@@ -19,13 +20,13 @@ interface CartographieValeurActuelleProps {
   auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void
 }
 
-export default function CartographieValeurActuelle({
+const CartographieValeurActuelle: FunctionComponent<CartographieValeurActuelleProps> = ({
   données,
   options,
   unité,
   auClicTerritoireCallback,
   élémentsDeLégende,
-}: CartographieValeurActuelleProps) {
+}) => {
   const {
     donnéesCartographie,
     légende,
@@ -42,4 +43,6 @@ export default function CartographieValeurActuelle({
       <CartographieLégendeListe contenu={légendeAdditionnelle} />
     </Cartographie>
   );
-}
+};
+
+export default CartographieValeurActuelle;

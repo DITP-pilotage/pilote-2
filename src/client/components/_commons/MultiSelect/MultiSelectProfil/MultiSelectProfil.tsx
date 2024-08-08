@@ -1,10 +1,18 @@
-import { useEffect, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import MultiSelect from '@/client/components/_commons/MultiSelect/MultiSelect';
 import { MultiSelectOptions, MultiSelectOptionsGroupées } from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
 import { deuxTableauxSontIdentiques, trierParOrdreAlphabétique } from '@/client/utils/arrays';
-import MultiSelectProfilsProps from './MultiSelectProfil.interface';
+import { Profil } from '@/server/domain/profil/Profil.interface';
 
-export default function MultiSelectProfil({ profilsIdsSélectionnésParDéfaut, changementValeursSélectionnéesCallback, valeursDésactivées, profils, afficherBoutonsSélection }: MultiSelectProfilsProps) {
+interface MultiSelectProfilsProps {
+  changementValeursSélectionnéesCallback: (profilsIdsSélectionnés: string[]) => void
+  profils: Profil[]
+  profilsIdsSélectionnésParDéfaut?: string[]
+  valeursDésactivées?: string[]
+  afficherBoutonsSélection?: boolean
+}
+
+const MultiSelectProfil: FunctionComponent<MultiSelectProfilsProps> = ({ profilsIdsSélectionnésParDéfaut, changementValeursSélectionnéesCallback, valeursDésactivées, profils, afficherBoutonsSélection }) => {
   const [valeursSélectionnéesParDéfaut, setValeursSélectionnéesParDéfaut] = useState(profilsIdsSélectionnésParDéfaut);
   const [optionsGroupées, setOptionsGroupées] = useState<MultiSelectOptionsGroupées>([]);
 
@@ -38,4 +46,6 @@ export default function MultiSelectProfil({ profilsIdsSélectionnésParDéfaut, 
       valeursSélectionnéesParDéfaut={valeursSélectionnéesParDéfaut}
     />
   );
-}
+};
+
+export default MultiSelectProfil;

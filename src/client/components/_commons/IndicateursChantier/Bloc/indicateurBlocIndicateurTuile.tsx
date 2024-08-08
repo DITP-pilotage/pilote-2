@@ -1,14 +1,24 @@
+import { FunctionComponent } from 'react';
 import IndicateurBlocIndicateurTuileStyled
   from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBlocIndicateurTuile.styled';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { formaterDate } from '@/client/utils/date/date';
-import IndicateurDétailsParTerritoireProps from './indicateurDétailsParTerritoire.interface';
+import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
+import {
+  IndicateurDétailsParTerritoire,
+} from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface';
 
-export default function IndicateurBlocIndicateurTuile({
+interface IndicateurDétailsParTerritoireProps {
+  indicateurDétailsParTerritoire: IndicateurDétailsParTerritoire
+  typeDeRéforme: TypeDeRéforme
+  unité?: string | null
+}
+
+const IndicateurBlocIndicateurTuile: FunctionComponent<IndicateurDétailsParTerritoireProps> = ({
   indicateurDétailsParTerritoire,
   typeDeRéforme,
   unité,
-}: IndicateurDétailsParTerritoireProps) {
+}) => {
   const {
     dateValeurInitiale,
     valeurInitiale,
@@ -146,4 +156,6 @@ export default function IndicateurBlocIndicateurTuile({
       </table>
     </IndicateurBlocIndicateurTuileStyled>
   );
-}
+};
+
+export default IndicateurBlocIndicateurTuile;
