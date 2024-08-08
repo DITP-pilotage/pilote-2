@@ -71,14 +71,13 @@ const MultiSelectTerritoire: FunctionComponent<MultiSelectTerritoireProps> = ({
     groupesÀAfficher.départementale ? optionsDépartements : null,
   ].filter((option): option is MultiSelectOptionGroupée => option !== null);
 
-  const optionsGroupées = options;
 
   return (
     <MultiSelect
       afficherBoutonsSélection={afficherBoutonsSélection}
       changementValeursSélectionnéesCallback={(valeursSélectionnées: string[]) => changementValeursSélectionnéesCallback(valeursSélectionnées)}
       label='Territoire(s)'
-      optionsGroupées={optionsGroupées}
+      optionsGroupées={options}
       suffixeLibellé='territoire(s) sélectionné(s)'
       valeursSélectionnéesParDéfaut={territoiresCodesSélectionnésParDéfaut}
     />
