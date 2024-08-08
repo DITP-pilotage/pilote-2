@@ -13,9 +13,9 @@ import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypede
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import useIndicateurBloc from './useIndicateurBloc';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 interface IndicateurBlocProps {
   indicateur: Indicateur
