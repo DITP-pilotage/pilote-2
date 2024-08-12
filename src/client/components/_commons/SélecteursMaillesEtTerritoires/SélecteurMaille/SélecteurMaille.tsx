@@ -1,9 +1,10 @@
+import { FunctionComponent } from 'react';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore, maillesAccessiblesEnLectureStore  } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { objectEntries } from '@/client/utils/objects/objects';
 import SélecteurMailleStyled from './SélecteurMaille.styled';
 
-const SélecteurMaille = () => {
+const SélecteurMaille: FunctionComponent<{}> = () => {
   const { modifierMailleSélectionnée } = actionsTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const maillesAccessiblesEnLecture = maillesAccessiblesEnLectureStore();

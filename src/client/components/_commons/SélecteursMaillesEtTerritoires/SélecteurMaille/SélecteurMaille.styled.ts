@@ -6,9 +6,9 @@ const SélecteurMailleStyled = styled.div`
   background: var(--background-alt-blue-france);
   border-radius: 0.25rem;
 
-    @media screen and (max-width: ${breakpointL}) {
-      border-radius: 0;
-    }
+  @media screen and (max-width: ${breakpointL}) {
+    border-radius: 0;
+  }
 
   &:not(:last-child) {
     margin-bottom: 1.5rem;

@@ -257,14 +257,14 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
               typeDeRéformeSélectionné='chantier'
             />
             {
-               estVueMobile && estVisibleEnMobile ? (
-                 <Titre
-                   baliseHtml='h3'
-                   className='fr-h6 fr-my-2w fr-col-8'
-                 >
-                   Maille géographique
-                 </Titre>
-               ) : null
+              estVueMobile && estVisibleEnMobile ? (
+                <Titre
+                  baliseHtml='h3'
+                  className='fr-h6 fr-my-2w fr-col-8'
+                >
+                  Maille géographique
+                </Titre>
+              ) : null
             }            
             <SélecteursMaillesEtTerritoires
               estVisibleEnMobile={estVisibleEnMobile}

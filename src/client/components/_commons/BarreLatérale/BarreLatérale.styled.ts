@@ -22,7 +22,7 @@ const BarreLatéraleStyled = styled.div<BarreLatéraleStyledProps>`
       z-index: 10000;
       width: 100%;
       transition: 500ms;
-      transform: ${props => props.estOuvert ? 'translateY(0)' : 'translateY(-40rem)'};
+      transform: ${props => props.estOuvert ? 'translateY(0)' : 'translateY(-200rem)'};
     }
   }
 
