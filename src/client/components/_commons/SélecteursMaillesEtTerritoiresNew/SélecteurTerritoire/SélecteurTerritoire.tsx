@@ -9,10 +9,12 @@ import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 
 interface SélecteurTerritoiresProps {
-  chantierMailles?: Chantier['mailles'];
-  territoireCode: string
-  mailleSelectionnee: 'départementale' | 'régionale'
+  chantierMailles?: Chantier['mailles'],
+  territoireCode: string,
+  mailleSelectionnee: 'départementale' | 'régionale',
   pathname: string
+  estVueMobile: boolean,
+  estVisibleEnMobile: boolean,
 }
 
 const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerritoire[], profil: ProfilCode | undefined, mailleSelectionnee: 'départementale' | 'régionale', chantierMailles?: Chantier['mailles']) => {
@@ -42,6 +44,8 @@ export default function SélecteurTerritoire({
   territoireCode,
   mailleSelectionnee,
   pathname,
+  estVueMobile,
+  estVisibleEnMobile,
 }: SélecteurTerritoiresProps) {
   const { data: session } = useSession();
   const router = useRouter();
@@ -66,8 +70,10 @@ export default function SélecteurTerritoire({
 
   return (
     <SélecteurAvecRecherche
-      htmlName='périmètre-géographique'
-      libellé='Périmètre géographique'
+      estVisibleEnMobile={estVisibleEnMobile}
+      estVueMobile={estVueMobile}
+      htmlName={estVueMobile && estVisibleEnMobile ? 'Territoire' : 'périmètre-géographique'}
+      libellé={estVueMobile && estVisibleEnMobile ? 'Territoire' : 'Périmètre géographique'}
       options={construireLaListeDOptions(territoiresAccessiblesEnLecture, session?.profil, mailleSelectionnee, chantierMailles)}
       valeurModifiéeCallback={territoireCodeSelectionne => changerTerritoire(territoireCodeSelectionne)}
       valeurSélectionnée={territoireCode}

@@ -8,7 +8,6 @@ import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLat�
 import Commentaires from '@/components/_commons/CommentairesNew/Commentaires';
 import SynthèseDesRésultats from '@/client/components/_commons/SynthèseDesRésultatsNew/SynthèseDesRésultats';
 import Sommaire from '@/client/components/_commons/Sommaire/Sommaire';
-import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
 import Titre from '@/components/_commons/Titre/Titre';
 import Objectifs from '@/components/_commons/ObjectifsNew/Objectifs';
 import { typesObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
@@ -37,6 +36,7 @@ import {
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { AvancementChantierContrat } from '@/components/PageChantier/AvancementChantier';
 import { CoordinateurTerritorial, ResponsableLocal } from '@/server/domain/territoire/Territoire.interface';
+import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import PageChantierEnTête from './EnTête/EnTête';
 import Cartes from './Cartes/Cartes';
@@ -80,6 +80,8 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
   listeCoordinateursTerritorials,
 }: PageChantierProps) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
+  const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('md');
+  const [estVisibleEnMobile, setEstVisibleEnMobile] = useState(false);
 
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
@@ -102,8 +104,20 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
+          {
+            estVueMobile && estVisibleEnMobile ? (
+              <Titre
+                baliseHtml='h3'
+                className='fr-h6 fr-mb-2w fr-mt-0 fr-col-8'
+              >
+                Maille géographique
+              </Titre>
+            ) : null
+          }        
           <SélecteursMaillesEtTerritoires
             chantierMailles={chantier.mailles}
+            estVisibleEnMobile={estVisibleEnMobile}
+            estVueMobile={estVueMobile}
             mailleSelectionnee={mailleSelectionnee}
             pathname='/chantier/[id]/[territoireCode]'
             territoireCode={territoireCode}
@@ -115,13 +129,19 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
         />
       </BarreLatérale>
       <main className='fr-pb-5w'>
-        <BoutonSousLigné
-          classNameSupplémentaires='fr-link--icon-left fr-fi-arrow-right-line fr-hidden-lg fr-m-2w'
-          onClick={() => setEstOuverteBarreLatérale(true)}
-          type='button'
-        >
-          Filtres
-        </BoutonSousLigné>
+        <div className='bouton-filtrer fr-hidden-lg fr-py-1w fr-px-1v'>
+          <button
+            className='fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-equalizer-fill fr-text-title--blue-france'
+            onClick={() => {
+              setEstOuverteBarreLatérale(true);
+              setEstVisibleEnMobile(true);
+            }}
+            title='Explorer'
+            type='button'
+          >
+            Explorer
+          </button>
+        </div>
         <PageChantierEnTête
           afficheLeBoutonFicheConducteur={estAutoriseAVoirLeBoutonFicheConducteur}
           afficheLeBoutonImpression

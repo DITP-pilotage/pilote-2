@@ -5,12 +5,18 @@ import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/Pé
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Icône from '@/components/_commons/Icône/Icône';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
-import FiltresMinistèresProps from './FiltresMinistères.interface';
 import FiltresMinistèresStyled from './FiltresMinistères.styled';
+
+interface FiltresMinistèresProps {
+  ministères: Ministère[],
+  estVueMobile: boolean,
+  estVisibleEnMobile: boolean
+}
 
 const catégorieDeFiltre: 'périmètresMinistériels' = 'périmètresMinistériels';
 
-export default function FiltresMinistères({ ministères }: FiltresMinistèresProps) {
+export default function FiltresMinistères({ ministères, estVueMobile,
+  estVisibleEnMobile }: FiltresMinistèresProps) {
   const [perimetres, setPerimetres] = useQueryState('perimetres', parseAsString.withDefault('').withOptions({
     shallow: false,
     clearOnDefault: true,
@@ -54,7 +60,7 @@ export default function FiltresMinistères({ ministères }: FiltresMinistèresPr
     <FiltresMinistèresStyled className='fr-form-group'>
       <button
         aria-controls={`fr-sidemenu-item-${catégorieDeFiltre}`}
-        aria-expanded='true'
+        aria-expanded={estVueMobile && estVisibleEnMobile ? 'false' : 'true'}
         className='fr-sidemenu__btn fr-m-0'
         type='button'
       >

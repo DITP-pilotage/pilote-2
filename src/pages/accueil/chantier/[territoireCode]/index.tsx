@@ -11,7 +11,6 @@ import SélecteursMaillesEtTerritoires
   from '@/components/_commons/SélecteursMaillesEtTerritoiresNew/SélecteursMaillesEtTerritoires';
 import Titre from '@/components/_commons/Titre/Titre';
 import Filtres from '@/components/PageAccueil/FiltresNew/Filtres';
-import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import RécupérerChantiersAccessiblesEnLectureUseCase
   from '@/server/chantiers/usecases/RécupérerChantiersAccessiblesEnLectureUseCase';
@@ -34,6 +33,8 @@ import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agré
 import { objectEntries } from '@/client/utils/objects/objects';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
+import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
+import IndexStyled from './Index.styled';
 
 interface ChantierAccueil {
   chantiers: ChantierAccueilContrat[]
@@ -224,7 +225,8 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   const { data: session } = useSession();
 
   const estProfilTerritorialise = PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE.has(session?.profil || '');
-
+  const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('md');
+  const [estVisibleEnMobile, setEstVisibleEnMobile] = useState(false);
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
@@ -240,11 +242,33 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
           setEstOuvert={setEstOuverteBarreLatérale}
         >
           <BarreLatéraleEncart>
+            {
+              estVueMobile && estVisibleEnMobile ? (
+                <Titre
+                  baliseHtml='h3'
+                  className='fr-h6 fr-mb-2w fr-mt-0 fr-col-8'
+                >
+                  Type de projets
+                </Titre>
+              ) : null
+            }
             <SélecteurTypeDeRéforme
               territoireCode={territoireCode}
               typeDeRéformeSélectionné='chantier'
             />
+            {
+              estVueMobile && estVisibleEnMobile ? (
+                <Titre
+                  baliseHtml='h3'
+                  className='fr-h6 fr-my-2w fr-col-8'
+                >
+                  Maille géographique
+                </Titre>
+              ) : null
+            }            
             <SélecteursMaillesEtTerritoires
+              estVisibleEnMobile={estVisibleEnMobile}
+              estVueMobile={estVueMobile}
               mailleSelectionnee={mailleSelectionnee}
               pathname='/accueil/chantier/[territoireCode]'
               territoireCode={territoireCode}
@@ -253,7 +277,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
           <section>
             <Titre
               baliseHtml='h1'
-              className='fr-h4 fr-mb-1w fr-px-3w fr-mt-2w fr-col-8'
+              className='fr-h4 fr-mb-1w fr-px-3w fr-mt-3w fr-col-8'
             >
               Filtres
             </Titre>
@@ -261,18 +285,26 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
               afficherToutLesFiltres
               axes={axes}
               estProfilTerritorialise={estProfilTerritorialise}
+              estVisibleEnMobile={estVisibleEnMobile}
+              estVueMobile={estVueMobile}
               ministères={ministères}
             />
           </section>
         </BarreLatérale>
-        <div className='w-full'>
-          <BoutonSousLigné
-            classNameSupplémentaires='fr-link--icon-left fr-fi-arrow-right-line fr-hidden-lg fr-m-2w'
-            onClick={() => setEstOuverteBarreLatérale(true)}
-            type='button'
-          >
-            Filtres
-          </BoutonSousLigné>
+        <IndexStyled className='w-full'>
+          <div className='bouton-filtrer fr-hidden-lg fr-py-1w fr-px-1v'>
+            <button
+              className='fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-equalizer-fill fr-text-title--blue-france'
+              onClick={() => {
+                setEstOuverteBarreLatérale(true); 
+                setEstVisibleEnMobile(true);
+              }}
+              title='Explorer'
+              type='button'
+            >
+              Explorer
+            </button>
+          </div>
           <PageChantiers
             avancementsAgrégés={avancementsAgrégés}
             avancementsGlobauxTerritoriauxMoyens={avancementsGlobauxTerritoriauxMoyens}
@@ -284,7 +316,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             répartitionMétéos={répartitionMétéos}
             territoireCode={territoireCode}
           />
-        </div>
+        </IndexStyled>
       </div>
     </>
   );

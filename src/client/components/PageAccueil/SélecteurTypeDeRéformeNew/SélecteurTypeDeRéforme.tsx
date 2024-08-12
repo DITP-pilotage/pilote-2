@@ -25,13 +25,16 @@ export default function SélecteurTypeDeRéforme({ typeDeRéformeSélectionné, 
     <SélecteurRéformeStyled className='fr-p-1v'>
       {
           typesDeRéformeÀAfficher.map(typeDeRéforme => (
-            <Link
+            <Link 
               className={`${typeDeRéformeSélectionné === typeDeRéforme.valeur && 'sélectionné fr-text--bold'}`}
               href={`/accueil/${typeDeRéforme.href}/${territoireCode}`}
               key={typeDeRéforme.valeur}
-              type='button'
             >
-              {typeDeRéforme.label}
+              <button
+                type='button'
+              >
+                {typeDeRéforme.label}
+              </button>
             </Link>
           ))
         }

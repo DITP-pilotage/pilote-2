@@ -17,17 +17,17 @@ export default function SélecteurTypeDeRéforme({ modifierTypeDeRéformeSélect
   return (
     <SélecteurRéformeStyled className='fr-p-1v'>
       {
-          typesDeRéformeÀAfficher.map(typeDeRéforme => (
-            <button
-              className={`${typeDeRéformeSélectionné === typeDeRéforme.valeur && 'sélectionné fr-text--bold'}`}
-              key={typeDeRéforme.valeur}
-              onClick={() => modifierTypeDeRéformeSélectionné()}
-              type='button'
-            >
-              {typeDeRéforme.label}
-            </button>
-          ))
-        }
+        typesDeRéformeÀAfficher.map(typeDeRéforme => (
+          <button
+            className={`${typeDeRéformeSélectionné === typeDeRéforme.valeur && 'sélectionné fr-text--bold'}`}
+            key={typeDeRéforme.valeur}
+            onClick={() => modifierTypeDeRéformeSélectionné()}
+            type='button'
+          >
+            {typeDeRéforme.label}
+          </button>
+        ))
+      }
     </SélecteurRéformeStyled>
   );
 }
