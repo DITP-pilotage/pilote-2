@@ -19,7 +19,7 @@ const SélecteursMaillesEtTerritoires: FunctionComponent<SélecteursMaillesEtTer
   estVueMobile, 
   estVisibleEnMobile,
   pathname,
-}: SélecteursMaillesEtTerritoiresProps) => {
+}) => {
   return (
     <>
       <SélecteurMaille

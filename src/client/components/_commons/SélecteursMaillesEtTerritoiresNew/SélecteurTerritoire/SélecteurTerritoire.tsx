@@ -47,7 +47,7 @@ const SélecteurTerritoire: FunctionComponent<SélecteurTerritoiresProps> = ({
   pathname,
   estVueMobile,
   estVisibleEnMobile,
-}: SélecteurTerritoiresProps) => {
+}) => {
   const { data: session } = useSession();
   const router = useRouter();
 
