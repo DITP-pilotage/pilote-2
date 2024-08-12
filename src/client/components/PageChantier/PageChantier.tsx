@@ -128,7 +128,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
           rubriques={listeRubriques}
         />
       </BarreLatérale>
-      <main className='fr-pb-5w'>
+      <main className='fr-pb-5w w-full'>
         <div className='bouton-filtrer fr-hidden-lg fr-py-1w fr-px-1v'>
           <button
             className='fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-equalizer-fill fr-text-title--blue-france'
