@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
@@ -13,7 +13,7 @@ import RécapitulatifUtilisateur
 import SaisieDesInformationsUtilisateur from './SaisieDesInformationsUtilisateur/SaisieDesInformationsUtilisateur';
 import { UtilisateurFormInputs, UtilisateurFormulaireProps } from './UtilisateurFormulaire.interface';
 
-export default function UtilisateurFormulaire({ utilisateur }: UtilisateurFormulaireProps) {
+const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({ utilisateur }) => {
   const étapes = ['Identifier l\'utilisateur', 'Vérifier les droits attribués au compte'];
   const [etapeCourante, setEtapeCourante] = useState(1);
   const { data: session } = useSession();
@@ -81,4 +81,6 @@ export default function UtilisateurFormulaire({ utilisateur }: UtilisateurFormul
       </Bloc>
     </>
   );
-}
+};
+
+export default UtilisateurFormulaire;

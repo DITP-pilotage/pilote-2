@@ -1,9 +1,14 @@
+import { FunctionComponent } from 'react';
 import FilAriane from '@/components/_commons/FilAriane/FilAriane';
 import Titre from '@/components/_commons/Titre/Titre';
+import { ChantierInformations } from '@/client/components/PageImportIndicateur/ChantierInformation.interface';
 import PageImportIndicateurEnTêteStyled from './PageImportIndicateurEnTête.styled';
-import PageImportIndicateurEnTêteProps from './PageImportIndicateurEnTête.interface';
 
-export default function PageImportIndicateurEnTête({ chantierInformations }: PageImportIndicateurEnTêteProps) {
+interface PageImportIndicateurEnTêteProps {
+  chantierInformations: ChantierInformations
+}
+
+const PageImportIndicateurEnTête: FunctionComponent<PageImportIndicateurEnTêteProps> = ({ chantierInformations }) => {
   return (
     <PageImportIndicateurEnTêteStyled>
       <div className='fr-container fr-py-4w'>
@@ -20,4 +25,6 @@ export default function PageImportIndicateurEnTête({ chantierInformations }: Pa
       </div>
     </PageImportIndicateurEnTêteStyled>
   );
-}
+};
+
+export default PageImportIndicateurEnTête;

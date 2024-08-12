@@ -1,4 +1,5 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
+import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import DétailsDroitsUtilisateur from '@/components/PageUtilisateur/DétailsDroitsUtilisateur/DétailsDroitsUtilisateur';
 import TableauUtilisateur from '@/components/PageUtilisateur/TableauUtilisateur/TableauUtilisateur';
@@ -6,7 +7,7 @@ import useFicheUtilisateur from '@/components/PageUtilisateur/FicheUtilisateur/u
 import FicheUtilisateurStyled from '@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur.styled';
 import FicheUtilisateurProps from './FicheUtilisateur.interface';
 
-export default function FicheUtilisateur({ utilisateur }: FicheUtilisateurProps) {
+const FicheUtilisateur: FunctionComponent<FicheUtilisateurProps> = ({ utilisateur }) => {
   const { scopes } = useFicheUtilisateur(utilisateur);
 
   return (
@@ -47,4 +48,6 @@ export default function FicheUtilisateur({ utilisateur }: FicheUtilisateurProps)
       />
     </FicheUtilisateurStyled>
   );
-}
+};
+
+export default FicheUtilisateur;

@@ -1,4 +1,5 @@
 import { Controller } from 'react-hook-form';
+import { FunctionComponent } from 'react';
 import InputAvecLabel from '@/components/_commons/InputAvecLabel/InputAvecLabel';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import useSaisieDesInformationsUtilisateur
@@ -18,7 +19,7 @@ import {
 import CaseACocher from '@/components/_commons/CaseACocher/CaseACocher';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
-export default function SaisieDesInformationsUtilisateur({ utilisateur }: UtilisateurFormulaireProps) {
+const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireProps> = ({ utilisateur }) => {
   const {
     listeProfils,
     profilSélectionné,
@@ -252,4 +253,6 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
       {/* <DevTool control={control} /> */}
     </>
   );
-}
+};
+
+export default SaisieDesInformationsUtilisateur;

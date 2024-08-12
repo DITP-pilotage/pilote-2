@@ -1,13 +1,19 @@
-import { useId } from 'react';
-import DétailsDroitsUtilisateurProps
-  from '@/components/PageUtilisateur/DétailsDroitsUtilisateur/DétailsDroitsUtilisateur.interface';
+import { FunctionComponent, useId } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import DétailsDroitsUtilisateurStyled
   from '@/components/PageUtilisateur/DétailsDroitsUtilisateur/DétailsDroitsUtilisateur.styled';
 import AucunÉlément from '@/components/PageUtilisateur/Élément/AucunÉlément';
 import ÉlémentAccessible from '@/components/PageUtilisateur/Élément/ÉlémentAccessible';
 
-export default function DétailsDroitsUtilisateur({ titre, territoires, chantiers, labelTerritoires = 'Droits ouverts pour les territoires', labelChantiers = 'Droits ouverts pour les chantiers' }: DétailsDroitsUtilisateurProps) {
+interface DétailsDroitsUtilisateurProps {
+  titre: string
+  territoires: string[]
+  chantiers: string[]
+  labelTerritoires?: string
+  labelChantiers?: string
+}
+
+const DétailsDroitsUtilisateur: FunctionComponent<DétailsDroitsUtilisateurProps> = ({ titre, territoires, chantiers, labelTerritoires = 'Droits ouverts pour les territoires', labelChantiers = 'Droits ouverts pour les chantiers' }) => {
   const id = useId();
 
   return (
@@ -59,4 +65,6 @@ export default function DétailsDroitsUtilisateur({ titre, territoires, chantier
       <hr className='fr-hr fr-mt-3w' />
     </DétailsDroitsUtilisateurStyled>
   );
-}
+};
+
+export default DétailsDroitsUtilisateur;
