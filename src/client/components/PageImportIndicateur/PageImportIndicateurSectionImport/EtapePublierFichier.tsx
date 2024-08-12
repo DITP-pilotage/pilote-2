@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, FunctionComponent, SetStateAction } from 'react';
 import Link from 'next/link';
 import { RapportContrat } from '@/server/app/contrats/RapportContrat';
 import Alerte from '@/components/_commons/Alerte/Alerte';
@@ -6,21 +6,21 @@ import { wording } from '@/client/utils/i18n/i18n';
 import FormulairePublierImportIndicateur
   from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/FormulaireImportIndicateur/FormulairePublierImportIndicateur';
 
-export function EtapePublierFichier({
-  estFichierPublie,
-  indicateurId,
-  chantierId,
-  rapportId,
-  setEstFichierPublie,
-  rapportImport,
-}: {
+const EtapePublierFichier: FunctionComponent<{
   estFichierPublie: boolean,
   indicateurId: string,
   chantierId: string,
   rapportId: string,
   setEstFichierPublie: Dispatch<SetStateAction<boolean>>,
   rapportImport: RapportContrat | null
-}) {
+}> = ({
+  estFichierPublie,
+  indicateurId,
+  chantierId,
+  rapportId,
+  setEstFichierPublie,
+  rapportImport,
+}) => {
   return (
     <div>
       {
@@ -115,4 +115,6 @@ export function EtapePublierFichier({
 
     </div>
   );
-}
+};
+
+export default EtapePublierFichier;

@@ -1,5 +1,5 @@
 import '@gouvfr/dsfr/dist/component/radio/radio.min.css';
-import { useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { parseAsBoolean, parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import Modale from '@/components/_commons/Modale/Modale';
 import { horodatage } from '@/client/utils/date/date';
@@ -37,7 +37,7 @@ const ressources = {
 
 export const ID_HTML_MODALE_EXPORT = 'modale-exporter-les-données';
 
-export default function ExportDesDonnées() {
+const ExportDesDonnées: FunctionComponent<{}> = () => {
   const [ressourceÀExporter, setRessourceÀExporter] = useState<keyof typeof ressources | undefined>();
   const [estDésactivé, setEstDésactivé] = useState(false);
 
@@ -166,4 +166,6 @@ export default function ExportDesDonnées() {
       </form>
     </Modale>
   );
-}
+};
+
+export default ExportDesDonnées;

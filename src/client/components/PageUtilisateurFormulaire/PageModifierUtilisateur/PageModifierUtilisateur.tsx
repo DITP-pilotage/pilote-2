@@ -1,10 +1,15 @@
 
+import { FunctionComponent } from 'react';
 import UtilisateurFormulaire from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire';
 import FilAriane from '@/client/components/_commons/FilAriane/FilAriane';
+import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import PageModifierUtilisateurStyled from './PageModifierUtilisateur.styled';
-import PageModifierUtilisateurProps from './PageModifierUtilisateur.interface';
 
-export default function PageModifierUtilisateur({ utilisateur }: PageModifierUtilisateurProps) {
+interface PageModifierUtilisateurProps {
+  utilisateur: Utilisateur
+}
+
+const PageModifierUtilisateur: FunctionComponent<PageModifierUtilisateurProps> = ({ utilisateur }) => {
   const chemin = [{ nom:'Gestion des comptes', lien:'/admin/utilisateurs' }];
 
   return (
@@ -20,4 +25,6 @@ export default function PageModifierUtilisateur({ utilisateur }: PageModifierUti
       </main>
     </PageModifierUtilisateurStyled>
   );
-}
+};
+
+export default PageModifierUtilisateur;

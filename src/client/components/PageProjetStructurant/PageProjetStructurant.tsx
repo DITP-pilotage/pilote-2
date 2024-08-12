@@ -140,7 +140,7 @@ export default function PageProjetStructurant({
               nomTerritoire={projetStructurant.territoire.nomAffiché}
               objectifs={[objectif]}
               réformeId={projetStructurant.id}
-              typesObjectif={[typeObjectifProjetStructurant]}
+              tousLesTypesDObjectif={[typeObjectifProjetStructurant]}
             />
           </section>
           {

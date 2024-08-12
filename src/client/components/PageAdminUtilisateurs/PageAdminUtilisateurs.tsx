@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
@@ -15,7 +15,7 @@ import '@gouvfr/dsfr/dist/component/select/select.min.css';
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
-export default function PageAdminUtilisateurs() {
+const PageAdminUtilisateurs: FunctionComponent<{}> = () => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const router = useRouter();
@@ -104,4 +104,6 @@ export default function PageAdminUtilisateurs() {
       </main>
     </div>
   );
-}
+};
+
+export default PageAdminUtilisateurs;

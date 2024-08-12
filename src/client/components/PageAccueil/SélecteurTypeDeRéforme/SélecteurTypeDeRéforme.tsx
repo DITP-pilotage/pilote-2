@@ -1,8 +1,13 @@
+import { FunctionComponent } from 'react';
 import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
-import SélecteurRéformeProps from './SélecteurTypeDeRéforme.interface';
 import SélecteurRéformeStyled from './SélecteurTypeDeRéforme.styled';
 
-export default function SélecteurTypeDeRéforme({ modifierTypeDeRéformeSélectionné, typeDeRéformeSélectionné }: SélecteurRéformeProps) {
+interface SélecteurTypeDeRéformeProps {
+  typeDeRéformeSélectionné: TypeDeRéforme
+  modifierTypeDeRéformeSélectionné: () => void
+}
+
+const SélecteurTypeDeRéforme: FunctionComponent<SélecteurTypeDeRéformeProps> = ({ modifierTypeDeRéformeSélectionné, typeDeRéformeSélectionné }) => {
   const typesDeRéformeÀAfficher: { label: string, valeur: TypeDeRéforme }[] = [
     {
       label: 'Chantiers',
@@ -30,4 +35,6 @@ export default function SélecteurTypeDeRéforme({ modifierTypeDeRéformeSélect
       }
     </SélecteurRéformeStyled>
   );
-}
+};
+
+export default SélecteurTypeDeRéforme;

@@ -1,5 +1,6 @@
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
 
+import { FunctionComponent } from 'react';
 import {
   actions as actionsFiltresModifierIndicateursStore, filtresModifierIndicateursActifsStore,
 } from '@/stores/useFiltresModifierIndicateursStore/useFiltresModifierIndicateursStore';
@@ -13,10 +14,10 @@ interface AdminIndicateursBarreLatéraleProps {
   setEstOuverteBarreLatérale: (valeur: boolean) => void
 }
 
-export function AdminIndicateurBarreLatérale({
+const AdminIndicateurBarreLatérale: FunctionComponent<AdminIndicateursBarreLatéraleProps> = ({
   estOuverteBarreLatérale,
   setEstOuverteBarreLatérale,
-}: AdminIndicateursBarreLatéraleProps) {
+}) => {
   const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
 
   const { modifierÉtatDuFiltre } = actionsFiltresModifierIndicateursStore();
@@ -41,4 +42,6 @@ export function AdminIndicateurBarreLatérale({
       </BarreLatéraleEncart>
     </BarreLatérale>
   );
-}
+};
+
+export default AdminIndicateurBarreLatérale;

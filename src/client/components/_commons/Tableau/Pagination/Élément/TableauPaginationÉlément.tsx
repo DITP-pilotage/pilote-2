@@ -1,6 +1,12 @@
-import TableauPaginationÉlémentProps from './TableauPaginationÉlément.interface';
+import { FunctionComponent } from 'react';
 
-export default function TableauPaginationÉlément({ estLaPageCourante, changementDePageCallback, numéroDePage }: TableauPaginationÉlémentProps) {
+interface TableauPaginationÉlémentProps {
+  numéroDePage: number
+  estLaPageCourante: boolean
+  changementDePageCallback:  (numéroDePage: number) => void
+}
+
+const TableauPaginationÉlément: FunctionComponent<TableauPaginationÉlémentProps> = ({ estLaPageCourante, changementDePageCallback, numéroDePage }) => {
   return (
     <li>
       <button
@@ -13,4 +19,6 @@ export default function TableauPaginationÉlément({ estLaPageCourante, changeme
       </button>
     </li>
   );
-}
+};
+
+export default TableauPaginationÉlément;

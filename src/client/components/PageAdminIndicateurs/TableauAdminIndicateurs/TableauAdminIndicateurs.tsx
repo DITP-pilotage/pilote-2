@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import useTableauPageAdminIndicateurs
   from '@/components/PageAdminIndicateurs/TableauAdminIndicateurs/useTableauAdminIndicateurs';
 import TableauAdminIndicateursStyled
@@ -14,7 +15,7 @@ import InputFichier from '@/components/_commons/InputFichier/InputFichier';
 import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 
-export function TableauAdminIndicateurs() {
+const TableauAdminIndicateurs: FunctionComponent<{}> = () => {
   const {
     tableau,
     file,
@@ -105,4 +106,6 @@ export function TableauAdminIndicateurs() {
       }
     </TableauAdminIndicateursStyled>
   );
-}
+};
+
+export default TableauAdminIndicateurs;

@@ -1,16 +1,5 @@
-import styled from '@emotion/styled';
 import { FunctionComponent, PropsWithChildren } from 'react';
-
-const BandeauInformationStyled = styled.section`
-  .fr-notice--info.fr-notice--warning {
-    background-color: var(--background-contrast-warning);
-
-    --idle: transparent;
-    --hover: var(--background-contrast-info-hover);
-    --active: var(--background-contrast-info-active);
-    color: var(--background-flat-warning);
-  }
-`;
+import BandeauInformationStyled from './BandeauInformation.styled';
 
 const getBandeauTypeClass = (bandeauType: string) => {
   switch (bandeauType) {
@@ -26,7 +15,7 @@ const getBandeauTypeClass = (bandeauType: string) => {
   }
 };
 
-export const BandeauInformation: FunctionComponent<PropsWithChildren<{
+const BandeauInformation: FunctionComponent<PropsWithChildren<{
   bandeauType: string,
   fermable?: boolean
 }>> = ({ children, bandeauType, fermable = true }) => {
@@ -59,3 +48,5 @@ export const BandeauInformation: FunctionComponent<PropsWithChildren<{
     </BandeauInformationStyled>
   );
 };
+
+export default BandeauInformation;

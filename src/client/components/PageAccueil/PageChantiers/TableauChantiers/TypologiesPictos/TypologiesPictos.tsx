@@ -1,11 +1,18 @@
+import { FunctionComponent } from 'react';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
 import PictoTerritorialisé from '@/components/_commons/PictoTerritorialisé/PictoTerritorialisé';
 import PictoChantierBrouillon from '@/components/_commons/PictoChantierBrouillon/PictoChantierBrouillon';
 import TypologiesPictosStyled
   from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos.styled';
-import TypologiesPictosProps from './TypologiesPictos.interface';
+import {
+  DonnéesTableauChantiers,
+} from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
 
-export default function TypologiesPictos({ typologies }: TypologiesPictosProps) {
+interface TypologiesPictosProps {
+  typologies: DonnéesTableauChantiers['typologie']
+}
+
+const TypologiesPictos: FunctionComponent<TypologiesPictosProps> = ({ typologies }) => {
   if (!typologies.estBaromètre && !typologies.estTerritorialisé && !typologies.estBrouillon) {
     return null;
   }
@@ -35,4 +42,6 @@ export default function TypologiesPictos({ typologies }: TypologiesPictosProps) 
       </li>
     </TypologiesPictosStyled>
   );
-}
+};
+
+export default TypologiesPictos;

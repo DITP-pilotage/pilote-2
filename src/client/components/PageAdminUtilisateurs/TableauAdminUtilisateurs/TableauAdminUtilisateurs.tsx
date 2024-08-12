@@ -1,5 +1,5 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
-import { useEffect } from 'react';
+import { FunctionComponent, useEffect } from 'react';
 import useTableauPageAdminUtilisateurs
   from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/useTableauAdminUtilisateurs';
 import TableauEnTête from '@/components/_commons/Tableau/EnTête/TableauEnTête';
@@ -13,7 +13,7 @@ import TableauAdminUtilisateursContenu
   from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/Contenu/TableauAdminUtilisateursContenu';
 import Loader from '@/components/_commons/Loader/Loader';
 
-export default function TableauAdminUtilisateurs() {
+const TableauAdminUtilisateurs: FunctionComponent<{}> = () => {
   const { tableau, estEnChargement, changementDePageCallback, changementDeLaRechercheCallback, valeurDeLaRecherche } = useTableauPageAdminUtilisateurs();
 
   useEffect(() => {
@@ -57,4 +57,6 @@ export default function TableauAdminUtilisateurs() {
       }
     </TableauAdminUtilisateursStyled>
   );
-}
+};
+
+export default TableauAdminUtilisateurs;

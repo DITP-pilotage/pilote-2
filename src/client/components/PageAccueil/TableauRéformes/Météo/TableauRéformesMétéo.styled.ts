@@ -1,7 +1,11 @@
 import styled from '@emotion/styled';
 import {
-  TableauRéformesMétéoStyledProps,
+  TableauChantiersMétéoTaille,
 } from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo.interface';
+
+interface TableauRéformesMétéoStyledProps {
+  taille: TableauChantiersMétéoTaille;
+}
 
 const hauteurMétéoPictoÀPartirDeLaTaille = {
   'sm': '1.65rem',

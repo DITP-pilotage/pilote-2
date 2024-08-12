@@ -2,7 +2,7 @@ import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css';
 import { parseAsBoolean, useQueryState } from 'nuqs';
-import { useEffect } from 'react';
+import { FunctionComponent, useEffect } from 'react';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
 import useTableauChantiers from '@/components/PageAccueil/PageChantiers/TableauChantiers/useTableauChantiers';
@@ -15,7 +15,7 @@ import TableauChantiersProps from './TableauChantiers.interface';
 import TableauChantiersStyled from './TableauChantiers.styled';
 import TableauChantiersContenu from './Contenu/TableauChantiersContenu';
 
-export default function TableauChantiers({ données, ministèresDisponibles, territoireCode }: TableauChantiersProps) {
+const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({ données, ministèresDisponibles, territoireCode }) => {
 
   const {
     tableau,
@@ -104,4 +104,6 @@ export default function TableauChantiers({ données, ministèresDisponibles, ter
           </>}
     </TableauChantiersStyled>
   );
-}
+};
+
+export default TableauChantiers;

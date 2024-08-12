@@ -1,11 +1,13 @@
-import { flexRender, Row } from '@tanstack/react-table';
-import { useCallback } from 'react';
+import { flexRender, Row, Table } from '@tanstack/react-table';
+import { FunctionComponent, useCallback } from 'react';
 import { useRouter } from 'next/router';
-import TableauAdminUtilisateursContenuProps
-  from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/Contenu/TableauAdminUtilisateursContenu.interface';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 
-export default function TableauAdminUtilisateursContenu({ tableau }: TableauAdminUtilisateursContenuProps) {
+interface TableauAdminUtilisateursContenuProps {
+  tableau: Table<Utilisateur>
+}
+
+const TableauAdminUtilisateursContenu: FunctionComponent<TableauAdminUtilisateursContenuProps> = ({ tableau }) => {
   const router = useRouter();
   const auClicSurLaLigne = useCallback((row: Row<Utilisateur>) =>{
     router.push(`/admin/utilisateur/${row.original.id}`);
@@ -40,4 +42,6 @@ export default function TableauAdminUtilisateursContenu({ tableau }: TableauAdmi
     }
     </tbody>
   );
-}
+};
+
+export default TableauAdminUtilisateursContenu;

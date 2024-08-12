@@ -1,9 +1,14 @@
 import '@gouvfr/dsfr/dist/component/pagination/pagination.min.css';
-import { useState } from 'react';
-import TableauPaginationProps from './TableauPagination.interface';
+import { FunctionComponent, useState } from 'react';
 import TableauPaginationÉlément from './Élément/TableauPaginationÉlément';
 
-export default function TableauPagination({ nombreDePages, changementDePageCallback, numéroDePageInitiale }: TableauPaginationProps) {
+interface PaginationProps {
+  nombreDePages: number,
+  changementDePageCallback: (numéroDePage: number) => void
+  numéroDePageInitiale: number,
+}
+
+const TableauPagination: FunctionComponent<PaginationProps> = ({ nombreDePages, changementDePageCallback, numéroDePageInitiale }) => {
   const [numéroDePageCourante, setNuméroDePageCourante] = useState(numéroDePageInitiale);
 
   if (nombreDePages <= 1) {
@@ -175,4 +180,7 @@ export default function TableauPagination({ nombreDePages, changementDePageCallb
       </ul>
     </nav>
   );
-}
+};
+
+
+export default TableauPagination;

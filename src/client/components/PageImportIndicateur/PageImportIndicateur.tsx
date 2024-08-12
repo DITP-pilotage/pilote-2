@@ -1,18 +1,27 @@
-import {
-  PageImportIndicateurSectionRessource,
-} from '@/components/PageImportIndicateur/PageImportIndicateurSectionRessource/PageImportIndicateurSectionRessource';
-import { PageImportIndicateurProps } from './PageImportIndicateur.interface';
+import { FunctionComponent } from 'react';
+import PageImportIndicateurSectionRessource from '@/components/PageImportIndicateur/PageImportIndicateurSectionRessource/PageImportIndicateurSectionRessource';
+import { RapportContrat } from '@/server/app/contrats/RapportContrat';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import { InformationIndicateurContrat } from '@/server/app/contrats/InformationIndicateurContrat';
 import PageImportIndicateurEnTête from './PageImportIndicateurEnTête/PageImportIndicateurEnTête';
 import PageImportIndicateurExplicationEtapeImport
   from './PageImportIndicateurExplicationEtapeImport/PageImportIndicateurExplicationEtapeImport';
 import PageImportIndicateurSectionImport from './PageImportIndicateurSectionImport/PageImportIndicateurSectionImport';
+import { ChantierInformations } from './ChantierInformation.interface';
 
-export default function PageImportIndicateur({
+interface PageImportIndicateurProps {
+  chantierInformations: ChantierInformations
+  indicateurs: Indicateur[];
+  rapport: RapportContrat | null
+  informationsIndicateur: InformationIndicateurContrat[],
+}
+
+const PageImportIndicateur: FunctionComponent<PageImportIndicateurProps> = ({
   chantierInformations,
   indicateurs,
   informationsIndicateur,
   rapport,
-}: PageImportIndicateurProps) {
+}) => {
   return (
     <main>
       <PageImportIndicateurEnTête chantierInformations={chantierInformations} />
@@ -25,5 +34,7 @@ export default function PageImportIndicateur({
       <PageImportIndicateurSectionRessource />
     </main>
   );
-}
+};
+
+export default PageImportIndicateur;
 

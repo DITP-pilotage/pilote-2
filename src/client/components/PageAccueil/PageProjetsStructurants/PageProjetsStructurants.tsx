@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import Titre from '@/client/components/_commons/Titre/Titre';
 import FiltresActifs from '@/components/PageAccueil/FiltresActifs/FiltresActifs';
 import Bloc from '@/client/components/_commons/Bloc/Bloc';
@@ -10,11 +10,19 @@ import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/Répa
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
+import {
+  ProjetStructurantVueDEnsemble,
+} from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import usePageProjetsStructurants from './usePageProjetsStructurants';
-import PageProjetsStructurantsProps from './PageProjetsStructurants.interface';
 import TableauProjetsStructurants from './TableauProjetsStructurants/TableauProjetsStructurants';
 
-export default function PageProjetsStructurants({ projetsStructurants, ministères }: PageProjetsStructurantsProps) {
+interface PageProjetsStructurantsProps {
+  projetsStructurants: ProjetStructurantVueDEnsemble[],
+  ministères: Ministère[]
+}
+
+const PageProjetsStructurants: FunctionComponent<PageProjetsStructurantsProps> = ({ projetsStructurants, ministères }) => {
   const {
     projetsDuTerritoireSélectionnéEtTerritoiresEnfants,
     nombreFiltresActifs,
@@ -132,4 +140,6 @@ export default function PageProjetsStructurants({ projetsStructurants, ministèr
       </div>
     </main>
   );
-}
+};
+
+export default PageProjetsStructurants;

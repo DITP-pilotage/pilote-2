@@ -1,11 +1,11 @@
-import { Fragment, useMemo } from 'react';
+import { Fragment, FunctionComponent, useMemo } from 'react';
 import Modale from '@/components/_commons/Modale/Modale';
 import PublicationAffichage from '@/components/_commons/Publication/PublicationAffichage/PublicationAffichage';
 import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
 import PublicationHistoriqueProps from './PublicationHistorique.interface';
 import usePublicationHistorique from './usePublicationHistorique';
 
-export default function PublicationHistorique({ type, entité, réformeId, maille }: PublicationHistoriqueProps) {
+const PublicationHistorique: FunctionComponent<PublicationHistoriqueProps> = ({ type, entité, réformeId, maille }) => {
   const { publications, nomTerritoire, récupérerPublications } = usePublicationHistorique(type, entité, réformeId, maille);
 
   const ID_HTML = useMemo(() => `historique-${entité}-${type}`, [entité, type]);
@@ -52,4 +52,6 @@ export default function PublicationHistorique({ type, entité, réformeId, maill
       </Modale>
     </>
   );
-}
+};
+
+export default PublicationHistorique;

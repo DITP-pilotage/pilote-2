@@ -1,4 +1,5 @@
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
+import { FunctionComponent } from 'react';
 import ContrôleSegmenté from '@/components/_commons/ContrôleSegmentéNew/ContrôleSegmenté';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import useSélecteurVueStatut from './useSélecteurVueStatut.interface';
@@ -6,7 +7,7 @@ import useSélecteurVueStatut from './useSélecteurVueStatut.interface';
 export const typesVueStatuts = ['BROUILLON_ET_PUBLIE', 'PUBLIE', 'BROUILLON'] as const;
 export type TypeVueStatuts = typeof typesVueStatuts[number];
 
-export default function SélecteurVueStatuts() {
+const SélecteurVueStatuts: FunctionComponent<{}> = () => {
 
   const { options } = useSélecteurVueStatut();
 
@@ -29,4 +30,6 @@ export default function SélecteurVueStatuts() {
       valeurSélectionnée={statut}
     />
   );
-}
+};
+
+export default SélecteurVueStatuts;

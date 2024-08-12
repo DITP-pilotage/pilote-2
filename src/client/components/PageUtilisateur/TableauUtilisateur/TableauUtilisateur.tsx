@@ -1,7 +1,22 @@
-import TableauUtilisateurProps from '@/components/PageUtilisateur/TableauUtilisateur/TableauUtilisateur.interface';
+import { FunctionComponent } from 'react';
 import { formaterDate } from '@/client/utils/date/date';
+import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 
-export default function TableauUtilisateur({ utilisateur }: TableauUtilisateurProps) {
+interface TableauUtilisateurProps {
+  utilisateur: {
+    nom: string
+    prénom: string
+    email: string
+    profil: ProfilCode
+    dateModification?: string
+    auteurModification?: string
+    dateCreation?: string
+    auteurCreation?: string
+    fonction: string | null
+  } 
+}
+
+const TableauUtilisateur: FunctionComponent<TableauUtilisateurProps> = ({ utilisateur }) => {
   return (
     <div className='fr-table'>
       <table>
@@ -70,4 +85,6 @@ export default function TableauUtilisateur({ utilisateur }: TableauUtilisateurPr
       </table>
     </div>
   );
-}
+};
+
+export default TableauUtilisateur;

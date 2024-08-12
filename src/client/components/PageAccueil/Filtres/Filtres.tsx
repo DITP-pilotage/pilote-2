@@ -1,11 +1,19 @@
+import { FunctionComponent } from 'react';
 import FiltresSélectionMultiple
   from '@/components/PageAccueil/Filtres/FiltresSélectionMultiple/FiltresSélectionMultiple';
 import { FiltreTypologieType } from '@/client/stores/useFiltresStore/useFiltresStore.interface';
 import { filtresActifs } from '@/client/stores/useFiltresStore/useFiltresStore';
+import Axe from '@/server/domain/axe/Axe.interface';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
 import FiltresGroupe from './FiltresGroupe/FiltresGroupe';
 import FiltresMinistères from './FiltresMinistères/FiltresMinistères';
-import FiltresProps from './Filtres.interface';
 import FiltreTypologie from './FiltreTypologie/FiltreTypologie';
+
+interface BarreLatéraleProps {
+  ministères: Ministère[],
+  axes: Axe[],
+  afficherToutLesFiltres: boolean
+}
 
 const filtreBaromètre: FiltreTypologieType = {
   id: 'filtreBaromètre',
@@ -18,7 +26,7 @@ const filtreTerritorialisé: FiltreTypologieType = {
   nom: 'Chantiers territorialisés',
 };
 
-export default function Filtres({ ministères, axes, afficherToutLesFiltres }: FiltresProps) {
+const Filtres: FunctionComponent<BarreLatéraleProps> = ({ ministères, axes, afficherToutLesFiltres }) => {
   filtresActifs();
 
   return (
@@ -46,4 +54,6 @@ export default function Filtres({ ministères, axes, afficherToutLesFiltres }: F
 }
     </>
   );
-}
+};
+
+export default Filtres;

@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import {
@@ -5,7 +6,7 @@ import {
 } from '@/components/PageAdminGestionContenus/MessageInformationForm/useMessageInformationForm';
 import TextArea from '@/components/_commons/TextArea/TextArea';
 
-export const MessageInformationForm = () => {
+const MessageInformationForm: FunctionComponent<{}> = () => {
   const { errors, register, getValues } = useMessageInformationForm();
   return (
     <>
@@ -57,3 +58,5 @@ export const MessageInformationForm = () => {
     </>
   );
 };
+
+export default MessageInformationForm;

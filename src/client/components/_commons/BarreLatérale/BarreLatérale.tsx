@@ -1,6 +1,11 @@
-import { FunctionComponent } from 'react';
-import BarreLatéraleProps from './BarreLatérale.interface';
+import { FunctionComponent, ReactNode } from 'react';
 import BarreLatéraleStyled from './BarreLatérale.styled';
+
+interface BarreLatéraleProps {
+  estOuvert: boolean,
+  setEstOuvert: (state: boolean) => void,
+  children?: ReactNode,
+}
 
 const BarreLatérale: FunctionComponent<BarreLatéraleProps> = ({ estOuvert, setEstOuvert, children }) => {
   return (

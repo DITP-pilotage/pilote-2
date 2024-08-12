@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import Titre from '@/components/_commons/Titre/Titre';
@@ -8,13 +9,13 @@ import ResultatValidationFichier
   from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
 import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
 
-export function EtapeChargerFichier({ indicateur, indicateurId, setRapport, rapport, chantierId }: {
+const EtapeChargerFichier: FunctionComponent<{
   indicateur: Indicateur,
   chantierId: string,
   indicateurId: string,
   setRapport: (value: (((prevState: (DetailValidationFichierContrat | null)) => (DetailValidationFichierContrat | null)) | DetailValidationFichierContrat | null)) => void,
   rapport: DetailValidationFichierContrat | null
-}) {
+}> = ({ indicateur, indicateurId, setRapport, rapport, chantierId }) => {
   return (
     <>
       <Titre baliseHtml='h4'>
@@ -66,4 +67,6 @@ export function EtapeChargerFichier({ indicateur, indicateurId, setRapport, rapp
       }
     </>
   );
-}
+};
+
+export default EtapeChargerFichier;

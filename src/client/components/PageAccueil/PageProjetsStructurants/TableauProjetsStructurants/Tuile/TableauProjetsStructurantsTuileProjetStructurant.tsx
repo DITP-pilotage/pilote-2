@@ -1,10 +1,16 @@
+import { FunctionComponent } from 'react';
 import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
 import TableauRéformesAvancement from '@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement';
 import TableauRéformesMétéo from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo';
+import { DonnéesTableauProjetsStructurants } from '@/client/components/PageAccueil/PageProjetsStructurants/TableauProjetsStructurants/TableauProjetsStructurants.interface';
 import TableauProjetsStructurantsTuileProjetStructurantStyled from './TableauProjetsStructurantsTuileProjetStructurant.styled';
-import TableauProjetsStructurantsTuileProjetStructurantProps from './TableauProjetsStructurantsTuileProjetStructurant.interface';
 
-export default function TableauProjetsStructurantsTuileProjetStructurant({ projetStructurant, afficherIcône }: TableauProjetsStructurantsTuileProjetStructurantProps) {
+interface TableauProjetsStructurantsTuileProjetStructurantProps {
+  projetStructurant: DonnéesTableauProjetsStructurants;
+  afficherIcône: boolean;
+}
+
+const TableauProjetsStructurantsTuileProjetStructurant: FunctionComponent<TableauProjetsStructurantsTuileProjetStructurantProps> = ({ projetStructurant, afficherIcône }) => {
 
   return (
     <TableauProjetsStructurantsTuileProjetStructurantStyled>
@@ -38,4 +44,6 @@ export default function TableauProjetsStructurantsTuileProjetStructurant({ proje
       </div>
     </TableauProjetsStructurantsTuileProjetStructurantStyled>
   );
-}
+};
+
+export default TableauProjetsStructurantsTuileProjetStructurant;

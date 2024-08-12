@@ -1,8 +1,21 @@
+import { FunctionComponent } from 'react';
+import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import SousIndicateurBloc from './Bloc/SousIndicateurBloc';
-import SousIndicateursProps from './SousIndicateurs.interface';
+
+interface SousIndicateursProps {
+  listeSousIndicateurs: Indicateur[]
+  détailsIndicateurs: DétailsIndicateurs
+  detailsIndicateursTerritoire: DétailsIndicateurs
+  chantierEstTerritorialisé: boolean
+  estInteractif: boolean
+  territoireCode: string
+  mailleSelectionnee: MailleInterne
+}
 
 
-export default function SousIndicateurs({
+const SousIndicateurs: FunctionComponent<SousIndicateursProps> = ({
   listeSousIndicateurs,
   chantierEstTerritorialisé,
   détailsIndicateurs,
@@ -10,7 +23,7 @@ export default function SousIndicateurs({
   estInteractif,
   territoireCode,
   mailleSelectionnee,
-}: SousIndicateursProps) {
+}) => {
 
   const listeClassesCouleursFond = [
     'fr-background-contrast--grey',
@@ -37,4 +50,6 @@ export default function SousIndicateurs({
       }
     </>
   );
-}
+};
+
+export default SousIndicateurs;

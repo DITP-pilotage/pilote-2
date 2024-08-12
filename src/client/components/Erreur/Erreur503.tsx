@@ -1,6 +1,7 @@
+import { FunctionComponent } from 'react';
 import PageErreur from '@/components/_commons/PageErreur/PageErreur';
 
-export default function Erreur500() {
+const Erreur500: FunctionComponent<{}> = () => {
   return (
     <PageErreur
       message='Nous vous invitons à réessayer plus tard.'
@@ -8,4 +9,6 @@ export default function Erreur500() {
       titre='Application indisponible'
     />
   );
-}
+};
+
+export default Erreur500;

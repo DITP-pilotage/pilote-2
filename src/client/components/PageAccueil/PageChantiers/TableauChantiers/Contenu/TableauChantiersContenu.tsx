@@ -1,5 +1,6 @@
 import { Cell, flexRender, Table } from '@tanstack/react-table';
 import Link from 'next/link';
+import { FunctionComponent } from 'react';
 import { ChantierVueDEnsemble } from '@/server/domain/chantier/Chantier.interface';
 import {
   DonnéesTableauChantiers,
@@ -20,13 +21,12 @@ function afficherContenuDeLaCellule(cell: Cell<ChantierVueDEnsemble, unknown>) {
   );
 }
 
-
 interface TableauChantiersContenuProps {
   tableau: Table<DonnéesTableauChantiers>
   territoireCode: string
 }
 
-export default function TableauChantiersContenu({ tableau, territoireCode }: TableauChantiersContenuProps) {
+const TableauChantiersContenu: FunctionComponent<TableauChantiersContenuProps> = ({ tableau, territoireCode }) => {
   return (
     <tbody>
       {
@@ -72,4 +72,6 @@ export default function TableauChantiersContenu({ tableau, territoireCode }: Tab
     }
     </tbody>
   );
-}
+};
+
+export default TableauChantiersContenu;

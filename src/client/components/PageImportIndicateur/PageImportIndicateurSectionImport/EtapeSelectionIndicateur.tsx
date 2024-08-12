@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, FunctionComponent, SetStateAction } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import { wording } from '@/client/utils/i18n/i18n';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
@@ -26,17 +26,17 @@ const presenterEnFonctionDuSchema = (informationsIndicateur: InformationIndicate
   }
 };
 
-export function EtapeSelectionIndicateur({
-  options,
-  valeurModifiéeCallback,
-  valeurSélectionnée,
-  informationsIndicateur,
-}: {
+const EtapeSelectionIndicateur: FunctionComponent<{
   options: { valeur: string; libellé: string }[],
   valeurModifiéeCallback: Dispatch<SetStateAction<string>>,
   valeurSélectionnée: string,
   informationsIndicateur: InformationIndicateurContrat[],
-}) {
+}> = ({
+  options,
+  valeurModifiéeCallback,
+  valeurSélectionnée,
+  informationsIndicateur,
+}) => {
 
   return (
     <div>
@@ -80,4 +80,6 @@ export function EtapeSelectionIndicateur({
       }
     </div>
   );
-}
+};
+
+export default EtapeSelectionIndicateur;
