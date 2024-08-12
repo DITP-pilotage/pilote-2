@@ -16,8 +16,8 @@ const Alerte = {
     return tendance === 'BAISSE';
   },
 
-  estEnAlerteTauxAvancementNonCalculé(tauxAvancement: number | null) {
-    return tauxAvancement === null;
+  estEnAlerteTauxAvancementNonCalculé(tauxAvancement: number | null, cibleAttendu: boolean) {
+    return cibleAttendu && tauxAvancement === null;
   },
 
   estEnAlerteAbscenceTauxAvancementDepartemental(departementsDonnées: ListeTerritoiresDonnéeAccueilContrat) {

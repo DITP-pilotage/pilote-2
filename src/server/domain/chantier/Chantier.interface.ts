@@ -35,6 +35,7 @@ export default interface Chantier {
   météoDonnéeTerritorialisée: Record<MailleInterne, Boolean>;
   ate: TypeAte;
   statut: TypeStatut;
+  cibleAttendu: boolean;
 }
 
 export type ChantierTendance = 'BAISSE' | 'HAUSSE' | 'STAGNATION';
