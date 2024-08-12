@@ -53,6 +53,8 @@ export default class ChantierBuilder {
 
   private _statut: Chantier['statut'];
 
+  private _cibleAttendu: Chantier['cibleAttendu'];
+
   constructor() {
     const axe = new AxeBuilder().build();
     const ppg = new PpgBuilder().build();
@@ -67,6 +69,7 @@ export default class ChantierBuilder {
     this._ppg = ppg.nom;
     this._ate = null;
     this._statut = faker.helpers.arrayElement(typesStatut);
+    this._cibleAttendu = faker.datatype.boolean();
     this._périmètreIds = ministèrePorteur.périmètresMinistériels.map(périmètreMinistériel => périmètreMinistériel.id);
     this._mailles = {
       nationale: this._générerTerritoires([codeInseeFrance]),
@@ -104,6 +107,7 @@ export default class ChantierBuilder {
       périmètreIds: this._périmètreIds,
       ate: this._ate,
       statut: this._statut,
+      cibleAttendu: this._cibleAttendu,
       mailles: this._mailles,
       responsables: {
         porteur: this._porteur,

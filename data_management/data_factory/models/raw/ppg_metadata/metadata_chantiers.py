@@ -26,7 +26,8 @@ def model(dbt, session):
         'ch_saisie_ate': 'string',
         'ch_state': 'string',
         'zg_applicable': 'string',
-        'maille_applicable': 'string'
+        'maille_applicable': 'string',
+        'cible_attendu': 'boolean'
     }
 
     chantiers = chantiers.astype(columns_type)

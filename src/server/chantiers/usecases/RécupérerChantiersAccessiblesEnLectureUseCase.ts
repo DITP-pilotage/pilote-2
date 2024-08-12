@@ -63,7 +63,6 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
       this.territoireRepository.récupérerTousNew(maille),
       this.chantierDatesDeMàjRepository.récupérerDateDeMiseÀJourMeteo(chantiersLecture, territoiresLecture),
     ]);
-
     const chantiersGroupésParId = groupBy<chantierPrisma>(chantiersRowsMaille, chantier => chantier.id);
     let chantiers = objectEntries(chantiersGroupésParId).map(([_, listeChantiers]) => presenterEnChantierAccueilContrat(territoireCode)(parseChantier(listeChantiers, territoires, ministères, chantiersRowsDatesDeMàj)))
       .filter(appliquerFiltre(mailleChantier, codeInseeSelectionne, profil));
