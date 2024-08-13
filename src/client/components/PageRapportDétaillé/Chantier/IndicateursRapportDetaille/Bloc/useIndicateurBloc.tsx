@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState } from 'react';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import IndicateurBlocIndicateurTuile
-  from '@/components/_commons/IndicateursRapportDetaille/Bloc/indicateurBlocIndicateurTuile';
+  from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/indicateurBlocIndicateurTuile';
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';

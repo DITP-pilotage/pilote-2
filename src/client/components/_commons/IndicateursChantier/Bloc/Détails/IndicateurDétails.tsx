@@ -15,7 +15,7 @@ import {
 import {
   ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE,
 } from '@/client/constants/légendes/élémentsDeLégendesCartographieValeurActuelle';
-import SousIndicateurs from '@/client/components/_commons/SousIndicateurs/SousIndicateurs';
+import SousIndicateurs from '@/components/_commons/IndicateursChantier/Bloc/Détails/SousIndicateurs/SousIndicateurs';
 
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import {
