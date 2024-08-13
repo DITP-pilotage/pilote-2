@@ -2,6 +2,7 @@ import { GetServerSidePropsResult } from 'next';
 import { GetServerSidePropsContext } from 'next/types';
 import { getServerSession } from 'next-auth/next';
 import Head from 'next/head';
+import { FunctionComponent } from 'react';
 import PageImportIndicateur from '@/components/PageImportIndicateur/PageImportIndicateur';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { ChantierInformations } from '@/components/PageImportIndicateur/ChantierInformation.interface';
@@ -80,12 +81,12 @@ export async function getServerSideProps({
   };
 }
 
-export default function NextPageImportIndicateur({
+const NextPageImportIndicateur: FunctionComponent<NextPageImportIndicateurProps> = ({
   chantierInformations,
   indicateurs,
   informationsIndicateur,
   rapport,
-}: NextPageImportIndicateurProps) {
+}) => {
   return (
     <>
       <Head>
@@ -101,4 +102,6 @@ export default function NextPageImportIndicateur({
       />
     </>
   );
-}
+};
+
+export default NextPageImportIndicateur;

@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import SectionDétailsMetadataIndicateurStyled
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataIndicateur/SectionDétailsMetadataIndicateur.styled';
@@ -22,17 +23,17 @@ import {
 } from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInterrupteur';
 
 
-export default function SectionDétailsMetadataIndicateur({
-  indicateur,
-  estEnCoursDeModification,
-  mapInformationMetadataIndicateur,
-  chantiers,
-}: {
+const SectionDétailsMetadataIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat
   estEnCoursDeModification: boolean
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
   chantiers: ChantierSynthétisé[]
-}) {
+}> = ({
+  indicateur,
+  estEnCoursDeModification,
+  mapInformationMetadataIndicateur,
+  chantiers,
+}) => {
   const {
     register,
     getValues,
@@ -175,4 +176,6 @@ export default function SectionDétailsMetadataIndicateur({
       <hr className='fr-hr fr-mt-3w' />
     </SectionDétailsMetadataIndicateurStyled>
   );
-}
+};
+
+export default SectionDétailsMetadataIndicateur;

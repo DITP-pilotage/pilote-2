@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { FunctionComponent } from 'react';
 import Encart from '@/components/_commons/Encart/Encart';
 import { consignesDÉcritureObjectif, libellésTypesObjectif, TypeObjectif } from '@/client/constants/libellésObjectif';
 
@@ -22,7 +23,7 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import AvancementChantier from '@/components/PageChantier/AvancementChantier/AvancementChantier';
 import RapportDétailléChantierStyled from './RapportDétailléChantier.styled';
 
-export default function RapportDétailléChantier({
+const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProps> = ({
   mailleSélectionnée,
   territoireSélectionné,
   territoireCode,
@@ -36,7 +37,7 @@ export default function RapportDétailléChantier({
   mapChantierStatistiques,
   donnéesCartographieAvancement,
   donnéesCartographieMétéo,
-}: RapportDétailléChantierProps) {
+}) => {
 
   const listeResponsablesLocaux = chantier?.responsableLocalTerritoireSélectionné ?? [];
   const listeCoordinateursTerritorials = chantier?.coordinateurTerritorialTerritoireSélectionné ?? [];
@@ -252,4 +253,6 @@ export default function RapportDétailléChantier({
       </div>
     </RapportDétailléChantierStyled>
   );
-}
+};
+
+export default RapportDétailléChantier;

@@ -1,8 +1,15 @@
-import { flexRender } from '@tanstack/react-table';
-import TableauChantiersEnTêteProps from './RapportDétailléTableauChantiersEnTête.interface';
+import { flexRender, Table } from '@tanstack/react-table';
+import { FunctionComponent } from 'react';
+import {
+  DonnéesTableauChantiers,
+} from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
 import RapportDétailléTableauChantiersEnTêteStyled from './RapportDétailléTableauChantiersEnTête.styled';
 
-export default function RapportDétailléTableauChantiersEnTête({ tableau }: TableauChantiersEnTêteProps) {
+interface TableauChantiersEnTêteProps {
+  tableau: Table<DonnéesTableauChantiers>
+}
+
+const RapportDétailléTableauChantiersEnTête: FunctionComponent<TableauChantiersEnTêteProps> = ({ tableau }) => {
   return (
     <RapportDétailléTableauChantiersEnTêteStyled>
       {
@@ -25,4 +32,6 @@ export default function RapportDétailléTableauChantiersEnTête({ tableau }: Ta
       }
     </RapportDétailléTableauChantiersEnTêteStyled>
   );
-}
+};
+
+export default RapportDétailléTableauChantiersEnTête;

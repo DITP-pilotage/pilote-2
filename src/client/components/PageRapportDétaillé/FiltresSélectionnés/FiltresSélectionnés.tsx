@@ -1,4 +1,5 @@
 import { parseAsBoolean, parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
@@ -15,12 +16,12 @@ interface FiltresSélectionnésProps {
   axes: Axe[],
 }
 
-export default function FiltresSélectionnés({
+const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
   estAutoriseAVoirLesBrouillons,
   territoireSélectionné,
   ministères,
   axes,
-}: FiltresSélectionnésProps) {
+}) => {
 
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
@@ -94,4 +95,6 @@ export default function FiltresSélectionnés({
       </div>
     </FiltresSélectionnésStyled>
   );
-}
+};
+
+export default FiltresSélectionnés;

@@ -1,10 +1,11 @@
+import { FunctionComponent } from 'react';
 import SectionTableauIndicateurStyled
   from '@/components/PageIndicateur/FicheIndicateur/SectionTableauIndicateur/SectionTableauIndicateur.styled';
 import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
 
-export default function SectionTableauIndicateur({ indicateur }: {
+const SectionTableauIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat
-}) {
+}> = ({ indicateur }) => {
   return (
     <SectionTableauIndicateurStyled>
       <div className='fr-table'>
@@ -44,6 +45,7 @@ export default function SectionTableauIndicateur({ indicateur }: {
         </table>
       </div>
     </SectionTableauIndicateurStyled>
-
   );
-}
+};
+
+export default SectionTableauIndicateur;

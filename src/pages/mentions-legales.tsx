@@ -1,7 +1,8 @@
 import Head from 'next/head';
+import { FunctionComponent } from 'react';
 import MentionsLegales from '@/components/MentionsLegales/MentionsLegales';
 
-export default function NextPageMentionsLegales() {
+const NextPageMentionsLegales: FunctionComponent<{}> = () => {
   return (
     <>
       <Head>
@@ -12,4 +13,6 @@ export default function NextPageMentionsLegales() {
       <MentionsLegales />
     </>
   );
-}
+};
+
+export default NextPageMentionsLegales;

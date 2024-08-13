@@ -1,5 +1,6 @@
 import { GetServerSidePropsContext } from 'next/types';
 import Head from 'next/head';
+import { FunctionComponent } from 'react';
 import { getServerAuthSession } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import {
@@ -29,14 +30,14 @@ export interface NextPageAdminUtilisateurProps {
   chantiers: ChantierSynthétisé[]
 }
 
-export default function NextPageAdminIndicateur({
+const NextPageAdminIndicateur: FunctionComponent<NextPageAdminUtilisateurProps> = ({
   indicateur,
   mapInformationMetadataIndicateur,
   estUneCréation,
   modificationReussie,
   creationReussie,
   chantiers,
-}: NextPageAdminUtilisateurProps) {
+}) => {
   return (
     <>
       <Head>
@@ -57,7 +58,8 @@ export default function NextPageAdminIndicateur({
       />
     </>
   );
-}
+};
+export default NextPageAdminIndicateur;
 
 export async function getServerSideProps({ req, res, params, query }: GetServerSidePropsContext<{
   id: Utilisateur['id'],

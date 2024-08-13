@@ -1,4 +1,5 @@
 import { parseAsBoolean, parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import { FunctionComponent } from 'react';
 import { formaterDate } from '@/client/utils/date/date';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
@@ -14,12 +15,12 @@ interface PremièrePageImpressionRapportDétailléProps {
   axes: Axe[],
 }
 
-const PremièrePageImpressionRapportDétaillé = ({
+const PremièrePageImpressionRapportDétaillé: FunctionComponent<PremièrePageImpressionRapportDétailléProps> = ({
   estAutoriseAVoirLesBrouillons,
   territoireSélectionné,
   ministères,
   axes,
-}: PremièrePageImpressionRapportDétailléProps) => {
+}) => {
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
     axes: parseAsString.withDefault(''),

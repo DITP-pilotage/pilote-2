@@ -1,10 +1,10 @@
+import { FunctionComponent } from 'react';
 import SélecteurRéformeProps from './SélecteurIndicateurActif.interface';
 import SélecteurRéformeStyled from './SélecteurIndicateurActif.styled';
 
 export type EtatIndicateur = 'true' | 'false';
 
-
-export default function SélecteurIndicateurActif({ setEtatIndicateurSélectionné, etatIndicateurSélectionné, estEnCoursDeModification }: SélecteurRéformeProps) {
+const SélecteurIndicateurActif: FunctionComponent<SélecteurRéformeProps> = ({ setEtatIndicateurSélectionné, etatIndicateurSélectionné, estEnCoursDeModification }) => {
   const etatIndicateurÀAfficher: { label: string, valeur: EtatIndicateur, className: string }[] = [
     {
       label: 'Actif',
@@ -37,4 +37,6 @@ export default function SélecteurIndicateurActif({ setEtatIndicateurSélectionn
         }
     </SélecteurRéformeStyled>
   );
-}
+};
+
+export default SélecteurIndicateurActif;

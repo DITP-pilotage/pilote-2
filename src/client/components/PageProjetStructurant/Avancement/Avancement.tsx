@@ -1,8 +1,13 @@
+import { FunctionComponent } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
-import AvancementPageProjetStructurantProps from './Avancement.interface';
 
-export default function AvancementPageProjetStructurant({ territoireNom, avancement }: AvancementPageProjetStructurantProps) {
+interface AvancementPageProjetStructurantProps {
+  territoireNom: string
+  avancement: number | null
+}
+
+const AvancementPageProjetStructurant: FunctionComponent<AvancementPageProjetStructurantProps> = ({ territoireNom, avancement }) => {
   return (
     <Bloc titre={territoireNom}>
       <div className='fr-grid-row fr-grid-row--center'>
@@ -15,4 +20,6 @@ export default function AvancementPageProjetStructurant({ territoireNom, avancem
       </div>
     </Bloc>
   );
-}
+};
+
+export default AvancementPageProjetStructurant;

@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import Encart from '@/components/_commons/Encart/Encart';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
@@ -5,8 +6,6 @@ import CartographieAvancement
   from '@/components/_commons/Cartographie/CartographieAvancementNew/CartographieAvancement';
 import Avancements from '@/components/_commons/Avancements/Avancements';
 import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
-import RapportDétailléVueDEnsembleProps
-  from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble.interface';
 import usePageRapportDétaillé from '@/components/PageRapportDétaillé/usePageRapportDétaillé';
 import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import {
@@ -19,9 +18,25 @@ import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import RemontéeAlerte from '@/components/_commons/RemontéeAlerte/RemontéeAlerte';
+import {
+  AvancementsGlobauxTerritoriauxMoyensContrat,
+  AvancementsStatistiquesAccueilContrat,
+  RépartitionsMétéos,
+} from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
+import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import RapportDétailléTableauChantiers from './RapportDétailléTableauChantiers/RapportDétailléTableauChantiers';
 
-export function RapportDétailléVueDEnsemble({
+interface RapportDétailléVueDEnsembleProps {
+  chantiers: ChantierRapportDetailleContrat[]
+  filtresComptesCalculés: Record<string, { nombre: number }>
+  avancementsAgrégés: AvancementsStatistiquesAccueilContrat
+  avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
+  répartitionMétéos: RépartitionsMétéos
+  territoireCode: string
+  mailleSelectionnee: 'départementale' | 'régionale'
+}
+
+const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnsembleProps> = ({
   chantiers,
   répartitionMétéos,
   avancementsGlobauxTerritoriauxMoyens: donnéesCartographie,
@@ -29,7 +44,7 @@ export function RapportDétailléVueDEnsemble({
   territoireCode,
   filtresComptesCalculés,
   mailleSelectionnee,
-}: RapportDétailléVueDEnsembleProps) {
+}) => {
   const {
     donnéesTableauChantiers,
     remontéesAlertes,
@@ -162,4 +177,6 @@ export function RapportDétailléVueDEnsemble({
       </div>
     </RapportDétailléVueDEnsembleStyled>
   );
-}
+};
+
+export default RapportDétailléVueDEnsemble;

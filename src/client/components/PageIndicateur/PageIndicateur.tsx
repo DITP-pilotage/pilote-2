@@ -1,23 +1,35 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import Link from 'next/link';
 import { FormProvider } from 'react-hook-form';
+import { FunctionComponent } from 'react';
 import FilAriane from '@/components/_commons/FilAriane/FilAriane';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import PageIndicateurStyled from '@/components/PageIndicateur/PageIndicateur.styled';
-import PageIndicateurProps from '@/components/PageIndicateur/PageIndicateur.interface';
 import FicheIndicateur from '@/components/PageIndicateur/FicheIndicateur/FicheIndicateur';
 import { usePageIndicateur } from '@/components/PageIndicateur/usePageIndicateur';
 import Alerte from '@/components/_commons/Alerte/Alerte';
+import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
+import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
+import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 
-export default function PageIndicateur({
+interface PageIndicateurProps {
+  indicateur: MetadataParametrageIndicateurContrat,
+  mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
+  estUneCréation: boolean
+  modificationReussie: boolean
+  creationReussie: boolean
+  chantiers: ChantierSynthétisé[]
+}
+
+const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
   indicateur,
   mapInformationMetadataIndicateur,
   estUneCréation,
   modificationReussie,
   creationReussie,
   chantiers,
-}: PageIndicateurProps) {
+}) => {
   const chemin = [{ nom: 'Gestion des indicateurs', lien: '/admin/indicateurs' }];
 
   const {
@@ -191,4 +203,6 @@ export default function PageIndicateur({
       </main>
     </PageIndicateurStyled>
   );
-}
+};
+
+export default PageIndicateur;
