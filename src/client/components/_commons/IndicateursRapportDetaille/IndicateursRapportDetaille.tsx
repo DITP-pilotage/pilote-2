@@ -13,7 +13,7 @@ export default function IndicateursRapportDetaille({
   typeDeRéforme,
   chantierEstTerritorialisé,
   mailleSelectionnee,
-  estInteractif = true,
+  estInteractif = false,
 }: IndicateursProps) {
   const codeInseeSélectionnée = territoireCode?.split('-')[1];
   if (indicateurs.length === 0) {
