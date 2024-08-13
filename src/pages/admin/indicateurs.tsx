@@ -1,13 +1,14 @@
 import Head from 'next/head';
 import { GetServerSidePropsContext } from 'next';
 import { getServerSession } from 'next-auth/next';
+import { FunctionComponent } from 'react';
 import PageAdminIndicateurs from '@/components/PageAdminIndicateurs/PageAdminIndicateurs';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import {
   estAutoriséAModifierDesIndicateurs,
 } from '@/client/utils/indicateur/indicateur';
 
-export default function NextPageIndicateurs() {
+const NextPageIndicateurs: FunctionComponent<{}> = () => {
   return (
     <>
       <Head>
@@ -18,7 +19,9 @@ export default function NextPageIndicateurs() {
       <PageAdminIndicateurs />
     </>
   );
-}
+};
+
+export default NextPageIndicateurs;
 
 
 export async function getServerSideProps({ req, res }: GetServerSidePropsContext) {

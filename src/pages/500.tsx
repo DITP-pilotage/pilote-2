@@ -1,7 +1,8 @@
 import Head from 'next/head';
+import { FunctionComponent } from 'react';
 import Erreur500 from '@/components/Erreur/Erreur500';
 
-export default function Erreur500Personnalisée() {
+const Erreur500Personnalisée: FunctionComponent<{}> = () => {
   return (
     <>
       <Head>
@@ -12,4 +13,6 @@ export default function Erreur500Personnalisée() {
       <Erreur500 />
     </>
   );
-}
+};
+
+export default Erreur500Personnalisée;

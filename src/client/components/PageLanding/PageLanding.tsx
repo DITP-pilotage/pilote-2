@@ -6,12 +6,13 @@ import téléchargementFichierSvg from '@gouvfr/dsfr/dist/artwork/pictograms/doc
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import Head from 'next/head';
+import { FunctionComponent } from 'react';
 import PageLandingStyled from '@/components/PageLanding/PageLanding.styled';
 import Titre from '@/components/_commons/Titre/Titre';
 import captureÉcranPilote from '/public/img/landing/capture-écran-pilote.png';
 import baromètreCarteSvg from '/public/img/landing/baromètre-carte-france.svg';
 
-export default function PageLanding() {
+const PageLanding: FunctionComponent<{}> = () => {
   return (
     <>
       <Head>
@@ -221,4 +222,6 @@ export default function PageLanding() {
       </PageLandingStyled>
     </>
   );
-}
+};
+
+export default PageLanding;

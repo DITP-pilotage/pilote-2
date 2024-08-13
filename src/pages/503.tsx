@@ -1,7 +1,8 @@
 import Head from 'next/head';
+import { FunctionComponent } from 'react';
 import Erreur503 from '@/components/Erreur/Erreur503';
 
-export default function Erreur503Personnalisée() {
+const Erreur503Personnalisée: FunctionComponent<{}> = () => {
   return (
     <>
       <Head>
@@ -12,4 +13,6 @@ export default function Erreur503Personnalisée() {
       <Erreur503 />
     </>
   );
-}
+};
+
+export default Erreur503Personnalisée;

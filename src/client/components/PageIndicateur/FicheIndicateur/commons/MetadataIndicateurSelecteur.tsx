@@ -1,19 +1,12 @@
 import { UseFormRegisterReturn } from 'react-hook-form';
+import { FunctionComponent } from 'react';
 import { InformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import { MetadataIndicateurChamp } from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp';
 
 export const optionsBooleanSelecteur = [{ libellé: 'Oui', valeur: 'true' }, { libellé: 'Non', valeur: 'false' }];
 
-export const MetadataIndicateurSelecteur = ({
-  informationMetadataIndicateur,
-  estEnCoursDeModification,
-  erreurMessage,
-  listeValeur,
-  register,
-  values,
-  valeurAffiché,
-}: {
+export const MetadataIndicateurSelecteur: FunctionComponent<{
   informationMetadataIndicateur: InformationMetadataIndicateurContrat,
   estEnCoursDeModification: boolean,
   erreurMessage?: string,
@@ -21,6 +14,14 @@ export const MetadataIndicateurSelecteur = ({
   register: UseFormRegisterReturn<string>,
   values: string | boolean,
   valeurAffiché: string,
+}> = ({
+  informationMetadataIndicateur,
+  estEnCoursDeModification,
+  erreurMessage,
+  listeValeur,
+  register,
+  values,
+  valeurAffiché,
 }) => {
   return (
     <MetadataIndicateurChamp

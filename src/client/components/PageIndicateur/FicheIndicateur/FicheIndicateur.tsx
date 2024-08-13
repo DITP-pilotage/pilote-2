@@ -1,4 +1,5 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
+import { FunctionComponent } from 'react';
 import FicheIndicateurStyled from '@/components/PageIndicateur/FicheIndicateur/FicheIndicateur.styled';
 import SectionTableauIndicateur
   from '@/components/PageIndicateur/FicheIndicateur/SectionTableauIndicateur/SectionTableauIndicateur';
@@ -20,7 +21,7 @@ import SectionDétailsMetadataParametrePonderationIndicateur
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametrePonderationIndicateur/SectionDétailsMetadataParametrePonderationIndicateur';
 import FicheIndicateurProps from './FicheIndicateur.interface';
 
-export default function FicheIndicateur({ indicateur, estEnCoursDeModification, mapInformationMetadataIndicateur, chantiers }: FicheIndicateurProps) {
+const FicheIndicateur: FunctionComponent<FicheIndicateurProps> = ({ indicateur, estEnCoursDeModification, mapInformationMetadataIndicateur, chantiers }) => {
   return (
     <FicheIndicateurStyled>
       <SectionSelectionIndicateur
@@ -66,4 +67,6 @@ export default function FicheIndicateur({ indicateur, estEnCoursDeModification, 
 
     </FicheIndicateurStyled>
   );
-}
+};
+
+export default FicheIndicateur;

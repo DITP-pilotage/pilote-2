@@ -1,5 +1,6 @@
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
+import { FunctionComponent } from 'react';
 import { getServerAuthSession } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
@@ -13,7 +14,7 @@ export interface NextPageModifierUtilisateurProps {
   utilisateur: Utilisateur
 }
 
-export default function NextPageModifierUtilisateur({ utilisateur }: NextPageModifierUtilisateurProps) {
+const NextPageModifierUtilisateur: FunctionComponent<NextPageModifierUtilisateurProps> = ({ utilisateur }) => {
   return (
     <>
       <Head>
@@ -31,7 +32,8 @@ export default function NextPageModifierUtilisateur({ utilisateur }: NextPageMod
       <PageModifierUtilisateur utilisateur={utilisateur} />
     </>
   );
-}
+};
+export default NextPageModifierUtilisateur;
 
 export async function getServerSideProps({ req, res, params } :GetServerSidePropsContext<{ id : Utilisateur['id'] }>) {
   const redirigerVersPageAccueil = {

@@ -1,11 +1,16 @@
 import '@gouvfr/dsfr/dist/dsfr.min.css';
 import Link from 'next/link';
+import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import BoutonImpression from '@/components/_commons/BoutonImpression/BoutonImpression';
-import PageProjetStructurantEnTêteProps from './EnTête.interface';
+import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import PageProjetStructurantEnTêteStyled from './EnTête.styled';
 
-export default function PageProjetStructurantEnTête({ nomProjetStructurant }: PageProjetStructurantEnTêteProps) {
+interface PageProjetStructurantEnTêteProps {
+  nomProjetStructurant: ProjetStructurant['nom']
+}
+
+const PageProjetStructurantEnTête: FunctionComponent<PageProjetStructurantEnTêteProps> = ({ nomProjetStructurant }) => {
   return (
     <PageProjetStructurantEnTêteStyled className='fr-p-4w'>
       <Link
@@ -24,4 +29,6 @@ export default function PageProjetStructurantEnTête({ nomProjetStructurant }: P
       <BoutonImpression />
     </PageProjetStructurantEnTêteStyled>
   );
-}
+};
+
+export default PageProjetStructurantEnTête;

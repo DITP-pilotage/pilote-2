@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth/next';
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
+import { FunctionComponent } from 'react';
 import assert from 'node:assert/strict';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { dependencies } from '@/server/infrastructure/Dependencies';
@@ -317,7 +318,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   };
 };
 
-export default function NextPageRapportDétaillé({
+const NextPageRapportDétaillé: FunctionComponent<NextPageRapportDétailléProps> = ({
   chantiers,
   ministères,
   axes,
@@ -335,7 +336,7 @@ export default function NextPageRapportDétaillé({
   répartitionMétéos,
   listeDonnéesCartographieAvancement,
   listeDonnéesCartographieMétéo,
-}: NextPageRapportDétailléProps) {
+}) => {
   const mapChantierStatistiques = new Map<string, AvancementChantierRapportDetaille>();
   listeAvancementsStatistiques.forEach(itemAvancementsStatistique => {
     mapChantierStatistiques.set(itemAvancementsStatistique.id, itemAvancementsStatistique.avancementChantierRapportDetaille);
@@ -377,4 +378,6 @@ export default function NextPageRapportDétaillé({
       />
     </>
   );
-}
+};
+
+export default NextPageRapportDétaillé;
