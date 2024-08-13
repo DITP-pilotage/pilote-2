@@ -4,7 +4,6 @@ import useTableauPageAdminUtilisateurs
   from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/useTableauAdminUtilisateurs';
 import TableauEnTête from '@/components/_commons/Tableau/EnTête/TableauEnTête';
 import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import TableauAdminUtilisateursStyled
   from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/TableauAdminUtilisateurs.styled';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
@@ -12,6 +11,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import TableauAdminUtilisateursContenu
   from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/Contenu/TableauAdminUtilisateursContenu';
 import Loader from '@/components/_commons/Loader/Loader';
+import { UtilisateurContrat } from '@/server/chantiers/app/contrats/UtilisateurContrat';
 
 const TableauAdminUtilisateurs: FunctionComponent<{}> = () => {
   const { tableau, estEnChargement, changementDePageCallback, changementDeLaRechercheCallback, valeurDeLaRecherche } = useTableauPageAdminUtilisateurs();
@@ -44,7 +44,7 @@ const TableauAdminUtilisateurs: FunctionComponent<{}> = () => {
               <caption className='fr-sr-only'>
                 Tableau des utilisateurs
               </caption>
-              <TableauEnTête<Utilisateur> tableau={tableau} />
+              <TableauEnTête<UtilisateurContrat> tableau={tableau} />
               <TableauAdminUtilisateursContenu tableau={tableau} />
             </table>
             <TableauPagination

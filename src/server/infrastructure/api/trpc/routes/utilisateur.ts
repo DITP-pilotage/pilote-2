@@ -6,7 +6,6 @@ import {
   validationSupprimerUtilisateur,
 } from '@/validation/utilisateur';
 import { zodValidateurCSRF } from '@/validation/publication';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import RécupérerListeUtilisateursUseCase from '@/server/usecase/utilisateur/RécupérerListeUtilisateursUseCase';
 import FiltrerListeUtilisateursUseCase from '@/server/usecase/utilisateur/FiltrerListeUtilisateursUseCase';
 import CréerOuMettreÀJourUnUtilisateurUseCase
@@ -15,6 +14,8 @@ import SupprimerUnUtilisateurUseCase from '@/server/usecase/utilisateur/Supprime
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import RécupérerUnProfilUseCase from '@/server/usecase/profil/RécupérerUnProfilUseCase';
+import { RecupererTousLesTerritoiresUseCase } from '@/server/usecase/territoire/RecupererTousLesTerritoiresUseCase';
+import { presenterEnUtilisateurContrat, UtilisateurContrat } from '@/server/chantiers/app/contrats/UtilisateurContrat';
 
 export const utilisateurRouter = créerRouteurTRPC({
   'créer': procédureProtégée
@@ -65,9 +66,11 @@ export const utilisateurRouter = créerRouteurTRPC({
     }),
   récupérerUtilisateursFiltrés: procédureProtégée
     .input(validationFiltresPourListeUtilisateur)
-    .query(async ({ ctx, input }): Promise<Utilisateur[]> => {
+    .query(async ({ ctx, input }): Promise<UtilisateurContrat[]> => {
       const tousLesUtilisateurs = await new RécupérerListeUtilisateursUseCase(dependencies.getUtilisateurRepository()).run(ctx.session.habilitations);
       const habilitation = new Habilitation(ctx.session.habilitations);
-      return new FiltrerListeUtilisateursUseCase(tousLesUtilisateurs, input.filtres, ctx.session.profil, habilitation).run();
+      const utilisateursFiltres = await new FiltrerListeUtilisateursUseCase(tousLesUtilisateurs, input.filtres, ctx.session.profil, habilitation).run();
+      const territoiresListe = await new RecupererTousLesTerritoiresUseCase({ territoireRepository: dependencies.getTerritoireRepository() }).run();
+      return utilisateursFiltres.map(utilisateur => presenterEnUtilisateurContrat(utilisateur, territoiresListe));
     }),
 });

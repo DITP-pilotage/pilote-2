@@ -6,14 +6,16 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ChangeEvent, useCallback, useState } from 'react';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
+import { useSession } from 'next-auth/react';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { formaterDate } from '@/client/utils/date/date';
 import api from '@/server/infrastructure/api/trpc/api';
 import { filtresUtilisateursActifsStore } from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { UtilisateurContrat } from '@/server/chantiers/app/contrats/UtilisateurContrat';
 
-const reactTableColonnesHelper = createColumnHelper<Utilisateur>();
+const reactTableColonnesHelper = createColumnHelper<UtilisateurContrat>();
 const colonnes = [
   reactTableColonnesHelper.accessor('email', {
     header: 'Adresse électronique',
@@ -53,9 +55,15 @@ const colonnes = [
       return 0;
     },
   }),
+  reactTableColonnesHelper.accessor(row => row.nomTerritoiresListe.join(', '), {
+    id: 'territoire',
+    header: 'Territoire',
+    cell: props => props.getValue(),
+  }),
 ];
 
 export default function useTableauPageAdminUtilisateurs() {
+  const { data: session } = useSession();
   const filtresActifs = filtresUtilisateursActifsStore();
   
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
@@ -78,6 +86,9 @@ export default function useTableauPageAdminUtilisateurs() {
     },
     state: {
       globalFilter: valeurDeLaRecherche,
+      columnVisibility: {
+        territoire: [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session!.profil),
+      },
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
