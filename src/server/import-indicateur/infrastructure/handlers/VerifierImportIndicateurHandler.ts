@@ -38,7 +38,7 @@ export default async function handleVerifierFichierImportIndicateur(
 
   const fichier = <File>formData.file![0];
 
-  const baseSchemaUrl = 'https://raw.githubusercontent.com/DITP-pilotage/pilote-2/main/public/schema/';
+  const baseSchemaUrl = 'https://raw.githubusercontent.com/DITP-pilotage/pilote-2/PIL-346-indicateur-1000/public/schema/';
   const sessionToken = await getToken({ req: request, secureCookie: estSecuredEnv, secret: configuration.nextAuth.secret });
   const session = await getServerSession(request, response, authOptions);
 
