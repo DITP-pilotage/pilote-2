@@ -26,7 +26,7 @@ const SynthèseDesRésultatsHistorique: FunctionComponent<SynthèseDesRésultats
     <>
       <BoutonSousLigné
         ariaControls={ID_HTML}
-        classNameSupplémentaires='fr-mt-1w fr-ml-3w'
+        classNameSupplémentaires='fr-mt-1w'
         dataFrOpened={false}
         type='button'
       >

@@ -44,9 +44,9 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
 
   return (
     <TableauChantiersStyled className='fr-table fr-m-0 fr-p-0'>
-      <div className='tableau-actions fr-mb-3v'>
-        <div className='tableau-actions-gauche'>
-          <div className='barre-de-recherche'>
+      <div className='flex flex-wrap justify-between w-full fr-mb-3v'>
+        <div className='flex flex-direction-row align-center tableau-actions-gauche'>
+          <div className='barre-de-recherche fr-mr-md-4w fr-mb-1w fr-mb-md-0'>
             <BarreDeRecherche
               changementDeLaRechercheCallback={changementDeLaRechercheCallback}
               valeur={valeurDeLaRecherche}
@@ -54,7 +54,6 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
           </div>
           <Interrupteur
             auChangement={async () => {
-
               sauvegarderFiltres({ groupeParMinistere: !estGroupe });
               await setEstGroupe(!estGroupe);
               return tableau.getColumn('porteur')?.getToggleGroupingHandler()() ?? undefined;
@@ -64,7 +63,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
             libellé='Grouper par ministère'
           />
         </div>
-        <div className='tableau-actions-droite'>
+        <div className='tableau-actions-droite fr-mt-1w fr-mt-md-0'>
           <TableauChantiersActionsDeTri
             changementColonneÀTrierCallback={changementSélectionColonneÀTrierCallback}
             changementDirectionDeTriCallback={changementDirectionDeTriCallback}

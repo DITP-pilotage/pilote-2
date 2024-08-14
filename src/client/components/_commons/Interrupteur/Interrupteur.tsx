@@ -13,7 +13,7 @@ interface InterrupteurProps {
 
 const Interrupteur: FunctionComponent<InterrupteurProps> = ({ checked, id, libellé, auChangement, register, messageSecondaire }) => {
   return (
-    <div className='fr-toggle'>
+    <div className='fr-toggle w-full'>
       <input
         checked={checked}
         className='fr-toggle__input'

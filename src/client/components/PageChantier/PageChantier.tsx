@@ -181,7 +181,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
             Données régionales : cette politique prioritaire fait l’objet d’un pilotage régional avec des données régionales. Les valeurs des indicateurs régionaux sont reportés à la maille départementale.
           </BandeauInformation>
         }
-        <div className='fr-container--fluid fr-py-2w fr-px-md-2w'>
+        <div className='fr-container--fluid fr-py-2w fr-px-2w btnss'>
           <div
             className={`grid-template ${territoireSélectionné.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}
           >
@@ -189,7 +189,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
               className='rubrique'
               id='avancement'
             >
-              <TitreInfobulleConteneur className='fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+              <TitreInfobulleConteneur className='fr-mb-1w fr-mt-3v fr-mt-md-0'>
                 <Titre
                   baliseHtml='h2'
                   className='fr-h4 fr-mb-0 fr-py-1v'
@@ -236,7 +236,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
               className='rubrique'
               id='synthèse'
             >
-              <TitreInfobulleConteneur className='fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+              <TitreInfobulleConteneur className='fr-mb-1w fr-mt-3v fr-mt-md-0'>
                 <Titre
                   baliseHtml='h2'
                   className='fr-h4 fr-mb-0 fr-py-1v'
@@ -262,7 +262,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
             >
               <Titre
                 baliseHtml='h2'
-                className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0'
               >
                 Responsables
               </Titre>
@@ -289,7 +289,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                 >
                   <Titre
                     baliseHtml='h2'
-                    className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                    className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0'
                   >
                     Répartition géographique
                   </Titre>
@@ -310,7 +310,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
               className='rubrique'
               id='objectifs'
             >
-              <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+              <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0'>
                 <Titre
                   baliseHtml='h2'
                   className='fr-h4 fr-mb-0 fr-py-1v'
@@ -343,7 +343,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                 >
                   <Titre
                     baliseHtml='h2'
-                    className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                    className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0'
                   >
                     Indicateurs
                   </Titre>
@@ -379,10 +379,10 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   className='rubrique'
                   id='décisions-stratégiques'
                 >
-                  <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+                  <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0'>
                     <Titre
                       baliseHtml='h2'
-                      className='fr-h4'
+                      className='fr-h4 fr-mb-0 fr-py-1v'
                       estInline
                     >
                       Décisions stratégiques
@@ -406,7 +406,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
               className='rubrique'
               id='commentaires'
             >
-              <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+              <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0'>
                 <Titre
                   baliseHtml='h2'
                   className='fr-h4 fr-mb-0 fr-py-1v'

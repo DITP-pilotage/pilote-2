@@ -1,55 +1,39 @@
 import styled from '@emotion/styled';
+import { breakpointL, breakpointSm } from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
 
 const TableauChantiersStyled = styled.section`
   color: var(--text-title-grey);
-  
-  .tableau-actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    width: 100%;
 
-    .tableau-actions-gauche {
+  .tableau-actions-gauche {
+
+    @media screen and (max-width: ${breakpointL}) {
       display: flex;
-      flex-wrap: wrap;
-      column-gap: 2rem;
-      align-items: center;
-
-      & > * {
-        flex-basis: content;
-      }
-      
-      .barre-de-recherche {
-        width: 100%;
-        max-width: 22rem;
-      }
-    }
-
-    .tableau-actions-droite {
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
       width: 100%;
-      max-width: 22rem;
+      margin-top:1rem;
     }
-    
-    @media screen and (max-width: 78rem) {
-      .label {
-        font-size: 0.875rem !important;
-      }
-      
-      .tableau-actions-droite {
-        max-width: 17rem;
-      }
-      
-      .tableau-actions-gauche {
-        column-gap: 1rem;
-        
-        .barre-de-recherche {
-          max-width: 13rem;
-        }
-      }
-    }
-  
   }
 
+  .barre-de-recherche {
+    width: 100%;
+    max-width: 22rem;
+
+      @media screen and (max-width: ${breakpointSm}) {
+        max-width: 100%;
+      }
+  }
+      
+  .tableau-actions-droite {
+    width: 100%;
+    max-width: 22rem;
+
+      @media screen and (max-width: ${breakpointSm}) {
+        max-width:100%;
+    }
+  }
+  
   table.tableau {
     display: table;
 

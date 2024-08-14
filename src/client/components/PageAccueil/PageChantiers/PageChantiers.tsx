@@ -140,7 +140,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                       </button>
                     ) : (
                       <Link
-                        className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
+                        className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm'
                         href={`/fiche-territoriale?territoireCode=${territoireCode}`}
                         title='Voir la fiche territoriale'
                       >
@@ -155,7 +155,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
               process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' &&
               <div>
                 <Link
-                  className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
+                  className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm fr-px-2w fr-px-md-0 fr-mb-0'
                   href={`${territoireCode}/rapport-detaille${queryParamString.length > 0 ? `?${queryParamString}` : ''}`}
                   title='Voir le rapport détaillé'
                 >
@@ -180,8 +180,8 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
           </div>
         </div>
         <div className='fr-grid-row'>
-          <div className='fr-col-12 fr-col-lg-7 fr-col-xl-6 fr-pr-1w'>
-            <Bloc contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'>
+          <div className='fr-col-12 fr-col-lg-7 fr-col-xl-6 taux-avancement-section fr-mb-1w'>
+            <Bloc contenuClassesSupplémentaires='fr-p-1w fr-p-md-2w'>
               <section>
                 <div className='fr-container fr-p-0'>
                   <div className='fr-grid-row fr-mb-2w'>
@@ -283,7 +283,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
               </section>
             </Bloc>
           </div>
-          <div className='fr-col-12 fr-col-lg-5 fr-col-xl-6 fr-pl-1w'>
+          <div className='fr-col-12 fr-col-lg-5 fr-col-xl-6 fr-mb-1w'>
             <Bloc>
               <section>
                 <Titre
@@ -344,7 +344,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
           </div>
         }
         <div className='fr-grid-row fr-mt-7v'>
-          <div className='fr-col'>
+          <div className='fr-col-12'>
             <Bloc>
               <TitreInfobulleConteneur>
                 <Titre

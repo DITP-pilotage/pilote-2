@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { breakpointLg } from '@/client/components/_commons/MiseEnPage/MiseEnPage.styled';
 
 const SynthèseDesRésultatsStyled = styled.div`
   .contenu {
@@ -28,13 +29,24 @@ const SynthèseDesRésultatsStyled = styled.div`
     height: auto;
   }
 
-  .actions {
-    display: flex;
-    justify-content: end;
+  .boutons-meteo  {
+    @media screen and (max-width: ${breakpointLg}) {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+    }
   }
-
+    
   .bouton-modifier {
     border-radius: 0.25rem;
+    margin-left: 1rem;
+    
+      @media screen and (max-width: ${breakpointLg}) {
+        justify-content: center;
+        width: 100%;
+        margin-top: 1rem;
+      }
   }
 `;
 

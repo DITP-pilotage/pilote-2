@@ -76,15 +76,15 @@ const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = (
                 </div>
                 {
                   estInteractif ? (
-                    <div className='fr-grid-row fr-grid-row--right'>
-                      <div className='fr-col-12 actions fr-mt-1w'>
-                        {
+                 
+                    <div className='boutons-meteo fr-mt-1w flex flex-direction-row justify-end align-center'>
+                      {
                           !!synthèseDesRésultatsInitiale && <SynthèseDesRésultatsHistorique réformeId={réformeId} />
                         }
-                        {
+                      {
                           modeÉcriture ? (
                             <button
-                              className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
+                              className='fr-btn fr-btn--secondary bouton-modifier'
                               onClick={() => setModeÉdition(true)}
                               type='button'
                             >
@@ -97,8 +97,8 @@ const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = (
                             </button>
                           ) : null
                         }
-                      </div>
                     </div>
+                    
                   ) : null
                 }
               </>

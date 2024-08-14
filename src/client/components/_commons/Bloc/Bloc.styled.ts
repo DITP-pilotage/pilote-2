@@ -8,6 +8,7 @@ const BlocStyled = styled.div`
   .titre {
     background: var(--background-action-low-blue-france);
     border-bottom: 2px solid var(--border-plain-grey);
+    border-radius: 8px 8px 0 0;
   }
   
   @media print {
