@@ -3,13 +3,13 @@ import { breakpointL } from '@/client/components/_commons/MiseEnPage/MiseEnPage.
 
 const PageChantierStyled = styled.div`
   background: var(--background-contrast-grey);
-.btnss {
 
-@media screen and (max-width: ${breakpointL}) {
-  background-color: #f5f5fe; 
-}}
+  .container {
+    @media screen and (max-width: ${breakpointL}) {
+      background-color: #f5f5fe; 
+    } 
+  }
   
-
   .grid-template {
     display: grid;
     grid-template-areas:

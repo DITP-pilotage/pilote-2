@@ -181,7 +181,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
             Données régionales : cette politique prioritaire fait l’objet d’un pilotage régional avec des données régionales. Les valeurs des indicateurs régionaux sont reportés à la maille départementale.
           </BandeauInformation>
         }
-        <div className='fr-container--fluid fr-py-2w fr-px-2w btnss'>
+        <div className='fr-container--fluid fr-py-2w fr-px-2w container'>
           <div
             className={`grid-template ${territoireSélectionné.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}
           >

@@ -39,8 +39,8 @@ const SynthèseDesRésultatsStyled = styled.div`
   }
     
   .bouton-modifier {
-    border-radius: 0.25rem;
     margin-left: 1rem;
+    border-radius: 0.25rem;
     
       @media screen and (max-width: ${breakpointLg}) {
         justify-content: center;

@@ -14,8 +14,8 @@ break-inside: avoid;
   }
 
   .bouton-modifier {
-    border-radius: 0.25rem;
     margin-left: 1rem;
+    border-radius: 0.25rem;
     
       @media screen and (max-width: ${breakpointSm}) {
         justify-content: center;

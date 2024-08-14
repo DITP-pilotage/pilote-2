@@ -5,12 +5,11 @@ const TableauChantiersStyled = styled.section`
   color: var(--text-title-grey);
 
   .tableau-actions-gauche {
-
     @media screen and (max-width: ${breakpointL}) {
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
       align-items: flex-start;
+      justify-content: flex-start;
       width: 100%;
       margin-top:1rem;
     }
