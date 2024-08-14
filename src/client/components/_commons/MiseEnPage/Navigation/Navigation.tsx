@@ -69,7 +69,9 @@ const Navigation: FunctionComponent<{}> = () => {
 
   const territoireCodeURL = router.query.territoireCode as string | undefined;
 
-  const territoireCodeStore = filtresActifs?.territoireCode ?? (session?.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : session?.habilitations.lecture.territoires[0]);
+  const territoireCodeStore = Boolean(filtresActifs?.territoireCode) ?
+    filtresActifs.territoireCode :
+    (session?.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : session?.habilitations.lecture.territoires[0]);
   const territoireCode = territoireCodeURL ?? territoireCodeStore;
 
   const queryParamString = getQueryParamString(filtresActifs, new Set(['territoireCode']));

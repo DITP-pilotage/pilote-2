@@ -6,21 +6,25 @@ import PageImportIndicateurEnTêteStyled from './PageImportIndicateurEnTête.sty
 
 interface PageImportIndicateurEnTêteProps {
   chantierInformations: ChantierInformations
+  hrefBoutonRetour: string
 }
 
-const PageImportIndicateurEnTête: FunctionComponent<PageImportIndicateurEnTêteProps> = ({ chantierInformations }) => {
+const PageImportIndicateurEnTête: FunctionComponent<PageImportIndicateurEnTêteProps> = ({
+  chantierInformations,
+  hrefBoutonRetour,
+}) => {
   return (
     <PageImportIndicateurEnTêteStyled>
       <div className='fr-container fr-py-4w'>
         <FilAriane
-          chemin={[{ nom: 'Chantier', lien: `/chantier/${chantierInformations.id}` }]}
+          chemin={[{ nom: 'Chantier', lien: hrefBoutonRetour }]}
           libelléPageCourante='Indicateurs'
         />
         <Titre
           baliseHtml='h1'
           className='fr-h2 fr-mt-2w fr-mb-1w'
         >
-          { chantierInformations.nom }
+          {chantierInformations.nom}
         </Titre>
       </div>
     </PageImportIndicateurEnTêteStyled>

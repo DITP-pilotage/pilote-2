@@ -1,5 +1,6 @@
 import { FunctionComponent } from 'react';
-import PageImportIndicateurSectionRessource from '@/components/PageImportIndicateur/PageImportIndicateurSectionRessource/PageImportIndicateurSectionRessource';
+import PageImportIndicateurSectionRessource
+  from '@/components/PageImportIndicateur/PageImportIndicateurSectionRessource/PageImportIndicateurSectionRessource';
 import { RapportContrat } from '@/server/app/contrats/RapportContrat';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { InformationIndicateurContrat } from '@/server/app/contrats/InformationIndicateurContrat';
@@ -14,6 +15,7 @@ interface PageImportIndicateurProps {
   indicateurs: Indicateur[];
   rapport: RapportContrat | null
   informationsIndicateur: InformationIndicateurContrat[],
+  hrefBoutonRetour: string
 }
 
 const PageImportIndicateur: FunctionComponent<PageImportIndicateurProps> = ({
@@ -21,10 +23,14 @@ const PageImportIndicateur: FunctionComponent<PageImportIndicateurProps> = ({
   indicateurs,
   informationsIndicateur,
   rapport,
+  hrefBoutonRetour,
 }) => {
   return (
     <main>
-      <PageImportIndicateurEnTête chantierInformations={chantierInformations} />
+      <PageImportIndicateurEnTête
+        chantierInformations={chantierInformations}
+        hrefBoutonRetour={hrefBoutonRetour}
+      />
       <PageImportIndicateurExplicationEtapeImport />
       <PageImportIndicateurSectionImport
         indicateurs={indicateurs}
