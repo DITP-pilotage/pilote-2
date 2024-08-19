@@ -3,6 +3,7 @@ import { GetServerSidePropsContext } from 'next/types';
 import { getServerSession } from 'next-auth/next';
 import Head from 'next/head';
 import { FunctionComponent } from 'react';
+import { useSession } from 'next-auth/react';
 import PageImportIndicateur from '@/components/PageImportIndicateur/PageImportIndicateur';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { ChantierInformations } from '@/components/PageImportIndicateur/ChantierInformation.interface';
@@ -16,6 +17,7 @@ import {
   InformationIndicateurContrat,
   presenterEnInformationIndicateurContrat,
 } from '@/server/app/contrats/InformationIndicateurContrat';
+import { getFiltresActifs } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 
 interface NextPageImportIndicateurProps {
   chantierInformations: ChantierInformations
@@ -87,6 +89,15 @@ const NextPageImportIndicateur: FunctionComponent<NextPageImportIndicateurProps>
   informationsIndicateur,
   rapport,
 }) => {
+  const { data: session } = useSession();
+  const filtresActifs = getFiltresActifs();
+
+  const territoireCode = Boolean(filtresActifs?.territoireCode) ?
+    filtresActifs.territoireCode :
+    (session!.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : session!.habilitations.lecture.territoires[0]);
+
+  const hrefBoutonRetour = `/chantier/${chantierInformations.id}/${territoireCode}`;
+
   return (
     <>
       <Head>
@@ -96,6 +107,7 @@ const NextPageImportIndicateur: FunctionComponent<NextPageImportIndicateurProps>
       </Head>
       <PageImportIndicateur
         chantierInformations={chantierInformations}
+        hrefBoutonRetour={hrefBoutonRetour}
         indicateurs={indicateurs}
         informationsIndicateur={informationsIndicateur}
         rapport={rapport}
