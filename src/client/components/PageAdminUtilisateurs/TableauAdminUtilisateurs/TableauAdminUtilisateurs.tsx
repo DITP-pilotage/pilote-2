@@ -11,10 +11,16 @@ import Titre from '@/components/_commons/Titre/Titre';
 import TableauAdminUtilisateursContenu
   from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/Contenu/TableauAdminUtilisateursContenu';
 import Loader from '@/components/_commons/Loader/Loader';
-import { UtilisateurContrat } from '@/server/chantiers/app/contrats/UtilisateurContrat';
+import { UtilisateurContrat } from '@/server/gestion-utilisateur/app/contrats/UtilisateurContrat';
 
 const TableauAdminUtilisateurs: FunctionComponent<{}> = () => {
-  const { tableau, estEnChargement, changementDePageCallback, changementDeLaRechercheCallback, valeurDeLaRecherche } = useTableauPageAdminUtilisateurs();
+  const {
+    tableau,
+    estEnChargement,
+    changementDePageCallback,
+    changementDeLaRechercheCallback,
+    valeurDeLaRecherche,
+  } = useTableauPageAdminUtilisateurs();
 
   useEffect(() => {
     tableau.setPageSize(20);
@@ -29,7 +35,7 @@ const TableauAdminUtilisateurs: FunctionComponent<{}> = () => {
         />
       </div>
       {
-        estEnChargement  ? <Loader /> :
+        estEnChargement ? <Loader /> :
         <>
           <Titre
             baliseHtml='h2'

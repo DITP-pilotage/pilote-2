@@ -5,9 +5,9 @@ import process from 'node:process';
 import assert from 'node:assert/strict';
 import logger from '@/server/infrastructure/Logger';
 import UtilisateurCSVParseur from '@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur';
-import ImporterDesUtilisateursUseCase from '@/server/usecase/utilisateur/ImporterDesUtilisateursUseCase';
+import ImporterDesUtilisateursUseCase from '@/server/gestion-utilisateur/usecases/ImporterDesUtilisateursUseCase';
 import RécupérerListeUtilisateursExistantsUseCase
-  from '@/server/usecase/utilisateur/RécupérerListeUtilisateursExistantsUseCase';
+  from '@/server/gestion-utilisateur/usecases/RécupérerListeUtilisateursExistantsUseCase';
 import { CsvRecord } from '@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur.interface';
 import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/utilisateur/UtilisateurSQLRepository';
 import UtilisateurIAMKeycloakRepository

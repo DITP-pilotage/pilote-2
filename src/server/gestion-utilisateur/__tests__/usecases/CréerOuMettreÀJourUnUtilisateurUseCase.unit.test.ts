@@ -22,7 +22,7 @@ import {
 import { Profil } from '@/server/domain/profil/Profil.interface';
 import { ProfilBuilder } from '@/server/domain/profil/Profil.builder';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import CréerOuMettreÀJourUnUtilisateurUseCase from './CréerOuMettreÀJourUnUtilisateurUseCase';
+import CréerOuMettreÀJourUnUtilisateurUseCase from '@/server/gestion-utilisateur/usecases/CréerOuMettreÀJourUnUtilisateurUseCase';
 
 describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
   const fakeChantiersSynthétisés: ChantierSynthétisé[] = [

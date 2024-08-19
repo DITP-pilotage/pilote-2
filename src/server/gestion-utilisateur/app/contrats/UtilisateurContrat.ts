@@ -1,5 +1,9 @@
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
-import Utilisateur, { ProfilCode, profilsDépartementaux, profilsRégionaux } from '@/server/domain/utilisateur/Utilisateur.interface';
+import Utilisateur, {
+  ProfilCode,
+  profilsDépartementaux,
+  profilsRégionaux,
+} from '@/server/domain/utilisateur/Utilisateur.interface';
 
 export interface UtilisateurContrat {
   id: string
@@ -10,7 +14,7 @@ export interface UtilisateurContrat {
   fonction: string | null
   dateModification: string
   auteurModification: string
-  nomTerritoiresListe: string[]
+  listeNomsTerritoires: string[]
 }
 
 const recupererLesNomsDesTerritoires = (utilisateur: Utilisateur, territoiresListe: Territoire[]): string[] => {
@@ -36,6 +40,6 @@ export const presenterEnUtilisateurContrat = (utilisateur: Utilisateur, territoi
     fonction: utilisateur.fonction,
     dateModification: utilisateur.dateModification,
     auteurModification: utilisateur.auteurModification,
-    nomTerritoiresListe: recupererLesNomsDesTerritoires(utilisateur, territoiresListe),
+    listeNomsTerritoires: recupererLesNomsDesTerritoires(utilisateur, territoiresListe),
   };
 };

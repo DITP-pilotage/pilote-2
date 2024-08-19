@@ -1,6 +1,7 @@
 import {
   createColumnHelper,
-  getCoreRowModel, getFilteredRowModel,
+  getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
@@ -13,7 +14,7 @@ import { formaterDate } from '@/client/utils/date/date';
 import api from '@/server/infrastructure/api/trpc/api';
 import { filtresUtilisateursActifsStore } from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { UtilisateurContrat } from '@/server/chantiers/app/contrats/UtilisateurContrat';
+import { UtilisateurContrat } from '@/server/gestion-utilisateur/app/contrats/UtilisateurContrat';
 
 const reactTableColonnesHelper = createColumnHelper<UtilisateurContrat>();
 const colonnes = [
@@ -37,25 +38,25 @@ const colonnes = [
     header: 'Fonction',
     cell: props => props.getValue(),
   }),
-  reactTableColonnesHelper.accessor(row =>  `${formaterDate(row.dateModification, 'DD/MM/YYYY')} par ${row.auteurModification}`, {
+  reactTableColonnesHelper.accessor(row => `${formaterDate(row.dateModification, 'DD/MM/YYYY')} par ${row.auteurModification}`, {
     header: 'Dernière modification',
     cell: props => props.getValue(),
     sortingFn: (a, b) => {
       const dateA = new Date(a.original.dateModification);
       const dateB = new Date(b.original.dateModification);
 
-      if ( dateA.getTime() > dateB.getTime()) {
+      if (dateA.getTime() > dateB.getTime()) {
         return 1;
       }
 
-      if ( dateA.getTime() < dateB.getTime()) {
+      if (dateA.getTime() < dateB.getTime()) {
         return -1;
       }
 
       return 0;
     },
   }),
-  reactTableColonnesHelper.accessor(row => row.nomTerritoiresListe.join(', '), {
+  reactTableColonnesHelper.accessor(row => row.listeNomsTerritoires.join(', '), {
     id: 'territoire',
     header: 'Territoire',
     cell: props => props.getValue(),
@@ -65,10 +66,15 @@ const colonnes = [
 export default function useTableauPageAdminUtilisateurs() {
   const { data: session } = useSession();
   const filtresActifs = filtresUtilisateursActifsStore();
-  
+
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
 
-  const { data: utilisateurs = [], isLoading: estEnChargement } = api.utilisateur.récupérerUtilisateursFiltrés.useQuery({
+  const estAutoriseAVoirLaColonneTerritoire = [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session!.profil);
+
+  const {
+    data: utilisateurs = [],
+    isLoading: estEnChargement,
+  } = api.utilisateur.récupérerUtilisateursFiltrés.useQuery({
     filtres: filtresActifs,
   });
 
@@ -77,7 +83,7 @@ export default function useTableauPageAdminUtilisateurs() {
   }, [setValeurDeLaRecherche]);
 
   const tableau = useReactTable({
-    data : utilisateurs,
+    data: utilisateurs,
     columns: colonnes,
 
     globalFilterFn: (ligne, colonneId, texteRecherché) => {
@@ -87,7 +93,7 @@ export default function useTableauPageAdminUtilisateurs() {
     state: {
       globalFilter: valeurDeLaRecherche,
       columnVisibility: {
-        territoire: [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session!.profil),
+        territoire: estAutoriseAVoirLaColonneTerritoire,
       },
     },
     getCoreRowModel: getCoreRowModel(),
