@@ -1,7 +1,7 @@
 import UtilisateurBuilder from '@/server/domain/utilisateur/Utilisateur.builder';
 import { HabilitationBuilder } from '@/server/domain/utilisateur/habilitation/HabilitationBuilder';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import FiltrerListeUtilisateursUseCase from './FiltrerListeUtilisateursUseCase';
+import FiltrerListeUtilisateursUseCase from '@/server/gestion-utilisateur/usecases/FiltrerListeUtilisateursUseCase';
 
 describe('FiltrerListeUtilisateursUseCase', () => {
   const habilitationsAdmin = new HabilitationBuilder().build();

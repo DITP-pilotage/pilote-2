@@ -1,5 +1,7 @@
-import { FiltresUtilisateursActifs } from '@/client/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore.interface';
-import { PROFILS_POSSIBLES_COORDINATEURS_LECTURE } from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
+import { FiltresUtilisateursActifs } from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore.interface';
+import {
+  PROFILS_POSSIBLES_COORDINATEURS_LECTURE,
+} from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 import Utilisateur, { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 
