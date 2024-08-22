@@ -137,10 +137,10 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
               setEstOuverteBarreLatérale(true);
               setEstVisibleEnMobile(true);
             }}
-            title='Explorer'
+            title='Filtrer'
             type='button'
           >
-            Explorer
+            Filtrer
           </button>
         </div>
         <PageChantierEnTête

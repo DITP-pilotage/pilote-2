@@ -27,6 +27,7 @@ const SélecteurMailleStyled = styled.div`
 
       @media screen and (max-width: ${breakpointL}) {
         margin: 0.2rem;
+        font-size: 12px;
         border-radius: 0;
       }
 

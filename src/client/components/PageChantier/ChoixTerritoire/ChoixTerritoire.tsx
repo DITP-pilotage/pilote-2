@@ -64,10 +64,10 @@ const ChoixTerritoire: FunctionComponent<ChoixTerritoireProps> = ({
                 setEstOuverteBarreLatérale(true); 
                 setEstVisibleEnMobile(true);
               }}
-              title='Explorer'
+              title='Filtrer'
               type='button'
             >
-              Explorer
+              Filtrer
             </button>
           </div>
           {
