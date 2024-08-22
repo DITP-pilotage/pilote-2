@@ -23,7 +23,7 @@ const recupererLesNomsDesTerritoires = (utilisateur: Utilisateur, territoiresLis
     profilsRégionaux.includes(utilisateur.profil) ? 'régionale' : 'nationale';
   
   return mailleUtilisateur === 'nationale' ? 
-    ['Tous les territoire'] : 
+    ['Tous les territoires'] : 
     territoiresListe.
       filter(territoire => utilisateur.habilitations.lecture.territoires.includes(territoire.code) && territoire.maille === mailleUtilisateur).
       map(territoire => territoire.nom);
