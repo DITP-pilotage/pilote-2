@@ -10,7 +10,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import TableauAdminUtilisateursContenu
   from '@/components/PageAdminUtilisateursNew/TableauAdminUtilisateurs/Contenu/TableauAdminUtilisateursContenu';
 import Loader from '@/components/_commons/Loader/Loader';
-import { UtilisateurListeGestion } from '@/server/app/contrats/UtilisateurListeGestion';
+import { UtilisateurListeGestionContrat } from '@/server/app/contrats/UtilisateurListeGestionContrat';
 
 export default function TableauAdminUtilisateurs() {
   const {
@@ -43,7 +43,7 @@ export default function TableauAdminUtilisateurs() {
               <caption className='fr-sr-only'>
                 Tableau des utilisateurs
               </caption>
-              <TableauEnTête<UtilisateurListeGestion> tableau={tableau} />
+              <TableauEnTête<UtilisateurListeGestionContrat> tableau={tableau} />
               <TableauAdminUtilisateursContenu tableau={tableau} />
             </table>
             <TableauPagination

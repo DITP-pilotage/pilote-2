@@ -23,10 +23,11 @@ import {
 } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { UtilisateurListeGestion } from '@/server/app/contrats/UtilisateurListeGestion';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion';
+import { removeAccents } from '@/server/utils/remove-accents';
 
 export const convertirEnModel = (utilisateurAConvertir: {
   email: string
@@ -268,6 +269,14 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       this._récupérerPérimètresMinistériels(),
     ]) ;
 
+    const testLower = removeAccents(valeurDeLaRecherche.toLowerCase());
+
+    const unaccentedUtilisateur = await this._prisma.$queryRawUnsafe<{ id: string }[]>(`SELECT id FROM utilisateur where LOWER(unaccent(nom)) ILIKE $1
+      OR LOWER(unaccent(prenom)) ILIKE $1
+      OR LOWER(unaccent(fonction)) ILIKE $1
+      OR LOWER(unaccent(profil_code)) ILIKE $1;
+    `, `%${testLower}%`);
+
     const utilisateurs = await this._prisma.utilisateur.findMany(
       {
         include: {
@@ -275,26 +284,9 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
           habilitation: true,
         },
         where: {
-          OR: [
-            {
-              nom: {
-                contains: valeurDeLaRecherche,
-                mode: 'insensitive',
-              },
-            },
-            {
-              prenom: {
-                contains: valeurDeLaRecherche,
-                mode: 'insensitive',
-              },
-            },
-            {
-              fonction: {
-                contains: valeurDeLaRecherche,
-                mode: 'insensitive',
-              },
-            },
-          ],
+          id: {
+            in: unaccentedUtilisateur.map(utilisateurIds => utilisateurIds.id),
+          },
         },
         orderBy: sorting.reduce((acc, val) => {
           acc[this.convertirEnIdPrisma(val.id)] = val.desc ? 'desc' : 'asc';

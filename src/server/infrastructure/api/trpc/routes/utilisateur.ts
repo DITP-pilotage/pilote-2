@@ -15,7 +15,10 @@ import SupprimerUnUtilisateurUseCase from '@/server/gestion-utilisateur/usecases
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import RécupérerUnProfilUseCase from '@/server/usecase/profil/RécupérerUnProfilUseCase';
-import { UtilisateurListeGestion } from '@/server/app/contrats/UtilisateurListeGestion';
+import {
+  presenterEnUtilisateurListeGestionContrat,
+  UtilisateurListeGestionContrat,
+} from '@/server/app/contrats/UtilisateurListeGestionContrat';
 import { RecupererTousLesTerritoiresUseCase } from '@/server/usecase/territoire/RecupererTousLesTerritoiresUseCase';
 import {
   presenterEnUtilisateurContrat,
@@ -84,10 +87,13 @@ export const utilisateurRouter = créerRouteurTRPC({
     }),
   récupérerUtilisateursFiltrésNew: procédureProtégée
     .input(validationFiltresPourListeUtilisateurNew)
-    .query(async ({ ctx, input }): Promise<{ count: number, utilisateurs: UtilisateurListeGestion[] }> => {
-      const tousLesUtilisateurs = await new RécupérerListeUtilisateursUseCaseNew(dependencies.getUtilisateurRepository()).run({ sorting: input.sorting, valeurDeLaRecherche: input.valeurDeLaRecherche });
+    .query(async ({ ctx, input }): Promise<{ count: number, utilisateurs: UtilisateurListeGestionContrat[] }> => {
+      const [tousLesUtilisateurs, territoiresListe] = await Promise.all([
+        new RécupérerListeUtilisateursUseCaseNew(dependencies.getUtilisateurRepository()).run({ sorting: input.sorting, valeurDeLaRecherche: input.valeurDeLaRecherche }),
+        new RecupererTousLesTerritoiresUseCase({ territoireRepository: dependencies.getTerritoireRepository() }).run(),
+      ]);
       const habilitation = new Habilitation(ctx.session.habilitations);
       const utilisateursFiltrés = new FiltrerListeUtilisateursUseCaseNew(tousLesUtilisateurs, input.filtres, ctx.session.profil, habilitation).run();
-      return { count: utilisateursFiltrés.length, utilisateurs: utilisateursFiltrés.splice((input.pagination.pageIndex - 1) * input.pagination.pageSize, input.pagination.pageSize) };
+      return { count: utilisateursFiltrés.length, utilisateurs: utilisateursFiltrés.splice((input.pagination.pageIndex - 1) * input.pagination.pageSize, input.pagination.pageSize).map(utilisateur => presenterEnUtilisateurListeGestionContrat(utilisateur, territoiresListe)) };
     }),
 });

@@ -1,6 +1,6 @@
-import { UtilisateurListeGestion } from '@/server/app/contrats/UtilisateurListeGestion';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
+import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion';
 import { HabilitationsÀCréerOuMettreÀJourCalculées } from './habilitation/Habilitation.interface';
 import Utilisateur, { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from './Utilisateur.interface';
 

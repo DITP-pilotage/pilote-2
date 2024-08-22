@@ -10,14 +10,16 @@ import {
 import { ChangeEvent, useCallback } from 'react';
 import { parseAsArrayOf, parseAsInteger, parseAsJson, parseAsString, useQueryState, useQueryStates } from 'nuqs';
 import { z } from 'zod';
+import { useSession } from 'next-auth/react';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { formaterDate } from '@/client/utils/date/date';
 import api from '@/server/infrastructure/api/trpc/api';
 import { filtresUtilisateursActifsStore } from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
-import { UtilisateurListeGestion } from '@/server/app/contrats/UtilisateurListeGestion';
+import { UtilisateurListeGestionContrat } from '@/server/app/contrats/UtilisateurListeGestionContrat';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
-const reactTableColonnesHelper = createColumnHelper<UtilisateurListeGestion>();
+const reactTableColonnesHelper = createColumnHelper<UtilisateurListeGestionContrat>();
 const colonnes = [
   reactTableColonnesHelper.accessor('email', {
     header: 'Adresse électronique',
@@ -57,14 +59,22 @@ const colonnes = [
       return 0;
     },
   }),
+  reactTableColonnesHelper.accessor(row => row.listeNomsTerritoires.join(', '), {
+    id: 'territoire',
+    header: 'Territoire',
+    cell: props => props.getValue(),
+  }),
 ];
 
 export default function useTableauPageAdminUtilisateurs() {
+  const { data: session } = useSession();
   const filtresActifs = filtresUtilisateursActifsStore();
+
+  const estAutoriseAVoirLaColonneTerritoire = [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session!.profil);
 
   const [pagination, setPagination] = useQueryStates({
     pageIndex: parseAsInteger.withDefault(1),
-    pageSize: parseAsInteger.withDefault(10),
+    pageSize: parseAsInteger.withDefault(20),
   }, {
     history: 'push',
     shallow: false,
@@ -118,6 +128,9 @@ export default function useTableauPageAdminUtilisateurs() {
     state: {
       pagination,
       sorting,
+      columnVisibility: {
+        territoire: estAutoriseAVoirLaColonneTerritoire,
+      },
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

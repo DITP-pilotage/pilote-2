@@ -1,35 +1,36 @@
-import { Territoire } from '@/server/domain/territoire/Territoire.interface';
-import Utilisateur, {
+import {
   ProfilCode,
   profilsDépartementaux,
   profilsRégionaux,
 } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { Territoire } from '@/server/domain/territoire/Territoire.interface';
+import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion';
 
-export interface UtilisateurContrat {
+export interface UtilisateurListeGestionContrat {
   id: string
+  email: string
   nom: string
   prénom: string
-  email: string
-  profil: ProfilCode
   fonction: string | null
   dateModification: string
   auteurModification: string
+  profil: ProfilCode
   listeNomsTerritoires: string[]
 }
 
-const recupererLesNomsDesTerritoires = (utilisateur: Utilisateur, territoiresListe: Territoire[]): string[] => {
+const recupererLesNomsDesTerritoires = (utilisateur: UtilisateurListeGestion, territoiresListe: Territoire[]): string[] => {
   const mailleUtilisateur = profilsDépartementaux.includes(utilisateur.profil) ?
     'départementale' :
     profilsRégionaux.includes(utilisateur.profil) ? 'régionale' : 'nationale';
-  
-  return mailleUtilisateur === 'nationale' ? 
-    ['Tous les territoires'] : 
+
+  return mailleUtilisateur === 'nationale' ?
+    ['Tous les territoire'] :
     territoiresListe.
       filter(territoire => utilisateur.habilitations.lecture.territoires.includes(territoire.code) && territoire.maille === mailleUtilisateur).
       map(territoire => territoire.nom);
 };
 
-export const presenterEnUtilisateurContrat = (utilisateur: Utilisateur, territoiresListe: Territoire[]): UtilisateurContrat => {
+export const presenterEnUtilisateurListeGestionContrat = (utilisateur: UtilisateurListeGestion, territoiresListe: Territoire[]): UtilisateurListeGestionContrat => {
   return {
     id: utilisateur.id,
     nom: utilisateur.nom,

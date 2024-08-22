@@ -8,8 +8,6 @@ import {
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Titre from '@/components/_commons/Titre/Titre';
-import AdminUtilisateursBarreLatéraleProps
-  from '@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale.interface';
 import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
 import MultiSelectPérimètreMinistériel
   from '@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
@@ -22,6 +20,11 @@ import {
   AAccesATousLesUtilisateurs,
   PROFILS_POSSIBLES_COORDINATEURS_LECTURE,
 } from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
+
+interface AdminUtilisateursBarreLatéraleProps {
+  estOuverteBarreLatérale: boolean
+  setEstOuverteBarreLatérale: (valeur: boolean) => void
+}
 
 export default function AdminUtilisateursBarreLatérale({
   estOuverteBarreLatérale,

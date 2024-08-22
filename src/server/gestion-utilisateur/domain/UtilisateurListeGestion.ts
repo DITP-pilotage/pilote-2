@@ -1,5 +1,5 @@
-import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
 export interface UtilisateurListeGestion {
   id: string

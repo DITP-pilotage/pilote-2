@@ -1,19 +1,19 @@
 import '@gouvfr/dsfr/dist/component/pagination/pagination.min.css';
 import { parseAsInteger, useQueryStates } from 'nuqs';
 import { Table } from '@tanstack/react-table';
-import { UtilisateurListeGestion } from '@/server/app/contrats/UtilisateurListeGestion';
+import { UtilisateurListeGestionContrat } from '@/server/app/contrats/UtilisateurListeGestionContrat';
 import TableauPaginationÉlément from './Élément/TableauPaginationÉlément';
 
 interface TableauPaginationProps {
   nombreDePages: number,
-  tableau: Table<UtilisateurListeGestion>
+  tableau: Table<UtilisateurListeGestionContrat>
 }
 
 
 export default function TableauPagination({ tableau, nombreDePages }: TableauPaginationProps) {
   const [pagination, setPagination] = useQueryStates({
     pageIndex: parseAsInteger.withDefault(1),
-    pageSize: parseAsInteger.withDefault(10),
+    pageSize: parseAsInteger.withDefault(20),
   }, {
     shallow: false,
     history: 'push',

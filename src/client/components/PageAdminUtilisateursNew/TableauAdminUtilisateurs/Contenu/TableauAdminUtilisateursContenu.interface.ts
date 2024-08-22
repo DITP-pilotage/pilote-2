@@ -1,6 +1,6 @@
 import { Table } from '@tanstack/react-table';
-import { UtilisateurListeGestion } from '@/server/app/contrats/UtilisateurListeGestion';
+import { UtilisateurListeGestionContrat } from '@/server/app/contrats/UtilisateurListeGestionContrat';
 
 export default interface TableauAdminUtilisateursContenuProps {
-  tableau: Table<UtilisateurListeGestion>
+  tableau: Table<UtilisateurListeGestionContrat>
 }

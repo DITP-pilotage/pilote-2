@@ -3,11 +3,11 @@ import { useCallback } from 'react';
 import { useRouter } from 'next/router';
 import TableauAdminUtilisateursContenuProps
   from '@/components/PageAdminUtilisateursNew/TableauAdminUtilisateurs/Contenu/TableauAdminUtilisateursContenu.interface';
-import { UtilisateurListeGestion } from '@/server/app/contrats/UtilisateurListeGestion';
+import { UtilisateurListeGestionContrat } from '@/server/app/contrats/UtilisateurListeGestionContrat';
 
 export default function TableauAdminUtilisateursContenu({ tableau }: TableauAdminUtilisateursContenuProps) {
   const router = useRouter();
-  const auClicSurLaLigne = useCallback((row: Row<UtilisateurListeGestion>) => {
+  const auClicSurLaLigne = useCallback((row: Row<UtilisateurListeGestionContrat>) => {
     router.push(`/admin/utilisateur/${row.original.id}`);
   }, [router]);
 

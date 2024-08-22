@@ -1,8 +1,20 @@
 import FlècheDeTri from '@/components/_commons/Tableau/EnTête/FlècheDeTri/FlècheDeTri';
-import BoutonsDeTriProps from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.interface';
 import BoutonsDeTriStyled from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.styled';
 
-export default function BoutonsDeTri({ nomColonneÀTrier, directionDeTri, changementDirectionDeTriCallback }: BoutonsDeTriProps) {
+type DirectionDeTri = 'asc' | 'desc' | false;
+
+interface BoutonsDeTriProps {
+  nomColonneÀTrier: string;
+  directionDeTri: DirectionDeTri;
+  changementDirectionDeTriCallback: (tri: DirectionDeTri) => void;
+}
+
+
+export default function BoutonsDeTri({
+  nomColonneÀTrier,
+  directionDeTri,
+  changementDirectionDeTriCallback,
+}: BoutonsDeTriProps) {
   return (
     <BoutonsDeTriStyled>
       <button
