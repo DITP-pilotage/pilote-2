@@ -112,7 +112,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     } else {
       setAfficherChampLecturePérimètres(false);
     }
-    
+
     const afficherChoixCommentaire = !!profilSélectionné && !profilSélectionné.chantiers.lecture.tous;
     setAfficherChampSaisieCommentaire(afficherChoixCommentaire);
 
@@ -122,34 +122,25 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     const afficherGestionCompte = !!profilSélectionné && profilSélectionné.utilisateurs.modificationPossible && !AAccesATousLesUtilisateurs(profilSélectionné);
     setAfficherChampGestionCompte(afficherGestionCompte);
 
-    // Saisie Commentaire
     if (!utilisateur) {
-      const valeurParDéfautCaseCommentaire = 
-        afficherChoixCommentaire
-          ? false
-          : (!!profilSélectionné?.chantiers.saisieCommentaire.saisiePossible);
+      // Saisie Commentaire
+      const valeurParDéfautCaseCommentaire = afficherChoixCommentaire ? false : !!profilSélectionné?.chantiers.saisieCommentaire.saisiePossible;
       setValue('saisieCommentaire', valeurParDéfautCaseCommentaire);
   
       // Saisie Indicateur
-      const valeurParDéfautCaseIndicateur = 
-      afficherChoixIndicateur
-        ? false
-        : (!!profilSélectionné?.chantiers.saisieIndicateur.tousTerritoires);
+      const valeurParDéfautCaseIndicateur = afficherChoixIndicateur ? false : !!profilSélectionné?.chantiers.saisieIndicateur.tousTerritoires;
       setValue('saisieIndicateur', valeurParDéfautCaseIndicateur);
 
       // Gestion des comptes
-      const valeurParDéfautCaseGestionCompte = afficherGestionCompte 
-        ? false 
-        : AAccesATousLesUtilisateurs(profilSélectionné ?? null);
+      const valeurParDéfautCaseGestionCompte = afficherGestionCompte ? false : AAccesATousLesUtilisateurs(profilSélectionné ?? null);
       setValue('gestionUtilisateur', valeurParDéfautCaseGestionCompte);
-
     } else {
       setValue('saisieCommentaire', utilisateur.saisieCommentaire);
       setValue('saisieIndicateur', utilisateur.saisieIndicateur);
       setValue('gestionUtilisateur', utilisateur.gestionUtilisateur);
     }
-
-  }, [profilCodeSélectionné, profilSélectionné, setValue, utilisateur, session]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profilCodeSélectionné, profilSélectionné, setValue, utilisateur]);
 
   useEffect(() => {
     if (!chantiers || !profilSélectionné) return;
@@ -174,6 +165,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     resetField('habilitations.lecture.périmètres', { defaultValue: [] });
     resetField('habilitations.responsabilite.chantiers', { defaultValue: [] });
 
+
     if (utilisateur) {
       if (utilisateur.habilitations?.lecture.chantiers && afficherChampLectureChantiers) 
         setValue('habilitations.lecture.chantiers', utilisateur.habilitations?.lecture.chantiers);
@@ -190,8 +182,9 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   }, [afficherChampLectureChantiers, afficherChampLecturePérimètres, afficherChampLectureTerritoires, profilCodeSélectionné, resetField, setValue, utilisateur, afficherChampResponsabiliteChantiers]);
 
   useEffect(() => {
+
     if (profils) {
-      const profilAssociéAuProfilCodeSélectionné = profils.find(p => p.code === profilCodeSélectionné)!;
+      const profilAssociéAuProfilCodeSélectionné = profils.find(profil => profil.code === profilCodeSélectionné)!;
       setProfilSélectionné(profilAssociéAuProfilCodeSélectionné);
       let profilsFiltrés = profils;
       if ([ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.COORDINATEUR_REGION].includes(session!.profil)) {
@@ -221,13 +214,13 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   }, [déterminerChantiersSélectionnésÀPartirDesPérimètresMinistériels, getValues, setValue]);
 
   useEffect(() => {
+
     handleChangementValeursSélectionnéesChantiers([...getValues('habilitations.lecture.chantiers') ?? [], ...chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés]);
-  }, [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés, getValues, handleChangementValeursSélectionnéesChantiers]); 
+  }, [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés, getValues, handleChangementValeursSélectionnéesChantiers]);
 
   useEffect(() => {
     handleChangementValeursSélectionnéesPérimètresMinistériels(getValues('habilitations.lecture.périmètres'));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chantiersAccessiblesPourLeProfil]);
+  }, [getValues, handleChangementValeursSélectionnéesPérimètresMinistériels]);
 
   useEffect(() => {
     if (!afficherChampResponsabiliteChantiers) {
@@ -237,11 +230,12 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     } else {
       setChantiersAccessibleResponsabilite(chantiersAccessiblesPourLeProfil);
     }
-  }, [chantiersAccessiblesPourLeProfil, chantiersSélectionnés, afficherChampResponsabiliteChantiers, afficherChampLectureChantiers, chantiers]);
+  }, [afficherChampLectureChantiers, afficherChampResponsabiliteChantiers, chantiersAccessiblesPourLeProfil, chantiersSélectionnés]);
   
 
   // GESTION DES TERRITOIRES
   useEffect(() => {
+
     if (!profilSélectionné) return;
     
     setGroupesTerritoiresÀAfficher({
