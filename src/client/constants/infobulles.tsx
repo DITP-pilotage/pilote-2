@@ -87,7 +87,8 @@ const INFOBULLE_CONTENUS = {
         <p className='fr-text--sm'>
           <PictoChantierBrouillon />
           {' '}
-          : Chantier non publié.
+          : Chantier en cours de publication et visible uniquement par la direction de projet en administration
+          centrale.
         </p>
         <p className='fr-text--sm'>
           La date affichée sous la météo correspond à la date de la dernière modification de la météo, de la synthèse ou

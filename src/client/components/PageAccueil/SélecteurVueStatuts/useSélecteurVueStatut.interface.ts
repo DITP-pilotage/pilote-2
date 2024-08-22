@@ -10,7 +10,7 @@ export default function useSélecteurVueStatut() {
 
   const optionsMobile: optionChoixVueStatuts[] = useMemo(() => [
     { valeur: 'PUBLIE', libellé: 'Validés' },
-    { valeur: 'BROUILLON', libellé: 'Brouillons' },
+    { valeur: 'BROUILLON', libellé: 'En cours de publication' },
     { valeur: 'BROUILLON_ET_PUBLIE', libellé: 'Tous' },
   ], []);
 
