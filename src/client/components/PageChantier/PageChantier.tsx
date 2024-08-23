@@ -114,7 +114,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                 Maille géographique
               </Titre>
             ) : null
-          }        
+          }
           <SélecteursMaillesEtTerritoires
             chantierMailles={chantier.mailles}
             estVisibleEnMobile={estVisibleEnMobile}
@@ -198,6 +198,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
               </TitreInfobulleConteneur>
               <AvancementChantier
                 avancements={avancements}
+                mailleSelectionnee={mailleSelectionnee}
                 territoireCode={territoireCode}
               />
             </section>

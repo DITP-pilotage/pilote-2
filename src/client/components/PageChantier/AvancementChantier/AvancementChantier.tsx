@@ -6,6 +6,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import AvancementChantierStyled from './AvancementChantier.styled';
 
 const classeÀPartirDeLaMaille = {
@@ -16,6 +17,7 @@ const classeÀPartirDeLaMaille = {
 
 interface AvancementChantierProps {
   territoireCode: string
+  mailleSelectionnee: MailleInterne
   avancements: {
     nationale: AvancementsStatistiques
     départementale: {
@@ -37,7 +39,11 @@ interface AvancementChantierProps {
   }
 }
 
-const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({ avancements, territoireCode }) => {
+const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
+  avancements,
+  territoireCode,
+  mailleSelectionnee,
+}) => {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const territoireSélectionnéParent = territoireSélectionné.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné.codeParent) : null;
@@ -45,16 +51,17 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({ avance
   return (
     <AvancementChantierStyled className={classeÀPartirDeLaMaille[territoireSélectionné.maille]}>
       {
-        (avancements.départementale.global.moyenne !== null && avancements.départementale.annuel.moyenne !== null) &&
-        <Bloc titre={territoireSélectionné?.nomAffiché}>
-          <div className='fr-py-1w jauge'>
-            <AvancementsTerritoire
-              avancementAnnuel={avancements.départementale.annuel.moyenne}
-              avancementGlobal={avancements.départementale.global.moyenne}
-              territoireNom={territoireSélectionné.nom}
-            />
-          </div>
-        </Bloc>
+        mailleSelectionnee === 'départementale' ? (
+          <Bloc titre={territoireSélectionné?.nomAffiché}>
+            <div className='fr-py-1w jauge'>
+              <AvancementsTerritoire
+                avancementAnnuel={avancements.départementale.annuel.moyenne}
+                avancementGlobal={avancements.départementale.global.moyenne}
+                territoireNom={territoireSélectionné.nom}
+              />
+            </div>
+          </Bloc>
+        ) : null
       }
       <Bloc
         titre={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
