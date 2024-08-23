@@ -58,7 +58,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     )
   );
 
-
   const estProjetStructurantDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS' });
 
   return {
@@ -90,16 +89,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
       >
         <BarreLatéraleEncart>
           {
-            estProjetStructurantDisponible && estVueMobile && estVisibleEnMobile ? (
-              <Titre
-                baliseHtml='h3'
-                className='fr-h6 fr-mb-2w fr-mt-0 fr-col-8'
-              >
-                Type de projets
-              </Titre>
-            ) : null
-          }
-          {
             estProjetStructurantDisponible ? (
               <SélecteurTypeDeRéforme
                 modifierTypeDeRéformeSélectionné={() => {
@@ -109,16 +98,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
               />
             ) : null
           }
-          {
-            estVueMobile && estVisibleEnMobile ? (
-              <Titre
-                baliseHtml='h3'
-                className='fr-h6 fr-my-2w fr-col-8'
-              >
-                Maille géographique
-              </Titre>
-            ) : null
-          }       
           <SélecteursMaillesEtTerritoires
             estVisibleEnMobile={estVisibleEnMobile}
             estVueMobile={estVueMobile}
@@ -146,10 +125,10 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
               setEstOuverteBarreLatérale(true); 
               setEstVisibleEnMobile(true);
             }}
-            title='Explorer'
+            title='Filtrer'
             type='button'
           >
-            Explorer
+            Filtrer
           </button>
         </div>
         <PageProjetsStructurants

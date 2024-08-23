@@ -73,8 +73,8 @@ const SélecteurTerritoire: FunctionComponent<SélecteurTerritoiresProps> = ({
     <SélecteurAvecRecherche
       estVisibleEnMobile={estVisibleEnMobile}
       estVueMobile={estVueMobile}
-      htmlName={estVueMobile && estVisibleEnMobile ? 'Territoire' : 'périmètre-géographique'}
-      libellé={estVueMobile && estVisibleEnMobile ? 'Territoire' : 'Périmètre géographique'}
+      htmlName='Territoire'
+      libellé='Territoire'
       options={construireLaListeDOptions(territoiresAccessiblesEnLecture, session?.profil, mailleSelectionnee, chantierMailles)}
       valeurModifiéeCallback={territoireCodeSelectionne => changerTerritoire(territoireCodeSelectionne)}
       valeurSélectionnée={territoireCode}
