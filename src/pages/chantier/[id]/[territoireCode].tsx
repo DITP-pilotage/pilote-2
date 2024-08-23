@@ -113,7 +113,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
       new RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase(dependencies.getSynthèseDesRésultatsRepository()).run(chantierId, territoireCode, session.habilitations),
       new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getCommentaireRepository()).run([chantierId], territoireCode, session.habilitations),
       new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getObjectifRepository()).run([chantierId], session.habilitations),
-      new RécupérerDécisionStratégiqueLaPlusRécenteUseCase(dependencies.getDécisionStratégiqueRepository()).run(chantierId, session.habilitations),
+      new RécupérerDécisionStratégiqueLaPlusRécenteUseCase(dependencies.getDécisionStratégiqueRepository()).run(chantierId, session.habilitations).catch(() => null),
       new RécupérerDétailsIndicateursUseCase(dependencies.getIndicateurRepository()).run(chantierId, territoireCodes, session.habilitations),
       new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository()).run([chantierId], mailleSelectionnee, session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat),
     ]);
