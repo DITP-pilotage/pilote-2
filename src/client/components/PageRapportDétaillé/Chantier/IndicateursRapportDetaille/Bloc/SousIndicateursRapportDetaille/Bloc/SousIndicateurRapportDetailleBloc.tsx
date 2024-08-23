@@ -98,14 +98,14 @@ const SousIndicateurRapportDetailleBloc: FunctionComponent<SousIndicateurBlocPro
               {
                 !!détailsIndicateur[codeInsee] ? (
                   <IndicateurPonderation
-                    indicateurPondération={détailsIndicateur[codeInsee]?.pondération ?? null}
+                    indicateurPondération={détailsIndicateur[codeInsee].pondération ?? null}
                     mailleSélectionnée={maille}
                   />
                 ) : null
               }
             </div>
             {
-              détailsIndicateur[codeInsee]?.tendance === 'BAISSE' ? (
+              détailsIndicateur[codeInsee].tendance === 'BAISSE' ? (
                 <IndicateurTendance />
               ) : null
             }

@@ -431,6 +431,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 listeSousIndicateurs={listeSousIndicateurs}
                 mailleSelectionnee={mailleSelectionnee}
                 territoireCode={territoireCode}
+                territoiresCompares={territoiresCompares}
               />
             ) : null
           }

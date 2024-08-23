@@ -28,7 +28,7 @@ const CartographieMétéo: FunctionComponent<CartographieMétéoProps> = ({
   pathname,
   mailleSelectionnee,
 }) => {
-  const { donnéesCartographie, légende } = useCartographieMétéo(données, élémentsDeLégende);
+  const { donnéesCartographie, légende } = useCartographieMétéo(données, élémentsDeLégende, mailleSelectionnee);
 
   return (
     <Cartographie

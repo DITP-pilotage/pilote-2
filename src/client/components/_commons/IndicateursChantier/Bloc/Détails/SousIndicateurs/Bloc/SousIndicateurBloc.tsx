@@ -1,39 +1,35 @@
-import { FunctionComponent, useState } from 'react';
-import { useRouter } from 'next/router';
+import { Fragment, FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
-import Tableau from '@/components/_commons/Tableau/Tableau';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
 import IndicateurDétails from '@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
-import FormulaireIndicateur
-  from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/FormulaireIndicateur/FormulaireIndicateur';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
-import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import ResultatValidationFichier
-  from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
 import IndicateurPonderation from '@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
-import {
-  IndicateurDétailsParTerritoire,
-} from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface';
 import PictoSousIndicateur from '@/components/_commons/PictoSousIndicateur/PictoSousIndicateur';
 import useIndicateurAlerteDateMaj from '@/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj';
 import IndicateurTendance from '@/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance';
+import '@gouvfr/dsfr/dist/utility/colors/colors.css';
+import IndicateurBlocIndicateurTuile
+  from '@/components/_commons/IndicateursChantier/Bloc/indicateurBlocIndicateurTuile';
+import ValeurEtDate from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate';
+import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
+import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
+import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import useSousIndicateurBloc from './useSousIndicateurBloc';
 import SousIndicateurBlocStyled from './SousIndicateurBloc.styled';
-import '@gouvfr/dsfr/dist/utility/colors/colors.css';
 
 interface SousIndicateurBlocProps {
   indicateur: Indicateur
   détailsIndicateurs: DétailsIndicateurs
   detailsIndicateursTerritoire: DétailsIndicateurs
-  estDisponibleALImport: boolean
   estInteractif: boolean
   chantierEstTerritorialisé: boolean
   classeCouleurFond: string
   territoireCode: string
+  territoiresCompares: string[]
   mailleSelectionnee: MailleInterne
 }
 
@@ -43,28 +39,41 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
   detailsIndicateursTerritoire,
   estInteractif,
   chantierEstTerritorialisé,
-  estDisponibleALImport = false,
   classeCouleurFond,
   territoireCode,
+  territoiresCompares,
   mailleSelectionnee,
 }) => {
-  const router = useRouter();
-  const réformeId = router.query.id as string;
-
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
+  const {
+    codeInsee: codeInseeTerritoireSelectionne,
+  } = territoireCodeVersMailleCodeInsee(territoireCode);
+
+  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+
+  const detailTerritoiresCompares = territoiresCompares.map(récupérerDétailsSurUnTerritoire);
+  const detailTerritoireSelectionne = récupérerDétailsSurUnTerritoire(territoireCode);
 
   const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
+
+  const informationsIndicateurs = (
+    detailTerritoiresCompares.length > 0 ? detailTerritoiresCompares.map(territoireCompare => ({
+      territoireNom: territoireCompare.nomAffiché,
+      données: détailsIndicateur[territoireCompare.codeInsee],
+    })) : [{
+      territoireNom: detailTerritoireSelectionne.nomAffiché,
+      données: détailsIndicateur[codeInseeTerritoireSelectionne],
+    }]
+  ).sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) => indicateurDétailsTerritoire1.données.codeInsee.localeCompare(indicateurDétailsTerritoire2.données.codeInsee));
 
   const {
-    indicateurDétailsParTerritoires,
-    tableau,
     dateDeMiseAJourIndicateur,
     dateProchaineDateMaj,
     dateProchaineDateValeurActuelle,
     dateValeurActuelle,
     indicateurNonAJour,
-  } = useSousIndicateurBloc(détailsIndicateur);
-  const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
+  } = useSousIndicateurBloc(détailsIndicateur, territoireCode);
 
   const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour);
 
@@ -108,53 +117,131 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                   {dateDeMiseAJourIndicateur ?? 'Non renseignée'}
                 </span>
               </p>
-              {
-                !!détailsIndicateur[codeInsee] ? (
-                  <p
-                    className={`fr-mb-0 fr-text--xs${estIndicateurEnAlerte ? ' fr-text-warning' : ''}`}
-                  >
-                    Date prévisionnelle de la prochaine date de mise à jour des données (de l'indicateur) :
-                    {' '}
-                    <span className='fr-text--bold'>
-                      {dateProchaineDateMaj ?? 'Non renseignée'}
-                    </span>
-                  </p>
-                ) : null
-              }
-              {
-                !!détailsIndicateur[codeInsee] ? (
-                  <IndicateurPonderation
-                    indicateurPondération={détailsIndicateur[codeInsee]?.pondération ?? null}
-                    mailleSélectionnée={maille}
-                  />
-                ) : null
-              }
+              <p
+                className={`fr-mb-0 fr-text--xs${estIndicateurEnAlerte ? ' fr-text-warning' : ''}`}
+              >
+                Date prévisionnelle de la prochaine date de mise à jour des données (de l'indicateur) :
+                {' '}
+                <span className='fr-text--bold'>
+                  {dateProchaineDateMaj ?? 'Non renseignée'}
+                </span>
+              </p>
+              <IndicateurPonderation
+                indicateurPondération={détailsIndicateur[codeInsee]?.pondération ?? null}
+                mailleSélectionnée={maille}
+              />
             </div>
             {
-              détailsIndicateur[codeInsee]?.tendance === 'BAISSE' ? (
+              détailsIndicateur[codeInsee].tendance === 'BAISSE' ? (
                 <IndicateurTendance />
               ) : null
             }
           </div>
-          {
-            estDisponibleALImport ? (
-              <FormulaireIndicateur
-                chantierId={réformeId}
-                indicateurId={indicateur.id}
-                setRapport={setRapport}
-              />
-            )
-              : null
-          }
         </div>
         {
-          rapport !== null &&
-          <ResultatValidationFichier rapport={rapport} />
+          estVueTuile ? (
+            informationsIndicateurs.map(informationIndicateur => (
+              <Fragment key={informationIndicateur.territoireNom}>
+                <IndicateurBlocIndicateurTuile
+                  indicateurDétailsParTerritoire={informationIndicateur}
+                  typeDeRéforme='chantier'
+                  unité={informationIndicateur.données.unité}
+                />
+              </Fragment>
+            ))
+          ) : (
+            <table className='fr-table w-full border-collapse fr-mb-0'>
+              <thead className='fr-background-action-low-blue-france'>
+                <tr>
+                  <th className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm fr-text--bold'>
+                    Territoire(s)
+                  </th>
+                  <th className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'>
+                    Valeur initiale
+                  </th>
+                  <th className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'>
+                    Valeur actuelle
+                  </th>
+                  <th className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'>
+                    Cible 2024
+                  </th>
+                  <th className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm fr-text--bold'>
+                    {'Avancement ' + new Date().getFullYear().toString()}
+                  </th>
+                  <th className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'>
+                    Cible 2026
+                  </th>
+                  <th className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm fr-text--bold'>
+                    Avancement 2026
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                informationsIndicateurs.map(informationIndicateur => {
+                  return informationIndicateur.données ? ( // TODO supprimer une fois le refacto fait ! A cause de la react query y'a quelques frames où informationIndicateur.données est undefined
+                    <Fragment key={informationIndicateur.territoireNom}>
+                      <tr key={informationIndicateur.territoireNom}>
+                        <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm'>
+                          {informationIndicateur.territoireNom}
+                        </td>
+                        <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                          <ValeurEtDate
+                            date={informationIndicateur.données.dateValeurInitiale}
+                            unité={informationIndicateur.données.unité}
+                            valeur={informationIndicateur.données.valeurInitiale}
+                          />
+                        </td>
+                        <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                          <ValeurEtDate
+                            date={informationIndicateur.données.dateValeurActuelle}
+                            unité={informationIndicateur.données.unité}
+                            valeur={informationIndicateur.données.valeurActuelle}
+                          />
+                        </td>
+                        <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                          <ValeurEtDate
+                            date={informationIndicateur.données.dateValeurCibleAnnuelle}
+                            unité={informationIndicateur.données.unité}
+                            valeur={informationIndicateur.données.valeurCibleAnnuelle}
+                          />
+                        </td>
+                        <td className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm'>
+                          <BarreDeProgression
+                            afficherTexte
+                            fond='gris-clair'
+                            positionTexte='dessus'
+                            taille='md'
+                            valeur={informationIndicateur.données.avancement.annuel}
+                            variante='secondaire'
+                          />
+                        </td>
+                        <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                          <ValeurEtDate
+                            date={informationIndicateur.données.dateValeurCible}
+                            unité={informationIndicateur.données.unité}
+                            valeur={informationIndicateur.données.valeurCible}
+                          />
+                        </td>
+                        <td className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm'>
+                          <BarreDeProgression
+                            afficherTexte
+                            fond='gris-clair'
+                            positionTexte='dessus'
+                            taille='md'
+                            valeur={informationIndicateur.données.avancement.global}
+                            variante='primaire'
+                          />
+                        </td>
+                      </tr>
+                    </Fragment>
+                  ) : null;
+                })
+              }
+              </tbody>
+            </table>
+          )
         }
-        <Tableau<IndicateurDétailsParTerritoire>
-          tableau={tableau}
-          titre={`Tableau de l'indicateur : ${indicateur.nom}`}
-        />
         {
           estInteractif ? (
             <IndicateurDétails
@@ -167,11 +254,12 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
               détailsIndicateurs={détailsIndicateurs}
               estSousIndicateur
               indicateur={indicateur}
-              indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
+              indicateurDétailsParTerritoires={informationsIndicateurs}
               indicateurEstAjour={!indicateurNonAJour}
               listeSousIndicateurs={[]}
               mailleSelectionnee={mailleSelectionnee}
               territoireCode={territoireCode}
+              territoiresCompares={territoiresCompares}
             />
           ) : null
         }

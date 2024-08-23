@@ -19,7 +19,7 @@ function déterminerRemplissage(valeur: Météo | null, élémentsDeLégende: Ca
   else return élémentsDeLégende.DÉFAUT.remplissage;
 }
 
-export default function useCartographieMétéo(données: CartographieDonnéesMétéo, élémentsDeLégende: CartographieÉlémentsDeLégende) {
+export default function useCartographieMétéo(données: CartographieDonnéesMétéo, élémentsDeLégende: CartographieÉlémentsDeLégende, mailleSelectionnee: 'départementale' | 'régionale') {
   const { récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
 
   const légende = useMemo(() => {
@@ -46,21 +46,18 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
 
   }, [élémentsDeLégende, données]);
 
-  const donnéesCartographie = useMemo(() => {
-    let donnéesFormatées: CartographieDonnées = {};
+  const donnéesCartographie = données.reduce((acc, val) => {
+    const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(val.codeInsee, mailleSelectionnee);
 
-    données.forEach(({ valeur, codeInsee, estApplicable }) => {
-      const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
-
-      donnéesFormatées[codeInsee] = {
-        valeurAffichée: estApplicable === false ? 'Non applicable' : libellésMétéos[valeur],
-        remplissage: déterminerRemplissage(valeur, élémentsDeLégende, estApplicable),
+    return {
+      ...acc,
+      [val.codeInsee]: {
+        valeurAffichée: val.estApplicable === false ? 'Non applicable' : libellésMétéos[val.valeur],
+        remplissage: déterminerRemplissage(val.valeur, élémentsDeLégende, val.estApplicable),
         libellé: territoireGéographique.nomAffiché,
-      };
-    });
-
-    return donnéesFormatées;
-  }, [données, récupérerDétailsSurUnTerritoireAvecCodeInsee, élémentsDeLégende]);
+      },
+    };
+  }, {} as CartographieDonnées);
 
   return {
     légende,

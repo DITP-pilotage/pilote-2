@@ -38,6 +38,7 @@ interface IndicateurDétailsProps {
   dateProchaineDateMaj: string | null
   dateProchaineDateValeurActuelle: string | null
   territoireCode: string
+  territoiresCompares: string[]
   mailleSelectionnee: MailleInterne
   indicateurEstAjour: boolean
 }
@@ -55,6 +56,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   dateProchaineDateValeurActuelle,
   estSousIndicateur = false,
   territoireCode,
+  territoiresCompares,
   mailleSelectionnee,
   indicateurEstAjour,
 }) => {
@@ -193,35 +195,37 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
         </div>
       </section>
       {
-        listeSousIndicateurs.length > 0 &&
-        <section className='fr-accordion'>
-          <h3 className='fr-accordion__title'>
-            <button
-              aria-controls={`sous-indicateurs-${indicateur.id}`}
-              aria-expanded='false'
-              className='fr-accordion__btn'
-              onClick={() => setFutOuvert(true)}
-              title={nomSousIndicateurs}
-              type='button'
+        listeSousIndicateurs.length > 0 ? (
+          <section className='fr-accordion'>
+            <h3 className='fr-accordion__title'>
+              <button
+                aria-controls={`sous-indicateurs-${indicateur.id}`}
+                aria-expanded='false'
+                className='fr-accordion__btn'
+                onClick={() => setFutOuvert(true)}
+                title={nomSousIndicateurs}
+                type='button'
+              >
+                {nomSousIndicateurs}
+              </button>
+            </h3>
+            <div
+              className='fr-collapse fr-m-0 fr-p-0'
+              id={`sous-indicateurs-${indicateur.id}`}
             >
-              {nomSousIndicateurs}
-            </button>
-          </h3>
-          <div
-            className='fr-collapse fr-m-0 fr-p-0'
-            id={`sous-indicateurs-${indicateur.id}`}
-          >
-            <SousIndicateurs
-              chantierEstTerritorialisé={chantierEstTerritorialisé}
-              detailsIndicateursTerritoire={detailsIndicateursTerritoire}
-              détailsIndicateurs={détailsIndicateurs}
-              estInteractif
-              listeSousIndicateurs={listeSousIndicateurs}
-              mailleSelectionnee={mailleSelectionnee}
-              territoireCode={territoireCode}
-            />
-          </div>
-        </section>
+              <SousIndicateurs
+                chantierEstTerritorialisé={chantierEstTerritorialisé}
+                detailsIndicateursTerritoire={detailsIndicateursTerritoire}
+                détailsIndicateurs={détailsIndicateurs}
+                estInteractif
+                listeSousIndicateurs={listeSousIndicateurs}
+                mailleSelectionnee={mailleSelectionnee}
+                territoireCode={territoireCode}
+                territoiresCompares={territoiresCompares}
+              />
+            </div>
+          </section>
+        ) : null
       }
     </div>
   );

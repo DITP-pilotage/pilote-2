@@ -73,8 +73,8 @@ const Cartes: FunctionComponent<CartesProps> = ({
                   auClicTerritoireCallback={auClicTerritoireCallback}
                   données={donnéesCartographieAvancement}
                   mailleSelectionnee={mailleSelectionnee}
-                  options={{ estInteractif: estInteractif }}
-                  pathname='/chantier/[id]/[territoireCode]'
+                  options={{ estInteractif }}
+                  pathname={pathname}
                   territoireCode={territoireCode}
                   élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
                 />
@@ -104,8 +104,8 @@ const Cartes: FunctionComponent<CartesProps> = ({
                   auClicTerritoireCallback={auClicTerritoireCallback}
                   données={donnéesCartographieMétéo}
                   mailleSelectionnee={mailleSelectionnee}
-                  options={{ estInteractif: estInteractif }}
-                  pathname='/chantier/[id]/[territoireCode]'
+                  options={{ estInteractif }}
+                  pathname={pathname}
                   territoireCode={territoireCode}
                   élémentsDeLégende={ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS}
                 />
