@@ -72,6 +72,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     dateProchaineDateMaj,
     dateProchaineDateValeurActuelle,
     dateValeurActuelle,
+    indicateurNonAJour,
   } = useIndicateurBloc(détailsIndicateur, territoireCode);
 
   const informationsIndicateurs = (
@@ -84,7 +85,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     }]
   ).sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) => indicateurDétailsTerritoire1.données.codeInsee.localeCompare(indicateurDétailsTerritoire2.données.codeInsee));
 
-  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(détailsIndicateur, codeInseeTerritoireSelectionne);
+  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour);
 
   return (
     <IndicateurBlocStyled
@@ -154,7 +155,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           Date prévisionnelle de mise à jour de l’indicateur :
                         </p>
                         <p>
-                          Elle dépend de la date de valeur actuelle, de la période de mise à jour et du délai de
+                          Elle dépend de la date de la valeur actuelle, de la période de mise à jour et du délai de
                           disponibilité des données. Plus d'informations dans l'accordéon "définition de l’indicateur et
                           calendrier de mise à jour".
                         </p>
@@ -427,6 +428,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 détailsIndicateurs={détailsIndicateurs}
                 indicateur={indicateur}
                 indicateurDétailsParTerritoires={informationsIndicateurs}
+                indicateurEstAjour={!indicateurNonAJour}
                 listeSousIndicateurs={listeSousIndicateurs}
                 mailleSelectionnee={mailleSelectionnee}
                 territoireCode={territoireCode}

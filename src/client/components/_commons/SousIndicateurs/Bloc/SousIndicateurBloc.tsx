@@ -62,10 +62,11 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
     dateProchaineDateMaj,
     dateProchaineDateValeurActuelle,
     dateValeurActuelle,
+    indicateurNonAJour,
   } = useSousIndicateurBloc(détailsIndicateur);
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
 
-  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(détailsIndicateur, codeInsee);
+  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour);
 
   return (
     <SousIndicateurBlocStyled
@@ -167,6 +168,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
               estSousIndicateur
               indicateur={indicateur}
               indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
+              indicateurEstAjour={!indicateurNonAJour}
               listeSousIndicateurs={[]}
               mailleSelectionnee={mailleSelectionnee}
               territoireCode={territoireCode}

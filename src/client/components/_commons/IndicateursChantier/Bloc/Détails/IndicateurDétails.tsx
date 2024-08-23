@@ -39,6 +39,7 @@ interface IndicateurDétailsProps {
   dateProchaineDateValeurActuelle: string | null
   territoireCode: string
   mailleSelectionnee: MailleInterne
+  indicateurEstAjour: boolean
 }
 
 const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
@@ -55,6 +56,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   estSousIndicateur = false,
   territoireCode,
   mailleSelectionnee,
+  indicateurEstAjour,
 }) => {
   const [futOuvert, setFutOuvert] = useState(false);
 
@@ -68,7 +70,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   } = useIndicateurDétails(indicateur.id, futOuvert, mailleSelectionnee, detailsIndicateursTerritoire[indicateur.id]);
 
   const indicateurSiTypeDeReformeEstChantier = futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle;
-  const nomDefinitionDeLindicateur = estSousIndicateur ? 'Description du sous-indicateur' : 'Description de l\'indicateur';
+  const nomDefinitionDeLindicateur = estSousIndicateur ? 'Description du sous-indicateur et calendrier de mise à jour' : 'Description de l\'indicateur et calendrier de mise à jour';
   const nomRepartitionGeographiqueEtEvolution = 'Répartition géographique et évolution';
   const nomSousIndicateurs = 'Sous indicateurs';
 
@@ -102,6 +104,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       dateValeurActuelle={dateValeurActuelle}
                       delaiDisponibilite={indicateur.delaiDisponibilite}
                       description={indicateur.description}
+                      indicateurEstAjour={indicateurEstAjour}
                       modeDeCalcul={indicateur.modeDeCalcul}
                       periodicite={indicateur.periodicite}
                       source={indicateur.source}

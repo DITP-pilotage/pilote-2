@@ -11,6 +11,7 @@ interface IndicateurSpécificationsProps {
   dateValeurActuelle: string | null
   dateProchaineDateMaj: string | null
   dateProchaineDateValeurActuelle: string | null
+  indicateurEstAjour: boolean
 }
 
 const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProps> = ({
@@ -22,6 +23,7 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
   dateProchaineDateMaj,
   dateProchaineDateValeurActuelle,
   dateValeurActuelle,
+  indicateurEstAjour,
 }) => {
   const libelléValeurNull = 'Non renseignée';
 
@@ -82,7 +84,7 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
                 {delaiDisponibilite ? `${delaiDisponibilite} mois.` : 'Non renseigné'}
               </span>
               {' '}
-              De ce fait, la mise à jour de la prochaine valeur actuelle est requise au plus tard le
+              {`De ce fait, la mise à jour de la prochaine valeur actuelle est requise ${indicateurEstAjour ? 'au plus tard le' : 'depuis le'}`}
               {' '}
               <span className='fr-text--bold'>
                 {`${dateProchaineDateMaj ?? libelléValeurNull}.`}
@@ -91,9 +93,17 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
           </>
         ) : (
           <>
-            <p className='fr-text--xs'>
-              La période de mise à jour pour cet indicateur et/ou le délai de disponibilité ne sont pas renseignés.
-            </p>
+            {
+              !!dateValeurActuelle ? (
+                <p className='fr-text--xs'>
+                  La période de mise à jour pour cet indicateur et/ou le délai de disponibilité ne sont pas renseignés.
+                </p>
+              ) : (
+                <p className='fr-text--xs'>
+                  La valeur actuelle de cet indicateur est non renseignée. De ce fait, la mise à jour de la prochaine valeur actuelle ne peut être calculée.
+                </p>                
+              )
+            }
             <p className='fr-text--xs'>
               De ce fait, la mise à jour de la prochaine valeur actuelle ne peut être calculée.
             </p>
