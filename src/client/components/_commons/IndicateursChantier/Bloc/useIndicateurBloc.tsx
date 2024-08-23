@@ -12,10 +12,13 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
 
   const dateValeurActuelle = formaterDate(détailsIndicateur[codeInsee]?.dateValeurActuelle, 'DD/MM/YYYY') ?? null;
 
+  const indicateurNonAJour = détailsIndicateur[codeInsee]?.estAJour === false && détailsIndicateur[codeInsee]?.prochaineDateMaj !== null;
+  
   return {
     dateDeMiseAJourIndicateur,
     dateProchaineDateMaj,
     dateProchaineDateValeurActuelle,
     dateValeurActuelle,
+    indicateurNonAJour,
   };
 }
