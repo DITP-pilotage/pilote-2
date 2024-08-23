@@ -80,6 +80,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
                 </Titre>
                 <AvancementChantier
                   avancements={avancements}
+                  mailleSelectionnee={mailleSélectionnée}
                   territoireCode={territoireCode}
                 />
               </section>
