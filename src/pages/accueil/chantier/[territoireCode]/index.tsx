@@ -272,19 +272,17 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
           </section>
         </BarreLatérale>
         <IndexStyled className='w-full'>
-          <div className='bouton-filtrer fr-hidden-lg fr-py-1w fr-px-1v'>
-            <button
-              className='fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-equalizer-fill fr-text-title--blue-france'
-              onClick={() => {
-                setEstOuverteBarreLatérale(true); 
-                setEstVisibleEnMobile(true);
-              }}
-              title='Filtrer'
-              type='button'
-            >
-              Filtrer
-            </button>
-          </div>
+          <button
+            className='fr-hidden-lg bouton-filtrer fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-equalizer-fill fr-text-title--blue-france fr-py-2w fr-px-5v'
+            onClick={() => {
+              setEstOuverteBarreLatérale(true); 
+              setEstVisibleEnMobile(true);
+            }}
+            title='Filtrer'
+            type='button'
+          >
+            Filtrer
+          </button>
           <PageChantiers
             avancementsAgrégés={avancementsAgrégés}
             avancementsGlobauxTerritoriauxMoyens={avancementsGlobauxTerritoriauxMoyens}
