@@ -30,7 +30,6 @@ const SousIndicateurRapportDetailleBloc: FunctionComponent<SousIndicateurBlocPro
   classeCouleurFond,
   territoireCode,
 }) => {
-
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
 
   const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
@@ -39,9 +38,10 @@ const SousIndicateurRapportDetailleBloc: FunctionComponent<SousIndicateurBlocPro
     tableau,
     dateDeMiseAJourIndicateur,
     dateProchaineDateMaj,
-  } = useSousIndicateurBloc(détailsIndicateur);
+    indicateurNonAJour,
+  } = useSousIndicateurBloc(détailsIndicateur, territoireCode);
 
-  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(détailsIndicateur, codeInsee);
+  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour);
 
   return (
     <SousIndicateurRapportDetailleBlocStyled
@@ -70,8 +70,7 @@ const SousIndicateurRapportDetailleBloc: FunctionComponent<SousIndicateurBlocPro
                   <span className='fr-mr-1v'>
                     <PictoBaromètre />
                   </span>
-                )
-                  : null
+                ) : null
               }
               {indicateur.nom + (indicateur.unité === null || indicateur.unité === '' ? '' : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
             </Titre>

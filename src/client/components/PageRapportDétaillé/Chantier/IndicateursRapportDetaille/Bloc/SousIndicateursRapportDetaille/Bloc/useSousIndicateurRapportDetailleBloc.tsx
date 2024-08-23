@@ -5,11 +5,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { useCallback, useEffect, useState } from 'react';
-import {
-  territoiresComparésTerritoiresStore,
-  territoireSélectionnéTerritoiresStore,
-} from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import IndicateurBlocIndicateurTuile
@@ -20,71 +16,21 @@ import {
   IndicateurDétailsParTerritoire,
 } from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface';
 import ValeurEtDate from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate';
-
-const indicateurDétailsVide: IndicateurDétailsParTerritoire = {
-  territoireNom: '',
-  données: {
-    codeInsee: '',
-    valeurInitiale: null,
-    dateValeurInitiale: null,
-    valeurs: [],
-    dateValeurs: [],
-    valeurActuelle: null,
-    dateValeurActuelle: null,
-    valeurCible: null,
-    dateValeurCible: null,
-    valeurCibleAnnuelle: null,
-    dateValeurCibleAnnuelle: null,
-    avancement: { global: null, annuel: null },
-    proposition: null,
-    unité: null,
-    est_applicable: false,
-    dateImport: null,
-    pondération: null,
-    prochaineDateMaj: null,
-    prochaineDateMajJours: null,
-    prochaineDateValeurActuelle: null,
-    estAJour: null,
-    tendance: null,
-  },
-};
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
 const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
 
-export default function useSousIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire) {
+export default function useSousIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, territoireCode: string) {
+  const { codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
-  const territoiresComparés = territoiresComparésTerritoiresStore();
-  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
-  const [indicateurDétailsParTerritoires, setIndicateurDétailsParTerritoires] = useState<IndicateurDétailsParTerritoire[]>([indicateurDétailsVide]);
+  const détailTerritoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
 
-  const metÀJourDétailsParTerritoires = useCallback(() => {
-    if (territoiresComparés.length > 0) {
-      setIndicateurDétailsParTerritoires(
-        territoiresComparés
-          .map(t => ({ territoireNom: t.nomAffiché, données: détailsIndicateur[t.codeInsee] }))
-          .sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) => indicateurDétailsTerritoire1.données.codeInsee.localeCompare(indicateurDétailsTerritoire2.données.codeInsee)),
-      );
-    } else {
-      setIndicateurDétailsParTerritoires([{
-        territoireNom: territoireSélectionné!.nomAffiché,
-        données: détailsIndicateur[territoireSélectionné!.codeInsee],
-      }]);
-    }
-  }, [détailsIndicateur, territoireSélectionné, territoiresComparés]);
-
-  useEffect(() => {
-    if (détailsIndicateur) {
-      metÀJourDétailsParTerritoires();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [détailsIndicateur]);
-
-  useEffect(() => {
-    if (territoiresComparés.length === 0) {
-      setIndicateurDétailsParTerritoires([indicateurDétailsVide]);
-    }
-  }, [territoiresComparés]);
+  const indicateurDétailsParTerritoires = [{
+    territoireNom: détailTerritoireSélectionné.nomAffiché,
+    données: détailsIndicateur[détailTerritoireSélectionné.codeInsee],
+  }];
 
   const colonnes = [
     reactTableColonnesHelper.accessor('territoireNom', {
@@ -205,17 +151,21 @@ export default function useSousIndicateurBloc(détailsIndicateur: DétailsIndica
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  const dateDeMiseAJourIndicateur = territoireSélectionné
-    ? formaterDate(détailsIndicateur[territoireSélectionné.codeInsee]?.dateImport, 'DD/MM/YYYY') ?? null
+  const dateDeMiseAJourIndicateur = détailTerritoireSélectionné
+    ? formaterDate(détailsIndicateur[détailTerritoireSélectionné.codeInsee]?.dateImport, 'DD/MM/YYYY') ?? null
     : null;
 
-  const dateProchaineDateMaj = territoireSélectionné
-    ? formaterDate(détailsIndicateur[territoireSélectionné.codeInsee]?.prochaineDateMaj, 'DD/MM/YYYY') ?? null
+  const dateProchaineDateMaj = détailTerritoireSélectionné
+    ? formaterDate(détailsIndicateur[détailTerritoireSélectionné.codeInsee]?.prochaineDateMaj, 'DD/MM/YYYY') ?? null
     : null;
+
+  const indicateurNonAJour = détailsIndicateur[codeInsee]?.estAJour === false && détailsIndicateur[codeInsee]?.prochaineDateMaj !== null;
 
   return {
     tableau,
     dateDeMiseAJourIndicateur,
     dateProchaineDateMaj,
+    indicateurNonAJour,
+    indicateurDétailsParTerritoires,
   };
 }

@@ -381,32 +381,31 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 </td>
                               </tr>
                               {
-                                  estAutoriseAVoirLesPropositionsDeValeurActuelle ? (
-                                    <tr className='ligne-modification-proposition-valeur-actuelle'>
-                                      <td colSpan={7}>
-                                        <div className='flex w-full justify-end'>
-                                          <button
-                                            aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
-                                            className='fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary'
-                                            data-fr-opened='false'
-                                            type='button'
-                                          >
-                                            Editer la proposition
-                                          </button>
-                                        </div>
-                                        <ModalePropositionValeurActuelle
-                                          detailIndicateur={informationIndicateur.données}
-                                          generatedHTMLID={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
-                                          indicateur={indicateur}
-                                          territoireCode={territoireCode}
-                                        />
-                                      </td>
-                                    </tr>
-                                  ) : null
-                                }
+                                estAutoriseAVoirLesPropositionsDeValeurActuelle ? (
+                                  <tr className='ligne-modification-proposition-valeur-actuelle'>
+                                    <td colSpan={7}>
+                                      <div className='flex w-full justify-end'>
+                                        <button
+                                          aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
+                                          className='fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary'
+                                          data-fr-opened='false'
+                                          type='button'
+                                        >
+                                          Editer la proposition
+                                        </button>
+                                      </div>
+                                      <ModalePropositionValeurActuelle
+                                        detailIndicateur={informationIndicateur.données}
+                                        generatedHTMLID={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
+                                        indicateur={indicateur}
+                                        territoireCode={territoireCode}
+                                      />
+                                    </td>
+                                  </tr>
+                                ) : null
+                              }
                             </>
-                          ) : null
-                            : null
+                          ) : null : null
                         }
                       </Fragment>
                     ) : null;
