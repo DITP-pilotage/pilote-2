@@ -11,6 +11,7 @@ interface SousIndicateursProps {
   chantierEstTerritorialisé: boolean
   estInteractif: boolean
   territoireCode: string
+  territoiresCompares: string[]
   mailleSelectionnee: MailleInterne
 }
 
@@ -22,9 +23,9 @@ const SousIndicateurs: FunctionComponent<SousIndicateursProps> = ({
   detailsIndicateursTerritoire,
   estInteractif,
   territoireCode,
+  territoiresCompares,
   mailleSelectionnee,
 }) => {
-
   const listeClassesCouleursFond = [
     'fr-background-contrast--grey',
     'fr-background-alt--grey',
@@ -39,12 +40,12 @@ const SousIndicateurs: FunctionComponent<SousIndicateursProps> = ({
             classeCouleurFond={listeClassesCouleursFond[index % 2]}
             detailsIndicateursTerritoire={detailsIndicateursTerritoire}
             détailsIndicateurs={détailsIndicateurs}
-            estDisponibleALImport={false}
             estInteractif={estInteractif}
             indicateur={sousIndicateur}
             key={sousIndicateur.id}
             mailleSelectionnee={mailleSelectionnee}
             territoireCode={territoireCode}
+            territoiresCompares={territoiresCompares}
           />
         ))
       }

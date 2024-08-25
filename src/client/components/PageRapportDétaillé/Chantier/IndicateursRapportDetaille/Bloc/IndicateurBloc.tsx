@@ -3,41 +3,37 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
-import { IndicateurDétailsParTerritoire } from '@/components/_commons/IndicateursRapportDetaille/Bloc/IndicateurBloc.interface';
+import {
+  IndicateurDétailsParTerritoire,
+} from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/IndicateurBloc.interface';
 import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
-import IndicateurPondération from '@/components/_commons/IndicateursRapportDetaille/Bloc/Pondération/IndicateurPondération';
+import IndicateurPondération
+  from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/Pondération/IndicateurPondération';
 import IndicateurTendance
-  from '@/client/components/_commons/IndicateursRapportDetaille/Bloc/Tendance/IndicateurTendance';
-import SousIndicateurs from '@/client/components/_commons/SousIndicateurs/SousIndicateurs';
+  from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/Tendance/IndicateurTendance';
 import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import useIndicateurBloc from './useIndicateurBloc';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
+import SousIndicateursRapportDetaille from './SousIndicateursRapportDetaille/SousIndicateursRapportDetaille';
 
 interface IndicateurBlocProps {
   indicateur: Indicateur
   détailsIndicateurs: DétailsIndicateurs
   territoireProjetStructurant?: ProjetStructurant['territoire']
   territoireCode: string
-  estInteractif: boolean
   typeDeRéforme: TypeDeRéforme
-  chantierEstTerritorialisé: boolean
   listeSousIndicateurs: Indicateur[]
-  mailleSelectionnee: MailleInterne
 }
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   indicateur,
   détailsIndicateurs,
-  estInteractif,
   territoireProjetStructurant,
   territoireCode,
   typeDeRéforme,
-  chantierEstTerritorialisé,
-  mailleSelectionnee,
   listeSousIndicateurs,
 }) => {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
@@ -79,16 +75,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     {dateDeMiseAJourIndicateur}
                   </span>
                 </p>
+                <IndicateurPondération
+                  indicateurPondération={détailsIndicateur[territoireSélectionné.codeInsee].pondération ?? null}
+                  mailleSélectionnée={territoireSélectionné.maille}
+                />
                 {
-                  !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] ? (
-                    <IndicateurPondération
-                      indicateurPondération={détailsIndicateur[territoireSélectionné.codeInsee]?.pondération ?? null}
-                      mailleSélectionnée={territoireSélectionné.maille}
-                    />
-                  ) : null
-                }
-                {
-                  territoireSélectionné && détailsIndicateur[territoireSélectionné.codeInsee]?.tendance === 'BAISSE' ? (
+                  détailsIndicateur[territoireSélectionné.codeInsee].tendance === 'BAISSE' ? (
                     <IndicateurTendance />
                   ) : null
                 }
@@ -99,13 +91,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
             tableau={tableau}
             titre={`Tableau de l'indicateur : ${indicateur.nom}`}
           />
-          <SousIndicateurs
-            chantierEstTerritorialisé={chantierEstTerritorialisé}
-            detailsIndicateursTerritoire={{}}
+          <SousIndicateursRapportDetaille
             détailsIndicateurs={détailsIndicateurs}
-            estInteractif={estInteractif}
             listeSousIndicateurs={listeSousIndicateurs}
-            mailleSelectionnee={mailleSelectionnee}
             territoireCode={territoireCode}
           />
         </section>

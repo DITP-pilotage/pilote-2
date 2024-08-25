@@ -7,7 +7,7 @@ import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé
 import RapportDétailléChantierProps from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier.interface';
 import Responsables from '@/components/PageChantier/ResponsablesChantier/ResponsablesChantier';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
-import IndicateursRapportDetaille from '@/components/_commons/IndicateursRapportDetaille/IndicateursRapportDetaille';
+import IndicateursRapportDetaille from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/IndicateursRapportDetaille';
 import DécisionsStratégiques from '@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques';
 import Commentaires from '@/components/_commons/CommentairesNew/Commentaires';
 import Titre from '@/components/_commons/Titre/Titre';
@@ -191,11 +191,9 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
                     Indicateurs
                   </Titre>
                   <IndicateursRapportDetaille
-                    chantierEstTerritorialisé={chantier.estTerritorialisé}
                     détailsIndicateurs={détailsIndicateurs}
                     indicateurs={indicateurs}
                     listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
-                    mailleSelectionnee={mailleSélectionnée}
                     territoireCode={territoireCode}
                     typeDeRéforme='chantier'
                   />

@@ -1,18 +1,10 @@
-import { FunctionComponent, useState } from 'react';
-import { useRouter } from 'next/router';
+import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
-import IndicateurDétails from '@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
-import FormulaireIndicateur
-  from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/FormulaireIndicateur/FormulaireIndicateur';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
-import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import ResultatValidationFichier
-  from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
 import IndicateurPonderation from '@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import {
@@ -21,55 +13,38 @@ import {
 import PictoSousIndicateur from '@/components/_commons/PictoSousIndicateur/PictoSousIndicateur';
 import useIndicateurAlerteDateMaj from '@/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj';
 import IndicateurTendance from '@/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance';
-import useSousIndicateurBloc from './useSousIndicateurBloc';
-import SousIndicateurBlocStyled from './SousIndicateurBloc.styled';
+import useSousIndicateurBloc from './useSousIndicateurRapportDetailleBloc';
 import '@gouvfr/dsfr/dist/utility/colors/colors.css';
+import SousIndicateurRapportDetailleBlocStyled from './SousIndicateurBlocRapportDetaille.styled';
 
 interface SousIndicateurBlocProps {
   indicateur: Indicateur
   détailsIndicateurs: DétailsIndicateurs
-  detailsIndicateursTerritoire: DétailsIndicateurs
-  estDisponibleALImport: boolean
-  estInteractif: boolean
-  chantierEstTerritorialisé: boolean
   classeCouleurFond: string
   territoireCode: string
-  mailleSelectionnee: MailleInterne
 }
 
-const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
+const SousIndicateurRapportDetailleBloc: FunctionComponent<SousIndicateurBlocProps> = ({
   indicateur,
   détailsIndicateurs,
-  detailsIndicateursTerritoire,
-  estInteractif,
-  chantierEstTerritorialisé,
-  estDisponibleALImport = false,
   classeCouleurFond,
   territoireCode,
-  mailleSelectionnee,
 }) => {
-  const router = useRouter();
-  const réformeId = router.query.id as string;
-
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
 
   const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
 
   const {
-    indicateurDétailsParTerritoires,
     tableau,
     dateDeMiseAJourIndicateur,
     dateProchaineDateMaj,
-    dateProchaineDateValeurActuelle,
-    dateValeurActuelle,
     indicateurNonAJour,
-  } = useSousIndicateurBloc(détailsIndicateur);
-  const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
+  } = useSousIndicateurBloc(détailsIndicateur, territoireCode);
 
   const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour);
 
   return (
-    <SousIndicateurBlocStyled
+    <SousIndicateurRapportDetailleBlocStyled
       className={`fr-pt-1w ${classeCouleurFond}`}
       key={indicateur.id}
     >
@@ -95,8 +70,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                   <span className='fr-mr-1v'>
                     <PictoBaromètre />
                   </span>
-                )
-                  : null
+                ) : null
               }
               {indicateur.nom + (indicateur.unité === null || indicateur.unité === '' ? '' : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
             </Titre>
@@ -124,60 +98,26 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
               {
                 !!détailsIndicateur[codeInsee] ? (
                   <IndicateurPonderation
-                    indicateurPondération={détailsIndicateur[codeInsee]?.pondération ?? null}
+                    indicateurPondération={détailsIndicateur[codeInsee].pondération ?? null}
                     mailleSélectionnée={maille}
                   />
                 ) : null
               }
             </div>
             {
-              détailsIndicateur[codeInsee]?.tendance === 'BAISSE' ? (
+              détailsIndicateur[codeInsee].tendance === 'BAISSE' ? (
                 <IndicateurTendance />
               ) : null
             }
           </div>
-          {
-            estDisponibleALImport ? (
-              <FormulaireIndicateur
-                chantierId={réformeId}
-                indicateurId={indicateur.id}
-                setRapport={setRapport}
-              />
-            )
-              : null
-          }
         </div>
-        {
-          rapport !== null &&
-          <ResultatValidationFichier rapport={rapport} />
-        }
         <Tableau<IndicateurDétailsParTerritoire>
           tableau={tableau}
           titre={`Tableau de l'indicateur : ${indicateur.nom}`}
         />
-        {
-          estInteractif ? (
-            <IndicateurDétails
-              chantierEstTerritorialisé={chantierEstTerritorialisé}
-              dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
-              dateProchaineDateMaj={dateProchaineDateMaj}
-              dateProchaineDateValeurActuelle={dateProchaineDateValeurActuelle}
-              dateValeurActuelle={dateValeurActuelle}
-              detailsIndicateursTerritoire={detailsIndicateursTerritoire}
-              détailsIndicateurs={détailsIndicateurs}
-              estSousIndicateur
-              indicateur={indicateur}
-              indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
-              indicateurEstAjour={!indicateurNonAJour}
-              listeSousIndicateurs={[]}
-              mailleSelectionnee={mailleSelectionnee}
-              territoireCode={territoireCode}
-            />
-          ) : null
-        }
       </section>
-    </SousIndicateurBlocStyled>
+    </SousIndicateurRapportDetailleBlocStyled>
   );
 };
 
-export default SousIndicateurBloc;
+export default SousIndicateurRapportDetailleBloc;

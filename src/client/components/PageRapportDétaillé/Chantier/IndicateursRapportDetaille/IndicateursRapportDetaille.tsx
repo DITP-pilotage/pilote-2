@@ -1,7 +1,7 @@
 import Titre from '@/components/_commons/Titre/Titre';
-import IndicateursProps from '@/components/_commons/IndicateursRapportDetaille/Indicateurs.interface';
-import IndicateurBloc from '@/components/_commons/IndicateursRapportDetaille/Bloc/IndicateurBloc';
-import IndicateursStyled from '@/components/_commons/IndicateursRapportDetaille/Indicateurs.styled';
+import IndicateursProps from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Indicateurs.interface';
+import IndicateurBloc from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/IndicateurBloc';
+import IndicateursStyled from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Indicateurs.styled';
 import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
 
 export default function IndicateursRapportDetaille({
@@ -11,9 +11,6 @@ export default function IndicateursRapportDetaille({
   listeRubriquesIndicateurs,
   territoireProjetStructurant,
   typeDeRéforme,
-  chantierEstTerritorialisé,
-  mailleSelectionnee,
-  estInteractif = false,
 }: IndicateursProps) {
   const codeInseeSélectionnée = territoireCode?.split('-')[1];
   if (indicateurs.length === 0) {
@@ -46,13 +43,10 @@ export default function IndicateursRapportDetaille({
                     .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][codeInseeSélectionnée]?.pondération, détailsIndicateurs[b.id][codeInseeSélectionnée]?.pondération))
                     .map(indicateur => (
                       <IndicateurBloc
-                        chantierEstTerritorialisé={chantierEstTerritorialisé}
                         détailsIndicateurs={détailsIndicateurs}
-                        estInteractif={estInteractif}
                         indicateur={indicateur}
                         key={indicateur.id}
                         listeSousIndicateurs={indicateurs.filter(ind => ind.parentId === indicateur.id)}
-                        mailleSelectionnee={mailleSelectionnee}
                         territoireCode={territoireCode}
                         territoireProjetStructurant={territoireProjetStructurant}
                         typeDeRéforme={typeDeRéforme}

@@ -1,12 +1,12 @@
 import { FunctionComponent } from 'react';
 import IndicateurBlocIndicateurTuileStyled
-  from '@/components/_commons/IndicateursRapportDetaille/Bloc/IndicateurBlocIndicateurTuile.styled';
+  from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/IndicateurBlocIndicateurTuile.styled';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { formaterDate } from '@/client/utils/date/date';
 import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 import {
   IndicateurDétailsParTerritoire,
-} from '@/components/_commons/IndicateursRapportDetaille/Bloc/IndicateurBloc.interface';
+} from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/IndicateurBloc.interface';
 
 interface IndicateurDétailsParTerritoireProps {
   indicateurDétailsParTerritoire: IndicateurDétailsParTerritoire
