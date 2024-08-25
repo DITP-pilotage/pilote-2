@@ -21,18 +21,18 @@ const BarreLatéraleStyled = styled.div<BarreLatéraleStyledProps>`
   @media screen and (max-width: ${breakpointL}) {
     .barre-latérale {
       position: fixed;
+      top: 0;
       left: 0;
       z-index: 10000;
       width: 90%;
       height: 95%;
-      margin: 5%;
       transition: 500ms;
-      transform: ${props => props.estOuvert ? 'translateY(0)' : 'translateY(-200rem)'};
+      transform: ${props => props.estOuvert ? 'translateX(0)' : 'translateX(-200rem)'};
     }
   }
 
   .bouton-fermer{
-    background-color: #ececfe;
+    background-color: #f5f5fe;
   }
 
   .arrière-plan {
