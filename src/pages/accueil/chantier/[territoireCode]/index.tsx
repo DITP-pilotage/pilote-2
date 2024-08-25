@@ -34,7 +34,8 @@ import { objectEntries } from '@/client/utils/objects/objects';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
-import IndexStyled from './Index.styled';
+import { MeteoDisponible } from '@/server/fiche-territoriale/domain/MeteoDisponible';
+import IndexStyled from './index.styled';
 
 interface ChantierAccueil {
   chantiers: ChantierAccueilContrat[]
@@ -54,6 +55,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   assert(query.territoireCode, 'Le territoire code est obligatoire pour afficher la page d\'accueil');
   assert(session, 'Vous devez être authentifié pour accéder a cette page');
   assert(session.habilitations, 'La session ne dispose d\'aucune habilitation');
+
   const territoireCode = query.territoireCode as string;
 
   const territoireDept = session.habilitations.lecture.territoires.find(territoire => territoire.startsWith('DEPT'));
@@ -84,10 +86,13 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     estEnAlerteAbscenceTauxAvancementDepartemental: query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
   };
 
-  const { maille, codeInsee: codeInseeSelectionne } = territoireCodeVersMailleCodeInsee(territoireCode);
-  const mailleSelectionnee = query.maille as 'départementale' | 'régionale' ?? (maille === 'REG' ? 'régionale' : 'départementale');
+  const {
+    maille: mailleTerritoireSelectionnee,
+    codeInsee: codeInseeSelectionne,
+  } = territoireCodeVersMailleCodeInsee(territoireCode);
+  const mailleSelectionnee = query.maille as 'départementale' | 'régionale' ?? (mailleTerritoireSelectionnee === 'REG' ? 'régionale' : 'départementale');
 
-  const mailleChantier = maille === 'NAT' ? 'nationale' : mailleSelectionnee;
+  const mailleChantier = mailleTerritoireSelectionnee === 'NAT' ? 'nationale' : mailleSelectionnee;
 
   const [ministères, axes] = session.habilitations.lecture.chantiers.length === 0 ? [[], []] : (
     await Promise.all(
@@ -123,27 +128,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   {
     nomCritère: 'estEnAlerteMétéoNonRenseignée',
     condition: (chantier) => Alerte.estEnAlerteMétéoNonRenseignée(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.météo),
-  },
-  {
-    nomCritère: 'orage',
-    condition: (chantier) => (
-      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'ORAGE'
-    ) ?? false,
-  }, {
-    nomCritère: 'couvert',
-    condition: (chantier) => (
-      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'COUVERT'
-    ) ?? false,
-  }, {
-    nomCritère: 'nuage',
-    condition: (chantier) => (
-      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'NUAGE'
-    ) ?? false,
-  }, {
-    nomCritère: 'soleil',
-    condition: (chantier) => (
-      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'SOLEIL'
-    ) ?? false,
   }]);
 
   const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisse || filtresAlertes.estEnAlerteTauxAvancementNonCalculé || filtresAlertes.estEnAlerteMétéoNonRenseignée || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? chantiers.filter(chantier => {
@@ -171,12 +155,21 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     estApplicable: null,
   }));
 
-  const répartitionMétéos = {
-    ORAGE: filtresComptesCalculés.orage.nombre,
-    COUVERT: filtresComptesCalculés.couvert.nombre,
-    NUAGE: filtresComptesCalculés.nuage.nombre,
-    SOLEIL: filtresComptesCalculés.soleil.nombre,
-  };
+  const répartitionMétéos = chantiers.reduce((acc, chantier) => {
+    const { météo } = chantier.mailles[mailleChantier][codeInseeSelectionne];
+
+    return {
+      ...acc,
+      [météo]: acc[météo] + 1,
+    };
+  }, {
+    ORAGE: 0,
+    COUVERT: 0,
+    NUAGE: 0,
+    SOLEIL: 0,
+    NON_RENSEIGNEE: 0,
+    NON_NECESSAIRE: 0,
+  } satisfies Record<MeteoDisponible | 'NON_RENSEIGNEE' | 'NON_NECESSAIRE', number>);
 
   return {
     props: {

@@ -6,25 +6,15 @@ type Critère<T> = {
 export default class CompteurFiltre<T> {
   constructor(private éléments: T[]) {}
 
-  compter(critères: Critère<T>[]): Record<string, { nomCritère: string, nombre: number }> {
-    let ensembles = Object.fromEntries(
-      critères.map(critère => [
-        critère.nomCritère,
+  compter(criteres: Critère<T>[]): Record<string, { nomCritère: string, nombre: number }> {
+    return Object.fromEntries(
+      criteres.map(critere => [
+        critere.nomCritère,
         {
-          nomCritère: critère.nomCritère,
-          nombre: 0,
+          nomCritère: critere.nomCritère,
+          nombre: this.éléments.filter(critere.condition).length,
         },
       ]),
     );
-    
-    for (const élément of this.éléments) {
-      for (const critère of critères) {
-        if (critère.condition(élément)) {
-          ensembles[critère.nomCritère].nombre++;
-        }
-      }
-    }
-
-    return ensembles;
   }
 }
