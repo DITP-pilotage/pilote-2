@@ -4,6 +4,7 @@ WITH ranked_propositions AS (
         pva.territoire_code,
         pva.date_valeur_actuelle,
         pva.date_proposition,
+        pva.valeur_actuelle_proposee,
         pva.motif_proposition,
         pva.source_donnee_methode_calcul,
         INITCAP(CONCAT(u.prenom, ' ', u.nom)) AS auteur_proposition,
@@ -17,6 +18,7 @@ SELECT
     territoire_code,
     date_valeur_actuelle,
     date_proposition,
+    valeur_actuelle_proposee,
     motif_proposition,
     source_donnee_methode_calcul,
     auteur_proposition
