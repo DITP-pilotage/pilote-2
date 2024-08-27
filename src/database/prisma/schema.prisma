@@ -87,7 +87,7 @@ model chantier {
   a_meteo_regional                   Boolean?
   est_applicable                     Boolean?
   statut                             type_statut @default(PUBLIE)
-  cible_attendu                      Boolean     @default(true)
+  cible_attendue                     Boolean     @default(true)
   a_supprimer                        Boolean     @default(true)
 
   @@id([id, code_insee, maille])
