@@ -9,7 +9,7 @@ import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import départements from '@/client/constants/départements.json';
 import régions from '@/client/constants/régions.json';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
+import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import { Agrégat, AgrégatParTerritoire } from './agrégateur.interface';
 
@@ -62,7 +62,7 @@ export class AgrégateurListeChantiersParTerritoire {
       avancementsPourCeCodeInsee.annuel = donnéesTerritoire.donnéesBrutes.avancements.map(avancement => avancement.annuel);
       avancementsPourCetteMaille.global = [...avancementsPourCetteMaille.global, ...avancementsPourCeCodeInsee.global];
       avancementsPourCetteMaille.annuel = [...avancementsPourCetteMaille.annuel, ...avancementsPourCeCodeInsee.annuel];
-        
+
       this._calculerLaRépartitionDesAvancementsParTerritoire(maille, avancementsPourCeCodeInsee, codeInsee);
     });
   

@@ -1,7 +1,8 @@
 import { parseAsBoolean, useQueryStates } from 'nuqs';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
+import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 
-export function useRemontéesAlertesChantiers(territoireCode: string, filtresComptesCalculés: Record<string, { nombre: number }>) {
+export function useRemontéesAlertesChantiers(territoireCode: string, filtresComptesCalculés: Record<TypeAlerteChantier, number>) {
   const { maille } = territoireCodeVersMailleCodeInsee(territoireCode);
 
   const mailleChantier = maille === 'NAT' ? 'nationale' : maille === 'REG' ? 'régionale' : 'départementale';
@@ -17,35 +18,35 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
   const alerteAbscenceTauxAvancementDepartemental = {
     nomCritère: 'estEnAlerteAbscenceTauxAvancementDepartemental',
     libellé: 'Chantier(s) sans taux d’avancement au niveau départemental',
-    nombre: filtresComptesCalculés.estEnAlerteAbscenceTauxAvancementDepartemental.nombre,
+    nombre: filtresComptesCalculés.estEnAlerteAbscenceTauxAvancementDepartemental,
     estActivée: filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental,
   };
 
   const alerteTauxAvancementNonCalculé = {
     nomCritère: 'estEnAlerteTauxAvancementNonCalculé',
     libellé: 'Taux d’avancement non calculé(s) en raison d’indicateurs non renseignés',
-    nombre: filtresComptesCalculés.estEnAlerteTauxAvancementNonCalculé.nombre,
+    nombre: filtresComptesCalculés.estEnAlerteTauxAvancementNonCalculé,
     estActivée: filtresAlertes.estEnAlerteTauxAvancementNonCalculé,
   };
 
   const alerteEcart = {
     nomCritère: 'estEnAlerteÉcart',
     libellé: `Chantier(s) avec un retard de 10 points par rapport à leur médiane ${mailleChantier}`,
-    nombre: filtresComptesCalculés.estEnAlerteÉcart.nombre,
+    nombre: filtresComptesCalculés.estEnAlerteÉcart,
     estActivée: filtresAlertes.estEnAlerteÉcart,
   };
 
   const alerteBaisse = {
     nomCritère: 'estEnAlerteBaisse',
     libellé: 'Chantier(s) avec tendance en baisse',
-    nombre: filtresComptesCalculés.estEnAlerteBaisse.nombre,
+    nombre: filtresComptesCalculés.estEnAlerteBaisse,
     estActivée: filtresAlertes.estEnAlerteBaisse,
   };
 
   const alerteMétéoNonRenseignée = {
     nomCritère: 'estEnAlerteMétéoNonRenseignée',
     libellé: 'Chantier(s) avec météo et synthèse des résultats non renseignés',
-    nombre: filtresComptesCalculés.estEnAlerteMétéoNonRenseignée.nombre,
+    nombre: filtresComptesCalculés.estEnAlerteMétéoNonRenseignée,
     estActivée: filtresAlertes.estEnAlerteMétéoNonRenseignée,
   };
 

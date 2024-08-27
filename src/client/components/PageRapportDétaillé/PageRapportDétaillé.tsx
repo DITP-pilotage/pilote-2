@@ -30,6 +30,7 @@ import { AvancementChantierRapportDetaille } from '@/components/PageRapportDéta
 import {
   CartographieDonnéesMétéo,
 } from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo.interface';
+import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import FiltresSélectionnés from './FiltresSélectionnés/FiltresSélectionnés';
 
 interface PageRapportDétailléProps {
@@ -43,13 +44,13 @@ interface PageRapportDétailléProps {
   mapChantierStatistiques: Map<string, AvancementChantierRapportDetaille>
   codeInsee: CodeInsee
   territoireCode: string
-  filtresComptesCalculés: Record<string, { nombre: number }>
+  filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   répartitionMétéos: RépartitionsMétéos
   estAutoriseAVoirLesBrouillons: boolean
   mapDonnéesCartographieAvancement: Map<string, AvancementsGlobauxTerritoriauxMoyensContrat>
-  mapDonnéesCartographieMétéo:Map<string, CartographieDonnéesMétéo>
+  mapDonnéesCartographieMétéo: Map<string, CartographieDonnéesMétéo>
 }
 
 export const htmlId = {
