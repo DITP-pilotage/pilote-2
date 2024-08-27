@@ -988,4 +988,8 @@ sources:
       - name: utilisateur
         description: "Table des utilisateurs de la webapp"
       - name: proposition_valeur_actuelle
-        description: "Table des propositions de valeurs actuelles saisies dans la webapp"
+        description: "Table des propositions de valeurs actuelles saisies dans la webapp."
+        columns:
+          - name: statut
+            data_type: String
+            description: "Statut de la proposition. Valeurs dans `{EN_COURS}`"
