@@ -51,7 +51,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   return (
     <AvancementChantierStyled className={classeÀPartirDeLaMaille[territoireSélectionné.maille]}>
       {
-        mailleSelectionnee === 'départementale' ? (
+        territoireCode !== 'NAT-FR' && mailleSelectionnee === 'départementale' ? (
           <Bloc titre={territoireSélectionné?.nomAffiché}>
             <div className='fr-py-1w jauge'>
               <AvancementsTerritoire
@@ -64,7 +64,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         ) : null
       }
       {
-        mailleSelectionnee === 'régionale' || territoireCode !== 'NAT-FR' ? (
+        territoireCode !== 'NAT-FR' && mailleSelectionnee === 'régionale' ? (
           <Bloc
             titre={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
           >
