@@ -9,4 +9,4 @@ models:
     columns:
       - name: ch_cible_attendue
         data_type: boolean
-        description: "Indique si une cible et donc un TA sont attendus pour ce chantier."
+        description: "Indique si une cible et donc un TA sont attendus pour ce chantier. Si vide -> TRUE"
