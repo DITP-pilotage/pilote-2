@@ -63,17 +63,21 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
           </Bloc>
         ) : null
       }
-      <Bloc
-        titre={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
-      >
-        <div className='fr-py-1w jauge'>
-          <AvancementsTerritoire
-            avancementAnnuel={avancements.régionale.annuel.moyenne}
-            avancementGlobal={avancements.régionale.global.moyenne}
-            territoireNom={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
-          />
-        </div>
-      </Bloc>
+      {
+        mailleSelectionnee === 'régionale' || territoireCode !== 'NAT-FR' ? (
+          <Bloc
+            titre={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
+          >
+            <div className='fr-py-1w jauge'>
+              <AvancementsTerritoire
+                avancementAnnuel={avancements.régionale.annuel.moyenne}
+                avancementGlobal={avancements.régionale.global.moyenne}
+                territoireNom={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
+              />
+            </div>
+          </Bloc>
+        ) : null
+      }
       <div className='avancement-national'>
         <Bloc
           contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
