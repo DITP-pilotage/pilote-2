@@ -27,7 +27,7 @@ def model(dbt, session):
         'ch_state': 'string',
         'zg_applicable': 'string',
         'maille_applicable': 'string',
-        'cible_attendu': 'boolean'
+        'ch_cible_attendue': 'boolean'
     }
 
     chantiers = chantiers.astype(columns_type)
