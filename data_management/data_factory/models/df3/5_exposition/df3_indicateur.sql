@@ -78,13 +78,13 @@ get_evol_vaca as (
 	date_pro_maj.delai_disponibilite,
 	date_pro_maj.prochaine_date_va as prochaine_date_valeur_actuelle,
 	mpi.tendance,
-	NULL::float as objectif_taux_avancement_proposition,
-	NULL::float as objectif_taux_avancement_intermediaire_proposition,
-	NULL::float as valeur_actuelle_proposition,
-	NULL::date as date_proposition,
-	NULL as motif_proposition,
-	NULL as source_donnee_methode_calcul_proposition,
-	NULL as auteur_proposition,
+	a.tap_global as objectif_taux_avancement_proposition,
+	a.tap_courant as objectif_taux_avancement_intermediaire_proposition,
+	a.vacp as valeur_actuelle_proposition,
+	pva.date_proposition::date,
+	pva.motif_proposition,
+	pva.source_donnee_methode_calcul as source_donnee_methode_calcul_proposition,
+	pva.auteur_proposition,
     FALSE as a_supprimer
 	from public.territoire t 
 	cross join {{ ref('metadata_indicateurs') }} mi
@@ -101,6 +101,7 @@ get_evol_vaca as (
 	left join {{ ref('metadata_indicateur_types') }} mit on mit.indic_type_id = mi.indic_type 
 	left join {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} mpi on mi.indic_id = mpi.indic_id 
 	left join public.territoire terr on t.zone_id = terr.zone_id 
+	left join {{ ref('int_propositions_valeurs') }} pva on pva.indic_id = mi.indic_id and pva.territoire_code = terr.code and pva.date_valeur_actuelle::DATE = a.date_valeur_actuelle::DATE
 	left join {{ ref('metadata_zones') }} mz on mz.zone_id = terr.zone_id 
 	LEFT JOIN {{ ref('int_indicateurs_zones_applicables') }} z_appl ON z_appl.indic_id = mi.indic_id AND z_appl.zone_id = t.zone_id
 	-- pour avoir le bon nombre de lignes, une par territoire

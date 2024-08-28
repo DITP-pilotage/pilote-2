@@ -102,6 +102,27 @@ models:
         description: "Code du territoire concerné"
       - name: zone_id
         description: "ID de la zone concernée"
+  - name: int_propositions_valeurs
+    description: |
+      Récupère les metadata des valeurs proposées. Règles:
+      
+      - pour une date de valeur actuelle plusieurs propositions peuvent avoir été faites. On prend uniquement la dernière, c'est à dire celle avec la date de proposition la plus récente.
+      - on ne garde que les propositions au statut **EN_COURS**
+    columns:
+      - name: indic_id
+        description: "ID de l'indicateur"
+      - name: territoire_code
+        description: "Code territoire sur lequel la valeur a été proposée"
+      - name: date_valeur_actuelle
+        description: "Date de la valeur actuelle"
+      - name: date_proposition
+        description: "Date de la proposition"
+      - name: motif_proposition
+        description: "Motif de la proposition"
+      - name: source_donnee_methode_calcul
+        description: "Source de la valeur proposée"
+      - name: auteur_proposition
+        description: "Auteur de la proposition"
   - name: int_chantiers_zone_applicables
     description: "Une ligne pour chaque chantier et chaque territoire pour les chantiers uniquement applicable sur une zone groupe. Indique si le chantier est applicable sur le territoire"
     columns:
