@@ -12,6 +12,7 @@ interface IndicateurSpécificationsProps {
   dateProchaineDateMaj: string | null
   dateProchaineDateValeurActuelle: string | null
   indicateurEstAjour: boolean
+  indicateurEstApplicable: boolean | null
 }
 
 const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProps> = ({
@@ -24,6 +25,7 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
   dateProchaineDateValeurActuelle,
   dateValeurActuelle,
   indicateurEstAjour,
+  indicateurEstApplicable,
 }) => {
   const libelléValeurNull = 'Non renseignée';
 
@@ -55,7 +57,11 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
         Mise à jour
       </p>
       {
-        !!dateProchaineDateMaj ? (
+        !!!indicateurEstApplicable ? (
+          <p className='fr-text--xs'>
+            L'indicateur n’est pas applicable sur le territoire
+          </p>            
+        ) : !!dateProchaineDateMaj ? (
           <>
             <p className='fr-text--xs'>
               La période de mise à jour pour cet indicateur est :
