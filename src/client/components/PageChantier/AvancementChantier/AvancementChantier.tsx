@@ -64,7 +64,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         ) : null
       }
       {
-        territoireCode !== 'NAT-FR' && mailleSelectionnee === 'régionale' ? (
+        territoireCode !== 'NAT-FR' && (mailleSelectionnee === 'régionale' || mailleSelectionnee === 'départementale') ? (
           <Bloc
             titre={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
           >
