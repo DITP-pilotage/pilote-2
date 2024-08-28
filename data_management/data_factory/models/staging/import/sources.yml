@@ -991,5 +991,5 @@ sources:
         description: "Table des propositions de valeurs actuelles saisies dans la webapp."
         columns:
           - name: statut
-            data_type: String
+            data_type: text
             description: "Statut de la proposition. Valeurs dans `{EN_COURS}`"

@@ -103,7 +103,11 @@ models:
       - name: zone_id
         description: "ID de la zone concernée"
   - name: int_propositions_valeurs
-    description: "Récupère les metadata des valeurs proposées. Pour une date de valeur actuelle plusieurs propositions peuvent avoir été faites. On prend uniquement la dernière, c'est à dire celle avec la date de proposition la plus récente."
+    description: |
+      Récupère les metadata des valeurs proposées. Règles:
+      
+      - pour une date de valeur actuelle plusieurs propositions peuvent avoir été faites. On prend uniquement la dernière, c'est à dire celle avec la date de proposition la plus récente.
+      - on ne garde que les propositions au statut **EN_COURS**
     columns:
       - name: indic_id
         description: "ID de l'indicateur"
