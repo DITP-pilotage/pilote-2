@@ -10,6 +10,7 @@ import { parseForm } from '@/server/import-indicateur/infrastructure/handlers/Pa
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { configuration } from '@/config';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
 
 const présenterEnContrat = (report: DetailValidationFichier): DetailValidationFichierContrat => {
   return {
@@ -38,7 +39,9 @@ export default async function handleVerifierFichierImportIndicateur(
 
   const fichier = <File>formData.file![0];
 
-  const baseSchemaUrl = 'https://raw.githubusercontent.com/DITP-pilotage/pilote-2/PIL-346-indicateur-1000/public/schema/';
+  const récupérerVariableContenuUseCase = new RécupérerVariableContenuUseCase();
+  const baseSchemaUrl =  récupérerVariableContenuUseCase.run({ nomVariableContenu: 'NEXT_PUBLIC_SCHEMA_VALIDATA_URL' });
+  console.log(baseSchemaUrl);
   const sessionToken = await getToken({ req: request, secureCookie: estSecuredEnv, secret: configuration.nextAuth.secret });
   const session = await getServerSession(request, response, authOptions);
 
@@ -48,6 +51,7 @@ export default async function handleVerifierFichierImportIndicateur(
     {
       cheminCompletDuFichier: fichier.filepath,
       nomDuFichier: fichier.originalFilename as string,
+      // @ts-expect-error baseSchemaUrl ne peut être undefined
       baseSchemaUrl,
       indicateurId: request.query.indicateurId as string,
       utilisateurAuteurDeLimportEmail: (sessionToken.user as { email: string }).email,
