@@ -41,7 +41,6 @@ export default async function handleVerifierFichierImportIndicateur(
 
   const récupérerVariableContenuUseCase = new RécupérerVariableContenuUseCase();
   const baseSchemaUrl =  récupérerVariableContenuUseCase.run({ nomVariableContenu: 'NEXT_PUBLIC_SCHEMA_VALIDATA_URL' });
-  console.log(baseSchemaUrl);
   const sessionToken = await getToken({ req: request, secureCookie: estSecuredEnv, secret: configuration.nextAuth.secret });
   const session = await getServerSession(request, response, authOptions);
 
