@@ -82,8 +82,12 @@ get_evol_vaca as (
 	CASE 
 		WHEN COALESCE(z_appl.est_applicable, true) THEN date_pro_maj.est_a_jour 
 		ELSE NULL END AS est_a_jour,
-	date_pro_maj.periodicite,
-	date_pro_maj.delai_disponibilite,
+	CASE 
+		WHEN COALESCE(z_appl.est_applicable, true) THEN date_pro_maj.periodicite 
+		ELSE NULL END AS periodicite,
+	CASE 
+		WHEN COALESCE(z_appl.est_applicable, true) THEN date_pro_maj.delai_disponibilite 
+		ELSE NULL END AS delai_disponibilite,
 	CASE 
 		WHEN COALESCE(z_appl.est_applicable, true) THEN date_pro_maj.prochaine_date_va 
 		ELSE NULL END AS prochaine_date_valeur_actuelle,
