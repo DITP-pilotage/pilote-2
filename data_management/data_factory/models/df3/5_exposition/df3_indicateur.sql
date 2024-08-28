@@ -71,12 +71,22 @@ get_evol_vaca as (
     last_update_indic.dernier_import_date_indic,
     last_update_indic.dernier_import_rapport_id_indic,
     last_update_indic.dernier_import_auteur_indic,
-    date_pro_maj.prochaine_date_maj,
-    date_pro_maj.prochaine_date_maj_jours,
-    date_pro_maj.est_a_jour,
+	-- Si l'indic n'est pas applicable sur la zone, prochaine_date_maj=NULL
+	--	peu importe la date calculée pour la maille correspondant à cette zone
+	CASE 
+		WHEN COALESCE(z_appl.est_applicable, true) THEN date_pro_maj.prochaine_date_maj 
+		ELSE NULL END AS prochaine_date_maj,
+	CASE 
+		WHEN COALESCE(z_appl.est_applicable, true) THEN date_pro_maj.prochaine_date_maj_jours 
+		ELSE NULL END AS prochaine_date_maj_jours,
+	CASE 
+		WHEN COALESCE(z_appl.est_applicable, true) THEN date_pro_maj.est_a_jour 
+		ELSE NULL END AS est_a_jour,
 	date_pro_maj.periodicite,
 	date_pro_maj.delai_disponibilite,
-	date_pro_maj.prochaine_date_va as prochaine_date_valeur_actuelle,
+	CASE 
+		WHEN COALESCE(z_appl.est_applicable, true) THEN date_pro_maj.prochaine_date_va 
+		ELSE NULL END AS prochaine_date_valeur_actuelle,
 	mpi.tendance,
 	a.tap_global as objectif_taux_avancement_proposition,
 	a.tap_courant as objectif_taux_avancement_intermediaire_proposition,
