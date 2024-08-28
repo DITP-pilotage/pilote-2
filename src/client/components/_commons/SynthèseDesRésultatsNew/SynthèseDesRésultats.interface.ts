@@ -5,6 +5,7 @@ import SynthèseDesRésultatsProjetStructurant
 export interface SynthèseDesRésultatsProps {
   synthèseDesRésultatsInitiale: SynthèseDesRésultats | SynthèseDesRésultatsProjetStructurant
   réformeId: string
+  territoireCode: string
   nomTerritoire: string
   modeÉcriture?: boolean
   estInteractif?: boolean

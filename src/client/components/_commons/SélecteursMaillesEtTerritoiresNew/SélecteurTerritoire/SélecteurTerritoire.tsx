@@ -56,6 +56,7 @@ const SélecteurTerritoire: FunctionComponent<SélecteurTerritoiresProps> = ({
       delete router.query.estEnAlerteTauxAvancementNonCalculé;
       delete router.query.estEnAlerteÉcart;
     }
+    delete router.query._action;
     sauvegarderFiltres({ territoireCode: territoireCodeSelectionne });
 
     return router.push({

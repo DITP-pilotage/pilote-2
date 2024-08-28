@@ -19,6 +19,7 @@ const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = (
   nomTerritoire,
   modeÉcriture = false,
   estInteractif = true,
+  territoireCode,
 }) => {
   const [action] = useQueryState('_action', parseAsStringLiteral(['creation-reussie', '']));
   const [modeÉdition, setModeÉdition] = useQueryState('edition', parseAsBoolean.withDefault(false).withOptions({
@@ -42,6 +43,7 @@ const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = (
                 contenuInitial={synthèseDesRésultatsInitiale?.contenu}
                 météoInitiale={synthèseDesRésultatsInitiale?.météo}
                 synthèseDesRésultatsCrééeCallback={synthèseDesRésultatsCréée}
+                territoireCode={territoireCode}
               />
               :
               <>
@@ -98,7 +100,7 @@ const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = (
                       </div>
                     </div>
                   ) : null
-}
+                }
               </>
           }
         </div>

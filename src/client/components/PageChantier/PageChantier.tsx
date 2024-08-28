@@ -223,6 +223,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                 nomTerritoire={territoireSélectionné.nomAffiché}
                 réformeId={chantier.id}
                 synthèseDesRésultatsInitiale={synthèseDesRésultats ?? null}
+                territoireCode={territoireCode}
               />
             </section>
             <section
