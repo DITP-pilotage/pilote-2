@@ -6,6 +6,7 @@ export default interface SynthèseDesRésultatsFormulaireProps {
   météoInitiale?: Météo
   synthèseDesRésultatsCrééeCallback?: (synthèseDesRésultatsCréée: SynthèseDesRésultats) => void
   annulationCallback?: () => void
+  territoireCode: string
 }
 
 export interface SynthèseDesRésultatsFormulaireInputs {

@@ -7,15 +7,33 @@ import { libellésMétéos, MétéoSaisissable, météosSaisissables } from '@/s
 import Titre from '@/components/_commons/Titre/Titre';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import Alerte from '@/components/_commons/Alerte/Alerte';
-import { LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS, validationSynthèseDesRésultatsFormulaire } from 'validation/synthèseDesRésultats';
+import {
+  LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS,
+  validationSynthèseDesRésultatsFormulaire,
+} from 'validation/synthèseDesRésultats';
 import SynthèseDesRésultatsFormulaireStyled from './Formulaire.styled';
 import SynthèseDesRésultatsFormulaireProps, { SynthèseDesRésultatsFormulaireInputs } from './Formulaire.interface';
 import useSynthèseDesRésultatsFormulaire from './useSynthèseDesRésultatsFormulaire';
 
-const SynthèseDesRésultatsFormulaire: FunctionComponent<SynthèseDesRésultatsFormulaireProps> = ({ contenuInitial, météoInitiale, synthèseDesRésultatsCrééeCallback, annulationCallback }) => {
-  const { créerSynthèseDesRésultats, alerte } = useSynthèseDesRésultatsFormulaire(synthèseDesRésultatsCrééeCallback);  
-  
-  const { register, handleSubmit, formState: { errors, isValid }, watch, getValues } = useForm<SynthèseDesRésultatsFormulaireInputs>({
+const SynthèseDesRésultatsFormulaire: FunctionComponent<SynthèseDesRésultatsFormulaireProps> = ({
+  contenuInitial,
+  météoInitiale,
+  synthèseDesRésultatsCrééeCallback,
+  annulationCallback,
+  territoireCode,
+}) => {
+  const {
+    créerSynthèseDesRésultats,
+    alerte,
+  } = useSynthèseDesRésultatsFormulaire(synthèseDesRésultatsCrééeCallback, territoireCode);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    watch,
+    getValues,
+  } = useForm<SynthèseDesRésultatsFormulaireInputs>({
     mode: 'all',
     resolver: zodResolver(validationSynthèseDesRésultatsFormulaire),
     defaultValues: {
@@ -48,9 +66,9 @@ const SynthèseDesRésultatsFormulaire: FunctionComponent<SynthèseDesRésultats
           <div>
             {
               !!errors.contenu &&
-                <p className='fr-error-text fr-mt-0 fr-mr-2w'>
-                  {errors.contenu.message}
-                </p>
+              <p className='fr-error-text fr-mt-0 fr-mr-2w'>
+                {errors.contenu.message}
+              </p>
             }
           </div>
           <CompteurCaractères
@@ -63,7 +81,10 @@ const SynthèseDesRésultatsFormulaire: FunctionComponent<SynthèseDesRésultats
         <Sélecteur<MétéoSaisissable>
           htmlName='météo'
           libellé='Météo'
-          options={météosSaisissables.map(optionMétéo => ({ libellé: libellésMétéos[optionMétéo], valeur: optionMétéo }))}
+          options={météosSaisissables.map(optionMétéo => ({
+            libellé: libellésMétéos[optionMétéo],
+            valeur: optionMétéo,
+          }))}
           register={{ ...register('météo') }}
           texteFantôme='Météo à renseigner'
           valeurSélectionnée={getValues('météo')}
@@ -93,12 +114,12 @@ const SynthèseDesRésultatsFormulaire: FunctionComponent<SynthèseDesRésultats
       </div>
       {
         !!alerte && (
-        <div className='fr-mt-2w'>
-          <Alerte
-            titre={alerte.titre}
-            type={alerte.type}
-          />
-        </div>
+          <div className='fr-mt-2w'>
+            <Alerte
+              titre={alerte.titre}
+              type={alerte.type}
+            />
+          </div>
         )
       }
     </SynthèseDesRésultatsFormulaireStyled>
