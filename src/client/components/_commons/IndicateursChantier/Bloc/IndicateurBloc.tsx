@@ -273,7 +273,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 <div className='flex w-full justify-end'>
                                   <button
                                     aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
-                                    className='fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary'
+                                    className='fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-actuelle'
                                     data-fr-opened='false'
                                     type='button'
                                   >
@@ -347,7 +347,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     positionTexte='dessus'
                                     taille='md'
                                     valeur={informationIndicateur.données.proposition.tauxAvancementIntermediaire}
-                                    variante='primaire-light'
+                                    variante='jaune-moutarde'
                                   />
                                 </td>
                                 <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
@@ -364,7 +364,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     positionTexte='dessus'
                                     taille='md'
                                     valeur={informationIndicateur.données.proposition.tauxAvancement}
-                                    variante='primaire-light'
+                                    variante='jaune-moutarde'
                                   />
                                 </td>
                               </tr>
@@ -375,7 +375,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                       <div className='flex w-full justify-end'>
                                         <button
                                           aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
-                                          className='fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary'
+                                          className='fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-actuelle'
                                           data-fr-opened='false'
                                           type='button'
                                         >
