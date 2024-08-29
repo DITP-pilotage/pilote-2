@@ -91,7 +91,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
 
   const territoireRepository = dependencies.getTerritoireRepository();
   const territoireSélectionné = await territoireRepository.récupérer(territoireCode);
-  const territoireCodes = territoiresCompares.length > 0 ? territoiresCompares : [territoireCode];
+  const territoireCodes = territoiresCompares.length > 0 ? [...territoiresCompares, territoireCode] : [territoireCode];
 
   try {
     const [chantier,
