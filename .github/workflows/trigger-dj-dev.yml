@@ -14,4 +14,4 @@ jobs:
         api_token: ${{ secrets.scalingo_api_token }}
         app_name: 'dev-datajobs'
     
-    - run: scalingo run /bin/bash scripts.run_datajobs.sh
+    - run: scalingo run /bin/bash scripts/run_datajobs.sh
