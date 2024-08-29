@@ -2,7 +2,7 @@ import { FunctionComponent } from 'react';
 import BarreDeProgressionStyled from './BarreDeProgression.styled';
 
 type BarreDeProgressionTaille = 'xxs' | 'xs' | 'sm' | 'md' | 'lg';
-type BarreDeProgressionVariante = 'primaire' | 'primaire-light' | 'secondaire' | 'rose';
+type BarreDeProgressionVariante = 'primaire' | 'primaire-light' | 'secondaire' | 'rose' | 'jaune-moutarde';
 type BarreDeProgressionFond = 'bleu' | 'blanc' | 'gris-moyen' | 'gris-clair';
 type BarreDeProgressionBordure = 'bleu' | 'gris-moyen' | null;
 type BarreDeProgressionPositionTexte = 'côté' | 'dessus';
@@ -14,19 +14,19 @@ interface BarreDeProgressionProps {
   fond?: BarreDeProgressionFond,
   bordure?: BarreDeProgressionBordure,
   valeur: number | null,
-  positionTexte? : BarreDeProgressionPositionTexte,
+  positionTexte?: BarreDeProgressionPositionTexte,
   afficherTexte?: boolean,
 }
 
 const dimensions = {
-  xxs: {  classNameDsfr: 'fr-text--xs' },
-  xs: {  classNameDsfr: 'fr-text--xs' },
-  sm: {  classNameDsfr: 'fr-text--xs' },
-  md: {  classNameDsfr: 'fr-text--sm' },
+  xxs: { classNameDsfr: 'fr-text--xs' },
+  xs: { classNameDsfr: 'fr-text--xs' },
+  sm: { classNameDsfr: 'fr-text--xs' },
+  md: { classNameDsfr: 'fr-text--sm' },
   lg: { classNameDsfr: 'fr-h1' },
 };
 
-const BarreDeProgression : FunctionComponent<BarreDeProgressionProps> = ({
+const BarreDeProgression: FunctionComponent<BarreDeProgressionProps> = ({
   taille,
   variante,
   fond = 'gris-moyen',

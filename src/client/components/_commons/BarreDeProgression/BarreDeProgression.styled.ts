@@ -121,6 +121,16 @@ const BarreDeProgressionStyled = styled.div`
             background-color: var(--background-action-high-pink-tuile);
         }
       }
+      
+      &.progress--jaune-moutarde {
+        &::-moz-progress-bar {
+          background-color: var(--yellow-moutarde-main-679)!important;
+        }
+
+        &::-webkit-progress-value {
+          background-color: var(--yellow-moutarde-main-679)!important;
+        }
+      }
     }
   }
   

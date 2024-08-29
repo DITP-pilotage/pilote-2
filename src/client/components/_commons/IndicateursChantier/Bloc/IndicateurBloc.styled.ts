@@ -20,13 +20,23 @@ const IndicateurBlocStyled = styled.div`
   }
   
   tr.ligne-modification-proposition-valeur-actuelle {
-    background-color: var(--blue-france-975-75)!important;
+    background-color: var(--yellow-moutarde-975-75)!important;
     
+    
+    & .infobulle-bouton {
+      color: var(--yellow-moutarde-main-679)!important;
+    }
+    
+    & .bouton-proposition-valeur-actuelle {
+      color: var(--yellow-moutarde-main-679)!important;
+      box-shadow: inset 0 0 0 1px var(--yellow-moutarde-main-679)!important;
+    }
+
     & .texte-proposition {
-      color: var(--blue-france-sun-113-625)!important;
+      color: var(--yellow-moutarde-main-679)!important;
       
       & .indicateur-valeur, & .pourcentage {
-        color: var(--blue-france-sun-113-625)!important;
+        color: var(--yellow-moutarde-main-679)!important;
       }
     }
   }
