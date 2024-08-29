@@ -21,12 +21,15 @@ export default function usePageChantier(chantier: Chantier, territoireSélection
   const territoires = territoiresTerritoiresStore();
 
   let estAutoriseAModifierLesPublications = territoireSélectionné!.accèsSaisiePublication && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantier.id);
+
+  const estAutoriseAProposerUneValeurActuelle = PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE.has(session!.profil) && estAutoriseAModifierLesPublications;
+
   if (session && [ProfilEnum.DIR_PROJET, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.SECRETARIAT_GENERAL].includes(session.profil) && territoireSélectionné?.maille != 'nationale') {
     estAutoriseAModifierLesPublications = estAutoriseAModifierLesPublications && chantier?.ate === 'hors_ate_centralise';
   }
+
   const estAutoriseAModifierLesObjectifs = territoires.some(territoire => territoire.maille === 'nationale' && territoire.accèsSaisiePublication) && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantier.id);
 
-  const estAutoriseAVoirLesPropositionsDeValeurActuelle = PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE.has(session!.profil);
 
   const estAutoriseAImporterDesIndicateurs = estAutoriséAImporterDesIndicateurs(session!.profil) && !!session?.habilitations['saisieIndicateur'].chantiers.includes(chantier.id);
 
@@ -36,7 +39,7 @@ export default function usePageChantier(chantier: Chantier, territoireSélection
   return {
     estAutoriseAImporterDesIndicateurs,
     estAutoriseAVoirLeBoutonFicheConducteur,
-    estAutoriseAVoirLesPropositionsDeValeurActuelle,
+    estAutoriseAProposerUneValeurActuelle,
     estAutoriseAModifierLesPublications,
     estAutoriseAModifierLesObjectifs,
   };

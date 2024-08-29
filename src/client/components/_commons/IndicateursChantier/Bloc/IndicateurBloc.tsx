@@ -34,7 +34,7 @@ interface IndicateurBlocProps {
   detailsIndicateursTerritoire: DétailsIndicateurs
   estInteractif: boolean
   chantierEstTerritorialisé: boolean,
-  estAutoriseAVoirLesPropositionsDeValeurActuelle: boolean,
+  estAutoriseAProposerUneValeurActuelle: boolean,
   listeSousIndicateurs: Indicateur[],
   territoireCode: string,
   territoiresCompares: string[],
@@ -47,7 +47,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   detailsIndicateursTerritoire,
   estInteractif,
   chantierEstTerritorialisé,
-  estAutoriseAVoirLesPropositionsDeValeurActuelle = false,
+  estAutoriseAProposerUneValeurActuelle = false,
   listeSousIndicateurs,
   territoireCode,
   territoiresCompares,
@@ -279,7 +279,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           </td>
                         </tr>
                         {
-                          variableContenuFFPropositionValeurActuelle ? estAutoriseAVoirLesPropositionsDeValeurActuelle && informationIndicateur.données.valeurActuelle !== null && informationIndicateur.données.proposition === null ? (
+                          variableContenuFFPropositionValeurActuelle ? estAutoriseAProposerUneValeurActuelle && informationIndicateur.données.valeurActuelle !== null && informationIndicateur.données.proposition === null ? (
                             <tr className='ligne-creation-proposition-valeur-actuelle'>
                               <td colSpan={7}>
                                 <div className='flex w-full justify-end'>
@@ -381,7 +381,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 </td>
                               </tr>
                               {
-                                estAutoriseAVoirLesPropositionsDeValeurActuelle ? (
+                                estAutoriseAProposerUneValeurActuelle ? (
                                   <tr className='ligne-modification-proposition-valeur-actuelle'>
                                     <td colSpan={7}>
                                       <div className='flex w-full justify-end'>
