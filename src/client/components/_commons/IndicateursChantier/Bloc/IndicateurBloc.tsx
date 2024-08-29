@@ -117,17 +117,13 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 {indicateur.nom + (indicateur.unité === null || indicateur.unité === '' ? '' : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
               </Titre>
               <div className='fr-ml-2w fr-mb-3w'>
-                {
-                  !!détailsIndicateur[codeInseeTerritoireSelectionne] ? (
-                    <p className='fr-mb-0 fr-text--xs texte-gris'>
-                      Identifiant de l'indicateur :
-                      {' '}
-                      <strong>
-                        {indicateur.id}
-                      </strong>
-                    </p>
-                  ) : null
-                }
+                <p className='fr-mb-0 fr-text--xs texte-gris'>
+                  Identifiant de l'indicateur :
+                  {' '}
+                  <strong>
+                    {indicateur.id}
+                  </strong>
+                </p>
                 <p className='fr-mb-0 fr-text--xs texte-gris'>
                   Dernière mise à jour des données (de l'indicateur) :
                   {' '}
@@ -135,42 +131,34 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     {dateDeMiseAJourIndicateur ?? 'Non renseignée'}
                   </span>
                 </p>
-                {
-                  !!détailsIndicateur[codeInseeTerritoireSelectionne] ? (
-                    <div
-                      className={`flex align-center relative${estIndicateurEnAlerte ? ' fr-text-warning' : ' texte-gris'}`}
-                    >
-                      <p className='fr-mb-0 fr-text--xs'>
-                        Date prévisionnelle de la prochaine mise à jour des données (de l’indicateur) :
-                        {' '}
-                        <span className='fr-text--bold'>
-                          {dateProchaineDateMaj ?? 'Non renseignée'}
-                        </span>
-                      </p>
-                      <Infobulle
-                        className='infobulle-date-previsionnelle'
-                        idHtml='infobulle-date-previsionnelle'
-                      >
-                        <p className='fr-text-title--blue-france'>
-                          Date prévisionnelle de mise à jour de l’indicateur :
-                        </p>
-                        <p>
-                          Elle dépend de la date de la valeur actuelle, de la période de mise à jour et du délai de
-                          disponibilité des données. Plus d'informations dans l'accordéon "définition de l’indicateur et
-                          calendrier de mise à jour".
-                        </p>
-                      </Infobulle>
-                    </div>
-                  ) : null
-                }
-                {
-                  !!détailsIndicateur[codeInseeTerritoireSelectionne] ? (
-                    <IndicateurPonderation
-                      indicateurPondération={détailsIndicateur[codeInseeTerritoireSelectionne]?.pondération ?? null}
-                      mailleSélectionnée={mailleTerritoireSelectionnee}
-                    />
-                  ) : null
-                }
+                <div
+                  className={`flex align-center relative${estIndicateurEnAlerte ? ' fr-text-warning' : ' texte-gris'}`}
+                >
+                  <p className='fr-mb-0 fr-text--xs'>
+                    Date prévisionnelle de la prochaine mise à jour des données (de l’indicateur) :
+                    {' '}
+                    <span className='fr-text--bold'>
+                      {dateProchaineDateMaj ?? 'Non renseignée'}
+                    </span>
+                  </p>
+                  <Infobulle
+                    className='infobulle-date-previsionnelle'
+                    idHtml='infobulle-date-previsionnelle'
+                  >
+                    <p className='fr-text-title--blue-france'>
+                      Date prévisionnelle de mise à jour de l’indicateur :
+                    </p>
+                    <p>
+                      Elle dépend de la date de la valeur actuelle, de la période de mise à jour et du délai de
+                      disponibilité des données. Plus d'informations dans l'accordéon "définition de l’indicateur et
+                      calendrier de mise à jour".
+                    </p>
+                  </Infobulle>
+                </div>
+                <IndicateurPonderation
+                  indicateurPondération={détailsIndicateur[codeInseeTerritoireSelectionne]?.pondération ?? null}
+                  mailleSélectionnée={mailleTerritoireSelectionnee}
+                />
               </div>
               {
                 détailsIndicateur[codeInseeTerritoireSelectionne]?.tendance === 'BAISSE' ? (
