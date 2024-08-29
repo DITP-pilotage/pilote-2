@@ -32,6 +32,9 @@ const SélecteurMaille: FunctionComponent<{
   const changerMaille = (maille: MailleInterne) => {
     sauvegarderFiltres({ maille });
     const territoireCode = session?.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : maille === 'régionale' ? territoireReg : maille === 'départementale' ? territoireDept : session?.habilitations.lecture.territoires[0];
+
+    sauvegarderFiltres({ territoireCode });
+
     delete router.query._action;
     return router.push({
       pathname,
