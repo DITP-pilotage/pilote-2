@@ -91,7 +91,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
   const {
     estAutoriseAImporterDesIndicateurs,
     estAutoriseAVoirLeBoutonFicheConducteur,
-    estAutoriseAVoirLesPropositionsDeValeurActuelle,
+    estAutoriseAProposerUneValeurActuelle,
     estAutoriseAModifierLesPublications,
     estAutoriseAModifierLesObjectifs,
   } = usePageChantier(chantier, territoireSélectionné);
@@ -320,7 +320,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     chantierEstTerritorialisé={chantier.estTerritorialisé}
                     detailsIndicateursTerritoire={detailsIndicateursTerritoire}
                     détailsIndicateurs={détailsIndicateurs}
-                    estAutoriseAVoirLesPropositionsDeValeurActuelle={estAutoriseAVoirLesPropositionsDeValeurActuelle}
+                    estAutoriseAProposerUneValeurActuelle={estAutoriseAProposerUneValeurActuelle}
                     indicateurs={indicateurs}
                     listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
                     mailleSelectionnee={mailleSelectionnee}
