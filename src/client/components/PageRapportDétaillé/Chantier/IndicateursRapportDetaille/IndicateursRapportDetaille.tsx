@@ -3,6 +3,7 @@ import IndicateursProps from '@/components/PageRapportDétaillé/Chantier/Indica
 import IndicateurBloc from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/IndicateurBloc';
 import IndicateursStyled from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Indicateurs.styled';
 import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
+import api from '@/server/infrastructure/api/trpc/api';
 
 export default function IndicateursRapportDetaille({
   territoireCode,
@@ -17,8 +18,11 @@ export default function IndicateursRapportDetaille({
     return null;
   }
 
-  const listeIndicateursParent = indicateurs.filter(indicateur => !indicateur.parentId);
-
+  const { data: sousIndicateursDisponibles } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_SOUS_INDICATEURS' });
+  const listeIndicateursParent = !!sousIndicateursDisponibles ? 
+    indicateurs.filter(indicateur => !indicateur.parentId) :
+    indicateurs;
+  
   return (
     <IndicateursStyled>
       {
@@ -41,17 +45,22 @@ export default function IndicateursRapportDetaille({
                 {
                   !!codeInseeSélectionnée && indicateursDeCetteRubrique
                     .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][codeInseeSélectionnée]?.pondération, détailsIndicateurs[b.id][codeInseeSélectionnée]?.pondération))
-                    .map(indicateur => (
-                      <IndicateurBloc
-                        détailsIndicateurs={détailsIndicateurs}
-                        indicateur={indicateur}
-                        key={indicateur.id}
-                        listeSousIndicateurs={indicateurs.filter(ind => ind.parentId === indicateur.id)}
-                        territoireCode={territoireCode}
-                        territoireProjetStructurant={territoireProjetStructurant}
-                        typeDeRéforme={typeDeRéforme}
-                      />
-                    ))
+                    .map(indicateur => {
+                      const listeSousIndicateurs = !!sousIndicateursDisponibles ? 
+                        indicateurs.filter(ind => ind.parentId === indicateur.id) :
+                        [];                      
+                      return (
+                        <IndicateurBloc
+                          détailsIndicateurs={détailsIndicateurs}
+                          indicateur={indicateur}
+                          key={indicateur.id}
+                          listeSousIndicateurs={listeSousIndicateurs}
+                          territoireCode={territoireCode}
+                          territoireProjetStructurant={territoireProjetStructurant}
+                          typeDeRéforme={typeDeRéforme}
+                        />
+                      );
+                    })
                 }
               </section>
             );

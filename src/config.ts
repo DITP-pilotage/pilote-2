@@ -210,6 +210,11 @@ const config = convict({
       default: false,
       env: 'NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE',
     },
+    sousIndicateurs: {
+      format: Boolean,
+      default: false,
+      env: 'NEXT_PUBLIC_FF_SOUS_INDICATEURS',
+    },
   },
   analytics: {
     matomoURL: {

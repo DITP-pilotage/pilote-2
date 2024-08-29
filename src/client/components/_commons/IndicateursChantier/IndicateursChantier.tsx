@@ -53,7 +53,10 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
     return null;
   }
 
-  const listeIndicateursParent = indicateurs.filter(indicateur => !indicateur.parentId);
+  const { data: sousIndicateursDisponibles } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_SOUS_INDICATEURS' });
+  const listeIndicateursParent = !!sousIndicateursDisponibles ? 
+    indicateurs.filter(indicateur => !indicateur.parentId) :
+    indicateurs;
 
   return (
     <IndicateursChantierStyled>
@@ -87,21 +90,27 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                 {
                   indicateursDeCetteRubrique
                     .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][codeInsee]?.pondération, détailsIndicateurs[b.id][codeInsee]?.pondération))
-                    .map(indicateur => (
-                      <IndicateurBloc
-                        chantierEstTerritorialisé={chantierEstTerritorialisé}
-                        detailsIndicateursTerritoire={detailsIndicateursTerritoire}
-                        détailsIndicateurs={détailsIndicateurs}
-                        estAutoriseAProposerUneValeurActuelle={estAutoriseAProposerUneValeurActuelle}
-                        estInteractif={estInteractif}
-                        indicateur={indicateur}
-                        key={indicateur.id}
-                        listeSousIndicateurs={indicateurs.filter(ind => ind.parentId === indicateur.id)}
-                        mailleSelectionnee={mailleSelectionnee}
-                        territoireCode={territoireCode}
-                        territoiresCompares={territoiresCompares}
-                      />
-                    ))
+                    .map(indicateur => {
+                      const listeSousIndicateurs = !!sousIndicateursDisponibles ? 
+                        indicateurs.filter(ind => ind.parentId === indicateur.id) :
+                        [];
+                      return (
+                        <IndicateurBloc
+                          chantierEstTerritorialisé={chantierEstTerritorialisé}
+                          detailsIndicateursTerritoire={detailsIndicateursTerritoire}
+                          détailsIndicateurs={détailsIndicateurs}
+                          estAutoriseAProposerUneValeurActuelle={estAutoriseAProposerUneValeurActuelle}
+                          estInteractif={estInteractif}
+                          indicateur={indicateur}
+                          key={indicateur.id}
+                          listeSousIndicateurs={listeSousIndicateurs}
+                          mailleSelectionnee={mailleSelectionnee}
+                          territoireCode={territoireCode}
+                          territoiresCompares={territoiresCompares}
+                        />
+                      );
+                      
+                    })
                 }
               </section>
             );
