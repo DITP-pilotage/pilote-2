@@ -149,9 +149,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       Date prévisionnelle de mise à jour de l’indicateur :
                     </p>
                     <p>
-                      Elle dépend de la date de la valeur actuelle, de la période de mise à jour et du délai de
-                      disponibilité des données. Plus d'informations dans l'accordéon "définition de l’indicateur et
-                      calendrier de mise à jour".
+                      Elle est calculée à partir de la date de la valeur actuelle, de la période de mise à jour et du délai de disponibilité 
+                      des données. Plus d'informations dans l'accordéon "Description de l’indicateur et calendrier de mise à jour
                     </p>
                   </Infobulle>
                 </div>
