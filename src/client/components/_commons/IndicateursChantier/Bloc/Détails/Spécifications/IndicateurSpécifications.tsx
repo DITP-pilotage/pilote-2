@@ -106,7 +106,7 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
                 </p>
               ) : (
                 <p className='fr-text--xs'>
-                  La valeur actuelle de cet indicateur est non renseignée. De ce fait, la mise à jour de la prochaine valeur actuelle ne peut être calculée.
+                  La valeur actuelle de cet indicateur est non renseignée.
                 </p>                
               )
             }
