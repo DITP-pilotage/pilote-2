@@ -14,9 +14,14 @@ import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/Chantier
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import { AgrégatParTerritoire } from './agrégateur.interface';
 
-type AvancementRegroupementDonnéesBrutes = {
+type AvancementRegroupementDonnéesBrutesMaille = {
   global: (number | null) [],
   annuel: (number | null) [],
+};
+
+type AvancementRegroupementDonnéesBrutesTerritoire = {
+  global: number | null,
+  annuel: number | null,
 };
 
 export class AgrégateurChantiersParTerritoire {
@@ -37,8 +42,8 @@ export class AgrégateurChantiersParTerritoire {
     this.chantiers.forEach(chantier => {
       objectEntries(chantier.mailles).forEach(([maille, codesInsee]) => {
         objectEntries(codesInsee).forEach(([codeInsee, donnéesTerritoire]) => {
-          this.agrégat[maille].territoires[codeInsee].donnéesBrutes.avancements = [...this.agrégat[maille].territoires[codeInsee].donnéesBrutes.avancements, donnéesTerritoire.avancement];
-          this.agrégat[maille].territoires[codeInsee].donnéesBrutes.météos = [...this.agrégat[maille].territoires[codeInsee].donnéesBrutes.météos, donnéesTerritoire.météo];
+          this.agrégat[maille].territoires[codeInsee].donnéesBrutes.avancements = donnéesTerritoire.avancement;
+          this.agrégat[maille].territoires[codeInsee].donnéesBrutes.météo = donnéesTerritoire.météo;
         });
       });
     });
@@ -46,21 +51,20 @@ export class AgrégateurChantiersParTerritoire {
 
   private _calculerLesRépartitions() {
     objectEntries(this.agrégat).forEach(([maille, codesInsee]) => {
-      let avancementsPourCetteMaille: AvancementRegroupementDonnéesBrutes = {
+      let avancementsPourCetteMaille: AvancementRegroupementDonnéesBrutesMaille = {
         global: [],
         annuel: [],
       };
       objectEntries(codesInsee.territoires).forEach(([codeInsee, donnéesTerritoire]) => {
-        let avancementsPourCeCodeInsee: AvancementRegroupementDonnéesBrutes = {
-          global: [],
-          annuel: [],
+        let avancementsPourCeCodeInsee: AvancementRegroupementDonnéesBrutesTerritoire = {
+          global: null,
+          annuel: null,
         };
-        avancementsPourCeCodeInsee.global = donnéesTerritoire.donnéesBrutes.avancements.map(avancement => avancement.global);
-        avancementsPourCeCodeInsee.annuel = donnéesTerritoire.donnéesBrutes.avancements.map(avancement => avancement.annuel);
-        avancementsPourCetteMaille.global = [...avancementsPourCetteMaille.global, ...avancementsPourCeCodeInsee.global];
-        avancementsPourCetteMaille.annuel = [...avancementsPourCetteMaille.annuel, ...avancementsPourCeCodeInsee.annuel];
+        avancementsPourCeCodeInsee.global = donnéesTerritoire.donnéesBrutes.avancements.global;
+        avancementsPourCeCodeInsee.annuel = donnéesTerritoire.donnéesBrutes.avancements.annuel;
+        avancementsPourCetteMaille.global = [...avancementsPourCetteMaille.global, avancementsPourCeCodeInsee.global];
+        avancementsPourCetteMaille.annuel = [...avancementsPourCetteMaille.annuel, avancementsPourCeCodeInsee.annuel];
         
-        this._calculerLaRépartitionDesMétéosParTerritoire(maille, codeInsee, donnéesTerritoire.donnéesBrutes.météos);
         this._calculerLaRépartitionDesAvancementsParTerritoire(maille, avancementsPourCeCodeInsee, codeInsee);
       });
   
@@ -68,23 +72,13 @@ export class AgrégateurChantiersParTerritoire {
     });
   }
 
-  private _calculerLaRépartitionDesMétéosParTerritoire(maille: Maille, codeInsee: CodeInsee, météos: Météo[]) {
-    météos.forEach(météo => {
-      this.agrégat[maille].territoires[codeInsee].répartition.météos[météo] += 1;
-    });
-  }
-
-  private _calculerLaRépartitionDesAvancementsParTerritoire(maille: Maille, avancements: AvancementRegroupementDonnéesBrutes, codeInsee: string) {
-    this.agrégat[maille].territoires[codeInsee].répartition.avancements.global.minimum = valeurMinimum(avancements.global);
-    this.agrégat[maille].territoires[codeInsee].répartition.avancements.global.maximum = valeurMaximum(avancements.global);
-    this.agrégat[maille].territoires[codeInsee].répartition.avancements.global.moyenne = calculerMoyenne(avancements.global);
-    this.agrégat[maille].territoires[codeInsee].répartition.avancements.global.médiane = calculerMédiane(avancements.global);
-
-    this.agrégat[maille].territoires[codeInsee].répartition.avancements.annuel.moyenne = calculerMoyenne(avancements.annuel);
+  private _calculerLaRépartitionDesAvancementsParTerritoire(maille: Maille, avancements: AvancementRegroupementDonnéesBrutesTerritoire, codeInsee: string) {
+    this.agrégat[maille].territoires[codeInsee].répartition.avancements.global = avancements.global; // pertinence ?
+    this.agrégat[maille].territoires[codeInsee].répartition.avancements.annuel = avancements.annuel;
 
   }
 
-  private _calculerLaRépartitionDesAvancementsParMaille(maille: Maille, avancements: AvancementRegroupementDonnéesBrutes) {
+  private _calculerLaRépartitionDesAvancementsParMaille(maille: Maille, avancements: AvancementRegroupementDonnéesBrutesMaille) {
     this.agrégat[maille].répartition.avancements.global.minimum = valeurMinimum(avancements.global);
     this.agrégat[maille].répartition.avancements.global.maximum = valeurMaximum(avancements.global);
     this.agrégat[maille].répartition.avancements.global.moyenne = calculerMoyenne(avancements.global);
@@ -98,28 +92,16 @@ export class AgrégateurChantiersParTerritoire {
     return {
       répartition: {
         avancements: {
-          global: {
-            moyenne: null,
-            médiane: null,
-            minimum: null,
-            maximum: null,
-          },
-          annuel: {
-            moyenne: null,
-          },
-        },
-        météos: {
-          'NON_RENSEIGNEE': 0,
-          'ORAGE': 0,
-          'COUVERT': 0,
-          'NUAGE': 0,
-          'SOLEIL': 0,
-          'NON_NECESSAIRE': 0,
+          global: null,
+          annuel: null,
         },
       },
       donnéesBrutes: {
-        avancements: [],
-        météos: [],
+        avancements: {
+          global: null,
+          annuel: null,
+        },
+        météo: 'NON_RENSEIGNEE' as Météo,
       },
     };
   }
