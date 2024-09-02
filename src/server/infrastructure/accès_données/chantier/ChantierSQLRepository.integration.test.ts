@@ -123,6 +123,7 @@ describe('ChantierSQLRepository', () => {
         .avecMaille('DEPT')
         .avecCodeInsee('01')
         .avecTauxAvancement(30)
+        .avecTauxAvancementAnnuel(25)
         .avecMinistèresAcronyme(['MINA', 'MINB'])
         .avecEstBaromètre(true)
         .avecEstApplicable(true)
@@ -307,6 +308,7 @@ describe('ChantierSQLRepository', () => {
           ministèreNom: 'MINA',
           estBaromètre: true,
           estTerritorialisé: false,
+          tauxDAvancementAnnuel: 25,
           tauxDAvancementNational: 10,
           tauxDAvancementRégional: 20,
           tauxDAvancementDépartemental: 30,

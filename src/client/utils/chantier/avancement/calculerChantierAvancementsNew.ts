@@ -19,16 +19,16 @@ export default function calculerChantierAvancements(
     const codeInseeTerritoireParent = territoireCodeParent ? territoireCodeVersMailleCodeInsee(territoireCodeParent).codeInsee : null;
 
     return maille === 'REG'
-      ? donnéesTerritoiresAgrégées.régionale.territoires[codeInsee].répartition.avancements[typeTauxAvancement].moyenne
+      ? donnéesTerritoiresAgrégées.régionale.territoires[codeInsee].répartition.avancements[typeTauxAvancement]
       : maille === 'DEPT' && codeInseeTerritoireParent
-        ? donnéesTerritoiresAgrégées.régionale.territoires[codeInseeTerritoireParent].répartition.avancements[typeTauxAvancement].moyenne
+        ? donnéesTerritoiresAgrégées.régionale.territoires[codeInseeTerritoireParent].répartition.avancements[typeTauxAvancement]
         : null;
   };
 
   const avancementDépartemental = ( typeTauxAvancement: 'global' | 'annuel' ) => {
     const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
 
-    return maille === 'DEPT' ? donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[codeInsee].répartition.avancements[typeTauxAvancement].moyenne : null;
+    return maille === 'DEPT' ? donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[codeInsee].répartition.avancements[typeTauxAvancement] : null;
   };
 
   return {
