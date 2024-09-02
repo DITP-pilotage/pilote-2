@@ -24,7 +24,6 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
     creerPropositonValeurActuelle,
     etapePropositionValeurActuelle,
     setEtapePropositionValeurActuelle,
-    auteurModification,
   } = useModalePropositionValeurActuelle({
     indicateur,
     detailIndicateur,
@@ -135,24 +134,22 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                         <TextAreaAvecLabel
                           erreurMessage={reactHookForm.formState.errors.motifProposition?.message}
                           htmlName='motifProposition'
-                          isRequired
                           libellé='Motif de la proposition'
-                          register={reactHookForm.register('motifProposition', { required: true })}
+                          register={reactHookForm.register('motifProposition')}
                         />
                       </div>
                       <div className='fr-mt-1w'>
                         <TextAreaAvecLabel
                           erreurMessage={reactHookForm.formState.errors.sourceDonneeEtMethodeCalcul?.message}
                           htmlName='sourceDonneeEtMethodeCalcul'
-                          isRequired
                           libellé='Sources des données et méthode de calcul'
-                          register={reactHookForm.register('sourceDonneeEtMethodeCalcul', { required: true })}
+                          register={reactHookForm.register('sourceDonneeEtMethodeCalcul')}
                         />
                       </div>
                       <div className='w-full flex justify-end fr-mt-2w'>
                         <button
                           className='fr-btn'
-                          disabled={Object.keys(reactHookForm.formState.errors).length > 0 || reactHookForm.getValues('motifProposition').length === 0 || reactHookForm.getValues('sourceDonneeEtMethodeCalcul').length === 0}
+                          disabled={Object.keys(reactHookForm.formState.errors).length > 0}
                           onClick={() => setEtapePropositionValeurActuelle(EtapePropositionValeurActuelle.VALIDATION_VALEUR_ACTUELLE)}
                           type='button'
                         >
@@ -175,11 +172,7 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                             {' '}
                             {`${formaterDate(new Date().toISOString(), 'DD/MM/YYYY')}`}
                             {' '}
-                            par 
-                            {' '}
-                            {auteurModification}
-                            {' '}
-                            :
+                            par Léon Zitrone :
                             {' '}
                             {reactHookForm.getValues('valeurActuelle')}
                             {' '}

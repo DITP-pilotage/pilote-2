@@ -8,7 +8,6 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 
 const PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE = new Set([
-  ProfilEnum.DITP_ADMIN,
   ProfilEnum.PREFET_DEPARTEMENT,
   ProfilEnum.PREFET_REGION,
   ProfilEnum.COORDINATEUR_REGION,

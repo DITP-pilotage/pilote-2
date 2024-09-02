@@ -49,7 +49,7 @@ export const publicationRouter = créerRouteurTRPC({
     .input(validationPublicationContexte.merge(zodValidateurCSRF).and(validationPublicationFormulaire))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      const auteur = ctx.session.user.email ?? '';
+      const auteur = ctx.session.user.name ?? '';   
       
       if (input.typeDeRéforme === 'chantier') {
         if (input.entité === 'commentaires') {

@@ -27,7 +27,7 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
     .input(validationSynthèseDesRésultatsContexte.merge(zodValidateurCSRF).merge(validationSynthèseDesRésultatsFormulaire))
     .mutation(({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      const auteur = ctx.session.user.email ?? '';
+      const auteur = ctx.session.user.name ?? '';
 
       if (input.typeDeRéforme === 'chantier') {
         const créerUneSynthèseDesRésultatsUseCase = new CréerUneSynthèseDesRésultatsUseCase(dependencies.getSynthèseDesRésultatsRepository(), dependencies.getChantierRepository());

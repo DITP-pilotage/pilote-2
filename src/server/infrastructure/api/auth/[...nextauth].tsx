@@ -172,7 +172,7 @@ const credentialsProvider = CredentialsProvider({
 
     return {
       id: utilisateur.id,
-      name: `${utilisateur.prénom} ${utilisateur.nom}`,
+      name: utilisateur.email,
       email: utilisateur.email,
     };
   },
