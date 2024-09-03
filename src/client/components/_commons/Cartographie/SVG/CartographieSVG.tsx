@@ -10,6 +10,7 @@ import { Viewbox } from './CartographieSVG.interface';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
 import CartographieTerritoireSélectionné from './CartographieTerritoireSélectionné';
+import { getTraceSvg, loadSvgAsJson } from '@/server/utils/pil-152/svg-builder';
 
 interface CartographieSVGProps {
   options: CartographieOptions,
@@ -40,6 +41,8 @@ const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
     }
   }, [svgRef]);
 
+  const sourceSvgAsJson = loadSvgAsJson('@/server/utils/pil-152/svg-builder/pil-152/Territoires_jfg_avec_dept_id.svg');
+  
 
   return (
     <CartographieSVGStyled>
@@ -76,7 +79,7 @@ const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
               territoires.map(territoire => (
                 <path
                   className={`territoire-rempli ${(options.estInteractif && territoire.estInteractif) && 'territoire-interactif'}`}
-                  d={territoire.tracéSVG}
+                  d={getTraceSvg(sourceSvgAsJson, territoire.codeInsee)} // ou territoire.code ?
                   fill={territoire.remplissage}
                   key={`territoire-${territoire.codeInsee}`}
                   onClick={() => options.estInteractif && territoire.estInteractif && auClicTerritoireCallback(territoire.codeInsee, options.territoireSélectionnable)}

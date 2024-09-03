@@ -7,6 +7,7 @@ export type CartographieInfoBulle = {
 
 export type CartographieTerritoire = {
   codeInsee: CodeInsee
+  // code // Rajouter le code du territoire pour faire le mapping avec le chemin SVG qui est dans le svg source. Si le code insee n'est pas le code territoire.
   tracéSVG: string;
   remplissage: string,
   libellé: string,
