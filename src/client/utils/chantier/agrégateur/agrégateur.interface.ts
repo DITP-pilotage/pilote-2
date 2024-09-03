@@ -1,6 +1,5 @@
 import Avancement from '@/server/domain/chantier/avancement/Avancement.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import { Météo } from '@/server/domain/météo/Météo.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 type RépartitionAvancementsMaille = {
@@ -32,7 +31,6 @@ export type AgrégatParTerritoire = {
         },
         donnéesBrutes: {
           avancements: Avancement
-          météo: Météo
         }
       }
     },

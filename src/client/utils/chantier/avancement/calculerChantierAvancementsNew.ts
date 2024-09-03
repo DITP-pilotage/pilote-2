@@ -12,7 +12,7 @@ export default function calculerChantierAvancements(
   avancementsAgrégés: AvancementsStatistiques,
 ) {
 
-  const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire([chantier]).agréger();
+  const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire(chantier).agréger();
 
   const avancementRégional = ( typeTauxAvancement: 'global' | 'annuel' ) => {
     const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
