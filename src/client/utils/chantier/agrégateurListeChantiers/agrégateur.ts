@@ -9,7 +9,6 @@ import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import départements from '@/client/constants/départements.json';
 import régions from '@/client/constants/régions.json';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import { Météo } from '@/server/domain/météo/Météo.interface';
 import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import { Agrégat, AgrégatParTerritoire } from './agrégateur.interface';
@@ -19,7 +18,7 @@ type AvancementRegroupementDonnéesBrutes = {
   annuel: (number | null) [],
 };
 
-export class AgrégateurChantiersParTerritoire {
+export class AgrégateurListeChantiersParTerritoire {
   private readonly agrégat: AgrégatParTerritoire;
 
   private readonly mailleSelectionnee: 'départementale' | 'régionale';
@@ -41,11 +40,9 @@ export class AgrégateurChantiersParTerritoire {
     this.chantiers.forEach(chantier => {
       objectEntries(chantier.mailles['nationale']).forEach(([codeInsee, donnéesTerritoire]) => {
         this.agrégat['nationale'].territoires[codeInsee].donnéesBrutes.avancements = [...this.agrégat['nationale'].territoires[codeInsee].donnéesBrutes.avancements, donnéesTerritoire.avancement];
-        this.agrégat['nationale'].territoires[codeInsee].donnéesBrutes.météos = [...this.agrégat['nationale'].territoires[codeInsee].donnéesBrutes.météos, donnéesTerritoire.météo];
       });
       objectEntries(chantier.mailles[this.mailleSelectionnee]).forEach(([codeInsee, donnéesTerritoire]) => {
         this.agrégat[this.mailleSelectionnee].territoires[codeInsee].donnéesBrutes.avancements = [...this.agrégat[this.mailleSelectionnee].territoires[codeInsee].donnéesBrutes.avancements, donnéesTerritoire.avancement];
-        this.agrégat[this.mailleSelectionnee].territoires[codeInsee].donnéesBrutes.météos = [...this.agrégat[this.mailleSelectionnee].territoires[codeInsee].donnéesBrutes.météos, donnéesTerritoire.météo];
       });
 
     });
@@ -66,17 +63,10 @@ export class AgrégateurChantiersParTerritoire {
       avancementsPourCetteMaille.global = [...avancementsPourCetteMaille.global, ...avancementsPourCeCodeInsee.global];
       avancementsPourCetteMaille.annuel = [...avancementsPourCetteMaille.annuel, ...avancementsPourCeCodeInsee.annuel];
         
-      this._calculerLaRépartitionDesMétéosParTerritoire(maille, codeInsee, donnéesTerritoire.donnéesBrutes.météos);
       this._calculerLaRépartitionDesAvancementsParTerritoire(maille, avancementsPourCeCodeInsee, codeInsee);
     });
   
     this._calculerLaRépartitionDesAvancementsParMaille(maille, avancementsPourCetteMaille);
-  }
-
-  private _calculerLaRépartitionDesMétéosParTerritoire(maille: Maille, codeInsee: CodeInsee, météos: Météo[]) {
-    météos.forEach(météo => {
-      this.agrégat[maille].territoires[codeInsee].répartition.météos[météo] += 1;
-    });
   }
 
   private _calculerLaRépartitionDesAvancementsParTerritoire(maille: Maille, avancements: AvancementRegroupementDonnéesBrutes, codeInsee: string) {
@@ -113,18 +103,9 @@ export class AgrégateurChantiersParTerritoire {
             moyenne: null,
           },
         },
-        météos: {
-          'NON_RENSEIGNEE': 0,
-          'ORAGE': 0,
-          'COUVERT': 0,
-          'NUAGE': 0,
-          'SOLEIL': 0,
-          'NON_NECESSAIRE': 0,
-        },
       },
       donnéesBrutes: {
         avancements: [],
-        météos: [],
       },
     };
   }
