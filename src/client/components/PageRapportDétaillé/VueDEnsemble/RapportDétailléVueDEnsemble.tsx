@@ -60,7 +60,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnse
           Vue d'ensemble
         </Titre>
       </Encart>
-      <div className='fr-mt-3w avancements-météos-carto'>
+      <div className='fr-mt-3w avancements-météos-carto impression-section'>
         <Bloc>
           <section>
             <TitreInfobulleConteneur>
@@ -152,7 +152,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnse
         </div>
       }
       <div
-        className='fr-grid-row fr-mt-7v'
+        className='fr-grid-row fr-mt-7v impression-section'
         id={htmlId.listeDesChantiers()}
       >
         <div className='fr-col'>
