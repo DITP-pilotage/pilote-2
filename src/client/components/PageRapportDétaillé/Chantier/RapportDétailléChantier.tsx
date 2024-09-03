@@ -56,7 +56,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
           {
             avancements !== null &&
             <>
-              <section className='rubrique avancement'>
+              <section className='rubrique avancement impression-section'>
                 <Link
                   className='fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-up-line fr-btn--icon-left fr-text--sm'
                   href={`#${htmlId.listeDesChantiers()}`}
@@ -102,7 +102,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
               </section>
             </>
           }
-          <section className='rubrique synthèse'>
+          <section className='rubrique synthèse impression-section'>
             <Titre
               baliseHtml='h2'
               className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
@@ -120,7 +120,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
         </div>
         {
           (!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSélectionnée] || !!chantier.météoDonnéeTerritorialisée[mailleSélectionnée] || chantier.estTerritorialisé) ? (
-            <div className='fr-my-2w'>
+            <div className='fr-my-2w impression-section'>
               <section className='rubrique cartes'>
                 <Titre
                   baliseHtml='h2'
@@ -142,7 +142,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
         }
         {
           objectifs !== null && objectifs.length > 0 ? (
-            <div className='fr-my-2w'>
+            <div className='fr-my-2w impression-section'>
               <section className='rubrique objectifs'>
                 <div className='rubrique__conteneur'>
                   <Titre
@@ -181,7 +181,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
         }
         {
           indicateurs.length > 0 ? (
-            <div className='fr-my-2w'>
+            <div className='fr-my-2w impression-section'>
               <section className='rubrique indicateurs'>
                 <div className='rubrique__conteneur'>
                   <Titre
@@ -205,7 +205,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
         {
           décisionStratégique !== null
           && territoireSélectionné!.maille === 'nationale' &&
-          <div className='fr-my-2w'>
+          <div className='fr-my-2w impression-section'>
             <section className='rubrique décisions-stratégiques'>
               <div className='rubrique__conteneur'>
                 <Titre
@@ -226,7 +226,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
         }
         {
           commentaires !== null && (
-            <div className='fr-my-2w'>
+            <div className='fr-my-2w impression-section'>
               <section className='rubrique commentaires'>
                 <div className='rubrique__conteneur'>
                   <Titre

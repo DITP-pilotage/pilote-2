@@ -20,6 +20,12 @@ const IndicateurBlocStyled = styled.div`
     font-size: 0.625rem;
     line-height: 1rem;
   }
+
+  @media print {
+    .impression-section {
+      break-inside: avoid;
+  }
+}
 `;
 
 export default IndicateurBlocStyled;
