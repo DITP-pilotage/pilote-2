@@ -9,7 +9,6 @@ import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import départements from '@/client/constants/départements.json';
 import régions from '@/client/constants/régions.json';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import { Météo } from '@/server/domain/météo/Météo.interface';
 import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import { AgrégatParTerritoire } from './agrégateur.interface';
@@ -27,8 +26,8 @@ type AvancementRegroupementDonnéesBrutesTerritoire = {
 export class AgrégateurChantiersParTerritoire {
   private agrégat: AgrégatParTerritoire;
 
-  constructor(private chantiers: (ChantierAccueilContrat | ChantierRapportDetailleContrat)[]) {
-    this.chantiers = chantiers;
+  constructor(private chantier: (ChantierAccueilContrat | ChantierRapportDetailleContrat)) {
+    this.chantier = chantier;
     this.agrégat = this._créerAgrégatInitial();
   }
 
@@ -39,12 +38,9 @@ export class AgrégateurChantiersParTerritoire {
   }
 
   private _répartirLesDonnéesBrutesPourChaqueTerritoire() {
-    this.chantiers.forEach(chantier => {
-      objectEntries(chantier.mailles).forEach(([maille, codesInsee]) => {
-        objectEntries(codesInsee).forEach(([codeInsee, donnéesTerritoire]) => {
-          this.agrégat[maille].territoires[codeInsee].donnéesBrutes.avancements = donnéesTerritoire.avancement;
-          this.agrégat[maille].territoires[codeInsee].donnéesBrutes.météo = donnéesTerritoire.météo;
-        });
+    objectEntries(this.chantier.mailles).forEach(([maille, codesInsee]) => {
+      objectEntries(codesInsee).forEach(([codeInsee, donnéesTerritoire]) => {
+        this.agrégat[maille].territoires[codeInsee].donnéesBrutes.avancements = donnéesTerritoire.avancement;
       });
     });
   }
@@ -73,7 +69,7 @@ export class AgrégateurChantiersParTerritoire {
   }
 
   private _calculerLaRépartitionDesAvancementsParTerritoire(maille: Maille, avancements: AvancementRegroupementDonnéesBrutesTerritoire, codeInsee: string) {
-    this.agrégat[maille].territoires[codeInsee].répartition.avancements.global = avancements.global; // pertinence ?
+    this.agrégat[maille].territoires[codeInsee].répartition.avancements.global = avancements.global;
     this.agrégat[maille].territoires[codeInsee].répartition.avancements.annuel = avancements.annuel;
 
   }
@@ -101,7 +97,6 @@ export class AgrégateurChantiersParTerritoire {
           global: null,
           annuel: null,
         },
-        météo: 'NON_RENSEIGNEE' as Météo,
       },
     };
   }
