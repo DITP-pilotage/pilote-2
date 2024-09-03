@@ -30,7 +30,7 @@ import {
   presenterEnAvancementsStatistiquesAccueilContrat,
   RépartitionsMétéos,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
-import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateurNew/agrégateur';
+import { AgrégateurListeChantiersParTerritoire } from '@/client/utils/chantier/agrégateurListeChantiers/agrégateur';
 import { objectEntries } from '@/client/utils/objects/objects';
 import CompteurFiltre from '@/client/utils/filtres/CompteurFiltre';
 import Axe from '@/server/domain/axe/Axe.interface';
@@ -245,7 +245,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   }]);
   const avancementsAgrégés = await récupérerStatistiquesChantiersUseCase.run(chantiersAvecAlertes.map(chantier => chantier.id), mailleSelectionnee || 'départementale', session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat);
 
-  const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire(chantiersAvecAlertes, mailleSelectionnee || 'départementale').agréger();
+  const donnéesTerritoiresAgrégées = new AgrégateurListeChantiersParTerritoire(chantiersAvecAlertes, mailleSelectionnee || 'départementale').agréger();
 
   if (avancementsAgrégés) {
     avancementsAgrégés.global.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[codeInseeSelectionne].répartition.avancements.global.moyenne;
