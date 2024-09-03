@@ -4,7 +4,7 @@ const IndicateurBlocStyled = styled.div`
   &:last-of-type {
     margin-bottom: 0 !important;
   }
-  
+
   td {
     min-height: 2rem;
     vertical-align: top;
@@ -24,8 +24,8 @@ const IndicateurBlocStyled = styled.div`
   @media print {
     .impression-section {
       break-inside: avoid;
+    }
   }
-}
 `;
 
 export default IndicateurBlocStyled;
