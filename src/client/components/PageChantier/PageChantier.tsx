@@ -94,7 +94,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
     estAutoriseAProposerUneValeurActuelle,
     estAutoriseAModifierLesPublications,
     estAutoriseAModifierLesObjectifs,
-  } = usePageChantier(chantier, territoireSélectionné);
+  } = usePageChantier(chantier, territoireSélectionné, territoireCode);
 
   const listeRubriques = listeRubriquesChantier(indicateurs.map(indicateur => indicateur.type), territoireSélectionné.maille);
 

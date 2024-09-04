@@ -17,13 +17,13 @@ const PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE = new Set([
   ProfilEnum.SERVICES_DECONCENTRES_REGION,
 ]);
 
-export default function usePageChantier(chantier: Chantier, territoireSélectionné: DétailTerritoire) {
+export default function usePageChantier(chantier: Chantier, territoireSélectionné: DétailTerritoire, territoireCode: string) {
   const { data: session } = useSession();
   const territoires = territoiresTerritoiresStore();
 
   let estAutoriseAModifierLesPublications = territoireSélectionné!.accèsSaisiePublication && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantier.id);
 
-  const estAutoriseAProposerUneValeurActuelle = PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE.has(session!.profil) && estAutoriseAModifierLesPublications;
+  const estAutoriseAProposerUneValeurActuelle = territoireCode !== 'NAT-FR' && PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE.has(session!.profil) && estAutoriseAModifierLesPublications;
 
   if (session && [ProfilEnum.DIR_PROJET, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.SECRETARIAT_GENERAL].includes(session.profil) && territoireSélectionné?.maille != 'nationale') {
     estAutoriseAModifierLesPublications = estAutoriseAModifierLesPublications && chantier?.ate === 'hors_ate_centralise';
