@@ -10,7 +10,7 @@ import { Viewbox } from './CartographieSVG.interface';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
 import CartographieTerritoireSélectionné from './CartographieTerritoireSélectionné';
-import { getTraceSvg, loadSvgAsJson } from '@/server/utils/pil-152/svg-builder';
+import { useCartographieSVG } from './useCartographieSVG';
 
 interface CartographieSVGProps {
   options: CartographieOptions,
@@ -20,6 +20,11 @@ interface CartographieSVGProps {
   auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
 }
 
+const getTraceSvg = function (svgAsJson: { svg: { g: { path: { 'attr-d': string, 'attr-territoire-code': string }[] } } },  territoireCode: string): string {
+  const pathCorrespondantAuTerritoireCode = svgAsJson.svg.g.path.find(path => path['attr-territoire-code'] === territoireCode);
+  return pathCorrespondantAuTerritoireCode?.['attr-d'] || '';
+};
+
 const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
   options,
   territoires,
@@ -27,6 +32,9 @@ const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
   setInfoBulle,
   auClicTerritoireCallback,
 }) => {
+
+  const { sourceSvgAsJson } = useCartographieSVG();
+  
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [viewbox, setViewbox] = useState<Viewbox>({
     x: 0,
@@ -41,8 +49,6 @@ const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
     }
   }, [svgRef]);
 
-  const sourceSvgAsJson = loadSvgAsJson('@/server/utils/pil-152/svg-builder/pil-152/Territoires_jfg_avec_dept_id.svg');
-  
 
   return (
     <CartographieSVGStyled>
@@ -77,9 +83,9 @@ const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
           >
             {
               territoires.map(territoire => (
-                <path
+                sourceSvgAsJson ? (<path 
                   className={`territoire-rempli ${(options.estInteractif && territoire.estInteractif) && 'territoire-interactif'}`}
-                  d={getTraceSvg(sourceSvgAsJson, territoire.codeInsee)} // ou territoire.code ?
+                  d={getTraceSvg(sourceSvgAsJson, territoire.code)}
                   fill={territoire.remplissage}
                   key={`territoire-${territoire.codeInsee}`}
                   onClick={() => options.estInteractif && territoire.estInteractif && auClicTerritoireCallback(territoire.codeInsee, options.territoireSélectionnable)}
@@ -93,8 +99,7 @@ const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
                       setInfoBulle(null);
                     }
                   }}
-
-                />),
+                                   />) : null),
               )
             }
             {
