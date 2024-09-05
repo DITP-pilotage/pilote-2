@@ -160,26 +160,20 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   }, [chantiers, profilSélectionné, session]);
 
   useEffect(() => {
-    resetField('habilitations.lecture.chantiers', { defaultValue: [] });
-    resetField('habilitations.lecture.territoires', { defaultValue: [] });
-    resetField('habilitations.lecture.périmètres', { defaultValue: [] });
-    resetField('habilitations.responsabilite.chantiers', { defaultValue: [] });
-
-
     if (utilisateur) {
-      if (utilisateur.habilitations?.lecture.chantiers && afficherChampLectureChantiers) 
+      if (utilisateur.habilitations?.lecture.chantiers && afficherChampLectureChantiers && getValues('habilitations.lecture.chantiers')?.length === 0) 
         setValue('habilitations.lecture.chantiers', utilisateur.habilitations?.lecture.chantiers);
       
-      if (utilisateur.habilitations?.lecture.territoires && afficherChampLectureTerritoires) 
+      if (utilisateur.habilitations?.lecture.territoires && afficherChampLectureTerritoires && getValues('habilitations.lecture.territoires')?.length === 0) 
         setValue('habilitations.lecture.territoires', utilisateur.habilitations?.lecture.territoires);
 
-      if (utilisateur.habilitations?.lecture.périmètres && afficherChampLecturePérimètres) 
+      if (utilisateur.habilitations?.lecture.périmètres && afficherChampLecturePérimètres && getValues('habilitations.lecture.périmètres')?.length === 0) 
         setValue('habilitations.lecture.périmètres', utilisateur.habilitations?.lecture.périmètres);
 
-      if (utilisateur.habilitations?.responsabilite.chantiers && afficherChampResponsabiliteChantiers) 
+      if (utilisateur.habilitations?.responsabilite.chantiers && afficherChampResponsabiliteChantiers && getValues('habilitations.lecture.chantiers')?.length === 0) 
         setValue('habilitations.responsabilite.chantiers', utilisateur.habilitations?.responsabilite.chantiers);
     }
-  }, [afficherChampLectureChantiers, afficherChampLecturePérimètres, afficherChampLectureTerritoires, profilCodeSélectionné, resetField, setValue, utilisateur, afficherChampResponsabiliteChantiers]);
+  }, [afficherChampLectureChantiers, afficherChampLecturePérimètres, afficherChampLectureTerritoires, profilCodeSélectionné, resetField, setValue, utilisateur, afficherChampResponsabiliteChantiers, getValues]);
 
   useEffect(() => {
 
@@ -214,7 +208,6 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   }, [déterminerChantiersSélectionnésÀPartirDesPérimètresMinistériels, getValues, setValue]);
 
   useEffect(() => {
-
     handleChangementValeursSélectionnéesChantiers([...getValues('habilitations.lecture.chantiers') ?? [], ...chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés]);
   }, [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés, getValues, handleChangementValeursSélectionnéesChantiers]);
 
