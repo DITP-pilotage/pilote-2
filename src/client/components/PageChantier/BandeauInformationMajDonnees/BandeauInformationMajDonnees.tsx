@@ -24,12 +24,12 @@ const BandeauInformationMajDonnees: FunctionComponent<{
     <BandeauInformationMajDonneesStyled>
       <div className={`fr-notice ${getBandeauTypeClass(bandeauType)}`}>
         <div className='fr-notice__body flex fr-mx-3w'>
-          <span className='fr-notice__title'>
-            {titre}
-          </span>
-          <span className='fr-notice__desc fr-ml-1v'>
+          <p className='fr-notice__desc fr-ml-1v'>
+            <span className='fr-text--bold'>
+              {titre}
+            </span>
             {message}
-          </span>
+          </p>
         </div>
       </div>
     </BandeauInformationMajDonneesStyled>
