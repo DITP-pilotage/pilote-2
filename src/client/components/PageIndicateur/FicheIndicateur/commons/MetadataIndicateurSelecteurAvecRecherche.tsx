@@ -1,25 +1,24 @@
-import { UseFormRegisterReturn } from 'react-hook-form';
 import { FunctionComponent } from 'react';
 import { InformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
-import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import { MetadataIndicateurChamp } from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp';
+import SélecteurAvecRecherche from '@/components/_commons/SélecteurAvecRecherche/SélecteurAvecRecherche';
 
-export const MetadataIndicateurSelecteur: FunctionComponent<{
+export const MetadataIndicateurSelecteurAvecRecherche: FunctionComponent<{
   informationMetadataIndicateur: InformationMetadataIndicateurContrat,
   estEnCoursDeModification: boolean,
   erreurMessage?: string,
   listeValeur: { valeur: string; libellé: string }[],
-  register: UseFormRegisterReturn<string>,
   values: string | boolean,
   valeurAffiché: string,
+  valeurModifiéeCallback: (chantierSelectionné: string) => void
 }> = ({
   informationMetadataIndicateur,
-  estEnCoursDeModification,
   erreurMessage,
+  estEnCoursDeModification,
   listeValeur,
-  register,
   values,
   valeurAffiché,
+  valeurModifiéeCallback,
 }) => {
   return (
     <MetadataIndicateurChamp
@@ -27,11 +26,13 @@ export const MetadataIndicateurSelecteur: FunctionComponent<{
       informationMetadataIndicateur={informationMetadataIndicateur}
       valeurAffiché={valeurAffiché}
     >
-      <Sélecteur
-        errorMessage={erreurMessage}
+      <SélecteurAvecRecherche
+        erreurMessage={erreurMessage}
+        estVisibleEnMobile
+        estVueMobile={false}
         htmlName='indicParentCh'
         options={listeValeur}
-        register={register}
+        valeurModifiéeCallback={valeurModifiéeCallback}
         valeurSélectionnée={`${values || '_'}`}
       />
     </MetadataIndicateurChamp>
