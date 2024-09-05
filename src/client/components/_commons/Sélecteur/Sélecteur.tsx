@@ -14,7 +14,7 @@ const Sélecteur = <T extends string>({
   valeurSélectionnée,
 }: SélecteurProps<T>) => {
   return (
-    <div className={`fr-select-group ${erreur !== undefined || errorMessage ? 'fr-select-group--error' : ''}`}>
+    <div className={`fr-select-group${erreur !== undefined || errorMessage ? ' fr-select-group--error' : ''}`}>
       {
         !!libellé && (
           <label
@@ -28,12 +28,12 @@ const Sélecteur = <T extends string>({
       {
         !!texteAide &&
         <span className='fr-hint-text'>
-            {texteAide}
+          {texteAide}
         </span>
       }
       <select
         aria-label={libellé}
-        className={`fr-select fr-mt-1w ${erreur !== undefined || errorMessage ? 'fr-select--error' : ''}`}
+        className={`fr-select fr-mt-1w${erreur !== undefined || errorMessage ? ' fr-select--error' : ''}`}
         name={htmlName}
         onChange={(événement) => valeurModifiéeCallback && valeurModifiéeCallback(événement.currentTarget.value as T)}
         value={valeurSélectionnée || ''}

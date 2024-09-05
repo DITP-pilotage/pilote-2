@@ -26,7 +26,13 @@ function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageIndicat
 }
 
 export default function useDetailMetadataIndicateurForm() {
-  const { register, watch, getValues, formState: { errors } } = useFormContext<MetadataParametrageIndicateurForm>();
+  const {
+    register,
+    watch,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = useFormContext<MetadataParametrageIndicateurForm>();
 
   const { data: metadataIndicateurs = [] } = api.metadataIndicateur.récupérerMetadataIndicateurFiltrés.useQuery({
     filtres: {
@@ -56,6 +62,7 @@ export default function useDetailMetadataIndicateurForm() {
   return {
     register,
     getValues,
+    setValue,
     errors,
     metadataIndicateurs,
     optionsIndicateurParent,
