@@ -2,6 +2,10 @@ import styled from '@emotion/styled';
 
 const TableauAdminUtilisateursStyled = styled.section`
 
+  table, th, td {
+    border: 0px solid;
+  }
+
   .barre-de-recherche {
     width: 100%;
     max-width: 20.5rem;

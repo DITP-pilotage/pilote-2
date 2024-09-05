@@ -59,7 +59,7 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
       {
         !!!indicateurEstApplicable ? (
           <p className='fr-text--xs'>
-            L'indicateur n’est pas applicable sur le territoire
+            L'indicateur n’est pas applicable sur le territoire.
           </p>            
         ) : !!dateProchaineDateMaj ? (
           <>

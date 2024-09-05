@@ -73,6 +73,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     dateProchaineDateValeurActuelle,
     dateValeurActuelle,
     indicateurNonAJour,
+    IndicateurEstApplicable,
   } = useIndicateurBloc(détailsIndicateur, territoireCode);
 
   const informationsIndicateurs = [{
@@ -85,7 +86,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     données: détailsIndicateur[territoireCompare.codeInsee],
   })).sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) => indicateurDétailsTerritoire1.données.codeInsee.localeCompare(indicateurDétailsTerritoire2.données.codeInsee))];
 
-  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour);
+  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour, IndicateurEstApplicable);
 
   return (
     <IndicateurBlocStyled
@@ -125,7 +126,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   </strong>
                 </p>
                 <p className='fr-mb-0 fr-text--xs texte-gris'>
-                  Dernière mise à jour des données (de l'indicateur) :
+                  Dernière mise à jour des données (de l’indicateur, toutes zones confondues) :
                   {' '}
                   <span className='fr-text--bold'>
                     {dateDeMiseAJourIndicateur ?? 'Non renseignée'}
@@ -138,7 +139,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     Date prévisionnelle de la prochaine mise à jour des données (de l’indicateur) :
                     {' '}
                     <span className='fr-text--bold'>
-                      {dateProchaineDateMaj ?? 'Non renseignée'}
+                      {IndicateurEstApplicable ? (dateProchaineDateMaj ?? 'Données requises mais non renseignées par l\'équipe projet') : 'Non renseignée'}
                     </span>
                   </p>
                   <Infobulle

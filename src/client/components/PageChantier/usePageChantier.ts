@@ -6,6 +6,7 @@ import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { territoiresTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
+import { PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS } from '@/client/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj';
 
 const PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE = new Set([
   ProfilEnum.DITP_ADMIN,
@@ -31,17 +32,19 @@ export default function usePageChantier(chantier: Chantier, territoireSélection
 
   const estAutoriseAModifierLesObjectifs = territoires.some(territoire => territoire.maille === 'nationale' && territoire.accèsSaisiePublication) && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantier.id);
 
-
   const estAutoriseAImporterDesIndicateurs = estAutoriséAImporterDesIndicateurs(session!.profil) && !!session?.habilitations['saisieIndicateur'].chantiers.includes(chantier.id);
 
   const { data: variableContenuFFFicheConducteur } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_FICHE_CONDUCTEUR' });
   const estAutoriseAVoirLeBoutonFicheConducteur = !!variableContenuFFFicheConducteur && estAutoriséAConsulterLaFicheConducteur(session!.profil);
 
+  const estAutoriseAVoirLesAlertesMAJIndicateurs = PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS.has(session!.profil);
+  
   return {
     estAutoriseAImporterDesIndicateurs,
     estAutoriseAVoirLeBoutonFicheConducteur,
     estAutoriseAProposerUneValeurActuelle,
     estAutoriseAModifierLesPublications,
     estAutoriseAModifierLesObjectifs,
+    estAutoriseAVoirLesAlertesMAJIndicateurs,
   };
 }
