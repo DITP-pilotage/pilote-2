@@ -107,6 +107,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       delaiDisponibilite={indicateur.delaiDisponibilite}
                       description={indicateur.description}
                       indicateurEstAjour={indicateurEstAjour}
+                      indicateurEstApplicable={détailsIndicateurs[indicateur.id][territoireCode.split('-')[1]].est_applicable}
                       modeDeCalcul={indicateur.modeDeCalcul}
                       periodicite={indicateur.periodicite}
                       source={indicateur.source}

@@ -21,11 +21,11 @@ interface IndicateursProps {
   listeRubriquesIndicateurs: ÉlémentPageIndicateursType[]
   chantierEstTerritorialisé: boolean,
   estInteractif?: boolean
-  estAutoriseAVoirLesAlertesMAJIndicateurs?: boolean
   estAutoriseAProposerUneValeurActuelle?: boolean
   territoireCode: string
   territoiresCompares: string[]
   mailleSelectionnee: MailleInterne
+  alerteMiseAJourIndicateur: boolean
 }
 
 const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
@@ -35,19 +35,14 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   listeRubriquesIndicateurs,
   chantierEstTerritorialisé,
   estInteractif = true,
-  estAutoriseAVoirLesAlertesMAJIndicateurs = false,
   estAutoriseAProposerUneValeurActuelle = false,
   territoireCode,
   territoiresCompares,
   mailleSelectionnee,
+  alerteMiseAJourIndicateur,
 }) => {
-  const { data: alerteMiseAJourIndicateurEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR' });
 
   const { codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
-
-  const alerteMiseAJourIndicateur = estAutoriseAVoirLesAlertesMAJIndicateurs && !!alerteMiseAJourIndicateurEstDisponible && Object.values(détailsIndicateurs).flatMap(values => Object.values(values)).reduce((acc, val) => {
-    return val.estAJour === false || val.prochaineDateMaj === null && val.dateValeurActuelle !== null && (val.pondération || 0) > 0 ? true : acc;
-  }, false);
 
   if (indicateurs.length === 0) {
     return null;
