@@ -42,7 +42,7 @@ const SousIndicateurRapportDetailleBloc: FunctionComponent<SousIndicateurBlocPro
     IndicateurEstApplicable,
   } = useSousIndicateurBloc(détailsIndicateur, territoireCode);
 
-  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour);
+  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour, IndicateurEstApplicable);
 
   return (
     <SousIndicateurRapportDetailleBlocStyled

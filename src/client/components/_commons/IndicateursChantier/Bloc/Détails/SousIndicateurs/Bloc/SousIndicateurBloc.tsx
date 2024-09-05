@@ -76,7 +76,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
     IndicateurEstApplicable,
   } = useSousIndicateurBloc(détailsIndicateur, territoireCode);
 
-  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour);
+  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour, IndicateurEstApplicable);
 
   return (
     <SousIndicateurBlocStyled
