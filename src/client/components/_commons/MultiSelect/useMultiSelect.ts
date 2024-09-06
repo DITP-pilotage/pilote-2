@@ -88,14 +88,14 @@ export default function useMultiSelect(
   useEffect(() => {
     changementValeursSélectionnéesCallback([...valeursSélectionnées]);
 
-    if (isOpen === false) {
+    if (!isOpen) {
       trierLesOptions();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [valeursSélectionnées]);
 
   useEffect(() => {
-    if (isOpen === false) {
+    if (!isOpen) {
       trierLesOptions();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

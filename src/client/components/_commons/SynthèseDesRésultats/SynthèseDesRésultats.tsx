@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import { SynthèseDesRésultatsProps } from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats.interface';
 import SynthèseDesRésultatsStyled from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats.styled';
@@ -9,7 +10,7 @@ import Alerte from '@/components/_commons/Alerte/Alerte';
 import SynthèseDesRésultatsAffichage from '@/components/_commons/SynthèseDesRésultats/Affichage/Affichage';
 import SynthèseDesRésultatsFormulaire from './Formulaire/Formulaire';
 
-export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale, rechargerRéforme, réformeId, nomTerritoire, modeÉcriture = false, estInteractif = true }: SynthèseDesRésultatsProps) {  
+const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = ({ synthèseDesRésultatsInitiale, rechargerRéforme, réformeId, nomTerritoire, modeÉcriture = false, estInteractif = true }) => {  
   const {
     synthèseDesRésultats,
     modeÉdition,
@@ -89,4 +90,6 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
       </Bloc>
     </SynthèseDesRésultatsStyled>
   );
-}
+};
+
+export default SynthèseDesRésultats;

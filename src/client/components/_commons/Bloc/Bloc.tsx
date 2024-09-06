@@ -1,7 +1,13 @@
+import { FunctionComponent } from 'react';
 import BlocStyled from '@/components/_commons/Bloc/Bloc.styled';
-import BlocProps from './Bloc.interface';
 
-export default function Bloc({ children, contenuClassesSupplémentaires = 'fr-p-2w', titre }: BlocProps) {
+interface BlocProps {
+  children: React.ReactNode
+  contenuClassesSupplémentaires?: string
+  titre?: string
+}
+
+const Bloc: FunctionComponent<BlocProps> = ({ children, contenuClassesSupplémentaires = 'fr-p-2w', titre }) => {
   return (
     <BlocStyled className='bloc-container'>
       {
@@ -15,4 +21,6 @@ export default function Bloc({ children, contenuClassesSupplémentaires = 'fr-p-
       </div>
     </BlocStyled>
   );
-}
+};
+
+export default Bloc;

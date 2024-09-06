@@ -1,7 +1,8 @@
+import { FunctionComponent } from 'react';
 import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
 import ÉlémentStyled from '@/components/PageUtilisateur/Élément/Élément.styled';
 
-export default function AucunÉlément() {
+const AucunÉlément: FunctionComponent<{}> = () => {
   return (
     <ÉlémentStyled>
       <IcônesMultiplesEtTexte
@@ -14,4 +15,6 @@ export default function AucunÉlément() {
       </IcônesMultiplesEtTexte>
     </ÉlémentStyled>
   );
-}
+};
+
+export default AucunÉlément;

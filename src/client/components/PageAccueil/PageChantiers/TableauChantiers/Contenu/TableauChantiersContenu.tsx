@@ -1,7 +1,10 @@
-import { Cell, flexRender } from '@tanstack/react-table';
+import { Cell, flexRender, Table } from '@tanstack/react-table';
 import Link from 'next/link';
+import { FunctionComponent } from 'react';
 import { ChantierVueDEnsemble } from '@/server/domain/chantier/Chantier.interface';
-import TableauChantiersContenuProps from './TableauChantiersContenu.interface';
+import {
+  DonnéesTableauChantiers,
+} from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
 
 function afficherContenuDeLaCellule(cell: Cell<ChantierVueDEnsemble, unknown>) {
   return !cell.getIsGrouped() && (
@@ -18,50 +21,57 @@ function afficherContenuDeLaCellule(cell: Cell<ChantierVueDEnsemble, unknown>) {
   );
 }
 
-export default function TableauChantiersContenu({ tableau }: TableauChantiersContenuProps) {
+interface TableauChantiersContenuProps {
+  tableau: Table<DonnéesTableauChantiers>
+  territoireCode: string
+}
+
+const TableauChantiersContenu: FunctionComponent<TableauChantiersContenuProps> = ({ tableau, territoireCode }) => {
   return (
     <tbody>
       {
-        tableau.getRowModel().rows.map(row => (
-          row.getIsGrouped() ? (
-            <tr
-              className='ligne-ministère'
-              key={row.id}
-              onClick={() => row.getToggleExpandedHandler()()}
-            >
-              {
-                row.getVisibleCells().map(cell => (
-                  <td key={cell.id}>
-                    { afficherContenuDeLaCellule(cell) }
-                  </td>
-                ))
-              }
-            </tr>
-          ) : (
-            <tr
-              className='ligne-chantier'
-              key={row.id}
-            >
-              {
-                row.getVisibleCells().map(cell => (
-                  <td
-                    className='fr-p-0'
-                    key={cell.id}
+      tableau.getRowModel().rows.map(row => (
+        row.getIsGrouped() ? (
+          <tr
+            className='ligne-ministère'
+            key={row.id}
+            onClick={() => row.getToggleExpandedHandler()()}
+          >
+            {
+              row.getVisibleCells().map(cell => (
+                <td key={cell.id}>
+                  {afficherContenuDeLaCellule(cell)}
+                </td>
+              ))
+            }
+          </tr>
+        ) : (
+          <tr
+            className='ligne-chantier'
+            key={row.id}
+          >
+            {
+              row.getVisibleCells().map(cell => (
+                <td
+                  className='fr-p-0'
+                  key={cell.id}
+                >
+                  <Link
+                    className='fr-p-1w'
+                    href={`/chantier/${row.original.id}/${territoireCode}`}
+                    tabIndex={cell.column.columnDef.meta?.tabIndex}
                   >
-                    <Link
-                      className='fr-p-1w'
-                      href={`/chantier/${row.original.id}`}
-                      tabIndex={cell.column.columnDef.meta?.tabIndex}
-                    >
-                      { afficherContenuDeLaCellule(cell) }
-                    </Link>
-                  </td>
-                ))
-              }
-            </tr>
-          )
-        ))
-      }
+                    {afficherContenuDeLaCellule(cell)}
+                  </Link>
+                </td>
+              ))
+            }
+          </tr>
+        )
+      ))
+    }
     </tbody>
-  );    
-}
+  );
+};
+
+export default TableauChantiersContenu;

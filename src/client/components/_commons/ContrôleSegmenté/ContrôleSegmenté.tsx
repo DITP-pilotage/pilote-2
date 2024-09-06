@@ -1,6 +1,16 @@
 import '@gouvfr/dsfr/dist/component/segmented/segmented.css';
-import ContrôleSegmentéProps from './ContrôleSegmenté.interface';
 import ContrôleSegmentéStyled from './ContrôleSegmenté.styled';
+
+type ContrôleSegmentéOption<T> = {
+  libellé: string,
+  valeur: T,
+};
+
+interface ContrôleSegmentéProps<T> {
+  options: ContrôleSegmentéOption<T>[]
+  valeurSélectionnée: T
+  valeurModifiéeCallback: (valeur: T) => void
+}
 
 export default function ContrôleSegmenté<T extends string>({ options, valeurSélectionnée, valeurModifiéeCallback } : ContrôleSegmentéProps<T>) {
 

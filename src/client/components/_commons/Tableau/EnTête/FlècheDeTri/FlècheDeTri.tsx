@@ -1,6 +1,11 @@
-import FlècheDeTriProps from './FlècheDeTri.interface';
+import { FunctionComponent } from 'react';
 
-export default function FlècheDeTri({ estActif, direction }: FlècheDeTriProps) {
+interface FlècheDeTriProps {
+  estActif: boolean
+  direction: 'desc' | 'asc'
+}
+
+const FlècheDeTri: FunctionComponent<FlècheDeTriProps> = ({ estActif, direction }) => {
   return (
     <svg
       fill='none'
@@ -17,4 +22,6 @@ export default function FlècheDeTri({ estActif, direction }: FlècheDeTriProps)
       />
     </svg>
   );
-}
+};
+
+export default FlècheDeTri;

@@ -1,8 +1,14 @@
+import { FunctionComponent } from 'react';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import AvancementsTerritoireProps from './AvancementsTerritoire.interface';
 
-export default function AvancementsTerritoire({ territoireNom, avancementGlobal, avancementAnnuel }: AvancementsTerritoireProps) {
+interface AvancementsTerritoireProps {
+  territoireNom: string
+  avancementGlobal: number | null 
+  avancementAnnuel: number | null
+}
+
+const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({ territoireNom, avancementGlobal, avancementAnnuel }) => {
   return (
     <>
       <JaugeDeProgression
@@ -34,4 +40,6 @@ export default function AvancementsTerritoire({ territoireNom, avancementGlobal,
 
     </>
   );
-}
+};
+
+export default AvancementsTerritoire;

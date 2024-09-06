@@ -1,12 +1,18 @@
 import '@gouvfr/dsfr/dist/component/badge/badge.min.css';
 import ovoidBackground from '@gouvfr/dsfr/dist/artwork/background/ovoid.svg';
 import technicalError from '@gouvfr/dsfr/dist/artwork/pictograms/system/technical-error.svg';
+import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import PageErreurStyled from './PageErreurStyled';
-import PageErreurProps from './PageErreur.interface';
 
-export default function PageErreur({ titre, sousTitre, message }: PageErreurProps) {
+interface PageErreurProps {
+  titre: string
+  sousTitre: string
+  message: string
+}
+
+const PageErreur: FunctionComponent<PageErreurProps> = ({ titre, sousTitre, message }) => {
   return (
     <PageErreurStyled>
       <main>
@@ -68,4 +74,6 @@ export default function PageErreur({ titre, sousTitre, message }: PageErreurProp
       </main>
     </PageErreurStyled>
   );
-}
+};
+
+export default PageErreur;

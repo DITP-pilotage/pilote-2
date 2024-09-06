@@ -1,7 +1,13 @@
-import SommaireProps from './Sommaire.interface';
+import { FunctionComponent } from 'react';
+import { Rubrique } from '@/client/utils/rubriques';
 import SommaireStyled from './Sommaire.styled';
 
-export default function Sommaire({ rubriques, auClic }: SommaireProps) {
+interface SommaireProps {
+  rubriques: Rubrique[];
+  auClic?: () => void;
+}
+
+const Sommaire: FunctionComponent<SommaireProps> = ({ rubriques, auClic }) => {
   return (
     <SommaireStyled>
       <nav className='fr-pt-3w fr-pl-7v fr-pr-4w'>
@@ -48,4 +54,6 @@ export default function Sommaire({ rubriques, auClic }: SommaireProps) {
       </nav>
     </SommaireStyled>
   );
-}
+};
+
+export default Sommaire;

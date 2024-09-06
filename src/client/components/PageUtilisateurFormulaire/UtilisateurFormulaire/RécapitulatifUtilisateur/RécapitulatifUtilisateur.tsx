@@ -1,11 +1,16 @@
 import Link from 'next/link';
+import { FunctionComponent } from 'react';
 import Bouton from '@/components/_commons/Bouton/Bouton';
 import useRécapitulatifUtilisateur from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/RécapitulatifUtilisateur/useRécapitulatifUtilisateur';
 import FicheUtilisateur from '@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur';
 import Alerte from '@/components/_commons/Alerte/Alerte';
-import RécapitulatifUtilisateurProps from './RécapitulatifUtilisateur.interface';
 
-export default function RécapitulatifUtilisateur({ auClicBoutonRetourCallback, utilisateurExistant }: RécapitulatifUtilisateurProps) {
+interface RécapitulatifUtilisateurProps {
+  auClicBoutonRetourCallback: () => void
+  utilisateurExistant: boolean
+}
+
+const RécapitulatifUtilisateur: FunctionComponent<RécapitulatifUtilisateurProps> = ({ auClicBoutonRetourCallback, utilisateurExistant }) => {
   const { utilisateur, envoyerFormulaireUtilisateur, alerte } = useRécapitulatifUtilisateur();
 
   return (
@@ -42,4 +47,6 @@ export default function RécapitulatifUtilisateur({ auClicBoutonRetourCallback, 
       </div>
     </div>
   );
-}
+};
+
+export default RécapitulatifUtilisateur;

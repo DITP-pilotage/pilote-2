@@ -1,16 +1,21 @@
-import { Fragment } from 'react';
+import { Fragment, FunctionComponent } from 'react';
 import Modale from '@/components/_commons/Modale/Modale';
 import MétéoBadge from '@/components/_commons/Météo/Badge/MétéoBadge';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import SynthèseDesRésultatsAffichage from '@/components/_commons/SynthèseDesRésultats/Affichage/Affichage';
 import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
-import SynthèseDesRésultatsHistoriqueProps from './Historique.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import SynthèseDesRésultatsHistoriqueStyled from './Historique.styled';
 import useHistoriqueDeLaSynthèseDesRésultats from './useHistoriqueDeLaSynthèseDesRésultats';
 
+interface SynthèseDesRésultatsHistoriqueProps {
+  réformeId: Chantier['id'] | ProjetStructurant['id'];
+}
+
 const ID_HTML = 'historique-synthèse-des-résultats';
 
-export default function SynthèseDesRésultatsHistorique({ réformeId }: SynthèseDesRésultatsHistoriqueProps) {
+const SynthèseDesRésultatsHistorique: FunctionComponent<SynthèseDesRésultatsHistoriqueProps> = ({ réformeId }) => {
   const { 
     historiqueDeLaSynthèseDesRésultats, 
     territoireSélectionné, 
@@ -70,4 +75,6 @@ export default function SynthèseDesRésultatsHistorique({ réformeId }: Synthè
       </Modale>
     </>
   );
-}
+};
+
+export default SynthèseDesRésultatsHistorique;

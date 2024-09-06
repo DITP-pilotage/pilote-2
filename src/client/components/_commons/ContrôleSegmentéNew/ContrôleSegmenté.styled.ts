@@ -1,22 +1,15 @@
 import styled from '@emotion/styled';
 
 const ContrôleSegmentéStyled = styled.div`
-  .fr-segmented__elements {
-    width: 40rem;
-
-    @media (max-width: 576px) {
-      width: 12rem;
-    }
+  .fr-tag-active {
+    color: white;
+    background-color: var(--blue-france-sun-113-625);
   }
-
-  .fr-segmented__element {
-    width: 50%;
-  }
-
-  .fr-label-centered {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  
+  .fr-tag-active:hover {
+    color: white;
+    cursor: not-allowed;
+    background-color: var(--blue-france-sun-113-625);
   }
 `;
 

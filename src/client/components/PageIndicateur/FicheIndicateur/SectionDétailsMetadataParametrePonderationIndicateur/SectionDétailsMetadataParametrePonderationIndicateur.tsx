@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import SectionDétailsMetadataParametrePonderationIndicateurStyled
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametrePonderationIndicateur/SectionDétailsMetadataParametrePonderationIndicateur.styled';
@@ -7,15 +8,15 @@ import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/Meta
 import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
 import { MetadataIndicateurInput } from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInput';
 
-export default function SectionDétailsMetadataParametrePonderationIndicateur({
-  indicateur,
-  estEnCoursDeModification,
-  mapInformationMetadataIndicateur,
-}: {
+const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat
   estEnCoursDeModification: boolean
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
-}) {
+}> = ({
+  indicateur,
+  estEnCoursDeModification,
+  mapInformationMetadataIndicateur,
+}) => {
   const { register, errors } = useDétailsMetadataParametrePonderationIndicateurForm();
 
   return (
@@ -61,11 +62,6 @@ export default function SectionDétailsMetadataParametrePonderationIndicateur({
       <hr className='fr-hr fr-mt-3w' />
     </SectionDétailsMetadataParametrePonderationIndicateurStyled>
   );
-}
+};
 
-
-
-
-
-
-
+export default SectionDétailsMetadataParametrePonderationIndicateur;

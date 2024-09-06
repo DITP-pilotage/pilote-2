@@ -1,11 +1,17 @@
 import { useMemo } from 'react';
 import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
-import { CartographieDonnéesValeurActuelle } from '@/components/_commons/Cartographie/CartographieValeurActuelle/CartographieValeurActuelle.interface';
+import {
+  CartographieDonnéesValeurActuelle,
+} from '@/components/_commons/Cartographie/CartographieValeurActuelle/CartographieValeurActuelle.interface';
 import { valeurMaximum, valeurMinimum } from '@/client/utils/statistiques/statistiques';
 import { interpolerCouleurs } from '@/client/utils/couleur/couleur';
-import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
-import { CartographieÉlémentsDeLégende } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
+import {
+  ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
+} from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
+import {
+  CartographieÉlémentsDeLégende,
+} from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 
 const COULEUR_DÉPART = '#8bcdb1';
 const COULEUR_ARRIVÉE = '#083a25';
@@ -44,8 +50,8 @@ export default function useCartographieValeurActuelle(données: CartographieDonn
 
   const légendeAdditionnelle = useMemo(() => {
     
-    const tousApplicables: Boolean = données.map(d => d.estApplicable).every(el => el === true);
-    const tousNonNull: Boolean = données.map(d => d.valeur !== null).every(el => el === true);
+    const tousApplicables: Boolean = données.every(d => d.estApplicable);
+    const tousNonNull: Boolean = données.every(d => d.valeur !== null);
 
     let légendeAffichée = Object.values(élémentsDeLégende);
     if (tousApplicables) {

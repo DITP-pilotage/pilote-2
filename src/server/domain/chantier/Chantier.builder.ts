@@ -1,8 +1,15 @@
 import { faker } from '@faker-js/faker/locale/fr';
 import Chantier, { typesStatut } from '@/server/domain/chantier/Chantier.interface';
-import { CodeInsee, codeInseeFrance, codesInseeDépartements, codesInseeRégions, TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
 import {
-  générerCaractèresSpéciaux, générerTableau,
+  CodeInsee,
+  codeInseeFrance,
+  codesInseeDépartements,
+  codesInseeRégions,
+  TerritoiresDonnées,
+} from '@/server/domain/territoire/Territoire.interface';
+import {
+  générerCaractèresSpéciaux,
+  générerTableau,
   générerUnIdentifiantUnique,
   générerUnLibellé,
 } from '@/server/infrastructure/test/builders/utils';
@@ -86,91 +93,6 @@ export default class ChantierBuilder {
     const territoires: TerritoiresDonnées = {};
     codesInsee.forEach(codeInsee => territoires[codeInsee] = new TerritoireDonnéesBuilder().avecCodeInsee(codeInsee).build());
     return territoires;
-  }
-
-  avecId(id: Chantier['id']): ChantierBuilder {
-    this._id = id;
-    return this;
-  }
-
-  avecNom(nom: Chantier['nom']): ChantierBuilder {
-    this._nom = nom;
-    return this;
-  }
-
-  avecAxe(axe: Chantier['axe']): ChantierBuilder {
-    this._axe = axe;
-    return this;
-  }
-
-  avecPpg(ppg: Chantier['ppg']): ChantierBuilder {
-    this._ppg = ppg;
-    return this;
-  }
-
-  avecPérimètreIds(périmètreIds: Chantier['périmètreIds']): ChantierBuilder {
-    this._périmètreIds = périmètreIds;
-    return this;
-  }
-
-  avecMailleRégionale(mailleRégionale: Chantier['mailles']['régionale']): ChantierBuilder {
-    this._mailles.régionale = mailleRégionale;
-    return this;
-  }
-
-  avecMailleDépartementale(mailleDépartementale: Chantier['mailles']['départementale']): ChantierBuilder {
-    this._mailles.départementale = mailleDépartementale;
-    return this;
-  }
-
-  avecMailleNationale(mailleNationale: Chantier['mailles']['nationale']): ChantierBuilder {
-    this._mailles.nationale = mailleNationale;
-    return this;
-  }
-
-  avecPorteur(porteur: Chantier['responsables']['porteur']): ChantierBuilder {
-    this._porteur = porteur;
-    return this;
-  }
-
-  avecCoporteurs(coporteurs: Chantier['responsables']['coporteurs']): ChantierBuilder {
-    this._coporteurs = coporteurs;
-    return this;
-  }
-
-  avecDirecteursAdminCentrale(directeursAdminCentrale: Chantier['responsables']['directeursAdminCentrale']): ChantierBuilder {
-    this._directeursAdminCentrale = directeursAdminCentrale;
-    return this;
-  }
-
-  avecDirecteursProjet(directeursProjet: Chantier['responsables']['directeursProjet']): ChantierBuilder {
-    this._directeursProjet = directeursProjet;
-    return this;
-  }
-
-  avecEstBaromètre(estBaromètre: Chantier['estBaromètre']): ChantierBuilder {
-    this._estBaromètre = estBaromètre;
-    return this;
-  }
-
-  avecEstTerritorialisé(estTerritorialisé: Chantier['estTerritorialisé']): ChantierBuilder {
-    this._estTerritorialisé = estTerritorialisé;
-    return this;
-  }
-
-  avecTauxAvancementDonnéeTerritorialisée(tauxAvancementDonnéeTerritorialisée: Chantier['tauxAvancementDonnéeTerritorialisée']): ChantierBuilder {
-    this._tauxAvancementDonnéeTerritorialisée = tauxAvancementDonnéeTerritorialisée;
-    return this;
-  }
-
-  avecMétéoDonnéeTerritorialisée(météoDonnéeTerritorialisée: Chantier['météoDonnéeTerritorialisée']): ChantierBuilder {
-    this._météoDonnéeTerritorialisée = météoDonnéeTerritorialisée;
-    return this;
-  }
-
-  avecSatut(statut: Chantier['statut']): ChantierBuilder {
-    this._statut = statut;
-    return this;
   }
 
   build(): Chantier {

@@ -2,6 +2,7 @@ import Chantier, { TypeStatut } from '@/server/domain/chantier/Chantier.interfac
 import { TerritoireDonnées, TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
 interface TerritoireAvancementAccueilContrat {
   global: number | null
@@ -89,7 +90,7 @@ const presenterEnPerimetresMinisterielAccueilContrat = (périmètreMinistériel:
 };
 
 export const presenterEnChantierAccueilContrat = (territoireCode: string) => (chantier: Chantier): ChantierAccueilContrat => {
-  const [maille, codeInsee] = territoireCode.split('-');
+  const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
   const mailleChantier = maille === 'NAT' ? 'nationale' : maille === 'REG' ? 'régionale' : 'départementale';
 
   const mailles = presenterEnMailleAccueilContrat(chantier.mailles);

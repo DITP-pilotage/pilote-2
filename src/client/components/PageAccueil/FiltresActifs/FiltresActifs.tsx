@@ -1,9 +1,14 @@
+import { FunctionComponent } from 'react';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Tag from '@/components/_commons/Tag/Tag';
 import { actions as actionsFiltreStore } from '@/stores/useFiltresStore/useFiltresStore';
 import FiltresActifsStyled from './FiltresActifs.styled';
-import FiltresActifsProps from './FiltresActifs.interface';
 
-export default function FiltresActifs({ ministères } : FiltresActifsProps) {
+interface FiltresActifsProps {
+  ministères: Ministère[]
+}
+
+const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères }) => {
   const {
     récupérerFiltresActifsAvecLeursCatégories,
     désactiverUnFiltre,
@@ -60,4 +65,6 @@ export default function FiltresActifs({ ministères } : FiltresActifsProps) {
       </button>
     </FiltresActifsStyled>
   );
-}
+};
+
+export default FiltresActifs;

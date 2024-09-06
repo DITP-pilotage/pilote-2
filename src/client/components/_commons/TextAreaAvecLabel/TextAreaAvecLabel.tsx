@@ -1,36 +1,68 @@
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/component/input/input.min.css';
-import InputAvecLabelProps from '@/components/_commons/InputAvecLabel/InputAvecLabel.interface';
+import { FunctionComponent, HTMLInputTypeAttribute } from 'react';
+import { FieldError, FieldErrorsImpl, Merge, UseFormRegisterReturn } from 'react-hook-form';
+import { ChampObligatoire } from '@/components/PageIndicateur/ChampObligatoire';
 
-export default function TextAreaAvecLabel({ erreur, libellé, htmlName, texteAide, register, disabled }: InputAvecLabelProps) {
+interface TexteAreaLabelProps {
+  libellé: string,
+  htmlName: string,
+  register: UseFormRegisterReturn,
+  erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>,
+  erreurMessage?: string,
+  isRequired?: boolean,
+  disabled?: boolean,
+  className?: string,
+  texteAide?: string,
+  type?: HTMLInputTypeAttribute
+}
+
+const TextAreaAvecLabel: FunctionComponent<TexteAreaLabelProps> = ({
+  erreur,
+  erreurMessage,
+  isRequired = false,
+  libellé,
+  htmlName,
+  texteAide,
+  register,
+  disabled,
+  className,
+}) => {
   return (
-    <div className={`fr-input-group ${erreur !== undefined ? 'fr-input-group--error' : ''}`}>
+    <div className={`fr-input-group ${erreur !== undefined || erreurMessage ? 'fr-input-group--error' : ''}`}>
       <label
         className='fr-label'
         htmlFor={htmlName}
       >
         {libellé}
         {
+          isRequired ? (
+            <ChampObligatoire />
+          ) : null
+        }
+        {
           !!texteAide &&
-            <span className='fr-hint-text'>
+          <span className='fr-hint-text'>
               {texteAide}
-            </span>
+          </span>
         }
       </label>
       <textarea
-        className={`fr-input ${erreur !== undefined ? 'fr-input-group--error' : ''}`}
+        className={`fr-input${erreur !== undefined || erreurMessage ? ' fr-input-group--error' : ''}${className !== undefined ? ' ' + className : ''}`}
         disabled={disabled}
         id={htmlName}
         {...register}
       />
       {
-        erreur !== undefined &&
-          <p
-            className='fr-error-text'
-          >
-            {erreur.message?.toString()}
-          </p>
+        (erreur !== undefined || erreurMessage !== undefined) &&
+        <p
+          className='fr-error-text'
+        >
+          {erreur?.message?.toString() || erreurMessage}
+        </p>
       }
     </div>
   );
-}
+};
+
+export default TextAreaAvecLabel;

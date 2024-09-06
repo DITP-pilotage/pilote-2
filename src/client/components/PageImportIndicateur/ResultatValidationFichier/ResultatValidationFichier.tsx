@@ -1,9 +1,14 @@
+import { FunctionComponent } from 'react';
 import { wording } from '@/client/utils/i18n/i18n';
 import Alerte from '@/components/_commons/Alerte/Alerte';
-import { ResultatValidationFichierProps } from './ResultatValidationFichier.interface';
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
+import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 
-export default function ResultatValidationFichier({ rapport }: ResultatValidationFichierProps) {
+interface ResultatValidationFichierProps {
+  rapport: DetailValidationFichierContrat
+}
+
+const ResultatValidationFichier: FunctionComponent<ResultatValidationFichierProps> = ({ rapport }) => {
   const contientDesErreursNonIdentifies = rapport.listeErreursValidation.some(erreur => erreur.nom === 'Erreur non identifié');
 
   return (
@@ -86,4 +91,6 @@ export default function ResultatValidationFichier({ rapport }: ResultatValidatio
       }
     </section>
   );
-}
+};
+
+export default ResultatValidationFichier;

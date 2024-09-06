@@ -1,174 +1,50 @@
-/* eslint-disable sonarjs/cognitive-complexity */
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import {
-  actionsTerritoiresStore,
-  mailleSélectionnéeTerritoiresStore,
-  territoiresComparésTerritoiresStore,
-  territoiresTerritoiresStore,
-  territoireSélectionnéTerritoiresStore,
-} from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import api from '@/server/infrastructure/api/trpc/api';
-import calculerChantierAvancements from '@/client/utils/chantier/avancement/calculerChantierAvancements';
-import { Commentaire } from '@/server/domain/chantier/commentaire/Commentaire.interface';
-import Objectif from '@/server/domain/chantier/objectif/Objectif.interface';
-import {
-  actionsTypeDeRéformeStore,
-  typeDeRéformeSélectionnéeStore,
-} from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { IndicateurPondération } from '@/components/PageChantier/PageChantier.interface';
-import { comparerIndicateur, estAutoriséAImporterDesIndicateurs } from '@/client/utils/indicateur/indicateur';
+import { estAutoriséAImporterDesIndicateurs } from '@/client/utils/indicateur/indicateur';
 import { estAutoriséAConsulterLaFicheConducteur } from '@/client/utils/fiche-conducteur/fiche-conducteur';
-import { getFiltresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
-import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
-import { getQueryParamString } from '@/client/utils/getQueryParamString';
-import { convertitEnPondération } from '@/client/utils/ponderation/ponderation';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { territoiresTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
+import { PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS } from '@/client/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj';
 
-const PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS = new Set(['DITP_ADMIN', 'DITP_PILOTAGE', 'SECRETARIAT_GENERAL', 'DIR_PROJET', 'EQUIPE_DIR_PROJET']);
+const PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE = new Set([
+  ProfilEnum.DITP_ADMIN,
+  ProfilEnum.PREFET_DEPARTEMENT,
+  ProfilEnum.PREFET_REGION,
+  ProfilEnum.COORDINATEUR_REGION,
+  ProfilEnum.COORDINATEUR_DEPARTEMENT,
+  ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+  ProfilEnum.SERVICES_DECONCENTRES_REGION,
+]);
 
-export default function usePageChantier(chantierId: string, indicateurs: Indicateur[]) {
-  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
-  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-  const territoiresComparés = territoiresComparésTerritoiresStore();
-  const territoires = territoiresTerritoiresStore();
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
-  const territoireParent = territoireSélectionné?.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné.codeParent) : null;
+export default function usePageChantier(chantier: Chantier, territoireSélectionné: DétailTerritoire, territoireCode: string) {
   const { data: session } = useSession();
+  const territoires = territoiresTerritoiresStore();
 
-  const { modifierTypeDeRéformeSélectionné } = actionsTypeDeRéformeStore();
-  const typeDeRéformeSélectionné = typeDeRéformeSélectionnéeStore();
+  let estAutoriseAModifierLesPublications = territoireSélectionné!.accèsSaisiePublication && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantier.id);
 
-  useEffect(() => {
-    if (typeDeRéformeSélectionné === 'projet structurant') modifierTypeDeRéformeSélectionné();
-  }, [modifierTypeDeRéformeSélectionné, typeDeRéformeSélectionné]);
-  
-  const saisieIndicateurAutorisée = estAutoriséAImporterDesIndicateurs(session!.profil) && !!session?.habilitations['saisieIndicateur'].chantiers.includes(chantierId);
-  const { data: variableContenuFFFicheConducteur } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_FICHE_CONDUCTEUR' });
+  const estAutoriseAProposerUneValeurActuelle = territoireCode !== 'NAT-FR' && PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE.has(session!.profil) && estAutoriseAModifierLesPublications;
 
-  const afficheLeBoutonFicheConducteur = (variableContenuFFFicheConducteur as boolean) && estAutoriséAConsulterLaFicheConducteur(session!.profil);
-
-  const { data: synthèseDesRésultats } = api.synthèseDesRésultats.récupérerLaPlusRécente.useQuery(
-    {
-      réformeId: chantierId,
-      territoireCode: territoireSélectionné!.code,
-      typeDeRéforme: 'chantier',
-    },
-  );
-
-  const { data: commentaires } = api.publication.récupérerLesPlusRécentesParTypeGroupéesParRéformes.useQuery(
-    {
-      réformeId: chantierId,
-      territoireCode: territoireSélectionné!.code,
-      entité: 'commentaires',
-      typeDeRéforme: 'chantier',
-    },
-  );
-
-  const { data: objectifs } = api.publication.récupérerLesPlusRécentesParTypeGroupéesParRéformes.useQuery(
-    {
-      réformeId: chantierId,
-      territoireCode: 'NAT-FR',
-      entité: 'objectifs',
-      typeDeRéforme: 'chantier',
-    },
-  );
-
-  const { data: décisionStratégique } = api.publication.récupérerLaPlusRécente.useQuery(
-    {
-      réformeId: chantierId,
-      territoireCode: 'NAT-FR',
-      entité: 'décisions stratégiques',
-      type: 'suiviDesDécisionsStratégiques',
-      typeDeRéforme: 'chantier',
-    },
-  );
-
-  const { data: détailsIndicateurs } = api.indicateur.récupererDétailsIndicateurs.useQuery(
-    {
-      chantierId,
-      territoireCodes: territoiresComparés.length > 0 ? territoiresComparés.map(territoire => territoire.code) : [territoireSélectionné!.code],
-    },
-    { keepPreviousData: true },
-  );
-
-  const { data: chantier, refetch: rechargerChantier } = api.chantier.récupérer.useQuery(
-    {
-      chantierId,
-    },
-  );
-
-  const { data: avancementsAgrégés } = api.chantier.récupérerStatistiquesAvancements.useQuery(
-    {
-      chantiers: [chantierId],
-      maille: mailleSélectionnée,
-    },
-    { refetchOnWindowFocus: false, keepPreviousData: true },
-  );
-
-  const avancements = !chantier
-    ? null
-    : (
-      calculerChantierAvancements(
-        chantier as unknown as ChantierRapportDetailleContrat,
-        mailleSélectionnée,
-        territoireSélectionné!,
-        territoireParent,
-        avancementsAgrégés ?? null,
-      )
-    );
-
-  const indicateurPondérations = !détailsIndicateurs || !territoireSélectionné
-    ? []
-    : (
-      indicateurs
-        .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireSélectionné.codeInsee]?.pondération ?? null, détailsIndicateurs[b.id][territoireSélectionné.codeInsee]?.pondération ?? null))
-        .map(indicateur => ({
-          pondération: convertitEnPondération(détailsIndicateurs[indicateur.id][territoireSélectionné.codeInsee]?.pondération),
-          nom: indicateur.nom,
-          type: indicateur.type,
-        }))
-        .filter((indPond): indPond is IndicateurPondération => indPond.pondération !== null && indPond.pondération !== '0')
-    );
-
-
-  let modeÉcriture = territoireSélectionné!.accèsSaisiePublication && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantierId);
-  if (session && ['DIR_PROJET', 'EQUIPE_DIR_PROJET', 'SECRETARIAT_GENERAL'].includes(session.profil) && territoireSélectionné?.maille != 'nationale') {
-    modeÉcriture = modeÉcriture && chantier?.ate === 'hors_ate_centralise';
+  if (session && [ProfilEnum.DIR_PROJET, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.SECRETARIAT_GENERAL].includes(session.profil) && territoireSélectionné?.maille != 'nationale') {
+    estAutoriseAModifierLesPublications = estAutoriseAModifierLesPublications && chantier?.ate === 'hors_ate_centralise';
   }
-  const modeÉcritureObjectifs = territoires.some(t => t.maille === 'nationale' && t.accèsSaisiePublication) && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantierId);
 
-  const chantierTerritoireSélectionné = chantier?.mailles[territoireSélectionné?.maille ?? 'nationale'][territoireSélectionné?.codeInsee ?? 'FR'];
-  const responsableLocal = chantierTerritoireSélectionné?.responsableLocal ?? [];
-  const listeCoordinateursTerritorials = chantierTerritoireSélectionné?.coordinateurTerritorial ?? [];
+  const estAutoriseAModifierLesObjectifs = territoires.some(territoire => territoire.maille === 'nationale' && territoire.accèsSaisiePublication) && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantier.id);
 
-  const territoireCode = territoireSélectionné?.code;
+  const estAutoriseAImporterDesIndicateurs = estAutoriséAImporterDesIndicateurs(session!.profil) && !!session?.habilitations['saisieIndicateur'].chantiers.includes(chantier.id);
 
-  const queryParamString = getQueryParamString(getFiltresActifs());
-  const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
+  const { data: variableContenuFFFicheConducteur } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_FICHE_CONDUCTEUR' });
+  const estAutoriseAVoirLeBoutonFicheConducteur = !!variableContenuFFFicheConducteur && estAutoriséAConsulterLaFicheConducteur(session!.profil);
 
   const estAutoriseAVoirLesAlertesMAJIndicateurs = PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS.has(session!.profil);
-
+  
   return {
-    détailsIndicateurs: détailsIndicateurs ?? null,
-    commentaires: commentaires ? commentaires[chantierId] as Commentaire[] : null,
-    objectifs: objectifs ? objectifs[chantierId] as Objectif[] : null,
-    synthèseDesRésultats: synthèseDesRésultats ?? null,
-    décisionStratégique: décisionStratégique ?? null,
-    chantier: chantier ?? null,
-    rechargerChantier,
-    territoireSélectionné,
-    modeÉcriture,
-    modeÉcritureObjectifs,
-    profil: session!.profil,
-    avancements,
-    indicateurPondérations,
-    saisieIndicateurAutorisée,
-    afficheLeBoutonFicheConducteur: afficheLeBoutonFicheConducteur as boolean,
-    responsableLocal,
-    listeCoordinateursTerritorials,
-    hrefBoutonRetour,
+    estAutoriseAImporterDesIndicateurs,
+    estAutoriseAVoirLeBoutonFicheConducteur,
+    estAutoriseAProposerUneValeurActuelle,
+    estAutoriseAModifierLesPublications,
+    estAutoriseAModifierLesObjectifs,
     estAutoriseAVoirLesAlertesMAJIndicateurs,
   };
 }

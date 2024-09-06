@@ -19,6 +19,12 @@ export default class IndicateurBuilder {
 
   private _unité: Indicateur['unité'];
 
+  private _parentId: Indicateur['parentId'];
+
+  private _periodicite: Indicateur['periodicite'];
+
+  private _delaiDisponibilite: Indicateur['delaiDisponibilite'];
+
   constructor() {
     this._id = générerUnIdentifiantUnique('IND');
     this._nom = `${this._id} ${faker.lorem.words()}`;
@@ -28,6 +34,9 @@ export default class IndicateurBuilder {
     this._source = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
     this._modeDeCalcul = générerPeutÊtreNull(0.2, faker.lorem.paragraph(5));
     this._unité = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
+    this._parentId = null;
+    this._periodicite = faker.helpers.arrayElement(['Annuelle', 'Mensuelle', '3 ans']);
+    this._delaiDisponibilite = faker.datatype.bigInt({ min: 10, max: 100 }).toString();
   }
 
   avecId(id: Indicateur['id']): IndicateurBuilder {
@@ -45,26 +54,6 @@ export default class IndicateurBuilder {
     return this;
   }
 
-  avecEstIndicateurDuBaromètre(estIndicateurDuBaromètre: Indicateur['estIndicateurDuBaromètre']): IndicateurBuilder {
-    this._estIndicateurDuBaromètre = estIndicateurDuBaromètre;
-    return this;
-  }
-
-  avecDescription(description: Indicateur['description']): IndicateurBuilder {
-    this._description = description;
-    return this;
-  }
-
-  avecSource(source: Indicateur['source']): IndicateurBuilder {
-    this._source = source;
-    return this;
-  }
-
-  avecModeDeCalcul(modeDeCalcul: Indicateur['modeDeCalcul']): IndicateurBuilder {
-    this._modeDeCalcul = modeDeCalcul;
-    return this;
-  }
-
   build(): Indicateur {
     return {
       id: this._id,
@@ -75,6 +64,9 @@ export default class IndicateurBuilder {
       source: this._source,
       modeDeCalcul: this._modeDeCalcul,
       unité: this._unité,
+      parentId: this._parentId,
+      periodicite: this._periodicite,
+      delaiDisponibilite: this._delaiDisponibilite,
     };
   }
 }

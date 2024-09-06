@@ -1,8 +1,14 @@
 import '@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css';
-import { Fragment, useId } from 'react';
-import MultiSelectGroupeProps from '@/components/_commons/MultiSelect/MultiSelectGroupe.interface';
+import { Fragment, FunctionComponent, useId } from 'react';
+import { MultiSelectOptionGroupée } from '@/components/_commons/MultiSelect/MultiSelect.interface';
 
-export default function MultiSelectGroupe({ groupeOptions, changementÉtatCallback, valeursSélectionnées } : MultiSelectGroupeProps) {
+interface MultiSelectGroupeProps {
+  groupeOptions: MultiSelectOptionGroupée
+  changementÉtatCallback: (valeur: string) => void
+  valeursSélectionnées: Set<string>
+}
+
+const MultiSelectGroupe: FunctionComponent<MultiSelectGroupeProps> = ({ groupeOptions, changementÉtatCallback, valeursSélectionnées }) => {
   const id = useId();
 
   if (groupeOptions.options.length === 0) 
@@ -48,4 +54,6 @@ export default function MultiSelectGroupe({ groupeOptions, changementÉtatCallba
       }
     </>
   );
-}
+};
+
+export default MultiSelectGroupe;

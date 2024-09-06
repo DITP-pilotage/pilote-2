@@ -1,13 +1,20 @@
 import { parseAsString, useQueryState } from 'nuqs';
+import { FunctionComponent } from 'react';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
-import FiltresSélectionMultipleProps from './FiltresSélectionMultiple.interface';
+import Axe from '@/server/domain/axe/Axe.interface';
 import FiltresSélectionMultipleStyled from './FiltresSélectionMultiple.styled';
 
-export default function FiltresSélectionMultiple({
+interface FiltresSélectionMultipleProps {
+  catégorieDeFiltre: 'axes',
+  filtres: Axe[],
+  libellé: string,
+}
+
+const FiltresSélectionMultiple: FunctionComponent<FiltresSélectionMultipleProps> = ({
   catégorieDeFiltre,
   libellé,
   filtres,
-}: FiltresSélectionMultipleProps) {
+}) => {
 
   const [filtresNew, setListeFiltresNew] = useQueryState(catégorieDeFiltre, parseAsString.withDefault('').withOptions({
     shallow: false,
@@ -60,4 +67,6 @@ export default function FiltresSélectionMultiple({
       </div>
     </FiltresSélectionMultipleStyled>
   );
-}
+};
+
+export default FiltresSélectionMultiple;

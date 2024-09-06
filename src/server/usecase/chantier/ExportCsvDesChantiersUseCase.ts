@@ -8,6 +8,7 @@ import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 const verifierOptionPerimetreIds = (optionsExport: OptionsExport, perimetreIds: string[]) => {
   return optionsExport.perimetreIds.length > 0 ? optionsExport.perimetreIds.some(perimetreId => perimetreIds.includes(perimetreId)) : true;
@@ -71,7 +72,7 @@ export class ExportCsvDesChantiersUseCase {
   }
 
   private masquerPourProfilDROM(profil: ProfilCode, périmètreIds : string[]) {
-    return profil == 'DROM' && !périmètreIds.includes('PER-018');
+    return profil == ProfilEnum.DROM && !périmètreIds.includes('PER-018');
   }
 
   private masquerChantierPourProfilDROM(profil: ProfilCode, chantier : ChantierPourExport) {
@@ -112,6 +113,6 @@ export class ExportCsvDesChantiersUseCase {
       chantierPourExport.commCommentairesSurLesDonnées || NON_APPLICABLE,
       chantierPourExport.commAutresRésultats || NON_APPLICABLE,
     ];
-    return profil === 'DITP_ADMIN' ? [...donnees, chantierPourExport.statut || NON_APPLICABLE] : donnees;
+    return profil === ProfilEnum.DITP_ADMIN ? [...donnees, chantierPourExport.statut || NON_APPLICABLE] : donnees;
   }
 }

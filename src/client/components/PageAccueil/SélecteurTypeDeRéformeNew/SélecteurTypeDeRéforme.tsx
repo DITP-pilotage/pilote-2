@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { FunctionComponent } from 'react';
 import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 import SélecteurRéformeStyled from './SélecteurTypeDeRéforme.styled';
 
@@ -7,7 +8,7 @@ interface SélecteurTypeDeRéformeProps {
   territoireCode: string
 }
 
-export default function SélecteurTypeDeRéforme({ typeDeRéformeSélectionné, territoireCode }: SélecteurTypeDeRéformeProps) {
+const SélecteurTypeDeRéforme: FunctionComponent<SélecteurTypeDeRéformeProps> = ({ typeDeRéformeSélectionné, territoireCode }) => {
   const typesDeRéformeÀAfficher: { label: string, valeur: TypeDeRéforme, href: string }[] = [
     {
       label: 'Chantiers',
@@ -25,16 +26,21 @@ export default function SélecteurTypeDeRéforme({ typeDeRéformeSélectionné, 
     <SélecteurRéformeStyled className='fr-p-1v'>
       {
           typesDeRéformeÀAfficher.map(typeDeRéforme => (
-            <Link
+            <Link 
               className={`${typeDeRéformeSélectionné === typeDeRéforme.valeur && 'sélectionné fr-text--bold'}`}
               href={`/accueil/${typeDeRéforme.href}/${territoireCode}`}
               key={typeDeRéforme.valeur}
-              type='button'
             >
-              {typeDeRéforme.label}
+              <button
+                type='button'
+              >
+                {typeDeRéforme.label}
+              </button>
             </Link>
           ))
         }
     </SélecteurRéformeStyled>
   );
-}
+};
+
+export default SélecteurTypeDeRéforme;

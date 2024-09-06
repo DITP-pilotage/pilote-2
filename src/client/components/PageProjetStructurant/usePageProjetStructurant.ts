@@ -1,12 +1,17 @@
 import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import CommentaireProjetStructurant from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
-import ObjectifProjetStructurant, { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
+import ObjectifProjetStructurant, {
+  typeObjectifProjetStructurant,
+} from '@/server/domain/projetStructurant/objectif/Objectif.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import api from '@/server/infrastructure/api/trpc/api';
 import SynthèseDesRésultatsProjetStructurant
   from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultats.interface';
-import { actionsTypeDeRéformeStore, typeDeRéformeSélectionnéeStore } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
+import {
+  actionsTypeDeRéformeStore,
+  typeDeRéformeSélectionnéeStore,
+} from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
 
 export default function usePageProjetStructurant(projetStructurantId: ProjetStructurant['id'], territoireCode: ProjetStructurant['territoire']['code']) {
   const { modifierTypeDeRéformeSélectionné } = actionsTypeDeRéformeStore();

@@ -50,6 +50,12 @@ export class RécupérerVariableContenuUseCase {
       case 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR': {
         return configuration.featureFlip.alerteMAJIndicateur as VariableContenuDisponibleEnv[T];
       }
+      case 'NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE': {
+        return configuration.featureFlip.propositionValeurActuelle as VariableContenuDisponibleEnv[T];
+      }
+      case 'NEXT_PUBLIC_FF_SOUS_INDICATEURS': {
+        return configuration.featureFlip.sousIndicateurs as VariableContenuDisponibleEnv[T];
+      }
     }
   }
 }

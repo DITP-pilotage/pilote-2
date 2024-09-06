@@ -1,11 +1,31 @@
-import { memo, useEffect, useRef, useState } from 'react';
+import { FunctionComponent, memo, useEffect, useRef, useState } from 'react';
 import hachuresGrisBlanc from '@/client/constants/légendes/hachure/hachuresGrisBlanc';
-import CartographieSVGProps, { Viewbox } from './CartographieSVG.interface';
+import {
+  CartographieOptions,
+  CartographieTerritoires,
+  CartographieInfoBulle,
+} from '@/components/_commons/Cartographie/useCartographie.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { Viewbox } from './CartographieSVG.interface';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
 import CartographieTerritoireSélectionné from './CartographieTerritoireSélectionné';
 
-function CartographieSVG({ options, territoires, frontières, setInfoBulle, auClicTerritoireCallback }: CartographieSVGProps) {
+interface CartographieSVGProps {
+  options: CartographieOptions,
+  territoires: CartographieTerritoires['territoires'],
+  frontières: CartographieTerritoires['frontières'],
+  setInfoBulle:  (state: CartographieInfoBulle | null) => void,
+  auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
+}
+
+const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
+  options,
+  territoires,
+  frontières,
+  setInfoBulle,
+  auClicTerritoireCallback,
+}) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [viewbox, setViewbox] = useState<Viewbox>({
     x: 0,
@@ -23,11 +43,14 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle, auCl
 
   return (
     <CartographieSVGStyled>
-      {!!options.estInteractif &&
-      <CartographieZoomEtDéplacement
-        svgRef={svgRef}
-        viewbox={viewbox}
-      />}
+      {
+        options.estInteractif ? (
+          <CartographieZoomEtDéplacement
+            svgRef={svgRef}
+            viewbox={viewbox}
+          />
+        ) : null
+      }
       <div className='carte'>
         <svg
           ref={svgRef}
@@ -41,7 +64,7 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle, auCl
           xmlns='http://www.w3.org/2000/svg'
         >
           <defs>
-            { hachuresGrisBlanc.patternSVG }
+            {hachuresGrisBlanc.patternSVG}
           </defs>
           <g
             className='canvas'
@@ -80,13 +103,20 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle, auCl
                 />
               ))
             }
-            {options.territoireSélectionnable ? <CartographieTerritoireSélectionné multiséléction={options.multiséléction} /> : null}
+            {
+              options.territoireSélectionnable ? (
+                <CartographieTerritoireSélectionné
+                  multiséléction={options.multiséléction}
+                  territoires={territoires}
+                />
+              ) : null
+            }
           </g>
         </svg>
       </div>
     </CartographieSVGStyled>
   );
-}
+};
 
 export default memo(CartographieSVG, (prevProps, nextProps) => (
   prevProps.territoires === nextProps.territoires &&

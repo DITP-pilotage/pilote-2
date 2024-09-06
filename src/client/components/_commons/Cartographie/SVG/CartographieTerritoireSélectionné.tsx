@@ -1,27 +1,58 @@
-import { territoiresComparésTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { useRouter } from 'next/router';
+import { parseAsString, useQueryState } from 'nuqs';
+import { FunctionComponent } from 'react';
+import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { CartographieTerritoires } from '@/components/_commons/Cartographie/useCartographie.interface';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
-export default function CartographieTerritoireSélectionné({ multiséléction }: { multiséléction: boolean }) {
-  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-  const territoiresComparés = territoiresComparésTerritoiresStore();
+const CartographieTerritoireSélectionné: FunctionComponent<{
+  multiséléction: boolean,
+  territoires: CartographieTerritoires['territoires']
+}> = ({
+  multiséléction,
+  territoires,
+}) => {
+  const router = useRouter();
+  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
-  if (territoireSélectionné === null) return null;
+  const [territoiresCompares] = useQueryState('territoiresCompares', parseAsString.withDefault(''));
+  const territoireCode = router.query.territoireCode as string;
+
+  const detailTerritoiresComparés = [territoireCode, ...territoiresCompares.split(',').filter(Boolean)].map(récupérerDétailsSurUnTerritoire);
+
+  if (!multiséléction && territoireCode === 'NAT-FR') {
+    return null;
+  }
+
+  const { codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+
+  const territoireSélectionné = territoires.find(territoire => territoire.codeInsee === codeInsee);
+
+  if (!multiséléction && !territoireSélectionné) {
+    return null;
+  }
 
   return (
     <g>
-      { multiséléction ?
-        territoiresComparés.map(territoire => (
-          <path
-            className='territoire-sélectionné'
-            d={territoire.tracéSvg}
-            key={territoire.codeInsee}
-          />
-        )) :
-        <path
-          className='territoire-sélectionné'
-          d={territoireSélectionné.tracéSvg}
-          key={territoireSélectionné.codeInsee}
-        />}
+      {
+        multiséléction ?
+          detailTerritoiresComparés.map(territoire => (
+            <path
+              className='territoire-sélectionné'
+              d={territoire.tracéSvg}
+              key={territoire.codeInsee}
+            />
+          )) : (
+            <path
+              className='territoire-sélectionné'
+              d={territoireSélectionné!.tracéSVG}
+              key={territoireSélectionné!.codeInsee}
+            />
+          )
+      }
     </g>
 
   );
-}
+};
+
+export default CartographieTerritoireSélectionné;

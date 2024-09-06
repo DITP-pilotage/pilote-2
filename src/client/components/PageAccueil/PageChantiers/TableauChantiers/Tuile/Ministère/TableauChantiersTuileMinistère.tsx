@@ -1,9 +1,10 @@
+import { FunctionComponent } from 'react';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
 import TableauChantiersTuileMinistèreStyled from './TableauChantiersTuileMinistère.styled';
 import TableauChantiersTuileMinistèreProps from './TableauChantiersTuileMinistère.interface';
 
-export default function TableauChantiersTuileMinistère({ ministère, estDéroulé }: TableauChantiersTuileMinistèreProps) {
+const TableauChantiersTuileMinistère: FunctionComponent<TableauChantiersTuileMinistèreProps> = ({ ministère, estDéroulé }) => {
   return (
     <TableauChantiersTuileMinistèreStyled>
       <div>
@@ -32,4 +33,6 @@ export default function TableauChantiersTuileMinistère({ ministère, estDéroul
       />
     </TableauChantiersTuileMinistèreStyled>
   );
-}
+};
+
+export default TableauChantiersTuileMinistère;

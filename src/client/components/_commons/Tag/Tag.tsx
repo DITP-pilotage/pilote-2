@@ -1,8 +1,13 @@
 import '@gouvfr/dsfr/dist/component/tag/tag.min.css';
-import TagProps from '@/components/_commons/Tag/Tag.interface';
+import { FunctionComponent } from 'react';
 import TagStyled from './Tag.styled';
 
-export default function Tag({ libellé, suppressionCallback } : TagProps) {
+interface TagProps {
+  libellé: string,
+  suppressionCallback: () => void,
+}
+
+const Tag: FunctionComponent<TagProps> = ({ libellé, suppressionCallback }) => {
   return (
     <TagStyled className='fr-tag fr-mr-1w fr-mb-1w'>
       {libellé}
@@ -15,4 +20,6 @@ export default function Tag({ libellé, suppressionCallback } : TagProps) {
       />
     </TagStyled>
   );
-}
+};
+
+export default Tag;

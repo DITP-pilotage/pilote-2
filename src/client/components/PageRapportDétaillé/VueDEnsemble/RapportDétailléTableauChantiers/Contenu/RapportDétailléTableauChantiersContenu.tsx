@@ -1,13 +1,16 @@
-import { flexRender, Row } from '@tanstack/react-table';
-import { useCallback } from 'react';
+import { flexRender, Row, Table } from '@tanstack/react-table';
+import { FunctionComponent, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import {
   DonnéesTableauChantiers,
 } from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
-import TableauChantiersContenuProps from './RapportDétailléTableauChantiersContenu.interface';
 
-export default function RapportDétailléTableauChantiersContenu({ tableau }: TableauChantiersContenuProps) {
+interface TableauChantiersContenuProps {
+  tableau: Table<DonnéesTableauChantiers>
+}
+
+const RapportDétailléTableauChantiersContenu: FunctionComponent<TableauChantiersContenuProps> = ({ tableau }) => {
   const router = useRouter();
 
   const auClicSurLaLigne = useCallback((row: Row<DonnéesTableauChantiers>) => {
@@ -44,4 +47,6 @@ export default function RapportDétailléTableauChantiersContenu({ tableau }: Ta
     }
     </tbody>
   );
-}
+};
+
+export default RapportDétailléTableauChantiersContenu;

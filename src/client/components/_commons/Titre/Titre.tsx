@@ -1,6 +1,13 @@
-import TitreProps from './Titre.interface';
+import { FunctionComponent } from 'react';
 
-export default function Titre({ children, baliseHtml, className, estInline = false }: TitreProps) {
+interface TitreProps {
+  children: React.ReactNode
+  baliseHtml: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+  className?: string
+  estInline? : boolean
+}
+
+const Titre: FunctionComponent<TitreProps> = ({ children, baliseHtml, className, estInline = false }) => {
   const Balise = `${baliseHtml}` as keyof JSX.IntrinsicElements;
 
   return (
@@ -13,4 +20,6 @@ export default function Titre({ children, baliseHtml, className, estInline = fal
       {children}
     </Balise>
   );
-}
+};
+
+export default Titre;

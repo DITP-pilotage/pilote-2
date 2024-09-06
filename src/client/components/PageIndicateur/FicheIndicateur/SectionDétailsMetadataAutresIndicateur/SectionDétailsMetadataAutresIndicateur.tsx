@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import SectionDétailsMetadataAutresIndicateurStyled
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataAutresIndicateur/SectionDétailsMetadataAutresIndicateur.styled';
@@ -20,15 +21,15 @@ import {
   mappingDisplayAcceptedValues,
 } from '@/components/PageIndicateur/FicheIndicateur/commons/utils';
 
-export default function SectionDétailsMetadataAutresIndicateur({
-  indicateur,
-  estEnCoursDeModification,
-  mapInformationMetadataIndicateur,
-}: {
+const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat
   estEnCoursDeModification: boolean
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
-}) {
+}> = ({
+  indicateur,
+  estEnCoursDeModification,
+  mapInformationMetadataIndicateur,
+}) => {
   const { register, getValues, errors } = useSectionDétailsMetadataAutresIndicateurForm();
   return (
     <SectionDétailsMetadataAutresIndicateurStyled>
@@ -308,4 +309,6 @@ export default function SectionDétailsMetadataAutresIndicateur({
       <hr className='fr-hr fr-mt-3w' />
     </SectionDétailsMetadataAutresIndicateurStyled>
   );
-}
+};
+
+export default SectionDétailsMetadataAutresIndicateur;

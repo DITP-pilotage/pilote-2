@@ -8,8 +8,9 @@ import PageAdminGestionTokenAPI from '@/components/PageAdminGestionTokenAPI/Page
 import { TokenAPIInformationContrat } from '@/server/authentification/app/contrats/TokenAPIInformationContrat';
 import { ListerTokenAPIInformationUseCase } from '@/server/authentification/usecases/ListerTokenAPIInformationUseCase';
 import { dependencies } from '@/server/infrastructure/Dependencies';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
-const PROFIL_AUTORISE_A_MODIFIER = new Set(['DITP_ADMIN']);
+const PROFIL_AUTORISE_A_MODIFIER = new Set([ProfilEnum.DITP_ADMIN]);
 
 export function estAutoriséAModifierLesTokensAPI(profil: string): boolean {
   return PROFIL_AUTORISE_A_MODIFIER.has(profil);

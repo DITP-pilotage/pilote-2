@@ -1,8 +1,13 @@
+import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import FiltresSélectionnésCatégorieStyled from './FiltresSélectionnésCatégorie.styled';
-import { FiltresSélectionnésCatégorieProps } from './FiltresSélectionnésCatégorie.interface';
 
-export default function FiltresSélectionnésCatégorie({ titre, filtres }: FiltresSélectionnésCatégorieProps) {
+interface FiltresSélectionnésCatégorieProps {
+  titre: string;
+  filtres: string[];
+}
+
+const FiltresSélectionnésCatégorie: FunctionComponent<FiltresSélectionnésCatégorieProps> = ({ titre, filtres }) => {
   const estVide = filtres.length === 0;
 
   return (
@@ -30,4 +35,6 @@ export default function FiltresSélectionnésCatégorie({ titre, filtres }: Filt
         </ul>}
     </FiltresSélectionnésCatégorieStyled>
   );
-}
+};
+
+export default FiltresSélectionnésCatégorie;

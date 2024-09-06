@@ -1,12 +1,15 @@
-/* eslint-disable unicorn/consistent-function-scoping */
 import {
   actionsTerritoiresStore,
   régionsTerritoiresStore,
-  territoireSélectionnéTerritoiresStore,
   territoiresAccessiblesEnLectureStore,
+  territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { CodeInsee, DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
-import { CartographieTerritoireAffiché, CartographieOptions, CartographieTerritoires } from './useCartographie.interface';
+import {
+  CartographieOptions,
+  CartographieTerritoireAffiché,
+  CartographieTerritoires,
+} from './useCartographie.interface';
 import { CartographieDonnées } from './Cartographie.interface';
 
 export default function useCartographie() {

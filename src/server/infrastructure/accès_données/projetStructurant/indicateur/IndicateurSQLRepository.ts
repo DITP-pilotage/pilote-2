@@ -21,6 +21,9 @@ export default class IndicateurProjetStructurantSQLRepository implements Indicat
       source: indicateur.source,
       modeDeCalcul: indicateur.mode_de_calcul,
       unité: null,
+      parentId: null,
+      periodicite: null,
+      delaiDisponibilite: null,
     };
   }
 
@@ -46,11 +49,13 @@ export default class IndicateurProjetStructurantSQLRepository implements Indicat
         valeurCibleAnnuelle: null,
         avancement: { annuel: null, global: indicateur.taux_avancement },
         unité: null,
+        proposition: null,
         est_applicable: null,
         dateImport: null,
         pondération: null,
         prochaineDateMaj: null,
         prochaineDateMajJours: null,
+        prochaineDateValeurActuelle: null,
         estAJour: null,
         tendance: null,
       };

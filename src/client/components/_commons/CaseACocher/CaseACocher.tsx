@@ -1,8 +1,13 @@
 import '@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css';
-import { useId } from 'react';
-import CaseACocherProps from './CaseACocher.interface';
+import { FunctionComponent, useId } from 'react';
+import { UseFormRegisterReturn } from 'react-hook-form';
 
-export default function CaseACocher({ libellé, register } : CaseACocherProps) {
+interface CaseACocherProps {
+  libellé: string,
+  register: UseFormRegisterReturn
+}
+
+const CaseACocher: FunctionComponent<CaseACocherProps> = ({ libellé, register }) => {
   const id = useId();
 
   return (
@@ -23,4 +28,6 @@ export default function CaseACocher({ libellé, register } : CaseACocherProps) {
       </div>
     </div>
   );
-}
+};
+
+export default CaseACocher;

@@ -15,6 +15,7 @@ import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import {
   handleImportDonneeIndicateurAPI,
 } from '@/server/import-indicateur/infrastructure/handlers/ImportDonneeIndicateurAPIHandler';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 jest.mock('@/server/import-indicateur/infrastructure/handlers/ParseForm', () => ({
   parseForm: () => ({
@@ -68,7 +69,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
             .build(),
         ).build();
 
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
       await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
       nock(BASE_URL_VALIDATA)
@@ -91,7 +92,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
 
       request.read = mock<() => string>(() => JSON.stringify(body));
 
-      await handleImportDonneeIndicateurAPI({ request, response, email: 'ditp.admin@example.com', profil: 'DITP_ADMIN' });
+      await handleImportDonneeIndicateurAPI({ request, response, email: 'ditp.admin@example.com', profil: ProfilEnum.DITP_ADMIN });
       // Then
       const data = response._getJSONData();
       expect(response._getStatusCode()).toEqual(400);
@@ -143,7 +144,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
             .build(),
         ).build();
 
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
       await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
       nock(BASE_URL_VALIDATA)
@@ -166,7 +167,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
 
       request.read = mock<() => string>(() => JSON.stringify(body));
 
-      await handleImportDonneeIndicateurAPI({ request, response, email: 'ditp.admin@example.com', profil: 'DITP_ADMIN' });
+      await handleImportDonneeIndicateurAPI({ request, response, email: 'ditp.admin@example.com', profil: ProfilEnum.DITP_ADMIN });
       // Then
       expect(response._getStatusCode()).toEqual(400);
       const listeErreursValidationFichier = await prisma.erreur_validation_fichier.findMany();
@@ -206,7 +207,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
             .build(),
         ).build();
 
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
       await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
       nock(BASE_URL_VALIDATA)
@@ -229,7 +230,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
 
       request.read = mock<() => string>(() => JSON.stringify(body));
 
-      await handleImportDonneeIndicateurAPI({ request, response, email: 'ditp.admin@example.com', profil: 'DITP_ADMIN' });
+      await handleImportDonneeIndicateurAPI({ request, response, email: 'ditp.admin@example.com', profil: ProfilEnum.DITP_ADMIN });
       // Then
       expect(response._getStatusCode()).toEqual(400);
       const listeErreursValidationFichier = await prisma.erreur_validation_fichier.findMany();
@@ -268,7 +269,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
             .build(),
         ).build();
 
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
       await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
       nock(BASE_URL_VALIDATA)
@@ -291,7 +292,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
 
       request.read = mock<() => string>(() => JSON.stringify(body));
 
-      await handleImportDonneeIndicateurAPI({ request, response, email: 'ditp.admin@example.com', profil: 'DITP_ADMIN' });
+      await handleImportDonneeIndicateurAPI({ request, response, email: 'ditp.admin@example.com', profil: ProfilEnum.DITP_ADMIN });
       // Then
       expect(response._getStatusCode()).toEqual(200);
       expect(response._getJSONData().message).toEqual('Les données ont correctement été importés');
@@ -346,7 +347,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
             .build(),
         ).build();
 
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
       await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
       nock(BASE_URL_VALIDATA)
@@ -367,7 +368,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
         query: { indicateurId: 'IND-001' },
       });
 
-      await handleImportDonneeIndicateurAPI({ request, response, email: 'ditp.admin@example.com', profil: 'DITP_ADMIN' });
+      await handleImportDonneeIndicateurAPI({ request, response, email: 'ditp.admin@example.com', profil: ProfilEnum.DITP_ADMIN });
       // Then
       const data = response._getJSONData();
       expect(response._getStatusCode()).toEqual(400);
@@ -419,7 +420,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
             .build(),
         ).build();
 
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
       await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
       nock(BASE_URL_VALIDATA)
@@ -440,7 +441,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
         query: { indicateurId: 'IND-001' },
       });
 
-      await handleImportDonneeIndicateurAPI({ request, response, email: 'ditp.admin@example.com', profil: 'DITP_ADMIN' });
+      await handleImportDonneeIndicateurAPI({ request, response, email: 'ditp.admin@example.com', profil: ProfilEnum.DITP_ADMIN });
       // Then
       expect(response._getStatusCode()).toEqual(400);
       const listeErreursValidationFichier = await prisma.erreur_validation_fichier.findMany();
@@ -480,7 +481,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
             .build(),
         ).build();
 
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
       await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
       nock(BASE_URL_VALIDATA)
@@ -501,7 +502,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
         query: { indicateurId: 'IND-001' },
       });
 
-      await handleImportDonneeIndicateurAPI({ request, response, email: 'ditp.admin@example.com', profil: 'DITP_ADMIN' });
+      await handleImportDonneeIndicateurAPI({ request, response, email: 'ditp.admin@example.com', profil: ProfilEnum.DITP_ADMIN });
       // Then
       expect(response._getStatusCode()).toEqual(400);
       const listeErreursValidationFichier = await prisma.erreur_validation_fichier.findMany();
@@ -540,7 +541,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
             .build(),
         ).build();
 
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
       await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
       nock(BASE_URL_VALIDATA)
@@ -560,7 +561,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
         },
         query: { indicateurId: 'IND-001' },
       });
-      await handleImportDonneeIndicateurAPI({ request, response, email: 'ditp.admin@example.com', profil: 'DITP_ADMIN' });
+      await handleImportDonneeIndicateurAPI({ request, response, email: 'ditp.admin@example.com', profil: ProfilEnum.DITP_ADMIN });
       // Then
       expect(response._getStatusCode()).toEqual(200);
       expect(response._getJSONData().message).toEqual('Les données ont correctement été importés');

@@ -43,6 +43,8 @@ export default class DétailsIndicateurBuilder {
 
   private _tendance: DétailsIndicateur['tendance'];
 
+  private _prochaineDateValeurActuelle: DétailsIndicateur['prochaineDateValeurActuelle'];
+
   constructor() {
     const nombreDeValeurs = faker.datatype.number({ min: 28, max: 35 });
 
@@ -54,6 +56,7 @@ export default class DétailsIndicateurBuilder {
     this._dateValeurCible = faker.date.future(3, '2025-01-01T00:00:00.000Z').toISOString();
     this._dateValeurActuelle = new Date('2023-03-01T00:00:00.000Z').toISOString();
     this._dateValeurCibleAnnuelle = faker.date.future(2, '2025-03-01T00:00:00.000Z').toISOString();
+    this._prochaineDateValeurActuelle = faker.date.future(2, '2023-03-01T00:00:00.000Z').toISOString();
     this._valeurCibleAnnuelle = faker.datatype.number({ min: this._valeurInitiale ?? 42, max: this._valeurCible ?? 39, precision: 0.01 });
     this._unité = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
     this._est_applicable = générerPeutÊtreNull(0.2, faker.datatype.boolean());
@@ -66,86 +69,6 @@ export default class DétailsIndicateurBuilder {
     this._valeurs = valeursEtDates.valeurs;
     this._dateValeurs = valeursEtDates.dateValeurs;
     this._avancement = new AvancementBuilder().build();
-  }
-
-  avecCodeInsee(codeInsee: DétailsIndicateur['codeInsee']): DétailsIndicateurBuilder {
-    this._codeInsee = codeInsee;
-    return this;
-  }
-
-  avecValeurInitiale(valeurInitiale: DétailsIndicateur['valeurInitiale']): DétailsIndicateurBuilder {
-    this._valeurInitiale = valeurInitiale;
-    return this;
-  }
-
-  avecDateValeurInitiale(dateValeurInitiale: DétailsIndicateur['dateValeurInitiale']): DétailsIndicateurBuilder {
-    this._dateValeurInitiale = dateValeurInitiale;
-    return this;
-  }
-
-  avecValeurs(valeurs: DétailsIndicateur['valeurs']): DétailsIndicateurBuilder {
-    this._valeurs = valeurs;
-    return this;
-  }
-
-  avecDateValeurs(dateValeurs: DétailsIndicateur['dateValeurs']): DétailsIndicateurBuilder {
-    this._dateValeurs = dateValeurs;
-    return this;
-  }
-
-  avecValeurCible(valeurCible: DétailsIndicateur['valeurCible']): DétailsIndicateurBuilder {
-    this._valeurCible = valeurCible;
-    return this;
-  }
-
-  avecDateValeurCible(dateValeurCible: DétailsIndicateur['dateValeurCible']): DétailsIndicateurBuilder {
-    this._dateValeurCible = dateValeurCible;
-    return this;
-  }
-
-  avecValeurActuelle(valeurActuelle: DétailsIndicateur['valeurActuelle']): DétailsIndicateurBuilder {
-    this._valeurActuelle = valeurActuelle;
-    return this;
-  }
-
-  avecDateValeurActuelle(dateValeurActuelle: DétailsIndicateur['dateValeurActuelle']): DétailsIndicateurBuilder {
-    this._dateValeurActuelle = dateValeurActuelle;
-    return this;
-  }
-
-  avecAvancement(avancement: DétailsIndicateur['avancement']): DétailsIndicateurBuilder {
-    this._avancement = avancement;
-    return this;
-  }
-
-  avecValeurCibleAnnuelle(valeurCibleAnnuelle: DétailsIndicateur['valeurCibleAnnuelle']): DétailsIndicateurBuilder {
-    this._valeurCibleAnnuelle = valeurCibleAnnuelle;
-    return this;
-  }
-
-  avecDateValeurCibleAnnuelle(dateValeurCibleAnnuelle: DétailsIndicateur['dateValeurCibleAnnuelle']): DétailsIndicateurBuilder {
-    this._dateValeurCibleAnnuelle = dateValeurCibleAnnuelle;
-    return this;
-  }
-
-  avecEstApplicable(est_applicable: DétailsIndicateur['est_applicable']): DétailsIndicateurBuilder {
-    this._est_applicable = est_applicable;
-    return this;
-  }
-
-  avecDateImport(dateImport: DétailsIndicateur['dateImport']): DétailsIndicateurBuilder {
-    this._dateImport = dateImport;
-    return this;
-  }
-
-  avecPondération(pondération: DétailsIndicateur['pondération']): DétailsIndicateurBuilder {
-    this._pondération = pondération;
-    return this;
-  }
-
-  avecTendance(tendance: DétailsIndicateur['tendance']): DétailsIndicateurBuilder {
-    this._tendance = tendance;
-    return this;
   }
 
   build(): DétailsIndicateur {
@@ -164,10 +87,12 @@ export default class DétailsIndicateurBuilder {
       avancement: this._avancement,
       unité: this._unité,
       est_applicable: this._est_applicable,
+      proposition: null,
       dateImport: this._dateImport,
       pondération: this._pondération,
       prochaineDateMaj: null,
       prochaineDateMajJours: null,
+      prochaineDateValeurActuelle: this._prochaineDateValeurActuelle,
       estAJour: false,
       tendance: this._tendance,
     };

@@ -1,4 +1,5 @@
-import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
+import { parseAsBoolean, parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
@@ -15,17 +16,17 @@ interface FiltresSélectionnésProps {
   axes: Axe[],
 }
 
-export default function FiltresSélectionnés({
+const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
   estAutoriseAVoirLesBrouillons,
   territoireSélectionné,
   ministères,
   axes,
-}: FiltresSélectionnésProps) {
+}) => {
 
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
     axes: parseAsString.withDefault(''),
-    brouillon: parseAsBoolean.withDefault(true),
+    statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE']),
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
@@ -61,7 +62,7 @@ export default function FiltresSélectionnés({
       nom: 'Autres critères', filtresActifs: [
         filtres.estBarometre ? 'Chantiers du baromètre' : null,
         filtres.estTerritorialise ? 'Chantiers territorialisés' : null,
-        estAutoriseAVoirLesBrouillons ? filtres.brouillon ? 'Chantiers validés et en cours de publication' : 'Chantiers validés uniquement' : null,
+        estAutoriseAVoirLesBrouillons ? filtres.statut === 'BROUILLON_ET_PUBLIE' ? 'Chantiers validés et en cours de publication' : filtres.statut === 'BROUILLON' ? 'Chantiers en cours de publication' : 'Chantiers validés' : null,
       ].filter(Boolean),
     },
     {
@@ -94,4 +95,6 @@ export default function FiltresSélectionnés({
       </div>
     </FiltresSélectionnésStyled>
   );
-}
+};
+
+export default FiltresSélectionnés;

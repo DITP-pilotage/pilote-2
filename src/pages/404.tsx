@@ -1,7 +1,8 @@
 import Head from 'next/head';
+import { FunctionComponent } from 'react';
 import Erreur404 from '@/components/Erreur/Erreur404';
 
-export default function Erreur404Personnalisée() {
+const Erreur404Personnalisée: FunctionComponent<{}> = () => {
   return (
     <>
       <Head>
@@ -12,4 +13,6 @@ export default function Erreur404Personnalisée() {
       <Erreur404 />
     </>
   );
-}
+};
+
+export default Erreur404Personnalisée;

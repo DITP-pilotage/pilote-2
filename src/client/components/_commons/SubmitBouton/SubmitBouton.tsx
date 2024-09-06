@@ -1,4 +1,5 @@
 import '@gouvfr/dsfr/dist/component/button/button.min.css';
+import { FunctionComponent } from 'react';
 
 interface SubmitBoutonProps {
   label: string
@@ -6,7 +7,7 @@ interface SubmitBoutonProps {
   className?: string
 }  
 
-export default function SubmitBouton({ label, disabled, className }: SubmitBoutonProps) {
+const SubmitBouton: FunctionComponent<SubmitBoutonProps> = ({ label, disabled, className }) => {
   return (
     <button
       className={`fr-btn${className ? ' ' + className : ''}`}
@@ -16,9 +17,11 @@ export default function SubmitBouton({ label, disabled, className }: SubmitBouto
       {label}
     </button>
   );
-}
+};
 
 SubmitBouton.defaultProps = {
   className: '',
   disabled: false,
 };
+
+export default SubmitBouton;

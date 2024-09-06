@@ -1,7 +1,8 @@
+import { FunctionComponent } from 'react';
 import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
 import ÉlémentStyled from '@/components/PageUtilisateur/Élément/Élément.styled';
 
-export default function ÉlémentAccessible({ libellé }: { libellé : string }) {
+const ÉlémentAccessible: FunctionComponent<{ libellé : string }> = ({ libellé }) => {
   return (
     <ÉlémentStyled>
       <IcônesMultiplesEtTexte
@@ -12,4 +13,6 @@ export default function ÉlémentAccessible({ libellé }: { libellé : string })
       </IcônesMultiplesEtTexte>
     </ÉlémentStyled>
   );
-}
+};
+
+export default ÉlémentAccessible;

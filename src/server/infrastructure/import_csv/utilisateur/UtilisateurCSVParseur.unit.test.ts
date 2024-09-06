@@ -15,7 +15,9 @@ describe('UtilisateurCSVParseur', () => {
       ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},lecture,,PER-25,CH-004|CH-008|CH-012\n
       ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},saisieCommentaire,,,CH-004\n
       ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},saisieIndicateur,,PER-25,\n
-      ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},gestionUtilisateur,DEPT-34,,CH-004`;
+      ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},gestionUtilisateur,DEPT-34,,CH-004\n
+      ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},responsabilite,DEPT-34,,CH-004`;
+
 
     jest.spyOn(fs, 'readFileSync').mockReturnValueOnce(contenuFichierCSV);
 
@@ -52,6 +54,7 @@ describe('UtilisateurCSVParseur', () => {
             périmètres: [],
           },
           gestionUtilisateur: habilitationVide,
+          responsabilite: habilitationVide,
         },
       },
       {
@@ -81,6 +84,11 @@ describe('UtilisateurCSVParseur', () => {
             périmètres: [],
           },
           gestionUtilisateur: {
+            chantiers: ['CH-004'],
+            territoires: ['DEPT-34'],
+            périmètres: [],
+          },
+          responsabilite: {
             chantiers: ['CH-004'],
             territoires: ['DEPT-34'],
             périmètres: [],

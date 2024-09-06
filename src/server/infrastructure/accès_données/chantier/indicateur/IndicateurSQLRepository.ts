@@ -2,8 +2,12 @@ import { indicateur as IndicateurPrisma, Prisma, PrismaClient } from '@prisma/cl
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
-import { DétailsIndicateurMailles, DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import {
+  DétailsIndicateurMailles,
+  DétailsIndicateurs,
+  DétailsIndicateurTerritoire,
+} from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { groupByAndTransform } from '@/client/utils/arrays';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
@@ -12,7 +16,10 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import {
   IndicateurPourExport,
 } from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
-import { parseDétailsIndicateur } from '@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLParser';
+import {
+  parseDétailsIndicateur,
+  parseDétailsIndicateurNew,
+} from '@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLParser';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 
@@ -43,15 +50,18 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       source: indicateur.source,
       modeDeCalcul: indicateur.mode_de_calcul,
       unité: indicateur.unite_mesure,
+      parentId: indicateur.parent_id,
+      periodicite: indicateur.periodicite ?? 'Non renseignée',
+      delaiDisponibilite: indicateur.delai_disponibilite?.toString() ?? 'Non renseignée',
     });
   }
 
   private _mapDétailsToDomain(indicateurs: IndicateurPrisma[]): DétailsIndicateurs {
     const détailsIndicateurs: DétailsIndicateurs = {};
 
-    let IntermediaireEstAnnéeEnCours: boolean;
+    let intermediaireEstAnnéeEnCours: boolean;
     for (const indic of indicateurs) {
-      IntermediaireEstAnnéeEnCours = indic.objectif_date_valeur_cible_intermediaire?.getFullYear() === new Date().getFullYear();
+      intermediaireEstAnnéeEnCours = indic.objectif_date_valeur_cible_intermediaire?.getFullYear() === new Date().getFullYear();
 
       if (!détailsIndicateurs[indic.id]) {
         détailsIndicateurs[indic.id] = {};
@@ -67,16 +77,26 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         dateValeurActuelle: formatDate(indic.date_valeur_actuelle),
         valeurCible: indic.objectif_valeur_cible,
         dateValeurCible: formatDate(indic.objectif_date_valeur_cible),
-        valeurCibleAnnuelle: IntermediaireEstAnnéeEnCours ? indic.objectif_valeur_cible_intermediaire : null,
-        dateValeurCibleAnnuelle: IntermediaireEstAnnéeEnCours ? formatDate(indic.objectif_date_valeur_cible_intermediaire) : null,
+        valeurCibleAnnuelle: intermediaireEstAnnéeEnCours ? indic.objectif_valeur_cible_intermediaire : null,
+        dateValeurCibleAnnuelle: intermediaireEstAnnéeEnCours ? formatDate(indic.objectif_date_valeur_cible_intermediaire) : null,
         avancement: {
           global: indic.objectif_taux_avancement,
-          annuel: IntermediaireEstAnnéeEnCours ? indic.objectif_taux_avancement_intermediaire : null,
+          annuel: intermediaireEstAnnéeEnCours ? indic.objectif_taux_avancement_intermediaire : null,
         },
+        proposition: indic.valeur_actuelle_proposition !== null && indic.valeur_actuelle_proposition !== undefined ? { // Pour autoriser une valeur actuelle proposé à 0
+          valeurActuelle: indic.valeur_actuelle_proposition,
+          tauxAvancement: indic.objectif_taux_avancement_proposition,
+          tauxAvancementIntermediaire: intermediaireEstAnnéeEnCours ? indic.objectif_taux_avancement_intermediaire_proposition : null,
+          auteur: indic.auteur_proposition,
+          motif: indic.motif_proposition,
+          sourceDonneeEtMethodeCalcul: indic.source_donnee_methode_calcul_proposition,
+          dateProposition: formatDate(indic.date_proposition),
+        } : null,
         unité: indic.unite_mesure,
         est_applicable: indic.est_applicable,
         dateImport: formatDate(indic.dernier_import_date_indic),
         pondération: indic.ponderation_zone_reel,
+        prochaineDateValeurActuelle: formatDate(indic.prochaine_date_valeur_actuelle),
         prochaineDateMaj: formatDate(indic.prochaine_date_maj),
         prochaineDateMajJours: indic.prochaine_date_maj_jours,
         estAJour: indic.est_a_jour,
@@ -95,6 +115,34 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     });
 
     return indicateur!.chantier_id;
+  }
+
+  async récupérerDétailsTerritoire(id: string, maille: MailleInterne, habilitations: Habilitations, profil: ProfilCode): Promise<DétailsIndicateurTerritoire> {
+    const habilitation = new Habilitation(habilitations);
+    const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+
+    let paramètresRequête : Prisma.indicateurFindManyArgs = {
+      where: {
+        id,
+        chantier_id: { in: chantiersLecture },
+      },
+    } ;
+
+    if (!profilsTerritoriaux.includes(profil)) {
+      const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
+
+      paramètresRequête.where!.territoire_code = { in: territoiresLecture };
+    }
+
+    const indicateur = await this.prisma.indicateur.findMany(paramètresRequête);
+
+    if (!indicateur || indicateur.length === 0) {
+      throw new ErreurIndicateurNonTrouvé(id);
+    }
+
+    const territoires = await this.prisma.territoire.findMany();
+
+    return parseDétailsIndicateurNew(indicateur, territoires, maille);
   }
 
   async récupérerDétailsParMailles(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<DétailsIndicateurMailles> {

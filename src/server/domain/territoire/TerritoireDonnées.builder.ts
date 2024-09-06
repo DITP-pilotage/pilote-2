@@ -52,31 +52,6 @@ export default class TerritoireDonnéesBuilder {
     return this;
   }
 
-  avecAvancement(avancement: TerritoireDonnées['avancement']): TerritoireDonnéesBuilder {
-    this._avancement = avancement;
-    return this;
-  }
-
-  avecAvancementPrécédent(avancementPrécédent: TerritoireDonnées['avancementPrécédent']): TerritoireDonnéesBuilder {
-    this._avancementPrécédent = avancementPrécédent;
-    return this;
-  }
-
-  avecMétéo(météo: TerritoireDonnées['météo']): TerritoireDonnéesBuilder {
-    this._météo = météo;
-    return this;
-  }
-
-  avecDateDeMàjDonnéesQualitatives(dateDeMàjDonnéesQualitatives: TerritoireDonnées['dateDeMàjDonnéesQualitatives']): TerritoireDonnéesBuilder {
-    this._dateDeMàjDonnéesQualitatives = dateDeMàjDonnéesQualitatives;
-    return this;
-  }
-
-  avecDateDeMàjDonnéesQuantitatives(dateDeMàjDonnéesQuantitatives: TerritoireDonnées['dateDeMàjDonnéesQuantitatives']): TerritoireDonnéesBuilder {
-    this._dateDeMàjDonnéesQuantitatives = dateDeMàjDonnéesQuantitatives;
-    return this;
-  }
-
   build(): TerritoireDonnées {
     return {
       codeInsee: this._codeInsee,

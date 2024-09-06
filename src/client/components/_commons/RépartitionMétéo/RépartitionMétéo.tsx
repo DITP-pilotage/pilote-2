@@ -1,11 +1,17 @@
-import { libellésMétéos } from '@/server/domain/météo/Météo.interface';
-import RépartitionMétéoProps from '@/components/_commons/RépartitionMétéo/RépartitionMétéo.interface';
+import { FunctionComponent } from 'react';
+import { libellésMétéos, MétéoSaisissable } from '@/server/domain/météo/Météo.interface';
 import RépartitionMétéoÉlément from './RépartitionMétéoÉlément/RépartitionMétéoÉlément';
 import RépartitionMétéoStyled from './RépartitionMétéo.styled';
 
+export type RépartitionMétéos = Record<MétéoSaisissable, number>;
+
+interface RépartitionMétéoProps {
+  météos: RépartitionMétéos;
+}
+
 const météosÀAfficher = ['ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL'] as const;
 
-export default function RépartitionMétéo({ météos }: RépartitionMétéoProps) {
+const RépartitionMétéo : FunctionComponent<RépartitionMétéoProps> = ({ météos }) => {
   return (
     <RépartitionMétéoStyled className='fr-grid-row fr-mx-n3v'>
       {
@@ -23,4 +29,6 @@ export default function RépartitionMétéo({ météos }: RépartitionMétéoPro
       }
     </RépartitionMétéoStyled>
   );
-}
+};
+
+export default RépartitionMétéo;

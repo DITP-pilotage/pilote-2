@@ -1,9 +1,15 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
-import Publication from '@/components/_commons/Publication/Publication';
+import Publication from '@/components/_commons/PublicationNew/Publication';
 import { libellésTypesDécisionStratégique } from '@/client/constants/libellésDécisionStratégique';
 import DécisionsStratégiquesProps from './DécisionsStratégiques.interface';
 
-export default function DécisionsStratégiques({ décisionStratégique, chantierId, modeÉcriture = false, estInteractif = true }: DécisionsStratégiquesProps) {
+export default function DécisionsStratégiques({
+  décisionStratégique,
+  chantierId,
+  modeÉcriture = false,
+  estInteractif = true,
+  territoireCode,
+}: DécisionsStratégiquesProps) {
   return (
     <Bloc titre='France'>
       <Publication
@@ -18,6 +24,7 @@ export default function DécisionsStratégiques({ décisionStratégique, chantie
         modeÉcriture={modeÉcriture}
         publicationInitiale={décisionStratégique}
         réformeId={chantierId}
+        territoireCode={territoireCode}
       />
     </Bloc>
   );

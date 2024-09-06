@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import { GetServerSidePropsContext } from 'next';
 import { getServerSession } from 'next-auth';
+import { FunctionComponent } from 'react';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import PageProjetStructurant from '@/components/PageProjetStructurant/PageProjetStructurant';
 import RécupérerProjetStructurantUseCase from '@/server/usecase/projetStructurant/RécupérerProjetStructurantUseCase';
@@ -15,7 +16,7 @@ interface NextPageProjetStructurantProps {
   détailsIndicateurs: DétailsIndicateurs
 }
 
-export default function NextPageProjetStructurant({ projetStructurant, indicateurs, détailsIndicateurs }: NextPageProjetStructurantProps) {
+const NextPageProjetStructurant: FunctionComponent<NextPageProjetStructurantProps> = ({ projetStructurant, indicateurs, détailsIndicateurs }) => {
   return (
     <>
       <Head>
@@ -30,7 +31,8 @@ export default function NextPageProjetStructurant({ projetStructurant, indicateu
       />
     </>
   );
-}
+};
+export default NextPageProjetStructurant;
 
 export async function getServerSideProps({ req, res, params }: GetServerSidePropsContext<{ id: ProjetStructurant['id'] }>) {
   if (!params?.id) {

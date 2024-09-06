@@ -7,8 +7,8 @@ WITH dir_projets_chantiers AS (
         {{ source('db_schema_public', 'habilitation') }} h 
         LEFT JOIN {{ source('db_schema_public', 'utilisateur') }} u ON h.utilisateur_id = u.id 
     WHERE 
-        u.profil_code = 'DIR_PROJET' 
-        AND h.scope_code = 'lecture'
+        u.profil_code = 'EQUIPE_DIR_PROJET' 
+        AND h.scope_code = 'responsabilite'
 ),
 
 dir_projets_perimetres AS (
@@ -20,8 +20,8 @@ dir_projets_perimetres AS (
         {{ source('db_schema_public', 'habilitation') }} h 
         LEFT JOIN {{ source('db_schema_public', 'utilisateur') }} u ON h.utilisateur_id = u.id 
     WHERE 
-        u.profil_code = 'DIR_PROJET' 
-        AND h.scope_code = 'lecture'
+        u.profil_code = 'EQUIPE_DIR_PROJET' 
+        AND h.scope_code = 'responsabilite'
 ),
 
 corresp_perimetres AS (

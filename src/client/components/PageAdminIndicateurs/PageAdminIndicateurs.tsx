@@ -1,15 +1,13 @@
-import { useState } from 'react';
-import { AdminIndicateurBarreLatérale } from '@/components/PageAdminIndicateurs/AdminIndicateurBarreLatérale';
+import { FunctionComponent, useState } from 'react';
+import AdminIndicateurBarreLatérale  from '@/components/PageAdminIndicateurs/AdminIndicateurBarreLatérale';
 import Titre from '@/components/_commons/Titre/Titre';
 import '@gouvfr/dsfr/dist/component/select/select.min.css';
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import Bloc from '@/components/_commons/Bloc/Bloc';
-import {
-  TableauAdminIndicateurs,
-} from '@/components/PageAdminIndicateurs/TableauAdminIndicateurs/TableauAdminIndicateurs';
+import TableauAdminIndicateurs from '@/components/PageAdminIndicateurs/TableauAdminIndicateurs/TableauAdminIndicateurs';
 import usePageAdminIndicateurs from '@/components/PageAdminIndicateurs/UsePageAdminIndicateurs';
 
-function PageAdminIndicateurs() {
+const PageAdminIndicateurs: FunctionComponent<{}> = () => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const { naviguerVersCreationIndicateur  } = usePageAdminIndicateurs();
 
@@ -49,6 +47,6 @@ function PageAdminIndicateurs() {
       </main>
     </div>
   );
-}
+};
 
 export default PageAdminIndicateurs;

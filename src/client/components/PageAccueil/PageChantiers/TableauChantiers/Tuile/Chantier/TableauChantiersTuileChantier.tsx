@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
 import PictoTendance from '@/components/_commons/PictoTendance/PictoTendance';
 import TexteColoré from '@/components/_commons/TexteColoré/TexteColoré';
@@ -8,9 +9,16 @@ import TypologiesPictos
   from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
 import TableauChantiersTuileChantierStyled
   from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tuile/Chantier/TableauChantiersTuileChantier.styled';
-import TableauChantiersTuileChantierProps from './TableauChantiersTuileChantier.interface';
+import {
+  DonnéesTableauChantiers,
+} from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
 
-export default function TableauChantiersTuileChantier({ chantier, afficherIcône }: TableauChantiersTuileChantierProps) {
+interface TableauChantiersTuileChantierProps {
+  chantier: DonnéesTableauChantiers;
+  afficherIcône: boolean;
+}
+
+const TableauChantiersTuileChantier: FunctionComponent<TableauChantiersTuileChantierProps> = ({ chantier, afficherIcône }) => {
   const couleurÉcartArrondi = définirCouleurÉcartArrondi(chantier.écart);
 
   return (
@@ -61,4 +69,6 @@ export default function TableauChantiersTuileChantier({ chantier, afficherIcône
       </div>
     </TableauChantiersTuileChantierStyled>
   );
-}
+};
+
+export default TableauChantiersTuileChantier;

@@ -1,6 +1,11 @@
-import CompteurCaractèresProps from './CompteurCaractères.interface';
+import { FunctionComponent } from 'react';
 
-export default function CompteurCaractères({ compte, limiteDeCaractères }: CompteurCaractèresProps) {
+interface CompteurCaractèresProps {
+  compte: number
+  limiteDeCaractères: number
+}
+
+const CompteurCaractères: FunctionComponent<CompteurCaractèresProps> = ({ compte, limiteDeCaractères }) =>{
   return (
     <p className='fr-text--xs fr-mb-0 texte-droite'>
       {compte}
@@ -8,4 +13,6 @@ export default function CompteurCaractères({ compte, limiteDeCaractères }: Com
       {limiteDeCaractères}
     </p>
   );
-}
+};
+
+export default CompteurCaractères;

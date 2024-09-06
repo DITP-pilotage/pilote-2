@@ -1,23 +1,24 @@
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import IndicateurDEtapes from '@/components/_commons/IndicateurDEtapes/IndicateurDEtapes';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import { wording } from '@/client/utils/i18n/i18n';
-import {
-  EtapeSelectionIndicateur,
-} from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapeSelectionIndicateur';
-import {
-  EtapeChargerFichier,
-} from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapeChargerFichier';
-import {
-  EtapePublierFichier,
-} from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapePublierFichier';
+import EtapeSelectionIndicateur from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapeSelectionIndicateur';
+import EtapeChargerFichier from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapeChargerFichier';
+import EtapePublierFichier from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapePublierFichier';
 import { EtapesImport } from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapesImport';
+import { RapportContrat } from '@/server/app/contrats/RapportContrat';
+import { InformationIndicateurContrat } from '@/server/app/contrats/InformationIndicateurContrat';
 import PageImportIndicateurSectionImportStyled from './PageImportIndicateurSectionImport.styled';
-import { PageImportIndicateurSectionImportProps } from './PageImportIndicateurSectionImport.interface';
+
+interface PageImportIndicateurSectionImportProps {
+  indicateurs: Indicateur[]
+  rapport: RapportContrat | null
+  informationsIndicateur: InformationIndicateurContrat[],
+}
 
 const étapes = [
   wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_EXPLICATION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.SOUS_TITRE_SELECTEUR,
@@ -25,11 +26,11 @@ const étapes = [
   wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_EXPLICATION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.SOUS_TITRE_SELECTEUR,
 ];
 
-export default function PageImportIndicateurSectionImport({
+const PageImportIndicateurSectionImport: FunctionComponent<PageImportIndicateurSectionImportProps> = ({
   indicateurs,
   informationsIndicateur,
   rapport: rapportImport,
-}: PageImportIndicateurSectionImportProps) {
+}) => {
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
   const [estFichierPublie, setEstFichierPublie] = useState<boolean>(false);
 
@@ -90,4 +91,6 @@ export default function PageImportIndicateurSectionImport({
       </div>
     </PageImportIndicateurSectionImportStyled>
   );
-}
+};
+
+export default PageImportIndicateurSectionImport;

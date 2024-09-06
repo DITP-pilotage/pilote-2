@@ -2,6 +2,7 @@ import { chantier as ChantierModel, PrismaClient } from '@prisma/client';
 import { ChantierRepository } from '@/server/fiche-conducteur/domain/ports/ChantierRepository';
 import { Chantier } from '@/server/fiche-conducteur/domain/Chantier';
 import { Meteo } from '@/server/fiche-conducteur/domain/Meteo';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
 const convertirEnChantier = (chantierModel: ChantierModel): Chantier => {
   return Chantier.creerChantier({
@@ -23,12 +24,14 @@ export class PrismaChantierRepository implements ChantierRepository {
   constructor(private prismaClient: PrismaClient) {}
 
   async récupérerParIdEtParTerritoireCode({ chantierId, territoireCode }: { chantierId: string; territoireCode: string }): Promise<Chantier> {
+    const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+
     const result = await this.prismaClient.chantier.findUnique({
       where: {
         id_code_insee_maille: {
           id: chantierId,
-          maille: territoireCode.split('-')[0],
-          code_insee: territoireCode.split('-')[1],
+          maille,
+          code_insee: codeInsee,
         },
       },
     });

@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import SélecteurMaille from './SélecteurMaille/SélecteurMaille';
 import SélecteurTerritoire from './SélecteurTerritoire/SélecteurTerritoire';
@@ -5,18 +6,36 @@ import SélecteurTerritoire from './SélecteurTerritoire/SélecteurTerritoire';
 interface SélecteursMaillesEtTerritoiresProps {
   chantierMailles?: Chantier['mailles'];
   territoireCode: string
-  mailleSelectionnee: 'départementale' | 'régionale'
+  mailleSelectionnee: 'départementale' | 'régionale',
+  estVueMobile: boolean,
+  estVisibleEnMobile: boolean
+  pathname: string
 }
 
-export default function SélecteursMaillesEtTerritoires({ chantierMailles, territoireCode, mailleSelectionnee }: SélecteursMaillesEtTerritoiresProps) {
+const SélecteursMaillesEtTerritoires: FunctionComponent<SélecteursMaillesEtTerritoiresProps> = ({
+  chantierMailles,
+  territoireCode,
+  mailleSelectionnee,
+  estVueMobile, 
+  estVisibleEnMobile,
+  pathname,
+}) => {
   return (
     <>
-      <SélecteurMaille mailleSelectionnee={mailleSelectionnee} />
-      <SélecteurTerritoire 
-        chantierMailles={chantierMailles}
+      <SélecteurMaille
         mailleSelectionnee={mailleSelectionnee}
+        pathname={pathname}
+      />
+      <SélecteurTerritoire
+        chantierMailles={chantierMailles}
+        estVisibleEnMobile={estVisibleEnMobile}
+        estVueMobile={estVueMobile}
+        mailleSelectionnee={mailleSelectionnee}
+        pathname={pathname}
         territoireCode={territoireCode}
       />
     </>
   );
-}
+};
+
+export default SélecteursMaillesEtTerritoires;

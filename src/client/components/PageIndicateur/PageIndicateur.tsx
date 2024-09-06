@@ -1,23 +1,35 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import Link from 'next/link';
 import { FormProvider } from 'react-hook-form';
+import { FunctionComponent } from 'react';
 import FilAriane from '@/components/_commons/FilAriane/FilAriane';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import PageIndicateurStyled from '@/components/PageIndicateur/PageIndicateur.styled';
-import PageIndicateurProps from '@/components/PageIndicateur/PageIndicateur.interface';
 import FicheIndicateur from '@/components/PageIndicateur/FicheIndicateur/FicheIndicateur';
 import { usePageIndicateur } from '@/components/PageIndicateur/usePageIndicateur';
 import Alerte from '@/components/_commons/Alerte/Alerte';
+import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
+import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
+import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 
-export default function PageIndicateur({
+interface PageIndicateurProps {
+  indicateur: MetadataParametrageIndicateurContrat,
+  mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
+  estUneCréation: boolean
+  modificationReussie: boolean
+  creationReussie: boolean
+  chantiers: ChantierSynthétisé[]
+}
+
+const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
   indicateur,
   mapInformationMetadataIndicateur,
   estUneCréation,
   modificationReussie,
   creationReussie,
   chantiers,
-}: PageIndicateurProps) {
+}) => {
   const chemin = [{ nom: 'Gestion des indicateurs', lien: '/admin/indicateurs' }];
 
   const {
@@ -67,24 +79,26 @@ export default function PageIndicateur({
                 Retour
               </Link>
               {
-                !!modificationReussie &&
-                <div className='fr-my-4w'>
-                  <Alerte
-                    message='Les modifications ont bien été prises en compte pour cet indicateur. Elles apparaitront dans PILOTE lors de la prochaine mise à jour de données'
-                    titre="Bravo, l'indicateur a bien été modifié !"
-                    type='succès'
-                  />
-                </div>
+                modificationReussie ? (
+                  <div className='fr-my-4w'>
+                    <Alerte
+                      message='Les modifications ont bien été prises en compte pour cet indicateur. Elles apparaitront dans PILOTE lors de la prochaine mise à jour de données'
+                      titre="Bravo, l'indicateur a bien été modifié !"
+                      type='succès'
+                    />
+                  </div>
+                ) : null
               }
               {
-                !!creationReussie &&
-                <div className='fr-my-4w'>
-                  <Alerte
-                    message='La création a bien été prise en compte pour cet indicateur. Il apparaitra dans PILOTE lors de la prochaine mise à jour de données'
-                    titre="Bravo, l'indicateur a bien été crée !"
-                    type='succès'
-                  />
-                </div>
+                creationReussie ? (
+                  <div className='fr-my-4w'>
+                    <Alerte
+                      message='La création a bien été prise en compte pour cet indicateur. Il apparaitra dans PILOTE lors de la prochaine mise à jour de données'
+                      titre="Bravo, l'indicateur a bien été crée !"
+                      type='succès'
+                    />
+                  </div>
+                ) : null
               }
               <Titre
                 baliseHtml='h1'
@@ -189,4 +203,6 @@ export default function PageIndicateur({
       </main>
     </PageIndicateurStyled>
   );
-}
+};
+
+export default PageIndicateur;

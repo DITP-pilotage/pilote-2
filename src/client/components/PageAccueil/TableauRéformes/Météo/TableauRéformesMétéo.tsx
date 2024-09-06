@@ -1,8 +1,15 @@
+import { FunctionComponent } from 'react';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
-import TableauRéformesMétéoProps from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo.interface';
+import { TableauChantiersMétéoTaille } from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo.interface';
 import { formaterDate } from '@/client/utils/date/date';
 import TableauRéformesMétéoStyled from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo.styled';
+
+interface TableauChantiersMétéoProps {
+  météo: Météo;
+  dateDeMàjDonnéesQualitatives?: string | null;
+  taille?: TableauChantiersMétéoTaille;
+}
 
 const libelléMétéosÀPartirDeLaTaille = {
   'sm': {
@@ -15,7 +22,7 @@ const libelléMétéosÀPartirDeLaTaille = {
   },
 };
 
-export default function TableauRéformesMétéo({ météo, dateDeMàjDonnéesQualitatives, taille = 'md' }: TableauRéformesMétéoProps) {
+const TableauRéformesMétéo: FunctionComponent<TableauChantiersMétéoProps> = ({ météo, dateDeMàjDonnéesQualitatives, taille = 'md' }) => {
   return (
     <TableauRéformesMétéoStyled taille={taille}>
       {
@@ -41,4 +48,6 @@ export default function TableauRéformesMétéo({ météo, dateDeMàjDonnéesQua
       }
     </TableauRéformesMétéoStyled>
   );
-}
+};
+
+export default TableauRéformesMétéo;

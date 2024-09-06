@@ -1,6 +1,7 @@
+import { FunctionComponent } from 'react';
 import PageErreur from '@/components/_commons/PageErreur/PageErreur';
 
-export default function Erreur404() {
+const Erreur404: FunctionComponent<{}> = () => {
   return (
     <PageErreur
       message=" Si vous avez tapé l'adresse web dans le navigateur, vérifiez qu'elle est correcte. La page n’est peut-être plus disponible."
@@ -8,4 +9,6 @@ export default function Erreur404() {
       titre='Page non trouvée'
     />
   );
-}
+};
+
+export default Erreur404;

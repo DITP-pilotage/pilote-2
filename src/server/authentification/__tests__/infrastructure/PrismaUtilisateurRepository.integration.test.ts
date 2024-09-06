@@ -2,6 +2,7 @@ import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import {
   PrismaUtilisateurRepository,
 } from '@/server/authentification/infrastructure/adapters/PrismaUtilisateurRepository';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 describe('PrismaUtilisateurRepository', () => {
   let prismaUtilisateurRepository: PrismaUtilisateurRepository;
@@ -23,7 +24,7 @@ describe('PrismaUtilisateurRepository', () => {
           auteur_creation: 'test',
           profil: {
             connect: {
-              code: 'DITP_ADMIN',
+              code: ProfilEnum.DITP_ADMIN,
             },
           },
         },
@@ -44,7 +45,7 @@ describe('PrismaUtilisateurRepository', () => {
           auteur_creation: 'test',
           profil: {
             connect: {
-              code: 'DITP_ADMIN',
+              code: ProfilEnum.DITP_ADMIN,
             },
           },
         },

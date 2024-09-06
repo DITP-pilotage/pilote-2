@@ -1,6 +1,7 @@
+import { FunctionComponent } from 'react';
 import PictoChantierBrouillonStyled from './PictoChantierBrouillon.styled';
 
-export default function PictoChantierBrouillon() {
+const PictoChantierBrouillon: FunctionComponent<{}> = () => {
   return (
     <>
       <PictoChantierBrouillonStyled
@@ -11,4 +12,6 @@ export default function PictoChantierBrouillon() {
       </span>
     </>
   );
-}
+};
+
+export default PictoChantierBrouillon;

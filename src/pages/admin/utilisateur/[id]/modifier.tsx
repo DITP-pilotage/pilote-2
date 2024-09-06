@@ -1,9 +1,10 @@
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
+import { FunctionComponent } from 'react';
 import { getServerAuthSession } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
-import RécupérerUnUtilisateurUseCase from '@/server/usecase/utilisateur/RécupérerUnUtilisateurUseCase';
+import RécupérerUnUtilisateurUseCase from '@/server/gestion-utilisateur/usecases/RécupérerUnUtilisateurUseCase';
 import PageModifierUtilisateur
   from '@/components/PageUtilisateurFormulaire/PageModifierUtilisateur/PageModifierUtilisateur';
 import { commenceParUneVoyelle } from '@/client/utils/strings';
@@ -13,14 +14,14 @@ export interface NextPageModifierUtilisateurProps {
   utilisateur: Utilisateur
 }
 
-export default function NextPageModifierUtilisateur({ utilisateur }: NextPageModifierUtilisateurProps) {
+const NextPageModifierUtilisateur: FunctionComponent<NextPageModifierUtilisateurProps> = ({ utilisateur }) => {
   return (
     <>
       <Head>
         <title>
           Modifier le compte
           {' '}
-          {commenceParUneVoyelle(utilisateur.prénom) ? "d'" : 'de '}
+          {commenceParUneVoyelle(utilisateur.prénom) ? 'd\'' : 'de '}
           {utilisateur.prénom}
           {' '}
           {utilisateur.nom.toUpperCase()}
@@ -31,9 +32,10 @@ export default function NextPageModifierUtilisateur({ utilisateur }: NextPageMod
       <PageModifierUtilisateur utilisateur={utilisateur} />
     </>
   );
-}
+};
+export default NextPageModifierUtilisateur;
 
-export async function getServerSideProps({ req, res, params } :GetServerSidePropsContext<{ id : Utilisateur['id'] }>) {
+export async function getServerSideProps({ req, res, params }: GetServerSidePropsContext<{ id: Utilisateur['id'] }>) {
   const redirigerVersPageAccueil = {
     redirect: {
       destination: '/',

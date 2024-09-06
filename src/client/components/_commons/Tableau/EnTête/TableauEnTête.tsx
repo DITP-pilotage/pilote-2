@@ -1,7 +1,10 @@
-import { flexRender, SortDirection } from '@tanstack/react-table';
+import { flexRender, SortDirection, Table } from '@tanstack/react-table';
 import BoutonsDeTri from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri';
-import TableauEnTêteProps from './TableauEnTête.interface';
 import TableauEnTêteStyled from './TableauEnTête.styled';
+
+interface TableauEnTêteProps<T> {
+  tableau: Table<T>
+}
 
 function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
   if (!typeDeTri)

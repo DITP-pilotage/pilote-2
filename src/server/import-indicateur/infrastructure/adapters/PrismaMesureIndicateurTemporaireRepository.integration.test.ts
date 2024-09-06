@@ -9,6 +9,7 @@ import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/b
 import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
 import { dependencies } from '@/server/infrastructure/Dependencies';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 describe('PrismaMesureIndicateurTemporaireRepository', () => {
   let prismaRapportRepository: PrismaRapportRepository;
@@ -22,7 +23,7 @@ describe('PrismaMesureIndicateurTemporaireRepository', () => {
   describe('#sauvegarder', () => {
     it('doit sauvegarder les données', async () => {
       // GIVEN
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
       await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
       const rapport = new DetailValidationFichierBuilder()
@@ -81,7 +82,7 @@ describe('PrismaMesureIndicateurTemporaireRepository', () => {
   describe('recupererToutParRapportId', () => {
     it('doit récupérer les mesures indicateurs temporaire liés au rapport id', async () => {
       // GIVEN
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
       await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
       const rapport = new DetailValidationFichierBuilder()
@@ -138,7 +139,7 @@ describe('PrismaMesureIndicateurTemporaireRepository', () => {
   describe('supprimerToutParRapportId', () => {
     it('doit supprimer les mesures indicateurs temporaires liés à un rapport', async () => {
       // GIVEN
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
       await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
       const rapport = new DetailValidationFichierBuilder()

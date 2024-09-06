@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import CartographieAvancement
   from '@/components/_commons/Cartographie/CartographieAvancementNew/CartographieAvancement';
@@ -11,21 +12,35 @@ import CartesStyled from '@/components/PageChantier/Cartes/Cartes.styled';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
-import CartesProps from './Cartes.interface';
+import {
+  AvancementsGlobauxTerritoriauxMoyensContrat,
+} from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
+import {
+  CartographieDonnéesMétéo,
+} from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo.interface';
 
-export default function Cartes({
+interface CartesProps {
+  afficheCarteAvancement: boolean,
+  afficheCarteMétéo: boolean,
+  donnéesCartographieAvancement: AvancementsGlobauxTerritoriauxMoyensContrat
+  donnéesCartographieMétéo: CartographieDonnéesMétéo
+  territoireCode: string,
+  mailleSelectionnee: 'départementale' | 'régionale',
+}
+
+const Cartes: FunctionComponent<CartesProps> = ({
   donnéesCartographieAvancement,
   donnéesCartographieMétéo,
   afficheCarteAvancement,
   afficheCarteMétéo,
   territoireCode,
   mailleSelectionnee,
-}: CartesProps) {
+}) => {
 
   return (
     <CartesStyled>
       {
-        !!afficheCarteAvancement && (
+        afficheCarteAvancement ? (
           <div className='carte'>
             <Bloc>
               <section>
@@ -46,16 +61,17 @@ export default function Cartes({
                   données={donnéesCartographieAvancement}
                   mailleSelectionnee={mailleSelectionnee}
                   options={{ estInteractif: false }}
+                  pathname={null}
                   territoireCode={territoireCode}
                   élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
                 />
               </section>
             </Bloc>
           </div>
-        )
+        ) : null
       }
       {
-        !!afficheCarteMétéo && (
+        afficheCarteMétéo ? (
           <div className='carte'>
             <Bloc>
               <section>
@@ -76,14 +92,17 @@ export default function Cartes({
                   données={donnéesCartographieMétéo}
                   mailleSelectionnee={mailleSelectionnee}
                   options={{ estInteractif: false }}
+                  pathname={null}
                   territoireCode={territoireCode}
                   élémentsDeLégende={ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS}
                 />
               </section>
             </Bloc>
           </div>
-        )
+        ) : null
       }
     </CartesStyled>
   );
-}
+};
+
+export default Cartes;

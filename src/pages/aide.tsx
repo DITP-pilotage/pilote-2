@@ -1,7 +1,8 @@
 import Head from 'next/head';
+import { FunctionComponent } from 'react';
 import CentreDAide from '@/components/CentreDAide/CentreDAide';
 
-export default function NextPageCentreDAide() {
+const NextPageCentreDAide: FunctionComponent<{}> = () => {
   return (
     <>
       <Head>
@@ -12,4 +13,6 @@ export default function NextPageCentreDAide() {
       <CentreDAide />
     </>
   );
-}
+};
+
+export default NextPageCentreDAide;

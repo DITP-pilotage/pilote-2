@@ -1,9 +1,10 @@
+import { FunctionComponent } from 'react';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import AvancementsStyled from '@/components/_commons/Avancements/Avancements.styled';
 import AvancementsProps from './Avancements.interface';
 
-export default function Avancements({ avancements }: AvancementsProps) {
+const Avancements: FunctionComponent<AvancementsProps> = ({ avancements }) => {
   return (
     <AvancementsStyled>
       <JaugeDeProgression
@@ -55,4 +56,6 @@ export default function Avancements({ avancements }: AvancementsProps) {
       </div>
     </AvancementsStyled>
   );
-}
+};
+
+export default Avancements;

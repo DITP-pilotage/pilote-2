@@ -10,6 +10,7 @@ import { objectEntries } from '@/client/utils/objects/objects';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDateDeMàjMeteoRepository.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 export default class RécupérerChantiersAccessiblesEnLectureUseCase {
   constructor(
@@ -31,7 +32,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
     const chantiersGroupésParId = groupBy<chantierPrisma>(chantiersRows, chantier => chantier.id);
     let chantiers = objectEntries(chantiersGroupésParId).map(([_, chantier]) => parseChantier(chantier, territoires, ministères, chantiersRowsDatesDeMàj));
 
-    if (profil === 'DROM') {
+    if (profil === ProfilEnum.DROM) {
       chantiers = chantiers.map(chantier => {
         if (!chantier.périmètreIds.includes('PER-018')) {
           chantier.mailles.nationale.FR.avancement.global = null;

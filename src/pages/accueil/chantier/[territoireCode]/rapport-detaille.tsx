@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth/next';
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
+import { FunctionComponent } from 'react';
 import assert from 'node:assert/strict';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { dependencies } from '@/server/infrastructure/Dependencies';
@@ -36,12 +37,12 @@ import Axe from '@/server/domain/axe/Axe.interface';
 import {
   AgrégateurChantierRapportDetailleParTerritoire,
 } from '@/client/utils/chantier/agrégateurRapportDetailleNew/agrégateur';
-import {
-  AvancementChantierRapportDetaille,
-} from '@/components/PageRapportDétaillé/avancement-chantier-rapport-detaille';
+import { AvancementChantierRapportDetaille } from '@/components/PageRapportDétaillé/AvancementChantierRapportDetaille';
 import {
   CartographieDonnéesMétéo,
 } from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo.interface';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
 interface NextPageRapportDétailléProps {
   chantiers: ChantierRapportDetailleContrat[]
@@ -69,7 +70,7 @@ interface NextPageRapportDétailléProps {
   }[],
 }
 
-const PROFILS_AUTORISE_VOIR_BROUILLONS = new Set(['DITP_ADMIN', 'DITP_PILOTAGE', 'DIR_PROJET', 'EQUIPE_DIR_PROJET']);
+const PROFILS_AUTORISE_VOIR_BROUILLONS = new Set([ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE, ProfilEnum.DIR_PROJET, ProfilEnum.EQUIPE_DIR_PROJET]);
 
 export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléProps> = async ({ req, res, query }) => {
   const session = await getServerSession(req, res, authOptions);
@@ -77,11 +78,12 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   assert(query.territoireCode, 'Le territoire code est manquant');
   assert(session, 'Vous devez être authentifié pour accéder a cette page');
   assert(session.habilitations, 'La session ne dispose d\'aucune habilitation');
+  const territoireCode = query.territoireCode as string;
 
   const filtres = {
     perimetres: query.perimetres ? (query.perimetres as string).split(',').filter(Boolean) : [],
     axes: query.axes ? (query.axes as string).split(',').filter(Boolean) : [],
-    statut: query.brouillon === 'false' ? ['PUBLIE'] : ['BROUILLON', 'PUBLIE'],
+    statut: query.statut === 'PUBLIE' ? ['PUBLIE'] : query.statut === 'BROUILLON' ? ['BROUILLON'] : ['BROUILLON', 'PUBLIE'],
     estTerritorialise: query.estTerritorialise === 'true',
     estBarometre: query.estBarometre === 'true',
   };
@@ -94,8 +96,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     estEnAlerteAbscenceTauxAvancementDepartemental: query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
   };
 
-  const territoireCode = query.territoireCode as string;
-  const [maille, codeInseeSelectionne] = territoireCode.split('-');
+  const { maille, codeInsee: codeInseeSelectionne } = territoireCodeVersMailleCodeInsee(territoireCode);
   const mailleSelectionnee = query.maille as 'départementale' | 'régionale' ?? (maille === 'REG' ? 'régionale' : 'départementale');
 
   const mailleChantier = maille === 'NAT' ? 'nationale' : mailleSelectionnee;
@@ -317,7 +318,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   };
 };
 
-export default function NextPageRapportDétaillé({
+const NextPageRapportDétaillé: FunctionComponent<NextPageRapportDétailléProps> = ({
   chantiers,
   ministères,
   axes,
@@ -335,7 +336,7 @@ export default function NextPageRapportDétaillé({
   répartitionMétéos,
   listeDonnéesCartographieAvancement,
   listeDonnéesCartographieMétéo,
-}: NextPageRapportDétailléProps) {
+}) => {
   const mapChantierStatistiques = new Map<string, AvancementChantierRapportDetaille>();
   listeAvancementsStatistiques.forEach(itemAvancementsStatistique => {
     mapChantierStatistiques.set(itemAvancementsStatistique.id, itemAvancementsStatistique.avancementChantierRapportDetaille);
@@ -377,4 +378,6 @@ export default function NextPageRapportDétaillé({
       />
     </>
   );
-}
+};
+
+export default NextPageRapportDétaillé;

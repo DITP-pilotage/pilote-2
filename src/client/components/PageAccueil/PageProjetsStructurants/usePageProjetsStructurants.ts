@@ -8,9 +8,8 @@ import {
 } from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { CodeInsee, codesInseeDépartements, codesInseeRégions } from '@/server/domain/territoire/Territoire.interface';
 import { actions as actionsFiltresStore, filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
-import { RépartitionMétéos } from '@/components/_commons/RépartitionMétéo/RépartitionMétéo.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-
+import { RépartitionMétéos } from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
 
 export default function usePageProjetsStructurants(projetsStructurants: ProjetStructurantVueDEnsemble[]) {
   const filtresActifs = filtresActifsStore();

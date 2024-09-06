@@ -1,9 +1,13 @@
-import { useId, useState } from 'react';
+import { FunctionComponent, useId, useState } from 'react';
 import Link from 'next/link';
-import FilArianeProps from './FilAriane.interface';
 import '@gouvfr/dsfr/dist/component/breadcrumb/breadcrumb.min.css';
 
-export default function FilAriane({ chemin, libelléPageCourante }: FilArianeProps) {
+interface FilArianeProps {
+  libelléPageCourante: string
+  chemin?: { nom: string, lien: string }[]
+}
+
+const FilAriane: FunctionComponent<FilArianeProps> = ({ chemin, libelléPageCourante }) => {
   const [estOuvert, setEstOuvert] = useState(false);
   const id = useId();
 
@@ -59,4 +63,6 @@ export default function FilAriane({ chemin, libelléPageCourante }: FilArianePro
       </div>
     </nav>
   );
-}
+};
+
+export default FilAriane;

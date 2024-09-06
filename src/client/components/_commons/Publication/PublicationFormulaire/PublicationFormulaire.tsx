@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import router from 'next/router';
+import { FunctionComponent } from 'react';
 import { LIMITE_CARACTÈRES_PUBLICATION, validationPublicationFormulaire } from 'validation/publication';
 import CompteurCaractères from '@/components/_commons/CompteurCaractères/CompteurCaractères';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
@@ -9,7 +10,7 @@ import PublicationFormulaireStyled from './PublicationFormulaire.styled';
 import PublicationFormulaireProps, { PublicationFormulaireInputs } from './PublicationFormulaire.interface';
 import usePublicationFormulaire from './usePublicationFormulaire';
 
-export default function PublicationFormulaire({ caractéristiques, contenuInitial, succèsCallback, erreurCallback, annulationCallback }: PublicationFormulaireProps) {
+const PublicationFormulaire: FunctionComponent<PublicationFormulaireProps> = ({ caractéristiques, contenuInitial, succèsCallback, erreurCallback, annulationCallback }) => {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const typeDeRéforme = typeDeRéformeSélectionnéeStore();
   const { créerPublication } = usePublicationFormulaire(succèsCallback, erreurCallback);
@@ -96,4 +97,6 @@ export default function PublicationFormulaire({ caractéristiques, contenuInitia
       </div>
     </PublicationFormulaireStyled>
   );
-}
+};
+
+export default PublicationFormulaire;

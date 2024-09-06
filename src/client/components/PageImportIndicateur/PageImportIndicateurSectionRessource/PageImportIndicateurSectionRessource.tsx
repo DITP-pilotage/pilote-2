@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import PageImportIndicateurSectionRessourceStyled
@@ -5,7 +6,7 @@ import PageImportIndicateurSectionRessourceStyled
 import { wording } from '@/client/utils/i18n/i18n';
 import '@gouvfr/dsfr/dist/component/download/download.min.css';
 
-export function PageImportIndicateurSectionRessource() {
+const PageImportIndicateurSectionRessource: FunctionComponent<{}> = () => {
   return (
     <PageImportIndicateurSectionRessourceStyled>
       <div className='fr-container fr-py-3w'>
@@ -232,4 +233,6 @@ export function PageImportIndicateurSectionRessource() {
       </div>
     </PageImportIndicateurSectionRessourceStyled>
   );
-}
+};
+
+export default PageImportIndicateurSectionRessource;

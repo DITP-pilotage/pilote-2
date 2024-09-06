@@ -1,14 +1,13 @@
 import { FormProvider } from 'react-hook-form';
+import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import { useMessageInformation } from '@/components/PageAdminGestionContenus/useMessageInformation';
-import {
-  MessageInformationForm,
-} from '@/components/PageAdminGestionContenus/MessageInformationForm/MessageInformationForm';
+import MessageInformationForm from '@/components/PageAdminGestionContenus/MessageInformationForm/MessageInformationForm';
 import { MessageInformationContrat } from '@/server/app/contrats/MessageInformationContrat';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 
-export function PageMessageInformation({ messageInformation, modificationReussie }: { messageInformation: MessageInformationContrat, modificationReussie: boolean } ) {
+const PageMessageInformation: FunctionComponent<{ messageInformation: MessageInformationContrat, modificationReussie: boolean }> = ({ messageInformation, modificationReussie }) => {
   const { reactHookForm, modifierIndicateur } = useMessageInformation({ messageInformation, modificationReussie });
 
   return (
@@ -49,5 +48,6 @@ export function PageMessageInformation({ messageInformation, modificationReussie
       </main>
     </div>
   );
+};
 
-}
+export default PageMessageInformation;

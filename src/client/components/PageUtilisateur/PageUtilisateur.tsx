@@ -1,7 +1,7 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import PageUtilisateurProps from '@/components/PageUtilisateur/PageUtilisateur.interface';
+import { FunctionComponent } from 'react';
 import FilAriane from '@/components/_commons/FilAriane/FilAriane';
 import PageUtilisateurStyled from '@/components/PageUtilisateur/PageUtilisateur.styled';
 import Titre from '@/components/_commons/Titre/Titre';
@@ -10,11 +10,18 @@ import FicheUtilisateur from '@/components/PageUtilisateur/FicheUtilisateur/Fich
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import Modale from '@/client/components/_commons/Modale/Modale';
 import Bouton from '@/client/components/_commons/Bouton/Bouton';
-import { BandeauInformation } from '@/client/components/_commons/BandeauInformation';
+import BandeauInformation from '@/components/_commons/BandeauInformation/BandeauInformation';
 import { useGestionTokenAPI } from '@/components/PageAdminGestionTokenAPI/useGestionTokenAPI';
+import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
+import { TokenAPIInformationContrat } from '@/server/authentification/app/contrats/TokenAPIInformationContrat';
 import usePageUtilisateur from './usePageUtilisateur';
 
-export default function PageUtilisateur({ utilisateur, tokenAPIInformation }: PageUtilisateurProps) {
+interface PageUtilisateurProps {
+  utilisateur: Utilisateur,
+  tokenAPIInformation : TokenAPIInformationContrat
+}
+
+const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({ utilisateur, tokenAPIInformation }) => {
   const {
     supprimerUtilisateur,
     fermerLaModaleDeSuppressionUtilisateur,
@@ -148,4 +155,6 @@ export default function PageUtilisateur({ utilisateur, tokenAPIInformation }: Pa
       </main>
     </PageUtilisateurStyled>
   );
-}
+};
+
+export default PageUtilisateur;

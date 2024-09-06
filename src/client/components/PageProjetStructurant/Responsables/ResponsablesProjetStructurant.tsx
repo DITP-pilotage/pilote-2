@@ -2,8 +2,13 @@ import { FunctionComponent } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import ResponsablesLigneProjetStructurant
   from '@/components/_commons/ResponsablesLigneProjetStructurant/ResponsablesLigneProjetStructurant';
+import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import ResponsablesProjetStructurantStyled from './ResponsablesProjetStructurant.styled';
-import ResponsablesPageProjetStructurantProps from './ResponsablesProjetStructurant.interface';
+
+interface ResponsablesPageProjetStructurantProps {
+  responsables: ProjetStructurant['responsables']
+  nomTerritoire: string
+}
 
 const ResponsablesProjetStructurant: FunctionComponent<ResponsablesPageProjetStructurantProps> = ({
   responsables,

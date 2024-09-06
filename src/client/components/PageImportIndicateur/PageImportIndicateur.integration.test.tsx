@@ -14,7 +14,7 @@ jest.mock('@/components/_commons/Cartographie/Cartographie.tsx', () => function 
   );
 });
 // eslint-disable-next-line react/no-multi-comp
-jest.mock('@/components/_commons/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution.tsx', () => function IndicateurChart() {
+jest.mock('@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurÉvolution.tsx', () => function IndicateurChart() {
   return (
     <span>
       Indicateur Chart
@@ -27,7 +27,7 @@ jest.mock('next/router', () => require('next-router-mock'));
 
 describe('PageImportIndicateur', () => {
   describe('En tête', () => {
-    it("doit afficher un titre indiquant que l'on est sur la page indicateur", () => {
+    it('doit afficher un titre indiquant que l\'on est sur la page indicateur', () => {
       // GIVEN
       const chantierInformations: ChantierInformations = {
         id: 'chantierId',
@@ -38,6 +38,7 @@ describe('PageImportIndicateur', () => {
       render(
         <PageImportIndicateur
           chantierInformations={chantierInformations}
+          hrefBoutonRetour='unlien'
           indicateurs={[]}
           informationsIndicateur={[]}
           rapport={null}
@@ -51,7 +52,7 @@ describe('PageImportIndicateur', () => {
       expect(titre).toHaveTextContent(CHANTIER_NOM);
     });
 
-    it("doit afficher un fil d'Ariane indiquant l'indicateur, le chantier et le retour à l'accueil", () => {
+    it('doit afficher un fil d\'Ariane indiquant l\'indicateur, le chantier et le retour à l\'accueil', () => {
       // GIVEN
       const chantierInformation: ChantierInformations = {
         id: 'chantierId',
@@ -62,6 +63,7 @@ describe('PageImportIndicateur', () => {
       render(
         <PageImportIndicateur
           chantierInformations={chantierInformation}
+          hrefBoutonRetour='/chantier/chantierId/NAT-FR'
           indicateurs={[]}
           informationsIndicateur={[]}
           rapport={null}
@@ -75,7 +77,7 @@ describe('PageImportIndicateur', () => {
 
       expect(fileDAriane).toBeInTheDocument();
       expect(elementAccueilFileDAriane).toHaveAttribute('href', '/');
-      expect(elementChantierFileDAriane).toHaveAttribute('href', '/chantier/chantierId');
+      expect(elementChantierFileDAriane).toHaveAttribute('href', '/chantier/chantierId/NAT-FR');
       expect(fileDAriane).toHaveTextContent('Indicateurs');
     });
   });
@@ -92,6 +94,7 @@ describe('PageImportIndicateur', () => {
       render(
         <PageImportIndicateur
           chantierInformations={chantierInformation}
+          hrefBoutonRetour='unlien'
           indicateurs={[]}
           informationsIndicateur={[]}
           rapport={null}
@@ -117,9 +120,10 @@ describe('PageImportIndicateur', () => {
       };
 
       // WHEN
-      await render(
+      render(
         <PageImportIndicateur
           chantierInformations={chantierInformation}
+          hrefBoutonRetour='unlien'
           indicateurs={indicateurs}
           informationsIndicateur={[]}
           rapport={null}
@@ -127,8 +131,8 @@ describe('PageImportIndicateur', () => {
       );
 
       // THEN
-      const titreCatégorieIndicateur1 = await screen.getByText('IND-CH-123 nom indicateur');
-      const titreCatégorieIndicateur2 = await screen.getByText('IND-CH-124 nom indicateur 2');
+      const titreCatégorieIndicateur1 = screen.getByText('IND-CH-123 nom indicateur');
+      const titreCatégorieIndicateur2 = screen.getByText('IND-CH-124 nom indicateur 2');
 
       expect(titreCatégorieIndicateur1).toBeInTheDocument();
       expect(titreCatégorieIndicateur2).toBeInTheDocument();

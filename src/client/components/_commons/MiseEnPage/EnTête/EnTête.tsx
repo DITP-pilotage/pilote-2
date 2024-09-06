@@ -2,9 +2,10 @@ import '@gouvfr/dsfr/dist/component/header/header.min.css';
 import '@gouvfr/dsfr/dist/component/logo/logo.min.css';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { FunctionComponent } from 'react';
 import Navigation from '@/components/_commons/MiseEnPage/Navigation/Navigation';
 import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
-import { BandeauInformation } from '@/components/_commons/BandeauInformation';
+import BandeauInformation from '@/components/_commons/BandeauInformation/BandeauInformation';
 import api from '@/server/infrastructure/api/trpc/api';
 
 const useEntete = () => {
@@ -14,7 +15,7 @@ const useEntete = () => {
   };
 };
 
-export default function EnTête() {
+const EnTête: FunctionComponent<{}> = () => {
   const { data: session } = useSession();
   const { messageInformation } = useEntete();
 
@@ -90,4 +91,6 @@ export default function EnTête() {
       }
     </header>
   );
-}
+};
+
+export default EnTête;

@@ -4,7 +4,7 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';
 import Link from 'next/link';
 import { FunctionComponent } from 'react';
 import { useSession } from 'next-auth/react';
-import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
+import { parseAsBoolean, parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import CartographieAvancement
@@ -23,7 +23,7 @@ import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import RemontéeAlerte from '@/components/_commons/RemontéeAlerteNew/RemontéeAlerte';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
-import SélecteurVueStatuts from '@/components/PageAccueil/SélecteurVueStatutsNew/SélecteurVueStatuts';
+import SélecteurVueStatuts from '@/components/PageAccueil/SélecteurVueStatuts/SélecteurVueStatuts';
 import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
@@ -46,7 +46,6 @@ interface PageChantiersProps {
   axes: Axe[],
   territoireCode: string
   mailleSelectionnee: 'départementale' | 'régionale'
-  brouillon: boolean
   filtresComptesCalculés: Record<string, { nombre: number }>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
@@ -59,7 +58,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   axes,
   territoireCode,
   mailleSelectionnee,
-  brouillon,
   filtresComptesCalculés,
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
@@ -68,7 +66,8 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
 
   const { data: session } = useSession();
 
-  const { auClicTerritoireCallback } = useCartographie(territoireCode, mailleSelectionnee);
+  const pathname = '/accueil/chantier/[territoireCode]';
+  const { auClicTerritoireCallback } = useCartographie(territoireCode, mailleSelectionnee, pathname);
 
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
@@ -76,7 +75,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
     maille: parseAsString.withDefault(''),
-    brouillon: parseAsBoolean.withDefault(true),
+    statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE']),
   });
 
   const [filtresAlertes] = useQueryStates({
@@ -103,7 +102,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     chantiersFiltrés,
     donnéesTableauChantiers,
     remontéesAlertes,
-    aDesDroitsDeLectureSurAuMoinsUnChantierBrouillon,
   } = usePageChantiers(chantiers, territoireCode, filtresComptesCalculés, avancementsAgrégés);
 
   return (
@@ -297,6 +295,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   auClicTerritoireCallback={auClicTerritoireCallback}
                   données={avancementsGlobauxTerritoriauxMoyens}
                   mailleSelectionnee={mailleSelectionnee}
+                  pathname='/accueil/chantier/[territoireCode]'
                   territoireCode={territoireCode}
                   élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
                 />
@@ -359,17 +358,16 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 </Infobulle>
               </TitreInfobulleConteneur>
               {
-                !!session?.profilAAccèsAuxChantiersBrouillons && (!brouillon || aDesDroitsDeLectureSurAuMoinsUnChantierBrouillon(session.habilitations.lecture.chantiers))
-                  ? (
-                    <div className='fr-grid-row fr-my-2w fr-mb-md-0'>
-                      <SélecteurVueStatuts />
-                    </div>
-                  )
-                  : null
+                !!session?.profilAAccèsAuxChantiersBrouillons ? (
+                  <div className='fr-grid-row fr-my-2w fr-mb-md-0'>
+                    <SélecteurVueStatuts />
+                  </div>
+                ) : null
               }
               <TableauChantiers
                 données={donnéesTableauChantiers}
                 ministèresDisponibles={ministères}
+                territoireCode={territoireCode}
               />
             </Bloc>
           </div>

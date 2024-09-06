@@ -1,15 +1,23 @@
-import { useState } from 'react';
+import { useState, ReactNode, FunctionComponent } from 'react';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
-import { CartographieInfoBulle } from '@/components/_commons/Cartographie/useCartographie.interface';
+import { CartographieInfoBulle, CartographieOptions } from '@/components/_commons/Cartographie/useCartographie.interface';
 import {
   départementsTerritoiresStore,
   mailleSélectionnéeTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import CartographieProps from './Cartographie.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { CartographieDonnées } from './Cartographie.interface';
 import BulleDInfo from './BulleDInfo/BulleDInfo';
 import CartographieSVG from './SVG/CartographieSVG';
 
-export default function Cartographie({ options, données, children, auClicTerritoireCallback }: CartographieProps) {
+interface CartographieProps {
+  options?: Partial<CartographieOptions>,
+  données: CartographieDonnées,
+  children?: ReactNode,
+  auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
+}
+
+const Cartographie: FunctionComponent<CartographieProps> = ({ options, données, children, auClicTerritoireCallback }) => {
   const niveauDeMaille = mailleSélectionnéeTerritoiresStore();
   const départements = départementsTerritoiresStore();
 
@@ -55,4 +63,6 @@ export default function Cartographie({ options, données, children, auClicTerrit
       { children }
     </div>
   );
-}
+};
+
+export default Cartographie;

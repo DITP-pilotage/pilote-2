@@ -1,6 +1,15 @@
-import { JaugeDeProgressionProps } from '@/components/_commons/JaugeDeProgression/JaugeDeProgression.interface';
+import { FunctionComponent } from 'react';
+import { JaugeDeProgressionCouleur, JaugeDeProgressionTaille } from '@/components/_commons/JaugeDeProgression/JaugeDeProgression.interface';
 import JaugeDeProgressionSVG from '@/components/_commons/JaugeDeProgression/JaugeDeProgressionSVG';
 import JaugeDeProgressionStyled from './JaugeDeProgression.styled';
+
+interface JaugeDeProgressionProps {
+  couleur: JaugeDeProgressionCouleur,
+  libellé: string,
+  pourcentage: number | null | undefined,
+  taille: JaugeDeProgressionTaille,
+  noWrap?: boolean,
+}
 
 const classesÀPartirDeTaille = {
   sm: {
@@ -17,7 +26,7 @@ const classesÀPartirDeTaille = {
   },
 };
 
-export default function JaugeDeProgression({ couleur, libellé, pourcentage, taille, noWrap = false }: JaugeDeProgressionProps ) {
+const JaugeDeProgression: FunctionComponent<JaugeDeProgressionProps> = ({ couleur, libellé, pourcentage, taille, noWrap = false }) => {
   return (
     <JaugeDeProgressionStyled>
       <div className={`jauge-tracé jauge-tracé--${taille}`}>
@@ -35,4 +44,6 @@ export default function JaugeDeProgression({ couleur, libellé, pourcentage, tai
       </p>
     </JaugeDeProgressionStyled>
   );
-}
+};
+
+export default JaugeDeProgression;

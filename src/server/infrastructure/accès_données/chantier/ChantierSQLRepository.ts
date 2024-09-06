@@ -14,6 +14,7 @@ import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -92,7 +93,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       },
     });
 
-    if (scope == 'saisieCommentaire' && ['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT'].includes(profilUtilisateur)) {
+    if (scope == 'saisieCommentaire' && [ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(profilUtilisateur)) {
       chantiers = chantiers.filter(c => c.ate !== 'hors_ate_centralise');
     }
 

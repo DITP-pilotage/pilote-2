@@ -1,8 +1,9 @@
 import styled from '@emotion/styled';
+import { breakpointL } from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
 
 const FiltresActifsStyled = styled.div`
   position: sticky;
-  top: -1px;
+  top: 0;
   z-index: 2;
   background: var(--background-alt-blue-france);
   box-shadow: 0 6px 18px var(--shadow-color);
@@ -15,6 +16,15 @@ const FiltresActifsStyled = styled.div`
 
     >li {
       display: inline;
+    }
+  }
+  
+  @media screen and (max-width: ${breakpointL}) {
+    top: 3.5rem;
+    
+    .conteneur-tags {
+      overflow-x: auto;
+      white-space: nowrap;
     }
   }
 
