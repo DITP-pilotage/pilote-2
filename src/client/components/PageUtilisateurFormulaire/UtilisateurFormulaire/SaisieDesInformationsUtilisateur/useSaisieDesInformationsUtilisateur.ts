@@ -81,8 +81,6 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   const [chantiersAccessiblesPourLeProfil, setChantiersAccessiblesPourLeProfil] = useState<ChantierSynthétisé[]>([]);
   const [chantiersAccessibleResponsabilite, setChantiersAccessibleResponsabilite] = useState<ChantierSynthétisé[]>([]);
 
-  
-
   const [groupesTerritoiresÀAfficher, setGroupesTerritoiresÀAfficher] = useState<{ nationale: boolean, régionale: boolean, départementale: boolean }>({
     nationale: false, 
     régionale: false, 
