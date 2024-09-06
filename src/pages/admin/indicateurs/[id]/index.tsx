@@ -30,37 +30,6 @@ export interface NextPageAdminUtilisateurProps {
   chantiers: ChantierSynthétisé[]
 }
 
-const NextPageAdminIndicateur: FunctionComponent<NextPageAdminUtilisateurProps> = ({
-  indicateur,
-  mapInformationMetadataIndicateur,
-  estUneCréation,
-  modificationReussie,
-  creationReussie,
-  chantiers,
-}) => {
-  return (
-    <>
-      <Head>
-        <title>
-          Indicateur
-          {' '}
-          {indicateur.indicId}
-          - PILOTE
-        </title>
-      </Head>
-      <PageIndicateur
-        chantiers={chantiers}
-        creationReussie={creationReussie}
-        estUneCréation={estUneCréation}
-        indicateur={indicateur}
-        mapInformationMetadataIndicateur={mapInformationMetadataIndicateur}
-        modificationReussie={modificationReussie}
-      />
-    </>
-  );
-};
-export default NextPageAdminIndicateur;
-
 export async function getServerSideProps({ req, res, params, query }: GetServerSidePropsContext<{
   id: Utilisateur['id'],
   _action?: string
@@ -108,3 +77,35 @@ export async function getServerSideProps({ req, res, params, query }: GetServerS
     },
   };
 }
+
+const NextPageAdminIndicateur: FunctionComponent<NextPageAdminUtilisateurProps> = ({
+  indicateur,
+  mapInformationMetadataIndicateur,
+  estUneCréation,
+  modificationReussie,
+  creationReussie,
+  chantiers,
+}) => {
+  return (
+    <>
+      <Head>
+        <title>
+          Indicateur
+          {' '}
+          {indicateur.indicId}
+          - PILOTE
+        </title>
+      </Head>
+      <PageIndicateur
+        chantiers={chantiers}
+        creationReussie={creationReussie}
+        estUneCréation={estUneCréation}
+        indicateur={indicateur}
+        mapInformationMetadataIndicateur={mapInformationMetadataIndicateur}
+        modificationReussie={modificationReussie}
+      />
+    </>
+  );
+};
+
+export default NextPageAdminIndicateur;

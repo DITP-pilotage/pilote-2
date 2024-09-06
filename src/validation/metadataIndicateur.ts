@@ -47,8 +47,7 @@ export const validationMetadataIndicateurFormulaire = z.object({
     .boolean(),
   indicType: z
     .string()
-    .max(500, 'La limite maximale de 500 caractères a été dépassée')
-    .min(0, 'Ce champ ne peut pas être vide')
+    .min(1, 'Veuillez choisir une option valide pour la typologie')
     .nullable(),
   indicSource: z
     .string()
@@ -151,7 +150,8 @@ export const validationMetadataIndicateurFormulaire = z.object({
     .string()
     .nullable(),
   periodicite: z
-    .string(),
+    .string()
+    .min(1, 'Veuillez choisir une option valide pour la periodicité'),
   delaiDisponibilite: z
     .string()
     .refine((value) => new RegExp(metadata.delai_disponibilite.metaPiloteEditRegex).test(value), metadata.delai_disponibilite.metaPiloteEditRegexViolationMessage),

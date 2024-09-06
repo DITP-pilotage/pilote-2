@@ -23,7 +23,7 @@ interface YamlColumn {
     pilote_edit_isEditable: boolean
     pilote_edit_regex: string
     pilote_edit_regexViolationMessage: string | null
-    pilote_edit_boxType: 'text' | 'textarea' | 'boolean'
+    pilote_edit_boxType: 'text' | 'textarea' | 'boolean' | 'multi-select'
     pilote_edit_acceptedValues: object
     pilote_create_defaultValue: string | number | null | boolean
     pilote_create_mandatory: boolean

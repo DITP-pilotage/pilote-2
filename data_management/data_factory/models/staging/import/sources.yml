@@ -101,7 +101,7 @@ sources:
               pilote_show: true
               pilote_alias: "Persévérant"
               pilote_edit_isEditable: false
-              pilote_create_mandatory: true
+              pilote_create_mandatory: false
               pilote_create_defaultValue: false
           - name: indic_is_phare
             data_type: boolean
@@ -110,7 +110,7 @@ sources:
               pilote_show: true
               pilote_alias: "Phare"
               pilote_edit_isEditable: true
-              pilote_create_mandatory: true
+              pilote_create_mandatory: false
               pilote_create_defaultValue: false
           - name: indic_is_baro
             description: "Indicateur présent dans le baromètre des résultats de l'action publique"
@@ -119,7 +119,7 @@ sources:
               pilote_show: true
               pilote_alias: "Baromètre"
               pilote_edit_isEditable: false
-              pilote_create_mandatory: true
+              pilote_create_mandatory: false
               pilote_create_defaultValue: false
           - name: indic_type
             data_type: text
@@ -133,6 +133,7 @@ sources:
               pilote_edit_isEditable: true
               pilote_edit_acceptedValuesViolationMessage: "Veuillez choisir une typologie d'indicateur valide parmi: "
               pilote_edit_acceptedValues: [
+                { "order_id": 0, "value": "", "name": "Choisir une typologie", "desc": "Choisir une typologie" },
                 { "order_id": 1, "value": "IMPACT", "name": "Impact", "desc": "Indicateur d'impact" },
                 { "order_id": 2, "value": "DEPL", "name": "Déploiement", "desc": "Indicateur de déploiement" },
                 { "order_id": 3, "value": "CONTEXTE", "name": "De contexte", "desc": "Indicateur de contexte" },
@@ -141,7 +142,7 @@ sources:
               ]
               pilote_disp_dispDesc: true
               pilote_create_mandatory: true
-              pilote_create_defaultValue: "IMPACT"
+              pilote_create_defaultValue: ""
           - name: indic_source
             description: "Source déclarée des données de l'indicateur"
             data_type: text
@@ -735,11 +736,13 @@ sources:
               pilote_alias: "Périodicité"
               pilote_edit_boxType: multi-select
               pilote_disp_dispDesc: true
-              pilote_create_defaultValue: "Annuelle"
+              pilote_create_defaultValue: ""
+              pilote_create_mandatory: true
               pilote_disp_blocId: 7
               pilote_edit_regex: null
               pilote_edit_regexViolationMessage: null
               pilote_edit_acceptedValues: [
+                { "order_id": 0, "value": "", "name": "Choisir une périodicité", "desc": "Choisir une périodicité" },
                 { "order_id": 1, "value": "Mensuelle", "name": "Mensuelle", "desc": "Périodicité mensuelle" },
                 { "order_id": 2, "value": "Trimestrielle", "name": "Trimestrielle", "desc": "Périodicité trimestrielle" },
                 { "order_id": 3, "value": "Semestrielle", "name": "Semestrielle", "desc": "Périodicité semestrielle" },
