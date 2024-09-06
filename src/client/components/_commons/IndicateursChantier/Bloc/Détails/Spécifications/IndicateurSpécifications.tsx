@@ -71,13 +71,13 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
               </span>
             </p>
             <p className='fr-text--xs'>
-              La valeur actuelle de cet indicateur est datée au
+              La date de valeur actuelle de cet indicateur est :
               {' '}
               <span className='fr-text--bold'>
                 {`${dateValeurActuelle ?? libelléValeurNull}.`}
               </span>
               {' '}
-              La prochaine valeur actuelle sera donc datée au
+              La date de la prochaine valeur actuelle sera donc :
               {' '}
               <span className='fr-text--bold'>
                 {`${dateProchaineDateValeurActuelle ?? libelléValeurNull}.`}
@@ -90,7 +90,7 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
                 {delaiDisponibilite ? `${delaiDisponibilite} mois.` : 'Non renseigné'}
               </span>
               {' '}
-              {`De ce fait, la mise à jour de la prochaine valeur actuelle est requise ${indicateurEstAjour ? 'au plus tard le' : 'depuis le'}`}
+              {`De ce fait, la mise à jour de la prochaine valeur actuelle est requise ${indicateurEstAjour ? 'au plus tard à' : 'depuis'} la date :`}
               {' '}
               <span className='fr-text--bold'>
                 {`${dateProchaineDateMaj ?? libelléValeurNull}.`}
