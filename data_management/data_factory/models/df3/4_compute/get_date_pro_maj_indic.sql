@@ -68,10 +68,17 @@ LEFT JOIN src_config_tempo AS b ON a.indic_id=b.indic_id
 
 -- Calcul de la prochaine date de màj
 --	prochaine_date_maj= prochaine_date_va+delai_disponibilite
+, get_prochaine_date_maj_debut_mois AS (
+SELECT *, 
+	(prochaine_date_va+ delai_disponibilite * interval '1 month') AS prochaine_date_maj_debut_mois
+FROM get_prochaine_date_va
+)
+
+-- On arrondit la date à la FIN du mois
 , get_prochaine_date_maj AS (
 SELECT *, 
-	(prochaine_date_va+ delai_disponibilite * interval '1 month') AS prochaine_date_maj
-FROM get_prochaine_date_va
+	(prochaine_date_maj_debut_mois::date + interval '1 month' - interval '1 day') AS prochaine_date_maj
+FROM get_prochaine_date_maj_debut_mois
 )
 
 -- Calcule si données à jour + distance à la prochaine màj (en jours)
