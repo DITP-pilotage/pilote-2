@@ -76,19 +76,19 @@ const EnTête: FunctionComponent<{}> = () => {
                 <ul className='flex align-center'>
                   <li className='fr-mr-md-2w'>
                     <button
-                      className='fr-btn fr-text--sm fr-p-0'
+                      className='fr-btn fr-text--sm fr-py-0 fr-pr-1w fr-pl-0'
                       type='button'
                     >
-                      <span className='material-icons-outlined fr-mr-1v fr-text-title--blue-france'>
+                      <span className='material-icons-outlined fr-mr-2v fr-text-title--blue-france'>
                         email
                       </span>
-                      <a
+                      <Link
                         className='font-normal'
                         href='mailto:pilote.ditp@modernisation.gouv.fr'
                         title="Contacter l'équipe PILOTE"
                       >
                         Contacter l'équipe PILOTE
-                      </a>
+                      </Link>
                     </button>
                   </li>
                   <li>

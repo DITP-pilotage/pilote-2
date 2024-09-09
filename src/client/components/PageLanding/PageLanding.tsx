@@ -209,13 +209,21 @@ const PageLanding: FunctionComponent<{}> = () => {
               >
                 Vous avez des questions ?
               </Titre>
-              <Link
+              <button
                 className='fr-btn'
-                href='mailto:support.ditp@modernisation.gouv.fr'
-                target='_blank'
+                type='button'
               >
-                Contacter l'équipe
-              </Link>
+                <span className='material-icons-outlined fr-mr-2v'>
+                  email
+                </span>
+                <Link
+                  className='font-normal'
+                  href='mailto:pilote.ditp@modernisation.gouv.fr'
+                  title="Contacter l'équipe PILOTE"
+                >
+                  Contacter l'équipe PILOTE
+                </Link>
+              </button>
             </div>
           </div>
         </section>
