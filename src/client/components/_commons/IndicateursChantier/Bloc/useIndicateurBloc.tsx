@@ -14,14 +14,14 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
 
   const indicateurNonAJour = !détailsIndicateur[codeInsee]?.estAJour;
 
-  const IndicateurEstApplicable = !!détailsIndicateur[codeInsee].est_applicable;
-  
+  const indicateurEstApplicable = !!détailsIndicateur[codeInsee]?.est_applicable;
+
   return {
     dateDeMiseAJourIndicateur,
     dateProchaineDateMaj,
     dateProchaineDateValeurActuelle,
     dateValeurActuelle,
     indicateurNonAJour,
-    IndicateurEstApplicable,
+    indicateurEstApplicable,
   };
 }

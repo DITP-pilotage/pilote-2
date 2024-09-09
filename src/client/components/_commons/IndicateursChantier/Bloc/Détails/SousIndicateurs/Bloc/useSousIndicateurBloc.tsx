@@ -27,7 +27,7 @@ export default function useSousIndicateurBloc(détailsIndicateur: DétailsIndica
     ? détailsIndicateur[detailTerritoireSelectionne.codeInsee]?.estAJour === false
     : false;
 
-  const IndicateurEstApplicable = !!détailsIndicateur[detailTerritoireSelectionne.codeInsee].est_applicable;
+  const indicateurEstApplicable = !!détailsIndicateur[detailTerritoireSelectionne.codeInsee].est_applicable;
 
   return {
     dateDeMiseAJourIndicateur,
@@ -35,6 +35,6 @@ export default function useSousIndicateurBloc(détailsIndicateur: DétailsIndica
     dateProchaineDateValeurActuelle,
     dateValeurActuelle,
     indicateurNonAJour,
-    IndicateurEstApplicable,
+    indicateurEstApplicable,
   };
 }

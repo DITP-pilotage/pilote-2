@@ -52,7 +52,7 @@ class TableauChantiersTest {
       tendance: 'STAGNATION',
     },
   ];
-  
+
   private territoireCode = 'DEPT-87';
 
   nombreDeDonnées() {
@@ -88,6 +88,7 @@ class TableauChantiersTest {
     waitFor(() => render(
       <TableauChantiers
         données={this.données}
+        mailleSelectionnee='départementale'
         ministèresDisponibles={this.ministèresDisponibles}
         territoireCode={this.territoireCode}
       />,
