@@ -71,7 +71,23 @@ const EnTête: FunctionComponent<{}> = () => {
             </div>
             <div className='fr-header__tools'>
               <div className='fr-header__tools-links'>
-                <ul>
+                <ul className='fr-btns-group'>
+                  <li className='fr-mr-md-2w'>
+                    <button
+                      className='fr-btn fr-text--sm fr-p-0'
+                      type='button'
+                    >
+                      <span className='material-icons-outlined fr-mr-1v fr-text-title--blue-france'>
+                        email
+                      </span>
+                      <a
+                        href='mailto:pilote.ditp@modernisation.gouv.fr'
+                        title="Contacter l'équipe PILOTE"
+                      >  
+                        Contacter l'équipe PILOTE
+                      </a>
+                    </button>
+                  </li>
                   <li>
                     <Utilisateur />
                   </li>
