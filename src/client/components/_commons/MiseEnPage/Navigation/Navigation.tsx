@@ -137,7 +137,28 @@ const Navigation: FunctionComponent<{}> = () => {
           Fermer
         </button>
         <div className='fr-header__menu-links'>
-          <Utilisateur />
+          <ul>
+            <li className='fr-mr-md-2w'>
+              <button
+                className='fr-btn fr-text--sm fr-p-0'
+                type='button'
+              >
+                <span className='material-icons-outlined fr-mr-1v fr-text-title--blue-france'>
+                  email
+                </span>
+                <a
+                  href='mailto:pilote.ditp@modernisation.gouv.fr'
+                  title="Contacter l'équipe PILOTE"
+                >
+                  Contacter l'équipe PILOTE
+                </a>
+              </button>
+            </li>
+            <li>
+
+              <Utilisateur />
+            </li>
+          </ul>
         </div>
         <nav
           aria-label='Menu principal'

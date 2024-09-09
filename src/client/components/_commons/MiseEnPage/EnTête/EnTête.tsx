@@ -71,7 +71,7 @@ const EnTête: FunctionComponent<{}> = () => {
             </div>
             <div className='fr-header__tools'>
               <div className='fr-header__tools-links'>
-                <ul className='fr-btns-group'>
+                <ul className='flex align-center'>
                   <li className='fr-mr-md-2w'>
                     <button
                       className='fr-btn fr-text--sm fr-p-0'
@@ -83,7 +83,7 @@ const EnTête: FunctionComponent<{}> = () => {
                       <a
                         href='mailto:pilote.ditp@modernisation.gouv.fr'
                         title="Contacter l'équipe PILOTE"
-                      >  
+                      >
                         Contacter l'équipe PILOTE
                       </a>
                     </button>
@@ -101,7 +101,7 @@ const EnTête: FunctionComponent<{}> = () => {
       {
         isBandeauActif ? (
           <BandeauInformation bandeauType={bandeauType}>
-            { bandeauTexte }
+            {bandeauTexte}
           </BandeauInformation>
         ) : null
       }
