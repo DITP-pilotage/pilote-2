@@ -73,10 +73,10 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
     dateProchaineDateValeurActuelle,
     dateValeurActuelle,
     indicateurNonAJour,
-    IndicateurEstApplicable,
+    indicateurEstApplicable,
   } = useSousIndicateurBloc(détailsIndicateur, territoireCode);
 
-  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour, IndicateurEstApplicable);
+  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour, indicateurEstApplicable);
 
   return (
     <SousIndicateurBlocStyled
@@ -124,7 +124,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                 Date prévisionnelle de la prochaine date de mise à jour des données (de l'indicateur) :
                 {' '}
                 <span className='fr-text--bold'>
-                  {IndicateurEstApplicable ? (dateProchaineDateMaj ?? 'Données requises mais non renseignées par l\'équipe projet') : 'Non renseignée'}
+                  {indicateurEstApplicable ? (dateProchaineDateMaj ?? 'Données requises mais non renseignées par l\'équipe projet') : 'Non renseignée'}
                 </span>
               </p>
               <IndicateurPonderation

@@ -24,9 +24,14 @@ function afficherContenuDeLaCellule(cell: Cell<ChantierVueDEnsemble, unknown>) {
 interface TableauChantiersContenuProps {
   tableau: Table<DonnéesTableauChantiers>
   territoireCode: string
+  mailleSelectionnee: 'départementale' | 'régionale'
 }
 
-const TableauChantiersContenu: FunctionComponent<TableauChantiersContenuProps> = ({ tableau, territoireCode }) => {
+const TableauChantiersContenu: FunctionComponent<TableauChantiersContenuProps> = ({
+  tableau,
+  territoireCode,
+  mailleSelectionnee,
+}) => {
   return (
     <tbody>
       {
@@ -58,7 +63,7 @@ const TableauChantiersContenu: FunctionComponent<TableauChantiersContenuProps> =
                 >
                   <Link
                     className='fr-p-1w'
-                    href={`/chantier/${row.original.id}/${territoireCode}`}
+                    href={`/chantier/${row.original.id}/${territoireCode}?maille=${mailleSelectionnee}`}
                     tabIndex={cell.column.columnDef.meta?.tabIndex}
                   >
                     {afficherContenuDeLaCellule(cell)}
