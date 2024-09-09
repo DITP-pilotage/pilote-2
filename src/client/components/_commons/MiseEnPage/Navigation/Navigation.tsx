@@ -2,6 +2,8 @@ import '@gouvfr/dsfr/dist/component/navigation/navigation.min.css';
 import '@gouvfr/dsfr/dist/component/button/button.min.css';
 import '@gouvfr/dsfr/dist/component/modal/modal.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
+import 'material-symbols/index.css';
+import 'material-icons/iconfont/material-icons.css';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -147,6 +149,7 @@ const Navigation: FunctionComponent<{}> = () => {
                   email
                 </span>
                 <a
+                  className='font-normal'
                   href='mailto:pilote.ditp@modernisation.gouv.fr'
                   title="Contacter l'équipe PILOTE"
                 >

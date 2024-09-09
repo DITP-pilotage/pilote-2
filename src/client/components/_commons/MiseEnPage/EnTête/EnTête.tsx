@@ -1,5 +1,7 @@
 import '@gouvfr/dsfr/dist/component/header/header.min.css';
 import '@gouvfr/dsfr/dist/component/logo/logo.min.css';
+import 'material-symbols/index.css';
+import 'material-icons/iconfont/material-icons.css';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { FunctionComponent } from 'react';
@@ -81,6 +83,7 @@ const EnTête: FunctionComponent<{}> = () => {
                         email
                       </span>
                       <a
+                        className='font-normal'
                         href='mailto:pilote.ditp@modernisation.gouv.fr'
                         title="Contacter l'équipe PILOTE"
                       >
