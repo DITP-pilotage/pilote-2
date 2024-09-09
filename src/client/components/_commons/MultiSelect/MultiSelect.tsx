@@ -1,4 +1,4 @@
-import { useId, useRef } from 'react';
+import { FunctionComponent, useId, useRef } from 'react';
 import MultiSelectProps from '@/components/_commons/MultiSelect/MultiSelect.interface';
 import MultiSelectGroupe from '@/components/_commons/MultiSelect/MultiSelectGroupe';
 import BoutonToutSélectionner from '@/components/_commons/BoutonsToutSélectionner/BoutonsToutSélectionner';
@@ -6,7 +6,7 @@ import MultiSelectStyled from './MultiSelect.styled';
 import useMultiSelect from './useMultiSelect';
 
 
-export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeursSélectionnéesParDéfaut, changementValeursSélectionnéesCallback, label, afficherBoutonsSélection }: MultiSelectProps) {
+const MultiSelect: FunctionComponent<MultiSelectProps> = ({ suffixeLibellé, optionsGroupées, valeursSélectionnéesParDéfaut, changementValeursSélectionnéesCallback, label, afficherBoutonsSélection, desactive }) => {
   const id = useId();
   const ref = useRef(null);
   const {
@@ -40,6 +40,7 @@ export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeurs
       }
       <button
         className='fr-select fr-ellipsis'
+        disabled={desactive}
         id={id}
         title={libellé}
         type='button'
@@ -72,4 +73,6 @@ export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeurs
       </div>
     </MultiSelectStyled>
   );
-}
+};
+
+export default MultiSelect;

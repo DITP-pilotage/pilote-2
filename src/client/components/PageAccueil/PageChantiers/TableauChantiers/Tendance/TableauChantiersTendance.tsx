@@ -1,10 +1,16 @@
+import { FunctionComponent } from 'react';
 import { ChantierTendance } from '@/server/domain/chantier/Chantier.interface';
 import { BadgeType } from '@/components/_commons/Badge/Badge.interface';
 import Badge from '@/components/_commons/Badge/Badge';
-import TableauChantiersTendanceProps
-  from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance.interface';
-
-export default function TableauChantiersTendance({ tendance }: TableauChantiersTendanceProps) {
+import {
+  DonnéesTableauChantiers,
+} from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
+  
+interface TableauChantiersTendanceProps {
+  tendance: DonnéesTableauChantiers['tendance']
+}
+  
+const TableauChantiersTendance: FunctionComponent<TableauChantiersTendanceProps> = ({ tendance }) => {
   const badgeTypeÀPartirDeLaTendance: Record<NonNullable<ChantierTendance>, BadgeType> = {
     'HAUSSE': 'vert',
     'BAISSE': 'rouge',
@@ -25,4 +31,6 @@ export default function TableauChantiersTendance({ tendance }: TableauChantiersT
       {libelléÀPartirDeLaTendance[tendance]}
     </Badge>
   );
-}
+};
+
+export default TableauChantiersTendance;

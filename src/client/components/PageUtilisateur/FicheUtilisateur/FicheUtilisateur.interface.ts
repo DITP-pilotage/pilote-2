@@ -29,6 +29,10 @@ export default interface FicheUtilisateurProps {
         chantiers?: Chantier['id'][]
         périmètres?: PérimètreMinistériel['id'][]          
       }
+      responsabilite?: {
+        chantiers?: Chantier['id'][]
+        périmètres?: PérimètreMinistériel['id'][]          
+      }
     }
   } 
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import BarreLatérale from '@/client/components/_commons/BarreLatérale/BarreLatérale';
 import Sommaire from '@/components/_commons/Sommaire/Sommaire';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
@@ -8,23 +8,32 @@ import { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant
 import { typesCommentaireProjetStructurant } from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
 import Titre from '@/client/components/_commons/Titre/Titre';
 import { listeRubriquesIndicateursProjetStructurant, listeRubriquesProjetStructurant } from '@/client/utils/rubriques';
-import Indicateurs from '@/client/components/_commons/Indicateurs/Indicateurs';
+import IndicateursProjetStructurant
+  from '@/components/_commons/IndicateursProjetStructurant/IndicateursProjetStructurant';
 import TitreInfobulleConteneur from '@/client/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import Infobulle from '@/client/components/_commons/Infobulle/Infobulle';
 import BoutonSousLigné from '@/client/components/_commons/BoutonSousLigné/BoutonSousLigné';
+import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import ResponsablesProjetStructurant from './Responsables/ResponsablesProjetStructurant';
-import PageProjetStructurantProps from './PageProjetStructurant.interface';
 import PageProjetStructurantEnTête from './EnTête/EnTête';
 import PageProjetStructurantStyled from './PageProjetStructurant.styled';
 import AvancementPageProjetStructurant from './Avancement/Avancement';
 import usePageProjetStructurant from './usePageProjetStructurant';
 
-export default function PageProjetStructurant({
+interface PageProjetStructurantProps {
+  projetStructurant: ProjetStructurant
+  indicateurs: Indicateur[]
+  détailsIndicateurs: DétailsIndicateurs
+}
+
+const PageProjetStructurant: FunctionComponent<PageProjetStructurantProps> = ({
   projetStructurant,
   indicateurs,
   détailsIndicateurs,
-}: PageProjetStructurantProps) {
+}) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const {
     synthèseDesRésultats,
@@ -139,7 +148,7 @@ export default function PageProjetStructurant({
               nomTerritoire={projetStructurant.territoire.nomAffiché}
               objectifs={[objectif]}
               réformeId={projetStructurant.id}
-              typesObjectif={[typeObjectifProjetStructurant]}
+              tousLesTypesDObjectif={[typeObjectifProjetStructurant]}
             />
           </section>
           {
@@ -154,7 +163,7 @@ export default function PageProjetStructurant({
               >
                 Indicateurs
               </Titre>
-              <Indicateurs
+              <IndicateursProjetStructurant
                 chantierEstTerritorialisé={false}
                 détailsIndicateurs={détailsIndicateurs}
                 indicateurs={indicateurs}
@@ -195,4 +204,6 @@ export default function PageProjetStructurant({
       </main>
     </PageProjetStructurantStyled>
   );
-}
+};
+
+export default PageProjetStructurant;

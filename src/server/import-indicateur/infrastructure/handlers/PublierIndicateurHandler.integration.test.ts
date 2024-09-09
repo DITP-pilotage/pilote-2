@@ -8,11 +8,12 @@ import {
 import handlePublierFichierImportIndicateur
   from '@/server/import-indicateur/infrastructure/handlers/PublierIndicateurHandler';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 describe('ImportIndicateurHandler', () => {
   it('doit transférer les mesures indicateurs temporaires vers la table permanente', async () => {
     // GIVEN
-    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
     await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
     
     const rapport = new DetailValidationFichierBuilder()

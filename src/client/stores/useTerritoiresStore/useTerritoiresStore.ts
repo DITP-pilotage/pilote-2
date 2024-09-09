@@ -23,7 +23,7 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
         return;
       }
 
-      const territoiresAccessiblesEnLecture = territoires.filter(territoire => territoire.accèsLecture === true);
+      const territoiresAccessiblesEnLecture = territoires.filter(territoire => territoire.accèsLecture);
 
       set({
         territoires,
@@ -74,7 +74,7 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
       }
 
       const _mailleSelectionnee = mailleSelectionnee || get().mailleSélectionnée;
-      
+
       if (_mailleSelectionnee === 'régionale') {
         return get().actions.récupérerDétailsSurUnTerritoire(`REG-${codeInsee}`);
       }
@@ -116,8 +116,10 @@ export const départementsTerritoiresStore = () => useTerritoiresStore(étatActu
 export const régionsTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.régions);
 export const territoiresTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.territoires);
 export const mailleSélectionnéeTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.mailleSélectionnée);
-export const territoireSélectionnéTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.territoireSélectionné);
-export const territoiresComparésTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.territoiresComparés);
 export const territoiresAccessiblesEnLectureStore = () => useTerritoiresStore(étatActuel => étatActuel.territoiresAccessiblesEnLecture);
 export const maillesAccessiblesEnLectureStore = () => useTerritoiresStore(étatActuel => étatActuel.maillesAccessiblesEnLecture);
+
+// TODO(JOTA: 29/08/2024): ne jamais utiliser ces stores, ils sont à supprimer
+export const territoireSélectionnéTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.territoireSélectionné);
+export const territoiresComparésTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.territoiresComparés);
 

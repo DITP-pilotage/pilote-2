@@ -1,5 +1,9 @@
 import styled from '@emotion/styled';
-import { RépartitionMétéosÉlémentStyledProps } from './RépartitionMétéoÉlément.interface';
+import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
+
+interface RépartitionMétéosÉlémentStyledProps {
+  typeDeRéforme: TypeDeRéforme
+}
 
 const couleurs = {
   chantier: 'var(--text-title-blue-france)',

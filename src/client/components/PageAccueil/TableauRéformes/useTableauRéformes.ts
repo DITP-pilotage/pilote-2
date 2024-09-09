@@ -1,6 +1,6 @@
 import { SortingState, Table } from '@tanstack/react-table';
 import { useCallback } from 'react';
-import { DirectionDeTri } from '@/client/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.interface';
+import { DirectionDeTri } from '@/client/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri';
 import {
   DonnéesTableauChantiers,
 } from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléTableauChantiers/RapportDétailléTableauChantiers.interface';

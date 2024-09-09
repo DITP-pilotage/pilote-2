@@ -1,14 +1,19 @@
-import { useCallback } from 'react';
+import { FunctionComponent, useCallback } from 'react';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
-import { Filtre } from '@/stores/useFiltresStore/useFiltresStore.interface';
-import FiltresSélectionMultipleProps from './FiltresSélectionMultiple.interface';
+import { Filtre, FiltreCatégorie } from '@/stores/useFiltresStore/useFiltresStore.interface';
 import FiltresSélectionMultipleStyled from './FiltresSélectionMultiple.styled';
 
-export default function FiltresSélectionMultiple({
+interface FiltresSélectionMultipleProps {
+  catégorieDeFiltre: FiltreCatégorie,
+  filtres: Filtre[],
+  libellé: string,
+}
+
+const FiltresSélectionMultiple: FunctionComponent<FiltresSélectionMultipleProps> = ({
   catégorieDeFiltre,
   libellé,
   filtres,
-}: FiltresSélectionMultipleProps) {
+}) => {
   const { changerÉtatDuFiltre, estActif } = actionsFiltresStore();
 
   const auClicSurUnFiltreCallback = useCallback(
@@ -54,4 +59,6 @@ export default function FiltresSélectionMultiple({
       </div>
     </FiltresSélectionMultipleStyled>
   );
-}
+};
+
+export default FiltresSélectionMultiple;

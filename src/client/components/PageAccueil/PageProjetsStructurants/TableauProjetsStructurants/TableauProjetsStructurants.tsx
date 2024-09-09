@@ -1,18 +1,25 @@
-import { useEffect } from 'react';
+import { useEffect, Dispatch, SetStateAction, FunctionComponent } from 'react';
 import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
 import TableauRéformesEnTête from '@/client/components/PageAccueil/TableauRéformes/EnTête/TableauRéformesEnTête';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import TableauChantiersActionsDeTri
   from '@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
-import TableauProjetsStructurantsProps from './TableauProjetsStructurants.interface';
+import {
+  ProjetStructurantVueDEnsemble,
+} from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import useTableauProjetsStructurants from './useTableauProjetsStructurants';
 import TableauProjetsStructurantsContenu from './Contenu/TableauProjetsStructurantsContenu';
 import TableauProjetsStructurantsStyled from './TableauProjetsStructurants.styled';
 
-export default function TableauProjetsStructurants({
+interface TableauProjetsStructurantsProps {
+  données: ProjetStructurantVueDEnsemble[]
+  setNombreProjetsStructurantsDansLeTableau: Dispatch<SetStateAction<number | undefined>>
+}
+
+const TableauProjetsStructurants: FunctionComponent<TableauProjetsStructurantsProps> = ({
   données,
   setNombreProjetsStructurantsDansLeTableau,
-}: TableauProjetsStructurantsProps) {
+}) => {
   const {
     tableau,
     changementDeLaRechercheCallback,
@@ -85,4 +92,6 @@ export default function TableauProjetsStructurants({
           </>}
     </TableauProjetsStructurantsStyled>
   );
-}
+};
+
+export default TableauProjetsStructurants;

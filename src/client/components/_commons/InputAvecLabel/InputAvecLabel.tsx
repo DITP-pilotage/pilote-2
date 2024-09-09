@@ -1,8 +1,19 @@
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/component/input/input.min.css';
-import InputAvecLabelProps from '@/components/_commons/InputAvecLabel/InputAvecLabel.interface';
+import { FunctionComponent, HTMLInputTypeAttribute } from 'react';
+import { FieldError, FieldErrorsImpl, Merge, UseFormRegisterReturn } from 'react-hook-form';
 
-export default function InputAvecLabel({ type = 'text', erreur, libellé, htmlName, texteAide, register, disabled }: InputAvecLabelProps) {
+interface InputAvecLabelProps {
+  type?: HTMLInputTypeAttribute,
+  libellé: string,
+  htmlName: string,
+  texteAide?: string,
+  erreur?:  FieldError | Merge<FieldError, FieldErrorsImpl<any>>
+  register: UseFormRegisterReturn
+  disabled?: boolean
+}
+
+const InputAvecLabel: FunctionComponent<InputAvecLabelProps> = ({ type = 'text', erreur, libellé, htmlName, texteAide, register, disabled }) => {
   return (
     <div className={`fr-input-group ${erreur !== undefined ? 'fr-input-group--error' : ''}`}>
       <label
@@ -34,4 +45,6 @@ export default function InputAvecLabel({ type = 'text', erreur, libellé, htmlNa
       }
     </div>
   );
-}
+};
+
+export default InputAvecLabel; 

@@ -15,6 +15,7 @@ import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/Re
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
 import { getNextAuthSessionTokenPourUtilisateurEmail } from '@/server/infrastructure/test/NextAuthHelper';
 import { dependencies } from '@/server/infrastructure/Dependencies';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 jest.mock('@/server/import-indicateur/infrastructure/handlers/ParseForm', () => ({
   parseForm: () => ({
@@ -50,7 +51,7 @@ describe('VerifierImportIndicateurHandler', () => {
             .build(),
         ).build();
 
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
       await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
       nock(BASE_URL_VALIDATA)
@@ -105,7 +106,7 @@ describe('VerifierImportIndicateurHandler', () => {
           JSON.stringify({ report }),
         );
 
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
       await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
       const formData = new FormData();
@@ -161,7 +162,7 @@ describe('VerifierImportIndicateurHandler', () => {
           JSON.stringify({ report }),
         );
 
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
       await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
       const formData = new FormData();
@@ -224,7 +225,7 @@ describe('VerifierImportIndicateurHandler', () => {
           .build(),
       ).build();
 
-    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
     await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
     nock(BASE_URL_VALIDATA)
@@ -312,7 +313,7 @@ describe('VerifierImportIndicateurHandler', () => {
           .build(),
       ).build();
 
-    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
     await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
     nock(BASE_URL_VALIDATA)

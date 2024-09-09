@@ -1,6 +1,12 @@
-import FiltresGroupeProps from './FiltresGroupe.interface';
 
-export default function FiltresGroupe({ libellé, children }: FiltresGroupeProps) {
+import { FunctionComponent, ReactNode } from 'react';
+
+interface FiltresGroupeProps {
+  libellé?: string,
+  children: ReactNode,
+}
+
+const FiltresGroupe: FunctionComponent<FiltresGroupeProps> = ({ libellé, children }) => {
   return (
     <section className='fr-px-3w'>
       {
@@ -13,4 +19,6 @@ export default function FiltresGroupe({ libellé, children }: FiltresGroupeProps
       { children }
     </section>
   );
-}
+};
+
+export default FiltresGroupe;

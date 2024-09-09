@@ -1,18 +1,18 @@
-import { PropsWithChildren } from 'react';
+import { FunctionComponent, PropsWithChildren } from 'react';
 import { InformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
 import { ChampObligatoire } from '@/components/PageIndicateur/ChampObligatoire';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 
-export const MetadataIndicateurChamp = ({
+export const MetadataIndicateurChamp: FunctionComponent<PropsWithChildren<{
+  informationMetadataIndicateur: InformationMetadataIndicateurContrat,
+  estEnCoursDeModification: boolean,
+  valeurAffiché: string,
+}>> = ({
   children,
   informationMetadataIndicateur,
   estEnCoursDeModification,
   valeurAffiché,
-}: PropsWithChildren<{
-  informationMetadataIndicateur: InformationMetadataIndicateurContrat,
-  estEnCoursDeModification: boolean,
-  valeurAffiché: string,
-}>) => {
+}) => {
   return (
     <>
       <div className='fr-text--md bold fr-mb-1v relative flex'>
@@ -40,8 +40,8 @@ export const MetadataIndicateurChamp = ({
       {
         estEnCoursDeModification
           ? (
-            <div>
-              { children }
+            <div className='fr-mt-1w'>
+              {children}
             </div>
           )
           : (

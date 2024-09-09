@@ -1,5 +1,5 @@
 import { ListeTerritoiresDonnéeAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
-import {  ChantierTendance, ChantierVueDEnsemble } from '@/server/domain/chantier/Chantier.interface';
+import { ChantierTendance, ChantierVueDEnsemble } from '@/server/domain/chantier/Chantier.interface';
 
 const Alerte = {
   estEnAlerteÉcart(écart: number | null) {
@@ -26,7 +26,7 @@ const Alerte = {
   },
 
   estEnAlerteMétéoNonRenseignée(météo: ChantierVueDEnsemble['météo']) {
-    return météo === 'NON_RENSEIGNEE' ? true : false;
+    return météo === 'NON_RENSEIGNEE';
   },
 };
 

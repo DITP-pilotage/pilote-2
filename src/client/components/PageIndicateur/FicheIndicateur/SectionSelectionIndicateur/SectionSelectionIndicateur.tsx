@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import useSelectionIndicateurForm
   from '@/components/PageIndicateur/FicheIndicateur/SectionSelectionIndicateur/useSelectionIndicateurForm';
 import SélecteurIndicateurActif
@@ -7,7 +8,7 @@ interface SectionSelectionIndicateurProps {
   estEnCoursDeModification: boolean
 }
 
-export default function SectionSelectionIndicateur({ estEnCoursDeModification }: SectionSelectionIndicateurProps) {
+const SectionSelectionIndicateur: FunctionComponent<SectionSelectionIndicateurProps> = ({ estEnCoursDeModification }) => {
   const { setValue, getValues } = useSelectionIndicateurForm();
 
   return (
@@ -17,4 +18,6 @@ export default function SectionSelectionIndicateur({ estEnCoursDeModification }:
       setEtatIndicateurSélectionné={setValue}
     />
   );
-}
+};
+
+export default SectionSelectionIndicateur;

@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import useDétailsMetadataParametreIndicateurNationaleForm
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurNationale/useDétailsMetadataParametreIndicateurNationaleForm';
@@ -13,15 +14,15 @@ import {
   mappingDisplayAcceptedValues,
 } from '@/components/PageIndicateur/FicheIndicateur/commons/utils';
 
-export default function SectionDétailsMetadataParametreIndicateurNationale({
-  indicateur,
-  estEnCoursDeModification,
-  mapInformationMetadataIndicateur,
-}: {
+const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat
   estEnCoursDeModification: boolean
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
-}) {
+}> = ({
+  indicateur,
+  estEnCoursDeModification,
+  mapInformationMetadataIndicateur,
+}) => {
   const { register, getValues, errors } = useDétailsMetadataParametreIndicateurNationaleForm();
 
   return (
@@ -105,11 +106,6 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
       <hr className='fr-hr fr-mt-3w' />
     </SectionDétailsMetadataParametreIndicateurNationaleStyled>
   );
-}
+};
 
-
-
-
-
-
-
+export default SectionDétailsMetadataParametreIndicateurNationale;

@@ -14,6 +14,7 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 const verifierOptionPerimetreIds = (optionsExport: OptionsExport, perimetreIds: string[]) => {
   return optionsExport.perimetreIds.length > 0 ? optionsExport.perimetreIds.some(perimetreId => perimetreIds.includes(perimetreId)) : true;
@@ -72,7 +73,7 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
   }
 
   private masquerIndicateurPourProfilDROM(profil: ProfilCode, indicateur : IndicateurPourExport) {
-    return profil === 'DROM' && !indicateur.périmètreIds.includes('PER-018') && indicateur.maille === 'NAT';
+    return profil === ProfilEnum.DROM && !indicateur.périmètreIds.includes('PER-018') && indicateur.maille === 'NAT';
   }
 
   private transformer(indicateurPourExport: IndicateurPourExport, profil: string): string[] {
@@ -100,6 +101,6 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
       formaterNumérique(indicateurPourExport.avancementGlobal),
     ];
 
-    return profil === 'DITP_ADMIN' ? [...donnees, indicateurPourExport.chantierStatut || NON_APPLICABLE] : donnees;
+    return profil === ProfilEnum.DITP_ADMIN ? [...donnees, indicateurPourExport.chantierStatut || NON_APPLICABLE] : donnees;
   }
 }

@@ -1,5 +1,8 @@
 import styled from '@emotion/styled';
-import { UtilisateurStyledProps } from './Utilisateur.interface';
+
+interface UtilisateurStyledProps {
+  estDéplié: boolean
+}
 
 const UtilisateurStyled = styled.div<UtilisateurStyledProps>`
   color: var(--text-action-high-blue-france);

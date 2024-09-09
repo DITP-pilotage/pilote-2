@@ -1,4 +1,4 @@
-import { MouseEventHandler } from 'react';
+import { FunctionComponent, MouseEventHandler } from 'react';
 import Bouton from '@/components/_commons/Bouton/Bouton';
 
 interface BoutonToutSélectionnerProps {
@@ -7,7 +7,7 @@ interface BoutonToutSélectionnerProps {
   className?: string
 }  
 
-export default function BoutonToutSélectionner({ onClickToutSélectionner, onClickToutDésélectionner, className }: BoutonToutSélectionnerProps) {
+const BoutonToutSélectionner: FunctionComponent<BoutonToutSélectionnerProps> = ({ onClickToutSélectionner, onClickToutDésélectionner, className }) => {
   return (
     <ul className={`fr-btns-group fr-btns-group--inline fr-btns-group--sm${className ? ' ' + className : ''}`}>
       <li>
@@ -26,8 +26,10 @@ export default function BoutonToutSélectionner({ onClickToutSélectionner, onCl
       </li>
     </ul>
   );
-}
+};
 
 BoutonToutSélectionner.defaultProps = {
   className: '',
 };
+
+export default BoutonToutSélectionner;

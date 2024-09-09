@@ -1,7 +1,8 @@
 import Head from 'next/head';
+import { FunctionComponent } from 'react';
 import Erreur404 from '@/components/Erreur/Erreur404';
 
-export default function Erreur403Unauthorized() {
+const Erreur403Unauthorized: FunctionComponent<{}> = () => {
   return (
     <>
       <Head>
@@ -12,4 +13,6 @@ export default function Erreur403Unauthorized() {
       <Erreur404 />
     </>
   );
-}
+};
+
+export default Erreur403Unauthorized;

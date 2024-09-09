@@ -1,6 +1,9 @@
 import styled from '@emotion/styled';
 import { breakpointL } from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
-import { BarreLatéraleStyledProps } from './BarreLatérale.interface';
+
+type BarreLatéraleStyledProps = {
+  estOuvert: boolean
+};
 
 const BarreLatéraleStyled = styled.div<BarreLatéraleStyledProps>`
   .barre-latérale {
@@ -18,11 +21,18 @@ const BarreLatéraleStyled = styled.div<BarreLatéraleStyledProps>`
   @media screen and (max-width: ${breakpointL}) {
     .barre-latérale {
       position: fixed;
+      top: 0;
       left: 0;
       z-index: 10000;
+      width: 90%;
+      height: 95%;
       transition: 500ms;
-      transform: ${props => props.estOuvert ? 'translateX(0)' : 'translateX(-20rem)'};
+      transform: ${props => props.estOuvert ? 'translateX(0)' : 'translateX(-200rem)'};
     }
+  }
+
+  .bouton-fermer{
+    background-color: #f5f5fe;
   }
 
   .arrière-plan {

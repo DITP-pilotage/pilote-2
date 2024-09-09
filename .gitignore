@@ -39,6 +39,7 @@ yarn-error.log*
 .env.test
 .idea/
 .vscode/
+qodana.yaml
 *.pgsql
 
 /uploads

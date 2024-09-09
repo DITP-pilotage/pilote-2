@@ -9,9 +9,9 @@ import { comparerAvancementRéforme } from '@/client/utils/chantier/avancement/a
 import TableauRéformesAvancement from '@/client/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import useTableauRéformes from '@/client/components/PageAccueil/TableauRéformes/useTableauRéformes';
-import { DirectionDeTri } from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.interface';
 import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
+import { DirectionDeTri } from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri';
 import TableauProjetsStructurantsTuileProjetStructurant from './Tuile/TableauProjetsStructurantsTuileProjetStructurant';
 
 export default function useTableauProjetsStructurants(projetsStructurants: ProjetStructurantVueDEnsemble[]) {

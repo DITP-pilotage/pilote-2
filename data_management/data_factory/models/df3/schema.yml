@@ -107,6 +107,10 @@ models:
           - depuis un nombre de mois donné `from_previous_month::X`, avec `X` dans `{3,6,12,48}` mois
           - depuis le début de l'année `from_year_start`
           - depuis le une date arbitraire  `X` avec `from_custom_date::X`
+  - name: compute_vacp
+    description: |
+        Récupère les VACP (*Valeur Actuelle comparable proposée*) depuis la table proposition_valeur_actuelle. Cette valeur est celle qui sera comparée à la VC pour le calcul des TA proposés.
+        Pour une date de valeur actuelle plusieurs propositions peuvent avoir été faites. On prend uniquement la dernière, c'est à dire celle avec la date de proposition la plus récente.
   - name: compute_vacg
     description: |
         Calcule les VACG (*Valeur Actuelle comparable globale*) pour chaque mesure. Cette valeur est celle qui sera comparée à la VC pour le calcul du TA. Règles:
@@ -225,7 +229,7 @@ models:
       - name: last_va_date
         description: "Date de la VA la plus récente pour toutes les zones de cette maille pour cet indicateur."
       - name: prochaine_date_maj
-        description: "Date de màj théorique des VA pour cet indicateur d'après la périodicité déclarée."
+        description: "Date de màj théorique des VA pour cet indicateur d'après la périodicité déclarée. La date est **le dernier jour du mois**."
       - name: prochaine_date_maj_jours
         description: "Nombre de jours avant la prochaine date de màj théorique. Négatif si la donnée n'est pas à jour, çàd que la date de prochaine màj théorique est dans le passé."
       - name: prochaine_date_va

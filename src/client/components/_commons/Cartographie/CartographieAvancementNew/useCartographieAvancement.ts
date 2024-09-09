@@ -18,7 +18,6 @@ function déterminerValeurAffichée(valeur: number | null, estApplicable: boolea
   return valeur.toFixed(0) + '%';
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
 function déterminerRemplissage(valeur: number | null, élémentsDeLégende: CartographieÉlémentsDeLégende, estApplicable: boolean | null) {
 
   if (estApplicable === false) {
@@ -48,8 +47,8 @@ export default function useCartographieAvancement(données: CartographieDonnées
 
   const légende = useMemo(() => {
     
-    const tousApplicables: Boolean = données.map(d => d.estApplicable).every(el => el !== false);
-    const tousNonNull: Boolean = données.map(d => d.valeur !== null).every(el => el === true);
+    const tousApplicables: Boolean = données.every(d => d.estApplicable);
+    const tousNonNull: Boolean = données.every(d => d.valeur !== null);
 
     let légendeAffichée = Object.values(élémentsDeLégende);
     if (tousApplicables) {
@@ -71,21 +70,18 @@ export default function useCartographieAvancement(données: CartographieDonnées
 
   }, [élémentsDeLégende, données]);
 
-  const donnéesCartographie = useMemo(() => {
-    const donnéesFormatées: CartographieDonnées = {};
+  const donnéesCartographie = données.reduce((acc, val) => {
+    const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(val.codeInsee, mailleSelectionnee);
 
-    données.forEach(({ valeur, codeInsee, estApplicable }) => {
-      const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee, mailleSelectionnee);
-
-      donnéesFormatées[codeInsee] = {
-        valeurAffichée: déterminerValeurAffichée(valeur, estApplicable),
-        remplissage: déterminerRemplissage(valeur, élémentsDeLégende, estApplicable),
+    return {
+      ...acc,
+      [val.codeInsee]: {
+        valeurAffichée: déterminerValeurAffichée(val.valeur, val.estApplicable),
+        remplissage: déterminerRemplissage(val.valeur, élémentsDeLégende, val.estApplicable),
         libellé: territoireGéographique.nomAffiché,
-      };
-    });
-
-    return donnéesFormatées;
-  }, [données, mailleSelectionnee, récupérerDétailsSurUnTerritoireAvecCodeInsee, élémentsDeLégende]);
+      },
+    };
+  }, {} as CartographieDonnées);
 
   return {
     légende,

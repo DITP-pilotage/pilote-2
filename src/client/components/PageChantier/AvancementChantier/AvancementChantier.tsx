@@ -1,14 +1,13 @@
+import { FunctionComponent } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
-import {
-  actionsTerritoiresStore,
-  territoireSélectionnéTerritoiresStore,
-} from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import AvancementsTerritoire from '@/components/_commons/AvancementsTerritoire/AvancementsTerritoire';
 import Titre from '@/components/_commons/Titre/Titre';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
+import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import AvancementChantierStyled from './AvancementChantier.styled';
-import AvancementChantierProps from './AvancementChantier.interface';
 
 const classeÀPartirDeLaMaille = {
   'nationale': '',
@@ -16,35 +15,68 @@ const classeÀPartirDeLaMaille = {
   'régionale': 'layout--reg',
 };
 
-export default function AvancementChantier({ avancements }: AvancementChantierProps) {
-  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+interface AvancementChantierProps {
+  territoireCode: string
+  mailleSelectionnee: MailleInterne
+  avancements: {
+    nationale: AvancementsStatistiques
+    départementale: {
+      global: {
+        moyenne: number | null
+      },
+      annuel: {
+        moyenne: number | null
+      },
+    }
+    régionale: {
+      global: {
+        moyenne: number | null
+      },
+      annuel: {
+        moyenne: number | null
+      },
+    }
+  }
+}
+
+const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
+  avancements,
+  territoireCode,
+  mailleSelectionnee,
+}) => {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+  const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
+  const territoireSélectionnéParent = territoireSélectionné.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné.codeParent) : null;
 
   return (
-    <AvancementChantierStyled className={classeÀPartirDeLaMaille[territoireSélectionné!.maille]}>
+    <AvancementChantierStyled className={classeÀPartirDeLaMaille[territoireSélectionné.maille]}>
       {
-        (avancements.départementale.global.moyenne !== undefined && avancements.départementale.annuel.moyenne !== undefined) &&
+        territoireCode !== 'NAT-FR' && mailleSelectionnee === 'départementale' ? (
           <Bloc titre={territoireSélectionné?.nomAffiché}>
             <div className='fr-py-1w jauge'>
               <AvancementsTerritoire
                 avancementAnnuel={avancements.départementale.annuel.moyenne}
                 avancementGlobal={avancements.départementale.global.moyenne}
-                territoireNom={territoireSélectionné!.nom}
+                territoireNom={territoireSélectionné.nom}
               />
             </div>
           </Bloc>
+        ) : null
       }
       {
-        (avancements.régionale.global.moyenne !== undefined && avancements.régionale.annuel.moyenne !== undefined) &&
-          <Bloc titre={territoireSélectionné!.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné!.codeParent).nomAffiché : territoireSélectionné!.nomAffiché}>
+        territoireCode !== 'NAT-FR' && (mailleSelectionnee === 'régionale' || mailleSelectionnee === 'départementale') ? (
+          <Bloc
+            titre={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
+          >
             <div className='fr-py-1w jauge'>
               <AvancementsTerritoire
                 avancementAnnuel={avancements.régionale.annuel.moyenne}
                 avancementGlobal={avancements.régionale.global.moyenne}
-                territoireNom={territoireSélectionné!.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné!.codeParent).nomAffiché : territoireSélectionné!.nomAffiché}
+                territoireNom={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
               />
             </div>
           </Bloc>
+        ) : null
       }
       <div className='avancement-national'>
         <Bloc
@@ -54,7 +86,9 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
           <section className='fr-py-1w'>
             <div className='fr-container fr-p-0'>
               <div className='fr-grid-row fr-mb-2w'>
-                <div className='fr-col-12 fr-col-md-6 fr-col-lg-12 fr-col-xl-6 flex flex-column border-md-r border-lg-0 border-xl-r fr-pr-1w'>
+                <div
+                  className='fr-col-12 fr-col-md-6 fr-col-lg-12 fr-col-xl-6 flex flex-column border-md-r border-lg-0 border-xl-r fr-pr-1w'
+                >
                   <Titre
                     baliseHtml='h3'
                     className='fr-text--md fr-mb-0 fr-py-1v texte-centre break-keep'
@@ -66,7 +100,7 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
                     <JaugeDeProgression
                       couleur='bleu'
                       libellé='Taux d’avancement moyen pour le territoire '
-                      pourcentage={avancements.nationale ? avancements.nationale.global.moyenne :  null}
+                      pourcentage={avancements.nationale ? avancements.nationale.global.moyenne : null}
                       taille='lg'
                     />
                   </div>
@@ -133,4 +167,6 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
       </div>
     </AvancementChantierStyled>
   );
-}
+};
+
+export default AvancementChantier;

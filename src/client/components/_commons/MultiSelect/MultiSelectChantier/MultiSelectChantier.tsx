@@ -1,11 +1,20 @@
-import { useEffect, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import MultiSelect from '@/client/components/_commons/MultiSelect/MultiSelect';
 import { MultiSelectOptions, MultiSelectOptionsGroupées } from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
-import { deuxTableauxSontIdentiques, trierParOrdreAlphabétique } from '@/client/utils/arrays';
-import MultiSelectChantierProps from './MultiSelectChantier.interface';
+import { trierParOrdreAlphabétique } from '@/client/utils/arrays';
+import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 
-export default function MultiSelectChantier({ chantiersIdsSélectionnésParDéfaut, changementValeursSélectionnéesCallback, valeursDésactivées, chantiers, afficherBoutonsSélection }: MultiSelectChantierProps) {
-  const [valeursSélectionnéesParDéfaut, setValeursSélectionnéesParDéfaut] = useState(chantiersIdsSélectionnésParDéfaut);
+interface MultiSelectChantierProps {
+  changementValeursSélectionnéesCallback: (chantiersIdsSélectionnés: string[]) => void
+  chantiers: ChantierSynthétisé[]
+  chantiersIdsSélectionnésParDéfaut?: string[]
+  valeursDésactivées?: string[]
+  afficherBoutonsSélection?: boolean
+  desactive?: boolean
+}
+
+const MultiSelectChantier: FunctionComponent<MultiSelectChantierProps> = ({ chantiersIdsSélectionnésParDéfaut, changementValeursSélectionnéesCallback, valeursDésactivées, chantiers, afficherBoutonsSélection, desactive }) => {
+  // const [valeursSélectionnéesParDéfaut, setValeursSélectionnéesParDéfaut] = useState(chantiersIdsSélectionnésParDéfaut);
   const [optionsGroupées, setOptionsGroupées] = useState<MultiSelectOptionsGroupées>([]);
 
   useEffect(() => {
@@ -21,21 +30,17 @@ export default function MultiSelectChantier({ chantiersIdsSélectionnésParDéfa
     }
   }, [chantiers, valeursDésactivées]);
 
-  useEffect(() => {
-    if (!deuxTableauxSontIdentiques(chantiersIdsSélectionnésParDéfaut ?? [], valeursSélectionnéesParDéfaut ?? [])) {
-      setValeursSélectionnéesParDéfaut(chantiersIdsSélectionnésParDéfaut);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chantiersIdsSélectionnésParDéfaut, valeursSélectionnéesParDéfaut, setValeursSélectionnéesParDéfaut]);
-
   return (
     <MultiSelect
       afficherBoutonsSélection={afficherBoutonsSélection}
       changementValeursSélectionnéesCallback={(valeursSélectionnées: string[]) => changementValeursSélectionnéesCallback(valeursSélectionnées)}
+      desactive={desactive}
       label='Chantier(s)'
       optionsGroupées={optionsGroupées}
       suffixeLibellé='chantier(s) sélectionné(s)'
-      valeursSélectionnéesParDéfaut={valeursSélectionnéesParDéfaut}
+      valeursSélectionnéesParDéfaut={chantiersIdsSélectionnésParDéfaut}
     />
   );
-}
+};
+
+export default MultiSelectChantier;

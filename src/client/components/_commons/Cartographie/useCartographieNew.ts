@@ -1,11 +1,12 @@
-/* eslint-disable unicorn/consistent-function-scoping */
 import { useRouter } from 'next/router';
+import { parseAsString, useQueryState } from 'nuqs';
 import {
-  actionsTerritoiresStore,
   régionsTerritoiresStore,
   territoiresAccessiblesEnLectureStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { CodeInsee, DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import {
   CartographieOptions,
   CartographieTerritoireAffiché,
@@ -13,14 +14,18 @@ import {
 } from './useCartographie.interface';
 import { CartographieDonnées } from './Cartographie.interface';
 
-export default function useCartographie(territoireCode: string, mailleSelectionnee: 'départementale' | 'régionale') {
+export default function useCartographie(territoireCode: string, mailleSelectionnee: MailleInterne, pathname: '/accueil/chantier/[territoireCode]' | '/chantier/[id]/[territoireCode]' | null) {
   const régions = régionsTerritoiresStore();
-  const { modifierTerritoiresComparés, récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
+  const [territoiresCompares, setTerritoiresCompares] = useQueryState('territoiresCompares', parseAsString.withDefault('').withOptions({
+    shallow: false,
+    history: 'push',
+    clearOnDefault: true,
+  }));
   const territoiresAccessiblesEnLecture = territoiresAccessiblesEnLectureStore();
 
   const router = useRouter();
 
-  const [, codeInsee] = territoireCode.split('-');
+  const { codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
 
   function déterminerRégionsÀTracer(territoireAffiché: CartographieTerritoireAffiché) {
     return territoireAffiché.maille === 'régionale'
@@ -76,7 +81,7 @@ export default function useCartographie(territoireCode: string, mailleSelectionn
     }
 
     return router.push({
-      pathname: '/accueil/chantier/[territoireCode]',
+      pathname,
       query: { ...router.query, territoireCode: code },
     },
     undefined,
@@ -86,7 +91,22 @@ export default function useCartographie(territoireCode: string, mailleSelectionn
 
   function auClicTerritoireMultiSélectionCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {
     if (!territoireSélectionnable) return;
-    modifierTerritoiresComparés(récupérerDétailsSurUnTerritoireAvecCodeInsee(territoireCodeInsee).code);
+
+    const listeTerritoiresCompares = territoiresCompares.split(',').filter(Boolean);
+
+    if (codeInsee === territoireCodeInsee) {
+      delete router.query.territoiresCompares;
+      return auClicTerritoireCallback(territoireCodeInsee, territoireSélectionnable);
+    }
+
+    let territoireCompareCode =  (codeInsee === territoireCodeInsee && territoiresAccessiblesEnLecture.some(territoire => territoire.maille === 'nationale')) ? 'NAT-FR' : mailleSelectionnee === 'départementale' ? `DEPT-${territoireCodeInsee}` : `REG-${territoireCodeInsee}`;
+
+    if (listeTerritoiresCompares.includes(territoireCompareCode)) {
+      listeTerritoiresCompares.splice(listeTerritoiresCompares.indexOf(territoireCompareCode), 1);
+      setTerritoiresCompares(listeTerritoiresCompares.join(','));
+    } else {
+      setTerritoiresCompares([territoireCompareCode, ...listeTerritoiresCompares].join(','));
+    }
   }
 
   return {

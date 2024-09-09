@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import Badge from '@/components/_commons/Badge/Badge';
 import { définirCouleurÉcartArrondi } from '@/client/utils/chantier/écart/écart';
 import {
@@ -8,7 +9,7 @@ interface TableauChantiersÉcartProps {
   écart: DonnéesTableauChantiers['écart']
 }
 
-export default function TableauChantiersÉcart({ écart }: TableauChantiersÉcartProps) {
+const TableauChantiersÉcart: FunctionComponent<TableauChantiersÉcartProps> = ({ écart }) => {
   const couleurÉcartArrondi = définirCouleurÉcartArrondi(écart);
 
   if (couleurÉcartArrondi === null) {
@@ -20,4 +21,6 @@ export default function TableauChantiersÉcart({ écart }: TableauChantiersÉcar
       {couleurÉcartArrondi.écartArrondi.toFixed(1)}
     </Badge>
   );
-}
+};
+
+export default TableauChantiersÉcart;

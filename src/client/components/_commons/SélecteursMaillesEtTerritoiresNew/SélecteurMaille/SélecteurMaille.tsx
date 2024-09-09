@@ -1,14 +1,16 @@
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { FunctionComponent } from 'react';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { maillesAccessiblesEnLectureStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import SélecteurMailleStyled from './SélecteurMaille.styled';
 
-export default function SélecteurMaille({ mailleSelectionnee }: {
-  mailleSelectionnee: 'départementale' | 'régionale'
-}) {
+const SélecteurMaille: FunctionComponent<{
+  mailleSelectionnee: 'départementale' | 'régionale',
+  pathname: string;
+}> = ({ mailleSelectionnee, pathname }) => {
   const maillesAccessiblesEnLecture = maillesAccessiblesEnLectureStore();
   const router = useRouter();
   const { data: session } = useSession();
@@ -27,12 +29,15 @@ export default function SélecteurMaille({ mailleSelectionnee }: {
   const territoireDept = session!.habilitations.lecture.territoires.find(territoire => territoire.startsWith('DEPT'));
   const territoireReg = session!.habilitations.lecture.territoires.find(territoire => territoire.startsWith('REG'));
 
-
   const changerMaille = (maille: MailleInterne) => {
     sauvegarderFiltres({ maille });
     const territoireCode = session?.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : maille === 'régionale' ? territoireReg : maille === 'départementale' ? territoireDept : session?.habilitations.lecture.territoires[0];
+
+    sauvegarderFiltres({ territoireCode });
+
+    delete router.query._action;
     return router.push({
-      pathname: '/accueil/chantier/[territoireCode]',
+      pathname,
       query: { ...router.query, territoireCode, maille },
     },
     undefined,
@@ -59,4 +64,6 @@ export default function SélecteurMaille({ mailleSelectionnee }: {
       }
     </SélecteurMailleStyled>
   );
-}
+};
+
+export default SélecteurMaille;

@@ -1,14 +1,23 @@
-import BoutonSousLignéInterface from '@/components/_commons/BoutonSousLigné/BoutonSousLigné.interface';
+import { ButtonHTMLAttributes, ReactNode, MouseEventHandler, FunctionComponent } from 'react';
 import BoutonSousLignéStyled from '@/components/_commons/BoutonSousLigné/BoutonSousLigné.styled';
 
-export default function BoutonSousLigné({
+interface BoutonSousLignéProps {
+  ariaControls?: string,
+  children?: ReactNode,
+  classNameSupplémentaires?: string,
+  dataFrOpened?: boolean
+  onClick?: MouseEventHandler<HTMLButtonElement>,
+  type?: ButtonHTMLAttributes<never>['type'],
+}
+
+const BoutonSousLigné: FunctionComponent<BoutonSousLignéProps> = ({
   ariaControls,
   classNameSupplémentaires,
   dataFrOpened,
   onClick,
   type,
   children,
-}: BoutonSousLignéInterface) {
+}) => {
   return (
     <BoutonSousLignéStyled
       aria-controls={ariaControls}
@@ -20,4 +29,6 @@ export default function BoutonSousLigné({
       { children }
     </BoutonSousLignéStyled>
   );
-}
+};
+
+export default BoutonSousLigné;

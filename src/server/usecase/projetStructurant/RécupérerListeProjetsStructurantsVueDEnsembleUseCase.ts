@@ -14,6 +14,7 @@ import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilita
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import RécupérerIconesMinistèresGroupéesParProjetsUseCase from './RécupérerIconesMinistèresGroupéesParProjetsUseCase';
 
 export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
@@ -33,7 +34,7 @@ export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
     const météos = await this.synthèseDesRésultatsRepository.récupérerToutesLesMétéosLesPlusRécentes();
     const iconesGroupéesParProjets = await new RécupérerIconesMinistèresGroupéesParProjetsUseCase(dependencies.getMinistèreRepository()).run(projetsStructurants);
 
-    if (profil === 'DROM') {
+    if (profil === ProfilEnum.DROM) {
       projetsStructurantsAccessibles = projetsStructurantsAccessibles.filter(ps => ps.périmètresIds.includes('PER-018'));
     }
 

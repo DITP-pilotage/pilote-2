@@ -23,6 +23,8 @@ interface FiltresProps {
   axes: Axe[],
   afficherToutLesFiltres: boolean
   estProfilTerritorialise: boolean
+  estVueMobile: boolean,
+  estVisibleEnMobile: boolean
 }
 
 const Filtres: FunctionComponent<FiltresProps> = ({
@@ -30,11 +32,17 @@ const Filtres: FunctionComponent<FiltresProps> = ({
   axes,
   afficherToutLesFiltres,
   estProfilTerritorialise,
+  estVueMobile,
+  estVisibleEnMobile,
 }) => {
   return (
     <>
       <section className='fr-px-3w'>
-        <FiltresMinistères ministères={ministères} />
+        <FiltresMinistères
+          estVisibleEnMobile={estVisibleEnMobile}
+          estVueMobile={estVueMobile}
+          ministères={ministères}
+        />
       </section>
       {
         afficherToutLesFiltres ? (

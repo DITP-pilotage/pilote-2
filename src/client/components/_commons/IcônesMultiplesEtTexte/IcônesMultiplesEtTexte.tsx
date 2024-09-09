@@ -1,8 +1,15 @@
+import { FunctionComponent, ReactNode } from 'react';
 import Icône from '@/components/_commons/Icône/Icône';
 import IcônesMultiplesEtTexteStyled from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte.styled';
-import IcônesMultiplesEtTexteProps from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte.interface';
 
-export default function IcônesMultiplesEtTexte({ icônesId, largeurDesIcônes = '3.5rem', texteAlternatifPourIcônes, children }: IcônesMultiplesEtTexteProps) {
+interface IcônesMultiplesEtTexteProps {
+  icônesId: string[],
+  largeurDesIcônes?: `${number}rem`,
+  texteAlternatifPourIcônes?: string,
+  children: ReactNode,
+}
+
+const IcônesMultiplesEtTexte: FunctionComponent<IcônesMultiplesEtTexteProps> = ({ icônesId, largeurDesIcônes = '3.5rem', texteAlternatifPourIcônes, children }) => {
   return (
     <IcônesMultiplesEtTexteStyled largeurDesIcônes={largeurDesIcônes}>
       <span className='icônes fr-pr-1w'>
@@ -26,4 +33,6 @@ export default function IcônesMultiplesEtTexte({ icônesId, largeurDesIcônes =
       </div>
     </IcônesMultiplesEtTexteStyled>
   );
-}
+};
+
+export default IcônesMultiplesEtTexte;

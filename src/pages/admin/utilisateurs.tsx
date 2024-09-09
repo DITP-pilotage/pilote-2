@@ -1,10 +1,11 @@
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
+import { FunctionComponent } from 'react';
 import { getServerAuthSession } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import PageAdminUtilisateurs from '@/components/PageAdminUtilisateurs/PageAdminUtilisateurs';
 
-export default function NextPageUtilisateurs() {
+const NextPageUtilisateurs: FunctionComponent<{}> = () => {
   return (
     <>
       <Head>
@@ -15,7 +16,8 @@ export default function NextPageUtilisateurs() {
       <PageAdminUtilisateurs />
     </>
   );
-}
+};
+export default NextPageUtilisateurs;
 
 export async function getServerSideProps({ req, res }: GetServerSidePropsContext) {
   const session = await getServerAuthSession({ req, res });

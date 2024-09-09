@@ -1,6 +1,11 @@
-import { useId } from 'react';
-import JaugeDeProgressionSVGProps from '@/components/_commons/JaugeDeProgression/JaugeDeProgressionSVG.interface';
-import { JaugeDeProgressionTaille } from './JaugeDeProgression.interface';
+import { FunctionComponent, useId } from 'react';
+import { JaugeDeProgressionCouleur, JaugeDeProgressionTaille } from '@/components/_commons/JaugeDeProgression/JaugeDeProgression.interface';
+
+interface JaugeDeProgressionSVGProps {
+  couleur: JaugeDeProgressionCouleur;
+  pourcentage: number | null;
+  taille?: 'sm' | 'md' | 'lg';
+}
 
 const TRACÉS = {
   sm: {
@@ -51,7 +56,7 @@ function tracerValeurJauge(pourcentage: number, taille: JaugeDeProgressionTaille
   ].join(' ');
 }
 
-function JaugeDeProgressionSVG({ pourcentage, taille, couleur }: JaugeDeProgressionSVGProps) {
+const JaugeDeProgressionSVG: FunctionComponent<JaugeDeProgressionSVGProps> = ({ pourcentage, taille, couleur }) => {
   const id = useId();
   return (
     <svg
@@ -86,6 +91,6 @@ function JaugeDeProgressionSVG({ pourcentage, taille, couleur }: JaugeDeProgress
       </defs>
     </svg>
   );
-}
+};
 
 export default JaugeDeProgressionSVG;

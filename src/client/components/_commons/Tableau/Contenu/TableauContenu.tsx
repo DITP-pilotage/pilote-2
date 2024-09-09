@@ -1,5 +1,8 @@
-import { flexRender } from '@tanstack/react-table';
-import TableauContenuProps from './TableauContenu.interface';
+import { flexRender, Table } from '@tanstack/react-table';
+
+interface TableauContenuProps<T> {
+  tableau: Table<T>
+}
 
 export default function TableauContenu<T>({ tableau }: TableauContenuProps<T>) {
   return (

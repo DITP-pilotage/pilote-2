@@ -5,8 +5,9 @@ import Utilisateur, { ProfilCode } from '@/server/domain/utilisateur/Utilisateur
 import api from '@/server/infrastructure/api/trpc/api';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
-const PROFIL_AUTORISE_A_POSSEDER_UN_TOKEN_API = new Set(['DITP_ADMIN', 'DIR_PROJET', 'EQUIPE_DIR_PROJET', 'SECRETARIAT_GENERAL']);
+const PROFIL_AUTORISE_A_POSSEDER_UN_TOKEN_API = new Set([ProfilEnum.DITP_ADMIN, ProfilEnum.DIR_PROJET, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.SECRETARIAT_GENERAL]);
 
 export default function usePageUtilisateur(utilisateur: Utilisateur) {
 
@@ -36,12 +37,12 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
       return true;
     }
 
-    if (['DITP_ADMIN', 'DITP_PILOTAGE'].includes(session.profil)) {
+    if ([ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session.profil)) {
       return false;
     }
 
     const habilitations = new Habilitation(session.habilitations);
-    return !habilitations.peutAccéderAuxTerritoiresUtilisateurs(utilisateurHabilitations.lecture.territoires) || ['COORDINATEUR_REGION', 'COORDINATEUR_DEPARTEMENT'].includes(utilisateurProfil);
+    return !habilitations.peutAccéderAuxTerritoiresUtilisateurs(utilisateurHabilitations.lecture.territoires) || [ProfilEnum.COORDINATEUR_REGION, ProfilEnum.COORDINATEUR_DEPARTEMENT].includes(utilisateurProfil);
   };
 
   const donnneContenuBandeau = (session: Session | null, utilisateurHabilitations: Habilitations, utilisateurProfil: ProfilCode) => {
@@ -53,7 +54,7 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
 
     if (!habilitations.peutAccéderAuxTerritoiresUtilisateurs(utilisateurHabilitations.lecture.territoires)) {
       return "Ce compte a des droits d'accès sur plusieurs territoires. Vous ne pouvez pas modifier ses droits ou supprimer l'utilisateur. Si vous avez besoin d’aide, veuillez contacter le support technique.";
-    } else if (['COORDINATEUR_REGION', 'COORDINATEUR_DEPARTEMENT'].includes(utilisateurProfil)) {
+    } else if ([ProfilEnum.COORDINATEUR_REGION, ProfilEnum.COORDINATEUR_DEPARTEMENT].includes(utilisateurProfil)) {
       return "Ce compte a un profil de coordinateur PILOTE. Vous ne pouvez le modifier ou le supprimer. Si vous avez besoin d'aide, veuillez contacter le support technique.";
     } else {
       return '';
@@ -61,7 +62,7 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
   };  
 
   const habilitationsAGenererUnTokenDAuthentification = (session: Session, utilisateurProfil: ProfilCode) => {
-    const PROFIL_ADMIN_AUTORISE_A_MODIFIER = new Set(['DITP_ADMIN']);
+    const PROFIL_ADMIN_AUTORISE_A_MODIFIER = new Set([ProfilEnum.DITP_ADMIN]);
 
     return !(!session || !PROFIL_ADMIN_AUTORISE_A_MODIFIER.has(session.profil) || !PROFIL_AUTORISE_A_POSSEDER_UN_TOKEN_API.has(utilisateurProfil));
   };

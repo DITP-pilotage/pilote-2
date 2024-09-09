@@ -1,3 +1,4 @@
+import { FunctionComponent } from 'react';
 import MétéoBadgeProps, { BadgeType } from './Badge.interface';
 import BadgeStyled from './Badge.styled';
 
@@ -9,10 +10,12 @@ const badgeÀPartirDuType: Record<BadgeType, string> = {
   'gris': 'badge-gris',
 };
 
-export default function Badge({ children, type }: MétéoBadgeProps) {
+const Badge: FunctionComponent<MétéoBadgeProps> = ({ children, type }) => {
   return (
     <BadgeStyled className={`fr-badge fr-badge--no-icon ${badgeÀPartirDuType[type]}`}>
       { children }
     </BadgeStyled>
   );
-}
+};
+
+export default Badge;

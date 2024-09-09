@@ -1,7 +1,9 @@
 import { useMemo } from 'react';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
-import { CartographieÉlémentsDeLégende } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
+import {
+  CartographieÉlémentsDeLégende,
+} from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { CartographieDonnéesAvancement } from './CartographieAvancement.interface';
 
 
@@ -46,8 +48,8 @@ export default function useCartographieAvancement(données: CartographieDonnées
 
   const légende = useMemo(() => {
     
-    const tousApplicables: Boolean = données.map(d => d.estApplicable).every(el => el !== false);
-    const tousNonNull: Boolean = données.map(d => d.valeur !== null).every(el => el === true);
+    const tousApplicables: Boolean = données.every(d => d.estApplicable !== false);
+    const tousNonNull: Boolean = données.every(d => d.valeur !== null);
 
     let légendeAffichée = Object.values(élémentsDeLégende);
     if (tousApplicables) {

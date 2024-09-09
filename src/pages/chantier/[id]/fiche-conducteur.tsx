@@ -12,7 +12,7 @@ import { estAutoriséAConsulterLaFicheConducteur } from '@/client/utils/fiche-co
 export const getServerSideProps: GetServerSideProps<FicheConducteurContrat> = async ({ req, res, query }) => {
   const session = await getServerSession(req, res, authOptions);
 
-  const estFicheConducteurDisponible = await new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_FICHE_CONDUCTEUR' });
+  const estFicheConducteurDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_FICHE_CONDUCTEUR' });
 
   if (!estFicheConducteurDisponible || !session || !estAutoriséAConsulterLaFicheConducteur(session.profil)) {
     throw new Error('Not connected or not authorized ?');
@@ -28,7 +28,6 @@ export const getServerSideProps: GetServerSideProps<FicheConducteurContrat> = as
 const FicheConducteur: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = (ficheConducteur) => {
   return (
     <>
-
       <Head>
         <title>
           Fiche conducteur

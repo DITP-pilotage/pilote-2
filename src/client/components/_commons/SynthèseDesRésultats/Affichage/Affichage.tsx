@@ -1,19 +1,24 @@
+import { FunctionComponent } from 'react';
 import { formaterDate } from '@/client/utils/date/date';
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
 import BoutonsAffichage from '@/components/_commons/SynthèseDesRésultats/BoutonsAffichage/BoutonsAffichage';
-import SynthèseDesRésultatsAffichageProps from './Affichage.interface';
+import { RouterOutputs } from '@/server/infrastructure/api/trpc/trpc.interface';
 import useAffichage from './useAffichage';
 
-export default function SynthèseDesRésultatsAffichage({ 
-  synthèseDesRésultats, 
-}: SynthèseDesRésultatsAffichageProps) {
+interface SynthèseDesRésultatsAffichageProps {
+  synthèseDesRésultats: RouterOutputs['synthèseDesRésultats']['récupérerLaPlusRécente']
+}
+
+const SynthèseDesRésultatsAffichage: FunctionComponent<SynthèseDesRésultatsAffichageProps> = ({
+  synthèseDesRésultats,
+}) => {
 
   const {
-    contenuAAfficher, 
+    contenuAAfficher,
     afficherBoutonsAffichage,
     afficherContenuComplet,
     déplierLeContenu,
-    replierLeContenu,    
+    replierLeContenu,
   } = useAffichage(synthèseDesRésultats);
 
   if (!synthèseDesRésultats) {
@@ -32,21 +37,24 @@ export default function SynthèseDesRésultatsAffichage({
       </p>
       <p
         className='fr-text--sm fr-mb-0'
-    // eslint-disable-next-line react/no-danger
+        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{
           __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(contenuAAfficher),
         }}
       />
       {
-        (!!afficherBoutonsAffichage) && 
-        <BoutonsAffichage 
-          afficherVoirMoins={afficherContenuComplet}
-          afficherVoirPlus={!afficherContenuComplet}
-          déplierLeContenu={déplierLeContenu}
-          replierLeContenu={replierLeContenu}
-        />
+        afficherBoutonsAffichage ? (
+          <BoutonsAffichage
+            afficherVoirMoins={afficherContenuComplet}
+            afficherVoirPlus={!afficherContenuComplet}
+            déplierLeContenu={déplierLeContenu}
+            replierLeContenu={replierLeContenu}
+          />
+        ) : null
       }
     </>
 
   );
-}
+};
+
+export default SynthèseDesRésultatsAffichage;

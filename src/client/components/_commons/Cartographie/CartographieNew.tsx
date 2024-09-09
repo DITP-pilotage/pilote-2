@@ -1,26 +1,48 @@
-import { useState } from 'react';
+import { FunctionComponent, ReactNode, useState } from 'react';
 import useCartographie from '@/components/_commons/Cartographie/useCartographieNew';
-import { CartographieInfoBulle } from '@/components/_commons/Cartographie/useCartographie.interface';
+import {
+  CartographieInfoBulle,
+  CartographieOptions,
+} from '@/components/_commons/Cartographie/useCartographie.interface';
 import { départementsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import CartographieProps from './CartographieNew.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import BulleDInfo from './BulleDInfo/BulleDInfo';
-import CartographieSVG from './SVG/CartographieSVGNew';
+import CartographieSVG from './SVG/CartographieSVG';
 
-export default function Cartographie({
+type CartographieDonnées = {
+  [key in CodeInsee]: {
+    valeurAffichée: string,
+    remplissage: string,
+    libellé: string
+  }
+};
+
+interface CartographieProps {
+  options?: Partial<CartographieOptions>,
+  données: CartographieDonnées,
+  pathname: '/accueil/chantier/[territoireCode]' | '/chantier/[id]/[territoireCode]' | null,
+  children?: ReactNode,
+  territoireCode: string,
+  mailleSelectionnee: 'départementale' | 'régionale',
+  auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
+}
+
+const Cartographie: FunctionComponent<CartographieProps> = ({
   options,
   données,
   children,
   auClicTerritoireCallback,
   territoireCode,
   mailleSelectionnee,
-}: CartographieProps) {
+  pathname,
+}) => {
   const départements = départementsTerritoiresStore();
 
   const {
     optionsParDéfaut,
     déterminerRégionsÀTracer,
     créerTerritoires,
-  } = useCartographie(territoireCode, mailleSelectionnee);
+  } = useCartographie(territoireCode, mailleSelectionnee, pathname);
 
   const [sourisPosition, setSourisPosition] = useState({ x: 0, y: 0 });
   const [infoBulle, setInfoBulle] = useState<CartographieInfoBulle | null>(null);
@@ -62,4 +84,6 @@ export default function Cartographie({
       {children}
     </div>
   );
-}
+};
+
+export default Cartographie;

@@ -1,15 +1,19 @@
 import { useSession } from 'next-auth/react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import PageLanding from '@/components/PageLanding/PageLanding';
 import Loader from '@/client/components/_commons/Loader/Loader';
 import MiseEnPageStyled from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
 import api from '@/server/infrastructure/api/trpc/api';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import MiseEnPageProps from './MiseEnPage.interface';
 import EnTête from './EnTête/EnTête';
 import PiedDePage from './PiedDePage/PiedDePage';
 
-export default function MiseEnPage({ afficherLeLoader, children }: MiseEnPageProps) {
+interface MiseEnPageProps {
+  afficherLeLoader: boolean
+  children: React.ReactNode
+}
+
+const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({ afficherLeLoader, children }) => {
   const { status } = useSession();
   const { initialiserLesTerritoires, initialiserLeTerritoireSélectionnéParDéfaut } = actionsTerritoiresStore();
   const [aFiniDeChargerLesTerritoires, setAFiniDeChargerLesTerritoires] = useState(false);
@@ -57,4 +61,6 @@ export default function MiseEnPage({ afficherLeLoader, children }: MiseEnPagePro
       }
     </MiseEnPageStyled>
   );
-}
+};
+
+export default MiseEnPage;

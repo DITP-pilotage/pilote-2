@@ -1,9 +1,13 @@
-import { useCallback } from 'react';
+import { FunctionComponent, useCallback } from 'react';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
-import FiltreTypologieProps from './FiltreTypologie.interface';
+import { FiltreTypologieType } from '@/stores/useFiltresStore/useFiltresStore.interface';
 
-export default function FiltreTypologie({ filtre }: FiltreTypologieProps) {
+interface FiltreTypologieProps {
+  filtre: FiltreTypologieType
+}
+
+const FiltreTypologie: FunctionComponent<FiltreTypologieProps> = ({ filtre }) => {
   const { activerUnFiltre, désactiverUnFiltre, estActif } = actionsFiltresStore();
 
   const auChangement = useCallback((estCochée: boolean) => {
@@ -22,4 +26,6 @@ export default function FiltreTypologie({ filtre }: FiltreTypologieProps) {
       libellé={filtre.nom}
     />
   );
-}
+};
+
+export default FiltreTypologie;

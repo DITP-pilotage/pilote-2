@@ -34,6 +34,7 @@ get_evol_vaca as (
 -- Jointure avec les tables référentielles	
 	select 
 	mi.indic_id as id,
+	mi.indic_parent_indic as parent_id,
 	mi.indic_nom as nom,
 	mi.indic_parent_ch as chantier_id,
 	gvcg.vcg as objectif_valeur_cible,
@@ -70,10 +71,34 @@ get_evol_vaca as (
     last_update_indic.dernier_import_date_indic,
     last_update_indic.dernier_import_rapport_id_indic,
     last_update_indic.dernier_import_auteur_indic,
-    date_pro_maj.prochaine_date_maj,
-    date_pro_maj.prochaine_date_maj_jours,
-    date_pro_maj.est_a_jour,
+	-- Si l'indic n'est pas applicable sur la zone, prochaine_date_maj=NULL
+	--	peu importe la date calculée pour la maille correspondant à cette zone
+	CASE 
+		WHEN COALESCE(z_appl.est_applicable, true) THEN date_pro_maj.prochaine_date_maj 
+		ELSE NULL END AS prochaine_date_maj,
+	CASE 
+		WHEN COALESCE(z_appl.est_applicable, true) THEN date_pro_maj.prochaine_date_maj_jours 
+		ELSE NULL END AS prochaine_date_maj_jours,
+	CASE 
+		WHEN COALESCE(z_appl.est_applicable, true) THEN date_pro_maj.est_a_jour 
+		ELSE NULL END AS est_a_jour,
+	CASE 
+		WHEN COALESCE(z_appl.est_applicable, true) THEN date_pro_maj.periodicite 
+		ELSE NULL END AS periodicite,
+	CASE 
+		WHEN COALESCE(z_appl.est_applicable, true) THEN date_pro_maj.delai_disponibilite 
+		ELSE NULL END AS delai_disponibilite,
+	CASE 
+		WHEN COALESCE(z_appl.est_applicable, true) THEN date_pro_maj.prochaine_date_va 
+		ELSE NULL END AS prochaine_date_valeur_actuelle,
 	mpi.tendance,
+	a.tap_global as objectif_taux_avancement_proposition,
+	a.tap_courant as objectif_taux_avancement_intermediaire_proposition,
+	a.vacp as valeur_actuelle_proposition,
+	pva.date_proposition::date,
+	pva.motif_proposition,
+	pva.source_donnee_methode_calcul as source_donnee_methode_calcul_proposition,
+	pva.auteur_proposition,
     FALSE as a_supprimer
 	from public.territoire t 
 	cross join {{ ref('metadata_indicateurs') }} mi
@@ -90,6 +115,7 @@ get_evol_vaca as (
 	left join {{ ref('metadata_indicateur_types') }} mit on mit.indic_type_id = mi.indic_type 
 	left join {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} mpi on mi.indic_id = mpi.indic_id 
 	left join public.territoire terr on t.zone_id = terr.zone_id 
+	left join {{ ref('int_propositions_valeurs') }} pva on pva.indic_id = mi.indic_id and pva.territoire_code = terr.code and pva.date_valeur_actuelle::DATE = a.date_valeur_actuelle::DATE
 	left join {{ ref('metadata_zones') }} mz on mz.zone_id = terr.zone_id 
 	LEFT JOIN {{ ref('int_indicateurs_zones_applicables') }} z_appl ON z_appl.indic_id = mi.indic_id AND z_appl.zone_id = t.zone_id
 	-- pour avoir le bon nombre de lignes, une par territoire

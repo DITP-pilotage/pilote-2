@@ -90,7 +90,15 @@ export default class IndicateurRowBuilder {
 
   private _est_a_jour: indicateur['est_a_jour'];
 
+  private _parent_id: indicateur['parent_id'];
+
   private _tendance: indicateur['tendance'];
+
+  private _prochaine_date_valeur_actuelle: indicateur['prochaine_date_valeur_actuelle'];
+
+  private _periodicite: indicateur['periodicite'];
+
+  private _delai_disponibilite: indicateur['delai_disponibilite'];
 
   constructor() {
     const indicateurGénéré = new IndicateurBuilder().build();
@@ -140,7 +148,11 @@ export default class IndicateurRowBuilder {
     this._prochaine_date_maj = null;
     this._prochaine_date_maj_jours = null;
     this._est_a_jour = false;
+    this._parent_id = null;
     this._tendance = détailsIndicateurGénéré.tendance;
+    this._prochaine_date_valeur_actuelle = new Date('2025-01-01T00:00:00.000Z');
+    this._periodicite = faker.helpers.arrayElement(['Annuelle', 'Mensuelle', '3 ans']);
+    this._delai_disponibilite = faker.datatype.number({ min: 10, max: 100 });
   }
 
   avecId(id: indicateur['id']): IndicateurRowBuilder {
@@ -338,8 +350,28 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
+  avecParentId(parent_id: indicateur['parent_id']): IndicateurRowBuilder {
+    this._parent_id = parent_id;
+    return this;
+  }
+
   avecTendance(tendance: indicateur['tendance']): IndicateurRowBuilder {
     this._tendance = tendance;
+    return this;
+  }
+
+  avecProchaineDateValeurActuelle(prochaine_date_valeur_actuelle: indicateur['prochaine_date_valeur_actuelle']): IndicateurRowBuilder {
+    this._prochaine_date_valeur_actuelle = prochaine_date_valeur_actuelle;
+    return this;
+  }
+
+  avecPeriodicite(periodicite: indicateur['periodicite']): IndicateurRowBuilder {
+    this._periodicite = periodicite;
+    return this;
+  }
+
+  avecDelaiDisponibilite(delai_disponibilite: indicateur['delai_disponibilite']): IndicateurRowBuilder {
+    this._delai_disponibilite = delai_disponibilite;
     return this;
   }
 
@@ -385,7 +417,18 @@ export default class IndicateurRowBuilder {
       prochaine_date_maj: this._prochaine_date_maj,
       prochaine_date_maj_jours: this._prochaine_date_maj_jours,
       est_a_jour: this._est_a_jour,
+      parent_id: this._parent_id,
       tendance: this._tendance,
+      date_proposition: null,
+      source_donnee_methode_calcul_proposition: null,
+      motif_proposition: null,
+      auteur_proposition: null,
+      valeur_actuelle_proposition: null,
+      objectif_taux_avancement_intermediaire_proposition: null,
+      objectif_taux_avancement_proposition: null,
+      prochaine_date_valeur_actuelle: this._prochaine_date_valeur_actuelle,
+      periodicite: this._periodicite,
+      delai_disponibilite: this._delai_disponibilite,
     };
   }
 }

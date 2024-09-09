@@ -1,8 +1,17 @@
 import '@gouvfr/dsfr/dist/component/toggle/toggle.min.css';
-import { ChangeEvent } from 'react';
-import InterrupteurProps from '@/components/_commons/Interrupteur/Interrupteur.interface';
+import { ChangeEvent, FunctionComponent } from 'react';
+import { UseFormRegisterReturn } from 'react-hook-form';
 
-export default function Interrupteur({ checked, id, libellé, auChangement, register, messageSecondaire }: InterrupteurProps) {
+interface InterrupteurProps {
+  checked: boolean;
+  id: string;
+  auChangement?: (estCochée: boolean) => void;
+  libellé: string;
+  register?: UseFormRegisterReturn;
+  messageSecondaire?: string;
+}
+
+const Interrupteur: FunctionComponent<InterrupteurProps> = ({ checked, id, libellé, auChangement, register, messageSecondaire }) => {
   return (
     <div className='fr-toggle'>
       <input
@@ -31,4 +40,6 @@ export default function Interrupteur({ checked, id, libellé, auChangement, regi
       }
     </div>
   );
-}
+};
+
+export default Interrupteur;

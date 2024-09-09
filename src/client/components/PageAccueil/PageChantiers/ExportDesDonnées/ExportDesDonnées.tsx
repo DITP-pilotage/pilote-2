@@ -1,6 +1,6 @@
 import '@gouvfr/dsfr/dist/component/radio/radio.min.css';
-import { useState } from 'react';
-import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
+import { FunctionComponent, useState } from 'react';
+import { parseAsBoolean, parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import Modale from '@/components/_commons/Modale/Modale';
 import { horodatage } from '@/client/utils/date/date';
 
@@ -37,7 +37,7 @@ const ressources = {
 
 export const ID_HTML_MODALE_EXPORT = 'modale-exporter-les-données';
 
-export default function ExportDesDonnées() {
+const ExportDesDonnées: FunctionComponent<{}> = () => {
   const [ressourceÀExporter, setRessourceÀExporter] = useState<keyof typeof ressources | undefined>();
   const [estDésactivé, setEstDésactivé] = useState(false);
 
@@ -45,7 +45,7 @@ export default function ExportDesDonnées() {
     perimetres: parseAsString.withDefault(''),
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
-    brouillon: parseAsBoolean.withDefault(true),
+    statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE']).withDefault('PUBLIE'),
   });
 
   const arrayOptionsExport: {
@@ -64,7 +64,7 @@ export default function ExportDesDonnées() {
     arrayOptionsExport.push({ name: 'estTerritorialise', value: true });
   }
 
-  (filtres.brouillon ? ['BROUILLON', 'PUBLIE'] : ['PUBLIE']).forEach(statut => {
+  (filtres.statut === 'BROUILLON' ? ['PUBLIE'] : filtres.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : ['PUBLIE']).forEach(statut => {
     arrayOptionsExport.push({ name: 'statut', value: statut });
   });
 
@@ -166,4 +166,6 @@ export default function ExportDesDonnées() {
       </form>
     </Modale>
   );
-}
+};
+
+export default ExportDesDonnées;

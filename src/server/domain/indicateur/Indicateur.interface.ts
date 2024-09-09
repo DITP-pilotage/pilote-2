@@ -4,12 +4,15 @@ export const typesIndicateurProjetStructurant = ['IMPACT', 'DEPL', 'FINANCIER'] 
 export type TypeIndicateur = typeof typesIndicateur[number] | typeof typesIndicateurProjetStructurant[number];
 
 export default interface Indicateur {
-  id: string;
-  nom: string;
-  type: TypeIndicateur;
-  estIndicateurDuBaromètre: boolean;
-  description: string | null;
-  source: string | null;
-  modeDeCalcul: string | null;
-  unité: string | null;
+  id: string
+  nom: string
+  type: TypeIndicateur
+  estIndicateurDuBaromètre: boolean
+  description: string | null
+  source: string | null
+  modeDeCalcul: string | null
+  unité: string | null
+  parentId: string | null
+  periodicite: string | null
+  delaiDisponibilite: string | null
 }

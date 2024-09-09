@@ -1,17 +1,33 @@
 import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
+import { FunctionComponent } from 'react';
 import { consignesDÉcritureObjectif, libellésTypesObjectif, TypeObjectif } from '@/client/constants/libellésObjectif';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Publication from '@/components/_commons/Publication/Publication';
-import { ObjectifsProps } from './Objectifs.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { Maille } from '@/server/domain/maille/Maille.interface';
+import Objectif, { typesObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
+import ObjectifProjetStructurant, { TypeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
+import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 
-export default function Objectifs({ objectifs, réformeId, maille, nomTerritoire, typesObjectif, estEtendu = true, modeÉcriture = false, estInteractif = true }: ObjectifsProps) {
+interface ObjectifsProps {
+  objectifs: (Objectif | ObjectifProjetStructurant)[] | null
+  réformeId: Chantier['id'] | ProjetStructurant['id']
+  maille: Maille
+  nomTerritoire: string
+  tousLesTypesDObjectif: typeof typesObjectif | TypeObjectifProjetStructurant[]
+  estEtendu: boolean
+  modeÉcriture?: boolean
+  estInteractif?: boolean 
+}
+
+const Objectifs: FunctionComponent<ObjectifsProps> = ({ objectifs, réformeId, maille, nomTerritoire, tousLesTypesDObjectif, estEtendu = true, modeÉcriture = false, estInteractif = true }) => {
   return (
     <Bloc 
       contenuClassesSupplémentaires=''
       titre={nomTerritoire} 
     >
       {
-          typesObjectif.map((type) => (
+          tousLesTypesDObjectif.map((type) => (
             <section 
               className='fr-accordion' 
               key={type}
@@ -51,4 +67,6 @@ export default function Objectifs({ objectifs, réformeId, maille, nomTerritoire
         }
     </Bloc>
   );
-}
+};
+
+export default Objectifs;

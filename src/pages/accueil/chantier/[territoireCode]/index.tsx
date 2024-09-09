@@ -11,7 +11,6 @@ import SélecteursMaillesEtTerritoires
   from '@/components/_commons/SélecteursMaillesEtTerritoiresNew/SélecteursMaillesEtTerritoires';
 import Titre from '@/components/_commons/Titre/Titre';
 import Filtres from '@/components/PageAccueil/FiltresNew/Filtres';
-import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import RécupérerChantiersAccessiblesEnLectureUseCase
   from '@/server/chantiers/usecases/RécupérerChantiersAccessiblesEnLectureUseCase';
@@ -32,6 +31,10 @@ import {
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateurNew/agrégateur';
 import { objectEntries } from '@/client/utils/objects/objects';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
+import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
+import IndexStyled from './Index.styled';
 
 interface ChantierAccueil {
   chantiers: ChantierAccueilContrat[]
@@ -39,7 +42,6 @@ interface ChantierAccueil {
   axes: Axe[],
   territoireCode: string
   mailleSelectionnee: 'départementale' | 'régionale',
-  brouillon: boolean
   filtresComptesCalculés: Record<string, { nombre: number }>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
@@ -52,11 +54,12 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   assert(query.territoireCode, 'Le territoire code est obligatoire pour afficher la page d\'accueil');
   assert(session, 'Vous devez être authentifié pour accéder a cette page');
   assert(session.habilitations, 'La session ne dispose d\'aucune habilitation');
+  const territoireCode = query.territoireCode as string;
 
   const territoireDept = session.habilitations.lecture.territoires.find(territoire => territoire.startsWith('DEPT'));
   const territoireReg = session.habilitations.lecture.territoires.find(territoire => territoire.startsWith('REG'));
 
-  if ((query.territoireCode === 'NAT-FR' && !session.habilitations.lecture.territoires.includes('NAT-FR')) || !session.habilitations.lecture.territoires.includes(query.territoireCode as string)) {
+  if ((territoireCode === 'NAT-FR' && !session.habilitations.lecture.territoires.includes('NAT-FR')) || !session.habilitations.lecture.territoires.includes(territoireCode)) {
     return {
       redirect: {
         statusCode: 302,
@@ -68,7 +71,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   const filtres = {
     perimetres: query.perimetres ? (query.perimetres as string).split(',').filter(Boolean) : [],
     axes: query.axes ? (query.axes as string).split(',').filter(Boolean) : [],
-    statut: query.brouillon === 'false' ? ['PUBLIE'] : ['BROUILLON', 'PUBLIE'],
+    statut: query.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : query.statut === 'BROUILLON' ? ['BROUILLON'] : ['PUBLIE'],
     estTerritorialise: query.estTerritorialise === 'true',
     estBarometre: query.estBarometre === 'true',
   };
@@ -81,8 +84,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     estEnAlerteAbscenceTauxAvancementDepartemental: query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
   };
 
-  const territoireCode = query.territoireCode as string;
-  const [maille, codeInseeSelectionne] = territoireCode.split('-');
+  const { maille, codeInsee: codeInseeSelectionne } = territoireCodeVersMailleCodeInsee(territoireCode);
   const mailleSelectionnee = query.maille as 'départementale' | 'régionale' ?? (maille === 'REG' ? 'régionale' : 'départementale');
 
   const mailleChantier = maille === 'NAT' ? 'nationale' : mailleSelectionnee;
@@ -187,7 +189,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
       axes,
       territoireCode,
       mailleSelectionnee: mailleSelectionnee || 'départementale',
-      brouillon: query.brouillon !== 'false',
       filtresComptesCalculés,
       avancementsAgrégés,
       avancementsGlobauxTerritoriauxMoyens,
@@ -197,17 +198,17 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
 };
 
 const PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE = new Set([
-  'CABINET_MTFP',
-  'PM_ET_CABINET',
-  'PR',
-  'CABINET_MINISTERIEL',
-  'DIR_ADMIN_CENTRALE',
-  'DROM',
-  'SECRETARIAT_GENERAL',
-  'DIR_PROJET',
-  'EQUIPE_DIR_PROJET',
-  'DITP_ADMIN',
-  'DITP_PILOTAGE',
+  ProfilEnum.CABINET_MTFP,
+  ProfilEnum.PM_ET_CABINET,
+  ProfilEnum.PR,
+  ProfilEnum.CABINET_MINISTERIEL,
+  ProfilEnum.DIR_ADMIN_CENTRALE,
+  ProfilEnum.DROM,
+  ProfilEnum.SECRETARIAT_GENERAL,
+  ProfilEnum.DIR_PROJET,
+  ProfilEnum.EQUIPE_DIR_PROJET,
+  ProfilEnum.DITP_ADMIN,
+  ProfilEnum.DITP_PILOTAGE,
 ]);
 
 const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
@@ -216,7 +217,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   ministères,
   territoireCode,
   mailleSelectionnee,
-  brouillon,
   filtresComptesCalculés,
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
@@ -225,7 +225,8 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   const { data: session } = useSession();
 
   const estProfilTerritorialise = PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE.has(session?.profil || '');
-
+  const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('md');
+  const [estVisibleEnMobile, setEstVisibleEnMobile] = useState(false);
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
@@ -246,14 +247,17 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
               typeDeRéformeSélectionné='chantier'
             />
             <SélecteursMaillesEtTerritoires
+              estVisibleEnMobile={estVisibleEnMobile}
+              estVueMobile={estVueMobile}
               mailleSelectionnee={mailleSelectionnee}
+              pathname='/accueil/chantier/[territoireCode]'
               territoireCode={territoireCode}
             />
           </BarreLatéraleEncart>
           <section>
             <Titre
               baliseHtml='h1'
-              className='fr-h4 fr-mb-1w fr-px-3w fr-mt-2w fr-col-8'
+              className='fr-h4 fr-mb-1w fr-px-3w fr-mt-3w fr-col-8'
             >
               Filtres
             </Titre>
@@ -261,23 +265,28 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
               afficherToutLesFiltres
               axes={axes}
               estProfilTerritorialise={estProfilTerritorialise}
+              estVisibleEnMobile={estVisibleEnMobile}
+              estVueMobile={estVueMobile}
               ministères={ministères}
             />
           </section>
         </BarreLatérale>
-        <div className='w-full'>
-          <BoutonSousLigné
-            classNameSupplémentaires='fr-link--icon-left fr-fi-arrow-right-line fr-hidden-lg fr-m-2w'
-            onClick={() => setEstOuverteBarreLatérale(true)}
+        <IndexStyled className='w-full'>
+          <button
+            className='fr-hidden-lg bouton-filtrer fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-equalizer-fill fr-text-title--blue-france fr-py-2w fr-px-5v'
+            onClick={() => {
+              setEstOuverteBarreLatérale(true);
+              setEstVisibleEnMobile(true);
+            }}
+            title='Filtrer'
             type='button'
           >
-            Filtres
-          </BoutonSousLigné>
+            Filtrer
+          </button>
           <PageChantiers
             avancementsAgrégés={avancementsAgrégés}
             avancementsGlobauxTerritoriauxMoyens={avancementsGlobauxTerritoriauxMoyens}
             axes={axes}
-            brouillon={brouillon}
             chantiers={chantiers}
             filtresComptesCalculés={filtresComptesCalculés}
             mailleSelectionnee={mailleSelectionnee}
@@ -285,7 +294,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             répartitionMétéos={répartitionMétéos}
             territoireCode={territoireCode}
           />
-        </div>
+        </IndexStyled>
       </div>
     </>
   );

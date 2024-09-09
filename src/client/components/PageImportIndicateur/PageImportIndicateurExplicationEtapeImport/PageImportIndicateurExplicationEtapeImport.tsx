@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import { wording } from '@/client/utils/i18n/i18n';
 import ExplicationEtapeIndicateur from './ExplicationEtapeIndicateur/ExplicationEtapeIndicateur';
@@ -24,10 +25,9 @@ const explicationsEtapeImport: ExplicationEtape[] = [
   },
 ];
 
-export default function PageImportIndicateurExplicationEtapeImport() {
+const PageImportIndicateurExplicationEtapeImport: FunctionComponent<{}> = () => {
   const { query } = useRouter();
   const etapeCourante = query.etapeCourante ? Number(query.etapeCourante) : 1;
-
 
   return (
     <PageImportIndicateurExplicationEtapeImportStyled>
@@ -56,4 +56,6 @@ export default function PageImportIndicateurExplicationEtapeImport() {
       </div>
     </PageImportIndicateurExplicationEtapeImportStyled>
   );
-}
+};
+
+export default PageImportIndicateurExplicationEtapeImport; 

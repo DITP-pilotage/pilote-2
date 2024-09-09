@@ -1,32 +1,36 @@
-import { useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
-import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
 import Loader from '@/components/_commons/Loader/Loader';
 import SélecteursMaillesEtTerritoires
   from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
-import PageChantierEnTête from '@/client/components/PageChantier/EnTête/EnTête';
-import Cartographie from '@/components/_commons/Cartographie/Cartographie';
+import PageChantierEnTête from '@/components/PageChantier/EnTête/EnTête';
+import Cartographie from '@/components/_commons/Cartographie/CartographieNew';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
-import { getFiltresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
-import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
-import { getQueryParamString } from '@/client/utils/getQueryParamString';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import useChoixTerritoire from './useChoixTerritoire';
-import ChoixTerritoireProps from './ChoixTerritoire.interface';
+import ChoixTerritoireStyled from './ChoixTerritoire.styled';
 
-export default function ChoixTerritoire({ chantierId }: ChoixTerritoireProps) {
+interface ChoixTerritoireProps {
+  chantierId: Chantier['id']
+  territoireCode: string
+  mailleSélectionnée: MailleInterne
+}
+
+const ChoixTerritoire: FunctionComponent<ChoixTerritoireProps> = ({
+  chantierId,
+  territoireCode,
+  mailleSélectionnée,
+}) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const { chantier, donnéesCartographie } = useChoixTerritoire(chantierId);
+  const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('md');
+  const [estVisibleEnMobile, setEstVisibleEnMobile] = useState(false);
+  const { chantier, donnéesCartographie } = useChoixTerritoire(chantierId, mailleSélectionnée);
   const { auClicTerritoireCallback } = useCartographie();
-  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-
-  const filtresActifs = getFiltresActifs();
-  const territoireCode = territoireSélectionné?.code;
-
-  const queryParamString = getQueryParamString(filtresActifs);
-  const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
 
   return (
     <div className='flex'>
@@ -35,48 +39,74 @@ export default function ChoixTerritoire({ chantierId }: ChoixTerritoireProps) {
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
-          <SélecteursMaillesEtTerritoires />
+          {
+            estVueMobile && estVisibleEnMobile ? (
+              <Titre
+                baliseHtml='h3'
+                className='fr-h6 fr-my-2w fr-col-8'
+              >
+                Maille géographique
+              </Titre>
+            ) : null
+          }        
+          <SélecteursMaillesEtTerritoires
+            estVisibleEnMobile={estVisibleEnMobile}
+            estVueMobile={estVueMobile}
+          />
         </BarreLatéraleEncart>
       </BarreLatérale>
       <main className='fr-pb-5w'>
-        <BoutonSousLigné
-          classNameSupplémentaires='fr-link--icon-left fr-fi-arrow-right-line fr-hidden-xl fr-m-2w'
-          onClick={() => setEstOuverteBarreLatérale(true)}
-          type='button'
-        >
-          Filtres
-        </BoutonSousLigné>
-        {
-          chantier !== null ? (
-            <>
-              <PageChantierEnTête
-                chantier={chantier}
-                hrefBoutonRetour={hrefBoutonRetour}
-              />
-              <div className='fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mt-5w fr-mx-1w'>
-                <div className='fr-col-12 fr-col-xl-6'>
-                  <Bloc>
-                    <section>
-                      <Titre
-                        baliseHtml='h3'
-                        className='fr-text--lg'
-                      >
-                        Veuillez sélectionner un DROM
-                      </Titre>
-                      <Cartographie
-                        auClicTerritoireCallback={auClicTerritoireCallback}
-                        données={donnéesCartographie}
-                      />
-                    </section>
-                  </Bloc>
+        <ChoixTerritoireStyled>     
+          <div className='bouton-filtrer fr-hidden-lg fr-py-1w fr-px-1v'>
+            <button
+              className='fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-equalizer-fill fr-text-title--blue-france'
+              onClick={() => {
+                setEstOuverteBarreLatérale(true); 
+                setEstVisibleEnMobile(true);
+              }}
+              title='Filtrer'
+              type='button'
+            >
+              Filtrer
+            </button>
+          </div>
+          {
+            chantier !== null ? (
+              <>
+                <PageChantierEnTête
+                  chantier={chantier}
+                  territoireCode={territoireCode}
+                />
+                <div className='fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mt-5w fr-mx-1w'>
+                  <div className='fr-col-12 fr-col-xl-6'>
+                    <Bloc>
+                      <section>
+                        <Titre
+                          baliseHtml='h3'
+                          className='fr-text--lg'
+                        >
+                          Veuillez sélectionner un DROM
+                        </Titre>
+                        <Cartographie
+                          auClicTerritoireCallback={auClicTerritoireCallback}
+                          données={donnéesCartographie}
+                          mailleSelectionnee={mailleSélectionnée}
+                          pathname='/chantier/[id]/[territoireCode]'
+                          territoireCode={territoireCode}
+                        />
+                      </section>
+                    </Bloc>
+                  </div>
                 </div>
-              </div>
-            </>
-          ) : (
-            <Loader />
-          )
-        }
+              </>
+            ) : (
+              <Loader />
+            )
+          }
+        </ChoixTerritoireStyled>
       </main>
     </div>
   );
-}
+};
+
+export default ChoixTerritoire;

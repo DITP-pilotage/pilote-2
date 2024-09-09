@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
-import { mailleSélectionnéeTerritoiresStore, territoiresTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { territoiresTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
 import api from '@/server/infrastructure/api/trpc/api';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
-export default function useChoixTerritoire(chantierId: string) {
-  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
+export default function useChoixTerritoire(chantierId: string, mailleSélectionnée: MailleInterne) {
   const territoires = territoiresTerritoiresStore();
 
   const { data: chantier } = api.chantier.récupérer.useQuery(

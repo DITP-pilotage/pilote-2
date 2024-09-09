@@ -1,10 +1,16 @@
+import { FunctionComponent } from 'react';
 import SélecteurCustom from '@/components/_commons/SelecteurCustom/SélecteurAvecRecherche/SélecteurCustom';
-import BoutonsDeTri from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri';
-import TableauChantiersActionsDeTriProps
-  from '@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri.interface';
+import BoutonsDeTri, { DirectionDeTri } from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri';
 import TableauChantiersActionsDeTriStyled
   from '@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri.styled';
-
+  
+interface TableauChantiersActionsDeTriProps {
+  changementColonneÀTrierCallback: (colonneId: string) => void;
+  colonneÀTrier: string;
+  changementDirectionDeTriCallback: (directionTri: DirectionDeTri) => void;
+  directionDeTri: DirectionDeTri;
+}
+  
 const listeColonnesÀtrier = [
   {
     libellé: 'Taux d\'avancement',
@@ -28,12 +34,12 @@ const listeColonnesÀtrier = [
   },
 ];
 
-export default function TableauChantiersActionsDeTri({
+const TableauChantiersActionsDeTri: FunctionComponent<TableauChantiersActionsDeTriProps> = ({
   changementColonneÀTrierCallback,
   changementDirectionDeTriCallback,
   colonneÀTrier,
   directionDeTri,
-}: TableauChantiersActionsDeTriProps) {
+}) => {
   return (
     <TableauChantiersActionsDeTriStyled>
       <div className='fr-select-group sélecteur-colonne-à-trier'>
@@ -59,4 +65,6 @@ export default function TableauChantiersActionsDeTri({
       </div>
     </TableauChantiersActionsDeTriStyled>
   );
-}
+};
+
+export default TableauChantiersActionsDeTri;

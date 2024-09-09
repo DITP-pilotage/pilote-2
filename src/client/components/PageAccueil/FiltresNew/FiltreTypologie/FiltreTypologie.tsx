@@ -1,15 +1,14 @@
-import { useCallback } from 'react';
+import { FunctionComponent, useCallback } from 'react';
 import { parseAsBoolean, useQueryState } from 'nuqs';
 import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
-
 
 interface FiltreTypologieProps {
   filtre: { id: string, attribut: 'estBaromètre' | 'estTerritorialisé', nom: string }
   categorie: 'estTerritorialise' | 'estBarometre'
 }
 
-export default function FiltreTypologie({ filtre, categorie }: FiltreTypologieProps) {
+const FiltreTypologie: FunctionComponent<FiltreTypologieProps> = ({ filtre, categorie }) => {
   const [filtreTypologie, setFiltreTypologie] = useQueryState(categorie, parseAsBoolean.withDefault(false).withOptions({
     shallow: false,
     clearOnDefault: true,
@@ -29,4 +28,6 @@ export default function FiltreTypologie({ filtre, categorie }: FiltreTypologiePr
       libellé={filtre.nom}
     />
   );
-}
+};
+
+export default FiltreTypologie;

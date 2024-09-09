@@ -1,8 +1,8 @@
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import UtilisateurStyled from './Utilisateur.styled';
 
-export default function Utilisateur() {
+const Utilisateur: FunctionComponent<{}> = () => {
   const [estDéplié, setEstDéplié] = useState<boolean>(false);
   const { data: session } = useSession();
 
@@ -36,17 +36,20 @@ export default function Utilisateur() {
         }
       </span>
       {
-        !!estDéplié &&
-        <span className='fr-col-12'>
-          <button
-            className='fr-p-0'
-            onClick={() => signOut()}
-            type='button'
-          >
-            Déconnexion
-          </button>
-        </span>
+        estDéplié ? (
+          <span className='fr-col-12'>
+            <button
+              className='fr-p-0'
+              onClick={() => signOut()}
+              type='button'
+            >
+              Déconnexion
+            </button>
+          </span>
+        ) : null
       }
     </UtilisateurStyled>
   );
-}
+};
+
+export default Utilisateur;

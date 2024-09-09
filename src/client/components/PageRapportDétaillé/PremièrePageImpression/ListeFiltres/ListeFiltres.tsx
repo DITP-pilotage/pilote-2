@@ -1,7 +1,11 @@
-import ListeFiltresProps
-  from '@/components/PageRapportDétaillé/PremièrePageImpression/ListeFiltres/ListeFiltres.interface';
+import { FunctionComponent } from 'react';
 
-export function ListeFiltres({ nom, enfants }: ListeFiltresProps) {
+interface ListeFiltresProps {
+  nom: string,
+  enfants: ListeFiltresProps[],
+}
+  
+const ListeFiltres: FunctionComponent<ListeFiltresProps> = ({ nom, enfants }) => {
   return (
     <li>
       {nom}
@@ -18,4 +22,6 @@ export function ListeFiltres({ nom, enfants }: ListeFiltresProps) {
       </ul>
     </li>
   );
-}
+};
+
+export default ListeFiltres;

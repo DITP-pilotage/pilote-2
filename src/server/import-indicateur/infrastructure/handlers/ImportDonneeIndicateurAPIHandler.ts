@@ -10,6 +10,7 @@ import {
   ImportDonneeIndicateurAPIContrat,
 } from '@/server/import-indicateur/app/contrats/DataImportDonneeIndicateurAPIContrat';
 import { parseForm } from '@/server/import-indicateur/infrastructure/handlers/ParseForm';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 function convertirEnTableauPourCSV(donnees: ImportDonneeIndicateurAPIContrat[]) {
   return donnees.map(donnee => ([
@@ -111,7 +112,7 @@ export const handleImportDonneeIndicateurAPI = async ({ request, response, email
             nomDuFichier: fileName,
             indicateurId: request.query.indicateurId as string,
             utilisateurAuteurDeLimportEmail: email,
-            isAdmin: profil === 'DITP_ADMIN',
+            isAdmin: profil === ProfilEnum.DITP_ADMIN,
             response,
           });
 
@@ -130,7 +131,7 @@ export const handleImportDonneeIndicateurAPI = async ({ request, response, email
       nomDuFichier: fichier.originalFilename as string,
       indicateurId: request.query.indicateurId as string,
       utilisateurAuteurDeLimportEmail: email,
-      isAdmin: profil === 'DITP_ADMIN',
+      isAdmin: profil === ProfilEnum.DITP_ADMIN,
       response,
     });
   }

@@ -1,4 +1,5 @@
 import { Controller } from 'react-hook-form';
+import { FunctionComponent } from 'react';
 import InputAvecLabel from '@/components/_commons/InputAvecLabel/InputAvecLabel';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import useSaisieDesInformationsUtilisateur
@@ -16,16 +17,16 @@ import {
   UtilisateurFormulaireProps,
 } from '@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
 import CaseACocher from '@/components/_commons/CaseACocher/CaseACocher';
-// import { DevTool } from '@hookform/devtools';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
-
-export default function SaisieDesInformationsUtilisateur({ utilisateur }: UtilisateurFormulaireProps) {
+const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireProps> = ({ utilisateur }) => {
   const {
     listeProfils,
     profilSélectionné,
     handleChangementValeursSélectionnéesTerritoires,
     handleChangementValeursSélectionnéesChantiers,
     handleChangementValeursSélectionnéesPérimètresMinistériels,
+    handleChangementValeursSélectionnéesChantiersResponsabilite,
     chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés,
     register,
     errors,
@@ -33,11 +34,14 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
     afficherChampLectureTerritoires,
     afficherChampLectureChantiers,
     afficherChampLecturePérimètres,
+    afficherChampResponsabiliteChantiers,
     territoiresSélectionnés,
     chantiersSélectionnés,
+    chantiersSélectionnésResponsabilite,
     périmètresMinistérielsSélectionnés,
     groupesTerritoiresÀAfficher,
     chantiersAccessiblesPourLeProfil,
+    chantiersAccessibleResponsabilite,
     afficherChampSaisieCommentaire,
     afficherChampSaisieIndicateur,
     afficherChampGestionCompte,
@@ -99,7 +103,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
         valeurSélectionnée={profilSélectionné?.code}
       />
       <div
-        className={`${(!!afficherChampLectureTerritoires || !!afficherChampLecturePérimètres || !!afficherChampLectureChantiers) ? '' : 'fr-hidden'}`}
+        className={`${(afficherChampLectureTerritoires || afficherChampLecturePérimètres || afficherChampLectureChantiers) ? '' : 'fr-hidden'}`}
       >
         <hr className='fr-hr' />
         <Titre
@@ -114,14 +118,14 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
              Le nombre d'utilisateurs est limité à ${MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT} comptes à la maille départementale et ${MAXIMUM_COMPTES_AUTORISE_PAR_REGION} comptes à la maille régionale.`
           }
         </p>
-        <div className={`${!!afficherChampLectureTerritoires ? '' : 'fr-hidden'}`}>
+        <div className={`${afficherChampLectureTerritoires ? '' : 'fr-hidden'}`}>
           <div className='fr-mb-4w'>
             <Controller
               control={control}
               name='habilitations.lecture.territoires'
               render={() => (
                 <MultiSelectTerritoire
-                  activerLaRestrictionDesTerritoires={!['DITP_ADMIN', 'DITP_PILOTAGE'].includes(session?.profil || '')}
+                  activerLaRestrictionDesTerritoires={![ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session?.profil || '')}
                   afficherBoutonsSélection
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesTerritoires}
                   groupesÀAfficher={groupesTerritoiresÀAfficher}
@@ -133,7 +137,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
             />
           </div>
         </div>
-        <div className={`${!!afficherChampLecturePérimètres ? '' : 'fr-hidden'}`}>
+        <div className={`${afficherChampLecturePérimètres ? '' : 'fr-hidden'}`}>
           <div className='fr-mb-4w'>
             <Controller
               control={control}
@@ -149,7 +153,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
             />
           </div>
         </div>
-        <div className={`${!!afficherChampLectureChantiers ? '' : 'fr-hidden'}`}>
+        <div className={`${afficherChampLectureChantiers ? '' : 'fr-hidden'}`}>
           <div className='fr-mb-4w'>
             <Controller
               control={control}
@@ -167,8 +171,38 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
             />
           </div>
         </div>
+        <div
+          className={`${afficherChampResponsabiliteChantiers ? '' : 'fr-hidden'}`}
+        >
+          <hr className='fr-hr' />
+          <Titre
+            baliseHtml='h2'
+            className='fr-text--md  fr-mb-2w'
+          >
+            Responsabilités
+          </Titre>
+          <p className='fr-text--xs texte-gris fr-mb-4w'>
+            Parmi les chantiers autorisés en lecture, merci d'indiquer ceux pour lesquels l'utilisateur a des responsabilités spécifiques (directeur de projet ou responsable local). L'utilisateur apparaîtra nominativement comme directeur de projet ou responsable local de ces chantiers sur les pages des chantiers concernés dans PILOTE
+          </p>
+          <div className='fr-mb-4w'>
+            <Controller
+              control={control}
+              name='habilitations.responsabilite.chantiers'
+              render={() => (
+                <MultiSelectChantier
+                  afficherBoutonsSélection
+                  changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesChantiersResponsabilite}
+                  chantiers={chantiersAccessibleResponsabilite}
+                  chantiersIdsSélectionnésParDéfaut={chantiersSélectionnésResponsabilite}
+                  desactive={chantiersAccessibleResponsabilite.length === 0}
+                />
+              )}
+              rules={{ required: true }}
+            />
+          </div>
+        </div>
       </div>
-      <div className={`${!!afficherChampSaisieIndicateur ? '' : 'fr-hidden'}`}>
+      <div className={`${afficherChampSaisieIndicateur ? '' : 'fr-hidden'}`}>
         <hr className='fr-hr' />
         <Titre
           baliseHtml='h2'
@@ -181,7 +215,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           register={register('saisieIndicateur')}
         />
       </div>
-      <div className={`${!!afficherChampSaisieCommentaire ? '' : 'fr-hidden'}`}>
+      <div className={`${afficherChampSaisieCommentaire ? '' : 'fr-hidden'}`}>
         <hr className='fr-hr' />
         <Titre
           baliseHtml='h2'
@@ -194,7 +228,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           register={register('saisieCommentaire')}
         />
       </div>
-      <div className={`${!!afficherChampGestionCompte ? '' : 'fr-hidden'}`}>
+      <div className={`${afficherChampGestionCompte ? '' : 'fr-hidden'}`}>
         <hr className='fr-hr' />
         <Titre
           baliseHtml='h2'
@@ -216,4 +250,6 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
       {/* <DevTool control={control} /> */}
     </>
   );
-}
+};
+
+export default SaisieDesInformationsUtilisateur;

@@ -1,11 +1,13 @@
-import { flexRender, Row } from '@tanstack/react-table';
-import { useCallback } from 'react';
+import { flexRender, Row, Table } from '@tanstack/react-table';
+import { FunctionComponent, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
-import TableauAdminIndicateursContenuProps
-  from '@/components/PageAdminIndicateurs/TableauAdminIndicateurs/Contenu/TableauAdminIndicateursContenu.interface';
-
-export default function TableauAdminIndicateursContenu({ tableau }: TableauAdminIndicateursContenuProps) {
+      
+interface TableauAdminIndicateursContenuProps {
+  tableau: Table<MetadataParametrageIndicateurContrat>
+}
+  
+const TableauAdminIndicateursContenu: FunctionComponent<TableauAdminIndicateursContenuProps> = ({ tableau }) => {
   const router = useRouter();
   const auClicSurLaLigne = useCallback((row: Row<MetadataParametrageIndicateurContrat>) =>{
     router.push(`/admin/indicateurs/${row.original.indicId}`);
@@ -40,4 +42,6 @@ export default function TableauAdminIndicateursContenu({ tableau }: TableauAdmin
     }
     </tbody>
   );
-}
+};
+
+export default TableauAdminIndicateursContenu;
