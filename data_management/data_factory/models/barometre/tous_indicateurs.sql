@@ -98,6 +98,19 @@ merge_exports AS
     FULL JOIN export_vc c ON a.indic_id = c.indic_id AND a.enforce_zone_id = c.enforce_zone_id AND a.metric_enforce_date = c.metric_enforce_date 
     FULL JOIN export_ta d ON a.indic_id = d.indic_id AND a.enforce_zone_id = d.enforce_zone_id AND a.metric_enforce_date = d.metric_enforce_date 
 )
+-- On arrondit les VI,VA,VC,TA à deux décimales
+, round_2_dec AS (
+  SELECT
+    indic_id,
+    enforce_zone_id,
+    metric_enforce_date,
+    maille,
+    round(indic_vi::numeric, 2) as indic_vi,
+    round(indic_va::numeric, 2) as indic_va,
+    round(indic_vc::numeric, 2) as indic_vc,
+    round(indic_ta::numeric, 2) as indic_ta
+  FROM merge_exports
+)
 
 
-SELECT * FROM merge_exports order by indic_id, maille, enforce_zone_id, metric_enforce_date
+SELECT * FROM round_2_dec order by indic_id, maille, enforce_zone_id, metric_enforce_date
