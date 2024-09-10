@@ -21,7 +21,9 @@ import {
 import {
   MetadataIndicateurInterrupteur,
 } from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInterrupteur';
-
+import {
+  MetadataIndicateurSelecteurAvecRecherche,
+} from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteurAvecRecherche';
 
 const SectionDétailsMetadataIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat
@@ -37,6 +39,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
   const {
     register,
     getValues,
+    setValue,
     errors,
     metadataIndicateurs,
     optionsIndicateurParent,
@@ -82,13 +85,13 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       </div>
       <div className='fr-grid-row fr-grid-row--gutters'>
         <div className='fr-col-12 fr-col-md-6'>
-          <MetadataIndicateurSelecteur
+          <MetadataIndicateurSelecteurAvecRecherche
             erreurMessage={errors.indicParentCh?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_parent_ch}
             listeValeur={optionsParentCh}
-            register={register('indicParentCh')}
             valeurAffiché={`${indicateur.indicParentCh} - ${chantiers.find(chantier => chantier.id === indicateur.indicParentCh)?.nom}`}
+            valeurModifiéeCallback={valeur => setValue('indicParentCh', valeur)}
             values={getValues('indicParentCh')}
           />
         </div>
