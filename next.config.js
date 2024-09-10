@@ -8,6 +8,12 @@ const nextConfig = {
         source: '/centreaide/:slug*',
         destination: '/centreaide/:slug*/index.html', 
       },
+      {
+        source: '/dbt/:slug*',
+        destination: '/dbt_docs/:slug*', 
+      },
+      // TODO: faire fonctionner le /dbt pour la racine
+      //    car seul /dbt/index.html fonctionne avec cette config
     ]
   },
   compiler: {
