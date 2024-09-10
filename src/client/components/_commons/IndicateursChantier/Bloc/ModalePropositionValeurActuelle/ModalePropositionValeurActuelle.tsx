@@ -100,7 +100,7 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                           </span>
                           <div className='w-full flex flex-column justify-between fr-pt-1w'>
                             <span className='flex justify-center fr-mb-5v'>
-                              {detailIndicateur.valeurActuelle}
+                              {detailIndicateur.valeurActuelle?.toLocaleString()}
                             </span>
                             <span className='flex justify-center align-end texte-gris'>
                               (
@@ -175,7 +175,7 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                             {' '}
                             {`${formaterDate(new Date().toISOString(), 'DD/MM/YYYY')}`}
                             {' '}
-                            par 
+                            par
                             {' '}
                             {auteurModification}
                             {' '}

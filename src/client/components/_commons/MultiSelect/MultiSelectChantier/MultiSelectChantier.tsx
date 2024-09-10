@@ -1,7 +1,7 @@
 import { FunctionComponent, useEffect, useState } from 'react';
 import MultiSelect from '@/client/components/_commons/MultiSelect/MultiSelect';
 import { MultiSelectOptions, MultiSelectOptionsGroupées } from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
-import { deuxTableauxSontIdentiques, trierParOrdreAlphabétique } from '@/client/utils/arrays';
+import { trierParOrdreAlphabétique } from '@/client/utils/arrays';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 
 interface MultiSelectChantierProps {
@@ -14,7 +14,7 @@ interface MultiSelectChantierProps {
 }
 
 const MultiSelectChantier: FunctionComponent<MultiSelectChantierProps> = ({ chantiersIdsSélectionnésParDéfaut, changementValeursSélectionnéesCallback, valeursDésactivées, chantiers, afficherBoutonsSélection, desactive }) => {
-  const [valeursSélectionnéesParDéfaut, setValeursSélectionnéesParDéfaut] = useState(chantiersIdsSélectionnésParDéfaut);
+  // const [valeursSélectionnéesParDéfaut, setValeursSélectionnéesParDéfaut] = useState(chantiersIdsSélectionnésParDéfaut);
   const [optionsGroupées, setOptionsGroupées] = useState<MultiSelectOptionsGroupées>([]);
 
   useEffect(() => {
@@ -30,13 +30,6 @@ const MultiSelectChantier: FunctionComponent<MultiSelectChantierProps> = ({ chan
     }
   }, [chantiers, valeursDésactivées]);
 
-  useEffect(() => {
-    if (!deuxTableauxSontIdentiques(chantiersIdsSélectionnésParDéfaut ?? [], valeursSélectionnéesParDéfaut ?? [])) {
-      setValeursSélectionnéesParDéfaut(chantiersIdsSélectionnésParDéfaut);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chantiersIdsSélectionnésParDéfaut, valeursSélectionnéesParDéfaut, setValeursSélectionnéesParDéfaut]);
-
   return (
     <MultiSelect
       afficherBoutonsSélection={afficherBoutonsSélection}
@@ -45,7 +38,7 @@ const MultiSelectChantier: FunctionComponent<MultiSelectChantierProps> = ({ chan
       label='Chantier(s)'
       optionsGroupées={optionsGroupées}
       suffixeLibellé='chantier(s) sélectionné(s)'
-      valeursSélectionnéesParDéfaut={valeursSélectionnéesParDéfaut}
+      valeursSélectionnéesParDéfaut={chantiersIdsSélectionnésParDéfaut}
     />
   );
 };
