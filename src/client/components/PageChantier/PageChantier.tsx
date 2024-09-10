@@ -38,6 +38,8 @@ import {
 import { AvancementChantierContrat } from '@/components/PageChantier/AvancementChantier';
 import { CoordinateurTerritorial, ResponsableLocal } from '@/server/domain/territoire/Territoire.interface';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
+import BandeauInformationMajDonnees from '@/components/PageChantier/BandeauInformationMajDonnees/BandeauInformationMajDonnees';
+import api from '@/server/infrastructure/api/trpc/api';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import PageChantierEnTête from './EnTête/EnTête';
 import Cartes from './Cartes/Cartes';
@@ -94,9 +96,16 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
     estAutoriseAProposerUneValeurActuelle,
     estAutoriseAModifierLesPublications,
     estAutoriseAModifierLesObjectifs,
-  } = usePageChantier(chantier, territoireSélectionné);
+    estAutoriseAVoirLesAlertesMAJIndicateurs,
+  } = usePageChantier(chantier, territoireSélectionné, territoireCode);
 
   const listeRubriques = listeRubriquesChantier(indicateurs.map(indicateur => indicateur.type), territoireSélectionné.maille);
+
+  const { data: alerteMiseAJourIndicateurEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR' });
+  const alerteMiseAJourIndicateur = estAutoriseAVoirLesAlertesMAJIndicateurs && !!alerteMiseAJourIndicateurEstDisponible && Object.values(détailsIndicateurs).flatMap(values => Object.values(values)).reduce((acc, val) => {
+    return !val.estAJour && (val.pondération || 0) > 0 && val.est_applicable ? true : acc;
+  }, false);
+
 
   return (
     <PageChantierStyled className='flex'>
@@ -151,6 +160,14 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
           responsables={chantier.responsables}
           territoireCode={territoireCode}
         />
+        {
+          !!alerteMiseAJourIndicateur && 
+            <BandeauInformationMajDonnees
+              bandeauType='WARNING'
+              message="un ou plusieurs indicateurs de cette politique prioritaire nécessitent au moins une mise à jour de leur valeur actuelle par l'équipe projet."
+              titre='Mise à jour des données requises : '
+            />
+        }
         <div className='fr-container--fluid fr-py-2w fr-px-md-2w'>
           <div
             className={`grid-template ${territoireSélectionné.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}
@@ -317,6 +334,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     Indicateurs
                   </Titre>
                   <IndicateursChantier
+                    alerteMiseAJourIndicateur={alerteMiseAJourIndicateur}
                     chantierEstTerritorialisé={chantier.estTerritorialisé}
                     detailsIndicateursTerritoire={detailsIndicateursTerritoire}
                     détailsIndicateurs={détailsIndicateurs}

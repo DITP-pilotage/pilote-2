@@ -366,6 +366,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
               }
               <TableauChantiers
                 données={donnéesTableauChantiers}
+                mailleSelectionnee={mailleSelectionnee}
                 ministèresDisponibles={ministères}
                 territoireCode={territoireCode}
               />

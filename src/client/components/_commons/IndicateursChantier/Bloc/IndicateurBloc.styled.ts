@@ -1,6 +1,14 @@
 import styled from '@emotion/styled';
 
 const IndicateurBlocStyled = styled.div`
+  table.fr-table tbody tr:nth-child(2n + 1) {
+    background-color: var(--background-contrast-grey);
+  }  
+  
+  table.fr-table tbody tr:nth-child(2n) {
+    background-color: transparent;
+  }
+  
   &:last-of-type {
     margin-bottom: 0 !important;
   }
@@ -15,7 +23,7 @@ const IndicateurBlocStyled = styled.div`
     font-size: inherit;
   }
   
-  .ligne-creation-proposition-valeur-actuelle {
+  .ligne-creation-proposition-valeur-actuelle, .ligne-territoire-proposition-valeur-actuelle {
     background-color: transparent!important;
   }
   
@@ -24,6 +32,9 @@ const IndicateurBlocStyled = styled.div`
     
     
     & .infobulle-bouton {
+      min-height: 2rem;
+      max-height: 2rem;
+      padding-top: 0;
       color: var(--yellow-moutarde-main-679)!important;
     }
     
