@@ -3,7 +3,6 @@ Cette classe ne possède pas encore de test car la récupération/création des 
 On ne peut donc pas utiliser la creation de table par migration prisma 
  */
 
-
 import { Prisma, PrismaClient } from '@prisma/client';
 import Logger from '@/server/infrastructure/Logger';
 import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur';
@@ -636,8 +635,6 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  contact_technique_email = ${makeStrSafer(indicateur.contactTechniqueEmail)}, 
                                                  commentaire = ${makeStrSafer(indicateur.commentaire)};`;
     } ;
-
-
 
 
     const listePromise = listeMetadataIndicateur.flatMap(indicateur => {
