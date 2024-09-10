@@ -30,7 +30,7 @@ import {
   presenterEnAvancementsStatistiquesAccueilContrat,
   RépartitionsMétéos,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
-import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateurNew/agrégateur';
+import { AgrégateurListeChantiersParTerritoire } from '@/client/utils/chantier/agrégateurListeChantiers/agrégateur';
 import { objectEntries } from '@/client/utils/objects/objects';
 import CompteurFiltre from '@/client/utils/filtres/CompteurFiltre';
 import Axe from '@/server/domain/axe/Axe.interface';
@@ -139,14 +139,14 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
       const avancementChantierRapportDetaille = new AgrégateurChantierRapportDetailleParTerritoire(chantier).agréger();
       const avancementRégional = (typeTauxAvancement: 'global' | 'annuel') => {
         return territoireSélectionné.maille === 'régionale'
-          ? avancementChantierRapportDetaille.régionale.territoires[territoireSélectionné.codeInsee].répartition.avancements[typeTauxAvancement].moyenne
+          ? avancementChantierRapportDetaille.régionale.territoires[territoireSélectionné.codeInsee].répartition.avancements[typeTauxAvancement]
           : territoireSélectionné.maille === 'départementale' && territoireSélectionné.codeParent
-            ? avancementChantierRapportDetaille.régionale.territoires[territoireSélectionné.codeParent.split('-')[1]].répartition.avancements[typeTauxAvancement].moyenne
+            ? avancementChantierRapportDetaille.régionale.territoires[territoireSélectionné.codeParent.split('-')[1]].répartition.avancements[typeTauxAvancement]
             : null;
       };
 
       const avancementDépartemental = (typeTauxAvancement: 'global' | 'annuel') => {
-        return territoireSélectionné.maille === 'départementale' ? avancementChantierRapportDetaille[mailleSelectionnee].territoires[territoireSélectionné.codeInsee].répartition.avancements[typeTauxAvancement].moyenne : null;
+        return territoireSélectionné.maille === 'départementale' ? avancementChantierRapportDetaille[mailleSelectionnee].territoires[territoireSélectionné.codeInsee].répartition.avancements[typeTauxAvancement] : null;
       };
 
       return {
@@ -245,7 +245,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   }]);
   const avancementsAgrégés = await récupérerStatistiquesChantiersUseCase.run(chantiersAvecAlertes.map(chantier => chantier.id), mailleSelectionnee || 'départementale', session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat);
 
-  const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire(chantiersAvecAlertes, mailleSelectionnee || 'départementale').agréger();
+  const donnéesTerritoiresAgrégées = new AgrégateurListeChantiersParTerritoire(chantiersAvecAlertes, mailleSelectionnee || 'départementale').agréger();
 
   if (avancementsAgrégés) {
     avancementsAgrégés.global.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[codeInseeSelectionne].répartition.avancements.global.moyenne;

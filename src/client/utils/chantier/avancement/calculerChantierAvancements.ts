@@ -12,19 +12,19 @@ export default function calculerChantierAvancements(
   avancementsAgrégés: AvancementsStatistiques,
 ) {
   
-  const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire([chantier]).agréger();
+  const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire(chantier).agréger();
 
   const avancementRégional = ( typeTauxAvancement: 'global' | 'annuel' ) => {
     if (territoireSélectionné.maille === 'régionale')
-      return donnéesTerritoiresAgrégées.régionale.territoires[territoireSélectionné.codeInsee].répartition.avancements[typeTauxAvancement].moyenne;
+      return donnéesTerritoiresAgrégées.régionale.territoires[territoireSélectionné.codeInsee].répartition.avancements[typeTauxAvancement];
 
     if (territoireSélectionné.maille === 'départementale' && territoireParent)
-      return donnéesTerritoiresAgrégées.régionale.territoires[territoireParent.codeInsee].répartition.avancements[typeTauxAvancement].moyenne;
+      return donnéesTerritoiresAgrégées.régionale.territoires[territoireParent.codeInsee].répartition.avancements[typeTauxAvancement];
   };
 
   const avancementDépartemental = ( typeTauxAvancement: 'global' | 'annuel' ) => {
     if (territoireSélectionné.maille === 'départementale')
-      return donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[territoireSélectionné.codeInsee].répartition.avancements[typeTauxAvancement].moyenne;
+      return donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[territoireSélectionné.codeInsee].répartition.avancements[typeTauxAvancement];
   };
 
   return {
