@@ -129,6 +129,8 @@ select
     coord_territoriaux.email as coordinateurs_territoriaux_mails,
     chantier_est_barometre.est_barometre,
     mc.ch_territo as est_territorialise,
+    -- Si ch_cible_attendue=NULL -> on le considère TRUE
+    COALESCE(mc.ch_cible_attendue, TRUE) as cible_attendue,
     t.code as territoire_code,
 	LOWER(mc.ch_saisie_ate)::type_ate as ate,
     COALESCE(ch_state::type_statut, 'PUBLIE') as statut,

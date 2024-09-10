@@ -16,13 +16,13 @@ const Alerte = {
     return tendance === 'BAISSE';
   },
 
-  estEnAlerteTauxAvancementNonCalculé(tauxAvancement: number | null) {
-    return tauxAvancement === null;
+  estEnAlerteTauxAvancementNonCalculé(tauxAvancement: number | null, cibleAttendu: boolean) {
+    return cibleAttendu && tauxAvancement === null;
   },
 
-  estEnAlerteAbscenceTauxAvancementDepartemental(departementsDonnées: ListeTerritoiresDonnéeAccueilContrat) {
+  estEnAlerteAbscenceTauxAvancementDepartemental(departementsDonnées: ListeTerritoiresDonnéeAccueilContrat, cibleAttendu: boolean) {
     const donnéesApplicables = Object.values(departementsDonnées).filter(donnée => donnée.estApplicable);
-    return donnéesApplicables.length > 0 && donnéesApplicables.every(donnée => donnée.avancement.global === null);
+    return cibleAttendu && donnéesApplicables.length > 0 && donnéesApplicables.every(donnée => donnée.avancement.global === null);
   },
 
   estEnAlerteMétéoNonRenseignée(météo: ChantierVueDEnsemble['météo']) {

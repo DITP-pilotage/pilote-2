@@ -90,23 +90,43 @@ describe('Alerte', () => {
   });
 
   describe('estEnAlerteTauxAvancementNonCalculé', () => {
-    test("le chantier est en alerte si le taux d'avancement est null", () => {
+    test("le chantier est en alerte si le taux d'avancement est null et qu'une cible est attendu", () => {
       // Given
       const tauxAvancement = null;
 
       // When
-      const estEnAlerteTauxAvancementNonCalculé = Alerte.estEnAlerteTauxAvancementNonCalculé(tauxAvancement);
+      const estEnAlerteTauxAvancementNonCalculé = Alerte.estEnAlerteTauxAvancementNonCalculé(tauxAvancement, true);
 
       // Then
       expect(estEnAlerteTauxAvancementNonCalculé).toBeTruthy();
     });
 
-    test("le chantier n'est pas en alerte si le taux d'avancement est non null", () => {
+    test("le chantier n'est pas en alerte si le taux d'avancement est non null et qu'une cible est attendue", () => {
       // Given
       const tauxAvancement = 55;
 
       // When
-      const estEnAlerteTauxAvancementNonCalculé = Alerte.estEnAlerteTauxAvancementNonCalculé(tauxAvancement);
+      const estEnAlerteTauxAvancementNonCalculé = Alerte.estEnAlerteTauxAvancementNonCalculé(tauxAvancement, true);
+
+      // Then
+      expect(estEnAlerteTauxAvancementNonCalculé).toBeFalsy();
+    });
+    test("le chantier n'est pas en alerte si le taux d'avancement null et qu'une cible n'est pas attendue", () => {
+      // Given
+      const tauxAvancement = null;
+
+      // When
+      const estEnAlerteTauxAvancementNonCalculé = Alerte.estEnAlerteTauxAvancementNonCalculé(tauxAvancement, false);
+
+      // Then
+      expect(estEnAlerteTauxAvancementNonCalculé).toBeFalsy();
+    });
+    test("le chantier n'est pas en alerte si le taux d'avancement non null et qu'une cible n'est pas attendue", () => {
+      // Given
+      const tauxAvancement = 55;
+
+      // When
+      const estEnAlerteTauxAvancementNonCalculé = Alerte.estEnAlerteTauxAvancementNonCalculé(tauxAvancement, false);
 
       // Then
       expect(estEnAlerteTauxAvancementNonCalculé).toBeFalsy();
@@ -134,7 +154,7 @@ describe('Alerte', () => {
   });
 
   describe('estEnAlerteAbscenceTauxAvancementDepartemental', () => {
-    test('le chantier est en alerte si tous les départements applicables ont un avancement global null', () => {
+    test('le chantier est en alerte si tous les départements applicables ont un avancement global null et qu\'une valeur cible est attendue', () => {
       // Given
       const départementsDonnées: ListeTerritoiresDonnéeAccueilContrat = {
         '01': {
@@ -175,10 +195,57 @@ describe('Alerte', () => {
         },
       };
       // When
-      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(départementsDonnées);
+      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(départementsDonnées, true);
 
       // Then
       expect(estEnAlerteAbscenceTauxAvancementDepartemental).toBeTruthy();
+    });
+
+    test('le chantier n\'est pas en alerte si une valeur cible n\'est pas attendue', () => {
+      // Given
+      const départementsDonnées: ListeTerritoiresDonnéeAccueilContrat = {
+        '01': {
+          estApplicable: true,
+          avancement: {
+            'global': null,
+            'annuel': null,
+          },
+          écart: null,
+          tendance: null,
+          dateDeMàjDonnéesQualitatives: null,
+          dateDeMàjDonnéesQuantitatives: null,
+          météo: 'NON_RENSEIGNEE',
+        },
+        '02': {
+          estApplicable: false,
+          avancement: {
+            'global': 12,
+            'annuel': null,
+          },
+          écart: null,
+          tendance: null,
+          dateDeMàjDonnéesQualitatives: null,
+          dateDeMàjDonnéesQuantitatives: null,
+          météo: 'NON_RENSEIGNEE',
+        },
+        '03': {
+          estApplicable: true,
+          avancement: {
+            'global': null,
+            'annuel': null,
+          },
+          écart: null,
+          tendance: null,
+          dateDeMàjDonnéesQualitatives: null,
+          dateDeMàjDonnéesQuantitatives: null,
+          météo: 'NON_RENSEIGNEE',
+        },
+      };
+      // When
+      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(départementsDonnées, false);
+
+      // Then
+      expect(estEnAlerteAbscenceTauxAvancementDepartemental).toBeFalse();
     });
 
     test("le chantier n'est pas en alerte si aucun département est applicable", () => {
@@ -223,7 +290,7 @@ describe('Alerte', () => {
       };
 
       // When
-      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(départementsDonnées);
+      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(départementsDonnées, true);
 
       // Then
       expect(estEnAlerteAbscenceTauxAvancementDepartemental).toBeFalsy();
@@ -271,7 +338,7 @@ describe('Alerte', () => {
       };
 
       // When
-      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(départementsDonnées);
+      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(départementsDonnées, true);
 
       // Then
       expect(estEnAlerteAbscenceTauxAvancementDepartemental).toBeFalsy();

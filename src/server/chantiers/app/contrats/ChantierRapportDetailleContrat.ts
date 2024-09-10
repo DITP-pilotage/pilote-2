@@ -84,6 +84,7 @@ export interface ChantierRapportDetailleContrat {
   mailles: MailleRapportDetailleContrat;
   périmètreIds: string[]
   statut: TypeStatut,
+  cibleAttendu: boolean,
   estTerritorialisé: boolean
   estBaromètre: boolean
   axe: string
@@ -176,6 +177,7 @@ export const presenterEnChantierRapportDetaille = (territoireCode: string) => (c
     id: chantier.id,
     nom: chantier.nom,
     statut: chantier.statut,
+    cibleAttendu: chantier.cibleAttendu,
     mailles,
     périmètreIds: chantier.périmètreIds,
     estTerritorialisé: chantier.estTerritorialisé,
