@@ -2,6 +2,7 @@ import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/component/input/input.min.css';
 import { FunctionComponent, HTMLInputTypeAttribute } from 'react';
 import { FieldError, FieldErrorsImpl, Merge, UseFormRegisterReturn } from 'react-hook-form';
+import { ChampObligatoire } from '@/components/PageIndicateur/ChampObligatoire';
 
 interface TexteAreaLabelProps {
   libellé: string,
@@ -9,6 +10,7 @@ interface TexteAreaLabelProps {
   register: UseFormRegisterReturn,
   erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>,
   erreurMessage?: string,
+  isRequired?: boolean,
   disabled?: boolean,
   className?: string,
   texteAide?: string,
@@ -18,6 +20,7 @@ interface TexteAreaLabelProps {
 const TextAreaAvecLabel: FunctionComponent<TexteAreaLabelProps> = ({
   erreur,
   erreurMessage,
+  isRequired = false,
   libellé,
   htmlName,
   texteAide,
@@ -33,6 +36,11 @@ const TextAreaAvecLabel: FunctionComponent<TexteAreaLabelProps> = ({
       >
         {libellé}
         {
+          isRequired ? (
+            <ChampObligatoire />
+          ) : null
+        }
+        {
           !!texteAide &&
           <span className='fr-hint-text'>
               {texteAide}
@@ -46,11 +54,11 @@ const TextAreaAvecLabel: FunctionComponent<TexteAreaLabelProps> = ({
         {...register}
       />
       {
-        erreur !== undefined &&
+        (erreur !== undefined || erreurMessage !== undefined) &&
         <p
           className='fr-error-text'
         >
-          {erreur.message?.toString()}
+          {erreur?.message?.toString() || erreurMessage}
         </p>
       }
     </div>

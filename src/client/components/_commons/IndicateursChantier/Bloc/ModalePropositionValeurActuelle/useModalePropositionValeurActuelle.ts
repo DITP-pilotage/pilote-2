@@ -1,6 +1,7 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import type { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { validationPropositionValeurActuelle } from '@/validation/proposition-valeur-actuelle';
@@ -44,6 +45,10 @@ const useModalePropositionValeurActuelle = ({ detailIndicateur, indicateur, terr
   territoireCode: string
 }) => {
 
+  const { data: session } = useSession();
+
+  const auteurModification = session?.user.name;
+
   const [etapePropositionValeurActuelle, setEtapePropositionValeurActuelle] = useState<EtapePropositionValeurActuelle | null>(EtapePropositionValeurActuelle.SAISIE_VALEUR_ACTUELLE);
 
   const mutationCreerPropositonValeurActuelle = api.propositionValeurActuelle.creer.useMutation({
@@ -59,6 +64,7 @@ const useModalePropositionValeurActuelle = ({ detailIndicateur, indicateur, terr
       valeurActuelle: data.valeurActuelle,
       dateValeurActuelle: detailIndicateur.dateValeurActuelle!,
       indicId: indicateur.id,
+      auteurModification,
       territoireCode,
     };
 
@@ -70,14 +76,14 @@ const useModalePropositionValeurActuelle = ({ detailIndicateur, indicateur, terr
     mode: 'all',
     resolver: zodResolver(validationPropositionValeurActuelle),
     defaultValues: detailIndicateur.proposition === null ? {
-      valeurActuelle: `${detailIndicateur.valeurActuelle}`,
+      valeurActuelle: `${detailIndicateur.valeurActuelle?.toLocaleString()}`,
       motifProposition: '',
       sourceDonneeEtMethodeCalcul: '',
       dateValeurActuelle: detailIndicateur.dateValeurActuelle!,
       indicId: indicateur.id,
       territoireCode,
     } : {
-      valeurActuelle: `${detailIndicateur.proposition.valeurActuelle}`,
+      valeurActuelle: `${detailIndicateur.proposition.valeurActuelle.toLocaleString()}`,
       motifProposition: detailIndicateur.proposition.motif || '',
       sourceDonneeEtMethodeCalcul: detailIndicateur.proposition.sourceDonneeEtMethodeCalcul || '',
       dateValeurActuelle: detailIndicateur.dateValeurActuelle!,
@@ -86,11 +92,15 @@ const useModalePropositionValeurActuelle = ({ detailIndicateur, indicateur, terr
     },
   });
 
+  reactHookForm.watch('motifProposition');
+  reactHookForm.watch('sourceDonneeEtMethodeCalcul');
+
   return {
     reactHookForm,
     creerPropositonValeurActuelle,
     etapePropositionValeurActuelle,
     setEtapePropositionValeurActuelle,
+    auteurModification,
   };
 };
 

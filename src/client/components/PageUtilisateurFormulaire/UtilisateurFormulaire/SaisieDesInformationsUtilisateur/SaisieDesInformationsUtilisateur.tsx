@@ -182,10 +182,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
             Responsabilités
           </Titre>
           <p className='fr-text--xs texte-gris fr-mb-4w'>
-            Parmi les chantiers autorisés en lecture, merci d\'indiquer celles pour lesquelles l\'utilisateur est
-            désigné responsable local.
-            L'utilisateur apparaîtra nominativement comme responsable local de ces chantiers sur les pages concernés de
-            PILOTE.
+            Parmi les chantiers autorisés en lecture, merci d'indiquer ceux pour lesquels l'utilisateur a des responsabilités spécifiques (directeur de projet ou responsable local). L'utilisateur apparaîtra nominativement comme directeur de projet ou responsable local de ces chantiers sur les pages des chantiers concernés dans PILOTE
           </p>
           <div className='fr-mb-4w'>
             <Controller

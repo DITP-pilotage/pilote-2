@@ -23,6 +23,7 @@ import {
 } from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { useIndicateurDétails } from './useIndicateurDétails';
 
 interface IndicateurDétailsProps {
@@ -76,6 +77,8 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   const nomRepartitionGeographiqueEtEvolution = 'Répartition géographique et évolution';
   const nomSousIndicateurs = 'Sous indicateurs';
 
+  const { codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+
   return (
     <div className='fr-accordions-group'>
       <section className='fr-accordion'>
@@ -107,6 +110,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       delaiDisponibilite={indicateur.delaiDisponibilite}
                       description={indicateur.description}
                       indicateurEstAjour={indicateurEstAjour}
+                      indicateurEstApplicable={détailsIndicateurs[indicateur.id][codeInsee]?.est_applicable}
                       modeDeCalcul={indicateur.modeDeCalcul}
                       periodicite={indicateur.periodicite}
                       source={indicateur.source}

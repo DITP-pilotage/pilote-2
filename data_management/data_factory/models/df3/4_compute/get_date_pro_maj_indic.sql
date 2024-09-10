@@ -22,11 +22,11 @@ SELECT
 	spmi.id as indic_id, 
 	i.chantier_id, 
 	base_mailles.maille,
-	max(last_vaca.date_valeur_actuelle::date) AS last_va_date,
-	count(*) AS n
+	last_vaca.last_va_date as last_va_date
 FROM base_mailles
 CROSS JOIN {{ ref('stg_ppg_metadata__indicateurs') }} spmi
-LEFT JOIN {{ ref('get_last_vaca') }} as last_vaca ON last_vaca.indic_id = spmi.id
+LEFT JOIN {{ ref('get_last_vaca_maille') }} as last_vaca ON last_vaca.indic_id = spmi.id
+	AND last_vaca.maille=base_mailles.maille -- ajouter jointure avec la maille
 LEFT JOIN {{ ref('stg_ppg_metadata__indicateurs') }} i ON i.id =spmi.id
 LEFT JOIN {{ ref('stg_ppg_metadata__chantiers') }} cchantier ON i.chantier_id =cchantier.id
 LEFT JOIN src_indic_territo it ON spmi.id =it.indic_id
@@ -37,7 +37,6 @@ WHERE
 	(base_mailles."maille"='REG' 	and cchantier.est_territorialise and it.indic_territo and maille_pilotage IN ('REG', 'DEPT')) OR
 	-- Pour NAT: Tous les indics
 	(base_mailles."maille"='NAT')
-GROUP BY spmi.id, base_mailles.maille, i.chantier_id 
 ORDER BY spmi.id, base_mailles.maille)
 
 
@@ -69,10 +68,17 @@ LEFT JOIN src_config_tempo AS b ON a.indic_id=b.indic_id
 
 -- Calcul de la prochaine date de màj
 --	prochaine_date_maj= prochaine_date_va+delai_disponibilite
+, get_prochaine_date_maj_debut_mois AS (
+SELECT *, 
+	(prochaine_date_va+ delai_disponibilite * interval '1 month') AS prochaine_date_maj_debut_mois
+FROM get_prochaine_date_va
+)
+
+-- On arrondit la date à la FIN du mois
 , get_prochaine_date_maj AS (
 SELECT *, 
-	(prochaine_date_va+ delai_disponibilite * interval '1 month') AS prochaine_date_maj
-FROM get_prochaine_date_va
+	(prochaine_date_maj_debut_mois::date + interval '1 month' - interval '1 day') AS prochaine_date_maj
+FROM get_prochaine_date_maj_debut_mois
 )
 
 -- Calcule si données à jour + distance à la prochaine màj (en jours)

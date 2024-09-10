@@ -25,7 +25,7 @@ export const utilisateurRouter = créerRouteurTRPC({
     .input(validationInfosBaseUtilisateur.merge(zodValidateurCSRF).merge(validationInfosHabilitationsUtilisateur))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      const auteurModification = ctx.session.user.name ?? '';
+      const auteurModification = ctx.session.user.email ?? '';
       const profilAuteur = await new RécupérerUnProfilUseCase(
         dependencies.getProfilRepository(),
       ).run(ctx.session.profil);
@@ -42,7 +42,7 @@ export const utilisateurRouter = créerRouteurTRPC({
     .input(validationInfosBaseUtilisateur.merge(zodValidateurCSRF).merge(validationInfosHabilitationsUtilisateur))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      const auteurModification = ctx.session.user.name ?? '';
+      const auteurModification = ctx.session.user.email ?? '';
       const profilAuteur = await new RécupérerUnProfilUseCase(
         dependencies.getProfilRepository(),
       ).run(ctx.session.profil);

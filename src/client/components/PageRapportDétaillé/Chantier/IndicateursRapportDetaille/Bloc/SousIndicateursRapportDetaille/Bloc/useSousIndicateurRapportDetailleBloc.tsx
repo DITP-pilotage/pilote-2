@@ -159,7 +159,9 @@ export default function useSousIndicateurBloc(détailsIndicateur: DétailsIndica
     ? formaterDate(détailsIndicateur[détailTerritoireSélectionné.codeInsee]?.prochaineDateMaj, 'DD/MM/YYYY') ?? null
     : null;
 
-  const indicateurNonAJour = détailsIndicateur[codeInsee]?.estAJour === false && détailsIndicateur[codeInsee]?.prochaineDateMaj !== null;
+  const indicateurNonAJour = détailsIndicateur[codeInsee]?.estAJour === false;
+
+  const indicateurEstApplicable = !!détailsIndicateur[codeInsee]?.est_applicable;
 
   return {
     tableau,
@@ -167,5 +169,6 @@ export default function useSousIndicateurBloc(détailsIndicateur: DétailsIndica
     dateProchaineDateMaj,
     indicateurNonAJour,
     indicateurDétailsParTerritoires,
+    indicateurEstApplicable,
   };
 }
