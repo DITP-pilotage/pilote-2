@@ -577,7 +577,7 @@ sources:
               Indiquer s'il faut faire une somme ou une moyenne des VA. Si la VA doit être utilisée telle que saisie, indiquer "Valeur saisie".
             meta:
               pilote_alias: "Opération (TA annuel)"
-              pilote_edit_boxType: multi-select   
+              pilote_edit_boxType: multi-select
               pilote_disp_dispDesc: true
               pilote_create_defaultValue: ""
               pilote_disp_blocId: 5
