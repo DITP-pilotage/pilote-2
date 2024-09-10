@@ -5,6 +5,10 @@ const ResponsablesLigneChantierStyled = styled.section`
         @media(max-width: 450px) {
             align-items: flex-end;  
         }
+          
+        @media print {
+            display: none;
+        }
     }
 `;
 
