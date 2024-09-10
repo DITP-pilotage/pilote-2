@@ -577,12 +577,12 @@ sources:
               Indiquer s'il faut faire une somme ou une moyenne des VA. Si la VA doit être utilisée telle que saisie, indiquer "Valeur saisie".
             meta:
               pilote_alias: "Opération (TA annuel)"
-              pilote_edit_boxType: multi-select
+              pilote_edit_boxType: multi-select   
               pilote_disp_dispDesc: true
               pilote_create_defaultValue: ""
               pilote_disp_blocId: 5
               pilote_edit_acceptedValues: [
-                { "order_id": 0, "value": "", "name": "Choisir une opération (TA annuel)", "desc": "Choisir une opération (TA annuel)" },
+                { "order_id": 0, "value": "", "name": "", "desc": "Choisir une Opération (TA annuel)" },
                 { "order_id": 1, "value": "current_value", "name": "Valeur saisie", "desc": "VA saisie : non cumulable (%) ou déjà cumulée (valeur à date)" },
                 { "order_id": 2, "value": "sum", "name": "Somme des VA" },
                 { "order_id": 3, "value": "moy", "name": "Moyenne" }
@@ -629,7 +629,7 @@ sources:
               pilote_create_defaultValue: ""
               pilote_disp_blocId: 5
               pilote_edit_acceptedValues: [
-                { "order_id": 0, "value": "", "name": "Choisir une opération (TA global)", "desc": "Choisir une opération (TA global)" },
+                { "order_id": 0, "value": "", "name": "", "desc": "Choisir une Opération (TA global)" },
                 { "order_id": 1, "value": "current_value", "name": "Valeur saisie", "desc": "VA saisie : non cumulable (%) ou déjà cumulée (valeur à date)" },
                 { "order_id": 2, "value": "sum", "name": "Somme des VA" },
                 { "order_id": 3, "value": "moy", "name": "Moyenne" }

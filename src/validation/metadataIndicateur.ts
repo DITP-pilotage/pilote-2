@@ -47,8 +47,7 @@ export const validationMetadataIndicateurFormulaire = z.object({
     .boolean(),
   indicType: z
     .string()
-    .min(1, 'Veuillez choisir une option valide pour la typologie')
-    .nullable(),
+    .min(1, 'Veuillez choisir une option valide pour la typologie'),
   indicSource: z
     .string()
     .max(2500, 'La limite maximale de 2500 caractères a été dépassée')
@@ -121,7 +120,8 @@ export const validationMetadataIndicateurFormulaire = z.object({
     .string()
     .refine((value) => new RegExp(metadata.param_vaca_partition_date.metaPiloteEditRegex).test(value), metadata.param_vaca_partition_date.metaPiloteEditRegexViolationMessage),
   paramVacaOp: z
-    .string(),
+    .string()
+    .min(1, "Veuillez choisir une option valide pour l'Opération (TA annuel)"),
   paramVacgDecumulFrom: z
     .string()
     .refine((value) => new RegExp(metadata.param_vacg_decumul_from.metaPiloteEditRegex).test(value), metadata.param_vacg_decumul_from.metaPiloteEditRegexViolationMessage),
@@ -129,7 +129,8 @@ export const validationMetadataIndicateurFormulaire = z.object({
     .string()
     .refine((value) => new RegExp(metadata.param_vacg_partition_date.metaPiloteEditRegex).test(value), metadata.param_vacg_partition_date.metaPiloteEditRegexViolationMessage),
   paramVacgOp: z
-    .string(),
+    .string()
+    .min(1, "Veuillez choisir une option valide pour l'Opération (TA global)"),
   poidsPourcentDept: z
     .string()
     .refine((value) => new RegExp(metadata.poids_pourcent_dept_declaree.metaPiloteEditRegex).test(value), metadata.poids_pourcent_dept_declaree.metaPiloteEditRegexViolationMessage),
