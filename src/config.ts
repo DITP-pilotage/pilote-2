@@ -240,6 +240,11 @@ const config = convict({
       env: 'TOKEN_API_SECRET',
     },
   },
+  schemaValidataUrl: {
+    format: String,
+    default: 'https://raw.githubusercontent.com/DITP-pilotage/pilote-2/dev/public/schema/',
+    env: 'NEXT_PUBLIC_SCHEMA_VALIDATA_URL',
+  },
 });
 
 config.set('keycloak.tokenUrl', config.get('keycloak.issuer') + '/protocol/openid-connect/token');
