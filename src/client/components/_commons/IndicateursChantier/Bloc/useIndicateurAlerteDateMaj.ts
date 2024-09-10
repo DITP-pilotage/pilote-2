@@ -6,14 +6,14 @@ export const PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS = new Set([Profi
 
 export default function useIndicateurAlerteDateMaj(
   indicateurNonAJour: boolean,
-  IndicateurEstApplicable: boolean,
+  indicateurEstApplicable: boolean,
 ) {
   const { data: session } = useSession();
 
   const estAutoriseAVoirLesAlertesMAJIndicateurs = PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS.has(session!.profil);
   const { data: alerteMiseAJourIndicateurEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR' });
 
-  const estIndicateurEnAlerte = estAutoriseAVoirLesAlertesMAJIndicateurs && !!alerteMiseAJourIndicateurEstDisponible && indicateurNonAJour && IndicateurEstApplicable;
+  const estIndicateurEnAlerte = estAutoriseAVoirLesAlertesMAJIndicateurs && !!alerteMiseAJourIndicateurEstDisponible && indicateurNonAJour && indicateurEstApplicable;
 
   return {
     estIndicateurEnAlerte,

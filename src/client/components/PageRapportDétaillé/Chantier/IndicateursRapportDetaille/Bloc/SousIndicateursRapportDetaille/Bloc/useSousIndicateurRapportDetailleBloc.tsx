@@ -161,7 +161,7 @@ export default function useSousIndicateurBloc(détailsIndicateur: DétailsIndica
 
   const indicateurNonAJour = détailsIndicateur[codeInsee]?.estAJour === false;
 
-  const IndicateurEstApplicable = !!détailsIndicateur[codeInsee]?.est_applicable;
+  const indicateurEstApplicable = !!détailsIndicateur[codeInsee]?.est_applicable;
 
   return {
     tableau,
@@ -169,6 +169,6 @@ export default function useSousIndicateurBloc(détailsIndicateur: DétailsIndica
     dateProchaineDateMaj,
     indicateurNonAJour,
     indicateurDétailsParTerritoires,
-    IndicateurEstApplicable,
+    indicateurEstApplicable,
   };
 }
