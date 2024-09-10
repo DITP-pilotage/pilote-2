@@ -11,6 +11,7 @@ import PageLandingStyled from '@/components/PageLanding/PageLanding.styled';
 import Titre from '@/components/_commons/Titre/Titre';
 import captureÉcranPilote from '/public/img/landing/capture-écran-pilote.png';
 import baromètreCarteSvg from '/public/img/landing/baromètre-carte-france.svg';
+import IcôneContacter from '@/client/components/_commons/IcôneContacter/IcôneContacter';
 
 const PageLanding: FunctionComponent<{}> = () => {
   return (
@@ -213,9 +214,7 @@ const PageLanding: FunctionComponent<{}> = () => {
                 className='fr-btn'
                 type='button'
               >
-                <span className='material-icons-outlined fr-mr-2v'>
-                  email
-                </span>
+                <IcôneContacter className='fr-mr-2v' />
                 <Link
                   className='font-normal'
                   href='mailto:pilote.ditp@modernisation.gouv.fr'

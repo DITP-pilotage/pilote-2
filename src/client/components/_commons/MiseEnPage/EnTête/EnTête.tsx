@@ -1,7 +1,5 @@
 import '@gouvfr/dsfr/dist/component/header/header.min.css';
 import '@gouvfr/dsfr/dist/component/logo/logo.min.css';
-import 'material-symbols/index.css';
-import 'material-icons/iconfont/material-icons.css';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { FunctionComponent } from 'react';
@@ -9,6 +7,7 @@ import Navigation from '@/components/_commons/MiseEnPage/Navigation/Navigation';
 import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
 import BandeauInformation from '@/components/_commons/BandeauInformation/BandeauInformation';
 import api from '@/server/infrastructure/api/trpc/api';
+import IcôneContacter from '@/client/components/_commons/IcôneContacter/IcôneContacter';
 
 const useEntete = () => {
   const { data: messageInformation } = api.gestionContenu.récupérerMessageInformation.useQuery();
@@ -79,9 +78,7 @@ const EnTête: FunctionComponent<{}> = () => {
                       className='fr-btn fr-text--sm fr-py-0 fr-pr-1w fr-pl-0'
                       type='button'
                     >
-                      <span className='material-icons-outlined fr-mr-2v fr-text-title--blue-france'>
-                        email
-                      </span>
+                      <IcôneContacter className='fr-mr-2v fr-text-title--blue-france' />
                       <Link
                         className='font-normal'
                         href='mailto:pilote.ditp@modernisation.gouv.fr'

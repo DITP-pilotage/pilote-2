@@ -2,8 +2,6 @@ import '@gouvfr/dsfr/dist/component/navigation/navigation.min.css';
 import '@gouvfr/dsfr/dist/component/button/button.min.css';
 import '@gouvfr/dsfr/dist/component/modal/modal.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
-import 'material-symbols/index.css';
-import 'material-icons/iconfont/material-icons.css';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -18,6 +16,7 @@ import { getFiltresActifs } from '@/stores/useFiltresStoreNew/useFiltresStoreNew
 import { récupérerUnCookie } from '@/client/utils/cookies';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import IcôneContacter from '@/client/components/_commons/IcôneContacter/IcôneContacter';
 import { derniereVersionNouveaute } from '../../../../../../public/nouveautés/ParametrageNouveautés';
 
 const fermerLaModaleDuMenu = () => {
@@ -145,9 +144,7 @@ const Navigation: FunctionComponent<{}> = () => {
                 className='fr-btn fr-text--sm fr-py-0 fr-pr-1w fr-pl-0'
                 type='button'
               >
-                <span className='material-icons-outlined fr-mr-2v fr-text-title--blue-france'>
-                  email
-                </span>
+                <IcôneContacter className='fr-mr-2v fr-text-title--blue-france' />
                 <Link
                   className='font-normal'
                   href='mailto:pilote.ditp@modernisation.gouv.fr'
