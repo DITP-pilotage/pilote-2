@@ -229,7 +229,7 @@ models:
       - name: last_va_date
         description: "Date de la VA la plus récente pour toutes les zones de cette maille pour cet indicateur."
       - name: prochaine_date_maj
-        description: "Date de màj théorique des VA pour cet indicateur d'après la périodicité déclarée."
+        description: "Date de màj théorique des VA pour cet indicateur d'après la périodicité déclarée. La date est **le dernier jour du mois**."
       - name: prochaine_date_maj_jours
         description: "Nombre de jours avant la prochaine date de màj théorique. Négatif si la donnée n'est pas à jour, çàd que la date de prochaine màj théorique est dans le passé."
       - name: prochaine_date_va

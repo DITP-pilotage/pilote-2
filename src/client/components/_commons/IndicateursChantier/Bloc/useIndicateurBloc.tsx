@@ -6,19 +6,22 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
   const { codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
   const dateDeMiseAJourIndicateur = formaterDate(détailsIndicateur[codeInsee]?.dateImport, 'DD/MM/YYYY') ?? null;
 
-  const dateProchaineDateMaj = formaterDate(détailsIndicateur[codeInsee]?.prochaineDateMaj, 'DD/MM/YYYY') ?? null;
+  const dateProchaineDateMaj = formaterDate(détailsIndicateur[codeInsee]?.prochaineDateMaj, 'MM/YYYY') ?? null;
 
-  const dateProchaineDateValeurActuelle = formaterDate(détailsIndicateur[codeInsee]?.prochaineDateValeurActuelle, 'DD/MM/YYYY') ?? null;
+  const dateProchaineDateValeurActuelle = formaterDate(détailsIndicateur[codeInsee]?.prochaineDateValeurActuelle, 'MM/YYYY') ?? null;
 
-  const dateValeurActuelle = formaterDate(détailsIndicateur[codeInsee]?.dateValeurActuelle, 'DD/MM/YYYY') ?? null;
+  const dateValeurActuelle = formaterDate(détailsIndicateur[codeInsee]?.dateValeurActuelle, 'MM/YYYY') ?? null;
 
-  const indicateurNonAJour = détailsIndicateur[codeInsee]?.estAJour === false && détailsIndicateur[codeInsee]?.prochaineDateMaj !== null;
-  
+  const indicateurNonAJour = !détailsIndicateur[codeInsee]?.estAJour;
+
+  const indicateurEstApplicable = !!détailsIndicateur[codeInsee]?.est_applicable;
+
   return {
     dateDeMiseAJourIndicateur,
     dateProchaineDateMaj,
     dateProchaineDateValeurActuelle,
     dateValeurActuelle,
     indicateurNonAJour,
+    indicateurEstApplicable,
   };
 }

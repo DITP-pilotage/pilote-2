@@ -15,7 +15,12 @@ import TableauChantiersProps from './TableauChantiers.interface';
 import TableauChantiersStyled from './TableauChantiers.styled';
 import TableauChantiersContenu from './Contenu/TableauChantiersContenu';
 
-const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({ données, ministèresDisponibles, territoireCode }) => {
+const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
+  données,
+  ministèresDisponibles,
+  territoireCode,
+  mailleSelectionnee,
+}) => {
 
   const {
     tableau,
@@ -92,6 +97,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({ données, 
               ) : null
             }
               <TableauChantiersContenu
+                mailleSelectionnee={mailleSelectionnee}
                 tableau={tableau}
                 territoireCode={territoireCode}
               />

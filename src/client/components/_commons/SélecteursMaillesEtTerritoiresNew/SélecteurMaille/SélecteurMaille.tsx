@@ -30,12 +30,12 @@ const SélecteurMaille: FunctionComponent<{
   const territoireReg = session!.habilitations.lecture.territoires.find(territoire => territoire.startsWith('REG'));
 
   const changerMaille = (maille: MailleInterne) => {
-    sauvegarderFiltres({ maille });
     const territoireCode = session?.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : maille === 'régionale' ? territoireReg : maille === 'départementale' ? territoireDept : session?.habilitations.lecture.territoires[0];
 
-    sauvegarderFiltres({ territoireCode });
+    sauvegarderFiltres({ territoireCode, maille });
 
     delete router.query._action;
+    delete router.query.territoiresCompares;
     return router.push({
       pathname,
       query: { ...router.query, territoireCode, maille },

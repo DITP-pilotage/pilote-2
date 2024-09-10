@@ -118,6 +118,15 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
       new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository()).run([chantierId], mailleSelectionnee, session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat),
     ]);
 
+    if (!chantier.estTerritorialisé && maille !== 'NAT') {
+      return {
+        redirect: {
+          destination: `/chantier/${chantierId}/NAT-FR`,
+          permanent: true,
+        },
+      };
+    }
+
     const avancements = calculerChantierAvancements(
       chantier as unknown as ChantierRapportDetailleContrat,
       mailleSelectionnee,
