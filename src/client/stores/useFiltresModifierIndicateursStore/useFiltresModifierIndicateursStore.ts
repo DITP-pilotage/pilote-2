@@ -6,18 +6,33 @@ import FiltresModifierIndicateursStore, {
 
 const filtresActifsInitiaux: FiltresModifierIndicateursActifs = {
   chantiers: [],
+  chantiersAssociésAuxPérimètres: [],
+  périmètresMinistériels: [],
+  territoires: [],
 };
 
 const useFiltresModifierIndicateursStore = create<FiltresModifierIndicateursStore>((set) => ({
   filtresActifs: filtresActifsInitiaux,
   actions: {
-    modifierÉtatDuFiltre: (filtres, catégorieDeFiltre) => {
-      set(étatActuel => ({
-        filtresActifs: {
-          ...étatActuel.filtresActifs,
-          [catégorieDeFiltre]: filtres,
-        },
-      }));
+    modifierÉtatDuFiltre: (filtres, catégorieDeFiltre, chantiersSynthétisés) => {
+
+      if (catégorieDeFiltre === 'périmètresMinistériels') {
+        const filtresChantiersSupplémentaires = chantiersSynthétisés?.filter(chantier => chantier.périmètreIds.some(périmètreId => filtres.includes(périmètreId)));
+        set(étatActuel => ({
+          filtresActifs: {
+            ...étatActuel.filtresActifs,
+            [catégorieDeFiltre]: filtres,
+            ['chantiersAssociésAuxPérimètres']: filtresChantiersSupplémentaires?.map(chantierSynthétisé => chantierSynthétisé.id) ?? [],
+          },
+        }));
+      } else {
+        set(étatActuel => ({
+          filtresActifs: {
+            ...étatActuel.filtresActifs,
+            [catégorieDeFiltre]: filtres,
+          },
+        }));
+      }
     },
     réinitialiser: () => {
       set(() => ({
@@ -43,3 +58,4 @@ const useFiltresModifierIndicateursStore = create<FiltresModifierIndicateursStor
 
 export const actions = () => useFiltresModifierIndicateursStore(étatActuel => étatActuel.actions);
 export const filtresModifierIndicateursActifsStore = () => useFiltresModifierIndicateursStore(étatActuel => étatActuel.filtresActifs);
+export const réinitialiser = () => useFiltresModifierIndicateursStore.getState().actions.réinitialiser;
