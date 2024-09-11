@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
 import Link from 'next/link';
-import IcôneContacter from '@/components/_commons/IcôneEmail/IcôneEmail';
+import IcôneEmail from '@/components/_commons/IcôneEmail/IcôneEmail';
 import ResponsablesLigneChantierStyled from './ResponsablesLigneChantier.styled';
 
 interface ResponsablesLigneProps {
@@ -33,7 +33,7 @@ const ResponsablesLigneChantier: FunctionComponent<ResponsablesLigneProps> = ({
               className='fr-col-5 fr-col-md-4 fr-col-xl-2 flex align-start justify-end bouton-format-mobile'
             >  
               <div className='flex align-start'>
-                <IcôneContacter className='fr-mr-1v fr-text-title--blue-france' />
+                <IcôneEmail className='fr-mr-1v fr-text-title--blue-france' />
                 <Link
                   className='fr-link fr-link--sm'
                   href={`mailto:${libelleEmailsResponsables}?subject=${objetCourriel}`}

@@ -16,7 +16,7 @@ import { getFiltresActifs } from '@/stores/useFiltresStoreNew/useFiltresStoreNew
 import { récupérerUnCookie } from '@/client/utils/cookies';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import IcôneContacter from '@/components/_commons/IcôneEmail/IcôneEmail';
+import IcôneEmail from '@/components/_commons/IcôneEmail/IcôneEmail';
 import { derniereVersionNouveaute } from '../../../../../../public/nouveautés/ParametrageNouveautés';
 
 const fermerLaModaleDuMenu = () => {
@@ -144,7 +144,7 @@ const Navigation: FunctionComponent<{}> = () => {
                 className='fr-btn fr-text--sm fr-py-0 fr-pr-1w fr-pl-0'
                 type='button'
               >
-                <IcôneContacter className='fr-mr-2v fr-text-title--blue-france' />
+                <IcôneEmail className='fr-mr-2v fr-text-title--blue-france' />
                 <Link
                   className='font-normal'
                   href='mailto:pilote.ditp@modernisation.gouv.fr'
