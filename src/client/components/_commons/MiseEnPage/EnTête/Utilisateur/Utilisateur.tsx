@@ -27,6 +27,7 @@ const Utilisateur: FunctionComponent<{}> = () => {
             :
             <button
               onClick={() => signIn('keycloak')}
+              title='Se connecter'
               type='button'
             >
               <i className='fr-icon-account-line fr-mr-1v' />
@@ -41,6 +42,7 @@ const Utilisateur: FunctionComponent<{}> = () => {
             <button
               className='fr-p-0'
               onClick={() => signOut()}
+              title='Déconnexion'
               type='button'
             >
               Déconnexion
