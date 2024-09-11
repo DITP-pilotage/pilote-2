@@ -2,11 +2,11 @@ import 'material-symbols/index.css';
 import 'material-icons/iconfont/material-icons.css';
 import { FunctionComponent } from 'react';
 
-interface IcôneContacterProps {
+interface IcôneEmailProps {
   className?: string
 }
 
-const IcôneContacter: FunctionComponent<IcôneContacterProps> = ({ className }) => {
+const IcôneEmail: FunctionComponent<IcôneEmailProps> = ({ className }) => {
   return (
     <span className={`material-icons-outlined ${className}`}>
       email
@@ -14,4 +14,4 @@ const IcôneContacter: FunctionComponent<IcôneContacterProps> = ({ className })
   );
 };
 
-export default IcôneContacter;
+export default IcôneEmail;

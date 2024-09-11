@@ -11,7 +11,7 @@ import PageLandingStyled from '@/components/PageLanding/PageLanding.styled';
 import Titre from '@/components/_commons/Titre/Titre';
 import captureÉcranPilote from '/public/img/landing/capture-écran-pilote.png';
 import baromètreCarteSvg from '/public/img/landing/baromètre-carte-france.svg';
-import IcôneContacter from '@/client/components/_commons/IcôneContacter/IcôneContacter';
+import IcôneContacter from '@/components/_commons/IcôneEmail/IcôneEmail';
 
 const PageLanding: FunctionComponent<{}> = () => {
   return (

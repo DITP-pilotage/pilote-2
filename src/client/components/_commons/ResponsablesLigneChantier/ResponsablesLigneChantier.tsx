@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
 import Link from 'next/link';
-import IcôneContacter from '@/client/components/_commons/IcôneContacter/IcôneContacter';
+import IcôneContacter from '@/components/_commons/IcôneEmail/IcôneEmail';
 import ResponsablesLigneChantierStyled from './ResponsablesLigneChantier.styled';
 
 interface ResponsablesLigneProps {

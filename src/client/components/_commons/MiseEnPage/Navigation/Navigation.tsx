@@ -16,7 +16,7 @@ import { getFiltresActifs } from '@/stores/useFiltresStoreNew/useFiltresStoreNew
 import { récupérerUnCookie } from '@/client/utils/cookies';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import IcôneContacter from '@/client/components/_commons/IcôneContacter/IcôneContacter';
+import IcôneContacter from '@/components/_commons/IcôneEmail/IcôneEmail';
 import { derniereVersionNouveaute } from '../../../../../../public/nouveautés/ParametrageNouveautés';
 
 const fermerLaModaleDuMenu = () => {
