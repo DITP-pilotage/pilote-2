@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 // const SVG_FILEPATH = join(process.cwd(), '/src/server/cartographie/domain/cartographie_avec_territoire_code.svg');
-const SVG_FILEPATH = join(process.cwd(), '/src/server/cartographie/domain/france-pilote.svg');
+const SVG_FILEPATH = join(process.cwd(), '/src/server/cartographie/domain/france-pilote-colin-2.svg');
 
 export const loadSvgAsJson = function (): 
 { svg: { defs: any, g: { path: { 'attr-d': string, 'attr-territoire-code': string }[] } } } {
