@@ -3,6 +3,7 @@ import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
+import RichEditor from '@/components/_commons/RichEditor/RichEditor';
 import { ParametrageNouveautés } from '../../../../public/nouveautés/ParametrageNouveautés';
 
 const Nouveautés: FunctionComponent<{}> = () => {
@@ -26,6 +27,7 @@ const Nouveautés: FunctionComponent<{}> = () => {
             ) : (
               <>
                 <div className='fr-grid-row'>
+                  <RichEditor />
                   <div className='fr-col-12'>
                     <h2 className='fr-h3'>
                       {`${ParametrageNouveautés[0].version} du ${ParametrageNouveautés[0].date}`}
