@@ -8,6 +8,24 @@ interface Nouveautés {
 
 export const ParametrageNouveautés: Nouveautés[] = [
   {
+    version: 'Version 2.5.6',
+    date: '12 septembre 2024',
+    contenu : [
+      'Page indicateurs : Précision du calcul de la date de mise à jour de l\'indicateur.',
+      'Page indicateurs : Bloc détail des indicateurs : ajout des informations concernant la fréquence de mise à jour des indicateurs + délai de disponibilité.',
+      'Page indicateurs : Fiabilisation du calcul de la date de dernière mise à jour des données.',
+      'Page indicateurs : Dans le bloc indicateurs, ajout d\'une infobulle précisant la méthode de calcul de la date prévisionnelle de mise à jour des données.',
+      'Page Gestion des comptes : Amélioration de l\'affichage de la page de création de comptes.',
+      'Page Gestion des comptes : Possibilité de désigner un responsable local et un DP lors d\'une création de compte.',
+      'Page Gestion des comptes : Ajout d\'une colonne "territoire" dans la liste des utilisateurs de PILOTE.',
+      'Page PPG : Les PPG validées se trouvent désormais par défaut dans la liste des PPG de la page d\'accueil, avec un bouton filtre sur les PPG en cours de cadrage (pour les personnes ayant accès à cette fonctionnalité).',
+    ],
+    correctifs : [
+      'Page PPG : Amélioration du temps de chargement de la page chantier pour se conformer aux standards d\'eco-conception de produits numériques.',
+      'Version mobile : Amélioration de l\'accès aux filtres.',
+    ],
+  },
+  {
     version: 'Version 2.5.5',
     date: '23 juillet 2024',
     contenu : [
