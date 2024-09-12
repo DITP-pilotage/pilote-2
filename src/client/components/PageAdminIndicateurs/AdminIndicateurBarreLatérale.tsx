@@ -30,7 +30,6 @@ const AdminIndicateurBarreLatérale: FunctionComponent<AdminIndicateursBarreLat�
   const réinitialiserFiltres = réinitialiser();
   const filtresActifs = filtresModifierIndicateursActifsStore();
   const territoires = territoiresTerritoiresStore();
-
   return (
     <BarreLatérale
       estOuvert={estOuverteBarreLatérale}
@@ -99,9 +98,11 @@ const AdminIndicateurBarreLatérale: FunctionComponent<AdminIndicateursBarreLat�
             filtresActifs.territoires.map(territoireCode => {
               const libellé = territoires.find(territoire => territoire.code === territoireCode)?.nomAffiché ?? null;
               return libellé === null ? null : (
-                <div className='fr-p-0 fr-mt-1w'>
-                  <Tag
-                    key={territoireCode}
+                <div
+                  className='fr-p-0 fr-mt-1w'
+                  key={territoireCode}
+                >
+                  <Tag        
                     libellé={libellé}
                     suppressionCallback={() => {
                       désactiverFiltre(territoireCode, 'territoires');
@@ -129,9 +130,11 @@ const AdminIndicateurBarreLatérale: FunctionComponent<AdminIndicateursBarreLat�
             filtresActifs.périmètresMinistériels.map(périmètreMinistérielId => {
               let libellé = périmètresMinistériels?.find(périmètre => périmètre.id === périmètreMinistérielId)?.nom ?? null;
               return libellé === null ? null : (
-                <div className='fr-p-0 fr-mt-1w'>
-                  <Tag
-                    key={périmètreMinistérielId}
+                <div
+                  className='fr-p-0 fr-mt-1w'
+                  key={périmètreMinistérielId}
+                >
+                  <Tag               
                     libellé={libellé}
                     suppressionCallback={() => {
                       désactiverFiltre(périmètreMinistérielId, 'périmètresMinistériels');
@@ -158,9 +161,11 @@ const AdminIndicateurBarreLatérale: FunctionComponent<AdminIndicateursBarreLat�
             filtresActifs.chantiers.map(chantierId => {
               let libellé = chantiers?.find(chantier => chantier.id === chantierId)?.nom ?? null;
               return libellé === null ? null : (
-                <div className='fr-p-0 fr-mt-1w'>
-                  <Tag
-                    key={chantierId}
+                <div
+                  className='fr-p-0 fr-mt-1w'
+                  key={chantierId}
+                >
+                  <Tag              
                     libellé={libellé}
                     suppressionCallback={() => {
                       désactiverFiltre(chantierId, 'chantiers');
