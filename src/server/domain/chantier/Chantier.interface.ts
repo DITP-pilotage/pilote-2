@@ -4,7 +4,7 @@ import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
-import { MinistereAccueilPorteur } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
+import { MinistereAccueilPorteur } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
 import { MinisterePorteurRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 
 export type DirecteurAdministrationCentrale = { nom: string, direction: string };

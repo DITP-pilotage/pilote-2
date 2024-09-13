@@ -36,6 +36,7 @@ import {
   RépartitionsMétéos,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
+import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
@@ -46,7 +47,7 @@ interface PageChantiersProps {
   axes: Axe[],
   territoireCode: string
   mailleSelectionnee: 'départementale' | 'régionale'
-  filtresComptesCalculés: Record<string, { nombre: number }>
+  filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   répartitionMétéos: RépartitionsMétéos

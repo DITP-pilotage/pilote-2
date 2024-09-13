@@ -3,9 +3,10 @@ import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/Chantier
 import {
   AvancementsStatistiquesAccueilContrat,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
+import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import { useRemontéesAlertesChantiers } from './useRemontéesAlertesChantiers';
 
-export default function useVueDEnsemble(chantiersFiltrés: ChantierAccueilContrat[], territoireCode: string, filtresComptesCalculés: Record<string, { nombre: number }>, avancementsAgrégés: AvancementsStatistiquesAccueilContrat) {
+export default function useVueDEnsemble(chantiersFiltrés: ChantierAccueilContrat[], territoireCode: string, filtresComptesCalculés: Record<TypeAlerteChantier, number>, avancementsAgrégés: AvancementsStatistiquesAccueilContrat) {
   const chantiersVueDEnsemble: ChantierVueDEnsemble[] = chantiersFiltrés.map(chantier => ({
     id: chantier.id,
     nom: chantier.nom,

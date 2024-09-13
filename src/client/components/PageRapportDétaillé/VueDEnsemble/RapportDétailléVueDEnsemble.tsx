@@ -24,11 +24,12 @@ import {
   RépartitionsMétéos,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
+import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import RapportDétailléTableauChantiers from './RapportDétailléTableauChantiers/RapportDétailléTableauChantiers';
 
 interface RapportDétailléVueDEnsembleProps {
   chantiers: ChantierRapportDetailleContrat[]
-  filtresComptesCalculés: Record<string, { nombre: number }>
+  filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   répartitionMétéos: RépartitionsMétéos

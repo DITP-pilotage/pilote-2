@@ -21,7 +21,7 @@ import RécupérerListeProjetsStructurantsVueDEnsembleUseCase
 import PageProjetsStructurants from '@/components/PageAccueil/PageProjetsStructurants/PageProjetsStructurants';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
-import IndexStyled from './Index.styled';
+import IndexStyled from './index.styled';
 
 interface ChantierAccueil {
   projetsStructurants: ProjetStructurantVueDEnsemble[]
@@ -122,7 +122,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
           <button
             className='fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-equalizer-fill fr-text-title--blue-france'
             onClick={() => {
-              setEstOuverteBarreLatérale(true); 
+              setEstOuverteBarreLatérale(true);
               setEstVisibleEnMobile(true);
             }}
             title='Filtrer'

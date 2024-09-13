@@ -6,7 +6,6 @@ import assert from 'node:assert/strict';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import PageRapportDétaillé from '@/components/PageRapportDétaillé/PageRapportDétaillé';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { PublicationsGroupéesParChantier } from '@/components/PageRapportDétaillé/PageRapportDétaillé.interface';
@@ -32,7 +31,6 @@ import {
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { AgrégateurListeChantiersParTerritoire } from '@/client/utils/chantier/agrégateurListeChantiers/agrégateur';
 import { objectEntries } from '@/client/utils/objects/objects';
-import CompteurFiltre from '@/client/utils/filtres/CompteurFiltre';
 import Axe from '@/server/domain/axe/Axe.interface';
 import {
   AgrégateurChantierRapportDetailleParTerritoire,
@@ -43,19 +41,21 @@ import {
 } from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
+import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
+import { Chantier } from '@/server/chantiers/domain/Chantier';
 
 interface NextPageRapportDétailléProps {
   chantiers: ChantierRapportDetailleContrat[]
   ministères: Ministère[]
   axes: Axe[]
   indicateursGroupésParChantier: Record<string, Indicateur[]>
-  détailsIndicateursGroupésParChantier: Record<Chantier['id'], DétailsIndicateurs>
+  détailsIndicateursGroupésParChantier: Record<string, DétailsIndicateurs>
   publicationsGroupéesParChantier: PublicationsGroupéesParChantier
   mailleSélectionnée: 'départementale' | 'régionale'
   listeAvancementsStatistiques: { id: string, avancementChantierRapportDetaille: AvancementChantierRapportDetaille }[]
   codeInsee: CodeInsee
   territoireCode: string
-  filtresComptesCalculés: Record<string, { nombre: number }>
+  filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   répartitionMétéos: RépartitionsMétéos
@@ -202,47 +202,11 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
 
   const objectifsGroupésParChantier = await new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getObjectifRepository()).run(chantiersIds, session.habilitations);
 
-  // Vue Ensemble
-  const compteurFiltre = new CompteurFiltre(chantiers);
+  const {
+    répartitionMétéos,
+    filtresComptesCalculés,
+  } = Chantier.recupererStatistiqueListeChantier(chantiers, mailleChantier, codeInseeSelectionne);
 
-  const filtresComptesCalculés = compteurFiltre.compter([{
-    nomCritère: 'estEnAlerteÉcart',
-    condition: (chantier) => Alerte.estEnAlerteÉcart(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.écart),
-  }, {
-    nomCritère: 'estEnAlerteBaisse',
-    condition: (chantier) => Alerte.estEnAlerteBaisse(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.tendance),
-  }, {
-    nomCritère: 'estEnAlerteTauxAvancementNonCalculé',
-    condition: (chantier) => Alerte.estEnAlerteTauxAvancementNonCalculé(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.avancement.global, chantier.cibleAttendu),
-  }, {
-    nomCritère: 'estEnAlerteAbscenceTauxAvancementDepartemental',
-    condition: (chantier) => Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.mailles.départementale, chantier.cibleAttendu),
-  },
-  {
-    nomCritère: 'estEnAlerteMétéoNonRenseignée',
-    condition: (chantier) => Alerte.estEnAlerteMétéoNonRenseignée(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.météo),
-  },
-  {
-    nomCritère: 'orage',
-    condition: (chantier) => (
-      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'ORAGE'
-    ) ?? false,
-  }, {
-    nomCritère: 'couvert',
-    condition: (chantier) => (
-      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'COUVERT'
-    ) ?? false,
-  }, {
-    nomCritère: 'nuage',
-    condition: (chantier) => (
-      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'NUAGE'
-    ) ?? false,
-  }, {
-    nomCritère: 'soleil',
-    condition: (chantier) => (
-      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'SOLEIL'
-    ) ?? false,
-  }]);
   const avancementsAgrégés = await récupérerStatistiquesChantiersUseCase.run(chantiersAvecAlertes.map(chantier => chantier.id), mailleSelectionnee || 'départementale', session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat);
 
   const donnéesTerritoiresAgrégées = new AgrégateurListeChantiersParTerritoire(chantiersAvecAlertes, mailleSelectionnee || 'départementale').agréger();
@@ -257,14 +221,6 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     codeInsee,
     estApplicable: null,
   }));
-
-  const répartitionMétéos = {
-    ORAGE: filtresComptesCalculés.orage.nombre,
-    COUVERT: filtresComptesCalculés.couvert.nombre,
-    NUAGE: filtresComptesCalculés.nuage.nombre,
-    SOLEIL: filtresComptesCalculés.soleil.nombre,
-  };
-  // Fin Vue Ensemble
 
   const listeDonnéesCartographieAvancement = chantiersAvecAlertes.map(chantier => ({
     id: chantier.id,
