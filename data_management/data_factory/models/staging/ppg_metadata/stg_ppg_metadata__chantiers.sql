@@ -38,6 +38,7 @@ renamed AS (
         string_to_array(maille_applicable, ' | ') AS maille_applicable_declaree,
         upper(cast(replicate_val_reg_to AS TEXT)) AS replicate_val_reg_to,
         upper(cast(replicate_val_nat_to AS TEXT)) AS replicate_val_nat_to,
+        ch_cible_attendue,
         case
             when ch_territo and maille_applicable = 'REG | NAT' 	then 'REG'
             when ch_territo and maille_applicable is null 			then 'DEPT'
