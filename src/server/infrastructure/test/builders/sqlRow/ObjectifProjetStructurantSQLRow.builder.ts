@@ -52,17 +52,6 @@ export default class ObjectifProjetStructurantSQLRowBuilder {
     return this;
   }
 
-  shallowCopy(): ObjectifProjetStructurantSQLRowBuilder {
-    const result = new ObjectifProjetStructurantSQLRowBuilder() as any;
-    for (const attribut in this) {
-      if (attribut == '_id') {
-        continue;
-      }
-      result[attribut] = this[attribut];
-    }
-    return result as ObjectifProjetStructurantSQLRowBuilder;
-  }
-
   build(): ObjectifProjetStructurantPrisma {
     return {
       id: this._id,

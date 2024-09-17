@@ -1,6 +1,10 @@
 import { faker } from '@faker-js/faker/locale/fr';
 import { projet_structurant as ProjetStructurantPrisma } from '@prisma/client';
-import {  générerCaractèresSpéciaux, générerUnIdentifiantUnique, générerUnLibellé } from '@/server/infrastructure/test/builders/utils';
+import {
+  générerCaractèresSpéciaux,
+  générerUnIdentifiantUnique,
+  générerUnLibellé,
+} from '@/server/infrastructure/test/builders/utils';
 import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
 import ProjetStructurantBuilder from '@/server/domain/projetStructurant/ProjetStructurant.builder';
 
@@ -71,29 +75,6 @@ export default class ProjetStructurantRowBuilder {
   avecTerritoireCode(territoireCode: ProjetStructurantPrisma['territoire_code']): ProjetStructurantRowBuilder {
     this._territoireCode = territoireCode;
     return this;
-  }
-
-  avecTauxDAvancement(tauxAvancement: ProjetStructurantPrisma['taux_avancement']): ProjetStructurantRowBuilder {
-    this._tauxAvancement = tauxAvancement;
-    return this;
-  }
-
-  avecDateTauxDAvancement(dateTauxAvancement: ProjetStructurantPrisma['date_taux_avancement']): ProjetStructurantRowBuilder {
-    this._dateTauxAvancement = dateTauxAvancement;
-    return this;
-  }
-
-  avecDateDonneesQualitative(dateDonneesQualitative: ProjetStructurantPrisma['date_donnees_qualitative']): ProjetStructurantRowBuilder {
-    this._dateDonneesQualitative = dateDonneesQualitative;
-    return this;
-  }
-  
-  shallowCopy(): ProjetStructurantRowBuilder {
-    const result = new ProjetStructurantRowBuilder() as any;
-    for (const attribut in this) {
-      result[attribut] = this[attribut];
-    }
-    return result as ProjetStructurantRowBuilder;
   }
 
   build(): ProjetStructurantPrisma {

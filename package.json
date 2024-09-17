@@ -50,7 +50,6 @@
     ]
   },
   "dependencies": {
-    "axios": "1.7.7",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@faker-js/faker": "^7.6.0",
@@ -67,6 +66,7 @@
     "@trpc/next": "^10.18.0",
     "@trpc/react-query": "^10.18.0",
     "@trpc/server": "^10.18.0",
+    "axios": "1.7.7",
     "chart.js": "^4.2.1",
     "chroma-js": "^2.4.2",
     "convict": "6.2.4",
@@ -98,10 +98,11 @@
     "react-hook-form": "^7.43.9",
     "react-select": "^5.7.3",
     "remixicon": "^3.2.0",
+    "sharp": "^0.33.5",
     "superjson": "^1.12.2",
     "swagger-ui-react": "5.17.14",
-    "yaml": "2.3.2",
     "ws": "8.18.0",
+    "yaml": "2.3.2",
     "zod": "^3.21.4",
     "zustand": "^4.3.6"
   },

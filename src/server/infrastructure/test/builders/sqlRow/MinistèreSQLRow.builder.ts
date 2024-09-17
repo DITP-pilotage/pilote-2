@@ -1,7 +1,5 @@
 import { ministere } from '@prisma/client';
-import {
-  générerUnIdentifiantUnique,
-} from '@/server/infrastructure/test/builders/utils';
+import { générerUnIdentifiantUnique } from '@/server/infrastructure/test/builders/utils';
 import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
 
 export default class MinistèreSQLRowBuilder {
@@ -32,16 +30,6 @@ export default class MinistèreSQLRowBuilder {
 
   avecNom(nom: ministere['nom']): MinistèreSQLRowBuilder {
     this._nom = nom;
-    return this;
-  }
-
-  avecIcône(icone: ministere['icone']): MinistèreSQLRowBuilder {
-    this._icone = icone;
-    return this;
-  }
-
-  avecAcronyme(acronyme: ministere['acronyme']): MinistèreSQLRowBuilder {
-    this._acronyme = acronyme;
     return this;
   }
 

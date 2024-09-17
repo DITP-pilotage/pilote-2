@@ -54,11 +54,6 @@ export default class SynthèseDesRésultatsProjetStructurantSQLRowBuilder {
     return this;
   }
 
-  avecDateMétéo(dateMétéo: synthese_des_resultats_projet_structurant['date_meteo']): SynthèseDesRésultatsProjetStructurantSQLRowBuilder {
-    this._dateMétéo = dateMétéo;
-    return this;
-  }
-
   avecAuteur(auteur: synthese_des_resultats_projet_structurant['auteur']): SynthèseDesRésultatsProjetStructurantSQLRowBuilder {
     this._auteur = auteur;
     return this;
