@@ -13,11 +13,11 @@ export class Chantier {
 
       acc.répartitionMétéos[météo] += 1;
       acc.filtresComptesCalculés = {
-        estEnAlerteÉcart: Alerte.estEnAlerteÉcart(écart) ? acc.filtresComptesCalculés.estEnAlerteBaisse + 1 : acc.filtresComptesCalculés.estEnAlerteBaisse,
+        estEnAlerteÉcart: Alerte.estEnAlerteÉcart(écart) ? acc.filtresComptesCalculés.estEnAlerteÉcart + 1 : acc.filtresComptesCalculés.estEnAlerteÉcart,
         estEnAlerteBaisse: Alerte.estEnAlerteBaisse(tendance) ? acc.filtresComptesCalculés.estEnAlerteBaisse + 1 : acc.filtresComptesCalculés.estEnAlerteBaisse,
-        estEnAlerteTauxAvancementNonCalculé: Alerte.estEnAlerteTauxAvancementNonCalculé(avancement.global, chantier.cibleAttendu) ? acc.filtresComptesCalculés.estEnAlerteBaisse + 1 : acc.filtresComptesCalculés.estEnAlerteBaisse,
-        estEnAlerteAbscenceTauxAvancementDepartemental: Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.mailles.départementale, chantier.cibleAttendu) ? acc.filtresComptesCalculés.estEnAlerteBaisse + 1 : acc.filtresComptesCalculés.estEnAlerteBaisse,
-        estEnAlerteMétéoNonRenseignée: Alerte.estEnAlerteMétéoNonRenseignée(météo) ? acc.filtresComptesCalculés.estEnAlerteBaisse + 1 : acc.filtresComptesCalculés.estEnAlerteBaisse,
+        estEnAlerteTauxAvancementNonCalculé: Alerte.estEnAlerteTauxAvancementNonCalculé(avancement.global, chantier.cibleAttendu) ? acc.filtresComptesCalculés.estEnAlerteTauxAvancementNonCalculé + 1 : acc.filtresComptesCalculés.estEnAlerteTauxAvancementNonCalculé,
+        estEnAlerteAbscenceTauxAvancementDepartemental: Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.mailles.départementale, chantier.cibleAttendu) ? acc.filtresComptesCalculés.estEnAlerteAbscenceTauxAvancementDepartemental + 1 : acc.filtresComptesCalculés.estEnAlerteAbscenceTauxAvancementDepartemental,
+        estEnAlerteMétéoNonRenseignée: Alerte.estEnAlerteMétéoNonRenseignée(météo) ? acc.filtresComptesCalculés.estEnAlerteMétéoNonRenseignée + 1 : acc.filtresComptesCalculés.estEnAlerteMétéoNonRenseignée,
       };
 
       return acc;
