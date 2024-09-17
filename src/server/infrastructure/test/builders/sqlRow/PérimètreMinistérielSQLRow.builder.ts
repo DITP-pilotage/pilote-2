@@ -25,16 +25,6 @@ export default class PérimètreMinistérielSQLRowBuilder {
     this._a_supprimer = false;
   }
 
-  avecId(id: perimetre['id']): PérimètreMinistérielSQLRowBuilder {
-    this._id = id;
-    return this;
-  }
-
-  avecNom(nom: perimetre['nom']): PérimètreMinistérielSQLRowBuilder {
-    this._nom = nom;
-    return this;
-  }
-
   avecMinistère({ nom, id }: MinistèreDUnPérimètreMinistériel): PérimètreMinistérielSQLRowBuilder {
     this._ministère = nom;
     this._ministère_id = id;

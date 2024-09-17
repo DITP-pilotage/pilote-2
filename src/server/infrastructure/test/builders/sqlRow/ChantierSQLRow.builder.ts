@@ -1,9 +1,11 @@
 import { chantier } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import {
-  générerCaractèresSpéciaux, générerPeutÊtreNull,
+  générerCaractèresSpéciaux,
+  générerPeutÊtreNull,
   générerTableau,
-  générerUneMailleAléatoire, générerUnLibellé,
+  générerUneMailleAléatoire,
+  générerUnLibellé,
   retourneUneListeDeCodeInseeCohérentePourUneMaille,
 } from '@/server/infrastructure/test/builders/utils';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
@@ -165,11 +167,6 @@ export default class ChantierRowBuilder {
     return this;
   }
 
-  avecTerritoireNom(territoireNom: chantier['territoire_nom']): ChantierRowBuilder {
-    this._territoireNom = territoireNom;
-    return this;
-  }
-
   avecCodeInsee(codeInsee: chantier['code_insee']): ChantierRowBuilder {
     this._codeInsee = codeInsee;
     this._territoireCode = `${this._maille}-${this._codeInsee}`;
@@ -241,43 +238,8 @@ export default class ChantierRowBuilder {
     return this;
   }
 
-  avecAMeteoDepartemental(aMeteo: chantier['a_meteo_departemental']): ChantierRowBuilder {
-    this._a_meteo_departemental = aMeteo;
-    return this;
-  }
-
-  avecAMeteoRegional(aMeteo: chantier['a_meteo_regional']): ChantierRowBuilder {
-    this._a_meteo_regional = aMeteo;
-    return this;
-  }
-
-  avecTauxAvancementDepartemental(aTauxAvancement: chantier['a_taux_avancement_departemental']): ChantierRowBuilder {
-    this._a_taux_avancement_departemental = aTauxAvancement;
-    return this;
-  }
-
-  avecTauxAvancementRegional(aTauxAvancement: chantier['a_taux_avancement_regional']): ChantierRowBuilder {
-    this._a_taux_avancement_regional = aTauxAvancement;
-    return this;
-  }
-
   avecEstApplicable(est_applicable: chantier['est_applicable']): ChantierRowBuilder {
     this._est_applicable = est_applicable;
-    return this;
-  }
-
-  avecStatut(statut: chantier['statut']): ChantierRowBuilder {
-    this._statut = statut;
-    return this;
-  }
-
-  avecTauxAvancementDate(taux_avancement_date: chantier['taux_avancement_date']): ChantierRowBuilder {
-    this._taux_avancement_date = taux_avancement_date;
-    return this;
-  }
-
-  avecCibleAttendu(CibleAttendu: boolean): ChantierRowBuilder {
-    this._cible_attendue = CibleAttendu;
     return this;
   }
 
