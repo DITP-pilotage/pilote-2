@@ -33,6 +33,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({ utilisateur,
   const chemin = [{ nom: 'Gestion des comptes', lien: '/admin/utilisateurs' }];
   const { data: session } = useSession();
   const { creerTokenAPI, alerte } = useGestionTokenAPI();
+
   return (
     <PageUtilisateurStyled className='fr-pt-2w'>
       <main className='fr-container'>

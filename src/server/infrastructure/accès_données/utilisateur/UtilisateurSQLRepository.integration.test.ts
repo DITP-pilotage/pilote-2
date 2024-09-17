@@ -86,7 +86,7 @@ describe('UtilisateurSQLRepository', () => {
     });
   });
 
-  describe('récupérerNombreUtilisateursSurLeTerritoire', function () {
+  describe('récupérerNombreUtilisateursParTerritoires', function () {
 
     test("retourne les nombres d'utilisateurs pour une liste de territoires", async () => {
       // Given
