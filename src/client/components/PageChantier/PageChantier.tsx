@@ -41,13 +41,13 @@ import { CoordinateurTerritorial, ResponsableLocal } from '@/server/domain/terri
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import BandeauInformationMajDonnees from '@/components/PageChantier/BandeauInformationMajDonnees/BandeauInformationMajDonnees';
 import api from '@/server/infrastructure/api/trpc/api';
+import BandeauInformation from '@/client/components/_commons/BandeauInformation/BandeauInformation';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import PageChantierEnTête from './EnTête/EnTête';
 import Cartes from './Cartes/Cartes';
 import PageChantierStyled from './PageChantier.styled';
 import usePageChantier from './usePageChantier';
 import DécisionsStratégiques from './DécisionsStratégiques/DécisionsStratégiques';
-import BandeauInformation from '../_commons/BandeauInformation/BandeauInformation';
 
 interface PageChantierProps {
   indicateurs: Indicateur[]
@@ -172,15 +172,15 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
               titre='Mise à jour des données requises : '
             />
         }
-              {
-                mailleSourceDonnees === 'régionale' &&
-                <BandeauInformation 
-                  bandeauType='INFO'
-                  fermable={false}
-                >
-                  Données régionales : cette politique prioritaire fait l’objet d’un pilotage régional avec des données régionales. Les valeurs des indicateurs régionaux sont reportés à la maille départementale.
-                </BandeauInformation>
-              }
+        {
+          mailleSourceDonnees === 'régionale' &&
+          <BandeauInformation 
+            bandeauType='INFO'
+            fermable={false}
+          >
+            Données régionales : cette politique prioritaire fait l’objet d’un pilotage régional avec des données régionales. Les valeurs des indicateurs régionaux sont reportés à la maille départementale.
+          </BandeauInformation>
+        }
         <div className='fr-container--fluid fr-py-2w fr-px-md-2w'>
           <div
             className={`grid-template ${territoireSélectionné.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}
@@ -297,8 +297,8 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     afficheCarteAvancement={!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSelectionnee] || chantier.estTerritorialisé}
                     afficheCarteMétéo={!!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] || chantier.estTerritorialisé}
                     chantierMailles={chantier.mailles}
-                          mailleSourceDonnees={mailleSourceDonnees}
                     mailleSelectionnee={mailleSelectionnee}
+                    mailleSourceDonnees={mailleSourceDonnees}
                     territoireCode={territoireCode}
                   />
                 </section>
@@ -347,15 +347,15 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   >
                     Indicateurs
                   </Titre>
-                        {
-                          mailleSourceDonnees === 'régionale' &&
-                            <Alerte
-                              classesSupplementaires='fr-mb-2w'
-                              message='Cette politique prioritaire fait l’objet d’un pilotage régional avec des données régionales. Les valeurs des indicateurs régionaux sont reportés à la maille départementale.'
-                              titre='Données régionales'
-                              type='info'
-                            />
-                        }
+                  {
+                    mailleSourceDonnees === 'régionale' &&
+                      <Alerte
+                        classesSupplementaires='fr-mb-2w'
+                        message='Cette politique prioritaire fait l’objet d’un pilotage régional avec des données régionales. Les valeurs des indicateurs régionaux sont reportés à la maille départementale.'
+                        titre='Données régionales'
+                        type='info'
+                      />
+                  }
                   <IndicateursChantier
                     alerteMiseAJourIndicateur={alerteMiseAJourIndicateur}
                     chantierEstTerritorialisé={chantier.estTerritorialisé}
@@ -422,15 +422,15 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   }
                 </Infobulle>
               </TitreInfobulleConteneur>
-                    {
-                      mailleSourceDonnees === 'régionale' &&
-                        <Alerte
-                          classesSupplementaires='fr-mb-2w'
-                          message='Commentaires facultatifs mais souhaités pour apporter un éclairage départemental au pilotage régional.'
-                          titre='Données régionales'
-                          type='info'
-                        />
-                    }
+              {
+                mailleSourceDonnees === 'régionale' &&
+                  <Alerte
+                    classesSupplementaires='fr-mb-2w'
+                    message='Commentaires facultatifs mais souhaités pour apporter un éclairage départemental au pilotage régional.'
+                    titre='Données régionales'
+                    type='info'
+                  />
+              }
               <Commentaires
                 commentaires={commentaires[chantier.id]}
                 maille={territoireSélectionné.maille}
