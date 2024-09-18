@@ -13,10 +13,10 @@ interface FiltresMinistèresProps {
   estVisibleEnMobile: boolean
 }
 
-const catégorieDeFiltre: 'périmètresMinistériels' = 'périmètresMinistériels';
-
-const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({ ministères, estVueMobile,
-  estVisibleEnMobile }) => {
+const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
+  ministères, estVueMobile,
+  estVisibleEnMobile,
+}) => {
   const [perimetres, setPerimetres] = useQueryState('perimetres', parseAsString.withDefault('').withOptions({
     shallow: false,
     clearOnDefault: true,
@@ -59,8 +59,8 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({ minist
   return (
     <FiltresMinistèresStyled className='fr-form-group'>
       <button
-        aria-controls={`fr-sidemenu-item-${catégorieDeFiltre}`}
-        aria-expanded={estVueMobile && estVisibleEnMobile ? 'false' : 'true'}
+        aria-controls='fr-sidemenu-item-périmètresMinistériels'
+        aria-expanded='true'
         className='fr-sidemenu__btn fr-m-0'
         type='button'
       >
@@ -68,7 +68,7 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({ minist
       </button>
       <div
         className='fr-collapse'
-        id={`fr-sidemenu-item-${catégorieDeFiltre}`}
+        id='fr-sidemenu-item-périmètresMinistériels'
       >
         <ul
           aria-label='Liste des filtres ministères'

@@ -31,7 +31,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
+const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 200;
 
 function MonApplication({ Component, pageProps }: AppProps) {
   useDétecterLargeurDÉcran();
@@ -41,6 +41,7 @@ function MonApplication({ Component, pageProps }: AppProps) {
   const estNouvellePageAccueil = router.pathname.startsWith('/accueil');
 
   const [afficherLeLoader, setAfficherLeLoader] = useState(false);
+  const [loaderVientDeSafficher, setLoaderVientDeSafficher] = useState(false);
   const [pageEnCoursDeChargement, setPageEnCoursDeChargement] = useState(false);
 
   const débutChargement = () => {
@@ -65,15 +66,23 @@ function MonApplication({ Component, pageProps }: AppProps) {
   useEffect(() => {
     let timer = setTimeout(() => {});
 
-    if (pageEnCoursDeChargement)
+    if (pageEnCoursDeChargement) {
       timer = setTimeout(() => setAfficherLeLoader(true), DELAI_AVANT_APPARITION_DU_LOADER_EN_MS);
-    else {
+    } else {
       clearTimeout(timer);
       setAfficherLeLoader(false);
     }
 
     return () => clearTimeout(timer);
   }, [pageEnCoursDeChargement]);
+
+  useEffect(() => {
+    if (afficherLeLoader) {
+      setTimeout(() => setLoaderVientDeSafficher(false), 500);
+    } else {
+      setLoaderVientDeSafficher(true);
+    }
+  }, [afficherLeLoader]);
 
   const matomoUrl = process.env.NEXT_PUBLIC_MATOMO_URL;
   const matomoSiteId = process.env.NEXT_PUBLIC_MATOMO_SITE_ID;

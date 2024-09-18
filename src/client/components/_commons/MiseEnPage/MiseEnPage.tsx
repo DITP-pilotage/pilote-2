@@ -1,7 +1,6 @@
 import { useSession } from 'next-auth/react';
-import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
+import { FunctionComponent, useCallback, useMemo, useState } from 'react';
 import PageLanding from '@/components/PageLanding/PageLanding';
-import Loader from '@/client/components/_commons/Loader/Loader';
 import MiseEnPageStyled from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
 import api from '@/server/infrastructure/api/trpc/api';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
@@ -37,28 +36,38 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({ afficherLeLoader, chil
     }
   }, [récupérerLesTerritoires, status]);
 
-  useEffect(() => {
-    if (status === 'loading' || afficherLeLoader) {
-      window.scrollTo(0, 0);
-    }
-  }, [afficherLeLoader, status]);
-
   return (
     <MiseEnPageStyled>
       <EnTête />
-      {
-        status === 'loading' || afficherLeLoader || (status === 'authenticated' && !aFiniDeChargerLesTerritoires)
-          ?
-            <Loader />
-          : (
+      <>
+        {
+          status === 'unauthenticated' ? <PageLanding /> : (
             <>
               {
-                status === 'unauthenticated' ? <PageLanding /> : children
+                status === 'loading' || afficherLeLoader
+                  ?
+                    <div style={{
+                      position: 'fixed',
+                      backgroundColor: 'wheat',
+                      bottom: '2rem',
+                      right: '4rem',
+                      display: 'flex',
+                      padding: '2rem',
+                      alignItems: 'center',
+                      height: '2rem',
+                      zIndex: '1000',
+                    }}
+                    >
+                      Chargement en cours...
+                    </div>
+                  : null
               }
-              <PiedDePage />
+              {aFiniDeChargerLesTerritoires ? children : null}
             </>
           )
-      }
+        }
+        <PiedDePage />
+      </>
     </MiseEnPageStyled>
   );
 };
