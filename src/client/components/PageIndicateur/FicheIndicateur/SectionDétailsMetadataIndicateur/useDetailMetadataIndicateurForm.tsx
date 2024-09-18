@@ -13,6 +13,14 @@ export type MetadataParametrageIndicateurForm = {
   zgApplicable: string;
   indicTerritorialise: boolean;
   indicIsBaro: boolean;
+  indicMethodeCalcul: string;
+  indicSource: string;
+  indicSourceUrl: string | null;
+  periodicite: string;
+  delaiDisponibilite: string;
+  indicNomBaro: string | null;
+  indicDescrBaro: string | null;
+
 };
 
 function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageIndicateurForm>) {
@@ -23,6 +31,7 @@ function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageIndicat
   watch('indicTerritorialise');
   watch('indicIsBaro');
   watch('zgApplicable');
+  watch('periodicite');
 }
 
 export default function useDetailMetadataIndicateurForm() {

@@ -19,7 +19,7 @@ const TableauAdminIndicateursContenu: FunctionComponent<TableauAdminIndicateursC
               <td
                 className='fr-p-1w'
                 key={cell.id}
-                title={cell.row.getValue(cell.column.id)}
+                title={cell.row.getValue(cell.column.id) || ''}
               >
                 <a
                   className='no-underline bg-none'
