@@ -8,6 +8,7 @@ import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale'
 import MultiSelectChantier from '@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier';
 import api from '@/server/infrastructure/api/trpc/api';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
+import MultiSelectPérimètreMinistériel from '@/client/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
 
 interface AdminIndicateursBarreLatéraleProps {
   estOuverteBarreLatérale: boolean,
@@ -20,9 +21,10 @@ const AdminIndicateurBarreLatérale: FunctionComponent<AdminIndicateursBarreLat�
 }) => {
   const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
 
-  const { modifierÉtatDuFiltre } = actionsFiltresModifierIndicateursStore();
+  const { sauvegarderFiltres } = actionsFiltresModifierIndicateursStore();
   const filtresActifs = filtresModifierIndicateursActifsStore();
 
+  console.log(filtresActifs);
 
   return (
     <BarreLatérale
@@ -33,10 +35,18 @@ const AdminIndicateurBarreLatérale: FunctionComponent<AdminIndicateursBarreLat�
         <div className='fr-mb-2w'>
           <MultiSelectChantier
             changementValeursSélectionnéesCallback={(chantier) => {
-              modifierÉtatDuFiltre(chantier, 'chantiers');
+              sauvegarderFiltres({ 'chantiers': chantier });
             }}
             chantiers={chantiers ?? []}
             chantiersIdsSélectionnésParDéfaut={filtresActifs.chantiers}
+          />
+        </div>
+        <div className='fr-mb-2w'>
+          <MultiSelectPérimètreMinistériel
+            changementValeursSélectionnéesCallback={(perimetresMinisteriel) => {
+              sauvegarderFiltres({ 'perimetresMinisteriels': perimetresMinisteriel });
+            }}
+            périmètresMinistérielsIdsSélectionnésParDéfaut={filtresActifs.perimetresMinisteriels}
           />
         </div>
       </BarreLatéraleEncart>

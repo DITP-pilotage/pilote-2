@@ -155,7 +155,7 @@ function convertirEnMetadataParametrageIndicateur(rawMetadataParametrageIndicate
 export class PrismaMetadataParametrageIndicateurRepository implements MetadataParametrageIndicateurRepository {
   constructor(private prismaClient: PrismaClient) {}
 
-  async recupererListeMetadataParametrageIndicateurParChantierIds(chantierIds: string[]): Promise<MetadataParametrageIndicateur[]> {
+  async recupererListeMetadataParametrageIndicateurParChantierIds(chantierIds: string[], perimetreIds: string[]): Promise<MetadataParametrageIndicateur[]> {
     try {
       let query = 'SELECT mi.*, mpi.*, mic.*, mc.ch_nom FROM raw_data.metadata_indicateurs_hidden mi ' +
                 'INNER JOIN raw_data.metadata_parametrage_indicateurs mpi ON mpi.indic_id = mi.indic_id ' +
@@ -165,6 +165,12 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
         const listeStringChantierId = (Array.isArray(chantierIds) ? chantierIds : [chantierIds]).map(i => `'${i}'`).join(',');
         query = `${query} WHERE mi.indic_parent_ch IN (${listeStringChantierId})`;
       }
+
+      if (perimetreIds.length > 0) {
+        const listeStringPerimetreId = (Array.isArray(perimetreIds) ? perimetreIds : [perimetreIds]).map(i => `'${i}'`).join(',');
+        query = `${query} ${chantierIds.length > 0 ? 'OR' : 'WHERE'} mc.ch_per IN (${listeStringPerimetreId})`;
+      }
+
       query = `${query} ORDER BY mi.indic_id`;
 
       const listeRawMetadataParametrageIndicateur = await this.prismaClient.$queryRaw<RawMetadataParametrageIndicateurModel[]>`${Prisma.raw(query)}`;
