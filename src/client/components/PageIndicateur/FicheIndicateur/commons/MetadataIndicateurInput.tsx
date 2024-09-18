@@ -11,6 +11,7 @@ export const MetadataIndicateurInput: FunctionComponent<{
   informationMetadataIndicateur: InformationMetadataIndicateurContrat,
   estEnCoursDeModification: boolean,
   valeurAffiché: string
+  disabled?: boolean
 }> = ({
   erreurMessage,
   register,
@@ -18,6 +19,7 @@ export const MetadataIndicateurInput: FunctionComponent<{
   informationMetadataIndicateur,
   estEnCoursDeModification,
   valeurAffiché,
+  disabled = false,
 }) => {
   return (
     <MetadataIndicateurChamp
@@ -26,6 +28,7 @@ export const MetadataIndicateurInput: FunctionComponent<{
       valeurAffiché={valeurAffiché}
     >
       <Input
+        disabled={disabled}
         erreurMessage={erreurMessage}
         htmlName={htmlName}
         register={register}

@@ -1,18 +1,11 @@
 import { useFormContext, UseFormWatch } from 'react-hook-form';
 
 export type MetadataParametrageAutresIndicateurForm = {
-  indicNomBaro: string | null;
-  indicDescrBaro: string | null;
   indicIsPerseverant: boolean;
   indicIsPhare: boolean;
-  indicSource: string;
-  indicSourceUrl: string | null;
-  indicMethodeCalcul: string;
   reformePrioritaire: string | null;
   projetAnnuelPerf: boolean;
   detailProjetAnnuelPerf: string | null;
-  periodicite: string;
-  delaiDisponibilite: string;
   indicTerritorialise: boolean;
   frequenceTerritoriale: string;
   mailles: string | null;
@@ -34,7 +27,6 @@ function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageAutresI
   watch('projetAnnuelPerf');
   watch('indicTerritorialise');
   watch('donneeOuverte');
-  watch('periodicite');
 }
 
 export default function useSectionDétailsMetadataAutresIndicateurForm() {
