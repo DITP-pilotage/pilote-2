@@ -26,9 +26,6 @@ import { FetchHttpClient } from '@/server/import-indicateur/infrastructure/adapt
 import {
   PrismaMesureIndicateurTemporaireRepository,
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurTemporaireRepository';
-import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
-import UtilisateurIAMKeycloakRepository
-  from '@/server/infrastructure/accès_données/utilisateur/UtilisateurIAMKeycloakRepository';
 import DécisionStratégiqueRepository
   from '@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
@@ -301,8 +298,6 @@ class Dependencies {
   private readonly _metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
 
   private readonly _informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository;
-
-  private _utilisateurIAMRepository: UtilisateurIAMRepository | undefined;
 
   private readonly _historisationModification: HistorisationModificationRepository;
 
@@ -577,17 +572,6 @@ class Dependencies {
 
   getPropositionValeurActuelleRepository() {
     return this._propositionValeurActuelleRepository;
-  }
-
-  getUtilisateurIAMRepository(): UtilisateurIAMRepository {
-    if (!this._utilisateurIAMRepository) {
-      const keycloakUrl = configuration.import.keycloakUrl;
-      const clientId = configuration.import.clientId;
-      const clientSecret = configuration.import.clientSecret;
-
-      this._utilisateurIAMRepository = new UtilisateurIAMKeycloakRepository(keycloakUrl, clientId, clientSecret);
-    }
-    return this._utilisateurIAMRepository;
   }
 }
 

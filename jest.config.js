@@ -37,7 +37,7 @@ module.exports = async () => {
           '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
         },
         transformIgnorePatterns: [
-          '/node_modules/',
+          '/node_modules/(?!@keycloak|url-join|url-template|camelize-ts)',
           '^.+\\.module\\.(css|sass|scss)$',
         ],
       },
@@ -53,7 +53,7 @@ module.exports = async () => {
           '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
         },
         transformIgnorePatterns: [
-          '/node_modules/',
+          '/node_modules/(?!@keycloak|url-join|url-template|camelize-ts)',
           '^.+\\.module\\.(css|sass|scss)$',
         ],
       },
@@ -63,6 +63,9 @@ module.exports = async () => {
         testEnvironment: 'jest-environment-jsdom',
         setupFilesAfterEnv: ['<rootDir>/jest.setup.ts', 'jest-extended/all'],
         testMatch: ['**/*.unit.test.*', '**/*.integration.test.*'],
+        transformIgnorePatterns: [
+          '/node_modules/(?!@keycloak|url-join|url-template|camelize-ts)',
+        ],
         roots: ['<rootDir>/src/client'],
       },
     ]

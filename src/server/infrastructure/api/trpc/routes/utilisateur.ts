@@ -28,18 +28,25 @@ import RécupérerListeUtilisateursUseCaseNew
   from '@/server/gestion-utilisateur/usecases/RécupérerListeUtilisateursUseCaseNew';
 import FiltrerListeUtilisateursUseCaseNew
   from '@/server/gestion-utilisateur/usecases/FiltrerListeUtilisateursUseCaseNew';
+import { configuration } from '@/config';
+import UtilisateurIAMKeycloakRepository
+  from '@/server/infrastructure/accès_données/utilisateur/UtilisateurIAMKeycloakRepository';
 
 export const utilisateurRouter = créerRouteurTRPC({
   'créer': procédureProtégée
     .input(validationInfosBaseUtilisateur.merge(zodValidateurCSRF).merge(validationInfosHabilitationsUtilisateur))
     .mutation(async ({ input, ctx }) => {
+      const keycloakUrl = configuration.import.keycloakUrl;
+      const clientId = configuration.import.clientId;
+      const clientSecret = configuration.import.clientSecret;
+
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const auteurModification = ctx.session.user.email ?? '';
       const profilAuteur = await new RécupérerUnProfilUseCase(
         dependencies.getProfilRepository(),
       ).run(ctx.session.profil);
       await new CréerOuMettreÀJourUnUtilisateurUseCase(
-        dependencies.getUtilisateurIAMRepository(),
+        new UtilisateurIAMKeycloakRepository(keycloakUrl, clientId, clientSecret),
         dependencies.getUtilisateurRepository(),
         dependencies.getTerritoireRepository(),
         dependencies.getChantierRepository(),
@@ -50,13 +57,17 @@ export const utilisateurRouter = créerRouteurTRPC({
   modifier: procédureProtégée
     .input(validationInfosBaseUtilisateur.merge(zodValidateurCSRF).merge(validationInfosHabilitationsUtilisateur))
     .mutation(async ({ input, ctx }) => {
+      const keycloakUrl = configuration.import.keycloakUrl;
+      const clientId = configuration.import.clientId;
+      const clientSecret = configuration.import.clientSecret;
+
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const auteurModification = ctx.session.user.email ?? '';
       const profilAuteur = await new RécupérerUnProfilUseCase(
         dependencies.getProfilRepository(),
       ).run(ctx.session.profil);
       await new CréerOuMettreÀJourUnUtilisateurUseCase(
-        dependencies.getUtilisateurIAMRepository(),
+        new UtilisateurIAMKeycloakRepository(keycloakUrl, clientId, clientSecret),
         dependencies.getUtilisateurRepository(),
         dependencies.getTerritoireRepository(),
         dependencies.getChantierRepository(),
@@ -67,13 +78,17 @@ export const utilisateurRouter = créerRouteurTRPC({
   supprimer: procédureProtégée
     .input(validationSupprimerUtilisateur.merge(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
+      const keycloakUrl = configuration.import.keycloakUrl;
+      const clientId = configuration.import.clientId;
+      const clientSecret = configuration.import.clientSecret;
+
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const profilAuteur = await new RécupérerUnProfilUseCase(
         dependencies.getProfilRepository(),
       ).run(ctx.session.profil);
       await new SupprimerUnUtilisateurUseCase(
         dependencies.getUtilisateurRepository(),
-        dependencies.getUtilisateurIAMRepository(),
+        new UtilisateurIAMKeycloakRepository(keycloakUrl, clientId, clientSecret),
       ).run(input.email, ctx.session.habilitations, profilAuteur);
     }),
   récupérerUtilisateursFiltrés: procédureProtégée
