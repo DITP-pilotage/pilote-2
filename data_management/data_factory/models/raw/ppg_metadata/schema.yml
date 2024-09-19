@@ -11,9 +11,6 @@ models:
         description: Indique vers quelle maille les valeurs REG doivent être répliquées. Dans {'dept'}
       - name: replicate_val_nat_to
         description: "**[Fonctionnalité désactivée]** Indique vers quelle maille les valeurs NAT doivent être répliquées. Dans {'dept', 'reg'}"
-  - name: metadata_chantiers
-    description: "Métadonnées des chantiers prioritaires."
-    columns:
       - name: ch_cible_attendue
         data_type: boolean
         description: "Indique si une cible et donc un TA sont attendus pour ce chantier. Si vide -> TRUE"
