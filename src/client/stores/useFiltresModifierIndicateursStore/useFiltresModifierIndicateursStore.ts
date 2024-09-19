@@ -2,8 +2,10 @@
 import { create } from 'zustand';
 
 export type FiltresIndicateurs = {
-  chantiers: string[],
+  chantiers: string[]
   perimetresMinisteriels: string[]
+  estTerritorialise: boolean
+  estBarometre: boolean
 };
 
 export default interface FiltresModifierIndicateursStore {
@@ -17,6 +19,8 @@ export default interface FiltresModifierIndicateursStore {
 const filtresActifsInitiaux: FiltresIndicateurs = {
   chantiers: [],
   perimetresMinisteriels: [],
+  estTerritorialise: false,
+  estBarometre: false,
 };
 
 const useFiltresModifierIndicateursStore = create<FiltresModifierIndicateursStore>((set) => ({

@@ -155,7 +155,7 @@ function convertirEnMetadataParametrageIndicateur(rawMetadataParametrageIndicate
 export class PrismaMetadataParametrageIndicateurRepository implements MetadataParametrageIndicateurRepository {
   constructor(private prismaClient: PrismaClient) {}
 
-  async recupererListeMetadataParametrageIndicateurParChantierIds(chantierIds: string[], perimetreIds: string[]): Promise<MetadataParametrageIndicateur[]> {
+  async recupererListeMetadataParametrageIndicateurEnFonctionDesFiltres(chantierIds: string[], perimetreIds: string[], estTerritorialise: boolean, estBarometre: boolean): Promise<MetadataParametrageIndicateur[]> {
     try {
       let query = 'SELECT mi.*, mpi.*, mic.*, mc.ch_nom FROM raw_data.metadata_indicateurs_hidden mi ' +
                 'INNER JOIN raw_data.metadata_parametrage_indicateurs mpi ON mpi.indic_id = mi.indic_id ' +
@@ -168,7 +168,15 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
 
       if (perimetreIds.length > 0) {
         const listeStringPerimetreId = (Array.isArray(perimetreIds) ? perimetreIds : [perimetreIds]).map(i => `'${i}'`).join(',');
-        query = `${query} ${chantierIds.length > 0 ? 'OR' : 'WHERE'} mc.ch_per IN (${listeStringPerimetreId})`;
+        query = `${query} ${chantierIds.length > 0 ? 'AND' : 'WHERE'} mc.ch_per IN (${listeStringPerimetreId})`;
+      }
+
+      if (estTerritorialise) {
+        query = `${query} ${chantierIds.length > 0 || perimetreIds.length > 0 ? 'AND' : 'WHERE'} mic.indic_territorialise`;
+      }
+
+      if (estBarometre) {
+        query = `${query} ${chantierIds.length > 0 || perimetreIds.length > 0 || estTerritorialise ? 'AND' : 'WHERE'} mi.indic_is_baro`;
       }
 
       query = `${query} ORDER BY mi.indic_id`;

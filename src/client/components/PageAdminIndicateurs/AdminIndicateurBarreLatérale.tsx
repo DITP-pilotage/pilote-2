@@ -9,6 +9,7 @@ import MultiSelectChantier from '@/components/_commons/MultiSelect/MultiSelectCh
 import api from '@/server/infrastructure/api/trpc/api';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import MultiSelectPérimètreMinistériel from '@/client/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
+import Interrupteur from '@/client/components/_commons/Interrupteur/Interrupteur';
 
 interface AdminIndicateursBarreLatéraleProps {
   estOuverteBarreLatérale: boolean,
@@ -19,12 +20,13 @@ const AdminIndicateurBarreLatérale: FunctionComponent<AdminIndicateursBarreLat�
   estOuverteBarreLatérale,
   setEstOuverteBarreLatérale,
 }) => {
-  const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
-
   const { sauvegarderFiltres } = actionsFiltresModifierIndicateursStore();
   const filtresActifs = filtresModifierIndicateursActifsStore();
 
-  console.log(filtresActifs);
+  const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
+  const chantierAAfficher = filtresActifs.perimetresMinisteriels.length > 0  
+    ? chantiers?.filter(chantier => chantier.périmètreIds.some(element => filtresActifs.perimetresMinisteriels.includes(element)))
+    : chantiers;
 
   return (
     <BarreLatérale
@@ -33,15 +35,6 @@ const AdminIndicateurBarreLatérale: FunctionComponent<AdminIndicateursBarreLat�
     >
       <BarreLatéraleEncart>
         <div className='fr-mb-2w'>
-          <MultiSelectChantier
-            changementValeursSélectionnéesCallback={(chantier) => {
-              sauvegarderFiltres({ 'chantiers': chantier });
-            }}
-            chantiers={chantiers ?? []}
-            chantiersIdsSélectionnésParDéfaut={filtresActifs.chantiers}
-          />
-        </div>
-        <div className='fr-mb-2w'>
           <MultiSelectPérimètreMinistériel
             changementValeursSélectionnéesCallback={(perimetresMinisteriel) => {
               sauvegarderFiltres({ 'perimetresMinisteriels': perimetresMinisteriel });
@@ -49,6 +42,31 @@ const AdminIndicateurBarreLatérale: FunctionComponent<AdminIndicateursBarreLat�
             périmètresMinistérielsIdsSélectionnésParDéfaut={filtresActifs.perimetresMinisteriels}
           />
         </div>
+        <div className='fr-mb-2w'>
+          <MultiSelectChantier
+            changementValeursSélectionnéesCallback={(chantier) => {
+              sauvegarderFiltres({ 'chantiers': chantier });
+            }}
+            chantiers={chantierAAfficher ?? []}
+            chantiersIdsSélectionnésParDéfaut={filtresActifs.chantiers}
+          />
+        </div>
+        <Interrupteur
+          auChangement={(estTerritorialise) => {
+            sauvegarderFiltres({ 'estTerritorialise': estTerritorialise });
+          }}
+          checked={filtresActifs.estTerritorialise}
+          id='estTerritorialise'
+          libellé='Chantiers territorialisés'
+        />
+        <Interrupteur
+          auChangement={(estBarometre) => {
+            sauvegarderFiltres({ 'estBarometre': estBarometre });
+          }}
+          checked={filtresActifs.estBarometre}
+          id='estBarometre'
+          libellé='Chantiers du baromètre'
+        />
       </BarreLatéraleEncart>
     </BarreLatérale>
   );

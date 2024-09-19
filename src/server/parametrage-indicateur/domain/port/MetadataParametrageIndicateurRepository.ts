@@ -2,7 +2,7 @@ import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/d
 import { ImportMetadataIndicateur } from '@/server/parametrage-indicateur/domain/ImportMetadataIndicateur';
 
 export interface MetadataParametrageIndicateurRepository {
-  recupererListeMetadataParametrageIndicateurParChantierIds(chantierIds: string[], perimetreIds: string[]): Promise<MetadataParametrageIndicateur[]>;
+  recupererListeMetadataParametrageIndicateurEnFonctionDesFiltres(chantierIds: string[], perimetreIds: string[], estTerritorialise: boolean, estBarometre: boolean): Promise<MetadataParametrageIndicateur[]>;
 
   recupererMetadataParametrageIndicateurParIndicId(indicId: string): Promise<MetadataParametrageIndicateur>;
 

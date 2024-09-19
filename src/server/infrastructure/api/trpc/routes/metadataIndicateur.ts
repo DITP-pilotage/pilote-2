@@ -95,7 +95,7 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
   récupérerMetadataIndicateurFiltrés: procédureProtégée
     .input(validationFiltresPourListeMetadataIndicateur)
     .query(async ({ input }): Promise<MetadataParametrageIndicateurContrat[]> => {
-      const listeMetadataIndicateur = await new RécupérerListeMetadataIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository()).run(input.filtres.chantiers, input.filtres.perimetresMinisteriels);
+      const listeMetadataIndicateur = await new RécupérerListeMetadataIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository()).run(input.filtres.chantiers, input.filtres.perimetresMinisteriels, input.filtres.estTerritorialise, input.filtres.estBarometre);
       return listeMetadataIndicateur.map(presenterEnMetadataParametrageIndicateurContrat);
     }),
   récupérerMetadataIndicateurIdentifiantGénéré: procédureProtégée

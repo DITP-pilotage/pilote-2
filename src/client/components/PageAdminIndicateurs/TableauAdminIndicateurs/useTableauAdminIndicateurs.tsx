@@ -72,10 +72,16 @@ export default function useTableauPageAdminIndicateurs() {
   });
 
   const exporterLesIndicateurs = () => {
-    let queryParam = '';
+    let queryParam = `?estTerritorialise=${filtresActifs.estTerritorialise}&estBarometre=${filtresActifs.estBarometre}`;
+
     if (filtresActifs.chantiers.length > 0) {
-      queryParam = '?' + filtresActifs.chantiers.map(chantier => (`chantierIds=${chantier}`)).join('&');
+      queryParam = queryParam + '&' + filtresActifs.chantiers.map(chantier => (`chantierIds=${chantier}`)).join('&');
     }
+
+    if (filtresActifs.perimetresMinisteriels.length > 0) {
+      queryParam = queryParam + '&' + filtresActifs.perimetresMinisteriels.map(perimetre => (`perimetreIds=${perimetre}`)).join('&');
+    }
+
     const url = `/api/export/metadata-indicateurs${queryParam}`;
     const a = window.document.createElement('a');
     a.href = url;
