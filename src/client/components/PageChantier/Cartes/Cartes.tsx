@@ -16,7 +16,8 @@ import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 
 import { MailleRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
+import Alerte from '@/components/_commons/Alerte/Alerte';
 
 interface CartesProps {
   chantierMailles: MailleRapportDetailleContrat,
@@ -25,6 +26,7 @@ interface CartesProps {
   estInteractif?: boolean,
   territoireCode: string,
   mailleSelectionnee: MailleInterne
+  mailleSourceDonnees? : Maille | null
 }
 
 const Cartes: FunctionComponent<CartesProps> = ({
@@ -34,6 +36,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
   estInteractif = true,
   territoireCode,
   mailleSelectionnee,
+  mailleSourceDonnees,
 }) => {
   const pathname = '/chantier/[id]/[territoireCode]';
   const { auClicTerritoireCallback } = useCartographie(territoireCode, mailleSelectionnee, pathname);
@@ -78,6 +81,14 @@ const Cartes: FunctionComponent<CartesProps> = ({
                   territoireCode={territoireCode}
                   élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
                 />
+                {
+                  mailleSourceDonnees === 'régionale' &&
+                    <Alerte
+                      classesSupplementaires='fr-mt-2w'
+                      message='Données régionales'
+                      type='info'
+                    />
+                }
               </section>
             </Bloc>
           </div>

@@ -5,6 +5,13 @@ models:
   - name: metadata_engagement
     description: Table référentielle des engagements du gouvernement
   - name: metadata_chantiers
+    description: Table de configuration des chantiers
+    columns:
+      - name: replicate_val_reg_to
+        description: Indique vers quelle maille les valeurs REG doivent être répliquées. Dans {'dept'}
+      - name: replicate_val_nat_to
+        description: "**[Fonctionnalité désactivée]** Indique vers quelle maille les valeurs NAT doivent être répliquées. Dans {'dept', 'reg'}"
+  - name: metadata_chantiers
     description: "Métadonnées des chantiers prioritaires."
     columns:
       - name: ch_cible_attendue

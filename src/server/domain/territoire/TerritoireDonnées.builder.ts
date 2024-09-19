@@ -32,6 +32,8 @@ export default class TerritoireDonnéesBuilder {
 
   private _coordinateurTerritorial: TerritoireDonnées['coordinateurTerritorial'];
 
+  private _mailleSourceDonnees: TerritoireDonnées['mailleSourceDonnees'];
+
   constructor() {
 
     this._codeInsee = faker.helpers.arrayElement([...codesInseeDépartements, ...codesInseeRégions, codeInseeFrance]);
@@ -45,10 +47,41 @@ export default class TerritoireDonnéesBuilder {
     this._estApplicable = générerPeutÊtreNull(0.2, faker.datatype.boolean());
     this._coordinateurTerritorial = générerTableau(1, 3, () => ({ nom: faker.name.fullName(), email: faker.internet.email() }));
     this._responsableLocal = générerTableau(1, 3, () => ({ nom: faker.name.fullName(), email: faker.internet.email() }));
+    this._mailleSourceDonnees = null;
   }
 
   avecCodeInsee(codeInsee: TerritoireDonnées['codeInsee']): TerritoireDonnéesBuilder {
     this._codeInsee = codeInsee;
+    return this;
+  }
+
+  avecAvancement(avancement: TerritoireDonnées['avancement']): TerritoireDonnéesBuilder {
+    this._avancement = avancement;
+    return this;
+  }
+
+  avecAvancementPrécédent(avancementPrécédent: TerritoireDonnées['avancementPrécédent']): TerritoireDonnéesBuilder {
+    this._avancementPrécédent = avancementPrécédent;
+    return this;
+  }
+
+  avecMétéo(météo: TerritoireDonnées['météo']): TerritoireDonnéesBuilder {
+    this._météo = météo;
+    return this;
+  }
+
+  avecDateDeMàjDonnéesQualitatives(dateDeMàjDonnéesQualitatives: TerritoireDonnées['dateDeMàjDonnéesQualitatives']): TerritoireDonnéesBuilder {
+    this._dateDeMàjDonnéesQualitatives = dateDeMàjDonnéesQualitatives;
+    return this;
+  }
+
+  avecDateDeMàjDonnéesQuantitatives(dateDeMàjDonnéesQuantitatives: TerritoireDonnées['dateDeMàjDonnéesQuantitatives']): TerritoireDonnéesBuilder {
+    this._dateDeMàjDonnéesQuantitatives = dateDeMàjDonnéesQuantitatives;
+    return this;
+  }
+
+  avecMailleSourceDonnees(mailleSourceDonnees: TerritoireDonnées['mailleSourceDonnees']): TerritoireDonnéesBuilder {
+    this._mailleSourceDonnees = mailleSourceDonnees;
     return this;
   }
 
@@ -65,6 +98,7 @@ export default class TerritoireDonnéesBuilder {
       estApplicable: this._estApplicable,
       responsableLocal: this._responsableLocal,
       coordinateurTerritorial: this._coordinateurTerritorial,
+      mailleSourceDonnees: this._mailleSourceDonnees,
     };
   }
 }

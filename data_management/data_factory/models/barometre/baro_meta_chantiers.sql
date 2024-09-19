@@ -1,11 +1,17 @@
-with chantiers_baro as (
+WITH chantiers_baro AS (
 -- ID des chantiers dans le baromètre
-select indic_parent_ch as chantier_id, count(*) as n 
-from {{ ref('baro_meta_indicateurs') }} 
-group by indic_parent_ch 
-order by indic_parent_ch)
+    SELECT
+        indic_parent_ch AS chantier_id,
+        count(*) AS n
+    FROM {{ ref('baro_meta_indicateurs') }}
+    GROUP BY indic_parent_ch
+    ORDER BY indic_parent_ch
+)
 
 -- On ajoute le nom et l'engagement correspondant pour chaque chantier
-select a.chantier_id, b.ch_nom, b.engagement_short 
-from chantiers_baro as a
-left join {{ ref('metadata_chantiers') }} b on a.chantier_id=b.chantier_id 
+SELECT
+    a.chantier_id,
+    b.nom AS ch_nom,
+    b.nom_engagement AS engagement_short
+FROM chantiers_baro AS a
+LEFT JOIN {{ ref('stg_ppg_metadata__chantiers') }} AS b ON a.chantier_id = b.id

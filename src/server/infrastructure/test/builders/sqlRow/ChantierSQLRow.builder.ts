@@ -83,6 +83,8 @@ export default class ChantierRowBuilder {
 
   private _taux_avancement_date: chantier['taux_avancement_date'];
 
+  private _donnees_maille_source: chantier['donnees_maille_source'];
+
   private _cible_attendue: chantier['cible_attendue'];
 
   constructor() {
@@ -129,6 +131,7 @@ export default class ChantierRowBuilder {
     this._est_applicable = faker.datatype.boolean();
     this._a_supprimer = false;
     this._taux_avancement_date = new Date();
+    this._donnees_maille_source = null;
     this._cible_attendue = faker.datatype.boolean();
   }
 
@@ -243,6 +246,21 @@ export default class ChantierRowBuilder {
     return this;
   }
 
+  avecStatut(statut: chantier['statut']): ChantierRowBuilder {
+    this._statut = statut;
+    return this;
+  }
+
+  avecTauxAvancementDate(taux_avancement_date: chantier['taux_avancement_date']): ChantierRowBuilder {
+    this._taux_avancement_date = taux_avancement_date;
+    return this;
+  }
+
+  avecValuesReplicatedFrom(donnees_maille_source: chantier['donnees_maille_source']): ChantierRowBuilder {
+    this._donnees_maille_source = donnees_maille_source;
+    return this;
+  }
+
   shallowCopy(): ChantierRowBuilder {
     const result = new ChantierRowBuilder() as any;
     for (const attribut in this) {
@@ -287,6 +305,7 @@ export default class ChantierRowBuilder {
       est_applicable: this._est_applicable,
       statut: this._statut,
       taux_avancement_date: this._taux_avancement_date,
+      donnees_maille_source: this._donnees_maille_source,
       cible_attendue: this._cible_attendue,
     };
   }

@@ -27,6 +27,8 @@ def model(dbt, session):
         'ch_state': 'string',
         'zg_applicable': 'string',
         'maille_applicable': 'string',
+        'replicate_val_reg_to': 'string',
+        'replicate_val_nat_to': 'string',
         'ch_cible_attendue': 'boolean'
     }
 

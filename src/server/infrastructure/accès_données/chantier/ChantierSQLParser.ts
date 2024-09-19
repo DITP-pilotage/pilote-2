@@ -3,6 +3,7 @@ import { Territoire, TerritoiresDonnées } from '@/server/domain/territoire/Terr
 import Chantier, { ChantierDateMajMeteo } from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
+import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import { calculerMédiane } from '@/client/utils/statistiques/statistiques';
 
 class ErreurChantierSansMailleNationale extends Error {
@@ -65,6 +66,7 @@ function créerDonnéesTerritoires(
       dateDeMàjDonnéesQuantitatives: chantierRow?.taux_avancement_date?.toISOString()  ?? null,
       responsableLocal: [],
       coordinateurTerritorial: [],
+      mailleSourceDonnees: chantierRow?.donnees_maille_source ? NOMS_MAILLES[chantierRow.donnees_maille_source] : null,
     };
 
     if (!!chantierRow) {
@@ -124,6 +126,7 @@ export function parseChantier(
           estApplicable: chantierMailleNationale.est_applicable,
           responsableLocal: [],
           coordinateurTerritorial: [],
+          mailleSourceDonnees: null,
         },
       },
       départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale, chantiersRowsDatesDeMàj),

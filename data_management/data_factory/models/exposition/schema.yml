@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: chantier
-    description: "Une vue sur `df1_chantier` ou `df3_chantier`"
+    description: "Une vue sur `df3_chantier`"
     columns:
       - name: id
         description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
@@ -44,6 +44,8 @@ models:
         description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_zone"
       - name: taux_avancement_precedent
         description: "source de données à date du 06/07/2023 : données non encore existante"
+      - name: donnees_maille_source
+        description: "Indique la maille depuis laquelle la valeur est répliquée. Dans `{reg, nat}`. En effet, on ne peut pas répliquer des valeurs depuis la maille `DEPT` car il n'y a pas de maille inférieure."
       - name: cible_attendue
         description: "Indique si une cible et donc un TA sont attendus pour ce chantier. Si non renseignée dans `ch_cible_attendue` (cf table source `metadata_chantiers`), alors on considère sa valeur à `TRUE`."
   - name: axe
