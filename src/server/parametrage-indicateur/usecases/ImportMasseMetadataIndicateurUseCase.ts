@@ -177,7 +177,7 @@ export default class ImportMasseMetadataIndicateurUseCase {
       if (Object.keys(listeRecordCsvImport[0]).sort().toString() === Object.values(AvailableHeaderCSVImport).sort().toString()) {
         let identifiants: Set<number> = new Set();
         if (listeRecordCsvImport.some(record => record.indic_id === TEXT_LABEL_CREATION_ID)) {
-          const listeMetadataParametrageIndicateur = await this._metadataParametrageIndicateurRepository.recupererListeMetadataParametrageIndicateurParChantierIds([]);
+          const listeMetadataParametrageIndicateur = await this._metadataParametrageIndicateurRepository.recupererListeMetadataParametrageIndicateurEnFonctionDesFiltres([], [], false, false);
           const sortedListeMetadataParametrageIndicateur = listeMetadataParametrageIndicateur.sort((metadataParametrageIndicateur1, metadataParametrageIndicateur2) => metadataParametrageIndicateur1.indicId.localeCompare(metadataParametrageIndicateur2.indicId));
           identifiants = new Set(sortedListeMetadataParametrageIndicateur.map(li => Number(li.indicId.split('-')[1])));
         }

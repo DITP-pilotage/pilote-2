@@ -46,6 +46,9 @@ export default function useDetailMetadataIndicateurForm() {
   const { data: metadataIndicateurs = [] } = api.metadataIndicateur.récupérerMetadataIndicateurFiltrés.useQuery({
     filtres: {
       chantiers: !getValues('indicParentCh') || getValues('indicParentCh') === '_' ? ['Aucun chantier séléctionné'] : [getValues('indicParentCh')],
+      perimetresMinisteriels: [],
+      estTerritorialise: false,
+      estBarometre: false,
     },
   });
 

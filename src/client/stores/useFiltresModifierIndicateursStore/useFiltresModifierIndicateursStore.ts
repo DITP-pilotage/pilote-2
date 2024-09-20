@@ -1,42 +1,41 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { create } from 'zustand';
-import FiltresModifierIndicateursStore, {
-  FiltresModifierIndicateursActifs,
-} from '@/stores/useFiltresModifierIndicateursStore/useFiltresModifierIndicateursStore.interface';
 
-const filtresActifsInitiaux: FiltresModifierIndicateursActifs = {
+export type FiltresIndicateurs = {
+  chantiers: string[]
+  perimetresMinisteriels: string[]
+  estTerritorialise: boolean
+  estBarometre: boolean
+};
+
+export default interface FiltresModifierIndicateursStore {
+  filtresActifs: FiltresIndicateurs,
+  actions: {
+    sauvegarderFiltres: (filtre: Partial<FiltresIndicateurs>) => void
+    réinitialiser: () => void,
+  }
+}
+
+const filtresActifsInitiaux: FiltresIndicateurs = {
   chantiers: [],
+  perimetresMinisteriels: [],
+  estTerritorialise: false,
+  estBarometre: false,
 };
 
 const useFiltresModifierIndicateursStore = create<FiltresModifierIndicateursStore>((set) => ({
   filtresActifs: filtresActifsInitiaux,
   actions: {
-    modifierÉtatDuFiltre: (filtres, catégorieDeFiltre) => {
-      set(étatActuel => ({
-        filtresActifs: {
-          ...étatActuel.filtresActifs,
-          [catégorieDeFiltre]: filtres,
-        },
-      }));
-    },
+    sauvegarderFiltres: (filtre: Partial<FiltresIndicateurs>) => set((etatActuel) => ({
+      filtresActifs: {
+        ...etatActuel.filtresActifs,
+        ...filtre,
+      },
+    })),
     réinitialiser: () => {
       set(() => ({
         filtresActifs: { ...filtresActifsInitiaux },
       }));
-    },
-    désactiverFiltre: (filtre, catégorieDeFiltre) => {
-      set(étatActuel => {
-        const filtres = [...étatActuel.filtresActifs[catégorieDeFiltre]];
-        const indexFiltreÀDésactiver = filtres.indexOf(filtre);
-        filtres.splice(indexFiltreÀDésactiver, 1);
-
-        return ({
-          filtresActifs: {
-            ...étatActuel.filtresActifs,
-            [catégorieDeFiltre]: filtres,
-          },
-        });
-      });
     },
   },
 }));

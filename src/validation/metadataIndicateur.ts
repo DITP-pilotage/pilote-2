@@ -9,6 +9,9 @@ import {
 export const validationFiltresPourListeMetadataIndicateur = z.object({
   filtres: z.object({
     chantiers: z.string().array(),
+    perimetresMinisteriels: z.string().array(),
+    estTerritorialise: z.boolean(),
+    estBarometre: z.boolean(),
   }),
 });
 

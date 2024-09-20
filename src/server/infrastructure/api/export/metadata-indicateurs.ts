@@ -83,7 +83,11 @@ export async function handleExportMetadataIndicateurs(request: NextApiRequest, r
   } satisfies Options);
   stringifier.pipe(response);
 
-  const listeMetadataIndicateur = await new RécupérerListeMetadataIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository()).run((request.query?.chantierIds as string[]) || []);
+
+  const listeMetadataIndicateur = 
+    await new RécupérerListeMetadataIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository())
+      .run((request.query?.chantierIds as string[]) || [], (request.query?.perimetreIds as string[]) || [], request.query?.estTerritorialise === 'true', request.query?.estBarometre === 'true');
+ 
   listeMetadataIndicateur.forEach((metadataIndicateur) => {
     stringifier.write([
       metadataIndicateur.indicId,
