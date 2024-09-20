@@ -1,9 +1,9 @@
 import { FunctionComponent, memo, useEffect, useRef, useState } from 'react';
 import hachuresGrisBlanc from '@/client/constants/légendes/hachure/hachuresGrisBlanc';
 import {
+  CartographieInfoBulle,
   CartographieOptions,
   CartographieTerritoires,
-  CartographieInfoBulle,
 } from '@/components/_commons/Cartographie/useCartographie.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { CartographieSVGContrat } from '@/server/cartographie/app/contrats/CartographieSVGContrat';
@@ -17,11 +17,11 @@ interface CartographieSVGProps {
   options: CartographieOptions,
   territoires: CartographieTerritoires['territoires'],
   frontières: CartographieTerritoires['frontières'],
-  setInfoBulle:  (state: CartographieInfoBulle | null) => void,
+  setInfoBulle: (state: CartographieInfoBulle | null) => void,
   auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
 }
 
-const getTraceSvg = function (svgAsJson: { svg: { g: { path: { 'attr-d': string, 'attr-territoire-code': string }[] } } },  territoireCode: string): string {
+const getTraceSvg = function (svgAsJson: CartographieSVGContrat, territoireCode: string): string {
   const pathCorrespondantAuTerritoireCode = svgAsJson.svg.g.path.find(path => path['attr-territoire-code'] === territoireCode);
   return pathCorrespondantAuTerritoireCode?.['attr-d'] || '';
 };
@@ -34,12 +34,7 @@ const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
   auClicTerritoireCallback,
 }) => {
 
-  const [stateSVG, setStateSVG] = useState<CartographieSVGContrat | null>(null);
   const { sourceSvgAsJson } = useCartographieSVG();
-
-  useEffect(() => {
-    setStateSVG(sourceSvgAsJson || null);
-  }, [sourceSvgAsJson]);
 
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [viewbox, setViewbox] = useState<Viewbox>({
@@ -89,10 +84,10 @@ const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
           >
             {
               territoires.map(territoire => (
-                stateSVG ? (
-                  <path 
+                sourceSvgAsJson ? (
+                  <path
                     className={`territoire-rempli ${(options.estInteractif && territoire.estInteractif) && 'territoire-interactif'}`}
-                    d={getTraceSvg(stateSVG, territoire.code)}
+                    d={getTraceSvg(sourceSvgAsJson, territoire.code)}
                     fill={territoire.remplissage}
                     key={`territoire-${territoire.codeInsee}`}
                     onClick={() => options.estInteractif && territoire.estInteractif && auClicTerritoireCallback(territoire.codeInsee, options.territoireSélectionnable)}
