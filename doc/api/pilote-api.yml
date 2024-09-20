@@ -161,6 +161,32 @@ paths:
       parameters: []
       security:
         - bearerAuth: []
+  '/chantier/{chantier_id}/donnees':
+    parameters:
+      - schema:
+          type: string
+          pattern: '^CH-\d{3}$'
+        name: chantier_id
+        in: path
+        required: true
+        description: ID Chantier
+    get:
+      summary: Informations chantier
+      tags:
+        - Chantier
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DonneeChantierContrat'
+        '403':
+          description: Vous n'êtes pas autorisé à acceder au chantier.
+      operationId: get-donnees-chantier
+      description: Obtenir les données du chantier au format JSON.
+      security:
+        - bearerAuth: []
 components:
   schemas:
     DonneeIndicateurContrat:
@@ -188,7 +214,7 @@ components:
           x-stoplight:
             id: 6s8rkoas7q30z
           items:
-            $ref: '#/components/schemas/DonneeTerritoireContrat'
+            $ref: '#/components/schemas/DonneeTerritoireIndicateurContrat'
             x-stoplight:
               id: e7s3bxer5n30d
     IndicateurId:
@@ -207,12 +233,12 @@ components:
       pattern: '^CH-\d{3}$'
       example: CH-123
       description: Identifiant unique d'un chantier
-    DonneeTerritoireContrat:
-      title: DonneeTerritoireContrat
+    DonneeTerritoireIndicateurContrat:
+      title: DonneeTerritoireIndicateurContrat
       x-stoplight:
-        id: 59a7twyiu5xvx
+        id: dzjah2w2bsrfp
       type: object
-      description: Donnée pour un territoire
+      description: Donnée indicateur pour un territoire
       properties:
         maille:
           x-stoplight:
@@ -363,21 +389,201 @@ components:
               - valeur
       required:
         - donnees
+    DonneeChantierContrat:
+      title: DonneeChantierContrat
+      x-stoplight:
+        id: d9ppgslqtmacp
+      type: object
+      properties:
+        chantier_id:
+          $ref: '#/components/schemas/ChantierId'
+          x-stoplight:
+            id: 11w6r5r67d40f
+        chantier_nom:
+          type: string
+          x-stoplight:
+            id: b42axme8e4vvt
+          description: Nom complet du chantier
+        chantier_axe:
+          type: string
+          x-stoplight:
+            id: qda1s5pmjkj1f
+          description: Axe gouvernemental associé au chantier.
+        chantier_ministere:
+          type: string
+          x-stoplight:
+            id: zypiaic3yjfuf
+          description: Nom du ministère associé
+        statut:
+          type: string
+          x-stoplight:
+            id: svnmgaypeufv3
+          enum:
+            - PUBLIE
+            - BROUILLON
+          description: Etata de publication.
+        chantier_du_barometre:
+          type: boolean
+          x-stoplight:
+            id: gv0yro0nsli6l
+          description: Est-ce que le chantier est publié au Baromètre des résultats de l'action publique.
+        chantier_territorialise:
+          type: boolean
+          x-stoplight:
+            id: uznvknhloqpc5
+        directeur_projet:
+          type: string
+          x-stoplight:
+            id: mxy1uoqzx2xmg
+          description: Nom du directeur de projet associé.
+        directeur_projet_contact:
+          type: string
+          x-stoplight:
+            id: l90npyimiuzvr
+          description: Contact du Directeur de projet.
+        donnees_territoires:
+          x-stoplight:
+            id: l6a2iuqmffnq1
+          type: array
+          items:
+            $ref: '#/components/schemas/DonneeTerritoireChantierContrat'
+            x-stoplight:
+              id: 5e4oxpsc1zprf
+      description: Données chantier retournées par les endpoints *données* de l'API.
+    DonneeTerritoireChantierContrat:
+      title: DonneeTerritoireChantierContrat
+      x-stoplight:
+        id: ssd90kbo0e89j
+      type: object
+      description: Donnée chantier pour un territoire
+      properties:
+        maille:
+          type: string
+          x-stoplight:
+            id: 013zqgnzj7hja
+          description: Maille du territoire.
+          enum:
+            - DEPT
+            - REG
+            - NAT
+          example: REG
+        territoire_code:
+          type: string
+          x-stoplight:
+            id: xjnmuc9qncmvl
+          example: DEPT-06
+          description: Code territoire
+        zone_id:
+          type: string
+          x-stoplight:
+            id: 511la25fumbfo
+          description: Code du territoire (second référentiel)
+          example: D06
+        responsable_local:
+          type: string
+          x-stoplight:
+            id: qnw86tpymz3x4
+          description: Nom du responsable local
+        responsable_local_contact:
+          type: string
+          x-stoplight:
+            id: 54xm2mzjr5qnb
+          description: Contact du responsable local
+        taux_avancement_dept:
+          type: number
+          x-stoplight:
+            id: 4hf595gpa72a4
+          minimum: 0
+          maximum: 100
+          example: 98.4
+          description: Taux d'avancement si la maille est DEPT
+        taux_avancement_region:
+          type: number
+          x-stoplight:
+            id: f6j4ntea7clae
+          minimum: 0
+          maximum: 100
+          example: 98.4
+          description: Taux d'avancement de la région associée
+        taux_avancement_nat:
+          type: number
+          x-stoplight:
+            id: rdxqvtz09643q
+          minimum: 0
+          maximum: 100
+          description: Taux avancement à la maille nationale
+        meteo:
+          type: string
+          x-stoplight:
+            id: vrkwiy4sz0hen
+          description: Météo du chantier
+          enum:
+            - ORAGE
+            - COUVERT
+            - NUAGE
+            - SOLEIL
+          example: ORAGE
+        publication:
+          type: array
+          x-stoplight:
+            id: 6sbbkiw841s5g
+          description: Données qualitatives locales visibles sur Pilote.
+          items:
+            x-stoplight:
+              id: 69usomafkb43d
+            type: object
+            properties:
+              synthese_des_resultats:
+                type: string
+                x-stoplight:
+                  id: ntp9q1m3n7rkl
+              notre_ambition:
+                type: string
+                x-stoplight:
+                  id: mnqst8njd4p1s
+              ce_qui_a_deja_ete_fait:
+                type: string
+                x-stoplight:
+                  id: 6fgn7v7c19nvm
+              ce_qui_reste_a_faire:
+                type: string
+                x-stoplight:
+                  id: 4d9gvnrwuv35x
+              suivi_decisions_strategiques:
+                type: string
+                x-stoplight:
+                  id: r5qfxt9b7jxsg
+              autres_resultats_non_coreeles_aux_indic:
+                type: string
+                x-stoplight:
+                  id: 7zrob4g0mmsok
+              risques_et_freins_a_lever:
+                type: string
+                x-stoplight:
+                  id: kh98d8kqd0wks
+              solutions:
+                type: string
+                x-stoplight:
+                  id: te1qvqjxi0wr8
+              exemples_reussite:
+                type: string
+                x-stoplight:
+                  id: oxcop0vqjg9xa
+              commentaires_sur_les_donnees:
+                type: string
+                x-stoplight:
+                  id: 4qq3vchuc3h3m
+              autres_resultats:
+                type: string
+                x-stoplight:
+                  id: umxzs3zaa5ulv
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       description: Cette clé d'API vous permet de vous authentifier et d'accéder uniquement aux resources autorisées.
       bearerFormat: JWT
-  parameters:
-    chantier_id:
-      name: chantier_id
-      in: query
-      schema:
-        type: string
-        pattern: bla
-      description: Identifiant de chantier
-      required: true
+  parameters: {}
 tags:
   - name: Chantier
     description: Opérations sur les chantiers prioritaires
