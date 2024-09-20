@@ -8,7 +8,7 @@ pivot_vi AS (
         zone_id,
         metric_date,
         metric_value AS vi
-    FROM {{ ref('agg_all') }} WHERE metric_type = 'vi'
+    FROM {{ ref('agg_all_replicate') }} WHERE metric_type = 'vi'
 ),
 
 -- Pivot des va
@@ -20,7 +20,7 @@ pivot_va AS (
         zone_id,
         metric_date,
         metric_value AS va
-    FROM {{ ref('agg_all') }} WHERE metric_type = 'va'
+    FROM {{ ref('agg_all_replicate') }} WHERE metric_type = 'va'
 ),
 
 -- Pivot des vc
@@ -32,7 +32,7 @@ pivot_vc AS (
         zone_id,
         metric_date,
         metric_value AS vc
-    FROM {{ ref('agg_all') }} WHERE metric_type = 'vc'
+    FROM {{ ref('agg_all_replicate') }} WHERE metric_type = 'vc'
 ),
 
 -- Jointure des 2 tables pivotées: vi X va => u_vi_va
