@@ -6,6 +6,7 @@ import {
   CartographieInfoBulle,
 } from '@/components/_commons/Cartographie/useCartographie.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { CartographieSVGContrat } from '@/server/cartographie/app/contrats/CartographieSVGContrat';
 import { Viewbox } from './CartographieSVG.interface';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
@@ -33,8 +34,13 @@ const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
   auClicTerritoireCallback,
 }) => {
 
+  const [stateSVG, setStateSVG] = useState<CartographieSVGContrat | null>(null);
   const { sourceSvgAsJson } = useCartographieSVG();
-  
+
+  useEffect(() => {
+    setStateSVG(sourceSvgAsJson || null);
+  }, [sourceSvgAsJson]);
+
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [viewbox, setViewbox] = useState<Viewbox>({
     x: 0,
@@ -83,23 +89,25 @@ const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
           >
             {
               territoires.map(territoire => (
-                sourceSvgAsJson ? (<path 
-                  className={`territoire-rempli ${(options.estInteractif && territoire.estInteractif) && 'territoire-interactif'}`}
-                  d={getTraceSvg(sourceSvgAsJson, territoire.code)}
-                  fill={territoire.remplissage}
-                  key={`territoire-${territoire.codeInsee}`}
-                  onClick={() => options.estInteractif && territoire.estInteractif && auClicTerritoireCallback(territoire.codeInsee, options.territoireSélectionnable)}
-                  onMouseEnter={() => {
-                    if (options.estInteractif) {
-                      setInfoBulle({
-                        libellé: territoire.libellé,
-                        valeurAffichée: territoire.valeurAffichée,
-                      });
-                    } else {
-                      setInfoBulle(null);
-                    }
-                  }}
-                                   />) : null),
+                stateSVG ? (
+                  <path 
+                    className={`territoire-rempli ${(options.estInteractif && territoire.estInteractif) && 'territoire-interactif'}`}
+                    d={getTraceSvg(stateSVG, territoire.code)}
+                    fill={territoire.remplissage}
+                    key={`territoire-${territoire.codeInsee}`}
+                    onClick={() => options.estInteractif && territoire.estInteractif && auClicTerritoireCallback(territoire.codeInsee, options.territoireSélectionnable)}
+                    onMouseEnter={() => {
+                      if (options.estInteractif) {
+                        setInfoBulle({
+                          libellé: territoire.libellé,
+                          valeurAffichée: territoire.valeurAffichée,
+                        });
+                      } else {
+                        setInfoBulle(null);
+                      }
+                    }}
+                  />
+                ) : null),
               )
             }
             {

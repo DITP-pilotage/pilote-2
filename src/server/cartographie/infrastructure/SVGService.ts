@@ -1,11 +1,12 @@
 import { XMLParser } from 'fast-xml-parser';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { CartographieSVGContrat } from '@/server/cartographie/app/contrats/CartographieSVGContrat';
 
 const SVG_FILEPATH = join(process.cwd(), '/src/server/cartographie/domain/france-pilote.svg');
 
-export const loadSvgAsJson = function (): 
-{ svg: { defs: any, g: { path: { 'attr-d': string, 'attr-territoire-code': string }[] } } } {
+
+export const loadSvgAsJson = (): CartographieSVGContrat => {
   // 1- Read SVG
   let sourceSvg = readFileSync(SVG_FILEPATH).toString();
   // 2- Parse as JSON
