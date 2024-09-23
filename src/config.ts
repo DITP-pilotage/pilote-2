@@ -245,13 +245,6 @@ const config = convict({
       env: 'TOKEN_API_SECRET',
     },
   },
-  cartographie: {
-    svgPath: {
-      format: String,
-      default: 'cartographie-france.svg',
-      env: 'CARTOGRAPHIE_SVG_PATH',
-    },
-  },
   schemaValidataUrl: {
     format: String,
     default: 'https://raw.githubusercontent.com/DITP-pilotage/pilote-2/dev/public/schema/',
