@@ -4,7 +4,6 @@ import { formaterDate } from '@/client/utils/date/date';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
-import Ppg from '@/server/domain/ppg/Ppg.interface';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import PremièrePageImpressionRapportDétailléStyled from './PremièrePageImpressionRapportDétaillé.styled';
 
@@ -42,7 +41,7 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<PremièrePageI
       .map((ministère) => [ministère.id, ministère.périmètresMinistériels[0].id]),
   );
 
-  const retrouverNomFiltre = (idItemRecherche: string, listItems: Ministère[] | PérimètreMinistériel[] | Axe[] | Ppg[]) => {
+  const retrouverNomFiltre = (idItemRecherche: string, listItems: Ministère[] | PérimètreMinistériel[] | Axe[]) => {
     return listItems.find(item => item.id === idItemRecherche)!.nom;
   };
 

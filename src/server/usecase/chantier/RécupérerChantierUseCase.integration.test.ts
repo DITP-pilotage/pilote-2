@@ -37,7 +37,7 @@ describe('RécupérerChantierUseCase', () => {
       data: [
         new ChantierSQLRowBuilder()
           .avecMaille('NAT')
-          .avecId('CH-001').avecNom('Chantier 1').avecAxe('Axe 1').avecPpg('Ppg 1')
+          .avecId('CH-001').avecNom('Chantier 1').avecAxe('Axe 1')
           .avecPérimètreIds(['PER-001', 'PER-002']).avecMétéo('COUVERT')
           .avecDirecteursAdminCentrale(['Alain Térieur', 'Alex Térieur'])
           .avecDirectionsAdminCentrale(['Intérieur', 'Extérieur'])
@@ -62,7 +62,6 @@ describe('RécupérerChantierUseCase', () => {
     // THEN
     expect(result1.nom).toEqual('Chantier 1');
     expect(result1.axe).toStrictEqual('Axe 1');
-    expect(result1.ppg).toStrictEqual('Ppg 1');
     expect(result1.périmètreIds).toStrictEqual(['PER-001', 'PER-002']);
     expect(result1.mailles.nationale.FR.météo).toEqual('COUVERT');
     expect(result1.responsables.directeursAdminCentrale).toStrictEqual([{ nom: 'Alain Térieur', direction: 'Intérieur' }, { nom: 'Alex Térieur', direction: 'Extérieur' }]);

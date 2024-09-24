@@ -72,7 +72,6 @@ model chantier {
   directions_administration_centrale String[]
   meteo                              String?     @default("NON_RENSEIGNEE")
   axe                                String      @default("non renseignée")
-  ppg                                String      @default("non renseignée")
   directeurs_projet_mails            String[]
   responsables_locaux_mails          String[]
   coordinateurs_territoriaux_mails   String[]
@@ -191,14 +190,6 @@ model synthese_des_resultats {
 }
 
 model axe {
-  id          String  @id
-  nom         String
-  a_supprimer Boolean @default(true)
-
-  @@schema("public")
-}
-
-model ppg {
   id          String  @id
   nom         String
   a_supprimer Boolean @default(true)

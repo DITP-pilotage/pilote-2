@@ -4,7 +4,6 @@ import Titre from '@/components/_commons/Titre/Titre';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
-import Ppg from '@/server/domain/ppg/Ppg.interface';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import FiltresSélectionnésCatégorie from './Catégorie/FiltresSélectionnésCatégorie';
 import FiltresSélectionnésStyled from './FiltresSélectionnés.styled';
@@ -44,7 +43,7 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
       .map((ministère) => [ministère.périmètresMinistériels[0].id, ministère.id]),
   );
 
-  const retrouverNomFiltre = (idItemRecherche: string, listItems: Ministère[] | PérimètreMinistériel[] | Axe[] | Ppg[]) => {
+  const retrouverNomFiltre = (idItemRecherche: string, listItems: Ministère[] | PérimètreMinistériel[] | Axe[]) => {
     return listItems.find(item => item.id === idItemRecherche)!.nom;
   };
 

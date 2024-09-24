@@ -107,7 +107,6 @@ export function parseChantier(
     id: chantierMailleNationale.id,
     nom: chantierMailleNationale.nom,
     axe: chantierMailleNationale.axe,
-    ppg: chantierMailleNationale.ppg,
     périmètreIds: chantierMailleNationale.perimetre_ids,
     ate: chantierMailleNationale.ate,
     statut: chantierMailleNationale.statut,

@@ -21,8 +21,6 @@ export default class ChantierRowBuilder {
 
   private _axe: chantier['axe'];
 
-  private _ppg: chantier['ppg'];
-
   private _périmètreIds: chantier['perimetre_ids'];
 
   private _maille: chantier['maille'];
@@ -100,7 +98,6 @@ export default class ChantierRowBuilder {
     this._id = chantierGénéré.id;
     this._nom = chantierGénéré.nom;
     this._axe = chantierGénéré.axe;
-    this._ppg = chantierGénéré.ppg;
     this._périmètreIds = ministères.flatMap(ministère => ministère.périmètresMinistériels).map(périmètreMinistériel => périmètreMinistériel.id);
     this._maille = maille;
     this._territoireNom = générerPeutÊtreNull(0.2, faker.address.state());
@@ -148,11 +145,6 @@ export default class ChantierRowBuilder {
 
   avecAxe(axe: chantier['axe']): ChantierRowBuilder {
     this._axe = axe;
-    return this;
-  }
-
-  avecPpg(ppg: chantier['ppg']): ChantierRowBuilder {
-    this._ppg = ppg;
     return this;
   }
 
@@ -274,7 +266,6 @@ export default class ChantierRowBuilder {
       id: this._id,
       nom: this._nom,
       axe: this._axe,
-      ppg: this._ppg,
       perimetre_ids: this._périmètreIds,
       maille: this._maille,
       territoire_nom: this._territoireNom,

@@ -32,8 +32,6 @@ models:
         description: "source de données à date du 06/07/2023 : champs déprécié"
       - name: axe
         description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_axe"
-      - name: ppg
-        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_ppg"
       - name: directeurs_projet_mails
         description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
       - name: est_barometre

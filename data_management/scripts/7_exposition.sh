@@ -17,7 +17,6 @@ fi
 
 psql "$DATABASE_URL" -c "UPDATE public.axe SET a_supprimer = TRUE"
 psql "$DATABASE_URL" -c "UPDATE public.perimetre SET a_supprimer = TRUE"
-psql "$DATABASE_URL" -c "UPDATE public.ppg SET a_supprimer = TRUE"
 psql "$DATABASE_URL" -c "UPDATE public.chantier SET a_supprimer = TRUE"
 psql "$DATABASE_URL" -c "UPDATE public.indicateur SET a_supprimer = TRUE"
 psql "$DATABASE_URL" -c "UPDATE public.ministere SET a_supprimer = TRUE"
@@ -27,7 +26,6 @@ dbt run --project-dir data_factory --select intermediate exposition df3 barometr
 if [ $? -eq 0 ]; then
   psql "$DATABASE_URL" -c "DELETE FROM public.axe WHERE a_supprimer = TRUE"
   psql "$DATABASE_URL" -c "DELETE FROM public.perimetre WHERE a_supprimer = TRUE"
-  psql "$DATABASE_URL" -c "DELETE FROM public.ppg WHERE a_supprimer = TRUE"
   psql "$DATABASE_URL" -c "DELETE FROM public.chantier WHERE a_supprimer = TRUE"
   psql "$DATABASE_URL" -c "DELETE FROM public.indicateur WHERE a_supprimer = TRUE"
   psql "$DATABASE_URL" -c "DELETE FROM public.ministere WHERE a_supprimer = TRUE"

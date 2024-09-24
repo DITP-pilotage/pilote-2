@@ -3,7 +3,6 @@ import { FunctionComponent } from 'react';
 import Tag from '@/components/_commons/Tag/Tag';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
-import Ppg from '@/server/domain/ppg/Ppg.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import { reinitialiserFiltres, sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import FiltresActifsStyled from './FiltresActifs.styled';
@@ -51,7 +50,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
       .map((ministère) => [ministère.périmètresMinistériels[0].id, ministère.id]),
   );
 
-  const retrouverNomFiltre = (idItemRecherche: string, listItems: Ministère[] | PérimètreMinistériel[] | Axe[] | Ppg[]) => {
+  const retrouverNomFiltre = (idItemRecherche: string, listItems: Ministère[] | PérimètreMinistériel[] | Axe[]) => {
     return listItems.find(item => item.id === idItemRecherche)!.nom;
   };
 
