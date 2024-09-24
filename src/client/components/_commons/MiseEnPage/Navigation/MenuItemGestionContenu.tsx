@@ -30,7 +30,7 @@ const MenuItemGestionContenu: FunctionComponent<{ urlActuelle: string }> = ({ ur
       lien: '/admin/chantiers',
       accessible: false,
     }, {
-      nom: 'Indicateurs des chantiers',
+      nom: 'Indicateurs des PPG',
       lien: '/admin/indicateurs',
       accessible: true,
     }, {

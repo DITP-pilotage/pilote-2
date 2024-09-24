@@ -20,11 +20,11 @@ import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
 const reactTableColonnesHelper = createColumnHelper<MetadataParametrageIndicateurContrat>();
 const colonnes = [
   reactTableColonnesHelper.accessor('indicParentCh', {
-    header: 'Chantier associé',
+    header: 'PPG associée',
     cell: props => props.getValue(),
   }),
   reactTableColonnesHelper.accessor('chantierNom', {
-    header: 'Nom du chantier',
+    header: 'Nom de la politque prioritaire',
     cell: props => props.getValue(),
   }),
   reactTableColonnesHelper.accessor('indicId', {

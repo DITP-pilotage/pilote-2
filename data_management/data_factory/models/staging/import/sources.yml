@@ -39,13 +39,13 @@ sources:
               pilote_create_defaultValue: ""
           - name: indic_parent_ch
             data_type: text
-            description: "Code du chantier associé à cet indicateur, au format CH-XXX."
+            description: "Code de la politique prioritaire associée à cet indicateur, au format CH-XXX."
             meta:
               pilote_show: true
-              pilote_alias: "Chantier associé"
+              pilote_alias: "PPG associée"
               pilote_edit_isEditable: true
               pilote_edit_regex: '^CH-\d{3}$'
-              pilote_edit_regexViolationMessage: "Le code du chantier parent doit être au format 'CH-XXX'"
+              pilote_edit_regexViolationMessage: "Le code de la politique prioritaire parent doit être au format 'CH-XXX'"
               pilote_edit_boxType: text
               pilote_disp_dispDesc: true
               pilote_create_mandatory: true
@@ -140,7 +140,7 @@ sources:
                 { "order_id": 2, "value": "DEPL", "name": "Déploiement", "desc": "Indicateur de déploiement" },
                 { "order_id": 3, "value": "CONTEXTE", "name": "De contexte", "desc": "Indicateur de contexte" },
                 { "order_id": 4, "value": "Q_SERV", "name": "De qualité de service", "desc": "Mesure la qualité du service rendu." },
-                { "order_id": 5, "value": "REBOND", "name": "Effets rebonds", "desc": "Effets rebonds engendrés par la mise en place du chantier" }
+                { "order_id": 5, "value": "REBOND", "name": "Effets rebonds", "desc": "Effets rebonds engendrés par la mise en place de la politique prioritaire" }
               ]
               pilote_disp_dispDesc: true
               pilote_create_mandatory: true
