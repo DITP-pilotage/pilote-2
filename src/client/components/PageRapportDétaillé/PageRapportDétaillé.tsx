@@ -105,7 +105,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
                 baliseHtml='h1'
                 className='fr-h2'
               >
-                {`Rapport détaillé : ${chantiersFiltrés.length} ${chantiersFiltrés.length > 1 ? 'chantiers' : 'chantier'}`}
+                {`Rapport détaillé : ${chantiersFiltrés.length} ${chantiersFiltrés.length > 1 ? 'Politiques Prioritaires' : 'politique prioritaire'}`}
               </Titre>
               <div>
                 <Link
@@ -135,7 +135,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
                 auChangement={setAfficherLesChantiers}
                 checked={afficherLesChantiers}
                 id='afficher-chantiers'
-                libellé='Afficher le détail des chantiers'
+                libellé='Afficher le détail des Politiques Prioritaires'
               />
             </div>
             <RapportDétailléVueDEnsemble

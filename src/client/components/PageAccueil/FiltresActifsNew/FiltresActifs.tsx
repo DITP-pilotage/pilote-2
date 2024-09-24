@@ -143,7 +143,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           filtres.estEnAlerteÉcart ? (
             <li>
               <Tag
-                libellé={`Chantier(s) avec un retard de 10 points par rapport à leur médiane ${mailleSelectionnee}`}
+                libellé={`Politique(s) Prioritaire(s) avec un retard de 10 points par rapport à leur médiane ${mailleSelectionnee}`}
                 suppressionCallback={() => {
                   filtres.estEnAlerteÉcart = false;
 
@@ -158,7 +158,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           filtres.estEnAlerteBaisse ? (
             <li>
               <Tag
-                libellé='Chantier(s) avec tendance en baisse'
+                libellé='Politique(s) Prioritaire(s)e(s) avec tendance en baisse'
                 suppressionCallback={() => {
                   filtres.estEnAlerteBaisse = false;
 
@@ -173,7 +173,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           filtres.estEnAlerteMétéoNonRenseignée ? (
             <li>
               <Tag
-                libellé='Chantier(s) avec météo et synthèse des résultats non renseignés'
+                libellé='Politique(s) Prioritaire(s) avec météo et synthèse des résultats non renseignés'
                 suppressionCallback={() => {
                   filtres.estEnAlerteMétéoNonRenseignée = false;
 
@@ -188,7 +188,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? (
             <li>
               <Tag
-                libellé='Chantier(s) sans taux d’avancement au niveau départemental'
+                libellé='Politique(s) Prioritaire(s) sans taux d’avancement au niveau départemental'
                 suppressionCallback={() => {
                   filtres.estEnAlerteAbscenceTauxAvancementDepartemental = false;
 
@@ -203,7 +203,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           filtres.estTerritorialise && filtres.estBarometre ? (
             <li>
               <Tag
-                libellé='Chantiers du baromètre ou chantiers territorialisés'
+                libellé='PPG du baromètre ou PPG territorialisés'
                 suppressionCallback={() => {
                   filtres.estBarometre = false;
                   filtres.estTerritorialise = false;
@@ -216,7 +216,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           ) : filtres.estBarometre ? (
             <li>
               <Tag
-                libellé='Chantiers du baromètre'
+                libellé='PPG du baromètre'
                 suppressionCallback={() => {
                   filtres.estBarometre = false;
 
@@ -228,7 +228,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           ) : filtres.estTerritorialise ? (
             <li>
               <Tag
-                libellé='Chantiers territorialisés'
+                libellé='PPG territorialisés'
                 suppressionCallback={() => {
                   filtres.estTerritorialise = false;
 

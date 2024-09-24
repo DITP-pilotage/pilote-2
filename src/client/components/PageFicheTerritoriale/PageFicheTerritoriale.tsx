@@ -128,7 +128,7 @@ export const PageFicheTerritoriale: FunctionComponent<FicheTerritorialeContrat> 
                           />
                         </div>
                         <span className='fr-pl-1w fr-text--sm fr-m-0'>
-                          Le déploiement du chantier prioritaire rencontrent des difficultés importantes qui empêche la réalisation des objectifs fixée.
+                          Le déploiement de la politique prioritaire rencontrent des difficultés importantes qui empêche la réalisation des objectifs fixée.
                         </span>
                       </div>
                     </li>
@@ -140,7 +140,7 @@ export const PageFicheTerritoriale: FunctionComponent<FicheTerritorialeContrat> 
                           />
                         </div>
                         <span className='fr-pl-1w fr-text--sm fr-m-0'>
-                          Le déploiement du chantier prioritaire rencontre des obstacles importants. Une intervention
+                          Le déploiement de la politique prioritaire rencontre des obstacles importants. Une intervention
                           directe du directeur de projet est nécessaire afin de résoudre les difficultés.
                         </span>
                       </div>
@@ -153,7 +153,7 @@ export const PageFicheTerritoriale: FunctionComponent<FicheTerritorialeContrat> 
                           />
                         </div>
                         <span className='fr-pl-1w fr-text--sm fr-m-0'>
-                          Le déploiement du chantier prioritaire ne rencontre pas de difficultés majeures. Les possibles
+                          Le déploiement de la politique prioritaire ne rencontre pas de difficultés majeures. Les possibles
                           difficultés sont résolues directement sur le terrain.
                         </span>
                       </div>
@@ -166,7 +166,7 @@ export const PageFicheTerritoriale: FunctionComponent<FicheTerritorialeContrat> 
                           />
                         </div>
                         <span className='fr-pl-1w fr-text--sm fr-m-0'>
-                          Le chantier prioritaire se déploie sans difficultés. Aucun appui nécessaire.
+                          La politique prioritaire se déploie sans difficultés. Aucun appui nécessaire.
                         </span>
                       </div>
                     </li>
@@ -189,7 +189,7 @@ export const PageFicheTerritoriale: FunctionComponent<FicheTerritorialeContrat> 
                   className='fr-text--lg fr-mb-0 fr-py-1v'
                   estInline
                 >
-                  {`Liste des chantiers (${chantiersFicheTerritoriale.length})`}
+                  {`Liste des Politiques Prioritaires (${chantiersFicheTerritoriale.length})`}
                 </Titre>
                 <div className='flex align-center'>
                   <div />

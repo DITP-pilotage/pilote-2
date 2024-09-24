@@ -11,12 +11,12 @@ const filtreBaromètre: {
   id: string,
   attribut: 'estBaromètre' | 'estTerritorialisé',
   nom: string
-} = { id: 'filtreBaromètre', attribut: 'estBaromètre', nom: 'Chantiers du baromètre' };
+} = { id: 'filtreBaromètre', attribut: 'estBaromètre', nom: 'PPG du baromètre' };
 const filtreTerritorialisé: {
   id: string,
   attribut: 'estBaromètre' | 'estTerritorialisé',
   nom: string
-} = { id: 'filtreTerritorialisé', attribut: 'estTerritorialisé', nom: 'Chantiers territorialisés' };
+} = { id: 'filtreTerritorialisé', attribut: 'estTerritorialisé', nom: 'PPG territorialisés' };
 
 interface FiltresProps {
   ministères: Ministère[],

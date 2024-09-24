@@ -57,7 +57,7 @@ const AdminIndicateurBarreLatérale: FunctionComponent<AdminIndicateursBarreLat�
           }}
           checked={filtresActifs.estTerritorialise}
           id='estTerritorialise'
-          libellé='Chantiers territorialisés'
+          libellé='PPG territorialisés'
         />
         <Interrupteur
           auChangement={(estBarometre) => {
@@ -65,7 +65,7 @@ const AdminIndicateurBarreLatérale: FunctionComponent<AdminIndicateursBarreLat�
           }}
           checked={filtresActifs.estBarometre}
           id='estBarometre'
-          libellé='Chantiers du baromètre'
+          libellé='PPG du baromètre'
         />
       </BarreLatéraleEncart>
     </BarreLatérale>

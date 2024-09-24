@@ -195,7 +195,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   className='fr-h4 fr-mb-0 fr-py-1v'
                   estInline
                 >
-                  Avancement du chantier
+                  Avancement de la Politique prioritaire
                 </Titre>
                 {
                   process.env.NEXT_PUBLIC_FF_INFOBULLE_PONDERATION === 'true' && (

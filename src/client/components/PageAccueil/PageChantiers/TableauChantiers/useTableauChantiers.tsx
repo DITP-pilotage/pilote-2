@@ -57,7 +57,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
       enableGrouping: true,
     }),
     reactTableColonnesHelper.accessor('nom', {
-      header: 'Chantiers',
+      header: 'Politiques Prioritaires',
       id: 'nom',
       aggregatedCell: aggregatedCellContext => (
         <IcônesMultiplesEtTexte

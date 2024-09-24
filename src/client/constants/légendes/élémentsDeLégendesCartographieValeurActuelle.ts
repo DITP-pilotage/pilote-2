@@ -8,7 +8,7 @@ export const ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE: CartographieÉlémentsDeLégen
     remplissage: REMPLISSAGE_PAR_DÉFAUT,
   },
   'NON_APPLICABLE': {
-    libellé: 'Territoire où le chantier prioritaire ne s’applique pas',
+    libellé: 'Territoire où la politique prioritaire ne s’applique pas',
     remplissage: 'url(#hachures-gris-blanc)',
   },
 };

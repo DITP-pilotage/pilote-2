@@ -66,16 +66,16 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<PremièrePageI
     return acc;
   }, new Map<string, { nom: string, perimetres: { id: string, nom: string }[] }>);
   const filtresTypologie = [
-    filtres.estBarometre ? 'Chantiers du baromètre' : null,
-    filtres.estTerritorialise ? 'Chantiers territorialisés' : null,
-    estAutoriseAVoirLesBrouillons ? filtres.statut === 'BROUILLON_ET_PUBLIE' ? 'Chantiers validés et en cours de publication' : filtres.statut === 'BROUILLON' ? 'Chantiers en cours de publication' : 'Chantiers validés' : null,
+    filtres.estBarometre ? 'PPG du baromètre' : null,
+    filtres.estTerritorialise ? 'PPG territorialisés' : null,
+    estAutoriseAVoirLesBrouillons ? filtres.statut === 'BROUILLON_ET_PUBLIE' ? 'PPG validés et en cours de publication' : filtres.statut === 'BROUILLON' ? 'PPG en cours de publication' : 'PPG validés' : null,
   ].filter(Boolean);
   const filtresAlertes = [
     filtres.estEnAlerteTauxAvancementNonCalculé ? 'Taux d’avancement non calculé en raison d’indicateurs non renseignés' : null,
-    filtres.estEnAlerteÉcart ? `Chantier(s) avec un retard de 10 points par rapport à leur médiane ${territoireSélectionné?.maille}` : null,
-    filtres.estEnAlerteBaisse ? 'Chantier(s) avec tendance en baisse' : null,
-    filtres.estEnAlerteMétéoNonRenseignée ? 'Chantier(s) avec météo et synthèse des résultats non renseignés' : null,
-    filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 'Chantier(s) sans taux d’avancement au niveau départemental' : null,
+    filtres.estEnAlerteÉcart ? `Politique(s) Prioritaire(s) avec un retard de 10 points par rapport à leur médiane ${territoireSélectionné?.maille}` : null,
+    filtres.estEnAlerteBaisse ? 'Politique(s) Prioritaire(s) avec tendance en baisse' : null,
+    filtres.estEnAlerteMétéoNonRenseignée ? 'Politique(s) Prioritaire(s) avec météo et synthèse des résultats non renseignés' : null,
+    filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 'Politique(s) Prioritaire(s) sans taux d’avancement au niveau départemental' : null,
   ].filter(Boolean);
 
   const filtresAxes = filtres.axes.split(',').filter(Boolean).map(axeId => retrouverNomFiltre(axeId, axes));

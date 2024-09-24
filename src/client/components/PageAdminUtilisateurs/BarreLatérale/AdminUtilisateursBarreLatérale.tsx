@@ -160,7 +160,7 @@ const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateursBarreL
           className='fr-sidemenu__btn fr-m-0'
           type='button'
         >
-          Chantier(s)
+          Politiques Prioritaires
         </button>
         <div
           className='fr-collapse'

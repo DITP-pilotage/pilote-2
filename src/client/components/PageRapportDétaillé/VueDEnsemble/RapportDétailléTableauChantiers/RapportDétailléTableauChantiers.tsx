@@ -21,7 +21,7 @@ const RapportDétailléTableauChantiers: FunctionComponent<RapportDétailléTabl
               <div className='fr-container'>
                 <div className='fr-notice__body'>
                   <p className='fr-notice__title'>
-                    Aucun chantier à afficher.
+                    Aucune poltique prioritaire à afficher.
                   </p>
                 </div>
               </div>
@@ -29,7 +29,7 @@ const RapportDétailléTableauChantiers: FunctionComponent<RapportDétailléTabl
           :
             <table className='tableau'>
               <caption className='fr-sr-only'>
-                Liste des chantiers
+                Liste des Politiques Prioritaires
               </caption>
               <RapportDétailléTableauChantiersEnTête tableau={tableau} />
               <RapportDétailléTableauChantiersContenu tableau={tableau} />
