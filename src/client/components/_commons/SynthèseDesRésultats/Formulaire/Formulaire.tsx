@@ -36,7 +36,7 @@ const SynthèseDesRésultatsFormulaire: FunctionComponent<SynthèseDesRésultats
         Modifier la météo et la synthèse des résultats
       </Titre>
       <p className='fr-text--xs fr-mb-1w texte-gris'>
-        {`Résumez l’état d’avancement du chantier et indiquez si vous souhaitez solliciter du soutien en quelques phrases (${LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS} caractères maximum). La météo doit indiquer votre niveau de confiance dans la possibilité d’atteindre les objectifs du chantier et le niveau d’appui nécessaire.`}
+        {`Résumez l’état d’avancement de la politique prioritaire et indiquez si vous souhaitez solliciter du soutien en quelques phrases (${LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS} caractères maximum). La météo doit indiquer votre niveau de confiance dans la possibilité d’atteindre les objectifs de la politique prioritaire et le niveau d’appui nécessaire.`}
       </p>
       <div className={`fr-mb-0 fr-input-group ${errors.contenu && 'fr-input-group--error'}`}>
         <textarea

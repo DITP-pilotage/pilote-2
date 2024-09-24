@@ -12,7 +12,7 @@ export const libellésTypesObjectif: Record<TypeObjectif, string> = {
 };
 
 export const consignesDÉcritureObjectif: Record<TypeObjectif, string> = {
-  notreAmbition: 'Rappelez l’ambition politique de votre chantier à horizon 2026 : quels sont les objectifs ? Pourquoi les indicateurs choisis pour mesurer son avancement sont-ils importants ? Quels sont les leviers pour agir au niveau central et déconcentré ?',
+  notreAmbition: 'Rappelez l’ambition politique de votre politique prioritaire à horizon 2026 : quels sont les objectifs ? Pourquoi les indicateurs choisis pour mesurer son avancement sont-ils importants ? Quels sont les leviers pour agir au niveau central et déconcentré ?',
   déjàFait: 'Quelles ont été les principales avancées au niveau national et au niveau déconcentré ?',
   àFaire: 'Quels sont les objectifs sur lesquels insister ? Quelles sont les principales actions envisagées ?',
   SuiviDesObjectifs: '',

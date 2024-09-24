@@ -412,7 +412,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   className='fr-h4 fr-mb-0 fr-py-1v'
                   estInline
                 >
-                  Commentaires du chantier
+                  Commentaires de la politique prioritaire
                 </Titre>
                 <Infobulle idHtml='infobulle-chantier-décisionsStratégiques'>
                   {
