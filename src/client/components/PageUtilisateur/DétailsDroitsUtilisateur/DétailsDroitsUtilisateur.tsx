@@ -13,7 +13,7 @@ interface DétailsDroitsUtilisateurProps {
   labelChantiers?: string
 }
 
-const DétailsDroitsUtilisateur: FunctionComponent<DétailsDroitsUtilisateurProps> = ({ titre, territoires, chantiers, labelTerritoires = 'Droits ouverts pour les territoires', labelChantiers = 'Droits ouverts pour les chantiers' }) => {
+const DétailsDroitsUtilisateur: FunctionComponent<DétailsDroitsUtilisateurProps> = ({ titre, territoires, chantiers, labelTerritoires = 'Droits ouverts pour les territoires', labelChantiers = 'Droits ouverts pour les politiques prioritaires' }) => {
   const id = useId();
 
   return (
