@@ -171,6 +171,7 @@ model indicateur {
   motif_proposition                                  String?
   source_donnee_methode_calcul_proposition           String?
   auteur_proposition                                 String?
+  responsables_donnees_mails                         String[]
 
   @@id([id, code_insee, maille])
   @@schema("public")
