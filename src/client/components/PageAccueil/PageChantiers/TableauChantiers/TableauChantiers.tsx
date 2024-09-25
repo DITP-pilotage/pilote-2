@@ -89,7 +89,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
           <>
             <table className='tableau'>
               <caption className='fr-sr-only'>
-                Liste des Politiques Prioritaires
+                Liste des politiques prioritaires
               </caption>
               {
               !estVueTuile ? (

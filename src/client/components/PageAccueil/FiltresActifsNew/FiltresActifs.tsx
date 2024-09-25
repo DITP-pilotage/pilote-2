@@ -143,7 +143,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           filtres.estEnAlerteÉcart ? (
             <li>
               <Tag
-                libellé={`Politique(s) Prioritaire(s) avec un retard de 10 points par rapport à leur médiane ${mailleSelectionnee}`}
+                libellé={`Politique(s) prioritaire(s) avec un retard de 10 points par rapport à leur médiane ${mailleSelectionnee}`}
                 suppressionCallback={() => {
                   filtres.estEnAlerteÉcart = false;
 
@@ -158,7 +158,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           filtres.estEnAlerteBaisse ? (
             <li>
               <Tag
-                libellé='Politique(s) Prioritaire(s)e(s) avec tendance en baisse'
+                libellé='Politique(s) prioritaire(s) avec tendance en baisse'
                 suppressionCallback={() => {
                   filtres.estEnAlerteBaisse = false;
 
@@ -173,7 +173,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           filtres.estEnAlerteMétéoNonRenseignée ? (
             <li>
               <Tag
-                libellé='Politique(s) Prioritaire(s) avec météo et synthèse des résultats non renseignés'
+                libellé='Politique(s) prioritaire(s) avec météo et synthèse des résultats non renseignés'
                 suppressionCallback={() => {
                   filtres.estEnAlerteMétéoNonRenseignée = false;
 
@@ -188,7 +188,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? (
             <li>
               <Tag
-                libellé='Politique(s) Prioritaire(s) sans taux d’avancement au niveau départemental'
+                libellé='Politique(s) prioritaire(s) sans taux d’avancement au niveau départemental'
                 suppressionCallback={() => {
                   filtres.estEnAlerteAbscenceTauxAvancementDepartemental = false;
 

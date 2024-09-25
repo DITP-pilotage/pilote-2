@@ -189,7 +189,7 @@ export const PageFicheTerritoriale: FunctionComponent<FicheTerritorialeContrat> 
                   className='fr-text--lg fr-mb-0 fr-py-1v'
                   estInline
                 >
-                  {`Liste des Politiques Prioritaires (${chantiersFicheTerritoriale.length})`}
+                  {`Liste des politiques prioritaires (${chantiersFicheTerritoriale.length})`}
                 </Titre>
                 <div className='flex align-center'>
                   <div />

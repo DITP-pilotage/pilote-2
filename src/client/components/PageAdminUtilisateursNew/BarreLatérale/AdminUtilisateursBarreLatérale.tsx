@@ -163,7 +163,7 @@ export default function AdminUtilisateursBarreLatérale({
           className='fr-sidemenu__btn fr-m-0'
           type='button'
         >
-          Politiques Prioritaires
+          Politiques prioritaires
         </button>
         <div
           className='fr-collapse'

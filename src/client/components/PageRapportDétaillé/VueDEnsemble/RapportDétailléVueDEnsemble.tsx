@@ -101,7 +101,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnse
               baliseHtml='h3'
               className='fr-text--lg fr-mb-0 fr-py-1v'
             >
-              Taux d’avancement des Politiques Prioritaires par territoire
+              Taux d’avancement des politiques prioritaires par territoire
             </Titre>
             <CartographieAvancement
               auClicTerritoireCallback={() => {}}
@@ -126,7 +126,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnse
                 className='fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w titre-remontée-alertes'
                 estInline
               >
-                Politiques Prioritaires signalées
+                Politiques prioritaires signalées
               </Titre>
               <Infobulle idHtml='infobulle-chantiers-alertes'>
                 {INFOBULLE_CONTENUS.chantiers.alertes}
@@ -164,7 +164,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnse
                 className='fr-text--lg fr-mb-0 fr-py-1v'
                 estInline
               >
-                Liste des Politiques Prioritaires
+                Liste des politiques prioritaires
               </Titre>
               <Infobulle idHtml='infobulle-chantiers-listeDesChantiers'>
                 {INFOBULLE_CONTENUS.chantiers.listeDesChantiers}

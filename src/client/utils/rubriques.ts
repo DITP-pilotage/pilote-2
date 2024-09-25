@@ -23,7 +23,7 @@ export const listeRubriquesChantier = (typesIndicateurs: TypeIndicateur[], maill
   );
 
   let rubriques = maille === 'nationale' ? [
-    { nom: 'Avancement de la Politique prioritaire', ancre: 'avancement' },
+    { nom: 'Avancement de la politique prioritaire', ancre: 'avancement' },
     { nom: 'Météo et synthèse des résultats', ancre: 'synthèse' },
     { nom: 'Responsables', ancre: 'responsables' },
     { nom: 'Répartition géographique', ancre: 'cartes' },
@@ -32,7 +32,7 @@ export const listeRubriquesChantier = (typesIndicateurs: TypeIndicateur[], maill
     { nom: 'Décisions stratégiques', ancre: 'décisions-stratégiques' },
     { nom: 'Commentaires', ancre: 'commentaires' },
   ] : [
-    { nom: 'Avancement de la Politique prioritaire', ancre: 'avancement' },
+    { nom: 'Avancement de la politique prioritaire', ancre: 'avancement' },
     { nom: 'Météo et synthèse des résultats', ancre: 'synthèse' },
     { nom: 'Responsables', ancre: 'responsables' },
     { nom: 'Répartition géographique', ancre: 'cartes' },

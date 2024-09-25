@@ -17,7 +17,7 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
 
   const alerteAbscenceTauxAvancementDepartemental = {
     nomCritère: 'estEnAlerteAbscenceTauxAvancementDepartemental',
-    libellé: 'Politique(s) Prioritaire(s) sans taux d’avancement au niveau départemental',
+    libellé: 'Politique(s) prioritaire(s) sans taux d’avancement au niveau départemental',
     nombre: filtresComptesCalculés.estEnAlerteAbscenceTauxAvancementDepartemental,
     estActivée: filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental,
   };
@@ -31,21 +31,21 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
 
   const alerteEcart = {
     nomCritère: 'estEnAlerteÉcart',
-    libellé: `Politique(s) Prioritaire(s) avec un retard de 10 points par rapport à leur médiane ${mailleChantier}`,
+    libellé: `Politique(s) prioritaire(s) avec un retard de 10 points par rapport à leur médiane ${mailleChantier}`,
     nombre: filtresComptesCalculés.estEnAlerteÉcart,
     estActivée: filtresAlertes.estEnAlerteÉcart,
   };
 
   const alerteBaisse = {
     nomCritère: 'estEnAlerteBaisse',
-    libellé: 'Politique(s) Prioritaire(s) avec tendance en baisse',
+    libellé: 'Politique(s) prioritaire(s) avec tendance en baisse',
     nombre: filtresComptesCalculés.estEnAlerteBaisse,
     estActivée: filtresAlertes.estEnAlerteBaisse,
   };
 
   const alerteMétéoNonRenseignée = {
     nomCritère: 'estEnAlerteMétéoNonRenseignée',
-    libellé: 'Politique(s) Prioritaire(s) avec météo et synthèse des résultats non renseignés',
+    libellé: 'Politique(s) prioritaire(s) avec météo et synthèse des résultats non renseignés',
     nombre: filtresComptesCalculés.estEnAlerteMétéoNonRenseignée,
     estActivée: filtresAlertes.estEnAlerteMétéoNonRenseignée,
   };

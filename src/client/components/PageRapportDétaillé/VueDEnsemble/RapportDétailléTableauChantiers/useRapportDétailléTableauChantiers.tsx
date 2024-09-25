@@ -17,7 +17,7 @@ const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
 
 const colonnesTableauChantiers = [
   reactTableColonnesHelper.accessor('nom', {
-    header: 'Politiques Prioritaires',
+    header: 'Politiques prioritaires',
     id: 'nom',
     cell: cellContext => (
       <IcônesMultiplesEtTexte

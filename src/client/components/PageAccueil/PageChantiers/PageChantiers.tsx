@@ -122,7 +122,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
             baliseHtml='h1'
             className='fr-h4 fr-px-2w fr-px-md-0 fr-mb-0'
           >
-            {`${chantiersFiltrés.length} ${chantiersFiltrés.length >= 2 ? 'Politiques Prioritaires' : 'Politique Prioritaire'}`}
+            {`${chantiersFiltrés.length} ${chantiersFiltrés.length >= 2 ? 'politiques prioritaires' : 'politique prioritaire'}`}
           </Titre>
           <div className='titre-liens'>
             {
@@ -290,7 +290,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   baliseHtml='h2'
                   className='fr-text--lg break-keep'
                 >
-                  Taux d’avancement des Politiques Prioritaires par territoire
+                  Taux d’avancement des politiques prioritaires par territoire
                 </Titre>
                 <CartographieAvancement
                   auClicTerritoireCallback={auClicTerritoireCallback}
@@ -315,7 +315,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   className='fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w titre-remontée-alertes'
                   estInline
                 >
-                  Politiques Prioritaires signalées
+                  Politiques prioritaires signalées
                 </Titre>
                 <Infobulle idHtml='infobulle-chantiers-alertes'>
                   {INFOBULLE_CONTENUS.chantiers.alertes}
@@ -352,7 +352,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   className='fr-text--lg fr-mb-0 fr-py-1v'
                   estInline
                 >
-                  {`Liste des Politiques Prioritaires du Gouvernement (${chantiers.length})`}
+                  {`Liste des politiques prioritaires du Gouvernement (${chantiers.length})`}
                 </Titre>
                 <Infobulle idHtml='infobulle-chantiers-listeDesChantiers'>
                   {INFOBULLE_CONTENUS.chantiers.listeDesChantiers}

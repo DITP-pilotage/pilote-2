@@ -72,10 +72,10 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<PremièrePageI
   ].filter(Boolean);
   const filtresAlertes = [
     filtres.estEnAlerteTauxAvancementNonCalculé ? 'Taux d’avancement non calculé en raison d’indicateurs non renseignés' : null,
-    filtres.estEnAlerteÉcart ? `Politique(s) Prioritaire(s) avec un retard de 10 points par rapport à leur médiane ${territoireSélectionné?.maille}` : null,
-    filtres.estEnAlerteBaisse ? 'Politique(s) Prioritaire(s) avec tendance en baisse' : null,
-    filtres.estEnAlerteMétéoNonRenseignée ? 'Politique(s) Prioritaire(s) avec météo et synthèse des résultats non renseignés' : null,
-    filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 'Politique(s) Prioritaire(s) sans taux d’avancement au niveau départemental' : null,
+    filtres.estEnAlerteÉcart ? `Politique(s) prioritaire(s) avec un retard de 10 points par rapport à leur médiane ${territoireSélectionné?.maille}` : null,
+    filtres.estEnAlerteBaisse ? 'Politique(s) prioritaire(s) avec tendance en baisse' : null,
+    filtres.estEnAlerteMétéoNonRenseignée ? 'Politique(s) prioritaire(s) avec météo et synthèse des résultats non renseignés' : null,
+    filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 'Politique(s) prioritaire(s) sans taux d’avancement au niveau départemental' : null,
   ].filter(Boolean);
 
   const filtresAxes = filtres.axes.split(',').filter(Boolean).map(axeId => retrouverNomFiltre(axeId, axes));
