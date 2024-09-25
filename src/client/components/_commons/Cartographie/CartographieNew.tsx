@@ -20,7 +20,7 @@ type CartographieDonnées = {
 interface CartographieProps {
   options?: Partial<CartographieOptions>,
   données: CartographieDonnées,
-  pathname: '/accueil/chantier/[territoireCode]' | '/chantier/[id]/[territoireCode]' | null,
+  pathname: '/accueil/ppg/[territoireCode]' | '/ppg/[id]/[territoireCode]' | null,
   children?: ReactNode,
   territoireCode: string,
   mailleSelectionnee: 'départementale' | 'régionale',

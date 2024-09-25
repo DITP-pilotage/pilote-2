@@ -63,7 +63,7 @@ describe('PageImportIndicateur', () => {
       render(
         <PageImportIndicateur
           chantierInformations={chantierInformation}
-          hrefBoutonRetour='/chantier/chantierId/NAT-FR'
+          hrefBoutonRetour='/ppg/chantierId/NAT-FR'
           indicateurs={[]}
           informationsIndicateur={[]}
           rapport={null}
@@ -73,11 +73,11 @@ describe('PageImportIndicateur', () => {
       // THEN
       const fileDAriane = screen.getByRole('navigation');
       const elementAccueilFileDAriane = within(fileDAriane).getByRole('link', { name: 'Accueil' });
-      const elementChantierFileDAriane = within(fileDAriane).getByRole('link', { name: 'Chantier' });
+      const elementChantierFileDAriane = within(fileDAriane).getByRole('link', { name: 'Politique prioritaire' });
 
       expect(fileDAriane).toBeInTheDocument();
       expect(elementAccueilFileDAriane).toHaveAttribute('href', '/');
-      expect(elementChantierFileDAriane).toHaveAttribute('href', '/chantier/chantierId/NAT-FR');
+      expect(elementChantierFileDAriane).toHaveAttribute('href', '/ppg/chantierId/NAT-FR');
       expect(fileDAriane).toHaveTextContent('Indicateurs');
     });
   });

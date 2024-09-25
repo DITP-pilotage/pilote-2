@@ -67,7 +67,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
 
   const { data: session } = useSession();
 
-  const pathname = '/accueil/chantier/[territoireCode]';
+  const pathname = '/accueil/ppg/[territoireCode]';
   const { auClicTerritoireCallback } = useCartographie(territoireCode, mailleSelectionnee, pathname);
 
   const [filtres] = useQueryStates({
@@ -296,7 +296,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   auClicTerritoireCallback={auClicTerritoireCallback}
                   données={avancementsGlobauxTerritoriauxMoyens}
                   mailleSelectionnee={mailleSelectionnee}
-                  pathname='/accueil/chantier/[territoireCode]'
+                  pathname='/accueil/ppg/[territoireCode]'
                   territoireCode={territoireCode}
                   élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
                 />

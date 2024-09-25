@@ -133,7 +133,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
             estVisibleEnMobile={estVisibleEnMobile}
             estVueMobile={estVueMobile}
             mailleSelectionnee={mailleSelectionnee}
-            pathname='/chantier/[id]/[territoireCode]'
+            pathname='/ppg/[id]/[territoireCode]'
             territoireCode={territoireCode}
           />
         </BarreLatéraleEncart>

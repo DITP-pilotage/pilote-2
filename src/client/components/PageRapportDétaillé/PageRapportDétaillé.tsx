@@ -87,7 +87,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
 
 
   const queryParamString = getQueryParamString(getFiltresActifs());
-  const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
+  const hrefBoutonRetour = `/accueil/ppg/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
 
   return (
     <>

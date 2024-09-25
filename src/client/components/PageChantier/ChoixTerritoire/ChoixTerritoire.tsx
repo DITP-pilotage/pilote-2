@@ -91,7 +91,7 @@ const ChoixTerritoire: FunctionComponent<ChoixTerritoireProps> = ({
                           auClicTerritoireCallback={auClicTerritoireCallback}
                           données={donnéesCartographie}
                           mailleSelectionnee={mailleSélectionnée}
-                          pathname='/chantier/[id]/[territoireCode]'
+                          pathname='/ppg/[id]/[territoireCode]'
                           territoireCode={territoireCode}
                         />
                       </section>

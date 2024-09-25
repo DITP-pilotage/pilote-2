@@ -96,7 +96,7 @@ const NextPageImportIndicateur: FunctionComponent<NextPageImportIndicateurProps>
     filtresActifs.territoireCode :
     (session!.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : session!.habilitations.lecture.territoires[0]);
 
-  const hrefBoutonRetour = `/chantier/${chantierInformations.id}/${territoireCode}`;
+  const hrefBoutonRetour = `/ppg/${chantierInformations.id}/${territoireCode}`;
 
   return (
     <>

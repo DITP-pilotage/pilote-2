@@ -82,8 +82,8 @@ const Navigation: FunctionComponent<{}> = () => {
   const pages = [
     {
       nom: 'Accueil',
-      lien: `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`,
-      matcher: '/accueil/chantier/[territoireCode]',
+      lien: `/accueil/ppg/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`,
+      matcher: '/accueil/ppg/[territoireCode]',
       accessible: true,
       prefetch: true,
       target: '_self',

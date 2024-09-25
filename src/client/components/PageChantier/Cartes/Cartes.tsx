@@ -38,7 +38,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
   mailleSelectionnee,
   mailleSourceDonnees,
 }) => {
-  const pathname = '/chantier/[id]/[territoireCode]';
+  const pathname = '/ppg/[id]/[territoireCode]';
   const { auClicTerritoireCallback } = useCartographie(territoireCode, mailleSelectionnee, pathname);
 
   const donnéesCartographieAvancement = objectEntries(chantierMailles[mailleSelectionnee]).map(([codeInsee, territoire]) => ({
