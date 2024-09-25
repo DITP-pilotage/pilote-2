@@ -99,6 +99,7 @@ get_evol_vaca as (
 	pva.motif_proposition,
 	pva.source_donnee_methode_calcul as source_donnee_methode_calcul_proposition,
 	pva.auteur_proposition,
+	STRING_TO_ARRAY(REPLACE(resp_donnees_email, ' ', ''), ',') AS responsables_donnees_mails,
     FALSE as a_supprimer
 	from public.territoire t 
 	cross join {{ ref('metadata_indicateurs') }} mi
@@ -114,6 +115,7 @@ get_evol_vaca as (
 	left join (select * from {{ ref('get_vca') }} where yyear=(date_part('year', now()))) gvca on mi.indic_id=gvca.indic_id and t.zone_id=gvca.zone_id
 	left join {{ ref('metadata_indicateur_types') }} mit on mit.indic_type_id = mi.indic_type 
 	left join {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} mpi on mi.indic_id = mpi.indic_id 
+	left join {{ source('parametrage_indicateurs', 'metadata_indicateurs_complementaire') }} ind_comp on mi.indic_id = ind_comp.indic_id 
 	left join public.territoire terr on t.zone_id = terr.zone_id 
 	left join {{ ref('int_propositions_valeurs') }} pva on pva.indic_id = mi.indic_id and pva.territoire_code = terr.code and pva.date_valeur_actuelle::DATE = a.date_valeur_actuelle::DATE
 	left join {{ ref('metadata_zones') }} mz on mz.zone_id = terr.zone_id 
