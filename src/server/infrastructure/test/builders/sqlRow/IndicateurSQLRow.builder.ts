@@ -100,6 +100,8 @@ export default class IndicateurRowBuilder {
 
   private _delai_disponibilite: indicateur['delai_disponibilite'];
 
+  private responsables_donnees_mails: indicateur['responsables_donnees_mails'];
+
   constructor() {
     const indicateurGénéré = new IndicateurBuilder().build();
     const détailsIndicateurGénéré = new DétailsIndicateurBuilder().build();
@@ -153,6 +155,7 @@ export default class IndicateurRowBuilder {
     this._prochaine_date_valeur_actuelle = new Date('2025-01-01T00:00:00.000Z');
     this._periodicite = faker.helpers.arrayElement(['Annuelle', 'Mensuelle', '3 ans']);
     this._delai_disponibilite = faker.datatype.number({ min: 10, max: 100 });
+    this.responsables_donnees_mails = [];
   }
 
   avecId(id: indicateur['id']): IndicateurRowBuilder {
@@ -359,6 +362,7 @@ export default class IndicateurRowBuilder {
       prochaine_date_valeur_actuelle: this._prochaine_date_valeur_actuelle,
       periodicite: this._periodicite,
       delai_disponibilite: this._delai_disponibilite,
+      responsables_donnees_mails: this.responsables_donnees_mails,
     };
   }
 }

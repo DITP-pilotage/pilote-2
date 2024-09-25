@@ -31,6 +31,7 @@ interface SousIndicateurBlocProps {
   territoireCode: string
   territoiresCompares: string[]
   mailleSelectionnee: MailleInterne
+  mailsDirecteursProjets: string[]
 }
 
 const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
@@ -43,6 +44,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
   territoireCode,
   territoiresCompares,
   mailleSelectionnee,
+  mailsDirecteursProjets,
 }) => {
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
   const {
@@ -259,6 +261,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
               indicateurEstAjour={!indicateurNonAJour}
               listeSousIndicateurs={[]}
               mailleSelectionnee={mailleSelectionnee}
+              mailsDirecteursProjets={mailsDirecteursProjets}
               territoireCode={territoireCode}
               territoiresCompares={territoiresCompares}
             />

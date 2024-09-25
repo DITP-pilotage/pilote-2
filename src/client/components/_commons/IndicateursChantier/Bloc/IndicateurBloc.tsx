@@ -33,12 +33,13 @@ interface IndicateurBlocProps {
   détailsIndicateurs: DétailsIndicateurs
   detailsIndicateursTerritoire: DétailsIndicateurs
   estInteractif: boolean
-  chantierEstTerritorialisé: boolean,
-  estAutoriseAProposerUneValeurActuelle: boolean,
-  listeSousIndicateurs: Indicateur[],
-  territoireCode: string,
-  territoiresCompares: string[],
-  mailleSelectionnee: MailleInterne,
+  chantierEstTerritorialisé: boolean
+  estAutoriseAProposerUneValeurActuelle: boolean
+  listeSousIndicateurs: Indicateur[]
+  territoireCode: string
+  territoiresCompares: string[]
+  mailleSelectionnee: MailleInterne
+  mailsDirecteursProjets: string[]
 }
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
@@ -52,6 +53,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   territoireCode,
   territoiresCompares,
   mailleSelectionnee,
+  mailsDirecteursProjets,
 }) => {
   const {
     maille: mailleTerritoireSelectionnee,
@@ -427,6 +429,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 indicateurEstAjour={!indicateurNonAJour}
                 listeSousIndicateurs={listeSousIndicateurs}
                 mailleSelectionnee={mailleSelectionnee}
+                mailsDirecteursProjets={mailsDirecteursProjets}
                 territoireCode={territoireCode}
                 territoiresCompares={territoiresCompares}
               />

@@ -365,6 +365,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     indicateurs={indicateurs}
                     listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
                     mailleSelectionnee={mailleSelectionnee}
+                    mailsDirecteursProjets={chantier.responsables.directeursProjet.map(directeur => directeur.email).filter(Boolean)}
                     territoireCode={territoireCode}
                     territoiresCompares={territoiresCompares}
                   />

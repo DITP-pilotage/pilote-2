@@ -25,6 +25,8 @@ export default class IndicateurBuilder {
 
   private _delaiDisponibilite: Indicateur['delaiDisponibilite'];
 
+  private _responsablesDonneesMails: Indicateur['responsablesDonneesMails'];
+
   constructor() {
     this._id = générerUnIdentifiantUnique('IND');
     this._nom = `${this._id} ${faker.lorem.words()}`;
@@ -37,6 +39,7 @@ export default class IndicateurBuilder {
     this._parentId = null;
     this._periodicite = faker.helpers.arrayElement(['Annuelle', 'Mensuelle', '3 ans']);
     this._delaiDisponibilite = faker.datatype.bigInt({ min: 10, max: 100 }).toString();
+    this._responsablesDonneesMails = [];
   }
 
   avecId(id: Indicateur['id']): IndicateurBuilder {
@@ -67,6 +70,7 @@ export default class IndicateurBuilder {
       parentId: this._parentId,
       periodicite: this._periodicite,
       delaiDisponibilite: this._delaiDisponibilite,
+      responsablesDonneesMails: this._responsablesDonneesMails,
     };
   }
 }

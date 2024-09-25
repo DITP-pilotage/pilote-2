@@ -13,6 +13,7 @@ interface SousIndicateursProps {
   territoireCode: string
   territoiresCompares: string[]
   mailleSelectionnee: MailleInterne
+  mailsDirecteursProjets: string[]
 }
 
 
@@ -25,6 +26,7 @@ const SousIndicateurs: FunctionComponent<SousIndicateursProps> = ({
   territoireCode,
   territoiresCompares,
   mailleSelectionnee,
+  mailsDirecteursProjets,
 }) => {
   const listeClassesCouleursFond = [
     'fr-background-contrast--grey',
@@ -44,6 +46,7 @@ const SousIndicateurs: FunctionComponent<SousIndicateursProps> = ({
             indicateur={sousIndicateur}
             key={sousIndicateur.id}
             mailleSelectionnee={mailleSelectionnee}
+            mailsDirecteursProjets={mailsDirecteursProjets}
             territoireCode={territoireCode}
             territoiresCompares={territoiresCompares}
           />
