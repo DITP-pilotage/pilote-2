@@ -29,7 +29,7 @@ export const PageCréerUtilisateurAide: FunctionComponent<{}> = () => {
           Créer un compte pour un utilisateur sur votre territoire
         </h3>
         <p className='fr-text fr-text--sm'>
-          PILOTE est un outil réservé aux agents de l’Etat habilités à travailler sur les Politiques Prioritaires du Gouvernement. Seuls ces agents peuvent y avoir accès. Au niveau territorial, les coordinateurs PILOTE sont seuls habilités à créer des comptes pour des utilisateurs sur leurs territoires.
+          PILOTE est un outil réservé aux agents de l’Etat habilités à travailler sur les politiques prioritaires du Gouvernement. Seuls ces agents peuvent y avoir accès. Au niveau territorial, les coordinateurs PILOTE sont seuls habilités à créer des comptes pour des utilisateurs sur leurs territoires.
         </p>
         <p className='fr-text fr-text--bold fr-text--sm'>
           Pour créer un compte PILOTE pour un utilisateur sur votre territoire, il vous est demandé de prendre connaissance des règles ci-dessous puis de suivre les étapes indiquées.

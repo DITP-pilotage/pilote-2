@@ -77,7 +77,7 @@ const TableauProjetsStructurants: FunctionComponent<TableauProjetsStructurantsPr
           <>
             <table className='tableau'>
               <caption className='fr-sr-only'>
-                Liste des chantiers
+                Liste des projets structurants
               </caption>
               {
               !estVueTuile && <TableauRéformesEnTête tableau={tableau} />

@@ -3,7 +3,6 @@ import { FunctionComponent } from 'react';
 import Tag from '@/components/_commons/Tag/Tag';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
-import Ppg from '@/server/domain/ppg/Ppg.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import { reinitialiserFiltres, sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import FiltresActifsStyled from './FiltresActifs.styled';
@@ -51,7 +50,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
       .map((ministère) => [ministère.périmètresMinistériels[0].id, ministère.id]),
   );
 
-  const retrouverNomFiltre = (idItemRecherche: string, listItems: Ministère[] | PérimètreMinistériel[] | Axe[] | Ppg[]) => {
+  const retrouverNomFiltre = (idItemRecherche: string, listItems: Ministère[] | PérimètreMinistériel[] | Axe[]) => {
     return listItems.find(item => item.id === idItemRecherche)!.nom;
   };
 
@@ -144,7 +143,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           filtres.estEnAlerteÉcart ? (
             <li>
               <Tag
-                libellé={`Chantier(s) avec un retard de 10 points par rapport à leur médiane ${mailleSelectionnee}`}
+                libellé={`Politique(s) prioritaire(s) avec un retard de 10 points par rapport à leur médiane ${mailleSelectionnee}`}
                 suppressionCallback={() => {
                   filtres.estEnAlerteÉcart = false;
 
@@ -159,7 +158,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           filtres.estEnAlerteBaisse ? (
             <li>
               <Tag
-                libellé='Chantier(s) avec tendance en baisse'
+                libellé='Politique(s) prioritaire(s) avec tendance en baisse'
                 suppressionCallback={() => {
                   filtres.estEnAlerteBaisse = false;
 
@@ -174,7 +173,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           filtres.estEnAlerteMétéoNonRenseignée ? (
             <li>
               <Tag
-                libellé='Chantier(s) avec météo et synthèse des résultats non renseignés'
+                libellé='Politique(s) prioritaire(s) avec météo et synthèse des résultats non renseignés'
                 suppressionCallback={() => {
                   filtres.estEnAlerteMétéoNonRenseignée = false;
 
@@ -189,7 +188,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? (
             <li>
               <Tag
-                libellé='Chantier(s) sans taux d’avancement au niveau départemental'
+                libellé='Politique(s) prioritaire(s) sans taux d’avancement au niveau départemental'
                 suppressionCallback={() => {
                   filtres.estEnAlerteAbscenceTauxAvancementDepartemental = false;
 
@@ -204,7 +203,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           filtres.estTerritorialise && filtres.estBarometre ? (
             <li>
               <Tag
-                libellé='Chantiers du baromètre ou chantiers territorialisés'
+                libellé='PPG du baromètre ou PPG territorialisés'
                 suppressionCallback={() => {
                   filtres.estBarometre = false;
                   filtres.estTerritorialise = false;
@@ -217,7 +216,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           ) : filtres.estBarometre ? (
             <li>
               <Tag
-                libellé='Chantiers du baromètre'
+                libellé='PPG du baromètre'
                 suppressionCallback={() => {
                   filtres.estBarometre = false;
 
@@ -229,7 +228,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           ) : filtres.estTerritorialise ? (
             <li>
               <Tag
-                libellé='Chantiers territorialisés'
+                libellé='PPG territorialisés'
                 suppressionCallback={() => {
                   filtres.estTerritorialise = false;
 

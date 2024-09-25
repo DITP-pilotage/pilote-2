@@ -13,7 +13,7 @@ renamed AS (
         ch_code AS code,
         ch_descr AS description,
         ch_nom AS nom,
-        ch_ppg AS ppg_id,
+        axe_id,
         ch_perseverant AS id_chantier_perseverant,
         ch_territo AS est_territorialise,
         engagement_short AS nom_engagement,

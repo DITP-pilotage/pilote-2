@@ -13,7 +13,6 @@ import {
   générerUnIdentifiantUnique,
   générerUnLibellé,
 } from '@/server/infrastructure/test/builders/utils';
-import PpgBuilder from '@/server/domain/ppg/Ppg.builder';
 import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
 import TerritoireDonnéesBuilder from '@/server/domain/territoire/TerritoireDonnées.builder';
 import AxeBuilder from '@/server/domain/axe/Axe.builder';
@@ -27,7 +26,6 @@ export default class ChantierBuilder {
 
   private _axe: Chantier['axe'];
 
-  private _ppg: Chantier['ppg'];
 
   private _périmètreIds: Chantier['périmètreIds'];
 
@@ -57,7 +55,6 @@ export default class ChantierBuilder {
 
   constructor() {
     const axe = new AxeBuilder().build();
-    const ppg = new PpgBuilder().build();
     const ministèrePorteur = new MinistèreBuilder().build();
     const ministèresCoPorteurs = générerTableau(0, 3, () => new MinistèreBuilder().build());
     const directeursAdminCentrale = générerTableau(1, 2, () => ({ nom: faker.name.fullName(), direction: faker.helpers.arrayElement(ÉCHANTILLON_DIRECTIONS) }));
@@ -66,7 +63,6 @@ export default class ChantierBuilder {
     this._id = générerUnIdentifiantUnique('CH');
     this._nom = `${générerUnLibellé(6, 14)} ${générerCaractèresSpéciaux(3)} ${this._id}`;
     this._axe = axe.nom;
-    this._ppg = ppg.nom;
     this._ate = null;
     this._statut = faker.helpers.arrayElement(typesStatut);
     this._cibleAttendu = faker.datatype.boolean();
@@ -103,7 +99,6 @@ export default class ChantierBuilder {
       id: this._id,
       nom: this._nom,
       axe: this._axe,
-      ppg: this._ppg,
       périmètreIds: this._périmètreIds,
       ate: this._ate,
       statut: this._statut,

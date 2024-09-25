@@ -35,7 +35,7 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
   const listeNomsDirecteursAdministrationCentrale = (responsables?.directeursAdminCentrale || []).map(directeurAdminCentrale => (`${directeurAdminCentrale.nom}  (${directeurAdminCentrale.direction})`)).filter(Boolean);
 
   const queryParamString = getQueryParamString(getFiltresActifs());
-  const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
+  const hrefBoutonRetour = `/accueil/ppg/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
 
   return (
     <PageChantierEnTêteStyled className='fr-px-2w fr-px-md-2w fr-py-2w'>
@@ -69,7 +69,7 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
           afficheLeBoutonMiseAJourDonnee ? (
             <Link
               className='fr-btn fr-btn--primary fr-mr-md-2w format-mobile-bouton'
-              href={`/chantier/${chantier.id}/indicateurs`}
+              href={`/ppg/${chantier.id}/indicateurs`}
               title='Mettre à jour les données'
             >
               Mettre à jour les données
@@ -87,7 +87,7 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
           afficheLeBoutonFicheConducteur ? (
             <Link
               className='fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left fr-px-1w fr-px-md-2w fr-ml-md-2w format-mobile-bouton'
-              href={`/chantier/${chantier.id}/fiche-conducteur`}
+              href={`/ppg/${chantier.id}/fiche-conducteur`}
               title='Fiche conducteur'
             >
               Fiche conducteur

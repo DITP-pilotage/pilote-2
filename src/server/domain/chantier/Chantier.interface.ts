@@ -1,7 +1,6 @@
 import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
-import Ppg from '@/server/domain/ppg/Ppg.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { MinistereAccueilPorteur } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
@@ -20,7 +19,6 @@ export default interface Chantier {
   id: string;
   nom: string;
   axe: Axe['nom'];
-  ppg: Ppg['nom'];
   périmètreIds: string[];
   mailles: Record<Maille, TerritoiresDonnées>;
   responsables: {

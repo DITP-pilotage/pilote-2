@@ -60,7 +60,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
                 <Link
                   className='fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-up-line fr-btn--icon-left fr-text--sm'
                   href={`#${htmlId.listeDesChantiers()}`}
-                  title='Revenir à la liste des chantiers'
+                  title='Revenir à la liste des politiques prioritaires'
                 >
                   Haut de page
                 </Link>
@@ -76,7 +76,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
                   baliseHtml='h2'
                   className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
                 >
-                  Avancement du chantier
+                  Avancement de la politique prioritaire
                 </Titre>
                 <AvancementChantier
                   avancements={avancements}
@@ -233,7 +233,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
                     baliseHtml='h2'
                     className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
                   >
-                    Commentaires du chantier
+                    Commentaires de la politique prioritaire
                   </Titre>
                   <Commentaires
                     commentaires={commentaires}

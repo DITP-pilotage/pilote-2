@@ -65,7 +65,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     return {
       redirect: {
         statusCode: 302,
-        destination: `/accueil/chantier/${query.maille === 'départementale' ? territoireDept : query.maille === 'départementale' ? territoireReg : session.habilitations.lecture.territoires[0]}`,
+        destination: `/accueil/ppg/${query.maille === 'départementale' ? territoireDept : query.maille === 'départementale' ? territoireReg : session.habilitations.lecture.territoires[0]}`,
       },
     };
   }
@@ -213,7 +213,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
               estVisibleEnMobile={estVisibleEnMobile}
               estVueMobile={estVueMobile}
               mailleSelectionnee={mailleSelectionnee}
-              pathname='/accueil/chantier/[territoireCode]'
+              pathname='/accueil/ppg/[territoireCode]'
               territoireCode={territoireCode}
             />
           </BarreLatéraleEncart>

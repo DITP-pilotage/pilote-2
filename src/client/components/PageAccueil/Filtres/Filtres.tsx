@@ -18,12 +18,12 @@ interface BarreLatéraleProps {
 const filtreBaromètre: FiltreTypologieType = {
   id: 'filtreBaromètre',
   attribut: 'estBaromètre',
-  nom: 'Chantiers du baromètre',
+  nom: 'PPG du baromètre',
 };
 const filtreTerritorialisé: FiltreTypologieType = {
   id: 'filtreTerritorialisé',
   attribut: 'estTerritorialisé',
-  nom: 'Chantiers territorialisés',
+  nom: 'PPG territorialisés',
 };
 
 const Filtres: FunctionComponent<BarreLatéraleProps> = ({ ministères, axes, afficherToutLesFiltres }) => {

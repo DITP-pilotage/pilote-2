@@ -20,7 +20,7 @@ interface CartographieValeurActuelleProps {
   élémentsDeLégende: CartographieÉlémentsDeLégende,
   auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void
   territoireCode: string
-  pathname: '/accueil/chantier/[territoireCode]' | '/chantier/[id]/[territoireCode]'
+  pathname: '/accueil/ppg/[territoireCode]' | '/ppg/[id]/[territoireCode]'
   mailleSelectionnee: MailleInterne
 }
 

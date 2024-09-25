@@ -29,7 +29,7 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
     let légendeAffichée = Object.values(élémentsDeLégende);
     if (tousApplicables) {
       légendeAffichée = légendeAffichée
-        .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s’applique pas');
+        .filter(el => el.libellé !== 'Territoire où la politique prioritaire ne s’applique pas');
     }
 
     if (tousNonNull) {

@@ -35,9 +35,9 @@ const MultiSelectChantier: FunctionComponent<MultiSelectChantierProps> = ({ chan
       afficherBoutonsSélection={afficherBoutonsSélection}
       changementValeursSélectionnéesCallback={(valeursSélectionnées: string[]) => changementValeursSélectionnéesCallback(valeursSélectionnées)}
       desactive={desactive}
-      label='Chantier(s)'
+      label='Politiques prioritaires'
       optionsGroupées={optionsGroupées}
-      suffixeLibellé='chantier(s) sélectionné(s)'
+      suffixeLibellé='Politiques prioritaires sélectionné(s)'
       valeursSélectionnéesParDéfaut={chantiersIdsSélectionnésParDéfaut}
     />
   );

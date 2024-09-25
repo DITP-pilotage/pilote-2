@@ -44,7 +44,6 @@ export interface ChantierAccueilContrat {
   estTerritorialisé: boolean
   estBaromètre: boolean
   axe: string
-  ppg: string
   tauxAvancementDonnéeTerritorialisée: Record<'régionale' | 'départementale', Boolean>
   météoDonnéeTerritorialisée: Record<'régionale' | 'départementale', Boolean>
   responsables: {
@@ -106,7 +105,6 @@ export const presenterEnChantierAccueilContrat = (territoireCode: string) => (ch
     estTerritorialisé: chantier.estTerritorialisé,
     estBaromètre: chantier.estBaromètre,
     axe: chantier.axe,
-    ppg: chantier.ppg,
     responsables: {
       porteur: {
         nom: chantier.responsables.porteur?.nom,

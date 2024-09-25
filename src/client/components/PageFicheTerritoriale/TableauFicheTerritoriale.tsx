@@ -25,7 +25,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
         <div
           className='fr-col-8 fr-text--bold fr-px-4w'
         >
-          Chantiers publiés au baromètre de l’action publique et leurs indicateurs
+          Politiques prioritaires publiées au baromètre de l’action publique et leurs indicateurs
         </div>
         <div
           className='fr-col-2 fr-text--bold'

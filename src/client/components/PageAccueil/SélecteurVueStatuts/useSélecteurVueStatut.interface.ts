@@ -3,8 +3,8 @@ import optionChoixVueStatuts from './SélecteurVueStatut.interface';
 
 export default function useSélecteurVueStatut() {
   const optionsParDéfaut: optionChoixVueStatuts[] = useMemo(() => [
-    { valeur: 'PUBLIE', libellé: 'Chantiers validés' },
-    { valeur: 'BROUILLON', libellé: 'Chantiers en cours de publication' },
+    { valeur: 'PUBLIE', libellé: 'PPG validés' },
+    { valeur: 'BROUILLON', libellé: 'PPG en cours de publication' },
     { valeur: 'BROUILLON_ET_PUBLIE', libellé: 'Tous' },
   ], []);
 

@@ -63,7 +63,7 @@ const TableauChantiersContenu: FunctionComponent<TableauChantiersContenuProps> =
                 >
                   <Link
                     className='fr-p-1w'
-                    href={`/chantier/${row.original.id}/${territoireCode}?maille=${mailleSelectionnee}`}
+                    href={`/ppg/${row.original.id}/${territoireCode}?maille=${mailleSelectionnee}`}
                     tabIndex={cell.column.columnDef.meta?.tabIndex}
                   >
                     {afficherContenuDeLaCellule(cell)}

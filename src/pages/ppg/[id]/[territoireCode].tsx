@@ -121,7 +121,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
     if (!chantier.estTerritorialisé && maille !== 'NAT') {
       return {
         redirect: {
-          destination: `/chantier/${chantierId}/NAT-FR`,
+          destination: `/ppg/${chantierId}/NAT-FR`,
           permanent: true,
         },
       };

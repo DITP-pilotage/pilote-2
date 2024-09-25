@@ -29,7 +29,8 @@ def model(dbt, session):
         'maille_applicable': 'string',
         'replicate_val_reg_to': 'string',
         'replicate_val_nat_to': 'string',
-        'ch_cible_attendue': 'boolean'
+        'ch_cible_attendue': 'boolean',
+        'axe_id': 'string'
     }
 
     chantiers = chantiers.astype(columns_type)

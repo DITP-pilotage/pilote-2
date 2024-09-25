@@ -11,7 +11,7 @@ interface SélecteurTypeDeRéformeProps {
 const SélecteurTypeDeRéforme: FunctionComponent<SélecteurTypeDeRéformeProps> = ({ typeDeRéformeSélectionné, territoireCode }) => {
   const typesDeRéformeÀAfficher: { label: string, valeur: TypeDeRéforme, href: string }[] = [
     {
-      label: 'Chantiers',
+      label: 'Politiques prioritaires',
       valeur: 'chantier',
       href: 'chantier',
     },

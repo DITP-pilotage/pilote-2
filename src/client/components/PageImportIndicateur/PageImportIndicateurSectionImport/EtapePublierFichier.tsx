@@ -34,7 +34,7 @@ const EtapePublierFichier: FunctionComponent<{
             <div className='fr-mt-3w flex justify-end'>
               <Link
                 className='fr-btn'
-                href={`/chantier/${chantierId}/indicateurs`}
+                href={`/ppg/${chantierId}/indicateurs`}
                 title='Importer de nouvelles données'
               >
                 <span>

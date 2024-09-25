@@ -133,7 +133,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
             estVisibleEnMobile={estVisibleEnMobile}
             estVueMobile={estVueMobile}
             mailleSelectionnee={mailleSelectionnee}
-            pathname='/chantier/[id]/[territoireCode]'
+            pathname='/ppg/[id]/[territoireCode]'
             territoireCode={territoireCode}
           />
         </BarreLatéraleEncart>
@@ -195,7 +195,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   className='fr-h4 fr-mb-0 fr-py-1v'
                   estInline
                 >
-                  Avancement du chantier
+                  Avancement de la politique prioritaire
                 </Titre>
                 {
                   process.env.NEXT_PUBLIC_FF_INFOBULLE_PONDERATION === 'true' && (
@@ -412,7 +412,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   className='fr-h4 fr-mb-0 fr-py-1v'
                   estInline
                 >
-                  Commentaires du chantier
+                  Commentaires de la politique prioritaire
                 </Titre>
                 <Infobulle idHtml='infobulle-chantier-décisionsStratégiques'>
                   {

@@ -93,9 +93,6 @@ models:
       perimetre:
         +unique_key:
           - 'id'
-      ppg:
-        +unique_key:
-          - 'id'
       chantier:
         +unique_key:
           - 'id'

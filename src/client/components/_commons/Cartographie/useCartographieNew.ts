@@ -14,7 +14,7 @@ import {
 } from './useCartographie.interface';
 import { CartographieDonnées } from './Cartographie.interface';
 
-export default function useCartographie(territoireCode: string, mailleSelectionnee: MailleInterne, pathname: '/accueil/chantier/[territoireCode]' | '/chantier/[id]/[territoireCode]' | null) {
+export default function useCartographie(territoireCode: string, mailleSelectionnee: MailleInterne, pathname: '/accueil/ppg/[territoireCode]' | '/ppg/[id]/[territoireCode]' | null) {
   const régions = régionsTerritoiresStore();
   const [territoiresCompares, setTerritoiresCompares] = useQueryState('territoiresCompares', parseAsString.withDefault('').withOptions({
     shallow: false,

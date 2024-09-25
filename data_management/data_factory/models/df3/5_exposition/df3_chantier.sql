@@ -135,7 +135,6 @@ SELECT
     coord_territoriaux.nom AS coordinateurs_territoriaux,
     sr.meteo,
     ax.axe_name AS axe,
-    ppg.ppg_nom AS ppg,
     dir_projets.email AS directeurs_projet_mails,
     resp_locaux.email AS responsables_locaux_mails,
     coord_territoriaux.email AS coordinateurs_territoriaux_mails,
@@ -198,8 +197,7 @@ LEFT JOIN synthese_triee_par_date_last1 AS sr
         mc.id = sr.chantier_id
         AND z.zone_type = sr.maille
         AND t.code_insee = sr.code_insee
-LEFT JOIN {{ ref('metadata_ppgs') }} AS ppg ON mc.ppg_id = ppg.ppg_id
-LEFT JOIN {{ ref('metadata_axes') }} AS ax ON ppg.ppg_axe = ax.axe_id
+LEFT JOIN {{ ref('metadata_axes') }} AS ax ON mc.axe_id = ax.axe_id 
 LEFT JOIN chantier_est_barometre ON mc.id = chantier_est_barometre.chantier_id
 LEFT JOIN ch_maille_has_ta_pivot_clean AS has_ta ON mc.id = has_ta.chantier_id
 LEFT JOIN ch_has_meteo ON mc.id = ch_has_meteo.chantier_id

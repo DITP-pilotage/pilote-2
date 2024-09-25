@@ -63,7 +63,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
 }) => {
   const [futOuvert, setFutOuvert] = useState(false);
 
-  const { auClicTerritoireMultiSélectionCallback } = useCartographie(territoireCode, mailleSelectionnee, '/chantier/[id]/[territoireCode]');
+  const { auClicTerritoireMultiSélectionCallback } = useCartographie(territoireCode, mailleSelectionnee, '/ppg/[id]/[territoireCode]');
 
   const {
     donnéesCartographieAvancement,
@@ -155,7 +155,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       données={donnéesCartographieAvancement}
                       mailleSelectionnee={mailleSelectionnee}
                       options={{ multiséléction: true }}
-                      pathname='/chantier/[id]/[territoireCode]'
+                      pathname='/ppg/[id]/[territoireCode]'
                       territoireCode={territoireCode}
                       élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
                     />
@@ -175,7 +175,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       données={donnéesCartographieValeurActuelle}
                       mailleSelectionnee={mailleSelectionnee}
                       options={{ multiséléction: true }}
-                      pathname='/chantier/[id]/[territoireCode]'
+                      pathname='/ppg/[id]/[territoireCode]'
                       territoireCode={territoireCode}
                       unité={indicateur.unité}
                       élémentsDeLégende={ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE}

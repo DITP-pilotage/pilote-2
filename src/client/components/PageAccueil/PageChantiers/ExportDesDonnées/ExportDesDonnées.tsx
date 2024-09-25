@@ -6,16 +6,16 @@ import { horodatage } from '@/client/utils/date/date';
 
 const ressources = {
   'chantiers-sans-filtre': {
-    libellé: 'Les chantiers sans filtre',
+    libellé: 'Les politiques prioritaires sans filtre',
     id: 'chantiers-sans-filtre' as const,
-    baseDuNomDeFichier: 'PILOTE-Chantiers-sans-filtre',
+    baseDuNomDeFichier: 'PILOTE-PPG-sans-filtre',
     url: '/api/export/chantiers',
     options: false,
   },
   'chantiers-avec-filtre': {
-    libellé: 'Les chantiers avec filtre',
+    libellé: 'Les politiques prioritaires avec filtre',
     id: 'chantiers-avec-filtre' as const,
-    baseDuNomDeFichier: 'PILOTE-Chantiers-avec-filtre',
+    baseDuNomDeFichier: 'PILOTE-PPG-avec-filtre',
     url: '/api/export/chantiers',
     options: true,
   },

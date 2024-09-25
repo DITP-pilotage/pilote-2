@@ -17,7 +17,7 @@ const PageImportIndicateurEnTête: FunctionComponent<PageImportIndicateurEnTête
     <PageImportIndicateurEnTêteStyled>
       <div className='fr-container fr-py-4w'>
         <FilAriane
-          chemin={[{ nom: 'Chantier', lien: hrefBoutonRetour }]}
+          chemin={[{ nom: 'Politique prioritaire', lien: hrefBoutonRetour }]}
           libelléPageCourante='Indicateurs'
         />
         <Titre

@@ -79,7 +79,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
             <div className='fr-container'>
               <div className='fr-notice__body'>
                 <p className='fr-notice__title'>
-                  Aucun chantier ne correspond à votre recherche !
+                  Aucune politique prioritaire ne correspond à votre recherche !
                 </p>
                 Vous pouvez modifier vos filtres pour élargir votre recherche.
               </div>
@@ -89,7 +89,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
           <>
             <table className='tableau'>
               <caption className='fr-sr-only'>
-                Liste des chantiers
+                Liste des politiques prioritaires
               </caption>
               {
               !estVueTuile ? (

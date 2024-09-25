@@ -12,7 +12,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async ({ req, res }) =
     return {
       redirect: {
         permanent: true,
-        destination: `/accueil/chantier/${territoireCode}`,
+        destination: `/accueil/ppg/${territoireCode}`,
       },
     };
   }

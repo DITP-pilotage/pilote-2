@@ -13,10 +13,10 @@ const SectionTableauIndicateur: FunctionComponent<{
           <thead>
             <tr>
               <th>
-                Chantier associé
+                PPG associée
               </th>
               <th>
-                Nom du chantier
+                Nom de la politque prioritaire
               </th>
               <th>
                 Identifiant indicateur
