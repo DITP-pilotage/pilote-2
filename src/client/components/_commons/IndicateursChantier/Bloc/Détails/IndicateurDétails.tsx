@@ -1,5 +1,6 @@
 import { FunctionComponent, useState } from 'react';
 import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
+import Link from 'next/link';
 import IndicateurÉvolution from '@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurÉvolution';
 import Titre from '@/components/_commons/Titre/Titre';
 import CartographieAvancement
@@ -25,6 +26,7 @@ import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicate
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { useIndicateurDétails } from './useIndicateurDétails';
+import IcôneEmail from '@/components/_commons/IcôneEmail/IcôneEmail';
 
 interface IndicateurDétailsProps {
   indicateur: Indicateur
@@ -117,6 +119,16 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                     />
                   ) : null
                 }
+                <div className='flex align-start'>
+                  <IcôneEmail className='fr-mr-1v fr-text-title--blue-france' />
+                  <Link
+                    className='fr-link'
+                    href={`mailto:${indicateur.responsablesDonneesMails.join(', ')}?subject=PILOTE - Indicateur “Nom de l’indicateur” (ID-INDICATEUR)`}
+                    title={`Contacter ${indicateur.responsablesDonneesMails.join(', ')}`}
+                  >  
+                    Poser une question sur cet indicateur
+                  </Link> 
+                </div>
               </div>
             </div>
           </div>

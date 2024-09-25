@@ -15,4 +15,5 @@ export default interface Indicateur {
   parentId: string | null
   periodicite: string | null
   delaiDisponibilite: string | null
+  responsablesDonneesMails: string[]
 }
