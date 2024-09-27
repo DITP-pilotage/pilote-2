@@ -2,8 +2,8 @@ import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import SectionDétailsMetadataParametreCalculIndicateurStyled
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreCalculIndicateur/SectionDétailsMetadataParametreCalculIndicateur.styled';
-import useDétailsMetadataParametreIndicateurRegionaleForm
-  from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurRegionale/useDétailsMetadataParametreIndicateurRegionaleForm';
+import useDétailsMetadataParametreIndicateurRegionaleForm 
+, { MetadataParametrageParametreIndicateurRegionaleForm }  from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurRegionale/useDétailsMetadataParametreIndicateurRegionaleForm';
 import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
 import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
 import {
@@ -23,7 +23,15 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
 }) => {
-  const { register, getValues, errors } = useDétailsMetadataParametreIndicateurRegionaleForm();
+  const { register, getValues, errors, setValue } = useDétailsMetadataParametreIndicateurRegionaleForm();
+
+  const valeursRegFromDesactiveRegOp = new Set(['DEPT', 'sub_indic']);
+  const ALaModificationValeurRegFrom = (variableFrom: keyof MetadataParametrageParametreIndicateurRegionaleForm, valeurFrom: string, variableOp: keyof MetadataParametrageParametreIndicateurRegionaleForm, variableParDefautOp: string) => {
+    setValue(variableFrom, valeurFrom);
+    if (valeursRegFromDesactiveRegOp.has(valeurFrom)) {
+      setValue(variableOp, variableParDefautOp);
+    }
+  };
 
   return (
     <SectionDétailsMetadataParametreCalculIndicateurStyled>
@@ -42,6 +50,9 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_reg_from')}
             register={register('viRegFrom')}
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_reg_from', 'viRegFrom')}
+            valeurModifiéeCallback={valeur => { 
+              ALaModificationValeurRegFrom('viRegFrom', valeur, 'viRegOp', mapInformationMetadataIndicateur.vi_reg_op.metaPiloteDefaultValue as string); 
+            }}
             values={getValues('viRegFrom')}
           />
         </div>
@@ -51,8 +62,10 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.va_reg_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_reg_from')}
-            register={register('vaRegFrom')}
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_reg_from', 'vaRegFrom')}
+            valeurModifiéeCallback={valeur => { 
+              ALaModificationValeurRegFrom('vaRegFrom', valeur, 'vaRegOp', mapInformationMetadataIndicateur.va_reg_op.metaPiloteDefaultValue as string); 
+            }}
             values={getValues('vaRegFrom')}
           />
         </div>
@@ -62,8 +75,10 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vc_reg_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_reg_from')}
-            register={register('vcRegFrom')}
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_reg_from', 'vcRegFrom')}
+            valeurModifiéeCallback={valeur => { 
+              ALaModificationValeurRegFrom('vcRegFrom', valeur, 'vcRegOp', mapInformationMetadataIndicateur.vc_reg_op.metaPiloteDefaultValue as string); 
+            }}           
             values={getValues('vcRegFrom')}
           />
         </div>
@@ -72,6 +87,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
         <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.viRegOp?.message}
+            estDesactive={valeursRegFromDesactiveRegOp.has(getValues('viRegFrom'))}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vi_reg_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_reg_op')}
@@ -83,6 +99,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
         <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.vaRegOp?.message}
+            estDesactive={valeursRegFromDesactiveRegOp.has(getValues('vaRegFrom'))}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.va_reg_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_reg_op')}
@@ -94,6 +111,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
         <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.vcRegOp?.message}
+            estDesactive={valeursRegFromDesactiveRegOp.has(getValues('vcRegFrom'))}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vc_reg_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_reg_op')}
