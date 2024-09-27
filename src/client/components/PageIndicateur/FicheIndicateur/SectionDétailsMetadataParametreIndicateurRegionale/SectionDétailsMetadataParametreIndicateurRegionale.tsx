@@ -25,7 +25,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
 }) => {
   const { register, getValues, errors, setValue } = useDétailsMetadataParametreIndicateurRegionaleForm();
 
-  const valeursRegFromDesactiveRegOp = new Set(['DEPT', 'sub_indic']);
+  const valeursRegFromDesactiveRegOp = new Set(['_', 'user_input']);
   const ALaModificationValeurRegFrom = (variableFrom: keyof MetadataParametrageParametreIndicateurRegionaleForm, valeurFrom: string, variableOp: keyof MetadataParametrageParametreIndicateurRegionaleForm, variableParDefautOp: string) => {
     setValue(variableFrom, valeurFrom);
     if (valeursRegFromDesactiveRegOp.has(valeurFrom)) {

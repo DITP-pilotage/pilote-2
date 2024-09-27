@@ -3,7 +3,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import SectionDétailsMetadataParametreIndicateurDepartementaleStyled
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurDepartementale/SectionDétailsMetadataParametreIndicateurDepartementale.styled';
 import useDétailsMetadataParametreIndicateurDepartementaleForm
-  from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurDepartementale/useDétailsMetadataParametreIndicateurDepartementaleForm';
+, { MetadataParametrageParametreIndicateurDepartementaleForm }  from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurDepartementale/useDétailsMetadataParametreIndicateurDepartementaleForm';
 import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
 import {
   MetadataIndicateurSelecteur,
@@ -23,7 +23,15 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
 }) => {
-  const { register, getValues, errors } = useDétailsMetadataParametreIndicateurDepartementaleForm();
+  const { register, getValues, errors, setValue } = useDétailsMetadataParametreIndicateurDepartementaleForm();
+
+  const valeursDeptFromDesactiveDeptOp = new Set(['_', 'user_input']);
+  const ALaModificationValeurDeptFrom = (variableFrom: keyof MetadataParametrageParametreIndicateurDepartementaleForm, valeurFrom: string, variableOp: keyof MetadataParametrageParametreIndicateurDepartementaleForm, variableParDefautOp: string) => {
+    setValue(variableFrom, valeurFrom);
+    if (valeursDeptFromDesactiveDeptOp.has(valeurFrom)) {
+      setValue(variableOp, variableParDefautOp);
+    }
+  };
 
   return (
     <SectionDétailsMetadataParametreIndicateurDepartementaleStyled>
@@ -40,8 +48,10 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vi_dept_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_dept_from')}
-            register={register('viDeptFrom')}
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_dept_from', 'viDeptFrom')}
+            valeurModifiéeCallback={valeur => {
+              ALaModificationValeurDeptFrom('viDeptFrom', valeur, 'viDeptOp', mapInformationMetadataIndicateur.vi_dept_from.metaPiloteDefaultValue as string);
+            }}
             values={getValues('viDeptFrom')}
           />
         </div>
@@ -51,8 +61,10 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.va_dept_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_dept_from')}
-            register={register('vaDeptFrom')}
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_dept_from', 'vaDeptFrom')}
+            valeurModifiéeCallback={valeur => {
+              ALaModificationValeurDeptFrom('vaDeptFrom', valeur, 'vaDeptOp', mapInformationMetadataIndicateur.va_dept_from.metaPiloteDefaultValue as string);
+            }}
             values={getValues('vaDeptFrom')}
           />
         </div>
@@ -62,8 +74,10 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vc_dept_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_dept_from')}
-            register={register('vcDeptFrom')}
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_dept_from', 'vcDeptFrom')}
+            valeurModifiéeCallback={valeur => {
+              ALaModificationValeurDeptFrom('vcDeptFrom', valeur, 'vcDeptOp', mapInformationMetadataIndicateur.vc_dept_from.metaPiloteDefaultValue as string);
+            }}
             values={getValues('vcDeptFrom')}
           />
         </div>
@@ -72,6 +86,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
         <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.viDeptOp?.message}
+            estDesactive={valeursDeptFromDesactiveDeptOp.has(getValues('viDeptFrom'))}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vi_dept_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_dept_op')}
@@ -83,6 +98,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
         <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.vaDeptOp?.message}
+            estDesactive={valeursDeptFromDesactiveDeptOp.has(getValues('vaDeptFrom'))}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.va_dept_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_dept_op')}
@@ -94,6 +110,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
         <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.vcDeptOp?.message}
+            estDesactive={valeursDeptFromDesactiveDeptOp.has(getValues('vcDeptFrom'))}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vc_dept_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_dept_op')}
