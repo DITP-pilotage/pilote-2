@@ -69,6 +69,8 @@ export default function useDetailMetadataIndicateurForm() {
       }))];
   }
 
+  const indicateurEstTerritorialise = getValues('indicTerritorialise');
+
   activerWatchSurSelecteur(watch);
 
   return {
@@ -78,5 +80,6 @@ export default function useDetailMetadataIndicateurForm() {
     errors,
     metadataIndicateurs,
     optionsIndicateurParent,
+    indicateurEstTerritorialise,
   };
 }

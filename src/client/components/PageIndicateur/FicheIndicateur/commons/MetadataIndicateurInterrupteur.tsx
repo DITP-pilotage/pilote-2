@@ -8,9 +8,10 @@ export const MetadataIndicateurInterrupteur: FunctionComponent<{
   informationMetadataIndicateur: InformationMetadataIndicateurContrat,
   estEnCoursDeModification: boolean,
   htmlName: string,
-  register: UseFormRegisterReturn<string>,
+  register?: UseFormRegisterReturn<string>,
   isChecked: boolean,
   valeurAffiché: string,
+  auChangement?: (estCochée: boolean) => void,
 }> = ({
   informationMetadataIndicateur,
   estEnCoursDeModification,
@@ -18,6 +19,7 @@ export const MetadataIndicateurInterrupteur: FunctionComponent<{
   register,
   isChecked,
   valeurAffiché,
+  auChangement,
 }) => {
   return (
     <MetadataIndicateurChamp
@@ -26,6 +28,7 @@ export const MetadataIndicateurInterrupteur: FunctionComponent<{
       valeurAffiché={valeurAffiché}
     >
       <Interrupteur
+        auChangement={auChangement}
         checked={isChecked}
         id={htmlName}
         libellé={isChecked ? 'Oui' : 'Non'}
