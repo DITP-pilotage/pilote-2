@@ -46,11 +46,11 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
     'Date valeur initiale',
     'Valeur actuelle',
     'Date valeur actuelle',
-    'Valeur cible annuelle',
-    'Date valeur cible annuelle',
+    'Valeur cible année en cours',
+    'Date valeur cible année en cours',
     'Taux d\'avancement de l\'année en cours',
-    'Valeur cible',
-    'Date valeur cible',
+    'Valeur cible à fin d\'échéance',
+    'Date valeur cible à fin d\'échéance',
     'Taux d\'avancement à fin d\'échéance (indicateur)',
   ];
 
