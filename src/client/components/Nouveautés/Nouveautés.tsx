@@ -1,11 +1,29 @@
 import Link from 'next/link';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useEffect } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
+import '@gouvfr/dsfr/dist/utility/icons/icons.min.css';
+import '@gouvfr/dsfr/dist/utility/colors/colors.min.css';
+import { Editor } from '@/components/Nouveautés/Editor';
 import { ParametrageNouveautés } from '../../../../public/nouveautés/ParametrageNouveautés';
 
 const Nouveautés: FunctionComponent<{}> = () => {
+
+  useEffect(() => {
+    if (document.readyState !== 'complete') {
+      console.log('hey');
+      const handler = () => {
+        new Editor();
+      };
+      window.addEventListener('load', handler);
+
+      return () => {
+        window.removeEventListener('load', handler);
+      };
+    }
+  }, []);
+
   return (
     <main>
       <div className='fr-container fr-pb-2w'>
@@ -17,6 +35,10 @@ const Nouveautés: FunctionComponent<{}> = () => {
             Nouveautés
           </Titre>
         </div>
+        <div
+          className='fr-p-2w'
+          id='editorjs'
+        />
         <Bloc>
           {
             !ParametrageNouveautés || ParametrageNouveautés.length === 0 ? (
