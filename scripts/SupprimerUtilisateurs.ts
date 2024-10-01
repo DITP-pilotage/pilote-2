@@ -1,10 +1,12 @@
 import { loadEnvConfig } from '@next/env';
+import { PrismaClient } from '@prisma/client';
 import process from 'node:process';
 import assert from 'node:assert/strict';
 import logger from '@/server/infrastructure/Logger';
 import UtilisateurCSVParseur from '@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur';
 import UtilisateurIAMKeycloakRepository
   from '@/server/infrastructure/accès_données/utilisateur/UtilisateurIAMKeycloakRepository';
+import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/utilisateur/UtilisateurSQLRepository';
 
 const projectDir = process.cwd();
 loadEnvConfig(projectDir);  // ⚠️ À appeler avant nos imports, because Configuration.ts est aussi chargée côté front
@@ -17,13 +19,15 @@ async function main() {
   const clientId = process.env.IMPORT_CLIENT_ID as string;
   const clientSecret = process.env.IMPORT_CLIENT_SECRET as string;
 
-  const utilisateurIAMRepository = new UtilisateurIAMKeycloakRepository(keycloakUrl, clientId, clientSecret);
+  const prisma = new PrismaClient();
 
-  const contenuParsé = new UtilisateurCSVParseur(filename).parse();
-  let utilisateurs = contenuParsé.parsedCsvRecords;
-  const utilisateursEmails = utilisateurs.map(utilisateur => utilisateur.email);
-  for (const email of utilisateursEmails) {
+  const utilisateurIAMRepository = new UtilisateurIAMKeycloakRepository(keycloakUrl, clientId, clientSecret);
+  const utilisateurSQLRepository = new UtilisateurSQLRepository(prisma);
+
+  const emailsASupprimer = new UtilisateurCSVParseur(filename).parseComptesASupprimer();
+  for (const email of emailsASupprimer) {
     await utilisateurIAMRepository.supprime(email);
+    await utilisateurSQLRepository.supprimer(email);
   }
 }
 

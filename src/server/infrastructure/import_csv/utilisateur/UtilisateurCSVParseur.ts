@@ -25,6 +25,18 @@ export default class UtilisateurCSVParseur {
 
   constructor(private _filename: string) {}
 
+  parseComptesASupprimer() {
+    const contents = fs.readFileSync(this._filename, 'utf8');
+    const csvRecords: CsvRecord[] = parse(contents, this._CSV_PARSE_OPTIONS);
+
+    let emails:string[] = [];
+    for (const csvRecord of csvRecords) {
+      emails = [...emails, csvRecord[this._colonnes.email].toLowerCase()];
+    }
+
+    return emails;
+  }
+
   parse(): { csvRecords: CsvRecord[], parsedCsvRecords: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[] } {
     const contents = fs.readFileSync(this._filename, 'utf8');
     const csvRecords: CsvRecord[] = parse(contents, this._CSV_PARSE_OPTIONS);
