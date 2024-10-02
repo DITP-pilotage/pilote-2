@@ -1,6 +1,9 @@
-import { useState, ReactNode, FunctionComponent } from 'react';
+import { FunctionComponent, ReactNode, useState } from 'react';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
-import { CartographieInfoBulle, CartographieOptions } from '@/components/_commons/Cartographie/useCartographie.interface';
+import {
+  CartographieInfoBulle,
+  CartographieOptions,
+} from '@/components/_commons/Cartographie/useCartographie.interface';
 import {
   départementsTerritoiresStore,
   mailleSélectionnéeTerritoiresStore,
@@ -17,7 +20,12 @@ interface CartographieProps {
   auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
 }
 
-const Cartographie: FunctionComponent<CartographieProps> = ({ options, données, children, auClicTerritoireCallback }) => {
+const Cartographie: FunctionComponent<CartographieProps> = ({
+  options,
+  données,
+  children,
+  auClicTerritoireCallback,
+}) => {
   const niveauDeMaille = mailleSélectionnéeTerritoiresStore();
   const départements = départementsTerritoiresStore();
 
@@ -28,11 +36,11 @@ const Cartographie: FunctionComponent<CartographieProps> = ({ options, données,
 
   const optionsEffectives = { ...optionsParDéfaut, ...options };
 
-  const régionsFiltrées =  déterminerRégionsÀTracer(optionsEffectives.territoireAffiché);
+  const régionsFiltrées = déterminerRégionsÀTracer(optionsEffectives.territoireAffiché);
   const territoiresÀTracer = niveauDeMaille === 'départementale' ? départements : régionsFiltrées;
   const frontièreÀTracer = niveauDeMaille === 'départementale' ? régionsFiltrées : [];
   const territoiresEtFrontières = créerTerritoires(territoiresÀTracer, frontièreÀTracer, données);
-  
+
   return (
     <div
       className='fr-container fr-p-0'
@@ -56,11 +64,12 @@ const Cartographie: FunctionComponent<CartographieProps> = ({ options, données,
       <CartographieSVG
         auClicTerritoireCallback={auClicTerritoireCallback}
         frontières={territoiresEtFrontières.frontières}
+        infoBulle={infoBulle}
         options={optionsEffectives}
         setInfoBulle={setInfoBulle}
         territoires={territoiresEtFrontières.territoires}
       />
-      { children }
+      {children}
     </div>
   );
 };

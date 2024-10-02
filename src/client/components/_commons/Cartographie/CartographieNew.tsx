@@ -77,6 +77,7 @@ const Cartographie: FunctionComponent<CartographieProps> = ({
       <CartographieSVG
         auClicTerritoireCallback={auClicTerritoireCallback}
         frontières={territoiresEtFrontières.frontières}
+        infoBulle={infoBulle}
         options={optionsEffectives}
         setInfoBulle={setInfoBulle}
         territoires={territoiresEtFrontières.territoires}

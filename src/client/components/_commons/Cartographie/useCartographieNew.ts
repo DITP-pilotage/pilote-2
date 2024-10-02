@@ -42,7 +42,6 @@ export default function useCartographie(territoireCode: string, mailleSelectionn
       territoires: territoiresÀTracer.map(territoire => ({
         codeInsee: territoire.codeInsee,
         code: territoire.code,
-        tracéSVG: territoire.tracéSvg,
         remplissage: données[territoire.codeInsee]?.remplissage ?? '#bababa', // TODO où gérer ce undefined ?
         libellé: données[territoire.codeInsee]?.libellé ?? '-', // TODO où gérer ce undefined ?
         valeurAffichée: données[territoire.codeInsee]?.valeurAffichée ?? 'Non renseignée', // TODO où gérer ce undefined ?
@@ -50,7 +49,6 @@ export default function useCartographie(territoireCode: string, mailleSelectionn
       })),
       frontières: frontièresÀTracer.map(frontière => ({
         codeInsee: frontière.codeInsee,
-        tracéSVG: frontière.tracéSvg,
       })),
     };
   }
