@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   pilote_webapp:
     image: node:18.20.2
@@ -94,7 +92,7 @@ services:
     container_name: pilote_postgres
     depends_on:
       - pilote_traefik
-    image: postgres:14.1-alpine
+    image: postgres:14.6-alpine
     ports:
       - "5432:5432"
     environment:
@@ -106,7 +104,7 @@ services:
   postgres_tests:
     hostname: postgres_tests
     container_name: pilote_postgres_tests
-    image: postgres:14.1-alpine
+    image: postgres:14.6-alpine
     ports:
       - "5433:5432"
     environment:
