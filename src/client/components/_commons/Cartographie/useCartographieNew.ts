@@ -49,6 +49,7 @@ export default function useCartographie(territoireCode: string, mailleSelectionn
       })),
       frontières: frontièresÀTracer.map(frontière => ({
         codeInsee: frontière.codeInsee,
+        code: frontière.code,
       })),
     };
   }
