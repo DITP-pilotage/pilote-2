@@ -98,12 +98,14 @@ const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
             }
             {
               frontières.map(frontière => (
-                <path
-                  className='territoire-frontière'
-                  d={frontière.tracéSVG}
-                  key={`frontière-${frontière.codeInsee}`}
-                />
-              ))
+                sourceSvgAsJson ? (
+                  <path
+                    className='territoire-frontière'
+                    d={getTraceSvg(sourceSvgAsJson, frontière.code)}
+                    key={`frontière-${frontière.codeInsee}`}
+                  />
+                ) : null),
+              )
             }
             {
               options.territoireSélectionnable ? (
