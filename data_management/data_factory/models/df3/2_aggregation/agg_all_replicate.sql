@@ -4,7 +4,7 @@ WITH
 -- Chantiers à répliquer depuis la REG
 to_replicate_from_reg AS (
     SELECT
-        id,
+        id as chantier_id,
         'REG' AS replicate_maille_from,
         replicate_val_reg_to AS replicate_maille_to
     FROM {{ ref('stg_ppg_metadata__chantiers') }}
@@ -14,7 +14,7 @@ to_replicate_from_reg AS (
 -- Chantiers à répliquer depuis la NAT
 to_replicate_from_nat AS (
     SELECT
-        id,
+        id as chantier_id,
         'NAT' AS replicate_maille_from,
         replicate_val_nat_to AS replicate_maille_to
     FROM {{ ref('stg_ppg_metadata__chantiers') }}
