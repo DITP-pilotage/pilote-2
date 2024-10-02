@@ -21,7 +21,7 @@ export type CartographieTerritoireAffiché = {
 
 export type CartographieTerritoires = {
   territoires: CartographieTerritoire[]
-  frontières: { codeInsee: CodeInsee }[]
+  frontières: { codeInsee: CodeInsee; code: string }[]
 };
 
 export type CartographieOptions = {
