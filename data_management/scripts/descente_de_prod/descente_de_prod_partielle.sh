@@ -5,7 +5,7 @@ export $(cat .env | xargs)
 # [export]
 ## [export.dump] pg_dump data of specific tables
 echo ">> Dumping data..."
-time /usr/lib/postgresql/14/bin/pg_dump -d $CONN_STR_PROD --verbose \
+time pg_dump -d $CONN_STR_PROD --verbose \
     --no-owner --data-only --format custom --compress 9 \
     --table public.rapport_import_mesure_indicateur \
     --table public.commentaire \
