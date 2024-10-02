@@ -7,6 +7,7 @@ export type CartographieInfoBulle = {
 
 export type CartographieTerritoire = {
   codeInsee: CodeInsee
+  code: string
   tracéSVG: string;
   remplissage: string,
   libellé: string,

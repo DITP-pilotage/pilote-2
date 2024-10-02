@@ -41,6 +41,7 @@ export default function useCartographie(territoireCode: string, mailleSelectionn
     return {
       territoires: territoiresÀTracer.map(territoire => ({
         codeInsee: territoire.codeInsee,
+        code: territoire.code,
         tracéSVG: territoire.tracéSvg,
         remplissage: données[territoire.codeInsee]?.remplissage ?? '#bababa', // TODO où gérer ce undefined ?
         libellé: données[territoire.codeInsee]?.libellé ?? '-', // TODO où gérer ce undefined ?
