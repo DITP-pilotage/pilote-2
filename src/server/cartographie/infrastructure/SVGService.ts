@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { CartographieSVGContrat } from '@/server/cartographie/app/contrats/CartographieSVGContrat';
 import { configuration } from '@/config';
 
-const SERVER_ROOT = '/src/server/cartographie/domain/';
+const SERVER_ROOT = '/public/img/';
 const SVG_FILEPATH = join(process.cwd(), SERVER_ROOT, configuration.cartographie.svgPath);
 const PREFIX_ATTR_SVG = 'attr-';
 

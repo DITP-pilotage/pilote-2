@@ -47,7 +47,6 @@ export type Territoire = {
   nom: string,
   nomAffiché: string,
   codeInsee: string,
-  tracéSvg: string,
   codeParent: string | null,
   maille: Maille,
 };
