@@ -58,7 +58,7 @@ const TableauChantiersContenu: FunctionComponent<TableauChantiersContenuProps> =
             {
               row.getVisibleCells().map(cell => (
                 <td
-                  className='fr-p-0'
+                  className='fr-p-1w fr-p-0'
                   key={cell.id}
                 >
                   <Link

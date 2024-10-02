@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { breakpointL } from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
 
 const PageChantiersStyled = styled.main`
   .titre {
@@ -11,7 +12,7 @@ const PageChantiersStyled = styled.main`
       flex-wrap: wrap;
     }
   }
-  
+
   .alertes {
     .titre-remontée-alertes {
       color: var(--text-default-warning);
@@ -20,6 +21,12 @@ const PageChantiersStyled = styled.main`
     .infobulle-bouton {
       color: var(--text-default-warning);
     }
+  }
+
+  .taux-avancement-section{
+    @media screen and (min-width: ${breakpointL}) {
+        padding-right: 0.9rem;
+      }
   }
 
 `;

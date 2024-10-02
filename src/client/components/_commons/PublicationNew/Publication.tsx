@@ -60,8 +60,8 @@ const Publication: FunctionComponent<PublicationProps> = ({
             {
               estInteractif ? (
 
-                <div className='fr-grid-row fr-grid-row--right'>
-                  <div className='fr-col-12 actions fr-mt-1w'>
+                <div className='fr-grid-row'>
+                  <div className='fr-col-12 actions fr-mt-1w flex flex-direction-row justify-end align-center boutons-commentaire'>
                     {
                       !!publication &&
                       <PublicationHistorique
@@ -74,7 +74,7 @@ const Publication: FunctionComponent<PublicationProps> = ({
                     {
                       modeÉcriture ? (
                         <button
-                          className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
+                          className='fr-btn fr-btn--secondary bouton-modifier'
                           onClick={activerLeModeÉdition}
                           type='button'
                         >

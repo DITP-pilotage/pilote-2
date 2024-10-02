@@ -1,8 +1,15 @@
 import styled from '@emotion/styled';
+import { breakpointL } from '@/client/components/_commons/MiseEnPage/MiseEnPage.styled';
 
 const PageChantierStyled = styled.div`
   background: var(--background-contrast-grey);
 
+  .container {
+    @media screen and (max-width: ${breakpointL}) {
+      background-color: #f5f5fe; 
+    } 
+  }
+  
   .grid-template {
     display: grid;
     grid-template-areas:
