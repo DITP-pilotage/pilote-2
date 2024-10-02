@@ -37,6 +37,7 @@ import {
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
+import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
@@ -66,6 +67,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
 }) => {
 
   const { data: session } = useSession();
+  const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
 
   const pathname = '/accueil/chantier/[territoireCode]';
   const { auClicTerritoireCallback } = useCartographie(territoireCode, mailleSelectionnee, pathname);
@@ -126,7 +128,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
           </Titre>
           <div className='titre-liens'>
             {
-              process.env.NEXT_PUBLIC_FF_FICHE_TERRITORIALE === 'true' && estAutoriséAConsulterLaFicheTerritoriale(session?.profil || '') && (
+              process.env.NEXT_PUBLIC_FF_FICHE_TERRITORIALE === 'true' && estAutoriséAConsulterLaFicheTerritoriale(session?.profil || '') && !estVueMobile ? (
                 <div>
                   {
                     territoireCode === 'NAT-FR' ? (
@@ -149,33 +151,35 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                     )
                   }
                 </div>
-              )
+              ) : null
             }
             {
-              process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' &&
-              <div>
-                <Link
-                  className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
-                  href={`${territoireCode}/rapport-detaille${queryParamString.length > 0 ? `?${queryParamString}` : ''}`}
-                  title='Voir le rapport détaillé'
-                >
-                  Voir le rapport détaillé
-                </Link>
-              </div>
+              process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' && !estVueMobile ? (
+                <div>
+                  <Link
+                    className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
+                    href={`${territoireCode}/rapport-detaille${queryParamString.length > 0 ? `?${queryParamString}` : ''}`}
+                    title='Voir le rapport détaillé'
+                  >
+                    Voir le rapport détaillé
+                  </Link>
+                </div>
+              ) : null
             }
             {
-              process.env.NEXT_PUBLIC_FF_EXPORT_CSV === 'true' &&
-              <div>
-                <button
-                  aria-controls={ID_HTML_MODALE_EXPORT}
-                  className='fr-btn fr-btn--tertiary-no-outline fr-icon-download-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
-                  data-fr-opened='false'
-                  type='button'
-                >
-                  Exporter les données
-                </button>
-                <ExportDesDonnées />
-              </div>
+              process.env.NEXT_PUBLIC_FF_EXPORT_CSV === 'true'  && !estVueMobile ? (
+                <div>
+                  <button
+                    aria-controls={ID_HTML_MODALE_EXPORT}
+                    className='fr-btn fr-btn--tertiary-no-outline fr-icon-download-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
+                    data-fr-opened='false'
+                    type='button'
+                  >
+                    Exporter les données
+                  </button>
+                  <ExportDesDonnées />
+                </div>
+              ) : null
             }
           </div>
         </div>
