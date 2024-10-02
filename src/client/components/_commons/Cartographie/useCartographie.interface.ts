@@ -8,7 +8,6 @@ export type CartographieInfoBulle = {
 export type CartographieTerritoire = {
   codeInsee: CodeInsee
   code: string
-  tracéSVG: string;
   remplissage: string,
   libellé: string,
   valeurAffichée: string,
@@ -22,7 +21,7 @@ export type CartographieTerritoireAffiché = {
 
 export type CartographieTerritoires = {
   territoires: CartographieTerritoire[]
-  frontières: { codeInsee: CodeInsee, tracéSVG: string }[]
+  frontières: { codeInsee: CodeInsee }[]
 };
 
 export type CartographieOptions = {

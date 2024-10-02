@@ -27,7 +27,6 @@ model territoire {
   nom_affiche String
   maille      Maille
   code_insee  String
-  trace_svg   String
   code_parent String?
   chantier    chantier[]
   indicateur  indicateur[]
