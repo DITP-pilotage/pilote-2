@@ -25,35 +25,37 @@ const SelecteurVueStatuts: FunctionComponent<{}> = () => {
 
   return (
     <SelecteurVueStatutStyled>
-      {
-        options.filter(option => option.position === 'gauche' && option.estVisible).map(option => (
-          <button
-            className={`fr-tag fr-tag--icon-left fr-mr-1w ${statut === option.valeur ? 'fr-tag-active' : ''} ${option.icone ?? ''}`}
-            id={option.valeur}
-            key={option.valeur}
-            onClick={() => statut !== option.valeur && auChangement(option.valeur)}
-            type='button'
-          >
-            {option.libellé}
-          </button>
+      <div className='fr-my-2w conteneur-tags'>
+        {
+          options.filter(option => option.position === 'gauche' && option.estVisible).map(option => (
+            <button
+              className={`fr-tag fr-tag--icon-left fr-mr-1w ${statut === option.valeur ? 'fr-tag-active' : ''} ${option.icone ?? ''}`}
+              id={option.valeur}
+              key={option.valeur}
+              onClick={() => statut !== option.valeur && auChangement(option.valeur)}
+              type='button'
+            >
+              {option.libellé}
+            </button>
 
-        ))
-      }
-      <div className='separator fr-mr-1w' />
-      {
-        options.filter(option => option.position === 'droite' && option.estVisible).map(option => (
-          <button
-            className={`fr-tag fr-tag--icon-left fr-mr-1w ${statut === option.valeur ? 'fr-tag-active' : ''} ${option.icone ?? ''}`}
-            id={option.valeur}
-            key={option.valeur}
-            onClick={() => statut !== option.valeur && auChangement(option.valeur)}
-            type='button'
-          >
-            {option.libellé}
-          </button>
+          ))
+        }
+        <div className='separator fr-mr-1w' />
+        {
+          options.filter(option => option.position === 'droite' && option.estVisible).map(option => (
+            <button
+              className={`fr-tag fr-tag--icon-left fr-mr-1w ${statut === option.valeur ? 'fr-tag-active' : ''} ${option.icone ?? ''}`}
+              id={option.valeur}
+              key={option.valeur}
+              onClick={() => statut !== option.valeur && auChangement(option.valeur)}
+              type='button'
+            >
+              {option.libellé}
+            </button>
 
-        ))
-      }
+          ))
+        }
+      </div>
     </SelecteurVueStatutStyled>
   );
 };

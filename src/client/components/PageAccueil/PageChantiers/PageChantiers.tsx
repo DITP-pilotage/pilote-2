@@ -345,7 +345,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
           </div>
         }
         <div className='fr-grid-row fr-mt-7v'>
-          <div className='fr-col'>
+          <div className='fr-col-12'>
             <Bloc>
               <TitreInfobulleConteneur>
                 <Titre
@@ -361,9 +361,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
               </TitreInfobulleConteneur>
               {
                 !!session?.profilAAccèsAuxChantiersBrouillons ? (
-                  <div className='fr-grid-row fr-my-2w fr-mb-md-0'>
-                    <SelecteurVueStatuts />
-                  </div>
+                  <SelecteurVueStatuts />
                 ) : null
               }
               <TableauChantiers
