@@ -65,16 +65,6 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             valeurAffiché={indicateur.indicNom || '_'}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-6'>
-          <MetadataIndicateurTextArea
-            erreurMessage={errors.indicDescr?.message}
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName='indicDescr'
-            informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_descr}
-            register={register('indicDescr', { value: indicateur?.indicDescr })}
-            valeurAffiché={indicateur.indicDescr}
-          />
-        </div>
       </div>
       <div className='fr-grid-row fr-grid-row--gutters'>
         <div className='fr-col-12 fr-col-md-6'>
@@ -102,16 +92,27 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       </div>
       <div className='fr-grid-row fr-grid-row--gutters'>
         <div className='fr-col-12 fr-col-md-6'>
-          <MetadataIndicateurSelecteur
-            erreurMessage={errors.indicSchema?.message}
+          <MetadataIndicateurTextArea
+            erreurMessage={errors.indicDescr?.message}
             estEnCoursDeModification={estEnCoursDeModification}
-            informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_schema}
-            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'indic_schema')}
-            register={register('indicSchema')}
-            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'indic_schema', 'indicSchema')}
-            values={getValues('indicSchema')}
+            htmlName='indicDescr'
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_descr}
+            register={register('indicDescr', { value: indicateur?.indicDescr })}
+            valeurAffiché={indicateur.indicDescr}
           />
         </div>
+        <div className='fr-col-12 fr-col-md-6'>
+          <MetadataIndicateurTextArea
+            erreurMessage={errors.indicMethodeCalcul?.message}
+            estEnCoursDeModification={estEnCoursDeModification}
+            htmlName='indicMethodeCalcul'
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_methode_calcul}
+            register={register('indicMethodeCalcul', { value: indicateur?.indicMethodeCalcul })}
+            valeurAffiché={indicateur.indicMethodeCalcul || '_'}
+          />
+        </div>
+      </div>
+      <div className='fr-grid-row fr-grid-row--gutters'>
         <div className='fr-col-12 fr-col-md-6'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.indicType?.message}
@@ -121,6 +122,17 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             register={register('indicType')}
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'indic_type', 'indicType')}
             values={getValues('indicType')}
+          />
+        </div>
+        <div className='fr-col-12 fr-col-md-6'>
+          <MetadataIndicateurSelecteur
+            erreurMessage={errors.indicSchema?.message}
+            estEnCoursDeModification={estEnCoursDeModification}
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_schema}
+            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'indic_schema')}
+            register={register('indicSchema')}
+            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'indic_schema', 'indicSchema')}
+            values={getValues('indicSchema')}
           />
         </div>
       </div>
@@ -235,18 +247,6 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             informationMetadataIndicateur={mapInformationMetadataIndicateur.delai_disponibilite}
             register={register('delaiDisponibilite', { value: `${indicateur?.delaiDisponibilite}` })}
             valeurAffiché={`${indicateur.delaiDisponibilite}`}
-          />
-        </div>
-      </div>
-      <div className='fr-grid-row fr-grid-row--gutters'>
-        <div className='fr-col-12 fr-col-md-6'>
-          <MetadataIndicateurTextArea
-            erreurMessage={errors.indicMethodeCalcul?.message}
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName='indicMethodeCalcul'
-            informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_methode_calcul}
-            register={register('indicMethodeCalcul', { value: indicateur?.indicMethodeCalcul })}
-            valeurAffiché={indicateur.indicMethodeCalcul || '_'}
           />
         </div>
       </div>
