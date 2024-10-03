@@ -23,11 +23,14 @@ const SelecteurVueStatuts: FunctionComponent<{}> = () => {
     return setStatut(vueStatuts);
   };
 
+  const optionsGauche = options.filter(option => option.position === 'gauche' && option.estVisible);
+  const optionsDroite = options.filter(option => option.position === 'droite' && option.estVisible);
+
   return (
     <SelecteurVueStatutStyled>
       <div className='fr-my-2w conteneur-tags'>
         {
-          options.filter(option => option.position === 'gauche' && option.estVisible).map(option => (
+          optionsGauche.map(option => (
             <button
               className={`fr-tag fr-tag--icon-left fr-mr-1w ${statut === option.valeur ? 'fr-tag-active' : ''} ${option.icone ?? ''}`}
               id={option.valeur}
@@ -40,9 +43,11 @@ const SelecteurVueStatuts: FunctionComponent<{}> = () => {
 
           ))
         }
-        <div className='separator fr-mr-1w' />
         {
-          options.filter(option => option.position === 'droite' && option.estVisible).map(option => (
+          optionsDroite.length > 0 && <div className='separator fr-mr-1w' />
+        }
+        {
+          optionsDroite.map(option => (
             <button
               className={`fr-tag fr-tag--icon-left fr-mr-1w ${statut === option.valeur ? 'fr-tag-active' : ''} ${option.icone ?? ''}`}
               id={option.valeur}

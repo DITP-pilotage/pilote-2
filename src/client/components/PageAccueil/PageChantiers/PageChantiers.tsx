@@ -359,11 +359,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   {INFOBULLE_CONTENUS.chantiers.listeDesChantiers}
                 </Infobulle>
               </TitreInfobulleConteneur>
-              {
-                !!session?.profilAAccèsAuxChantiersBrouillons ? (
-                  <SelecteurVueStatuts />
-                ) : null
-              }
+              <SelecteurVueStatuts />
               <TableauChantiers
                 données={donnéesTableauChantiers}
                 mailleSelectionnee={mailleSelectionnee}
