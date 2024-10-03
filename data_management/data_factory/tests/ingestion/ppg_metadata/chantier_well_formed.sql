@@ -30,7 +30,7 @@ WHERE
         'ATE', 'HORS_ATE_DECONCENTRE', 'HORS_ATE_CENTRALISE'
     )
     -- Etat de publication du chantier
-    OR ch_state NOT IN ('PUBLIE', 'BROUILLON', 'NON_PUBLIE')
+    OR ch_state NOT IN ('PUBLIE', 'BROUILLON', 'SUPPRIME', 'ARCHIVE')
     -- Zone-groupe applicable
     OR zg_applicable NOT SIMILAR TO 'ZG-\d{3}'
     -- Mailles de réplication des données: REG->DEPT
