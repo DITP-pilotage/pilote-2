@@ -23,7 +23,6 @@ import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import RemontéeAlerte from '@/components/_commons/RemontéeAlerteNew/RemontéeAlerte';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
-import SélecteurVueStatuts from '@/components/PageAccueil/SélecteurVueStatuts/SélecteurVueStatuts';
 import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
@@ -37,9 +36,11 @@ import {
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
+import SelecteurVueStatuts from '@/client/components/PageAccueil/SelecteurVueStatuts/SelecteurVueStatuts';
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
+// eslint-disable-next-line import/extensions
 
 interface PageChantiersProps {
   chantiers: ChantierAccueilContrat[],
@@ -76,7 +77,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
     maille: parseAsString.withDefault(''),
-    statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE']),
+    statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']),
   });
 
   const [filtresAlertes] = useQueryStates({
@@ -361,7 +362,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
               {
                 !!session?.profilAAccèsAuxChantiersBrouillons ? (
                   <div className='fr-grid-row fr-my-2w fr-mb-md-0'>
-                    <SélecteurVueStatuts />
+                    <SelecteurVueStatuts />
                   </div>
                 ) : null
               }
