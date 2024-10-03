@@ -79,6 +79,9 @@ replicated_values AS (
 )
 
 -- Union des données précédentes avec les données répliquées
-SELECT * FROM {{ ref('agg_all') }}
-UNION
-SELECT * FROM replicated_values
+SELECT * 
+FROM {{ ref('agg_all') }} 
+WHERE (indic_id, zone_id) NOT IN (SELECT indic_id, zone_id FROM replicated_values)
+UNION 
+SELECT * 
+FROM replicated_values
