@@ -1,14 +1,11 @@
 import { créerRouteurTRPC, procédureProtégée, vérifierSiLeCSRFEstValide } from '@/server/infrastructure/api/trpc/trpc';
 import {
-  validationFiltresPourListeUtilisateur,
   validationFiltresPourListeUtilisateurNew,
   validationInfosBaseUtilisateur,
   validationInfosHabilitationsUtilisateur,
   validationSupprimerUtilisateur,
 } from '@/validation/utilisateur';
 import { zodValidateurCSRF } from '@/validation/publication';
-import RécupérerListeUtilisateursUseCase from '@/server/gestion-utilisateur/usecases/RécupérerListeUtilisateursUseCase';
-import FiltrerListeUtilisateursUseCase from '@/server/gestion-utilisateur/usecases/FiltrerListeUtilisateursUseCase';
 import CréerOuMettreÀJourUnUtilisateurUseCase
   from '@/server/gestion-utilisateur/usecases/CréerOuMettreÀJourUnUtilisateurUseCase';
 import SupprimerUnUtilisateurUseCase from '@/server/gestion-utilisateur/usecases/SupprimerUnUtilisateurUseCase';
@@ -20,10 +17,6 @@ import {
   UtilisateurListeGestionContrat,
 } from '@/server/app/contrats/UtilisateurListeGestionContrat';
 import { RecupererTousLesTerritoiresUseCase } from '@/server/usecase/territoire/RecupererTousLesTerritoiresUseCase';
-import {
-  presenterEnUtilisateurContrat,
-  UtilisateurContrat,
-} from '@/server/gestion-utilisateur/app/contrats/UtilisateurContrat';
 import RécupérerListeUtilisateursUseCaseNew
   from '@/server/gestion-utilisateur/usecases/RécupérerListeUtilisateursUseCaseNew';
 import FiltrerListeUtilisateursUseCaseNew
@@ -90,15 +83,6 @@ export const utilisateurRouter = créerRouteurTRPC({
         dependencies.getUtilisateurRepository(),
         new UtilisateurIAMKeycloakRepository(keycloakUrl, clientId, clientSecret),
       ).run(input.email, ctx.session.habilitations, profilAuteur);
-    }),
-  récupérerUtilisateursFiltrés: procédureProtégée
-    .input(validationFiltresPourListeUtilisateur)
-    .query(async ({ ctx, input }): Promise<UtilisateurContrat[]> => {
-      const tousLesUtilisateurs = await new RécupérerListeUtilisateursUseCase(dependencies.getUtilisateurRepository()).run(ctx.session.habilitations);
-      const habilitation = new Habilitation(ctx.session.habilitations);
-      const utilisateursFiltres = new FiltrerListeUtilisateursUseCase(tousLesUtilisateurs, input.filtres, ctx.session.profil, habilitation).run();
-      const territoiresListe = await new RecupererTousLesTerritoiresUseCase({ territoireRepository: dependencies.getTerritoireRepository() }).run();
-      return utilisateursFiltres.map(utilisateur => presenterEnUtilisateurContrat(utilisateur, territoiresListe));
     }),
   récupérerUtilisateursFiltrésNew: procédureProtégée
     .input(validationFiltresPourListeUtilisateurNew)
