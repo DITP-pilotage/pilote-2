@@ -42,11 +42,10 @@ const RapportDétailléChantierStyled = styled.section`
     content-visibility: auto;
     break-before: page;
   }
-  
-    .impression-sections {
-      break-inside: avoid;
-    }
+
   @media print {
+    break-after: page;
+
     .impression-section {
       break-inside: avoid;
     }

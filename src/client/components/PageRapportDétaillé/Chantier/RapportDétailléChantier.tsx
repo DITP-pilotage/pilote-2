@@ -49,7 +49,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
       className='fr-mt-4w fr-pb-4w chantier-item'
       id={htmlId.chantier(chantier.id)}
     >
-      <div className='fr-mt-2w impression-section'>
+      <div className='fr-mt-2w'>
         <div
           className={`grid-template ${territoireSélectionné!.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}
         >
