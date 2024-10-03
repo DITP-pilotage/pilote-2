@@ -15,8 +15,8 @@ const SelecteurVueStatutStyled = styled.div`
   }
 
   .separator {
-    border-left: 2px solid var(--blue-france-sun-113-625);
     height: 100%;
+    border-left: 2px solid var(--blue-france-sun-113-625);
   }
 `;
 

@@ -13,7 +13,7 @@ export type DirecteurProjet = { nom: string, email: string | null };
 export const typesAte = ['ate', 'hors_ate_centralise', 'hors_ate_deconcentre'] as const;
 export type TypeAte = typeof typesAte[number] | null;
 
-export const typesStatut = ['BROUILLON', 'PUBLIE', 'NON_PUBLIE'] as const;
+export const typesStatut = ['BROUILLON', 'PUBLIE', 'ARCHIVE', 'SUPPRIME'] as const;
 export type TypeStatut = typeof typesStatut[number];
 
 export default interface Chantier {

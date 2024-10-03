@@ -34,6 +34,6 @@ def model(dbt, session):
 
     chantiers = chantiers.astype(columns_type)
     # On ignore les chantiers qui ne doivent pas être publiés
-    chantiers_publies = chantiers[~chantiers['ch_state'].isin(['NON_PUBLIE'])]
+    chantiers_publies = chantiers[~chantiers['ch_state'].isin(['SUPPRIME'])]
 
     return chantiers_publies
