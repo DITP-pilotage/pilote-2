@@ -1,14 +1,32 @@
 {{ config(materialized = 'table') }}
 
-WITH
+WITH 
+-- Chantiers à répliquer depuis la REG
+to_replicate_from_reg AS (
+    SELECT
+        id as chantier_id,
+        'REG' AS replicate_maille_from,
+        replicate_val_reg_to AS replicate_maille_to
+    FROM {{ ref('stg_ppg_metadata__chantiers') }}
+    WHERE replicate_val_reg_to IS NOT null
+),
+
+-- Chantiers à répliquer depuis la NAT
+to_replicate_from_nat AS (
+    SELECT
+        id as chantier_id,
+        'NAT' AS replicate_maille_from,
+        replicate_val_nat_to AS replicate_maille_to
+    FROM {{ ref('stg_ppg_metadata__chantiers') }}
+    WHERE replicate_val_nat_to IS NOT null
+),
+
 
 -- Tableau des chantier à répliquer de maille X -> Y
 src_chantier_mailles_to_replicate AS (
-    SELECT * FROM (
-        VALUES
-        ('CH-006', 'DEPT', 'REG'), ('CH-015', 'DEPT', 'REG')
-    ) AS t (chantier_id, replicate_maille_to, replicate_maille_from)
-    WHERE chantier_id = 'CH-006' --and zone_id_parent='R84'
+    SELECT * FROM to_replicate_from_reg
+    UNION
+    SELECT * FROM to_replicate_from_nat
 ),
 
 -- Liste des zones où répliquer les données
@@ -60,9 +78,10 @@ replicated_values AS (
     ORDER BY indic_id, metric_date
 )
 
---select indic_id, zone_id, count(*) as n from replicated_values group by indic_id, zone_id
-
 -- Union des données précédentes avec les données répliquées
-SELECT * FROM {{ ref('agg_all') }}
-UNION
-SELECT * FROM replicated_values
+SELECT * 
+FROM {{ ref('agg_all') }} 
+WHERE (indic_id, zone_id) NOT IN (SELECT indic_id, zone_id FROM replicated_values)
+UNION 
+SELECT * 
+FROM replicated_values
