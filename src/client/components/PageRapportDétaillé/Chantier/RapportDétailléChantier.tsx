@@ -100,7 +100,8 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
                     maille={territoireSélectionné?.maille ?? null}
                   />
                 </section>
-              </>) : null
+              </>
+            ) : null
           }
           <section className='rubrique synthèse impression-section'>
             <Titre
