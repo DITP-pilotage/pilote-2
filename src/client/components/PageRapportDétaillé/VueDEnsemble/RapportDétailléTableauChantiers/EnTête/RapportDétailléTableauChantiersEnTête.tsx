@@ -17,6 +17,7 @@ const RapportDétailléTableauChantiersEnTête: FunctionComponent<TableauChantie
           <tr key={headerGroup.id}>
             {headerGroup.headers.map(header => (
               <th
+                className='fr-px-1w'
                 key={header.id}
                 style={{
                   width: header.column.columnDef.meta?.width ?? undefined,
