@@ -24,6 +24,7 @@ export const VARIABLE_CONTENU_DISPONIBLE_ENV = [
   'NEXT_PUBLIC_SCHEMA_VALIDATA_URL',
   'NEXT_PUBLIC_FF_SOUS_INDICATEURS',
   'NEXT_PUBLIC_FF_DOCS_API',
+  'NEXT_PUBLIC_FF_PPG_ARCHIVE',
 ] as const;
 
 export type VariableContenuDisponibleEnv = {
@@ -46,4 +47,5 @@ export type VariableContenuDisponibleEnv = {
   NEXT_PUBLIC_SCHEMA_VALIDATA_URL: string
   NEXT_PUBLIC_FF_SOUS_INDICATEURS: boolean
   NEXT_PUBLIC_FF_DOCS_API: boolean
+  NEXT_PUBLIC_FF_PPG_ARCHIVE: boolean
 };
