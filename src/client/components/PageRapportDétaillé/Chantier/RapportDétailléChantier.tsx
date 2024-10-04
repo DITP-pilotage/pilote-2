@@ -144,7 +144,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
           objectifs !== null && objectifs.length > 0 ? (
             <div className='fr-my-2w impression-section'>
               <section className='rubrique objectifs'>
-                <div className='rubrique__conteneur'>
+                <div>
                   <Titre
                     baliseHtml='h2'
                     className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
@@ -183,7 +183,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
           indicateurs.length > 0 ? (
             <div className='fr-my-2w impression-section'>
               <section className='rubrique indicateurs'>
-                <div className='rubrique__conteneur'>
+                <div>
                   <Titre
                     baliseHtml='h2'
                     className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
@@ -207,7 +207,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
           && territoireSélectionné!.maille === 'nationale' &&
           <div className='fr-my-2w impression-section'>
             <section className='rubrique décisions-stratégiques'>
-              <div className='rubrique__conteneur'>
+              <div>
                 <Titre
                   baliseHtml='h2'
                   className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
