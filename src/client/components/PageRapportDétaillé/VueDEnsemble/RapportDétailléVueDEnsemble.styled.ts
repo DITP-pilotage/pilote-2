@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 const RapportDétailléVueDEnsembleStyled = styled.section`
+  break-after: always;
   
   .avancements-météos-carto {
     display: grid;

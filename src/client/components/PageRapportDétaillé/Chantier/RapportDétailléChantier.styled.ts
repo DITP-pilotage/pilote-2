@@ -37,15 +37,21 @@ const RapportDétailléChantierStyled = styled.section`
   .rubrique.synthèse {
     grid-area: synthèse;
   }
-
+  
+  .rubrique {
+    break-inside: avoid;
+    
+    & .rubrique__conteneur > div {
+      height: auto;
+    }
+  }
+  
   .chantier-item {
     content-visibility: auto;
     break-before: page;
   }
-
+  
   @media print {
-    break-after: page;
-
     .impression-section {
       break-inside: avoid;
     }
