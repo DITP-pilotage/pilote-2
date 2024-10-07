@@ -41,7 +41,7 @@ const colonnes = [
     header: 'Fonction',
     cell: props => props.getValue(),
   }),
-  reactTableColonnesHelper.accessor(row => `${formaterDate(row.dateModification, 'DD/MM/YYYY')} par ${row.auteurModification}`, {
+  reactTableColonnesHelper.accessor(row => `${ formaterDate(row.dateModification, 'DD/MM/YYYY') } par ${ row.auteurModification }`, {
     header: 'Dernière modification',
     cell: props => props.getValue(),
     sortingFn: (a, b) => {
@@ -87,7 +87,10 @@ export default function useTableauPageAdminUtilisateurs() {
     },
   );
 
-  const [sorting, setSorting] = useQueryState('sort', parseAsArrayOf<ColumnSort>(parseAsJson(ZodSchemaSorting.parse)).withDefault([]).withOptions({
+  const [sorting, setSorting] = useQueryState('sort', parseAsArrayOf<ColumnSort>(parseAsJson(ZodSchemaSorting.parse)).withDefault([{
+    id: 'Dernière modification',
+    desc: true,
+  }]).withOptions({
     shallow: false,
     clearOnDefault: true,
     history: 'push',
