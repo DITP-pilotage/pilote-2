@@ -275,7 +275,8 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       OR LOWER(unaccent(email)) ILIKE $1
       OR LOWER(unaccent(prenom)) ILIKE $1
       OR LOWER(unaccent(fonction)) ILIKE $1
-      OR LOWER(unaccent(profil_code)) ILIKE $1;
+      OR LOWER(unaccent(profil_code)) ILIKE $1
+      OR LOWER(unaccent(auteur_modification)) ILIKE $1;
     `, `%${testLower}%`);
 
     const utilisateurs = await this._prisma.utilisateur.findMany(

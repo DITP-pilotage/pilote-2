@@ -1,6 +1,9 @@
 import { FunctionComponent, useEffect, useState } from 'react';
 import MultiSelect from '@/client/components/_commons/MultiSelect/MultiSelect';
-import { MultiSelectOptions, MultiSelectOptionsGroupées } from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
+import {
+  MultiSelectOptions,
+  MultiSelectOptionsGroupées,
+} from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
 import { deuxTableauxSontIdentiques, trierParOrdreAlphabétique } from '@/client/utils/arrays';
 import { Profil } from '@/server/domain/profil/Profil.interface';
 
@@ -12,14 +15,20 @@ interface MultiSelectProfilsProps {
   afficherBoutonsSélection?: boolean
 }
 
-const MultiSelectProfil: FunctionComponent<MultiSelectProfilsProps> = ({ profilsIdsSélectionnésParDéfaut, changementValeursSélectionnéesCallback, valeursDésactivées, profils, afficherBoutonsSélection }) => {
+const MultiSelectProfil: FunctionComponent<MultiSelectProfilsProps> = ({
+  profilsIdsSélectionnésParDéfaut,
+  changementValeursSélectionnéesCallback,
+  valeursDésactivées,
+  profils,
+  afficherBoutonsSélection,
+}) => {
   const [valeursSélectionnéesParDéfaut, setValeursSélectionnéesParDéfaut] = useState(profilsIdsSélectionnésParDéfaut);
   const [optionsGroupées, setOptionsGroupées] = useState<MultiSelectOptionsGroupées>([]);
 
   useEffect(() => {
     if (profils) {
       setOptionsGroupées([{
-        label: '¨Profils',
+        label: 'Profils',
         options: trierParOrdreAlphabétique<MultiSelectOptions>(profils.map(profil => ({
           label: profil.nom,
           value: profil.code,
