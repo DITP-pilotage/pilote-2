@@ -322,10 +322,10 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
         return 'fonction';
       }
       case 'Dernière modification': {
-        return 'date_modication';
+        return 'date_modification';
       }
       default: {
-        return 'date_modication';
+        return 'date_modification';
       }
     }
   }
