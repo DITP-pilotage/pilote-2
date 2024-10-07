@@ -54,54 +54,53 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
           className={`grid-template ${territoireSélectionné!.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}
         >
           {
-            avancements !== null ? (
-              <>
-                <section className='rubrique avancement impression-section'>
-                  <Link
-                    className='fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-up-line fr-btn--icon-left fr-text--sm'
-                    href={`#${htmlId.listeDesChantiers()}`}
-                    title='Revenir à la liste des chantiers'
-                  >
-                    Haut de page
-                  </Link>
-                  <Encart>
-                    <Titre
-                      baliseHtml='h1'
-                      className='fr-h2 fr-mb-1w'
-                    >
-                      {chantier.nom}
-                    </Titre>
-                  </Encart>
+            avancements !== null &&
+            <>
+              <section className='rubrique avancement impression-section'>
+                <Link
+                  className='fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-up-line fr-btn--icon-left fr-text--sm'
+                  href={`#${htmlId.listeDesChantiers()}`}
+                  title='Revenir à la liste des chantiers'
+                >
+                  Haut de page
+                </Link>
+                <Encart>
                   <Titre
-                    baliseHtml='h2'
-                    className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                    baliseHtml='h1'
+                    className='fr-h2 fr-mb-1w'
                   >
-                    Avancement du chantier
+                    {chantier.nom}
                   </Titre>
-                  <AvancementChantier
-                    avancements={avancements}
-                    mailleSelectionnee={mailleSélectionnée}
-                    territoireCode={territoireCode}
-                  />
-                </section>
-                <section className='rubrique responsables impression-section'>
-                  <Titre
-                    baliseHtml='h2'
-                    className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-                  >
-                    Responsables
-                  </Titre>
-                  <Responsables
-                    afficheResponsablesLocaux={territoireSélectionné?.maille !== 'nationale'}
-                    libelléChantier={chantier.nom}
-                    listeCoordinateursTerritorials={listeCoordinateursTerritorials}
-                    listeDirecteursProjets={chantier.responsables.directeursProjet}
-                    listeResponsablesLocaux={listeResponsablesLocaux}
-                    maille={territoireSélectionné?.maille ?? null}
-                  />
-                </section>
-              </>
-            ) : null
+                </Encart>
+                <Titre
+                  baliseHtml='h2'
+                  className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                >
+                  Avancement du chantier
+                </Titre>
+                <AvancementChantier
+                  avancements={avancements}
+                  mailleSelectionnee={mailleSélectionnée}
+                  territoireCode={territoireCode}
+                />
+              </section>
+              <section className='rubrique responsables'>
+                <Titre
+                  baliseHtml='h2'
+                  className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                >
+                  Responsables
+                </Titre>
+                <Responsables
+                  afficheResponsablesLocaux={territoireSélectionné?.maille !== 'nationale'}
+                  libelléChantier={chantier.nom}
+                  listeCoordinateursTerritorials={listeCoordinateursTerritorials}
+                  listeDirecteursProjets={chantier.responsables.directeursProjet}
+                  listeResponsablesLocaux={listeResponsablesLocaux}
+                  maille={territoireSélectionné?.maille ?? null}
+                />
+              </section>
+            </>
           }
           <section className='rubrique synthèse impression-section'>
             <Titre
@@ -145,7 +144,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
           objectifs !== null && objectifs.length > 0 ? (
             <div className='fr-my-2w impression-section'>
               <section className='rubrique objectifs'>
-                <div>
+                <div className='rubrique__conteneur'>
                   <Titre
                     baliseHtml='h2'
                     className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
@@ -184,7 +183,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
           indicateurs.length > 0 ? (
             <div className='fr-my-2w impression-section'>
               <section className='rubrique indicateurs'>
-                <div>
+                <div className='rubrique__conteneur'>
                   <Titre
                     baliseHtml='h2'
                     className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
@@ -208,7 +207,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
           && territoireSélectionné!.maille === 'nationale' &&
           <div className='fr-my-2w impression-section'>
             <section className='rubrique décisions-stratégiques'>
-              <div>
+              <div className='rubrique__conteneur'>
                 <Titre
                   baliseHtml='h2'
                   className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
@@ -227,9 +226,9 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
         }
         {
           commentaires !== null && (
-            <div className='fr-my-2w'>
-              <section className='commentaires'>
-                <div>
+            <div className='fr-my-2w impression-section'>
+              <section className='rubrique commentaires'>
+                <div className='rubrique__conteneur'>
                   <Titre
                     baliseHtml='h2'
                     className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
