@@ -1,5 +1,4 @@
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
 import { comparerAvancementRéforme } from '@/client/utils/chantier/avancement/avancement';
 import TableauRéformesAvancement from '@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement';
 import TableauRéformesMétéo from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo';
@@ -52,7 +51,6 @@ const colonnesTableauChantiers = [
         météo={cellContext.getValue()}
       />),
     enableGlobalFilter: false,
-    sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
     meta: {
       width: '8rem',
     },
@@ -67,7 +65,6 @@ const colonnesTableauChantiers = [
         dateDeMàjDonnéesQuantitatives={cellContext.row.original.dateDeMàjDonnéesQuantitatives}
       />),
     enableGlobalFilter: false,
-    sortingFn: (a, b, columnId) => comparerAvancementRéforme(a.getValue(columnId), b.getValue(columnId), null),
     meta: {
       width: '11rem',
     },

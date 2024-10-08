@@ -24,11 +24,12 @@ import {
   RépartitionsMétéos,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
+import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import RapportDétailléTableauChantiers from './RapportDétailléTableauChantiers/RapportDétailléTableauChantiers';
 
 interface RapportDétailléVueDEnsembleProps {
   chantiers: ChantierRapportDetailleContrat[]
-  filtresComptesCalculés: Record<string, { nombre: number }>
+  filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   répartitionMétéos: RépartitionsMétéos
@@ -60,7 +61,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnse
           Vue d'ensemble
         </Titre>
       </Encart>
-      <div className='fr-mt-3w avancements-météos-carto'>
+      <div className='fr-mt-3w avancements-météos-carto impression-section'>
         <Bloc>
           <section>
             <TitreInfobulleConteneur>
@@ -152,7 +153,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnse
         </div>
       }
       <div
-        className='fr-grid-row fr-mt-7v'
+        className='fr-grid-row fr-mt-7v impression-section'
         id={htmlId.listeDesChantiers()}
       >
         <div className='fr-col'>

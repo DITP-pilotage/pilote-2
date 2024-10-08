@@ -1,9 +1,11 @@
 import { chantier } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import {
-  générerCaractèresSpéciaux, générerPeutÊtreNull,
+  générerCaractèresSpéciaux,
+  générerPeutÊtreNull,
   générerTableau,
-  générerUneMailleAléatoire, générerUnLibellé,
+  générerUneMailleAléatoire,
+  générerUnLibellé,
   retourneUneListeDeCodeInseeCohérentePourUneMaille,
 } from '@/server/infrastructure/test/builders/utils';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
@@ -81,6 +83,10 @@ export default class ChantierRowBuilder {
 
   private _taux_avancement_date: chantier['taux_avancement_date'];
 
+  private _donnees_maille_source: chantier['donnees_maille_source'];
+
+  private _cible_attendue: chantier['cible_attendue'];
+
   constructor() {
     const chantierGénéré = new ChantierBuilder().build();
     const avancement = new AvancementBuilder().build();
@@ -125,6 +131,8 @@ export default class ChantierRowBuilder {
     this._est_applicable = faker.datatype.boolean();
     this._a_supprimer = false;
     this._taux_avancement_date = new Date();
+    this._donnees_maille_source = null;
+    this._cible_attendue = faker.datatype.boolean();
   }
 
   avecId(id: chantier['id']): ChantierRowBuilder {
@@ -159,11 +167,6 @@ export default class ChantierRowBuilder {
     this._maille = maille;
     this._codeInsee = faker.helpers.arrayElement(codesInsee);
     this._territoireCode = `${this._maille}-${this._codeInsee}`;
-    return this;
-  }
-
-  avecTerritoireNom(territoireNom: chantier['territoire_nom']): ChantierRowBuilder {
-    this._territoireNom = territoireNom;
     return this;
   }
 
@@ -238,26 +241,6 @@ export default class ChantierRowBuilder {
     return this;
   }
 
-  avecAMeteoDepartemental(aMeteo: chantier['a_meteo_departemental']): ChantierRowBuilder {
-    this._a_meteo_departemental = aMeteo;
-    return this;
-  }
-
-  avecAMeteoRegional(aMeteo: chantier['a_meteo_regional']): ChantierRowBuilder {
-    this._a_meteo_regional = aMeteo;
-    return this;
-  }
-
-  avecTauxAvancementDepartemental(aTauxAvancement: chantier['a_taux_avancement_departemental']): ChantierRowBuilder {
-    this._a_taux_avancement_departemental = aTauxAvancement;
-    return this;
-  }
-
-  avecTauxAvancementRegional(aTauxAvancement: chantier['a_taux_avancement_regional']): ChantierRowBuilder {
-    this._a_taux_avancement_regional = aTauxAvancement;
-    return this;
-  }
-
   avecEstApplicable(est_applicable: chantier['est_applicable']): ChantierRowBuilder {
     this._est_applicable = est_applicable;
     return this;
@@ -270,6 +253,11 @@ export default class ChantierRowBuilder {
 
   avecTauxAvancementDate(taux_avancement_date: chantier['taux_avancement_date']): ChantierRowBuilder {
     this._taux_avancement_date = taux_avancement_date;
+    return this;
+  }
+
+  avecValuesReplicatedFrom(donnees_maille_source: chantier['donnees_maille_source']): ChantierRowBuilder {
+    this._donnees_maille_source = donnees_maille_source;
     return this;
   }
 
@@ -317,6 +305,8 @@ export default class ChantierRowBuilder {
       est_applicable: this._est_applicable,
       statut: this._statut,
       taux_avancement_date: this._taux_avancement_date,
+      donnees_maille_source: this._donnees_maille_source,
+      cible_attendue: this._cible_attendue,
     };
   }
 }

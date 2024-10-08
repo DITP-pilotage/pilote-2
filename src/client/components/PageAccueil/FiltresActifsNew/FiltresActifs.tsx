@@ -98,7 +98,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
                 libellé={ministèresAvecUnSeulPérimètre.has(perimetreId) ? retrouverNomFiltre(ministèresAvecUnSeulPérimètre.get(perimetreId)!, ministères) : retrouverNomFiltre(perimetreId, listePerimetres)}
                 suppressionCallback={() => {
                   let arrFiltrePerimetres = filtres.perimetres.split(',').filter(Boolean);
-                  arrFiltrePerimetres.splice(filtres.perimetres.indexOf(perimetreId), 1);
+                  arrFiltrePerimetres.splice(arrFiltrePerimetres.indexOf(perimetreId), 1);
 
                   sauvegarderFiltres({ perimetres: arrFiltrePerimetres });
                   return setFiltres({ perimetres: arrFiltrePerimetres.join(',') });

@@ -215,6 +215,11 @@ const config = convict({
       default: false,
       env: 'NEXT_PUBLIC_FF_SOUS_INDICATEURS',
     },
+    docsAPI: {
+      format: Boolean,
+      default: false,
+      env: 'NEXT_PUBLIC_FF_DOCS_API',
+    },
   },
   analytics: {
     matomoURL: {
@@ -239,6 +244,11 @@ const config = convict({
       default: 'secret',
       env: 'TOKEN_API_SECRET',
     },
+  },
+  schemaValidataUrl: {
+    format: String,
+    default: 'https://raw.githubusercontent.com/DITP-pilotage/pilote-2/dev/public/schema/',
+    env: 'NEXT_PUBLIC_SCHEMA_VALIDATA_URL',
   },
 });
 

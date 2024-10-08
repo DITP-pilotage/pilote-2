@@ -13,13 +13,7 @@ import {
 import {
   MetadataIndicateurInterrupteur,
 } from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInterrupteur';
-import {
-  MetadataIndicateurSelecteur,
-} from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur';
-import {
-  mappingAcceptedValues,
-  mappingDisplayAcceptedValues,
-} from '@/components/PageIndicateur/FicheIndicateur/commons/utils';
+
 
 const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat
@@ -39,73 +33,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       >
         Autres informations
       </Titre>
-      <div className='fr-grid-row fr-grid-row--gutters'>
-        <div className='fr-col-12 fr-col-md-6'>
-          <MetadataIndicateurTextArea
-            erreurMessage={errors.indicMethodeCalcul?.message}
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName='indicMethodeCalcul'
-            informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_methode_calcul}
-            register={register('indicMethodeCalcul', { value: indicateur?.indicMethodeCalcul })}
-            valeurAffiché={indicateur.indicMethodeCalcul || '_'}
-          />
-        </div>
-        <div className='fr-col-12 fr-col-md-6'>
-          <MetadataIndicateurInterrupteur
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName='indicIsPhare'
-            informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_is_phare}
-            isChecked={getValues('indicIsPhare')}
-            register={register('indicIsPhare')}
-            valeurAffiché={indicateur.indicIsPhare ? 'Oui' : 'Non'}
-          />
-        </div>
-      </div>
-      <div className='fr-grid-row fr-grid-row--gutters'>
-        <div className='fr-col-12 fr-col-md-6'>
-          <MetadataIndicateurTextArea
-            erreurMessage={errors.indicSource?.message}
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName='indicSource'
-            informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_source}
-            register={register('indicSource', { value: indicateur?.indicSource })}
-            valeurAffiché={indicateur.indicSource || '_'}
-          />
-        </div>
-        <div className='fr-col-12 fr-col-md-6'>
-          <MetadataIndicateurInput
-            erreurMessage={errors.indicSourceUrl?.message}
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName='indicSourceUrl'
-            informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_source_url}
-            register={register('indicSourceUrl', { value: indicateur?.indicSourceUrl })}
-            valeurAffiché={indicateur.indicSourceUrl || '_'}
-          />
-        </div>
-      </div>
-      <div className='fr-grid-row fr-grid-row--gutters'>
-        <div className='fr-col-12 fr-col-md-6'>
-          <MetadataIndicateurSelecteur
-            erreurMessage={errors.periodicite?.message}
-            estEnCoursDeModification={estEnCoursDeModification}
-            informationMetadataIndicateur={mapInformationMetadataIndicateur.periodicite}
-            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'periodicite')}
-            register={register('periodicite')}
-            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'periodicite', 'periodicite')}
-            values={getValues('periodicite')}
-          />
-        </div>
-        <div className='fr-col-12 fr-col-md-6'>
-          <MetadataIndicateurInput
-            erreurMessage={errors.delaiDisponibilite?.message}
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName='delaiDisponibilite'
-            informationMetadataIndicateur={mapInformationMetadataIndicateur.delai_disponibilite}
-            register={register('delaiDisponibilite', { value: `${indicateur?.delaiDisponibilite}` })}
-            valeurAffiché={`${indicateur.delaiDisponibilite}`}
-          />
-        </div>
-      </div>
       <div className='fr-grid-row fr-grid-row--gutters'>
         <div className='fr-col-12 fr-col-md-6'>
           <MetadataIndicateurInput
@@ -147,18 +74,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             informationMetadataIndicateur={mapInformationMetadataIndicateur.si_source}
             register={register('siSource', { value: indicateur?.siSource })}
             valeurAffiché={indicateur.siSource || '_'}
-          />
-        </div>
-      </div>
-      <div className='fr-grid-row fr-grid-row--gutters'>
-        <div className='fr-col-12 fr-col-md-6'>
-          <MetadataIndicateurInput
-            erreurMessage={errors.methodeCollecte?.message}
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName='methodeCollecte'
-            informationMetadataIndicateur={mapInformationMetadataIndicateur.methode_collecte}
-            register={register('methodeCollecte', { value: indicateur?.methodeCollecte })}
-            valeurAffiché={indicateur.methodeCollecte || '_'}
           />
         </div>
       </div>
@@ -274,28 +189,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       </div>
       <div className='fr-grid-row fr-grid-row--gutters'>
         <div className='fr-col-12 fr-col-md-6'>
-          <MetadataIndicateurInput
-            erreurMessage={errors.indicNomBaro?.message}
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName='indicNomBaro'
-            informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_nom_baro}
-            register={register('indicNomBaro', { value: indicateur?.indicNomBaro })}
-            valeurAffiché={indicateur.indicNomBaro || '_'}
-          />
-        </div>
-        <div className='fr-col-12 fr-col-md-6'>
-          <MetadataIndicateurInput
-            erreurMessage={errors.indicDescrBaro?.message}
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName='indicDescrBaro'
-            informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_descr_baro}
-            register={register('indicDescrBaro', { value: indicateur?.indicDescrBaro })}
-            valeurAffiché={indicateur.indicDescrBaro || '_'}
-          />
-        </div>
-      </div>
-      <div className='fr-grid-row fr-grid-row--gutters'>
-        <div className='fr-col-12 fr-col-md-6'>
           <MetadataIndicateurTextArea
             erreurMessage={errors.commentaire?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -305,8 +198,29 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             valeurAffiché={indicateur.commentaire || '_'}
           />
         </div>
+        <div className='fr-col-12 fr-col-md-6'>
+          <MetadataIndicateurInput
+            erreurMessage={errors.methodeCollecte?.message}
+            estEnCoursDeModification={estEnCoursDeModification}
+            htmlName='methodeCollecte'
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.methode_collecte}
+            register={register('methodeCollecte', { value: indicateur?.methodeCollecte })}
+            valeurAffiché={indicateur.methodeCollecte || '_'}
+          />
+        </div>
       </div>
-      <hr className='fr-hr fr-mt-3w' />
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-6'>
+          <MetadataIndicateurInterrupteur
+            estEnCoursDeModification={estEnCoursDeModification}
+            htmlName='indicIsPhare'
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_is_phare}
+            isChecked={getValues('indicIsPhare')}
+            register={register('indicIsPhare')}
+            valeurAffiché={indicateur.indicIsPhare ? 'Oui' : 'Non'}
+          />
+        </div>
+      </div>
     </SectionDétailsMetadataAutresIndicateurStyled>
   );
 };

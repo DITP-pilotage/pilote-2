@@ -31,7 +31,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
         baliseHtml='h2'
         className='fr-h5'
       >
-        Paramétrages - Calcul de la valeur actuelle
+        Calcul de la valeur actuelle
       </Titre>
       <div className='fr-grid-row fr-grid-row--gutters'>
         <div className='fr-col-12 fr-col-md-4'>

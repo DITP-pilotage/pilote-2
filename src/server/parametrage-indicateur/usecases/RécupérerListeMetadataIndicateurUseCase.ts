@@ -8,7 +8,7 @@ export default class RécupérerListeMetadataIndicateurUseCase {
     private readonly metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository,
   ) {}
 
-  async run(chantierIds: string[]): Promise<MetadataParametrageIndicateur[]> {
-    return this.metadataParametrageIndicateurRepository.recupererListeMetadataParametrageIndicateurParChantierIds(chantierIds);
+  async run(chantierIds: string[], perimetreIds: string[], estTerritorialise: boolean, estBarometre: boolean): Promise<MetadataParametrageIndicateur[]> {
+    return this.metadataParametrageIndicateurRepository.recupererListeMetadataParametrageIndicateurEnFonctionDesFiltres(chantierIds, perimetreIds, estTerritorialise, estBarometre);
   }
 }

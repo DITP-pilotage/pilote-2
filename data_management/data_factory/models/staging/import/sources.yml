@@ -18,6 +18,8 @@ sources:
               pilote_show: true
               pilote_alias: indic_id
               pilote_edit_isEditable: false
+              pilote_edit_regex: '^IND-\d{3,4}$'
+              pilote_edit_regexViolationMessage: "Le code de l'indicateur doit être au format 'IND-XXX' ou 'IND-XXXX'"
               pilote_edit_boxType: text
               pilote_disp_dispDesc: false
               pilote_create_mandatory: true
@@ -29,8 +31,8 @@ sources:
               pilote_show: true
               pilote_alias: "Indicateur parent"
               pilote_edit_isEditable: true
-              pilote_edit_regex: "IND-\\d\\d\\d"
-              pilote_edit_regexViolationMessage: "Le code de l'indicateur parent doit être au format 'IND-XXX'"
+              pilote_edit_regex: '^IND-\d{3,4}$'
+              pilote_edit_regexViolationMessage: "Le code de l'indicateur parent doit être au format 'IND-XXX' ou 'IND-XXXX'"
               pilote_edit_boxType: text
               pilote_disp_dispDesc: false
               pilote_create_mandatory: false
@@ -42,7 +44,7 @@ sources:
               pilote_show: true
               pilote_alias: "Chantier associé"
               pilote_edit_isEditable: true
-              pilote_edit_regex: "CH-\\d\\d\\d"
+              pilote_edit_regex: '^CH-\d{3}$'
               pilote_edit_regexViolationMessage: "Le code du chantier parent doit être au format 'CH-XXX'"
               pilote_edit_boxType: text
               pilote_disp_dispDesc: true
@@ -101,7 +103,7 @@ sources:
               pilote_show: true
               pilote_alias: "Persévérant"
               pilote_edit_isEditable: false
-              pilote_create_mandatory: true
+              pilote_create_mandatory: false
               pilote_create_defaultValue: false
           - name: indic_is_phare
             data_type: boolean
@@ -110,7 +112,7 @@ sources:
               pilote_show: true
               pilote_alias: "Phare"
               pilote_edit_isEditable: true
-              pilote_create_mandatory: true
+              pilote_create_mandatory: false
               pilote_create_defaultValue: false
           - name: indic_is_baro
             description: "Indicateur présent dans le baromètre des résultats de l'action publique"
@@ -119,7 +121,7 @@ sources:
               pilote_show: true
               pilote_alias: "Baromètre"
               pilote_edit_isEditable: false
-              pilote_create_mandatory: true
+              pilote_create_mandatory: false
               pilote_create_defaultValue: false
           - name: indic_type
             data_type: text
@@ -133,6 +135,7 @@ sources:
               pilote_edit_isEditable: true
               pilote_edit_acceptedValuesViolationMessage: "Veuillez choisir une typologie d'indicateur valide parmi: "
               pilote_edit_acceptedValues: [
+                { "order_id": 0, "value": "", "name": "Choisir une typologie", "desc": "Choisir une typologie" },
                 { "order_id": 1, "value": "IMPACT", "name": "Impact", "desc": "Indicateur d'impact" },
                 { "order_id": 2, "value": "DEPL", "name": "Déploiement", "desc": "Indicateur de déploiement" },
                 { "order_id": 3, "value": "CONTEXTE", "name": "De contexte", "desc": "Indicateur de contexte" },
@@ -141,7 +144,7 @@ sources:
               ]
               pilote_disp_dispDesc: true
               pilote_create_mandatory: true
-              pilote_create_defaultValue: "IMPACT"
+              pilote_create_defaultValue: ""
           - name: indic_source
             description: "Source déclarée des données de l'indicateur"
             data_type: text
@@ -247,7 +250,8 @@ sources:
                 { "order_id": 19, "value": "ZG-019", "name": "Toutes zones métropole", "desc": "Tous départements et régions Hexagone" },
                 { "order_id": 20, "value": "ZG-020", "name": "50 sites + émetteurs", "desc": "Territoires des 50 sites industriels les plus émetteurs" },
                 { "order_id": 21, "value": "ZG-021", "name": "Force aux Frontières", "desc": "Territoires de la PPG « Force aux Frontières »" },
-                { "order_id": 22, "value": "ZG-022", "name": "Stationnement vélo sécurisé en gare", "desc": "Territoires de l'indicateur Places de stationnement vélo sécurisé en gare (IND-215) de la PPG « Amplifier le plan vélo »" }
+                { "order_id": 22, "value": "ZG-022", "name": "Stationnement vélo sécurisé en gare", "desc": "Territoires de l'indicateur Places de stationnement vélo sécurisé en gare (IND-215) de la PPG « Amplifier le plan vélo »" },
+                { "order_id": 23, "value": "ZG-023", "name": "Industrie décarbonnée", "desc": "Régions de la PPG « Devenir la première grande économie décarbonée »" }
               ]
               pilote_create_mandatory: false
               pilote_create_defaultValue: ""
@@ -262,6 +266,8 @@ sources:
               pilote_alias: indic_id
               pilote_edit_isEditable: false
               pilote_edit_boxType: text
+              pilote_edit_regex: '^IND-\d{3,4}$'
+              pilote_edit_regexViolationMessage: "Le code de l'indicateur doit être au format 'IND-XXX' ou 'IND-XXXX'"
               pilote_disp_dispDesc: false
               pilote_create_mandatory: true
               pilote_create_defaultValue: ""
@@ -578,9 +584,10 @@ sources:
               pilote_alias: "Opération (TA annuel)"
               pilote_edit_boxType: multi-select
               pilote_disp_dispDesc: true
-              pilote_create_defaultValue: "_"
+              pilote_create_defaultValue: ""
               pilote_disp_blocId: 5
               pilote_edit_acceptedValues: [
+                { "order_id": 0, "value": "", "name": "Choisir une Opération (TA annuel)", "desc": "Choisir une Opération (TA annuel)" },
                 { "order_id": 1, "value": "current_value", "name": "Valeur saisie", "desc": "VA saisie : non cumulable (%) ou déjà cumulée (valeur à date)" },
                 { "order_id": 2, "value": "sum", "name": "Somme des VA" },
                 { "order_id": 3, "value": "moy", "name": "Moyenne" }
@@ -624,9 +631,10 @@ sources:
               pilote_alias: "Opération (TA global)"
               pilote_edit_boxType: multi-select
               pilote_disp_dispDesc: true
-              pilote_create_defaultValue: "_"
+              pilote_create_defaultValue: ""
               pilote_disp_blocId: 5
               pilote_edit_acceptedValues: [
+                { "order_id": 0, "value": "", "name": "Choisir une Opération (TA global)", "desc": "Choisir une Opération (TA global)" },
                 { "order_id": 1, "value": "current_value", "name": "Valeur saisie", "desc": "VA saisie : non cumulable (%) ou déjà cumulée (valeur à date)" },
                 { "order_id": 2, "value": "sum", "name": "Somme des VA" },
                 { "order_id": 3, "value": "moy", "name": "Moyenne" }
@@ -735,11 +743,13 @@ sources:
               pilote_alias: "Périodicité"
               pilote_edit_boxType: multi-select
               pilote_disp_dispDesc: true
-              pilote_create_defaultValue: "Annuelle"
+              pilote_create_defaultValue: ""
+              pilote_create_mandatory: true
               pilote_disp_blocId: 7
               pilote_edit_regex: null
               pilote_edit_regexViolationMessage: null
               pilote_edit_acceptedValues: [
+                { "order_id": 0, "value": "", "name": "Choisir une périodicité", "desc": "Choisir une périodicité" },
                 { "order_id": 1, "value": "Mensuelle", "name": "Mensuelle", "desc": "Périodicité mensuelle" },
                 { "order_id": 2, "value": "Trimestrielle", "name": "Trimestrielle", "desc": "Périodicité trimestrielle" },
                 { "order_id": 3, "value": "Semestrielle", "name": "Semestrielle", "desc": "Périodicité semestrielle" },

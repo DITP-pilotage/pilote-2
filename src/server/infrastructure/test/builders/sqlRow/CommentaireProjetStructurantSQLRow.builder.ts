@@ -61,17 +61,6 @@ export default class CommentaireProjetStructurantRowBuilder {
     return this;
   }
 
-  shallowCopy(): CommentaireProjetStructurantRowBuilder {
-    const result = new CommentaireProjetStructurantRowBuilder() as any;
-    for (const attribut in this) {
-      if (attribut == '_id') {
-        continue;
-      }
-      result[attribut] = this[attribut];
-    }
-    return result as CommentaireProjetStructurantRowBuilder;
-  }
-
   build(): commentaire_projet_structurant {
     return {
       id: this._id,

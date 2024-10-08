@@ -1,8 +1,12 @@
 import '@gouvfr/dsfr/dist/component/footer/footer.min.css';
 import Link from 'next/link';
 import { FunctionComponent } from 'react';
+import api from '@/server/infrastructure/api/trpc/api';
 
 const PiedDePage: FunctionComponent<{}> = () => {
+
+  const { data: estBoutonDocsAPIAffiche } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_DOCS_API' });
+
   return (
     <footer
       className='fr-footer'
@@ -62,6 +66,23 @@ const PiedDePage: FunctionComponent<{}> = () => {
                 Données personnelles et cookies
               </Link>
             </li>
+            {
+              estBoutonDocsAPIAffiche ? (
+                <li
+                  className='fr-footer__bottom-item'
+                  title='Données personnelles et cookies'
+                >
+
+                  <Link
+                    className='fr-footer__bottom-link'
+                    href='/swagger'
+                    prefetch={false}
+                  >
+                    Docs API
+                  </Link>
+                </li>
+              ) : null
+            }
           </ul>
         </div>
       </div>

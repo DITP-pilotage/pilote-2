@@ -6,6 +6,10 @@ import {
 import { ImportMetadataIndicateur } from '@/server/parametrage-indicateur/domain/ImportMetadataIndicateur';
 import logger from '@/server/infrastructure/Logger';
 import { supprimerLeFichier } from '@/server/import-indicateur/infrastructure/adapters/FichierService';
+import {
+  validationImportMetadataIndicateurFormulaire,
+  validationMetadataIndicateurContexte,
+} from '@/validation/metadataIndicateur';
 
 type RecordCSVImport = Record<typeof AvailableHeaderCSVImport[number], string>;
 
@@ -144,6 +148,7 @@ const AvailableHeaderCSVImport = [
   'commentaire',
 ] as const;
 
+const TEXT_LABEL_CREATION_ID = 'CREATE-ID';
 export default class ImportMasseMetadataIndicateurUseCase {
   private _metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
 
@@ -174,7 +179,35 @@ export default class ImportMasseMetadataIndicateurUseCase {
 
     if (listeRecordCsvImport.length > 0) {
       if (Object.keys(listeRecordCsvImport[0]).sort().toString() === Object.values(AvailableHeaderCSVImport).sort().toString()) {
-        const listeMetadataIndicateur: ImportMetadataIndicateur[] = listeRecordCsvImport.map(convertirEnImportMetadataIndicateur);
+        let identifiants: Set<number> = new Set();
+        let identifiantsFichier: Set<number> = new Set();
+        if (listeRecordCsvImport.some(record => record.indic_id === TEXT_LABEL_CREATION_ID)) {
+          const listeMetadataParametrageIndicateur = await this._metadataParametrageIndicateurRepository.recupererListeMetadataParametrageIndicateurEnFonctionDesFiltres([], [], false, false);
+          const sortedListeMetadataParametrageIndicateur = listeMetadataParametrageIndicateur.sort((metadataParametrageIndicateur1, metadataParametrageIndicateur2) => metadataParametrageIndicateur1.indicId.localeCompare(metadataParametrageIndicateur2.indicId));
+          identifiants = new Set(sortedListeMetadataParametrageIndicateur.map(metadataParametrageIndicateur => Number(metadataParametrageIndicateur.indicId.split('-')[1])));
+          identifiantsFichier = new Set(listeRecordCsvImport.map(recordFichier => Number((recordFichier.indic_id || '').split('-')[1])));
+        }
+        let currentId = 1;
+        const listeMetadataIndicateur: ImportMetadataIndicateur[] = listeRecordCsvImport.map(record => {
+          let indicId = record.indic_id;
+
+          if (indicId === TEXT_LABEL_CREATION_ID) {
+            while (identifiants.has(currentId) || identifiantsFichier.has(currentId)) {
+              currentId++;
+            }
+            indicId = `IND-${currentId.toString().padStart(3, '0')}`;
+            identifiants.add(currentId);
+          }
+
+          const importMetadataIndicateur = convertirEnImportMetadataIndicateur({
+            ...record,
+            indic_id: indicId,
+          });
+
+          validationImportMetadataIndicateurFormulaire.and(validationMetadataIndicateurContexte).parse(importMetadataIndicateur);
+
+          return importMetadataIndicateur;
+        });
         await this._metadataParametrageIndicateurRepository.importerEnMasseLesMetadataIndicateurs(listeMetadataIndicateur);
       } else {
         throw new Error('Les entêtes ne sont pas correct');

@@ -10,7 +10,7 @@ import Alerte from '@/components/_commons/Alerte/Alerte';
 import SynthèseDesRésultatsAffichage from '@/components/_commons/SynthèseDesRésultats/Affichage/Affichage';
 import SynthèseDesRésultatsFormulaire from './Formulaire/Formulaire';
 
-const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = ({ synthèseDesRésultatsInitiale, rechargerRéforme, réformeId, nomTerritoire, modeÉcriture = false, estInteractif = true }) => {  
+const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = ({ synthèseDesRésultatsInitiale, rechargerRéforme, réformeId, nomTerritoire, mailleSourceDonnees, modeÉcriture = false, estInteractif = true }) => {  
   const {
     synthèseDesRésultats,
     modeÉdition,
@@ -24,6 +24,15 @@ const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = (
     <SynthèseDesRésultatsStyled>
       <Bloc titre={nomTerritoire}>
         <div className='fr-py-1w'>
+          {
+            mailleSourceDonnees === 'régionale' &&
+              <Alerte
+                classesSupplementaires='fr-mb-4w'
+                message='Commentaires facultatifs mais souhaités pour apporter un éclairage départemental au pilotage régional.'
+                titre='Données régionales'
+                type='info'
+              />
+          }
           {
             modeÉdition && modeÉcriture ?
               <SynthèseDesRésultatsFormulaire

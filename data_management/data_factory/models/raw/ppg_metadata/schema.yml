@@ -4,3 +4,13 @@ models:
     description: "Cette **table** contient les indicateurs Pilote qui ne sont **pas masqués**. Pour avoir l'ensemble des indicateurs **non masqués**, voir la table `metadata_indicateurs_hidden`."
   - name: metadata_engagement
     description: Table référentielle des engagements du gouvernement
+  - name: metadata_chantiers
+    description: Table de configuration des chantiers
+    columns:
+      - name: replicate_val_reg_to
+        description: Indique vers quelle maille les valeurs REG doivent être répliquées. Dans {'dept'}
+      - name: replicate_val_nat_to
+        description: "**[Fonctionnalité désactivée]** Indique vers quelle maille les valeurs NAT doivent être répliquées. Dans {'dept', 'reg'}"
+      - name: ch_cible_attendue
+        data_type: boolean
+        description: "Indique si une cible et donc un TA sont attendus pour ce chantier. Si vide -> TRUE"

@@ -27,7 +27,6 @@ const recupererLesNomsDesTerritoires = (utilisateur: Utilisateur, territoiresLis
     territoiresListe.
       filter(territoire => utilisateur.habilitations.lecture.territoires.includes(territoire.code) && territoire.maille === mailleUtilisateur).
       map(territoire => territoire.nom);
-
 };
 
 export const presenterEnUtilisateurContrat = (utilisateur: Utilisateur, territoiresListe: Territoire[]): UtilisateurContrat => {

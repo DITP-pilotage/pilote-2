@@ -13,6 +13,14 @@ export type MetadataParametrageIndicateurForm = {
   zgApplicable: string;
   indicTerritorialise: boolean;
   indicIsBaro: boolean;
+  indicMethodeCalcul: string;
+  indicSource: string;
+  indicSourceUrl: string | null;
+  periodicite: string;
+  delaiDisponibilite: string;
+  indicNomBaro: string | null;
+  indicDescrBaro: string | null;
+
 };
 
 function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageIndicateurForm>) {
@@ -23,14 +31,24 @@ function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageIndicat
   watch('indicTerritorialise');
   watch('indicIsBaro');
   watch('zgApplicable');
+  watch('periodicite');
 }
 
 export default function useDetailMetadataIndicateurForm() {
-  const { register, watch, getValues, formState: { errors } } = useFormContext<MetadataParametrageIndicateurForm>();
+  const {
+    register,
+    watch,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = useFormContext<MetadataParametrageIndicateurForm>();
 
   const { data: metadataIndicateurs = [] } = api.metadataIndicateur.récupérerMetadataIndicateurFiltrés.useQuery({
     filtres: {
       chantiers: !getValues('indicParentCh') || getValues('indicParentCh') === '_' ? ['Aucun chantier séléctionné'] : [getValues('indicParentCh')],
+      perimetresMinisteriels: [],
+      estTerritorialise: false,
+      estBarometre: false,
     },
   });
 
@@ -56,6 +74,7 @@ export default function useDetailMetadataIndicateurForm() {
   return {
     register,
     getValues,
+    setValue,
     errors,
     metadataIndicateurs,
     optionsIndicateurParent,

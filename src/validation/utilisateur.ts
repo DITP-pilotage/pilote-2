@@ -70,6 +70,25 @@ export const validationFiltresPourListeUtilisateur = z.object({
   }),
 });
 
+export const validationFiltresPourListeUtilisateurNew = z.object({
+  filtres: z.object({
+    chantiers: z.string().array(),
+    territoires: z.string().array(),
+    périmètresMinistériels: z.string().array(),
+    chantiersAssociésAuxPérimètres: z.string().array(),
+    profils: z.enum(profilsCodes).array(),
+  }),
+  pagination: z.object({
+    pageIndex: z.number(),
+    pageSize: z.number(),
+  }),
+  sorting: z.object({
+    id: z.string().regex(/email|nom|prénom|profil|fonction|Dernière modification/),
+    desc: z.boolean(),
+  }).array(),
+  valeurDeLaRecherche: z.string(),
+});
+
 export const validationSupprimerUtilisateur = z.object({
   email: z.string().email(),
 });

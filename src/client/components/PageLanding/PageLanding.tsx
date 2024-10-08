@@ -11,6 +11,7 @@ import PageLandingStyled from '@/components/PageLanding/PageLanding.styled';
 import Titre from '@/components/_commons/Titre/Titre';
 import captureÉcranPilote from '/public/img/landing/capture-écran-pilote.png';
 import baromètreCarteSvg from '/public/img/landing/baromètre-carte-france.svg';
+import IcôneEmail from '@/components/_commons/IcôneEmail/IcôneEmail';
 
 const PageLanding: FunctionComponent<{}> = () => {
   return (
@@ -209,13 +210,19 @@ const PageLanding: FunctionComponent<{}> = () => {
               >
                 Vous avez des questions ?
               </Titre>
-              <Link
+              <button
                 className='fr-btn'
-                href='mailto:support.ditp@modernisation.gouv.fr'
-                target='_blank'
+                type='button'
               >
-                Contacter l'équipe
-              </Link>
+                <IcôneEmail className='fr-mr-2v' />
+                <Link
+                  className='font-normal'
+                  href='mailto:pilote.ditp@modernisation.gouv.fr'
+                  title="Contacter l'équipe PILOTE"
+                >
+                  Contacter l'équipe PILOTE
+                </Link>
+              </button>
             </div>
           </div>
         </section>

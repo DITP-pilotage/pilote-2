@@ -52,7 +52,7 @@ export default function useTableauProjetsStructurants(projetsStructurants: Proje
       id: 'météo',
       cell: météo => <TableauRéformesMétéo météo={météo.getValue()} />,
       enableGlobalFilter: false,
-      sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
+      sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId), tri),
       meta: {
         width: '8rem',
         tabIndex: -1,

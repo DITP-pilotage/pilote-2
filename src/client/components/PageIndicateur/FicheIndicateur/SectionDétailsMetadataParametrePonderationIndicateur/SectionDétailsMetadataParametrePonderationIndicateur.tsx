@@ -25,7 +25,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
         baliseHtml='h2'
         className='fr-h5'
       >
-        Paramétrages - Pondération de l'indicateur dans le calcul du taux d'avancement global
+        Pondération de l'indicateur dans le calcul du taux d'avancement global
       </Titre>
       <div className='fr-grid-row fr-grid-row--gutters'>
         <div className='fr-col-12 fr-col-md-4'>
@@ -59,7 +59,6 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
           />
         </div>
       </div>
-      <hr className='fr-hr fr-mt-3w' />
     </SectionDétailsMetadataParametrePonderationIndicateurStyled>
   );
 };

@@ -231,6 +231,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
       request.read = mock<() => string>(() => JSON.stringify(body));
 
       await handleImportDonneeIndicateurAPI({ request, response, email: 'ditp.admin@example.com', profil: ProfilEnum.DITP_ADMIN });
+
       // Then
       expect(response._getStatusCode()).toEqual(400);
       const listeErreursValidationFichier = await prisma.erreur_validation_fichier.findMany();

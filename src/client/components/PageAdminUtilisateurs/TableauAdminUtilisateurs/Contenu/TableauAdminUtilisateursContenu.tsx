@@ -1,6 +1,7 @@
 import { flexRender, Row, Table } from '@tanstack/react-table';
 import { FunctionComponent, useCallback } from 'react';
 import { useRouter } from 'next/router';
+import { UtilisateurListeGestionContrat } from '@/server/app/contrats/UtilisateurListeGestionContrat';
 import { UtilisateurContrat } from '@/server/gestion-utilisateur/app/contrats/UtilisateurContrat';
 
 interface TableauAdminUtilisateursContenuProps {
@@ -9,7 +10,7 @@ interface TableauAdminUtilisateursContenuProps {
 
 const TableauAdminUtilisateursContenu: FunctionComponent<TableauAdminUtilisateursContenuProps> = ({ tableau }) => {
   const router = useRouter();
-  const auClicSurLaLigne = useCallback((row: Row<UtilisateurContrat>) => {
+  const auClicSurLaLigne = useCallback((row: Row<UtilisateurListeGestionContrat>) => {
     router.push(`/admin/utilisateur/${row.original.id}`);
   }, [router]);
 

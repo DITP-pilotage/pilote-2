@@ -115,7 +115,7 @@ export const presenterEnMetadataParametrageIndicateurContrat = (metadataParametr
   indicHiddenPilote: metadataParametrageIndicateur.indicHiddenPilote,
   indicSchema: metadataParametrageIndicateur.indicSchema,
   zgApplicable: metadataParametrageIndicateur.zgApplicable,
-  chantierNom: metadataParametrageIndicateur.chantierNom,
+  chantierNom: metadataParametrageIndicateur.chantierNom || 'Chantier non publié',
   reformePrioritaire: metadataParametrageIndicateur.reformePrioritaire,
   projetAnnuelPerf: metadataParametrageIndicateur.projetAnnuelPerf,
   detailProjetAnnuelPerf: metadataParametrageIndicateur.detailProjetAnnuelPerf,
