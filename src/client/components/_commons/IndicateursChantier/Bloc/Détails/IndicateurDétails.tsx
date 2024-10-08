@@ -1,5 +1,6 @@
 import { FunctionComponent, useState } from 'react';
 import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
+import Link from 'next/link';
 import IndicateurÉvolution from '@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurÉvolution';
 import Titre from '@/components/_commons/Titre/Titre';
 import CartographieAvancement
@@ -24,6 +25,7 @@ import {
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
+import IcôneEmail from '@/components/_commons/IcôneEmail/IcôneEmail';
 import { useIndicateurDétails } from './useIndicateurDétails';
 
 interface IndicateurDétailsProps {
@@ -42,6 +44,7 @@ interface IndicateurDétailsProps {
   territoiresCompares: string[]
   mailleSelectionnee: MailleInterne
   indicateurEstAjour: boolean
+  mailsDirecteursProjets: string[]
 }
 
 const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
@@ -60,6 +63,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   territoiresCompares,
   mailleSelectionnee,
   indicateurEstAjour,
+  mailsDirecteursProjets,
 }) => {
   const [futOuvert, setFutOuvert] = useState(false);
 
@@ -76,6 +80,11 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   const nomDefinitionDeLindicateur = estSousIndicateur ? 'Description du sous-indicateur et calendrier de mise à jour' : 'Description de l\'indicateur et calendrier de mise à jour';
   const nomRepartitionGeographiqueEtEvolution = 'Répartition géographique et évolution';
   const nomSousIndicateurs = 'Sous indicateurs';
+
+  const libelleResponsablesDonnees = indicateur.responsablesDonneesMails.length > 0 ? 
+    indicateur.responsablesDonneesMails.join(', ') :
+    mailsDirecteursProjets.join(', ');
+  const objectMail = `PILOTE - Indicateur ${indicateur.nom} (${indicateur.id})`;
 
   const { codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
 
@@ -117,6 +126,24 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                     />
                   ) : null
                 }
+                <div className='fr-grid-row fr-mt-2w fr-ml-7w'>
+                  <div className='fr-col-lg-7 fr-col-12 '>
+                    <p className='fr-text fr-text--xs fr-mb-0'>
+                      Contactez le responsable des données de la politique prioritaire pour obtenir plus d’informations ou lui rapporter toute erreur ou anomalie concernant cet indicateur : définition de l’indicateur, données source, méthode de calcul, mise à jour, etc. :
+                    </p>
+                  </div>
+                  <div className='fr-col flex align-end justify-end'>
+                    <IcôneEmail className='fr-mr-1v fr-text-title--blue-france fr-mt-2w fr-mt-lg-0' />
+                    <Link
+                      className='fr-link'
+                      href={`mailto:${libelleResponsablesDonnees}?subject=${objectMail}`}
+                      title={`Contacter ${indicateur.responsablesDonneesMails.join(', ')}`}
+                    >  
+                      Poser une question sur cet indicateur
+                    </Link> 
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
@@ -224,6 +251,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                 estInteractif
                 listeSousIndicateurs={listeSousIndicateurs}
                 mailleSelectionnee={mailleSelectionnee}
+                mailsDirecteursProjets={mailsDirecteursProjets}
                 territoireCode={territoireCode}
                 territoiresCompares={territoiresCompares}
               />

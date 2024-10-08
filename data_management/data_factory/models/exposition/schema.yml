@@ -153,6 +153,8 @@ models:
         description: "Indique si les données sont à jour par rapport à la périodicité théorique déclarée de mise à jour. `NULL` si indicateur non applicable sur cette zone."
       - name: tendance
         description : "Indique si l'indicateur a une tendance en hausse ou en baisse (valeur HAUSSE / BAISSE)"
+      - name: responsables_donnees_mails
+        description : "Liste des emails des responsables données de l'indicateur"
   - name: decision_strategique
     columns:
       - name: id

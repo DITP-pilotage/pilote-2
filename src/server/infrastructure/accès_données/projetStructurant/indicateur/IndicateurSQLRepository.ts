@@ -24,6 +24,7 @@ export default class IndicateurProjetStructurantSQLRepository implements Indicat
       parentId: null,
       periodicite: null,
       delaiDisponibilite: null,
+      responsablesDonneesMails: [],
     };
   }
 

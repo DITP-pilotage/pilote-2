@@ -52,6 +52,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       parentId: indicateur.parent_id,
       periodicite: indicateur.periodicite ?? 'Non renseignée',
       delaiDisponibilite: indicateur.delai_disponibilite?.toString() ?? 'Non renseignée',
+      responsablesDonneesMails: indicateur.responsables_donnees_mails,
     });
   }
 
