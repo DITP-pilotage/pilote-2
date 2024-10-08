@@ -6,13 +6,20 @@ import { loginFn } from './utils';
 test('doit pouvoir importer des données', async ({ page }) => {
   await loginFn({ page });
 
+  await test.step('Navigation vers la page 2 du tableau', async () => {
+    await page.getByRole('navigation').getByRole('button', { name: /2/ }).click();
+  });
+
   await test.step('Navigation vers la page chantier "Doubler les effectifs de la réserve opérationnelle"', async () => {
+    await expect(page.getByRole('table').getByRole('cell', { name: /Doubler les effectifs de la réserve opérationnelle/ })).toBeVisible();
     await page.getByRole('table').getByRole('cell', { name: /Doubler les effectifs de la réserve opérationnelle/ }).click();
+    await page.waitForURL('**/chantier/CH-027/NAT-FR**');
   });
 
   await test.step('Navigation vers la page "Mise à jour des données"', async () => {
     await expect(page.getByRole('link', { name: /Mettre à jour les données/ })).toBeVisible();
     await page.getByRole('link', { name: /Mettre à jour les données/ }).click();
+    await page.waitForURL('**/chantier/CH-027/indicateurs');
   });
 
   await test.step('Sélection de l\'indicateur IND-927 - Part d’entraînement de la réserve opérationnelle', async () => {
@@ -23,6 +30,7 @@ test('doit pouvoir importer des données', async ({ page }) => {
 
   await test.step('Passage à l\'étape suivante "Charger le fichier"', async () => {
     await page.getByRole('button', { name: /Suivant/ }).click();
+    await page.waitForURL('**/chantier/CH-027/indicateurs?etapeCourante=2**');
     await expect(page.getByRole('heading', { name: /Étape 2 sur 3/ })).toBeVisible();
   });
 
@@ -56,6 +64,7 @@ test('doit pouvoir importer des données', async ({ page }) => {
 
   await test.step('Passage à l\'étape suivante "Transmettre les données pour publication"', async () => {
     await page.getByRole('button', { name: /Suivant/ }).click();
+    await page.waitForURL('**/chantier/CH-027/indicateurs?etapeCourante=3**');
     await expect(page.getByRole('heading', { name: /Étape 3 sur 3/ })).toBeVisible();
   });
 
