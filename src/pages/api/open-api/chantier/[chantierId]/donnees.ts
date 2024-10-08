@@ -1,23 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import assert from 'node:assert';
 import logger from '@/server/infrastructure/Logger';
 import {
   UtilisateurAuthentifieJWTService,
 } from '@/server/authentification/infrastructure/adapters/services/UtilisateurAuthentifieJWTService';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import { handleListerIndicateurs } from '@/server/chantiers/infrastructure/handlers/ListerIndicateursHandler';
-import {
-  handleImportDonneeIndicateurAPI,
-} from '@/server/import-indicateur/infrastructure/handlers/ImportDonneeIndicateurAPIHandler';
-
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
+import { getContainer } from '@/server/dependances';
+ 
 export default async function handle(request: NextApiRequest, response: NextApiResponse) {
   const bearerToken = request.headers['authorization'];
+  
+  assert(request.query.chantierId, 'Le chantier id est obligatoire');
 
   const token = (bearerToken || '').split(' ')[1];
   const utilisateurAuthentifie = await new UtilisateurAuthentifieJWTService({
@@ -26,21 +19,15 @@ export default async function handle(request: NextApiRequest, response: NextApiR
   }).recupererUtilisateurAuthentifie(token);
 
 
+  // eslint-disable-next-line sonarjs/no-small-switch
   switch (request.method) {
     case 'GET': {
-      logger.info('Export des données indicateur API', `Chantier : ${request.query.chantierId}`, `Indicateur : ${request.query.indicateurId}`);
+      logger.info('Export des données chantier API', `Chantier : ${request.query.chantierId}`);
       if (!utilisateurAuthentifie.peutAccederAuChantier(request.query.chantierId as string)) {
         response.status(403).json({ message: `Vous n'êtes pas autorisé à acceder au chantier ${request.query.chantierId}` });
       }
-      await handleListerIndicateurs({ request, response });
-      break;
-    }
-    case 'POST': {
-      logger.info('Import des données API', `Chantier : ${request.query.chantierId}`, `Indicateur : ${request.query.indicateurId}`);
-      if (!utilisateurAuthentifie.peutAccederEnEcritureAuChantier(request.query.chantierId as string)) {
-        response.status(403).json({ message: `Vous n'êtes pas autorisé à acceder au chantier ${request.query.chantierId}` });
-      }
-      await handleImportDonneeIndicateurAPI({ request, response, email: utilisateurAuthentifie.email, profil: utilisateurAuthentifie.profil });
+      const donneeChantier = await getContainer().resolve('recupererDonneesChantierQuery').handle(request.query.chantierId as string, utilisateurAuthentifie.habilitations.lecture.territoires);
+      response.status(200).json(donneeChantier);
       break;
     }
     default: {
