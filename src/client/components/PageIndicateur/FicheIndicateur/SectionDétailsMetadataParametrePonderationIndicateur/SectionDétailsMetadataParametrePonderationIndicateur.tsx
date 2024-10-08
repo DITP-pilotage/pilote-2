@@ -7,6 +7,7 @@ import useDétailsMetadataParametrePonderationIndicateurForm
 import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
 import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
 import { MetadataIndicateurInput } from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInput';
+import useDetailMetadataIndicateurForm from '@/client/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataIndicateur/useDetailMetadataIndicateurForm';
 
 const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat
@@ -18,7 +19,8 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
   mapInformationMetadataIndicateur,
 }) => {
   const { register, errors } = useDétailsMetadataParametrePonderationIndicateurForm();
-
+  const { indicateurEstTerritorialise } = useDetailMetadataIndicateurForm();
+ 
   return (
     <SectionDétailsMetadataParametrePonderationIndicateurStyled>
       <Titre
@@ -30,6 +32,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
       <div className='fr-grid-row fr-grid-row--gutters'>
         <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurInput
+            disabled={!indicateurEstTerritorialise}
             erreurMessage={errors.poidsPourcentDept?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName='poidsPourcentDept'
@@ -40,6 +43,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
         </div>
         <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurInput
+            disabled={!indicateurEstTerritorialise}
             erreurMessage={errors.poidsPourcentReg?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName='poidsPourcentReg'

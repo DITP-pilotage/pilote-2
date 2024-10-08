@@ -1,7 +1,7 @@
 import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import useDétailsMetadataParametreIndicateurNationaleForm
-  from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurNationale/useDétailsMetadataParametreIndicateurNationaleForm';
+, { MetadataParametrageParametreIndicateurNationaleForm }  from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurNationale/useDétailsMetadataParametreIndicateurNationaleForm';
 import SectionDétailsMetadataParametreIndicateurNationaleStyled
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurNationale/SectionDétailsMetadataParametreIndicateurNationale.styled';
 import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
@@ -23,7 +23,15 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
 }) => {
-  const { register, getValues, errors } = useDétailsMetadataParametreIndicateurNationaleForm();
+  const { register, getValues, errors, setValue } = useDétailsMetadataParametreIndicateurNationaleForm();
+
+  const valeursNatFromDesactiveNatOp = new Set(['_', 'user_input']);
+  const ALaModificationValeurNatFrom = (variableFrom: keyof MetadataParametrageParametreIndicateurNationaleForm, valeurFrom: string, variableOp: keyof MetadataParametrageParametreIndicateurNationaleForm, variableParDefautOp: string) => {
+    setValue(variableFrom, valeurFrom);
+    if (valeursNatFromDesactiveNatOp.has(valeurFrom)) {
+      setValue(variableOp, variableParDefautOp);
+    }
+  };
 
   return (
     <SectionDétailsMetadataParametreIndicateurNationaleStyled>
@@ -40,8 +48,10 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vi_nat_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_nat_from')}
-            register={register('viNatFrom')}
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_nat_from', 'viNatFrom')}
+            valeurModifiéeCallback={valeur => {
+              ALaModificationValeurNatFrom('viNatFrom', valeur, 'viNatOp', mapInformationMetadataIndicateur.vi_nat_op.metaPiloteDefaultValue as string);
+            }}
             values={getValues('viNatFrom')}
           />
         </div>
@@ -51,8 +61,10 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.va_nat_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_nat_from')}
-            register={register('vaNatFrom')}
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_nat_from', 'vaNatFrom')}
+            valeurModifiéeCallback={valeur => {
+              ALaModificationValeurNatFrom('vaNatFrom', valeur, 'vaNatOp', mapInformationMetadataIndicateur.va_nat_op.metaPiloteDefaultValue as string);
+            }}
             values={getValues('vaNatFrom')}
           />
         </div>
@@ -62,8 +74,10 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vc_nat_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_nat_from')}
-            register={register('vcNatFrom')}
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_nat_from', 'vcNatFrom')}
+            valeurModifiéeCallback={valeur => {
+              ALaModificationValeurNatFrom('vcNatFrom', valeur, 'vcNatOp', mapInformationMetadataIndicateur.va_nat_op.metaPiloteDefaultValue as string);              
+            }}
             values={getValues('vcNatFrom')}
           />
         </div>
@@ -72,6 +86,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
         <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.viNatOp?.message}
+            estDesactive={valeursNatFromDesactiveNatOp.has(getValues('viNatFrom'))}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vi_nat_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_nat_op')}
@@ -83,6 +98,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
         <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.vaNatOp?.message}
+            estDesactive={valeursNatFromDesactiveNatOp.has(getValues('vaNatFrom'))}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.va_nat_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_nat_op')}
@@ -94,6 +110,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
         <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.vcNatOp?.message}
+            estDesactive={valeursNatFromDesactiveNatOp.has(getValues('vcNatFrom'))}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vc_nat_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_nat_op')}
