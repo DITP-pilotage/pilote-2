@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev | pino-pretty",
-    "build": "next build && node copy-assets.js && bash scripts/clone_centre_aide.sh && prisma migrate deploy",
+    "build": "next build && bash scripts/clone_centre_aide.sh && node copy-assets.js  && prisma migrate deploy",
     "start": "node .next/standalone/server.js",
     "lint": "prisma generate && npm run lint:eslint && npm run lint:tsc && npm run lint:stylelint",
     "lint:fix": "npm run lint:eslint -- --fix && npm run lint:stylelint -- --fix",
