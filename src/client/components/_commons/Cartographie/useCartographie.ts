@@ -39,6 +39,7 @@ export default function useCartographie() {
         estInteractif: territoire.accèsLecture,
       })),
       frontières: frontièresÀTracer.map(frontière => ({
+        code: frontière.code,
         codeInsee: frontière.codeInsee,
       })),
     };
