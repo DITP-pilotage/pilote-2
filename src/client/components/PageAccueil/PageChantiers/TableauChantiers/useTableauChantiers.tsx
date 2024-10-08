@@ -29,6 +29,7 @@ import TableauChantiersTendance
 import TableauChantiersÉcart from '@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import { comparerDateDeMàjDonnées } from '@/client/utils/date/date';
+import { comparerTendance } from '@/client/utils/chantier/tendance/tendance';
 import TableauChantiersProps, { DonnéesTableauChantiers } from './TableauChantiers.interface';
 import TableauChantiersTuileChantier from './Tuile/Chantier/TableauChantiersTuileChantier';
 import TableauChantiersTuileMinistère from './Tuile/Ministère/TableauChantiersTuileMinistère';
@@ -165,10 +166,10 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
       reactTableColonnesHelper.accessor('tendance', {
         header: 'Tendance',
         id: 'tendance',
-        enableSorting: false,
         cell: cellContext => (
           <TableauChantiersTendance tendance={cellContext.getValue()} />
         ),
+        sortingFn: (a, b, columnId) => comparerTendance(a.getValue(columnId), b.getValue(columnId), tri),
         enableGrouping: false,
         meta: {
           width: '7.5rem',
@@ -178,7 +179,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
       reactTableColonnesHelper.accessor('écart', {
         header: 'Écart',
         id: 'écart',
-        enableSorting: false,
+        sortingFn: (a, b, columnId) => comparerAvancementRéforme(a.getValue(columnId), b.getValue(columnId), tri),
         cell: cellContext => (
           <TableauChantiersÉcart écart={cellContext.getValue()} />
         ),
@@ -240,12 +241,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
     ));
   }, [sélectionColonneÀTrier]);
 
-  useEffect(() => {
-    if (tri[0]) {
-      setSélectionColonneÀTrier(tri[0].id);
-    }
-  }, [tri]);
-
+  
   const tableau = useReactTable({
     data: données,
     columns: colonnesTableauChantiers,

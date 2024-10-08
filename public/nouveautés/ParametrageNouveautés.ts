@@ -8,6 +8,22 @@ interface Nouveautés {
 
 export const ParametrageNouveautés: Nouveautés[] = [
   {
+    version: 'Version 2.5.7',
+    date: '8 octobre 2024',
+    contenu: [
+      'Page d’accueil : dans la liste des chantiers, ajout d\'un tri en fonction de la tendance et de l\'écart à la moyenne nationale',
+      'Export des données en format csv : ajout du taux d\'avancement annuel dans l\'export des chantiers',
+      'Page d’accueil : ajout d\'un bouton permettant de contacter l\'équipe PILOTE à partir de la nouvelle adresse pilote.ditp@modernisation.gouv.fr. L\'adresse support.ditp@modernisation.gouv.fr sera progressivement remplacée par cette adresse et les messages seront automatiquement transmis sur la nouvelle adresse.',
+      'Interface de gestion des indicateurs (réservée aux profils DITP) : amélioration de l\'interface (ajout de filtres, modification des champs, etc.)',
+    ],
+    correctifs: [
+      'Page d’accueil : sur le menu \"filtres actifs sur cette page\", correction d\'une erreur qui empechait la suppression des filtres',
+      'Gestion des comptes : amélioration de la configuration de la page afin d\'en diminuer le temps de chargement et améliorer la stabilité',
+      'Import de données : lors d\'un import de valeur initiale, PILOTE prenait en compte la valeur initiale importée à la date la plus ancienne. Dorénavant, la valeur initiale affichée pour chaque indicateur correspond à la dernière valeur importée dans l\'outil (même si des VI avec des dates de valeur plus anciennes ont déjà été importées)',
+      'Import de données : limitation du nombre de décimales affichées pour chaque valeur d\'indicateur',
+    ],
+  },
+  {
     version: 'Version 2.5.6',
     date: '12 septembre 2024',
     contenu : [

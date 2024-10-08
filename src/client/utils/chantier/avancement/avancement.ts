@@ -1,7 +1,7 @@
 import { SortingState } from '@tanstack/react-table';
 
-export function comparerAvancementRéforme(a: number | null, b: number | null, tri: SortingState | null) {
-  const sensDeTriDesc = tri === null ? true : tri[0].desc;
+export function comparerAvancementRéforme(a: number | null, b: number | null, tri: SortingState) {
+  const sensDeTriDesc = tri[0].desc;
   if (a === null && b === null)
     return 0;
   if (a === null)

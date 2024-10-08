@@ -31,7 +31,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
         baliseHtml='h2'
         className='fr-h5'
       >
-        Paramétrages - Maille nationale
+        Maille nationale
       </Titre>
       <div className='fr-grid-row fr-grid-row--gutters'>
         <div className='fr-col-12 fr-col-md-4'>

@@ -6,6 +6,10 @@
   font-weight: bold;
 }
 
+.font-normal {
+  font-weight: 400;
+}
+
 .flex {
   display: flex;
 }
@@ -104,6 +108,14 @@
 
 .texte-centre {
   text-align: center;
+}
+
+.no-underline {
+  text-decoration-line: none;
+}
+
+.bg-none {
+  background-image: none;
 }
 
 .btn-radius {

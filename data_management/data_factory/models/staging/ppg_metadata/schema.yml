@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: stg_ppg_metadata__chantiers
+    description: "Table de *staging* de `metadata_chantiers`"
+    columns:
+        - name: maille_applicable_declaree
+          description: "Array des mailles applicables déclarées."
+        - name: maille_applicable
+          description: "Array des mailles applicables issues du calcul. Prend en compte les colonnes `replicate_val_reg_to` et `replicate_val_nat_to` en plus des mailles déclarées."

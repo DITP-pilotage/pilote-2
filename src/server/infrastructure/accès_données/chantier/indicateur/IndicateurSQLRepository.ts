@@ -20,7 +20,6 @@ import {
   parseDétailsIndicateur,
   parseDétailsIndicateurNew,
 } from '@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLParser';
-import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 class ErreurIndicateurNonTrouvé extends Error {
@@ -243,14 +242,10 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
   }
 
   async récupererDétailsParChantierIdEtTerritoire(chantierId: string, territoireCodes: string[]): Promise<DétailsIndicateurs> {
-    const { maille } = territoireCodeVersMailleCodeInsee(territoireCodes[0]);
-    const codesInsee = territoireCodes.map(territoireCode => territoireCodeVersMailleCodeInsee(territoireCode).codeInsee);
-
     const indicateurs: IndicateurPrisma[] = await this.prisma.indicateur.findMany({
       where: {
         chantier_id: chantierId,
-        maille,
-        code_insee: { in: codesInsee },
+        territoire_code: { in: territoireCodes },
         NOT: {
           type_id : null,
         },

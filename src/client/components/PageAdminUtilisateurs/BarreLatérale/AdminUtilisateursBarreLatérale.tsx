@@ -1,6 +1,7 @@
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
 import { useSession } from 'next-auth/react';
 import { FunctionComponent } from 'react';
+import { parseAsInteger, useQueryStates } from 'nuqs';
 import {
   actions as actionsFiltresUtilisateursStore,
   filtresUtilisateursActifsStore,
@@ -10,13 +11,17 @@ import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale'
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Titre from '@/components/_commons/Titre/Titre';
 import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
-import MultiSelectPérimètreMinistériel from '@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
+import MultiSelectPérimètreMinistériel
+  from '@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
 import MultiSelectChantier from '@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier';
 import Tag from '@/components/_commons/Tag/Tag';
 import { territoiresTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import api from '@/server/infrastructure/api/trpc/api';
 import MultiSelectProfil from '@/components/_commons/MultiSelect/MultiSelectProfil/MultiSelectProfil';
-import { AAccesATousLesUtilisateurs, PROFILS_POSSIBLES_COORDINATEURS_LECTURE } from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
+import {
+  AAccesATousLesUtilisateurs,
+  PROFILS_POSSIBLES_COORDINATEURS_LECTURE,
+} from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 
 interface AdminUtilisateursBarreLatéraleProps {
   estOuverteBarreLatérale: boolean
@@ -38,8 +43,15 @@ const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateursBarreL
   const territoiresAccessibles = session!.habilitations.lecture.territoires;
   const profilCréateur = profils?.find(profil => profil.code === session!.profil);
   const profilAccessibles = AAccesATousLesUtilisateurs(profilCréateur ?? null)
-    ? (profils ?? []) : 
+    ? (profils ?? []) :
     profils?.filter(profil => PROFILS_POSSIBLES_COORDINATEURS_LECTURE[profilCréateur?.code as keyof typeof PROFILS_POSSIBLES_COORDINATEURS_LECTURE].includes(profil.code));
+  const [, setPagination] = useQueryStates({
+    pageIndex: parseAsInteger.withDefault(1),
+    pageSize: parseAsInteger.withDefault(20),
+  }, {
+    history: 'push',
+    shallow: false,
+  });
 
   return (
     <BarreLatérale
@@ -50,6 +62,9 @@ const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateursBarreL
         <div className='fr-mb-2w'>
           <MultiSelectTerritoire
             changementValeursSélectionnéesCallback={(territoire) => {
+              setPagination({
+                pageIndex: 1,
+              });
               modifierÉtatDuFiltre(territoire, 'territoires');
             }}
             groupesÀAfficher={{
@@ -64,6 +79,9 @@ const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateursBarreL
         <div className='fr-mb-2w'>
           <MultiSelectPérimètreMinistériel
             changementValeursSélectionnéesCallback={(périmètreMinistériel) => {
+              setPagination({
+                pageIndex: 1,
+              });
               modifierÉtatDuFiltre(périmètreMinistériel, 'périmètresMinistériels', chantiers);
             }}
             périmètresMinistérielsIdsSélectionnésParDéfaut={filtresActifs.périmètresMinistériels}
@@ -72,6 +90,9 @@ const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateursBarreL
         <div className='fr-mb-2w'>
           <MultiSelectChantier
             changementValeursSélectionnéesCallback={(chantier) => {
+              setPagination({
+                pageIndex: 1,
+              });
               modifierÉtatDuFiltre(chantier, 'chantiers');
             }}
             chantiers={chantiers ?? []}
@@ -80,6 +101,9 @@ const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateursBarreL
         </div>
         <MultiSelectProfil
           changementValeursSélectionnéesCallback={(profil) => {
+            setPagination({
+              pageIndex: 1,
+            });
             modifierÉtatDuFiltre(profil, 'profils');
           }}
           profils={profilAccessibles ?? []}

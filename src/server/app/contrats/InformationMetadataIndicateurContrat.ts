@@ -24,7 +24,7 @@ export interface InformationMetadataIndicateurContrat {
 
   metaPiloteEditRegexViolationMessage: string;
 
-  metaPiloteEditBoxType: 'text' | 'textarea' | 'boolean';
+  metaPiloteEditBoxType: 'text' | 'textarea' | 'boolean' | 'multi-select';
 
   metaPiloteDefaultValue: string | number | null | boolean;
 

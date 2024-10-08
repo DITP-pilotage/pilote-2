@@ -8,6 +8,7 @@ export type SélecteurAvecRechercheOption<T> = {
 export default interface SélecteurAvecRechercheProps<T> {
   htmlName: string,
   options: SélecteurAvecRechercheOption<T>[],
+  erreurMessage?: string,
   estVueMobile: boolean,
   estVisibleEnMobile: boolean,
   valeurModifiéeCallback?: (valeur: T) => void,

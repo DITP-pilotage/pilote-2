@@ -7,6 +7,7 @@ import Navigation from '@/components/_commons/MiseEnPage/Navigation/Navigation';
 import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
 import BandeauInformation from '@/components/_commons/BandeauInformation/BandeauInformation';
 import api from '@/server/infrastructure/api/trpc/api';
+import IcôneEmail from '@/components/_commons/IcôneEmail/IcôneEmail';
 
 const useEntete = () => {
   const { data: messageInformation } = api.gestionContenu.récupérerMessageInformation.useQuery();
@@ -71,7 +72,22 @@ const EnTête: FunctionComponent<{}> = () => {
             </div>
             <div className='fr-header__tools'>
               <div className='fr-header__tools-links'>
-                <ul>
+                <ul className='flex align-center'>
+                  <li className='fr-mr-md-2w'>
+                    <button
+                      className='fr-btn fr-text--sm fr-py-0 fr-pr-1w fr-pl-0'
+                      type='button'
+                    >
+                      <IcôneEmail className='fr-mr-2v fr-text-title--blue-france' />
+                      <Link
+                        className='font-normal'
+                        href='mailto:pilote.ditp@modernisation.gouv.fr'
+                        title="Contacter l'équipe PILOTE"
+                      >
+                        Contacter l'équipe PILOTE
+                      </Link>
+                    </button>
+                  </li>
                   <li>
                     <Utilisateur />
                   </li>
@@ -85,7 +101,7 @@ const EnTête: FunctionComponent<{}> = () => {
       {
         isBandeauActif ? (
           <BandeauInformation bandeauType={bandeauType}>
-            { bandeauTexte }
+            {bandeauTexte}
           </BandeauInformation>
         ) : null
       }

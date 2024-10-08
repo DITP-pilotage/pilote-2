@@ -200,26 +200,6 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
-  avecTypeId(typeId: indicateur['type_id']): IndicateurRowBuilder {
-    this._typeId = typeId;
-    return this;
-  }
-
-  avecTypeNom(typeNom: indicateur['type_nom']): IndicateurRowBuilder {
-    this._typeNom = typeNom;
-    return this;
-  }
-
-  avecEstBaromètre(estBaromètre: indicateur['est_barometre']): IndicateurRowBuilder {
-    this._estBaromètre = estBaromètre;
-    return this;
-  }
-
-  avecEstPhare(estPhare: indicateur['est_phare']): IndicateurRowBuilder {
-    this._estPhare = estPhare;
-    return this;
-  }
-
   avecValeurInitiale(valeurInitiale: indicateur['valeur_initiale']): IndicateurRowBuilder {
     this._valeurInitiale = valeurInitiale;
     return this;
@@ -237,11 +217,6 @@ export default class IndicateurRowBuilder {
 
   avecDateValeurActuelle(dateValeurActuelle: indicateur['date_valeur_actuelle']): IndicateurRowBuilder {
     this._dateValeurActuelle = dateValeurActuelle;
-    return this;
-  }
-
-  avecTerritoireNom(territoireNom: indicateur['territoire_nom']): IndicateurRowBuilder {
-    this._territoireNom = territoireNom;
     return this;
   }
 
@@ -285,11 +260,6 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
-  avecTerritoireCode(territoireCode: indicateur['territoire_code']): IndicateurRowBuilder {
-    this._territoireCode = territoireCode;
-    return this;
-  }
-
   avecUnité(unité: indicateur['unite_mesure']): IndicateurRowBuilder {
     this._unite_mesure = unité;
     return this;
@@ -300,33 +270,8 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
-  avecDernierImportDate(dernier_import_date: indicateur['dernier_import_date']): IndicateurRowBuilder {
-    this._dernier_import_date = dernier_import_date;
-    return this;
-  }
-
-  avecDernierImportRapportId(dernier_import_rapport_id: indicateur['dernier_import_rapport_id']): IndicateurRowBuilder {
-    this._dernier_import_rapport_id = dernier_import_rapport_id;
-    return this;
-  }
-
-  avecDernierImportAuteur(dernier_import_auteur: indicateur['dernier_import_auteur']): IndicateurRowBuilder {
-    this._dernier_import_auteur = dernier_import_auteur;
-    return this;
-  }
-
   avecDernierImportDateIndic(dernier_import_date_indic: indicateur['dernier_import_date_indic']): IndicateurRowBuilder {
     this._dernier_import_date_indic = dernier_import_date_indic;
-    return this;
-  }
-
-  avecDernierImportRapportIdIndic(dernier_import_rapport_id_indic: indicateur['dernier_import_rapport_id_indic']): IndicateurRowBuilder {
-    this._dernier_import_rapport_id_indic = dernier_import_rapport_id_indic;
-    return this;
-  }
-
-  avecDernierImportAuteurIndic(dernier_import_auteur_indic: indicateur['dernier_import_auteur_indic']): IndicateurRowBuilder {
-    this._dernier_import_auteur_indic = dernier_import_auteur_indic;
     return this;
   }
 
@@ -350,11 +295,6 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
-  avecParentId(parent_id: indicateur['parent_id']): IndicateurRowBuilder {
-    this._parent_id = parent_id;
-    return this;
-  }
-
   avecTendance(tendance: indicateur['tendance']): IndicateurRowBuilder {
     this._tendance = tendance;
     return this;
@@ -362,16 +302,6 @@ export default class IndicateurRowBuilder {
 
   avecProchaineDateValeurActuelle(prochaine_date_valeur_actuelle: indicateur['prochaine_date_valeur_actuelle']): IndicateurRowBuilder {
     this._prochaine_date_valeur_actuelle = prochaine_date_valeur_actuelle;
-    return this;
-  }
-
-  avecPeriodicite(periodicite: indicateur['periodicite']): IndicateurRowBuilder {
-    this._periodicite = periodicite;
-    return this;
-  }
-
-  avecDelaiDisponibilite(delai_disponibilite: indicateur['delai_disponibilite']): IndicateurRowBuilder {
-    this._delai_disponibilite = delai_disponibilite;
     return this;
   }
 

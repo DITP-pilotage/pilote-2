@@ -1,9 +1,8 @@
 import Avancement from '@/server/domain/chantier/avancement/Avancement.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import { Météo } from '@/server/domain/météo/Météo.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
-type RépartitionAvancements = {
+type RépartitionAvancementsMaille = {
   global: {
     moyenne: number | null,
     médiane: number | null,
@@ -15,22 +14,23 @@ type RépartitionAvancements = {
   }
 };
 
-type RépartitionMétéos = Record<Météo, number>;
+type RépartitionAvancementsTerritoire = {
+  global: number | null
+  annuel: number | null
+};
 
 export type AgrégatParTerritoire = {
   [key in Maille]: {
     répartition: {
-      avancements: RépartitionAvancements
+      avancements: RépartitionAvancementsMaille
     },
     territoires: {
       [clé in CodeInsee]: {
         répartition: {
-          avancements: RépartitionAvancements,
-          météos: RépartitionMétéos
+          avancements: RépartitionAvancementsTerritoire,
         },
         donnéesBrutes: {
-          avancements: Avancement[]
-          météos: Météo[]
+          avancements: Avancement
         }
       }
     },

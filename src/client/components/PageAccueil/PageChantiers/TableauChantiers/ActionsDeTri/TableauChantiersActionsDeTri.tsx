@@ -32,6 +32,16 @@ const listeColonnesÀtrier = [
     valeur: 'dateDeMàjDonnéesQualitatives',
     désactivé: process.env.NEXT_PUBLIC_FF_TRI_DATES !== 'true',
   },
+  {
+    libellé: 'Tendance',
+    valeur: 'tendance',
+    désactivé: false,
+  },
+  {
+    libellé: 'Écart',
+    valeur: 'écart',
+    désactivé: false,
+  },
 ];
 
 const TableauChantiersActionsDeTri: FunctionComponent<TableauChantiersActionsDeTriProps> = ({

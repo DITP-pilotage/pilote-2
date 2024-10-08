@@ -31,7 +31,7 @@ const TextArea: FunctionComponent<PropsWithChildren<{
       {
         (erreurMessage !== undefined || erreur !== undefined) &&
         <p
-          className='fr-error-text'
+          className='fr-error-text fr-mt-1v'
         >
           {erreurMessage?.toString()}
         </p>

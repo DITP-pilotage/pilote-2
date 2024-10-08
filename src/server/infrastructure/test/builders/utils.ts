@@ -50,12 +50,6 @@ export function générerTableau<T>(nombreOccurrenceMin: number, nombreOccurrenc
   }).map((_, i) => entitéBuilder(i));
 }
 
-export function répéter(nombreOccurrenceMin: number, nombreOccurrenceMax: number, action: () => void) {
-  for (let i = 0; i < faker.datatype.number({ min: nombreOccurrenceMin, max: nombreOccurrenceMax }); ++i) {
-    action();
-  }
-}
-
 export function générerPeutÊtreNull<T>(probabilitéNull: number, valeurSinon: T): T | null {
   return faker.datatype.number({ min: 0, max: 1, precision: 0.001 }) < probabilitéNull ? null : valeurSinon;
 }

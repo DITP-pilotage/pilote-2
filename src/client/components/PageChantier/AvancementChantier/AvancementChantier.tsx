@@ -6,7 +6,8 @@ import Titre from '@/components/_commons/Titre/Titre';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
+import Alerte from '@/components/_commons/Alerte/Alerte';
 import AvancementChantierStyled from './AvancementChantier.styled';
 
 const classeÀPartirDeLaMaille = {
@@ -37,12 +38,14 @@ interface AvancementChantierProps {
       },
     }
   }
+  mailleSourceDonnees?: Maille | null
 }
 
 const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   avancements,
   territoireCode,
   mailleSelectionnee,
+  mailleSourceDonnees,
 }) => {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
@@ -59,6 +62,15 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 avancementGlobal={avancements.départementale.global.moyenne}
                 territoireNom={territoireSélectionné.nom}
               />
+              {
+                mailleSourceDonnees === 'régionale' &&
+                  <Alerte
+                    classesMessagePolice='fr-text fr-text--xs'
+                    classesSupplementaires='fr-mt-2w'
+                    message='Données régionales'
+                    type='info'
+                  />
+              }
             </div>
           </Bloc>
         ) : null

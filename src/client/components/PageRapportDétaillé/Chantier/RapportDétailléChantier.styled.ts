@@ -13,8 +13,9 @@ const RapportDétailléChantierStyled = styled.section`
 
   .layout--nat {
     grid-template-areas:
-      "avancement responsables"
-      "synthèse   synthèse";
+      "avancement avancement"
+      "responsables responsables"
+      "synthèse synthèse";
     grid-template-columns: auto minmax(22.5rem, 1fr);
   }
 
@@ -51,8 +52,7 @@ const RapportDétailléChantierStyled = styled.section`
   }
   
   @media print {
-    .avancements,
-    .cartes {
+    .impression-section {
       break-inside: avoid;
     }
   }

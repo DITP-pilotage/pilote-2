@@ -47,7 +47,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
 
   return (
     <IndicateurBlocStyled
-      className='fr-mb-2w'
+      className='fr-mb-2w impression-section'
       key={indicateur.id}
     >
       <Bloc>

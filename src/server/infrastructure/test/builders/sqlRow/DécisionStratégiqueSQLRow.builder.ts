@@ -36,11 +36,6 @@ export default class DécisionStratégiqueSQLRowBuilder {
     return this;
   }
 
-  avecContenu(contenu: decision_strategique['contenu']): DécisionStratégiqueSQLRowBuilder {
-    this._contenu = contenu;
-    return this;
-  }
-
   avecDate(date: decision_strategique['date']): DécisionStratégiqueSQLRowBuilder {
     this._date = date;
     return this;

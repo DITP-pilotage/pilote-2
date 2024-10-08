@@ -1,4 +1,5 @@
 import {
+  ColumnSort,
   createColumnHelper,
   getCoreRowModel,
   getFilteredRowModel,
@@ -6,17 +7,19 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ChangeEvent, useCallback, useState } from 'react';
+import { ChangeEvent, useCallback } from 'react';
+import { parseAsArrayOf, parseAsInteger, parseAsJson, parseAsString, useQueryState, useQueryStates } from 'nuqs';
+import { z } from 'zod';
 import { useSession } from 'next-auth/react';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { formaterDate } from '@/client/utils/date/date';
 import api from '@/server/infrastructure/api/trpc/api';
 import { filtresUtilisateursActifsStore } from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
+import { UtilisateurListeGestionContrat } from '@/server/app/contrats/UtilisateurListeGestionContrat';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { UtilisateurContrat } from '@/server/gestion-utilisateur/app/contrats/UtilisateurContrat';
 
-const reactTableColonnesHelper = createColumnHelper<UtilisateurContrat>();
+const reactTableColonnesHelper = createColumnHelper<UtilisateurListeGestionContrat>();
 const colonnes = [
   reactTableColonnesHelper.accessor('email', {
     header: 'Adresse électronique',
@@ -38,7 +41,7 @@ const colonnes = [
     header: 'Fonction',
     cell: props => props.getValue(),
   }),
-  reactTableColonnesHelper.accessor(row => `${formaterDate(row.dateModification, 'DD/MM/YYYY')} par ${row.auteurModification}`, {
+  reactTableColonnesHelper.accessor(row => `${ formaterDate(row.dateModification, 'DD/MM/YYYY') } par ${ row.auteurModification }`, {
     header: 'Dernière modification',
     cell: props => props.getValue(),
     sortingFn: (a, b) => {
@@ -67,20 +70,55 @@ export default function useTableauPageAdminUtilisateurs() {
   const { data: session } = useSession();
   const filtresActifs = filtresUtilisateursActifsStore();
 
-  const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
-
   const estAutoriseAVoirLaColonneTerritoire = [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session!.profil);
 
+  const [pagination, setPagination] = useQueryStates({
+    pageIndex: parseAsInteger.withDefault(1),
+    pageSize: parseAsInteger.withDefault(20),
+  }, {
+    history: 'push',
+    shallow: false,
+  });
+
+  const ZodSchemaSorting = z.object(
+    {
+      id: z.string().regex(/email|nom|prénom|profil|fonction|Dernière modification/),
+      desc: z.boolean(),
+    },
+  );
+
+  const [sorting, setSorting] = useQueryState('sort', parseAsArrayOf<ColumnSort>(parseAsJson(ZodSchemaSorting.parse)).withDefault([{
+    id: 'Dernière modification',
+    desc: true,
+  }]).withOptions({
+    shallow: false,
+    clearOnDefault: true,
+    history: 'push',
+  }));
+
+  const [valeurDeLaRecherche, setValeurDeLaRecherche] = useQueryState('q', parseAsString.withDefault('').withOptions({
+    shallow: false,
+    clearOnDefault: true,
+    history: 'push',
+    throttleMs: 400,
+  }));
+
   const {
-    data: utilisateurs = [],
+    data: { count, utilisateurs } = { count: 0, utilisateurs: [] },
     isLoading: estEnChargement,
-  } = api.utilisateur.récupérerUtilisateursFiltrés.useQuery({
+  } = api.utilisateur.récupérerUtilisateursFiltrésNew.useQuery({
     filtres: filtresActifs,
+    pagination,
+    sorting,
+    valeurDeLaRecherche,
   });
 
   const changementDeLaRechercheCallback = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setPagination({
+      pageIndex: 1,
+    });
     setValeurDeLaRecherche(event.target.value);
-  }, [setValeurDeLaRecherche]);
+  }, [setPagination, setValeurDeLaRecherche]);
 
   const tableau = useReactTable({
     data: utilisateurs,
@@ -91,7 +129,8 @@ export default function useTableauPageAdminUtilisateurs() {
       return valeurCellule !== null && rechercheUnTexteContenuDansUnContenant(texteRecherché, valeurCellule.toString());
     },
     state: {
-      globalFilter: valeurDeLaRecherche,
+      pagination,
+      sorting,
       columnVisibility: {
         territoire: estAutoriseAVoirLaColonneTerritoire,
       },
@@ -99,17 +138,17 @@ export default function useTableauPageAdminUtilisateurs() {
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
     getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
+    pageCount: count % 10 === 0 ? Math.trunc(count / pagination.pageSize) : Math.trunc(count / pagination.pageSize) + 1,
+    manualPagination: true,
   });
 
-  const changementDePageCallback = useCallback((numéroDePage: number) => (
-    tableau.setPageIndex(numéroDePage - 1)
-  ), [tableau]);
-
   return {
+    nombreElementPage: count,
     tableau,
     estEnChargement,
-    changementDePageCallback,
     valeurDeLaRecherche,
     changementDeLaRechercheCallback,
   };

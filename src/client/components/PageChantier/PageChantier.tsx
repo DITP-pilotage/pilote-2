@@ -21,6 +21,7 @@ import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import IndicateursChantier from '@/components/_commons/IndicateursChantier/IndicateursChantier';
 import { listeRubriquesChantier, listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
+import Alerte from '@/client/components/_commons/Alerte/Alerte';
 import ResponsablesPageChantier from '@/components/PageChantier/ResponsablesChantier/ResponsablesChantier';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
@@ -40,6 +41,7 @@ import { CoordinateurTerritorial, ResponsableLocal } from '@/server/domain/terri
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import BandeauInformationMajDonnees from '@/components/PageChantier/BandeauInformationMajDonnees/BandeauInformationMajDonnees';
 import api from '@/server/infrastructure/api/trpc/api';
+import BandeauInformation from '@/client/components/_commons/BandeauInformation/BandeauInformation';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import PageChantierEnTête from './EnTête/EnTête';
 import Cartes from './Cartes/Cartes';
@@ -107,6 +109,8 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
   }, false);
 
 
+  const mailleSourceDonnees = chantier.mailles[territoireSélectionné.maille][territoireSélectionné.codeInsee].mailleSourceDonnees;
+
   return (
     <PageChantierStyled className='flex'>
       <BarreLatérale
@@ -167,6 +171,15 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
               message="un ou plusieurs indicateurs de cette politique prioritaire nécessitent au moins une mise à jour de leur valeur actuelle par l'équipe projet."
               titre='Mise à jour des données requises : '
             />
+        }
+        {
+          mailleSourceDonnees === 'régionale' &&
+          <BandeauInformation 
+            bandeauType='INFO'
+            fermable={false}
+          >
+            Données régionales : cette politique prioritaire fait l’objet d’un pilotage régional avec des données régionales. Les valeurs des indicateurs régionaux sont reportés à la maille départementale.
+          </BandeauInformation>
         }
         <div className='fr-container--fluid fr-py-2w fr-px-md-2w'>
           <div
@@ -285,6 +298,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     afficheCarteMétéo={!!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] || chantier.estTerritorialisé}
                     chantierMailles={chantier.mailles}
                     mailleSelectionnee={mailleSelectionnee}
+                    mailleSourceDonnees={mailleSourceDonnees}
                     territoireCode={territoireCode}
                   />
                 </section>
@@ -333,6 +347,15 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   >
                     Indicateurs
                   </Titre>
+                  {
+                    mailleSourceDonnees === 'régionale' &&
+                      <Alerte
+                        classesSupplementaires='fr-mb-2w'
+                        message='Cette politique prioritaire fait l’objet d’un pilotage régional avec des données régionales. Les valeurs des indicateurs régionaux sont reportés à la maille départementale.'
+                        titre='Données régionales'
+                        type='info'
+                      />
+                  }
                   <IndicateursChantier
                     alerteMiseAJourIndicateur={alerteMiseAJourIndicateur}
                     chantierEstTerritorialisé={chantier.estTerritorialisé}
@@ -399,6 +422,15 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   }
                 </Infobulle>
               </TitreInfobulleConteneur>
+              {
+                mailleSourceDonnees === 'régionale' &&
+                  <Alerte
+                    classesSupplementaires='fr-mb-2w'
+                    message='Commentaires facultatifs mais souhaités pour apporter un éclairage départemental au pilotage régional.'
+                    titre='Données régionales'
+                    type='info'
+                  />
+              }
               <Commentaires
                 commentaires={commentaires[chantier.id]}
                 maille={territoireSélectionné.maille}

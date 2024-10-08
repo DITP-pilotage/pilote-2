@@ -4,8 +4,6 @@ import { InformationMetadataIndicateurContrat } from '@/server/app/contrats/Info
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import { MetadataIndicateurChamp } from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp';
 
-export const optionsBooleanSelecteur = [{ libellé: 'Oui', valeur: 'true' }, { libellé: 'Non', valeur: 'false' }];
-
 export const MetadataIndicateurSelecteur: FunctionComponent<{
   informationMetadataIndicateur: InformationMetadataIndicateurContrat,
   estEnCoursDeModification: boolean,

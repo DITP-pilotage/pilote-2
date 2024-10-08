@@ -1,13 +1,10 @@
+import KcAdminClient from '@keycloak/keycloak-admin-client';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 import logger from '@/server/infrastructure/Logger';
 import UtilisateurPourIAM from '@/server/domain/utilisateur/UtilisateurIAM.interface';
 import { configuration } from '@/config';
 
 const KEYCLOAK_REALM = 'DITP';
-
-// Oups?! Voir : https://github.com/TypeStrong/ts-node/discussions/1290
-// eslint-disable-next-line @typescript-eslint/no-implied-eval
-const _dynamicImport = new Function('specifier', 'return import(specifier)');
 
 const DAY_IN_SECONDS = 3600 * 24;
 export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMRepository {
@@ -44,7 +41,6 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
   }
 
   private async loginKcAdminClient() {
-    const { default: KcAdminClient } = await _dynamicImport('@keycloak/keycloak-admin-client');
     this.kcAdminClient = new KcAdminClient({
       baseUrl: this.keycloakUrl,
       realmName: KEYCLOAK_REALM,
