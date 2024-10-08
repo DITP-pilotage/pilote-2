@@ -249,7 +249,7 @@ const config = convict({
     svgPath: {
       format: String,
       default: 'cartographie-france.svg',
-      env: 'CARTOGRAPHIE_SVG_PATH', 
+      env: 'CARTOGRAPHIE_SVG_PATH',
     },
   },
   schemaValidataUrl: {
