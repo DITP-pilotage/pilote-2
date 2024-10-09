@@ -16,6 +16,8 @@ import { CartographieDonnées } from './Cartographie.interface';
 
 export default function useCartographie(territoireCode: string, mailleSelectionnee: MailleInterne, pathname: '/accueil/chantier/[territoireCode]' | '/chantier/[id]/[territoireCode]' | null) {
   const régions = régionsTerritoiresStore();
+  // TODO(Tristan : 09/10/2024) : Désactivation temporaire le temps fix des territoires comparés
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [territoiresCompares, setTerritoiresCompares] = useQueryState('territoiresCompares', parseAsString.withDefault('').withOptions({
     shallow: false,
     history: 'push',
@@ -89,24 +91,28 @@ export default function useCartographie(territoireCode: string, mailleSelectionn
     );
   }
 
+  // TODO(Tristan : 09/10/2024) : Désactivation temporaire le temps fix des territoires comparés
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function auClicTerritoireMultiSélectionCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {
-    if (!territoireSélectionnable) return;
+    // eslint-disable-next-line no-console
+    console.log('Fonctionnalité désactivée');
+    // if (!territoireSélectionnable) return;
 
-    const listeTerritoiresCompares = territoiresCompares.split(',').filter(Boolean);
+    // const listeTerritoiresCompares = territoiresCompares.split(',').filter(Boolean);
 
-    if (codeInsee === territoireCodeInsee) {
-      delete router.query.territoiresCompares;
-      return auClicTerritoireCallback(territoireCodeInsee, territoireSélectionnable);
-    }
+    // if (codeInsee === territoireCodeInsee) {
+    //   delete router.query.territoiresCompares;
+    //   return auClicTerritoireCallback(territoireCodeInsee, territoireSélectionnable);
+    // }
 
-    let territoireCompareCode =  (codeInsee === territoireCodeInsee && territoiresAccessiblesEnLecture.some(territoire => territoire.maille === 'nationale')) ? 'NAT-FR' : mailleSelectionnee === 'départementale' ? `DEPT-${territoireCodeInsee}` : `REG-${territoireCodeInsee}`;
+    // let territoireCompareCode =  (codeInsee === territoireCodeInsee && territoiresAccessiblesEnLecture.some(territoire => territoire.maille === 'nationale')) ? 'NAT-FR' : mailleSelectionnee === 'départementale' ? `DEPT-${territoireCodeInsee}` : `REG-${territoireCodeInsee}`;
 
-    if (listeTerritoiresCompares.includes(territoireCompareCode)) {
-      listeTerritoiresCompares.splice(listeTerritoiresCompares.indexOf(territoireCompareCode), 1);
-      setTerritoiresCompares(listeTerritoiresCompares.join(','));
-    } else {
-      setTerritoiresCompares([territoireCompareCode, ...listeTerritoiresCompares].join(','));
-    }
+    // if (listeTerritoiresCompares.includes(territoireCompareCode)) {
+    //   listeTerritoiresCompares.splice(listeTerritoiresCompares.indexOf(territoireCompareCode), 1);
+    //   setTerritoiresCompares(listeTerritoiresCompares.join(','));
+    // } else {
+    //   setTerritoiresCompares([territoireCompareCode, ...listeTerritoiresCompares].join(','));
+    // }
   }
 
   return {
