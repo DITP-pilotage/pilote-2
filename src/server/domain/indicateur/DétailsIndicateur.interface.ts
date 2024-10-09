@@ -17,12 +17,16 @@ interface DetailIndicateurPropositionValeurActuelle {
   sourceDonneeEtMethodeCalcul: string | null
 }
 
+interface HistoriqueValeur {
+  date: string,
+  valeur: number
+}
+
 export type DétailsIndicateur = {
   codeInsee: string,
   valeurInitiale: number | null,
   dateValeurInitiale: string | null,
-  valeurs: number[],
-  dateValeurs: string[],
+  historiquesValeurs: HistoriqueValeur[]
   valeurActuelle: number | null,
   dateValeurActuelle: string | null,
   valeurCible: number | null,

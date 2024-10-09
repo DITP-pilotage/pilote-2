@@ -24,11 +24,11 @@ export default function useIndicateurÉvolution(indicateurDétailsParTerritoires
     },
   };
 
-  const libellés = indicateurDétailsPourUnTerritoire.données.dateValeurs.map(date => formaterDate(date, 'MM/YYYY'));
+  const libellés = indicateurDétailsPourUnTerritoire.données.historiquesValeurs.map(historique => formaterDate(historique.date, 'MM/YYYY'));
 
   const évolutions: ChartDataset<'line'>[] = indicateurDétailsParTerritoires.map((détailsParTerritoire, index) => ({
     label: détailsParTerritoire.territoireNom,
-    data: détailsParTerritoire.données.valeurs,
+    data: détailsParTerritoire.données.historiquesValeurs.map(historique => historique.valeur),
     pointStyle: 'rect',
     pointRadius: 5,
     borderColor: couleurs[index],

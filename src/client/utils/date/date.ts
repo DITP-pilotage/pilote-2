@@ -21,6 +21,14 @@ export function horodatage() {
   return dayjs.tz(new Date, dayjs.tz.guess()).format('YYYY-MM-DD-HH-mm-ss');
 }
 
+export const comparerDates = (a: string, b: string) => {
+  if (a < b)
+    return -1;
+  if (a > b)
+    return 1;
+  return 0;
+};
+
 export const comparerDateDeMàjDonnées = (a: string | null, b: string | null, tri: SortingState | null) => {
   const sensDeTriDesc = tri === null ? true : tri[0].desc;
   if (a === null && b === null)

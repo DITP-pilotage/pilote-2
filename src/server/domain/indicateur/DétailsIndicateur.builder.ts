@@ -15,10 +15,6 @@ export default class DétailsIndicateurBuilder {
 
   private _dateValeurInitiale: DétailsIndicateur['dateValeurInitiale'];
 
-  private _valeurs: DétailsIndicateur['valeurs'];
-
-  private _dateValeurs: DétailsIndicateur['dateValeurs'];
-
   private _valeurCible: DétailsIndicateur['valeurCible'];
 
   private _dateValeurCible: DétailsIndicateur['dateValeurCible'];
@@ -26,6 +22,8 @@ export default class DétailsIndicateurBuilder {
   private _valeurActuelle: DétailsIndicateur['valeurActuelle'];
 
   private _dateValeurActuelle: DétailsIndicateur['dateValeurActuelle'];
+
+  private _historiquesValeurs: DétailsIndicateur['historiquesValeurs'];
 
   private _avancement: DétailsIndicateur['avancement'];
 
@@ -46,7 +44,6 @@ export default class DétailsIndicateurBuilder {
   private _prochaineDateValeurActuelle: DétailsIndicateur['prochaineDateValeurActuelle'];
 
   constructor() {
-    const nombreDeValeurs = faker.datatype.number({ min: 28, max: 35 });
 
     this._codeInsee = faker.helpers.arrayElement([...codesInseeDépartements, ...codesInseeRégions, codeInseeFrance]);
     this._valeurInitiale = faker.datatype.number({ precision: 0.01 });
@@ -64,10 +61,8 @@ export default class DétailsIndicateurBuilder {
     this._pondération = faker.datatype.number({ min: 0, max: 100 });
     this._tendance = générerPeutÊtreNull(0.1, faker.datatype.string(6).toUpperCase());
 
-    const valeursEtDates = this.générerValeursEtDates(nombreDeValeurs, this._valeurInitiale, this._valeurCible);
+    this._historiquesValeurs = [];
 
-    this._valeurs = valeursEtDates.valeurs;
-    this._dateValeurs = valeursEtDates.dateValeurs;
     this._avancement = new AvancementBuilder().build();
   }
 
@@ -76,14 +71,13 @@ export default class DétailsIndicateurBuilder {
       codeInsee: this._codeInsee,
       valeurInitiale: this._valeurInitiale,
       dateValeurInitiale: this._dateValeurInitiale,
-      valeurs: this._valeurs,
-      dateValeurs: this._dateValeurs,
       valeurCible: this._valeurCible,
       dateValeurCible: this._dateValeurCible,
       valeurActuelle: this._valeurActuelle,
       dateValeurActuelle: this._dateValeurActuelle,
       dateValeurCibleAnnuelle: this._dateValeurCibleAnnuelle,
       valeurCibleAnnuelle: this._valeurCibleAnnuelle,
+      historiquesValeurs: this._historiquesValeurs,
       avancement: this._avancement,
       unité: this._unité,
       est_applicable: this._est_applicable,

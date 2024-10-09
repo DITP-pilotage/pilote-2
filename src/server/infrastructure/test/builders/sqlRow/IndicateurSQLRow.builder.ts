@@ -125,13 +125,13 @@ export default class IndicateurRowBuilder {
     this._estPhare = générerPeutÊtreNull(0.2, faker.datatype.boolean());
     this._valeurInitiale = détailsIndicateurGénéré.valeurInitiale;
     this._dateValeurInitiale = détailsIndicateurGénéré.dateValeurInitiale ? new Date(détailsIndicateurGénéré.dateValeurInitiale) : null;
-    this._valeurActuelle = détailsIndicateurGénéré.valeurs.length === 0 ? null : détailsIndicateurGénéré.valeurs[détailsIndicateurGénéré.valeurs.length - 1];
-    this._dateValeurActuelle = détailsIndicateurGénéré.dateValeurs.length === 0 ? null : new Date(détailsIndicateurGénéré.dateValeurs[détailsIndicateurGénéré.dateValeurs.length - 1]);
+    this._valeurActuelle = détailsIndicateurGénéré.valeurActuelle;
+    this._dateValeurActuelle = détailsIndicateurGénéré.dateValeurActuelle ? new Date(détailsIndicateurGénéré.dateValeurActuelle) : null;
     this._territoireNom = générerPeutÊtreNull(0.2, faker.address.state());
     this._codeInsee = faker.helpers.arrayElement(codesInsee);
     this._maille = maille;
-    this._évolutionValeurActuelle = détailsIndicateurGénéré.valeurs;
-    this._évolutionDateValeurActuelle = détailsIndicateurGénéré.dateValeurs.map(d => new Date(d));
+    this._évolutionValeurActuelle = détailsIndicateurGénéré.historiquesValeurs.map(historique => historique.valeur);
+    this._évolutionDateValeurActuelle = détailsIndicateurGénéré.historiquesValeurs.map(historique => new Date(historique.date));
     this._description = indicateurGénéré.description;
     this._source = indicateurGénéré.source;
     this._modeDeCalcul = indicateurGénéré.modeDeCalcul;
