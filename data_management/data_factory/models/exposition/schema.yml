@@ -116,9 +116,7 @@ models:
       - name: territoire_nom
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_zone"
       - name: evolution_valeur_actuelle
-        description: "source de données à date du 07/07/2023 : dfakto.fact_financials"
-      - name: evolution_date_valeur_actuelle
-        description: "source de données à date du 07/07/2023 : ppg_metadata.fact_financials"
+        description: "Liste de dates et valeur associée. Exemple: [{date: YYYY-MM-DD, vaca: 12.34}, ...]"
       - name: description
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_indicateur"
       - name: source
