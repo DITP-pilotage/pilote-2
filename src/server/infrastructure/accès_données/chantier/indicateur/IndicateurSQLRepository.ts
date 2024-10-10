@@ -77,6 +77,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         codeInsee: indic.code_insee,
         valeurInitiale: indic.valeur_initiale,
         dateValeurInitiale: formatDate(indic.date_valeur_initiale),
+        // TODO(Tristan-10/10/2024) : Trouver une moyen de se débarasser du as unknown
         historiquesValeurs: (indic.evolution_valeur_actuelle as unknown as historique_valeurs[]).sort((a, b) => comparerDates(a.date, b.date)),
         valeurActuelle: indic.valeur_actuelle,
         dateValeurActuelle: formatDate(indic.date_valeur_actuelle),
