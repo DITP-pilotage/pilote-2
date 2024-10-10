@@ -1,15 +1,21 @@
 import { Fragment, FunctionComponent } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
-import Publication from '@/components/_commons/PublicationNew/Publication';
+import Publication from '@/components/_commons/PublicationChantier/Publication';
 import {
   consignesDÉcritureCommentaire,
   libellésTypesCommentaire,
   TypeCommentaire,
 } from '@/client/constants/libellésCommentaire';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { Commentaire, typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/chantier/commentaire/Commentaire.interface';
+import {
+  Commentaire,
+  typesCommentaireMailleNationale,
+  typesCommentaireMailleRégionaleOuDépartementale,
+} from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import CommentaireProjetStructurant, { typesCommentaireProjetStructurant } from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
+import CommentaireProjetStructurant, {
+  typesCommentaireProjetStructurant,
+} from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 
 interface CommentairesProps {
@@ -33,7 +39,7 @@ const Commentaires: FunctionComponent<CommentairesProps> = ({
   estInteractif = true,
   territoireCode,
 }) => {
-  
+
   return (
     <Bloc titre={nomTerritoire}>
       {

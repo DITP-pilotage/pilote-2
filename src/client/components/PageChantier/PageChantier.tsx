@@ -4,10 +4,10 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-media/icons-media.min.css';
 import { FunctionComponent, useState } from 'react';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import SélecteursMaillesEtTerritoires
-  from '@/components/_commons/SélecteursMaillesEtTerritoiresNew/SélecteursMaillesEtTerritoires';
+  from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Commentaires from '@/components/_commons/CommentairesNew/Commentaires';
-import SynthèseDesRésultats from '@/client/components/_commons/SynthèseDesRésultatsNew/SynthèseDesRésultats';
+import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultatsChantier/SynthèseDesRésultats';
 import Sommaire from '@/client/components/_commons/Sommaire/Sommaire';
 import Titre from '@/components/_commons/Titre/Titre';
 import Objectifs from '@/components/_commons/ObjectifsNew/Objectifs';
@@ -39,7 +39,8 @@ import {
 import { AvancementChantierContrat } from '@/components/PageChantier/AvancementChantier';
 import { CoordinateurTerritorial, ResponsableLocal } from '@/server/domain/territoire/Territoire.interface';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
-import BandeauInformationMajDonnees from '@/components/PageChantier/BandeauInformationMajDonnees/BandeauInformationMajDonnees';
+import BandeauInformationMajDonnees
+  from '@/components/PageChantier/BandeauInformationMajDonnees/BandeauInformationMajDonnees';
 import api from '@/server/infrastructure/api/trpc/api';
 import BandeauInformation from '@/client/components/_commons/BandeauInformation/BandeauInformation';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
@@ -165,25 +166,26 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
           territoireCode={territoireCode}
         />
         {
-          !!alerteMiseAJourIndicateur && 
-            <BandeauInformationMajDonnees
-              bandeauType='WARNING'
-              message="un ou plusieurs indicateurs de cette politique prioritaire nécessitent au moins une mise à jour de leur valeur actuelle par l'équipe projet."
-              titre='Mise à jour des données requises : '
-            />
+          !!alerteMiseAJourIndicateur &&
+          <BandeauInformationMajDonnees
+            bandeauType='WARNING'
+            message="un ou plusieurs indicateurs de cette politique prioritaire nécessitent au moins une mise à jour de leur valeur actuelle par l'équipe projet."
+            titre='Mise à jour des données requises : '
+          />
         }
         {
           mailleSourceDonnees === 'régionale' &&
-          <BandeauInformation 
+          <BandeauInformation
             bandeauType='INFO'
             fermable={false}
           >
-            Données régionales : cette politique prioritaire fait l’objet d’un pilotage régional avec des données régionales. Les valeurs des indicateurs régionaux sont reportés à la maille départementale.
+            Données régionales : cette politique prioritaire fait l’objet d’un pilotage régional avec des données
+            régionales. Les valeurs des indicateurs régionaux sont reportés à la maille départementale.
           </BandeauInformation>
         }
         <div className='fr-container--fluid fr-py-2w fr-px-md-2w'>
           <div
-            className={`grid-template ${territoireSélectionné.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}
+            className={`grid-template ${ territoireSélectionné.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg' }`}
           >
             <section
               className='rubrique'
@@ -204,7 +206,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                         <Infobulle
                           idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'
                         >
-                          {INFOBULLE_CONTENUS.chantier.avancement.aucunIndicateur(territoireSélectionné.maille)}
+                          { INFOBULLE_CONTENUS.chantier.avancement.aucunIndicateur(territoireSélectionné.maille) }
                         </Infobulle>
                       ) : (
                         indicateurPondérations.length === 1
@@ -212,14 +214,14 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                             <Infobulle
                               idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'
                             >
-                              {INFOBULLE_CONTENUS.chantier.avancement.unSeulIndicateur(territoireSélectionné.maille, indicateurPondérations[0])}
+                              { INFOBULLE_CONTENUS.chantier.avancement.unSeulIndicateur(territoireSélectionné.maille, indicateurPondérations[0]) }
                             </Infobulle>
                           )
                           : (
                             <Infobulle
                               idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'
                             >
-                              {INFOBULLE_CONTENUS.chantier.avancement.plusieursIndicateurs(territoireSélectionné.maille, indicateurPondérations)}
+                              { INFOBULLE_CONTENUS.chantier.avancement.plusieursIndicateurs(territoireSélectionné.maille, indicateurPondérations) }
                             </Infobulle>
                           )
                       )
@@ -245,7 +247,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   Météo et synthèse des résultats
                 </Titre>
                 <Infobulle idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'>
-                  {INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats}
+                  { INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats }
                 </Infobulle>
               </TitreInfobulleConteneur>
               <SynthèseDesRésultats
@@ -319,7 +321,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   Objectifs
                 </Titre>
                 <Infobulle idHtml='infobulle-chantier-objectifs'>
-                  {INFOBULLE_CONTENUS.chantier.objectifs}
+                  { INFOBULLE_CONTENUS.chantier.objectifs }
                 </Infobulle>
               </TitreInfobulleConteneur>
               <Objectifs
@@ -349,12 +351,12 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   </Titre>
                   {
                     mailleSourceDonnees === 'régionale' &&
-                      <Alerte
-                        classesSupplementaires='fr-mb-2w'
-                        message='Cette politique prioritaire fait l’objet d’un pilotage régional avec des données régionales. Les valeurs des indicateurs régionaux sont reportés à la maille départementale.'
-                        titre='Données régionales'
-                        type='info'
-                      />
+                    <Alerte
+                      classesSupplementaires='fr-mb-2w'
+                      message='Cette politique prioritaire fait l’objet d’un pilotage régional avec des données régionales. Les valeurs des indicateurs régionaux sont reportés à la maille départementale.'
+                      titre='Données régionales'
+                      type='info'
+                    />
                   }
                   <IndicateursChantier
                     alerteMiseAJourIndicateur={alerteMiseAJourIndicateur}
@@ -389,7 +391,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                       Décisions stratégiques
                     </Titre>
                     <Infobulle idHtml='infobulle-chantier-décisionsStratégiques'>
-                      {INFOBULLE_CONTENUS.chantier.décisionsStratégiques}
+                      { INFOBULLE_CONTENUS.chantier.décisionsStratégiques }
                     </Infobulle>
                   </TitreInfobulleConteneur>
                   <DécisionsStratégiques
@@ -425,12 +427,12 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
               </TitreInfobulleConteneur>
               {
                 mailleSourceDonnees === 'régionale' &&
-                  <Alerte
-                    classesSupplementaires='fr-mb-2w'
-                    message='Commentaires facultatifs mais souhaités pour apporter un éclairage départemental au pilotage régional.'
-                    titre='Données régionales'
-                    type='info'
-                  />
+                <Alerte
+                  classesSupplementaires='fr-mb-2w'
+                  message='Commentaires facultatifs mais souhaités pour apporter un éclairage départemental au pilotage régional.'
+                  titre='Données régionales'
+                  type='info'
+                />
               }
               <Commentaires
                 commentaires={commentaires[chantier.id]}
