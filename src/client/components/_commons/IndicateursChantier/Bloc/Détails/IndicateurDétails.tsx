@@ -1,6 +1,5 @@
 import { FunctionComponent, useState } from 'react';
 import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
-import Link from 'next/link';
 import IndicateurÉvolution from '@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurÉvolution';
 import Titre from '@/components/_commons/Titre/Titre';
 import CartographieAvancement
@@ -25,7 +24,6 @@ import {
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
-import IcôneEmail from '@/components/_commons/IcôneEmail/IcôneEmail';
 import { useIndicateurDétails } from './useIndicateurDétails';
 
 interface IndicateurDétailsProps {
@@ -81,10 +79,9 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   const nomRepartitionGeographiqueEtEvolution = 'Répartition géographique et évolution';
   const nomSousIndicateurs = 'Sous indicateurs';
 
-  const libelleResponsablesDonnees = indicateur.responsablesDonneesMails.length > 0 ? 
-    indicateur.responsablesDonneesMails.join(', ') :
-    mailsDirecteursProjets.join(', ');
-  const objectMail = `PILOTE - Indicateur ${indicateur.nom} (${indicateur.id})`;
+  const responsablesDonnees = indicateur.responsablesDonneesMails.length > 0 ? 
+    indicateur.responsablesDonneesMails :
+    mailsDirecteursProjets;
 
   const { codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
 
@@ -120,30 +117,15 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       description={indicateur.description}
                       indicateurEstAjour={indicateurEstAjour}
                       indicateurEstApplicable={détailsIndicateurs[indicateur.id][codeInsee]?.est_applicable}
+                      indicateurId={indicateur.id}
+                      indicateurNom={indicateur.nom}
                       modeDeCalcul={indicateur.modeDeCalcul}
                       periodicite={indicateur.periodicite}
+                      responsablesMails={responsablesDonnees}
                       source={indicateur.source}
                     />
                   ) : null
                 }
-                <div className='fr-grid-row fr-mt-2w fr-ml-7w'>
-                  <div className='fr-col-lg-7 fr-col-12 '>
-                    <p className='fr-text fr-text--xs fr-mb-0'>
-                      Contactez le responsable des données de la politique prioritaire pour obtenir plus d’informations ou lui rapporter toute erreur ou anomalie concernant cet indicateur : définition de l’indicateur, données source, méthode de calcul, mise à jour, etc. :
-                    </p>
-                  </div>
-                  <div className='fr-col flex align-end justify-end'>
-                    <IcôneEmail className='fr-mr-1v fr-text-title--blue-france fr-mt-2w fr-mt-lg-0' />
-                    <Link
-                      className='fr-link'
-                      href={`mailto:${libelleResponsablesDonnees}?subject=${objectMail}`}
-                      title={`Contacter ${indicateur.responsablesDonneesMails.join(', ')}`}
-                    >  
-                      Poser une question sur cet indicateur
-                    </Link> 
-                  </div>
-                </div>
-
               </div>
             </div>
           </div>
