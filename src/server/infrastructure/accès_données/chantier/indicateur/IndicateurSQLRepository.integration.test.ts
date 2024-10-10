@@ -498,19 +498,19 @@ describe('IndicateurSQLRepository', () => {
         avecÉvolutionValeurActuelle([
           {
             date: '2023-10-01',
-            vaca: 1,
+            valeur: 1,
           },
           {
             date: '2023-06-01',
-            vaca: 1,
+            valeur: 1,
           },
           {
             date: '2024-01-01',
-            vaca: 1,
+            valeur: 1,
           },
           {
             date: '2022-06-01',
-            vaca: 1,
+            valeur: 1,
           },
         ]).
         build();

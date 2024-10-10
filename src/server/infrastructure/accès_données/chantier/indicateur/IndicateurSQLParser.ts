@@ -21,14 +21,7 @@ function créerDonnéesTerritoires(territoires: PrismaTerritoire[], indicateurRo
       dateValeurActuelle: indicateurRow?.date_valeur_actuelle?.toLocaleString() ?? null,
       dateValeurCibleAnnuelle: IntermediaireEstAnnéeEnCours ?  indicateurRow?.objectif_date_valeur_cible_intermediaire?.toLocaleString() ?? null : null,
       historiquesValeurs: indicateurRow ? 
-        (indicateurRow.evolution_valeur_actuelle as unknown as historique_valeurs[]).
-          map(historique => {
-            return {
-              date: historique.date,
-              valeur: historique.vaca,
-            };
-          }).
-          sort((a, b) => comparerDates(a.date, b.date)) : 
+        (indicateurRow.evolution_valeur_actuelle as unknown as historique_valeurs[]).sort((a, b) => comparerDates(a.date, b.date)) : 
         [],
       valeurCible: indicateurRow?.objectif_valeur_cible ?? null,
       valeurInitiale: indicateurRow?.valeur_initiale ?? null,

@@ -25,7 +25,7 @@ import { comparerDates } from '@/client/utils/date/date';
 
 export interface historique_valeurs {
   date: string
-  vaca: number
+  valeur: number
 }
 
 class ErreurIndicateurNonTrouvé extends Error {
@@ -77,14 +77,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         codeInsee: indic.code_insee,
         valeurInitiale: indic.valeur_initiale,
         dateValeurInitiale: formatDate(indic.date_valeur_initiale),
-        historiquesValeurs: (indic.evolution_valeur_actuelle as unknown as historique_valeurs[]).
-          map(historique => {
-            return {
-              date: historique.date,
-              valeur: historique.vaca,
-            };
-          }).
-          sort((a, b) => comparerDates(a.date, b.date)),
+        historiquesValeurs: (indic.evolution_valeur_actuelle as unknown as historique_valeurs[]).sort((a, b) => comparerDates(a.date, b.date)),
         valeurActuelle: indic.valeur_actuelle,
         dateValeurActuelle: formatDate(indic.date_valeur_actuelle),
         valeurCible: indic.objectif_valeur_cible,
