@@ -20,6 +20,7 @@ function créerDonnéesTerritoires(territoires: PrismaTerritoire[], indicateurRo
       dateValeurInitiale: indicateurRow?.date_valeur_initiale?.toLocaleString() ?? null,
       dateValeurActuelle: indicateurRow?.date_valeur_actuelle?.toLocaleString() ?? null,
       dateValeurCibleAnnuelle: IntermediaireEstAnnéeEnCours ?  indicateurRow?.objectif_date_valeur_cible_intermediaire?.toLocaleString() ?? null : null,
+      // TODO(Tristan-10/10/2024) : Trouver une moyen de se débarasser du as unknown
       historiquesValeurs: indicateurRow ? 
         (indicateurRow.evolution_valeur_actuelle as unknown as historique_valeurs[]).sort((a, b) => comparerDates(a.date, b.date)) : 
         [],
