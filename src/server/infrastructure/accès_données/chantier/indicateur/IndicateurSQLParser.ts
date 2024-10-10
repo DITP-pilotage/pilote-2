@@ -5,6 +5,7 @@ import {
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { comparerDates } from '@/client/utils/date/date';
+import { historique_valeurs } from './IndicateurSQLRepository';
 
 function créerDonnéesTerritoires(territoires: PrismaTerritoire[], indicateurRows: PrismaIndicateur[]) {
   let donnéesTerritoires: DétailsIndicateurTerritoire = {};
@@ -19,15 +20,16 @@ function créerDonnéesTerritoires(territoires: PrismaTerritoire[], indicateurRo
       dateValeurInitiale: indicateurRow?.date_valeur_initiale?.toLocaleString() ?? null,
       dateValeurActuelle: indicateurRow?.date_valeur_actuelle?.toLocaleString() ?? null,
       dateValeurCibleAnnuelle: IntermediaireEstAnnéeEnCours ?  indicateurRow?.objectif_date_valeur_cible_intermediaire?.toLocaleString() ?? null : null,
-      historiquesValeurs: indicateurRow?.evolution_valeur_actuelle ? 
-        indicateurRow.evolution_date_valeur_actuelle.
-          map( (date, index) => {
+      historiquesValeurs: indicateurRow ? 
+        (indicateurRow.evolution_valeur_actuelle as unknown as historique_valeurs[]).
+          map(historique => {
             return {
-              date: date.toLocaleString(),
-              valeur: indicateurRow.evolution_valeur_actuelle[index],
+              date: historique.date,
+              valeur: historique.vaca,
             };
           }).
-          sort((a, b) => comparerDates(a.date, b.date)) : [],
+          sort((a, b) => comparerDates(a.date, b.date)) : 
+        [],
       valeurCible: indicateurRow?.objectif_valeur_cible ?? null,
       valeurInitiale: indicateurRow?.valeur_initiale ?? null,
       valeurActuelle: indicateurRow?.valeur_actuelle ?? null,

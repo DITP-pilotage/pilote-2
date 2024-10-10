@@ -1,4 +1,4 @@
-import { indicateur } from '@prisma/client';
+import { indicateur, Prisma } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import IndicateurBuilder from '@/server/domain/indicateur/Indicateur.builder';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
@@ -44,9 +44,7 @@ export default class IndicateurRowBuilder {
 
   private _maille: indicateur['maille'];
 
-  private _évolutionValeurActuelle: indicateur['evolution_valeur_actuelle'];
-
-  private _évolutionDateValeurActuelle: indicateur['evolution_date_valeur_actuelle'];
+  private _évolutionValeurActuelle: Prisma.JsonValue | null;
 
   private _description: indicateur['description'];
 
@@ -130,8 +128,7 @@ export default class IndicateurRowBuilder {
     this._territoireNom = générerPeutÊtreNull(0.2, faker.address.state());
     this._codeInsee = faker.helpers.arrayElement(codesInsee);
     this._maille = maille;
-    this._évolutionValeurActuelle = détailsIndicateurGénéré.historiquesValeurs.map(historique => historique.valeur);
-    this._évolutionDateValeurActuelle = détailsIndicateurGénéré.historiquesValeurs.map(historique => new Date(historique.date));
+    this._évolutionValeurActuelle = [] as Prisma.JsonValue;
     this._description = indicateurGénéré.description;
     this._source = indicateurGénéré.source;
     this._modeDeCalcul = indicateurGénéré.modeDeCalcul;
@@ -243,11 +240,6 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
-  avecÉvolutionDateValeurActuelle(évolutionDateValeurActuelle: indicateur['evolution_date_valeur_actuelle']): IndicateurRowBuilder {
-    this._évolutionDateValeurActuelle = évolutionDateValeurActuelle;
-    return this;
-  }
-
   avecDescription(description: indicateur['description']): IndicateurRowBuilder {
     this._description = description;
     return this;
@@ -328,7 +320,6 @@ export default class IndicateurRowBuilder {
       code_insee: this._codeInsee,
       maille: this._maille,
       evolution_valeur_actuelle: this._évolutionValeurActuelle,
-      evolution_date_valeur_actuelle: this._évolutionDateValeurActuelle,
       description: this._description,
       source: this._source,
       mode_de_calcul: this._modeDeCalcul,

@@ -61,6 +61,7 @@ describe('IndicateurSQLRepository', () => {
           .build(),
       ];
 
+      // @ts-expect-error Attention ici erreur de typage prisma pour la colonne de type Json --> Non bloquant pour les tests
       await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
@@ -100,9 +101,7 @@ describe('IndicateurSQLRepository', () => {
           .avecChantierId('CH-001')
           .avecMaille('DEPT')
           .avecCodeInsee('02')
-          .avecÉvolutionValeurActuelle( [1, 4, 6])
           .avecDateValeurInitiale(new Date('2021-01-01'))
-          .avecÉvolutionDateValeurActuelle([new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')])
           .avecValeurInitiale(1001)
           .avecValeurCible(1790)
           .avecValeurActuelle(1500)
@@ -122,9 +121,7 @@ describe('IndicateurSQLRepository', () => {
           .avecChantierId('CH-001')
           .avecMaille('DEPT')
           .avecCodeInsee('03')
-          .avecÉvolutionValeurActuelle( [1, 4, 6])
           .avecDateValeurInitiale(new Date('2021-01-01'))
-          .avecÉvolutionDateValeurActuelle([new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')])
           .avecValeurInitiale(1001)
           .avecValeurActuelle(1503)
           .avecDateValeurActuelle(new Date('2023-03-01'))
@@ -140,6 +137,7 @@ describe('IndicateurSQLRepository', () => {
           .build(),
       ];
 
+      // @ts-expect-error Attention ici erreur de typage prisma pour la colonne de type Json --> Non bloquant pour les tests
       await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
@@ -153,8 +151,7 @@ describe('IndicateurSQLRepository', () => {
               codeInsee: '02',
               valeurInitiale: 1001,
               dateValeurInitiale: '2021-01-01T00:00:00.000Z',
-              valeurs: [1, 4, 6],
-              dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
+              historiquesValeurs: [],
               valeurCible: 1790,
               dateValeurCible: '2026-05-01T00:00:00.000Z',
               dateValeurActuelle: '2023-03-01T00:00:00.000Z',
@@ -180,8 +177,7 @@ describe('IndicateurSQLRepository', () => {
               codeInsee: '03',
               valeurInitiale: 1001,
               dateValeurInitiale: '2021-01-01T00:00:00.000Z',
-              valeurs: [1, 4, 6],
-              dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
+              historiquesValeurs: [],
               valeurCible: 1790,
               dateValeurCible: '2026-05-01T00:00:00.000Z',
               dateValeurActuelle: '2023-03-01T00:00:00.000Z',
@@ -231,9 +227,7 @@ describe('IndicateurSQLRepository', () => {
           .avecChantierId('CH-001')
           .avecMaille('DEPT')
           .avecCodeInsee('01')
-          .avecÉvolutionValeurActuelle( [1, 2, 3])
           .avecDateValeurInitiale(new Date('2021-01-01'))
-          .avecÉvolutionDateValeurActuelle([new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')])
           .avecValeurInitiale(1000)
           .avecValeurCible(1789)
           .avecDateValeurActuelle(new Date('2023-03-01'))
@@ -256,9 +250,7 @@ describe('IndicateurSQLRepository', () => {
           .avecChantierId('CH-001')
           .avecMaille('DEPT')
           .avecCodeInsee('02')
-          .avecÉvolutionValeurActuelle( [1, 4, 6])
           .avecDateValeurInitiale(new Date('2021-01-01'))
-          .avecÉvolutionDateValeurActuelle([new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')])
           .avecValeurInitiale(1001)
           .avecValeurCible(1790)
           .avecDateValeurCible(new Date('2026-05-01'))
@@ -281,10 +273,8 @@ describe('IndicateurSQLRepository', () => {
           .avecChantierId('CH-001')
           .avecMaille('DEPT')
           .avecCodeInsee('03')
-          .avecÉvolutionValeurActuelle( [1, 4, 6])
           .avecDateValeurInitiale(new Date('2021-01-01'))
           .avecProchaineDateValeurActuelle(new Date('2025-05-01'))
-          .avecÉvolutionDateValeurActuelle([new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')])
           .avecValeurInitiale(1001)
           .avecValeurCible(1790)
           .avecDateValeurCible(new Date('2026-05-01'))
@@ -302,6 +292,7 @@ describe('IndicateurSQLRepository', () => {
           .build(),
       ];
 
+      // @ts-expect-error Attention ici erreur de typage prisma pour la colonne de type Json --> Non bloquant pour les tests
       await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
@@ -315,8 +306,7 @@ describe('IndicateurSQLRepository', () => {
               codeInsee: '01',
               valeurInitiale: 1000,
               dateValeurInitiale: '2021-01-01T00:00:00.000Z',
-              valeurs: [1, 2, 3],
-              dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
+              historiquesValeurs: [],
               valeurCible: 1789,
               dateValeurCible: '2026-05-01T00:00:00.000Z',
               dateValeurActuelle: '2023-03-01T00:00:00.000Z',
@@ -344,8 +334,7 @@ describe('IndicateurSQLRepository', () => {
               codeInsee: '02',
               valeurInitiale: 1001,
               dateValeurInitiale: '2021-01-01T00:00:00.000Z',
-              valeurs: [1, 4, 6],
-              dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
+              historiquesValeurs: [],
               valeurCible: 1790,
               dateValeurCible: '2026-05-01T00:00:00.000Z',
               prochaineDateValeurActuelle: '2025-05-01T00:00:00.000Z',
@@ -371,8 +360,7 @@ describe('IndicateurSQLRepository', () => {
               codeInsee: '03',
               valeurInitiale: 1001,
               dateValeurInitiale: '2021-01-01T00:00:00.000Z',
-              valeurs: [1, 4, 6],
-              dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
+              historiquesValeurs: [],
               valeurCible: 1790,
               dateValeurCible: '2026-05-01T00:00:00.000Z',
               valeurCibleAnnuelle: null,
@@ -420,9 +408,7 @@ describe('IndicateurSQLRepository', () => {
           .avecChantierId('CH-002')
           .avecMaille('DEPT')
           .avecCodeInsee('02')
-          .avecÉvolutionValeurActuelle( [1, 4, 6])
           .avecDateValeurInitiale(new Date('2021-01-01'))
-          .avecÉvolutionDateValeurActuelle([new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')])
           .avecProchaineDateValeurActuelle(new Date('2025-05-01'))
           .avecValeurInitiale(1001)
           .avecValeurCible(1790)
@@ -440,9 +426,7 @@ describe('IndicateurSQLRepository', () => {
           .avecChantierId('CH-002')
           .avecMaille('REG')
           .avecCodeInsee('02')
-          .avecÉvolutionValeurActuelle( [1, 4, 6])
           .avecDateValeurInitiale(new Date('2021-01-01'))
-          .avecÉvolutionDateValeurActuelle([new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')])
           .avecValeurInitiale(1001)
           .avecValeurCible(1790)
           .avecDateValeurCible(new Date('2026-05-01'))
@@ -461,6 +445,7 @@ describe('IndicateurSQLRepository', () => {
           .build(),
       ];
 
+      // @ts-expect-error Attention ici erreur de typage prisma pour la colonne de type Json --> Non bloquant pour les tests
       await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
@@ -474,8 +459,7 @@ describe('IndicateurSQLRepository', () => {
               codeInsee: '02',
               valeurInitiale: 1001,
               dateValeurInitiale: '2021-01-01T00:00:00.000Z',
-              valeurs: [1, 4, 6],
-              dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
+              historiquesValeurs: [],
               valeurCible: 1790,
               dateValeurCible: '2026-05-01T00:00:00.000Z',
               valeurActuelle: 1500,
@@ -500,6 +484,65 @@ describe('IndicateurSQLRepository', () => {
           },
         },
       );
+    });
+
+    test('Récupère les valeurs historiques dans l\'ordre chronologique', async () => {
+      // GIVEN
+      const repository = new IndicateurSQLRepository(prisma);
+
+      const indicateurEvolution = new IndicateurSQLRowBuilder().
+        avecId('IND-001').
+        avecChantierId('CH-002').
+        avecMaille('DEPT').
+        avecCodeInsee('01').
+        avecÉvolutionValeurActuelle([
+          {
+            date: '2023-10-01',
+            vaca: 1,
+          },
+          {
+            date: '2023-06-01',
+            vaca: 1,
+          },
+          {
+            date: '2024-01-01',
+            vaca: 1,
+          },
+          {
+            date: '2022-06-01',
+            vaca: 1,
+          },
+        ]).
+        build();
+
+      // @ts-expect-error Attention ici erreur de typage prisma pour la colonne de type Json --> Non bloquant pour les tests
+      await prisma.indicateur.create({ data: indicateurEvolution });
+
+      // WHEN
+      const result = await repository.récupererDétailsParChantierIdEtTerritoire('CH-002', ['DEPT-01']);
+      // THEN
+      expect(result['IND-001']['01']).toEqual(expect.objectContaining(
+        {
+          historiquesValeurs: [
+            {
+              date: '2022-06-01',
+              valeur: 1,
+            },
+            {
+              date: '2023-06-01',
+              valeur: 1,
+            },
+            {
+              date: '2023-10-01',
+              valeur: 1,
+            },
+            {
+              date: '2024-01-01',
+              valeur: 1,
+            },
+          ],
+        },
+      ));
     });
   });
 
@@ -533,6 +576,7 @@ describe('IndicateurSQLRepository', () => {
       });
       await prisma.indicateur.createMany({
         data:[
+          // @ts-expect-error Attention ici erreur de typage prisma pour la colonne de type Json --> Non bloquant pour les tests
           new IndicateurSQLRowBuilder()
             .avecChantierId('CH-001')
             .avecId('IND-001')
@@ -541,6 +585,7 @@ describe('IndicateurSQLRepository', () => {
             .avecCodeInsee('FR')
             .avecEstApplicable(true)
             .build(),
+          // @ts-expect-error Attention ici erreur de typage prisma pour la colonne de type Json --> Non bloquant pour les tests
           new IndicateurSQLRowBuilder()
             .avecChantierId('CH-001')
             .avecId('IND-001')
@@ -549,6 +594,7 @@ describe('IndicateurSQLRepository', () => {
             .avecCodeInsee('01')
             .avecEstApplicable(true)
             .build(),
+          // @ts-expect-error Attention ici erreur de typage prisma pour la colonne de type Json --> Non bloquant pour les tests
           new IndicateurSQLRowBuilder()
             .avecChantierId('CH-002')
             .avecId('IND-002')
@@ -557,6 +603,7 @@ describe('IndicateurSQLRepository', () => {
             .avecCodeInsee('FR')
             .avecEstApplicable(true)
             .build(),
+          // @ts-expect-error Attention ici erreur de typage prisma pour la colonne de type Json --> Non bloquant pour les tests
           new IndicateurSQLRowBuilder()
             .avecChantierId('CH-003') // Ne doit pas être sélectionné
             .avecId('IND-003')
@@ -600,6 +647,7 @@ describe('IndicateurSQLRepository', () => {
       });
       await prisma.indicateur.createMany({
         data:[
+          // @ts-expect-error Attention ici erreur de typage prisma pour la colonne de type Json --> Non bloquant pour les tests
           new IndicateurSQLRowBuilder()
             .avecChantierId('CH-001')
             .avecId('IND-001')
@@ -612,6 +660,7 @@ describe('IndicateurSQLRepository', () => {
             .avecTauxAvancementCibleIntermedaire(12)
             .avecEstApplicable(true)
             .build(),
+          // @ts-expect-error Attention ici erreur de typage prisma pour la colonne de type Json --> Non bloquant pour les tests
           new IndicateurSQLRowBuilder()
             .avecChantierId('CH-002')
             .avecId('IND-002')
@@ -677,6 +726,7 @@ describe('IndicateurSQLRepository', () => {
       });
       await prisma.indicateur.createMany({
         data:[
+          // @ts-expect-error Attention ici erreur de typage prisma pour la colonne de type Json --> Non bloquant pour les tests
           new IndicateurSQLRowBuilder()
             .avecChantierId('CH-001')
             .avecId('IND-001')
@@ -685,6 +735,7 @@ describe('IndicateurSQLRepository', () => {
             .avecCodeInsee('FR')
             .avecEstApplicable(true)
             .build(),
+          // @ts-expect-error Attention ici erreur de typage prisma pour la colonne de type Json --> Non bloquant pour les tests
           new IndicateurSQLRowBuilder()
             .avecChantierId('CH-002')
             .avecId('IND-002')
@@ -728,9 +779,7 @@ describe('IndicateurSQLRepository', () => {
           .avecChantierId('CH-001')
           .avecMaille('DEPT')
           .avecCodeInsee('01')
-          .avecÉvolutionValeurActuelle( [1, 2, 3])
           .avecDateValeurInitiale(new Date('2021-01-01'))
-          .avecÉvolutionDateValeurActuelle([new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')])
           .avecValeurInitiale(1000)
           .avecValeurCible(1789)
           .avecDateValeurActuelle(new Date('2023-03-01'))
@@ -752,6 +801,7 @@ describe('IndicateurSQLRepository', () => {
           .build(),
       ];
 
+      // @ts-expect-error Attention ici erreur de typage prisma pour la colonne de type Json --> Non bloquant pour les tests
       await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
@@ -765,8 +815,7 @@ describe('IndicateurSQLRepository', () => {
               codeInsee: '01',
               valeurInitiale: 1000,
               dateValeurInitiale: '2021-01-01T00:00:00.000Z',
-              valeurs: [1, 2, 3],
-              dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
+              historiquesValeurs: [],
               valeurCible: 1789,
               dateValeurCible: '2026-05-01T00:00:00.000Z',
               dateValeurActuelle: '2023-03-01T00:00:00.000Z',
@@ -802,9 +851,7 @@ describe('IndicateurSQLRepository', () => {
           .avecChantierId('CH-001')
           .avecMaille('DEPT')
           .avecCodeInsee('01')
-          .avecÉvolutionValeurActuelle( [1, 2, 3])
           .avecDateValeurInitiale(new Date('2021-01-01'))
-          .avecÉvolutionDateValeurActuelle([new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')])
           .avecValeurInitiale(1000)
           .avecValeurCible(1789)
           .avecDateValeurActuelle(new Date('2023-03-01'))
@@ -826,6 +873,7 @@ describe('IndicateurSQLRepository', () => {
           .build(),
       ];
 
+      // @ts-expect-error Attention ici erreur de typage prisma pour la colonne de type Json --> Non bloquant pour les tests
       await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
@@ -839,8 +887,7 @@ describe('IndicateurSQLRepository', () => {
               codeInsee: '01',
               valeurInitiale: 1000,
               dateValeurInitiale: '2021-01-01T00:00:00.000Z',
-              valeurs: [1, 2, 3],
-              dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
+              historiquesValeurs: [],
               valeurCible: 1789,
               dateValeurCible: '2026-05-01T00:00:00.000Z',
               dateValeurActuelle: '2023-03-01T00:00:00.000Z',

@@ -23,6 +23,11 @@ import {
 import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { comparerDates } from '@/client/utils/date/date';
 
+export interface historique_valeurs {
+  date: string
+  vaca: number
+}
+
 class ErreurIndicateurNonTrouvé extends Error {
   constructor(idIndicateur: string) {
     super(`Erreur: indicateur '${idIndicateur}' non trouvé.`);
@@ -72,11 +77,11 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         codeInsee: indic.code_insee,
         valeurInitiale: indic.valeur_initiale,
         dateValeurInitiale: formatDate(indic.date_valeur_initiale),
-        historiquesValeurs: indic.evolution_date_valeur_actuelle.
-          map((date, index) => {
+        historiquesValeurs: (indic.evolution_valeur_actuelle as unknown as historique_valeurs[]).
+          map(historique => {
             return {
-              date: date.toISOString(),
-              valeur: indic.evolution_valeur_actuelle[index],
+              date: historique.date,
+              valeur: historique.vaca,
             };
           }).
           sort((a, b) => comparerDates(a.date, b.date)),
