@@ -6,6 +6,6 @@
 
 */
 -- AlterTable
-ALTER TABLE "public"."indicateur" DROP COLUMN "evolution_date_valeur_actuelle",
-DROP COLUMN "evolution_valeur_actuelle",
+ALTER TABLE "public"."indicateur" DROP COLUMN "evolution_date_valeur_actuelle" CASCADE,
+DROP COLUMN "evolution_valeur_actuelle" CASCADE,
 ADD COLUMN     "evolution_valeur_actuelle" JSONB;
