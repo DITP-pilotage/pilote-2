@@ -22,7 +22,7 @@ export const propositionValeurActuelleRouter = créerRouteurTRPC({
         idAuteurModification: idAuteur,
         indicId: input.indicId,
         territoireCode: input.territoireCode,
-        valeurActuelleProposee: +input.valeurActuelle,
+        valeurActuelleProposee: +(input.valeurActuelle.replace(',', '.')),
         motifProposition: input.motifProposition,
         sourceDonneeEtMethodeCalcul: input.sourceDonneeEtMethodeCalcul,
         statut: StatutProposition.EN_COURS,
