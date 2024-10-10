@@ -25,7 +25,7 @@ models:
       - name: ministeres
         description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
       - name: directions_administration_centrale
-        description: "source de données à date du 06/07/2023 : ppg_metadata.m_porteurs"
+        description: "Acronymes des directions porteuses de ce chantier. Si pas d'acronyme pour une direction, on retourne '-' pour ne pas planter la webapp."
       - name: directeurs_projet
         description: "source de données à date du 06/07/2023 : ppg_metadata.m_porteurs"
       - name: meteo
