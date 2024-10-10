@@ -97,7 +97,6 @@ export default class TerritoireBuilder {
       codeInsee: this._codeInsee,
       maille: this._maille,
       codeParent: this._codeParent,
-      tracéSvg: '',
     };
   }
 }
