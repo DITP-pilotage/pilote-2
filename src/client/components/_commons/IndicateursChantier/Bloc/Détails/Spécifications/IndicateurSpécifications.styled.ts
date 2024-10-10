@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
 
-const IndicateurSpécificationsStyled = styled.div`
+const IndicateurPoserUneQuestionStyled = styled.div`
   position: relative;  
-  background-color: var(--grey-975-125);
   
   .icone-information{
     position: absolute;
@@ -19,6 +18,10 @@ const IndicateurSpécificationsStyled = styled.div`
   p{
     margin-bottom: 0;
   }
+
+  .bloc-question {
+    background-color: var(--grey-975-125);
+  }
 `;
 
-export default IndicateurSpécificationsStyled;
+export default IndicateurPoserUneQuestionStyled;
