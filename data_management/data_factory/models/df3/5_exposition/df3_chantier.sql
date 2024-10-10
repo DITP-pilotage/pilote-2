@@ -81,7 +81,8 @@ ch_unnest_porteurs_dac_pnames AS (
     SELECT
         a.*,
         mp.directeur,
-        mp.acronyme
+        -- Affichage de '-' si pas d'acronyme de porteur
+        coalesce(mp.acronyme, '-') as acronyme
     FROM ch_unnest_porteurs_dac AS a
     LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} AS mp ON a.pi = mp.id
 ),
