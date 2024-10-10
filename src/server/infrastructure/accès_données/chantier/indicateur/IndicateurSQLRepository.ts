@@ -21,6 +21,12 @@ import {
   parseDétailsIndicateurNew,
 } from '@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLParser';
 import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { comparerDates } from '@/client/utils/date/date';
+
+export interface historique_valeurs {
+  date: string
+  valeur: number
+}
 
 class ErreurIndicateurNonTrouvé extends Error {
   constructor(idIndicateur: string) {
@@ -71,8 +77,8 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         codeInsee: indic.code_insee,
         valeurInitiale: indic.valeur_initiale,
         dateValeurInitiale: formatDate(indic.date_valeur_initiale),
-        valeurs: indic.evolution_valeur_actuelle ?? [],
-        dateValeurs: indic.evolution_date_valeur_actuelle.map((date) => date.toISOString()) ?? [],
+        // TODO(Tristan-10/10/2024) : Trouver une moyen de se débarasser du as unknown
+        historiquesValeurs: (indic.evolution_valeur_actuelle as unknown as historique_valeurs[]).sort((a, b) => comparerDates(a.date, b.date)),
         valeurActuelle: indic.valeur_actuelle,
         dateValeurActuelle: formatDate(indic.date_valeur_actuelle),
         valeurCible: indic.objectif_valeur_cible,
