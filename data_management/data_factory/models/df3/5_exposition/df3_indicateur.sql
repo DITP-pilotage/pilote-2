@@ -23,9 +23,9 @@ list_indic_terr as (
 get_evol_vaca as (
 	select 
 	indic_id, zone_id,
-	json_agg(json_build_object(
+	jsonb_agg(jsonb_build_object(
 		'date',metric_date,
-		'valeur',vaca))::jsonb as evolution_valeur_actuelle
+		'valeur',vaca)) as evolution_valeur_actuelle
 	from {{ ref('compute_ta_indic') }}
 	where vaca is not null
 	group by indic_id, zone_id
