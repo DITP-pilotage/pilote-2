@@ -40,42 +40,42 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
 
   return (
     <IndicateurSpécificationsStyled>
-      <p className='fr-text--md fr-text--bold sous-titre'>
+      <p className='fr-text--md sous-titre'>
         Description de l'indicateur
       </p>
-      <p className='fr-text--xs'>
+      <p className='fr-text--sm'>
         {description ?? libelléValeurNull}
       </p>
-      <p className='fr-text--md fr-text--bold sous-titre fr-mt-2w'>
+      <p className='fr-text--md sous-titre fr-mt-2w'>
         Méthode de calcul
       </p>
-      <p className='fr-text--xs'>
+      <p className='fr-text--sm'>
         {modeDeCalcul ?? libelléValeurNull}
       </p>
-      <p className='fr-text--md fr-text--bold sous-titre fr-mt-2w'>
+      <p className='fr-text--md sous-titre fr-mt-2w'>
         Source
       </p>
-      <p className='fr-text--xs'>
+      <p className='fr-text--sm'>
         {source ?? libelléValeurNull}
       </p>
-      <p className='fr-text--md fr-text--bold sous-titre fr-mt-2w'>
+      <p className='fr-text--md sous-titre fr-mt-2w'>
         Mise à jour
       </p>
       {
         !!!indicateurEstApplicable ? (
-          <p className='fr-text--xs'>
+          <p className='fr-text--sm'>
             L'indicateur n’est pas applicable sur le territoire.
           </p>            
         ) : !!dateProchaineDateMaj ? (
           <>
-            <p className='fr-text--xs'>
+            <p className='fr-text--sm'>
               La période de mise à jour pour cet indicateur est :
               {' '}
               <span className='fr-text--bold'>
                 {periodicite ?? libelléValeurNull}
               </span>
             </p>
-            <p className='fr-text--xs'>
+            <p className='fr-text--sm'>
               La date de valeur actuelle de cet indicateur est :
               {' '}
               <span className='fr-text--bold'>
@@ -88,7 +88,7 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
                 {`${dateProchaineDateValeurActuelle ?? libelléValeurNull}.`}
               </span>
             </p>
-            <p className='fr-text--xs'>
+            <p className='fr-text--sm'>
               La mise à disposition d’une nouvelle valeur pour cet indicateur nécessite un délai de disponibilité de
               {' '}
               <span className='fr-text--bold'>
@@ -106,35 +106,45 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
           <>
             {
               !!dateValeurActuelle ? (
-                <p className='fr-text--xs'>
+                <p className='fr-text--sm'>
                   La période de mise à jour pour cet indicateur et/ou le délai de disponibilité ne sont pas renseignés.
                 </p>
               ) : (
-                <p className='fr-text--xs'>
+                <p className='fr-text--sm'>
                   La valeur actuelle de cet indicateur est non renseignée.
                 </p>                
               )
             }
-            <p className='fr-text--xs'>
+            <p className='fr-text--sm'>
               De ce fait, la mise à jour de la prochaine valeur actuelle ne peut être calculée.
             </p>
           </>
         )
       }
-      <div className='fr-grid-row fr-mt-2w fr-ml-7w bloc-question'>
-        <div className='fr-col-lg-7 fr-col-12 '>
-          <p className='fr-text fr-text--xs fr-mb-0'>
-            Contactez le responsable des données de la politique prioritaire pour obtenir plus d’informations ou lui rapporter toute erreur ou anomalie concernant cet indicateur : définition de l’indicateur, données source, méthode de calcul, mise à jour, etc. :
-          </p>
+      <div className='fr-mt-3w fr-ml-7w fr-p-2w bloc-question'>
+        <div className='flex'>
+          <span
+            aria-hidden='true'
+            className='fr-icon-question-fill icone-question fr-mr-2w'
+          />
+          <div>
+            <p className='fr-text--md sous-titre'>
+              Poser une question sur cet indicateur
+            </p>
+            <p className='fr-text fr-text--sm fr-mb-0'>
+              Des questions ou des remarques sur cet indicateur (définition de l’indicateur, données source, méthode de calcul, mise à jour, etc.) ? Contactez le responsable des données de la politique prioritaire désigné par le directeur de projet pour obtenir plus d’informations.
+            </p>
+          </div>
+
         </div>
-        <div className='fr-col flex align-end justify-end'>
+        <div className='flex align-end justify-end'>
           <IcôneEmail className='fr-mr-1v fr-text-title--blue-france fr-mt-2w fr-mt-lg-0' />
           <Link
             className='fr-link'
             href={`mailto:${responsablesMails.join(', ')}?subject=${objectMail}`}
             title={`Contacter ${responsablesMails.join(', ')}`}
           >  
-            Poser une question sur cet indicateur
+            Contacter
           </Link> 
         </div>
       </div>

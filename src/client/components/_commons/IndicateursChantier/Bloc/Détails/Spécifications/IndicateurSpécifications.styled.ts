@@ -1,11 +1,9 @@
 import styled from '@emotion/styled';
 
-const IndicateurPoserUneQuestionStyled = styled.div`
+const IndicateurSpécificationsStyled = styled.div`
   position: relative;  
   
-  .icone-information{
-    position: absolute;
-    left: 3.25rem;
+  .icone-question{
     color: var(--text-title-blue-france);
   }
   
@@ -24,4 +22,4 @@ const IndicateurPoserUneQuestionStyled = styled.div`
   }
 `;
 
-export default IndicateurPoserUneQuestionStyled;
+export default IndicateurSpécificationsStyled;
