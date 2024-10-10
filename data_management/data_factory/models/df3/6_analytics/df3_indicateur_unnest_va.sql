@@ -14,7 +14,7 @@ SELECT
     id,
     territoire_code,
     --evolution_valeur_actuelle_unnest,
-    (evolution_valeur_actuelle_unnest ->> 'vaca')
+    (evolution_valeur_actuelle_unnest ->> 'valeur')
     ::numeric AS va_unnest_computed,
     (evolution_valeur_actuelle_unnest ->> 'date')
     ::date AS va_date_unnest_computed

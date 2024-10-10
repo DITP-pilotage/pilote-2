@@ -19,13 +19,13 @@ list_indic_terr as (
 --	where not coalesce (mi.indic_hidden_pilote, false)
 ),
 -- Reformattage (pour chaque indicateur-zone):
---	- Retourne au format [{date: "YYYY-MM-DD", vaca: 12.34}]
+--	- Retourne au format [{date: "YYYY-MM-DD", valeur: 12.34}]
 get_evol_vaca as (
 	select 
 	indic_id, zone_id,
 	json_agg(json_build_object(
 		'date',metric_date,
-		'vaca',vaca))::jsonb as evolution_valeur_actuelle
+		'valeur',vaca))::jsonb as evolution_valeur_actuelle
 	from {{ ref('compute_ta_indic') }}
 	where vaca is not null
 	group by indic_id, zone_id
@@ -50,7 +50,10 @@ get_evol_vaca as (
 	terr.code_insee,
 	mz.zone_type as maille,
 	terr.nom as territoire_nom,
-	b.evolution_valeur_actuelle,
+	coalesce(
+		b.evolution_valeur_actuelle,
+		'[]'::jsonb	-- Return [] if the join gives NULL
+	) as evolution_valeur_actuelle,
 	mi.indic_descr as description,
 	mi.indic_source as "source",
 	mi.indic_methode_calcul as mode_de_calcul,
