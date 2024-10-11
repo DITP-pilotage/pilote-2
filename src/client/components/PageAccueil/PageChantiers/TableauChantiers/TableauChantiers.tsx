@@ -2,7 +2,7 @@ import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css';
 import { parseAsBoolean, useQueryState } from 'nuqs';
-import { FunctionComponent, useEffect } from 'react';
+import { FunctionComponent } from 'react';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
 import useTableauChantiers from '@/components/PageAccueil/PageChantiers/TableauChantiers/useTableauChantiers';
@@ -25,7 +25,6 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
   const {
     tableau,
     changementDeLaRechercheCallback,
-    changementDePageCallback,
     valeurDeLaRecherche,
     sélectionColonneÀTrier,
     changementSélectionColonneÀTrierCallback,
@@ -33,10 +32,6 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
     changementDirectionDeTriCallback,
     estVueTuile,
   } = useTableauChantiers(données, ministèresDisponibles);
-
-  useEffect(() => {
-    tableau.setPageSize(50);
-  }, [tableau]);
 
   const [estGroupe, setEstGroupe] = useQueryState('groupeParMinistere', parseAsBoolean.withDefault(false).withOptions({
     clearOnDefault: true,
@@ -103,9 +98,8 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
               />
             </table>
             <TableauPagination
-              changementDePageCallback={changementDePageCallback}
               nombreDePages={tableau.getPageCount()}
-              numéroDePageInitiale={1}
+              tableau={tableau}
             />
           </>}
     </TableauChantiersStyled>
