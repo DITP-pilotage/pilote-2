@@ -424,15 +424,6 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   }
                 </Infobulle>
               </TitreInfobulleConteneur>
-              {
-                mailleSourceDonnees === 'régionale' &&
-                <Alerte
-                  classesSupplementaires='fr-mb-2w'
-                  message='Commentaires facultatifs mais souhaités pour apporter un éclairage départemental au pilotage régional.'
-                  titre='Données régionales'
-                  type='info'
-                />
-              }
               <Commentaires
                 commentaires={commentaires[chantier.id]}
                 maille={territoireSélectionné.maille}
