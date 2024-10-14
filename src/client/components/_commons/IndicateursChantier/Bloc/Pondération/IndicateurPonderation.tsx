@@ -9,8 +9,8 @@ interface IndicateurPondérationProps {
 
 const adjectifÀPartirDeLaMaille: Record<MailleTerritoireSelectionne, string> = {
   NAT: 'national',
-  DEPT: 'régional',
-  REG: 'départemental',
+  DEPT: 'départemental',
+  REG: 'régional',
 };
 
 const IndicateurPonderation: FunctionComponent<IndicateurPondérationProps> = ({ indicateurPondération, mailleSélectionnée }) => {

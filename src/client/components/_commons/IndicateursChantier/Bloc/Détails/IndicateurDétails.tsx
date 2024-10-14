@@ -42,6 +42,7 @@ interface IndicateurDétailsProps {
   territoiresCompares: string[]
   mailleSelectionnee: MailleInterne
   indicateurEstAjour: boolean
+  mailsDirecteursProjets: string[]
 }
 
 const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
@@ -60,6 +61,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   territoiresCompares,
   mailleSelectionnee,
   indicateurEstAjour,
+  mailsDirecteursProjets,
 }) => {
   const [futOuvert, setFutOuvert] = useState(false);
 
@@ -76,6 +78,10 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   const nomDefinitionDeLindicateur = estSousIndicateur ? 'Description du sous-indicateur et calendrier de mise à jour' : 'Description de l\'indicateur et calendrier de mise à jour';
   const nomRepartitionGeographiqueEtEvolution = 'Répartition géographique et évolution';
   const nomSousIndicateurs = 'Sous indicateurs';
+
+  const responsablesDonnees = indicateur.responsablesDonneesMails.length > 0 ? 
+    indicateur.responsablesDonneesMails :
+    mailsDirecteursProjets;
 
   const { codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
 
@@ -111,8 +117,11 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       description={indicateur.description}
                       indicateurEstAjour={indicateurEstAjour}
                       indicateurEstApplicable={détailsIndicateurs[indicateur.id][codeInsee]?.est_applicable}
+                      indicateurId={indicateur.id}
+                      indicateurNom={indicateur.nom}
                       modeDeCalcul={indicateur.modeDeCalcul}
                       periodicite={indicateur.periodicite}
+                      responsablesMails={responsablesDonnees}
                       source={indicateur.source}
                     />
                   ) : null
@@ -224,6 +233,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                 estInteractif
                 listeSousIndicateurs={listeSousIndicateurs}
                 mailleSelectionnee={mailleSelectionnee}
+                mailsDirecteursProjets={mailsDirecteursProjets}
                 territoireCode={territoireCode}
                 territoiresCompares={territoiresCompares}
               />

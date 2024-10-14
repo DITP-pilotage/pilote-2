@@ -2,11 +2,8 @@ import styled from '@emotion/styled';
 
 const IndicateurSpécificationsStyled = styled.div`
   position: relative;  
-  background-color: var(--grey-975-125);
   
-  .icone-information{
-    position: absolute;
-    left: 3.25rem;
+  .icone-question{
     color: var(--text-title-blue-france);
   }
   
@@ -18,6 +15,10 @@ const IndicateurSpécificationsStyled = styled.div`
   
   p{
     margin-bottom: 0;
+  }
+
+  .bloc-question {
+    background-color: var(--grey-975-125);
   }
 `;
 

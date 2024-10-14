@@ -3,14 +3,14 @@ import { FunctionComponent } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import {
   SynthèseDesRésultatsProps,
-} from '@/components/_commons/SynthèseDesRésultatsNew/SynthèseDesRésultats.interface';
-import SynthèseDesRésultatsStyled from '@/components/_commons/SynthèseDesRésultatsNew/SynthèseDesRésultats.styled';
+} from '@/components/_commons/SynthèseDesRésultatsChantier/SynthèseDesRésultats.interface';
+import SynthèseDesRésultatsStyled from '@/components/_commons/SynthèseDesRésultatsChantier/SynthèseDesRésultats.styled';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import MétéoBadge from '@/components/_commons/Météo/Badge/MétéoBadge';
-import SynthèseDesRésultatsHistorique from '@/components/_commons/SynthèseDesRésultatsNew/Historique/Historique';
-import { useSynthèseDesRésultats } from '@/components/_commons/SynthèseDesRésultatsNew/useSynthèseDesRésultats';
+import SynthèseDesRésultatsHistorique from '@/components/_commons/SynthèseDesRésultatsChantier/Historique/Historique';
+import { useSynthèseDesRésultats } from '@/components/_commons/SynthèseDesRésultatsChantier/useSynthèseDesRésultats';
 import Alerte from '@/components/_commons/Alerte/Alerte';
-import SynthèseDesRésultatsAffichage from '@/components/_commons/SynthèseDesRésultatsNew/Affichage/Affichage';
+import SynthèseDesRésultatsAffichage from '@/components/_commons/SynthèseDesRésultatsChantier/Affichage/Affichage';
 import SynthèseDesRésultatsFormulaire from './Formulaire/Formulaire';
 
 const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = ({
@@ -79,7 +79,12 @@ const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = (
                     <div className='fr-grid-row fr-grid-row--right'>
                       <div className='fr-col-12 actions fr-mt-1w'>
                         {
-                          !!synthèseDesRésultatsInitiale && <SynthèseDesRésultatsHistorique réformeId={réformeId} />
+                          !!synthèseDesRésultatsInitiale ? (
+                            <SynthèseDesRésultatsHistorique
+                              réformeId={réformeId}
+                              territoireCode={territoireCode}
+                            />
+                          ) : null
                         }
                         {
                           modeÉcriture ? (
@@ -92,7 +97,7 @@ const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = (
                                 aria-hidden='true'
                                 className='fr-icon-edit-line fr-mr-1w'
                               />
-                              {}
+                              { }
                               Modifier
                             </button>
                           ) : null

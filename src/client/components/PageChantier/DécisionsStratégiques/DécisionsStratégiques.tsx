@@ -1,5 +1,5 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
-import Publication from '@/components/_commons/PublicationNew/Publication';
+import Publication from '@/components/_commons/PublicationChantier/Publication';
 import { libellésTypesDécisionStratégique } from '@/client/constants/libellésDécisionStratégique';
 import DécisionsStratégiquesProps from './DécisionsStratégiques.interface';
 

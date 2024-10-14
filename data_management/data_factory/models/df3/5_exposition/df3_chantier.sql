@@ -80,18 +80,19 @@ ch_unnest_porteurs_dac AS (
 ch_unnest_porteurs_dac_pnames AS (
     SELECT
         a.*,
-        mp.porteur_directeur,
-        mp.porteur_short
+        mp.directeur,
+        -- Affichage de '-' si pas d'acronyme de porteur
+        coalesce(mp.acronyme, '-') as acronyme
     FROM ch_unnest_porteurs_dac AS a
-    LEFT JOIN {{ ref('metadata_porteurs') }} AS mp ON a.pi = mp.porteur_id
+    LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} AS mp ON a.pi = mp.id
 ),
 
 ch_unnest_porteurs_dac_pnames_agg AS (
     SELECT
         chantier_id,
         ARRAY_AGG(pi) AS p_id,
-        ARRAY_AGG(porteur_directeur) AS p_directeurs,
-        ARRAY_AGG(porteur_short) AS p_shorts
+        ARRAY_AGG(directeur) AS p_directeurs,
+        ARRAY_AGG(acronyme) AS p_acronymes
     FROM ch_unnest_porteurs_dac_pnames
     GROUP BY chantier_id
 ),
@@ -154,7 +155,7 @@ SELECT
         p_names.p_directeurs, STRING_TO_ARRAY('', '')
     ) AS directeurs_administration_centrale,
     COALESCE(
-        p_names.p_shorts, STRING_TO_ARRAY('', '')
+        p_names.p_acronymes, STRING_TO_ARRAY('', '')
     ) AS directions_administration_centrale,
     COALESCE(mc.statut::type_statut, 'PUBLIE') AS statut,
     COALESCE(chantier_za.zone_est_applicable, TRUE)

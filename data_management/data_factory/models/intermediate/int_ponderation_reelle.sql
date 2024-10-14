@@ -29,7 +29,7 @@ case
 end as poids_zone_appl,
 a.*
 from get_poids_declaree a 
-left join marts.int_indicateurs_zones_applicables b on b.indic_id=a.indic_id and b.zone_id=a.zone_id)
+left join {{ ref('int_indicateurs_zones_applicables') }} b on b.indic_id=a.indic_id and b.zone_id=a.zone_id)
 
 , get_total_poids_appl_ch as (
 select

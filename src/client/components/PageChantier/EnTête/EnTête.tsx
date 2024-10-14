@@ -9,6 +9,7 @@ import { ResponsableRapportDetailleContrat } from '@/server/chantiers/app/contra
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { getFiltresActifs } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
+import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import PageChantierEnTêteStyled from './EnTête.styled';
 import ResponsableChantierEnTete from './EnTêteResponsables';
 
@@ -29,7 +30,7 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
   afficheLeBoutonFicheConducteur = false,
   territoireCode,
 }) => {
-
+  const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
   const listeNomsResponsablesMinistèrePorteur: string[] = [responsables?.porteur?.nom].filter(Boolean);
   const listeNomsResponsablesAutresMinistèresCoPorteurs = (responsables?.coporteurs || []).map(coporteur => coporteur.nom).filter(Boolean);
   const listeNomsDirecteursAdministrationCentrale = (responsables?.directeursAdminCentrale || []).map(directeurAdminCentrale => (`${directeurAdminCentrale.nom}  (${directeurAdminCentrale.direction})`)).filter(Boolean);
@@ -66,7 +67,7 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
       />
       <div className='flex flex-direction-row justify-start align-center fr-mt-md-2w format-mobile'>
         {
-          afficheLeBoutonMiseAJourDonnee ? (
+          afficheLeBoutonMiseAJourDonnee && !estVueMobile ? (
             <Link
               className='fr-btn fr-btn--primary fr-mr-md-2w format-mobile-bouton'
               href={`/chantier/${chantier.id}/indicateurs`}
@@ -77,14 +78,14 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
           ) : null
         }
         {
-          afficheLeBoutonImpression ? (
+          afficheLeBoutonImpression && !estVueMobile ? (
             <div className='format-mobile-bouton-impression'>
               <BoutonImpression />
             </div>
           ) : null
         }
         {
-          afficheLeBoutonFicheConducteur ? (
+          afficheLeBoutonFicheConducteur && !estVueMobile ? (
             <Link
               className='fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left fr-px-1w fr-px-md-2w fr-ml-md-2w format-mobile-bouton'
               href={`/chantier/${chantier.id}/fiche-conducteur`}
