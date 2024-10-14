@@ -4,7 +4,7 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css';
 import { parseAsBoolean, useQueryState } from 'nuqs';
 import { FunctionComponent } from 'react';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
-import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
+import TableauPagination from '@/components/_commons/TableauNew/Pagination/TableauPagination';
 import useTableauChantiers from '@/components/PageAccueil/PageChantiers/TableauChantiers/useTableauChantiers';
 import TableauChantiersActionsDeTri
   from '@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
@@ -16,6 +16,7 @@ import TableauChantiersStyled from './TableauChantiers.styled';
 import TableauChantiersContenu from './Contenu/TableauChantiersContenu';
 
 const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
+  nombreTotalChantiersAvecAlertes,
   données,
   ministèresDisponibles,
   territoireCode,
@@ -31,7 +32,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
     directionDeTri,
     changementDirectionDeTriCallback,
     estVueTuile,
-  } = useTableauChantiers(données, ministèresDisponibles);
+  } = useTableauChantiers(données, ministèresDisponibles, nombreTotalChantiersAvecAlertes);
 
   const [estGroupe, setEstGroupe] = useQueryState('groupeParMinistere', parseAsBoolean.withDefault(false).withOptions({
     clearOnDefault: true,
@@ -98,6 +99,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
               />
             </table>
             <TableauPagination
+              initialPageSize={50}
               nombreDePages={tableau.getPageCount()}
               tableau={tableau}
             />
