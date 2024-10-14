@@ -192,7 +192,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
 
   async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, maille: 'DEPT' | 'REG', filtres: FiltreQueryParams): Promise<ChantierPrisma[]> {
     const whereOptions: Prisma.chantierWhereInput = {};
-
+    //modifier pour n'afficher que 
     if (filtres.perimetres?.length > 0) {
       whereOptions.perimetre_ids = {
         hasSome: filtres.perimetres,
@@ -237,6 +237,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
         ],
         ...whereOptions,
       },
+      //orderBy 
     };
 
     if (!profilsTerritoriaux.includes(profil)) {
