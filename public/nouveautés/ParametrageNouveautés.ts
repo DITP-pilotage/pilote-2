@@ -21,7 +21,7 @@ export const ParametrageNouveautés: Nouveautés[] = [
     version: 'Version 2.5.7',
     date: '8 octobre 2024',
     contenu: [
-      'Page d’accueil : dans la liste des chantiers, ajout d\'un tri en fonction de la tendance et de l\'écart à la médiane nationale',
+      'Page d’accueil : dans la liste des chantiers, ajout d\'un tri en fonction de la tendance et de l\'écart à la médiane de la maille concernée',
       'Export des données en format csv : ajout du taux d\'avancement annuel dans l\'export des chantiers',
       'Page d’accueil : ajout d\'un bouton permettant de contacter l\'équipe PILOTE à partir de la nouvelle adresse pilote.ditp@modernisation.gouv.fr. L\'adresse support.ditp@modernisation.gouv.fr sera progressivement remplacée par cette adresse et les messages seront automatiquement transmis sur la nouvelle adresse.',
       'Interface de gestion des indicateurs (réservée aux profils DITP) : amélioration de l\'interface (ajout de filtres, modification des champs, etc.)',
