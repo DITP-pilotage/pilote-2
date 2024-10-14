@@ -179,8 +179,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
             bandeauType='INFO'
             fermable={false}
           >
-            Données régionales : cette politique prioritaire fait l’objet d’un pilotage régional avec des données
-            régionales. Les valeurs des indicateurs régionaux sont reportés à la maille départementale.
+            En l’absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le département.
           </BandeauInformation>
         }
         <div className='fr-container--fluid fr-py-2w fr-px-md-2w'>
@@ -353,7 +352,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     mailleSourceDonnees === 'régionale' &&
                     <Alerte
                       classesSupplementaires='fr-mb-2w'
-                      message='Cette politique prioritaire fait l’objet d’un pilotage régional avec des données régionales. Les valeurs des indicateurs régionaux sont reportés à la maille départementale.'
+                      message='En l’absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le département.'
                       titre='Données régionales'
                       type='info'
                     />
