@@ -23,14 +23,15 @@ donnees AS
 export_va AS 
 (
   SELECT
-    id AS indic_id,
-    zone_id AS enforce_zone_id,
-    zone_type AS "maille",
-	-- Unnest de l'array des valeurs des VA
-    UNNEST(evolution_date_valeur_actuelle) AS metric_enforce_date,
-	-- Unnest de l'array des dates des VA
-    UNNEST(evolution_valeur_actuelle) AS indic_va 
-  FROM donnees 
+    a.id AS indic_id,
+    a.zone_id AS enforce_zone_id,
+    a.zone_type AS "maille",
+	-- Unnest des valeurs des VA
+    va_date_unnest_computed AS metric_enforce_date,
+	-- Unnest des dates des VA
+    va_unnest_computed AS indic_va 
+  FROM donnees a
+  left join {{ ref('df3_indicateur_unnest_va') }} b on a.id=b.id and a.territoire_code=b.territoire_code
   -- On ne garde que les lignes où une VA est dispo
   WHERE evolution_valeur_actuelle IS NOT NULL 
 ),

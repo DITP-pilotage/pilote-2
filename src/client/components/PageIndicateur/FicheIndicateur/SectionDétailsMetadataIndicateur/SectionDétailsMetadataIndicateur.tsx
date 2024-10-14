@@ -23,6 +23,7 @@ import {
 import {
   MetadataIndicateurSelecteurAvecRecherche,
 } from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteurAvecRecherche';
+import useDétailsMetadataParametrePonderationIndicateurForm from '@/client/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametrePonderationIndicateur/useDétailsMetadataParametrePonderationndicateurForm';
 
 const SectionDétailsMetadataIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat
@@ -47,6 +48,8 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
     valeur: chantier.id,
     libellé: `${chantier.id} - ${chantier.nom}`,
   })), { valeur: '_', libellé: 'Aucun chantier selectionné' }];
+
+  const { setValuePonderation } = useDétailsMetadataParametrePonderationIndicateurForm();
 
   function displayParentIndic(indicParentIndic: string | null) {
     return indicParentIndic ? `${indicParentIndic} - ${metadataIndicateurs.find(metadataIndicateur => metadataIndicateur.indicId === indicParentIndic)?.indicNom}` : 'Pas d\'indicateur parent';
@@ -162,11 +165,17 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       <div className='fr-grid-row fr-grid-row--gutters'>
         <div className='fr-col-12 fr-col-md-6'>
           <MetadataIndicateurInterrupteur
+            auChangement={valeur => {
+              setValue('indicTerritorialise', valeur);
+              if (!valeur) {
+                setValuePonderation('poidsPourcentDept', '0');
+                setValuePonderation('poidsPourcentReg', '0');
+              }
+            }}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName='indicTerritorialise'
             informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_territorialise}
             isChecked={getValues('indicTerritorialise')}
-            register={register('indicTerritorialise')}
             valeurAffiché={indicateur.indicTerritorialise ? 'Oui' : 'Non'}
           />
         </div>

@@ -7,11 +7,16 @@ export type MetadataParametrageParametrePonderationIndicateurForm = {
 };
 
 export default function useDétailsMetadataParametrePonderationIndicateurForm() {
-  const { register, getValues, formState: { errors } } = useFormContext<MetadataParametrageParametrePonderationIndicateurForm>();
+  const { register, getValues, formState: { errors }, setValue } = useFormContext<MetadataParametrageParametrePonderationIndicateurForm>();
+
+  const setValuePonderation = (variable: keyof MetadataParametrageParametrePonderationIndicateurForm, valeur: string) => {
+    setValue(variable, valeur);
+  };
 
   return {
     register,
     getValues,
     errors,
+    setValuePonderation,
   };
 }

@@ -17,7 +17,6 @@ export class TerritoireSQLRepository implements TerritoireRepository {
       nom: territoire.nom,
       nomAffiché: territoire.nom_affiche,
       codeInsee: territoire.code_insee,
-      tracéSvg: territoire.trace_svg,
       codeParent: territoire.code_parent,
       maille: NOMS_MAILLES[territoire.maille],
     }; 

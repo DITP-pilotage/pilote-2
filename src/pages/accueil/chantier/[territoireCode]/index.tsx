@@ -8,7 +8,7 @@ import PageChantiers from '@/components/PageAccueil/PageChantiers/PageChantiers'
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import SélecteursMaillesEtTerritoires
-  from '@/components/_commons/SélecteursMaillesEtTerritoiresNew/SélecteursMaillesEtTerritoires';
+  from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires';
 import Titre from '@/components/_commons/Titre/Titre';
 import Filtres from '@/components/PageAccueil/FiltresNew/Filtres';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
@@ -65,7 +65,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     return {
       redirect: {
         statusCode: 302,
-        destination: `/accueil/chantier/${query.maille === 'départementale' ? territoireDept : query.maille === 'départementale' ? territoireReg : session.habilitations.lecture.territoires[0]}`,
+        destination: `/accueil/chantier/${ query.maille === 'départementale' ? territoireDept : query.maille === 'départementale' ? territoireReg : session.habilitations.lecture.territoires[0] }`,
       },
     };
   }

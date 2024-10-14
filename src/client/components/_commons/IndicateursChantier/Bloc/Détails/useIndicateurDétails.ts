@@ -15,7 +15,7 @@ export const useIndicateurDétails = (indicateurId: Indicateur['id'], futOuvert:
   }
 
   const donnéesCartographieAvancement = objectEntries(detailsIndicateurTerritoire).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.avancement.global, codeInsee: codeInsee, estApplicable: détailsIndicateur.est_applicable }));
-  const donnéesCartographieValeurActuelle = objectEntries(detailsIndicateurTerritoire).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.valeurs[détailsIndicateur.valeurs.length - 1] ?? null, codeInsee: codeInsee, estApplicable: détailsIndicateur.est_applicable }));
+  const donnéesCartographieValeurActuelle = objectEntries(detailsIndicateurTerritoire).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.valeurActuelle ?? null, codeInsee: codeInsee, estApplicable: détailsIndicateur.est_applicable }));
   const donnéesCartographieAvancementTerritorialisées = aDeLaDonnéeTerritoriale(donnéesCartographieAvancement);
   const donnéesCartographieValeurActuelleTerritorialisées = aDeLaDonnéeTerritoriale(donnéesCartographieValeurActuelle);
 

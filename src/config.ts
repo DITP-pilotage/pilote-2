@@ -220,6 +220,11 @@ const config = convict({
       default: false,
       env: 'NEXT_PUBLIC_FF_DOCS_API',
     },
+    PoserUneQuestionIndicateur: {
+      format: Boolean,
+      default: false,
+      env: 'NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR',
+    },
   },
   analytics: {
     matomoURL: {
@@ -243,6 +248,13 @@ const config = convict({
       format: String,
       default: 'secret',
       env: 'TOKEN_API_SECRET',
+    },
+  },
+  cartographie: {
+    svgPath: {
+      format: String,
+      default: 'cartographie-france.svg',
+      env: 'CARTOGRAPHIE_SVG_PATH',
     },
   },
   schemaValidataUrl: {

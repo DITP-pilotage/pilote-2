@@ -7,7 +7,7 @@ import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilita
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
-const PROFIL_AUTORISE_A_POSSEDER_UN_TOKEN_API = new Set([ProfilEnum.DITP_ADMIN, ProfilEnum.DIR_PROJET, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.SECRETARIAT_GENERAL]);
+const PROFIL_AUTORISE_A_POSSEDER_UN_TOKEN_API = new Set([ProfilEnum.DITP_ADMIN, ProfilEnum.DIR_PROJET, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.SECRETARIAT_GENERAL, ProfilEnum.COORDINATEUR_REGION, ProfilEnum.COORDINATEUR_DEPARTEMENT]);
 
 export default function usePageUtilisateur(utilisateur: Utilisateur) {
 

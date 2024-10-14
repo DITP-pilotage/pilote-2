@@ -9,9 +9,11 @@ export const MetadataIndicateurSelecteur: FunctionComponent<{
   estEnCoursDeModification: boolean,
   erreurMessage?: string,
   listeValeur: { valeur: string; libellé: string }[],
-  register: UseFormRegisterReturn<string>,
+  register?: UseFormRegisterReturn<string>,
   values: string | boolean,
   valeurAffiché: string,
+  estDesactive?: boolean,
+  valeurModifiéeCallback?: (valeur: string) => void,
 }> = ({
   informationMetadataIndicateur,
   estEnCoursDeModification,
@@ -20,7 +22,10 @@ export const MetadataIndicateurSelecteur: FunctionComponent<{
   register,
   values,
   valeurAffiché,
+  estDesactive,
+  valeurModifiéeCallback,
 }) => {
+
   return (
     <MetadataIndicateurChamp
       estEnCoursDeModification={estEnCoursDeModification}
@@ -29,9 +34,11 @@ export const MetadataIndicateurSelecteur: FunctionComponent<{
     >
       <Sélecteur
         errorMessage={erreurMessage}
+        estDesactive={estDesactive}
         htmlName='indicParentCh'
         options={listeValeur}
         register={register}
+        valeurModifiéeCallback={valeurModifiéeCallback}
         valeurSélectionnée={`${values || '_'}`}
       />
     </MetadataIndicateurChamp>

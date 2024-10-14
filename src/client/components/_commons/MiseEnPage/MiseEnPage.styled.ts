@@ -30,10 +30,6 @@ const MiseEnPageStyled = styled.div`
     flex-grow: 1;
     background:  var(--background-alt-blue-france);
 
-      @media screen and (max-width: ${breakpointL}) {
-        background: #e3e3fd;
-      }
-
     h1 {
       color: var(--text-title-blue-france);
     }

@@ -19,7 +19,7 @@ function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageParamet
 }
 
 export default function useDétailsMetadataParametreIndicateurNationaleForm() {
-  const { register, watch, getValues, formState: { errors } } = useFormContext<MetadataParametrageParametreIndicateurNationaleForm>();
+  const { register, watch, getValues, setValue, formState: { errors } } = useFormContext<MetadataParametrageParametreIndicateurNationaleForm>();
 
   activerWatchSurSelecteur(watch);
 
@@ -27,5 +27,6 @@ export default function useDétailsMetadataParametreIndicateurNationaleForm() {
     register,
     getValues,
     errors,
+    setValue,
   };
 }

@@ -7,11 +7,12 @@ import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé
 import RapportDétailléChantierProps from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier.interface';
 import Responsables from '@/components/PageChantier/ResponsablesChantier/ResponsablesChantier';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
-import IndicateursRapportDetaille from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/IndicateursRapportDetaille';
+import IndicateursRapportDetaille
+  from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/IndicateursRapportDetaille';
 import DécisionsStratégiques from '@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques';
 import Commentaires from '@/components/_commons/CommentairesNew/Commentaires';
 import Titre from '@/components/_commons/Titre/Titre';
-import Publication from '@/components/_commons/PublicationNew/Publication';
+import Publication from '@/components/_commons/PublicationChantier/Publication';
 import { typesObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
 import {
   typesCommentaireMailleNationale,
@@ -51,7 +52,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
     >
       <div className='fr-mt-2w'>
         <div
-          className={`grid-template ${territoireSélectionné!.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}
+          className={`grid-template ${ territoireSélectionné!.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg' }`}
         >
           {
             avancements !== null &&
@@ -59,7 +60,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
               <section className='rubrique avancement impression-section'>
                 <Link
                   className='fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-up-line fr-btn--icon-left fr-text--sm'
-                  href={`#${htmlId.listeDesChantiers()}`}
+                  href={`#${ htmlId.listeDesChantiers() }`}
                   title='Revenir à la liste des chantiers'
                 >
                   Haut de page
@@ -69,7 +70,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
                     baliseHtml='h1'
                     className='fr-h2 fr-mb-1w'
                   >
-                    {chantier.nom}
+                    { chantier.nom }
                   </Titre>
                 </Encart>
                 <Titre

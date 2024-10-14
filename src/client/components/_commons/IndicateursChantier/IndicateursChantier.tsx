@@ -26,6 +26,7 @@ interface IndicateursProps {
   territoiresCompares: string[]
   mailleSelectionnee: MailleInterne
   alerteMiseAJourIndicateur: boolean
+  mailsDirecteursProjets: string[]
 }
 
 const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
@@ -40,6 +41,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   territoiresCompares,
   mailleSelectionnee,
   alerteMiseAJourIndicateur,
+  mailsDirecteursProjets,
 }) => {
 
   const { codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
@@ -100,6 +102,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                           key={indicateur.id}
                           listeSousIndicateurs={listeSousIndicateurs}
                           mailleSelectionnee={mailleSelectionnee}
+                          mailsDirecteursProjets={mailsDirecteursProjets}
                           territoireCode={territoireCode}
                           territoiresCompares={territoiresCompares}
                         />

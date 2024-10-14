@@ -4,6 +4,8 @@ import {
   DétailsIndicateurTerritoire,
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { comparerDates } from '@/client/utils/date/date';
+import { historique_valeurs } from './IndicateurSQLRepository';
 
 function créerDonnéesTerritoires(territoires: PrismaTerritoire[], indicateurRows: PrismaIndicateur[]) {
   let donnéesTerritoires: DétailsIndicateurTerritoire = {};
@@ -18,8 +20,10 @@ function créerDonnéesTerritoires(territoires: PrismaTerritoire[], indicateurRo
       dateValeurInitiale: indicateurRow?.date_valeur_initiale?.toLocaleString() ?? null,
       dateValeurActuelle: indicateurRow?.date_valeur_actuelle?.toLocaleString() ?? null,
       dateValeurCibleAnnuelle: IntermediaireEstAnnéeEnCours ?  indicateurRow?.objectif_date_valeur_cible_intermediaire?.toLocaleString() ?? null : null,
-      dateValeurs: indicateurRow?.evolution_date_valeur_actuelle ? indicateurRow?.evolution_date_valeur_actuelle.map(date => ( date.toLocaleString())) : [],
-      valeurs: indicateurRow?.evolution_valeur_actuelle ?? [],
+      // TODO(Tristan-10/10/2024) : Trouver une moyen de se débarasser du as unknown
+      historiquesValeurs: indicateurRow ? 
+        (indicateurRow.evolution_valeur_actuelle as unknown as historique_valeurs[]).sort((a, b) => comparerDates(a.date, b.date)) : 
+        [],
       valeurCible: indicateurRow?.objectif_valeur_cible ?? null,
       valeurInitiale: indicateurRow?.valeur_initiale ?? null,
       valeurActuelle: indicateurRow?.valeur_actuelle ?? null,

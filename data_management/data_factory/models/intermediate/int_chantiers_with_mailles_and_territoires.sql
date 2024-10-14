@@ -11,7 +11,7 @@ chantiers_territorialises as (
      		ORDER  BY directeur.i
      	) AS directeurs_administration_centrale,
         m_chantiers.ministeres_ids AS ministeres,
-        array(SELECT m_porteurs.nom_court
+        array(SELECT m_porteurs.acronyme
      		FROM   unnest(m_chantiers.directeurs_administration_centrale_ids) WITH ORDINALITY direction(id, i)
      		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = direction.id
      		ORDER  BY direction.i
@@ -43,7 +43,7 @@ chantiers_non_territorialises as (
      		ORDER  BY directeur.i
      	) AS directeurs_administration_centrale,
         m_chantiers.ministeres_ids AS ministeres,
-        array(SELECT m_porteurs.nom_court
+        array(SELECT m_porteurs.acronyme
      		FROM   unnest(m_chantiers.directeurs_administration_centrale_ids) WITH ORDINALITY direction(id, i)
      		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = direction.id
      		ORDER  BY direction.i

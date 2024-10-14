@@ -27,7 +27,6 @@ model territoire {
   nom_affiche String
   maille      Maille
   code_insee  String
-  trace_svg   String
   code_parent String?
   chantier    chantier[]
   indicateur  indicateur[]
@@ -135,8 +134,7 @@ model indicateur {
   territoire_nom                                     String?
   code_insee                                         String
   maille                                             String
-  evolution_valeur_actuelle                          Float[]
-  evolution_date_valeur_actuelle                     DateTime[] @db.Date
+  evolution_valeur_actuelle                          Json?
   description                                        String?
   source                                             String?
   mode_de_calcul                                     String?
@@ -171,6 +169,7 @@ model indicateur {
   motif_proposition                                  String?
   source_donnee_methode_calcul_proposition           String?
   auteur_proposition                                 String?
+  responsables_donnees_mails                         String[]
 
   @@id([id, code_insee, maille])
   @@schema("public")

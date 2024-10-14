@@ -19,4 +19,5 @@ export default interface SélecteurProps<T> {
   libellé?: string,
   texteFantôme?: string,
   register?: UseFormRegisterReturn
+  estDesactive?: boolean
 }
