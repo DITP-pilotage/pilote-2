@@ -220,6 +220,11 @@ const config = convict({
       default: false,
       env: 'NEXT_PUBLIC_FF_DOCS_API',
     },
+    PoserUneQuestionIndicateur: {
+      format: Boolean,
+      default: false,
+      env: 'NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR',
+    },
   },
   analytics: {
     matomoURL: {

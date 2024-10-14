@@ -2,6 +2,7 @@ import { FunctionComponent } from 'react';
 import Link from 'next/dist/client/link';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import IcôneEmail from '@/components/_commons/IcôneEmail/IcôneEmail';
+import api from '@/server/infrastructure/api/trpc/api';
 import IndicateurSpécificationsStyled from './IndicateurSpécifications.styled';
 
 interface IndicateurSpécificationsProps {
@@ -37,6 +38,8 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
 }) => {
   const libelléValeurNull = 'Non renseignée';
   const objectMail = `PILOTE - Indicateur ${indicateurNom} (${indicateurId})`;
+  const { data: variableContenuFFPoserUneQuestion } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR' });
+
 
   return (
     <IndicateurSpécificationsStyled>
@@ -121,33 +124,38 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
           </>
         )
       }
-      <div className='fr-mt-3w fr-ml-7w fr-p-2w bloc-question'>
-        <div className='flex'>
-          <span
-            aria-hidden='true'
-            className='fr-icon-question-fill icone-question fr-mr-2w'
-          />
-          <div>
-            <p className='fr-text--md sous-titre'>
-              Poser une question sur cet indicateur
-            </p>
-            <p className='fr-text fr-text--sm fr-mb-0'>
-              Des questions ou des remarques sur cet indicateur (définition de l’indicateur, données source, méthode de calcul, mise à jour, etc.) ? Contactez le responsable des données de la politique prioritaire désigné par le directeur de projet pour obtenir plus d’informations.
-            </p>
-          </div>
+      {
+        !!variableContenuFFPoserUneQuestion && (
+          <div className='fr-mt-3w fr-ml-7w fr-p-2w bloc-question'>
+            <div className='flex'>
+              <span
+                aria-hidden='true'
+                className='fr-icon-question-fill icone-question fr-mr-2w'
+              />
+              <div>
+                <p className='fr-text--md sous-titre'>
+                  Poser une question sur cet indicateur
+                </p>
+                <p className='fr-text fr-text--sm fr-mb-0'>
+                  Des questions ou des remarques sur cet indicateur (définition de l’indicateur, données source, méthode de calcul, mise à jour, etc.) ? Contactez le responsable des données de la politique prioritaire désigné par le directeur de projet pour obtenir plus d’informations.
+                </p>
+              </div>
 
-        </div>
-        <div className='flex align-end justify-end'>
-          <IcôneEmail className='fr-mr-1v fr-text-title--blue-france fr-mt-2w fr-mt-lg-0' />
-          <Link
-            className='fr-link'
-            href={`mailto:${responsablesMails.join(', ')}?subject=${objectMail}`}
-            title={`Contacter ${responsablesMails.join(', ')}`}
-          >  
-            Contacter
-          </Link> 
-        </div>
-      </div>
+            </div>
+            <div className='flex align-end justify-end'>
+              <IcôneEmail className='fr-mr-1v fr-text-title--blue-france fr-mt-2w fr-mt-lg-0' />
+              <Link
+                className='fr-link'
+                href={`mailto:${responsablesMails.join(', ')}?subject=${objectMail}`}
+                title={`Contacter ${responsablesMails.join(', ')}`}
+              >  
+                Contacter
+              </Link> 
+            </div>
+          </div>
+        )
+      }
+
 
     </IndicateurSpécificationsStyled>
   );
