@@ -39,10 +39,11 @@ import IndexStyled from './index.styled';
 
 interface ChantierAccueil {
   chantiers: ChantierAccueilContrat[]
+  nombreTotalChantiersAvecAlertes: number
   ministères: Ministère[]
-  axes: Axe[],
+  axes: Axe[]
   territoireCode: string
-  mailleSelectionnee: 'départementale' | 'régionale',
+  mailleSelectionnee: 'départementale' | 'régionale'
   filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
@@ -51,6 +52,9 @@ interface ChantierAccueil {
 
 export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ req, res, query }) => {
   const session = await getServerSession(req, res, authOptions);
+  
+  const pageIndex = Number.parseInt(query.pageIndex as string) || 1;
+  const pageSize =  Number.parseInt(query.pageSize as string) || 20;
 
   assert(query.territoireCode, 'Le territoire code est obligatoire pour afficher la page d\'accueil');
   assert(session, 'Vous devez être authentifié pour accéder a cette page');
@@ -142,13 +146,18 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     estApplicable: null,
   }));
 
+  const nombreTotalChantiersAvecAlertes = chantiersAvecAlertes.length;
+
+  const chantiersPaginesAvecAlertes = chantiersAvecAlertes.splice((pageIndex - 1) * pageSize, pageSize);
+
   return {
     props: {
-      chantiers: chantiersAvecAlertes.map(chantier => {
+      chantiers: chantiersPaginesAvecAlertes.map(chantier => {
         // @ts-expect-error
         delete chantier.mailles;
         return chantier;
       }),
+      nombreTotalChantiersAvecAlertes,
       ministères,
       axes,
       territoireCode,
@@ -177,6 +186,7 @@ const PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE = new Set([
 
 const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   chantiers,
+  nombreTotalChantiersAvecAlertes,
   axes,
   ministères,
   territoireCode,
@@ -255,6 +265,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             filtresComptesCalculés={filtresComptesCalculés}
             mailleSelectionnee={mailleSelectionnee}
             ministères={ministères}
+            nombreTotalChantiersAvecAlertes={nombreTotalChantiersAvecAlertes}
             répartitionMétéos={répartitionMétéos}
             territoireCode={territoireCode}
           />

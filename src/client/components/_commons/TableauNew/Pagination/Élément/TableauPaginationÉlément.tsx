@@ -7,6 +7,7 @@ export default function TableauPaginationÉlément({ estLaPageCourante, changeme
         aria-current={estLaPageCourante ? 'page' : undefined}
         className='fr-pagination__link'
         onClick={() => changementDePageCallback(numéroDePage)}
+        title={numéroDePage.toString()}
         type='button'
       >
         {numéroDePage}

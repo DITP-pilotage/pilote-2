@@ -36,7 +36,7 @@ import TableauChantiersTuileMinistère from './Tuile/Ministère/TableauChantiers
 import TableauChantiersTuileMinistèreProps from './Tuile/Ministère/TableauChantiersTuileMinistère.interface';
 
 
-export default function useTableauChantiers(données: TableauChantiersProps['données'], ministèresDisponibles: Ministère[]) {
+export default function useTableauChantiers(données: TableauChantiersProps['données'], ministèresDisponibles: Ministère[], nombreTotalChantiersAvecAlertes: number) {
     
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
   const [tri, setTri] = useState<SortingState>([{ id: 'avancement', desc: false }]);
@@ -282,6 +282,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
     },
     manualPagination: true,
     onPaginationChange: setPagination,
+    pageCount: nombreTotalChantiersAvecAlertes % pagination.pageSize === 0 ? Math.trunc(nombreTotalChantiersAvecAlertes / pagination.pageSize) : Math.trunc(nombreTotalChantiersAvecAlertes / pagination.pageSize) + 1,
     onSortingChange: setTri,
     onGroupingChange: setRegroupement,
     getCoreRowModel: getCoreRowModel(),
@@ -299,10 +300,12 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
   const {
     transformerEnDirectionDeTri,
     transformerEnSortingState,
-  } = useTableauRéformes();
+    changementDePageCallback,
+  } = useTableauRéformes(tableau);
 
   return {
     tableau,
+    changementDePageCallback,
     changementDeLaRechercheCallback,
     valeurDeLaRecherche,
     sélectionColonneÀTrier,

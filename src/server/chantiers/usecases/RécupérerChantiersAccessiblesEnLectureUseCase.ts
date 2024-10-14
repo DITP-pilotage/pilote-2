@@ -51,6 +51,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
     const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
     const filtresPourChantier: FiltreQueryParams = {
+      //ajout du sorting + de la recherche
       perimetres: filtres.perimetres,
       axes: filtres.axes.map(filtre => axes.find(axe => axe.id === filtre)!.nom),
       statut: filtres.statut,
