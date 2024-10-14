@@ -8,6 +8,16 @@ interface Nouveautés {
 
 export const ParametrageNouveautés: Nouveautés[] = [
   {
+    version: 'Version 2.5.8',
+    date: '14 octobre 2024',
+    contenu: [],
+    correctifs: [
+      'Page PPG : correction d\'une erreur qui empechait l\'affichage de la pondération d\'un indicateur à la maille correspondante au niveau régional ou départemental.',
+      'Page PPG : correction d\'une erreur sur les graphiques d\'évolution pour chaque indicateur. Les valeurs des indicateurs pouvaient ne pas apparaître dans l\'ordre chronologique.',
+      'Page PPG : correction d\'une erreur d\'affichage dans les historiques de commentaires. L\'ensemble des commentaires sont à nouveau disponibles.',
+    ],
+  },
+  {
     version: 'Version 2.5.7',
     date: '8 octobre 2024',
     contenu: [
