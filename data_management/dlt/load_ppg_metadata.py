@@ -41,13 +41,13 @@ def load_data() -> None:
         #export_schema_path="dlt/schema/export",
         dataset_name='raw_data', # db schema        
     )
-    load_info = p.run(ppg_metadata_source(github_repo, 'raw_data'), write_disposition='replace', refresh="drop_sources")
+    load_info = p.run(ppg_metadata_source(github_repo, 'raw_data_dlt'), write_disposition='replace', refresh="drop_sources")
     p2 = dlt.pipeline(
         import_schema_path="dlt/schema/import",
         destination=dlt.destinations.postgres(conn_str),
         dataset_name="tmp", # db schema   
     )
-    load_info = p2.run(ppg_metadata_source(github_repo, 'tmp'), write_disposition='replace', refresh="drop_sources")
+    load_info = p2.run(ppg_metadata_source(github_repo, 'tmp_dlt'), write_disposition='replace', refresh="drop_sources")
     github_repo.close()
     print(load_info)
 

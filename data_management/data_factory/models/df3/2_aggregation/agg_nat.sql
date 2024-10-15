@@ -15,13 +15,13 @@ mesure_last_params_nat as (
 ), 
 -- Valeurs NAT saisies directement par l'utilisateur
 mesure_last_params_nat_user as (
-    select a.*, b.zone_type from mesure_last_params_nat a
-    left join {{ source('dlt_load', 'metadata_zones') }} b on a.zone_id=b.zone_id
+    select a.*, b.maille as zone_type from mesure_last_params_nat a
+    left join {{ ref('stg_ppg_metadata__zones') }} b on a.zone_id=b.id
     where 
         ((metric_type='vi' and vi_nat_from='user_input') OR
         (metric_type='va' and va_nat_from='user_input') OR
         (metric_type='vc' and vc_nat_from='user_input')) and
-		zone_type='NAT'
+		b.maille='NAT'
 ),
 
 
