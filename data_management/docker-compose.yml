@@ -39,7 +39,7 @@ services:
       - "${PWD}/input_data:/app/data_management/input_data"
       - "${PWD}/scripts:/app/data_management/scripts"
       - "${PWD}/.dlt:/app/data_management/.dlt:ro"
-      - "${PWD}/dlt:/app/data_management/dlt:ro"
+      - "${PWD}/dlt:/app/data_management/dlt"
       - "${PWD}/edr_target:/app/data_management/edr_target"
       - "${PWD}/../src/database/:/app/src/database:ro"
   
