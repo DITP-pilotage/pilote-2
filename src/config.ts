@@ -254,6 +254,16 @@ const config = convict({
       default: 'secret',
       env: 'TOKEN_API_SECRET',
     },
+    localTokenAPIE2EJohan: {
+      format: String,
+      default: 'toBeDefinedForE2E',
+      env: 'TOKEN_API_E2E_JOHAN',
+    },
+    localTokenAPIE2EEquipeDirProjet: {
+      format: String,
+      default: 'toBeDefinedForE2E',
+      env: 'TOKEN_API_E2E_EQUIPE_DIR_PROJET',
+    },
   },
   cartographie: {
     svgPath: {
