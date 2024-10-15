@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ ref('metadata_zones') }}
+    select * from {{ source('dlt_load', 'metadata_zones') }}
 
 ),
 

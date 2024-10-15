@@ -2,4 +2,4 @@
 
 select 
     "chantier_id","maille","code_insee","date","type","contenu","auteur","meteo","date_meteo"
-from {{ ref('commentaires_py') }}
+from {{ source('dlt_load_tmp', 'commentaires_py') }}

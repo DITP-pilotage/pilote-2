@@ -16,7 +16,7 @@ mesure_last_params_reg as (
 -- Valeurs REG saisies directement par l'utilisateur
 mesure_last_params_reg_user as (
     select a.*, b.zone_type from mesure_last_params_reg a
-    left join {{ ref('metadata_zones') }} b on a.zone_id=b.zone_id
+    left join {{ source('dlt_load', 'metadata_zones') }} b on a.zone_id=b.zone_id
     where 
         ((metric_type='vi' and vi_reg_from='user_input') OR
         (metric_type='va' and va_reg_from='user_input') OR

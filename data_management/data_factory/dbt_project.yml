@@ -61,9 +61,6 @@ models:
       +schema: marts
       +materialized: view
     seeds_:
-      python_load:
-        +schema: tmp
-        +materialized: table
       sql_incremental:
         +materialized: incremental
         utilisateur:

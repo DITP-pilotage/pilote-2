@@ -9,7 +9,7 @@ ta_zone_indic as (
 	taa_courant, tag
 	from {{ ref('compute_ta_indic') }} a
 	left join {{ ref('metadata_indicateurs') }} b on a.indic_id =b.indic_id
-	left join {{ ref('metadata_zones') }} z on a.zone_id=z.zone_id 
+	left join {{ source('dlt_load', 'metadata_zones') }} z on a.zone_id=z.zone_id 
 	order by indic_parent_ch, zone_id, metric_date, indic_id
 ),
 -- Calcul du TA pondéré

@@ -13,8 +13,9 @@ def dl_github_file(github_repo, path):
     return [arrow_table]
 
 @dlt.source()
-def ppg_metadata_source(github_repo, csv_to_load: str = dlt.config.value):
-    for csv_name, csv_path in json.loads(csv_to_load).items():
+def ppg_metadata_source(github_repo, schema, csv_to_load: str = dlt.config.value):
+    print('[dlt] Schema: '+schema)
+    for csv_name, csv_path in json.loads(csv_to_load).get('schema').get(schema).items():
         print('[dlt] Handling resource '+csv_name+'...')
         yield dlt.resource(dl_github_file(github_repo, csv_path), name=csv_name)
 
@@ -34,10 +35,14 @@ def load_data() -> None:
     ])
     p = dlt.pipeline(
         destination=dlt.destinations.postgres(conn_str),
-        dataset_name=dlt.config.get("destination.db_pilote.config").get('target_schema'), # db schema        
+        dataset_name='raw_data', # db schema        
     )
-    load_info = p.run(ppg_metadata_source(github_repo), write_disposition='replace')
-
+    load_info = p.run(ppg_metadata_source(github_repo, 'raw_data'), write_disposition='replace')
+    p2 = dlt.pipeline(
+        destination=dlt.destinations.postgres(conn_str),
+        dataset_name="tmp", # db schema        
+    )
+    load_info = p2.run(ppg_metadata_source(github_repo, 'tmp'), write_disposition='replace')
     github_repo.close()
     print(load_info)
 

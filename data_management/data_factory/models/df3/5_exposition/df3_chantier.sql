@@ -48,7 +48,7 @@ ch_maille_has_ta_pivot_clean AS (
     LEFT JOIN
         {{ source('db_schema_public', 'territoire') }} AS t
         ON a.territoire_code = t.code
-    LEFT JOIN {{ ref('metadata_zones') }} AS z ON t.zone_id = z.zone_id
+    LEFT JOIN {{ source('dlt_load', 'metadata_zones') }} AS z ON t.zone_id = z.zone_id
     GROUP BY a.chantier_id
 ),
 
@@ -188,8 +188,8 @@ LEFT JOIN
 LEFT JOIN
     {{ ref('int_coordinateurs_territoriaux') }} AS coord_territoriaux
     ON t.code = coord_territoriaux.territoire_code
-LEFT JOIN {{ ref('metadata_zones') }} AS z ON t.zone_id = z.zone_id
---LEFT JOIN {{ ref('metadata_porteurs') }} AS po 
+LEFT JOIN {{ source('dlt_load', 'metadata_zones') }} AS z ON t.zone_id = z.zone_id
+--LEFT JOIN {{ source('dlt_load', 'metadata_porteurs') }} AS po 
 --  ON mc."porteur_ids_DAC" = po.porteur_id
 LEFT JOIN
     ch_unnest_porteurs_dac_pnames_agg AS p_names
@@ -199,8 +199,8 @@ LEFT JOIN synthese_triee_par_date_last1 AS sr
         mc.id = sr.chantier_id
         AND z.zone_type = sr.maille
         AND t.code_insee = sr.code_insee
-LEFT JOIN {{ ref('metadata_ppgs') }} AS ppg ON mc.ppg_id = ppg.ppg_id
-LEFT JOIN {{ ref('metadata_axes') }} AS ax ON ppg.ppg_axe = ax.axe_id
+LEFT JOIN {{ source('dlt_load', 'metadata_ppgs') }} AS ppg ON mc.ppg_id = ppg.ppg_id
+LEFT JOIN {{ source('dlt_load', 'metadata_axes') }} AS ax ON ppg.ppg_axe = ax.axe_id
 LEFT JOIN chantier_est_barometre ON mc.id = chantier_est_barometre.chantier_id
 LEFT JOIN ch_maille_has_ta_pivot_clean AS has_ta ON mc.id = has_ta.chantier_id
 LEFT JOIN ch_has_meteo ON mc.id = ch_has_meteo.chantier_id

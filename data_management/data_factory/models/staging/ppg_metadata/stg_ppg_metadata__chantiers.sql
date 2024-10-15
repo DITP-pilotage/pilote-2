@@ -2,7 +2,7 @@ WITH
 
 source AS (
 
-    SELECT * FROM {{ ref('metadata_chantiers') }}
+    SELECT * FROM {{ source('dlt_load', 'metadata_chantiers') }}
 
 ),
 
