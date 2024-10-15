@@ -62,7 +62,7 @@ tables:
         data_type: text
     write_disposition: replace
     resource: metadata_axes
-  metadata_metadata_chantier_meteos:
+  metadata_chantier_meteos:
     columns:
       ch_meteo_id:
         nullable: true
@@ -86,9 +86,15 @@ tables:
       ch_descr:
         nullable: true
         data_type: text
+      ch_code:
+        nullable: true
+        data_type: text
       ch_nom:
         nullable: true
         data_type: text
+      ch_hidden_pilote:
+        nullable: true
+        data_type: bool
       ch_dp:
         nullable: true
         data_type: text
@@ -137,6 +143,12 @@ tables:
       ch_cible_attendue:
         nullable: true
         data_type: bool
+      replicate_val_reg_to:
+        nullable: true
+        data_type: text
+      replicate_val_nat_to:
+        nullable: true
+        data_type: text
     write_disposition: replace
     resource: metadata_chantiers
   metadata_engagement:
@@ -189,12 +201,15 @@ tables:
       per_nom:
         nullable: true
         data_type: text
+      per_picto:
+        nullable: true
+        data_type: text
       per_short:
         nullable: true
         data_type: text
       per_porteur_id:
         nullable: true
-        data_type: double
+        data_type: text
       per_porteur_name_short:
         nullable: true
         data_type: text
@@ -207,7 +222,7 @@ tables:
     columns:
       porteur_id:
         nullable: true
-        data_type: bigint
+        data_type: text
       porteur_short:
         nullable: true
         data_type: text
@@ -219,7 +234,7 @@ tables:
         data_type: text
       porteur_type_id:
         nullable: true
-        data_type: bigint
+        data_type: text
       porteur_type_short:
         nullable: true
         data_type: text
@@ -356,6 +371,9 @@ tables:
       auteur_creation:
         nullable: true
         data_type: text
+      fonction:
+        nullable: true
+        data_type: text
       date_creation:
         nullable: true
         data_type: timestamp
@@ -404,13 +422,13 @@ tables:
         data_type: text
       metric_date:
         nullable: true
-        data_type: date
+        data_type: text
       metric_type:
         nullable: true
         data_type: text
       metric_value:
         nullable: true
-        data_type: bigint
+        data_type: text
       zone_id:
         nullable: true
         data_type: text

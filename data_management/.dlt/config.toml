@@ -14,7 +14,7 @@ repo = "PPG_metadata"
 [sources.load_ppg_metadata.ppg_metadata_source.csv_to_load.schema.raw_data]
 # table_alias = "<path-to-file>"
 metadata_axes = "views/axe/view_meta_axe.csv"
-metadata_metadata_chantier_meteos = "models/chantier/ref_chantier_meteo.csv"
+metadata_chantier_meteos = "models/chantier/ref_chantier_meteo.csv"
 metadata_chantiers = "views/chantier/view_meta_chantier.csv"
 metadata_engagement = "models/chantier/ref_chantier_engagement.csv"
 metadata_indicateur_types = "models/indicateur/ref_indic_type.csv"
