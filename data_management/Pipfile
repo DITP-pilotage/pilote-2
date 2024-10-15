@@ -4,16 +4,17 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-dbt-core = "==1.5.10"
-dbt-duckdb = "==1.5.2"
-dbt-fal = "==1.5.4"
-dbt-postgres = "==1.5.10"
-markdown2 = "==2.4.13"
-python-dotenv = "==1.0.1"
-requests = "==2.31.0"
-pyarrow = ">=14.0.1" # https://github.com/DITP-pilotage/pilote-2/security/dependabot/38
-elementary-data = {extras = ["postgres"], version = "==0.13.2"}
-sqlfluff = "==3.0.7"
+dbt-core = "*"
+dbt-duckdb = "*"
+dbt-postgres = "*"
+markdown2 = "*"
+python-dotenv = "*"
+requests = "*"
+elementary-data = {extras = ["postgres"], version = "*"}
+sqlfluff = "*"
+dlt = {extras = ["postgres"], version = "*"}
+pygithub = "*"
+pyarrow = "*"
 
 [dev-packages]
 

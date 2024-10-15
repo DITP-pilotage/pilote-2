@@ -1,0 +1,18 @@
+[runtime]
+dlthub_telemetry = false
+
+[sources.load_ppg_metadata]
+some_key = false
+
+[github_repo]
+user = "DITP-pilotage"
+repo = "PPG_metadata"
+
+[destination.db_pilote.config]
+target_schema = "raw_data"
+
+[sources.load_ppg_metadata.ppg_metadata_source.csv_to_load]
+# table_alias = "<path-to-file>"
+metadata_chantiers_test = "views/chantier/view_meta_chantier.csv"
+metadata_porteurs_test = "views/porteur/view_meta_porteur.csv"
+metadata_indicateurs = "views/indicateur/view_meta_indicateur.csv"
