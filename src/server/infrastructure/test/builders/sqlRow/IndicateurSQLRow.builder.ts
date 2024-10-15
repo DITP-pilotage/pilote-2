@@ -1,4 +1,4 @@
-import { indicateur } from '@prisma/client';
+import { indicateur, Prisma } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import IndicateurBuilder from '@/server/domain/indicateur/Indicateur.builder';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
@@ -44,9 +44,7 @@ export default class IndicateurRowBuilder {
 
   private _maille: indicateur['maille'];
 
-  private _évolutionValeurActuelle: indicateur['evolution_valeur_actuelle'];
-
-  private _évolutionDateValeurActuelle: indicateur['evolution_date_valeur_actuelle'];
+  private _évolutionValeurActuelle: Prisma.JsonValue | null;
 
   private _description: indicateur['description'];
 
@@ -100,6 +98,8 @@ export default class IndicateurRowBuilder {
 
   private _delai_disponibilite: indicateur['delai_disponibilite'];
 
+  private responsables_donnees_mails: indicateur['responsables_donnees_mails'];
+
   constructor() {
     const indicateurGénéré = new IndicateurBuilder().build();
     const détailsIndicateurGénéré = new DétailsIndicateurBuilder().build();
@@ -123,13 +123,12 @@ export default class IndicateurRowBuilder {
     this._estPhare = générerPeutÊtreNull(0.2, faker.datatype.boolean());
     this._valeurInitiale = détailsIndicateurGénéré.valeurInitiale;
     this._dateValeurInitiale = détailsIndicateurGénéré.dateValeurInitiale ? new Date(détailsIndicateurGénéré.dateValeurInitiale) : null;
-    this._valeurActuelle = détailsIndicateurGénéré.valeurs.length === 0 ? null : détailsIndicateurGénéré.valeurs[détailsIndicateurGénéré.valeurs.length - 1];
-    this._dateValeurActuelle = détailsIndicateurGénéré.dateValeurs.length === 0 ? null : new Date(détailsIndicateurGénéré.dateValeurs[détailsIndicateurGénéré.dateValeurs.length - 1]);
+    this._valeurActuelle = détailsIndicateurGénéré.valeurActuelle;
+    this._dateValeurActuelle = détailsIndicateurGénéré.dateValeurActuelle ? new Date(détailsIndicateurGénéré.dateValeurActuelle) : null;
     this._territoireNom = générerPeutÊtreNull(0.2, faker.address.state());
     this._codeInsee = faker.helpers.arrayElement(codesInsee);
     this._maille = maille;
-    this._évolutionValeurActuelle = détailsIndicateurGénéré.valeurs;
-    this._évolutionDateValeurActuelle = détailsIndicateurGénéré.dateValeurs.map(d => new Date(d));
+    this._évolutionValeurActuelle = [] as Prisma.JsonValue;
     this._description = indicateurGénéré.description;
     this._source = indicateurGénéré.source;
     this._modeDeCalcul = indicateurGénéré.modeDeCalcul;
@@ -153,6 +152,7 @@ export default class IndicateurRowBuilder {
     this._prochaine_date_valeur_actuelle = new Date('2025-01-01T00:00:00.000Z');
     this._periodicite = faker.helpers.arrayElement(['Annuelle', 'Mensuelle', '3 ans']);
     this._delai_disponibilite = faker.datatype.number({ min: 10, max: 100 });
+    this.responsables_donnees_mails = [];
   }
 
   avecId(id: indicateur['id']): IndicateurRowBuilder {
@@ -240,11 +240,6 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
-  avecÉvolutionDateValeurActuelle(évolutionDateValeurActuelle: indicateur['evolution_date_valeur_actuelle']): IndicateurRowBuilder {
-    this._évolutionDateValeurActuelle = évolutionDateValeurActuelle;
-    return this;
-  }
-
   avecDescription(description: indicateur['description']): IndicateurRowBuilder {
     this._description = description;
     return this;
@@ -325,7 +320,6 @@ export default class IndicateurRowBuilder {
       code_insee: this._codeInsee,
       maille: this._maille,
       evolution_valeur_actuelle: this._évolutionValeurActuelle,
-      evolution_date_valeur_actuelle: this._évolutionDateValeurActuelle,
       description: this._description,
       source: this._source,
       mode_de_calcul: this._modeDeCalcul,
@@ -359,6 +353,7 @@ export default class IndicateurRowBuilder {
       prochaine_date_valeur_actuelle: this._prochaine_date_valeur_actuelle,
       periodicite: this._periodicite,
       delai_disponibilite: this._delai_disponibilite,
+      responsables_donnees_mails: this.responsables_donnees_mails,
     };
   }
 }

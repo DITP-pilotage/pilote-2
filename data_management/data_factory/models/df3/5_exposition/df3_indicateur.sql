@@ -19,13 +19,13 @@ list_indic_terr as (
 --	where not coalesce (mi.indic_hidden_pilote, false)
 ),
 -- Reformattage (pour chaque indicateur-zone):
---	- format source: 1 ligne pour chaque VA 
---	- format cible: 1 seule ligne, contenant une liste des VACA evolution_valeur_actuelle
+--	- Retourne au format [{date: "YYYY-MM-DD", valeur: 12.34}]
 get_evol_vaca as (
 	select 
 	indic_id, zone_id,
-	array_agg(metric_date::timestamp)as evolution_date_valeur_actuelle,
-	array_agg(vaca) as evolution_valeur_actuelle
+	jsonb_agg(jsonb_build_object(
+		'date',metric_date,
+		'valeur',vaca)) as evolution_valeur_actuelle
 	from {{ ref('compute_ta_indic') }}
 	where vaca is not null
 	group by indic_id, zone_id
@@ -50,7 +50,10 @@ get_evol_vaca as (
 	terr.code_insee,
 	mz.zone_type as maille,
 	terr.nom as territoire_nom,
-	b.evolution_valeur_actuelle, b.evolution_date_valeur_actuelle,
+	coalesce(
+		b.evolution_valeur_actuelle,
+		'[]'::jsonb	-- Return [] if the join gives NULL
+	) as evolution_valeur_actuelle,
 	mi.indic_descr as description,
 	mi.indic_source as "source",
 	mi.indic_methode_calcul as mode_de_calcul,
@@ -99,6 +102,7 @@ get_evol_vaca as (
 	pva.motif_proposition,
 	pva.source_donnee_methode_calcul as source_donnee_methode_calcul_proposition,
 	pva.auteur_proposition,
+	STRING_TO_ARRAY(REPLACE(resp_donnees_email, ' ', ''), ',') AS responsables_donnees_mails,
     FALSE as a_supprimer
 	from public.territoire t 
 	cross join {{ ref('metadata_indicateurs') }} mi
@@ -114,6 +118,7 @@ get_evol_vaca as (
 	left join (select * from {{ ref('get_vca') }} where yyear=(date_part('year', now()))) gvca on mi.indic_id=gvca.indic_id and t.zone_id=gvca.zone_id
 	left join {{ ref('metadata_indicateur_types') }} mit on mit.indic_type_id = mi.indic_type 
 	left join {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} mpi on mi.indic_id = mpi.indic_id 
+	left join {{ source('parametrage_indicateurs', 'metadata_indicateurs_complementaire') }} ind_comp on mi.indic_id = ind_comp.indic_id 
 	left join public.territoire terr on t.zone_id = terr.zone_id 
 	left join {{ ref('int_propositions_valeurs') }} pva on pva.indic_id = mi.indic_id and pva.territoire_code = terr.code and pva.date_valeur_actuelle::DATE = a.date_valeur_actuelle::DATE
 	left join {{ ref('metadata_zones') }} mz on mz.zone_id = terr.zone_id 

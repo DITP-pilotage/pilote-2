@@ -25,7 +25,7 @@ models:
       - name: ministeres
         description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
       - name: directions_administration_centrale
-        description: "source de données à date du 06/07/2023 : ppg_metadata.m_porteurs"
+        description: "Acronymes des directions porteuses de ce chantier. Si pas d'acronyme pour une direction, on retourne '-' pour ne pas planter la webapp."
       - name: directeurs_projet
         description: "source de données à date du 06/07/2023 : ppg_metadata.m_porteurs"
       - name: meteo
@@ -116,9 +116,7 @@ models:
       - name: territoire_nom
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_zone"
       - name: evolution_valeur_actuelle
-        description: "source de données à date du 07/07/2023 : dfakto.fact_financials"
-      - name: evolution_date_valeur_actuelle
-        description: "source de données à date du 07/07/2023 : ppg_metadata.fact_financials"
+        description: "Liste de dates et valeur associée. Exemple: [{date: YYYY-MM-DD, valeur: 12.34}, ...]"
       - name: description
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_indicateur"
       - name: source
@@ -153,6 +151,8 @@ models:
         description: "Indique si les données sont à jour par rapport à la périodicité théorique déclarée de mise à jour. `NULL` si indicateur non applicable sur cette zone."
       - name: tendance
         description : "Indique si l'indicateur a une tendance en hausse ou en baisse (valeur HAUSSE / BAISSE)"
+      - name: responsables_donnees_mails
+        description : "Liste des emails des responsables données de l'indicateur"
   - name: decision_strategique
     columns:
       - name: id

@@ -1,7 +1,7 @@
 import { FunctionComponent } from 'react';
 import { formaterDate } from '@/client/utils/date/date';
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
-import BoutonsAffichage from '@/components/_commons/SynthèseDesRésultatsNew/BoutonsAffichage/BoutonsAffichage';
+import BoutonsAffichage from '@/components/_commons/SynthèseDesRésultatsChantier/BoutonsAffichage/BoutonsAffichage';
 import { RouterOutputs } from '@/server/infrastructure/api/trpc/trpc.interface';
 import useAffichage from './useAffichage';
 
@@ -32,8 +32,8 @@ const SynthèseDesRésultatsAffichage: FunctionComponent<SynthèseDesRésultatsA
   return (
     <>
       <p className='fr-text--xs texte-gris fr-mb-1w'>
-        {`Mis à jour le ${formaterDate(synthèseDesRésultats.date, 'DD/MM/YYYY')}`}
-        {!!synthèseDesRésultats.auteur && ` | Par ${synthèseDesRésultats.auteur}`}
+        { `Mis à jour le ${ formaterDate(synthèseDesRésultats.date, 'DD/MM/YYYY') }` }
+        { !!synthèseDesRésultats.auteur && ` | Par ${ synthèseDesRésultats.auteur }` }
       </p>
       <p
         className='fr-text--sm fr-mb-0'

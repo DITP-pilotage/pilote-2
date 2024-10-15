@@ -2,25 +2,31 @@ import { Fragment, FunctionComponent } from 'react';
 import Modale from '@/components/_commons/Modale/Modale';
 import MétéoBadge from '@/components/_commons/Météo/Badge/MétéoBadge';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
-import SynthèseDesRésultatsAffichage from '@/components/_commons/SynthèseDesRésultatsNew/Affichage/Affichage';
+import SynthèseDesRésultatsAffichage from '@/components/_commons/SynthèseDesRésultatsChantier/Affichage/Affichage';
 import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
+import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import SynthèseDesRésultatsHistoriqueStyled from './Historique.styled';
 import useHistoriqueDeLaSynthèseDesRésultats from './useHistoriqueDeLaSynthèseDesRésultats';
 
 interface SynthèseDesRésultatsHistoriqueProps {
-  réformeId: Chantier['id'] | ProjetStructurant['id'];
+  réformeId: string;
+  territoireCode: string
 }
 
 const ID_HTML = 'historique-synthèse-des-résultats';
 
-const SynthèseDesRésultatsHistorique: FunctionComponent<SynthèseDesRésultatsHistoriqueProps> = ({ réformeId }) => {
+const SynthèseDesRésultatsHistorique: FunctionComponent<SynthèseDesRésultatsHistoriqueProps> = ({
+  réformeId,
+  territoireCode,
+}) => {
   const {
     historiqueDeLaSynthèseDesRésultats,
-    territoireSélectionné,
     récupérerHistoriqueSynthèseDesRésultats,
-  } = useHistoriqueDeLaSynthèseDesRésultats(réformeId);
+  } = useHistoriqueDeLaSynthèseDesRésultats(réformeId, territoireCode);
+
+  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+
+  const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
 
   return (
     <>
@@ -35,7 +41,7 @@ const SynthèseDesRésultatsHistorique: FunctionComponent<SynthèseDesRésultats
       <Modale
         idHtml={ID_HTML}
         ouvertureCallback={récupérerHistoriqueSynthèseDesRésultats}
-        sousTitre={territoireSélectionné!.nomAffiché}
+        sousTitre={territoireSélectionné.nomAffiché}
         titre='Historique - Synthèse des résultats'
       >
         <SynthèseDesRésultatsHistoriqueStyled>

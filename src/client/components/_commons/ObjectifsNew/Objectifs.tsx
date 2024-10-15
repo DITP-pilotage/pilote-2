@@ -2,7 +2,7 @@ import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
 import { FunctionComponent } from 'react';
 import { consignesDÉcritureObjectif, libellésTypesObjectif, TypeObjectif } from '@/client/constants/libellésObjectif';
 import Bloc from '@/components/_commons/Bloc/Bloc';
-import Publication from '@/components/_commons/PublicationNew/Publication';
+import Publication from '@/components/_commons/PublicationChantier/Publication';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import Objectif, { typesObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
@@ -47,18 +47,18 @@ const Objectifs: FunctionComponent<ObjectifsProps> = ({
           >
             <h3 className='fr-accordion__title'>
               <button
-                aria-controls={`accordion-${type}`}
+                aria-controls={`accordion-${ type }`}
                 aria-expanded={estEtendu}
                 className='fr-accordion__btn'
                 title={libellésTypesObjectif[type as TypeObjectif]}
                 type='button'
               >
-                {libellésTypesObjectif[type as TypeObjectif]}
+                { libellésTypesObjectif[type as TypeObjectif] }
               </button>
             </h3>
             <div
               className='fr-collapse'
-              id={`accordion-${type}`}
+              id={`accordion-${ type }`}
             >
               <Publication
                 caractéristiques={{

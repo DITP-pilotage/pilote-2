@@ -99,6 +99,11 @@ const config = convict({
       default: 'ToBeDefined',
       env: 'IMPORT_CLIENT_SECRET',
     },
+    urlValidata: {
+      format: String,
+      default: 'https://api.validata.etalab.studio/validate',
+      env: 'URL_VALIDATA',
+    },
   },
   export: {
     csvChantiersChunkSize: {
@@ -220,6 +225,11 @@ const config = convict({
       default: false,
       env: 'NEXT_PUBLIC_FF_DOCS_API',
     },
+    PoserUneQuestionIndicateur: {
+      format: Boolean,
+      default: false,
+      env: 'NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR',
+    },
   },
   analytics: {
     matomoURL: {
@@ -253,6 +263,13 @@ const config = convict({
       format: String,
       default: 'toBeDefinedForE2E',
       env: 'TOKEN_API_E2E_EQUIPE_DIR_PROJET',
+    },
+  },
+  cartographie: {
+    svgPath: {
+      format: String,
+      default: 'cartographie-france.svg',
+      env: 'CARTOGRAPHIE_SVG_PATH',
     },
   },
   schemaValidataUrl: {

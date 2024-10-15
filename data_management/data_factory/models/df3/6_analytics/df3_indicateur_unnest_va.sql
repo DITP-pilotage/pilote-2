@@ -1,7 +1,21 @@
 {{ config(materialized='table') }}
 
-select 
-    id, territoire_code, 
-    unnest(evolution_valeur_actuelle) as va_unnest_computed, 
-    unnest(evolution_date_valeur_actuelle)::date as va_date_unnest_computed 
-from {{ ref('df3_indicateur') }}
+WITH unnest_json_array AS (
+    SELECT
+        id,
+        territoire_code,
+        jsonb_array_elements(
+            evolution_valeur_actuelle
+        ) AS evolution_valeur_actuelle_unnest
+    FROM {{ ref('df3_indicateur') }}
+)
+
+SELECT
+    id,
+    territoire_code,
+    --evolution_valeur_actuelle_unnest,
+    (evolution_valeur_actuelle_unnest ->> 'valeur')
+    ::numeric AS va_unnest_computed,
+    (evolution_valeur_actuelle_unnest ->> 'date')
+    ::date AS va_date_unnest_computed
+FROM unnest_json_array
