@@ -1,6 +1,6 @@
 {
   "$schema": "https://specs.frictionlessdata.io/schemas/table-schema.json",
-  "name": "Indicateur Pilote - Saisie pourcentage",
+  "name": "restrict-0-100",
   "title": "Indicateur Pilote - Saisie pourcentage",
   "description": "Spécification d'un fichier d'import d'indicateur Pilote - Saisie pourcentage",
   "keywords": [
