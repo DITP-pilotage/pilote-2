@@ -10,7 +10,9 @@ def dl_github_file(github_repo, path):
     # See https://arrow.apache.org/docs/python/generated/pyarrow.csv.read_csv.html#pyarrow-csv-read-csv
     csv_string = github_repo.getFileContent(path)
     arrow_table = csv.read_csv(io.BytesIO(csv_string.encode()))
-    return [arrow_table]
+    # arrow_table = arrow_table.rename_columns([x.lower() for x in arrow_table.column_names])
+    pd_table = arrow_table.to_pandas()
+    return [pd_table]
 
 @dlt.source()
 def ppg_metadata_source(github_repo, schema, csv_to_load: str = dlt.config.value):
@@ -35,6 +37,8 @@ def load_data() -> None:
     ])
     p = dlt.pipeline(
         destination=dlt.destinations.postgres(conn_str),
+        import_schema_path="dlt/schema/import",
+        # export_schema_path="dlt/schema/export",
         dataset_name='raw_data', # db schema        
     )
     load_info = p.run(ppg_metadata_source(github_repo, 'raw_data'), write_disposition='replace')

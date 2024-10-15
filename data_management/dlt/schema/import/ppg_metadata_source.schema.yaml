@@ -1,0 +1,471 @@
+version: 19
+version_hash: yfrrkKkDCTg1qcEa6hDC3Gen4lhwK9YQ3Gq6SXJJWqc=
+engine_version: 10
+name: ppg_metadata_source
+tables:
+  _dlt_version:
+    columns:
+      version:
+        data_type: bigint
+        nullable: false
+      engine_version:
+        data_type: bigint
+        nullable: false
+      inserted_at:
+        data_type: timestamp
+        nullable: false
+      schema_name:
+        data_type: text
+        nullable: false
+      version_hash:
+        data_type: text
+        nullable: false
+      schema:
+        data_type: text
+        nullable: false
+    write_disposition: skip
+    resource: _dlt_version
+    description: Created by DLT. Tracks schema updates
+  _dlt_loads:
+    columns:
+      load_id:
+        data_type: text
+        nullable: false
+      schema_name:
+        data_type: text
+        nullable: true
+      status:
+        data_type: bigint
+        nullable: false
+      inserted_at:
+        data_type: timestamp
+        nullable: false
+      schema_version_hash:
+        data_type: text
+        nullable: true
+    write_disposition: skip
+    resource: _dlt_loads
+    description: Created by DLT. Tracks completed loads
+  metadata_axes:
+    columns:
+      axe_id:
+        nullable: true
+        data_type: text
+      axe_desc:
+        nullable: true
+        data_type: text
+      axe_short:
+        nullable: true
+        data_type: text
+      axe_name:
+        nullable: true
+        data_type: text
+    write_disposition: replace
+    resource: metadata_axes
+  metadata_metadata_chantier_meteos:
+    columns:
+      ch_meteo_id:
+        nullable: true
+        data_type: text
+      ch_meteo_name:
+        nullable: true
+        data_type: text
+      ch_meteo_descr:
+        nullable: true
+        data_type: text
+      ch_meteo_name_dfakto:
+        nullable: true
+        data_type: text
+    write_disposition: replace
+    resource: metadata_metadata_chantier_meteos
+  metadata_chantiers:
+    columns:
+      chantier_id:
+        nullable: true
+        data_type: text
+      ch_descr:
+        nullable: true
+        data_type: text
+      ch_nom:
+        nullable: true
+        data_type: text
+      ch_dp:
+        nullable: true
+        data_type: text
+      ch_ppg:
+        nullable: true
+        data_type: text
+      ch_perseverant:
+        nullable: true
+        data_type: text
+      porteur_shorts_no_dac:
+        nullable: true
+        data_type: text
+      porteur_ids_no_dac:
+        nullable: true
+        data_type: text
+      porteur_shorts_dac:
+        nullable: true
+        data_type: text
+      porteur_ids_dac:
+        nullable: true
+        data_type: text
+      ch_per:
+        nullable: true
+        data_type: text
+      ch_dp_mail:
+        nullable: true
+        data_type: text
+      ch_territo:
+        nullable: true
+        data_type: bool
+      engagement_short:
+        nullable: true
+        data_type: text
+      ch_saisie_ate:
+        nullable: true
+        data_type: text
+      ch_state:
+        nullable: true
+        data_type: text
+      zg_applicable:
+        nullable: true
+        data_type: text
+      maille_applicable:
+        nullable: true
+        data_type: text
+      ch_cible_attendue:
+        nullable: true
+        data_type: bool
+    write_disposition: replace
+    resource: metadata_chantiers
+  metadata_engagement:
+    columns:
+      engagement_id:
+        nullable: true
+        data_type: bigint
+      engagement_short:
+        nullable: true
+        data_type: text
+      engagement_name:
+        nullable: true
+        data_type: text
+      engagement_desc:
+        nullable: true
+        data_type: text
+    write_disposition: replace
+    resource: metadata_engagement
+  metadata_indicateur_types:
+    columns:
+      indic_type_id:
+        nullable: true
+        data_type: text
+      indic_type_name:
+        nullable: true
+        data_type: text
+      indic_type_descr:
+        nullable: true
+        data_type: text
+      indic_type_rank:
+        nullable: true
+        data_type: text
+    write_disposition: replace
+    resource: metadata_indicateur_types
+  metadata_perimetres_projet_structurant:
+    columns:
+      per_pst_nom:
+        nullable: true
+        data_type: text
+      perimetre_id:
+        nullable: true
+        data_type: text
+    write_disposition: replace
+    resource: metadata_perimetres_projet_structurant
+  metadata_perimetres:
+    columns:
+      perimetre_id:
+        nullable: true
+        data_type: text
+      per_nom:
+        nullable: true
+        data_type: text
+      per_short:
+        nullable: true
+        data_type: text
+      per_porteur_id:
+        nullable: true
+        data_type: double
+      per_porteur_name_short:
+        nullable: true
+        data_type: text
+      per_top_dfakto:
+        nullable: true
+        data_type: text
+    write_disposition: replace
+    resource: metadata_perimetres
+  metadata_porteurs:
+    columns:
+      porteur_id:
+        nullable: true
+        data_type: bigint
+      porteur_short:
+        nullable: true
+        data_type: text
+      porteur_name:
+        nullable: true
+        data_type: text
+      porteur_desc:
+        nullable: true
+        data_type: text
+      porteur_type_id:
+        nullable: true
+        data_type: bigint
+      porteur_type_short:
+        nullable: true
+        data_type: text
+      porteur_type_name:
+        nullable: true
+        data_type: text
+      porteur_directeur:
+        nullable: true
+        data_type: text
+      porteur_name_short:
+        nullable: true
+        data_type: text
+      porteur_picto:
+        nullable: true
+        data_type: text
+    write_disposition: replace
+    resource: metadata_porteurs
+  metadata_ppgs:
+    columns:
+      ppg_id:
+        nullable: true
+        data_type: text
+      ppg_axe:
+        nullable: true
+        data_type: text
+      ppg_code:
+        nullable: true
+        data_type: text
+      ppg_desc:
+        nullable: true
+        data_type: text
+      ppg_nom:
+        nullable: true
+        data_type: text
+      porteur_shorts:
+        nullable: true
+        data_type: text
+      porteur_ids:
+        nullable: true
+        data_type: text
+    write_disposition: replace
+    resource: metadata_ppgs
+  metadata_zonegroup:
+    columns:
+      zone_group_id:
+        nullable: true
+        data_type: text
+      zg_name:
+        nullable: true
+        data_type: text
+      zg_desc:
+        nullable: true
+        data_type: text
+      zg_zones:
+        nullable: true
+        data_type: text
+    write_disposition: replace
+    resource: metadata_zonegroup
+  metadata_zones:
+    columns:
+      zone_id:
+        nullable: true
+        data_type: text
+      nom:
+        nullable: true
+        data_type: text
+      zone_code:
+        nullable: true
+        data_type: text
+      zone_type:
+        nullable: true
+        data_type: text
+      zone_parent:
+        nullable: true
+        data_type: text
+    write_disposition: replace
+    resource: metadata_zones
+  _dlt_pipeline_state:
+    columns:
+      version:
+        data_type: bigint
+        nullable: false
+      engine_version:
+        data_type: bigint
+        nullable: false
+      pipeline_name:
+        data_type: text
+        nullable: false
+      state:
+        data_type: text
+        nullable: false
+      created_at:
+        data_type: timestamp
+        nullable: false
+      version_hash:
+        data_type: text
+        nullable: true
+      _dlt_load_id:
+        data_type: text
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    write_disposition: append
+    file_format: preferred
+    resource: _dlt_pipeline_state
+  utilisateur_py:
+    columns:
+      id:
+        nullable: true
+        data_type: text
+      email:
+        nullable: true
+        data_type: text
+      nom:
+        nullable: true
+        data_type: text
+      prenom:
+        nullable: true
+        data_type: text
+      profil_code:
+        nullable: true
+        data_type: text
+      auteur_modification:
+        nullable: true
+        data_type: text
+      date_modification:
+        nullable: true
+        data_type: timestamp
+        precision: 6
+        timezone: false
+      auteur_creation:
+        nullable: true
+        data_type: text
+      date_creation:
+        nullable: true
+        data_type: timestamp
+        precision: 6
+        timezone: false
+    write_disposition: replace
+    resource: utilisateur_py
+  commentaires_py:
+    columns:
+      chantier_id:
+        nullable: true
+        data_type: text
+      maille:
+        nullable: true
+        data_type: text
+      code_insee:
+        nullable: true
+        data_type: text
+      date:
+        nullable: true
+        data_type: text
+      type:
+        nullable: true
+        data_type: text
+      contenu:
+        nullable: true
+        data_type: text
+      auteur:
+        nullable: true
+        data_type: text
+      meteo:
+        nullable: true
+        data_type: text
+      date_meteo:
+        nullable: true
+        data_type: text
+    write_disposition: replace
+    resource: commentaires_py
+  mesure_indicateur_py:
+    columns:
+      date_import:
+        nullable: true
+        data_type: text
+      indic_id:
+        nullable: true
+        data_type: text
+      metric_date:
+        nullable: true
+        data_type: date
+      metric_type:
+        nullable: true
+        data_type: text
+      metric_value:
+        nullable: true
+        data_type: bigint
+      zone_id:
+        nullable: true
+        data_type: text
+      id:
+        nullable: true
+        data_type: text
+      rapport_id:
+        nullable: true
+        data_type: text
+    write_disposition: replace
+    resource: mesure_indicateur_py
+  rapport_import_mesure_indicateur_py:
+    columns:
+      id:
+        nullable: true
+        data_type: text
+      date_creation:
+        nullable: true
+        data_type: text
+      utilisateur_email:
+        nullable: true
+        data_type: text
+      est_valide:
+        nullable: true
+        data_type: bool
+    write_disposition: replace
+    resource: rapport_import_mesure_indicateur_py
+settings:
+  detections:
+  - iso_timestamp
+  default_hints:
+    not_null:
+    - _dlt_id
+    - _dlt_root_id
+    - _dlt_parent_id
+    - _dlt_list_idx
+    - _dlt_load_id
+    parent_key:
+    - _dlt_parent_id
+    root_key:
+    - _dlt_root_id
+    unique:
+    - _dlt_id
+    row_key:
+    - _dlt_id
+normalizers:
+  names: snake_case
+  json:
+    module: dlt.common.normalizers.json.relational
+previous_hashes:
+- QhBTq/ci56P/y13JYeY1ZfTL99SS989o2Ugh/R41oDk=
+- yfrrkKkDCTg1qcEa6hDC3Gen4lhwK9YQ3Gq6SXJJWqc=
+- 9R2HWbBuZY4aN9od7MEknrADTR7Tes5/bVByNnbxW5Q=
+- D81SjLAXJMaRPkiv/J+gWKxVApoGGhX6LY9inrBrfI0=
+- SVmNx+HvCepCJTbCs2+w3run4WN6xcTmbJ+qF3g4V4c=
+- ckpbtERSC8am59VnDTRdPA+jmPnS4zLRxrvzWKEohfA=
+- MN+Ypgbqj1Pks9+D0j4WhN2UD/3tENkuLHYZk1ZjSEk=
+- K7LeSjwN36gMoWGLsxs/Tz69xTTEIfPVnJW+x7ttfdk=
