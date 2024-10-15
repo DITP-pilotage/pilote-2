@@ -15,6 +15,7 @@ def dl_github_file(github_repo, path):
 @dlt.source()
 def ppg_metadata_source(github_repo, csv_to_load: str = dlt.config.value):
     for csv_name, csv_path in json.loads(csv_to_load).items():
+        print('[dlt] Handling resource '+csv_name+'...')
         yield dlt.resource(dl_github_file(github_repo, csv_path), name=csv_name)
 
 def load_data() -> None:
