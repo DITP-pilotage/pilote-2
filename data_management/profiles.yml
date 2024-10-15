@@ -1,5 +1,5 @@
 ditp_ppg_dbt:
-  target: prod_with_fal
+  target: prod
   outputs:
     prod:
       type: postgres
@@ -13,13 +13,9 @@ ditp_ppg_dbt:
     local:
       type: duckdb
       path: 'ditp_pilote.duckdb'
-    prod_with_fal:
-      type: fal
-      threads: 1
-      db_profile: prod
 
 elementary:
-  target: prod_with_fal
+  target: prod
   outputs:
     prod:
       type: postgres
@@ -30,7 +26,3 @@ elementary:
       pass: "{{ env_var('PGPASSWORD') }}"
       dbname: "{{ env_var('PGDATABASE') }}"
       schema: elementary
-    prod_with_fal:
-      type: fal
-      threads: 1
-      db_profile: prod
