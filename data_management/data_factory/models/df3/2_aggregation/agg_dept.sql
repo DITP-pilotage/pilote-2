@@ -30,16 +30,16 @@ mesure_last_params_dept AS (
 mesure_last_params_dept_user AS (
     SELECT
         a.*,
-        b.zone_type
+        b.maille as zone_type
     FROM mesure_last_params_dept AS a
-    LEFT JOIN raw_data.metadata_zones AS b ON a.zone_id = b.zone_id
+    LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} AS b ON a.zone_id = b.id
     WHERE
         (
             (metric_type = 'vi' AND vi_dept_from = 'user_input')
             OR (metric_type = 'va' AND va_dept_from = 'user_input')
             OR (metric_type = 'vc' AND vc_dept_from = 'user_input')
         )
-        AND zone_type = 'DEPT'
+        AND b.maille = 'DEPT'
 )
 
 -- Valeurs DEPT aggrégées: Aucune, car pas de niveau inférieur

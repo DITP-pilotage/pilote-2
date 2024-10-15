@@ -4,16 +4,16 @@ with
 get_poids_declaree as (select 
 indic_id, t.zone_id, 
 case 
-	when zone_type='DEPT' then poids_pourcent_dept_declaree
-	when zone_type='REG' then poids_pourcent_reg_declaree
-	when zone_type='NAT' then poids_pourcent_nat_declaree
+	when z.maille='DEPT' then poids_pourcent_dept_declaree
+	when z.maille='REG' then poids_pourcent_reg_declaree
+	when z.maille='NAT' then poids_pourcent_nat_declaree
 end as poids_zone_declaree,
 ind.chantier_id ,
-poids_pourcent_dept_declaree, poids_pourcent_reg_declaree, poids_pourcent_nat_declaree, z.zone_type
+poids_pourcent_dept_declaree, poids_pourcent_reg_declaree, poids_pourcent_nat_declaree, t.maille as zone_type
 
 from {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} a
 cross join {{ source('db_schema_public', 'territoire') }} t
-left join {{ source('dlt_load', 'metadata_zones') }} z on t.zone_id =z.zone_id
+left join {{ ref('stg_ppg_metadata__zones') }} z on t.zone_id =z.id
 left join {{ ref('stg_ppg_metadata__indicateurs') }} ind on ind.id = indic_id  
 --where ind.chantier_id  ='CH-058'
 order by indic_id, t.zone_id 
