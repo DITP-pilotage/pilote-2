@@ -99,6 +99,11 @@ const config = convict({
       default: 'ToBeDefined',
       env: 'IMPORT_CLIENT_SECRET',
     },
+    urlValidata: {
+      format: String,
+      default: 'https://api.validata.etalab.studio/validate',
+      env: 'URL_VALIDATA',
+    },
   },
   export: {
     csvChantiersChunkSize: {

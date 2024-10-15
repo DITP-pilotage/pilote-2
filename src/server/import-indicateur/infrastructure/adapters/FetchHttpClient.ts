@@ -1,14 +1,17 @@
 import FormData from 'form-data';
 import { ReportValidata } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
-import { recupererFichier, supprimerLeFichier } from '@/server/import-indicateur/infrastructure/adapters/FichierService';
+import {
+  recupererFichier,
+  supprimerLeFichier,
+} from '@/server/import-indicateur/infrastructure/adapters/FichierService';
 import logger from '@/server/infrastructure/Logger';
 import {
   HttpClient,
   ValidataValidationFichierPayload,
 } from '@/server/import-indicateur/domain/ports/HttpClient.interface';
+import { configuration } from '@/config';
 
 export class FetchHttpClient implements HttpClient {
-  private readonly urlValidata = 'https://api.validata.etalab.studio/validate';
 
   async post(body: ValidataValidationFichierPayload): Promise<ReportValidata> {
     const formData = new FormData();
@@ -18,7 +21,7 @@ export class FetchHttpClient implements HttpClient {
     logger.info(`Soumission du fichier ${body.nomDuFichier} à validata`);
     
     const { report } = await new Promise<{ report: ReportValidata }>(async (resolve) => {
-      await formData.submit(this.urlValidata, (error, response) => {
+      await formData.submit(configuration.import.urlValidata, (error, response) => {
         let data = '';
         response.on('data', function (chunk) {
           data += chunk;
