@@ -7,7 +7,7 @@
     meta={"is_demo": "false"}
 ) }}
 
-SELECT * FROM {{ ref('metadata_chantiers') }}
+SELECT * FROM {{ source('dlt_load', 'metadata_chantiers') }}
 WHERE
     -- ID match regex 'CH-XXX'
     chantier_id NOT SIMILAR TO 'CH-\d\d\d'

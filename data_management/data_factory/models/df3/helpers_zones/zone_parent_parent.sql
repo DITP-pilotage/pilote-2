@@ -11,7 +11,7 @@ zones_unnest_parent_parent as (
 zones_parent_parent_type as (
     select a.*, b.zone_type  as zone_parent_parent_type, b.zone_parent as zone_parent_parent_parent 
     from zones_unnest_parent_parent a 
-    left join {{ ref('metadata_zones') }} b 
+    left join {{ source('dlt_load', 'metadata_zones') }} b 
     ON a.zone_parent_parent = b.zone_id ),
 
 -- on supprime les doublons de parent_parent

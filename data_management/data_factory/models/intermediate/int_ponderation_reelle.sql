@@ -13,7 +13,7 @@ poids_pourcent_dept_declaree, poids_pourcent_reg_declaree, poids_pourcent_nat_de
 
 from {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} a
 cross join {{ source('db_schema_public', 'territoire') }} t
-left join {{ ref('metadata_zones') }} z on t.zone_id =z.zone_id
+left join {{ source('dlt_load', 'metadata_zones') }} z on t.zone_id =z.zone_id
 left join {{ ref('stg_ppg_metadata__indicateurs') }} ind on ind.id = indic_id  
 --where ind.chantier_id  ='CH-058'
 order by indic_id, t.zone_id 
