@@ -13,8 +13,6 @@ import {
 } from '@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
 import AxeRepository from '@/server/domain/axe/AxeRepository.interface';
 import AxeSQLRepository from '@/server/infrastructure/accès_données/axe/AxeSQLRepository';
-import PpgRepository from '@/server/domain/ppg/PpgRepository.interface';
-import PpgSQLRepository from '@/server/infrastructure/accès_données/ppg/PpgSQLRepository';
 import CommentaireRepository from '@/server/domain/chantier/commentaire/CommentaireRepository.interface';
 import CommentaireSQLRepository
   from '@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository';
@@ -124,14 +122,8 @@ import {
   IndicateurRepository as ChantierIndicateurRepository,
 } from '@/server/chantiers/domain/ports/IndicateurRepository';
 import {
-  YamlInformationMetadataIndicateurRepository,
-} from '@/server/parametrage-indicateur/infrastructure/adapters/YamlInformationMetadataIndicateurRepository';
-import {
-  InformationMetadataIndicateurRepository,
-} from '@/server/parametrage-indicateur/domain/ports/InformationMetadataIndicateurRepository';
-import {
-  HistorisationModificationSQLRepository,
-} from '@/server/infrastructure/accès_données/historisationModification/HistorisationModificationSQLRepository';
+  PrismaHistorisationModificationRepository,
+} from '@/server/infrastructure/accès_données/historisationModification/PrismaHistorisationModificationRepository';
 import {
   HistorisationModificationRepository,
 } from '@/server/domain/historisationModification/HistorisationModificationRepository';
@@ -213,8 +205,6 @@ class Dependencies {
 
   private readonly _axeRepository: AxeRepository;
 
-  private readonly _ppgRepository: PpgRepository;
-
   private readonly _synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
 
   private readonly _ministèreRepository: MinistèreRepository;
@@ -287,8 +277,6 @@ class Dependencies {
 
   private readonly _importIndicateurRepository: ImportIndicateurRepository;
 
-  private readonly _informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository;
-
   private readonly _historisationModification: HistorisationModificationRepository;
 
   private readonly _gestionContenuRepository: GestionContenuRepository;
@@ -308,7 +296,6 @@ class Dependencies {
     this._chantierRepository = new ChantierSQLRepository(prisma);
     this._chantierDateDeMàjMeteoRepository = new ChantierDateDeMàjMeteoSQLRepository(prisma);
     this._axeRepository = new AxeSQLRepository(prisma);
-    this._ppgRepository = new PpgSQLRepository(prisma);
     this._ministèreRepository = new MinistèreSQLRepository(prisma);
     this._indicateurRepository = new IndicateurSQLRepository(prisma);
     this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
@@ -343,8 +330,7 @@ class Dependencies {
     this._synthèseDesRésultatsProjetStructurantRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository(prisma);
     this._indicateurProjetStructurantRepository = new IndicateurProjetStructurantSQLRepository(prisma);
     this._importIndicateurRepository = new PrismaIndicateurRepository(prisma);
-    this._informationMetadataIndicateurRepository = new YamlInformationMetadataIndicateurRepository();
-    this._historisationModification = new HistorisationModificationSQLRepository(prisma);
+    this._historisationModification = new PrismaHistorisationModificationRepository();
     this._gestionContenuRepository = new PrismaGestionContenuRepository(prisma);
     this._tokenAPIService = new TokenAPIJWTService({ secret: configuration.tokenAPI.secret });
     this._tokenAPIInformationRepository = new PrismaTokenAPIInformationRepository(prisma);
@@ -422,10 +408,6 @@ class Dependencies {
 
   getMesureIndicateurTemporaireRepository(): MesureIndicateurTemporaireRepository {
     return this._mesureIndicateurTemporaireRepository;
-  }
-
-  getInformationMetadataIndicateurRepository(): InformationMetadataIndicateurRepository {
-    return this._informationMetadataIndicateurRepository;
   }
 
   getPublierFichierIndicateurImporteUseCase(): PublierFichierIndicateurImporteUseCase {

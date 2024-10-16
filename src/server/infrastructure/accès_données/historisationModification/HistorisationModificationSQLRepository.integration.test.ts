@@ -1,14 +1,14 @@
 import { randomUUID } from 'node:crypto';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import {
-  HistorisationModificationSQLRepository,
-} from '@/server/infrastructure/accès_données/historisationModification/HistorisationModificationSQLRepository';
+  PrismaHistorisationModificationRepository,
+} from '@/server/infrastructure/accès_données/historisationModification/PrismaHistorisationModificationRepository';
 import { HistorisationModificationCreationBuilder } from '@/server/app/builders/HistorisationModificationCreationBuilder';
 
 describe('HistorisationModificationSQLRepository', () => {
-  let historisationModificationSQLRepository: HistorisationModificationSQLRepository;
+  let historisationModificationSQLRepository: PrismaHistorisationModificationRepository;
   beforeEach(() => {
-    historisationModificationSQLRepository = new HistorisationModificationSQLRepository(prisma);
+    historisationModificationSQLRepository = new PrismaHistorisationModificationRepository(prisma);
   });
   test('doit sauvegarder une nouvelle création', async () => {
     // GIVEN

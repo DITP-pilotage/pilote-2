@@ -85,7 +85,7 @@ export async function handleExportMetadataIndicateurs(request: NextApiRequest, r
 
 
   const listeMetadataIndicateur = 
-    await new RécupérerListeMetadataIndicateurUseCase(getContainer('parametrageIndicateur').resolve('metadataParametrageIndicateurRepository'))
+    await getContainer('parametrageIndicateur').resolve('récupérerListeMetadataIndicateurUseCase')
       .run((request.query?.chantierIds as string[]) || [], (request.query?.perimetreIds as string[]) || [], request.query?.estTerritorialise === 'true', request.query?.estBarometre === 'true');
  
   listeMetadataIndicateur.forEach((metadataIndicateur) => {

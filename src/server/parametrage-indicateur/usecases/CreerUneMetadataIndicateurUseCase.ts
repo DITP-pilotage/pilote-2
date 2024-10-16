@@ -10,11 +10,23 @@ import {
 import { HistorisationModification } from '@/server/domain/historisationModification/HistorisationModification';
 import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur';
 
+type Dependencies = {
+  metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository,
+  historisationModificationRepository: HistorisationModificationRepository,
+};
 export default class CreerUneMetadataIndicateurUseCase {
-  constructor(
-    private readonly metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository,
-    private readonly historisationModificationRepository: HistorisationModificationRepository,
-  ) {}
+  private metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
+
+  private historisationModificationRepository: HistorisationModificationRepository;
+
+  constructor({
+    metadataParametrageIndicateurRepository,
+    historisationModificationRepository,
+  }: Dependencies) {
+    this.metadataParametrageIndicateurRepository = metadataParametrageIndicateurRepository;
+    this.historisationModificationRepository = historisationModificationRepository;
+
+  }
 
   async run(utilisateurNom: string, inputs: MetadataParametrageIndicateurForm) {
     const metadataParametrageIndicateurNouveau = MetadataParametrageIndicateur.creerMetadataParametrageIndicateur({
