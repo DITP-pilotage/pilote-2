@@ -38,4 +38,34 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     return prismaListeDonneesIndicateurs.map(convertirEnDonneeIndicateur);
   }
 
+  async supprimerPropositionValeurActuelle({
+    indicId,
+    territoireCode,
+    auteurModification,
+  }: {
+    indicId: string,
+    territoireCode: string,
+    auteurModification: string,
+  }): Promise<void> {
+    const [maille, codeInsee] = territoireCode.split('-');
+    await this.prismaClient.indicateur.update({
+      where: {
+        id_code_insee_maille: {
+          id: indicId,
+          maille,
+          code_insee: codeInsee,
+        },
+      },
+      data: {
+        motif_proposition: null,
+        date_proposition: null,
+        valeur_actuelle_proposition: null,
+        objectif_taux_avancement_intermediaire_proposition: null,
+        objectif_taux_avancement_proposition: null,
+        source_donnee_methode_calcul_proposition: null,
+        auteur_proposition: auteurModification,
+      },
+    });
+  }
+
 }

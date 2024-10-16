@@ -22,10 +22,13 @@ import { formaterDate } from '@/client/utils/date/date';
 import IndicateurTendance from '@/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import ModaleSuppressionValeurActuelle
+  from '@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurActuelle/ModaleSuppressionValeurActuelle';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 import useIndicateurAlerteDateMaj from './useIndicateurAlerteDateMaj';
 
+export const ID_HTML_MODALE_SUPPRESSION_VALEUR_ACTUELLE = 'modale-suppression-valeur-actuelle';
 export const ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE = 'modale-proposition-valeur-actuelle';
 
 interface IndicateurBlocProps {
@@ -385,16 +388,29 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                         <div className='flex w-full justify-end'>
                                           <button
                                             aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
-                                            className='fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-actuelle'
+                                            className='fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-actuelle fr-mr-1w'
                                             data-fr-opened='false'
                                             type='button'
                                           >
                                             Editer la proposition
                                           </button>
+                                          <button
+                                            aria-controls={ID_HTML_MODALE_SUPPRESSION_VALEUR_ACTUELLE + indicateur.id}
+                                            className='fr-btn fr-btn--icon-left fr-icon-delete-line fr-btn--secondary bouton-proposition-valeur-actuelle'
+                                            data-fr-opened='false'
+                                            type='button'
+                                          >
+                                            Supprimer la proposition
+                                          </button>
                                         </div>
                                         <ModalePropositionValeurActuelle
                                           detailIndicateur={informationIndicateur.données}
                                           generatedHTMLID={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
+                                          indicateur={indicateur}
+                                          territoireCode={territoireCode}
+                                        />
+                                        <ModaleSuppressionValeurActuelle
+                                          generatedHTMLID={ID_HTML_MODALE_SUPPRESSION_VALEUR_ACTUELLE + indicateur.id}
                                           indicateur={indicateur}
                                           territoireCode={territoireCode}
                                         />
