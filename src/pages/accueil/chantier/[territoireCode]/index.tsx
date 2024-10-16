@@ -80,7 +80,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     statut: query.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : !!query.statut ? [query.statut as string] : ['PUBLIE'],
     estTerritorialise: query.estTerritorialise === 'true',
     estBarometre: query.estBarometre === 'true',
-    sorting: query.sorting,
+    sorting: query.sorting ? JSON.parse(JSON.stringify(query.sorting)) : [],
     valeurDeLaRecherche: query.valeurDeLaRecherche as string,
   };
   
