@@ -116,6 +116,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
 
   async récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation: Habilitation, optionsExport: OptionsExport): Promise<Chantier['id'][]> {
     const chantierIdsLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+
+    const listeChantierId = chantierIdsLecture.filter(value => optionsExport.listeChantierId.includes(value));
     const whereOptions: Prisma.chantierWhereInput = {};
 
     if (optionsExport.estBarometre && optionsExport.estTerritorialise) {
@@ -147,7 +149,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     const chantiers = await this.prisma.chantier.findMany({
       distinct: ['id'],
       where: {
-        id: { in: chantierIdsLecture },
+        id: { in: listeChantierId },
         ...whereOptions,
       },
       orderBy: [{ nom: 'asc' }],

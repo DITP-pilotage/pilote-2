@@ -37,7 +37,7 @@ const ressources = {
 
 export const ID_HTML_MODALE_EXPORT = 'modale-exporter-les-données';
 
-const ExportDesDonnées: FunctionComponent<{}> = () => {
+const ExportDesDonnées: FunctionComponent<{ listeChantierId: string[] }> = ({ listeChantierId }) => {
   const [ressourceÀExporter, setRessourceÀExporter] = useState<keyof typeof ressources | undefined>();
   const [estDésactivé, setEstDésactivé] = useState(false);
 
@@ -55,6 +55,10 @@ const ExportDesDonnées: FunctionComponent<{}> = () => {
     name: 'perimetreIds',
     value: filtrePerimetreMinisteriel,
   }));
+
+  if (listeChantierId.length > 0) {
+    arrayOptionsExport.push({ name: 'listeChantierId', value: listeChantierId.join(',') });
+  }
 
   if (filtres.estBarometre) {
     arrayOptionsExport.push({ name: 'estBarometre', value: true });
