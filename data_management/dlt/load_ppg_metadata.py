@@ -5,24 +5,24 @@ from pyarrow import csv
 import io
 import json
 
-
-def dl_github_file(github_repo, path):
+def dl_github_file(github_repo, path, branch):
     # See https://arrow.apache.org/docs/python/generated/pyarrow.csv.read_csv.html#pyarrow-csv-read-csv
-    csv_string = github_repo.getFileContent(path)
+    csv_string = github_repo.getFileContent(path, branch)
     arrow_table = csv.read_csv(io.BytesIO(csv_string.encode()))
     # arrow_table = arrow_table.rename_columns([x.lower() for x in arrow_table.column_names])
     pd_table = arrow_table.to_pandas()
     return [pd_table]
 
 @dlt.source()
-def ppg_metadata_source(github_repo, schema, csv_to_load: str = dlt.config.value):
-    print('[dlt] Schema: '+schema)
+def ppg_metadata_source(github_repo, branch, schema, csv_to_load: str = dlt.config.value):
+    print('[dlt] Schema: '+schema+' Branch: '+branch)
     for csv_name, csv_path in json.loads(csv_to_load).get('schema').get(schema).items():
         print('[dlt] Handling resource '+csv_name+'...')
-        yield dlt.resource(dl_github_file(github_repo, csv_path), name=csv_name)
+        yield dlt.resource(dl_github_file(github_repo, csv_path, branch), name=csv_name)
 
 def load_data() -> None:
     github_repo_config = dlt.config.get("github_repo")
+    github_branch = os.environ.get("PPG_METADATA_GITHUB_BRANCH", github_repo_config.get('default_branch'))
     github_repo = GithubRepo(
                 os.environ.get('PPG_METADATA_GITHUB_TOKEN'),
                 github_repo_config.get('user'), 
@@ -41,13 +41,13 @@ def load_data() -> None:
         #export_schema_path="dlt/schema/export",
         dataset_name='raw_data', # db schema        
     )
-    load_info = p.run(ppg_metadata_source(github_repo, 'raw_data_dlt'), write_disposition='replace', refresh="drop_sources")
+    load_info = p.run(ppg_metadata_source(github_repo, github_branch, 'raw_data_dlt'), write_disposition='replace', refresh="drop_sources")
     p2 = dlt.pipeline(
         import_schema_path="dlt/schema/import",
         destination=dlt.destinations.postgres(conn_str),
         dataset_name="tmp", # db schema   
     )
-    load_info = p2.run(ppg_metadata_source(github_repo, 'tmp_dlt'), write_disposition='replace', refresh="drop_sources")
+    load_info = p2.run(ppg_metadata_source(github_repo, github_branch, 'tmp_dlt'), write_disposition='replace', refresh="drop_sources")
     github_repo.close()
     print(load_info)
 
