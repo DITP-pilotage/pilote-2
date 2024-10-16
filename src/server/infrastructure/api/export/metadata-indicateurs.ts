@@ -3,7 +3,7 @@ import { stringify } from 'csv-stringify';
 import { Options } from 'csv-stringify/sync';
 import RécupérerListeMetadataIndicateurUseCase
   from '@/server/parametrage-indicateur/usecases/RécupérerListeMetadataIndicateurUseCase';
-import { dependencies } from '@/server/infrastructure/Dependencies';
+import { getContainer } from '@/server/dependances';
 
 const EXPORT_METADATA_INDICATEURS_COLUMN = [
   'indic_id',
@@ -85,7 +85,7 @@ export async function handleExportMetadataIndicateurs(request: NextApiRequest, r
 
 
   const listeMetadataIndicateur = 
-    await new RécupérerListeMetadataIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository())
+    await new RécupérerListeMetadataIndicateurUseCase(getContainer('parametrageIndicateur').resolve('metadataParametrageIndicateurRepository'))
       .run((request.query?.chantierIds as string[]) || [], (request.query?.perimetreIds as string[]) || [], request.query?.estTerritorialise === 'true', request.query?.estBarometre === 'true');
  
   listeMetadataIndicateur.forEach((metadataIndicateur) => {

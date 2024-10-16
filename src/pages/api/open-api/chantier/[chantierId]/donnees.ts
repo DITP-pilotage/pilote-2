@@ -26,7 +26,7 @@ export default async function handle(request: NextApiRequest, response: NextApiR
       if (!utilisateurAuthentifie.peutAccederAuChantier(request.query.chantierId as string)) {
         response.status(403).json({ message: `Vous n'êtes pas autorisé à acceder au chantier ${request.query.chantierId}` });
       }
-      const donneeChantier = await getContainer().resolve('recupererDonneesChantierQuery').handle(request.query.chantierId as string, utilisateurAuthentifie.habilitations.lecture.territoires);
+      const donneeChantier = await getContainer('chantier').resolve('recupererDonneesChantierQuery').handle(request.query.chantierId as string, utilisateurAuthentifie.habilitations.lecture.territoires);
       response.status(200).json(donneeChantier);
       break;
     }

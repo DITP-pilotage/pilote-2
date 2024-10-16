@@ -20,6 +20,7 @@ import InitialiserNouvelIndicateurUseCase
 import RécupérerChantiersSynthétisésUseCase from '@/server/usecase/chantier/RécupérerChantiersSynthétisésUseCase';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
+import { getContainer } from '@/server/dependances';
 
 export interface NextPageAdminUtilisateurProps {
   indicateur: MetadataParametrageIndicateurContrat,
@@ -55,7 +56,7 @@ export async function getServerSideProps({ req, res, params, query }: GetServerS
   if (estUneCréation) {
     indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await new InitialiserNouvelIndicateurUseCase(dependencies.getInformationMetadataIndicateurRepository()).run(params.id));
   } else {
-    indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await new RécupérerUnIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository()).run(params.id));
+    indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await new RécupérerUnIndicateurUseCase(getContainer('parametrageIndicateur').resolve('metadataParametrageIndicateurRepository')).run(params.id));
     if (!indicateurDemandé) {
       return redirigerVersPageAccueil;
     }

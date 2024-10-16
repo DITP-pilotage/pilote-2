@@ -1,38 +1,72 @@
-import type { AwilixContainer } from 'awilix';
-import { asClass, createContainer } from 'awilix';
+import { AwilixContainer, asClass, createContainer, InjectionMode, ContainerOptions } from 'awilix';
 import { RecupererDonneesChantierQuery } from '@/server/chantiers/infrastructure/queries/RecupererDonneesChantierQuery';
 import { ChantierRepository } from '@/server/chantiers/domain/ports/ChantierRepository';
 import { PrismaChantierRepository } from '@/server/chantiers/infrastructure/adapters/PrismaChantierRepository';
+import {
+  ImportMasseMetadataIndicateurHandler,
+} from '@/server/parametrage-indicateur/infrastructure/handlers/ImportMasseMetadataIndicateurHandler';
+import ImportMasseMetadataIndicateurUseCase
+  from '@/server/parametrage-indicateur/usecases/ImportMasseMetadataIndicateurUseCase';
+import {
+  MetadataParametrageIndicateurRepository,
+} from '@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository';
+import {
+  PrismaMetadataParametrageIndicateurRepository,
+} from '@/server/parametrage-indicateur/infrastructure/adapters/PrismaMetadataParametrageIndicateurRepository';
 
 type ChantierDependencies = {
   chantierRepository: ChantierRepository
   recupererDonneesChantierQuery: RecupererDonneesChantierQuery
 };
 
-export type ContainerDependencies = ChantierDependencies;
+type ParametrageIndicateurDependencies = {
+  importMasseMetadataIndicateurHandler: ImportMasseMetadataIndicateurHandler
+  importMasseMetadataIndicateurUseCase: ImportMasseMetadataIndicateurUseCase
+  metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository
+};
 
-let innerContainer: AwilixContainer<ContainerDependencies>;
+export type ContainerDependencies = {
+  chantier: AwilixContainer<ChantierDependencies>,
+  parametrageIndicateur: AwilixContainer<ParametrageIndicateurDependencies>
+};
+
+let innerContainer: ContainerDependencies;
 
 declare global {
-  var __container: AwilixContainer<ContainerDependencies> | undefined;
+  var __container: ContainerDependencies | undefined;
 }
 
-function registerContainer(container: AwilixContainer<ContainerDependencies>) {
-  container.register({
+function registerContainer(): ContainerDependencies {
+  // On pourra utiliser plus tard des registers provenant des sous dossiers pour plus de lisibilité
+  const defaultOptions: ContainerOptions = { injectionMode: InjectionMode.PROXY };
+  
+  const chantier = createContainer<ChantierDependencies>(defaultOptions);
+  const parametrageIndicateurDependencies = createContainer<ParametrageIndicateurDependencies>(defaultOptions);
+
+  chantier.register({
     chantierRepository: asClass(PrismaChantierRepository),
     recupererDonneesChantierQuery: asClass(RecupererDonneesChantierQuery),
   });
+
+  parametrageIndicateurDependencies.register({
+    importMasseMetadataIndicateurHandler: asClass(ImportMasseMetadataIndicateurHandler),
+    importMasseMetadataIndicateurUseCase: asClass(ImportMasseMetadataIndicateurUseCase),
+    metadataParametrageIndicateurRepository: asClass(PrismaMetadataParametrageIndicateurRepository),
+  });
+
+  return {
+    chantier: chantier.createScope(),
+    parametrageIndicateur: parametrageIndicateurDependencies.createScope(),
+  };
 }
 
 if (process.env.NODE_ENV === 'production') {
-  innerContainer = createContainer<ContainerDependencies>({ injectionMode: 'PROXY' });
-  registerContainer(innerContainer);
+  innerContainer = registerContainer();
 } else {
   if (!global.__container) {
-    global.__container = createContainer();
-    registerContainer(global.__container);
+    global.__container = registerContainer();
   }
   innerContainer = global.__container;
 }
 
-export const getContainer = innerContainer.createScope;
+export const getContainer = <T extends keyof ContainerDependencies>(nameDependency: T) => innerContainer[nameDependency];
