@@ -76,14 +76,14 @@ const useModalePropositionValeurActuelle = ({ detailIndicateur, indicateur, terr
     mode: 'all',
     resolver: zodResolver(validationPropositionValeurActuelle),
     defaultValues: detailIndicateur.proposition === null ? {
-      valeurActuelle: `${detailIndicateur.valeurActuelle?.toLocaleString()}`,
+      valeurActuelle: `${detailIndicateur.valeurActuelle}`,
       motifProposition: '',
       sourceDonneeEtMethodeCalcul: '',
       dateValeurActuelle: detailIndicateur.dateValeurActuelle!,
       indicId: indicateur.id,
       territoireCode,
     } : {
-      valeurActuelle: `${detailIndicateur.proposition.valeurActuelle.toLocaleString()}`,
+      valeurActuelle: `${detailIndicateur.proposition.valeurActuelle}`,
       motifProposition: detailIndicateur.proposition.motif || '',
       sourceDonneeEtMethodeCalcul: detailIndicateur.proposition.sourceDonneeEtMethodeCalcul || '',
       dateValeurActuelle: detailIndicateur.dateValeurActuelle!,
