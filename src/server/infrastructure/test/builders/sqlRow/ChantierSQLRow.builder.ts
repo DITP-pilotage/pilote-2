@@ -246,21 +246,6 @@ export default class ChantierRowBuilder {
     return this;
   }
 
-  avecStatut(statut: chantier['statut']): ChantierRowBuilder {
-    this._statut = statut;
-    return this;
-  }
-
-  avecTauxAvancementDate(taux_avancement_date: chantier['taux_avancement_date']): ChantierRowBuilder {
-    this._taux_avancement_date = taux_avancement_date;
-    return this;
-  }
-
-  avecValuesReplicatedFrom(donnees_maille_source: chantier['donnees_maille_source']): ChantierRowBuilder {
-    this._donnees_maille_source = donnees_maille_source;
-    return this;
-  }
-
   shallowCopy(): ChantierRowBuilder {
     const result = new ChantierRowBuilder() as any;
     for (const attribut in this) {

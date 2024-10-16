@@ -120,8 +120,8 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
 
     try {
       rapportValidata = await this.httpClient.post({ cheminCompletDuFichier, nomDuFichier, schema });
-      rapport = DetailValidationFichier.creerDetailValidationFichier({ estValide: rapportValidata.valid, utilisateurEmail });
 
+      rapport = DetailValidationFichier.creerDetailValidationFichier({ estValide: rapportValidata.valid, utilisateurEmail });
 
       const rawEnTete = rapportValidata.tasks[0].resource.data[0];
 

@@ -1,17 +1,29 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { dependencies } from '@/server/infrastructure/Dependencies';
+import {
+  PublierFichierIndicateurImporteUseCase,
+} from '@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase';
 
-export default async function handlePublierFichierImportIndicateur(
-  request: NextApiRequest,
-  response: NextApiResponse,
-  publierFichierIndicateurImporteUseCase = dependencies.getPublierFichierIndicateurImporteUseCase(),
-) {
+type Dependencies = {
+  publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase,
+};
 
-  await publierFichierIndicateurImporteUseCase.execute(
-    {
-      rapportId: request.query.rapportId as string,
-    },
-  );
+export class PublierFichierImportIndicateurHandler {
+  private publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase;
 
-  response.status(200).json({});
+  constructor({
+    publierFichierIndicateurImporteUseCase,
+  }: Dependencies) {
+    this.publierFichierIndicateurImporteUseCase = publierFichierIndicateurImporteUseCase;
+  }
+
+  async handle(request: NextApiRequest,
+    response: NextApiResponse) {
+    await this.publierFichierIndicateurImporteUseCase.execute(
+      {
+        rapportId: request.query.rapportId as string,
+      },
+    );
+
+    response.status(200).json({});
+  }
 }

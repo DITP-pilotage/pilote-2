@@ -1,8 +1,9 @@
-import { mesure_indicateur_temporaire as MesureIndicateurTemporaireModel, PrismaClient } from '@prisma/client';
+import { mesure_indicateur_temporaire as MesureIndicateurTemporaireModel } from '@prisma/client';
 import {
   MesureIndicateurTemporaireRepository,
 } from '@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface';
 import { MesureIndicateurTemporaire } from '@/server/import-indicateur/domain/MesureIndicateurTemporaire';
+import { prisma } from '@/server/db/prisma';
 
 const convertirEnModel = (mesureIndicateurTemporaire: MesureIndicateurTemporaire): Omit<MesureIndicateurTemporaireModel, 'date_import'> => {
   return {
@@ -29,16 +30,14 @@ const convertirEnMesureIndicateurTemporaire = (mesureIndicateur: MesureIndicateu
 };
 
 export class PrismaMesureIndicateurTemporaireRepository implements MesureIndicateurTemporaireRepository {
-  constructor(private prismaClient: PrismaClient) {}
-
   async sauvegarder(listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[]): Promise<void> {
     const listeMesuresIndicateursModel = listeMesuresIndicateurTemporaire.map(convertirEnModel);
 
-    await this.prismaClient.mesure_indicateur_temporaire.createMany({ data: listeMesuresIndicateursModel });
+    await prisma.mesure_indicateur_temporaire.createMany({ data: listeMesuresIndicateursModel });
   }
 
   async recupererToutParRapportId(rapportId: string): Promise<MesureIndicateurTemporaire[]> {
-    const listeMesuresIndicateurTemporaireModel = await this.prismaClient.mesure_indicateur_temporaire.findMany({
+    const listeMesuresIndicateurTemporaireModel = await prisma.mesure_indicateur_temporaire.findMany({
       where: {
         rapport_id: rapportId,
       },
@@ -47,7 +46,7 @@ export class PrismaMesureIndicateurTemporaireRepository implements MesureIndicat
   }
 
   async supprimerToutParRapportId(rapportId: string): Promise<void> {
-    await this.prismaClient.mesure_indicateur_temporaire.deleteMany({
+    await prisma.mesure_indicateur_temporaire.deleteMany({
       where: {
         rapport_id: rapportId,
       },

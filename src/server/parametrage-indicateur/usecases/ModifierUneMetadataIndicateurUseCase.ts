@@ -10,11 +10,22 @@ import {
   HistorisationModificationRepository,
 } from '@/server/domain/historisationModification/HistorisationModificationRepository';
 
+type Dependencies = {
+  metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository,
+  historisationModificationRepository: HistorisationModificationRepository,
+};
 export default class ModifierUneMetadataIndicateurUseCase {
-  constructor(
-    private readonly metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository,
-    private readonly historisationModificationRepository: HistorisationModificationRepository,
-  ) {}
+  private metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
+
+  private historisationModificationRepository: HistorisationModificationRepository;
+
+  constructor({
+    metadataParametrageIndicateurRepository,
+    historisationModificationRepository,
+  }: Dependencies) {
+    this.metadataParametrageIndicateurRepository = metadataParametrageIndicateurRepository;
+    this.historisationModificationRepository = historisationModificationRepository;
+  }
 
   async run(utilisateurNom: string, inputs: MetadataParametrageIndicateurForm) {
     const metadataParametrageIndicateurAncien = await this.metadataParametrageIndicateurRepository.recupererMetadataParametrageIndicateurParIndicId(inputs.indicId);
