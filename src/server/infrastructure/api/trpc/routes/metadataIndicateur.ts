@@ -21,6 +21,7 @@ import { dependencies } from '@/server/infrastructure/Dependencies';
 import {
   MetadataParametrageIndicateurForm,
 } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateurInputForm';
+import { getContainer } from '@/server/dependances';
 
 const convertirEnMetadataParametrageIndicateurForm = (input: any): MetadataParametrageIndicateurForm =>  {
   return {
@@ -95,23 +96,23 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
   récupérerMetadataIndicateurFiltrés: procédureProtégée
     .input(validationFiltresPourListeMetadataIndicateur)
     .query(async ({ input }): Promise<MetadataParametrageIndicateurContrat[]> => {
-      const listeMetadataIndicateur = await new RécupérerListeMetadataIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository()).run(input.filtres.chantiers, input.filtres.perimetresMinisteriels, input.filtres.estTerritorialise, input.filtres.estBarometre);
+      const listeMetadataIndicateur = await new RécupérerListeMetadataIndicateurUseCase(getContainer('parametrageIndicateur').resolve('metadataParametrageIndicateurRepository')).run(input.filtres.chantiers, input.filtres.perimetresMinisteriels, input.filtres.estTerritorialise, input.filtres.estBarometre);
       return listeMetadataIndicateur.map(presenterEnMetadataParametrageIndicateurContrat);
     }),
   récupérerMetadataIndicateurIdentifiantGénéré: procédureProtégée
     .query(async ({}): Promise<string> => {
-      return new RécupérerMetadataIndicateurIdentifiantGénéréUseCase(dependencies.getMetadataParametrageIndicateurRepository()).run();
+      return new RécupérerMetadataIndicateurIdentifiantGénéréUseCase(getContainer('parametrageIndicateur').resolve('metadataParametrageIndicateurRepository')).run();
     }),
   modifier: procédureProtégée.input(zodValidateurCSRF.merge(validationMetadataIndicateurFormulaire).and(validationMetadataIndicateurContexte))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
-      return new ModifierUneMetadataIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository(), dependencies.getHistorisationModificationRepository()).run(ctx.session.user.email as string, convertirEnMetadataParametrageIndicateurForm(input));
+      return new ModifierUneMetadataIndicateurUseCase(getContainer('parametrageIndicateur').resolve('metadataParametrageIndicateurRepository'), dependencies.getHistorisationModificationRepository()).run(ctx.session.user.email as string, convertirEnMetadataParametrageIndicateurForm(input));
     }),
   creer: procédureProtégée.input(zodValidateurCSRF.merge(validationMetadataIndicateurFormulaire).and(validationMetadataIndicateurContexte))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
-      return new CreerUneMetadataIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository(), dependencies.getHistorisationModificationRepository()).run(ctx.session.user.email as string, convertirEnMetadataParametrageIndicateurForm(input));
+      return new CreerUneMetadataIndicateurUseCase(getContainer('parametrageIndicateur').resolve('metadataParametrageIndicateurRepository'), dependencies.getHistorisationModificationRepository()).run(ctx.session.user.email as string, convertirEnMetadataParametrageIndicateurForm(input));
     }),
 });

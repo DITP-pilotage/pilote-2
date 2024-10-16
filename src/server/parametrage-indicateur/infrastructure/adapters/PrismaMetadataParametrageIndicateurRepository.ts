@@ -3,7 +3,8 @@ Cette classe ne possède pas encore de test car la récupération/création des 
 On ne peut donc pas utiliser la creation de table par migration prisma 
  */
 
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import { prisma } from '@/server/db/prisma';
 import Logger from '@/server/infrastructure/Logger';
 import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur';
 import {
@@ -153,8 +154,6 @@ function convertirEnMetadataParametrageIndicateur(rawMetadataParametrageIndicate
   });
 }
 export class PrismaMetadataParametrageIndicateurRepository implements MetadataParametrageIndicateurRepository {
-  constructor(private prismaClient: PrismaClient) {}
-
   async recupererListeMetadataParametrageIndicateurEnFonctionDesFiltres(chantierIds: string[], perimetreIds: string[], estTerritorialise: boolean, estBarometre: boolean): Promise<MetadataParametrageIndicateur[]> {
     try {
       let query = 'SELECT mi.*, mpi.*, mic.*, mc.ch_nom FROM raw_data.metadata_indicateurs_hidden mi ' +
@@ -181,7 +180,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
 
       query = `${query} ORDER BY mi.indic_id`;
 
-      const listeRawMetadataParametrageIndicateur = await this.prismaClient.$queryRaw<RawMetadataParametrageIndicateurModel[]>`${Prisma.raw(query)}`;
+      const listeRawMetadataParametrageIndicateur = await prisma.$queryRaw<RawMetadataParametrageIndicateurModel[]>`${Prisma.raw(query)}`;
 
       if (listeRawMetadataParametrageIndicateur.length === 0) {
         return [];
@@ -203,7 +202,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                   LEFT JOIN raw_data.metadata_chantiers mc ON mi.indic_parent_ch = mc.chantier_id
                          WHERE mpi.indic_id LIKE '${indicId}'
             `;
-      const listeRawMetadataParametrageIndicateur = await this.prismaClient.$queryRaw<RawMetadataParametrageIndicateurModel[]>`${Prisma.raw(query)}`;
+      const listeRawMetadataParametrageIndicateur = await prisma.$queryRaw<RawMetadataParametrageIndicateurModel[]>`${Prisma.raw(query)}`;
 
       if (listeRawMetadataParametrageIndicateur.length === 0) {
         throw new Error('invalid indic_id');
@@ -289,10 +288,10 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                              commentaire                 = ${makeStrSafer(inputs.commentaire)}
                                          WHERE indic_id = '${inputs.indicId}'`;
 
-    await this.prismaClient.$transaction([
-      this.prismaClient.$queryRaw`${Prisma.raw(queryIndicateur)}`,
-      this.prismaClient.$queryRaw`${Prisma.raw(queryMetadataIndicateur)}`,
-      this.prismaClient.$queryRaw`${Prisma.raw(queryMetadataIndicateurComplementaire)}`,
+    await prisma.$transaction([
+      prisma.$queryRaw`${Prisma.raw(queryIndicateur)}`,
+      prisma.$queryRaw`${Prisma.raw(queryMetadataIndicateur)}`,
+      prisma.$queryRaw`${Prisma.raw(queryMetadataIndicateurComplementaire)}`,
     ]);
 
     return this.recupererMetadataParametrageIndicateurParIndicId(inputs.indicId);
@@ -433,10 +432,10 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  ${makeStrSafer(inputs.contactTechnique)},
                                                  ${makeStrSafer(inputs.contactTechniqueEmail)},
                                                  ${makeStrSafer(inputs.commentaire)})`;
-    await this.prismaClient.$transaction([
-      this.prismaClient.$queryRaw`${Prisma.raw(queryIndicateur)}`,
-      this.prismaClient.$queryRaw`${Prisma.raw(queryMetadataIndicateur)}`,
-      this.prismaClient.$queryRaw`${Prisma.raw(queryMetadataIndicateurComplementaire)}`,
+    await prisma.$transaction([
+      prisma.$queryRaw`${Prisma.raw(queryIndicateur)}`,
+      prisma.$queryRaw`${Prisma.raw(queryMetadataIndicateur)}`,
+      prisma.$queryRaw`${Prisma.raw(queryMetadataIndicateurComplementaire)}`,
     ]);
 
     return this.recupererMetadataParametrageIndicateurParIndicId(inputs.indicId);
@@ -653,12 +652,12 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
 
     const listePromise = listeMetadataIndicateur.flatMap(indicateur => {
       return [
-        this.prismaClient.$queryRaw`${Prisma.raw(queryIndicateurFn(indicateur))}`,
-        this.prismaClient.$queryRaw`${Prisma.raw(queryMetadataIndicateurFn(indicateur))}`,
-        this.prismaClient.$queryRaw`${Prisma.raw(queryMetadataIndicateurComplementaireFn(indicateur))}`,
+        prisma.$queryRaw`${Prisma.raw(queryIndicateurFn(indicateur))}`,
+        prisma.$queryRaw`${Prisma.raw(queryMetadataIndicateurFn(indicateur))}`,
+        prisma.$queryRaw`${Prisma.raw(queryMetadataIndicateurComplementaireFn(indicateur))}`,
       ];
     });
-    await this.prismaClient.$transaction(listePromise);
+    await prisma.$transaction(listePromise);
   }
 
 }

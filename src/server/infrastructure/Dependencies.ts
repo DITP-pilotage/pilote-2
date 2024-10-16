@@ -124,12 +124,6 @@ import {
   IndicateurRepository as ChantierIndicateurRepository,
 } from '@/server/chantiers/domain/ports/IndicateurRepository';
 import {
-  PrismaMetadataParametrageIndicateurRepository,
-} from '@/server/parametrage-indicateur/infrastructure/adapters/PrismaMetadataParametrageIndicateurRepository';
-import {
-  MetadataParametrageIndicateurRepository,
-} from '@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository';
-import {
   YamlInformationMetadataIndicateurRepository,
 } from '@/server/parametrage-indicateur/infrastructure/adapters/YamlInformationMetadataIndicateurRepository';
 import {
@@ -141,8 +135,6 @@ import {
 import {
   HistorisationModificationRepository,
 } from '@/server/domain/historisationModification/HistorisationModificationRepository';
-import ImportMasseMetadataIndicateurUseCase
-  from '@/server/parametrage-indicateur/usecases/ImportMasseMetadataIndicateurUseCase';
 import { GestionContenuRepository } from '@/server/gestion-contenu/domain/ports/GestionContenuRepository';
 import {
   PrismaGestionContenuRepository,
@@ -295,15 +287,11 @@ class Dependencies {
 
   private readonly _importIndicateurRepository: ImportIndicateurRepository;
 
-  private readonly _metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
-
   private readonly _informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository;
 
   private readonly _historisationModification: HistorisationModificationRepository;
 
   private readonly _gestionContenuRepository: GestionContenuRepository;
-
-  private readonly _importMasseMetadataIndicateurUseCase: ImportMasseMetadataIndicateurUseCase;
 
   private readonly _tokenAPIService: TokenAPIService;
 
@@ -355,7 +343,6 @@ class Dependencies {
     this._synthèseDesRésultatsProjetStructurantRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository(prisma);
     this._indicateurProjetStructurantRepository = new IndicateurProjetStructurantSQLRepository(prisma);
     this._importIndicateurRepository = new PrismaIndicateurRepository(prisma);
-    this._metadataParametrageIndicateurRepository = new PrismaMetadataParametrageIndicateurRepository(prisma);
     this._informationMetadataIndicateurRepository = new YamlInformationMetadataIndicateurRepository();
     this._historisationModification = new HistorisationModificationSQLRepository(prisma);
     this._gestionContenuRepository = new PrismaGestionContenuRepository(prisma);
@@ -379,15 +366,6 @@ class Dependencies {
       indicateurRepository: this._importIndicateurRepository,
       erreurValidationFichierRepository: this._erreurValidationFichierRepository,
     });
-
-    this._importMasseMetadataIndicateurUseCase = new ImportMasseMetadataIndicateurUseCase({
-      metadataParametrageIndicateurRepository: this._metadataParametrageIndicateurRepository,
-    });
-  }
-
-
-  getImportMasseMetadataIndicateurUseCase(): ImportMasseMetadataIndicateurUseCase {
-    return this._importMasseMetadataIndicateurUseCase;
   }
 
   getGestionContenuRepository(): GestionContenuRepository {
@@ -408,10 +386,6 @@ class Dependencies {
 
   getAxeRepository(): AxeRepository {
     return this._axeRepository;
-  }
-
-  getPpgRepository(): PpgRepository {
-    return this._ppgRepository;
   }
 
   getSynthèseDesRésultatsRepository(): SynthèseDesRésultatsRepository {
@@ -442,20 +416,12 @@ class Dependencies {
     return this._importIndicateurRepository;
   }
 
-  getMetadataParametrageIndicateurRepository(): MetadataParametrageIndicateurRepository {
-    return this._metadataParametrageIndicateurRepository;
-  }
-
   getRapportRepository(): RapportRepository {
     return this._rapportRepository;
   }
 
   getMesureIndicateurTemporaireRepository(): MesureIndicateurTemporaireRepository {
     return this._mesureIndicateurTemporaireRepository;
-  }
-
-  getMesureIndicateurRepository(): MesureIndicateurRepository {
-    return this._mesureIndicateurRepository;
   }
 
   getInformationMetadataIndicateurRepository(): InformationMetadataIndicateurRepository {
