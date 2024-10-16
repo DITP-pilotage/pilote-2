@@ -11,7 +11,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
-import { parseAsBoolean, useQueryState } from 'nuqs';
+import { parseAsBoolean, parseAsInteger, useQueryState, useQueryStates } from 'nuqs';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
 import { comparerAvancementRéforme } from '@/client/utils/chantier/avancement/avancement';
@@ -36,12 +36,18 @@ import TableauChantiersTuileMinistère from './Tuile/Ministère/TableauChantiers
 import TableauChantiersTuileMinistèreProps from './Tuile/Ministère/TableauChantiersTuileMinistère.interface';
 
 
-export default function useTableauChantiers(données: TableauChantiersProps['données'], ministèresDisponibles: Ministère[]) {
+export default function useTableauChantiers(données: TableauChantiersProps['données'], ministèresDisponibles: Ministère[], nombreTotalChantiersAvecAlertes: number) {
     
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
   const [tri, setTri] = useState<SortingState>([{ id: 'avancement', desc: false }]);
   const [sélectionColonneÀTrier, setSélectionColonneÀTrier] = useState<string>('avancement');
-
+  const [pagination, setPagination] = useQueryStates({
+    pageIndex: parseAsInteger.withDefault(1),
+    pageSize: parseAsInteger.withDefault(50),
+  }, {
+    history: 'push',
+    shallow: false,
+  });
   const [estGroupe] = useQueryState('groupeParMinistere', parseAsBoolean.withDefault(false));
 
   const [regroupement, setRegroupement] = useState<GroupingState>(ministèresDisponibles.length > 1 && estGroupe ? ['porteur'] : []);
@@ -254,6 +260,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
     state: {
       globalFilter: valeurDeLaRecherche,
       sorting: tri,
+      pagination,
       grouping: regroupement,
       columnVisibility: estVueTuile ? ({
         porteur: false,
@@ -273,6 +280,9 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
         dateDeMàjDonnéesQuantitatives: false,
       }),
     },
+    manualPagination: true,
+    onPaginationChange: setPagination,
+    pageCount: nombreTotalChantiersAvecAlertes % pagination.pageSize === 0 ? Math.trunc(nombreTotalChantiersAvecAlertes / pagination.pageSize) : Math.trunc(nombreTotalChantiersAvecAlertes / pagination.pageSize) + 1,
     onSortingChange: setTri,
     onGroupingChange: setRegroupement,
     getCoreRowModel: getCoreRowModel(),
@@ -295,8 +305,8 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
 
   return {
     tableau,
-    changementDeLaRechercheCallback,
     changementDePageCallback,
+    changementDeLaRechercheCallback,
     valeurDeLaRecherche,
     sélectionColonneÀTrier,
     changementSélectionColonneÀTrierCallback: setSélectionColonneÀTrier,

@@ -51,11 +51,14 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
     const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
     const filtresPourChantier: FiltreQueryParams = {
+      //ajout du sorting + de la recherche
       perimetres: filtres.perimetres,
       axes: filtres.axes.map(filtre => axes.find(axe => axe.id === filtre)!.nom),
       statut: filtres.statut,
       estTerritorialise: filtres.estTerritorialise,
       estBarometre: filtres.estBarometre,
+      sorting: filtres.sorting,
+      valeurDeLaRecherche: filtres.valeurDeLaRecherche,
     };
 
     const [chantiersRowsMaille, territoires, chantiersRowsDatesDeMàj ] = await Promise.all([

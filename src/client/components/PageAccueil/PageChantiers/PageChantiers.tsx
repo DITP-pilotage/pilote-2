@@ -44,6 +44,7 @@ import usePageChantiers from './usePageChantiers';
 
 interface PageChantiersProps {
   chantiers: ChantierAccueilContrat[],
+  nombreTotalChantiersAvecAlertes: number
   ministères: Ministère[]
   axes: Axe[],
   territoireCode: string
@@ -56,6 +57,7 @@ interface PageChantiersProps {
 
 const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   chantiers,
+  nombreTotalChantiersAvecAlertes,
   ministères,
   axes,
   territoireCode,
@@ -373,6 +375,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 données={donnéesTableauChantiers}
                 mailleSelectionnee={mailleSelectionnee}
                 ministèresDisponibles={ministères}
+                nombreTotalChantiersAvecAlertes={nombreTotalChantiersAvecAlertes}
                 territoireCode={territoireCode}
               />
             </Bloc>
