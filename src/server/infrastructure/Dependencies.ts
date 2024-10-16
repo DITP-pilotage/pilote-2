@@ -17,13 +17,6 @@ import CommentaireRepository from '@/server/domain/chantier/commentaire/Commenta
 import CommentaireSQLRepository
   from '@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository';
 import ObjectifRepository from '@/server/domain/chantier/objectif/ObjectifRepository.interface';
-import {
-  ValidataFichierIndicateurValidationService,
-} from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
-import { FetchHttpClient } from '@/server/import-indicateur/infrastructure/adapters/FetchHttpClient';
-import {
-  PrismaMesureIndicateurTemporaireRepository,
-} from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurTemporaireRepository';
 import DécisionStratégiqueRepository
   from '@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
@@ -71,24 +64,9 @@ import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructu
 import ObjectifProjetStructurantRepository
   from '@/server/domain/projetStructurant/objectif/ObjectifRepository.interface';
 import ProjetStructurantRepository from '@/server/domain/projetStructurant/ProjetStructurantRepository.interface';
-import {
-  VerifierFichierIndicateurImporteUseCase,
-} from '@/server/import-indicateur/usecases/VerifierFichierIndicateurImporteUseCase';
 import { RapportRepository } from '@/server/import-indicateur/domain/ports/RapportRepository';
-import {
-  PrismaMesureIndicateurRepository,
-} from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurRepository';
-import {
-  MesureIndicateurTemporaireRepository,
-} from '@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface';
-import {
-  MesureIndicateurRepository,
-} from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface';
 import CommentaireProjetStructurantRepository
   from '@/server/domain/projetStructurant/commentaire/CommentaireRepository.interface';
-import {
-  PublierFichierIndicateurImporteUseCase,
-} from '@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase';
 import PérimètreMinistérielRepository
   from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
 import {
@@ -106,12 +84,6 @@ import ProfilRepository from '@/server/domain/profil/ProfilRepository';
 import ChantierDateDeMàjMeteoRepository from '@/server/domain/chantier/ChantierDateDeMàjMeteoRepository.interface';
 import ChantierDateDeMàjMeteoSQLRepository
   from '@/server/infrastructure/accès_données/chantier/ChantierDateDeMàjMeteoSQLRepository';
-import {
-  ErreurValidationFichierRepository,
-} from '@/server/import-indicateur/domain/ports/ErreurValidationFichierRepository';
-import {
-  PrismaErreurValidationFichierRepository,
-} from '@/server/import-indicateur/infrastructure/adapters/PrismaErreurValidationFichierRepository';
 import {
   PrismaIndicateurRepository,
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaIndicateurRepository';
@@ -217,10 +189,6 @@ class Dependencies {
 
   private readonly _décisionStratégiqueRepository: DécisionStratégiqueRepository;
 
-  private readonly _publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase;
-
-  private readonly _verifierFichierIndicateurImporteUseCase: VerifierFichierIndicateurImporteUseCase;
-
   private readonly _utilisateurRepository: UtilisateurRepository;
 
   private readonly _authentificationUtilisateurRepository: AuthentificationUtilisateurRepository;
@@ -261,12 +229,6 @@ class Dependencies {
 
   private readonly _rapportRepository: RapportRepository;
 
-  private readonly _mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
-
-  private readonly _erreurValidationFichierRepository: ErreurValidationFichierRepository;
-
-  private readonly _mesureIndicateurRepository: MesureIndicateurRepository;
-
   private readonly _commentaireProjetStructurantRepository: CommentaireProjetStructurantRepository;
 
   private readonly _périmètreMinistérielRepository: PérimètreMinistérielRepository;
@@ -302,7 +264,7 @@ class Dependencies {
     this._commentaireRepository = new CommentaireSQLRepository(prisma);
     this._objectifRepository = new ObjectifSQLRepository(prisma);
     this._décisionStratégiqueRepository = new DécisionStratégiqueSQLRepository(prisma);
-    this._utilisateurRepository = new UtilisateurSQLRepository(prisma);
+    this._utilisateurRepository = new UtilisateurSQLRepository();
     this._authentificationUtilisateurRepository = new PrismaUtilisateurRepository(prisma);
     this._authentificationProfilRepository = new PrismaProfilRepository(prisma);
     this._territoireRepository = new TerritoireSQLRepository(prisma);
@@ -321,37 +283,17 @@ class Dependencies {
     this._projetStructurantRepository = new ProjetStructurantSQLRepository(prisma);
     this._profilRepository = new ProfilSQLRepository(prisma);
     this._objectifProjetStructurantRepository = new ObjectifProjetStructurantSQLRepository(prisma);
-    this._rapportRepository = new PrismaRapportRepository(prisma);
-    this._mesureIndicateurTemporaireRepository = new PrismaMesureIndicateurTemporaireRepository(prisma);
-    this._erreurValidationFichierRepository = new PrismaErreurValidationFichierRepository(prisma);
-    this._mesureIndicateurRepository = new PrismaMesureIndicateurRepository(prisma);
+    this._rapportRepository = new PrismaRapportRepository();
     this._commentaireProjetStructurantRepository = new CommentaireProjetStructurantSQLRepository(prisma);
     this._périmètreMinistérielRepository = new PérimètreMinistérielSQLRepository(prisma);
     this._synthèseDesRésultatsProjetStructurantRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository(prisma);
     this._indicateurProjetStructurantRepository = new IndicateurProjetStructurantSQLRepository(prisma);
-    this._importIndicateurRepository = new PrismaIndicateurRepository(prisma);
+    this._importIndicateurRepository = new PrismaIndicateurRepository();
     this._historisationModification = new PrismaHistorisationModificationRepository();
     this._gestionContenuRepository = new PrismaGestionContenuRepository(prisma);
     this._tokenAPIService = new TokenAPIJWTService({ secret: configuration.tokenAPI.secret });
     this._tokenAPIInformationRepository = new PrismaTokenAPIInformationRepository(prisma);
     this._propositionValeurActuelleRepository = new PrismaPropositionValeurActuelleRepository(prisma);
-
-    const httpClient = new FetchHttpClient();
-    const fichierIndicateurValidationService = new ValidataFichierIndicateurValidationService({ httpClient });
-
-    this._publierFichierIndicateurImporteUseCase = new PublierFichierIndicateurImporteUseCase({
-      mesureIndicateurRepository: this._mesureIndicateurRepository,
-      mesureIndicateurTemporaireRepository: this._mesureIndicateurTemporaireRepository,
-      rapportRepository: this._rapportRepository,
-    });
-
-    this._verifierFichierIndicateurImporteUseCase = new VerifierFichierIndicateurImporteUseCase({
-      fichierIndicateurValidationService,
-      rapportRepository: this._rapportRepository,
-      mesureIndicateurTemporaireRepository: this._mesureIndicateurTemporaireRepository,
-      indicateurRepository: this._importIndicateurRepository,
-      erreurValidationFichierRepository: this._erreurValidationFichierRepository,
-    });
   }
 
   getGestionContenuRepository(): GestionContenuRepository {
@@ -404,18 +346,6 @@ class Dependencies {
 
   getRapportRepository(): RapportRepository {
     return this._rapportRepository;
-  }
-
-  getMesureIndicateurTemporaireRepository(): MesureIndicateurTemporaireRepository {
-    return this._mesureIndicateurTemporaireRepository;
-  }
-
-  getPublierFichierIndicateurImporteUseCase(): PublierFichierIndicateurImporteUseCase {
-    return this._publierFichierIndicateurImporteUseCase;
-  }
-
-  getVerifierFichierIndicateurImporteUseCase(): VerifierFichierIndicateurImporteUseCase {
-    return this._verifierFichierIndicateurImporteUseCase;
   }
 
   getUtilisateurRepository() {

@@ -2,7 +2,6 @@ import {
   chantier,
   habilitation,
   perimetre,
-  PrismaClient,
   profil,
   projet_structurant,
   territoire,
@@ -28,6 +27,7 @@ import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion';
 import { removeAccents } from '@/server/utils/remove-accents';
+import { prisma } from '@/server/db/prisma';
 
 export const convertirEnModel = (utilisateurAConvertir: {
   email: string
@@ -107,18 +107,16 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
   private _périmètresMinistériels: string[] = [];
 
-  constructor(private _prisma: PrismaClient) {}
-
   async _récupérerTerritoires() {
     if (this._territoires.length === 0) {
-      const tousLesTerritoires = await this._prisma.territoire.findMany();
+      const tousLesTerritoires = await prisma.territoire.findMany();
       this._territoires = tousLesTerritoires.map(c => c.code);
     }
   }
 
   async _récupérerProjetsStructurants() {
     if (this._projetsStructurants.donnéesBrutes.length === 0) {
-      const tousLesProjetsStructurants = await this._prisma.projet_structurant.findMany();
+      const tousLesProjetsStructurants = await prisma.projet_structurant.findMany();
 
       this._projetsStructurants.donnéesBrutes = tousLesProjetsStructurants;
 
@@ -139,7 +137,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
   async _récupérerChantiers() {
     if (this._chantiers.donnéesBrutes.length === 0) {
-      const tousLesChantiers = await this._prisma.chantier.findMany({ distinct: ['id'] });
+      const tousLesChantiers = await prisma.chantier.findMany({ distinct: ['id'] });
 
       this._chantiers.donnéesBrutes = tousLesChantiers;
 
@@ -161,13 +159,13 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
   async _récupérerPérimètresMinistériels() {
     if (this._périmètresMinistériels.length === 0) {
-      const tousLesPérimètresMinistériels = await this._prisma.perimetre.findMany();
+      const tousLesPérimètresMinistériels = await prisma.perimetre.findMany();
       this._périmètresMinistériels = tousLesPérimètresMinistériels.map(périmètre => périmètre.id);
     }
   }
 
   async supprimer(email: string): Promise<void> {
-    await this._prisma.utilisateur.delete({ 
+    await prisma.utilisateur.delete({
       where: { email: email.toLowerCase() }, 
       include: { 
         habilitation: true, 
@@ -181,7 +179,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     await this._récupérerProjetsStructurants();
     await this._récupérerPérimètresMinistériels();
 
-    const row = await this._prisma.utilisateur.findUnique({ 
+    const row = await prisma.utilisateur.findUnique({
       where: { email: email.toLowerCase() }, 
       include: { 
         profil: true, 
@@ -202,7 +200,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     await this._récupérerProjetsStructurants();
     await this._récupérerPérimètresMinistériels();
 
-    const row = await this._prisma.utilisateur.findUnique({
+    const row = await prisma.utilisateur.findUnique({
       where: { id },
       include: {
         profil: true,
@@ -224,7 +222,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     await this._récupérerProjetsStructurants();
     await this._récupérerPérimètresMinistériels();
 
-    const utilisateurs = await this._prisma.utilisateur.findMany(
+    const utilisateurs = await prisma.utilisateur.findMany(
       {
         include: {
           profil: true,
@@ -271,7 +269,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
     const testLower = removeAccents(valeurDeLaRecherche.toLowerCase());
 
-    const unaccentedUtilisateur = await this._prisma.$queryRawUnsafe<{ id: string }[]>(`SELECT id FROM utilisateur where LOWER(unaccent(nom)) ILIKE $1
+    const unaccentedUtilisateur = await prisma.$queryRawUnsafe<{ id: string }[]>(`SELECT id FROM utilisateur where LOWER(unaccent(nom)) ILIKE $1
       OR LOWER(unaccent(email)) ILIKE $1
       OR LOWER(unaccent(prenom)) ILIKE $1
       OR LOWER(unaccent(fonction)) ILIKE $1
@@ -279,7 +277,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       OR LOWER(unaccent(auteur_modification)) ILIKE $1;
     `, `%${testLower}%`);
 
-    const utilisateurs = await this._prisma.utilisateur.findMany(
+    const utilisateurs = await prisma.utilisateur.findMany(
       {
         include: {
           profil: true,
@@ -334,7 +332,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
   async récupérerExistants(utilisateurs: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[]): Promise<Utilisateur['email'][]> {
 
-    const utilisateursExistants = await this._prisma.utilisateur.findMany({
+    const utilisateursExistants = await prisma.utilisateur.findMany({
       where: {
         email: {
           in: utilisateurs.map(u => u.email),
@@ -348,7 +346,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   async récupérerNombreUtilisateursSurLeTerritoire(territoireCode: string, maille: MailleInterne): Promise<number> {
     const profilsCodes = maille === 'départementale' ? profilsDépartementaux : profilsRégionaux;
 
-    return this._prisma.utilisateur.count({
+    return prisma.utilisateur.count({
       where: {
         profilCode: {
           in: profilsCodes,
@@ -368,7 +366,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   async récupérerNombreUtilisateursParTerritoires(territoires: Territoire[]): Promise<Record<string, number>> {
 
     const territoireCodes = territoires.map(territoireElement => territoireElement.code);
-    const utilisateurs = await this._prisma.utilisateur.findMany({
+    const utilisateurs = await prisma.utilisateur.findMany({
       where: {
         OR: [
           {
@@ -427,7 +425,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
   async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteur: string): Promise<void> {
    
-    const utilisateurCrééOuMisÀJour = await this._prisma.utilisateur.upsert({
+    const utilisateurCrééOuMisÀJour = await prisma.utilisateur.upsert({
       create: convertirEnModel({
         email: u.email.toLocaleLowerCase(),
         nom: u.nom,
@@ -461,13 +459,13 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       chantiers: h[1].chantiers,
     }));
 
-    await this._prisma.habilitation.deleteMany({
+    await prisma.habilitation.deleteMany({
       where: {
         utilisateurId: utilisateurCrééOuMisÀJour.id,
       },
     });
 
-    await this._prisma.habilitation.createMany({
+    await prisma.habilitation.createMany({
       data: habilitationsÀCréer,
     });
   }

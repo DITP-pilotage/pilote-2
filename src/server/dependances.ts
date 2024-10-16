@@ -4,19 +4,22 @@ import {
   ParametrageIndicateurDependencies,
 } from '@/server/parametrage-indicateur/container';
 import { ChantierDependencies, getChantiersContainer } from '@/server/chantiers/container';
+import { getImportIndicateurContainer, ImportIndicateurDependencies } from '@/server/import-indicateur/container';
+import { AuthentificationDependencies, getAuthentificationContainer } from '@/server/authentification/container';
 
 export type ContainerDependencies = {
+  authentification: AwilixContainer<AuthentificationDependencies>
   chantiers: AwilixContainer<ChantierDependencies>,
   parametrageIndicateur: AwilixContainer<ParametrageIndicateurDependencies>
+  importIndicateur: AwilixContainer<ImportIndicateurDependencies>
 };
 
 function registerContainer(): ContainerDependencies {
-  const chantier = getChantiersContainer();
-  const parametrageIndicateurContainer = getParametrageIndicateurContainer();
-
   return {
-    chantiers: chantier.createScope(),
-    parametrageIndicateur: parametrageIndicateurContainer.createScope(),
+    authentification: getAuthentificationContainer().createScope(),
+    chantiers: getChantiersContainer().createScope(),
+    parametrageIndicateur: getParametrageIndicateurContainer().createScope(),
+    importIndicateur: getImportIndicateurContainer().createScope(),
   };
 }
 

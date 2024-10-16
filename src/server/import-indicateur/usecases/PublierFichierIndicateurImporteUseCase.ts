@@ -19,13 +19,9 @@ export class PublierFichierIndicateurImporteUseCase {
 
   private mesureIndicateurRepository: MesureIndicateurRepository;
 
-  private rapportRepository: RapportRepository;
-
-
-  constructor({ mesureIndicateurTemporaireRepository, mesureIndicateurRepository, rapportRepository }: Dependencies) {
+  constructor({ mesureIndicateurTemporaireRepository, mesureIndicateurRepository }: Dependencies) {
     this.mesureIndicateurTemporaireRepository = mesureIndicateurTemporaireRepository;
     this.mesureIndicateurRepository = mesureIndicateurRepository;
-    this.rapportRepository = rapportRepository;
   }
 
   async execute({ rapportId }: { rapportId: string }): Promise<void> {

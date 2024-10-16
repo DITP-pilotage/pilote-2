@@ -8,7 +8,7 @@ import { HistorisationModificationCreationBuilder } from '@/server/app/builders/
 describe('HistorisationModificationSQLRepository', () => {
   let historisationModificationSQLRepository: PrismaHistorisationModificationRepository;
   beforeEach(() => {
-    historisationModificationSQLRepository = new PrismaHistorisationModificationRepository(prisma);
+    historisationModificationSQLRepository = new PrismaHistorisationModificationRepository();
   });
   test('doit sauvegarder une nouvelle création', async () => {
     // GIVEN

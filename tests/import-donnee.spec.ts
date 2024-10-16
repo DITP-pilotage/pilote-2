@@ -6,10 +6,6 @@ import { loginFn } from './utils';
 test('doit pouvoir importer des données', async ({ page }) => {
   await loginFn({ page });
 
-  await test.step('Navigation vers la page 2 du tableau', async () => {
-    await page.getByRole('navigation').getByRole('button', { name: /2/ }).click();
-  });
-
   await test.step('Navigation vers la page chantier "Doubler les effectifs de la réserve opérationnelle"', async () => {
     await expect(page.getByRole('table').getByRole('cell', { name: /Doubler les effectifs de la réserve opérationnelle/ })).toBeVisible();
     await page.getByRole('table').getByRole('cell', { name: /Doubler les effectifs de la réserve opérationnelle/ }).click();

@@ -19,10 +19,8 @@ async function main() {
   const clientId = process.env.IMPORT_CLIENT_ID as string;
   const clientSecret = process.env.IMPORT_CLIENT_SECRET as string;
 
-  const prisma = new PrismaClient();
-
   const utilisateurIAMRepository = new UtilisateurIAMKeycloakRepository(keycloakUrl, clientId, clientSecret);
-  const utilisateurSQLRepository = new UtilisateurSQLRepository(prisma);
+  const utilisateurSQLRepository = new UtilisateurSQLRepository();
 
   const emailsASupprimer = new UtilisateurCSVParseur(filename).parseComptesASupprimer();
   for (const email of emailsASupprimer) {

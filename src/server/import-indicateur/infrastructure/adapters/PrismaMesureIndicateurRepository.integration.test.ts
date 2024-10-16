@@ -1,13 +1,12 @@
 import {
   PrismaMesureIndicateurRepository,
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurRepository';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { IndicateurDataBuilder } from '@/server/import-indicateur/app/builder/IndicateurData.builder';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
 import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichier.builder';
 import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { getContainer } from '@/server/dependances';
 
 describe('PrismaMesureIndicateurRepository', () => {
   let prismaRapportRepository: PrismaRapportRepository;
@@ -16,13 +15,13 @@ describe('PrismaMesureIndicateurRepository', () => {
   describe('#sauvegarder', () => {
 
     beforeEach(() => {
-      prismaRapportRepository = new PrismaRapportRepository(prisma);
-      prismaMesureIndicateurRepository = new PrismaMesureIndicateurRepository(prisma);
+      prismaRapportRepository = new PrismaRapportRepository();
+      prismaMesureIndicateurRepository = new PrismaMesureIndicateurRepository();
     });
     it('doit sauvegarder les données', async () => {
       // GIVEN
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId('6cba829c-def8-4f21-9bb0-07bd5a36bd02')

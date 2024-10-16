@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { stringify } from 'csv-stringify';
 import { Options } from 'csv-stringify/sync';
-import RécupérerListeMetadataIndicateurUseCase
-  from '@/server/parametrage-indicateur/usecases/RécupérerListeMetadataIndicateurUseCase';
 import { getContainer } from '@/server/dependances';
 
 const EXPORT_METADATA_INDICATEURS_COLUMN = [
