@@ -6,8 +6,8 @@ class GithubRepo:
         self.repo = self.g.get_repo("/".join([username, repo_name]))
         pass
 
-    def getFileContent(self, file_path):
-        return self.repo.get_contents(file_path).decoded_content.decode()
+    def getFileContent(self, file_path, branch):
+        return self.repo.get_contents(path=file_path, ref=branch).decoded_content.decode()
 
     def close(self):
         return self.g.close()

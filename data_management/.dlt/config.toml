@@ -7,6 +7,7 @@ some_key = false
 [github_repo]
 user = "DITP-pilotage"
 repo = "PPG_metadata"
+default_branch = "prod"
 
 [destination.db_pilote.config]
 # target_schema = "raw_data"
