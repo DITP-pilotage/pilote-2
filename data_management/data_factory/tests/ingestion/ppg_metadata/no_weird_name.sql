@@ -11,4 +11,4 @@
 -- (test de démo, pas utile)
 
 
-select axe_id from {{ref('metadata_axes')}} where axe_id = 'weird_name'
+select axe_id from {{source('dlt_load', 'metadata_axes')}} where axe_id = 'weird_name'
