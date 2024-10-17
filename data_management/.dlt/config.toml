@@ -12,7 +12,7 @@ default_branch = "prod"
 [destination.db_pilote.config]
 # target_schema = "raw_data"
 
-[sources.load_ppg_metadata.ppg_metadata_source.csv_to_load.schema.raw_data_dlt]
+[sources.load_ppg_metadata.ppg_metadata_source.csv_to_load.schema.raw_data]
 # table_alias = "<path-to-file>"
 metadata_axes = "views/axe/view_meta_axe.csv"
 metadata_chantier_meteos = "models/chantier/ref_chantier_meteo.csv"
@@ -26,7 +26,7 @@ metadata_ppgs = "views/ppg/view_meta_ppg.csv"
 metadata_zonegroup = "models/zone/ref_zone_group.csv"
 metadata_zones = "views/zone/view_meta_zone.csv"
 
-[sources.load_ppg_metadata.ppg_metadata_source.csv_to_load.schema.tmp_dlt]
+[sources.load_ppg_metadata.ppg_metadata_source.csv_to_load.schema.tmp]
 # table_alias = "<path-to-file>"
 utilisateur_py = "seeds/utilisateur.csv"
 commentaires_py = "seeds/commentaires.csv"
