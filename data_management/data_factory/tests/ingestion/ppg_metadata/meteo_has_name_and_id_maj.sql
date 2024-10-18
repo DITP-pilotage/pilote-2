@@ -7,7 +7,7 @@
     meta={"is_demo": "false"}
 ) }}
 
-select ch_meteo_id, ch_meteo_name from {{source('dlt_load', 'metadata_chantier_meteos')}} 
+select ch_meteo_id, ch_meteo_name from {{source('python_load', 'metadata_chantier_meteos')}} 
 WHERE 
     -- un ID non vide
     ch_meteo_id is NULL OR

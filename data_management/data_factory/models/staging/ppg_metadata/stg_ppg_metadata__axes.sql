@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ source('dlt_load', 'metadata_axes') }}
+    select * from {{ source('python_load', 'metadata_axes') }}
 
 ),
 

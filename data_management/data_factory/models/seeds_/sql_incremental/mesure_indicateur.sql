@@ -8,4 +8,4 @@ select
     "id"::uuid,
     "rapport_id"::uuid
 
-from {{ source('dlt_load_tmp', 'mesure_indicateur_py') }}
+from {{ source('python_load_tmp', 'mesure_indicateur_py') }}

@@ -4,12 +4,12 @@ with
 -- TA de chaque {indic-zone} à chaque date
 ta_zone_indic as (
 	select 
-	b.indic_parent_ch, a.zone_id, z.zone_type as "maille", metric_date,a.indic_id,
+	b.indic_parent_ch, a.zone_id, z.maille as "maille", metric_date,a.indic_id,
 	vaca, vig, vca_courant, vcg,
 	taa_courant, tag
 	from {{ ref('compute_ta_indic') }} a
 	left join {{ ref('metadata_indicateurs') }} b on a.indic_id =b.indic_id
-	left join {{ source('dlt_load', 'metadata_zones') }} z on a.zone_id=z.zone_id 
+	left join {{ ref('stg_ppg_metadata__zones') }} z on a.zone_id=z.id 
 	order by indic_parent_ch, zone_id, metric_date, indic_id
 ),
 -- Calcul du TA pondéré
