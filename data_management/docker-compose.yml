@@ -42,6 +42,7 @@ services:
       - "${PWD}/dlt:/app/data_management/dlt"
       - "${PWD}/edr_target:/app/data_management/edr_target"
       - "${PWD}/../src/database/:/app/src/database:ro"
+      - "${PWD}/load_ppg_metadata:/app/data_management/load_ppg_metadata:ro"
   
   pilote_dbt:
     command: "scripts/doc_dbt.sh"
@@ -65,6 +66,7 @@ services:
       - "${PWD}/profiles.yml:/app/data_management/profiles.yml:ro"
       - "${PWD}/setup.py:/app/data_management/setup.py:ro"
       - "${PWD}/scripts:/app/data_management/scripts"
+      - "${PWD}/load_ppg_metadata:/app/data_management/load_ppg_metadata:ro"
     labels:
       - "traefik.http.routers.pilote_dbt.rule=Host(`pilote-dbt.localhost`)"
       - "traefik.http.services.pilote_dbt.loadbalancer.server.port=8080"

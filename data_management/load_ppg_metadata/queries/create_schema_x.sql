@@ -1,0 +1,2 @@
+-- DROP SCHEMA IF EXISTS {{schema}}; -- CASCADE
+CREATE SCHEMA IF NOT EXISTS {{schema}};

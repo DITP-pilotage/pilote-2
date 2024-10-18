@@ -1,0 +1,19 @@
+github_repo:
+  user: "DITP-pilotage"
+  repo: "PPG_metadata"
+  default_branch: "prod"
+
+groups:
+  ppg_metadata:
+    tables:
+      metadata_chantier:
+        schema: "raw_data_6"
+        path_in_repo: "views/chantier/view_meta_chantier.csv"
+      metadata_axes:
+        schema: "raw_data_6"
+        path_in_repo: "views/axe/view_meta_axe.csv"
+      metadata_zonegroup:
+        schema: "raw_data_7"
+        path_in_repo: "models/zone/ref_zone_group.csv"
+  seeds:
+    tables: {}
