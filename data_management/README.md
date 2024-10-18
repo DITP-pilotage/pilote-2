@@ -61,10 +61,10 @@ L'application complète a été conteneurisées (partie webapp et data). Pour l'
 
 Pour l'utiliser:
 
-- *optionnel* `docker-compose build` pour construire les images Docker nécessaires
-- `docker-compose up` pour lancer la base de données, la documentation interactive (dbt et prisma), et la webapp
-- *optionnel* `docker-compose run pilote_scripts` pour entrer dans le container et lancer les scripts dbt via `/bin/bash scripts/<name-of-the-script>.sh`
-- *optionnel* OU `docker-compose run pilote_scripts scripts/<name-of-the-script>.sh` pour lancer le script dbt `<name-of-the-script>.sh`
+- *optionnel* `docker compose build` pour construire les images Docker nécessaires
+- `docker compose up` pour lancer la base de données, la documentation interactive (dbt et prisma), et la webapp
+- *optionnel* `docker compose run pilote_scripts` pour entrer dans le container et lancer les scripts dbt via `/bin/bash scripts/<name-of-the-script>.sh`
+- *optionnel* OU `docker compose run pilote_scripts scripts/<name-of-the-script>.sh` pour lancer le script dbt `<name-of-the-script>.sh`
 - *optionnel* `docker container exec -it pilote_webapp /bin/sh` pour entrer dans le container webapp et éventuellement entrer des commandes (ex: npm, yarn, ...)
 
 Le *reverse-proxy* [Traefik](https://traefik.io/traefik/) est utilisé pour définir les différentes routes. Ainsi, on a:
@@ -96,13 +96,13 @@ Un exemple complet d'utilisation de docker pour cette partie data pourrait être
 
 ```sh
 # Build the image
-docker-compose build
+docker compose build
 # Lancement de la base de données, documentation, et webapp
-docker-compose up
+docker compose up
 # Run prisma migrations
-docker-compose run pilote_scripts scripts/0_prisma_migrate.sh
+docker compose run pilote_scripts scripts/0_prisma_migrate.sh
 # Run script 1
-docker-compose run pilote_scripts scripts/1_dump_dfakto.sh
+docker compose run pilote_scripts scripts/1_dump_dfakto.sh
 # and so on for all the scripts
 ```
 

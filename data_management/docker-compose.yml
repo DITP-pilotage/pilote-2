@@ -131,8 +131,8 @@ volumes:
     driver: local
 
 # Usage :
-# - (optionnel) "docker-compose build" pour construire les images
-# - "docker-compose up" pour lancer la db, la doc, et la webapp
-# - (optionnel) "docker-compose run pilote_scripts" pour entrer dans le container et lancer les scripts dbt via "/bin/bash scripts/<name-of-the-script>.sh"
-# - (optionnel) OU "docker-compose run pilote_scripts scripts/<name-of-the-script>.sh" pour lancer le script dbt <name-of-the-script>.sh
+# - (optionnel) "docker compose build" pour construire les images
+# - "docker compose up" pour lancer la db, la doc, et la webapp
+# - (optionnel) "docker compose run pilote_scripts" pour entrer dans le container et lancer les scripts dbt via "/bin/bash scripts/<name-of-the-script>.sh"
+# - (optionnel) OU "docker compose run pilote_scripts scripts/<name-of-the-script>.sh" pour lancer le script dbt <name-of-the-script>.sh
 # - (optionnel) "docker container exec -it pilote_webapp /bin/sh" pour entrer dans le container webapp et éventuellement entrer des commandes (ex: npm, yarn, ...)
