@@ -11,7 +11,7 @@ import { donneValidationInfosBaseUtilisateur } from '@/validation/utilisateur';
 import RécapitulatifUtilisateur
   from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/RécapitulatifUtilisateur/RécapitulatifUtilisateur';
 import { UtilisateurFormInputs, UtilisateurFormulaireProps } from './UtilisateurFormulaire.interface';
-import SaisieDesInformationsUtilisateur from './SaisieDesInformationsUtilisateurNew/SaisieDesInformationsUtilisateurNew';
+import SaisieDesInformationsUtilisateur from './SaisieDesInformationsUtilisateur/SaisieDesInformationsUtilisateur';
 
 const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({ utilisateur }) => {
   const étapes = ['Identifier l\'utilisateur', 'Vérifier les droits attribués au compte'];
