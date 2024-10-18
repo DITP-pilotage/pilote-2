@@ -40,4 +40,16 @@ groups:
         schema: "raw_data"
         path_in_repo: "views/axe/view_meta_axe.csv"
   seeds:
-    tables: {}
+    tables:
+      rapport_import_mesure_indicateur_py:
+        schema: "tmp"
+        path_in_repo: "seeds/rapport_import_mesure_indicateur.csv"
+      mesure_indicateur_py:
+        schema: "tmp"
+        path_in_repo: "seeds/mesure_indicateur.csv"
+      commentaires_py:
+        schema: "tmp"
+        path_in_repo: "seeds/commentaires.csv"
+      utilisateur_py:
+        schema: "tmp"
+        path_in_repo: "seeds/utilisateur.csv"
