@@ -15,6 +15,9 @@ sqlfluff = "*"
 dlt = {extras = ["postgres"], version = "*"}
 pygithub = "*"
 pyarrow = "*"
+jinja2 = "*"
+sqlalchemy = "*"
+pyyaml = "*"
 
 [dev-packages]
 
