@@ -21,15 +21,15 @@ renamed AS (
         ch_saisie_ate AS ate,
         ch_state AS statut,
         cast(zg_applicable AS TEXT) AS zone_groupe_applicable,
-        string_to_array("porteur_ids_no_dac", ' | ') AS ministeres_ids,
+        string_to_array("porteur_ids_noDAC", ' | ') AS ministeres_ids,
         string_to_array(
-            "porteur_shorts_no_dac", ' | '
+            "porteur_shorts_noDAC", ' | '
         ) AS ministeres_polygrammes,
         string_to_array(
-            "porteur_shorts_dac", ' | '
+            "porteur_shorts_DAC", ' | '
         ) AS directeurs_administration_centrale_polygrammes,
         string_to_array(
-            "porteur_ids_dac", ' | '
+            "porteur_ids_DAC", ' | '
         ) AS directeurs_administration_centrale_ids,
         string_to_array(ch_per, ' | ') AS perimetre_ids,
         string_to_array(ch_dp, ' | ') AS directeurs_projet_noms,

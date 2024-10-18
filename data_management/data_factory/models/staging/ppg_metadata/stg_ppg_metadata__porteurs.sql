@@ -9,7 +9,7 @@ source as (
 renamed as (
 
     select
-        porteur_id as id,
+        porteur_id::text as id,
         porteur_short as acronyme,
         porteur_name as nom,
         porteur_desc as description,

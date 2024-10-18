@@ -15,5 +15,5 @@ then
   fi
 fi
 
-python3 dlt/load_ppg_metadata.py metadata
+python3 load_ppg_metadata/load.py ppg_metadata
 dbt run --project-dir data_factory --select metadata_indicateurs
