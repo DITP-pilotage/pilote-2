@@ -42,14 +42,14 @@ groups:
   seeds:
     tables:
       rapport_import_mesure_indicateur_py:
-        schema: "tmp"
+        schema: "seeds"
         path_in_repo: "seeds/rapport_import_mesure_indicateur.csv"
       mesure_indicateur_py:
-        schema: "tmp"
+        schema: "seeds"
         path_in_repo: "seeds/mesure_indicateur.csv"
       commentaires_py:
-        schema: "tmp"
+        schema: "seeds"
         path_in_repo: "seeds/commentaires.csv"
       utilisateur_py:
-        schema: "tmp"
+        schema: "seeds"
         path_in_repo: "seeds/utilisateur.csv"
