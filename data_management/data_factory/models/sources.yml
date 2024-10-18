@@ -19,10 +19,10 @@ sources:
       - name: metadata_perimetres_projet_structurant
       - name: metadata_porteurs
 
-  - name: python_load_tmp
-    description: "Données chargées par dlt dans le schema *tmp* de la base Pilote de production."
+  - name: python_load_seeds
+    description: "Données chargées par dlt dans le schema *seeds* de la base Pilote de production."
     database: "{{ env_var('PGDATABASE') }}"
-    schema: tmp
+    schema: seeds
     tables:
       - name: utilisateur_py
       - name: commentaires_py
