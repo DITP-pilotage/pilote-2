@@ -53,7 +53,6 @@ models:
             - 'indic_id'
     staging:
       +schema: raw_data
-      +materialized: table
       ppg_metadata:
         +docs:
           node_color: "#553df2"

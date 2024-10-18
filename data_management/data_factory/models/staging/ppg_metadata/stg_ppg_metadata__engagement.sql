@@ -1,3 +1,5 @@
+{{ config(materialized="table") }}
+
 SELECT 
     engagement_id, 
     engagement_short, 
