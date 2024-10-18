@@ -2,8 +2,8 @@ import os
 import yaml
 import sys
 from sqlalchemy import create_engine
-from GithubRepo import GithubRepo
-from sql_utils import generateQueriesCreateSchema
+from utils.GithubRepo import GithubRepo
+from utils.sql import generateQueriesCreateSchema
 
 
 def getTablesOfGroup(group_name, config):
