@@ -2,8 +2,6 @@ import { Controller } from 'react-hook-form';
 import { FunctionComponent } from 'react';
 import InputAvecLabel from '@/components/_commons/InputAvecLabel/InputAvecLabel';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
-import useSaisieDesInformationsUtilisateur
-  from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
 import Titre from '@/components/_commons/Titre/Titre';
 import MultiSelectTerritoire, {
@@ -17,36 +15,35 @@ import {
   UtilisateurFormulaireProps,
 } from '@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
 import CaseACocher from '@/components/_commons/CaseACocher/CaseACocher';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import useSaisieDesInformationsUtilisateur from './useSaisieDesInformationsUtilisateur';
 
 const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireProps> = ({ utilisateur }) => {
-  const {
-    listeProfils,
-    profilSélectionné,
-    handleChangementValeursSélectionnéesTerritoires,
-    handleChangementValeursSélectionnéesChantiers,
-    handleChangementValeursSélectionnéesPérimètresMinistériels,
-    handleChangementValeursSélectionnéesChantiersResponsabilite,
-    chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés,
+
+  const { 
     register,
-    errors,
     control,
+    getValues,
+    setValue,
+    errors,
+    optionsProfil,
+    profilCodeSelectionne,
+    ChangementProfilSelectionne,
     afficherChampLectureTerritoires,
-    afficherChampLectureChantiers,
-    afficherChampLecturePérimètres,
-    afficherChampResponsabiliteChantiers,
-    territoiresSélectionnés,
-    chantiersSélectionnés,
-    chantiersSélectionnésResponsabilite,
-    périmètresMinistérielsSélectionnés,
+    activerLaRestrictionDesTerritoires,
     groupesTerritoiresÀAfficher,
-    chantiersAccessiblesPourLeProfil,
+    territoiresSélectionnables,
+    afficherChampLecturePérimètres,
+    ChangementPerimetresSelectionnes,
+    afficherChampLectureChantiers,
+    chantiersAccessiblesLecture,
+    chantiersIdsAppartenantsAuxPerimetresSelectionnes,
+    ChangementChantiersSelectionnes,
+    afficherChampResponsabiliteChantiers,
     chantiersAccessibleResponsabilite,
-    afficherChampSaisieCommentaire,
     afficherChampSaisieIndicateur,
     afficherChampGestionCompte,
-    session,
-  } = useSaisieDesInformationsUtilisateur(utilisateur);
+    afficherChampSaisieCommentaire,
+  } = useSaisieDesInformationsUtilisateur();
 
   return (
     <>
@@ -70,7 +67,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
         erreur={errors.email}
         htmlName='email'
         libellé='Adresse électronique'
-        register={register('email', { value: utilisateur?.email })}
+        register={register('email')}
         texteAide='Format attendu : nom@domaine.fr'
         type='email'
       />
@@ -78,29 +75,29 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
         erreur={errors.nom}
         htmlName='nom'
         libellé='Nom'
-        register={register('nom', { value: utilisateur?.nom })}
+        register={register('nom')}
       />
       <InputAvecLabel
         erreur={errors.prénom}
         htmlName='prénom'
         libellé='Prénom'
-        register={register('prénom', { value: utilisateur?.prénom })}
+        register={register('prénom')}
       />
       <InputAvecLabel
         erreur={errors.fonction}
         htmlName='fonction'
         libellé='Fonction'
-        register={register('fonction', { value: utilisateur?.fonction })}
+        register={register('fonction')}
       />
       <Sélecteur
         erreur={errors.profil}
         htmlName='profil'
         libellé='Profil'
-        options={listeProfils}
-        register={register('profil', { value: utilisateur?.profil })}
+        options={optionsProfil}
         texteAide='Les droits attribués dépendent du profil sélectionné.'
         texteFantôme='Sélectionner un profil'
-        valeurSélectionnée={profilSélectionné?.code}
+        valeurModifiéeCallback={ChangementProfilSelectionne}
+        valeurSélectionnée={profilCodeSelectionne}
       />
       <div
         className={`${(afficherChampLectureTerritoires || afficherChampLecturePérimètres || afficherChampLectureChantiers) ? '' : 'fr-hidden'}`}
@@ -125,12 +122,12 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
               name='habilitations.lecture.territoires'
               render={() => (
                 <MultiSelectTerritoire
-                  activerLaRestrictionDesTerritoires={![ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session?.profil || '')}
+                  activerLaRestrictionDesTerritoires={activerLaRestrictionDesTerritoires}
                   afficherBoutonsSélection
-                  changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesTerritoires}
+                  changementValeursSélectionnéesCallback={(valeursSélectionnées) => setValue('habilitations.lecture.territoires', valeursSélectionnées)}
                   groupesÀAfficher={groupesTerritoiresÀAfficher}
-                  territoiresCodesSélectionnésParDéfaut={territoiresSélectionnés}
-                  territoiresSélectionnables={session?.habilitations.gestionUtilisateur.territoires}
+                  territoiresCodesSélectionnésParDéfaut={getValues('habilitations.lecture.territoires')}
+                  territoiresSélectionnables={territoiresSélectionnables}
                 />
               )}
               rules={{ required: true }}
@@ -145,8 +142,8 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
               render={() => (
                 <MultiSelectPérimètreMinistériel
                   afficherBoutonsSélection
-                  changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesPérimètresMinistériels}
-                  périmètresMinistérielsIdsSélectionnésParDéfaut={périmètresMinistérielsSélectionnés}
+                  changementValeursSélectionnéesCallback={ChangementPerimetresSelectionnes}
+                  périmètresMinistérielsIdsSélectionnésParDéfaut={getValues('habilitations.lecture.périmètres')}
                 />
               )}
               rules={{ required: true }}
@@ -161,10 +158,10 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
               render={() => (
                 <MultiSelectChantier
                   afficherBoutonsSélection
-                  changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesChantiers}
-                  chantiers={chantiersAccessiblesPourLeProfil}
-                  chantiersIdsSélectionnésParDéfaut={chantiersSélectionnés}
-                  valeursDésactivées={chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés}
+                  changementValeursSélectionnéesCallback={ChangementChantiersSelectionnes}
+                  chantiers={chantiersAccessiblesLecture ?? []}
+                  chantiersIdsSélectionnésParDéfaut={getValues('habilitations.lecture.chantiers')}
+                  valeursDésactivées={chantiersIdsAppartenantsAuxPerimetresSelectionnes}
                 />
               )}
               rules={{ required: true }}
@@ -191,9 +188,9 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
               render={() => (
                 <MultiSelectChantier
                   afficherBoutonsSélection
-                  changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesChantiersResponsabilite}
+                  changementValeursSélectionnéesCallback={(valeursSélectionnées) => setValue('habilitations.responsabilite.chantiers', valeursSélectionnées)}
                   chantiers={chantiersAccessibleResponsabilite}
-                  chantiersIdsSélectionnésParDéfaut={chantiersSélectionnésResponsabilite}
+                  chantiersIdsSélectionnésParDéfaut={getValues('habilitations.responsabilite.chantiers')}
                   desactive={chantiersAccessibleResponsabilite.length === 0}
                 />
               )}
@@ -247,7 +244,6 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
           label='Suivant'
         />
       </div>
-      {/* <DevTool control={control} /> */}
     </>
   );
 };
