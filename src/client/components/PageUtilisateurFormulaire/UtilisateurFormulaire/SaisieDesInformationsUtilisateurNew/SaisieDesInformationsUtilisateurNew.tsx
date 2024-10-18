@@ -1,6 +1,5 @@
 import { Controller } from 'react-hook-form';
 import { FunctionComponent } from 'react';
-// import { DevTool } from '@hookform/devtools';
 import InputAvecLabel from '@/components/_commons/InputAvecLabel/InputAvecLabel';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
@@ -245,7 +244,6 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
           label='Suivant'
         />
       </div>
-      {/* <DevTool control={control} /> */}
     </>
   );
 };
