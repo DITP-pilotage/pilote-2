@@ -6,14 +6,38 @@ github_repo:
 groups:
   ppg_metadata:
     tables:
-      metadata_chantier:
-        schema: "raw_data_6"
-        path_in_repo: "views/chantier/view_meta_chantier.csv"
-      metadata_axes:
-        schema: "raw_data_6"
-        path_in_repo: "views/axe/view_meta_axe.csv"
+      metadata_zones:
+        schema: "raw_data"
+        path_in_repo: "views/zone/view_meta_zone.csv"
       metadata_zonegroup:
-        schema: "raw_data_7"
+        schema: "raw_data"
         path_in_repo: "models/zone/ref_zone_group.csv"
+      metadata_ppgs:
+        schema: "raw_data"
+        path_in_repo: "views/ppg/view_meta_ppg.csv"
+      metadata_porteurs:
+        schema: "raw_data"
+        path_in_repo: "views/porteur/view_meta_porteur.csv"
+      metadata_perimetres:
+        schema: "raw_data"
+        path_in_repo: "views/perimetre/view_meta_perimetre.csv"
+      metadata_perimetres_projet_structurant:
+        schema: "raw_data"
+        path_in_repo: "views/perimetre/mapping_per_pst.csv"
+      metadata_indicateur_types:
+        schema: "raw_data"
+        path_in_repo: "models/indicateur/ref_indic_type.csv"
+      metadata_engagement:
+        schema: "raw_data"
+        path_in_repo: "models/chantier/ref_chantier_engagement.csv"
+      metadata_chantiers:
+        schema: "raw_data"
+        path_in_repo: "views/chantier/view_meta_chantier.csv"
+      metadata_chantier_meteos:
+        schema: "raw_data"
+        path_in_repo: "models/chantier/ref_chantier_meteo.csv"
+      metadata_axes:
+        schema: "raw_data"
+        path_in_repo: "views/axe/view_meta_axe.csv"
   seeds:
     tables: {}
