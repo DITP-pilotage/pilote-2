@@ -1,7 +1,9 @@
+{{ config(materialized="table") }}
+
 WITH 
 
 init AS (
-    SELECT  * FROM {{ ref('metadata_zonegroup') }}
+    SELECT  * FROM {{ source('python_load', 'metadata_zonegroup') }}
 ),
 
 unnest_trgt AS (
@@ -20,7 +22,7 @@ unnest_parents AS (
     SELECT 
         *,
         UNNEST(string_to_array(zone_parent, ' | ')) AS parent 
-    FROM {{ ref('metadata_zones') }} 
+    FROM {{ source('python_load', 'metadata_zones') }} 
 ),
 
 find_children AS (

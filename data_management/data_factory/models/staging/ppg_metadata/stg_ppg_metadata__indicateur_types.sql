@@ -1,8 +1,10 @@
+{{ config(materialized="table") }}
+
 with
 
 source as (
 
-    select * from {{ ref('metadata_indicateur_types') }}
+    select * from {{ source('python_load', 'metadata_indicateur_types') }}
 
 ),
 

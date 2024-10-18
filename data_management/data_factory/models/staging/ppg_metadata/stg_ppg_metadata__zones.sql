@@ -1,8 +1,10 @@
+{{ config(materialized="table") }}
+
 with
 
 source as (
 
-    select * from {{ ref('metadata_zones') }}
+    select * from {{ source('python_load', 'metadata_zones') }}
 
 ),
 
@@ -13,6 +15,7 @@ renamed as (
         nom,
         zone_code as code_insee,
         zone_type as maille,
+        zone_parent,
         string_to_array(zone_parent, ' | ') as zone_parent_id
 
     from source

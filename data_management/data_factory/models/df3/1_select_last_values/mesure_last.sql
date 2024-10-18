@@ -13,11 +13,11 @@ fix_mesure_indicateur_06_31 as (
         ELSE metric_date
     END as metric_date_fixed
     from {{ source('import_from_files', 'mesure_indicateur') }} a
-	INNER JOIN {{ ref('metadata_indicateurs') }} b on a.indic_id=b.indic_id 
+	INNER JOIN {{ ref('stg_ppg_metadata__indicateurs') }} b on a.indic_id=b.id 
     left join {{ ref('int_indicateurs_zones_applicables') }} c on a.indic_id=c.indic_id and a.zone_id=c.zone_id
     WHERE 
 	    -- On ne garde que les indics qui ne sont pas cachés
-    	NOT coalesce(b.indic_hidden_pilote::text::bool, false)
+    	NOT coalesce(b.est_cache_dans_pilote::text::bool, false)
 		-- On ne garde que les valeurs sur un territoire applicable  
 		AND coalesce(c.est_applicable, true)
 ),

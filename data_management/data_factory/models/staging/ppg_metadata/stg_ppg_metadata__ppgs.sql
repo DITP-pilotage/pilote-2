@@ -1,8 +1,10 @@
+{{ config(materialized="table") }}
+
 with
 
 source as (
 
-    select * from {{ ref('metadata_ppgs') }}
+    select * from {{ source('python_load', 'metadata_ppgs') }}
 
 ),
 

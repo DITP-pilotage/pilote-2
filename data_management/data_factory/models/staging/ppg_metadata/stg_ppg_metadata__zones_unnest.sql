@@ -1,8 +1,10 @@
+{{ config(materialized="table") }}
+
 with
 
 source as (
 
-    select * from {{ ref('metadata_zones') }}
+    select * from {{ source('python_load', 'metadata_zones') }}
 
 ),
 

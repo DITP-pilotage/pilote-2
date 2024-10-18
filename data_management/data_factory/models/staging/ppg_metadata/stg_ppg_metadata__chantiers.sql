@@ -1,8 +1,10 @@
+{{ config(materialized="table") }}
+
 WITH
 
 source AS (
 
-    SELECT * FROM {{ ref('metadata_chantiers') }}
+    SELECT * FROM {{ source('python_load', 'metadata_chantiers') }}
 
 ),
 
