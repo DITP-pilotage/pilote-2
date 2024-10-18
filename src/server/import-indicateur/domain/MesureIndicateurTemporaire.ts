@@ -107,6 +107,11 @@ export class MesureIndicateurTemporaire {
         this._metricDate = this._metricDate.split('/').reverse().map(valeur => valeur.padStart(2, '0')).join('-');
         break;
       }
+      case ACCEPTED_DATE_FORMAT.DD_MM_YY: {
+        const tmpDate = this._metricDate.split('/');
+        this._metricDate = `20${tmpDate[2]}-${tmpDate[1].padStart(2, '0')}-${tmpDate[0].padStart(2, '0')}`;
+        break;
+      }
       case ACCEPTED_DATE_FORMAT.MM_DD_YY: {
         const tmpDate = this._metricDate.split('-');
         this._metricDate = `20${tmpDate[2]}-${tmpDate[0].padStart(2, '0')}-${tmpDate[1].padStart(2, '0')}`;

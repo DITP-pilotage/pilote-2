@@ -61,8 +61,11 @@ const verifierDateValide = (mesureIndicateurTemporaire: MesureIndicateurTemporai
 };
  
 const verifierFormatDateValeur = (mesureIndicateurTemporaire: MesureIndicateurTemporaire) => {
-  if (mesureIndicateurTemporaire.metricDate?.match(/^([0-2]?\d|3[01])\/(0?\d|1[0-2])\/(20\d{2})$/)) {
+  if (mesureIndicateurTemporaire.metricDate?.match(/^([0-2]?\d|3[01])\/(0?\d|1[0-2])\/(20?\d{2})$/)) {
     mesureIndicateurTemporaire.convertirDateProvenantDuFormat(ACCEPTED_DATE_FORMAT.DD_MM_YYYY);
+  }
+  if (mesureIndicateurTemporaire.metricDate?.match(/^([0-2]?\d|3[01])\/(0?\d|1[0-2])\/((20)?\d{2})$/)) {
+    mesureIndicateurTemporaire.convertirDateProvenantDuFormat(ACCEPTED_DATE_FORMAT.DD_MM_YY);
   }
   if (mesureIndicateurTemporaire.metricDate?.match(/^(0?\d|1[0-2])-(([0-2]?\d|3[01])-\d{2})$/)) {
     mesureIndicateurTemporaire.convertirDateProvenantDuFormat(ACCEPTED_DATE_FORMAT.MM_DD_YY);
