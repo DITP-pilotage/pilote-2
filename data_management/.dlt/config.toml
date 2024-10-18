@@ -12,7 +12,7 @@ default_branch = "prod"
 [destination.db_pilote.config]
 # target_schema = "raw_data"
 
-[sources.load_ppg_metadata.ppg_metadata_source.csv_to_load.schema.raw_data]
+[sources.load_ppg_metadata.ppg_metadata_source.csv_to_load.schema.raw_data_dlt2]
 # table_alias = "<path-to-file>"
 metadata_axes = "views/axe/view_meta_axe.csv"
 metadata_chantier_meteos = "models/chantier/ref_chantier_meteo.csv"
