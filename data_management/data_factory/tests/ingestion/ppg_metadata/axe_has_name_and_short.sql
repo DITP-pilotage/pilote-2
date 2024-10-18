@@ -8,7 +8,7 @@
 ) }}
 
 -- Chaque axe a bien un ID et un nom non vide
-select axe_id, axe_name from {{source('dlt_load', 'metadata_axes')}} 
+select axe_id, axe_name from {{source('python_load', 'metadata_axes')}} 
 WHERE 
     axe_id is NULL OR
     axe_name is NULL

@@ -1,7 +1,7 @@
 version: 2
 
 sources:
-  - name: dlt_load
+  - name: python_load
     description: "Données chargées par dlt dans le schema *raw_data* de la base Pilote de production."
     database: "{{ env_var('PGDATABASE') }}"
     schema: raw_data
@@ -19,7 +19,7 @@ sources:
       - name: metadata_perimetres_projet_structurant
       - name: metadata_porteurs
 
-  - name: dlt_load_tmp
+  - name: python_load_tmp
     description: "Données chargées par dlt dans le schema *tmp* de la base Pilote de production."
     database: "{{ env_var('PGDATABASE') }}"
     schema: tmp

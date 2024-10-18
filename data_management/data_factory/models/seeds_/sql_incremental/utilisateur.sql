@@ -6,4 +6,4 @@ select
     "date_modification"::timestamp(3),
     "date_creation"::timestamp(3),
     "fonction" 
-from {{ source('dlt_load_tmp', 'utilisateur_py') }}
+from {{ source('python_load_tmp', 'utilisateur_py') }}

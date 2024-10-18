@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ source('dlt_load', 'metadata_chantier_meteos') }}
+    select * from {{ source('python_load', 'metadata_chantier_meteos') }}
 
 ),
 
