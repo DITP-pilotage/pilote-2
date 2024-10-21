@@ -40,12 +40,6 @@ CREATE TABLE "public"."habilitation" (
   "perimetres" TEXT [],
   "chantiers" TEXT []
 );
--- CreateTable
-CREATE TABLE "public"."scope" (
-  "code" TEXT NOT NULL,
-  "nom" TEXT NOT NULL,
-  CONSTRAINT "scope_pkey" PRIMARY KEY ("code")
-);
 -- AddForeignKey
 ALTER TABLE "public"."utilisateur"
 ADD CONSTRAINT "utilisateur_profilCode_fkey" FOREIGN KEY ("profilCode") REFERENCES "public"."profil"("code") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -54,4 +48,4 @@ ALTER TABLE "public"."habilitation"
 ADD CONSTRAINT "habilitation_utilisateurId_fkey" FOREIGN KEY ("utilisateurId") REFERENCES "public"."utilisateur"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 -- AddForeignKey
 ALTER TABLE "public"."habilitation"
-ADD CONSTRAINT "habilitation_scopeCode_fkey" FOREIGN KEY ("scopeCode") REFERENCES "public"."scope"("code") ON DELETE CASCADE ON UPDATE CASCADE;
+ADD CONSTRAINT "habilitation_scopeCode_fkey" FOREIGN KEY ("scopeCode") REFERENCES "public"."scope"("code") ON DELETE CASCADE ON UPDATE CASCADE; -- pb à venir si suppr table scope ?
