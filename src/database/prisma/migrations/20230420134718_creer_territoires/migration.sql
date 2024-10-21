@@ -1,1 +1,0 @@
--- TODO: Remplacer ce script par un seed
