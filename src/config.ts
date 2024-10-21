@@ -225,6 +225,11 @@ const config = convict({
       default: false,
       env: 'NEXT_PUBLIC_FF_DOCS_API',
     },
+    ppgArchive: {
+      format: Boolean,
+      default: false,
+      env: 'NEXT_PUBLIC_FF_PPG_ARCHIVE',
+    },
     PoserUneQuestionIndicateur: {
       format: Boolean,
       default: false,
