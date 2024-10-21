@@ -11,6 +11,6 @@ ALTER TABLE "public"."chantier" ALTER COLUMN "statut" DROP DEFAULT;
 ALTER TABLE "public"."chantier" ALTER COLUMN "statut" TYPE "public"."type_statut_new" USING ("statut"::text::"public"."type_statut_new");
 ALTER TYPE "public"."type_statut" RENAME TO "type_statut_old";
 ALTER TYPE "public"."type_statut_new" RENAME TO "type_statut";
-DROP TYPE "public"."type_statut_old";
+DROP TYPE "public"."type_statut_old" CASCADE;
 ALTER TABLE "public"."chantier" ALTER COLUMN "statut" SET DEFAULT 'PUBLIE';
 COMMIT;
