@@ -19,11 +19,6 @@ DROP INDEX "public"."profil_nom_key";
 ALTER TABLE "public"."chantier" DROP CONSTRAINT "chantier_pkey",
   ADD CONSTRAINT "chantier_pkey" PRIMARY KEY ("id", "code_insee", "maille");
 -- AlterTable
-ALTER TABLE "public"."profil" DROP CONSTRAINT "profil_pkey",
-  DROP COLUMN "id",
-  ADD COLUMN "a_acces_tous_chantiers_territorialises" BOOLEAN NOT NULL DEFAULT false,
-  ADD CONSTRAINT "profil_pkey" PRIMARY KEY ("code");
--- AlterTable
 ALTER TABLE "public"."utilisateur" DROP COLUMN "profil_id",
   ADD COLUMN "profilCode" TEXT NOT NULL;
 -- DropTable
