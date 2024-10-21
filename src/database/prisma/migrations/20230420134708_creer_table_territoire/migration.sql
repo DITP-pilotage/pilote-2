@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "public"."maille" AS ENUM ('nat', 'dept', 'reg');
+CREATE TYPE "public"."maille" AS ENUM ('nat', 'dept', 'reg'); -- TODO: que faire avec ça ?
 
 -- AlterTable
 ALTER TABLE "public"."chantier" ADD COLUMN     "territoire_code" TEXT;
@@ -9,7 +9,7 @@ CREATE TABLE "public"."territoire" (
     "code" TEXT NOT NULL,
     "nom" TEXT NOT NULL,
     "nom_affiche" TEXT NOT NULL,
-    "maille" "public"."maille" NOT NULL,
+    "maille" "public"."maille" NOT NULL, -- TODO: Comment créer la table territoire avec ce type précis ? On l'abandonne ?
     "code_insee" TEXT NOT NULL,
     "trace_svg" TEXT NOT NULL,
     "code_parent" TEXT,
