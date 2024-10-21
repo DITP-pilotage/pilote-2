@@ -56,6 +56,10 @@ models:
       ppg_metadata:
         +docs:
           node_color: "#553df2"
+        table:
+          +materialized: table
+        view:
+          +materialized: view
     intermediate:
       +schema: marts
       +materialized: view
