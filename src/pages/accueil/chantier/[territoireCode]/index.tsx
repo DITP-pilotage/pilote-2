@@ -137,6 +137,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
 
   const avancementsGlobauxTerritoriauxMoyens = objectEntries(donnéesTerritoiresAgrégées[mailleSelectionnee || 'départementale'].territoires).map(([codeInsee, territoire]) => ({
     valeur: territoire.répartition.avancements.global.moyenne,
+    valeurAnnuelle: territoire.répartition.avancements.annuel.moyenne,
     codeInsee,
     estApplicable: null,
   }));

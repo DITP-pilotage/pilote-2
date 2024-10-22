@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
 import {
@@ -7,18 +7,41 @@ import {
 import { CartographieDonnéesAvancement } from './CartographieAvancement.interface';
 
 
-function déterminerValeurAffichée(valeur: number | null, estApplicable: boolean | null): string {
+function déterminerValeurAffichée(valeur: number | null, valeurAnnuelle: number | null, estApplicable: boolean | null): ReactNode {
   if (estApplicable === false) {
-    return 'Non applicable';
+    return (
+      <div className='fr-py-1w fr-px-2w fr-text--bold'>
+        Non applicable
+      </div>
+    );
   }
   
-  if (valeur === null)
-    return 'Non renseigné';
+  if (valeur === null) {
+    return (
+      <div className='fr-py-1w fr-px-2w fr-text--bold'>
+        Non renseigné
+      </div>
+    );
+  }
 
-  return valeur.toFixed(0) + '%';
+  if (valeurAnnuelle === null) {
+    return (
+      <div className='fr-py-1w fr-px-2w fr-text--bold'>
+        {`TA 2026 : ${valeur.toFixed(0)}%`}
+      </div>
+    );
+  }
+
+  return (
+    <div className='fr-py-1w fr-px-2w'>
+      {`TA 2024: ${valeurAnnuelle.toFixed(0)}% | `}
+      <span className='fr-text--bold'>
+        {`TA 2026 : ${valeur.toFixed(0)}%`}
+      </span>
+    </div>
+  );
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
 function déterminerRemplissage(valeur: number | null, élémentsDeLégende: CartographieÉlémentsDeLégende, estApplicable: boolean | null) {
 
   if (estApplicable === false) {
@@ -43,12 +66,12 @@ function déterminerRemplissage(valeur: number | null, élémentsDeLégende: Car
   else return élémentsDeLégende.DÉFAUT.remplissage;
 }
 
-export default function useCartographieAvancement(données: CartographieDonnéesAvancement, élémentsDeLégende: CartographieÉlémentsDeLégende) {
+export default function useCartographieAvancement(données: CartographieDonnéesAvancement, élémentsDeLégende: CartographieÉlémentsDeLégende, mailleSelectionnee: 'départementale' | 'régionale') {
   const { récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
 
   const légende = useMemo(() => {
     
-    const tousApplicables: Boolean = données.every(d => d.estApplicable !== false);
+    const tousApplicables: Boolean = données.every(d => d.estApplicable);
     const tousNonNull: Boolean = données.every(d => d.valeur !== null);
 
     let légendeAffichée = Object.values(élémentsDeLégende);
@@ -71,21 +94,18 @@ export default function useCartographieAvancement(données: CartographieDonnées
 
   }, [élémentsDeLégende, données]);
 
-  const donnéesCartographie = useMemo(() => {
-    const donnéesFormatées: CartographieDonnées = {};
+  const donnéesCartographie = données.reduce((acc, val) => {
+    const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(val.codeInsee, mailleSelectionnee);
 
-    données.forEach(({ valeur, codeInsee, estApplicable }) => {
-      const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
-
-      donnéesFormatées[codeInsee] = {
-        valeurAffichée: déterminerValeurAffichée(valeur, estApplicable),
-        remplissage: déterminerRemplissage(valeur, élémentsDeLégende, estApplicable),
+    return {
+      ...acc,
+      [val.codeInsee]: {
+        contenu: déterminerValeurAffichée(val.valeur, val.valeurAnnuelle, val.estApplicable),
+        remplissage: déterminerRemplissage(val.valeur, élémentsDeLégende, val.estApplicable),
         libellé: territoireGéographique.nomAffiché,
-      };
-    });
-
-    return donnéesFormatées;
-  }, [données, récupérerDétailsSurUnTerritoireAvecCodeInsee, élémentsDeLégende]);
+      },
+    };
+  }, {} as CartographieDonnées);
 
   return {
     légende,

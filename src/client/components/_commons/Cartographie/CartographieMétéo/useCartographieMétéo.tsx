@@ -53,7 +53,11 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
       const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
 
       donnéesFormatées[codeInsee] = {
-        valeurAffichée: estApplicable === false ? 'Non applicable' : libellésMétéos[valeur],
+        contenu: (
+          <div className='fr-py-1w fr-px-2w fr-text--bold'>
+            { estApplicable === false ? 'Non applicable' : libellésMétéos[valeur] }
+          </div>
+        ),
         remplissage: déterminerRemplissage(valeur, élémentsDeLégende, estApplicable),
         libellé: territoireGéographique.nomAffiché,
       };

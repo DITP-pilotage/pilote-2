@@ -18,12 +18,25 @@ const COULEUR_ARRIVÉE = '#083a25';
 const REMPLISSAGE_PAR_DÉFAUT = ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS.DÉFAUT.remplissage;
 
 
-function déterminerValeurAffichée(valeur: number | null, estApplicable: boolean | null, unité?: string | null) {
+function déterminerValeurAffichée(valeur: number | null, valeurCible: number | null, estApplicable: boolean | null, unité?: string | null) {
   const unitéAffichée = unité?.toLocaleLowerCase() === 'pourcentage' ? '%' : ''; 
   if (estApplicable === false) {
-    return 'Non applicable';
+    return (
+      <div className='fr-py-1w fr-px-2w fr-text--bold'>
+        Non applicable
+      </div>
+    );
   }
-  return valeur === null ? 'Non renseigné' : valeur.toLocaleString() + unitéAffichée;
+  return (
+    <div className='fr-py-1w fr-px-2w'>
+      <div className='fr-text--bold'>
+        {'VA : ' + (valeur === null ? 'Non renseigné' : valeur.toLocaleString()) + unitéAffichée}
+      </div>
+      <div>
+        {'VC 2026 : ' + (valeurCible === null ? 'Non renseigné' : valeurCible.toLocaleString()) + unitéAffichée}
+      </div>
+    </div>
+  );
 }
 
 function déterminerRemplissage(valeur: number | null, valeurMin: number | null, valeurMax: number | null, estApplicable: boolean | null) {
@@ -84,10 +97,10 @@ export default function useCartographieValeurActuelle(données: CartographieDonn
   const donnéesCartographie = useMemo(() => {
     let donnéesFormatées: CartographieDonnées = {};
     
-    données.forEach(({ valeur, codeInsee, estApplicable }) => {
+    données.forEach(({ valeur, valeurCible, codeInsee, estApplicable }) => {
       const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
       donnéesFormatées[codeInsee] = {
-        valeurAffichée: déterminerValeurAffichée(valeur, estApplicable, unité),
+        contenu: déterminerValeurAffichée(valeur, valeurCible, estApplicable, unité),
         remplissage: déterminerRemplissage(valeur, valeurMin, valeurMax, estApplicable),
         libellé: territoireGéographique.nomAffiché,
       };

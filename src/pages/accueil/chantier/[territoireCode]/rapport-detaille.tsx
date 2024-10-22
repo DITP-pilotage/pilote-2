@@ -218,6 +218,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
 
   const avancementsGlobauxTerritoriauxMoyens = objectEntries(donnéesTerritoiresAgrégées[mailleSelectionnee || 'départementale'].territoires).map(([codeInsee, territoire]) => ({
     valeur: territoire.répartition.avancements.global.moyenne,
+    valeurAnnuelle: territoire.répartition.avancements.annuel.moyenne,
     codeInsee,
     estApplicable: null,
   }));
@@ -226,6 +227,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     id: chantier.id,
     donnéesCartographieAvancement: objectEntries(chantier.mailles[mailleSelectionnee]).map(([codeInsee, territoire]) => ({
       valeur: territoire.avancement.global,
+      valeurAnnuelle: territoire.avancement.annuel,
       codeInsee: codeInsee,
       estApplicable: territoire.estApplicable,
     })),
