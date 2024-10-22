@@ -20,20 +20,20 @@ function déterminerValeurAffichée(valeur: number | null, valeurCible: number |
   const unitéAffichée = unité?.toLocaleLowerCase() === 'pourcentage' ? '%' : ''; 
   if (estApplicable === false) {
     return (
-      <div className='fr-py-1w fr-px-2w fr-text--bold'>
+      <div className='fr-text--bold'>
         Non applicable
       </div>
     );
   }
   return (
-    <div className='fr-py-1w fr-px-2w'>
+    <>
       <div className='fr-text--bold'>
         {'VA : ' + (valeur === null ? 'Non renseigné' : valeur.toLocaleString()) + unitéAffichée}
       </div>
       <div>
         {'VC 2026 : ' + (valeurCible === null ? 'Non renseigné' : valeurCible.toLocaleString()) + unitéAffichée}
       </div>
-    </div>
+    </>
   );
 }
 

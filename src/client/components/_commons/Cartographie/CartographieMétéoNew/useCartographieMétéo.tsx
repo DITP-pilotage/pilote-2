@@ -53,7 +53,7 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
       ...acc,
       [val.codeInsee]: {
         contenu: (
-          <div className='fr-py-1w fr-px-2w fr-text--bold'>
+          <div className='fr-text--bold'>
             { val.estApplicable === false ? 'Non applicable' : libellésMétéos[val.valeur] }
           </div>
         ),

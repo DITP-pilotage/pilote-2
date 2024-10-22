@@ -10,35 +10,35 @@ import { CartographieDonnéesAvancement } from './CartographieAvancement.interfa
 function déterminerValeurAffichée(valeur: number | null, valeurAnnuelle: number | null, estApplicable: boolean | null): ReactNode {
   if (estApplicable === false) {
     return (
-      <div className='fr-py-1w fr-px-2w fr-text--bold'>
+      <span className='fr-text--bold'>
         Non applicable
-      </div>
+      </span>
     );
   }
   
   if (valeur === null) {
     return (
-      <div className='fr-py-1w fr-px-2w fr-text--bold'>
+      <span className='fr-text--bold'>
         Non renseigné
-      </div>
+      </span>
     );
   }
 
   if (valeurAnnuelle === null) {
     return (
-      <div className='fr-py-1w fr-px-2w fr-text--bold'>
+      <div className='fr-text--bold'>
         {`TA 2026 : ${valeur.toFixed(0)}%`}
       </div>
     );
   }
 
   return (
-    <div className='fr-py-1w fr-px-2w'>
+    <>
       {`TA 2024: ${valeurAnnuelle.toFixed(0)}% | `}
       <span className='fr-text--bold'>
         {`TA 2026 : ${valeur.toFixed(0)}%`}
       </span>
-    </div>
+    </>
   );
 }
 
