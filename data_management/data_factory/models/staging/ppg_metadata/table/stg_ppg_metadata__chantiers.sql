@@ -15,9 +15,9 @@ renamed AS (
         ch_nom AS nom,
         ch_ppg AS ppg_id,
         ch_perseverant AS id_chantier_perseverant,
-        ch_territo AS est_territorialise,
+        ch_territo::boolean AS est_territorialise,
         engagement_short AS nom_engagement,
-        ch_hidden_pilote AS est_cache_dans_pilote,
+        ch_hidden_pilote::boolean AS est_cache_dans_pilote,
         ch_saisie_ate AS ate,
         ch_state AS statut,
         cast(zg_applicable AS TEXT) AS zone_groupe_applicable,
@@ -38,7 +38,7 @@ renamed AS (
         string_to_array(maille_applicable, ' | ') AS maille_applicable_declaree,
         upper(cast(replicate_val_reg_to AS TEXT)) AS replicate_val_reg_to,
         upper(cast(replicate_val_nat_to AS TEXT)) AS replicate_val_nat_to,
-        ch_cible_attendue,
+        ch_cible_attendue::boolean as ch_cible_attendue,
         case
             when ch_territo and maille_applicable = 'REG | NAT' 	then 'REG'
             when ch_territo and maille_applicable is null 			then 'DEPT'
@@ -47,6 +47,10 @@ renamed AS (
 
     FROM source
 
+),
+
+chantiers_non_supprimes as (
+    SELECT * FROM renamed WHERE statut <> 'SUPPRIME'
 ),
 
 -- Calcul des mailles applicables en fonction 
@@ -88,7 +92,7 @@ get_maille_applicable AS (
 
             ELSE maille_applicable_declaree
         END AS maille_applicable
-    FROM renamed
+    FROM chantiers_non_supprimes
 
 )
 
