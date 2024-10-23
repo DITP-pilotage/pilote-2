@@ -89,7 +89,7 @@ export default function useTableauPageAdminUtilisateurs() {
 
   const [sorting, setSorting] = useQueryState('sort', parseAsArrayOf<ColumnSort>(parseAsJson(ZodSchemaSorting.parse)).withDefault([{
     id: 'Dernière modification',
-    desc: true,
+    desc: false,
   }]).withOptions({
     shallow: false,
     clearOnDefault: true,

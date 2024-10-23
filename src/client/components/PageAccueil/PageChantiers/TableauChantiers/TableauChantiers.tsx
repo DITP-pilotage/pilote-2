@@ -5,9 +5,9 @@ import { parseAsBoolean, useQueryState } from 'nuqs';
 import { FunctionComponent } from 'react';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import TableauPagination from '@/components/_commons/TableauNew/Pagination/TableauPagination';
-import useTableauChantiers from '@/components/PageAccueil/PageChantiers/TableauChantiers/useTableauChantiers';
-import TableauChantiersActionsDeTri
-  from '@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
+import { useTableauChantiers } from '@/components/PageAccueil/PageChantiers/TableauChantiers/useTableauChantiers';
+import { TableauChantiersActionsDeTri }
+  from '@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTriNew/TableauChantiersActionsDeTri';
 import TableauRéformesEnTête from '@/client/components/PageAccueil/TableauRéformes/EnTête/TableauRéformesEnTête';
 import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
@@ -27,10 +27,6 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
     tableau,
     changementDeLaRechercheCallback,
     valeurDeLaRecherche,
-    sélectionColonneÀTrier,
-    changementSélectionColonneÀTrierCallback,
-    directionDeTri,
-    changementDirectionDeTriCallback,
     estVueTuile,
   } = useTableauChantiers(données, ministèresDisponibles, nombreTotalChantiersAvecAlertes);
 
@@ -50,7 +46,6 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
           </div>
           <Interrupteur
             auChangement={async () => {
-
               sauvegarderFiltres({ groupeParMinistere: !estGroupe });
               await setEstGroupe(!estGroupe);
               return tableau.getColumn('porteur')?.getToggleGroupingHandler()() ?? undefined;
@@ -61,12 +56,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
           />
         </div>
         <div className='tableau-actions-droite'>
-          <TableauChantiersActionsDeTri
-            changementColonneÀTrierCallback={changementSélectionColonneÀTrierCallback}
-            changementDirectionDeTriCallback={changementDirectionDeTriCallback}
-            colonneÀTrier={sélectionColonneÀTrier}
-            directionDeTri={directionDeTri}
-          />
+          <TableauChantiersActionsDeTri />
         </div>
       </div>
       {tableau.getRowModel().rows.length === 0

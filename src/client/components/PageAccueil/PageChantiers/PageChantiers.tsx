@@ -41,7 +41,6 @@ import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLarge
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
-// eslint-disable-next-line import/extensions
 
 interface PageChantiersProps {
   chantiers: ChantierAccueilContrat[],
@@ -105,7 +104,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   const queryParamString = getQueryParamString({ ...filtres, ...filtresAlertes });
 
   const {
-    chantiersFiltrés,
     donnéesTableauChantiers,
     remontéesAlertes,
   } = usePageChantiers(chantiers, territoireCode, filtresComptesCalculés, avancementsAgrégés);
@@ -127,7 +125,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
             baliseHtml='h1'
             className='fr-h4 fr-px-2w fr-px-md-0 fr-mb-0'
           >
-            {`${chantiersFiltrés.length} ${chantiersFiltrés.length >= 2 ? 'chantiers' : 'chantier'}`}
+            {`${nombreTotalChantiersAvecAlertes} ${nombreTotalChantiersAvecAlertes >= 2 ? 'chantiers' : 'chantier'}`}
           </Titre>
           <div className='titre-liens'>
             {
@@ -359,7 +357,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   className='fr-text--lg fr-mb-0 fr-py-1v'
                   estInline
                 >
-                  {`Liste des chantiers (${chantiers.length})`}
+                  {`Liste des chantiers (${nombreTotalChantiersAvecAlertes})`}
                 </Titre>
                 <Infobulle idHtml='infobulle-chantiers-listeDesChantiers'>
                   {INFOBULLE_CONTENUS.chantiers.listeDesChantiers}

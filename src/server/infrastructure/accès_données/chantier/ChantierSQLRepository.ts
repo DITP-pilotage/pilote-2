@@ -13,8 +13,9 @@ import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChanti
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
-import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
+import { FiltreQueryParams, SortingParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { removeAccents } from '@/server/utils/remove-accents';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -27,6 +28,70 @@ export class ErreurChantierPermission extends Error {
     super(`Erreur de Permission: l'utilisateur n'a pas le droit de lecture pour le chantier '${idChantier}'.`);
   }
 }
+
+const appliquerSortingChantier = (sorting: SortingParams, mailleChantier: 'nationale' | 'départementale' | 'régionale'): Prisma.Enumerable<Prisma.chantierOrderByWithRelationInput> => {
+  const sortingDirection = sorting.desc ? 'desc' : 'asc';
+  const orderBy: Prisma.SortOrderInput = {
+    sort: sortingDirection,
+    nulls: 'last',
+  };
+
+  switch (sorting.id) {
+    case 'avancement': {
+      return mailleChantier === 'nationale' ? ([{
+        taux_avancement: orderBy,
+      }, {
+        id: 'asc',
+      }]) : mailleChantier === 'départementale' ? ([{
+        a_taux_avancement_departemental: orderBy,
+      }, {
+        id: 'asc',
+      }]) : mailleChantier === 'régionale' ? ([{
+        a_taux_avancement_regional: orderBy,
+      }, {
+        id: 'asc',
+      }]) : {};
+    }
+    case 'météo': {
+      return [{
+        meteo: orderBy,
+      }, {
+        id: 'asc',
+      }];
+    }
+    case 'dateDeMàjDonnéesQuantitatives': {
+      return [{
+        taux_avancement_date: orderBy,
+      }, {
+        id: 'asc',
+      }];
+    }
+    case 'dateDeMàjDonnéesQualitatives': {
+      return [{
+        derniere_maj_date_qualitative: orderBy,
+      }, {
+        id: 'asc',
+      }];
+    }
+    case 'tendance': {
+      return [{
+        tendance_ecart: orderBy,
+      }, {
+        id: 'asc',
+      }];
+    }
+    case 'écart': {
+      return [{
+        ecart: orderBy,
+      }, {
+        id: 'asc',
+      }];
+    }
+    default: {
+      return {};
+    }
+  }
+};
 
 export default class ChantierSQLRepository implements ChantierRepository {
   private prisma: PrismaClient;
@@ -71,11 +136,11 @@ export default class ChantierSQLRepository implements ChantierRepository {
     }
 
     const peutAccéderAuChantier = chantiersLecture.includes(id);
-  
+
     if (!peutAccéderAuChantier) {
       throw new ErreurChantierPermission(id);
     }
-    
+
     const chantiers = await this.prisma.chantier.findMany(paramètresRequête);
 
     if (!chantiers || chantiers.length === 0) {
@@ -110,7 +175,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
         ],
       },
     });
-    
+
     return chantiers.map(c => c.id);
   }
 
@@ -192,9 +257,9 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return this.prisma.chantier.findMany(paramètresRequête);
   }
 
-  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, maille: 'DEPT' | 'REG', filtres: FiltreQueryParams): Promise<ChantierPrisma[]> {
+  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, maille: 'DEPT' | 'REG', filtres: FiltreQueryParams, sorting: SortingParams): Promise<ChantierPrisma[]> {
     const whereOptions: Prisma.chantierWhereInput = {};
-    //modifier pour n'afficher que 
+
     if (filtres.perimetres?.length > 0) {
       whereOptions.perimetre_ids = {
         hasSome: filtres.perimetres,
@@ -225,10 +290,19 @@ export default class ChantierSQLRepository implements ChantierRepository {
       whereOptions.est_barometre = true;
     }
 
+    let chantierIds = chantiersLectureIds;
+
+    if (filtres.valeurDeLaRecherche?.length > 0) {
+      const testLower = removeAccents(filtres.valeurDeLaRecherche.toLowerCase());
+
+      chantierIds = await this.prisma.$queryRawUnsafe<{ id: string }[]>(`SELECT id FROM chantier where maille = ${filtres.mailleChantier} and (LOWER(unaccent(nom)) ILIKE $1 OR LOWER(unaccent(id)) ILIKE $1)`, `%${testLower}%`)
+        .then(chantiersMatched => chantiersMatched.map(chantierMatched => chantierMatched.id).filter(chantierId => chantiersLectureIds.includes(chantierId)));
+    }
+
     let paramètresRequête : Prisma.chantierFindManyArgs = {
       where: {
         NOT: { ministeres: { isEmpty: true } },
-        id: { in: chantiersLectureIds },
+        id: { in: chantierIds },
         OR: [
           {
             maille: 'NAT',
@@ -239,7 +313,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
         ],
         ...whereOptions,
       },
-      //orderBy 
+      orderBy: sorting ? appliquerSortingChantier(sorting, filtres.mailleChantier) : {},
     };
 
     if (!profilsTerritoriaux.includes(profil)) {
@@ -435,7 +509,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     const habilitation = new Habilitation(habilitations);
     const chantiersAutorisés = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const chantiersLecture = listeChantier.filter((x) => chantiersAutorisés.includes(x));
-    
+
     const rows = await this.prisma.$queryRaw<any[]>`
       WITH chantier_average AS (
         SELECT 
@@ -455,7 +529,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
         NULL AS stat_avg_annuel
       FROM chantier_average
   `;
-  
+
     const values = rows[0];
     return {
       global: {

@@ -113,8 +113,21 @@ mailles_applicables AS (
                 ELSE COALESCE(mc.maille_applicable, '{NAT}')
             END AS maille_applicable
     ) AS m
-)
+),
 
+mediane_par_chantier AS (
+    SELECT
+        chantier_id,
+        z.zone_type as maille,
+        percentile_cont(0.5) WITHIN GROUP (ORDER BY tag_ch) AS mediane
+    FROM
+        {{ ref('compute_ta_ch') }} as ta_ch_today
+    LEFT JOIN {{ source('python_load', 'metadata_zones') }} z ON z.zone_id = ta_ch_today.zone_id
+    WHERE
+        valid_on = 'today' and tag_ch IS NOT NULL AND z.zone_type <> 'NAT'
+    GROUP BY
+        chantier_id, z.zone_type
+)
 
 SELECT
     mc.id,
@@ -175,9 +188,39 @@ SELECT
         WHEN
             UPPER(mc.replicate_val_nat_to) = 'REG' AND z.zone_type = 'REG'
             THEN 'reg'::maille
-    END AS donnees_maille_source
+    END AS donnees_maille_source,
+    CASE
+        WHEN
+            ta_ch_today.tag_ch IS NULL
+            THEN NULL::type_tendance
+        WHEN
+            ta_ch_prev_month.tag_ch IS NULL OR ta_ch_today.tag_ch = ta_ch_prev_month.tag_ch
+            THEN 'STAGNATION'::type_tendance
+        WHEN
+            ta_ch_today.tag_ch > ta_ch_prev_month.tag_ch
+            THEN 'HAUSSE'::type_tendance
+        WHEN
+            ta_ch_today.tag_ch < ta_ch_prev_month.tag_ch
+            THEN 'BAISSE'::type_tendance
+        END AS tendance,
+    CASE
+        WHEN
+            ta_ch_today.tag_ch IS NULL
+            THEN NULL
+        WHEN
+            ta_ch_prev_month.tag_ch IS NULL OR ta_ch_today.tag_ch = ta_ch_prev_month.tag_ch
+            THEN 0
+        WHEN
+            ta_ch_today.tag_ch > ta_ch_prev_month.tag_ch
+            THEN 1
+        WHEN
+            ta_ch_today.tag_ch < ta_ch_prev_month.tag_ch
+            THEN -1
+        END AS tendance_ecart,
+    sr.date_meteo::date as derniere_maj_date_qualitative,
+    ROUND((ta_ch_today.tag_ch::numeric - mediane_par_chantier.mediane::numeric)::numeric, 1) as ecart
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS mc
--- On dupplique les lignes chantier pour chaque territoire
+-- On duplique les lignes chantier pour chaque territoire
 CROSS JOIN {{ source('db_schema_public', 'territoire') }} AS t
 LEFT JOIN
     {{ ref('int_directeurs_projets') }} AS dir_projets
@@ -204,6 +247,7 @@ LEFT JOIN {{ source('python_load', 'metadata_axes') }} AS ax ON ppg.ppg_axe = ax
 LEFT JOIN chantier_est_barometre ON mc.id = chantier_est_barometre.chantier_id
 LEFT JOIN ch_maille_has_ta_pivot_clean AS has_ta ON mc.id = has_ta.chantier_id
 LEFT JOIN ch_has_meteo ON mc.id = ch_has_meteo.chantier_id
+LEFT JOIN mediane_par_chantier ON mc.id = mediane_par_chantier.chantier_id and z.zone_type = mediane_par_chantier.maille
 LEFT JOIN
     (
         SELECT * FROM {{ ref('compute_ta_ch') }} WHERE valid_on = 'today'

@@ -52,14 +52,24 @@ enum type_statut {
   @@schema("public")
 }
 
+enum type_tendance {
+  HAUSSE
+  BAISSE
+  STAGNATION
+
+  @@schema("public")
+}
+
 model chantier {
   id                                 String
   nom                                String
   perimetre_ids                      String[]
   taux_avancement                    Float?
-  taux_avancement_date               DateTime?   @db.Date
+  taux_avancement_date               DateTime?      @db.Date
+  derniere_maj_date_qualitative      DateTime?      @db.Date
   taux_avancement_precedent          Float?
   taux_avancement_annuel             Float?
+  ecart                              Float?
   territoire_nom                     String?
   code_insee                         String
   maille                             String
@@ -70,15 +80,15 @@ model chantier {
   ministeres                         String[]
   ministeres_acronymes               String[]
   directions_administration_centrale String[]
-  meteo                              String?     @default("NON_RENSEIGNEE")
-  axe                                String      @default("non renseignée")
-  ppg                                String      @default("non renseignée")
+  meteo                              String?        @default("NON_RENSEIGNEE")
+  axe                                String         @default("non renseignée")
+  ppg                                String         @default("non renseignée")
   directeurs_projet_mails            String[]
   responsables_locaux_mails          String[]
   coordinateurs_territoriaux_mails   String[]
   est_barometre                      Boolean?
   est_territorialise                 Boolean?
-  territoire                         territoire  @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  territoire                         territoire     @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
   territoire_code                    String
   ate                                type_ate?
   a_taux_avancement_departemental    Boolean?
@@ -86,10 +96,12 @@ model chantier {
   a_meteo_departemental              Boolean?
   a_meteo_regional                   Boolean?
   est_applicable                     Boolean?
-  statut                             type_statut @default(PUBLIE)
+  statut                             type_statut    @default(PUBLIE)
+  tendance                           type_tendance?
+  tendance_ecart                           Float?
   donnees_maille_source              Maille?
-  cible_attendue                     Boolean     @default(true)
-  a_supprimer                        Boolean     @default(true)
+  cible_attendue                     Boolean        @default(true)
+  a_supprimer                        Boolean        @default(true)
 
   @@id([id, code_insee, maille])
   @@schema("public")
@@ -157,7 +169,7 @@ model indicateur {
   dernier_import_auteur_indic                        String?
   prochaine_date_maj                                 DateTime?  @db.Date
   prochaine_date_maj_jours                           Int?
-  prochaine_date_valeur_actuelle                     DateTime? @db.Date
+  prochaine_date_valeur_actuelle                     DateTime?  @db.Date
   periodicite                                        String?
   delai_disponibilite                                Int?
   est_a_jour                                         Boolean?

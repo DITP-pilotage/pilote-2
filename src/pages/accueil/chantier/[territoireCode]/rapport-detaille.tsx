@@ -80,12 +80,19 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   assert(session.habilitations, 'La session ne dispose d\'aucune habilitation');
   const territoireCode = query.territoireCode as string;
 
+  const { maille, codeInsee: codeInseeSelectionne } = territoireCodeVersMailleCodeInsee(territoireCode);
+  const mailleSelectionnee = query.maille as 'départementale' | 'régionale' ?? (maille === 'REG' ? 'régionale' : 'départementale');
+
+  const mailleChantier = maille === 'NAT' ? 'nationale' : mailleSelectionnee;
+
   const filtres = {
     perimetres: query.perimetres ? (query.perimetres as string).split(',').filter(Boolean) : [],
     axes: query.axes ? (query.axes as string).split(',').filter(Boolean) : [],
     statut: query.statut === 'PUBLIE' ? ['PUBLIE'] : query.statut === 'BROUILLON' ? ['BROUILLON'] : ['BROUILLON', 'PUBLIE'],
     estTerritorialise: query.estTerritorialise === 'true',
     estBarometre: query.estBarometre === 'true',
+    valeurDeLaRecherche: query.q as string,
+    mailleChantier: mailleChantier as 'nationale' | 'départementale' | 'régionale',
   };
 
   const filtresAlertes = {
@@ -96,10 +103,6 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     estEnAlerteAbscenceTauxAvancementDepartemental: query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
   };
 
-  const { maille, codeInsee: codeInseeSelectionne } = territoireCodeVersMailleCodeInsee(territoireCode);
-  const mailleSelectionnee = query.maille as 'départementale' | 'régionale' ?? (maille === 'REG' ? 'régionale' : 'départementale');
-
-  const mailleChantier = maille === 'NAT' ? 'nationale' : mailleSelectionnee;
 
   const [ministères, axes] = session.habilitations.lecture.chantiers.length === 0 ? [[], []] : (
     await Promise.all(
@@ -115,12 +118,16 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   const territoireRepository = dependencies.getTerritoireRepository();
   const territoireSélectionné = await territoireRepository.récupérer(territoireCode);
 
+  const sorting = query.sort ? JSON.parse(query.sort as string) as { id: string, desc: boolean } : {
+    id: 'avancement',
+    desc: false,
+  };
+
   const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
     dependencies.getChantierRepository(),
-    dependencies.getChantierDateDeMàjMeteoRepository(),
     territoireRepository,
   )
-    .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', codeInseeSelectionne, ministères, axes, filtres);
+    .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', codeInseeSelectionne, ministères, axes, filtres, sorting);
 
 
   const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisse || filtresAlertes.estEnAlerteTauxAvancementNonCalculé || filtresAlertes.estEnAlerteMétéoNonRenseignée || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? chantiers.filter(chantier => {
