@@ -4,9 +4,11 @@ export type FiltreQueryParams = {
   statut: string[]
   estTerritorialise: boolean
   estBarometre: boolean
-  sorting: {   
-    desc: boolean;
-    id: string;
-  }
   valeurDeLaRecherche: string
+  mailleChantier: 'nationale' | 'régionale' | 'départementale'
+};
+
+export type SortingParams = {
+  desc: boolean;
+  id: string;
 };

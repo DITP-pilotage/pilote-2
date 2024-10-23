@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useSession } from 'next-auth/react';
 import api from '@/server/infrastructure/api/trpc/api';
 import optionChoixVueStatuts from './SelecteurVueStatut.interface';
@@ -24,25 +24,7 @@ export default function useSélecteurVueStatut() {
     { valeur: 'ARCHIVE', libellé: 'Archivées', position: 'droite', estVisible: !!variableContenuFFPpgArchive, icone: 'fr-icon-archive-fill' },
   ], [profilPeutAccederAuxBrouillons, variableContenuFFPpgArchive]);
 
-  const [options, setOptions] = useState(optionsParDéfaut);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 576) {
-        setOptions(optionsMobile);
-      } else {
-        setOptions(optionsParDéfaut);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    handleResize();
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [optionsMobile, optionsParDéfaut]);
-
   return {
-    options,
+    options: window.innerWidth <= 576 ? optionsMobile : optionsParDéfaut,
   };
 }

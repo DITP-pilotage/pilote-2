@@ -52,9 +52,9 @@ interface ChantierAccueil {
 
 export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ req, res, query }) => {
   const session = await getServerSession(req, res, authOptions);
-  
+
   const pageIndex = Number.parseInt(query.pageIndex as string) || 1;
-  const pageSize =  Number.parseInt(query.pageSize as string) || 20;
+  const pageSize = Number.parseInt(query.pageSize as string) || 20;
 
   assert(query.territoireCode, 'Le territoire code est obligatoire pour afficher la page d\'accueil');
   assert(session, 'Vous devez être authentifié pour accéder a cette page');
@@ -65,33 +65,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   const territoireDept = session.habilitations.lecture.territoires.find(territoire => territoire.startsWith('DEPT'));
   const territoireReg = session.habilitations.lecture.territoires.find(territoire => territoire.startsWith('REG'));
 
-  if ((territoireCode === 'NAT-FR' && !session.habilitations.lecture.territoires.includes('NAT-FR')) || !session.habilitations.lecture.territoires.includes(territoireCode)) {
-    return {
-      redirect: {
-        statusCode: 302,
-        destination: `/accueil/chantier/${ query.maille === 'départementale' ? territoireDept : query.maille === 'départementale' ? territoireReg : session.habilitations.lecture.territoires[0] }`,
-      },
-    };
-  }
-
-  const filtres = {
-    perimetres: query.perimetres ? (query.perimetres as string).split(',').filter(Boolean) : [],
-    axes: query.axes ? (query.axes as string).split(',').filter(Boolean) : [],
-    statut: query.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : !!query.statut ? [query.statut as string] : ['PUBLIE'],
-    estTerritorialise: query.estTerritorialise === 'true',
-    estBarometre: query.estBarometre === 'true',
-    sorting: query.sorting ? JSON.parse(JSON.stringify(query.sorting)) : [],
-    valeurDeLaRecherche: query.valeurDeLaRecherche as string,
-  };
-  
-  const filtresAlertes = {
-    estEnAlerteTauxAvancementNonCalculé: query.estEnAlerteTauxAvancementNonCalculé === 'true',
-    estEnAlerteÉcart: query.estEnAlerteÉcart === 'true',
-    estEnAlerteBaisse: query.estEnAlerteBaisse === 'true',
-    estEnAlerteMétéoNonRenseignée: query.estEnAlerteMétéoNonRenseignée === 'true',
-    estEnAlerteAbscenceTauxAvancementDepartemental: query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
-  };
-
   const {
     maille: mailleTerritoireSelectionnee,
     codeInsee: codeInseeSelectionne,
@@ -100,6 +73,37 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   const mailleSelectionnee = query.maille as 'départementale' | 'régionale' ?? (mailleTerritoireSelectionnee === 'REG' ? 'régionale' : 'départementale');
   const mailleChantier = mailleTerritoireSelectionnee === 'NAT' ? 'nationale' : mailleSelectionnee;
 
+  if ((territoireCode === 'NAT-FR' && !session.habilitations.lecture.territoires.includes('NAT-FR')) || !session.habilitations.lecture.territoires.includes(territoireCode)) {
+    return {
+      redirect: {
+        statusCode: 302,
+        destination: `/accueil/chantier/${query.maille === 'départementale' ? territoireDept : query.maille === 'départementale' ? territoireReg : session.habilitations.lecture.territoires[0]}`,
+      },
+    };
+  }
+
+  const sorting = query.sort ? JSON.parse(query.sort as string) as { id: string, desc: boolean } : {
+    id: 'avancement',
+    desc: true,
+  };
+
+  const filtres = {
+    perimetres: query.perimetres ? (query.perimetres as string).split(',').filter(Boolean) : [],
+    axes: query.axes ? (query.axes as string).split(',').filter(Boolean) : [],
+    statut: query.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : !!query.statut ? [query.statut as string] : ['PUBLIE'],
+    estTerritorialise: query.estTerritorialise === 'true',
+    estBarometre: query.estBarometre === 'true',
+    valeurDeLaRecherche: query.valeurDeLaRecherche as string,
+    mailleChantier: mailleChantier as 'nationale' | 'départementale' | 'régionale',
+  };
+
+  const filtresAlertes = {
+    estEnAlerteTauxAvancementNonCalculé: query.estEnAlerteTauxAvancementNonCalculé === 'true',
+    estEnAlerteÉcart: query.estEnAlerteÉcart === 'true',
+    estEnAlerteBaisse: query.estEnAlerteBaisse === 'true',
+    estEnAlerteMétéoNonRenseignée: query.estEnAlerteMétéoNonRenseignée === 'true',
+    estEnAlerteAbscenceTauxAvancementDepartemental: query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
+  };
   const [ministères, axes] = session.habilitations.lecture.chantiers.length === 0 ? [[], []] : (
     await Promise.all(
       [
@@ -114,7 +118,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     dependencies.getChantierDateDeMàjMeteoRepository(),
     dependencies.getTerritoireRepository(),
   )
-    .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', codeInseeSelectionne, ministères, axes, filtres);
+    .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', codeInseeSelectionne, ministères, axes, filtres, sorting);
 
   const {
     répartitionMétéos,
