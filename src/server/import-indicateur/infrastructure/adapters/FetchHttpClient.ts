@@ -19,7 +19,7 @@ export class FetchHttpClient implements HttpClient {
     formData.append('schema', body.schema);
 
     logger.info(`Soumission du fichier ${body.nomDuFichier} à validata`);
-    
+
     const { report } = await new Promise<{ report: ReportValidata }>(async (resolve) => {
       await formData.submit(configuration.import.urlValidata, (error, response) => {
         let data = '';

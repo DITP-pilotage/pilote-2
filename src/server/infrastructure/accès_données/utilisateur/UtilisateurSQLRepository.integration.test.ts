@@ -1,14 +1,14 @@
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import TerritoireBuilder from '@/server/domain/territoire/Territoire.builder';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { prisma } from '@/server/db/prisma';
 import { UtilisateurSQLRepository } from './UtilisateurSQLRepository';
 
 describe('UtilisateurSQLRepository', () => {
   let utilisateurRepository: UtilisateurRepository;
 
   beforeEach(() => {
-    utilisateurRepository = new UtilisateurSQLRepository(prisma);
+    utilisateurRepository = new UtilisateurSQLRepository();
   });
 
   describe('récupérerNombreUtilisateursSurLeTerritoire', function () {

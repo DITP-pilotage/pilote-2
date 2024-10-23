@@ -3,9 +3,6 @@ import { createMocks } from 'node-mocks-http';
 import { anyString, mock } from 'jest-mock-extended';
 import PersistentFile from 'formidable/PersistentFile';
 import { NextApiRequest, NextApiResponse } from 'next';
-import handleVerifierFichierImportIndicateur
-  from '@/server/import-indicateur/infrastructure/handlers/VerifierImportIndicateurHandler';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { ReportErrorTaskBuilder } from '@/server/import-indicateur/app/builder/ReportErrorTask.builder';
 import {
   ReportResourceTaskBuilder,
@@ -14,8 +11,9 @@ import {
 import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/ReportValidata.builder';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
 import { getNextAuthSessionTokenPourUtilisateurEmail } from '@/server/infrastructure/test/NextAuthHelper';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { getContainer } from '@/server/dependances';
+import { prisma } from '@/server/db/prisma';
 
 jest.mock('@/server/import-indicateur/infrastructure/handlers/ParseForm', () => ({
   parseForm: () => ({
@@ -29,6 +27,8 @@ jest.mock('@/server/import-indicateur/infrastructure/adapters/FichierService.ts'
 
 const DONNEE_DATE_1 = '2023-12-30';
 const DONNEE_DATE_2 = '31/12/2023';
+
+// Il y a un pb si on set un env var différente pour ces tests => to fix
 const BASE_URL_VALIDATA = 'https://api.validata.etalab.studio';
 
 describe('VerifierImportIndicateurHandler', () => {
@@ -52,7 +52,7 @@ describe('VerifierImportIndicateurHandler', () => {
         ).build();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
 
       nock(BASE_URL_VALIDATA)
         .post('/validate').reply(200,
@@ -73,7 +73,7 @@ describe('VerifierImportIndicateurHandler', () => {
         query: { indicateurId: 'IND-001' },
       });
 
-      await handleVerifierFichierImportIndicateur(req, res);
+      await getContainer('importIndicateur').resolve('verifierFichierImportIndicateurHandler').handle(req, res);
 
       // THEN
       expect(res._getStatusCode()).toEqual(200);
@@ -107,7 +107,7 @@ describe('VerifierImportIndicateurHandler', () => {
         );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
 
       const formData = new FormData();
       const file = mock<File>();
@@ -122,7 +122,7 @@ describe('VerifierImportIndicateurHandler', () => {
       });
 
       // WHEN
-      await handleVerifierFichierImportIndicateur(req, res);
+      await getContainer('importIndicateur').resolve('verifierFichierImportIndicateurHandler').handle(req, res);
 
       // THEN
       const listeDonneesFichier = await prisma.mesure_indicateur_temporaire.findMany({ orderBy: { indic_id: 'asc' } });
@@ -163,7 +163,7 @@ describe('VerifierImportIndicateurHandler', () => {
         );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
 
       const formData = new FormData();
       const file = mock<File>();
@@ -178,7 +178,7 @@ describe('VerifierImportIndicateurHandler', () => {
       });
 
       // WHEN
-      await handleVerifierFichierImportIndicateur(req, res);
+      await getContainer('importIndicateur').resolve('verifierFichierImportIndicateurHandler').handle(req, res);
 
       // THEN
       const listeRapport = await prisma.rapport_import_mesure_indicateur.findMany();
@@ -226,7 +226,7 @@ describe('VerifierImportIndicateurHandler', () => {
       ).build();
 
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-    await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
+    await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
 
     nock(BASE_URL_VALIDATA)
       .post('/validate').reply(200,
@@ -246,7 +246,8 @@ describe('VerifierImportIndicateurHandler', () => {
       },
       query: { indicateurId: 'IND-001' },
     });
-    await handleVerifierFichierImportIndicateur(req, res);
+
+    await getContainer('importIndicateur').resolve('verifierFichierImportIndicateurHandler').handle(req, res);
 
     // THEN
     expect(res._getStatusCode()).toEqual(200);
@@ -314,7 +315,7 @@ describe('VerifierImportIndicateurHandler', () => {
       ).build();
 
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-    await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
+    await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
 
     nock(BASE_URL_VALIDATA)
       .post('/validate').reply(200,
@@ -334,7 +335,7 @@ describe('VerifierImportIndicateurHandler', () => {
       },
       query: { indicateurId: 'IND-001' },
     });
-    await handleVerifierFichierImportIndicateur(req, res);
+    await getContainer('importIndicateur').resolve('verifierFichierImportIndicateurHandler').handle(req, res);
 
     // THEN
     expect(res._getStatusCode()).toEqual(200);

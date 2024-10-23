@@ -6,10 +6,17 @@ import {
   presenterEnMapInformationMetadataIndicateurContrat,
 } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
 
+type Dependencies = {
+  informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository
+};
 export default class InitialiserNouvelIndicateurUseCase {
-  constructor(
-    private readonly informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository,
-  ) {}
+  private informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository;
+  
+  constructor({
+    informationMetadataIndicateurRepository,
+  }: Dependencies) {
+    this.informationMetadataIndicateurRepository = informationMetadataIndicateurRepository;
+  }
 
   async run(indicId: string): Promise<MetadataParametrageIndicateur> {
     const listeInformation = presenterEnMapInformationMetadataIndicateurContrat(this.informationMetadataIndicateurRepository.récupererInformationMetadataIndicateur());

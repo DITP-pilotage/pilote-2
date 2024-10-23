@@ -1,20 +1,18 @@
 import { createMocks } from 'node-mocks-http';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
 import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichier.builder';
 import {
   MesureIndicateurTemporaireBuilder,
 } from '@/server/import-indicateur/app/builder/MesureIndicateurTemporaire.builder';
-import handlePublierFichierImportIndicateur
-  from '@/server/import-indicateur/infrastructure/handlers/PublierIndicateurHandler';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { getContainer } from '@/server/dependances';
 
-describe('ImportIndicateurHandler', () => {
+describe('PublierFichierImportIndicateurHandler', () => {
   it('doit transférer les mesures indicateurs temporaires vers la table permanente', async () => {
     // GIVEN
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-    await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
+    await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
     
     const rapport = new DetailValidationFichierBuilder()
       .avecId('6cba829c-def8-4f21-9bb0-07bd5a36bd02')
@@ -24,8 +22,8 @@ describe('ImportIndicateurHandler', () => {
       .avecId('1402c583-e04f-4236-a59f-39b1e8890bc1')
       .avecUtilisateurEmail('ditp.admin@example.com')
       .build();
-    await dependencies.getRapportRepository().sauvegarder(rapport);
-    await dependencies.getRapportRepository().sauvegarder(rapport2);
+    await getContainer('importIndicateur').resolve('rapportRepository').sauvegarder(rapport);
+    await getContainer('importIndicateur').resolve('rapportRepository').sauvegarder(rapport2);
 
     const listeMesuresIndicateurTemporaire = [
       new MesureIndicateurTemporaireBuilder()
@@ -56,7 +54,7 @@ describe('ImportIndicateurHandler', () => {
         .avecZoneId('D002')
         .build(),
     ];
-    await dependencies.getMesureIndicateurTemporaireRepository().sauvegarder(listeMesuresIndicateurTemporaire);
+    await getContainer('importIndicateur').resolve('mesureIndicateurTemporaireRepository').sauvegarder(listeMesuresIndicateurTemporaire);
 
     const { req, res } = createMocks({
       method: 'POST',
@@ -64,7 +62,7 @@ describe('ImportIndicateurHandler', () => {
     });
 
     // WHEN
-    await handlePublierFichierImportIndicateur(req, res);
+    await getContainer('importIndicateur').resolve('publierFichierImportIndicateurHandler').handle(req, res);
     // THEN
     const listeMesuresIndicateursTemporaire = await prisma.mesure_indicateur_temporaire.findMany({});
     const listeMesuresIndicateurs = await prisma.mesure_indicateur.findMany({});
