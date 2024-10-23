@@ -29,11 +29,21 @@ function déterminerValeurAffichée(valeur: number | null, valeurCible: number |
   }
   return (
     <>
-      <div className='fr-text--bold'>
-        {'VA : ' + (valeur === null ? 'Non renseigné' : valeur.toLocaleString()) + unitéAffichée}
+      <div className='flex justify-center align-center fr-text--bold'>
+        <div className='fr-mr-1w'>
+          VA :
+        </div>
+        <div>
+          {valeur === null ? 'Non renseigné' : valeur.toLocaleString() + unitéAffichée}
+        </div>
       </div>
-      <div>
-        {'VC 2026 : ' + (valeurCible === null ? 'Non renseigné' : valeurCible.toLocaleString()) + unitéAffichée}
+      <div className='flex justify-center align-center'>
+        <div className='fr-mr-1w'>
+          VC 2026 :
+        </div>
+        <div>
+          {valeurCible === null ? 'Non renseigné' : valeurCible.toLocaleString() + unitéAffichée}
+        </div>
       </div>
     </>
   );
