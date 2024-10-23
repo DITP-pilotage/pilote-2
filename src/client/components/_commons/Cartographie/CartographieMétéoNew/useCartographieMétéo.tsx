@@ -52,7 +52,11 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
     return {
       ...acc,
       [val.codeInsee]: {
-        valeurAffichée: val.estApplicable === false ? 'Non applicable' : libellésMétéos[val.valeur],
+        contenu: (
+          <div className='fr-text--bold'>
+            { val.estApplicable === false ? 'Non applicable' : libellésMétéos[val.valeur] }
+          </div>
+        ),
         remplissage: déterminerRemplissage(val.valeur, élémentsDeLégende, val.estApplicable),
         libellé: territoireGéographique.nomAffiché,
       },

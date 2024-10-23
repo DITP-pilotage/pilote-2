@@ -54,11 +54,12 @@ const Cartographie: FunctionComponent<CartographieProps> = ({
       {
         infoBulle ?
           <BulleDInfo
-            contenu={infoBulle.valeurAffichée}
             titre={infoBulle.libellé}
             x={sourisPosition.x}
             y={sourisPosition.y}
-          />
+          >
+            {infoBulle?.contenu}
+          </BulleDInfo>
           : null
       }
       <CartographieSVG

@@ -1,14 +1,14 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, ReactNode } from 'react';
 import BulleDInfoStyled from './BulleDInfo.styled';
 
 interface BulleDInfoProps {
   x: number,
   y: number,
   titre: string,
-  contenu: string,
+  children: ReactNode,
 }
 
-const BulleDInfo: FunctionComponent<BulleDInfoProps> = ({ x, y, titre, contenu }) => {
+const BulleDInfo: FunctionComponent<BulleDInfoProps> = ({ x, y, titre, children }) => {
   return (
     <BulleDInfoStyled
       style={{
@@ -19,8 +19,8 @@ const BulleDInfo: FunctionComponent<BulleDInfoProps> = ({ x, y, titre, contenu }
       <div className='fr-py-1w fr-px-2w'>
         { titre }
       </div>
-      <div className='fr-py-1w fr-px-2w fr-text--bold'>
-        { contenu }
+      <div className='fr-py-1w fr-px-2w'>
+        { children }
       </div>
     </BulleDInfoStyled>
   );

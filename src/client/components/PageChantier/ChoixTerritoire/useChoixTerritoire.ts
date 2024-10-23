@@ -19,7 +19,7 @@ export default function useChoixTerritoire(chantierId: string, mailleSélectionn
     territoires.filter(territoire => territoire.maille === mailleSélectionnée).forEach(territoire => {
 
       donnéesFormatées[territoire.codeInsee] = {
-        valeurAffichée: '',
+        contenu: undefined,
         remplissage: '#bababa',
         libellé: territoire.nomAffiché,
       };
