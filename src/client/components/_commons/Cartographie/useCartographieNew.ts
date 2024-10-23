@@ -44,7 +44,7 @@ export default function useCartographie(territoireCode: string, mailleSelectionn
         code: territoire.code,
         remplissage: données[territoire.codeInsee]?.remplissage ?? '#bababa', // TODO où gérer ce undefined ?
         libellé: données[territoire.codeInsee]?.libellé ?? '-', // TODO où gérer ce undefined ?
-        valeurAffichée: données[territoire.codeInsee]?.valeurAffichée ?? 'Non renseignée', // TODO où gérer ce undefined ?
+        contenuInfoBulle: données[territoire.codeInsee].contenu, // TODO où gérer ce undefined ?
         estInteractif: territoire.accèsLecture,
       })),
       frontières: frontièresÀTracer.map(frontière => ({

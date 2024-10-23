@@ -37,10 +37,10 @@ export default function useIndicateurDétails(indicateurId: Indicateur['id'], fu
       enabled: false,
       onSuccess: (data: DétailsIndicateurMailles) => {
         setDonnéesCartographieAvancement(
-          objectEntries(data[mailleSélectionnée]).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.avancement.global, codeInsee: codeInsee, estApplicable: détailsIndicateur.est_applicable })),
+          objectEntries(data[mailleSélectionnée]).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.avancement.global, valeurAnnuelle: détailsIndicateur.avancement.annuel, codeInsee: codeInsee, estApplicable: détailsIndicateur.est_applicable })),
         );
         setDonnéesCartographieValeurActuelle(
-          objectEntries(data[mailleSélectionnée]).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.valeurActuelle ?? null, codeInsee: codeInsee, estApplicable: détailsIndicateur.est_applicable })),
+          objectEntries(data[mailleSélectionnée]).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.valeurActuelle ?? null, valeurCible: détailsIndicateur.valeurCible ?? null, codeInsee: codeInsee, estApplicable: détailsIndicateur.est_applicable })),
         );
       },
     },

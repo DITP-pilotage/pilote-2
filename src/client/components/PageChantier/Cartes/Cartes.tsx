@@ -43,6 +43,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
 
   const donnéesCartographieAvancement = objectEntries(chantierMailles[mailleSelectionnee]).map(([codeInsee, territoire]) => ({
     valeur: territoire.avancement.global,
+    valeurAnnuelle: territoire.avancement.annuel,
     codeInsee: codeInsee,
     estApplicable: territoire.estApplicable,
   }));

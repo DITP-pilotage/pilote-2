@@ -18,7 +18,7 @@ export type RépartitionsMétéos = { ORAGE: number
   NUAGE: number
   SOLEIL: number
 };
-export type AvancementsGlobauxTerritoriauxMoyensContrat = { valeur: number | null, codeInsee: CodeInsee, estApplicable: boolean | null }[];
+export type AvancementsGlobauxTerritoriauxMoyensContrat = { valeur: number | null, valeurAnnuelle: number | null, codeInsee: CodeInsee, estApplicable: boolean | null }[];
 export type AvancementsGlobauxRépartitionsMétéosContrat = { valeur: number | null, codeInsee: CodeInsee, estApplicable: boolean | null }[];
 
 export const presenterEnAvancementsStatistiquesAccueilContrat = (avancementsStatistiques: AvancementsStatistiques): AvancementsStatistiquesAccueilContrat => {

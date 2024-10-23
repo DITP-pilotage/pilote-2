@@ -55,7 +55,7 @@ export default function usePageProjetsStructurants(projetsStructurants: ProjetSt
     return codesInsee.map(codeInsee => {
       const projets = projetsDuTerritoireEtTerritoiresEnfants(codeInsee, mailleSélectionnée);
       const avancementMoyen = calculerMoyenne(projets.map(projet => projet.avancement));
-      return { valeur: avancementMoyen, codeInsee: codeInsee, estApplicable: null };
+      return { valeur: avancementMoyen, valeurAnnuelle: null, codeInsee: codeInsee, estApplicable: null };
     });
   }, [mailleSélectionnée, projetsDuTerritoireEtTerritoiresEnfants]);
 

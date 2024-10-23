@@ -48,6 +48,7 @@ import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import {
   ListerDétailsIndicateurTerritoireUseCase,
 } from '@/server/usecase/chantier/indicateur/ListerDétailsIndicateurTerritoireUseCase';
+import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
 
 interface NextPageChantierProps {
   indicateurs: Indicateur[],
@@ -92,7 +93,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
   const territoireRepository = dependencies.getTerritoireRepository();
   const territoireSélectionné = await territoireRepository.récupérer(territoireCode);
   const territoireCodes = territoiresCompares.length > 0 ? [...territoiresCompares, territoireCode] : [territoireCode];
-
+  
   try {
     const [chantier,
       indicateurs,
@@ -102,6 +103,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
       décisionStratégique,
       détailsIndicateurs,
       avancementsAgrégés,
+      valeurFFPpgArchive,
     ] = await Promise.all([
       new RécupérerChantierUseCase(
         dependencies.getChantierRepository(),
@@ -116,7 +118,10 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
       new RécupérerDécisionStratégiqueLaPlusRécenteUseCase(dependencies.getDécisionStratégiqueRepository()).run(chantierId, session.habilitations).catch(() => null),
       new RécupérerDétailsIndicateursUseCase(dependencies.getIndicateurRepository()).run(chantierId, territoireCodes, session.habilitations),
       new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository()).run([chantierId], mailleSelectionnee, session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat),
+      new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_PPG_ARCHIVE' }),
     ]);
+
+    assert(valeurFFPpgArchive || chantier.statut !== 'ARCHIVE', 'La page n\'est pas disponible');
 
     if (!chantier.estTerritorialisé && maille !== 'NAT') {
       return {

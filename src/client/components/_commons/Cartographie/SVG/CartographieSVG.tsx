@@ -86,7 +86,7 @@ const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
                       if (options.estInteractif && territoire.libellé !== infoBulle?.libellé) {
                         setInfoBulle({
                           libellé: territoire.libellé,
-                          valeurAffichée: territoire.valeurAffichée,
+                          contenu: territoire.contenuInfoBulle,
                         });
                       } else {
                         setInfoBulle(null);

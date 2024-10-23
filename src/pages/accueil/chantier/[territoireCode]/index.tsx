@@ -73,7 +73,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   const filtres = {
     perimetres: query.perimetres ? (query.perimetres as string).split(',').filter(Boolean) : [],
     axes: query.axes ? (query.axes as string).split(',').filter(Boolean) : [],
-    statut: query.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : query.statut === 'BROUILLON' ? ['BROUILLON'] : ['PUBLIE'],
+    statut: query.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : !!query.statut ? [query.statut as string] : ['PUBLIE'],
     estTerritorialise: query.estTerritorialise === 'true',
     estBarometre: query.estBarometre === 'true',
   };
@@ -137,6 +137,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
 
   const avancementsGlobauxTerritoriauxMoyens = objectEntries(donnéesTerritoiresAgrégées[mailleSelectionnee || 'départementale'].territoires).map(([codeInsee, territoire]) => ({
     valeur: territoire.répartition.avancements.global.moyenne,
+    valeurAnnuelle: territoire.répartition.avancements.annuel.moyenne,
     codeInsee,
     estApplicable: null,
   }));
