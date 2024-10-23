@@ -7,7 +7,6 @@ import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
 import { UtilisateurFormInputs } from '@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
 
 export default function useRécapitulatifUtilisateur() {
-
   const { getValues } = useFormContext<UtilisateurFormInputs>();
   const utilisateur = getValues();
   

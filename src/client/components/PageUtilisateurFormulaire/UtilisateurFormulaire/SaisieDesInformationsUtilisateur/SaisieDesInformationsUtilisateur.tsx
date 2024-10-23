@@ -27,17 +27,17 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
     errors,
     optionsProfil,
     profilCodeSelectionne,
-    ChangementProfilSelectionne,
+    changementProfilSelectionne,
     afficherChampLectureTerritoires,
     activerLaRestrictionDesTerritoires,
     groupesTerritoiresÀAfficher,
     territoiresSélectionnables,
     afficherChampLecturePérimètres,
-    ChangementPerimetresSelectionnes,
+    changementPerimetresSelectionnes,
     afficherChampLectureChantiers,
     chantiersAccessiblesLecture,
     chantiersIdsAppartenantsAuxPerimetresSelectionnes,
-    ChangementChantiersSelectionnes,
+    changementChantiersSelectionnes,
     afficherChampResponsabiliteChantiers,
     chantiersAccessibleResponsabilite,
     afficherChampSaisieIndicateur,
@@ -96,7 +96,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
         options={optionsProfil}
         texteAide='Les droits attribués dépendent du profil sélectionné.'
         texteFantôme='Sélectionner un profil'
-        valeurModifiéeCallback={ChangementProfilSelectionne}
+        valeurModifiéeCallback={changementProfilSelectionne}
         valeurSélectionnée={profilCodeSelectionne}
       />
       <div
@@ -142,7 +142,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
               render={() => (
                 <MultiSelectPérimètreMinistériel
                   afficherBoutonsSélection
-                  changementValeursSélectionnéesCallback={ChangementPerimetresSelectionnes}
+                  changementValeursSélectionnéesCallback={changementPerimetresSelectionnes}
                   périmètresMinistérielsIdsSélectionnésParDéfaut={getValues('habilitations.lecture.périmètres')}
                 />
               )}
@@ -158,7 +158,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
               render={() => (
                 <MultiSelectChantier
                   afficherBoutonsSélection
-                  changementValeursSélectionnéesCallback={ChangementChantiersSelectionnes}
+                  changementValeursSélectionnéesCallback={changementChantiersSelectionnes}
                   chantiers={chantiersAccessiblesLecture ?? []}
                   chantiersIdsSélectionnésParDéfaut={getValues('habilitations.lecture.chantiers')}
                   valeursDésactivées={chantiersIdsAppartenantsAuxPerimetresSelectionnes}
