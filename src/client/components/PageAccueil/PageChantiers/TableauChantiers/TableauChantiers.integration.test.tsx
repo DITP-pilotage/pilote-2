@@ -90,6 +90,7 @@ class TableauChantiersTest {
         données={this.données}
         mailleSelectionnee='départementale'
         ministèresDisponibles={this.ministèresDisponibles}
+        nombreTotalChantiersAvecAlertes={120}
         territoireCode={this.territoireCode}
       />,
     ));

@@ -1,10 +1,10 @@
-export function groupBy<T>(arr: T[], fn: (item: T) => any) {
+export function groupBy<T>(arr: T[], fn: (item: T) => any, init: Record<string, T[]> = {}) {
   return arr.reduce<Record<string, T[]>>((prev, curr) => {
     const groupKey = fn(curr);
     const group = prev[groupKey] || [];
     group.push(curr);
     return { ...prev, [groupKey]: group };
-  }, {});
+  }, init);
 }
 
 export function groupByAndTransform<T, U>(arr: T[], fn: (item: T) => any, transformFn: (item: T) => U) {

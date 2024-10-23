@@ -2,12 +2,12 @@ import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css';
 import { parseAsBoolean, useQueryState } from 'nuqs';
-import { FunctionComponent, useEffect } from 'react';
+import { FunctionComponent } from 'react';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
-import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
-import useTableauChantiers from '@/components/PageAccueil/PageChantiers/TableauChantiers/useTableauChantiers';
-import TableauChantiersActionsDeTri
-  from '@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
+import TableauPagination from '@/components/_commons/TableauNew/Pagination/TableauPagination';
+import { useTableauChantiers } from '@/components/PageAccueil/PageChantiers/TableauChantiers/useTableauChantiers';
+import { TableauChantiersActionsDeTri }
+  from '@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTriNew/TableauChantiersActionsDeTri';
 import TableauRéformesEnTête from '@/client/components/PageAccueil/TableauRéformes/EnTête/TableauRéformesEnTête';
 import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
@@ -16,6 +16,7 @@ import TableauChantiersStyled from './TableauChantiers.styled';
 import TableauChantiersContenu from './Contenu/TableauChantiersContenu';
 
 const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
+  nombreTotalChantiersAvecAlertes,
   données,
   ministèresDisponibles,
   territoireCode,
@@ -25,18 +26,9 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
   const {
     tableau,
     changementDeLaRechercheCallback,
-    changementDePageCallback,
     valeurDeLaRecherche,
-    sélectionColonneÀTrier,
-    changementSélectionColonneÀTrierCallback,
-    directionDeTri,
-    changementDirectionDeTriCallback,
     estVueTuile,
-  } = useTableauChantiers(données, ministèresDisponibles);
-
-  useEffect(() => {
-    tableau.setPageSize(50);
-  }, [tableau]);
+  } = useTableauChantiers(données, ministèresDisponibles, nombreTotalChantiersAvecAlertes);
 
   const [estGroupe, setEstGroupe] = useQueryState('groupeParMinistere', parseAsBoolean.withDefault(false).withOptions({
     clearOnDefault: true,
@@ -54,7 +46,6 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
           </div>
           <Interrupteur
             auChangement={async () => {
-
               sauvegarderFiltres({ groupeParMinistere: !estGroupe });
               await setEstGroupe(!estGroupe);
               return tableau.getColumn('porteur')?.getToggleGroupingHandler()() ?? undefined;
@@ -65,12 +56,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
           />
         </div>
         <div className='tableau-actions-droite'>
-          <TableauChantiersActionsDeTri
-            changementColonneÀTrierCallback={changementSélectionColonneÀTrierCallback}
-            changementDirectionDeTriCallback={changementDirectionDeTriCallback}
-            colonneÀTrier={sélectionColonneÀTrier}
-            directionDeTri={directionDeTri}
-          />
+          <TableauChantiersActionsDeTri />
         </div>
       </div>
       {tableau.getRowModel().rows.length === 0
@@ -103,9 +89,9 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
               />
             </table>
             <TableauPagination
-              changementDePageCallback={changementDePageCallback}
+              initialPageSize={50}
               nombreDePages={tableau.getPageCount()}
-              numéroDePageInitiale={1}
+              tableau={tableau}
             />
           </>}
     </TableauChantiersStyled>

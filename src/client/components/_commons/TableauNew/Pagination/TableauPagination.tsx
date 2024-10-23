@@ -1,24 +1,22 @@
 import '@gouvfr/dsfr/dist/component/pagination/pagination.min.css';
 import { parseAsInteger, useQueryStates } from 'nuqs';
 import { Table } from '@tanstack/react-table';
-import { UtilisateurListeGestionContrat } from '@/server/app/contrats/UtilisateurListeGestionContrat';
 import TableauPaginationÉlément from './Élément/TableauPaginationÉlément';
 
-interface TableauPaginationProps {
+interface TableauPaginationProps<T> {
   nombreDePages: number,
-  tableau: Table<UtilisateurListeGestionContrat>
+  tableau: Table<T>,
+  initialPageSize?: number
 }
 
-
-export default function TableauPagination({ tableau, nombreDePages }: TableauPaginationProps) {
+export default function TableauPagination<T>({ tableau, nombreDePages, initialPageSize = 20 }: TableauPaginationProps<T>) {
   const [pagination, setPagination] = useQueryStates({
     pageIndex: parseAsInteger.withDefault(1),
-    pageSize: parseAsInteger.withDefault(20),
+    pageSize: parseAsInteger.withDefault(initialPageSize),
   }, {
     shallow: false,
     history: 'push',
   });
-
 
   if (nombreDePages <= 1) {
     return null;
@@ -42,6 +40,7 @@ export default function TableauPagination({ tableau, nombreDePages }: TableauPag
             className='fr-pagination__link fr-pagination__link--first'
             disabled={pagination.pageIndex === 1}
             onClick={() => setPagination({ pageIndex: 1 })}
+            title='Première page'
             type='button'
           >
             Première page
@@ -52,6 +51,7 @@ export default function TableauPagination({ tableau, nombreDePages }: TableauPag
             className='fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label'
             disabled={pagination.pageIndex === 1}
             onClick={() => tableau.previousPage()}
+            title='Page précédente'
             type='button'
           >
             Page précédente
@@ -166,6 +166,7 @@ export default function TableauPagination({ tableau, nombreDePages }: TableauPag
             className='fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label'
             disabled={pagination.pageIndex === numéroDernièrePage}
             onClick={() => tableau.nextPage()}
+            title='Page suivante'
             type='button'
           >
             Page suivante
@@ -176,6 +177,7 @@ export default function TableauPagination({ tableau, nombreDePages }: TableauPag
             className='fr-pagination__link fr-pagination__link--last'
             disabled={pagination.pageIndex === numéroDernièrePage}
             onClick={() => setPagination({ pageIndex: numéroDernièrePage })}
+            title='Dernière page'
             type='button'
           >
             Dernière page
