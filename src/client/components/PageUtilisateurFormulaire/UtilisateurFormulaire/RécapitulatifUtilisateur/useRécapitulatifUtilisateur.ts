@@ -9,6 +9,7 @@ import { UtilisateurFormInputs } from '@/client/components/PageUtilisateurFormul
 export default function useRécapitulatifUtilisateur() {
   const { getValues } = useFormContext<UtilisateurFormInputs>();
   const utilisateur = getValues();
+  
   const router = useRouter();
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
