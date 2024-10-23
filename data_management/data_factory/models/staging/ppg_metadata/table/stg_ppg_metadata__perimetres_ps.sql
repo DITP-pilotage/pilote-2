@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ ref('metadata_perimetres_projet_structurant') }}
+    select * from {{ source('python_load', 'metadata_perimetres_projet_structurant') }}
 
 ),
 

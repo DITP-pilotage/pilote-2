@@ -1,0 +1,31 @@
+version: 2
+
+sources:
+  - name: python_load
+    description: "Données chargées par dlt dans le schema *raw_data* de la base Pilote de production."
+    database: "{{ env_var('PGDATABASE') }}"
+    schema: raw_data
+    tables:
+      - name: metadata_engagement
+        description: Table référentielle des engagements du gouvernement
+      - name: metadata_zones
+      - name: metadata_chantiers
+      - name: metadata_perimetres
+      - name: metadata_ppgs
+      - name: metadata_axes
+      - name: metadata_zonegroup
+      - name: metadata_chantier_meteos
+      - name: metadata_indicateur_types
+      - name: metadata_perimetres_projet_structurant
+      - name: metadata_porteurs
+
+  - name: python_load_seeds
+    description: "Données chargées par dlt dans le schema *seeds* de la base Pilote de production."
+    database: "{{ env_var('PGDATABASE') }}"
+    schema: seeds
+    tables:
+      - name: utilisateur_py
+      - name: commentaires_py
+      - name: mesure_indicateur_py
+      - name: rapport_import_mesure_indicateur_py
+

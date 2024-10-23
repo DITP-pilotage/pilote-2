@@ -2,14 +2,14 @@ with
 
 source as (
 
-    select * from {{ ref('metadata_porteurs') }}
+    select * from {{ source('python_load', 'metadata_porteurs') }}
 
 ),
 
 renamed as (
 
     select
-        porteur_id as id,
+        porteur_id::text as id,
         porteur_short as acronyme,
         porteur_name as nom,
         porteur_desc as description,

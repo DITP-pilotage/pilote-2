@@ -1,0 +1,55 @@
+github_repo:
+  user: "DITP-pilotage"
+  repo: "PPG_metadata"
+  default_branch: "prod"
+
+groups:
+  ppg_metadata:
+    tables:
+      metadata_zones:
+        schema: "raw_data"
+        path_in_repo: "views/zone/view_meta_zone.csv"
+      metadata_zonegroup:
+        schema: "raw_data"
+        path_in_repo: "models/zone/ref_zone_group.csv"
+      metadata_ppgs:
+        schema: "raw_data"
+        path_in_repo: "views/ppg/view_meta_ppg.csv"
+      metadata_porteurs:
+        schema: "raw_data"
+        path_in_repo: "views/porteur/view_meta_porteur.csv"
+      metadata_perimetres:
+        schema: "raw_data"
+        path_in_repo: "views/perimetre/view_meta_perimetre.csv"
+      metadata_perimetres_projet_structurant:
+        schema: "raw_data"
+        path_in_repo: "views/perimetre/mapping_per_pst.csv"
+      metadata_indicateur_types:
+        schema: "raw_data"
+        path_in_repo: "models/indicateur/ref_indic_type.csv"
+      metadata_engagement:
+        schema: "raw_data"
+        path_in_repo: "models/chantier/ref_chantier_engagement.csv"
+      metadata_chantiers:
+        schema: "raw_data"
+        path_in_repo: "views/chantier/view_meta_chantier.csv"
+      metadata_chantier_meteos:
+        schema: "raw_data"
+        path_in_repo: "models/chantier/ref_chantier_meteo.csv"
+      metadata_axes:
+        schema: "raw_data"
+        path_in_repo: "views/axe/view_meta_axe.csv"
+  seeds:
+    tables:
+      rapport_import_mesure_indicateur_py:
+        schema: "seeds"
+        path_in_repo: "seeds/rapport_import_mesure_indicateur.csv"
+      mesure_indicateur_py:
+        schema: "seeds"
+        path_in_repo: "seeds/mesure_indicateur.csv"
+      commentaires_py:
+        schema: "seeds"
+        path_in_repo: "seeds/commentaires.csv"
+      utilisateur_py:
+        schema: "seeds"
+        path_in_repo: "seeds/utilisateur.csv"

@@ -16,15 +16,15 @@ mesure_last_params_nat as (
 ), 
 -- Les VC FR saisies, **qui ne devraient pas être prises en compte**! (vc_nat_from<>'user_input')
 mesure_last_params_nat_all_vc as (
-    select a.*, b.zone_type from mesure_last_params_nat a
-    left join {{ ref('metadata_zones') }} b on a.zone_id=b.zone_id
+    select a.*, b.maille as zone_type from mesure_last_params_nat a
+    left join {{ ref('stg_ppg_metadata__zones') }} b on a.zone_id=b.id
     where 
 		a.zone_id='FRANCE' and metric_type='vc' and vc_nat_from<>'user_input'
 ),
 -- Les VI FR saisies, **qui ne devraient pas être prises en compte**! (vi_nat_from<>'user_input')
 mesure_last_params_nat_all_vi as (
-    select a.*, b.zone_type from mesure_last_params_nat a
-    left join {{ ref('metadata_zones') }} b on a.zone_id=b.zone_id
+    select a.*, b.maille as zone_type from mesure_last_params_nat a
+    left join {{ ref('stg_ppg_metadata__zones') }} b on a.zone_id=b.id
     where 
 		a.zone_id='FRANCE' and metric_type='vi' and vc_nat_from<>'user_input'
 ),
