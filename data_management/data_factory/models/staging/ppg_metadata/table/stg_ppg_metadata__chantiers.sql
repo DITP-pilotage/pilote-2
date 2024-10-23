@@ -17,7 +17,7 @@ renamed AS (
         ch_perseverant AS id_chantier_perseverant,
         ch_territo::boolean AS est_territorialise,
         engagement_short AS nom_engagement,
-        ch_hidden_pilote::boolean AS est_cache_dans_pilote,
+        ch_hidden_pilote::text::boolean AS est_cache_dans_pilote,
         ch_saisie_ate AS ate,
         ch_state AS statut,
         cast(zg_applicable AS TEXT) AS zone_groupe_applicable,
