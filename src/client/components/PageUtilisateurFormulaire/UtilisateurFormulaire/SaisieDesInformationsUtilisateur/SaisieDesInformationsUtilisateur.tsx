@@ -32,6 +32,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
     activerLaRestrictionDesTerritoires,
     groupesTerritoiresÀAfficher,
     territoiresSélectionnables,
+    changementTerritoiresSelectionnes,
     afficherChampLecturePérimètres,
     changementPerimetresSelectionnes,
     afficherChampLectureChantiers,
@@ -124,7 +125,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
                 <MultiSelectTerritoire
                   activerLaRestrictionDesTerritoires={activerLaRestrictionDesTerritoires}
                   afficherBoutonsSélection
-                  changementValeursSélectionnéesCallback={(valeursSélectionnées) => setValue('habilitations.lecture.territoires', valeursSélectionnées)}
+                  changementValeursSélectionnéesCallback={changementTerritoiresSelectionnes}
                   groupesÀAfficher={groupesTerritoiresÀAfficher}
                   territoiresCodesSélectionnésParDéfaut={getValues('habilitations.lecture.territoires')}
                   territoiresSélectionnables={territoiresSélectionnables}

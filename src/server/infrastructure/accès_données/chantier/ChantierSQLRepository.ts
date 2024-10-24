@@ -36,17 +36,28 @@ export default class ChantierSQLRepository implements ChantierRepository {
   }
 
   async récupérerChantiersSynthétisés(): Promise<ChantierSynthétisé[]> {
-    const chantiers = await this.prisma.chantier.findMany({
-      distinct: ['id'],
-    });
+    const chantiers = await this.prisma.$queryRaw<any[]>`
+      SELECT 
+        id,
+        nom, 
+        est_territorialise,
+        perimetre_ids,
+        ate ,
+        statut ,
+        ARRAY_AGG(territoire_code) as territoires_applicables
+      FROM chantier
+      WHERE est_applicable
+      GROUP BY id, nom, est_territorialise, perimetre_ids, ate, statut;   
+    `;
 
-    return chantiers.map(c => ({
-      id: c.id,
-      nom: c.nom,
-      estTerritorialisé: Boolean(c.est_territorialise),
-      périmètreIds: c.perimetre_ids,
-      ate: c.ate,
-      statut: c.statut,
+    return chantiers.map(chantier => ({
+      id: chantier.id,
+      nom: chantier.nom,
+      estTerritorialisé: Boolean(chantier.est_territorialise),
+      périmètreIds: chantier.perimetre_ids,
+      ate: chantier.ate,
+      statut: chantier.statut,
+      territoiresApplicables: chantier.territoires_applicables,
     }));
   }
 

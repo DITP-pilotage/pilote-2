@@ -75,6 +75,7 @@ function AAccesATousLesTerritoires(profilCode: ProfilCode) {
 export default function useSectionDétailsMetadataAutresIndicateurForm() {
   const { data: profils } = api.profil.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
   const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
+  const { data: territoires } = api.territoire.récupérerListe.useQuery({ territoireCodes: null }, { staleTime: Number.POSITIVE_INFINITY });
   const { data: session } = useSession();
   const {
     register,
@@ -86,6 +87,7 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
   } = useFormContext<UtilisateurFormInputs>();
 
   const [chantiersIdsAppartenantsAuxPerimetresSelectionnes, setChantiersIdsAppartenantsAuxPerimetresSelectionnes] = useState<string[]>([]);
+  const [chantiersApplicablesPourLesTerrioiresSelectionnes, setChantiersApplicablesPourLesTerrioiresSelectionnes] = useState<Set<string>>(new Set());
 
   const listeProfils = utilisateurEstCoordinateur(session!.profil) ?
     profils?.filter(profil => profilsPeutEtreCreeParUnCoordinateur(session!.profil, profil.code)) :
@@ -105,7 +107,6 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
       AAccesATousLesUtilisateurs(profilUtilisateur) : 
       false;
 
-
     setValue('profil', profilCode);
     setValue('habilitations.lecture.territoires', []);
     setValue('habilitations.lecture.périmètres', []);
@@ -124,11 +125,30 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
     départementale: afficherChampLectureTerritoires && profilsDépartementaux.includes(profilCodeSelectionne),
   };
   const territoiresSélectionnables = session?.habilitations.gestionUtilisateur.territoires;
+  const changementTerritoiresSelectionnes = (valeursSelectionnees: string[]) => {
+    const territoiresEnfants = territoires?.
+      filter(territoire => valeursSelectionnees.includes(territoire.codeParent ?? '')).
+      map(territoire => territoire.code) ?? [];
+    const listeTerritoiresProfil = new Set([...valeursSelectionnees, ...territoiresEnfants]);
+    const chantiersIdSelectionnes = getValues('habilitations.lecture.chantiers');
+
+    if (listeTerritoiresProfil.size > 0) {
+      const chantiersApplicablesIds = new Set(chantiers?.
+        filter(chantier => chantier.territoiresApplicables.some(chantierApplicable => listeTerritoiresProfil.has(chantierApplicable))).
+        map(chantier => chantier.id));
+      setChantiersApplicablesPourLesTerrioiresSelectionnes(chantiersApplicablesIds);
+      setValue('habilitations.lecture.chantiers', chantiersIdSelectionnes?.filter(chantierId => chantiersApplicablesIds.has(chantierId)));
+    } else {
+      setChantiersApplicablesPourLesTerrioiresSelectionnes(new Set(chantiers?.map(chantier => chantier.id)));
+    }
+    
+    setValue('habilitations.lecture.territoires', valeursSelectionnees);
+  };
 
   const afficherChampLectureChantiers = profilSelectionne && !profilSelectionne.chantiers.lecture.tous && !profilSelectionne.chantiers.lecture.tousTerritorialisés;
   let chantiersAccessiblesLecture = chantiers?.filter(chantier => session?.habilitations.gestionUtilisateur.chantiers.includes(chantier.id));
   if (AAccesUniquementAuxChantiersTerritorialises(profilCodeSelectionne)) {
-    chantiersAccessiblesLecture = chantiersAccessiblesLecture?.filter(chantier => chantier.estTerritorialisé);
+    chantiersAccessiblesLecture = chantiersAccessiblesLecture?.filter(chantier => chantier.estTerritorialisé && chantiersApplicablesPourLesTerrioiresSelectionnes.has(chantier.id));
   } 
   if (!profilSelectionne?.chantiers.lecture.brouillons) {
     chantiersAccessiblesLecture = chantiersAccessiblesLecture?.filter(chantier => chantier.statut !== 'BROUILLON');
@@ -189,6 +209,7 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
     activerLaRestrictionDesTerritoires,
     groupesTerritoiresÀAfficher,
     territoiresSélectionnables,
+    changementTerritoiresSelectionnes,
     afficherChampLecturePérimètres,
     changementPerimetresSelectionnes,
     afficherChampLectureChantiers,
