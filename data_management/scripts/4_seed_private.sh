@@ -13,5 +13,5 @@ then
 fi
 
 echo ">> Seeding database"
-python3 load_ppg_metadata/load.py seeds
+python3 load_static_files/load.py seeds
 dbt run --project-dir data_factory --select seeds_.sql_incremental

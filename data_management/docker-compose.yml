@@ -42,7 +42,7 @@ services:
       - "${PWD}/dlt:/app/data_management/dlt"
       - "${PWD}/edr_target:/app/data_management/edr_target"
       - "${PWD}/../src/database/:/app/src/database:ro"
-      - "${PWD}/load_ppg_metadata:/app/data_management/load_ppg_metadata:ro"
+      - "${PWD}/load_static_files:/app/data_management/load_static_files:ro"
   
   pilote_dbt:
     command: "scripts/doc_dbt.sh"

@@ -1,7 +1,8 @@
 github_repo:
-  user: "DITP-pilotage"
-  repo: "PPG_metadata"
-  default_branch: "prod"
+  ppg_metadata:
+    user: "DITP-pilotage"
+    repo: "PPG_metadata"
+    default_branch: "prod"
 
 groups:
   ppg_metadata:
@@ -53,3 +54,15 @@ groups:
       utilisateur_py:
         schema: "seeds"
         path_in_repo: "seeds/utilisateur.csv"
+
+  flat_tables:
+    tables:
+      profil_py:
+        schema: "flat_tables"
+        path_in_repo: "seeds/rapport_import_mesure_indicateur.csv"
+      scope_py:
+        schema: "flat_tables"
+        path_in_repo: "seeds/mesure_indicateur.csv"
+      territoire_py:
+        schema: "flat_tables"
+        path_in_repo: "seeds/commentaires.csv"
