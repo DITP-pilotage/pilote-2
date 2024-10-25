@@ -120,7 +120,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     </span>
                   ) : null
                 }
-                {indicateur.nom + (indicateur.unité === null || indicateur.unité === '' ? '' : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
+                {indicateur.nom + (indicateur.unité === null || indicateur.unité === '' ? '' : ` (en ${indicateur.unité})`)}
               </Titre>
               <div className='fr-ml-2w fr-mb-3w'>
                 <p className='fr-mb-0 fr-text--xs texte-gris'>
