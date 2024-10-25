@@ -40,7 +40,7 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
     shallow: false,
     clearOnDefault: true,
     history: 'push',
-    throttleMs: 400,
+    throttleMs: 200,
   }));
 
   const [pagination, setPagination] = useQueryStates({

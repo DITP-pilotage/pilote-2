@@ -62,7 +62,12 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
       nom: 'Autres critères', filtresActifs: [
         filtres.estBarometre ? 'Chantiers du baromètre' : null,
         filtres.estTerritorialise ? 'Chantiers territorialisés' : null,
-        estAutoriseAVoirLesBrouillons ? filtres.statut === 'BROUILLON_ET_PUBLIE' ? 'Chantiers validés et en cours de publication' : filtres.statut === 'BROUILLON' ? 'Chantiers en cours de publication' : 'Chantiers validés' : null,
+        estAutoriseAVoirLesBrouillons ? filtres.statut === 'BROUILLON_ET_PUBLIE'
+          ? 'Chantiers validés et en cours de publication'
+          : filtres.statut === 'BROUILLON'
+            ? 'Chantiers en cours de publication'
+            : filtres.statut === 'ARCHIVE' ? 'Chantiers archivés' :
+              'Chantiers validés' : null,
       ].filter(Boolean),
     },
     {
