@@ -75,7 +75,7 @@ const appliquerSortingChantier = (sorting: SortingParams, mailleChantier: 'natio
     }
     case 'tendance': {
       return [{
-        tendance_ecart: orderBy,
+        tendance_int_index: orderBy,
       }, {
         id: 'asc',
       }];

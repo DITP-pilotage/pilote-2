@@ -48,6 +48,14 @@ models:
         description: "Indique la maille depuis laquelle la valeur est répliquée. Dans `{reg, nat}`. En effet, on ne peut pas répliquer des valeurs depuis la maille `DEPT` car il n'y a pas de maille inférieure."
       - name: cible_attendue
         description: "Indique si une cible et donc un TA sont attendus pour ce chantier. Si non renseignée dans `ch_cible_attendue` (cf table source `metadata_chantiers`), alors on considère sa valeur à `TRUE`."
+      - name: tendance
+        description: "Indique la tendance du taux d'avancement par rapport au taux avancement précédent, HAUSSE si taux avancement > taux avancement précédent, BAISSE si taux avancement < taux avancement précédent, sinon STAGNATION"
+      - name: tendance_int_index
+        description: "Indique la répresentation de la tendance sous forme [-1, 0, 1] correspondant à [BAISSE, STAGNATION, HAUSSE] pour permettre des actions de tri"
+      - name: derniere_maj_date_qualitative
+        description: "Indique la dernière date de mise à jour des données qualitatives d'un chantier"
+      - name: ecart
+        description: "Indique l'écart entre le taux d'avancement d'un territoire d'un chantier et la mediane de l'ensemble des chantiers appartenant à la maille du taux d'avancement précédent"
   - name: axe
     columns:
       - name: id

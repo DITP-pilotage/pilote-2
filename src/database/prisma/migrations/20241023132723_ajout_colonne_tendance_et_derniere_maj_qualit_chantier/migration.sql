@@ -6,5 +6,5 @@ ALTER TABLE "public"."chantier" ADD COLUMN     "derniere_maj_date_qualitative" D
 ADD COLUMN     "tendance" "public"."type_tendance";
 
 ALTER TABLE "public"."chantier" ADD COLUMN     "ecart" DOUBLE PRECISION;
-ALTER TABLE "public"."chantier" ADD COLUMN     "tendance_ecart" DOUBLE PRECISION;
+ALTER TABLE "public"."chantier" ADD COLUMN     "tendance_int_index" DOUBLE PRECISION;
 

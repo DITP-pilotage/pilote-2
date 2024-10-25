@@ -298,7 +298,7 @@ export default class ChantierRowBuilder {
       derniere_maj_date_qualitative: this._derniere_maj_date_qualitative,
       ecart: null,
       tendance: null,
-      tendance_ecart: 0,
+      tendance_int_index: 0,
     };
   }
 }

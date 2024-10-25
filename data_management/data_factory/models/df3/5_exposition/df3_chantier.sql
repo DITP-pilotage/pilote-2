@@ -216,7 +216,7 @@ SELECT
         WHEN
             ta_ch_today.tag_ch < ta_ch_prev_month.tag_ch
             THEN -1
-        END AS tendance_ecart,
+        END AS tendance_int_index,
     sr.date_meteo::date as derniere_maj_date_qualitative,
     ROUND((ta_ch_today.tag_ch::numeric - mediane_par_chantier.mediane::numeric)::numeric, 1) as ecart
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS mc
