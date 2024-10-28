@@ -93,7 +93,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
   const territoireRepository = dependencies.getTerritoireRepository();
   const territoireSélectionné = await territoireRepository.récupérer(territoireCode);
   const territoireCodes = territoiresCompares.length > 0 ? [...territoiresCompares, territoireCode] : [territoireCode];
-  
+
   try {
     const [chantier,
       indicateurs,
@@ -107,7 +107,6 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
     ] = await Promise.all([
       new RécupérerChantierUseCase(
         dependencies.getChantierRepository(),
-        dependencies.getChantierDateDeMàjMeteoRepository(),
         dependencies.getMinistèreRepository(),
         dependencies.getTerritoireRepository(),
       ).run(chantierId, session.habilitations, session.profil),

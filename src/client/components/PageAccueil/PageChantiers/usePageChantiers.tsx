@@ -12,7 +12,6 @@ export default function usePageChantiers(chantiers: ChantierAccueilContrat[], te
   } = useVueDEnsemble(chantiers, territoireCode, filtresComptesCalculés, avancementsAgrégés);
 
   return {
-    chantiersFiltrés: chantiers,
     avancementsAgrégés,
     donnéesTableauChantiers: chantiersVueDEnsemble,
     remontéesAlertes,

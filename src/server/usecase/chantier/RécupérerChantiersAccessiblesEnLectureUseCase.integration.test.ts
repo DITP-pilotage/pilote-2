@@ -5,7 +5,6 @@ import RécupérerChantiersAccessiblesEnLectureUseCase
   from '@/server/usecase/chantier/RécupérerChantiersAccessiblesEnLectureUseCase';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDateDeMàjMeteoRepository.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
@@ -14,15 +13,13 @@ describe('RécupérerChantiersAccessiblesEnLectureUseCase', () => {
 
   let récupérerChantiersAccessiblesEnLectureUseCase: RécupérerChantiersAccessiblesEnLectureUseCase;
   let chantierRepository: ChantierRepository;
-  let chantierDatesDeMàjRepository: ChantierDatesDeMàjRepository;
   let ministèreRepository: MinistèreRepository;
   let territoireRepository: TerritoireRepository;
   beforeEach(() => {
     chantierRepository = dependencies.getChantierRepository();
-    chantierDatesDeMàjRepository = dependencies.getChantierDateDeMàjMeteoRepository();
     ministèreRepository = dependencies.getMinistèreRepository();
     territoireRepository = dependencies.getTerritoireRepository();
-    récupérerChantiersAccessiblesEnLectureUseCase = new RécupérerChantiersAccessiblesEnLectureUseCase( chantierRepository, chantierDatesDeMàjRepository, ministèreRepository, territoireRepository);
+    récupérerChantiersAccessiblesEnLectureUseCase = new RécupérerChantiersAccessiblesEnLectureUseCase( chantierRepository, ministèreRepository, territoireRepository);
   });
 
   test('un chantier sans ministères est exclu du résultat', async () => {

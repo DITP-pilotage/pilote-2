@@ -1,5 +1,4 @@
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { comparerAvancementRéforme } from '@/client/utils/chantier/avancement/avancement';
 import TableauRéformesAvancement from '@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement';
 import TableauRéformesMétéo from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo';
 import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
@@ -100,7 +99,7 @@ const colonnesTableauChantiers = [
 export default function useRapportDétailléTableauChantiers(données: RapportDétailléTableauChantiersProps['données']) {
 
   const tableau = useReactTable({
-    data: données.sort((a, b) => comparerAvancementRéforme(a.avancement, b.avancement, [{ id: 'avancement', desc: false }])),
+    data: données,
     columns: colonnesTableauChantiers,
     getCoreRowModel: getCoreRowModel(),
   });
