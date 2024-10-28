@@ -20,6 +20,7 @@ export const useIndicateurDétails = (indicateurId: Indicateur['id'], futOuvert:
     map(([codeInsee, détailsIndicateur]) => ({ 
       valeur: détailsIndicateur.valeurActuelle ?? null, 
       valeurCible: détailsIndicateur.valeurCible ?? null,
+      valeurCibleAnnuelle: détailsIndicateur.valeurCibleAnnuelle ?? null,
       codeInsee: codeInsee, 
       estApplicable: détailsIndicateur.est_applicable }));
   const donnéesCartographieAvancementTerritorialisées = aDeLaDonnéeTerritoriale(donnéesCartographieAvancement);

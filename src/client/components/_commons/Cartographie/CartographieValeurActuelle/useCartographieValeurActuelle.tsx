@@ -18,7 +18,7 @@ const COULEUR_ARRIVÉE = '#083a25';
 const REMPLISSAGE_PAR_DÉFAUT = ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS.DÉFAUT.remplissage;
 
 
-function déterminerValeurAffichée(valeur: number | null, valeurCible: number | null, estApplicable: boolean | null, unité?: string | null) {
+function déterminerValeurAffichée(valeur: number | null, valeurCible: number | null, valeurCibleAnnuelle: number | null, estApplicable: boolean | null, unité?: string | null) {
   const unitéAffichée = unité?.toLocaleLowerCase() === 'pourcentage' ? '%' : ''; 
   if (estApplicable === false) {
     return (
@@ -35,6 +35,14 @@ function déterminerValeurAffichée(valeur: number | null, valeurCible: number |
         </div>
         <div>
           {valeur === null ? 'Non renseigné' : valeur.toLocaleString() + unitéAffichée}
+        </div>
+      </div>
+      <div className='flex justify-center align-center'>
+        <div className='fr-mr-1w'>
+          {`VC ${(new Date()).getFullYear()} :`}
+        </div>
+        <div>
+          {valeurCibleAnnuelle === null ? 'Non renseigné' : valeurCibleAnnuelle.toLocaleString() + unitéAffichée}
         </div>
       </div>
       <div className='flex justify-center align-center'>
@@ -107,10 +115,10 @@ export default function useCartographieValeurActuelle(données: CartographieDonn
   const donnéesCartographie = useMemo(() => {
     let donnéesFormatées: CartographieDonnées = {};
     
-    données.forEach(({ valeur, valeurCible, codeInsee, estApplicable }) => {
+    données.forEach(({ valeur, valeurCible, valeurCibleAnnuelle, codeInsee, estApplicable }) => {
       const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
       donnéesFormatées[codeInsee] = {
-        contenu: déterminerValeurAffichée(valeur, valeurCible, estApplicable, unité),
+        contenu: déterminerValeurAffichée(valeur, valeurCible, valeurCibleAnnuelle, estApplicable, unité),
         remplissage: déterminerRemplissage(valeur, valeurMin, valeurMax, estApplicable),
         libellé: territoireGéographique.nomAffiché,
       };
