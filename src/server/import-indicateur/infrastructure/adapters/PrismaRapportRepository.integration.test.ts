@@ -1,4 +1,3 @@
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichier.builder';
 import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
@@ -8,16 +7,17 @@ import {
 import {
   PrismaMesureIndicateurTemporaireRepository,
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurTemporaireRepository';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { prisma } from '@/server/db/prisma';
+import { getContainer } from '@/server/dependances';
 
 describe('PrismaRapportRepository', () => {
   let prismaRapportRepository: PrismaRapportRepository;
   let prismaMesureIndicateurTemporaireRepository: PrismaMesureIndicateurTemporaireRepository;
 
   beforeEach(() => {
-    prismaRapportRepository = new PrismaRapportRepository(prisma);
-    prismaMesureIndicateurTemporaireRepository = new PrismaMesureIndicateurTemporaireRepository(prisma);
+    prismaRapportRepository = new PrismaRapportRepository();
+    prismaMesureIndicateurTemporaireRepository = new PrismaMesureIndicateurTemporaireRepository();
   });
   describe('#sauvegarder', () => {
     it('doit sauvegarder le rapport', async () => {
@@ -25,7 +25,7 @@ describe('PrismaRapportRepository', () => {
       const now = new Date();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
 
       const rapport = new DetailValidationFichierBuilder()
         .avecEstValide(true)
@@ -52,7 +52,7 @@ describe('PrismaRapportRepository', () => {
       const now = new Date();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
 
       const listeMesuresIndicateurTemporaire = [
         new MesureIndicateurTemporaireBuilder()

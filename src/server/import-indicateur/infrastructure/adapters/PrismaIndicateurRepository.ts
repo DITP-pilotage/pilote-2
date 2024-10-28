@@ -3,11 +3,10 @@ Cette classe ne possède pas encore de test car la récupération/création des 
 On ne peut donc pas utiliser la creation de table par migration prisma 
  */
 
-
-import { PrismaClient } from '@prisma/client';
 import { IndicateurRepository } from '@/server/import-indicateur/domain/ports/IndicateurRepository';
 import { InformationIndicateur } from '@/server/import-indicateur/domain/InformationIndicateur';
 import Logger from '@/server/infrastructure/Logger';
+import { prisma } from '@/server/db/prisma';
 
 interface RawInformationIndicateurModel {
   indic_id: string,
@@ -22,11 +21,9 @@ function convertirEnInformationIndicateur(rawInformationIndicateur: RawInformati
 }
 
 export class PrismaIndicateurRepository implements IndicateurRepository {
-  constructor(private prismaClient: PrismaClient) {}
-
   async recupererInformationIndicateurParId(indicId: string): Promise<InformationIndicateur> {
     try {
-      const rawInformationIndicateur = await this.prismaClient.$queryRaw<RawInformationIndicateurModel[]>`SELECT indic_id, indic_schema
+      const rawInformationIndicateur = await prisma.$queryRaw<RawInformationIndicateurModel[]>`SELECT indic_id, indic_schema
                                                                                                           FROM raw_data.metadata_indicateurs_hidden
                                                                                                           WHERE indic_id = ${indicId}`;
       if (!rawInformationIndicateur || rawInformationIndicateur.length === 0) {

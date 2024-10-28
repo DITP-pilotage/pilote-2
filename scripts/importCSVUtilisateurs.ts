@@ -103,7 +103,7 @@ async function main() {
   const clientSecret = process.env.IMPORT_CLIENT_SECRET as string;
 
   const utilisateurIAMRepository = new UtilisateurIAMKeycloakRepository(keycloakUrl, clientId, clientSecret);
-  const utilisateurRepository = new UtilisateurSQLRepository(prisma);
+  const utilisateurRepository = new UtilisateurSQLRepository();
   const territoireRepository = new TerritoireSQLRepository(prisma);
 
   const contenuParsé = new UtilisateurCSVParseur(filename).parse();

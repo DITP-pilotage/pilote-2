@@ -149,14 +149,15 @@ const AvailableHeaderCSVImport = [
 ] as const;
 
 const TEXT_LABEL_CREATION_ID = 'CREATE-ID';
+type Dependencies = {
+  metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository
+};
 export default class ImportMasseMetadataIndicateurUseCase {
   private _metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
 
   constructor({ 
     metadataParametrageIndicateurRepository,
-  } : {
-    metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository
-  }) {
+  } : Dependencies) {
     this._metadataParametrageIndicateurRepository = metadataParametrageIndicateurRepository;
   }
 

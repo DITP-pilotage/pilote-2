@@ -3,10 +3,18 @@ import {
 } from '@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository';
 import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur';
 
+type Dependencies = {
+  metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository,
+
+};
 export default class RécupérerMetadataIndicateurIdentifiantGénéréUseCase {
-  constructor(
-    private readonly metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository,
-  ) {}
+  private metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
+  
+  constructor({
+    metadataParametrageIndicateurRepository,
+  }: Dependencies) {
+    this.metadataParametrageIndicateurRepository = metadataParametrageIndicateurRepository;
+  }
 
   async run(): Promise<string> {
     const listeMetadataParametrageIndicateur: MetadataParametrageIndicateur[] = await this.metadataParametrageIndicateurRepository.recupererListeMetadataParametrageIndicateurEnFonctionDesFiltres([], [], false, false);

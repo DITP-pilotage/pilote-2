@@ -131,6 +131,7 @@ export class VerifierFichierIndicateurImporteUseCase {
       schema: `${baseSchemaUrl}${schema}`,
       utilisateurEmail: utilisateurAuteurDeLimportEmail,
     });
+
     await this.rapportRepository.sauvegarder(report);
 
     try {

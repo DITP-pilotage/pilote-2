@@ -1,6 +1,5 @@
 import {
   mesure_indicateur_temporaire as MesureIndicateurTemporaireModel,
-  PrismaClient,
   rapport_import_mesure_indicateur as RapportModel,
 } from '@prisma/client';
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
@@ -8,6 +7,7 @@ import { DetailValidationFichier } from '@/server/import-indicateur/domain/Detai
 import { RapportRepository } from '@/server/import-indicateur/domain/ports/RapportRepository';
 import { RapportNotFoundError } from '@/server/import-indicateur/domain/errors/RapportNotFoundError';
 import { MesureIndicateurTemporaire } from '@/server/import-indicateur/domain/MesureIndicateurTemporaire';
+import { prisma } from '@/server/db/prisma';
 
 function convertirEnModel(rapport: DetailValidationFichier): RapportModel {
   return {
@@ -40,17 +40,15 @@ function convertirEnDetailValidationFichier(rapport: RapportModel & {
 }
 
 export class PrismaRapportRepository implements RapportRepository {
-  constructor(private prismaClient: PrismaClient) {}
-
   async sauvegarder(rapport: DetailValidationFichier): Promise<void> {
     const rapportModel = convertirEnModel(rapport);
-    await this.prismaClient.rapport_import_mesure_indicateur.create({
+    await prisma.rapport_import_mesure_indicateur.create({
       data: rapportModel,
     });
   }
 
   async récupérerRapportParId(rapportId: string): Promise<DetailValidationFichier> {
-    const rapportResult = await this.prismaClient.rapport_import_mesure_indicateur.findUnique({
+    const rapportResult = await prisma.rapport_import_mesure_indicateur.findUnique({
       where: { id: rapportId },
       include: {
         mesure_indicateur_temporaire: true,
