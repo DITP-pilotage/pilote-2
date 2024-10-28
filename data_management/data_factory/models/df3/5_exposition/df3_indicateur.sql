@@ -40,7 +40,7 @@ get_evol_vaca as (
 	gvcg.vcg as objectif_valeur_cible,
 	a.tag as objectif_taux_avancement,
 	mi.indic_type as type_id,
-	mit.indic_type_name as type_nom,
+	mit.nom as type_nom,
 	mi.indic_is_baro as est_barometre,
 	mi.indic_is_phare as est_phare,
 	a.date_valeur_actuelle::date as date_valeur_actuelle,
@@ -48,7 +48,7 @@ get_evol_vaca as (
 	a.vaca as valeur_actuelle,
 	gvig.vig as valeur_initiale,
 	terr.code_insee,
-	mz.zone_type as maille,
+	mz.maille as maille,
 	terr.nom as territoire_nom,
 	coalesce(
 		b.evolution_valeur_actuelle,
@@ -116,18 +116,18 @@ get_evol_vaca as (
 	left join {{ ref('get_vig') }} gvig on mi.indic_id=gvig.indic_id and t.zone_id=gvig.zone_id
 	left join {{ ref('get_vcg') }} gvcg on mi.indic_id=gvcg.indic_id and t.zone_id=gvcg.zone_id
 	left join (select * from {{ ref('get_vca') }} where yyear=(date_part('year', now()))) gvca on mi.indic_id=gvca.indic_id and t.zone_id=gvca.zone_id
-	left join {{ ref('metadata_indicateur_types') }} mit on mit.indic_type_id = mi.indic_type 
+	left join {{ ref('stg_ppg_metadata__indicateur_types') }} mit on mit.id = mi.indic_type 
 	left join {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} mpi on mi.indic_id = mpi.indic_id 
 	left join {{ source('parametrage_indicateurs', 'metadata_indicateurs_complementaire') }} ind_comp on mi.indic_id = ind_comp.indic_id 
 	left join public.territoire terr on t.zone_id = terr.zone_id 
 	left join {{ ref('int_propositions_valeurs') }} pva on pva.indic_id = mi.indic_id and pva.territoire_code = terr.code and pva.date_valeur_actuelle::DATE = a.date_valeur_actuelle::DATE
-	left join {{ ref('metadata_zones') }} mz on mz.zone_id = terr.zone_id 
+	left join {{ ref('stg_ppg_metadata__zones') }} mz on mz.id = terr.zone_id 
 	LEFT JOIN {{ ref('int_indicateurs_zones_applicables') }} z_appl ON z_appl.indic_id = mi.indic_id AND z_appl.zone_id = t.zone_id
 	-- pour avoir le bon nombre de lignes, une par territoire
 	right join list_indic_terr lit on mi.indic_id=lit.indic_id and terr.code=lit.territoire_code
 	LEFT JOIN {{ ref('last_update_indic_zone') }} last_update_indic_zone ON mi.indic_id=last_update_indic_zone.indic_id AND t.code =last_update_indic_zone.territoire_code 
     LEFT JOIN {{ ref('last_update_indic') }} last_update_indic ON mi.indic_id=last_update_indic.indic_id
 	LEFT JOIN {{ ref('int_ponderation_reelle') }} pond_reelle ON pond_reelle.indic_id=mi.indic_id and pond_reelle.zone_id=t.zone_id
-	LEFT JOIN {{ ref('get_date_pro_maj_indic') }} as date_pro_maj ON mi.indic_id=date_pro_maj.indic_id and mz.zone_type =date_pro_maj."maille"
+	LEFT JOIN {{ ref('get_date_pro_maj_indic') }} as date_pro_maj ON mi.indic_id=date_pro_maj.indic_id and mz.maille =date_pro_maj."maille"
 	--where a.r=1
 	order by mi.indic_id, terr.code

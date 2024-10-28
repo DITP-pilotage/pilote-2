@@ -81,9 +81,6 @@ import IndicateurProjetStructurantRepository
   from '@/server/domain/indicateur/IndicateurProjetStructurantRepository.interface';
 import ProfilSQLRepository from '@/server/infrastructure/accès_données/profil/ProfilSQLRepository';
 import ProfilRepository from '@/server/domain/profil/ProfilRepository';
-import ChantierDateDeMàjMeteoRepository from '@/server/domain/chantier/ChantierDateDeMàjMeteoRepository.interface';
-import ChantierDateDeMàjMeteoSQLRepository
-  from '@/server/infrastructure/accès_données/chantier/ChantierDateDeMàjMeteoSQLRepository';
 import {
   PrismaIndicateurRepository,
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaIndicateurRepository';
@@ -173,8 +170,6 @@ const globalForPrisma = globalThis as unknown as {
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
 
-  private readonly _chantierDateDeMàjMeteoRepository: ChantierDateDeMàjMeteoRepository;
-
   private readonly _axeRepository: AxeRepository;
 
   private readonly _synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
@@ -256,7 +251,6 @@ class Dependencies {
     }
 
     this._chantierRepository = new ChantierSQLRepository(prisma);
-    this._chantierDateDeMàjMeteoRepository = new ChantierDateDeMàjMeteoSQLRepository(prisma);
     this._axeRepository = new AxeSQLRepository(prisma);
     this._ministèreRepository = new MinistèreSQLRepository(prisma);
     this._indicateurRepository = new IndicateurSQLRepository(prisma);
@@ -306,10 +300,6 @@ class Dependencies {
 
   getChantierRepository(): ChantierRepository {
     return this._chantierRepository;
-  }
-
-  getChantierDateDeMàjMeteoRepository(): ChantierDateDeMàjMeteoRepository {
-    return this._chantierDateDeMàjMeteoRepository;
   }
 
   getAxeRepository(): AxeRepository {

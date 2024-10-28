@@ -9,8 +9,8 @@ RUN apt-get update && apt-get install -y \
  && rm -rf /var/lib/apt/lists/*
 
 # [install.node] Install nvm with node and npm. See https://stackoverflow.com/a/28390848/21676629
-ENV NVM_DIR /root/.nvm 
-ENV NODE_VERSION 18.20.2
+ENV NVM_DIR=/root/.nvm 
+ENV NODE_VERSION=18.20.2
 
 RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash \
     && . $NVM_DIR/nvm.sh \
@@ -18,8 +18,8 @@ RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash 
     && nvm alias default $NODE_VERSION \
     && nvm use default
 
-ENV NODE_PATH $NVM_DIR/versions/node/v$NODE_VERSION/lib/node_modules
-ENV PATH      $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+ENV NODE_PATH=$NVM_DIR/versions/node/v$NODE_VERSION/lib/node_modules
+ENV PATH=$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 RUN node --version
 RUN npx --version
 RUN npm --version
@@ -32,12 +32,13 @@ RUN npm install prisma --save-dev
 ARG DATA_DIR=data_management/
 WORKDIR /app/$DATA_DIR
 COPY $DATA_DIR/Pipfile .
+COPY $DATA_DIR/Pipfile.lock .
 ## COPY Pipfile.lock . #1
 
 ## [install.pipenv] (last version)
 RUN python -m pip install --no-cache pipenv
 ## [install.pipenv-deps]
-RUN pipenv lock #1
+# Install exact versions of Pipfile.lock with "pipenv sync"
 RUN pipenv sync
 ## [log] Show path of env just created
 RUN pipenv --venv
@@ -54,7 +55,7 @@ RUN pipenv run dbt deps --profiles-dir . --project-dir data_factory
 
 WORKDIR /app/$DATA_DIR
 
-ENV PIPENV_PIPFILE /app/$DATA_DIR/Pipfile
+ENV PIPENV_PIPFILE=/app/$DATA_DIR/Pipfile
 # Start entrypoint.sh script
 ENTRYPOINT ["pipenv", "run", "/bin/bash"]
 #CMD ["scripts/serve_doc.sh"]

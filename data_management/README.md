@@ -3,117 +3,56 @@ Ce répertoire administre les pipelines d'import, de chargement et transformatio
 
 ## Description
 
-Ce projet est décomposé en 2 parties : 
-1. Exploration des données issues de _Dfakto_ et du projet _PPG_metadata_ : 
-   - Projet Python pour explorer les données du projet.
-   - Ces données se situent dans le dossier `input_data`. 
-   On mettra les données privées dans le répertoire `private_data` et les données publiques dans `open_data`. 
-2. Pipelines d'import, de chargement et transformation des données. L'ensemble de ces pipelines passeront par des scripts.
-   - Les jobs d'imports et de transformations sont réalisés avec DBT dans un environnement Python.
-   - Enfin les données sont exposées dans des tables dont le schéma est géré par Prisma et exposées à l'application _Pilote 2_.  
-3. Planification des jobs. Le flux de données tourne tous les jours selon les règles suivantes :
-   - A 8h 10h 12h 15h 17h 19h et 21h avec seulement une mise à jour des tables en mode ajout de données ou modification (UPSERT).  
-   - A 1h et 13h, en plus de la mise à jour des données, une suppression des lignes est réalisée en amont 
-   permettant de supprimer des données qui doivent l'être. 
-   Attention cette étape rend les données indisponibles sur l'application pendant environ 1 minute. 
+
+La mise à jour des données de la datafactory se fait automatiquement vie l'exécution du script `scripts/run_datajobs.sh`. La fréquence de mise à jour est définie par le job cron de l'app Scalingo (exemple [pour la dev](https://dashboard.scalingo.com/apps/osc-secnum-fr1/dev-datajobs/resources)).
+
+Les modèles de données *dbt* sont dans le dossier [data_factory/models/](data_factory/models/). La doc *dbt* est générée via `scripts/doc_dbt.sh`.
 
 ## Avant de démarrer
 
 ### Pré-requis
 
-#### :warning: Disclaimer windows
-
-Si vous êtes sur windows, nous vous conseillons de passer exclusivement sur un terminal UNIX.
-Vous pouvez à la documentation suivante pour l'installation de l'invit de commande Ubuntu pour windows:
-
-- <https://pub.towardsai.net/how-to-install-ubuntu-terminal-on-windows-10-716b6a64ad82>
-
-#### Version de Python
-
-Il est nécessaire d'avoir la version de Python indiquée dans le Pipfile sur
-votre machine, voici les étapes à suivre.
-
-Installer pyenv :
-
-- <https://github.com/pyenv/pyenv#installation>
-
-Installer la bonne version de Python (voir Pipfile, ligne `python_full_version`) :
-
-- <https://github.com/pyenv/pyenv#install-additional-python-versions>
-
-Installer pipenv :
-
-- <https://pipenv.pypa.io/en/latest/installation/>
-
-Avoir docker ou un outil de containerisation :
-
-- <https://www.docker.com/>
-
-#### Webapp et SQL
-
-Il faut avoir configuré et initialisé votre base de données de Webapp comme précisé dans le README.md à la racine du projet.
-Pour la suite du projet, il faut s'assurer que la base de données soit démarrée.
-
-Le client Postgres `psql` (le cli) est également nécessaire pour les scripts d'import.
-
-### Installation
-
-Les projets et pipelines s'appuient sur des métadonnées à récupérer en provenance de plusieurs sources.
-
-Il faut cloner le répertoire _PPG_metadata_ (demande d'accès à celui-ci à la DITP) dans le répertoire `data_management/input_data/private_data`.
-Ce projet est aussi récupérable par token (en le mettant en variable d'environnement) et en exécutant le script `scripts/2_fill_tables_ppg_metadata.sh`.
-
-On se retrouve avec une arborescence qui ressemble à cela :
-
-```
-data_management/input_data/private_data/
-└── PPG_metadata
-    ├── CONTRIBUTING.md
-    ├── PPG_metadata.Rproj
-    ├── README.md
-    ├── 1_roles_definition
-    ├── barometre_data
-    ├── config_calculs
-    ├── config_viz
-    ├── docs
-    ├── generators
-    ├── ingestion
-    ├── models
-    └── views
-```
-
 #### Ajout des variables d'environnement
 
-Copier le fichier `/.env.example` vers `/data_management/.env` :
+Copier le fichier `.env.example` vers `.env` :
 
 ```bash
-cp ../.env.example .env
+cp .env.example .env
 ```
-
 Pensez à mettre jour le fichier `.env` en demandant les variables à l'équipe.
 
-:warning: **En cas de changement de nom ou d'emplacement des fichiers de ppg_metadata, 
-pensez à mettre à jour vos variable d'environnnement en local ainsi que sur scalingo 
-dans les environnements de dev (dev-datajobs-ditp) et de prod (prod-datajobs-ditp).**
 
-#### Initialisation de l'environnement Python
+#### Gestion des packages
 
-Afin d'installer les dépendances liées au projet, il faut exécuter la commande suivante :
+Utilisation de [Pipenv](https://pipenv.pypa.io/en/latest/commands.html) pour la gestion des dépendances Python.
 
-```bash
-pipenv install
-```
+Commandes utiles:
+```sh
+# [Installation de packages]
+# Installation des versions exactes du Pipenv.lock
+pipenv sync
+# /!\ Installation des versions les plus récentes compatibles avec le Pipenv
+pipenv install pyarrow
+# /!\ Installation des versions les plus récentes compatibles avec le Pipenv
+#     -> Attention aux màj cassantes
+pipenv update
 
-Afin de démarrer l'environnement :
-
-```bash
+# [Excécution commandes]
+# Exécuter une commande dans l'environnement
+pipenv run dbt compile --project-dir data_factory --select model_1
+# Exécuter des commandes interactivement dans l'environnement
 pipenv shell
 ```
 
 #### Initialisation des dépendances de DBT
 
-```bash
+Utilisation des [commandes dbt](https://docs.getdbt.com/reference/dbt-commands):
+
+```sh
+# Mise à jour des dépendances
 dbt deps --project-dir data_factory
+# Exécution d'un modèle
+dbt run --project-dir data_factory --select model_1
 ```
 
 ### [docker-conf] Installation
@@ -122,10 +61,10 @@ L'application complète a été conteneurisées (partie webapp et data). Pour l'
 
 Pour l'utiliser:
 
-- *optionnel* `docker-compose build` pour construire les images Docker nécessaires
-- `docker-compose up` pour lancer la base de données, la documentation interactive (dbt et prisma), et la webapp
-- *optionnel* `docker-compose run pilote_scripts` pour entrer dans le container et lancer les scripts dbt via `/bin/bash scripts/<name-of-the-script>.sh`
-- *optionnel* OU `docker-compose run pilote_scripts scripts/<name-of-the-script>.sh` pour lancer le script dbt `<name-of-the-script>.sh`
+- *optionnel* `docker compose build` pour construire les images Docker nécessaires
+- `docker compose up` pour lancer la base de données, la documentation interactive (dbt et prisma), et la webapp
+- *optionnel* `docker compose run pilote_scripts` pour entrer dans le container et lancer les scripts dbt via `/bin/bash scripts/<name-of-the-script>.sh`
+- *optionnel* OU `docker compose run pilote_scripts scripts/<name-of-the-script>.sh` pour lancer le script dbt `<name-of-the-script>.sh`
 - *optionnel* `docker container exec -it pilote_webapp /bin/sh` pour entrer dans le container webapp et éventuellement entrer des commandes (ex: npm, yarn, ...)
 
 Le *reverse-proxy* [Traefik](https://traefik.io/traefik/) est utilisé pour définir les différentes routes. Ainsi, on a:
@@ -157,13 +96,13 @@ Un exemple complet d'utilisation de docker pour cette partie data pourrait être
 
 ```sh
 # Build the image
-docker-compose build
+docker compose build
 # Lancement de la base de données, documentation, et webapp
-docker-compose up
+docker compose up
 # Run prisma migrations
-docker-compose run pilote_scripts scripts/0_prisma_migrate.sh
+docker compose run pilote_scripts scripts/0_prisma_migrate.sh
 # Run script 1
-docker-compose run pilote_scripts scripts/1_dump_dfakto.sh
+docker compose run pilote_scripts scripts/1_dump_dfakto.sh
 # and so on for all the scripts
 ```
 
