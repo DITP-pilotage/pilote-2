@@ -1,4 +1,4 @@
-import { parseAsStringLiteral, useQueryState } from 'nuqs';
+import { parseAsInteger, parseAsStringLiteral, useQueryState } from 'nuqs';
 import { FunctionComponent } from 'react';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import useSélecteurVueStatut from './useSelecteurVueStatut.interface';
@@ -17,9 +17,14 @@ const SelecteurVueStatuts: FunctionComponent<{}> = () => {
     history: 'push',
   }));
 
+  const [, setPagination] = useQueryState('pageIndex', parseAsInteger.withDefault(1).withOptions({
+    shallow: false,
+  }));
+
   const auChangement = (vueStatuts: TypeVueStatuts) => {
     sauvegarderFiltres({ statut: vueStatuts });
 
+    setPagination(1);
     return setStatut(vueStatuts);
   };
 

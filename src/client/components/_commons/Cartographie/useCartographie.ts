@@ -58,10 +58,11 @@ export default function useCartographie() {
   function auClicTerritoireCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {
     if (!territoireSélectionnable || !territoireSélectionné) return;
 
-    if (territoireSélectionné.codeInsee === territoireCodeInsee && territoiresAccessiblesEnLecture.some(t => t.maille === 'nationale'))
+    if (territoireSélectionné.codeInsee === territoireCodeInsee && territoiresAccessiblesEnLecture.some(t => t.maille === 'nationale')) {
       modifierTerritoireSélectionné('NAT-FR');
-    else 
+    } else  {
       modifierTerritoireSélectionné(récupérerDétailsSurUnTerritoireAvecCodeInsee(territoireCodeInsee).code);
+    }
   }
 
   function auClicTerritoireMultiSélectionCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {

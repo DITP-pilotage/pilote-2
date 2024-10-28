@@ -30,10 +30,6 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
     clearOnDefault: true,
     history: 'push',
   });
-  // Taux d’avancement non calculé en raison d’indicateurs non renseignés
-  // Retard de 10 points par rapport à la médiane
-  // Tendance(s) en baisse
-  // Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour
 
   const nombreFiltresActifs = filtres.axes.split(',').filter(Boolean).length
     + filtres.perimetres.split(',').filter(Boolean).length
