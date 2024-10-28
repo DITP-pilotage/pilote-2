@@ -36,6 +36,7 @@ const SélecteurMaille: FunctionComponent<{
 
     delete router.query._action;
     delete router.query.territoiresCompares;
+    delete router.query.pageIndex;
     return router.push({
       pathname,
       query: { ...router.query, territoireCode, maille },

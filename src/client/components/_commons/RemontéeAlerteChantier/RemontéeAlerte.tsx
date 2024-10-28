@@ -1,4 +1,4 @@
-import { parseAsBoolean, useQueryState } from 'nuqs';
+import { parseAsBoolean, parseAsInteger, useQueryState } from 'nuqs';
 import { FunctionComponent } from 'react';
 import RemontéeAlerteStyled from '@/components/_commons/RemontéeAlerte/RemontéeAlerte.styled';
 
@@ -16,12 +16,18 @@ const RemontéeAlerte: FunctionComponent<RemontéeAlerteProps> = ({ nombre, libe
     clearOnDefault: true,
     history: 'push',
   }));
+  const [, setPagination] = useQueryState('pageIndex', parseAsInteger.withDefault(1).withOptions({
+    shallow: false,
+  }));
 
   return (
     <RemontéeAlerteStyled
       className={`fr-p-3v fr-p-md-3w ${estActivée ? 'est-activée' : ''}`}
       disabled={nombre === null}
-      onClick={() => setFiltreAlerte(!filtreAlerte)}
+      onClick={() => {
+        setPagination(1);
+        setFiltreAlerte(!filtreAlerte);
+      }}
     >
       <span className='fr-h1 fr-mb-0 nombre'>
         {nombre ?? '-'}

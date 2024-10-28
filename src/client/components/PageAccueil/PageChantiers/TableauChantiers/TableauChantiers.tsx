@@ -1,7 +1,7 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css';
-import { parseAsBoolean, useQueryState } from 'nuqs';
+import { parseAsBoolean, parseAsInteger, useQueryState } from 'nuqs';
 import { FunctionComponent } from 'react';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import TableauPagination from '@/components/_commons/TableauNew/Pagination/TableauPagination';
@@ -33,6 +33,10 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
   const [estGroupe, setEstGroupe] = useQueryState('groupeParMinistere', parseAsBoolean.withDefault(false).withOptions({
     clearOnDefault: true,
   }));
+  
+  const [, setPagination] = useQueryState('pageIndex', parseAsInteger.withDefault(1).withOptions({
+    shallow: false,
+  }));
 
   return (
     <TableauChantiersStyled className='fr-table fr-m-0 fr-p-0'>
@@ -47,6 +51,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
           <Interrupteur
             auChangement={async () => {
               sauvegarderFiltres({ groupeParMinistere: !estGroupe });
+              setPagination(1);
               await setEstGroupe(!estGroupe);
               return tableau.getColumn('porteur')?.getToggleGroupingHandler()() ?? undefined;
             }}

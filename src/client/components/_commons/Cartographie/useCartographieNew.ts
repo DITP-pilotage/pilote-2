@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { parseAsString, useQueryState } from 'nuqs';
+import { parseAsInteger, parseAsString, useQueryState } from 'nuqs';
 import {
   régionsTerritoiresStore,
   territoiresAccessiblesEnLectureStore,
@@ -21,6 +21,11 @@ export default function useCartographie(territoireCode: string, mailleSelectionn
     history: 'push',
     clearOnDefault: true,
   }));
+
+  const [, setPagination] = useQueryState('pageIndex', parseAsInteger.withDefault(1).withOptions({
+    shallow: false,
+  }));
+
   const territoiresAccessiblesEnLecture = territoiresAccessiblesEnLectureStore();
 
   const router = useRouter();
@@ -80,6 +85,8 @@ export default function useCartographie(territoireCode: string, mailleSelectionn
       code = 'NAT-FR';
     }
 
+    delete router.query.pageIndex;
+
     return router.push({
       pathname,
       query: { ...router.query, territoireCode: code },
@@ -100,6 +107,8 @@ export default function useCartographie(territoireCode: string, mailleSelectionn
     }
 
     let territoireCompareCode =  (codeInsee === territoireCodeInsee && territoiresAccessiblesEnLecture.some(territoire => territoire.maille === 'nationale')) ? 'NAT-FR' : mailleSelectionnee === 'départementale' ? `DEPT-${territoireCodeInsee}` : `REG-${territoireCodeInsee}`;
+
+    setPagination(1);
 
     if (listeTerritoiresCompares.includes(territoireCompareCode)) {
       listeTerritoiresCompares.splice(listeTerritoiresCompares.indexOf(territoireCompareCode), 1);

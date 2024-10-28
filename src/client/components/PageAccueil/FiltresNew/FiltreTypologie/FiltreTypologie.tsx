@@ -1,5 +1,5 @@
 import { FunctionComponent, useCallback } from 'react';
-import { parseAsBoolean, useQueryState } from 'nuqs';
+import { parseAsBoolean, parseAsInteger, useQueryState } from 'nuqs';
 import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 
@@ -15,8 +15,14 @@ const FiltreTypologie: FunctionComponent<FiltreTypologieProps> = ({ filtre, cate
     history: 'push',
   }));
 
+
+  const [, setPagination] = useQueryState('pageIndex', parseAsInteger.withDefault(1).withOptions({
+    shallow: false,
+  }));
+
   const auChangement = useCallback(() => {
     sauvegarderFiltres({ [categorie]: !filtreTypologie });
+    setPagination(1);
     return setFiltreTypologie(!filtreTypologie);
   }, [categorie, filtreTypologie, setFiltreTypologie]);
 

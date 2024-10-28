@@ -1,5 +1,5 @@
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
-import { parseAsString, useQueryState } from 'nuqs';
+import { parseAsInteger, parseAsString, useQueryState } from 'nuqs';
 import { FunctionComponent, useCallback } from 'react';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
@@ -15,12 +15,18 @@ interface FiltresMinistèresProps {
 
 const catégorieDeFiltre: 'périmètresMinistériels' = 'périmètresMinistériels';
 
-const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({ ministères, estVueMobile,
-  estVisibleEnMobile }) => {
+const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
+  ministères,
+  estVueMobile,
+  estVisibleEnMobile,
+}) => {
   const [perimetres, setPerimetres] = useQueryState('perimetres', parseAsString.withDefault('').withOptions({
     shallow: false,
     clearOnDefault: true,
     history: 'push',
+  }));
+  const [, setPagination] = useQueryState('pageIndex', parseAsInteger.withDefault(1).withOptions({
+    shallow: false,
   }));
 
   const estDéroulé = useCallback((ministère: Ministère) => {
@@ -35,10 +41,11 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({ minist
       } else {
         ministère.périmètresMinistériels.forEach(périmètre => arrPerimetreFiltre.push(périmètre.id));
       }
+      setPagination(1);
       sauvegarderFiltres({ perimetres: arrPerimetreFiltre });
       return setPerimetres(arrPerimetreFiltre.join(','));
     },
-    [estDéroulé, perimetres, setPerimetres],
+    [estDéroulé, perimetres, setPagination, setPerimetres],
   );
 
   const auClicSurUnPérimètreCallback = useCallback(
@@ -50,10 +57,11 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({ minist
       } else {
         arrPerimetreFiltre.push(périmètre.id);
       }
+      setPagination(1);
       sauvegarderFiltres({ perimetres: arrPerimetreFiltre });
       return setPerimetres(arrPerimetreFiltre.join(','));
     },
-    [perimetres, setPerimetres],
+    [perimetres, setPagination, setPerimetres],
   );
 
   return (
