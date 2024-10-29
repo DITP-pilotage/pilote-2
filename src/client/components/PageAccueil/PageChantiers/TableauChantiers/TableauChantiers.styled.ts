@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 
-const TableauChantiersStyled = styled.section`
+const TableauChantiersStyled = styled.section<{
+  chantiersArchives: boolean
+}>`
   color: var(--text-title-grey);
   
   .tableau-actions {
@@ -70,13 +72,22 @@ const TableauChantiersStyled = styled.section`
         }
 
         &.ligne-chantier {
-          &:hover:nth-of-type(even) {
-            background-color: var(--background-contrast-grey-hover);
+          &:nth-of-type(even) {
+            background-color: ${({ chantiersArchives }) => (chantiersArchives ? 'var(--background-contrast-grey)' : 'var(--background-contrast-blue-france)')};
+            
+            --hover: ${({ chantiersArchives }) => (chantiersArchives ? 'var(--background-contrast-grey-hover)' : 'var(--background-contrast-blue-france-hover)')};
           }
 
-          &:hover:nth-of-type(odd) {
-            background-color: var(--background-alt-grey-hover);
+          &:nth-of-type(odd) {
+            background-color: ${({ chantiersArchives }) => (chantiersArchives ? 'var(--background-alt-grey)' : 'var(--background-alt-blue-france)')};
+           
+            --hover: ${({ chantiersArchives }) => (chantiersArchives ? 'var(--background-alt-grey-hover)' : 'var(--background-alt-blue-france-hover)')};
           }
+
+          &:hover {
+            background-color: var(--hover);
+          }
+
         }
 
         &.ligne-ministère,
@@ -97,7 +108,7 @@ const TableauChantiersStyled = styled.section`
       }
 
       .chevron-accordéon::before {
-        background-color: var(--blue-france-sun-113-625);
+        background-color: ${({ chantiersArchives }) => (chantiersArchives ? 'var(--text-disabled-grey)' : 'var(--blue-france-sun-113-625)')};
       }
     }
   }
@@ -109,7 +120,7 @@ const TableauChantiersStyled = styled.section`
   }
 
   .icônes {
-    color: var(--background-active-blue-france)
+    color: ${({ chantiersArchives }) => (chantiersArchives ? 'var(--text-disabled-grey)' : 'var(--background-active-blue-france)')}
   }
 `;
 

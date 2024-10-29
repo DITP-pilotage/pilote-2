@@ -4,7 +4,7 @@ import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTex
 import TableauChantiersTuileMinistèreStyled from './TableauChantiersTuileMinistère.styled';
 import TableauChantiersTuileMinistèreProps from './TableauChantiersTuileMinistère.interface';
 
-const TableauChantiersTuileMinistère: FunctionComponent<TableauChantiersTuileMinistèreProps> = ({ ministère, estDéroulé }) => {
+const TableauChantiersTuileMinistère: FunctionComponent<TableauChantiersTuileMinistèreProps> = ({ ministère, estDéroulé, estArchive }) => {
   return (
     <TableauChantiersTuileMinistèreStyled>
       <div>
@@ -23,7 +23,7 @@ const TableauChantiersTuileMinistère: FunctionComponent<TableauChantiersTuileMi
             fond='blanc'
             taille='sm'
             valeur={ministère.avancement}
-            variante='primaire'
+            variante={estArchive ? 'secondaire' : 'primaire'}
           />
         </div>
       </div>

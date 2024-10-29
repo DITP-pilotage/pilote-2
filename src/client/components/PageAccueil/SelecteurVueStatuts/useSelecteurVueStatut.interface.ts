@@ -14,14 +14,14 @@ export default function useSélecteurVueStatut() {
     { valeur: 'PUBLIE', libellé: 'PPG actives', position: 'gauche', estVisible: true },
     { valeur: 'BROUILLON', libellé: 'PPG en cours de publication', position: 'gauche', estVisible: profilPeutAccederAuxBrouillons },
     { valeur: 'BROUILLON_ET_PUBLIE', libellé: 'Tous', position: 'gauche', estVisible: profilPeutAccederAuxBrouillons },
-    { valeur: 'ARCHIVE', libellé: 'PPG archivés', position: 'droite', estVisible: !!variableContenuFFPpgArchive, icone: 'fr-icon-archive-fill' },
+    { valeur: 'ARCHIVE', libellé: 'PPG précédemment suivies', position: 'droite', estVisible: !!variableContenuFFPpgArchive, icone: 'fr-icon-archive-fill' },
   ], [profilPeutAccederAuxBrouillons, variableContenuFFPpgArchive]);
 
   const optionsMobile: optionChoixVueStatuts[] = useMemo(() => [
     { valeur: 'PUBLIE', libellé: 'Actives', position: 'gauche', estVisible: true },
     { valeur: 'BROUILLON', libellé: 'En cours de publication', position: 'gauche', estVisible: profilPeutAccederAuxBrouillons },
     { valeur: 'BROUILLON_ET_PUBLIE', libellé: 'Tous', position: 'gauche', estVisible: profilPeutAccederAuxBrouillons },
-    { valeur: 'ARCHIVE', libellé: 'Archivées', position: 'droite', estVisible: !!variableContenuFFPpgArchive, icone: 'fr-icon-archive-fill' },
+    { valeur: 'ARCHIVE', libellé: 'Précédemment suivies', position: 'droite', estVisible: !!variableContenuFFPpgArchive, icone: 'fr-icon-archive-fill' },
   ], [profilPeutAccederAuxBrouillons, variableContenuFFPpgArchive]);
 
   return {

@@ -6,7 +6,7 @@ const BadgeStyled = styled.p`
 
   &.badge-gris {
     color: var(--text-mention-grey);
-    background-color: var(--background-contrast-grey);
+    background-color: var(--artwork-motif-grey);
   }
   
   &.badge-vert {
