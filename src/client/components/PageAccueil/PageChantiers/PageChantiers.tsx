@@ -108,6 +108,8 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     remontéesAlertes,
   } = usePageChantiers(chantiers, territoireCode, filtresComptesCalculés, avancementsAgrégés);
 
+  const chantiersSontArchives = filtres.statut?.includes('ARCHIVE') ?? false;
+
   return (
     <PageChantiersStyled>
       {
@@ -123,7 +125,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
         <div className='fr-mb-2w titre flex align-center'>
           <Titre
             baliseHtml='h1'
-            className='fr-h4 fr-px-2w fr-px-md-0 fr-mb-0'
+            className={`fr-h4 fr-px-2w fr-px-md-0 fr-mb-0 ${chantiersSontArchives ? 'titre-gris' : ''}`}
           >
             {`${nombreTotalChantiersAvecAlertes} ${nombreTotalChantiersAvecAlertes >= 2 ? 'chantiers' : 'chantier'}`}
           </Titre>
@@ -205,7 +207,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                       </TitreInfobulleConteneur>
                       <div className='flex w-full justify-center fr-px-1w'>
                         <JaugeDeProgression
-                          couleur='bleu'
+                          couleur={chantiersSontArchives ? 'gris' : 'bleu'}
                           libellé="Taux d'avancement global"
                           pourcentage={avancementsAgrégés?.global.moyenne || null}
                           taille='lg'
@@ -220,7 +222,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                         <div className='fr-grid-row fr-grid-row-md--gutters fr-px-3v'>
                           <div className='fr-col-4'>
                             <JaugeDeProgression
-                              couleur='orange'
+                              couleur={chantiersSontArchives ? 'gris' : 'orange'}
                               libellé='Minimum'
                               noWrap
                               pourcentage={avancementsAgrégés?.global.minimum || null}
@@ -229,7 +231,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                           </div>
                           <div className='fr-col-4'>
                             <JaugeDeProgression
-                              couleur='violet'
+                              couleur={chantiersSontArchives ? 'gris' : 'violet'}
                               libellé='Médiane'
                               noWrap
                               pourcentage={avancementsAgrégés?.global.médiane || null}
@@ -238,7 +240,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                           </div>
                           <div className='fr-col-4'>
                             <JaugeDeProgression
-                              couleur='vert'
+                              couleur={chantiersSontArchives ? 'gris' : 'vert'}
                               libellé='Maximum'
                               noWrap
                               pourcentage={avancementsAgrégés?.global.maximum || null}
@@ -284,7 +286,10 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                     {INFOBULLE_CONTENUS.chantiers.météos}
                   </Infobulle>
                 </TitreInfobulleConteneur>
-                <RépartitionMétéo météos={répartitionMétéos} />
+                <RépartitionMétéo 
+                  chantiersSontArchives={chantiersSontArchives}
+                  météos={répartitionMétéos} 
+                />
               </section>
             </Bloc>
           </div>
@@ -365,7 +370,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
               </TitreInfobulleConteneur>
               <SelecteurVueStatuts />
               <TableauChantiers
-                chantiersSontArchives={filtres.statut?.includes('ARCHIVE') ?? false}
+                chantiersSontArchives={chantiersSontArchives ?? false}
                 données={donnéesTableauChantiers}
                 mailleSelectionnee={mailleSelectionnee}
                 ministèresDisponibles={ministères}

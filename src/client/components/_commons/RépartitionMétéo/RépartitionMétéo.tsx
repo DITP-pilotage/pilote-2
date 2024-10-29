@@ -6,12 +6,13 @@ import RépartitionMétéoStyled from './RépartitionMétéo.styled';
 export type RépartitionMétéos = Record<MétéoSaisissable, number>;
 
 interface RépartitionMétéoProps {
-  météos: RépartitionMétéos;
+  météos: RépartitionMétéos
+  chantiersSontArchives?: boolean
 }
 
 const météosÀAfficher = ['ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL'] as const;
 
-const RépartitionMétéo : FunctionComponent<RépartitionMétéoProps> = ({ météos }) => {
+const RépartitionMétéo : FunctionComponent<RépartitionMétéoProps> = ({ météos, chantiersSontArchives }) => {
   return (
     <RépartitionMétéoStyled className='fr-grid-row fr-mx-n3v'>
       {
@@ -21,6 +22,7 @@ const RépartitionMétéo : FunctionComponent<RépartitionMétéoProps> = ({ mé
             key={libellésMétéos[météo]}
           >
             <RépartitionMétéoÉlément
+              estArchive={chantiersSontArchives}
               météo={météo}
               nombreDeChantiers={`${météos[météo]}`}
             />

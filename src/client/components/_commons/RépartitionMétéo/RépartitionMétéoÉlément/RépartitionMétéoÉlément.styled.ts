@@ -3,6 +3,7 @@ import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypede
 
 interface RépartitionMétéosÉlémentStyledProps {
   typeDeRéforme: TypeDeRéforme
+  estArchive?: boolean
 }
 
 const couleurs = {
@@ -20,10 +21,11 @@ const RépartitionMétéoÉlémentStyled = styled.div<RépartitionMétéosÉlém
   .météo-picto {
     width: auto;
     height: auto;
+    filter: ${({ estArchive }) => estArchive ? 'grayscale(100%)' : undefined};
   }
 
   .nombre-de-chantiers {
-    color: ${(props) => couleurs[props.typeDeRéforme]};
+    color: ${({ typeDeRéforme, estArchive }) => estArchive ? 'var(--text-disabled-grey)' : couleurs[typeDeRéforme]};
   }
 
   .label {
