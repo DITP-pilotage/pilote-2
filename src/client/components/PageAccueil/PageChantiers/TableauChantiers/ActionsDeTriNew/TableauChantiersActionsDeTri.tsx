@@ -74,7 +74,7 @@ export const TableauChantiersActionsDeTri: FunctionComponent<TableauChantiersAct
           options={listeColonnesÀtrier}
           valeurModifiéeCallback={triSélectionné => setSorting({
             id: triSélectionné,
-            desc: true,
+            desc: sorting.desc,
           })}
           valeurSélectionnée={sorting.id}
         />

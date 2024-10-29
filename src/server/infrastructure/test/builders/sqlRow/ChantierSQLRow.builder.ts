@@ -299,6 +299,7 @@ export default class ChantierRowBuilder {
       ecart: null,
       tendance: null,
       tendance_int_index: 0,
+      meteo_int_index: 0,
     };
   }
 }

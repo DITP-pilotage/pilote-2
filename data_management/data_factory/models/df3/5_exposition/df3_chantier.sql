@@ -148,6 +148,23 @@ SELECT
     resp_locaux.nom AS responsables_locaux,
     coord_territoriaux.nom AS coordinateurs_territoriaux,
     sr.meteo,
+    CASE
+        WHEN
+            sr.meteo IS NULL
+            THEN NULL
+        WHEN
+            sr.meteo = 'ORAGE'
+            THEN 1
+        WHEN
+            sr.meteo = 'NUAGE'
+            THEN 2
+        WHEN
+            sr.meteo = 'COUVERT'
+            THEN 3
+        WHEN
+            sr.meteo = 'SOLEIL'
+            THEN 4
+        END AS meteo_int_index,
     ax.axe_name AS axe,
     ppg.ppg_nom AS ppg,
     dir_projets.email AS directeurs_projet_mails,
