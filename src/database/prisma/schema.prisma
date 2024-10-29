@@ -99,6 +99,7 @@ model chantier {
   statut                             type_statut    @default(PUBLIE)
   tendance                           type_tendance?
   tendance_int_index                 Float?
+  meteo_int_index                    Float?
   donnees_maille_source              Maille?
   cible_attendue                     Boolean        @default(true)
   a_supprimer                        Boolean        @default(true)

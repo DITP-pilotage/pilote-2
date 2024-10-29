@@ -46,7 +46,7 @@ const appliquerSortingChantier = (sorting: SortingParams): Prisma.Enumerable<Pri
     }
     case 'météo': {
       return [{
-        meteo: orderBy,
+        meteo_int_index: orderBy,
       }, {
         id: 'asc',
       }];
