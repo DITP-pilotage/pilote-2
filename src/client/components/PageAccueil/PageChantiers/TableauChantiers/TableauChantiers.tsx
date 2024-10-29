@@ -21,6 +21,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
   ministèresDisponibles,
   territoireCode,
   mailleSelectionnee,
+  chantiersSontArchives,
 }) => {
 
   const {
@@ -28,7 +29,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
     changementDeLaRechercheCallback,
     valeurDeLaRecherche,
     estVueTuile,
-  } = useTableauChantiers(données, ministèresDisponibles, nombreTotalChantiersAvecAlertes);
+  } = useTableauChantiers(données, ministèresDisponibles, nombreTotalChantiersAvecAlertes, chantiersSontArchives);
 
   const [estGroupe, setEstGroupe] = useQueryState('groupeParMinistere', parseAsBoolean.withDefault(false).withOptions({
     clearOnDefault: true,
@@ -39,7 +40,10 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
   }));
 
   return (
-    <TableauChantiersStyled className='fr-table fr-m-0 fr-p-0'>
+    <TableauChantiersStyled 
+      chantiersArchives={chantiersSontArchives}
+      className='fr-table fr-m-0 fr-p-0'
+    >
       <div className='tableau-actions fr-mb-3v'>
         <div className='tableau-actions-gauche'>
           <div className='barre-de-recherche'>

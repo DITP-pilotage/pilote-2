@@ -34,7 +34,7 @@ import TableauChantiersTuileMinistère from './Tuile/Ministère/TableauChantiers
 import TableauChantiersTuileMinistèreProps from './Tuile/Ministère/TableauChantiersTuileMinistère.interface';
 
 
-export const useTableauChantiers = (données: TableauChantiersProps['données'], ministèresDisponibles: Ministère[], nombreTotalChantiersAvecAlertes: number) => {
+export const useTableauChantiers = (données: TableauChantiersProps['données'], ministèresDisponibles: Ministère[], nombreTotalChantiersAvecAlertes: number, chantiersSontArchives: boolean) => {
 
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useQueryState('q', parseAsString.withDefault('').withOptions({
     shallow: false,
@@ -114,6 +114,7 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
       id: 'météo',
       cell: cellContext => (
         <TableauRéformesMétéo
+          chantiersSontArchives={chantiersSontArchives}
           dateDeMàjDonnéesQualitatives={cellContext.row.original.dateDeMàjDonnéesQualitatives}
           météo={cellContext.getValue()}
         />
@@ -137,6 +138,7 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
         <TableauRéformesAvancement
           avancement={cellContext.getValue()}
           dateDeMàjDonnéesQuantitatives={cellContext.row.original.dateDeMàjDonnéesQuantitatives}
+          estArchive={chantiersSontArchives}
         />
       ),
       enableGlobalFilter: false,
@@ -144,7 +146,12 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
       aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
         return calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement));
       },
-      aggregatedCell: avancement => <TableauRéformesAvancement avancement={avancement.getValue() ?? null} />,
+      aggregatedCell: avancement => (
+        <TableauRéformesAvancement 
+          avancement={avancement.getValue() ?? null} 
+          estArchive={chantiersSontArchives} 
+        />
+      ),
       meta: {
         width: '8rem',
         tabIndex: -1,
@@ -160,7 +167,10 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
         header: 'Tendance',
         id: 'tendance',
         cell: cellContext => (
-          <TableauChantiersTendance tendance={cellContext.getValue()} />
+          <TableauChantiersTendance 
+            estArchive={chantiersSontArchives} 
+            tendance={cellContext.getValue()}
+          />
         ),
         enableGrouping: false,
         meta: {
@@ -172,7 +182,10 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
         header: 'Écart',
         id: 'écart',
         cell: cellContext => (
-          <TableauChantiersÉcart écart={cellContext.getValue()} />
+          <TableauChantiersÉcart 
+            estArchive={chantiersSontArchives}
+            écart={cellContext.getValue()}
+          />
         ),
         enableGrouping: false,
         aggregatedCell: () => null,
@@ -201,10 +214,12 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
         <TableauChantiersTuileChantier
           afficherIcône={!chantierCellContext.table.getColumn('porteur')?.getIsGrouped()}
           chantier={chantierCellContext.row.original}
+          chantiersSontArchives={chantiersSontArchives}
         />
       ),
       aggregatedCell: aggregatedCellContext => (
         <TableauChantiersTuileMinistère
+          estArchive={chantiersSontArchives}
           estDéroulé={aggregatedCellContext.row.getIsExpanded()}
           ministère={aggregatedCellContext.getValue() as TableauChantiersTuileMinistèreProps['ministère']}
         />

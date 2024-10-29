@@ -26,7 +26,7 @@ const MétéoPicto: FunctionComponent<MétéoPictoProps> = ({ météo, estVisibl
       alt={estVisibleParLecteurDÉcran ? libellésMétéos[météo] : ''}
       aria-hidden={estVisibleParLecteurDÉcran ? undefined : 'true'}
       className='météo-picto'
-      src={météosPictos[météo]}
+      src={météosPictos[météo]} 
     />
   ) : null;
 };

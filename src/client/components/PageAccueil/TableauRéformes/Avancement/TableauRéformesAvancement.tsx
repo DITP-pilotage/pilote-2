@@ -7,9 +7,10 @@ import TableauRéformesAvancementStyled from '@/components/PageAccueil/TableauR�
 interface TableauRéformesAvancementProps {
   avancement: number | null;
   dateDeMàjDonnéesQuantitatives?: string | null;
+  estArchive?: boolean
 }
 
-const TableauRéformesAvancement: FunctionComponent<TableauRéformesAvancementProps> = ({ avancement, dateDeMàjDonnéesQuantitatives }) => {
+const TableauRéformesAvancement: FunctionComponent<TableauRéformesAvancementProps> = ({ avancement, dateDeMàjDonnéesQuantitatives, estArchive }) => {
   const typeDeRéforme = typeDeRéformeSélectionnéeStore();
   
   return (
@@ -25,7 +26,7 @@ const TableauRéformesAvancement: FunctionComponent<TableauRéformesAvancementPr
               fond='blanc'
               taille='sm'
               valeur={avancement}
-              variante={typeDeRéforme === 'chantier' ? 'primaire' : 'rose'}
+              variante={typeDeRéforme === 'chantier' ? (estArchive ? 'secondaire' : 'primaire') : 'rose'}
             />
           )
       }

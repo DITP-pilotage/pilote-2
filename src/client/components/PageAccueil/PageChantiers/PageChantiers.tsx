@@ -365,6 +365,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
               </TitreInfobulleConteneur>
               <SelecteurVueStatuts />
               <TableauChantiers
+                chantiersSontArchives={filtres.statut?.includes('ARCHIVE') ?? false}
                 données={donnéesTableauChantiers}
                 mailleSelectionnee={mailleSelectionnee}
                 ministèresDisponibles={ministères}

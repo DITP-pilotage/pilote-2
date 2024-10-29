@@ -87,6 +87,7 @@ class TableauChantiersTest {
   render() {
     waitFor(() => render(
       <TableauChantiers
+        chantiersSontArchives={false}
         données={this.données}
         mailleSelectionnee='départementale'
         ministèresDisponibles={this.ministèresDisponibles}

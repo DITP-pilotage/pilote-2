@@ -14,12 +14,13 @@ import {
 } from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
 
 interface TableauChantiersTuileChantierProps {
-  chantier: DonnéesTableauChantiers;
-  afficherIcône: boolean;
+  chantier: DonnéesTableauChantiers
+  afficherIcône: boolean
+  chantiersSontArchives: boolean
 }
 
-const TableauChantiersTuileChantier: FunctionComponent<TableauChantiersTuileChantierProps> = ({ chantier, afficherIcône }) => {
-  const couleurÉcartArrondi = définirCouleurÉcartArrondi(chantier.écart);
+const TableauChantiersTuileChantier: FunctionComponent<TableauChantiersTuileChantierProps> = ({ chantier, afficherIcône, chantiersSontArchives }) => {
+  const couleurÉcartArrondi = définirCouleurÉcartArrondi(chantier.écart, chantiersSontArchives);
 
   return (
     <TableauChantiersTuileChantierStyled>
@@ -42,6 +43,7 @@ const TableauChantiersTuileChantier: FunctionComponent<TableauChantiersTuileChan
       <div className='fr-mt-1w fr-ml-5v tuile-chantier-corps'>
         <div className='météo'>
           <TableauRéformesMétéo
+            chantiersSontArchives={chantiersSontArchives}
             dateDeMàjDonnéesQualitatives={chantier.dateDeMàjDonnéesQualitatives}
             météo={chantier.météo}
             taille='sm'
@@ -51,11 +53,15 @@ const TableauChantiersTuileChantier: FunctionComponent<TableauChantiersTuileChan
           <TableauRéformesAvancement
             avancement={chantier.avancement}
             dateDeMàjDonnéesQuantitatives={chantier.dateDeMàjDonnéesQuantitatives}
+            estArchive={chantiersSontArchives}
           />
         </div>
         {
           (process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true') &&
-          <PictoTendance tendance={chantier.tendance} />
+          <PictoTendance 
+            estArchive={chantiersSontArchives}
+            tendance={chantier.tendance}
+          />
         }
         {
           (process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true') && !!couleurÉcartArrondi &&

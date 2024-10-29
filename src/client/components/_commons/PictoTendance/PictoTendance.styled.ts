@@ -1,17 +1,19 @@
 import styled from '@emotion/styled';
 
-const PictoTendanceStyled = styled.span`
+const PictoTendanceStyled = styled.span<{
+  estArchive?: boolean
+}>`
   &.picto-tendance--baisse {
-    color: var(--background-flat-error);
+    color: ${({ estArchive }) => (estArchive ? 'var(--text-disabled-grey)' : 'var(--background-flat-error)')};
     transform: rotate(90deg);
   }
   
   &.picto-tendance--stagnation {
-    color: var(--background-flat-info);
+    color: ${({ estArchive }) => (estArchive ? 'var(--text-disabled-grey)' : 'var(--background-flat-info)')};
   }
   
   &.picto-tendance--hausse {
-    color: var(--background-flat-success);
+    color: ${({ estArchive }) => (estArchive ? 'var(--text-disabled-grey)' : 'var(--background-flat-info)')};
   }
 `;
 

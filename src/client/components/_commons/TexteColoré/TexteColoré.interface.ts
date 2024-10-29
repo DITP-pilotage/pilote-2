@@ -1,7 +1,7 @@
 type TexteColoréAlignement = 'gauche' | 'centre' | 'droite';
 
 export interface TexteColoréProps {
-  couleur: 'rouge' | 'bleu' | 'vert',
+  couleur: 'rouge' | 'bleu' | 'vert' | 'gris',
   estGras?: boolean,
   alignement?: TexteColoréAlignement,
   texte: string,
