@@ -55,7 +55,6 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
       estTerritorialise: filtres.estTerritorialise,
       estBarometre: filtres.estBarometre,
       valeurDeLaRecherche: filtres.valeurDeLaRecherche,
-      mailleChantier: filtres.mailleChantier,
     };
 
     const [chantiersRowsMaille, territoires ] = await Promise.all([
@@ -69,6 +68,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
         [val.id]: [],
       };
     }, {});
+
 
     const chantiersGroupésParId = groupBy<chantierPrisma>(chantiersRowsMaille, chantier => chantier.id, init);
     let chantiers = objectEntries(chantiersGroupésParId).map(([_, listeChantiers]) => presenterEnChantierAccueilContrat(territoireCode)(parseChantier(listeChantiers, territoires, ministères)))

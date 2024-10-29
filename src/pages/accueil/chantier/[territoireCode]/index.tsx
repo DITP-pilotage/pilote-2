@@ -35,6 +35,7 @@ import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import { Chantier } from '@/server/chantiers/domain/Chantier';
+import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 import IndexStyled from './index.styled';
 
 interface ChantierAccueil {
@@ -87,14 +88,13 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     desc: false,
   };
 
-  const filtres = {
+  const filtres: FiltreQueryParams = {
     perimetres: query.perimetres ? (query.perimetres as string).split(',').filter(Boolean) : [],
     axes: query.axes ? (query.axes as string).split(',').filter(Boolean) : [],
     statut: query.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : !!query.statut ? [query.statut as string] : ['PUBLIE'],
     estTerritorialise: query.estTerritorialise === 'true',
     estBarometre: query.estBarometre === 'true',
     valeurDeLaRecherche: query.q as string,
-    mailleChantier: mailleChantier as 'nationale' | 'départementale' | 'régionale',
   };
 
   const filtresAlertes = {

@@ -29,7 +29,7 @@ export class ErreurChantierPermission extends Error {
   }
 }
 
-const appliquerSortingChantier = (sorting: SortingParams, mailleChantier: 'nationale' | 'départementale' | 'régionale'): Prisma.Enumerable<Prisma.chantierOrderByWithRelationInput> => {
+const appliquerSortingChantier = (sorting: SortingParams): Prisma.Enumerable<Prisma.chantierOrderByWithRelationInput> => {
   const sortingDirection = sorting.desc ? 'desc' : 'asc';
   const orderBy: Prisma.SortOrderInput = {
     sort: sortingDirection,
@@ -38,19 +38,11 @@ const appliquerSortingChantier = (sorting: SortingParams, mailleChantier: 'natio
 
   switch (sorting.id) {
     case 'avancement': {
-      return mailleChantier === 'nationale' ? ([{
+      return [{
         taux_avancement: orderBy,
       }, {
         id: 'asc',
-      }]) : mailleChantier === 'départementale' ? ([{
-        a_taux_avancement_departemental: orderBy,
-      }, {
-        id: 'asc',
-      }]) : mailleChantier === 'régionale' ? ([{
-        a_taux_avancement_regional: orderBy,
-      }, {
-        id: 'asc',
-      }]) : {};
+      }];
     }
     case 'météo': {
       return [{
@@ -313,7 +305,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
         ],
         ...whereOptions,
       },
-      orderBy: sorting ? appliquerSortingChantier(sorting, filtres.mailleChantier) : {},
+      orderBy: sorting ? appliquerSortingChantier(sorting) : {},
     };
 
     if (!profilsTerritoriaux.includes(profil)) {

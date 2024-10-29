@@ -43,6 +43,7 @@ import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import { Chantier } from '@/server/chantiers/domain/Chantier';
+import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 
 interface NextPageRapportDétailléProps {
   chantiers: ChantierRapportDetailleContrat[]
@@ -85,14 +86,13 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
 
   const mailleChantier = maille === 'NAT' ? 'nationale' : mailleSelectionnee;
 
-  const filtres = {
+  const filtres: FiltreQueryParams = {
     perimetres: query.perimetres ? (query.perimetres as string).split(',').filter(Boolean) : [],
     axes: query.axes ? (query.axes as string).split(',').filter(Boolean) : [],
     statut: query.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : !!query.statut ? [query.statut as string] : ['PUBLIE'],
     estTerritorialise: query.estTerritorialise === 'true',
     estBarometre: query.estBarometre === 'true',
     valeurDeLaRecherche: query.q as string,
-    mailleChantier: mailleChantier as 'nationale' | 'départementale' | 'régionale',
   };
 
   const filtresAlertes = {

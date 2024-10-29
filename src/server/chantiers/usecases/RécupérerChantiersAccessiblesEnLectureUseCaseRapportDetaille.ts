@@ -55,7 +55,6 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
       estTerritorialise: filtres.estTerritorialise,
       estBarometre: filtres.estBarometre,
       valeurDeLaRecherche: filtres.valeurDeLaRecherche,
-      mailleChantier: filtres.mailleChantier,
     };
 
     const [chantiersRowsMaille, territoires ] = await Promise.all([
