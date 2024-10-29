@@ -5,7 +5,6 @@ export type FiltreQueryParams = {
   estTerritorialise: boolean
   estBarometre: boolean
   valeurDeLaRecherche: string
-  mailleChantier: 'nationale' | 'régionale' | 'départementale'
 };
 
 export type SortingParams = {
