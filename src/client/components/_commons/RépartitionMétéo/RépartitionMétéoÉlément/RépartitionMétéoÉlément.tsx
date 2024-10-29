@@ -7,12 +7,16 @@ import RépartitionMétéoÉlémentStyled from './RépartitionMétéoÉlément.s
 interface RépartitionMétéoÉlémentProps {
   météo: Météo
   nombreDeChantiers: string
+  estArchive?: boolean
 }
 
-const RépartitionMétéoÉlément: FunctionComponent<RépartitionMétéoÉlémentProps> = ({ météo, nombreDeChantiers }) => {
+const RépartitionMétéoÉlément: FunctionComponent<RépartitionMétéoÉlémentProps> = ({ météo, nombreDeChantiers, estArchive }) => {
   const typeDeRéforme = typeDeRéformeSélectionnéeStore();
   return (
-    <RépartitionMétéoÉlémentStyled typeDeRéforme={typeDeRéforme}>
+    <RépartitionMétéoÉlémentStyled 
+      estArchive={estArchive}
+      typeDeRéforme={typeDeRéforme}
+    >
       <div className='fr-grid-row'>
         <MétéoPicto
           météo={météo}

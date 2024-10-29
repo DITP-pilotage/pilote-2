@@ -47,6 +47,10 @@ const JaugeDeProgressionStyled = styled.div`
         color: var(--background-action-high-pink-tuile);
       }
 
+      &.jauge-valeur--gris {
+        color: var(--grey-625-425);
+      }
+
       margin-bottom: 0;
       word-break: normal;
 
@@ -84,6 +88,10 @@ const JaugeDeProgressionStyled = styled.div`
 
     .jauge-barre-valeur--rose {
       fill: var(--background-action-high-pink-tuile);
+    }
+
+    .jauge-barre-valeur--gris {
+      fill: var(--grey-625-425);
     }
   }
 
