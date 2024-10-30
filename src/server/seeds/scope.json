@@ -1,0 +1,22 @@
+[
+  {
+    "code": "lecture",
+    "nom": "Lecture"
+  },
+  {
+    "code": "saisieCommentaire",
+    "nom": "Saisie de commentaire"
+  },
+  {
+    "code": "saisieIndicateur",
+    "nom": "Saisie des indicateurs"
+  },
+  {
+    "code": "gestionUtilisateur",
+    "nom": "Gestion des utilisateurs"
+  },
+  {
+    "code": "responsabilite",
+    "nom": "Responsabilité"
+  }
+]

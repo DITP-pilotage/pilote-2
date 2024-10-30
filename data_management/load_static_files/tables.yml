@@ -63,13 +63,4 @@ groups:
 
   flat_tables:
     github_repo: pilote_2
-    tables:
-      profil_py:
-        schema: "flat_tables"
-        path_in_repo: "seeds/rapport_import_mesure_indicateur.csv"
-      scope_py:
-        schema: "flat_tables"
-        path_in_repo: "seeds/mesure_indicateur.csv"
-      territoire_py:
-        schema: "flat_tables"
-        path_in_repo: "seeds/commentaires.csv"
+    tables: []
