@@ -1,7 +1,8 @@
 services:
   pilote_webapp:
-    image: node:18.20.2
-    command: sh -c "cd /app && npm install && npx prisma generate && npm run dev"
+    build: 
+      dockerfile: docker/Dockerfile.webapp.dev
+      context: .
     depends_on:
       - postgres
     #ports: [ "3000:3000" ]
