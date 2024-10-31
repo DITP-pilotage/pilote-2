@@ -46,6 +46,6 @@ WORKDIR /app/data_management/data_factory
 
 ENTRYPOINT ["pipenv","run"]
 
-CMD ["/bin/bash", "../../docker/entrypoint.datajobs.dev.sh"]
+CMD ["/bin/bash", "../../docker/entrypoint.dbt.dev.sh"]
 
 #CMD ["scripts/serve_doc.sh"]

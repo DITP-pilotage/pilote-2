@@ -15,14 +15,15 @@ services:
       - "traefik.http.routers.pilote_webapp.rule=Host(`pilote.localhost`)"
       - "traefik.http.services.pilote_webapp.loadbalancer.server.port=3000"
   
-  pilote_datajobs:
+  pilote_dbt:
     build: 
-      dockerfile: docker/Dockerfile.datajobs.dev
+      dockerfile: docker/Dockerfile.dbt.dev
       context: .
     depends_on:
       - postgres
     volumes:
-      - ./:/app
+      - ./data_management:/app/data_management
+      - ./docker:/app/docker
 
   postgres:
     hostname: postgres
