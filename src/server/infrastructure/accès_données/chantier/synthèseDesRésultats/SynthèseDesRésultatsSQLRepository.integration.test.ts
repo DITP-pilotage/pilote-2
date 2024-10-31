@@ -1,11 +1,12 @@
 import { synthese_des_resultats } from '@prisma/client';
+import { randomUUID } from 'node:crypto';
 import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import SynthèseDesRésultatsRepository from '@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import SynthèseDesRésultatsSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';
-import SynthèseDesRésultatsBuilder from '@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.builder';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 describe('SynthèseDesRésultatsSQLRepository ', function () {
   describe('créer', () => {
@@ -17,13 +18,29 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       const id = '123';
       const contenu = 'Quatrième commentaire';
       const date = new Date('2023-12-31T00:00:00.000Z');
-      const auteur = 'Jean DUPONT';
       const météo = 'SOLEIL';
+      const auteur_id = randomUUID();
 
       const synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
 
       // When
-      await synthèseDesRésultatsRepository.créer(chantierId, `${CODES_MAILLES[maille]}-${codeInsee}`, id, contenu, auteur, météo, date);
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: 'john.doe@test.com',
+          nom: 'John',
+          prenom: 'Doe',
+          auteur_modification: 'test',
+          date_creation: new Date().toISOString(),
+          auteur_creation: 'test',
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
+      await synthèseDesRésultatsRepository.créer(chantierId, `${CODES_MAILLES[maille]}-${codeInsee}`, id, contenu, auteur_id, météo, date);
 
       // Then
       const synthèseDesRésultatsCrééeEnBase = await prisma.synthese_des_resultats.findUnique({ where: { id: id } });
@@ -35,26 +52,37 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       const chantierId = 'CH-001';
       const maille = 'régionale';
       const codeInsee = '01';
-
-      const { id, contenu, auteur, météo, date } = new SynthèseDesRésultatsBuilder()
-        .avecSynthèseDesRésultats({
-          id: '123',
-          contenu: 'Quatrième commentaire',
-          date: '2023-12-31T00:00:00.000Z',
-          auteur: 'Jean DUPONT',
-          météo: 'SOLEIL',
-        })
-        .build()!;
+      const id =  '123';
+      const contenu = 'Quatrième commentaire';
+      const date =  '2023-12-31T00:00:00.000Z';
+      const météo = 'SOLEIL';
+      const auteur_id = randomUUID();
 
       const synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
 
       // When
-      const synthèseDesRésultatsCréée = await synthèseDesRésultatsRepository.créer(chantierId, `${CODES_MAILLES[maille]}-${codeInsee}`, id, contenu, auteur, météo, new Date(date));
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: 'john.doe@test.com',
+          nom: 'John',
+          prenom: 'Doe',
+          auteur_modification: 'test',
+          date_creation: new Date().toISOString(),
+          auteur_creation: 'test',
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
+      const synthèseDesRésultatsCréée = await synthèseDesRésultatsRepository.créer(chantierId, `${CODES_MAILLES[maille]}-${codeInsee}`, id, contenu, auteur_id, météo, new Date(date));
 
       // Then
       expect(synthèseDesRésultatsCréée).toStrictEqual({
         contenu,
-        auteur,
+        auteur: 'Doe John',
         date,
         id,
         météo,
@@ -114,7 +142,6 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
           .avecCommentaire('Quatrième commentaire')
-          .avecAuteur('Jean DUPONT')
           .avecDateCommentaire(new Date('2023-12-31'))
           .build(),
       ];
@@ -130,9 +157,73 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
         météo: 'SOLEIL',
         contenu: 'Quatrième commentaire',
         date: '2023-12-31T00:00:00.000Z',
-        auteur: 'Jean DUPONT',
+        auteur: 'Auteur Inconnu',
       });
     });
+    test('Quand l\auteur_id est null, retourne Auteur Inconnu', async () => {
+      // Given
+      const chantierId = 'CH-003';
+      const maille: Maille = 'régionale';
+      const codeInsee = '01';
+      const synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
+
+      const synthesesDesResultats = new SynthèseDesRésultatsSQLRowBuilder()
+        .avecChantierId(chantierId)
+        .avecAuteurId(null)
+        .avecMaille(CODES_MAILLES[maille])
+        .avecCodeInsee(codeInsee)
+        .avecCommentaire('Premier commentaire')
+        .avecDateCommentaire(new Date('2023-12-31'))
+        .build();
+      await prisma.synthese_des_resultats.create({ data: synthesesDesResultats });
+
+      // When
+      const result = await synthèseDesRésultatsRepository.récupérerLaPlusRécente(chantierId, `${CODES_MAILLES[maille]}-${codeInsee}`);
+      
+      // Then
+      expect(result?.auteur).toStrictEqual('Auteur Inconnu');
+    });
+    test('Quand l\auteur_id est non null, retourne prenom + nom de l\'utilisateur associé', async () => {
+      // Given
+      const chantierId = 'CH-003';
+      const maille: Maille = 'régionale';
+      const codeInsee = '01';
+      const auteur_id = randomUUID();
+      const synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
+
+      const synthesesDesResultats = new SynthèseDesRésultatsSQLRowBuilder()
+        .avecChantierId(chantierId)
+        .avecAuteurId(null)
+        .avecMaille(CODES_MAILLES[maille])
+        .avecCodeInsee(codeInsee)
+        .avecCommentaire('Premier commentaire')
+        .avecDateCommentaire(new Date('2023-12-31'))
+        .build();
+      await prisma.synthese_des_resultats.create({ data: synthesesDesResultats });
+
+      // When
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: 'john.doe@test.com',
+          nom: 'John',
+          prenom: 'Doe',
+          auteur_modification: 'test',
+          date_creation: new Date().toISOString(),
+          auteur_creation: 'test',
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
+      const result = await synthèseDesRésultatsRepository.récupérerLaPlusRécente(chantierId, `${CODES_MAILLES[maille]}-${codeInsee}`);
+      
+      // Then
+      expect(result?.auteur).toStrictEqual('Auteur Inconnu');
+    });
+
   });
 
   describe('récupérerHistoriqueDeLaSynthèseDesRésultats', () => {
@@ -147,7 +238,6 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
         new SynthèseDesRésultatsSQLRowBuilder()
           .avecId('aaaa-aab')
           .avecMétéo('SOLEIL')
-          .avecAuteur('Jean DUPONT')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
@@ -158,7 +248,6 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
         new SynthèseDesRésultatsSQLRowBuilder()
           .avecId('aaaa-aaa')
           .avecMétéo('SOLEIL')
-          .avecAuteur('Jean DUPONT')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
@@ -185,13 +274,13 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
         {
           id: 'aaaa-aaa',
           météo: 'SOLEIL',
-          auteur: 'Jean DUPONT',
+          auteur: 'Auteur Inconnu',
           contenu: 'Ma synthèse REG-01 2023',
           date: '2023-12-31T00:00:00.000Z',
         }, {
           id: 'aaaa-aab',
           météo: 'SOLEIL',
-          auteur: 'Jean DUPONT',
+          auteur: 'Auteur Inconnu',
           contenu: 'Ma synthèse REG-01 2022',
           date: '2022-12-31T00:00:00.000Z',
         },
