@@ -4,7 +4,7 @@ SELECT
                  'type',
                  'date']
              ) }} as id,
-    auteur,
+    NULL::uuid as auteur_id,
     type::type_objectif,
     contenu,
     date,

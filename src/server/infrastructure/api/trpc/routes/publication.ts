@@ -61,7 +61,7 @@ export const publicationRouter = créerRouteurTRPC({
           
         if (input.entité === 'objectifs') {
           const créerUnObjectifUseCase = new CréerUnObjectifUseCase(dependencies.getObjectifRepository());
-          return créerUnObjectifUseCase.run(input.réformeId, input.contenu, auteur, input.type as TypeObjectif, ctx.session.habilitations);
+          return créerUnObjectifUseCase.run(input.réformeId, input.contenu, auteur_id, input.type as TypeObjectif, ctx.session.habilitations);
         }
           
         if (input.entité === 'décisions stratégiques') {

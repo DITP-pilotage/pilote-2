@@ -402,12 +402,13 @@ enum type_objectif {
 }
 
 model objectif {
-  id          String        @id
-  auteur      String
-  type        type_objectif
-  contenu     String
-  date        DateTime      @db.Timestamp
-  chantier_id String
+  id               String        @id
+  type             type_objectif
+  contenu          String
+  date             DateTime      @db.Timestamp
+  chantier_id      String
+  auteur_objectif  utilisateur?  @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_id        String?       @db.Uuid
 
   @@schema("public")
 }
@@ -535,6 +536,7 @@ model utilisateur {
   auteur_creation                  String
   commentaires                     commentaire[]
   decisions_strategique            decision_strategique[]
+  objectifs                        objectif[]
   @@schema("public")
 }
 
