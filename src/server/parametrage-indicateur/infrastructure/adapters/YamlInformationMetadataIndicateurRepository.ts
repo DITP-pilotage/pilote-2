@@ -3,7 +3,7 @@ import {
 } from '@/server/parametrage-indicateur/domain/ports/InformationMetadataIndicateurRepository';
 import { InformationMetadataIndicateur } from '@/server/parametrage-indicateur/domain/InformationMetadataIndicateur';
 import { AcceptedValue } from '@/server/parametrage-indicateur/domain/AcceptedValue';
-import data from '../../../../../data_management/data_factory/models/staging/import/sources.yml';
+import data from '../../../../../data_management/models/staging/import/sources.yml';
 
 interface YamlAcceptedValue {
 

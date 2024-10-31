@@ -39,7 +39,7 @@
         "validation/*"
       ],
       "@/ppg_metadata/*": [
-        "/data_management/data_factory/models/raw/ppg_metadata/"
+        "/data_management/models/raw/ppg_metadata/"
       ],
       "@/config": [
         "config.ts"
@@ -50,7 +50,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "/data_management/data_factory/models/raw/ppg_metadata/schema.yml"
+    "/data_management/models/raw/ppg_metadata/schema.yml"
   ],
   "exclude": [
     "node_modules"
