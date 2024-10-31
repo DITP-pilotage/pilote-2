@@ -1,10 +1,9 @@
 
+import { Maille, territoire as TerritoireModel } from '@prisma/client';
 import { prisma } from '@/server/db/prisma';
 import seed_profil from '@/server/seeds/profil.json';
 import seed_scope from '@/server/seeds/scope.json';
 import seed_territoire from '@/server/seeds/territoire.json';
-import { Territoire } from '@/server/domain/territoire/Territoire.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
 
 
 function upsertProfile() {
@@ -42,20 +41,24 @@ function upsertTerritoire() {
     seed_territoire.map(territoire => {
 
       // Modification de certains types
-      const mailleTerritoire: Maille = territoire.maille as Maille;
+      const mailleTerritoire: Maille = {
+        'dept': Maille.DEPT,
+        'reg': Maille.REG,
+        'nat': Maille.NAT,
+      }[territoire.maille] as Maille;
       const codeInseeTerritoire: string = territoire.code_insee.toString();
 
       // Création du territoire avec les bons types
-      const t: Territoire = {
+      const t: TerritoireModel = {
         code: territoire.code,
-        codeInsee: codeInseeTerritoire,
-        codeParent: territoire.code_parent,
+        code_insee: codeInseeTerritoire,
+        code_parent: territoire.code_parent,
         maille: mailleTerritoire,
         nom: territoire.nom,
-        nomAffiché: territoire.nom_affiche,
+        nom_affiche: territoire.nom_affiche,
+        zone_id: territoire.zone_id,
       };
 
-      // TODO: fix l'upsert des terrtoires
       return prisma.territoire.upsert({ 
         where: { code: territoire.code },
         create: t,
