@@ -19,7 +19,7 @@ export default class CommentaireRowBuilder {
 
   private _date: commentaire['date'];
 
-  private _auteur: commentaire['auteur'];
+  private _auteur_id: commentaire['auteur_id'];
 
   private _maille: commentaire['maille'] = '';
 
@@ -32,7 +32,7 @@ export default class CommentaireRowBuilder {
     this._chantierId = chantierGénéré.id;
     this._contenu = faker.lorem.paragraph();
     this._date = faker.date.recent(60, '2023-05-01T00:00:00.000Z');
-    this._auteur = faker.name.fullName();
+    this._auteur_id = null;
     this._type = faker.helpers.arrayElement([
       'actions_a_valoriser',
       'actions_a_venir',
@@ -79,8 +79,8 @@ export default class CommentaireRowBuilder {
     return this;
   }
 
-  avecAuteur(auteur: commentaire['auteur']): CommentaireRowBuilder {
-    this._auteur = auteur;
+  avecAuteurId(auteur_id: commentaire['auteur_id']): CommentaireRowBuilder {
+    this._auteur_id = auteur_id;
     return this;
   }
 
@@ -118,7 +118,7 @@ export default class CommentaireRowBuilder {
       type: this._type,
       contenu: this._contenu,
       date: this._date,
-      auteur: this._auteur,
+      auteur_id: this._auteur_id,
       maille: this._maille,
       code_insee: this._codeInsee,
     };
