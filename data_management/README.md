@@ -39,7 +39,7 @@ pipenv update
 
 # [Excécution commandes]
 # Exécuter une commande dans l'environnement
-pipenv run dbt compile --project-dir data_factory --select model_1
+pipenv run dbt compile --select model_1
 # Exécuter des commandes interactivement dans l'environnement
 pipenv shell
 ```
@@ -50,9 +50,9 @@ Utilisation des [commandes dbt](https://docs.getdbt.com/reference/dbt-commands):
 
 ```sh
 # Mise à jour des dépendances
-dbt deps --project-dir data_factory
+dbt deps
 # Exécution d'un modèle
-dbt run --project-dir data_factory --select model_1
+dbt run --select model_1
 ```
 
 ### [docker-conf] Installation
@@ -341,7 +341,7 @@ Il est possible d'y avoir accès en exécutant la commande suivante :
 
 ```bash
 source .env
-dbt docs generate --project-dir data_factory/  && dbt docs serve --project-dir data_factory/
+dbt docs generate && dbt docs serve
 ```
 
 Cette ligne de commande ouvrira une interface web avec laquelle vous pourrez interagir. 

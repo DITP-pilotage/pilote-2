@@ -29,7 +29,7 @@ RUN pipenv run pip freeze
 # COPY data_management/data_factory data_factory/
 # COPY data_management/profiles.yml .
 
-# RUN pipenv run dbt deps --project-dir data_factory 
+# RUN pipenv run dbt deps
 # RUN rm -rf data_factory/
 # RUN rm -rf profiles.yml
 
@@ -41,11 +41,10 @@ RUN pipenv run pip freeze
 # Start entrypoint.sh script
 # VOLUME  ["/app/data_management/data_factory"]
 # WORKDIR /app/data_management/data_factory
-RUN mkdir -p data_factory
-WORKDIR /app/data_management/data_factory
+WORKDIR /app/data_management
 
 ENTRYPOINT ["pipenv","run"]
 
-CMD ["/bin/bash", "../../docker/entrypoint.dbt.dev.sh"]
+CMD ["/bin/bash", "../docker/entrypoint.dbt.dev.sh"]
 
 #CMD ["scripts/serve_doc.sh"]
