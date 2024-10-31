@@ -1,14 +1,9 @@
+# Docker pour la webapp
 
-
-Pour n'importe quelle commande
+```sh
+# Exécuter une commande npm
 docker compose run --rm pilote_webapp npm run lint
-Reset la db
+# Reset la db
 docker compose run --rm pilote_webapp /bin/bash scripts/prisma_reset_and_migrate.sh
-ou /bin/bash scripts/prisma_reset_and_migrate.sh
-
-
-commande DJ
-cd data_management
-docker compose run --rm pilote_dbt dbt run --select barometre
-
+```
 
