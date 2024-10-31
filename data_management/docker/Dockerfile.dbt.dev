@@ -1,0 +1,30 @@
+FROM python:3.9.16
+
+# [setup.root-dir]
+WORKDIR /app/data_management
+
+# [install.postgres]
+RUN apt-get update && apt-get install -y \
+    postgresql \
+ && rm -rf /var/lib/apt/lists/*
+
+## [install.pipenv] (last version)
+RUN python -m pip install --no-cache pipenv
+
+## [install.pipenv-deps]
+COPY Pipfile .
+COPY Pipfile.lock .
+
+# Install exact versions of Pipfile.lock with "pipenv sync"
+RUN pipenv sync
+## [log] Show path of env just created
+RUN pipenv --venv
+## [log] Show versions of packages installed in env just created
+RUN pipenv run pip freeze
+
+
+WORKDIR /app/data_management
+
+ENTRYPOINT ["pipenv","run"]
+
+CMD ["/bin/bash", "docker/entrypoint.dbt.dev.sh"]

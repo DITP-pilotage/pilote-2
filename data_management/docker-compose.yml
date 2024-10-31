@@ -1,0 +1,8 @@
+services:
+  pilote_dbt:
+    build: 
+      dockerfile: docker/Dockerfile.dbt.dev
+      context: .
+    volumes:
+      - ./:/app/data_management
+      - ./docker:/app/data_management/docker

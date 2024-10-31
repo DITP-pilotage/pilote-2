@@ -1,6 +1,6 @@
-DUMP_DEST=out/dump_prod_partielle.dump
+DUMP_DEST=scripts/dumps/dump_prod_partielle.dump
 
-export $(cat .env | xargs)
+# export $(cat .env | xargs)
 
 # [export]
 ## [export.dump] pg_dump data of specific tables
@@ -33,7 +33,7 @@ time pg_dump -d $CONN_STR_PROD --verbose \
 
 # [import]
 echo ">> TRUNCATE content of these tables..."
-time psql -d $CONN_STR_DESTINATION -c "
+time psql -d $DATABASE_URL -c "
 TRUNCATE TABLE
     public.rapport_import_mesure_indicateur,
     public.commentaire,
@@ -59,6 +59,6 @@ TRUNCATE TABLE
     public.erreur_validation_fichier;"
 
 echo ">> pg_restore dumped file..."
-time pg_restore -d $CONN_STR_DESTINATION --verbose \
+time pg_restore -d $DATABASE_URL --verbose \
     --no-owner --no-privileges --exit-on-error \
     $DUMP_DEST
