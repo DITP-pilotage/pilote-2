@@ -11,13 +11,13 @@ export default class CréerUneDécisionStratégiqueUseCase {
     private readonly décisionStratégiqueRepository: DécisionStratégiqueRepository,
   ) {}
 
-  async run(chantierId: Chantier['id'], contenu: string, auteur: string, habilitations: Habilitations): Promise<DécisionStratégique> {
+  async run(chantierId: Chantier['id'], contenu: string, auteur_id: string, habilitations: Habilitations): Promise<DécisionStratégique> {
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnSaisieDesPublications(chantierId, 'NAT-FR');
 
     const date = new Date();
     const id = randomUUID();
     const type = 'suiviDesDécisionsStratégiques';
-    return this.décisionStratégiqueRepository.créer(chantierId, id, contenu, type, auteur, date);
+    return this.décisionStratégiqueRepository.créer(chantierId, id, contenu, type, auteur_id, date);
   }
 }

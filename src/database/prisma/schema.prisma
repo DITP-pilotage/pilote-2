@@ -419,12 +419,13 @@ enum type_decision_strategique {
 }
 
 model decision_strategique {
-  id          String                    @id
-  auteur      String
-  type        type_decision_strategique
-  contenu     String
-  date        DateTime                  @db.Timestamp
-  chantier_id String
+  id                           String                    @id
+  type                         type_decision_strategique
+  contenu                      String
+  date                         DateTime                  @db.Timestamp
+  chantier_id                  String
+  auteur_decision_strategique  utilisateur?              @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_id                    String?                   @db.Uuid
 
   @@schema("public")
 }
@@ -533,6 +534,7 @@ model utilisateur {
   date_creation                    DateTime
   auteur_creation                  String
   commentaires                     commentaire[]
+  decisions_strategique            decision_strategique[]
   @@schema("public")
 }
 

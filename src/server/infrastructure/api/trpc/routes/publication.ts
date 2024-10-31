@@ -66,7 +66,7 @@ export const publicationRouter = créerRouteurTRPC({
           
         if (input.entité === 'décisions stratégiques') {
           const créerUneDécisionStratégiqueUseCase = new CréerUneDécisionStratégiqueUseCase(dependencies.getDécisionStratégiqueRepository());
-          return créerUneDécisionStratégiqueUseCase.run(input.réformeId, input.contenu, auteur, ctx.session.habilitations);
+          return créerUneDécisionStratégiqueUseCase.run(input.réformeId, input.contenu, auteur_id, ctx.session.habilitations);
         }
       } else if (input.typeDeRéforme === 'projet structurant') {
         if (input.entité === 'commentaires') {
