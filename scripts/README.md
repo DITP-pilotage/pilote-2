@@ -7,3 +7,7 @@ Pour réinitialiser la base de données avec prisma, exécuter
 ```
 
 Pour les commandes avec Docker, voir [docker/](../docker).
+
+# Scripts "daily"
+
+Voir [daily](./daily).
