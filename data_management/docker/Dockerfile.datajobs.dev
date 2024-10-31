@@ -3,6 +3,11 @@ FROM python:3.9.16
 # [setup.root-dir]
 WORKDIR /app/data_management
 
+# [install.postgres]
+RUN apt-get update && apt-get install -y \
+    postgresql \
+ && rm -rf /var/lib/apt/lists/*
+
 ## [install.pipenv] (last version)
 RUN python -m pip install --no-cache pipenv
 
@@ -20,6 +25,6 @@ RUN pipenv run pip freeze
 
 WORKDIR /app/data_management
 
-ENTRYPOINT ["pipenv","run"]
+ENTRYPOINT ["pipenv","run", "/bin/bash"]
 
-CMD ["dbt", "deps"]
+CMD ["scripts/run_datajobs.sh"]

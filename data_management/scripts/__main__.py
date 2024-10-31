@@ -19,22 +19,12 @@ ERROR_MSG = "\n".join([
     f"- [Logs de {SELECTED_ENV}]({os.environ.get('SCALINGO_LOGS_URL')})"
 ])
 
-# Jobs à exécuter en fonction de l'environnement
+# Exécution de tous les jobs seulement si FULL_DJ==true
+RUN_FULL_DATAJOBS = os.environ.get('FULL_DJ', "false").lower() == "true"
+
 JOBS_TO_RUN={}
-JOBS_TO_RUN['PROD'] = [
-        'scripts/0_dbt_deps.sh',
-        'scripts/2_seed_ppg_metadata.sh',
-        'scripts/5_staging.sh',
-        'scripts/7_exposition.sh'
-    ]
-JOBS_TO_RUN['PREPROD'] = JOBS_TO_RUN['PROD']
-JOBS_TO_RUN['DEV'] = [
-        'scripts/0_dbt_deps.sh',
-        'scripts/2_seed_ppg_metadata.sh',
-        'scripts/5_staging.sh',
-        'scripts/7_exposition.sh'
-    ]
-JOBS_TO_RUN['LOCAL'] = [
+if (RUN_FULL_DATAJOBS):
+    JOBS_TO_RUN = [
         'scripts/0_dbt_deps.sh',
         'scripts/0_init_elementary.sh',
         'scripts/2_seed_ppg_metadata.sh',
@@ -42,14 +32,19 @@ JOBS_TO_RUN['LOCAL'] = [
         'scripts/5_staging.sh',
         'scripts/7_exposition.sh'
     ]
-
+else:
+    JOBS_TO_RUN = [
+        'scripts/0_dbt_deps.sh',
+        'scripts/2_seed_ppg_metadata.sh',
+        'scripts/5_staging.sh',
+        'scripts/7_exposition.sh'
+    ]
 
 def run_datajobs() -> int:
-    if os.environ.get('FORCE_ENVIRONMENT_DATAJOBS'): print("> ATTENTION: Environnement forcé sur", os.environ.get('FORCE_ENVIRONMENT_DATAJOBS'))
-    print('> Environnement détecté:', SELECTED_ENV)
-    print("> Exécution des datajobs suivants:", JOBS_TO_RUN[SELECTED_ENV])
+    if RUN_FULL_DATAJOBS: print(" !! RUN_FULL_DATAJOBS=true : Exécution des datajobs en mode FULL")
+    print("> Exécution des datajobs suivants:", JOBS_TO_RUN)
     # Select jobs to run for current env
-    for file in JOBS_TO_RUN[SELECTED_ENV]:
+    for file in JOBS_TO_RUN:
         returncode = subprocess.Popen([file], stdin=subprocess.PIPE).wait()
         if returncode > 0:
             notify(ERROR_MSG)

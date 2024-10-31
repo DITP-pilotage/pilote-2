@@ -6,3 +6,11 @@ services:
     volumes:
       - ./:/app/data_management
       - ./docker:/app/data_management/docker
+
+  pilote_datajobs:
+    build: 
+      dockerfile: docker/Dockerfile.datajobs.dev
+      context: .
+    volumes:
+      - ./:/app/data_management
+      - ./docker:/app/data_management/docker
