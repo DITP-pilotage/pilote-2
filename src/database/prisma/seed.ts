@@ -1,9 +1,10 @@
 
-import { Maille } from '@prisma/client';
 import { prisma } from '@/server/db/prisma';
 import seed_profil from '@/server/seeds/profil.json';
 import seed_scope from '@/server/seeds/scope.json';
 import seed_territoire from '@/server/seeds/territoire.json';
+import { Territoire } from '@/server/domain/territoire/Territoire.interface';
+import { Maille } from '@/server/domain/maille/Maille.interface';
 
 
 function upsertProfile() {
@@ -40,17 +41,25 @@ function upsertTerritoire() {
   return Promise.all(
     seed_territoire.map(territoire => {
 
-      const mailleTerritoire: Maille | undefined = {
-        'nat': Maille.NAT,
-        'reg': Maille.REG,
-        'dept': Maille.DEPT,
-      }[territoire.maille];
-      const codeInseeTerritoire: String = territoire.code_insee.toString();
+      // Modification de certains types
+      const mailleTerritoire: Maille = territoire.maille as Maille;
+      const codeInseeTerritoire: string = territoire.code_insee.toString();
 
+      // Création du territoire avec les bons types
+      const t: Territoire = {
+        code: territoire.code,
+        codeInsee: codeInseeTerritoire,
+        codeParent: territoire.code_parent,
+        maille: mailleTerritoire,
+        nom: territoire.nom,
+        nomAffiché: territoire.nom_affiche,
+      };
+
+      // TODO: fix l'upsert des terrtoires
       return prisma.territoire.upsert({ 
         where: { code: territoire.code },
-        create: Object.assign(territoire, { maille: mailleTerritoire, code_insee: codeInseeTerritoire }),
-        update: Object.assign(territoire, { maille: mailleTerritoire, code_insee: codeInseeTerritoire }),
+        create: t,
+        update: t,
       });
     },
     ),
