@@ -17,6 +17,8 @@ FULL_DJ=true docker compose run --rm -e FULL_DJ pilote_datajobs
 echo ">> Run dbt command"
 docker compose run --rm pilote_dbt dbt run --select barometre
 echo ">> Run descente de prod"
+cd ..
 docker compose run --rm pilote_datajobs scripts/descente_de_prod_partielle.sh
 echo ">> Run dj prod"
+cd data_management
 FULL_DJ=false docker compose run --rm -e FULL_DJ pilote_datajobs

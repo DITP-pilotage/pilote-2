@@ -29,6 +29,13 @@ services:
     volumes: 
       - db_dbt_pilote:/var/lib/postgresql/data
 
+  descente_de_prod:
+    image: postgres:14.6-alpine
+    command: "/bin/bash scripts/descente_de_prod_partielle.sh"
+    environment:
+      - CONN_STR_PROD
+    volumes: 
+      - ./scripts:/scripts
 
   pilote_traefik:
     container_name: pilote_traefik
