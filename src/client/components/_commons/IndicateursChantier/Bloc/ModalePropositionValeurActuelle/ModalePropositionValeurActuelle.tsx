@@ -209,13 +209,11 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                         </h3>
                         <p>
                           Nous vous rappelons que la valeur actuelle que vous proposez ne sera pas prise en compte dans
-                          le
-                          calcul du taux d’avancement global de la PPG.
-                          À moins que votre proposition soit intégrée par la direction de projet, elle ne sera plus
-                          visible
-                          dans l’historique de l’indicateur à la prochaine mise à jour. Elle sera cependant conservée
-                          dans la
-                          base de données de PILOTE.
+                          le calcul du taux d’avancement global de la PPG. Cette proposition vise à engager un dialogue
+                          avec la direction de projet au niveau national, qui en sera informée. Si votre proposition
+                          n’est pas intégrée par la direction de projet, elle ne sera plus visible dans l’historique de
+                          l’indicateur à la prochaine mise à jour. Elle sera cependant conservée dans la base de données
+                          de PILOTE.
                         </p>
                       </div>
                       <div className='w-full flex justify-end fr-mt-2w'>
@@ -242,11 +240,10 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
         ) : (
           <div className='fr-alert fr-alert--success fr-mt-2w'>
             <h3 className='fr-alert__title'>
-              La proposition de valeur actuelle a correctement été prise en compte, vous pouvez fermer cette
-              modale.
+              La proposition de valeur actuelle a correctement été prise en compte. Vous pouvez clore cette fenêtre.
             </h3>
             <span>
-              La proposition de valeur actuelle s'affichera dans le tableau des indicateurs dans une heure.
+              La proposition de valeur actuelle s’affichera dans le tableau des indicateurs dans une heure. Veuillez noter que dans cet intervalle, il n’est pas possible de faire une autre proposition pour cet indicateur.
             </span>
           </div>
         )
