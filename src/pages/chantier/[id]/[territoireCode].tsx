@@ -95,7 +95,8 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
   const territoireCodes = territoiresCompares.length > 0 ? [...territoiresCompares, territoireCode] : [territoireCode];
 
   try {
-    const [chantier,
+    const [
+      chantier,
       indicateurs,
       synthèseDesRésultats,
       commentaires,
@@ -121,8 +122,10 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
     ]);
 
     assert(valeurFFPpgArchive || chantier.statut !== 'ARCHIVE', 'La page n\'est pas disponible');
+    
+    const chantierTerritoireSélectionné = chantier?.mailles[territoireSélectionné?.maille ?? 'nationale'][territoireSélectionné?.codeInsee ?? 'FR'];
 
-    if (!chantier.estTerritorialisé && maille !== 'NAT') {
+    if (!chantierTerritoireSélectionné.estApplicable || (!chantier.estTerritorialisé && maille !== 'NAT')) {
       return {
         redirect: {
           destination: `/chantier/${chantierId}/NAT-FR`,
@@ -152,7 +155,6 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
           .filter((indPond): indPond is IndicateurPondération => indPond.pondération !== null && indPond.pondération !== '0')
       );
 
-    const chantierTerritoireSélectionné = chantier?.mailles[territoireSélectionné?.maille ?? 'nationale'][territoireSélectionné?.codeInsee ?? 'FR'];
     const listeResponsablesLocaux = chantierTerritoireSélectionné?.responsableLocal ?? [];
     const listeCoordinateursTerritorials = chantierTerritoireSélectionné?.coordinateurTerritorial ?? [];
 

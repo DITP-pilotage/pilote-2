@@ -37,6 +37,7 @@ export default function useCartographie() {
         libellé: données[territoire.codeInsee]?.libellé ?? '-', // TODO où gérer ce undefined ?
         contenuInfoBulle: données[territoire.codeInsee].contenu,
         estInteractif: territoire.accèsLecture,
+        estApplicable: données[territoire.codeInsee].estApplicable,
       })),
       frontières: frontièresÀTracer.map(frontière => ({
         code: frontière.code,

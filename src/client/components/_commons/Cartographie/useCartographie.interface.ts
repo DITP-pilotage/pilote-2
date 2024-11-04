@@ -13,6 +13,7 @@ export type CartographieTerritoire = {
   libellé: string,
   contenuInfoBulle: ReactNode
   estInteractif: boolean
+  estApplicable: boolean | null
 };
 
 export type CartographieTerritoireAffiché = {

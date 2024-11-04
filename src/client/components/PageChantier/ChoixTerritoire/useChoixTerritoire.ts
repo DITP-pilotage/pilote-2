@@ -22,6 +22,7 @@ export default function useChoixTerritoire(chantierId: string, mailleSélectionn
         contenu: undefined,
         remplissage: '#bababa',
         libellé: territoire.nomAffiché,
+        estApplicable: true,
       };
     });
 
