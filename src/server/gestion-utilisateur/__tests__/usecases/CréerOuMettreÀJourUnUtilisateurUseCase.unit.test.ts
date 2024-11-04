@@ -1,4 +1,5 @@
 import { mock } from 'jest-mock-extended';
+import { randomUUID } from 'node:crypto';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
@@ -115,6 +116,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
 
   async function testCasPassant(profilCode: ProfilCode, habilitationsAttendues: HabilitationsÀCréerOuMettreÀJourCalculées, saisieIndicateur: boolean, saisieCommentaire: boolean, gestionUtilisateur: boolean, territoiresCodes?: string[], chantiersIds?: string[], périmètresIds?: string[], chantiersIdsResponsabilite?: string[], profilGestionUtilisateur?: Profil['utilisateurs']) {
     //GIVEN
+    const auteurId = randomUUID();
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecSaisieCommentaire(saisieCommentaire).avecSaisieIndicateur(saisieIndicateur).avecGestionUtilisateur(gestionUtilisateur).avecProfil(profilCode).avecHabilitationsLecture(territoiresCodes, chantiersIds, périmètresIds).avecResponsabiliteChantiers(chantiersIdsResponsabilite).build();
     let profilBuilder = new ProfilBuilder().withCode(profilCode);
     if (profilGestionUtilisateur) {
@@ -123,10 +125,10 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     const profil = profilBuilder.build();
 
     //WHEN
-    await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto', false, habilitations, profil);
+    await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto', auteurId, false, habilitations, profil);
     
     //THEN
-    expect(stubUtilisateurRepository.créerOuMettreÀJour).toHaveBeenNthCalledWith(1, { ...utilisateur, habilitations: habilitationsAttendues }, 'toto');
+    expect(stubUtilisateurRepository.créerOuMettreÀJour).toHaveBeenNthCalledWith(1, { ...utilisateur, habilitations: habilitationsAttendues }, auteurId);
     expect(stubUtilisateurIAMRepository.ajouteUtilisateurs).toHaveBeenNthCalledWith(1, [{ nom: utilisateur.nom, prénom: utilisateur.prénom, email: utilisateur.email }]);
   }
 
@@ -139,7 +141,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
       const profil = new ProfilBuilder().build();
 
       //WHEN
-      await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto', false, habilitations, profil);
+      await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto', randomUUID(), false, habilitations, profil);
         
       //THEN
       expect(stubUtilisateurIAMRepository.ajouteUtilisateurs).toHaveBeenCalledTimes(0);

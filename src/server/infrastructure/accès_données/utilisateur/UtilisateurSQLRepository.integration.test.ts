@@ -18,8 +18,6 @@ describe('UtilisateurSQLRepository', () => {
       const randomUtilisateur = {
         nom: '',
         prenom: '',
-        auteur_modification: '',
-        auteur_creation: '',
         date_creation: new Date().toISOString(),
       };
 
@@ -99,8 +97,6 @@ describe('UtilisateurSQLRepository', () => {
       const randomUtilisateur = {
         nom: '',
         prenom: '',
-        auteur_modification: '',
-        auteur_creation: '',
         date_creation: new Date().toISOString(),
       };
 

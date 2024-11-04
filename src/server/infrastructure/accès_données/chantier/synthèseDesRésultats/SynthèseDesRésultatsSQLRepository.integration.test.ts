@@ -30,9 +30,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
           email: 'john.doe@test.com',
           nom: 'John',
           prenom: 'Doe',
-          auteur_modification: 'test',
           date_creation: new Date().toISOString(),
-          auteur_creation: 'test',
           profil: {
             connect: {
               code: ProfilEnum.DITP_ADMIN,
@@ -67,9 +65,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
           email: 'john.doe@test.com',
           nom: 'John',
           prenom: 'Doe',
-          auteur_modification: 'test',
           date_creation: new Date().toISOString(),
-          auteur_creation: 'test',
           profil: {
             connect: {
               code: ProfilEnum.DITP_ADMIN,
@@ -208,9 +204,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
           email: 'john.doe@test.com',
           nom: 'John',
           prenom: 'Doe',
-          auteur_modification: 'test',
           date_creation: new Date().toISOString(),
-          auteur_creation: 'test',
           profil: {
             connect: {
               code: ProfilEnum.DITP_ADMIN,
