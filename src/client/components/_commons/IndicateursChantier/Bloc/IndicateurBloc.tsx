@@ -324,7 +324,17 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                           {informationIndicateur.données.proposition.auteur}
                                         </p>
                                         <p>
+                                          <b>
+                                            Motif de la proposition
+                                          </b>
+                                        </p>
+                                        <p>
                                           {informationIndicateur.données.proposition.motif}
+                                        </p>
+                                        <p>
+                                          <b>
+                                            Source des données et méthode de calcul
+                                          </b>
                                         </p>
                                         <p>
                                           {informationIndicateur.données.proposition.sourceDonneeEtMethodeCalcul}
