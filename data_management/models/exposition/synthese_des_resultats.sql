@@ -9,6 +9,7 @@ SELECT
     COALESCE(maille, 'NAT') as maille, --TODO supprimer le coalesce car la maille est sensé etre renseignée
     COALESCE(code_insee, 'FR') as code_insee, --TODO supprimer le coalesce car le code_insee est sensé etre renseigné
     NULL::uuid as auteur_id,
+    auteur,
     COALESCE(meteo, 'NON_RENSEIGNEE') as meteo,
     date_meteo,
     contenu as commentaire,

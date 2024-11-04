@@ -5,6 +5,7 @@ SELECT
                  'date']
              ) }} as id,
     NULL::uuid as auteur_id,
+    auteur,
     type::type_decision_strategique,
     contenu,
     date,

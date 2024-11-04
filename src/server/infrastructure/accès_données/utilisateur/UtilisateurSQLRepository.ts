@@ -39,7 +39,7 @@ export const convertirEnModel = (utilisateurAConvertir: {
   dateModification: Date
   auteurIdCreation: string
   dateCreation: Date
-}): Omit<utilisateur, 'id'> => {
+}): Omit<utilisateur, 'id' | 'auteur_email_creation' | 'auteur_email_modification'> => {
   return {
     email: utilisateurAConvertir.email,
     nom: utilisateurAConvertir.nom,
@@ -62,7 +62,7 @@ export const convertirEnModelModification = (utilisateurAConvertir: {
   fonction: string | null
   auteurIdModification: string
   dateModification: Date
-}): Omit<utilisateur, 'id' | 'auteur_id_creation' | 'date_creation'> => {
+}): Omit<utilisateur, 'id' | 'auteur_id_creation' | 'date_creation' | 'auteur_email_creation' | 'auteur_email_modification'> => {
   return {
     email: utilisateurAConvertir.email,
     nom: utilisateurAConvertir.nom,

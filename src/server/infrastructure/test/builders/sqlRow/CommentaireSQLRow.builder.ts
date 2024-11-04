@@ -25,6 +25,8 @@ export default class CommentaireRowBuilder {
 
   private _codeInsee: commentaire['code_insee'] = '';
 
+  private _auteur: commentaire['auteur'];
+
   constructor() {
     const chantierGénéré = new ChantierBuilder().build();
     
@@ -33,6 +35,7 @@ export default class CommentaireRowBuilder {
     this._contenu = faker.lorem.paragraph();
     this._date = faker.date.recent(60, '2023-05-01T00:00:00.000Z');
     this._auteur_id = null;
+    this._auteur = null;
     this._type = faker.helpers.arrayElement([
       'actions_a_valoriser',
       'actions_a_venir',
@@ -121,6 +124,7 @@ export default class CommentaireRowBuilder {
       auteur_id: this._auteur_id,
       maille: this._maille,
       code_insee: this._codeInsee,
+      auteur: this._auteur,
     };
   }
 }

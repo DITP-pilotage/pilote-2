@@ -22,6 +22,8 @@ export default class SyntheseDesResultatsRowBuilder {
 
   private _auteur_id: synthese_des_resultats['auteur_id'];
 
+  private _auteur: synthese_des_resultats['auteur'];
+
   constructor(possèdeCommentaireEtMétéo = Math.random() < 0.95) {
     const maille = générerUneMailleAléatoire();
     const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
@@ -35,6 +37,7 @@ export default class SyntheseDesResultatsRowBuilder {
     this._météo = possèdeCommentaireEtMétéo ? new MétéoBuilder().build() : null;
     this._dateMétéo = possèdeCommentaireEtMétéo ? faker.date.recent(60, '2023-05-01T00:00:00.000Z') : null;
     this._auteur_id = null;
+    this._auteur = null;
   }
 
   avecId(id: synthese_des_resultats['id']): SyntheseDesResultatsRowBuilder {
@@ -96,6 +99,7 @@ export default class SyntheseDesResultatsRowBuilder {
       commentaire: this._commentaire,
       date_commentaire: this._dateCommentaire,
       auteur_id: this._auteur_id,
+      auteur: this._auteur,
     };
   }
 }
