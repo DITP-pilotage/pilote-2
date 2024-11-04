@@ -11,7 +11,7 @@ function déterminerValeurAffichée(valeur: number | null, valeurAnnuelle: numbe
   if (estApplicable === false) {
     return (
       <span className='fr-text--bold'>
-        Non applicabaaale
+        Non applicable
       </span>
     );
   }

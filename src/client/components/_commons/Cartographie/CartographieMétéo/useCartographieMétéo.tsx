@@ -60,6 +60,7 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
         ),
         remplissage: déterminerRemplissage(valeur, élémentsDeLégende, estApplicable),
         libellé: territoireGéographique.nomAffiché,
+        estApplicable,
       };
     });
 

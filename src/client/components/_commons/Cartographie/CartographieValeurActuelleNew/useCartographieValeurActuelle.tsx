@@ -21,7 +21,7 @@ function déterminerValeurAffichée(valeur: number | null, valeurCible: number |
   if (estApplicable === false) {
     return (
       <div className='fr-text--bold'>
-        Non applicabbbble
+        Non applicable
       </div>
     );
   }
