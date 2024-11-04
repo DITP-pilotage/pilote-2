@@ -1,6 +1,7 @@
-import { parseAsInteger, parseAsStringLiteral, useQueryState } from 'nuqs';
+import { parseAsBoolean, parseAsInteger, parseAsStringLiteral, useQueryState, useQueryStates } from 'nuqs';
 import { FunctionComponent } from 'react';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
+
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import useSélecteurVueStatut from './useSelecteurVueStatut.interface';
 import SelecteurVueStatutStyled from './SelecteurVueStatut.styled';
@@ -22,8 +23,30 @@ const SelecteurVueStatuts: FunctionComponent<{}> = () => {
     shallow: false,
   }));
 
+  const [, setFiltresAlertes] = useQueryStates({
+    estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
+    estEnAlerteÉcart: parseAsBoolean.withDefault(false),
+    estEnAlerteBaisse: parseAsBoolean.withDefault(false),
+    estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
+    estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
+  }, {
+    shallow: false,
+    clearOnDefault: true,
+    history: 'push',
+  });
+
   const auChangement = (vueStatuts: TypeVueStatuts) => {
     sauvegarderFiltres({ statut: vueStatuts });
+    
+    if (vueStatuts === 'ARCHIVE') {
+      setFiltresAlertes({ 
+        estEnAlerteAbscenceTauxAvancementDepartemental: false,
+        estEnAlerteBaisse: false,
+        estEnAlerteTauxAvancementNonCalculé: false,
+        estEnAlerteÉcart: false,
+        estEnAlerteMétéoNonRenseignée: false,
+      });
+    }
 
     setPagination(1);
     return setStatut(vueStatuts);

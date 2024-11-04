@@ -315,7 +315,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
           </div>
         </div>
         {
-          process.env.NEXT_PUBLIC_FF_ALERTES === 'true' &&
+          process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && !chantiersSontArchives &&
           <div className='fr-pt-3w fr-px-2w fr-px-md-0 alertes'>
             <div className='fr-mb-2w'>
               <TitreInfobulleConteneur>
