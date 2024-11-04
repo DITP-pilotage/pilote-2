@@ -19,15 +19,6 @@ npm run lint
 docker compose run --rm pilote_webapp npm run lint
 ```
 
-
-Utilisation de Docker pour gérer la webapp:
-
-```sh
-# Exécuter une commande npm
-# Reset de la db
-```
-
-
 # Scripts "daily"
 
 Voir [daily](./daily).
