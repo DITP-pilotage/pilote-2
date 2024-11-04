@@ -148,7 +148,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     valeur: territoire.répartition.avancements.global.moyenne,
     valeurAnnuelle: territoire.répartition.avancements.annuel.moyenne,
     codeInsee,
-    estApplicable: null,
+    estApplicable: true,
   }));
 
   const nombreTotalChantiersAvecAlertes = chantiersAvecAlertes.length;

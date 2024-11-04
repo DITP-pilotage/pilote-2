@@ -14,6 +14,7 @@ type CartographieDonnées = {
     contenu: ReactNode,
     remplissage: string,
     libellé: string
+    estApplicable: boolean | null
   }
 };
 
