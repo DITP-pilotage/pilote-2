@@ -1,12 +1,32 @@
 # Scripts webapp
 
+
 Pour réinitialiser la base de données avec prisma, exécuter
 
 ```sh
+# En local
 /bin/bash scripts/prisma_reset_and_migrate.sh
+# Via docker
+docker compose run --rm pilote_webapp /bin/bash scripts/prisma_reset_and_migrate.sh
 ```
 
-Pour les commandes avec Docker, voir [docker/](../docker).
+Les commandes `npm` (*lint, test, ...*) sont également éxécutables via Docker:
+
+```sh
+# En local
+npm run lint
+# Via docker
+docker compose run --rm pilote_webapp npm run lint
+```
+
+
+Utilisation de Docker pour gérer la webapp:
+
+```sh
+# Exécuter une commande npm
+# Reset de la db
+```
+
 
 # Scripts "daily"
 
