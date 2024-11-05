@@ -2,7 +2,7 @@ from sqlalchemy import text
 from jinja2 import Template
 
 def generateQueriesCreateSchema(schema_list):
-    CREATE_SCHEMA_SQL_PATH="load_ppg_metadata/queries/create_schema_x.sql"
+    CREATE_SCHEMA_SQL_PATH="load_static_files/queries/create_schema_x.sql"
 
     create_schema_queries=[]
     for schema_x in schema_list:
