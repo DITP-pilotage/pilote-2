@@ -19,7 +19,7 @@ const REMPLISSAGE_PAR_DÉFAUT = ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS.DÉFAUT
 
 
 function déterminerValeurAffichée(valeur: number | null, valeurCible: number | null, valeurCibleAnnuelle: number | null, estApplicable: boolean | null, unité?: string | null) {
-  const unitéAffichée = unité?.toLocaleLowerCase() === 'pourcentage' ? '%' : ''; 
+  const unitéAffichée = unité?.toLocaleLowerCase() === 'pourcentage' ? '%' : '';
   if (estApplicable === false) {
     return (
       <div className='fr-text--bold'>
@@ -80,7 +80,7 @@ export default function useCartographieValeurActuelle(données: CartographieDonn
   const valeurMax = useMemo(() => valeurMaximum(données.map(donnée => donnée.valeur)), [données]);
 
   const légendeAdditionnelle = useMemo(() => {
-    
+
     const tousApplicables: Boolean = données.every(d => d.estApplicable);
     const tousNonNull: Boolean = données.every(d => d.valeur !== null);
 
@@ -94,7 +94,7 @@ export default function useCartographieValeurActuelle(données: CartographieDonn
       légendeAffichée = légendeAffichée
         .filter(el => el.libellé !== 'Territoire pour lequel la donnée n’est pas renseignée/disponible');
     }
-    
+
     légendeAffichée = légendeAffichée.map(({ remplissage, libellé }) => ({
       libellé,
       remplissage,
@@ -114,13 +114,14 @@ export default function useCartographieValeurActuelle(données: CartographieDonn
 
   const donnéesCartographie = useMemo(() => {
     let donnéesFormatées: CartographieDonnées = {};
-    
+
     données.forEach(({ valeur, valeurCible, valeurCibleAnnuelle, codeInsee, estApplicable }) => {
       const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
       donnéesFormatées[codeInsee] = {
         contenu: déterminerValeurAffichée(valeur, valeurCible, valeurCibleAnnuelle, estApplicable, unité),
         remplissage: déterminerRemplissage(valeur, valeurMin, valeurMax, estApplicable),
         libellé: territoireGéographique.nomAffiché,
+        estApplicable,
       };
     });
 

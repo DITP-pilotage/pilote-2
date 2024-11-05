@@ -15,7 +15,7 @@ function déterminerValeurAffichée(valeur: number | null, valeurAnnuelle: numbe
       </span>
     );
   }
-  
+
   if (valeur === null) {
     return (
       <span className='fr-text--bold'>
@@ -48,7 +48,7 @@ function déterminerRemplissage(valeur: number | null, élémentsDeLégende: Car
   if (estApplicable === false) {
     return élémentsDeLégende.NON_APPLICABLE.remplissage;
   }
-  
+
   if (valeur === null)
     return élémentsDeLégende.DÉFAUT.remplissage;
 
@@ -71,7 +71,7 @@ export default function useCartographieAvancement(données: CartographieDonnées
   const { récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
 
   const légende = useMemo(() => {
-    
+
     const tousApplicables: Boolean = données.every(d => d.estApplicable !== false);
     const tousNonNull: Boolean = données.every(d => d.valeur !== null);
 
@@ -85,7 +85,7 @@ export default function useCartographieAvancement(données: CartographieDonnées
       légendeAffichée = légendeAffichée
         .filter(el => el.libellé !== 'Territoire pour lequel la donnée n’est pas renseignée/disponible');
     }
-    
+
     légendeAffichée = légendeAffichée.map(({ remplissage, libellé }) => ({
       libellé,
       remplissage,
@@ -105,6 +105,7 @@ export default function useCartographieAvancement(données: CartographieDonnées
         contenu: déterminerValeurAffichée(valeur, valeurAnnuelle, estApplicable),
         remplissage: déterminerRemplissage(valeur, élémentsDeLégende, estApplicable),
         libellé: territoireGéographique.nomAffiché,
+        estApplicable,
       };
     });
 
