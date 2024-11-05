@@ -354,6 +354,21 @@ model metadata_indicateurs_complementaire {
   @@schema("raw_data")
 }
 
+model commentaires {
+  chantier_id   String
+  maille        String
+  code_insee    String
+  date          String 
+  type          String
+  contenu       String?
+  meteo         String?
+  date_meteo    String?
+  auteur_email  String?
+
+  @@id([chantier_id, code_insee, maille, type, date])
+  @@schema("raw_data")
+}
+
 model mesure_indicateur_temporaire {
   id           String                           @id @db.Uuid
   indic_id     String?

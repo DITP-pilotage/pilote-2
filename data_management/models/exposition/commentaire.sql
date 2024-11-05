@@ -10,7 +10,14 @@ SELECT
     type,
     contenu,
     date,
-    NULL::uuid as auteur_id,
+    (
+        CASE 
+            WHEN (SELECT id FROM utilisateur WHERE email = auteur_email) IS NOT NULL THEN 
+                (SELECT id FROM utilisateur WHERE email = auteur_email)
+            ELSE 
+                (SELECT id FROM utilisateur WHERE email = 'import.csv@modernisation.gouv.fr')
+        END
+    )::uuid as auteur_id,
     auteur,
     COALESCE(maille, 'NAT') as maille, --TODO supprimer le coalesce car la maille est sensé etre renseignée
     COALESCE(code_insee, 'FR') as code_insee --TODO supprimer le coalesce car le code_insee est sensé etre renseigné
