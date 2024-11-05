@@ -20,22 +20,26 @@ const config = convict({
   logLevel: {
     format: String,
     default: 'info',
+    doc: 'Niveaux de logs possibles : trace, debug, info, warn, error, fatal, silent.',
     env: 'LOG_LEVEL',
   },
   databaseUrl: {
     format: String,
-    default: 'info',
+    default: 'ToBeDefined',
+    doc: 'URL de la db pour Prisma et cible pour la descente de prod.',
     env: 'DATABASE_URL',
   },
   devPassword: {
     format: String,
     default: '',
+    doc: 'MDP admin optionnel. Remplace complètement OIDC',
     env: 'DEV_PASSWORD',
   },
   nextAuth: {
     secret: {
       format: String,
       default: 'next_auth_secret',
+      doc: 'Peut être généré par `openssl rand -base64 32`',
       env: 'NEXTAUTH_SECRET',
     },
     url: {
@@ -55,6 +59,7 @@ const config = convict({
     },
   },
   keycloak: {
+    doc: '(optionel) Pour se connecter par une instance Keycloak. Incompatible avec DEV_PASSWORD',
     clientId: {
       format: String,
       default: 'ToBeDefined',
@@ -87,6 +92,7 @@ const config = convict({
     keycloakUrl: {
       format: String,
       default: 'ToBeDefined',
+      doc: '(optionnel) Import d utilisateurs dans Keycloak',
       env: 'IMPORT_KEYCLOAK_URL',
     },
     clientId: {
@@ -122,9 +128,22 @@ const config = convict({
     default: '',
     env: 'WEBAPP_BASE_URL',
   },
+  descenteDeProdSource: {
+    format: String,
+    default: 'postgres://usr:pwd@host:port/db_name',
+    doc: 'URL de la db de prod',
+    env: 'CONN_STR_PROD',
+  },
+  descenteDeProdDestination: {
+    format: String,
+    default: 'postgres://usr:pwd@host:port/db_name',
+    doc: 'URL de la db sur laquelle copier les données de prod',
+    env: 'CONN_STR_DEST',
+  },
   centreaide: {
     githubFolder: {
       format: String,
+      doc: 'Dossier du centre d aide à récupérer',
       default: 'integration-pilote',
       env: 'CENTREAIDE_GITHUB_FOLDER',
     },
@@ -237,6 +256,7 @@ const config = convict({
     },
   },
   analytics: {
+    doc: 'Matomo Analytics',
     matomoURL: {
       format: String,
       default: 'https://stats.beta.gouv.fr',
