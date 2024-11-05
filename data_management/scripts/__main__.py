@@ -10,13 +10,11 @@ Exemple d'utilisation :
 $  python3 scripts/__main__.py
 """
 
-# Environnement d'exécution. Il peut être forcé avec l'env var FORCE_ENVIRONMENT_DATAJOBS
-SELECTED_ENV = os.environ.get('FORCE_ENVIRONMENT_DATAJOBS') or os.environ.get('ENVIRONMENT')
 # Message d'erreur généré en cas de  problème lors de l'exécution des jobs
 ERROR_MSG = "\n".join([
     f"## ⚠️  Erreur lors de l'exécution des transformations de données",
     f"Veuillez regarder les logs pour en savoir plus :\n",
-    f"- [Logs de {SELECTED_ENV}]({os.environ.get('SCALINGO_LOGS_URL')})"
+    f"- [Logs de {os.environ.get('ENVIRONMENT')}]({os.environ.get('SCALINGO_LOGS_URL')})"
 ])
 
 # Exécution de tous les jobs seulement si FULL_DJ==true
