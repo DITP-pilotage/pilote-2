@@ -96,9 +96,19 @@ npm run lint
 
 ## Lancer l'application en mode production
 
-TODO
+Avec Docker:
 
 ```sh
+# [docker]
+docker compose -f docker-compose.prod.yml build
+docker compose -f docker-compose.prod.yml up
+# puis visiter http://localhost:8686
+```
+
+En local:
+
+```sh
+# [local]
 npm run build
 npm run start
 ```

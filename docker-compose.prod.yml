@@ -1,0 +1,9 @@
+services:
+  pilote_webapp_prod:
+    build: 
+      dockerfile: docker/Dockerfile.webapp.prod
+      context: .
+    ports: [ "8686:3000" ]
+    env_file:
+      - .env.prod
+    tty: true

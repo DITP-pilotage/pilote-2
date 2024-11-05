@@ -5,3 +5,4 @@ data_management/target/
 data_management/logs/
 data_management/dbt_packages/
 
+node_modules/
