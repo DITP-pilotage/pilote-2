@@ -6,7 +6,7 @@ Ce répertoire administre les pipelines d'import, de chargement et transformatio
 
 La mise à jour des données de la datafactory se fait automatiquement vie l'exécution du script `scripts/run_datajobs.sh`. La fréquence de mise à jour est définie par le job cron de l'app Scalingo (exemple [pour la dev](https://dashboard.scalingo.com/apps/osc-secnum-fr1/dev-datajobs/resources)).
 
-Les modèles de données *dbt* sont dans le dossier [data_factory/models/](data_factory/models/). La doc *dbt* est générée via `scripts/doc_dbt.sh`.
+Les modèles de données *dbt* sont dans le dossier [models/](models/). La doc *dbt* est générée via `scripts/doc_dbt.sh`.
 
 ## Avant de démarrer
 
@@ -39,7 +39,7 @@ pipenv update
 
 # [Excécution commandes]
 # Exécuter une commande dans l'environnement
-pipenv run dbt compile --project-dir data_factory --select model_1
+pipenv run dbt compile --select model_1
 # Exécuter des commandes interactivement dans l'environnement
 pipenv shell
 ```
@@ -50,9 +50,9 @@ Utilisation des [commandes dbt](https://docs.getdbt.com/reference/dbt-commands):
 
 ```sh
 # Mise à jour des dépendances
-dbt deps --project-dir data_factory
+dbt deps
 # Exécution d'un modèle
-dbt run --project-dir data_factory --select model_1
+dbt run --select model_1
 ```
 
 ### [docker-conf] Installation
@@ -181,7 +181,7 @@ Toujours depuis le répertoire data_management :
 bash scripts/3_fill_tables_import_massif_commentaires.sh
 ```
 
-Si vous rencontrez un problème, pensez à supprimer le dossier target généré par DBT dans le dossier `data_factory`.
+Si vous rencontrez un problème, pensez à supprimer le dossier target généré par DBT dans le dossier `data_management`.
 
 NB: après avoir importé les données, coupez le tunnel et changez vos variables d'environnement.
 
@@ -204,7 +204,7 @@ Les transformations des mesures des indicateurs en taux d'avancement d'indicateu
 `models/marts`.
 
 ```
-data_factory/models/
+models/
 └── marts
     ├── 0_faits_indicateur_avec_hypotheses
     ├── 1_agregation_geographique
@@ -276,7 +276,7 @@ Afin d'exécuter les jobs de la data factory, il suffit de :
 
 ### Tests sur les données
 
-Des tests sur les données ont été implémentés. Ils sont situés dans le dossier [data_factory/tests](./data_factory/tests). Pour les exécuter, utiliser le script `scripts/test_data.sh` ou via Docker: 
+Des tests sur les données ont été implémentés. Ils sont situés dans le dossier [tests](./tests). Pour les exécuter, utiliser le script `scripts/test_data.sh` ou via Docker: 
 
 ```sh
 docker-compose run pilote_scripts scripts/test_data.sh
@@ -341,7 +341,7 @@ Il est possible d'y avoir accès en exécutant la commande suivante :
 
 ```bash
 source .env
-dbt docs generate --project-dir data_factory/  && dbt docs serve --project-dir data_factory/
+dbt docs generate && dbt docs serve
 ```
 
 Cette ligne de commande ouvrira une interface web avec laquelle vous pourrez interagir. 
@@ -352,7 +352,7 @@ Ou via Docker, puis à l'adresse `pilote-dbt.localhost` (voir la section [Instal
 ### Zoom sur une brique du flux
 
 Dans le lineage graph (ou DAG) affiché sur l'interface web générée par DBT, il est possible de sélectionner une partie du graphe.
-En bas dans la case `--select`, vous pouvez écrire par exemple `marts` afin de visualiser le flux à l'intérieur du répertoire `data_factory/models/marts`.
+En bas dans la case `--select`, vous pouvez écrire par exemple `marts` afin de visualiser le flux à l'intérieur du répertoire `models/marts`.
 Afin de voir les étapes qui précèdent et sont nécessaires à l'exécution du `marts` il suffit d'écrire `+marts`.
 De même, pour les étapes qui succèdent, on peut écrire `marts+`.
 

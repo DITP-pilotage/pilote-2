@@ -1,0 +1,7 @@
+ARG NODE_VERSION=18.20.2
+
+FROM node:$NODE_VERSION
+
+WORKDIR /app
+
+CMD ["/bin/bash", "docker/entrypoint.webapp.dev.sh"]
