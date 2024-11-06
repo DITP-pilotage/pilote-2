@@ -18,7 +18,7 @@ echo ">> Run dbt command"
 docker compose run --rm pilote_dbt dbt run --select barometre
 echo ">> Run descente de prod"
 cd ..
-docker compose run --rm pilote_datajobs scripts/descente_de_prod_partielle.sh
+docker compose run --rm ddp bash docker/entrypoint.ddp.sh
 echo ">> Run dj prod"
 cd data_management
 FULL_DJ=false docker compose run --rm -e FULL_DJ pilote_datajobs

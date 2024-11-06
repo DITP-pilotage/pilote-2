@@ -29,6 +29,17 @@ services:
     volumes: 
       - db_dbt_pilote:/var/lib/postgresql/data
 
+  ddp:
+    command: "echo 'SKIP descente de prod'"
+    build:
+      dockerfile: docker/Dockerfile.ddp
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - ./scripts:/app/scripts
+      - ./docker:/app/docker
+
   postgres_test:
     hostname: postgres_test
     container_name: pilote_postgres_test
