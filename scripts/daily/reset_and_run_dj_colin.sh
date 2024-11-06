@@ -8,7 +8,6 @@
 # Warn: only with docker commands
 # You can dupplicate this file and modify it to fit your local env (example: use docker only for data operations)
 
-
 echo ">> Reset db"
 docker compose run --rm pilote_webapp bash scripts/prisma_reset_migrate_seed.sh
 cd data_management
@@ -23,7 +22,6 @@ echo ">> Run descente de prod"
 cd ..
 docker compose run --rm ddp bash docker/entrypoint.ddp.sh
 echo ">> Run dj prod"
-cd data_management
 FULL_DJ=false docker compose run --rm -e FULL_DJ pilote_datajobs
 echo ">> Restart db + webapp"
 cd ..
