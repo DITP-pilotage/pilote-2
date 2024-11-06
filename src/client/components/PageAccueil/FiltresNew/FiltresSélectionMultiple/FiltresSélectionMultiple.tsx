@@ -1,4 +1,4 @@
-import { parseAsString, useQueryState } from 'nuqs';
+import { parseAsInteger, parseAsString, useQueryState } from 'nuqs';
 import { FunctionComponent } from 'react';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import Axe from '@/server/domain/axe/Axe.interface';
@@ -20,6 +20,10 @@ const FiltresSélectionMultiple: FunctionComponent<FiltresSélectionMultipleProp
     shallow: false,
     clearOnDefault: true,
     history: 'push',
+  }));
+
+  const [, setPagination] = useQueryState('pageIndex', parseAsInteger.withDefault(1).withOptions({
+    shallow: false,
   }));
 
   return (
@@ -55,6 +59,7 @@ const FiltresSélectionMultiple: FunctionComponent<FiltresSélectionMultipleProp
                     arrFiltresNew.push(filtre.id);
                   }
                   sauvegarderFiltres({ axes: arrFiltresNew });
+                  setPagination(1);
                   return setListeFiltresNew(arrFiltresNew.join(','));
                 }}
                 type='button'

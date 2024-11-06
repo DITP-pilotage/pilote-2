@@ -8,18 +8,14 @@ import {
   presenterEnMetadataParametrageIndicateurContrat,
 } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
 import PageIndicateur from '@/components/PageIndicateur/PageIndicateur';
-import RécupérerUnIndicateurUseCase from '@/server/parametrage-indicateur/usecases/RécupérerUnIndicateurUseCase';
-import RécupérerInformationMetadataIndicateurUseCase
-  from '@/server/parametrage-indicateur/usecases/RécupérerInformationMetadataIndicateurUseCase';
 import {
   MapInformationMetadataIndicateurContrat,
   presenterEnMapInformationMetadataIndicateurContrat,
 } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
-import InitialiserNouvelIndicateurUseCase
-  from '@/server/parametrage-indicateur/usecases/InitialiserNouvelIndicateurUseCase';
 import RécupérerChantiersSynthétisésUseCase from '@/server/usecase/chantier/RécupérerChantiersSynthétisésUseCase';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
+import { getContainer } from '@/server/dependances';
 
 export interface NextPageAdminUtilisateurProps {
   indicateur: MetadataParametrageIndicateurContrat,
@@ -53,9 +49,9 @@ export async function getServerSideProps({ req, res, params, query }: GetServerS
   let modificationReussie = query._action === 'modification-reussie';
   let estUneCréation = query._action === 'creer-indicateur';
   if (estUneCréation) {
-    indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await new InitialiserNouvelIndicateurUseCase(dependencies.getInformationMetadataIndicateurRepository()).run(params.id));
+    indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await getContainer('parametrageIndicateur').resolve('initialiserNouvelIndicateurUseCase').run(params.id));
   } else {
-    indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await new RécupérerUnIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository()).run(params.id));
+    indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await getContainer('parametrageIndicateur').resolve('récupérerUnIndicateurUseCase').run(params.id));
     if (!indicateurDemandé) {
       return redirigerVersPageAccueil;
     }
@@ -64,7 +60,7 @@ export async function getServerSideProps({ req, res, params, query }: GetServerS
   const récupérerChantiersSynthétisésUseCase = new RécupérerChantiersSynthétisésUseCase(dependencies.getChantierRepository());
   const chantiers = await récupérerChantiersSynthétisésUseCase.run(session.habilitations);
 
-  const mapInformationMetadataIndicateur = presenterEnMapInformationMetadataIndicateurContrat(new RécupérerInformationMetadataIndicateurUseCase(dependencies.getInformationMetadataIndicateurRepository()).run());
+  const mapInformationMetadataIndicateur = presenterEnMapInformationMetadataIndicateurContrat(getContainer('parametrageIndicateur').resolve('récupérerInformationMetadataIndicateurUseCase').run());
 
   return {
     props: {

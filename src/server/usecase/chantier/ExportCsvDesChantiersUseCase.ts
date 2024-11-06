@@ -80,7 +80,6 @@ export class ExportCsvDesChantiersUseCase {
     return this.masquerPourProfilDROM(profil, chantier.périmètreIds) && chantier.maille === 'NAT';
   }
 
-  // eslint-disable-next-line sonarjs/cognitive-complexity
   private transformer(chantierPourExport: ChantierPourExport, profil: ProfilCode): string[] {
     const donnees = [
       chantierPourExport.maille || NON_APPLICABLE,

@@ -62,6 +62,9 @@ export class RécupérerVariableContenuUseCase {
       case 'NEXT_PUBLIC_FF_DOCS_API': {
         return configuration.featureFlip.docsAPI as VariableContenuDisponibleEnv[T];
       }
+      case 'NEXT_PUBLIC_FF_PPG_ARCHIVE': {
+        return configuration.featureFlip.ppgArchive as VariableContenuDisponibleEnv[T];
+      }
       case 'NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR': {
         return configuration.featureFlip.PoserUneQuestionIndicateur as VariableContenuDisponibleEnv[T];
       }

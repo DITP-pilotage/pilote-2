@@ -18,7 +18,7 @@ const TypologiesPictos: FunctionComponent<TypologiesPictosProps> = ({ typologies
   }
 
   return (
-    <TypologiesPictosStyled className='flex fr-m-0 fr-p-0'>
+    <TypologiesPictosStyled className='flex fr-m-0 fr-p-0 icônes'>
       <li className='fr-mr-1v'>
         {
           typologies.estBaromètre ? (

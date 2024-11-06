@@ -5,6 +5,7 @@ import {
 
 interface TableauRéformesMétéoStyledProps {
   taille: TableauChantiersMétéoTaille;
+  estArchive?: boolean 
 }
 
 const hauteurMétéoPictoÀPartirDeLaTaille = {
@@ -22,6 +23,7 @@ const TableauRéformesMétéoStyled = styled.div<TableauRéformesMétéoStyledPr
   .météo-picto {
     width: auto;
     height: ${({ taille }) => hauteurMétéoPictoÀPartirDeLaTaille[taille]};
+    filter: ${({ estArchive }) => estArchive ? 'grayscale(100%)' : undefined};
   }
 `;
 

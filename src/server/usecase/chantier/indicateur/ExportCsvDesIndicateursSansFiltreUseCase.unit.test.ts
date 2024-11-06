@@ -25,6 +25,7 @@ const optionsExport: OptionsExport = {
   estTerritorialise: false,
   estBarometre: false,
   listeStatuts: [],
+  listeChantierId: [],
 };
 
 describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {

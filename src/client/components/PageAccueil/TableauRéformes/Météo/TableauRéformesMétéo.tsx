@@ -9,6 +9,7 @@ interface TableauChantiersMétéoProps {
   météo: Météo;
   dateDeMàjDonnéesQualitatives?: string | null;
   taille?: TableauChantiersMétéoTaille;
+  chantiersSontArchives?: boolean;
 }
 
 const libelléMétéosÀPartirDeLaTaille = {
@@ -22,9 +23,12 @@ const libelléMétéosÀPartirDeLaTaille = {
   },
 };
 
-const TableauRéformesMétéo: FunctionComponent<TableauChantiersMétéoProps> = ({ météo, dateDeMàjDonnéesQualitatives, taille = 'md' }) => {
+const TableauRéformesMétéo: FunctionComponent<TableauChantiersMétéoProps> = ({ météo, dateDeMàjDonnéesQualitatives, taille = 'md', chantiersSontArchives }) => {
   return (
-    <TableauRéformesMétéoStyled taille={taille}>
+    <TableauRéformesMétéoStyled 
+      estArchive={chantiersSontArchives}
+      taille={taille}
+    >
       {
         météo !== 'NON_NECESSAIRE' && météo !== 'NON_RENSEIGNEE'
           ?

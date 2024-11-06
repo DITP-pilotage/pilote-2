@@ -12,3 +12,10 @@ export const validationPropositionValeurActuelle =
     indicId: z.string(),
     territoireCode: z.string(),
   });
+
+export const validationSuppressionValeurActuelle =
+  z.object({
+    auteurModification: z.string(),
+    indicId: z.string(),
+    territoireCode: z.string(),
+  });

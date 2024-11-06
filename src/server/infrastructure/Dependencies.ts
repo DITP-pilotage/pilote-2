@@ -13,19 +13,10 @@ import {
 } from '@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
 import AxeRepository from '@/server/domain/axe/AxeRepository.interface';
 import AxeSQLRepository from '@/server/infrastructure/accès_données/axe/AxeSQLRepository';
-import PpgRepository from '@/server/domain/ppg/PpgRepository.interface';
-import PpgSQLRepository from '@/server/infrastructure/accès_données/ppg/PpgSQLRepository';
 import CommentaireRepository from '@/server/domain/chantier/commentaire/CommentaireRepository.interface';
 import CommentaireSQLRepository
   from '@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository';
 import ObjectifRepository from '@/server/domain/chantier/objectif/ObjectifRepository.interface';
-import {
-  ValidataFichierIndicateurValidationService,
-} from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
-import { FetchHttpClient } from '@/server/import-indicateur/infrastructure/adapters/FetchHttpClient';
-import {
-  PrismaMesureIndicateurTemporaireRepository,
-} from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurTemporaireRepository';
 import DécisionStratégiqueRepository
   from '@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
@@ -73,24 +64,9 @@ import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructu
 import ObjectifProjetStructurantRepository
   from '@/server/domain/projetStructurant/objectif/ObjectifRepository.interface';
 import ProjetStructurantRepository from '@/server/domain/projetStructurant/ProjetStructurantRepository.interface';
-import {
-  VerifierFichierIndicateurImporteUseCase,
-} from '@/server/import-indicateur/usecases/VerifierFichierIndicateurImporteUseCase';
 import { RapportRepository } from '@/server/import-indicateur/domain/ports/RapportRepository';
-import {
-  PrismaMesureIndicateurRepository,
-} from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurRepository';
-import {
-  MesureIndicateurTemporaireRepository,
-} from '@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface';
-import {
-  MesureIndicateurRepository,
-} from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface';
 import CommentaireProjetStructurantRepository
   from '@/server/domain/projetStructurant/commentaire/CommentaireRepository.interface';
-import {
-  PublierFichierIndicateurImporteUseCase,
-} from '@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase';
 import PérimètreMinistérielRepository
   from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
 import {
@@ -105,15 +81,6 @@ import IndicateurProjetStructurantRepository
   from '@/server/domain/indicateur/IndicateurProjetStructurantRepository.interface';
 import ProfilSQLRepository from '@/server/infrastructure/accès_données/profil/ProfilSQLRepository';
 import ProfilRepository from '@/server/domain/profil/ProfilRepository';
-import ChantierDateDeMàjMeteoRepository from '@/server/domain/chantier/ChantierDateDeMàjMeteoRepository.interface';
-import ChantierDateDeMàjMeteoSQLRepository
-  from '@/server/infrastructure/accès_données/chantier/ChantierDateDeMàjMeteoSQLRepository';
-import {
-  ErreurValidationFichierRepository,
-} from '@/server/import-indicateur/domain/ports/ErreurValidationFichierRepository';
-import {
-  PrismaErreurValidationFichierRepository,
-} from '@/server/import-indicateur/infrastructure/adapters/PrismaErreurValidationFichierRepository';
 import {
   PrismaIndicateurRepository,
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaIndicateurRepository';
@@ -124,25 +91,11 @@ import {
   IndicateurRepository as ChantierIndicateurRepository,
 } from '@/server/chantiers/domain/ports/IndicateurRepository';
 import {
-  PrismaMetadataParametrageIndicateurRepository,
-} from '@/server/parametrage-indicateur/infrastructure/adapters/PrismaMetadataParametrageIndicateurRepository';
-import {
-  MetadataParametrageIndicateurRepository,
-} from '@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository';
-import {
-  YamlInformationMetadataIndicateurRepository,
-} from '@/server/parametrage-indicateur/infrastructure/adapters/YamlInformationMetadataIndicateurRepository';
-import {
-  InformationMetadataIndicateurRepository,
-} from '@/server/parametrage-indicateur/domain/ports/InformationMetadataIndicateurRepository';
-import {
-  HistorisationModificationSQLRepository,
-} from '@/server/infrastructure/accès_données/historisationModification/HistorisationModificationSQLRepository';
+  PrismaHistorisationModificationRepository,
+} from '@/server/infrastructure/accès_données/historisationModification/PrismaHistorisationModificationRepository';
 import {
   HistorisationModificationRepository,
 } from '@/server/domain/historisationModification/HistorisationModificationRepository';
-import ImportMasseMetadataIndicateurUseCase
-  from '@/server/parametrage-indicateur/usecases/ImportMasseMetadataIndicateurUseCase';
 import { GestionContenuRepository } from '@/server/gestion-contenu/domain/ports/GestionContenuRepository';
 import {
   PrismaGestionContenuRepository,
@@ -217,11 +170,7 @@ const globalForPrisma = globalThis as unknown as {
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
 
-  private readonly _chantierDateDeMàjMeteoRepository: ChantierDateDeMàjMeteoRepository;
-
   private readonly _axeRepository: AxeRepository;
-
-  private readonly _ppgRepository: PpgRepository;
 
   private readonly _synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
 
@@ -234,10 +183,6 @@ class Dependencies {
   private readonly _objectifRepository: ObjectifRepository;
 
   private readonly _décisionStratégiqueRepository: DécisionStratégiqueRepository;
-
-  private readonly _publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase;
-
-  private readonly _verifierFichierIndicateurImporteUseCase: VerifierFichierIndicateurImporteUseCase;
 
   private readonly _utilisateurRepository: UtilisateurRepository;
 
@@ -279,12 +224,6 @@ class Dependencies {
 
   private readonly _rapportRepository: RapportRepository;
 
-  private readonly _mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
-
-  private readonly _erreurValidationFichierRepository: ErreurValidationFichierRepository;
-
-  private readonly _mesureIndicateurRepository: MesureIndicateurRepository;
-
   private readonly _commentaireProjetStructurantRepository: CommentaireProjetStructurantRepository;
 
   private readonly _périmètreMinistérielRepository: PérimètreMinistérielRepository;
@@ -295,15 +234,9 @@ class Dependencies {
 
   private readonly _importIndicateurRepository: ImportIndicateurRepository;
 
-  private readonly _metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
-
-  private readonly _informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository;
-
   private readonly _historisationModification: HistorisationModificationRepository;
 
   private readonly _gestionContenuRepository: GestionContenuRepository;
-
-  private readonly _importMasseMetadataIndicateurUseCase: ImportMasseMetadataIndicateurUseCase;
 
   private readonly _tokenAPIService: TokenAPIService;
 
@@ -318,16 +251,14 @@ class Dependencies {
     }
 
     this._chantierRepository = new ChantierSQLRepository(prisma);
-    this._chantierDateDeMàjMeteoRepository = new ChantierDateDeMàjMeteoSQLRepository(prisma);
     this._axeRepository = new AxeSQLRepository(prisma);
-    this._ppgRepository = new PpgSQLRepository(prisma);
     this._ministèreRepository = new MinistèreSQLRepository(prisma);
     this._indicateurRepository = new IndicateurSQLRepository(prisma);
     this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
     this._commentaireRepository = new CommentaireSQLRepository(prisma);
     this._objectifRepository = new ObjectifSQLRepository(prisma);
     this._décisionStratégiqueRepository = new DécisionStratégiqueSQLRepository(prisma);
-    this._utilisateurRepository = new UtilisateurSQLRepository(prisma);
+    this._utilisateurRepository = new UtilisateurSQLRepository();
     this._authentificationUtilisateurRepository = new PrismaUtilisateurRepository(prisma);
     this._authentificationProfilRepository = new PrismaProfilRepository(prisma);
     this._territoireRepository = new TerritoireSQLRepository(prisma);
@@ -346,48 +277,17 @@ class Dependencies {
     this._projetStructurantRepository = new ProjetStructurantSQLRepository(prisma);
     this._profilRepository = new ProfilSQLRepository(prisma);
     this._objectifProjetStructurantRepository = new ObjectifProjetStructurantSQLRepository(prisma);
-    this._rapportRepository = new PrismaRapportRepository(prisma);
-    this._mesureIndicateurTemporaireRepository = new PrismaMesureIndicateurTemporaireRepository(prisma);
-    this._erreurValidationFichierRepository = new PrismaErreurValidationFichierRepository(prisma);
-    this._mesureIndicateurRepository = new PrismaMesureIndicateurRepository(prisma);
+    this._rapportRepository = new PrismaRapportRepository();
     this._commentaireProjetStructurantRepository = new CommentaireProjetStructurantSQLRepository(prisma);
     this._périmètreMinistérielRepository = new PérimètreMinistérielSQLRepository(prisma);
     this._synthèseDesRésultatsProjetStructurantRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository(prisma);
     this._indicateurProjetStructurantRepository = new IndicateurProjetStructurantSQLRepository(prisma);
-    this._importIndicateurRepository = new PrismaIndicateurRepository(prisma);
-    this._metadataParametrageIndicateurRepository = new PrismaMetadataParametrageIndicateurRepository(prisma);
-    this._informationMetadataIndicateurRepository = new YamlInformationMetadataIndicateurRepository();
-    this._historisationModification = new HistorisationModificationSQLRepository(prisma);
+    this._importIndicateurRepository = new PrismaIndicateurRepository();
+    this._historisationModification = new PrismaHistorisationModificationRepository();
     this._gestionContenuRepository = new PrismaGestionContenuRepository(prisma);
     this._tokenAPIService = new TokenAPIJWTService({ secret: configuration.tokenAPI.secret });
     this._tokenAPIInformationRepository = new PrismaTokenAPIInformationRepository(prisma);
     this._propositionValeurActuelleRepository = new PrismaPropositionValeurActuelleRepository(prisma);
-
-    const httpClient = new FetchHttpClient();
-    const fichierIndicateurValidationService = new ValidataFichierIndicateurValidationService({ httpClient });
-
-    this._publierFichierIndicateurImporteUseCase = new PublierFichierIndicateurImporteUseCase({
-      mesureIndicateurRepository: this._mesureIndicateurRepository,
-      mesureIndicateurTemporaireRepository: this._mesureIndicateurTemporaireRepository,
-      rapportRepository: this._rapportRepository,
-    });
-
-    this._verifierFichierIndicateurImporteUseCase = new VerifierFichierIndicateurImporteUseCase({
-      fichierIndicateurValidationService,
-      rapportRepository: this._rapportRepository,
-      mesureIndicateurTemporaireRepository: this._mesureIndicateurTemporaireRepository,
-      indicateurRepository: this._importIndicateurRepository,
-      erreurValidationFichierRepository: this._erreurValidationFichierRepository,
-    });
-
-    this._importMasseMetadataIndicateurUseCase = new ImportMasseMetadataIndicateurUseCase({
-      metadataParametrageIndicateurRepository: this._metadataParametrageIndicateurRepository,
-    });
-  }
-
-
-  getImportMasseMetadataIndicateurUseCase(): ImportMasseMetadataIndicateurUseCase {
-    return this._importMasseMetadataIndicateurUseCase;
   }
 
   getGestionContenuRepository(): GestionContenuRepository {
@@ -402,16 +302,8 @@ class Dependencies {
     return this._chantierRepository;
   }
 
-  getChantierDateDeMàjMeteoRepository(): ChantierDateDeMàjMeteoRepository {
-    return this._chantierDateDeMàjMeteoRepository;
-  }
-
   getAxeRepository(): AxeRepository {
     return this._axeRepository;
-  }
-
-  getPpgRepository(): PpgRepository {
-    return this._ppgRepository;
   }
 
   getSynthèseDesRésultatsRepository(): SynthèseDesRésultatsRepository {
@@ -442,32 +334,8 @@ class Dependencies {
     return this._importIndicateurRepository;
   }
 
-  getMetadataParametrageIndicateurRepository(): MetadataParametrageIndicateurRepository {
-    return this._metadataParametrageIndicateurRepository;
-  }
-
   getRapportRepository(): RapportRepository {
     return this._rapportRepository;
-  }
-
-  getMesureIndicateurTemporaireRepository(): MesureIndicateurTemporaireRepository {
-    return this._mesureIndicateurTemporaireRepository;
-  }
-
-  getMesureIndicateurRepository(): MesureIndicateurRepository {
-    return this._mesureIndicateurRepository;
-  }
-
-  getInformationMetadataIndicateurRepository(): InformationMetadataIndicateurRepository {
-    return this._informationMetadataIndicateurRepository;
-  }
-
-  getPublierFichierIndicateurImporteUseCase(): PublierFichierIndicateurImporteUseCase {
-    return this._publierFichierIndicateurImporteUseCase;
-  }
-
-  getVerifierFichierIndicateurImporteUseCase(): VerifierFichierIndicateurImporteUseCase {
-    return this._verifierFichierIndicateurImporteUseCase;
   }
 
   getUtilisateurRepository() {

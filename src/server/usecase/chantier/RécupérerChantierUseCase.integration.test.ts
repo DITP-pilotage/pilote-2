@@ -7,7 +7,6 @@ import MinistèreSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRo
 import PérimètreMinistérielSQLRowBuilder
   from '@/server/infrastructure/test/builders/sqlRow/PérimètreMinistérielSQLRow.builder';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDateDeMàjMeteoRepository.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
@@ -16,16 +15,14 @@ import { ProfilEnum } from '@/server/app/enum/profil.enum';
 describe('RécupérerChantierUseCase', () => {
   let récupérerChantierUseCase: RécupérerChantierUseCase;
   let chantierRepository: ChantierRepository;
-  let chantierDatesDeMàjRepository: ChantierDatesDeMàjRepository;
   let ministèreRepository: MinistèreRepository;
   let territoireRepository: TerritoireRepository;
 
   beforeEach(() => {
     chantierRepository = dependencies.getChantierRepository();
-    chantierDatesDeMàjRepository = dependencies.getChantierDateDeMàjMeteoRepository();
     ministèreRepository = dependencies.getMinistèreRepository();
     territoireRepository = dependencies.getTerritoireRepository();
-    récupérerChantierUseCase = new RécupérerChantierUseCase(chantierRepository, chantierDatesDeMàjRepository, ministèreRepository, territoireRepository);
+    récupérerChantierUseCase = new RécupérerChantierUseCase(chantierRepository, ministèreRepository, territoireRepository);
   });
 
 
@@ -211,75 +208,6 @@ describe('RécupérerChantierUseCase', () => {
 
     // THEN
     expect(result.estBaromètre).toBe(true);
-  });
-
-  test("Contient l'écart entre avec le taux d'avancement du territoire et la médiane à la maille du territoire", async () => {
-    // GIVEN
-    const chantierId = 'CH-001';
-
-    await prisma.chantier.createMany({
-      data: [
-        new ChantierSQLRowBuilder()
-          .avecId(chantierId).avecMaille('NAT').avecTauxAvancement(75).build(),
-        new ChantierSQLRowBuilder()
-          .avecId(chantierId).avecMaille('REG').avecCodeInsee('01').avecTauxAvancement(80).build(),
-        new ChantierSQLRowBuilder()
-          .avecId(chantierId).avecMaille('REG').avecCodeInsee('02').avecTauxAvancement(null).build(),
-        new ChantierSQLRowBuilder()
-          .avecId(chantierId).avecMaille('REG').avecCodeInsee('03').avecTauxAvancement(10).build(),
-        new ChantierSQLRowBuilder()
-          .avecId(chantierId).avecMaille('REG').avecCodeInsee('04').avecTauxAvancement(50).build(),
-      ],
-    });
-
-    const habilitation = { lecture: {
-      chantiers: ['CH-001'],
-      territoires: ['NAT-FR', 'REG-01', 'REG-02', 'REG-03', 'REG-04'],
-    } } as unknown as Utilisateur['habilitations'];
-
-    // WHEN
-    const result = await récupérerChantierUseCase.run(chantierId, habilitation, profil);
-
-    // THEN
-    expect(result.mailles.régionale['01'].écart).toEqual(30);
-    expect(result.mailles.régionale['02'].écart).toBeNull();
-    expect(result.mailles.régionale['03'].écart).toEqual(-40);
-    expect(result.mailles.régionale['04'].écart).toEqual(0);
-  });
-
-  test("Contient la tendance du taux d'avancement du chantier", async () => {
-    // GIVEN
-    const chantierId = 'CH-001';
-
-    await prisma.chantier.createMany({
-      data: [
-        new ChantierSQLRowBuilder()
-          .avecId(chantierId).avecMaille('NAT').avecTauxAvancement(75).avecTauxAvancementPrécédent(70).build(),
-        new ChantierSQLRowBuilder()
-          .avecId(chantierId).avecMaille('DEPT').avecCodeInsee('01').avecTauxAvancement(65).avecTauxAvancementPrécédent(70).build(),
-        new ChantierSQLRowBuilder()
-          .avecId(chantierId).avecMaille('DEPT').avecCodeInsee('02').avecTauxAvancement(10).avecTauxAvancementPrécédent(null).build(),
-        new ChantierSQLRowBuilder()
-          .avecId(chantierId).avecMaille('DEPT').avecCodeInsee('03').avecTauxAvancement(70).avecTauxAvancementPrécédent(70).build(),
-        new ChantierSQLRowBuilder()
-          .avecId(chantierId).avecMaille('DEPT').avecCodeInsee('04').avecTauxAvancement(null).build(),
-      ],
-    });
-
-    const habilitation = { lecture: {
-      chantiers: ['CH-001'],
-      territoires: ['NAT-FR', 'DEPT-01', 'DEPT-02', 'DEPT-03'],
-    } } as unknown as Utilisateur['habilitations'];
-
-    // WHEN
-    const result = await récupérerChantierUseCase.run(chantierId, habilitation, profil);
-
-    // THEN
-    expect(result.mailles.nationale.FR.tendance).toEqual('HAUSSE');
-    expect(result.mailles.départementale['01'].tendance).toEqual('BAISSE');
-    expect(result.mailles.départementale['02'].tendance).toEqual('STAGNATION');
-    expect(result.mailles.départementale['03'].tendance).toEqual('STAGNATION');
-    expect(result.mailles.départementale['04'].tendance).toEqual(null);
   });
 
   describe("Gestion d'erreur", () => {

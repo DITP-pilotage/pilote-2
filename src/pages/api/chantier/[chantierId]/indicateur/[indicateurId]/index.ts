@@ -1,8 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import handlePublierFichierImportIndicateur
-  from '@/server/import-indicateur/infrastructure/handlers/PublierIndicateurHandler';
+import { getContainer } from '@/server/dependances';
 
 export default function handle(req: NextApiRequest, res: NextApiResponse) {
-  return handlePublierFichierImportIndicateur(req, res);
+  return getContainer('importIndicateur').resolve('publierFichierImportIndicateurHandler').handle(req, res);
 }

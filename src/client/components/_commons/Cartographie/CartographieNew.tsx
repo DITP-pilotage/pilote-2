@@ -11,9 +11,10 @@ import CartographieSVG from './SVG/CartographieSVG';
 
 type CartographieDonnées = {
   [key in CodeInsee]: {
-    valeurAffichée: string,
+    contenu: ReactNode,
     remplissage: string,
     libellé: string
+    estApplicable: boolean | null
   }
 };
 
@@ -67,11 +68,12 @@ const Cartographie: FunctionComponent<CartographieProps> = ({
       {
         infoBulle ?
           <BulleDInfo
-            contenu={infoBulle.valeurAffichée}
             titre={infoBulle.libellé}
             x={sourisPosition.x}
             y={sourisPosition.y}
-          />
+          >
+            {infoBulle.contenu}
+          </BulleDInfo>
           : null
       }
       <CartographieSVG

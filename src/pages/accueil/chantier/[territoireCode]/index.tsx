@@ -35,14 +35,16 @@ import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import { Chantier } from '@/server/chantiers/domain/Chantier';
+import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 import IndexStyled from './index.styled';
 
 interface ChantierAccueil {
   chantiers: ChantierAccueilContrat[]
+  nombreTotalChantiersAvecAlertes: number
   ministères: Ministère[]
-  axes: Axe[],
+  axes: Axe[]
   territoireCode: string
-  mailleSelectionnee: 'départementale' | 'régionale',
+  mailleSelectionnee: 'départementale' | 'régionale'
   filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
@@ -51,6 +53,9 @@ interface ChantierAccueil {
 
 export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ req, res, query }) => {
   const session = await getServerSession(req, res, authOptions);
+
+  const pageIndex = Number.parseInt(query.pageIndex as string) || 1;
+  const pageSize = Number.parseInt(query.pageSize as string) || 50;
 
   assert(query.territoireCode, 'Le territoire code est obligatoire pour afficher la page d\'accueil');
   assert(session, 'Vous devez être authentifié pour accéder a cette page');
@@ -61,21 +66,35 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   const territoireDept = session.habilitations.lecture.territoires.find(territoire => territoire.startsWith('DEPT'));
   const territoireReg = session.habilitations.lecture.territoires.find(territoire => territoire.startsWith('REG'));
 
+  const {
+    maille: mailleTerritoireSelectionnee,
+    codeInsee: codeInseeSelectionne,
+  } = territoireCodeVersMailleCodeInsee(territoireCode);
+
+  const mailleSelectionnee = query.maille as 'départementale' | 'régionale' ?? (mailleTerritoireSelectionnee === 'REG' ? 'régionale' : 'départementale');
+  const mailleChantier = mailleTerritoireSelectionnee === 'NAT' ? 'nationale' : mailleSelectionnee;
+
   if ((territoireCode === 'NAT-FR' && !session.habilitations.lecture.territoires.includes('NAT-FR')) || !session.habilitations.lecture.territoires.includes(territoireCode)) {
     return {
       redirect: {
         statusCode: 302,
-        destination: `/accueil/chantier/${ query.maille === 'départementale' ? territoireDept : query.maille === 'départementale' ? territoireReg : session.habilitations.lecture.territoires[0] }`,
+        destination: `/accueil/chantier/${query.maille === 'départementale' ? territoireDept : query.maille === 'départementale' ? territoireReg : session.habilitations.lecture.territoires[0]}`,
       },
     };
   }
 
-  const filtres = {
+  const sorting = query.sort ? JSON.parse(query.sort as string) as { id: string, desc: boolean } : {
+    id: 'avancement',
+    desc: false,
+  };
+
+  const filtres: FiltreQueryParams = {
     perimetres: query.perimetres ? (query.perimetres as string).split(',').filter(Boolean) : [],
     axes: query.axes ? (query.axes as string).split(',').filter(Boolean) : [],
-    statut: query.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : query.statut === 'BROUILLON' ? ['BROUILLON'] : ['PUBLIE'],
+    statut: query.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : !!query.statut ? [query.statut as string] : ['PUBLIE'],
     estTerritorialise: query.estTerritorialise === 'true',
     estBarometre: query.estBarometre === 'true',
+    valeurDeLaRecherche: query.q as string,
   };
 
   const filtresAlertes = {
@@ -85,15 +104,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     estEnAlerteMétéoNonRenseignée: query.estEnAlerteMétéoNonRenseignée === 'true',
     estEnAlerteAbscenceTauxAvancementDepartemental: query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
   };
-
-  const {
-    maille: mailleTerritoireSelectionnee,
-    codeInsee: codeInseeSelectionne,
-  } = territoireCodeVersMailleCodeInsee(territoireCode);
-
-  const mailleSelectionnee = query.maille as 'départementale' | 'régionale' ?? (mailleTerritoireSelectionnee === 'REG' ? 'régionale' : 'départementale');
-  const mailleChantier = mailleTerritoireSelectionnee === 'NAT' ? 'nationale' : mailleSelectionnee;
-
   const [ministères, axes] = session.habilitations.lecture.chantiers.length === 0 ? [[], []] : (
     await Promise.all(
       [
@@ -105,10 +115,9 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
 
   const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
     dependencies.getChantierRepository(),
-    dependencies.getChantierDateDeMàjMeteoRepository(),
     dependencies.getTerritoireRepository(),
   )
-    .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', codeInseeSelectionne, ministères, axes, filtres);
+    .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', codeInseeSelectionne, ministères, axes, filtres, sorting);
 
   const {
     répartitionMétéos,
@@ -137,17 +146,23 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
 
   const avancementsGlobauxTerritoriauxMoyens = objectEntries(donnéesTerritoiresAgrégées[mailleSelectionnee || 'départementale'].territoires).map(([codeInsee, territoire]) => ({
     valeur: territoire.répartition.avancements.global.moyenne,
+    valeurAnnuelle: territoire.répartition.avancements.annuel.moyenne,
     codeInsee,
-    estApplicable: null,
+    estApplicable: true,
   }));
+
+  const nombreTotalChantiersAvecAlertes = chantiersAvecAlertes.length;
+
+  const chantiersPaginesAvecAlertes = chantiersAvecAlertes.splice((pageIndex - 1) * pageSize, pageSize);
 
   return {
     props: {
-      chantiers: chantiersAvecAlertes.map(chantier => {
+      chantiers: chantiersPaginesAvecAlertes.map(chantier => {
         // @ts-expect-error
         delete chantier.mailles;
         return chantier;
       }),
+      nombreTotalChantiersAvecAlertes,
       ministères,
       axes,
       territoireCode,
@@ -176,6 +191,7 @@ const PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE = new Set([
 
 const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   chantiers,
+  nombreTotalChantiersAvecAlertes,
   axes,
   ministères,
   territoireCode,
@@ -254,6 +270,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             filtresComptesCalculés={filtresComptesCalculés}
             mailleSelectionnee={mailleSelectionnee}
             ministères={ministères}
+            nombreTotalChantiersAvecAlertes={nombreTotalChantiersAvecAlertes}
             répartitionMétéos={répartitionMétéos}
             territoireCode={territoireCode}
           />

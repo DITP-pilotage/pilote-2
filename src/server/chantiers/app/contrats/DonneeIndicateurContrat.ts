@@ -23,6 +23,7 @@ export interface DonneeIndicateurContrat {
   chantier_id: string;
   donnees_territoires: DonneeTerritoireContrat[];
 }
+
 export const presenterEnDonneeIndicateurContrat = (chantierId: string, listeDonneesIndicateurs: DonneeIndicateur[]): DonneeIndicateurContrat => {
   return {
     indic_id: listeDonneesIndicateurs[0].indicId,

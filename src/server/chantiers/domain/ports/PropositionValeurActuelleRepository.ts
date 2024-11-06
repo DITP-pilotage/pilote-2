@@ -2,4 +2,11 @@ import { PropositionValeurActuelle } from '@/server/chantiers/domain/Proposition
 
 export interface PropositionValeurActuelleRepository {
   creerPropositionValeurActuelle: (propositionValeurActuelle: PropositionValeurActuelle) => Promise<void>;
+  supprimerPropositionValeurActuelle: ({
+    indicId,
+    territoireCode,
+  }: {
+    indicId: string,
+    territoireCode: string,
+  }) => Promise<void>;
 }

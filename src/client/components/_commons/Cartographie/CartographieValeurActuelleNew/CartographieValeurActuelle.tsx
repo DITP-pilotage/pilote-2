@@ -1,8 +1,5 @@
 import { FunctionComponent } from 'react';
 import Cartographie from '@/components/_commons/Cartographie/CartographieNew';
-import {
-  CartographieDonnéesValeurActuelle,
-} from '@/components/_commons/Cartographie/CartographieValeurActuelle/CartographieValeurActuelle.interface';
 import CartographieLégendeDégradé from '@/components/_commons/Cartographie/Légende/Dégradé/CartographieLégendeDégradé';
 import CartographieLégendeListe from '@/client/components/_commons/Cartographie/Légende/Liste/CartographieLégendeListe';
 import { CartographieOptions } from '@/components/_commons/Cartographie/useCartographie.interface';
@@ -12,6 +9,7 @@ import {
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import useCartographieValeurActuelle from './useCartographieValeurActuelle';
+import { CartographieDonnéesValeurActuelle } from './CartographieValeurActuelle.interface';
 
 interface CartographieValeurActuelleProps {
   données: CartographieDonnéesValeurActuelle,
