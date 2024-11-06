@@ -1,0 +1,18 @@
+FROM postgres:14.6-bullseye
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    nano \
+    openssh-client \
+    curl \
+ && rm -rf /var/lib/apt/lists/*
+
+RUN curl -O https://cli-dl.scalingo.com/install && bash install
+
+WORKDIR /root/.ssh
+
+COPY scripts/ddp/id_rsa_scalingo id_rsa
+COPY scripts/ddp/id_rsa_scalingo.pub id_rsa.pub
+
+WORKDIR /app

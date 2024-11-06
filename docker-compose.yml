@@ -29,6 +29,17 @@ services:
     volumes: 
       - db_dbt_pilote:/var/lib/postgresql/data
 
+  ddp:
+    command: "echo 'SKIP descente de prod'"
+    build: 
+      dockerfile: docker/Dockerfile.ddp
+      context: .
+    env_file:
+      - .env
+    volumes: 
+      - ./scripts:/app/scripts
+      - ./docker:/app/docker
+
   descente_de_prod:
     image: postgres:14.6-alpine
     command: "/bin/bash scripts/descente_de_prod_partielle.sh"
