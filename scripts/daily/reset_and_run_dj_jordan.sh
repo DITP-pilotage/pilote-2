@@ -10,11 +10,11 @@
 
 
 echo ">> Reset db"
-bash scripts/prisma_reset_and_migrate.sh
+bash scripts/prisma_reset_migrate_seed.sh
 cd data_management
 echo ">> Run dj FULL"
 FULL_DJ=true docker compose run --rm -e FULL_DJ pilote_datajobs
-echo ">> Prisma seed"
+echo ">> Run descente de prod"
 cd ..
 bash scripts/ddp_dump.sh
 bash scripts/ddp_restore.sh
