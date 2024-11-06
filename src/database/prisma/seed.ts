@@ -1,18 +1,18 @@
 
 import { Maille, territoire as TerritoireModel } from '@prisma/client';
 import { prisma } from '@/server/db/prisma';
-import seed_profil from '@/server/seeds/profil.json';
-import seed_scope from '@/server/seeds/scope.json';
-import seed_territoire from '@/server/seeds/territoire.json';
+import seedProfil from '@/server/seeds/profil.json';
+import seedScope from '@/server/seeds/scope.json';
+import seedTerritoireArray from '@/server/seeds/territoire.json';
 
 
 function upsertProfile() {
 
   // Exemple pour créer des lignes en une requête
-  // await prisma.profil.createMany({ data: seed_profil, skipDuplicates: true });
+  // await prisma.profil.createMany({ data: seedProfil, skipDuplicates: true });
 
   return Promise.all(
-    seed_profil.map(profil => 
+    seedProfil.map(profil => 
       prisma.profil.upsert({ 
         where: { code: profil.code },
         create: profil,
@@ -25,7 +25,7 @@ function upsertProfile() {
 function upsertScope() {
 
   return Promise.all(
-    seed_scope.map(scope => 
+    seedScope.map(scope => 
       prisma.scope.upsert({ 
         where: { code: scope.code },
         create: scope,
@@ -38,31 +38,31 @@ function upsertScope() {
 function upsertTerritoire() {
 
   return Promise.all(
-    seed_territoire.map(territoire => {
+    seedTerritoireArray.map(territoireSeed => {
 
       // Modification de certains types
       const mailleTerritoire: Maille = {
         'dept': Maille.DEPT,
         'reg': Maille.REG,
         'nat': Maille.NAT,
-      }[territoire.maille] as Maille;
-      const codeInseeTerritoire: string = territoire.code_insee.toString();
+      }[territoireSeed.maille] as Maille;
+      const codeInseeTerritoire: string = territoireSeed.code_insee.toString();
 
       // Création du territoire avec les bons types
-      const t: TerritoireModel = {
-        code: territoire.code,
+      const territoireACreer: TerritoireModel = {
+        code: territoireSeed.code,
         code_insee: codeInseeTerritoire,
-        code_parent: territoire.code_parent,
+        code_parent: territoireSeed.code_parent,
         maille: mailleTerritoire,
-        nom: territoire.nom,
-        nom_affiche: territoire.nom_affiche,
-        zone_id: territoire.zone_id,
+        nom: territoireSeed.nom,
+        nom_affiche: territoireSeed.nom_affiche,
+        zone_id: territoireSeed.zone_id,
       };
 
       return prisma.territoire.upsert({ 
-        where: { code: territoire.code },
-        create: t,
-        update: t,
+        where: { code: territoireSeed.code },
+        create: territoireACreer,
+        update: territoireACreer,
       });
     },
     ),
@@ -71,8 +71,6 @@ function upsertTerritoire() {
 
 
 Promise.resolve(true)
-  .then(_ => upsertProfile())
-  .then(_ => upsertScope())
-  .then(_ => upsertTerritoire())
-  .then(_ => true);
-
+  .then(() => upsertProfile())
+  .then(() => upsertScope())
+  .then(() => upsertTerritoire());
