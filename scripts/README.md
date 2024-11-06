@@ -6,9 +6,9 @@ Pour réinitialiser la base de données avec prisma, exécuter
 
 ```sh
 # Reset db [docker]
-docker compose run --rm pilote_webapp /bin/bash scripts/prisma_reset_and_migrate.sh
+docker compose run --rm pilote_webapp /bin/bash scripts/prisma_reset_migrate_seed.sh
 ## [local]
-/bin/bash scripts/prisma_reset_and_migrate.sh
+/bin/bash scripts/prisma_reset_migrate_seed.sh
 ```
 
 Les commandes `npm` (*lint, test, ...*) sont également éxécutables via Docker:
