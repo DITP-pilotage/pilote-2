@@ -3,16 +3,19 @@ import {
   DonneeIndicateurContrat,
   DonneeTerritoireContrat,
 } from '@/server/chantiers/app/contrats/DonneeIndicateurContrat';
+import { configuration } from '@/config';
 
 let apiContext: APIRequestContext;
 let result: APIResponse;
 
+const localTokenAPIEquipeDirProjet =  configuration.tokenAPI.localTokenAPIE2EEquipeDirProjet;
+
 test('quand on a pas accès au chantier, doit remonter une erreur 403 Forbidden', async ({ playwright }) => {
-  await test.step('Création du context - Authorization Pilote - jordan.wojcik@ac-grenoble - SERVICES_DECONCENTRES_REGION', async () => {
+  await test.step('Création du context - Authorization Pilote - equipe.dir.projet@example.com - EQUIPE_DIR_PROJET', async () => {
     apiContext = await playwright.request.newContext({
       baseURL: 'http://localhost:3000',
       extraHTTPHeaders: {
-        'Authorization': 'Bearer eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..VWicRLTMPn0MSVCe.n3Jw93eA5k239_z0d9TEZK2RDiyfuYrBzQLaj8SHAGTB_UCnYRe4-IynhBmXh6-q5JXAV1veHYJRz5LO7XMQ4kQImIfPMZbdVD1U5-Rse-SMqXvDWFs3ZQluv7AONyTrZrDHTaRc6xhgO3dMQUMnRovsL25djeo.rZ6Kh7C9qaFIQ0NbnF7P4w',
+        'Authorization': `Bearer ${localTokenAPIEquipeDirProjet}`,
       },
     });
   });
@@ -33,17 +36,17 @@ test('quand on a pas accès au chantier, doit remonter une erreur 403 Forbidden'
 });
 
 test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les données de l'indicateur", async ({ playwright }) => {
-  await test.step('Création du context - Authorization Pilote - thierry.gentes@sarthe.gouv.fr - SERVICES_DECONCENTRES_DEPARTEMENT', async () => {
+  await test.step('Création du context - Authorization Pilote - equipe.dir.projet@example.com - EQUIPE_DIR_PROJET', async () => {
     apiContext = await playwright.request.newContext({
       baseURL: 'http://localhost:3000',
       extraHTTPHeaders: {
-        'Authorization': 'Bearer eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..bCypuoOudgshfX0v.rEpeu_ckLOqc85mvsuyf000pZv6KGAqwMADmFnKQDJfhzrpkluntSboIf4k9RuX9CZ9Ir5cptpkMS_zw6pskIAFYy2MnoS661x2I6pE2jZoXPhaa22KTJ63cHX5Bf_0u-obTLKKrVP3cfQ_bGrzZNR6ceZaVTNN8.CZeAvbeRvfcCeBttwr1vuQ',
+        'Authorization': `Bearer ${localTokenAPIEquipeDirProjet}`,
       },
     });
   });
 
-  await test.step('Appel du endpoint /api/open-api/chantier/CH-039/indicateur/IND-718/donnees', async () => {
-    result = await apiContext.get('/api/open-api/chantier/CH-039/indicateur/IND-718/donnees');
+  await test.step('Appel du endpoint /api/open-api/chantier/CH-001/indicateur/IND-900/donnees', async () => {
+    result = await apiContext.get('/api/open-api/chantier/CH-001/indicateur/IND-900/donnees');
   });
 
   await test.step('Vérification status égal 200 OK', async () => {
@@ -57,8 +60,8 @@ test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les 
   });
 
   await test.step('Vérification donnees appartiennent bien au CH-039 et IND-718', async () => {
-    expect(donneeIndicateur.chantier_id).toEqual('CH-039');
-    expect(donneeIndicateur.indic_id).toEqual('IND-718');
+    expect(donneeIndicateur.chantier_id).toEqual('CH-001');
+    expect(donneeIndicateur.indic_id).toEqual('IND-900');
   });
 
   await test.step('Vérification donnees territoires possèdes bien 101 données departementales, 18 données régionales et 1 donnée nationale', async () => {

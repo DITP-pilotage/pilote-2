@@ -11,6 +11,10 @@ const PageChantiersStyled = styled.main`
       flex-wrap: wrap;
     }
   }
+
+  .titre-gris {
+    color: var(--text-disabled-grey);
+  }
   
   .alertes {
     .titre-remontée-alertes {

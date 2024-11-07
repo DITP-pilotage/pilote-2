@@ -3,10 +3,18 @@ import {
   InformationMetadataIndicateurRepository,
 } from '@/server/parametrage-indicateur/domain/ports/InformationMetadataIndicateurRepository';
 
+type Dependencies = {
+  informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository,
+};
+
 export default class RécupérerInformationMetadataIndicateurUseCase {
-  constructor(
-    private readonly informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository,
-  ) {}
+  private informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository;
+
+  constructor({
+    informationMetadataIndicateurRepository,
+  }: Dependencies) {
+    this.informationMetadataIndicateurRepository = informationMetadataIndicateurRepository;
+  }
     
   run(): InformationMetadataIndicateur[] {
     return this.informationMetadataIndicateurRepository.récupererInformationMetadataIndicateur();

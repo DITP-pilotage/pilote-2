@@ -1,7 +1,7 @@
 import { SortingState } from '@tanstack/react-table';
 import { ChantierTendance } from '@/server/domain/chantier/Chantier.interface';
 
-const ORDRE_DES_TENDANCE: ChantierTendance[] = ['BAISSE', 'STAGNATION', 'HAUSSE'];
+const ORDRE_DES_TENDANCE: ChantierTendance[] = ['BAISSE', 'HAUSSE', 'STAGNATION'];
 
 export function comparerTendance(tendanceA: ChantierTendance | null, tendanceB: ChantierTendance | null, tri: SortingState) {
 

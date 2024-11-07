@@ -1,20 +1,30 @@
-import { NextApiRequest } from 'next';
 import { File } from 'formidable';
+import { NextApiRequest } from 'next';
 import { parseForm } from '@/server/import-indicateur/infrastructure/handlers/ParseForm';
-import { dependencies } from '@/server/infrastructure/Dependencies';
+import ImportMasseMetadataIndicateurUseCase
+  from '@/server/parametrage-indicateur/usecases/ImportMasseMetadataIndicateurUseCase';
 
+type Dependencies = {
+  importMasseMetadataIndicateurUseCase: ImportMasseMetadataIndicateurUseCase
+};
 
-export default async function handleImportMasseMetadataIndicateur(
-  request: NextApiRequest,
-  importMasseMetadataIndicateurUseCase = dependencies.getImportMasseMetadataIndicateurUseCase(),
-) {
+export class ImportMasseMetadataIndicateurHandler {
+  private importMasseMetadataIndicateurUseCase: ImportMasseMetadataIndicateurUseCase;
 
-  const formData = await parseForm(request);
+  constructor({
+    importMasseMetadataIndicateurUseCase,
+  }: Dependencies) {
+    this.importMasseMetadataIndicateurUseCase = importMasseMetadataIndicateurUseCase;
+  }
 
-  const fichier = <File>formData.file![0];
+  async handle(request: NextApiRequest) {
 
-  return importMasseMetadataIndicateurUseCase.run({
-    nomDuFichier: fichier.filepath,
-  });
+    const formData = await parseForm(request);
+
+    const fichier = <File>formData.file![0];
+
+    return this.importMasseMetadataIndicateurUseCase.run({
+      nomDuFichier: fichier.filepath,
+    });
+  }
 }
-

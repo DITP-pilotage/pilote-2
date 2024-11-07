@@ -399,17 +399,17 @@ components:
           $ref: '#/components/schemas/ChantierId'
           x-stoplight:
             id: 11w6r5r67d40f
-        chantier_nom:
+        nom:
           type: string
           x-stoplight:
             id: b42axme8e4vvt
           description: Nom complet du chantier
-        chantier_axe:
+        axe:
           type: string
           x-stoplight:
             id: qda1s5pmjkj1f
           description: Axe gouvernemental associé au chantier.
-        chantier_ministere:
+        ministere:
           type: string
           x-stoplight:
             id: zypiaic3yjfuf
@@ -422,25 +422,25 @@ components:
             - PUBLIE
             - BROUILLON
           description: Etata de publication.
-        chantier_du_barometre:
+        est_barometre:
           type: boolean
           x-stoplight:
             id: gv0yro0nsli6l
           description: Est-ce que le chantier est publié au Baromètre des résultats de l'action publique.
-        chantier_territorialise:
+        est_territorialise:
           type: boolean
           x-stoplight:
             id: uznvknhloqpc5
-        directeur_projet:
+        directeurs_projet:
           type: string
           x-stoplight:
             id: mxy1uoqzx2xmg
-          description: Nom du directeur de projet associé.
-        directeur_projet_contact:
+          description: Liste des noms des directeurs de projet (séparé par une virgule).
+        directeurs_projet_mails:
           type: string
           x-stoplight:
             id: l90npyimiuzvr
-          description: Contact du Directeur de projet.
+          description: Liste des emails des directeurs de projet (séparé par une virgule).
         donnees_territoires:
           x-stoplight:
             id: l6a2iuqmffnq1
@@ -479,16 +479,16 @@ components:
             id: 511la25fumbfo
           description: Code du territoire (second référentiel)
           example: D06
-        responsable_local:
+        responsables_locaux:
           type: string
           x-stoplight:
             id: qnw86tpymz3x4
-          description: Nom du responsable local
-        responsable_local_contact:
+          description: Liste des noms des responsables locaux (séparé par une virgule)
+        responsable_locaux_mails:
           type: string
           x-stoplight:
             id: 54xm2mzjr5qnb
-          description: Contact du responsable local
+          description: Liste des emails des responsables locaux (séparé par une virgule).
         taux_avancement_dept:
           type: number
           x-stoplight:
@@ -512,6 +512,13 @@ components:
           minimum: 0
           maximum: 100
           description: Taux avancement à la maille nationale
+        taux_avancement_annuel:
+          type: number
+          x-stoplight:
+            id: rdxqvtz09643e
+          minimum: 0
+          maximum: 100
+          description: Taux avancement annuel du territoire
         meteo:
           type: string
           x-stoplight:

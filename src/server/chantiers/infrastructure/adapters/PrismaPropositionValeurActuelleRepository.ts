@@ -3,6 +3,7 @@ import { PropositionValeurActuelle } from '@/server/chantiers/domain/Proposition
 import {
   PropositionValeurActuelleRepository,
 } from '@/server/chantiers/domain/ports/PropositionValeurActuelleRepository';
+import { StatutProposition } from '@/server/chantiers/domain/StatutProposition';
 
 const convertirEnModel = (propositionValeurActuelle: PropositionValeurActuelle): PrismaPropositionValeurActuelle => {
   return {
@@ -29,4 +30,24 @@ export class PrismaPropositionValeurActuelleRepository implements PropositionVal
       data: prismaPropositionValeurActuelle,
     });
   }
+
+  async supprimerPropositionValeurActuelle({
+    indicId,
+    territoireCode,
+  }: {
+    indicId: string,
+    territoireCode: string,
+  }): Promise<void> {
+    await this.prismaClient.proposition_valeur_actuelle.updateMany({
+      where: {
+        indic_id: indicId,
+        territoire_code: territoireCode,
+      },
+      data: {
+        statut: StatutProposition.SUPPRIME,
+      },
+    });
+  }
+
+
 }

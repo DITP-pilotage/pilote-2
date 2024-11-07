@@ -5,7 +5,7 @@ export const prisma = new PrismaClient();
 
 beforeEach(async () => {
   try {
-    await prisma.$executeRawUnsafe("INSERT INTO scope VALUES ('responsabilite', 'Responsabilité');");
+    await prisma.$executeRawUnsafe("INSERT INTO scope VALUES ('responsabilite', 'Responsabilité') ON CONFLICT DO NOTHING;");
   } catch {
     logger.info('Le scope responsabilité existe déjà');
   }

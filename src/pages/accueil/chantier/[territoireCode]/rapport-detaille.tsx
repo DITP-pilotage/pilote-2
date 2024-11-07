@@ -43,6 +43,7 @@ import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import { Chantier } from '@/server/chantiers/domain/Chantier';
+import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 
 interface NextPageRapportDétailléProps {
   chantiers: ChantierRapportDetailleContrat[]
@@ -80,12 +81,18 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   assert(session.habilitations, 'La session ne dispose d\'aucune habilitation');
   const territoireCode = query.territoireCode as string;
 
-  const filtres = {
+  const { maille, codeInsee: codeInseeSelectionne } = territoireCodeVersMailleCodeInsee(territoireCode);
+  const mailleSelectionnee = query.maille as 'départementale' | 'régionale' ?? (maille === 'REG' ? 'régionale' : 'départementale');
+
+  const mailleChantier = maille === 'NAT' ? 'nationale' : mailleSelectionnee;
+
+  const filtres: FiltreQueryParams = {
     perimetres: query.perimetres ? (query.perimetres as string).split(',').filter(Boolean) : [],
     axes: query.axes ? (query.axes as string).split(',').filter(Boolean) : [],
-    statut: query.statut === 'PUBLIE' ? ['PUBLIE'] : query.statut === 'BROUILLON' ? ['BROUILLON'] : ['BROUILLON', 'PUBLIE'],
+    statut: query.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : !!query.statut ? [query.statut as string] : ['PUBLIE'],
     estTerritorialise: query.estTerritorialise === 'true',
     estBarometre: query.estBarometre === 'true',
+    valeurDeLaRecherche: query.q as string,
   };
 
   const filtresAlertes = {
@@ -96,10 +103,6 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     estEnAlerteAbscenceTauxAvancementDepartemental: query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
   };
 
-  const { maille, codeInsee: codeInseeSelectionne } = territoireCodeVersMailleCodeInsee(territoireCode);
-  const mailleSelectionnee = query.maille as 'départementale' | 'régionale' ?? (maille === 'REG' ? 'régionale' : 'départementale');
-
-  const mailleChantier = maille === 'NAT' ? 'nationale' : mailleSelectionnee;
 
   const [ministères, axes] = session.habilitations.lecture.chantiers.length === 0 ? [[], []] : (
     await Promise.all(
@@ -115,12 +118,16 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   const territoireRepository = dependencies.getTerritoireRepository();
   const territoireSélectionné = await territoireRepository.récupérer(territoireCode);
 
+  const sorting = query.sort ? JSON.parse(query.sort as string) as { id: string, desc: boolean } : {
+    id: 'avancement',
+    desc: false,
+  };
+
   const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
     dependencies.getChantierRepository(),
-    dependencies.getChantierDateDeMàjMeteoRepository(),
     territoireRepository,
   )
-    .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', codeInseeSelectionne, ministères, axes, filtres);
+    .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', codeInseeSelectionne, ministères, axes, filtres, sorting);
 
 
   const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisse || filtresAlertes.estEnAlerteTauxAvancementNonCalculé || filtresAlertes.estEnAlerteMétéoNonRenseignée || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? chantiers.filter(chantier => {
@@ -218,6 +225,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
 
   const avancementsGlobauxTerritoriauxMoyens = objectEntries(donnéesTerritoiresAgrégées[mailleSelectionnee || 'départementale'].territoires).map(([codeInsee, territoire]) => ({
     valeur: territoire.répartition.avancements.global.moyenne,
+    valeurAnnuelle: territoire.répartition.avancements.annuel.moyenne,
     codeInsee,
     estApplicable: null,
   }));
@@ -226,6 +234,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     id: chantier.id,
     donnéesCartographieAvancement: objectEntries(chantier.mailles[mailleSelectionnee]).map(([codeInsee, territoire]) => ({
       valeur: territoire.avancement.global,
+      valeurAnnuelle: territoire.avancement.annuel,
       codeInsee: codeInsee,
       estApplicable: territoire.estApplicable,
     })),

@@ -28,6 +28,7 @@ test('doit pouvoir consulter les données des chantiers', async ({ page }) => {
   await test.step('Navigation vers le chantier "Développer le co-voiturage"', async () => {
     await expect(page.getByRole('table').getByRole('cell', { name: /Développer le co-voiturage/ })).toBeVisible();
     await page.getByRole('table').getByRole('cell', { name: /Développer le co-voiturage/ }).click();
+    await page.waitForURL('**/chantier/CH-046/NAT-FR**');
   });
 
   await test.step('Vérification de la structure de la page chantier "Développer le co-voiturage"', async () => {

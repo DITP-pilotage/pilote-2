@@ -8,6 +8,18 @@ interface Nouveautés {
 
 export const ParametrageNouveautés: Nouveautés[] = [
   {
+    version: 'Version 2.5.9',
+    date: '7 novembre 2024',
+    contenu: [
+      'Page d\'accueil et page PPG : les cartes des taux d\'avancement affichent désormais le taux d\'avancement de l\'année en cours. De plus, pour chaque indicateur, en plus des valeurs actuelles, elles affichent également les valeurs cibles',
+      'Exports csv : il est désormais possible de réaliser un export csv en prenant en compte le filtre "Chantiers signalés" depuis la page d\'accueil',
+    ],
+    correctifs: [
+      'Page d\'accueil : correction d\'une erreur dans la fonctionnalité de tri des PPG. Celle-ci empechait l\'affichage correct des PPG lorsque le type de tri était modifié',   
+      'Gestion des comptes (profils DITP et coordinateurs PILOTE uniquement) : amélioration de la stabilité du formulaire de création de compte',
+    ],
+  },
+  {
     version: 'Version 2.5.8',
     date: '14 octobre 2024',
     contenu: [],

@@ -3,10 +3,12 @@ import Ministère from '@/server/domain/ministère/Ministère.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 export default interface TableauChantiersProps {
-  données: DonnéesTableauChantiers[],
-  ministèresDisponibles: Ministère[],
+  nombreTotalChantiersAvecAlertes: number
+  données: DonnéesTableauChantiers[]
+  ministèresDisponibles: Ministère[]
   territoireCode: string
   mailleSelectionnee: MailleInterne
+  chantiersSontArchives: boolean
 }
 
 export type DonnéesTableauChantiers = ChantierVueDEnsemble;

@@ -5,6 +5,7 @@ const couleurCSSÀPartirDeLaCouleur = {
   'rouge': 'var(--background-flat-error)',
   'bleu': 'var(--background-flat-info)',
   'vert': 'var(--background-flat-success)',
+  'gris': 'var(--text-disabled-grey)',
 };
 
 const TexteColoréStyled = styled.span<TexteColoréStyledProps>`;

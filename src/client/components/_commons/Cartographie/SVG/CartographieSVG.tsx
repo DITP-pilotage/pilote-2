@@ -77,16 +77,16 @@ const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
               territoires.map(territoire => (
                 sourceSvgAsJson ? (
                   <path
-                    className={`territoire-rempli ${(options.estInteractif && territoire.estInteractif) && 'territoire-interactif'}`}
+                    className={`territoire-rempli ${(options.estInteractif && territoire.estInteractif && territoire.estApplicable) && 'territoire-interactif'}`}
                     d={getTraceSvg(sourceSvgAsJson, territoire.code)}
                     fill={territoire.remplissage}
                     key={`territoire-${territoire.codeInsee}`}
-                    onClick={() => options.estInteractif && territoire.estInteractif && auClicTerritoireCallback(territoire.codeInsee, options.territoireSélectionnable)}
+                    onClick={() => territoire.estApplicable && options.estInteractif && territoire.estInteractif && auClicTerritoireCallback(territoire.codeInsee, options.territoireSélectionnable)}
                     onMouseEnter={() => {
                       if (options.estInteractif && territoire.libellé !== infoBulle?.libellé) {
                         setInfoBulle({
                           libellé: territoire.libellé,
-                          valeurAffichée: territoire.valeurAffichée,
+                          contenu: territoire.contenuInfoBulle,
                         });
                       } else {
                         setInfoBulle(null);

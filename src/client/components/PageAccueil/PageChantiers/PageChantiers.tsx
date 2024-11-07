@@ -23,7 +23,6 @@ import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import RemontéeAlerte from '@/components/_commons/RemontéeAlerteChantier/RemontéeAlerte';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
-import SélecteurVueStatuts from '@/components/PageAccueil/SélecteurVueStatuts/SélecteurVueStatuts';
 import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
@@ -37,6 +36,7 @@ import {
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
+import SelecteurVueStatuts from '@/client/components/PageAccueil/SelecteurVueStatuts/SelecteurVueStatuts';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
@@ -44,6 +44,7 @@ import usePageChantiers from './usePageChantiers';
 
 interface PageChantiersProps {
   chantiers: ChantierAccueilContrat[],
+  nombreTotalChantiersAvecAlertes: number
   ministères: Ministère[]
   axes: Axe[],
   territoireCode: string
@@ -56,6 +57,7 @@ interface PageChantiersProps {
 
 const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   chantiers,
+  nombreTotalChantiersAvecAlertes,
   ministères,
   axes,
   territoireCode,
@@ -78,7 +80,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
     maille: parseAsString.withDefault(''),
-    statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE']),
+    statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']),
   });
 
   const [filtresAlertes] = useQueryStates({
@@ -102,10 +104,11 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   const queryParamString = getQueryParamString({ ...filtres, ...filtresAlertes });
 
   const {
-    chantiersFiltrés,
     donnéesTableauChantiers,
     remontéesAlertes,
   } = usePageChantiers(chantiers, territoireCode, filtresComptesCalculés, avancementsAgrégés);
+
+  const chantiersSontArchives = filtres.statut?.includes('ARCHIVE') ?? false;
 
   return (
     <PageChantiersStyled>
@@ -122,9 +125,9 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
         <div className='fr-mb-2w titre flex align-center'>
           <Titre
             baliseHtml='h1'
-            className='fr-h4 fr-px-2w fr-px-md-0 fr-mb-0'
+            className={`fr-h4 fr-px-2w fr-px-md-0 fr-mb-0 ${chantiersSontArchives ? 'titre-gris' : ''}`}
           >
-            { `${ chantiersFiltrés.length } ${ chantiersFiltrés.length >= 2 ? 'chantiers' : 'chantier' }` }
+            {`${nombreTotalChantiersAvecAlertes} ${nombreTotalChantiersAvecAlertes >= 2 ? 'chantiers' : 'chantier'}`}
           </Titre>
           <div className='titre-liens'>
             {
@@ -143,7 +146,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                     ) : (
                       <Link
                         className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
-                        href={`/fiche-territoriale?territoireCode=${ territoireCode }`}
+                        href={`/fiche-territoriale?territoireCode=${territoireCode}`}
                         title='Voir la fiche territoriale'
                       >
                         Fiche territoriale
@@ -158,7 +161,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 <div>
                   <Link
                     className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
-                    href={`${ territoireCode }/rapport-detaille${ queryParamString.length > 0 ? `?${ queryParamString }` : '' }`}
+                    href={`${territoireCode}/rapport-detaille${queryParamString.length > 0 ? `?${queryParamString}` : ''}`}
                     title='Voir le rapport détaillé'
                   >
                     Voir le rapport détaillé
@@ -177,7 +180,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   >
                     Exporter les données
                   </button>
-                  <ExportDesDonnées />
+                  <ExportDesDonnées listeChantierId={chantiers.map(chantier => chantier.id)} />
                 </div>
               ) : null
             }
@@ -199,12 +202,12 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                           Taux d’avancement moyen
                         </Titre>
                         <Infobulle idHtml='infobulle-chantiers-jauges'>
-                          { INFOBULLE_CONTENUS.chantiers.jauges }
+                          {INFOBULLE_CONTENUS.chantiers.jauges}
                         </Infobulle>
                       </TitreInfobulleConteneur>
                       <div className='flex w-full justify-center fr-px-1w'>
                         <JaugeDeProgression
-                          couleur='bleu'
+                          couleur={chantiersSontArchives ? 'gris' : 'bleu'}
                           libellé="Taux d'avancement global"
                           pourcentage={avancementsAgrégés?.global.moyenne || null}
                           taille='lg'
@@ -219,7 +222,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                         <div className='fr-grid-row fr-grid-row-md--gutters fr-px-3v'>
                           <div className='fr-col-4'>
                             <JaugeDeProgression
-                              couleur='orange'
+                              couleur={chantiersSontArchives ? 'gris' : 'orange'}
                               libellé='Minimum'
                               noWrap
                               pourcentage={avancementsAgrégés?.global.minimum || null}
@@ -228,7 +231,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                           </div>
                           <div className='fr-col-4'>
                             <JaugeDeProgression
-                              couleur='violet'
+                              couleur={chantiersSontArchives ? 'gris' : 'violet'}
                               libellé='Médiane'
                               noWrap
                               pourcentage={avancementsAgrégés?.global.médiane || null}
@@ -237,7 +240,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                           </div>
                           <div className='fr-col-4'>
                             <JaugeDeProgression
-                              couleur='vert'
+                              couleur={chantiersSontArchives ? 'gris' : 'vert'}
                               libellé='Maximum'
                               noWrap
                               pourcentage={avancementsAgrégés?.global.maximum || null}
@@ -251,7 +254,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   <div className='fr-grid-row border-t'>
                     <div className='fr-mt-2w w-full'>
                       <p className='fr-text--xl fr-text--bold fr-mb-0 texte-gris'>
-                        { `${ (process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancementsAgrégés?.annuel.moyenne?.toFixed(0) : null) ?? '- ' }%` }
+                        {`${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancementsAgrégés?.annuel.moyenne?.toFixed(0) : null) ?? '- '}%`}
                       </p>
                       <BarreDeProgression
                         afficherTexte={false}
@@ -280,10 +283,13 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                     Répartition des météos renseignées
                   </Titre>
                   <Infobulle idHtml='infobulle-chantiers-météos'>
-                    { INFOBULLE_CONTENUS.chantiers.météos }
+                    {INFOBULLE_CONTENUS.chantiers.météos}
                   </Infobulle>
                 </TitreInfobulleConteneur>
-                <RépartitionMétéo météos={répartitionMétéos} />
+                <RépartitionMétéo 
+                  chantiersSontArchives={chantiersSontArchives}
+                  météos={répartitionMétéos} 
+                />
               </section>
             </Bloc>
           </div>
@@ -309,7 +315,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
           </div>
         </div>
         {
-          process.env.NEXT_PUBLIC_FF_ALERTES === 'true' &&
+          process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && !chantiersSontArchives &&
           <div className='fr-pt-3w fr-px-2w fr-px-md-0 alertes'>
             <div className='fr-mb-2w'>
               <TitreInfobulleConteneur>
@@ -322,7 +328,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   Chantiers signalés
                 </Titre>
                 <Infobulle idHtml='infobulle-chantiers-alertes'>
-                  { INFOBULLE_CONTENUS.chantiers.alertes }
+                  {INFOBULLE_CONTENUS.chantiers.alertes}
                 </Infobulle>
               </TitreInfobulleConteneur>
             </div>
@@ -348,7 +354,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
           </div>
         }
         <div className='fr-grid-row fr-mt-7v'>
-          <div className='fr-col'>
+          <div className='fr-col-12'>
             <Bloc>
               <TitreInfobulleConteneur>
                 <Titre
@@ -356,23 +362,19 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   className='fr-text--lg fr-mb-0 fr-py-1v'
                   estInline
                 >
-                  { `Liste des chantiers (${ chantiers.length })` }
+                  {`Liste des chantiers (${nombreTotalChantiersAvecAlertes})`}
                 </Titre>
                 <Infobulle idHtml='infobulle-chantiers-listeDesChantiers'>
-                  { INFOBULLE_CONTENUS.chantiers.listeDesChantiers }
+                  {INFOBULLE_CONTENUS.chantiers.listeDesChantiers}
                 </Infobulle>
               </TitreInfobulleConteneur>
-              {
-                !!session?.profilAAccèsAuxChantiersBrouillons ? (
-                  <div className='fr-grid-row fr-my-2w fr-mb-md-0'>
-                    <SélecteurVueStatuts />
-                  </div>
-                ) : null
-              }
+              <SelecteurVueStatuts />
               <TableauChantiers
+                chantiersSontArchives={chantiersSontArchives ?? false}
                 données={donnéesTableauChantiers}
                 mailleSelectionnee={mailleSelectionnee}
                 ministèresDisponibles={ministères}
+                nombreTotalChantiersAvecAlertes={nombreTotalChantiersAvecAlertes}
                 territoireCode={territoireCode}
               />
             </Bloc>

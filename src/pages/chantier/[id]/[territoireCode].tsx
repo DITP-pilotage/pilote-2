@@ -48,6 +48,7 @@ import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import {
   ListerDétailsIndicateurTerritoireUseCase,
 } from '@/server/usecase/chantier/indicateur/ListerDétailsIndicateurTerritoireUseCase';
+import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
 
 interface NextPageChantierProps {
   indicateurs: Indicateur[],
@@ -94,7 +95,8 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
   const territoireCodes = territoiresCompares.length > 0 ? [...territoiresCompares, territoireCode] : [territoireCode];
 
   try {
-    const [chantier,
+    const [
+      chantier,
       indicateurs,
       synthèseDesRésultats,
       commentaires,
@@ -102,10 +104,10 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
       décisionStratégique,
       détailsIndicateurs,
       avancementsAgrégés,
+      valeurFFPpgArchive,
     ] = await Promise.all([
       new RécupérerChantierUseCase(
         dependencies.getChantierRepository(),
-        dependencies.getChantierDateDeMàjMeteoRepository(),
         dependencies.getMinistèreRepository(),
         dependencies.getTerritoireRepository(),
       ).run(chantierId, session.habilitations, session.profil),
@@ -116,9 +118,14 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
       new RécupérerDécisionStratégiqueLaPlusRécenteUseCase(dependencies.getDécisionStratégiqueRepository()).run(chantierId, session.habilitations).catch(() => null),
       new RécupérerDétailsIndicateursUseCase(dependencies.getIndicateurRepository()).run(chantierId, territoireCodes, session.habilitations),
       new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository()).run([chantierId], mailleSelectionnee, session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat),
+      new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_PPG_ARCHIVE' }),
     ]);
 
-    if (!chantier.estTerritorialisé && maille !== 'NAT') {
+    assert(valeurFFPpgArchive || chantier.statut !== 'ARCHIVE', 'La page n\'est pas disponible');
+    
+    const chantierTerritoireSélectionné = chantier?.mailles[territoireSélectionné?.maille ?? 'nationale'][territoireSélectionné?.codeInsee ?? 'FR'];
+
+    if (!chantierTerritoireSélectionné.estApplicable || (!chantier.estTerritorialisé && maille !== 'NAT')) {
       return {
         redirect: {
           destination: `/chantier/${chantierId}/NAT-FR`,
@@ -148,7 +155,6 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
           .filter((indPond): indPond is IndicateurPondération => indPond.pondération !== null && indPond.pondération !== '0')
       );
 
-    const chantierTerritoireSélectionné = chantier?.mailles[territoireSélectionné?.maille ?? 'nationale'][territoireSélectionné?.codeInsee ?? 'FR'];
     const listeResponsablesLocaux = chantierTerritoireSélectionné?.responsableLocal ?? [];
     const listeCoordinateursTerritorials = chantierTerritoireSélectionné?.coordinateurTerritorial ?? [];
 

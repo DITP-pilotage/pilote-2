@@ -109,9 +109,8 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
     return !val.estAJour && (val.pondération || 0) > 0 && val.est_applicable ? true : acc;
   }, false);
 
-
   const mailleSourceDonnees = chantier.mailles[territoireSélectionné.maille][territoireSélectionné.codeInsee].mailleSourceDonnees;
-
+  
   return (
     <PageChantierStyled className='flex'>
       <BarreLatérale

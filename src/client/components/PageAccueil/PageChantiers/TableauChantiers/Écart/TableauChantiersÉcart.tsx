@@ -7,9 +7,10 @@ import {
 
 interface TableauChantiersÉcartProps {
   écart: DonnéesTableauChantiers['écart']
+  estArchive?: boolean
 }
 
-const TableauChantiersÉcart: FunctionComponent<TableauChantiersÉcartProps> = ({ écart }) => {
+const TableauChantiersÉcart: FunctionComponent<TableauChantiersÉcartProps> = ({ écart, estArchive }) => {
   const couleurÉcartArrondi = définirCouleurÉcartArrondi(écart);
 
   if (couleurÉcartArrondi === null) {
@@ -17,7 +18,7 @@ const TableauChantiersÉcart: FunctionComponent<TableauChantiersÉcartProps> = (
   }
 
   return (
-    <Badge type={couleurÉcartArrondi.couleur}>
+    <Badge type={estArchive ? 'gris' : couleurÉcartArrondi.couleur}>
       {couleurÉcartArrondi.écartArrondi.toFixed(1)}
     </Badge>
   );

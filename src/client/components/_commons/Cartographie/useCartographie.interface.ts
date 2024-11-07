@@ -1,8 +1,9 @@
+import { ReactNode } from 'react';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 export type CartographieInfoBulle = {
   libellé: string
-  valeurAffichée: string
+  contenu: ReactNode
 };
 
 export type CartographieTerritoire = {
@@ -10,8 +11,9 @@ export type CartographieTerritoire = {
   code: string
   remplissage: string,
   libellé: string,
-  valeurAffichée: string,
+  contenuInfoBulle: ReactNode
   estInteractif: boolean
+  estApplicable: boolean | null
 };
 
 export type CartographieTerritoireAffiché = {

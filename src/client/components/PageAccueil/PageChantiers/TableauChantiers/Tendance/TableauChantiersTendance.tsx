@@ -8,9 +8,10 @@ import {
   
 interface TableauChantiersTendanceProps {
   tendance: DonnéesTableauChantiers['tendance']
+  estArchive?: boolean
 }
   
-const TableauChantiersTendance: FunctionComponent<TableauChantiersTendanceProps> = ({ tendance }) => {
+const TableauChantiersTendance: FunctionComponent<TableauChantiersTendanceProps> = ({ tendance, estArchive }) => {
   const badgeTypeÀPartirDeLaTendance: Record<NonNullable<ChantierTendance>, BadgeType> = {
     'HAUSSE': 'vert',
     'BAISSE': 'rouge',
@@ -27,7 +28,7 @@ const TableauChantiersTendance: FunctionComponent<TableauChantiersTendanceProps>
   }
 
   return (
-    <Badge type={badgeTypeÀPartirDeLaTendance[tendance]}>
+    <Badge type={estArchive ? 'gris' : badgeTypeÀPartirDeLaTendance[tendance]}>
       {libelléÀPartirDeLaTendance[tendance]}
     </Badge>
   );

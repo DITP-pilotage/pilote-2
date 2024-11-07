@@ -1,26 +1,10 @@
-type CouleurÉcart = 'rouge' | 'bleu' | 'vert';
+type CouleurÉcart = 'rouge' | 'bleu' | 'vert' | 'gris';
 
-export function définirCouleurÉcartArrondi(écart: number | null) {
-  if (écart === null) {
-    return null;
-  }
+export function définirCouleurÉcartArrondi(écart: number | null, estArchive?: boolean) {
+  if (écart === null) return null;
 
-  let écartArrondi = Number(écart.toFixed(1));
+  const écartArrondi = +écart.toFixed(1) || 0;
+  const couleur: CouleurÉcart = estArchive ? 'gris' : (écartArrondi <= -10 ? 'rouge' : écartArrondi >= 10 ? 'vert' : 'bleu');
 
-  if (écartArrondi === -0) {
-    écartArrondi = 0;
-  }
-
-  let couleur: CouleurÉcart = 'bleu';
-
-  if (écartArrondi <= -10) {
-    couleur = 'rouge';
-  } else if (écartArrondi >= 10) {
-    couleur = 'vert';
-  }
-
-  return {
-    écartArrondi,
-    couleur,
-  };
+  return { écartArrondi, couleur };
 }

@@ -16,7 +16,6 @@ export const chantierRouter = créerRouteurTRPC({
     .query(({ input, ctx }) => {
       const récupérerChantierUseCase = new RécupérerChantierUseCase(
         dependencies.getChantierRepository(),
-        dependencies.getChantierDateDeMàjMeteoRepository(),
         dependencies.getMinistèreRepository(),
         dependencies.getTerritoireRepository(),
       );

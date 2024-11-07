@@ -10,8 +10,8 @@ import IndicateurDEtapes from '@/components/_commons/IndicateurDEtapes/Indicateu
 import { donneValidationInfosBaseUtilisateur } from '@/validation/utilisateur';
 import RécapitulatifUtilisateur
   from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/RécapitulatifUtilisateur/RécapitulatifUtilisateur';
-import SaisieDesInformationsUtilisateur from './SaisieDesInformationsUtilisateur/SaisieDesInformationsUtilisateur';
 import { UtilisateurFormInputs, UtilisateurFormulaireProps } from './UtilisateurFormulaire.interface';
+import SaisieDesInformationsUtilisateur from './SaisieDesInformationsUtilisateur/SaisieDesInformationsUtilisateur';
 
 const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({ utilisateur }) => {
   const étapes = ['Identifier l\'utilisateur', 'Vérifier les droits attribués au compte'];
@@ -20,6 +20,26 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({ 
 
   const reactHookForm = useForm<UtilisateurFormInputs>({
     resolver: zodResolver(donneValidationInfosBaseUtilisateur(session!.profil)),
+    defaultValues: {
+      email: utilisateur?.email,
+      nom: utilisateur?.nom,
+      prénom: utilisateur?.prénom,
+      fonction: utilisateur?.fonction,
+      profil: utilisateur?.profil,
+      gestionUtilisateur: utilisateur?.gestionUtilisateur,
+      saisieCommentaire: utilisateur?.saisieCommentaire,
+      saisieIndicateur: utilisateur?.saisieIndicateur,
+      habilitations: {
+        lecture: {
+          chantiers: utilisateur?.habilitations.lecture.chantiers,
+          périmètres: utilisateur?.habilitations.lecture.périmètres,
+          territoires: utilisateur?.habilitations.lecture.territoires,
+        },
+        responsabilite: {
+          chantiers: utilisateur?.habilitations.responsabilite.chantiers,
+        },
+      },
+    },
   });
 
   const passerAuRécapitulatif = async () => {

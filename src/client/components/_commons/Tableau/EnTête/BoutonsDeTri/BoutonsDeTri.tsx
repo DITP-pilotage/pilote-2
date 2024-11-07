@@ -10,7 +10,12 @@ interface BoutonsDeTriProps {
   changementDirectionDeTriCallback: (tri: DirectionDeTri) => void;
 }
 
-const BoutonsDeTri: FunctionComponent<BoutonsDeTriProps> = ({ nomColonneÀTrier, directionDeTri, changementDirectionDeTriCallback }) => {
+const BoutonsDeTri: FunctionComponent<BoutonsDeTriProps> = ({
+  nomColonneÀTrier,
+  directionDeTri,
+  changementDirectionDeTriCallback,
+}) => {
+
   return (
     <BoutonsDeTriStyled>
       <button

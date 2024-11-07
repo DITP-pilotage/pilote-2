@@ -1,8 +1,9 @@
-import { erreur_validation_fichier as ErreurValidationFichierModel, PrismaClient } from '@prisma/client';
+import { erreur_validation_fichier as ErreurValidationFichierModel } from '@prisma/client';
 import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
 import {
   ErreurValidationFichierRepository,
 } from '@/server/import-indicateur/domain/ports/ErreurValidationFichierRepository';
+import { prisma } from '@/server/db/prisma';
 
 const convertirEnModel = (erreurValidationFichier: ErreurValidationFichier): Omit<ErreurValidationFichierModel, 'date_import'> => {
   return {
@@ -19,11 +20,9 @@ const convertirEnModel = (erreurValidationFichier: ErreurValidationFichier): Omi
 };
 
 export class PrismaErreurValidationFichierRepository implements ErreurValidationFichierRepository {
-  constructor(private prisma: PrismaClient) {}
-
   async sauvegarder(listeErreursValidationFichier: ErreurValidationFichier[]): Promise<void> {
     const listeErreursValidationFichierModel = listeErreursValidationFichier.map(convertirEnModel);
 
-    await this.prisma.erreur_validation_fichier.createMany({ data: listeErreursValidationFichierModel });
+    await prisma.erreur_validation_fichier.createMany({ data: listeErreursValidationFichierModel });
   }
 }

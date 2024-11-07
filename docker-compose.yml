@@ -1,28 +1,59 @@
-version: '3.8'
 services:
-  app:
-    image: node:lts-alpine
+  pilote_webapp:
+    build: 
+      dockerfile: docker/Dockerfile.webapp.dev
+      context: .
     depends_on:
-      - postgresql
-    restart: always
-    environment:
-      DATABASE_URL: postgresql://postgresql:secret@postgresql:5432/postgresql
-    ports:
-      - "3000:3000"
+      - postgres
+    #ports: [ "3000:3000" ]
+    env_file:
+      - .env
     volumes:
-      - ./:/app/
-    command: sh -c "cd /app && npm install && npm run dev"
+      - ./:/app
     tty: true
-  postgresql:
-    image: scalingo/postgresql:13.8.0-2
-    environment:
-      DB_USER: postgresql
-      DB_PASSWORD: secret
-      DB_ADMIN_PASSWORD: admin-secret
-    restart: always
+    labels:
+      - "traefik.http.routers.pilote_webapp.rule=Host(`pilote.localhost`)"
+      - "traefik.http.services.pilote_webapp.loadbalancer.server.port=3000"
+  
+  postgres:
+    hostname: postgres
+    container_name: pilote_postgres
+    depends_on:
+      - pilote_traefik
+    image: postgres:14.6-alpine
     ports:
       - "5432:5432"
+    environment:
+      - POSTGRES_USER=${PGUSER}
+      - POSTGRES_PASSWORD=${PGPASSWORD}
+    volumes: 
+      - db_dbt_pilote:/var/lib/postgresql/data
+
+  descente_de_prod:
+    image: postgres:14.6-alpine
+    command: "/bin/bash scripts/descente_de_prod_partielle.sh"
+    environment:
+      - CONN_STR_PROD
+    volumes: 
+      - ./scripts:/scripts
+
+  pilote_traefik:
+    container_name: pilote_traefik
+    image: traefik:v2.10
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "80:80"
+      #- "8080:8080"
     volumes:
-      - ./db:/var/lib/postgresql/data
-    command: /postgresql
-    tty: true
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  db_dbt_pilote:
+    driver: local
+
+# Usage :
+# - (optionnel) "docker compose build" pour construire les images
+# - "docker compose up" pour lancer la db, la doc, et la webapp
+# - (optionnel) "docker compose run pilote_scripts" pour entrer dans le container et lancer les scripts dbt via "/bin/bash scripts/<name-of-the-script>.sh"
+# - (optionnel) OU "docker compose run pilote_scripts scripts/<name-of-the-script>.sh" pour lancer le script dbt <name-of-the-script>.sh
+# - (optionnel) "docker container exec -it pilote_webapp /bin/sh" pour entrer dans le container webapp et éventuellement entrer des commandes (ex: npm, yarn, ...)
