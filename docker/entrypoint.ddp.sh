@@ -10,6 +10,7 @@ if [ "$RUN_DUMP" = "true" ]; then
     kill %1
 else
     echo "SKIP prod dump"
-    echo "Restore data to $DATABASE_URL"
-    bash scripts/ddp_restore.sh
 fi
+
+echo "Restore data to $CONN_STR_DEST"
+bash scripts/ddp_restore.sh
