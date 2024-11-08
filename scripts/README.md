@@ -32,7 +32,7 @@ Prérequis:
 
 ```sh
 # Exécuter une descente de prod partielle [docker]
-docker compose run --rm descente_de_prod
+docker compose run --rm ddp bash docker/entrypoint.ddp.sh
 ## [local]
 pipenv run /bin/bash scripts/descente_de_prod_partielle.sh
 ```

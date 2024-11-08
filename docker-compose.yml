@@ -40,14 +40,6 @@ services:
       - ./scripts:/app/scripts
       - ./docker:/app/docker
 
-  descente_de_prod:
-    image: postgres:14.6-alpine
-    command: "/bin/bash scripts/descente_de_prod_partielle.sh"
-    environment:
-      - CONN_STR_PROD
-    volumes: 
-      - ./scripts:/scripts
-
   pilote_traefik:
     container_name: pilote_traefik
     image: traefik:v2.10

@@ -41,7 +41,7 @@ cd data_management
 FULL_DJ=true docker compose run --rm -e FULL_DJ pilote_datajobs
 ## (5) Faire une descente de prod
 cd ..
-docker compose run --rm descente_de_prod
+docker compose run --rm ddp bash docker/entrypoint.ddp.sh
 ## (6) Lancer les datajobs en mode normal
 cd data_management
 FULL_DJ=false docker compose run --rm -e FULL_DJ pilote_datajobs
