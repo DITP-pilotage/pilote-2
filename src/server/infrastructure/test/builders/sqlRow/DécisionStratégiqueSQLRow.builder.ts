@@ -5,7 +5,7 @@ import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
 export default class DécisionStratégiqueSQLRowBuilder {
   private _id: decision_strategique['id'];
 
-  private _auteur: decision_strategique['auteur'];
+  private _auteur_id: decision_strategique['auteur_id'];
 
   private _contenu: decision_strategique['contenu'];
 
@@ -15,15 +15,18 @@ export default class DécisionStratégiqueSQLRowBuilder {
 
   private _chantierId: decision_strategique['chantier_id'];
 
+  private _auteur: decision_strategique['auteur'];
+
   constructor() {
     const chantierGénéré = new ChantierBuilder().build();
 
     this._id = faker.datatype.uuid();
-    this._auteur = faker.name.fullName();
+    this._auteur_id = null;
     this._contenu = faker.lorem.paragraph();
     this._date = faker.date.recent(60, '2023-05-01T00:00:00.000Z');
     this._type = faker.helpers.arrayElement(['suivi_des_decisions']);
     this._chantierId = chantierGénéré.id;
+    this._auteur = null;
   }
 
   avecId(id: decision_strategique['id']): DécisionStratégiqueSQLRowBuilder {
@@ -31,8 +34,8 @@ export default class DécisionStratégiqueSQLRowBuilder {
     return this;
   }
 
-  avecAuteur(auteur: decision_strategique['auteur']): DécisionStratégiqueSQLRowBuilder {
-    this._auteur = auteur;
+  avecAuteurId(auteur_id: decision_strategique['auteur_id']): DécisionStratégiqueSQLRowBuilder {
+    this._auteur_id = auteur_id;
     return this;
   }
 
@@ -49,11 +52,12 @@ export default class DécisionStratégiqueSQLRowBuilder {
   build(): decision_strategique {
     return {
       id: this._id,
-      auteur: this._auteur,
+      auteur_id: this._auteur_id,
       contenu: this._contenu,
       date: this._date,
       type: this._type,
       chantier_id: this._chantierId,
+      auteur: this._auteur,
     };
   }
 }

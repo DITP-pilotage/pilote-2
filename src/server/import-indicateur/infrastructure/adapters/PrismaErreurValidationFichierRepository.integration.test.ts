@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichier.builder';
 import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
@@ -21,8 +22,23 @@ describe('PrismaErreurValidationFichierRepository', () => {
   describe('#sauvegarder', () => {
     it('doit sauvegarder les données', async () => {
       // GIVEN
+      const auteurId = randomUUID();
+      await prisma.utilisateur.create({
+        data: {
+          id: auteurId,
+          email: 'john.doe@test.com',
+          nom: 'John',
+          prenom: 'Doe',
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, auteurId);
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId('a0c086eb-21e2-4f00-9ca8-4b0fcce133ad')

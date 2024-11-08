@@ -13,7 +13,7 @@ export default class CréerUneSynthèseDesRésultatsUseCase {
     private readonly chantierRepository: ChantierRepository,
   ) {}
 
-  async run(chantierId: string, territoireCode: string, contenu: string, auteur: string, météo: Météo, habilitations: Habilitations): Promise<SynthèseDesRésultats> {
+  async run(chantierId: string, territoireCode: string, contenu: string, auteur_id: string, météo: Météo, habilitations: Habilitations): Promise<SynthèseDesRésultats> {
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnSaisieDesPublications(chantierId, territoireCode);
     
@@ -22,7 +22,7 @@ export default class CréerUneSynthèseDesRésultatsUseCase {
    
     const [, synthèseDesRésultatsCréée] = await Promise.all([
       this.chantierRepository.modifierMétéo(chantierId, territoireCode, météo),
-      this.synthèsesDesRésultatsRepository.créer(chantierId, territoireCode, id, contenu, auteur, météo, date),
+      this.synthèsesDesRésultatsRepository.créer(chantierId, territoireCode, id, contenu, auteur_id, météo, date),
     ]);
     return synthèseDesRésultatsCréée;
   }

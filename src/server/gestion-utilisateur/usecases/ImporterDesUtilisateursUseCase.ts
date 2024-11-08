@@ -16,7 +16,7 @@ export default class ImporterDesUtilisateursUseCase {
   ) {}
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
-  async run(utilisateurs: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[], auteur: string): Promise<void> {
+  async run(utilisateurs: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées; auteurEmail: string })[]): Promise<void> {
     for (const utilisateur of utilisateurs) {
       const territoires = await this.territoireRepository.récupérerTous();
 
@@ -53,7 +53,9 @@ export default class ImporterDesUtilisateursUseCase {
         });
       }
     
-      await this.utilisateurRepository.créerOuMettreÀJour(utilisateur, auteur);
+      const auteur = await this.utilisateurRepository.récupérer(utilisateur.auteurEmail);
+      const auteurGenerique = await this.utilisateurRepository.récupérer('import.csv@modernisation.gouv.fr');
+      await this.utilisateurRepository.créerOuMettreÀJour(utilisateur, auteur ? auteur.id : auteurGenerique!.id);
     }
     const utilisateursPourIAM = utilisateurs.map(utilisateur => ({ nom:  utilisateur.nom, prénom: utilisateur.prénom, email: utilisateur.email }));
     await this.utilisateurIAMRepository.ajouteUtilisateurs(utilisateursPourIAM);

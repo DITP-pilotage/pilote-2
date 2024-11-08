@@ -73,7 +73,10 @@ models:
               - 'id'
           commentaires:
             +unique_key:
-              - 'id'
+              - 'chantier_id'
+              - 'maille'
+              - 'code_insee'
+              - 'date'
               - 'type'
         public:
           +schema: public

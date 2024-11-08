@@ -3,6 +3,7 @@ import { mock } from 'jest-mock-extended';
 import PersistentFile from 'formidable/PersistentFile';
 import { createMocks } from 'node-mocks-http';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { randomUUID } from 'node:crypto';
 import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/ReportValidata.builder';
 import {
   ReportResourceTaskBuilder,
@@ -25,11 +26,30 @@ jest.mock('@/server/import-indicateur/infrastructure/adapters/FichierService.ts'
 }));
 
 const BASE_URL_VALIDATA = 'https://api.validata.etalab.studio';
+async function creeUnUtilisateurEnBase() {
+  const auteurId = randomUUID();
+  await prisma.utilisateur.create({
+    data: {
+      id: auteurId,
+      email: 'john.doe@test.com',
+      nom: 'John',
+      prenom: 'Doe',
+      date_creation: new Date().toISOString(),
+      profil: {
+        connect: {
+          code: ProfilEnum.DITP_ADMIN,
+        },
+      },
+    },
+  });
+  return auteurId;
+}
 
 describe('ImportDonneeIndicateurAPIHandler', () => {
   describe('quand on import un fichier via une donnee en JSON', () => {
     it('quand le fichier est invalide a cause de validata, doit remonter les erreurs validata', async () => {
       // Given
+      const auteurId = await creeUnUtilisateurEnBase();
       const report = new ReportValidataBuilder()
         .avecValid(false)
         .avecTasks(
@@ -67,7 +87,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
         ).build();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, auteurId);
 
       nock(BASE_URL_VALIDATA)
         .post('/validate').reply(200,
@@ -105,6 +125,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
 
     it('quand le fichier est invalide a cause de validata, doit sauvegarder les erreurs validata', async () => {
       // Given
+      const auteurId = await creeUnUtilisateurEnBase();
       const report = new ReportValidataBuilder()
         .avecValid(false)
         .avecTasks(
@@ -142,7 +163,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
         ).build();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, auteurId);
 
       nock(BASE_URL_VALIDATA)
         .post('/validate').reply(200,
@@ -187,6 +208,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
 
     it('quand le fichier est invalide a cause de règle DITP <<indic_id request different des indic_id dans fichier>>, doit sauvegarder les erreurs', async () => {
       // Given
+      const auteurId = await creeUnUtilisateurEnBase();
       const report = new ReportValidataBuilder()
         .avecValid(true)
         .avecTasks(
@@ -205,7 +227,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
         ).build();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, auteurId);
 
       nock(BASE_URL_VALIDATA)
         .post('/validate').reply(200,
@@ -250,6 +272,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
 
     it('quand le fichier est valide, doit importer les données', async () => {
       // Given
+      const auteurId = await creeUnUtilisateurEnBase();
       const report = new ReportValidataBuilder()
         .avecValid(true)
         .avecTasks(
@@ -268,7 +291,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
         ).build();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, auteurId);
 
       nock(BASE_URL_VALIDATA)
         .post('/validate').reply(200,
@@ -309,6 +332,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
   describe('quand on import un fichier via une donnee en CSV', () => {
     it('quand le fichier est invalide a cause de validata, doit remonter les erreurs validata', async () => {
       // Given
+      const auteurId = await creeUnUtilisateurEnBase();
       const report = new ReportValidataBuilder()
         .avecValid(false)
         .avecTasks(
@@ -346,7 +370,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
         ).build();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, auteurId);
 
       nock(BASE_URL_VALIDATA)
         .post('/validate').reply(200,
@@ -382,6 +406,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
 
     it('quand le fichier est invalide a cause de validata, doit sauvegarder les erreurs validata', async () => {
       // Given
+      const auteurId = await creeUnUtilisateurEnBase();
       const report = new ReportValidataBuilder()
         .avecValid(false)
         .avecTasks(
@@ -419,7 +444,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
         ).build();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, auteurId);
 
       nock(BASE_URL_VALIDATA)
         .post('/validate').reply(200,
@@ -462,6 +487,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
 
     it('quand le fichier est invalide a cause de règle DITP <<indic_id request different des indic_id dans fichier>>, doit sauvegarder les erreurs', async () => {
       // Given
+      const auteurId = await creeUnUtilisateurEnBase();
       const report = new ReportValidataBuilder()
         .avecValid(true)
         .avecTasks(
@@ -480,7 +506,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
         ).build();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, auteurId);
 
       nock(BASE_URL_VALIDATA)
         .post('/validate').reply(200,
@@ -522,6 +548,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
 
     it('quand le fichier est valide, doit importer les données', async () => {
       // Given
+      const auteurId = await creeUnUtilisateurEnBase();
       const report = new ReportValidataBuilder()
         .avecValid(true)
         .avecTasks(
@@ -540,7 +567,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
         ).build();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, auteurId);
 
       nock(BASE_URL_VALIDATA)
         .post('/validate').reply(200,
@@ -573,6 +600,7 @@ describe('ImportDonneeIndicateurAPIHandler', () => {
       expect(listeMesuresIndicateurs.at(0)?.indic_id).toEqual('IND-001');
       expect(listeMesuresIndicateurs.at(1)?.indic_id).toEqual('IND-001');
       expect(listeMesuresIndicateurs.at(2)?.indic_id).toEqual('IND-001');
+
     });
   });
 });

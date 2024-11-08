@@ -21,6 +21,7 @@ export default class UtilisateurCSVParseur {
     territoires: 'territoires',
     périmètreIds: 'périmètreIds',
     chantierIds: 'chantierIds',
+    auteurEmail: 'auteurEmail',
   };
 
   constructor(private _filename: string) {}
@@ -37,7 +38,7 @@ export default class UtilisateurCSVParseur {
     return emails;
   }
 
-  parse(): { csvRecords: CsvRecord[], parsedCsvRecords: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[] } {
+  parse(): { csvRecords: CsvRecord[], parsedCsvRecords: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées; auteurEmail: string })[] } {
     const contents = fs.readFileSync(this._filename, 'utf8');
     const csvRecords: CsvRecord[] = parse(contents, this._CSV_PARSE_OPTIONS);
 
@@ -45,10 +46,10 @@ export default class UtilisateurCSVParseur {
     return { csvRecords, parsedCsvRecords };
   }
 
-  _parseCsvRecords(csvRecords: CsvRecord[]): (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[] {
+  _parseCsvRecords(csvRecords: CsvRecord[]): (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées; auteurEmail: string })[] {
     assert(csvRecords, 'Erreur de parsing CSV. Pas de lignes ?');
   
-    let utilisateurs: Record<string, (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })> = {};
+    let utilisateurs: Record<string, (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées; auteurEmail: string })> = {};
 
     for (const csvRecord of csvRecords) {
       const email = csvRecord[this._colonnes.email].toLowerCase();
@@ -76,12 +77,13 @@ export default class UtilisateurCSVParseur {
     };
   }
   
-  _générerUtilisateurÀCréerOuMettreÀJour(csvRecord: CsvRecord): (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }) {
+  _générerUtilisateurÀCréerOuMettreÀJour(csvRecord: CsvRecord): (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées; auteurEmail: string }) {
     return {
       email: csvRecord[this._colonnes.email].toLowerCase(),
       nom: csvRecord[this._colonnes.nom].toLowerCase(),
       prénom: csvRecord[this._colonnes.prénom].toLowerCase(),
       profil: csvRecord[this._colonnes.profil].toUpperCase() as ProfilCode,
+      auteurEmail: csvRecord[this._colonnes.auteurEmail],
       fonction: null,
       saisieCommentaire: true,
       saisieIndicateur: true,

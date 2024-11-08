@@ -190,15 +190,17 @@ model indicateur {
 }
 
 model synthese_des_resultats {
-  id               String    @id
-  chantier_id      String
-  maille           String
-  code_insee       String
+  id               String       @id
+  chantier_id      String   
+  maille           String   
+  code_insee       String   
+  meteo            String?    
+  date_meteo       DateTime?    @db.Timestamp
+  commentaire      String?    
+  date_commentaire DateTime?    @db.Timestamp
   auteur           String?
-  meteo            String?
-  date_meteo       DateTime? @db.Timestamp
-  commentaire      String?
-  date_commentaire DateTime? @db.Timestamp
+  auteur_synthese  utilisateur? @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_id        String?      @db.Uuid
 
   @@schema("public")
 }
@@ -220,14 +222,16 @@ model ppg {
 }
 
 model commentaire {
-  id          String   @id
-  chantier_id String
-  type        String
-  contenu     String
-  date        DateTime @db.Timestamp
-  auteur      String
-  maille      String
-  code_insee  String
+  id                  String   @id
+  chantier_id         String
+  type                String
+  contenu             String
+  date                DateTime @db.Timestamp
+  maille              String
+  code_insee          String
+  auteur              String?
+  auteur_commentaire  utilisateur? @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_id           String? @db.Uuid
 
   @@schema("public")
 }
@@ -350,6 +354,21 @@ model metadata_indicateurs_complementaire {
   @@schema("raw_data")
 }
 
+model commentaires {
+  chantier_id   String
+  maille        String
+  code_insee    String
+  date          String 
+  type          String
+  contenu       String?
+  meteo         String?
+  date_meteo    String?
+  auteur_email  String?
+
+  @@id([chantier_id, code_insee, maille, type, date])
+  @@schema("raw_data")
+}
+
 model mesure_indicateur_temporaire {
   id           String                           @id @db.Uuid
   indic_id     String?
@@ -401,12 +420,14 @@ enum type_objectif {
 }
 
 model objectif {
-  id          String        @id
-  auteur      String
-  type        type_objectif
-  contenu     String
-  date        DateTime      @db.Timestamp
-  chantier_id String
+  id               String        @id
+  type             type_objectif
+  contenu          String
+  date             DateTime      @db.Timestamp
+  chantier_id      String
+  auteur           String?
+  auteur_objectif  utilisateur?  @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_id        String?       @db.Uuid
 
   @@schema("public")
 }
@@ -418,12 +439,14 @@ enum type_decision_strategique {
 }
 
 model decision_strategique {
-  id          String                    @id
-  auteur      String
-  type        type_decision_strategique
-  contenu     String
-  date        DateTime                  @db.Timestamp
-  chantier_id String
+  id                           String                    @id
+  type                         type_decision_strategique
+  contenu                      String
+  date                         DateTime                  @db.Timestamp
+  chantier_id                  String
+  auteur                       String?
+  auteur_decision_strategique  utilisateur?              @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_id                    String?                   @db.Uuid
 
   @@schema("public")
 }
@@ -528,10 +551,19 @@ model utilisateur {
   habilitation                     habilitation[]
   rapport_import_mesure_indicateur rapport_import_mesure_indicateur[]
   date_modification                DateTime                           @default(now())
-  auteur_modification              String
+  auteur_email_modification        String?
+  auteur_modification              utilisateur?                       @relation("modification", fields: [auteur_id_modification], references: [id])
+  auteur_id_modification           String?                            @db.Uuid
   date_creation                    DateTime
-  auteur_creation                  String
-
+  auteur_email_creation            String?
+  auteur_creation                  utilisateur?                       @relation("creation", fields: [auteur_id_creation], references: [id])
+  auteur_id_creation               String?                            @db.Uuid
+  commentaires                     commentaire[]
+  decisions_strategique            decision_strategique[]
+  objectifs                        objectif[]
+  syntheses                        synthese_des_resultats[]
+  utilisateurs_crees               utilisateur[]                      @relation("creation")
+  utilisateur_modifies             utilisateur[]                      @relation("modification")
   @@schema("public")
 }
 

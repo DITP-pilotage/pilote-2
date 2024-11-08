@@ -45,7 +45,7 @@ export const utilisateurRouter = créerRouteurTRPC({
         dependencies.getChantierRepository(),
         dependencies.getPérimètreMinistérielRepository(),
         dependencies.getHistorisationModificationRepository(),
-      ).run(input, auteurModification, false, ctx.session.habilitations, profilAuteur);
+      ).run(input, auteurModification, ctx.session.user.id, false, ctx.session.habilitations, profilAuteur);
     }),
   modifier: procédureProtégée
     .input(validationInfosBaseUtilisateur.merge(zodValidateurCSRF).merge(validationInfosHabilitationsUtilisateur))
@@ -66,7 +66,7 @@ export const utilisateurRouter = créerRouteurTRPC({
         dependencies.getChantierRepository(),
         dependencies.getPérimètreMinistérielRepository(),
         dependencies.getHistorisationModificationRepository(),
-      ).run(input, auteurModification, true, ctx.session.habilitations, profilAuteur);
+      ).run(input, auteurModification, ctx.session.user.id, true, ctx.session.habilitations, profilAuteur);
     }),
   supprimer: procédureProtégée
     .input(validationSupprimerUtilisateur.merge(zodValidateurCSRF))

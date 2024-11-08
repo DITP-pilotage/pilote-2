@@ -37,7 +37,7 @@ describe('PrismaDecisionStrategiqueRepository', () => {
             chantier_id: 'CH-168',
             type: 'suivi_des_decisions',
             contenu: 'contenu OK suivi_des_decisions',
-            auteur: 'Test 1',
+            auteur_id: null,
             date: new Date(),
           },
           {
@@ -45,7 +45,7 @@ describe('PrismaDecisionStrategiqueRepository', () => {
             chantier_id: 'CH-169',
             type: 'suivi_des_decisions',
             contenu: 'contenu KO chantier_id',
-            auteur: 'Test 1',
+            auteur_id: null,
             date: new Date(),
           },
         ],
