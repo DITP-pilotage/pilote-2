@@ -1,5 +1,5 @@
 -- CreateTable
-DROP TABLE IF EXISTS "raw_data"."commentaires";
+DROP TABLE IF EXISTS "raw_data"."commentaires" CASCADE;
 CREATE TABLE "raw_data"."commentaires" (
     "chantier_id" TEXT NOT NULL,
     "maille" TEXT NOT NULL,
