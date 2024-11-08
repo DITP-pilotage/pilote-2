@@ -1,6 +1,7 @@
 DUMP_DEST=scripts/dumps/dump_prod_partielle.dump
 
-# export $(cat .env | xargs)
+source .env
+
 # [export]
 ## [export.dump] pg_dump data of specific tables
 echo ">> Dumping data..."

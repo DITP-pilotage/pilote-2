@@ -64,7 +64,8 @@ cd data_management
 FULL_DJ=true pipenv run bash scripts/run_datajobs.sh
 ## (5) Faire une descente de prod
 cd ..
-bash scripts/descente_de_prod_partielle.sh
+bash scripts/ddp_dump.sh
+bash scripts/ddp_restore.sh
 ## (6) Lancer les datajobs en mode normal
 FULL_DJ=false pipenv run bash scripts/run_datajobs.sh
 ```
