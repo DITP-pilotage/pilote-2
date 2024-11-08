@@ -1,5 +1,6 @@
 DUMP_DEST=scripts/dumps/dump_prod_partielle.dump
 
+source .env
 # export $(cat .env | xargs)
 # [export]
 ## [export.dump] pg_dump data of specific tables
@@ -8,6 +9,7 @@ time pg_dump -d $CONN_STR_PROD --verbose \
     --no-owner --data-only --format custom --compress 9 \
     --table public.rapport_import_mesure_indicateur \
     --table public.commentaire \
+    --table public.decision_strategique \
     --table public.scope \
     --table public.profil \
     --table public.habilitation \
@@ -34,6 +36,7 @@ time pg_dump -d $CONN_STR_PROD --verbose \
 echo ">> TRUNCATE content of these tables..."
 time psql -d $CONN_STR_DEST -c "
 TRUNCATE TABLE
+    public.decision_strategique,
     public.rapport_import_mesure_indicateur,
     public.commentaire,
     public.scope,
@@ -41,7 +44,6 @@ TRUNCATE TABLE
     public.habilitation,
     public.historisation_modification,
     public.synthese_des_resultats,
-    public.utilisateur,
     raw_data.mesure_indicateur,
     raw_data.commentaires,
     raw_data.metadata_indicateurs_complementaire,
@@ -55,6 +57,7 @@ TRUNCATE TABLE
     public.perimetre_projet_structurant,
     public.projet_structurant,
     public.synthese_des_resultats_projet_structurant,
+    public.utilisateur,
     public.erreur_validation_fichier;"
 
 echo ">> pg_restore dumped file..."

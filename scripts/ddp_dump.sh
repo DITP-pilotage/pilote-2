@@ -8,6 +8,7 @@ time pg_dump -d $CONN_STR_PROD --verbose \
     --no-owner --data-only --format custom --compress 9 \
     --table public.rapport_import_mesure_indicateur \
     --table public.commentaire \
+    --table public.decision_strategique \
     --table public.scope \
     --table public.profil \
     --table public.habilitation \
