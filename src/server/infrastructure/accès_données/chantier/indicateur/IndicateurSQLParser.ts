@@ -3,18 +3,17 @@ import {
   DétailsIndicateurMailles,
   DétailsIndicateurTerritoire,
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { comparerDates } from '@/client/utils/date/date';
 import { historique_valeurs } from './IndicateurSQLRepository';
 
-function créerDonnéesTerritoires(territoires: PrismaTerritoire[], indicateurRows: PrismaIndicateur[]) {
+export function créerDonnéesTerritoires(territoires: PrismaTerritoire[], indicateurRows: PrismaIndicateur[]) {
   let donnéesTerritoires: DétailsIndicateurTerritoire = {};
   let IntermediaireEstAnnéeEnCours: boolean;
   territoires.forEach(territoire => {
     const indicateurRow = indicateurRows.find(indicateur => indicateur.code_insee === territoire.code_insee);
     IntermediaireEstAnnéeEnCours = indicateurRow?.objectif_date_valeur_cible_intermediaire?.getFullYear() === new Date().getFullYear();
 
-    donnéesTerritoires[territoire.code_insee] = {
+    donnéesTerritoires[territoire.code] = {
       codeInsee: territoire.code_insee,
       dateValeurCible: indicateurRow?.objectif_date_valeur_cible?.toLocaleString() ?? null,
       dateValeurInitiale: indicateurRow?.date_valeur_initiale?.toLocaleString() ?? null,
@@ -66,13 +65,4 @@ export function parseDétailsIndicateur(indicateurRows: PrismaIndicateur[], terr
     départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'DEPT'), indicateurMailleDépartementale),
     régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'REG'), indicateurMailleRégionale),
   };
-}
-
-export function parseDétailsIndicateurNew(indicateurRows: PrismaIndicateur[], territoires: PrismaTerritoire[], mailleInterne: MailleInterne): DétailsIndicateurTerritoire {
-  const maille = mailleInterne === 'départementale' ? 'DEPT' : mailleInterne === 'régionale' ? 'REG' : 'NAT';
-
-  const listeIndicateurTerritoire = indicateurRows.filter(c => c.maille === maille);
-  const listeTerritoires = territoires.filter(t => t.maille === maille);
-
-  return créerDonnéesTerritoires(listeTerritoires, listeIndicateurTerritoire);
 }

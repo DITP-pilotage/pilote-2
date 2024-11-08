@@ -74,7 +74,7 @@ function déterminerRemplissage(valeur: number | null, valeurMin: number | null,
 }
 
 export default function useCartographieValeurActuelle(données: CartographieDonnéesValeurActuelle, élémentsDeLégende: CartographieÉlémentsDeLégende, unité?: string | null) {
-  const { récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
+  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
   const valeurMin = useMemo(() => valeurMinimum(données.map(donnée => donnée.valeur)), [données]);
   const valeurMax = useMemo(() => valeurMaximum(données.map(donnée => donnée.valeur)), [données]);
@@ -115,9 +115,9 @@ export default function useCartographieValeurActuelle(données: CartographieDonn
   const donnéesCartographie = useMemo(() => {
     let donnéesFormatées: CartographieDonnées = {};
 
-    données.forEach(({ valeur, valeurCible, valeurCibleAnnuelle, codeInsee, estApplicable }) => {
-      const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
-      donnéesFormatées[codeInsee] = {
+    données.forEach(({ valeur, valeurCible, valeurCibleAnnuelle, territoireCode, estApplicable }) => {
+      const territoireGéographique = récupérerDétailsSurUnTerritoire(territoireCode);
+      donnéesFormatées[territoireCode] = {
         contenu: déterminerValeurAffichée(valeur, valeurCible, valeurCibleAnnuelle, estApplicable, unité),
         remplissage: déterminerRemplissage(valeur, valeurMin, valeurMax, estApplicable),
         libellé: territoireGéographique.nomAffiché,
@@ -126,7 +126,7 @@ export default function useCartographieValeurActuelle(données: CartographieDonn
     });
 
     return donnéesFormatées;
-  }, [données, récupérerDétailsSurUnTerritoireAvecCodeInsee, valeurMax, valeurMin, unité]);
+  }, [données, récupérerDétailsSurUnTerritoire, valeurMax, valeurMin, unité]);
 
   return {
     légende,

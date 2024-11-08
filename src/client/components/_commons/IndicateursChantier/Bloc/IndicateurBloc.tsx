@@ -42,6 +42,7 @@ interface IndicateurBlocProps {
   territoireCode: string
   territoiresCompares: string[]
   mailleSelectionnee: MailleInterne
+  mailleQuery: MailleInterne
   mailsDirecteursProjets: string[]
 }
 
@@ -56,6 +57,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   territoireCode,
   territoiresCompares,
   mailleSelectionnee,
+  mailleQuery,
   mailsDirecteursProjets,
 }) => {
   const {
@@ -84,11 +86,11 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   const informationsIndicateurs = [{
     territoireNom: détailTerritoireSélectionné.nomAffiché,
     code: détailTerritoireSélectionné.code,
-    données: détailsIndicateur[codeInseeTerritoireSelectionne],
+    données: détailsIndicateur[territoireCode],
   }, ...detailTerritoiresCompares.map(territoireCompare => ({
     territoireNom: territoireCompare.nomAffiché,
     code: territoireCompare.code,
-    données: détailsIndicateur[territoireCompare.codeInsee],
+    données: détailsIndicateur[territoireCompare.code],
   })).sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) => indicateurDétailsTerritoire1.données.codeInsee.localeCompare(indicateurDétailsTerritoire2.données.codeInsee))];
 
   const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour, indicateurEstApplicable);
@@ -454,6 +456,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 indicateurDétailsParTerritoires={informationsIndicateurs}
                 indicateurEstAjour={!indicateurNonAJour}
                 listeSousIndicateurs={listeSousIndicateurs}
+                mailleQuery={mailleQuery}
                 mailleSelectionnee={mailleSelectionnee}
                 mailsDirecteursProjets={mailsDirecteursProjets}
                 territoireCode={territoireCode}

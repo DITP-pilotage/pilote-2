@@ -19,8 +19,8 @@ function déterminerRemplissage(valeur: Météo | null, élémentsDeLégende: Ca
   else return élémentsDeLégende.DÉFAUT.remplissage;
 }
 
-export default function useCartographieMétéo(données: CartographieDonnéesMétéo, élémentsDeLégende: CartographieÉlémentsDeLégende, mailleSelectionnee: 'départementale' | 'régionale') {
-  const { récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
+export default function useCartographieMétéo(données: CartographieDonnéesMétéo, élémentsDeLégende: CartographieÉlémentsDeLégende) {
+  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
   const légende = useMemo(() => {
     const tousApplicables: Boolean = données.every(d => d.estApplicable);
@@ -47,11 +47,11 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
   }, [élémentsDeLégende, données]);
 
   const donnéesCartographie = données.reduce((acc, val) => {
-    const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(val.codeInsee, mailleSelectionnee);
+    const territoireGéographique = récupérerDétailsSurUnTerritoire(val.territoireCode);
 
     return {
       ...acc,
-      [val.codeInsee]: {
+      [val.territoireCode]: {
         contenu: (
           <div className='fr-text--bold'>
             {val.estApplicable === false ? 'Non applicable' : libellésMétéos[val.valeur]}

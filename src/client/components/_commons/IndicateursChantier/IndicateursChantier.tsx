@@ -24,6 +24,7 @@ interface IndicateursProps {
   estAutoriseAProposerUneValeurActuelle?: boolean
   territoireCode: string
   territoiresCompares: string[]
+  mailleQuery: MailleInterne
   mailleSelectionnee: MailleInterne
   alerteMiseAJourIndicateur: boolean
   mailsDirecteursProjets: string[]
@@ -39,6 +40,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   estAutoriseAProposerUneValeurActuelle = false,
   territoireCode,
   territoiresCompares,
+  mailleQuery,
   mailleSelectionnee,
   alerteMiseAJourIndicateur,
   mailsDirecteursProjets,
@@ -51,7 +53,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   }
 
   const { data: sousIndicateursDisponibles } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_SOUS_INDICATEURS' });
-  const listeIndicateursParent = !!sousIndicateursDisponibles ? 
+  const listeIndicateursParent = !!sousIndicateursDisponibles ?
     indicateurs.filter(indicateur => !indicateur.parentId) :
     indicateurs;
 
@@ -88,7 +90,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                   indicateursDeCetteRubrique
                     .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][codeInsee]?.pondération, détailsIndicateurs[b.id][codeInsee]?.pondération))
                     .map(indicateur => {
-                      const listeSousIndicateurs = !!sousIndicateursDisponibles ? 
+                      const listeSousIndicateurs = !!sousIndicateursDisponibles ?
                         indicateurs.filter(ind => ind.parentId === indicateur.id) :
                         [];
                       return (
@@ -101,13 +103,14 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                           indicateur={indicateur}
                           key={indicateur.id}
                           listeSousIndicateurs={listeSousIndicateurs}
+                          mailleQuery={mailleQuery}
                           mailleSelectionnee={mailleSelectionnee}
                           mailsDirecteursProjets={mailsDirecteursProjets}
                           territoireCode={territoireCode}
                           territoiresCompares={territoiresCompares}
                         />
                       );
-                      
+
                     })
                 }
               </section>

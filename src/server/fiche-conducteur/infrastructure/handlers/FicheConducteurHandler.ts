@@ -97,8 +97,8 @@ const presenterEnObjectifsContrat = (objectif: Map<ObjectifType | DecisionStrate
 
 const presenterEnDonnéesCartographieContrat = (donnéesCartographie: DonnéeCartographie[]): DonnéesCartographieContrat => {
   return donnéesCartographie.reduce((acc, val) => {
-    acc.tauxAvancement.push({ codeInsee: val.codeInsee, valeur: val.tauxAvancement, valeurAnnuelle: null, estApplicable: val.estApplicable });
-    acc.meteo.push({ codeInsee: val.codeInsee, valeur: val.météo, estApplicable: val.estApplicable });
+    acc.tauxAvancement.push({ territoireCode: val.territoireCode, valeur: val.tauxAvancement, valeurAnnuelle: null, estApplicable: val.estApplicable });
+    acc.meteo.push({ territoireCode: val.territoireCode, valeur: val.météo, estApplicable: val.estApplicable });
     return acc;
   }, {
     tauxAvancement: [],

@@ -29,6 +29,20 @@ services:
     volumes: 
       - db_dbt_pilote:/var/lib/postgresql/data
 
+  postgres_test:
+    hostname: postgres_test
+    container_name: pilote_postgres_test
+    depends_on:
+      - pilote_traefik
+    image: postgres:14.6-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=${PGUSER}
+      - POSTGRES_PASSWORD=${PGPASSWORD}
+    volumes:
+      - db_dbt_pilote:/var/lib/postgresql/data
+
   descente_de_prod:
     image: postgres:14.6-alpine
     command: "/bin/bash scripts/descente_de_prod_partielle.sh"

@@ -9,11 +9,15 @@ interface SélecteursMaillesEtTerritoiresProps {
   estVueMobile: boolean,
 }
 
-const SélecteursMaillesEtTerritoires: FunctionComponent<SélecteursMaillesEtTerritoiresProps> = ({ chantierMailles, estVisibleEnMobile, estVueMobile }) => {
+const SélecteursMaillesEtTerritoires: FunctionComponent<SélecteursMaillesEtTerritoiresProps> = ({
+  chantierMailles,
+  estVisibleEnMobile,
+  estVueMobile,
+}) => {
   return (
     <>
       <SélecteurMaille />
-      <SélecteurTerritoire 
+      <SélecteurTerritoire
         chantierMailles={chantierMailles}
         estVisibleEnMobile={estVisibleEnMobile}
         estVueMobile={estVueMobile}

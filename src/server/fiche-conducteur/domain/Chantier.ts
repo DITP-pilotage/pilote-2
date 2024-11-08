@@ -15,6 +15,8 @@ export class Chantier {
 
   private readonly _codeInsee: string;
 
+  private readonly _territoireCode: string;
+
   private readonly _meteo: string;
 
   private readonly _estApplicable: boolean;
@@ -23,7 +25,7 @@ export class Chantier {
 
   private readonly _listeDirecteursProjet: string[];
 
-  private constructor({ id, nom, estTerritorialise, tauxAvancement, tauxAvancementAnnuel, maille, codeInsee, meteo, estApplicable, listeDirecteursAdministrationCentrale, listeDirecteursProjet }: { id: string, nom: string, estTerritorialise: boolean, tauxAvancement: number | null, tauxAvancementAnnuel: number | null, maille: string, codeInsee: string, meteo: Meteo, estApplicable: boolean, listeDirecteursAdministrationCentrale: string[], listeDirecteursProjet: string[]  }) {
+  private constructor({ id, nom, estTerritorialise, tauxAvancement, tauxAvancementAnnuel, maille, codeInsee, territoireCode, meteo, estApplicable, listeDirecteursAdministrationCentrale, listeDirecteursProjet }: { id: string, nom: string, estTerritorialise: boolean, tauxAvancement: number | null, tauxAvancementAnnuel: number | null, maille: string, codeInsee: string, territoireCode: string, meteo: Meteo, estApplicable: boolean, listeDirecteursAdministrationCentrale: string[], listeDirecteursProjet: string[]  }) {
     this._id = id;
     this._nom = nom;
     this._estTerritorialise = estTerritorialise;
@@ -31,6 +33,7 @@ export class Chantier {
     this._tauxAvancementAnnuel = tauxAvancementAnnuel;
     this._maille = maille;
     this._codeInsee = codeInsee;
+    this._territoireCode = territoireCode;
     this._meteo = meteo;
     this._estApplicable = estApplicable;
     this._listeDirecteursAdministrationCentrale = listeDirecteursAdministrationCentrale;
@@ -65,6 +68,10 @@ export class Chantier {
     return this._codeInsee;
   }
 
+  get territoireCode(): string {
+    return this._territoireCode;
+  }
+
   get meteo(): string {
     return this._meteo;
   }
@@ -81,7 +88,7 @@ export class Chantier {
     return this._listeDirecteursProjet;
   }
 
-  static creerChantier({ id, nom, estTerritorialise, tauxAvancement, tauxAvancementAnnuel, maille, codeInsee, meteo, estApplicable, listeDirecteursAdministrationCentrale, listeDirecteursProjet }: { id: string, nom: string, estTerritorialise: boolean, tauxAvancement: number | null, tauxAvancementAnnuel: number | null, maille: string, codeInsee: string, meteo: Meteo, estApplicable: boolean, listeDirecteursAdministrationCentrale: string[], listeDirecteursProjet: string[]  }) {
-    return new Chantier({ id, nom, estTerritorialise, tauxAvancement, tauxAvancementAnnuel, maille, codeInsee, meteo, estApplicable, listeDirecteursAdministrationCentrale, listeDirecteursProjet });
+  static creerChantier({ id, nom, estTerritorialise, tauxAvancement, tauxAvancementAnnuel, maille, codeInsee, territoireCode, meteo, estApplicable, listeDirecteursAdministrationCentrale, listeDirecteursProjet }: { id: string, nom: string, estTerritorialise: boolean, tauxAvancement: number | null, tauxAvancementAnnuel: number | null, maille: string, codeInsee: string, territoireCode: string, meteo: Meteo, estApplicable: boolean, listeDirecteursAdministrationCentrale: string[], listeDirecteursProjet: string[]  }) {
+    return new Chantier({ id, nom, estTerritorialise, tauxAvancement, tauxAvancementAnnuel, maille, codeInsee, territoireCode, meteo, estApplicable, listeDirecteursAdministrationCentrale, listeDirecteursProjet });
   }
 }

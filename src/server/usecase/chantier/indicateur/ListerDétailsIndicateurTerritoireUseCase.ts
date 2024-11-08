@@ -3,19 +3,18 @@ import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilita
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 export class ListerDétailsIndicateurTerritoireUseCase {
   constructor(
     private readonly indicateurRepository: IndicateurRepository,
   ) {}
 
-  async run(listeIndicateurId: string[], chantierId: string, maille: MailleInterne, habilitations: Habilitations, profil: ProfilCode) {
+  async run(listeIndicateurId: string[], chantierId: string, habilitations: Habilitations, profil: ProfilCode) {
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnLecture(chantierId, null);
 
     const resultDétailsParMailles = await Promise.all(
-      listeIndicateurId.map(indicateurId => this.indicateurRepository.récupérerDétailsTerritoire(indicateurId, maille, habilitations, profil).then(detailsTerritoire => ({ id: indicateurId, detailsTerritoire }))),
+      listeIndicateurId.map(indicateurId => this.indicateurRepository.récupérerDétailsTerritoire(indicateurId, habilitations, profil).then(detailsTerritoire => ({ id: indicateurId, detailsTerritoire }))),
     );
 
     return resultDétailsParMailles.reduce((acc, val) => {

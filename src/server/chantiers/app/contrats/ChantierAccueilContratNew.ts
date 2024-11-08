@@ -91,7 +91,7 @@ const presenterEnPerimetresMinisterielAccueilContrat = (périmètreMinistériel:
 };
 
 export const presenterEnChantierAccueilContrat = (territoireCode: string) => (chantier: Chantier): ChantierAccueilContrat => {
-  const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+  const { maille } = territoireCodeVersMailleCodeInsee(territoireCode);
   const mailleChantier = maille === 'NAT' ? 'nationale' : maille === 'REG' ? 'régionale' : 'départementale';
 
   const mailles = presenterEnMailleAccueilContrat(chantier.mailles);
@@ -116,11 +116,11 @@ export const presenterEnChantierAccueilContrat = (territoireCode: string) => (ch
     },
     tauxAvancementDonnéeTerritorialisée: chantier.tauxAvancementDonnéeTerritorialisée,
     météoDonnéeTerritorialisée: chantier.météoDonnéeTerritorialisée,
-    dateDeMàjDonnéesQuantitatives: mailles[mailleChantier][codeInsee].dateDeMàjDonnéesQuantitatives,
-    dateDeMàjDonnéesQualitatives: mailles[mailleChantier][codeInsee].dateDeMàjDonnéesQualitatives,
-    écart: mailles[mailleChantier][codeInsee].écart,
-    tendance: mailles[mailleChantier][codeInsee].tendance,
-    météo: mailles[mailleChantier][codeInsee].météo,
-    avancementGlobal: mailles[mailleChantier][codeInsee].avancement.global,
+    dateDeMàjDonnéesQuantitatives: mailles[mailleChantier][territoireCode].dateDeMàjDonnéesQuantitatives,
+    dateDeMàjDonnéesQualitatives: mailles[mailleChantier][territoireCode].dateDeMàjDonnéesQualitatives,
+    écart: mailles[mailleChantier][territoireCode].écart,
+    tendance: mailles[mailleChantier][territoireCode].tendance,
+    météo: mailles[mailleChantier][territoireCode].météo,
+    avancementGlobal: mailles[mailleChantier][territoireCode].avancement.global,
   };
 };

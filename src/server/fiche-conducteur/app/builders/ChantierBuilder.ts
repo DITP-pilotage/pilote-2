@@ -16,6 +16,8 @@ export class ChantierBuilder {
 
   private codeInsee: string = '87';
 
+  private territoireCode: string = 'DEPT-87';
+
   private meteo: Meteo = 'SOLEIL';
 
   private estApplicable: boolean = false;
@@ -31,6 +33,11 @@ export class ChantierBuilder {
 
   withCodeInsee(codeInsee: string) : ChantierBuilder {
     this.codeInsee = codeInsee;
+    return this;
+  }
+
+  withTerritoireCode(territoireCode: string) : ChantierBuilder {
+    this.territoireCode = territoireCode;
     return this;
   }
 
@@ -88,6 +95,7 @@ export class ChantierBuilder {
       tauxAvancementAnnuel: this.tauxAvancementAnnuel,
       maille: this.maille,
       codeInsee: this.codeInsee,
+      territoireCode: this.territoireCode,
       meteo: this.meteo,
       estApplicable: this.estApplicable,
       listeDirecteursAdministrationCentrale: this.listeDirecteursAdministrationCentrale,

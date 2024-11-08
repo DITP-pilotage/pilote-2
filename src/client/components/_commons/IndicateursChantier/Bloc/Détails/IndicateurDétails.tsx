@@ -24,6 +24,8 @@ import {
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
+import SélecteurMaille
+  from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
 import { useIndicateurDétails } from './useIndicateurDétails';
 
 interface IndicateurDétailsProps {
@@ -41,6 +43,7 @@ interface IndicateurDétailsProps {
   territoireCode: string
   territoiresCompares: string[]
   mailleSelectionnee: MailleInterne
+  mailleQuery: MailleInterne
   indicateurEstAjour: boolean
   mailsDirecteursProjets: string[]
 }
@@ -60,26 +63,29 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   territoireCode,
   territoiresCompares,
   mailleSelectionnee,
+  mailleQuery,
   indicateurEstAjour,
   mailsDirecteursProjets,
 }) => {
+  const pathname = '/chantier/[id]/[territoireCode]';
+
   const [futOuvert, setFutOuvert] = useState(false);
 
-  const { auClicTerritoireMultiSélectionCallback } = useCartographie(territoireCode, mailleSelectionnee, '/chantier/[id]/[territoireCode]');
+  const { auClicTerritoireMultiSélectionCallback } = useCartographie(territoireCode, pathname);
 
   const {
     donnéesCartographieAvancement,
     donnéesCartographieValeurActuelle,
     donnéesCartographieAvancementTerritorialisées,
     donnéesCartographieValeurActuelleTerritorialisées,
-  } = useIndicateurDétails(indicateur.id, futOuvert, mailleSelectionnee, detailsIndicateursTerritoire[indicateur.id]);
+  } = useIndicateurDétails(detailsIndicateursTerritoire[indicateur.id]);
 
   const indicateurSiTypeDeReformeEstChantier = futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle;
   const nomDefinitionDeLindicateur = estSousIndicateur ? 'Description du sous-indicateur et calendrier de mise à jour' : 'Description de l\'indicateur et calendrier de mise à jour';
   const nomRepartitionGeographiqueEtEvolution = 'Répartition géographique et évolution';
   const nomSousIndicateurs = 'Sous indicateurs';
 
-  const responsablesDonnees = indicateur.responsablesDonneesMails.length > 0 ? 
+  const responsablesDonnees = indicateur.responsablesDonneesMails.length > 0 ?
     indicateur.responsablesDonneesMails :
     mailsDirecteursProjets;
 
@@ -159,10 +165,16 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                     >
                       Répartition géographique de l'avancement 2026
                     </Titre>
+                    <div className='fr-grid-row fr-grid-row--center texte-centre fr-pb-2w fr-text--sm'>
+                      <SélecteurMaille
+                        mailleQuery={mailleQuery}
+                        pathname={pathname}
+                      />
+                    </div>
                     <CartographieAvancement
                       auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
                       données={donnéesCartographieAvancement}
-                      mailleSelectionnee={mailleSelectionnee}
+                      mailleSelectionnee={mailleQuery}
                       options={{ multiséléction: true }}
                       pathname='/chantier/[id]/[territoireCode]'
                       territoireCode={territoireCode}
@@ -179,10 +191,16 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                     >
                       Répartition géographique de la valeur actuelle de l'indicateur
                     </Titre>
+                    <div className='fr-grid-row fr-grid-row--center texte-centre fr-pb-2w fr-text--sm'>
+                      <SélecteurMaille
+                        mailleQuery={mailleQuery}
+                        pathname={pathname}
+                      />
+                    </div>
                     <CartographieValeurActuelle
                       auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
                       données={donnéesCartographieValeurActuelle}
-                      mailleSelectionnee={mailleSelectionnee}
+                      mailleSelectionnee={mailleQuery}
                       options={{ multiséléction: true }}
                       pathname='/chantier/[id]/[territoireCode]'
                       territoireCode={territoireCode}
@@ -232,6 +250,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                 détailsIndicateurs={détailsIndicateurs}
                 estInteractif
                 listeSousIndicateurs={listeSousIndicateurs}
+                mailleQuery={mailleQuery}
                 mailleSelectionnee={mailleSelectionnee}
                 mailsDirecteursProjets={mailsDirecteursProjets}
                 territoireCode={territoireCode}

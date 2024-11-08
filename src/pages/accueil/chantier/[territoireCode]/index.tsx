@@ -36,6 +36,7 @@ import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLarge
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import { Chantier } from '@/server/chantiers/domain/Chantier';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import IndexStyled from './index.styled';
 
 interface ChantierAccueil {
@@ -44,7 +45,8 @@ interface ChantierAccueil {
   ministères: Ministère[]
   axes: Axe[]
   territoireCode: string
-  mailleSelectionnee: 'départementale' | 'régionale'
+  mailleSelectionnee: MailleInterne
+  mailleQuery: MailleInterne
   filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
@@ -68,17 +70,21 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
 
   const {
     maille: mailleTerritoireSelectionnee,
-    codeInsee: codeInseeSelectionne,
   } = territoireCodeVersMailleCodeInsee(territoireCode);
 
-  const mailleSelectionnee = query.maille as 'départementale' | 'régionale' ?? (mailleTerritoireSelectionnee === 'REG' ? 'régionale' : 'départementale');
-  const mailleChantier = mailleTerritoireSelectionnee === 'NAT' ? 'nationale' : mailleSelectionnee;
+  const mailleQuery = query.maille as 'départementale' | 'régionale' || 'départementale';
+
+  const mailleGlobalTerritoireSelectionnee = mailleTerritoireSelectionnee === 'NAT'
+    ? mailleQuery
+    : mailleTerritoireSelectionnee === 'DEPT' ? 'départementale' : 'régionale';
+
+  const mailleChantier = mailleTerritoireSelectionnee === 'NAT' ? 'nationale' : mailleGlobalTerritoireSelectionnee;
 
   if ((territoireCode === 'NAT-FR' && !session.habilitations.lecture.territoires.includes('NAT-FR')) || !session.habilitations.lecture.territoires.includes(territoireCode)) {
     return {
       redirect: {
         statusCode: 302,
-        destination: `/accueil/chantier/${query.maille === 'départementale' ? territoireDept : query.maille === 'départementale' ? territoireReg : session.habilitations.lecture.territoires[0]}`,
+        destination: `/accueil/chantier/${query.maille === 'départementale' ? territoireDept : query.maille === 'départementale' ? territoireReg : session.habilitations.lecture.territoires[0]}?maille=${query.maille || 'départementale'}`,
       },
     };
   }
@@ -117,15 +123,15 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     dependencies.getChantierRepository(),
     dependencies.getTerritoireRepository(),
   )
-    .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', codeInseeSelectionne, ministères, axes, filtres, sorting);
+    .run(session.habilitations, session.profil, territoireCode, mailleGlobalTerritoireSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', ministères, axes, filtres, sorting);
 
   const {
     répartitionMétéos,
     filtresComptesCalculés,
-  } = Chantier.recupererStatistiqueListeChantier(chantiers, mailleChantier, codeInseeSelectionne);
+  } = Chantier.recupererStatistiqueListeChantier(chantiers, mailleChantier, territoireCode);
 
   const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisse || filtresAlertes.estEnAlerteTauxAvancementNonCalculé || filtresAlertes.estEnAlerteMétéoNonRenseignée || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? chantiers.filter(chantier => {
-    const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][codeInseeSelectionne];
+    const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][territoireCode];
     return (filtresAlertes.estEnAlerteÉcart && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
       || (filtresAlertes.estEnAlerteBaisse && Alerte.estEnAlerteBaisse(chantierDonnéesTerritoires.tendance))
       || (filtresAlertes.estEnAlerteTauxAvancementNonCalculé && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierDonnéesTerritoires.avancement.global, chantier.cibleAttendu))
@@ -135,19 +141,19 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
 
   const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository());
 
-  const avancementsAgrégés = await récupérerStatistiquesChantiersUseCase.run(chantiersAvecAlertes.map(chantier => chantier.id), mailleSelectionnee || 'départementale', session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat);
+  const avancementsAgrégés = await récupérerStatistiquesChantiersUseCase.run(chantiersAvecAlertes.map(chantier => chantier.id), mailleGlobalTerritoireSelectionnee, session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat);
 
-  const donnéesTerritoiresAgrégées = new AgrégateurListeChantiersParTerritoire(chantiersAvecAlertes, mailleSelectionnee || 'départementale').agréger();
+  const donnéesTerritoiresAgrégées = new AgrégateurListeChantiersParTerritoire(chantiersAvecAlertes).agréger();
 
   if (avancementsAgrégés) {
-    avancementsAgrégés.global.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[codeInseeSelectionne].répartition.avancements.global.moyenne;
-    avancementsAgrégés.annuel.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[codeInseeSelectionne].répartition.avancements.annuel.moyenne;
+    avancementsAgrégés.global.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[territoireCode].répartition.avancements.global.moyenne;
+    avancementsAgrégés.annuel.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[territoireCode].répartition.avancements.annuel.moyenne;
   }
 
-  const avancementsGlobauxTerritoriauxMoyens = objectEntries(donnéesTerritoiresAgrégées[mailleSelectionnee || 'départementale'].territoires).map(([codeInsee, territoire]) => ({
+  const avancementsGlobauxTerritoriauxMoyens = objectEntries({ ...donnéesTerritoiresAgrégées.régionale.territoires, ...donnéesTerritoiresAgrégées.départementale.territoires }).map(([territoireCodeDonnee, territoire]) => ({
     valeur: territoire.répartition.avancements.global.moyenne,
     valeurAnnuelle: territoire.répartition.avancements.annuel.moyenne,
-    codeInsee,
+    territoireCode: territoireCodeDonnee as string,
     estApplicable: true,
   }));
 
@@ -166,7 +172,8 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
       ministères,
       axes,
       territoireCode,
-      mailleSelectionnee: mailleSelectionnee || 'départementale',
+      mailleSelectionnee: mailleGlobalTerritoireSelectionnee,
+      mailleQuery,
       filtresComptesCalculés,
       avancementsAgrégés,
       avancementsGlobauxTerritoriauxMoyens,
@@ -196,6 +203,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   ministères,
   territoireCode,
   mailleSelectionnee,
+  mailleQuery,
   filtresComptesCalculés,
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
@@ -226,9 +234,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
               typeDeRéformeSélectionné='chantier'
             />
             <SélecteursMaillesEtTerritoires
-              estVisibleEnMobile={estVisibleEnMobile}
-              estVueMobile={estVueMobile}
-              mailleSelectionnee={mailleSelectionnee}
               pathname='/accueil/chantier/[territoireCode]'
               territoireCode={territoireCode}
             />
@@ -268,6 +273,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             axes={axes}
             chantiers={chantiers}
             filtresComptesCalculés={filtresComptesCalculés}
+            mailleQuery={mailleQuery}
             mailleSelectionnee={mailleSelectionnee}
             ministères={ministères}
             nombreTotalChantiersAvecAlertes={nombreTotalChantiersAvecAlertes}

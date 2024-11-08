@@ -18,7 +18,7 @@ export class RécupérerDonnéesCartographieUseCase {
 
     return listeChantiersNatEtDept.filter(chantier => chantier.maille !== 'NAT').map(chantier => (
       DonnéeCartographie.creerDonnéeCartographie({
-        codeInsee: chantier.codeInsee,
+        territoireCode: chantier.territoireCode,
         tauxAvancement: chantier.tauxAvancement,
         météo: chantier.meteo as Meteo,
         estApplicable: chantier.estApplicable,

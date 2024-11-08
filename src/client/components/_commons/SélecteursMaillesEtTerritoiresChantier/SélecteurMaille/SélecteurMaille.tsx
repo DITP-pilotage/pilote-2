@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { FunctionComponent } from 'react';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { maillesAccessiblesEnLectureStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
@@ -8,61 +7,57 @@ import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreN
 import SélecteurMailleStyled from './SélecteurMaille.styled';
 
 const SélecteurMaille: FunctionComponent<{
-  mailleSelectionnee: 'départementale' | 'régionale',
-  pathname: string;
-}> = ({ mailleSelectionnee, pathname }) => {
+  pathname: string,
+  mailleQuery: MailleInterne
+}> = ({ pathname, mailleQuery }) => {
   const maillesAccessiblesEnLecture = maillesAccessiblesEnLectureStore();
   const router = useRouter();
-  const { data: session } = useSession();
 
   const maillesInternesAccessiblesEnLecture = maillesAccessiblesEnLecture.filter((maille): maille is MailleInterne => maille !== 'nationale');
 
   const mailles: Record<MailleInterne, string> = {
-    'départementale': 'Départements',
     'régionale': 'Régions',
+    'départementale': 'Départements',
   };
 
   if (maillesInternesAccessiblesEnLecture.length <= 1) {
     return null;
   }
 
-  const territoireDept = session!.habilitations.lecture.territoires.find(territoire => territoire.startsWith('DEPT'));
-  const territoireReg = session!.habilitations.lecture.territoires.find(territoire => territoire.startsWith('REG'));
-
   const changerMaille = (maille: MailleInterne) => {
-    const territoireCode = session?.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : maille === 'régionale' ? territoireReg : maille === 'départementale' ? territoireDept : session?.habilitations.lecture.territoires[0];
+    const initialeTerritoireCode = router.query.territoireCode as string;
 
-    sauvegarderFiltres({ territoireCode, maille });
+    sauvegarderFiltres({ territoireCode: initialeTerritoireCode, maille });
 
     delete router.query._action;
-    delete router.query.territoiresCompares;
     delete router.query.pageIndex;
     return router.push({
       pathname,
-      query: { ...router.query, territoireCode, maille },
+      query: { ...router.query, maille },
     },
     undefined,
     {},
     );
   };
 
-
   return (
     <SélecteurMailleStyled className='fr-p-1v'>
-      {
-        objectEntries(mailles)
-          .filter(([maille]) => maillesInternesAccessiblesEnLecture.includes(maille))
-          .map(([maille, libellé]) => (
-            <button
-              className={`${mailleSelectionnee === maille && 'sélectionné fr-text--bold'}`}
-              key={maille}
-              onClick={() => changerMaille(maille)}
-              type='button'
-            >
-              {libellé}
-            </button>
-          ))
-      }
+      <div className='flex'>
+        {
+          objectEntries(mailles)
+            .filter(([maille]) => maillesInternesAccessiblesEnLecture.includes(maille))
+            .map(([maille, libellé]) => (
+              <button
+                className={`fr-tag fr-mr-1w${mailleQuery === maille ? ' tag-selectionnee' : ''}`}
+                key={maille}
+                onClick={() => changerMaille(maille)}
+                type='button'
+              >
+                {libellé}
+              </button>
+            ))
+        }
+      </div>
     </SélecteurMailleStyled>
   );
 };

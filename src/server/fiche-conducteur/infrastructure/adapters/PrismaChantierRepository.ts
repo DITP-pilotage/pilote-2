@@ -13,6 +13,7 @@ const convertirEnChantier = (chantierModel: ChantierModel): Chantier => {
     tauxAvancementAnnuel: chantierModel.taux_avancement_annuel,
     maille: chantierModel.maille,
     codeInsee: chantierModel.code_insee,
+    territoireCode: chantierModel.territoire_code,
     meteo: chantierModel.meteo as Meteo,
     estApplicable: !!chantierModel.est_applicable,
     listeDirecteursAdministrationCentrale: chantierModel.directeurs_administration_centrale,

@@ -28,6 +28,7 @@ export type CoordinateurTerritorial = { nom: string, email: string };
 export type TerritoiresDonnées = Record<CodeInsee, TerritoireDonnées>;
 
 export type TerritoireDonnées = {
+  territoireCode: string,
   codeInsee: CodeInsee,
   avancement: Avancement,
   avancementPrécédent: Avancement,

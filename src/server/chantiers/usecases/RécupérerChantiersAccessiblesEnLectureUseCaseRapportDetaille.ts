@@ -59,7 +59,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
 
     const [chantiersRowsMaille, territoires ] = await Promise.all([
       this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLecture, territoiresLecture, profil, maille, filtresPourChantier, sorting),
-      this.territoireRepository.récupérerTousNew(maille),
+      this.territoireRepository.récupérerTousNew(),
     ]);
 
     const init = chantiersRowsMaille.filter(chantier => chantier.territoire_code === territoireCode).reduce((acc, val) => {

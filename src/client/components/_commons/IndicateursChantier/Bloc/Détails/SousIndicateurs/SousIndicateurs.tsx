@@ -12,6 +12,7 @@ interface SousIndicateursProps {
   estInteractif: boolean
   territoireCode: string
   territoiresCompares: string[]
+  mailleQuery: MailleInterne
   mailleSelectionnee: MailleInterne
   mailsDirecteursProjets: string[]
 }
@@ -25,6 +26,7 @@ const SousIndicateurs: FunctionComponent<SousIndicateursProps> = ({
   estInteractif,
   territoireCode,
   territoiresCompares,
+  mailleQuery,
   mailleSelectionnee,
   mailsDirecteursProjets,
 }) => {
@@ -45,6 +47,7 @@ const SousIndicateurs: FunctionComponent<SousIndicateursProps> = ({
             estInteractif={estInteractif}
             indicateur={sousIndicateur}
             key={sousIndicateur.id}
+            mailleQuery={mailleQuery}
             mailleSelectionnee={mailleSelectionnee}
             mailsDirecteursProjets={mailsDirecteursProjets}
             territoireCode={territoireCode}
