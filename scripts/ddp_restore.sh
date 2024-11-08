@@ -1,5 +1,7 @@
 DUMP_DEST=scripts/dumps/dump_prod_partielle.dump
 
+source .env
+
 # [import]
 echo ">> TRUNCATE content of these tables..."
 time psql -d $CONN_STR_DEST -c "
