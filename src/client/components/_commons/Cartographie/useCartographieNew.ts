@@ -1,12 +1,10 @@
 import { useRouter } from 'next/router';
-import { parseAsInteger, parseAsString, useQueryState } from 'nuqs';
+import { parseAsString, useQueryState } from 'nuqs';
 import {
   régionsTerritoiresStore,
   territoiresAccessiblesEnLectureStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { CodeInsee, DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
+import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import {
   CartographieOptions,
   CartographieTerritoireAffiché,
@@ -14,7 +12,7 @@ import {
 } from './useCartographie.interface';
 import { CartographieDonnées } from './Cartographie.interface';
 
-export default function useCartographie(territoireCode: string, mailleSelectionnee: MailleInterne, pathname: '/accueil/chantier/[territoireCode]' | '/chantier/[id]/[territoireCode]' | null) {
+export default function useCartographie(territoireCode: string, pathname: '/accueil/chantier/[territoireCode]' | '/chantier/[id]/[territoireCode]' | null) {
   const régions = régionsTerritoiresStore();
   const [territoiresCompares, setTerritoiresCompares] = useQueryState('territoiresCompares', parseAsString.withDefault('').withOptions({
     shallow: false,
@@ -22,15 +20,9 @@ export default function useCartographie(territoireCode: string, mailleSelectionn
     clearOnDefault: true,
   }));
 
-  const [, setPagination] = useQueryState('pageIndex', parseAsInteger.withDefault(1).withOptions({
-    shallow: false,
-  }));
-
   const territoiresAccessiblesEnLecture = territoiresAccessiblesEnLectureStore();
 
   const router = useRouter();
-
-  const { codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
 
   function déterminerRégionsÀTracer(territoireAffiché: CartographieTerritoireAffiché) {
     return territoireAffiché.maille === 'régionale'
@@ -43,15 +35,17 @@ export default function useCartographie(territoireCode: string, mailleSelectionn
     frontièresÀTracer: DétailTerritoire[],
     données: CartographieDonnées,
   ): CartographieTerritoires {
+
     return {
       territoires: territoiresÀTracer.map(territoire => ({
         codeInsee: territoire.codeInsee,
+        territoireCode: territoire.code,
         code: territoire.code,
-        remplissage: données[territoire.codeInsee]?.remplissage ?? '#bababa', // TODO où gérer ce undefined ?
-        libellé: données[territoire.codeInsee]?.libellé ?? '-', // TODO où gérer ce undefined ?
-        contenuInfoBulle: données[territoire.codeInsee].contenu, // TODO où gérer ce undefined ?
+        remplissage: données[territoire.code]?.remplissage ?? '#bababa', // TODO où gérer ce undefined ?
+        libellé: données[territoire.code]?.libellé ?? '-', // TODO où gérer ce undefined ?
+        contenuInfoBulle: données[territoire.code].contenu, // TODO où gérer ce undefined ?
         estInteractif: territoire.accèsLecture,
-        estApplicable: données[territoire.codeInsee].estApplicable,
+        estApplicable: données[territoire.code].estApplicable,
       })),
       frontières: frontièresÀTracer.map(frontière => ({
         codeInsee: frontière.codeInsee,
@@ -70,10 +64,12 @@ export default function useCartographie(territoireCode: string, mailleSelectionn
     estInteractif: true,
   };
 
-  function auClicTerritoireCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {
+  function auClicTerritoireCallback(territoireCodeSelectionnee: string, territoireSélectionnable: boolean) {
     if (!territoireSélectionnable) return;
 
-    let code =  (codeInsee === territoireCodeInsee && territoiresAccessiblesEnLecture.some(territoire => territoire.maille === 'nationale')) ? 'NAT-FR' : mailleSelectionnee === 'départementale' ? `DEPT-${territoireCodeInsee}` : `REG-${territoireCodeInsee}`;
+    const listeTerritoiresCompares = territoiresCompares.split(',').filter(Boolean);
+
+    let code =  (territoireCode === territoireCodeSelectionnee && territoiresAccessiblesEnLecture.some(territoire => territoire.maille === 'nationale')) ? 'NAT-FR' : territoireCodeSelectionnee;
 
     if (router.query.territoireCode === 'NAT-FR' || code === 'NAT-FR') {
       delete router.query.estEnAlerteTauxAvancementNonCalculé;
@@ -88,28 +84,39 @@ export default function useCartographie(territoireCode: string, mailleSelectionn
 
     delete router.query.pageIndex;
 
+    if (listeTerritoiresCompares.includes(territoireCodeSelectionnee)) {
+      listeTerritoiresCompares.splice(listeTerritoiresCompares.indexOf(territoireCodeSelectionnee), 1);
+    } else {
+      router.query.territoireCode = code;
+    }
+
+    if (listeTerritoiresCompares.length === 0) {
+      delete router.query.territoiresCompares;
+    } else {
+      router.query.territoiresCompares = listeTerritoiresCompares.join(',');
+    }
+
     return router.push({
       pathname,
-      query: { ...router.query, territoireCode: code },
+      query: { ...router.query },
     },
     undefined,
     {},
     );
   }
 
-  function auClicTerritoireMultiSélectionCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {
+  function auClicTerritoireMultiSélectionCallback(territoireCodeSelectionnee: string, territoireSélectionnable: boolean) {
     if (!territoireSélectionnable) return;
 
     const listeTerritoiresCompares = territoiresCompares.split(',').filter(Boolean);
 
-    if (codeInsee === territoireCodeInsee) {
+
+    if (territoireCode === territoireCodeSelectionnee) {
       delete router.query.territoiresCompares;
-      return auClicTerritoireCallback(territoireCodeInsee, territoireSélectionnable);
+      return auClicTerritoireCallback(territoireCodeSelectionnee, territoireSélectionnable);
     }
 
-    let territoireCompareCode =  (codeInsee === territoireCodeInsee && territoiresAccessiblesEnLecture.some(territoire => territoire.maille === 'nationale')) ? 'NAT-FR' : mailleSelectionnee === 'départementale' ? `DEPT-${territoireCodeInsee}` : `REG-${territoireCodeInsee}`;
-
-    setPagination(1);
+    let territoireCompareCode =  (territoireCode === territoireCodeSelectionnee && territoiresAccessiblesEnLecture.some(territoire => territoire.maille === 'nationale')) ? 'NAT-FR' : territoireCodeSelectionnee;
 
     if (listeTerritoiresCompares.includes(territoireCompareCode)) {
       listeTerritoiresCompares.splice(listeTerritoiresCompares.indexOf(territoireCompareCode), 1);

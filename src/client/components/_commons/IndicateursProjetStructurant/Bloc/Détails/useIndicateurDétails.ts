@@ -20,8 +20,8 @@ export default function useIndicateurDétails(indicateurId: Indicateur['id'], fu
 
   function aDeLaDonnéeTerritoriale(donnéesCartographie: CartographieDonnéesAvancement | CartographieDonnéesValeurActuelle | null): boolean {
     if (donnéesCartographie) {
-      for (const d of donnéesCartographie) {
-        if (d.valeur !== null) {
+      for (const donneeCartographie of donnéesCartographie) {
+        if (donneeCartographie.valeur !== null) {
           return true;
         }
       }
@@ -37,10 +37,10 @@ export default function useIndicateurDétails(indicateurId: Indicateur['id'], fu
       enabled: false,
       onSuccess: (data: DétailsIndicateurMailles) => {
         setDonnéesCartographieAvancement(
-          objectEntries(data[mailleSélectionnée]).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.avancement.global, valeurAnnuelle: détailsIndicateur.avancement.annuel, codeInsee: codeInsee, estApplicable: détailsIndicateur.est_applicable })),
+          objectEntries(data[mailleSélectionnée]).map(([territoireCode, détailsIndicateur]) => ({ valeur: détailsIndicateur.avancement.global, valeurAnnuelle: détailsIndicateur.avancement.annuel, territoireCode: territoireCode, estApplicable: détailsIndicateur.est_applicable })),
         );
         setDonnéesCartographieValeurActuelle(
-          objectEntries(data[mailleSélectionnée]).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.valeurActuelle ?? null, valeurCible: détailsIndicateur.valeurCible ?? null, valeurCibleAnnuelle: détailsIndicateur.valeurCibleAnnuelle ?? null, codeInsee: codeInsee, estApplicable: détailsIndicateur.est_applicable })),
+          objectEntries(data[mailleSélectionnée]).map(([territoireCode, détailsIndicateur]) => ({ valeur: détailsIndicateur.valeurActuelle ?? null, valeurCible: détailsIndicateur.valeurCible ?? null, valeurCibleAnnuelle: détailsIndicateur.valeurCibleAnnuelle ?? null, territoireCode: territoireCode, estApplicable: détailsIndicateur.est_applicable })),
         );
       },
     },

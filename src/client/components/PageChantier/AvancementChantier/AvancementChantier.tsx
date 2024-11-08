@@ -8,6 +8,8 @@ import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDe
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
 import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 import Alerte from '@/components/_commons/Alerte/Alerte';
+import SélecteurMaille
+  from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
 import AvancementChantierStyled from './AvancementChantier.styled';
 
 const classeÀPartirDeLaMaille = {
@@ -19,6 +21,7 @@ const classeÀPartirDeLaMaille = {
 interface AvancementChantierProps {
   territoireCode: string
   mailleSelectionnee: MailleInterne
+  mailleQuery: MailleInterne
   avancements: {
     nationale: AvancementsStatistiques
     départementale: {
@@ -45,9 +48,13 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   avancements,
   territoireCode,
   mailleSelectionnee,
+  mailleQuery,
   mailleSourceDonnees,
 }) => {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+
+  const pathname = '/chantier/[id]/[territoireCode]';
+
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const territoireSélectionnéParent = territoireSélectionné.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné.codeParent) : null;
 
@@ -64,12 +71,12 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               />
               {
                 mailleSourceDonnees === 'régionale' &&
-                  <Alerte
-                    classesMessagePolice='fr-text fr-text--xs'
-                    classesSupplementaires='fr-mt-2w'
-                    message='Données régionales'
-                    type='info'
-                  />
+                <Alerte
+                  classesMessagePolice='fr-text fr-text--xs'
+                  classesSupplementaires='fr-mt-2w'
+                  message='Données régionales'
+                  type='info'
+                />
               }
             </div>
           </Bloc>
@@ -121,6 +128,12 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                   <div className='fr-container fr-px-md-1w fr-px-lg-2w'>
                     <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
                       Répartition des taux d’avancement des territoires
+                    </div>
+                    <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
+                      <SélecteurMaille
+                        mailleQuery={mailleQuery}
+                        pathname={pathname}
+                      />
                     </div>
                     <div className='fr-grid-row fr-grid-row-md--gutters'>
                       <div className='fr-col-4'>

@@ -37,9 +37,9 @@ export class AgrégateurChantiersParTerritoire {
   }
 
   private _répartirLesDonnéesBrutesPourChaqueTerritoire() {
-    objectEntries(this.chantier.mailles).forEach(([maille, codesInsee]) => {
-      objectEntries(codesInsee).forEach(([codeInsee, donnéesTerritoire]) => {
-        this.agrégat[maille].territoires[codeInsee].donnéesBrutes.avancements = donnéesTerritoire.avancement;
+    objectEntries(this.chantier.mailles).forEach(([maille, territoiresCode]) => {
+      objectEntries(territoiresCode).forEach(([territoireCode, donnéesTerritoire]) => {
+        this.agrégat[maille].territoires[territoireCode].donnéesBrutes.avancements = donnéesTerritoire.avancement;
       });
     });
   }
@@ -128,9 +128,9 @@ export class AgrégateurChantiersParTerritoire {
 
   private _créerAgrégatInitial(): AgrégatParTerritoire {
     return {
-      nationale: this._créerDonnéesInitialesPourUneMaille(['FR']),
-      départementale: this._créerDonnéesInitialesPourUneMaille(départements.map(département => département.codeInsee)),
-      régionale: this._créerDonnéesInitialesPourUneMaille(régions.map(région => région.codeInsee)),
+      nationale: this._créerDonnéesInitialesPourUneMaille(['NAT-FR']),
+      départementale: this._créerDonnéesInitialesPourUneMaille(départements.map(département => département.territoireCode)),
+      régionale: this._créerDonnéesInitialesPourUneMaille(régions.map(région => région.territoireCode)),
     };
   }
 }

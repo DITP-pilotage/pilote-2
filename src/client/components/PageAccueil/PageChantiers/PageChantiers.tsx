@@ -38,6 +38,9 @@ import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import SelecteurVueStatuts from '@/client/components/PageAccueil/SelecteurVueStatuts/SelecteurVueStatuts';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
+import SélecteurMaille
+  from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
@@ -48,7 +51,8 @@ interface PageChantiersProps {
   ministères: Ministère[]
   axes: Axe[],
   territoireCode: string
-  mailleSelectionnee: 'départementale' | 'régionale'
+  mailleSelectionnee: MailleInterne
+  mailleQuery: MailleInterne
   filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
@@ -62,6 +66,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   axes,
   territoireCode,
   mailleSelectionnee,
+  mailleQuery,
   filtresComptesCalculés,
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
@@ -72,7 +77,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
 
   const pathname = '/accueil/chantier/[territoireCode]';
-  const { auClicTerritoireCallback } = useCartographie(territoireCode, mailleSelectionnee, pathname);
+  const { auClicTerritoireCallback } = useCartographie(territoireCode, pathname);
 
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
@@ -219,6 +224,12 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                         <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
                           Répartition des taux d’avancement des territoires
                         </div>
+                        <div className='fr-grid-row fr-grid-row--center texte-centre fr-pb-2w fr-text--sm'>
+                          <SélecteurMaille
+                            mailleQuery={mailleQuery}
+                            pathname={pathname}
+                          />
+                        </div>
                         <div className='fr-grid-row fr-grid-row-md--gutters fr-px-3v'>
                           <div className='fr-col-4'>
                             <JaugeDeProgression
@@ -286,9 +297,9 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                     {INFOBULLE_CONTENUS.chantiers.météos}
                   </Infobulle>
                 </TitreInfobulleConteneur>
-                <RépartitionMétéo 
+                <RépartitionMétéo
                   chantiersSontArchives={chantiersSontArchives}
-                  météos={répartitionMétéos} 
+                  météos={répartitionMétéos}
                 />
               </section>
             </Bloc>
@@ -302,10 +313,16 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 >
                   Taux d’avancement des chantiers par territoire
                 </Titre>
+                <div>
+                  <SélecteurMaille
+                    mailleQuery={mailleQuery}
+                    pathname={pathname}
+                  />
+                </div>
                 <CartographieAvancement
                   auClicTerritoireCallback={auClicTerritoireCallback}
                   données={avancementsGlobauxTerritoriauxMoyens}
-                  mailleSelectionnee={mailleSelectionnee}
+                  mailleSelectionnee={mailleQuery}
                   pathname='/accueil/chantier/[territoireCode]'
                   territoireCode={territoireCode}
                   élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}

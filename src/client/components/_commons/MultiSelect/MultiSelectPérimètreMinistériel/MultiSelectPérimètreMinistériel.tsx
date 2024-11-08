@@ -1,7 +1,10 @@
 import { FunctionComponent, useEffect, useState } from 'react';
 import MultiSelect from '@/client/components/_commons/MultiSelect/MultiSelect';
 import api from '@/server/infrastructure/api/trpc/api';
-import { MultiSelectOptions, MultiSelectOptionsGroupées } from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
+import {
+  MultiSelectOptions,
+  MultiSelectOptionsGroupées,
+} from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
 import { trierParOrdreAlphabétique } from '@/client/utils/arrays';
 
 interface MultiSelectPérimètreMinistérielProps {
@@ -11,9 +14,14 @@ interface MultiSelectPérimètreMinistérielProps {
   afficherBoutonsSélection?: boolean
 }
 
-const MultiSelectPérimètreMinistériel: FunctionComponent<MultiSelectPérimètreMinistérielProps> = ({ périmètresMinistérielsIdsSélectionnésParDéfaut, changementValeursSélectionnéesCallback, périmètresId, afficherBoutonsSélection }) => {
+const MultiSelectPérimètreMinistériel: FunctionComponent<MultiSelectPérimètreMinistérielProps> = ({
+  périmètresMinistérielsIdsSélectionnésParDéfaut,
+  changementValeursSélectionnéesCallback,
+  périmètresId,
+  afficherBoutonsSélection,
+}) => {
   const { data: périmètresMinistériels } = api.périmètreMinistériel.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
-  
+
   const [optionsGroupées, setOptionsGroupées] = useState<MultiSelectOptionsGroupées>([]);
 
   useEffect(() => {

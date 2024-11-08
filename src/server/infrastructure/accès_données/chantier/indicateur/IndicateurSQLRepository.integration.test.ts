@@ -147,7 +147,7 @@ describe('IndicateurSQLRepository', () => {
       expect(result).toStrictEqual(
         {
           [indicateurId]: {
-            '02': {
+            'DEPT-02': {
               codeInsee: '02',
               valeurInitiale: 1001,
               dateValeurInitiale: '2021-01-01T00:00:00.000Z',
@@ -173,7 +173,7 @@ describe('IndicateurSQLRepository', () => {
               estAJour: false,
               tendance: 'HAUSSE',
             },
-            '03': {
+            'DEPT-03': {
               codeInsee: '03',
               valeurInitiale: 1001,
               dateValeurInitiale: '2021-01-01T00:00:00.000Z',
@@ -302,7 +302,7 @@ describe('IndicateurSQLRepository', () => {
       expect(result).toStrictEqual(
         {
           'IND-001': {
-            '01': {
+            'DEPT-01': {
               codeInsee: '01',
               valeurInitiale: 1000,
               dateValeurInitiale: '2021-01-01T00:00:00.000Z',
@@ -330,7 +330,7 @@ describe('IndicateurSQLRepository', () => {
             },
           },
           'IND-002': {
-            '02': {
+            'DEPT-02': {
               codeInsee: '02',
               valeurInitiale: 1001,
               dateValeurInitiale: '2021-01-01T00:00:00.000Z',
@@ -356,7 +356,7 @@ describe('IndicateurSQLRepository', () => {
               estAJour: false,
               tendance: 'HAUSSE',
             },
-            '03': {
+            'DEPT-03': {
               codeInsee: '03',
               valeurInitiale: 1001,
               dateValeurInitiale: '2021-01-01T00:00:00.000Z',
@@ -455,7 +455,7 @@ describe('IndicateurSQLRepository', () => {
       expect(result).toStrictEqual(
         {
           'IND-002': {
-            '02': {
+            'REG-02': {
               codeInsee: '02',
               valeurInitiale: 1001,
               dateValeurInitiale: '2021-01-01T00:00:00.000Z',
@@ -521,7 +521,7 @@ describe('IndicateurSQLRepository', () => {
       // WHEN
       const result = await repository.récupererDétailsParChantierIdEtTerritoire('CH-002', ['DEPT-01']);
       // THEN
-      expect(result['IND-001']['01']).toEqual(expect.objectContaining(
+      expect(result['IND-001']['DEPT-01']).toEqual(expect.objectContaining(
         {
           historiquesValeurs: [
             {
@@ -811,7 +811,7 @@ describe('IndicateurSQLRepository', () => {
       expect(result).toStrictEqual(
         {
           'IND-001': {
-            '01': {
+            'DEPT-01': {
               codeInsee: '01',
               valeurInitiale: 1000,
               dateValeurInitiale: '2021-01-01T00:00:00.000Z',
@@ -883,7 +883,7 @@ describe('IndicateurSQLRepository', () => {
       expect(result).toStrictEqual(
         {
           'IND-001': {
-            '01': {
+            'DEPT-01': {
               codeInsee: '01',
               valeurInitiale: 1000,
               dateValeurInitiale: '2021-01-01T00:00:00.000Z',

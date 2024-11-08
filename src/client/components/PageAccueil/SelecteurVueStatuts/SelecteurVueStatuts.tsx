@@ -1,5 +1,5 @@
 import { parseAsBoolean, parseAsInteger, parseAsStringLiteral, useQueryState, useQueryStates } from 'nuqs';
-import { FunctionComponent } from 'react';
+import { Fragment, FunctionComponent } from 'react';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
@@ -37,9 +37,9 @@ const SelecteurVueStatuts: FunctionComponent<{}> = () => {
 
   const auChangement = (vueStatuts: TypeVueStatuts) => {
     sauvegarderFiltres({ statut: vueStatuts });
-    
+
     if (vueStatuts === 'ARCHIVE') {
-      setFiltresAlertes({ 
+      setFiltresAlertes({
         estEnAlerteAbscenceTauxAvancementDepartemental: false,
         estEnAlerteBaisse: false,
         estEnAlerteTauxAvancementNonCalculé: false,
@@ -62,8 +62,8 @@ const SelecteurVueStatuts: FunctionComponent<{}> = () => {
           optionsGauche.map(option => (
             <button
               className={`fr-tag fr-tag--icon-left fr-mr-1w ${statut === option.valeur ? 'fr-tag-active' : ''} ${option.icone ?? ''}`}
-              id={option.valeur}
-              key={option.valeur}
+              id={`left-${option.valeur}`}
+              key={`left-${option.valeur}`}
               onClick={() => statut !== option.valeur && auChangement(option.valeur)}
               type='button'
             >
@@ -77,26 +77,26 @@ const SelecteurVueStatuts: FunctionComponent<{}> = () => {
         }
         {
           optionsDroite.map(option => (
-            <>
+            <Fragment key={`right-${option.valeur}`}>
               <button
                 className={`fr-tag fr-tag--icon-left fr-mr-1w ${statut === option.valeur ? 'fr-tag-active' : ''} ${option.icone ?? ''}`}
-                id={option.valeur}
-                key={option.valeur}
+                id={`right-${option.valeur}`}
                 onClick={() => statut !== option.valeur && auChangement(option.valeur)}
                 type='button'
               >
                 {option.libellé}
               </button>
               {
-                option.valeur === 'ARCHIVE' && 
-                <Infobulle 
+                option.valeur === 'ARCHIVE' &&
+                <Infobulle
                   className='fr-pl-0 fr-pb-2w'
                   idHtml='infobulle-chantiers'
                 >
-                  Ces PPG ne sont dorénavant plus suivies dans PILOTE et leurs données ne sont plus mises à jour. Elles restent cependant accessibles avec les données correspondant à leur dernière mise à jour.
+                  Ces PPG ne sont dorénavant plus suivies dans PILOTE et leurs données ne sont plus mises à jour. Elles
+                  restent cependant accessibles avec les données correspondant à leur dernière mise à jour.
                 </Infobulle>
               }
-            </>
+            </Fragment>
 
           ))
         }

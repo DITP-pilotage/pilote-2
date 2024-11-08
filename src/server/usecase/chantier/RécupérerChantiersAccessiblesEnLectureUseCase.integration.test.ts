@@ -68,7 +68,7 @@ describe('RécupérerChantiersAccessiblesEnLectureUseCase', () => {
     // THEN
     const ids = chantiers.map(ch => ch.id);
     expect(ids).toStrictEqual(['CH-001', 'CH-002']);
-    expect(chantiers[1].mailles.nationale.FR.avancement.global).toBe(50);
+    expect(chantiers[1].mailles.nationale['NAT-FR'].avancement.global).toBe(50);
   });
 
   test('Un code insee sur trois caractères fonctionne', async () => {
@@ -91,6 +91,6 @@ describe('RécupérerChantiersAccessiblesEnLectureUseCase', () => {
     const chantiers = await récupérerChantiersAccessiblesEnLectureUseCase.run(habilitation, ProfilEnum.DITP_ADMIN);
 
     // THEN
-    expect(chantiers[0].mailles.départementale['974']).toBeDefined();
+    expect(chantiers[0].mailles.départementale['DEPT-974']).toBeDefined();
   });
 });

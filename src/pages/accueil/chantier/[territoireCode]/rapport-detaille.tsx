@@ -44,6 +44,7 @@ import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import { Chantier } from '@/server/chantiers/domain/Chantier';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 interface NextPageRapportDétailléProps {
   chantiers: ChantierRapportDetailleContrat[]
@@ -52,7 +53,8 @@ interface NextPageRapportDétailléProps {
   indicateursGroupésParChantier: Record<string, Indicateur[]>
   détailsIndicateursGroupésParChantier: Record<string, DétailsIndicateurs>
   publicationsGroupéesParChantier: PublicationsGroupéesParChantier
-  mailleSélectionnée: 'départementale' | 'régionale'
+  mailleQuery: MailleInterne
+  mailleSelectionnee: MailleInterne
   listeAvancementsStatistiques: { id: string, avancementChantierRapportDetaille: AvancementChantierRapportDetaille }[]
   codeInsee: CodeInsee
   territoireCode: string
@@ -82,7 +84,12 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   const territoireCode = query.territoireCode as string;
 
   const { maille, codeInsee: codeInseeSelectionne } = territoireCodeVersMailleCodeInsee(territoireCode);
-  const mailleSelectionnee = query.maille as 'départementale' | 'régionale' ?? (maille === 'REG' ? 'régionale' : 'départementale');
+
+  const mailleQuery = query.maille as MailleInterne || 'départementale';
+
+  const mailleSelectionnee = maille === 'NAT'
+    ? mailleQuery
+    : maille === 'DEPT' ? 'départementale' : 'régionale';
 
   const mailleChantier = maille === 'NAT' ? 'nationale' : mailleSelectionnee;
 
@@ -216,35 +223,35 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
 
   const avancementsAgrégés = await récupérerStatistiquesChantiersUseCase.run(chantiersAvecAlertes.map(chantier => chantier.id), mailleSelectionnee || 'départementale', session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat);
 
-  const donnéesTerritoiresAgrégées = new AgrégateurListeChantiersParTerritoire(chantiersAvecAlertes, mailleSelectionnee || 'départementale').agréger();
+  const donnéesTerritoiresAgrégées = new AgrégateurListeChantiersParTerritoire(chantiersAvecAlertes).agréger();
 
   if (avancementsAgrégés) {
     avancementsAgrégés.global.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[codeInseeSelectionne].répartition.avancements.global.moyenne;
     avancementsAgrégés.annuel.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[codeInseeSelectionne].répartition.avancements.annuel.moyenne;
   }
 
-  const avancementsGlobauxTerritoriauxMoyens = objectEntries(donnéesTerritoiresAgrégées[mailleSelectionnee || 'départementale'].territoires).map(([codeInsee, territoire]) => ({
+  const avancementsGlobauxTerritoriauxMoyens = objectEntries(donnéesTerritoiresAgrégées[mailleSelectionnee || 'départementale'].territoires).map(([territoireCodeSelectionne, territoire]) => ({
     valeur: territoire.répartition.avancements.global.moyenne,
     valeurAnnuelle: territoire.répartition.avancements.annuel.moyenne,
-    codeInsee,
+    territoireCode: territoireCodeSelectionne,
     estApplicable: null,
   }));
 
   const listeDonnéesCartographieAvancement = chantiersAvecAlertes.map(chantier => ({
     id: chantier.id,
-    donnéesCartographieAvancement: objectEntries(chantier.mailles[mailleSelectionnee]).map(([codeInsee, territoire]) => ({
+    donnéesCartographieAvancement: objectEntries(chantier.mailles[mailleSelectionnee]).map(([territoireCodeDonnee, territoire]) => ({
       valeur: territoire.avancement.global,
       valeurAnnuelle: territoire.avancement.annuel,
-      codeInsee: codeInsee,
+      territoireCode: territoireCodeDonnee,
       estApplicable: territoire.estApplicable,
     })),
   }));
 
   const listeDonnéesCartographieMétéo = chantiersAvecAlertes.map(chantier => ({
     id: chantier.id,
-    donnéesCartographieMétéo: objectEntries(chantier.mailles[mailleSelectionnee]).map(([codeInsee, territoire]) => ({
+    donnéesCartographieMétéo: objectEntries(chantier.mailles[mailleSelectionnee]).map(([territoireCodeDonnee, territoire]) => ({
       valeur: territoire.météo,
-      codeInsee: codeInsee,
+      territoireCode: territoireCodeDonnee,
       estApplicable: territoire.estApplicable,
     })),
   }));
@@ -262,7 +269,8 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
       axes,
       indicateursGroupésParChantier,
       détailsIndicateursGroupésParChantier,
-      mailleSélectionnée: mailleSelectionnee,
+      mailleQuery,
+      mailleSelectionnee,
       codeInsee: codeInseeSelectionne,
       listeAvancementsStatistiques,
       listeDonnéesCartographieAvancement,
@@ -290,7 +298,8 @@ const NextPageRapportDétaillé: FunctionComponent<NextPageRapportDétailléProp
   indicateursGroupésParChantier,
   détailsIndicateursGroupésParChantier,
   publicationsGroupéesParChantier,
-  mailleSélectionnée,
+  mailleQuery,
+  mailleSelectionnee,
   listeAvancementsStatistiques,
   codeInsee,
   filtresComptesCalculés,
@@ -332,7 +341,8 @@ const NextPageRapportDétaillé: FunctionComponent<NextPageRapportDétailléProp
         estAutoriseAVoirLesBrouillons={estAutoriseAVoirLesBrouillons}
         filtresComptesCalculés={filtresComptesCalculés}
         indicateursGroupésParChantier={indicateursGroupésParChantier}
-        mailleSélectionnée={mailleSélectionnée}
+        mailleQuery={mailleQuery}
+        mailleSelectionnee={mailleSelectionnee}
         mapChantierStatistiques={mapChantierStatistiques}
         mapDonnéesCartographieAvancement={mapDonnéesCartographieAvancement}
         mapDonnéesCartographieMétéo={mapDonnéesCartographieMétéo}

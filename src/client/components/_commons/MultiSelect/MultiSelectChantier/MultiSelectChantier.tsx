@@ -1,6 +1,9 @@
 import { FunctionComponent, useEffect, useState } from 'react';
 import MultiSelect from '@/client/components/_commons/MultiSelect/MultiSelect';
-import { MultiSelectOptions, MultiSelectOptionsGroupées } from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
+import {
+  MultiSelectOptions,
+  MultiSelectOptionsGroupées,
+} from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
 import { trierParOrdreAlphabétique } from '@/client/utils/arrays';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 
@@ -13,7 +16,14 @@ interface MultiSelectChantierProps {
   desactive?: boolean
 }
 
-const MultiSelectChantier: FunctionComponent<MultiSelectChantierProps> = ({ chantiersIdsSélectionnésParDéfaut, changementValeursSélectionnéesCallback, valeursDésactivées, chantiers, afficherBoutonsSélection, desactive }) => {
+const MultiSelectChantier: FunctionComponent<MultiSelectChantierProps> = ({
+  chantiersIdsSélectionnésParDéfaut,
+  changementValeursSélectionnéesCallback,
+  valeursDésactivées,
+  chantiers,
+  afficherBoutonsSélection,
+  desactive,
+}) => {
   // const [valeursSélectionnéesParDéfaut, setValeursSélectionnéesParDéfaut] = useState(chantiersIdsSélectionnésParDéfaut);
   const [optionsGroupées, setOptionsGroupées] = useState<MultiSelectOptionsGroupées>([]);
 

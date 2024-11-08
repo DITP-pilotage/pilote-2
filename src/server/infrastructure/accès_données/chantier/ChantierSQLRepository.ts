@@ -295,14 +295,6 @@ export default class ChantierSQLRepository implements ChantierRepository {
       where: {
         NOT: { ministeres: { isEmpty: true } },
         id: { in: chantierIds },
-        OR: [
-          {
-            maille: 'NAT',
-          },
-          {
-            maille,
-          },
-        ],
         ...whereOptions,
       },
       orderBy: sorting ? appliquerSortingChantier(sorting) : {},

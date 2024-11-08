@@ -1,4 +1,4 @@
-import { Maille, PrismaClient, territoire as TerritoirePrisma } from '@prisma/client';
+import { PrismaClient, territoire as TerritoirePrisma } from '@prisma/client';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { CODES_MAILLES, NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
@@ -27,12 +27,8 @@ export class TerritoireSQLRepository implements TerritoireRepository {
     return territoires.map(t => this._mapperVersLeDomaine(t));
   }
 
-  async récupérerTousNew(maille: string) {
-    const territoires = await this._prisma.territoire.findMany({
-      where: {
-        maille: maille as Maille,
-      },
-    });
+  async récupérerTousNew() {
+    const territoires = await this._prisma.territoire.findMany();
     return territoires.map(t => this._mapperVersLeDomaine(t));
   }
 

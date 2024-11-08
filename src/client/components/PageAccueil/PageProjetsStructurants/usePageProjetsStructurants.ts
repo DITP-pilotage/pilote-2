@@ -51,11 +51,11 @@ export default function usePageProjetsStructurants(projetsStructurants: ProjetSt
   };
   
   const avancementsMoyensTerritoiresMailleSélectionnée = useMemo((): CartographieDonnéesAvancement => {
-    const codesInsee = mailleSélectionnée === 'départementale' ? codesInseeDépartements : codesInseeRégions;
-    return codesInsee.map(codeInsee => {
-      const projets = projetsDuTerritoireEtTerritoiresEnfants(codeInsee, mailleSélectionnée);
+    const listeTerritoireCode = mailleSélectionnée === 'départementale' ? codesInseeDépartements.map(code => `DEPT-${code}`) : codesInseeRégions.map(code => `REG-${code}`) ;
+    return listeTerritoireCode.map(territoireCode => {
+      const projets = projetsDuTerritoireEtTerritoiresEnfants(territoireCode, mailleSélectionnée);
       const avancementMoyen = calculerMoyenne(projets.map(projet => projet.avancement));
-      return { valeur: avancementMoyen, valeurAnnuelle: null, codeInsee: codeInsee, estApplicable: null };
+      return { valeur: avancementMoyen, valeurAnnuelle: null, territoireCode, estApplicable: null };
     });
   }, [mailleSélectionnée, projetsDuTerritoireEtTerritoiresEnfants]);
 

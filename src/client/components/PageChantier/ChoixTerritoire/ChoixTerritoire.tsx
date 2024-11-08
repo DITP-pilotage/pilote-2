@@ -16,20 +16,22 @@ import useChoixTerritoire from './useChoixTerritoire';
 import ChoixTerritoireStyled from './ChoixTerritoire.styled';
 
 interface ChoixTerritoireProps {
-  chantierId: Chantier['id']
+  chantier: Chantier
   territoireCode: string
-  mailleSélectionnée: MailleInterne
+  mailleSelectionnee: MailleInterne
+  mailleQuery: MailleInterne
 }
 
 const ChoixTerritoire: FunctionComponent<ChoixTerritoireProps> = ({
-  chantierId,
+  chantier,
   territoireCode,
-  mailleSélectionnée,
+  mailleSelectionnee,
+  mailleQuery,
 }) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('md');
   const [estVisibleEnMobile, setEstVisibleEnMobile] = useState(false);
-  const { chantier, donnéesCartographie } = useChoixTerritoire(chantierId, mailleSélectionnée);
+  const { donnéesCartographie } = useChoixTerritoire(mailleSelectionnee);
   const { auClicTerritoireCallback } = useCartographie();
 
   return (
@@ -48,7 +50,7 @@ const ChoixTerritoire: FunctionComponent<ChoixTerritoireProps> = ({
                 Maille géographique
               </Titre>
             ) : null
-          }        
+          }
           <SélecteursMaillesEtTerritoires
             estVisibleEnMobile={estVisibleEnMobile}
             estVueMobile={estVueMobile}
@@ -56,12 +58,12 @@ const ChoixTerritoire: FunctionComponent<ChoixTerritoireProps> = ({
         </BarreLatéraleEncart>
       </BarreLatérale>
       <main className='fr-pb-5w'>
-        <ChoixTerritoireStyled>     
+        <ChoixTerritoireStyled>
           <div className='bouton-filtrer fr-hidden-lg fr-py-1w fr-px-1v'>
             <button
               className='fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-equalizer-fill fr-text-title--blue-france'
               onClick={() => {
-                setEstOuverteBarreLatérale(true); 
+                setEstOuverteBarreLatérale(true);
                 setEstVisibleEnMobile(true);
               }}
               title='Filtrer'
@@ -90,7 +92,7 @@ const ChoixTerritoire: FunctionComponent<ChoixTerritoireProps> = ({
                         <Cartographie
                           auClicTerritoireCallback={auClicTerritoireCallback}
                           données={donnéesCartographie}
-                          mailleSelectionnee={mailleSélectionnée}
+                          mailleSelectionnee={mailleQuery}
                           pathname='/chantier/[id]/[territoireCode]'
                           territoireCode={territoireCode}
                         />

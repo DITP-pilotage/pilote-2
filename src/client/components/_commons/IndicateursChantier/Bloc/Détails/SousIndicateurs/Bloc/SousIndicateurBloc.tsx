@@ -30,6 +30,7 @@ interface SousIndicateurBlocProps {
   classeCouleurFond: string
   territoireCode: string
   territoiresCompares: string[]
+  mailleQuery: MailleInterne
   mailleSelectionnee: MailleInterne
   mailsDirecteursProjets: string[]
 }
@@ -43,6 +44,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
   classeCouleurFond,
   territoireCode,
   territoiresCompares,
+  mailleQuery,
   mailleSelectionnee,
   mailsDirecteursProjets,
 }) => {
@@ -260,6 +262,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
               indicateurDétailsParTerritoires={informationsIndicateurs}
               indicateurEstAjour={!indicateurNonAJour}
               listeSousIndicateurs={[]}
+              mailleQuery={mailleQuery}
               mailleSelectionnee={mailleSelectionnee}
               mailsDirecteursProjets={mailsDirecteursProjets}
               territoireCode={territoireCode}

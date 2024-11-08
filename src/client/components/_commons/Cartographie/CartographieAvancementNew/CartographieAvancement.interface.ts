@@ -1,8 +1,6 @@
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
-
-export type CartographieDonnéesAvancement = { 
+export type CartographieDonnéesAvancement = {
   valeur: number | null
   valeurAnnuelle: number | null
-  codeInsee: CodeInsee
+  territoireCode: string
   estApplicable: boolean | null 
 }[];

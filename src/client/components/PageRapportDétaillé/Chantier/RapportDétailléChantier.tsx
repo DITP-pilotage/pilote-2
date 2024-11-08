@@ -25,7 +25,8 @@ import AvancementChantier from '@/components/PageChantier/AvancementChantier/Ava
 import RapportDétailléChantierStyled from './RapportDétailléChantier.styled';
 
 const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProps> = ({
-  mailleSélectionnée,
+  mailleSelectionnee,
+  mailleQuery,
   territoireSélectionné,
   territoireCode,
   chantier,
@@ -52,7 +53,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
     >
       <div className='fr-mt-2w'>
         <div
-          className={`grid-template ${ territoireSélectionné!.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg' }`}
+          className={`grid-template ${territoireSélectionné!.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}
         >
           {
             avancements !== null &&
@@ -60,7 +61,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
               <section className='rubrique avancement impression-section'>
                 <Link
                   className='fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-up-line fr-btn--icon-left fr-text--sm'
-                  href={`#${ htmlId.listeDesChantiers() }`}
+                  href={`#${htmlId.listeDesChantiers()}`}
                   title='Revenir à la liste des chantiers'
                 >
                   Haut de page
@@ -70,7 +71,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
                     baliseHtml='h1'
                     className='fr-h2 fr-mb-1w'
                   >
-                    { chantier.nom }
+                    {chantier.nom}
                   </Titre>
                 </Encart>
                 <Titre
@@ -81,7 +82,8 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
                 </Titre>
                 <AvancementChantier
                   avancements={avancements}
-                  mailleSelectionnee={mailleSélectionnée}
+                  mailleQuery={mailleQuery}
+                  mailleSelectionnee={mailleSelectionnee}
                   territoireCode={territoireCode}
                 />
               </section>
@@ -120,7 +122,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
           </section>
         </div>
         {
-          (!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSélectionnée] || !!chantier.météoDonnéeTerritorialisée[mailleSélectionnée] || chantier.estTerritorialisé) ? (
+          (!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSelectionnee] || !!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] || chantier.estTerritorialisé) ? (
             <div className='fr-my-2w impression-section'>
               <section className='rubrique cartes'>
                 <Titre
@@ -130,11 +132,11 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
                   Répartition géographique
                 </Titre>
                 <Cartes
-                  afficheCarteAvancement={!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSélectionnée] || chantier.estTerritorialisé}
-                  afficheCarteMétéo={!!chantier.météoDonnéeTerritorialisée[mailleSélectionnée] || chantier.estTerritorialisé}
+                  afficheCarteAvancement={!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSelectionnee] || chantier.estTerritorialisé}
+                  afficheCarteMétéo={!!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] || chantier.estTerritorialisé}
                   donnéesCartographieAvancement={donnéesCartographieAvancement}
                   donnéesCartographieMétéo={donnéesCartographieMétéo}
-                  mailleSelectionnee={mailleSélectionnée}
+                  mailleSelectionnee={mailleSelectionnee}
                   territoireCode={territoireCode}
                 />
               </section>
