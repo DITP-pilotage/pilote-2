@@ -226,13 +226,13 @@ export const authOptions: AuthOptions = {
     },
 
     async session({ session, token }: any & { token: PiloteJWTPayload }): Promise<any> {
-      logger.debug({ userId: token.user.id }, 'Session callback, adding habilitations to session');
-
       const utilisateurRepository = dependencies.getUtilisateurRepository();
       const utilisateur = await utilisateurRepository.récupérer(token.user.email);
 
       const profilRepository = dependencies.getProfilRepository();
       const profil = await profilRepository.récupérer(utilisateur!.profil);
+
+      logger.debug({ userId: utilisateur?.id }, 'Session callback, adding habilitations to session');
 
       // Send properties to the client
       session.user = {
