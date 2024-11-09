@@ -235,7 +235,10 @@ export const authOptions: AuthOptions = {
       const profil = await profilRepository.récupérer(utilisateur!.profil);
 
       // Send properties to the client
-      session.user = token.user;
+      session.user = {
+        ...token.user,
+        id: utilisateur?.id,
+      };
       session.accessToken = token.accessToken;
       session.error = token.error;
       session.profil = utilisateur?.profil;
