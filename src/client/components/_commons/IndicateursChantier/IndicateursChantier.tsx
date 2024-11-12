@@ -11,7 +11,6 @@ import {
   DétailsIndicateurTerritoire,
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 interface IndicateursProps {
@@ -45,8 +44,6 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   alerteMiseAJourIndicateur,
   mailsDirecteursProjets,
 }) => {
-
-  const { codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
 
   if (indicateurs.length === 0) {
     return null;
@@ -88,7 +85,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                 </Titre>
                 {
                   indicateursDeCetteRubrique
-                    .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][codeInsee]?.pondération, détailsIndicateurs[b.id][codeInsee]?.pondération))
+                    .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireCode]?.pondération, détailsIndicateurs[b.id][territoireCode]?.pondération))
                     .map(indicateur => {
                       const listeSousIndicateurs = !!sousIndicateursDisponibles ?
                         indicateurs.filter(ind => ind.parentId === indicateur.id) :

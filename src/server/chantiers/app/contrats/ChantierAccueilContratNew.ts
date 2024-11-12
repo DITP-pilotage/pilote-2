@@ -76,8 +76,8 @@ const presenterEnTerritoireDonnéeAccueilContrat = (territoireDonnee: Territoire
 // le double reduce doit être enlever, on a pas besoin d'un record, un Map<CodeInsee, TerritoireDonnee> conditionnée par la maille suffit
 const presenterEnMailleAccueilContrat = (mailles: Record<MailleChantierContrat, TerritoiresDonnées>): MailleAccueilContrat => {
   return Object.keys(mailles).reduce((acc, val) => {
-    acc[val as MailleChantierContrat] = Object.keys(mailles[val as MailleChantierContrat]).reduce((accTerritoireDonnee, codeInsee) => {
-      accTerritoireDonnee[codeInsee] = presenterEnTerritoireDonnéeAccueilContrat(mailles[val as MailleChantierContrat][codeInsee]);
+    acc[val as MailleChantierContrat] = Object.keys(mailles[val as MailleChantierContrat]).reduce((accTerritoireDonnee, territoireCode) => {
+      accTerritoireDonnee[territoireCode] = presenterEnTerritoireDonnéeAccueilContrat(mailles[val as MailleChantierContrat][territoireCode]);
       return accTerritoireDonnee;
     }, {} as ListeTerritoiresDonnéeAccueilContrat);
     return acc;

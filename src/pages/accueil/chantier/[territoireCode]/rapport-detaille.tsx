@@ -9,7 +9,6 @@ import PageRapportDétaillé from '@/components/PageRapportDétaillé/PageRappor
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { PublicationsGroupéesParChantier } from '@/components/PageRapportDétaillé/PageRapportDétaillé.interface';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase
   from '@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
 import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase
@@ -56,7 +55,6 @@ interface NextPageRapportDétailléProps {
   mailleQuery: MailleInterne
   mailleSelectionnee: MailleInterne
   listeAvancementsStatistiques: { id: string, avancementChantierRapportDetaille: AvancementChantierRapportDetaille }[]
-  codeInsee: CodeInsee
   territoireCode: string
   filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
@@ -134,7 +132,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     dependencies.getChantierRepository(),
     territoireRepository,
   )
-    .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', codeInseeSelectionne, ministères, axes, filtres, sorting);
+    .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', ministères, axes, filtres, sorting);
 
 
   const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisse || filtresAlertes.estEnAlerteTauxAvancementNonCalculé || filtresAlertes.estEnAlerteMétéoNonRenseignée || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? chantiers.filter(chantier => {
@@ -153,14 +151,14 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
       const avancementChantierRapportDetaille = new AgrégateurChantierRapportDetailleParTerritoire(chantier).agréger();
       const avancementRégional = (typeTauxAvancement: 'global' | 'annuel') => {
         return territoireSélectionné.maille === 'régionale'
-          ? avancementChantierRapportDetaille.régionale.territoires[territoireSélectionné.codeInsee].répartition.avancements[typeTauxAvancement]
+          ? avancementChantierRapportDetaille.régionale.territoires[territoireCode].répartition.avancements[typeTauxAvancement]
           : territoireSélectionné.maille === 'départementale' && territoireSélectionné.codeParent
-            ? avancementChantierRapportDetaille.régionale.territoires[territoireSélectionné.codeParent.split('-')[1]].répartition.avancements[typeTauxAvancement]
+            ? avancementChantierRapportDetaille.régionale.territoires[territoireSélectionné.codeParent].répartition.avancements[typeTauxAvancement]
             : null;
       };
 
       const avancementDépartemental = (typeTauxAvancement: 'global' | 'annuel') => {
-        return territoireSélectionné.maille === 'départementale' ? avancementChantierRapportDetaille[mailleSelectionnee].territoires[territoireSélectionné.codeInsee].répartition.avancements[typeTauxAvancement] : null;
+        return territoireSélectionné.maille === 'départementale' ? avancementChantierRapportDetaille[mailleSelectionnee].territoires[territoireCode].répartition.avancements[typeTauxAvancement] : null;
       };
 
       return {
@@ -219,15 +217,15 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   const {
     répartitionMétéos,
     filtresComptesCalculés,
-  } = Chantier.recupererStatistiqueListeChantier(chantiers, mailleChantier, codeInseeSelectionne);
+  } = Chantier.recupererStatistiqueListeChantier(chantiers, mailleChantier, territoireCode);
 
   const avancementsAgrégés = await récupérerStatistiquesChantiersUseCase.run(chantiersAvecAlertes.map(chantier => chantier.id), mailleSelectionnee || 'départementale', session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat);
 
   const donnéesTerritoiresAgrégées = new AgrégateurListeChantiersParTerritoire(chantiersAvecAlertes).agréger();
 
   if (avancementsAgrégés) {
-    avancementsAgrégés.global.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[codeInseeSelectionne].répartition.avancements.global.moyenne;
-    avancementsAgrégés.annuel.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[codeInseeSelectionne].répartition.avancements.annuel.moyenne;
+    avancementsAgrégés.global.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[territoireCode].répartition.avancements.global.moyenne;
+    avancementsAgrégés.annuel.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[territoireCode].répartition.avancements.annuel.moyenne;
   }
 
   const avancementsGlobauxTerritoriauxMoyens = objectEntries(donnéesTerritoiresAgrégées[mailleSelectionnee || 'départementale'].territoires).map(([territoireCodeSelectionne, territoire]) => ({
@@ -271,7 +269,6 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
       détailsIndicateursGroupésParChantier,
       mailleQuery,
       mailleSelectionnee,
-      codeInsee: codeInseeSelectionne,
       listeAvancementsStatistiques,
       listeDonnéesCartographieAvancement,
       listeDonnéesCartographieMétéo,
@@ -301,7 +298,6 @@ const NextPageRapportDétaillé: FunctionComponent<NextPageRapportDétailléProp
   mailleQuery,
   mailleSelectionnee,
   listeAvancementsStatistiques,
-  codeInsee,
   filtresComptesCalculés,
   territoireCode,
   avancementsAgrégés,
@@ -336,7 +332,6 @@ const NextPageRapportDétaillé: FunctionComponent<NextPageRapportDétailléProp
         avancementsGlobauxTerritoriauxMoyens={avancementsGlobauxTerritoriauxMoyens}
         axes={axes}
         chantiers={chantiers}
-        codeInsee={codeInsee}
         détailsIndicateursGroupésParChantier={détailsIndicateursGroupésParChantier}
         estAutoriseAVoirLesBrouillons={estAutoriseAVoirLesBrouillons}
         filtresComptesCalculés={filtresComptesCalculés}

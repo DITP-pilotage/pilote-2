@@ -45,12 +45,12 @@ export class AgrégateurChantiersParTerritoire {
   }
 
   private _calculerLesRépartitions() {
-    objectEntries(this.agrégat).forEach(([maille, codesInsee]) => {
+    objectEntries(this.agrégat).forEach(([maille, territoiresCodes]) => {
       let avancementsPourCetteMaille: AvancementRegroupementDonnéesBrutesMaille = {
         global: [],
         annuel: [],
       };
-      objectEntries(codesInsee.territoires).forEach(([codeInsee, donnéesTerritoire]) => {
+      objectEntries(territoiresCodes.territoires).forEach(([territoireCode, donnéesTerritoire]) => {
         let avancementsPourCeCodeInsee: AvancementRegroupementDonnéesBrutesTerritoire = {
           global: null,
           annuel: null,
@@ -60,16 +60,16 @@ export class AgrégateurChantiersParTerritoire {
         avancementsPourCetteMaille.global = [...avancementsPourCetteMaille.global, avancementsPourCeCodeInsee.global];
         avancementsPourCetteMaille.annuel = [...avancementsPourCetteMaille.annuel, avancementsPourCeCodeInsee.annuel];
 
-        this._calculerLaRépartitionDesAvancementsParTerritoire(maille, avancementsPourCeCodeInsee, codeInsee);
+        this._calculerLaRépartitionDesAvancementsParTerritoire(maille, avancementsPourCeCodeInsee, territoireCode);
       });
   
       this._calculerLaRépartitionDesAvancementsParMaille(maille, avancementsPourCetteMaille);
     });
   }
 
-  private _calculerLaRépartitionDesAvancementsParTerritoire(maille: Maille, avancements: AvancementRegroupementDonnéesBrutesTerritoire, codeInsee: string) {
-    this.agrégat[maille].territoires[codeInsee].répartition.avancements.global = avancements.global;
-    this.agrégat[maille].territoires[codeInsee].répartition.avancements.annuel = avancements.annuel;
+  private _calculerLaRépartitionDesAvancementsParTerritoire(maille: Maille, avancements: AvancementRegroupementDonnéesBrutesTerritoire, territoireCode: string) {
+    this.agrégat[maille].territoires[territoireCode].répartition.avancements.global = avancements.global;
+    this.agrégat[maille].territoires[territoireCode].répartition.avancements.annuel = avancements.annuel;
 
   }
 
@@ -116,9 +116,9 @@ export class AgrégateurChantiersParTerritoire {
         },
       },
       territoires: Object.fromEntries(
-        listeDeCodeInsee.map(codeInsee => (
+        listeDeCodeInsee.map(territoireCode => (
           [
-            codeInsee,
+            territoireCode,
             this._créerDonnéesInitialesPourUnTerritoire(),
           ]
         )),

@@ -157,9 +157,9 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
       ? []
       : (
         indicateurs
-          .sort((indicateurA, indicateurB) => comparerIndicateur(indicateurA, indicateurB, détailsIndicateurs[indicateurA.id][territoireSélectionné.codeInsee]?.pondération ?? null, détailsIndicateurs[indicateurB.id][territoireSélectionné.codeInsee]?.pondération ?? null))
+          .sort((indicateurA, indicateurB) => comparerIndicateur(indicateurA, indicateurB, détailsIndicateurs[indicateurA.id][territoireCode]?.pondération ?? null, détailsIndicateurs[indicateurB.id][territoireCode]?.pondération ?? null))
           .map(indicateur => ({
-            pondération: convertitEnPondération(détailsIndicateurs[indicateur.id][territoireSélectionné.codeInsee]?.pondération),
+            pondération: convertitEnPondération(détailsIndicateurs[indicateur.id][territoireCode]?.pondération),
             nom: indicateur.nom,
             type: indicateur.type,
           }))

@@ -23,7 +23,6 @@ import {
 } from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import SélecteurMaille
   from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
 import { useIndicateurDétails } from './useIndicateurDétails';
@@ -89,8 +88,6 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
     indicateur.responsablesDonneesMails :
     mailsDirecteursProjets;
 
-  const { codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
-
   return (
     <div className='fr-accordions-group'>
       <section className='fr-accordion'>
@@ -122,7 +119,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       delaiDisponibilite={indicateur.delaiDisponibilite}
                       description={indicateur.description}
                       indicateurEstAjour={indicateurEstAjour}
-                      indicateurEstApplicable={détailsIndicateurs[indicateur.id][codeInsee]?.est_applicable}
+                      indicateurEstApplicable={détailsIndicateurs[indicateur.id][territoireCode]?.est_applicable}
                       indicateurId={indicateur.id}
                       indicateurNom={indicateur.nom}
                       modeDeCalcul={indicateur.modeDeCalcul}

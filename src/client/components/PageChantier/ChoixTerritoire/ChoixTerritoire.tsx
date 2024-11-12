@@ -3,7 +3,7 @@ import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale'
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Loader from '@/components/_commons/Loader/Loader';
 import SélecteursMaillesEtTerritoires
-  from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
+  from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires';
 import PageChantierEnTête from '@/components/PageChantier/EnTête/EnTête';
 import Cartographie from '@/components/_commons/Cartographie/CartographieNew';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
@@ -52,8 +52,9 @@ const ChoixTerritoire: FunctionComponent<ChoixTerritoireProps> = ({
             ) : null
           }
           <SélecteursMaillesEtTerritoires
-            estVisibleEnMobile={estVisibleEnMobile}
-            estVueMobile={estVueMobile}
+            chantierMailles={chantier.mailles}
+            pathname='/chantier/[id]/[territoireCode]'
+            territoireCode={territoireCode}
           />
         </BarreLatéraleEncart>
       </BarreLatérale>

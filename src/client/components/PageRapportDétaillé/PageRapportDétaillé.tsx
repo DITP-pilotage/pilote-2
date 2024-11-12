@@ -17,7 +17,6 @@ import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
@@ -44,7 +43,6 @@ interface PageRapportDétailléProps {
   mailleQuery: MailleInterne
   mailleSelectionnee: MailleInterne
   mapChantierStatistiques: Map<string, AvancementChantierRapportDetaille>
-  codeInsee: CodeInsee
   territoireCode: string
   filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
@@ -70,7 +68,6 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   mailleQuery,
   mailleSelectionnee,
   mapChantierStatistiques,
-  codeInsee,
   filtresComptesCalculés,
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
@@ -81,11 +78,10 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   mapDonnéesCartographieMétéo,
 }) => {
   const {
-    récupérerDétailsSurUnTerritoireAvecCodeInsee,
+    récupérerDétailsSurUnTerritoire,
   } = actionsTerritoiresStore();
 
-  // le filtre devrait être fait en server side avant d'arriver au front
-  const territoireSélectionné = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee, mailleSelectionnee);
+  const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const [afficherLesChantiers, setAfficherLesChantiers] = useState(false);
 
 
