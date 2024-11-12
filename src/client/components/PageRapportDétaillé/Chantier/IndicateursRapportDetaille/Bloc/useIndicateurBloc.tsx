@@ -55,13 +55,13 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
   const metÀJourDétailsParTerritoires = useCallback(() => {
     if (typeDeRéforme === 'chantier') {
       setIndicateurDétailsParTerritoires([{
-        territoireNom: territoireSélectionné!.nomAffiché,
-        données: détailsIndicateur[territoireSélectionné!.codeInsee],
+        territoireNom: territoireSélectionné.nomAffiché,
+        données: détailsIndicateur[territoireSélectionné.code],
       }]);
     } else if (typeDeRéforme === 'projet structurant' && territoireProjetStructurant) {
       setIndicateurDétailsParTerritoires([{
         territoireNom: territoireProjetStructurant.nomAffiché,
-        données: détailsIndicateur[territoireProjetStructurant.codeInsee],
+        données: détailsIndicateur[territoireSélectionné.code],
       }]);
     }
   }, [détailsIndicateur, territoireProjetStructurant, territoireSélectionné, typeDeRéforme]);
@@ -261,7 +261,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
   });
 
   const dateDeMiseAJourIndicateur = territoireSélectionné
-    ? formaterDate(détailsIndicateur[territoireSélectionné.codeInsee]?.dateImport, 'DD/MM/YYYY') ?? 'Non renseigné'
+    ? formaterDate(détailsIndicateur[territoireSélectionné.code]?.dateImport, 'DD/MM/YYYY') ?? 'Non renseigné'
     : 'Non renseigné';
 
   return {

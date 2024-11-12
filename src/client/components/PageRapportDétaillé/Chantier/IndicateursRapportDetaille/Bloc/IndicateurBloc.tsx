@@ -76,11 +76,11 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   </span>
                 </p>
                 <IndicateurPondération
-                  indicateurPondération={détailsIndicateur[territoireSélectionné.codeInsee].pondération ?? null}
+                  indicateurPondération={détailsIndicateur[territoireCode].pondération ?? null}
                   mailleSélectionnée={territoireSélectionné.maille}
                 />
                 {
-                  détailsIndicateur[territoireSélectionné.codeInsee].tendance === 'BAISSE' ? (
+                  détailsIndicateur[territoireCode].tendance === 'BAISSE' ? (
                     <IndicateurTendance />
                   ) : null
                 }

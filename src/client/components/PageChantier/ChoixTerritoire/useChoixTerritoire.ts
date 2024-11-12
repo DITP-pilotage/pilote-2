@@ -11,7 +11,7 @@ export default function useChoixTerritoire(mailleSélectionnée: MailleInterne) 
 
     territoires.filter(territoire => territoire.maille === mailleSélectionnée).forEach(territoire => {
 
-      donnéesFormatées[territoire.codeInsee] = {
+      donnéesFormatées[territoire.code] = {
         contenu: undefined,
         remplissage: '#bababa',
         libellé: territoire.nomAffiché,

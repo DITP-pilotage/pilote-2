@@ -49,25 +49,22 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
   mailsDirecteursProjets,
 }) => {
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
-  const {
-    codeInsee: codeInseeTerritoireSelectionne,
-  } = territoireCodeVersMailleCodeInsee(territoireCode);
 
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
   const detailTerritoiresCompares = territoiresCompares.map(récupérerDétailsSurUnTerritoire);
   const detailTerritoireSelectionne = récupérerDétailsSurUnTerritoire(territoireCode);
 
-  const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+  const { maille } = territoireCodeVersMailleCodeInsee(territoireCode);
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
 
   const informationsIndicateurs = (
     detailTerritoiresCompares.length > 0 ? detailTerritoiresCompares.map(territoireCompare => ({
       territoireNom: territoireCompare.nomAffiché,
-      données: détailsIndicateur[territoireCompare.codeInsee],
+      données: détailsIndicateur[territoireCompare.code],
     })) : [{
       territoireNom: detailTerritoireSelectionne.nomAffiché,
-      données: détailsIndicateur[codeInseeTerritoireSelectionne],
+      données: détailsIndicateur[territoireCode],
     }]
   ).sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) => indicateurDétailsTerritoire1.données.codeInsee.localeCompare(indicateurDétailsTerritoire2.données.codeInsee));
 
@@ -132,12 +129,12 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                 </span>
               </p>
               <IndicateurPonderation
-                indicateurPondération={détailsIndicateur[codeInsee]?.pondération ?? null}
+                indicateurPondération={détailsIndicateur[territoireCode]?.pondération ?? null}
                 mailleSélectionnée={maille}
               />
             </div>
             {
-              détailsIndicateur[codeInsee].tendance === 'BAISSE' ? (
+              détailsIndicateur[territoireCode].tendance === 'BAISSE' ? (
                 <IndicateurTendance />
               ) : null
             }
