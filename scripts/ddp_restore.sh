@@ -15,8 +15,6 @@ TRUNCATE TABLE
     public.decision_strategique,
     public.rapport_import_mesure_indicateur,
     public.commentaire,
-    public.scope,
-    public.profil,
     public.habilitation,
     public.historisation_modification,
     public.synthese_des_resultats,
