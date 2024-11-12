@@ -37,6 +37,7 @@ yarn-error.log*
 /db/
 .env
 .env.test
+.env.prod
 .idea/
 .vscode/
 qodana.yaml

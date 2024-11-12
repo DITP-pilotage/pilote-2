@@ -29,6 +29,17 @@ services:
     volumes: 
       - db_dbt_pilote:/var/lib/postgresql/data
 
+  ddp:
+    command: "echo 'SKIP descente de prod'"
+    build:
+      dockerfile: docker/Dockerfile.ddp
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - ./scripts:/app/scripts
+      - ./docker:/app/docker
+
   postgres_test:
     hostname: postgres_test
     container_name: pilote_postgres_test
@@ -42,14 +53,6 @@ services:
       - POSTGRES_PASSWORD=${PGPASSWORD}
     volumes:
       - db_dbt_pilote:/var/lib/postgresql/data
-
-  descente_de_prod:
-    image: postgres:14.6-alpine
-    command: "/bin/bash scripts/descente_de_prod_partielle.sh"
-    environment:
-      - CONN_STR_PROD
-    volumes: 
-      - ./scripts:/scripts
 
   pilote_traefik:
     container_name: pilote_traefik
