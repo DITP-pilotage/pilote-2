@@ -35,6 +35,9 @@ import {
 import {
   PrismaMetadataParametrageIndicateurRepository,
 } from '@/server/parametrage-indicateur/infrastructure/adapters/PrismaMetadataParametrageIndicateurRepository';
+import {
+  PrismaMetadataParametrageIndicateurQuery,
+} from '@/server/parametrage-indicateur/infrastructure/queries/PrismaMetadataParametrageIndicateurQuery';
 
 export type ParametrageIndicateurDependencies = {
   informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository,
@@ -49,7 +52,9 @@ export type ParametrageIndicateurDependencies = {
   importMasseMetadataIndicateurHandler: ImportMasseMetadataIndicateurHandler
   importMasseMetadataIndicateurUseCase: ImportMasseMetadataIndicateurUseCase
   metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository
+  metadataParametrageIndicateurQuery: PrismaMetadataParametrageIndicateurQuery
 };
+
 export const getParametrageIndicateurContainer = (): AwilixContainer<ParametrageIndicateurDependencies> => {
   const defaultOptions: ContainerOptions = { injectionMode: InjectionMode.PROXY, strict: true };
 
@@ -68,5 +73,6 @@ export const getParametrageIndicateurContainer = (): AwilixContainer<Parametrage
     importMasseMetadataIndicateurHandler: asClass(ImportMasseMetadataIndicateurHandler),
     importMasseMetadataIndicateurUseCase: asClass(ImportMasseMetadataIndicateurUseCase),
     metadataParametrageIndicateurRepository: asClass(PrismaMetadataParametrageIndicateurRepository),
+    metadataParametrageIndicateurQuery: asClass(PrismaMetadataParametrageIndicateurQuery),
   });
 };

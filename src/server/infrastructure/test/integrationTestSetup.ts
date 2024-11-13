@@ -13,6 +13,9 @@ beforeEach(async () => {
   const tablenames = await prisma.$queryRaw<Array<{ tablename: string }>>`SELECT tablename
                                                                           FROM pg_tables
                                                                           WHERE schemaname = 'public'`;
+  const tablenamesRawData = await prisma.$queryRaw<Array<{ tablename: string }>>`SELECT tablename
+                                                                          FROM pg_tables
+                                                                          WHERE schemaname = 'raw_data'`;
 
   const tables = tablenames
     .map(({ tablename }) => tablename)
@@ -20,7 +23,13 @@ beforeEach(async () => {
     .map((name) => `"public"."${name}"`)
     .join(', ');
 
+  const tablesRawData = tablenamesRawData
+    .map(({ tablename }) => tablename)
+    .map((name) => `"raw_data"."${name}"`)
+    .join(', ');
+
   await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tables} CASCADE;`);
+  await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tablesRawData} CASCADE;`);
   await prisma.mesure_indicateur.deleteMany();
 });
 
