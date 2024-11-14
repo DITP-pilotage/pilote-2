@@ -42,7 +42,7 @@ const SélecteurMaille: FunctionComponent<{
 
   return (
     <SélecteurMailleStyled className='fr-p-1v'>
-      <div className='flex'>
+      <div className='flex tag-liste'>
         {
           objectEntries(mailles)
             .filter(([maille]) => maillesInternesAccessiblesEnLecture.includes(maille))
