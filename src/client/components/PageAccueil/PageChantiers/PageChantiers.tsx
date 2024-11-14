@@ -192,12 +192,15 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
           </div>
         </div>
         <div className='fr-grid-row'>
-          <div className='fr-col-12 fr-col-lg-7 fr-col-xl-6 fr-pr-1w'>
-            <Bloc contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'>
-              <section>
-                <div className='fr-container fr-p-0'>
-                  <div className='fr-grid-row fr-mb-2w'>
-                    <div className='fr-col-12 fr-col-xl-6 flex flex-column border-xl-r align-center'>
+          <div className='fr-col-12 fr-col-lg-7 fr-col-xl-6 flex flex-column'>
+            <section className='flex flex-1'>
+              <div className='fr-container fr-p-0 flex flex-1'>
+                <div className='fr-grid-row fr-grid-row--gutters fr-mb-0 fr-mt-0 w-full fr-mr-md-2w'>
+                  <div className='fr-col-12 fr-col-xl-6 flex flex-column align-center fr-pr-0 fr-pt-0'>
+                    <Bloc
+                      className='w-full h-full'
+                      contenuClassesSupplémentaires='fr-p-2w'
+                    >
                       <TitreInfobulleConteneur>
                         <Titre
                           baliseHtml='h2'
@@ -210,7 +213,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                           {INFOBULLE_CONTENUS.chantiers.jauges}
                         </Infobulle>
                       </TitreInfobulleConteneur>
-                      <div className='flex w-full justify-center fr-px-1w'>
+                      <div className='flex w-full justify-center fr-px-1w fr-mt-1w'>
                         <JaugeDeProgression
                           couleur={chantiersSontArchives ? 'gris' : 'bleu'}
                           libellé="Taux d'avancement global"
@@ -218,13 +221,39 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                           taille='lg'
                         />
                       </div>
-                    </div>
-                    <div className='fr-col-12 fr-col-xl-6'>
+                      <div className='fr-grid-row border-t fr-mt-1w'>
+                        <div className='fr-mt-1w w-full'>
+                          <p className='fr-text--xl fr-text--bold fr-mb-0 texte-gris'>
+                            {`${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancementsAgrégés?.annuel.moyenne?.toFixed(0) : null) ?? '- '}%`}
+                          </p>
+                          <BarreDeProgression
+                            afficherTexte={false}
+                            bordure={null}
+                            fond='gris-clair'
+                            positionTexte='dessus'
+                            taille='xxs'
+                            valeur={!!avancementsAgrégés && process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancementsAgrégés.annuel.moyenne : null}
+                            variante='secondaire'
+                          />
+                          <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
+                            Moyenne de l'année en cours
+                          </p>
+                        </div>
+                      </div>
+                    </Bloc>
+                  </div>
+                  <div className='fr-col-12 fr-col-xl-6 fr-pr-0 fr-pt-0'>
+                    <Bloc
+                      className='h-full fr-ml-xl-1w'
+                      contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
+                    >
                       <div className='fr-container fr-px-1w'>
                         <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
                           Répartition des taux d’avancement des territoires
                         </div>
-                        <div className='fr-grid-row fr-grid-row--center texte-centre fr-pb-2w fr-text--sm'>
+                        <div
+                          className='fr-grid-row fr-grid-row--center texte-centre fr-pb-2w fr-text--sm repartition-selecteur-maille'
+                        >
                           <SélecteurMaille
                             mailleQuery={mailleQuery}
                             pathname={pathname}
@@ -259,31 +288,20 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                             />
                           </div>
                         </div>
+                        <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
+                          Répartition Maximum, médiane et minimum des taux d’avancement observés sur les régions taux
+                          d’avancement des territoires
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className='fr-grid-row border-t'>
-                    <div className='fr-mt-2w w-full'>
-                      <p className='fr-text--xl fr-text--bold fr-mb-0 texte-gris'>
-                        {`${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancementsAgrégés?.annuel.moyenne?.toFixed(0) : null) ?? '- '}%`}
-                      </p>
-                      <BarreDeProgression
-                        afficherTexte={false}
-                        bordure={null}
-                        fond='gris-clair'
-                        positionTexte='dessus'
-                        taille='xxs'
-                        valeur={!!avancementsAgrégés && process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancementsAgrégés.annuel.moyenne : null}
-                        variante='secondaire'
-                      />
-                      <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-                        Moyenne de l'année en cours
-                      </p>
-                    </div>
+                    </Bloc>
                   </div>
                 </div>
-              </section>
-              <hr className='fr-hr fr-mt-3w fr-mb-3v fr-pb-1v' />
+              </div>
+            </section>
+            <Bloc
+              className='fr-mr-md-2w fr-mr-xl-0 fr-mb-1w'
+              contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
+            >
               <section className='fr-mx-2w'>
                 <TitreInfobulleConteneur>
                   <Titre
@@ -304,7 +322,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
               </section>
             </Bloc>
           </div>
-          <div className='fr-col-12 fr-col-lg-5 fr-col-xl-6 fr-pl-1w'>
+          <div className='fr-col-12 fr-col-lg-5 fr-col-xl-6 fr-pl-xl-1w'>
             <Bloc>
               <section>
                 <Titre
@@ -333,7 +351,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
         </div>
         {
           process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && !chantiersSontArchives &&
-          <div className='fr-pt-3w fr-px-2w fr-px-md-0 alertes'>
+          <div className='fr-pt-2w fr-px-2w fr-px-md-0 alertes'>
             <div className='fr-mb-2w'>
               <TitreInfobulleConteneur>
                 <BadgeIcône type='warning' />
