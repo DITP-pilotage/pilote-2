@@ -15,7 +15,7 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
 
   const { data: tokenAPIEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_GESTION_TOKEN_API' });
 
-  const mutationSupprimerUtilisateur = api.utilisateur.supprimer.useMutation({
+  const mutationSupprimerUtilisateur = api.utilisateur.desactiver.useMutation({
     onSuccess: () => {
       router.push('/admin/utilisateurs?compteSupprimé=true');
     },

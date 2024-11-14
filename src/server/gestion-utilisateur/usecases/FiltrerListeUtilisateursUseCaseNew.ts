@@ -6,7 +6,7 @@ import {
 } from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion';
+import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface';
 
 export default class FiltrerListeUtilisateursUseCase {
   constructor(
@@ -48,6 +48,10 @@ export default class FiltrerListeUtilisateursUseCase {
 
     return this.filtresActifs.profils.includes(utilisateur.profil);
   }
+  
+  private utilisateurEstActif(utilisateur: UtilisateurListeGestion) {
+    return utilisateur.dateDesactivation === null;
+  }
 
   private utilisateurPasseLesFiltres(utilisateur: UtilisateurListeGestion) {
     return this.utilisateurPasseLeFiltreTerritoire(utilisateur)
@@ -68,7 +72,7 @@ export default class FiltrerListeUtilisateursUseCase {
     if (!Object.keys(PROFILS_POSSIBLES_COORDINATEURS_LECTURE).includes(this.profil))
       return true;
     
-    return this.profilEstAutorisé(utilisateur) && this.territoireEstAutorisé(utilisateur);
+    return this.profilEstAutorisé(utilisateur) && this.territoireEstAutorisé(utilisateur) && this.utilisateurEstActif(utilisateur);
   }
 
   run() {

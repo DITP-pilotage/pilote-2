@@ -25,9 +25,9 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface';
 import { removeAccents } from '@/server/utils/remove-accents';
 import { prisma } from '@/server/db/prisma';
-import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface';
 
 export const convertirEnModel = (utilisateurAConvertir: {
   email: string
@@ -169,6 +169,17 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       where: { email: email.toLowerCase() }, 
       include: { 
         habilitation: true, 
+      },
+    });
+  }
+
+  async desactiver(email: string): Promise<void> {
+    await prisma.utilisateur.update({
+      where: { 
+        email: email.toLowerCase(),
+      }, 
+      data: {
+        date_desactivation: new Date(),
       },
     });
   }

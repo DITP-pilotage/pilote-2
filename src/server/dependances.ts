@@ -6,12 +6,14 @@ import {
 import { ChantierDependencies, getChantiersContainer } from '@/server/chantiers/container';
 import { getImportIndicateurContainer, ImportIndicateurDependencies } from '@/server/import-indicateur/container';
 import { AuthentificationDependencies, getAuthentificationContainer } from '@/server/authentification/container';
+import { GestionUtilisateurDependencies, getGestionUtilisateurContainer } from './gestion-utilisateur/container';
 
 export type ContainerDependencies = {
   authentification: AwilixContainer<AuthentificationDependencies>
   chantiers: AwilixContainer<ChantierDependencies>,
   parametrageIndicateur: AwilixContainer<ParametrageIndicateurDependencies>
   importIndicateur: AwilixContainer<ImportIndicateurDependencies>
+  gestionUtilisateur: AwilixContainer<GestionUtilisateurDependencies>
 };
 
 function registerContainer(): ContainerDependencies {
@@ -20,6 +22,7 @@ function registerContainer(): ContainerDependencies {
     chantiers: getChantiersContainer().createScope(),
     parametrageIndicateur: getParametrageIndicateurContainer().createScope(),
     importIndicateur: getImportIndicateurContainer().createScope(),
+    gestionUtilisateur: getGestionUtilisateurContainer().createScope(),
   };
 }
 

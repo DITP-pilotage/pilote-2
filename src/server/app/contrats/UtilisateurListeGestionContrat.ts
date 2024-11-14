@@ -4,7 +4,7 @@ import {
   profilsRégionaux,
 } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
-import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion';
+import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface';
 
 export interface UtilisateurListeGestionContrat {
   id: string

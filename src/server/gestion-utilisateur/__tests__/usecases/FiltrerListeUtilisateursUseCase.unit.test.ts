@@ -1,5 +1,5 @@
-import UtilisateurBuilder from '@/server/domain/utilisateur/Utilisateur.builder';
-import { HabilitationBuilder } from '@/server/domain/utilisateur/habilitation/HabilitationBuilder';
+import { HabilitationBuilder } from '@/server/gestion-utilisateur/domain/habilitation/HabilitationBuilder';
+import UtilisateurBuilder from '@/server/gestion-utilisateur/app/builders/Utilisateur.builder';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import FiltrerListeUtilisateursUseCase from '@/server/gestion-utilisateur/usecases/FiltrerListeUtilisateursUseCase';
 

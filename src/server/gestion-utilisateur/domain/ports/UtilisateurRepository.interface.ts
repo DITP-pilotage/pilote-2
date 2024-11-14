@@ -1,8 +1,8 @@
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface';
-import { HabilitationsÀCréerOuMettreÀJourCalculées } from './habilitation/Habilitation.interface';
-import Utilisateur, { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from './Utilisateur.interface';
+import { HabilitationsÀCréerOuMettreÀJourCalculées } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface';
+import Utilisateur, { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
 
 export default interface UtilisateurRepository {
   récupérer(email: string): Promise<Utilisateur | null>
@@ -14,4 +14,5 @@ export default interface UtilisateurRepository {
   récupérerExistants(utilisateurs: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[]): Promise<Utilisateur['email'][]>
   récupérerNombreUtilisateursSurLeTerritoire(territoireCode: string, maille: MailleInterne): Promise<number>
   récupérerNombreUtilisateursParTerritoires(territoires: Territoire[]): Promise<Record<string, number>>
+  desactiver(email: string): Promise<void>
 }
