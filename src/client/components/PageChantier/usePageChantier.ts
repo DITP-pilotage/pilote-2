@@ -18,6 +18,8 @@ const PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE = new Set([
   ProfilEnum.SERVICES_DECONCENTRES_REGION,
 ]);
 
+const PROFIL_INTERDIT_DE_VOIR_LE_SELECTEUR_DE_MAILLE = new Set([ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.RESPONSABLE_DEPARTEMENT]);
+
 export default function usePageChantier(chantier: Chantier, territoireSélectionné: DétailTerritoire, territoireCode: string) {
   const { data: session } = useSession();
   const territoires = territoiresTerritoiresStore();
@@ -38,7 +40,9 @@ export default function usePageChantier(chantier: Chantier, territoireSélection
   const estAutoriseAVoirLeBoutonFicheConducteur = !!variableContenuFFFicheConducteur && estAutoriséAConsulterLaFicheConducteur(session!.profil);
 
   const estAutoriseAVoirLesAlertesMAJIndicateurs = PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS.has(session!.profil);
-  
+
+  const estAutoriseAVoirLeSelecteurDeMaille = !PROFIL_INTERDIT_DE_VOIR_LE_SELECTEUR_DE_MAILLE.has(session!.profil);
+
   return {
     estAutoriseAImporterDesIndicateurs,
     estAutoriseAVoirLeBoutonFicheConducteur,
@@ -46,5 +50,6 @@ export default function usePageChantier(chantier: Chantier, territoireSélection
     estAutoriseAModifierLesPublications,
     estAutoriseAModifierLesObjectifs,
     estAutoriseAVoirLesAlertesMAJIndicateurs,
+    estAutoriseAVoirLeSelecteurDeMaille,
   };
 }

@@ -29,6 +29,7 @@ interface CartesProps {
   territoireCode: string,
   mailleQuery: MailleInterne
   mailleSourceDonnees?: Maille | null
+  estAutoriseAVoirLeSelecteurDeMaille: boolean,
 }
 
 const Cartes: FunctionComponent<CartesProps> = ({
@@ -39,6 +40,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
   territoireCode,
   mailleQuery,
   mailleSourceDonnees,
+  estAutoriseAVoirLeSelecteurDeMaille,
 }) => {
   const pathname = '/chantier/[id]/[territoireCode]';
   const { auClicTerritoireCallback } = useCartographie(territoireCode, pathname);
@@ -75,10 +77,14 @@ const Cartes: FunctionComponent<CartesProps> = ({
                     {INFOBULLE_CONTENUS.chantier.répartitionGéographiqueTauxAvancement}
                   </Infobulle>
                 </TitreInfobulleConteneur>
-                <SélecteurMaille
-                  mailleQuery={mailleQuery}
-                  pathname={pathname}
-                />
+                {
+                  estAutoriseAVoirLeSelecteurDeMaille ? (
+                    <SélecteurMaille
+                      mailleQuery={mailleQuery}
+                      pathname={pathname}
+                    />
+                  ) : null
+                }
                 <CartographieAvancement
                   auClicTerritoireCallback={auClicTerritoireCallback}
                   données={donnéesCartographieAvancement}
@@ -118,10 +124,14 @@ const Cartes: FunctionComponent<CartesProps> = ({
                     {INFOBULLE_CONTENUS.chantier.répartitionGéographiqueNiveauDeConfiance}
                   </Infobulle>
                 </TitreInfobulleConteneur>
-                <SélecteurMaille
-                  mailleQuery={mailleQuery}
-                  pathname={pathname}
-                />
+                {
+                  estAutoriseAVoirLeSelecteurDeMaille ? (
+                    <SélecteurMaille
+                      mailleQuery={mailleQuery}
+                      pathname={pathname}
+                    />
+                  ) : null
+                }
                 <CartographieMétéo
                   auClicTerritoireCallback={auClicTerritoireCallback}
                   données={donnéesCartographieMétéo}
