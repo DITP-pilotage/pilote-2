@@ -16,10 +16,7 @@ const PageRapportDétailléStyled = styled.div`
   }
 
   @media print {
-    .force-break-page {
-      height: 500px;
-    }
-      
+    
     @page {
       margin: 12mm 0; /* marges pour configuration de l'imprimante */
       size: 280mm 396mm;

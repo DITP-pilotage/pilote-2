@@ -58,7 +58,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
           {
             avancements !== null &&
             <>
-              <section className='rubrique avancement impression-section'>
+              <section className='rubrique avancement impression-section-haut-de-page'>
                 <Link
                   className='fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-up-line fr-btn--icon-left fr-text--sm'
                   href={`#${htmlId.listeDesChantiers()}`}

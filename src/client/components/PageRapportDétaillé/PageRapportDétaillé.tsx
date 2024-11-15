@@ -148,10 +148,8 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
             />
             {
               afficherLesChantiers ? (
-                <>
-                  <div className='force-break-page' />
-                  <div className='chantiers'>
-                    {
+                <div className='chantiers'>
+                  {
                       chantiersFiltrés.map((chantier) => (
                         <RapportDétailléChantier
                           chantier={chantier}
@@ -172,8 +170,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
                         />
                       ))
                     }
-                  </div>
-                </>
+                </div>
               ) : null
             }
           </div>
