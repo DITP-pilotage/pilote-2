@@ -98,10 +98,10 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         ) : null
       }
       <div className='avancement-national'>
-        <section className='fr-container fr-p-0'>
-          <div className='fr-grid-row fr-grid-row--gutters'>
+        <section className='fr-p-0'>
+          <div className='fr-grid-row fr-grid-row--gutters fr-pr-md-2w'>
             <div
-              className='fr-col-12 fr-col-xl-6 flex flex-column'
+              className='fr-col-12 fr-col-xl-6 flex flex-column fr-pr-0'
             >
               <Bloc
                 contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
@@ -109,8 +109,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               >
                 <Titre
                   baliseHtml='h3'
-                  className='fr-text--md fr-mb-0 fr-py-1v texte-centre break-keep'
-                  estInline
+                  className='fr-text--md fr-mb-1w fr-py-1v texte-centre break-keep flex justify-center w-full'
                 >
                   Taux d’avancement national
                 </Titre>
@@ -122,8 +121,8 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                     taille='lg'
                   />
                 </div>
-                <div className='fr-grid-row border-t'>
-                  <div className='fr-mt-2w w-full'>
+                <div className='fr-grid-row border-t fr-mt-1w '>
+                  <div className='fr-mt-1w w-full'>
                     <p className='fr-text--xl fr-text--bold fr-mb-0 texte-gris'>
                       {`${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancements.nationale?.annuel.moyenne?.toFixed(0) : null) ?? '- '}%`}
                     </p>
@@ -143,7 +142,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 </div>
               </Bloc>
             </div>
-            <div className='fr-col-12 fr-col-xl-6'>
+            <div className='fr-col-12 fr-col-xl-6 fr-pr-0'>
               <Bloc
                 className='h-full'
                 contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
@@ -188,7 +187,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                       />
                     </div>
                   </div>
-                  <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
+                  <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--xs'>
                     Maximum, médiane et minimum des taux d’avancement observés sur les régions
                   </div>
                 </div>

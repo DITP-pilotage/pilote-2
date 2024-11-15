@@ -207,7 +207,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                           className='fr-text--md fr-mb-0 fr-py-1v'
                           estInline
                         >
-                          Taux d’avancement moyen
+                          Taux d'avancement moyen
                         </Titre>
                         <Infobulle idHtml='infobulle-chantiers-jauges'>
                           {INFOBULLE_CONTENUS.chantiers.jauges}
@@ -245,14 +245,18 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   <div className='fr-col-12 fr-col-xl-6 fr-pr-0 fr-pt-0'>
                     <Bloc
                       className='h-full fr-ml-xl-1w'
-                      contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
+                      contenuClassesSupplémentaires='fr-p-2w'
                     >
                       <div className='fr-container fr-px-1w'>
-                        <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
-                          Répartition des taux d’avancement des territoires
-                        </div>
+                        <Titre
+                          baliseHtml='h2'
+                          className='fr-text--md'
+                          estInline
+                        >
+                          Répartition territoriale
+                        </Titre>
                         <div
-                          className='fr-grid-row fr-grid-row--center texte-centre fr-pb-2w fr-text--sm repartition-selecteur-maille'
+                          className='fr-grid-row fr-grid-row--center texte-centre fr-py-2w fr-text--sm repartition-selecteur-maille'
                         >
                           <SélecteurMaille
                             mailleQuery={mailleQuery}
@@ -288,7 +292,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                             />
                           </div>
                         </div>
-                        <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
+                        <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--xs'>
                           Répartition Maximum, médiane et minimum des taux d’avancement observés sur les régions taux
                           d’avancement des territoires
                         </div>
