@@ -55,7 +55,7 @@
     "@faker-js/faker": "^7.6.0",
     "@gouvfr/dsfr": "^1.11.0",
     "@hookform/resolvers": "^3.0.1",
-    "@keycloak/keycloak-admin-client": "^21.0.2",
+    "@keycloak/keycloak-admin-client": "^26.0.5",
     "@next/env": "14.1.4",
     "@prisma/client": "^4.12.0",
     "@socialgouv/matomo-next": "^1.8.1",
@@ -109,6 +109,7 @@
     "zustand": "^4.3.6"
   },
   "devDependencies": {
+    "@babel/plugin-transform-private-methods": "^7.25.9",
     "@commitlint/cli": "^17.5.1",
     "@commitlint/config-conventional": "^17.4.4",
     "@hookform/devtools": "^4.3.1",
