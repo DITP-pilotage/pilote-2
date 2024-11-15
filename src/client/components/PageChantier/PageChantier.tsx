@@ -102,6 +102,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
     estAutoriseAModifierLesPublications,
     estAutoriseAModifierLesObjectifs,
     estAutoriseAVoirLesAlertesMAJIndicateurs,
+    estAutoriseAVoirLeSelecteurDeMaille,
   } = usePageChantier(chantier, territoireSélectionné, territoireCode);
 
   const listeRubriques = listeRubriquesChantier(indicateurs.map(indicateur => indicateur.type), territoireSélectionné.maille);
@@ -229,6 +230,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
               </TitreInfobulleConteneur>
               <AvancementChantier
                 avancements={avancements}
+                estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
                 mailleQuery={mailleQuery}
                 mailleSelectionnee={mailleSelectionnee}
                 territoireCode={territoireCode}
@@ -299,6 +301,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     afficheCarteAvancement={!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSelectionnee] || chantier.estTerritorialisé}
                     afficheCarteMétéo={!!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] || chantier.estTerritorialisé}
                     chantierMailles={chantier.mailles}
+                    estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
                     mailleQuery={mailleQuery}
                     mailleSourceDonnees={mailleSourceDonnees}
                     territoireCode={territoireCode}

@@ -22,6 +22,12 @@ const INFOBULLE_CONTENUS = {
         </p>
       </>
     ),
+    repartitions: (
+      <p className='fr-text--sm'>
+        Maximum, médiane et minimum des taux d’avancement observés sur les territoires de la maille
+        sélectionnée
+      </p>
+    ),
     météos: (
       <>
         <p className='fr-text--sm'>

@@ -111,7 +111,8 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   const {
     donnéesTableauChantiers,
     remontéesAlertes,
-  } = usePageChantiers(chantiers, territoireCode, filtresComptesCalculés, avancementsAgrégés);
+    estAutoriseAVoirLeSelecteurDeMaille,
+  } = usePageChantiers(chantiers, territoireCode, filtresComptesCalculés, avancementsAgrégés, session!.profil);
 
   const chantiersSontArchives = filtres.statut?.includes('ARCHIVE') ?? false;
 
@@ -204,7 +205,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                       <TitreInfobulleConteneur>
                         <Titre
                           baliseHtml='h2'
-                          className='fr-text--md fr-mb-0 fr-py-1v'
+                          className='fr-text--md fr-mb-0 fr-py-1v texte-centre'
                           estInline
                         >
                           Taux d'avancement moyen
@@ -248,21 +249,33 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                       contenuClassesSupplémentaires='fr-p-2w'
                     >
                       <div className='fr-container fr-px-1w'>
-                        <Titre
-                          baliseHtml='h2'
-                          className='fr-text--md'
-                          estInline
-                        >
-                          Répartition territoriale
-                        </Titre>
-                        <div
-                          className='fr-grid-row fr-grid-row--center texte-centre fr-py-2w fr-text--sm repartition-selecteur-maille'
-                        >
-                          <SélecteurMaille
-                            mailleQuery={mailleQuery}
-                            pathname={pathname}
-                          />
+                        <div className='w-full flex justify-center items-center fr-mb-2w'>
+                          <Titre
+                            baliseHtml='h2'
+                            className='fr-text--md fr-m-0'
+                            estInline
+                          >
+                            Répartition territoriale
+                          </Titre>
+                          <Infobulle
+                            className='fr-pt-0'
+                            idHtml='infobulle-chantiers-jauges'
+                          >
+                            {INFOBULLE_CONTENUS.chantiers.repartitions}
+                          </Infobulle>
                         </div>
+                        {
+                          estAutoriseAVoirLeSelecteurDeMaille ? (
+                            <div
+                              className='fr-grid-row fr-grid-row--center texte-centre fr-pb-2w fr-text--sm repartition-selecteur-maille'
+                            >
+                              <SélecteurMaille
+                                mailleQuery={mailleQuery}
+                                pathname={pathname}
+                              />
+                            </div>
+                          ) : null
+                        }
                         <div className='fr-grid-row fr-grid-row-md--gutters fr-px-3v'>
                           <div className='fr-col-4'>
                             <JaugeDeProgression
@@ -291,10 +304,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                               taille='sm'
                             />
                           </div>
-                        </div>
-                        <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--xs'>
-                          Répartition Maximum, médiane et minimum des taux d’avancement observés sur les régions taux
-                          d’avancement des territoires
                         </div>
                       </div>
                     </Bloc>
@@ -335,12 +344,14 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 >
                   Taux d’avancement des chantiers par territoire
                 </Titre>
-                <div>
-                  <SélecteurMaille
-                    mailleQuery={mailleQuery}
-                    pathname={pathname}
-                  />
-                </div>
+                {
+                  estAutoriseAVoirLeSelecteurDeMaille ? (
+                    <SélecteurMaille
+                      mailleQuery={mailleQuery}
+                      pathname={pathname}
+                    />
+                  ) : null
+                }
                 <CartographieAvancement
                   auClicTerritoireCallback={auClicTerritoireCallback}
                   données={avancementsGlobauxTerritoriauxMoyens}

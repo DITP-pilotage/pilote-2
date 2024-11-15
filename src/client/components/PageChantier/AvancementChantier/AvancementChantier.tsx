@@ -10,6 +10,7 @@ import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import SélecteurMaille
   from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
+import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import AvancementChantierStyled from './AvancementChantier.styled';
 
 const classeÀPartirDeLaMaille = {
@@ -22,6 +23,7 @@ interface AvancementChantierProps {
   territoireCode: string
   mailleSelectionnee: MailleInterne
   mailleQuery: MailleInterne
+  estAutoriseAVoirLeSelecteurDeMaille: boolean
   avancements: {
     nationale: AvancementsStatistiques
     départementale: {
@@ -49,6 +51,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   territoireCode,
   mailleSelectionnee,
   mailleQuery,
+  estAutoriseAVoirLeSelecteurDeMaille,
   mailleSourceDonnees,
 }) => {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
@@ -146,18 +149,23 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               <Bloc
                 className='h-full'
                 contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
+                contenuInfobulle={INFOBULLE_CONTENUS.chantiers.repartitions}
                 titre='Répartition territoriale'
               >
                 <div className='fr-container fr-px-md-1w fr-px-lg-2w'>
                   <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
                     Répartition des taux d’avancement des territoires
                   </div>
-                  <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
-                    <SélecteurMaille
-                      mailleQuery={mailleQuery}
-                      pathname={pathname}
-                    />
-                  </div>
+                  {
+                    estAutoriseAVoirLeSelecteurDeMaille ? (
+                      <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
+                        <SélecteurMaille
+                          mailleQuery={mailleQuery}
+                          pathname={pathname}
+                        />
+                      </div>
+                    ) : null
+                  }
                   <div className='fr-grid-row fr-grid-row-md--gutters'>
                     <div className='fr-col-4'>
                       <JaugeDeProgression
@@ -188,7 +196,8 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                     </div>
                   </div>
                   <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--xs'>
-                    Maximum, médiane et minimum des taux d’avancement observés sur les régions
+                    Maximum, médiane et minimum des taux d’avancement observés sur les territoires de la maille
+                    sélectionnée
                   </div>
                 </div>
               </Bloc>

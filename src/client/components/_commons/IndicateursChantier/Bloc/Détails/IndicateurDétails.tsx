@@ -77,6 +77,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
     donnéesCartographieValeurActuelle,
     donnéesCartographieAvancementTerritorialisées,
     donnéesCartographieValeurActuelleTerritorialisées,
+    estAutoriseAVoirLeSelecteurDeMaille,
   } = useIndicateurDétails(detailsIndicateursTerritoire[indicateur.id]);
 
   const indicateurSiTypeDeReformeEstChantier = futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle;
@@ -154,7 +155,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
           <div className='fr-container'>
             <div className='fr-grid-row fr-grid-row--gutters fr-my-1w'>
               {
-                indicateurSiTypeDeReformeEstChantier && (donnéesCartographieAvancementTerritorialisées || chantierEstTerritorialisé) ?
+                indicateurSiTypeDeReformeEstChantier && (donnéesCartographieAvancementTerritorialisées || chantierEstTerritorialisé) ? (
                   <section className='fr-col-12 fr-col-xl-6'>
                     <Titre
                       baliseHtml='h5'
@@ -163,10 +164,14 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       Répartition géographique de l'avancement 2026
                     </Titre>
                     <div className='fr-grid-row fr-grid-row--center texte-centre fr-pb-2w fr-text--sm'>
-                      <SélecteurMaille
-                        mailleQuery={mailleQuery}
-                        pathname={pathname}
-                      />
+                      {
+                        estAutoriseAVoirLeSelecteurDeMaille ? (
+                          <SélecteurMaille
+                            mailleQuery={mailleQuery}
+                            pathname={pathname}
+                          />
+                        ) : null
+                      }
                     </div>
                     <CartographieAvancement
                       auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
@@ -177,10 +182,11 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       territoireCode={territoireCode}
                       élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
                     />
-                  </section> : null
+                  </section>
+                ) : null
               }
               {
-                indicateurSiTypeDeReformeEstChantier && (donnéesCartographieValeurActuelleTerritorialisées || chantierEstTerritorialisé) ?
+                indicateurSiTypeDeReformeEstChantier && (donnéesCartographieValeurActuelleTerritorialisées || chantierEstTerritorialisé) ? (
                   <section className='fr-col-12 fr-col-xl-6'>
                     <Titre
                       baliseHtml='h5'
@@ -188,12 +194,16 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                     >
                       Répartition géographique de la valeur actuelle de l'indicateur
                     </Titre>
-                    <div className='fr-grid-row fr-grid-row--center texte-centre fr-pb-2w fr-text--sm'>
-                      <SélecteurMaille
-                        mailleQuery={mailleQuery}
-                        pathname={pathname}
-                      />
-                    </div>
+                    {
+                      estAutoriseAVoirLeSelecteurDeMaille ? (
+                        <div className='fr-grid-row fr-grid-row--center texte-centre fr-pb-2w fr-text--sm'>
+                          <SélecteurMaille
+                            mailleQuery={mailleQuery}
+                            pathname={pathname}
+                          />
+                        </div>
+                      ) : null
+                    }
                     <CartographieValeurActuelle
                       auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
                       données={donnéesCartographieValeurActuelle}
@@ -204,7 +214,8 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       unité={indicateur.unité}
                       élémentsDeLégende={ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE}
                     />
-                  </section> : null
+                  </section>
+                ) : null
               }
               {
                 // TODO(JOTA-02/08/2024): Supprimer indicateurDétailsParTerritoires[0]?.données une fois le refacto page chantier terminé

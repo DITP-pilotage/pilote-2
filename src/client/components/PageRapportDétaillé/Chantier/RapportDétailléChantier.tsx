@@ -82,6 +82,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
                 </Titre>
                 <AvancementChantier
                   avancements={avancements}
+                  estAutoriseAVoirLeSelecteurDeMaille={false}
                   mailleQuery={mailleQuery}
                   mailleSelectionnee={mailleSelectionnee}
                   territoireCode={territoireCode}
