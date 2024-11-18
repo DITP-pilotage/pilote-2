@@ -36,13 +36,19 @@ export class AgrégateurListeChantiersParTerritoire {
   private _répartirLesDonnéesBrutesPourChaqueTerritoire() {
     this.chantiers.forEach(chantier => {
       objectEntries(chantier.mailles['nationale']).forEach(([territoireCode, donnéesTerritoire]) => {
-        this.agrégat['nationale'].territoires[territoireCode].donnéesBrutes.avancements = [...this.agrégat['nationale'].territoires[territoireCode].donnéesBrutes.avancements, donnéesTerritoire.avancement];
+        if (donnéesTerritoire.estApplicable) {
+          this.agrégat['nationale'].territoires[territoireCode].donnéesBrutes.avancements = [...this.agrégat['nationale'].territoires[territoireCode].donnéesBrutes.avancements, donnéesTerritoire.avancement];
+        }
       });
       objectEntries(chantier.mailles['départementale']).forEach(([territoireCode, donnéesTerritoire]) => {
-        this.agrégat['départementale'].territoires[territoireCode].donnéesBrutes.avancements = [...this.agrégat['départementale'].territoires[territoireCode].donnéesBrutes.avancements, donnéesTerritoire.avancement];
+        if (donnéesTerritoire.estApplicable) {
+          this.agrégat['départementale'].territoires[territoireCode].donnéesBrutes.avancements = [...this.agrégat['départementale'].territoires[territoireCode].donnéesBrutes.avancements, donnéesTerritoire.avancement];
+        }
       });
       objectEntries(chantier.mailles['régionale']).forEach(([territoireCode, donnéesTerritoire]) => {
-        this.agrégat['régionale'].territoires[territoireCode].donnéesBrutes.avancements = [...this.agrégat['régionale'].territoires[territoireCode].donnéesBrutes.avancements, donnéesTerritoire.avancement];
+        if (donnéesTerritoire.estApplicable) {
+          this.agrégat['régionale'].territoires[territoireCode].donnéesBrutes.avancements = [...this.agrégat['régionale'].territoires[territoireCode].donnéesBrutes.avancements, donnéesTerritoire.avancement];
+        }
       });
     });
   }
@@ -75,7 +81,6 @@ export class AgrégateurListeChantiersParTerritoire {
     this.agrégat[maille].territoires[territoireCode].répartition.avancements.global.médiane = calculerMédiane(avancements.global);
 
     this.agrégat[maille].territoires[territoireCode].répartition.avancements.annuel.moyenne = calculerMoyenne(avancements.annuel);
-
   }
 
   private _calculerLaRépartitionDesAvancementsParMaille(maille: Maille, avancements: AvancementRegroupementDonnéesBrutes) {
