@@ -15,23 +15,39 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
 
   const { data: tokenAPIEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_GESTION_TOKEN_API' });
 
-  const mutationSupprimerUtilisateur = api.utilisateur.desactiver.useMutation({
+  const mutationDesactiverUtilisateur = api.utilisateur.desactiver.useMutation({
     onSuccess: () => {
-      router.push('/admin/utilisateurs?compteSupprimé=true');
+      router.push('/admin/utilisateurs?compteDésactivé=true');
+    },
+  });
+
+  const mutationReactiverUtilisateur = api.utilisateur.reactiver.useMutation({
+    onSuccess: () => {
+      router.push('/admin/utilisateurs?compteRéactivé=true');
     },
   });
 
   // eslint-disable-next-line unicorn/consistent-function-scoping
-  const fermerLaModaleDeSuppressionUtilisateur = () => {
+  const fermerLaModaleDeDesactivationUtilisateur = () => {
     if (typeof window.dsfr === 'function') {
-      window.dsfr(document.querySelector<HTMLElement>('#supprimer-compte'))?.modal?.conceal();
+      window.dsfr(document.querySelector<HTMLElement>('#desactiver-compte'))?.modal?.conceal();
     }
   };
 
-  const supprimerUtilisateur = () => {
-    mutationSupprimerUtilisateur.mutate({ email: utilisateur.email, 'csrf': récupérerUnCookie('csrf') ?? '' });
+  const desactiverUtilisateur = () => {
+    mutationDesactiverUtilisateur.mutate({ email: utilisateur.email, 'csrf': récupérerUnCookie('csrf') ?? '' });
   };
   
+  const fermerLaModaleDeReactivationUtilisateur = () => {
+    if (typeof window.dsfr === 'function') {
+      window.dsfr(document.querySelector<HTMLElement>('#reactiver-compte'))?.modal?.conceal();
+    }
+  };
+
+  const reactiverUtilisateur = () => {
+    mutationReactiverUtilisateur.mutate({ email: utilisateur.email, 'csrf': récupérerUnCookie('csrf') ?? '' });
+  };
+
   const modificationEstImpossible = (session: Session | null, utilisateurHabilitations: Habilitations, utilisateurProfil: ProfilCode) => {
     if (!session) {
       return true;
@@ -53,9 +69,9 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
     const habilitations = new Habilitation(session.habilitations);
 
     if (!habilitations.peutAccéderAuxTerritoiresUtilisateurs(utilisateurHabilitations.lecture.territoires)) {
-      return "Ce compte a des droits d'accès sur plusieurs territoires. Vous ne pouvez pas modifier ses droits ou supprimer l'utilisateur. Si vous avez besoin d’aide, veuillez contacter le support technique.";
+      return "Ce compte a des droits d'accès sur plusieurs territoires. Vous ne pouvez pas modifier ses droits ou désactiver l'utilisateur. Si vous avez besoin d’aide, veuillez contacter le support technique.";
     } else if ([ProfilEnum.COORDINATEUR_REGION, ProfilEnum.COORDINATEUR_DEPARTEMENT].includes(utilisateurProfil)) {
-      return "Ce compte a un profil de coordinateur PILOTE. Vous ne pouvez le modifier ou le supprimer. Si vous avez besoin d'aide, veuillez contacter le support technique.";
+      return "Ce compte a un profil de coordinateur PILOTE. Vous ne pouvez le modifier ou le désactiver. Si vous avez besoin d'aide, veuillez contacter le support technique.";
     } else {
       return '';
     }
@@ -68,11 +84,13 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
   };
 
   return {
-    fermerLaModaleDeSuppressionUtilisateur,
-    supprimerUtilisateur,
+    fermerLaModaleDeDesactivationUtilisateur,
+    desactiverUtilisateur,
     modificationEstImpossible,
     donnneContenuBandeau,
     habilitationsAGenererUnTokenDAuthentification,
     vérifierFFTokenAPIEstDisponible: tokenAPIEstDisponible,
+    fermerLaModaleDeReactivationUtilisateur,
+    reactiverUtilisateur,
   };
 }

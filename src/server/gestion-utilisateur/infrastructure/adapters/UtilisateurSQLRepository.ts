@@ -174,12 +174,23 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   }
 
   async desactiver(email: string): Promise<void> {
-    await prisma.utilisateur.update({
+    await prisma.utilisateur.updateMany({
       where: { 
         email: email.toLowerCase(),
       }, 
       data: {
         date_desactivation: new Date(),
+      },
+    });
+  }
+
+  async reactiver(email: string): Promise<void> {
+    await prisma.utilisateur.updateMany({
+      where: { 
+        email: email.toLowerCase(),
+      }, 
+      data: {
+        date_desactivation: null,
       },
     });
   }
@@ -390,6 +401,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
             profilCode: {
               in: profilsDépartementaux,
             },
+            date_desactivation: null,
             habilitation: {
               some: {
                 scopeCode: 'lecture',
@@ -403,6 +415,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
             profilCode: {
               in: profilsRégionaux,
             },
+            date_desactivation: null,
             habilitation: {
               some: {
                 scopeCode: 'lecture',
@@ -717,6 +730,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       saisieIndicateur: this._aDesDroitsdeSaisieIndicateur(habilitations, utilisateurBrut.profil),
       gestionUtilisateur: this._aDesDroitsdeGestionUtilisateur(habilitations, utilisateurBrut.profil),
       habilitations: habilitations,
+      dateDesactivation: utilisateurBrut.date_desactivation?.toISOString() ?? null,
     };
   }
 }

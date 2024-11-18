@@ -77,6 +77,7 @@ export const validationFiltresPourListeUtilisateurNew = z.object({
     périmètresMinistériels: z.string().array(),
     chantiersAssociésAuxPérimètres: z.string().array(),
     profils: z.enum(profilsCodes).array(),
+    typesCompte: z.enum(['actif', 'desactive']).array(),
   }),
   pagination: z.object({
     pageIndex: z.number(),
@@ -90,6 +91,10 @@ export const validationFiltresPourListeUtilisateurNew = z.object({
 });
 
 export const validationSupprimerUtilisateur = z.object({
+  email: z.string().email(),
+});
+
+export const validationReactiverUtilisateur = z.object({
   email: z.string().email(),
 });
 

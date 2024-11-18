@@ -2,10 +2,9 @@ import { flexRender, Row, Table } from '@tanstack/react-table';
 import { FunctionComponent, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { UtilisateurListeGestionContrat } from '@/server/app/contrats/UtilisateurListeGestionContrat';
-import { UtilisateurContrat } from '@/server/gestion-utilisateur/app/contrats/UtilisateurContrat';
 
 interface TableauAdminUtilisateursContenuProps {
-  tableau: Table<UtilisateurContrat>
+  tableau: Table<UtilisateurListeGestionContrat>
 }
 
 const TableauAdminUtilisateursContenu: FunctionComponent<TableauAdminUtilisateursContenuProps> = ({ tableau }) => {

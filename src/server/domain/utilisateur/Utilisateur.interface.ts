@@ -51,6 +51,7 @@ type Utilisateur = {
   saisieCommentaire: boolean
   gestionUtilisateur: boolean
   habilitations: Habilitations
+  dateDesactivation: string | null
 };
 
 export type UtilisateurÀCréerOuMettreÀJour =  {

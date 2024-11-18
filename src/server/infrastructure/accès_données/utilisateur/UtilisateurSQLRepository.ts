@@ -379,6 +379,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
             profilCode: {
               in: profilsDépartementaux,
             },
+            date_desactivation: null,
             habilitation: {
               some: {
                 scopeCode: 'lecture',
@@ -392,6 +393,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
             profilCode: {
               in: profilsRégionaux,
             },
+            date_desactivation: null,
             habilitation: {
               some: {
                 scopeCode: 'lecture',
@@ -706,6 +708,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       saisieIndicateur: this._aDesDroitsdeSaisieIndicateur(habilitations, utilisateurBrut.profil),
       gestionUtilisateur: this._aDesDroitsdeGestionUtilisateur(habilitations, utilisateurBrut.profil),
       habilitations: habilitations,
+      dateDesactivation: utilisateurBrut.date_desactivation?.toISOString() ?? null,
     };
   }
 }

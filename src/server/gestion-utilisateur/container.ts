@@ -6,12 +6,14 @@ import DesactiverUnUtilisateurUseCase from './usecases/DesactiverUnUtilisateurUs
 import { UtilisateurSQLRepository } from './infrastructure/adapters/UtilisateurSQLRepository';
 import { UtilisateurIAMKeycloakRepository } from './infrastructure/adapters/UtilisateurIAMKeycloakRepository';
 import { PrismaTokenAPIInformationRepository } from './infrastructure/adapters/PrismaTokenAPIInformationRepository';
+import ReactiverUnUtilisateurUseCase from './usecases/ReactiverUnUtilisateurUseCase';
 
 export type GestionUtilisateurDependencies = {
   utilisateurRepository: UtilisateurRepository
   utilisateurIAMRepository: UtilisateurIAMRepository
   tokenAPIInformationRepository: TokenAPIInformationRepository
   desactiverUnUtilisateurUseCase: DesactiverUnUtilisateurUseCase
+  reactiverUnUtilisateurUseCase: ReactiverUnUtilisateurUseCase
 };
 export const getGestionUtilisateurContainer = (): AwilixContainer<GestionUtilisateurDependencies> => {
   const defaultOptions: ContainerOptions = { injectionMode: InjectionMode.PROXY, strict: true };
@@ -23,5 +25,6 @@ export const getGestionUtilisateurContainer = (): AwilixContainer<GestionUtilisa
     utilisateurIAMRepository: asClass(UtilisateurIAMKeycloakRepository),
     tokenAPIInformationRepository: asClass(PrismaTokenAPIInformationRepository),
     desactiverUnUtilisateurUseCase: asClass(DesactiverUnUtilisateurUseCase),
+    reactiverUnUtilisateurUseCase: asClass(ReactiverUnUtilisateurUseCase),
   });
 };

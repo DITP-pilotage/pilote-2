@@ -30,6 +30,8 @@ export default class UtilisateurBuilder {
 
   private _gestionUtilisateur: Utilisateur['gestionUtilisateur'];
 
+  private _dateDesactivation: Utilisateur['dateDesactivation'];
+
   constructor() {
     this._id = faker.helpers.unique(faker.random.numeric, [10]);
     this._nom = faker.name.lastName();
@@ -44,6 +46,7 @@ export default class UtilisateurBuilder {
     this._saisieCommentaire = faker.datatype.boolean();
     this._saisieIndicateur = faker.datatype.boolean();
     this._gestionUtilisateur = faker.datatype.boolean();
+    this._dateDesactivation = null;
     this._habilitations = {
       lecture: { chantiers: [], territoires: [], périmètres: [] },
       saisieCommentaire: { chantiers: [], territoires: [], périmètres: [] },
@@ -101,6 +104,7 @@ export default class UtilisateurBuilder {
       saisieIndicateur: this._saisieIndicateur,
       gestionUtilisateur: this._gestionUtilisateur,
       habilitations: this._habilitations,
+      dateDesactivation: this._dateDesactivation,
     };
   }
 }

@@ -46,9 +46,16 @@ const PageAdminUtilisateurs: FunctionComponent<{}> = () => {
       });
     }
 
-    if (router.query['compteSupprimé']) {
+    if (router.query['compteRéactivé']) {
       setAlerte({
-        titre: 'Le compte a bien été supprimé.',
+        titre: 'Bravo, le compte a bien été réactivé !',
+        type: 'succès',
+      });
+    }
+
+    if (router.query['compteDésactivé']) {
+      setAlerte({
+        titre: 'Le compte a bien été désactivé.',
         type: 'erreur',
       });
       window.scroll(0, 0);

@@ -53,11 +53,22 @@ export default class FiltrerListeUtilisateursUseCase {
     return utilisateur.dateDesactivation === null;
   }
 
+  private utilisateurPasseLeFiltreTypeCompte(utilisateur: UtilisateurListeGestion) {
+    if (this.filtresActifs.typesCompte.includes('actif') && this.filtresActifs.typesCompte.includes('desactive')) {
+      return true;
+    } else if (this.filtresActifs.typesCompte.includes('actif')) {
+      return this.utilisateurEstActif(utilisateur);
+    } else {
+      return !this.utilisateurEstActif(utilisateur);
+    }
+  }
+
   private utilisateurPasseLesFiltres(utilisateur: UtilisateurListeGestion) {
     return this.utilisateurPasseLeFiltreTerritoire(utilisateur)
       && this.utilisateurPasseLeFiltreChantier(utilisateur)
       && this.utilisateurPasseLeFiltrePérimètreMinistériel(utilisateur)
-      && this.utilisateurPasseLeFiltreProfil(utilisateur);
+      && this.utilisateurPasseLeFiltreProfil(utilisateur)
+      && this.utilisateurPasseLeFiltreTypeCompte(utilisateur);
   }
 
   private profilEstAutorisé(utilisateur: UtilisateurListeGestion) {
@@ -72,7 +83,7 @@ export default class FiltrerListeUtilisateursUseCase {
     if (!Object.keys(PROFILS_POSSIBLES_COORDINATEURS_LECTURE).includes(this.profil))
       return true;
     
-    return this.profilEstAutorisé(utilisateur) && this.territoireEstAutorisé(utilisateur) && this.utilisateurEstActif(utilisateur);
+    return this.profilEstAutorisé(utilisateur) && this.territoireEstAutorisé(utilisateur);
   }
 
   run() {

@@ -40,7 +40,24 @@ export class UtilisateurIAMKeycloakRepository implements UtilisateurIAMRepositor
         { id: utilisateur[0].id },
         { enabled: false },
       );
-      logger.info(`Utilisateur ${email} supprimé.`);
+      logger.info(`Utilisateur ${email} désactivé.`);
+    }
+  }
+
+  async reactive(email: string): Promise<void> {
+    await this.loginKcAdminClient();
+
+    const utilisateur = await this.kcAdminClient.users.findOne({
+      realm: KEYCLOAK_REALM,
+      email: email,
+    }); 
+
+    if (utilisateur.length > 0) {
+      await this.kcAdminClient.users.update(
+        { id: utilisateur[0].id },
+        { enabled: true },
+      );
+      logger.info(`Utilisateur ${email} réactivé.`);
     }
   }
 

@@ -15,4 +15,5 @@ export default interface UtilisateurRepository {
   récupérerNombreUtilisateursSurLeTerritoire(territoireCode: string, maille: MailleInterne): Promise<number>
   récupérerNombreUtilisateursParTerritoires(territoires: Territoire[]): Promise<Record<string, number>>
   desactiver(email: string): Promise<void>
+  reactiver(email: string): Promise<void>
 }

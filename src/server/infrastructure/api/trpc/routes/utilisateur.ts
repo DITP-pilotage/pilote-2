@@ -3,6 +3,7 @@ import {
   validationFiltresPourListeUtilisateurNew,
   validationInfosBaseUtilisateur,
   validationInfosHabilitationsUtilisateur,
+  validationReactiverUtilisateur,
   validationSupprimerUtilisateur,
 } from '@/validation/utilisateur';
 import { zodValidateurCSRF } from '@/validation/publication';
@@ -79,6 +80,12 @@ export const utilisateurRouter = créerRouteurTRPC({
         dependencies.getProfilRepository(),
       ).run(ctx.session.profil);
       await getContainer('gestionUtilisateur').resolve('desactiverUnUtilisateurUseCase').run(input.email, ctx.session.habilitations, profilAuteur);
+    }),
+  reactiver: procédureProtégée
+    .input(validationReactiverUtilisateur.merge(zodValidateurCSRF))
+    .mutation(async ({ input, ctx }) => {
+      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      await getContainer('gestionUtilisateur').resolve('reactiverUnUtilisateurUseCase').run(input.email, ctx.session.profil);
     }),
   récupérerUtilisateursFiltrésNew: procédureProtégée
     .input(validationFiltresPourListeUtilisateurNew)
