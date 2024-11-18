@@ -203,10 +203,10 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                       className='w-full h-full'
                       contenuClassesSupplémentaires='fr-p-2w'
                     >
-                      <TitreInfobulleConteneur>
+                      <TitreInfobulleConteneur className='justify-center'>
                         <Titre
                           baliseHtml='h2'
-                          className='fr-text--md fr-mb-0 fr-py-1v texte-centre'
+                          className='fr-text--lg fr-mb-0 fr-py-1v'
                           estInline
                         >
                           Taux d'avancement moyen
@@ -250,21 +250,20 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                       contenuClassesSupplémentaires='fr-p-2w'
                     >
                       <div className='fr-container fr-px-1w'>
-                        <div className='w-full flex justify-center items-center fr-mb-2w'>
+                        <TitreInfobulleConteneur className='justify-center'>
                           <Titre
                             baliseHtml='h2'
-                            className='fr-text--md fr-m-0'
+                            className='fr-text--lg fr-m-0 fr-py-1v '
                             estInline
                           >
                             Répartition territoriale
                           </Titre>
                           <Infobulle
-                            className='fr-pt-0'
                             idHtml='infobulle-chantiers-jauges'
                           >
                             {INFOBULLE_CONTENUS.chantiers.repartitions}
                           </Infobulle>
-                        </div>
+                        </TitreInfobulleConteneur>
                         {
                           estAutoriseAVoirLeSelecteurDeMaille ? (
                             <div
