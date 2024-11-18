@@ -11,6 +11,10 @@ const PageChantiersStyled = styled.main`
       flex-wrap: wrap;
     }
   }
+  
+  .fr-text--lg {
+    line-height: 1.5rem;
+  }
 
   .titre-gris {
     color: var(--text-disabled-grey);
