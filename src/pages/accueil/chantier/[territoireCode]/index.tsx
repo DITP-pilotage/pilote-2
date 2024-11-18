@@ -141,7 +141,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
 
   const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository());
 
-  const avancementsAgrégés = await récupérerStatistiquesChantiersUseCase.run(chantiersAvecAlertes.map(chantier => chantier.id), mailleGlobalTerritoireSelectionnee, session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat);
+  const avancementsAgrégés = await récupérerStatistiquesChantiersUseCase.run(chantiersAvecAlertes.map(chantier => chantier.id), mailleQuery, session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat);
 
   const donnéesTerritoiresAgrégées = new AgrégateurListeChantiersParTerritoire(chantiersAvecAlertes).agréger();
 

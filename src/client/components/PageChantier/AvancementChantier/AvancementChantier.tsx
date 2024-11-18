@@ -11,6 +11,7 @@ import Alerte from '@/components/_commons/Alerte/Alerte';
 import SélecteurMaille
   from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
+import { JaugeDeProgressionSmall } from '@/components/_commons/JaugeDeProgressionSmall/JaugeDeProgressionSmall';
 import AvancementChantierStyled from './AvancementChantier.styled';
 
 const classeÀPartirDeLaMaille = {
@@ -153,9 +154,6 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 titre='Répartition territoriale'
               >
                 <div className='fr-container fr-px-md-1w fr-px-lg-2w'>
-                  <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
-                    Répartition des taux d’avancement des territoires
-                  </div>
                   {
                     estAutoriseAVoirLeSelecteurDeMaille ? (
                       <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
@@ -166,38 +164,22 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                       </div>
                     ) : null
                   }
-                  <div className='fr-grid-row fr-grid-row-md--gutters'>
-                    <div className='fr-col-4'>
-                      <JaugeDeProgression
-                        couleur='orange'
-                        libellé='Minimum'
-                        noWrap
-                        pourcentage={avancements.nationale ? avancements.nationale.global.minimum : null}
-                        taille='sm'
-                      />
-                    </div>
-                    <div className='fr-col-4'>
-                      <JaugeDeProgression
-                        couleur='violet'
-                        libellé='Médiane'
-                        noWrap
-                        pourcentage={avancements.nationale ? avancements.nationale.global.médiane : null}
-                        taille='sm'
-                      />
-                    </div>
-                    <div className='fr-col-4'>
-                      <JaugeDeProgression
-                        couleur='vert'
-                        libellé='Maximum'
-                        noWrap
-                        pourcentage={avancements.nationale ? avancements.nationale.global.maximum : null}
-                        taille='sm'
-                      />
-                    </div>
-                  </div>
-                  <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--xs'>
-                    Maximum, médiane et minimum des taux d’avancement observés sur les territoires de la maille
-                    sélectionnée
+                  <div className='flex flex-column justify-center'>
+                    <JaugeDeProgressionSmall
+                      couleur='vert'
+                      libellé='Maximum'
+                      pourcentage={avancements.nationale ? avancements.nationale.global.maximum : null}
+                    />
+                    <JaugeDeProgressionSmall
+                      couleur='violet'
+                      libellé='Médiane'
+                      pourcentage={avancements.nationale ? avancements.nationale.global.médiane : null}
+                    />
+                    <JaugeDeProgressionSmall
+                      couleur='orange'
+                      libellé='Minimum'
+                      pourcentage={avancements.nationale ? avancements.nationale.global.minimum : null}
+                    />
                   </div>
                 </div>
               </Bloc>

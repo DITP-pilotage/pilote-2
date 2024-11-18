@@ -1,5 +1,8 @@
 import { FunctionComponent } from 'react';
-import { JaugeDeProgressionCouleur, JaugeDeProgressionTaille } from '@/components/_commons/JaugeDeProgression/JaugeDeProgression.interface';
+import {
+  JaugeDeProgressionCouleur,
+  JaugeDeProgressionTaille,
+} from '@/components/_commons/JaugeDeProgression/JaugeDeProgression.interface';
 import JaugeDeProgressionSVG from '@/components/_commons/JaugeDeProgression/JaugeDeProgressionSVG';
 import JaugeDeProgressionStyled from './JaugeDeProgression.styled';
 
@@ -26,7 +29,13 @@ const classesÀPartirDeTaille = {
   },
 };
 
-const JaugeDeProgression: FunctionComponent<JaugeDeProgressionProps> = ({ couleur, libellé, pourcentage, taille, noWrap = false }) => {
+const JaugeDeProgression: FunctionComponent<JaugeDeProgressionProps> = ({
+  couleur,
+  libellé,
+  pourcentage,
+  taille,
+  noWrap = false,
+}) => {
   return (
     <JaugeDeProgressionStyled>
       <div className={`jauge-tracé jauge-tracé--${taille}`}>
@@ -36,10 +45,12 @@ const JaugeDeProgression: FunctionComponent<JaugeDeProgressionProps> = ({ couleu
           taille={taille}
         />
         <p className={`jauge-valeur jauge-valeur--${couleur} texte-centre ${classesÀPartirDeTaille[taille].valeur}`}>
-          { `${pourcentage?.toFixed(0) ?? '- '}%` }
+          {`${pourcentage?.toFixed(0) ?? '- '}%`}
         </p>
       </div>
-      <p className={`fr-text--xs fr-mb-0 texte-centre ${classesÀPartirDeTaille[taille].libellé}${noWrap ? 'no-wrap' : ''}`}>
+      <p
+        className={`fr-text--xs fr-mb-0 texte-centre ${classesÀPartirDeTaille[taille].libellé}${noWrap ? 'no-wrap' : ''}`}
+      >
         {libellé}
       </p>
     </JaugeDeProgressionStyled>
