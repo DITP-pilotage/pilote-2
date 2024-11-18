@@ -1,55 +1,20 @@
 import styled from '@emotion/styled';
 
-const JaugeDeProgressionStyled = styled.div`
+const JaugeDeProgressionSmallStyled = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
 
+
   .jauge-tracé--sm {
     width: 3.75rem;
-  }
-
-  .jauge-tracé--md {
-    width: 5.5rem;
-  }
-
-  .jauge-tracé--lg {
-    width: 10.5rem;
   }
 
   .jauge-tracé {
     position: relative;
 
     .jauge-valeur {
-      &.jauge-valeur--bleu {
-        color: var(--background-active-blue-france);
-      }
-
-      &.jauge-valeur--bleu-clair {
-        color: var(--background-flat-info);
-      }
-
-      &.jauge-valeur--violet {
-        color: #8585F6;
-      }
-
-      &.jauge-valeur--orange {
-        color: #FC5D00;
-      }
-
-      &.jauge-valeur--vert {
-        color: #27A658;
-      }
-
-      &.jauge-valeur--rose {
-        color: var(--background-action-high-pink-tuile);
-      }
-
-      &.jauge-valeur--gris {
-        color: var(--grey-625-425);
-      }
-
       margin-bottom: 0;
       word-break: normal;
 
@@ -94,19 +59,39 @@ const JaugeDeProgressionStyled = styled.div`
     }
   }
 
+  .jauge-valeur--bleu {
+    color: var(--background-active-blue-france);
+  }
+
+  .jauge-valeur--bleu-clair {
+    color: var(--background-flat-info);
+  }
+
+  .jauge-valeur--violet {
+    color: #8585F6;
+  }
+
+  .jauge-valeur--orange {
+    color: #FC5D00;
+  }
+
+  .jauge-valeur--vert {
+    color: #27A658;
+  }
+
+  .jauge-valeur--rose {
+    color: var(--background-action-high-pink-tuile);
+  }
+
+  .jauge-valeur--gris {
+    color: var(--grey-625-425);
+  }
+
   @media screen and (max-width: 80rem) {
     .jauge-tracé--sm {
       width: 3.75rem;
     }
-
-    .jauge-tracé--md {
-      width: 4rem;
-    }
-
-    .jauge-tracé--lg {
-      width: 8.25rem;
-    }
   }
 `;
 
-export default JaugeDeProgressionStyled;
+export default JaugeDeProgressionSmallStyled;

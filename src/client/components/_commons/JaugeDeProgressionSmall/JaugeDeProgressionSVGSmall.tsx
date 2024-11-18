@@ -1,28 +1,16 @@
 import { FunctionComponent, useId } from 'react';
 import {
-  JaugeDeProgressionCouleur,
-  JaugeDeProgressionTaille,
-} from '@/components/_commons/JaugeDeProgression/JaugeDeProgression.interface';
+  JaugeDeProgressionSmallCouleur,
+} from '@/components/_commons/JaugeDeProgressionSmall/JaugeDeProgressionSmall.interface';
 
-interface JaugeDeProgressionSVGProps {
-  couleur: JaugeDeProgressionCouleur;
+interface JaugeDeProgressionSVGSmallProps {
+  couleur: JaugeDeProgressionSmallCouleur;
   pourcentage: number | null;
-  taille?: 'sm' | 'md' | 'lg';
 }
 
 const TRACÉS = {
   sm: {
     tracéSVG: 'M.672.934C.68.949.699.96.715.949A.496.496 0 0 0 .938.742C.992.641 1.012.523.992.41A.53.53 0 0 0 .824.117a.503.503 0 0 0-.77.613c.051.094.126.168.22.215.015.008.035 0 .042-.015L.367.805C.375.789.367.77.352.762A.302.302 0 0 1 .234.637a.293.293 0 0 1-.027-.2.306.306 0 0 1 .106-.171.308.308 0 0 1 .19-.067C.575.2.642.227.696.27a.35.35 0 0 1 .102.176c.012.067 0 .14-.035.2a.301.301 0 0 1-.121.12C.625.774.617.794.625.81Zm0 0',
-    angleDépart: 23,
-    amplitudeAngulaire: 316,
-  },
-  md: {
-    tracéSVG: 'M.68.953C.684.961.69.961.695.961A.505.505 0 0 0 .992.402.505.505 0 0 0 .508 0a.5.5 0 0 0-.215.953C.297.957.305.953.309.95l.03-.078C.345.863.34.86.337.855a.388.388 0 0 1-.082-.66.395.395 0 0 1 .422-.047.395.395 0 0 1-.02.711C.648.863.648.867.648.875Zm0 0',
-    angleDépart: 23,
-    amplitudeAngulaire: 316,
-  },
-  lg: {
-    tracéSVG: 'M.68.953C.684.961.69.961.695.961A.505.505 0 0 0 .992.402.505.505 0 0 0 .508 0a.5.5 0 0 0-.215.953C.297.957.305.953.309.95l.03-.078C.345.863.34.86.337.855a.388.388 0 0 1-.082-.66.395.395 0 0 1 .422-.047.395.395 0 0 1-.02.711C.648.863.648.867.648.875Zm0 0',
     angleDépart: 23,
     amplitudeAngulaire: 316,
   },
@@ -43,9 +31,9 @@ function polaireVersCartésien(rayon: number, angleEnDegrés: number) {
   };
 }
 
-function tracerValeurJauge(pourcentage: number, taille: JaugeDeProgressionTaille) {
+function tracerValeurJauge(pourcentage: number) {
   const rayon = TAILLE_VIEWBOX / 2;
-  const amplitudeAngulaire = TRACÉS[taille].amplitudeAngulaire;
+  const amplitudeAngulaire = TRACÉS['sm'].amplitudeAngulaire;
   const angleDépart = 0;
   const angleArrivée = pourcentage / 100 * amplitudeAngulaire;
   const pointDépart = polaireVersCartésien(rayon, angleArrivée);
@@ -59,7 +47,10 @@ function tracerValeurJauge(pourcentage: number, taille: JaugeDeProgressionTaille
   ].join(' ');
 }
 
-const JaugeDeProgressionSVG: FunctionComponent<JaugeDeProgressionSVGProps> = ({ pourcentage, taille, couleur }) => {
+const JaugeDeProgressionSVGSmall: FunctionComponent<JaugeDeProgressionSVGSmallProps> = ({
+  pourcentage,
+  couleur,
+}) => {
   const id = useId();
   return (
     <svg
@@ -79,8 +70,8 @@ const JaugeDeProgressionSVG: FunctionComponent<JaugeDeProgressionSVGProps> = ({ 
             ?
               <path
                 className={`jauge-barre-valeur jauge-barre-valeur--${couleur}`}
-                d={tracerValeurJauge(pourcentage, taille || 'lg')}
-                transform={`rotate(${TRACÉS[taille || 'lg'].angleDépart} ${CENTRE_VIEWBOX.x} ${CENTRE_VIEWBOX.y})`}
+                d={tracerValeurJauge(pourcentage)}
+                transform={`rotate(${TRACÉS['sm'].angleDépart} ${CENTRE_VIEWBOX.x} ${CENTRE_VIEWBOX.y})`}
               />
             : null
         }
@@ -88,7 +79,7 @@ const JaugeDeProgressionSVG: FunctionComponent<JaugeDeProgressionSVGProps> = ({ 
       <defs>
         <clipPath id={`masque-${id}`}>
           <path
-            d={TRACÉS[taille || 'lg'].tracéSVG}
+            d={TRACÉS['sm'].tracéSVG}
           />
         </clipPath>
       </defs>
@@ -96,4 +87,4 @@ const JaugeDeProgressionSVG: FunctionComponent<JaugeDeProgressionSVGProps> = ({ 
   );
 };
 
-export default JaugeDeProgressionSVG;
+export default JaugeDeProgressionSVGSmall;

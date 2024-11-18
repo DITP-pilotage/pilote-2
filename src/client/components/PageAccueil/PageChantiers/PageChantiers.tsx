@@ -24,7 +24,7 @@ import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleContene
 import RemontéeAlerte from '@/components/_commons/RemontéeAlerteChantier/RemontéeAlerte';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
-import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
+import { JaugeDeProgressionSmall } from '@/components/_commons/JaugeDeProgressionSmall/JaugeDeProgressionSmall';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
@@ -41,6 +41,7 @@ import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLarge
 import SélecteurMaille
   from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
@@ -276,34 +277,22 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                             </div>
                           ) : null
                         }
-                        <div className='fr-grid-row fr-grid-row-md--gutters fr-px-3v'>
-                          <div className='fr-col-4'>
-                            <JaugeDeProgression
-                              couleur={chantiersSontArchives ? 'gris' : 'orange'}
-                              libellé='Minimum'
-                              noWrap
-                              pourcentage={avancementsAgrégés?.global.minimum || null}
-                              taille='sm'
-                            />
-                          </div>
-                          <div className='fr-col-4'>
-                            <JaugeDeProgression
-                              couleur={chantiersSontArchives ? 'gris' : 'violet'}
-                              libellé='Médiane'
-                              noWrap
-                              pourcentage={avancementsAgrégés?.global.médiane || null}
-                              taille='sm'
-                            />
-                          </div>
-                          <div className='fr-col-4'>
-                            <JaugeDeProgression
-                              couleur={chantiersSontArchives ? 'gris' : 'vert'}
-                              libellé='Maximum'
-                              noWrap
-                              pourcentage={avancementsAgrégés?.global.maximum || null}
-                              taille='sm'
-                            />
-                          </div>
+                        <div className='flex flex-column items-center fr-px-3v'>
+                          <JaugeDeProgressionSmall
+                            couleur={chantiersSontArchives ? 'gris' : 'vert'}
+                            libellé='Maximum'
+                            pourcentage={avancementsAgrégés?.global.maximum || null}
+                          />
+                          <JaugeDeProgressionSmall
+                            couleur={chantiersSontArchives ? 'gris' : 'violet'}
+                            libellé='Médiane'
+                            pourcentage={avancementsAgrégés?.global.médiane || null}
+                          />
+                          <JaugeDeProgressionSmall
+                            couleur={chantiersSontArchives ? 'gris' : 'orange'}
+                            libellé='Minimum'
+                            pourcentage={avancementsAgrégés?.global.minimum || null}
+                          />
                         </div>
                       </div>
                     </Bloc>
@@ -422,7 +411,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
               <TableauChantiers
                 chantiersSontArchives={chantiersSontArchives ?? false}
                 données={donnéesTableauChantiers}
-                mailleSelectionnee={mailleSelectionnee}
                 ministèresDisponibles={ministères}
                 nombreTotalChantiersAvecAlertes={nombreTotalChantiersAvecAlertes}
                 territoireCode={territoireCode}

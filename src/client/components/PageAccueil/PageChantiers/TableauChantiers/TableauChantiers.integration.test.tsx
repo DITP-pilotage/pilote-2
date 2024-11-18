@@ -89,7 +89,6 @@ class TableauChantiersTest {
       <TableauChantiers
         chantiersSontArchives={false}
         données={this.données}
-        mailleSelectionnee='départementale'
         ministèresDisponibles={this.ministèresDisponibles}
         nombreTotalChantiersAvecAlertes={120}
         territoireCode={this.territoireCode}
