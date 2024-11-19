@@ -4,7 +4,8 @@ import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { Profil } from '@/server/domain/profil/Profil.interface';
 
 type Filtre = Territoire['code'] | PérimètreMinistériel['id'] | Chantier['id'];
-type FiltreCatégorie = 'territoires' | 'périmètresMinistériels' | 'chantiers' | 'profils';
+type FiltreCatégorie = 'territoires' | 'périmètresMinistériels' | 'chantiers' | 'profils' | 'typesCompte';
+export type TypesCompte = 'actif' | 'desactive';
 
 export type FiltresUtilisateursActifs = {
   territoires: Array<Territoire['code']>,
@@ -12,6 +13,7 @@ export type FiltresUtilisateursActifs = {
   chantiersAssociésAuxPérimètres: Array<Chantier['id']>,
   chantiers: Array<Chantier['id']>,
   profils: Array<Profil['code']>,
+  typesCompte: TypesCompte[],
 };
 
 export default interface FiltresUtilisateursStore {

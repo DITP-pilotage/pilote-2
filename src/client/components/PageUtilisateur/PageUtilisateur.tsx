@@ -23,12 +23,14 @@ interface PageUtilisateurProps {
 
 const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({ utilisateur, tokenAPIInformation }) => {
   const {
-    supprimerUtilisateur,
-    fermerLaModaleDeSuppressionUtilisateur,
+    desactiverUtilisateur,
+    fermerLaModaleDeDesactivationUtilisateur,
     modificationEstImpossible,
     donnneContenuBandeau,
     habilitationsAGenererUnTokenDAuthentification,
     vérifierFFTokenAPIEstDisponible,
+    reactiverUtilisateur,
+    fermerLaModaleDeReactivationUtilisateur,
   } = usePageUtilisateur(utilisateur);
   const chemin = [{ nom: 'Gestion des comptes', lien: '/admin/utilisateurs' }];
   const { data: session } = useSession();
@@ -70,7 +72,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({ utilisateur,
               }
               <FicheUtilisateur utilisateur={utilisateur} />
               {
-                !modificationEstImpossible(session, utilisateur.habilitations, utilisateur.profil) &&
+                (!utilisateur.dateDesactivation && !modificationEstImpossible(session, utilisateur.habilitations, utilisateur.profil)) &&
                 <div className='fr-grid-row fr-mt-4w'>
                   <Link
                     className='fr-btn fr-mr-2w'
@@ -92,12 +94,12 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({ utilisateur,
                     ) : null
                   }
                   <button
-                    aria-controls='supprimer-compte'
-                    className='fr-text supprimer'
+                    aria-controls='desactiver-compte'
+                    className='fr-text desactiver'
                     data-fr-opened={false}
                     type='button'
                   >
-                    Supprimer le compte
+                    Désactiver le compte
                   </button>
                   {
                     alerte ? (
@@ -121,11 +123,11 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({ utilisateur,
                     ) : null
                   }
                   <Modale
-                    idHtml='supprimer-compte'
-                    titre='Suppression de compte'
+                    idHtml='desactiver-compte'
+                    titre='Désactivation de compte'
                   >
                     <div>
-                      Vous êtes sur le point de supprimer le compte de
+                      Vous êtes sur le point de désactiver le compte de
                       {' '}
                       <span className='prénom'>
                         {utilisateur.prénom}
@@ -140,14 +142,55 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({ utilisateur,
                       <Bouton
                         className='fr-btn--secondary fr-mr-2w'
                         label='Annuler'
-                        onClick={fermerLaModaleDeSuppressionUtilisateur}
+                        onClick={fermerLaModaleDeDesactivationUtilisateur}
                       />
                       <Bouton
-                        label='Confirmer la suppression'
-                        onClick={supprimerUtilisateur}
+                        label='Confirmer la désactivation'
+                        onClick={desactiverUtilisateur}
                       />
                     </div>
                   </Modale>
+                </div>
+              }
+              {
+                (!!utilisateur.dateDesactivation && !modificationEstImpossible(session, utilisateur.habilitations, utilisateur.profil)) && 
+                <div className='fr-grid-row fr-mt-4w'>
+                  <button
+                    aria-controls='reactiver-compte'
+                    className='fr-btn'
+                    data-fr-opened={false}
+                    type='button'
+                  >
+                    Réactiver le compte
+                  </button>
+                  <Modale
+                    idHtml='reactiver-compte'
+                    titre='Réactivation de compte'
+                  >
+                    <div>
+                      Vous êtes sur le point de réactiver le compte de
+                      {' '}
+                      <span className='prénom'>
+                        {utilisateur.prénom}
+                      </span>
+                      {' '}
+                      <span className='nom'>
+                        {utilisateur.nom}
+                        .
+                      </span>
+                    </div>
+                    <div className='fr-grid-row fr-grid-row--right fr-mt-4w'>
+                      <Bouton
+                        className='fr-btn--secondary fr-mr-2w'
+                        label='Annuler'
+                        onClick={fermerLaModaleDeReactivationUtilisateur}
+                      />
+                      <Bouton
+                        label='Confirmer la réactivation'
+                        onClick={reactiverUtilisateur}
+                      />
+                    </div>
+                  </Modale>             
                 </div>
               }
             </div>

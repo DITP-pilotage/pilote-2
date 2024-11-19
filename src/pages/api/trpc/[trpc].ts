@@ -14,6 +14,5 @@ export default createNextApiHandler({
       'path': path,
       'input': input,
       'utilisateur': ctx?.session?.user.email,
-      'habilitations': ctx?.session?.habilitations,
     }),
 });

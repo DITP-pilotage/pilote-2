@@ -25,9 +25,9 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion';
 import { removeAccents } from '@/server/utils/remove-accents';
 import { prisma } from '@/server/db/prisma';
+import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface';
 
 export const convertirEnModel = (utilisateurAConvertir: {
   email: string
@@ -39,7 +39,7 @@ export const convertirEnModel = (utilisateurAConvertir: {
   dateModification: Date
   auteurIdCreation: string
   dateCreation: Date
-}): Omit<utilisateur, 'id' | 'auteur_email_creation' | 'auteur_email_modification'> => {
+}): Omit<utilisateur, 'id' | 'auteur_email_creation' | 'auteur_email_modification' | 'date_desactivation'> => {
   return {
     email: utilisateurAConvertir.email,
     nom: utilisateurAConvertir.nom,
@@ -62,7 +62,7 @@ export const convertirEnModelModification = (utilisateurAConvertir: {
   fonction: string | null
   auteurIdModification: string
   dateModification: Date
-}): Omit<utilisateur, 'id' | 'auteur_id_creation' | 'date_creation' | 'auteur_email_creation' | 'auteur_email_modification'> => {
+}): Omit<utilisateur, 'id' | 'auteur_id_creation' | 'date_creation' | 'auteur_email_creation' | 'auteur_email_modification' | 'date_desactivation'> => {
   return {
     email: utilisateurAConvertir.email,
     nom: utilisateurAConvertir.nom,
@@ -379,6 +379,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
             profilCode: {
               in: profilsDépartementaux,
             },
+            date_desactivation: null,
             habilitation: {
               some: {
                 scopeCode: 'lecture',
@@ -392,6 +393,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
             profilCode: {
               in: profilsRégionaux,
             },
+            date_desactivation: null,
             habilitation: {
               some: {
                 scopeCode: 'lecture',
@@ -683,6 +685,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       dateModification: utilisateurBrut.date_modification?.toISOString(),
       auteurModification: auteurModification ? `${auteurModification.prenom} ${auteurModification.nom}` : 'Auteur Inconnu',
       profil: utilisateurBrut.profilCode as ProfilCode,
+      dateDesactivation: utilisateurBrut.date_desactivation?.toISOString() ?? null,
     };
   }
 
@@ -705,6 +708,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       saisieIndicateur: this._aDesDroitsdeSaisieIndicateur(habilitations, utilisateurBrut.profil),
       gestionUtilisateur: this._aDesDroitsdeGestionUtilisateur(habilitations, utilisateurBrut.profil),
       habilitations: habilitations,
+      dateDesactivation: utilisateurBrut.date_desactivation?.toISOString() ?? null,
     };
   }
 }

@@ -15,7 +15,7 @@ export const PageCréerUtilisateurAide: FunctionComponent<{}> = () => {
     },
     {
       titre: 'Gestion du comptes',
-      texte: 'Vous pouvez modifier et supprimer en continu les comptes des utilisateurs de votre territoire.',
+      texte: 'Vous pouvez modifier et désactiver en continu les comptes des utilisateurs de votre territoire.',
     },
   ];
 
@@ -51,7 +51,7 @@ export const PageCréerUtilisateurAide: FunctionComponent<{}> = () => {
             Il est important de garder à l'esprit que les données publiées sur cet outil sont protégées et ne sont pas destinées au grand public. Par conséquent, veuillez accorder une attention particulière à la confidentialité et à la sécurité des informations partagées. 
             {' '}
             <b>
-              La DITP se réserve le droit de modifier ou de supprimer des comptes qui ne respecteraient pas ces règles d’utilisation.
+              La DITP se réserve le droit de modifier ou de désactiver des comptes qui ne respecteraient pas ces règles d’utilisation.
             </b>
           </p>
           <h5 className='fr-mb-1w'>

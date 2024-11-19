@@ -6,7 +6,7 @@ import {
 } from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion';
+import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface';
 
 export default class FiltrerListeUtilisateursUseCase {
   constructor(
@@ -48,12 +48,27 @@ export default class FiltrerListeUtilisateursUseCase {
 
     return this.filtresActifs.profils.includes(utilisateur.profil);
   }
+  
+  private utilisateurEstActif(utilisateur: UtilisateurListeGestion) {
+    return utilisateur.dateDesactivation === null;
+  }
+
+  private utilisateurPasseLeFiltreTypeCompte(utilisateur: UtilisateurListeGestion) {
+    if (this.filtresActifs.typesCompte.includes('actif') && this.filtresActifs.typesCompte.includes('desactive')) {
+      return true;
+    } else if (this.filtresActifs.typesCompte.includes('actif')) {
+      return this.utilisateurEstActif(utilisateur);
+    } else {
+      return !this.utilisateurEstActif(utilisateur);
+    }
+  }
 
   private utilisateurPasseLesFiltres(utilisateur: UtilisateurListeGestion) {
     return this.utilisateurPasseLeFiltreTerritoire(utilisateur)
       && this.utilisateurPasseLeFiltreChantier(utilisateur)
       && this.utilisateurPasseLeFiltrePérimètreMinistériel(utilisateur)
-      && this.utilisateurPasseLeFiltreProfil(utilisateur);
+      && this.utilisateurPasseLeFiltreProfil(utilisateur)
+      && this.utilisateurPasseLeFiltreTypeCompte(utilisateur);
   }
 
   private profilEstAutorisé(utilisateur: UtilisateurListeGestion) {

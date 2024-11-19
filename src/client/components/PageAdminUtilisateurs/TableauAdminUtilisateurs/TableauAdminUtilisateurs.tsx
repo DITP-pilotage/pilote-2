@@ -20,6 +20,10 @@ const TableauAdminUtilisateurs: FunctionComponent<{}> = () => {
     estEnChargement,
     changementDeLaRechercheCallback,
     valeurDeLaRecherche,
+    filtresActifs,
+    modifierÉtatDuFiltre,
+    setPagination,
+    peutConsulterLesUtilisateursDesactives,
   } = useTableauPageAdminUtilisateurs();
 
   return (
@@ -39,6 +43,53 @@ const TableauAdminUtilisateurs: FunctionComponent<{}> = () => {
           >
             {`${nombreElementPage} ${tableau.getFilteredRowModel().rows.length > 1 ? 'comptes' : 'compte'}`}
           </Titre>
+          {
+            !!peutConsulterLesUtilisateursDesactives && 
+            <div className='fr-mt-2w'>
+              <button 
+                className={`fr-tag fr-mr-1w ${filtresActifs.typesCompte.includes('actif') && !filtresActifs.typesCompte.includes('desactive') ? 'fr-tag-active' : ''}`}
+                id='tag-comptes-actifs'
+                key='tag-comptes-actifs'
+                onClick={() => {
+                  setPagination({
+                    pageIndex: 1,
+                  });
+                  modifierÉtatDuFiltre(['actif'], 'typesCompte');
+                }}
+                type='button'
+              >
+                Comptes actifs
+              </button>
+              <button 
+                className={`fr-tag fr-mr-1w ${filtresActifs.typesCompte.includes('desactive') && !filtresActifs.typesCompte.includes('actif') ? 'fr-tag-active' : ''}`}
+                id='tag-comptes-desactives'
+                key='tag-comptes-desactives'
+                onClick={() => {
+                  setPagination({
+                    pageIndex: 1,
+                  });
+                  modifierÉtatDuFiltre(['desactive'], 'typesCompte');
+                }}
+                type='button'
+              >
+                Comptes désactivés
+              </button>
+              <button 
+                className={`fr-tag ${filtresActifs.typesCompte.includes('desactive') && filtresActifs.typesCompte.includes('actif') ? 'fr-tag-active' : ''}`}
+                id='tag-comptes-desactives'
+                key='tag-comptes-desactives'
+                onClick={() => {
+                  setPagination({
+                    pageIndex: 1,
+                  });
+                  modifierÉtatDuFiltre(['actif', 'desactive'], 'typesCompte');
+                }}
+                type='button'
+              >
+                Tous
+              </button>
+            </div>
+          }
           <div className='fr-table'>
             <table className='tableau fr-m-0 fr-p-0'>
               <caption className='fr-sr-only'>
@@ -59,3 +110,4 @@ const TableauAdminUtilisateurs: FunctionComponent<{}> = () => {
 };
 
 export default TableauAdminUtilisateurs;
+

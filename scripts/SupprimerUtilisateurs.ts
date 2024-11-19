@@ -1,5 +1,4 @@
 import { loadEnvConfig } from '@next/env';
-import { PrismaClient } from '@prisma/client';
 import process from 'node:process';
 import assert from 'node:assert/strict';
 import logger from '@/server/infrastructure/Logger';
