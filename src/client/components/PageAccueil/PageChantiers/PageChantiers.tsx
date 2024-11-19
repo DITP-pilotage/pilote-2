@@ -328,7 +328,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
               <section>
                 <Titre
                   baliseHtml='h2'
-                  className='fr-text--lg break-keep'
+                  className='fr-text--lg break-keep fr-mb-0 fr-py-1v'
                 >
                   Taux d’avancement des chantiers par territoire
                 </Titre>

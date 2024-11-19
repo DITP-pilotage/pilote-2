@@ -48,7 +48,7 @@ const SélecteurMaille: FunctionComponent<{
             .filter(([maille]) => maillesInternesAccessiblesEnLecture.includes(maille))
             .map(([maille, libellé]) => (
               <button
-                className={`fr-tag fr-mr-1w${mailleQuery === maille ? ' tag-selectionnee' : ''}`}
+                className={`fr-tag fr-tag--sm fr-mr-1w${mailleQuery === maille ? ' tag-selectionnee' : ''}`}
                 key={maille}
                 onClick={() => changerMaille(maille)}
                 type='button'
