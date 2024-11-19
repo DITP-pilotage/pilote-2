@@ -100,61 +100,53 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
             </div>
           </Bloc>
         ) : null
-      }
-      <div className='avancement-national'>
-        <section className='fr-p-0'>
-          <div className='fr-grid-row fr-grid-row--gutters fr-pr-md-2w'>
-            <div
-              className='fr-col-12 fr-col-xl-6 flex flex-column fr-pr-0'
-            >
-              <Bloc
-                contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
-                titre='National'
-              >
-                <Titre
-                  baliseHtml='h3'
-                  className='fr-text--md fr-mb-1w fr-py-1v texte-centre break-keep flex justify-center w-full'
-                >
-                  Taux d’avancement national
-                </Titre>
-                <div className='flex w-full justify-center'>
-                  <JaugeDeProgression
-                    couleur='bleu'
-                    libellé='Taux d’avancement moyen pour le territoire '
-                    pourcentage={avancements.nationale ? avancements.nationale.global.moyenne : null}
-                    taille='lg'
-                  />
-                </div>
-                <div className='fr-grid-row border-t fr-mt-1w '>
-                  <div className='fr-mt-1w w-full'>
-                    <p className='fr-text--xl fr-text--bold fr-mb-0 texte-gris'>
-                      {`${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancements.nationale?.annuel.moyenne?.toFixed(0) : null) ?? '- '}%`}
-                    </p>
-                    <BarreDeProgression
-                      afficherTexte={false}
-                      bordure={null}
-                      fond='gris-clair'
-                      positionTexte='dessus'
-                      taille='xxs'
-                      valeur={!!avancements.nationale && process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancements.nationale.annuel.moyenne : null}
-                      variante='secondaire'
-                    />
-                    <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-                      Moyenne de l'année en cours
-                    </p>
-                  </div>
-                </div>
-              </Bloc>
-            </div>
-            <div className='fr-col-12 fr-col-xl-6 fr-pr-0'>
-              <Bloc
-                className='h-full'
-                contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
-                contenuInfobulle={INFOBULLE_CONTENUS.chantiers.repartitions}
-                titre='Répartition territoriale'
-              >
-                <div className='fr-container fr-px-md-1w fr-px-lg-2w'>
-                  {
+      }   
+      <Bloc
+        contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
+        titre='National'
+      >
+        <Titre
+          baliseHtml='h3'
+          className='fr-text--md fr-mb-1w fr-py-1v texte-centre break-keep flex justify-center w-full'
+        >
+          Taux d’avancement national
+        </Titre>
+        <div className='flex w-full justify-center'>
+          <JaugeDeProgression
+            couleur='bleu'
+            libellé='Taux d’avancement moyen pour le territoire '
+            pourcentage={avancements.nationale ? avancements.nationale.global.moyenne : null}
+            taille='lg'
+          />
+        </div>
+        <div className='fr-grid-row border-t fr-mt-1w '>
+          <div className='fr-mt-1w w-full'>
+            <p className='fr-text--xl fr-text--bold fr-mb-0 texte-gris'>
+              {`${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancements.nationale?.annuel.moyenne?.toFixed(0) : null) ?? '- '}%`}
+            </p>
+            <BarreDeProgression
+              afficherTexte={false}
+              bordure={null}
+              fond='gris-clair'
+              positionTexte='dessus'
+              taille='xxs'
+              valeur={!!avancements.nationale && process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancements.nationale.annuel.moyenne : null}
+              variante='secondaire'
+            />
+            <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
+              Moyenne de l'année en cours
+            </p>
+          </div>
+        </div>
+      </Bloc>      
+      <Bloc
+        className='h-full'
+        contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
+        contenuInfobulle={INFOBULLE_CONTENUS.chantiers.repartitions}
+        titre='Répartition territoriale'
+      >
+        <div className='fr-container fr-px-md-1w fr-px-lg-2w'>
+          {
                     estAutoriseAVoirLeSelecteurDeMaille ? (
                       <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
                         <SélecteurMaille
@@ -164,29 +156,25 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                       </div>
                     ) : null
                   }
-                  <div className='flex flex-column justify-center'>
-                    <JaugeDeProgressionSmall
-                      couleur='vert'
-                      libellé='Maximum'
-                      pourcentage={avancements.nationale ? avancements.nationale.global.maximum : null}
-                    />
-                    <JaugeDeProgressionSmall
-                      couleur='violet'
-                      libellé='Médiane'
-                      pourcentage={avancements.nationale ? avancements.nationale.global.médiane : null}
-                    />
-                    <JaugeDeProgressionSmall
-                      couleur='orange'
-                      libellé='Minimum'
-                      pourcentage={avancements.nationale ? avancements.nationale.global.minimum : null}
-                    />
-                  </div>
-                </div>
-              </Bloc>
-            </div>
+          <div className='flex flex-column justify-center'>
+            <JaugeDeProgressionSmall
+              couleur='vert'
+              libellé='Maximum'
+              pourcentage={avancements.nationale ? avancements.nationale.global.maximum : null}
+            />
+            <JaugeDeProgressionSmall
+              couleur='violet'
+              libellé='Médiane'
+              pourcentage={avancements.nationale ? avancements.nationale.global.médiane : null}
+            />
+            <JaugeDeProgressionSmall
+              couleur='orange'
+              libellé='Minimum'
+              pourcentage={avancements.nationale ? avancements.nationale.global.minimum : null}
+            />
           </div>
-        </section>
-      </div>
+        </div>
+      </Bloc>
     </AvancementChantierStyled>
   );
 };
