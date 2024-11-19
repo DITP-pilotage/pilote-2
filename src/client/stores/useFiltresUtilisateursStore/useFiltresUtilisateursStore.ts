@@ -10,7 +10,7 @@ const filtresActifsInitiaux: FiltresUtilisateursActifs = {
   chantiersAssociésAuxPérimètres: [],
   chantiers: [],
   profils: [],
-  typesCompte: ['actif'],
+  typesCompte: ['actif', 'desactive'],
 };
 
 const useFiltresUtilisateursStore = create<FiltresUtilisateursStore>((set) => ({
