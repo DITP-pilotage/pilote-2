@@ -47,6 +47,20 @@ const TableauAdminUtilisateurs: FunctionComponent<{}> = () => {
             !!peutConsulterLesUtilisateursDesactives && 
             <div className='fr-mt-2w'>
               <button 
+                className={`fr-tag fr-mr-1w ${filtresActifs.typesCompte.includes('desactive') && filtresActifs.typesCompte.includes('actif') ? 'fr-tag-active' : ''}`}
+                id='tag-comptes-tous'
+                key='tag-comptes-tous'
+                onClick={() => {
+                  setPagination({
+                    pageIndex: 1,
+                  });
+                  modifierÉtatDuFiltre(['actif', 'desactive'], 'typesCompte');
+                }}
+                type='button'
+              >
+                Tous
+              </button>
+              <button 
                 className={`fr-tag fr-mr-1w ${filtresActifs.typesCompte.includes('actif') && !filtresActifs.typesCompte.includes('desactive') ? 'fr-tag-active' : ''}`}
                 id='tag-comptes-actifs'
                 key='tag-comptes-actifs'
@@ -73,20 +87,6 @@ const TableauAdminUtilisateurs: FunctionComponent<{}> = () => {
                 type='button'
               >
                 Comptes désactivés
-              </button>
-              <button 
-                className={`fr-tag ${filtresActifs.typesCompte.includes('desactive') && filtresActifs.typesCompte.includes('actif') ? 'fr-tag-active' : ''}`}
-                id='tag-comptes-desactives'
-                key='tag-comptes-desactives'
-                onClick={() => {
-                  setPagination({
-                    pageIndex: 1,
-                  });
-                  modifierÉtatDuFiltre(['actif', 'desactive'], 'typesCompte');
-                }}
-                type='button'
-              >
-                Tous
               </button>
             </div>
           }
