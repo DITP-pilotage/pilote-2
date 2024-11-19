@@ -27,7 +27,7 @@ function créerDonnéesTerritoires(
       avancementPrécédent: { annuel: null, global: chantierRow?.taux_avancement_precedent ?? null },
       estApplicable: chantierRow?.est_applicable ?? null,
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
-      écart: chantierRow?.ecart || null,
+      écart: chantierRow?.ecart ?? null,
       tendance: chantierRow?.tendance || null,
       dateDeMàjDonnéesQualitatives: chantierRow?.derniere_maj_date_qualitative?.toISOString() || null,
       dateDeMàjDonnéesQuantitatives: chantierRow?.taux_avancement_date?.toISOString()  ?? null,
