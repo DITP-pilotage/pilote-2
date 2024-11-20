@@ -61,7 +61,7 @@ const SelecteurVueStatuts: FunctionComponent<{}> = () => {
         {
           optionsGauche.map(option => (
             <button
-              className={`fr-tag fr-tag--sm fr-tag--icon-left fr-mr-1w ${statut === option.valeur ? 'fr-tag-active' : ''} ${option.icone ?? ''}`}
+              className={`fr-tag fr-tag--icon-left fr-mr-1w ${statut === option.valeur ? 'fr-tag-active' : ''} ${option.icone ?? ''}`}
               id={`left-${option.valeur}`}
               key={`left-${option.valeur}`}
               onClick={() => statut !== option.valeur && auChangement(option.valeur)}
@@ -79,7 +79,7 @@ const SelecteurVueStatuts: FunctionComponent<{}> = () => {
           optionsDroite.map(option => (
             <Fragment key={`right-${option.valeur}`}>
               <button
-                className={`fr-tag fr-tag--sm fr-tag--icon-left fr-mr-1w ${statut === option.valeur ? 'fr-tag-active' : ''} ${option.icone ?? ''}`}
+                className={`fr-tag fr-tag--icon-left fr-mr-1w ${statut === option.valeur ? 'fr-tag-active' : ''} ${option.icone ?? ''}`}
                 id={`right-${option.valeur}`}
                 onClick={() => statut !== option.valeur && auChangement(option.valeur)}
                 type='button'

@@ -31,26 +31,12 @@ const PageChantiersStyled = styled.main`
   }
 
   .repartition-selecteur-maille .tag-liste {
-    flex-direction: row;
-    
-    .fr-tag + .fr-tag {
-      margin-top: 0;
-    }
-  }
-
-  @media screen and (min-width: 78rem) and (max-width: 92rem) {
-    .repartition-selecteur-maille {
-      > div {
-        width: 100%;
-      }
-    }
-
-    .repartition-selecteur-maille .tag-liste {
-      flex-direction: column;
-      
-      .fr-tag + .fr-tag {
-        margin-top: 0.5rem;
-      }
+    .fr-tag {
+      display: block;
+      min-width: 5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: normal;
     }
   }
 

@@ -203,7 +203,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                       className='w-full h-full'
                       contenuClassesSupplémentaires='fr-p-2w'
                     >
-                      <TitreInfobulleConteneur className='justify-center'>
+                      <TitreInfobulleConteneur>
                         <Titre
                           baliseHtml='h2'
                           className='fr-text--lg fr-mb-0 fr-py-1v'
@@ -249,8 +249,8 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                       className='h-full fr-ml-xl-1w'
                       contenuClassesSupplémentaires='fr-p-2w'
                     >
-                      <div className='fr-container fr-px-1w'>
-                        <TitreInfobulleConteneur className='justify-center'>
+                      <div className='fr-container fr-p-0'>
+                        <TitreInfobulleConteneur>
                           <Titre
                             baliseHtml='h2'
                             className='fr-text--lg fr-m-0 fr-py-1v '
@@ -267,7 +267,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                         {
                           estAutoriseAVoirLeSelecteurDeMaille ? (
                             <div
-                              className='fr-grid-row fr-grid-row--center texte-centre fr-pb-2w fr-text--sm repartition-selecteur-maille'
+                              className='fr-grid-row fr-pb-2w fr-text--sm repartition-selecteur-maille'
                             >
                               <SélecteurMaille
                                 mailleQuery={mailleQuery}

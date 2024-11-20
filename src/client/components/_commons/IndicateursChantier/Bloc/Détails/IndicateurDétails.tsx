@@ -163,7 +163,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                     >
                       Répartition géographique de l'avancement 2026
                     </Titre>
-                    <div className='fr-grid-row fr-grid-row--center texte-centre fr-pb-2w fr-text--sm'>
+                    <div className='fr-grid-row fr-pb-2w fr-text--sm'>
                       {
                         estAutoriseAVoirLeSelecteurDeMaille ? (
                           <SélecteurMaille
@@ -196,7 +196,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                     </Titre>
                     {
                       estAutoriseAVoirLeSelecteurDeMaille ? (
-                        <div className='fr-grid-row fr-grid-row--center texte-centre fr-pb-2w fr-text--sm'>
+                        <div className='fr-grid-row fr-pb-2w fr-text--sm'>
                           <SélecteurMaille
                             mailleQuery={mailleQuery}
                             pathname={pathname}

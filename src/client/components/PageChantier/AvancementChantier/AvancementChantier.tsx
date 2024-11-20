@@ -148,7 +148,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         <div className='fr-container fr-px-md-1w fr-px-lg-2w'>
           {
                     estAutoriseAVoirLeSelecteurDeMaille ? (
-                      <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
+                      <div className='fr-grid-row fr-py-1w fr-text--sm'>
                         <SélecteurMaille
                           mailleQuery={mailleQuery}
                           pathname={pathname}

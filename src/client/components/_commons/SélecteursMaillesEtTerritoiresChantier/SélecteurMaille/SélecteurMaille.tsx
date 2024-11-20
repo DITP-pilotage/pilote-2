@@ -41,14 +41,14 @@ const SélecteurMaille: FunctionComponent<{
   };
 
   return (
-    <SélecteurMailleStyled className='fr-p-1v'>
+    <SélecteurMailleStyled className='fr-p-1v w-full'>
       <div className='flex tag-liste'>
         {
           objectEntries(mailles)
             .filter(([maille]) => maillesInternesAccessiblesEnLecture.includes(maille))
             .map(([maille, libellé]) => (
               <button
-                className={`fr-tag fr-tag--sm fr-mr-1w${mailleQuery === maille ? ' tag-selectionnee' : ''}`}
+                className={`fr-tag fr-mr-1w${mailleQuery === maille ? ' tag-selectionnee' : ''}`}
                 key={maille}
                 onClick={() => changerMaille(maille)}
                 type='button'
