@@ -1,4 +1,17 @@
 import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur';
+import {
+  InformationDerniereModificationMetadataIndicateurContrat,
+} from '@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat';
+
+export interface MetadataParametrageIndicateurInformationContrat {
+  indicId: string;
+  indicNom: string;
+  indicParentCh: string;
+  indicHiddenPilote: boolean;
+  chantierNom: string;
+  dateDerniereModification: string;
+  auteurDerniereModification: string;
+}
 
 export interface MetadataParametrageIndicateurContrat {
   indicId: string;
@@ -134,4 +147,14 @@ export const presenterEnMetadataParametrageIndicateurContrat = (metadataParametr
   contactTechnique: metadataParametrageIndicateur.contactTechnique,
   contactTechniqueEmail: metadataParametrageIndicateur.contactTechniqueEmail,
   commentaire: metadataParametrageIndicateur.commentaire,
+});
+
+export const presenterEnMetadataParametrageIndicateurInformationContrat = (metadataParametrageIndicateur: MetadataParametrageIndicateur, informationDerniereModificationMetadataIndicateurContrat: InformationDerniereModificationMetadataIndicateurContrat): MetadataParametrageIndicateurInformationContrat => ({
+  indicId: metadataParametrageIndicateur.indicId,
+  indicParentCh: metadataParametrageIndicateur.indicParentCh,
+  indicNom: metadataParametrageIndicateur.indicNom,
+  indicHiddenPilote: metadataParametrageIndicateur.indicHiddenPilote,
+  chantierNom: metadataParametrageIndicateur.chantierNom || 'Chantier non publié',
+  auteurDerniereModification: informationDerniereModificationMetadataIndicateurContrat.auteurModification,
+  dateDerniereModification: informationDerniereModificationMetadataIndicateurContrat.dateDerniereModification,
 });

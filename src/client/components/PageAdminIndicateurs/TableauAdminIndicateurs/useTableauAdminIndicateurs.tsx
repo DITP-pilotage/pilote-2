@@ -13,11 +13,13 @@ import api from '@/server/infrastructure/api/trpc/api';
 import {
   filtresModifierIndicateursActifsStore,
 } from '@/stores/useFiltresModifierIndicateursStore/useFiltresModifierIndicateursStore';
-import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
+import {
+  MetadataParametrageIndicateurInformationContrat,
+} from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
 import { horodatage } from '@/client/utils/date/date';
 import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
 
-const reactTableColonnesHelper = createColumnHelper<MetadataParametrageIndicateurContrat>();
+const reactTableColonnesHelper = createColumnHelper<MetadataParametrageIndicateurInformationContrat>();
 const colonnes = [
   reactTableColonnesHelper.accessor('indicParentCh', {
     header: 'Chantier associé',
@@ -36,6 +38,24 @@ const colonnes = [
     header: 'Nom de l\'indicateur',
     sortingFn: 'auto',
     cell: props => props.getValue(),
+  }),
+  reactTableColonnesHelper.accessor(row => `${row.dateDerniereModification} par ${row.auteurDerniereModification}`, {
+    header: 'Dernière modification',
+    cell: props => props.getValue(),
+    sortingFn: (a, b) => {
+      const dateA = new Date(a.original.dateDerniereModification);
+      const dateB = new Date(b.original.dateDerniereModification);
+
+      if (dateA.getTime() > dateB.getTime()) {
+        return 1;
+      }
+
+      if (dateA.getTime() < dateB.getTime()) {
+        return -1;
+      }
+
+      return 0;
+    },
   }),
   reactTableColonnesHelper.accessor('indicHiddenPilote', {
     header: 'Actif / Inactif',
@@ -60,14 +80,17 @@ const colonnes = [
 
 export default function useTableauPageAdminIndicateurs() {
   const filtresActifs = filtresModifierIndicateursActifsStore();
-  
+
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
 
 
   const [file, setFile] = useState<File | null>(null);
-  const [alerte, setAlerte] = useState <AlerteProps | null>(null);
+  const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
-  const { data: metadataIndicateurs = [], isLoading: estEnChargement } = api.metadataIndicateur.récupérerMetadataIndicateurFiltrés.useQuery({
+  const {
+    data: metadataIndicateurs = [],
+    isLoading: estEnChargement,
+  } = api.metadataIndicateur.listerMetadataIndicateurFiltrés.useQuery({
     filtres: filtresActifs,
   });
 
@@ -98,7 +121,7 @@ export default function useTableauPageAdminIndicateurs() {
   }, [setValeurDeLaRecherche]);
 
   const tableau = useReactTable({
-    data : metadataIndicateurs,
+    data: metadataIndicateurs,
     columns: colonnes,
 
     globalFilterFn: (ligne, colonneId, texteRecherché) => {
@@ -153,13 +176,13 @@ export default function useTableauPageAdminIndicateurs() {
     if (result.status === 200) {
       setAlerte({
         type: 'succès',
-        titre : 'Import de masse réussie',
+        titre: 'Import de masse réussie',
       });
     } else {
       const errorResponse = await result.json() as { message: string };
       setAlerte({
         type: 'erreur',
-        titre : 'Une erreur est survenue',
+        titre: 'Une erreur est survenue',
         message: `Une erreur interne est survenu : ${(errorResponse.message)}`,
       });
     }
