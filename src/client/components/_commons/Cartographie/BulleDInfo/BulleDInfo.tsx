@@ -12,7 +12,7 @@ const BulleDInfo: FunctionComponent<BulleDInfoProps> = ({ x, y, titre, children 
   return (
     <BulleDInfoStyled
       style={{
-        top: y - 40, /* problème de performance avec styled component */
+        top: y, /* problème de performance avec styled component */
         left: x,
       }}
     >
