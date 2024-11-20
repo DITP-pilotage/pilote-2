@@ -98,7 +98,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
 
   async récupérerLesPlusRécentesGroupéesParChantier(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], SynthèseDesRésultats>> {
     const synthèsesDesRésultats = await this.prisma.$queryRaw<(synthese_des_resultats & { auteur_prenom: string, auteur_nom: string })[]>`
-      SELECT s.*, utilisateur.prenom, utilisateur.nom
+      SELECT s.*, utilisateur.prenom as auteur_prenom, utilisateur.nom as auteur_nom
       FROM synthese_des_resultats s
         LEFT JOIN utilisateur on utilisateur.id = s.auteur_id
         INNER JOIN (
