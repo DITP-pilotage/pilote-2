@@ -6,4 +6,5 @@ export default interface ObjectifRepository {
   récupérerLePlusRécent(chantierId: string, type: TypeObjectif): Promise<Objectif>
   créer(chantierId: string, id: string, contenu: string, auteur: string, type: TypeObjectif, date: Date): Promise<Objectif>;
   récupérerLesPlusRécentsGroupésParChantier(chantiersIds: Chantier['id'][]): Promise<Record<Chantier['id'], Objectif[]>>
+  anonymiserAuteurs(auteursAAnonymiserIds: string[], emailAuteurRemplacement: string): Promise<void>
 }

@@ -104,4 +104,25 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
       )),
     );
   }
+
+  async anonymiserAuteurs(auteursAAnonymiserIds: string[], emailAuteurRemplacement: string): Promise<void> {
+    const auteurAnonyme = await prisma.utilisateur.findFirst({
+      where: {
+        email: emailAuteurRemplacement,
+      },
+    });
+
+    if (auteurAnonyme) {
+      await prisma.decision_strategique.updateMany({
+        where: {
+          auteur_id: {
+            in: auteursAAnonymiserIds,
+          },
+        },
+        data: {
+          auteur_id: auteurAnonyme.id,
+        },
+      }); 
+    }
+  }
 }

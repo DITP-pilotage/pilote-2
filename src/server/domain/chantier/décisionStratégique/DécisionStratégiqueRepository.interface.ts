@@ -6,4 +6,5 @@ export default interface DécisionStratégiqueRepository {
   récupérerHistorique(chantierId: string): Promise<DécisionStratégique[]>
   créer(chantierId: string, id: string, contenu: string, type: TypeDécisionStratégique, auteur: string, date: Date): Promise<DécisionStratégique>
   récupérerLesPlusRécentesGroupéesParChantier(chantiersIds: Chantier['id'][]): Promise<Record<Chantier['id'], DécisionStratégique>>;
+  anonymiserAuteurs(auteursAAnonymiserIds: string[], emailAuteurRemplacement: string): Promise<void>;
 }

@@ -122,4 +122,25 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
       },
     );
   }
+
+  async anonymiserAuteurs(auteursAAnonymiserIds: string[], emailAuteurRemplacement: string): Promise<void> {
+    const auteurAnonyme = await prisma.utilisateur.findFirst({
+      where: {
+        email: emailAuteurRemplacement,
+      },
+    });
+
+    if (auteurAnonyme) {
+      await prisma.objectif.updateMany({
+        where: {
+          auteur_id: {
+            in: auteursAAnonymiserIds,
+          },
+        },
+        data: {
+          auteur_id: auteurAnonyme.id,
+        },
+      }); 
+    }
+  }
 }

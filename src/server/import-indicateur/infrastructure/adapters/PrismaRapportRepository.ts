@@ -61,4 +61,17 @@ export class PrismaRapportRepository implements RapportRepository {
 
     return convertirEnDetailValidationFichier(rapportResult);
   }
+
+  async anonymiserAuteurs(auteursAAnonymiserEmails: string[], emailAuteurRemplacement: string): Promise<void> {
+    await prisma.rapport_import_mesure_indicateur.updateMany({
+      where: {
+        utilisateurEmail: {
+          in: auteursAAnonymiserEmails,
+        },
+      },
+      data: {
+        utilisateurEmail: emailAuteurRemplacement,
+      },
+    }); 
+  }
 }
