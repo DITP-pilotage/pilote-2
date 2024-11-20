@@ -16,9 +16,13 @@ import RécupérerChantiersSynthétisésUseCase from '@/server/usecase/chantier/
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { getContainer } from '@/server/dependances';
+import {
+  InformationDerniereModificationMetadataIndicateurContrat,
+} from '@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat';
 
 export interface NextPageAdminUtilisateurProps {
   indicateur: MetadataParametrageIndicateurContrat,
+  informationHistorisationIndicateur: InformationDerniereModificationMetadataIndicateurContrat,
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
   estUneCréation: boolean
   modificationReussie: boolean
@@ -57,6 +61,8 @@ export async function getServerSideProps({ req, res, params, query }: GetServerS
     }
   }
 
+  const informationHistorisationIndicateur = await getContainer('parametrageIndicateur').resolve('metadataParametrageIndicateurQuery').recupererInformationDerniereModification({ indicId: params.id });
+
   const récupérerChantiersSynthétisésUseCase = new RécupérerChantiersSynthétisésUseCase(dependencies.getChantierRepository());
   const chantiers = await récupérerChantiersSynthétisésUseCase.run(session.habilitations);
 
@@ -65,6 +71,7 @@ export async function getServerSideProps({ req, res, params, query }: GetServerS
   return {
     props: {
       indicateur: indicateurDemandé,
+      informationHistorisationIndicateur,
       mapInformationMetadataIndicateur,
       chantiers,
       estUneCréation,
@@ -76,6 +83,7 @@ export async function getServerSideProps({ req, res, params, query }: GetServerS
 
 const NextPageAdminIndicateur: FunctionComponent<NextPageAdminUtilisateurProps> = ({
   indicateur,
+  informationHistorisationIndicateur,
   mapInformationMetadataIndicateur,
   estUneCréation,
   modificationReussie,
@@ -97,6 +105,7 @@ const NextPageAdminIndicateur: FunctionComponent<NextPageAdminUtilisateurProps> 
         creationReussie={creationReussie}
         estUneCréation={estUneCréation}
         indicateur={indicateur}
+        informationHistorisationIndicateur={informationHistorisationIndicateur}
         mapInformationMetadataIndicateur={mapInformationMetadataIndicateur}
         modificationReussie={modificationReussie}
       />

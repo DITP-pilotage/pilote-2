@@ -5,14 +5,15 @@ import {
   validationMetadataIndicateurFormulaire,
 } from '@/validation/metadataIndicateur';
 import {
-  MetadataParametrageIndicateurContrat,
-  presenterEnMetadataParametrageIndicateurContrat,
+  MetadataParametrageIndicateurContrat, MetadataParametrageIndicateurInformationContrat,
+  presenterEnMetadataParametrageIndicateurContrat, presenterEnMetadataParametrageIndicateurInformationContrat,
 } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
 import { zodValidateurCSRF } from '@/validation/publication';
 import {
   MetadataParametrageIndicateurForm,
 } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateurInputForm';
 import { getContainer } from '@/server/dependances';
+import { defaultHistoriqueInformation } from '@/server/parametrage-indicateur/domain/DefaultHistoriqueInformation';
 
 const convertirEnMetadataParametrageIndicateurForm = (input: any): MetadataParametrageIndicateurForm =>  {
   return {
@@ -89,6 +90,13 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
     .query(async ({ input }): Promise<MetadataParametrageIndicateurContrat[]> => {
       const listeMetadataIndicateur = await getContainer('parametrageIndicateur').resolve('récupérerListeMetadataIndicateurUseCase').run(input.filtres.chantiers, input.filtres.perimetresMinisteriels, input.filtres.estTerritorialise, input.filtres.estBarometre);
       return listeMetadataIndicateur.map(presenterEnMetadataParametrageIndicateurContrat);
+    }),
+  listerMetadataIndicateurFiltrés: procédureProtégée
+    .input(validationFiltresPourListeMetadataIndicateur)
+    .query(async ({ input }): Promise<MetadataParametrageIndicateurInformationContrat[]> => {
+      const listeMetadataIndicateur = await getContainer('parametrageIndicateur').resolve('récupérerListeMetadataIndicateurUseCase').run(input.filtres.chantiers, input.filtres.perimetresMinisteriels, input.filtres.estTerritorialise, input.filtres.estBarometre);
+      const mapHistorisationIndicateur = await getContainer('parametrageIndicateur').resolve('metadataParametrageIndicateurQuery').listerInformationDerniereModification({ listeIndicId: listeMetadataIndicateur.map(metadataIndicateur => metadataIndicateur.indicId) });
+      return listeMetadataIndicateur.map(indicateur => presenterEnMetadataParametrageIndicateurInformationContrat(indicateur, mapHistorisationIndicateur.get(indicateur.indicId) || defaultHistoriqueInformation));
     }),
   récupérerMetadataIndicateurIdentifiantGénéré: procédureProtégée
     .query(async ({}): Promise<string> => {
