@@ -1,5 +1,8 @@
 import { FunctionComponent, useId } from 'react';
-import { JaugeDeProgressionCouleur, JaugeDeProgressionTaille } from '@/components/_commons/JaugeDeProgression/JaugeDeProgression.interface';
+import {
+  JaugeDeProgressionCouleur,
+  JaugeDeProgressionTaille,
+} from '@/components/_commons/JaugeDeProgression/JaugeDeProgression.interface';
 
 interface JaugeDeProgressionSVGProps {
   couleur: JaugeDeProgressionCouleur;
@@ -72,15 +75,15 @@ const JaugeDeProgressionSVG: FunctionComponent<JaugeDeProgressionSVGProps> = ({ 
           width={TAILLE_VIEWBOX}
         />
         {
-        pourcentage
-          ?
-            <path
-              className={`jauge-barre-valeur jauge-barre-valeur--${couleur}`}
-              d={tracerValeurJauge(pourcentage, taille || 'lg')}
-              transform={`rotate(${TRACÉS[taille || 'lg'].angleDépart} ${CENTRE_VIEWBOX.x} ${CENTRE_VIEWBOX.y})`}
-            />
-          : null
-      }
+          pourcentage
+            ?
+              <path
+                className={`jauge-barre-valeur jauge-barre-valeur--${couleur}`}
+                d={tracerValeurJauge(pourcentage, taille || 'lg')}
+                transform={`rotate(${TRACÉS[taille || 'lg'].angleDépart} ${CENTRE_VIEWBOX.x} ${CENTRE_VIEWBOX.y})`}
+              />
+            : null
+        }
       </g>
       <defs>
         <clipPath id={`masque-${id}`}>

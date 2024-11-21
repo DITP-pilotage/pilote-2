@@ -32,7 +32,7 @@ const SousIndicateurRapportDetailleBloc: FunctionComponent<SousIndicateurBlocPro
 }) => {
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
 
-  const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+  const { maille } = territoireCodeVersMailleCodeInsee(territoireCode);
 
   const {
     tableau,
@@ -84,7 +84,7 @@ const SousIndicateurRapportDetailleBloc: FunctionComponent<SousIndicateurBlocPro
                 </span>
               </p>
               {
-                !!détailsIndicateur[codeInsee] ? (
+                !!détailsIndicateur[territoireCode] ? (
                   <p
                     className={`fr-mb-0 fr-text--xs${estIndicateurEnAlerte ? ' fr-text-warning' : ''}`}
                   >
@@ -97,16 +97,16 @@ const SousIndicateurRapportDetailleBloc: FunctionComponent<SousIndicateurBlocPro
                 ) : null
               }
               {
-                !!détailsIndicateur[codeInsee] ? (
+                !!détailsIndicateur[territoireCode] ? (
                   <IndicateurPonderation
-                    indicateurPondération={détailsIndicateur[codeInsee].pondération ?? null}
+                    indicateurPondération={détailsIndicateur[territoireCode].pondération ?? null}
                     mailleSélectionnée={maille}
                   />
                 ) : null
               }
             </div>
             {
-              détailsIndicateur[codeInsee].tendance === 'BAISSE' ? (
+              détailsIndicateur[territoireCode].tendance === 'BAISSE' ? (
                 <IndicateurTendance />
               ) : null
             }

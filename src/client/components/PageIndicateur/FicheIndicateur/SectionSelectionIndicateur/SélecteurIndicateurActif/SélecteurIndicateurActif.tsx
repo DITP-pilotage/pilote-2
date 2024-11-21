@@ -1,10 +1,15 @@
 import { FunctionComponent } from 'react';
 import SélecteurRéformeProps from './SélecteurIndicateurActif.interface';
 import SélecteurRéformeStyled from './SélecteurIndicateurActif.styled';
+import '@gouvfr/dsfr/dist/component/badge/badge.min.css';
 
 export type EtatIndicateur = 'true' | 'false';
 
-const SélecteurIndicateurActif: FunctionComponent<SélecteurRéformeProps> = ({ setEtatIndicateurSélectionné, etatIndicateurSélectionné, estEnCoursDeModification }) => {
+const SélecteurIndicateurActif: FunctionComponent<SélecteurRéformeProps> = ({
+  setEtatIndicateurSélectionné,
+  etatIndicateurSélectionné,
+  estEnCoursDeModification,
+}) => {
   const etatIndicateurÀAfficher: { label: string, valeur: EtatIndicateur, className: string }[] = [
     {
       label: 'Actif',
@@ -17,24 +22,24 @@ const SélecteurIndicateurActif: FunctionComponent<SélecteurRéformeProps> = ({
       className: 'inactif',
     },
   ];
-      
+
   return (
     <SélecteurRéformeStyled className='fr-p-1v'>
       {
-          etatIndicateurÀAfficher.map(etatIndicateur => (
-            <button
-              className={`${etatIndicateurSélectionné === etatIndicateur.valeur && 'sélectionné fr-text--bold'} ${etatIndicateur.className}`}
-              disabled={!estEnCoursDeModification}
-              key={etatIndicateur.valeur}
-              onClick={() => setEtatIndicateurSélectionné('indicHiddenPilote', etatIndicateur.valeur)}
-              type='button'
-            >
-              {etatIndicateur.label}  
-              {' '}
-              { estEnCoursDeModification }
-            </button>
-          ))
-        }
+        etatIndicateurÀAfficher.map(etatIndicateur => (
+          <button
+            className={`${etatIndicateurSélectionné === etatIndicateur.valeur && 'sélectionné fr-text--bold'} ${etatIndicateur.className}`}
+            disabled={!estEnCoursDeModification}
+            key={etatIndicateur.valeur}
+            onClick={() => setEtatIndicateurSélectionné('indicHiddenPilote', etatIndicateur.valeur)}
+            type='button'
+          >
+            {etatIndicateur.label}
+            {' '}
+            {estEnCoursDeModification}
+          </button>
+        ))
+      }
     </SélecteurRéformeStyled>
   );
 };

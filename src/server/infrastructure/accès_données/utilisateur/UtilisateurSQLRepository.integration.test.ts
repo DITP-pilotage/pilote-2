@@ -18,8 +18,6 @@ describe('UtilisateurSQLRepository', () => {
       const randomUtilisateur = {
         nom: '',
         prenom: '',
-        auteur_modification: '',
-        auteur_creation: '',
         date_creation: new Date().toISOString(),
       };
 
@@ -99,8 +97,6 @@ describe('UtilisateurSQLRepository', () => {
       const randomUtilisateur = {
         nom: '',
         prenom: '',
-        auteur_modification: '',
-        auteur_creation: '',
         date_creation: new Date().toISOString(),
       };
 
@@ -110,6 +106,7 @@ describe('UtilisateurSQLRepository', () => {
         'sd_occ@test.com': ['REG-76', 'DEPT-34'],
         'sd_herault@test.com': ['DEPT-34'],
         'ditp_admin@test.com': ['REG-84'],
+        'compte_desactive_herault@test.com': ['DEPT-34'],
       };
 
       await prisma.utilisateur.createMany({
@@ -118,6 +115,12 @@ describe('UtilisateurSQLRepository', () => {
             ...randomUtilisateur, 
             email: 'prefet_herault@test.com',
             profilCode: ProfilEnum.PREFET_DEPARTEMENT,
+          },
+          {
+            ...randomUtilisateur, 
+            email: 'compte_desactive_herault@test.com',
+            profilCode: ProfilEnum.PREFET_DEPARTEMENT,
+            date_desactivation: new Date(),
           },
           {
             ...randomUtilisateur, 

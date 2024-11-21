@@ -8,6 +8,22 @@ interface Nouveautés {
 
 export const ParametrageNouveautés: Nouveautés[] = [
   {
+    version: 'Version 2.5.10',
+    date: '21 novembre 2024',
+    contenu: [
+      'La navigation dans PILOTE est modifiée ! Si vous êtes en administration centrale ou en région, vous pourrez dorénavant choisir d\'afficher la maille régionale ou départementale directement depuis les cartes et les jauges affichant la répartition géographique. Le panneau latéral est également modifié. Le filtre "Territoire" vous permet dorénavant de sélectionner une région ou un département dans un menu unique. Il n\'est plus nécessaire de choisir la maille avant de sélectionner un territoire. Dans ce panneau latéral, le bouton permettant de sélectionner la maille est dorénavant supprimé. Cette modification sera bientôt suivie d\'autres nouveautés permettant de faciliter la navigation dans PILOTE.',
+      'Page d\'accueil et Page PPG : modification de l\'affichage des jauges de répartition territoriale des taux d\'avancement. Afin de faciliter la compréhension de l\'affichage du minimum, du maximum et de la médiane des taux d\'avancement dans les territoires, ces jauges ont été déplacées dans une tuile séparée. Une infobulle permet d\'expliquer le détail des informations.',
+      'Export du rapport détaillé : l\'export en format PDF a été amélioré. Afin de faciliter la lecture des commentaires, un commentaire rédigé pour un territoire n\'est plus divisé sur plusieurs pages. L\'affichage d\'un seul commentaire est limitée sur une seule page.',
+      'Gestion des comptes (profil DITP et coordinateurs PILOTE uniquement) : Lors de la création d\'un compte, le menu déroulant permettant de sélectionner les PPG à attribuer pour un compte s\'adapte désormais au territoire sélectionné. Les PPG non applicables sur un territoire n\'apparaissent plus dans ce menu.',
+      'Déclaration d\'accessibilité : la déclaration d\'accessibilité de PILOTE a été mise à jour.',
+
+    ],
+    correctifs: [
+      'Page d\'accueil : dans la liste des PPG, pour certaines PPG, lorsque l\'écart par rapport à la médiane était égal à 0, il pouvait ne pas s\'afficher. Désormais, l\'écart à la médiane s\'affiche pour l\'ensemble des PPG, même si celui-ci est nul.',
+      'Gestion des comptes (profil DITP uniquement) : la procédure de désactivation des comptes a été modifiée afin de corriger un comportement qui pouvait empêcher la suppression de certains comptes utilisateurs.',
+    ],
+  },
+  {
     version: 'Version 2.5.9',
     date: '7 novembre 2024',
     contenu: [

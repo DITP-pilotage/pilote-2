@@ -9,14 +9,14 @@ describe('UtilisateurCSVParseur', () => {
 
     const utilisateurÀImporter2 = new UtilisateurÀCréerOuMettreÀJourBuilder().build();
 
-    const contenuFichierCSV = `nom,prénom,email,profil,scope,territoires,périmètreIds,chantierIds\n
-      ${utilisateurÀImporter1.nom},${utilisateurÀImporter1.prénom},"${utilisateurÀImporter1.email}",${utilisateurÀImporter1.profil},lecture,REG-12|DEPT-13,PER-15,CH-001|CH-002|CH-003\n
-      ${utilisateurÀImporter1.nom},${utilisateurÀImporter1.prénom},"${utilisateurÀImporter1.email}",${utilisateurÀImporter1.profil},saisieCommentaire,DEPT-13,,CH-001|CH-002\n
-      ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},lecture,,PER-25,CH-004|CH-008|CH-012\n
-      ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},saisieCommentaire,,,CH-004\n
-      ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},saisieIndicateur,,PER-25,\n
-      ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},gestionUtilisateur,DEPT-34,,CH-004\n
-      ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},responsabilite,DEPT-34,,CH-004`;
+    const contenuFichierCSV = `nom,prénom,email,profil,scope,territoires,périmètreIds,chantierIds,auteurEmail\n
+      ${utilisateurÀImporter1.nom},${utilisateurÀImporter1.prénom},"${utilisateurÀImporter1.email}",${utilisateurÀImporter1.profil},lecture,REG-12|DEPT-13,PER-15,CH-001|CH-002|CH-003,ditp.admin@example.com\n
+      ${utilisateurÀImporter1.nom},${utilisateurÀImporter1.prénom},"${utilisateurÀImporter1.email}",${utilisateurÀImporter1.profil},saisieCommentaire,DEPT-13,,CH-001|CH-002,ditp.admin@example.com\n
+      ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},lecture,,PER-25,CH-004|CH-008|CH-012,\n
+      ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},saisieCommentaire,,,CH-004,\n
+      ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},saisieIndicateur,,PER-25,,\n
+      ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},gestionUtilisateur,DEPT-34,,CH-004,\n
+      ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},responsabilite,DEPT-34,,CH-004,`;
 
 
     jest.spyOn(fs, 'readFileSync').mockReturnValueOnce(contenuFichierCSV);
@@ -37,6 +37,7 @@ describe('UtilisateurCSVParseur', () => {
         saisieCommentaire: true,
         saisieIndicateur: true,
         gestionUtilisateur: true,
+        auteurEmail: 'ditp.admin@example.com',
         habilitations: {
           lecture: {
             chantiers: ['CH-001', 'CH-002', 'CH-003'],
@@ -67,6 +68,7 @@ describe('UtilisateurCSVParseur', () => {
         saisieCommentaire: true,
         saisieIndicateur: true,
         gestionUtilisateur: true,
+        auteurEmail: '',
         habilitations: {
           lecture: {
             chantiers: ['CH-004', 'CH-008', 'CH-012'],

@@ -20,7 +20,7 @@ docker compose run --rm pilote_webapp npm run lint
 npm run lint
 ```
 
-## Descente de prod partielle
+## Descente de prod
 
 Ce processus permet de copier certaines tables de la base de données de production vers un autre environement.
 
@@ -31,10 +31,11 @@ Prérequis:
 - Le fichier `.dump` généré par le dump et chargé dans la base de destination sera disponible dans `scripts/dumps/`
 
 ```sh
-# Exécuter une descente de prod partielle [docker]
-docker compose run --rm descente_de_prod
+# Exécuter une descente de prod [docker]
+docker compose run --rm ddp bash docker/entrypoint.ddp.sh
 ## [local]
-pipenv run /bin/bash scripts/descente_de_prod_partielle.sh
+bash scripts/ddp_dump.sh
+bash scripts/ddp_restore.sh
 ```
 
 ## Scripts "daily"
@@ -46,4 +47,4 @@ Voir [daily](./daily).
 Etapes à réaliser sur Scalingo:
 
 - se connecter à un one-off de l'environnement souhaité sur l'app des datajobs
-- *descente de prod*: exécuter `/bin/bash scripts/descente_de_prod_partielle.sh`
+- *descente de prod*: exécuter la commande de descente de prod (voir section précédente)

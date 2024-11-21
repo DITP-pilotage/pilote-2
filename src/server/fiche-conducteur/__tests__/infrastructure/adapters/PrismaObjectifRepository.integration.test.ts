@@ -35,7 +35,7 @@ describe('PrismaObjectifRepository', () => {
             chantier_id: 'CH-168',
             type: 'deja_fait',
             contenu: 'contenu OK deja_fait',
-            auteur: 'Test 1',
+            auteur_id: null,
             date: new Date(),
           },
           {
@@ -43,7 +43,7 @@ describe('PrismaObjectifRepository', () => {
             chantier_id: 'CH-168',
             type: 'notre_ambition',
             contenu: 'contenu OK notre_ambition',
-            auteur: 'Test 1',
+            auteur_id: null,
             date: new Date(),
           },
           {
@@ -51,7 +51,7 @@ describe('PrismaObjectifRepository', () => {
             chantier_id: 'CH-168',
             type: 'a_faire',
             contenu: 'contenu OK a_faire',
-            auteur: 'Test 1',
+            auteur_id: null,
             date: new Date(),
           },
           {
@@ -59,7 +59,7 @@ describe('PrismaObjectifRepository', () => {
             chantier_id: 'CH-169',
             type: 'notre_ambition',
             contenu: 'contenu KO chantier_id',
-            auteur: 'Test 1',
+            auteur_id: null,
             date: new Date(),
           },
         ],

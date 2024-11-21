@@ -4,7 +4,7 @@ import {
   profilsRégionaux,
 } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
-import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion';
+import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface';
 
 export interface UtilisateurListeGestionContrat {
   id: string
@@ -16,6 +16,7 @@ export interface UtilisateurListeGestionContrat {
   auteurModification: string
   profil: ProfilCode
   listeNomsTerritoires: string[]
+  statut: 'actif' | 'desactive'
 }
 
 const recupererLesNomsDesTerritoires = (utilisateur: UtilisateurListeGestion, territoiresListe: Territoire[]): string[] => {
@@ -41,5 +42,6 @@ export const presenterEnUtilisateurListeGestionContrat = (utilisateur: Utilisate
     dateModification: utilisateur.dateModification,
     auteurModification: utilisateur.auteurModification,
     listeNomsTerritoires: recupererLesNomsDesTerritoires(utilisateur, territoiresListe),
+    statut: utilisateur.dateDesactivation ? 'desactive' : 'actif',
   };
 };

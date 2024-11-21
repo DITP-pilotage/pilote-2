@@ -7,7 +7,7 @@ import {
   DétailsIndicateurs,
   DétailsIndicateurTerritoire,
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { groupByAndTransform } from '@/client/utils/arrays';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
@@ -17,8 +17,8 @@ import {
   IndicateurPourExport,
 } from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
 import {
+  créerDonnéesTerritoires,
   parseDétailsIndicateur,
-  parseDétailsIndicateurNew,
 } from '@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLParser';
 import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { comparerDates } from '@/client/utils/date/date';
@@ -73,7 +73,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         détailsIndicateurs[indic.id] = {};
       }
 
-      détailsIndicateurs[indic.id][indic.code_insee] = {
+      détailsIndicateurs[indic.id][indic.territoire_code] = {
         codeInsee: indic.code_insee,
         valeurInitiale: indic.valeur_initiale,
         dateValeurInitiale: formatDate(indic.date_valeur_initiale),
@@ -123,7 +123,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return indicateur!.chantier_id;
   }
 
-  async récupérerDétailsTerritoire(id: string, maille: MailleInterne, habilitations: Habilitations, profil: ProfilCode): Promise<DétailsIndicateurTerritoire> {
+  async récupérerDétailsTerritoire(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<DétailsIndicateurTerritoire> {
     const habilitation = new Habilitation(habilitations);
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
 
@@ -140,15 +140,15 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       paramètresRequête.where!.territoire_code = { in: territoiresLecture };
     }
 
-    const indicateur = await this.prisma.indicateur.findMany(paramètresRequête);
+    const listeIndicateursModel = await this.prisma.indicateur.findMany(paramètresRequête);
 
-    if (!indicateur || indicateur.length === 0) {
+    if (listeIndicateursModel.length === 0) {
       throw new ErreurIndicateurNonTrouvé(id);
     }
 
     const territoires = await this.prisma.territoire.findMany();
 
-    return parseDétailsIndicateurNew(indicateur, territoires, maille);
+    return créerDonnéesTerritoires(territoires, listeIndicateursModel);
   }
 
   async récupérerDétailsParMailles(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<DétailsIndicateurMailles> {

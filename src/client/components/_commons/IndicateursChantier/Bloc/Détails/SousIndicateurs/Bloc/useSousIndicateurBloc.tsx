@@ -1,33 +1,18 @@
-import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { formaterDate } from '@/client/utils/date/date';
 
 export default function useSousIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, territoireCode: string) {
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+  const dateDeMiseAJourIndicateur = formaterDate(détailsIndicateur[territoireCode]?.dateImport, 'DD/MM/YYYY') ?? null;
 
-  const detailTerritoireSelectionne = récupérerDétailsSurUnTerritoire(territoireCode);
+  const dateProchaineDateMaj = formaterDate(détailsIndicateur[territoireCode]?.prochaineDateMaj, 'DD/MM/YYYY') ?? null;
 
-  const dateDeMiseAJourIndicateur = detailTerritoireSelectionne
-    ? formaterDate(détailsIndicateur[detailTerritoireSelectionne.codeInsee]?.dateImport, 'DD/MM/YYYY') ?? null
-    : null;
+  const dateProchaineDateValeurActuelle = formaterDate(détailsIndicateur[territoireCode]?.prochaineDateValeurActuelle, 'DD/MM/YYYY') ?? null;
 
-  const dateProchaineDateMaj = detailTerritoireSelectionne
-    ? formaterDate(détailsIndicateur[detailTerritoireSelectionne.codeInsee]?.prochaineDateMaj, 'DD/MM/YYYY') ?? null
-    : null;
+  const dateValeurActuelle = formaterDate(détailsIndicateur[territoireCode]?.dateValeurActuelle, 'DD/MM/YYYY') ?? null;
 
-  const dateProchaineDateValeurActuelle = detailTerritoireSelectionne
-    ? formaterDate(détailsIndicateur[detailTerritoireSelectionne.codeInsee]?.prochaineDateValeurActuelle, 'DD/MM/YYYY') ?? null
-    : null;
+  const indicateurNonAJour = détailsIndicateur[territoireCode]?.estAJour === false;
 
-  const dateValeurActuelle = detailTerritoireSelectionne
-    ? formaterDate(détailsIndicateur[detailTerritoireSelectionne.codeInsee]?.dateValeurActuelle, 'DD/MM/YYYY') ?? null
-    : null;
-
-  const indicateurNonAJour = detailTerritoireSelectionne
-    ? détailsIndicateur[detailTerritoireSelectionne.codeInsee]?.estAJour === false
-    : false;
-
-  const indicateurEstApplicable = !!détailsIndicateur[detailTerritoireSelectionne.codeInsee].est_applicable;
+  const indicateurEstApplicable = !!détailsIndicateur[territoireCode].est_applicable;
 
   return {
     dateDeMiseAJourIndicateur,

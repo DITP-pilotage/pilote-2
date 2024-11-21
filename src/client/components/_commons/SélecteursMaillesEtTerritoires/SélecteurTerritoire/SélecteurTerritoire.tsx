@@ -36,12 +36,16 @@ const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerri
     ...territoiresDisponibles.sort((a, b) => a.codeInsee < b.codeInsee ? -1 : 1).map(territoire => ({
       libellé: territoire.nomAffiché,
       valeur: territoire.code,
-      désactivée: !!chantierMailles ? !chantierMailles[territoire.maille][territoire.codeInsee].estApplicable ?? true : false,
+      désactivée: !!chantierMailles ? !chantierMailles[territoire.maille][territoire.code].estApplicable ?? true : false,
     })),
   ];
 };
 
-const SélecteurTerritoire: FunctionComponent<SélecteurTerritoiresProps> = ({ chantierMailles, estVueMobile, estVisibleEnMobile }) => {
+const SélecteurTerritoire: FunctionComponent<SélecteurTerritoiresProps> = ({
+  chantierMailles,
+  estVueMobile,
+  estVisibleEnMobile,
+}) => {
   const { data: session } = useSession();
   const { modifierTerritoireSélectionné } = actionsTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();

@@ -135,8 +135,8 @@ const presenterEnTerritoireDonnéeRapportDetailleContrat = (territoireDonnee: Te
 // le double reduce doit être enlever, on a pas besoin d'un record, un Map<CodeInsee, TerritoireDonnee> conditionnée par la maille suffit
 const presenterEnMailleRapportDetailleContrat = (mailles: Record<Maille, TerritoiresDonnées>): MailleRapportDetailleContrat => {
   return Object.keys(mailles).reduce((acc, val) => {
-    acc[val as Maille] = Object.keys(mailles[val as Maille]).reduce((accTerritoireDonnee, codeInsee) => {
-      accTerritoireDonnee[codeInsee] = presenterEnTerritoireDonnéeRapportDetailleContrat(mailles[val as Maille][codeInsee]);
+    acc[val as Maille] = Object.keys(mailles[val as Maille]).reduce((accTerritoireDonnee, territoireCode) => {
+      accTerritoireDonnee[territoireCode] = presenterEnTerritoireDonnéeRapportDetailleContrat(mailles[val as Maille][territoireCode]);
       return accTerritoireDonnee;
     }, {} as ListeTerritoiresDonnéeRapportDetailleContrat);
     return acc;
@@ -168,7 +168,7 @@ const presenterEnDirecteurProjetRapportDetailleContrat = (directeurProjet: Direc
 };
 
 export const presenterEnChantierRapportDetaille = (territoireCode: string) => (chantier: Chantier): ChantierRapportDetailleContrat => {
-  const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+  const { maille } = territoireCodeVersMailleCodeInsee(territoireCode);
   const mailleChantier = maille === 'NAT' ? 'nationale' : maille === 'REG' ? 'régionale' : 'départementale';
 
   const mailles = presenterEnMailleRapportDetailleContrat(chantier.mailles);
@@ -196,13 +196,13 @@ export const presenterEnChantierRapportDetaille = (territoireCode: string) => (c
     },
     tauxAvancementDonnéeTerritorialisée: chantier.tauxAvancementDonnéeTerritorialisée,
     météoDonnéeTerritorialisée: chantier.météoDonnéeTerritorialisée,
-    responsableLocalTerritoireSélectionné:  mailles[mailleChantier][codeInsee].responsableLocal,
-    coordinateurTerritorialTerritoireSélectionné:  mailles[mailleChantier][codeInsee].coordinateurTerritorial,
-    dateDeMàjDonnéesQuantitatives: mailles[mailleChantier][codeInsee].dateDeMàjDonnéesQuantitatives,
-    dateDeMàjDonnéesQualitatives: mailles[mailleChantier][codeInsee].dateDeMàjDonnéesQualitatives,
-    écart: mailles[mailleChantier][codeInsee].écart,
-    tendance: mailles[mailleChantier][codeInsee].tendance,
-    météo: mailles[mailleChantier][codeInsee].météo,
-    avancementGlobal: mailles[mailleChantier][codeInsee].avancement.global,
+    responsableLocalTerritoireSélectionné:  mailles[mailleChantier][territoireCode].responsableLocal,
+    coordinateurTerritorialTerritoireSélectionné:  mailles[mailleChantier][territoireCode].coordinateurTerritorial,
+    dateDeMàjDonnéesQuantitatives: mailles[mailleChantier][territoireCode].dateDeMàjDonnéesQuantitatives,
+    dateDeMàjDonnéesQualitatives: mailles[mailleChantier][territoireCode].dateDeMàjDonnéesQualitatives,
+    écart: mailles[mailleChantier][territoireCode].écart,
+    tendance: mailles[mailleChantier][territoireCode].tendance,
+    météo: mailles[mailleChantier][territoireCode].météo,
+    avancementGlobal: mailles[mailleChantier][territoireCode].avancement.global,
   };
 };

@@ -1,6 +1,4 @@
 #!/bin/sh
 
-npx prisma migrate reset --force
-npx prisma generate
-npx prisma migrate dev
+npm run database:init-force
 npx prisma generate

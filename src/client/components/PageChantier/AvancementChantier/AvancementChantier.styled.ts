@@ -6,14 +6,14 @@ const AvancementChantierStyled = styled.div`
   gap: 0.7rem;
 
   &.layout--dept {
-    @media (min-width: 992px) {
-      grid-template-areas: "dept reg nat";
-      grid-template-columns: 1fr 1fr 4fr;
+    @media (min-width: 1025px) {
+      grid-template-areas: "dept reg nat nat";
+      grid-template-columns: 1fr 1fr 2fr 2fr;
     }
 
-    @media (min-width: 768px) and (max-width: 991px) {
+    @media (min-width: 768px) and (max-width: 1024px) {
       grid-template-areas: "dept reg" "nat nat";
-      grid-template-columns: 1fr 2fr;
+      grid-template-columns: 2fr 2fr;
     }
 
     grid-template-areas: "dept" "reg" "nat";
@@ -44,8 +44,8 @@ const AvancementChantierStyled = styled.div`
   
   @media print {
     &.layout--dept {
-      grid-template-areas: "dept reg nat";
-      grid-template-columns: 1fr 1fr 2fr;
+      grid-template-areas: "dept reg nat nat";
+      grid-template-columns: 1fr 1fr 2fr 2fr;
     }
 
     &.layout--reg {

@@ -31,13 +31,13 @@ export default function useCartographie() {
   ): CartographieTerritoires {
     return {
       territoires: territoiresÀTracer.map(territoire => ({
-        codeInsee: territoire.codeInsee,
+        codeInsee: territoire.code,
         code: territoire.code,
-        remplissage: données[territoire.codeInsee]?.remplissage ?? '#bababa', // TODO où gérer ce undefined ?
-        libellé: données[territoire.codeInsee]?.libellé ?? '-', // TODO où gérer ce undefined ?
-        contenuInfoBulle: données[territoire.codeInsee].contenu,
+        remplissage: données[territoire.code]?.remplissage ?? '#bababa', // TODO où gérer ce undefined ?
+        libellé: données[territoire.code]?.libellé ?? '-', // TODO où gérer ce undefined ?
+        contenuInfoBulle: données[territoire.code].contenu,
         estInteractif: territoire.accèsLecture,
-        estApplicable: données[territoire.codeInsee].estApplicable,
+        estApplicable: données[territoire.code].estApplicable,
       })),
       frontières: frontièresÀTracer.map(frontière => ({
         code: frontière.code,

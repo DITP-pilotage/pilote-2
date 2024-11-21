@@ -11,7 +11,6 @@ import {
   DétailsIndicateurTerritoire,
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 interface IndicateursProps {
@@ -24,6 +23,7 @@ interface IndicateursProps {
   estAutoriseAProposerUneValeurActuelle?: boolean
   territoireCode: string
   territoiresCompares: string[]
+  mailleQuery: MailleInterne
   mailleSelectionnee: MailleInterne
   alerteMiseAJourIndicateur: boolean
   mailsDirecteursProjets: string[]
@@ -39,19 +39,18 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   estAutoriseAProposerUneValeurActuelle = false,
   territoireCode,
   territoiresCompares,
+  mailleQuery,
   mailleSelectionnee,
   alerteMiseAJourIndicateur,
   mailsDirecteursProjets,
 }) => {
-
-  const { codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
 
   if (indicateurs.length === 0) {
     return null;
   }
 
   const { data: sousIndicateursDisponibles } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_SOUS_INDICATEURS' });
-  const listeIndicateursParent = !!sousIndicateursDisponibles ? 
+  const listeIndicateursParent = !!sousIndicateursDisponibles ?
     indicateurs.filter(indicateur => !indicateur.parentId) :
     indicateurs;
 
@@ -86,9 +85,9 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                 </Titre>
                 {
                   indicateursDeCetteRubrique
-                    .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][codeInsee]?.pondération, détailsIndicateurs[b.id][codeInsee]?.pondération))
+                    .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireCode]?.pondération, détailsIndicateurs[b.id][territoireCode]?.pondération))
                     .map(indicateur => {
-                      const listeSousIndicateurs = !!sousIndicateursDisponibles ? 
+                      const listeSousIndicateurs = !!sousIndicateursDisponibles ?
                         indicateurs.filter(ind => ind.parentId === indicateur.id) :
                         [];
                       return (
@@ -101,13 +100,14 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                           indicateur={indicateur}
                           key={indicateur.id}
                           listeSousIndicateurs={listeSousIndicateurs}
+                          mailleQuery={mailleQuery}
                           mailleSelectionnee={mailleSelectionnee}
                           mailsDirecteursProjets={mailsDirecteursProjets}
                           territoireCode={territoireCode}
                           territoiresCompares={territoiresCompares}
                         />
                       );
-                      
+
                     })
                 }
               </section>

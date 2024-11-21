@@ -15,7 +15,10 @@ import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTe
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { formaterDate } from '@/client/utils/date/date';
 import api from '@/server/infrastructure/api/trpc/api';
-import { filtresUtilisateursActifsStore } from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
+import {
+  filtresUtilisateursActifsStore,
+  actions as actionsFiltresUtilisateursStore,
+} from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
 import { UtilisateurListeGestionContrat } from '@/server/app/contrats/UtilisateurListeGestionContrat';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
@@ -41,7 +44,7 @@ const colonnes = [
     header: 'Fonction',
     cell: props => props.getValue(),
   }),
-  reactTableColonnesHelper.accessor(row => `${ formaterDate(row.dateModification, 'DD/MM/YYYY') } par ${ row.auteurModification }`, {
+  reactTableColonnesHelper.accessor(row => `${formaterDate(row.dateModification, 'DD/MM/YYYY')} par ${row.auteurModification}`, {
     header: 'Dernière modification',
     cell: props => props.getValue(),
     sortingFn: (a, b) => {
@@ -64,13 +67,33 @@ const colonnes = [
     header: 'Territoire',
     cell: props => props.getValue(),
   }),
+  reactTableColonnesHelper.accessor('statut', {
+    header: 'Actif',
+    cell: props => props.getValue() === 'desactive' ? (
+      <div className='flex justify-center'>
+        <span
+          aria-hidden='true'
+          className='fr-icon-close-circle-fill fr-icon-red'
+        />
+      </div>
+    ) : (
+      <div className='flex justify-center'>
+        <span
+          aria-hidden='true'
+          className='fr-icon-checkbox-circle-fill fr-icon-green'
+        />
+      </div>
+    ),
+  }),
 ];
 
 export default function useTableauPageAdminUtilisateurs() {
   const { data: session } = useSession();
   const filtresActifs = filtresUtilisateursActifsStore();
+  const { modifierÉtatDuFiltre } = actionsFiltresUtilisateursStore();
 
   const estAutoriseAVoirLaColonneTerritoire = [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session!.profil);
+  const peutConsulterLesUtilisateursDesactives = [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session!.profil);
 
   const [pagination, setPagination] = useQueryStates({
     pageIndex: parseAsInteger.withDefault(1),
@@ -133,7 +156,16 @@ export default function useTableauPageAdminUtilisateurs() {
       sorting,
       columnVisibility: {
         territoire: estAutoriseAVoirLaColonneTerritoire,
+        statut: peutConsulterLesUtilisateursDesactives,
       },
+    },
+    initialState: {
+      sorting: [
+        {
+          id: 'Dernière modification',
+          desc: true,
+        },
+      ],
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -151,5 +183,9 @@ export default function useTableauPageAdminUtilisateurs() {
     estEnChargement,
     valeurDeLaRecherche,
     changementDeLaRechercheCallback,
+    modifierÉtatDuFiltre,
+    filtresActifs,
+    setPagination,
+    peutConsulterLesUtilisateursDesactives,
   };
 }

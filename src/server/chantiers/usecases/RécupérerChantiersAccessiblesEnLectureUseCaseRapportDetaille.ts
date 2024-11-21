@@ -28,10 +28,10 @@ const appliquerFiltreTerritorialise = (chantier: ChantierRapportDetailleContrat,
   return mailleChantier !== 'nationale' ? chantier.estTerritorialisé || !!chantier.tauxAvancementDonnéeTerritorialisée[mailleChantier] || !!chantier.météoDonnéeTerritorialisée[mailleChantier] : true;
 };
 
-const appliquerFiltre = (mailleChantier: MailleChantierContrat, codeInsee: string, sessionProfil: ProfilCode) => {
+const appliquerFiltre = (mailleChantier: MailleChantierContrat, territoireCode: string, sessionProfil: ProfilCode) => {
 
   return (chantier: ChantierRapportDetailleContrat): boolean => {
-    return !!chantier.mailles[mailleChantier][codeInsee].estApplicable
+    return !!chantier.mailles[mailleChantier][territoireCode].estApplicable
       && appliquerFiltreDrom(chantier, sessionProfil, mailleChantier)
       && appliquerFiltreTerritorialise(chantier, mailleChantier);
   };
@@ -43,7 +43,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
     private readonly territoireRepository: TerritoireRepository,
   ) {}
 
-  async run(habilitations: Habilitations, profil: ProfilCode, territoireCode: string, maille: 'DEPT' | 'REG', mailleChantier: MailleChantierContrat, codeInseeSelectionne: string, ministères: Ministère[], axes: Axe[], filtres: FiltreQueryParams, sorting: SortingParams): Promise<ChantierRapportDetailleContrat[]> {
+  async run(habilitations: Habilitations, profil: ProfilCode, territoireCode: string, maille: 'DEPT' | 'REG', mailleChantier: MailleChantierContrat, ministères: Ministère[], axes: Axe[], filtres: FiltreQueryParams, sorting: SortingParams): Promise<ChantierRapportDetailleContrat[]> {
     const habilitation = new Habilitation(habilitations);
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
@@ -59,7 +59,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
 
     const [chantiersRowsMaille, territoires ] = await Promise.all([
       this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLecture, territoiresLecture, profil, maille, filtresPourChantier, sorting),
-      this.territoireRepository.récupérerTousNew(maille),
+      this.territoireRepository.récupérerTousNew(),
     ]);
 
     const init = chantiersRowsMaille.filter(chantier => chantier.territoire_code === territoireCode).reduce((acc, val) => {
@@ -71,7 +71,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
 
     const chantiersGroupésParId = groupBy<chantierPrisma>(chantiersRowsMaille, chantier => chantier.id, init);
     let chantiers = objectEntries(chantiersGroupésParId).map(([_, listeChantiers]) => presenterEnChantierRapportDetaille(territoireCode)(parseChantier(listeChantiers, territoires, ministères)))
-      .filter(appliquerFiltre(mailleChantier, codeInseeSelectionne, profil));
+      .filter(appliquerFiltre(mailleChantier, territoireCode, profil));
 
     if (profil === ProfilEnum.DROM) {
       chantiers = chantiers.map(chantier => {

@@ -17,7 +17,6 @@ import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
@@ -31,6 +30,7 @@ import {
   CartographieDonnéesMétéo,
 } from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo.interface';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import FiltresSélectionnés from './FiltresSélectionnés/FiltresSélectionnés';
 
 interface PageRapportDétailléProps {
@@ -40,9 +40,9 @@ interface PageRapportDétailléProps {
   indicateursGroupésParChantier: Record<string, Indicateur[]>
   détailsIndicateursGroupésParChantier: Record<Chantier['id'], DétailsIndicateurs>
   publicationsGroupéesParChantier: PublicationsGroupéesParChantier
-  mailleSélectionnée: 'départementale' | 'régionale'
+  mailleQuery: MailleInterne
+  mailleSelectionnee: MailleInterne
   mapChantierStatistiques: Map<string, AvancementChantierRapportDetaille>
-  codeInsee: CodeInsee
   territoireCode: string
   filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
@@ -65,9 +65,9 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   indicateursGroupésParChantier,
   détailsIndicateursGroupésParChantier,
   publicationsGroupéesParChantier,
-  mailleSélectionnée,
+  mailleQuery,
+  mailleSelectionnee,
   mapChantierStatistiques,
-  codeInsee,
   filtresComptesCalculés,
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
@@ -78,11 +78,10 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   mapDonnéesCartographieMétéo,
 }) => {
   const {
-    récupérerDétailsSurUnTerritoireAvecCodeInsee,
+    récupérerDétailsSurUnTerritoire,
   } = actionsTerritoiresStore();
 
-  // le filtre devrait être fait en server side avant d'arriver au front
-  const territoireSélectionné = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee, mailleSélectionnée);
+  const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const [afficherLesChantiers, setAfficherLesChantiers] = useState(false);
 
 
@@ -143,16 +142,14 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
               avancementsGlobauxTerritoriauxMoyens={avancementsGlobauxTerritoriauxMoyens}
               chantiers={chantiersFiltrés}
               filtresComptesCalculés={filtresComptesCalculés}
-              mailleSelectionnee={mailleSélectionnée}
+              mailleSelectionnee={mailleSelectionnee}
               répartitionMétéos={répartitionMétéos}
               territoireCode={territoireCode}
             />
             {
               afficherLesChantiers ? (
-                <>
-                  <div className='force-break-page' />
-                  <div className='chantiers'>
-                    {
+                <div className='chantiers'>
+                  {
                       chantiersFiltrés.map((chantier) => (
                         <RapportDétailléChantier
                           chantier={chantier}
@@ -163,7 +160,8 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
                           détailsIndicateurs={détailsIndicateursGroupésParChantier[chantier.id] ?? []}
                           indicateurs={indicateursGroupésParChantier[chantier.id] ?? []}
                           key={chantier.id}
-                          mailleSélectionnée={mailleSélectionnée}
+                          mailleQuery={mailleQuery}
+                          mailleSelectionnee={mailleSelectionnee}
                           mapChantierStatistiques={mapChantierStatistiques}
                           objectifs={publicationsGroupéesParChantier.objectifs[chantier.id] ?? []}
                           synthèseDesRésultats={publicationsGroupéesParChantier.synthèsesDesRésultats[chantier.id] ?? null}
@@ -172,8 +170,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
                         />
                       ))
                     }
-                  </div>
-                </>
+                </div>
               ) : null
             }
           </div>

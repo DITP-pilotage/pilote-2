@@ -24,6 +24,7 @@ import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
 
 const FicheIndicateur: FunctionComponent<FicheIndicateurProps> = ({
   indicateur,
+  informationHistorisationIndicateur,
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
   chantiers,
@@ -33,6 +34,7 @@ const FicheIndicateur: FunctionComponent<FicheIndicateurProps> = ({
       <div className='fr-mb-2w'>
         <SectionSelectionIndicateur
           estEnCoursDeModification={estEnCoursDeModification}
+          informationHistorisationIndicateur={informationHistorisationIndicateur}
         />
         <SectionTableauIndicateur indicateur={indicateur} />
         <section className='fr-accordion'>

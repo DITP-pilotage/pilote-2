@@ -1,4 +1,4 @@
-import { PrismaClient, objectif as ObjectifPrisma, type_objectif as TypeObjectifPrisma } from '@prisma/client';
+import { PrismaClient, objectif as ObjectifPrisma, type_objectif as TypeObjectifPrisma, utilisateur as UtilisateurPrisma } from '@prisma/client';
 import ObjectifRepository from '@/server/domain/chantier/objectif/ObjectifRepository.interface';
 import Objectif, { TypeObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
@@ -23,14 +23,15 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
     this.prisma = prisma;
   }
 
-  private mapperVersDomaine(objectif: ObjectifPrisma | null): Objectif {
+  private mapperVersDomaine(objectif: ObjectifPrisma & { auteur_objectif: UtilisateurPrisma | null } | null): Objectif {
     if (objectif === null) return null;
+    const auteurObjectif = objectif.auteur_objectif;
     return {
       id: objectif.id,
       type: NOMS_TYPES_OBJECTIFS[objectif.type],
       contenu: objectif.contenu,
       date: objectif.date.toISOString(),
-      auteur: objectif.auteur,
+      auteur: auteurObjectif ? `${auteurObjectif.prenom} ${auteurObjectif.nom}` : 'Auteur Inconnu',
     };
   }
 
@@ -40,6 +41,9 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
         chantier_id: chantierId,
         type: CODES_TYPES_OBJECTIFS[type],
       },
+      include: {
+        auteur_objectif: true,
+      },
       orderBy: { date: 'desc' },
     });
 
@@ -47,10 +51,13 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
   }
 
   async récupérerHistorique(chantierId: string, type: TypeObjectif): Promise<Objectif[]> {
-    const objectifs: ObjectifPrisma[] = await this.prisma.objectif.findMany({
+    const objectifs = await this.prisma.objectif.findMany({
       where: {
         chantier_id: chantierId,
         type: CODES_TYPES_OBJECTIFS[type],
+      },
+      include: {
+        auteur_objectif: true,
       },
       orderBy: { date: 'desc' },
     });
@@ -58,7 +65,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
     return objectifs.map(objectifDeLHistorique => this.mapperVersDomaine(objectifDeLHistorique));
   }
 
-  async créer(chantierId: string, id: string, contenu: string, auteur: string, type: TypeObjectif, date: Date): Promise<Objectif> {
+  async créer(chantierId: string, id: string, contenu: string, auteur_id: string, type: TypeObjectif, date: Date): Promise<Objectif> {
     const objectifCréé =  await this.prisma.objectif.create({
       data: {
         id: id,
@@ -66,16 +73,21 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
         contenu: contenu,
         type: CODES_TYPES_OBJECTIFS[type],
         date: date,
-        auteur: auteur,
-      } });
+        auteur_id: auteur_id,
+      },
+      include: {
+        auteur_objectif: true,
+      },
+    });
 
     return this.mapperVersDomaine(objectifCréé);
   }
 
   async récupérerLesPlusRécentsGroupésParChantier(chantiersIds: Chantier['id'][]) {
-    const objectifs = await this.prisma.$queryRaw<ObjectifPrisma[]>`
-      SELECT o.*
+    const objectifs = await this.prisma.$queryRaw<(ObjectifPrisma & { auteur_prenom: string, auteur_nom: string })[]>`
+      SELECT o.*, utilisateur.prenom as auteur_prenom, utilisateur.nom as auteur_nom
       FROM objectif o
+        LEFT JOIN utilisateur on utilisateur.id = o.auteur_id
         INNER JOIN (
           SELECT type, chantier_id, MAX(date) as maxdate
           FROM objectif
@@ -89,8 +101,16 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
 
     return groupByAndTransform(
       objectifs,
-      o => o.chantier_id,
-      (o: ObjectifPrisma) => this.mapperVersDomaine(o),
+      objectif => objectif.chantier_id,
+      objectif => {
+        return {
+          id: objectif.id,
+          type: NOMS_TYPES_OBJECTIFS[objectif.type],
+          contenu: objectif.contenu,
+          date: objectif.date.toISOString(),
+          auteur: objectif.auteur_id ? `${objectif.auteur_prenom} ${objectif.auteur_nom}` : 'Auteur Inconnu',        
+        };
+      },
     );
   }
 }

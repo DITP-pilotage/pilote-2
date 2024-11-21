@@ -7,9 +7,9 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 
 // eslint-disable-next-line unicorn/no-static-only-class
 export class Chantier {
-  static recupererStatistiqueListeChantier(chantiers: ChantierRapportDetailleContrat[] | ChantierAccueilContrat[], mailleChantier: Maille, codeInseeSelectionne: string) {
+  static recupererStatistiqueListeChantier(chantiers: ChantierRapportDetailleContrat[] | ChantierAccueilContrat[], mailleChantier: Maille, territoireCode: string) {
     return chantiers.reduce((acc, chantier) => {
-      const { météo, écart, tendance, avancement } = chantier.mailles[mailleChantier][codeInseeSelectionne];
+      const { météo, écart, tendance, avancement } = chantier.mailles[mailleChantier][territoireCode];
 
       acc.répartitionMétéos[météo] += 1;
       acc.filtresComptesCalculés = {

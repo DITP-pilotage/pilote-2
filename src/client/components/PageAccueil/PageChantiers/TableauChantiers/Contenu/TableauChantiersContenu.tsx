@@ -1,6 +1,7 @@
 import { Cell, flexRender, Table } from '@tanstack/react-table';
 import Link from 'next/link';
 import { FunctionComponent } from 'react';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { ChantierVueDEnsemble } from '@/server/domain/chantier/Chantier.interface';
 import {
   DonnéesTableauChantiers,
@@ -24,14 +25,15 @@ function afficherContenuDeLaCellule(cell: Cell<ChantierVueDEnsemble, unknown>) {
 interface TableauChantiersContenuProps {
   tableau: Table<DonnéesTableauChantiers>
   territoireCode: string
-  mailleSelectionnee: 'départementale' | 'régionale'
 }
 
 const TableauChantiersContenu: FunctionComponent<TableauChantiersContenuProps> = ({
   tableau,
   territoireCode,
-  mailleSelectionnee,
 }) => {
+
+  const [mailleSelectionnee] = useQueryState('maille', parseAsStringLiteral(['départementale', 'régionale']).withDefault('départementale'));
+
   return (
     <tbody>
       {

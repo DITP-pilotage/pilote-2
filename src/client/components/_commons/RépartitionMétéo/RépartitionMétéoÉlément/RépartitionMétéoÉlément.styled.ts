@@ -30,6 +30,10 @@ const RépartitionMétéoÉlémentStyled = styled.div<RépartitionMétéosÉlém
 
   .label {
     color: var(--text-action-high-grey);
+
+    @media print {
+      font-size: smaller;
+    }
   }
 `;
 

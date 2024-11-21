@@ -18,6 +18,8 @@ import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleContene
 import { MailleRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 import Alerte from '@/components/_commons/Alerte/Alerte';
+import SélecteurMaille
+  from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
 
 interface CartesProps {
   chantierMailles: MailleRapportDetailleContrat,
@@ -25,8 +27,9 @@ interface CartesProps {
   afficheCarteMétéo: boolean,
   estInteractif?: boolean,
   territoireCode: string,
-  mailleSelectionnee: MailleInterne
-  mailleSourceDonnees? : Maille | null
+  mailleQuery: MailleInterne
+  mailleSourceDonnees?: Maille | null
+  estAutoriseAVoirLeSelecteurDeMaille: boolean,
 }
 
 const Cartes: FunctionComponent<CartesProps> = ({
@@ -35,22 +38,23 @@ const Cartes: FunctionComponent<CartesProps> = ({
   afficheCarteMétéo,
   estInteractif = true,
   territoireCode,
-  mailleSelectionnee,
+  mailleQuery,
   mailleSourceDonnees,
+  estAutoriseAVoirLeSelecteurDeMaille,
 }) => {
   const pathname = '/chantier/[id]/[territoireCode]';
-  const { auClicTerritoireCallback } = useCartographie(territoireCode, mailleSelectionnee, pathname);
+  const { auClicTerritoireCallback } = useCartographie(territoireCode, pathname);
 
-  const donnéesCartographieAvancement = objectEntries(chantierMailles[mailleSelectionnee]).map(([codeInsee, territoire]) => ({
+  const donnéesCartographieAvancement = objectEntries(({ ...chantierMailles.départementale, ...chantierMailles.régionale })).map(([territoireCodeDonnee, territoire]) => ({
     valeur: territoire.avancement.global,
     valeurAnnuelle: territoire.avancement.annuel,
-    codeInsee: codeInsee,
+    territoireCode: territoireCodeDonnee as string,
     estApplicable: territoire.estApplicable,
   }));
 
-  const donnéesCartographieMétéo = objectEntries(chantierMailles[mailleSelectionnee]).map(([codeInsee, territoire]) => ({
+  const donnéesCartographieMétéo = objectEntries({ ...chantierMailles.départementale, ...chantierMailles.régionale }).map(([territoireCodeDonnee, territoire]) => ({
     valeur: territoire.météo,
-    codeInsee: codeInsee,
+    territoireCode: territoireCodeDonnee as string,
     estApplicable: territoire.estApplicable,
   }));
 
@@ -73,10 +77,18 @@ const Cartes: FunctionComponent<CartesProps> = ({
                     {INFOBULLE_CONTENUS.chantier.répartitionGéographiqueTauxAvancement}
                   </Infobulle>
                 </TitreInfobulleConteneur>
+                {
+                  estAutoriseAVoirLeSelecteurDeMaille ? (
+                    <SélecteurMaille
+                      mailleQuery={mailleQuery}
+                      pathname={pathname}
+                    />
+                  ) : null
+                }
                 <CartographieAvancement
                   auClicTerritoireCallback={auClicTerritoireCallback}
                   données={donnéesCartographieAvancement}
-                  mailleSelectionnee={mailleSelectionnee}
+                  mailleSelectionnee={mailleQuery}
                   options={{ estInteractif }}
                   pathname={pathname}
                   territoireCode={territoireCode}
@@ -84,11 +96,11 @@ const Cartes: FunctionComponent<CartesProps> = ({
                 />
                 {
                   mailleSourceDonnees === 'régionale' &&
-                    <Alerte
-                      classesSupplementaires='fr-mt-2w'
-                      message='Données régionales'
-                      type='info'
-                    />
+                  <Alerte
+                    classesSupplementaires='fr-mt-2w'
+                    message='Données régionales'
+                    type='info'
+                  />
                 }
               </section>
             </Bloc>
@@ -112,10 +124,18 @@ const Cartes: FunctionComponent<CartesProps> = ({
                     {INFOBULLE_CONTENUS.chantier.répartitionGéographiqueNiveauDeConfiance}
                   </Infobulle>
                 </TitreInfobulleConteneur>
+                {
+                  estAutoriseAVoirLeSelecteurDeMaille ? (
+                    <SélecteurMaille
+                      mailleQuery={mailleQuery}
+                      pathname={pathname}
+                    />
+                  ) : null
+                }
                 <CartographieMétéo
                   auClicTerritoireCallback={auClicTerritoireCallback}
                   données={donnéesCartographieMétéo}
-                  mailleSelectionnee={mailleSelectionnee}
+                  mailleSelectionnee={mailleQuery}
                   options={{ estInteractif }}
                   pathname={pathname}
                   territoireCode={territoireCode}

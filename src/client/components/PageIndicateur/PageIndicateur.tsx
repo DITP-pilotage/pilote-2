@@ -12,9 +12,13 @@ import Alerte from '@/components/_commons/Alerte/Alerte';
 import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
 import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
+import {
+  InformationDerniereModificationMetadataIndicateurContrat,
+} from '@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat';
 
 interface PageIndicateurProps {
   indicateur: MetadataParametrageIndicateurContrat,
+  informationHistorisationIndicateur: InformationDerniereModificationMetadataIndicateurContrat,
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
   estUneCréation: boolean
   modificationReussie: boolean
@@ -24,6 +28,7 @@ interface PageIndicateurProps {
 
 const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
   indicateur,
+  informationHistorisationIndicateur,
   mapInformationMetadataIndicateur,
   estUneCréation,
   modificationReussie,
@@ -154,6 +159,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
                     chantiers={chantiers}
                     estEnCoursDeModification={estUneCréation || estEnCoursDeModification}
                     indicateur={indicateur}
+                    informationHistorisationIndicateur={informationHistorisationIndicateur}
                     mapInformationMetadataIndicateur={mapInformationMetadataIndicateur}
                   />
                   {

@@ -1,4 +1,4 @@
-import { FunctionComponent, memo, useRef } from 'react';
+import { FunctionComponent, useRef } from 'react';
 import hachuresGrisBlanc from '@/client/constants/légendes/hachure/hachuresGrisBlanc';
 import {
   CartographieInfoBulle,
@@ -9,10 +9,11 @@ import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { CartographieSVGContrat } from '@/server/cartographie/app/contrats/CartographieSVGContrat';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
-import CartographieTerritoireSélectionné from './CartographieTerritoireSélectionné';
+import { CartographieTerritoireSélectionné } from './CartographieTerritoireSélectionné';
 import { useCartographieSVG } from './useCartographieSVG';
 
 interface CartographieSVGProps {
+  territoireCode: string,
   options: CartographieOptions,
   territoires: CartographieTerritoires['territoires'],
   frontières: CartographieTerritoires['frontières'],
@@ -26,7 +27,8 @@ const getTraceSvg = function (svgAsJson: CartographieSVGContrat, territoireCode:
   return pathCorrespondantAuTerritoireCode?.['attr-d'] || '';
 };
 
-const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
+export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
+  territoireCode,
   options,
   territoires,
   frontières,
@@ -81,7 +83,7 @@ const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
                     d={getTraceSvg(sourceSvgAsJson, territoire.code)}
                     fill={territoire.remplissage}
                     key={`territoire-${territoire.codeInsee}`}
-                    onClick={() => territoire.estApplicable && options.estInteractif && territoire.estInteractif && auClicTerritoireCallback(territoire.codeInsee, options.territoireSélectionnable)}
+                    onClick={() => territoire.estApplicable && options.estInteractif && territoire.estInteractif && auClicTerritoireCallback(territoire.code, options.territoireSélectionnable)}
                     onMouseEnter={() => {
                       if (options.estInteractif && territoire.libellé !== infoBulle?.libellé) {
                         setInfoBulle({
@@ -109,10 +111,7 @@ const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
             }
             {
               options.territoireSélectionnable ? (
-                <CartographieTerritoireSélectionné
-                  multiséléction={options.multiséléction}
-                  territoires={territoires}
-                />
+                <CartographieTerritoireSélectionné territoireCode={territoireCode} />
               ) : null
             }
           </g>
@@ -121,9 +120,3 @@ const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
     </CartographieSVGStyled>
   );
 };
-
-export default memo(CartographieSVG, (prevProps, nextProps) => (
-  prevProps.territoires === nextProps.territoires &&
-  prevProps.frontières === nextProps.frontières &&
-  prevProps.setInfoBulle === nextProps.setInfoBulle
-));

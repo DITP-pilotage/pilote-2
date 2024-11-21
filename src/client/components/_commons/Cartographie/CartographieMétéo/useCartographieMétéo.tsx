@@ -20,7 +20,7 @@ function déterminerRemplissage(valeur: Météo | null, élémentsDeLégende: Ca
 }
 
 export default function useCartographieMétéo(données: CartographieDonnéesMétéo, élémentsDeLégende: CartographieÉlémentsDeLégende) {
-  const { récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
+  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
   const légende = useMemo(() => {
     const tousApplicables: Boolean = données.every(d => d.estApplicable);
@@ -49,10 +49,10 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
   const donnéesCartographie = useMemo(() => {
     let donnéesFormatées: CartographieDonnées = {};
 
-    données.forEach(({ valeur, codeInsee, estApplicable }) => {
-      const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
+    données.forEach(({ valeur, territoireCode, estApplicable }) => {
+      const territoireGéographique = récupérerDétailsSurUnTerritoire(territoireCode);
 
-      donnéesFormatées[codeInsee] = {
+      donnéesFormatées[territoireCode] = {
         contenu: (
           <div className='fr-text--bold'>
             {estApplicable === false ? 'Non applicable' : libellésMétéos[valeur]}
@@ -65,7 +65,7 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
     });
 
     return donnéesFormatées;
-  }, [données, récupérerDétailsSurUnTerritoireAvecCodeInsee, élémentsDeLégende]);
+  }, [données, récupérerDétailsSurUnTerritoire, élémentsDeLégende]);
 
   return {
     légende,

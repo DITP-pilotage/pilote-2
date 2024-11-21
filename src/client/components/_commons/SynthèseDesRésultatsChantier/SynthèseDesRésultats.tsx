@@ -34,7 +34,10 @@ const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = (
 
   return (
     <SynthèseDesRésultatsStyled>
-      <Bloc titre={nomTerritoire}>
+      <Bloc
+        className='h-full'
+        titre={nomTerritoire}
+      >
         <div className='fr-py-1w'>
           {
             modeÉdition && modeÉcriture ?
@@ -97,7 +100,7 @@ const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = (
                                 aria-hidden='true'
                                 className='fr-icon-edit-line fr-mr-1w'
                               />
-                              { }
+                              {}
                               Modifier
                             </button>
                           ) : null

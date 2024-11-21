@@ -1,4 +1,4 @@
-import { PrismaClient, decision_strategique as DécisionStratégiquePrisma, type_decision_strategique as TypeDécisionStratégiquePrisma } from '@prisma/client';
+import { PrismaClient, decision_strategique as DécisionStratégiquePrisma, type_decision_strategique as TypeDécisionStratégiquePrisma, utilisateur } from '@prisma/client';
 import DécisionStratégique, { TypeDécisionStratégique } from '@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface';
 import DécisionStratégiqueRepository from '@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
@@ -18,13 +18,14 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
     this.prisma = prisma;
   }
   
-  private mapperVersDomaine(décisionStratégique: DécisionStratégiquePrisma): DécisionStratégique {
+  private mapperVersDomaine(décisionStratégique: DécisionStratégiquePrisma & { auteur_decision_strategique: utilisateur | null }): DécisionStratégique {
+    const auteurDecisionStrategique = décisionStratégique.auteur_decision_strategique;
     return {
       id: décisionStratégique.id,
       type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[décisionStratégique.type],
       contenu: décisionStratégique.contenu,
       date: décisionStratégique.date.toISOString(),
-      auteur: décisionStratégique.auteur,
+      auteur: auteurDecisionStrategique ? `${auteurDecisionStrategique.prenom} ${auteurDecisionStrategique.nom}` : 'Auteur Inconnu',
     };
   }
   
@@ -33,6 +34,9 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
       where: {
         chantier_id: chantierId,
       },
+      include: {
+        auteur_decision_strategique: true,
+      },
       orderBy: { date: 'desc' },
     });
   
@@ -40,9 +44,12 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
   }
 
   async récupérerHistorique(chantierId: string): Promise<DécisionStratégique[]> {
-    const décisionsStratégiques: DécisionStratégiquePrisma[] = await this.prisma.decision_strategique.findMany({
+    const décisionsStratégiques = await this.prisma.decision_strategique.findMany({
       where: {
         chantier_id: chantierId,
+      },
+      include: {
+        auteur_decision_strategique: true,
       },
       orderBy: { date: 'desc' },
     });
@@ -50,7 +57,7 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
     return décisionsStratégiques.map(décisionStratégique => this.mapperVersDomaine(décisionStratégique));
   }
 
-  async créer(chantierId: string, id: string, contenu: string, type: TypeDécisionStratégique, auteur: string, date: Date): Promise<DécisionStratégique> {
+  async créer(chantierId: string, id: string, contenu: string, type: TypeDécisionStratégique, auteur_id: string, date: Date): Promise<DécisionStratégique> {
     const décisionStratégiqueCréée = await this.prisma.decision_strategique.create({
       data: {
         id,
@@ -58,16 +65,21 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
         contenu,
         type: CODES_TYPES_DÉCISION_STRATÉGIQUE[type],
         date,
-        auteur,
-      } });
+        auteur_id,
+      },
+      include: {
+        auteur_decision_strategique: true,
+      },
+    });
 
     return this.mapperVersDomaine(décisionStratégiqueCréée);
   }
 
-  async récupérerLesPlusRécentesGroupéesParChantier(chantiersIds: Chantier['id'][]) {
-    const décisionsStratégiques = await this.prisma.$queryRaw<DécisionStratégiquePrisma[]>`
-        SELECT d.*
+  async récupérerLesPlusRécentesGroupéesParChantier(chantiersIds: Chantier['id'][]): Promise<Record<string, DécisionStratégique>> {
+    const décisionsStratégiques = await this.prisma.$queryRaw<(DécisionStratégiquePrisma & { prenom_auteur: string | null, nom_auteur: string | null })[]>`
+        SELECT d.*, utilisateur.prenom as prenom_auteur, utilisateur.nom as nom_auteur
         FROM decision_strategique d
+          LEFT JOIN utilisateur on utilisateur.id = d.auteur_id
           INNER JOIN (
             SELECT chantier_id, MAX(date) as maxdate
             FROM decision_strategique
@@ -82,7 +94,13 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
       décisionsStratégiques.map(décisionStratégique => (
         [
           décisionStratégique.chantier_id,
-          this.mapperVersDomaine(décisionStratégique),
+          {
+            id: décisionStratégique.id,
+            type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[décisionStratégique.type],
+            contenu: décisionStratégique.contenu,
+            date: décisionStratégique.date.toISOString(),
+            auteur: décisionStratégique.auteur_id ? `${décisionStratégique.prenom_auteur} ${décisionStratégique.nom_auteur}` : 'Auteur Inconnu',
+          },
         ]
       )),
     );

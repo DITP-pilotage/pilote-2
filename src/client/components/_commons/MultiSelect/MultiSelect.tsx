@@ -6,7 +6,15 @@ import MultiSelectStyled from './MultiSelect.styled';
 import useMultiSelect from './useMultiSelect';
 
 
-const MultiSelect: FunctionComponent<MultiSelectProps> = ({ suffixeLibellé, optionsGroupées, valeursSélectionnéesParDéfaut, changementValeursSélectionnéesCallback, label, afficherBoutonsSélection, desactive }) => {
+const MultiSelect: FunctionComponent<MultiSelectProps> = ({
+  suffixeLibellé,
+  optionsGroupées,
+  valeursSélectionnéesParDéfaut,
+  changementValeursSélectionnéesCallback,
+  label,
+  afficherBoutonsSélection,
+  desactive,
+}) => {
   const id = useId();
   const ref = useRef(null);
   const {
@@ -28,7 +36,7 @@ const MultiSelect: FunctionComponent<MultiSelectProps> = ({ suffixeLibellé, opt
         htmlFor={id}
       >
         {label}
-      </label> 
+      </label>
       {
         !!afficherBoutonsSélection && (
           <BoutonToutSélectionner
@@ -61,7 +69,7 @@ const MultiSelect: FunctionComponent<MultiSelectProps> = ({ suffixeLibellé, opt
           value={recherche}
         />
         {
-          optionsGroupéesFiltrées.map(groupe =>(
+          optionsGroupéesFiltrées.map(groupe => (
             <MultiSelectGroupe
               changementÉtatCallback={valeur => mettreÀJourLesValeursSélectionnées(valeur)}
               groupeOptions={groupe}

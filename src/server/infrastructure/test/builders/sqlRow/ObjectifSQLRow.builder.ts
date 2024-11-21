@@ -5,7 +5,7 @@ import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
 export default class ObjectifSQLRowBuilder {
   private _id: objectif['id'];
 
-  private _auteur: objectif['auteur'];
+  private _auteur_id: objectif['auteur_id'];
 
   private _type: objectif['type'];
 
@@ -19,7 +19,7 @@ export default class ObjectifSQLRowBuilder {
     const chantierGénéré = new ChantierBuilder().build();
 
     this._id = faker.datatype.uuid();
-    this._auteur = faker.name.fullName();
+    this._auteur_id = null;
     this._type = faker.helpers.arrayElement(['notre_ambition', 'deja_fait', 'a_faire']);
     this._contenu = faker.lorem.paragraph();
     this._date = faker.date.recent(60, '2023-05-01T00:00:00.000Z');
@@ -31,8 +31,8 @@ export default class ObjectifSQLRowBuilder {
     return this;
   }
 
-  avecAuteur(auteur: objectif['auteur']): ObjectifSQLRowBuilder {
-    this._auteur = auteur;
+  avecAuteurID(auteur_id: objectif['auteur_id']): ObjectifSQLRowBuilder {
+    this._auteur_id = auteur_id;
     return this;
   }
 
@@ -70,7 +70,7 @@ export default class ObjectifSQLRowBuilder {
   build(): Prisma.objectifCreateArgs['data'] {
     return {
       id: this._id,
-      auteur: this._auteur,
+      auteur_id: this._auteur_id,
       type: this._type,
       contenu: this._contenu,
       date: this._date,
