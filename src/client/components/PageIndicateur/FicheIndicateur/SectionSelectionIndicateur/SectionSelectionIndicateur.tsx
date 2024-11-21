@@ -6,6 +6,7 @@ import SélecteurIndicateurActif
 import {
   InformationDerniereModificationMetadataIndicateurContrat,
 } from '@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat';
+import { formaterDate } from '@/client/utils/date/date';
 
 interface SectionSelectionIndicateurProps {
   estEnCoursDeModification: boolean
@@ -29,7 +30,7 @@ const SectionSelectionIndicateur: FunctionComponent<SectionSelectionIndicateurPr
         <p
           className='fr-badge fr-badge--error fr-badge--no-icon'
         >
-          {`Dernière modification le ${informationHistorisationIndicateur.dateDerniereModification} par ${informationHistorisationIndicateur.auteurModification}`}
+          {`Dernière modification le ${formaterDate(informationHistorisationIndicateur.dateDerniereModification, 'DD/MM/YYYY')} par ${informationHistorisationIndicateur.auteurModification}`}
         </p>
       </div>
     </div>
