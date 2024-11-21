@@ -23,7 +23,8 @@ import {
 } from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
+import SélecteurMaille
+  from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
 import { useIndicateurDétails } from './useIndicateurDétails';
 
 interface IndicateurDétailsProps {
@@ -41,6 +42,7 @@ interface IndicateurDétailsProps {
   territoireCode: string
   territoiresCompares: string[]
   mailleSelectionnee: MailleInterne
+  mailleQuery: MailleInterne
   indicateurEstAjour: boolean
   mailsDirecteursProjets: string[]
 }
@@ -60,30 +62,32 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   territoireCode,
   territoiresCompares,
   mailleSelectionnee,
+  mailleQuery,
   indicateurEstAjour,
   mailsDirecteursProjets,
 }) => {
+  const pathname = '/chantier/[id]/[territoireCode]';
+
   const [futOuvert, setFutOuvert] = useState(false);
 
-  const { auClicTerritoireMultiSélectionCallback } = useCartographie(territoireCode, mailleSelectionnee, '/chantier/[id]/[territoireCode]');
+  const { auClicTerritoireMultiSélectionCallback } = useCartographie(territoireCode, pathname);
 
   const {
     donnéesCartographieAvancement,
     donnéesCartographieValeurActuelle,
     donnéesCartographieAvancementTerritorialisées,
     donnéesCartographieValeurActuelleTerritorialisées,
-  } = useIndicateurDétails(indicateur.id, futOuvert, mailleSelectionnee, detailsIndicateursTerritoire[indicateur.id]);
+    estAutoriseAVoirLeSelecteurDeMaille,
+  } = useIndicateurDétails(detailsIndicateursTerritoire[indicateur.id]);
 
   const indicateurSiTypeDeReformeEstChantier = futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle;
   const nomDefinitionDeLindicateur = estSousIndicateur ? 'Description du sous-indicateur et calendrier de mise à jour' : 'Description de l\'indicateur et calendrier de mise à jour';
   const nomRepartitionGeographiqueEtEvolution = 'Répartition géographique et évolution';
   const nomSousIndicateurs = 'Sous indicateurs';
 
-  const responsablesDonnees = indicateur.responsablesDonneesMails.length > 0 ? 
+  const responsablesDonnees = indicateur.responsablesDonneesMails.length > 0 ?
     indicateur.responsablesDonneesMails :
     mailsDirecteursProjets;
-
-  const { codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
 
   return (
     <div className='fr-accordions-group'>
@@ -116,7 +120,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       delaiDisponibilite={indicateur.delaiDisponibilite}
                       description={indicateur.description}
                       indicateurEstAjour={indicateurEstAjour}
-                      indicateurEstApplicable={détailsIndicateurs[indicateur.id][codeInsee]?.est_applicable}
+                      indicateurEstApplicable={détailsIndicateurs[indicateur.id][territoireCode]?.est_applicable}
                       indicateurId={indicateur.id}
                       indicateurNom={indicateur.nom}
                       modeDeCalcul={indicateur.modeDeCalcul}
@@ -151,7 +155,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
           <div className='fr-container'>
             <div className='fr-grid-row fr-grid-row--gutters fr-my-1w'>
               {
-                indicateurSiTypeDeReformeEstChantier && (donnéesCartographieAvancementTerritorialisées || chantierEstTerritorialisé) ?
+                indicateurSiTypeDeReformeEstChantier && (donnéesCartographieAvancementTerritorialisées || chantierEstTerritorialisé) ? (
                   <section className='fr-col-12 fr-col-xl-6'>
                     <Titre
                       baliseHtml='h5'
@@ -159,19 +163,30 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                     >
                       Répartition géographique de l'avancement 2026
                     </Titre>
+                    <div className='fr-grid-row fr-pb-2w fr-text--sm'>
+                      {
+                        estAutoriseAVoirLeSelecteurDeMaille ? (
+                          <SélecteurMaille
+                            mailleQuery={mailleQuery}
+                            pathname={pathname}
+                          />
+                        ) : null
+                      }
+                    </div>
                     <CartographieAvancement
                       auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
                       données={donnéesCartographieAvancement}
-                      mailleSelectionnee={mailleSelectionnee}
+                      mailleSelectionnee={mailleQuery}
                       options={{ multiséléction: true }}
                       pathname='/chantier/[id]/[territoireCode]'
                       territoireCode={territoireCode}
                       élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
                     />
-                  </section> : null
+                  </section>
+                ) : null
               }
               {
-                indicateurSiTypeDeReformeEstChantier && (donnéesCartographieValeurActuelleTerritorialisées || chantierEstTerritorialisé) ?
+                indicateurSiTypeDeReformeEstChantier && (donnéesCartographieValeurActuelleTerritorialisées || chantierEstTerritorialisé) ? (
                   <section className='fr-col-12 fr-col-xl-6'>
                     <Titre
                       baliseHtml='h5'
@@ -179,17 +194,28 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                     >
                       Répartition géographique de la valeur actuelle de l'indicateur
                     </Titre>
+                    {
+                      estAutoriseAVoirLeSelecteurDeMaille ? (
+                        <div className='fr-grid-row fr-pb-2w fr-text--sm'>
+                          <SélecteurMaille
+                            mailleQuery={mailleQuery}
+                            pathname={pathname}
+                          />
+                        </div>
+                      ) : null
+                    }
                     <CartographieValeurActuelle
                       auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
                       données={donnéesCartographieValeurActuelle}
-                      mailleSelectionnee={mailleSelectionnee}
+                      mailleSelectionnee={mailleQuery}
                       options={{ multiséléction: true }}
                       pathname='/chantier/[id]/[territoireCode]'
                       territoireCode={territoireCode}
                       unité={indicateur.unité}
                       élémentsDeLégende={ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE}
                     />
-                  </section> : null
+                  </section>
+                ) : null
               }
               {
                 // TODO(JOTA-02/08/2024): Supprimer indicateurDétailsParTerritoires[0]?.données une fois le refacto page chantier terminé
@@ -232,6 +258,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                 détailsIndicateurs={détailsIndicateurs}
                 estInteractif
                 listeSousIndicateurs={listeSousIndicateurs}
+                mailleQuery={mailleQuery}
                 mailleSelectionnee={mailleSelectionnee}
                 mailsDirecteursProjets={mailsDirecteursProjets}
                 territoireCode={territoireCode}

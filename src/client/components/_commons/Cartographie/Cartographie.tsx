@@ -1,4 +1,5 @@
 import { FunctionComponent, ReactNode, useState } from 'react';
+import { useRouter } from 'next/router';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import {
   CartographieInfoBulle,
@@ -11,7 +12,7 @@ import {
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { CartographieDonnées } from './Cartographie.interface';
 import BulleDInfo from './BulleDInfo/BulleDInfo';
-import CartographieSVG from './SVG/CartographieSVG';
+import { CartographieSVG } from './SVG/CartographieSVG';
 
 interface CartographieProps {
   options?: Partial<CartographieOptions>,
@@ -28,6 +29,9 @@ const Cartographie: FunctionComponent<CartographieProps> = ({
 }) => {
   const niveauDeMaille = mailleSélectionnéeTerritoiresStore();
   const départements = départementsTerritoiresStore();
+  const router = useRouter();
+
+  const territoireCode = router.query.territoireCode as string;
 
   const { optionsParDéfaut, déterminerRégionsÀTracer, créerTerritoires } = useCartographie();
 
@@ -68,6 +72,7 @@ const Cartographie: FunctionComponent<CartographieProps> = ({
         infoBulle={infoBulle}
         options={optionsEffectives}
         setInfoBulle={setInfoBulle}
+        territoireCode={territoireCode}
         territoires={territoiresEtFrontières.territoires}
       />
       {children}

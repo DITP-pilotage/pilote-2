@@ -20,7 +20,6 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
   données,
   ministèresDisponibles,
   territoireCode,
-  mailleSelectionnee,
   chantiersSontArchives,
 }) => {
 
@@ -34,13 +33,13 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
   const [estGroupe, setEstGroupe] = useQueryState('groupeParMinistere', parseAsBoolean.withDefault(false).withOptions({
     clearOnDefault: true,
   }));
-  
+
   const [, setPagination] = useQueryState('pageIndex', parseAsInteger.withDefault(1).withOptions({
     shallow: false,
   }));
 
   return (
-    <TableauChantiersStyled 
+    <TableauChantiersStyled
       chantiersArchives={chantiersSontArchives}
       className='fr-table fr-m-0 fr-p-0'
     >
@@ -92,7 +91,6 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
               ) : null
             }
               <TableauChantiersContenu
-                mailleSelectionnee={mailleSelectionnee}
                 tableau={tableau}
                 territoireCode={territoireCode}
               />

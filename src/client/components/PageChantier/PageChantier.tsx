@@ -56,6 +56,7 @@ interface PageChantierProps {
   territoireCode: string
   territoiresCompares: string[]
   mailleSelectionnee: MailleInterne
+  mailleQuery: MailleInterne
   synthèseDesRésultats: SynthèseDesRésultatsContrat
   commentaires: CommentaireChantierContrat
   objectifs: ObjectifChantierContrat
@@ -74,6 +75,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
   territoireCode,
   territoiresCompares,
   mailleSelectionnee,
+  mailleQuery,
   synthèseDesRésultats,
   commentaires,
   détailsIndicateurs,
@@ -100,6 +102,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
     estAutoriseAModifierLesPublications,
     estAutoriseAModifierLesObjectifs,
     estAutoriseAVoirLesAlertesMAJIndicateurs,
+    estAutoriseAVoirLeSelecteurDeMaille,
   } = usePageChantier(chantier, territoireSélectionné, territoireCode);
 
   const listeRubriques = listeRubriquesChantier(indicateurs.map(indicateur => indicateur.type), territoireSélectionné.maille);
@@ -109,8 +112,8 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
     return !val.estAJour && (val.pondération || 0) > 0 && val.est_applicable ? true : acc;
   }, false);
 
-  const mailleSourceDonnees = chantier.mailles[territoireSélectionné.maille][territoireSélectionné.codeInsee].mailleSourceDonnees;
-  
+  const mailleSourceDonnees = chantier.mailles[territoireSélectionné.maille][territoireCode].mailleSourceDonnees;
+
   return (
     <PageChantierStyled className='flex'>
       <BarreLatérale
@@ -130,9 +133,6 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
           }
           <SélecteursMaillesEtTerritoires
             chantierMailles={chantier.mailles}
-            estVisibleEnMobile={estVisibleEnMobile}
-            estVueMobile={estVueMobile}
-            mailleSelectionnee={mailleSelectionnee}
             pathname='/chantier/[id]/[territoireCode]'
             territoireCode={territoireCode}
           />
@@ -165,12 +165,13 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
           territoireCode={territoireCode}
         />
         {
-          !!alerteMiseAJourIndicateur &&
-          <BandeauInformationMajDonnees
-            bandeauType='WARNING'
-            message="un ou plusieurs indicateurs de cette politique prioritaire nécessitent au moins une mise à jour de leur valeur actuelle par l'équipe projet."
-            titre='Mise à jour des données requises : '
-          />
+          alerteMiseAJourIndicateur ? (
+            <BandeauInformationMajDonnees
+              bandeauType='WARNING'
+              message="un ou plusieurs indicateurs de cette politique prioritaire nécessitent au moins une mise à jour de leur valeur actuelle par l'équipe projet."
+              titre='Mise à jour des données requises : '
+            />
+          ) : null
         }
         {
           mailleSourceDonnees === 'régionale' &&
@@ -178,12 +179,13 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
             bandeauType='INFO'
             fermable={false}
           >
-            En l’absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le département.
+            En l’absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le
+            département.
           </BandeauInformation>
         }
         <div className='fr-container--fluid fr-py-2w fr-px-md-2w'>
           <div
-            className={`grid-template ${ territoireSélectionné.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg' }`}
+            className={`grid-template ${territoireSélectionné.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}
           >
             <section
               className='rubrique'
@@ -204,7 +206,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                         <Infobulle
                           idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'
                         >
-                          { INFOBULLE_CONTENUS.chantier.avancement.aucunIndicateur(territoireSélectionné.maille) }
+                          {INFOBULLE_CONTENUS.chantier.avancement.aucunIndicateur(territoireSélectionné.maille)}
                         </Infobulle>
                       ) : (
                         indicateurPondérations.length === 1
@@ -212,14 +214,14 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                             <Infobulle
                               idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'
                             >
-                              { INFOBULLE_CONTENUS.chantier.avancement.unSeulIndicateur(territoireSélectionné.maille, indicateurPondérations[0]) }
+                              {INFOBULLE_CONTENUS.chantier.avancement.unSeulIndicateur(territoireSélectionné.maille, indicateurPondérations[0])}
                             </Infobulle>
                           )
                           : (
                             <Infobulle
                               idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'
                             >
-                              { INFOBULLE_CONTENUS.chantier.avancement.plusieursIndicateurs(territoireSélectionné.maille, indicateurPondérations) }
+                              {INFOBULLE_CONTENUS.chantier.avancement.plusieursIndicateurs(territoireSélectionné.maille, indicateurPondérations)}
                             </Infobulle>
                           )
                       )
@@ -228,6 +230,8 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
               </TitreInfobulleConteneur>
               <AvancementChantier
                 avancements={avancements}
+                estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
+                mailleQuery={mailleQuery}
                 mailleSelectionnee={mailleSelectionnee}
                 territoireCode={territoireCode}
               />
@@ -245,7 +249,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   Météo et synthèse des résultats
                 </Titre>
                 <Infobulle idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'>
-                  { INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats }
+                  {INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats}
                 </Infobulle>
               </TitreInfobulleConteneur>
               <SynthèseDesRésultats
@@ -297,7 +301,8 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     afficheCarteAvancement={!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSelectionnee] || chantier.estTerritorialisé}
                     afficheCarteMétéo={!!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] || chantier.estTerritorialisé}
                     chantierMailles={chantier.mailles}
-                    mailleSelectionnee={mailleSelectionnee}
+                    estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
+                    mailleQuery={mailleQuery}
                     mailleSourceDonnees={mailleSourceDonnees}
                     territoireCode={territoireCode}
                   />
@@ -319,7 +324,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   Objectifs
                 </Titre>
                 <Infobulle idHtml='infobulle-chantier-objectifs'>
-                  { INFOBULLE_CONTENUS.chantier.objectifs }
+                  {INFOBULLE_CONTENUS.chantier.objectifs}
                 </Infobulle>
               </TitreInfobulleConteneur>
               <Objectifs
@@ -364,6 +369,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     estAutoriseAProposerUneValeurActuelle={estAutoriseAProposerUneValeurActuelle}
                     indicateurs={indicateurs}
                     listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
+                    mailleQuery={mailleQuery}
                     mailleSelectionnee={mailleSelectionnee}
                     mailsDirecteursProjets={chantier.responsables.directeursProjet.map(directeur => directeur.email).filter(Boolean)}
                     territoireCode={territoireCode}
@@ -389,7 +395,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                       Décisions stratégiques
                     </Titre>
                     <Infobulle idHtml='infobulle-chantier-décisionsStratégiques'>
-                      { INFOBULLE_CONTENUS.chantier.décisionsStratégiques }
+                      {INFOBULLE_CONTENUS.chantier.décisionsStratégiques}
                     </Infobulle>
                   </TitreInfobulleConteneur>
                   <DécisionsStratégiques

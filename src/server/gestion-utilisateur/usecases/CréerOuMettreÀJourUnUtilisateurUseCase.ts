@@ -35,7 +35,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     private readonly historisationModification: HistorisationModificationRepository,
   ) {}
 
-  async run(utilisateur: UtilisateurÀCréerOuMettreÀJour, auteur: string, utilisateurExistant: boolean, habilitations: Habilitations, profil: Profil | null): Promise<void> {
+  async run(utilisateur: UtilisateurÀCréerOuMettreÀJour, auteur: string, auteurId: string, utilisateurExistant: boolean, habilitations: Habilitations, profil: Profil | null): Promise<void> {
     const habilitationsFormatées = await this._définirLesHabilitations(utilisateur);
     let utilisateurAvantModification: Utilisateur | null = null;
 
@@ -48,7 +48,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
       utilisateurAvantModification = await this.utilisateurRepository.récupérer(utilisateur.email) as Utilisateur;
     }
 
-    await this.utilisateurRepository.créerOuMettreÀJour({ ...utilisateur, habilitations: habilitationsFormatées }, auteur);
+    await this.utilisateurRepository.créerOuMettreÀJour({ ...utilisateur, habilitations: habilitationsFormatées }, auteurId);
 
     const utilisateurApresExecution = await this.utilisateurRepository.récupérer(utilisateur.email) as Utilisateur;
 

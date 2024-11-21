@@ -1,9 +1,11 @@
 import { flexRender, Table } from '@tanstack/react-table';
 import { FunctionComponent } from 'react';
-import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
+import {
+  MetadataParametrageIndicateurInformationContrat,
+} from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
 
 interface TableauAdminIndicateursContenuProps {
-  tableau: Table<MetadataParametrageIndicateurContrat>
+  tableau: Table<MetadataParametrageIndicateurInformationContrat>
 }
 
 const TableauAdminIndicateursContenu: FunctionComponent<TableauAdminIndicateursContenuProps> = ({ tableau }) => {

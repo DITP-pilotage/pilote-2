@@ -29,7 +29,7 @@ const CartographieAvancement: FunctionComponent<CartographieAvancementProps> = (
   territoireCode,
   mailleSelectionnee,
 }) => {
-  const { donnéesCartographie, légende } = useCartographieAvancement(données, élémentsDeLégende, mailleSelectionnee);
+  const { donnéesCartographie, légende } = useCartographieAvancement(données, élémentsDeLégende);
 
   return (
     <Cartographie

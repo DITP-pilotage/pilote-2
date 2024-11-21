@@ -34,7 +34,7 @@ module.exports = async () => {
         maxWorkers: 1,
         transform: {
           "\\.yml$": "jest-transform-yaml",
-          '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
+          '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'], configFile: './tests/babel.config.json' }],
         },
         transformIgnorePatterns: [
           '/node_modules/(?!@keycloak|url-join|url-template|camelize-ts)',

@@ -55,6 +55,11 @@ const RapportDétailléChantierStyled = styled.section`
     .impression-section {
       break-inside: avoid;
     }
+
+    .impression-section-haut-de-page {
+      break-inside: avoid;
+      break-before: page;
+    }
   }
 `;
 

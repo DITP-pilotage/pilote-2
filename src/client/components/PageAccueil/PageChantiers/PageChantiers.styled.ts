@@ -11,6 +11,10 @@ const PageChantiersStyled = styled.main`
       flex-wrap: wrap;
     }
   }
+  
+  .fr-text--lg {
+    line-height: 1.5rem;
+  }
 
   .titre-gris {
     color: var(--text-disabled-grey);
@@ -23,6 +27,16 @@ const PageChantiersStyled = styled.main`
     
     .infobulle-bouton {
       color: var(--text-default-warning);
+    }
+  }
+
+  .repartition-selecteur-maille .tag-liste {
+    .fr-tag {
+      display: block;
+      min-width: 5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: normal;
     }
   }
 

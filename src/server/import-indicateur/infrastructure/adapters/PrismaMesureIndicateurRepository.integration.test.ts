@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import {
   PrismaMesureIndicateurRepository,
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurRepository';
@@ -7,6 +8,7 @@ import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/b
 import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { getContainer } from '@/server/dependances';
+import { prisma } from '@/server/db/prisma';
 
 describe('PrismaMesureIndicateurRepository', () => {
   let prismaRapportRepository: PrismaRapportRepository;
@@ -20,8 +22,23 @@ describe('PrismaMesureIndicateurRepository', () => {
     });
     it('doit sauvegarder les données', async () => {
       // GIVEN
+      const auteurId = randomUUID();
+      await prisma.utilisateur.create({
+        data: {
+          id: auteurId,
+          email: 'john.doe@test.com',
+          nom: 'John',
+          prenom: 'Doe',
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, auteurId);
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId('6cba829c-def8-4f21-9bb0-07bd5a36bd02')

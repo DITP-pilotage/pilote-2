@@ -1,5 +1,4 @@
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 export interface AvancementsStatistiquesAccueilContrat {
   global: {
@@ -18,7 +17,7 @@ export type RépartitionsMétéos = { ORAGE: number
   NUAGE: number
   SOLEIL: number
 };
-export type AvancementsGlobauxTerritoriauxMoyensContrat = { valeur: number | null, valeurAnnuelle: number | null, codeInsee: CodeInsee, estApplicable: boolean | null }[];
+export type AvancementsGlobauxTerritoriauxMoyensContrat = { valeur: number | null, valeurAnnuelle: number | null, territoireCode: string, estApplicable: boolean | null }[];
 
 export const presenterEnAvancementsStatistiquesAccueilContrat = (avancementsStatistiques: AvancementsStatistiques): AvancementsStatistiquesAccueilContrat => {
   return {

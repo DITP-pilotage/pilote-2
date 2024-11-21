@@ -28,10 +28,11 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
     .mutation(({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const auteur = ctx.session.user.email ?? '';
+      const auteur_id = ctx.session.user.id;
 
       if (input.typeDeRéforme === 'chantier') {
         const créerUneSynthèseDesRésultatsUseCase = new CréerUneSynthèseDesRésultatsUseCase(dependencies.getSynthèseDesRésultatsRepository(), dependencies.getChantierRepository());
-        return créerUneSynthèseDesRésultatsUseCase.run(input.réformeId, input.territoireCode, input.contenu, auteur, input.météo, ctx.session.habilitations);
+        return créerUneSynthèseDesRésultatsUseCase.run(input.réformeId, input.territoireCode, input.contenu, auteur_id, input.météo, ctx.session.habilitations);
       }
 
       if (input.typeDeRéforme === 'projet structurant') {

@@ -17,15 +17,13 @@ const RépartitionMétéoÉlément: FunctionComponent<RépartitionMétéoÉléme
       estArchive={estArchive}
       typeDeRéforme={typeDeRéforme}
     >
-      <div className='fr-grid-row'>
-        <MétéoPicto
-          météo={météo}
-        />
-      </div>
-      <p className='nombre-de-chantiers fr-grid-row fr-h1 fr-mb-0'>
+      <MétéoPicto
+        météo={météo}
+      />
+      <p className='nombre-de-chantiers fr-h1 fr-mb-0'>
         {nombreDeChantiers}
       </p>
-      <p className='label fr-grid-row fr-mb-0 fr-text--sm break-keep'>
+      <p className='label fr-mb-0 break-keep'>
         {libellésMétéos[météo]}
       </p>
     </RépartitionMétéoÉlémentStyled>

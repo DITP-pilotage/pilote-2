@@ -38,11 +38,12 @@ const PiedDePage: FunctionComponent<{}> = () => {
               className='fr-footer__bottom-item'
               title='Accessibilité : non conforme'
             >
-              <span
+              <Link
                 className='fr-footer__bottom-link'
+                href='/accessibilite'
               >
                 Accessibilité : non conforme
-              </span>
+              </Link>
             </li>
             <li
               className='fr-footer__bottom-item'

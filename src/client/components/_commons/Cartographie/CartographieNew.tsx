@@ -4,10 +4,12 @@ import {
   CartographieInfoBulle,
   CartographieOptions,
 } from '@/components/_commons/Cartographie/useCartographie.interface';
-import { départementsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import {
+  départementsTerritoiresStore,
+} from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import BulleDInfo from './BulleDInfo/BulleDInfo';
-import CartographieSVG from './SVG/CartographieSVG';
+import { CartographieSVG } from './SVG/CartographieSVG';
 
 type CartographieDonnées = {
   [key in CodeInsee]: {
@@ -34,8 +36,8 @@ const Cartographie: FunctionComponent<CartographieProps> = ({
   children,
   auClicTerritoireCallback,
   territoireCode,
-  mailleSelectionnee,
   pathname,
+  mailleSelectionnee,
 }) => {
   const départements = départementsTerritoiresStore();
 
@@ -43,7 +45,9 @@ const Cartographie: FunctionComponent<CartographieProps> = ({
     optionsParDéfaut,
     déterminerRégionsÀTracer,
     créerTerritoires,
-  } = useCartographie(territoireCode, mailleSelectionnee, pathname);
+  } = useCartographie(territoireCode, pathname);
+
+  const territoireCodeAAfficher = territoireCode;
 
   const [sourisPosition, setSourisPosition] = useState({ x: 0, y: 0 });
   const [infoBulle, setInfoBulle] = useState<CartographieInfoBulle | null>(null);
@@ -82,6 +86,7 @@ const Cartographie: FunctionComponent<CartographieProps> = ({
         infoBulle={infoBulle}
         options={optionsEffectives}
         setInfoBulle={setInfoBulle}
+        territoireCode={territoireCodeAAfficher}
         territoires={territoiresEtFrontières.territoires}
       />
       {children}

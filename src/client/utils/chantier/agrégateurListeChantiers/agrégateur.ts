@@ -5,13 +5,12 @@ import {
   valeurMaximum,
   valeurMinimum,
 } from '@/client/utils/statistiques/statistiques';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import départements from '@/client/constants/départements.json';
 import régions from '@/client/constants/régions.json';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
-import { Agrégat, AgrégatParTerritoire } from './agrégateur.interface';
+import { AgrégatParTerritoire } from './agrégateur.interface';
 
 type AvancementRegroupementDonnéesBrutes = {
   global: (number | null) [],
@@ -21,30 +20,36 @@ type AvancementRegroupementDonnéesBrutes = {
 export class AgrégateurListeChantiersParTerritoire {
   private readonly agrégat: AgrégatParTerritoire;
 
-  private readonly mailleSelectionnee: 'départementale' | 'régionale';
-
-  constructor(private chantiers: (ChantierAccueilContrat | ChantierRapportDetailleContrat)[], mailleSelectionnee: 'départementale' | 'régionale') {
+  constructor(private chantiers: (ChantierAccueilContrat | ChantierRapportDetailleContrat)[]) {
     this.chantiers = chantiers;
-    this.mailleSelectionnee = mailleSelectionnee;
-    this.agrégat = this._créerAgrégatInitial(mailleSelectionnee);
+    this.agrégat = this._créerAgrégatInitial();
   }
 
   agréger() {
     this._répartirLesDonnéesBrutesPourChaqueTerritoire();
     this._calculerLesRépartitions('nationale');
-    this._calculerLesRépartitions(this.mailleSelectionnee);
+    this._calculerLesRépartitions('départementale');
+    this._calculerLesRépartitions('régionale');
     return this.agrégat;
   }
 
   private _répartirLesDonnéesBrutesPourChaqueTerritoire() {
     this.chantiers.forEach(chantier => {
-      objectEntries(chantier.mailles['nationale']).forEach(([codeInsee, donnéesTerritoire]) => {
-        this.agrégat['nationale'].territoires[codeInsee].donnéesBrutes.avancements = [...this.agrégat['nationale'].territoires[codeInsee].donnéesBrutes.avancements, donnéesTerritoire.avancement];
+      objectEntries(chantier.mailles['nationale']).forEach(([territoireCode, donnéesTerritoire]) => {
+        if (donnéesTerritoire.estApplicable) {
+          this.agrégat['nationale'].territoires[territoireCode].donnéesBrutes.avancements = [...this.agrégat['nationale'].territoires[territoireCode].donnéesBrutes.avancements, donnéesTerritoire.avancement];
+        }
       });
-      objectEntries(chantier.mailles[this.mailleSelectionnee]).forEach(([codeInsee, donnéesTerritoire]) => {
-        this.agrégat[this.mailleSelectionnee].territoires[codeInsee].donnéesBrutes.avancements = [...this.agrégat[this.mailleSelectionnee].territoires[codeInsee].donnéesBrutes.avancements, donnéesTerritoire.avancement];
+      objectEntries(chantier.mailles['départementale']).forEach(([territoireCode, donnéesTerritoire]) => {
+        if (donnéesTerritoire.estApplicable) {
+          this.agrégat['départementale'].territoires[territoireCode].donnéesBrutes.avancements = [...this.agrégat['départementale'].territoires[territoireCode].donnéesBrutes.avancements, donnéesTerritoire.avancement];
+        }
       });
-
+      objectEntries(chantier.mailles['régionale']).forEach(([territoireCode, donnéesTerritoire]) => {
+        if (donnéesTerritoire.estApplicable) {
+          this.agrégat['régionale'].territoires[territoireCode].donnéesBrutes.avancements = [...this.agrégat['régionale'].territoires[territoireCode].donnéesBrutes.avancements, donnéesTerritoire.avancement];
+        }
+      });
     });
   }
 
@@ -53,30 +58,29 @@ export class AgrégateurListeChantiersParTerritoire {
       global: [],
       annuel: [],
     };
-    objectEntries(this.agrégat[maille].territoires).forEach(([codeInsee, donnéesTerritoire]) => {
-      let avancementsPourCeCodeInsee: AvancementRegroupementDonnéesBrutes = {
+    objectEntries(this.agrégat[maille].territoires).forEach(([territoireCode, donnéesTerritoire]) => {
+      let avancementsPourCeTerritoireCode: AvancementRegroupementDonnéesBrutes = {
         global: [],
         annuel: [],
       };
-      avancementsPourCeCodeInsee.global = donnéesTerritoire.donnéesBrutes.avancements.map(avancement => avancement.global);
-      avancementsPourCeCodeInsee.annuel = donnéesTerritoire.donnéesBrutes.avancements.map(avancement => avancement.annuel);
-      avancementsPourCetteMaille.global = [...avancementsPourCetteMaille.global, ...avancementsPourCeCodeInsee.global];
-      avancementsPourCetteMaille.annuel = [...avancementsPourCetteMaille.annuel, ...avancementsPourCeCodeInsee.annuel];
+      avancementsPourCeTerritoireCode.global = donnéesTerritoire.donnéesBrutes.avancements.map(avancement => avancement.global);
+      avancementsPourCeTerritoireCode.annuel = donnéesTerritoire.donnéesBrutes.avancements.map(avancement => avancement.annuel);
+      avancementsPourCetteMaille.global = [...avancementsPourCetteMaille.global, ...avancementsPourCeTerritoireCode.global];
+      avancementsPourCetteMaille.annuel = [...avancementsPourCetteMaille.annuel, ...avancementsPourCeTerritoireCode.annuel];
 
-      this._calculerLaRépartitionDesAvancementsParTerritoire(maille, avancementsPourCeCodeInsee, codeInsee);
+      this._calculerLaRépartitionDesAvancementsParTerritoire(maille, avancementsPourCeTerritoireCode, territoireCode);
     });
   
     this._calculerLaRépartitionDesAvancementsParMaille(maille, avancementsPourCetteMaille);
   }
 
-  private _calculerLaRépartitionDesAvancementsParTerritoire(maille: Maille, avancements: AvancementRegroupementDonnéesBrutes, codeInsee: string) {
-    this.agrégat[maille].territoires[codeInsee].répartition.avancements.global.minimum = valeurMinimum(avancements.global);
-    this.agrégat[maille].territoires[codeInsee].répartition.avancements.global.maximum = valeurMaximum(avancements.global);
-    this.agrégat[maille].territoires[codeInsee].répartition.avancements.global.moyenne = calculerMoyenne(avancements.global);
-    this.agrégat[maille].territoires[codeInsee].répartition.avancements.global.médiane = calculerMédiane(avancements.global);
+  private _calculerLaRépartitionDesAvancementsParTerritoire(maille: Maille, avancements: AvancementRegroupementDonnéesBrutes, territoireCode: string) {
+    this.agrégat[maille].territoires[territoireCode].répartition.avancements.global.minimum = valeurMinimum(avancements.global);
+    this.agrégat[maille].territoires[territoireCode].répartition.avancements.global.maximum = valeurMaximum(avancements.global);
+    this.agrégat[maille].territoires[territoireCode].répartition.avancements.global.moyenne = calculerMoyenne(avancements.global);
+    this.agrégat[maille].territoires[territoireCode].répartition.avancements.global.médiane = calculerMédiane(avancements.global);
 
-    this.agrégat[maille].territoires[codeInsee].répartition.avancements.annuel.moyenne = calculerMoyenne(avancements.annuel);
-
+    this.agrégat[maille].territoires[territoireCode].répartition.avancements.annuel.moyenne = calculerMoyenne(avancements.annuel);
   }
 
   private _calculerLaRépartitionDesAvancementsParMaille(maille: Maille, avancements: AvancementRegroupementDonnéesBrutes) {
@@ -110,7 +114,7 @@ export class AgrégateurListeChantiersParTerritoire {
     };
   }
 
-  private _créerDonnéesInitialesPourUneMaille(listeDeCodeInsee: CodeInsee[]) {
+  private _créerDonnéesInitialesPourUneMaille(listeDeTerritoireCode: string[]) {
     return {
       répartition: {
         avancements: {
@@ -126,9 +130,9 @@ export class AgrégateurListeChantiersParTerritoire {
         },
       },
       territoires: Object.fromEntries(
-        listeDeCodeInsee.map(codeInsee => (
+        listeDeTerritoireCode.map(territoireCode => (
           [
-            codeInsee,
+            territoireCode,
             this._créerDonnéesInitialesPourUnTerritoire(),
           ]
         )),
@@ -136,15 +140,11 @@ export class AgrégateurListeChantiersParTerritoire {
     };
   }
 
-  private _créerAgrégatInitial(mailleSelectionnee: 'départementale' | 'régionale'): AgrégatParTerritoire {
-    return mailleSelectionnee === 'départementale' ? {
-      nationale: this._créerDonnéesInitialesPourUneMaille(['FR']),
-      départementale: this._créerDonnéesInitialesPourUneMaille(départements.map(département => département.codeInsee)),
-      régionale: {} as Agrégat,
-    } : {
-      nationale: this._créerDonnéesInitialesPourUneMaille(['FR']),
-      départementale: {} as Agrégat,
-      régionale: this._créerDonnéesInitialesPourUneMaille(régions.map(région => région.codeInsee)),
+  private _créerAgrégatInitial(): AgrégatParTerritoire {
+    return {
+      nationale: this._créerDonnéesInitialesPourUneMaille(['NAT-FR']),
+      départementale: this._créerDonnéesInitialesPourUneMaille(départements.map(département => département.territoireCode)),
+      régionale: this._créerDonnéesInitialesPourUneMaille(régions.map(région => région.territoireCode)),
     };
   }
 }

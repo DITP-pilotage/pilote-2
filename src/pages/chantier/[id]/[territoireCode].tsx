@@ -49,11 +49,13 @@ import {
   ListerDétailsIndicateurTerritoireUseCase,
 } from '@/server/usecase/chantier/indicateur/ListerDétailsIndicateurTerritoireUseCase';
 import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 interface NextPageChantierProps {
   indicateurs: Indicateur[],
   chantierInformations: ChantierInformations,
-  mailleSelectionnee: 'départementale' | 'régionale'
+  mailleQuery: MailleInterne
+  mailleSelectionnee: MailleInterne
   territoireCode: string
   territoiresCompares: string[]
   profil: ProfilCode
@@ -84,11 +86,20 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
   assert(query.territoireCode, 'Le territoire code est obligatoire pour afficher la page d\'accueil');
   assert(session, 'Vous devez être authentifié pour accéder a cette page');
   assert(session.habilitations, 'La session ne dispose d\'aucune habilitation');
+
   const territoireCode = query.territoireCode as string;
   const territoiresCompares = (query.territoiresCompares || '').length > 0 ? (query.territoiresCompares as string).split(',').filter(Boolean) : [];
 
-  const { maille } = territoireCodeVersMailleCodeInsee(territoireCode);
-  const mailleSelectionnee = query.maille as 'départementale' | 'régionale' ?? (maille === 'REG' ? 'régionale' : 'départementale');
+  const {
+    maille: mailleTerritoireSelectionnee,
+  } = territoireCodeVersMailleCodeInsee(territoireCode);
+
+  const mailleQuery = query.maille as 'départementale' | 'régionale' || 'départementale';
+
+  const mailleSelectionnee = mailleTerritoireSelectionnee === 'NAT'
+    ? mailleQuery
+    : mailleTerritoireSelectionnee === 'DEPT' ? 'départementale' : 'régionale';
+
 
   const territoireRepository = dependencies.getTerritoireRepository();
   const territoireSélectionné = await territoireRepository.récupérer(territoireCode);
@@ -117,15 +128,15 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
       new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getObjectifRepository()).run([chantierId], session.habilitations),
       new RécupérerDécisionStratégiqueLaPlusRécenteUseCase(dependencies.getDécisionStratégiqueRepository()).run(chantierId, session.habilitations).catch(() => null),
       new RécupérerDétailsIndicateursUseCase(dependencies.getIndicateurRepository()).run(chantierId, territoireCodes, session.habilitations),
-      new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository()).run([chantierId], mailleSelectionnee, session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat),
+      new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository()).run([chantierId], mailleQuery, session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat),
       new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_PPG_ARCHIVE' }),
     ]);
 
     assert(valeurFFPpgArchive || chantier.statut !== 'ARCHIVE', 'La page n\'est pas disponible');
-    
-    const chantierTerritoireSélectionné = chantier?.mailles[territoireSélectionné?.maille ?? 'nationale'][territoireSélectionné?.codeInsee ?? 'FR'];
 
-    if (!chantierTerritoireSélectionné.estApplicable || (!chantier.estTerritorialisé && maille !== 'NAT')) {
+    const chantierTerritoireSélectionné = chantier.mailles[territoireSélectionné?.maille ?? 'nationale'][territoireCode];
+
+    if (!chantierTerritoireSélectionné.estApplicable || (!chantier.estTerritorialisé && mailleTerritoireSelectionnee !== 'NAT')) {
       return {
         redirect: {
           destination: `/chantier/${chantierId}/NAT-FR`,
@@ -146,9 +157,9 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
       ? []
       : (
         indicateurs
-          .sort((indicateurA, indicateurB) => comparerIndicateur(indicateurA, indicateurB, détailsIndicateurs[indicateurA.id][territoireSélectionné.codeInsee]?.pondération ?? null, détailsIndicateurs[indicateurB.id][territoireSélectionné.codeInsee]?.pondération ?? null))
+          .sort((indicateurA, indicateurB) => comparerIndicateur(indicateurA, indicateurB, détailsIndicateurs[indicateurA.id][territoireCode]?.pondération ?? null, détailsIndicateurs[indicateurB.id][territoireCode]?.pondération ?? null))
           .map(indicateur => ({
-            pondération: convertitEnPondération(détailsIndicateurs[indicateur.id][territoireSélectionné.codeInsee]?.pondération),
+            pondération: convertitEnPondération(détailsIndicateurs[indicateur.id][territoireCode]?.pondération),
             nom: indicateur.nom,
             type: indicateur.type,
           }))
@@ -160,7 +171,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
 
     const listeIndicateurId = indicateurs.map(indicateur => indicateur.id);
 
-    const detailsIndicateursTerritoire = await new ListerDétailsIndicateurTerritoireUseCase(dependencies.getIndicateurRepository()).run(listeIndicateurId, chantierId, mailleSelectionnee, session.habilitations, session.profil);
+    const detailsIndicateursTerritoire = await new ListerDétailsIndicateurTerritoireUseCase(dependencies.getIndicateurRepository()).run(listeIndicateurId, chantierId, session.habilitations, session.profil);
 
     return {
       props: {
@@ -174,6 +185,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
         territoiresCompares,
         profil: session.profil,
         mailleSelectionnee,
+        mailleQuery,
         synthèseDesRésultats,
         commentaires,
         objectifs,
@@ -203,6 +215,7 @@ const NextPageChantier: FunctionComponent<InferGetServerSidePropsType<typeof get
   territoiresCompares,
   profil,
   mailleSelectionnee,
+  mailleQuery,
   synthèseDesRésultats,
   commentaires,
   objectifs,
@@ -228,8 +241,9 @@ const NextPageChantier: FunctionComponent<InferGetServerSidePropsType<typeof get
       {
         estTerritoireNational && estUnProfilDROM && !chantierInformations.estUnChantierDROM ? (
           <ChoixTerritoire
-            chantierId={chantierInformations.id}
-            mailleSélectionnée={mailleSelectionnee}
+            chantier={chantier}
+            mailleQuery={mailleQuery}
+            mailleSelectionnee={mailleSelectionnee}
             territoireCode={territoireCode}
           />
         ) : (
@@ -244,6 +258,7 @@ const NextPageChantier: FunctionComponent<InferGetServerSidePropsType<typeof get
             indicateurs={indicateurs}
             listeCoordinateursTerritorials={listeCoordinateursTerritorials}
             listeResponsablesLocaux={listeResponsablesLocaux}
+            mailleQuery={mailleQuery}
             mailleSelectionnee={mailleSelectionnee}
             objectifs={objectifs}
             synthèseDesRésultats={synthèseDesRésultats}

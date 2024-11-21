@@ -20,13 +20,13 @@ loadEnvConfig(projectDir);  // ⚠️ À appeler avant nos imports, because Conf
 
 /**
  - Format CSV attendu:
-      nom,prénom,email,profil,scope,territoires,périmètreIds,chantierIds
-      Dupont,Jean,reg.sgar002@example.com,PREFET_REGION,lecture,REG-12,,
-      Dupont,Jean,reg.sgar002@example.com,PREFET_REGION,saisieCommentaire,REG-12,,
-      Dupont,Jean,reg.sgar002@example.com,PREFET_REGION,saisieIndicateur,REG-12,,
-      Durand,Pierre,dp.dir@example.com,DIR_PROJET,lecture,TOUS,,CH-001|CH-002
-      Durand,Pierre,dp.dir@example.com,DIR_PROJET,saisieCommentaire,NAT-FR,,CH-001
-      Durand,Pierre,dp.dir@example.com,DIR_PROJET,saisieIndicateur,TOUS,,
+      nom,prénom,email,profil,scope,territoires,périmètreIds,chantierIds,auteurEmail
+      Dupont,Jean,reg.sgar002@example.com,PREFET_REGION,lecture,REG-12,,,ditp.admin@example.com
+      Dupont,Jean,reg.sgar002@example.com,PREFET_REGION,saisieCommentaire,REG-12,,,
+      Dupont,Jean,reg.sgar002@example.com,PREFET_REGION,saisieIndicateur,REG-12,,,
+      Durand,Pierre,dp.dir@example.com,DIR_PROJET,lecture,TOUS,,CH-001|CH-002,
+      Durand,Pierre,dp.dir@example.com,DIR_PROJET,saisieCommentaire,NAT-FR,,CH-001,
+      Durand,Pierre,dp.dir@example.com,DIR_PROJET,saisieIndicateur,TOUS,,,
 
  - Comment tester l'import d'un fichier CSV en local : 
       S'assurer d'avoir les variables d'env IMPORT_CLIENT_ID - IMPORT_CLIENT_SECRET - IMPORT_KEYCLOAK_URL configurées
@@ -78,6 +78,7 @@ function ecrireCsvUtilisateurs(outputName: string, utilisateurFormatCsv: CsvReco
       { id: 'territoires', title: 'territoires' },
       { id: 'périmètreIds', title: 'périmètreIds' },
       { id: 'chantierIds', title: 'chantierIds' },
+      { id: 'auteurEmail', title: 'auteurEmail' },
     ],
   });
   
@@ -121,7 +122,7 @@ async function main() {
     }
   }
 
-  await new ImporterDesUtilisateursUseCase(utilisateurRepository, utilisateurIAMRepository, territoireRepository).run(utilisateurs, 'Import CSV');
+  await new ImporterDesUtilisateursUseCase(utilisateurRepository, utilisateurIAMRepository, territoireRepository).run(utilisateurs);
 }
 
 const isMain = eval('require.main === module');

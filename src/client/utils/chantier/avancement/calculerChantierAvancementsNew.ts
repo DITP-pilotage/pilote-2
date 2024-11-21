@@ -15,20 +15,19 @@ export default function calculerChantierAvancements(
   const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire(chantier).agréger();
 
   const avancementRégional = ( typeTauxAvancement: 'global' | 'annuel' ) => {
-    const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
-    const codeInseeTerritoireParent = territoireCodeParent ? territoireCodeVersMailleCodeInsee(territoireCodeParent).codeInsee : null;
+    const { maille } = territoireCodeVersMailleCodeInsee(territoireCode);
 
     return maille === 'REG'
-      ? donnéesTerritoiresAgrégées.régionale.territoires[codeInsee].répartition.avancements[typeTauxAvancement]
-      : maille === 'DEPT' && codeInseeTerritoireParent
-        ? donnéesTerritoiresAgrégées.régionale.territoires[codeInseeTerritoireParent].répartition.avancements[typeTauxAvancement]
+      ? donnéesTerritoiresAgrégées.régionale.territoires[territoireCode].répartition.avancements[typeTauxAvancement]
+      : maille === 'DEPT' && territoireCodeParent
+        ? donnéesTerritoiresAgrégées.régionale.territoires[territoireCodeParent].répartition.avancements[typeTauxAvancement]
         : null;
   };
 
   const avancementDépartemental = ( typeTauxAvancement: 'global' | 'annuel' ) => {
-    const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+    const { maille } = territoireCodeVersMailleCodeInsee(territoireCode);
 
-    return maille === 'DEPT' ? donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[codeInsee].répartition.avancements[typeTauxAvancement] : null;
+    return maille === 'DEPT' ? donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[territoireCode].répartition.avancements[typeTauxAvancement] : null;
   };
 
   return {

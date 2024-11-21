@@ -9,12 +9,12 @@ export default class CréerUnObjectifUseCase {
     private readonly objectifRepository: ObjectifRepository,
   ) {}
 
-  async run(chantierId: string, contenu: string, auteur: string, type: TypeObjectif, habilitations: Habilitations): Promise<Objectif> {
+  async run(chantierId: string, contenu: string, auteur_id: string, type: TypeObjectif, habilitations: Habilitations): Promise<Objectif> {
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnSaisieDesPublications(chantierId, 'NAT-FR');
 
     const date = new Date();
     const id = randomUUID();
-    return this.objectifRepository.créer(chantierId, id, contenu, auteur, type, date);
+    return this.objectifRepository.créer(chantierId, id, contenu, auteur_id, type, date);
   }
 }

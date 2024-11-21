@@ -1,20 +1,18 @@
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { formaterDate } from '@/client/utils/date/date';
-import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
 export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, territoireCode: string) {
-  const { codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
-  const dateDeMiseAJourIndicateur = formaterDate(détailsIndicateur[codeInsee]?.dateImport, 'DD/MM/YYYY') ?? null;
+  const dateDeMiseAJourIndicateur = formaterDate(détailsIndicateur[territoireCode]?.dateImport, 'DD/MM/YYYY') ?? null;
 
-  const dateProchaineDateMaj = formaterDate(détailsIndicateur[codeInsee]?.prochaineDateMaj, 'MM/YYYY') ?? null;
+  const dateProchaineDateMaj = formaterDate(détailsIndicateur[territoireCode]?.prochaineDateMaj, 'MM/YYYY') ?? null;
 
-  const dateProchaineDateValeurActuelle = formaterDate(détailsIndicateur[codeInsee]?.prochaineDateValeurActuelle, 'MM/YYYY') ?? null;
+  const dateProchaineDateValeurActuelle = formaterDate(détailsIndicateur[territoireCode]?.prochaineDateValeurActuelle, 'MM/YYYY') ?? null;
 
-  const dateValeurActuelle = formaterDate(détailsIndicateur[codeInsee]?.dateValeurActuelle, 'MM/YYYY') ?? null;
+  const dateValeurActuelle = formaterDate(détailsIndicateur[territoireCode]?.dateValeurActuelle, 'MM/YYYY') ?? null;
 
-  const indicateurNonAJour = !détailsIndicateur[codeInsee]?.estAJour;
+  const indicateurNonAJour = !détailsIndicateur[territoireCode]?.estAJour;
 
-  const indicateurEstApplicable = !!détailsIndicateur[codeInsee]?.est_applicable;
+  const indicateurEstApplicable = !!détailsIndicateur[territoireCode]?.est_applicable;
 
   return {
     dateDeMiseAJourIndicateur,

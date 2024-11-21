@@ -1,0 +1,11 @@
+ARG NODE_VERSION=18.20.2
+
+FROM node:$NODE_VERSION
+
+WORKDIR /app
+
+COPY . .
+RUN npm install
+RUN npm run build
+
+CMD ["/bin/bash", "docker/entrypoint.webapp.prod.sh"]

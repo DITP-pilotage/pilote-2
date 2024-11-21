@@ -16,12 +16,10 @@ import {
   IndicateurDétailsParTerritoire,
 } from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface';
 import ValeurEtDate from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate';
-import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
 const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
 
 export default function useSousIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, territoireCode: string) {
-  const { codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
@@ -29,7 +27,7 @@ export default function useSousIndicateurBloc(détailsIndicateur: DétailsIndica
 
   const indicateurDétailsParTerritoires = [{
     territoireNom: détailTerritoireSélectionné.nomAffiché,
-    données: détailsIndicateur[détailTerritoireSélectionné.codeInsee],
+    données: détailsIndicateur[détailTerritoireSélectionné.code],
   }];
 
   const colonnes = [
@@ -152,16 +150,16 @@ export default function useSousIndicateurBloc(détailsIndicateur: DétailsIndica
   });
 
   const dateDeMiseAJourIndicateur = détailTerritoireSélectionné
-    ? formaterDate(détailsIndicateur[détailTerritoireSélectionné.codeInsee]?.dateImport, 'DD/MM/YYYY') ?? null
+    ? formaterDate(détailsIndicateur[détailTerritoireSélectionné.code]?.dateImport, 'DD/MM/YYYY') ?? null
     : null;
 
   const dateProchaineDateMaj = détailTerritoireSélectionné
-    ? formaterDate(détailsIndicateur[détailTerritoireSélectionné.codeInsee]?.prochaineDateMaj, 'DD/MM/YYYY') ?? null
+    ? formaterDate(détailsIndicateur[détailTerritoireSélectionné.code]?.prochaineDateMaj, 'DD/MM/YYYY') ?? null
     : null;
 
-  const indicateurNonAJour = détailsIndicateur[codeInsee]?.estAJour === false;
+  const indicateurNonAJour = détailsIndicateur[territoireCode]?.estAJour === false;
 
-  const indicateurEstApplicable = !!détailsIndicateur[codeInsee]?.est_applicable;
+  const indicateurEstApplicable = !!détailsIndicateur[territoireCode]?.est_applicable;
 
   return {
     tableau,

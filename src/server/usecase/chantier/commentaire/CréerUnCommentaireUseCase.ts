@@ -9,12 +9,12 @@ export default class CréerUnCommentaireUseCase {
     private readonly commentaireRepository: CommentaireRepository,
   ) {}
 
-  async run(chantierId: string, territoireCode: string, contenu: string, auteur: string, type: TypeCommentaireChantier, habilitations: Habilitations) {
+  async run(chantierId: string, territoireCode: string, contenu: string, auteur_id: string, type: TypeCommentaireChantier, habilitations: Habilitations) {
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnSaisieDesPublications(chantierId, territoireCode);
     
     const date = new Date();
     const id = randomUUID();
-    return this.commentaireRepository.créer(chantierId, territoireCode, id, contenu, auteur, type, date);
+    return this.commentaireRepository.créer(chantierId, territoireCode, id, contenu, auteur_id, type, date);
   }
 }

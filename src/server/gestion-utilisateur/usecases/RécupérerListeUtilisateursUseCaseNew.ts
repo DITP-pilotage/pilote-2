@@ -1,5 +1,5 @@
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
-import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion';
+import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface';
 
 export default class RécupérerListeUtilisateursUseCase {
   constructor(

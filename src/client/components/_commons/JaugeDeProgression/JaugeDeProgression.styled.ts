@@ -6,7 +6,6 @@ const JaugeDeProgressionStyled = styled.div`
   flex-direction: column;
   align-items: center;
 
-
   .jauge-tracé--sm {
     width: 3.75rem;
   }

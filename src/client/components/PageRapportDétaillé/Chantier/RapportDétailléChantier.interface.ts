@@ -13,10 +13,12 @@ import {
 import {
   CartographieDonnéesMétéo,
 } from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 export default interface RapportDétailléChantierProps {
   territoireSélectionné: DétailTerritoire,
-  mailleSélectionnée: 'départementale' | 'régionale',
+  mailleSelectionnee: MailleInterne,
+  mailleQuery: MailleInterne,
   territoireCode: string,
   chantier: ChantierRapportDetailleContrat
   indicateurs: Indicateur[]

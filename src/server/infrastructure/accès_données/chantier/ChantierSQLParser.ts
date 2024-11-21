@@ -18,15 +18,16 @@ function créerDonnéesTerritoires(
   let donnéesTerritoires: TerritoiresDonnées = {};
 
   territoires.forEach(t => {
-    const chantierRow = chantierRows.find(c => c.code_insee === t.codeInsee);
+    const chantierRow = chantierRows.find(c => c.territoire_code === t.code);
 
-    donnéesTerritoires[t.codeInsee] = {
+    donnéesTerritoires[t.code] = {
+      territoireCode: t.code,
       codeInsee: t.codeInsee,
       avancement: { annuel: chantierRow?.taux_avancement_annuel ?? null, global: chantierRow?.taux_avancement ?? null },
       avancementPrécédent: { annuel: null, global: chantierRow?.taux_avancement_precedent ?? null },
       estApplicable: chantierRow?.est_applicable ?? null,
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
-      écart: chantierRow?.ecart || null,
+      écart: chantierRow?.ecart ?? null,
       tendance: chantierRow?.tendance || null,
       dateDeMàjDonnéesQualitatives: chantierRow?.derniere_maj_date_qualitative?.toISOString() || null,
       dateDeMàjDonnéesQuantitatives: chantierRow?.taux_avancement_date?.toISOString()  ?? null,
@@ -39,13 +40,13 @@ function créerDonnéesTerritoires(
       const responsables = chantierRow.responsables_locaux;
       const responsablesEmails = chantierRow.responsables_locaux_mails;
       for (const [i, responsable] of (responsables || []).entries()) {
-        donnéesTerritoires[t.codeInsee].responsableLocal.push({ nom: responsable, email: responsablesEmails[i] });
+        donnéesTerritoires[t.code].responsableLocal.push({ nom: responsable, email: responsablesEmails[i] });
       }
 
       const coordinateurs = chantierRow.coordinateurs_territoriaux;
       const coordinateursEmails = chantierRow.coordinateurs_territoriaux_mails;
       for (const [i, coordinateur] of (coordinateurs || []).entries()) {
-        donnéesTerritoires[t.codeInsee].coordinateurTerritorial.push({ nom: coordinateur, email: coordinateursEmails[i] });
+        donnéesTerritoires[t.code].coordinateurTerritorial.push({ nom: coordinateur, email: coordinateursEmails[i] });
       }
     }
   });
@@ -77,7 +78,8 @@ export function parseChantier(
     cibleAttendu: chantierMailleNationale.cible_attendue,
     mailles: {
       nationale: {
-        FR: {
+        'NAT-FR': {
+          territoireCode: chantierMailleNationale.territoire_code,
           codeInsee: chantierMailleNationale.code_insee,
           avancement: { annuel: chantierMailleNationale.taux_avancement_annuel, global: chantierMailleNationale.taux_avancement },
           avancementPrécédent: { annuel: null, global: chantierMailleNationale.taux_avancement_precedent ?? null },

@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import {
   PrismaMesureIndicateurTemporaireRepository,
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurTemporaireRepository';
@@ -11,6 +12,25 @@ import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { prisma } from '@/server/db/prisma';
 import { getContainer } from '@/server/dependances';
 
+async function creeUnUtilisateurEnBase() {
+  const auteurId = randomUUID();
+  await prisma.utilisateur.create({
+    data: {
+      id: auteurId,
+      email: 'john.doe@test.com',
+      nom: 'John',
+      prenom: 'Doe',
+      date_creation: new Date().toISOString(),
+      profil: {
+        connect: {
+          code: ProfilEnum.DITP_ADMIN,
+        },
+      },
+    },
+  });
+  return auteurId;
+}
+
 describe('PrismaMesureIndicateurTemporaireRepository', () => {
   let prismaRapportRepository: PrismaRapportRepository;
   let prismaMesureIndicateurTemporaireRepository: PrismaMesureIndicateurTemporaireRepository;
@@ -23,8 +43,9 @@ describe('PrismaMesureIndicateurTemporaireRepository', () => {
   describe('#sauvegarder', () => {
     it('doit sauvegarder les données', async () => {
       // GIVEN
+      const auteurId = await creeUnUtilisateurEnBase();
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, auteurId);
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId('6cba829c-def8-4f21-9bb0-07bd5a36bd02')
@@ -82,8 +103,9 @@ describe('PrismaMesureIndicateurTemporaireRepository', () => {
   describe('recupererToutParRapportId', () => {
     it('doit récupérer les mesures indicateurs temporaire liés au rapport id', async () => {
       // GIVEN
+      const auteurId = await creeUnUtilisateurEnBase();
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, auteurId);
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId('6cba829c-def8-4f21-9bb0-07bd5a36bd02')
@@ -139,8 +161,9 @@ describe('PrismaMesureIndicateurTemporaireRepository', () => {
   describe('supprimerToutParRapportId', () => {
     it('doit supprimer les mesures indicateurs temporaires liés à un rapport', async () => {
       // GIVEN
+      const auteurId = await creeUnUtilisateurEnBase();
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
+      await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, auteurId);
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId('6cba829c-def8-4f21-9bb0-07bd5a36bd02')

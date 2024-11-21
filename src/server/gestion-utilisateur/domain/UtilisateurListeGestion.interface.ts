@@ -1,5 +1,5 @@
-import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
-import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { Habilitations } from './habilitation/Habilitation.interface';
+import { ProfilCode } from './Utilisateur.interface';
 
 export interface UtilisateurListeGestion {
   id: string
@@ -11,4 +11,5 @@ export interface UtilisateurListeGestion {
   dateModification: string
   auteurModification: string
   profil: ProfilCode
+  dateDesactivation: string | null
 }

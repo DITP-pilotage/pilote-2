@@ -61,7 +61,7 @@ describe('RécupérerChantierUseCase', () => {
     expect(result1.axe).toStrictEqual('Axe 1');
     expect(result1.ppg).toStrictEqual('Ppg 1');
     expect(result1.périmètreIds).toStrictEqual(['PER-001', 'PER-002']);
-    expect(result1.mailles.nationale.FR.météo).toEqual('COUVERT');
+    expect(result1.mailles.nationale['NAT-FR'].météo).toEqual('COUVERT');
     expect(result1.responsables.directeursAdminCentrale).toStrictEqual([{ nom: 'Alain Térieur', direction: 'Intérieur' }, { nom: 'Alex Térieur', direction: 'Extérieur' }]);
     expect(result1.responsables.directeursProjet).toStrictEqual([{ nom: 'Dir proj 1', email: 'dirproj1@example.com' }, { nom: 'Dir proj 2', email: 'dirproj2@example.com' }]);
     expect(result1.estTerritorialisé).toStrictEqual(true);
@@ -91,20 +91,20 @@ describe('RécupérerChantierUseCase', () => {
 
     // THEN
     expect(result.mailles.nationale).toMatchObject({
-      FR: {
+      'NAT-FR': {
         codeInsee: 'FR',
         avancement: { annuel: 20, global: 18 },
         météo: 'SOLEIL',
       },
     });
 
-    expect(result.mailles.départementale[13]).toMatchObject({
+    expect(result.mailles.départementale['DEPT-13']).toMatchObject({
       codeInsee: '13',
       avancement: { annuel: 51, global: 45 },
       météo: 'SOLEIL',
     });
 
-    expect(result.mailles.départementale[12]).toMatchObject({
+    expect(result.mailles.départementale['DEPT-12']).toMatchObject({
       codeInsee: '12',
       avancement: { annuel: null, global: null },
       météo: 'NON_RENSEIGNEE',

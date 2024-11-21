@@ -68,7 +68,7 @@ function déterminerRemplissage(valeur: number | null, élémentsDeLégende: Car
 }
 
 export default function useCartographieAvancement(données: CartographieDonnéesAvancement, élémentsDeLégende: CartographieÉlémentsDeLégende) {
-  const { récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
+  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
   const légende = useMemo(() => {
 
@@ -98,10 +98,10 @@ export default function useCartographieAvancement(données: CartographieDonnées
   const donnéesCartographie = useMemo(() => {
     const donnéesFormatées: CartographieDonnées = {};
 
-    données.forEach(({ valeur, valeurAnnuelle, codeInsee, estApplicable }) => {
-      const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
+    données.forEach(({ valeur, valeurAnnuelle, territoireCode, estApplicable }) => {
+      const territoireGéographique = récupérerDétailsSurUnTerritoire(territoireCode);
 
-      donnéesFormatées[codeInsee] = {
+      donnéesFormatées[territoireCode] = {
         contenu: déterminerValeurAffichée(valeur, valeurAnnuelle, estApplicable),
         remplissage: déterminerRemplissage(valeur, élémentsDeLégende, estApplicable),
         libellé: territoireGéographique.nomAffiché,
@@ -110,7 +110,7 @@ export default function useCartographieAvancement(données: CartographieDonnées
     });
 
     return donnéesFormatées;
-  }, [données, récupérerDétailsSurUnTerritoireAvecCodeInsee, élémentsDeLégende]);
+  }, [données, récupérerDétailsSurUnTerritoire, élémentsDeLégende]);
 
   return {
     légende,

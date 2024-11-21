@@ -14,6 +14,10 @@
   display: flex;
 }
 
+.flex-1 {
+  flex: 1 1 0;
+}
+
 .flex-direction-row {
   flex-direction: row;
 }
@@ -223,6 +227,10 @@
 .fr-icon-red,
 .fr-text-red {
   color: red;
+}
+
+.fr-icon-green {
+  color: green;
 }
 
 .fr-text-warning {

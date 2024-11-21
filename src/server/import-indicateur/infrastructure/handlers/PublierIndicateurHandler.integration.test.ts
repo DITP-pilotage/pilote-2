@@ -1,4 +1,5 @@
 import { createMocks } from 'node-mocks-http';
+import { randomUUID } from 'node:crypto';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
 import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichier.builder';
 import {
@@ -11,8 +12,23 @@ import { getContainer } from '@/server/dependances';
 describe('PublierFichierImportIndicateurHandler', () => {
   it('doit transférer les mesures indicateurs temporaires vers la table permanente', async () => {
     // GIVEN
+    const auteurId = randomUUID();
+    await prisma.utilisateur.create({
+      data: {
+        id: auteurId,
+        email: 'john.doe@test.com',
+        nom: 'John',
+        prenom: 'Doe',
+        date_creation: new Date().toISOString(),
+        profil: {
+          connect: {
+            code: ProfilEnum.DITP_ADMIN,
+          },
+        },
+      },
+    });
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
-    await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, 'test');
+    await getContainer('authentification').resolve('utilisateurRepository').créerOuMettreÀJour(utilisateur as any, auteurId);
     
     const rapport = new DetailValidationFichierBuilder()
       .avecId('6cba829c-def8-4f21-9bb0-07bd5a36bd02')

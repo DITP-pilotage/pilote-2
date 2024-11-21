@@ -7,7 +7,9 @@ import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRech
 import Loader from '@/components/_commons/Loader/Loader';
 import Titre from '@/components/_commons/Titre/Titre';
 import TableauEnTête from '@/components/_commons/Tableau/EnTête/TableauEnTête';
-import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
+import {
+  MetadataParametrageIndicateurInformationContrat,
+} from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
 import TableauAdminIndicateursContenu
   from '@/components/PageAdminIndicateurs/TableauAdminIndicateurs/Contenu/TableauAdminIndicateursContenu';
 import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
@@ -84,7 +86,7 @@ const TableauAdminIndicateurs: FunctionComponent<{}> = () => {
               >
                 Exporter
                 {' '}
-                {`${tableau.getFilteredRowModel().rows.length === 1 ? "l'indicateur" : `les ${tableau.getFilteredRowModel().rows.length} indicateurs` }`}
+                {`${tableau.getFilteredRowModel().rows.length === 1 ? 'l\'indicateur' : `les ${tableau.getFilteredRowModel().rows.length} indicateurs`}`}
               </button>
             </div>
           </div>
@@ -93,7 +95,7 @@ const TableauAdminIndicateurs: FunctionComponent<{}> = () => {
               <caption className='fr-sr-only'>
                 Tableau des indicateurs
               </caption>
-              <TableauEnTête<MetadataParametrageIndicateurContrat> tableau={tableau} />
+              <TableauEnTête<MetadataParametrageIndicateurInformationContrat> tableau={tableau} />
               <TableauAdminIndicateursContenu tableau={tableau} />
             </table>
             <TableauPagination

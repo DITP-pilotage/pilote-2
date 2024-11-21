@@ -1,6 +1,5 @@
 import { créerRouteurTRPC, procédureProtégée } from '@/server/infrastructure/api/trpc/trpc';
-import { validationChantierContexte, validationChantiersContexte } from '@/validation/chantier';
-import RécupérerChantierUseCase from '@/server/usecase/chantier/RécupérerChantierUseCase';
+import { validationChantiersContexte } from '@/validation/chantier';
 import RécupérerStatistiquesAvancementChantiersUseCase
   from '@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase';
 import { Maille } from '@/server/domain/maille/Maille.interface';
@@ -11,17 +10,6 @@ import {
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 
 export const chantierRouter = créerRouteurTRPC({
-  récupérer: procédureProtégée
-    .input(validationChantierContexte)
-    .query(({ input, ctx }) => {
-      const récupérerChantierUseCase = new RécupérerChantierUseCase(
-        dependencies.getChantierRepository(),
-        dependencies.getMinistèreRepository(),
-        dependencies.getTerritoireRepository(),
-      );
-      return récupérerChantierUseCase.run(input.chantierId, ctx.session.habilitations, ctx.session.profil);
-    }),
-
   récupérerTousSynthétisésAccessiblesEnLecture: procédureProtégée
     .query(({ ctx }) => {
       const récupérerChantiersSynthétisésUseCase = new RécupérerChantiersSynthétisésUseCase(dependencies.getChantierRepository());

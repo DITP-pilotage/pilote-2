@@ -20,6 +20,8 @@ export default class SyntheseDesResultatsRowBuilder {
 
   private _dateMétéo: synthese_des_resultats['date_meteo'];
 
+  private _auteur_id: synthese_des_resultats['auteur_id'];
+
   private _auteur: synthese_des_resultats['auteur'];
 
   constructor(possèdeCommentaireEtMétéo = Math.random() < 0.95) {
@@ -34,7 +36,8 @@ export default class SyntheseDesResultatsRowBuilder {
     this._dateCommentaire = possèdeCommentaireEtMétéo ? faker.date.recent(60, '2023-05-01T00:00:00.000Z') : null;
     this._météo = possèdeCommentaireEtMétéo ? new MétéoBuilder().build() : null;
     this._dateMétéo = possèdeCommentaireEtMétéo ? faker.date.recent(60, '2023-05-01T00:00:00.000Z') : null;
-    this._auteur = possèdeCommentaireEtMétéo ? faker.name.fullName() : null;
+    this._auteur_id = null;
+    this._auteur = null;
   }
 
   avecId(id: synthese_des_resultats['id']): SyntheseDesResultatsRowBuilder {
@@ -80,8 +83,8 @@ export default class SyntheseDesResultatsRowBuilder {
     return this;
   }
 
-  avecAuteur(auteur: synthese_des_resultats['auteur']): SyntheseDesResultatsRowBuilder {
-    this._auteur = auteur;
+  avecAuteurId(auteur_id: synthese_des_resultats['auteur_id']): SyntheseDesResultatsRowBuilder {
+    this._auteur_id = auteur_id;
     return this;
   }
 
@@ -95,6 +98,7 @@ export default class SyntheseDesResultatsRowBuilder {
       date_meteo: this._dateMétéo,
       commentaire: this._commentaire,
       date_commentaire: this._dateCommentaire,
+      auteur_id: this._auteur_id,
       auteur: this._auteur,
     };
   }

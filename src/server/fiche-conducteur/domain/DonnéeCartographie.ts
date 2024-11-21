@@ -1,7 +1,7 @@
 import { Meteo } from '@/server/fiche-conducteur/domain/Meteo';
 
 export class DonnéeCartographie {
-  private readonly _codeInsee: string;
+  private readonly _territoireCode: string;
 
   private readonly _tauxAvancement: number | null;
 
@@ -9,21 +9,21 @@ export class DonnéeCartographie {
 
   private readonly _estApplicable: boolean;
 
-  constructor({ codeInsee, tauxAvancement, météo, estApplicable }: {
-    codeInsee: string,
+  constructor({ territoireCode, tauxAvancement, météo, estApplicable }: {
+    territoireCode: string,
     tauxAvancement: number | null,
     météo: Meteo
     estApplicable: boolean
   }) {
-    this._codeInsee = codeInsee;
+    this._territoireCode = territoireCode;
     this._tauxAvancement = tauxAvancement;
     this._météo = météo;
     this._estApplicable = estApplicable;
   }
 
 
-  get codeInsee(): string {
-    return this._codeInsee;
+  get territoireCode(): string {
+    return this._territoireCode;
   }
 
   get tauxAvancement(): number | null {
@@ -38,12 +38,12 @@ export class DonnéeCartographie {
     return this._estApplicable;
   }
 
-  static creerDonnéeCartographie({ codeInsee, tauxAvancement, météo, estApplicable }: {
-    codeInsee: string,
+  static creerDonnéeCartographie({ territoireCode, tauxAvancement, météo, estApplicable }: {
+    territoireCode: string,
     tauxAvancement: number | null,
     météo: Meteo
     estApplicable: boolean
   }) {
-    return new DonnéeCartographie({ codeInsee, tauxAvancement, météo, estApplicable });
+    return new DonnéeCartographie({ territoireCode, tauxAvancement, météo, estApplicable });
   }
 }
