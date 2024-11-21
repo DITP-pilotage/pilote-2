@@ -18,6 +18,7 @@ import {
 import {
   CartographieDonnéesMétéo,
 } from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 interface CartesProps {
   afficheCarteAvancement: boolean,
@@ -25,7 +26,7 @@ interface CartesProps {
   donnéesCartographieAvancement: AvancementsGlobauxTerritoriauxMoyensContrat
   donnéesCartographieMétéo: CartographieDonnéesMétéo
   territoireCode: string,
-  mailleSelectionnee: 'départementale' | 'régionale',
+  mailleSelectionnee: MailleInterne,
 }
 
 const Cartes: FunctionComponent<CartesProps> = ({

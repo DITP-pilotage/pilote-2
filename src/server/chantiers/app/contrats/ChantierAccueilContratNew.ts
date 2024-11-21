@@ -21,7 +21,7 @@ interface TerritoireDonnéeAccueilContrat {
 
 export type ListeTerritoiresDonnéeAccueilContrat = Record<string, TerritoireDonnéeAccueilContrat>;
 
-export type MailleChantierContrat = 'nationale' | 'régionale' | 'départementale';
+export type MailleChantierContrat = 'nationale' | 'regionale' | 'departementale';
 
 
 type MailleAccueilContrat = Record<MailleChantierContrat, ListeTerritoiresDonnéeAccueilContrat>;
@@ -45,8 +45,8 @@ export interface ChantierAccueilContrat {
   estBaromètre: boolean
   axe: string
   ppg: string
-  tauxAvancementDonnéeTerritorialisée: Record<'régionale' | 'départementale', Boolean>
-  météoDonnéeTerritorialisée: Record<'régionale' | 'départementale', Boolean>
+  tauxAvancementDonnéeTerritorialisée: Record<'regionale' | 'departementale', Boolean>
+  météoDonnéeTerritorialisée: Record<'regionale' | 'departementale', Boolean>
   responsables: {
     porteur: MinistereAccueilPorteur | null
   }
@@ -92,7 +92,7 @@ const presenterEnPerimetresMinisterielAccueilContrat = (périmètreMinistériel:
 
 export const presenterEnChantierAccueilContrat = (territoireCode: string) => (chantier: Chantier): ChantierAccueilContrat => {
   const { maille } = territoireCodeVersMailleCodeInsee(territoireCode);
-  const mailleChantier = maille === 'NAT' ? 'nationale' : maille === 'REG' ? 'régionale' : 'départementale';
+  const mailleChantier = maille === 'NAT' ? 'nationale' : maille === 'REG' ? 'regionale' : 'departementale';
 
   const mailles = presenterEnMailleAccueilContrat(chantier.mailles);
 

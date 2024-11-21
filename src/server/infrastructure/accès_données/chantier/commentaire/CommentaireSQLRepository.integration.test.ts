@@ -172,7 +172,7 @@ describe('CommentaireSQLRepository', () => {
         new CommentaireSQLRowBuilder()
           .avecId('145')
           .avecChantierId(chantierId)
-          .avecMaille('départementale')
+          .avecMaille('departementale')
           .avecCodeInsee('01')
           .avecType(CODES_TYPES_COMMENTAIRES['risquesEtFreinsÀLever'])
           .avecContenu('Mon commentaire frein département 2023')
@@ -210,7 +210,7 @@ describe('CommentaireSQLRepository', () => {
     test('Crée le commentaire en base', async () => {
       // Given
       const chantierId = 'CH-001';
-      const maille = 'régionale';
+      const maille = 'regionale';
       const codeInsee = '01';
       const id = '123';
       const contenu = 'Quatrième commentaire';
@@ -245,7 +245,7 @@ describe('CommentaireSQLRepository', () => {
     test('Retourne le commentaire créé', async () => {
       // Given
       const chantierId = 'CH-001';
-      const maille = 'régionale';
+      const maille = 'regionale';
       const codeInsee = '01';
       const id = '123';
       const contenu = 'Quatrième commentaire';

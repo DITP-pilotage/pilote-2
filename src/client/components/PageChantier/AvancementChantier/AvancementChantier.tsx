@@ -18,8 +18,8 @@ import AvancementChantierStyled from './AvancementChantier.styled';
 
 const classeÀPartirDeLaMaille = {
   'nationale': '',
-  'départementale': 'layout--dept',
-  'régionale': 'layout--reg',
+  'departementale': 'layout--dept',
+  'regionale': 'layout--reg',
 };
 
 interface AvancementChantierProps {
@@ -29,7 +29,7 @@ interface AvancementChantierProps {
   estAutoriseAVoirLeSelecteurDeMaille: boolean
   avancements: {
     nationale: AvancementsStatistiques
-    départementale: {
+    departementale: {
       global: {
         moyenne: number | null
       },
@@ -37,7 +37,7 @@ interface AvancementChantierProps {
         moyenne: number | null
       },
     }
-    régionale: {
+    regionale: {
       global: {
         moyenne: number | null
       },
@@ -71,16 +71,16 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   return (
     <AvancementChantierStyled className={classeÀPartirDeLaMaille[territoireSélectionné.maille]}>
       {
-        territoireCode !== 'NAT-FR' && mailleSelectionnee === 'départementale' ? (
+        territoireCode !== 'NAT-FR' && mailleSelectionnee === 'departementale' ? (
           <Bloc titre={territoireSélectionné?.nomAffiché}>
             <div className='fr-py-1w jauge'>
               <AvancementsTerritoire
-                avancementAnnuel={avancements.départementale.annuel.moyenne}
-                avancementGlobal={avancements.départementale.global.moyenne}
+                avancementAnnuel={avancements.departementale.annuel.moyenne}
+                avancementGlobal={avancements.departementale.global.moyenne}
                 territoireNom={territoireSélectionné.nom}
               />
               {
-                mailleSourceDonnees === 'régionale' &&
+                mailleSourceDonnees === 'regionale' &&
                 <Alerte
                   classesMessagePolice='fr-text fr-text--xs'
                   classesSupplementaires='fr-mt-2w'
@@ -93,20 +93,20 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         ) : null
       }
       {
-        territoireCode !== 'NAT-FR' && (mailleSelectionnee === 'régionale' || mailleSelectionnee === 'départementale') ? (
+        territoireCode !== 'NAT-FR' && (mailleSelectionnee === 'regionale' || mailleSelectionnee === 'departementale') ? (
           <Bloc
             titre={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
           >
             <div className='fr-py-1w jauge'>
               <AvancementsTerritoire
-                avancementAnnuel={avancements.régionale.annuel.moyenne}
-                avancementGlobal={avancements.régionale.global.moyenne}
+                avancementAnnuel={avancements.regionale.annuel.moyenne}
+                avancementGlobal={avancements.regionale.global.moyenne}
                 territoireNom={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
               />
             </div>
           </Bloc>
         ) : null
-      }   
+      }
       <Bloc
         contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
         titre='National'
@@ -144,7 +144,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
             </p>
           </div>
         </div>
-      </Bloc>      
+      </Bloc>
       <Bloc
         className='h-full'
         contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
@@ -153,15 +153,15 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
       >
         <div className='fr-container fr-px-md-1w fr-px-lg-2w'>
           {
-                    estAutoriseAVoirLeSelecteurDeMaille ? (
-                      <div className='fr-grid-row fr-py-1w fr-text--sm'>
-                        <SélecteurMaille
-                          mailleQuery={mailleQuery}
-                          pathname={pathname}
-                        />
-                      </div>
-                    ) : null
-                  }
+            estAutoriseAVoirLeSelecteurDeMaille ? (
+              <div className='fr-grid-row fr-py-1w fr-text--sm'>
+                <SélecteurMaille
+                  mailleQuery={mailleQuery}
+                  pathname={pathname}
+                />
+              </div>
+            ) : null
+          }
           <div className='flex flex-column justify-center'>
             <JaugeDeProgressionSmall
               couleur='vert'

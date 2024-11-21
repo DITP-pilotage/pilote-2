@@ -41,8 +41,8 @@ const Cartographie: FunctionComponent<CartographieProps> = ({
   const optionsEffectives = { ...optionsParDéfaut, ...options };
 
   const régionsFiltrées = déterminerRégionsÀTracer(optionsEffectives.territoireAffiché);
-  const territoiresÀTracer = niveauDeMaille === 'départementale' ? départements : régionsFiltrées;
-  const frontièreÀTracer = niveauDeMaille === 'départementale' ? régionsFiltrées : [];
+  const territoiresÀTracer = niveauDeMaille === 'departementale' ? départements : régionsFiltrées;
+  const frontièreÀTracer = niveauDeMaille === 'departementale' ? régionsFiltrées : [];
   const territoiresEtFrontières = créerTerritoires(territoiresÀTracer, frontièreÀTracer, données);
 
   return (

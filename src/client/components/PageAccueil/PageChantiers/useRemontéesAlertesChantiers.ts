@@ -5,7 +5,7 @@ import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteCh
 export function useRemontéesAlertesChantiers(territoireCode: string, filtresComptesCalculés: Record<TypeAlerteChantier, number>) {
   const { maille } = territoireCodeVersMailleCodeInsee(territoireCode);
 
-  const mailleChantier = maille === 'NAT' ? 'nationale' : maille === 'REG' ? 'régionale' : 'départementale';
+  const mailleChantier = maille === 'NAT' ? 'nationale' : maille === 'REG' ? 'regionale' : 'departementale';
 
   const [filtresAlertes] = useQueryStates({
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),

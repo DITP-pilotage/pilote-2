@@ -23,8 +23,8 @@ describe('RécupérerTerritoiresAvecNombreUtilisateursUseCase', () => {
     
     // Given
     const territoires = [
-      new TerritoireBuilder().avecCode('DEPT-01').avecMaille('départementale').build(),
-      new TerritoireBuilder().avecCode('REG-84').avecMaille('régionale').build(),
+      new TerritoireBuilder().avecCode('DEPT-01').avecMaille('departementale').build(),
+      new TerritoireBuilder().avecCode('REG-84').avecMaille('regionale').build(),
     ];
     territoireRepository.récupérerListe.mockResolvedValue(territoires);
     utilisateurRepository.récupérerNombreUtilisateursParTerritoires.mockResolvedValue({
@@ -63,9 +63,9 @@ describe('RécupérerTerritoiresAvecNombreUtilisateursUseCase', () => {
   it('si territoiresCode est null doit retourner tous les territoires', async () => {
     // Given
     const territoires = [
-      new TerritoireBuilder().avecCode('DEPT-01').avecMaille('départementale').build(),
-      new TerritoireBuilder().avecCode('REG-84').avecMaille('régionale').build(),
-      new TerritoireBuilder().avecCode('DEPT-34').avecMaille('départementale').build(),
+      new TerritoireBuilder().avecCode('DEPT-01').avecMaille('departementale').build(),
+      new TerritoireBuilder().avecCode('REG-84').avecMaille('regionale').build(),
+      new TerritoireBuilder().avecCode('DEPT-34').avecMaille('departementale').build(),
     ];
     territoireRepository.récupérerTous.mockResolvedValue(territoires);
     utilisateurRepository.récupérerNombreUtilisateursParTerritoires.mockResolvedValue({

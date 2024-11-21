@@ -9,11 +9,14 @@ interface IndicateurPondérationProps {
 
 const adjectifÀPartirDeLaMaille: Record<Maille, string> = {
   nationale: 'national',
-  régionale: 'régional',
-  départementale: 'départemental',
+  regionale: 'regional',
+  departementale: 'departemental',
 };
 
-const IndicateurPonderation: FunctionComponent<IndicateurPondérationProps> = ({ indicateurPondération, mailleSélectionnée }) => {
+const IndicateurPonderation: FunctionComponent<IndicateurPondérationProps> = ({
+  indicateurPondération,
+  mailleSélectionnée,
+}) => {
   return (
     <p className='fr-text--xs texte-gris'>
       {

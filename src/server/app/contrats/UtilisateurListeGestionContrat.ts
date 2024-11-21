@@ -21,8 +21,8 @@ export interface UtilisateurListeGestionContrat {
 
 const recupererLesNomsDesTerritoires = (utilisateur: UtilisateurListeGestion, territoiresListe: Territoire[]): string[] => {
   const mailleUtilisateur = profilsDépartementaux.includes(utilisateur.profil) ?
-    'départementale' :
-    profilsRégionaux.includes(utilisateur.profil) ? 'régionale' : 'nationale';
+    'departementale' :
+    profilsRégionaux.includes(utilisateur.profil) ? 'regionale' : 'nationale';
 
   return mailleUtilisateur === 'nationale' ?
     ['Tous les territoire'] :

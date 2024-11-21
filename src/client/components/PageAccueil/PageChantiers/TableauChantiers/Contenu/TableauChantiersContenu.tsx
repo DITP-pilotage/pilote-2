@@ -32,7 +32,7 @@ const TableauChantiersContenu: FunctionComponent<TableauChantiersContenuProps> =
   territoireCode,
 }) => {
 
-  const [mailleSelectionnee] = useQueryState('maille', parseAsStringLiteral(['départementale', 'régionale']).withDefault('départementale'));
+  const [mailleSelectionnee] = useQueryState('maille', parseAsStringLiteral(['departementale', 'regionale']).withDefault('departementale'));
 
   return (
     <tbody>

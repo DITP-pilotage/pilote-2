@@ -4,7 +4,7 @@ import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import TerritoiresStore from './useTerritoiresStore.interface';
 
-const MAILLE_DÉPARTEMENTALE = 'départementale';
+const MAILLE_DÉPARTEMENTALE = 'departementale';
 
 const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
   départements: [],
@@ -28,8 +28,8 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
       set({
         territoires,
         territoiresCodes: territoires.map(territoire => territoire.code),
-        départements: territoires.filter(territoire => territoire.maille === 'départementale'),
-        régions: territoires.filter(territoire => territoire.maille === 'régionale'),
+        départements: territoires.filter(territoire => territoire.maille === 'departementale'),
+        régions: territoires.filter(territoire => territoire.maille === 'regionale'),
         territoiresAccessiblesEnLecture: territoiresAccessiblesEnLecture,
         maillesAccessiblesEnLecture: [...new Set(territoiresAccessiblesEnLecture.map(territoire => territoire.maille))],
       });
@@ -41,13 +41,13 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
       }
 
       const territoireNational = get().territoiresAccessiblesEnLecture.find(territoire => territoire.maille === 'nationale');
-      const premierTerritoireRégional = get().territoiresAccessiblesEnLecture.find(territoire => territoire.maille === 'régionale');
-      const premierTerritoireDépartemental = get().territoiresAccessiblesEnLecture.find(territoire => territoire.maille === 'départementale');
+      const premierTerritoireRégional = get().territoiresAccessiblesEnLecture.find(territoire => territoire.maille === 'regionale');
+      const premierTerritoireDépartemental = get().territoiresAccessiblesEnLecture.find(territoire => territoire.maille === 'departementale');
 
       const territoireSélectionné = territoireNational ?? premierTerritoireRégional ?? premierTerritoireDépartemental;
 
       if (territoireSélectionné) {
-        set({ mailleSélectionnée: territoireSélectionné.maille === 'régionale' ? 'régionale' : 'départementale' });
+        set({ mailleSélectionnée: territoireSélectionné.maille === 'regionale' ? 'regionale' : 'departementale' });
         get().actions.modifierTerritoireSélectionné(territoireSélectionné.code);
       }
     },
@@ -75,7 +75,7 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
 
       const _mailleSelectionnee = mailleSelectionnee || get().mailleSélectionnée;
 
-      if (_mailleSelectionnee === 'régionale') {
+      if (_mailleSelectionnee === 'regionale') {
         return get().actions.récupérerDétailsSurUnTerritoire(`REG-${codeInsee}`);
       }
 
@@ -96,7 +96,7 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
     },
 
     récupérerCodesInseeDépartementsAssociésÀLaRégion: (codeInsee: CodeInsee, maille: MailleInterne) => {
-      if (maille === 'départementale') return [];
+      if (maille === 'departementale') return [];
       return get().départements.filter(département =>
         département.codeParent === (get().régions.find(région => région.codeInsee === codeInsee))?.code,
       ).map(département => département.codeInsee);

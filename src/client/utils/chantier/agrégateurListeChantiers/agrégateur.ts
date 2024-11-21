@@ -28,8 +28,8 @@ export class AgrégateurListeChantiersParTerritoire {
   agréger() {
     this._répartirLesDonnéesBrutesPourChaqueTerritoire();
     this._calculerLesRépartitions('nationale');
-    this._calculerLesRépartitions('départementale');
-    this._calculerLesRépartitions('régionale');
+    this._calculerLesRépartitions('departementale');
+    this._calculerLesRépartitions('regionale');
     return this.agrégat;
   }
 
@@ -40,14 +40,14 @@ export class AgrégateurListeChantiersParTerritoire {
           this.agrégat['nationale'].territoires[territoireCode].donnéesBrutes.avancements = [...this.agrégat['nationale'].territoires[territoireCode].donnéesBrutes.avancements, donnéesTerritoire.avancement];
         }
       });
-      objectEntries(chantier.mailles['départementale']).forEach(([territoireCode, donnéesTerritoire]) => {
+      objectEntries(chantier.mailles['departementale']).forEach(([territoireCode, donnéesTerritoire]) => {
         if (donnéesTerritoire.estApplicable) {
-          this.agrégat['départementale'].territoires[territoireCode].donnéesBrutes.avancements = [...this.agrégat['départementale'].territoires[territoireCode].donnéesBrutes.avancements, donnéesTerritoire.avancement];
+          this.agrégat['departementale'].territoires[territoireCode].donnéesBrutes.avancements = [...this.agrégat['departementale'].territoires[territoireCode].donnéesBrutes.avancements, donnéesTerritoire.avancement];
         }
       });
-      objectEntries(chantier.mailles['régionale']).forEach(([territoireCode, donnéesTerritoire]) => {
+      objectEntries(chantier.mailles['regionale']).forEach(([territoireCode, donnéesTerritoire]) => {
         if (donnéesTerritoire.estApplicable) {
-          this.agrégat['régionale'].territoires[territoireCode].donnéesBrutes.avancements = [...this.agrégat['régionale'].territoires[territoireCode].donnéesBrutes.avancements, donnéesTerritoire.avancement];
+          this.agrégat['regionale'].territoires[territoireCode].donnéesBrutes.avancements = [...this.agrégat['regionale'].territoires[territoireCode].donnéesBrutes.avancements, donnéesTerritoire.avancement];
         }
       });
     });
@@ -143,8 +143,8 @@ export class AgrégateurListeChantiersParTerritoire {
   private _créerAgrégatInitial(): AgrégatParTerritoire {
     return {
       nationale: this._créerDonnéesInitialesPourUneMaille(['NAT-FR']),
-      départementale: this._créerDonnéesInitialesPourUneMaille(départements.map(département => département.territoireCode)),
-      régionale: this._créerDonnéesInitialesPourUneMaille(régions.map(région => région.territoireCode)),
+      departementale: this._créerDonnéesInitialesPourUneMaille(départements.map(département => département.territoireCode)),
+      regionale: this._créerDonnéesInitialesPourUneMaille(régions.map(région => région.territoireCode)),
     };
   }
 }

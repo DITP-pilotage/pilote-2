@@ -8,6 +8,7 @@ import {
   départementsTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import BulleDInfo from './BulleDInfo/BulleDInfo';
 import { CartographieSVG } from './SVG/CartographieSVG';
 
@@ -26,7 +27,7 @@ interface CartographieProps {
   pathname: '/accueil/chantier/[territoireCode]' | '/chantier/[id]/[territoireCode]' | null,
   children?: ReactNode,
   territoireCode: string,
-  mailleSelectionnee: 'départementale' | 'régionale',
+  mailleSelectionnee: MailleInterne,
   auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
 }
 
@@ -55,8 +56,8 @@ const Cartographie: FunctionComponent<CartographieProps> = ({
   const optionsEffectives = { ...optionsParDéfaut, ...options };
 
   const régionsFiltrées = déterminerRégionsÀTracer(optionsEffectives.territoireAffiché);
-  const territoiresÀTracer = mailleSelectionnee === 'départementale' ? départements : régionsFiltrées;
-  const frontièreÀTracer = mailleSelectionnee === 'départementale' ? régionsFiltrées : [];
+  const territoiresÀTracer = mailleSelectionnee === 'departementale' ? départements : régionsFiltrées;
+  const frontièreÀTracer = mailleSelectionnee === 'departementale' ? régionsFiltrées : [];
   const territoiresEtFrontières = créerTerritoires(territoiresÀTracer, frontièreÀTracer, données);
 
   return (

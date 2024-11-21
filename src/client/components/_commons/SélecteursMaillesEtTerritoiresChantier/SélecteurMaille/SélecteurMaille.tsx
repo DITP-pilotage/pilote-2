@@ -16,8 +16,8 @@ const SélecteurMaille: FunctionComponent<{
   const maillesInternesAccessiblesEnLecture = maillesAccessiblesEnLecture.filter((maille): maille is MailleInterne => maille !== 'nationale');
 
   const mailles: Record<MailleInterne, string> = {
-    'régionale': 'Régions',
-    'départementale': 'Départements',
+    'regionale': 'Régions',
+    'departementale': 'Départements',
   };
 
   if (maillesInternesAccessiblesEnLecture.length <= 1) {

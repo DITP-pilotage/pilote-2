@@ -1,6 +1,11 @@
 import { FunctionComponent } from 'react';
 import MultiSelect from '@/client/components/_commons/MultiSelect/MultiSelect';
-import { MultiSelectOption, MultiSelectOptionGroupée, MultiSelectOptions, MultiSelectOptionsGroupées } from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
+import {
+  MultiSelectOption,
+  MultiSelectOptionGroupée,
+  MultiSelectOptions,
+  MultiSelectOptionsGroupées,
+} from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
 import { trierParOrdreAlphabétique } from '@/client/utils/arrays';
 import api from '@/server/infrastructure/api/trpc/api';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
@@ -10,8 +15,8 @@ interface MultiSelectTerritoireProps {
   territoiresCodesSélectionnésParDéfaut?: string[]
   groupesÀAfficher: {
     nationale: boolean
-    régionale: boolean
-    départementale: boolean
+    regionale: boolean
+    departementale: boolean
   },
   territoiresSélectionnables?: string[],
   afficherBoutonsSélection?: boolean,
@@ -19,10 +24,10 @@ interface MultiSelectTerritoireProps {
 }
 
 export const MAXIMUM_COMPTES_AUTORISE_PAR_REGION = 200;
-export const MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT = 150; 
+export const MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT = 150;
 const MAXIMUM_COMPTES_AUTORISE_PAR_TERRITOIRE: Record<MailleInterne, number> = {
-  départementale: MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT,
-  régionale: MAXIMUM_COMPTES_AUTORISE_PAR_REGION,
+  departementale: MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT,
+  regionale: MAXIMUM_COMPTES_AUTORISE_PAR_REGION,
 };
 
 const générerLesOptions = (nom: string, code: string, maille: MailleInterne, nombreUtilisateur: number, activerLaRestrictionDesTerritoires: boolean | undefined): MultiSelectOption => ({
@@ -34,18 +39,18 @@ const générerLesOptions = (nom: string, code: string, maille: MailleInterne, n
 
 const MultiSelectTerritoire: FunctionComponent<MultiSelectTerritoireProps> = ({
   territoiresCodesSélectionnésParDéfaut,
-  changementValeursSélectionnéesCallback, 
-  groupesÀAfficher, 
-  territoiresSélectionnables, 
+  changementValeursSélectionnéesCallback,
+  groupesÀAfficher,
+  territoiresSélectionnables,
   afficherBoutonsSélection,
   activerLaRestrictionDesTerritoires,
 
 }) => {
 
   const { data: territoires } = api.territoire.récupérerListe.useQuery({ territoireCodes: territoiresSélectionnables || null }, { staleTime: Number.POSITIVE_INFINITY });
-  
-  const départements = territoires?.filter(territoire => territoire.maille === 'départementale') ?? [];
-  const régions = territoires?.filter(territoire => territoire.maille === 'régionale') ?? [];
+
+  const départements = territoires?.filter(territoire => territoire.maille === 'departementale') ?? [];
+  const régions = territoires?.filter(territoire => territoire.maille === 'regionale') ?? [];
 
   const optionFR = {
     label: 'National',
@@ -53,22 +58,22 @@ const MultiSelectTerritoire: FunctionComponent<MultiSelectTerritoireProps> = ({
       label: 'France',
       value: 'NAT-FR',
     }],
-  };    
+  };
 
   const optionsRégions = {
     label: 'Régions',
-    options: trierParOrdreAlphabétique<MultiSelectOptions>(régions.map(d => générerLesOptions(d.nomAffiché, d.code, 'régionale', d.nombreUtilisateur, activerLaRestrictionDesTerritoires)), 'label'),
+    options: trierParOrdreAlphabétique<MultiSelectOptions>(régions.map(d => générerLesOptions(d.nomAffiché, d.code, 'regionale', d.nombreUtilisateur, activerLaRestrictionDesTerritoires)), 'label'),
   };
 
   const optionsDépartements = {
     label: 'Départements',
-    options: trierParOrdreAlphabétique<MultiSelectOptions>(départements.map(d => générerLesOptions(d.nomAffiché, d.code, 'départementale', d.nombreUtilisateur, activerLaRestrictionDesTerritoires)), 'label'),
+    options: trierParOrdreAlphabétique<MultiSelectOptions>(départements.map(d => générerLesOptions(d.nomAffiché, d.code, 'departementale', d.nombreUtilisateur, activerLaRestrictionDesTerritoires)), 'label'),
   };
 
   const options: MultiSelectOptionsGroupées = [
     groupesÀAfficher.nationale ? optionFR : null,
-    groupesÀAfficher.régionale ? optionsRégions : null,
-    groupesÀAfficher.départementale ? optionsDépartements : null,
+    groupesÀAfficher.regionale ? optionsRégions : null,
+    groupesÀAfficher.departementale ? optionsDépartements : null,
   ].filter((option): option is MultiSelectOptionGroupée => option !== null);
 
 

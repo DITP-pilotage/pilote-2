@@ -94,8 +94,8 @@ export function parseChantier(
           mailleSourceDonnees: null,
         },
       },
-      départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale),
-      régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'régionale'), chantierMailleRégionale),
+      departementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'departementale'), chantierMailleDépartementale),
+      regionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'regionale'), chantierMailleRégionale),
     },
     responsables: {
       porteur: ministères.find(m => m.id === chantierMailleNationale.ministeres[0]) ?? null,
@@ -110,12 +110,12 @@ export function parseChantier(
     estBaromètre: !!chantierMailleNationale.est_barometre,
     estTerritorialisé: !!chantierMailleNationale.est_territorialise,
     tauxAvancementDonnéeTerritorialisée: {
-      'départementale': !!chantierMailleNationale.a_taux_avancement_departemental,
-      'régionale': !!chantierMailleNationale.a_taux_avancement_regional,
+      'departementale': !!chantierMailleNationale.a_taux_avancement_departemental,
+      'regionale': !!chantierMailleNationale.a_taux_avancement_regional,
     },
     météoDonnéeTerritorialisée: {
-      'départementale': !!chantierMailleNationale.a_meteo_departemental,
-      'régionale': !!chantierMailleNationale.a_meteo_regional,
+      'departementale': !!chantierMailleNationale.a_meteo_departemental,
+      'regionale': !!chantierMailleNationale.a_meteo_regional,
     },
   };
 

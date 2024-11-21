@@ -83,11 +83,11 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
 
   const { maille, codeInsee: codeInseeSelectionne } = territoireCodeVersMailleCodeInsee(territoireCode);
 
-  const mailleQuery = query.maille as MailleInterne || 'départementale';
+  const mailleQuery = query.maille as MailleInterne || 'departementale';
 
   const mailleSelectionnee = maille === 'NAT'
     ? mailleQuery
-    : maille === 'DEPT' ? 'départementale' : 'régionale';
+    : maille === 'DEPT' ? 'departementale' : 'regionale';
 
   const mailleChantier = maille === 'NAT' ? 'nationale' : mailleSelectionnee;
 
@@ -132,7 +132,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     dependencies.getChantierRepository(),
     territoireRepository,
   )
-    .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', ministères, axes, filtres, sorting);
+    .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'regionale' ? 'REG' : 'DEPT', mailleChantier || 'departementale', ministères, axes, filtres, sorting);
 
 
   const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisse || filtresAlertes.estEnAlerteTauxAvancementNonCalculé || filtresAlertes.estEnAlerteMétéoNonRenseignée || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? chantiers.filter(chantier => {
@@ -140,25 +140,25 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     return (filtresAlertes.estEnAlerteÉcart && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
       || (filtresAlertes.estEnAlerteBaisse && Alerte.estEnAlerteBaisse(chantierDonnéesTerritoires.tendance))
       || (filtresAlertes.estEnAlerteTauxAvancementNonCalculé && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierDonnéesTerritoires.avancement.global, chantier.cibleAttendu))
-      || (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental && Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.mailles.départementale, chantier.cibleAttendu))
+      || (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental && Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.mailles.departementale, chantier.cibleAttendu))
       || (filtresAlertes.estEnAlerteMétéoNonRenseignée && Alerte.estEnAlerteMétéoNonRenseignée(chantierDonnéesTerritoires.météo));
   }) : chantiers;
 
   const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository());
 
   const listeAvancementsStatistiques = await Promise.all(
-    chantiersAvecAlertes.map(chantier => récupérerStatistiquesChantiersUseCase.run([chantier.id], mailleSelectionnee || 'départementale', session.habilitations).then(avancementsStatistique => {
+    chantiersAvecAlertes.map(chantier => récupérerStatistiquesChantiersUseCase.run([chantier.id], mailleSelectionnee || 'departementale', session.habilitations).then(avancementsStatistique => {
       const avancementChantierRapportDetaille = new AgrégateurChantierRapportDetailleParTerritoire(chantier).agréger();
       const avancementRégional = (typeTauxAvancement: 'global' | 'annuel') => {
-        return territoireSélectionné.maille === 'régionale'
-          ? avancementChantierRapportDetaille.régionale.territoires[territoireCode].répartition.avancements[typeTauxAvancement]
-          : territoireSélectionné.maille === 'départementale' && territoireSélectionné.codeParent
-            ? avancementChantierRapportDetaille.régionale.territoires[territoireSélectionné.codeParent].répartition.avancements[typeTauxAvancement]
+        return territoireSélectionné.maille === 'regionale'
+          ? avancementChantierRapportDetaille.regionale.territoires[territoireCode].répartition.avancements[typeTauxAvancement]
+          : territoireSélectionné.maille === 'departementale' && territoireSélectionné.codeParent
+            ? avancementChantierRapportDetaille.regionale.territoires[territoireSélectionné.codeParent].répartition.avancements[typeTauxAvancement]
             : null;
       };
 
       const avancementDépartemental = (typeTauxAvancement: 'global' | 'annuel') => {
-        return territoireSélectionné.maille === 'départementale' ? avancementChantierRapportDetaille[mailleSelectionnee].territoires[territoireCode].répartition.avancements[typeTauxAvancement] : null;
+        return territoireSélectionné.maille === 'departementale' ? avancementChantierRapportDetaille[mailleSelectionnee].territoires[territoireCode].répartition.avancements[typeTauxAvancement] : null;
       };
 
       return {
@@ -174,7 +174,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
               moyenne: avancementChantierRapportDetaille.nationale.répartition.avancements.annuel.moyenne,
             },
           },
-          départementale: {
+          departementale: {
             global: {
               moyenne: avancementDépartemental('global'),
             },
@@ -182,7 +182,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
               moyenne: avancementDépartemental('annuel'),
             },
           },
-          régionale: {
+          regionale: {
             global: {
               moyenne: avancementRégional('global'),
             },
@@ -219,7 +219,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     filtresComptesCalculés,
   } = Chantier.recupererStatistiqueListeChantier(chantiers, mailleChantier, territoireCode);
 
-  const avancementsAgrégés = await récupérerStatistiquesChantiersUseCase.run(chantiersAvecAlertes.map(chantier => chantier.id), mailleSelectionnee || 'départementale', session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat);
+  const avancementsAgrégés = await récupérerStatistiquesChantiersUseCase.run(chantiersAvecAlertes.map(chantier => chantier.id), mailleSelectionnee || 'departementale', session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat);
 
   const donnéesTerritoiresAgrégées = new AgrégateurListeChantiersParTerritoire(chantiersAvecAlertes).agréger();
 
@@ -228,7 +228,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     avancementsAgrégés.annuel.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[territoireCode].répartition.avancements.annuel.moyenne;
   }
 
-  const avancementsGlobauxTerritoriauxMoyens = objectEntries(donnéesTerritoiresAgrégées[mailleSelectionnee || 'départementale'].territoires).map(([territoireCodeSelectionne, territoire]) => ({
+  const avancementsGlobauxTerritoriauxMoyens = objectEntries(donnéesTerritoiresAgrégées[mailleSelectionnee || 'departementale'].territoires).map(([territoireCodeSelectionne, territoire]) => ({
     valeur: territoire.répartition.avancements.global.moyenne,
     valeurAnnuelle: territoire.répartition.avancements.annuel.moyenne,
     territoireCode: territoireCodeSelectionne,

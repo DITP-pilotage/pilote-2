@@ -129,8 +129,8 @@ export class AgrégateurChantiersParTerritoire {
   private _créerAgrégatInitial(): AgrégatParTerritoire {
     return {
       nationale: this._créerDonnéesInitialesPourUneMaille(['NAT-FR']),
-      départementale: this._créerDonnéesInitialesPourUneMaille(départements.map(département => département.territoireCode)),
-      régionale: this._créerDonnéesInitialesPourUneMaille(régions.map(région => région.territoireCode)),
+      departementale: this._créerDonnéesInitialesPourUneMaille(départements.map(département => département.territoireCode)),
+      regionale: this._créerDonnéesInitialesPourUneMaille(régions.map(région => région.territoireCode)),
     };
   }
 }
