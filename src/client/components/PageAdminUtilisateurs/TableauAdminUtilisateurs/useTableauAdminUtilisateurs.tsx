@@ -15,7 +15,10 @@ import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTe
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { formaterDate } from '@/client/utils/date/date';
 import api from '@/server/infrastructure/api/trpc/api';
-import { filtresUtilisateursActifsStore, actions as actionsFiltresUtilisateursStore } from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
+import {
+  filtresUtilisateursActifsStore,
+  actions as actionsFiltresUtilisateursStore,
+} from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
 import { UtilisateurListeGestionContrat } from '@/server/app/contrats/UtilisateurListeGestionContrat';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
@@ -41,7 +44,7 @@ const colonnes = [
     header: 'Fonction',
     cell: props => props.getValue(),
   }),
-  reactTableColonnesHelper.accessor(row => `${ formaterDate(row.dateModification, 'DD/MM/YYYY') } par ${ row.auteurModification }`, {
+  reactTableColonnesHelper.accessor(row => `${formaterDate(row.dateModification, 'DD/MM/YYYY')} par ${row.auteurModification}`, {
     header: 'Dernière modification',
     cell: props => props.getValue(),
     sortingFn: (a, b) => {
@@ -156,6 +159,14 @@ export default function useTableauPageAdminUtilisateurs() {
         statut: peutConsulterLesUtilisateursDesactives,
       },
     },
+    initialState: {
+      sorting: [
+        {
+          id: 'Dernière modification',
+          desc: true,
+        },
+      ],
+    },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -172,7 +183,7 @@ export default function useTableauPageAdminUtilisateurs() {
     estEnChargement,
     valeurDeLaRecherche,
     changementDeLaRechercheCallback,
-    modifierÉtatDuFiltre, 
+    modifierÉtatDuFiltre,
     filtresActifs,
     setPagination,
     peutConsulterLesUtilisateursDesactives,

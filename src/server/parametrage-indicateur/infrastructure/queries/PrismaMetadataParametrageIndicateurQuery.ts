@@ -21,17 +21,12 @@ export class PrismaMetadataParametrageIndicateurQuery {
     });
 
     if (!result) {
-      return {
-        auteurModification: 'DITP Admin',
-        dateDerniereModification: '31/01/2024',
-      };
+      return defaultHistoriqueInformation;
     }
-
-    const date = result.date_de_modification.split('T')[0];
 
     return {
       auteurModification: result.utilisateur_nom,
-      dateDerniereModification: date.split('-').reverse().join('/'),
+      dateDerniereModification: result.date_de_modification,
     } satisfies InformationDerniereModificationMetadataIndicateurContrat;
   }
 
@@ -59,15 +54,10 @@ export class PrismaMetadataParametrageIndicateurQuery {
 
     return new Map<string, InformationDerniereModificationMetadataIndicateurContrat>(listeIndicId.map(indicId => {
       const result = listeHistorisationResult.find(historisationResult => historisationResult.id_objet_modifie === indicId);
-      if (result) {
-        const date = result.date_de_modification.split('T')[0];
-        return [indicId, {
-          auteurModification: result.utilisateur_nom,
-          dateDerniereModification: date.split('-').reverse().join('/'),
-        } satisfies InformationDerniereModificationMetadataIndicateurContrat];
-      } else {
-        return [indicId, defaultHistoriqueInformation];
-      }
+      return result ? [indicId, {
+        auteurModification: result.utilisateur_nom,
+        dateDerniereModification: result.date_de_modification,
+      } satisfies InformationDerniereModificationMetadataIndicateurContrat] : [indicId, defaultHistoriqueInformation];
     }));
   }
 }

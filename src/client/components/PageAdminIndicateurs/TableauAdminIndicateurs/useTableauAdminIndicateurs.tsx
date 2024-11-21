@@ -16,7 +16,7 @@ import {
 import {
   MetadataParametrageIndicateurInformationContrat,
 } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
-import { horodatage } from '@/client/utils/date/date';
+import { formaterDate, horodatage } from '@/client/utils/date/date';
 import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
 
 const reactTableColonnesHelper = createColumnHelper<MetadataParametrageIndicateurInformationContrat>();
@@ -39,7 +39,7 @@ const colonnes = [
     sortingFn: 'auto',
     cell: props => props.getValue(),
   }),
-  reactTableColonnesHelper.accessor(row => `${row.dateDerniereModification} par ${row.auteurDerniereModification}`, {
+  reactTableColonnesHelper.accessor(row => `${formaterDate(row.dateDerniereModification, 'DD/MM/YYYY')} par ${row.auteurDerniereModification}`, {
     header: 'Dernière modification',
     cell: props => props.getValue(),
     sortingFn: (a, b) => {
@@ -115,7 +115,6 @@ export default function useTableauPageAdminIndicateurs() {
     a.remove();
   };
 
-
   const changementDeLaRechercheCallback = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setValeurDeLaRecherche(event.target.value);
   }, [setValeurDeLaRecherche]);
@@ -136,6 +135,12 @@ export default function useTableauPageAdminIndicateurs() {
         pageIndex: 0,
         pageSize: 20,
       },
+      sorting: [
+        {
+          id: 'Dernière modification',
+          desc: true,
+        },
+      ],
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

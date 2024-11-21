@@ -4,5 +4,5 @@ import {
 
 export const defaultHistoriqueInformation: InformationDerniereModificationMetadataIndicateurContrat = {
   auteurModification: 'DITP Admin',
-  dateDerniereModification: '31/01/2024',
+  dateDerniereModification: '2024-01-31',
 };

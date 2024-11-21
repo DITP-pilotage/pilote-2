@@ -22,7 +22,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
       // Then
       expect(informationDerniereModification).toEqual({
         auteurModification: 'DITP Admin',
-        dateDerniereModification: '31/01/2024',
+        dateDerniereModification: '2024-01-31',
       });
     });
 
@@ -55,7 +55,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
       // Then
       expect(informationDerniereModification).toEqual({
         auteurModification: 'DITP Admin',
-        dateDerniereModification: '31/01/2024',
+        dateDerniereModification: '2024-01-31',
       });
     });
 
@@ -88,7 +88,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
       // Then
       expect(informationDerniereModification).toEqual({
         auteurModification: 'DITP Admin',
-        dateDerniereModification: '31/01/2024',
+        dateDerniereModification: '2024-01-31',
       });
     });
 
@@ -121,7 +121,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
       // Then
       expect(informationDerniereModification).toEqual({
         auteurModification: 'Eloge',
-        dateDerniereModification: '29/04/2024',
+        dateDerniereModification: '2024-04-29',
       });
     });
 
@@ -167,7 +167,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
       // Then
       expect(informationDerniereModification).toEqual({
         auteurModification: 'Zakaria',
-        dateDerniereModification: '01/05/2024',
+        dateDerniereModification: '2024-05-01',
       });
     });
 
@@ -226,7 +226,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
       // Then
       expect(informationDerniereModification).toEqual({
         auteurModification: 'Gaelle',
-        dateDerniereModification: '10/05/2024',
+        dateDerniereModification: '2024-05-10',
       });
     });
   });
@@ -242,11 +242,11 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
       // Then
       expect(mapInformationDerniereModification.get('a1217dba-f725-4b70-af96-5d3b6e393853')).toEqual({
         auteurModification: 'DITP Admin',
-        dateDerniereModification: '31/01/2024',
+        dateDerniereModification: '2024-01-31',
       });
       expect(mapInformationDerniereModification.get('d0fcac64-c020-4682-8824-92e9dec2c914')).toEqual({
         auteurModification: 'DITP Admin',
-        dateDerniereModification: '31/01/2024',
+        dateDerniereModification: '2024-01-31',
       });
     });
 
@@ -287,11 +287,11 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
       // Then
       expect(mapInformationDerniereModification.get('a1217dba-f725-4b70-af96-5d3b6e393853')).toEqual({
         auteurModification: 'DITP Admin',
-        dateDerniereModification: '31/01/2024',
+        dateDerniereModification: '2024-01-31',
       });
       expect(mapInformationDerniereModification.get('d0fcac64-c020-4682-8824-92e9dec2c914')).toEqual({
         auteurModification: 'DITP Admin',
-        dateDerniereModification: '31/01/2024',
+        dateDerniereModification: '2024-01-31',
       });
     });
 
@@ -332,11 +332,11 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
       // Then
       expect(mapInformationDerniereModification.get('a1217dba-f725-4b70-af96-5d3b6e393853')).toEqual({
         auteurModification: 'DITP Admin',
-        dateDerniereModification: '31/01/2024',
+        dateDerniereModification: '2024-01-31',
       });
       expect(mapInformationDerniereModification.get('d0fcac64-c020-4682-8824-92e9dec2c914')).toEqual({
         auteurModification: 'DITP Admin',
-        dateDerniereModification: '31/01/2024',
+        dateDerniereModification: '2024-01-31',
       });
     });
 
@@ -378,11 +378,11 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
       // Then
       expect(mapInformationDerniereModification.get('a1217dba-f725-4b70-af96-5d3b6e393853')).toEqual({
         auteurModification: 'Eloge',
-        dateDerniereModification: '29/04/2024',
+        dateDerniereModification: '2024-04-29',
       });
       expect(mapInformationDerniereModification.get('d0fcac64-c020-4682-8824-92e9dec2c914')).toEqual({
         auteurModification: 'DITP Admin',
-        dateDerniereModification: '31/01/2024',
+        dateDerniereModification: '2024-01-31',
       });
     });
 
@@ -435,11 +435,11 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
       // Then
       expect(mapInformationDerniereModification.get('a1217dba-f725-4b70-af96-5d3b6e393853')).toEqual({
         auteurModification: 'Zakaria',
-        dateDerniereModification: '01/05/2024',
+        dateDerniereModification: '2024-05-01',
       });
       expect(mapInformationDerniereModification.get('d0fcac64-c020-4682-8824-92e9dec2c914')).toEqual({
         auteurModification: 'DITP Admin',
-        dateDerniereModification: '31/01/2024',
+        dateDerniereModification: '2024-01-31',
       });
     });
 
@@ -505,11 +505,11 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
       // Then
       expect(mapInformationDerniereModification.get('a1217dba-f725-4b70-af96-5d3b6e393853')).toEqual({
         auteurModification: 'Gaelle',
-        dateDerniereModification: '10/05/2024',
+        dateDerniereModification: '2024-05-10',
       });
       expect(mapInformationDerniereModification.get('d0fcac64-c020-4682-8824-92e9dec2c914')).toEqual({
         auteurModification: 'DITP Admin',
-        dateDerniereModification: '31/01/2024',
+        dateDerniereModification: '2024-01-31',
       });
     });
 
@@ -602,11 +602,11 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
       // Then
       expect(mapInformationDerniereModification.get('a1217dba-f725-4b70-af96-5d3b6e393853')).toEqual({
         auteurModification: 'Gaelle',
-        dateDerniereModification: '10/05/2024',
+        dateDerniereModification: '2024-05-10',
       });
       expect(mapInformationDerniereModification.get('d0fcac64-c020-4682-8824-92e9dec2c914')).toEqual({
         auteurModification: 'Laurène',
-        dateDerniereModification: '10/06/2024',
+        dateDerniereModification: '2024-06-10',
       });
     });
   });
