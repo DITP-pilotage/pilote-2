@@ -293,7 +293,7 @@ const config = convict({
   cartographie: {
     svgPath: {
       format: String,
-      default: '13_02.svg',
+      default: '18-02.svg',
       env: 'CARTOGRAPHIE_SVG_PATH',
     },
   },
