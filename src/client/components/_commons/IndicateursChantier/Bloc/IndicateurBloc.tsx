@@ -62,7 +62,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
 }) => {
   const {
     maille: mailleTerritoireSelectionnee,
-    codeInsee: codeInseeTerritoireSelectionne,
   } = territoireCodeVersMailleCodeInsee(territoireCode);
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
@@ -70,7 +69,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   const detailTerritoiresCompares = territoiresCompares.map(récupérerDétailsSurUnTerritoire);
   const détailTerritoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
 
-  const détailsIndicateur = détailsIndicateurs[indicateur.id];
+  const détailsIndicateur = détailsIndicateurs[indicateur.id];  
 
   const { data: variableContenuFFPropositionValeurActuelle } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE' });
 
@@ -165,12 +164,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   </Infobulle>
                 </div>
                 <IndicateurPonderation
-                  indicateurPondération={détailsIndicateur[codeInseeTerritoireSelectionne]?.pondération ?? null}
+                  indicateurPondération={détailsIndicateur[territoireCode]?.pondération ?? null}
                   mailleSélectionnée={mailleTerritoireSelectionnee}
                 />
               </div>
               {
-                détailsIndicateur[codeInseeTerritoireSelectionne]?.tendance === 'BAISSE' ? (
+                détailsIndicateur[territoireCode]?.tendance === 'BAISSE' ? (
                   <IndicateurTendance />
                 ) : null
               }
