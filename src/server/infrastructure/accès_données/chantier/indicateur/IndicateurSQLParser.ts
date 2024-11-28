@@ -10,7 +10,7 @@ export function créerDonnéesTerritoires(territoires: PrismaTerritoire[], indic
   let donnéesTerritoires: DétailsIndicateurTerritoire = {};
   let IntermediaireEstAnnéeEnCours: boolean;
   territoires.forEach(territoire => {
-    const indicateurRow = indicateurRows.find(indicateur => indicateur.code_insee === territoire.code_insee);
+    const indicateurRow = indicateurRows.find(indicateur => indicateur.territoire_code === territoire.code);
     IntermediaireEstAnnéeEnCours = indicateurRow?.objectif_date_valeur_cible_intermediaire?.getFullYear() === new Date().getFullYear();
 
     donnéesTerritoires[territoire.code] = {
