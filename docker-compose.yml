@@ -51,8 +51,6 @@ services:
     environment:
       - POSTGRES_USER=${PGUSER}
       - POSTGRES_PASSWORD=${PGPASSWORD}
-    volumes:
-      - db_dbt_pilote:/var/lib/postgresql/data
 
   pilote_traefik:
     container_name: pilote_traefik
@@ -63,6 +61,20 @@ services:
       #- "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
+  pilote_dbt_docs:
+    command: "sh -c 'dbt docs generate && dbt docs serve --host 0.0.0.0 --no-browser --port 8088'"
+    build: 
+      dockerfile: docker/Dockerfile.dbt.dev
+      context: data_management/
+    #ports:
+    #  - "8088:8088"
+    volumes:
+      - ./data_management/:/app/data_management
+      - ./data_management/docker:/app/data_management/docker
+    labels:
+      - "traefik.http.routers.pilote_dbt_docs.rule=Host(`dbt.localhost`)"
+      - "traefik.http.services.pilote_dbt_docs.loadbalancer.server.port=8088"
 
 volumes:
   db_dbt_pilote:
