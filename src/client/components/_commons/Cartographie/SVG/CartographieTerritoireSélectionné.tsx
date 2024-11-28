@@ -30,7 +30,7 @@ export const CartographieTerritoireSélectionné: FunctionComponent<{ territoire
               <path
                 className='territoire-sélectionné'
                 d={getTraceSvg(sourceSvgAsJson, territoire.code)}
-                key={territoire.codeInsee}
+                key={territoire.code}
               />
             ) : null),
           ) : (
