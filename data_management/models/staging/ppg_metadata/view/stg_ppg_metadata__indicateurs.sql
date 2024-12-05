@@ -1,31 +1,29 @@
-with
-
-source as (
-
-    select * from {{ ref('metadata_indicateurs') }}
-
+WITH
+source AS (
+    SELECT * FROM {{ ref('metadata_indicateurs') }}
 ),
 
-renamed as (
-
-    select
-        indic_id as id,
-        indic_parent_indic as indicateur_parent_id,
-        indic_parent_ch as chantier_id,
-        indic_nom as nom,
-        indic_descr as description,
-        indic_is_perseverant as est_perseverant,
-        indic_is_phare as est_phare,
-        indic_is_baro as est_barometre,
-        indic_type as indicateur_type_id,
-        indic_source as source,
-        indic_source_url as source_url,
-        indic_methode_calcul as mode_de_calcul,
-        indic_unite as unite,
-        indic_hidden_pilote as est_cache_dans_pilote,
-        CAST(zg_applicable as TEXT) as zone_groupe_applicable
-    from source
-
+renamed AS (
+    SELECT
+        indic_id AS id,
+        indic_parent_indic AS indicateur_parent_id,
+        indic_parent_ch AS chantier_id,
+        indic_nom AS nom,
+        indic_nom_baro AS nom_barometre,
+        indic_descr AS description,
+        indic_descr_baro AS description_barometre,
+        indic_is_perseverant AS est_perseverant,
+        indic_is_phare AS est_phare,
+        indic_is_baro AS est_barometre,
+        indic_type AS indicateur_type_id,
+        indic_source AS source,
+        indic_source_url AS source_url,
+        indic_methode_calcul AS mode_de_calcul,
+        indic_unite AS unite,
+        indic_schema AS schema_validata,
+        indic_hidden_pilote AS est_cache_dans_pilote,
+        CAST(zg_applicable AS TEXT) AS zone_groupe_applicable
+    FROM source
 )
 
-select * from renamed
+SELECT * FROM renamed
