@@ -11,7 +11,7 @@ export const ParametrageNouveautés: Nouveautés[] = [
     version: 'Version 2.6.1',
     date: '12 décembre 2024',
     contenu: [
-      'PILOTE se dote d\'une nouvelle fonctionnalité permettant aux territoires de proposer des valeurs pour les indicateurs des PPG. Cette fonctionnalité permet de proposer une valeur pour un indicateur, affichée en parallèle des données importées par le Directeur de projet. Elle est réservée aux utilisateurs habilités à rédiger des commentaires pour une PPG sur un territoire. Pensée comme un outil de dialogue supplémentaire, cette fonctionnalité doit vous permettre d’indiquer si vous constatez une différence entre les résultats apportés par la direction de projet et la réalité du terrain. Plus d\'informations dans le centre d\'aide [ici]() ',
+      'PILOTE se dote d\'une nouvelle fonctionnalité permettant aux territoires de proposer des valeurs pour les indicateurs des PPG. Cette fonctionnalité permet de proposer une valeur pour un indicateur, affichée en parallèle des données importées par le Directeur de projet. Elle est réservée aux utilisateurs habilités à rédiger des commentaires pour une PPG sur un territoire. Pensée comme un outil de dialogue supplémentaire, cette fonctionnalité doit vous permettre d’indiquer si vous constatez une différence entre les résultats apportés par la direction de projet et la réalité du terrain. Plus d\'informations dans le centre d\'aide.',
 
     ],
     correctifs: [
