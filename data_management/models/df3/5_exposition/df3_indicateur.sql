@@ -39,13 +39,16 @@ get_evol_vaca as (
 	mi.indic_parent_ch as chantier_id,
 	gvcg.vcg as objectif_valeur_cible,
 	a.tag as objectif_taux_avancement,
+	a_prev_year.tag_prev_year as objectif_taux_avancement_prev_year,
 	mi.indic_type as type_id,
 	mit.nom as type_nom,
 	mi.indic_is_baro as est_barometre,
 	mi.indic_is_phare as est_phare,
 	a.date_valeur_actuelle::date as date_valeur_actuelle,
+	a_prev_year.date_valeur_actuelle_prev_year, -- -> date a remonter dans le front
 	gvig.vig_date::date as date_valeur_initiale,
 	a.vaca as valeur_actuelle,
+	a_prev_year.valeur_actuelle_prev_year,
 	gvig.vig as valeur_initiale,
 	terr.code_insee,
 	mz.maille as maille,
@@ -65,6 +68,7 @@ get_evol_vaca as (
 	gvcg.vcg_date::date as objectif_date_valeur_cible,
 	gvca.vca as objectif_valeur_cible_intermediaire,
 	a.taa_courant as objectif_taux_avancement_intermediaire,
+	a_prev_year.taa_prev_year as objectif_taux_avancement_intermediaire_prev_year,
 	-- Ajouter taa_adate ? ou pas besoin
 	gvca.vca_date::date as objectif_date_valeur_cible_intermediaire,
     COALESCE(z_appl.est_applicable, true) AS est_applicable,
@@ -107,6 +111,7 @@ get_evol_vaca as (
 	from public.territoire t 
 	cross join {{ ref('metadata_indicateurs') }} mi
 	left join {{ ref('get_last_vaca') }} a on a.indic_id=mi.indic_id and a.zone_id=t.zone_id
+	left join {{ ref('get_ta_indic_prev_year') }} a_prev_year on a_prev_year.indic_id=mi.indic_id and a_prev_year.zone_id=t.zone_id
 	-- donc la liste des terr X liste des indic vont ressortir ici.
 	-- list_indic_terr list_indic left join sort_mesures_va a on t.indic_id = list_indic.indic_id and t.zone_id = list_indic.zone_id
 	left join get_evol_vaca b on mi.indic_id=b.indic_id and t.zone_id=b.zone_id
