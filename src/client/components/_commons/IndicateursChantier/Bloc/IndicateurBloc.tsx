@@ -203,7 +203,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       Valeur actuelle
                     </th>
                     <th className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'>
-                      Cible 2024
+                      {'Cible ' + new Date().getFullYear().toString()}
                     </th>
                     <th className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm fr-text--bold'>
                       {'Avancement ' + new Date().getFullYear().toString()}
