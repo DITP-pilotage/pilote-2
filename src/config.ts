@@ -297,6 +297,11 @@ const config = convict({
       env: 'CARTOGRAPHIE_SVG_PATH',
     },
   },
+  dateBasculeTauxAnnuelAnneeCourante: {
+    format: String,
+    default: '2000-01-31',
+    env: 'DATE_BASCULE_TAUX_ANNUEL_ANNEE_COURANTE',
+  },
   schemaValidataUrl: {
     format: String,
     default: 'https://raw.githubusercontent.com/DITP-pilotage/pilote-2/dev/public/schema/',

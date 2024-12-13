@@ -12,6 +12,7 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import ValeurEtDate from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate';
+import getDateBasculeAnneeCourante from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeTA';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import IndicateurBlocIndicateurTuile
   from '@/components/_commons/IndicateursChantier/Bloc/indicateurBlocIndicateurTuile';
@@ -93,7 +94,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   })).sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) => indicateurDétailsTerritoire1.données.codeInsee.localeCompare(indicateurDétailsTerritoire2.données.codeInsee))];
 
   const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour, indicateurEstApplicable);
-
+  const anneeCourante: number = new Date().getFullYear();
   return (
     <IndicateurBlocStyled
       className='fr-mb-2w'
@@ -203,10 +204,10 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       Valeur actuelle
                     </th>
                     <th className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'>
-                      {'Cible ' + new Date().getFullYear().toString()}
+                      {'Cible ' + (getDateBasculeAnneeCourante().dateBasculeDepassee ? anneeCourante : anneeCourante - 1)}
                     </th>
                     <th className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm fr-text--bold'>
-                      {'Avancement ' + new Date().getFullYear().toString()}
+                      {'Avancement ' + (getDateBasculeAnneeCourante().dateBasculeDepassee ? anneeCourante : anneeCourante - 1)}
                     </th>
                     <th className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'>
                       Cible 2026
