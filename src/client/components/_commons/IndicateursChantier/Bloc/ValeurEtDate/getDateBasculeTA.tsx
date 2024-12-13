@@ -1,0 +1,25 @@
+// Impossible d'utiliser convict ici
+
+const DATE_BASCULE_TAUX_ANNUEL_ANNEE_COURANTE_DEFAULT : string = '2000-12-31';
+
+/**
+ * Indique la date de bascule d'affichage du TA de l'année précédente
+ * @returns {{Date, boolean}} Date de la bascule pour année en cours, et booleen si la date est dépassée pour cette année
+ */
+function getDateBasculeAnneeCourante(): {
+  dateBascule: Date, dateBasculeDepassee: boolean
+} {
+
+  const maintenant: Date = new Date();
+  const dateBasculeTauxAnnuelAnneeCouranteString: string = process.env.NEXT_PUBLIC_FF_TA_ANNUEL || DATE_BASCULE_TAUX_ANNUEL_ANNEE_COURANTE_DEFAULT;
+  const dateBasculeTauxAnnuelAnneeCouranteDate: Date = new Date(dateBasculeTauxAnnuelAnneeCouranteString);
+  const dateBasculeTauxAnnuelAnneeCouranteDateAnneeCourante: Date = new Date(dateBasculeTauxAnnuelAnneeCouranteDate.setFullYear(maintenant.getFullYear()));
+
+  return {
+    dateBascule: dateBasculeTauxAnnuelAnneeCouranteDateAnneeCourante,
+    dateBasculeDepassee: dateBasculeTauxAnnuelAnneeCouranteDateAnneeCourante < maintenant,
+  };
+
+}
+
+export default getDateBasculeAnneeCourante;
