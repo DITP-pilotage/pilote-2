@@ -300,6 +300,7 @@ const config = convict({
   dateBasculeTauxAnnuelAnneeCourante: {
     format: String,
     default: '2000-01-31',
+    doc: 'Date (mois-année) avant laquelle afficher encore le TA de l année dernière',
     env: 'DATE_BASCULE_TAUX_ANNUEL_ANNEE_COURANTE',
   },
   schemaValidataUrl: {
