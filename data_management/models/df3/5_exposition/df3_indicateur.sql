@@ -102,9 +102,9 @@ get_evol_vaca as (
 			-- Nous sommes après la date de bascule, afficher TA de l'année courante
 			date_bascule.date_depassee THEN gvca.vca_date::date
 		-- Nous sommes après la date de bascule, afficher TA de l'année précédente
-		--ELSE a_prev_year.vca_adate_date::date
+		ELSE a_prev_year.vca_adate_date::date
 		--ELSE (now() - interval '1 year')::date
-		ELSE '2023-12-01'::date
+		--ELSE '2023-12-01'::date
 	END as objectif_date_valeur_cible_intermediaire,
 	a_prev_year.vca_adate_date::date as objectif_date_valeur_cible_intermediaire_not_working,
 	a_prev_year.vca_adate_date,
