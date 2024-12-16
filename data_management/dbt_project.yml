@@ -135,4 +135,4 @@ vars:
     # Nombre de décimales renvoyées par le calcul des TAA et TAG
     ta_decimales: 2
     # Date (mois-année) avant laquelle afficher encore le TA de l'année dernière
-    dateBasculeTauxAnnuelAnneeCouranteString: "{{ env_var('DATE_BASCULE_TAUX_ANNUEL_ANNEE_COURANTE_DEFAULT', '2000-12-25') }}"
+    dateBasculeTauxAnnuelAnneeCouranteString: "{{ env_var('DATE_BASCULE_TAUX_ANNUEL_ANNEE_COURANTE', '2000-12-25') }}"
