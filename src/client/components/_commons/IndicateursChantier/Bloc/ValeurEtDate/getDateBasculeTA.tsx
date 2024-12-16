@@ -1,6 +1,6 @@
 // Impossible d'utiliser convict ici
 
-const DATE_BASCULE_TAUX_ANNUEL_ANNEE_COURANTE_DEFAULT : string = '2000-12-31';
+const DATE_BASCULE_TAUX_ANNUEL_ANNEE_COURANTE_DEFAULT : string = '2000-01-31';
 
 /**
  * Indique la date de bascule d'affichage du TA de l'année précédente
