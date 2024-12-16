@@ -4,10 +4,19 @@ import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartogr
 import {
   CartographieÉlémentsDeLégende,
 } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
+import getDateBasculeAnneeCourante from '@/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeTA';
 import { CartographieDonnéesAvancement } from './CartographieAvancement.interface';
 
 
 function déterminerValeurAffichée(valeur: number | null, valeurAnnuelle: number | null, estApplicable: boolean | null): ReactNode {
+  
+  const anneeCourante: number = new Date().getFullYear();
+  const anneePrecedente: number = anneeCourante - 1;
+
+  const labelTooltipTAAnnuel: string = getDateBasculeAnneeCourante().dateBasculeDepassee 
+    ? 'TA ' + anneeCourante.toString() 
+    : 'TA ' + anneePrecedente.toString(); 
+  
   if (estApplicable === false) {
     return (
       <span className='fr-text--bold'>
@@ -34,7 +43,7 @@ function déterminerValeurAffichée(valeur: number | null, valeurAnnuelle: numbe
 
   return (
     <>
-      {`TA 2024: ${valeurAnnuelle.toFixed(0)}% | `}
+      {`${labelTooltipTAAnnuel} : ${valeurAnnuelle.toFixed(0)}% | `}
       <span className='fr-text--bold'>
         {`TA 2026 : ${valeur.toFixed(0)}%`}
       </span>

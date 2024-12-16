@@ -10,6 +10,7 @@ import {
   CartographieÉlémentsDeLégende,
 } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import getDateBasculeAnneeCourante from '@/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeTA';
 import { CartographieDonnéesValeurActuelle } from './CartographieValeurActuelle.interface';
 
 const COULEUR_DÉPART = '#8bcdb1';
@@ -18,6 +19,14 @@ const REMPLISSAGE_PAR_DÉFAUT = ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS.DÉFAUT
 
 function déterminerValeurAffichée(valeur: number | null, valeurCible: number | null, valeurCibleAnnuelle: number | null, estApplicable: boolean | null, unité?: string | null) {
   const unitéAffichée = unité?.toLocaleLowerCase() === 'pourcentage' ? '%' : '';
+  const anneeCourante: number = new Date().getFullYear();
+  const anneeCouranteDerniersChiffres: string = (anneeCourante).toString().slice(2, 4);
+  const anneePrecedenteDerniersChiffres: string = (anneeCourante - 1).toString().slice(2, 4);
+
+  const labelTooltipVCAnnuel: string = getDateBasculeAnneeCourante().dateBasculeDepassee 
+    ? 'VC ' + anneeCouranteDerniersChiffres + ' :'
+    : 'VC ' + anneePrecedenteDerniersChiffres + ' :';
+
   if (estApplicable === false) {
     return (
       <div className='fr-text--bold'>
@@ -37,7 +46,7 @@ function déterminerValeurAffichée(valeur: number | null, valeurCible: number |
       </div>
       <div className='flex justify-center align-center'>
         <div className='fr-mr-1w'>
-          {`VC ${(new Date()).getFullYear()} :`}
+          {labelTooltipVCAnnuel}
         </div>
         <div>
           {valeurCibleAnnuelle === null ? 'Non renseigné' : valeurCibleAnnuelle.toLocaleString() + unitéAffichée}
