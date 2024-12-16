@@ -11,7 +11,7 @@ function getDateBasculeAnneeCourante(): {
 } {
 
   const maintenant: Date = new Date();
-  const dateBasculeTauxAnnuelAnneeCouranteString: string = process.env.NEXT_PUBLIC_FF_TA_ANNUEL || DATE_BASCULE_TAUX_ANNUEL_ANNEE_COURANTE_DEFAULT;
+  const dateBasculeTauxAnnuelAnneeCouranteString: string = process.env.DATE_BASCULE_TAUX_ANNUEL_ANNEE_COURANTE || DATE_BASCULE_TAUX_ANNUEL_ANNEE_COURANTE_DEFAULT;
   const dateBasculeTauxAnnuelAnneeCouranteDate: Date = new Date(dateBasculeTauxAnnuelAnneeCouranteString);
   const dateBasculeTauxAnnuelAnneeCouranteDateAnneeCourante: Date = new Date(dateBasculeTauxAnnuelAnneeCouranteDate.setFullYear(maintenant.getFullYear()));
 
