@@ -57,7 +57,6 @@ get_evol_vaca as (
 		ELSE a_prev_year.date_valeur_actuelle_prev_year
 	END as date_valeur_actuelle,
 	gvig.vig_date::date as date_valeur_initiale,
-	date_part('day', now()) >= date_part('day', '{{ var("dateBasculeTauxAnnuelAnneeCouranteString") }}'::date) as day_compare,
 	CASE 
 		WHEN 
 			-- Nous sommes après la date de bascule, afficher TA de l'année courante
