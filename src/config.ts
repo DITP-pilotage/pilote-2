@@ -297,11 +297,11 @@ const config = convict({
       env: 'CARTOGRAPHIE_SVG_PATH',
     },
   },
-  dateBasculeTauxAnnuelAnneeCourante: {
+  dateBasculeAffichageValeursAnneePrecedente: {
     format: String,
     default: '2000-01-31',
-    doc: 'Date (mois-année) avant laquelle afficher encore le TA de l année dernière',
-    env: 'DATE_BASCULE_TAUX_ANNUEL_ANNEE_COURANTE',
+    doc: 'Date (mois-année) avant laquelle afficher encore les VA,VC,TA de l année dernière',
+    env: 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE',
   },
   schemaValidataUrl: {
     format: String,
