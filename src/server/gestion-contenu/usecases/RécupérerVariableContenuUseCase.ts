@@ -68,6 +68,9 @@ export class RécupérerVariableContenuUseCase {
       case 'NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR': {
         return configuration.featureFlip.PoserUneQuestionIndicateur as VariableContenuDisponibleEnv[T];
       }
+      case 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE': {
+        return configuration.dateBasculeAffichageValeursAnneePrecedente as VariableContenuDisponibleEnv[T];
+      }
     }
   }
 }

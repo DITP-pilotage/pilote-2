@@ -12,7 +12,7 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import ValeurEtDate from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate';
-import getDateBasculeAnneeCourante from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeTA';
+import { useDateBasculeAffichageValeursAnneePrecedente } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/useDateBasculeAffichageValeursAnneePrecedente';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import IndicateurBlocIndicateurTuile
   from '@/components/_commons/IndicateursChantier/Bloc/indicateurBlocIndicateurTuile';
@@ -95,6 +95,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
 
   const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour, indicateurEstApplicable);
   const anneeCourante: number = new Date().getFullYear();
+
+  const dateBasculeEstDepassee: boolean = useDateBasculeAffichageValeursAnneePrecedente().dateBasculeDepassee;
+
   return (
     <IndicateurBlocStyled
       className='fr-mb-2w'
@@ -204,10 +207,10 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       Valeur actuelle
                     </th>
                     <th className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'>
-                      {'Cible ' + (getDateBasculeAnneeCourante().dateBasculeDepassee ? anneeCourante : anneeCourante - 1)}
+                      {'Cible ' + (dateBasculeEstDepassee ? anneeCourante : anneeCourante - 1)}
                     </th>
                     <th className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm fr-text--bold'>
-                      {'Avancement ' + (getDateBasculeAnneeCourante().dateBasculeDepassee ? anneeCourante : anneeCourante - 1)}
+                      {'Avancement ' + (dateBasculeEstDepassee ? anneeCourante : anneeCourante - 1)}
                     </th>
                     <th className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'>
                       Cible 2026
