@@ -4,7 +4,7 @@ import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartogr
 import {
   CartographieÉlémentsDeLégende,
 } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
-import getDateBasculeAnneeCourante from '@/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeTA';
+import { useDateBasculeAnneeCourante } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/useDateBasculeAffichageValeursAnneePrecedente';
 import { CartographieDonnéesAvancement } from './CartographieAvancement.interface';
 
 
@@ -13,7 +13,7 @@ function déterminerValeurAffichée(valeur: number | null, valeurAnnuelle: numbe
   const anneeCourante: number = new Date().getFullYear();
   const anneePrecedente: number = anneeCourante - 1;
 
-  const labelTooltipTAAnnuel: string = getDateBasculeAnneeCourante().dateBasculeDepassee 
+  const labelTooltipTAAnnuel: string = useDateBasculeAnneeCourante().dateBasculeDepassee 
     ? 'TA ' + anneeCourante.toString() 
     : 'TA ' + anneePrecedente.toString(); 
   
