@@ -1,6 +1,6 @@
 import api from '@/server/infrastructure/api/trpc/api';
 
-export const useDateBasculeAffichageValeursAnneePrecedente = (): {
+export const getDateBasculeAffichageValeursAnneePrecedente = (): {
   dateBascule: Date, dateBasculeDepassee: boolean
 } => {
 

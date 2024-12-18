@@ -12,7 +12,7 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import ValeurEtDate from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate';
-import { useDateBasculeAffichageValeursAnneePrecedente } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/useDateBasculeAffichageValeursAnneePrecedente';
+import { getDateBasculeAffichageValeursAnneePrecedente } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import IndicateurBlocIndicateurTuile
   from '@/components/_commons/IndicateursChantier/Bloc/indicateurBlocIndicateurTuile';
@@ -96,7 +96,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour, indicateurEstApplicable);
   const anneeCourante: number = new Date().getFullYear();
 
-  const dateBasculeEstDepassee: boolean = useDateBasculeAffichageValeursAnneePrecedente().dateBasculeDepassee;
+  const dateBasculeEstDepassee: boolean = getDateBasculeAffichageValeursAnneePrecedente().dateBasculeDepassee;
 
   return (
     <IndicateurBlocStyled

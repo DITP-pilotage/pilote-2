@@ -10,7 +10,7 @@ import {
   CartographieÉlémentsDeLégende,
 } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import { useDateBasculeAffichageValeursAnneePrecedente } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/useDateBasculeAffichageValeursAnneePrecedente';
+import { getDateBasculeAffichageValeursAnneePrecedente } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 import { CartographieDonnéesValeurActuelle } from './CartographieValeurActuelle.interface';
 
 const COULEUR_DÉPART = '#8bcdb1';
@@ -23,7 +23,7 @@ function déterminerValeurAffichée(valeur: number | null, valeurCible: number |
   const anneeCouranteDerniersChiffres: string = (anneeCourante).toString().slice(2, 4);
   const anneePrecedenteDerniersChiffres: string = (anneeCourante - 1).toString().slice(2, 4);
 
-  const labelTooltipVCAnnuel: string = useDateBasculeAffichageValeursAnneePrecedente().dateBasculeDepassee 
+  const labelTooltipVCAnnuel: string = getDateBasculeAffichageValeursAnneePrecedente().dateBasculeDepassee 
     ? 'VC ' + anneeCouranteDerniersChiffres + ' :'
     : 'VC ' + anneePrecedenteDerniersChiffres + ' :';
 
