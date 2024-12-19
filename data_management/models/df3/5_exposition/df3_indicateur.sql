@@ -38,32 +38,14 @@ get_evol_vaca as (
 	mi.indic_nom as nom,
 	mi.indic_parent_ch as chantier_id,
 	gvcg.vcg as objectif_valeur_cible,
-	CASE 
-		WHEN 
-			-- Nous sommes après la date de bascule, afficher TA de l'année courante
-			date_bascule.date_depassee THEN a.tag
-		-- Nous sommes après la date de bascule, afficher TA de l'année précédente
-		ELSE a_prev_year.tag_prev_year
-	END as objectif_taux_avancement,
+	a.tag as objectif_taux_avancement,
 	mi.indic_type as type_id,
 	mit.nom as type_nom,
 	mi.indic_is_baro as est_barometre,
 	mi.indic_is_phare as est_phare,
-	CASE 
-		WHEN 
-			-- Nous sommes après la date de bascule, afficher TA de l'année courante
-			date_bascule.date_depassee THEN a.date_valeur_actuelle::date
-		-- Nous sommes après la date de bascule, afficher TA de l'année précédente
-		ELSE a_prev_year.date_valeur_actuelle_prev_year
-	END as date_valeur_actuelle,
+	a.date_valeur_actuelle::date as date_valeur_actuelle,
 	gvig.vig_date::date as date_valeur_initiale,
-	CASE 
-		WHEN 
-			-- Nous sommes après la date de bascule, afficher TA de l'année courante
-			date_bascule.date_depassee THEN a.vaca
-		-- Nous sommes après la date de bascule, afficher TA de l'année précédente
-		ELSE a_prev_year.valeur_actuelle_prev_year
-	END as valeur_actuelle,
+	a.vaca as valeur_actuelle,
 	gvig.vig as valeur_initiale,
 	terr.code_insee,
 	mz.maille as maille,
@@ -81,32 +63,10 @@ get_evol_vaca as (
 	pond_reelle.poids_zone_reel as ponderation_zone_reel,
 	pond_reelle.poids_zone_declaree as ponderation_zone_declaree,
 	gvcg.vcg_date::date as objectif_date_valeur_cible,
-	CASE 
-		WHEN 
-			-- Nous sommes après la date de bascule, afficher TA de l'année courante
-			date_bascule.date_depassee THEN gvca.vca
-		-- Nous sommes après la date de bascule, afficher TA de l'année précédente
-		ELSE a_prev_year.vca_adate
-	END as objectif_valeur_cible_intermediaire,
-	CASE 
-		WHEN 
-			-- Nous sommes après la date de bascule, afficher TA de l'année courante
-			date_bascule.date_depassee THEN a.taa_courant
-		-- Nous sommes après la date de bascule, afficher TA de l'année précédente
-		ELSE a_prev_year.taa_prev_year
-	END as objectif_taux_avancement_intermediaire,
+	gvca.vca as objectif_valeur_cible_intermediaire,
+	a.taa_courant as objectif_taux_avancement_intermediaire,
 	-- Ajouter taa_adate ? ou pas besoin
-	CASE 
-		WHEN 
-			-- Nous sommes après la date de bascule, afficher TA de l'année courante
-			date_bascule.date_depassee THEN gvca.vca_date::date
-		-- Nous sommes après la date de bascule, afficher TA de l'année précédente
-		ELSE a_prev_year.vca_adate_date::date
-		--ELSE (now() - interval '1 year')::date
-		--ELSE '2023-12-01'::date
-	END as objectif_date_valeur_cible_intermediaire,
-	a_prev_year.vca_adate_date::date as objectif_date_valeur_cible_intermediaire_not_working,
-	a_prev_year.vca_adate_date,
+	gvca.vca_date::date as objectif_date_valeur_cible_intermediaire,
     COALESCE(z_appl.est_applicable, true) AS est_applicable,
 	last_update_indic_zone.dernier_import_date,
     last_update_indic_zone.dernier_import_rapport_id,
@@ -147,8 +107,6 @@ get_evol_vaca as (
 	from public.territoire t 
 	cross join {{ ref('metadata_indicateurs') }} mi
 	left join {{ ref('get_last_vaca') }} a on a.indic_id=mi.indic_id and a.zone_id=t.zone_id
-	left join {{ ref('get_ta_indic_prev_year') }} a_prev_year on a_prev_year.indic_id=mi.indic_id and a_prev_year.zone_id=t.zone_id
-	cross join {{ ref('get_date_bascule_depassee') }} as date_bascule
 	-- donc la liste des terr X liste des indic vont ressortir ici.
 	-- list_indic_terr list_indic left join sort_mesures_va a on t.indic_id = list_indic.indic_id and t.zone_id = list_indic.zone_id
 	left join get_evol_vaca b on mi.indic_id=b.indic_id and t.zone_id=b.zone_id
