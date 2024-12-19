@@ -138,10 +138,26 @@ get_evol_vaca as (
 	a.tap_global as objectif_taux_avancement_proposition,
 	a.tap_courant as objectif_taux_avancement_intermediaire_proposition,
 	a.vacp as valeur_actuelle_proposition,
-	pva.date_proposition::date,
-	pva.motif_proposition,
-	pva.source_donnee_methode_calcul as source_donnee_methode_calcul_proposition,
-	pva.auteur_proposition,
+	CASE 
+		WHEN 
+			date_bascule.date_depassee THEN pva.date_proposition::date
+		ELSE pva_prev_year.date_proposition::date
+	END as date_proposition,
+	CASE 
+		WHEN 
+			date_bascule.date_depassee THEN pva.motif_proposition
+		ELSE pva_prev_year.motif_proposition
+	END as motif_proposition,
+	CASE 
+		WHEN 
+			date_bascule.date_depassee THEN pva.source_donnee_methode_calcul
+		ELSE pva_prev_year.source_donnee_methode_calcul
+	END as source_donnee_methode_calcul_proposition,
+	CASE 
+		WHEN 
+			date_bascule.date_depassee THEN pva.auteur_proposition
+		ELSE pva_prev_year.auteur_proposition
+	END as auteur_proposition,
 	STRING_TO_ARRAY(REPLACE(resp_donnees_email, ' ', ''), ',') AS responsables_donnees_mails,
     FALSE as a_supprimer
 	from public.territoire t 
@@ -163,6 +179,7 @@ get_evol_vaca as (
 	left join {{ source('parametrage_indicateurs', 'metadata_indicateurs_complementaire') }} ind_comp on mi.indic_id = ind_comp.indic_id 
 	left join public.territoire terr on t.zone_id = terr.zone_id 
 	left join {{ ref('int_propositions_valeurs') }} pva on pva.indic_id = mi.indic_id and pva.territoire_code = terr.code and pva.date_valeur_actuelle::DATE = a.date_valeur_actuelle::DATE
+	left join {{ ref('int_propositions_valeurs') }} pva_prev_year on pva_prev_year.indic_id = mi.indic_id and pva_prev_year.territoire_code = terr.code and pva_prev_year.date_valeur_actuelle::DATE = a.date_valeur_actuelle::DATE
 	left join {{ ref('stg_ppg_metadata__zones') }} mz on mz.id = terr.zone_id 
 	LEFT JOIN {{ ref('int_indicateurs_zones_applicables') }} z_appl ON z_appl.indic_id = mi.indic_id AND z_appl.zone_id = t.zone_id
 	-- pour avoir le bon nombre de lignes, une par territoire
