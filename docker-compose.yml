@@ -49,6 +49,8 @@ services:
     environment:
       - POSTGRES_USER=${PGUSER}
       - POSTGRES_PASSWORD=${PGPASSWORD}
+    volumes:
+      - db_dbt_pilote:/var/lib/postgresql/data
 
   pilote_traefik:
     container_name: pilote_traefik

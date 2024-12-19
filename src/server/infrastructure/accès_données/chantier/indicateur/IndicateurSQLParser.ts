@@ -18,7 +18,7 @@ export function créerDonnéesTerritoires(territoires: PrismaTerritoire[], indic
       dateValeurCible: indicateurRow?.objectif_date_valeur_cible?.toLocaleString() ?? null,
       dateValeurInitiale: indicateurRow?.date_valeur_initiale?.toLocaleString() ?? null,
       dateValeurActuelle: indicateurRow?.date_valeur_actuelle?.toLocaleString() ?? null,
-      dateValeurCibleAnnuelle: indicateurRow?.objectif_date_valeur_cible_intermediaire?.toLocaleString() ?? null,
+      dateValeurCibleAnnuelle: IntermediaireEstAnnéeEnCours ?  indicateurRow?.objectif_date_valeur_cible_intermediaire?.toLocaleString() ?? null : null,
       // TODO(Tristan-10/10/2024) : Trouver une moyen de se débarasser du as unknown
       historiquesValeurs: indicateurRow ? 
         (indicateurRow.evolution_valeur_actuelle as unknown as historique_valeurs[]).sort((a, b) => comparerDates(a.date, b.date)) : 
@@ -26,9 +26,9 @@ export function créerDonnéesTerritoires(territoires: PrismaTerritoire[], indic
       valeurCible: indicateurRow?.objectif_valeur_cible ?? null,
       valeurInitiale: indicateurRow?.valeur_initiale ?? null,
       valeurActuelle: indicateurRow?.valeur_actuelle ?? null,
-      valeurCibleAnnuelle: indicateurRow?.objectif_valeur_cible_intermediaire ?? null,
+      valeurCibleAnnuelle: IntermediaireEstAnnéeEnCours ? indicateurRow?.objectif_valeur_cible_intermediaire ?? null : null,
       avancement: {
-        annuel: indicateurRow?.objectif_taux_avancement_intermediaire ?? null,
+        annuel: IntermediaireEstAnnéeEnCours ? indicateurRow?.objectif_taux_avancement_intermediaire ?? null : null,
         global: indicateurRow?.objectif_taux_avancement ?? null,
       },
       proposition: indicateurRow?.valeur_actuelle_proposition !== null && indicateurRow?.valeur_actuelle_proposition !== undefined ? { // Pour autoriser une valeur actuelle proposé à 0
