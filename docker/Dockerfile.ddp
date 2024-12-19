@@ -12,8 +12,7 @@ RUN curl -O https://cli-dl.scalingo.com/install && bash install
 
 WORKDIR /root/.ssh
 
-# Copy if files exist
-COPY docker/id_rsa_scaling[o] id_rsa
-COPY docker/id_rsa_scalingo.pu[b] id_rsa.pub
+COPY scripts/ddp/id_rsa_scalingo id_rsa
+COPY scripts/ddp/id_rsa_scalingo.pub id_rsa.pub
 
 WORKDIR /app

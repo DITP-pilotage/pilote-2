@@ -133,22 +133,9 @@ SELECT
     mc.id,
     mc.nom,
     t.code_insee,
-    CASE 
-        WHEN date_bascule.date_depassee 
-            THEN ta_ch_today.tag_ch
-        ELSE ta_prev_year.tag_prev_year
-    END as taux_avancement,
-    -- est-ce que cette date est utile dans la webapp ?
-    CASE 
-        WHEN date_bascule.date_depassee 
-            THEN ta_ch_today.date_ta::date
-        ELSE ta_prev_year.taa_prev_year_date::date
-    END as taux_avancement_date,
-    CASE 
-        WHEN date_bascule.date_depassee 
-            THEN ta_ch_today.taa_courant_ch
-        ELSE ta_prev_year.taa_prev_year
-    END as taux_avancement_annuel,
+    ta_ch_today.tag_ch AS taux_avancement,
+    ta_ch_today.date_ta::date AS taux_avancement_date,
+    ta_ch_today.taa_courant_ch AS taux_avancement_annuel,
     ta_ch_prev_month.tag_ch AS taux_avancement_precedent,
     t.nom AS territoire_nom,
     mc.perimetre_ids,
@@ -252,8 +239,6 @@ SELECT
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS mc
 -- On duplique les lignes chantier pour chaque territoire
 CROSS JOIN {{ source('db_schema_public', 'territoire') }} AS t
-CROSS JOIN {{ ref('get_date_bascule_depassee') }} AS date_bascule
-LEFT JOIN {{ ref('get_ta_ch_prev_year') }} AS ta_prev_year ON ta_prev_year.chantier_id=mc.id AND ta_prev_year.territoire_code=t.code
 LEFT JOIN
     {{ ref('int_directeurs_projets') }} AS dir_projets
     ON mc.id = dir_projets.chantier_id
