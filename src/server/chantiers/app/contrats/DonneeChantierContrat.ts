@@ -47,8 +47,8 @@ export const presenterEnDonneeTerritoireChantierContrat = (donneeChantier: Donne
     maille: donneeChantier.maille,
     territoire_code: donneeChantier.territoireCode,
     meteo: donneeChantier.météo,
-    responsables_locaux: donneeChantier.responsablesLocaux ? donneeChantier.responsablesLocaux.join(',') : NON_APPLICABLE,
-    responsable_locaux_mails: donneeChantier.responsablesLocauxMails ? donneeChantier.responsablesLocauxMails.join(',') : NON_APPLICABLE,
+    responsables_locaux: donneeChantier.responsablesLocaux?.join(',') || NON_APPLICABLE,
+    responsable_locaux_mails: donneeChantier.responsablesLocauxMails?.join(',') || NON_APPLICABLE,
     taux_avancement_dept: formaterNumérique(donneeChantier.tauxDAvancementDépartemental),
     taux_avancement_region: formaterNumérique(donneeChantier.tauxDAvancementRégional),
     taux_avancement_nat: formaterNumérique(donneeChantier.tauxDAvancementNational),
@@ -79,8 +79,8 @@ export const presenterEnDonneeChantierContrat = (listeDonneesChantier: DonneeCha
     statut: chantier.statut,
     est_barometre: chantier.estBaromètre,
     est_territorialise: chantier.estTerritorialisé, 
-    directeurs_projet: chantier.directeursProjet.join(','),
-    directeurs_projet_mails: chantier.directeursProjetMails.join(','),
+    directeurs_projet: chantier.directeursProjet?.join(',') || NON_APPLICABLE,
+    directeurs_projet_mails: chantier.directeursProjetMails?.join(',') || NON_APPLICABLE,
     donnees_territoires: listeDonneesChantier.map(presenterEnDonneeTerritoireChantierContrat),
   };
 };
