@@ -238,7 +238,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                             variante='secondaire'
                           />
                           <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-                            Moyenne de l'année en cours
+                            Moyenne de l'année 2023
                           </p>
                         </div>
                       </div>
