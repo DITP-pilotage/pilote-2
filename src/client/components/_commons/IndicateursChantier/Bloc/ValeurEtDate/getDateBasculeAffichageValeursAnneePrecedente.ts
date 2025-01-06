@@ -1,12 +1,9 @@
-import api from '@/server/infrastructure/api/trpc/api';
-
-export const getDateBasculeAffichageValeursAnneePrecedente = (): {
+export const getDateBasculeAffichageValeursAnneePrecedente = (dateBascule: string): {
   dateBascule: Date, dateBasculeDepassee: boolean
 } => {
   const maintenant: Date = new Date();
-  const { data: dateBasculeTauxAnnuelAnneeCouranteString } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE' });
-  
-  const dateBasculeTauxAnnuelAnneeCouranteDate: Date = new Date(dateBasculeTauxAnnuelAnneeCouranteString as string);
+
+  const dateBasculeTauxAnnuelAnneeCouranteDate: Date = new Date(dateBascule as string);
 
   dateBasculeTauxAnnuelAnneeCouranteDate.setFullYear(maintenant.getFullYear());
 

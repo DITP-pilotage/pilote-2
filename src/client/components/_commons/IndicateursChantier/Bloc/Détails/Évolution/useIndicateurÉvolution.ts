@@ -26,6 +26,10 @@ export default function useIndicateurÉvolution(indicateurDétailsParTerritoires
 
   const libellés = indicateurDétailsPourUnTerritoire.données.historiquesValeurs.map(historique => formaterDate(historique.date, 'MM/YYYY'));
 
+  if (libellés.length === 1) {
+    libellés.push('');
+  }
+
   const évolutions: ChartDataset<'line'>[] = indicateurDétailsParTerritoires.map((détailsParTerritoire, index) => ({
     label: détailsParTerritoire.territoireNom,
     data: détailsParTerritoire.données.historiquesValeurs.map(historique => historique.valeur),
@@ -40,10 +44,12 @@ export default function useIndicateurÉvolution(indicateurDétailsParTerritoires
       labels: libellés,
       datasets: évolutions,
     };
-  } else {    
+  } else {
+    const listeValeurCible = Array.from({ length: libellés.length }).map(() => indicateurDétailsPourUnTerritoire.données.valeurCible);
+
     const valeurCible: ChartDataset<'line'> = {
       label: 'Cible',
-      data: Array.from({ length: libellés.length }).map(() => indicateurDétailsPourUnTerritoire.données.valeurCible),
+      data: listeValeurCible,
       borderColor: '#FC5D00',
       backgroundColor: 'transparent',
       borderDash: [10, 12],
