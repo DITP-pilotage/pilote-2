@@ -14,7 +14,16 @@ services:
     labels:
       - "traefik.http.routers.pilote_webapp.rule=Host(`pilote.localhost`)"
       - "traefik.http.services.pilote_webapp.loadbalancer.server.port=3000"
-  
+  ddp:
+    command: "echo 'SKIP descente de prod'"
+    build:
+      dockerfile: docker/Dockerfile.ddp
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - ./scripts:/app/scripts
+      - ./docker:/app/docker
   postgres:
     hostname: postgres
     container_name: pilote_postgres
