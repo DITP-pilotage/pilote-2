@@ -4,19 +4,22 @@ import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartogr
 import {
   CartographieÉlémentsDeLégende,
 } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
-import { getDateBasculeAffichageValeursAnneePrecedente } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import {
+  getDateBasculeAffichageValeursAnneePrecedente,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import api from '@/server/infrastructure/api/trpc/api';
 import { CartographieDonnéesAvancement } from './CartographieAvancement.interface';
 
 
-function déterminerValeurAffichée(valeur: number | null, valeurAnnuelle: number | null, estApplicable: boolean | null): ReactNode {
-  
+function déterminerValeurAffichée(valeur: number | null, valeurAnnuelle: number | null, estApplicable: boolean | null, dateBascule: string): ReactNode {
+
   const anneeCourante: number = new Date().getFullYear();
   const anneePrecedente: number = anneeCourante - 1;
 
-  const labelTooltipTAAnnuel: string = getDateBasculeAffichageValeursAnneePrecedente().dateBasculeDepassee 
-    ? 'TA ' + anneeCourante.toString() 
-    : 'TA ' + anneePrecedente.toString(); 
-  
+  const labelTooltipTAAnnuel: string = getDateBasculeAffichageValeursAnneePrecedente(dateBascule).dateBasculeDepassee
+    ? 'TA ' + anneeCourante.toString()
+    : 'TA ' + anneePrecedente.toString();
+
   if (estApplicable === false) {
     return (
       <span className='fr-text--bold'>
@@ -77,6 +80,7 @@ function déterminerRemplissage(valeur: number | null, élémentsDeLégende: Car
 
 export default function useCartographieAvancement(données: CartographieDonnéesAvancement, élémentsDeLégende: CartographieÉlémentsDeLégende) {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+  const { data: dateBasculeTauxAnnuelAnneeCouranteString } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE' });
 
   const légende = useMemo(() => {
 
@@ -109,7 +113,7 @@ export default function useCartographieAvancement(données: CartographieDonnées
     return {
       ...acc,
       [val.territoireCode]: {
-        contenu: déterminerValeurAffichée(val.valeur, val.valeurAnnuelle, val.estApplicable),
+        contenu: déterminerValeurAffichée(val.valeur, val.valeurAnnuelle, val.estApplicable, dateBasculeTauxAnnuelAnneeCouranteString as string),
         remplissage: déterminerRemplissage(val.valeur, élémentsDeLégende, val.estApplicable),
         libellé: territoireGéographique.nomAffiché,
         estApplicable: val.estApplicable,
