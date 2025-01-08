@@ -140,7 +140,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               variante='secondaire'
             />
             <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-              {`Taux d\'avacement de l'année ${anneeJalon}`}
+              {`Taux d\'avancement de l'année ${anneeJalon}`}
             </p>
           </div>
         </div>
