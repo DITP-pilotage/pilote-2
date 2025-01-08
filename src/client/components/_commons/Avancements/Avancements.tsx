@@ -56,7 +56,7 @@ const Avancements: FunctionComponent<AvancementsProps> = ({ avancements }) => {
             variante='secondaire'
           />
           <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-            {`Moyenne de l'année ${anneeJalon}`}
+            {`Taux d\'avacement de l'année ${anneeJalon}`}
           </p>
         </div>
       </div>

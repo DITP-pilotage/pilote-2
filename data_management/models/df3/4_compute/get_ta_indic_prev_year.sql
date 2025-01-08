@@ -8,5 +8,8 @@ SELECT
 	vaca as valeur_actuelle_prev_year,
 	date_valeur_actuelle::date as date_valeur_actuelle_prev_year,
 	vca_adate,
-	vca_adate_date
+	vca_adate_date,
+	vacp,
+	tap_global,
+	tap_courant
 FROM {{ ref('get_last_vaca_prev_year') }}

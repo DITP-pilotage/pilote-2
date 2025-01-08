@@ -135,9 +135,18 @@ get_evol_vaca as (
 		WHEN COALESCE(z_appl.est_applicable, true) THEN date_pro_maj.prochaine_date_va 
 		ELSE NULL END AS prochaine_date_valeur_actuelle,
 	mpi.tendance,
-	a.tap_global as objectif_taux_avancement_proposition,
-	a.tap_courant as objectif_taux_avancement_intermediaire_proposition,
-	a.vacp as valeur_actuelle_proposition,
+	CASE 
+		WHEN date_bascule.date_depassee THEN a.tap_global
+		ELSE a_prev_year.tap_global
+	END as objectif_taux_avancement_proposition,
+	CASE 
+		WHEN date_bascule.date_depassee THEN a.tap_courant
+		ELSE a_prev_year.tap_courant
+	END as objectif_taux_avancement_intermediaire_proposition,
+	CASE 
+		WHEN date_bascule.date_depassee THEN a.vacp
+		ELSE a_prev_year.vacp
+	END as valeur_actuelle_proposition,
 	CASE 
 		WHEN 
 			date_bascule.date_depassee THEN pva.date_proposition::date
