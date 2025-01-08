@@ -42,6 +42,8 @@ import SélecteurMaille
   from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
+import api from '@/server/infrastructure/api/trpc/api';
+import { getDateBasculeAffichageValeursAnneePrecedente } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
@@ -116,6 +118,10 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   } = usePageChantiers(chantiers, territoireCode, filtresComptesCalculés, avancementsAgrégés, session!.profil);
 
   const chantiersSontArchives = filtres.statut?.includes('ARCHIVE') ?? false;
+  
+  const { data: dateBasculeTauxAnnuelAnneeCouranteString } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE' });
+  const anneeCourante = (new Date).getFullYear();
+  const anneeJalon = getDateBasculeAffichageValeursAnneePrecedente(dateBasculeTauxAnnuelAnneeCouranteString as string).dateBasculeDepassee ? anneeCourante : anneeCourante - 1;
 
   return (
     <PageChantiersStyled>
@@ -238,7 +244,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                             variante='secondaire'
                           />
                           <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-                            Moyenne de l'année 2023
+                            {`Moyenne de l'année ${anneeJalon}`}
                           </p>
                         </div>
                       </div>
