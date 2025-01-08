@@ -1,5 +1,6 @@
 import { objectif, Prisma } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
+import { randomUUID } from 'node:crypto';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
 
 export default class ObjectifSQLRowBuilder {
@@ -19,7 +20,7 @@ export default class ObjectifSQLRowBuilder {
     const chantierGénéré = new ChantierBuilder().build();
 
     this._id = faker.datatype.uuid();
-    this._auteur_id = null;
+    this._auteur_id = randomUUID();
     this._type = faker.helpers.arrayElement(['notre_ambition', 'deja_fait', 'a_faire']);
     this._contenu = faker.lorem.paragraph();
     this._date = faker.date.recent(60, '2023-05-01T00:00:00.000Z');

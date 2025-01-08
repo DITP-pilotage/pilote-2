@@ -198,9 +198,8 @@ model synthese_des_resultats {
   date_meteo       DateTime?    @db.Timestamp
   commentaire      String?    
   date_commentaire DateTime?    @db.Timestamp
-  auteur           String?
-  auteur_synthese  utilisateur? @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  auteur_id        String?      @db.Uuid
+  auteur_synthese  utilisateur  @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_id        String       @db.Uuid
 
   @@schema("public")
 }
@@ -222,16 +221,15 @@ model ppg {
 }
 
 model commentaire {
-  id                  String   @id
+  id                  String      @id
   chantier_id         String
   type                String
   contenu             String
-  date                DateTime @db.Timestamp
+  date                DateTime    @db.Timestamp
   maille              String
   code_insee          String
-  auteur              String?
-  auteur_commentaire  utilisateur? @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  auteur_id           String? @db.Uuid
+  auteur_commentaire  utilisateur @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_id           String      @db.Uuid
 
   @@schema("public")
 }
@@ -425,9 +423,8 @@ model objectif {
   contenu          String
   date             DateTime      @db.Timestamp
   chantier_id      String
-  auteur           String?
-  auteur_objectif  utilisateur?  @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  auteur_id        String?       @db.Uuid
+  auteur_objectif  utilisateur   @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_id        String        @db.Uuid
 
   @@schema("public")
 }
@@ -444,9 +441,8 @@ model decision_strategique {
   contenu                      String
   date                         DateTime                  @db.Timestamp
   chantier_id                  String
-  auteur                       String?
-  auteur_decision_strategique  utilisateur?              @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  auteur_id                    String?                   @db.Uuid
+  auteur_decision_strategique  utilisateur               @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_id                    String                    @db.Uuid
 
   @@schema("public")
 }
@@ -551,13 +547,11 @@ model utilisateur {
   habilitation                     habilitation[]
   rapport_import_mesure_indicateur rapport_import_mesure_indicateur[]
   date_modification                DateTime                           @default(now())
-  auteur_email_modification        String?
-  auteur_modification              utilisateur?                       @relation("modification", fields: [auteur_id_modification], references: [id])
-  auteur_id_modification           String?                            @db.Uuid
+  auteur_modification              utilisateur                        @relation("modification", fields: [auteur_id_modification], references: [id])
+  auteur_id_modification           String                             @db.Uuid
   date_creation                    DateTime
-  auteur_email_creation            String?
-  auteur_creation                  utilisateur?                       @relation("creation", fields: [auteur_id_creation], references: [id])
-  auteur_id_creation               String?                            @db.Uuid
+  auteur_creation                  utilisateur                        @relation("creation", fields: [auteur_id_creation], references: [id])
+  auteur_id_creation               String                             @db.Uuid
   commentaires                     commentaire[]
   decisions_strategique            decision_strategique[]
   objectifs                        objectif[]

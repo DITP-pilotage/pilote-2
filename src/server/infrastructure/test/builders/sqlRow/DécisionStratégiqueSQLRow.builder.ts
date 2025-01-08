@@ -1,5 +1,6 @@
 import { decision_strategique } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
+import { randomUUID } from 'node:crypto';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
 
 export default class DécisionStratégiqueSQLRowBuilder {
@@ -15,18 +16,15 @@ export default class DécisionStratégiqueSQLRowBuilder {
 
   private _chantierId: decision_strategique['chantier_id'];
 
-  private _auteur: decision_strategique['auteur'];
-
   constructor() {
     const chantierGénéré = new ChantierBuilder().build();
 
     this._id = faker.datatype.uuid();
-    this._auteur_id = null;
+    this._auteur_id = randomUUID();
     this._contenu = faker.lorem.paragraph();
     this._date = faker.date.recent(60, '2023-05-01T00:00:00.000Z');
     this._type = faker.helpers.arrayElement(['suivi_des_decisions']);
     this._chantierId = chantierGénéré.id;
-    this._auteur = null;
   }
 
   avecId(id: decision_strategique['id']): DécisionStratégiqueSQLRowBuilder {
@@ -57,7 +55,6 @@ export default class DécisionStratégiqueSQLRowBuilder {
       date: this._date,
       type: this._type,
       chantier_id: this._chantierId,
-      auteur: this._auteur,
     };
   }
 }
