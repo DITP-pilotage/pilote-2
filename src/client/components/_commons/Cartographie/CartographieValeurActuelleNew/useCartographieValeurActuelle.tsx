@@ -23,12 +23,9 @@ const REMPLISSAGE_PAR_DÉFAUT = ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS.DÉFAUT
 function déterminerValeurAffichée(valeur: number | null, valeurCible: number | null, valeurCibleAnnuelle: number | null, estApplicable: boolean | null, dateBascule: string, unité?: string | null) {
   const unitéAffichée = unité?.toLocaleLowerCase() === 'pourcentage' ? '%' : '';
   const anneeCourante: number = new Date().getFullYear();
-  const anneeCouranteDerniersChiffres: string = (anneeCourante).toString().slice(2, 4);
-  const anneePrecedenteDerniersChiffres: string = (anneeCourante - 1).toString().slice(2, 4);
-
   const labelTooltipVCAnnuel: string = getDateBasculeAffichageValeursAnneePrecedente(dateBascule).dateBasculeDepassee
-    ? 'VC ' + anneeCouranteDerniersChiffres + ' :'
-    : 'VC ' + anneePrecedenteDerniersChiffres + ' :';
+    ? 'VC ' + anneeCourante + ' :'
+    : 'VC ' + (anneeCourante - 1) + ' :';
 
   if (estApplicable === false) {
     return (

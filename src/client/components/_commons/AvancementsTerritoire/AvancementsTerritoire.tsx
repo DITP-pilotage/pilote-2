@@ -1,6 +1,8 @@
 import { FunctionComponent } from 'react';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
+import api from '@/server/infrastructure/api/trpc/api';
+import { getDateBasculeAffichageValeursAnneePrecedente } from '@/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 
 interface AvancementsTerritoireProps {
   territoireNom: string
@@ -9,6 +11,10 @@ interface AvancementsTerritoireProps {
 }
 
 const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({ territoireNom, avancementGlobal, avancementAnnuel }) => {
+  const { data: dateBasculeTauxAnnuelAnneeCouranteString } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE' });
+  const anneeCourante = (new Date).getFullYear();
+  const anneeJalon = getDateBasculeAffichageValeursAnneePrecedente(dateBasculeTauxAnnuelAnneeCouranteString as string).dateBasculeDepassee ? anneeCourante : anneeCourante - 1;
+
   return (
     <>
       <JaugeDeProgression
@@ -33,7 +39,7 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({ 
               variante='secondaire'
             />
             <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-              Moyenne de l'année en cours
+              {`Moyenne de l'année ${anneeJalon}`}
             </p>
           </div>
       }
