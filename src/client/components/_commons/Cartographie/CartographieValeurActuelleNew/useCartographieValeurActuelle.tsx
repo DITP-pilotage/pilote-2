@@ -10,23 +10,14 @@ import {
   CartographieÉlémentsDeLégende,
 } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import {
-  getDateBasculeAffichageValeursAnneePrecedente,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
-import api from '@/server/infrastructure/api/trpc/api';
 import { CartographieDonnéesValeurActuelle } from './CartographieValeurActuelle.interface';
 
 const COULEUR_DÉPART = '#8bcdb1';
 const COULEUR_ARRIVÉE = '#083a25';
 const REMPLISSAGE_PAR_DÉFAUT = ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS.DÉFAUT.remplissage;
 
-function déterminerValeurAffichée(valeur: number | null, valeurCible: number | null, valeurCibleAnnuelle: number | null, estApplicable: boolean | null, dateBascule: string, unité?: string | null) {
+function déterminerValeurAffichée(valeur: number | null, valeurCible: number | null, valeurCibleAnnuelle: number | null, estApplicable: boolean | null, unité?: string | null) {
   const unitéAffichée = unité?.toLocaleLowerCase() === 'pourcentage' ? '%' : '';
-  const anneeCourante: number = new Date().getFullYear();
-  const labelTooltipVCAnnuel: string = getDateBasculeAffichageValeursAnneePrecedente(dateBascule).dateBasculeDepassee
-    ? 'VC ' + anneeCourante + ' :'
-    : 'VC ' + (anneeCourante - 1) + ' :';
-
   if (estApplicable === false) {
     return (
       <div className='fr-text--bold'>
@@ -46,7 +37,7 @@ function déterminerValeurAffichée(valeur: number | null, valeurCible: number |
       </div>
       <div className='flex justify-center align-center'>
         <div className='fr-mr-1w'>
-          {labelTooltipVCAnnuel}
+          {`VC ${(new Date()).getFullYear()} :`}
         </div>
         <div>
           {valeurCibleAnnuelle === null ? 'Non renseigné' : valeurCibleAnnuelle.toLocaleString() + unitéAffichée}
@@ -82,8 +73,6 @@ function déterminerRemplissage(valeur: number | null, valeurMin: number | null,
 
 export default function useCartographieValeurActuelle(données: CartographieDonnéesValeurActuelle, élémentsDeLégende: CartographieÉlémentsDeLégende, mailleSelectionnee: MailleInterne, unité?: string | null) {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
-
-  const { data: dateBasculeTauxAnnuelAnneeCouranteString } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE' });
 
   const valeurMin = useMemo(() => valeurMinimum(données.map(donnée => donnée.valeur)), [données]);
   const valeurMax = useMemo(() => valeurMaximum(données.map(donnée => donnée.valeur)), [données]);
@@ -127,7 +116,7 @@ export default function useCartographieValeurActuelle(données: CartographieDonn
       const territoireGéographique = récupérerDétailsSurUnTerritoire(territoireCode);
 
       donnéesFormatées[territoireCode] = {
-        contenu: déterminerValeurAffichée(valeur, valeurCible, valeurCibleAnnuelle, estApplicable, dateBasculeTauxAnnuelAnneeCouranteString as string, unité),
+        contenu: déterminerValeurAffichée(valeur, valeurCible, valeurCibleAnnuelle, estApplicable, unité),
         remplissage: déterminerRemplissage(valeur, valeurMin, valeurMax, estApplicable),
         libellé: territoireGéographique?.nomAffiché,
         estApplicable,
@@ -135,7 +124,7 @@ export default function useCartographieValeurActuelle(données: CartographieDonn
     });
 
     return donnéesFormatées;
-  }, [données, récupérerDétailsSurUnTerritoire, dateBasculeTauxAnnuelAnneeCouranteString, unité, valeurMin, valeurMax]);
+  }, [données, récupérerDétailsSurUnTerritoire, unité, valeurMin, valeurMax]);
 
   return {
     légende,

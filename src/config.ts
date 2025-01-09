@@ -297,12 +297,6 @@ const config = convict({
       env: 'CARTOGRAPHIE_SVG_PATH',
     },
   },
-  dateBasculeAffichageValeursAnneePrecedente: {
-    format: String,
-    default: '2000-01-31',
-    doc: 'Date (mois-année) avant laquelle afficher encore les VA,VC,TA de l année dernière',
-    env: 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE',
-  },
   schemaValidataUrl: {
     format: String,
     default: 'https://raw.githubusercontent.com/DITP-pilotage/pilote-2/dev/public/schema/',
