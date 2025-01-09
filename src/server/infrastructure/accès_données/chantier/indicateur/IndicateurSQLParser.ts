@@ -4,37 +4,44 @@ import {
   DétailsIndicateurTerritoire,
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { comparerDates } from '@/client/utils/date/date';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { configuration } from '@/config';
 import { historique_valeurs } from './IndicateurSQLRepository';
 
 export function créerDonnéesTerritoires(territoires: PrismaTerritoire[], indicateurRows: PrismaIndicateur[]) {
   let donnéesTerritoires: DétailsIndicateurTerritoire = {};
-  let IntermediaireEstAnnéeEnCours: boolean;
+  let estDateDuJourCorrespondantALanneeValeurCible: boolean;
+
+  const dateBascule = configuration.dateBasculeAffichageValeursAnneePrecedente;
+
   territoires.forEach(territoire => {
     const indicateurRow = indicateurRows.find(indicateur => indicateur.territoire_code === territoire.code);
-    IntermediaireEstAnnéeEnCours = indicateurRow?.objectif_date_valeur_cible_intermediaire?.getFullYear() === new Date().getFullYear();
+    estDateDuJourCorrespondantALanneeValeurCible = indicateurRow?.objectif_date_valeur_cible_intermediaire ? getAnneeAffichageDateDeBascule(new Date(), dateBascule) === indicateurRow?.objectif_date_valeur_cible_intermediaire.getFullYear() : false;
 
     donnéesTerritoires[territoire.code] = {
       codeInsee: territoire.code_insee,
       dateValeurCible: indicateurRow?.objectif_date_valeur_cible?.toLocaleString() ?? null,
       dateValeurInitiale: indicateurRow?.date_valeur_initiale?.toLocaleString() ?? null,
       dateValeurActuelle: indicateurRow?.date_valeur_actuelle?.toLocaleString() ?? null,
-      dateValeurCibleAnnuelle: IntermediaireEstAnnéeEnCours ?  indicateurRow?.objectif_date_valeur_cible_intermediaire?.toLocaleString() ?? null : null,
+      dateValeurCibleAnnuelle: estDateDuJourCorrespondantALanneeValeurCible ? indicateurRow?.objectif_date_valeur_cible_intermediaire?.toLocaleString() ?? null : null,
       // TODO(Tristan-10/10/2024) : Trouver une moyen de se débarasser du as unknown
       historiquesValeurs: indicateurRow ? 
-        (indicateurRow.evolution_valeur_actuelle as unknown as historique_valeurs[]).sort((a, b) => comparerDates(a.date, b.date)) : 
+        (indicateurRow.evolution_valeur_actuelle as unknown as historique_valeurs[]).sort((a, b) => comparerDates(a.date, b.date)) :
         [],
       valeurCible: indicateurRow?.objectif_valeur_cible ?? null,
       valeurInitiale: indicateurRow?.valeur_initiale ?? null,
       valeurActuelle: indicateurRow?.valeur_actuelle ?? null,
-      valeurCibleAnnuelle: IntermediaireEstAnnéeEnCours ? indicateurRow?.objectif_valeur_cible_intermediaire ?? null : null,
+      valeurCibleAnnuelle: estDateDuJourCorrespondantALanneeValeurCible ? indicateurRow?.objectif_valeur_cible_intermediaire ?? null : null,
       avancement: {
-        annuel: IntermediaireEstAnnéeEnCours ? indicateurRow?.objectif_taux_avancement_intermediaire ?? null : null,
+        annuel: estDateDuJourCorrespondantALanneeValeurCible ? indicateurRow?.objectif_taux_avancement_intermediaire ?? null : null,
         global: indicateurRow?.objectif_taux_avancement ?? null,
       },
       proposition: indicateurRow?.valeur_actuelle_proposition !== null && indicateurRow?.valeur_actuelle_proposition !== undefined ? { // Pour autoriser une valeur actuelle proposé à 0
         valeurActuelle: indicateurRow?.valeur_actuelle_proposition,
         tauxAvancement: indicateurRow?.objectif_taux_avancement_proposition,
-        tauxAvancementIntermediaire: IntermediaireEstAnnéeEnCours ? indicateurRow?.objectif_taux_avancement_intermediaire_proposition : null,
+        tauxAvancementIntermediaire: estDateDuJourCorrespondantALanneeValeurCible ? indicateurRow?.objectif_taux_avancement_intermediaire_proposition : null,
         auteur: indicateurRow?.auteur_proposition,
         motif: indicateurRow?.motif_proposition,
         sourceDonneeEtMethodeCalcul: indicateurRow?.source_donnee_methode_calcul_proposition,
