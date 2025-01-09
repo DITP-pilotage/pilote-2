@@ -6,9 +6,24 @@ import {
 
 describe('PrismaSyntheseDesResultatsRepository', () => {
   let prismaSyntheseDesResultatsRepository: PrismaSyntheseDesResultatsRepository;
+  const auteur_id = randomUUID();
 
-  beforeEach(() => {
+  beforeEach(async () => {
     prismaSyntheseDesResultatsRepository = new PrismaSyntheseDesResultatsRepository(prisma);
+    await prisma.utilisateur.create({
+      data: {
+        id: auteur_id,
+        email: '',
+        nom: '', 
+        prenom: '',
+        date_creation: new Date(),
+        profil: {
+          connect: {
+            code: 'DITP_ADMIN',
+          },
+        },
+      },
+    });
   });
 
   describe('#recupererMapSyntheseDesResultatsParListeChantierIdEtTerritoire', () => {
@@ -61,6 +76,7 @@ describe('PrismaSyntheseDesResultatsRepository', () => {
           maille: 'DEPT',
           date_meteo: '2023-02-02T00:00:00.000Z',
           date_commentaire: '2024-01-02T00:00:00.000Z',
+          auteur_id: auteur_id,
         },
       });
       await prisma.synthese_des_resultats.create({
@@ -71,6 +87,7 @@ describe('PrismaSyntheseDesResultatsRepository', () => {
           maille: 'DEPT',
           date_meteo: '2021-01-02T00:00:00.000Z',
           date_commentaire: '2022-01-02T00:00:00.000Z',
+          auteur_id: auteur_id,
         },
       });
 
@@ -82,6 +99,7 @@ describe('PrismaSyntheseDesResultatsRepository', () => {
           maille: 'DEPT',
           date_meteo: '2020-03-02T00:00:00.000Z',
           date_commentaire: '2021-04-02T00:00:00.000Z',
+          auteur_id: auteur_id,
         },
       });
       await prisma.synthese_des_resultats.create({
@@ -92,6 +110,7 @@ describe('PrismaSyntheseDesResultatsRepository', () => {
           maille: 'DEPT',
           date_meteo: '2021-01-02T00:00:00.000Z',
           date_commentaire: '2022-01-02T00:00:00.000Z',
+          auteur_id: auteur_id,
         },
       });
       await prisma.synthese_des_resultats.create({
@@ -102,6 +121,7 @@ describe('PrismaSyntheseDesResultatsRepository', () => {
           maille: 'REG',
           date_meteo: '2021-01-02T00:00:00.000Z',
           date_commentaire: '2022-01-02T00:00:00.000Z',
+          auteur_id: auteur_id,
         },
       });
 
@@ -114,6 +134,7 @@ describe('PrismaSyntheseDesResultatsRepository', () => {
           maille: 'DEPT',
           date_meteo: '2021-01-02T00:00:00.000Z',
           date_commentaire: '2022-01-02T00:00:00.000Z',
+          auteur_id: auteur_id,
         },
       });
 

@@ -6,10 +6,25 @@ import {
 
 describe('PrismaSynthèseDesRésultatsRepository', () => {
   let prismaSynthèseDesRésultatsRepository: PrismaSynthèseDesRésultatsRepository;
+  const auteur_id = randomUUID();
 
   describe('#recupererLaPlusRecenteMailleNatParChantierId', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       prismaSynthèseDesRésultatsRepository = new PrismaSynthèseDesRésultatsRepository(prisma);
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: '',
+          nom: '', 
+          prenom: '',
+          date_creation: new Date(),
+          profil: {
+            connect: {
+              code: 'DITP_ADMIN',
+            },
+          },
+        },
+      });
     });
 
     it('doit récupérer la synthèse la plus récente pour un chantier de maille nationale', async () => {
@@ -41,6 +56,7 @@ describe('PrismaSynthèseDesRésultatsRepository', () => {
           date_commentaire: '2022-01-02T00:00:00.000Z',
           meteo: 'SOLEIL',
           commentaire: 'commentaire synthèse OK maille',
+          auteur_id: auteur_id,
         },
       });
       await prisma.synthese_des_resultats.create({
@@ -52,6 +68,7 @@ describe('PrismaSynthèseDesRésultatsRepository', () => {
           date_commentaire: '2021-01-02T00:00:00.000Z',
           meteo: 'COUVERT',
           commentaire: 'commentaire synthèse KO ancienne',
+          auteur_id: auteur_id,
         },
       });
       await prisma.synthese_des_resultats.create({
@@ -62,6 +79,7 @@ describe('PrismaSynthèseDesRésultatsRepository', () => {
           maille: 'DEPT',
           meteo: 'SOLEIL',
           commentaire: 'commentaire synthèse KO maille',
+          auteur_id: auteur_id,
         },
       });
       await prisma.synthese_des_resultats.create({
@@ -72,6 +90,7 @@ describe('PrismaSynthèseDesRésultatsRepository', () => {
           meteo: 'SOLEIL',
           maille: 'DEPT',
           commentaire: 'commentaire synthèse KO chantierID',
+          auteur_id: auteur_id,
         },
       });
 

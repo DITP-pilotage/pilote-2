@@ -6,9 +6,24 @@ import {
 
 describe('PrismaDecisionStrategiqueRepository', () => {
   let prismaDecisionStrategiqueRepository: PrismaDecisionStrategiqueRepository;
+  const auteur_id = randomUUID();
 
-  beforeEach(() => {
+  beforeEach(async () => {
     prismaDecisionStrategiqueRepository = new PrismaDecisionStrategiqueRepository(prisma);
+    await prisma.utilisateur.create({
+      data: {
+        id: auteur_id,
+        email: '',
+        nom: '', 
+        prenom: '',
+        date_creation: new Date(),
+        profil: {
+          connect: {
+            code: 'DITP_ADMIN',
+          },
+        },
+      },
+    });
   });
 
   describe('#listerObjectifParChantierId', () => {
@@ -37,7 +52,7 @@ describe('PrismaDecisionStrategiqueRepository', () => {
             chantier_id: 'CH-168',
             type: 'suivi_des_decisions',
             contenu: 'contenu OK suivi_des_decisions',
-            auteur_id: null,
+            auteur_id: auteur_id,
             date: new Date(),
           },
           {
@@ -45,7 +60,7 @@ describe('PrismaDecisionStrategiqueRepository', () => {
             chantier_id: 'CH-169',
             type: 'suivi_des_decisions',
             contenu: 'contenu KO chantier_id',
-            auteur_id: null,
+            auteur_id: auteur_id,
             date: new Date(),
           },
         ],

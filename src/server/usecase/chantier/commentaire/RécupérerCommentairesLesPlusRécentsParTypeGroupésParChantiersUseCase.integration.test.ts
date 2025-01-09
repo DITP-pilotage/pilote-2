@@ -13,7 +13,7 @@ function mapperVersDomaine(commentairePrisma: commentaire): Commentaire {
     id: commentairePrisma.id,
     contenu: commentairePrisma.contenu,
     date: commentairePrisma.date.toISOString(),
-    auteur: 'Auteur Inconnu',
+    auteur: 'Paul Lasne',
     type: NOMS_TYPES_COMMENTAIRES[commentairePrisma.type],
   };
 }
@@ -29,6 +29,7 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
     .avecMaille('NAT')
     .avecDate(new Date('2023-04-19'))
     .avecType(CODES_TYPES_COMMENTAIRES['solutionsEtActionsÀVenir'])
+    .avecAuteurId(auteur_id) 
     .build();
   const commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale = new CommentaireSQLRowBuilder()
     .avecChantierId(chantierId)
@@ -36,24 +37,28 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
     .avecCodeInsee('75')
     .avecType(CODES_TYPES_COMMENTAIRES['solutionsEtActionsÀVenir'])
     .avecDate(new Date('2023-04-20'))
+    .avecAuteurId(auteur_id)
     .build();
   const commentaireRisquesEtFreinsÀLeverLePlusRécent = new CommentaireSQLRowBuilder()
     .avecChantierId(chantierId)
     .avecMaille('NAT')
     .avecDate(new Date('2023-04-19'))
     .avecType(CODES_TYPES_COMMENTAIRES['risquesEtFreinsÀLever'])
+    .avecAuteurId(auteur_id)
     .build();
   const commentaireRisquesEtFreinsÀLeverMoinsRécent = new CommentaireSQLRowBuilder()
     .avecChantierId(chantierId)
     .avecMaille('NAT')
     .avecDate(new Date('2023-04-18'))
     .avecType(CODES_TYPES_COMMENTAIRES['risquesEtFreinsÀLever'])
+    .avecAuteurId(auteur_id)
     .build();
   const commentaireExemplesConcretsDeRéussite = new CommentaireSQLRowBuilder()
     .avecChantierId(chantierId)
     .avecMaille('NAT')
     .avecDate(new Date('2023-04-19'))
     .avecType(CODES_TYPES_COMMENTAIRES['exemplesConcretsDeRéussite'])
+    .avecAuteurId(auteur_id)
     .build();
   const commentaireAutresRésultatsObtenus = new CommentaireSQLRowBuilder()
     .avecChantierId(chantierId)
@@ -61,12 +66,14 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
     .avecCodeInsee('75')
     .avecType(CODES_TYPES_COMMENTAIRES['autresRésultatsObtenus'])
     .avecDate(new Date('2023-04-19'))
+    .avecAuteurId(auteur_id)
     .build();
   const commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs = new CommentaireSQLRowBuilder()
     .avecChantierId(chantierId)
     .avecMaille('NAT')
     .avecDate(new Date('2023-04-19'))
     .avecType(CODES_TYPES_COMMENTAIRES['autresRésultatsObtenusNonCorrélésAuxIndicateurs'])
+    .avecAuteurId(auteur_id)
     .build();
   const commentairesSurLesDonnéesDept93 = new CommentaireSQLRowBuilder()
     .avecChantierId(chantierId)
@@ -74,6 +81,7 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
     .avecCodeInsee('93')
     .avecType(CODES_TYPES_COMMENTAIRES['commentairesSurLesDonnées'])
     .avecDate(new Date('2023-04-19'))
+    .avecAuteurId(auteur_id)
     .build();
   const commentairesSurLesDonnéesDept75 = new CommentaireSQLRowBuilder()
     .avecChantierId(chantierId)
@@ -81,14 +89,7 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
     .avecCodeInsee('75')
     .avecType(CODES_TYPES_COMMENTAIRES['commentairesSurLesDonnées'])
     .avecDate(new Date('2023-04-19'))
-    .build();
-  const commentaireSansAuteurId = new CommentaireSQLRowBuilder()
-    .avecChantierId('CH-003')
-    .avecAuteurId(null)
-    .avecMaille('DEPT')
-    .avecCodeInsee('75')
-    .avecType(CODES_TYPES_COMMENTAIRES['commentairesSurLesDonnées'])
-    .avecDate(new Date('2023-04-19'))
+    .avecAuteurId(auteur_id)
     .build();
   const commentaireAvecAuteurId = new CommentaireSQLRowBuilder()
     .avecChantierId('CH-004')
@@ -121,11 +122,10 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
     });
 
     // WHEN
-    await prisma.commentaire.createMany({ data: [commentaireAvecAuteurId, commentaireSansAuteurId ] });
+    await prisma.commentaire.createMany({ data: [commentaireAvecAuteurId ] });
     const résultat = await récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run(['CH-003', 'CH-004'], 'DEPT-75', habilitation);
 
     // THEN
-    expect(résultat['CH-003'][0]?.auteur).toStrictEqual('Auteur Inconnu');
     expect(résultat['CH-004'][0]?.auteur).toStrictEqual('Paul Lasne');
 
   });
@@ -135,7 +135,20 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
         chantiers: [chantierId],
         territoires: ['NAT-FR'],
       } } as unknown as Utilisateur['habilitations'];
-
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: 'john.doe@test.com',
+          nom: 'Lasne',
+          prenom: 'Paul',
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
       // WHEN
       await prisma.commentaire.createMany({ data: [commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale, commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale, commentaireRisquesEtFreinsÀLeverMoinsRécent, commentaireRisquesEtFreinsÀLeverLePlusRécent, commentaireExemplesConcretsDeRéussite, commentaireAutresRésultatsObtenus, commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs, commentairesSurLesDonnéesDept93, commentairesSurLesDonnéesDept75] });
       const résultat = await récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([chantierId], 'NAT-FR', habilitation);
@@ -157,6 +170,20 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
         chantiers: [chantierId],
         territoires: ['REG-01'],
       } } as unknown as Utilisateur['habilitations'];
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: 'john.doe@test.com',
+          nom: 'Lasne',
+          prenom: 'Paul',
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
 
       // WHEN
       await prisma.commentaire.createMany({ data: [commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale, commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale, commentaireRisquesEtFreinsÀLeverMoinsRécent, commentaireRisquesEtFreinsÀLeverLePlusRécent, commentaireExemplesConcretsDeRéussite, commentaireAutresRésultatsObtenus, commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs, commentairesSurLesDonnéesDept93, commentairesSurLesDonnéesDept75] });
@@ -171,6 +198,21 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
         chantiers: [chantierId],
         territoires: ['DEPT-75'],
       } } as unknown as Utilisateur['habilitations'];
+
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: 'john.doe@test.com',
+          nom: 'Lasne',
+          prenom: 'Paul',
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
 
       // WHEN
       await prisma.commentaire.createMany({ data: [commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale, commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale, commentaireRisquesEtFreinsÀLeverMoinsRécent, commentaireRisquesEtFreinsÀLeverLePlusRécent, commentaireExemplesConcretsDeRéussite, commentaireAutresRésultatsObtenus, commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs, commentairesSurLesDonnéesDept93, commentairesSurLesDonnéesDept75] });

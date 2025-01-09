@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { decision_strategique } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import DécisionStratégiqueSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/DécisionStratégiqueSQLRow.builder';
@@ -14,22 +14,19 @@ describe('DécisionStratégiqueSQLRepository', () => {
 
   const décisionStratégiqueLaPlusRécente = new DécisionStratégiqueSQLRowBuilder()
     .avecChantierId(chantierId)
+    .avecAuteurId(auteur_id)
     .avecDate(new Date('2023-03-30'))
     .build();
         
   const décisionStratégiqueMoinsRécente = new DécisionStratégiqueSQLRowBuilder()
     .avecChantierId(chantierId)
+    .avecAuteurId(auteur_id)
     .avecDate(new Date('2023-01-30'))
     .build();
 
   const décisionStratégiqueLaPlusAncienne = new DécisionStratégiqueSQLRowBuilder()
     .avecChantierId(chantierId)
-    .avecDate(new Date('2022-09-30'))
-    .build();
-
-  const décisionStratégiqueSansAuteurId = new DécisionStratégiqueSQLRowBuilder()
-    .avecChantierId('CH-003')
-    .avecAuteurId(null)
+    .avecAuteurId(auteur_id)
     .avecDate(new Date('2022-09-30'))
     .build();
 
@@ -39,10 +36,24 @@ describe('DécisionStratégiqueSQLRepository', () => {
     .avecDate(new Date('2022-09-30'))
     .build();
 
-  const décisionsStratégiques: Prisma.decision_strategiqueCreateArgs['data'][] = [décisionStratégiqueMoinsRécente, décisionStratégiqueLaPlusRécente, décisionStratégiqueLaPlusAncienne];
+  const décisionsStratégiques: decision_strategique[] = [décisionStratégiqueMoinsRécente, décisionStratégiqueLaPlusRécente, décisionStratégiqueLaPlusAncienne];
   
   describe('récupérerLePlusRécent', () => {
     it('Retourne la décision stratégique la plus récente pour un chantier avec son contenu, auteur et date', async () => {
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: 'john.doe@test.com',
+          nom: 'John',
+          prenom: 'Doe',
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
       await prisma.decision_strategique.createMany({ data: décisionsStratégiques });
 
       // WHEN
@@ -52,24 +63,9 @@ describe('DécisionStratégiqueSQLRepository', () => {
       expect(résultat).toStrictEqual({
         id: décisionStratégiqueLaPlusRécente.id,
         type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[décisionStratégiqueLaPlusRécente.type],
-        auteur: 'Auteur Inconnu',
+        auteur: 'Doe John',
         contenu: décisionStratégiqueLaPlusRécente.contenu,
         date: (décisionStratégiqueLaPlusRécente.date).toISOString(),
-      });
-    });
-    it('Lorsque l\'auteur id est null, retourne Auteur Inconnu', async () => {
-      await prisma.decision_strategique.create({ data: décisionStratégiqueSansAuteurId });
-
-      // WHEN
-      const résultat = await décisionStratégiqueRepository.récupérerLaPlusRécente('CH-003');
-
-      // THEN
-      expect(résultat).toStrictEqual({
-        id: décisionStratégiqueSansAuteurId.id,
-        type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[décisionStratégiqueSansAuteurId.type],
-        auteur: 'Auteur Inconnu',
-        contenu: décisionStratégiqueSansAuteurId.contenu,
-        date: (décisionStratégiqueSansAuteurId.date).toISOString(),
       });
     });
     it('Lorsque l\'auteur id est non null, retourne prenom + nom de l\'utilisateur associé', async () => {
@@ -105,6 +101,21 @@ describe('DécisionStratégiqueSQLRepository', () => {
 
   describe('RécupérerLHistorique', () => {
     it("Retourne toutes les publications de décisions stratégiques pour un chantier, dans l'ordre décroissant", async () => {
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: 'john.doe@test.com',
+          nom: 'Marveaux',
+          prenom: 'Sylvain',
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
+      
       await prisma.decision_strategique.createMany({ data: décisionsStratégiques });
 
       // WHEN 

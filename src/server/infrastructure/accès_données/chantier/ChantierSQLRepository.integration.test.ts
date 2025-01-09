@@ -1,4 +1,5 @@
 import { chantier } from '@prisma/client';
+import { randomUUID } from 'node:crypto';
 import ChantierSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
@@ -117,6 +118,22 @@ describe('ChantierSQLRepository', () => {
       const chantierIdsLecture = ['CH-001', 'CH-002', 'CH-003', 'CH-004', 'CH-005'];
       const territoireCodesLecture = ['NAT-FR', 'DEPT-01', 'REG-84'];
 
+      const auteur_id = randomUUID();
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: '',
+          nom: '', 
+          prenom: '',
+          date_creation: new Date(),
+          profil: {
+            connect: {
+              code: 'DITP_ADMIN',
+            },
+          },
+        },
+      });
+
       const chantier001Builder = new ChantierSQLRowBuilder()
         .avecId('CH-001')
         .avecNom('chantier 1')
@@ -150,7 +167,8 @@ describe('ChantierSQLRepository', () => {
       ] });
 
       const commentaireBuilder = new CommentaireRowBuilder()
-        .avecChantierId('CH-001');
+        .avecChantierId('CH-001')
+        .avecAuteurId(auteur_id);
       await prisma.commentaire.createMany({ data: [
         commentaireBuilder.shallowCopy()
           .avecMaille('DEPT').avecCodeInsee('01')
@@ -231,7 +249,9 @@ describe('ChantierSQLRepository', () => {
         .avecChantierId('CH-001')
         .avecType('notre_ambition')
         .avecContenu('objectif NA 1 v1')
-        .avecDate(new Date(1));
+        .avecDate(new Date(1))
+        .avecAuteurID(auteur_id);
+            
       await prisma.objectif.createMany({ data: [
         objectifBuilder.build(),
         objectifBuilder.shallowCopy()
@@ -269,6 +289,7 @@ describe('ChantierSQLRepository', () => {
           .avecDateCommentaire(new Date(1))
           .avecCommentaire('synthèse des résultats 1 v1')
           .avecMétéo('COUVERT')
+          .avecAuteurId(auteur_id)
           .build(),
         new SyntheseDesResultatsRowBuilder()
           .avecChantierId('CH-001')
@@ -277,6 +298,7 @@ describe('ChantierSQLRepository', () => {
           .avecDateCommentaire(new Date(2))
           .avecCommentaire('synthèse des résultats 1 v2')
           .avecMétéo('SOLEIL')
+          .avecAuteurId(auteur_id)
           .build(),
       ] });
 

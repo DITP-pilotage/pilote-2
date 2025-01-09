@@ -6,9 +6,24 @@ import {
 
 describe('PrismaCommentaireRepository', () => {
   let prismaCommentaireRepository: PrismaCommentaireRepository;
+  const auteur_id = randomUUID();
 
-  beforeEach(() => {
+  beforeEach(async () => {
     prismaCommentaireRepository = new PrismaCommentaireRepository(prisma);
+    await prisma.utilisateur.create({
+      data: {
+        id: auteur_id,
+        email: '',
+        nom: '', 
+        prenom: '',
+        date_creation: new Date(),
+        profil: {
+          connect: {
+            code: 'DITP_ADMIN',
+          },
+        },
+      },
+    });
   });
 
   describe('#listerObjectifParChantierId', () => {
@@ -37,7 +52,7 @@ describe('PrismaCommentaireRepository', () => {
             chantier_id: 'CH-168',
             type: 'freins_a_lever',
             contenu: 'contenu OK freins_a_lever',
-            auteur_id: null,
+            auteur_id: auteur_id,
             date: new Date(),
             maille: 'NAT',
             code_insee: 'FR',
@@ -47,7 +62,7 @@ describe('PrismaCommentaireRepository', () => {
             chantier_id: 'CH-168',
             type: 'actions_a_venir',
             contenu: 'contenu OK actions_a_venir',
-            auteur_id: null,
+            auteur_id: auteur_id,
             date: new Date(),
             maille: 'NAT',
             code_insee: 'FR',
@@ -57,7 +72,7 @@ describe('PrismaCommentaireRepository', () => {
             chantier_id: 'CH-169',
             type: 'actions_a_venir',
             contenu: 'contenu KO chantier_id',
-            auteur_id: null,
+            auteur_id: auteur_id,
             date: new Date(),
             maille: 'NAT',
             code_insee: 'FR',

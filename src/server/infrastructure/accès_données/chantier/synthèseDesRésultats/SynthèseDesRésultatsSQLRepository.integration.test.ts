@@ -104,100 +104,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       const maille: Maille = 'regionale';
       const codeInsee = '01';
       const synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
-
-
-      const synthesesDesResultats: synthese_des_resultats[] = [
-        new SynthèseDesRésultatsSQLRowBuilder()
-          .avecChantierId(chantierId)
-          .avecMaille(CODES_MAILLES[maille])
-          .avecCodeInsee(codeInsee)
-          .avecCommentaire('Premier commentaire')
-          .avecDateCommentaire(null)
-          .build(),
-
-        new SynthèseDesRésultatsSQLRowBuilder()
-          .avecChantierId(chantierId)
-          .avecMaille(CODES_MAILLES[maille])
-          .avecCodeInsee(codeInsee)
-          .avecCommentaire(null)
-          .avecDateCommentaire(new Date('2023-01-01'))
-          .build(),
-
-        new SynthèseDesRésultatsSQLRowBuilder()
-          .avecChantierId(chantierId)
-          .avecMaille(CODES_MAILLES[maille])
-          .avecCodeInsee(codeInsee)
-          .avecCommentaire('Troisième commentaire')
-          .avecDateCommentaire(new Date('2023-01-01'))
-          .build(),
-
-        new SynthèseDesRésultatsSQLRowBuilder()
-          .avecId('aaa-aaa')
-          .avecMétéo('SOLEIL')
-          .avecChantierId(chantierId)
-          .avecMaille(CODES_MAILLES[maille])
-          .avecCodeInsee(codeInsee)
-          .avecCommentaire('Quatrième commentaire')
-          .avecDateCommentaire(new Date('2023-12-31'))
-          .build(),
-      ];
-
-      await prisma.synthese_des_resultats.createMany({ data: synthesesDesResultats });
-
-      // When
-      const result = await synthèseDesRésultatsRepository.récupérerLaPlusRécente(chantierId, `${CODES_MAILLES[maille]}-${codeInsee}`);
-
-      // Then
-      expect(result).toStrictEqual({
-        id: 'aaa-aaa',
-        météo: 'SOLEIL',
-        contenu: 'Quatrième commentaire',
-        date: '2023-12-31T00:00:00.000Z',
-        auteur: 'Auteur Inconnu',
-      });
-    });
-    test('Quand l\auteur_id est null, retourne Auteur Inconnu', async () => {
-      // Given
-      const chantierId = 'CH-003';
-      const maille: Maille = 'regionale';
-      const codeInsee = '01';
-      const synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
-
-      const synthesesDesResultats = new SynthèseDesRésultatsSQLRowBuilder()
-        .avecChantierId(chantierId)
-        .avecAuteurId(null)
-        .avecMaille(CODES_MAILLES[maille])
-        .avecCodeInsee(codeInsee)
-        .avecCommentaire('Premier commentaire')
-        .avecDateCommentaire(new Date('2023-12-31'))
-        .build();
-      await prisma.synthese_des_resultats.create({ data: synthesesDesResultats });
-
-      // When
-      const result = await synthèseDesRésultatsRepository.récupérerLaPlusRécente(chantierId, `${CODES_MAILLES[maille]}-${codeInsee}`);
-      
-      // Then
-      expect(result?.auteur).toStrictEqual('Auteur Inconnu');
-    });
-    test('Quand l\auteur_id est non null, retourne prenom + nom de l\'utilisateur associé', async () => {
-      // Given
-      const chantierId = 'CH-003';
-      const maille: Maille = 'regionale';
-      const codeInsee = '01';
       const auteur_id = randomUUID();
-      const synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
-
-      const synthesesDesResultats = new SynthèseDesRésultatsSQLRowBuilder()
-        .avecChantierId(chantierId)
-        .avecAuteurId(null)
-        .avecMaille(CODES_MAILLES[maille])
-        .avecCodeInsee(codeInsee)
-        .avecCommentaire('Premier commentaire')
-        .avecDateCommentaire(new Date('2023-12-31'))
-        .build();
-      await prisma.synthese_des_resultats.create({ data: synthesesDesResultats });
-
-      // When
       await prisma.utilisateur.create({
         data: {
           id: auteur_id,
@@ -212,10 +119,100 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
           },
         },
       });
+
+      const synthesesDesResultats: synthese_des_resultats[] = [
+        new SynthèseDesRésultatsSQLRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecCommentaire('Premier commentaire')
+          .avecDateCommentaire(null)
+          .avecAuteurId(auteur_id)
+          .build(),
+
+        new SynthèseDesRésultatsSQLRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecCommentaire(null)
+          .avecDateCommentaire(new Date('2023-01-01'))
+          .avecAuteurId(auteur_id)
+          .build(),
+
+        new SynthèseDesRésultatsSQLRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecCommentaire('Troisième commentaire')
+          .avecDateCommentaire(new Date('2023-01-01'))
+          .avecAuteurId(auteur_id)
+          .build(),
+
+        new SynthèseDesRésultatsSQLRowBuilder()
+          .avecId('aaa-aaa')
+          .avecMétéo('SOLEIL')
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecCommentaire('Quatrième commentaire')
+          .avecDateCommentaire(new Date('2023-12-31'))
+          .avecAuteurId(auteur_id)
+          .build(),
+      ];
+
+      await prisma.synthese_des_resultats.createMany({ data: synthesesDesResultats });
+
+      // When
+      const result = await synthèseDesRésultatsRepository.récupérerLaPlusRécente(chantierId, `${CODES_MAILLES[maille]}-${codeInsee}`);
+
+      // Then
+      expect(result).toStrictEqual({
+        id: 'aaa-aaa',
+        météo: 'SOLEIL',
+        contenu: 'Quatrième commentaire',
+        date: '2023-12-31T00:00:00.000Z',
+        auteur: 'Doe John',
+      });
+    });
+    test('retourne prenom + nom de l\'utilisateur associé', async () => {
+      // Given
+      const chantierId = 'CH-003';
+      const maille: Maille = 'regionale';
+      const codeInsee = '01';
+      const auteur_id = randomUUID();
+      const synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
+  
+      const synthesesDesResultats = new SynthèseDesRésultatsSQLRowBuilder()
+        .avecChantierId(chantierId)
+        .avecAuteurId(auteur_id)
+        .avecMaille(CODES_MAILLES[maille])
+        .avecCodeInsee(codeInsee)
+        .avecCommentaire('Premier commentaire')
+        .avecDateCommentaire(new Date('2023-12-31'))
+        .build();
+
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: 'john.doe@test.com',
+          nom: 'John',
+          prenom: 'Doe',
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
+
+      await prisma.synthese_des_resultats.create({ data: synthesesDesResultats });
+
+      // When
       const result = await synthèseDesRésultatsRepository.récupérerLaPlusRécente(chantierId, `${CODES_MAILLES[maille]}-${codeInsee}`);
       
       // Then
-      expect(result?.auteur).toStrictEqual('Auteur Inconnu');
+      expect(result?.auteur).toStrictEqual('Doe John');
     });
 
   });
@@ -227,6 +224,21 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       const chantierId = 'CH-001';
       const maille: Maille = 'regionale';
       const codeInsee = '01';
+      const auteur_id = randomUUID();
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: 'john.doe@test.com',
+          nom: 'John',
+          prenom: 'Doe',
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
 
       const synthèsesDesResultats: synthese_des_resultats[] = [
         new SynthèseDesRésultatsSQLRowBuilder()
@@ -237,6 +249,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
           .avecCodeInsee(codeInsee)
           .avecCommentaire('Ma synthèse REG-01 2022')
           .avecDateCommentaire(new Date('2022-12-31'))
+          .avecAuteurId(auteur_id)
           .build(),
 
         new SynthèseDesRésultatsSQLRowBuilder()
@@ -247,6 +260,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
           .avecCodeInsee(codeInsee)
           .avecCommentaire('Ma synthèse REG-01 2023')
           .avecDateCommentaire(new Date('2023-12-31'))
+          .avecAuteurId(auteur_id)
           .build(),
 
         new SynthèseDesRésultatsSQLRowBuilder()
@@ -255,6 +269,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
           .avecCodeInsee('88')
           .avecCommentaire('Ma synthèse DEPT-88')
           .avecDateCommentaire(new Date('2023-12-31'))
+          .avecAuteurId(auteur_id)
           .build(),
       ];
 
@@ -268,13 +283,13 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
         {
           id: 'aaaa-aaa',
           météo: 'SOLEIL',
-          auteur: 'Auteur Inconnu',
+          auteur: 'Doe John',
           contenu: 'Ma synthèse REG-01 2023',
           date: '2023-12-31T00:00:00.000Z',
         }, {
           id: 'aaaa-aab',
           météo: 'SOLEIL',
-          auteur: 'Auteur Inconnu',
+          auteur: 'Doe John',
           contenu: 'Ma synthèse REG-01 2022',
           date: '2022-12-31T00:00:00.000Z',
         },

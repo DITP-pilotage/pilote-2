@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { objectif as objectifModel } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import ObjectifRepository from '@/server/domain/chantier/objectif/ObjectifRepository.interface';
@@ -16,14 +16,16 @@ describe('ObjectifSQLRepository', function () {
   describe('récupérerLePlusRécent', () => {
     test('retourne l\'objectif avec un contenu, un auteur et une date le plus récent', async () => {
       // GIVEN
+      const auteur_id = randomUUID();
       const type: TypeObjectif = 'àFaire';
-      const objectifs: Prisma.objectifCreateArgs['data'][] = [
+      const objectifs: objectifModel[] = [
         new ObjectifSQLRowBuilder()
           .avecId('123abc')
           .avecChantierId(chantierId)
           .avecDate(new Date('2022-12-31'))
           .avecContenu('Objectif à faire blabla')
           .avecType(CODES_TYPES_OBJECTIFS[type])
+          .avecAuteurID(auteur_id)
           .build(),
 
         new ObjectifSQLRowBuilder()
@@ -31,6 +33,7 @@ describe('ObjectifSQLRepository', function () {
           .avecDate(new Date('2022-12-31'))
           .avecContenu('Objectif déjà fait blabla')
           .avecType('deja_fait')
+          .avecAuteurID(auteur_id)
           .build(),
 
         new ObjectifSQLRowBuilder()
@@ -38,6 +41,7 @@ describe('ObjectifSQLRepository', function () {
           .avecDate(new Date('2022-12-31'))
           .avecContenu('Objectif notre ambition blabla')
           .avecType('notre_ambition')
+          .avecAuteurID(auteur_id)
           .build(),
 
         new ObjectifSQLRowBuilder()
@@ -45,8 +49,24 @@ describe('ObjectifSQLRepository', function () {
           .avecDate(new Date('2023-12-31'))
           .avecContenu('Objectif notre ambition blabla')
           .avecType('notre_ambition')
+          .avecAuteurID(auteur_id)
           .build(),
       ];
+
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: 'john.doe@test.com',
+          nom: 'Savidan',
+          prenom: 'Steve',
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
 
       // WHEN
       await prisma.objectif.createMany({ data: objectifs });
@@ -57,38 +77,12 @@ describe('ObjectifSQLRepository', function () {
       expect(result).toStrictEqual({
         id: '123abc',
         type,
-        auteur: 'Auteur Inconnu',
+        auteur: 'Steve Savidan',
         contenu: 'Objectif à faire blabla',
         date: '2022-12-31T00:00:00.000Z',
       });
     });
-    test('Quand l\id auteur est null, retourne Auteur Inconnu', async () => {
-      // GIVEN
-      const type: TypeObjectif = 'àFaire';
-      const objectif = new ObjectifSQLRowBuilder()
-        .avecId('123abc')
-        .avecAuteurID(null)
-        .avecChantierId('CH-003')
-        .avecDate(new Date('2022-12-31'))
-        .avecContenu('Objectif à faire blabla')
-        .avecType(CODES_TYPES_OBJECTIFS[type])
-        .build();
-
-      // WHEN
-      await prisma.objectif.create({ data: objectif });
-
-      const result = await objectifRepository.récupérerLePlusRécent('CH-003', type);
-
-      // THEN
-      expect(result).toStrictEqual({
-        id: '123abc',
-        type,
-        auteur: 'Auteur Inconnu',
-        contenu: 'Objectif à faire blabla',
-        date: '2022-12-31T00:00:00.000Z',
-      });
-    });
-    test('Quand l\id auteur est non null, retourne prenom + nom de l\'utilisateur associé', async () => {
+    test('retourne prenom + nom de l\'utilisateur associé', async () => {
       // GIVEN
       const type: TypeObjectif = 'àFaire';
       const auteur_id = randomUUID();
@@ -134,26 +128,45 @@ describe('ObjectifSQLRepository', function () {
   describe('récupérerHistoriqueDUnObjectif', () => {
     test('Retourne, par ordre antéchronologique, tous les objectifs pour un type et un chantier', async () => {
       // GIVEN
+      const auteur_id = randomUUID();
       const type: TypeObjectif = 'notreAmbition';
-      const objectifs: Prisma.objectifCreateArgs['data'][] = [
+      const objectifs: objectifModel[] = [
         new ObjectifSQLRowBuilder()
           .avecChantierId(chantierId)
           .avecDate(new Date('2022-04-01'))
           .avecType(CODES_TYPES_OBJECTIFS[type])
+          .avecAuteurID(auteur_id)
           .build(),
 
         new ObjectifSQLRowBuilder()
           .avecChantierId(chantierId)
           .avecDate(new Date('2023-04-01'))
           .avecType(CODES_TYPES_OBJECTIFS[type])
+          .avecAuteurID(auteur_id)
           .build(),
 
         new ObjectifSQLRowBuilder()
           .avecChantierId(chantierId)
           .avecDate(new Date('2021-12-31'))
           .avecType('deja_fait')
+          .avecAuteurID(auteur_id)
           .build(),
       ];
+
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: 'john.doe@test.com',
+          nom: 'Savidan',
+          prenom: 'Steve',
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
 
       await prisma.objectif.createMany({ data: objectifs });
 

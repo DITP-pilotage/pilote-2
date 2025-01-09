@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { commentaire as commentaireModel } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 import CommentaireRepository from '@/server/domain/chantier/commentaire/CommentaireRepository.interface';
 import CommentaireSQLRepository, {
@@ -24,27 +24,7 @@ describe('CommentaireSQLRepository', () => {
       expect(résultat).toStrictEqual(null);
     });
 
-    it('quand l\'id auteur est null, l\'auteur est égal à Auteur Inconnu ', async () => {
-      // GIVEN
-      const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
-      const commentaire = new CommentaireSQLRowBuilder()
-        .avecChantierId('CH-001')
-        .avecAuteurId(null)
-        .avecMaille('NAT')
-        .avecCodeInsee('FR')
-        .avecType(CODES_TYPES_COMMENTAIRES['risquesEtFreinsÀLever'])
-        .avecDate(new Date('2023-04-20'))
-        .build();
-      await prisma.commentaire.create({ data: commentaire });
-
-      // WHEN
-      const résultat = await commentaireRepository.récupérerLePlusRécent('CH-001', 'NAT-FR', 'risquesEtFreinsÀLever');
-
-      // THEN
-      expect(résultat?.auteur).toStrictEqual('Auteur Inconnu');
-    });
-
-    it('quand l\'id auteur est non null, l\'auteur retourné est égal au prénom + nom de l\'utilisateur associé à l\'id', async () => {
+    it('l\'auteur retourné est égal au prénom + nom de l\'utilisateur associé à l\'id', async () => {
       // GIVEN
       const auteur_id = randomUUID();
       const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
@@ -87,12 +67,29 @@ describe('CommentaireSQLRepository', () => {
       const codeInsee = 'FR';
       const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
 
+      const auteur_id = randomUUID();
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: '',
+          nom: 'test', 
+          prenom: 'test',
+          date_creation: new Date(),
+          profil: {
+            connect: {
+              code: 'DITP_ADMIN',
+            },
+          },
+        },
+      });
+
       const commentaireRisqueEtFreinsÀLeverLePlusRécent = new CommentaireSQLRowBuilder()
         .avecChantierId(chantierId)
         .avecMaille(CODES_MAILLES[maille])
         .avecCodeInsee(codeInsee)
         .avecType(CODES_TYPES_COMMENTAIRES['risquesEtFreinsÀLever'])
         .avecDate(new Date('2023-04-20'))
+        .avecAuteurId(auteur_id)
         .build();
 
       const commentaireRisqueEtFreinsÀLeverMoinsRécent = new CommentaireSQLRowBuilder()
@@ -101,6 +98,7 @@ describe('CommentaireSQLRepository', () => {
         .avecCodeInsee(codeInsee)
         .avecType(CODES_TYPES_COMMENTAIRES['risquesEtFreinsÀLever'])
         .avecDate(new Date('2022-12-31'))
+        .avecAuteurId(auteur_id)
         .build();
 
       const commentaireSolutionsEtActionsÀVenir = new CommentaireSQLRowBuilder()
@@ -109,9 +107,10 @@ describe('CommentaireSQLRepository', () => {
         .avecCodeInsee(codeInsee)
         .avecType(CODES_TYPES_COMMENTAIRES['solutionsEtActionsÀVenir'])
         .avecDate(new Date('2023-04-21'))
+        .avecAuteurId(auteur_id)
         .build();
 
-      const commentaires: Prisma.commentaireCreateArgs['data'][] = [commentaireSolutionsEtActionsÀVenir, commentaireRisqueEtFreinsÀLeverLePlusRécent, commentaireRisqueEtFreinsÀLeverMoinsRécent];
+      const commentaires: commentaireModel[] = [commentaireSolutionsEtActionsÀVenir, commentaireRisqueEtFreinsÀLeverLePlusRécent, commentaireRisqueEtFreinsÀLeverMoinsRécent];
 
       await prisma.commentaire.createMany({ data: commentaires });
 
@@ -123,7 +122,7 @@ describe('CommentaireSQLRepository', () => {
         id: commentaireRisqueEtFreinsÀLeverLePlusRécent.id,
         contenu: commentaireRisqueEtFreinsÀLeverLePlusRécent.contenu,
         date: (commentaireRisqueEtFreinsÀLeverLePlusRécent.date).toISOString(),
-        auteur: 'Auteur Inconnu',
+        auteur: 'test test',
         type: NOMS_TYPES_COMMENTAIRES[commentaireRisqueEtFreinsÀLeverLePlusRécent.type],
       });
     });
@@ -137,8 +136,22 @@ describe('CommentaireSQLRepository', () => {
       const codeInsee = 'FR';
       const typeCommentaire: TypeCommentaireChantier = 'risquesEtFreinsÀLever';
       const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
-
-      const commentaires: Prisma.commentaireCreateArgs['data'][]  = [
+      const auteur_id = randomUUID();
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: '',
+          nom: 'test', 
+          prenom: 'test',
+          date_creation: new Date(),
+          profil: {
+            connect: {
+              code: 'DITP_ADMIN',
+            },
+          },
+        },
+      });
+      const commentaires: commentaireModel[]  = [
         new CommentaireSQLRowBuilder()
           .avecId('12345')
           .avecChantierId(chantierId)
@@ -147,6 +160,7 @@ describe('CommentaireSQLRepository', () => {
           .avecType(CODES_TYPES_COMMENTAIRES['risquesEtFreinsÀLever'])
           .avecContenu('Mon commentaire frein FR 2022')
           .avecDate(new Date('2022-12-31'))
+          .avecAuteurId(auteur_id)
           .build(),
 
         new CommentaireSQLRowBuilder()
@@ -157,6 +171,7 @@ describe('CommentaireSQLRepository', () => {
           .avecType(CODES_TYPES_COMMENTAIRES['risquesEtFreinsÀLever'])
           .avecContenu('Mon commentaire frein FR 2023')
           .avecDate(new Date('2023-12-31'))
+          .avecAuteurId(auteur_id)
           .build(),
 
         new CommentaireSQLRowBuilder()
@@ -167,6 +182,7 @@ describe('CommentaireSQLRepository', () => {
           .avecType(CODES_TYPES_COMMENTAIRES['solutionsEtActionsÀVenir'])
           .avecContenu('Mon commentaire action')
           .avecDate(new Date('2023-12-30'))
+          .avecAuteurId(auteur_id)
           .build(),
 
         new CommentaireSQLRowBuilder()
@@ -177,6 +193,7 @@ describe('CommentaireSQLRepository', () => {
           .avecType(CODES_TYPES_COMMENTAIRES['risquesEtFreinsÀLever'])
           .avecContenu('Mon commentaire frein département 2023')
           .avecDate(new Date('2023-12-31'))
+          .avecAuteurId(auteur_id)
           .build(),
       ];
 
@@ -190,14 +207,14 @@ describe('CommentaireSQLRepository', () => {
         {
           id: '1235',
           type: 'risquesEtFreinsÀLever',
-          auteur: 'Auteur Inconnu',
+          auteur: 'test test',
           contenu: 'Mon commentaire frein FR 2023',
           date: '2023-12-31T00:00:00.000Z',
         }, 
         {
           id: '12345',
           type: 'risquesEtFreinsÀLever',
-          auteur: 'Auteur Inconnu',
+          auteur: 'test test',
           contenu: 'Mon commentaire frein FR 2022',
           date: '2022-12-31T00:00:00.000Z',
         },

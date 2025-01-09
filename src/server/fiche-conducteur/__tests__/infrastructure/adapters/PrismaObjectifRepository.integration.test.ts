@@ -4,9 +4,24 @@ import { PrismaObjectifRepository } from '@/server/fiche-conducteur/infrastructu
 
 describe('PrismaObjectifRepository', () => {
   let prismaObjectifRepository: PrismaObjectifRepository;
+  const auteur_id = randomUUID();
 
-  beforeEach(() => {
+  beforeEach(async () => {
     prismaObjectifRepository = new PrismaObjectifRepository(prisma);
+    await prisma.utilisateur.create({
+      data: {
+        id: auteur_id,
+        email: '',
+        nom: '', 
+        prenom: '',
+        date_creation: new Date(),
+        profil: {
+          connect: {
+            code: 'DITP_ADMIN',
+          },
+        },
+      },
+    });
   });
 
   describe('#listerObjectifParChantierId', () => {
@@ -35,7 +50,7 @@ describe('PrismaObjectifRepository', () => {
             chantier_id: 'CH-168',
             type: 'deja_fait',
             contenu: 'contenu OK deja_fait',
-            auteur_id: null,
+            auteur_id: auteur_id,
             date: new Date(),
           },
           {
@@ -43,7 +58,7 @@ describe('PrismaObjectifRepository', () => {
             chantier_id: 'CH-168',
             type: 'notre_ambition',
             contenu: 'contenu OK notre_ambition',
-            auteur_id: null,
+            auteur_id: auteur_id,
             date: new Date(),
           },
           {
@@ -51,7 +66,7 @@ describe('PrismaObjectifRepository', () => {
             chantier_id: 'CH-168',
             type: 'a_faire',
             contenu: 'contenu OK a_faire',
-            auteur_id: null,
+            auteur_id: auteur_id,
             date: new Date(),
           },
           {
@@ -59,7 +74,7 @@ describe('PrismaObjectifRepository', () => {
             chantier_id: 'CH-169',
             type: 'notre_ambition',
             contenu: 'contenu KO chantier_id',
-            auteur_id: null,
+            auteur_id: auteur_id,
             date: new Date(),
           },
         ],

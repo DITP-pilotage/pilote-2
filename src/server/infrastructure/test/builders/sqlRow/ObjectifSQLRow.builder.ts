@@ -1,4 +1,4 @@
-import { objectif, Prisma } from '@prisma/client';
+import { objectif } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import { randomUUID } from 'node:crypto';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
@@ -68,7 +68,7 @@ export default class ObjectifSQLRowBuilder {
     return result as ObjectifSQLRowBuilder;
   }
 
-  build(): Prisma.objectifCreateArgs['data'] {
+  build(): objectif {
     return {
       id: this._id,
       auteur_id: this._auteur_id,

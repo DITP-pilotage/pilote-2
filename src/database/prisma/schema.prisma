@@ -547,11 +547,11 @@ model utilisateur {
   habilitation                     habilitation[]
   rapport_import_mesure_indicateur rapport_import_mesure_indicateur[]
   date_modification                DateTime                           @default(now())
-  auteur_modification              utilisateur                        @relation("modification", fields: [auteur_id_modification], references: [id])
-  auteur_id_modification           String                             @db.Uuid
+  auteur_modification              utilisateur?                       @relation("modification", fields: [auteur_id_modification], references: [id])
+  auteur_id_modification           String?                            @db.Uuid
   date_creation                    DateTime
-  auteur_creation                  utilisateur                        @relation("creation", fields: [auteur_id_creation], references: [id])
-  auteur_id_creation               String                             @db.Uuid
+  auteur_creation                  utilisateur?                       @relation("creation", fields: [auteur_id_creation], references: [id])
+  auteur_id_creation               String?                            @db.Uuid
   commentaires                     commentaire[]
   decisions_strategique            decision_strategique[]
   objectifs                        objectif[]
