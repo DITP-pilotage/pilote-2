@@ -28,8 +28,7 @@ TRUNCATE TABLE
     public.projet_structurant,
     public.synthese_des_resultats_projet_structurant,
     public.utilisateur,
-    public.erreur_validation_fichier,
-    public.proposition_valeur_actuelle;"
+    public.erreur_validation_fichier;"
 
 echo ">> pg_restore dumped file..."
 time pg_restore -d $CONN_STR_DEST --verbose \

@@ -17,15 +17,10 @@ import { TableauFicheTerritoriale } from '@/components/PageFicheTerritoriale/Tab
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import { FicheTerritorialeContrat } from '@/server/fiche-territoriale/app/contrats/FicheTerritorialeContrat';
-import api from '@/server/infrastructure/api/trpc/api';
-import { getDateBasculeAffichageValeursAnneePrecedente } from '@/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 import PageFicheTerritorialeStyled from './PageFicheTerritoriale.styled';
 
 export const PageFicheTerritoriale: FunctionComponent<FicheTerritorialeContrat> = ({ territoire, avancementGlobalTerritoire, avancementAnnuelTerritoire, répartitionMétéos, chantiersFicheTerritoriale }) => {
   const now = new Date();
-  const { data: dateBasculeTauxAnnuelAnneeCouranteString } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE' });
-  const anneeCourante = (new Date).getFullYear();
-  const anneeJalon = getDateBasculeAffichageValeursAnneePrecedente(dateBasculeTauxAnnuelAnneeCouranteString as string).dateBasculeDepassee ? anneeCourante : anneeCourante - 1;
 
   return (
     <PageFicheTerritorialeStyled>
@@ -102,7 +97,7 @@ export const PageFicheTerritoriale: FunctionComponent<FicheTerritorialeContrat> 
                     </div>
                     <div className='w-full flex justify-center fr-mt-2w'>
                       <span>
-                        { `Année en cours : ${anneeJalon}` }
+                        { `Année en cours : ${new Date().getFullYear()}` }
                       </span>
                     </div>
                   </div>

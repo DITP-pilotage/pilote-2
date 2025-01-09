@@ -5,8 +5,8 @@ with
 ta_zone_indic as (
 	select 
 	b.indic_parent_ch, a.zone_id, z.maille as "maille", metric_date,a.indic_id,
-	vaca, vig, vca_courant, vca_adate, vca_adate_date, vcg,
-	taa_courant, taa_adate, tag
+	vaca, vig, vca_courant, vcg,
+	taa_courant, tag
 	from {{ ref('compute_ta_indic') }} a
 	left join {{ ref('metadata_indicateurs') }} b on a.indic_id =b.indic_id
 	left join {{ ref('stg_ppg_metadata__zones') }} z on a.zone_id=z.id 
@@ -18,7 +18,6 @@ ta_zone_indic_pond as (
 select a.*,
 	b.poids_zone_reel,
 	taa_courant*0.01*b.poids_zone_reel as taa_courant_pond,
-	taa_adate*0.01*b.poids_zone_reel as taa_adate_pond,
 	tag*0.01*b.poids_zone_reel as tag_pond
 from ta_zone_indic a
 left join {{ ref('int_ponderation_reelle') }} b on a.indic_id=b.indic_id and a.zone_id=b.zone_id
@@ -48,23 +47,6 @@ select * from (
 	) a
 where a.r=1
 ),
--- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente avec date<=annee_precedente
-ta_zone_indic_pond_prev_year as (
-select * from (
-	select a.*, rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, 
-	-- 31 décembre de l'année précédente
-	(date_trunc('year', now()) - interval '1 days')::date::text as max_date,
-	'prev_year' as valid_on
-	from ta_zone_indic_pond a
-	left join {{ ref('get_max_date_vaca_ch') }} b on a.indic_parent_ch=b.chantier_id and a.zone_id=b.zone_id
-	where vaca is not null
-	-- avant le 31 déc année précédente
-	and metric_date::date<= (date_trunc('year', now()) - interval '1 days')::date
-	-- apres le 01 jan année précédente
-	and metric_date::date>= date_trunc('year', (date_trunc('year', now()) - interval '1 days'))::date
-	) a
-where a.r=1
-),
 -- Calcul du TA chantier intermediaire 
 --		car sans prendre en compte le nombre de TA indic remontés pour ce CH (PIL-227)
 ta_ch_int as (
@@ -76,13 +58,9 @@ ta_ch_int as (
 	array_agg(vaca) as vaca_agg, 
 	array_agg(vig) as vig_agg, 
 	array_agg(vca_courant) as vca_courant_agg, 
-	array_agg(vca_adate) as vca_adate_agg, 
-	array_agg(vca_adate_date) as vca_adate_date_agg, 
 	array_agg(vcg) as vcg_agg, 
 	array_agg(taa_courant) as taa_courant_agg, 
-	array_agg(taa_adate) as taa_adate_agg, 
 	array_agg(taa_courant_pond) as taa_courant_pond_agg, 
-	array_agg(taa_adate_pond) as taa_adate_pond_agg, 
 	array_agg(tag) as tag_agg,
 	array_agg(tag_pond) as tag_pond_agg,
 	-- Calcul du TA par somme des TA pondérés et bornage dans [0,100] (+handle null)
@@ -92,13 +70,6 @@ ta_ch_int as (
 		when sum(taa_courant_pond) < 0 then 0
 		else round(sum(taa_courant_pond)::numeric, 3)
 	end as taa_courant_ch_int,
-	-- [adate] Calcul du TA par somme des TA pondérés et bornage dans [0,100] (+handle null)
-	case 
-		when bool_or(taa_adate_pond is null) then null
-		when sum(taa_adate_pond) > 100 then 100
-		when sum(taa_adate_pond) < 0 then 0
-		else round(sum(taa_adate_pond)::numeric, 3)
-	end as taa_adate_ch_int,
 	case
 		when bool_or(tag_pond is null) then null
 		when sum(tag_pond) > 100 then 100
@@ -114,8 +85,6 @@ ta_ch_int as (
 	select * from ta_zone_indic_pond_today where poids_zone_reel > 0 
 	union
 	select * from ta_zone_indic_pond_prev_month where poids_zone_reel > 0
-	union
-	select * from ta_zone_indic_pond_prev_year where poids_zone_reel > 0
 	) a
 	group by indic_parent_ch, a.zone_id, valid_on
 )
@@ -139,10 +108,6 @@ case
 	when n_indic_in_ta=n_indic_in_ta_expected then taa_courant_ch_int
 	else null
 end as taa_courant_ch,
-case 
-	when n_indic_in_ta=n_indic_in_ta_expected then taa_adate_ch_int
-	else null
-end as taa_adate_ch,
 case 
 	when n_indic_in_ta=n_indic_in_ta_expected then tag_ch_int
 	else null
