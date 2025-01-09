@@ -30,5 +30,4 @@ time pg_dump -d $CONN_STR_PROD --verbose \
     --table public.perimetre_projet_structurant \
     --table public.projet_structurant \
     --table public.synthese_des_resultats_projet_structurant \
-    --table public.proposition_valeur_actuelle \
     --file=$DUMP_DEST

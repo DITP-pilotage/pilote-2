@@ -2,15 +2,9 @@ import { FunctionComponent } from 'react';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import AvancementsStyled from '@/components/_commons/Avancements/Avancements.styled';
-import api from '@/server/infrastructure/api/trpc/api';
-import { getDateBasculeAffichageValeursAnneePrecedente } from '@/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 import AvancementsProps from './Avancements.interface';
 
 const Avancements: FunctionComponent<AvancementsProps> = ({ avancements }) => {
-  const { data: dateBasculeTauxAnnuelAnneeCouranteString } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE' });
-  const anneeCourante = (new Date).getFullYear();
-  const anneeJalon = getDateBasculeAffichageValeursAnneePrecedente(dateBasculeTauxAnnuelAnneeCouranteString as string).dateBasculeDepassee ? anneeCourante : anneeCourante - 1;
-
   return (
     <AvancementsStyled>
       <JaugeDeProgression
@@ -56,7 +50,7 @@ const Avancements: FunctionComponent<AvancementsProps> = ({ avancements }) => {
             variante='secondaire'
           />
           <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-            {`Taux d\'avancement de l'année ${anneeJalon}`}
+            Moyenne de l'année en cours
           </p>
         </div>
       </div>
