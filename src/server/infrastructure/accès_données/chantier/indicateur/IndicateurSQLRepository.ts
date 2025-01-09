@@ -22,6 +22,10 @@ import {
 } from '@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLParser';
 import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { comparerDates } from '@/client/utils/date/date';
+import { configuration } from '@/config';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 
 export interface historique_valeurs {
   date: string
@@ -65,48 +69,50 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
   private _mapDétailsToDomain(indicateurs: IndicateurPrisma[]): DétailsIndicateurs {
     const détailsIndicateurs: DétailsIndicateurs = {};
 
-    let intermediaireEstAnnéeEnCours: boolean;
-    for (const indic of indicateurs) {
-      intermediaireEstAnnéeEnCours = indic.objectif_date_valeur_cible_intermediaire?.getFullYear() === new Date().getFullYear();
+    const dateBascule = configuration.dateBasculeAffichageValeursAnneePrecedente;
 
-      if (!détailsIndicateurs[indic.id]) {
-        détailsIndicateurs[indic.id] = {};
+    let estDateDuJourCorrespondantALanneeValeurCible: boolean;
+    for (const indicateurRow of indicateurs) {
+      estDateDuJourCorrespondantALanneeValeurCible = indicateurRow?.objectif_date_valeur_cible_intermediaire ? getAnneeAffichageDateDeBascule(new Date(), dateBascule) === indicateurRow?.objectif_date_valeur_cible_intermediaire.getFullYear() : false;
+
+      if (!détailsIndicateurs[indicateurRow.id]) {
+        détailsIndicateurs[indicateurRow.id] = {};
       }
 
-      détailsIndicateurs[indic.id][indic.territoire_code] = {
-        codeInsee: indic.code_insee,
-        valeurInitiale: indic.valeur_initiale,
-        dateValeurInitiale: formatDate(indic.date_valeur_initiale),
+      détailsIndicateurs[indicateurRow.id][indicateurRow.territoire_code] = {
+        codeInsee: indicateurRow.code_insee,
+        valeurInitiale: indicateurRow.valeur_initiale,
+        dateValeurInitiale: formatDate(indicateurRow.date_valeur_initiale),
         // TODO(Tristan-10/10/2024) : Trouver une moyen de se débarasser du as unknown
-        historiquesValeurs: (indic.evolution_valeur_actuelle as unknown as historique_valeurs[]).sort((a, b) => comparerDates(a.date, b.date)),
-        valeurActuelle: indic.valeur_actuelle,
-        dateValeurActuelle: formatDate(indic.date_valeur_actuelle),
-        valeurCible: indic.objectif_valeur_cible,
-        dateValeurCible: formatDate(indic.objectif_date_valeur_cible),
-        valeurCibleAnnuelle: intermediaireEstAnnéeEnCours ? indic.objectif_valeur_cible_intermediaire : null,
-        dateValeurCibleAnnuelle: intermediaireEstAnnéeEnCours ? formatDate(indic.objectif_date_valeur_cible_intermediaire) : null,
+        historiquesValeurs: (indicateurRow.evolution_valeur_actuelle as unknown as historique_valeurs[]).sort((a, b) => comparerDates(a.date, b.date)),
+        valeurActuelle: indicateurRow.valeur_actuelle,
+        dateValeurActuelle: formatDate(indicateurRow.date_valeur_actuelle),
+        valeurCible: indicateurRow.objectif_valeur_cible,
+        dateValeurCible: formatDate(indicateurRow.objectif_date_valeur_cible),
+        valeurCibleAnnuelle: estDateDuJourCorrespondantALanneeValeurCible ? indicateurRow.objectif_valeur_cible_intermediaire : null,
+        dateValeurCibleAnnuelle: estDateDuJourCorrespondantALanneeValeurCible ? formatDate(indicateurRow.objectif_date_valeur_cible_intermediaire) : null,
         avancement: {
-          global: indic.objectif_taux_avancement,
-          annuel: intermediaireEstAnnéeEnCours ? indic.objectif_taux_avancement_intermediaire : null,
+          global: indicateurRow.objectif_taux_avancement,
+          annuel: estDateDuJourCorrespondantALanneeValeurCible ? indicateurRow.objectif_taux_avancement_intermediaire : null,
         },
-        proposition: indic.valeur_actuelle_proposition !== null && indic.valeur_actuelle_proposition !== undefined ? { // Pour autoriser une valeur actuelle proposé à 0
-          valeurActuelle: indic.valeur_actuelle_proposition,
-          tauxAvancement: indic.objectif_taux_avancement_proposition,
-          tauxAvancementIntermediaire: intermediaireEstAnnéeEnCours ? indic.objectif_taux_avancement_intermediaire_proposition : null,
-          auteur: indic.auteur_proposition,
-          motif: indic.motif_proposition,
-          sourceDonneeEtMethodeCalcul: indic.source_donnee_methode_calcul_proposition,
-          dateProposition: formatDate(indic.date_proposition),
+        proposition: indicateurRow.valeur_actuelle_proposition !== null && indicateurRow.valeur_actuelle_proposition !== undefined ? { // Pour autoriser une valeur actuelle proposé à 0
+          valeurActuelle: indicateurRow.valeur_actuelle_proposition,
+          tauxAvancement: indicateurRow.objectif_taux_avancement_proposition,
+          tauxAvancementIntermediaire: estDateDuJourCorrespondantALanneeValeurCible ? indicateurRow.objectif_taux_avancement_intermediaire_proposition : null,
+          auteur: indicateurRow.auteur_proposition,
+          motif: indicateurRow.motif_proposition,
+          sourceDonneeEtMethodeCalcul: indicateurRow.source_donnee_methode_calcul_proposition,
+          dateProposition: formatDate(indicateurRow.date_proposition),
         } : null,
-        unité: indic.unite_mesure,
-        est_applicable: indic.est_applicable,
-        dateImport: formatDate(indic.dernier_import_date_indic),
-        pondération: indic.ponderation_zone_reel,
-        prochaineDateValeurActuelle: formatDate(indic.prochaine_date_valeur_actuelle),
-        prochaineDateMaj: formatDate(indic.prochaine_date_maj),
-        prochaineDateMajJours: indic.prochaine_date_maj_jours,
-        estAJour: indic.est_a_jour,
-        tendance: indic.tendance,
+        unité: indicateurRow.unite_mesure,
+        est_applicable: indicateurRow.est_applicable,
+        dateImport: formatDate(indicateurRow.dernier_import_date_indic),
+        pondération: indicateurRow.ponderation_zone_reel,
+        prochaineDateValeurActuelle: formatDate(indicateurRow.prochaine_date_valeur_actuelle),
+        prochaineDateMaj: formatDate(indicateurRow.prochaine_date_maj),
+        prochaineDateMajJours: indicateurRow.prochaine_date_maj_jours,
+        estAJour: indicateurRow.est_a_jour,
+        tendance: indicateurRow.tendance,
       };
     }
 
