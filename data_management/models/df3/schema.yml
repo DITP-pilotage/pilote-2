@@ -126,6 +126,10 @@ models:
         description: Valeur Cible Annuelle (VCA) **à date**. C'est la VC annuelle dont l'année correspond à **l'année en cours**
       - name: vca_adate_date
         description: "Date de la **VCA à date**"
+      - name: vca_prev_year
+        description: "Dernière VC annuelle de l'an dernier."
+      - name: vca_prev_year_date
+        description: "Date de la dernière VC annuelle de l'an dernier."
     description: Jointure des VACA, VACG, VCA, VCG, VIG dans une table unqie avant de calculer les TA.
   - name: compute_ta_indic
     description: |
@@ -158,6 +162,8 @@ models:
           La VC prise en compte pour ce calcul est la `vca_courant`. 
 
           *Exemple d'utilisation:* Utile lorsque l'on veut mettre à jour le calcul de TA retrospectivement. Par exemple, nous sommes en 2024, et une VA de déc-2023 est mise à jour. Pour connaitre le TAA tel qu'il aurait été en déc-23, il faut regarder ce TAA (TAA *à date*).
+      - name: taa_prev_year
+        description: "TA de l'an dernier. Ex: si on est en 2025, retourne le dernier TA dispo en vigueur en 2024. Peut se faire grace à une VA de 2023 si c'est la dernière dispo."
       - name: tag
         description: Taux d'Avancement Global (TAG). Indique l'avancement sur la période compète, utilise la VCG (déterminée dans `get_vcg`).
   - name: df3_indicateur
