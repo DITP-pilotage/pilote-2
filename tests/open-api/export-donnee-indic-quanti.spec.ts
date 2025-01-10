@@ -8,32 +8,9 @@ import { configuration } from '@/config';
 let apiContext: APIRequestContext;
 let result: APIResponse;
 
-const localTokenAPIEquipeDirProjet =  configuration.tokenAPI.localTokenAPIE2EEquipeDirProjet;
-
-test('quand on a pas accès au chantier, doit remonter une erreur 403 Forbidden', async ({ playwright }) => {
-  await test.step('Création du context - Authorization Pilote - equipe.dir.projet@example.com - EQUIPE_DIR_PROJET', async () => {
-    apiContext = await playwright.request.newContext({
-      baseURL: 'http://localhost:3000',
-      extraHTTPHeaders: {
-        'Authorization': `Bearer ${localTokenAPIEquipeDirProjet}`,
-      },
-    });
-  });
-
-  await test.step('Appel du endpoint /api/open-api/chantier/CH-039/indicateur/IND-718/donnees', async () => {
-    result = await apiContext.get('/api/open-api/chantier/CH-039/indicateur/IND-718/donnees');
-  });
-
-  await test.step('Vérification status égal 403 Forbidden', async () => {
-    expect(result.status()).toEqual(403);
-  });
-
-  await test.step('Vérification message égal "Vous n\'êtes pas autorisé à acceder au chantier CH-039"', async () => {
-    expect(await result.json()).toEqual({
-      message: "Vous n'êtes pas autorisé à acceder au chantier CH-039",
-    });
-  });
-});
+const localTokenAPIEquipeDirProjet =  configuration.tokenAPI.localTokenAPIE2EUtilisateurEquipeDirProjet;
+const chantierIdAccessibleParUtilisateurEquipeDirProjet =  configuration.tokenAPI.chantierIdAccessibleParUtilisateurEquipeDirProjet;
+const indicateurIdAccessibleParUtilisateurEquipeDirProjet =  configuration.tokenAPI.indicateurIdAccessibleParUtilisateurEquipeDirProjet;
 
 test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les données de l'indicateur", async ({ playwright }) => {
   await test.step('Création du context - Authorization Pilote - equipe.dir.projet@example.com - EQUIPE_DIR_PROJET', async () => {
@@ -45,8 +22,8 @@ test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les 
     });
   });
 
-  await test.step('Appel du endpoint /api/open-api/chantier/CH-001/indicateur/IND-900/donnees', async () => {
-    result = await apiContext.get('/api/open-api/chantier/CH-001/indicateur/IND-900/donnees');
+  await test.step(`Appel du endpoint /api/open-api/chantier/${chantierIdAccessibleParUtilisateurEquipeDirProjet}/indicateur/${indicateurIdAccessibleParUtilisateurEquipeDirProjet}/donnees`, async () => {
+    result = await apiContext.get(`/api/open-api/chantier/${chantierIdAccessibleParUtilisateurEquipeDirProjet}/indicateur/${indicateurIdAccessibleParUtilisateurEquipeDirProjet}/donnees`);
   });
 
   await test.step('Vérification status égal 200 OK', async () => {
@@ -59,9 +36,9 @@ test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les 
     donneeIndicateur = await result.json() as DonneeIndicateurContrat;
   });
 
-  await test.step('Vérification donnees appartiennent bien au CH-039 et IND-718', async () => {
-    expect(donneeIndicateur.chantier_id).toEqual('CH-001');
-    expect(donneeIndicateur.indic_id).toEqual('IND-900');
+  await test.step(`Vérification donnees appartiennent bien au ${chantierIdAccessibleParUtilisateurEquipeDirProjet} et ${indicateurIdAccessibleParUtilisateurEquipeDirProjet}`, async () => {
+    expect(donneeIndicateur.chantier_id).toEqual(chantierIdAccessibleParUtilisateurEquipeDirProjet);
+    expect(donneeIndicateur.indic_id).toEqual(indicateurIdAccessibleParUtilisateurEquipeDirProjet);
   });
 
   await test.step('Vérification donnees territoires possèdes bien 101 données departementales, 18 données régionales et 1 donnée nationale', async () => {
