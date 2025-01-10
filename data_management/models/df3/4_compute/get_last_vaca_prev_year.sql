@@ -19,9 +19,9 @@ SELECT
 	vaca,
 	tag,
 	taa_courant,
-	vca_adate,
-	vca_adate_date,
-	taa_adate,
+	vca_prev_year,
+	vca_prev_year_date,
+	taa_prev_year,
 	vacp,
 	tap_global,
 	tap_courant

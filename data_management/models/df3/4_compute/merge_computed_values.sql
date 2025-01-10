@@ -10,6 +10,8 @@ c.vacg,
 vacp.vacp,
 -- VCA pour l'année COURANTE (rule::620)
 d2.vca as vca_courant, d2.vca_date as vca_courant_date,
+-- VCA pour l'année PRECEDENTE
+d3.vca as vca_prev_year, d3.vca_date as vca_prev_year_date,
 -- VCA pour l'année de la a.metric_date (pas utilisé, mais valeur avant rule::620)
 d.vca as vca_adate, d.vca_date as vca_adate_date,
 e.vig, e.vig_date,
@@ -22,5 +24,7 @@ left join {{ ref('compute_vacp') }} vacp on a.indic_id = vacp.indic_id and a.zon
 left join {{ ref('get_vca') }} d on a.indic_id =d.indic_id and a.zone_id =d.zone_id and date_part('year', a.metric_date::date)=d.yyear 
 -- La VCA ici est en date de l'année courante
 left join (select * from {{ ref('get_vca') }} where yyear=(date_part('year', now()))) d2 on a.indic_id =d2.indic_id and a.zone_id =d2.zone_id
+-- La VCA ici est en date de l'année précédente
+left join (select * from {{ ref('get_vca') }} where yyear=(date_part('year', now()) - 1)) d3 on a.indic_id =d3.indic_id and a.zone_id =d3.zone_id
 left join {{ ref('get_vig') }} e on a.indic_id =e.indic_id and a.zone_id =e.zone_id
 left join {{ ref('get_vcg') }} f on a.indic_id =f.indic_id and a.zone_id =f.zone_id
