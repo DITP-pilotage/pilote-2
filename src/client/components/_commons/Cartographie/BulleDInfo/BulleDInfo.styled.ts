@@ -9,7 +9,7 @@ const BulleDInfoStyled = styled.div`
   background-color: var(--background-contrast-grey);
   box-shadow: 0 4px 4px 0 #00000040;
   transform: translate(-50%, -3rem);
-
+  min-width: 8rem;
   div:last-child {
     background-color: var(--background-alt-grey);
   }
