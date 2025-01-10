@@ -60,8 +60,8 @@ select * from (
 	where vaca is not null
 	-- avant le 31 déc année précédente
 	and metric_date::date<= (date_trunc('year', now()) - interval '1 days')::date
-	-- apres le 01 jan année précédente
-	and metric_date::date>= date_trunc('year', (date_trunc('year', now()) - interval '1 days'))::date
+	-- apres le 01 jan année précédente [condition supprimée dans PIL-536]
+	-- and metric_date::date>= date_trunc('year', (date_trunc('year', now()) - interval '1 days'))::date
 	) a
 where a.r=1
 ),
