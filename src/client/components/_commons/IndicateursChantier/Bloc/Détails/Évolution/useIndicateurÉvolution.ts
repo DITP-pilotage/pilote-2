@@ -1,5 +1,5 @@
 import { ChartData, ChartDataset, ChartOptions } from 'chart.js';
-import { comparerDates, formaterDate } from '@/client/utils/date/date';
+import { formaterDate } from '@/client/utils/date/date';
 import { générerCouleursAléatoiresEntreDeuxCouleurs } from '@/client/utils/couleur/couleur';
 import IndicateurÉvolutionProps from './IndicateurÉvolution.interface';
 
@@ -24,19 +24,15 @@ export default function useIndicateurÉvolution(indicateurDétailsParTerritoires
     },
   };
 
-  const datesDeTousLesIndicateurs = indicateurDétailsParTerritoires.flatMap(detailIndicateur => 
-    detailIndicateur.données.historiquesValeurs.map(h => h.date),
-  );
-  const listeDesDateOrdonnees = [...new Set(datesDeTousLesIndicateurs)].sort((a, b) => comparerDates(a, b));
-  const valeursAxeX = listeDesDateOrdonnees.map(date => formaterDate(date, 'MM/YYYY'));
+  const libellés = indicateurDétailsPourUnTerritoire.données.historiquesValeurs.map(historique => formaterDate(historique.date, 'MM/YYYY'));
 
-  if (valeursAxeX.length === 1) {
-    valeursAxeX.push('');
+  if (libellés.length === 1) {
+    libellés.push('');
   }
 
   const évolutions: ChartDataset<'line'>[] = indicateurDétailsParTerritoires.map((détailsParTerritoire, index) => ({
     label: détailsParTerritoire.territoireNom,
-    data: listeDesDateOrdonnees.map(date => détailsParTerritoire.données.historiquesValeurs.find(valeurHistorique => valeurHistorique.date === date)?.valeur ?? null),
+    data: détailsParTerritoire.données.historiquesValeurs.map(historique => historique.valeur),
     pointStyle: 'rect',
     pointRadius: 5,
     borderColor: couleurs[index],
@@ -45,11 +41,11 @@ export default function useIndicateurÉvolution(indicateurDétailsParTerritoires
 
   if (estEnSélectionMultiple()) {
     donnéesParTerritoire = {
-      labels: valeursAxeX,
+      labels: libellés,
       datasets: évolutions,
     };
   } else {
-    const listeValeurCible = Array.from({ length: valeursAxeX.length }).map(() => indicateurDétailsPourUnTerritoire.données.valeurCible);
+    const listeValeurCible = Array.from({ length: libellés.length }).map(() => indicateurDétailsPourUnTerritoire.données.valeurCible);
 
     const valeurCible: ChartDataset<'line'> = {
       label: 'Cible',
@@ -63,8 +59,8 @@ export default function useIndicateurÉvolution(indicateurDétailsParTerritoires
     };
   
     donnéesParTerritoire = {
-      labels: valeursAxeX,
-      datasets: indicateurDétailsPourUnTerritoire.données.valeurCible !== null ? [évolutions[0], valeurCible] : [évolutions[0]],
+      labels: libellés,
+      datasets: indicateurDétailsPourUnTerritoire.données.valeurCible ? [évolutions[0], valeurCible] : [évolutions[0]],
     };
   }
 
