@@ -126,6 +126,10 @@ models:
         description: Valeur Cible Annuelle (VCA) **à date**. C'est la VC annuelle dont l'année correspond à **l'année en cours**
       - name: vca_adate_date
         description: "Date de la **VCA à date**"
+      - name: vca_prev_year
+        description: "Dernière VC annuelle de l'an dernier."
+      - name: vca_prev_year_date
+        description: "Date de la dernière VC annuelle de l'an dernier."
     description: Jointure des VACA, VACG, VCA, VCG, VIG dans une table unqie avant de calculer les TA.
   - name: compute_ta_indic
     description: |
@@ -158,6 +162,8 @@ models:
           La VC prise en compte pour ce calcul est la `vca_courant`. 
 
           *Exemple d'utilisation:* Utile lorsque l'on veut mettre à jour le calcul de TA retrospectivement. Par exemple, nous sommes en 2024, et une VA de déc-2023 est mise à jour. Pour connaitre le TAA tel qu'il aurait été en déc-23, il faut regarder ce TAA (TAA *à date*).
+      - name: taa_prev_year
+        description: "TA de l'an dernier. Ex: si on est en 2025, retourne le dernier TA dispo en vigueur en 2024. Peut se faire grace à une VA de 2023 si c'est la dernière dispo."
       - name: tag
         description: Taux d'Avancement Global (TAG). Indique l'avancement sur la période compète, utilise la VCG (déterminée dans `get_vcg`).
   - name: df3_indicateur
@@ -191,13 +197,16 @@ models:
       - pour le calcul du *TA précédent*: on utilise la *valeur la plus récente **mais antérieure au mois actuel** de l'indicateur*, peu importe sa date. Ex: on est en 11-23, on ne pourra utiliser que des données de *10-23* ou antérieures.
       - le *TA chantier* est la somme des TA pondérés de chaque indicateur du chantier **DONT la pondération est > 0** (`redmine::721`). On fait cela car si un TA pondéré d'indicateur de valeur `NULL` était pris en compte dans le calcul du TA chantier, le **résultat vaudrait toujours `NULL`**. Or si un indicateur est pondéré à 0, ce ne doit pas être un problème d'avoir un TA qui vaut `NULL`.
       - on compte le nombre de TA indicateurs pris en compte dans le calcul du TA chantier intermédiaire (`taa_courant_ch_int` et `ta_ch_int`) pour chaque {chantier-zone}. Si ce nombre n'est pas celui attendu (`n_indic_in_ta != n_indic_in_ta_expected`), alors **les deux TA chantiers sont mis à `NULL`**: `taa_courant_ch` et `tag_ch`. Sinon, on conserve bien les valeurs des calculs intermédiaires. (*PIL-227*)
+      - pour le TA de l'année précédente, il s'agit du TA le plus récent **avant** le 31 décembre de l'année précédente. Si pas de valeur dans cette année, on prend la dernière dispo. Ex: Si nous sommes en 2025, on recherche le dernier TA de 2024. Cela peut se faire avec une VA de 2023 si c'est la dernière dispo.
     columns:
       - name: tag_ch
         description: "**Principal**: TA chantier *global*. C'est cette valeur qui est remontée comme TA du chantier"
       - name: taa_courant_ch
         description: "TA chantier *annuel* courant"
+      - name: taa_prev_year_ch
+        description: "TA du chantier pour l'année précédente. Se base bien sur les ta indicateur de l'année précédente calculés dans `compute_ta_indic`."  
       - name: valid_on
-        description: "Prend les valeurs `[prev_month, today]` pour indiquer s'il s'agit du TA actuel ou du mois précédent."
+        description: "Prend les valeurs `[prev_year, prev_month, today]` pour indiquer s'il s'agit du TA actuel ou du mois précédent ou de l'année précédente. Par l'année précédente, on entend **l'année précédant l'année en cours**, et non pas l'année précédant l'année de la valeur actuelle."
       - name: date_ta
         description: "Il s'agit de la date du TA chantier. C'est la date la plus récente de mise à jour d'un indicateur pris en compte dans le TA du chantier."
   - name: df3_chantier
