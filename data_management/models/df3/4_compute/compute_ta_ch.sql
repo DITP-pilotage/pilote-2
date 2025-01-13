@@ -6,7 +6,7 @@ ta_zone_indic as (
 	select 
 	b.indic_parent_ch, a.zone_id, z.maille as "maille", metric_date,a.indic_id,
 	vaca, vig, vca_courant, vca_adate, vca_adate_date, vcg,
-	taa_courant, taa_adate, tag
+	taa_courant, taa_adate, taa_prev_year, tag
 	from {{ ref('compute_ta_indic') }} a
 	left join {{ ref('metadata_indicateurs') }} b on a.indic_id =b.indic_id
 	left join {{ ref('stg_ppg_metadata__zones') }} z on a.zone_id=z.id 
@@ -18,6 +18,7 @@ ta_zone_indic_pond as (
 select a.*,
 	b.poids_zone_reel,
 	taa_courant*0.01*b.poids_zone_reel as taa_courant_pond,
+	taa_prev_year*0.01*b.poids_zone_reel as taa_prev_year_pond,
 	taa_adate*0.01*b.poids_zone_reel as taa_adate_pond,
 	tag*0.01*b.poids_zone_reel as tag_pond
 from ta_zone_indic a
@@ -82,6 +83,7 @@ ta_ch_int as (
 	array_agg(taa_courant) as taa_courant_agg, 
 	array_agg(taa_adate) as taa_adate_agg, 
 	array_agg(taa_courant_pond) as taa_courant_pond_agg, 
+	array_agg(taa_prev_year_pond) as taa_prev_year_pond_agg, 
 	array_agg(taa_adate_pond) as taa_adate_pond_agg, 
 	array_agg(tag) as tag_agg,
 	array_agg(tag_pond) as tag_pond_agg,
@@ -99,6 +101,13 @@ ta_ch_int as (
 		when sum(taa_adate_pond) < 0 then 0
 		else round(sum(taa_adate_pond)::numeric, 3)
 	end as taa_adate_ch_int,
+	-- [prev_year] Calcul du TA par somme des TA pondérés et bornage dans [0,100] (+handle null)
+	case 
+		when bool_or(taa_prev_year_pond is null) then null
+		when sum(taa_prev_year_pond) > 100 then 100
+		when sum(taa_prev_year_pond) < 0 then 0
+		else round(sum(taa_prev_year_pond)::numeric, 3)
+	end as taa_prev_year_ch_int,
 	case
 		when bool_or(tag_pond is null) then null
 		when sum(tag_pond) > 100 then 100
@@ -139,6 +148,10 @@ case
 	when n_indic_in_ta=n_indic_in_ta_expected then taa_courant_ch_int
 	else null
 end as taa_courant_ch,
+case 
+	when n_indic_in_ta=n_indic_in_ta_expected then taa_prev_year_ch_int
+	else null
+end as taa_prev_year_ch,
 case 
 	when n_indic_in_ta=n_indic_in_ta_expected then taa_adate_ch_int
 	else null

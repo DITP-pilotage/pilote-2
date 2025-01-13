@@ -203,6 +203,8 @@ models:
         description: "**Principal**: TA chantier *global*. C'est cette valeur qui est remontée comme TA du chantier"
       - name: taa_courant_ch
         description: "TA chantier *annuel* courant"
+      - name: taa_prev_year_ch
+        description: "TA du chantier pour l'année précédente. Se base bien sur les ta indicateur de l'année précédente calculés dans `compute_ta_indic`."  
       - name: valid_on
         description: "Prend les valeurs `[prev_year, prev_month, today]` pour indiquer s'il s'agit du TA actuel ou du mois précédent ou de l'année précédente. Par l'année précédente, on entend **l'année précédant l'année en cours**, et non pas l'année précédant l'année de la valeur actuelle."
       - name: date_ta
