@@ -27,6 +27,7 @@ export class ExportCsvDesChantiersUseCase {
     'Maille',
     'Région',
     'Département',
+    'Code INSEE - Nom du département',
     'Ministère',
     'Axe',
     'Chantier',
@@ -82,9 +83,10 @@ export class ExportCsvDesChantiersUseCase {
 
   private transformer(chantierPourExport: ChantierPourExport, profil: ProfilCode): string[] {
     const donnees = [
-      chantierPourExport.maille || NON_APPLICABLE,
+      chantierPourExport.maille === 'NAT' ? '1 - NAT' : chantierPourExport.maille === 'REG' ? '2 - REG' : chantierPourExport.maille === 'DEPT' ? '3 - DEPT' : NON_APPLICABLE,
       chantierPourExport.régionNom || NON_APPLICABLE,
       chantierPourExport.départementNom || NON_APPLICABLE,
+      chantierPourExport.départementNom && chantierPourExport.codeInsee ? `${chantierPourExport.codeInsee === '2A' ? '20A' : chantierPourExport.codeInsee === '2B' ? '20B' : chantierPourExport.codeInsee?.padStart(2, '0')} - ${chantierPourExport.départementNom}` : NON_APPLICABLE,
       chantierPourExport.ministèreNom || NON_APPLICABLE,
       chantierPourExport.axe || NON_APPLICABLE,
       chantierPourExport.nom || NON_APPLICABLE,

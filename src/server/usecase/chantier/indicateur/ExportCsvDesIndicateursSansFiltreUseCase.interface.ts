@@ -9,6 +9,7 @@ export type IndicateurPourExport = {
   maille: string | null,
   régionNom: string | null,
   départementNom: string | null,
+  codeInsee: string | null,
   chantierMinistèreNom: Ministère['nom'] | null,
   axe: Chantier['axe'] | null,
   chantierNom: Chantier['nom'] | null,
