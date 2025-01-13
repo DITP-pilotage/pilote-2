@@ -28,19 +28,21 @@ const handle = async (request: NextApiRequest, response: NextApiResponse)=> {
 
   switch (request.method) {
     case 'GET': {
-      logger.info('Export des données indicateur API', `Chantier : ${request.query.chantierId}`, `Indicateur : ${request.query.indicateurId}`);
+      logger.info('API: Export des données indicateur', `Chantier : ${request.query.chantierId}`, `Indicateur : ${request.query.indicateurId}`);
       if (!utilisateurAuthentifie.peutAccederAuChantier(request.query.chantierId as string)) {
         throw new ForbiddenError(`Vous n'êtes pas autorisé à accéder à l'indicateur ${request.query.indicateurId}`);
       }
       await handleListerIndicateurs({ request, response });
+      logger.info(`API: Export des données indicateur ${request.query.indicateurId} réussie`);
       break;
     }
     case 'POST': {
-      logger.info('Import des données API', `Chantier : ${request.query.chantierId}`, `Indicateur : ${request.query.indicateurId}`);
+      logger.info('API: Import des données', `Chantier : ${request.query.chantierId}`, `Indicateur : ${request.query.indicateurId}`);
       if (!utilisateurAuthentifie.peutAccederEnEcritureAuChantier(request.query.chantierId as string)) {
         throw new ForbiddenError(`Vous n'êtes pas autorisé à accéder à l'indicateur ${request.query.indicateurId}`);
       }
       await getContainer('importIndicateur').resolve('importDonneeIndicateurAPIHandler').handle({ request, response, email: utilisateurAuthentifie.email, profil: utilisateurAuthentifie.profil });
+      logger.info(`API: Import des données indicateur ${request.query.indicateurId} réussie`);
       break;
     }
     default: {
