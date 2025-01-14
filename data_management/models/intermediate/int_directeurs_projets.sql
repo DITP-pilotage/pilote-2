@@ -8,6 +8,7 @@ WITH dir_projets_chantiers AS (
         LEFT JOIN {{ source('db_schema_public', 'utilisateur') }} u ON h.utilisateur_id = u.id 
     WHERE 
         u.profil_code = 'EQUIPE_DIR_PROJET' 
+        AND u.date_desactivation is NULL
         AND h.scope_code = 'responsabilite'
 ),
 
@@ -20,7 +21,8 @@ dir_projets_perimetres AS (
         {{ source('db_schema_public', 'habilitation') }} h 
         LEFT JOIN {{ source('db_schema_public', 'utilisateur') }} u ON h.utilisateur_id = u.id 
     WHERE 
-        u.profil_code = 'EQUIPE_DIR_PROJET' 
+        u.profil_code = 'EQUIPE_DIR_PROJET'
+        AND u.date_desactivation is NULL
         AND h.scope_code = 'responsabilite'
 ),
 
