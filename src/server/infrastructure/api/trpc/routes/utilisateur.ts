@@ -85,7 +85,10 @@ export const utilisateurRouter = créerRouteurTRPC({
     .input(validationReactiverUtilisateur.merge(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      await getContainer('gestionUtilisateur').resolve('reactiverUnUtilisateurUseCase').run(input.email, ctx.session.profil);
+      const profilAuteur = await new RécupérerUnProfilUseCase(
+        dependencies.getProfilRepository(),
+      ).run(ctx.session.profil);
+      await getContainer('gestionUtilisateur').resolve('reactiverUnUtilisateurUseCase').run(input.email, ctx.session.habilitations, profilAuteur);
     }),
   récupérerUtilisateursFiltrésNew: procédureProtégée
     .input(validationFiltresPourListeUtilisateurNew)

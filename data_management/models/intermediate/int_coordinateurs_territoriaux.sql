@@ -8,7 +8,8 @@ WITH coord_locaux AS (
         {{ source('db_schema_public', 'habilitation') }} h 
         LEFT JOIN {{ source('db_schema_public', 'utilisateur') }} u ON h.utilisateur_id = u.id 
     WHERE 
-        (u.profil_code = 'COORDINATEUR_REGION' OR u.profil_code = 'COORDINATEUR_DEPARTEMENT') 
+        (u.profil_code = 'COORDINATEUR_REGION' OR u.profil_code = 'COORDINATEUR_DEPARTEMENT')
+        AND u.date_desactivation is NULL
         AND h.scope_code = 'lecture'
     GROUP BY territoire_code, u.profil_code
 )

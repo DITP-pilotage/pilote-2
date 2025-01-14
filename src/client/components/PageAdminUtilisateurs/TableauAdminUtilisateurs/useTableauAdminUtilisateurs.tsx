@@ -93,7 +93,6 @@ export default function useTableauPageAdminUtilisateurs() {
   const { modifierÉtatDuFiltre } = actionsFiltresUtilisateursStore();
 
   const estAutoriseAVoirLaColonneTerritoire = [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session!.profil);
-  const peutConsulterLesUtilisateursDesactives = [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session!.profil);
 
   const [pagination, setPagination] = useQueryStates({
     pageIndex: parseAsInteger.withDefault(1),
@@ -156,7 +155,6 @@ export default function useTableauPageAdminUtilisateurs() {
       sorting,
       columnVisibility: {
         territoire: estAutoriseAVoirLaColonneTerritoire,
-        statut: peutConsulterLesUtilisateursDesactives,
       },
     },
     initialState: {
@@ -186,6 +184,5 @@ export default function useTableauPageAdminUtilisateurs() {
     modifierÉtatDuFiltre,
     filtresActifs,
     setPagination,
-    peutConsulterLesUtilisateursDesactives,
   };
 }

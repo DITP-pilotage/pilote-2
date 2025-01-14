@@ -4,7 +4,6 @@ import {
 import {
   PROFILS_POSSIBLES_COORDINATEURS_LECTURE,
 } from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface';
@@ -55,10 +54,9 @@ export default class FiltrerListeUtilisateursUseCase {
   }
 
   private utilisateurPasseLeFiltreTypeCompte(utilisateur: UtilisateurListeGestion) {
-    const typesCompteDemandes = [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(this.profil) ? this.filtresActifs.typesCompte : ['actif'];
-    if (typesCompteDemandes.includes('actif') && typesCompteDemandes.includes('desactive')) {
+    if (this.filtresActifs.typesCompte.includes('actif') && this.filtresActifs.typesCompte.includes('desactive')) {
       return true;
-    } else if (typesCompteDemandes.includes('actif')) {
+    } else if (this.filtresActifs.typesCompte.includes('actif')) {
       return this.utilisateurEstActif(utilisateur);
     } else {
       return !this.utilisateurEstActif(utilisateur);
