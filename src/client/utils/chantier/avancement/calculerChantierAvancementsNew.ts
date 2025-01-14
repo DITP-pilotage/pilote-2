@@ -18,9 +18,9 @@ export default function calculerChantierAvancements(
     const { maille } = territoireCodeVersMailleCodeInsee(territoireCode);
 
     return maille === 'REG'
-      ? donnéesTerritoiresAgrégées.régionale.territoires[territoireCode].répartition.avancements[typeTauxAvancement]
+      ? donnéesTerritoiresAgrégées.regionale.territoires[territoireCode].répartition.avancements[typeTauxAvancement]
       : maille === 'DEPT' && territoireCodeParent
-        ? donnéesTerritoiresAgrégées.régionale.territoires[territoireCodeParent].répartition.avancements[typeTauxAvancement]
+        ? donnéesTerritoiresAgrégées.regionale.territoires[territoireCodeParent].répartition.avancements[typeTauxAvancement]
         : null;
   };
 
@@ -42,7 +42,7 @@ export default function calculerChantierAvancements(
         moyenne: donnéesTerritoiresAgrégées.nationale.répartition.avancements.annuel.moyenne,
       },
     },
-    départementale: {
+    departementale: {
       global: {
         moyenne: avancementDépartemental('global'),
       },
@@ -50,7 +50,7 @@ export default function calculerChantierAvancements(
         moyenne: avancementDépartemental('annuel'),
       },
     },
-    régionale: {
+    regionale: {
       global: {
         moyenne: avancementRégional('global'),
       },

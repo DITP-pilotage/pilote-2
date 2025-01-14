@@ -29,17 +29,17 @@ const générerLesOptions = (nom: string, code: string, disabled: boolean): Mult
 });
 
 const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerritoire[], profil: ProfilCode | undefined, chantierMailles?: Chantier['mailles']) => {
-  const territoiresDisponiblesDept = territoiresAccessiblesEnLecture.filter(territoire => territoire.maille === 'départementale');
-  const territoiresDisponiblesReg = territoiresAccessiblesEnLecture.filter(territoire => territoire.maille === 'régionale');
+  const territoiresDisponiblesDept = territoiresAccessiblesEnLecture.filter(territoire => territoire.maille === 'departementale');
+  const territoiresDisponiblesReg = territoiresAccessiblesEnLecture.filter(territoire => territoire.maille === 'regionale');
 
   const optionsRégions = {
     label: 'Régions',
-    options: trierParOrdreAlphabétique<InputGroupeOptions>(territoiresDisponiblesReg.map(region => générerLesOptions(region.nomAffiché, region.code, !!chantierMailles ? !chantierMailles['régionale'][region.code].estApplicable ?? true : false)), 'label'),
+    options: trierParOrdreAlphabétique<InputGroupeOptions>(territoiresDisponiblesReg.map(region => générerLesOptions(region.nomAffiché, region.code, !!chantierMailles ? !chantierMailles['regionale'][region.code].estApplicable ?? true : false)), 'label'),
   };
 
   const optionsDépartements = {
     label: 'Départements',
-    options: trierParOrdreAlphabétique<InputGroupeOptions>(territoiresDisponiblesDept.map(departement => générerLesOptions(departement.nomAffiché, departement.code, !!chantierMailles ? !chantierMailles['départementale'][departement.code].estApplicable ?? true : false)), 'label'),
+    options: trierParOrdreAlphabétique<InputGroupeOptions>(territoiresDisponiblesDept.map(departement => générerLesOptions(departement.nomAffiché, departement.code, !!chantierMailles ? !chantierMailles['departementale'][departement.code].estApplicable ?? true : false)), 'label'),
   };
 
   return [
@@ -69,7 +69,7 @@ const SélecteursMaillesEtTerritoires: FunctionComponent<SélecteursMaillesEtTer
 
     const { maille } = territoireCodeVersMailleCodeInsee(territoireCodeSelectionne);
 
-    router.query.maille = maille === 'DEPT' ? 'départementale' : maille === 'REG' ? 'régionale' : router.query.maille;
+    router.query.maille = maille === 'DEPT' ? 'departementale' : maille === 'REG' ? 'regionale' : router.query.maille;
 
     sauvegarderFiltres({ territoireCode: territoireCodeSelectionne });
 

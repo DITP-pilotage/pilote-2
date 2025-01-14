@@ -139,10 +139,10 @@ export default class Habilitation {
     let result: MailleInterne[] = [];
 
     for (const codeTerritoire of territoires) {
-      if (codeTerritoire.startsWith('REG') && !result.includes('régionale')) {
-        result.push('régionale');
-      } else if (codeTerritoire.startsWith('DEPT') && !result.includes('départementale')) {
-        result.push('départementale');
+      if (codeTerritoire.startsWith('REG') && !result.includes('regionale')) {
+        result.push('regionale');
+      } else if (codeTerritoire.startsWith('DEPT') && !result.includes('departementale')) {
+        result.push('departementale');
       }
     }
     return result;

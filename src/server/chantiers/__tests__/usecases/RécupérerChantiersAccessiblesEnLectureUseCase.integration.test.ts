@@ -92,6 +92,6 @@ describe('RécupérerChantiersAccessiblesEnLectureUseCase', () => {
     const chantiers = await récupérerChantiersAccessiblesEnLectureUseCase.run(habilitation, ProfilEnum.DITP_ADMIN);
 
     // THEN
-    expect(chantiers[0].mailles.départementale['DEPT-974']).toBeDefined();
+    expect(chantiers[0].mailles.departementale['DEPT-974']).toBeDefined();
   });
 });

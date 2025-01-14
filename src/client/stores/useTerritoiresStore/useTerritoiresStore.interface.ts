@@ -16,7 +16,7 @@ export default interface TerritoiresStore {
     initialiserLeTerritoireSélectionnéParDéfaut: () => void,
     modifierMailleSélectionnée: (maille: MailleInterne) => void,
     modifierTerritoireSélectionné: (territoireCode: DétailTerritoire['code']) => void,
-    récupérerDétailsSurUnTerritoireAvecCodeInsee: (codeInsee: CodeInsee, mailleSelectionnee?: 'départementale' | 'régionale') => DétailTerritoire
+    récupérerDétailsSurUnTerritoireAvecCodeInsee: (codeInsee: CodeInsee, mailleSelectionnee?: MailleInterne) => DétailTerritoire
     récupérerDétailsSurUnTerritoire: (territoireCode: DétailTerritoire['code']) => DétailTerritoire
     modifierTerritoiresComparés: (territoireCode: DétailTerritoire['code']) => void
     récupérerCodesInseeDépartementsAssociésÀLaRégion: (codeInsee: CodeInsee, maille: MailleInterne) => CodeInsee[]

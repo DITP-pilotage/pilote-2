@@ -6,6 +6,7 @@ import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import {
   CartographieÉlémentsDeLégende,
 } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import useCartographieMétéo from './useCartographieMétéo';
 import { CartographieDonnéesMétéo } from './CartographieMétéo.interface';
 
@@ -16,7 +17,7 @@ interface CartographieMétéoProps {
   auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
   territoireCode: string,
   pathname: '/accueil/chantier/[territoireCode]' | '/chantier/[id]/[territoireCode]' | null,
-  mailleSelectionnee: 'départementale' | 'régionale',
+  mailleSelectionnee: MailleInterne,
 }
 
 const CartographieMétéo: FunctionComponent<CartographieMétéoProps> = ({

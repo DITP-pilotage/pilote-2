@@ -2,7 +2,7 @@ import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avanc
 
 export type AvancementChantierContrat = {
   nationale: AvancementsStatistiques
-  départementale: {
+  departementale: {
     global: {
       moyenne: number | null
     },
@@ -10,7 +10,7 @@ export type AvancementChantierContrat = {
       moyenne: number | null
     },
   }
-  régionale: {
+  regionale: {
     global: {
       moyenne: number | null
     },

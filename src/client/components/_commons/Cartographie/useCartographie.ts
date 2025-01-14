@@ -19,7 +19,7 @@ export default function useCartographie() {
   const territoiresAccessiblesEnLecture = territoiresAccessiblesEnLectureStore();
 
   function déterminerRégionsÀTracer(territoireAffiché: CartographieTerritoireAffiché) {
-    return territoireAffiché.maille === 'régionale'
+    return territoireAffiché.maille === 'regionale'
       ? régions.filter(région => région.codeInsee === territoireAffiché.codeInsee)
       : régions;
   }

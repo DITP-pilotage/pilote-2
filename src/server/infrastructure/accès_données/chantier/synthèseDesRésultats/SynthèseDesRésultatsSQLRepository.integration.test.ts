@@ -13,7 +13,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
     test('Crée la synthèse des résultats en base', async () => {
       // Given
       const chantierId = 'CH-001';
-      const maille = 'régionale';
+      const maille = 'regionale';
       const codeInsee = '01';
       const id = '123';
       const contenu = 'Quatrième commentaire';
@@ -48,7 +48,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
     test('Retourne la synthèse de résultats créée', async () => {
       // Given
       const chantierId = 'CH-001';
-      const maille = 'régionale';
+      const maille = 'regionale';
       const codeInsee = '01';
       const id =  '123';
       const contenu = 'Quatrième commentaire';
@@ -101,7 +101,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
     test('renvoie la synthèse des résultats la plus récente et dont le commentaire est non nul', async () => {
       // Given
       const chantierId = 'CH-001';
-      const maille: Maille = 'régionale';
+      const maille: Maille = 'regionale';
       const codeInsee = '01';
       const synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
 
@@ -159,7 +159,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
     test('Quand l\auteur_id est null, retourne Auteur Inconnu', async () => {
       // Given
       const chantierId = 'CH-003';
-      const maille: Maille = 'régionale';
+      const maille: Maille = 'regionale';
       const codeInsee = '01';
       const synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
 
@@ -182,7 +182,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
     test('Quand l\auteur_id est non null, retourne prenom + nom de l\'utilisateur associé', async () => {
       // Given
       const chantierId = 'CH-003';
-      const maille: Maille = 'régionale';
+      const maille: Maille = 'regionale';
       const codeInsee = '01';
       const auteur_id = randomUUID();
       const synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
@@ -225,7 +225,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       // GIVEN
       const synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
       const chantierId = 'CH-001';
-      const maille: Maille = 'régionale';
+      const maille: Maille = 'regionale';
       const codeInsee = '01';
 
       const synthèsesDesResultats: synthese_des_resultats[] = [
@@ -251,7 +251,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
 
         new SynthèseDesRésultatsSQLRowBuilder()
           .avecChantierId(chantierId)
-          .avecMaille('départementale')
+          .avecMaille('departementale')
           .avecCodeInsee('88')
           .avecCommentaire('Ma synthèse DEPT-88')
           .avecDateCommentaire(new Date('2023-12-31'))

@@ -16,7 +16,7 @@ describe('CréerUneSynthèseDesRésultatsUseCase', () => {
     //GIVEN
     const contenu = 'test contenu';
     const chantierId = 'CH-011';
-    const maille = 'départementale';
+    const maille = 'departementale';
     const codeInsee = '01';
     const auteur = 'Jean DDDD';
     const date = new Date('2023-03-22T00:00:00.000Z');
@@ -45,7 +45,7 @@ describe('CréerUneSynthèseDesRésultatsUseCase', () => {
     //GIVEN
     const contenu = 'test contenu';
     const chantierId = 'CH-011';
-    const maille = 'départementale';
+    const maille = 'departementale';
     const codeInsee = '01';
     const auteur = 'Jean DDDD';
     const date = new Date('2023-03-22T00:00:00.000Z');

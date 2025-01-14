@@ -44,7 +44,7 @@ describe('ChantierSQLRepository', () => {
     test('renvoie la météo pour un chantier et territoire donné', async () => {
       // Given
       const chantierId = 'CH-001';
-      const maille = 'régionale';
+      const maille = 'regionale';
       const codeInsee = '01';
       const repository: ChantierRepository = new ChantierSQLRepository(prisma);
 
@@ -71,7 +71,7 @@ describe('ChantierSQLRepository', () => {
   describe('récupérerChantierIdsPourSaisieCommentaireServiceDeconcentré', function () {
     test('renvoie la météo pour un chantier et territoire donné', async () => {
       // Given
-      const maille = 'départementale';
+      const maille = 'departementale';
       const codeInsee = '75';
       const repository: ChantierRepository = new ChantierSQLRepository(prisma);
 

@@ -6,12 +6,10 @@ import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 export const scopesUtilisateurs = ['gestionUtilisateur'] as const;
 export const scopesChantiers = ['lecture', 'saisieCommentaire', 'saisieIndicateur', 'responsabilite'] as const;
 export const scopesProjetsStructurants = ['projetsStructurants.lecture'] as const;
-export const scopes = [...scopesChantiers, ...scopesProjetsStructurants, ...scopesUtilisateurs] as const;
 
 export type ScopeUtilisateurs = typeof scopesUtilisateurs[number];
 export type ScopeChantiers = typeof scopesChantiers[number];
 export type ScopeProjetsStructurants = typeof scopesProjetsStructurants[number];
-export type Scope = typeof scopes[number];
 
 export type HabilitationChantiers = {
   chantiers: Chantier['id'][]

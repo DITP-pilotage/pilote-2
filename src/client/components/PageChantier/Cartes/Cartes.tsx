@@ -45,14 +45,14 @@ const Cartes: FunctionComponent<CartesProps> = ({
   const pathname = '/chantier/[id]/[territoireCode]';
   const { auClicTerritoireCallback } = useCartographie(territoireCode, pathname);
 
-  const donnéesCartographieAvancement = objectEntries(({ ...chantierMailles.départementale, ...chantierMailles.régionale })).map(([territoireCodeDonnee, territoire]) => ({
+  const donnéesCartographieAvancement = objectEntries(({ ...chantierMailles.departementale, ...chantierMailles.regionale })).map(([territoireCodeDonnee, territoire]) => ({
     valeur: territoire.avancement.global,
     valeurAnnuelle: territoire.avancement.annuel,
     territoireCode: territoireCodeDonnee as string,
     estApplicable: territoire.estApplicable,
   }));
 
-  const donnéesCartographieMétéo = objectEntries({ ...chantierMailles.départementale, ...chantierMailles.régionale }).map(([territoireCodeDonnee, territoire]) => ({
+  const donnéesCartographieMétéo = objectEntries({ ...chantierMailles.departementale, ...chantierMailles.regionale }).map(([territoireCodeDonnee, territoire]) => ({
     valeur: territoire.météo,
     territoireCode: territoireCodeDonnee as string,
     estApplicable: territoire.estApplicable,
@@ -95,7 +95,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
                   élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
                 />
                 {
-                  mailleSourceDonnees === 'régionale' &&
+                  mailleSourceDonnees === 'regionale' &&
                   <Alerte
                     classesSupplementaires='fr-mt-2w'
                     message='Données régionales'

@@ -1,4 +1,4 @@
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 import Chantier, {
   DirecteurAdministrationCentrale,
   DirecteurProjet,
@@ -15,8 +15,6 @@ import Ministère from '@/server/domain/ministère/Ministère.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
-
-export type MailleChantierContrat = 'nationale' | 'régionale' | 'départementale';
 
 interface TerritoireAvancementRapportDetailleContrat {
   global: number | null
@@ -91,8 +89,8 @@ export interface ChantierRapportDetailleContrat {
   ppg: string
   responsableLocalTerritoireSélectionné: ResponsableLocalRapportDetailleContrat[]
   coordinateurTerritorialTerritoireSélectionné: CoordinateurTerritorialRapportDetailleContrat[]
-  tauxAvancementDonnéeTerritorialisée: Record<'régionale' | 'départementale', Boolean>
-  météoDonnéeTerritorialisée: Record<'régionale' | 'départementale', Boolean>
+  tauxAvancementDonnéeTerritorialisée: Record<MailleInterne, Boolean>
+  météoDonnéeTerritorialisée: Record<MailleInterne, Boolean>
   responsables: ResponsableRapportDetailleContrat
   dateDeMàjDonnéesQuantitatives: string | null;
   dateDeMàjDonnéesQualitatives: string | null;
@@ -169,7 +167,7 @@ const presenterEnDirecteurProjetRapportDetailleContrat = (directeurProjet: Direc
 
 export const presenterEnChantierRapportDetaille = (territoireCode: string) => (chantier: Chantier): ChantierRapportDetailleContrat => {
   const { maille } = territoireCodeVersMailleCodeInsee(territoireCode);
-  const mailleChantier = maille === 'NAT' ? 'nationale' : maille === 'REG' ? 'régionale' : 'départementale';
+  const mailleChantier = maille === 'NAT' ? 'nationale' : maille === 'REG' ? 'regionale' : 'departementale';
 
   const mailles = presenterEnMailleRapportDetailleContrat(chantier.mailles);
 

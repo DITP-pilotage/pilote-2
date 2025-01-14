@@ -73,8 +73,8 @@ export default class ChantierBuilder {
     this._périmètreIds = ministèrePorteur.périmètresMinistériels.map(périmètreMinistériel => périmètreMinistériel.id);
     this._mailles = {
       nationale: this._générerTerritoires([codeInseeFrance]),
-      régionale: this._générerTerritoires(codesInseeRégions),
-      départementale: this._générerTerritoires(codesInseeDépartements),
+      regionale: this._générerTerritoires(codesInseeRégions),
+      departementale: this._générerTerritoires(codesInseeDépartements),
     };
     this._porteur = ministèrePorteur;
     this._coporteurs = ministèresCoPorteurs;
@@ -83,12 +83,12 @@ export default class ChantierBuilder {
     this._estBaromètre = faker.datatype.boolean();
     this._estTerritorialisé = faker.datatype.boolean();
     this._tauxAvancementDonnéeTerritorialisée = {
-      'départementale': faker.datatype.boolean(),
-      'régionale': faker.datatype.boolean(),
+      'departementale': faker.datatype.boolean(),
+      'regionale': faker.datatype.boolean(),
     };
     this._météoDonnéeTerritorialisée = {
-      'départementale': faker.datatype.boolean(),
-      'régionale': faker.datatype.boolean(),
+      'departementale': faker.datatype.boolean(),
+      'regionale': faker.datatype.boolean(),
     };
   }
 

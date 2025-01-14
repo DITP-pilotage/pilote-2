@@ -10,7 +10,15 @@ import Alerte from '@/components/_commons/Alerte/Alerte';
 import SynthèseDesRésultatsAffichage from '@/components/_commons/SynthèseDesRésultats/Affichage/Affichage';
 import SynthèseDesRésultatsFormulaire from './Formulaire/Formulaire';
 
-const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = ({ synthèseDesRésultatsInitiale, rechargerRéforme, réformeId, nomTerritoire, mailleSourceDonnees, modeÉcriture = false, estInteractif = true }) => {  
+const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = ({
+  synthèseDesRésultatsInitiale,
+  rechargerRéforme,
+  réformeId,
+  nomTerritoire,
+  mailleSourceDonnees,
+  modeÉcriture = false,
+  estInteractif = true,
+}) => {
   const {
     synthèseDesRésultats,
     modeÉdition,
@@ -25,13 +33,13 @@ const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = (
       <Bloc titre={nomTerritoire}>
         <div className='fr-py-1w'>
           {
-            mailleSourceDonnees === 'régionale' &&
-              <Alerte
-                classesSupplementaires='fr-mb-4w'
-                message='Commentaires facultatifs mais souhaités pour apporter un éclairage départemental au pilotage régional.'
-                titre='Données régionales'
-                type='info'
-              />
+            mailleSourceDonnees === 'regionale' &&
+            <Alerte
+              classesSupplementaires='fr-mb-4w'
+              message='Commentaires facultatifs mais souhaités pour apporter un éclairage départemental au pilotage régional.'
+              titre='Données régionales'
+              type='info'
+            />
           }
           {
             modeÉdition && modeÉcriture ?
@@ -65,34 +73,34 @@ const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = (
                     }
                   </div>
                   <div className='synthèse-affichage'>
-                    <SynthèseDesRésultatsAffichage 
-                      synthèseDesRésultats={synthèseDesRésultats} 
+                    <SynthèseDesRésultatsAffichage
+                      synthèseDesRésultats={synthèseDesRésultats}
                     />
                   </div>
                 </div>
-                {!!estInteractif && 
-                <div className='fr-grid-row fr-grid-row--right'>
-                  <div className='fr-col-12 actions fr-mt-1w'>
-                    {
-                      !!synthèseDesRésultats && <SynthèseDesRésultatsHistorique réformeId={réformeId} />
+                {!!estInteractif &&
+                  <div className='fr-grid-row fr-grid-row--right'>
+                    <div className='fr-col-12 actions fr-mt-1w'>
+                      {
+                        !!synthèseDesRésultats && <SynthèseDesRésultatsHistorique réformeId={réformeId} />
                       }
-                    {
-                      !!modeÉcriture &&
-                      <button
-                        className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
-                        onClick={activerLeModeÉdition}
-                        type='button'
-                      >
-                        <span
-                          aria-hidden='true'
-                          className='fr-icon-edit-line fr-mr-1w'
-                        />
-                        {}
-                        Modifier
-                      </button>
-                    }
-                  </div>
-                </div>}
+                      {
+                        !!modeÉcriture &&
+                        <button
+                          className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
+                          onClick={activerLeModeÉdition}
+                          type='button'
+                        >
+                          <span
+                            aria-hidden='true'
+                            className='fr-icon-edit-line fr-mr-1w'
+                          />
+                          {}
+                          Modifier
+                        </button>
+                      }
+                    </div>
+                  </div>}
               </>
           }
         </div>

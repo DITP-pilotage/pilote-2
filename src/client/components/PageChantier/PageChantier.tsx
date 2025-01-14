@@ -174,7 +174,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
           ) : null
         }
         {
-          mailleSourceDonnees === 'régionale' &&
+          mailleSourceDonnees === 'regionale' &&
           <BandeauInformation
             bandeauType='INFO'
             fermable={false}
@@ -353,7 +353,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     Indicateurs
                   </Titre>
                   {
-                    mailleSourceDonnees === 'régionale' &&
+                    mailleSourceDonnees === 'regionale' &&
                     <Alerte
                       classesSupplementaires='fr-mb-2w'
                       message='En l’absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le département.'

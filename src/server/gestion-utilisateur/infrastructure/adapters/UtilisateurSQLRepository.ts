@@ -372,7 +372,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   }
 
   async récupérerNombreUtilisateursSurLeTerritoire(territoireCode: string, maille: MailleInterne): Promise<number> {
-    const profilsCodes = maille === 'départementale' ? profilsDépartementaux : profilsRégionaux;
+    const profilsCodes = maille === 'departementale' ? profilsDépartementaux : profilsRégionaux;
 
     return prisma.utilisateur.count({
       where: {
@@ -442,7 +442,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     });
 
     return territoires.reduce((acc: { [key: string]: number }, { code, maille }: Territoire) => {
-      const profilsCodes = maille === 'départementale' ? profilsDépartementaux : profilsRégionaux;
+      const profilsCodes = maille === 'departementale' ? profilsDépartementaux : profilsRégionaux;
 
       acc[code] = utilisateurs.filter(({ habilitation: habilitationUtilisateur, profilCode }) =>
         habilitationUtilisateur.some(h => h.territoires.includes(code)) && profilsCodes.includes(profilCode),
