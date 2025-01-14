@@ -34,6 +34,7 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
     'Maille',
     'Région',
     'Département',
+    'Code INSEE - Nom du département',
     'Ministère',
     'Axe',
     'Chantier',
@@ -78,9 +79,10 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
 
   private transformer(indicateurPourExport: IndicateurPourExport, profil: string): string[] {
     const donnees = [
-      indicateurPourExport.maille || NON_APPLICABLE,
+      indicateurPourExport.maille === 'NAT' ? '1 - NAT' : indicateurPourExport.maille === 'REG' ? '2 - REG' : indicateurPourExport.maille === 'DEPT' ? '3 - DEPT' : NON_APPLICABLE,
       indicateurPourExport.régionNom || NON_APPLICABLE,
       indicateurPourExport.départementNom || NON_APPLICABLE,
+      indicateurPourExport.départementNom && indicateurPourExport.codeInsee ? `${indicateurPourExport.codeInsee === '2A' ? '20A' : indicateurPourExport.codeInsee === '2B' ? '20B' : indicateurPourExport.codeInsee?.padStart(2, '0')} - ${indicateurPourExport.départementNom}` : NON_APPLICABLE,
       indicateurPourExport.chantierMinistèreNom || NON_APPLICABLE,
       indicateurPourExport.axe || NON_APPLICABLE,
       indicateurPourExport.chantierNom || NON_APPLICABLE,
