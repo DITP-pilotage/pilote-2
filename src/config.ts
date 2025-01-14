@@ -284,10 +284,20 @@ const config = convict({
       default: 'toBeDefinedForE2E',
       env: 'TOKEN_API_E2E_JOHAN',
     },
-    localTokenAPIE2EEquipeDirProjet: {
+    localTokenAPIE2EUtilisateurEquipeDirProjet: {
       format: String,
       default: 'toBeDefinedForE2E',
       env: 'TOKEN_API_E2E_EQUIPE_DIR_PROJET',
+    },
+    chantierIdAccessibleParUtilisateurEquipeDirProjet: {
+      format: String,
+      default: 'toBeDefinedForE2E',
+      env: 'CHANTIER_ID_ACCESSIBLE_PAR_UTILISATEUR_EQUIPE_DIR_PROJET',
+    },
+    indicateurIdAccessibleParUtilisateurEquipeDirProjet: {
+      format: String,
+      default: 'toBeDefinedForE2E',
+      env: 'INDICATEUR_ID_ACCESSIBLE_PAR_UTILISATEUR_EQUIPE_DIR_PROJET',
     },
   },
   cartographie: {
