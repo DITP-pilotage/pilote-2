@@ -37,8 +37,8 @@ jalons_a_considerer AS (
 SELECT
     meta_ch.id,
     t.code AS territoire_code,
-    z.zone_type AS maille,
-    z.zone_id,
+    t.maille AS maille,
+    z.zone_id AS zone_id,
     t.code_insee,
     jalons_a_considerer.jalon,
     tous_jalons.taux_avancement_annuel as taux_avancement
@@ -50,4 +50,4 @@ LEFT JOIN
 CROSS JOIN jalons_a_considerer
 LEFT JOIN
     jalon_annee_precedente_et_courante AS tous_jalons
-    ON t.zone_id = tous_jalons.zone_id AND meta_ch.id = tous_jalons.chantier_id
+    ON t.zone_id = tous_jalons.zone_id AND meta_ch.id = tous_jalons.chantier_id AND jalons_a_considerer.jalon=tous_jalons.jalon

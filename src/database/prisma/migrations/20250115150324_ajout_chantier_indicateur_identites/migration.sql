@@ -56,12 +56,13 @@ CREATE TABLE "public"."chantier_territoire" (
 CREATE TABLE "public"."chantier_territoire_jalon" (
     "id" TEXT NOT NULL,
     "code_insee" TEXT NOT NULL,
-    "maille" TEXT NOT NULL,
+    "maille" "public"."maille" NOT NULL,
     "territoire_code" TEXT NOT NULL,
-    "jalon" TEXT NOT NULL,
+    "zone_id" TEXT NOT NULL,
+    "jalon" INTEGER NOT NULL,
     "taux_avancement" DOUBLE PRECISION,
 
-    CONSTRAINT "chantier_territoire_jalon_pkey" PRIMARY KEY ("id","territoire_code")
+    CONSTRAINT "chantier_territoire_jalon_pkey" PRIMARY KEY ("id","territoire_code", "jalon")
 );
 
 -- CreateTable
