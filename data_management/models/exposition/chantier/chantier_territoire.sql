@@ -161,24 +161,7 @@ SELECT
             ta_ch_today.tag_ch < ta_ch_prev_month.tag_ch
             THEN -1
     END AS tendance_int_index,
-    CASE
-        WHEN
-            sr.meteo IS NULL
-            THEN NULL
-        WHEN
-            sr.meteo = 'ORAGE'
-            THEN 1
-        WHEN
-            sr.meteo = 'NUAGE'
-            THEN 2
-        WHEN
-            sr.meteo = 'COUVERT'
-            THEN 3
-        WHEN
-            sr.meteo = 'SOLEIL'
-            THEN 4
-    END AS meteo_int_index
-
+    ('{"ORAGE": 1, "NUAGE": 2, "COUVERT": 3, "SOLEIL": 4}'::json->>sr.meteo)::int as meteo_int_index
 
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch
 CROSS JOIN {{ source('db_schema_public', 'territoire') }} AS t
