@@ -125,7 +125,6 @@ model chantier_identite {
   est_barometre                         Boolean?
   est_territorialise                    Boolean?
   ate                                   type_ate?
-  donnees_maille_source                 Maille?
   possede_taux_avancement_departemental Boolean?
   possede_taux_avancement_regional      Boolean?
   possede_meteo_departemental           Boolean?
@@ -159,6 +158,7 @@ model chantier_territoire {
   tendance_int_index                       Float?
   ecart                                    Float?
   meteo_int_index                          Float?
+  donnees_maille_source                    Maille?
 
   @@id([id, territoire_code])
   @@schema("public")
