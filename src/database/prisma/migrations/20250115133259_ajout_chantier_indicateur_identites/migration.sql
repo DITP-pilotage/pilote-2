@@ -14,7 +14,6 @@ CREATE TABLE "public"."chantier_identite" (
     "est_barometre" BOOLEAN,
     "est_territorialise" BOOLEAN,
     "ate" "public"."type_ate",
-    "donnees_maille_source" "public"."maille",
     "possede_taux_avancement_departemental" BOOLEAN,
     "possede_taux_avancement_regional" BOOLEAN,
     "possede_meteo_departemental" BOOLEAN,
@@ -48,6 +47,7 @@ CREATE TABLE "public"."chantier_territoire" (
     "tendance_int_index" DOUBLE PRECISION,
     "ecart" DOUBLE PRECISION,
     "meteo_int_index" DOUBLE PRECISION,
+    "donnees_maille_source" "public"."maille",
 
     CONSTRAINT "chantier_territoire_pkey" PRIMARY KEY ("id","territoire_code")
 );
