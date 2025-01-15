@@ -1,0 +1,13 @@
+version: 2
+
+models:
+  - name: chantier_territoire_jalon
+    description: |
+        Retourne les valeurs de TA annuel du chantier pour chaque jalon et chaque zone. Règles:
+
+        - Les jalons étudiés sont **[année en cours, année précédente]**. Tous les jalons ne sont pas disponibles pour l'instant
+    columns:
+      - name: jalon
+        description: "Jalon pour lequel le TA chantier est retourné"
+      - name: taux_avancement
+        description: "TA annuel du chantier pour le jalon."
