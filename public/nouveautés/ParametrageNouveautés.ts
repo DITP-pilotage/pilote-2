@@ -7,22 +7,29 @@ interface Nouveautés {
 }
 
 export const ParametrageNouveautés: Nouveautés[] = [
- 
-   {
+  {
+    version: 'Version 2.6.3',
+    date: '16 janvier 2025',
+    contenu: [
+      'Mise en place de l\'API PILOTE : l\'import et l\'export des données PILOTE de manière automatique via API est désormais disponible. Plus d\'informations pour les utilisateurs intéressés directement via la documentation API en pied de page de PILOTE ou en contactant directement pilote.ditp@modernisation.gouv.fr',
+      'Gestion des comptes (profils DITP ou coordinateurs PILOTE uniquement) : lors de la suppression d\'un compte utilisateur, le compte est dorénavant désactivé. Comme précédemment, il ne peut plus avoir accès à PILOTE. Toutefois, il est toujours possible d\'accéder aux informations de ce compte via le nouvel onglet "Comptes désactivés". Il est désormais également possible de réactiver des comptes précédemment désactivés.',
+    ],
+    correctifs: [
+      'Rapport détaillé : une erreur empêchait la génération d\'un rapport détaillé en format PDF en cas de sélection d\'un filtre "Chantiers signalés" sur la page d\'accueil de PILOTE. Celle-ci est désormais corrigé.',
+      'Gestion des comptes : Les contacts des coordinateurs PILOTE et des responsables locaux figurent sur la page PPG de chaque territoire. Lors de la suppression de ce compte, il pouvait arriver que leurs contacts restent affichés sur la page PPG. Cette erreur est désormais corrigée.',
+    ],
+  },
+  {
     version: 'Version 2.6.2',
     date: '19 décembre 2024',
     contenu: [
-     'Information concernant l\'évaluation des résultats pour l\'année 2024. PILOTE affiche actuellement deux taux d\'avancement pour chaque PPG : 1. le taux pour atteindre la cible fixée en 2026, 2. le taux d\'avancement de l\'année 2024, soit l\'année en cours. A partir du 1er janvier 2025, PILOTE basculera automatiquement les taux d\'avancements de l\'année en cours vers ceux de l\'année 2025. Les taux d\'avancement correspondant aux cibles 2024 ne seront plus affichés. Afin de faciliter la préparation de l\'évaluation des feuilles de route interministérielles des préfets pour l\'année 2024, nous vous informons que ces taux d\'avancement seront à nouveau visibles dans PILOTE dans le courant du mois de janvier. Pour plus d\'informations, vous pouvez contacter l\'équipe PILOTE de la DITP : pilote.ditp@modernisation.gouv.fr',
+      'Information concernant l\'évaluation des résultats pour l\'année 2024. PILOTE affiche actuellement deux taux d\'avancement pour chaque PPG : 1. le taux pour atteindre la cible fixée en 2026, 2. le taux d\'avancement de l\'année 2024, soit l\'année en cours. A partir du 1er janvier 2025, PILOTE basculera automatiquement les taux d\'avancements de l\'année en cours vers ceux de l\'année 2025. Les taux d\'avancement correspondant aux cibles 2024 ne seront plus affichés. Afin de faciliter la préparation de l\'évaluation des feuilles de route interministérielles des préfets pour l\'année 2024, nous vous informons que ces taux d\'avancement seront à nouveau visibles dans PILOTE dans le courant du mois de janvier. Pour plus d\'informations, vous pouvez contacter l\'équipe PILOTE de la DITP : pilote.ditp@modernisation.gouv.fr',
       'Mise en place d\'un bandeau d\'alerte en cas de retard de mise à jour des indicateurs : Afin d\'accompagner les Directeurs de projet et leurs équipes dans l’actualisation des indicateurs, PILOTE affiche désormais une alerte en cas de retard de mise à jour. Cette alerte est affichée directement sur la page de la PPG concernée et n\’est visible que par les Directeurs de projet et leurs équipes, ainsi que par la DITP. L\'alerte n’est pas affichée dans les territoires. Cette alerte signifie qu\’il convient de procéder à une mise à jour des données pour un ou plusieurs indicateurs des PPG. Elle est affichée en prenant en compte les informations concernant la périodicité et le délai de disponibilité des données de chaque indicateur, déclarées dans le formulaire Démarches Simplifiées lors de la phase de cadrage. Pour retrouver toutes ces informations et comprendre le calendrier de mise à jour de chaque indicateur, vous pouvez consulter la rubrique « Description de l’indicateur et calendrier de mise à jour » directement sur la page de la PPG concernée.',
 
     ],
     correctifs: [
     ],
   },
-  
-  
-  
-  
   {
     version: 'Version 2.6.1',
     date: '12 décembre 2024',
