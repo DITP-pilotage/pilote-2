@@ -94,6 +94,7 @@ export default class SyntheseDesResultatsRowBuilder {
       chantier_id: this._chantierId,
       maille: this._maille,
       code_insee: this._codeInsee,
+      territoire_code: this._maille + '-' + this._codeInsee,
       meteo: this._météo,
       date_meteo: this._dateMétéo,
       commentaire: this._commentaire,
