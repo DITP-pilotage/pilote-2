@@ -17,7 +17,7 @@ describe('CréerUnCommentaireProjetStructurantUseCase', () => {
     const auteur = 'Jean DDDD';
     const date = new Date('2023-03-22T00:00:00.000Z');
     const type = 'partenariatsEtMoyensMobilisés';
-    const maille = 'départementale';
+    const maille = 'departementale';
     const codeInsee = '01';
 
     jest.useFakeTimers().setSystemTime(date);
@@ -45,7 +45,7 @@ describe('CréerUnCommentaireProjetStructurantUseCase', () => {
     const auteur = 'Jean DDDD';
     const date = new Date('2023-03-22T00:00:00.000Z');
     const type = 'partenariatsEtMoyensMobilisés';
-    const maille = 'départementale';
+    const maille = 'departementale';
     const codeInsee = '01';
 
     jest.useFakeTimers().setSystemTime(date);

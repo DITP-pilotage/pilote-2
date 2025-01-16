@@ -1,6 +1,10 @@
 import { FunctionComponent } from 'react';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore, maillesAccessiblesEnLectureStore  } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import {
+  actionsTerritoiresStore,
+  mailleSélectionnéeTerritoiresStore,
+  maillesAccessiblesEnLectureStore,
+} from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { objectEntries } from '@/client/utils/objects/objects';
 import SélecteurMailleStyled from './SélecteurMaille.styled';
 
@@ -12,14 +16,14 @@ const SélecteurMaille: FunctionComponent<{}> = () => {
   const maillesInternesAccessiblesEnLecture = maillesAccessiblesEnLecture.filter((maille): maille is MailleInterne => maille !== 'nationale');
 
   const mailles: Record<MailleInterne, string> = {
-    'départementale': 'Départements',
-    'régionale': 'Régions',
+    'departementale': 'Départements',
+    'regionale': 'Régions',
   };
 
   if (maillesInternesAccessiblesEnLecture.length <= 1) {
     return null;
   }
-  
+
   return (
     <SélecteurMailleStyled className='fr-p-1v'>
       {

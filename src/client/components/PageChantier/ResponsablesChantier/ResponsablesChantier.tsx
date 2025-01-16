@@ -20,8 +20,8 @@ interface ResponsablesChantierProps {
 
 const adjectifReferent: Record<Maille, string> = {
   'nationale': 'national',
-  'départementale': 'départemental',
-  'régionale': 'régional',
+  'departementale': 'departemental',
+  'regionale': 'regional',
 };
 
 const ResponsablesPageChantier: FunctionComponent<ResponsablesChantierProps> = ({

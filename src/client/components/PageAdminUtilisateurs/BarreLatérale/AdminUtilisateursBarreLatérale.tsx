@@ -69,8 +69,8 @@ const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateursBarreL
             }}
             groupesÀAfficher={{
               nationale: territoiresAccessibles.includes('NAT-FR'),
-              régionale: true,
-              départementale: true,
+              regionale: true,
+              departementale: true,
             }}
             territoiresCodesSélectionnésParDéfaut={filtresActifs.territoires}
             territoiresSélectionnables={territoiresAccessibles}

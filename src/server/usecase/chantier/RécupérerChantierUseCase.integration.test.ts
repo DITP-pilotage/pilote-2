@@ -98,20 +98,20 @@ describe('RécupérerChantierUseCase', () => {
       },
     });
 
-    expect(result.mailles.départementale['DEPT-13']).toMatchObject({
+    expect(result.mailles.departementale['DEPT-13']).toMatchObject({
       codeInsee: '13',
       avancement: { annuel: 51, global: 45 },
       météo: 'SOLEIL',
     });
 
-    expect(result.mailles.départementale['DEPT-12']).toMatchObject({
+    expect(result.mailles.departementale['DEPT-12']).toMatchObject({
       codeInsee: '12',
       avancement: { annuel: null, global: null },
       météo: 'NON_RENSEIGNEE',
     });
 
-    expect(objectEntries(result.mailles.départementale)).toHaveLength(101);
-    expect(objectEntries(result.mailles.régionale)).toHaveLength(18);
+    expect(objectEntries(result.mailles.departementale)).toHaveLength(101);
+    expect(objectEntries(result.mailles.regionale)).toHaveLength(18);
   });
 
   test('Contient des porteurs et des coporteurs', async () => {

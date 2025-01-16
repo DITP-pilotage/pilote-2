@@ -94,11 +94,11 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
     maille: mailleTerritoireSelectionnee,
   } = territoireCodeVersMailleCodeInsee(territoireCode);
 
-  const mailleQuery = query.maille as 'départementale' | 'régionale' || 'départementale';
+  const mailleQuery = query.maille as MailleInterne || 'departementale';
 
   const mailleSelectionnee = mailleTerritoireSelectionnee === 'NAT'
     ? mailleQuery
-    : mailleTerritoireSelectionnee === 'DEPT' ? 'départementale' : 'régionale';
+    : mailleTerritoireSelectionnee === 'DEPT' ? 'departementale' : 'regionale';
 
 
   const territoireRepository = dependencies.getTerritoireRepository();
@@ -134,10 +134,15 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
 
     assert(valeurFFPpgArchive || chantier.statut !== 'ARCHIVE', 'La page n\'est pas disponible');
 
-    const chantierTerritoireSélectionné = chantier.mailles[territoireSélectionné?.maille ?? 'nationale'][territoireCode];
+    const chantierTerritoireSélectionné = chantier.mailles[territoireSélectionné.maille ?? 'nationale'][territoireCode];
 
     if (!chantierTerritoireSélectionné.estApplicable || (!chantier.estTerritorialisé && mailleTerritoireSelectionnee !== 'NAT')) {
-      return {
+      return mailleTerritoireSelectionnee === 'DEPT' ? {
+        redirect: {
+          destination: `/chantier/${chantierId}/${territoireSélectionné.codeParent}?maille=regionale`,
+          permanent: true,
+        },
+      } : {
         redirect: {
           destination: `/chantier/${chantierId}/NAT-FR`,
           permanent: true,

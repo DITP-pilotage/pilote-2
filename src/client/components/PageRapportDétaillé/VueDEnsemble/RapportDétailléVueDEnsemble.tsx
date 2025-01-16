@@ -25,6 +25,7 @@ import {
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import RapportDétailléTableauChantiers from './RapportDétailléTableauChantiers/RapportDétailléTableauChantiers';
 
 interface RapportDétailléVueDEnsembleProps {
@@ -34,7 +35,7 @@ interface RapportDétailléVueDEnsembleProps {
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   répartitionMétéos: RépartitionsMétéos
   territoireCode: string
-  mailleSelectionnee: 'départementale' | 'régionale'
+  mailleSelectionnee: MailleInterne
 }
 
 const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnsembleProps> = ({

@@ -1,12 +1,13 @@
 import { decode, encode } from 'next-auth/jwt';
 import { TokenAPIJWTService } from '@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService';
 import { TokenAPIInformationBuilder } from '@/server/authentification/app/builder/TokenAPIInformationBuilder';
+import { configuration } from '@/config';
 
 describe('TokenAPIJWTService', () => {
   let tokenAPIJWTService: TokenAPIJWTService;
 
   beforeEach(() => {
-    tokenAPIJWTService = new TokenAPIJWTService({ secret: process.env.TOKEN_API_SECRET! });
+    tokenAPIJWTService = new TokenAPIJWTService({ secret: configuration.tokenAPI.secret });
   });
 
   describe('creerTokenAPI', () => {
@@ -17,7 +18,7 @@ describe('TokenAPIJWTService', () => {
       // When
       const result = await tokenAPIJWTService.creerTokenAPI(tokenAPIInformation);
       // Then
-      const tokenDecode = await decode({ token: result, secret: process.env.TOKEN_API_SECRET! });
+      const tokenDecode = await decode({ token: result, secret: configuration.tokenAPI.secret });
       expect(tokenDecode?.email).toEqual('test@example.com');
     });
   });
@@ -26,7 +27,7 @@ describe('TokenAPIJWTService', () => {
     it('doit générer un token api au format JWT', async () => {
       // Given
       const email = 'test@example.com';
-      const token = await encode({ token: { email }, secret: process.env.TOKEN_API_SECRET! });
+      const token = await encode({ token: { email }, secret: configuration.tokenAPI.secret });
       // When
       const result = await tokenAPIJWTService.decoderTokenAPI(token);
       // Then

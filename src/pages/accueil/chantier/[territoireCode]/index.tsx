@@ -72,11 +72,11 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     maille: mailleTerritoireSelectionnee,
   } = territoireCodeVersMailleCodeInsee(territoireCode);
 
-  const mailleQuery = query.maille as 'départementale' | 'régionale' || 'départementale';
+  const mailleQuery = query.maille as 'departementale' | 'regionale' || 'departementale';
 
   const mailleGlobalTerritoireSelectionnee = mailleTerritoireSelectionnee === 'NAT'
     ? mailleQuery
-    : mailleTerritoireSelectionnee === 'DEPT' ? 'départementale' : 'régionale';
+    : mailleTerritoireSelectionnee === 'DEPT' ? 'departementale' : 'regionale';
 
   const mailleChantier = mailleTerritoireSelectionnee === 'NAT' ? 'nationale' : mailleGlobalTerritoireSelectionnee;
 
@@ -84,7 +84,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     return {
       redirect: {
         statusCode: 302,
-        destination: `/accueil/chantier/${query.maille === 'départementale' ? territoireDept : query.maille === 'départementale' ? territoireReg : session.habilitations.lecture.territoires[0]}?maille=${query.maille || 'départementale'}`,
+        destination: `/accueil/chantier/${query.maille === 'departementale' ? territoireDept : query.maille === 'departementale' ? territoireReg : session.habilitations.lecture.territoires[0]}?maille=${query.maille || 'departementale'}`,
       },
     };
   }
@@ -123,7 +123,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     dependencies.getChantierRepository(),
     dependencies.getTerritoireRepository(),
   )
-    .run(session.habilitations, session.profil, territoireCode, mailleGlobalTerritoireSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', ministères, axes, filtres, sorting);
+    .run(session.habilitations, session.profil, territoireCode, mailleGlobalTerritoireSelectionnee === 'regionale' ? 'REG' : 'DEPT', mailleChantier || 'departementale', ministères, axes, filtres, sorting);
 
   const {
     répartitionMétéos,
@@ -135,7 +135,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     return (filtresAlertes.estEnAlerteÉcart && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
       || (filtresAlertes.estEnAlerteBaisse && Alerte.estEnAlerteBaisse(chantierDonnéesTerritoires.tendance))
       || (filtresAlertes.estEnAlerteTauxAvancementNonCalculé && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierDonnéesTerritoires.avancement.global, chantier.cibleAttendu))
-      || (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental && Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.mailles.départementale, chantier.cibleAttendu))
+      || (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental && Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.mailles.departementale, chantier.cibleAttendu))
       || (filtresAlertes.estEnAlerteMétéoNonRenseignée && Alerte.estEnAlerteMétéoNonRenseignée(chantierDonnéesTerritoires.météo));
   }) : chantiers;
 
@@ -150,7 +150,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     avancementsAgrégés.annuel.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[territoireCode].répartition.avancements.annuel.moyenne;
   }
 
-  const avancementsGlobauxTerritoriauxMoyens = objectEntries({ ...donnéesTerritoiresAgrégées.régionale.territoires, ...donnéesTerritoiresAgrégées.départementale.territoires }).map(([territoireCodeDonnee, territoire]) => ({
+  const avancementsGlobauxTerritoriauxMoyens = objectEntries({ ...donnéesTerritoiresAgrégées.regionale.territoires, ...donnéesTerritoiresAgrégées.departementale.territoires }).map(([territoireCodeDonnee, territoire]) => ({
     valeur: territoire.répartition.avancements.global.moyenne,
     valeurAnnuelle: territoire.répartition.avancements.annuel.moyenne,
     territoireCode: territoireCodeDonnee as string,

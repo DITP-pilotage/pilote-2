@@ -23,7 +23,7 @@ test.describe('Authentification', () => {
     await apiContext.dispose();
   });
 
-  test('quand on dispose d\'un header Authorization invalide, doit remonter une erreur 401 Unauthorized', async ({ playwright }) => {
+  test('quand on dispose d\'un header Authorization invalide, doit remonter une erreur 400 Bad Request', async ({ playwright }) => {
     await test.step('Création du context avec header Authorization + valeur incorrect', async () => {
       apiContext = await playwright.request.newContext({
         baseURL: 'http://localhost:3000',
@@ -37,14 +37,14 @@ test.describe('Authentification', () => {
       result = await apiContext.get('/api/open-api/healthcheck');
     });
 
-    await test.step('Vérification status égal 401', async () => {
-      expect(result.status()).toEqual(401);
+    await test.step('Vérification status égal 400', async () => {
+      expect(result.status()).toEqual(400);
     });
 
     await apiContext.dispose();
   });
 
-  test('quand on dispose d\'un header Authorization valide mais que le token n\'a pas été forgé par notre API, doit remonter une erreur 401 Unauthorized', async ({ playwright }) => {
+  test('quand on dispose d\'un header Authorization valide mais que le token n\'a pas été forgé par notre API, doit remonter une erreur 400 Request', async ({ playwright }) => {
     await test.step('Création du context avec header Authorization et valeur Bearer + JWT non pilote', async () => {
       apiContext = await playwright.request.newContext({
         baseURL: 'http://localhost:3000',
@@ -58,8 +58,8 @@ test.describe('Authentification', () => {
       result = await apiContext.get('/api/open-api/healthcheck');
     });
 
-    await test.step('Vérification status égal 401', async () => {
-      expect(result.status()).toEqual(401);
+    await test.step('Vérification status égal 400', async () => {
+      expect(result.status()).toEqual(400);
     });
 
     await apiContext.dispose();

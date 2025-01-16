@@ -71,7 +71,7 @@ export default class TerritoireBuilder {
     this._nom = this._territoire.nom;
     this._codeInsee = territoireCodeVersMailleCodeInsee(this._code).codeInsee;
     this._maille = NOMS_MAILLES[territoireCodeVersMailleCodeInsee(this._code).maille] as MailleInterne;
-    this._nomAffiché = this._maille === 'départementale' ? `${this._codeInsee} - ${this._nom}` : this._nom;
+    this._nomAffiché = this._maille === 'departementale' ? `${this._codeInsee} - ${this._nom}` : this._nom;
   }
 
   avecCodeInsee(codeInsee: Territoire['codeInsee']): TerritoireBuilder {

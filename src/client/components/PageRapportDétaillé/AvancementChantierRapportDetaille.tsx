@@ -10,7 +10,7 @@ export interface AvancementChantierRapportDetaille {
       moyenne: number | null
     }
   };
-  départementale: {
+  departementale: {
     global: {
       moyenne: number | null
     };
@@ -18,7 +18,7 @@ export interface AvancementChantierRapportDetaille {
       moyenne: number | null
     }
   };
-  régionale: {
+  regionale: {
     global: {
       moyenne: number | null
     };

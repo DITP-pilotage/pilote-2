@@ -121,8 +121,8 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
   const activerLaRestrictionDesTerritoires = !AAccesATousLesTerritoires(session!.profil);
   const groupesTerritoiresÀAfficher = {
     nationale: false,
-    régionale: afficherChampLectureTerritoires && profilsRégionaux.includes(profilCodeSelectionne),
-    départementale: afficherChampLectureTerritoires && profilsDépartementaux.includes(profilCodeSelectionne),
+    regionale: afficherChampLectureTerritoires && profilsRégionaux.includes(profilCodeSelectionne),
+    departementale: afficherChampLectureTerritoires && profilsDépartementaux.includes(profilCodeSelectionne),
   };
   const territoiresSélectionnables = session?.habilitations.gestionUtilisateur.territoires;
   const changementTerritoiresSelectionnes = (valeursSelectionnees: string[]) => {

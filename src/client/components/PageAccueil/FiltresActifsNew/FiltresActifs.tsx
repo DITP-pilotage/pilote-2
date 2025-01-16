@@ -6,12 +6,13 @@ import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import { reinitialiserFiltres, sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import FiltresActifsStyled from './FiltresActifs.styled';
 
 interface FiltresActifsProps {
   ministères: Ministère[]
   axes: Axe[]
-  mailleSelectionnee: 'départementale' | 'régionale'
+  mailleSelectionnee: MailleInterne
 }
 
 const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axes, mailleSelectionnee }) => {

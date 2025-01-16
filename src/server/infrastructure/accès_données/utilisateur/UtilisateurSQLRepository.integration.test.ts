@@ -74,8 +74,8 @@ describe('UtilisateurSQLRepository', () => {
       });
 
       // When
-      const nombreProfilHerault = await utilisateurRepository.récupérerNombreUtilisateursSurLeTerritoire('DEPT-34', 'départementale');
-      const nombreProfilAra = await utilisateurRepository.récupérerNombreUtilisateursSurLeTerritoire('REG-84', 'régionale');
+      const nombreProfilHerault = await utilisateurRepository.récupérerNombreUtilisateursSurLeTerritoire('DEPT-34', 'departementale');
+      const nombreProfilAra = await utilisateurRepository.récupérerNombreUtilisateursSurLeTerritoire('REG-84', 'regionale');
       
       // Then
       expect(nombreProfilHerault).toStrictEqual(2);
@@ -89,9 +89,9 @@ describe('UtilisateurSQLRepository', () => {
     test("retourne les nombres d'utilisateurs pour une liste de territoires", async () => {
       // Given
       const territoires = [
-        new TerritoireBuilder().avecCode('DEPT-34').avecMaille('départementale').build(),
-        new TerritoireBuilder().avecCode('DEPT-75').avecMaille('départementale').build(),
-        new TerritoireBuilder().avecCode('REG-84').avecMaille('régionale').build(),
+        new TerritoireBuilder().avecCode('DEPT-34').avecMaille('departementale').build(),
+        new TerritoireBuilder().avecCode('DEPT-75').avecMaille('departementale').build(),
+        new TerritoireBuilder().avecCode('REG-84').avecMaille('regionale').build(),
       ];
 
       const randomUtilisateur = {

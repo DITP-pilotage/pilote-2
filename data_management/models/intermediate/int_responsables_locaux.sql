@@ -13,6 +13,7 @@ WITH resp_locaux AS (
         LEFT JOIN UNNEST(h.chantiers) AS c(chantier_id) ON true
     WHERE 
         u.profil_code in ('SERVICES_DECONCENTRES_REGION', 'PREFET_REGION', 'COORDINATEUR_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'PREFET_DEPARTEMENT', 'COORDINATEUR_DEPARTEMENT')
+        AND u.date_desactivation is NULL
 )
 SELECT 
 	ARRAY_AGG(a.nom) as nom,

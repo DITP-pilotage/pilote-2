@@ -25,7 +25,7 @@ export default function useCartographie(territoireCode: string, pathname: '/accu
   const router = useRouter();
 
   function déterminerRégionsÀTracer(territoireAffiché: CartographieTerritoireAffiché) {
-    return territoireAffiché.maille === 'régionale'
+    return territoireAffiché.maille === 'regionale'
       ? régions.filter(région => région.codeInsee === territoireAffiché.codeInsee)
       : régions;
   }

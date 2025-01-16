@@ -11,28 +11,33 @@ import {
   UtilisateurAuthentifieJWTService,
 } from '@/server/authentification/infrastructure/adapters/services/UtilisateurAuthentifieJWTService';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { TokenAPIInformationRepository } from '@/server/authentification/domain/ports/TokenAPIInformationRepository';
+import { configuration } from '@/config';
 
 describe('UtilisateurAuthentifieJWTService', () => {
   let utilisateurAuthentifieJWTService: UtilisateurAuthentifieJWTService;
   let utilisateurRepository: MockProxy<UtilisateurRepository>;
+  let tokenAPIRepository: MockProxy<TokenAPIInformationRepository>;
   let profilRepository: MockProxy<ProfilRepository>;
   
   beforeEach(() => {
     utilisateurRepository = mock<UtilisateurRepository>();
     profilRepository = mock<ProfilRepository>();
-    utilisateurAuthentifieJWTService = new UtilisateurAuthentifieJWTService({ utilisateurRepository, profilRepository });
+    tokenAPIRepository = mock<TokenAPIInformationRepository>();
+    utilisateurAuthentifieJWTService = new UtilisateurAuthentifieJWTService({ utilisateurRepository, tokenAPIRepository, profilRepository });
   });
 
   it("quand l'utilisateur est toujours présent dans la base utilisateur, doit retourner l'utilisateur authentifie associe au token jwt", async () => {
     // Given
     const email = 'test@example.com';
     const tokenAPIInformation = new TokenAPIInformationBuilder().withEmail('test@example.com').build();
-    const tokenJWT = await new TokenAPIJWTService({ secret: process.env.TOKEN_API_SECRET! }).creerTokenAPI(tokenAPIInformation);
+    const tokenJWT = await new TokenAPIJWTService({ secret: configuration.tokenAPI.secret }).creerTokenAPI(tokenAPIInformation);
     const habilitationsAPI = new HabilitationAuthentitificationAPIBuilder().ajouterHabilitationLecture('chantiers', ['7a33ee55-b74c-4464-892b-b2b7fdc3bc58']).build();
     const utilisateur = new UtilisateurBuilder().withEmail(email).withProfil(ProfilEnum.CABINET_MTFP).withHabilitations(habilitationsAPI).build();
 
     // @ts-expect-error Attention ici on n'utilise pas le bon utilisateur car il y trop d'action effectué pour retourner les habilitations, il faudrait simplifier tout cela.
     utilisateurRepository.récupérer.mockResolvedValue(utilisateur);
+    tokenAPIRepository.recupererTokenAPIInformation.mockResolvedValue(tokenAPIInformation);
     profilRepository.estAutoriseAAccederAuxChantiersBrouillons.mockResolvedValue(true);
 
     // When
@@ -79,7 +84,7 @@ describe('UtilisateurAuthentifieJWTService', () => {
   it("quand l'utilisateur n'est plus présent dans la base utilisateur, doit retourner une erreur", async () => {
     // Given
     const tokenAPIInformation = new TokenAPIInformationBuilder().withEmail('test@example.com').build();
-    const tokenJWT = await new TokenAPIJWTService({ secret: process.env.TOKEN_API_SECRET! }).creerTokenAPI(tokenAPIInformation);
+    const tokenJWT = await new TokenAPIJWTService({ secret: configuration.tokenAPI.secret }).creerTokenAPI(tokenAPIInformation);
     utilisateurRepository.récupérer.mockResolvedValue(null);
     expect.assertions(1);
 

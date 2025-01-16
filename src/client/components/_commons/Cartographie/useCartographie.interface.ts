@@ -18,7 +18,7 @@ export type CartographieTerritoire = {
 
 export type CartographieTerritoireAffiché = {
   codeInsee: CodeInsee,
-  maille: 'nationale' | 'régionale',
+  maille: 'nationale' | 'regionale',
 };
 
 export type CartographieTerritoires = {

@@ -2,8 +2,9 @@ import UtilisateurRepository from '@/server/gestion-utilisateur/domain/ports/Uti
 import { UtilisateurIAMRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository';
 import Utilisateur from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
 import { TokenAPIInformationRepository } from '@/server/gestion-utilisateur/domain/ports/TokenAPIInformationRepository';
-import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { Habilitations } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface';
+import Habilitation from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
+import { Profil } from '@/server/domain/profil/Profil.interface';
 
 type Dependencies = {
   utilisateurRepository: UtilisateurRepository,
@@ -25,15 +26,19 @@ export default class ReactiverUnUtilisateurUseCase {
     this.utilisateurIAMRepository = utilisateurIAMRepository;
   }
 
-  async run(email: Utilisateur['email'], profilAuteur: ProfilCode): Promise<void> {
+  async run(email: Utilisateur['email'], habilitations: Habilitations, profilAuteur: Profil | null): Promise<void> {
     const utilisateurAReactiver = await this.utilisateurRepository.récupérer(email);
     if (!utilisateurAReactiver) {
       throw new Error('Le compte à supprimer n’existe pas.');
     }
 
-    if (profilAuteur !== ProfilEnum.DITP_ADMIN) {
-      throw new Error('Le profil n\'est pas autorisé pour la réactiviation de compte');
-    }
+    const habilitation = new Habilitation(habilitations);
+    habilitation.vérifierLesHabilitationsEnCréationModificationUtilisateur(
+      utilisateurAReactiver.habilitations.lecture.chantiers, 
+      utilisateurAReactiver.habilitations.lecture.territoires,
+      profilAuteur,
+    );
+
 
     await this.utilisateurRepository.reactiver(email);
 
