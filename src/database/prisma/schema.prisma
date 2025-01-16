@@ -119,8 +119,8 @@ model chantier_identite {
   ministeres                            String[]
   ministeres_acronymes                  String[]
   directeurs_projet                     String[]
-  axe                                   String                 @default("non renseignée")
-  ppg                                   String                 @default("non renseignée")
+  axe                                   String                @default("non renseigné")
+  ppg                                   String                @default("non renseignée")
   directeurs_projet_mails               String[]
   est_barometre                         Boolean?
   est_territorialise                    Boolean?
@@ -145,7 +145,7 @@ model chantier_territoire {
   territoire_code                          String
   territoire                               territoire                  @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
   code_insee                               String
-  maille                                   String
+  maille                                   Maille
   zone_id                                  String
   taux_avancement_mandat                   Float?
   date_taux_avancement_mandat              DateTime?                   @db.Date
@@ -175,13 +175,14 @@ model chantier_territoire {
 model chantier_territoire_jalon {
   id                  String
   code_insee          String
-  maille              String
+  maille              Maille
   territoire_code     String
-  jalon               String
+  zone_id             String
+  jalon               Int
   taux_avancement     Float?
   chantier_territoire chantier_territoire @relation(fields: [id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
 
-  @@id([id, territoire_code])
+  @@id([id, territoire_code, jalon])
   @@schema("public")
 }
 
