@@ -8,7 +8,7 @@ CREATE TABLE "public"."chantier_identite" (
     "ministeres" TEXT[],
     "ministeres_acronymes" TEXT[],
     "directeurs_projet" TEXT[],
-    "axe" TEXT NOT NULL DEFAULT 'non renseignée',
+    "axe" TEXT NOT NULL DEFAULT 'non renseigné',
     "ppg" TEXT NOT NULL DEFAULT 'non renseignée',
     "directeurs_projet_mails" TEXT[],
     "est_barometre" BOOLEAN,

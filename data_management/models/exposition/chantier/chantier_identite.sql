@@ -1,3 +1,5 @@
+{{ config(materialized = 'incremental') }}
+
 WITH
 
 -- On récupère les directeurs des directions porteuses de chaque chantier
@@ -98,6 +100,12 @@ SELECT
     meta_ch.id,
     meta_ch.nom,
     meta_ch.perimetre_ids,
+    COALESCE(
+        p_names.p_directeurs, STRING_TO_ARRAY('', '')
+    ) AS directeurs_administration_centrale,
+    COALESCE(
+        p_names.p_acronymes, STRING_TO_ARRAY('', '')
+    ) AS directions_administration_centrale,
     meta_ch.ministeres_ids AS ministeres,
     meta_ch.ministeres_polygrammes AS ministeres_acronymes,
     dir_projets.nom AS directeurs_projet,
@@ -123,18 +131,13 @@ SELECT
     --         UPPER(meta_ch.replicate_val_nat_to) = 'REG' AND z.zone_type = 'REG'
     --         THEN 'reg'::maille
     -- END AS donnees_maille_source
-    ch_has_meteo.has_meteo_dept AS a_meteo_departemental,
-    ch_has_meteo.has_meteo_reg AS a_meteo_regional,
-    FALSE AS a_supprimer,
-    COALESCE(
-        p_names.p_directeurs, STRING_TO_ARRAY('', '')
-    ) AS directeurs_administration_centrale,
-    COALESCE(
-        p_names.p_acronymes, STRING_TO_ARRAY('', '')
-    ) AS directions_administration_centrale,
+    ch_has_meteo.has_meteo_dept AS possede_meteo_departemental,
+    ch_has_meteo.has_meteo_reg AS possede_meteo_regional,
     -- Si ch_cible_attendue=NULL -> on le considère TRUE
     COALESCE(meta_ch.statut::type_statut, 'PUBLIE') AS statut,
-    COALESCE(meta_ch.ch_cible_attendue, TRUE) AS cible_attendue
+    COALESCE(meta_ch.ch_cible_attendue, TRUE) AS cible_attendue,
+    FALSE AS a_supprimer
+
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch
 --CROSS JOIN {{ source('db_schema_public', 'territoire') }} AS t
 --LEFT JOIN {{ source('python_load', 'metadata_zones') }} AS z ON t.zone_id = z.zone_id
