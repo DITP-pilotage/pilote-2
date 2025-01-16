@@ -8,7 +8,7 @@ CREATE TABLE "public"."chantier_identite" (
     "ministeres" TEXT[],
     "ministeres_acronymes" TEXT[],
     "directeurs_projet" TEXT[],
-    "axe" TEXT NOT NULL DEFAULT 'non renseigné',
+    "axe" TEXT NOT NULL DEFAULT 'non renseignée',
     "ppg" TEXT NOT NULL DEFAULT 'non renseignée',
     "directeurs_projet_mails" TEXT[],
     "est_barometre" BOOLEAN,
@@ -30,7 +30,7 @@ CREATE TABLE "public"."chantier_territoire" (
     "id" TEXT NOT NULL,
     "territoire_code" TEXT NOT NULL,
     "code_insee" TEXT NOT NULL,
-    "maille" "public"."maille" NOT NULL,
+    "maille" TEXT NOT NULL,
     "zone_id" TEXT NOT NULL,
     "taux_avancement_mandat" DOUBLE PRECISION,
     "date_taux_avancement_mandat" DATE,
@@ -56,13 +56,12 @@ CREATE TABLE "public"."chantier_territoire" (
 CREATE TABLE "public"."chantier_territoire_jalon" (
     "id" TEXT NOT NULL,
     "code_insee" TEXT NOT NULL,
-    "maille" "public"."maille" NOT NULL,
+    "maille" TEXT NOT NULL,
     "territoire_code" TEXT NOT NULL,
-    "zone_id" TEXT NOT NULL,
-    "jalon" INTEGER NOT NULL,
+    "jalon" TEXT NOT NULL,
     "taux_avancement" DOUBLE PRECISION,
 
-    CONSTRAINT "chantier_territoire_jalon_pkey" PRIMARY KEY ("id","territoire_code", "jalon")
+    CONSTRAINT "chantier_territoire_jalon_pkey" PRIMARY KEY ("id","territoire_code")
 );
 
 -- CreateTable
