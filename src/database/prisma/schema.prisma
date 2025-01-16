@@ -145,7 +145,7 @@ model chantier_territoire {
   territoire_code                          String
   territoire                               territoire                  @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
   code_insee                               String
-  maille                                   String
+  maille                                   Maille
   zone_id                                  String
   taux_avancement_mandat                   Float?
   date_taux_avancement_mandat              DateTime?                   @db.Date

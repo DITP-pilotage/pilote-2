@@ -30,7 +30,7 @@ CREATE TABLE "public"."chantier_territoire" (
     "id" TEXT NOT NULL,
     "territoire_code" TEXT NOT NULL,
     "code_insee" TEXT NOT NULL,
-    "maille" TEXT NOT NULL,
+    "maille" "public"."maille" NOT NULL,
     "zone_id" TEXT NOT NULL,
     "taux_avancement_mandat" DOUBLE PRECISION,
     "date_taux_avancement_mandat" DATE,

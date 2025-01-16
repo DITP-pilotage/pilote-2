@@ -1,3 +1,5 @@
+{{ config(materialized = 'incremental') }}
+
 WITH
 
 -- Table des synthèses triée par date
@@ -20,34 +22,6 @@ synthese_triee_par_date AS (
 -- Indique la date de météo la plus récente
 synthese_triee_par_date_last1 AS (
     SELECT * FROM synthese_triee_par_date WHERE row_id_by_date_meteo_desc = 1
-),
-
--- On récupère les directeurs des directions porteuses de chaque chantier
-ch_unnest_porteurs_dac AS (
-    SELECT
-        meta_ch.id AS chantier_id,
-        UNNEST(meta_ch.directeurs_administration_centrale_ids) AS pi
-    FROM {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch
-),
-
-ch_unnest_porteurs_dac_pnames AS (
-    SELECT
-        a.*,
-        mp.directeur,
-        -- Affichage de '-' si pas d'acronyme de porteur
-        COALESCE(mp.acronyme, '-') AS acronyme
-    FROM ch_unnest_porteurs_dac AS a
-    LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} AS mp ON a.pi = mp.id
-),
-
-ch_unnest_porteurs_dac_pnames_agg AS (
-    SELECT
-        chantier_id,
-        ARRAY_AGG(pi) AS p_id,
-        ARRAY_AGG(directeur) AS p_directeurs,
-        ARRAY_AGG(acronyme) AS p_acronymes
-    FROM ch_unnest_porteurs_dac_pnames
-    GROUP BY chantier_id
 ),
 
 mailles_applicables AS (
@@ -86,45 +60,32 @@ mediane_par_chantier AS (
 
 SELECT
     meta_ch.id,
-    z.zone_type AS maille,
     t.code AS territoire_code,
     t.code_insee,
+    t.maille AS maille,
     z.zone_id,
-    t.nom AS territoire_nom,
-    sr.meteo,
-    ta_ch_prev_month.tag_ch AS taux_avancement_mandat_valeur_precedente,
-    resp_locaux.nom AS responsables_locaux,
-    resp_locaux.email AS responsables_locaux_mails,
-    coord_territoriaux.nom AS coordinateurs_territoriaux,
-    coord_territoriaux.email AS coordinateurs_territoriaux_mails,
-    sr.date_meteo::date AS derniere_maj_date_qualitative,
     CASE
         WHEN date_bascule.date_depassee
             THEN ta_ch_today.tag_ch
         ELSE ta_prev_year.tag_prev_year
     END AS taux_avancement_mandat,
-    COALESCE(
-        p_names.p_directeurs, STRING_TO_ARRAY('', '')
-    ) AS directeurs_administration_centrale,
-    COALESCE(
-        p_names.p_acronymes, STRING_TO_ARRAY('', '')
-    ) AS directions_administration_centrale,
-    COALESCE(meta_ch.statut::type_statut, 'PUBLIE') AS statut,
-    COALESCE(chantier_za.zone_est_applicable, TRUE)
-    AND COALESCE(
-        mailles_applicables.maille_est_applicable, FALSE
-    ) AS est_applicable,
-    -- est-ce que cette date est utile dans la webapp ?
-    CASE
-        WHEN date_bascule.date_depassee
-            THEN ta_ch_today.taa_courant_ch
-        ELSE ta_prev_year.taa_prev_year
-    END AS taux_avancement_annuel,
     CASE
         WHEN date_bascule.date_depassee
             THEN ta_ch_today.date_ta::date
         ELSE ta_prev_year.taa_prev_year_date::date
     END AS date_taux_avancement_mandat,
+    t.nom AS territoire_nom,
+    sr.meteo,
+    ta_ch_prev_month.tag_ch AS taux_avancement_mandat_valeur_precedente,
+    COALESCE(chantier_za.zone_est_applicable, TRUE)
+    AND COALESCE(
+        mailles_applicables.maille_est_applicable, FALSE
+    ) AS est_applicable,
+    resp_locaux.nom AS responsables_locaux,
+    coord_territoriaux.nom AS coordinateurs_territoriaux,
+    resp_locaux.email AS responsables_locaux_mails,
+    coord_territoriaux.email AS coordinateurs_territoriaux_mails,
+    sr.date_meteo::date AS derniere_maj_date_qualitative,
     CASE
         WHEN
             ta_ch_today.tag_ch IS NULL
@@ -140,12 +101,6 @@ SELECT
             ta_ch_today.tag_ch < ta_ch_prev_month.tag_ch
             THEN 'BAISSE'::type_tendance
     END AS tendance,
-    ROUND(
-        (
-            ta_ch_today.tag_ch::numeric - mediane_par_chantier.mediane::numeric
-        )::numeric,
-        1
-    ) AS ecart,
     CASE
         WHEN
             ta_ch_today.tag_ch IS NULL
@@ -161,7 +116,27 @@ SELECT
             ta_ch_today.tag_ch < ta_ch_prev_month.tag_ch
             THEN -1
     END AS tendance_int_index,
-    ('{"ORAGE": 1, "NUAGE": 2, "COUVERT": 3, "SOLEIL": 4}'::json->>sr.meteo)::int as meteo_int_index
+    ROUND(
+        (
+            ta_ch_today.tag_ch::numeric - mediane_par_chantier.mediane::numeric
+        )::numeric,
+        1
+    ) AS ecart,
+    ('{"ORAGE": 1, "NUAGE": 2, "COUVERT": 3, "SOLEIL": 4}'::json->>sr.meteo)::int as meteo_int_index,
+    CASE
+        -- values replicated REG->DEPT
+        WHEN
+            UPPER(meta_ch.replicate_val_reg_to) = 'DEPT' AND z.zone_type = 'DEPT'
+            THEN 'reg'::maille
+        -- values replicated NAT->DEPT
+        WHEN
+            UPPER(meta_ch.replicate_val_nat_to) = 'DEPT' AND z.zone_type = 'DEPT'
+            THEN 'nat'::maille
+        -- values replicated NAT->REG
+        WHEN
+            UPPER(meta_ch.replicate_val_nat_to) = 'REG' AND z.zone_type = 'REG'
+            THEN 'reg'::maille
+    END AS donnees_maille_source
 
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch
 CROSS JOIN {{ source('db_schema_public', 'territoire') }} AS t
@@ -191,9 +166,6 @@ LEFT JOIN
     ON
         meta_ch.id = ta_prev_year.chantier_id
         AND t.code = ta_prev_year.territoire_code
-LEFT JOIN
-    ch_unnest_porteurs_dac_pnames_agg AS p_names
-    ON meta_ch.id = p_names.chantier_id
 LEFT JOIN
     {{ ref('int_chantiers_zone_applicables') }} AS chantier_za
     ON meta_ch.id = chantier_za.chantier_id AND z.zone_id = chantier_za.zone_id
