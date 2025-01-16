@@ -141,4 +141,16 @@ CREATE TABLE "public"."indicateur_territoire_jalon" (
 ALTER TABLE "public"."chantier_territoire" ADD CONSTRAINT "chantier_territoire_territoire_code_fkey" FOREIGN KEY ("territoire_code") REFERENCES "public"."territoire"("code") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "public"."chantier_territoire" ADD CONSTRAINT "chantier_territoire_id_fkey" FOREIGN KEY ("id") REFERENCES "public"."chantier_identite"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."chantier_territoire_jalon" ADD CONSTRAINT "chantier_territoire_jalon_id_territoire_code_fkey" FOREIGN KEY ("id", "territoire_code") REFERENCES "public"."chantier_territoire"("id", "territoire_code") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "public"."indicateur_territoire" ADD CONSTRAINT "indicateur_territoire_territoire_code_fkey" FOREIGN KEY ("territoire_code") REFERENCES "public"."territoire"("code") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."indicateur_territoire" ADD CONSTRAINT "indicateur_territoire_id_fkey" FOREIGN KEY ("id") REFERENCES "public"."indicateur_identite"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."indicateur_territoire_jalon" ADD CONSTRAINT "indicateur_territoire_jalon_id_territoire_code_fkey" FOREIGN KEY ("id", "territoire_code") REFERENCES "public"."indicateur_territoire"("id", "territoire_code") ON DELETE CASCADE ON UPDATE CASCADE;

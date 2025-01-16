@@ -1,21 +1,19 @@
-import { chantier as ChantierPrisma, Prisma, PrismaClient, type_statut } from '@prisma/client';
+import { chantier_identite as PrismaChantierIdentite, chantier_territoire as PrismaChantierTerritoire, Prisma, type_statut } from '@prisma/client';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import Chantier, { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { Habilitations, Scope } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
 import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import { FiltreQueryParams, SortingParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { removeAccents } from '@/server/utils/remove-accents';
+import { prisma } from '@/server/db/prisma';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -86,14 +84,8 @@ const appliquerSortingChantier = (sorting: SortingParams): Prisma.Enumerable<Pri
 };
 
 export default class ChantierSQLRepository implements ChantierRepository {
-  private prisma: PrismaClient;
-
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
-  }
-
   async récupérerChantiersSynthétisés(): Promise<ChantierSynthétisé[]> {
-    const chantiers = await this.prisma.$queryRaw<any[]>`
+    const chantiers = await prisma.$queryRaw<any[]>`
       SELECT 
         id,
         nom, 
@@ -118,68 +110,47 @@ export default class ChantierSQLRepository implements ChantierRepository {
     }));
   }
 
-  async récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<ChantierPrisma[]> {
-    const h = new Habilitation(habilitations);
-    const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
+  async récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<(PrismaChantierIdentite & {
+    chantier_territoire: PrismaChantierTerritoire[]
+  })[]> {
+    const habilitation = new Habilitation(habilitations);
+    const listeChantiersIdsAccessiblesEnLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
 
-    let paramètresRequête : Prisma.chantierFindManyArgs = {
-      where: {
-        id,
-      },
-      include: {
-        territoire: true,
-      },
-    };
+    let whereParam = {};
 
     if (!profilsTerritoriaux.includes(profil)) {
-      let territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
+      let listeTerritoireAccessibleEnLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
       // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
-      territoiresLecture = [...territoiresLecture, 'NAT-FR'];
-      paramètresRequête.where!.territoire_code = { in: territoiresLecture };
+      listeTerritoireAccessibleEnLecture = [...listeTerritoireAccessibleEnLecture, 'NAT-FR'];
+      whereParam = {
+        territoire_code: {
+          in: listeTerritoireAccessibleEnLecture,
+        },
+      };
     }
 
-    const peutAccéderAuChantier = chantiersLecture.includes(id);
+    const peutAccéderAuChantier = listeChantiersIdsAccessiblesEnLecture.includes(id);
 
     if (!peutAccéderAuChantier) {
       throw new ErreurChantierPermission(id);
     }
 
-    const chantiers = await this.prisma.chantier.findMany(paramètresRequête);
+    const chantiers = await prisma.chantier_identite.findMany({
+      where: {
+        id,
+      },
+      include: {
+        chantier_territoire: {
+          where: whereParam,
+        },
+      },
+    });
 
     if (!chantiers || chantiers.length === 0) {
       throw new ErreurChantierNonTrouvé(id);
     }
 
     return chantiers;
-  }
-
-  async récupérerChantierIdsAssociésAuxPérimètresMinistèriels(périmètreIds: PérimètreMinistériel['id'][], scope: Scope, profilUtilisateur: string): Promise<Chantier['id'][]> {
-    let chantiers = await this.prisma.chantier.findMany({
-      distinct: ['id'],
-      where: {
-        perimetre_ids: { hasSome: périmètreIds },
-      },
-    });
-
-    if (scope == 'saisieCommentaire' && [ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(profilUtilisateur)) {
-      chantiers = chantiers.filter(c => c.ate !== 'hors_ate_centralise');
-    }
-
-    return chantiers.map(c => c.id);
-  }
-
-  async récupérerChantierIdsPourSaisieCommentaireServiceDeconcentré(chantierIds: Chantier['id'][]): Promise<Chantier['id'][]> {
-    let chantiers = await this.prisma.chantier.findMany({
-      distinct: ['id'],
-      where: {
-        AND: [
-          { id: { in: chantierIds } },
-          { NOT: { ate: 'hors_ate_centralise' } },
-        ],
-      },
-    });
-
-    return chantiers.map(c => c.id);
   }
 
   async récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation: Habilitation, optionsExport: OptionsExport): Promise<Chantier['id'][]> {
@@ -214,7 +185,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       };
     }
 
-    const chantiers = await this.prisma.chantier.findMany({
+    const chantiers = await prisma.chantier.findMany({
       distinct: ['id'],
       where: {
         id: { in: listeChantierId },
@@ -226,41 +197,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return chantiers.map(c => c.id);
   }
 
-  async récupérerChantierIdsEnLectureOrdonnésParNom(habilitation: Habilitation): Promise<Chantier['id'][]> {
-    const chantierIdsLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
-    const chantiers = await this.prisma.chantier.findMany({
-      distinct: ['id'],
-      where: {
-        id: { in: chantierIdsLecture },
-      },
-      orderBy: [{ nom: 'asc' }],
-    });
-
-    return chantiers.map(c => c.id);
-  }
-
-  async récupérerLesEntréesDeTousLesChantiersHabilités(habilitation: Habilitation, profil: ProfilCode): Promise<ChantierPrisma[]> {
-
-    const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
-
-    let paramètresRequête : Prisma.chantierFindManyArgs = {
-      where: {
-        NOT: { ministeres: { isEmpty: true } },
-        id: { in: chantiersLecture },
-      },
-    };
-
-    if (!profilsTerritoriaux.includes(profil)) {
-      let territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
-      // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
-      territoiresLecture = [...territoiresLecture, 'NAT-FR'];
-      paramètresRequête.where!.territoire_code = { in: territoiresLecture };
-    }
-
-    return this.prisma.chantier.findMany(paramètresRequête);
-  }
-
-  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, maille: 'DEPT' | 'REG', filtres: FiltreQueryParams, sorting: SortingParams): Promise<ChantierPrisma[]> {
+  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, maille: 'DEPT' | 'REG', filtres: FiltreQueryParams, sorting: SortingParams): Promise<PrismaChantierIdentite[]> {
     const whereOptions: Prisma.chantierWhereInput = {};
 
     if (filtres.perimetres?.length > 0) {
@@ -298,7 +235,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     if (filtres.valeurDeLaRecherche?.length > 0) {
       const testLower = removeAccents(filtres.valeurDeLaRecherche.toLowerCase());
 
-      chantierIds = await this.prisma.$queryRawUnsafe<{ id: string }[]>('SELECT distinct(id) FROM chantier where (LOWER(unaccent(nom)) ILIKE $1 OR LOWER(unaccent(id)) ILIKE $1)', `%${testLower}%`)
+      chantierIds = await prisma.$queryRawUnsafe<{ id: string }[]>('SELECT distinct(id) FROM chantier where (LOWER(unaccent(nom)) ILIKE $1 OR LOWER(unaccent(id)) ILIKE $1)', `%${testLower}%`)
         .then(chantiersMatched => chantiersMatched.map(chantierMatched => chantierMatched.id).filter(chantierId => chantiersLectureIds.includes(chantierId)));
     }
 
@@ -316,34 +253,13 @@ export default class ChantierSQLRepository implements ChantierRepository {
       paramètresRequête.where!.territoire_code = { in: [...territoiresLectureIds, 'NAT-FR'] };
     }
 
-    return this.prisma.chantier.findMany(paramètresRequête);
-  }
-
-  async récupérerTous(): Promise<ChantierPrisma[]> {
-    return this.prisma.chantier.findMany();
-  }
-
-  async récupérerMétéoParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Météo | null> {
-    const chantierRow: ChantierPrisma | null = await this.prisma.chantier.findFirst({
-      where: {
-        id: chantierId,
-        maille: CODES_MAILLES[maille],
-        code_insee: codeInsee,
-      },
-    });
-
-    if (!chantierRow) {
-      throw new ErreurChantierNonTrouvé(chantierId);
-    }
-
-    // TODO: avoir une réflexion sur avoir un mapper et retourné un objet du domainz Chantier
-    return chantierRow.meteo as Météo | null;
+    return prisma.chantier.findMany(paramètresRequête);
   }
 
   async modifierMétéo(chantierId: string, territoireCode: string, météo: Météo) {
     const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
 
-    await this.prisma.chantier.update({
+    await prisma.chantier.update({
       data: {
         meteo: météo,
       },
@@ -358,7 +274,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
   }
 
   async récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[]): Promise<ChantierPourExport[]> {
-    const rows = await this.prisma.$queryRaw<any[]>`
+    const rows = await prisma.$queryRaw<any[]>`
         with chantier_ids as (select distinct c.id
                               from chantier c
                               where c.id in (${Prisma.join(chantierIdsLecture)})
@@ -506,7 +422,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     const chantiersAutorisés = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const chantiersLecture = listeChantier.filter((x) => chantiersAutorisés.includes(x));
 
-    const rows = await this.prisma.$queryRaw<any[]>`
+    const rows = await prisma.$queryRaw<any[]>`
       WITH chantier_average AS (
         SELECT 
           territoire_code, 
