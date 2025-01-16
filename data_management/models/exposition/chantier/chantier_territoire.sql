@@ -1,4 +1,7 @@
-{{ config(materialized = 'incremental') }}
+{{ config(
+    materialized = 'incremental', 
+    unique_key = ['id', 'territoire_code'])
+}}
 
 WITH
 

@@ -1,3 +1,8 @@
+{{ config(
+    materialized = 'incremental', 
+    unique_key = ['id', 'territoire_code', 'jalon'])
+}}
+
 WITH
 jalon_annee_precedente AS (
     SELECT

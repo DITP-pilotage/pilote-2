@@ -1,4 +1,7 @@
-{{ config(materialized = 'incremental') }}
+{{ config(
+    materialized = 'incremental', 
+    unique_key = ['id'])
+}}
 
 WITH
 
@@ -117,20 +120,6 @@ SELECT
     LOWER(meta_ch.ate)::type_ate AS ate,
     has_ta.has_ta_dept AS possede_taux_avancement_departemental,
     has_ta.has_ta_reg AS possede_taux_avancement_regional,
-    -- CASE
-    --     -- values replicated REG->DEPT
-    --     WHEN
-    --         UPPER(meta_ch.replicate_val_reg_to) = 'DEPT' AND z.zone_type = 'DEPT'
-    --         THEN 'reg'::maille
-    --     -- values replicated NAT->DEPT
-    --     WHEN
-    --         UPPER(meta_ch.replicate_val_nat_to) = 'DEPT' AND z.zone_type = 'DEPT'
-    --         THEN 'nat'::maille
-    --     -- values replicated NAT->REG
-    --     WHEN
-    --         UPPER(meta_ch.replicate_val_nat_to) = 'REG' AND z.zone_type = 'REG'
-    --         THEN 'reg'::maille
-    -- END AS donnees_maille_source
     ch_has_meteo.has_meteo_dept AS possede_meteo_departemental,
     ch_has_meteo.has_meteo_reg AS possede_meteo_regional,
     -- Si ch_cible_attendue=NULL -> on le considère TRUE
@@ -139,8 +128,6 @@ SELECT
     FALSE AS a_supprimer
 
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch
---CROSS JOIN {{ source('db_schema_public', 'territoire') }} AS t
---LEFT JOIN {{ source('python_load', 'metadata_zones') }} AS z ON t.zone_id = z.zone_id
 LEFT JOIN
     ch_unnest_porteurs_dac_pnames_agg AS p_names
     ON meta_ch.id = p_names.chantier_id
