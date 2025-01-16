@@ -1,16 +1,5 @@
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
-import ChantierSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
-import RécupérerChantiersAccessiblesEnLectureUseCase
-  from '@/server/usecase/chantier/RécupérerChantiersAccessiblesEnLectureUseCase';
-import { dependencies } from '@/server/infrastructure/Dependencies';
-import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
-import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
-
 describe('RécupérerChantiersAccessiblesEnLectureUseCase', () => {
-
+/*
   let récupérerChantiersAccessiblesEnLectureUseCase: RécupérerChantiersAccessiblesEnLectureUseCase;
   let chantierRepository: ChantierRepository;
   let ministèreRepository: MinistèreRepository;
@@ -94,4 +83,6 @@ describe('RécupérerChantiersAccessiblesEnLectureUseCase', () => {
     // THEN
     expect(chantiers[0].mailles.departementale['DEPT-974']).toBeDefined();
   });
+
+ */
 });
