@@ -124,6 +124,7 @@ export default class CommentaireRowBuilder {
       auteur_id: this._auteur_id,
       maille: this._maille,
       code_insee: this._codeInsee,
+      territoire_code: this._maille + '-' + this._codeInsee,
       auteur: this._auteur,
     };
   }

@@ -1,4 +1,4 @@
-import { chantier_identite as PrismaChantierIdentite, chantier_territoire as PrismaChantierTerritoire, Prisma, type_statut } from '@prisma/client';
+import { chantier_identite as PrismaChantierIdentite, chantier_territoire as PrismaChantierTerritoire, type_objectif, Prisma, type_statut } from '@prisma/client';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import Chantier, { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
@@ -274,6 +274,163 @@ export default class ChantierSQLRepository implements ChantierRepository {
   }
 
   async récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[]): Promise<ChantierPourExport[]> {
+
+    const chantierIds = await prisma.chantier_identite.findMany({
+      where: {
+        id: { in: chantierIdsLecture },
+        NOT: [
+          {
+            ministeres: { equals: '{}' },
+          },
+        ],
+      },
+      select: {
+        id: true,
+      },
+      distinct: ['id'],
+    });
+
+    console.log('chantierIds', chantierIds);
+
+    const result = await prisma.chantier_identite.findMany({
+      where: {
+        id: { in: chantierIds.map(chantier => chantier.id) },
+      },
+      include: {
+        chantier_territoire: {
+          where: {
+            est_applicable: true,
+            territoire: { code: { in: territoireCodesLecture } },
+          },
+          include: {
+            territoire: true,
+          },
+        },
+      },
+      orderBy: { id: 'asc' },
+    });
+    console.log('result', result);
+
+    const resultChantierIds = result.map(chantier => chantier.id);
+
+    const listeTypesCommentaires = [
+      'actions_a_venir',
+      'actions_a_valoriser',
+      'freins_a_lever',
+      'commentaires_sur_les_donnees',
+      'autres_resultats_obtenus',
+      'autres_resultats_obtenus_non_correles_aux_indicateurs',
+    ];
+    const listeTypesDecisionsStrategiques = [
+      'suivi_des_decisions',
+    ] as const;
+
+    const listeTypesObjectifs = [
+      'notre_ambition',
+      'deja_fait',
+      'a_faire',
+    ] as type_objectif[];
+
+    const [
+      mapActionsAVenir,
+      mapActionsAValoriser,
+      mapFreinsALever,
+      mapCommentairesSurLesDonnees,
+      mapAutresResultatsObtenus,
+      mapAutresResultatsObtenusNonCorrelesAuxIndicateurs,
+      mapSynthesesDesResultats,
+      mapDecisionsStrategiques,
+      mapNotreAmbition,
+      mapDejaFait,
+      mapAFaire,
+    ] = await Promise.all([
+      ...listeTypesCommentaires.map((typeCommentaire) => prisma.chantier_territoire.findMany({
+        where: {
+          id: { in: resultChantierIds },
+          territoire: { code: { in: territoireCodesLecture } },
+        },
+        include: {
+          commentaires: {
+            where: {
+              type: typeCommentaire,
+            },
+            orderBy: {
+              date: 'desc',
+            },
+            take: 1,
+          },
+        },
+      }).then(resultMap => new Map(
+        resultMap.map(chantierCommentaire => [[chantierCommentaire.id, chantierCommentaire.territoire_code], chantierCommentaire.commentaires[0]?.contenu || null]),
+      ),
+      )),
+      prisma.chantier_territoire.findMany({
+        where: {
+          id: { in: resultChantierIds },
+          territoire: { code: { in: territoireCodesLecture } },
+        },
+        include: {
+          syntheses_des_resultats: {
+            orderBy: {
+              date_commentaire: 'desc',
+            },
+            take: 1,
+          },
+        },
+      }).then(resultMap => new Map(
+        resultMap.map(chantierCommentaire => [[chantierCommentaire.id, chantierCommentaire.territoire_code], chantierCommentaire.syntheses_des_resultats[0]?.commentaire || null]),
+      )),
+      ...listeTypesDecisionsStrategiques.map((typeDecisionStrategique) => prisma.chantier_identite.findMany({
+        where: {
+          id: { in: resultChantierIds },
+        },
+        include: {
+          decisions_strategiques: {
+            where: {
+              type: typeDecisionStrategique,
+            },
+            orderBy: {
+              date: 'desc',
+            },
+            take: 1,
+          },
+        },
+      }).then(resultMap => new Map(
+        resultMap.map(chantierCommentaire => [chantierCommentaire.id, chantierCommentaire.decisions_strategiques[0]?.contenu || null]),
+      )),
+      ...listeTypesObjectifs.map((typeObjectif) => prisma.chantier_identite.findMany({
+        where: {
+          id: { in: resultChantierIds },
+        },
+        include: {
+          objectifs: {
+            where: {
+              type: typeObjectif,
+            },
+            orderBy: {
+              date: 'desc',
+            },
+            take: 1,
+          },
+        },
+      }).then(resultMap => new Map(
+        resultMap.map(chantierCommentaire => [chantierCommentaire.id, chantierCommentaire.objectifs[0]?.contenu || null]),
+      )),
+      )),
+    ]);
+
+    console.log(mapActionsAVenir); // CH-001 => "Mon action"
+    console.log(mapActionsAValoriser); // CH-001 => "Mon action"
+    console.log(mapFreinsALever); // CH-001 => "Mon action"
+    console.log(mapCommentairesSurLesDonnees); // CH-001 => "Mon action"
+    console.log(mapAutresResultatsObtenus); // CH-001 => "Mon action"
+    console.log(mapAutresResultatsObtenusNonCorrelesAuxIndicateurs); // CH-001 => "Mon action"
+    console.log(mapSynthesesDesResultats); // CH-001 => "Mon action"
+    console.log(mapDecisionsStrategiques); // CH-001 => "Mon action"
+    console.log(mapNotreAmbition); // CH-001 => "Mon action"
+    console.log(mapDejaFait); // CH-001 => "Mon action"
+    console.log(mapAFaire); // CH-001 => "Mon action"
+
     const rows = await prisma.$queryRaw<any[]>`
         with chantier_ids as (select distinct c.id
                               from chantier c

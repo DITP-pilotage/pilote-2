@@ -189,40 +189,57 @@ describe('ChantierSQLRepository', () => {
         const chantierIdsLecture = ['CH-001', 'CH-002', 'CH-003', 'CH-004', 'CH-005'];
         const territoireCodesLecture = ['NAT-FR', 'DEPT-01', 'REG-84'];
 
-        const chantier001Builder = new ChantierSQLRowBuilder()
-          .avecId('CH-001')
-          .avecNom('chantier 1')
-          .avecMaille('DEPT')
-          .avecCodeInsee('01')
-          .avecTauxAvancement(30)
-          .avecTauxAvancementAnnuel(25)
-          .avecMinistèresAcronyme(['MINA', 'MINB'])
-          .avecEstBaromètre(true)
-          .avecEstApplicable(true)
-          .avecEstTerritorialisé(false);
+        await prisma.chantier_identite.createMany({
+          data: [{
+            id: 'CH-001',
+            nom: 'Chantier 001',
+            ministeres: ['1009'],
+          }, {
+            id: 'CH-002',
+            nom: 'Chantier 002',
+            ministeres: ['1009'],
+          }],
+        });
 
-        await prisma.chantier.createMany({ data: [
-          chantier001Builder.build(),
-          chantier001Builder.shallowCopy()
-            .avecMaille('REG')
-            .avecCodeInsee('84')
-            .avecTauxAvancement(20)
-            .avecEstApplicable(true)
-            .build(),
-          chantier001Builder.shallowCopy()
-            .avecMaille('NAT')
-            .avecCodeInsee('FR')
-            .avecTauxAvancement(10)
-            .avecEstApplicable(true)
-            .build(),
-          new ChantierSQLRowBuilder().avecId('CH-002').avecNom('chantier 2').avecMaille('NAT').avecCodeInsee('FR').avecEstApplicable(true).build(),
-          new ChantierSQLRowBuilder().avecId('CH-003').avecNom('chantier 3').avecMaille('NAT').avecCodeInsee('FR').avecEstApplicable(true).build(),
-          new ChantierSQLRowBuilder().avecId('CH-004').avecNom('chantier 4').avecMaille('NAT').avecCodeInsee('FR').avecEstApplicable(true).build(),
-          new ChantierSQLRowBuilder().avecId('CH-005').avecNom('chantier 5').avecMaille('NAT').avecCodeInsee('FR').avecEstApplicable(true).build(),
-        ] });
+        await prisma.chantier_territoire.createMany({
+          data: [{
+            id: 'CH-001',
+            maille: 'REG',
+            code_insee: '84',
+            territoire_code: 'REG-84',
+            zone_id: 'R84',
+            taux_avancement_mandat: 20,
+            est_applicable: true,
+          }, {
+            id: 'CH-001',
+            maille: 'DEPT',
+            code_insee: '01',
+            territoire_code: 'DEPT-01',
+            zone_id: 'D01',
+            taux_avancement_mandat: 30,
+            est_applicable: true,
+          }, {
+            id: 'CH-001',
+            maille: 'NAT',
+            code_insee: 'FR',
+            territoire_code: 'NAT-FR',
+            zone_id: 'FRANCE',
+            taux_avancement_mandat: 10,
+            est_applicable: true,
+          }, {
+            id: 'CH-002',
+            maille: 'NAT',
+            code_insee: 'FR',
+            territoire_code: 'NAT-FR',
+            zone_id: 'FRANCE',
+            taux_avancement_mandat: 5,
+            est_applicable: true,
+          }],
+        });
 
-        const commentaireBuilder = new CommentaireRowBuilder()
-          .avecChantierId('CH-001');
+        const commentaireBuilder = new CommentaireRowBuilder().avecChantierId('CH-001');
+        const commentaire2Builder = new CommentaireRowBuilder().avecChantierId('CH-002');
+
         await prisma.commentaire.createMany({ data: [
           commentaireBuilder.shallowCopy()
             .avecMaille('DEPT').avecCodeInsee('01')
@@ -253,6 +270,12 @@ describe('ChantierSQLRepository', () => {
             .avecMaille('NAT').avecCodeInsee('FR')
             .avecType('actions_a_venir')
             .avecContenu('commentaire AAVN 1 v1')
+            .avecDate(new Date(1))
+            .build(),
+          commentaire2Builder.shallowCopy()
+            .avecMaille('NAT').avecCodeInsee('FR')
+            .avecType('actions_a_venir')
+            .avecContenu('commentaire AAVN 2 v1')
             .avecDate(new Date(1))
             .build(),
           commentaireBuilder.shallowCopy()
@@ -398,9 +421,6 @@ describe('ChantierSQLRepository', () => {
             synthèseDesRésultats: 'synthèse des résultats 1 v2',
           }),
           expect.objectContaining({ nom: 'chantier 2' }),
-          expect.objectContaining({ nom: 'chantier 3' }),
-          expect.objectContaining({ nom: 'chantier 4' }),
-          expect.objectContaining({ nom: 'chantier 5' }),
         ]);
       });
 
