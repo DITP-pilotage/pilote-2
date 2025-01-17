@@ -49,20 +49,16 @@ jalons_a_considerer AS (
 )
 
 SELECT
-    meta_indic.id,
+    tous_jalons.indic_id as id,
     territoire.code AS territoire_code,
     territoire.code_insee,
     territoire.maille,
     jalons.jalon AS jalon,
     territoire.zone_id,
     tous_jalons.date_valeur_cible,
-    tous_jalons.taux_avancement,
-    tous_jalons.valeur_cible,
-    tous_jalons.taux_avancement_proposition
-FROM {{ source('db_schema_public', 'territoire') }} AS territoire
-CROSS JOIN {{ ref('stg_ppg_metadata__indicateurs') }} AS meta_indic
-CROSS JOIN {{ ref('get_date_bascule_depassee') }} AS date_bascule
-CROSS JOIN jalons_a_considerer as jalons
-LEFT JOIN
-    jalon_annee_precedente_et_courante AS tous_jalons
-    ON territoire.zone_id = tous_jalons.zone_id AND meta_indic.id = tous_jalons.indic_id AND jalons.jalon=tous_jalons.jalon
+	tous_jalons.taux_avancement,
+	tous_jalons.valeur_cible,
+	tous_jalons.taux_avancement_proposition
+FROM jalon_annee_precedente_et_courante AS tous_jalons
+LEFT JOIN {{ source('db_schema_public', 'territoire') }} AS territoire on territoire.zone_id = tous_jalons.zone_id
+RIGHT JOIN jalons_a_considerer as jalons on jalons.jalon = tous_jalons.jalon
