@@ -19,6 +19,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
   const [filtres, setFiltres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
     axes: parseAsString.withDefault(''),
+    meteos: parseAsString.withDefault(''),
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
@@ -34,6 +35,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
 
   const nombreFiltresActifs = filtres.axes.split(',').filter(Boolean).length
     + filtres.perimetres.split(',').filter(Boolean).length
+    + filtres.meteos.split(',').filter(Boolean).length
     + (filtres.estBarometre ? 1 : 0)
     + (filtres.estTerritorialise ? 1 : 0)
     + (filtres.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
@@ -60,6 +62,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
     return setFiltres({
       perimetres: '',
       axes: '',
+      meteos: '',
       estBarometre: false,
       estTerritorialise: false,
       estEnAlerteTauxAvancementNonCalculé: false,

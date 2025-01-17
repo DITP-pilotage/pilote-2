@@ -1,0 +1,36 @@
+import styled from '@emotion/styled';
+
+const RepartitionsMeteosChantiersStyled = styled.ul`
+  list-style: none;
+
+  .fr-col-3 {
+    padding: .5rem;
+  }
+
+  .bouton-repartition-meteos {
+    padding: 1rem 0.5rem;
+    border: 1px solid #e3e3fd;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgb(0 0 18 / 16%);
+  }
+
+  .nombre-de-chantiers {
+    color: var(--text-title-blue-france);
+  }
+
+  .label {
+    color: var(--text-action-high-grey);
+  }
+
+  @media screen and (max-width: 80rem) {
+    .fr-col-3 {
+      padding: 0.125rem;
+    }
+
+    .label {
+      font-size: .75rem !important;
+    }
+  }
+`;
+
+export default RepartitionsMeteosChantiersStyled;

@@ -4,6 +4,7 @@ interface FiltreAccueil {
   territoireCode: string
   perimetres: string[]
   axes: string[]
+  meteos: string[]
   maille: string
   statut: string
   groupeParMinistere: boolean
@@ -28,6 +29,7 @@ interface FiltresStore {
 const etatInitial = {
   perimetres: [] as string[],
   axes: [] as string[],
+  meteos: [] as string[],
   territoireCode: '',
   maille: '',
   statut: 'PUBLIE',

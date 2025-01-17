@@ -159,7 +159,6 @@ export default class ChantierSQLRepository implements ChantierRepository {
 
     return chantiers.map(c => c.id);
   }
-
   async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, filtres: FiltreQueryParams): Promise<PrismaChantier[]> {
     const whereOptions: Prisma.chantier_identiteWhereInput = {};
 

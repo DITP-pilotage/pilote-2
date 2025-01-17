@@ -26,7 +26,6 @@ import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
   presenterEnAvancementsStatistiquesAccueilContrat,
-  RépartitionsMétéos,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { AgrégateurListeChantiersParTerritoire } from '@/client/utils/chantier/agrégateurListeChantiers/agrégateur';
 import { objectEntries } from '@/client/utils/objects/objects';
@@ -37,6 +36,9 @@ import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteCh
 import { Chantier } from '@/server/chantiers/domain/Chantier';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { RecupererMeteosChantiersUseCase } from '@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase';
+import { presenterEnRépartitionsMétéosChantiersContrat } from '@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat';
+import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import IndexStyled from './index.styled';
 
 interface ChantierAccueil {
@@ -50,7 +52,7 @@ interface ChantierAccueil {
   filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
-  répartitionMétéos: RépartitionsMétéos
+  repartitionMeteosChantiers: RepartitionMeteoContrat
 }
 
 export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ req, res, query }) => {
@@ -98,6 +100,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     perimetres: query.perimetres ? (query.perimetres as string).split(',').filter(Boolean) : [],
     axes: query.axes ? (query.axes as string).split(',').filter(Boolean) : [],
     statut: query.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : !!query.statut ? [query.statut as string] : ['PUBLIE'],
+    meteos: query.meteos ? (query.meteos as string).split(',').filter(Boolean) : [],
     estTerritorialise: query.estTerritorialise === 'true',
     estBarometre: query.estBarometre === 'true',
     valeurDeLaRecherche: query.q as string,
@@ -127,10 +130,14 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   ).run(session.habilitations, session.profil, territoireCode, mailleChantier || 'departementale', ministères, mapAxes, filtres, sorting);
 
   const {
-    répartitionMétéos,
     filtresComptesCalculés,
   } = Chantier.recupererStatistiqueListeChantier(chantiers, mailleChantier, territoireCode);
 
+  const repartitionMeteosChantiers = await new RecupererMeteosChantiersUseCase({
+    chantierRepository: dependencies.getChantierRepository(),
+  }).run(session.habilitations, session.profil, territoireCode, mailleGlobalTerritoireSelectionnee === 'régionale' ? 'REG' : 'DEPT', axes, filtres, sorting).then(presenterEnRépartitionsMétéosChantiersContrat);
+
+  console.log({ 'repartitionMeteosChantiers': repartitionMeteosChantiers });
   const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisse || filtresAlertes.estEnAlerteTauxAvancementNonCalculé || filtresAlertes.estEnAlerteMétéoNonRenseignée || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? chantiers.filter(chantier => {
     const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][territoireCode];
     return (filtresAlertes.estEnAlerteÉcart && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
@@ -143,7 +150,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository());
 
   const avancementsAgrégés = await récupérerStatistiquesChantiersUseCase.run(chantiersAvecAlertes.map(chantier => chantier.id), mailleQuery, session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat);
-
+  //créer un nouveau usecase qui récupère pour chaque météo le count 
   const donnéesTerritoiresAgrégées = new AgrégateurListeChantiersParTerritoire(chantiersAvecAlertes).agréger();
 
   if (avancementsAgrégés) {
@@ -178,7 +185,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
       filtresComptesCalculés,
       avancementsAgrégés,
       avancementsGlobauxTerritoriauxMoyens,
-      répartitionMétéos,
+      repartitionMeteosChantiers,
     },
   };
 };
@@ -208,7 +215,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   filtresComptesCalculés,
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
-  répartitionMétéos,
+  repartitionMeteosChantiers,
 }) => {
   const { data: session } = useSession();
 
@@ -278,7 +285,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             mailleSelectionnee={mailleSelectionnee}
             ministères={ministères}
             nombreTotalChantiersAvecAlertes={nombreTotalChantiersAvecAlertes}
-            répartitionMétéos={répartitionMétéos}
+            repartitionMeteosChantiers={repartitionMeteosChantiers}
             territoireCode={territoireCode}
           />
         </IndexStyled>

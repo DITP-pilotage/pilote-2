@@ -32,7 +32,6 @@ import Axe from '@/server/domain/axe/Axe.interface';
 import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
-  RépartitionsMétéos,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
@@ -44,9 +43,11 @@ import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import api from '@/server/infrastructure/api/trpc/api';
 import { getDateBasculeAffichageValeursAnneePrecedente } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
+import RepartitionsMeteosChantiers from './FiltresMeteos/RepartitionsMeteosChantiers';
 
 interface PageChantiersProps {
   chantiers: ChantierAccueilContrat[],
@@ -59,7 +60,7 @@ interface PageChantiersProps {
   filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
-  répartitionMétéos: RépartitionsMétéos
+  repartitionMeteosChantiers: RepartitionMeteoContrat
 }
 
 const PageChantiers: FunctionComponent<PageChantiersProps> = ({
@@ -73,7 +74,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   filtresComptesCalculés,
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
-  répartitionMétéos,
+  repartitionMeteosChantiers,
 }) => {
 
   const { data: session } = useSession();
@@ -85,6 +86,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
     axes: parseAsString.withDefault(''),
+    meteos: parseAsString.withDefault(''),
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
     maille: parseAsString.withDefault(''),
@@ -101,6 +103,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
 
   const nombreFiltresActifs = filtres.axes.split(',').filter(Boolean).length
     + filtres.perimetres.split(',').filter(Boolean).length
+    + filtres.meteos.split(',').filter(Boolean).length
     + (filtres.estBarometre ? 1 : 0)
     + (filtres.estTerritorialise ? 1 : 0)
     + (filtresAlertes.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
@@ -322,9 +325,8 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                     {INFOBULLE_CONTENUS.chantiers.météos}
                   </Infobulle>
                 </TitreInfobulleConteneur>
-                <RépartitionMétéo
-                  chantiersSontArchives={chantiersSontArchives}
-                  météos={répartitionMétéos}
+                <RepartitionsMeteosChantiers
+                  météos={repartitionMeteosChantiers}
                 />
               </section>
             </Bloc>

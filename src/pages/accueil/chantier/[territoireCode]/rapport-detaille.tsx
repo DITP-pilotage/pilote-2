@@ -95,6 +95,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     perimetres: query.perimetres ? (query.perimetres as string).split(',').filter(Boolean) : [],
     axes: query.axes ? (query.axes as string).split(',').filter(Boolean) : [],
     statut: query.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : !!query.statut ? [query.statut as string] : ['PUBLIE'],
+    meteos: query.meteos ? (query.meteos as string).split(',').filter(Boolean) : [],
     estTerritorialise: query.estTerritorialise === 'true',
     estBarometre: query.estBarometre === 'true',
     valeurDeLaRecherche: query.q as string,
