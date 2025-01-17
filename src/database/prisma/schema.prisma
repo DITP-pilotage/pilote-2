@@ -133,6 +133,7 @@ model chantier_identite {
   cible_attendue                        Boolean                @default(true)
   a_supprimer                           Boolean                @default(true)
   chantier_territoire                   chantier_territoire[]
+
   objectifs                             objectif[]
   decisions_strategiques                decision_strategique[]
 

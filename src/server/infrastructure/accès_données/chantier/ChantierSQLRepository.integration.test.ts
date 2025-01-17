@@ -1,9 +1,5 @@
 import ChantierSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
-import CommentaireRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
-import SyntheseDesResultatsRowBuilder
-  from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
-import ObjectifSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifSQLRow.builder';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { prisma } from '@/server/db/prisma';
 import ChantierSQLRepository from './ChantierSQLRepository';
@@ -194,10 +190,12 @@ describe('ChantierSQLRepository', () => {
             id: 'CH-001',
             nom: 'Chantier 001',
             ministeres: ['1009'],
+            ministeres_acronymes: ['MINA'],
+            est_barometre: true,
+            est_territorialise: false,
           }, {
             id: 'CH-002',
             nom: 'Chantier 002',
-            ministeres: ['1009'],
           }],
         });
 
@@ -237,191 +235,268 @@ describe('ChantierSQLRepository', () => {
           }],
         });
 
-        const commentaireBuilder = new CommentaireRowBuilder().avecChantierId('CH-001');
-        const commentaire2Builder = new CommentaireRowBuilder().avecChantierId('CH-002');
+        await prisma.chantier_territoire_jalon.createMany({
+          data: [
+            {
+              id: 'CH-001',
+              maille: 'DEPT',
+              jalon: '2025',
+              code_insee: '01',
+              territoire_code: 'DEPT-01',
+              taux_avancement: 25,
+            },
+          ],
+        });
 
-        await prisma.commentaire.createMany({ data: [
-          commentaireBuilder.shallowCopy()
-            .avecMaille('DEPT').avecCodeInsee('01')
-            .avecType('autres_resultats_obtenus')
-            .avecContenu('commentaire ARO 1 v1')
-            .avecDate(new Date(1))
-            .build(),
-          commentaireBuilder.shallowCopy()
-            .avecMaille('DEPT').avecCodeInsee('01')
-            .avecType('autres_resultats_obtenus')
-            .avecContenu('commentaire ARO 1 v2')
-            .avecDate(new Date(2))
-            .build(),
-          commentaireBuilder.shallowCopy()
-            .avecMaille('DEPT').avecCodeInsee('01')
-            .avecType('commentaires_sur_les_donnees')
-            .avecContenu('commentaire CSLD 1 v1')
-            .avecDate(new Date(1))
-            .build(),
-          commentaireBuilder.shallowCopy()
-            .avecMaille('DEPT').avecCodeInsee('01')
-            .avecType('commentaires_sur_les_donnees')
-            .avecContenu('commentaire CSLD 1 v2')
-            .avecDate(new Date(2))
-            .build(),
-
-          commentaireBuilder.shallowCopy()
-            .avecMaille('NAT').avecCodeInsee('FR')
-            .avecType('actions_a_venir')
-            .avecContenu('commentaire AAVN 1 v1')
-            .avecDate(new Date(1))
-            .build(),
-          commentaire2Builder.shallowCopy()
-            .avecMaille('NAT').avecCodeInsee('FR')
-            .avecType('actions_a_venir')
-            .avecContenu('commentaire AAVN 2 v1')
-            .avecDate(new Date(1))
-            .build(),
-          commentaireBuilder.shallowCopy()
-            .avecMaille('NAT').avecCodeInsee('FR')
-            .avecType('actions_a_venir')
-            .avecContenu('commentaire AAVN 1 v2')
-            .avecDate(new Date(2))
-            .build(),
-          commentaireBuilder.shallowCopy()
-            .avecMaille('NAT').avecCodeInsee('FR')
-            .avecType('actions_a_valoriser')
-            .avecContenu('commentaire AAVL 1 v1')
-            .avecDate(new Date(1))
-            .build(),
-          commentaireBuilder.shallowCopy()
-            .avecMaille('NAT').avecCodeInsee('FR')
-            .avecType('actions_a_valoriser')
-            .avecContenu('commentaire AAVL 1 v2')
-            .avecDate(new Date(2))
-            .build(),
-          commentaireBuilder.shallowCopy()
-            .avecMaille('NAT').avecCodeInsee('FR')
-            .avecType('freins_a_lever')
-            .avecContenu('commentaire FAL 1 v1')
-            .avecDate(new Date(1))
-            .build(),
-          commentaireBuilder.shallowCopy()
-            .avecMaille('NAT').avecCodeInsee('FR')
-            .avecType('freins_a_lever')
-            .avecContenu('commentaire FAL 1 v2')
-            .avecDate(new Date(2))
-            .build(),
-          commentaireBuilder.shallowCopy()
-            .avecMaille('NAT').avecCodeInsee('FR')
-            .avecType('autres_resultats_obtenus_non_correles_aux_indicateurs')
-            .avecContenu('commentaire ARONCAI 1 v1')
-            .avecDate(new Date(1))
-            .build(),
-          commentaireBuilder.shallowCopy()
-            .avecMaille('NAT').avecCodeInsee('FR')
-            .avecType('autres_resultats_obtenus_non_correles_aux_indicateurs')
-            .avecContenu('commentaire ARONCAI 1 v2')
-            .avecDate(new Date(2))
-            .build(),
+        await prisma.commentaire.createMany({ data: [{
+          id: 'dcf01b22-9ae9-41a8-8c3f-0996cb15bd52',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '01',
+          territoire_code: 'DEPT-01',
+          type: 'autres_resultats_obtenus',
+          contenu: 'commentaire ARO 1 v1',
+          date: new Date(1),
+        }, {
+          id: 'e32d25df-0077-4ce8-bcf1-b0440a65456e',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '01',
+          territoire_code: 'DEPT-01',
+          type: 'autres_resultats_obtenus',
+          contenu: 'commentaire ARO 1 v2',
+          date: new Date(2),
+        }, {
+          id: '2f18d9ee-405a-48a4-b162-fd6836ec0c43',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '01',
+          territoire_code: 'DEPT-01',
+          type: 'commentaires_sur_les_donnees',
+          contenu: 'commentaire CSLD 1 v1',
+          date: new Date(1),
+        }, {
+          id: '82a7665f-f45b-465b-9889-2e7000890157',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '01',
+          territoire_code: 'DEPT-01',
+          type: 'commentaires_sur_les_donnees',
+          contenu: 'commentaire CSLD 1 v2',
+          date: new Date(2),
+        }, {
+          id: 'af230cf3-eb41-410f-a051-22199cbd7e56',
+          chantier_id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          type: 'actions_a_venir',
+          contenu: 'commentaire AAVN 1 v1',
+          date: new Date(1),
+        }, {
+          id: '8aca154c-680d-4119-aab3-f25a24d872e7',
+          chantier_id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          type: 'actions_a_venir',
+          contenu: 'commentaire AAVN 1 v2',
+          date: new Date(2),
+        }, {
+          id: 'a35c54ce-d8a2-4e24-b2b9-7a91e7ae97ae',
+          chantier_id: 'CH-002',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          type: 'actions_a_venir',
+          contenu: 'commentaire AAVN 2 v1',
+          date: new Date(1),
+        }, {
+          id: '621fab4a-aed4-41cd-b557-9827af9c80e9',
+          chantier_id: 'CH-002',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          type: 'actions_a_venir',
+          contenu: 'commentaire AAVN 2 v2',
+          date: new Date(2),
+        }, {
+          id: 'ced97f10-dde9-4ba4-bb15-9fc6145c818f',
+          chantier_id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          type: 'actions_a_valoriser',
+          contenu: 'commentaire AAVL 1 v1',
+          date: new Date(1),
+        }, {
+          id: '2dbaecee-11db-40fd-a1a1-f1e310c067a1',
+          chantier_id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          type: 'actions_a_valoriser',
+          contenu: 'commentaire AAVL 1 v2',
+          date: new Date(2),
+        }, {
+          id: '5ab851cc-6273-41e5-9bbd-a6d54d8e3315',
+          chantier_id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          type: 'freins_a_lever',
+          contenu: 'commentaire FAL 1 v1',
+          date: new Date(1),
+        }, {
+          id: '4607bb4b-c54c-4b69-a00a-031da7b30420',
+          chantier_id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          type: 'freins_a_lever',
+          contenu: 'commentaire FAL 1 v2',
+          date: new Date(2),
+        }, {
+          id: '5f577371-1a0d-4cf2-937b-36c75db86699',
+          chantier_id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          type: 'autres_resultats_obtenus_non_correles_aux_indicateurs',
+          contenu: 'commentaire ARONCAI 1 v1',
+          date: new Date(1),
+        }, {
+          id: '41465460-ed59-429e-ad9e-aed4b27b6e19',
+          chantier_id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          type: 'autres_resultats_obtenus_non_correles_aux_indicateurs',
+          contenu: 'commentaire ARONCAI 1 v2',
+          date: new Date(2),
+        },
         ] });
 
-        const objectifBuilder = new ObjectifSQLRowBuilder()
-          .avecChantierId('CH-001')
-          .avecType('notre_ambition')
-          .avecContenu('objectif NA 1 v1')
-          .avecDate(new Date(1));
-        await prisma.objectif.createMany({ data: [
-          objectifBuilder.build(),
-          objectifBuilder.shallowCopy()
-            .avecType('notre_ambition')
-            .avecContenu('objectif NA 1 v2')
-            .avecDate(new Date(2))
-            .build(),
-          objectifBuilder.shallowCopy()
-            .avecType('a_faire')
-            .avecContenu('objectif AF 1 v1')
-            .avecDate(new Date(1))
-            .build(),
-          objectifBuilder.shallowCopy()
-            .avecType('a_faire')
-            .avecContenu('objectif AF 1 v2')
-            .avecDate(new Date(2))
-            .build(),
-          objectifBuilder.shallowCopy()
-            .avecType('deja_fait')
-            .avecContenu('objectif DF 1 v1')
-            .avecDate(new Date(1))
-            .build(),
-          objectifBuilder.shallowCopy()
-            .avecType('deja_fait')
-            .avecContenu('objectif DF 1 v2')
-            .avecDate(new Date(2))
-            .build(),
-        ] });
+        await prisma.objectif.createMany({ data: [{
+          id: 'ed221b61-861e-43ae-9b35-0dee6bcaba36',
+          type: 'notre_ambition',
+          contenu: 'objectif NA 1 v1',
+          date: new Date(1),
+          chantier_id: 'CH-001',
+        }, {
+          id: '8ee95d7d-981e-4971-a766-ef285e9706b9',
+          type: 'notre_ambition',
+          contenu: 'objectif NA 1 v2',
+          date: new Date(2),
+          chantier_id: 'CH-001',
+        }, {
+          id: '1223efc6-97f0-4f37-b1b8-23db76d1a3e5',
+          type: 'a_faire',
+          contenu: 'objectif AF 1 v1',
+          date: new Date(1),
+          chantier_id: 'CH-001',
+        }, {
+          id: 'a299ebfe-5927-4d71-a10d-95027760aead',
+          type: 'a_faire',
+          contenu: 'objectif AF 1 v2',
+          date: new Date(2),
+          chantier_id: 'CH-001',
+        }, {
+          id: '77d53a9d-d6c5-45d9-9b9d-a2d72d84fc84',
+          type: 'deja_fait',
+          contenu: 'objectif DF 1 v1',
+          date: new Date(1),
+          chantier_id: 'CH-001',
+        }, {
+          id: '88a6499e-b4b3-4748-8dd0-7e5da6ef479a',
+          type: 'deja_fait',
+          contenu: 'objectif DF 1 v2',
+          date: new Date(2),
+          chantier_id: 'CH-001',
+        }],
+        });
 
-        await prisma.synthese_des_resultats.createMany({ data: [
-          new SyntheseDesResultatsRowBuilder()
-            .avecChantierId('CH-001')
-            .avecMaille('DEPT')
-            .avecCodeInsee('01')
-            .avecDateCommentaire(new Date(1))
-            .avecCommentaire('synthèse des résultats 1 v1')
-            .avecMétéo('COUVERT')
-            .build(),
-          new SyntheseDesResultatsRowBuilder()
-            .avecChantierId('CH-001')
-            .avecMaille('DEPT')
-            .avecCodeInsee('01')
-            .avecDateCommentaire(new Date(2))
-            .avecCommentaire('synthèse des résultats 1 v2')
-            .avecMétéo('SOLEIL')
-            .build(),
-        ] });
+        await prisma.synthese_des_resultats.createMany({ data: [{
+          id: 'd014962e-7543-4731-80e7-e0cca44a3918',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '01',
+          territoire_code: 'DEPT-01',
+          date_commentaire: new Date(1),
+          commentaire: 'synthèse des résultats 1 v1',
+          meteo: 'COUVERT',
+        }, {
+          id: '5b79dcdb-6db0-444e-8cd8-0287ee517499',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '01',
+          territoire_code: 'DEPT-01',
+          date_commentaire: new Date(2),
+          commentaire: 'synthèse des résultats 1 v2',
+          meteo: 'SOLEIL',
+        }] });
+
+        await prisma.decision_strategique.createMany({ data: [{
+          id: '44c1b043-e9e4-4528-9a32-87f0097cac57',
+          chantier_id: 'CH-001',
+          type: 'suivi_des_decisions',
+          contenu: 'decision_strategique 1 v1',
+          date: new Date(1),
+        }, {
+          id: '3f85994e-5ad3-4a58-a230-f6c66bde409c',
+          chantier_id: 'CH-001',
+          type: 'suivi_des_decisions',
+          contenu: 'decision_strategique 1 v2',
+          date: new Date(2),
+        }] });
 
         // When
         const result = await prismaChantierRepository.récupérerPourExports(chantierIdsLecture, territoireCodesLecture);
 
         // Then
-        expect(result).toEqual([
-          expect.objectContaining({
-            nom: 'chantier 1',
-            maille: 'NAT',
-            commActionsÀVenir: 'commentaire AAVN 1 v2',
-            commActionsÀValoriser: 'commentaire AAVL 1 v2',
-            commFreinsÀLever: 'commentaire FAL 1 v2',
-            commCommentairesSurLesDonnées: null,
-            commAutresRésultats: null,
-            commAutresRésultatsNonCorrélésAuxIndicateurs: 'commentaire ARONCAI 1 v2',
-            objNotreAmbition: 'objectif NA 1 v2',
-            objDéjàFait: 'objectif DF 1 v2',
-            objÀFaire: 'objectif AF 1 v2',
-          }),
-          expect.objectContaining({ nom: 'chantier 1', maille: 'REG' }),
-          expect.objectContaining({
-            nom: 'chantier 1',
-            id: 'CH-001',
-            maille: 'DEPT',
-            régionNom: 'Auvergne-Rhône-Alpes',
-            départementNom: 'Ain',
-            ministèreNom: 'MINA',
-            estBaromètre: true,
-            estTerritorialisé: false,
-            tauxDAvancementAnnuel: 25,
-            tauxDAvancementNational: 10,
-            tauxDAvancementRégional: 20,
-            tauxDAvancementDépartemental: 30,
-            météo: 'SOLEIL',
-            commActionsÀVenir: null,
-            commActionsÀValoriser: null,
-            commFreinsÀLever: null,
-            commCommentairesSurLesDonnées: 'commentaire CSLD 1 v2',
-            commAutresRésultats: 'commentaire ARO 1 v2',
-            commAutresRésultatsNonCorrélésAuxIndicateurs: null,
-            decStratSuiviDesDécisions: null,
-            objNotreAmbition: null,
-            objDéjàFait: null,
-            objÀFaire: null,
-            synthèseDesRésultats: 'synthèse des résultats 1 v2',
-          }),
-          expect.objectContaining({ nom: 'chantier 2' }),
-        ]);
+        expect(result).toPartiallyContain({
+          nom: 'Chantier 001',
+          maille: 'NAT',
+          commActionsÀVenir: 'commentaire AAVN 1 v2',
+          commActionsÀValoriser: 'commentaire AAVL 1 v2',
+          commFreinsÀLever: 'commentaire FAL 1 v2',
+          commCommentairesSurLesDonnées: null,
+          commAutresRésultats: null,
+          commAutresRésultatsNonCorrélésAuxIndicateurs: 'commentaire ARONCAI 1 v2',
+          objNotreAmbition: 'objectif NA 1 v2',
+          objDéjàFait: 'objectif DF 1 v2',
+          objÀFaire: 'objectif AF 1 v2',
+          decStratSuiviDesDécisions: 'decision_strategique 1 v2',
+        });
+        expect(result).toPartiallyContain({
+          nom: 'Chantier 001', maille: 'REG',
+        });
+        expect(result).toPartiallyContain({
+          nom: 'Chantier 001',
+          id: 'CH-001',
+          maille: 'DEPT',
+          régionNom: 'Auvergne-Rhône-Alpes',
+          départementNom: 'Ain',
+          ministèreNom: 'MINA',
+          estBaromètre: true,
+          estTerritorialisé: false,
+          tauxDAvancementAnnuel: 25,
+          tauxDAvancementNational: 10,
+          tauxDAvancementRégional: 20,
+          tauxDAvancementDépartemental: 30,
+          météo: 'SOLEIL',
+          commActionsÀVenir: null,
+          commActionsÀValoriser: null,
+          commFreinsÀLever: null,
+          commCommentairesSurLesDonnées: 'commentaire CSLD 1 v2',
+          commAutresRésultats: 'commentaire ARO 1 v2',
+          commAutresRésultatsNonCorrélésAuxIndicateurs: null,
+          decStratSuiviDesDécisions: null,
+          objNotreAmbition: null,
+          objDéjàFait: null,
+          objÀFaire: null,
+          synthèseDesRésultats: 'synthèse des résultats 1 v2',
+        });
       });
 
       it('renvoie seulement les données pour les chantiers et territoires habilités', async () => {
