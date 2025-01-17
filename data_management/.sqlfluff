@@ -2,6 +2,7 @@
 
 templater = jinja
 dialect = postgres
+exclude_rules = L034
 
 [sqlfluff:rules:capitalisation.keywords]
 
