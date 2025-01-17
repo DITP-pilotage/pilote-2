@@ -331,12 +331,12 @@ model indicateur_territoire_jalon {
   id                          String
   territoire_code             String
   code_insee                  String
-  maille                      String
+  maille                      Maille
+  jalon                       Int
   zone_id                     String
-  jalon                       String
   date_valeur_cible           DateTime?             @db.Date
-  valeur_cible                Float?
   taux_avancement             Float?
+  valeur_cible                Float?
   taux_avancement_proposition Float?
   indicateur_territoire       indicateur_territoire @relation(fields: [id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
 
