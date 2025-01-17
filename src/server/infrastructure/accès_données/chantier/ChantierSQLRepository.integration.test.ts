@@ -1,7 +1,8 @@
-import ChantierSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { prisma } from '@/server/db/prisma';
+import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {
@@ -9,6 +10,96 @@ describe('ChantierSQLRepository', () => {
 
   beforeEach(() => {
     prismaChantierRepository = new ChantierSQLRepository();
+  });
+
+  describe('#récupérerChantiersSynthétisés', () => {
+    it('doit récupérer la liste des territoires applicable de tout les chantiers applicables', async () => {
+      // Given
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          est_territorialise: true,
+          perimetre_ids: ['PER-01'],
+          ate: 'ate',
+          statut: 'PUBLIE',
+        }, {
+          id: 'CH-002',
+          nom: 'Chantier 002',
+          est_territorialise: true,
+          perimetre_ids: ['PER-02'],
+          ate: 'hors_ate_centralise',
+          statut: 'BROUILLON',
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          maille: 'REG',
+          code_insee: '84',
+          territoire_code: 'REG-84',
+          zone_id: 'R84',
+          taux_avancement_mandat: 20,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '01',
+          territoire_code: 'DEPT-01',
+          zone_id: 'D01',
+          taux_avancement_mandat: 30,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '02',
+          territoire_code: 'DEPT-02',
+          zone_id: 'D02',
+          taux_avancement_mandat: 30,
+          est_applicable: false,
+        }, {
+          id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          zone_id: 'FRANCE',
+          taux_avancement_mandat: 10,
+          est_applicable: true,
+        }, {
+          id: 'CH-002',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          zone_id: 'FRANCE',
+          taux_avancement_mandat: 5,
+          est_applicable: true,
+        }],
+      });
+      // When
+      const result = await prismaChantierRepository.récupérerChantiersSynthétisés();
+
+      // Then
+      expect(result).toContainEqual({
+        id: 'CH-001',
+        nom: 'Chantier 001',
+        estTerritorialisé: true,
+        périmètreIds: ['PER-01'],
+        ate: 'ate',
+        statut: 'PUBLIE',
+        territoiresApplicables: ['REG-84', 'DEPT-01', 'NAT-FR'],
+      });
+
+      expect(result).toContainEqual({
+        id: 'CH-002',
+        nom: 'Chantier 002',
+        estTerritorialisé: true,
+        périmètreIds: ['PER-02'],
+        ate: 'hors_ate_centralise',
+        statut: 'BROUILLON',
+        territoiresApplicables: ['NAT-FR'],
+      });
+    });
   });
 
   describe('#récupérerLesEntréesDUnChantier', () => {
@@ -175,6 +266,403 @@ describe('ChantierSQLRepository', () => {
       }, {
         territoire_code: 'NAT-FR',
       }]);
+    });
+  });
+
+  describe('#récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions', () => {
+    it("quand on a l'option estBarometre et estTerritorialise à true, doit remonter les chantiers ids contenant soit les chantiers du barometre soit territorialisé", async () => {
+      // Given
+
+      const habilitation = { lecture: {
+        chantiers: ['CH-001', 'CH-002', 'CH-003', 'CH-004'],
+        territoires: ['NAT-FR'],
+      } } as unknown as Utilisateur['habilitations'];
+
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          est_barometre: true,
+          est_territorialise: true,
+        }, {
+          id: 'CH-002',
+          nom: 'Chantier 002',
+          est_barometre: true,
+          est_territorialise: false,
+        }, {
+          id: 'CH-003',
+          nom: 'Chantier 003',
+          est_barometre: false,
+          est_territorialise: true,
+        }, {
+          id: 'CH-004',
+          nom: 'Chantier 004',
+          est_barometre: false,
+          est_territorialise: false,
+        }],
+      });
+
+      const optionsPourExport: OptionsExport = {
+        estBarometre: true,
+        estTerritorialise: true,
+        perimetreIds: [],
+        listeChantierId: [],
+        listeStatuts: [],
+      };
+
+      // When
+      const result = await prismaChantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(new Habilitation(habilitation), optionsPourExport);
+
+      // Then
+      expect(result).toEqual(['CH-001', 'CH-002', 'CH-003']);
+    });
+
+    it("quand on a l'option estBarometre est a false et estTerritorialise à false, doit remonter les chantiers ids contenant les chantiers du barometre", async () => {
+      // Given
+
+      const habilitation = { lecture: {
+        chantiers: ['CH-001', 'CH-002', 'CH-003', 'CH-004'],
+        territoires: ['NAT-FR'],
+      } } as unknown as Utilisateur['habilitations'];
+
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          est_barometre: true,
+          est_territorialise: true,
+        }, {
+          id: 'CH-002',
+          nom: 'Chantier 002',
+          est_barometre: true,
+          est_territorialise: false,
+        }, {
+          id: 'CH-003',
+          nom: 'Chantier 003',
+          est_barometre: false,
+          est_territorialise: true,
+        }, {
+          id: 'CH-004',
+          nom: 'Chantier 004',
+          est_barometre: false,
+          est_territorialise: false,
+        }],
+      });
+
+      const optionsPourExport: OptionsExport = {
+        estBarometre: true,
+        estTerritorialise: false,
+        perimetreIds: [],
+        listeChantierId: [],
+        listeStatuts: [],
+      };
+
+      // When
+      const result = await prismaChantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(new Habilitation(habilitation), optionsPourExport);
+
+      // Then
+      expect(result).toEqual(['CH-001', 'CH-002']);
+    });
+
+    it("quand on a l'option estBarometre est a true et estTerritorialise à true, doit remonter les chantiers ids contenant les chantiers territorialise", async () => {
+      // Given
+
+      const habilitation = { lecture: {
+        chantiers: ['CH-001', 'CH-002', 'CH-003', 'CH-004'],
+        territoires: ['NAT-FR'],
+      } } as unknown as Utilisateur['habilitations'];
+
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          est_barometre: true,
+          est_territorialise: true,
+        }, {
+          id: 'CH-002',
+          nom: 'Chantier 002',
+          est_barometre: true,
+          est_territorialise: false,
+        }, {
+          id: 'CH-003',
+          nom: 'Chantier 003',
+          est_barometre: false,
+          est_territorialise: true,
+        }, {
+          id: 'CH-004',
+          nom: 'Chantier 004',
+          est_barometre: false,
+          est_territorialise: false,
+        }],
+      });
+
+      const optionsPourExport: OptionsExport = {
+        estBarometre: false,
+        estTerritorialise: true,
+        perimetreIds: [],
+        listeChantierId: [],
+        listeStatuts: [],
+      };
+
+      // When
+      const result = await prismaChantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(new Habilitation(habilitation), optionsPourExport);
+
+      // Then
+      expect(result).toEqual(['CH-001', 'CH-003']);
+    });
+
+    it("quand on a l'option listeStatuts est définie, doit remonter les chantiers ids des chantiers avec les statuts demandés", async () => {
+      // Given
+
+      const habilitation = { lecture: {
+        chantiers: ['CH-001', 'CH-002', 'CH-003', 'CH-004', 'CH-005'],
+        territoires: ['NAT-FR'],
+      } } as unknown as Utilisateur['habilitations'];
+
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          est_barometre: true,
+          est_territorialise: true,
+          statut: 'PUBLIE',
+        }, {
+          id: 'CH-002',
+          nom: 'Chantier 002',
+          est_barometre: true,
+          est_territorialise: false,
+          statut: 'PUBLIE',
+        }, {
+          id: 'CH-003',
+          nom: 'Chantier 003',
+          est_barometre: false,
+          est_territorialise: true,
+          statut: 'BROUILLON',
+        }, {
+          id: 'CH-004',
+          nom: 'Chantier 004',
+          est_barometre: false,
+          est_territorialise: false,
+          statut: 'ARCHIVE',
+        }, {
+          id: 'CH-005',
+          nom: 'Chantier 005',
+          est_barometre: false,
+          est_territorialise: false,
+          statut: 'SUPPRIME',
+        }],
+      });
+
+      const optionsPourExport: OptionsExport = {
+        estBarometre: false,
+        estTerritorialise: false,
+        perimetreIds: [],
+        listeChantierId: [],
+        listeStatuts: ['PUBLIE', 'BROUILLON'],
+      };
+
+      // When
+      const result = await prismaChantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(new Habilitation(habilitation), optionsPourExport);
+
+      // Then
+      expect(result).toEqual(['CH-001', 'CH-002', 'CH-003']);
+    });
+
+    it("quand on a l'option perimetreIds est définie, doit remonter les chantiers ids des chantiers avec les périmètres demandés", async () => {
+      // Given
+
+      const habilitation = { lecture: {
+        chantiers: ['CH-001', 'CH-002', 'CH-003', 'CH-004', 'CH-005'],
+        territoires: ['NAT-FR'],
+      } } as unknown as Utilisateur['habilitations'];
+
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          est_barometre: true,
+          est_territorialise: true,
+          statut: 'PUBLIE',
+          perimetre_ids: ['PER-01', 'PER-02'],
+        }, {
+          id: 'CH-002',
+          nom: 'Chantier 002',
+          est_barometre: true,
+          est_territorialise: false,
+          statut: 'PUBLIE',
+          perimetre_ids: ['PER-01'],
+        }, {
+          id: 'CH-003',
+          nom: 'Chantier 003',
+          est_barometre: false,
+          est_territorialise: true,
+          statut: 'BROUILLON',
+          perimetre_ids: ['PER-02'],
+        }, {
+          id: 'CH-004',
+          nom: 'Chantier 004',
+          est_barometre: false,
+          est_territorialise: false,
+          statut: 'ARCHIVE',
+          perimetre_ids: ['PER-03'],
+        }, {
+          id: 'CH-005',
+          nom: 'Chantier 005',
+          est_barometre: false,
+          est_territorialise: false,
+          statut: 'SUPPRIME',
+          perimetre_ids: ['PER-01', 'PER-03'],
+        }],
+      });
+
+      const optionsPourExport: OptionsExport = {
+        estBarometre: false,
+        estTerritorialise: false,
+        perimetreIds: ['PER-01', 'PER-02'],
+        listeChantierId: [],
+        listeStatuts: [],
+      };
+
+      // When
+      const result = await prismaChantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(new Habilitation(habilitation), optionsPourExport);
+
+      // Then
+      expect(result).toEqual(['CH-001', 'CH-002', 'CH-003', 'CH-005']);
+    });
+
+    it("quand on a l'option listeChantierId est définie, doit remonter les chantiers ids des chantiers avec les ids de chantier demandés", async () => {
+      // Given
+
+      const habilitation = { lecture: {
+        chantiers: ['CH-001', 'CH-002', 'CH-003', 'CH-004', 'CH-005'],
+        territoires: ['NAT-FR'],
+      } } as unknown as Utilisateur['habilitations'];
+
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          est_barometre: true,
+          est_territorialise: true,
+          statut: 'PUBLIE',
+          perimetre_ids: ['PER-01', 'PER-02'],
+        }, {
+          id: 'CH-002',
+          nom: 'Chantier 002',
+          est_barometre: true,
+          est_territorialise: false,
+          statut: 'PUBLIE',
+          perimetre_ids: ['PER-01'],
+        }, {
+          id: 'CH-003',
+          nom: 'Chantier 003',
+          est_barometre: false,
+          est_territorialise: true,
+          statut: 'BROUILLON',
+          perimetre_ids: ['PER-02'],
+        }, {
+          id: 'CH-004',
+          nom: 'Chantier 004',
+          est_barometre: false,
+          est_territorialise: false,
+          statut: 'ARCHIVE',
+          perimetre_ids: ['PER-03'],
+        }, {
+          id: 'CH-005',
+          nom: 'Chantier 005',
+          est_barometre: false,
+          est_territorialise: false,
+          statut: 'SUPPRIME',
+          perimetre_ids: ['PER-01', 'PER-03'],
+        }],
+      });
+
+      const optionsPourExport: OptionsExport = {
+        estBarometre: false,
+        estTerritorialise: false,
+        perimetreIds: [],
+        listeChantierId: ['CH-002', 'CH-003', 'CH-005'],
+        listeStatuts: [],
+      };
+
+      // When
+      const result = await prismaChantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(new Habilitation(habilitation), optionsPourExport);
+
+      // Then
+      expect(result).toEqual(['CH-002', 'CH-003', 'CH-005']);
+    });
+  });
+
+  describe('#récupérerLesEntréesDeTousLesChantiersHabilitésNew', () => {});
+
+  describe('#modifierMétéo', () => {
+    it('doit mettre à jour la météo appertenant au chantier territoire', async () => {
+      // Given
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+        }, {
+          id: 'CH-002',
+          nom: 'Chantier 002',
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          zone_id: 'D87',
+          maille: 'DEPT',
+          code_insee: '87',
+          meteo: 'SOLEIL',
+          territoire_code: 'DEPT-87',
+        }, {
+          id: 'CH-001',
+          zone_id: 'D88',
+          maille: 'DEPT',
+          code_insee: '88',
+          meteo: 'COUVERT',
+          territoire_code: 'DEPT-88',
+        }, {
+          id: 'CH-002',
+          zone_id: 'D87',
+          maille: 'DEPT',
+          code_insee: '87',
+          meteo: 'NON_RENSEIGNEE',
+          territoire_code: 'DEPT-87',
+        }],
+      });
+      // When
+      await prismaChantierRepository.modifierMétéo('CH-001', 'DEPT-87', 'NUAGE');
+
+      // Then
+      const chantier01Dept87 = await prisma.chantier_territoire.findUnique({
+        where: {
+          id_territoire_code: {
+            id: 'CH-001',
+            territoire_code: 'DEPT-87',
+          },
+        },
+      });
+      const chantier01Dept88 = await prisma.chantier_territoire.findUnique({
+        where: {
+          id_territoire_code: {
+            id: 'CH-001',
+            territoire_code: 'DEPT-88',
+          },
+        },
+      });
+      const chantier02Dept87 = await prisma.chantier_territoire.findUnique({
+        where: {
+          id_territoire_code: {
+            id: 'CH-002',
+            territoire_code: 'DEPT-87',
+          },
+        },
+      });
+      expect(chantier01Dept87!.meteo).toStrictEqual('NUAGE');
+      expect(chantier01Dept88!.meteo).toStrictEqual('COUVERT');
+      expect(chantier02Dept87!.meteo).toStrictEqual('NON_RENSEIGNEE');
     });
   });
 
@@ -501,60 +989,277 @@ describe('ChantierSQLRepository', () => {
 
       it('renvoie seulement les données pour les chantiers et territoires habilités', async () => {
       // Given
-        const territoireHabilité = {
-          code: 'DEPT-26',
-          maille: 'DEPT',
-          codeInsee: '26',
-          nom: 'Drôme',
-        };
+        const chantierIdsLecture = ['CH-001', 'CH-003'];
+        const territoireCodesLecture = ['DEPT-01', 'REG-11'];
 
-        const chantierIdsLecture = ['CH-001'];
-        const territoireCodesLecture = [territoireHabilité.code];
+        await prisma.chantier_identite.createMany({
+          data: [{
+            id: 'CH-001',
+            nom: 'Chantier 001',
+            ministeres: ['1009'],
+            ministeres_acronymes: ['MINA'],
+          }, {
+            id: 'CH-002',
+            nom: 'Chantier 002',
+            ministeres: ['1009'],
+            ministeres_acronymes: ['MINA'],
+          }, {
+            id: 'CH-003',
+            nom: 'Chantier 003',
+            ministeres: ['1009'],
+            ministeres_acronymes: ['MINA'],
+          }],
+        });
 
-        const chantiersHabilités = [
-          new ChantierSQLRowBuilder()
-            .avecId('CH-001')
-            .avecNom('chantier 1')
-            .avecMaille(territoireHabilité.maille)
-            .avecCodeInsee(territoireHabilité.codeInsee)
-            .avecEstApplicable(true)
-            .build(),
-        ];
-
-        const chantiersNonHabilités = [
-          new ChantierSQLRowBuilder()
-            .avecId('CH-002')
-            .avecNom('chantier 2')
-            .avecMaille(territoireHabilité.maille)
-            .avecCodeInsee(territoireHabilité.codeInsee)
-            .avecEstApplicable(true)
-            .build(),
-          new ChantierSQLRowBuilder()
-            .avecId('CH-001')
-            .avecNom('chantier 1')
-            .avecMaille('REG')
-            .avecCodeInsee('84')
-            .avecEstApplicable(true)
-            .build(),
-        ];
-
-        await prisma.chantier.createMany({ data: [
-          ...chantiersHabilités,
-          ...chantiersNonHabilités,
-        ] });
+        await prisma.chantier_territoire.createMany({
+          data: [{
+            id: 'CH-001',
+            zone_id: 'D26',
+            maille: 'DEPT',
+            code_insee: '01',
+            territoire_code: 'DEPT-01',
+            est_applicable: true,
+          }, {
+            id: 'CH-001',
+            zone_id: 'R84',
+            maille: 'REG',
+            code_insee: '84',
+            territoire_code: 'REG-84',
+            est_applicable: true,
+          }, {
+            id: 'CH-002',
+            zone_id: 'D26',
+            maille: 'DEPT',
+            code_insee: '26',
+            territoire_code: 'DEPT-26',
+            est_applicable: true,
+          }, {
+            id: 'CH-001',
+            zone_id: 'FRANCE',
+            maille: 'NAT',
+            code_insee: 'FR',
+            territoire_code: 'NAT-FR',
+            est_applicable: true,
+          }, {
+            id: 'CH-003',
+            zone_id: 'R11',
+            maille: 'REG',
+            code_insee: '11',
+            territoire_code: 'REG-11',
+            est_applicable: true,
+          }, {
+            id: 'CH-003',
+            zone_id: 'FRANCE',
+            maille: 'NAT',
+            code_insee: 'FR',
+            territoire_code: 'NAT-FR',
+            est_applicable: true,
+          }],
+        });
 
         // When
         const result = await prismaChantierRepository.récupérerPourExports(chantierIdsLecture, territoireCodesLecture);
 
         // Then
-        expect(result).toEqual([
-          expect.objectContaining({
-            nom: 'chantier 1',
-            maille: territoireHabilité.maille,
-            départementNom: territoireHabilité.nom,
-          }),
-        ]);
+        expect(result).toHaveLength(2);
+        expect(result).toPartiallyContain({
+          nom: 'Chantier 001',
+          maille: 'DEPT',
+        });
+        expect(result).toPartiallyContain({
+          nom: 'Chantier 003',
+          maille: 'REG',
+        });
+      });
+    });
+  });
 
+  describe('#getChantierStatistiques', () => {
+    it("quand le nombre de territoire demandé est pair, doit récupérer les statistiques d'une liste de chantier", async () => {
+      // Given
+      const listeChantierIds = ['CH-001', 'CH-002'];
+
+      const habilitation = { lecture: {
+        chantiers: ['CH-001', 'CH-002', 'CH-003', 'CH-004'],
+        territoires: ['NAT-FR'],
+      } } as unknown as Utilisateur['habilitations'];
+
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+        }, {
+          id: 'CH-002',
+          nom: 'Chantier 002',
+        }, {
+          id: 'CH-003',
+          nom: 'Chantier 003',
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          zone_id: 'D87',
+          maille: 'DEPT',
+          code_insee: '87',
+          meteo: 'SOLEIL',
+          territoire_code: 'DEPT-87',
+          taux_avancement_mandat: 10,
+        }, {
+          id: 'CH-001',
+          zone_id: 'D88',
+          maille: 'DEPT',
+          code_insee: '88',
+          meteo: 'COUVERT',
+          territoire_code: 'DEPT-88',
+          taux_avancement_mandat: 12,
+        }, {
+          id: 'CH-002',
+          zone_id: 'D87',
+          maille: 'DEPT',
+          code_insee: '87',
+          meteo: 'NON_RENSEIGNEE',
+          territoire_code: 'DEPT-87',
+          taux_avancement_mandat: 14,
+        }, {
+          id: 'CH-002',
+          zone_id: 'D88',
+          maille: 'DEPT',
+          code_insee: '88',
+          meteo: 'COUVERT',
+          territoire_code: 'DEPT-88',
+          taux_avancement_mandat: 16,
+        }, {
+          id: 'CH-002',
+          zone_id: 'RO1',
+          maille: 'REG',
+          code_insee: '01',
+          meteo: 'COUVERT',
+          territoire_code: 'REG-01',
+          taux_avancement_mandat: 50,
+        }, {
+          id: 'CH-003',
+          zone_id: 'D87',
+          maille: 'DEPT',
+          code_insee: '87',
+          meteo: 'NON_RENSEIGNEE',
+          territoire_code: 'DEPT-87',
+          taux_avancement_mandat: 18,
+        }],
+      });
+      // When
+      const result = await prismaChantierRepository.getChantierStatistiques(habilitation, listeChantierIds, 'departementale');
+
+      // Then
+      expect(result).toEqual({
+        global: {
+          moyenne: 13,
+          médiane: 13,
+          maximum: 14,
+          minimum: 12,
+        },
+        annuel: {
+          moyenne: null,
+        },
+      });
+    });
+
+    it("quand le nombre de territoire demandé est impair, doit récupérer les statistiques d'une liste de chantier", async () => {
+      // Given
+      const listeChantierIds = ['CH-001', 'CH-002'];
+
+      const habilitation = { lecture: {
+        chantiers: ['CH-001', 'CH-002', 'CH-003', 'CH-004'],
+        territoires: ['NAT-FR'],
+      } } as unknown as Utilisateur['habilitations'];
+
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+        }, {
+          id: 'CH-002',
+          nom: 'Chantier 002',
+        }, {
+          id: 'CH-003',
+          nom: 'Chantier 003',
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          zone_id: 'D87',
+          maille: 'DEPT',
+          code_insee: '87',
+          meteo: 'SOLEIL',
+          territoire_code: 'DEPT-87',
+          taux_avancement_mandat: 10,
+        }, {
+          id: 'CH-001',
+          zone_id: 'D88',
+          maille: 'DEPT',
+          code_insee: '88',
+          meteo: 'COUVERT',
+          territoire_code: 'DEPT-88',
+          taux_avancement_mandat: 12,
+        }, {
+          id: 'CH-001',
+          zone_id: 'D89',
+          maille: 'DEPT',
+          code_insee: '89',
+          meteo: 'COUVERT',
+          territoire_code: 'DEPT-89',
+          taux_avancement_mandat: 22,
+        }, {
+          id: 'CH-002',
+          zone_id: 'D87',
+          maille: 'DEPT',
+          code_insee: '87',
+          meteo: 'NON_RENSEIGNEE',
+          territoire_code: 'DEPT-87',
+          taux_avancement_mandat: 14,
+        }, {
+          id: 'CH-002',
+          zone_id: 'D88',
+          maille: 'DEPT',
+          code_insee: '88',
+          meteo: 'COUVERT',
+          territoire_code: 'DEPT-88',
+          taux_avancement_mandat: 16,
+        }, {
+          id: 'CH-002',
+          zone_id: 'RO1',
+          maille: 'REG',
+          code_insee: '01',
+          meteo: 'COUVERT',
+          territoire_code: 'REG-01',
+          taux_avancement_mandat: 50,
+        }, {
+          id: 'CH-003',
+          zone_id: 'D87',
+          maille: 'DEPT',
+          code_insee: '87',
+          meteo: 'NON_RENSEIGNEE',
+          territoire_code: 'DEPT-87',
+          taux_avancement_mandat: 18,
+        }],
+      });
+      // When
+      const result = await prismaChantierRepository.getChantierStatistiques(habilitation, listeChantierIds, 'departementale');
+
+      // Then
+      expect(result).toEqual({
+        global: {
+          moyenne: 16,
+          médiane: 14,
+          maximum: 22,
+          minimum: 12,
+        },
+        annuel: {
+          moyenne: null,
+        },
       });
     });
   });
