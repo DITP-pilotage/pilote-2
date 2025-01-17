@@ -12,7 +12,7 @@ import { FiltreQueryParams, SortingParams } from '@/server/chantiers/app/contrat
 
 export default interface ChantierRepository {
   récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<ChantierPrisma[]>;
-  récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, maille: string, filtres: FiltreQueryParams, sorting: SortingParams): Promise<ChantierPrisma[]>;
+  récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, filtres: FiltreQueryParams, sorting: SortingParams): Promise<ChantierPrisma[]>;
   récupérerChantiersSynthétisés(): Promise<ChantierSynthétisé[]>;
   getChantierStatistiques(habilitations: Habilitations, listeChantier: Chantier['id'][], maille: Maille): Promise<AvancementsStatistiques>;
   modifierMétéo(chantierId: string, territoireCode: string, météo: Météo): Promise<void>;

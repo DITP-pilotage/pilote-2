@@ -8,7 +8,6 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
 import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
-import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import { FiltreQueryParams, SortingParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
@@ -38,7 +37,7 @@ const appliquerSortingChantier = (sorting: SortingParams): Prisma.Enumerable<Pri
   switch (sorting.id) {
     case 'avancement': {
       return [{
-        taux_avancement: orderBy,
+        taux_avancement_mandat: orderBy,
       }, {
         id: 'asc',
       }];
@@ -52,7 +51,7 @@ const appliquerSortingChantier = (sorting: SortingParams): Prisma.Enumerable<Pri
     }
     case 'dateDeMàjDonnéesQuantitatives': {
       return [{
-        taux_avancement_date: orderBy,
+        date_taux_avancement_mandat: orderBy,
       }, {
         id: 'asc',
       }];
@@ -116,18 +115,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     const habilitation = new Habilitation(habilitations);
     const listeChantiersIdsAccessiblesEnLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
 
-    let whereParam = {};
-
-    if (!profilsTerritoriaux.includes(profil)) {
-      let listeTerritoireAccessibleEnLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
-      // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
-      listeTerritoireAccessibleEnLecture = [...listeTerritoireAccessibleEnLecture, 'NAT-FR'];
-      whereParam = {
-        territoire_code: {
-          in: listeTerritoireAccessibleEnLecture,
-        },
-      };
-    }
+    let listeTerritoireAccessibleEnLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
     const peutAccéderAuChantier = listeChantiersIdsAccessiblesEnLecture.includes(id);
 
@@ -141,7 +129,11 @@ export default class ChantierSQLRepository implements ChantierRepository {
       },
       include: {
         chantier_territoire: {
-          where: whereParam,
+          where: {
+            territoire_code: {
+              in: profilsTerritoriaux.includes(profil) ? listeTerritoireAccessibleEnLecture : [...listeTerritoireAccessibleEnLecture, 'NAT-FR'],
+            },
+          },
         },
       },
     });
@@ -197,7 +189,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return chantiers.map(c => c.id);
   }
 
-  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, maille: 'DEPT' | 'REG', filtres: FiltreQueryParams, sorting: SortingParams): Promise<PrismaChantierIdentite[]> {
+  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, filtres: FiltreQueryParams, sorting: SortingParams): Promise<PrismaChantierTerritoire[]> {
     const whereOptions: Prisma.chantier_identiteWhereInput = {};
 
     if (filtres.perimetres?.length > 0) {
@@ -235,25 +227,56 @@ export default class ChantierSQLRepository implements ChantierRepository {
     if (filtres.valeurDeLaRecherche?.length > 0) {
       const testLower = removeAccents(filtres.valeurDeLaRecherche.toLowerCase());
 
-      chantierIds = await prisma.$queryRawUnsafe<{ id: string }[]>('SELECT distinct(id) FROM chantier where (LOWER(unaccent(nom)) ILIKE $1 OR LOWER(unaccent(id)) ILIKE $1)', `%${testLower}%`)
+      chantierIds = await prisma.$queryRawUnsafe<{ id: string }[]>('SELECT distinct(id) FROM chantier_identite where (LOWER(unaccent(nom)) ILIKE $1 OR LOWER(unaccent(id)) ILIKE $1)', `%${testLower}%`)
         .then(chantiersMatched => chantiersMatched.map(chantierMatched => chantierMatched.id).filter(chantierId => chantiersLectureIds.includes(chantierId)));
     }
 
-    let paramètresRequête : Prisma.chantier_identiteFindManyArgs = {
+    return prisma.chantier_territoire.findMany({
+      where: {
+        territoire_code: {
+          in: profilsTerritoriaux.includes(profil) ? territoiresLectureIds : [...territoiresLectureIds, 'NAT-FR'],
+        },
+        chantier_identite: {
+          NOT: {
+            ministeres: {
+              isEmpty: true,
+            },
+          },
+          id: { in: chantierIds },
+          ...whereOptions,
+        },
+      },
+      orderBy: sorting ? appliquerSortingChantier(sorting) : {},
+      include: {
+        chantier_identite: true,
+      },
+    });
+
+    /*
+    return prisma.chantier_identite.findMany({
       where: {
         NOT: { ministeres: { isEmpty: true } },
         id: { in: chantierIds },
         ...whereOptions,
       },
-      orderBy: sorting ? appliquerSortingChantier(sorting) : {},
-    };
-
-    if (!profilsTerritoriaux.includes(profil)) {
-      // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
-      paramètresRequête.where!.territoire_code = { in: [...territoiresLectureIds, 'NAT-FR'] };
-    }
-
-    return prisma.chantier.findMany(paramètresRequête);
+      include: {
+        chantier_territoire: {
+          where: {
+            territoire_code: {
+              in: profilsTerritoriaux.includes(profil) ? territoiresLectureIds : [...territoiresLectureIds, 'NAT-FR'],
+            },
+          },
+        },
+      },
+      orderBy: {
+        chantier_territoire: {
+          taux_avancement_mandat: {
+            sort: 'asc',
+            nulls: 'last',
+          },
+        },
+      },
+    }); */
   }
 
   async modifierMétéo(chantierId: string, territoireCode: string, météo: Météo) {
