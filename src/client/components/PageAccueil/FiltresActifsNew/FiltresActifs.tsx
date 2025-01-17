@@ -56,6 +56,22 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
 
   const listePerimetres = ministères.flatMap(ministère => ministère.périmètresMinistériels);
 
+  const meteosAAfficher = (meteo: string) => {
+    switch (meteo) {
+      case 'ORAGE':
+        return 'Objectifs compromis';
+      case 'NUAGE':
+        return 'Appuis nécessaires';
+      case 'COUVERT':
+        return 'Objectifs atteignables';
+      case 'SOLEIL':
+        return 'Objectifs sécurisés';
+      default:
+        break;
+    }
+  };
+
+
   const désactiverTousLesFiltres = () => {
     reinitialiserFiltres();
 
@@ -120,6 +136,25 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
 
                   sauvegarderFiltres({ axes: arrFiltreAxes });
                   return setFiltres({ axes: arrFiltreAxes.join(',') });
+                }}
+              />
+            </li>
+          ),
+          )
+        }
+        {
+          filtres.meteos.split(',').filter(Boolean).map((meteo) => (
+            <li
+              key={`tag-axe-${meteo}`}
+            >
+              <Tag
+                libellé={meteosAAfficher(meteo)}
+                suppressionCallback={() => {
+                  let arrFiltreMeteos = filtres.meteos.split(',').filter(Boolean);
+                  arrFiltreMeteos.splice(arrFiltreMeteos.indexOf(meteo), 1);
+
+                  sauvegarderFiltres({ meteos: arrFiltreMeteos });
+                  return setFiltres({ meteos: arrFiltreMeteos.join(',') });
                 }}
               />
             </li>

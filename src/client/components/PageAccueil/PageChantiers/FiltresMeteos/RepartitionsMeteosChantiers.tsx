@@ -2,19 +2,19 @@ import { FunctionComponent, useCallback } from 'react';
 import { parseAsInteger, parseAsString, useQueryState } from 'nuqs';
 import { libellésMétéos, MétéoSaisissable } from '@/server/domain/météo/Météo.interface';
 import { sauvegarderFiltres } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
-import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
+import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import RepartitionsMeteosChantiersStyled from './RepartitionsMeteosChantiersStyled.styled';
 
 export type RépartitionMétéos = Record<MétéoSaisissable, number>;
 
 interface RepartitionsMeteosChantiersProps {
-  météos: RepartitionMeteoContrat
+  repartitionMeteos: RepartitionMeteoContrat
 }
 
-const météosÀAfficher = ['ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL'] as const;
+const meteosÀAfficher = ['ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL'] as const;
 
-const RepartitionsMeteosChantiers : FunctionComponent<RepartitionsMeteosChantiersProps> = ({ météos }) => {
+const RepartitionsMeteosChantiers : FunctionComponent<RepartitionsMeteosChantiersProps> = ({ repartitionMeteos }) => {
   const [meteos, setMeteos] = useQueryState('meteos', parseAsString.withDefault('').withOptions({
     shallow: false,
     clearOnDefault: true,
@@ -25,16 +25,12 @@ const RepartitionsMeteosChantiers : FunctionComponent<RepartitionsMeteosChantier
   }));
 
   const auClickCallback = useCallback(
-    (météo: MétéoSaisissable) => {
-      console.log('météo', météo);
+    (meteo: MétéoSaisissable) => {
       let arrMétéoFiltre = meteos.split(',').filter(Boolean);
-      console.log('indexOf', arrMétéoFiltre.indexOf(météo));
-      if (meteos.includes(météo)) {
-        console.log('avant arrMétéoFiltre', arrMétéoFiltre);
-        arrMétéoFiltre.splice(arrMétéoFiltre.indexOf(météo), 1);
-        console.log('après arrMétéoFiltre', arrMétéoFiltre);
+      if (meteos.includes(meteo)) {
+        arrMétéoFiltre.splice(arrMétéoFiltre.indexOf(meteo), 1);
       } else {
-        arrMétéoFiltre.push(météo);
+        arrMétéoFiltre.push(meteo);
       }
       setPagination(1);
       sauvegarderFiltres({ meteos: arrMétéoFiltre });
@@ -46,24 +42,24 @@ const RepartitionsMeteosChantiers : FunctionComponent<RepartitionsMeteosChantier
   return (
     <RepartitionsMeteosChantiersStyled className='fr-grid-row fr-mx-n3v'>
       {
-        météosÀAfficher.map(météo => (
+        meteosÀAfficher.map(meteo => (
           <li
             className='fr-col-3'
-            key={libellésMétéos[météo]}
+            key={libellésMétéos[meteo]}
           >
             <button
               className='bouton-repartition-meteos'
-              onClick={() => auClickCallback(météo)}
+              onClick={() => auClickCallback(meteo)}
               type='button'
             >
-              <MétéoPicto
-                météo={météo}
+              <MeteoPicto
+                meteo={meteo}
               />
               <p className='nombre-de-chantiers fr-h1 fr-mb-0'>
-                {météos[météo]}
+                {repartitionMeteos[meteo]}
               </p>
               <p className='label fr-mb-0 break-keep'>
-                {libellésMétéos[météo]}
+                {libellésMétéos[meteo]}
               </p>
             </button>
             

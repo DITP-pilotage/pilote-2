@@ -3,7 +3,7 @@ import { FunctionComponent } from 'react';
 import TagStyled from './Tag.styled';
 
 interface TagProps {
-  libellé: string,
+  libellé: string | undefined,
   suppressionCallback: () => void,
 }
 

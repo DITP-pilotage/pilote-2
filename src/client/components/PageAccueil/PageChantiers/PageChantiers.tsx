@@ -17,7 +17,6 @@ import {
   ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
 } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import FiltresActifs from '@/client/components/PageAccueil/FiltresActifsNew/FiltresActifs';
-import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
@@ -326,7 +325,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   </Infobulle>
                 </TitreInfobulleConteneur>
                 <RepartitionsMeteosChantiers
-                  météos={repartitionMeteosChantiers}
+                  repartitionMeteos={repartitionMeteosChantiers}
                 />
               </section>
             </Bloc>

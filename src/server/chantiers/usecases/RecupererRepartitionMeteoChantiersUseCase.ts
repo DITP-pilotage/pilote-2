@@ -60,7 +60,7 @@ export class RecupererMeteosChantiersUseCase {
       nombreNuage: 0,
       nombreSoleil: 0,
     });
-
+    console.log({ 'repartitions': repartitions });
     return RepartitionMeteoChantiers.creerRepartitionMeteoChantiers(repartitions);
   }
 }
