@@ -12,7 +12,7 @@ import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
 import AvancementBuilder from '@/server/domain/chantier/avancement/Avancement.builder';
 import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
-import { TypeAte, typesAte, typesStatut } from '@/server/domain/chantier/Chantier.interface';
+import { typesAte, typesStatut } from '@/server/domain/chantier/Chantier.interface';
 
 export default class ChantierRowBuilder {
   private _id: chantier['id'];
@@ -184,11 +184,6 @@ export default class ChantierRowBuilder {
     return this;
   }
 
-  avecTauxAvancementPrécédent(tauxAvancementPrécédent: chantier['taux_avancement_precedent']): ChantierRowBuilder {
-    this._tauxAvancementPrécédent = tauxAvancementPrécédent;
-    return this;
-  }
-
   avecTauxAvancementAnnuel(tauxAvancementAnnuel: chantier['taux_avancement_annuel']): ChantierRowBuilder {
     this._tauxAvancementAnnuel = tauxAvancementAnnuel;
     return this;
@@ -196,11 +191,6 @@ export default class ChantierRowBuilder {
 
   avecMinistères(ministères: chantier['ministeres']): ChantierRowBuilder {
     this._ministères = ministères;
-    return this;
-  }
-
-  avecMinistèresAcronyme(acronyme: chantier['ministeres_acronymes']): ChantierRowBuilder {
-    this._ministères_acronymes = acronyme;
     return this;
   }
 
@@ -239,22 +229,9 @@ export default class ChantierRowBuilder {
     return this;
   }
 
-  avecAte(typeAte: TypeAte): ChantierRowBuilder {
-    this._ate = typeAte;
-    return this;
-  }
-
   avecEstApplicable(est_applicable: chantier['est_applicable']): ChantierRowBuilder {
     this._est_applicable = est_applicable;
     return this;
-  }
-
-  shallowCopy(): ChantierRowBuilder {
-    const result = new ChantierRowBuilder() as any;
-    for (const attribut in this) {
-      result[attribut] = this[attribut];
-    }
-    return result as ChantierRowBuilder;
   }
 
   build(): chantier {

@@ -78,11 +78,6 @@ export default class SyntheseDesResultatsRowBuilder {
     return this;
   }
 
-  avecDateMétéo(dateMétéo: synthese_des_resultats['date_meteo']): SyntheseDesResultatsRowBuilder {
-    this._dateMétéo = dateMétéo;
-    return this;
-  }
-
   avecAuteurId(auteur_id: synthese_des_resultats['auteur_id']): SyntheseDesResultatsRowBuilder {
     this._auteur_id = auteur_id;
     return this;
