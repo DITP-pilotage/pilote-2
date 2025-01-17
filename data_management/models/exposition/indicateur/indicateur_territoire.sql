@@ -109,7 +109,6 @@ SELECT
         '[]'::jsonb	-- Return [] if the join gives NULL
     ) AS evolution_valeur_actuelle
 
---, TODO: le reste des colonnes
 FROM {{ source('db_schema_public', 'territoire') }} AS territoire
 CROSS JOIN {{ ref('stg_ppg_metadata__indicateurs') }} AS meta_indic
 LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} AS meta_zone
