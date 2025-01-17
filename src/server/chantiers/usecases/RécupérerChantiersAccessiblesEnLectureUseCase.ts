@@ -57,7 +57,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
     };
 
     const [chantiersRowsMaille, territoires ] = await Promise.all([
-      this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLecture, territoiresLecture, profil, maille, filtresPourChantier, sorting),
+      this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLecture, territoiresLecture, profil, filtresPourChantier, sorting),
       this.territoireRepository.récupérerTousNew(),
     ]);
 
