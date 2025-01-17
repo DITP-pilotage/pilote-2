@@ -292,34 +292,34 @@ model indicateur_identite {
 
 model indicateur_territoire {
   id                                       String
+  maille                                   Maille
+  territoire_code                          String
+  code_insee                               String
+  zone_id                                  String
   valeur_cible_mandat                      Float?
   taux_avancement_mandat                   Float?
-  date_valeur_cible_mandat                 DateTime?                     @db.Date
-  valeur_initiale                          Float?
+  date_valeur_actuelle                     DateTime?                     @db.Date
   date_valeur_initiale                     DateTime?                     @db.Date
   valeur_actuelle                          Float?
-  date_valeur_actuelle                     DateTime?                     @db.Date
+  valeur_initiale                          Float?
   territoire_nom                           String?
-  code_insee                               String
-  maille                                   String
-  evolution_valeur_actuelle                Json?
-  territoire                               territoire                    @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  territoire_code                          String
-  zone_id                                  String
+  date_valeur_cible_mandat                 DateTime?                     @db.Date
+  est_applicable                           Boolean?
   ponderation_zone_declaree                Float?
   ponderation_zone_reel                    Float?
-  est_applicable                           Boolean?
+  est_a_jour                               Boolean?
   prochaine_date_maj                       DateTime?                     @db.Date
   prochaine_date_maj_jours                 Int?
-  prochaine_date_valeur_actuelle           DateTime?                     @db.Date
-  est_a_jour                               Boolean?
   tendance                                 String?
   valeur_actuelle_proposition              Float?
-  taux_avancement_mandat_proposition       Float?
+  auteur_proposition                       String?
   date_proposition                         DateTime?                     @db.Date
   motif_proposition                        String?
   source_donnee_methode_calcul_proposition String?
-  auteur_proposition                       String?
+  taux_avancement_mandat_proposition       Float?
+  prochaine_date_valeur_actuelle           DateTime?                     @db.Date
+  evolution_valeur_actuelle                Json?
+  territoire                               territoire                    @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
   indicateur_identite                      indicateur_identite           @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   indicateur_territoire_jalon              indicateur_territoire_jalon[]
 
