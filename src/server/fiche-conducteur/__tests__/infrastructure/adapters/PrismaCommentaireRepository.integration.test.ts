@@ -15,17 +15,26 @@ describe('PrismaCommentaireRepository', () => {
     it('doit lister les commentaires associé au chantier', async () => {
       // Given
       const chantierId = 'CH-168';
-      await prisma.chantier.createMany({ data: [{
+      await prisma.chantier_identite.createMany({ data: [{
         id: 'CH-168',
         nom: 'Nom chantier OK',
-        code_insee: 'FR',
-        maille: 'NAT',
-        territoire_code: 'NAT-FR',
       }, {
         id: 'CH-169',
         nom: 'Nom chantier OK',
-        code_insee: 'FR',
+      }],
+      });
+
+      await prisma.chantier_territoire.createMany({ data: [{
+        id: 'CH-168',
+        zone_id: 'FRANCE',
         maille: 'NAT',
+        code_insee: 'FR',
+        territoire_code: 'NAT-FR',
+      }, {
+        id: 'CH-169',
+        zone_id: 'FRANCE',
+        maille: 'NAT',
+        code_insee: 'FR',
         territoire_code: 'NAT-FR',
       }],
       });
@@ -41,6 +50,7 @@ describe('PrismaCommentaireRepository', () => {
             date: new Date(),
             maille: 'NAT',
             code_insee: 'FR',
+            territoire_code: 'NAT-FR',
           },
           {
             id: randomUUID(),
@@ -51,6 +61,7 @@ describe('PrismaCommentaireRepository', () => {
             date: new Date(),
             maille: 'NAT',
             code_insee: 'FR',
+            territoire_code: 'NAT-FR',
           },
           {
             id: randomUUID(),
@@ -61,6 +72,7 @@ describe('PrismaCommentaireRepository', () => {
             date: new Date(),
             maille: 'NAT',
             code_insee: 'FR',
+            territoire_code: 'NAT-FR',
           },
         ],
       });
