@@ -3,7 +3,7 @@ import ChantierRepository from '@/server/domain/chantier/ChantierRepository.inte
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
-import { parseChantier } from '@/server/infrastructure/accès_données/chantier/ChantierSQLParser';
+import { parseChantierNew } from '@/server/infrastructure/accès_données/chantier/ChantierSQLParser';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 
@@ -21,6 +21,6 @@ export default class RécupérerChantierUseCase {
     const ministères = await this.ministèreRepository.getListe();
     const territoires = await this.territoireRepository.récupérerTous();
     const chantierRows = await this.chantierRepository.récupérerLesEntréesDUnChantier(chantierId, habilitations, profil);
-    return parseChantier(chantierRows, territoires, ministères);
+    return parseChantierNew(chantierRows, territoires, ministères);
   }
 }
