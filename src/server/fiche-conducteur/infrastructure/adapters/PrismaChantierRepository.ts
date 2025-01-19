@@ -1,23 +1,39 @@
-import { chantier as ChantierModel, PrismaClient } from '@prisma/client';
+import { chantier_territoire as ChantierTerritoireModel, chantier_identite as ChantierIdentiteModel, chantier_territoire_jalon as ChantierTerritoireJalonModel, PrismaClient } from '@prisma/client';
 import { ChantierRepository } from '@/server/fiche-conducteur/domain/ports/ChantierRepository';
 import { Chantier } from '@/server/fiche-conducteur/domain/Chantier';
 import { Meteo } from '@/server/fiche-conducteur/domain/Meteo';
-import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
-const convertirEnChantier = (chantierModel: ChantierModel): Chantier => {
+const convertirChantierTerritoireEnChantier = (chantierTerritoireModel: ChantierTerritoireModel & { chantier_identite: ChantierIdentiteModel, chantier_territoire_jalon: ChantierTerritoireJalonModel[] }): Chantier => {
   return Chantier.creerChantier({
-    id: chantierModel.id,
-    nom: chantierModel.nom,
-    estTerritorialise: chantierModel.est_territorialise || false,
-    tauxAvancement: chantierModel.taux_avancement,
-    tauxAvancementAnnuel: chantierModel.taux_avancement_annuel,
-    maille: chantierModel.maille,
-    codeInsee: chantierModel.code_insee,
-    territoireCode: chantierModel.territoire_code,
-    meteo: chantierModel.meteo as Meteo,
-    estApplicable: !!chantierModel.est_applicable,
-    listeDirecteursAdministrationCentrale: chantierModel.directeurs_administration_centrale,
-    listeDirecteursProjet: chantierModel.directeurs_projet,
+    id: chantierTerritoireModel.id,
+    nom: chantierTerritoireModel.chantier_identite.nom,
+    estTerritorialise: chantierTerritoireModel.chantier_identite.est_territorialise || false,
+    tauxAvancement: chantierTerritoireModel.taux_avancement_mandat,
+    tauxAvancementAnnuel: chantierTerritoireModel.chantier_territoire_jalon[0]?.taux_avancement || null,
+    maille: chantierTerritoireModel.maille,
+    codeInsee: chantierTerritoireModel.code_insee,
+    territoireCode: chantierTerritoireModel.territoire_code,
+    meteo: chantierTerritoireModel.meteo as Meteo,
+    estApplicable: !!chantierTerritoireModel.est_applicable,
+    listeDirecteursAdministrationCentrale: chantierTerritoireModel.chantier_identite.directeurs_administration_centrale,
+    listeDirecteursProjet: chantierTerritoireModel.chantier_identite.directeurs_projet,
+  });
+};
+
+const convertirChantierIdentiteEnChantier = (chantierIdentiteModel: ChantierIdentiteModel, chantierTerritoire: ChantierTerritoireModel & { chantier_territoire_jalon: ChantierTerritoireJalonModel[] }): Chantier => {
+  return Chantier.creerChantier({
+    id: chantierIdentiteModel.id,
+    nom: chantierIdentiteModel.nom,
+    estTerritorialise: chantierIdentiteModel.est_territorialise || false,
+    tauxAvancement: chantierTerritoire.taux_avancement_mandat,
+    tauxAvancementAnnuel: chantierTerritoire.chantier_territoire_jalon[0]?.taux_avancement || null,
+    maille: chantierTerritoire.maille,
+    codeInsee: chantierTerritoire.code_insee,
+    territoireCode: chantierTerritoire.territoire_code,
+    meteo: chantierTerritoire.meteo as Meteo,
+    estApplicable: !!chantierTerritoire.est_applicable,
+    listeDirecteursAdministrationCentrale: chantierIdentiteModel.directeurs_administration_centrale,
+    listeDirecteursProjet: chantierIdentiteModel.directeurs_projet,
   });
 };
 
@@ -25,14 +41,19 @@ export class PrismaChantierRepository implements ChantierRepository {
   constructor(private prismaClient: PrismaClient) {}
 
   async récupérerParIdEtParTerritoireCode({ chantierId, territoireCode }: { chantierId: string; territoireCode: string }): Promise<Chantier> {
-    const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
-
-    const result = await this.prismaClient.chantier.findUnique({
+    const result = await this.prismaClient.chantier_territoire.findUnique({
       where: {
-        id_code_insee_maille: {
+        id_territoire_code: {
           id: chantierId,
-          maille,
-          code_insee: codeInsee,
+          territoire_code: territoireCode,
+        },
+      },
+      include: {
+        chantier_identite: true,
+        chantier_territoire_jalon: {
+          where: {
+            jalon: '2025',
+          },
         },
       },
     });
@@ -41,21 +62,34 @@ export class PrismaChantierRepository implements ChantierRepository {
       throw new Error("Le chantier n'existe pas");
     }
 
-    return convertirEnChantier(result);
+    return convertirChantierTerritoireEnChantier(result);
   }
 
   async récupérerMailleNatEtDeptParId(chantierId: string): Promise<Chantier[]> {
-    const result = await this.prismaClient.chantier.findMany({
+    const result = await this.prismaClient.chantier_identite.findUnique({
       where: {
         id: chantierId,
-        OR: [
-          {
-            maille: 'DEPT',
+      },
+      include: {
+        chantier_territoire: {
+          where: {
+            OR: [
+              {
+                maille: 'DEPT',
+              },
+              {
+                maille: 'NAT',
+              },
+            ],
           },
-          {
-            maille: 'NAT',
+          include: {
+            chantier_territoire_jalon: {
+              where: {
+                jalon: '2025',
+              },
+            },
           },
-        ],
+        },
       },
     });
 
@@ -63,6 +97,6 @@ export class PrismaChantierRepository implements ChantierRepository {
       throw new Error("Le chantier n'existe pas");
     }
 
-    return result.map(convertirEnChantier);
+    return result.chantier_territoire.map(chantierTerritoire => convertirChantierIdentiteEnChantier(result, chantierTerritoire));
   }
 }

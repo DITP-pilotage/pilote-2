@@ -181,7 +181,7 @@ model chantier_territoire_jalon {
   taux_avancement     Float?
   chantier_territoire chantier_territoire @relation(fields: [id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
 
-  @@id([id, territoire_code])
+  @@id([id, territoire_code, jalon])
   @@schema("public")
 }
 
