@@ -181,9 +181,8 @@ describe('ChantierSQLRepository', () => {
       const listeChantier = await prismaChantierRepository.récupérerLesEntréesDUnChantier('CH-001', habilitation, profil);
 
       // Then
-      expect(listeChantier).toHaveLength(1);
-      expect(listeChantier.at(0)?.nom).toEqual('Chantier 001');
-      expect(listeChantier.at(0)?.chantier_territoire[0].territoire_code).toEqual('DEPT-87');
+      expect(listeChantier.nom).toEqual('Chantier 001');
+      expect(listeChantier.chantier_territoire[0].territoire_code).toEqual('DEPT-87');
     });
 
     test("quand on n'est pas un profil territorial, doit renvoyer la liste des chantiers avec la maille nationale", async () => {
@@ -252,10 +251,9 @@ describe('ChantierSQLRepository', () => {
       const listeChantier = await prismaChantierRepository.récupérerLesEntréesDUnChantier('CH-001', habilitation, profil);
 
       // Then
-      expect(listeChantier).toHaveLength(1);
-      expect(listeChantier.at(0)?.nom).toEqual('Chantier 001');
-      expect(listeChantier.at(0)?.chantier_territoire).toHaveLength(2);
-      expect(listeChantier.at(0)?.chantier_territoire).toIncludeAllPartialMembers([{
+      expect(listeChantier.nom).toEqual('Chantier 001');
+      expect(listeChantier.chantier_territoire).toHaveLength(2);
+      expect(listeChantier.chantier_territoire).toIncludeAllPartialMembers([{
         territoire_code: 'DEPT-87',
       }, {
         territoire_code: 'NAT-FR',

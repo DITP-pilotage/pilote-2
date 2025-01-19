@@ -1,4 +1,8 @@
-import { chantier as chantierPrisma } from '@prisma/client';
+import {
+  chantier_identite as PrismaChantierIdentite,
+  chantier_territoire as PrismaChantierTerritoire,
+  chantier_territoire_jalon as PrismaChantierTerritoireJalon,
+} from '@prisma/client';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
@@ -69,7 +73,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
       };
     }, {});
 
-    const chantiersGroupésParId = groupBy<chantierPrisma>(chantiersRowsMaille, chantier => chantier.id, init);
+    const chantiersGroupésParId = groupBy<(PrismaChantierTerritoire & { chantier_identite: PrismaChantierIdentite, chantier_territoire_jalon: PrismaChantierTerritoireJalon[] })>(chantiersRowsMaille, chantier => chantier.id, init);
     let chantiers = objectEntries(chantiersGroupésParId).map(([_, listeChantiers]) => presenterEnChantierRapportDetaille(territoireCode)(parseChantier(listeChantiers, territoires, ministères)))
       .filter(appliquerFiltre(mailleChantier, territoireCode, profil));
 

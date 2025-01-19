@@ -1,4 +1,4 @@
-import { chantier_identite as PrismaChantierIdentite, chantier_territoire as PrismaChantierTerritoire, type_objectif, Prisma, type_statut } from '@prisma/client';
+import { chantier_identite as PrismaChantierIdentite, chantier_territoire as PrismaChantierTerritoire, chantier_territoire_jalon as PrismaChantierTerritoireJalon, type_objectif, Prisma, type_statut } from '@prisma/client';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import Chantier, { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
@@ -27,7 +27,7 @@ export class ErreurChantierPermission extends Error {
   }
 }
 
-const appliquerSortingChantier = (sorting: SortingParams): Prisma.Enumerable<Prisma.chantierOrderByWithRelationInput> => {
+const appliquerSortingChantier = (sorting: SortingParams): Prisma.Enumerable<Prisma.chantier_territoireOrderByWithRelationInput> => {
   const sortingDirection = sorting.desc ? 'desc' : 'asc';
   const orderBy: Prisma.SortOrderInput = {
     sort: sortingDirection,
@@ -110,8 +110,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
   }
 
   async récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<(PrismaChantierIdentite & {
-    chantier_territoire: PrismaChantierTerritoire[]
-  })[]> {
+    chantier_territoire: (PrismaChantierTerritoire & { chantier_territoire_jalon: PrismaChantierTerritoireJalon[] })[]
+  })> {
     const habilitation = new Habilitation(habilitations);
     const listeChantiersIdsAccessiblesEnLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
 
@@ -123,7 +123,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       throw new ErreurChantierPermission(id);
     }
 
-    const chantiers = await prisma.chantier_identite.findMany({
+    const chantier = await prisma.chantier_identite.findUnique({
       where: {
         id,
       },
@@ -134,15 +134,22 @@ export default class ChantierSQLRepository implements ChantierRepository {
               in: profilsTerritoriaux.includes(profil) ? listeTerritoireAccessibleEnLecture : [...listeTerritoireAccessibleEnLecture, 'NAT-FR'],
             },
           },
+          include: {
+            chantier_territoire_jalon: {
+              where: {
+                jalon: '2025',
+              },
+            },
+          },
         },
       },
     });
 
-    if (!chantiers || chantiers.length === 0) {
+    if (!chantier) {
       throw new ErreurChantierNonTrouvé(id);
     }
 
-    return chantiers;
+    return chantier;
   }
 
   async récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation: Habilitation, optionsExport: OptionsExport): Promise<Chantier['id'][]> {
@@ -189,7 +196,10 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return chantiers.map(c => c.id);
   }
 
-  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, filtres: FiltreQueryParams, sorting: SortingParams): Promise<PrismaChantierTerritoire[]> {
+  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, filtres: FiltreQueryParams, sorting: SortingParams): Promise<(PrismaChantierTerritoire & {
+    chantier_identite: PrismaChantierIdentite
+    chantier_territoire_jalon: PrismaChantierTerritoireJalon[]
+  })[]> {
     const whereOptions: Prisma.chantier_identiteWhereInput = {};
 
     if (filtres.perimetres?.length > 0) {
@@ -249,34 +259,13 @@ export default class ChantierSQLRepository implements ChantierRepository {
       orderBy: sorting ? appliquerSortingChantier(sorting) : {},
       include: {
         chantier_identite: true,
+        chantier_territoire_jalon: {
+          where: {
+            jalon: '2025',
+          },
+        },
       },
     });
-
-    /*
-    return prisma.chantier_identite.findMany({
-      where: {
-        NOT: { ministeres: { isEmpty: true } },
-        id: { in: chantierIds },
-        ...whereOptions,
-      },
-      include: {
-        chantier_territoire: {
-          where: {
-            territoire_code: {
-              in: profilsTerritoriaux.includes(profil) ? territoiresLectureIds : [...territoiresLectureIds, 'NAT-FR'],
-            },
-          },
-        },
-      },
-      orderBy: {
-        chantier_territoire: {
-          taux_avancement_mandat: {
-            sort: 'asc',
-            nulls: 'last',
-          },
-        },
-      },
-    }); */
   }
 
   async modifierMétéo(chantierId: string, territoireCode: string, météo: Météo) {

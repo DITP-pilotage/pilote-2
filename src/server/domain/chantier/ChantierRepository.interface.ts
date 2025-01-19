@@ -1,4 +1,8 @@
-import { chantier as ChantierPrisma } from '@prisma/client';
+import {
+  chantier_identite as PrismaChantierIdentite,
+  chantier_territoire as PrismaChantierTerritoire,
+  chantier_territoire_jalon as PrismaChantierTerritoireJalon,
+} from '@prisma/client';
 import Chantier, { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
@@ -11,8 +15,13 @@ import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import { FiltreQueryParams, SortingParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 
 export default interface ChantierRepository {
-  récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<ChantierPrisma[]>;
-  récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, filtres: FiltreQueryParams, sorting: SortingParams): Promise<ChantierPrisma[]>;
+  récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<(PrismaChantierIdentite & {
+    chantier_territoire: (PrismaChantierTerritoire & { chantier_territoire_jalon: PrismaChantierTerritoireJalon[] })[]
+  })>;
+  récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, filtres: FiltreQueryParams, sorting: SortingParams): Promise<(PrismaChantierTerritoire & {
+    chantier_identite: PrismaChantierIdentite
+    chantier_territoire_jalon: PrismaChantierTerritoireJalon[]
+  })[]>;
   récupérerChantiersSynthétisés(): Promise<ChantierSynthétisé[]>;
   getChantierStatistiques(habilitations: Habilitations, listeChantier: Chantier['id'][], maille: Maille): Promise<AvancementsStatistiques>;
   modifierMétéo(chantierId: string, territoireCode: string, météo: Météo): Promise<void>;
