@@ -120,7 +120,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
   }
   
   async récupérerChantierIdAssocié(id: string): Promise<string> {
-    const indicateur = await this.prisma.indicateur.findFirst({
+    const indicateur = await this.prisma.indicateur_identite.findFirst({
       where: {
         id,
       },

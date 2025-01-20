@@ -250,14 +250,14 @@ class Dependencies {
       globalForPrisma.prisma = prisma;
     }
 
-    this._chantierRepository = new ChantierSQLRepository(prisma);
+    this._chantierRepository = new ChantierSQLRepository();
     this._axeRepository = new AxeSQLRepository(prisma);
     this._ministèreRepository = new MinistèreSQLRepository(prisma);
     this._indicateurRepository = new IndicateurSQLRepository(prisma);
     this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
-    this._commentaireRepository = new CommentaireSQLRepository(prisma);
+    this._commentaireRepository = new CommentaireSQLRepository();
     this._objectifRepository = new ObjectifSQLRepository(prisma);
-    this._décisionStratégiqueRepository = new DécisionStratégiqueSQLRepository(prisma);
+    this._décisionStratégiqueRepository = new DécisionStratégiqueSQLRepository();
     this._utilisateurRepository = new UtilisateurSQLRepository();
     this._authentificationUtilisateurRepository = new PrismaUtilisateurRepository(prisma);
     this._authentificationProfilRepository = new PrismaProfilRepository(prisma);
