@@ -36,7 +36,7 @@ import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteCh
 import { Chantier } from '@/server/chantiers/domain/Chantier';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import { RecupererMeteosChantiersUseCase } from '@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase';
+import { RecupererRepartitionsMeteoChantiersUseCase } from '@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase';
 import { presenterEnRépartitionsMétéosChantiersContrat } from '@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import IndexStyled from './index.styled';
@@ -133,7 +133,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     filtresComptesCalculés,
   } = Chantier.recupererStatistiqueListeChantier(chantiers, mailleChantier, territoireCode);
 
-  const repartitionMeteosChantiers = await new RecupererMeteosChantiersUseCase({
+  const repartitionMeteosChantiers = await new RecupererRepartitionsMeteoChantiersUseCase({
     chantierRepository: dependencies.getChantierRepository(),
   }).run(session.habilitations, session.profil, territoireCode, mailleGlobalTerritoireSelectionnee === 'régionale' ? 'REG' : 'DEPT', axes, filtres, sorting).then(presenterEnRépartitionsMétéosChantiersContrat);
 

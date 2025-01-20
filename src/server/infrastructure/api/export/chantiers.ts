@@ -38,6 +38,7 @@ export default async function handleExportDesChantiers(request: NextApiRequest, 
       estTerritorialise: request.query.estTerritorialise === 'true',
       listeStatuts: request.query.statut ? Array.isArray(request.query.statut) ? request.query.statut : [request.query.statut] as string[] : [],
       listeChantierId: request.query.listeChantierId ? (request.query.listeChantierId as string).split(',') : [],
+      listeMeteos: request.query.meteos ? Array.isArray(request.query.meteos) ? request.query.meteos : [request.query.meteos] as string[] : [],
     },
   })) {
     for (const chantierPourExport of partialResult) {

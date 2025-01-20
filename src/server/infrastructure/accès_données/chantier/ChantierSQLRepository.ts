@@ -139,6 +139,12 @@ export default class ChantierSQLRepository implements ChantierRepository {
       };
     }
 
+    if (optionsExport.listeMeteos && optionsExport.listeMeteos.length > 0) {
+      whereOptions.meteo = {
+        in: optionsExport.listeMeteos as Météo[],
+      };
+    }
+
     if (optionsExport.perimetreIds && optionsExport.perimetreIds.length > 0) {
       whereOptions.perimetre_ids = {
         hasSome: optionsExport.perimetreIds,

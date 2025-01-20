@@ -43,6 +43,7 @@ const ExportDesDonnées: FunctionComponent<{ listeChantierId: string[] }> = ({ l
 
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
+    meteos: parseAsString.withDefault(''),
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
     statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']).withDefault('PUBLIE'),
@@ -56,6 +57,7 @@ const ExportDesDonnées: FunctionComponent<{ listeChantierId: string[] }> = ({ l
     value: filtrePerimetreMinisteriel,
   }));
 
+
   if (listeChantierId.length > 0) {
     arrayOptionsExport.push({ name: 'listeChantierId', value: listeChantierId.join(',') });
   }
@@ -64,6 +66,11 @@ const ExportDesDonnées: FunctionComponent<{ listeChantierId: string[] }> = ({ l
     arrayOptionsExport.push({ name: 'estBarometre', value: true });
   }
 
+  (filtres.meteos.split(',').filter(Boolean).forEach(filtreMeteo => {
+    arrayOptionsExport.push({ name: 'meteos', value: filtreMeteo });
+  }));
+
+
   if (filtres.estTerritorialise) {
     arrayOptionsExport.push({ name: 'estTerritorialise', value: true });
   }
@@ -71,7 +78,6 @@ const ExportDesDonnées: FunctionComponent<{ listeChantierId: string[] }> = ({ l
   (filtres.statut === 'BROUILLON' ? ['PUBLIE'] : filtres.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : ['PUBLIE']).forEach(statut => {
     arrayOptionsExport.push({ name: 'statut', value: statut });
   });
-
 
   return (
     <Modale

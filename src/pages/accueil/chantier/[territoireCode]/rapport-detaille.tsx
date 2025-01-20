@@ -45,7 +45,7 @@ import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryPa
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import { presenterEnRépartitionsMétéosChantiersContrat } from '@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat';
-import { RecupererMeteosChantiersUseCase } from '@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase';
+import { RecupererRepartitionsMeteoChantiersUseCase } from '@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase';
 
 interface NextPageRapportDétailléProps {
   chantiers: ChantierRapportDetailleContrat[]
@@ -139,7 +139,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   )
     .run(session.habilitations, session.profil, territoireCode, mailleChantier || 'departementale', ministères, mapAxes, filtres, sorting);
 
-  const repartitionMeteosChantiers = await new RecupererMeteosChantiersUseCase({
+  const repartitionMeteosChantiers = await new RecupererRepartitionsMeteoChantiersUseCase({
     chantierRepository: dependencies.getChantierRepository(),
   }).run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'regionale' ? 'REG' : 'DEPT', axes, filtres, sorting).then(presenterEnRépartitionsMétéosChantiersContrat);
 

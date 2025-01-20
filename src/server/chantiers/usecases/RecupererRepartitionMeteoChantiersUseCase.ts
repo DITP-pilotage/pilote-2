@@ -11,7 +11,7 @@ interface Dependencies {
   chantierRepository: ChantierRepository
 }
 
-export class RecupererMeteosChantiersUseCase {
+export class RecupererRepartitionsMeteoChantiersUseCase {
   private chantierRepository: ChantierRepository;
 
   constructor({ chantierRepository }: Dependencies) {
@@ -27,7 +27,7 @@ export class RecupererMeteosChantiersUseCase {
       perimetres: filtres.perimetres,
       axes: filtres.axes.map(filtre => axes.find(axe => axe.id === filtre)!.nom),
       statut: filtres.statut,
-      meteos: filtres.meteos,
+      meteos: [],
       estTerritorialise: filtres.estTerritorialise,
       estBarometre: filtres.estBarometre,
       valeurDeLaRecherche: filtres.valeurDeLaRecherche,
@@ -60,7 +60,7 @@ export class RecupererMeteosChantiersUseCase {
       nombreNuage: 0,
       nombreSoleil: 0,
     });
-    console.log({ 'repartitions': repartitions });
+
     return RepartitionMeteoChantiers.creerRepartitionMeteoChantiers(repartitions);
   }
 }

@@ -23,7 +23,7 @@ const verifierOptionStatut = (optionsExport: OptionsExport, chantierStatut: stri
 };
 
 const verifierOptionMeteo = (optionsExport: OptionsExport, chantierMeteo: string | null) => {
-  return chantierMeteo ? optionsExport.listeMeteos.length > 0 ? optionsExport.listeMeteos.includes(chantierMeteo) : true : true;
+  return optionsExport.listeMeteos.length > 0 ? chantierMeteo ? optionsExport.listeMeteos.includes(chantierMeteo) : false : true ;
 };
 
 export class ExportCsvDesChantiersUseCase {
