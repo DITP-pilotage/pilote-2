@@ -22,6 +22,7 @@ const optionsExport: OptionsExport = {
   estBarometre: false,
   listeStatuts: [],
   listeChantierId: [],
+  listeMeteos: [],
 };
 
 describe('ExportCsvDesChantiersSansFiltreUseCase', () => {

@@ -21,7 +21,6 @@ import Ministère from '@/server/domain/ministère/Ministère.interface';
 import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
-  RépartitionsMétéos,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import Axe from '@/server/domain/axe/Axe.interface';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
@@ -31,6 +30,7 @@ import {
 } from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo.interface';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import FiltresSélectionnés from './FiltresSélectionnés/FiltresSélectionnés';
 
 interface PageRapportDétailléProps {
@@ -47,7 +47,7 @@ interface PageRapportDétailléProps {
   filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
-  répartitionMétéos: RépartitionsMétéos
+  repartitionMeteosChantiers: RepartitionMeteoContrat
   estAutoriseAVoirLesBrouillons: boolean
   mapDonnéesCartographieAvancement: Map<string, AvancementsGlobauxTerritoriauxMoyensContrat>
   mapDonnéesCartographieMétéo: Map<string, CartographieDonnéesMétéo>
@@ -71,7 +71,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   filtresComptesCalculés,
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
-  répartitionMétéos,
+  repartitionMeteosChantiers,
   estAutoriseAVoirLesBrouillons,
   territoireCode,
   mapDonnéesCartographieAvancement,
@@ -143,7 +143,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
               chantiers={chantiersFiltrés}
               filtresComptesCalculés={filtresComptesCalculés}
               mailleSelectionnee={mailleSelectionnee}
-              répartitionMétéos={répartitionMétéos}
+              repartitionMeteosChantiers={repartitionMeteosChantiers}
               territoireCode={territoireCode}
             />
             {

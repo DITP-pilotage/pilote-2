@@ -22,6 +22,10 @@ const verifierOptionStatut = (optionsExport: OptionsExport, chantierStatut: stri
   return chantierStatut ? optionsExport.listeStatuts.length > 0 ? optionsExport.listeStatuts.includes(chantierStatut) : true : true;
 };
 
+const verifierOptionMeteo = (optionsExport: OptionsExport, chantierMeteo: string | null) => {
+  return chantierMeteo ? optionsExport.listeMeteos.length > 0 ? optionsExport.listeMeteos.includes(chantierMeteo) : true : true;
+};
+
 export class ExportCsvDesChantiersUseCase {
   public static readonly NOMS_COLONNES = [
     'Maille',
@@ -68,7 +72,12 @@ export class ExportCsvDesChantiersUseCase {
       const partialChantierIds = chantierIdsLecture.slice(i, i + chantierChunkSize);
       const partialResult = await this._chantierRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
       yield partialResult
-        .filter(chantier => !this.masquerChantierPourProfilDROM(profil, chantier) && verifierOptionPerimetreIds(optionsExport, chantier.périmètreIds) && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, chantier.estBaromètre, chantier.estTerritorialisé) && verifierOptionStatut(optionsExport, chantier.statut))
+        .filter(chantier => !this.masquerChantierPourProfilDROM(profil, chantier) 
+          && verifierOptionPerimetreIds(optionsExport, chantier.périmètreIds) 
+          && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, chantier.estBaromètre, chantier.estTerritorialisé) 
+          && verifierOptionStatut(optionsExport, chantier.statut)
+          && verifierOptionMeteo(optionsExport, chantier.météo),
+        )
         .map(chantier => this.transformer(chantier, profil));
     }
   }
