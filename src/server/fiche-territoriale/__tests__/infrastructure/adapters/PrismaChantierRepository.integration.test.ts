@@ -14,78 +14,115 @@ describe('PrismaChantierRepository', () => {
         // Given
         const territoireCode = 'DEPT-34';
 
-        await prisma.chantier.create({
-          data: {
+        await prisma.chantier_identite.createMany({
+          data: [{
             id: 'CH-001',
             est_barometre: true,
-            nom: 'Un nom de chantier 1',
-            code_insee: '04',
-            maille: 'DEPT',
-            territoire_code: 'DEPT-34',
-            meteo: 'SOLEIL',
-            a_taux_avancement_regional: true,
-            a_meteo_regional: true,
-            a_taux_avancement_departemental: true,
-            a_meteo_departemental: true,
+            nom: 'Chantier 001',
+            possede_taux_avancement_regional: true,
+            possede_meteo_regional: true,
+            possede_taux_avancement_departemental: true,
+            possede_meteo_departemental: true,
             est_territorialise: true,
-            taux_avancement: null,
-            taux_avancement_annuel: null,
             ministeres: ['1009'],
-          },
-        });
-
-        await prisma.chantier.create({
-          data: {
+          }, {
             id: 'CH-002',
             est_barometre: true,
-            nom: 'Un nom de chantier 2',
-            code_insee: '04',
-            maille: 'DEPT',
-            meteo: null,
-            territoire_code: 'DEPT-34',
-            a_taux_avancement_departemental: true,
-            a_meteo_departemental: true,
+            nom: 'Chantier 002',
+            possede_taux_avancement_regional: true,
+            possede_meteo_regional: true,
+            possede_taux_avancement_departemental: true,
+            possede_meteo_departemental: true,
             est_territorialise: true,
-            taux_avancement: 2,
-            taux_avancement_annuel: 2,
             ministeres: ['1010'],
-          },
-        });
-
-        await prisma.chantier.create({
-          data: {
+          }, {
             id: 'CH-004',
             est_barometre: true,
-            nom: 'Un nom de chantier 4',
-            code_insee: '87',
-            maille: 'DEPT',
-            meteo: 'NUAGEUX',
-            territoire_code: 'DEPT-87',
-            a_taux_avancement_departemental: true,
-            a_meteo_departemental: true,
+            nom: 'Chantier 004',
+            possede_taux_avancement_regional: true,
+            possede_meteo_regional: true,
+            possede_taux_avancement_departemental: true,
+            possede_meteo_departemental: true,
             est_territorialise: true,
-            taux_avancement: null,
-            taux_avancement_annuel: null,
             ministeres: ['1011'],
-          },
-        });
-
-        await prisma.chantier.create({
-          data: {
+          }, {
             id: 'CH-003',
             est_barometre: true,
-            nom: 'Un nom de chantier 3',
+            nom: 'Chantier 003',
+            possede_taux_avancement_regional: true,
+            possede_meteo_regional: true,
+            possede_taux_avancement_departemental: true,
+            possede_meteo_departemental: true,
+            est_territorialise: true,
+            ministeres: ['1012'],
+          }],
+        });
+        await prisma.chantier_territoire.createMany({
+          data: [{
+            id: 'CH-001',
+            zone_id: 'D34',
+            code_insee: '34',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-34',
+            taux_avancement_mandat: null,
+            meteo: 'SOLEIL',
+          }, {
+            id: 'CH-002',
+            zone_id: 'D34',
+            code_insee: '34',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-34',
+            taux_avancement_mandat: 2,
+            meteo: null,
+          }, {
+            id: 'CH-004',
+            zone_id: 'D87',
+            code_insee: '87',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-87',
+            taux_avancement_mandat: null,
+            meteo: 'NUAGEUX',
+          }, {
+            id: 'CH-003',
+            zone_id: 'R01',
             code_insee: '01',
             maille: 'REG',
-            meteo: 'ORAGE',
             territoire_code: 'REG-01',
-            a_taux_avancement_departemental: true,
-            a_meteo_departemental: true,
-            est_territorialise: true,
+            taux_avancement_mandat: 1,
+            meteo: 'ORAGE',
+          }],
+        });
+
+        await prisma.chantier_territoire_jalon.createMany({
+          data: [{
+            id: 'CH-001',
+            jalon: '2025',
+            code_insee: '34',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-34',
+            taux_avancement: null,
+          }, {
+            id: 'CH-002',
+            jalon: '2025',
+            code_insee: '34',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-34',
+            taux_avancement: 2,
+          }, {
+            id: 'CH-004',
+            jalon: '2025',
+            code_insee: '87',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-87',
+            taux_avancement: null,
+          }, {
+            id: 'CH-003',
+            jalon: '2025',
+            code_insee: '01',
+            maille: 'REG',
+            territoire_code: 'REG-01',
             taux_avancement: 1,
-            taux_avancement_annuel: 1,
-            ministeres: ['1012'],
-          },
+          }],
         });
 
         // When
@@ -99,14 +136,14 @@ describe('PrismaChantierRepository', () => {
             tauxAvancement: null,
             tauxAvancementAnnuel: null,
             meteo: 'SOLEIL',
-            nom: 'Un nom de chantier 1',
+            nom: 'Chantier 001',
             codeMinisterePorteur: '1009',
           }, {
             id: 'CH-002',
             tauxAvancement: 2,
             tauxAvancementAnnuel: 2,
             meteo: null,
-            nom: 'Un nom de chantier 2',
+            nom: 'Chantier 002',
             codeMinisterePorteur: '1010',
           },
         ]);
@@ -116,47 +153,84 @@ describe('PrismaChantierRepository', () => {
         // Given
         const territoireCode = 'DEPT-34';
 
-        await prisma.chantier.create({
-          data: {
+        await prisma.chantier_identite.createMany({
+          data: [{
             id: 'CH-001',
             est_barometre: true,
-            nom: 'Un nom de chantier 1',
-            code_insee: '04',
-            maille: 'DEPT',
-            territoire_code: 'DEPT-34',
-            a_taux_avancement_departemental: false,
-            a_meteo_departemental: false,
+            nom: 'Chantier 001',
+            possede_taux_avancement_regional: false,
+            possede_meteo_regional: false,
+            possede_taux_avancement_departemental: false,
+            possede_meteo_departemental: false,
             est_territorialise: true,
-            taux_avancement: null,
-          },
-        });
-        await prisma.chantier.create({
-          data: {
+          }, {
             id: 'CH-002',
             est_barometre: true,
-            nom: 'Un nom de chantier 2',
-            code_insee: '04',
-            maille: 'DEPT',
-            territoire_code: 'DEPT-34',
-            a_taux_avancement_departemental: false,
-            a_meteo_departemental: false,
+            nom: 'Chantier 002',
+            possede_taux_avancement_regional: false,
+            possede_meteo_regional: false,
+            possede_taux_avancement_departemental: false,
+            possede_meteo_departemental: false,
             est_territorialise: false,
-            taux_avancement: 2,
-          },
-        });
-        await prisma.chantier.create({
-          data: {
+          }, {
             id: 'CH-003',
             est_barometre: true,
-            nom: 'Un nom de chantier 3',
+            nom: 'Chantier 003',
+            possede_taux_avancement_regional: true,
+            possede_meteo_regional: true,
+            possede_taux_avancement_departemental: true,
+            possede_meteo_departemental: true,
+            est_territorialise: true,
+          }],
+        });
+        await prisma.chantier_territoire.createMany({
+          data: [{
+            id: 'CH-001',
+            zone_id: 'D34',
+            code_insee: '34',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-34',
+            taux_avancement_mandat: null,
+          }, {
+            id: 'CH-002',
+            zone_id: 'D34',
+            code_insee: '34',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-34',
+            taux_avancement_mandat: 2,
+          }, {
+            id: 'CH-003',
+            zone_id: 'R01',
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
-            a_taux_avancement_departemental: false,
-            a_meteo_departemental: true,
-            est_territorialise: false,
+            taux_avancement_mandat: 1,
+          }],
+        });
+
+        await prisma.chantier_territoire_jalon.createMany({
+          data: [{
+            id: 'CH-001',
+            jalon: '2025',
+            code_insee: '34',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-34',
+            taux_avancement: null,
+          }, {
+            id: 'CH-002',
+            jalon: '2025',
+            code_insee: '34',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-34',
+            taux_avancement: 2,
+          }, {
+            id: 'CH-003',
+            jalon: '2025',
+            code_insee: '01',
+            maille: 'REG',
+            territoire_code: 'REG-01',
             taux_avancement: 1,
-          },
+          }],
         });
 
         // When
@@ -174,49 +248,84 @@ describe('PrismaChantierRepository', () => {
         // Given
         const territoireCode = 'DEPT-34';
 
-        await prisma.chantier.create({
-          data: {
+        await prisma.chantier_identite.createMany({
+          data: [{
             id: 'CH-001',
             est_barometre: true,
-            nom: 'Un nom de chantier 1',
-            code_insee: '04',
-            maille: 'DEPT',
-            territoire_code: 'DEPT-34',
-            a_taux_avancement_departemental: false,
-            a_meteo_departemental: false,
+            nom: 'Chantier 001',
+            possede_taux_avancement_regional: false,
+            possede_meteo_regional: false,
+            possede_taux_avancement_departemental: false,
+            possede_meteo_departemental: false,
             est_territorialise: true,
-            taux_avancement: null,
-          },
-        });
-
-        await prisma.chantier.create({
-          data: {
+          }, {
             id: 'CH-002',
             est_barometre: false,
-            nom: 'Un nom de chantier 2',
-            code_insee: '04',
-            maille: 'DEPT',
-            territoire_code: 'DEPT-34',
-            a_taux_avancement_departemental: false,
-            a_meteo_departemental: false,
+            nom: 'Chantier 002',
+            possede_taux_avancement_regional: false,
+            possede_meteo_regional: false,
+            possede_taux_avancement_departemental: false,
+            possede_meteo_departemental: false,
             est_territorialise: true,
-            taux_avancement: 2,
-          },
-        });
-
-        await prisma.chantier.create({
-          data: {
+          }, {
             id: 'CH-003',
             est_barometre: true,
-            nom: 'Un nom de chantier 3',
+            nom: 'Chantier 003',
+            possede_taux_avancement_regional: true,
+            possede_meteo_regional: true,
+            possede_taux_avancement_departemental: true,
+            possede_meteo_departemental: true,
+            est_territorialise: true,
+          }],
+        });
+        await prisma.chantier_territoire.createMany({
+          data: [{
+            id: 'CH-001',
+            zone_id: 'D34',
+            code_insee: '34',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-34',
+            taux_avancement_mandat: null,
+          }, {
+            id: 'CH-002',
+            zone_id: 'D34',
+            code_insee: '34',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-34',
+            taux_avancement_mandat: 2,
+          }, {
+            id: 'CH-003',
+            zone_id: 'R01',
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
-            a_taux_avancement_departemental: false,
-            a_meteo_departemental: true,
-            est_territorialise: false,
+            taux_avancement_mandat: 1,
+          }],
+        });
+
+        await prisma.chantier_territoire_jalon.createMany({
+          data: [{
+            id: 'CH-001',
+            jalon: '2025',
+            code_insee: '34',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-34',
+            taux_avancement: null,
+          }, {
+            id: 'CH-002',
+            jalon: '2025',
+            code_insee: '34',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-34',
+            taux_avancement: 2,
+          }, {
+            id: 'CH-003',
+            jalon: '2025',
+            code_insee: '01',
+            maille: 'REG',
+            territoire_code: 'REG-01',
             taux_avancement: 1,
-          },
+          }],
         });
 
         // When
@@ -238,68 +347,111 @@ describe('PrismaChantierRepository', () => {
         // Given
         const territoireCode = 'REG-01';
 
-        await prisma.chantier.create({
-          data: {
+        await prisma.chantier_identite.createMany({
+          data: [{
             id: 'CH-001',
             est_barometre: true,
-            nom: 'Un nom de chantier 1',
-            code_insee: '04',
-            maille: 'REG',
-            territoire_code: 'REG-01',
-            a_taux_avancement_regional: true,
-            a_meteo_departemental: true,
+            nom: 'Chantier 001',
+            possede_taux_avancement_regional: true,
+            possede_meteo_regional: true,
+            possede_taux_avancement_departemental: true,
+            possede_meteo_departemental: true,
             est_territorialise: true,
-            taux_avancement: null,
-            taux_avancement_annuel: null,
-          },
-        });
-
-        await prisma.chantier.create({
-          data: {
+            ministeres: ['1009'],
+          }, {
             id: 'CH-002',
             est_barometre: true,
-            nom: 'Un nom de chantier 2',
-            code_insee: '04',
-            maille: 'REG',
-            territoire_code: 'REG-01',
-            a_taux_avancement_regional: true,
-            a_meteo_departemental: true,
+            nom: 'Chantier 002',
+            possede_taux_avancement_regional: true,
+            possede_meteo_regional: true,
+            possede_taux_avancement_departemental: true,
+            possede_meteo_departemental: true,
             est_territorialise: true,
-            taux_avancement: 2,
-            taux_avancement_annuel: 2,
-          },
-        });
-
-        await prisma.chantier.create({
-          data: {
+            ministeres: ['1010'],
+          }, {
             id: 'CH-004',
             est_barometre: true,
-            nom: 'Un nom de chantier 4',
-            code_insee: '87',
-            maille: 'REG',
-            territoire_code: 'REG-02',
-            a_taux_avancement_regional: true,
-            a_meteo_departemental: true,
+            nom: 'Chantier 004',
+            possede_taux_avancement_regional: true,
+            possede_meteo_regional: true,
+            possede_taux_avancement_departemental: true,
+            possede_meteo_departemental: true,
             est_territorialise: true,
-            taux_avancement: null,
-            taux_avancement_annuel: null,
-          },
-        });
-
-        await prisma.chantier.create({
-          data: {
+            ministeres: ['1011'],
+          }, {
             id: 'CH-003',
             est_barometre: true,
-            nom: 'Un nom de chantier 3',
+            nom: 'Chantier 003',
+            possede_taux_avancement_regional: true,
+            possede_meteo_regional: true,
+            possede_taux_avancement_departemental: true,
+            possede_meteo_departemental: true,
+            est_territorialise: true,
+            ministeres: ['1012'],
+          }],
+        });
+        await prisma.chantier_territoire.createMany({
+          data: [{
+            id: 'CH-001',
+            zone_id: 'R01',
             code_insee: '01',
+            maille: 'REG',
+            territoire_code: 'REG-01',
+            taux_avancement_mandat: null,
+          }, {
+            id: 'CH-002',
+            zone_id: 'R01',
+            code_insee: '01',
+            maille: 'REG',
+            territoire_code: 'REG-01',
+            taux_avancement_mandat: 2,
+          }, {
+            id: 'CH-004',
+            zone_id: 'R02',
+            code_insee: '02',
+            maille: 'REG',
+            territoire_code: 'REG-02',
+            taux_avancement_mandat: null,
+          }, {
+            id: 'CH-003',
+            zone_id: 'D34',
+            code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
-            a_taux_avancement_departemental: true,
-            a_meteo_departemental: true,
-            est_territorialise: true,
+            taux_avancement_mandat: 1,
+          }],
+        });
+
+        await prisma.chantier_territoire_jalon.createMany({
+          data: [{
+            id: 'CH-001',
+            jalon: '2025',
+            code_insee: '01',
+            maille: 'REG',
+            territoire_code: 'REG-01',
+            taux_avancement: null,
+          }, {
+            id: 'CH-002',
+            jalon: '2025',
+            code_insee: '01',
+            maille: 'REG',
+            territoire_code: 'REG-01',
+            taux_avancement: 2,
+          }, {
+            id: 'CH-004',
+            jalon: '2025',
+            code_insee: '02',
+            maille: 'REG',
+            territoire_code: 'REG-02',
+            taux_avancement: null,
+          }, {
+            id: 'CH-003',
+            jalon: '2025',
+            code_insee: '34',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-34',
             taux_avancement: 1,
-            taux_avancement_annuel: 1,
-          },
+          }],
         });
 
         // When
@@ -321,49 +473,84 @@ describe('PrismaChantierRepository', () => {
         // Given
         const territoireCode = 'REG-01';
 
-        await prisma.chantier.create({
-          data: {
+        await prisma.chantier_identite.createMany({
+          data: [{
             id: 'CH-001',
             est_barometre: true,
-            nom: 'Un nom de chantier 1',
-            code_insee: '04',
-            maille: 'REG',
-            territoire_code: 'REG-01',
-            a_taux_avancement_regional: false,
-            a_meteo_regional: false,
+            nom: 'Chantier 001',
+            possede_taux_avancement_regional: true,
+            possede_meteo_regional: true,
+            possede_taux_avancement_departemental: true,
+            possede_meteo_departemental: true,
             est_territorialise: true,
-            taux_avancement: null,
-          },
-        });
-        await prisma.chantier.create({
-          data: {
+          }, {
             id: 'CH-002',
             est_barometre: true,
-            nom: 'Un nom de chantier 2',
-            code_insee: '04',
-            maille: 'REG',
-            territoire_code: 'REG-01',
-            a_taux_avancement_regional: false,
-            a_meteo_regional: false,
+            nom: 'Chantier 002',
+            possede_taux_avancement_regional: true,
+            possede_meteo_regional: true,
+            possede_taux_avancement_departemental: true,
+            possede_meteo_departemental: true,
             est_territorialise: false,
-            taux_avancement: 2,
-          },
-        });
-        await prisma.chantier.create({
-          data: {
+          }, {
             id: 'CH-003',
             est_barometre: true,
-            nom: 'Un nom de chantier 3',
+            nom: 'Chantier 003',
+            possede_taux_avancement_regional: true,
+            possede_meteo_regional: true,
+            possede_taux_avancement_departemental: true,
+            possede_meteo_departemental: true,
+            est_territorialise: true,
+          }],
+        });
+        await prisma.chantier_territoire.createMany({
+          data: [{
+            id: 'CH-001',
+            zone_id: 'R01',
             code_insee: '01',
+            maille: 'REG',
+            territoire_code: 'REG-01',
+            taux_avancement_mandat: null,
+          }, {
+            id: 'CH-002',
+            zone_id: 'R01',
+            code_insee: '01',
+            maille: 'REG',
+            territoire_code: 'REG-01',
+            taux_avancement_mandat: 2,
+          }, {
+            id: 'CH-003',
+            zone_id: 'D34',
+            code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
-            a_taux_avancement_regional: true,
-            a_meteo_regional: true,
-            est_territorialise: true,
-            a_meteo_departemental: true,
-            a_taux_avancement_departemental: true,
+            taux_avancement_mandat: 1,
+          }],
+        });
+
+        await prisma.chantier_territoire_jalon.createMany({
+          data: [{
+            id: 'CH-001',
+            jalon: '2025',
+            code_insee: '01',
+            maille: 'REG',
+            territoire_code: 'REG-01',
+            taux_avancement: null,
+          }, {
+            id: 'CH-002',
+            jalon: '2025',
+            code_insee: '01',
+            maille: 'REG',
+            territoire_code: 'REG-01',
+            taux_avancement: 2,
+          }, {
+            id: 'CH-003',
+            jalon: '2025',
+            code_insee: '34',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-34',
             taux_avancement: 1,
-          },
+          }],
         });
 
         // When
@@ -381,49 +568,84 @@ describe('PrismaChantierRepository', () => {
         // Given
         const territoireCode = 'REG-01';
 
-        await prisma.chantier.create({
-          data: {
+        await prisma.chantier_identite.createMany({
+          data: [{
             id: 'CH-001',
             est_barometre: true,
-            nom: 'Un nom de chantier 1',
-            code_insee: '01',
-            maille: 'REG',
-            territoire_code: 'REG-01',
-            a_taux_avancement_regional: false,
-            a_meteo_regional: false,
+            nom: 'Chantier 001',
+            possede_taux_avancement_regional: true,
+            possede_meteo_regional: true,
+            possede_taux_avancement_departemental: true,
+            possede_meteo_departemental: true,
             est_territorialise: true,
-            taux_avancement: null,
-          },
-        });
-
-        await prisma.chantier.create({
-          data: {
+          }, {
             id: 'CH-002',
             est_barometre: false,
-            nom: 'Un nom de chantier 2',
+            nom: 'Chantier 002',
+            possede_taux_avancement_regional: true,
+            possede_meteo_regional: true,
+            possede_taux_avancement_departemental: true,
+            possede_meteo_departemental: true,
+            est_territorialise: true,
+          }, {
+            id: 'CH-003',
+            est_barometre: true,
+            nom: 'Chantier 003',
+            possede_taux_avancement_regional: true,
+            possede_meteo_regional: true,
+            possede_taux_avancement_departemental: true,
+            possede_meteo_departemental: true,
+            est_territorialise: true,
+          }],
+        });
+        await prisma.chantier_territoire.createMany({
+          data: [{
+            id: 'CH-001',
+            zone_id: 'R01',
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
-            a_taux_avancement_regional: false,
-            a_meteo_regional: false,
-            est_territorialise: true,
-            taux_avancement: 2,
-          },
-        });
-
-        await prisma.chantier.create({
-          data: {
+            taux_avancement_mandat: null,
+          }, {
+            id: 'CH-002',
+            zone_id: 'R01',
+            code_insee: '01',
+            maille: 'REG',
+            territoire_code: 'REG-01',
+            taux_avancement_mandat: 2,
+          }, {
             id: 'CH-003',
-            est_barometre: true,
-            nom: 'Un nom de chantier 3',
+            zone_id: 'D34',
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
-            a_taux_avancement_regional: false,
-            a_meteo_regional: true,
-            est_territorialise: false,
+            taux_avancement_mandat: 1,
+          }],
+        });
+
+        await prisma.chantier_territoire_jalon.createMany({
+          data: [{
+            id: 'CH-001',
+            jalon: '2025',
+            code_insee: '01',
+            maille: 'REG',
+            territoire_code: 'REG-01',
+            taux_avancement: null,
+          }, {
+            id: 'CH-002',
+            jalon: '2025',
+            code_insee: '01',
+            maille: 'REG',
+            territoire_code: 'REG-01',
+            taux_avancement: 2,
+          }, {
+            id: 'CH-003',
+            jalon: '2025',
+            code_insee: '34',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-34',
             taux_avancement: 1,
-          },
+          }],
         });
 
         // When
