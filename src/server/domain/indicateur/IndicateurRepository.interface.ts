@@ -16,11 +16,11 @@ import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 export default interface IndicateurRepository {
   récupérerChantierIdAssocié(indicateurId: string): Promise<string>
   récupérerDétailsParMailles(IndicateurId: string, habilitations: Habilitations, profil: ProfilCode): Promise<DétailsIndicateurMailles>
-  récupérerDétailsTerritoire(indicateurId: string, habilitations: Habilitations, profil: ProfilCode): Promise<DétailsIndicateurTerritoire>
+  récupérerDétailsTerritoirePourUnIndicateur(indicateurId: string, habilitations: Habilitations, profil: ProfilCode): Promise<DétailsIndicateurTerritoire>
   récupérerParChantierId(chantierId: string): Promise<Indicateur[]>;
-  récupérerDétails(indicateurId: string, maille: Maille): Promise<DétailsIndicateurs>;
+  récupérerDétailsParIndicIdEtMaille(indicateurId: string, maille: Maille): Promise<DétailsIndicateurs>;
   récupererDétailsParChantierIdEtTerritoire(chantierId: string, territoireCodes: string[]): Promise<DétailsIndicateurs>;
-  récupérerGroupésParChantier(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<string, Indicateur[]>>
+  récupérerGroupésParChantier(chantiersIds: Chantier['id'][]): Promise<Record<string, Indicateur[]>>
   récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], DétailsIndicateurs>>
   récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[]): Promise<IndicateurPourExport[]>;
 }

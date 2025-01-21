@@ -197,7 +197,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   const chantiersIds = chantiers.map(chantier => chantier.id);
 
   const indicateursRepository = dependencies.getIndicateurRepository();
-  const indicateursGroupésParChantier = await indicateursRepository.récupérerGroupésParChantier(chantiersIds, mailleChantier, codeInseeSelectionne);
+  const indicateursGroupésParChantier = await indicateursRepository.récupérerGroupésParChantier(chantiersIds);
   const détailsIndicateursGroupésParChantier = await indicateursRepository.récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds, mailleChantier, codeInseeSelectionne);
 
   const synthèseDesRésultatsRepository = dependencies.getSynthèseDesRésultatsRepository();

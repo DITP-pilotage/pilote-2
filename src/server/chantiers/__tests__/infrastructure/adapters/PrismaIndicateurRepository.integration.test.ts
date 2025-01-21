@@ -29,6 +29,7 @@ describe('PrismaIndicateurRepository', () => {
         territoire_code: 'NAT-FR',
       },
     });
+
     await prisma.indicateur_identite.create({
       data: {
         id: 'IND-001',
@@ -37,28 +38,26 @@ describe('PrismaIndicateurRepository', () => {
         type_id: 'IMPACT',
       },
     });
-    await prisma.indicateur_territoire.create({
-      data: {
+
+    await prisma.indicateur_territoire.createMany({
+      data: [{
         id: 'IND-001',
         code_insee: 'FR',
         maille: 'NAT',
         zone_id: 'FRANCE',
         territoire_code: 'NAT-FR',
         ponderation_zone_reel: 20,
-      },
-    });
-    await prisma.indicateur_territoire.create({
-      data: {
+      }, {
         id: 'IND-001',
         code_insee: '01',
         maille: 'REG',
         zone_id: 'D51',
         territoire_code: 'REG-01',
         ponderation_zone_reel: 20,
-      },
+      }],
     });
-    await prisma.indicateur_territoire_jalon.create({
-      data: {
+    await prisma.indicateur_territoire_jalon.createMany({
+      data: [{
         id: 'IND-001',
         code_insee: 'FR',
         maille: 'NAT',
@@ -68,11 +67,7 @@ describe('PrismaIndicateurRepository', () => {
         date_valeur_cible: new Date('2024-12-06'),
         taux_avancement: 13,
         jalon: '2024',
-      },
-    });
-
-    await prisma.indicateur_territoire_jalon.create({
-      data: {
+      }, {
         id: 'IND-001',
         code_insee: 'FR',
         maille: 'NAT',
@@ -81,11 +76,8 @@ describe('PrismaIndicateurRepository', () => {
         valeur_cible: 22,
         date_valeur_cible: new Date('2025-12-06'),
         taux_avancement: 13,
-        jalon: '2025',
-      },
-    });
-    await prisma.indicateur_territoire_jalon.create({
-      data: {
+        jalon: 2025,
+      }, {
         id: 'IND-001',
         code_insee: '01',
         maille: 'REG',
@@ -94,9 +86,10 @@ describe('PrismaIndicateurRepository', () => {
         valeur_cible: 22,
         date_valeur_cible: new Date('2025-12-06'),
         taux_avancement: 13,
-        jalon: '2025',
-      },
+        jalon: 2025,
+      }],
     });
+
     // When
     const listeDonneesIndicateurs = await prismaIndicateurRepository.listerParIndicId({ indicId });
     // Then
@@ -154,7 +147,7 @@ describe('PrismaIndicateurRepository', () => {
         code_insee: 'FR',
         maille: 'NAT',
         zone_id: 'FRANCE',
-        jalon: '2025',
+        jalon: 2025,
         territoire_code: 'NAT-FR',
         taux_avancement_proposition: 30,
       },
@@ -176,7 +169,7 @@ describe('PrismaIndicateurRepository', () => {
           include: {
             indicateur_territoire_jalon: {
               where: {
-                jalon: '2025',
+                jalon: 2025,
                 territoire_code: 'NAT-FR',
               },
             },

@@ -34,7 +34,7 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
       },
       orderBy: { date: 'desc' },
     });
-  
+
     return décisionStratégiqueLaPlusRécente ? this.mapperVersDomaine(décisionStratégiqueLaPlusRécente) : null;
   }
 

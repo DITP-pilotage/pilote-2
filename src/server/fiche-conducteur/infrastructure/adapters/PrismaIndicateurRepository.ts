@@ -1,6 +1,10 @@
 import { indicateur_territoire as PrismaIndicateurTerritoire, indicateur_identite as PrismaIndicateurIdentite, indicateur_territoire_jalon as PrismaIndicateurTerritoireJalon, PrismaClient } from '@prisma/client';
 import { IndicateurRepository } from '@/server/fiche-conducteur/domain/ports/IndicateurRepository';
 import { Indicateur } from '@/server/fiche-conducteur/domain/Indicateur';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { configuration } from '@/config';
 
 const convertirEnIndicateur = (prismaIndicateurTerritoire: PrismaIndicateurTerritoire & { indicateur_identite: PrismaIndicateurIdentite, indicateur_territoire_jalon: PrismaIndicateurTerritoireJalon[] }): Indicateur => {
   return Indicateur.creerIndicateur({
@@ -35,7 +39,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         indicateur_identite: true,
         indicateur_territoire_jalon: {
           where: {
-            jalon: '2025',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
           },
         },
       },

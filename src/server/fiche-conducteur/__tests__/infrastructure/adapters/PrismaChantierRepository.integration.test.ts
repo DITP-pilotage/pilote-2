@@ -129,24 +129,27 @@ describe('PrismaChantierRepository', () => {
       await prisma.chantier_territoire_jalon.createMany({
         data: [{
           id: 'CH-168',
+          zone_id: 'FRANCE',
           code_insee: 'FR',
           maille: 'NAT',
           territoire_code: 'NAT-FR',
-          jalon: '2025',
+          jalon: 2025,
           taux_avancement: 9.2,
         }, {
           id: 'CH-168',
+          zone_id: 'D01',
           code_insee: '01',
           maille: 'DEPT',
           territoire_code: 'DEPT-01',
-          jalon: '2025',
+          jalon: 2025,
           taux_avancement: 13.3,
         }, {
           id: 'CH-168',
+          zone_id: 'D02',
           code_insee: '02',
           maille: 'DEPT',
           territoire_code: 'DEPT-02',
-          jalon: '2025',
+          jalon: 2025,
           taux_avancement: null,
         }],
       });

@@ -2256,16 +2256,15 @@ describe('ChantierSQLRepository', () => {
         });
 
         await prisma.chantier_territoire_jalon.createMany({
-          data: [
-            {
-              id: 'CH-001',
-              maille: 'DEPT',
-              jalon: '2025',
-              code_insee: '01',
-              territoire_code: 'DEPT-01',
-              taux_avancement: 25,
-            },
-          ],
+          data: [{
+            id: 'CH-001',
+            maille: 'DEPT',
+            zone_id: 'D01',
+            jalon: 2025,
+            code_insee: '01',
+            territoire_code: 'DEPT-01',
+            taux_avancement: 25,
+          }],
         });
 
         await prisma.commentaire.createMany({ data: [{

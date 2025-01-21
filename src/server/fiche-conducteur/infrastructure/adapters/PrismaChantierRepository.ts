@@ -2,6 +2,10 @@ import { chantier_territoire as ChantierTerritoireModel, chantier_identite as Ch
 import { ChantierRepository } from '@/server/fiche-conducteur/domain/ports/ChantierRepository';
 import { Chantier } from '@/server/fiche-conducteur/domain/Chantier';
 import { Meteo } from '@/server/fiche-conducteur/domain/Meteo';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { configuration } from '@/config';
 
 const convertirChantierTerritoireEnChantier = (chantierTerritoireModel: ChantierTerritoireModel & { chantier_identite: ChantierIdentiteModel, chantier_territoire_jalon: ChantierTerritoireJalonModel[] }): Chantier => {
   return Chantier.creerChantier({
@@ -52,7 +56,7 @@ export class PrismaChantierRepository implements ChantierRepository {
         chantier_identite: true,
         chantier_territoire_jalon: {
           where: {
-            jalon: '2025',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
           },
         },
       },
@@ -85,7 +89,7 @@ export class PrismaChantierRepository implements ChantierRepository {
           include: {
             chantier_territoire_jalon: {
               where: {
-                jalon: '2025',
+                jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
               },
             },
           },

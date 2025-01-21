@@ -136,7 +136,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           zone_id: 'FRANCE',
-          jalon: '2025',
+          jalon: 2025,
           taux_avancement: 10,
           valeur_cible: 20,
         }, {
@@ -145,7 +145,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           zone_id: 'FRANCE',
-          jalon: '2025',
+          jalon: 2025,
           taux_avancement: 11,
           valeur_cible: 21,
         }, {
@@ -154,7 +154,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'DEPT',
           territoire_code: 'DEPT-01',
           zone_id: 'D01',
-          jalon: '2025',
+          jalon: 2025,
           taux_avancement: 12,
           valeur_cible: 22,
         }, {
@@ -163,7 +163,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           zone_id: 'FRANCE',
-          jalon: '2025',
+          jalon: 2025,
           taux_avancement: 13,
           valeur_cible: 23,
         }, {
@@ -172,7 +172,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           zone_id: 'FRANCE',
-          jalon: '2025',
+          jalon: 2025,
           taux_avancement: 14,
           valeur_cible: 24,
         }, {
@@ -181,7 +181,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           zone_id: 'FRANCE',
-          jalon: '2025',
+          jalon: 2025,
           taux_avancement: 15,
           valeur_cible: 15,
         }],

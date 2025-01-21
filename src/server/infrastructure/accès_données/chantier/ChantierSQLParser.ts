@@ -18,7 +18,6 @@ class ErreurChantierSansMailleNationale extends Error {
 function créerDonnéesTerritoires(
   territoires: Territoire[],
   chantierRows: (PrismaChantierTerritoire & {
-    chantier_identite: PrismaChantierIdentite
     chantier_territoire_jalon: PrismaChantierTerritoireJalon[]
   })[],
 ) {
@@ -148,49 +147,6 @@ export function parseChantier(
   return result;
 }
 
-const créerDonnéesTerritoiresNew = (
-  territoires: Territoire[],
-  listeChantiersTerritoire: (PrismaChantierTerritoire & { chantier_territoire_jalon: PrismaChantierTerritoireJalon[] })[],
-)=>  {
-  let donnéesTerritoires: TerritoiresDonnées = {};
-
-  territoires.forEach(territoire => {
-    const chantierRow = listeChantiersTerritoire.find(chantierTerritoire => chantierTerritoire.territoire_code === territoire.code);
-
-    donnéesTerritoires[territoire.code] = {
-      territoireCode: territoire.code,
-      codeInsee: territoire.codeInsee,
-      avancement: { annuel: chantierRow?.chantier_territoire_jalon.at(0)?.taux_avancement ?? null, global: chantierRow?.taux_avancement_mandat ?? null },
-      avancementPrécédent: { annuel: null, global: chantierRow?.taux_avancement_mandat_valeur_precedente ?? null },
-      estApplicable: chantierRow?.est_applicable ?? null,
-      météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
-      écart: chantierRow?.ecart ?? null,
-      tendance: chantierRow?.tendance || null,
-      dateDeMàjDonnéesQualitatives: chantierRow?.derniere_maj_date_qualitative?.toISOString() || null,
-      dateDeMàjDonnéesQuantitatives: chantierRow?.date_taux_avancement_mandat?.toISOString()  ?? null,
-      responsableLocal: [],
-      coordinateurTerritorial: [],
-      mailleSourceDonnees: chantierRow?.donnees_maille_source ? NOMS_MAILLES[chantierRow.donnees_maille_source] : null,
-    };
-
-    if (!!chantierRow) {
-      const responsables = chantierRow.responsables_locaux;
-      const responsablesEmails = chantierRow.responsables_locaux_mails;
-      for (const [i, responsable] of (responsables || []).entries()) {
-        donnéesTerritoires[territoire.code].responsableLocal.push({ nom: responsable, email: responsablesEmails[i] });
-      }
-
-      const coordinateurs = chantierRow.coordinateurs_territoriaux;
-      const coordinateursEmails = chantierRow.coordinateurs_territoriaux_mails;
-      for (const [i, coordinateur] of (coordinateurs || []).entries()) {
-        donnéesTerritoires[territoire.code].coordinateurTerritorial.push({ nom: coordinateur, email: coordinateursEmails[i] });
-      }
-    }
-  });
-
-  return donnéesTerritoires;
-};
-
 export const parseChantierNew = (
   chantierIdentite: (PrismaChantierIdentite & {
     chantier_territoire: (PrismaChantierTerritoire & { chantier_territoire_jalon: PrismaChantierTerritoireJalon[] })[]
@@ -233,8 +189,8 @@ export const parseChantierNew = (
           mailleSourceDonnees: null,
         },
       },
-      departementale: créerDonnéesTerritoiresNew(territoires.filter(t => t.maille === 'departementale'), listeChantiersMailleDépartementale),
-      regionale: créerDonnéesTerritoiresNew(territoires.filter(t => t.maille === 'regionale'), listeChantiersMailleRégionale),
+      departementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'departementale'), listeChantiersMailleDépartementale),
+      regionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'regionale'), listeChantiersMailleRégionale),
     },
     responsables: {
       porteur: ministères.find(m => m.id === chantierIdentite.ministeres[0]) ?? null,

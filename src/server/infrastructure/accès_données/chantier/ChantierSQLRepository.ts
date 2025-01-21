@@ -14,6 +14,10 @@ import { FiltreQueryParams, SortingParams } from '@/server/chantiers/app/contrat
 import { removeAccents } from '@/server/utils/remove-accents';
 import { prisma } from '@/server/db/prisma';
 import { calculerMoyenne, calculerMédiane } from '@/client/utils/statistiques/statistiques';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { configuration } from '@/config';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -137,7 +141,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
           include: {
             chantier_territoire_jalon: {
               where: {
-                jalon: '2025',
+                jalon: 2025,
               },
             },
           },
@@ -261,7 +265,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
         chantier_identite: true,
         chantier_territoire_jalon: {
           where: {
-            jalon: '2025',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
           },
         },
       },
@@ -311,7 +315,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
             territoire: true,
             chantier_territoire_jalon: {
               where: {
-                jalon: '2025',
+                jalon: 2025,
               },
             },
           },

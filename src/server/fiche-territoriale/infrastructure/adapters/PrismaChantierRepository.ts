@@ -2,6 +2,10 @@ import { chantier_territoire as PrismaChantierTerritoireModel, PrismaClient } fr
 import { ChantierRepository } from '@/server/fiche-territoriale/domain/ports/ChantierRepository';
 import { Chantier } from '@/server/fiche-territoriale/domain/Chantier';
 import { MeteoDisponible } from '@/server/fiche-territoriale/domain/MeteoDisponible';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { configuration } from '@/config';
 
 export class PrismaChantierRepository implements ChantierRepository {
   constructor(private prismaClient: PrismaClient) {}
@@ -33,7 +37,7 @@ export class PrismaChantierRepository implements ChantierRepository {
         },
         chantier_territoire_jalon: {
           where: {
-            jalon: '2025',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
           },
           select: {
             taux_avancement: true,

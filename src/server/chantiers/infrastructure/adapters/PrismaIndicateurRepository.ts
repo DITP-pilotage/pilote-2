@@ -36,7 +36,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           include: {
             indicateur_territoire_jalon: {
               where: {
-                jalon: '2025',
+                jalon: 2025,
               },
             },
           },
@@ -78,7 +78,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         id_territoire_code_jalon: {
           id: indicId,
           territoire_code: territoireCode,
-          jalon: '2025',
+          jalon: 2025,
         },
       },
       data: {

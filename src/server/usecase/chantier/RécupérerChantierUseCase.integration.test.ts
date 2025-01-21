@@ -123,14 +123,14 @@ describe('RécupérerChantierUseCase', () => {
         territoire_code: 'NAT-FR',
         maille: 'NAT',
         code_insee: 'FR',
-        jalon: '2025',
+        jalon: 2025,
         taux_avancement: 20,
       }, {
         id: 'CH-001',
         territoire_code: 'DEPT-13',
         maille: 'DEPT',
         code_insee: '13',
-        jalon: '2025',
+        jalon: 2025,
         taux_avancement: 51,
       }],
     });
