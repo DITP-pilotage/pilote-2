@@ -1,5 +1,5 @@
 import {
-  indicateur_identite as PrismaIndicateurIdentite, Prisma,
+  indicateur_identite as PrismaIndicateurIdentite,
   indicateur_territoire as PrismaIndicateurTerritoire,
   indicateur_territoire_jalon as PrismaIndicateurTerritoireJalon,
 } from '@prisma/client';
@@ -31,6 +31,7 @@ import {
   getAnneeAffichageDateDeBascule,
 } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 import { prisma } from '@/server/db/prisma';
+import { Météo } from '@/server/domain/météo/Météo.interface';
 
 export interface historique_valeurs {
   date: string
@@ -310,7 +311,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
   }
 
   async récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[]): Promise<IndicateurPourExport[]> {
-    const rows = await prisma.$queryRaw<any[]>`
+    /*const rows = await prisma.$queryRaw<any[]>`
       with chantier_ids as (
               select distinct c.id
               from chantier c
@@ -381,35 +382,135 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
           region_nom,
           t_d.code_insee, -- on ordonne en fonction du numéro du département et pas par ordre alphabétique (le Haut-Rhin vient juste après le Bas-Rhin)
           c.ministeres
-    `;
+    `;*/
 
-    return rows.map(it => ({
+    const result = await prisma.indicateur_territoire.findMany({
+      where: {
+        territoire_code: {
+          in: territoireCodesLecture,
+        },
+        indicateur_identite: {
+          chantier_id: { in: chantierIdsLecture },
+          chantier_identite: {
+            NOT: [
+              {
+                ministeres: { equals: '{}' },
+              },
+            ],
+          },
+        },
+        est_applicable: true,
+      },
+      select: {
+        maille: true,
+        code_insee: true,
+        valeur_initiale: true,
+        date_valeur_initiale: true,
+        valeur_actuelle: true,
+        date_valeur_actuelle: true,
+        valeur_cible_mandat: true,
+        date_valeur_cible_mandat: true,
+        taux_avancement_mandat: true,
+        indicateur_territoire_jalon: {
+          where: {
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+          },
+          select: {
+            valeur_cible: true,
+            date_valeur_cible: true,
+            taux_avancement: true,
+          },
+        },
+        indicateur_identite: {
+          select: {
+            nom: true,
+            chantier_id: true,
+            chantier_identite: {
+              select: {
+                ministeres_acronymes: true,
+                ministeres: true,
+                est_barometre: true,
+                est_territorialise: true,
+                statut: true,
+                nom: true,
+                axe: true,
+                perimetre_ids: true,
+              },
+            },
+          },
+        },
+        territoire: {
+          select: {
+            nom: true,
+            territoire_parent: {
+              select: {
+                nom: true,
+              },
+            },
+          },
+        },
+        chantier_territoire: {
+          select: {
+            meteo: true,
+            taux_avancement_mandat: true,
+          },
+        },
+      },
+    });
+
+    return result.sort((indicA, indicB) => {
+      const orderMaille = { 'NAT': 1, 'REG': 2, 'DEPT': 3 };
+
+      // Comparer par nom
+      if (indicA.indicateur_identite.chantier_identite.nom !== indicB.indicateur_identite.chantier_identite.nom) {
+        return indicA.indicateur_identite.chantier_identite.nom.localeCompare(indicB.indicateur_identite.chantier_identite.nom);
+      }
+
+      // Comparer par nom_indicateur
+      if (indicA.indicateur_identite.nom !== indicB.indicateur_identite.chantier_identite.nom) {
+        return indicA.indicateur_identite.chantier_identite.nom.localeCompare(indicB.indicateur_identite.chantier_identite.nom);
+      }
+
+      // Comparer par maille
+      if (indicA.maille !== indicB.maille) {
+        return orderMaille[indicA.maille] - orderMaille[indicB.maille];
+      }
+
+      // Comparer par nom_region
+      const nomRegionA = indicA.maille === 'DEPT' ? indicA.territoire.territoire_parent?.nom || null : indicA.maille === 'REG' ? indicA.territoire.nom : null;
+      const nomRegionB = indicB.maille === 'DEPT' ? indicB.territoire.territoire_parent?.nom || null : indicB.maille === 'REG' ? indicB.territoire.nom : null;
+      if (nomRegionA && nomRegionB && nomRegionA !== nomRegionB) {
+        return nomRegionA.localeCompare(nomRegionB);
+      }
+
+      // Comparer par code_insee
+      return indicA.code_insee.localeCompare(indicB.code_insee);
+    }).map(it => ({
       maille: it.maille,
-      régionNom: it.region_nom,
-      départementNom: it.departement_nom,
+      régionNom: it.maille === 'DEPT' ? it.territoire.territoire_parent?.nom || null : it.territoire.nom,
+      départementNom: it.maille === 'DEPT' ? it.territoire.nom : null,
       codeInsee: it.code_insee,
-      chantierMinistèreNom: it.chantier_ministeres_acronymes ? it.chantier_ministeres_acronymes[0] : null,
-      axe: it.axe,
-      chantierNom: it.chantier_nom,
-      chantierId: it.chantier_id,
-      statut: it.chantier_statut,
-      chantierStatut: it.chantier_statut,
-      chantierEstBaromètre: it.chantier_est_barometre,
-      chantierEstTerritorialise: it.chantier_est_territorialise,
-      chantierAvancementGlobal: it.chantier_taux_avancement,
-      périmètreIds: it.perimetre_ids,
-      météo: it.meteo,
-      nom: it.nom,
+      chantierMinistèreNom: it.indicateur_identite.chantier_identite.ministeres_acronymes ? it.indicateur_identite.chantier_identite.ministeres_acronymes[0] : null,
+      axe: it.indicateur_identite.chantier_identite.axe,
+      chantierNom: it.indicateur_identite.chantier_identite.nom,
+      chantierId: it.indicateur_identite.chantier_id,
+      chantierStatut: it.indicateur_identite.chantier_identite.statut,
+      chantierEstBaromètre: it.indicateur_identite.chantier_identite.est_barometre,
+      chantierEstTerritorialise: it.indicateur_identite.chantier_identite.est_territorialise,
+      chantierAvancementGlobal: it.chantier_territoire.taux_avancement_mandat,
+      périmètreIds: it.indicateur_identite.chantier_identite.perimetre_ids,
+      météo: it.chantier_territoire.meteo as Météo | null,
+      nom: it.indicateur_identite.nom,
       valeurInitiale: it.valeur_initiale,
-      dateValeurInitiale: it.date_valeur_initiale,
+      dateValeurInitiale: it.date_valeur_initiale?.toISOString() || null,
       valeurActuelle: it.valeur_actuelle,
-      dateValeurActuelle: it.date_valeur_actuelle,
-      valeurCibleAnnuelle: it.valeur_cible_annuelle,
-      dateValeurCibleAnnuelle: it.date_valeur_cible_annuelle,
-      avancementAnnuel: it.taux_avancement_annuel,
-      valeurCible: it.valeur_cible,
-      dateValeurCible: it.date_valeur_cible,
-      avancementGlobal: it.taux_avancement,
+      dateValeurActuelle: it.date_valeur_actuelle?.toISOString() || null,
+      valeurCibleAnnuelle: it.indicateur_territoire_jalon.at(0)?.valeur_cible !== null && it.indicateur_territoire_jalon.at(0)?.valeur_cible !== undefined ? it.indicateur_territoire_jalon.at(0)?.valeur_cible! : null,
+      dateValeurCibleAnnuelle: it.indicateur_territoire_jalon.at(0)?.date_valeur_cible?.toISOString() || null,
+      avancementAnnuel: it.indicateur_territoire_jalon.at(0)?.taux_avancement !== null && it.indicateur_territoire_jalon.at(0)?.taux_avancement !== undefined ? it.indicateur_territoire_jalon.at(0)?.taux_avancement! : null,
+      valeurCible: it.valeur_cible_mandat,
+      dateValeurCible: it.date_valeur_cible_mandat?.toISOString() || null,
+      avancementGlobal: it.taux_avancement_mandat,
     }));
   }
 }

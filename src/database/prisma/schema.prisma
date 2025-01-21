@@ -33,6 +33,9 @@ model territoire {
   indicateur_territoire indicateur_territoire[]
   chantier_territoire   chantier_territoire[]
   zone_id               String
+  territoire_parent     territoire?     @relation("territoire_parent", fields: [code_parent], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  territoire_enfant     territoire[]  @relation("territoire_parent")
+
 
   @@schema("public")
 }
@@ -133,6 +136,7 @@ model chantier_identite {
   cible_attendue                        Boolean                @default(true)
   a_supprimer                           Boolean                @default(true)
   chantier_territoire                   chantier_territoire[]
+  indicateur_identite                   indicateur_identite[]
 
   objectifs                             objectif[]
   decisions_strategiques                decision_strategique[]
@@ -167,6 +171,7 @@ model chantier_territoire {
   chantier_territoire_jalon                chantier_territoire_jalon[]
   commentaires                             commentaire[]
   syntheses_des_resultats                  synthese_des_resultats[]
+  indicateur_territoire                    indicateur_territoire[]
 
   @@id([id, territoire_code])
   @@schema("public")
@@ -286,12 +291,14 @@ model indicateur_identite {
   parent_id                  String?
   responsables_donnees_mails String[]
   indicateur_territoire      indicateur_territoire[]
+  chantier_identite          chantier_identite @relation(fields: [chantier_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@schema("public")
 }
 
 model indicateur_territoire {
   id                                       String
+  chantier_id                              String
   maille                                   Maille
   territoire_code                          String
   code_insee                               String
@@ -321,6 +328,7 @@ model indicateur_territoire {
   evolution_valeur_actuelle                Json?
   territoire                               territoire                    @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
   indicateur_identite                      indicateur_identite           @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  chantier_territoire                      chantier_territoire           @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
   indicateur_territoire_jalon              indicateur_territoire_jalon[]
 
   @@id([id, territoire_code])
