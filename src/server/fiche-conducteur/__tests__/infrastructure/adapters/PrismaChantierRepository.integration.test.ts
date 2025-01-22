@@ -1,3 +1,5 @@
+import { getAnneeAffichageDateDeBascule } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { configuration } from '@/config';
 import { PrismaChantierRepository } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaChantierRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 
@@ -133,7 +135,7 @@ describe('PrismaChantierRepository', () => {
           code_insee: 'FR',
           maille: 'NAT',
           territoire_code: 'NAT-FR',
-          jalon: 2025,
+          jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
           taux_avancement: 9.2,
         }, {
           id: 'CH-168',
@@ -141,7 +143,7 @@ describe('PrismaChantierRepository', () => {
           code_insee: '01',
           maille: 'DEPT',
           territoire_code: 'DEPT-01',
-          jalon: 2025,
+          jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
           taux_avancement: 13.3,
         }, {
           id: 'CH-168',
@@ -149,7 +151,7 @@ describe('PrismaChantierRepository', () => {
           code_insee: '02',
           maille: 'DEPT',
           territoire_code: 'DEPT-02',
-          jalon: 2025,
+          jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
           taux_avancement: null,
         }],
       });

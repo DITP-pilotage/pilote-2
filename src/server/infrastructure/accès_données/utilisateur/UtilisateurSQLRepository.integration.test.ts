@@ -168,7 +168,6 @@ describe('UtilisateurSQLRepository', () => {
         'REG-84': 1,
         'DEPT-75': 0,
       });
-
     });
   });
 });

@@ -311,79 +311,6 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
   }
 
   async récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[]): Promise<IndicateurPourExport[]> {
-    /*const rows = await prisma.$queryRaw<any[]>`
-      with chantier_ids as (
-              select distinct c.id
-              from chantier c
-              where c.id in (${Prisma.join(chantierIdsLecture)})
-                and ministeres <> '{}'
-          ),
-          dernieres_syntheses as (
-              select *
-              from (
-                      select s.*,
-                      row_number() over (
-                          partition by chantier_id, maille, code_insee order by date_commentaire desc
-                      ) r
-                      from synthese_des_resultats s
-                      where date_commentaire is not null
-                  ) sr
-              where sr.r = 1
-          )
-      
-      select i.maille                                   maille,
-             t_r.nom                                    region_nom,
-             t_d.nom                                    departement_nom,
-             i.code_insee                               code_insee,
-             c.ministeres                               chantier_ministeres,
-             c.ministeres_acronymes                     chantier_ministeres_acronymes,
-             c.axe                                      axe,
-             c.nom                                      chantier_nom,
-             c.id                                       chantier_id,
-             c.statut                                   chantier_statut,
-             c.est_barometre                            chantier_est_barometre,
-             c.est_territorialise                       chantier_est_territorialise,
-             c.taux_avancement                          chantier_taux_avancement,
-             c.perimetre_ids                            perimetre_ids,
-             s.meteo                                    meteo,
-             i.nom                                      nom,
-             i.valeur_initiale                          valeur_initiale,
-             i.date_valeur_initiale                     date_valeur_initiale,
-             i.valeur_actuelle                          valeur_actuelle,
-             i.date_valeur_actuelle                     date_valeur_actuelle,
-             i.objectif_valeur_cible_intermediaire      valeur_cible_annuelle,
-             i.objectif_date_valeur_cible_intermediaire date_valeur_cible_annuelle,
-             i.objectif_taux_avancement_intermediaire   taux_avancement_annuel,
-             i.objectif_valeur_cible                    valeur_cible,
-             i.objectif_date_valeur_cible               date_valeur_cible,
-             i.objectif_taux_avancement                 taux_avancement
-      
-      from chantier_ids cids
-               inner join territoire t on t.code in (${Prisma.join(territoireCodesLecture)})
-               inner join indicateur i on i.chantier_id = cids.id and lower(i.maille) = cast(t.maille as text) and i.code_insee = t.code_insee and i.type_id is not null
-               left outer join chantier c on c.id = cids.id and c.territoire_code = t.code
-               left outer join chantier c_r on (c_r.id = cids.id and c_r.maille = 'REG')
-                                            and (c_r.territoire_code = t.code or c_r.territoire_code = t.code_parent)
-               left outer join chantier c_d on c_d.id = cids.id and c_d.maille = 'DEPT' and c_d.territoire_code = t.code
-               left outer join territoire t_r on t_r.code = c_r.territoire_code
-               left outer join territoire t_d on t_d.code = c_d.territoire_code
-               left outer join dernieres_syntheses s
-                               on s.chantier_id = c.id and s.maille = c.maille and s.code_insee = c.code_insee
-      where c.id is not null
-      and i.est_applicable
-      order by
-          c.nom,
-          i.nom,
-          CASE i.maille
-            WHEN 'NAT' THEN 1
-            WHEN 'REG' THEN 2
-            WHEN 'DEPT' THEN 3
-            ELSE 4 END,
-          region_nom,
-          t_d.code_insee, -- on ordonne en fonction du numéro du département et pas par ordre alphabétique (le Haut-Rhin vient juste après le Bas-Rhin)
-          c.ministeres
-    `;*/
-
     const result = await prisma.indicateur_territoire.findMany({
       where: {
         territoire_code: {
@@ -467,7 +394,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       }
 
       // Comparer par nom_indicateur
-      if (indicA.indicateur_identite.nom !== indicB.indicateur_identite.chantier_identite.nom) {
+      if (indicA.indicateur_identite.nom !== indicB.indicateur_identite.nom) {
         return indicA.indicateur_identite.chantier_identite.nom.localeCompare(indicB.indicateur_identite.chantier_identite.nom);
       }
 

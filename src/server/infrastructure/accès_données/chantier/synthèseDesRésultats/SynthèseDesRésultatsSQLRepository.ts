@@ -1,4 +1,4 @@
-import { synthese_des_resultats, PrismaClient, utilisateur as UtilisateurPrisma } from '@prisma/client';
+import { synthese_des_resultats, utilisateur as UtilisateurPrisma } from '@prisma/client';
 import SynthèseDesRésultatsRepository from '@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import { Maille } from '@/server/domain/maille/Maille.interface';
@@ -7,23 +7,32 @@ import SynthèseDesRésultats from '@/server/domain/chantier/synthèseDesRésult
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
+import { prisma } from '@/server/db/prisma';
 
 export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésultatsRepository {
-  private prisma: PrismaClient;
-
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
+  private mapperVersDomaine(synthèse: synthese_des_resultats & { auteur_synthese: UtilisateurPrisma | null } | null): SynthèseDesRésultats {
+    if (synthèse === null || synthèse.commentaire === null || synthèse.date_commentaire === null)
+      return null;
+    const auteurSynthese = synthèse.auteur_synthese;
+    return {
+      id: synthèse.id,
+      contenu: synthèse.commentaire,
+      date: synthèse.date_commentaire.toISOString(),
+      auteur: auteurSynthese ? `${auteurSynthese.prenom} ${auteurSynthese.nom}` : 'Auteur Inconnu',
+      météo: synthèse.meteo as Météo ?? 'NON_RENSEIGNEE',
+    };
   }
 
   async créer(chantierId: string, territoireCode: string, id: string, contenu: string, auteur_id: string, météo: Météo, date: Date): Promise<SynthèseDesRésultats> {
     const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
 
-    const synthèseDesRésultats =  await this.prisma.synthese_des_resultats.create({
+    const synthèseDesRésultats =  await prisma.synthese_des_resultats.create({
       data: {
         id: id,
         chantier_id: chantierId,
         maille: maille,
         code_insee: codeInsee,
+        territoire_code: territoireCode,
         commentaire: contenu,
         meteo: météo,
         date_commentaire: date,
@@ -37,23 +46,10 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     return this.mapperVersDomaine(synthèseDesRésultats);
   }
 
-  private mapperVersDomaine(synthèse: synthese_des_resultats & { auteur_synthese: UtilisateurPrisma | null } | null): SynthèseDesRésultats {
-    if (synthèse === null || synthèse.commentaire === null || synthèse.date_commentaire === null)
-      return null;
-    const auteurSynthese = synthèse.auteur_synthese;
-    return {
-      id: synthèse.id,
-      contenu: synthèse.commentaire,
-      date: synthèse.date_commentaire.toISOString(),
-      auteur: auteurSynthese ? `${auteurSynthese.prenom} ${auteurSynthese.nom}` : 'Auteur Inconnu',
-      météo: synthèse.meteo as Météo ?? 'NON_RENSEIGNEE',
-    };
-  }
-  
   async récupérerLaPlusRécente(chantierId: string, territoireCode: string): Promise<SynthèseDesRésultats> {
     const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
     
-    const synthèseDesRésultats = await this.prisma.synthese_des_resultats.findFirst({
+    const synthèseDesRésultats = await prisma.synthese_des_resultats.findFirst({
       where: {
         chantier_id: chantierId,
         maille: maille,
@@ -79,7 +75,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
   async récupérerHistorique(chantierId: string, territoireCode: string): Promise<SynthèseDesRésultats[]> {
     const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
     
-    const synthèsesDesRésultats = await this.prisma.synthese_des_resultats.findMany({
+    const synthèsesDesRésultats = await prisma.synthese_des_resultats.findMany({
       where: {
         chantier_id: chantierId,
         maille: maille,
@@ -97,7 +93,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
   }
 
   async récupérerLesPlusRécentesGroupéesParChantier(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], SynthèseDesRésultats>> {
-    const synthèsesDesRésultats = await this.prisma.$queryRaw<(synthese_des_resultats & { auteur_prenom: string, auteur_nom: string })[]>`
+    const synthèsesDesRésultats = await prisma.$queryRaw<(synthese_des_resultats & { auteur_prenom: string, auteur_nom: string })[]>`
       SELECT s.*, utilisateur.prenom as auteur_prenom, utilisateur.nom as auteur_nom
       FROM synthese_des_resultats s
         LEFT JOIN utilisateur on utilisateur.id = s.auteur_id

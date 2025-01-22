@@ -15,193 +15,174 @@ describe('PrismaIndicateurRepository', () => {
       // Given
       const listeChantierId = ['CH-001', 'CH-002'];
       const maille = 'DEPT';
-      const codeInsee = '34';
+      const codeInsee = '01';
 
-      await prisma.chantier_identite.create({
-        data: {
+      await prisma.chantier_identite.createMany({
+        data: [{
           id: 'CH-001',
           nom: 'Un nom de chantier 1',
-        },
-      });
-
-      await prisma.chantier_identite.create({
-        data: {
+        }, {
           id: 'CH-002',
           nom: 'Un nom de chantier 2',
-        },
-      });
-
-      await prisma.chantier_identite.create({
-        data: {
+        }, {
           id: 'CH-003',
           nom: 'Un nom de chantier 3',
-        },
-      });
-
-      await prisma.chantier_identite.create({
-        data: {
+        }, {
           id: 'CH-004',
           nom: 'Un nom de chantier 4',
-        },
+        }],
       });
 
-      await prisma.indicateur_identite.create({
-        data: {
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          code_insee: 'FR',
+          maille: 'NAT',
+          zone_id: 'FRANCE',
+          territoire_code: 'NAT-FR',
+        }, {
+          id: 'CH-001',
+          code_insee: '01',
+          maille: 'DEPT',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
+        }, {
+          id: 'CH-002',
+          code_insee: '01',
+          maille: 'DEPT',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
+        }, {
+          id: 'CH-002',
+          code_insee: '01',
+          maille: 'REG',
+          zone_id: 'R01',
+          territoire_code: 'REG-01',
+        }, {
+          id: 'CH-003',
+          code_insee: '01',
+          maille: 'DEPT',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
+        }],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [{
           id: 'IND-001',
           nom: 'Un nom indicateur 1 OK baromètre',
           chantier_id: 'CH-001',
           est_barometre: true,
           unite_mesure: 'Pourcentage',
-        },
-      });
-
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: 'IND-001',
-          code_insee: '34',
-          maille: 'DEPT',
-          zone_id: 'D34',
-          territoire_code: 'DEPT-34',
-          ponderation_zone_reel: null,
-          date_valeur_actuelle: '2021-01-01T00:00:00.000Z',
-          valeur_actuelle: 10.1,
-          valeur_cible_mandat: 11.1,
-          taux_avancement_mandat: 12.1,
-        },
-      });
-
-      await prisma.indicateur_identite.create({
-        data: {
+        }, {
           id: 'IND-002',
           nom: 'Un nom indicateur 2 OK pondération et maille',
           chantier_id: 'CH-001',
           est_barometre: false,
           unite_mesure: 'Pourcentage',
-        },
-      });
-
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: 'IND-002',
-          code_insee: '34',
-          maille: 'DEPT',
-          zone_id: 'D34',
-          territoire_code: 'DEPT-34',
-          ponderation_zone_reel: 20,
-          date_valeur_actuelle: '2023-02-04T00:00:00.000Z',
-          valeur_actuelle: 22.3,
-          valeur_cible_mandat: 23.3,
-          taux_avancement_mandat: 24.3,
-        },
-      });
-
-      await prisma.indicateur_identite.create({
-        data: {
+        }, {
           id: 'IND-003',
           nom: 'Un nom indicateur 3 OK pondération et maille',
           chantier_id: 'CH-002',
           est_barometre: true,
           unite_mesure: 'million habitant',
-        },
+        }, {
+          id: 'IND-004',
+          nom: 'Un nom indicateur 4 KO maille',
+          chantier_id: 'CH-002',
+          est_barometre: false,
+        }, {
+          id: 'IND-005',
+          nom: 'Un nom indicateur 5 KO chantier id',
+          chantier_id: 'CH-003',
+          est_barometre: true,
+        }, {
+          id: 'IND-006',
+          nom: 'Un nom indicateur 6 KO pas barometre pondération null',
+          chantier_id: 'CH-003',
+          est_barometre: false,
+        }, {
+          id: 'IND-007',
+          nom: 'Un nom indicateur 7 KO pas barometre pondération 0',
+          chantier_id: 'CH-003',
+          est_barometre: false,
+        }],
       });
 
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: 'IND-003',
-          code_insee: '34',
+      await prisma.indicateur_territoire.createMany({
+        data: [{
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          code_insee: '01',
           maille: 'DEPT',
-          zone_id: 'D34',
-          territoire_code: 'DEPT-34',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
+          ponderation_zone_reel: null,
+          date_valeur_actuelle: '2021-01-01T00:00:00.000Z',
+          valeur_actuelle: 10.1,
+          valeur_cible_mandat: 11.1,
+          taux_avancement_mandat: 12.1,
+        }, {
+          id: 'IND-002',
+          chantier_id: 'CH-001',
+          code_insee: '01',
+          maille: 'DEPT',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
+          ponderation_zone_reel: 20,
+          date_valeur_actuelle: '2023-02-04T00:00:00.000Z',
+          valeur_actuelle: 22.3,
+          valeur_cible_mandat: 23.3,
+          taux_avancement_mandat: 24.3,
+        }, {
+          id: 'IND-003',
+          chantier_id: 'CH-002',
+          code_insee: '01',
+          maille: 'DEPT',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
           ponderation_zone_reel: 20,
           date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
           valeur_actuelle: 31.3,
           valeur_cible_mandat: 32.3,
           taux_avancement_mandat: 33.3,
-        },
-      });
-
-      await prisma.indicateur_identite.create({
-        data: {
+        }, {
           id: 'IND-004',
-          nom: 'Un nom indicateur 4 KO maille',
           chantier_id: 'CH-002',
-          est_barometre: false,
-        },
-      });
-
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: 'IND-004',
-          code_insee: '34',
+          code_insee: '01',
           maille: 'REG',
-          zone_id: 'R34',
-          territoire_code: 'REG-06',
+          zone_id: 'R01',
+          territoire_code: 'REG-01',
           ponderation_zone_reel: 20,
           date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
-        },
-      });
-
-      await prisma.indicateur_identite.create({
-        data: {
+        }, {
           id: 'IND-005',
-          nom: 'Un nom indicateur 5 KO chantier id',
           chantier_id: 'CH-003',
-          est_barometre: true,
-        },
-      });
-
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: 'IND-005',
-          code_insee: '34',
+          code_insee: '01',
           maille: 'DEPT',
-          zone_id: 'D34',
-          territoire_code: 'DEPT-34',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
           ponderation_zone_reel: 20,
           date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
-        },
-      });
-
-      await prisma.indicateur_identite.create({
-        data: {
+        }, {
           id: 'IND-006',
-          nom: 'Un nom indicateur 6 KO pas barometre pondération null',
           chantier_id: 'CH-003',
-          est_barometre: false,
-        },
-      });
-
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: 'IND-006',
-          code_insee: '34',
+          code_insee: '01',
           maille: 'DEPT',
-          zone_id: 'D34',
-          territoire_code: 'DEPT-34',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
           ponderation_zone_reel: null,
           date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
-        },
-      });
-
-      await prisma.indicateur_identite.create({
-        data: {
+        }, {
           id: 'IND-007',
-          nom: 'Un nom indicateur 7 KO pas barometre pondération 0',
           chantier_id: 'CH-003',
-          est_barometre: false,
-        },
-      });
-
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: 'IND-007',
-          code_insee: '34',
+          code_insee: '01',
           maille: 'DEPT',
-          zone_id: 'D34',
-          territoire_code: 'DEPT-34',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
           ponderation_zone_reel: 0,
           date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
-        },
+        }],
       });
 
       // When
@@ -234,181 +215,166 @@ describe('PrismaIndicateurRepository', () => {
       // Given
       const listeChantierId = ['CH-001', 'CH-002'];
       const maille = 'REG';
-      const codeInsee = '06';
+      const codeInsee = '01';
 
-      await prisma.chantier_identite.create({
-        data: {
+      await prisma.chantier_identite.createMany({
+        data: [{
           id: 'CH-001',
           nom: 'Un nom de chantier 1',
-        },
-      });
-
-      await prisma.chantier_identite.create({
-        data: {
+        }, {
           id: 'CH-002',
           nom: 'Un nom de chantier 2',
-        },
-      });
-
-      await prisma.chantier_identite.create({
-        data: {
+        }, {
           id: 'CH-003',
           nom: 'Un nom de chantier 3',
-        },
-      });
-
-      await prisma.chantier_identite.create({
-        data: {
+        }, {
           id: 'CH-004',
           nom: 'Un nom de chantier 4',
-        },
+        }],
       });
 
-      await prisma.indicateur_identite.create({
-        data: {
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          code_insee: 'FR',
+          maille: 'NAT',
+          zone_id: 'FRANCE',
+          territoire_code: 'NAT-FR',
+        }, {
+          id: 'CH-001',
+          code_insee: '01',
+          maille: 'REG',
+          zone_id: 'R01',
+          territoire_code: 'REG-01',
+        }, {
+          id: 'CH-002',
+          code_insee: '01',
+          maille: 'REG',
+          zone_id: 'R01',
+          territoire_code: 'REG-01',
+        }, {
+          id: 'CH-002',
+          code_insee: '01',
+          maille: 'DEPT',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
+        }, {
+          id: 'CH-003',
+          code_insee: '01',
+          maille: 'REG',
+          zone_id: 'R01',
+          territoire_code: 'REG-01',
+        }],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [{
           id: 'IND-001',
           nom: 'Un nom indicateur 1 OK baromètre',
           chantier_id: 'CH-001',
           est_barometre: true,
-        },
-      });
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: 'IND-001',
-          code_insee: '06',
-          zone_id: 'R06',
-          maille: 'REG',
-          territoire_code: 'REG-06',
-          ponderation_zone_reel: null,
-          date_valeur_actuelle: '2021-01-01T00:00:00.000Z',
-        },
-      });
-
-      await prisma.indicateur_identite.create({
-        data: {
+        }, {
           id: 'IND-002',
           nom: 'Un nom indicateur 2 OK pondération et maille',
           chantier_id: 'CH-001',
           est_barometre: false,
-        },
-      });
-
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: 'IND-002',
-          code_insee: '06',
-          maille: 'REG',
-          zone_id: 'R06',
-          territoire_code: 'REG-06',
-          ponderation_zone_reel: 20,
-          date_valeur_actuelle: '2023-02-04T00:00:00.000Z',
-        },
-      });
-
-      await prisma.indicateur_identite.create({
-        data: {
+        }, {
           id: 'IND-003',
           nom: 'Un nom indicateur 3 OK pondération et maille',
           chantier_id: 'CH-002',
           est_barometre: true,
-        },
-      });
-
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: 'IND-003',
-          code_insee: '06',
-          maille: 'REG',
-          zone_id: 'R06',
-          territoire_code: 'REG-06',
-          ponderation_zone_reel: 20,
-          date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
-        },
-      });
-
-      await prisma.indicateur_identite.create({
-        data: {
+        }, {
           id: 'IND-004',
           nom: 'Un nom indicateur 4 KO maille',
           chantier_id: 'CH-002',
           est_barometre: false,
-        },
-      });
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: 'IND-004',
-          code_insee: '34',
-          zone_id: 'D34',
-          maille: 'DEPT',
-          territoire_code: 'DEPT-34',
-          ponderation_zone_reel: 20,
-          date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
-        },
-      });
-
-      await prisma.indicateur_identite.create({
-        data: {
+        },  {
           id: 'IND-005',
           nom: 'Un nom indicateur 5 KO chantier id',
           chantier_id: 'CH-003',
           est_barometre: true,
-        },
-      });
-
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: 'IND-005',
-          code_insee: '06',
-          maille: 'REG',
-          zone_id: 'R06',
-          territoire_code: 'REG-06',
-          ponderation_zone_reel: 20,
-          date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
-        },
-      });
-
-      await prisma.indicateur_identite.create({
-        data: {
+        }, {
           id: 'IND-006',
           nom: 'Un nom indicateur 6 KO pas barometre pondération null',
           chantier_id: 'CH-003',
           est_barometre: false,
-        },
-      });
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: 'IND-006',
-          code_insee: '06',
-          maille: 'REG',
-          zone_id: 'R06',
-          territoire_code: 'REG-06',
-          ponderation_zone_reel: null,
-          date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
-        },
-      });
-
-      await prisma.indicateur_identite.create({
-        data: {
+        }, {
           id: 'IND-007',
           nom: 'Un nom indicateur 7 KO pas barometre pondération 0',
           chantier_id: 'CH-003',
           est_barometre: false,
-        },
+        }],
       });
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: 'IND-007',
-          code_insee: '06',
+      await prisma.indicateur_territoire.createMany({
+        data: [{
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          code_insee: '01',
+          zone_id: 'R01',
           maille: 'REG',
-          zone_id: 'R06',
-          territoire_code: 'REG-06',
+          territoire_code: 'REG-01',
+          ponderation_zone_reel: null,
+          date_valeur_actuelle: '2021-01-01T00:00:00.000Z',
+        }, {
+          id: 'IND-002',
+          chantier_id: 'CH-001',
+          code_insee: '01',
+          maille: 'REG',
+          zone_id: 'R01',
+          territoire_code: 'REG-01',
+          ponderation_zone_reel: 20,
+          date_valeur_actuelle: '2023-02-04T00:00:00.000Z',
+        }, {
+          id: 'IND-003',
+          chantier_id: 'CH-002',
+          code_insee: '01',
+          maille: 'REG',
+          zone_id: 'R01',
+          territoire_code: 'REG-01',
+          ponderation_zone_reel: 20,
+          date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
+        }, {
+          id: 'IND-004',
+          chantier_id: 'CH-002',
+          code_insee: '01',
+          zone_id: 'D01',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-01',
+          ponderation_zone_reel: 20,
+          date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
+        }, {
+          id: 'IND-005',
+          chantier_id: 'CH-003',
+          code_insee: '01',
+          maille: 'REG',
+          zone_id: 'R01',
+          territoire_code: 'REG-01',
+          ponderation_zone_reel: 20,
+          date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
+        }, {
+          id: 'IND-006',
+          chantier_id: 'CH-003',
+          code_insee: '01',
+          maille: 'REG',
+          zone_id: 'R01',
+          territoire_code: 'REG-01',
+          ponderation_zone_reel: null,
+          date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
+        }, {
+          id: 'IND-007',
+          chantier_id: 'CH-003',
+          code_insee: '01',
+          maille: 'REG',
+          zone_id: 'R01',
+          territoire_code: 'REG-01',
           ponderation_zone_reel: 0,
           date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
-        },
+        }],
       });
 
       // When
       const result = await prismaIndicateurRepository.recupererMapIndicateursParListeChantierIdEtTerritoire({ listeChantierId, maille, codeInsee });
+
       // Then
       expect([...result.keys()]).toEqual(['CH-001', 'CH-002']);
       expect(result.get('CH-001')?.at(0)?.dateValeurActuelle).toEqual('2021-01-01T00:00:00.000Z');
@@ -424,95 +390,98 @@ describe('PrismaIndicateurRepository', () => {
       // Given
       const listeIndicateurId = ['IND-001', 'IND-002'];
 
-      await prisma.chantier_identite.create({
-        data: {
+      await prisma.chantier_identite.createMany({
+        data: [{
           id: 'CH-001',
           nom: 'Un nom de chantier 1',
-        },
-      });
-
-      await prisma.chantier_identite.create({
-        data: {
+        }, {
           id: 'CH-002',
           nom: 'Un nom de chantier 2',
-        },
-      });
-
-      await prisma.chantier_identite.create({
-        data: {
+        }, {
           id: 'CH-003',
           nom: 'Un nom de chantier 3',
-        },
+        }],
       });
 
-      await prisma.indicateur_identite.create({
-        data: {
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          code_insee: 'FR',
+          maille: 'NAT',
+          zone_id: 'FRANCE',
+          territoire_code: 'NAT-FR',
+        }, {
+          id: 'CH-001',
+          code_insee: '01',
+          maille: 'DEPT',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
+        }, {
+          id: 'CH-002',
+          code_insee: 'FR',
+          maille: 'NAT',
+          zone_id: 'FRANCE',
+          territoire_code: 'NAT-FR',
+        }, {
+          id: 'CH-003',
+          code_insee: 'FR',
+          maille: 'NAT',
+          zone_id: 'FRANCE',
+          territoire_code: 'NAT-FR',
+        }],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [{
           id: 'IND-001',
           nom: 'Un nom indicateur 1 KO pas NAT chantier 1',
           chantier_id: 'CH-001',
-        },
+        }, {
+          id: 'IND-002',
+          nom: 'Un nom indicateur 3 OK chantier 2',
+          chantier_id: 'CH-002',
+        }, {
+          id: 'IND-003',
+          nom: 'Un nom indicateur 4 KO indic id',
+          chantier_id: 'CH-003',
+        }],
       });
 
-      await prisma.indicateur_territoire.create({
-        data: {
+      await prisma.indicateur_territoire.createMany({
+        data: [{
           id: 'IND-001',
-          code_insee: '34',
+          chantier_id: 'CH-001',
+          code_insee: '01',
           maille: 'DEPT',
-          zone_id: 'D34',
-          territoire_code: 'DEPT-34',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
           taux_avancement_mandat: 9.2,
-        },
-      });
-
-      await prisma.indicateur_territoire.create({
-        data: {
+        }, {
           id: 'IND-001',
+          chantier_id: 'CH-001',
           code_insee: 'FR',
           maille: 'NAT',
           zone_id: 'FRANCE',
           territoire_code: 'NAT-FR',
           taux_avancement_mandat: 10.2,
-        },
-      });
-
-      await prisma.indicateur_identite.create({
-        data: {
+        }, {
           id: 'IND-002',
-          nom: 'Un nom indicateur 3 OK chantier 2',
           chantier_id: 'CH-002',
-        },
-      });
-
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: 'IND-002',
           code_insee: 'FR',
           maille: 'NAT',
           zone_id: 'FRANCE',
           territoire_code: 'NAT-FR',
           taux_avancement_mandat: 11.2,
-        },
-      });
-
-      await prisma.indicateur_identite.create({
-        data: {
+        }, {
           id: 'IND-003',
-          nom: 'Un nom indicateur 4 KO indic id',
           chantier_id: 'CH-003',
-        },
-      });
-
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: 'IND-003',
-          code_insee: '34',
+          code_insee: '01',
           maille: 'NAT',
           zone_id: 'FRANCE',
           territoire_code: 'NAT-FR',
           taux_avancement_mandat: 13.2,
-        },
+        }],
       });
-
 
       // When
       const result = await prismaIndicateurRepository.recupererMapIndicateursNationalParListeIndicateurId({ listeIndicateurId });

@@ -2,6 +2,10 @@ import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import {
   PrismaIndicateurRepository,
 } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaIndicateurRepository';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { configuration } from '@/config';
 
 describe('PrismaIndicateurRepository', () => {
   let prismaIndicateurRepository: PrismaIndicateurRepository;
@@ -14,8 +18,8 @@ describe('PrismaIndicateurRepository', () => {
       // Given
       await prisma.chantier_identite.createMany({
         data: [{
-          id: 'CH-168',
-          nom: 'Chantier 168',
+          id: 'CH-001',
+          nom: 'Chantier 001',
           est_territorialise: true,
           directeurs_administration_centrale: ['DAC 1', 'DAC 2'],
           directeurs_projet: ['DP 1', 'DP 2'],
@@ -23,49 +27,49 @@ describe('PrismaIndicateurRepository', () => {
       });
       await prisma.chantier_territoire.createMany({
         data: [{
-          id: 'CH-168',
+          id: 'CH-001',
           zone_id: 'FRANCE',
           code_insee: 'FR',
           maille: 'NAT',
           territoire_code: 'NAT-FR',
         }, {
-          id: 'CH-168',
-          zone_id: 'R01',
+          id: 'CH-001',
+          zone_id: 'D01',
           code_insee: '01',
-          maille: 'REG',
-          territoire_code: 'REG-01',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-01',
         }],
       });
 
       await prisma.indicateur_identite.createMany({
         data: [{
           id: 'IND-001',
-          chantier_id: 'CH-168',
+          chantier_id: 'CH-001',
           nom: 'Indicateur 001',
           type_id: 'IMPACT',
         }, {
           id: 'IND-002',
-          chantier_id: 'CH-168',
+          chantier_id: 'CH-001',
           nom: 'Indicateur 002',
           type_id: 'IMPACT',
         }, {
           id: 'IND-003',
-          chantier_id: 'CH-168',
+          chantier_id: 'CH-001',
           nom: 'Indicateur 003',
           type_id: 'IMPACT',
         }, {
           id: 'IND-004',
-          chantier_id: 'CH-168',
+          chantier_id: 'CH-001',
           nom: 'Indicateur 004',
           type_id: 'Q_SERV',
         }, {
           id: 'IND-005',
-          chantier_id: 'CH-168',
+          chantier_id: 'CH-001',
           nom: 'Indicateur 005',
           type_id: 'IMPACT',
         }, {
           id: 'IND-006',
-          chantier_id: 'CH-168',
+          chantier_id: 'CH-001',
           nom: 'Indicateur 006',
           type_id: 'Q_SERV',
         }],
@@ -74,6 +78,7 @@ describe('PrismaIndicateurRepository', () => {
       await prisma.indicateur_territoire.createMany({
         data: [{
           id: 'IND-001',
+          chantier_id: 'CH-001',
           code_insee: 'FR',
           maille: 'NAT',
           territoire_code: 'NAT-FR',
@@ -83,6 +88,7 @@ describe('PrismaIndicateurRepository', () => {
           taux_avancement_mandat: 30,
         }, {
           id: 'IND-002',
+          chantier_id: 'CH-001',
           code_insee: 'FR',
           maille: 'NAT',
           territoire_code: 'NAT-FR',
@@ -92,6 +98,7 @@ describe('PrismaIndicateurRepository', () => {
           taux_avancement_mandat: 31,
         }, {
           id: 'IND-003',
+          chantier_id: 'CH-001',
           code_insee: '01',
           maille: 'DEPT',
           territoire_code: 'DEPT-01',
@@ -101,6 +108,7 @@ describe('PrismaIndicateurRepository', () => {
           taux_avancement_mandat: 32,
         }, {
           id: 'IND-004',
+          chantier_id: 'CH-001',
           code_insee: 'FR',
           maille: 'NAT',
           territoire_code: 'NAT-FR',
@@ -110,6 +118,7 @@ describe('PrismaIndicateurRepository', () => {
           taux_avancement_mandat: 33,
         }, {
           id: 'IND-005',
+          chantier_id: 'CH-001',
           code_insee: 'FR',
           maille: 'NAT',
           territoire_code: 'NAT-FR',
@@ -119,6 +128,7 @@ describe('PrismaIndicateurRepository', () => {
           taux_avancement_mandat: 34,
         }, {
           id: 'IND-006',
+          chantier_id: 'CH-001',
           code_insee: 'FR',
           maille: 'NAT',
           territoire_code: 'NAT-FR',
@@ -136,7 +146,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           zone_id: 'FRANCE',
-          jalon: 2025,
+          jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
           taux_avancement: 10,
           valeur_cible: 20,
         }, {
@@ -145,7 +155,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           zone_id: 'FRANCE',
-          jalon: 2025,
+          jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
           taux_avancement: 11,
           valeur_cible: 21,
         }, {
@@ -154,7 +164,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'DEPT',
           territoire_code: 'DEPT-01',
           zone_id: 'D01',
-          jalon: 2025,
+          jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
           taux_avancement: 12,
           valeur_cible: 22,
         }, {
@@ -163,7 +173,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           zone_id: 'FRANCE',
-          jalon: 2025,
+          jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
           taux_avancement: 13,
           valeur_cible: 23,
         }, {
@@ -172,7 +182,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           zone_id: 'FRANCE',
-          jalon: 2025,
+          jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
           taux_avancement: 14,
           valeur_cible: 24,
         }, {
@@ -181,14 +191,14 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           zone_id: 'FRANCE',
-          jalon: 2025,
+          jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
           taux_avancement: 15,
           valeur_cible: 15,
         }],
       });
 
       // When
-      const listeIndicateursResult = await prismaIndicateurRepository.récupérerIndicImpactParChantierId('CH-168');
+      const listeIndicateursResult = await prismaIndicateurRepository.récupérerIndicImpactParChantierId('CH-001');
 
       // Then
 

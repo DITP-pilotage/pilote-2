@@ -1,5 +1,9 @@
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { PrismaChantierRepository } from '@/server/fiche-territoriale/infrastructure/adapters/PrismaChantierRepository';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { configuration } from '@/config';
 
 describe('PrismaChantierRepository', () => {
   let prismaChantierRepository: PrismaChantierRepository;
@@ -96,28 +100,32 @@ describe('PrismaChantierRepository', () => {
         await prisma.chantier_territoire_jalon.createMany({
           data: [{
             id: 'CH-001',
-            jalon: 2025,
+            zone_id: 'D34',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
             taux_avancement: null,
           }, {
             id: 'CH-002',
-            jalon: 2025,
+            zone_id: 'D34',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
             taux_avancement: 2,
           }, {
             id: 'CH-004',
-            jalon: 2025,
+            zone_id: 'D87',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '87',
             maille: 'DEPT',
             territoire_code: 'DEPT-87',
             taux_avancement: null,
           }, {
             id: 'CH-003',
-            jalon: 2025,
+            zone_id: 'R01',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
@@ -211,21 +219,24 @@ describe('PrismaChantierRepository', () => {
         await prisma.chantier_territoire_jalon.createMany({
           data: [{
             id: 'CH-001',
-            jalon: 2025,
+            zone_id: 'D34',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
             taux_avancement: null,
           }, {
             id: 'CH-002',
-            jalon: 2025,
+            zone_id: 'D34',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
             taux_avancement: 2,
           }, {
             id: 'CH-003',
-            jalon: 2025,
+            zone_id: 'R01',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
@@ -306,21 +317,24 @@ describe('PrismaChantierRepository', () => {
         await prisma.chantier_territoire_jalon.createMany({
           data: [{
             id: 'CH-001',
-            jalon: 2025,
+            zone_id: 'D34',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
             taux_avancement: null,
           }, {
             id: 'CH-002',
-            jalon: 2025,
+            zone_id: 'D34',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
             taux_avancement: 2,
           }, {
             id: 'CH-003',
-            jalon: 2025,
+            zone_id: 'R01',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
@@ -425,28 +439,32 @@ describe('PrismaChantierRepository', () => {
         await prisma.chantier_territoire_jalon.createMany({
           data: [{
             id: 'CH-001',
-            jalon: 2025,
+            zone_id: 'R01',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
             taux_avancement: null,
           }, {
             id: 'CH-002',
-            jalon: 2025,
+            zone_id: 'R01',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
             taux_avancement: 2,
           }, {
             id: 'CH-004',
-            jalon: 2025,
+            zone_id: 'R02',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '02',
             maille: 'REG',
             territoire_code: 'REG-02',
             taux_avancement: null,
           }, {
             id: 'CH-003',
-            jalon: 2025,
+            zone_id: 'D34',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
@@ -460,11 +478,9 @@ describe('PrismaChantierRepository', () => {
         expect(result).toHaveLength(2);
         expect(result).toMatchObject([
           {
-            tauxAvancement: null,
-            tauxAvancementAnnuel: null,
+            id: 'CH-001',
           }, {
-            tauxAvancement: 2,
-            tauxAvancementAnnuel: 2,
+            id: 'CH-002',
           },
         ]);
       });
@@ -531,21 +547,24 @@ describe('PrismaChantierRepository', () => {
         await prisma.chantier_territoire_jalon.createMany({
           data: [{
             id: 'CH-001',
-            jalon: 2025,
+            zone_id: 'R01',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
             taux_avancement: null,
           }, {
             id: 'CH-002',
-            jalon: 2025,
+            zone_id: 'R01',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
             taux_avancement: 2,
           }, {
             id: 'CH-003',
-            jalon: 2025,
+            zone_id: 'D34',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
@@ -626,21 +645,24 @@ describe('PrismaChantierRepository', () => {
         await prisma.chantier_territoire_jalon.createMany({
           data: [{
             id: 'CH-001',
-            jalon: 2025,
+            zone_id: 'R01',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
             taux_avancement: null,
           }, {
             id: 'CH-002',
-            jalon: 2025,
+            zone_id: 'R01',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
             taux_avancement: 2,
           }, {
             id: 'CH-003',
-            jalon: 2025,
+            zone_id: 'D34',
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',

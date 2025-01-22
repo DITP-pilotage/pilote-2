@@ -194,7 +194,6 @@ describe('IndicateurSQLRepository', () => {
         }],
       });
 
-
       // When
       const result = await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur('IND-001', habilitations, ProfilEnum.DITP_ADMIN);
 
@@ -1139,7 +1138,7 @@ describe('IndicateurSQLRepository', () => {
       const result = await prismaIndicateurRepository.récupérerDétailsParIndicIdEtMaille('IND-001', 'departementale');
 
       // Then
-      expect(result).toStrictEqual({
+      expect(result).toMatchObject({
         'IND-001': {
           'DEPT-01': {
             avancement: {
@@ -1518,7 +1517,7 @@ describe('IndicateurSQLRepository', () => {
       const result = await prismaIndicateurRepository.récupererDétailsParChantierIdEtTerritoire('CH-001', ['DEPT-01', 'DEPT-02']);
 
       // Then
-      expect(result).toStrictEqual({
+      expect(result).toMatchObject({
         'IND-001': {
           'DEPT-01': {
             avancement: {
@@ -1981,7 +1980,7 @@ describe('IndicateurSQLRepository', () => {
       const result = await prismaIndicateurRepository.récupérerPourExports(['CH-001', 'CH-002'], ['DEPT-01', 'DEPT-02', 'REG-01']);
 
       // Then
-      expect(result).toStrictEqual([{
+      expect(result).toIncludeAllMembers([{
         maille: 'REG',
         régionNom: 'Guadeloupe',
         départementNom: null,

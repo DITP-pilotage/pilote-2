@@ -252,11 +252,11 @@ class Dependencies {
 
     this._chantierRepository = new ChantierSQLRepository();
     this._axeRepository = new AxeSQLRepository(prisma);
-    this._ministèreRepository = new MinistèreSQLRepository(prisma);
-    this._indicateurRepository = new IndicateurSQLRepository(prisma);
-    this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
+    this._ministèreRepository = new MinistèreSQLRepository();
+    this._indicateurRepository = new IndicateurSQLRepository();
+    this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository();
     this._commentaireRepository = new CommentaireSQLRepository();
-    this._objectifRepository = new ObjectifSQLRepository(prisma);
+    this._objectifRepository = new ObjectifSQLRepository();
     this._décisionStratégiqueRepository = new DécisionStratégiqueSQLRepository();
     this._utilisateurRepository = new UtilisateurSQLRepository();
     this._authentificationUtilisateurRepository = new PrismaUtilisateurRepository(prisma);

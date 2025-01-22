@@ -120,6 +120,7 @@ describe('RécupérerChantierUseCase', () => {
     await prisma.chantier_territoire_jalon.createMany({
       data: [{
         id: 'CH-001',
+        zone_id: 'FRANCE',
         territoire_code: 'NAT-FR',
         maille: 'NAT',
         code_insee: 'FR',
@@ -127,6 +128,7 @@ describe('RécupérerChantierUseCase', () => {
         taux_avancement: 20,
       }, {
         id: 'CH-001',
+        zone_id: 'D01',
         territoire_code: 'DEPT-13',
         maille: 'DEPT',
         code_insee: '13',

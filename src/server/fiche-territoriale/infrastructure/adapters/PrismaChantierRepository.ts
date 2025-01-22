@@ -1,4 +1,4 @@
-import { chantier_territoire as PrismaChantierTerritoireModel, PrismaClient } from '@prisma/client';
+import { chantier_territoire as PrismaChantierTerritoireModel, Maille, PrismaClient } from '@prisma/client';
 import { ChantierRepository } from '@/server/fiche-territoriale/domain/ports/ChantierRepository';
 import { Chantier } from '@/server/fiche-territoriale/domain/Chantier';
 import { MeteoDisponible } from '@/server/fiche-territoriale/domain/MeteoDisponible';
@@ -22,7 +22,7 @@ export class PrismaChantierRepository implements ChantierRepository {
     const listePrismaChantierTerritoireModel = await this.prismaClient.chantier_territoire.findMany({
       where: {
         territoire_code: territoireCode,
-        maille,
+        maille: maille as Maille,
         chantier_identite: {
           est_barometre: true,
           est_territorialise: true,

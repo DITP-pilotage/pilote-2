@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { Maille, PrismaClient } from '@prisma/client';
 import { IndicateurRepository } from '@/server/fiche-territoriale/domain/ports/IndicateurRepository';
 import { Indicateur } from '@/server/fiche-territoriale/domain/Indicateur';
 
@@ -21,7 +21,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             est_barometre: true,
             indicateur_territoire: {
               every: {
-                maille,
+                maille: maille as Maille,
                 code_insee: codeInsee,
               },
             },
@@ -29,7 +29,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             est_barometre: false,
             indicateur_territoire: {
               every: {
-                maille,
+                maille: maille as Maille,
                 code_insee: codeInsee,
                 OR: [
                   {
