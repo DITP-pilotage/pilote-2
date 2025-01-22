@@ -141,7 +141,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
 
   const repartitionMeteosChantiers = await new RecupererRepartitionsMeteoChantiersUseCase({
     chantierRepository: dependencies.getChantierRepository(),
-  }).run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'regionale' ? 'REG' : 'DEPT', axes, filtres, sorting).then(presenterEnRépartitionsMétéosChantiersContrat);
+  }).run(session.habilitations, territoireCode, filtres, axes).then(presenterEnRépartitionsMétéosChantiersContrat);
 
   const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisse || filtresAlertes.estEnAlerteTauxAvancementNonCalculé || filtresAlertes.estEnAlerteMétéoNonRenseignée || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? chantiers.filter(chantier => {
     const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][territoireCode];

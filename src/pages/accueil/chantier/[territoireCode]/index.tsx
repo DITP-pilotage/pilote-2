@@ -135,7 +135,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
 
   const repartitionMeteosChantiers = await new RecupererRepartitionsMeteoChantiersUseCase({
     chantierRepository: dependencies.getChantierRepository(),
-  }).run(session.habilitations, session.profil, territoireCode, mailleGlobalTerritoireSelectionnee === 'régionale' ? 'REG' : 'DEPT', axes, filtres, sorting).then(presenterEnRépartitionsMétéosChantiersContrat);
+  }).run(session.habilitations, territoireCode, filtres, axes).then(presenterEnRépartitionsMétéosChantiersContrat);
 
   const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisse || filtresAlertes.estEnAlerteTauxAvancementNonCalculé || filtresAlertes.estEnAlerteMétéoNonRenseignée || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? chantiers.filter(chantier => {
     const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][territoireCode];
@@ -149,7 +149,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository());
 
   const avancementsAgrégés = await récupérerStatistiquesChantiersUseCase.run(chantiersAvecAlertes.map(chantier => chantier.id), mailleQuery, session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat);
-  //créer un nouveau usecase qui récupère pour chaque météo le count 
   const donnéesTerritoiresAgrégées = new AgrégateurListeChantiersParTerritoire(chantiersAvecAlertes).agréger();
 
   if (avancementsAgrégés) {

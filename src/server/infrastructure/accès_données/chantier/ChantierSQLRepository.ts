@@ -26,6 +26,7 @@ import {
 } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 import { configuration } from '@/config';
 import { PrismaChantier } from '@/server/infrastructure/accès_données/chantier/PrismaChantier';
+import { RepartitionMeteoChantiers } from '@/server/chantiers/domain/RepartitionMeteoChantiers';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -574,5 +575,65 @@ export default class ChantierSQLRepository implements ChantierRepository {
         moyenne: null,
       },
     };
+  }
+
+  async recupererLaRepartitionMeteo(chantiersLectureIds: string[], territoireCode: string, filtres: FiltreQueryParams): Promise<RepartitionMeteoChantiers> {
+    const whereOptions: Prisma.chantierWhereInput = {};
+
+    if (filtres.perimetres?.length > 0) {
+      whereOptions.perimetre_ids = {
+        hasSome: filtres.perimetres,
+      };
+    }
+
+    if (filtres.statut?.length > 0) {
+      whereOptions.statut = {
+        in: filtres.statut as type_statut[],
+      };
+    }
+
+    if (filtres.axes?.length > 0) {
+      whereOptions.axe = {
+        in: filtres.axes,
+      };
+    }
+
+    if (filtres.estTerritorialise && filtres.estBarometre) {
+      whereOptions.OR = [{
+        est_barometre: true,
+      }, {
+        est_territorialise: true,
+      }];
+    } else if (filtres.estTerritorialise) {
+      whereOptions.est_territorialise = true;
+    } else if (filtres.estBarometre) {
+      whereOptions.est_barometre = true;
+    }
+
+    let chantierIds = chantiersLectureIds;
+
+    if (filtres.valeurDeLaRecherche?.length > 0) {
+      const testLower = removeAccents(filtres.valeurDeLaRecherche.toLowerCase());
+
+      chantierIds = await this.prisma.$queryRawUnsafe<{ id: string }[]>('SELECT distinct(id) FROM chantier where (LOWER(unaccent(nom)) ILIKE $1 OR LOWER(unaccent(id)) ILIKE $1)', `%${testLower}%`)
+        .then(chantiersMatched => chantiersMatched.map(chantierMatched => chantierMatched.id).filter(chantierId => chantiersLectureIds.includes(chantierId)));
+    }
+    const meteosGroupee = await this.prisma.chantier.groupBy({
+      by: ['meteo'],
+      _count: true,
+      where: {
+        NOT: { ministeres: { isEmpty: true } },
+        territoire_code: territoireCode,
+        id: { in: chantierIds },
+        ...whereOptions,
+      },
+    });
+
+    return RepartitionMeteoChantiers.creerRepartitionMeteoChantiers({
+      nombreCouvert: meteosGroupee.find(meteo => meteo.meteo === 'COUVERT')?._count ?? 0,
+      nombreNuage: meteosGroupee.find(meteo => meteo.meteo === 'NUAGE')?._count ?? 0,
+      nombreOrage: meteosGroupee.find(meteo => meteo.meteo === 'ORAGE')?._count ?? 0,
+      nombreSoleil: meteosGroupee.find(meteo => meteo.meteo === 'SOLEIL')?._count ?? 0,
+    });
   }
 }

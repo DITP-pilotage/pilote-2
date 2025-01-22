@@ -2203,4 +2203,509 @@ describe('ChantierSQLRepository', () => {
       });
     });
   });
+
+  describe('#recupererLaRepartitionMeteo', () => {
+    it("quand on a l'option estBarometre et estTerritorialise à true, doit remonter la répartition météo des chantiers qui sont soit du barometre soit territorialisés", async () => {
+      // Given
+      const repository = new ChantierSQLRepository(prisma);
+      await prisma.chantier.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          est_barometre: true,
+          est_territorialise: true,
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'COUVERT',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-002',
+          nom: 'Chantier 002',
+          est_barometre: true,
+          est_territorialise: false,
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'SOLEIL',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-003',
+          nom: 'Chantier 003',
+          est_barometre: false,
+          est_territorialise: true,
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'SOLEIL',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-004',
+          nom: 'Chantier 004',
+          est_barometre: false,
+          est_territorialise: false,
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'NUAGE',
+          ministeres: ['MINA'],
+        }],
+      });
+
+      const filtres = {
+        perimetres: [],
+        axes: [],
+        statut: [],
+        meteos: [],
+        estTerritorialise: true,
+        estBarometre: true,
+        valeurDeLaRecherche: '',
+      };
+
+      // When
+      const result = await repository.recupererLaRepartitionMeteo(['CH-001', 'CH-002', 'CH-003', 'CH-004'], 'NAT-FR', filtres);
+
+      // Then
+      expect(result.nombreCouvert).toEqual(1);
+      expect(result.nombreSoleil).toEqual(2);
+      expect(result.nombreNuage).toEqual(0);
+      expect(result.nombreOrage).toEqual(0);
+    });
+
+    it('quand on a le filtre estBarometre a true et estTerritorialise à false, doit remonter la répartition météo pour les chantiers du barometre', async () => {
+      // Given
+      const repository = new ChantierSQLRepository(prisma);
+      await prisma.chantier.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          est_barometre: true,
+          est_territorialise: true,
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'COUVERT',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-002',
+          nom: 'Chantier 002',
+          est_barometre: true,
+          est_territorialise: false,
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'SOLEIL',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-003',
+          nom: 'Chantier 003',
+          est_barometre: false,
+          est_territorialise: true,
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'SOLEIL',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-004',
+          nom: 'Chantier 004',
+          est_barometre: false,
+          est_territorialise: false,
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'NUAGE',
+          ministeres: ['MINA'],
+        }],
+      });
+
+      const filtres = {
+        perimetres: [],
+        axes: [],
+        statut: [],
+        meteos: [],
+        estTerritorialise: false,
+        estBarometre: true,
+        valeurDeLaRecherche: '',
+      };
+
+      // When
+      const result = await repository.recupererLaRepartitionMeteo(['CH-001', 'CH-002', 'CH-003', 'CH-004'], 'NAT-FR', filtres);
+
+      // Then
+      expect(result.nombreCouvert).toEqual(1);
+      expect(result.nombreSoleil).toEqual(1);
+      expect(result.nombreNuage).toEqual(0);
+      expect(result.nombreOrage).toEqual(0);
+    });
+
+    it("quand on a l'option estBarometre est a false et estTerritorialise à true, doit remonter les chantiers ids contenant les chantiers territorialise", async () => {
+      // Given
+      const repository = new ChantierSQLRepository(prisma);
+      await prisma.chantier.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          est_barometre: true,
+          est_territorialise: true,
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'COUVERT',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-002',
+          nom: 'Chantier 002',
+          est_barometre: true,
+          est_territorialise: false,
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'SOLEIL',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-003',
+          nom: 'Chantier 003',
+          est_barometre: false,
+          est_territorialise: true,
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'ORAGE',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-004',
+          nom: 'Chantier 004',
+          est_barometre: false,
+          est_territorialise: false,
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'NUAGE',
+          ministeres: ['MINA'],
+        }],
+      });
+
+      const filtres = {
+        perimetres: [],
+        axes: [],
+        statut: [],
+        meteos: [],
+        estTerritorialise: true,
+        estBarometre: false,
+        valeurDeLaRecherche: '',
+      };
+
+      // When
+      const result = await repository.recupererLaRepartitionMeteo(['CH-001', 'CH-002', 'CH-003', 'CH-004'], 'NAT-FR', filtres);
+
+      // Then
+      expect(result.nombreCouvert).toEqual(1);
+      expect(result.nombreSoleil).toEqual(0);
+      expect(result.nombreNuage).toEqual(0);
+      expect(result.nombreOrage).toEqual(1);
+    });
+
+    it('quand on a le filtre statut est défini, doit remonter la répartition météo des chantiers avec les statuts demandés', async () => {
+      // Given
+      const repository = new ChantierSQLRepository(prisma);
+      await prisma.chantier.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          est_barometre: true,
+          est_territorialise: true,
+          statut: 'PUBLIE',
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'COUVERT',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-002',
+          nom: 'Chantier 002',
+          est_barometre: true,
+          est_territorialise: false,
+          statut: 'PUBLIE',
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'COUVERT',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-003',
+          nom: 'Chantier 003',
+          est_barometre: false,
+          est_territorialise: true,
+          statut: 'BROUILLON',
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'ORAGE',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-004',
+          nom: 'Chantier 004',
+          est_barometre: false,
+          est_territorialise: false,
+          statut: 'ARCHIVE',
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'COUVERT',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-005',
+          nom: 'Chantier 005',
+          est_barometre: false,
+          est_territorialise: false,
+          statut: 'SUPPRIME',
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'COUVERT',
+          ministeres: ['MINA'],
+        }],
+      });
+
+      const filtres = {
+        perimetres: [],
+        axes: [],
+        statut: ['PUBLIE', 'BROUILLON'],
+        meteos: [],
+        estTerritorialise: false,
+        estBarometre: false,
+        valeurDeLaRecherche: '',
+      };
+
+      // When
+      const result = await repository.recupererLaRepartitionMeteo(['CH-001', 'CH-002', 'CH-003', 'CH-004'], 'NAT-FR', filtres);
+
+      // Then
+      expect(result.nombreCouvert).toEqual(2);
+      expect(result.nombreSoleil).toEqual(0);
+      expect(result.nombreNuage).toEqual(0);
+      expect(result.nombreOrage).toEqual(1);
+    });
+
+    it("quand on a l'option perimetreIds est définie, doit remonter les répartions météo des chantiers avec les périmètres demandés", async () => {
+      // Given
+      const repository = new ChantierSQLRepository(prisma);
+      await prisma.chantier.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          est_barometre: true,
+          est_territorialise: true,
+          statut: 'PUBLIE',
+          perimetre_ids: ['PER-01', 'PER-02'],
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'SOLEIL',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-002',
+          nom: 'Chantier 002',
+          est_barometre: true,
+          est_territorialise: false,
+          statut: 'PUBLIE',
+          perimetre_ids: ['PER-01'],
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'ORAGE',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-003',
+          nom: 'Chantier 003',
+          est_barometre: false,
+          est_territorialise: true,
+          statut: 'BROUILLON',
+          perimetre_ids: ['PER-02'],
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'ORAGE',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-004',
+          nom: 'Chantier 004',
+          est_barometre: false,
+          est_territorialise: false,
+          statut: 'ARCHIVE',
+          perimetre_ids: ['PER-03'],
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'COUVERT',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-005',
+          nom: 'Chantier 005',
+          est_barometre: false,
+          est_territorialise: false,
+          statut: 'SUPPRIME',
+          perimetre_ids: ['PER-01', 'PER-03'],
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'COUVERT',
+          ministeres: ['MINA'],
+        }],
+      });
+
+      const filtres = {
+        perimetres: ['PER-01', 'PER-02'],
+        axes: [],
+        statut: [],
+        meteos: [],
+        estTerritorialise: false,
+        estBarometre: false,
+        valeurDeLaRecherche: '',
+      };
+
+      // When
+      const result = await repository.recupererLaRepartitionMeteo(['CH-001', 'CH-002', 'CH-003', 'CH-004', 'CH-005'], 'NAT-FR', filtres);
+
+      // Then
+      expect(result.nombreCouvert).toEqual(1);
+      expect(result.nombreSoleil).toEqual(1);
+      expect(result.nombreNuage).toEqual(0);
+      expect(result.nombreOrage).toEqual(2);
+    });
+
+    it('doit retourner la répartition météo des chantiers ids demandés', async () => {
+      // Given
+      const repository = new ChantierSQLRepository(prisma);
+      await prisma.chantier.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'SOLEIL',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-002',
+          nom: 'Chantier 002',
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'ORAGE',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-003',
+          nom: 'Chantier 003',
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'ORAGE',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-004',
+          nom: 'Chantier 004',
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'COUVERT',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-005',
+          nom: 'Chantier 005',
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'COUVERT',
+          ministeres: ['MINA'],
+        }],
+      });
+
+      const filtres = {
+        perimetres: [],
+        axes: [],
+        statut: [],
+        meteos: [],
+        estTerritorialise: false,
+        estBarometre: false,
+        valeurDeLaRecherche: '',
+      };
+
+      // When
+      const result = await repository.recupererLaRepartitionMeteo(['CH-001', 'CH-003', 'CH-005'], 'NAT-FR', filtres);
+
+      // Then
+      expect(result.nombreCouvert).toEqual(1);
+      expect(result.nombreSoleil).toEqual(1);
+      expect(result.nombreNuage).toEqual(0);
+      expect(result.nombreOrage).toEqual(1);
+    });
+    it('doit retourner la répartition météo des chantiers uniquement sur les territoires demandés', async () => {
+      // Given
+      const repository = new ChantierSQLRepository(prisma);
+      await prisma.chantier.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'SOLEIL',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-002',
+          nom: 'Chantier 002',
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'ORAGE',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-003',
+          nom: 'Chantier 003',
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'ORAGE',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-004',
+          nom: 'Chantier 004',
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          meteo: 'COUVERT',
+          ministeres: ['MINA'],
+        }, {
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          code_insee: '34',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-34',
+          meteo: 'COUVERT',
+          ministeres: ['MINA'],
+        }],
+      });
+
+      const filtres = {
+        perimetres: [],
+        axes: [],
+        statut: [],
+        meteos: [],
+        estTerritorialise: false,
+        estBarometre: false,
+        valeurDeLaRecherche: '',
+      };
+
+      // When
+      const result = await repository.recupererLaRepartitionMeteo(['CH-001', 'CH-002', 'CH-003', 'CH-004'], 'NAT-FR', filtres);
+
+      // Then
+      expect(result.nombreCouvert).toEqual(1);
+      expect(result.nombreSoleil).toEqual(1);
+      expect(result.nombreNuage).toEqual(0);
+      expect(result.nombreOrage).toEqual(2);
+    });
+  });
 });
