@@ -49,8 +49,8 @@ const RepartitionsMeteosChantiers : FunctionComponent<RepartitionsMeteosChantier
             title={libellésMétéos[meteo]}
           >
             <button
-              className='bouton-repartition-meteos'
-              onClick={() => auClickCallback(meteo)}
+              className={`bouton-repartition-meteos ${meteos.includes(meteo) ? 'est-activé' : ''}`}
+              onClick={() => {auClickCallback(meteo);}}
               type='button'
             >
               <MeteoPicto

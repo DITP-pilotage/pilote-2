@@ -26,6 +26,7 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
     axes: parseAsString.withDefault(''),
+    meteos: parseAsString.withDefault(''),
     statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']),
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
@@ -46,6 +47,21 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
 
   const retrouverNomFiltre = (idItemRecherche: string, listItems: Ministère[] | PérimètreMinistériel[] | Axe[] | Ppg[]) => {
     return listItems.find(item => item.id === idItemRecherche)!.nom;
+  };
+
+  const meteosAAfficher = (meteo: string) => {
+    switch (meteo) {
+      case 'ORAGE':
+        return 'Objectifs compromis';
+      case 'NUAGE':
+        return 'Appuis nécessaires';
+      case 'COUVERT':
+        return 'Objectifs atteignables';
+      case 'SOLEIL':
+        return 'Objectifs sécurisés';
+      default: 
+        return 'NON RENSEIGNEES';
+    }
   };
 
   const filtresCatégories = [
@@ -78,6 +94,11 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
         filtres.estEnAlerteMétéoNonRenseignée ? 'Chantier(s) avec météo et synthèse des résultats non renseignés' : null,
         filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 'Chantier(s) sans taux d’avancement au niveau départemental' : null,
       ].filter(Boolean),
+    },
+    {
+      nom: 'Météos', 
+      filtresActifs : 
+        filtres.meteos.split(',').filter(Boolean).map(meteo => meteosAAfficher(meteo)),
     },
   ];
 

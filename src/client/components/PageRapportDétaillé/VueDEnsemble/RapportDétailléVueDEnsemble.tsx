@@ -23,9 +23,9 @@ import {
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
-import RepartitionsMeteosChantiers from '@/components/PageAccueil/PageChantiers/FiltresMeteos/RepartitionsMeteosChantiers';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import RepartitionsMeteosRapportDetaille from '@/client/components/PageRapportDétaillé/FiltresSélectionnés/FiltresMétéos/RepartitionsMeteosRapportDetaille';
 import RapportDétailléTableauChantiers from './RapportDétailléTableauChantiers/RapportDétailléTableauChantiers';
 
 interface RapportDétailléVueDEnsembleProps {
@@ -93,7 +93,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnse
                 {INFOBULLE_CONTENUS.chantiers.météos}
               </Infobulle>
             </TitreInfobulleConteneur>
-            <RepartitionsMeteosChantiers
+            <RepartitionsMeteosRapportDetaille
               repartitionMeteos={repartitionMeteosChantiers}
             />
           </section>

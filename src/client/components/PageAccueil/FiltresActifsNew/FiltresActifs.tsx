@@ -12,7 +12,7 @@ import FiltresActifsStyled from './FiltresActifs.styled';
 interface FiltresActifsProps {
   ministères: Ministère[]
   axes: Axe[]
-  mailleSelectionnee: MailleInterne
+  mailleSelectionnee: MailleInterne,
 }
 
 const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axes, mailleSelectionnee }) => {
@@ -66,11 +66,10 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
         return 'Objectifs atteignables';
       case 'SOLEIL':
         return 'Objectifs sécurisés';
-      default:
-        break;
+      default: 
+        return 'NON RENSEIGNEES';
     }
   };
-
 
   const désactiverTousLesFiltres = () => {
     reinitialiserFiltres();

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const RepartitionsMeteosChantiersStyled = styled.ul`
+const RepartitionsMeteosRapportDetailleStyled = styled.ul`
   list-style: none;
 
   .fr-col-3 {
@@ -38,4 +38,4 @@ const RepartitionsMeteosChantiersStyled = styled.ul`
   }
 `;
 
-export default RepartitionsMeteosChantiersStyled;
+export default RepartitionsMeteosRapportDetailleStyled;

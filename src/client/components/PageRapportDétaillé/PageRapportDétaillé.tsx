@@ -128,6 +128,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
               estAutoriseAVoirLesBrouillons={estAutoriseAVoirLesBrouillons}
               ministères={ministères}
               territoireSélectionné={territoireSélectionné}
+
             />
             <div className='fr-mb-3w interrupteur-chantiers'>
               <Interrupteur
