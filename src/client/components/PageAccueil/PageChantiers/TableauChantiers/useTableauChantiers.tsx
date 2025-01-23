@@ -147,9 +147,9 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
         return calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement));
       },
       aggregatedCell: avancement => (
-        <TableauRéformesAvancement 
-          avancement={avancement.getValue() ?? null} 
-          estArchive={chantiersSontArchives} 
+        <TableauRéformesAvancement
+          avancement={avancement.getValue() ?? null}
+          estArchive={chantiersSontArchives}
         />
       ),
       meta: {
@@ -167,8 +167,8 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
         header: 'Tendance',
         id: 'tendance',
         cell: cellContext => (
-          <TableauChantiersTendance 
-            estArchive={chantiersSontArchives} 
+          <TableauChantiersTendance
+            estArchive={chantiersSontArchives}
             tendance={cellContext.getValue()}
           />
         ),
@@ -182,7 +182,7 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
         header: 'Écart',
         id: 'écart',
         cell: cellContext => (
-          <TableauChantiersÉcart 
+          <TableauChantiersÉcart
             estArchive={chantiersSontArchives}
             écart={cellContext.getValue()}
           />

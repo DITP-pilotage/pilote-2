@@ -11,6 +11,7 @@
 
 echo ">> Reset db"
 npm run database:init
+
 bash scripts/ddp_dump.sh
 bash scripts/ddp_restore.sh
 # ou ddp via docker avec: "docker compose run --rm ddp bash docker/entrypoint.ddp.sh"

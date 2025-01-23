@@ -230,6 +230,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       },
     });
 
+    // TODO la majeur partie de la latence provient de cette opération (100 à 150ms)
     return Promise.all(
       listeChantierIdentite.map(chantierIdentite => prisma.chantier_territoire.findMany({
         where: {

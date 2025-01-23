@@ -7,6 +7,7 @@ test('doit pouvoir importer des données', async ({ page }) => {
   await loginFn({ page });
 
   await test.step('Navigation vers la page chantier "Doubler les effectifs de la réserve opérationnelle"', async () => {
+    await page.getByLabel('Pagination').getByText('2').click();
     await expect(page.getByRole('table').getByRole('cell', { name: /Doubler les effectifs de la réserve opérationnelle/ })).toBeVisible();
     await page.getByRole('table').getByRole('cell', { name: /Doubler les effectifs de la réserve opérationnelle/ }).click();
     await page.waitForURL('**/chantier/CH-027/NAT-FR**');
