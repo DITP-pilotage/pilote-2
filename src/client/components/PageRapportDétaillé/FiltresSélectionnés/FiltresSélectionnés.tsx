@@ -60,7 +60,7 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
       case 'SOLEIL':
         return 'Objectifs sécurisés';
       default: 
-        return 'NON RENSEIGNEES';
+        return 'Non renseignées';
     }
   };
 

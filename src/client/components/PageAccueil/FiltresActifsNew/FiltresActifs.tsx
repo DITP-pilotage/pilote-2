@@ -67,7 +67,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
       case 'SOLEIL':
         return 'Objectifs sécurisés';
       default: 
-        return 'NON RENSEIGNEES';
+        return 'Non renseignées';
     }
   };
 
