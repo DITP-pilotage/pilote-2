@@ -385,34 +385,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       },
     });
 
-    return result.sort((indicA, indicB) => {
-      const orderMaille = { 'NAT': 1, 'REG': 2, 'DEPT': 3 };
-
-      // Comparer par nom
-      if (indicA.indicateur_identite.chantier_identite.nom !== indicB.indicateur_identite.chantier_identite.nom) {
-        return indicA.indicateur_identite.chantier_identite.nom.localeCompare(indicB.indicateur_identite.chantier_identite.nom);
-      }
-
-      // Comparer par nom_indicateur
-      if (indicA.indicateur_identite.nom !== indicB.indicateur_identite.nom) {
-        return indicA.indicateur_identite.chantier_identite.nom.localeCompare(indicB.indicateur_identite.chantier_identite.nom);
-      }
-
-      // Comparer par maille
-      if (indicA.maille !== indicB.maille) {
-        return orderMaille[indicA.maille] - orderMaille[indicB.maille];
-      }
-
-      // Comparer par nom_region
-      const nomRegionA = indicA.maille === 'DEPT' ? indicA.territoire.territoire_parent?.nom || null : indicA.maille === 'REG' ? indicA.territoire.nom : null;
-      const nomRegionB = indicB.maille === 'DEPT' ? indicB.territoire.territoire_parent?.nom || null : indicB.maille === 'REG' ? indicB.territoire.nom : null;
-      if (nomRegionA && nomRegionB && nomRegionA !== nomRegionB) {
-        return nomRegionA.localeCompare(nomRegionB);
-      }
-
-      // Comparer par code_insee
-      return indicA.code_insee.localeCompare(indicB.code_insee);
-    }).map(it => ({
+    return result.map(it => ({
       maille: it.maille,
       régionNom: it.maille === 'DEPT' ? it.territoire.territoire_parent?.nom || null : it.territoire.nom,
       départementNom: it.maille === 'DEPT' ? it.territoire.nom : null,
@@ -438,6 +411,42 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       valeurCible: it.valeur_cible_mandat,
       dateValeurCible: it.date_valeur_cible_mandat?.toISOString() || null,
       avancementGlobal: it.taux_avancement_mandat,
-    }));
+    })).sort((indicA, indicB) => {
+      const orderMaille = { 'NAT': 1, 'REG': 2, 'DEPT': 3 };
+
+      // Comparer par nom
+      if (indicB.chantierNom !== indicA.chantierNom) {
+        return indicB.chantierNom.localeCompare(indicA.chantierNom);
+      }
+
+      // Comparer par nom_indicateur
+      if (indicB.nom !== indicA.nom) {
+        return indicB.nom.localeCompare(indicA.nom);
+      }
+
+      // Comparer par maille
+      if (indicA.maille !== indicB.maille) {
+        return orderMaille[indicA.maille] - orderMaille[indicB.maille];
+      }
+
+      // Comparer par nom_region
+      const nomRegionA = indicB.maille === 'DEPT' ? indicB.régionNom || null : indicB.maille === 'REG' ? indicB.départementNom : null;
+      const nomRegionB = indicA.maille === 'DEPT' ? indicA.régionNom || null : indicA.maille === 'REG' ? indicA.départementNom : null;
+      if (nomRegionA && nomRegionB && nomRegionA !== nomRegionB) {
+        return nomRegionA.localeCompare(nomRegionB);
+      }// Comparer par code insee
+      if (indicB.codeInsee !== indicA.codeInsee) {
+        return indicB.codeInsee.localeCompare(indicA.codeInsee);
+      }
+
+      // Comparer par ministere
+      if (indicB.chantierMinistèreNom === null) {
+        return 1;
+      }
+      if (indicA.chantierMinistèreNom === null) {
+        return -1;
+      }
+      return indicB.chantierMinistèreNom.localeCompare(indicA.chantierMinistèreNom);
+    });
   }
 }

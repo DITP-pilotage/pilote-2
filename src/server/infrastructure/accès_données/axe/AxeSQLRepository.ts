@@ -17,7 +17,7 @@ export default class AxeSQLRepository implements AxeRepository {
   async getListePourChantiers(chantierIds: string[]): Promise<Axe[]> {
     return this.prisma.$queryRaw<Axe[]>`
     WITH axe_liste AS (
-      select DISTINCT c.axe as axe_id from chantier c where  c.id IN (${Prisma.join(chantierIds)})
+      select DISTINCT c.axe as axe_id from chantier_identite c where  c.id IN (${Prisma.join(chantierIds)})
     )
     select a.*
     from axe a

@@ -10,13 +10,8 @@
 
 
 echo ">> Reset db"
-bash scripts/prisma_reset_and_migrate.sh
-cd data_management
-echo ">> Run dj FULL"
-FULL_DJ=true docker compose run --rm -e FULL_DJ pilote_datajobs
-echo ">> Run descente de prod"
-cd ..
-// bash scripts/ddp_dump.sh
+npm run database:init
+bash scripts/ddp_dump.sh
 bash scripts/ddp_restore.sh
 # ou ddp via docker avec: "docker compose run --rm ddp bash docker/entrypoint.ddp.sh"
 #   pré-requis: mettre des clés ssh dans pilote-2/docker (voir pilote-2/docker/.gitignore) 

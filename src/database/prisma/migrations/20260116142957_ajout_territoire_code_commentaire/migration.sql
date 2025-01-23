@@ -1,5 +1,5 @@
 -- AlterTable
-ALTER TABLE "public"."commentaire" ADD COLUMN     "territoire_code" TEXT;
+ALTER TABLE "public"."commentaire" ADD COLUMN  "territoire_code" TEXT;
 
 UPDATE "public"."commentaire" SET territoire_code = CONCAT(maille, '-', code_insee);
 

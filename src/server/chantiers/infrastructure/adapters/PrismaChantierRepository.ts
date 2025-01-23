@@ -7,7 +7,7 @@ export class PrismaChantierRepository implements ChantierRepository {
   async récupérerDonneesChantier(chantierId: string, territoireCodesLecture: string[]): Promise<DonneeChantier[]> {
     const rows = await prisma.$queryRaw<any[]>`
         with chantier_ids as (select distinct c.id
-                              from chantier c
+                              from chantier_identite c
                               where c.id = ${chantierId}
                                 and ministeres <> '{}'),
              derniers_commentaires as (select *

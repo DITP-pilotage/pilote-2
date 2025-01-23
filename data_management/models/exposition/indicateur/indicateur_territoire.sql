@@ -1,3 +1,6 @@
+-- depends_on: {{ ref('chantier_territoire') }}
+-- depends_on: {{ ref('indicateur_identite') }}
+
 {{ config(
     materialized = 'incremental', 
     unique_key = ['id', 'territoire_code'])
@@ -22,6 +25,7 @@ get_evol_vaca AS (
 
 SELECT
     meta_indic.id,
+    meta_indic.chantier_id,
     territoire.maille,
     territoire.code AS territoire_code,
     territoire.code_insee,

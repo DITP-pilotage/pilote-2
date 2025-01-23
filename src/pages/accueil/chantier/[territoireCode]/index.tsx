@@ -119,11 +119,12 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     )
   );
 
+  const mapAxes = new Map<string, Axe>(axes.map(axe => [axe.id, axe]));
+
   const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
     dependencies.getChantierRepository(),
     dependencies.getTerritoireRepository(),
-  )
-    .run(session.habilitations, session.profil, territoireCode, mailleGlobalTerritoireSelectionnee === 'regionale' ? 'REG' : 'DEPT', mailleChantier || 'departementale', ministères, axes, filtres, sorting);
+  ).run(session.habilitations, session.profil, territoireCode, mailleChantier || 'departementale', ministères, mapAxes, filtres, sorting);
 
   const {
     répartitionMétéos,
