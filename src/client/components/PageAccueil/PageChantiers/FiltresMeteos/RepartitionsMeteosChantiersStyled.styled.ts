@@ -15,7 +15,7 @@ const RepartitionsMeteosChantiersStyled = styled.ul`
     box-shadow: 0 2px 6px rgb(0 0 18 / 16%);
   }
 
-  button.est-activé { 
+  button.est-active { 
     border-color: var(--text-title-blue-france);
   }
 

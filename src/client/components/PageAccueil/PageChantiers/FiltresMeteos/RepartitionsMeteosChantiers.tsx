@@ -6,13 +6,11 @@ import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import RepartitionsMeteosChantiersStyled from './RepartitionsMeteosChantiersStyled.styled';
 
-export type RépartitionMétéos = Record<MétéoSaisissable, number>;
-
 interface RepartitionsMeteosChantiersProps {
   repartitionMeteos: RepartitionMeteoContrat
 }
 
-const meteosÀAfficher = ['ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL'] as const;
+const meteosAAfficher = ['ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL'] as const;
 
 const RepartitionsMeteosChantiers : FunctionComponent<RepartitionsMeteosChantiersProps> = ({ repartitionMeteos }) => {
   const [meteos, setMeteos] = useQueryState('meteos', parseAsString.withDefault('').withOptions({
@@ -26,15 +24,15 @@ const RepartitionsMeteosChantiers : FunctionComponent<RepartitionsMeteosChantier
 
   const auClickCallback = useCallback(
     (meteo: MétéoSaisissable) => {
-      let arrMétéoFiltre = meteos.split(',').filter(Boolean);
+      let arrMeteoFiltre = meteos.split(',').filter(Boolean);
       if (meteos.includes(meteo)) {
-        arrMétéoFiltre.splice(arrMétéoFiltre.indexOf(meteo), 1);
+        arrMeteoFiltre.splice(arrMeteoFiltre.indexOf(meteo), 1);
       } else {
-        arrMétéoFiltre.push(meteo);
+        arrMeteoFiltre.push(meteo);
       }
       setPagination(1);
-      sauvegarderFiltres({ meteos: arrMétéoFiltre });
-      return (setMeteos(arrMétéoFiltre.join(',')));
+      sauvegarderFiltres({ meteos: arrMeteoFiltre });
+      return (setMeteos(arrMeteoFiltre.join(',')));
     }, 
     [meteos, setMeteos, setPagination],
   );
@@ -42,14 +40,14 @@ const RepartitionsMeteosChantiers : FunctionComponent<RepartitionsMeteosChantier
   return (
     <RepartitionsMeteosChantiersStyled className='fr-grid-row fr-mx-n3v'>
       {
-        meteosÀAfficher.map(meteo => (
+        meteosAAfficher.map(meteo => (
           <li
             className='fr-col-3'
             key={libellésMétéos[meteo]}
             title={libellésMétéos[meteo]}
           >
             <button
-              className={`bouton-repartition-meteos ${meteos.includes(meteo) ? 'est-activé' : ''}`}
+              className={`bouton-repartition-meteos ${meteos.includes(meteo) ? 'est-active' : ''}`}
               onClick={() => {auClickCallback(meteo);}}
               type='button'
             >

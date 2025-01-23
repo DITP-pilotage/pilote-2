@@ -9,7 +9,7 @@ interface RepartitionsMeteosRapportDetailleProps {
   repartitionMeteos: RepartitionMeteoContrat
 }
 
-const meteosÀAfficher = ['ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL'] as const;
+const meteosAAfficher = ['ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL'] as const;
 
 const RepartitionsMeteosRapportDetaille : FunctionComponent<RepartitionsMeteosRapportDetailleProps> = ({ repartitionMeteos }) => {
   const [meteos] = useQueryState('meteos', parseAsString.withDefault('').withOptions({
@@ -21,14 +21,14 @@ const RepartitionsMeteosRapportDetaille : FunctionComponent<RepartitionsMeteosRa
   return (
     <RepartitionsMeteosRapportDetailleStyled className='fr-grid-row fr-mx-n3v'>
       {
-        meteosÀAfficher.map(meteo => (
+        meteosAAfficher.map(meteo => (
           <li
             className='fr-col-3'
             key={libellésMétéos[meteo]}
             title={libellésMétéos[meteo]}
           >
             <button
-              className={`bouton-repartition-meteos ${meteos.includes(meteo) ? 'est-activé' : ''}`}
+              className={`bouton-repartition-meteos ${meteos.includes(meteo) ? 'est-active' : ''}`}
               disabled
               type='button'
             >
