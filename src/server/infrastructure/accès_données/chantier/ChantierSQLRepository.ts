@@ -17,7 +17,7 @@ import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avanc
 import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
 import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
-import { FiltreQueryParams, SortingParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
+import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 import { removeAccents } from '@/server/utils/remove-accents';
 import { prisma } from '@/server/db/prisma';
 import { calculerMoyenne, calculerMédiane } from '@/client/utils/statistiques/statistiques';

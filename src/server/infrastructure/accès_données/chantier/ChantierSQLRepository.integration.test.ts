@@ -585,9 +585,9 @@ describe('ChantierSQLRepository', () => {
   });
 
   describe('#récupérerLesEntréesDeTousLesChantiersHabilitésNew', () => {
-    it('quand on est profil territoriale et que les filtres e sont laissés par défault, doit remonter les chantiers demandés', async () => {
+    it('quand on est profil territoriale et que les filtres sont laissés par défault, doit remonter les chantiers demandés', async () => {
       // Given
-      const chantiersLectureIds = ['CH-001', 'CH-002', 'CH-003', 'CH-004'];
+      const chantiersLectureIds = ['CH-001', 'CH-002', 'CH-004'];
       const territoiresLectureIds = ['DEPT-87', 'DEPT-88', 'REG-01'];
 
       const filtres: FiltreQueryParams = {
@@ -641,6 +641,7 @@ describe('ChantierSQLRepository', () => {
           code_insee: '87',
           meteo: 'SOLEIL',
           territoire_code: 'DEPT-87',
+          est_applicable: true,
           taux_avancement_mandat: 5,
         }, {
           id: 'CH-001',
@@ -649,6 +650,7 @@ describe('ChantierSQLRepository', () => {
           code_insee: '88',
           meteo: 'SOLEIL',
           territoire_code: 'DEPT-88',
+          est_applicable: true,
           taux_avancement_mandat: 2,
         }, {
           id: 'CH-002',
@@ -657,6 +659,7 @@ describe('ChantierSQLRepository', () => {
           code_insee: '88',
           meteo: 'COUVERT',
           territoire_code: 'DEPT-88',
+          est_applicable: true,
           taux_avancement_mandat: 10,
         }, {
           id: 'CH-003',
@@ -665,6 +668,7 @@ describe('ChantierSQLRepository', () => {
           code_insee: 'FR',
           meteo: 'COUVERT',
           territoire_code: 'NAT-FR',
+          est_applicable: true,
           taux_avancement_mandat: 15,
         }, {
           id: 'CH-004',
@@ -673,25 +677,40 @@ describe('ChantierSQLRepository', () => {
           code_insee: '87',
           meteo: 'NON_RENSEIGNEE',
           territoire_code: 'DEPT-87',
+          est_applicable: true,
           taux_avancement_mandat: 20,
         }],
       });
+
       // When
       const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres);
 
       // Then
       expect(result).toMatchObject([
-        { territoire_code: 'DEPT-88', taux_avancement_mandat: 2, chantier_identite: { id: 'CH-001' } },
-        { territoire_code: 'DEPT-87', taux_avancement_mandat: 5, chantier_identite: { id: 'CH-001' } },
-        { territoire_code: 'DEPT-88', taux_avancement_mandat: 10, chantier_identite: { id: 'CH-002' } },
-        { territoire_code: 'DEPT-87', taux_avancement_mandat: 20, chantier_identite: { id: 'CH-004' } },
+        {
+          nom: 'Chantier 001',
+          chantier_territoire: [
+            { territoire_code: 'DEPT-87', taux_avancement_mandat: 5 },
+            { territoire_code: 'DEPT-88', taux_avancement_mandat: 2  },
+          ],
+        }, {
+          nom: 'Chantier 002',
+          chantier_territoire: [
+            { territoire_code: 'DEPT-88', taux_avancement_mandat: 10  },
+          ],
+        }, {
+          nom: 'Chantier 004',
+          chantier_territoire: [
+            { territoire_code: 'DEPT-87', taux_avancement_mandat: 20 },
+          ],
+        },
       ]);
       expect(result).not.toMatchObject([
         { territoire_code: 'NAT-FR', taux_avancement_mandat: 20, chantier_identite: { id: 'CH-003' } },
       ]);
     });
 
-    it("quand on n'est pas un profil territoriale et que les filtres e sont laissés par défault, doit remonter les chantiers demandés avec la maille nationale en plus", async () => {
+    it("quand on n'est pas un profil territoriale et que les filtres sont laissés par défault, doit remonter les chantiers demandés avec la maille nationale en plus", async () => {
       // Given
       const chantiersLectureIds = ['CH-001', 'CH-002', 'CH-003', 'CH-004'];
       const territoiresLectureIds = ['DEPT-87', 'DEPT-88', 'REG-01'];
@@ -748,6 +767,7 @@ describe('ChantierSQLRepository', () => {
           meteo: 'SOLEIL',
           territoire_code: 'DEPT-87',
           taux_avancement_mandat: 2,
+          est_applicable: true,
         }, {
           id: 'CH-002',
           zone_id: 'D88',
@@ -756,6 +776,7 @@ describe('ChantierSQLRepository', () => {
           meteo: 'COUVERT',
           territoire_code: 'DEPT-88',
           taux_avancement_mandat: 3,
+          est_applicable: true,
         }, {
           id: 'CH-003',
           zone_id: 'FRANCE',
@@ -764,6 +785,7 @@ describe('ChantierSQLRepository', () => {
           meteo: 'COUVERT',
           territoire_code: 'NAT-FR',
           taux_avancement_mandat: 4,
+          est_applicable: true,
         }, {
           id: 'CH-004',
           zone_id: 'D87',
@@ -772,6 +794,7 @@ describe('ChantierSQLRepository', () => {
           meteo: 'NON_RENSEIGNEE',
           territoire_code: 'DEPT-87',
           taux_avancement_mandat: 5,
+          est_applicable: true,
         }],
       });
 
@@ -781,10 +804,28 @@ describe('ChantierSQLRepository', () => {
 
       // Then
       expect(result).toMatchObject([
-        { territoire_code: 'DEPT-87', taux_avancement_mandat: 2, chantier_identite: { nom: 'Chantier 001' } },
-        { territoire_code: 'DEPT-88', taux_avancement_mandat: 3, chantier_identite: { nom: 'Chantier 002' } },
-        { territoire_code: 'NAT-FR', taux_avancement_mandat: 4, chantier_identite: { nom: 'Chantier 003' } },
-        { territoire_code: 'DEPT-87', taux_avancement_mandat: 5, chantier_identite: { nom: 'Chantier 004' } },
+        {
+          nom: 'Chantier 001',
+          chantier_territoire: [
+            { territoire_code: 'DEPT-87', taux_avancement_mandat: 2 },
+          ],
+        }, {
+          nom: 'Chantier 003',
+          chantier_territoire: [
+            { territoire_code: 'NAT-FR', taux_avancement_mandat: 4  },
+          ],
+        }, {
+          nom: 'Chantier 002',
+          chantier_territoire: [
+            { territoire_code: 'DEPT-88', taux_avancement_mandat: 3  },
+          ],
+
+        }, {
+          nom: 'Chantier 004',
+          chantier_territoire: [
+            { territoire_code: 'DEPT-87', taux_avancement_mandat: 5 },
+          ],
+        },
       ]);
     });
 
@@ -842,6 +883,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'SOLEIL',
             territoire_code: 'DEPT-87',
             taux_avancement_mandat: 2,
+            est_applicable: true,
           }, {
             id: 'CH-002',
             zone_id: 'D88',
@@ -850,6 +892,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'COUVERT',
             territoire_code: 'DEPT-88',
             taux_avancement_mandat: 3,
+            est_applicable: true,
           }, {
             id: 'CH-003',
             zone_id: 'R01',
@@ -858,15 +901,26 @@ describe('ChantierSQLRepository', () => {
             meteo: 'COUVERT',
             territoire_code: 'REG-01',
             taux_avancement_mandat: 4,
+            est_applicable: true,
           }],
         });
         // When
         const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres);
 
         // Then
+
         expect(result).toMatchObject([
-          { territoire_code: 'DEPT-87', taux_avancement_mandat: 2, chantier_identite: { id: 'CH-001' } },
-          { territoire_code: 'REG-01', taux_avancement_mandat: 4, chantier_identite: { id: 'CH-003' } },
+          {
+            nom: 'Chantier 001',
+            chantier_territoire: [
+              { territoire_code: 'DEPT-87', taux_avancement_mandat: 2 },
+            ],
+          }, {
+            nom: 'Chantier 003',
+            chantier_territoire: [
+              { territoire_code: 'REG-01', taux_avancement_mandat: 4  },
+            ],
+          },
         ]);
       });
 
@@ -923,6 +977,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'SOLEIL',
             territoire_code: 'DEPT-87',
             taux_avancement_mandat: 2,
+            est_applicable: true,
           }, {
             id: 'CH-002',
             zone_id: 'D88',
@@ -931,6 +986,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'COUVERT',
             territoire_code: 'DEPT-88',
             taux_avancement_mandat: 3,
+            est_applicable: true,
           }, {
             id: 'CH-003',
             zone_id: 'R01',
@@ -939,6 +995,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'COUVERT',
             territoire_code: 'REG-01',
             taux_avancement_mandat: 4,
+            est_applicable: true,
           }],
         });
         // When
@@ -946,8 +1003,17 @@ describe('ChantierSQLRepository', () => {
 
         // Then
         expect(result).toMatchObject([
-          { territoire_code: 'DEPT-87', taux_avancement_mandat: 2, chantier_identite: { id: 'CH-001' } },
-          { territoire_code: 'DEPT-88', taux_avancement_mandat: 3, chantier_identite: { id: 'CH-002' } },
+          {
+            nom: 'Chantier 001',
+            chantier_territoire: [
+              { territoire_code: 'DEPT-87', taux_avancement_mandat: 2 },
+            ],
+          }, {
+            nom: 'Chantier 002',
+            chantier_territoire: [
+              { territoire_code: 'DEPT-88', taux_avancement_mandat: 3  },
+            ],
+          },
         ]);
       });
 
@@ -1004,6 +1070,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'SOLEIL',
             territoire_code: 'DEPT-87',
             taux_avancement_mandat: 2,
+            est_applicable: true,
           }, {
             id: 'CH-002',
             zone_id: 'D88',
@@ -1012,6 +1079,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'COUVERT',
             territoire_code: 'DEPT-88',
             taux_avancement_mandat: 3,
+            est_applicable: true,
           }, {
             id: 'CH-003',
             zone_id: 'R01',
@@ -1020,16 +1088,24 @@ describe('ChantierSQLRepository', () => {
             meteo: 'COUVERT',
             territoire_code: 'REG-01',
             taux_avancement_mandat: 4,
+            est_applicable: true,
           }],
         });
         // When
         const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres);
 
         // Then
-        expect(result).toMatchObject([
-          { territoire_code: 'DEPT-88', taux_avancement_mandat: 3, chantier_identite: { id: 'CH-002' } },
-          { territoire_code: 'REG-01', taux_avancement_mandat: 4, chantier_identite: { id: 'CH-003' } },
-        ]);
+        expect(result).toMatchObject([{
+          nom: 'Chantier 003',
+          chantier_territoire: [
+            { territoire_code: 'REG-01', taux_avancement_mandat: 4  },
+          ],
+        }, {
+          nom: 'Chantier 002',
+          chantier_territoire: [
+            { territoire_code: 'DEPT-88', taux_avancement_mandat: 3  },
+          ],
+        }]);
       });
 
       it('quand on est profil territoriale et que le filtres est barometre et est territorialise est defini, doit remonter les chantiers demandés', async () => {
@@ -1089,6 +1165,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'SOLEIL',
             territoire_code: 'DEPT-87',
             taux_avancement_mandat: 2,
+            est_applicable: true,
           }, {
             id: 'CH-002',
             zone_id: 'D88',
@@ -1097,6 +1174,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'COUVERT',
             territoire_code: 'DEPT-88',
             taux_avancement_mandat: 3,
+            est_applicable: true,
           }, {
             id: 'CH-003',
             zone_id: 'R01',
@@ -1105,6 +1183,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'COUVERT',
             territoire_code: 'REG-01',
             taux_avancement_mandat: 4,
+            est_applicable: true,
           }, {
             id: 'CH-004',
             zone_id: 'R01',
@@ -1113,6 +1192,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'COUVERT',
             territoire_code: 'REG-01',
             taux_avancement_mandat: 5,
+            est_applicable: true,
           }],
         });
         // When
@@ -1120,9 +1200,22 @@ describe('ChantierSQLRepository', () => {
 
         // Then
         expect(result).toMatchObject([
-          { territoire_code: 'DEPT-87', taux_avancement_mandat: 2, chantier_identite: { id: 'CH-001' } },
-          { territoire_code: 'DEPT-88', taux_avancement_mandat: 3, chantier_identite: { id: 'CH-002' } },
-          { territoire_code: 'REG-01', taux_avancement_mandat: 4, chantier_identite: { id: 'CH-003' } },
+          {
+            nom: 'Chantier 001',
+            chantier_territoire: [
+              { territoire_code: 'DEPT-87', taux_avancement_mandat: 2 },
+            ],
+          }, {
+            nom: 'Chantier 003',
+            chantier_territoire: [
+              { territoire_code: 'REG-01', taux_avancement_mandat: 4  },
+            ],
+          }, {
+            nom: 'Chantier 002',
+            chantier_territoire: [
+              { territoire_code: 'DEPT-88', taux_avancement_mandat: 3  },
+            ],
+          },
         ]);
       });
 
@@ -1183,6 +1276,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'SOLEIL',
             territoire_code: 'DEPT-87',
             taux_avancement_mandat: 2,
+            est_applicable: true,
           }, {
             id: 'CH-002',
             zone_id: 'D88',
@@ -1191,6 +1285,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'COUVERT',
             territoire_code: 'DEPT-88',
             taux_avancement_mandat: 3,
+            est_applicable: true,
           }, {
             id: 'CH-003',
             zone_id: 'R01',
@@ -1199,6 +1294,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'COUVERT',
             territoire_code: 'REG-01',
             taux_avancement_mandat: 4,
+            est_applicable: true,
           }, {
             id: 'CH-004',
             zone_id: 'R01',
@@ -1207,6 +1303,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'COUVERT',
             territoire_code: 'REG-01',
             taux_avancement_mandat: 5,
+            est_applicable: true,
           }],
         });
         // When
@@ -1214,8 +1311,17 @@ describe('ChantierSQLRepository', () => {
 
         // Then
         expect(result).toMatchObject([
-          { territoire_code: 'DEPT-87', taux_avancement_mandat: 2, chantier_identite: { id: 'CH-001' } },
-          { territoire_code: 'DEPT-88', taux_avancement_mandat: 3, chantier_identite: { id: 'CH-002' } },
+          {
+            nom: 'Chantier 001',
+            chantier_territoire: [
+              { territoire_code: 'DEPT-87', taux_avancement_mandat: 2 },
+            ],
+          }, {
+            nom: 'Chantier 002',
+            chantier_territoire: [
+              { territoire_code: 'DEPT-88', taux_avancement_mandat: 3  },
+            ],
+          },
         ]);
       });
 
@@ -1276,6 +1382,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'SOLEIL',
             territoire_code: 'DEPT-87',
             taux_avancement_mandat: 2,
+            est_applicable: true,
           }, {
             id: 'CH-002',
             zone_id: 'D88',
@@ -1284,6 +1391,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'COUVERT',
             territoire_code: 'DEPT-88',
             taux_avancement_mandat: 3,
+            est_applicable: true,
           }, {
             id: 'CH-003',
             zone_id: 'R01',
@@ -1292,6 +1400,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'COUVERT',
             territoire_code: 'REG-01',
             taux_avancement_mandat: 4,
+            est_applicable: true,
           }, {
             id: 'CH-004',
             zone_id: 'R01',
@@ -1300,6 +1409,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'COUVERT',
             territoire_code: 'REG-01',
             taux_avancement_mandat: 5,
+            est_applicable: true,
           }],
         });
         // When
@@ -1307,8 +1417,17 @@ describe('ChantierSQLRepository', () => {
 
         // Then
         expect(result).toMatchObject([
-          { territoire_code: 'DEPT-87', taux_avancement_mandat: 2, chantier_identite: { id: 'CH-001' } },
-          { territoire_code: 'REG-01', taux_avancement_mandat: 4, chantier_identite: { id: 'CH-003' } },
+          {
+            nom: 'Chantier 001',
+            chantier_territoire: [
+              { territoire_code: 'DEPT-87', taux_avancement_mandat: 2 },
+            ],
+          }, {
+            nom: 'Chantier 003',
+            chantier_territoire: [
+              { territoire_code: 'REG-01', taux_avancement_mandat: 4  },
+            ],
+          },
         ]);
       });
 
@@ -1369,6 +1488,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'SOLEIL',
             territoire_code: 'DEPT-87',
             taux_avancement_mandat: 2,
+            est_applicable: true,
           }, {
             id: 'CH-002',
             zone_id: 'D88',
@@ -1377,6 +1497,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'COUVERT',
             territoire_code: 'DEPT-88',
             taux_avancement_mandat: 3,
+            est_applicable: true,
           }, {
             id: 'CH-003',
             zone_id: 'R01',
@@ -1385,6 +1506,7 @@ describe('ChantierSQLRepository', () => {
             meteo: 'COUVERT',
             territoire_code: 'REG-01',
             taux_avancement_mandat: 4,
+            est_applicable: true,
           }, {
             id: 'CH-004',
             zone_id: 'R01',
@@ -1393,15 +1515,24 @@ describe('ChantierSQLRepository', () => {
             meteo: 'COUVERT',
             territoire_code: 'REG-01',
             taux_avancement_mandat: 5,
+            est_applicable: true,
           }],
         });
         // When
         const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres);
 
         // Then
-        expect(result).toMatchObject([
-          { territoire_code: 'DEPT-88', taux_avancement_mandat: 3, chantier_identite: { id: 'CH-002', nom: 'Chantier maValeur recherche 002 ajout texte pour valeur de recherche' } },
-          { territoire_code: 'REG-01', taux_avancement_mandat: 4, chantier_identite: { id: 'CH-003', nom: 'Chantier maValeur recherche 003 ajout texte pour valeur de recherche' } },
+        expect(result).toMatchObject([{
+          nom: 'Chantier maValeur recherche 003 ajout texte pour valeur de recherche',
+          chantier_territoire: [
+            { territoire_code: 'REG-01', taux_avancement_mandat: 4  },
+          ],
+        }, {
+          nom: 'Chantier maValeur recherche 002 ajout texte pour valeur de recherche',
+          chantier_territoire: [
+            { territoire_code: 'DEPT-88', taux_avancement_mandat: 3  },
+          ],
+        },
         ]);
       });
     });
