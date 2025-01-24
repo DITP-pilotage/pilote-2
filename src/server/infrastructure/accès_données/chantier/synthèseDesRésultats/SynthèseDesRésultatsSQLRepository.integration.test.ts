@@ -9,8 +9,9 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
   let  synthèseDesRésultatsRepository: SynthèseDesRésultatsSQLRepository;
 
   beforeEach(() => {
-    synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository();
+    synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
   });
+
   describe('créer', () => {
     test('Crée la synthèse des résultats en base', async () => {
       // Given

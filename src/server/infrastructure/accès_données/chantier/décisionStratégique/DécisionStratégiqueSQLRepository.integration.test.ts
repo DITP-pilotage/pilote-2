@@ -11,7 +11,7 @@ describe('DécisionStratégiqueSQLRepository', () => {
   let décisionStratégiqueRepository: DécisionStratégiqueRepository;
 
   beforeEach(() => {
-    décisionStratégiqueRepository = new DécisionStratégiqueSQLRepository();
+    décisionStratégiqueRepository = new DécisionStratégiqueSQLRepository(prisma);
   });
 
   describe('#récupérerLePlusRécent', () => {

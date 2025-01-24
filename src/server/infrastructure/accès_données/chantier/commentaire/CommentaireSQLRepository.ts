@@ -1,4 +1,4 @@
-import { commentaire as CommentairePrisma, utilisateur } from '@prisma/client';
+import { commentaire as CommentairePrisma, PrismaClient, utilisateur } from '@prisma/client';
 import CommentaireRepository from '@/server/domain/chantier/commentaire/CommentaireRepository.interface';
 import {
   Commentaire,
@@ -7,7 +7,6 @@ import {
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { groupByAndTransform } from '@/client/utils/arrays';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
-import { prisma } from '@/server/db/prisma';
 
 export const NOMS_TYPES_COMMENTAIRES: Record<string, TypeCommentaireChantier> = {
   commentaires_sur_les_donnees: 'commentairesSurLesDonnées',
@@ -28,6 +27,8 @@ export const CODES_TYPES_COMMENTAIRES: Record<TypeCommentaireChantier, string> =
 };
 
 export default class CommentaireSQLRepository implements CommentaireRepository {
+  constructor(private prismaClient: PrismaClient) {}
+
   private mapperVersDomaine(commentairePrisma: CommentairePrisma & { auteur_commentaire: utilisateur | null }): Commentaire {
     if (commentairePrisma === undefined) return null;
     const auteurCommentaire = commentairePrisma.auteur_commentaire;
@@ -41,7 +42,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
   }
 
   async récupérerLePlusRécent(chantierId: string, territoireCode: string, type: TypeCommentaireChantier): Promise<Commentaire> {
-    const commentaireLePlusRécent = await prisma.commentaire.findFirst({
+    const commentaireLePlusRécent = await this.prismaClient.commentaire.findFirst({
       where: {
         chantier_id: chantierId,
         territoire_code: territoireCode,
@@ -57,7 +58,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
   }
 
   async récupérerHistorique(chantierId: string, territoireCode: string, type: TypeCommentaireChantier): Promise<Commentaire[]> {
-    const commentaires = await prisma.commentaire.findMany({
+    const commentaires = await this.prismaClient.commentaire.findMany({
       where: {
         chantier_id: chantierId,
         territoire_code: territoireCode,
@@ -75,7 +76,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
   async créer(chantierId: string, territoireCode: string, id: string, contenu: string, auteur_id: string, type: TypeCommentaireChantier, date: Date): Promise<Commentaire> {
     const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
 
-    const commentaireCréé =  await prisma.commentaire.create({
+    const commentaireCréé =  await this.prismaClient.commentaire.create({
       data: {
         id: id,
         chantier_id: chantierId,
@@ -98,7 +99,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
   async récupérerLesPlusRécentsGroupésParChantier(listeChantierIds: Chantier['id'][], territoireCode: string): Promise<Record<string, Commentaire[]>> {
     const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
 
-    const commentairesAvecAuteur = await prisma.$queryRaw<(CommentairePrisma & utilisateur)[]>`
+    const commentairesAvecAuteur = await this.prismaClient.$queryRaw<(CommentairePrisma & utilisateur)[]>`
       SELECT c.chantier_id, c.contenu, c.type, c.id, c.date, utilisateur.nom, utilisateur.prenom
       FROM commentaire c
       LEFT JOIN utilisateur on utilisateur.id = c.auteur_id
