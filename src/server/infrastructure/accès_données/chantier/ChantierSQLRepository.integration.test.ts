@@ -81,7 +81,7 @@ describe('ChantierSQLRepository', () => {
       const result = await prismaChantierRepository.récupérerChantiersSynthétisés();
 
       // Then
-      expect(result).toContainEqual({
+      expect(result).toMatchObject([{
         id: 'CH-001',
         nom: 'Chantier 001',
         estTerritorialisé: true,
@@ -89,9 +89,7 @@ describe('ChantierSQLRepository', () => {
         ate: 'ate',
         statut: 'PUBLIE',
         territoiresApplicables: ['REG-84', 'DEPT-01', 'NAT-FR'],
-      });
-
-      expect(result).toContainEqual({
+      }, {
         id: 'CH-002',
         nom: 'Chantier 002',
         estTerritorialisé: true,
@@ -99,7 +97,7 @@ describe('ChantierSQLRepository', () => {
         ate: 'hors_ate_centralise',
         statut: 'BROUILLON',
         territoiresApplicables: ['NAT-FR'],
-      });
+      }]);
     });
   });
 
