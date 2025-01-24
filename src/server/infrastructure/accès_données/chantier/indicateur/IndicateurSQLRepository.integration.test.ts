@@ -265,7 +265,7 @@ describe('IndicateurSQLRepository', () => {
           parent_id: null,
           periodicite: '10 jours',
           delai_disponibilite: 10,
-          responsables_donnees_mails: 'john.doe@pilote.fr',
+          responsables_donnees_mails: ['john.doe@pilote.fr'],
         }, {
           id: 'IND-002',
           nom: 'Indicateur 002',
@@ -279,7 +279,7 @@ describe('IndicateurSQLRepository', () => {
           parent_id: 'IND-001',
           periodicite: null,
           delai_disponibilite: null,
-          responsables_donnees_mails: 'jane.doe@pilote.fr',
+          responsables_donnees_mails: ['jane.doe@pilote.fr'],
         }, {
           id: 'IND-003',
           nom: 'Indicateur 003',
@@ -293,7 +293,7 @@ describe('IndicateurSQLRepository', () => {
           parent_id: null,
           periodicite: null,
           delai_disponibilite: null,
-          responsables_donnees_mails: 'john.doe@pilote.fr',
+          responsables_donnees_mails: ['john.doe@pilote.fr'],
         }],
       });
       // When
@@ -759,7 +759,7 @@ describe('IndicateurSQLRepository', () => {
           parent_id: null,
           periodicite: '10 jours',
           delai_disponibilite: 10,
-          responsables_donnees_mails: 'john.doe@pilote.fr',
+          responsables_donnees_mails: ['john.doe@pilote.fr'],
         }, {
           id: 'IND-002',
           nom: 'Indicateur 002',
@@ -773,7 +773,7 @@ describe('IndicateurSQLRepository', () => {
           parent_id: 'IND-001',
           periodicite: null,
           delai_disponibilite: null,
-          responsables_donnees_mails: 'jane.doe@pilote.fr',
+          responsables_donnees_mails: ['jane.doe@pilote.fr'],
         }, {
           id: 'IND-003',
           nom: 'Indicateur 003',
@@ -787,7 +787,7 @@ describe('IndicateurSQLRepository', () => {
           parent_id: null,
           periodicite: null,
           delai_disponibilite: null,
-          responsables_donnees_mails: 'john.doe@pilote.fr',
+          responsables_donnees_mails: ['john.doe@pilote.fr'],
         }, {
           id: 'IND-004',
           nom: 'Indicateur 004',
@@ -801,7 +801,7 @@ describe('IndicateurSQLRepository', () => {
           parent_id: null,
           periodicite: '10 jours',
           delai_disponibilite: 10,
-          responsables_donnees_mails: 'john.doe@pilote.fr',
+          responsables_donnees_mails: ['john.doe@pilote.fr'],
         }],
       });
       // When
