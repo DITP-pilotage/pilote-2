@@ -322,7 +322,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
           chantier_identite: {
             NOT: [
               {
-                ministeres: { equals: '{}' },
+                ministeres: { isEmpty: true },
               },
             ],
           },

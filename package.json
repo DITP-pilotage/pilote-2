@@ -57,7 +57,7 @@
     "@hookform/resolvers": "^3.0.1",
     "@keycloak/keycloak-admin-client": "^26.0.5",
     "@next/env": "14.1.4",
-    "@prisma/client": "^4.12.0",
+    "@prisma/client": "6.2.1",
     "@socialgouv/matomo-next": "^1.8.1",
     "@tanstack/react-query": "^4.28.0",
     "@tanstack/react-query-devtools": "^4.28.0",
