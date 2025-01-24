@@ -13,18 +13,13 @@ describe('PrismaObjectifRepository', () => {
     it('doit lister les objectifs associé au chantier', async () => {
       // Given
       const chantierId = 'CH-168';
-      await prisma.chantier.createMany({ data: [{
+      
+      await prisma.chantier_identite.createMany({ data: [{
         id: 'CH-168',
         nom: 'Nom chantier OK',
-        code_insee: 'FR',
-        maille: 'NAT',
-        territoire_code: 'NAT-FR',
       }, {
         id: 'CH-169',
         nom: 'Nom chantier OK',
-        code_insee: 'FR',
-        maille: 'NAT',
-        territoire_code: 'NAT-FR',
       }],
       });
 

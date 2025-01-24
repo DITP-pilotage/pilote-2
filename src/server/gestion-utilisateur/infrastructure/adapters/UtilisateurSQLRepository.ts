@@ -1,5 +1,5 @@
 import {
-  chantier,
+  chantier_identite as PrismaChantierModel,
   habilitation,
   perimetre,
   profil,
@@ -74,14 +74,16 @@ export const convertirEnModelModification = (utilisateurAConvertir: {
   };
 };
 
+type PartialPrismaChantierIdentite = Pick<PrismaChantierModel, 'id' | 'est_territorialise' | 'perimetre_ids' | 'statut' | 'ate'>;
+
 export class UtilisateurSQLRepository implements UtilisateurRepository {
   private _territoires: string[] = [];
 
   private _chantiers: {
-    donnéesBrutes: chantier[]
-    groupésParId: Record<chantier['id'], chantier>
-    chantiersIdsPérimètresIds: Record<chantier['id'], perimetre['id'][]> 
-    ids: chantier['id'][]
+    donnéesBrutes: PartialPrismaChantierIdentite[]
+    groupésParId: Record<PrismaChantierModel['id'], PartialPrismaChantierIdentite>
+    chantiersIdsPérimètresIds: Record<PrismaChantierModel['id'], perimetre['id'][]>
+    ids: PrismaChantierModel['id'][]
   } = {
       donnéesBrutes: [],
       groupésParId: {},
@@ -137,11 +139,19 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
   async _récupérerChantiers() {
     if (this._chantiers.donnéesBrutes.length === 0) {
-      const tousLesChantiers = await prisma.chantier.findMany({ distinct: ['id'] });
+      const listeDeTousLesChantiers = await prisma.chantier_identite.findMany({
+        select: {
+          id: true,
+          est_territorialise: true,
+          perimetre_ids: true,
+          statut: true,
+          ate: true,
+        },
+      });
 
-      this._chantiers.donnéesBrutes = tousLesChantiers;
+      this._chantiers.donnéesBrutes = listeDeTousLesChantiers;
 
-      tousLesChantiers.forEach(c => {
+      listeDeTousLesChantiers.forEach(c => {
         this._chantiers.groupésParId[c.id] = c;
         this._chantiers.ids.push(c.id);
         this._chantiers.chantiersIdsPérimètresIds[c.id] = c.perimetre_ids;
@@ -500,9 +510,9 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     });
   }
 
-  private async _récupérerChantiersParDéfaut(profilUtilisateur: profil): Promise<Record<ScopeChantiers | ScopeUtilisateurs, chantier['id'][]>> {
-    let chantiersAccessibles: chantier['id'][] = [];
-    let chantiersAccessiblesEnSaisieCommentaire: chantier['id'][];
+  private async _récupérerChantiersParDéfaut(profilUtilisateur: profil): Promise<Record<ScopeChantiers | ScopeUtilisateurs, PartialPrismaChantierIdentite['id'][]>> {
+    let chantiersAccessibles: PartialPrismaChantierIdentite['id'][] = [];
+    let chantiersAccessiblesEnSaisieCommentaire: PartialPrismaChantierIdentite['id'][];
 
     if (profilUtilisateur.a_acces_tous_chantiers) {
       chantiersAccessibles = this._chantiers.ids;

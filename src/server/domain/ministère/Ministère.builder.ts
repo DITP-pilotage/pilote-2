@@ -46,11 +46,6 @@ export default class MinistèreBuilder {
     this._icône = générerPeutÊtreNull(0.2, faker.helpers.arrayElement(ÉCHANTILLONS_ICÔNES));
   }
 
-  avecId(id: Ministère['id']): MinistèreBuilder {
-    this._id = id;
-    return this;
-  }
-
   avecNom(nom: Ministère['nom']): MinistèreBuilder {
     this._nom = nom;
     return this;

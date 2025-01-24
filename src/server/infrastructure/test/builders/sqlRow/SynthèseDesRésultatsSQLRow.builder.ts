@@ -78,11 +78,6 @@ export default class SyntheseDesResultatsRowBuilder {
     return this;
   }
 
-  avecDateMétéo(dateMétéo: synthese_des_resultats['date_meteo']): SyntheseDesResultatsRowBuilder {
-    this._dateMétéo = dateMétéo;
-    return this;
-  }
-
   avecAuteurId(auteur_id: synthese_des_resultats['auteur_id']): SyntheseDesResultatsRowBuilder {
     this._auteur_id = auteur_id;
     return this;
@@ -94,6 +89,7 @@ export default class SyntheseDesResultatsRowBuilder {
       chantier_id: this._chantierId,
       maille: this._maille,
       code_insee: this._codeInsee,
+      territoire_code: this._maille + '-' + this._codeInsee,
       meteo: this._météo,
       date_meteo: this._dateMétéo,
       commentaire: this._commentaire,

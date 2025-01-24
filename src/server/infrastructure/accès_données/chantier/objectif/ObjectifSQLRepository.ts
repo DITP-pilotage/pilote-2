@@ -1,8 +1,9 @@
-import { PrismaClient, objectif as ObjectifPrisma, type_objectif as TypeObjectifPrisma, utilisateur as UtilisateurPrisma } from '@prisma/client';
+import { objectif as ObjectifPrisma, type_objectif as TypeObjectifPrisma, utilisateur as UtilisateurPrisma } from '@prisma/client';
 import ObjectifRepository from '@/server/domain/chantier/objectif/ObjectifRepository.interface';
 import Objectif, { TypeObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { groupByAndTransform } from '@/client/utils/arrays';
+import { prisma } from '@/server/db/prisma';
 
 export const NOMS_TYPES_OBJECTIFS: Record<TypeObjectifPrisma, TypeObjectif> = {
   notre_ambition: 'notreAmbition',
@@ -17,12 +18,6 @@ export const CODES_TYPES_OBJECTIFS: Record<TypeObjectif, TypeObjectifPrisma> = {
 };
 
 export default class ObjectifSQLRepository implements ObjectifRepository {
-  private prisma: PrismaClient;
-
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
-  }
-
   private mapperVersDomaine(objectif: ObjectifPrisma & { auteur_objectif: UtilisateurPrisma | null } | null): Objectif {
     if (objectif === null) return null;
     const auteurObjectif = objectif.auteur_objectif;
@@ -36,7 +31,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
   }
 
   async récupérerLePlusRécent(chantierId: string, type: TypeObjectif): Promise<Objectif> {
-    const objectifLePlusRécent = await this.prisma.objectif.findFirst({
+    const objectifLePlusRécent = await prisma.objectif.findFirst({
       where: {
         chantier_id: chantierId,
         type: CODES_TYPES_OBJECTIFS[type],
@@ -51,7 +46,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
   }
 
   async récupérerHistorique(chantierId: string, type: TypeObjectif): Promise<Objectif[]> {
-    const objectifs = await this.prisma.objectif.findMany({
+    const objectifs = await prisma.objectif.findMany({
       where: {
         chantier_id: chantierId,
         type: CODES_TYPES_OBJECTIFS[type],
@@ -66,7 +61,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
   }
 
   async créer(chantierId: string, id: string, contenu: string, auteur_id: string, type: TypeObjectif, date: Date): Promise<Objectif> {
-    const objectifCréé =  await this.prisma.objectif.create({
+    const objectifCréé =  await prisma.objectif.create({
       data: {
         id: id,
         chantier_id: chantierId,
@@ -84,23 +79,33 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
   }
 
   async récupérerLesPlusRécentsGroupésParChantier(chantiersIds: Chantier['id'][]) {
-    const objectifs = await this.prisma.$queryRaw<(ObjectifPrisma & { auteur_prenom: string, auteur_nom: string })[]>`
-      SELECT o.*, utilisateur.prenom as auteur_prenom, utilisateur.nom as auteur_nom
-      FROM objectif o
-        LEFT JOIN utilisateur on utilisateur.id = o.auteur_id
-        INNER JOIN (
-          SELECT type, chantier_id, MAX(date) as maxdate
-          FROM objectif
-          WHERE  chantier_id = ANY (${chantiersIds})
-          GROUP BY type, chantier_id
-        ) o_recents
-          ON o.type = o_recents.type
-            AND o.date = o_recents.maxdate
-            AND o.chantier_id = o_recents.chantier_id
-    `;
+    const result = await prisma.objectif.groupBy({
+      by: ['type', 'chantier_id'],
+      where: {
+        chantier_id: { in: chantiersIds },
+      },
+      _max: {
+        date: true,
+      },
+    });
+
+    const latestEntries = await Promise.all(
+      result.filter(group => group._max.date).map(async (group) => (
+        prisma.objectif.findFirst({
+          where: {
+            type: group.type,
+            date: group._max.date!,
+            chantier_id: group.chantier_id,
+          },
+          include: {
+            auteur_objectif: true,
+          },
+        })
+      )),
+    ).then(resultObjectif => resultObjectif.filter(Boolean));
 
     return groupByAndTransform(
-      objectifs,
+      latestEntries,
       objectif => objectif.chantier_id,
       objectif => {
         return {
@@ -108,7 +113,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
           type: NOMS_TYPES_OBJECTIFS[objectif.type],
           contenu: objectif.contenu,
           date: objectif.date.toISOString(),
-          auteur: objectif.auteur_id ? `${objectif.auteur_prenom} ${objectif.auteur_nom}` : 'Auteur Inconnu',        
+          auteur: objectif.auteur_objectif ? `${objectif.auteur_objectif.prenom} ${objectif.auteur_objectif.nom}` : 'Auteur Inconnu',
         };
       },
     );

@@ -7,7 +7,7 @@ WITH unnest_json_array AS (
         jsonb_array_elements(
             evolution_valeur_actuelle
         ) AS evolution_valeur_actuelle_unnest
-    FROM {{ ref('df3_indicateur') }}
+    FROM {{ ref('indicateur_territoire') }}
 )
 
 SELECT

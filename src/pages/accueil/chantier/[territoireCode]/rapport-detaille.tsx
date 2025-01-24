@@ -128,11 +128,13 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     desc: false,
   };
 
+  const mapAxes = new Map<string, Axe>(axes.map(axe => [axe.id, axe]));
+
   const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
     dependencies.getChantierRepository(),
-    territoireRepository,
+    dependencies.getTerritoireRepository(),
   )
-    .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'regionale' ? 'REG' : 'DEPT', mailleChantier || 'departementale', ministères, axes, filtres, sorting);
+    .run(session.habilitations, session.profil, territoireCode, mailleChantier || 'departementale', ministères, mapAxes, filtres, sorting);
 
   const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisse || filtresAlertes.estEnAlerteTauxAvancementNonCalculé || filtresAlertes.estEnAlerteMétéoNonRenseignée || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? chantiers.filter(chantier => {
     const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][territoireCode];
@@ -197,7 +199,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   const chantiersIds = chantiers.map(chantier => chantier.id);
 
   const indicateursRepository = dependencies.getIndicateurRepository();
-  const indicateursGroupésParChantier = await indicateursRepository.récupérerGroupésParChantier(chantiersIds, mailleChantier, codeInseeSelectionne);
+  const indicateursGroupésParChantier = await indicateursRepository.récupérerGroupésParChantier(chantiersIds);
   const détailsIndicateursGroupésParChantier = await indicateursRepository.récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds, mailleChantier, codeInseeSelectionne);
 
   const synthèseDesRésultatsRepository = dependencies.getSynthèseDesRésultatsRepository();

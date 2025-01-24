@@ -14,7 +14,7 @@ export class ListerDétailsIndicateurTerritoireUseCase {
     habilitation.vérifierLesHabilitationsEnLecture(chantierId, null);
 
     const resultDétailsParMailles = await Promise.all(
-      listeIndicateurId.map(indicateurId => this.indicateurRepository.récupérerDétailsTerritoire(indicateurId, habilitations, profil).then(detailsTerritoire => ({ id: indicateurId, detailsTerritoire }))),
+      listeIndicateurId.map(indicateurId => this.indicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(indicateurId, habilitations, profil).then(detailsTerritoire => ({ id: indicateurId, detailsTerritoire }))),
     );
 
     return resultDétailsParMailles.reduce((acc, val) => {

@@ -22,15 +22,18 @@ enum Maille {
 }
 
 model territoire {
-  code        String       @id
-  nom         String
-  nom_affiche String
-  maille      Maille
-  code_insee  String
-  code_parent String?
-  chantier    chantier[]
-  indicateur  indicateur[]
-  zone_id     String
+  code                  String                  @id
+  nom                   String
+  nom_affiche           String
+  maille                Maille
+  code_insee            String
+  code_parent           String?
+  indicateur_territoire indicateur_territoire[]
+  chantier_territoire   chantier_territoire[]
+  zone_id               String
+  territoire_parent     territoire?     @relation("territoire_parent", fields: [code_parent], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  territoire_enfant     territoire[]  @relation("territoire_parent")
+
 
   @@schema("public")
 }
@@ -60,51 +63,81 @@ enum type_tendance {
   @@schema("public")
 }
 
-model chantier {
-  id                                 String
-  nom                                String
-  perimetre_ids                      String[]
-  taux_avancement                    Float?
-  taux_avancement_date               DateTime?      @db.Date
-  derniere_maj_date_qualitative      DateTime?      @db.Date
-  taux_avancement_precedent          Float?
-  taux_avancement_annuel             Float?
-  ecart                              Float?
-  territoire_nom                     String?
-  code_insee                         String
-  maille                             String
-  directeurs_administration_centrale String[]
-  directeurs_projet                  String[]
-  responsables_locaux                String[]
-  coordinateurs_territoriaux         String[]
-  ministeres                         String[]
-  ministeres_acronymes               String[]
-  directions_administration_centrale String[]
-  meteo                              String?        @default("NON_RENSEIGNEE")
-  axe                                String         @default("non renseignée")
-  ppg                                String         @default("non renseignée")
-  directeurs_projet_mails            String[]
-  responsables_locaux_mails          String[]
-  coordinateurs_territoriaux_mails   String[]
-  est_barometre                      Boolean?
-  est_territorialise                 Boolean?
-  territoire                         territoire     @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  territoire_code                    String
-  ate                                type_ate?
-  a_taux_avancement_departemental    Boolean?
-  a_taux_avancement_regional         Boolean?
-  a_meteo_departemental              Boolean?
-  a_meteo_regional                   Boolean?
-  est_applicable                     Boolean?
-  statut                             type_statut    @default(PUBLIE)
-  tendance                           type_tendance?
-  tendance_int_index                 Float?
-  meteo_int_index                    Float?
-  donnees_maille_source              Maille?
-  cible_attendue                     Boolean        @default(true)
-  a_supprimer                        Boolean        @default(true)
+model chantier_identite {
+  id                                    String                 @id
+  nom                                   String
+  perimetre_ids                         String[]
+  directeurs_administration_centrale    String[]
+  directions_administration_centrale    String[]
+  ministeres                            String[]
+  ministeres_acronymes                  String[]
+  directeurs_projet                     String[]
+  axe                                   String                @default("non renseigné")
+  ppg                                   String                @default("non renseignée")
+  directeurs_projet_mails               String[]
+  est_barometre                         Boolean?
+  est_territorialise                    Boolean?
+  ate                                   type_ate?
+  possede_taux_avancement_departemental Boolean?
+  possede_taux_avancement_regional      Boolean?
+  possede_meteo_departemental           Boolean?
+  possede_meteo_regional                Boolean?
+  statut                                type_statut            @default(PUBLIE)
+  cible_attendue                        Boolean                @default(true)
+  a_supprimer                           Boolean                @default(true)
+  chantier_territoire                   chantier_territoire[]
+  indicateur_identite                   indicateur_identite[]
 
-  @@id([id, code_insee, maille])
+  objectifs                             objectif[]
+  decisions_strategiques                decision_strategique[]
+
+  @@schema("public")
+}
+
+model chantier_territoire {
+  id                                       String
+  territoire_code                          String
+  territoire                               territoire                  @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  code_insee                               String
+  maille                                   Maille
+  zone_id                                  String
+  taux_avancement_mandat                   Float?
+  date_taux_avancement_mandat              DateTime?                   @db.Date
+  territoire_nom                           String?
+  meteo                                    String?                     @default("NON_RENSEIGNEE")
+  taux_avancement_mandat_valeur_precedente Float?
+  est_applicable                           Boolean?
+  responsables_locaux                      String[]
+  coordinateurs_territoriaux               String[]
+  responsables_locaux_mails                String[]
+  coordinateurs_territoriaux_mails         String[]
+  derniere_maj_date_qualitative            DateTime?                   @db.Date
+  tendance                                 type_tendance?
+  tendance_int_index                       Float?
+  ecart                                    Float?
+  meteo_int_index                          Float?
+  donnees_maille_source                    Maille?
+  chantier_identite                        chantier_identite           @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  chantier_territoire_jalon                chantier_territoire_jalon[]
+  commentaires                             commentaire[]
+  syntheses_des_resultats                  synthese_des_resultats[]
+  indicateur_territoire                    indicateur_territoire[]
+
+  @@id([id, territoire_code])
+  @@schema("public")
+}
+
+model chantier_territoire_jalon {
+  id                  String
+  code_insee          String
+  maille              Maille
+  territoire_code     String
+  zone_id             String
+  jalon               Int
+  taux_avancement     Float?
+  chantier_territoire chantier_territoire @relation(fields: [id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([id, territoire_code, jalon])
   @@schema("public")
 }
 
@@ -130,77 +163,100 @@ model perimetre {
   @@schema("public")
 }
 
-model indicateur {
-  id                                                 String
-  nom                                                String
-  chantier_id                                        String
-  objectif_valeur_cible                              Float?
-  objectif_taux_avancement                           Float?
-  objectif_date_valeur_cible                         DateTime?  @db.Date
-  type_id                                            String?
-  type_nom                                           String?
-  est_barometre                                      Boolean?
-  est_phare                                          Boolean?
-  valeur_initiale                                    Float?
-  date_valeur_initiale                               DateTime?  @db.Date
-  valeur_actuelle                                    Float?
-  date_valeur_actuelle                               DateTime?  @db.Date
-  territoire_nom                                     String?
-  code_insee                                         String
-  maille                                             String
-  evolution_valeur_actuelle                          Json?
-  description                                        String?
-  source                                             String?
-  mode_de_calcul                                     String?
-  unite_mesure                                       String?
-  territoire                                         territoire @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  territoire_code                                    String
-  ponderation_zone_declaree                          Float?
-  ponderation_zone_reel                              Float?
-  objectif_valeur_cible_intermediaire                Float?
-  objectif_taux_avancement_intermediaire             Float?
-  objectif_date_valeur_cible_intermediaire           DateTime?  @db.Date
-  est_applicable                                     Boolean?
-  a_supprimer                                        Boolean    @default(true)
-  dernier_import_date                                DateTime?  @db.Date
-  dernier_import_rapport_id                          String?    @db.Uuid
-  dernier_import_auteur                              String?
-  dernier_import_date_indic                          DateTime?  @db.Date
-  dernier_import_rapport_id_indic                    String?    @db.Uuid
-  dernier_import_auteur_indic                        String?
-  prochaine_date_maj                                 DateTime?  @db.Date
-  prochaine_date_maj_jours                           Int?
-  prochaine_date_valeur_actuelle                     DateTime?  @db.Date
-  periodicite                                        String?
-  delai_disponibilite                                Int?
-  est_a_jour                                         Boolean?
-  tendance                                           String?
-  parent_id                                          String?
-  valeur_actuelle_proposition                        Float?
-  objectif_taux_avancement_intermediaire_proposition Float?
-  objectif_taux_avancement_proposition               Float?
-  date_proposition                                   DateTime?  @db.Date
-  motif_proposition                                  String?
-  source_donnee_methode_calcul_proposition           String?
-  auteur_proposition                                 String?
-  responsables_donnees_mails                         String[]
+model indicateur_identite {
+  id                         String                  @id
+  nom                        String
+  chantier_id                String
+  type_id                    String?
+  type_nom                   String?
+  est_barometre              Boolean?
+  est_phare                  Boolean?
+  description                String?
+  source                     String?
+  mode_de_calcul             String?
+  unite_mesure               String?
+  a_supprimer                Boolean                 @default(true)
+  dernier_import_date_indic  DateTime?               @db.Date
+  periodicite                String?
+  delai_disponibilite        Int?
+  parent_id                  String?
+  responsables_donnees_mails String[]
+  indicateur_territoire      indicateur_territoire[]
+  chantier_identite          chantier_identite @relation(fields: [chantier_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  @@id([id, code_insee, maille])
+  @@schema("public")
+}
+
+model indicateur_territoire {
+  id                                       String
+  chantier_id                              String
+  maille                                   Maille
+  territoire_code                          String
+  code_insee                               String
+  zone_id                                  String
+  valeur_cible_mandat                      Float?
+  taux_avancement_mandat                   Float?
+  date_valeur_actuelle                     DateTime?                     @db.Date
+  date_valeur_initiale                     DateTime?                     @db.Date
+  valeur_actuelle                          Float?
+  valeur_initiale                          Float?
+  territoire_nom                           String?
+  date_valeur_cible_mandat                 DateTime?                     @db.Date
+  est_applicable                           Boolean?
+  ponderation_zone_declaree                Float?
+  ponderation_zone_reel                    Float?
+  est_a_jour                               Boolean?
+  prochaine_date_maj                       DateTime?                     @db.Date
+  prochaine_date_maj_jours                 Int?
+  tendance                                 String?
+  valeur_actuelle_proposition              Float?
+  auteur_proposition                       String?
+  date_proposition                         DateTime?                     @db.Date
+  motif_proposition                        String?
+  source_donnee_methode_calcul_proposition String?
+  taux_avancement_mandat_proposition       Float?
+  prochaine_date_valeur_actuelle           DateTime?                     @db.Date
+  evolution_valeur_actuelle                Json?
+  territoire                               territoire                    @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  indicateur_identite                      indicateur_identite           @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  chantier_territoire                      chantier_territoire           @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
+  indicateur_territoire_jalon              indicateur_territoire_jalon[]
+
+  @@id([id, territoire_code])
+  @@schema("public")
+}
+
+model indicateur_territoire_jalon {
+  id                          String
+  territoire_code             String
+  code_insee                  String
+  maille                      Maille
+  jalon                       Int
+  zone_id                     String
+  date_valeur_cible           DateTime?             @db.Date
+  taux_avancement             Float?
+  valeur_cible                Float?
+  taux_avancement_proposition Float?
+  indicateur_territoire       indicateur_territoire @relation(fields: [id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([id, territoire_code, jalon])
   @@schema("public")
 }
 
 model synthese_des_resultats {
-  id               String       @id
-  chantier_id      String   
-  maille           String   
-  code_insee       String   
-  meteo            String?    
-  date_meteo       DateTime?    @db.Timestamp
-  commentaire      String?    
-  date_commentaire DateTime?    @db.Timestamp
-  auteur           String?
-  auteur_synthese  utilisateur? @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  auteur_id        String?      @db.Uuid
+  id                  String              @id
+  chantier_id         String
+  maille              String
+  code_insee          String
+  territoire_code     String
+  meteo               String?
+  date_meteo          DateTime?           @db.Timestamp
+  commentaire         String?
+  date_commentaire    DateTime?           @db.Timestamp
+  auteur              String?
+  auteur_synthese     utilisateur?        @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_id           String?             @db.Uuid
+  chantier_territoire chantier_territoire @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
 
   @@schema("public")
 }
@@ -222,16 +278,18 @@ model ppg {
 }
 
 model commentaire {
-  id                  String   @id
+  id                  String              @id
   chantier_id         String
   type                String
   contenu             String
-  date                DateTime @db.Timestamp
+  date                DateTime            @db.Timestamp
   maille              String
   code_insee          String
+  territoire_code     String
   auteur              String?
-  auteur_commentaire  utilisateur? @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  auteur_id           String? @db.Uuid
+  auteur_commentaire  utilisateur?        @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  chantier_territoire chantier_territoire @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
+  auteur_id           String?             @db.Uuid
 
   @@schema("public")
 }
@@ -355,15 +413,15 @@ model metadata_indicateurs_complementaire {
 }
 
 model commentaires {
-  chantier_id   String
-  maille        String
-  code_insee    String
-  date          String 
-  type          String
-  contenu       String?
-  meteo         String?
-  date_meteo    String?
-  auteur_email  String?
+  chantier_id  String
+  maille       String
+  code_insee   String
+  date         String
+  type         String
+  contenu      String?
+  meteo        String?
+  date_meteo   String?
+  auteur_email String?
 
   @@id([chantier_id, code_insee, maille, type, date])
   @@schema("raw_data")
@@ -420,14 +478,15 @@ enum type_objectif {
 }
 
 model objectif {
-  id               String        @id
-  type             type_objectif
-  contenu          String
-  date             DateTime      @db.Timestamp
-  chantier_id      String
-  auteur           String?
-  auteur_objectif  utilisateur?  @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  auteur_id        String?       @db.Uuid
+  id                String            @id
+  type              type_objectif
+  contenu           String
+  date              DateTime          @db.Timestamp
+  chantier_id       String
+  auteur            String?
+  auteur_objectif   utilisateur?      @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_id         String?           @db.Uuid
+  chantier_identite chantier_identite @relation(fields: [chantier_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@schema("public")
 }
@@ -439,14 +498,15 @@ enum type_decision_strategique {
 }
 
 model decision_strategique {
-  id                           String                    @id
-  type                         type_decision_strategique
-  contenu                      String
-  date                         DateTime                  @db.Timestamp
-  chantier_id                  String
-  auteur                       String?
-  auteur_decision_strategique  utilisateur?              @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  auteur_id                    String?                   @db.Uuid
+  id                          String                    @id
+  type                        type_decision_strategique
+  contenu                     String
+  date                        DateTime                  @db.Timestamp
+  chantier_id                 String
+  auteur                      String?
+  auteur_decision_strategique utilisateur?              @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_id                   String?                   @db.Uuid
+  chantier_identite           chantier_identite         @relation(fields: [chantier_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@schema("public")
 }
@@ -565,6 +625,7 @@ model utilisateur {
   utilisateurs_crees               utilisateur[]                      @relation("creation")
   utilisateur_modifies             utilisateur[]                      @relation("modification")
   date_desactivation               DateTime?
+
   @@schema("public")
 }
 

@@ -1,39 +1,131 @@
-import { chantier as chantierPrisma } from '@prisma/client';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
-import { parseChantier } from '@/server/infrastructure/accès_données/chantier/ChantierSQLParser';
-import { groupBy } from '@/client/utils/arrays';
-import { objectEntries } from '@/client/utils/objects/objects';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { FiltreQueryParams, SortingParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 import {
   ChantierAccueilContrat,
   MailleChantierContrat,
-  presenterEnChantierAccueilContrat,
+  presenterEnChantierAccueilContratNew,
 } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { PrismaChantier } from '@/server/infrastructure/accès_données/chantier/PrismaChantier';
+import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 
 const masquerPourDROM = (sessionProfil: string, mailleChantier: MailleChantierContrat) => {
   return sessionProfil === ProfilEnum.DROM && mailleChantier === 'nationale';
 };
-const appliquerFiltreDrom = (chantier: ChantierAccueilContrat, sessionProfil: string, mailleChantier: MailleChantierContrat) => {
-  return masquerPourDROM(sessionProfil, mailleChantier) ? chantier.périmètreIds.includes('PER-018') : true;
+const appliquerFiltreDrom = (chantier: PrismaChantier, sessionProfil: string, mailleChantier: MailleChantierContrat) => {
+  return masquerPourDROM(sessionProfil, mailleChantier) ? chantier.perimetre_ids.includes('PER-018') : true;
 };
 
-const appliquerFiltreTerritorialise = (chantier: ChantierAccueilContrat, mailleChantier: MailleChantierContrat): boolean => {
-  return mailleChantier !== 'nationale' ? chantier.estTerritorialisé || !!chantier.tauxAvancementDonnéeTerritorialisée[mailleChantier] || !!chantier.météoDonnéeTerritorialisée[mailleChantier] : true;
+const appliquerFiltreTerritorialise = (chantier: PrismaChantier, mailleChantier: MailleChantierContrat): boolean => {
+  return mailleChantier !== 'nationale'
+    ? chantier.est_territorialise  || mailleChantier === 'departementale'
+      ? !!chantier.possede_taux_avancement_departemental || !!chantier.possede_meteo_departemental
+      : !!chantier.possede_taux_avancement_regional  || !!chantier.possede_meteo_regional
+    : true;
 };
 
-const appliquerFiltre = (mailleChantier: MailleChantierContrat, territoireCode: string, sessionProfil: ProfilCode) => {
-  return (chantier: ChantierAccueilContrat): boolean => {
-    return !!chantier.mailles[mailleChantier][territoireCode].estApplicable
-      && appliquerFiltreDrom(chantier, sessionProfil, mailleChantier)
+const appliquerFiltre = (mailleChantier: MailleChantierContrat, sessionProfil: ProfilCode) => {
+  return (chantier: PrismaChantier): boolean => {
+    return appliquerFiltreDrom(chantier, sessionProfil, mailleChantier)
       && appliquerFiltreTerritorialise(chantier, mailleChantier);
   };
+};
+
+const appliquerTri = (sorting: SortingParams, mailleChantier: MailleChantierContrat, territoireCode: string) => (chantierA: ChantierAccueilContrat, chantierB: ChantierAccueilContrat) => {
+  switch (sorting.id) {
+    case 'avancement': {
+      const donneeTriA = chantierA.mailles[mailleChantier][territoireCode].avancement.global;
+      const donneeTriB = chantierB.mailles[mailleChantier][territoireCode].avancement.global;
+
+      if (donneeTriA === null) {
+        return 1;
+      } else if (donneeTriB === null) {
+        return -1;
+      } else {
+        return sorting.desc
+          ? donneeTriB - donneeTriA
+          : donneeTriA - donneeTriB;
+      }
+    }
+    case 'météo': {
+      const orderMétéo = { 'SOLEIL': 1, 'COUVERT': 2, 'NUAGE': 3, 'ORAGE': 4, 'NON_RENSEIGNEE': null, 'NON_NECESSAIRE': null };
+      const donneeTriA = orderMétéo[chantierA.mailles[mailleChantier][territoireCode].météo || 'NON_RENSEIGNEE'];
+      const donneeTriB = orderMétéo[chantierB.mailles[mailleChantier][territoireCode].météo || 'NON_RENSEIGNEE'];
+
+      if (donneeTriA === null) {
+        return 1;
+      } else if (donneeTriB === null) {
+        return -1;
+      } else {
+        return sorting.desc
+          ? donneeTriA - donneeTriB
+          : donneeTriB - donneeTriA;
+      }
+    }
+    case 'dateDeMàjDonnéesQuantitatives': {
+      const donneeTriA = chantierA.mailles[mailleChantier][territoireCode].dateDeMàjDonnéesQuantitatives;
+      const donneeTriB = chantierB.mailles[mailleChantier][territoireCode].dateDeMàjDonnéesQuantitatives;
+
+      if (donneeTriA === null) {
+        return 1;
+      } else if (donneeTriB === null) {
+        return -1;
+      } else {
+        return sorting.desc
+          ? donneeTriB.localeCompare(donneeTriA)
+          : donneeTriA.localeCompare(donneeTriB);
+      }
+    }
+    case 'dateDeMàjDonnéesQualitatives': {
+      const donneeTriA = chantierA.mailles[mailleChantier][territoireCode].dateDeMàjDonnéesQualitatives;
+      const donneeTriB = chantierB.mailles[mailleChantier][territoireCode].dateDeMàjDonnéesQualitatives;
+
+      if (donneeTriA === null) {
+        return 1;
+      } else if (donneeTriB === null) {
+        return -1;
+      } else {
+        return sorting.desc
+          ? donneeTriB.localeCompare(donneeTriA)
+          : donneeTriA.localeCompare(donneeTriB);
+      }
+    }
+    case 'tendance': {
+      const orderMétéo = { 'HAUSSE': 1, 'STAGNATION': 2, 'BAISSE': 3, 'NON_APPLICABLE': null };
+      const donneeTriA = orderMétéo[chantierA.mailles[mailleChantier][territoireCode].tendance || 'NON_APPLICABLE'];
+      const donneeTriB = orderMétéo[chantierB.mailles[mailleChantier][territoireCode].tendance || 'NON_APPLICABLE'];
+
+      if (donneeTriA === null) {
+        return 1;
+      } else if (donneeTriB === null) {
+        return -1;
+      } else {
+        return sorting.desc
+          ? donneeTriA - donneeTriB
+          : donneeTriB - donneeTriA;
+      }
+    }
+    case 'écart': {
+      const donneeTriA = chantierA.mailles[mailleChantier][territoireCode].écart;
+      const donneeTriB = chantierB.mailles[mailleChantier][territoireCode].écart;
+
+      if (donneeTriA === null) {
+        return 1;
+      } else if (donneeTriB === null) {
+        return -1;
+      } else {
+        return sorting.desc
+          ? donneeTriB - donneeTriA
+          : donneeTriA - donneeTriB;
+      }
+    }
+  }
+  return 0;
 };
 
 export default class RécupérerChantiersAccessiblesEnLectureUseCase {
@@ -42,49 +134,32 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
     private readonly territoireRepository: TerritoireRepository,
   ) {}
 
-  async run(habilitations: Habilitations, profil: ProfilCode, territoireCode: string, maille: 'DEPT' | 'REG', mailleChantier: MailleChantierContrat, ministères: Ministère[], axes: Axe[], filtres: FiltreQueryParams, sorting: SortingParams): Promise<ChantierAccueilContrat[]> {
+  async run(habilitations: Habilitations, profil: ProfilCode, territoireCode: string, mailleChantier: MailleChantierContrat, ministères: Ministère[], mapAxe: Map<string, Axe>, filtres: FiltreQueryParams, sorting: SortingParams): Promise<ChantierAccueilContrat[]> {
     const habilitation = new Habilitation(habilitations);
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
     const filtresPourChantier: FiltreQueryParams = {
       perimetres: filtres.perimetres,
-      axes: filtres.axes.map(filtre => axes.find(axe => axe.id === filtre)!.nom),
+      axes: filtres.axes.map(filtre => mapAxe.get(filtre)!.nom),
       statut: filtres.statut,
       estTerritorialise: filtres.estTerritorialise,
       estBarometre: filtres.estBarometre,
       valeurDeLaRecherche: filtres.valeurDeLaRecherche,
     };
 
-    const [chantiersRowsMaille, territoires ] = await Promise.all([
-      this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLecture, territoiresLecture, profil, maille, filtresPourChantier, sorting),
-      this.territoireRepository.récupérerTousNew(),
-    ]);
+    const territoires = await this.territoireRepository.récupérerTousNew();
 
-    const init = chantiersRowsMaille.filter(chantier => chantier.territoire_code === territoireCode).reduce((acc, val) => {
-      return {
-        ...acc,
-        [val.id]: [],
-      };
-    }, {});
-
-
-    const chantiersGroupésParId = groupBy<chantierPrisma>(chantiersRowsMaille, chantier => chantier.id, init);
-    let chantiers = objectEntries(chantiersGroupésParId).map(([, listeChantiers]) => presenterEnChantierAccueilContrat(territoireCode)(parseChantier(listeChantiers, territoires, ministères)))
-      .filter(appliquerFiltre(mailleChantier, territoireCode, profil));
-
-    if (profil === ProfilEnum.DROM) {
-      chantiers = chantiers.map(chantier => {
-        if (!chantier.périmètreIds.includes('PER-018')) {
-          chantier.mailles.nationale.FR.avancement.global = null;
-          chantier.mailles.nationale.FR.avancement.annuel = null;
-          chantier.mailles.nationale.FR.météo = 'NON_RENSEIGNEE';
-        }
-
-        return chantier;
-      });
-    }
-
-    return chantiers;
+    return this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLecture, territoiresLecture, profil, filtresPourChantier)
+      .then(listePrismaChantier => listePrismaChantier
+        .reduce((acc, chantierIdentite) => {
+          // on devrait pouvoir appliquer le filtre plus tôt
+          if (appliquerFiltre(mailleChantier, profil)(chantierIdentite)) {
+            return [...acc, presenterEnChantierAccueilContratNew(chantierIdentite, territoires, ministères, territoireCode, profil)];
+          }
+          return acc;
+        }, [] as ChantierAccueilContrat[])
+        .sort(appliquerTri(sorting, mailleChantier, territoireCode)),
+      );
   }
 }

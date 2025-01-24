@@ -1,21 +1,31 @@
-import { chantier as ChantierPrisma, Prisma, PrismaClient, type_statut } from '@prisma/client';
+import {
+  chantier_identite as PrismaChantierIdentite,
+  chantier_territoire as PrismaChantierTerritoire,
+  chantier_territoire_jalon as PrismaChantierTerritoireJalon,
+  Prisma,
+  type_objectif,
+  type_statut,
+} from '@prisma/client';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import Chantier, { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { Habilitations, Scope } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
 import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
-import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
-import { FiltreQueryParams, SortingParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 import { removeAccents } from '@/server/utils/remove-accents';
+import { prisma } from '@/server/db/prisma';
+import { calculerMoyenne, calculerMédiane } from '@/client/utils/statistiques/statistiques';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { configuration } from '@/config';
+import { PrismaChantier } from '@/server/infrastructure/accès_données/chantier/PrismaChantier';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -29,164 +39,80 @@ export class ErreurChantierPermission extends Error {
   }
 }
 
-const appliquerSortingChantier = (sorting: SortingParams): Prisma.Enumerable<Prisma.chantierOrderByWithRelationInput> => {
-  const sortingDirection = sorting.desc ? 'desc' : 'asc';
-  const orderBy: Prisma.SortOrderInput = {
-    sort: sortingDirection,
-    nulls: 'last',
-  };
-
-  switch (sorting.id) {
-    case 'avancement': {
-      return [{
-        taux_avancement: orderBy,
-      }, {
-        id: 'asc',
-      }];
-    }
-    case 'météo': {
-      return [{
-        meteo_int_index: orderBy,
-      }, {
-        id: 'asc',
-      }];
-    }
-    case 'dateDeMàjDonnéesQuantitatives': {
-      return [{
-        taux_avancement_date: orderBy,
-      }, {
-        id: 'asc',
-      }];
-    }
-    case 'dateDeMàjDonnéesQualitatives': {
-      return [{
-        derniere_maj_date_qualitative: orderBy,
-      }, {
-        id: 'asc',
-      }];
-    }
-    case 'tendance': {
-      return [{
-        tendance_int_index: orderBy,
-      }, {
-        id: 'asc',
-      }];
-    }
-    case 'écart': {
-      return [{
-        ecart: orderBy,
-      }, {
-        id: 'asc',
-      }];
-    }
-    default: {
-      return {};
-    }
-  }
-};
-
 export default class ChantierSQLRepository implements ChantierRepository {
-  private prisma: PrismaClient;
-
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
-  }
-
   async récupérerChantiersSynthétisés(): Promise<ChantierSynthétisé[]> {
-    const chantiers = await this.prisma.$queryRaw<any[]>`
-      SELECT 
-        id,
-        nom, 
-        est_territorialise,
-        perimetre_ids,
-        ate ,
-        statut ,
-        ARRAY_AGG(territoire_code) as territoires_applicables
-      FROM chantier
-      WHERE est_applicable
-      GROUP BY id, nom, est_territorialise, perimetre_ids, ate, statut;   
-    `;
+    const listeChantiersIdentites = await prisma.chantier_identite.findMany({
+      include: {
+        chantier_territoire: {
+          where: {
+            est_applicable: true,
+          },
+          select: {
+            territoire_code: true,
+          },
+        },
+      },
+    });
 
-    return chantiers.map(chantier => ({
+    return listeChantiersIdentites.map(chantier => ({
       id: chantier.id,
       nom: chantier.nom,
       estTerritorialisé: Boolean(chantier.est_territorialise),
       périmètreIds: chantier.perimetre_ids,
       ate: chantier.ate,
       statut: chantier.statut,
-      territoiresApplicables: chantier.territoires_applicables,
+      territoiresApplicables: chantier.chantier_territoire.map(chantierTerritoire => chantierTerritoire.territoire_code),
     }));
   }
 
-  async récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<ChantierPrisma[]> {
-    const h = new Habilitation(habilitations);
-    const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
+  async récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<(PrismaChantierIdentite & {
+    chantier_territoire: (PrismaChantierTerritoire & { chantier_territoire_jalon: PrismaChantierTerritoireJalon[] })[]
+  })> {
+    const habilitation = new Habilitation(habilitations);
+    const listeChantiersIdsAccessiblesEnLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
 
-    let paramètresRequête : Prisma.chantierFindManyArgs = {
-      where: {
-        id,
-      },
-      include: {
-        territoire: true,
-      },
-    };
+    let listeTerritoireAccessibleEnLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
-    if (!profilsTerritoriaux.includes(profil)) {
-      let territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
-      // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
-      territoiresLecture = [...territoiresLecture, 'NAT-FR'];
-      paramètresRequête.where!.territoire_code = { in: territoiresLecture };
-    }
-
-    const peutAccéderAuChantier = chantiersLecture.includes(id);
+    const peutAccéderAuChantier = listeChantiersIdsAccessiblesEnLecture.includes(id);
 
     if (!peutAccéderAuChantier) {
       throw new ErreurChantierPermission(id);
     }
 
-    const chantiers = await this.prisma.chantier.findMany(paramètresRequête);
+    const chantier = await prisma.chantier_identite.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        chantier_territoire: {
+          where: {
+            territoire_code: {
+              in: profilsTerritoriaux.includes(profil) ? undefined : [...listeTerritoireAccessibleEnLecture, 'NAT-FR'],
+            },
+          },
+          include: {
+            chantier_territoire_jalon: {
+              where: {
+                jalon: 2025,
+              },
+            },
+          },
+        },
+      },
+    });
 
-    if (!chantiers || chantiers.length === 0) {
+    if (!chantier) {
       throw new ErreurChantierNonTrouvé(id);
     }
 
-    return chantiers;
-  }
-
-  async récupérerChantierIdsAssociésAuxPérimètresMinistèriels(périmètreIds: PérimètreMinistériel['id'][], scope: Scope, profilUtilisateur: string): Promise<Chantier['id'][]> {
-    let chantiers = await this.prisma.chantier.findMany({
-      distinct: ['id'],
-      where: {
-        perimetre_ids: { hasSome: périmètreIds },
-      },
-    });
-
-    if (scope == 'saisieCommentaire' && [ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(profilUtilisateur)) {
-      chantiers = chantiers.filter(c => c.ate !== 'hors_ate_centralise');
-    }
-
-    return chantiers.map(c => c.id);
-  }
-
-  async récupérerChantierIdsPourSaisieCommentaireServiceDeconcentré(chantierIds: Chantier['id'][]): Promise<Chantier['id'][]> {
-    let chantiers = await this.prisma.chantier.findMany({
-      distinct: ['id'],
-      where: {
-        AND: [
-          { id: { in: chantierIds } },
-          { NOT: { ate: 'hors_ate_centralise' } },
-        ],
-      },
-    });
-
-    return chantiers.map(c => c.id);
+    return chantier;
   }
 
   async récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation: Habilitation, optionsExport: OptionsExport): Promise<Chantier['id'][]> {
     const chantierIdsLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
 
     const listeChantierId = optionsExport.listeChantierId.length > 0 ? chantierIdsLecture.filter(value => optionsExport.listeChantierId.includes(value)) : chantierIdsLecture;
-    const whereOptions: Prisma.chantierWhereInput = {};
+    const whereOptions: Prisma.chantier_identiteWhereInput = {};
 
     if (optionsExport.estBarometre && optionsExport.estTerritorialise) {
       whereOptions.OR = [
@@ -214,54 +140,23 @@ export default class ChantierSQLRepository implements ChantierRepository {
       };
     }
 
-    const chantiers = await this.prisma.chantier.findMany({
+    const chantiers = await prisma.chantier_identite.findMany({
       distinct: ['id'],
       where: {
         id: { in: listeChantierId },
         ...whereOptions,
       },
       orderBy: [{ nom: 'asc' }],
+      select: {
+        id: true,
+      },
     });
 
     return chantiers.map(c => c.id);
   }
 
-  async récupérerChantierIdsEnLectureOrdonnésParNom(habilitation: Habilitation): Promise<Chantier['id'][]> {
-    const chantierIdsLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
-    const chantiers = await this.prisma.chantier.findMany({
-      distinct: ['id'],
-      where: {
-        id: { in: chantierIdsLecture },
-      },
-      orderBy: [{ nom: 'asc' }],
-    });
-
-    return chantiers.map(c => c.id);
-  }
-
-  async récupérerLesEntréesDeTousLesChantiersHabilités(habilitation: Habilitation, profil: ProfilCode): Promise<ChantierPrisma[]> {
-
-    const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
-
-    let paramètresRequête : Prisma.chantierFindManyArgs = {
-      where: {
-        NOT: { ministeres: { isEmpty: true } },
-        id: { in: chantiersLecture },
-      },
-    };
-
-    if (!profilsTerritoriaux.includes(profil)) {
-      let territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
-      // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
-      territoiresLecture = [...territoiresLecture, 'NAT-FR'];
-      paramètresRequête.where!.territoire_code = { in: territoiresLecture };
-    }
-
-    return this.prisma.chantier.findMany(paramètresRequête);
-  }
-
-  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, maille: 'DEPT' | 'REG', filtres: FiltreQueryParams, sorting: SortingParams): Promise<ChantierPrisma[]> {
-    const whereOptions: Prisma.chantierWhereInput = {};
+  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, filtres: FiltreQueryParams): Promise<PrismaChantier[]> {
+    const whereOptions: Prisma.chantier_identiteWhereInput = {};
 
     if (filtres.perimetres?.length > 0) {
       whereOptions.perimetre_ids = {
@@ -298,207 +193,352 @@ export default class ChantierSQLRepository implements ChantierRepository {
     if (filtres.valeurDeLaRecherche?.length > 0) {
       const testLower = removeAccents(filtres.valeurDeLaRecherche.toLowerCase());
 
-      chantierIds = await this.prisma.$queryRawUnsafe<{ id: string }[]>('SELECT distinct(id) FROM chantier where (LOWER(unaccent(nom)) ILIKE $1 OR LOWER(unaccent(id)) ILIKE $1)', `%${testLower}%`)
+      chantierIds = await prisma.$queryRawUnsafe<{ id: string }[]>('SELECT distinct(id) FROM chantier_identite where (LOWER(unaccent(nom)) ILIKE $1 OR LOWER(unaccent(id)) ILIKE $1)', `%${testLower}%`)
         .then(chantiersMatched => chantiersMatched.map(chantierMatched => chantierMatched.id).filter(chantierId => chantiersLectureIds.includes(chantierId)));
     }
 
-    let paramètresRequête : Prisma.chantierFindManyArgs = {
+    const listeChantierIdentite = await prisma.chantier_identite.findMany({
       where: {
-        NOT: { ministeres: { isEmpty: true } },
+        NOT: {
+          ministeres: {
+            isEmpty: true,
+          },
+        },
         id: { in: chantierIds },
         ...whereOptions,
       },
-      orderBy: sorting ? appliquerSortingChantier(sorting) : {},
-    };
-
-    if (!profilsTerritoriaux.includes(profil)) {
-      // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
-      paramètresRequête.where!.territoire_code = { in: [...territoiresLectureIds, 'NAT-FR'] };
-    }
-
-    return this.prisma.chantier.findMany(paramètresRequête);
-  }
-
-  async récupérerTous(): Promise<ChantierPrisma[]> {
-    return this.prisma.chantier.findMany();
-  }
-
-  async récupérerMétéoParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Météo | null> {
-    const chantierRow: ChantierPrisma | null = await this.prisma.chantier.findFirst({
-      where: {
-        id: chantierId,
-        maille: CODES_MAILLES[maille],
-        code_insee: codeInsee,
+      select: {
+        id: true,
+        nom: true,
+        axe: true,
+        ppg: true,
+        perimetre_ids: true,
+        ate: true,
+        ministeres: true,
+        statut: true,
+        cible_attendue: true,
+        est_barometre: true,
+        est_territorialise: true,
+        possede_taux_avancement_departemental: true,
+        possede_taux_avancement_regional: true,
+        possede_meteo_departemental: true,
+        possede_meteo_regional: true,
+        directeurs_administration_centrale: true,
+        directions_administration_centrale: true,
+        directeurs_projet: true,
+        directeurs_projet_mails: true,
       },
     });
 
-    if (!chantierRow) {
-      throw new ErreurChantierNonTrouvé(chantierId);
-    }
-
-    // TODO: avoir une réflexion sur avoir un mapper et retourné un objet du domainz Chantier
-    return chantierRow.meteo as Météo | null;
+    // TODO la majeur partie de la latence provient de cette opération (100 à 150ms)
+    return Promise.all(
+      listeChantierIdentite.map(chantierIdentite => prisma.chantier_territoire.findMany({
+        where: {
+          id: chantierIdentite.id,
+          territoire_code: {
+            in: profilsTerritoriaux.includes(profil) ? undefined : [...territoiresLectureIds, 'NAT-FR'],
+          },
+          est_applicable: true,
+        },
+        select: {
+          territoire_code: true,
+          id: true,
+          code_insee: true,
+          maille: true,
+          ecart: true,
+          donnees_maille_source: true,
+          taux_avancement_mandat_valeur_precedente: true,
+          meteo: true,
+          tendance: true,
+          derniere_maj_date_qualitative: true,
+          date_taux_avancement_mandat: true,
+          est_applicable: true,
+          responsables_locaux: true,
+          responsables_locaux_mails: true,
+          coordinateurs_territoriaux: true,
+          coordinateurs_territoriaux_mails: true,
+          taux_avancement_mandat: true,
+          chantier_territoire_jalon: {
+            select: {
+              taux_avancement: true,
+            },
+            where: {
+              jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            },
+          },
+        },
+      }).then(resultListeChantierTerritoire => {
+        return {
+          ...chantierIdentite,
+          chantier_territoire: resultListeChantierTerritoire,
+        } as PrismaChantier;
+      }),
+      ),
+    );
   }
 
   async modifierMétéo(chantierId: string, territoireCode: string, météo: Météo) {
-    const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
-
-    await this.prisma.chantier.update({
+    await prisma.chantier_territoire.update({
       data: {
         meteo: météo,
       },
       where: {
-        id_code_insee_maille: {
+        id_territoire_code: {
           id: chantierId,
-          maille: maille,
-          code_insee: codeInsee,
+          territoire_code: territoireCode,
         },
       },
     });
   }
 
   async récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[]): Promise<ChantierPourExport[]> {
-    const rows = await this.prisma.$queryRaw<any[]>`
-        with chantier_ids as (select distinct c.id
-                              from chantier c
-                              where c.id in (${Prisma.join(chantierIdsLecture)})
-                                and ministeres <> '{}'),
-             derniers_commentaires as (select *
-                                       from (select c.*,
-                                                    row_number() over (partition by chantier_id, maille, code_insee, type order by date desc) r
-                                             from commentaire c
-                                            ) comm
-                                       where comm.r = 1),
-             dernieres_decisions_strat as (select *
-                                           from (select ds.*,
-                                                        row_number() over (partition by chantier_id, type order by date desc) r
-                                                 from decision_strategique ds
-                                                ) decis_s
-                                           where decis_s.r = 1),
-             derniers_objectifs as (select *
-                                    from (select ob.*,
-                                                 row_number() over (partition by chantier_id, type order by date desc) r
-                                          from objectif ob
-                                         ) obj
-                                    where obj.r = 1),
-             dernieres_syntheses as (select *
-                                     from (select s.*,
-                                                  row_number() over (partition by chantier_id, maille, code_insee order by date_commentaire desc) r
-                                           from synthese_des_resultats s
-                                           where date_commentaire is not null) sr
-                                     where sr.r = 1)
+    const chantierIds = await prisma.chantier_identite.findMany({
+      where: {
+        id: { in: chantierIdsLecture },
+        NOT: [
+          {
+            ministeres: { equals: '{}' },
+          },
+        ],
+      },
+      select: {
+        id: true,
+      },
+      distinct: ['id'],
+    });
 
-        select c.*,
-               t_r.nom             region_nom,
-               t_d.nom             departement_nom,
-               c_n.taux_avancement taux_national,
-               c_r.taux_avancement taux_regional,
-               c_d.taux_avancement taux_departemental,
-               co_aavn.contenu     comm_actions_a_venir,
-               co_aavl.contenu     comm_actions_a_valoriser,
-               co_fal.contenu      comm_freins_a_lever,
-               co_csld.contenu     comm_commentaires_sur_les_donnees,
-               co_ar.contenu       comm_autres_resultats,
-               co_arncai.contenu   comm_autres_resultats_non_correles_aux_indicateurs,
-               ds_sdd.contenu      dec_strat_suivi_des_decisions,
-               o_na.contenu        obj_notre_ambition,
-               o_df.contenu        obj_deja_fait,
-               o_af.contenu        obj_a_faire,
-               s.commentaire       synthese_des_resultats,
-               s.meteo             meteo
+    const listePrismaChantierIdentite = await prisma.chantier_identite.findMany({
+      where: {
+        id: { in: chantierIds.map(chantier => chantier.id) },
+      },
+      include: {
+        chantier_territoire: {
+          where: {
+            est_applicable: true,
+          },
+          include: {
+            territoire: true,
+            chantier_territoire_jalon: {
+              where: {
+                jalon: 2025,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { id: 'asc' },
+    });
 
-        from chantier_ids cids
-                 inner join territoire t on t.code in (${Prisma.join(territoireCodesLecture)})
-                 left outer join chantier c on c.id = cids.id and c.territoire_code = t.code
-                 left outer join chantier c_n on c_n.id = cids.id and c_n.maille = 'NAT'
-                 left outer join chantier c_r on (c_r.id = cids.id and c_r.maille = 'REG')
-            and (c_r.territoire_code = t.code or c_r.territoire_code = t.code_parent)
-                 left outer join chantier c_d on c_d.id = cids.id and c_d.maille = 'DEPT' and c_d.territoire_code = t.code
-                 left outer join territoire t_r on t_r.code = c_r.territoire_code
-                 left outer join territoire t_d on t_d.code = c_d.territoire_code
-                 left outer join derniers_commentaires co_aavn
-                                 on co_aavn.chantier_id = c.id and co_aavn.maille = c.maille and co_aavn.code_insee = c.code_insee
-                                     and co_aavn.type = 'actions_a_venir'
-                 left outer join derniers_commentaires co_aavl
-                                 on co_aavl.chantier_id = c.id and co_aavl.maille = c.maille and co_aavl.code_insee = c.code_insee
-                                     and co_aavl.type = 'actions_a_valoriser'
-                 left outer join derniers_commentaires co_fal
-                                 on co_fal.chantier_id = c.id and co_fal.maille = c.maille and co_fal.code_insee = c.code_insee
-                                     and co_fal.type = 'freins_a_lever'
-                 left outer join derniers_commentaires co_csld
-                                 on co_csld.chantier_id = c.id and co_csld.maille = c.maille and co_csld.code_insee = c.code_insee
-                                     and co_csld.type = 'commentaires_sur_les_donnees'
-                 left outer join derniers_commentaires co_ar
-                                 on co_ar.chantier_id = c.id and co_ar.maille = c.maille and co_ar.code_insee = c.code_insee
-                                     and co_ar.type = 'autres_resultats_obtenus'
-                 left outer join derniers_commentaires co_arncai
-                                 on co_arncai.chantier_id = c.id and co_arncai.maille = c.maille and co_arncai.code_insee = c.code_insee
-                                     and co_arncai.type = 'autres_resultats_obtenus_non_correles_aux_indicateurs'
-                 left outer join dernieres_decisions_strat ds_sdd
-                                 on ds_sdd.chantier_id = c.id
-                                     and ds_sdd.type = 'suivi_des_decisions'
-                                     and c.maille = 'NAT' -- ne pas afficher les décisions strat. pour les territoires non nationaux
-                 left outer join derniers_objectifs o_na
-                                 on o_na.chantier_id = c.id
-                                     and o_na.type = 'notre_ambition'
-                                     and c.maille = 'NAT' -- ne pas afficher les objectifs pour les territoires non nationaux
-                 left outer join derniers_objectifs o_df
-                                 on o_df.chantier_id = c.id
-                                     and o_df.type = 'deja_fait'
-                                     and c.maille = 'NAT' -- ne pas afficher les objectifs pour les territoires non nationaux
-                 left outer join derniers_objectifs o_af
-                                 on o_af.chantier_id = c.id
-                                     and o_af.type = 'a_faire'
-                                     and c.maille = 'NAT' -- ne pas afficher les objectifs pour les territoires non nationaux
-                 left outer join dernieres_syntheses s
-                                 on s.chantier_id = c.id and s.maille = c.maille and s.code_insee = c.code_insee
-        where c.id is not null
-        and c.est_applicable
-        order by
-            c.nom,
-            CASE c.maille
-                WHEN 'NAT' THEN 1
-                WHEN 'REG' THEN 2
-                WHEN 'DEPT' THEN 3
-                ELSE 4 END,
-            region_nom,
-            t_d.code_insee, -- on ordonne en fonction du numéro du département et pas par ordre alphabétique (le Haut-Rhin vient juste après le Bas-Rhin)
-            c.ministeres
-    `;
-    return rows.map(it => ({
-      nom: it.nom,
-      id: it.id,
-      maille: it.maille,
-      régionNom: it.region_nom,
-      départementNom: it.departement_nom,
-      codeInsee: it.code_insee,
-      ministèreNom: it.ministeres_acronymes ? it.ministeres_acronymes[0] : null, // <-- en fait ce sont les porteurs
-      axe: it.axe,
-      tauxDAvancementAnnuel: it.taux_avancement_annuel,
-      tauxDAvancementNational: it.taux_national,
-      tauxDAvancementRégional: it.taux_regional,
-      tauxDAvancementDépartemental: it.taux_departemental,
-      périmètreIds: it.perimetre_ids,
-      météo: it.meteo,
-      directeursProjet: it.directeurs_projet,
-      directeursProjetMails: it.directeurs_projet_mails,
-      responsablesLocaux: it.responsables_locaux,
-      responsablesLocauxMails: it.responsables_locaux_mails,
-      statut: it.statut,
-      estBaromètre: it.est_barometre,
-      estTerritorialisé: it.est_territorialise,
-      commActionsÀVenir: it.comm_actions_a_venir,
-      commActionsÀValoriser: it.comm_actions_a_valoriser,
-      commFreinsÀLever: it.comm_freins_a_lever,
-      commCommentairesSurLesDonnées: it.comm_commentaires_sur_les_donnees,
-      commAutresRésultats: it.comm_autres_resultats,
-      commAutresRésultatsNonCorrélésAuxIndicateurs: it.comm_autres_resultats_non_correles_aux_indicateurs,
-      decStratSuiviDesDécisions: it.dec_strat_suivi_des_decisions,
-      objNotreAmbition: it.obj_notre_ambition,
-      objDéjàFait: it.obj_deja_fait,
-      objÀFaire: it.obj_a_faire,
-      synthèseDesRésultats: it.synthese_des_resultats,
-    }));
+    const resultChantierIds = listePrismaChantierIdentite.map(chantier => chantier.id);
+
+    const listeTypesCommentaires = [
+      'actions_a_venir',
+      'actions_a_valoriser',
+      'freins_a_lever',
+      'commentaires_sur_les_donnees',
+      'autres_resultats_obtenus',
+      'autres_resultats_obtenus_non_correles_aux_indicateurs',
+    ];
+    const listeTypesDecisionsStrategiques = [
+      'suivi_des_decisions',
+    ] as const;
+
+    const listeTypesObjectifs = [
+      'notre_ambition',
+      'deja_fait',
+      'a_faire',
+    ] as type_objectif[];
+
+    const [
+      mapActionsAVenir,
+      mapActionsAValoriser,
+      mapFreinsALever,
+      mapCommentairesSurLesDonnees,
+      mapAutresResultatsObtenus,
+      mapAutresResultatsObtenusNonCorrelesAuxIndicateurs,
+      mapSynthesesDesResultats,
+      mapMeteo,
+      mapDecisionsStrategiques,
+      mapNotreAmbition,
+      mapDejaFait,
+      mapAFaire,
+    ] = await Promise.all([
+      ...listeTypesCommentaires.map((typeCommentaire) => prisma.chantier_territoire.findMany({
+        where: {
+          id: { in: resultChantierIds },
+          territoire: { code: { in: territoireCodesLecture } },
+        },
+        include: {
+          commentaires: {
+            where: {
+              type: typeCommentaire,
+            },
+            orderBy: {
+              date: 'desc',
+            },
+            take: 1,
+          },
+        },
+      }).then(resultMap => new Map<string, string | null>(
+        resultMap.map(chantierCommentaire => [`${chantierCommentaire.id}-${chantierCommentaire.territoire_code}`, chantierCommentaire.commentaires[0]?.contenu || null]),
+      ),
+      )),
+      prisma.chantier_territoire.findMany({
+        where: {
+          id: { in: resultChantierIds },
+          territoire: { code: { in: territoireCodesLecture } },
+        },
+        include: {
+          syntheses_des_resultats: {
+            orderBy: {
+              date_commentaire: 'desc',
+            },
+            take: 1,
+          },
+        },
+      }).then(resultMap => new Map<string, string | null>(
+        resultMap.map(chantierCommentaire => [`${chantierCommentaire.id}-${chantierCommentaire.territoire_code}`, chantierCommentaire.syntheses_des_resultats[0]?.commentaire || null]),
+      )),
+      prisma.chantier_territoire.findMany({
+        where: {
+          id: { in: resultChantierIds },
+          territoire: { code: { in: territoireCodesLecture } },
+        },
+        include: {
+          syntheses_des_resultats: {
+            orderBy: {
+              date_commentaire: 'desc',
+            },
+            take: 1,
+          },
+        },
+      }).then(resultMap => new Map<string, string | null>(
+        resultMap.map(chantierCommentaire => [`${chantierCommentaire.id}-${chantierCommentaire.territoire_code}`, chantierCommentaire.syntheses_des_resultats[0]?.meteo || null]),
+      )),
+      ...listeTypesDecisionsStrategiques.map((typeDecisionStrategique) => prisma.chantier_identite.findMany({
+        where: {
+          id: { in: resultChantierIds },
+        },
+        include: {
+          decisions_strategiques: {
+            where: {
+              type: typeDecisionStrategique,
+            },
+            orderBy: {
+              date: 'desc',
+            },
+            take: 1,
+          },
+        },
+      }).then(resultMap => new Map<string, string | null>(
+        resultMap.map(chantierCommentaire => [chantierCommentaire.id, chantierCommentaire.decisions_strategiques[0]?.contenu || null]),
+      ))),
+      ...listeTypesObjectifs.map((typeObjectif) => prisma.chantier_identite.findMany({
+        where: {
+          id: { in: resultChantierIds },
+        },
+        include: {
+          objectifs: {
+            where: {
+              type: typeObjectif,
+            },
+            orderBy: {
+              date: 'desc',
+            },
+            take: 1,
+          },
+        },
+      }).then(resultMap => new Map<string, string | null>(
+        resultMap.map(chantierCommentaire => [chantierCommentaire.id, chantierCommentaire.objectifs[0]?.contenu || null]),
+      ))),
+    ]);
+
+
+    return listePrismaChantierIdentite.flatMap(prismaChantierIdentite => {
+      return prismaChantierIdentite.chantier_territoire
+        .filter(chantierTerritoire => territoireCodesLecture.includes(chantierTerritoire.territoire_code))
+        .map(prismaChantierTerritoire => {
+          let prismaChantierTerritoireReg = prismaChantierTerritoire;
+          let prismaChantierTerritoireNat = prismaChantierTerritoire;
+
+          if (prismaChantierTerritoire.maille === 'DEPT') {
+            prismaChantierTerritoireReg = prismaChantierIdentite.chantier_territoire.find(chantierTerritoire => chantierTerritoire.territoire_code === prismaChantierTerritoire.territoire.code_parent)!;
+            prismaChantierTerritoireNat = prismaChantierIdentite.chantier_territoire.find(chantierTerritoire => chantierTerritoire.territoire_code === 'NAT-FR')!;
+          } else if (prismaChantierTerritoire.maille === 'REG') {
+            prismaChantierTerritoireNat = prismaChantierIdentite.chantier_territoire.find(chantierTerritoire => chantierTerritoire.territoire_code === 'NAT-FR')!;
+          }
+
+
+          return {
+            nom: prismaChantierIdentite.nom,
+            id: prismaChantierIdentite.id,
+            maille: prismaChantierTerritoire.maille,
+            régionNom: prismaChantierTerritoire.maille === 'REG' || prismaChantierTerritoire.maille === 'DEPT' ? prismaChantierTerritoireReg.territoire.nom : null,
+            départementNom: prismaChantierTerritoire.maille === 'DEPT' ? prismaChantierTerritoire.territoire.nom : null,
+            codeInsee: prismaChantierTerritoire.code_insee,
+            ministèreNom: prismaChantierIdentite.ministeres_acronymes ? prismaChantierIdentite.ministeres_acronymes[0] : null,
+            axe: prismaChantierIdentite.axe,
+            tauxDAvancementAnnuel: prismaChantierTerritoire.chantier_territoire_jalon.at(0)?.taux_avancement || null,
+            tauxDAvancementNational: prismaChantierTerritoireNat.taux_avancement_mandat,
+            tauxDAvancementRégional: prismaChantierTerritoire.maille === 'REG' || prismaChantierTerritoire.maille === 'DEPT' ? prismaChantierTerritoireReg.taux_avancement_mandat : null,
+            tauxDAvancementDépartemental: prismaChantierTerritoire.maille === 'DEPT' ? prismaChantierTerritoire.taux_avancement_mandat : null,
+            périmètreIds: prismaChantierIdentite.perimetre_ids,
+            météo: (mapMeteo.get(`${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`) || null) as Météo || null,
+            directeursProjet: prismaChantierIdentite.directeurs_projet,
+            directeursProjetMails: prismaChantierIdentite.directeurs_projet_mails,
+            responsablesLocaux: prismaChantierTerritoire.responsables_locaux,
+            responsablesLocauxMails: prismaChantierTerritoire.responsables_locaux_mails,
+            statut: prismaChantierIdentite.statut,
+            estBaromètre: prismaChantierIdentite.est_barometre,
+            estTerritorialisé: prismaChantierIdentite.est_territorialise,
+            commActionsÀVenir: mapActionsAVenir.get(`${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`) || null,
+            commActionsÀValoriser: mapActionsAValoriser.get(`${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`) || null,
+            commFreinsÀLever: mapFreinsALever.get(`${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`) || null,
+            commCommentairesSurLesDonnées: mapCommentairesSurLesDonnees.get(`${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`) || null,
+            commAutresRésultats: mapAutresResultatsObtenus.get(`${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`) || null,
+            commAutresRésultatsNonCorrélésAuxIndicateurs: mapAutresResultatsObtenusNonCorrelesAuxIndicateurs.get(`${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`) || null,
+            decStratSuiviDesDécisions: prismaChantierTerritoire.maille === 'NAT' ? mapDecisionsStrategiques.get(prismaChantierIdentite.id) || null : null,
+            objNotreAmbition: prismaChantierTerritoire.maille === 'NAT' ? mapNotreAmbition.get(prismaChantierIdentite.id) || null : null,
+            objDéjàFait: prismaChantierTerritoire.maille === 'NAT' ? mapDejaFait.get(prismaChantierIdentite.id) || null : null,
+            objÀFaire: prismaChantierTerritoire.maille === 'NAT' ? mapAFaire.get(prismaChantierIdentite.id) || null : null,
+            synthèseDesRésultats: mapSynthesesDesResultats.get(`${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`) || null,
+          };
+        })
+        .sort((chantierA, chantierB) => {
+          const orderMaille = { 'NAT': 1, 'REG': 2, 'DEPT': 3 };
+
+          // Comparer par nom
+          if (chantierB.nom !== chantierA.nom) {
+            return chantierB.nom.localeCompare(chantierA.nom);
+          }
+
+          // Comparer par maille
+          if (chantierA.maille !== chantierB.maille) {
+            return orderMaille[chantierA.maille] - orderMaille[chantierB.maille];
+          }
+
+          // Comparer par nom_region
+          const nomRegionCA = chantierB.maille === 'DEPT' ? chantierB.régionNom || null : chantierB.maille === 'REG' ? chantierB.départementNom : null;
+          const nomRegionB = chantierA.maille === 'DEPT' ? chantierA.régionNom || null : chantierA.maille === 'REG' ? chantierA.départementNom : null;
+
+          if (nomRegionCA && nomRegionB && nomRegionCA !== nomRegionB) {
+            return nomRegionCA.localeCompare(nomRegionB);
+          }
+
+          // Comparer par code insee
+          if (chantierB.codeInsee !== chantierA.codeInsee) {
+            return chantierB.codeInsee.localeCompare(chantierA.codeInsee);
+          }
+          // Comparer par ministere
+          if (chantierB.ministèreNom === null) {
+            return 1;
+          }
+          if (chantierA.ministèreNom === null) {
+            return -1;
+          }
+          return chantierB.ministèreNom.localeCompare(chantierA.ministèreNom);
+        });
+    });
   }
 
   async getChantierStatistiques(habilitations: Habilitations, listeChantier: Chantier['id'][], maille: Maille): Promise<AvancementsStatistiques> {
@@ -506,36 +546,33 @@ export default class ChantierSQLRepository implements ChantierRepository {
     const chantiersAutorisés = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const chantiersLecture = listeChantier.filter((x) => chantiersAutorisés.includes(x));
 
-    const rows = await this.prisma.$queryRaw<any[]>`
-      WITH chantier_average AS (
-        SELECT 
-          territoire_code, 
-          AVG(taux_avancement) AS stat
-        FROM chantier 
-        WHERE 
-        chantier.id IN (${chantiersLecture.length > 0 ? Prisma.join(chantiersLecture) : undefined}) 
-          AND maille = ${CODES_MAILLES[maille]}
-        GROUP BY territoire_code
-      )
-      SELECT 
-        AVG(stat) AS stat_avg,
-        MIN(stat) AS stat_min, 
-        PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY stat) AS stat_median,
-        MAX(stat) AS stat_max,
-        NULL AS stat_avg_annuel
-      FROM chantier_average
-  `;
+    const listeMoyenneParTerritoire = await prisma.chantier_territoire.groupBy({
+      by: ['territoire_code'],
+      _avg: {
+        taux_avancement_mandat: true,
+      },
+      where: {
+        id: {
+          in: (chantiersLecture || []),
+        },
+        maille: CODES_MAILLES[maille],
+      },
+      orderBy: {
+        _avg: {
+          taux_avancement_mandat: 'asc',
+        },
+      },
+    });
 
-    const values = rows[0];
     return {
       global: {
-        moyenne: values.stat_avg,
-        médiane: values.stat_median,
-        maximum: values.stat_max,
-        minimum: values.stat_min,
+        moyenne: calculerMoyenne(listeMoyenneParTerritoire.map(moyenneParTerritoire => moyenneParTerritoire._avg.taux_avancement_mandat)),
+        médiane: calculerMédiane(listeMoyenneParTerritoire.map(moyenneParTerritoire => moyenneParTerritoire._avg.taux_avancement_mandat)),
+        minimum: listeMoyenneParTerritoire.at(0) === null || listeMoyenneParTerritoire.at(0) === undefined ? null : listeMoyenneParTerritoire.at(0)!._avg.taux_avancement_mandat,
+        maximum: listeMoyenneParTerritoire.at(-1) === null || listeMoyenneParTerritoire.at(-1) === undefined ? null : listeMoyenneParTerritoire.at(-1)!._avg.taux_avancement_mandat,
       },
       annuel: {
-        moyenne: values.stat_avg_annuel,
+        moyenne: null,
       },
     };
   }

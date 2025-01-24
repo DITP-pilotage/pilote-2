@@ -1,9 +1,13 @@
-import { chantier as ChantierPrisma } from '@prisma/client';
 import { Territoire, TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
+import { EntreePrismaChantier, PrismaChantier } from '@/server/infrastructure/accès_données/chantier/PrismaChantier';
+import { ListeTerritoiresDonnéeAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
+import {
+  ListeTerritoiresDonnéeRapportDetailleContrat,
+} from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 
 class ErreurChantierSansMailleNationale extends Error {
   constructor(idChantier: string) {
@@ -11,9 +15,9 @@ class ErreurChantierSansMailleNationale extends Error {
   }
 }
 
-function créerDonnéesTerritoires(
+export function créerDonnéesTerritoires(
   territoires: Territoire[],
-  chantierRows: ChantierPrisma[],
+  chantierRows: EntreePrismaChantier[],
 ) {
   let donnéesTerritoires: TerritoiresDonnées = {};
 
@@ -23,14 +27,14 @@ function créerDonnéesTerritoires(
     donnéesTerritoires[t.code] = {
       territoireCode: t.code,
       codeInsee: t.codeInsee,
-      avancement: { annuel: chantierRow?.taux_avancement_annuel ?? null, global: chantierRow?.taux_avancement ?? null },
-      avancementPrécédent: { annuel: null, global: chantierRow?.taux_avancement_precedent ?? null },
+      avancement: { annuel: chantierRow?.chantier_territoire_jalon.at(0)?.taux_avancement ?? null, global: chantierRow?.taux_avancement_mandat ?? null },
+      avancementPrécédent: { annuel: null, global: chantierRow?.taux_avancement_mandat_valeur_precedente ?? null },
       estApplicable: chantierRow?.est_applicable ?? null,
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
       écart: chantierRow?.ecart ?? null,
       tendance: chantierRow?.tendance || null,
       dateDeMàjDonnéesQualitatives: chantierRow?.derniere_maj_date_qualitative?.toISOString() || null,
-      dateDeMàjDonnéesQuantitatives: chantierRow?.taux_avancement_date?.toISOString()  ?? null,
+      dateDeMàjDonnéesQuantitatives: chantierRow?.date_taux_avancement_mandat?.toISOString()  ?? null,
       responsableLocal: [],
       coordinateurTerritorial: [],
       mailleSourceDonnees: chantierRow?.donnees_maille_source ? NOMS_MAILLES[chantierRow.donnees_maille_source] : null,
@@ -54,52 +58,106 @@ function créerDonnéesTerritoires(
   return donnéesTerritoires;
 }
 
-export function parseChantier(
-  chantierRows: ChantierPrisma[],
+export function créerDonnéesTerritoiresNew(
+  territoires: Territoire[],
+  chantierRows: EntreePrismaChantier[],
+) {
+  let donnéesTerritoires: ListeTerritoiresDonnéeAccueilContrat = {};
+
+  territoires.forEach(t => {
+    const chantierRow = chantierRows.find(c => c.territoire_code === t.code);
+
+    donnéesTerritoires[t.code] = {
+      estApplicable: chantierRow?.est_applicable ?? null,
+      écart: chantierRow?.ecart ?? null,
+      tendance: chantierRow?.tendance || null,
+      dateDeMàjDonnéesQualitatives: chantierRow?.derniere_maj_date_qualitative?.toISOString() || null,
+      dateDeMàjDonnéesQuantitatives: chantierRow?.date_taux_avancement_mandat?.toISOString()  ?? null,
+      avancement: {
+        annuel: chantierRow?.chantier_territoire_jalon.at(0)?.taux_avancement ?? null,
+        global: chantierRow?.taux_avancement_mandat ?? null,
+      },
+      météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
+    };
+  });
+
+  return donnéesTerritoires;
+}
+
+export function créerDonnéesTerritoiresRapportDetailleNew(
+  territoires: Territoire[],
+  chantierRows: EntreePrismaChantier[],
+) {
+  let donnéesTerritoires: ListeTerritoiresDonnéeRapportDetailleContrat = {};
+
+  territoires.forEach(t => {
+    const chantierRow = chantierRows.find(c => c.territoire_code === t.code);
+
+    donnéesTerritoires[t.code] = {
+      estApplicable: chantierRow?.est_applicable ?? null,
+      écart: chantierRow?.ecart ?? null,
+      tendance: chantierRow?.tendance || null,
+      dateDeMàjDonnéesQualitatives: chantierRow?.derniere_maj_date_qualitative?.toISOString() || null,
+      dateDeMàjDonnéesQuantitatives: chantierRow?.date_taux_avancement_mandat?.toISOString()  ?? null,
+      avancement: {
+        annuel: chantierRow?.chantier_territoire_jalon.at(0)?.taux_avancement ?? null,
+        global: chantierRow?.taux_avancement_mandat ?? null,
+      },
+      météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
+      responsableLocal: (chantierRow?.responsables_locaux || []).map((value, index) => ({ nom: value, email: chantierRow?.responsables_locaux_mails[index]! })),
+      coordinateurTerritorial: (chantierRow?.coordinateurs_territoriaux || []).map((value, index) => ({ nom: value, email: chantierRow?.coordinateurs_territoriaux_mails[index]! })),
+    };
+  });
+
+  return donnéesTerritoires;
+}
+
+export const parseChantierNew = (
+  chantierIdentite: PrismaChantier,
   territoires: Territoire[],
   ministères: Ministère[],
-): Chantier {
-  const chantierMailleNationale = chantierRows.find(c => c.maille === 'NAT');
-  const chantierMailleDépartementale = chantierRows.filter(c => c.maille === 'DEPT');
-  const chantierMailleRégionale = chantierRows.filter(c => c.maille === 'REG');
+): Chantier => {
+  const chantierMailleNationale = chantierIdentite.chantier_territoire.find(c => c.maille === 'NAT');
+  const listeChantiersMailleDépartementale = chantierIdentite.chantier_territoire.filter(c => c.maille === 'DEPT');
+  const listeChantiersMailleRégionale = chantierIdentite.chantier_territoire.filter(c => c.maille === 'REG');
 
   if (!chantierMailleNationale) {
-    throw new ErreurChantierSansMailleNationale(chantierRows[0].id);
+    throw new ErreurChantierSansMailleNationale(chantierIdentite.id);
   }
 
   const result: Chantier = {
-    id: chantierMailleNationale.id,
-    nom: chantierMailleNationale.nom,
-    axe: chantierMailleNationale.axe,
-    ppg: chantierMailleNationale.ppg,
-    périmètreIds: chantierMailleNationale.perimetre_ids,
-    ate: chantierMailleNationale.ate,
-    statut: chantierMailleNationale.statut,
-    cibleAttendu: chantierMailleNationale.cible_attendue,
+    id: chantierIdentite.id,
+    nom: chantierIdentite.nom,
+    axe: chantierIdentite.axe,
+    ppg: chantierIdentite.ppg,
+    périmètreIds: chantierIdentite.perimetre_ids,
+    ate: chantierIdentite.ate,
+    statut: chantierIdentite.statut,
+    cibleAttendu: chantierIdentite.cible_attendue,
     mailles: {
       nationale: {
         'NAT-FR': {
           territoireCode: chantierMailleNationale.territoire_code,
           codeInsee: chantierMailleNationale.code_insee,
-          avancement: { annuel: chantierMailleNationale.taux_avancement_annuel, global: chantierMailleNationale.taux_avancement },
-          avancementPrécédent: { annuel: null, global: chantierMailleNationale.taux_avancement_precedent ?? null },
+          avancement: { annuel: chantierMailleNationale.chantier_territoire_jalon.at(0)?.taux_avancement || null, global: chantierMailleNationale.taux_avancement_mandat },
+          avancementPrécédent: { annuel: null, global: chantierMailleNationale.taux_avancement_mandat_valeur_precedente ?? null },
           météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
           écart: null,
           tendance: chantierMailleNationale.tendance,
           dateDeMàjDonnéesQualitatives: chantierMailleNationale.derniere_maj_date_qualitative?.toISOString() ?? null,
-          dateDeMàjDonnéesQuantitatives: chantierMailleNationale.taux_avancement_date?.toISOString() ?? null,
+          dateDeMàjDonnéesQuantitatives: chantierMailleNationale.date_taux_avancement_mandat?.toISOString() ?? null,
           estApplicable: chantierMailleNationale.est_applicable,
           responsableLocal: [],
           coordinateurTerritorial: [],
           mailleSourceDonnees: null,
         },
       },
-      departementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'departementale'), chantierMailleDépartementale),
-      regionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'regionale'), chantierMailleRégionale),
+      departementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'departementale'), listeChantiersMailleDépartementale),
+      regionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'regionale'), listeChantiersMailleRégionale),
     },
     responsables: {
-      porteur: ministères.find(m => m.id === chantierMailleNationale.ministeres[0]) ?? null,
-      coporteurs: chantierMailleNationale.ministeres.slice(1)
+      porteur: ministères.find(m => m.id === chantierIdentite.ministeres[0]) ?? null,
+      coporteurs: chantierIdentite.ministeres.slice(1)
         .map(coporteurId => (
           ministères.find(m => m.id === coporteurId) ?? null
         ))
@@ -107,33 +165,34 @@ export function parseChantier(
       directeursAdminCentrale: [],
       directeursProjet: [],
     },
-    estBaromètre: !!chantierMailleNationale.est_barometre,
-    estTerritorialisé: !!chantierMailleNationale.est_territorialise,
+    estBaromètre: !!chantierIdentite.est_barometre,
+    estTerritorialisé: !!chantierIdentite.est_territorialise,
     tauxAvancementDonnéeTerritorialisée: {
-      'departementale': !!chantierMailleNationale.a_taux_avancement_departemental,
-      'regionale': !!chantierMailleNationale.a_taux_avancement_regional,
+      'departementale': !!chantierIdentite.possede_taux_avancement_departemental,
+      'regionale': !!chantierIdentite.possede_taux_avancement_regional,
     },
     météoDonnéeTerritorialisée: {
-      'departementale': !!chantierMailleNationale.a_meteo_departemental,
-      'regionale': !!chantierMailleNationale.a_meteo_regional,
+      'departementale': !!chantierIdentite.possede_meteo_departemental,
+      'regionale': !!chantierIdentite.possede_meteo_regional,
     },
   };
 
-  if (chantierMailleNationale.directeurs_administration_centrale) {
-    const directeurs = chantierMailleNationale.directeurs_administration_centrale;
-    const directions = chantierMailleNationale.directions_administration_centrale;
+  if (chantierIdentite.directeurs_administration_centrale) {
+    const directeurs = chantierIdentite.directeurs_administration_centrale;
+    const directions = chantierIdentite.directions_administration_centrale;
     for (const [i, directeur] of directeurs.entries()) {
       result.responsables.directeursAdminCentrale.push({ nom: directeur, direction: directions[i] });
     }
   }
 
-  if (chantierMailleNationale.directeurs_projet && chantierMailleNationale.directeurs_projet.length > 0) {
-    const directeurs = chantierMailleNationale.directeurs_projet;
-    const emails = chantierMailleNationale.directeurs_projet_mails;
+  if (chantierIdentite.directeurs_projet && chantierIdentite.directeurs_projet.length > 0) {
+    const directeurs = chantierIdentite.directeurs_projet;
+    const emails = chantierIdentite.directeurs_projet_mails;
     for (const [i, directeur] of directeurs.entries()) {
       result.responsables.directeursProjet.push({ nom: directeur, email: (emails[i] || null) });
     }
   }
 
   return result;
-}
+};
+

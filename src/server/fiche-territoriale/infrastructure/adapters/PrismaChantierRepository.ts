@@ -1,7 +1,11 @@
-import { chantier as ChantierModel, PrismaClient } from '@prisma/client';
+import { chantier_territoire as PrismaChantierTerritoireModel, Maille, PrismaClient } from '@prisma/client';
 import { ChantierRepository } from '@/server/fiche-territoriale/domain/ports/ChantierRepository';
 import { Chantier } from '@/server/fiche-territoriale/domain/Chantier';
 import { MeteoDisponible } from '@/server/fiche-territoriale/domain/MeteoDisponible';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { configuration } from '@/config';
 
 export class PrismaChantierRepository implements ChantierRepository {
   constructor(private prismaClient: PrismaClient) {}
@@ -15,26 +19,44 @@ export class PrismaChantierRepository implements ChantierRepository {
   }
 
   async listerParTerritoireCodePourEtMaille({ territoireCode, maille }: { territoireCode: string, maille: string }): Promise<Chantier[]> {
-    const result = await this.prismaClient.chantier.findMany({
+    const listePrismaChantierTerritoireModel = await this.prismaClient.chantier_territoire.findMany({
       where: {
         territoire_code: territoireCode,
-        maille,
-        est_barometre: true,
-        est_territorialise: true,
+        maille: maille as Maille,
+        chantier_identite: {
+          est_barometre: true,
+          est_territorialise: true,
+        },
+      },
+      include: {
+        chantier_identite: {
+          select: {
+            nom: true,
+            ministeres: true,
+          },
+        },
+        chantier_territoire_jalon: {
+          where: {
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+          },
+          select: {
+            taux_avancement: true,
+          },
+        },
       },
     });
 
-    return result.map(this.convertirEnChantier);
+    return listePrismaChantierTerritoireModel.map(this.convertirEnChantier);
   }
 
-  private convertirEnChantier(chantierModel: ChantierModel): Chantier {
+  private convertirEnChantier(prismaChantierTerritoireModel: PrismaChantierTerritoireModel & { chantier_identite: { nom: string, ministeres: string[] }, chantier_territoire_jalon: { taux_avancement: number | null }[] }): Chantier {
     return Chantier.creerChantier({
-      id: chantierModel.id,
-      tauxAvancement: chantierModel.taux_avancement,
-      tauxAvancementAnnuel: chantierModel.taux_avancement_annuel,
-      meteo: chantierModel.meteo as MeteoDisponible | null,
-      nom: chantierModel.nom,
-      codeMinisterePorteur: chantierModel.ministeres.at(0),
+      id: prismaChantierTerritoireModel.id,
+      tauxAvancement: prismaChantierTerritoireModel.chantier_territoire_jalon.at(0)?.taux_avancement || null,
+      tauxAvancementAnnuel: prismaChantierTerritoireModel.taux_avancement_mandat,
+      meteo: prismaChantierTerritoireModel.meteo as MeteoDisponible | null,
+      nom: prismaChantierTerritoireModel.chantier_identite.nom,
+      codeMinisterePorteur: prismaChantierTerritoireModel.chantier_identite.ministeres.at(0),
     });
   }
 

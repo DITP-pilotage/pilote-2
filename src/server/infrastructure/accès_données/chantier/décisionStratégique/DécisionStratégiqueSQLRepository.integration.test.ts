@@ -1,77 +1,149 @@
-import { Prisma } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
-import DécisionStratégiqueSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/DécisionStratégiqueSQLRow.builder';
 import DécisionStratégiqueRepository from '@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import DécisionStratégiqueSQLRepository, { NOMS_TYPES_DÉCISION_STRATÉGIQUE } from './DécisionStratégiqueSQLRepository';
+import DécisionStratégiqueSQLRepository from './DécisionStratégiqueSQLRepository';
 
 describe('DécisionStratégiqueSQLRepository', () => {
-  // GIVEN
+  // Given
   const chantierId = 'CH-001';
   const auteur_id = randomUUID();
-  const décisionStratégiqueRepository: DécisionStratégiqueRepository = new DécisionStratégiqueSQLRepository(prisma);
+  let décisionStratégiqueRepository: DécisionStratégiqueRepository;
 
-  const décisionStratégiqueLaPlusRécente = new DécisionStratégiqueSQLRowBuilder()
-    .avecChantierId(chantierId)
-    .avecDate(new Date('2023-03-30'))
-    .build();
-        
-  const décisionStratégiqueMoinsRécente = new DécisionStratégiqueSQLRowBuilder()
-    .avecChantierId(chantierId)
-    .avecDate(new Date('2023-01-30'))
-    .build();
+  beforeEach(() => {
+    décisionStratégiqueRepository = new DécisionStratégiqueSQLRepository();
+  });
 
-  const décisionStratégiqueLaPlusAncienne = new DécisionStratégiqueSQLRowBuilder()
-    .avecChantierId(chantierId)
-    .avecDate(new Date('2022-09-30'))
-    .build();
-
-  const décisionStratégiqueSansAuteurId = new DécisionStratégiqueSQLRowBuilder()
-    .avecChantierId('CH-003')
-    .avecAuteurId(null)
-    .avecDate(new Date('2022-09-30'))
-    .build();
-
-  const décisionStratégiqueAvecAuteurId = new DécisionStratégiqueSQLRowBuilder()
-    .avecChantierId('CH-004')
-    .avecAuteurId(auteur_id)
-    .avecDate(new Date('2022-09-30'))
-    .build();
-
-  const décisionsStratégiques: Prisma.decision_strategiqueCreateArgs['data'][] = [décisionStratégiqueMoinsRécente, décisionStratégiqueLaPlusRécente, décisionStratégiqueLaPlusAncienne];
-  
-  describe('récupérerLePlusRécent', () => {
+  describe('#récupérerLePlusRécent', () => {
     it('Retourne la décision stratégique la plus récente pour un chantier avec son contenu, auteur et date', async () => {
-      await prisma.decision_strategique.createMany({ data: décisionsStratégiques });
+      // Given
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: 'john.doe@test.com',
+          nom: 'Lasne',
+          prenom: 'Paul',
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
 
-      // WHEN
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+        }, {
+          id: 'CH-003',
+          nom: 'Chantier 003',
+        }, {
+          id: 'CH-004',
+          nom: 'Chantier 004',
+        }],
+      });
+
+      await prisma.decision_strategique.createMany({
+        data: [{
+          id: 'e7369826-7d9a-4ea0-8f70-a888c86df6da',
+          chantier_id: 'CH-001',
+          date: new Date('2023-03-30'),
+          type: 'suivi_des_decisions',
+          contenu: 'Contenu décision la plus recente',
+          auteur_id: null,
+        }, {
+          id: '731c4017-eab3-419a-874a-b19171045e62',
+          chantier_id: 'CH-001',
+          date: new Date('2023-01-30'),
+          type: 'suivi_des_decisions',
+          contenu: 'Contenu décision moins recente',
+          auteur_id: null,
+        }, {
+          id: '1a8803f8-d045-42b7-9c99-8062f2c0d124',
+          chantier_id: 'CH-001',
+          date: new Date('2022-09-30'),
+          type: 'suivi_des_decisions',
+          contenu: 'Contenu décision la plus ancienne',
+          auteur_id: null,
+        }, {
+          id: '80a0cd7b-f2e1-4262-8c59-93f24baefb70',
+          chantier_id: 'CH-003',
+          date: new Date('2022-09-30'),
+          type: 'suivi_des_decisions',
+          contenu: 'Contenu décision sans auteur id',
+          auteur_id: null,
+        }, {
+          id: '8a045044-a04f-4447-a4d2-5cc81685684b',
+          chantier_id: 'CH-004',
+          date: new Date('2022-09-30'),
+          type: 'suivi_des_decisions',
+          contenu: 'Contenu décision avec auteur id',
+          auteur_id: auteur_id,
+        }],
+      });
+
+      // When
       const résultat = await décisionStratégiqueRepository.récupérerLaPlusRécente(chantierId);
 
-      // THEN
+      // Then
       expect(résultat).toStrictEqual({
-        id: décisionStratégiqueLaPlusRécente.id,
-        type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[décisionStratégiqueLaPlusRécente.type],
+        id: 'e7369826-7d9a-4ea0-8f70-a888c86df6da',
+        type: 'suiviDesDécisionsStratégiques',
         auteur: 'Auteur Inconnu',
-        contenu: décisionStratégiqueLaPlusRécente.contenu,
-        date: (décisionStratégiqueLaPlusRécente.date).toISOString(),
+        contenu: 'Contenu décision la plus recente',
+        date: new Date('2023-03-30').toISOString(),
       });
     });
-    it('Lorsque l\'auteur id est null, retourne Auteur Inconnu', async () => {
-      await prisma.decision_strategique.create({ data: décisionStratégiqueSansAuteurId });
 
-      // WHEN
+    it('Lorsque l\'auteur id est null, retourne Auteur Inconnu', async () => {
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: 'john.doe@test.com',
+          nom: 'Lasne',
+          prenom: 'Paul',
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
+
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-003',
+          nom: 'Chantier 003',
+        }],
+      });
+
+      await prisma.decision_strategique.createMany({
+        data: [{
+          id: '80a0cd7b-f2e1-4262-8c59-93f24baefb70',
+          chantier_id: 'CH-003',
+          date: new Date('2022-09-30'),
+          type: 'suivi_des_decisions',
+          contenu: 'Contenu décision sans auteur id',
+          auteur_id: null,
+        }],
+      });
+
+      // When
       const résultat = await décisionStratégiqueRepository.récupérerLaPlusRécente('CH-003');
 
-      // THEN
+      // Then
       expect(résultat).toStrictEqual({
-        id: décisionStratégiqueSansAuteurId.id,
-        type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[décisionStratégiqueSansAuteurId.type],
+        id: '80a0cd7b-f2e1-4262-8c59-93f24baefb70',
+        type: 'suiviDesDécisionsStratégiques',
         auteur: 'Auteur Inconnu',
-        contenu: décisionStratégiqueSansAuteurId.contenu,
-        date: (décisionStratégiqueSansAuteurId.date).toISOString(),
+        contenu: 'Contenu décision sans auteur id',
+        date: new Date('2022-09-30').toISOString(),
       });
     });
+
     it('Lorsque l\'auteur id est non null, retourne prenom + nom de l\'utilisateur associé', async () => {
       await prisma.utilisateur.create({
         data: {
@@ -87,38 +159,121 @@ describe('DécisionStratégiqueSQLRepository', () => {
           },
         },
       });
-      await prisma.decision_strategique.create({ data: décisionStratégiqueAvecAuteurId });
 
-      // WHEN
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-004',
+          nom: 'Chantier 004',
+        }],
+      });
+
+      await prisma.decision_strategique.createMany({
+        data: [{
+          id: '8a045044-a04f-4447-a4d2-5cc81685684b',
+          chantier_id: 'CH-004',
+          date: new Date('2022-09-30'),
+          type: 'suivi_des_decisions',
+          contenu: 'Contenu décision avec auteur id',
+          auteur_id: auteur_id,
+        }],
+      });
+
+      // When
       const résultat = await décisionStratégiqueRepository.récupérerLaPlusRécente('CH-004');
 
-      // THEN
+      // Then
       expect(résultat).toStrictEqual({
-        id: décisionStratégiqueAvecAuteurId.id,
-        type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[décisionStratégiqueAvecAuteurId.type],
+        id: '8a045044-a04f-4447-a4d2-5cc81685684b',
+        type: 'suiviDesDécisionsStratégiques',
         auteur: 'Sylvain Marveaux',
-        contenu: décisionStratégiqueAvecAuteurId.contenu,
-        date: (décisionStratégiqueAvecAuteurId.date).toISOString(),
+        contenu: 'Contenu décision avec auteur id',
+        date: new Date('2022-09-30').toISOString(),
       });
     });
   });
 
   describe('RécupérerLHistorique', () => {
     it("Retourne toutes les publications de décisions stratégiques pour un chantier, dans l'ordre décroissant", async () => {
-      await prisma.decision_strategique.createMany({ data: décisionsStratégiques });
+      // Given
+      await prisma.utilisateur.create({
+        data: {
+          id: auteur_id,
+          email: 'john.doe@test.com',
+          nom: 'Lasne',
+          prenom: 'Paul',
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
 
-      // WHEN 
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+        }, {
+          id: 'CH-003',
+          nom: 'Chantier 003',
+        }, {
+          id: 'CH-004',
+          nom: 'Chantier 004',
+        }],
+      });
+
+      await prisma.decision_strategique.createMany({
+        data: [{
+          id: 'e7369826-7d9a-4ea0-8f70-a888c86df6da',
+          chantier_id: 'CH-001',
+          date: new Date('2023-03-30'),
+          type: 'suivi_des_decisions',
+          contenu: 'Contenu décision la plus recente',
+          auteur_id: null,
+        }, {
+          id: '731c4017-eab3-419a-874a-b19171045e62',
+          chantier_id: 'CH-001',
+          date: new Date('2023-01-30'),
+          type: 'suivi_des_decisions',
+          contenu: 'Contenu décision moins recente',
+          auteur_id: null,
+        }, {
+          id: '1a8803f8-d045-42b7-9c99-8062f2c0d124',
+          chantier_id: 'CH-001',
+          date: new Date('2022-09-30'),
+          type: 'suivi_des_decisions',
+          contenu: 'Contenu décision la plus ancienne',
+          auteur_id: null,
+        }, {
+          id: '80a0cd7b-f2e1-4262-8c59-93f24baefb70',
+          chantier_id: 'CH-003',
+          date: new Date('2022-09-30'),
+          type: 'suivi_des_decisions',
+          contenu: 'Contenu décision sans auteur id',
+          auteur_id: null,
+        }, {
+          id: '8a045044-a04f-4447-a4d2-5cc81685684b',
+          chantier_id: 'CH-004',
+          date: new Date('2022-09-30'),
+          type: 'suivi_des_decisions',
+          contenu: 'Contenu décision avec auteur id',
+          auteur_id: auteur_id,
+        }],
+      });
+
+      // When
       const résultat = await décisionStratégiqueRepository.récupérerHistorique(chantierId);
 
-      // THEN
-      expect(résultat[0]?.date).toStrictEqual((décisionStratégiqueLaPlusRécente.date).toISOString());
-      expect(résultat[1]?.date).toStrictEqual((décisionStratégiqueMoinsRécente.date).toISOString());
-      expect(résultat[2]?.date).toStrictEqual((décisionStratégiqueLaPlusAncienne.date).toISOString());
+      // Then
+      expect(résultat[0]?.date).toStrictEqual(new Date('2023-03-30').toISOString());
+      expect(résultat[1]?.date).toStrictEqual(new Date('2023-01-30').toISOString());
+      expect(résultat[2]?.date).toStrictEqual(new Date('2022-09-30').toISOString());
     });
   });
 
   describe('créer', () => {
-    // GIVEN
+    // Given
     const id = '123';
     const contenu = 'Décision importante';
     const type = 'suiviDesDécisionsStratégiques';
@@ -140,10 +295,17 @@ describe('DécisionStratégiqueSQLRepository', () => {
         },
       });
 
-      // WHEN
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+        }],
+      });
+
+      // When
       await décisionStratégiqueRepository.créer(chantierId, id, contenu, type, auteur_id, date);
 
-      // THEN
+      // Then
       const décisionStratégiqueCrééeEnBase = await prisma.decision_strategique.findUnique({ where: { id: id } });
       expect(décisionStratégiqueCrééeEnBase?.id).toEqual(id);
     });
@@ -162,6 +324,13 @@ describe('DécisionStratégiqueSQLRepository', () => {
             },
           },
         },
+      });
+
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+        }],
       });
 
       // When

@@ -1,5 +1,4 @@
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
-import ChantierSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import RécupérerChantierUseCase from '@/server/usecase/chantier/RécupérerChantierUseCase';
 import { objectEntries } from '@/client/utils/objects/objects';
@@ -29,56 +28,113 @@ describe('RécupérerChantierUseCase', () => {
   const profil = ProfilEnum.DITP_ADMIN;
 
   test('Accède à un chantier par son id, vérification de quelques champs', async () => {
-    // GIVEN
-    await prisma.chantier.createMany({
-      data: [
-        new ChantierSQLRowBuilder()
-          .avecMaille('NAT')
-          .avecId('CH-001').avecNom('Chantier 1').avecAxe('Axe 1').avecPpg('Ppg 1')
-          .avecPérimètreIds(['PER-001', 'PER-002']).avecMétéo('COUVERT')
-          .avecDirecteursAdminCentrale(['Alain Térieur', 'Alex Térieur'])
-          .avecDirectionsAdminCentrale(['Intérieur', 'Extérieur'])
-          .avecDirecteursProjet(['Dir proj 1', 'Dir proj 2'])
-          .avecDirecteursProjetMails(['dirproj1@example.com', 'dirproj2@example.com'])
-          .avecEstTerritorialisé(true)
-          .build(),
-        new ChantierSQLRowBuilder()
-          .avecMaille('NAT')
-          .avecId('CH-002').avecNom('Chantier 2').build(),
-      ],
+    // Given
+    await prisma.chantier_identite.createMany({
+      data: [{
+        id: 'CH-001',
+        nom: 'Chantier 001',
+        axe: 'Axe 1',
+        ppg: 'Ppg 1',
+        directeurs_administration_centrale: ['Alain Térieur', 'Alex Térieur'],
+        directions_administration_centrale: ['Intérieur', 'Extérieur'],
+        directeurs_projet: ['Dir proj 1', 'Dir proj 2'],
+        directeurs_projet_mails: ['dirproj1@example.com', 'dirproj2@example.com'],
+        est_territorialise: true,
+        perimetre_ids: ['PER-01', 'PER-02'],
+      }, {
+        id: 'CH-002',
+        nom: 'Chantier 002',
+      }],
     });
+
+    await prisma.chantier_territoire.createMany({
+      data: [{
+        id: 'CH-001',
+        zone_id: 'FRANCE',
+        territoire_code: 'NAT-FR',
+        maille: 'NAT',
+        meteo: 'COUVERT',
+        code_insee: 'FR',
+      }, {
+        id: 'CH-002',
+        zone_id: 'FRANCE',
+        territoire_code: 'NAT-FR',
+        maille: 'NAT',
+        code_insee: 'FR',
+      }],
+    });
+
     const habilitation = { lecture: {
       chantiers: ['CH-001', 'CH-002'],
       territoires: ['NAT-FR'],
     } } as unknown as Utilisateur['habilitations'];
 
-    // WHEN
+    // When
     const result1 = await récupérerChantierUseCase.run('CH-001', habilitation, profil);
     const result2 = await récupérerChantierUseCase.run('CH-002', habilitation, profil);
 
-    // THEN
-    expect(result1.nom).toEqual('Chantier 1');
+    // Then
+    expect(result1.nom).toEqual('Chantier 001');
     expect(result1.axe).toStrictEqual('Axe 1');
     expect(result1.ppg).toStrictEqual('Ppg 1');
-    expect(result1.périmètreIds).toStrictEqual(['PER-001', 'PER-002']);
+    expect(result1.périmètreIds).toStrictEqual(['PER-01', 'PER-02']);
     expect(result1.mailles.nationale['NAT-FR'].météo).toEqual('COUVERT');
     expect(result1.responsables.directeursAdminCentrale).toStrictEqual([{ nom: 'Alain Térieur', direction: 'Intérieur' }, { nom: 'Alex Térieur', direction: 'Extérieur' }]);
     expect(result1.responsables.directeursProjet).toStrictEqual([{ nom: 'Dir proj 1', email: 'dirproj1@example.com' }, { nom: 'Dir proj 2', email: 'dirproj2@example.com' }]);
     expect(result1.estTerritorialisé).toStrictEqual(true);
 
-    expect(result2.nom).toEqual('Chantier 2');
+    expect(result2.nom).toEqual('Chantier 002');
   });
 
   test('un chantier contenant une maille nationale et départementale', async () => {
-    // GIVEN
+    // Given
     const chantierId = 'CH-001';
-    await prisma.chantier.createMany({
-      data: [
-        new ChantierSQLRowBuilder()
-          .avecId(chantierId).avecMaille('NAT').avecMétéo('SOLEIL').avecTauxAvancement(18).avecTauxAvancementAnnuel(20).build(),
-        new ChantierSQLRowBuilder()
-          .avecId(chantierId).avecMaille('DEPT').avecMétéo('SOLEIL').avecCodeInsee('13').avecTauxAvancement(45).avecTauxAvancementAnnuel(51).build(),
-      ],
+
+    await prisma.chantier_identite.createMany({
+      data: [{
+        id: 'CH-001',
+        nom: 'Chantier 001',
+      }],
+    });
+
+    await prisma.chantier_territoire.createMany({
+      data: [{
+        id: 'CH-001',
+        zone_id: 'FRANCE',
+        territoire_code: 'NAT-FR',
+        maille: 'NAT',
+        code_insee: 'FR',
+        meteo: 'SOLEIL',
+        taux_avancement_mandat: 18,
+      }, {
+        id: 'CH-001',
+        zone_id: 'D13',
+        territoire_code: 'DEPT-13',
+        maille: 'DEPT',
+        code_insee: '13',
+        meteo: 'SOLEIL',
+        taux_avancement_mandat: 45,
+      }],
+    });
+
+    await prisma.chantier_territoire_jalon.createMany({
+      data: [{
+        id: 'CH-001',
+        zone_id: 'FRANCE',
+        territoire_code: 'NAT-FR',
+        maille: 'NAT',
+        code_insee: 'FR',
+        jalon: 2025,
+        taux_avancement: 20,
+      }, {
+        id: 'CH-001',
+        zone_id: 'D01',
+        territoire_code: 'DEPT-13',
+        maille: 'DEPT',
+        code_insee: '13',
+        jalon: 2025,
+        taux_avancement: 51,
+      }],
     });
 
     const habilitation = { lecture: {
@@ -86,10 +142,10 @@ describe('RécupérerChantierUseCase', () => {
       territoires: ['NAT-FR', 'DEPT-13'],
     } } as unknown as Utilisateur['habilitations'];
 
-    // WHEN
+    // When
     const result = await récupérerChantierUseCase.run(chantierId, habilitation, profil);
 
-    // THEN
+    // Then
     expect(result.mailles.nationale).toMatchObject({
       'NAT-FR': {
         codeInsee: 'FR',
@@ -115,7 +171,7 @@ describe('RécupérerChantierUseCase', () => {
   });
 
   test('Contient des porteurs et des coporteurs', async () => {
-    // GIVEN
+    // Given
     const ministères = [
       new MinistèreSQLRowBuilder().avecId('1').avecNom('Agriculture et Alimentation').build(),
       new MinistèreSQLRowBuilder().avecId('2').avecNom('Intérieur').build(),
@@ -130,19 +186,38 @@ describe('RécupérerChantierUseCase', () => {
       ],
     });
 
-    await prisma.chantier.createMany({
-      data: [
-        new ChantierSQLRowBuilder()
-          .avecId('CH-001').avecNom('Chantier 1')
-          .avecMaille('NAT')
-          .avecMinistères(['1', '2', '3'])
-          .build(),
-        new ChantierSQLRowBuilder()
-          .avecId('CH-002').avecNom('Chantier 2')
-          .avecMaille('NAT')
-          .avecMinistères(['2'])
-          .build(),
-      ],
+    await prisma.chantier_identite.createMany({
+      data: [{
+        id: 'CH-001',
+        nom: 'Chantier 001',
+        ministeres: ['1', '2', '3'],
+      }, {
+        id: 'CH-002',
+        nom: 'Chantier 002',
+        ministeres: ['2'],
+      }],
+    });
+
+    await prisma.chantier_territoire.createMany({
+      data: [{
+        id: 'CH-001',
+        zone_id: 'FRANCE',
+        territoire_code: 'NAT-FR',
+        maille: 'NAT',
+        code_insee: 'FR',
+      }, {
+        id: 'CH-002',
+        zone_id: 'D13',
+        territoire_code: 'DEPT-13',
+        maille: 'DEPT',
+        code_insee: '13',
+      }, {
+        id: 'CH-002',
+        zone_id: 'FRANCE',
+        territoire_code: 'NAT-FR',
+        maille: 'NAT',
+        code_insee: 'FR',
+      }],
     });
 
     const habilitation = { lecture: {
@@ -150,11 +225,11 @@ describe('RécupérerChantierUseCase', () => {
       territoires: ['NAT-FR'],
     } } as unknown as Utilisateur['habilitations'];
 
-    // WHEN
+    // When
     const result1 = await récupérerChantierUseCase.run('CH-001', habilitation, profil);
     const result2 = await récupérerChantierUseCase.run('CH-002', habilitation, profil);
 
-    // THEN
+    // Then
     expect(result1.responsables.porteur).toBeDefined();
     expect(result1.responsables.porteur!.nom).toEqual('Agriculture et Alimentation');
     expect(result1.responsables.coporteurs).toBeDefined();
@@ -167,13 +242,27 @@ describe('RécupérerChantierUseCase', () => {
   });
 
   test('Un directeur de projet peut ne pas avoir d\'adresse email', async () => {
-    // GIVEN
-
+    // Given
     const chantierId = 'CH-001';
 
-    await prisma.chantier.create({
-      data: new ChantierSQLRowBuilder()
-        .avecId(chantierId).avecMaille('NAT').avecDirecteursProjet(['Jean Bon']).avecDirecteursProjetMails([]).build(),
+    await prisma.chantier_identite.createMany({
+      data: [{
+        id: 'CH-001',
+        nom: 'Chantier 001',
+        ministeres: ['1', '2', '3'],
+        directeurs_projet: ['Jean Bon'],
+        directeurs_projet_mails: [],
+      }],
+    });
+
+    await prisma.chantier_territoire.createMany({
+      data: [{
+        id: 'CH-001',
+        zone_id: 'FRANCE',
+        territoire_code: 'NAT-FR',
+        maille: 'NAT',
+        code_insee: 'FR',
+      }],
     });
 
     const habilitation = { lecture: {
@@ -181,21 +270,33 @@ describe('RécupérerChantierUseCase', () => {
       territoires: ['NAT-FR'],
     } } as unknown as Utilisateur['habilitations'];
 
-    // WHEN
+    // When
     const result = await récupérerChantierUseCase.run(chantierId, habilitation, profil);
 
-    // THEN
+    // Then
     expect(result.responsables.directeursProjet[0]).toStrictEqual({ nom: 'Jean Bon', email: null });
   });
 
   test('Un chantier est du baromètre', async () => {
-    // GIVEN
-
+    // Given
     const chantierId = 'CH-001';
 
-    await prisma.chantier.create({
-      data: new ChantierSQLRowBuilder()
-        .avecId(chantierId).avecMaille('NAT').avecEstBaromètre(true).build(),
+    await prisma.chantier_identite.createMany({
+      data: [{
+        id: 'CH-001',
+        nom: 'Chantier 001',
+        est_barometre: true,
+      }],
+    });
+
+    await prisma.chantier_territoire.createMany({
+      data: [{
+        id: 'CH-001',
+        zone_id: 'FRANCE',
+        territoire_code: 'NAT-FR',
+        maille: 'NAT',
+        code_insee: 'FR',
+      }],
     });
 
     const habilitation = { lecture: {
@@ -203,19 +304,33 @@ describe('RécupérerChantierUseCase', () => {
       territoires: ['NAT-FR'],
     } } as unknown as Utilisateur['habilitations'];
 
-    // WHEN
+    // When
     const result = await récupérerChantierUseCase.run(chantierId, habilitation, profil);
 
-    // THEN
+    // Then
     expect(result.estBaromètre).toBe(true);
   });
 
   describe("Gestion d'erreur", () => {
     test('Erreur en cas d\'absence de maille nationale', async () => {
-      // GIVEN
+      // Given
       const chantierId = 'CH-001';
-      await prisma.chantier.create({
-        data: new ChantierSQLRowBuilder().avecId(chantierId).avecMaille('DEPT').avecCodeInsee('12').build(),
+
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          zone_id: 'D12',
+          territoire_code: 'DEPT-12',
+          maille: 'DEPT',
+          code_insee: '12',
+        }],
       });
 
       const habilitation = { lecture: {
@@ -224,12 +339,12 @@ describe('RécupérerChantierUseCase', () => {
         territoires: ['NAT-FR', 'DEPT-12'],
       } } as unknown as Utilisateur['habilitations'];
 
-      // WHEN
+      // When
       const request = async () => {
         await récupérerChantierUseCase.run(chantierId, habilitation, profil);
       };
 
-      // THEN
+      // Then
       await expect(request).rejects.toThrow(/le chantier 'CH-001' n'a pas de maille nationale/);
     });
   });

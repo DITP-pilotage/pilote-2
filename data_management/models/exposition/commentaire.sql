@@ -1,11 +1,14 @@
 SELECT
-    {{ dbt_utils.surrogate_key(
-                 ['chantier_id',
-                 'type',
-                 'maille',
-                 'code_insee',
-                 'date']
-             ) }} as id,
+    {{
+    dbt_utils.surrogate_key(
+        [
+            'chantier_id',
+             'type',
+             'maille',
+             'code_insee',
+             'date'
+        ]
+    ) }} as id,
     chantier_id,
     type,
     contenu,
