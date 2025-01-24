@@ -22,9 +22,6 @@ export class RecupererRepartitionsMeteoChantiersUseCase {
     filtres.axes = filtres.axes.map(filtre => axes.find(axe => axe.id === filtre)!.nom);
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
 
-    // eslint-disable-next-line sonarjs/prefer-immediate-return
-    const repartitions = await this.chantierRepository.recupererLaRepartitionMeteo(chantiersLecture, territoireCode, filtres);
-
-    return repartitions;
+    return this.chantierRepository.recupererLaRepartitionMeteo(chantiersLecture, territoireCode, filtres);
   }
 }

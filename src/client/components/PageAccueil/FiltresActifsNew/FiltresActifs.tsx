@@ -7,6 +7,7 @@ import Ppg from '@/server/domain/ppg/Ppg.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import { reinitialiserFiltres, sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { libellésMétéos } from '@/server/domain/météo/Météo.interface';
 import FiltresActifsStyled from './FiltresActifs.styled';
 
 interface FiltresActifsProps {
@@ -55,21 +56,6 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
   };
 
   const listePerimetres = ministères.flatMap(ministère => ministère.périmètresMinistériels);
-
-  const meteosAAfficher = (meteo: string) => {
-    switch (meteo) {
-      case 'ORAGE':
-        return 'Objectifs compromis';
-      case 'NUAGE':
-        return 'Appuis nécessaires';
-      case 'COUVERT':
-        return 'Objectifs atteignables';
-      case 'SOLEIL':
-        return 'Objectifs sécurisés';
-      default: 
-        return 'Non renseignées';
-    }
-  };
 
   const désactiverTousLesFiltres = () => {
     reinitialiserFiltres();
@@ -147,7 +133,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
               key={`tag-axe-${meteo}`}
             >
               <Tag
-                libellé={meteosAAfficher(meteo)}
+                libellé={libellésMétéos[meteo]}
                 suppressionCallback={() => {
                   let arrFiltreMeteos = filtres.meteos.split(',').filter(Boolean);
                   arrFiltreMeteos.splice(arrFiltreMeteos.indexOf(meteo), 1);

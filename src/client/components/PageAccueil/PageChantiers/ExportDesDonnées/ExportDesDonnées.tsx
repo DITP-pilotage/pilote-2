@@ -57,7 +57,6 @@ const ExportDesDonnées: FunctionComponent<{ listeChantierId: string[] }> = ({ l
     value: filtrePerimetreMinisteriel,
   }));
 
-
   if (listeChantierId.length > 0) {
     arrayOptionsExport.push({ name: 'listeChantierId', value: listeChantierId.join(',') });
   }
@@ -69,7 +68,6 @@ const ExportDesDonnées: FunctionComponent<{ listeChantierId: string[] }> = ({ l
   (filtres.meteos.split(',').filter(Boolean).forEach(filtreMeteo => {
     arrayOptionsExport.push({ name: 'meteos', value: filtreMeteo });
   }));
-
 
   if (filtres.estTerritorialise) {
     arrayOptionsExport.push({ name: 'estTerritorialise', value: true });

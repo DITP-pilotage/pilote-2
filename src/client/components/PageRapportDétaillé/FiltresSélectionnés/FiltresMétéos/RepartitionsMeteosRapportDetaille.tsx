@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
 import { parseAsString, useQueryState } from 'nuqs';
-import { libellésMétéos } from '@/server/domain/météo/Météo.interface';
+import { libellésMétéos, météosSaisissables } from '@/server/domain/météo/Météo.interface';
 import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import RepartitionsMeteosRapportDetailleStyled from './RepartitionsMeteosRapportDetailleStyled.styled';
@@ -8,8 +8,6 @@ import RepartitionsMeteosRapportDetailleStyled from './RepartitionsMeteosRapport
 interface RepartitionsMeteosRapportDetailleProps {
   repartitionMeteos: RepartitionMeteoContrat
 }
-
-const meteosAAfficher = ['ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL'] as const;
 
 const RepartitionsMeteosRapportDetaille : FunctionComponent<RepartitionsMeteosRapportDetailleProps> = ({ repartitionMeteos }) => {
   const [meteos] = useQueryState('meteos', parseAsString.withDefault('').withOptions({
@@ -21,9 +19,9 @@ const RepartitionsMeteosRapportDetaille : FunctionComponent<RepartitionsMeteosRa
   return (
     <RepartitionsMeteosRapportDetailleStyled className='fr-grid-row fr-mx-n3v'>
       {
-        meteosAAfficher.map(meteo => (
+        météosSaisissables.map(meteo => (
           <li
-            className='fr-col-3'
+            className='fr-col-3 fr-p-2v'
             key={libellésMétéos[meteo]}
             title={libellésMétéos[meteo]}
           >
@@ -42,7 +40,6 @@ const RepartitionsMeteosRapportDetaille : FunctionComponent<RepartitionsMeteosRa
                 {libellésMétéos[meteo]}
               </p>
             </button>
-            
           </li>
         ))
       }

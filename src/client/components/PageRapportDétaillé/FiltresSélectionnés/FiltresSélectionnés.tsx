@@ -6,6 +6,7 @@ import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/Pé
 import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
+import { libellésMétéos } from '@/server/domain/météo/Météo.interface';
 import FiltresSélectionnésCatégorie from './Catégorie/FiltresSélectionnésCatégorie';
 import FiltresSélectionnésStyled from './FiltresSélectionnés.styled';
 
@@ -49,21 +50,6 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
     return listItems.find(item => item.id === idItemRecherche)!.nom;
   };
 
-  const meteosAAfficher = (meteo: string) => {
-    switch (meteo) {
-      case 'ORAGE':
-        return 'Objectifs compromis';
-      case 'NUAGE':
-        return 'Appuis nécessaires';
-      case 'COUVERT':
-        return 'Objectifs atteignables';
-      case 'SOLEIL':
-        return 'Objectifs sécurisés';
-      default: 
-        return 'Non renseignées';
-    }
-  };
-
   const filtresCatégories = [
     { nom: 'Territoire', filtresActifs: [territoireSélectionné!.nomAffiché] },
     {
@@ -98,7 +84,7 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
     {
       nom: 'Météos', 
       filtresActifs : 
-        filtres.meteos.split(',').filter(Boolean).map(meteo => meteosAAfficher(meteo)),
+        filtres.meteos.split(',').filter(Boolean).map(meteo => libellésMétéos[meteo]),
     },
   ];
 

@@ -1,6 +1,6 @@
 import { FunctionComponent, useCallback } from 'react';
 import { parseAsInteger, parseAsString, useQueryState } from 'nuqs';
-import { libellésMétéos, MétéoSaisissable } from '@/server/domain/météo/Météo.interface';
+import { libellésMétéos, MétéoSaisissable, météosSaisissables } from '@/server/domain/météo/Météo.interface';
 import { sauvegarderFiltres } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
 import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
@@ -10,14 +10,13 @@ interface RepartitionsMeteosChantiersProps {
   repartitionMeteos: RepartitionMeteoContrat
 }
 
-const meteosAAfficher = ['ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL'] as const;
-
 const RepartitionsMeteosChantiers : FunctionComponent<RepartitionsMeteosChantiersProps> = ({ repartitionMeteos }) => {
   const [meteos, setMeteos] = useQueryState('meteos', parseAsString.withDefault('').withOptions({
     shallow: false,
     clearOnDefault: true,
     history: 'push',
   }));
+  
   const [, setPagination] = useQueryState('pageIndex', parseAsInteger.withDefault(1).withOptions({
     shallow: false,
   }));
@@ -40,9 +39,9 @@ const RepartitionsMeteosChantiers : FunctionComponent<RepartitionsMeteosChantier
   return (
     <RepartitionsMeteosChantiersStyled className='fr-grid-row fr-mx-n3v'>
       {
-        meteosAAfficher.map(meteo => (
+        météosSaisissables.map(meteo => (
           <li
-            className='fr-col-3'
+            className='fr-col-3 fr-p-2v'
             key={libellésMétéos[meteo]}
             title={libellésMétéos[meteo]}
           >
@@ -61,7 +60,6 @@ const RepartitionsMeteosChantiers : FunctionComponent<RepartitionsMeteosChantier
                 {libellésMétéos[meteo]}
               </p>
             </button>
-            
           </li>
         ))
       }

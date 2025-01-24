@@ -3,10 +3,6 @@ import styled from '@emotion/styled';
 const RepartitionsMeteosRapportDetailleStyled = styled.ul`
   list-style: none;
 
-  .fr-col-3 {
-    padding: .5rem;
-  }
-
   .bouton-repartition-meteos {
     height: 100%;
     padding: 1rem 0.5rem;
