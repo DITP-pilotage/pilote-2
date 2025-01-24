@@ -147,54 +147,64 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
 
   const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository());
 
-  const listeAvancementsStatistiques = await Promise.all(
-    chantiersAvecAlertes.map(chantier => récupérerStatistiquesChantiersUseCase.run([chantier.id], mailleSelectionnee || 'departementale', session.habilitations).then(avancementsStatistique => {
-      const avancementChantierRapportDetaille = new AgrégateurChantierRapportDetailleParTerritoire(chantier).agréger();
-      const avancementRégional = (typeTauxAvancement: 'global' | 'annuel') => {
-        return territoireSélectionné.maille === 'regionale'
-          ? avancementChantierRapportDetaille.regionale.territoires[territoireCode].répartition.avancements[typeTauxAvancement]
-          : territoireSélectionné.maille === 'departementale' && territoireSélectionné.codeParent
-            ? avancementChantierRapportDetaille.regionale.territoires[territoireSélectionné.codeParent].répartition.avancements[typeTauxAvancement]
-            : null;
-      };
+  const listeAvancementsStatistiques = [];
 
-      const avancementDépartemental = (typeTauxAvancement: 'global' | 'annuel') => {
-        return territoireSélectionné.maille === 'departementale' ? avancementChantierRapportDetaille[mailleSelectionnee].territoires[territoireCode].répartition.avancements[typeTauxAvancement] : null;
-      };
+  for (const chantier of chantiersAvecAlertes) {
+    const avancementsStatistique = await récupérerStatistiquesChantiersUseCase.run(
+      [chantier.id],
+      mailleSelectionnee || 'departementale',
+      session.habilitations,
+    );
 
-      return {
-        id: chantier.id, avancementChantierRapportDetaille: {
-          nationale: {
-            global: {
-              moyenne: avancementChantierRapportDetaille.nationale.répartition.avancements.global.moyenne,
-              médiane: avancementsStatistique?.global.médiane ?? null,
-              minimum: avancementsStatistique?.global.minimum ?? null,
-              maximum: avancementsStatistique?.global.maximum ?? null,
-            },
-            annuel: {
-              moyenne: avancementChantierRapportDetaille.nationale.répartition.avancements.annuel.moyenne,
-            },
+    const avancementChantierRapportDetaille = new AgrégateurChantierRapportDetailleParTerritoire(chantier).agréger();
+
+    const avancementRégional = (typeTauxAvancement: 'global' | 'annuel') => {
+      return territoireSélectionné.maille === 'regionale'
+        ? avancementChantierRapportDetaille.regionale.territoires[territoireCode].répartition.avancements[typeTauxAvancement]
+        : territoireSélectionné.maille === 'departementale' && territoireSélectionné.codeParent
+          ? avancementChantierRapportDetaille.regionale.territoires[territoireSélectionné.codeParent].répartition.avancements[typeTauxAvancement]
+          : null;
+    };
+
+    const avancementDépartemental = (typeTauxAvancement: 'global' | 'annuel') => {
+      return territoireSélectionné.maille === 'departementale'
+        ? avancementChantierRapportDetaille[mailleSelectionnee].territoires[territoireCode].répartition.avancements[typeTauxAvancement]
+        : null;
+    };
+
+    listeAvancementsStatistiques.push({
+      id: chantier.id,
+      avancementChantierRapportDetaille: {
+        nationale: {
+          global: {
+            moyenne: avancementChantierRapportDetaille.nationale.répartition.avancements.global.moyenne,
+            médiane: avancementsStatistique?.global.médiane ?? null,
+            minimum: avancementsStatistique?.global.minimum ?? null,
+            maximum: avancementsStatistique?.global.maximum ?? null,
           },
-          departementale: {
-            global: {
-              moyenne: avancementDépartemental('global'),
-            },
-            annuel: {
-              moyenne: avancementDépartemental('annuel'),
-            },
-          },
-          regionale: {
-            global: {
-              moyenne: avancementRégional('global'),
-            },
-            annuel: {
-              moyenne: avancementRégional('annuel'),
-            },
+          annuel: {
+            moyenne: avancementChantierRapportDetaille.nationale.répartition.avancements.annuel.moyenne,
           },
         },
-      };
-    })),
-  );
+        departementale: {
+          global: {
+            moyenne: avancementDépartemental('global'),
+          },
+          annuel: {
+            moyenne: avancementDépartemental('annuel'),
+          },
+        },
+        regionale: {
+          global: {
+            moyenne: avancementRégional('global'),
+          },
+          annuel: {
+            moyenne: avancementRégional('annuel'),
+          },
+        },
+      },
+    });
+  }
 
   const chantiersIds = chantiers.map(chantier => chantier.id);
 

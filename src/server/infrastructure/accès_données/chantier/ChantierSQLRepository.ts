@@ -54,6 +54,9 @@ export default class ChantierSQLRepository implements ChantierRepository {
           },
         },
       },
+      orderBy: {
+        id: 'asc',
+      },
     });
 
     return listeChantiersIdentites.map(chantier => ({
