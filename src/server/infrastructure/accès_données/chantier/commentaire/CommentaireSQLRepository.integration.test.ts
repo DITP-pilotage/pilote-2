@@ -12,7 +12,7 @@ describe('CommentaireSQLRepository', () => {
   let prismaCommentaireRepository: CommentaireSQLRepository;
 
   beforeEach(() => {
-    prismaCommentaireRepository = new CommentaireSQLRepository();
+    prismaCommentaireRepository = new CommentaireSQLRepository(prisma);
   });
 
   describe('#récupérerLePlusRécent', () => {

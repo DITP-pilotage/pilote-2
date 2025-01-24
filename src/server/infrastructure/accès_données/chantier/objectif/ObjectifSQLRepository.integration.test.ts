@@ -8,7 +8,7 @@ describe('ObjectifSQLRepository', function () {
   let objectifRepository: ObjectifRepository;
 
   beforeEach(() => {
-    objectifRepository = new ObjectifSQLRepository();
+    objectifRepository = new ObjectifSQLRepository(prisma);
   });
 
   describe('récupérerLePlusRécent', () => {

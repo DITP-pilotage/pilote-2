@@ -1,14 +1,14 @@
 import { Prisma } from '@prisma/client';
 import IndicateurSQLRepository from '@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLRepository';
-import { prisma } from '@/server/db/prisma';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 
 describe('IndicateurSQLRepository', () => {
   let prismaIndicateurRepository: IndicateurSQLRepository;
 
   beforeEach(() => {
-    prismaIndicateurRepository = new IndicateurSQLRepository();
+    prismaIndicateurRepository = new IndicateurSQLRepository(prisma);
   });
 
   describe('#récupérerChantierIdAssocié', () => {

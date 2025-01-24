@@ -1,9 +1,13 @@
-import { objectif as ObjectifPrisma, type_objectif as TypeObjectifPrisma, utilisateur as UtilisateurPrisma } from '@prisma/client';
+import {
+  objectif as ObjectifPrisma,
+  PrismaClient,
+  type_objectif as TypeObjectifPrisma,
+  utilisateur as UtilisateurPrisma,
+} from '@prisma/client';
 import ObjectifRepository from '@/server/domain/chantier/objectif/ObjectifRepository.interface';
 import Objectif, { TypeObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { groupByAndTransform } from '@/client/utils/arrays';
-import { prisma } from '@/server/db/prisma';
 
 export const NOMS_TYPES_OBJECTIFS: Record<TypeObjectifPrisma, TypeObjectif> = {
   notre_ambition: 'notreAmbition',
@@ -18,6 +22,8 @@ export const CODES_TYPES_OBJECTIFS: Record<TypeObjectif, TypeObjectifPrisma> = {
 };
 
 export default class ObjectifSQLRepository implements ObjectifRepository {
+  constructor(private prismaClient: PrismaClient) {}
+
   private mapperVersDomaine(objectif: ObjectifPrisma & { auteur_objectif: UtilisateurPrisma | null } | null): Objectif {
     if (objectif === null) return null;
     const auteurObjectif = objectif.auteur_objectif;
@@ -31,7 +37,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
   }
 
   async récupérerLePlusRécent(chantierId: string, type: TypeObjectif): Promise<Objectif> {
-    const objectifLePlusRécent = await prisma.objectif.findFirst({
+    const objectifLePlusRécent = await this.prismaClient.objectif.findFirst({
       where: {
         chantier_id: chantierId,
         type: CODES_TYPES_OBJECTIFS[type],
@@ -46,7 +52,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
   }
 
   async récupérerHistorique(chantierId: string, type: TypeObjectif): Promise<Objectif[]> {
-    const objectifs = await prisma.objectif.findMany({
+    const objectifs = await this.prismaClient.objectif.findMany({
       where: {
         chantier_id: chantierId,
         type: CODES_TYPES_OBJECTIFS[type],
@@ -61,7 +67,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
   }
 
   async créer(chantierId: string, id: string, contenu: string, auteur_id: string, type: TypeObjectif, date: Date): Promise<Objectif> {
-    const objectifCréé =  await prisma.objectif.create({
+    const objectifCréé =  await this.prismaClient.objectif.create({
       data: {
         id: id,
         chantier_id: chantierId,
@@ -79,7 +85,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
   }
 
   async récupérerLesPlusRécentsGroupésParChantier(chantiersIds: Chantier['id'][]) {
-    const result = await prisma.objectif.groupBy({
+    const result = await this.prismaClient.objectif.groupBy({
       by: ['type', 'chantier_id'],
       where: {
         chantier_id: { in: chantiersIds },
@@ -91,7 +97,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
 
     const latestEntries = await Promise.all(
       result.filter(group => group._max.date).map(async (group) => (
-        prisma.objectif.findFirst({
+        this.prismaClient.objectif.findFirst({
           where: {
             type: group.type,
             date: group._max.date!,
