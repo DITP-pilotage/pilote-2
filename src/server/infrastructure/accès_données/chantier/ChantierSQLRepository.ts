@@ -199,7 +199,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
         .then(chantiersMatched => chantiersMatched.map(chantierMatched => chantierMatched.id).filter(chantierId => chantiersLectureIds.includes(chantierId)));
     }
 
-    const listeChantierIdentite = await this.prismaClient.chantier_identite.findMany({
+    return this.prismaClient.chantier_identite.findMany({
       where: {
         NOT: {
           ministeres: {
@@ -229,54 +229,43 @@ export default class ChantierSQLRepository implements ChantierRepository {
         directions_administration_centrale: true,
         directeurs_projet: true,
         directeurs_projet_mails: true,
+        chantier_territoire: {
+          where: {
+            territoire_code: {
+              in: profilsTerritoriaux.includes(profil) ? undefined : [...territoiresLectureIds, 'NAT-FR'],
+            },
+            est_applicable: true,
+          },
+          select: {
+            territoire_code: true,
+            id: true,
+            code_insee: true,
+            maille: true,
+            ecart: true,
+            donnees_maille_source: true,
+            taux_avancement_mandat_valeur_precedente: true,
+            meteo: true,
+            tendance: true,
+            derniere_maj_date_qualitative: true,
+            date_taux_avancement_mandat: true,
+            est_applicable: true,
+            responsables_locaux: true,
+            responsables_locaux_mails: true,
+            coordinateurs_territoriaux: true,
+            coordinateurs_territoriaux_mails: true,
+            taux_avancement_mandat: true,
+            chantier_territoire_jalon: {
+              select: {
+                taux_avancement: true,
+              },
+              where: {
+                jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+              },
+            },
+          },
+        },
       },
     });
-
-    // TODO la majeur partie de la latence provient de cette opération (100 à 150ms)
-    return Promise.all(
-      listeChantierIdentite.map(chantierIdentite => this.prismaClient.chantier_territoire.findMany({
-        where: {
-          id: chantierIdentite.id,
-          territoire_code: {
-            in: profilsTerritoriaux.includes(profil) ? undefined : [...territoiresLectureIds, 'NAT-FR'],
-          },
-          est_applicable: true,
-        },
-        select: {
-          territoire_code: true,
-          id: true,
-          code_insee: true,
-          maille: true,
-          ecart: true,
-          donnees_maille_source: true,
-          taux_avancement_mandat_valeur_precedente: true,
-          meteo: true,
-          tendance: true,
-          derniere_maj_date_qualitative: true,
-          date_taux_avancement_mandat: true,
-          est_applicable: true,
-          responsables_locaux: true,
-          responsables_locaux_mails: true,
-          coordinateurs_territoriaux: true,
-          coordinateurs_territoriaux_mails: true,
-          taux_avancement_mandat: true,
-          chantier_territoire_jalon: {
-            select: {
-              taux_avancement: true,
-            },
-            where: {
-              jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
-            },
-          },
-        },
-      }).then(resultListeChantierTerritoire => {
-        return {
-          ...chantierIdentite,
-          chantier_territoire: resultListeChantierTerritoire,
-        } as PrismaChantier;
-      }),
-      ),
-    );
   }
 
   async modifierMétéo(chantierId: string, territoireCode: string, météo: Météo) {
@@ -299,7 +288,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
         id: { in: chantierIdsLecture },
         NOT: [
           {
-            ministeres: { equals: '{}' },
+            ministeres: { isEmpty: true },
           },
         ],
       },
