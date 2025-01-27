@@ -53,7 +53,7 @@ const AvancementChantierStyled = styled.div`
     }
 
     &.layout--nat {
-      grid-template-areas: "nat  ";
+      grid-template-areas: "nat";
       grid-template-columns: 2fr 2fr;
     }
   } 
