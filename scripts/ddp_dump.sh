@@ -14,7 +14,6 @@ time pg_dump -d $CONN_STR_PROD --verbose \
     --table public.profil \
     --table public.habilitation \
     --table public.historisation_modification \
-    --table public.synthese_des_resultats \
     --table public.utilisateur \
     --table raw_data.mesure_indicateur \
     --table raw_data.commentaires \
