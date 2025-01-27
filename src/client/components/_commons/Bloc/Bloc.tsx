@@ -21,8 +21,10 @@ const Bloc: FunctionComponent<BlocProps> = ({
     <BlocStyled className={`bloc-container${className ? ` ${className}` : ''}`}>
       {
         titre ? (
-          <div className='titre fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-2w fr-text--sm fr-text--bold flex'>
-            {titre}
+          <div className='titre fr-mb-0 fr-p-2w fr-text--sm fr-text--bold flex'>
+            <div className='titreEllipsis'>
+              {titre}
+            </div>
             {
               titre && contenuInfobulle ? (
                 <Infobulle

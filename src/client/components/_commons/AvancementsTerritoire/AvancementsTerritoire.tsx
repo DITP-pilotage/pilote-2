@@ -1,16 +1,19 @@
 import { FunctionComponent } from 'react';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
-import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
+import BarreDeProgression, { BarreDeProgressionVariante } from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import api from '@/server/infrastructure/api/trpc/api';
 import { getDateBasculeAffichageValeursAnneePrecedente } from '@/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { JaugeDeProgressionCouleur } from '@/client/components/_commons/JaugeDeProgression/JaugeDeProgression.interface';
 
 interface AvancementsTerritoireProps {
   territoireNom: string
   avancementGlobal: number | null 
   avancementAnnuel: number | null
+  couleurBarreDeProgression: BarreDeProgressionVariante
+  couleurJaugeDeProgression: JaugeDeProgressionCouleur
 }
 
-const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({ territoireNom, avancementGlobal, avancementAnnuel }) => {
+const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({ territoireNom, avancementGlobal, avancementAnnuel, couleurBarreDeProgression, couleurJaugeDeProgression }) => {
   const { data: dateBasculeTauxAnnuelAnneeCouranteString } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE' });
   const anneeCourante = (new Date).getFullYear();
   const anneeJalon = getDateBasculeAffichageValeursAnneePrecedente(dateBasculeTauxAnnuelAnneeCouranteString as string).dateBasculeDepassee ? anneeCourante : anneeCourante - 1;
@@ -18,7 +21,7 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({ 
   return (
     <>
       <JaugeDeProgression
-        couleur='bleu-clair'
+        couleur={couleurJaugeDeProgression}
         libellé={territoireNom}
         pourcentage={avancementGlobal}
         taille='lg'
@@ -36,10 +39,10 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({ 
               positionTexte='dessus'
               taille='xxs'
               valeur={avancementAnnuel}
-              variante='secondaire'
+              variante={couleurBarreDeProgression}
             />
             <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-              {`Taux d\'avancement de l'année ${anneeJalon}`}
+              {`Avancement à échéance ${anneeJalon}`}
             </p>
           </div>
       }

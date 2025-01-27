@@ -2,7 +2,6 @@ import { FunctionComponent } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import AvancementsTerritoire from '@/components/_commons/AvancementsTerritoire/AvancementsTerritoire';
-import Titre from '@/components/_commons/Titre/Titre';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
@@ -17,7 +16,7 @@ import api from '@/server/infrastructure/api/trpc/api';
 import AvancementChantierStyled from './AvancementChantier.styled';
 
 const classeÀPartirDeLaMaille = {
-  'nationale': '',
+  'nationale': 'layout--nat',
   'departementale': 'layout--dept',
   'regionale': 'layout--reg',
 };
@@ -77,6 +76,8 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               <AvancementsTerritoire
                 avancementAnnuel={avancements.departementale.annuel.moyenne}
                 avancementGlobal={avancements.departementale.global.moyenne}
+                couleurBarreDeProgression='secondaire'
+                couleurJaugeDeProgression='bleu'
                 territoireNom={territoireSélectionné.nom}
               />
               {
@@ -101,6 +102,8 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               <AvancementsTerritoire
                 avancementAnnuel={avancements.regionale.annuel.moyenne}
                 avancementGlobal={avancements.regionale.global.moyenne}
+                couleurBarreDeProgression={mailleSelectionnee === 'regionale' ? 'secondaire' : 'secondaire-light'}
+                couleurJaugeDeProgression={mailleSelectionnee === 'regionale' ? 'bleu' : 'bleu-clair'}
                 territoireNom={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
               />
             </div>
@@ -108,25 +111,16 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         ) : null
       }
       <Bloc
-        contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
         titre='National'
       >
-        <Titre
-          baliseHtml='h3'
-          className='fr-text--md fr-mb-1w fr-py-1v texte-centre break-keep flex justify-center w-full'
-        >
-          Taux d’avancement national
-        </Titre>
-        <div className='flex w-full justify-center'>
+        <div className='fr-py-1w jauge'>
           <JaugeDeProgression
-            couleur='bleu'
-            libellé='Taux d’avancement moyen pour le territoire '
+            couleur='bleu-clair'
+            libellé='France'
             pourcentage={avancements.nationale ? avancements.nationale.global.moyenne : null}
             taille='lg'
           />
-        </div>
-        <div className='fr-grid-row border-t fr-mt-1w '>
-          <div className='fr-mt-1w w-full'>
+          <div className='fr-mt-2w'>
             <p className='fr-text--xl fr-text--bold fr-mb-0 texte-gris'>
               {`${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancements.nationale?.annuel.moyenne?.toFixed(0) : null) ?? '- '}%`}
             </p>
@@ -137,10 +131,10 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               positionTexte='dessus'
               taille='xxs'
               valeur={!!avancements.nationale && process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancements.nationale.annuel.moyenne : null}
-              variante='secondaire'
+              variante='secondaire-light'
             />
             <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-              {`Taux d\'avancement de l'année ${anneeJalon}`}
+              {`Avancement à échéance ${anneeJalon}`}
             </p>
           </div>
         </div>
