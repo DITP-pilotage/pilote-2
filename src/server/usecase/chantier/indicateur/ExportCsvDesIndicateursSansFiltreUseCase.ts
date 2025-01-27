@@ -28,6 +28,10 @@ const verifierOptionStatut = (optionsExport: OptionsExport, chantierStatut: stri
   return chantierStatut ? optionsExport.listeStatuts.length > 0 ? optionsExport.listeStatuts.includes(chantierStatut) : true : true;
 };
 
+const verifierOptionMeteo = (optionsExport: OptionsExport, chantierMeteo: string | null) => {
+  return optionsExport.listeMeteos.length > 0 ? chantierMeteo ? optionsExport.listeMeteos.includes(chantierMeteo) : false : true ;
+};
+
 export default class ExportCsvDesIndicateursSansFiltreUseCase {
 
   public static readonly NOMS_COLONNES = [
@@ -68,7 +72,12 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
       const partialChantierIds = chantierIdsLecture.slice(i, i + indicateurChunkSize);
       const indicateursPourExports = await this._indicateurRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
       yield indicateursPourExports
-        .filter(ind => !this.masquerIndicateurPourProfilDROM(profil, ind) && verifierOptionPerimetreIds(optionsExport, ind.périmètreIds) && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, ind.chantierEstBaromètre, ind.chantierEstTerritorialise) && verifierOptionStatut(optionsExport, ind.chantierStatut))
+        .filter(ind => !this.masquerIndicateurPourProfilDROM(profil, ind) 
+          && verifierOptionPerimetreIds(optionsExport, ind.périmètreIds) 
+          && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, ind.chantierEstBaromètre, ind.chantierEstTerritorialise) 
+          && verifierOptionStatut(optionsExport, ind.chantierStatut)
+          && verifierOptionMeteo(optionsExport, ind.météo),
+        )
         .map(ind => this.transformer(ind, profil));
     }
   }

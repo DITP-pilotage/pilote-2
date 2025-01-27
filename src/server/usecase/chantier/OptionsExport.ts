@@ -4,4 +4,5 @@ export interface OptionsExport {
   estTerritorialise: boolean
   listeStatuts: string[],
   listeChantierId: string[],
+  listeMeteos: string[],
 }

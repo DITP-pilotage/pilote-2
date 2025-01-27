@@ -3,6 +3,7 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-business/icons-business.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import Link from 'next/link';
 import { FunctionComponent, useState } from 'react';
+import { parseAsBoolean, parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import PageRapportDétailléStyled from '@/components/PageRapportDétaillé/PageRapportDétaillé.styled';
 import Titre from '@/components/_commons/Titre/Titre';
 import { PublicationsGroupéesParChantier } from '@/components/PageRapportDétaillé/PageRapportDétaillé.interface';
@@ -12,7 +13,6 @@ import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerrito
 import PremièrePageImpressionRapportDétaillé
   from '@/components/PageRapportDétaillé/PremièrePageImpression/PremièrePageImpressionRapportDétaillé';
 import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
-import { getFiltresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
@@ -21,7 +21,6 @@ import Ministère from '@/server/domain/ministère/Ministère.interface';
 import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
-  RépartitionsMétéos,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import Axe from '@/server/domain/axe/Axe.interface';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
@@ -31,6 +30,7 @@ import {
 } from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo.interface';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import FiltresSélectionnés from './FiltresSélectionnés/FiltresSélectionnés';
 
 interface PageRapportDétailléProps {
@@ -47,7 +47,7 @@ interface PageRapportDétailléProps {
   filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
-  répartitionMétéos: RépartitionsMétéos
+  repartitionMeteosChantiers: RepartitionMeteoContrat
   estAutoriseAVoirLesBrouillons: boolean
   mapDonnéesCartographieAvancement: Map<string, AvancementsGlobauxTerritoriauxMoyensContrat>
   mapDonnéesCartographieMétéo: Map<string, CartographieDonnéesMétéo>
@@ -71,7 +71,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   filtresComptesCalculés,
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
-  répartitionMétéos,
+  repartitionMeteosChantiers,
   estAutoriseAVoirLesBrouillons,
   territoireCode,
   mapDonnéesCartographieAvancement,
@@ -84,8 +84,26 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const [afficherLesChantiers, setAfficherLesChantiers] = useState(false);
 
+  const [filtres] = useQueryStates({
+    perimetres: parseAsString.withDefault(''),
+    axes: parseAsString.withDefault(''),
+    meteos: parseAsString.withDefault(''),
+    estBarometre: parseAsBoolean.withDefault(false),
+    estTerritorialise: parseAsBoolean.withDefault(false),
+    maille: parseAsString.withDefault(''),
+    statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']),
+  });
 
-  const queryParamString = getQueryParamString(getFiltresActifs());
+  const [filtresAlertes] = useQueryStates({
+    estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
+    estEnAlerteÉcart: parseAsBoolean.withDefault(false),
+    estEnAlerteBaisse: parseAsBoolean.withDefault(false),
+    estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
+    estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
+  });
+
+  const queryParamString = getQueryParamString({ ...filtres, ...filtresAlertes });
+
   const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
 
   return (
@@ -143,7 +161,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
               chantiers={chantiersFiltrés}
               filtresComptesCalculés={filtresComptesCalculés}
               mailleSelectionnee={mailleSelectionnee}
-              répartitionMétéos={répartitionMétéos}
+              repartitionMeteosChantiers={repartitionMeteosChantiers}
               territoireCode={territoireCode}
             />
             {

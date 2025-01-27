@@ -26,7 +26,6 @@ import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
   presenterEnAvancementsStatistiquesAccueilContrat,
-  RépartitionsMétéos,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { AgrégateurListeChantiersParTerritoire } from '@/client/utils/chantier/agrégateurListeChantiers/agrégateur';
 import { objectEntries } from '@/client/utils/objects/objects';
@@ -44,6 +43,9 @@ import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteCh
 import { Chantier } from '@/server/chantiers/domain/Chantier';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
+import { presenterEnRépartitionsMétéosChantiersContrat } from '@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat';
+import { RecupererRepartitionsMeteoChantiersUseCase } from '@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase';
 
 interface NextPageRapportDétailléProps {
   chantiers: ChantierRapportDetailleContrat[]
@@ -59,7 +61,7 @@ interface NextPageRapportDétailléProps {
   filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
-  répartitionMétéos: RépartitionsMétéos
+  repartitionMeteosChantiers: RepartitionMeteoContrat
   estAutoriseAVoirLesBrouillons: boolean
   listeDonnéesCartographieAvancement: {
     id: string,
@@ -95,6 +97,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     perimetres: query.perimetres ? (query.perimetres as string).split(',').filter(Boolean) : [],
     axes: query.axes ? (query.axes as string).split(',').filter(Boolean) : [],
     statut: query.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : !!query.statut ? [query.statut as string] : ['PUBLIE'],
+    meteos: query.meteos ? (query.meteos as string).split(',').filter(Boolean) : [],
     estTerritorialise: query.estTerritorialise === 'true',
     estBarometre: query.estBarometre === 'true',
     valeurDeLaRecherche: query.q as string,
@@ -135,6 +138,10 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     dependencies.getTerritoireRepository(),
   )
     .run(session.habilitations, session.profil, territoireCode, mailleChantier || 'departementale', ministères, mapAxes, filtres, sorting);
+
+  const repartitionMeteosChantiers = await new RecupererRepartitionsMeteoChantiersUseCase({
+    chantierRepository: dependencies.getChantierRepository(),
+  }).run(session.habilitations, territoireCode, filtres, axes).then(presenterEnRépartitionsMétéosChantiersContrat);
 
   const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisse || filtresAlertes.estEnAlerteTauxAvancementNonCalculé || filtresAlertes.estEnAlerteMétéoNonRenseignée || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? chantiers.filter(chantier => {
     const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][territoireCode];
@@ -226,7 +233,6 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   const objectifsGroupésParChantier = await new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getObjectifRepository()).run(chantiersIds, session.habilitations);
 
   const {
-    répartitionMétéos,
     filtresComptesCalculés,
   } = Chantier.recupererStatistiqueListeChantier(chantiers, mailleChantier, territoireCode);
 
@@ -287,7 +293,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
       avancementsAgrégés,
       territoireCode,
       avancementsGlobauxTerritoriauxMoyens,
-      répartitionMétéos,
+      repartitionMeteosChantiers,
       estAutoriseAVoirLesBrouillons,
       publicationsGroupéesParChantier: {
         commentaires: commentairesGroupésParChantier,
@@ -314,7 +320,7 @@ const NextPageRapportDétaillé: FunctionComponent<NextPageRapportDétailléProp
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
   estAutoriseAVoirLesBrouillons,
-  répartitionMétéos,
+  repartitionMeteosChantiers,
   listeDonnéesCartographieAvancement,
   listeDonnéesCartographieMétéo,
 }) => {
@@ -354,7 +360,7 @@ const NextPageRapportDétaillé: FunctionComponent<NextPageRapportDétailléProp
         mapDonnéesCartographieMétéo={mapDonnéesCartographieMétéo}
         ministères={ministères}
         publicationsGroupéesParChantier={publicationsGroupéesParChantier}
-        répartitionMétéos={répartitionMétéos}
+        repartitionMeteosChantiers={repartitionMeteosChantiers}
         territoireCode={territoireCode}
       />
     </>

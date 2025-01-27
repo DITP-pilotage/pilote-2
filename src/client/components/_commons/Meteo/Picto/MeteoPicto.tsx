@@ -6,12 +6,12 @@ import Image from 'next/image';
 import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
 import { FunctionComponent } from 'react';
 
-interface MétéoPictoProps {
-  météo: Météo,
+interface MeteoPictoProps {
+  meteo: Météo,
   estVisibleParLecteurDÉcran?: boolean,
 }
 
-export const météosPictos: Record<Météo, any> = {
+export const meteosPictos: Record<Météo, any> = {
   'ORAGE': pictoOrage,
   'NUAGE': pictoNuage,
   'COUVERT': pictoCouvert,
@@ -20,15 +20,15 @@ export const météosPictos: Record<Météo, any> = {
   'NON_NECESSAIRE': null,
 };
 
-const MétéoPicto: FunctionComponent<MétéoPictoProps> = ({ météo, estVisibleParLecteurDÉcran = false }) => {
-  return météosPictos[météo] !== null ? (
+const MeteoPicto: FunctionComponent<MeteoPictoProps> = ({ meteo, estVisibleParLecteurDÉcran = false }) => {
+  return meteosPictos[meteo] !== null ? (
     <Image
-      alt={estVisibleParLecteurDÉcran ? libellésMétéos[météo] : ''}
+      alt={estVisibleParLecteurDÉcran ? libellésMétéos[meteo] : ''}
       aria-hidden={estVisibleParLecteurDÉcran ? undefined : 'true'}
-      className='météo-picto'
-      src={météosPictos[météo]} 
+      className='meteo-picto'
+      src={meteosPictos[meteo]} 
     />
   ) : null;
 };
 
-export default MétéoPicto;
+export default MeteoPicto;

@@ -6,8 +6,8 @@ import PageFicheConducteurStyled from '@/components/PageFicheConducteur/PageFich
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
-import MétéoBadge from '@/components/_commons/Météo/Badge/MétéoBadge';
-import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
+import MétéoBadge from '@/components/_commons/Meteo/Badge/MétéoBadge';
+import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
 import {
   ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
 } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
@@ -132,7 +132,7 @@ FicheConducteurContrat
                     <MétéoBadge météo={synthèseDesRésultats.meteo || 'NON_RENSEIGNEE'} />
                   </div>
                   <div className='w-full flex justify-center'>
-                    <MétéoPicto météo={synthèseDesRésultats.meteo || 'NON_RENSEIGNEE'} />
+                    <MeteoPicto meteo={synthèseDesRésultats.meteo || 'NON_RENSEIGNEE'} />
                   </div>
                 </div>
                 <div className='fr-col-10'>

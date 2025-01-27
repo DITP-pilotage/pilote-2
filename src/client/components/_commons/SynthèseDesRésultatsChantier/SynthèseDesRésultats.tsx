@@ -5,8 +5,8 @@ import {
   SynthèseDesRésultatsProps,
 } from '@/components/_commons/SynthèseDesRésultatsChantier/SynthèseDesRésultats.interface';
 import SynthèseDesRésultatsStyled from '@/components/_commons/SynthèseDesRésultatsChantier/SynthèseDesRésultats.styled';
-import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
-import MétéoBadge from '@/components/_commons/Météo/Badge/MétéoBadge';
+import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
+import MétéoBadge from '@/components/_commons/Meteo/Badge/MétéoBadge';
 import SynthèseDesRésultatsHistorique from '@/components/_commons/SynthèseDesRésultatsChantier/Historique/Historique';
 import { useSynthèseDesRésultats } from '@/components/_commons/SynthèseDesRésultatsChantier/useSynthèseDesRésultats';
 import Alerte from '@/components/_commons/Alerte/Alerte';
@@ -67,7 +67,7 @@ const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = (
                     {
                       !!synthèseDesRésultatsInitiale &&
                       <div>
-                        <MétéoPicto météo={synthèseDesRésultatsInitiale.météo} />
+                        <MeteoPicto meteo={synthèseDesRésultatsInitiale.météo} />
                       </div>
                     }
                   </div>

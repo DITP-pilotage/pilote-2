@@ -143,6 +143,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
       perimetres: filtres.perimetres,
       axes: filtres.axes.map(filtre => mapAxe.get(filtre)!.nom),
       statut: filtres.statut,
+      meteos: filtres.meteos,
       estTerritorialise: filtres.estTerritorialise,
       estBarometre: filtres.estBarometre,
       valeurDeLaRecherche: filtres.valeurDeLaRecherche,
@@ -150,7 +151,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
 
     const territoires = await this.territoireRepository.récupérerTousNew();
 
-    return this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLecture, territoiresLecture, profil, filtresPourChantier)
+    return this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLecture, territoiresLecture, profil, filtresPourChantier, territoireCode)
       .then(listePrismaChantier => listePrismaChantier
         .reduce((acc, chantierIdentite) => {
           // on devrait pouvoir appliquer le filtre plus tôt

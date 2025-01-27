@@ -15,7 +15,7 @@ import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
 import { TableauFicheTerritoriale } from '@/components/PageFicheTerritoriale/TableauFicheTerritoriale';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
+import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
 import { FicheTerritorialeContrat } from '@/server/fiche-territoriale/app/contrats/FicheTerritorialeContrat';
 import api from '@/server/infrastructure/api/trpc/api';
 import { getDateBasculeAffichageValeursAnneePrecedente } from '@/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
@@ -128,8 +128,8 @@ export const PageFicheTerritoriale: FunctionComponent<FicheTerritorialeContrat> 
                     <li className='fr-mb-1w'>
                       <div className='flex align-center'>
                         <div className='fiche-territoriale__avancement--meteo'>
-                          <MétéoPicto
-                            météo='ORAGE'
+                          <MeteoPicto
+                            meteo='ORAGE'
                           />
                         </div>
                         <span className='fr-pl-1w fr-text--sm fr-m-0'>
@@ -140,8 +140,8 @@ export const PageFicheTerritoriale: FunctionComponent<FicheTerritorialeContrat> 
                     <li className='fr-mb-1w'>
                       <div className='flex align-center'>
                         <div className='fiche-territoriale__avancement--meteo'>
-                          <MétéoPicto
-                            météo='NUAGE'
+                          <MeteoPicto
+                            meteo='NUAGE'
                           />
                         </div>
                         <span className='fr-pl-1w fr-text--sm fr-m-0'>
@@ -153,8 +153,8 @@ export const PageFicheTerritoriale: FunctionComponent<FicheTerritorialeContrat> 
                     <li className='fr-mb-1w fr-text--sm'>
                       <div className='flex align-center'>
                         <div className='fiche-territoriale__avancement--meteo'>
-                          <MétéoPicto
-                            météo='COUVERT'
+                          <MeteoPicto
+                            meteo='COUVERT'
                           />
                         </div>
                         <span className='fr-pl-1w fr-text--sm fr-m-0'>
@@ -166,8 +166,8 @@ export const PageFicheTerritoriale: FunctionComponent<FicheTerritorialeContrat> 
                     <li className='fr-mb-1w'>
                       <div className='flex align-center'>
                         <div className='fiche-territoriale__avancement--meteo'>
-                          <MétéoPicto
-                            météo='SOLEIL'
+                          <MeteoPicto
+                            meteo='SOLEIL'
                           />
                         </div>
                         <span className='fr-pl-1w fr-text--sm fr-m-0'>
