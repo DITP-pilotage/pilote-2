@@ -1,4 +1,5 @@
 {{ config(materialized = 'table') }}
+
 WITH
 synthese_triee_par_date AS (
     SELECT
@@ -15,6 +16,13 @@ synthese_triee_par_date AS (
         AS row_id_by_date_meteo_desc
     FROM {{ source('db_schema_public', 'synthese_des_resultats') }}
 )
--- Indique la date de météo la plus récente
-SELECT * FROM synthese_triee_par_date WHERE row_id_by_date_meteo_desc = 1
 
+SELECT
+    a.chantier_id,
+    t.code AS territoire_code,
+    meteo,
+    date_meteo
+FROM synthese_triee_par_date AS a
+LEFT JOIN {{ source('db_schema_public', 'territoire') }} AS t
+    ON t.maille = LOWER(a.maille)::maille
+WHERE row_id_by_date_meteo_desc = 1

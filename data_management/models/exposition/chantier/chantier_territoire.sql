@@ -126,11 +126,10 @@ CROSS JOIN {{ ref('get_date_bascule_depassee') }} AS date_bascule
 LEFT JOIN
     {{ source('python_load', 'metadata_zones') }} AS z
     ON t.zone_id = z.zone_id
-LEFT JOIN {{ ref('int_last_synthese') }} AS sr
+LEFT JOIN {{ ref('int_last_meteo') }} AS sr
     ON
         meta_ch.id = sr.chantier_id
-        AND z.zone_type = sr.maille
-        AND t.code_insee = sr.code_insee
+        AND t.code = sr.territoire_code
 LEFT JOIN
     (
         SELECT * FROM {{ ref('compute_ta_ch') }} WHERE valid_on = 'today'
