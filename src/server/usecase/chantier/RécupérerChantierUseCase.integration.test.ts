@@ -10,6 +10,10 @@ import MinistèreRepository from '@/server/domain/ministère/MinistèreRepositor
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { configuration } from '@/config';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 
 describe('RécupérerChantierUseCase', () => {
   let récupérerChantierUseCase: RécupérerChantierUseCase;
@@ -124,7 +128,7 @@ describe('RécupérerChantierUseCase', () => {
         territoire_code: 'NAT-FR',
         maille: 'NAT',
         code_insee: 'FR',
-        jalon: 2025,
+        jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
         taux_avancement: 20,
       }, {
         id: 'CH-001',
@@ -132,7 +136,7 @@ describe('RécupérerChantierUseCase', () => {
         territoire_code: 'DEPT-13',
         maille: 'DEPT',
         code_insee: '13',
-        jalon: 2025,
+        jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
         taux_avancement: 51,
       }],
     });

@@ -99,7 +99,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
           include: {
             chantier_territoire_jalon: {
               where: {
-                jalon: 2025,
+                jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
               },
             },
           },
@@ -329,7 +329,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
             territoire: true,
             chantier_territoire_jalon: {
               where: {
-                jalon: 2025,
+                jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
               },
             },
           },

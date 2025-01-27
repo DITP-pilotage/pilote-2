@@ -4,6 +4,10 @@ import { prisma } from '@/server/db/prisma';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { configuration } from '@/config';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {
@@ -1772,7 +1776,7 @@ describe('ChantierSQLRepository', () => {
             id: 'CH-001',
             maille: 'DEPT',
             zone_id: 'D01',
-            jalon: 2025,
+            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
             code_insee: '01',
             territoire_code: 'DEPT-01',
             taux_avancement: 25,
