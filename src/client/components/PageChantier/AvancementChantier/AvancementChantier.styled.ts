@@ -48,7 +48,7 @@ const AvancementChantierStyled = styled.div`
     }
 
     &.layout--reg {
-      grid-template-areas: "reg nat  ";
+      grid-template-areas: "reg nat";
       grid-template-columns: 2fr 2fr 2fr;
     }
 
