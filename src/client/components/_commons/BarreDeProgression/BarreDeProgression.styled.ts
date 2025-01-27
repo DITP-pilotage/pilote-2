@@ -92,6 +92,16 @@ const BarreDeProgressionStyled = styled.div`
         }
       }
 
+       &.progress--bleu-clair {
+          &::-moz-progress-bar {
+          background-color: var(--background-flat-info);
+        } 
+        
+        &::-webkit-progress-value {
+          background-color: var(--background-flat-info);
+        }
+      }
+
       &.progress--primaire-light {
         &::-moz-progress-bar {
           background-color: var(--blue-france-sun-113-625);
@@ -147,6 +157,10 @@ const BarreDeProgressionStyled = styled.div`
   .pourcentage {
     &.pourcentage--bleu {
       color: var(--blue-ecume-850-200);
+    }
+
+    &.pourcentage--bleu-clair {
+      color: var(--background-flat-info);
     }
 
     &.pourcentage--blanc {

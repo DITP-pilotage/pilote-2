@@ -115,7 +115,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
       >
         <div className='fr-py-1w jauge'>
           <JaugeDeProgression
-            couleur='bleu-clair'
+            couleur={territoireCode !== 'NAT-FR' ? 'bleu-clair' : 'bleu'}
             libellé='France'
             pourcentage={avancements.nationale ? avancements.nationale.global.moyenne : null}
             taille='lg'

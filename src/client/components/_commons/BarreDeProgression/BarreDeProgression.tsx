@@ -1,7 +1,7 @@
 import { FunctionComponent } from 'react';
 import BarreDeProgressionStyled from './BarreDeProgression.styled';
 
-export type BarreDeProgressionVariante = 'primaire' | 'primaire-light' | 'secondaire' | 'secondaire-light' | 'rose' | 'jaune-moutarde';
+export type BarreDeProgressionVariante = 'primaire' | 'primaire-light' | 'secondaire' | 'secondaire-light' | 'rose' | 'jaune-moutarde' | 'bleu-clair';
 type BarreDeProgressionTaille = 'xxs' | 'xs' | 'sm' | 'md' | 'lg';
 type BarreDeProgressionFond = 'bleu' | 'blanc' | 'gris-moyen' | 'gris-clair';
 type BarreDeProgressionBordure = 'bleu' | 'gris-moyen' | null;

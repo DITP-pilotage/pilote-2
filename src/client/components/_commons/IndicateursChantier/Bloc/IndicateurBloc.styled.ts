@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 
 const IndicateurBlocStyled = styled.div`
-  table.fr-table tbody tr:nth-of-type(2n + 1) {
-    background-color: var(--background-contrast-grey);
-  }  
-  
-  table.fr-table tbody tr:nth-of-type(2n) {
+  table.fr-table tbody tr:not(:last-child) {
+    border-bottom: 1px solid #DDDDDD;
+  }
+
+  table.fr-table tbody tr {
     background-color: transparent;
   }
   
