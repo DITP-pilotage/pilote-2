@@ -22,7 +22,7 @@ const Bloc: FunctionComponent<BlocProps> = ({
       {
         titre ? (
           <div className='titre fr-mb-0 fr-p-2w fr-text--sm fr-text--bold flex'>
-            <div className='titreEllipsis'>
+            <div className='titre-ellipsis'>
               {titre}
             </div>
             {

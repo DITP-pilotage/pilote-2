@@ -18,11 +18,11 @@ const JaugeDeProgressionStyled = styled.div`
     width: 10.5rem;
   }
 
-  .titreEllipsis {
+  .titre-ellipsis {
     width: auto;
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    overflow: hidden;
   }
 
   .jauge-tracé {

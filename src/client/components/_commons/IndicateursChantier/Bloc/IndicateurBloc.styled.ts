@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 const IndicateurBlocStyled = styled.div`
   table.fr-table tbody tr:not(:last-child) {
-    border-bottom: 1px solid #DDDDDD;
+    border-bottom: 1px solid #DDD;
   }
 
   table.fr-table tbody tr {
