@@ -6,29 +6,6 @@
 }}
 
 WITH
-
--- Table des synthèses triée par date
-synthese_triee_par_date AS (
-    SELECT
-        chantier_id,
-        code_insee,
-        maille,
-        meteo,
-        date_meteo,
-        ROW_NUMBER()
-            OVER (
-                PARTITION BY chantier_id, code_insee, maille
-                ORDER BY date_meteo DESC
-            )
-        AS row_id_by_date_meteo_desc
-    FROM {{ source('db_schema_public', 'synthese_des_resultats') }}
-),
-
--- Indique la date de météo la plus récente
-synthese_triee_par_date_last1 AS (
-    SELECT * FROM synthese_triee_par_date WHERE row_id_by_date_meteo_desc = 1
-),
-
 mailles_applicables AS (
     SELECT
         meta_ch.id AS chantier_id,
@@ -149,7 +126,7 @@ CROSS JOIN {{ ref('get_date_bascule_depassee') }} AS date_bascule
 LEFT JOIN
     {{ source('python_load', 'metadata_zones') }} AS z
     ON t.zone_id = z.zone_id
-LEFT JOIN synthese_triee_par_date_last1 AS sr
+LEFT JOIN {{ ref('int_last_synthese') }} AS sr
     ON
         meta_ch.id = sr.chantier_id
         AND z.zone_type = sr.maille

@@ -15,23 +15,18 @@ then
   fi
 fi
 
-psql "$DATABASE_URL" -c "UPDATE public.axe SET a_supprimer = TRUE"
-psql "$DATABASE_URL" -c "UPDATE public.perimetre SET a_supprimer = TRUE"
-psql "$DATABASE_URL" -c "UPDATE public.ppg SET a_supprimer = TRUE"
-psql "$DATABASE_URL" -c "UPDATE public.chantier_identite SET a_supprimer = TRUE"
-psql "$DATABASE_URL" -c "UPDATE public.indicateur_identite SET a_supprimer = TRUE"
-psql "$DATABASE_URL" -c "UPDATE public.ministere SET a_supprimer = TRUE"
+dbt run --select intermediate
 
-dbt run --select intermediate exposition df3 barometre
+psql "$DATABASE_URL" -f scripts/sql/1_set_flag_true.sql 
+psql "$DATABASE_URL" -f scripts/sql/2_create_temporary_tables.sql 
+
+dbt run --select exposition df3 barometre
 
 if [ $? -eq 0 ]; then
-  psql "$DATABASE_URL" -c "DELETE FROM public.axe WHERE a_supprimer = TRUE"
-  psql "$DATABASE_URL" -c "DELETE FROM public.perimetre WHERE a_supprimer = TRUE"
-  psql "$DATABASE_URL" -c "DELETE FROM public.ppg WHERE a_supprimer = TRUE"
-  psql "$DATABASE_URL" -c "DELETE FROM public.chantier_identite WHERE a_supprimer = TRUE"
-  psql "$DATABASE_URL" -c "DELETE FROM public.indicateur_identite WHERE a_supprimer = TRUE"
-  psql "$DATABASE_URL" -c "DELETE FROM public.ministere WHERE a_supprimer = TRUE"
-  # Add similar delete queries for other tables if needed
+  psql "$DATABASE_URL" -f scripts/sql/3_delete_flag_true.sql 
+  psql "$DATABASE_URL" -f scripts/sql/4_insert_from_temporary_tables.sql 
+  psql "$DATABASE_URL" -f scripts/sql/5_drop_temporary_tables.sql 
+
 else
   echo "dbt job failed. Skipping delete queries."
 fi
