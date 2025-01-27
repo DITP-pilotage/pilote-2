@@ -11,6 +11,13 @@ const BlocStyled = styled.div`
     border-radius: 7px 7px 0 0;
   }
   
+  .titre-ellipsis {
+    width: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
   @media print {
     height: unset;
     border: 1px solid #7B7B7B;

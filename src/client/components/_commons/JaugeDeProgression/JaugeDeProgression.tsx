@@ -49,7 +49,7 @@ const JaugeDeProgression: FunctionComponent<JaugeDeProgressionProps> = ({
         </p>
       </div>
       <p
-        className={`fr-text--xs fr-mb-0 texte-centre ${classesÀPartirDeTaille[taille].libellé}${noWrap ? 'no-wrap' : ''}`}
+        className={`fr-text--xs titre-ellipsis fr-mb-0 texte-centre ${classesÀPartirDeTaille[taille].libellé}${noWrap ? 'no-wrap' : ''}`}
       >
         {libellé}
       </p>
