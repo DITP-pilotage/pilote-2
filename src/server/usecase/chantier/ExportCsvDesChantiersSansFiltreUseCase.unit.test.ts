@@ -1,4 +1,4 @@
-import { mock } from 'jest-mock-extended';
+import { mock, MockProxy } from 'jest-mock-extended';
 import { ExportCsvDesChantiersUseCase } from '@/server/usecase/chantier/ExportCsvDesChantiersUseCase';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { HabilitationBuilder } from '@/server/domain/utilisateur/habilitation/HabilitationBuilder';
@@ -26,11 +26,16 @@ const optionsExport: OptionsExport = {
 };
 
 describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
+  let chantierRepository: MockProxy<ChantierRepository>;
+
+  beforeEach(() => {
+    chantierRepository = mock<ChantierRepository>();
+  });
+
   it('Renvoie une liste vide si pas de chantiers', async () => {
     // GIVEN
     const chantierIds: Chantier['id'][] = [];
     const chantierChunkSize = 5;
-    const chantierRepository = mock<ChantierRepository>();
     chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
       .mockResolvedValueOnce(chantierIds);
 
@@ -57,7 +62,6 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     // GIVEN
     const chantierChunkSize = 5;
     const chantierIds = ['CH-001'];
-    const chantierRepository = mock<ChantierRepository>();
     chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
       .mockResolvedValueOnce(chantierIds);
     chantierRepository.récupérerPourExports
@@ -85,14 +89,14 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     expect(chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions)
       .toHaveBeenCalledWith(habilitation, optionsExport);
     expect(chantierRepository.récupérerPourExports)
-      .toHaveBeenCalledWith(chantierIds, territoireCodesLecture);
+      .toHaveBeenCalledWith(chantierIds, territoireCodesLecture, optionsExport);
   });
 
   it('Renvoie 3 lignes pour 3 chantiers si configuré avec lots de 3', async () => {
     // GIVEN
     const chantierIds = ['CH-001', 'CH-002', 'CH-003'];
     const chantierChunkSize = 3;
-    const chantierRepository = mock<ChantierRepository>();
+
     chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
       .mockResolvedValueOnce(chantierIds);
     chantierRepository.récupérerPourExports
@@ -127,7 +131,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const chantierChunkSize = 3;
     const firstChunk = chantierIds.slice(0, chantierChunkSize);
     const secondChunk = chantierIds.slice(chantierChunkSize);
-    const chantierRepository = mock<ChantierRepository>();
+
     chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
       .mockResolvedValueOnce(chantierIds);
     chantierRepository.récupérerPourExports

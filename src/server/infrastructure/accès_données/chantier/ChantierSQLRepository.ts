@@ -121,13 +121,11 @@ export default class ChantierSQLRepository implements ChantierRepository {
     const whereOptions: Prisma.chantier_identiteWhereInput = {};
 
     if (optionsExport.estBarometre && optionsExport.estTerritorialise) {
-      whereOptions.OR = [
-        {
-          est_barometre: true,
-        }, {
-          est_territorialise: true,
-        },
-      ];
+      whereOptions.OR = [{
+        est_barometre: true,
+      }, {
+        est_territorialise: true,
+      }];
     } else if (optionsExport.estBarometre) {
       whereOptions.est_barometre = true;
     } else if (optionsExport.estTerritorialise) {
@@ -137,12 +135,6 @@ export default class ChantierSQLRepository implements ChantierRepository {
     if (optionsExport.listeStatuts && optionsExport.listeStatuts.length > 0) {
       whereOptions.statut = {
         in: optionsExport.listeStatuts as type_statut[],
-      };
-    }
-
-    if (optionsExport.listeMeteos && optionsExport.listeMeteos.length > 0) {
-      whereOptions.meteo = {
-        in: optionsExport.listeMeteos as Météo[],
       };
     }
 
@@ -164,9 +156,10 @@ export default class ChantierSQLRepository implements ChantierRepository {
       },
     });
 
-    return chantiers.map(c => c.id);
+    return chantiers.map(chantier => chantier.id);
   }
-  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, filtres: FiltreQueryParams): Promise<PrismaChantier[]> {
+
+  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, filtres: FiltreQueryParams, territoireCode: string): Promise<PrismaChantier[]> {
     const whereOptions: Prisma.chantier_identiteWhereInput = {};
 
     if (filtres.perimetres?.length > 0) {
@@ -208,6 +201,19 @@ export default class ChantierSQLRepository implements ChantierRepository {
         .then(chantiersMatched => chantiersMatched.map(chantierMatched => chantierMatched.id).filter(chantierId => chantiersLectureIds.includes(chantierId)));
     }
 
+    if (filtres.meteos?.length > 0) {
+      chantierIds = await this.prismaClient.chantier_territoire.findMany({
+        where: {
+          id: { in: chantierIds },
+          meteo: {
+            in: filtres.meteos as Météo[],
+          },
+          territoire_code: territoireCode,
+        },
+      })
+        .then(chantiersMatched => chantiersMatched.map(chantierMatched => chantierMatched.id).filter(chantierId => chantierIds.includes(chantierId)));
+    }
+
     return this.prismaClient.chantier_identite.findMany({
       where: {
         NOT: {
@@ -217,6 +223,9 @@ export default class ChantierSQLRepository implements ChantierRepository {
         },
         id: { in: chantierIds },
         ...whereOptions,
+      },
+      orderBy: {
+        id: 'asc',
       },
       select: {
         id: true,
@@ -291,7 +300,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     });
   }
 
-  async récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[]): Promise<ChantierPourExport[]> {
+  async récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[], optionsExport: OptionsExport): Promise<ChantierPourExport[]> {
     const chantierIds = await this.prismaClient.chantier_identite.findMany({
       where: {
         id: { in: chantierIdsLecture },
@@ -357,7 +366,6 @@ export default class ChantierSQLRepository implements ChantierRepository {
       mapAutresResultatsObtenus,
       mapAutresResultatsObtenusNonCorrelesAuxIndicateurs,
       mapSynthesesDesResultats,
-      mapMeteo,
       mapDecisionsStrategiques,
       mapNotreAmbition,
       mapDejaFait,
@@ -399,22 +407,6 @@ export default class ChantierSQLRepository implements ChantierRepository {
       }).then(resultMap => new Map<string, string | null>(
         resultMap.map(chantierCommentaire => [`${chantierCommentaire.id}-${chantierCommentaire.territoire_code}`, chantierCommentaire.syntheses_des_resultats[0]?.commentaire || null]),
       )),
-      this.prismaClient.chantier_territoire.findMany({
-        where: {
-          id: { in: resultChantierIds },
-          territoire: { code: { in: territoireCodesLecture } },
-        },
-        include: {
-          syntheses_des_resultats: {
-            orderBy: {
-              date_commentaire: 'desc',
-            },
-            take: 1,
-          },
-        },
-      }).then(resultMap => new Map<string, string | null>(
-        resultMap.map(chantierCommentaire => [`${chantierCommentaire.id}-${chantierCommentaire.territoire_code}`, chantierCommentaire.syntheses_des_resultats[0]?.meteo || null]),
-      )),
       ...listeTypesDecisionsStrategiques.map((typeDecisionStrategique) => this.prismaClient.chantier_identite.findMany({
         where: {
           id: { in: resultChantierIds },
@@ -453,10 +445,11 @@ export default class ChantierSQLRepository implements ChantierRepository {
       ))),
     ]);
 
-
     return listePrismaChantierIdentite.flatMap(prismaChantierIdentite => {
       return prismaChantierIdentite.chantier_territoire
-        .filter(chantierTerritoire => territoireCodesLecture.includes(chantierTerritoire.territoire_code))
+        .filter(chantierTerritoire => territoireCodesLecture.includes(chantierTerritoire.territoire_code)
+          && (optionsExport.listeMeteos.length > 0 ? optionsExport.listeMeteos.includes(chantierTerritoire.meteo || '') : true),
+        )
         .map(prismaChantierTerritoire => {
           let prismaChantierTerritoireReg = prismaChantierTerritoire;
           let prismaChantierTerritoireNat = prismaChantierTerritoire;
@@ -467,7 +460,6 @@ export default class ChantierSQLRepository implements ChantierRepository {
           } else if (prismaChantierTerritoire.maille === 'REG') {
             prismaChantierTerritoireNat = prismaChantierIdentite.chantier_territoire.find(chantierTerritoire => chantierTerritoire.territoire_code === 'NAT-FR')!;
           }
-
 
           return {
             nom: prismaChantierIdentite.nom,
@@ -483,7 +475,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
             tauxDAvancementRégional: prismaChantierTerritoire.maille === 'REG' || prismaChantierTerritoire.maille === 'DEPT' ? prismaChantierTerritoireReg.taux_avancement_mandat : null,
             tauxDAvancementDépartemental: prismaChantierTerritoire.maille === 'DEPT' ? prismaChantierTerritoire.taux_avancement_mandat : null,
             périmètreIds: prismaChantierIdentite.perimetre_ids,
-            météo: (mapMeteo.get(`${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`) || null) as Météo || null,
+            météo: prismaChantierTerritoire.meteo as Météo || null,
             directeursProjet: prismaChantierIdentite.directeurs_projet,
             directeursProjetMails: prismaChantierIdentite.directeurs_projet_mails,
             responsablesLocaux: prismaChantierTerritoire.responsables_locaux,
@@ -578,7 +570,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
   }
 
   async recupererLaRepartitionMeteo(chantiersLectureIds: string[], territoireCode: string, filtres: FiltreQueryParams): Promise<RepartitionMeteoChantiers> {
-    const whereOptions: Prisma.chantierWhereInput = {};
+    const whereOptions: Prisma.chantier_identiteWhereInput = {};
 
     if (filtres.perimetres?.length > 0) {
       whereOptions.perimetre_ids = {
@@ -615,17 +607,19 @@ export default class ChantierSQLRepository implements ChantierRepository {
     if (filtres.valeurDeLaRecherche?.length > 0) {
       const testLower = removeAccents(filtres.valeurDeLaRecherche.toLowerCase());
 
-      chantierIds = await this.prisma.$queryRawUnsafe<{ id: string }[]>('SELECT distinct(id) FROM chantier where (LOWER(unaccent(nom)) ILIKE $1 OR LOWER(unaccent(id)) ILIKE $1)', `%${testLower}%`)
+      chantierIds = await this.prismaClient.$queryRawUnsafe<{ id: string }[]>('SELECT distinct(id) FROM chantier_identite where (LOWER(unaccent(nom)) ILIKE $1 OR LOWER(unaccent(id)) ILIKE $1)', `%${testLower}%`)
         .then(chantiersMatched => chantiersMatched.map(chantierMatched => chantierMatched.id).filter(chantierId => chantiersLectureIds.includes(chantierId)));
     }
-    const meteosGroupee = await this.prisma.chantier.groupBy({
+    const meteosGroupee = await this.prismaClient.chantier_territoire.groupBy({
       by: ['meteo'],
       _count: true,
       where: {
-        NOT: { ministeres: { isEmpty: true } },
         territoire_code: territoireCode,
+        chantier_identite: {
+          NOT: { ministeres: { isEmpty: true } },
+          ...whereOptions,
+        },
         id: { in: chantierIds },
-        ...whereOptions,
       },
     });
 

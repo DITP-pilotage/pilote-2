@@ -70,7 +70,7 @@ export class ExportCsvDesChantiersUseCase {
 
     for (let i = 0; i < chantierIdsLecture.length; i += chantierChunkSize) {
       const partialChantierIds = chantierIdsLecture.slice(i, i + chantierChunkSize);
-      const partialResult = await this._chantierRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
+      const partialResult = await this._chantierRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture, optionsExport);
       yield partialResult
         .filter(chantier => !this.masquerChantierPourProfilDROM(profil, chantier) 
           && verifierOptionPerimetreIds(optionsExport, chantier.périmètreIds) 

@@ -6,6 +6,12 @@ source .env
 echo ">> TRUNCATE content of these tables..."
 time psql -d $CONN_STR_DEST -c "
 TRUNCATE TABLE
+    public.indicateur_territoire_jalon,
+    public.indicateur_territoire,
+    public.indicateur_identite,
+    public.chantier_territoire_jalon,
+    public.chantier_territoire,
+    public.chantier_identite,
     public.decision_strategique,
     public.rapport_import_mesure_indicateur,
     public.commentaire,

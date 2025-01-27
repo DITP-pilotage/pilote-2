@@ -151,7 +151,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
 
     const territoires = await this.territoireRepository.récupérerTousNew();
 
-    return this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLecture, territoiresLecture, profil, filtresPourChantier)
+    return this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLecture, territoiresLecture, profil, filtresPourChantier, territoireCode)
       .then(listePrismaChantier => listePrismaChantier
         .reduce((acc, chantierIdentite) => {
           // on devrait pouvoir appliquer le filtre plus tôt
