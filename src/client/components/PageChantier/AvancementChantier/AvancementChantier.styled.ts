@@ -21,14 +21,14 @@ const AvancementChantierStyled = styled.div`
 
   &.layout--reg {
     @media (min-width: 768px) {
-      grid-template-areas: "reg nat  ";
+      grid-template-areas: "reg nat";
       grid-template-columns: 2fr 2fr 2fr;
     }
   }
 
   &.layout--nat {
     @media (min-width: 768px) {
-      grid-template-areas: "nat  ";
+      grid-template-areas: "nat";
       grid-template-columns: 2fr 2fr;
     }
   }
