@@ -23,7 +23,6 @@ mailles_applicables AS (
             END AS maille_applicable
     ) AS m
 ),
-
 mediane_par_chantier AS (
     SELECT
         chantier_id,
@@ -38,6 +37,21 @@ mediane_par_chantier AS (
         valid_on = 'today' AND tag_ch IS NOT NULL AND z.zone_type <> 'NAT'
     GROUP BY
         chantier_id, z.zone_type
+),
+proposition_valeur_actuelle_chantier AS (
+    SELECT 
+        meta_indic.chantier_id, 
+        pva.territoire_code, 
+        TRUE AS possede_proposition_valeur_actuelle 
+    FROM 
+        proposition_valeur_actuelle pva
+    LEFT JOIN 
+        raw_data.stg_ppg_metadata__indicateurs meta_indic 
+    ON 
+        meta_indic.id = pva.indic_id 
+    GROUP BY 
+        meta_indic.chantier_id, 
+        pva.territoire_code
 )
 
 SELECT
@@ -118,8 +132,8 @@ SELECT
         WHEN
             UPPER(meta_ch.replicate_val_nat_to) = 'REG' AND z.zone_type = 'REG'
             THEN 'reg'::maille
-    END AS donnees_maille_source
-
+    END AS donnees_maille_source,
+    COALESCE(pva.possede_proposition_valeur_actuelle, FALSE) as possede_proposition_valeur_actuelle
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch
 CROSS JOIN {{ source('db_schema_public', 'territoire') }} AS t
 CROSS JOIN {{ ref('get_date_bascule_depassee') }} AS date_bascule
@@ -168,4 +182,9 @@ LEFT JOIN
     ON
         meta_ch.id = mediane_par_chantier.chantier_id
         AND z.zone_type = mediane_par_chantier.maille
+LEFT JOIN
+    proposition_valeur_actuelle_chantier pva
+    ON
+        pva.chantier_id = meta_ch.id
+        AND pva.territoire_code = t.code
 --ORDER by meta_ch.id, z.zone_type
