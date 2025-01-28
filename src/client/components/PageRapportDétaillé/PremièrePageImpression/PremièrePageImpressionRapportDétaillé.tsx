@@ -100,7 +100,7 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<PremièrePageI
         </div>
       </header>
       <div className='fr-pt-6w fr-pb-3w fond-bleu-clair'>
-        <div className='fr-mb-6w fr-display--md texte-centre titre-rapport-détaillé'>
+        <div className='fr-mb-6w fr-display--md text-center titre-rapport-détaillé'>
           État des lieux de l’avancement
           <br />
           des politiques prioritaires
