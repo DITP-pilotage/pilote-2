@@ -616,6 +616,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       _count: true,
       where: {
         territoire_code: territoireCode,
+        est_applicable: true,
         chantier_identite: {
           NOT: { ministeres: { isEmpty: true } },
           ...whereOptions,
