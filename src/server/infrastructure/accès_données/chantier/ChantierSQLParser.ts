@@ -134,6 +134,7 @@ export const parseChantierNew = (
     ate: chantierIdentite.ate,
     statut: chantierIdentite.statut,
     cibleAttendu: chantierIdentite.cible_attendue,
+    maillesApplicables: chantierIdentite.mailles_applicables.map(maille => NOMS_MAILLES[maille]),
     mailles: {
       nationale: {
         'NAT-FR': {
