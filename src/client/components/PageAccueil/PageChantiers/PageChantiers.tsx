@@ -307,11 +307,10 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 </div>
               </div>
             </section>
-            <Bloc
-              className='fr-mr-md-2w fr-mr-xl-0 fr-mb-1w'
-              contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
-            >
-              <section className='fr-mx-2w'>
+            <section className='fr-mr-md-2w fr-mr-xl-0'>
+              <Bloc
+                contenuClassesSupplémentaires='fr-py-2w fr-px-3w'
+              >     
                 <TitreInfobulleConteneur>
                   <Titre
                     baliseHtml='h2'
@@ -326,9 +325,9 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 </TitreInfobulleConteneur>
                 <RepartitionsMeteosChantiers
                   repartitionMeteos={repartitionMeteosChantiers}
-                />
-              </section>
-            </Bloc>
+                />           
+              </Bloc>
+            </section>
           </div>
           <div className='fr-col-12 fr-col-lg-5 fr-col-xl-6 fr-pl-xl-1w'>
             <Bloc>

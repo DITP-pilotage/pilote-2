@@ -111,7 +111,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         ) : null
       }
       <Bloc
-        titre='National'
+        titre='France'
       >
         <div className='fr-py-1w jauge'>
           <JaugeDeProgression
