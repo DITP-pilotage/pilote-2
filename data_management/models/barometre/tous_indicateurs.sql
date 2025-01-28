@@ -70,7 +70,7 @@ export_ta AS
     id AS indic_id,
     zone_id AS enforce_zone_id,
     zone_type AS "maille",
-    date_valeur_actuelle AS metric_enforce_date,
+    date_valeur_actuelle_mandat AS metric_enforce_date,
     -- TA
     taux_avancement_mandat AS indic_ta 
   FROM donnees 

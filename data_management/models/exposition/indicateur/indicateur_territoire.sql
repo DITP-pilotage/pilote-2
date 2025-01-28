@@ -31,28 +31,10 @@ SELECT
     territoire.code_insee,
     territoire.zone_id,
     gvcg.vcg AS valeur_cible_mandat,
-    CASE
-        WHEN
-            -- Nous sommes après la date de bascule, afficher TA de l'année courante
-            date_bascule.date_depassee THEN a.tag
-        -- Nous sommes après la date de bascule, afficher TA de l'année précédente
-        ELSE a_prev_year.tag_prev_year
-    END AS taux_avancement_mandat,
-    CASE
-        WHEN
-            -- Nous sommes après la date de bascule, afficher TA de l'année courante
-            date_bascule.date_depassee THEN a.date_valeur_actuelle::date
-        -- Nous sommes après la date de bascule, afficher TA de l'année précédente
-        ELSE a_prev_year.date_valeur_actuelle_prev_year
-    END AS date_valeur_actuelle,
+    a.tag AS taux_avancement_mandat,
+    a.date_valeur_actuelle::date AS date_valeur_actuelle_mandat,
     gvig.vig_date::date AS date_valeur_initiale,
-    CASE
-        WHEN
-            -- Nous sommes après la date de bascule, afficher TA de l'année courante
-            date_bascule.date_depassee THEN a.vaca
-        -- Nous sommes après la date de bascule, afficher TA de l'année précédente
-        ELSE a_prev_year.valeur_actuelle_prev_year
-    END AS valeur_actuelle,
+    a.vaca AS valeur_actuelle_mandat,
     gvig.vig AS valeur_initiale,
     territoire.nom AS territoire_nom,
     gvcg.vcg_date::date AS date_valeur_cible_mandat,
