@@ -85,9 +85,9 @@ model chantier_identite {
   statut                                type_statut            @default(PUBLIE)
   cible_attendue                        Boolean                @default(true)
   a_supprimer                           Boolean                @default(true)
+  mailles_applicables                   Maille[]
   chantier_territoire                   chantier_territoire[]
   indicateur_identite                   indicateur_identite[]
-
   objectifs                             objectif[]
   decisions_strategiques                decision_strategique[]
 
@@ -117,6 +117,7 @@ model chantier_territoire {
   ecart                                    Float?
   meteo_int_index                          Float?
   donnees_maille_source                    Maille?
+  possede_proposition_valeur_actuelle      Boolean                     @default(false)
   chantier_identite                        chantier_identite           @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   chantier_territoire_jalon                chantier_territoire_jalon[]
   commentaires                             commentaire[]

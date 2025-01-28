@@ -125,6 +125,15 @@ SELECT
     -- Si ch_cible_attendue=NULL -> on le considère TRUE
     COALESCE(meta_ch.statut::type_statut, 'PUBLIE') AS statut,
     COALESCE(meta_ch.ch_cible_attendue, TRUE) AS cible_attendue,
+    ARRAY(
+        SELECT LOWER(maille)::maille
+        FROM UNNEST(
+            COALESCE(
+                meta_ch.maille_applicable_declaree,
+                ARRAY['NAT', 'REG', 'DEPT']
+            )
+        ) AS maille
+    ) AS mailles_applicables,
     FALSE AS a_supprimer
 
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch
