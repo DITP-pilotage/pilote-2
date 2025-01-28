@@ -116,7 +116,7 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                           <div className='w-full flex flex-column align-center fr-pt-1w'>
                             <div className='w-half-full flex fr-mb-1w'>
                               <Input
-                                className='texte-centre'
+                                className='text-center'
                                 erreurMessage={reactHookForm.formState.errors.valeurActuelle?.message}
                                 htmlName='valeurActuelle'
                                 register={reactHookForm.register('valeurActuelle')}

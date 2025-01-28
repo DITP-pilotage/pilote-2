@@ -3,6 +3,9 @@ import {
   indicateur_territoire as PrismaIndicateurTerritoire,
   indicateur_territoire_jalon as PrismaIndicateurTerritoireJalon, PrismaClient,
 } from '@prisma/client';
+import { undefined } from 'zod';
+import { formatDate } from 'tough-cookie';
+import { b } from 'nuqs/dist/serializer-DjSGvhZt';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
@@ -70,20 +73,22 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
   private _mapDétailsToDomain(indicateurs: (PrismaIndicateurTerritoire & {
     indicateur_identite: PrismaIndicateurIdentite
     indicateur_territoire_jalon: PrismaIndicateurTerritoireJalon[]
-  })[]): DétailsIndicateurs {
+  })[], jalon: number): DétailsIndicateurs {
     const détailsIndicateurs: DétailsIndicateurs = {};
-
-    const dateBascule = configuration.dateBasculeAffichageValeursAnneePrecedente;
 
     let estDateDuJourCorrespondantALanneeValeurCible: boolean;
     for (const indicateurRow of indicateurs) {
-      estDateDuJourCorrespondantALanneeValeurCible = indicateurRow?.indicateur_territoire_jalon.at(0)?.date_valeur_cible ? getAnneeAffichageDateDeBascule(new Date(), dateBascule) === indicateurRow?.indicateur_territoire_jalon.at(0)?.date_valeur_cible?.getFullYear() : false;
+      console.log(indicateurRow?.indicateur_territoire_jalon.at(0));
+      estDateDuJourCorrespondantALanneeValeurCible = indicateurRow?.indicateur_territoire_jalon.at(0)?.date_valeur_cible ? jalon === indicateurRow?.indicateur_territoire_jalon.at(0)?.date_valeur_cible?.getFullYear() : false;
 
       if (!détailsIndicateurs[indicateurRow.id]) {
         détailsIndicateurs[indicateurRow.id] = {};
       }
 
       détailsIndicateurs[indicateurRow.id][indicateurRow.territoire_code] = {
+        avancementMandat: undefined,
+        dateValeurActuelleMandat: undefined,
+        valeurActuelleMandat: undefined,
         codeInsee: indicateurRow.code_insee,
         valeurInitiale: indicateurRow.valeur_initiale,
         dateValeurInitiale: formatDate(indicateurRow.date_valeur_initiale),
@@ -219,7 +224,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     );
   }
 
-  async récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], DétailsIndicateurs>> {
+  async récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee, jalon = getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente)): Promise<Record<Chantier['id'], DétailsIndicateurs>> {
     const indicateurs = await this.prismaClient.indicateur_territoire.findMany({
       where: {
         maille: CODES_MAILLES[maille],
@@ -235,7 +240,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         indicateur_identite: true,
         indicateur_territoire_jalon: {
           where: {
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon,
           },
         },
       },
@@ -245,7 +250,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       indicateurs.map(indicateur => (
         [
           indicateur.indicateur_identite.chantier_id,
-          this._mapDétailsToDomain(indicateurs.filter(ind => ind.indicateur_identite.chantier_id === indicateur.indicateur_identite.chantier_id)),
+          this._mapDétailsToDomain(indicateurs.filter(ind => ind.indicateur_identite.chantier_id === indicateur.indicateur_identite.chantier_id), jalon),
         ]
       )),
     );
@@ -264,7 +269,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return listePrismaIndicateurIdentite.map((indicateur) => this._mapToDomain(indicateur));
   }
 
-  async récupérerDétailsParIndicIdEtMaille(indicateurId: string, maille: Maille): Promise<DétailsIndicateurs> {
+  async récupérerDétailsParIndicIdEtMaille(indicateurId: string, maille: Maille, jalon = getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente)): Promise<DétailsIndicateurs> {
     const indicateurs = await this.prismaClient.indicateur_territoire.findMany({
       where: {
         id: indicateurId,
@@ -285,10 +290,10 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       },
     });
 
-    return this._mapDétailsToDomain(indicateurs);
+    return this._mapDétailsToDomain(indicateurs, jalon);
   }
 
-  async récupererDétailsParChantierIdEtTerritoire(chantierId: string, territoireCodes: string[]): Promise<DétailsIndicateurs> {
+  async récupererDétailsParChantierIdEtTerritoire(chantierId: string, territoireCodes: string[], jalon: number = getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente) ): Promise<DétailsIndicateurs> {
     const indicateurs = await this.prismaClient.indicateur_territoire.findMany({
       where: {
         territoire_code: { in: territoireCodes },
@@ -303,12 +308,12 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         indicateur_identite: true,
         indicateur_territoire_jalon: {
           where: {
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon,
           },
         },
       },
     });
-    return this._mapDétailsToDomain(indicateurs);
+    return this._mapDétailsToDomain(indicateurs, jalon);
   }
 
   async récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[]): Promise<IndicateurPourExport[]> {

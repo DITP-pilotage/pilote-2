@@ -110,8 +110,8 @@
   text-align: right;
 }
 
-.texte-centre {
-  text-align: center;
+.text-center {
+  text-align: center!important;
 }
 
 .no-underline {
@@ -156,6 +156,14 @@
   background-color: var(--background-action-low-blue-france) !important
 }
 
+.fr-background-transparent {
+  background-color: transparent !important
+}
+
+.fr-background-contrast-grey {
+  background-color: var(--background-contrast-grey)!important;
+}
+
 .border-t {
   border-top-width: 1px;
   border-top-color: var(--border-default-grey);
@@ -169,9 +177,15 @@
 }
 
 .border-b {
-  border-bottom-width: 1px;
-  border-bottom-color: var(--border-default-grey);
-  border-bottom-style: solid;
+  border-bottom-width: 1px!important;
+  border-bottom-color: var(--border-default-grey)!important;
+  border-bottom-style: solid!important;
+}
+
+.border-b-2 {
+  border-bottom-width: 1px!important;
+  border-bottom-color: var(--border-action-high-grey)!important;
+  border-bottom-style: solid!important;
 }
 
 .border-l {
