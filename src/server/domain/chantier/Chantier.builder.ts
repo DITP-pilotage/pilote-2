@@ -55,6 +55,8 @@ export default class ChantierBuilder {
 
   private _cibleAttendu: Chantier['cibleAttendu'];
 
+  private _maillesApplicables: Chantier['maillesApplicables'];
+
   constructor() {
     const axe = new AxeBuilder().build();
     const ppg = new PpgBuilder().build();
@@ -71,6 +73,7 @@ export default class ChantierBuilder {
     this._statut = faker.helpers.arrayElement(typesStatut);
     this._cibleAttendu = faker.datatype.boolean();
     this._périmètreIds = ministèrePorteur.périmètresMinistériels.map(périmètreMinistériel => périmètreMinistériel.id);
+    this._maillesApplicables = ['nationale', 'regionale', 'departementale'];
     this._mailles = {
       nationale: this._générerTerritoires([codeInseeFrance]),
       regionale: this._générerTerritoires(codesInseeRégions),
@@ -108,6 +111,7 @@ export default class ChantierBuilder {
       ate: this._ate,
       statut: this._statut,
       cibleAttendu: this._cibleAttendu,
+      maillesApplicables: this._maillesApplicables,
       mailles: this._mailles,
       responsables: {
         porteur: this._porteur,

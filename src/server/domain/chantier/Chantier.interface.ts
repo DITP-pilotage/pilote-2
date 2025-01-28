@@ -22,6 +22,7 @@ export default interface Chantier {
   axe: Axe['nom'];
   ppg: Ppg['nom'];
   périmètreIds: string[];
+  maillesApplicables: Maille[]
   mailles: Record<Maille, TerritoiresDonnées>;
   responsables: {
     porteur: Ministère | null,

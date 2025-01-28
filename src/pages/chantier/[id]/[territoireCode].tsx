@@ -72,6 +72,13 @@ interface NextPageChantierProps {
   listeCoordinateursTerritorials: CoordinateurTerritorial[]
 }
 
+const redirigeLaPage = (destination: string) => ({
+  redirect: {
+    destination,
+    permanent: true,
+  },
+});
+
 export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = async ({ req, res, query }) => {
   if (!query?.id) {
     return {
@@ -135,20 +142,23 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
     assert(valeurFFPpgArchive || chantier.statut !== 'ARCHIVE', 'La page n\'est pas disponible');
 
     const chantierTerritoireSélectionné = chantier.mailles[territoireSélectionné.maille ?? 'nationale'][territoireCode];
-
-    if (!chantierTerritoireSélectionné.estApplicable || (!chantier.estTerritorialisé && mailleTerritoireSelectionnee !== 'NAT')) {
-      return mailleTerritoireSelectionnee === 'DEPT' ? {
-        redirect: {
-          destination: `/chantier/${chantierId}/${territoireSélectionné.codeParent}?maille=regionale`,
-          permanent: true,
-        },
-      } : {
-        redirect: {
-          destination: `/chantier/${chantierId}/NAT-FR`,
-          permanent: true,
-        },
-      };
+    
+    if (mailleQuery === 'departementale' && !chantier.maillesApplicables.includes('departementale')) {
+      const destination = mailleTerritoireSelectionnee === 'DEPT'
+        ? `/chantier/${chantierId}/${territoireSélectionné.codeParent}?maille=regionale`
+        : `/chantier/${chantierId}/NAT-FR?maille=regionale`;
+    
+      return redirigeLaPage(destination);
     }
+    
+    if (!chantierTerritoireSélectionné.estApplicable || (!chantier.estTerritorialisé && mailleTerritoireSelectionnee !== 'NAT')) {
+      const destination = mailleTerritoireSelectionnee === 'DEPT'
+        ? `/chantier/${chantierId}/${territoireSélectionné.codeParent}?maille=regionale`
+        : `/chantier/${chantierId}/NAT-FR`;
+    
+      return redirigeLaPage(destination);
+    }
+    
 
     const avancements = calculerChantierAvancements(
       chantier as unknown as ChantierRapportDetailleContrat,
