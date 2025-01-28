@@ -23,9 +23,11 @@ const appliquerFiltreDrom = (chantier: PrismaChantier, sessionProfil: string, ma
 
 const appliquerFiltreTerritorialise = (chantier: PrismaChantier, mailleChantier: MailleChantierContrat): boolean => {
   return mailleChantier !== 'nationale'
-    ? chantier.est_territorialise  || mailleChantier === 'departementale'
-      ? !!chantier.possede_taux_avancement_departemental || !!chantier.possede_meteo_departemental
-      : !!chantier.possede_taux_avancement_regional  || !!chantier.possede_meteo_regional
+    ? chantier.est_territorialise || (
+      mailleChantier === 'departementale'
+        ? !!chantier.possede_taux_avancement_departemental || !!chantier.possede_meteo_departemental
+        : !!chantier.possede_taux_avancement_regional  || !!chantier.possede_meteo_regional
+    )
     : true;
 };
 
@@ -155,7 +157,8 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
       .then(listePrismaChantier => listePrismaChantier
         .reduce((acc, chantierIdentite) => {
           // on devrait pouvoir appliquer le filtre plus tôt
-          if (appliquerFiltre(mailleChantier, profil)(chantierIdentite)) {
+          const chantierTerritoireSelectionne = chantierIdentite.chantier_territoire.find(chantierTerritoire => chantierTerritoire.territoire_code === territoireCode);
+          if (chantierTerritoireSelectionne?.est_applicable && appliquerFiltre(mailleChantier, profil)(chantierIdentite)) {
             return [...acc, presenterEnChantierAccueilContratNew(chantierIdentite, territoires, ministères, territoireCode, profil)];
           }
           return acc;
