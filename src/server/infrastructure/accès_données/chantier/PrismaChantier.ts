@@ -24,6 +24,7 @@ type EntreePrismaChantierIdentite = Pick<PrismaChantierIdentite,
 | 'directions_administration_centrale'
 | 'directeurs_projet'
 | 'directeurs_projet_mails'
+| 'mailles_applicables'
 >;
 type EntreePrismaChantierTerritoireJalon = Pick<PrismaChantierTerritoireJalon,
 'taux_avancement'

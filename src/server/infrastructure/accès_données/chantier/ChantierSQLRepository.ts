@@ -247,6 +247,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
         directions_administration_centrale: true,
         directeurs_projet: true,
         directeurs_projet_mails: true,
+        mailles_applicables: true,
         chantier_territoire: {
           where: {
             territoire_code: {
