@@ -35,10 +35,13 @@ describe('RécupererChantierFicheConducteurUseCase', () => {
       .build();
     chantierRepository.récupérerParIdEtParTerritoireCode.mockResolvedValue( chantier);
     indicateurRepository.récupérerIndicImpactParChantierId.mockResolvedValue([]);
+
+    const jalon = 2024;
+
     // When
-    const chantierResult = await récupererChantierFicheConducteurUseCase.run({ chantierId: id, territoireCode });
+    const chantierResult = await récupererChantierFicheConducteurUseCase.run({ chantierId: id, territoireCode, jalon });
     // Then
-    expect(chantierRepository.récupérerParIdEtParTerritoireCode).toHaveBeenNthCalledWith(1, { chantierId: 'CH-168', territoireCode: 'NAT-FR' });
+    expect(chantierRepository.récupérerParIdEtParTerritoireCode).toHaveBeenNthCalledWith(1, { chantierId: 'CH-168', territoireCode: 'NAT-FR', jalon });
     expect(chantierResult.id).toEqual('CH-168');
     expect(chantierResult.nom).toEqual('Chantier 1');
     expect(chantierResult.estTerritorialise).toEqual(true);
@@ -63,10 +66,13 @@ describe('RécupererChantierFicheConducteurUseCase', () => {
     const indicateur2 = new IndicateurBuilder().withNom('Indicateur 2').withType('IMPACT').build();
     const indicateur3 = new IndicateurBuilder().withNom('Indicateur 3').withType('Q_SERV').build();
     indicateurRepository.récupérerIndicImpactParChantierId.mockResolvedValue([indicateur1, indicateur2, indicateur3]);
+
+    const jalon = 2024;
+
     // When
-    const chantierResult = await récupererChantierFicheConducteurUseCase.run({ chantierId: id, territoireCode });
+    const chantierResult = await récupererChantierFicheConducteurUseCase.run({ chantierId: id, territoireCode, jalon });
     // Then
-    expect(indicateurRepository.récupérerIndicImpactParChantierId).toHaveBeenNthCalledWith(1, 'CH-168');
+    expect(indicateurRepository.récupérerIndicImpactParChantierId).toHaveBeenNthCalledWith(1, 'CH-168', jalon);
     expect(chantierResult.indicateurs).toHaveLength(3);
     expect(chantierResult.indicateurs.map(indic => indic.nom)).toIncludeSameMembers(['Indicateur 1', 'Indicateur 2', 'Indicateur 3']);
     expect(chantierResult.indicateurs.map(indic => indic.type)).toIncludeSameMembers(['IMPACT', 'IMPACT', 'Q_SERV']);

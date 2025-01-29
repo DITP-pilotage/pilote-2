@@ -1,11 +1,13 @@
-import { chantier_territoire as ChantierTerritoireModel, chantier_identite as ChantierIdentiteModel, chantier_territoire_jalon as ChantierTerritoireJalonModel, PrismaClient } from '@prisma/client';
+import {
+  chantier_identite as ChantierIdentiteModel,
+  chantier_territoire as ChantierTerritoireModel,
+  chantier_territoire_jalon as ChantierTerritoireJalonModel,
+  PrismaClient,
+} from '@prisma/client';
 import { ChantierRepository } from '@/server/fiche-conducteur/domain/ports/ChantierRepository';
 import { Chantier } from '@/server/fiche-conducteur/domain/Chantier';
 import { Meteo } from '@/server/fiche-conducteur/domain/Meteo';
-import {
-  getAnneeAffichageDateDeBascule,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
-import { configuration } from '@/config';
+import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
 
 const convertirChantierTerritoireEnChantier = (chantierTerritoireModel: ChantierTerritoireModel & { chantier_identite: ChantierIdentiteModel, chantier_territoire_jalon: ChantierTerritoireJalonModel[] }): Chantier => {
   return Chantier.creerChantier({
@@ -13,7 +15,7 @@ const convertirChantierTerritoireEnChantier = (chantierTerritoireModel: Chantier
     nom: chantierTerritoireModel.chantier_identite.nom,
     estTerritorialise: chantierTerritoireModel.chantier_identite.est_territorialise || false,
     tauxAvancement: chantierTerritoireModel.taux_avancement_mandat,
-    tauxAvancementAnnuel: chantierTerritoireModel.chantier_territoire_jalon[0]?.taux_avancement || null,
+    tauxAvancementAnnuel: verifyValeurIsNotNullOrUndefined(chantierTerritoireModel.chantier_territoire_jalon[0]?.taux_avancement),
     maille: chantierTerritoireModel.maille,
     codeInsee: chantierTerritoireModel.code_insee,
     territoireCode: chantierTerritoireModel.territoire_code,
@@ -44,7 +46,7 @@ const convertirChantierIdentiteEnChantier = (chantierIdentiteModel: ChantierIden
 export class PrismaChantierRepository implements ChantierRepository {
   constructor(private prismaClient: PrismaClient) {}
 
-  async récupérerParIdEtParTerritoireCode({ chantierId, territoireCode }: { chantierId: string; territoireCode: string }): Promise<Chantier> {
+  async récupérerParIdEtParTerritoireCode({ chantierId, territoireCode, jalon }: { chantierId: string; territoireCode: string, jalon: number }): Promise<Chantier> {
     const result = await this.prismaClient.chantier_territoire.findUnique({
       where: {
         id_territoire_code: {
@@ -56,7 +58,7 @@ export class PrismaChantierRepository implements ChantierRepository {
         chantier_identite: true,
         chantier_territoire_jalon: {
           where: {
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon,
           },
         },
       },
@@ -69,7 +71,7 @@ export class PrismaChantierRepository implements ChantierRepository {
     return convertirChantierTerritoireEnChantier(result);
   }
 
-  async récupérerMailleNatEtDeptParId(chantierId: string): Promise<Chantier[]> {
+  async récupérerMailleNatEtDeptParId(chantierId: string, jalon: number): Promise<Chantier[]> {
     const result = await this.prismaClient.chantier_identite.findUnique({
       where: {
         id: chantierId,
@@ -89,7 +91,7 @@ export class PrismaChantierRepository implements ChantierRepository {
           include: {
             chantier_territoire_jalon: {
               where: {
-                jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+                jalon,
               },
             },
           },

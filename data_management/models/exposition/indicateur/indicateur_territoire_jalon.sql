@@ -13,9 +13,11 @@ jalon_annee_precedente AS (
         zone_id,
         date_part('year', now()) - 1 AS jalon,
         vca_prev_year_date::date AS date_valeur_cible,
-        taa_prev_year AS taux_avancement,
         vca_prev_year AS valeur_cible,
-        tap_courant AS taux_avancement_proposition
+        taa_prev_year AS taux_avancement,
+        tap_courant AS taux_avancement_proposition,
+        date_valeur_actuelle_prev_year::date AS date_valeur_actuelle,
+        valeur_actuelle_prev_year AS valeur_actuelle
     FROM {{ ref('get_ta_indic_prev_year') }}
 ),
 
@@ -27,7 +29,9 @@ jalon_annee_courante AS (
         pt1.vca_date::date AS date_valeur_cible,
         pt1.vca AS valeur_cible,
         pt2.taa_courant AS taux_avancement,
-        pt2.tap_courant AS taux_avancement_proposition
+        pt2.tap_courant AS taux_avancement_proposition,
+        pt2.date_valeur_actuelle::date as date_valeur_actuelle,
+        pt2.vaca AS valeur_actuelle
     FROM {{ source('db_schema_public', 'territoire') }} AS territoire
     CROSS JOIN {{ ref('stg_ppg_metadata__indicateurs') }} AS meta_indic
     LEFT JOIN
@@ -63,7 +67,9 @@ SELECT
     tous_jalons.date_valeur_cible,
     tous_jalons.taux_avancement,
     tous_jalons.valeur_cible,
-    tous_jalons.taux_avancement_proposition
+    tous_jalons.taux_avancement_proposition,
+    tous_jalons.date_valeur_actuelle,
+    tous_jalons.valeur_actuelle
 FROM jalon_annee_precedente_et_courante AS tous_jalons
 LEFT JOIN {{ source('db_schema_public', 'territoire') }} AS territoire
     ON tous_jalons.zone_id = territoire.zone_id

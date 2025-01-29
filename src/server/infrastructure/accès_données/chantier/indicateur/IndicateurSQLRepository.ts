@@ -26,11 +26,8 @@ import {
 } from '@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLParser';
 import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { comparerDates } from '@/client/utils/date/date';
-import { configuration } from '@/config';
-import {
-  getAnneeAffichageDateDeBascule,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 import { Météo } from '@/server/domain/météo/Météo.interface';
+import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
 
 export interface historique_valeurs {
   date: string
@@ -73,36 +70,35 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
   })[]): DétailsIndicateurs {
     const détailsIndicateurs: DétailsIndicateurs = {};
 
-    const dateBascule = configuration.dateBasculeAffichageValeursAnneePrecedente;
-
-    let estDateDuJourCorrespondantALanneeValeurCible: boolean;
     for (const indicateurRow of indicateurs) {
-      estDateDuJourCorrespondantALanneeValeurCible = indicateurRow?.indicateur_territoire_jalon.at(0)?.date_valeur_cible ? getAnneeAffichageDateDeBascule(new Date(), dateBascule) === indicateurRow?.indicateur_territoire_jalon.at(0)?.date_valeur_cible?.getFullYear() : false;
-
       if (!détailsIndicateurs[indicateurRow.id]) {
         détailsIndicateurs[indicateurRow.id] = {};
       }
 
+      const indicateurTerritoireJalon = indicateurRow.indicateur_territoire_jalon.at(0);
+
       détailsIndicateurs[indicateurRow.id][indicateurRow.territoire_code] = {
+        dateValeurActuelleMandat: formatDate(indicateurRow.date_valeur_actuelle_mandat),
+        valeurActuelleMandat: indicateurRow.valeur_actuelle_mandat,
         codeInsee: indicateurRow.code_insee,
         valeurInitiale: indicateurRow.valeur_initiale,
         dateValeurInitiale: formatDate(indicateurRow.date_valeur_initiale),
         // TODO(Tristan-10/10/2024) : Trouver une moyen de se débarasser du as unknown
         historiquesValeurs: (indicateurRow.evolution_valeur_actuelle as unknown as historique_valeurs[]).sort((a, b) => comparerDates(a.date, b.date)),
-        valeurActuelle: indicateurRow.valeur_actuelle,
-        dateValeurActuelle: formatDate(indicateurRow.date_valeur_actuelle),
+        valeurActuelle: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_actuelle),
+        dateValeurActuelle: formatDate(indicateurTerritoireJalon?.date_valeur_actuelle || null),
         valeurCible: indicateurRow.valeur_cible_mandat,
         dateValeurCible: formatDate(indicateurRow.date_valeur_cible_mandat),
-        valeurCibleAnnuelle: estDateDuJourCorrespondantALanneeValeurCible && indicateurRow.indicateur_territoire_jalon.at(0)?.valeur_cible !== null && !Number.isNaN(indicateurRow?.indicateur_territoire_jalon.at(0)?.valeur_cible) ? indicateurRow.indicateur_territoire_jalon.at(0)?.valeur_cible! : null,
-        dateValeurCibleAnnuelle: estDateDuJourCorrespondantALanneeValeurCible ? formatDate(indicateurRow.indicateur_territoire_jalon.at(0)?.date_valeur_cible || null) : null,
+        valeurCibleAnnuelle: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_cible),
+        dateValeurCibleAnnuelle: formatDate(indicateurTerritoireJalon?.date_valeur_cible || null),
         avancement: {
           global: indicateurRow.taux_avancement_mandat,
-          annuel: estDateDuJourCorrespondantALanneeValeurCible && indicateurRow.indicateur_territoire_jalon.at(0)?.taux_avancement !== null && !Number.isNaN(indicateurRow?.indicateur_territoire_jalon.at(0)?.taux_avancement) ? indicateurRow.indicateur_territoire_jalon.at(0)?.taux_avancement! : null,
+          annuel: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.taux_avancement),
         },
         proposition: indicateurRow.valeur_actuelle_proposition !== null && indicateurRow.valeur_actuelle_proposition !== undefined ? { // Pour autoriser une valeur actuelle proposé à 0
           valeurActuelle: indicateurRow.valeur_actuelle_proposition,
           tauxAvancement: indicateurRow.taux_avancement_mandat_proposition,
-          tauxAvancementIntermediaire: estDateDuJourCorrespondantALanneeValeurCible && indicateurRow.indicateur_territoire_jalon.at(0)?.taux_avancement_proposition !== null && !Number.isNaN(indicateurRow?.indicateur_territoire_jalon.at(0)?.taux_avancement_proposition) ? indicateurRow.indicateur_territoire_jalon.at(0)?.taux_avancement_proposition! : null,
+          tauxAvancementIntermediaire: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.taux_avancement_proposition),
           auteur: indicateurRow.auteur_proposition,
           motif: indicateurRow.motif_proposition,
           sourceDonneeEtMethodeCalcul: indicateurRow.source_donnee_methode_calcul_proposition,
@@ -133,7 +129,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return indicateur!.chantier_id;
   }
 
-  async récupérerDétailsTerritoirePourUnIndicateur(indicateurId: string, habilitations: Habilitations, profil: ProfilCode): Promise<DétailsIndicateurTerritoire> {
+  async récupérerDétailsTerritoirePourUnIndicateur(indicateurId: string, habilitations: Habilitations, profil: ProfilCode, jalon: number): Promise<DétailsIndicateurTerritoire> {
     const habilitation = new Habilitation(habilitations);
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
@@ -150,7 +146,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         indicateur_identite: true,
         indicateur_territoire_jalon: {
           where: {
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon,
           },
         },
       },
@@ -170,7 +166,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return créerDonnéesTerritoires(territoires, listeIndicateursModel);
   }
 
-  async récupérerDétailsParMailles(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<DétailsIndicateurMailles> {
+  async récupérerDétailsParMailles(id: string, habilitations: Habilitations, profil: ProfilCode, jalon: number): Promise<DétailsIndicateurMailles> {
     const h = new Habilitation(habilitations);
     const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
@@ -187,7 +183,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         indicateur_identite: true,
         indicateur_territoire_jalon: {
           where: {
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon,
           },
         },
       },
@@ -219,7 +215,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     );
   }
 
-  async récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], DétailsIndicateurs>> {
+  async récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee, jalon: number): Promise<Record<Chantier['id'], DétailsIndicateurs>> {
     const indicateurs = await this.prismaClient.indicateur_territoire.findMany({
       where: {
         maille: CODES_MAILLES[maille],
@@ -235,7 +231,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         indicateur_identite: true,
         indicateur_territoire_jalon: {
           where: {
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon,
           },
         },
       },
@@ -264,7 +260,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return listePrismaIndicateurIdentite.map((indicateur) => this._mapToDomain(indicateur));
   }
 
-  async récupérerDétailsParIndicIdEtMaille(indicateurId: string, maille: Maille): Promise<DétailsIndicateurs> {
+  async récupérerDétailsParIndicIdEtMaille(indicateurId: string, maille: Maille, jalon: number): Promise<DétailsIndicateurs> {
     const indicateurs = await this.prismaClient.indicateur_territoire.findMany({
       where: {
         id: indicateurId,
@@ -279,7 +275,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         indicateur_identite: true,
         indicateur_territoire_jalon: {
           where: {
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon,
           },
         },
       },
@@ -288,7 +284,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return this._mapDétailsToDomain(indicateurs);
   }
 
-  async récupererDétailsParChantierIdEtTerritoire(chantierId: string, territoireCodes: string[]): Promise<DétailsIndicateurs> {
+  async récupererDétailsParChantierIdEtTerritoire(chantierId: string, territoireCodes: string[], jalon: number): Promise<DétailsIndicateurs> {
     const indicateurs = await this.prismaClient.indicateur_territoire.findMany({
       where: {
         territoire_code: { in: territoireCodes },
@@ -303,7 +299,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         indicateur_identite: true,
         indicateur_territoire_jalon: {
           where: {
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon,
           },
         },
       },
@@ -311,7 +307,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return this._mapDétailsToDomain(indicateurs);
   }
 
-  async récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[]): Promise<IndicateurPourExport[]> {
+  async récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[], jalon: number): Promise<IndicateurPourExport[]> {
     const result = await this.prismaClient.indicateur_territoire.findMany({
       where: {
         territoire_code: {
@@ -334,19 +330,21 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         code_insee: true,
         valeur_initiale: true,
         date_valeur_initiale: true,
-        valeur_actuelle: true,
-        date_valeur_actuelle: true,
+        valeur_actuelle_mandat: true,
+        date_valeur_actuelle_mandat: true,
         valeur_cible_mandat: true,
         date_valeur_cible_mandat: true,
         taux_avancement_mandat: true,
         indicateur_territoire_jalon: {
           where: {
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon,
           },
           select: {
             valeur_cible: true,
             date_valeur_cible: true,
             taux_avancement: true,
+            valeur_actuelle: true,
+            date_valeur_actuelle: true,
           },
         },
         indicateur_identite: {
@@ -386,33 +384,36 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       },
     });
 
-    return result.map(it => ({
-      maille: it.maille,
-      régionNom: it.maille === 'DEPT' ? it.territoire.territoire_parent?.nom || null : it.territoire.nom,
-      départementNom: it.maille === 'DEPT' ? it.territoire.nom : null,
-      codeInsee: it.code_insee,
-      chantierMinistèreNom: it.indicateur_identite.chantier_identite.ministeres_acronymes ? it.indicateur_identite.chantier_identite.ministeres_acronymes[0] : null,
-      axe: it.indicateur_identite.chantier_identite.axe,
-      chantierNom: it.indicateur_identite.chantier_identite.nom,
-      chantierId: it.indicateur_identite.chantier_id,
-      chantierStatut: it.indicateur_identite.chantier_identite.statut,
-      chantierEstBaromètre: it.indicateur_identite.chantier_identite.est_barometre,
-      chantierEstTerritorialise: it.indicateur_identite.chantier_identite.est_territorialise,
-      chantierAvancementGlobal: it.chantier_territoire.taux_avancement_mandat,
-      périmètreIds: it.indicateur_identite.chantier_identite.perimetre_ids,
-      météo: it.chantier_territoire.meteo as Météo | null,
-      nom: it.indicateur_identite.nom,
-      valeurInitiale: it.valeur_initiale,
-      dateValeurInitiale: it.date_valeur_initiale?.toISOString() || null,
-      valeurActuelle: it.valeur_actuelle,
-      dateValeurActuelle: it.date_valeur_actuelle?.toISOString() || null,
-      valeurCibleAnnuelle: it.indicateur_territoire_jalon.at(0)?.valeur_cible !== null && it.indicateur_territoire_jalon.at(0)?.valeur_cible !== undefined ? it.indicateur_territoire_jalon.at(0)?.valeur_cible! : null,
-      dateValeurCibleAnnuelle: it.indicateur_territoire_jalon.at(0)?.date_valeur_cible?.toISOString() || null,
-      avancementAnnuel: it.indicateur_territoire_jalon.at(0)?.taux_avancement !== null && it.indicateur_territoire_jalon.at(0)?.taux_avancement !== undefined ? it.indicateur_territoire_jalon.at(0)?.taux_avancement! : null,
-      valeurCible: it.valeur_cible_mandat,
-      dateValeurCible: it.date_valeur_cible_mandat?.toISOString() || null,
-      avancementGlobal: it.taux_avancement_mandat,
-    })).sort((indicA, indicB) => {
+    return result.map(indicateurPourExport => {
+      const indicateurTerritoireJalon = indicateurPourExport.indicateur_territoire_jalon.at(0);
+      return ({
+        maille: indicateurPourExport.maille,
+        régionNom: indicateurPourExport.maille === 'DEPT' ? indicateurPourExport.territoire.territoire_parent?.nom || null : indicateurPourExport.territoire.nom,
+        départementNom: indicateurPourExport.maille === 'DEPT' ? indicateurPourExport.territoire.nom : null,
+        codeInsee: indicateurPourExport.code_insee,
+        chantierMinistèreNom: indicateurPourExport.indicateur_identite.chantier_identite.ministeres_acronymes ? indicateurPourExport.indicateur_identite.chantier_identite.ministeres_acronymes[0] : null,
+        axe: indicateurPourExport.indicateur_identite.chantier_identite.axe,
+        chantierNom: indicateurPourExport.indicateur_identite.chantier_identite.nom,
+        chantierId: indicateurPourExport.indicateur_identite.chantier_id,
+        chantierStatut: indicateurPourExport.indicateur_identite.chantier_identite.statut,
+        chantierEstBaromètre: indicateurPourExport.indicateur_identite.chantier_identite.est_barometre,
+        chantierEstTerritorialise: indicateurPourExport.indicateur_identite.chantier_identite.est_territorialise,
+        chantierAvancementGlobal: indicateurPourExport.chantier_territoire.taux_avancement_mandat,
+        périmètreIds: indicateurPourExport.indicateur_identite.chantier_identite.perimetre_ids,
+        météo: indicateurPourExport.chantier_territoire.meteo as Météo | null,
+        nom: indicateurPourExport.indicateur_identite.nom,
+        valeurInitiale: indicateurPourExport.valeur_initiale,
+        dateValeurInitiale: indicateurPourExport.date_valeur_initiale?.toISOString() || null,
+        valeurActuelle: indicateurTerritoireJalon?.valeur_actuelle !== null && indicateurTerritoireJalon?.valeur_actuelle !== undefined ? indicateurTerritoireJalon?.valeur_actuelle! : null,
+        dateValeurActuelle: indicateurTerritoireJalon?.date_valeur_actuelle?.toISOString() || null,
+        valeurCibleAnnuelle: indicateurTerritoireJalon?.valeur_cible !== null && indicateurTerritoireJalon?.valeur_cible !== undefined ? indicateurTerritoireJalon?.valeur_cible! : null,
+        dateValeurCibleAnnuelle: indicateurTerritoireJalon?.date_valeur_cible?.toISOString() || null,
+        avancementAnnuel: indicateurTerritoireJalon?.taux_avancement !== null && indicateurTerritoireJalon?.taux_avancement !== undefined ? indicateurTerritoireJalon?.taux_avancement! : null,
+        valeurCible: indicateurPourExport.valeur_cible_mandat,
+        dateValeurCible: indicateurPourExport.date_valeur_cible_mandat?.toISOString() || null,
+        avancementGlobal: indicateurPourExport.taux_avancement_mandat,
+      });
+    }).sort((indicA, indicB) => {
       const orderMaille = { 'NAT': 1, 'REG': 2, 'DEPT': 3 };
 
       // Comparer par nom

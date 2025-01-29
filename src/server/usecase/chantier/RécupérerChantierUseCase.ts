@@ -14,13 +14,13 @@ export default class RécupérerChantierUseCase {
     private readonly territoireRepository: TerritoireRepository,
   ) {}
 
-  async run(chantierId: string, habilitations: Habilitations, profil: ProfilCode): Promise<Chantier> {
+  async run(chantierId: string, habilitations: Habilitations, profil: ProfilCode, jalon: number): Promise<Chantier> {
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnLecture(chantierId, null);
 
     const ministères = await this.ministèreRepository.getListe();
     const territoires = await this.territoireRepository.récupérerTous();
-    const chantierRows = await this.chantierRepository.récupérerLesEntréesDUnChantier(chantierId, habilitations, profil);
+    const chantierRows = await this.chantierRepository.récupérerLesEntréesDUnChantier(chantierId, habilitations, profil, jalon);
     return parseChantierNew(chantierRows, territoires, ministères);
   }
 }

@@ -5,10 +5,11 @@ import { Indicateur } from '@/server/fiche-territoriale/domain/Indicateur';
 export class PrismaIndicateurRepository implements IndicateurRepository {
   constructor(private prismaClient: PrismaClient) {}
 
-  async recupererMapIndicateursParListeChantierIdEtTerritoire({ listeChantierId, maille, codeInsee }: {
+  async recupererMapIndicateursParListeChantierIdEtTerritoire({ listeChantierId, maille, codeInsee, jalon }: {
     listeChantierId: string[],
     maille: string,
     codeInsee: string,
+    jalon: number,
   }): Promise<Map<string, Indicateur[]>> {
 
     const result = await this.prismaClient.indicateur_identite.findMany({
@@ -48,10 +49,17 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       include: {
         indicateur_territoire: {
           select: {
-            date_valeur_actuelle: true,
             taux_avancement_mandat: true,
-            valeur_actuelle: true,
             valeur_cible_mandat: true,
+            indicateur_territoire_jalon: {
+              where: {
+                jalon,
+              },
+              select: {
+                date_valeur_actuelle: true,
+                valeur_actuelle: true,
+              },
+            },
           },
         },
       },
@@ -61,9 +69,9 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       const indicateur = Indicateur.creerIndicateur({
         id: val.id,
         nom: val.nom,
-        dateValeurActuelle: val.indicateur_territoire[0].date_valeur_actuelle?.toISOString() || '',
+        dateValeurActuelle: val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.date_valeur_actuelle?.toISOString() || '',
         objectifTauxAvancement: val.indicateur_territoire[0].taux_avancement_mandat,
-        valeurActuelle: val.indicateur_territoire[0].valeur_actuelle,
+        valeurActuelle: val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.valeur_actuelle,
         valeurCible: val.indicateur_territoire[0].valeur_cible_mandat,
         uniteMesure: val.unite_mesure,
       });
@@ -72,8 +80,9 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     }, new Map<string, Indicateur[]>());
   }
 
-  async recupererMapIndicateursNationalParListeIndicateurId({ listeIndicateurId }: {
+  async recupererMapIndicateursNationalParListeIndicateurId({ listeIndicateurId, jalon }: {
     listeIndicateurId: string[]
+    jalon: number
   }): Promise<Map<string, Indicateur>> {
     const result = await this.prismaClient.indicateur_identite.findMany({
       where: {
@@ -87,10 +96,17 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             territoire_code: 'NAT-FR',
           },
           select: {
-            date_valeur_actuelle: true,
             taux_avancement_mandat: true,
-            valeur_actuelle: true,
             valeur_cible_mandat: true,
+            indicateur_territoire_jalon: {
+              where: {
+                jalon,
+              },
+              select: {
+                date_valeur_actuelle: true,
+                valeur_actuelle: true,
+              },
+            },
           },
         },
       },
@@ -100,9 +116,9 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       const indicateur = Indicateur.creerIndicateur({
         id: val.id,
         nom: val.nom,
-        dateValeurActuelle: val.indicateur_territoire[0].date_valeur_actuelle?.toISOString() || '',
+        dateValeurActuelle: val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.date_valeur_actuelle?.toISOString() || '',
         objectifTauxAvancement: val.indicateur_territoire[0].taux_avancement_mandat,
-        valeurActuelle: val.indicateur_territoire[0].valeur_actuelle,
+        valeurActuelle: val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.valeur_actuelle,
         valeurCible: val.indicateur_territoire[0].valeur_cible_mandat,
         uniteMesure: val.unite_mesure,
       });

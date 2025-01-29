@@ -12,8 +12,8 @@ export class RécupérerAvancementUseCase {
     this.chantierRepository = chantierRepository;
   }
 
-  async run({ chantierId }: { chantierId: string }): Promise<AvancementFicheConducteur> {
-    const listeChantiers = await this.chantierRepository.récupérerMailleNatEtDeptParId(chantierId);
+  async run({ chantierId, jalon }: { chantierId: string, jalon: number }): Promise<AvancementFicheConducteur> {
+    const listeChantiers = await this.chantierRepository.récupérerMailleNatEtDeptParId(chantierId, jalon);
 
     const chantierNational = listeChantiers.find(chantier => chantier.maille === 'NAT')!;
     const listeAscChantiersDepartementTauxAvancement = listeChantiers.filter(chantier => chantier.maille === 'DEPT').map(chantier => chantier.tauxAvancement).filter(Boolean).sort((a, b) => a - b);

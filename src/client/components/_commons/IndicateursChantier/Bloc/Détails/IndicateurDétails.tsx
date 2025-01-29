@@ -44,6 +44,7 @@ interface IndicateurDétailsProps {
   mailleSelectionnee: MailleInterne
   mailleQuery: MailleInterne
   indicateurEstAjour: boolean
+  jalon: number
   mailsDirecteursProjets: string[]
 }
 
@@ -64,6 +65,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   mailleSelectionnee,
   mailleQuery,
   indicateurEstAjour,
+  jalon,
   mailsDirecteursProjets,
 }) => {
   const pathname = '/chantier/[id]/[territoireCode]';
@@ -257,6 +259,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                 detailsIndicateursTerritoire={detailsIndicateursTerritoire}
                 détailsIndicateurs={détailsIndicateurs}
                 estInteractif
+                jalon={jalon}
                 listeSousIndicateurs={listeSousIndicateurs}
                 mailleQuery={mailleQuery}
                 mailleSelectionnee={mailleSelectionnee}

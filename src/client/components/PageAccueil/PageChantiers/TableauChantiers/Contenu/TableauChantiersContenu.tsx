@@ -25,11 +25,13 @@ function afficherContenuDeLaCellule(cell: Cell<ChantierVueDEnsemble, unknown>) {
 interface TableauChantiersContenuProps {
   tableau: Table<DonnéesTableauChantiers>
   territoireCode: string
+  jalon: number
 }
 
 const TableauChantiersContenu: FunctionComponent<TableauChantiersContenuProps> = ({
   tableau,
   territoireCode,
+  jalon,
 }) => {
 
   const [mailleSelectionnee] = useQueryState('maille', parseAsStringLiteral(['departementale', 'regionale']).withDefault('departementale'));
@@ -65,7 +67,7 @@ const TableauChantiersContenu: FunctionComponent<TableauChantiersContenuProps> =
                 >
                   <Link
                     className='fr-p-1w'
-                    href={`/chantier/${row.original.id}/${territoireCode}?maille=${mailleSelectionnee}`}
+                    href={`/chantier/${row.original.id}/${territoireCode}?maille=${mailleSelectionnee}&jalon=${jalon}`}
                     tabIndex={cell.column.columnDef.meta?.tabIndex}
                   >
                     {afficherContenuDeLaCellule(cell)}

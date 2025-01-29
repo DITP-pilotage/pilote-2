@@ -4,7 +4,7 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';
 import Link from 'next/link';
 import { FunctionComponent } from 'react';
 import { useSession } from 'next-auth/react';
-import { parseAsBoolean, parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import { parseAsBoolean, parseAsString, parseAsStringLiteral, useQueryState, useQueryStates } from 'nuqs';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import CartographieAvancement
@@ -40,9 +40,9 @@ import SélecteurMaille
   from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
-import api from '@/server/infrastructure/api/trpc/api';
-import { getDateBasculeAffichageValeursAnneePrecedente } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
+import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
+import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
@@ -60,6 +60,7 @@ interface PageChantiersProps {
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   repartitionMeteosChantiers: RepartitionMeteoContrat
+  jalon: number
 }
 
 const PageChantiers: FunctionComponent<PageChantiersProps> = ({
@@ -74,6 +75,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
   repartitionMeteosChantiers,
+  jalon,
 }) => {
 
   const { data: session } = useSession();
@@ -90,6 +92,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     estTerritorialise: parseAsBoolean.withDefault(false),
     maille: parseAsString.withDefault(''),
     statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']),
+    jalon: parseAsStringLiteral(['2024', '2025']),
   });
 
   const [filtresAlertes] = useQueryStates({
@@ -111,6 +114,16 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     + (filtresAlertes.estEnAlerteMétéoNonRenseignée ? 1 : 0)
     + (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0);
 
+  const [, setJalon] = useQueryState('jalon', parseAsStringLiteral(['2024', '2025']).withDefault('2024').withOptions({
+    shallow: false,
+    history: 'push',
+  }));
+
+  const auClickSelecteurJalon = (valeur: '2024' | '2025') => {
+    sauvegarderFiltres({ jalon: valeur });
+    setJalon(valeur);
+  };
+
   const queryParamString = getQueryParamString({ ...filtres, ...filtresAlertes });
 
   const {
@@ -120,10 +133,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   } = usePageChantiers(chantiers, territoireCode, filtresComptesCalculés, avancementsAgrégés, session!.profil);
 
   const chantiersSontArchives = filtres.statut?.includes('ARCHIVE') ?? false;
-  
-  const { data: dateBasculeTauxAnnuelAnneeCouranteString } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE' });
-  const anneeCourante = (new Date).getFullYear();
-  const anneeJalon = getDateBasculeAffichageValeursAnneePrecedente(dateBasculeTauxAnnuelAnneeCouranteString as string).dateBasculeDepassee ? anneeCourante : anneeCourante - 1;
 
   return (
     <PageChantiersStyled>
@@ -245,9 +254,18 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                             valeur={!!avancementsAgrégés && process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancementsAgrégés.annuel.moyenne : null}
                             variante='secondaire'
                           />
-                          <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-                            {`Taux d\'avancement de l'année ${anneeJalon}`}
-                          </p>
+                          <div className='flex align-center justify-center fr-text--xs'>
+                            <p className='fr-text--xs fr-mb-0 fr-mt-1v no-wrap'>
+                              Taux d'avancement de l'année
+                            </p>
+                            <Sélecteur<'2024' | '2025'>
+                              htmlName='jalon'
+                              options={[{ libellé: '2024', valeur: '2024' }, { libellé: '2025', valeur: '2025' }]}
+                              texteFantôme='Sélectionner un jalon'
+                              valeurModifiéeCallback={auClickSelecteurJalon}
+                              valeurSélectionnée={`${jalon}` as '2024' | '2025'}
+                            />
+                          </div>
                         </div>
                       </div>
                     </Bloc>
@@ -310,7 +328,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
             <section className='fr-mr-md-2w fr-mr-xl-0'>
               <Bloc
                 contenuClassesSupplémentaires='fr-py-2w fr-px-3w'
-              >     
+              >
                 <TitreInfobulleConteneur>
                   <Titre
                     baliseHtml='h2'
@@ -325,7 +343,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 </TitreInfobulleConteneur>
                 <RepartitionsMeteosChantiers
                   repartitionMeteos={repartitionMeteosChantiers}
-                />           
+                />
               </Bloc>
             </section>
           </div>
@@ -416,6 +434,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
               <TableauChantiers
                 chantiersSontArchives={chantiersSontArchives ?? false}
                 données={donnéesTableauChantiers}
+                jalon={jalon}
                 ministèresDisponibles={ministères}
                 nombreTotalChantiersAvecAlertes={nombreTotalChantiersAvecAlertes}
                 territoireCode={territoireCode}

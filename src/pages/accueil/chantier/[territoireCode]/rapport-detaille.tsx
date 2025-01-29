@@ -44,8 +44,16 @@ import { Chantier } from '@/server/chantiers/domain/Chantier';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
-import { presenterEnRépartitionsMétéosChantiersContrat } from '@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat';
-import { RecupererRepartitionsMeteoChantiersUseCase } from '@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase';
+import {
+  presenterEnRépartitionsMétéosChantiersContrat,
+} from '@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat';
+import {
+  RecupererRepartitionsMeteoChantiersUseCase,
+} from '@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { configuration } from '@/config';
 
 interface NextPageRapportDétailléProps {
   chantiers: ChantierRapportDetailleContrat[]
@@ -58,6 +66,7 @@ interface NextPageRapportDétailléProps {
   mailleSelectionnee: MailleInterne
   listeAvancementsStatistiques: { id: string, avancementChantierRapportDetaille: AvancementChantierRapportDetaille }[]
   territoireCode: string
+  jalon: number
   filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
@@ -86,6 +95,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   const { maille, codeInsee: codeInseeSelectionne } = territoireCodeVersMailleCodeInsee(territoireCode);
 
   const mailleQuery = query.maille as MailleInterne || 'departementale';
+  const jalon = Number.parseInt(query.jalon as string) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
 
   const mailleSelectionnee = maille === 'NAT'
     ? mailleQuery
@@ -137,7 +147,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     dependencies.getChantierRepository(),
     dependencies.getTerritoireRepository(),
   )
-    .run(session.habilitations, session.profil, territoireCode, mailleChantier || 'departementale', ministères, mapAxes, filtres, sorting);
+    .run(session.habilitations, session.profil, territoireCode, mailleChantier || 'departementale', ministères, mapAxes, filtres, sorting, jalon);
 
   const repartitionMeteosChantiers = await new RecupererRepartitionsMeteoChantiersUseCase({
     chantierRepository: dependencies.getChantierRepository(),
@@ -217,7 +227,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
 
   const indicateursRepository = dependencies.getIndicateurRepository();
   const indicateursGroupésParChantier = await indicateursRepository.récupérerGroupésParChantier(chantiersIds);
-  const détailsIndicateursGroupésParChantier = await indicateursRepository.récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds, mailleChantier, codeInseeSelectionne);
+  const détailsIndicateursGroupésParChantier = await indicateursRepository.récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds, mailleChantier, codeInseeSelectionne, jalon);
 
   const synthèseDesRésultatsRepository = dependencies.getSynthèseDesRésultatsRepository();
   const synthèsesDesRésultatsGroupéesParChantier = await synthèseDesRésultatsRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds, mailleChantier, codeInseeSelectionne);
@@ -292,6 +302,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
       filtresComptesCalculés,
       avancementsAgrégés,
       territoireCode,
+      jalon,
       avancementsGlobauxTerritoriauxMoyens,
       repartitionMeteosChantiers,
       estAutoriseAVoirLesBrouillons,
@@ -317,6 +328,7 @@ const NextPageRapportDétaillé: FunctionComponent<NextPageRapportDétailléProp
   listeAvancementsStatistiques,
   filtresComptesCalculés,
   territoireCode,
+  jalon,
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
   estAutoriseAVoirLesBrouillons,
@@ -353,6 +365,7 @@ const NextPageRapportDétaillé: FunctionComponent<NextPageRapportDétailléProp
         estAutoriseAVoirLesBrouillons={estAutoriseAVoirLesBrouillons}
         filtresComptesCalculés={filtresComptesCalculés}
         indicateursGroupésParChantier={indicateursGroupésParChantier}
+        jalon={jalon}
         mailleQuery={mailleQuery}
         mailleSelectionnee={mailleSelectionnee}
         mapChantierStatistiques={mapChantierStatistiques}

@@ -75,6 +75,8 @@ describe('PrismaIndicateurRepository', () => {
         valeur_cible: 20,
         date_valeur_cible: new Date('2024-12-06'),
         taux_avancement: 13,
+        valeur_actuelle: 20,
+        date_valeur_actuelle: new Date('2024-12-06'),
         jalon: 2024,
       }, {
         id: 'IND-001',
@@ -85,6 +87,8 @@ describe('PrismaIndicateurRepository', () => {
         valeur_cible: 22,
         date_valeur_cible: new Date('2025-12-06'),
         taux_avancement: 13,
+        valeur_actuelle: 25,
+        date_valeur_actuelle: new Date('2025-12-06'),
         jalon: 2025,
       }, {
         id: 'IND-001',
@@ -96,11 +100,13 @@ describe('PrismaIndicateurRepository', () => {
         date_valeur_cible: new Date('2025-12-06'),
         taux_avancement: 13,
         jalon: 2025,
+        valeur_actuelle: 30,
+        date_valeur_actuelle: new Date('2025-12-06'),
       }],
     });
 
     // When
-    const listeDonneesIndicateurs = await prismaIndicateurRepository.listerParIndicId({ indicId });
+    const listeDonneesIndicateurs = await prismaIndicateurRepository.listerParIndicId({ indicId, jalon: 2025 });
     // Then
     expect(listeDonneesIndicateurs).toHaveLength(2);
     expect(listeDonneesIndicateurs[0].indicId).toEqual('IND-001');
@@ -108,8 +114,126 @@ describe('PrismaIndicateurRepository', () => {
     expect(listeDonneesIndicateurs[0].valeurCibleAnnuelle).toEqual(22);
     expect(listeDonneesIndicateurs[0].dateValeurCibleAnnuelle?.toISOString()).toStartWith('2025-12-06');
     expect(listeDonneesIndicateurs[0].tauxAvancementAnnuel).toEqual(13);
+    expect(listeDonneesIndicateurs[0].valeurActuelle).toEqual(25);
+    expect(listeDonneesIndicateurs[0].dateValeurActuelle?.toISOString()).toStartWith('2025-12-06');
     expect(listeDonneesIndicateurs[1].indicId).toEqual('IND-001');
     expect(listeDonneesIndicateurs[1].territoireCode).toEqual('REG-01');
+    expect(listeDonneesIndicateurs[1].valeurActuelle).toEqual(30);
+    expect(listeDonneesIndicateurs[1].dateValeurActuelle?.toISOString()).toStartWith('2025-12-06');
+  });
+
+  it("quand on donne un jalon, doit récupérer les données associés à l'indicateur", async () => {
+    // Given
+    const indicId = 'IND-001';
+    await prisma.chantier_identite.create({
+      data: {
+        id: 'CH-001',
+        nom: 'Nom chantier OK',
+        directeurs_administration_centrale: ['DAC 1', 'DAC 2'],
+        directeurs_projet: ['DP 1', 'DP 2'],
+      },
+    });
+
+    await prisma.chantier_territoire.createMany({
+      data: [{
+        id: 'CH-001',
+        code_insee: 'FR',
+        maille: 'NAT',
+        zone_id: 'FRANCE',
+        territoire_code: 'NAT-FR',
+      }, {
+        id: 'CH-001',
+        code_insee: 'FR',
+        maille: 'REG',
+        zone_id: 'R51',
+        territoire_code: 'REG-01',
+      }],
+    });
+
+    await prisma.indicateur_identite.create({
+      data: {
+        id: 'IND-001',
+        nom: 'Indicateur OK',
+        chantier_id: 'CH-001',
+        type_id: 'IMPACT',
+      },
+    });
+
+    await prisma.indicateur_territoire.createMany({
+      data: [{
+        id: 'IND-001',
+        chantier_id: 'CH-001',
+        code_insee: 'FR',
+        maille: 'NAT',
+        zone_id: 'FRANCE',
+        territoire_code: 'NAT-FR',
+        ponderation_zone_reel: 20,
+      }, {
+        id: 'IND-001',
+        chantier_id: 'CH-001',
+        code_insee: '01',
+        maille: 'REG',
+        zone_id: 'R51',
+        territoire_code: 'REG-01',
+        ponderation_zone_reel: 20,
+      }],
+    });
+
+    await prisma.indicateur_territoire_jalon.createMany({
+      data: [{
+        id: 'IND-001',
+        code_insee: 'FR',
+        maille: 'NAT',
+        zone_id: 'FRANCE',
+        territoire_code: 'NAT-FR',
+        valeur_cible: 20,
+        date_valeur_cible: new Date('2024-12-06'),
+        taux_avancement: 13,
+        valeur_actuelle: 20,
+        date_valeur_actuelle: new Date('2024-12-06'),
+        jalon: 2024,
+      }, {
+        id: 'IND-001',
+        code_insee: 'FR',
+        maille: 'NAT',
+        zone_id: 'FRANCE',
+        territoire_code: 'NAT-FR',
+        valeur_cible: 22,
+        date_valeur_cible: new Date('2025-12-06'),
+        taux_avancement: 13,
+        valeur_actuelle: 25,
+        date_valeur_actuelle: new Date('2025-12-06'),
+        jalon: 2025,
+      }, {
+        id: 'IND-001',
+        code_insee: '01',
+        maille: 'REG',
+        zone_id: 'D51',
+        territoire_code: 'REG-01',
+        valeur_cible: 22,
+        date_valeur_cible: new Date('2025-12-06'),
+        taux_avancement: 13,
+        jalon: 2025,
+        valeur_actuelle: 30,
+        date_valeur_actuelle: new Date('2025-12-06'),
+      }],
+    });
+
+    // When
+    const listeDonneesIndicateurs = await prismaIndicateurRepository.listerParIndicId({ indicId, jalon: 2024 });
+    // Then
+    expect(listeDonneesIndicateurs).toHaveLength(2);
+    expect(listeDonneesIndicateurs[0].indicId).toEqual('IND-001');
+    expect(listeDonneesIndicateurs[0].territoireCode).toEqual('NAT-FR');
+    expect(listeDonneesIndicateurs[0].valeurCibleAnnuelle).toEqual(20);
+    expect(listeDonneesIndicateurs[0].dateValeurCibleAnnuelle?.toISOString()).toStartWith('2024-12-06');
+    expect(listeDonneesIndicateurs[0].tauxAvancementAnnuel).toEqual(13);
+    expect(listeDonneesIndicateurs[0].valeurActuelle).toEqual(20);
+    expect(listeDonneesIndicateurs[0].dateValeurActuelle?.toISOString()).toStartWith('2024-12-06');
+    expect(listeDonneesIndicateurs[1].indicId).toEqual('IND-001');
+    expect(listeDonneesIndicateurs[1].territoireCode).toEqual('REG-01');
+    expect(listeDonneesIndicateurs[1].valeurActuelle).toEqual(null);
+    expect(listeDonneesIndicateurs[1].dateValeurActuelle).toEqual(null);
   });
 
   it("doit supprimer les données associés à la proposition de valeur actuelle de l'indicateur", async () => {

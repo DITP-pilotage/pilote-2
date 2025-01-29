@@ -118,8 +118,8 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'D01',
           territoire_code: 'DEPT-01',
           ponderation_zone_reel: null,
-          date_valeur_actuelle: '2021-01-01T00:00:00.000Z',
-          valeur_actuelle: 10.1,
+          date_valeur_actuelle_mandat: new Date('2021-01-01'),
+          valeur_actuelle_mandat: 10.1,
           valeur_cible_mandat: 11.1,
           taux_avancement_mandat: 12.1,
         }, {
@@ -130,8 +130,8 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'D01',
           territoire_code: 'DEPT-01',
           ponderation_zone_reel: 20,
-          date_valeur_actuelle: '2023-02-04T00:00:00.000Z',
-          valeur_actuelle: 22.3,
+          date_valeur_actuelle_mandat: new Date('2023-02-04'),
+          valeur_actuelle_mandat: 22.3,
           valeur_cible_mandat: 23.3,
           taux_avancement_mandat: 24.3,
         }, {
@@ -142,8 +142,8 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'D01',
           territoire_code: 'DEPT-01',
           ponderation_zone_reel: 20,
-          date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
-          valeur_actuelle: 31.3,
+          date_valeur_actuelle_mandat: new Date('2022-08-02'),
+          valeur_actuelle_mandat: 31.3,
           valeur_cible_mandat: 32.3,
           taux_avancement_mandat: 33.3,
         }, {
@@ -154,7 +154,7 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'R01',
           territoire_code: 'REG-01',
           ponderation_zone_reel: 20,
-          date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
+          date_valeur_actuelle_mandat: new Date('2022-08-02'),
         }, {
           id: 'IND-005',
           chantier_id: 'CH-003',
@@ -163,7 +163,7 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'D01',
           territoire_code: 'DEPT-01',
           ponderation_zone_reel: 20,
-          date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
+          date_valeur_actuelle_mandat: new Date('2022-08-02'),
         }, {
           id: 'IND-006',
           chantier_id: 'CH-003',
@@ -172,7 +172,7 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'D01',
           territoire_code: 'DEPT-01',
           ponderation_zone_reel: null,
-          date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
+          date_valeur_actuelle_mandat: new Date('2022-08-02'),
         }, {
           id: 'IND-007',
           chantier_id: 'CH-003',
@@ -181,12 +181,64 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'D01',
           territoire_code: 'DEPT-01',
           ponderation_zone_reel: 0,
-          date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
+          date_valeur_actuelle_mandat: new Date('2022-08-02'),
+        }],
+      });
+
+      await prisma.indicateur_territoire_jalon.createMany({
+        data: [{
+          id: 'IND-001',
+          code_insee: '01',
+          maille: 'DEPT',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
+          valeur_cible: 20,
+          date_valeur_cible: new Date('2024-12-06'),
+          taux_avancement: 13,
+          date_valeur_actuelle: new Date('2021-01-01'),
+          valeur_actuelle: 10.1,
+          jalon: 2024,
+        }, {
+          id: 'IND-001',
+          code_insee: '01',
+          maille: 'DEPT',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
+          valeur_cible: 20,
+          date_valeur_cible: new Date('2024-12-06'),
+          taux_avancement: 13,
+          date_valeur_actuelle: new Date('2025-01-01'),
+          valeur_actuelle: 20.1,
+          jalon: 2025,
+        }, {
+          id: 'IND-002',
+          code_insee: '01',
+          maille: 'DEPT',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
+          valeur_cible: 20,
+          date_valeur_cible: new Date('2024-12-06'),
+          taux_avancement: 13,
+          date_valeur_actuelle: new Date('2023-02-04'),
+          valeur_actuelle: 22.3,
+          jalon: 2024,
+        }, {
+          id: 'IND-003',
+          code_insee: '01',
+          maille: 'DEPT',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
+          valeur_cible: 20,
+          date_valeur_cible: new Date('2024-12-06'),
+          taux_avancement: 13,
+          date_valeur_actuelle: new Date('2022-08-02'),
+          valeur_actuelle: 31.3,
+          jalon: 2024,
         }],
       });
 
       // When
-      const result = await prismaIndicateurRepository.recupererMapIndicateursParListeChantierIdEtTerritoire({ listeChantierId, maille, codeInsee });
+      const result = await prismaIndicateurRepository.recupererMapIndicateursParListeChantierIdEtTerritoire({ listeChantierId, maille, codeInsee, jalon: 2024 });
       // Then
       expect([...result.keys()]).toEqual(['CH-001', 'CH-002']);
       expect(result.get('CH-001')?.at(0)?.id).toEqual('IND-001');
@@ -305,6 +357,7 @@ describe('PrismaIndicateurRepository', () => {
           est_barometre: false,
         }],
       });
+
       await prisma.indicateur_territoire.createMany({
         data: [{
           id: 'IND-001',
@@ -314,7 +367,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'REG',
           territoire_code: 'REG-01',
           ponderation_zone_reel: null,
-          date_valeur_actuelle: '2021-01-01T00:00:00.000Z',
+          date_valeur_actuelle_mandat: new Date('2021-01-01'),
         }, {
           id: 'IND-002',
           chantier_id: 'CH-001',
@@ -323,7 +376,7 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'R01',
           territoire_code: 'REG-01',
           ponderation_zone_reel: 20,
-          date_valeur_actuelle: '2023-02-04T00:00:00.000Z',
+          date_valeur_actuelle_mandat: new Date('2023-02-04'),
         }, {
           id: 'IND-003',
           chantier_id: 'CH-002',
@@ -332,7 +385,7 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'R01',
           territoire_code: 'REG-01',
           ponderation_zone_reel: 20,
-          date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
+          date_valeur_actuelle_mandat: new Date('2022-08-02'),
         }, {
           id: 'IND-004',
           chantier_id: 'CH-002',
@@ -341,7 +394,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'DEPT',
           territoire_code: 'DEPT-01',
           ponderation_zone_reel: 20,
-          date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
+          date_valeur_actuelle_mandat: new Date('2022-08-02'),
         }, {
           id: 'IND-005',
           chantier_id: 'CH-003',
@@ -350,7 +403,7 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'R01',
           territoire_code: 'REG-01',
           ponderation_zone_reel: 20,
-          date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
+          date_valeur_actuelle_mandat: new Date('2022-08-02'),
         }, {
           id: 'IND-006',
           chantier_id: 'CH-003',
@@ -359,7 +412,7 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'R01',
           territoire_code: 'REG-01',
           ponderation_zone_reel: null,
-          date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
+          date_valeur_actuelle_mandat: new Date('2022-08-02'),
         }, {
           id: 'IND-007',
           chantier_id: 'CH-003',
@@ -368,12 +421,66 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'R01',
           territoire_code: 'REG-01',
           ponderation_zone_reel: 0,
-          date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
+          date_valeur_actuelle_mandat: new Date('2022-08-02'),
         }],
       });
 
+      await prisma.indicateur_territoire_jalon.createMany({
+        data: [{
+          id: 'IND-001',
+          code_insee: '01',
+          maille: 'REG',
+          zone_id: 'R01',
+          territoire_code: 'REG-01',
+          valeur_cible: 20,
+          date_valeur_cible: new Date('2024-12-06'),
+          taux_avancement: 13,
+          date_valeur_actuelle: new Date('2021-01-01'),
+          valeur_actuelle: 10.1,
+          jalon: 2024,
+        }, {
+          id: 'IND-001',
+          code_insee: '01',
+          maille: 'REG',
+          zone_id: 'R01',
+          territoire_code: 'REG-01',
+          valeur_cible: 20,
+          date_valeur_cible: new Date('2024-12-06'),
+          taux_avancement: 13,
+          date_valeur_actuelle: new Date('2025-01-01'),
+          valeur_actuelle: 20.1,
+          jalon: 2025,
+        }, {
+          id: 'IND-002',
+          code_insee: '01',
+          maille: 'REG',
+          zone_id: 'R01',
+          territoire_code: 'REG-01',
+          valeur_cible: 20,
+          date_valeur_cible: new Date('2024-12-06'),
+          taux_avancement: 13,
+          date_valeur_actuelle: new Date('2023-02-04'),
+          valeur_actuelle: 22.3,
+          jalon: 2024,
+        }, {
+          id: 'IND-003',
+          code_insee: '01',
+          maille: 'REG',
+          zone_id: 'R01',
+          territoire_code: 'REG-01',
+          valeur_cible: 20,
+          date_valeur_cible: new Date('2024-12-06'),
+          taux_avancement: 13,
+          date_valeur_actuelle: new Date('2022-08-02'),
+          valeur_actuelle: 31.3,
+          jalon: 2024,
+        }],
+      });
+
+      const jalon = 2024;
+
       // When
-      const result = await prismaIndicateurRepository.recupererMapIndicateursParListeChantierIdEtTerritoire({ listeChantierId, maille, codeInsee });
+      const result = await prismaIndicateurRepository.recupererMapIndicateursParListeChantierIdEtTerritoire({ listeChantierId, maille, codeInsee, jalon });
 
       // Then
       expect([...result.keys()]).toEqual(['CH-001', 'CH-002']);
@@ -483,8 +590,86 @@ describe('PrismaIndicateurRepository', () => {
         }],
       });
 
+      await prisma.indicateur_territoire_jalon.createMany({
+        data: [{
+          id: 'IND-001',
+          code_insee: '01',
+          maille: 'DEPT',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
+          valeur_cible: 20,
+          date_valeur_cible: new Date('2024-12-06'),
+          taux_avancement: 13,
+          date_valeur_actuelle: new Date('2021-01-01'),
+          valeur_actuelle: 10.1,
+          jalon: 2024,
+        }, {
+          id: 'IND-001',
+          code_insee: '01',
+          maille: 'DEPT',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
+          valeur_cible: 20,
+          date_valeur_cible: new Date('2024-12-06'),
+          taux_avancement: 13,
+          date_valeur_actuelle: new Date('2025-01-01'),
+          valeur_actuelle: 20.1,
+          jalon: 2025,
+        }, {
+          id: 'IND-001',
+          code_insee: 'FR',
+          maille: 'NAT',
+          zone_id: 'FRANCE',
+          territoire_code: 'NAT-FR',
+          valeur_cible: 20,
+          date_valeur_cible: new Date('2024-12-06'),
+          taux_avancement: 13,
+          date_valeur_actuelle: new Date('2021-01-01'),
+          valeur_actuelle: 10.1,
+          jalon: 2024,
+        }, {
+          id: 'IND-001',
+          code_insee: 'FR',
+          maille: 'NAT',
+          zone_id: 'FRANCE',
+          territoire_code: 'NAT-FR',
+          valeur_cible: 20,
+          date_valeur_cible: new Date('2024-12-06'),
+          taux_avancement: 13,
+          date_valeur_actuelle: new Date('2025-01-01'),
+          valeur_actuelle: 20.1,
+          jalon: 2025,
+        }, {
+          id: 'IND-002',
+          code_insee: 'FR',
+          maille: 'NAT',
+          zone_id: 'FRANCE',
+          territoire_code: 'NAT-FR',
+          valeur_cible: 20,
+          date_valeur_cible: new Date('2024-12-06'),
+          taux_avancement: 13,
+          date_valeur_actuelle: new Date('2023-02-04'),
+          valeur_actuelle: 22.3,
+          jalon: 2024,
+        }, {
+          id: 'IND-003',
+          code_insee: 'FR',
+          maille: 'NAT',
+          zone_id: 'FRANCE',
+          territoire_code: 'NAT-FR',
+          valeur_cible: 20,
+          date_valeur_cible: new Date('2024-12-06'),
+          taux_avancement: 13,
+          date_valeur_actuelle: new Date('2022-08-02'),
+          valeur_actuelle: 31.3,
+          jalon: 2024,
+        }],
+      });
+
+      const jalon = 2024;
+
       // When
-      const result = await prismaIndicateurRepository.recupererMapIndicateursNationalParListeIndicateurId({ listeIndicateurId });
+      const result = await prismaIndicateurRepository.recupererMapIndicateursNationalParListeIndicateurId({ listeIndicateurId, jalon });
 
       // Then
       expect([...result.keys()]).toEqual(['IND-001', 'IND-002']);

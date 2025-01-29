@@ -17,11 +17,11 @@ export class RécupérerTauxAvancementGlobalTerritoireUseCase {
     this.territoireRepository = territoireRepository;
   }
 
-  async run({ territoireCode }: { territoireCode: string }): Promise<(number | null)[]> {
+  async run({ territoireCode, jalon }: { territoireCode: string, jalon: number }): Promise<(number | null)[]> {
     const territoire = await this.territoireRepository.recupererTerritoireParCode({ territoireCode });
 
     let chantiers = territoire.maille !== 'NAT'
-      ? (await this.chantierRepository.listerParTerritoireCodePourEtMaille({ territoireCode, maille: territoire.maille }).then(chantiersResult => chantiersResult.filter(chantier => !CHANTIER_EXCLUS[territoire.maille].has(chantier.id))))
+      ? (await this.chantierRepository.listerParTerritoireCodePourEtMaille({ territoireCode, maille: territoire.maille, jalon }).then(chantiersResult => chantiersResult.filter(chantier => !CHANTIER_EXCLUS[territoire.maille].has(chantier.id))))
       : [];
 
     return chantiers.map(chantier => chantier.tauxAvancement);

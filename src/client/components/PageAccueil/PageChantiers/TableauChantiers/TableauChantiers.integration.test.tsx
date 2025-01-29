@@ -89,6 +89,7 @@ class TableauChantiersTest {
       <TableauChantiers
         chantiersSontArchives={false}
         données={this.données}
+        jalon={2024}
         ministèresDisponibles={this.ministèresDisponibles}
         nombreTotalChantiersAvecAlertes={120}
         territoireCode={this.territoireCode}

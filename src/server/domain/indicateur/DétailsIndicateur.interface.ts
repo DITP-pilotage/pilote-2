@@ -27,8 +27,10 @@ export type DétailsIndicateur = {
   valeurInitiale: number | null,
   dateValeurInitiale: string | null,
   historiquesValeurs: HistoriqueValeur[]
+  valeurActuelleMandat: number | null,
   valeurActuelle: number | null,
   dateValeurActuelle: string | null,
+  dateValeurActuelleMandat: string | null,
   valeurCible: number | null,
   dateValeurCible: string | null,
   valeurCibleAnnuelle: number | null,

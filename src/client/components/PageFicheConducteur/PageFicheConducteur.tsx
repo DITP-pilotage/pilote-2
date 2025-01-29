@@ -16,17 +16,19 @@ import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from '@/client/constants/légen
 import CartographieMétéo from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo';
 import { EnteteFicheConducteur } from '@/components/PageFicheConducteur/EnteteFicheConducteur';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import { getDateBasculeAffichageValeursAnneePrecedente } from '@/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
-import api from '@/server/infrastructure/api/trpc/api';
 
 const PageFicheConducteur: FunctionComponent<
-FicheConducteurContrat
-> = ({ chantier, avancement, synthèseDesRésultats, donnéesCartographie, publications, doitAfficherDonnéesCartographie }) => {
+FicheConducteurContrat & { jalon: number }
+> = ({
+  chantier,
+  avancement,
+  jalon,
+  synthèseDesRésultats,
+  donnéesCartographie,
+  publications,
+  doitAfficherDonnéesCartographie,
+}) => {
   const commentaire = (synthèseDesRésultats.commentaire?.length || 0) > 1000 ? synthèseDesRésultats.commentaire?.slice(0, 930) + '... [commentaire coupé car dépassant les 1000 caractères]' : synthèseDesRésultats.commentaire;
-
-  const { data: dateBasculeTauxAnnuelAnneeCouranteString } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE' });
-  const anneeCourante = (new Date).getFullYear();
-  const anneeJalon = getDateBasculeAffichageValeursAnneePrecedente(dateBasculeTauxAnnuelAnneeCouranteString as string).dateBasculeDepassee ? anneeCourante : anneeCourante - 1;
 
   return (
     <PageFicheConducteurStyled>
@@ -38,7 +40,9 @@ FicheConducteurContrat
         </div>
         <div className='fr-container'>
           <div className='fr-grid-row fr-grid-row--gutters'>
-            <div className='fr-col-4 flex flex-column fiche-conducteur__bloc fiche-conducteur__bloc--border-light fr-pr-1v'>
+            <div
+              className='fr-col-4 flex flex-column fiche-conducteur__bloc fiche-conducteur__bloc--border-light fr-pr-1v'
+            >
               <Titre
                 baliseHtml='h2'
                 className='fr-h5 fr-mb-1w fr-text-title--blue-france'
@@ -101,7 +105,7 @@ FicheConducteurContrat
                 <div className='fr-grid-row border-t'>
                   <div className='w-full fr-pt-1v'>
                     <p className='fr-text--md fr-text--bold fr-mb-0 texte-gris'>
-                      { `${avancement.annuel?.toFixed(0) ?? '- '}%`}
+                      {`${avancement.annuel?.toFixed(0) ?? '- '}%`}
                     </p>
                     <BarreDeProgression
                       afficherTexte={false}
@@ -113,13 +117,15 @@ FicheConducteurContrat
                       variante='secondaire'
                     />
                     <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-                      {`Taux d\'avancement de l'année ${anneeJalon}`}
+                      {`Taux d'avancement de l'année ${jalon}`}
                     </p>
                   </div>
                 </div>
               </Bloc>
             </div>
-            <div className='fr-col-8 flex flex-column fiche-conducteur__bloc fiche-conducteur__bloc--border-light fr-pl-1v'>
+            <div
+              className='fr-col-8 flex flex-column fiche-conducteur__bloc fiche-conducteur__bloc--border-light fr-pl-1v'
+            >
               <Titre
                 baliseHtml='h2'
                 className='fr-h5 fr-mb-1w fr-text-title--blue-france'
@@ -128,7 +134,7 @@ FicheConducteurContrat
               </Titre>
               <Bloc contenuClassesSupplémentaires='fr-grid-row fr-grid-row--gutters fr-p-1w'>
                 <div className='fr-col-2'>
-                  <div className='texte-centre fr-text--xs'>
+                  <div className='text-center fr-text--xs'>
                     <MétéoBadge météo={synthèseDesRésultats.meteo || 'NON_RENSEIGNEE'} />
                   </div>
                   <div className='w-full flex justify-center'>
@@ -255,7 +261,9 @@ FicheConducteurContrat
         {
           doitAfficherDonnéesCartographie ? (
             <>
-              <div className='fr-container fr-pb-1w fiche-conducteur__container fiche-conducteur__bloc--no-border only-print'>
+              <div
+                className='fr-container fr-pb-1w fiche-conducteur__container fiche-conducteur__bloc--no-border only-print'
+              >
                 <EnteteFicheConducteur>
                   {`${chantier.nom} - Principaux résultats`}
                 </EnteteFicheConducteur>

@@ -5,6 +5,20 @@ const AvancementChantierStyled = styled.div`
   grid-template-areas: "nat";
   gap: 0.7rem;
 
+  .fr-select-group, .fr-select {
+    width: 3.5rem;
+    height: 1.5rem;
+    padding: 0.07rem 0 0 0.2rem;
+    margin: 0!important;
+    font-size: 0.75rem!important;
+    background-color: transparent;
+    background-position: 100% 70%!important;
+  }
+
+  .fr-select {
+    box-shadow: inset 0 -1px 0 0 var(--border-plain-grey)
+  }
+
   &.layout--dept {
     @media (min-width: 1025px) {
       grid-template-areas: "dept reg nat nat";

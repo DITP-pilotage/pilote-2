@@ -19,6 +19,7 @@ interface RubriquesIndicateursProps {
   chantierEstTerritorialisé: boolean,
   territoireProjetStructurant?: ProjetStructurant['territoire']
   estInteractif?: boolean
+  jalon: number
 }
 
 const IndicateursProjetStructurant: FunctionComponent<RubriquesIndicateursProps> = ({
@@ -29,6 +30,7 @@ const IndicateursProjetStructurant: FunctionComponent<RubriquesIndicateursProps>
   typeDeRéforme,
   chantierEstTerritorialisé,
   estInteractif = true,
+  jalon,
 }) => {
   const CodeInseeSélectionnée = territoireSélectionnéTerritoiresStore()?.codeInsee;
 
@@ -66,6 +68,7 @@ const IndicateursProjetStructurant: FunctionComponent<RubriquesIndicateursProps>
                         détailsIndicateurs={détailsIndicateurs}
                         estInteractif={estInteractif}
                         indicateur={indicateur}
+                        jalon={jalon}
                         key={indicateur.id}
                         territoireProjetStructurant={territoireProjetStructurant}
                         typeDeRéforme={typeDeRéforme}

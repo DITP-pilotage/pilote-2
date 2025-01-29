@@ -1,3 +1,4 @@
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Fragment, FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
@@ -18,6 +19,8 @@ import ValeurEtDate from '@/components/_commons/IndicateursChantier/Bloc/ValeurE
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
+import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import useSousIndicateurBloc from './useSousIndicateurBloc';
 import SousIndicateurBlocStyled from './SousIndicateurBloc.styled';
 
@@ -33,6 +36,7 @@ interface SousIndicateurBlocProps {
   mailleQuery: MailleInterne
   mailleSelectionnee: MailleInterne
   mailsDirecteursProjets: string[]
+  jalon: number
 }
 
 const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
@@ -47,8 +51,19 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
   mailleQuery,
   mailleSelectionnee,
   mailsDirecteursProjets,
+  jalon,
 }) => {
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
+
+  const [, setJalon] = useQueryState('jalon', parseAsStringLiteral(['2024', '2025']).withDefault('2024').withOptions({
+    shallow: false,
+    history: 'push',
+  }));
+
+  const auClickSelecteurJalon = (valeur: '2024' | '2025') => {
+    sauvegarderFiltres({ jalon: valeur });
+    setJalon(valeur);
+  };
 
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
@@ -153,28 +168,74 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
             ))
           ) : (
             <table className='fr-table w-full border-collapse fr-mb-0'>
-              <thead className='fr-background-action-low-blue-france'>
+              <thead className='fr-background-transparent text-center'>
                 <tr>
-                  <th className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm fr-text--bold'>
+                  <th className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w' />
+                  <th className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm' />
+                  <th
+                    className='fr-background-contrast-grey border-b-2 text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                    colSpan={3}
+                  >
+                    <div className='flex align-center justify-center fr-text--xs'>
+                      <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
+                        DONNÉES À ÉCHÉANCE
+                      </p>
+                      <Sélecteur<'2024' | '2025'>
+                        htmlName='jalon'
+                        options={[{ libellé: '2024', valeur: '2024' }, { libellé: '2025', valeur: '2025' }]}
+                        texteFantôme='Sélectionner un jalon'
+                        valeurModifiéeCallback={auClickSelecteurJalon}
+                        valeurSélectionnée={`${jalon}` as '2024' | '2025'}
+                      />
+                    </div>
+                  </th>
+                  <th
+                    className='fr-background-action-low-blue-france border-b-2 text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                    colSpan={3}
+                  >
+                    DONNÉES À ÉCHÉANCE 2026
+                  </th>
+                </tr>
+                <tr className='border-b-2'>
+                  <th
+                    className='fr-background-action-low-blue-france text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                  >
                     Territoire(s)
                   </th>
-                  <th className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'>
-                    Valeur initiale
+                  <th
+                    className='fr-background-action-low-blue-france text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                  >
+                    valeur initiale
                   </th>
-                  <th className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'>
-                    Valeur actuelle
+                  <th
+                    className='fr-background-contrast-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                  >
+                    valeur de référence
                   </th>
-                  <th className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'>
-                    Cible 2024
+                  <th
+                    className='fr-background-contrast-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                  >
+                    valeur cible
                   </th>
-                  <th className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm fr-text--bold'>
-                    {'Avancement ' + new Date().getFullYear().toString()}
+                  <th
+                    className='fr-background-contrast-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                  >
+                    taux d'avancement
                   </th>
-                  <th className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'>
-                    Cible 2026
+                  <th
+                    className='fr-background-action-low-blue-france text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                  >
+                    valeur actuelle
                   </th>
-                  <th className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm fr-text--bold'>
-                    Avancement 2026
+                  <th
+                    className='fr-background-action-low-blue-france text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                  >
+                    valeur cible
+                  </th>
+                  <th
+                    className='fr-background-action-low-blue-france text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                  >
+                    taux d'avancement
                   </th>
                 </tr>
               </thead>
@@ -187,21 +248,22 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                         <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm'>
                           {informationIndicateur.territoireNom}
                         </td>
-                        <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                        <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                           <ValeurEtDate
                             date={informationIndicateur.données.dateValeurInitiale}
                             unité={informationIndicateur.données.unité}
                             valeur={informationIndicateur.données.valeurInitiale}
                           />
                         </td>
-                        <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                        { /* Valeur et date valeur actuelle de indicateurTerritoireJalon en fonction du jalon */}
+                        <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                           <ValeurEtDate
                             date={informationIndicateur.données.dateValeurActuelle}
                             unité={informationIndicateur.données.unité}
                             valeur={informationIndicateur.données.valeurActuelle}
                           />
                         </td>
-                        <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                        <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                           <ValeurEtDate
                             date={informationIndicateur.données.dateValeurCibleAnnuelle}
                             unité={informationIndicateur.données.unité}
@@ -218,7 +280,15 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                             variante='secondaire'
                           />
                         </td>
-                        <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                        { /* Valeur et date valeur actuelle mandat de indicateurTerritoire */}
+                        <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
+                          <ValeurEtDate
+                            date={informationIndicateur.données.dateValeurActuelleMandat}
+                            unité={informationIndicateur.données.unité}
+                            valeur={informationIndicateur.données.valeurActuelleMandat}
+                          />
+                        </td>
+                        <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                           <ValeurEtDate
                             date={informationIndicateur.données.dateValeurCible}
                             unité={informationIndicateur.données.unité}
@@ -258,6 +328,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
               indicateur={indicateur}
               indicateurDétailsParTerritoires={informationsIndicateurs}
               indicateurEstAjour={!indicateurNonAJour}
+              jalon={jalon}
               listeSousIndicateurs={[]}
               mailleQuery={mailleQuery}
               mailleSelectionnee={mailleSelectionnee}

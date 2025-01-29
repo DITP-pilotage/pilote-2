@@ -20,6 +20,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
   données,
   ministèresDisponibles,
   territoireCode,
+  jalon,
   chantiersSontArchives,
 }) => {
 
@@ -91,6 +92,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
               ) : null
             }
               <TableauChantiersContenu
+                jalon={jalon}
                 tableau={tableau}
                 territoireCode={territoireCode}
               />

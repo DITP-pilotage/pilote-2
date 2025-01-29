@@ -4,6 +4,13 @@ const IndicateurBlocStyled = styled.div`
   table.fr-table tbody tr:not(:last-child) {
     border-bottom: 1px solid #DDD;
   }
+  
+  .fr-select-group, .fr-select {
+    width: 4rem;
+    padding: 0.2rem 0 0.2rem 0.3rem;
+    margin: 0!important;
+    background-position: 100% 70%!important;
+  }
 
   table.fr-table tbody tr {
     background-color: transparent;
