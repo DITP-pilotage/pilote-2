@@ -57,34 +57,12 @@ SELECT
             THEN date_pro_maj.prochaine_date_maj_jours
     END AS prochaine_date_maj_jours,
     meta_indic_parametrage.tendance,
-    CASE
-        WHEN date_bascule.date_depassee THEN a.vacp
-        ELSE a_prev_year.vacp
-    END AS valeur_actuelle_proposition,
-    CASE
-        WHEN
-            date_bascule.date_depassee THEN pva.auteur_proposition
-        ELSE pva_prev_year.auteur_proposition
-    END AS auteur_proposition,
-    CASE
-        WHEN
-            date_bascule.date_depassee THEN pva.date_proposition::date
-        ELSE pva_prev_year.date_proposition::date
-    END AS date_proposition,
-    CASE
-        WHEN
-            date_bascule.date_depassee THEN pva.motif_proposition
-        ELSE pva_prev_year.motif_proposition
-    END AS motif_proposition,
-    CASE
-        WHEN
-            date_bascule.date_depassee THEN pva.source_donnee_methode_calcul
-        ELSE pva_prev_year.source_donnee_methode_calcul
-    END AS source_donnee_methode_calcul_proposition,
-    CASE
-        WHEN date_bascule.date_depassee THEN a.tap_global
-        ELSE a_prev_year.tap_global
-    END AS taux_avancement_mandat_proposition,
+    a.vacp AS valeur_actuelle_proposition,
+    pva.auteur_proposition AS auteur_proposition,
+    pva.date_proposition::date AS date_proposition,
+    pva.motif_proposition AS motif_proposition,
+    pva.source_donnee_methode_calcul AS source_donnee_methode_calcul_proposition,
+    a.tap_global AS taux_avancement_mandat_proposition,
     CASE
         WHEN
             coalesce(z_appl.est_applicable, true)
@@ -101,13 +79,8 @@ LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} AS meta_zone
     ON territoire.zone_id = meta_zone.id
 LEFT JOIN {{ ref('get_vcg') }} AS gvcg
     ON meta_indic.id = gvcg.indic_id AND territoire.zone_id = gvcg.zone_id
-CROSS JOIN {{ ref('get_date_bascule_depassee') }} AS date_bascule
 LEFT JOIN {{ ref('get_last_vaca') }} AS a
     ON meta_indic.id = a.indic_id AND territoire.zone_id = a.zone_id
-LEFT JOIN {{ ref('get_ta_indic_prev_year') }} AS a_prev_year
-    ON
-        meta_indic.id = a_prev_year.indic_id
-        AND territoire.zone_id = a_prev_year.zone_id
 LEFT JOIN {{ ref('get_vig') }} AS gvig
     ON meta_indic.id = gvig.indic_id AND territoire.zone_id = gvig.zone_id
 LEFT JOIN {{ ref('int_indicateurs_zones_applicables') }} AS z_appl
