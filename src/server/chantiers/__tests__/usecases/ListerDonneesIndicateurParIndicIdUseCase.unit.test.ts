@@ -54,8 +54,10 @@ describe('ListerDonneesIndicateurParIndicIdUseCase', () => {
 
     indicateurRepository.listerParIndicId.mockResolvedValue([donneeIndicateur1, donneeIndicateur2]);
 
+    const jalon = 2024;
+
     // When
-    const listeDonneesIndicateurs = await listerDonneesIndicateurParIndicIdUseCase.run({ indicId });
+    const listeDonneesIndicateurs = await listerDonneesIndicateurParIndicIdUseCase.run({ indicId, jalon });
 
     // Then
     expect(listeDonneesIndicateurs).toHaveLength(2);

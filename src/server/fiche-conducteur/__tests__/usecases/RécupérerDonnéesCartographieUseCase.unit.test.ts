@@ -22,8 +22,10 @@ describe('RécupérerDonnéesCartographieUseCase', () => {
     const chantier3 = new ChantierBuilder().withId('CH-168').withTerritoireCode('FR').withMeteo('COUVERT').withEstApplicable(false).withTauxAvancement(17.2).withMaille('NAT').build();
     chantierRepository.récupérerMailleNatEtDeptParId.mockResolvedValue([chantier1, chantier2, chantier3]);
 
+    const jalon = 2024;
+
     // When
-    const donnéesCartographieResult = await récupérerDonnéesCartographieUseCase.run({ chantierId });
+    const donnéesCartographieResult = await récupérerDonnéesCartographieUseCase.run({ chantierId, jalon });
     // Then
     expect(donnéesCartographieResult.map(donnee => donnee.territoireCode)).toIncludeSameMembers(['DEPT-87', 'DEPT-36']);
     expect(donnéesCartographieResult.map(donnee => donnee.météo)).toIncludeSameMembers(['SOLEIL', 'COUVERT']);

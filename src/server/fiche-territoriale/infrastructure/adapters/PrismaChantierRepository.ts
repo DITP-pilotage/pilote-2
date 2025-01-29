@@ -2,23 +2,19 @@ import { chantier_territoire as PrismaChantierTerritoireModel, Maille, PrismaCli
 import { ChantierRepository } from '@/server/fiche-territoriale/domain/ports/ChantierRepository';
 import { Chantier } from '@/server/fiche-territoriale/domain/Chantier';
 import { MeteoDisponible } from '@/server/fiche-territoriale/domain/MeteoDisponible';
-import {
-  getAnneeAffichageDateDeBascule,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
-import { configuration } from '@/config';
 
 export class PrismaChantierRepository implements ChantierRepository {
   constructor(private prismaClient: PrismaClient) {}
 
-  async listerParTerritoireCodePourUnDepartement({ territoireCode }: { territoireCode: string }): Promise<Chantier[]> {
-    return this.listerParTerritoireCodePourEtMaille({ territoireCode, maille: 'DEPT' });
+  async listerParTerritoireCodePourUnDepartement({ territoireCode, jalon }: { territoireCode: string, jalon: number }): Promise<Chantier[]> {
+    return this.listerParTerritoireCodePourEtMaille({ territoireCode, maille: 'DEPT', jalon });
   }
 
-  async listerParTerritoireCodePourUneRegion({ territoireCode }: { territoireCode: string }): Promise<Chantier[]> {
-    return this.listerParTerritoireCodePourEtMaille({ territoireCode, maille: 'REG' });
+  async listerParTerritoireCodePourUneRegion({ territoireCode, jalon }: { territoireCode: string, jalon: number }): Promise<Chantier[]> {
+    return this.listerParTerritoireCodePourEtMaille({ territoireCode, maille: 'REG', jalon });
   }
 
-  async listerParTerritoireCodePourEtMaille({ territoireCode, maille }: { territoireCode: string, maille: string }): Promise<Chantier[]> {
+  async listerParTerritoireCodePourEtMaille({ territoireCode, maille, jalon }: { territoireCode: string, maille: string, jalon: number }): Promise<Chantier[]> {
     const listePrismaChantierTerritoireModel = await this.prismaClient.chantier_territoire.findMany({
       where: {
         territoire_code: territoireCode,
@@ -37,7 +33,7 @@ export class PrismaChantierRepository implements ChantierRepository {
         },
         chantier_territoire_jalon: {
           where: {
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon,
           },
           select: {
             taux_avancement: true,

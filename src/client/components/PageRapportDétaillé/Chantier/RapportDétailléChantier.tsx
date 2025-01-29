@@ -39,6 +39,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
   mapChantierStatistiques,
   donnéesCartographieAvancement,
   donnéesCartographieMétéo,
+  jalon,
 }) => {
 
   const listeResponsablesLocaux = chantier?.responsableLocalTerritoireSélectionné ?? [];
@@ -83,6 +84,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
                 <AvancementChantier
                   avancements={avancements}
                   estAutoriseAVoirLeSelecteurDeMaille={false}
+                  jalon={jalon}
                   mailleQuery={mailleQuery}
                   mailleSelectionnee={mailleSelectionnee}
                   territoireCode={territoireCode}

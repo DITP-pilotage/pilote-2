@@ -30,4 +30,5 @@ export default interface RapportDétailléChantierProps {
   mapChantierStatistiques: Map<string, AvancementChantierRapportDetaille>
   donnéesCartographieAvancement: AvancementsGlobauxTerritoriauxMoyensContrat
   donnéesCartographieMétéo: CartographieDonnéesMétéo
+  jalon: number
 }

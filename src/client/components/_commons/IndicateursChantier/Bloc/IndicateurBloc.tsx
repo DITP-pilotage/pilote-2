@@ -1,4 +1,5 @@
 import { Fragment, FunctionComponent } from 'react';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
@@ -12,9 +13,6 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import ValeurEtDate from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate';
-import {
-  getDateBasculeAffichageValeursAnneePrecedente,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import IndicateurBlocIndicateurTuile
   from '@/components/_commons/IndicateursChantier/Bloc/indicateurBlocIndicateurTuile';
@@ -27,6 +25,8 @@ import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import ModaleSuppressionValeurActuelle
   from '@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurActuelle/ModaleSuppressionValeurActuelle';
+import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
+import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 import useIndicateurAlerteDateMaj from './useIndicateurAlerteDateMaj';
@@ -47,6 +47,7 @@ interface IndicateurBlocProps {
   mailleSelectionnee: MailleInterne
   mailleQuery: MailleInterne
   mailsDirecteursProjets: string[]
+  jalon: number
 }
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
@@ -62,11 +63,17 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   mailleSelectionnee,
   mailleQuery,
   mailsDirecteursProjets,
+  jalon,
 }) => {
   const {
     maille: mailleTerritoireSelectionnee,
   } = territoireCodeVersMailleCodeInsee(territoireCode);
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+
+  const [, setJalon] = useQueryState('jalon', parseAsStringLiteral(['2024', '2025']).withDefault('2024').withOptions({
+    shallow: false,
+    history: 'push',
+  }));
 
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
   const detailTerritoiresCompares = territoiresCompares.map(récupérerDétailsSurUnTerritoire);
@@ -75,7 +82,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
 
   const { data: variableContenuFFPropositionValeurActuelle } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE' });
-  const { data: dateBasculeTauxAnnuelAnneeCouranteString } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE' });
 
   const {
     dateDeMiseAJourIndicateur,
@@ -99,9 +105,11 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   })).sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) => indicateurDétailsTerritoire1.données.codeInsee.localeCompare(indicateurDétailsTerritoire2.données.codeInsee));
 
   const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour, indicateurEstApplicable);
-  const anneeCourante: number = new Date().getFullYear();
 
-  const dateBasculeEstDepassee: boolean = getDateBasculeAffichageValeursAnneePrecedente(dateBasculeTauxAnnuelAnneeCouranteString as string).dateBasculeDepassee;
+  const auClickSelecteurJalon = (valeur: '2024' | '2025') => {
+    sauvegarderFiltres({ jalon: valeur });
+    setJalon(valeur);
+  };
 
   return (
     <IndicateurBlocStyled
@@ -208,7 +216,18 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       className='fr-background-contrast-grey border-b-2 text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
                       colSpan={3}
                     >
-                      {`DONNÉES À ÉCHÉANCE ${(dateBasculeEstDepassee ? anneeCourante : anneeCourante - 1)}`}
+                      <div className='flex align-center justify-center'>
+                        <span className='fr-pr-1w'>
+                          DONNÉES À ÉCHÉANCE
+                        </span>
+                        <Sélecteur<'2024' | '2025'>
+                          htmlName='jalon'
+                          options={[{ libellé: '2024', valeur: '2024' }, { libellé: '2025', valeur: '2025' }]}
+                          texteFantôme='Sélectionner un jalon'
+                          valeurModifiéeCallback={auClickSelecteurJalon}
+                          valeurSélectionnée={`${jalon}` as '2024' | '2025'}
+                        />
+                      </div>
                     </th>
                     <th
                       className='fr-background-action-low-blue-france border-b-2 text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
@@ -219,42 +238,42 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   </tr>
                   <tr className='border-b-2'>
                     <th
-                      className='fr-background-action-low-blue-france text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                      className='fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
                     >
                       Territoire(s)
                     </th>
                     <th
-                      className='fr-background-action-low-blue-france text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                      className='fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
                     >
                       valeur initiale
                     </th>
                     <th
-                      className='fr-background-contrast-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                      className='fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
                     >
                       valeur de référence
                     </th>
                     <th
-                      className='fr-background-contrast-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                      className='fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
                     >
                       valeur cible
                     </th>
                     <th
-                      className='fr-background-contrast-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                      className='fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
                     >
                       taux d'avancement
                     </th>
                     <th
-                      className='fr-background-action-low-blue-france text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                      className='fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
                     >
                       valeur actuelle
                     </th>
                     <th
-                      className='fr-background-action-low-blue-france text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                      className='fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
                     >
                       valeur cible
                     </th>
                     <th
-                      className='fr-background-action-low-blue-france text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                      className='fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
                     >
                       taux d'avancement
                     </th>
@@ -279,6 +298,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               valeur={informationIndicateur.données.valeurInitiale}
                             />
                           </td>
+                          { /* Valeur et date valeur actuelle de indicateurTerritoireJalon en fonction du jalon */}
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                             <ValeurEtDate
                               date={informationIndicateur.données.dateValeurActuelle}
@@ -286,7 +306,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               valeur={informationIndicateur.données.valeurActuelle}
                             />
                           </td>
-                          { /* Valeur et date valeur actuelle de indicateurTerritoireJalon en fonction du jalon */}
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                             <ValeurEtDate
                               date={informationIndicateur.données.dateValeurCibleAnnuelle}
@@ -304,14 +323,14 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               variante='secondaire'
                             />
                           </td>
+                          { /* Valeur et date valeur actuelle mandat de indicateurTerritoire */}
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                             <ValeurEtDate
-                              date={informationIndicateur.données.dateValeurActuelle}
+                              date={informationIndicateur.données.dateValeurActuelleMandat}
                               unité={informationIndicateur.données.unité}
-                              valeur={informationIndicateur.données.valeurActuelle}
+                              valeur={informationIndicateur.données.valeurActuelleMandat}
                             />
                           </td>
-                          { /* Valeur et date valeur actuelle mandat de indicateurTerritoire */}
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                             <ValeurEtDate
                               date={informationIndicateur.données.dateValeurCible}
@@ -336,7 +355,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               <tr
                                 className='ligne-creation-proposition-valeur-actuelle'
                               >
-                                <td colSpan={7}>
+                                <td colSpan={8}>
                                   <div className='flex w-full justify-end'>
                                     <button
                                       aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
@@ -396,21 +415,22 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                       </Infobulle>
                                     </div>
                                   </td>
-                                  <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                                  <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                                     <ValeurEtDate
                                       date={informationIndicateur.données.dateValeurInitiale}
                                       unité={informationIndicateur.données.unité}
                                       valeur={informationIndicateur.données.valeurInitiale}
                                     />
                                   </td>
-                                  <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition'>
+                                  { /* Valeur et date valeur actuelle de indicateurTerritoireJalon en fonction du jalon */}
+                                  <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center'>
                                     <ValeurEtDate
                                       date={informationIndicateur.données.dateValeurActuelle}
                                       unité={informationIndicateur.données.unité}
                                       valeur={informationIndicateur.données.proposition.valeurActuelle}
                                     />
                                   </td>
-                                  <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                                  <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                                     <ValeurEtDate
                                       date={informationIndicateur.données.dateValeurCibleAnnuelle}
                                       unité={informationIndicateur.données.unité}
@@ -427,7 +447,15 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                       variante='jaune-moutarde'
                                     />
                                   </td>
-                                  <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                                  { /* Valeur et date valeur actuelle mandat de indicateurTerritoire */}
+                                  <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
+                                    <ValeurEtDate
+                                      date={informationIndicateur.données.dateValeurActuelleMandat}
+                                      unité={informationIndicateur.données.unité}
+                                      valeur={informationIndicateur.données.valeurActuelleMandat}
+                                    />
+                                  </td>
+                                  <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                                     <ValeurEtDate
                                       date={informationIndicateur.données.dateValeurCible}
                                       unité={informationIndicateur.données.unité}
@@ -448,7 +476,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 {
                                   estAutoriseAProposerUneValeurActuelle ? (
                                     <tr className='ligne-modification-proposition-valeur-actuelle'>
-                                      <td colSpan={7}>
+                                      <td colSpan={8}>
                                         <div className='flex w-full justify-end'>
                                           <button
                                             aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
@@ -501,21 +529,21 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm'>
                             {informationIndicateurComparé.territoireNom}
                           </td>
-                          <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                          <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                             <ValeurEtDate
                               date={informationIndicateurComparé.données.dateValeurInitiale}
                               unité={informationIndicateurComparé.données.unité}
                               valeur={informationIndicateurComparé.données.valeurInitiale}
                             />
                           </td>
-                          <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                          <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                             <ValeurEtDate
                               date={informationIndicateurComparé.données.dateValeurActuelle}
                               unité={informationIndicateurComparé.données.unité}
                               valeur={informationIndicateurComparé.données.valeurActuelle}
                             />
                           </td>
-                          <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                          <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                             <ValeurEtDate
                               date={informationIndicateurComparé.données.dateValeurCibleAnnuelle}
                               unité={informationIndicateurComparé.données.unité}
@@ -532,7 +560,15 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               variante='secondaire-light'
                             />
                           </td>
-                          <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm'>
+                          { /* Valeur et date valeur actuelle mandat de indicateurTerritoire */}
+                          <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
+                            <ValeurEtDate
+                              date={informationIndicateurComparé.données.dateValeurActuelleMandat}
+                              unité={informationIndicateurComparé.données.unité}
+                              valeur={informationIndicateurComparé.données.valeurActuelleMandat}
+                            />
+                          </td>
+                          <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                             <ValeurEtDate
                               date={informationIndicateurComparé.données.dateValeurCible}
                               unité={informationIndicateurComparé.données.unité}
@@ -571,6 +607,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 indicateur={indicateur}
                 indicateurDétailsParTerritoires={informationsIndicateurs}
                 indicateurEstAjour={!indicateurNonAJour}
+                jalon={jalon}
                 listeSousIndicateurs={listeSousIndicateurs}
                 mailleQuery={mailleQuery}
                 mailleSelectionnee={mailleSelectionnee}

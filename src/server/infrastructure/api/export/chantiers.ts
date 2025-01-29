@@ -9,6 +9,10 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { configuration } from '@/config';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 
 
 export default async function handleExportDesChantiers(request: NextApiRequest, response: NextApiResponse): Promise<void> {
@@ -32,6 +36,7 @@ export default async function handleExportDesChantiers(request: NextApiRequest, 
     habilitation,
     profil: session.profil,
     chantierChunkSize: configuration.export.csvChantiersChunkSize,
+    jalon: (!Number.isNaN(request.query?.jalon) && verifyValeurIsNotNullOrUndefined(+request.query.jalon!)) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
     optionsExport: {
       perimetreIds: request.query.perimetreIds ? Array.isArray(request.query.perimetreIds) ? request.query.perimetreIds : [request.query.perimetreIds] as string[] : [],
       estBarometre: request.query.estBarometre === 'true',

@@ -41,8 +41,10 @@ export default class IndicateurProjetStructurantSQLRepository implements Indicat
         valeurInitiale: indicateur.valeur_initiale,
         dateValeurInitiale: indicateur.date_valeur_initiale?.toISOString() ?? null,
         valeurActuelle: indicateur.valeur_actuelle,
+        valeurActuelleMandat: indicateur.valeur_actuelle,
         dateValeurActuelle: indicateur.date_valeur_actuelle?.toISOString() ?? null,
-        historiquesValeurs: indicateur.valeur_actuelle && indicateur.date_valeur_actuelle ? 
+        dateValeurActuelleMandat: indicateur.date_valeur_actuelle?.toISOString() ?? null,
+        historiquesValeurs: indicateur.valeur_actuelle && indicateur.date_valeur_actuelle ?
           [
             {
               date: indicateur.date_valeur_actuelle?.toISOString(),

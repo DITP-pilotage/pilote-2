@@ -8,7 +8,8 @@ import {
   IndicateurDétailsParTerritoire,
 } from '@/components/_commons/IndicateursProjetStructurant/Bloc/IndicateurBloc.interface';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
-import IndicateurPonderation from '@/components/_commons/IndicateursProjetStructurant/Bloc/Pondération/IndicateurPonderation';
+import IndicateurPonderation
+  from '@/components/_commons/IndicateursProjetStructurant/Bloc/Pondération/IndicateurPonderation';
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
@@ -24,6 +25,7 @@ interface IndicateurBlocProps {
   estInteractif: boolean
   typeDeRéforme: TypeDeRéforme
   chantierEstTerritorialisé: boolean
+  jalon: number
 }
 
 
@@ -34,6 +36,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   territoireProjetStructurant,
   typeDeRéforme,
   chantierEstTerritorialisé,
+  jalon,
 }: IndicateurBlocProps) => {
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
@@ -122,6 +125,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
                 indicateur={indicateur}
                 indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
+                jalon={jalon}
                 typeDeRéforme={typeDeRéforme}
               />
             ) : null

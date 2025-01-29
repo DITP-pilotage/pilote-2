@@ -29,12 +29,14 @@ describe('RécupérerTauxAvancementAnnuelTerritoireUseCase', () => {
     territoireRepository.recupererTerritoireParCode.mockResolvedValue(territoire);
     chantierRepository.listerParTerritoireCodePourEtMaille.mockResolvedValue([chantier1, chantier2, chantier3]);
 
+    const jalon = 2024;
+
     // When
-    const result = await récupérerTauxAvancementAnnuelTerritoireUseCase.run({ territoireCode });
+    const result = await récupérerTauxAvancementAnnuelTerritoireUseCase.run({ territoireCode, jalon });
 
     // Then
     expect(territoireRepository.recupererTerritoireParCode).toHaveBeenNthCalledWith(1, { territoireCode });
-    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'DEPT' });
+    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'DEPT', jalon });
     expect(result).toHaveLength(3);
     expect(result).toStrictEqual([null, 3, 4]);
   });
@@ -51,12 +53,14 @@ describe('RécupérerTauxAvancementAnnuelTerritoireUseCase', () => {
     territoireRepository.recupererTerritoireParCode.mockResolvedValue(territoire);
     chantierRepository.listerParTerritoireCodePourEtMaille.mockResolvedValue([chantier1, chantier2, chantier3]);
 
+    const jalon = 2024;
+
     // When
-    const result = await récupérerTauxAvancementAnnuelTerritoireUseCase.run({ territoireCode });
+    const result = await récupérerTauxAvancementAnnuelTerritoireUseCase.run({ territoireCode, jalon });
 
     // Then
     expect(territoireRepository.recupererTerritoireParCode).toHaveBeenNthCalledWith(1, { territoireCode });
-    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'REG' });
+    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'REG', jalon });
     expect(result).toHaveLength(3);
     expect(result).toStrictEqual([null, 5, 6]);
   });
@@ -73,8 +77,10 @@ describe('RécupérerTauxAvancementAnnuelTerritoireUseCase', () => {
     territoireRepository.recupererTerritoireParCode.mockResolvedValue(territoire);
     chantierRepository.listerParTerritoireCodePourUneRegion.mockResolvedValue([chantier1, chantier2, chantier3]);
 
+    const jalon = 2024;
+
     // When
-    const result = await récupérerTauxAvancementAnnuelTerritoireUseCase.run({ territoireCode });
+    const result = await récupérerTauxAvancementAnnuelTerritoireUseCase.run({ territoireCode, jalon });
 
     // Then
     expect(territoireRepository.recupererTerritoireParCode).toHaveBeenNthCalledWith(1, { territoireCode });

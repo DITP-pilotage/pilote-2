@@ -25,7 +25,8 @@ import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import RepartitionsMeteosRapportDetaille from '@/client/components/PageRapportDétaillé/FiltresSélectionnés/FiltresMétéos/RepartitionsMeteosRapportDetaille';
+import RepartitionsMeteosRapportDetaille
+  from '@/client/components/PageRapportDétaillé/FiltresSélectionnés/FiltresMétéos/RepartitionsMeteosRapportDetaille';
 import RapportDétailléTableauChantiers from './RapportDétailléTableauChantiers/RapportDétailléTableauChantiers';
 
 interface RapportDétailléVueDEnsembleProps {
@@ -36,6 +37,7 @@ interface RapportDétailléVueDEnsembleProps {
   repartitionMeteosChantiers: RepartitionMeteoContrat
   territoireCode: string
   mailleSelectionnee: MailleInterne
+  jalon: number
 }
 
 const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnsembleProps> = ({
@@ -46,6 +48,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnse
   territoireCode,
   filtresComptesCalculés,
   mailleSelectionnee,
+  jalon,
 }) => {
   const {
     donnéesTableauChantiers,
@@ -77,7 +80,10 @@ const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnse
                 {INFOBULLE_CONTENUS.chantiers.jauges}
               </Infobulle>
             </TitreInfobulleConteneur>
-            <Avancements avancements={avancementsAgrégés} />
+            <Avancements
+              avancements={avancementsAgrégés}
+              jalon={jalon}
+            />
           </section>
           <hr className='fr-hr fr-my-3w fr-pb-1v' />
           <section>

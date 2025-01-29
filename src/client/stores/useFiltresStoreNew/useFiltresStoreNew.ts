@@ -1,12 +1,13 @@
 import { create } from 'zustand';
 
-interface FiltreAccueil {
+export interface FiltreAccueil {
   territoireCode: string
   perimetres: string[]
   axes: string[]
   meteos: string[]
   maille: string
   statut: string
+  jalon: string
   groupeParMinistere: boolean
   estBarometre: boolean
   estTerritorialise: boolean
@@ -33,6 +34,7 @@ const etatInitial = {
   territoireCode: '',
   maille: '',
   statut: 'PUBLIE',
+  jalon: '2024',
   groupeParMinistere: false,
   estBarometre: false,
   estTerritorialise: false,

@@ -8,6 +8,7 @@ import { ListeTerritoiresDonnéeAccueilContrat } from '@/server/chantiers/app/co
 import {
   ListeTerritoiresDonnéeRapportDetailleContrat,
 } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
+import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
 
 class ErreurChantierSansMailleNationale extends Error {
   constructor(idChantier: string) {
@@ -27,8 +28,8 @@ export function créerDonnéesTerritoires(
     donnéesTerritoires[t.code] = {
       territoireCode: t.code,
       codeInsee: t.codeInsee,
-      avancement: { annuel: chantierRow?.chantier_territoire_jalon.at(0)?.taux_avancement ?? null, global: chantierRow?.taux_avancement_mandat ?? null },
-      avancementPrécédent: { annuel: null, global: chantierRow?.taux_avancement_mandat_valeur_precedente ?? null },
+      avancement: { annuel: verifyValeurIsNotNullOrUndefined(chantierRow?.chantier_territoire_jalon.at(0)?.taux_avancement), global: verifyValeurIsNotNullOrUndefined(chantierRow?.taux_avancement_mandat) },
+      avancementPrécédent: { annuel: null, global: verifyValeurIsNotNullOrUndefined(chantierRow?.taux_avancement_mandat_valeur_precedente) },
       estApplicable: chantierRow?.est_applicable ?? null,
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
       écart: chantierRow?.ecart ?? null,
@@ -65,7 +66,7 @@ export function créerDonnéesTerritoiresNew(
   let donnéesTerritoires: ListeTerritoiresDonnéeAccueilContrat = {};
 
   territoires.forEach(t => {
-    const chantierRow = chantierRows.find(c => c.territoire_code === t.code);
+    const chantierRow = chantierRows.find(chantier => chantier.territoire_code === t.code);
 
     donnéesTerritoires[t.code] = {
       estApplicable: chantierRow?.est_applicable ?? null,
@@ -74,8 +75,8 @@ export function créerDonnéesTerritoiresNew(
       dateDeMàjDonnéesQualitatives: chantierRow?.derniere_maj_date_qualitative?.toISOString() || null,
       dateDeMàjDonnéesQuantitatives: chantierRow?.date_taux_avancement_mandat?.toISOString()  ?? null,
       avancement: {
-        annuel: chantierRow?.chantier_territoire_jalon.at(0)?.taux_avancement ?? null,
-        global: chantierRow?.taux_avancement_mandat ?? null,
+        annuel: verifyValeurIsNotNullOrUndefined(chantierRow?.chantier_territoire_jalon.at(0)?.taux_avancement),
+        global: verifyValeurIsNotNullOrUndefined(chantierRow?.taux_avancement_mandat),
       },
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
     };
@@ -140,8 +141,8 @@ export const parseChantierNew = (
         'NAT-FR': {
           territoireCode: chantierMailleNationale.territoire_code,
           codeInsee: chantierMailleNationale.code_insee,
-          avancement: { annuel: chantierMailleNationale.chantier_territoire_jalon.at(0)?.taux_avancement || null, global: chantierMailleNationale.taux_avancement_mandat },
-          avancementPrécédent: { annuel: null, global: chantierMailleNationale.taux_avancement_mandat_valeur_precedente ?? null },
+          avancement: { annuel: verifyValeurIsNotNullOrUndefined(chantierMailleNationale.chantier_territoire_jalon.at(0)?.taux_avancement), global: verifyValeurIsNotNullOrUndefined(chantierMailleNationale.taux_avancement_mandat) },
+          avancementPrécédent: { annuel: null, global: verifyValeurIsNotNullOrUndefined(chantierMailleNationale.taux_avancement_mandat_valeur_precedente) },
           météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
           écart: null,
           tendance: chantierMailleNationale.tendance,

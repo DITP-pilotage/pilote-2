@@ -36,14 +36,23 @@ import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteCh
 import { Chantier } from '@/server/chantiers/domain/Chantier';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import { RecupererRepartitionsMeteoChantiersUseCase } from '@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase';
-import { presenterEnRépartitionsMétéosChantiersContrat } from '@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat';
+import {
+  RecupererRepartitionsMeteoChantiersUseCase,
+} from '@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase';
+import {
+  presenterEnRépartitionsMétéosChantiersContrat,
+} from '@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { configuration } from '@/config';
 import IndexStyled from './index.styled';
 
 interface ChantierAccueil {
   chantiers: ChantierAccueilContrat[]
   nombreTotalChantiersAvecAlertes: number
+  jalon: number
   ministères: Ministère[]
   axes: Axe[]
   territoireCode: string
@@ -60,6 +69,8 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
 
   const pageIndex = Number.parseInt(query.pageIndex as string) || 1;
   const pageSize = Number.parseInt(query.pageSize as string) || 50;
+  const jalon = Number.parseInt(query.jalon as string) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
+
 
   assert(query.territoireCode, 'Le territoire code est obligatoire pour afficher la page d\'accueil');
   assert(session, 'Vous devez être authentifié pour accéder a cette page');
@@ -127,7 +138,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
     dependencies.getChantierRepository(),
     dependencies.getTerritoireRepository(),
-  ).run(session.habilitations, session.profil, territoireCode, mailleChantier || 'departementale', ministères, mapAxes, filtres, sorting);
+  ).run(session.habilitations, session.profil, territoireCode, mailleChantier || 'departementale', ministères, mapAxes, filtres, sorting, jalon);
 
   const {
     filtresComptesCalculés,
@@ -178,6 +189,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
       ministères,
       axes,
       territoireCode,
+      jalon,
       mailleSelectionnee: mailleGlobalTerritoireSelectionnee,
       mailleQuery,
       filtresComptesCalculés,
@@ -214,6 +226,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
   repartitionMeteosChantiers,
+  jalon,
 }) => {
   const { data: session } = useSession();
 
@@ -279,6 +292,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             axes={axes}
             chantiers={chantiers}
             filtresComptesCalculés={filtresComptesCalculés}
+            jalon={jalon}
             mailleQuery={mailleQuery}
             mailleSelectionnee={mailleSelectionnee}
             ministères={ministères}

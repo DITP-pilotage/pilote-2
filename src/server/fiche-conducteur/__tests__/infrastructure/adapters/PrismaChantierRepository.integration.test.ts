@@ -1,5 +1,3 @@
-import { getAnneeAffichageDateDeBascule } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
-import { configuration } from '@/config';
 import { PrismaChantierRepository } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaChantierRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 
@@ -37,10 +35,10 @@ describe('PrismaChantierRepository', () => {
           territoire_code: 'NAT-FR',
         }, {
           id: 'CH-168',
-          zone_id: 'R01',
+          zone_id: 'D01',
           code_insee: '01',
-          maille: 'REG',
-          territoire_code: 'REG-01',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-01',
         }, {
           id: 'CH-169',
           zone_id: 'FRANCE',
@@ -50,13 +48,50 @@ describe('PrismaChantierRepository', () => {
         }],
       });
 
+      await prisma.chantier_territoire_jalon.createMany({
+        data: [{
+          id: 'CH-168',
+          code_insee: 'FR',
+          zone_id: 'FRANCE',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          jalon: 2025,
+          taux_avancement: 9.2,
+        }, {
+          id: 'CH-168',
+          code_insee: '01',
+          zone_id: 'D01',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-01',
+          jalon: 2025,
+          taux_avancement: 14.3,
+        }, {
+          id: 'CH-168',
+          code_insee: '01',
+          zone_id: 'D01',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-01',
+          jalon: 2024,
+          taux_avancement: 13.3,
+        }, {
+          id: 'CH-169',
+          code_insee: 'FR',
+          zone_id: 'FRANCE',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          jalon: 2025,
+          taux_avancement: null,
+        }],
+      });
+
       // When
-      const chantierResult = await prismaChantierRepository.récupérerParIdEtParTerritoireCode({ chantierId: 'CH-168', territoireCode: 'NAT-FR' });
+      const chantierResult = await prismaChantierRepository.récupérerParIdEtParTerritoireCode({ chantierId: 'CH-168', territoireCode: 'NAT-FR', jalon: 2025 });
       
       // Then
       expect(chantierResult.id).toEqual('CH-168');
       expect(chantierResult.nom).toEqual('Chantier 168');
       expect(chantierResult.estTerritorialise).toEqual(true);
+      expect(chantierResult.tauxAvancementAnnuel).toEqual(9.2);
       expect(chantierResult.listeDirecteursAdministrationCentrale).toIncludeSameMembers(['DAC 1', 'DAC 2']);
       expect(chantierResult.listeDirecteursProjet).toIncludeSameMembers(['DP 1', 'DP 2']);
     });
@@ -135,7 +170,7 @@ describe('PrismaChantierRepository', () => {
           code_insee: 'FR',
           maille: 'NAT',
           territoire_code: 'NAT-FR',
-          jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+          jalon: 2024,
           taux_avancement: 9.2,
         }, {
           id: 'CH-168',
@@ -143,7 +178,7 @@ describe('PrismaChantierRepository', () => {
           code_insee: '01',
           maille: 'DEPT',
           territoire_code: 'DEPT-01',
-          jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+          jalon: 2024,
           taux_avancement: 13.3,
         }, {
           id: 'CH-168',
@@ -151,13 +186,13 @@ describe('PrismaChantierRepository', () => {
           code_insee: '02',
           maille: 'DEPT',
           territoire_code: 'DEPT-02',
-          jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+          jalon: 2024,
           taux_avancement: null,
         }],
       });
 
       // When
-      const chantierResult = await prismaChantierRepository.récupérerMailleNatEtDeptParId('CH-168');
+      const chantierResult = await prismaChantierRepository.récupérerMailleNatEtDeptParId('CH-168', 2024);
 
       // Then
       expect(chantierResult).toHaveLength(3);

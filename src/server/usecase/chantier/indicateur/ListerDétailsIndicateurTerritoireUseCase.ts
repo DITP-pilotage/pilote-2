@@ -9,12 +9,12 @@ export class ListerDétailsIndicateurTerritoireUseCase {
     private readonly indicateurRepository: IndicateurRepository,
   ) {}
 
-  async run(listeIndicateurId: string[], chantierId: string, habilitations: Habilitations, profil: ProfilCode) {
+  async run(listeIndicateurId: string[], chantierId: string, habilitations: Habilitations, profil: ProfilCode, jalon: number) {
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnLecture(chantierId, null);
 
     const resultDétailsParMailles = await Promise.all(
-      listeIndicateurId.map(indicateurId => this.indicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(indicateurId, habilitations, profil).then(detailsTerritoire => ({ id: indicateurId, detailsTerritoire }))),
+      listeIndicateurId.map(indicateurId => this.indicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(indicateurId, habilitations, profil, jalon).then(detailsTerritoire => ({ id: indicateurId, detailsTerritoire }))),
     );
 
     return resultDétailsParMailles.reduce((acc, val) => {

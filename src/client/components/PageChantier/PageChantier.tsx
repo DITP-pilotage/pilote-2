@@ -67,6 +67,7 @@ interface PageChantierProps {
   indicateurPondérations: IndicateurPondération[]
   listeResponsablesLocaux: ResponsableLocal[]
   listeCoordinateursTerritorials: CoordinateurTerritorial[]
+  jalon: number
 }
 
 const PageChantier: FunctionComponent<PageChantierProps> = ({
@@ -86,6 +87,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
   indicateurPondérations,
   listeResponsablesLocaux,
   listeCoordinateursTerritorials,
+  jalon,
 }: PageChantierProps) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('md');
@@ -231,6 +233,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
               <AvancementChantier
                 avancements={avancements}
                 estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
+                jalon={jalon}
                 mailleQuery={mailleQuery}
                 mailleSelectionnee={mailleSelectionnee}
                 territoireCode={territoireCode}
@@ -368,6 +371,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     détailsIndicateurs={détailsIndicateurs}
                     estAutoriseAProposerUneValeurActuelle={estAutoriseAProposerUneValeurActuelle}
                     indicateurs={indicateurs}
+                    jalon={jalon}
                     listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
                     mailleQuery={mailleQuery}
                     mailleSelectionnee={mailleSelectionnee}

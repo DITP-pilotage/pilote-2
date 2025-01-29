@@ -27,6 +27,8 @@ const indicateurDétailsVide: IndicateurDétailsParTerritoire = {
     historiquesValeurs: [],
     valeurActuelle: null,
     dateValeurActuelle: null,
+    valeurActuelleMandat: null,
+    dateValeurActuelleMandat: null,
     valeurCible: null,
     dateValeurCible: null,
     valeurCibleAnnuelle: null,

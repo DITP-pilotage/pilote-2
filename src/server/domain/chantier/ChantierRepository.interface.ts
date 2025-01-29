@@ -17,14 +17,14 @@ import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryPa
 import { PrismaChantier } from '@/server/infrastructure/accès_données/chantier/PrismaChantier';
 
 export default interface ChantierRepository {
-  récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<(PrismaChantierIdentite & {
+  récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: ProfilCode, jalon: number): Promise<(PrismaChantierIdentite & {
     chantier_territoire: (PrismaChantierTerritoire & { chantier_territoire_jalon: PrismaChantierTerritoireJalon[] })[]
   })>;
-  récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, filtres: FiltreQueryParams, territoireCode: string): Promise<PrismaChantier[]>;
+  récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, filtres: FiltreQueryParams, territoireCode: string, jalon: number): Promise<PrismaChantier[]>;
   récupérerChantiersSynthétisés(): Promise<ChantierSynthétisé[]>;
   getChantierStatistiques(habilitations: Habilitations, listeChantier: Chantier['id'][], maille: Maille): Promise<AvancementsStatistiques>;
   modifierMétéo(chantierId: string, territoireCode: string, météo: Météo): Promise<void>;
-  récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[], optionsExport: OptionsExport): Promise<ChantierPourExport[]>;
+  récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[], optionsExport: OptionsExport, jalon: number): Promise<ChantierPourExport[]>;
   récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation: Habilitation, optionsExport: OptionsExport): Promise<Chantier['id'][]>;
   recupererLaRepartitionMeteo(chantiersLectureIds: string[], territoireCode: string, filtres: FiltreQueryParams): Promise<RepartitionMeteoChantiers>;
 }

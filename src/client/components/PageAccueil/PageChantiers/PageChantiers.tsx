@@ -40,8 +40,6 @@ import SélecteurMaille
   from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
-import api from '@/server/infrastructure/api/trpc/api';
-import { getDateBasculeAffichageValeursAnneePrecedente } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
@@ -60,6 +58,7 @@ interface PageChantiersProps {
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   repartitionMeteosChantiers: RepartitionMeteoContrat
+  jalon: number
 }
 
 const PageChantiers: FunctionComponent<PageChantiersProps> = ({
@@ -74,6 +73,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
   repartitionMeteosChantiers,
+  jalon,
 }) => {
 
   const { data: session } = useSession();
@@ -90,6 +90,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     estTerritorialise: parseAsBoolean.withDefault(false),
     maille: parseAsString.withDefault(''),
     statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']),
+    jalon: parseAsStringLiteral(['2024', '2025']),
   });
 
   const [filtresAlertes] = useQueryStates({
@@ -120,10 +121,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   } = usePageChantiers(chantiers, territoireCode, filtresComptesCalculés, avancementsAgrégés, session!.profil);
 
   const chantiersSontArchives = filtres.statut?.includes('ARCHIVE') ?? false;
-  
-  const { data: dateBasculeTauxAnnuelAnneeCouranteString } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE' });
-  const anneeCourante = (new Date).getFullYear();
-  const anneeJalon = getDateBasculeAffichageValeursAnneePrecedente(dateBasculeTauxAnnuelAnneeCouranteString as string).dateBasculeDepassee ? anneeCourante : anneeCourante - 1;
 
   return (
     <PageChantiersStyled>
@@ -246,7 +243,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                             variante='secondaire'
                           />
                           <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-                            {`Taux d\'avancement de l'année ${anneeJalon}`}
+                            {`Taux d'avancement de l'année ${jalon}`}
                           </p>
                         </div>
                       </div>
@@ -416,6 +413,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
               <TableauChantiers
                 chantiersSontArchives={chantiersSontArchives ?? false}
                 données={donnéesTableauChantiers}
+                jalon={jalon}
                 ministèresDisponibles={ministères}
                 nombreTotalChantiersAvecAlertes={nombreTotalChantiersAvecAlertes}
                 territoireCode={territoireCode}

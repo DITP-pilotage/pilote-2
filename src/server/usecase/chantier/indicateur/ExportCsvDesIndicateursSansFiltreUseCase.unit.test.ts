@@ -31,7 +31,7 @@ const optionsExport: OptionsExport = {
 
 describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
   it('Renvoie une liste vide si pas de chantiers', async () => {
-    // GIVEN
+    // Given
     const indicateurChunkSize = 5;
     const chantierIds: Chantier['id'][] = [];
     const chantierRepository = mock<ChantierRepository>();
@@ -43,18 +43,20 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     const habilitation = new HabilitationBuilder().build();
     const profil = ProfilEnum.DITP_ADMIN;
 
-    // WHEN
+    const jalon = 2024;
+
+    // When
     let result: string[][] = [];
-    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize, optionsExport })) {
+    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize, optionsExport, jalon })) {
       result = [...result, ...partialResult];
     }
 
-    // THEN
+    // Then
     expect(result).toEqual([]);
   });
 
   it('Délègue l\'habilitation aux repositories', async () => {
-    // GIVEN
+    // Given
     const indicateurChunkSize = 5;
     const chantierIds = ['CH-001'];
     const chantierRepository = mock<ChantierRepository>();
@@ -73,21 +75,23 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
       .build();
     const profil = ProfilEnum.DITP_ADMIN;
 
-    // WHEN
+    const jalon = 2024;
+
+    // When
     let result: string[][] = [];
-    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize, optionsExport })) {
+    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize, optionsExport, jalon })) {
       result = [...result, ...partialResult];
     }
 
-    // THEN
+    // Then
     expect(chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions)
       .toHaveBeenCalledWith(habilitation, optionsExport);
     expect(indicateurRepository.récupérerPourExports)
-      .toHaveBeenCalledWith(chantierIds, territoireCodesLecture);
+      .toHaveBeenCalledWith(chantierIds, territoireCodesLecture, jalon);
   });
 
   it('Renvoie 3 lignes pour 3 chantiers si configuré avec lots de 3', async () => {
-    // GIVEN
+    // Given
     const chantierIds = ['CH-001', 'CH-002', 'CH-003'];
     const indicateurChunkSize = 3;
     const chantierRepository = mock<ChantierRepository>();
@@ -103,13 +107,15 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     const habilitation = new HabilitationBuilder().build();
     const profil = ProfilEnum.DITP_ADMIN;
 
-    // WHEN
+    const jalon = 2024;
+
+    // When
     let result: string[][] = [];
-    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize, optionsExport })) {
+    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize, optionsExport, jalon })) {
       result = [...result, ...partialResult];
     }
 
-    // THEN
+    // Then
     expect(result).toEqual([
       ['Indicateur IND-001'],
       ['Indicateur IND-002'],
@@ -118,7 +124,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
   });
 
   it('Renvoie 4 lignes pour 4 chantiers si configuré avec lots de 3', async () => {
-    // GIVEN
+    // Given
     const chantierIds = ['CH-001', 'CH-002', 'CH-003', 'CH-004'];
     const indicateurChunkSize = 3;
     const chantierRepository = mock<ChantierRepository>();
@@ -137,13 +143,15 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     const habilitation = new HabilitationBuilder().build();
     const profil = ProfilEnum.DITP_ADMIN;
 
-    // WHEN
+    const jalon = 2024;
+
+    // When
     let result: string[][] = [];
-    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize, optionsExport })) {
+    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize, optionsExport, jalon })) {
       result = [...result, ...partialResult];
     }
 
-    // THEN
+    // Then
     expect(result).toEqual([
       ['Indicateur IND-001'],
       ['Indicateur IND-002'],
@@ -153,7 +161,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
   });
 
   it('Masque certains indicateurs pour les proflis DROMs', async () => {
-    // GIVEN
+    // Given
     const indicateurChunkSize = 5;
     const chantierIds = ['CH-001'];
     const chantierRepository = mock<ChantierRepository>();
@@ -175,13 +183,15 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     const habilitation = new HabilitationBuilder().build();
     const profil = ProfilEnum.DROM;
 
-    // WHEN
+    const jalon = 2024;
+
+    // When
     let result: string[][] = [];
-    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize, optionsExport })) {
+    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize, optionsExport, jalon })) {
       result = [...result, ...partialResult];
     }
 
-    // THEN
+    // Then
     expect(result).toEqual([
       ['Indicateur IND-001'],
       ['Indicateur IND-002'],

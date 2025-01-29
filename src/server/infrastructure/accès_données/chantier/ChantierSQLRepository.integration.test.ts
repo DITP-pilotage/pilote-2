@@ -1,13 +1,10 @@
+import { chantier_territoire_jalon } from '@prisma/client';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { prisma } from '@/server/db/prisma';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
-import {
-  getAnneeAffichageDateDeBascule,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
-import { configuration } from '@/config';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {
@@ -134,7 +131,7 @@ describe('ChantierSQLRepository', () => {
 
       // When
       const request = async () => {
-        await prismaChantierRepository.récupérerLesEntréesDUnChantier('CH-002', habilitation, profil);
+        await prismaChantierRepository.récupérerLesEntréesDUnChantier('CH-002', habilitation, profil, 2024);
       };
 
       // Then
@@ -180,7 +177,7 @@ describe('ChantierSQLRepository', () => {
       const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
 
       // When
-      const listeChantier = await prismaChantierRepository.récupérerLesEntréesDUnChantier('CH-001', habilitation, profil);
+      const listeChantier = await prismaChantierRepository.récupérerLesEntréesDUnChantier('CH-001', habilitation, profil, 2024);
 
       // Then
       expect(listeChantier.nom).toEqual('Chantier 001');
@@ -229,16 +226,50 @@ describe('ChantierSQLRepository', () => {
           maille: 'DEPT',
           zone_id: 'D87',
           territoire_code: 'DEPT-87',
+          chantier_territoire_jalon: {
+            createMany: {
+              data: [{
+                code_insee: '87',
+                maille: 'DEPT',
+                zone_id: 'D87',
+                jalon: 2024,
+                taux_avancement: 10,
+              }, {
+                code_insee: '87',
+                maille: 'DEPT',
+                zone_id: 'D87',
+                jalon: 2025,
+                taux_avancement: 12,
+              }],
+            },
+          },
         },
       });
 
       await prisma.chantier_territoire.create({
         data: {
           id: 'CH-001',
-          code_insee: '87',
+          code_insee: '88',
           maille: 'DEPT',
-          zone_id: 'D87',
+          zone_id: 'D88',
           territoire_code: 'DEPT-88',
+          chantier_territoire_jalon: {
+            createMany: {
+              data: [{
+                code_insee: '88',
+                maille: 'DEPT',
+                zone_id: 'D88',
+                jalon: 2024,
+                taux_avancement: 10,
+              }, {
+                code_insee: '88',
+                maille: 'DEPT',
+                zone_id: 'D88',
+                jalon: 2025,
+                taux_avancement: 12,
+              }],
+            },
+          },
         },
       });
 
@@ -250,7 +281,7 @@ describe('ChantierSQLRepository', () => {
       const profil = ProfilEnum.DITP_ADMIN;
 
       // When
-      const listeChantier = await prismaChantierRepository.récupérerLesEntréesDUnChantier('CH-001', habilitation, profil);
+      const listeChantier = await prismaChantierRepository.récupérerLesEntréesDUnChantier('CH-001', habilitation, profil, 2024);
 
       // Then
       expect(listeChantier.nom).toEqual('Chantier 001');
@@ -259,6 +290,9 @@ describe('ChantierSQLRepository', () => {
         territoire_code: 'DEPT-87',
       }, {
         territoire_code: 'NAT-FR',
+      }]);
+      expect(listeChantier.chantier_territoire[0]?.chantier_territoire_jalon).toIncludeAllPartialMembers<Partial<chantier_territoire_jalon>>([{
+        taux_avancement: 10,
       }]);
     });
   });
@@ -690,9 +724,10 @@ describe('ChantierSQLRepository', () => {
           taux_avancement_mandat: 20,
         }],
       });
+      const jalon = 2024;
 
       // When
-      const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87');
+      const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87', jalon);
 
       // Then
       expect(result).toMatchObject([
@@ -808,9 +843,10 @@ describe('ChantierSQLRepository', () => {
         }],
       });
 
+      const jalon = 2024;
 
       // When
-      const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87');
+      const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87', jalon);
 
       // Then
       expect(result).toMatchObject([
@@ -914,8 +950,10 @@ describe('ChantierSQLRepository', () => {
             est_applicable: true,
           }],
         });
+        const jalon = 2024;
+
         // When
-        const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87');
+        const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87', jalon);
 
         // Then
         expect(result).toMatchObject([
@@ -1008,8 +1046,11 @@ describe('ChantierSQLRepository', () => {
             est_applicable: true,
           }],
         });
+
+        const jalon = 2024;
+      
         // When
-        const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87');
+        const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87', jalon);
 
         // Then
         expect(result).toMatchObject([
@@ -1102,8 +1143,11 @@ describe('ChantierSQLRepository', () => {
             est_applicable: true,
           }],
         });
+
+        const jalon = 2024;
+      
         // When
-        const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87');
+        const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87', jalon);
 
         // Then
         expect(result).toMatchObject([
@@ -1191,8 +1235,11 @@ describe('ChantierSQLRepository', () => {
             est_applicable: true,
           }],
         });
+
+        const jalon = 2024;
+      
         // When
-        const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87');
+        const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87', jalon);
 
         // Then
         expect(result).toMatchObject([{
@@ -1296,8 +1343,11 @@ describe('ChantierSQLRepository', () => {
             est_applicable: true,
           }],
         });
+
+        const jalon = 2024;
+      
         // When
-        const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87');
+        const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87', jalon);
 
         // Then
         expect(result).toMatchObject([
@@ -1408,8 +1458,11 @@ describe('ChantierSQLRepository', () => {
             est_applicable: true,
           }],
         });
+
+        const jalon = 2024;
+      
         // When
-        const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87');
+        const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87', jalon);
 
         // Then
         expect(result).toMatchObject([
@@ -1515,8 +1568,11 @@ describe('ChantierSQLRepository', () => {
             est_applicable: true,
           }],
         });
+
+        const jalon = 2024;
+      
         // When
-        const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87');
+        const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87', jalon);
 
         // Then
         expect(result).toMatchObject([
@@ -1622,8 +1678,11 @@ describe('ChantierSQLRepository', () => {
             est_applicable: true,
           }],
         });
+
+        const jalon = 2024;
+      
         // When
-        const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87');
+        const result = await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds, territoiresLectureIds, profil, filtres, 'DEPT-87', jalon);
 
         // Then
         expect(result).toMatchObject([{
@@ -1776,7 +1835,7 @@ describe('ChantierSQLRepository', () => {
             id: 'CH-001',
             maille: 'DEPT',
             zone_id: 'D01',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '01',
             territoire_code: 'DEPT-01',
             taux_avancement: 25,
@@ -1992,8 +2051,10 @@ describe('ChantierSQLRepository', () => {
           listeStatuts: [],
         };
 
+        const jalon = 2024;
+        
         // When
-        const result = await prismaChantierRepository.récupérerPourExports(chantierIdsLecture, territoireCodesLecture, optionsPourExport);
+        const result = await prismaChantierRepository.récupérerPourExports(chantierIdsLecture, territoireCodesLecture, optionsPourExport, jalon);
 
         // Then
         expect(result).toPartiallyContain({
@@ -2126,8 +2187,10 @@ describe('ChantierSQLRepository', () => {
           listeStatuts: [],
         };
 
+        const jalon = 2024;
+        
         // When
-        const result = await prismaChantierRepository.récupérerPourExports(chantierIdsLecture, territoireCodesLecture, optionsPourExport);
+        const result = await prismaChantierRepository.récupérerPourExports(chantierIdsLecture, territoireCodesLecture, optionsPourExport, jalon);
 
         // Then
         expect(result).toHaveLength(1);
@@ -2218,8 +2281,10 @@ describe('ChantierSQLRepository', () => {
         };
 
 
+        const jalon = 2024;
+        
         // When
-        const result = await prismaChantierRepository.récupérerPourExports(chantierIdsLecture, territoireCodesLecture, optionsPourExport);
+        const result = await prismaChantierRepository.récupérerPourExports(chantierIdsLecture, territoireCodesLecture, optionsPourExport, jalon);
 
         // Then
         expect(result).toHaveLength(2);
