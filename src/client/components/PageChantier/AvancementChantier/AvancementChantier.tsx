@@ -1,4 +1,5 @@
 import { FunctionComponent } from 'react';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import AvancementsTerritoire from '@/components/_commons/AvancementsTerritoire/AvancementsTerritoire';
@@ -11,6 +12,8 @@ import SélecteurMaille
   from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import { JaugeDeProgressionSmall } from '@/components/_commons/JaugeDeProgressionSmall/JaugeDeProgressionSmall';
+import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
+import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import AvancementChantierStyled from './AvancementChantier.styled';
 
 const classeÀPartirDeLaMaille = {
@@ -57,6 +60,16 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   jalon,
 }) => {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+
+  const [, setJalon] = useQueryState('jalon', parseAsStringLiteral(['2024', '2025']).withDefault('2024').withOptions({
+    shallow: false,
+    history: 'push',
+  }));
+
+  const auClickSelecteurJalon = (valeur: '2024' | '2025') => {
+    sauvegarderFiltres({ jalon: valeur });
+    setJalon(valeur);
+  };
 
   const pathname = '/chantier/[id]/[territoireCode]';
 
@@ -131,9 +144,18 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               valeur={!!avancements.nationale && process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancements.nationale.annuel.moyenne : null}
               variante='secondaire-light'
             />
-            <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-              {`Avancement à échéance ${jalon}`}
-            </p>
+            <div className='flex align-center justify-center fr-text--xs'>
+              <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
+                Avancement à échéance
+              </p>
+              <Sélecteur<'2024' | '2025'>
+                htmlName='jalon'
+                options={[{ libellé: '2024', valeur: '2024' }, { libellé: '2025', valeur: '2025' }]}
+                texteFantôme='Sélectionner un jalon'
+                valeurModifiéeCallback={auClickSelecteurJalon}
+                valeurSélectionnée={`${jalon}` as '2024' | '2025'}
+              />
+            </div>
           </div>
         </div>
       </Bloc>

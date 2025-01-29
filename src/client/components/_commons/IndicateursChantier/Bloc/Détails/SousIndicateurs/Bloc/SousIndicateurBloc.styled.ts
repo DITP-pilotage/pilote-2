@@ -1,6 +1,13 @@
 import styled from '@emotion/styled';
 
 const SousIndicateurBlocStyled = styled.div`
+  .fr-select-group, .fr-select {
+    width: 4rem;
+    padding: 0.2rem 0 0.2rem 0.3rem;
+    margin: 0!important;
+    background-position: 100% 70%!important;
+  }
+  
   &:last-of-type {
     margin-bottom: 0 !important;
   }

@@ -75,8 +75,14 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     history: 'push',
   }));
 
+  const auClickSelecteurJalon = (valeur: '2024' | '2025') => {
+    sauvegarderFiltres({ jalon: valeur });
+    setJalon(valeur);
+  };
+
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
   const detailTerritoiresCompares = territoiresCompares.map(récupérerDétailsSurUnTerritoire);
+
   const détailTerritoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
 
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
@@ -105,11 +111,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   })).sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) => indicateurDétailsTerritoire1.données.codeInsee.localeCompare(indicateurDétailsTerritoire2.données.codeInsee));
 
   const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour, indicateurEstApplicable);
-
-  const auClickSelecteurJalon = (valeur: '2024' | '2025') => {
-    sauvegarderFiltres({ jalon: valeur });
-    setJalon(valeur);
-  };
 
   return (
     <IndicateurBlocStyled
