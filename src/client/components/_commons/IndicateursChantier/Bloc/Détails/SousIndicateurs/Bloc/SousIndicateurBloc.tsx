@@ -1,3 +1,4 @@
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Fragment, FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
@@ -22,7 +23,6 @@ import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import useSousIndicateurBloc from './useSousIndicateurBloc';
 import SousIndicateurBlocStyled from './SousIndicateurBloc.styled';
-import { parseAsStringLiteral, useQueryState } from 'nuqs';
 
 interface SousIndicateurBlocProps {
   indicateur: Indicateur

@@ -3,16 +3,16 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { FiltreQueryParams, SortingParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
-import {
-  ChantierAccueilContrat,
-  MailleChantierContrat,
-} from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { PrismaChantier } from '@/server/infrastructure/accès_données/chantier/PrismaChantier';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
-import { presenterEnChantierRapportDetaille } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
+import {
+  ChantierRapportDetailleContrat,
+  presenterEnChantierRapportDetaille,
+} from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
+import { MailleChantierContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
 
 const masquerPourDROM = (sessionProfil: string, mailleChantier: MailleChantierContrat) => {
   return sessionProfil === ProfilEnum.DROM && mailleChantier === 'nationale';
@@ -38,7 +38,7 @@ const appliquerFiltre = (mailleChantier: MailleChantierContrat, sessionProfil: P
   };
 };
 
-const appliquerTri = (sorting: SortingParams, mailleChantier: MailleChantierContrat, territoireCode: string) => (chantierA: ChantierAccueilContrat, chantierB: ChantierAccueilContrat) => {
+const appliquerTri = (sorting: SortingParams, mailleChantier: MailleChantierContrat, territoireCode: string) => (chantierA: ChantierRapportDetailleContrat, chantierB: ChantierRapportDetailleContrat) => {
   switch (sorting.id) {
     case 'avancement': {
       const donneeTriA = chantierA.mailles[mailleChantier][territoireCode].avancement.global;
@@ -136,7 +136,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
     private readonly territoireRepository: TerritoireRepository,
   ) {}
 
-  async run(habilitations: Habilitations, profil: ProfilCode, territoireCode: string, mailleChantier: MailleChantierContrat, ministères: Ministère[], mapAxe: Map<string, Axe>, filtres: FiltreQueryParams, sorting: SortingParams, jalon: number): Promise<ChantierAccueilContrat[]> {
+  async run(habilitations: Habilitations, profil: ProfilCode, territoireCode: string, mailleChantier: MailleChantierContrat, ministères: Ministère[], mapAxe: Map<string, Axe>, filtres: FiltreQueryParams, sorting: SortingParams, jalon: number): Promise<ChantierRapportDetailleContrat[]> {
     const habilitation = new Habilitation(habilitations);
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
@@ -162,7 +162,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
             return [...acc, presenterEnChantierRapportDetaille(chantierIdentite, territoires, ministères, territoireCode, profil)];
           }
           return acc;
-        }, [] as ChantierAccueilContrat[])
+        }, [] as ChantierRapportDetailleContrat[])
         .sort(appliquerTri(sorting, mailleChantier, territoireCode)),
       );
   }

@@ -33,11 +33,11 @@ const PageChantiersStyled = styled.main`
   .fr-select-group, .fr-select {
     width: 3.5rem;
     height: 1.5rem;
-    padding: 0.07rem 0 0rem 0.2rem;
+    padding: 0.07rem 0 0 0.2rem;
     margin: 0!important;
-    background-position: 100% 70%!important;
-    background-color: transparent;
     font-size: 0.75rem!important;
+    background-color: transparent;
+    background-position: 100% 70%!important;
   }
 
   .fr-select {
