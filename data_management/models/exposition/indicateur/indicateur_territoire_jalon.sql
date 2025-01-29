@@ -13,8 +13,8 @@ jalon_annee_precedente AS (
         zone_id,
         date_part('year', now()) - 1 AS jalon,
         vca_prev_year_date::date AS date_valeur_cible,
-        taa_prev_year AS taux_avancement,
         vca_prev_year AS valeur_cible,
+        taa_prev_year AS taux_avancement,
         tap_courant AS taux_avancement_proposition,
         date_valeur_actuelle_prev_year::date AS date_valeur_actuelle,
         valeur_actuelle_prev_year AS valeur_actuelle
