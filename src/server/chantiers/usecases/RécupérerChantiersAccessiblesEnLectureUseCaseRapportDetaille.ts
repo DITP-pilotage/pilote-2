@@ -11,11 +11,8 @@ import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { PrismaChantier } from '@/server/infrastructure/accès_données/chantier/PrismaChantier';
-import {
-  ChantierRapportDetailleContrat,
-  presenterEnChantierRapportDetaille,
-} from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
+import { presenterEnChantierRapportDetaille } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 
 const masquerPourDROM = (sessionProfil: string, mailleChantier: MailleChantierContrat) => {
   return sessionProfil === ProfilEnum.DROM && mailleChantier === 'nationale';
@@ -26,9 +23,11 @@ const appliquerFiltreDrom = (chantier: PrismaChantier, sessionProfil: string, ma
 
 const appliquerFiltreTerritorialise = (chantier: PrismaChantier, mailleChantier: MailleChantierContrat): boolean => {
   return mailleChantier !== 'nationale'
-    ? chantier.est_territorialise  || mailleChantier === 'departementale'
-      ? !!chantier.possede_taux_avancement_departemental || !!chantier.possede_meteo_departemental
-      : !!chantier.possede_taux_avancement_regional  || !!chantier.possede_meteo_regional
+    ? chantier.est_territorialise || (
+      mailleChantier === 'departementale'
+        ? !!chantier.possede_taux_avancement_departemental || !!chantier.possede_meteo_departemental
+        : !!chantier.possede_taux_avancement_regional  || !!chantier.possede_meteo_regional
+    )
     : true;
 };
 
@@ -137,7 +136,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
     private readonly territoireRepository: TerritoireRepository,
   ) {}
 
-  async run(habilitations: Habilitations, profil: ProfilCode, territoireCode: string, mailleChantier: MailleChantierContrat, ministères: Ministère[], mapAxe: Map<string, Axe>, filtres: FiltreQueryParams, sorting: SortingParams, jalon: number): Promise<ChantierRapportDetailleContrat[]> {
+  async run(habilitations: Habilitations, profil: ProfilCode, territoireCode: string, mailleChantier: MailleChantierContrat, ministères: Ministère[], mapAxe: Map<string, Axe>, filtres: FiltreQueryParams, sorting: SortingParams, jalon: number): Promise<ChantierAccueilContrat[]> {
     const habilitation = new Habilitation(habilitations);
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
@@ -158,11 +157,12 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
       .then(listePrismaChantier => listePrismaChantier
         .reduce((acc, chantierIdentite) => {
           // on devrait pouvoir appliquer le filtre plus tôt
-          if (appliquerFiltre(mailleChantier, profil)(chantierIdentite)) {
+          const chantierTerritoireSelectionne = chantierIdentite.chantier_territoire.find(chantierTerritoire => chantierTerritoire.territoire_code === territoireCode);
+          if (chantierTerritoireSelectionne?.est_applicable && appliquerFiltre(mailleChantier, profil)(chantierIdentite)) {
             return [...acc, presenterEnChantierRapportDetaille(chantierIdentite, territoires, ministères, territoireCode, profil)];
           }
           return acc;
-        }, [] as ChantierRapportDetailleContrat[])
+        }, [] as ChantierAccueilContrat[])
         .sort(appliquerTri(sorting, mailleChantier, territoireCode)),
       );
   }
