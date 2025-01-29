@@ -19,9 +19,13 @@ const BulleDInfo: FunctionComponent<BulleDInfoProps> = ({ x, y, titre, children 
       <div className='fr-py-1w fr-px-2w'>
         { titre }
       </div>
-      <div className='fr-py-1w fr-px-2w'>
-        { children }
-      </div>
+      {
+        children ? 
+          <div className='fr-py-1w fr-px-2w'>
+            { children }
+          </div> : null
+      }
+
     </BulleDInfoStyled>
   );
 };
