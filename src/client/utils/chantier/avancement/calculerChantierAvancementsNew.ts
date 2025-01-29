@@ -30,8 +30,6 @@ export default function calculerChantierAvancements(
     return maille === 'DEPT' ? donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[territoireCode].répartition.avancements[typeTauxAvancement] : null;
   };
 
-  console.log(avancementsAgrégés?.global);
-
   return {
     nationale: {
       global: {

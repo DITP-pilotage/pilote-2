@@ -23,6 +23,7 @@ import { removeAccents } from '@/server/utils/remove-accents';
 import { calculerMoyenne, calculerMédiane } from '@/client/utils/statistiques/statistiques';
 import { PrismaChantier } from '@/server/infrastructure/accès_données/chantier/PrismaChantier';
 import { RepartitionMeteoChantiers } from '@/server/chantiers/domain/RepartitionMeteoChantiers';
+import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -545,6 +546,11 @@ export default class ChantierSQLRepository implements ChantierRepository {
           in: (chantiersLecture || []),
         },
         maille: CODES_MAILLES[maille],
+        NOT: {
+          taux_avancement_mandat: {
+            equals: null,
+          },
+        },
       },
       orderBy: {
         _avg: {
@@ -557,8 +563,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
       global: {
         moyenne: calculerMoyenne(listeMoyenneParTerritoire.map(moyenneParTerritoire => moyenneParTerritoire._avg.taux_avancement_mandat)),
         médiane: calculerMédiane(listeMoyenneParTerritoire.map(moyenneParTerritoire => moyenneParTerritoire._avg.taux_avancement_mandat)),
-        minimum: listeMoyenneParTerritoire.at(0) === null || listeMoyenneParTerritoire.at(0) === undefined ? null : listeMoyenneParTerritoire.at(0)!._avg.taux_avancement_mandat,
-        maximum: listeMoyenneParTerritoire.at(-1) === null || listeMoyenneParTerritoire.at(-1) === undefined ? null : listeMoyenneParTerritoire.at(-1)!._avg.taux_avancement_mandat,
+        minimum: verifyValeurIsNotNullOrUndefined(listeMoyenneParTerritoire.at(0)?._avg.taux_avancement_mandat),
+        maximum: verifyValeurIsNotNullOrUndefined(listeMoyenneParTerritoire.at(-1)!._avg.taux_avancement_mandat),
       },
       annuel: {
         moyenne: null,
