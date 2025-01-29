@@ -60,16 +60,8 @@ SELECT
     t.code_insee,
     t.maille AS maille,
     z.zone_id,
-    CASE
-        WHEN date_bascule.date_depassee
-            THEN ta_ch_today.tag_ch
-        ELSE ta_prev_year.tag_prev_year
-    END AS taux_avancement_mandat,
-    CASE
-        WHEN date_bascule.date_depassee
-            THEN ta_ch_today.date_ta::date
-        ELSE ta_prev_year.taa_prev_year_date::date
-    END AS date_taux_avancement_mandat,
+    ta_ch_today.tag_ch AS taux_avancement_mandat,
+    ta_ch_today.date_ta::date AS date_taux_avancement_mandat,
     t.nom AS territoire_nom,
     sr.meteo,
     ta_ch_prev_month.tag_ch AS taux_avancement_mandat_valeur_precedente,
@@ -136,7 +128,6 @@ SELECT
     COALESCE(pva.possede_proposition_valeur_actuelle, FALSE) as possede_proposition_valeur_actuelle
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch
 CROSS JOIN {{ source('db_schema_public', 'territoire') }} AS t
-CROSS JOIN {{ ref('get_date_bascule_depassee') }} AS date_bascule
 LEFT JOIN
     {{ source('python_load', 'metadata_zones') }} AS z
     ON t.zone_id = z.zone_id
@@ -156,11 +147,6 @@ LEFT JOIN
     ON
         meta_ch.id = ta_ch_prev_month.chantier_id
         AND z.zone_id = ta_ch_prev_month.zone_id
-LEFT JOIN
-    {{ ref('get_ta_ch_prev_year') }} AS ta_prev_year
-    ON
-        meta_ch.id = ta_prev_year.chantier_id
-        AND t.code = ta_prev_year.territoire_code
 LEFT JOIN
     {{ ref('int_chantiers_zone_applicables') }} AS chantier_za
     ON meta_ch.id = chantier_za.chantier_id AND z.zone_id = chantier_za.zone_id
