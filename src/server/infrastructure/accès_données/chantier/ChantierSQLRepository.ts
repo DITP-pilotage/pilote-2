@@ -564,7 +564,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
         moyenne: calculerMoyenne(listeMoyenneParTerritoire.map(moyenneParTerritoire => moyenneParTerritoire._avg.taux_avancement_mandat)),
         médiane: calculerMédiane(listeMoyenneParTerritoire.map(moyenneParTerritoire => moyenneParTerritoire._avg.taux_avancement_mandat)),
         minimum: verifyValeurIsNotNullOrUndefined(listeMoyenneParTerritoire.at(0)?._avg.taux_avancement_mandat),
-        maximum: verifyValeurIsNotNullOrUndefined(listeMoyenneParTerritoire.at(-1)!._avg.taux_avancement_mandat),
+        maximum: verifyValeurIsNotNullOrUndefined(listeMoyenneParTerritoire.at(-1)?._avg.taux_avancement_mandat),
       },
       annuel: {
         moyenne: null,
