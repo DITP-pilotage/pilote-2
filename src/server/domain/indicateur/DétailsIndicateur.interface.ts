@@ -36,7 +36,6 @@ export type DétailsIndicateur = {
   valeurCibleAnnuelle: number | null,
   dateValeurCibleAnnuelle: string | null,
   avancement: Avancement,
-  avancementMandat: Avancement,
   proposition: DetailIndicateurPropositionValeurActuelle | null,
   unité: string | null,
   est_applicable: boolean | null,

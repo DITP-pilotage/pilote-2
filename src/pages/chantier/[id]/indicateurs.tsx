@@ -18,6 +18,10 @@ import {
   presenterEnInformationIndicateurContrat,
 } from '@/server/app/contrats/InformationIndicateurContrat';
 import { getFiltresActifs } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { configuration } from '@/config';
 
 interface NextPageImportIndicateurProps {
   chantierInformations: ChantierInformations
@@ -44,6 +48,8 @@ export async function getServerSideProps({
       notFound: true,
     };
   }
+  const jalon = Number.parseInt(query.jalon as string) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
+
 
   const session = await getServerSession(req, res, authOptions);
   if (!session || !estAutoriséAImporterDesIndicateurs(session.profil)) {
@@ -54,7 +60,7 @@ export async function getServerSideProps({
     dependencies.getChantierRepository(),
     dependencies.getMinistèreRepository(),
     dependencies.getTerritoireRepository(),
-  ).run(params.id, session.habilitations, session.profil);
+  ).run(params.id, session.habilitations, session.profil, jalon);
 
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs = await indicateurRepository.récupérerParChantierId(params.id);

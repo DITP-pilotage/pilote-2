@@ -1,34 +1,38 @@
 import { indicateur_identite as PrismaIndicateurIdentite, indicateur_territoire as PrismaIndicateurTerritoire, indicateur_territoire_jalon as PrismaIndicateurTerritoireJalon, PrismaClient } from '@prisma/client';
 import { DonneeIndicateur } from '@/server/chantiers/domain/DonneeIndicateur';
 import { IndicateurRepository } from '@/server/chantiers/domain/ports/IndicateurRepository';
+import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
 
 const convertirEnDonneeIndicateur = (prismaIndicateurIdentite: PrismaIndicateurIdentite & {
   indicateur_territoire: (PrismaIndicateurTerritoire & { indicateur_territoire_jalon: PrismaIndicateurTerritoireJalon[] })[]
 }): DonneeIndicateur[] => {
-  return prismaIndicateurIdentite.indicateur_territoire.map(prismaIndicateurTerritoire => DonneeIndicateur.creerDonneeIndicateur({
-    indicId: prismaIndicateurIdentite.id,
-    zoneId: prismaIndicateurTerritoire.zone_id,
-    maille: prismaIndicateurTerritoire.maille,
-    codeInsee: prismaIndicateurTerritoire.code_insee,
-    territoireCode: prismaIndicateurTerritoire.territoire_code,
-    valeurInitiale: prismaIndicateurTerritoire.valeur_initiale,
-    dateValeurInitiale: prismaIndicateurTerritoire.date_valeur_initiale,
-    valeurActuelle: prismaIndicateurTerritoire.valeur_actuelle,
-    dateValeurActuelle: prismaIndicateurTerritoire.date_valeur_actuelle,
-    valeurCibleAnnuelle: prismaIndicateurTerritoire.indicateur_territoire_jalon[0].valeur_cible,
-    dateValeurCibleAnnuelle: prismaIndicateurTerritoire.indicateur_territoire_jalon[0].date_valeur_cible,
-    tauxAvancementAnnuel: prismaIndicateurTerritoire.indicateur_territoire_jalon[0].taux_avancement,
-    valeurCibleGlobale: prismaIndicateurTerritoire.valeur_cible_mandat,
-    dateValeurCibleGlobale: prismaIndicateurTerritoire.date_valeur_cible_mandat,
-    tauxAvancementGlobale: prismaIndicateurTerritoire.taux_avancement_mandat,
-    estBarometre: prismaIndicateurIdentite.est_barometre || false,
-  }));
+  return prismaIndicateurIdentite.indicateur_territoire.map(prismaIndicateurTerritoire => {
+    const indicateurTerritoireJalon = prismaIndicateurTerritoire.indicateur_territoire_jalon[0];
+    return DonneeIndicateur.creerDonneeIndicateur({
+      indicId: prismaIndicateurIdentite.id,
+      zoneId: prismaIndicateurTerritoire.zone_id,
+      maille: prismaIndicateurTerritoire.maille,
+      codeInsee: prismaIndicateurTerritoire.code_insee,
+      territoireCode: prismaIndicateurTerritoire.territoire_code,
+      valeurInitiale: prismaIndicateurTerritoire.valeur_initiale,
+      dateValeurInitiale: prismaIndicateurTerritoire.date_valeur_initiale,
+      valeurActuelle: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_actuelle),
+      dateValeurActuelle: indicateurTerritoireJalon?.date_valeur_actuelle || null,
+      valeurCibleAnnuelle: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_cible),
+      dateValeurCibleAnnuelle: indicateurTerritoireJalon?.date_valeur_cible || null,
+      tauxAvancementAnnuel: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.taux_avancement),
+      valeurCibleGlobale: prismaIndicateurTerritoire.valeur_cible_mandat,
+      dateValeurCibleGlobale: prismaIndicateurTerritoire.date_valeur_cible_mandat,
+      tauxAvancementGlobale: prismaIndicateurTerritoire.taux_avancement_mandat,
+      estBarometre: prismaIndicateurIdentite.est_barometre || false,
+    });
+  });
 };
 
 export class PrismaIndicateurRepository implements IndicateurRepository {
   constructor(private prismaClient: PrismaClient) {}
 
-  async listerParIndicId({ indicId }: { indicId: string }): Promise<DonneeIndicateur[]> {
+  async listerParIndicId({ indicId, jalon }: { indicId: string, jalon: number }): Promise<DonneeIndicateur[]> {
     const indicateurIdentite = await this.prismaClient.indicateur_identite.findUnique({
       where: { id: indicId },
       include: {
@@ -36,7 +40,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           include: {
             indicateur_territoire_jalon: {
               where: {
-                jalon: 2025,
+                jalon,
               },
             },
           },

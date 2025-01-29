@@ -10,10 +10,6 @@ import MinistèreRepository from '@/server/domain/ministère/MinistèreRepositor
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { configuration } from '@/config';
-import {
-  getAnneeAffichageDateDeBascule,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 
 describe('RécupérerChantierUseCase', () => {
   let récupérerChantierUseCase: RécupérerChantierUseCase;
@@ -73,9 +69,11 @@ describe('RécupérerChantierUseCase', () => {
       territoires: ['NAT-FR'],
     } } as unknown as Utilisateur['habilitations'];
 
+    const jalon = 2024;
+
     // When
-    const result1 = await récupérerChantierUseCase.run('CH-001', habilitation, profil);
-    const result2 = await récupérerChantierUseCase.run('CH-002', habilitation, profil);
+    const result1 = await récupérerChantierUseCase.run('CH-001', habilitation, profil, jalon);
+    const result2 = await récupérerChantierUseCase.run('CH-002', habilitation, profil, jalon);
 
     // Then
     expect(result1.nom).toEqual('Chantier 001');
@@ -128,7 +126,7 @@ describe('RécupérerChantierUseCase', () => {
         territoire_code: 'NAT-FR',
         maille: 'NAT',
         code_insee: 'FR',
-        jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+        jalon: 2024,
         taux_avancement: 20,
       }, {
         id: 'CH-001',
@@ -136,7 +134,7 @@ describe('RécupérerChantierUseCase', () => {
         territoire_code: 'DEPT-13',
         maille: 'DEPT',
         code_insee: '13',
-        jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+        jalon: 2024,
         taux_avancement: 51,
       }],
     });
@@ -146,8 +144,10 @@ describe('RécupérerChantierUseCase', () => {
       territoires: ['NAT-FR', 'DEPT-13'],
     } } as unknown as Utilisateur['habilitations'];
 
+    const jalon = 2024;
+
     // When
-    const result = await récupérerChantierUseCase.run(chantierId, habilitation, profil);
+    const result = await récupérerChantierUseCase.run(chantierId, habilitation, profil, jalon);
 
     // Then
     expect(result.mailles.nationale).toMatchObject({
@@ -229,9 +229,11 @@ describe('RécupérerChantierUseCase', () => {
       territoires: ['NAT-FR'],
     } } as unknown as Utilisateur['habilitations'];
 
+    const jalon = 2024;
+
     // When
-    const result1 = await récupérerChantierUseCase.run('CH-001', habilitation, profil);
-    const result2 = await récupérerChantierUseCase.run('CH-002', habilitation, profil);
+    const result1 = await récupérerChantierUseCase.run('CH-001', habilitation, profil, jalon);
+    const result2 = await récupérerChantierUseCase.run('CH-002', habilitation, profil, jalon);
 
     // Then
     expect(result1.responsables.porteur).toBeDefined();
@@ -274,8 +276,10 @@ describe('RécupérerChantierUseCase', () => {
       territoires: ['NAT-FR'],
     } } as unknown as Utilisateur['habilitations'];
 
+    const jalon = 2024;
+
     // When
-    const result = await récupérerChantierUseCase.run(chantierId, habilitation, profil);
+    const result = await récupérerChantierUseCase.run(chantierId, habilitation, profil, jalon);
 
     // Then
     expect(result.responsables.directeursProjet[0]).toStrictEqual({ nom: 'Jean Bon', email: null });
@@ -308,8 +312,10 @@ describe('RécupérerChantierUseCase', () => {
       territoires: ['NAT-FR'],
     } } as unknown as Utilisateur['habilitations'];
 
+    const jalon = 2024;
+
     // When
-    const result = await récupérerChantierUseCase.run(chantierId, habilitation, profil);
+    const result = await récupérerChantierUseCase.run(chantierId, habilitation, profil, jalon);
 
     // Then
     expect(result.estBaromètre).toBe(true);
@@ -343,9 +349,11 @@ describe('RécupérerChantierUseCase', () => {
         territoires: ['NAT-FR', 'DEPT-12'],
       } } as unknown as Utilisateur['habilitations'];
 
+      const jalon = 2024;
+
       // When
       const request = async () => {
-        await récupérerChantierUseCase.run(chantierId, habilitation, profil);
+        await récupérerChantierUseCase.run(chantierId, habilitation, profil, jalon);
       };
 
       // Then

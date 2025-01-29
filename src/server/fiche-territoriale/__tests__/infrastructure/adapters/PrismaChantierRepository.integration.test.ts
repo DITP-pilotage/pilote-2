@@ -1,9 +1,5 @@
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { PrismaChantierRepository } from '@/server/fiche-territoriale/infrastructure/adapters/PrismaChantierRepository';
-import {
-  getAnneeAffichageDateDeBascule,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
-import { configuration } from '@/config';
 
 describe('PrismaChantierRepository', () => {
   let prismaChantierRepository: PrismaChantierRepository;
@@ -101,7 +97,7 @@ describe('PrismaChantierRepository', () => {
           data: [{
             id: 'CH-001',
             zone_id: 'D34',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
@@ -109,7 +105,7 @@ describe('PrismaChantierRepository', () => {
           }, {
             id: 'CH-002',
             zone_id: 'D34',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
@@ -117,7 +113,7 @@ describe('PrismaChantierRepository', () => {
           }, {
             id: 'CH-004',
             zone_id: 'D87',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '87',
             maille: 'DEPT',
             territoire_code: 'DEPT-87',
@@ -125,7 +121,7 @@ describe('PrismaChantierRepository', () => {
           }, {
             id: 'CH-003',
             zone_id: 'R01',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
@@ -134,7 +130,7 @@ describe('PrismaChantierRepository', () => {
         });
 
         // When
-        const result = await prismaChantierRepository.listerParTerritoireCodePourUnDepartement({ territoireCode });
+        const result = await prismaChantierRepository.listerParTerritoireCodePourUnDepartement({ territoireCode, jalon: 2024 });
 
         // Then
         expect(result).toHaveLength(2);
@@ -220,7 +216,7 @@ describe('PrismaChantierRepository', () => {
           data: [{
             id: 'CH-001',
             zone_id: 'D34',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
@@ -228,7 +224,7 @@ describe('PrismaChantierRepository', () => {
           }, {
             id: 'CH-002',
             zone_id: 'D34',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
@@ -236,7 +232,7 @@ describe('PrismaChantierRepository', () => {
           }, {
             id: 'CH-003',
             zone_id: 'R01',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
@@ -245,7 +241,7 @@ describe('PrismaChantierRepository', () => {
         });
 
         // When
-        const result = await prismaChantierRepository.listerParTerritoireCodePourUnDepartement({ territoireCode });
+        const result = await prismaChantierRepository.listerParTerritoireCodePourUnDepartement({ territoireCode, jalon: 2024 });
         // Then
         expect(result).toHaveLength(1);
         expect(result).toMatchObject([
@@ -318,15 +314,23 @@ describe('PrismaChantierRepository', () => {
           data: [{
             id: 'CH-001',
             zone_id: 'D34',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
             taux_avancement: null,
           }, {
+            id: 'CH-001',
+            zone_id: 'D34',
+            jalon: 2025,
+            code_insee: '34',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-34',
+            taux_avancement: 10,
+          }, {
             id: 'CH-002',
             zone_id: 'D34',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
@@ -334,7 +338,7 @@ describe('PrismaChantierRepository', () => {
           }, {
             id: 'CH-003',
             zone_id: 'R01',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
@@ -343,7 +347,7 @@ describe('PrismaChantierRepository', () => {
         });
 
         // When
-        const result = await prismaChantierRepository.listerParTerritoireCodePourUnDepartement({ territoireCode });
+        const result = await prismaChantierRepository.listerParTerritoireCodePourUnDepartement({ territoireCode, jalon: 2024 });
         // Then
         expect(result).toHaveLength(1);
         expect(result).toMatchObject([
@@ -440,7 +444,7 @@ describe('PrismaChantierRepository', () => {
           data: [{
             id: 'CH-001',
             zone_id: 'R01',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
@@ -448,7 +452,7 @@ describe('PrismaChantierRepository', () => {
           }, {
             id: 'CH-002',
             zone_id: 'R01',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
@@ -456,7 +460,7 @@ describe('PrismaChantierRepository', () => {
           }, {
             id: 'CH-004',
             zone_id: 'R02',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '02',
             maille: 'REG',
             territoire_code: 'REG-02',
@@ -464,7 +468,7 @@ describe('PrismaChantierRepository', () => {
           }, {
             id: 'CH-003',
             zone_id: 'D34',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
@@ -473,7 +477,7 @@ describe('PrismaChantierRepository', () => {
         });
 
         // When
-        const result = await prismaChantierRepository.listerParTerritoireCodePourUneRegion({ territoireCode });
+        const result = await prismaChantierRepository.listerParTerritoireCodePourUneRegion({ territoireCode, jalon: 2024 });
         // Then
         expect(result).toHaveLength(2);
         expect(result).toMatchObject([
@@ -548,7 +552,7 @@ describe('PrismaChantierRepository', () => {
           data: [{
             id: 'CH-001',
             zone_id: 'R01',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
@@ -556,7 +560,7 @@ describe('PrismaChantierRepository', () => {
           }, {
             id: 'CH-002',
             zone_id: 'R01',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
@@ -564,7 +568,7 @@ describe('PrismaChantierRepository', () => {
           }, {
             id: 'CH-003',
             zone_id: 'D34',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
@@ -573,7 +577,7 @@ describe('PrismaChantierRepository', () => {
         });
 
         // When
-        const result = await prismaChantierRepository.listerParTerritoireCodePourUneRegion({ territoireCode });
+        const result = await prismaChantierRepository.listerParTerritoireCodePourUneRegion({ territoireCode, jalon: 2024 });
         // Then
         expect(result).toHaveLength(1);
         expect(result).toMatchObject([
@@ -646,7 +650,7 @@ describe('PrismaChantierRepository', () => {
           data: [{
             id: 'CH-001',
             zone_id: 'R01',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
@@ -654,7 +658,7 @@ describe('PrismaChantierRepository', () => {
           }, {
             id: 'CH-002',
             zone_id: 'R01',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '01',
             maille: 'REG',
             territoire_code: 'REG-01',
@@ -662,7 +666,7 @@ describe('PrismaChantierRepository', () => {
           }, {
             id: 'CH-003',
             zone_id: 'D34',
-            jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+            jalon: 2024,
             code_insee: '34',
             maille: 'DEPT',
             territoire_code: 'DEPT-34',
@@ -671,7 +675,7 @@ describe('PrismaChantierRepository', () => {
         });
 
         // When
-        const result = await prismaChantierRepository.listerParTerritoireCodePourUneRegion({ territoireCode });
+        const result = await prismaChantierRepository.listerParTerritoireCodePourUneRegion({ territoireCode, jalon: 2024 });
         // Then
         expect(result).toHaveLength(1);
         expect(result).toMatchObject([

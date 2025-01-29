@@ -11,6 +11,10 @@ import { dependencies } from '@/server/infrastructure/Dependencies';
 import { configuration } from '@/config';
 import { NON_APPLICABLE } from '@/server/infrastructure/export_csv/valeurs';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 
 export default async function handleExportDesIndicateurs(request: NextApiRequest, response: NextApiResponse): Promise<void> {
   const session = await getServerSession(request, response, authOptions);
@@ -33,6 +37,7 @@ export default async function handleExportDesIndicateurs(request: NextApiRequest
     habilitation,
     profil: session.profil,
     indicateurChunkSize: configuration.export.csvIndicateursChunkSize,
+    jalon: (!Number.isNaN(request.query?.jalon) && verifyValeurIsNotNullOrUndefined(+request.query.jalon!)) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
     optionsExport: {
       perimetreIds: request.query.perimetreIds ? Array.isArray(request.query.perimetreIds) ? request.query.perimetreIds : [request.query.perimetreIds] as string[] : [],
       estBarometre: request.query.estBarometre === 'true',

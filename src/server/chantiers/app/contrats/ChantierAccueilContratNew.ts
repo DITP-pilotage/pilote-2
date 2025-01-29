@@ -6,6 +6,7 @@ import { créerDonnéesTerritoiresNew } from '@/server/infrastructure/accès_don
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
+import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
 
 interface TerritoireAvancementAccueilContrat {
   global: number | null
@@ -97,7 +98,7 @@ export const presenterEnChantierAccueilContratNew = (
         dateDeMàjDonnéesQuantitatives: chantierMailleNationale.date_taux_avancement_mandat?.toISOString() ?? null,
         estApplicable: chantierMailleNationale.est_applicable,
       } : {
-        avancement: { annuel: chantierMailleNationale.chantier_territoire_jalon.at(0)?.taux_avancement || null, global: chantierMailleNationale.taux_avancement_mandat },
+        avancement: { annuel: verifyValeurIsNotNullOrUndefined(chantierMailleNationale.chantier_territoire_jalon.at(0)?.taux_avancement), global: verifyValeurIsNotNullOrUndefined(chantierMailleNationale.taux_avancement_mandat) },
         météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
         écart: null,
         tendance: chantierMailleNationale.tendance,

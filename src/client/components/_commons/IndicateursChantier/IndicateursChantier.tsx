@@ -27,6 +27,7 @@ interface IndicateursProps {
   mailleSelectionnee: MailleInterne
   alerteMiseAJourIndicateur: boolean
   mailsDirecteursProjets: string[]
+  jalon: number
 }
 
 const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
@@ -43,6 +44,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   mailleSelectionnee,
   alerteMiseAJourIndicateur,
   mailsDirecteursProjets,
+  jalon,
 }) => {
 
   if (indicateurs.length === 0) {
@@ -98,6 +100,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                           estAutoriseAProposerUneValeurActuelle={estAutoriseAProposerUneValeurActuelle}
                           estInteractif={estInteractif}
                           indicateur={indicateur}
+                          jalon={jalon}
                           key={indicateur.id}
                           listeSousIndicateurs={listeSousIndicateurs}
                           mailleQuery={mailleQuery}

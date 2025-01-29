@@ -16,26 +16,19 @@ import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from '@/client/constants/légen
 import CartographieMétéo from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo';
 import { EnteteFicheConducteur } from '@/components/PageFicheConducteur/EnteteFicheConducteur';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import {
-  getDateBasculeAffichageValeursAnneePrecedente,
-} from '@/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
-import api from '@/server/infrastructure/api/trpc/api';
 
 const PageFicheConducteur: FunctionComponent<
-FicheConducteurContrat
+FicheConducteurContrat & { jalon: number }
 > = ({
   chantier,
   avancement,
+  jalon,
   synthèseDesRésultats,
   donnéesCartographie,
   publications,
   doitAfficherDonnéesCartographie,
 }) => {
   const commentaire = (synthèseDesRésultats.commentaire?.length || 0) > 1000 ? synthèseDesRésultats.commentaire?.slice(0, 930) + '... [commentaire coupé car dépassant les 1000 caractères]' : synthèseDesRésultats.commentaire;
-
-  const { data: dateBasculeTauxAnnuelAnneeCouranteString } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE' });
-  const anneeCourante = (new Date).getFullYear();
-  const anneeJalon = getDateBasculeAffichageValeursAnneePrecedente(dateBasculeTauxAnnuelAnneeCouranteString as string).dateBasculeDepassee ? anneeCourante : anneeCourante - 1;
 
   return (
     <PageFicheConducteurStyled>
@@ -124,7 +117,7 @@ FicheConducteurContrat
                       variante='secondaire'
                     />
                     <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-                      {`Taux d\'avancement de l'année ${anneeJalon}`}
+                      {`Taux d'avancement de l'année ${jalon}`}
                     </p>
                   </div>
                 </div>

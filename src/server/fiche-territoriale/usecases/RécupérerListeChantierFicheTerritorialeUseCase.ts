@@ -35,10 +35,10 @@ export class RécupérerListeChantierFicheTerritorialeUseCase {
     this.ministereRepository = ministereRepository;
   }
 
-  async run({ territoireCode }: { territoireCode: string }): Promise<ChantierFicheTerritoriale[]> {
+  async run({ territoireCode, jalon }: { territoireCode: string, jalon: number }): Promise<ChantierFicheTerritoriale[]> {
     const territoire = await this.territoireRepository.recupererTerritoireParCode({ territoireCode });
 
-    let chantiers = territoire.maille !== 'NAT' ? (await this.chantierRepository.listerParTerritoireCodePourEtMaille({ territoireCode, maille: territoire.maille }).then(chantiersResult => {
+    let chantiers = territoire.maille !== 'NAT' ? (await this.chantierRepository.listerParTerritoireCodePourEtMaille({ territoireCode, maille: territoire.maille, jalon }).then(chantiersResult => {
       return chantiersResult
         .filter(chantier => !CHANTIER_EXCLUS[territoire.maille].has(chantier.id))
         .sort((chantier1, chantier2) => {
@@ -67,13 +67,13 @@ export class RécupérerListeChantierFicheTerritorialeUseCase {
     ] = await Promise.all(
       [
         this.syntheseDesResultatsRepository.recupererMapSyntheseDesResultatsParListeChantierIdEtTerritoire({ listeChantierId, maille: territoire.maille, codeInsee: territoire.codeInsee }),
-        this.indicateurRepository.recupererMapIndicateursParListeChantierIdEtTerritoire({ listeChantierId, maille: territoire.maille, codeInsee: territoire.codeInsee }),
+        this.indicateurRepository.recupererMapIndicateursParListeChantierIdEtTerritoire({ listeChantierId, maille: territoire.maille, codeInsee: territoire.codeInsee, jalon }),
         this.ministereRepository.recupererMapMinistereParListeCodeMinistere({ listeCodeMinistere: listeCodeMinisterePorteur }),
       ],
     );
 
     const listeIndicateurId = [...mapIndicateurs.values()].flat().map(indicateur => indicateur.id);
-    const mapIndicateursNationale = await this.indicateurRepository.recupererMapIndicateursNationalParListeIndicateurId({ listeIndicateurId });
+    const mapIndicateursNationale = await this.indicateurRepository.recupererMapIndicateursNationalParListeIndicateurId({ listeIndicateurId, jalon });
 
     return chantiers.map(chantier => ChantierFicheTerritoriale.creerChantierFicheTerritoriale({
       nom: chantier.nom,

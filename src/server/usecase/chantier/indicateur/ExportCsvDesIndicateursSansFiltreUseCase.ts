@@ -64,13 +64,13 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
     private readonly _indicateurRepository: IndicateurRepository,
   ) {}
 
-  public async *run({ habilitation, profil, indicateurChunkSize, optionsExport }: { habilitation: Habilitation, profil: ProfilCode, indicateurChunkSize: number, optionsExport: OptionsExport }): AsyncGenerator<string[][]> {
+  public async *run({ habilitation, profil, indicateurChunkSize, optionsExport, jalon }: { habilitation: Habilitation, profil: ProfilCode, indicateurChunkSize: number, optionsExport: OptionsExport, jalon: number }): AsyncGenerator<string[][]> {
     const chantierIdsLecture = await this._chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation, optionsExport);
     const territoireCodesLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
     for (let i = 0; i < chantierIdsLecture.length; i += indicateurChunkSize) {
       const partialChantierIds = chantierIdsLecture.slice(i, i + indicateurChunkSize);
-      const indicateursPourExports = await this._indicateurRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
+      const indicateursPourExports = await this._indicateurRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture, jalon);
       yield indicateursPourExports
         .filter(ind => !this.masquerIndicateurPourProfilDROM(profil, ind) 
           && verifierOptionPerimetreIds(optionsExport, ind.périmètreIds) 

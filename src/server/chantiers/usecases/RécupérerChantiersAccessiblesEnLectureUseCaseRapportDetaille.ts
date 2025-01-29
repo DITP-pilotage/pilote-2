@@ -137,7 +137,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
     private readonly territoireRepository: TerritoireRepository,
   ) {}
 
-  async run(habilitations: Habilitations, profil: ProfilCode, territoireCode: string, mailleChantier: MailleChantierContrat, ministères: Ministère[], mapAxe: Map<string, Axe>, filtres: FiltreQueryParams, sorting: SortingParams): Promise<ChantierRapportDetailleContrat[]> {
+  async run(habilitations: Habilitations, profil: ProfilCode, territoireCode: string, mailleChantier: MailleChantierContrat, ministères: Ministère[], mapAxe: Map<string, Axe>, filtres: FiltreQueryParams, sorting: SortingParams, jalon: number): Promise<ChantierRapportDetailleContrat[]> {
     const habilitation = new Habilitation(habilitations);
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
@@ -154,7 +154,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
 
     const territoires = await this.territoireRepository.récupérerTousNew();
 
-    return this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLecture, territoiresLecture, profil, filtresPourChantier, territoireCode)
+    return this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLecture, territoiresLecture, profil, filtresPourChantier, territoireCode, jalon)
       .then(listePrismaChantier => listePrismaChantier
         .reduce((acc, chantierIdentite) => {
           // on devrait pouvoir appliquer le filtre plus tôt

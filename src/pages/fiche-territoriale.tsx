@@ -6,9 +6,20 @@ import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
 import { FicheTerritorialeContrat } from '@/server/fiche-territoriale/app/contrats/FicheTerritorialeContrat';
 import { ficheTerritorialeHandler } from '@/server/fiche-territoriale/infrastructure/handlers/FicheTerritorialeHandler';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { configuration } from '@/config';
 
 
-export const getServerSideProps: GetServerSideProps<{ ficheTerritoriale: FicheTerritorialeContrat }> = async ({ req, res, query }) => {
+export const getServerSideProps: GetServerSideProps<{
+  ficheTerritoriale: FicheTerritorialeContrat,
+  jalon: number
+}> = async ({
+  req,
+  res,
+  query,
+}) => {
   const session = await getServerSession(req, res, authOptions);
 
   if (!session || !estAutoriséAConsulterLaFicheTerritoriale(session.profil)) {
@@ -19,21 +30,28 @@ export const getServerSideProps: GetServerSideProps<{ ficheTerritoriale: FicheTe
     throw new Error('Veuillez choisir un département ou une région');
   }
 
-  const ficheTerritoriale = await ficheTerritorialeHandler().recupererFicheTerritoriale(query.territoireCode as string);
+  const jalon = Number.parseInt(query.jalon as string) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
+
+  const ficheTerritoriale = await ficheTerritorialeHandler().recupererFicheTerritoriale(query.territoireCode as string, jalon);
 
   return {
     props: {
       ficheTerritoriale,
+      jalon,
     },
   };
 };
 
-const FicheTerritoriale: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ ficheTerritoriale }) => {
+const FicheTerritoriale: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
+  ficheTerritoriale,
+  jalon,
+}) => {
   return (
     <PageFicheTerritoriale
       avancementAnnuelTerritoire={ficheTerritoriale.avancementAnnuelTerritoire}
       avancementGlobalTerritoire={ficheTerritoriale.avancementGlobalTerritoire}
       chantiersFicheTerritoriale={ficheTerritoriale.chantiersFicheTerritoriale}
+      jalon={jalon}
       répartitionMétéos={ficheTerritoriale.répartitionMétéos}
       territoire={ficheTerritoriale.territoire}
     />

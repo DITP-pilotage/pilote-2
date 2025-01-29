@@ -64,13 +64,13 @@ export class ExportCsvDesChantiersUseCase {
     private readonly _chantierRepository: ChantierRepository,
   ) {}
 
-  public async* run({ habilitation, profil, chantierChunkSize, optionsExport }: { habilitation: Habilitation, profil: ProfilCode, chantierChunkSize: number, optionsExport: OptionsExport }): AsyncGenerator<string[][]> {
+  public async* run({ habilitation, profil, chantierChunkSize, optionsExport, jalon }: { habilitation: Habilitation, profil: ProfilCode, chantierChunkSize: number, optionsExport: OptionsExport, jalon: number }): AsyncGenerator<string[][]> {
     const chantierIdsLecture = await this._chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation, optionsExport);
     const territoireCodesLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
     for (let i = 0; i < chantierIdsLecture.length; i += chantierChunkSize) {
       const partialChantierIds = chantierIdsLecture.slice(i, i + chantierChunkSize);
-      const partialResult = await this._chantierRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture, optionsExport);
+      const partialResult = await this._chantierRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture, optionsExport, jalon);
       yield partialResult
         .filter(chantier => !this.masquerChantierPourProfilDROM(profil, chantier) 
           && verifierOptionPerimetreIds(optionsExport, chantier.périmètreIds) 

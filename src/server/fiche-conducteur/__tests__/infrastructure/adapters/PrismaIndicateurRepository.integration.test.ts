@@ -2,10 +2,6 @@ import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import {
   PrismaIndicateurRepository,
 } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaIndicateurRepository';
-import {
-  getAnneeAffichageDateDeBascule,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
-import { configuration } from '@/config';
 
 describe('PrismaIndicateurRepository', () => {
   let prismaIndicateurRepository: PrismaIndicateurRepository;
@@ -146,16 +142,29 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           zone_id: 'FRANCE',
-          jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+          jalon: 2024,
           taux_avancement: 10,
           valeur_cible: 20,
+          valeur_actuelle: 10,
+          date_valeur_actuelle: new Date('2024-12-01'),
+        }, {
+          id: 'IND-001',
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          zone_id: 'FRANCE',
+          jalon: 2025,
+          taux_avancement: 10,
+          valeur_cible: 20,
+          valeur_actuelle: 12,
+          date_valeur_actuelle: new Date('2025-12-01'),
         }, {
           id: 'IND-002',
           code_insee: 'FR',
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           zone_id: 'FRANCE',
-          jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+          jalon: 2024,
           taux_avancement: 11,
           valeur_cible: 21,
         }, {
@@ -164,7 +173,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'DEPT',
           territoire_code: 'DEPT-01',
           zone_id: 'D01',
-          jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+          jalon: 2024,
           taux_avancement: 12,
           valeur_cible: 22,
         }, {
@@ -173,7 +182,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           zone_id: 'FRANCE',
-          jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+          jalon: 2024,
           taux_avancement: 13,
           valeur_cible: 23,
         }, {
@@ -182,7 +191,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           zone_id: 'FRANCE',
-          jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+          jalon: 2024,
           taux_avancement: 14,
           valeur_cible: 24,
         }, {
@@ -191,14 +200,14 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           zone_id: 'FRANCE',
-          jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+          jalon: 2024,
           taux_avancement: 15,
           valeur_cible: 15,
         }],
       });
 
       // When
-      const listeIndicateursResult = await prismaIndicateurRepository.récupérerIndicImpactParChantierId('CH-001');
+      const listeIndicateursResult = await prismaIndicateurRepository.récupérerIndicImpactParChantierId('CH-001', 2024);
 
       // Then
 
@@ -209,6 +218,7 @@ describe('PrismaIndicateurRepository', () => {
         objectifTauxAvancementIntermediaire: 10,
         objectifValeurCible: 10,
         objectifTauxAvancement: 30,
+        dateValeurActuelle: new Date('2024-12-01').toISOString(),
       }, {
         nom: 'Indicateur 002',
         type: 'IMPACT',

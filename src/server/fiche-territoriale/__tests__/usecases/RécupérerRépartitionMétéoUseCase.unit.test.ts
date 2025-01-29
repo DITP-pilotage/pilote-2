@@ -30,12 +30,14 @@ describe('RécupérerRépartitionMétéoUseCase', () => {
 
     chantierRepository.listerParTerritoireCodePourEtMaille.mockResolvedValue([chantier1, chantier2, chantier3, chantier4]);
 
+    const jalon = 2024;
+
     // When
-    const result = await récupérerRépartitionMétéoUseCase.run({ territoireCode });
+    const result = await récupérerRépartitionMétéoUseCase.run({ territoireCode, jalon });
 
     // Then
     expect(territoireRepository.recupererTerritoireParCode).toHaveBeenNthCalledWith(1, { territoireCode });
-    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'DEPT' });
+    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'DEPT', jalon });
 
     expect(result.nombreOrage).toEqual(2);
     expect(result.nombreCouvert).toEqual(1);
@@ -57,12 +59,14 @@ describe('RécupérerRépartitionMétéoUseCase', () => {
 
     chantierRepository.listerParTerritoireCodePourEtMaille.mockResolvedValue([chantier1, chantier2, chantier3, chantier4]);
 
+    const jalon = 2024;
+
     // When
-    const result = await récupérerRépartitionMétéoUseCase.run({ territoireCode });
+    const result = await récupérerRépartitionMétéoUseCase.run({ territoireCode, jalon });
 
     // Then
     expect(territoireRepository.recupererTerritoireParCode).toHaveBeenNthCalledWith(1, { territoireCode });
-    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'DEPT' });
+    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'DEPT', jalon });
 
     expect(result.nombreOrage).toEqual(2);
     expect(result.nombreCouvert).toEqual(0);
@@ -84,12 +88,14 @@ describe('RécupérerRépartitionMétéoUseCase', () => {
 
     chantierRepository.listerParTerritoireCodePourEtMaille.mockResolvedValue([chantier1, chantier2, chantier3, chantier4]);
 
+    const jalon = 2024;
+
     // When
-    const result = await récupérerRépartitionMétéoUseCase.run({ territoireCode });
+    const result = await récupérerRépartitionMétéoUseCase.run({ territoireCode, jalon });
 
     // Then
     expect(territoireRepository.recupererTerritoireParCode).toHaveBeenNthCalledWith(1, { territoireCode });
-    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'REG' });
+    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'REG', jalon });
 
     expect(result.nombreOrage).toEqual(2);
     expect(result.nombreCouvert).toEqual(1);

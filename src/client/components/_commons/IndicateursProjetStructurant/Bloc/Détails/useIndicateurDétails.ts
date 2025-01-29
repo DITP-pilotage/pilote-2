@@ -10,7 +10,7 @@ import {
 import api from '@/server/infrastructure/api/trpc/api';
 import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 
-export default function useIndicateurDétails(indicateurId: Indicateur['id'], futOuvert: boolean, typeDeRéforme: TypeDeRéforme) {
+export default function useIndicateurDétails(indicateurId: Indicateur['id'], futOuvert: boolean, typeDeRéforme: TypeDeRéforme, jalon: number) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
 
   const [donnéesCartographieAvancement, setDonnéesCartographieAvancement] = useState<CartographieDonnéesAvancement | null>(null);
@@ -31,7 +31,7 @@ export default function useIndicateurDétails(indicateurId: Indicateur['id'], fu
   
 
   const { refetch: fetchDétailsIndicateur  } = api.indicateur.récupererDétailsIndicateur.useQuery(
-    { indicateurId },
+    { indicateurId, jalon },
     {
       refetchOnWindowFocus: false,
       enabled: false,

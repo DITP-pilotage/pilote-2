@@ -33,7 +33,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
   });
 
   it('Renvoie une liste vide si pas de chantiers', async () => {
-    // GIVEN
+    // Given
     const chantierIds: Chantier['id'][] = [];
     const chantierChunkSize = 5;
     chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
@@ -43,23 +43,26 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const habilitation = new HabilitationBuilder().build();
     const profil = ProfilEnum.DITP_ADMIN;
 
-    // WHEN
+    const jalon = 2024;
+
+    // When
     let result: string[][] = [];
     for await (const partialResult of exportCsvDesChantiersSansFiltreUseCase.run({
       habilitation,
       profil,
       chantierChunkSize,
       optionsExport,
+      jalon,
     })) {
       result = [...result, ...partialResult];
     }
 
-    // THEN
+    // Then
     expect(result).toEqual([]);
   });
 
   it('Délègue l\'habilitation aux repositories', async () => {
-    // GIVEN
+    // Given
     const chantierChunkSize = 5;
     const chantierIds = ['CH-001'];
     chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
@@ -74,26 +77,29 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
       .build();
     const profil = ProfilEnum.DITP_ADMIN;
 
-    // WHEN
+    const jalon = 2024;
+
+    // When
     let result: string[][] = [];
     for await (const partialResult of exportCsvDesChantiersSansFiltreUseCase.run({
       habilitation,
       profil,
       chantierChunkSize,
       optionsExport,
+      jalon,
     })) {
       result = [...result, ...partialResult];
     }
 
-    // THEN
+    // Then
     expect(chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions)
       .toHaveBeenCalledWith(habilitation, optionsExport);
     expect(chantierRepository.récupérerPourExports)
-      .toHaveBeenCalledWith(chantierIds, territoireCodesLecture, optionsExport);
+      .toHaveBeenCalledWith(chantierIds, territoireCodesLecture, optionsExport, jalon);
   });
 
   it('Renvoie 3 lignes pour 3 chantiers si configuré avec lots de 3', async () => {
-    // GIVEN
+    // Given
     const chantierIds = ['CH-001', 'CH-002', 'CH-003'];
     const chantierChunkSize = 3;
 
@@ -106,18 +112,21 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const habilitation = new HabilitationBuilder().build();
     const profil = ProfilEnum.DITP_ADMIN;
 
-    // WHEN
+    const jalon = 2024;
+
+    // When
     let result: string[][] = [];
     for await (const partialResult of exportCsvDesChantiersSansFiltreUseCase.run({
       habilitation,
       profil,
       chantierChunkSize,
       optionsExport,
+      jalon,
     })) {
       result = [...result, ...partialResult];
     }
 
-    // THEN
+    // Then
     expect(result).toEqual([
       ['Chantier CH-001'],
       ['Chantier CH-002'],
@@ -126,7 +135,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
   });
 
   it('Renvoie 4 lignes pour 4 chantiers si configuré avec lots de 3', async () => {
-    // GIVEN
+    // Given
     const chantierIds = ['CH-001', 'CH-002', 'CH-003', 'CH-004'];
     const chantierChunkSize = 3;
     const firstChunk = chantierIds.slice(0, chantierChunkSize);
@@ -142,18 +151,21 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const habilitation = new HabilitationBuilder().build();
     const profil = ProfilEnum.DITP_ADMIN;
 
-    // WHEN
+    const jalon = 2024;
+
+    // When
     let result: string[][] = [];
     for await (const partialResult of exportCsvDesChantiersSansFiltreUseCase.run({
       habilitation,
       profil,
       chantierChunkSize,
       optionsExport,
+      jalon,
     })) {
       result = [...result, ...partialResult];
     }
 
-    // THEN
+    // Then
     expect(result).toEqual([
       ['Chantier CH-001'],
       ['Chantier CH-002'],

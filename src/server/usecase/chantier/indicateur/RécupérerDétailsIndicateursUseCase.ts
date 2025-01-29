@@ -7,12 +7,12 @@ export default class RécupérerDétailsIndicateursUseCase {
     private readonly indicateurRepository: IndicateurRepository,
   ) {}
 
-  async run(chantierId: string, territoireCodes: string[], habilitations: Habilitations) {
+  async run(chantierId: string, territoireCodes: string[], habilitations: Habilitations, jalon: number) {
     const habilitation = new Habilitation(habilitations);
     territoireCodes.forEach(territoireCode => {
       habilitation.vérifierLesHabilitationsEnLecture(chantierId, territoireCode);
     });
 
-    return this.indicateurRepository.récupererDétailsParChantierIdEtTerritoire(chantierId, territoireCodes);
+    return this.indicateurRepository.récupererDétailsParChantierIdEtTerritoire(chantierId, territoireCodes, jalon);
   }
 }

@@ -7,6 +7,7 @@ import {
 export interface FicheTerritorialeContrat {
   territoire: TerritoireContrat,
   avancementGlobalTerritoire: number | null,
+  jalon: number,
   avancementAnnuelTerritoire: number | null,
   répartitionMétéos: RepartitionMeteoContrat,
   chantiersFicheTerritoriale: ChantierFicheTerritorialeContrat[],

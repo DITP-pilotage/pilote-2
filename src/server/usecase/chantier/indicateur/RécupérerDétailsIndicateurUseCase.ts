@@ -8,11 +8,11 @@ export default class RécupérerDétailsIndicateurUseCase {
     private readonly indicateurRepository: IndicateurRepository,
   ) {}
 
-  async run(indicateurId: string, habilitations: Habilitations, profil: ProfilCode) {
+  async run(indicateurId: string, habilitations: Habilitations, profil: ProfilCode, jalon: number) {
     const chantierId = await this.indicateurRepository.récupérerChantierIdAssocié(indicateurId);
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnLecture(chantierId, null);
     
-    return this.indicateurRepository.récupérerDétailsParMailles(indicateurId, habilitations, profil);
+    return this.indicateurRepository.récupérerDétailsParMailles(indicateurId, habilitations, profil, jalon);
   }
 }

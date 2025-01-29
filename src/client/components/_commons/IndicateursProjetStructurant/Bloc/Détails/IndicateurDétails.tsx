@@ -28,6 +28,7 @@ interface IndicateurDétailsProps {
   typeDeRéforme: TypeDeRéforme,
   chantierEstTerritorialisé: boolean,
   dateDeMiseAJourIndicateur: string
+  jalon: number
 }
 
 const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
@@ -36,6 +37,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   typeDeRéforme,
   chantierEstTerritorialisé,
   dateDeMiseAJourIndicateur,
+  jalon,
 }) => {
 
   const [futOuvert, setFutOuvert] = useState(false);
@@ -45,7 +47,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
     donnéesCartographieValeurActuelle,
     donnéesCartographieAvancementTerritorialisées,
     donnéesCartographieValeurActuelleTerritorialisées,
-  } = useIndicateurDétails(indicateur.id, futOuvert, typeDeRéforme);
+  } = useIndicateurDétails(indicateur.id, futOuvert, typeDeRéforme, jalon);
 
   const indicateurSiTypeDeReformeEstChantier = typeDeRéforme === 'chantier' && futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle;
   const nomDefinitionDeLindicateur = 'Définition de l\'indicateur';

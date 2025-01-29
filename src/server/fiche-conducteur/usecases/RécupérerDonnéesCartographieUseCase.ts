@@ -13,8 +13,8 @@ export class RécupérerDonnéesCartographieUseCase {
     this.chantierRepository = chantierRepository;
   }
 
-  async run({ chantierId }: { chantierId: string }): Promise<DonnéeCartographie[]> {
-    const listeChantiersNatEtDept = await this.chantierRepository.récupérerMailleNatEtDeptParId(chantierId);
+  async run({ chantierId, jalon }: { chantierId: string, jalon: number }): Promise<DonnéeCartographie[]> {
+    const listeChantiersNatEtDept = await this.chantierRepository.récupérerMailleNatEtDeptParId(chantierId, jalon);
 
     return listeChantiersNatEtDept.filter(chantier => chantier.maille !== 'NAT').map(chantier => (
       DonnéeCartographie.creerDonnéeCartographie({

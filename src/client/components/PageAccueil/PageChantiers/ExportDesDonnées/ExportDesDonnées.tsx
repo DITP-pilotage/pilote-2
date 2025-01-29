@@ -3,6 +3,10 @@ import { FunctionComponent, useState } from 'react';
 import { parseAsBoolean, parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import Modale from '@/components/_commons/Modale/Modale';
 import { horodatage } from '@/client/utils/date/date';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import api from '@/server/infrastructure/api/trpc/api';
 
 const ressources = {
   'chantiers-sans-filtre': {
@@ -41,12 +45,15 @@ const ExportDesDonnées: FunctionComponent<{ listeChantierId: string[] }> = ({ l
   const [ressourceÀExporter, setRessourceÀExporter] = useState<keyof typeof ressources | undefined>();
   const [estDésactivé, setEstDésactivé] = useState(false);
 
+  const { data: dataBasculeValeurAnneePrecedente } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE' });
+
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
     meteos: parseAsString.withDefault(''),
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
     statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']).withDefault('PUBLIE'),
+    jalon: parseAsStringLiteral(['2024', '2025']).withDefault(getAnneeAffichageDateDeBascule(new Date(), dataBasculeValeurAnneePrecedente as string).toString() as '2024' | '2025'),
   });
 
   const arrayOptionsExport: {

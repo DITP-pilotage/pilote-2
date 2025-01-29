@@ -21,10 +21,6 @@ import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 import { removeAccents } from '@/server/utils/remove-accents';
 import { calculerMoyenne, calculerMédiane } from '@/client/utils/statistiques/statistiques';
-import {
-  getAnneeAffichageDateDeBascule,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
-import { configuration } from '@/config';
 import { PrismaChantier } from '@/server/infrastructure/accès_données/chantier/PrismaChantier';
 import { RepartitionMeteoChantiers } from '@/server/chantiers/domain/RepartitionMeteoChantiers';
 
@@ -71,7 +67,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     }));
   }
 
-  async récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<(PrismaChantierIdentite & {
+  async récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: ProfilCode, jalon: number): Promise<(PrismaChantierIdentite & {
     chantier_territoire: (PrismaChantierTerritoire & { chantier_territoire_jalon: PrismaChantierTerritoireJalon[] })[]
   })> {
     const habilitation = new Habilitation(habilitations);
@@ -99,7 +95,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
           include: {
             chantier_territoire_jalon: {
               where: {
-                jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+                jalon,
               },
             },
           },
@@ -159,7 +155,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return chantiers.map(chantier => chantier.id);
   }
 
-  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, filtres: FiltreQueryParams, territoireCode: string): Promise<PrismaChantier[]> {
+  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, filtres: FiltreQueryParams, territoireCode: string, jalon: number): Promise<PrismaChantier[]> {
     const whereOptions: Prisma.chantier_identiteWhereInput = {};
 
     if (filtres.perimetres?.length > 0) {
@@ -278,7 +274,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
                 taux_avancement: true,
               },
               where: {
-                jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+                jalon,
               },
             },
           },
@@ -301,7 +297,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     });
   }
 
-  async récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[], optionsExport: OptionsExport): Promise<ChantierPourExport[]> {
+  async récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[], optionsExport: OptionsExport, jalon: number): Promise<ChantierPourExport[]> {
     const chantierIds = await this.prismaClient.chantier_identite.findMany({
       where: {
         id: { in: chantierIdsLecture },
@@ -330,7 +326,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
             territoire: true,
             chantier_territoire_jalon: {
               where: {
-                jalon: getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente),
+                jalon,
               },
             },
           },

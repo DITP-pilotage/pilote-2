@@ -44,6 +44,7 @@ interface PageRapportDétailléProps {
   mailleSelectionnee: MailleInterne
   mapChantierStatistiques: Map<string, AvancementChantierRapportDetaille>
   territoireCode: string
+  jalon: number
   filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
@@ -74,6 +75,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   repartitionMeteosChantiers,
   estAutoriseAVoirLesBrouillons,
   territoireCode,
+  jalon,
   mapDonnéesCartographieAvancement,
   mapDonnéesCartographieMétéo,
 }) => {
@@ -160,6 +162,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
               avancementsGlobauxTerritoriauxMoyens={avancementsGlobauxTerritoriauxMoyens}
               chantiers={chantiersFiltrés}
               filtresComptesCalculés={filtresComptesCalculés}
+              jalon={jalon}
               mailleSelectionnee={mailleSelectionnee}
               repartitionMeteosChantiers={repartitionMeteosChantiers}
               territoireCode={territoireCode}
@@ -168,26 +171,27 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
               afficherLesChantiers ? (
                 <div className='chantiers'>
                   {
-                      chantiersFiltrés.map((chantier) => (
-                        <RapportDétailléChantier
-                          chantier={chantier}
-                          commentaires={publicationsGroupéesParChantier.commentaires[chantier.id] ?? []}
-                          donnéesCartographieAvancement={mapDonnéesCartographieAvancement.get(chantier.id)!}
-                          donnéesCartographieMétéo={mapDonnéesCartographieMétéo.get(chantier.id)!}
-                          décisionStratégique={publicationsGroupéesParChantier.décisionStratégique[chantier.id] ?? null}
-                          détailsIndicateurs={détailsIndicateursGroupésParChantier[chantier.id] ?? []}
-                          indicateurs={indicateursGroupésParChantier[chantier.id] ?? []}
-                          key={chantier.id}
-                          mailleQuery={mailleQuery}
-                          mailleSelectionnee={mailleSelectionnee}
-                          mapChantierStatistiques={mapChantierStatistiques}
-                          objectifs={publicationsGroupéesParChantier.objectifs[chantier.id] ?? []}
-                          synthèseDesRésultats={publicationsGroupéesParChantier.synthèsesDesRésultats[chantier.id] ?? null}
-                          territoireCode={territoireCode}
-                          territoireSélectionné={territoireSélectionné}
-                        />
-                      ))
-                    }
+                    chantiersFiltrés.map((chantier) => (
+                      <RapportDétailléChantier
+                        chantier={chantier}
+                        commentaires={publicationsGroupéesParChantier.commentaires[chantier.id] ?? []}
+                        donnéesCartographieAvancement={mapDonnéesCartographieAvancement.get(chantier.id)!}
+                        donnéesCartographieMétéo={mapDonnéesCartographieMétéo.get(chantier.id)!}
+                        décisionStratégique={publicationsGroupéesParChantier.décisionStratégique[chantier.id] ?? null}
+                        détailsIndicateurs={détailsIndicateursGroupésParChantier[chantier.id] ?? []}
+                        indicateurs={indicateursGroupésParChantier[chantier.id] ?? []}
+                        jalon={jalon}
+                        key={chantier.id}
+                        mailleQuery={mailleQuery}
+                        mailleSelectionnee={mailleSelectionnee}
+                        mapChantierStatistiques={mapChantierStatistiques}
+                        objectifs={publicationsGroupéesParChantier.objectifs[chantier.id] ?? []}
+                        synthèseDesRésultats={publicationsGroupéesParChantier.synthèsesDesRésultats[chantier.id] ?? null}
+                        territoireCode={territoireCode}
+                        territoireSélectionné={territoireSélectionné}
+                      />
+                    ))
+                  }
                 </div>
               ) : null
             }

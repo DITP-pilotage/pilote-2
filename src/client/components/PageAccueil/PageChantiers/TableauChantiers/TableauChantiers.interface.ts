@@ -6,6 +6,7 @@ export default interface TableauChantiersProps {
   données: DonnéesTableauChantiers[]
   ministèresDisponibles: Ministère[]
   territoireCode: string
+  jalon: number
   chantiersSontArchives: boolean
 }
 
