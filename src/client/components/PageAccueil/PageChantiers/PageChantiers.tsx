@@ -255,7 +255,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                             variante='secondaire'
                           />
                           <div className='select-sm flex align-center justify-center fr-text--xs'>
-                            <p className='fr-text--xs fr-mb-0 fr-mt-1v no-wrap'>
+                            <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
                               Taux d'avancement de l'année
                             </p>
                             <Sélecteur<'2024' | '2025'>
@@ -367,6 +367,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 <CartographieAvancement
                   auClicTerritoireCallback={auClicTerritoireCallback}
                   données={avancementsGlobauxTerritoriauxMoyens}
+                  jalon={jalon}
                   mailleSelectionnee={mailleQuery}
                   pathname='/accueil/chantier/[territoireCode]'
                   territoireCode={territoireCode}

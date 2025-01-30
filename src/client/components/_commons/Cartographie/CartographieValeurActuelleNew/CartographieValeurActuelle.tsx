@@ -20,6 +20,7 @@ interface CartographieValeurActuelleProps {
   territoireCode: string
   pathname: '/accueil/chantier/[territoireCode]' | '/chantier/[id]/[territoireCode]'
   mailleSelectionnee: MailleInterne
+  jalon: number
 }
 
 const CartographieValeurActuelle: FunctionComponent<CartographieValeurActuelleProps> = ({
@@ -30,13 +31,14 @@ const CartographieValeurActuelle: FunctionComponent<CartographieValeurActuellePr
   élémentsDeLégende,
   territoireCode,
   mailleSelectionnee,
+  jalon,
   pathname,
 }) => {
   const {
     donnéesCartographie,
     légende,
     légendeAdditionnelle,
-  } = useCartographieValeurActuelle(données, élémentsDeLégende, mailleSelectionnee, unité);
+  } = useCartographieValeurActuelle(données, élémentsDeLégende, jalon, unité);
 
   return (
     <Cartographie

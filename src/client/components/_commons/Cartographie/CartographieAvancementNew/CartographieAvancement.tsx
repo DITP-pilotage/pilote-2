@@ -18,6 +18,7 @@ interface CartographieAvancementProps {
   territoireCode: string,
   pathname: '/accueil/chantier/[territoireCode]' | '/chantier/[id]/[territoireCode]' | null,
   mailleSelectionnee: MailleInterne,
+  jalon: number,
 }
 
 const CartographieAvancement: FunctionComponent<CartographieAvancementProps> = ({
@@ -28,8 +29,9 @@ const CartographieAvancement: FunctionComponent<CartographieAvancementProps> = (
   élémentsDeLégende,
   territoireCode,
   mailleSelectionnee,
+  jalon,
 }) => {
-  const { donnéesCartographie, légende } = useCartographieAvancement(données, élémentsDeLégende);
+  const { donnéesCartographie, légende } = useCartographieAvancement(données, élémentsDeLégende, jalon);
 
   return (
     <Cartographie

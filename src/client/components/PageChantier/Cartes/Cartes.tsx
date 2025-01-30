@@ -27,6 +27,7 @@ interface CartesProps {
   afficheCarteMétéo: boolean,
   estInteractif?: boolean,
   territoireCode: string,
+  jalon: number,
   mailleQuery: MailleInterne
   mailleSourceDonnees?: Maille | null
   estAutoriseAVoirLeSelecteurDeMaille: boolean,
@@ -38,6 +39,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
   afficheCarteMétéo,
   estInteractif = true,
   territoireCode,
+  jalon,
   mailleQuery,
   mailleSourceDonnees,
   estAutoriseAVoirLeSelecteurDeMaille,
@@ -88,6 +90,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
                 <CartographieAvancement
                   auClicTerritoireCallback={auClicTerritoireCallback}
                   données={donnéesCartographieAvancement}
+                  jalon={jalon}
                   mailleSelectionnee={mailleQuery}
                   options={{ estInteractif }}
                   pathname={pathname}
