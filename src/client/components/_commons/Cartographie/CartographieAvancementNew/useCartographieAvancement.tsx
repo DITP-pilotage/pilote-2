@@ -35,7 +35,7 @@ function déterminerValeurAffichée(valeur: number | null, valeurAnnuelle: numbe
 
   return (
     <>
-      {`${jalon} : ${valeurAnnuelle.toFixed(0)}% | `}
+      {`TA ${jalon} : ${valeurAnnuelle.toFixed(0)}% | `}
       <span className='fr-text--bold'>
         {`TA 2026 : ${valeur.toFixed(0)}%`}
       </span>
