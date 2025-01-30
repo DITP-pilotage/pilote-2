@@ -139,6 +139,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
                   afficheCarteMétéo={!!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] || chantier.estTerritorialisé}
                   donnéesCartographieAvancement={donnéesCartographieAvancement}
                   donnéesCartographieMétéo={donnéesCartographieMétéo}
+                  jalon={jalon}
                   mailleSelectionnee={mailleSelectionnee}
                   territoireCode={territoireCode}
                 />

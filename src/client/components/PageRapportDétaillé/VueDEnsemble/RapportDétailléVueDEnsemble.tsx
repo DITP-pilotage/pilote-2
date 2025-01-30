@@ -115,6 +115,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnse
             <CartographieAvancement
               auClicTerritoireCallback={() => {}}
               données={donnéesCartographie}
+              jalon={jalon}
               mailleSelectionnee={mailleSelectionnee}
               options={{ estInteractif: false }}
               pathname={null}

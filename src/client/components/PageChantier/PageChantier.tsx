@@ -305,6 +305,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     afficheCarteMétéo={!!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] || chantier.estTerritorialisé}
                     chantierMailles={chantier.mailles}
                     estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
+                    jalon={jalon}
                     mailleQuery={mailleQuery}
                     mailleSourceDonnees={mailleSourceDonnees}
                     territoireCode={territoireCode}

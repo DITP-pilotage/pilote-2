@@ -178,6 +178,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                     <CartographieAvancement
                       auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
                       données={donnéesCartographieAvancement}
+                      jalon={jalon}
                       mailleSelectionnee={mailleQuery}
                       options={{ multiséléction: true }}
                       pathname='/chantier/[id]/[territoireCode]'
@@ -209,6 +210,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                     <CartographieValeurActuelle
                       auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
                       données={donnéesCartographieValeurActuelle}
+                      jalon={jalon}
                       mailleSelectionnee={mailleQuery}
                       options={{ multiséléction: true }}
                       pathname='/chantier/[id]/[territoireCode]'

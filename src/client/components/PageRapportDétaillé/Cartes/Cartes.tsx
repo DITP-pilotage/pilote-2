@@ -26,6 +26,7 @@ interface CartesProps {
   donnéesCartographieAvancement: AvancementsGlobauxTerritoriauxMoyensContrat
   donnéesCartographieMétéo: CartographieDonnéesMétéo
   territoireCode: string,
+  jalon: number,
   mailleSelectionnee: MailleInterne,
 }
 
@@ -35,6 +36,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
   afficheCarteAvancement,
   afficheCarteMétéo,
   territoireCode,
+  jalon,
   mailleSelectionnee,
 }) => {
 
@@ -60,6 +62,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
                 <CartographieAvancement
                   auClicTerritoireCallback={() => {}}
                   données={donnéesCartographieAvancement}
+                  jalon={jalon}
                   mailleSelectionnee={mailleSelectionnee}
                   options={{ estInteractif: false }}
                   pathname={null}
