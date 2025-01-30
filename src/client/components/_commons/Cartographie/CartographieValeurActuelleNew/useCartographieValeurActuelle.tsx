@@ -37,7 +37,7 @@ function déterminerValeurAffichée(valeur: number | null, valeurCible: number |
       </div>
       <div className='flex justify-center align-center'>
         <div className='fr-mr-1w'>
-          {`VC : ${jalon}`}
+          {`VC ${jalon} : `}
         </div>
         <div>
           {valeurCibleAnnuelle === null ? 'Non renseigné' : valeurCibleAnnuelle.toLocaleString() + unitéAffichée}
@@ -124,7 +124,7 @@ export default function useCartographieValeurActuelle(données: CartographieDonn
     });
 
     return donnéesFormatées;
-  }, [données, récupérerDétailsSurUnTerritoire, unité, valeurMin, valeurMax]);
+  }, [données, récupérerDétailsSurUnTerritoire, unité, valeurMin, valeurMax, jalon]);
 
   return {
     légende,
