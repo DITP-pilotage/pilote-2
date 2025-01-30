@@ -254,7 +254,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                             valeur={!!avancementsAgrégés && process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancementsAgrégés.annuel.moyenne : null}
                             variante='secondaire'
                           />
-                          <div className='flex align-center justify-center fr-text--xs'>
+                          <div className='select-sm flex align-center justify-center fr-text--xs'>
                             <p className='fr-text--xs fr-mb-0 fr-mt-1v no-wrap'>
                               Taux d'avancement de l'année
                             </p>
