@@ -87,6 +87,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 avancementGlobal={avancements.departementale.global.moyenne}
                 couleurBarreDeProgression='secondaire'
                 couleurJaugeDeProgression='bleu'
+                doitAfficherLeSelecteur={territoireCode.startsWith('DEPT')}
                 jalon={jalon}
                 territoireNom={territoireSélectionné.nom}
               />
@@ -114,6 +115,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 avancementGlobal={avancements.regionale.global.moyenne}
                 couleurBarreDeProgression={mailleSelectionnee === 'regionale' ? 'secondaire' : 'secondaire-light'}
                 couleurJaugeDeProgression={mailleSelectionnee === 'regionale' ? 'bleu' : 'bleu-clair'}
+                doitAfficherLeSelecteur={territoireCode.startsWith('REG')}
                 jalon={jalon}
                 territoireNom={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
               />
@@ -146,15 +148,19 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
             />
             <div className='flex align-center justify-center fr-text--xs'>
               <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-                Avancement à échéance
+                {`Avancement à échéance${!territoireCode.startsWith('NAT') ? ` ${jalon}` : ''}`}
               </p>
-              <Sélecteur<'2024' | '2025'>
-                htmlName='jalon'
-                options={[{ libellé: '2024', valeur: '2024' }, { libellé: '2025', valeur: '2025' }]}
-                texteFantôme='Sélectionner un jalon'
-                valeurModifiéeCallback={auClickSelecteurJalon}
-                valeurSélectionnée={`${jalon}` as '2024' | '2025'}
-              />
+              {
+                territoireCode.startsWith('NAT') ? (
+                  <Sélecteur<'2024' | '2025'>
+                    htmlName='jalon'
+                    options={[{ libellé: '2024', valeur: '2024' }, { libellé: '2025', valeur: '2025' }]}
+                    texteFantôme='Sélectionner un jalon'
+                    valeurModifiéeCallback={auClickSelecteurJalon}
+                    valeurSélectionnée={`${jalon}` as '2024' | '2025'}
+                  />
+                ) : null
+              }
             </div>
           </div>
         </div>
