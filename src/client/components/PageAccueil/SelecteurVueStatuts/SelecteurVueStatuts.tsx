@@ -29,6 +29,7 @@ const SelecteurVueStatuts: FunctionComponent<{}> = () => {
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
+    estEnAlertePossedePropositionValeurActuelle: parseAsBoolean.withDefault(false),
   }, {
     shallow: false,
     clearOnDefault: true,
@@ -45,6 +46,7 @@ const SelecteurVueStatuts: FunctionComponent<{}> = () => {
         estEnAlerteTauxAvancementNonCalculé: false,
         estEnAlerteÉcart: false,
         estEnAlerteMétéoNonRenseignée: false,
+        estEnAlertePossedePropositionValeurActuelle: false,
       });
     }
 

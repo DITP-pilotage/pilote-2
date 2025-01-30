@@ -73,6 +73,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
       estEnAlerteBaisse: false,
       estEnAlerteMétéoNonRenseignée: false,
       estEnAlerteAbscenceTauxAvancementDepartemental: false,
+      estEnAlertePossedePropositionValeurActuelle: false,
     });
   };
 

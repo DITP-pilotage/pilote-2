@@ -136,9 +136,9 @@ export const presenterEnChantierRapportDetaille = (
         dateDeMàjDonnéesQualitatives: chantierMailleNationale.derniere_maj_date_qualitative?.toISOString() ?? null,
         dateDeMàjDonnéesQuantitatives: chantierMailleNationale.date_taux_avancement_mandat?.toISOString() ?? null,
         estApplicable: chantierMailleNationale.est_applicable,
-        possedePropositionValeurActuelle: chantierMailleNationale.possede_proposition_valeur_actuelle,
         responsableLocal: [],
         coordinateurTerritorial: [],
+        possedePropositionValeurActuelle: chantierMailleNationale.possede_proposition_valeur_actuelle,
       } : {
         avancement: { annuel: verifyValeurIsNotNullOrUndefined(chantierMailleNationale.chantier_territoire_jalon.at(0)?.taux_avancement), global: chantierMailleNationale.taux_avancement_mandat },
         météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
@@ -147,9 +147,9 @@ export const presenterEnChantierRapportDetaille = (
         dateDeMàjDonnéesQualitatives: chantierMailleNationale.derniere_maj_date_qualitative?.toISOString() ?? null,
         dateDeMàjDonnéesQuantitatives: chantierMailleNationale.date_taux_avancement_mandat?.toISOString() ?? null,
         estApplicable: chantierMailleNationale.est_applicable,
-        possedePropositionValeurActuelle: chantierMailleNationale.possede_proposition_valeur_actuelle,
         coordinateurTerritorial: [],
         responsableLocal: [],
+        possedePropositionValeurActuelle: chantierMailleNationale.possede_proposition_valeur_actuelle,
       },
     },
     departementale: créerDonnéesTerritoiresRapportDetailleNew(listeTerritoireDept, listeChantiersMailleDépartementale),
@@ -200,7 +200,6 @@ export const presenterEnChantierRapportDetaille = (
     responsableLocalTerritoireSélectionné: newMaille[mailleChantier][territoireCode].responsableLocal,
     coordinateurTerritorialTerritoireSélectionné: newMaille[mailleChantier][territoireCode].coordinateurTerritorial,
     possedePropositionValeurActuelle: newMaille[mailleChantier][territoireCode].possedePropositionValeurActuelle,
-
   };
 
 };
