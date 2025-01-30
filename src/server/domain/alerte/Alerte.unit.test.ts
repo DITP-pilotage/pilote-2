@@ -358,8 +358,8 @@ describe('Alerte', () => {
   });
 
   describe('estEnAlertePossedePropositionValeurActuelle', () => {
-    //Given
     test("le chantier est en alerte s'il possède au moins une proposition de valeur actuelle", () => {
+      //Given
       const ChantierVueDEnsemble = {
         id:'1',
         nom: 'test1',
@@ -388,33 +388,32 @@ describe('Alerte', () => {
     });
 
     test("le chantier n'est pas en alerte s'il possède aucune proposition de valeur actuelle", () => {
-      test("le chantier est en alerte s'il possède au moins une proposition de valeur actuelle", () => {
-        const ChantierVueDEnsemble = {
-          id:'1',
-          nom: 'test1',
-          avancement: {
-            'global': null,
-            'annuel': null,
-          },
-          météo: 'NON_RENSEIGNEE',
-          typologie: { 
-            estBaromètre: false, 
-            estTerritorialisé: false, 
-            estBrouillon: false },
-          porteur:  null,
-          tendance: null,
-          écart:  null,
-          dateDeMàjDonnéesQualitatives: null,
-          dateDeMàjDonnéesQuantitatives: null,
-          possedePropositionValeurActuelle: false,
-        };
+      //Given
+      const ChantierVueDEnsemble = {
+        id:'1',
+        nom: 'test1',
+        avancement: {
+          'global': null,
+          'annuel': null,
+        },
+        météo: 'NON_RENSEIGNEE',
+        typologie: { 
+          estBaromètre: false, 
+          estTerritorialisé: false, 
+          estBrouillon: false },
+        porteur:  null,
+        tendance: null,
+        écart:  null,
+        dateDeMàjDonnéesQualitatives: null,
+        dateDeMàjDonnéesQuantitatives: null,
+        possedePropositionValeurActuelle: false,
+      };
 
-        // When
-        const estEnAlertePossedePropositionValeurActuelle = Alerte.estEnAlertePossedePropositionValeurActuelle(ChantierVueDEnsemble.possedePropositionValeurActuelle);
+      // When
+      const estEnAlertePossedePropositionValeurActuelle = Alerte.estEnAlertePossedePropositionValeurActuelle(ChantierVueDEnsemble.possedePropositionValeurActuelle);
 
-        // Then
-        expect(estEnAlertePossedePropositionValeurActuelle).toBeFalsy();
-      });
+      // Then
+      expect(estEnAlertePossedePropositionValeurActuelle).toBeFalsy();
     });
   });
 });
