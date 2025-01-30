@@ -152,7 +152,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
     if (mailleQuery === 'departementale' && !chantier.maillesApplicables.includes('departementale')) {
       const destination = mailleTerritoireSelectionnee === 'DEPT'
         ? `/chantier/${chantierId}/${territoireSélectionné.codeParent}?maille=regionale`
-        : `/chantier/${chantierId}/NAT-FR?maille=regionale`;
+        : `/chantier/${chantierId}/${territoireCode}?maille=regionale`;
 
       return redirigeLaPage(destination);
     }
