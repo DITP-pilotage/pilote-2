@@ -36,10 +36,17 @@ jalon_annee_courante AS (
     CROSS JOIN {{ ref('stg_ppg_metadata__indicateurs') }} AS meta_indic
     LEFT JOIN
         {{ ref('get_vca') }} AS pt1
-        ON meta_indic.id = pt1.indic_id AND territoire.zone_id = pt1.zone_id and pt1.yyear=date_part('year', now())
+        ON
+            meta_indic.id = pt1.indic_id
+            AND territoire.zone_id = pt1.zone_id
+            AND pt1.yyear = date_part('year', now())
     LEFT JOIN
         {{ ref('get_last_vaca') }} AS pt2
-        ON meta_indic.id = pt2.indic_id AND territoire.zone_id = pt2.zone_id and date_part('year', pt2.date_valeur_actuelle::date) = (date_part('year', now()))
+        ON
+            meta_indic.id = pt2.indic_id
+            AND territoire.zone_id = pt2.zone_id
+            AND date_part('year', pt2.date_valeur_actuelle::date)
+            = (date_part('year', now()))
 ),
 
 -- Tous les TA pour tous les jalons
