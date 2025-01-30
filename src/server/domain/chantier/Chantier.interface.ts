@@ -52,6 +52,7 @@ export type ChantierVueDEnsemble = {
   écart: number | null,
   dateDeMàjDonnéesQualitatives: string | null,
   dateDeMàjDonnéesQuantitatives: string | null,
+  possedePropositionValeurActuelle: boolean
 };
 
 export type ChantierDateMajMeteo = string | null;

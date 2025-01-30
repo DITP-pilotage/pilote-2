@@ -101,6 +101,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
+    estEnAlertePossedePropositionValeurActuelle: parseAsBoolean.withDefault(false),
   });
 
   const nombreFiltresActifs = filtres.axes.split(',').filter(Boolean).length
@@ -112,7 +113,8 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     + (filtresAlertes.estEnAlerteÉcart ? 1 : 0)
     + (filtresAlertes.estEnAlerteBaisse ? 1 : 0)
     + (filtresAlertes.estEnAlerteMétéoNonRenseignée ? 1 : 0)
-    + (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0);
+    + (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0)
+    + (filtresAlertes.estEnAlertePossedePropositionValeurActuelle ? 1 : 0);
 
   const [, setJalon] = useQueryState('jalon', parseAsStringLiteral(['2024', '2025']).withDefault('2024').withOptions({
     shallow: false,

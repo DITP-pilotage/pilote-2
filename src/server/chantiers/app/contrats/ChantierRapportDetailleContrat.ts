@@ -29,6 +29,7 @@ interface TerritoireDonnéeRapportDetailleContrat {
   responsableLocal: ResponsableLocalRapportDetailleContrat[]
   coordinateurTerritorial: CoordinateurTerritorialRapportDetailleContrat[]
   météo: 'NON_RENSEIGNEE' | 'ORAGE' | 'NUAGE' | 'COUVERT' | 'SOLEIL' | 'NON_NECESSAIRE'
+  possedePropositionValeurActuelle: boolean;
 }
 
 export type ListeTerritoiresDonnéeRapportDetailleContrat = Record<string, TerritoireDonnéeRapportDetailleContrat>;
@@ -96,6 +97,7 @@ export interface ChantierRapportDetailleContrat {
   avancementGlobal: number | null;
   responsableLocalTerritoireSélectionné: ResponsableLocalRapportDetailleContrat[]
   coordinateurTerritorialTerritoireSélectionné: CoordinateurTerritorialRapportDetailleContrat[]
+  possedePropositionValeurActuelle: boolean;
 }
 
 class ErreurChantierSansMailleNationale extends Error {
@@ -134,6 +136,7 @@ export const presenterEnChantierRapportDetaille = (
         dateDeMàjDonnéesQualitatives: chantierMailleNationale.derniere_maj_date_qualitative?.toISOString() ?? null,
         dateDeMàjDonnéesQuantitatives: chantierMailleNationale.date_taux_avancement_mandat?.toISOString() ?? null,
         estApplicable: chantierMailleNationale.est_applicable,
+        possedePropositionValeurActuelle: chantierMailleNationale.possede_proposition_valeur_actuelle,
         responsableLocal: [],
         coordinateurTerritorial: [],
       } : {
@@ -144,6 +147,7 @@ export const presenterEnChantierRapportDetaille = (
         dateDeMàjDonnéesQualitatives: chantierMailleNationale.derniere_maj_date_qualitative?.toISOString() ?? null,
         dateDeMàjDonnéesQuantitatives: chantierMailleNationale.date_taux_avancement_mandat?.toISOString() ?? null,
         estApplicable: chantierMailleNationale.est_applicable,
+        possedePropositionValeurActuelle: chantierMailleNationale.possede_proposition_valeur_actuelle,
         coordinateurTerritorial: [],
         responsableLocal: [],
       },
@@ -195,6 +199,8 @@ export const presenterEnChantierRapportDetaille = (
     avancementGlobal: newMaille[mailleChantier][territoireCode].avancement.global,
     responsableLocalTerritoireSélectionné: newMaille[mailleChantier][territoireCode].responsableLocal,
     coordinateurTerritorialTerritoireSélectionné: newMaille[mailleChantier][territoireCode].coordinateurTerritorial,
+    possedePropositionValeurActuelle: newMaille[mailleChantier][territoireCode].possedePropositionValeurActuelle,
+
   };
 
 };
