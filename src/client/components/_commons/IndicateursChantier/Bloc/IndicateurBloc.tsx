@@ -289,7 +289,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           className={`${informationIndicateur.code === territoireCode ? 'ligne-territoire-proposition-valeur-actuelle' : null}`}
                           key={informationIndicateur.territoireNom}
                         >
-                          <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm'>
+                          <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm fr-text--bold fr-text-title--high-blue-france'>
                             {informationIndicateur.territoireNom}
                           </td>
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
@@ -527,7 +527,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           className={`${informationIndicateurComparé.code === territoireCode ? 'ligne-territoire-proposition-valeur-actuelle' : null}`}
                           key={informationIndicateurComparé.territoireNom}
                         >
-                          <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm'>
+                          <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm fr-text--bold fr-text-title--light-blue-france'>
                             {informationIndicateurComparé.territoireNom}
                           </td>
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
