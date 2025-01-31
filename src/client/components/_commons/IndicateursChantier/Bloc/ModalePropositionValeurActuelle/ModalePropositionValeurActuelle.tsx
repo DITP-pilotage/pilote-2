@@ -100,11 +100,11 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                           </span>
                           <div className='w-full flex flex-column justify-between fr-pt-1w'>
                             <span className='flex justify-center fr-mb-5v'>
-                              {detailIndicateur.valeurActuelle?.toLocaleString()}
+                              {detailIndicateur.valeurActuelleMandat?.toLocaleString()}
                             </span>
                             <span className='flex justify-center align-end texte-gris'>
                               (
-                              {formaterDate(detailIndicateur.dateValeurActuelle, 'MM/YYYY')}
+                              {formaterDate(detailIndicateur.dateValeurActuelleMandat, 'MM/YYYY')}
                               )
                             </span>
                           </div>
@@ -125,7 +125,7 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                             </div>
                             <span className='flex justify-center texte-gris'>
                               (
-                              {formaterDate(detailIndicateur.dateValeurActuelle, 'MM/YYYY')}
+                              {formaterDate(detailIndicateur.dateValeurActuelleMandat, 'MM/YYYY')}
                               )
                             </span>
                           </div>
