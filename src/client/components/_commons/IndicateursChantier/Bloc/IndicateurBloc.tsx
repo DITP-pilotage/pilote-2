@@ -524,10 +524,10 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     return informationIndicateurComparé.données ? ( // TODO supprimer une fois le refacto fait ! A cause de la react query y'a quelques frames où informationIndicateurComparé.données est undefined
                       <Fragment key={informationIndicateurComparé.territoireNom}>
                         <tr
-                          className={`${informationIndicateurComparé.code === territoireCode ? 'ligne-territoire-proposition-valeur-actuelle' : null}`}
+                          className={`${informationIndicateurComparé.code === territoireCode ? 'ligne-territoire-proposition-valeur-actuelle' : 'table-comparaison-border'}`}
                           key={informationIndicateurComparé.territoireNom}
                         >
-                          <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm fr-text--bold fr-text-title--light-blue-france'>
+                          <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm fr-text-title--light-blue-france'>
                             {informationIndicateurComparé.territoireNom}
                           </td>
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
