@@ -1,10 +1,6 @@
 import styled from '@emotion/styled';
 
 const IndicateurBlocStyled = styled.div`
-  table.fr-table tbody tr:not(:last-child) {
-    border-bottom: 1px solid #DDD;
-  }
-  
   .fr-select-group, .fr-select {
     width: 4rem;
     padding: 0.2rem 0 0.2rem 0.3rem;
@@ -81,6 +77,10 @@ const IndicateurBlocStyled = styled.div`
     height: 1rem;
     font-size: 0.625rem;
     line-height: 1rem;
+  }
+
+  tr.table-comparaison-border {
+    border-top: 1px solid #DDD;
   }
 `;
 
