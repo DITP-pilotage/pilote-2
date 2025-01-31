@@ -30,17 +30,23 @@ jalon_annee_courante AS (
         pt1.vca AS valeur_cible,
         pt2.taa_courant AS taux_avancement,
         pt2.tap_courant AS taux_avancement_proposition,
-        pt2.date_valeur_actuelle::date as date_valeur_actuelle,
+        pt2.date_valeur_actuelle::date AS date_valeur_actuelle,
         pt2.vaca AS valeur_actuelle
     FROM {{ source('db_schema_public', 'territoire') }} AS territoire
     CROSS JOIN {{ ref('stg_ppg_metadata__indicateurs') }} AS meta_indic
     LEFT JOIN
         {{ ref('get_vca') }} AS pt1
-        ON meta_indic.id = pt1.indic_id AND territoire.zone_id = pt1.zone_id
+        ON
+            meta_indic.id = pt1.indic_id
+            AND territoire.zone_id = pt1.zone_id
+            AND pt1.yyear = date_part('year', now())
     LEFT JOIN
         {{ ref('get_last_vaca') }} AS pt2
-        ON meta_indic.id = pt2.indic_id AND territoire.zone_id = pt2.zone_id
-    WHERE pt1.yyear = (date_part('year', now()))
+        ON
+            meta_indic.id = pt2.indic_id
+            AND territoire.zone_id = pt2.zone_id
+            AND date_part('year', pt2.date_valeur_actuelle::date)
+            = (date_part('year', now()))
 ),
 
 -- Tous les TA pour tous les jalons
