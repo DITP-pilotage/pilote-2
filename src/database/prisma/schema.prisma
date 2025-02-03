@@ -63,7 +63,7 @@ enum type_tendance {
 }
 
 model chantier_identite {
-  id                                    String                @id
+  id                                    String                 @id
   nom                                   String
   perimetre_ids                         String[]
   directeurs_administration_centrale    String[]
@@ -71,8 +71,8 @@ model chantier_identite {
   ministeres                            String[]
   ministeres_acronymes                  String[]
   directeurs_projet                     String[]
-  axe                                   String                @default("non renseigné")
-  ppg                                   String                @default("non renseignée")
+  axe                                   String                 @default("non renseigné")
+  ppg                                   String                 @default("non renseignée")
   directeurs_projet_mails               String[]
   est_barometre                         Boolean?
   est_territorialise                    Boolean?
@@ -94,34 +94,35 @@ model chantier_identite {
 }
 
 model chantier_territoire {
-  id                                       String
-  territoire_code                          String
-  territoire                               territoire                  @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  code_insee                               String
-  maille                                   Maille
-  zone_id                                  String
-  taux_avancement_mandat                   Float?
-  date_taux_avancement_mandat              DateTime?                   @db.Date
-  territoire_nom                           String?
-  meteo                                    String?                     @default("NON_RENSEIGNEE")
-  taux_avancement_mandat_valeur_precedente Float?
-  est_applicable                           Boolean?
-  responsables_locaux                      String[]
-  coordinateurs_territoriaux               String[]
-  responsables_locaux_mails                String[]
-  coordinateurs_territoriaux_mails         String[]
-  derniere_maj_date_qualitative            DateTime?                   @db.Date
-  tendance                                 type_tendance?
-  tendance_int_index                       Float?
-  ecart                                    Float?
-  meteo_int_index                          Float?
-  donnees_maille_source                    Maille?
-  possede_proposition_valeur_actuelle      Boolean                     @default(false)
-  chantier_identite                        chantier_identite           @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  chantier_territoire_jalon                chantier_territoire_jalon[]
-  commentaires                             commentaire[]
-  syntheses_des_resultats                  synthese_des_resultats[]
-  indicateur_territoire                    indicateur_territoire[]
+  id                                           String
+  territoire_code                              String
+  territoire                                   territoire                  @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  code_insee                                   String
+  maille                                       Maille
+  zone_id                                      String
+  taux_avancement_mandat                       Float?
+  date_taux_avancement_mandat                  DateTime?                   @db.Date
+  territoire_nom                               String?
+  meteo                                        String?                     @default("NON_RENSEIGNEE")
+  taux_avancement_mandat_valeur_precedente     Float?
+  est_applicable                               Boolean?
+  responsables_locaux                          String[]
+  coordinateurs_territoriaux                   String[]
+  responsables_locaux_mails                    String[]
+  coordinateurs_territoriaux_mails             String[]
+  derniere_maj_date_qualitative                DateTime?                   @db.Date
+  tendance                                     type_tendance?
+  tendance_int_index                           Float?
+  ecart                                        Float?
+  meteo_int_index                              Float?
+  donnees_maille_source                        Maille?
+  nombre_propositions_valeur_actuelle          Int                         @default(0)
+  nombre_propositions_valeur_actuelle_ponderee Int                         @default(0)
+  chantier_identite                            chantier_identite           @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  chantier_territoire_jalon                    chantier_territoire_jalon[]
+  commentaires                                 commentaire[]
+  syntheses_des_resultats                      synthese_des_resultats[]
+  indicateur_territoire                        indicateur_territoire[]
 
   @@id([id, territoire_code])
   @@schema("public")
