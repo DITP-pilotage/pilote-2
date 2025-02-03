@@ -40,18 +40,22 @@ mediane_par_chantier AS (
 ),
 proposition_valeur_actuelle_chantier AS (
     SELECT 
-        meta_indic.chantier_id, 
-        pva.territoire_code, 
-        TRUE AS possede_proposition_valeur_actuelle 
-    FROM 
-        proposition_valeur_actuelle pva
-    LEFT JOIN 
-        raw_data.stg_ppg_metadata__indicateurs meta_indic 
-    ON 
-        meta_indic.id = pva.indic_id 
-    GROUP BY 
-        meta_indic.chantier_id, 
-        pva.territoire_code
+        ipv.territoire_code, 
+        spmi.chantier_id, 
+        COUNT(*) AS nombre_propositions_valeur_actuelle,
+        SUM(CASE WHEN ipr.poids_zone_reel > 0 THEN 1 ELSE 0 END) AS nombre_propositions_valeur_actuelle_ponderee
+    FROM {{ ref('int_propositions_valeurs')}} ipv
+    LEFT JOIN {{ source('db_schema_public', 'territoire') }}  t ON t.code = ipv.territoire_code 
+    INNER JOIN {{ ref('get_last_vaca') }} vaca
+        ON vaca.zone_id = t.zone_id 
+        AND vaca.indic_id = ipv.indic_id 
+        AND vaca.date_valeur_actuelle::DATE = ipv.date_valeur_actuelle
+    LEFT JOIN {{ ref('int_ponderation_reelle') }} ipr 
+        ON ipr.indic_id = ipv.indic_id 
+        AND ipr.zone_id = t.zone_id
+    LEFT JOIN {{ ref('stg_ppg_metadata__indicateurs') }} spmi 
+        ON spmi.id = ipv.indic_id 
+    GROUP BY ipv.territoire_code, spmi.chantier_id
 )
 
 SELECT
@@ -125,7 +129,8 @@ SELECT
             UPPER(meta_ch.replicate_val_nat_to) = 'REG' AND z.zone_type = 'REG'
             THEN 'reg'::maille
     END AS donnees_maille_source,
-    COALESCE(pva.possede_proposition_valeur_actuelle, FALSE) as possede_proposition_valeur_actuelle
+    COALESCE(pva.nombre_propositions_valeur_actuelle, 0) as nombre_propositions_valeur_actuelle,
+    COALESCE(pva.nombre_propositions_valeur_actuelle_ponderee, 0) as nombre_propositions_valeur_actuelle_ponderee
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch
 CROSS JOIN {{ source('db_schema_public', 'territoire') }} AS t
 LEFT JOIN
