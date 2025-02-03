@@ -13,7 +13,7 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
-    estEnAlertePossedePropositionValeurActuelle: parseAsBoolean.withDefault(false),
+    estEnAlertePossedePropositionsValeurActuelle: parseAsBoolean.withDefault(false),
   });
 
   const alerteAbscenceTauxAvancementDepartemental = {
@@ -51,15 +51,15 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
     estActivée: filtresAlertes.estEnAlerteMétéoNonRenseignée,
   };
 
-  const estEnAlertePossedePropositionValeurActuelle = {
-    nomCritère: 'estEnAlertePossedePropositionValeurActuelle',
+  const estEnAlertePossedePropositionsValeurActuelle = {
+    nomCritère: 'estEnAlertePossedePropositionsValeurActuelle',
     libellé: 'Chantier(s) avec proposition(s) de valeur actuelle',
-    nombre: filtresComptesCalculés.estEnAlertePossedePropositionValeurActuelle,
-    estActivée: filtresAlertes.estEnAlertePossedePropositionValeurActuelle,
+    nombre: filtresComptesCalculés.estEnAlertePossedePropositionsValeurActuelle,
+    estActivée: filtresAlertes.estEnAlertePossedePropositionsValeurActuelle,
   };
 
-  const alertesNationales = [alerteTauxAvancementNonCalculé, alerteAbscenceTauxAvancementDepartemental, alerteMétéoNonRenseignée, estEnAlertePossedePropositionValeurActuelle];
-  const alertesTerritoriales = [alerteEcart, alerteBaisse, alerteMétéoNonRenseignée, estEnAlertePossedePropositionValeurActuelle];
+  const alertesNationales = [alerteTauxAvancementNonCalculé, alerteAbscenceTauxAvancementDepartemental, alerteMétéoNonRenseignée, estEnAlertePossedePropositionsValeurActuelle];
+  const alertesTerritoriales = [alerteEcart, alerteBaisse, alerteMétéoNonRenseignée, estEnAlertePossedePropositionsValeurActuelle];
 
   return {
     remontéesAlertes: mailleChantier === 'nationale' ? alertesNationales : alertesTerritoriales,

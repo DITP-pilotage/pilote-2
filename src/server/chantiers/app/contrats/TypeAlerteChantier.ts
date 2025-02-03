@@ -3,4 +3,4 @@ export type TypeAlerteChantier = 'estEnAlerteÉcart'
 | 'estEnAlerteTauxAvancementNonCalculé' 
 | 'estEnAlerteAbscenceTauxAvancementDepartemental' 
 | 'estEnAlerteMétéoNonRenseignée'
-| 'estEnAlertePossedePropositionValeurActuelle';
+| 'estEnAlertePossedePropositionsValeurActuelle';

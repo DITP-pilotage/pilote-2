@@ -102,7 +102,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
-    estEnAlertePossedePropositionValeurActuelle: parseAsBoolean.withDefault(false),
+    estEnAlertePossedePropositionsValeurActuelle: parseAsBoolean.withDefault(false),
   });
 
   const queryParamString = getQueryParamString({ ...filtres, ...filtresAlertes });

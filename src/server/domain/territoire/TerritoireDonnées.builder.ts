@@ -34,7 +34,9 @@ export default class TerritoireDonnéesBuilder {
 
   private _mailleSourceDonnees: TerritoireDonnées['mailleSourceDonnees'];
 
-  private _possedePropositionValeurActuelle: TerritoireDonnées['possedePropositionValeurActuelle'];
+  private _nombrePropositionsValeurActuelle: TerritoireDonnées['nombrePropositionsValeurActuelle'];
+
+  private _nombrePropositionsValeurActuellePonderee: TerritoireDonnées['nombrePropositionsValeurActuellePonderee'];
 
   constructor() {
 
@@ -50,7 +52,8 @@ export default class TerritoireDonnéesBuilder {
     this._coordinateurTerritorial = générerTableau(1, 3, () => ({ nom: faker.name.fullName(), email: faker.internet.email() }));
     this._responsableLocal = générerTableau(1, 3, () => ({ nom: faker.name.fullName(), email: faker.internet.email() }));
     this._mailleSourceDonnees = null;
-    this._possedePropositionValeurActuelle = faker.datatype.boolean();
+    this._nombrePropositionsValeurActuelle = faker.datatype.number({ min: 0 });
+    this._nombrePropositionsValeurActuellePonderee = faker.datatype.number({ min: 0 });
   }
 
   avecCodeInsee(codeInsee: TerritoireDonnées['codeInsee']): TerritoireDonnéesBuilder {
@@ -73,7 +76,8 @@ export default class TerritoireDonnéesBuilder {
       responsableLocal: this._responsableLocal,
       coordinateurTerritorial: this._coordinateurTerritorial,
       mailleSourceDonnees: this._mailleSourceDonnees,
-      possedePropositionValeurActuelle: this._possedePropositionValeurActuelle,
+      nombrePropositionsValeurActuelle: this._nombrePropositionsValeurActuelle,
+      nombrePropositionsValeurActuellePonderee: this._nombrePropositionsValeurActuellePonderee,
     };
   }
 }

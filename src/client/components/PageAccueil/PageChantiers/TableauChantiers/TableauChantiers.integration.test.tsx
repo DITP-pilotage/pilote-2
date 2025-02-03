@@ -26,7 +26,8 @@ class TableauChantiersTest {
       dateDeMàjDonnéesQualitatives: new Date().toISOString(),
       écart: 0,
       tendance: 'STAGNATION',
-      possedePropositionValeurActuelle: false,
+      nombrePropositionsValeurActuelle: 0,
+      nombrePropositionsValeurActuellePonderee: 0,
     },
     {
       porteur: this.ministèresDisponibles[0],
@@ -39,7 +40,8 @@ class TableauChantiersTest {
       dateDeMàjDonnéesQualitatives: new Date().toISOString(),
       écart: 0,
       tendance: 'STAGNATION',
-      possedePropositionValeurActuelle: false,
+      nombrePropositionsValeurActuelle: 0,
+      nombrePropositionsValeurActuellePonderee: 0,
     },
     {
       porteur: this.ministèresDisponibles[0],
@@ -52,7 +54,8 @@ class TableauChantiersTest {
       dateDeMàjDonnéesQualitatives: new Date().toISOString(),
       écart: 0,
       tendance: 'STAGNATION',
-      possedePropositionValeurActuelle: false,
+      nombrePropositionsValeurActuelle: 0,
+      nombrePropositionsValeurActuellePonderee: 0,
     },
   ];
 

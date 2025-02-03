@@ -29,8 +29,8 @@ const Alerte = {
     return météo === 'NON_RENSEIGNEE';
   },
 
-  estEnAlertePossedePropositionValeurActuelle(possedePropositionValeurActuelle: ChantierVueDEnsemble['possedePropositionValeurActuelle'] ) {
-    return possedePropositionValeurActuelle === true;
+  estEnAlertePossedePropositionsValeurActuelle(nombrePropositionsValeurActuelle: ChantierVueDEnsemble['nombrePropositionsValeurActuelle'] ) {
+    return nombrePropositionsValeurActuelle > 0;
   },
 };
 
