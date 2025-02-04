@@ -2,9 +2,12 @@ import styled from '@emotion/styled';
 
 const SousIndicateurBlocStyled = styled.div`
   .fr-select-group, .fr-select {
-    width: 4rem;
-    padding: 0.2rem 0 0.2rem 0.3rem;
+    width: 3.2rem;
+    padding: 0.2rem 0;
     margin: 0!important;
+    font-size: 0.875rem;
+    font-weight: bold;
+    color: var(--text-title-grey);
     background-position: 100% 70%!important;
   }
   
