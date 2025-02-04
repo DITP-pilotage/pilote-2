@@ -1,4 +1,4 @@
-import { Dispatch, FunctionComponent, SetStateAction } from 'react';
+import { FunctionComponent } from 'react';
 import SélecteurMaille from '@/client/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
@@ -25,9 +25,9 @@ const CartographieAvecSelecteur: FunctionComponent<{
   estAutoriseAVoirLeSelecteurDeMaille: boolean,
   jalon: number,
   cartographieSelectionnee: CartographieType,
-  setCartographieSelectionnee: Dispatch<SetStateAction<CartographieType>>
+  aLaSelectionCartographie: (valeur: CartographieType) => void
   listeCartographiesDesactives: CartographieType[]
-}> = ({ chantierMailles, estAutoriseAVoirLeSelecteurDeMaille, mailleQuery, estInteractif, territoireCode, jalon, cartographieSelectionnee, setCartographieSelectionnee, listeCartographiesDesactives }) => {
+}> = ({ chantierMailles, estAutoriseAVoirLeSelecteurDeMaille, mailleQuery, estInteractif, territoireCode, jalon, cartographieSelectionnee, aLaSelectionCartographie, listeCartographiesDesactives }) => {
 
   const donneesEtLegendesCartographies: Record<CartographieType, { donneesCartographie: CartographieDonnées; legende: CartographieÉlémentDeLégende[] }> = {
     avancementMandat: useCartographieAvancement(chantierMailles, ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS, jalon, 'MANDAT'),
@@ -67,7 +67,7 @@ const CartographieAvecSelecteur: FunctionComponent<{
       <Sélecteur 
         htmlName='selecteur-carte' 
         options={optionsCartographie}
-        valeurModifiéeCallback={setCartographieSelectionnee}
+        valeurModifiéeCallback={aLaSelectionCartographie}
         valeurSélectionnée={cartographieSelectionnee}      
       />
       {

@@ -12,6 +12,7 @@ import {
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { CartographieIndicateurType } from './Bloc/Détails/IndicateurDétails';
 
 interface IndicateursProps {
   indicateurs: Indicateur[];
@@ -28,6 +29,8 @@ interface IndicateursProps {
   alerteMiseAJourIndicateur: boolean
   mailsDirecteursProjets: string[]
   jalon: number
+  cartographieDroiteIndicateur: CartographieIndicateurType
+  cartographieGaucheIndicateur: CartographieIndicateurType
 }
 
 const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
@@ -45,6 +48,8 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   alerteMiseAJourIndicateur,
   mailsDirecteursProjets,
   jalon,
+  cartographieDroiteIndicateur,
+  cartographieGaucheIndicateur,
 }) => {
 
   if (indicateurs.length === 0) {
@@ -94,6 +99,8 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                         [];
                       return (
                         <IndicateurBloc
+                          cartographieDroiteIndicateur={cartographieDroiteIndicateur}
+                          cartographieGaucheIndicateur={cartographieGaucheIndicateur}
                           chantierEstTerritorialisé={chantierEstTerritorialisé}
                           detailsIndicateursTerritoire={detailsIndicateursTerritoire}
                           détailsIndicateurs={détailsIndicateurs}

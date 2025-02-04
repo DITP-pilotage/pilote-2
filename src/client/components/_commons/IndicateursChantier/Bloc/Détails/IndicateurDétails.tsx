@@ -1,32 +1,20 @@
 import { FunctionComponent, useState } from 'react';
 import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
+import { parseAsString, useQueryState } from 'nuqs';
 import IndicateurÉvolution from '@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurÉvolution';
-import Titre from '@/components/_commons/Titre/Titre';
-import CartographieAvancement
-  from '@/components/_commons/Cartographie/CartographieAvancementNew/CartographieAvancement';
-import CartographieValeurActuelle
-  from '@/components/_commons/Cartographie/CartographieValeurActuelleNew/CartographieValeurActuelle';
-import useCartographie from '@/components/_commons/Cartographie/useCartographieNew';
 import IndicateurSpécifications
   from '@/components/_commons/IndicateursChantier/Bloc/Détails/Spécifications/IndicateurSpécifications';
-import {
-  ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
-} from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
-import {
-  ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE,
-} from '@/client/constants/légendes/élémentsDeLégendesCartographieValeurActuelle';
 import SousIndicateurs from '@/components/_commons/IndicateursChantier/Bloc/Détails/SousIndicateurs/SousIndicateurs';
-
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import {
   IndicateurDétailsParTerritoire,
 } from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import SélecteurMaille
-  from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
+import CartographieAvecSelecteurIndicateur from '@/components/_commons/Cartographie/CartographieAvecSelecteurIndicateur/CartographieAvecSelecteurIndicateur';
 import { useIndicateurDétails } from './useIndicateurDétails';
 
+export type CartographieIndicateurType = 'avancementMandat' | 'avancementJalon' | 'propositionValeur' | 'valeurActuelle';
 interface IndicateurDétailsProps {
   indicateur: Indicateur
   indicateurDétailsParTerritoires: IndicateurDétailsParTerritoire[]
@@ -46,6 +34,8 @@ interface IndicateurDétailsProps {
   indicateurEstAjour: boolean
   jalon: number
   mailsDirecteursProjets: string[]
+  cartographieDroiteIndicateur: CartographieIndicateurType
+  cartographieGaucheIndicateur: CartographieIndicateurType
 }
 
 const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
@@ -67,22 +57,19 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   indicateurEstAjour,
   jalon,
   mailsDirecteursProjets,
+  cartographieDroiteIndicateur,
+  cartographieGaucheIndicateur,
 }) => {
-  const pathname = '/chantier/[id]/[territoireCode]';
 
   const [futOuvert, setFutOuvert] = useState(false);
 
-  const { auClicTerritoireMultiSélectionCallback } = useCartographie(territoireCode, pathname);
-
   const {
-    donnéesCartographieAvancement,
-    donnéesCartographieValeurActuelle,
     donnéesCartographieAvancementTerritorialisées,
     donnéesCartographieValeurActuelleTerritorialisées,
     estAutoriseAVoirLeSelecteurDeMaille,
   } = useIndicateurDétails(detailsIndicateursTerritoire[indicateur.id]);
 
-  const indicateurSiTypeDeReformeEstChantier = futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle;
+  const indicateurSiTypeDeReformeEstChantier = futOuvert;
   const nomDefinitionDeLindicateur = estSousIndicateur ? 'Description du sous-indicateur et calendrier de mise à jour' : 'Description de l\'indicateur et calendrier de mise à jour';
   const nomRepartitionGeographiqueEtEvolution = 'Répartition géographique et évolution';
   const nomSousIndicateurs = 'Sous indicateurs';
@@ -91,6 +78,16 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
     indicateur.responsablesDonneesMails :
     mailsDirecteursProjets;
 
+  const [, setCartographieGaucheSelection] = useQueryState('cartographieGaucheIndicateur', parseAsString.withDefault('avancementMandat').withOptions({
+    shallow: false,
+    history: 'push',
+  }));
+  
+  const [, setCartographieDroiteSelection] = useQueryState('cartographieDroiteIndicateur', parseAsString.withDefault('valeurActuelle').withOptions({
+    shallow: false,
+    history: 'push',
+  }));
+    
   return (
     <div className='fr-accordions-group'>
       <section className='fr-accordion'>
@@ -157,68 +154,35 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
           <div className='fr-container'>
             <div className='fr-grid-row fr-grid-row--gutters fr-my-1w'>
               {
-                indicateurSiTypeDeReformeEstChantier && (donnéesCartographieAvancementTerritorialisées || chantierEstTerritorialisé) ? (
-                  <section className='fr-col-12 fr-col-xl-6'>
-                    <Titre
-                      baliseHtml='h5'
-                      className='fr-text--lg'
-                    >
-                      Répartition géographique de l'avancement 2026
-                    </Titre>
-                    <div className='fr-grid-row fr-pb-2w fr-text--sm'>
-                      {
-                        estAutoriseAVoirLeSelecteurDeMaille ? (
-                          <SélecteurMaille
-                            mailleQuery={mailleQuery}
-                            pathname={pathname}
-                          />
-                        ) : null
-                      }
-                    </div>
-                    <CartographieAvancement
-                      auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
-                      données={donnéesCartographieAvancement}
-                      jalon={jalon}
-                      mailleSelectionnee={mailleQuery}
-                      options={{ multiséléction: true }}
-                      pathname='/chantier/[id]/[territoireCode]'
-                      territoireCode={territoireCode}
-                      élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
-                    />
-                  </section>
-                ) : null
-              }
-              {
-                indicateurSiTypeDeReformeEstChantier && (donnéesCartographieValeurActuelleTerritorialisées || chantierEstTerritorialisé) ? (
-                  <section className='fr-col-12 fr-col-xl-6'>
-                    <Titre
-                      baliseHtml='h5'
-                      className='fr-text--lg'
-                    >
-                      Répartition géographique de la valeur actuelle de l'indicateur
-                    </Titre>
-                    {
-                      estAutoriseAVoirLeSelecteurDeMaille ? (
-                        <div className='fr-grid-row fr-pb-2w fr-text--sm'>
-                          <SélecteurMaille
-                            mailleQuery={mailleQuery}
-                            pathname={pathname}
-                          />
-                        </div>
-                      ) : null
-                    }
-                    <CartographieValeurActuelle
-                      auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
-                      données={donnéesCartographieValeurActuelle}
-                      jalon={jalon}
-                      mailleSelectionnee={mailleQuery}
-                      options={{ multiséléction: true }}
-                      pathname='/chantier/[id]/[territoireCode]'
-                      territoireCode={territoireCode}
-                      unité={indicateur.unité}
-                      élémentsDeLégende={ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE}
-                    />
-                  </section>
+                indicateurSiTypeDeReformeEstChantier && (donnéesCartographieAvancementTerritorialisées || donnéesCartographieValeurActuelleTerritorialisées || chantierEstTerritorialisé) ? (
+                  <>
+                    <section className='fr-col-12 fr-col-xl-6'>
+                      <CartographieAvecSelecteurIndicateur 
+                        aLaSelectionCartographie={(valeur: CartographieIndicateurType) => setCartographieGaucheSelection(valeur)} 
+                        cartographieSelectionnee={cartographieGaucheIndicateur} 
+                        detailsIndicateurTerritoire={detailsIndicateursTerritoire[indicateur.id]} 
+                        estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille} 
+                        jalon={jalon} 
+                        listeCartographiesDesactives={[]} 
+                        mailleQuery={mailleQuery} 
+                        territoireCode={territoireCode}      
+                        unité={indicateur.unité}                
+                      />
+                    </section>
+                    <section className='fr-col-12 fr-col-xl-6'>
+                      <CartographieAvecSelecteurIndicateur 
+                        aLaSelectionCartographie={(valeur: CartographieIndicateurType) => setCartographieDroiteSelection(valeur)} 
+                        cartographieSelectionnee={cartographieDroiteIndicateur} 
+                        detailsIndicateurTerritoire={detailsIndicateursTerritoire[indicateur.id]} 
+                        estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille} 
+                        jalon={jalon} 
+                        listeCartographiesDesactives={[]} 
+                        mailleQuery={mailleQuery}
+                        territoireCode={territoireCode}      
+                        unité={indicateur.unité}                
+                      />
+                    </section>
+                  </>
                 ) : null
               }
               {
@@ -257,6 +221,8 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
               id={`sous-indicateurs-${indicateur.id}`}
             >
               <SousIndicateurs
+                cartographieDroiteIndicateur={cartographieDroiteIndicateur}
+                cartographieGaucheIndicateur={cartographieGaucheIndicateur}
                 chantierEstTerritorialisé={chantierEstTerritorialisé}
                 detailsIndicateursTerritoire={detailsIndicateursTerritoire}
                 détailsIndicateurs={détailsIndicateurs}

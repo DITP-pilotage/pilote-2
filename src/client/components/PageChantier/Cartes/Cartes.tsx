@@ -1,4 +1,5 @@
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent } from 'react';
+import { parseAsString, useQueryState } from 'nuqs';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import CartesStyled from '@/components/PageChantier/Cartes/Cartes.styled';
 import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
@@ -16,7 +17,9 @@ interface CartesProps {
   jalon: number,
   mailleQuery: MailleInterne
   mailleSourceDonnees?: Maille | null
-  estAutoriseAVoirLeSelecteurDeMaille: boolean,
+  estAutoriseAVoirLeSelecteurDeMaille: boolean
+  cartographieGaucheChantier: CartographieType
+  cartographieDroiteChantier: CartographieType
 }
 
 const Cartes: FunctionComponent<CartesProps> = ({
@@ -29,9 +32,18 @@ const Cartes: FunctionComponent<CartesProps> = ({
   mailleQuery,
   mailleSourceDonnees,
   estAutoriseAVoirLeSelecteurDeMaille,
+  cartographieGaucheChantier,
+  cartographieDroiteChantier,
 }) => {
-  const [cartographieGaucheSelection, setCartographieGaucheSelection] = useState<CartographieType>('avancementMandat');
-  const [cartographieDroiteSelection, setCartographieDroiteSelection] = useState<CartographieType>('meteo');
+  const [, setCartographieGaucheSelection] = useQueryState('cartographieGaucheChantier', parseAsString.withDefault('avancementMandat').withOptions({
+    shallow: false,
+    history: 'push',
+  }));
+  
+  const [, setCartographieDroiteSelection] = useQueryState('cartographieDroiteChantier', parseAsString.withDefault('meteo').withOptions({
+    shallow: false,
+    history: 'push',
+  }));
 
   return (
     <CartesStyled>
@@ -41,14 +53,14 @@ const Cartes: FunctionComponent<CartesProps> = ({
             <Bloc>
               <section>
                 <CartographieAvecSelecteur 
-                  cartographieSelectionnee={cartographieGaucheSelection}
-                  chantierMailles={chantierMailles} 
+                  aLaSelectionCartographie={(valeur: CartographieType) => setCartographieGaucheSelection(valeur)}
+                  cartographieSelectionnee={cartographieGaucheChantier} 
+                  chantierMailles={chantierMailles}
                   estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
-                  estInteractif={estInteractif}
-                  jalon={jalon} 
-                  listeCartographiesDesactives={[cartographieDroiteSelection]}
+                  estInteractif={estInteractif} 
+                  jalon={jalon}
+                  listeCartographiesDesactives={[cartographieDroiteChantier]}
                   mailleQuery={mailleQuery}
-                  setCartographieSelectionnee={setCartographieGaucheSelection}
                   territoireCode={territoireCode}       
                 />
                 {
@@ -70,14 +82,14 @@ const Cartes: FunctionComponent<CartesProps> = ({
             <Bloc>
               <section>
                 <CartographieAvecSelecteur 
-                  cartographieSelectionnee={cartographieDroiteSelection}
-                  chantierMailles={chantierMailles} 
+                  aLaSelectionCartographie={(valeur: CartographieType) => setCartographieDroiteSelection(valeur)}
+                  cartographieSelectionnee={cartographieDroiteChantier} 
+                  chantierMailles={chantierMailles}
                   estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
-                  estInteractif={estInteractif}
-                  jalon={jalon} 
-                  listeCartographiesDesactives={[cartographieGaucheSelection]}    
-                  mailleQuery={mailleQuery}
-                  setCartographieSelectionnee={setCartographieDroiteSelection}    
+                  estInteractif={estInteractif} 
+                  jalon={jalon}    
+                  listeCartographiesDesactives={[cartographieGaucheChantier]}
+                  mailleQuery={mailleQuery}    
                   territoireCode={territoireCode}        
                 />
               </section>

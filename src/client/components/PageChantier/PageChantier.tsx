@@ -43,9 +43,10 @@ import BandeauInformationMajDonnees
   from '@/components/PageChantier/BandeauInformationMajDonnees/BandeauInformationMajDonnees';
 import api from '@/server/infrastructure/api/trpc/api';
 import BandeauInformation from '@/client/components/_commons/BandeauInformation/BandeauInformation';
+import { CartographieIndicateurType } from '@/client/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import PageChantierEnTête from './EnTête/EnTête';
-import Cartes from './Cartes/Cartes';
+import Cartes, { CartographieType } from './Cartes/Cartes';
 import PageChantierStyled from './PageChantier.styled';
 import usePageChantier from './usePageChantier';
 import DécisionsStratégiques from './DécisionsStratégiques/DécisionsStratégiques';
@@ -68,6 +69,10 @@ interface PageChantierProps {
   listeResponsablesLocaux: ResponsableLocal[]
   listeCoordinateursTerritorials: CoordinateurTerritorial[]
   jalon: number
+  cartographieGaucheChantier: CartographieType
+  cartographieDroiteChantier: CartographieType
+  cartographieDroiteIndicateur: CartographieIndicateurType
+  cartographieGaucheIndicateur: CartographieIndicateurType
 }
 
 const PageChantier: FunctionComponent<PageChantierProps> = ({
@@ -88,6 +93,10 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
   listeResponsablesLocaux,
   listeCoordinateursTerritorials,
   jalon,
+  cartographieDroiteChantier,
+  cartographieGaucheChantier,
+  cartographieDroiteIndicateur,
+  cartographieGaucheIndicateur,
 }: PageChantierProps) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('md');
@@ -303,6 +312,8 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   <Cartes
                     afficheCarteAvancement={!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSelectionnee] || chantier.estTerritorialisé}
                     afficheCarteMétéo={!!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] || chantier.estTerritorialisé}
+                    cartographieDroiteChantier={cartographieDroiteChantier}
+                    cartographieGaucheChantier={cartographieGaucheChantier}
                     chantierMailles={chantier.mailles}
                     estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
                     jalon={jalon}
@@ -367,6 +378,8 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   }
                   <IndicateursChantier
                     alerteMiseAJourIndicateur={alerteMiseAJourIndicateur}
+                    cartographieDroiteIndicateur={cartographieDroiteIndicateur}
+                    cartographieGaucheIndicateur={cartographieGaucheIndicateur}
                     chantierEstTerritorialisé={chantier.estTerritorialisé}
                     detailsIndicateursTerritoire={detailsIndicateursTerritoire}
                     détailsIndicateurs={détailsIndicateurs}

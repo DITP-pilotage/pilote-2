@@ -54,6 +54,8 @@ import {
   getAnneeAffichageDateDeBascule,
 } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 import { configuration } from '@/config';
+import { CartographieType } from '@/components/PageChantier/Cartes/Cartes';
+import { CartographieIndicateurType } from '@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
 
 interface NextPageChantierProps {
   indicateurs: Indicateur[],
@@ -75,6 +77,10 @@ interface NextPageChantierProps {
   listeResponsablesLocaux: ResponsableLocal[]
   listeCoordinateursTerritorials: CoordinateurTerritorial[]
   jalon: number
+  cartographieGaucheChantier: CartographieType
+  cartographieDroiteChantier: CartographieType
+  cartographieDroiteIndicateur: CartographieIndicateurType
+  cartographieGaucheIndicateur: CartographieIndicateurType
 }
 
 const redirigeLaPage = (destination: string) => ({
@@ -93,6 +99,10 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
 
   const chantierId = query.id as string;
   const jalon = Number.parseInt(query.jalon as string) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
+  const cartographieGaucheChantier = query.cartographieGaucheChantier as CartographieType || 'avancementMandat';
+  const cartographieDroiteChantier = query.cartographieDroiteChantier as CartographieType || 'meteo';
+  const cartographieGaucheIndicateur = query.cartographieGaucheIndicateur as CartographieIndicateurType || 'avancementMandat';
+  const cartographieDroiteIndicateur = query.cartographieDroiteIndicateur as CartographieIndicateurType || 'valeurActuelle';
 
   const session = await getServerSession(req, res, authOptions);
 
@@ -112,7 +122,6 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
   const mailleSelectionnee = mailleTerritoireSelectionnee === 'NAT'
     ? mailleQuery
     : mailleTerritoireSelectionnee === 'DEPT' ? 'departementale' : 'regionale';
-
 
   const territoireRepository = dependencies.getTerritoireRepository();
   const territoireSélectionné = await territoireRepository.récupérer(territoireCode);
@@ -219,6 +228,10 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
         listeResponsablesLocaux,
         listeCoordinateursTerritorials,
         jalon,
+        cartographieGaucheChantier,
+        cartographieDroiteChantier,
+        cartographieDroiteIndicateur,
+        cartographieGaucheIndicateur,
       },
     };
   } catch (error) {
@@ -250,6 +263,10 @@ const NextPageChantier: FunctionComponent<InferGetServerSidePropsType<typeof get
   listeResponsablesLocaux,
   listeCoordinateursTerritorials,
   jalon,
+  cartographieDroiteChantier,
+  cartographieGaucheChantier,
+  cartographieDroiteIndicateur,
+  cartographieGaucheIndicateur,
 }) => {
   const estUnProfilDROM = profil === ProfilEnum.DROM;
   const estTerritoireNational = territoireCode === 'NAT-FR';
@@ -272,6 +289,10 @@ const NextPageChantier: FunctionComponent<InferGetServerSidePropsType<typeof get
         ) : (
           <PageChantier
             avancements={avancements}
+            cartographieDroiteChantier={cartographieDroiteChantier}
+            cartographieDroiteIndicateur={cartographieDroiteIndicateur}
+            cartographieGaucheChantier={cartographieGaucheChantier}
+            cartographieGaucheIndicateur={cartographieGaucheIndicateur}
             chantier={chantier}
             commentaires={commentaires}
             detailsIndicateursTerritoire={detailsIndicateursTerritoire}
