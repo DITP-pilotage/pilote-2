@@ -84,6 +84,8 @@ const ExportDesDonnées: FunctionComponent<{ listeChantierId: string[] }> = ({ l
     arrayOptionsExport.push({ name: 'statut', value: statut });
   });
 
+  arrayOptionsExport.push({ name: 'jalon', value: filtres.jalon });
+
   return (
     <Modale
       idHtml={ID_HTML_MODALE_EXPORT}

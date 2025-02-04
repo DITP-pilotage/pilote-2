@@ -111,7 +111,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   })).sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) => indicateurDétailsTerritoire1.données.codeInsee.localeCompare(indicateurDétailsTerritoire2.données.codeInsee));
 
   const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour, indicateurEstApplicable);
-  
+
   const estPropositionSurLeBonJalon = détailsIndicateur[territoireCode].dateValeurActuelleMandat !== null ? new Date(détailsIndicateur[territoireCode].dateValeurActuelleMandat!).getFullYear() <= jalon : false;
 
   return (
@@ -220,7 +220,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       colSpan={3}
                     >
                       <div className='flex align-center justify-center'>
-                        <span className='fr-pr-1w'>
+                        <span className='fr-pr-1v'>
                           DONNÉES À ÉCHÉANCE
                         </span>
                         <Sélecteur<'2024' | '2025'>
@@ -291,7 +291,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           className={`${informationIndicateur.code === territoireCode ? 'ligne-territoire-proposition-valeur-actuelle' : null}`}
                           key={informationIndicateur.territoireNom}
                         >
-                          <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm fr-text--bold fr-text-title--high-blue-france'>
+                          <td
+                            className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm fr-text--bold fr-text-title--high-blue-france'
+                          >
                             {informationIndicateur.territoireNom}
                           </td>
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
@@ -426,37 +428,41 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     />
                                   </td>
                                   {
-                                      estPropositionSurLeBonJalon ? (
-                                        <>
-                                          { /* Valeur actuelle en fonction du jalon et date valeur actuelle en fonction du mandat */}
-                                          <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center'>
-                                            <ValeurEtDate
-                                              date={informationIndicateur.données.dateValeurActuelleMandat}
-                                              unité={informationIndicateur.données.unité}
-                                              valeur={informationIndicateur.données.proposition.valeurActuelle}
-                                            />
-                                          </td>
-                                          <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
-                                            <ValeurEtDate
-                                              date={informationIndicateur.données.dateValeurCibleAnnuelle}
-                                              unité={informationIndicateur.données.unité}
-                                              valeur={informationIndicateur.données.valeurCibleAnnuelle}
-                                            />
-                                          </td>
-                                          <td className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm texte-proposition'>
-                                            <BarreDeProgression
-                                              afficherTexte
-                                              fond='gris-clair'
-                                              positionTexte='dessus'
-                                              taille='md'
-                                              valeur={informationIndicateur.données.proposition.tauxAvancementIntermediaire}
-                                              variante='jaune-moutarde'
-                                            />
-                                          </td>
-                                        </>                                    
-                                      ) : (
-                                        <td colSpan={3} />
-                                      )
+                                    estPropositionSurLeBonJalon ? (
+                                      <>
+                                        { /* Valeur actuelle en fonction du jalon et date valeur actuelle en fonction du mandat */}
+                                        <td
+                                          className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center'
+                                        >
+                                          <ValeurEtDate
+                                            date={informationIndicateur.données.dateValeurActuelleMandat}
+                                            unité={informationIndicateur.données.unité}
+                                            valeur={informationIndicateur.données.proposition.valeurActuelle}
+                                          />
+                                        </td>
+                                        <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
+                                          <ValeurEtDate
+                                            date={informationIndicateur.données.dateValeurCibleAnnuelle}
+                                            unité={informationIndicateur.données.unité}
+                                            valeur={informationIndicateur.données.valeurCibleAnnuelle}
+                                          />
+                                        </td>
+                                        <td
+                                          className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm texte-proposition'
+                                        >
+                                          <BarreDeProgression
+                                            afficherTexte
+                                            fond='gris-clair'
+                                            positionTexte='dessus'
+                                            taille='md'
+                                            valeur={informationIndicateur.données.proposition.tauxAvancementIntermediaire}
+                                            variante='jaune-moutarde'
+                                          />
+                                        </td>
+                                      </>
+                                    ) : (
+                                      <td colSpan={3} />
+                                    )
                                   }
                                   { /* Valeur et date valeur actuelle mandat de indicateurTerritoire */}
                                   <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
@@ -537,7 +543,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           className={`${informationIndicateurComparé.code === territoireCode ? 'ligne-territoire-proposition-valeur-actuelle' : 'table-comparaison-border'}`}
                           key={informationIndicateurComparé.territoireNom}
                         >
-                          <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm fr-text-title--light-blue-france'>
+                          <td
+                            className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm fr-text-title--light-blue-france'
+                          >
                             {informationIndicateurComparé.territoireNom}
                           </td>
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>

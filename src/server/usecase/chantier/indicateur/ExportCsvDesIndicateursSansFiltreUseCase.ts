@@ -34,7 +34,7 @@ const verifierOptionMeteo = (optionsExport: OptionsExport, chantierMeteo: string
 
 export default class ExportCsvDesIndicateursSansFiltreUseCase {
 
-  public static readonly NOMS_COLONNES = [
+  public static readonly NOMS_COLONNES = (jalon: number): string[] => [
     'Maille',
     'Région',
     'Département',
@@ -44,7 +44,8 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
     'Chantier',
     'Chantier Id',
     'Chantier du baromètre',
-    'Taux d\'avancement à fin d\'échéance (chantier)',
+    "Taux d'avancement à fin d'échéance (chantier)",
+    `Taux d'avancement de l'année en cours (${jalon}) (chantier)`,
     'Météo',
     'Indicateur',
     'Valeur initiale',
@@ -53,10 +54,10 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
     'Date valeur actuelle',
     'Valeur cible année en cours',
     'Date valeur cible année en cours',
-    'Taux d\'avancement de l\'année en cours',
-    'Valeur cible à fin d\'échéance',
-    'Date valeur cible à fin d\'échéance',
-    'Taux d\'avancement à fin d\'échéance (indicateur)',
+    `Taux d'avancement de l'année en cours (${jalon}) (indicateur)`,
+    "Valeur cible à fin d'échéance",
+    "Date valeur cible à fin d'échéance",
+    "Taux d'avancement à fin d'échéance (indicateur)",
   ];
 
   constructor(
@@ -98,6 +99,7 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
       indicateurPourExport.chantierId || NON_APPLICABLE,
       indicateurPourExport.chantierEstBaromètre ? OUI : NON,
       formaterNumérique(indicateurPourExport.chantierAvancementGlobal),
+      formaterNumérique(indicateurPourExport.chantierAvancementAnnuel),
       formaterMétéo(indicateurPourExport.météo),
       indicateurPourExport.nom || NON_APPLICABLE,
       formaterNumérique(indicateurPourExport.valeurInitiale),

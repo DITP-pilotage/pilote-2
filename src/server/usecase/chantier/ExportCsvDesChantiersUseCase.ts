@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/dot-notation */
 import { formaterMétéo, formaterNumérique, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
 import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
 import { libellésTypesCommentaire } from '@/client/constants/libellésCommentaire';
@@ -27,7 +26,7 @@ const verifierOptionMeteo = (optionsExport: OptionsExport, chantierMeteo: string
 };
 
 export class ExportCsvDesChantiersUseCase {
-  public static readonly NOMS_COLONNES = [
+  public static readonly NOMS_COLONNES = (jalon: number): string[] => [
     'Maille',
     'Région',
     'Département',
@@ -42,10 +41,10 @@ export class ExportCsvDesChantiersUseCase {
     'Contact directeur projet',
     'Responsable local',
     'Contact responsable local',
-    'Taux d\'avancement de l\'année en cours',
-    'Taux d\'avancement départemental à fin d\'échéance',
-    'Taux d\'avancement régional à fin d\'échéance',
-    'Taux d\'avancement national à fin d\'échéance',
+    `Taux d'avancement de l'année en cours (${jalon})`,
+    "Taux d'avancement départemental à fin d'échéance",
+    "Taux d'avancement régional à fin d'échéance",
+    "Taux d'avancement national à fin d'échéance",
     'Météo',
     'Synthèse des résultats',
     libellésTypesObjectif['notreAmbition'],

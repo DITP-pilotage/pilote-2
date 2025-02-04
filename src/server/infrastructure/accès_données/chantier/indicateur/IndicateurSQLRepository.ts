@@ -379,6 +379,14 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
           select: {
             meteo: true,
             taux_avancement_mandat: true,
+            chantier_territoire_jalon: {
+              select: {
+                taux_avancement: true,
+              },
+              where: {
+                jalon,
+              },
+            },
           },
         },
       },
@@ -386,6 +394,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
 
     return result.map(indicateurPourExport => {
       const indicateurTerritoireJalon = indicateurPourExport.indicateur_territoire_jalon.at(0);
+      const chantierTerritoireJalon = indicateurPourExport.chantier_territoire.chantier_territoire_jalon.at(0);
       return ({
         maille: indicateurPourExport.maille,
         régionNom: indicateurPourExport.maille === 'DEPT' ? indicateurPourExport.territoire.territoire_parent?.nom || null : indicateurPourExport.territoire.nom,
@@ -398,17 +407,18 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         chantierStatut: indicateurPourExport.indicateur_identite.chantier_identite.statut,
         chantierEstBaromètre: indicateurPourExport.indicateur_identite.chantier_identite.est_barometre,
         chantierEstTerritorialise: indicateurPourExport.indicateur_identite.chantier_identite.est_territorialise,
-        chantierAvancementGlobal: indicateurPourExport.chantier_territoire.taux_avancement_mandat,
+        chantierAvancementGlobal: verifyValeurIsNotNullOrUndefined(indicateurPourExport.chantier_territoire.taux_avancement_mandat),
+        chantierAvancementAnnuel: verifyValeurIsNotNullOrUndefined(chantierTerritoireJalon?.taux_avancement),
         périmètreIds: indicateurPourExport.indicateur_identite.chantier_identite.perimetre_ids,
         météo: indicateurPourExport.chantier_territoire.meteo as Météo | null,
         nom: indicateurPourExport.indicateur_identite.nom,
         valeurInitiale: indicateurPourExport.valeur_initiale,
         dateValeurInitiale: indicateurPourExport.date_valeur_initiale?.toISOString() || null,
-        valeurActuelle: indicateurTerritoireJalon?.valeur_actuelle !== null && indicateurTerritoireJalon?.valeur_actuelle !== undefined ? indicateurTerritoireJalon?.valeur_actuelle! : null,
+        valeurActuelle: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_actuelle),
         dateValeurActuelle: indicateurTerritoireJalon?.date_valeur_actuelle?.toISOString() || null,
-        valeurCibleAnnuelle: indicateurTerritoireJalon?.valeur_cible !== null && indicateurTerritoireJalon?.valeur_cible !== undefined ? indicateurTerritoireJalon?.valeur_cible! : null,
+        valeurCibleAnnuelle:verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_cible),
         dateValeurCibleAnnuelle: indicateurTerritoireJalon?.date_valeur_cible?.toISOString() || null,
-        avancementAnnuel: indicateurTerritoireJalon?.taux_avancement !== null && indicateurTerritoireJalon?.taux_avancement !== undefined ? indicateurTerritoireJalon?.taux_avancement! : null,
+        avancementAnnuel: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.taux_avancement),
         valeurCible: indicateurPourExport.valeur_cible_mandat,
         dateValeurCible: indicateurPourExport.date_valeur_cible_mandat?.toISOString() || null,
         avancementGlobal: indicateurPourExport.taux_avancement_mandat,
