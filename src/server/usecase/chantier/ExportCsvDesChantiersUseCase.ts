@@ -41,7 +41,7 @@ export class ExportCsvDesChantiersUseCase {
     'Contact directeur projet',
     'Responsable local',
     'Contact responsable local',
-    `Taux d'avancement de l'année en cours (${jalon})`,
+    `Taux d'avancement de l'année (${jalon})`,
     "Taux d'avancement départemental à fin d'échéance",
     "Taux d'avancement régional à fin d'échéance",
     "Taux d'avancement national à fin d'échéance",
