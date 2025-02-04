@@ -3,7 +3,6 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-business/icons-business.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import Link from 'next/link';
 import { FunctionComponent, useState } from 'react';
-import { parseAsBoolean, parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import PageRapportDétailléStyled from '@/components/PageRapportDétaillé/PageRapportDétaillé.styled';
 import Titre from '@/components/_commons/Titre/Titre';
 import { PublicationsGroupéesParChantier } from '@/components/PageRapportDétaillé/PageRapportDétaillé.interface';
@@ -31,6 +30,7 @@ import {
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
+import { getFiltresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
 import FiltresSélectionnés from './FiltresSélectionnés/FiltresSélectionnés';
 
 interface PageRapportDétailléProps {
@@ -86,26 +86,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const [afficherLesChantiers, setAfficherLesChantiers] = useState(false);
 
-  const [filtres] = useQueryStates({
-    perimetres: parseAsString.withDefault(''),
-    axes: parseAsString.withDefault(''),
-    meteos: parseAsString.withDefault(''),
-    estBarometre: parseAsBoolean.withDefault(false),
-    estTerritorialise: parseAsBoolean.withDefault(false),
-    maille: parseAsString.withDefault(''),
-    statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']),
-  });
-
-  const [filtresAlertes] = useQueryStates({
-    estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
-    estEnAlerteÉcart: parseAsBoolean.withDefault(false),
-    estEnAlerteBaisse: parseAsBoolean.withDefault(false),
-    estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
-    estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
-    estEnAlertePossedePropositionsValeurActuelle: parseAsBoolean.withDefault(false),
-  });
-
-  const queryParamString = getQueryParamString({ ...filtres, ...filtresAlertes });
+  const queryParamString = getQueryParamString(getFiltresActifs());
 
   const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
 
