@@ -39,14 +39,16 @@ jalon_annee_courante AS (
         ON
             meta_indic.id = pt1.indic_id
             AND territoire.zone_id = pt1.zone_id
+            -- VC de l'année en cours
             AND pt1.yyear = date_part('year', now())
     LEFT JOIN
         {{ ref('get_last_vaca') }} AS pt2
         ON
             meta_indic.id = pt2.indic_id
             AND territoire.zone_id = pt2.zone_id
+            -- VA dont l'année n'est pas dans le futur
             AND date_part('year', pt2.date_valeur_actuelle::date)
-            = (date_part('year', now()))
+            < date_part('year', now()) + 1
 ),
 
 -- Tous les TA pour tous les jalons
