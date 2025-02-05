@@ -18,7 +18,7 @@ const AvancementChantierStyled = styled.div`
   .fr-select {
     box-shadow: inset 0 -1px 0 0 var(--border-plain-grey)
   }
-
+  
   &.layout--dept {
     @media (min-width: 1025px) {
       grid-template-areas: "dept reg nat nat";
