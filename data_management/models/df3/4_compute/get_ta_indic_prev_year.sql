@@ -12,5 +12,6 @@ SELECT
 	vacp,
 	tap_global,
 	tap_courant,
+	tap_prev_year,
 	tap_adate
 FROM {{ ref('get_last_vaca_prev_year') }}

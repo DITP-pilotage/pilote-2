@@ -25,5 +25,6 @@ SELECT
 	vacp,
 	tap_global,
 	tap_courant,
+	tap_prev_year,
 	tap_adate
 FROM sort_mesures_vaca_prev_year_last
