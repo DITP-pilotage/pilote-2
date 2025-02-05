@@ -15,7 +15,7 @@ jalon_annee_precedente AS (
         vca_prev_year_date::date AS date_valeur_cible,
         vca_prev_year AS valeur_cible,
         taa_prev_year AS taux_avancement,
-        tap_adate AS taux_avancement_proposition,
+        tap_prev_year AS taux_avancement_proposition,
         date_valeur_actuelle_prev_year::date AS date_valeur_actuelle,
         valeur_actuelle_prev_year AS valeur_actuelle
     FROM {{ ref('get_ta_indic_prev_year') }}
