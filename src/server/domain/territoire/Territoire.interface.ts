@@ -42,7 +42,6 @@ export type TerritoireDonnées = {
   coordinateurTerritorial: CoordinateurTerritorial[],
   mailleSourceDonnees: Maille | null;
   nombrePropositionsValeurActuelle: number,
-  nombrePropositionsValeurActuellePonderee: number,
 };
 
 export type Territoire = {

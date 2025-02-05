@@ -40,7 +40,6 @@ export function créerDonnéesTerritoires(
       coordinateurTerritorial: [],
       mailleSourceDonnees: chantierRow?.donnees_maille_source ? NOMS_MAILLES[chantierRow.donnees_maille_source] : null,
       nombrePropositionsValeurActuelle: chantierRow?.nombre_propositions_valeur_actuelle ?? 0,
-      nombrePropositionsValeurActuellePonderee: chantierRow?.nombre_propositions_valeur_actuelle_ponderee ?? 0,
     };
 
     if (!!chantierRow) {
@@ -82,7 +81,6 @@ export function créerDonnéesTerritoiresNew(
       },
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
       nombrePropositionsValeurActuelle: chantierRow?.nombre_propositions_valeur_actuelle ?? 0,
-      nombrePropositionsValeurActuellePonderee: chantierRow?.nombre_propositions_valeur_actuelle_ponderee ?? 0,
     };
   });
 
@@ -112,7 +110,6 @@ export function créerDonnéesTerritoiresRapportDetailleNew(
       responsableLocal: (chantierRow?.responsables_locaux || []).map((value, index) => ({ nom: value, email: chantierRow?.responsables_locaux_mails[index]! })),
       coordinateurTerritorial: (chantierRow?.coordinateurs_territoriaux || []).map((value, index) => ({ nom: value, email: chantierRow?.coordinateurs_territoriaux_mails[index]! })),
       nombrePropositionsValeurActuelle: chantierRow?.nombre_propositions_valeur_actuelle ?? 0,
-      nombrePropositionsValeurActuellePonderee: chantierRow?.nombre_propositions_valeur_actuelle_ponderee ?? 0,
     };
   });
 
@@ -158,8 +155,7 @@ export const parseChantierNew = (
           responsableLocal: [],
           coordinateurTerritorial: [],
           mailleSourceDonnees: null,
-          nombrePropositionsValeurActuelle: chantierMailleNationale.nombre_propositions_valeur_actuelle,
-          nombrePropositionsValeurActuellePonderee: chantierMailleNationale.nombre_propositions_valeur_actuelle_ponderee,
+          nombrePropositionsValeurActuelle: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0) ? 1 : 0,
         },
       },
       departementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'departementale'), listeChantiersMailleDépartementale),

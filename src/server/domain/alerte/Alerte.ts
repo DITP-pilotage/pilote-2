@@ -29,7 +29,7 @@ const Alerte = {
     return météo === 'NON_RENSEIGNEE';
   },
 
-  estEnAlertePossedePropositionsValeurActuelle(nombrePropositionsValeurActuelle: ChantierVueDEnsemble['nombrePropositionsValeurActuelle'] ) {
+  estEnAlertePossedePropositionsValeurActuelle(nombrePropositionsValeurActuelle: number ) {
     return nombrePropositionsValeurActuelle > 0;
   },
 };

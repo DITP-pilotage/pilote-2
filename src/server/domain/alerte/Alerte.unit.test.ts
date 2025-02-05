@@ -169,7 +169,6 @@ describe('Alerte', () => {
           dateDeMàjDonnéesQuantitatives: null,
           météo: 'NON_RENSEIGNEE',
           nombrePropositionsValeurActuelle: 0,
-          nombrePropositionsValeurActuellePonderee: 0,
         },
         '02': {
           estApplicable: false,
@@ -183,7 +182,6 @@ describe('Alerte', () => {
           dateDeMàjDonnéesQuantitatives: null,
           météo: 'NON_RENSEIGNEE',
           nombrePropositionsValeurActuelle: 0,
-          nombrePropositionsValeurActuellePonderee: 0,
         },
         '03': {
           estApplicable: true,
@@ -197,7 +195,6 @@ describe('Alerte', () => {
           dateDeMàjDonnéesQuantitatives: null,
           météo: 'NON_RENSEIGNEE',
           nombrePropositionsValeurActuelle: 0,
-          nombrePropositionsValeurActuellePonderee: 0,
         },
       };
       // When
@@ -222,7 +219,6 @@ describe('Alerte', () => {
           dateDeMàjDonnéesQuantitatives: null,
           météo: 'NON_RENSEIGNEE',
           nombrePropositionsValeurActuelle: 0,
-          nombrePropositionsValeurActuellePonderee: 0,
         },
         '02': {
           estApplicable: false,
@@ -236,7 +232,6 @@ describe('Alerte', () => {
           dateDeMàjDonnéesQuantitatives: null,
           météo: 'NON_RENSEIGNEE',
           nombrePropositionsValeurActuelle: 0,
-          nombrePropositionsValeurActuellePonderee: 0,
         },
         '03': {
           estApplicable: true,
@@ -250,7 +245,6 @@ describe('Alerte', () => {
           dateDeMàjDonnéesQuantitatives: null,
           météo: 'NON_RENSEIGNEE',
           nombrePropositionsValeurActuelle: 0,
-          nombrePropositionsValeurActuellePonderee: 0,
         },
       };
       // When
@@ -275,7 +269,6 @@ describe('Alerte', () => {
           dateDeMàjDonnéesQuantitatives: null,
           météo: 'NON_RENSEIGNEE',
           nombrePropositionsValeurActuelle: 0,
-          nombrePropositionsValeurActuellePonderee: 0,
         },
         '02': {
           estApplicable: false,
@@ -289,7 +282,6 @@ describe('Alerte', () => {
           dateDeMàjDonnéesQuantitatives: null,
           météo: 'NON_RENSEIGNEE',
           nombrePropositionsValeurActuelle: 0,
-          nombrePropositionsValeurActuellePonderee: 0,
         },
         '03': {
           estApplicable: false,
@@ -303,7 +295,6 @@ describe('Alerte', () => {
           dateDeMàjDonnéesQuantitatives: null,
           météo: 'NON_RENSEIGNEE',
           nombrePropositionsValeurActuelle: 0,
-          nombrePropositionsValeurActuellePonderee: 0,
         },
       };
 
@@ -329,7 +320,6 @@ describe('Alerte', () => {
           dateDeMàjDonnéesQuantitatives: null,
           météo: 'NON_RENSEIGNEE',
           nombrePropositionsValeurActuelle: 0,
-          nombrePropositionsValeurActuellePonderee: 0,
         },
         '02': {
           estApplicable: false,
@@ -343,7 +333,6 @@ describe('Alerte', () => {
           dateDeMàjDonnéesQuantitatives: null,
           météo: 'NON_RENSEIGNEE',
           nombrePropositionsValeurActuelle: 0,
-          nombrePropositionsValeurActuellePonderee: 0,
         },
         '03': {
           estApplicable: true,
@@ -357,7 +346,6 @@ describe('Alerte', () => {
           dateDeMàjDonnéesQuantitatives: null,
           météo: 'NON_RENSEIGNEE',
           nombrePropositionsValeurActuelle: 0,
-          nombrePropositionsValeurActuellePonderee: 0,
         },
       };
 
@@ -372,29 +360,10 @@ describe('Alerte', () => {
   describe('estEnAlertePossedePropositionsValeurActuelle', () => {
     test("le chantier est en alerte s'il possède au moins une proposition de valeur actuelle", () => {
       //Given
-      const ChantierVueDEnsemble = {
-        id:'1',
-        nom: 'test1',
-        avancement: {
-          'global': null,
-          'annuel': null,
-        },
-        météo: 'NON_RENSEIGNEE',
-        typologie: { 
-          estBaromètre: false, 
-          estTerritorialisé: false, 
-          estBrouillon: false },
-        porteur:  null,
-        tendance: null,
-        écart:  null,
-        dateDeMàjDonnéesQualitatives: null,
-        dateDeMàjDonnéesQuantitatives: null,
-        nombrePropositionsValeurActuelle: 1,
-        nombrePropositionsValeurActuellePonderee: 1,
-      };
+      const nombrePropositionsValeurActuelle = 1;
 
       // When
-      const estEnAlertePossedePropositionsValeurActuelle = Alerte.estEnAlertePossedePropositionsValeurActuelle(ChantierVueDEnsemble.nombrePropositionsValeurActuelle);
+      const estEnAlertePossedePropositionsValeurActuelle = Alerte.estEnAlertePossedePropositionsValeurActuelle(nombrePropositionsValeurActuelle);
 
       // Then
       expect(estEnAlertePossedePropositionsValeurActuelle).toBeTruthy();
@@ -402,29 +371,10 @@ describe('Alerte', () => {
 
     test("le chantier n'est pas en alerte s'il possède aucune proposition de valeur actuelle", () => {
       //Given
-      const ChantierVueDEnsemble = {
-        id:'1',
-        nom: 'test1',
-        avancement: {
-          'global': null,
-          'annuel': null,
-        },
-        météo: 'NON_RENSEIGNEE',
-        typologie: { 
-          estBaromètre: false, 
-          estTerritorialisé: false, 
-          estBrouillon: false },
-        porteur:  null,
-        tendance: null,
-        écart:  null,
-        dateDeMàjDonnéesQualitatives: null,
-        dateDeMàjDonnéesQuantitatives: null,
-        nombrePropositionsValeurActuelle: 0,
-        nombrePropositionsValeurActuellePonderee: 0,
-      };
+      const nombrePropositionsValeurActuelle = 0;
 
       // When
-      const estEnAlertePossedePropositionsValeurActuelle = Alerte.estEnAlertePossedePropositionsValeurActuelle(ChantierVueDEnsemble.nombrePropositionsValeurActuelle);
+      const estEnAlertePossedePropositionsValeurActuelle = Alerte.estEnAlertePossedePropositionsValeurActuelle(nombrePropositionsValeurActuelle);
 
       // Then
       expect(estEnAlertePossedePropositionsValeurActuelle).toBeFalsy();

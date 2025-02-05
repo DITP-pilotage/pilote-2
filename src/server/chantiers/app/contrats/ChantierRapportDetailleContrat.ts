@@ -30,7 +30,6 @@ interface TerritoireDonnéeRapportDetailleContrat {
   coordinateurTerritorial: CoordinateurTerritorialRapportDetailleContrat[]
   météo: 'NON_RENSEIGNEE' | 'ORAGE' | 'NUAGE' | 'COUVERT' | 'SOLEIL' | 'NON_NECESSAIRE'
   nombrePropositionsValeurActuelle: number,
-  nombrePropositionsValeurActuellePonderee: number,
 }
 
 export type ListeTerritoiresDonnéeRapportDetailleContrat = Record<string, TerritoireDonnéeRapportDetailleContrat>;
@@ -99,7 +98,6 @@ export interface ChantierRapportDetailleContrat {
   responsableLocalTerritoireSélectionné: ResponsableLocalRapportDetailleContrat[]
   coordinateurTerritorialTerritoireSélectionné: CoordinateurTerritorialRapportDetailleContrat[]
   nombrePropositionsValeurActuelle: number,
-  nombrePropositionsValeurActuellePonderee: number,
 }
 
 class ErreurChantierSansMailleNationale extends Error {
@@ -140,8 +138,7 @@ export const presenterEnChantierRapportDetaille = (
         estApplicable: chantierMailleNationale.est_applicable,
         responsableLocal: [],
         coordinateurTerritorial: [],
-        nombrePropositionsValeurActuelle: chantierMailleNationale.nombre_propositions_valeur_actuelle,
-        nombrePropositionsValeurActuellePonderee: chantierMailleNationale.nombre_propositions_valeur_actuelle_ponderee,
+        nombrePropositionsValeurActuelle: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0) ? 1 : 0,
       } : {
         avancement: { annuel: verifyValeurIsNotNullOrUndefined(chantierMailleNationale.chantier_territoire_jalon.at(0)?.taux_avancement), global: chantierMailleNationale.taux_avancement_mandat },
         météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
@@ -152,8 +149,7 @@ export const presenterEnChantierRapportDetaille = (
         estApplicable: chantierMailleNationale.est_applicable,
         coordinateurTerritorial: [],
         responsableLocal: [],
-        nombrePropositionsValeurActuelle: chantierMailleNationale.nombre_propositions_valeur_actuelle,
-        nombrePropositionsValeurActuellePonderee: chantierMailleNationale.nombre_propositions_valeur_actuelle_ponderee,
+        nombrePropositionsValeurActuelle: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0) ? 1 : 0,
       },
     },
     departementale: créerDonnéesTerritoiresRapportDetailleNew(listeTerritoireDept, listeChantiersMailleDépartementale),
@@ -204,6 +200,5 @@ export const presenterEnChantierRapportDetaille = (
     responsableLocalTerritoireSélectionné: newMaille[mailleChantier][territoireCode].responsableLocal,
     coordinateurTerritorialTerritoireSélectionné: newMaille[mailleChantier][territoireCode].coordinateurTerritorial,
     nombrePropositionsValeurActuelle: newMaille[mailleChantier][territoireCode].nombrePropositionsValeurActuelle,
-    nombrePropositionsValeurActuellePonderee: newMaille[mailleChantier][territoireCode].nombrePropositionsValeurActuellePonderee,
   };
 };

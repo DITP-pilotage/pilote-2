@@ -19,7 +19,7 @@ export default function useVueDEnsemble(chantiersFiltrés: ChantierRapportDetail
     dateDeMàjDonnéesQualitatives: chantier.dateDeMàjDonnéesQualitatives,
     dateDeMàjDonnéesQuantitatives: chantier.dateDeMàjDonnéesQuantitatives,
     nombrePropositionsValeurActuelle: chantier.nombrePropositionsValeurActuelle,
-    nombrePropositionsValeurActuellePonderee: chantier.nombrePropositionsValeurActuellePonderee  }));
+  }));
 
   const { remontéesAlertes } = useRemontéesAlertesChantiers(territoireCode, filtresComptesCalculés);
 

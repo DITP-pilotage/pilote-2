@@ -36,8 +36,6 @@ export default class TerritoireDonnéesBuilder {
 
   private _nombrePropositionsValeurActuelle: TerritoireDonnées['nombrePropositionsValeurActuelle'];
 
-  private _nombrePropositionsValeurActuellePonderee: TerritoireDonnées['nombrePropositionsValeurActuellePonderee'];
-
   constructor() {
 
     this._codeInsee = faker.helpers.arrayElement([...codesInseeDépartements, ...codesInseeRégions, codeInseeFrance]);
@@ -53,7 +51,6 @@ export default class TerritoireDonnéesBuilder {
     this._responsableLocal = générerTableau(1, 3, () => ({ nom: faker.name.fullName(), email: faker.internet.email() }));
     this._mailleSourceDonnees = null;
     this._nombrePropositionsValeurActuelle = faker.datatype.number({ min: 0 });
-    this._nombrePropositionsValeurActuellePonderee = faker.datatype.number({ min: 0 });
   }
 
   avecCodeInsee(codeInsee: TerritoireDonnées['codeInsee']): TerritoireDonnéesBuilder {
@@ -77,7 +74,6 @@ export default class TerritoireDonnéesBuilder {
       coordinateurTerritorial: this._coordinateurTerritorial,
       mailleSourceDonnees: this._mailleSourceDonnees,
       nombrePropositionsValeurActuelle: this._nombrePropositionsValeurActuelle,
-      nombrePropositionsValeurActuellePonderee: this._nombrePropositionsValeurActuellePonderee,
     };
   }
 }
