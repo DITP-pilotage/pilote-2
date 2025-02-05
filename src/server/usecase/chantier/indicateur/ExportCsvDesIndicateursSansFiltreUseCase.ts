@@ -44,8 +44,8 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
     'Chantier',
     'Chantier Id',
     'Chantier du baromètre',
-    "Taux d'avancement à fin d'échéance (chantier)",
-    `Taux d'avancement de l'année (${jalon}) (chantier)`,
+    "Taux d'avancement à fin d'échéance 2026 (chantier)",
+    `Taux d'avancement à fin d'échéance ${jalon} (chantier)`,
     'Météo',
     'Indicateur',
     'Valeur initiale',
@@ -54,10 +54,10 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
     'Date valeur actuelle',
     'Valeur cible année en cours',
     'Date valeur cible année en cours',
-    `Taux d'avancement de l'année (${jalon}) (indicateur)`,
+    `Taux d'avancement à fin d'échéance ${jalon} (indicateur)`,
     "Valeur cible à fin d'échéance",
-    "Date valeur cible à fin d'échéance",
-    "Taux d'avancement à fin d'échéance (indicateur)",
+    "Date valeur cible à fin d'échéance 2026",
+    "Taux d'avancement à fin d'échéance 2026 (indicateur)",
   ];
 
   constructor(

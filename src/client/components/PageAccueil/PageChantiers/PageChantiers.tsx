@@ -235,7 +235,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                       <div className='flex w-full justify-center fr-px-1w fr-mt-1w'>
                         <JaugeDeProgression
                           couleur={chantiersSontArchives ? 'gris' : 'bleu'}
-                          libellé="Taux d'avancement global"
+                          libellé="Taux d'avancement à échéance 2026"
                           pourcentage={avancementsAgrégés?.global.moyenne || null}
                           taille='lg'
                         />
@@ -256,7 +256,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                           />
                           <div className='select-sm flex align-center justify-center fr-text--xs'>
                             <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-                              Taux d'avancement de l'année
+                              Taux d'avancement à échéance
                             </p>
                             <Sélecteur<'2024' | '2025'>
                               htmlName='jalon'

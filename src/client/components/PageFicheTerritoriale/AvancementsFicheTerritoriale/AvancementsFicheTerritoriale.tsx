@@ -15,7 +15,7 @@ export const AvancementsFicheTerritoriale: FunctionComponent<AvancementsProps> =
     <AvancementsFicheTerritorialeStyled>
       <JaugeDeProgression
         couleur='bleu'
-        libellé="Taux d'avancement global du territoire"
+        libellé="Taux d'avancement à échéance 2026 du territoire"
         pourcentage={avancementGlobalTerritoire || null}
         taille='lg'
       />

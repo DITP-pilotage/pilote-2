@@ -70,7 +70,7 @@ FicheConducteurContrat & { jalon: number }
                   <div className='fr-col-5 flex justify-center align-end'>
                     <JaugeDeProgression
                       couleur='bleu'
-                      libellé="Taux d'avancement global"
+                      libellé="Taux d'avancement à échéance 2026"
                       pourcentage={avancement.global}
                       taille='md'
                     />
@@ -117,7 +117,7 @@ FicheConducteurContrat & { jalon: number }
                       variante='secondaire'
                     />
                     <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-                      {`Taux d'avancement de l'année ${jalon}`}
+                      {`Taux d'avancement à échéance ${jalon}`}
                     </p>
                   </div>
                 </div>

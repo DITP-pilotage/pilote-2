@@ -253,7 +253,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <th
                       className='fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
                     >
-                      valeur de référence
+                      valeur d'avancement
                     </th>
                     <th
                       className='fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
@@ -268,7 +268,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <th
                       className='fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
                     >
-                      valeur actuelle
+                      valeur d'avancement
                     </th>
                     <th
                       className='fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
@@ -430,7 +430,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   {
                                     estPropositionSurLeBonJalon ? (
                                       <>
-                                        { /* Valeur actuelle en fonction du jalon et date valeur actuelle en fonction du mandat */}
+                                        { /* Valeur actuelle en fonction de la proposition du jalon et date valeur actuelle en fonction du mandat */}
                                         <td
                                           className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center'
                                         >
@@ -464,12 +464,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                       <td colSpan={3} />
                                     )
                                   }
-                                  { /* Valeur et date valeur actuelle mandat de indicateurTerritoire */}
+                                  { /* Valeur actuelle en fonction de la proposition du jalon et date valeur actuelle en fonction du mandat */}
                                   <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                                     <ValeurEtDate
                                       date={informationIndicateur.données.dateValeurActuelleMandat}
                                       unité={informationIndicateur.données.unité}
-                                      valeur={informationIndicateur.données.valeurActuelleMandat}
+                                      valeur={informationIndicateur.données.proposition.valeurActuelle}
                                     />
                                   </td>
                                   <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>

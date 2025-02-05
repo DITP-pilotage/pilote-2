@@ -22,7 +22,7 @@ const Avancements: FunctionComponent<AvancementsProps> = ({ avancements, jalon }
     <AvancementsStyled>
       <JaugeDeProgression
         couleur='bleu'
-        libellé="Taux d'avancement global"
+        libellé="Taux d'avancement à échéance 2026"
         pourcentage={!!avancements ? avancements.global.moyenne : null}
         taille='lg'
       />
@@ -64,7 +64,7 @@ const Avancements: FunctionComponent<AvancementsProps> = ({ avancements, jalon }
           />
           <div className='flex align-center justify-center fr-text--xs'>
             <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-              Taux d'avancement de l'année
+              Taux d'avancement à échéance
             </p>
             <Sélecteur<'2024' | '2025'>
               htmlName='jalon'

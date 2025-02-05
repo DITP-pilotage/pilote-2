@@ -210,7 +210,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                   <th
                     className='fr-background-contrast-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
                   >
-                    valeur de référence
+                    valeur d'avancement
                   </th>
                   <th
                     className='fr-background-contrast-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
@@ -225,7 +225,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                   <th
                     className='fr-background-action-low-blue-france text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
                   >
-                    valeur actuelle
+                    valeur d'avancement
                   </th>
                   <th
                     className='fr-background-action-low-blue-france text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
