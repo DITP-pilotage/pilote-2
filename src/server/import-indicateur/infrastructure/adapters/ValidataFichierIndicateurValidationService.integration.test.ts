@@ -2,12 +2,8 @@ import { mock, MockProxy } from 'jest-mock-extended';
 import {
   ValidataFichierIndicateurValidationService,
 } from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
-import { ReportErrorTaskBuilder } from '@/server/import-indicateur/app/builder/ReportErrorTask.builder';
-import {
-  ReportResourceTaskBuilder,
-  ReportTaskBuilder,
-} from '@/server/import-indicateur/app/builder/ReportTask.builder';
-import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/ReportValidata.builder';
+import { ReportErrorBuilder } from '@/server/import-indicateur/app/builder/ReportErrorBuilder';
+import { ReportValidataWithDataBuilder } from '@/server/import-indicateur/app/builder/ReportValidataWithDataBuilder';
 import {
   ValiderFichierPayload,
 } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
@@ -30,73 +26,59 @@ describe('ValidataFichierIndicateurValidationService', () => {
   });
 
   it('doit appeler le httpClient pour contacter validata', async () => {
-    // GIVEN
+    // Given
     const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
-    const report = new ReportValidataBuilder()
+    const report = new ReportValidataWithDataBuilder()
       .avecValid(true)
-      .avecTasks(new ReportTaskBuilder()
-        .avecResource(
-          new ReportResourceTaskBuilder()
-            .avecData([
-              ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
-              ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
-              ['IND-002', 'D004', metricDateValue2, 'vc', '3'],
-            ])
-            .build(),
-        )
-        .build(),
+      .avecResourceData(
+        ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
+        ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
+        ['IND-002', 'D004', metricDateValue2, 'vc', '3'],
       )
       .build();
 
     httpClient.post.mockResolvedValue(report);
 
-    // WHEN
+    // When
     await validataFichierIndicateurValidationService.validerFichier(body);
 
-    // THEN
+    // Then
     expect(httpClient.post).toHaveBeenNthCalledWith(1, { cheminCompletDuFichier, nomDuFichier, schema });
   });
 
   it('quand le httpClient remonte une erreur, doit remonter une erreur', async () => {
-    // GIVEN
+    // Given
     const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
 
     httpClient.post.mockRejectedValue(new Error('error'));
 
-    // WHEN
+    // When
     const result = await validataFichierIndicateurValidationService.validerFichier(body);
 
-    // THEN
+    // Then
     expect(httpClient.post).toHaveBeenNthCalledWith(1, { cheminCompletDuFichier, nomDuFichier, schema });
     expect(result.listeErreursValidation.at(0)?.message).toEqual('Une erreur est survenue lors de la validation de la forme du fichier');
   });
 
   describe('quand le fichier est valide', () => {
     it('doit construire le rapport de validation du fichier', async () => {
-      // GIVEN
+      // Given
       const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
-      const report = new ReportValidataBuilder()
+      const report = new ReportValidataWithDataBuilder()
         .avecValid(true)
-        .avecTasks(new ReportTaskBuilder()
-          .avecResource(
-            new ReportResourceTaskBuilder()
-              .avecData([
-                ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
-                ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
-                ['IND-002', 'D004', metricDateValue2, 'vc', '3'],
-              ])
-              .build(),
-          )
-          .build(),
+        .avecResourceData(
+          ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
+          ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
+          ['IND-002', 'D004', metricDateValue2, 'vc', '3'],
         )
         .build();
 
       httpClient.post.mockResolvedValue(report);
 
-      // WHEN
+      // When
       const result = await validataFichierIndicateurValidationService.validerFichier(body);
 
-      // THEN
+      // Then
       expect(result.id).toBeDefined();
       expect(result.estValide).toEqual(true);
       expect(result.dateCreation).toBeDefined();
@@ -122,30 +104,23 @@ describe('ValidataFichierIndicateurValidationService', () => {
     });
 
     it('quand les en-têtes sont dans un autre ordre, doit construire le même rapport de validation du fichier', async () => {
-      // GIVEN
+      // Given
       const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
-      const report = new ReportValidataBuilder()
+      const report = new ReportValidataWithDataBuilder()
         .avecValid(true)
-        .avecTasks(new ReportTaskBuilder()
-          .avecResource(
-            new ReportResourceTaskBuilder()
-              .avecData([
-                ['type_valeur', 'zone_id', 'date_valeur', 'identifiant_indic', 'valeur'],
-                ['vi', 'D001', metricDateValue1, 'IND-001', '9'],
-                ['vc', 'D004', metricDateValue2, 'IND-002', '3'],
-              ])
-              .build(),
-          )
-          .build(),
+        .avecResourceData(
+          ['type_valeur', 'zone_id', 'date_valeur', 'identifiant_indic', 'valeur'],
+          ['vi', 'D001', metricDateValue1, 'IND-001', '9'],
+          ['vc', 'D004', metricDateValue2, 'IND-002', '3'],
         )
         .build();
 
       httpClient.post.mockResolvedValue(report);
 
-      // WHEN
+      // When
       const result = await validataFichierIndicateurValidationService.validerFichier(body);
 
-      // THEN
+      // Then
       expect(result.estValide).toEqual(true);
 
       expect(result.listeMesuresIndicateurTemporaire).toHaveLength(2);
@@ -168,50 +143,42 @@ describe('ValidataFichierIndicateurValidationService', () => {
 
   describe('quand le fichier est invalide', () => {
     it("doit construire le rapport d'erreur du fichier", async () => {
-      // GIVEN
+      // Given
       const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
-      const report = new ReportValidataBuilder()
+      const report = new ReportValidataWithDataBuilder()
         .avecValid(false)
-        .avecTasks(
-          new ReportTaskBuilder()
-            .avecErrors(
-              new ReportErrorTaskBuilder()
-                .avecCell('cellule 1')
-                .avecName('nom 1')
-                .avecFieldName('nom du champ 1')
-                .avecFieldPosition(1)
-                .avecMessage('message 1')
-                .avecRowNumber(1)
-                .avecRowPosition(1)
-                .build(),
-              new ReportErrorTaskBuilder()
-                .avecCell('cellule 2')
-                .avecName('nom 2')
-                .avecFieldName('nom du champ 2')
-                .avecFieldPosition(2)
-                .avecMessage('message 2')
-                .avecRowNumber(2)
-                .avecRowPosition(2)
-                .build(),
-            ).avecResource(
-              new ReportResourceTaskBuilder()
-                .avecData([
-                  ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
-                  ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
-                  ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
-                ])
-                .build(),
-            )
+        .avecErrors(
+          new ReportErrorBuilder()
+            .avecCell('cellule 1')
+            .avecName('nom 1')
+            .avecFieldName('nom du champ 1')
+            .avecFieldPosition(1)
+            .avecMessage('message 1')
+            .avecRowNumber(1)
+            .avecRowPosition(1)
             .build(),
+          new ReportErrorBuilder()
+            .avecCell('cellule 2')
+            .avecName('nom 2')
+            .avecFieldName('nom du champ 2')
+            .avecFieldPosition(2)
+            .avecMessage('message 2')
+            .avecRowNumber(2)
+            .avecRowPosition(2)
+            .build(),
+        ).avecResourceData(
+          ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
+          ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
+          ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
         )
         .build();
 
       httpClient.post.mockResolvedValue(report);
 
-      // WHEN
+      // When
       const result = await validataFichierIndicateurValidationService.validerFichier(body);
 
-      // THEN
+      // Then
       expect(result.estValide).toEqual(false);
       expect(result.listeErreursValidation).toHaveLength(2);
 
@@ -221,7 +188,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
       expect(result.listeErreursValidation.at(0)?.positionDuChamp).toEqual(1);
       expect(result.listeErreursValidation.at(0)?.message).toEqual('message 1');
       expect(result.listeErreursValidation.at(0)?.numeroDeLigne).toEqual(1);
-      expect(result.listeErreursValidation.at(0)?.positionDeLigne).toEqual(1);
+      expect(result.listeErreursValidation.at(0)?.positionDeLigne).toEqual(0);
 
       expect(result.listeErreursValidation.at(1)?.cellule).toEqual('cellule 2');
       expect(result.listeErreursValidation.at(1)?.nom).toEqual('nom 2');
@@ -229,7 +196,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
       expect(result.listeErreursValidation.at(1)?.positionDuChamp).toEqual(2);
       expect(result.listeErreursValidation.at(1)?.message).toEqual('message 2');
       expect(result.listeErreursValidation.at(1)?.numeroDeLigne).toEqual(2);
-      expect(result.listeErreursValidation.at(1)?.positionDeLigne).toEqual(2);
+      expect(result.listeErreursValidation.at(1)?.positionDeLigne).toEqual(1);
     });
 
     describe('et que le rapport possèdes des erreurs spécifiques, doit personnaliser le message', () => {
@@ -257,40 +224,32 @@ describe('ValidataFichierIndicateurValidationService', () => {
         rowPosition,
         expected,
       ) => {
-        // GIVEN
+        // Given
         const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
-        const report = new ReportValidataBuilder()
+        const report = new ReportValidataWithDataBuilder()
           .avecValid(false)
-          .avecTasks(
-            new ReportTaskBuilder()
-              .avecErrors(
-                new ReportErrorTaskBuilder()
-                  .avecFieldName(fieldName)
-                  .avecCode(code)
-                  .avecMessage("Une erreur est survenue, veuillez contacter le support pour plus d'information")
-                  .avecNote(note)
-                  .avecCell('F001')
-                  .avecRowNumber(rowNumber)
-                  .avecRowPosition(rowPosition)
-                  .avecDescription(description)
-                  .build(),
-              )
-              .avecResource(
-                new ReportResourceTaskBuilder()
-                  .avecData([
-                    ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
-                    ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
-                    ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
-                  ])
-                  .build(),
-              )
+          .avecErrors(
+            new ReportErrorBuilder()
+              .avecFieldName(fieldName)
+              .avecCode(code)
+              .avecMessage("Une erreur est survenue, veuillez contacter le support pour plus d'information")
+              .avecNote(note)
+              .avecCell('F001')
+              .avecRowNumber(rowNumber)
+              .avecRowPosition(rowPosition)
+              .avecDescription(description)
               .build(),
+          )
+          .avecResourceData(
+            ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
+            ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
+            ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
           )
           .build();
 
         httpClient.post.mockResolvedValue(report);
 
-        // WHEN
+        // When
         const result = await validataFichierIndicateurValidationService.validerFichier(body);
 
         expect(result.listeErreursValidation.at(0)?.message).toEqual(expected);
@@ -299,42 +258,34 @@ describe('ValidataFichierIndicateurValidationService', () => {
 
     describe("quand identifiant_indic n'est pas défini dans les en-têtes", () => {
       it("doit identifier que l'en-tête identifiant_indic n'est pas présente", async () => {
-        // GIVEN
+        // Given
         const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
-        const report = new ReportValidataBuilder()
+        const report = new ReportValidataWithDataBuilder()
           .avecValid(false)
-          .avecTasks(
-            new ReportTaskBuilder()
-              .avecErrors(
-                new ReportErrorTaskBuilder()
-                  .avecCell('cellule 1')
-                  .avecName('nom 1')
-                  .avecFieldName('nom du champ 1')
-                  .avecFieldPosition(1)
-                  .avecMessage('message 1')
-                  .avecRowNumber(1)
-                  .avecRowPosition(1)
-                  .build(),
-              )
-              .avecResource(
-                new ReportResourceTaskBuilder()
-                  .avecData([
-                    ['id_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
-                    ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
-                    ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
-                  ])
-                  .build(),
-              )
+          .avecErrors(
+            new ReportErrorBuilder()
+              .avecCell('cellule 1')
+              .avecName('nom 1')
+              .avecFieldName('nom du champ 1')
+              .avecFieldPosition(1)
+              .avecMessage('message 1')
+              .avecRowNumber(1)
+              .avecRowPosition(1)
               .build(),
+          )
+          .avecResourceData(
+            ['id_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
+            ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
+            ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
           )
           .build();
 
         httpClient.post.mockResolvedValue(report);
 
-        // WHEN
+        // When
         const result = await validataFichierIndicateurValidationService.validerFichier(body);
 
-        // THEN
+        // Then
         expect(result.estValide).toEqual(false);
         expect(result.listeErreursValidation).toHaveLength(2);
         expect(result.listeMesuresIndicateurTemporaire).toHaveLength(0);
@@ -350,42 +301,34 @@ describe('ValidataFichierIndicateurValidationService', () => {
 
     describe('quand une entête possède un espace', () => {
       it("doit identifier que l'en-tête est incorrect", async () => {
-        // GIVEN
+        // Given
         const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
-        const report = new ReportValidataBuilder()
+        const report = new ReportValidataWithDataBuilder()
           .avecValid(false)
-          .avecTasks(
-            new ReportTaskBuilder()
-              .avecErrors(
-                new ReportErrorTaskBuilder()
-                  .avecCell('cellule 1')
-                  .avecName('nom 1')
-                  .avecFieldName('nom du champ 1')
-                  .avecFieldPosition(1)
-                  .avecMessage('message 1')
-                  .avecRowNumber(1)
-                  .avecRowPosition(1)
-                  .build(),
-              )
-              .avecResource(
-                new ReportResourceTaskBuilder()
-                  .avecData([
-                    ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur   '],
-                    ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
-                    ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
-                  ])
-                  .build(),
-              )
+          .avecErrors(
+            new ReportErrorBuilder()
+              .avecCell('cellule 1')
+              .avecName('nom 1')
+              .avecFieldName('nom du champ 1')
+              .avecFieldPosition(1)
+              .avecMessage('message 1')
+              .avecRowNumber(1)
+              .avecRowPosition(1)
               .build(),
+          )
+          .avecResourceData(
+            ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur   '],
+            ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
+            ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
           )
           .build();
 
         httpClient.post.mockResolvedValue(report);
 
-        // WHEN
+        // When
         const result = await validataFichierIndicateurValidationService.validerFichier(body);
 
-        // THEN
+        // Then
         expect(result.estValide).toEqual(false);
         expect(result.listeErreursValidation).toHaveLength(2);
         expect(result.listeMesuresIndicateurTemporaire).toHaveLength(2);
@@ -402,42 +345,34 @@ describe('ValidataFichierIndicateurValidationService', () => {
 
     describe('quand une entête possède des majuscules', () => {
       it("doit identifier que l'en-tête est incorrect", async () => {
-        // GIVEN
+        // Given
         const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
-        const report = new ReportValidataBuilder()
+        const report = new ReportValidataWithDataBuilder()
           .avecValid(false)
-          .avecTasks(
-            new ReportTaskBuilder()
-              .avecErrors(
-                new ReportErrorTaskBuilder()
-                  .avecCell('cellule 1')
-                  .avecName('nom 1')
-                  .avecFieldName('nom du champ 1')
-                  .avecFieldPosition(1)
-                  .avecMessage('message 1')
-                  .avecRowNumber(1)
-                  .avecRowPosition(1)
-                  .build(),
-              )
-              .avecResource(
-                new ReportResourceTaskBuilder()
-                  .avecData([
-                    ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'Valeur'],
-                    ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
-                    ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
-                  ])
-                  .build(),
-              )
+          .avecErrors(
+            new ReportErrorBuilder()
+              .avecCell('cellule 1')
+              .avecName('nom 1')
+              .avecFieldName('nom du champ 1')
+              .avecFieldPosition(1)
+              .avecMessage('message 1')
+              .avecRowNumber(1)
+              .avecRowPosition(1)
               .build(),
+          )
+          .avecResourceData(
+            ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'Valeur'],
+            ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
+            ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
           )
           .build();
 
         httpClient.post.mockResolvedValue(report);
 
-        // WHEN
+        // When
         const result = await validataFichierIndicateurValidationService.validerFichier(body);
 
-        // THEN
+        // Then
         expect(result.estValide).toEqual(false);
         expect(result.listeErreursValidation).toHaveLength(2);
         expect(result.listeMesuresIndicateurTemporaire).toHaveLength(2);
@@ -453,42 +388,34 @@ describe('ValidataFichierIndicateurValidationService', () => {
     });
 
     it('quand le fichier possède des données, doit construire le remonter les données du fichier', async () => {
-      // GIVEN
+      // Given
       const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
-      const report = new ReportValidataBuilder()
+      const report = new ReportValidataWithDataBuilder()
         .avecValid(false)
-        .avecTasks(
-          new ReportTaskBuilder()
-            .avecErrors(
-              new ReportErrorTaskBuilder()
-                .avecCell('cellule 1')
-                .avecName('nom 1')
-                .avecFieldName('nom du champ 1')
-                .avecFieldPosition(1)
-                .avecMessage('message 1')
-                .avecRowNumber(1)
-                .avecRowPosition(1)
-                .build(),
-            )
-            .avecResource(
-              new ReportResourceTaskBuilder()
-                .avecData([
-                  ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
-                  ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
-                  ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
-                ])
-                .build(),
-            )
+        .avecErrors(
+          new ReportErrorBuilder()
+            .avecCell('cellule 1')
+            .avecName('nom 1')
+            .avecFieldName('nom du champ 1')
+            .avecFieldPosition(1)
+            .avecMessage('message 1')
+            .avecRowNumber(1)
+            .avecRowPosition(1)
             .build(),
+        )
+        .avecResourceData(
+          ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
+          ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
+          ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
         )
         .build();
 
       httpClient.post.mockResolvedValue(report);
 
-      // WHEN
+      // When
       const result = await validataFichierIndicateurValidationService.validerFichier(body);
 
-      // THEN
+      // Then
       expect(result.listeErreursValidation).toHaveLength(1);
       expect(result.listeMesuresIndicateurTemporaire).toHaveLength(2);
     });

@@ -4,12 +4,8 @@ import { anyString, mock } from 'jest-mock-extended';
 import PersistentFile from 'formidable/PersistentFile';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { randomUUID } from 'node:crypto';
-import { ReportErrorTaskBuilder } from '@/server/import-indicateur/app/builder/ReportErrorTask.builder';
-import {
-  ReportResourceTaskBuilder,
-  ReportTaskBuilder,
-} from '@/server/import-indicateur/app/builder/ReportTask.builder';
-import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/ReportValidata.builder';
+import { ReportErrorBuilder } from '@/server/import-indicateur/app/builder/ReportErrorBuilder';
+import { ReportValidataWithDataBuilder } from '@/server/import-indicateur/app/builder/ReportValidataWithDataBuilder';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
 import { getNextAuthSessionTokenPourUtilisateurEmail } from '@/server/infrastructure/test/NextAuthHelper';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
@@ -56,20 +52,12 @@ describe('VerifierImportIndicateurHandler', () => {
     it('doit retourner que le fichier est valide', async () => {
       // GIVEN
       const auteurId = await creeUnUtilisateurEnBase();
-      const report = new ReportValidataBuilder()
+      const report = new ReportValidataWithDataBuilder()
         .avecValid(true)
-        .avecTasks(
-          new ReportTaskBuilder()
-            .avecResource(
-              new ReportResourceTaskBuilder()
-                .avecData([
-                  ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
-                  ['IND-001', 'D001', DONNEE_DATE_1, 'vi', '9'],
-                  ['IND-001', 'D004', DONNEE_DATE_2, 'vc', '3'],
-                ])
-                .build(),
-            )
-            .build(),
+        .avecResourceData(
+          ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
+          ['IND-001', 'D001', DONNEE_DATE_1, 'vi', '9'],
+          ['IND-001', 'D004', DONNEE_DATE_2, 'vc', '3'],
         ).build();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
@@ -77,7 +65,7 @@ describe('VerifierImportIndicateurHandler', () => {
 
       nock(BASE_URL_VALIDATA)
         .post('/validate').reply(200,
-          JSON.stringify({ report }),
+          JSON.stringify({ report, resource_data: report.resource_data }),
         );
 
       // WHEN
@@ -108,24 +96,16 @@ describe('VerifierImportIndicateurHandler', () => {
     it('doit sauvegarder les données du fichier', async () => {
       // GIVEN
       const auteurId = await creeUnUtilisateurEnBase();
-      const report = new ReportValidataBuilder()
+      const report = new ReportValidataWithDataBuilder()
         .avecValid(true)
-        .avecTasks(
-          new ReportTaskBuilder()
-            .avecResource(
-              new ReportResourceTaskBuilder()
-                .avecData([
-                  ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
-                  ['IND-001', 'D001', DONNEE_DATE_1, 'vi', '9'],
-                  ['IND-001', 'D004', DONNEE_DATE_2, 'vc', '3'],
-                ])
-                .build(),
-            )
-            .build(),
+        .avecResourceData(
+          ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
+          ['IND-001', 'D001', DONNEE_DATE_1, 'vi', '9'],
+          ['IND-001', 'D004', DONNEE_DATE_2, 'vc', '3'],
         ).build();
       nock(BASE_URL_VALIDATA)
         .post('/validate').reply(200,
-          JSON.stringify({ report }),
+          JSON.stringify({ report, resource_data: report.resource_data }),
         );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
@@ -165,24 +145,16 @@ describe('VerifierImportIndicateurHandler', () => {
     it('doit sauvegarder le rapport pour lié à l\'utilisateur', async () => {
       // GIVEN
       const auteurId = await creeUnUtilisateurEnBase();
-      const report = new ReportValidataBuilder()
+      const report = new ReportValidataWithDataBuilder()
         .avecValid(true)
-        .avecTasks(
-          new ReportTaskBuilder()
-            .avecResource(
-              new ReportResourceTaskBuilder()
-                .avecData([
-                  ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
-                  ['IND-001', 'D001', DONNEE_DATE_1, 'vi', '9'],
-                  ['IND-001', 'D004', DONNEE_DATE_2, 'vc', '3'],
-                ])
-                .build(),
-            )
-            .build(),
+        .avecResourceData(
+          ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
+          ['IND-001', 'D001', DONNEE_DATE_1, 'vi', '9'],
+          ['IND-001', 'D004', DONNEE_DATE_2, 'vc', '3'],
         ).build();
       nock(BASE_URL_VALIDATA)
         .post('/validate').reply(200,
-          JSON.stringify({ report }),
+          JSON.stringify({ report, resource_data: report.resource_data }),
         );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
@@ -214,39 +186,31 @@ describe('VerifierImportIndicateurHandler', () => {
   it('Quand le fichier envoyé est incorrect, doit retourner les erreurs du fichier', async () => {
     // GIVEN
     const auteurId = await creeUnUtilisateurEnBase();
-    const report = new ReportValidataBuilder()
+    const report = new ReportValidataWithDataBuilder()
       .avecValid(false)
-      .avecTasks(
-        new ReportTaskBuilder()
-          .avecErrors(
-            new ReportErrorTaskBuilder()
-              .avecCell('cellule 1')
-              .avecName('nom 1')
-              .avecFieldName('nom du champ 1')
-              .avecFieldPosition(1)
-              .avecMessage('message 1')
-              .avecRowNumber(1)
-              .avecRowPosition(1)
-              .build(),
-            new ReportErrorTaskBuilder()
-              .avecCell('cellule 2')
-              .avecName('nom 2')
-              .avecFieldName('nom du champ 2')
-              .avecFieldPosition(2)
-              .avecMessage('message 2')
-              .avecRowNumber(2)
-              .avecRowPosition(2)
-              .build(),
-          ).avecResource(
-            new ReportResourceTaskBuilder()
-              .avecData([
-                ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
-                ['IND-001', 'D001', '30/12/2023', 'vi', '9'],
-                ['IND-001', 'D004', '31/12/2023', 'vc', '3'],
-              ])
-              .build(),
-          )
+      .avecErrors(
+        new ReportErrorBuilder()
+          .avecCell('cellule 1')
+          .avecName('nom 1')
+          .avecFieldName('nom du champ 1')
+          .avecFieldPosition(1)
+          .avecMessage('message 1')
+          .avecRowNumber(1)
+          .avecRowPosition(1)
           .build(),
+        new ReportErrorBuilder()
+          .avecCell('cellule 2')
+          .avecName('nom 2')
+          .avecFieldName('nom du champ 2')
+          .avecFieldPosition(2)
+          .avecMessage('message 2')
+          .avecRowNumber(2)
+          .avecRowPosition(2)
+          .build(),
+      ).avecResourceData(
+        ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
+        ['IND-001', 'D001', '30/12/2023', 'vi', '9'],
+        ['IND-001', 'D004', '31/12/2023', 'vc', '3'],
       ).build();
 
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
@@ -254,7 +218,7 @@ describe('VerifierImportIndicateurHandler', () => {
 
     nock(BASE_URL_VALIDATA)
       .post('/validate').reply(200,
-        JSON.stringify({ report }),
+        JSON.stringify({ report, resource_data: report.resource_data }),
       );
 
     // WHEN
@@ -284,7 +248,7 @@ describe('VerifierImportIndicateurHandler', () => {
           nom: 'nom 1',
           message: 'message 1',
           numeroDeLigne: 1,
-          positionDeLigne: 1,
+          positionDeLigne: 0,
           nomDuChamp: 'nom du champ 1',
           positionDuChamp: 1,
         },
@@ -293,7 +257,7 @@ describe('VerifierImportIndicateurHandler', () => {
           nom: 'nom 2',
           message: 'message 2',
           numeroDeLigne: 2,
-          positionDeLigne: 2,
+          positionDeLigne: 1,
           nomDuChamp: 'nom du champ 2',
           positionDuChamp: 2,
         },
@@ -304,39 +268,31 @@ describe('VerifierImportIndicateurHandler', () => {
   it('Quand le fichier envoyé est incorrect, doit sauvegarder les erreurs du fichier', async () => {
     // GIVEN
     const auteurId = await creeUnUtilisateurEnBase();
-    const report = new ReportValidataBuilder()
+    const report = new ReportValidataWithDataBuilder()
       .avecValid(false)
-      .avecTasks(
-        new ReportTaskBuilder()
-          .avecErrors(
-            new ReportErrorTaskBuilder()
-              .avecCell('cellule 1')
-              .avecName('nom 1')
-              .avecFieldName('nom du champ 1')
-              .avecFieldPosition(1)
-              .avecMessage('message 1')
-              .avecRowNumber(1)
-              .avecRowPosition(1)
-              .build(),
-            new ReportErrorTaskBuilder()
-              .avecCell('cellule 2')
-              .avecName('nom 2')
-              .avecFieldName('nom du champ 2')
-              .avecFieldPosition(2)
-              .avecMessage('message 2')
-              .avecRowNumber(2)
-              .avecRowPosition(2)
-              .build(),
-          ).avecResource(
-            new ReportResourceTaskBuilder()
-              .avecData([
-                ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
-                ['IND-001', 'D001', '30/12/2023', 'vi', '9'],
-                ['IND-001', 'D004', '31/12/2023', 'vc', '3'],
-              ])
-              .build(),
-          )
+      .avecErrors(
+        new ReportErrorBuilder()
+          .avecCell('cellule 1')
+          .avecName('nom 1')
+          .avecFieldName('nom du champ 1')
+          .avecFieldPosition(1)
+          .avecMessage('message 1')
+          .avecRowNumber(1)
+          .avecRowPosition(1)
           .build(),
+        new ReportErrorBuilder()
+          .avecCell('cellule 2')
+          .avecName('nom 2')
+          .avecFieldName('nom du champ 2')
+          .avecFieldPosition(2)
+          .avecMessage('message 2')
+          .avecRowNumber(2)
+          .avecRowPosition(2)
+          .build(),
+      ).avecResourceData(
+        ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
+        ['IND-001', 'D001', '30/12/2023', 'vi', '9'],
+        ['IND-001', 'D004', '31/12/2023', 'vc', '3'],
       ).build();
 
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil(ProfilEnum.DITP_ADMIN).avecHabilitationsLecture([], [], []).build();
@@ -344,7 +300,7 @@ describe('VerifierImportIndicateurHandler', () => {
 
     nock(BASE_URL_VALIDATA)
       .post('/validate').reply(200,
-        JSON.stringify({ report }),
+        JSON.stringify({ report, resource_data: report.resource_data }),
       );
 
     // WHEN
@@ -369,7 +325,7 @@ describe('VerifierImportIndicateurHandler', () => {
     expect(listeErreursValidationFichier[0].nom).toEqual('nom 1');
     expect(listeErreursValidationFichier[0].message).toEqual('message 1');
     expect(listeErreursValidationFichier[0].numero_de_ligne).toEqual(1);
-    expect(listeErreursValidationFichier[0].position_de_ligne).toEqual(1);
+    expect(listeErreursValidationFichier[0].position_de_ligne).toEqual(0);
     expect(listeErreursValidationFichier[0].nom_du_champ).toEqual('nom du champ 1');
     expect(listeErreursValidationFichier[0].position_du_champ).toEqual(1);
 
@@ -377,7 +333,7 @@ describe('VerifierImportIndicateurHandler', () => {
     expect(listeErreursValidationFichier[1].nom).toEqual('nom 2');
     expect(listeErreursValidationFichier[1].message).toEqual('message 2');
     expect(listeErreursValidationFichier[1].numero_de_ligne).toEqual(2);
-    expect(listeErreursValidationFichier[1].position_de_ligne).toEqual(2);
+    expect(listeErreursValidationFichier[1].position_de_ligne).toEqual(1);
     expect(listeErreursValidationFichier[1].nom_du_champ).toEqual('nom du champ 2');
     expect(listeErreursValidationFichier[1].position_du_champ).toEqual(2);
   });

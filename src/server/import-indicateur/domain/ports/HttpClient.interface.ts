@@ -1,4 +1,6 @@
-import { ReportValidata } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
+import {
+  ReportValidataWithData,
+} from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
 
 export type ValidataValidationFichierPayload = {
   cheminCompletDuFichier: string
@@ -7,5 +9,5 @@ export type ValidataValidationFichierPayload = {
 };
 
 export interface HttpClient {
-  post(body: ValidataValidationFichierPayload): Promise<ReportValidata>
+  post(body: ValidataValidationFichierPayload): Promise<ReportValidataWithData>
 }

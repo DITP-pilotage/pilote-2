@@ -14,6 +14,7 @@ import {
   ErreurValidationFichierRepository,
 } from '@/server/import-indicateur/domain/ports/ErreurValidationFichierRepository';
 import { IndicateurRepository } from '@/server/import-indicateur/domain/ports/IndicateurRepository';
+import logger from '@/server/infrastructure/Logger';
 
 interface Dependencies {
   fichierIndicateurValidationService: FichierIndicateurValidationService
@@ -154,7 +155,8 @@ export class VerifierFichierIndicateurImporteUseCase {
           utilisateurEmail: utilisateurAuteurDeLimportEmail,
         });
       }
-    } catch {
+    } catch (error) {
+      logger.error((error as Error).message);
       const listeErreursValidation = [
         ErreurValidationFichier.creerErreurValidationFichier({
           rapportId: report.id,
