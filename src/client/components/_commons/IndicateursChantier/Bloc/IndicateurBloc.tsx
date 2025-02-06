@@ -241,7 +241,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   </tr>
                   <tr className='border-b-2'>
                     <th
-                      className='fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
+                      className='fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold no-wrap'
                     >
                       Territoire(s)
                     </th>
@@ -465,7 +465,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     )
                                   }
                                   { /* Valeur actuelle en fonction de la proposition du jalon et date valeur actuelle en fonction du mandat */}
-                                  <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
+                                  <td
+                                    className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center'
+                                  >
                                     <ValeurEtDate
                                       date={informationIndicateur.données.dateValeurActuelleMandat}
                                       unité={informationIndicateur.données.unité}
