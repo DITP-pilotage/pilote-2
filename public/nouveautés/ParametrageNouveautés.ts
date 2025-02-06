@@ -8,7 +8,7 @@ interface Nouveautés {
 
 export const ParametrageNouveautés: Nouveautés[] = [
   {
-    version: 'Version 2.6.3',
+    version: 'Version 2.6.4',
     date: '06 février 2025',
     contenu: [
       'Sélecteur d\'affichage pour le taux d\'avancement annuel : Il vous est dorénavant possible de sélectionner l\'année à afficher pour le taux d\'avancement annuel. Cette fonctionnalité vous permet notamment d\'afficher le taux d\'avancement pour l\'année 2024 en prévision de l\'exercice d\'évaluation des feuilles de route interministérielles des préfets. Ce sélecteur modifie l\'affichage pour la page d\'accueil, les pages des PPG, ainsi que dans les exports de données (rapport détaillé en format PDF et exports .csv)',

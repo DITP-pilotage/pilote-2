@@ -1,8 +1,8 @@
 -- DropForeignKey
-ALTER TABLE "public"."chantier" DROP CONSTRAINT "chantier_territoire_code_fkey";
+ALTER TABLE "public"."chantier" DROP CONSTRAINT IF EXISTS "chantier_territoire_code_fkey";
 
 -- DropForeignKey
-ALTER TABLE "public"."indicateur" DROP CONSTRAINT "indicateur_territoire_code_fkey";
+ALTER TABLE "public"."indicateur" DROP CONSTRAINT IF EXISTS "indicateur_territoire_code_fkey";
 
 -- DropTable
 DROP TABLE "public"."chantier" CASCADE;
