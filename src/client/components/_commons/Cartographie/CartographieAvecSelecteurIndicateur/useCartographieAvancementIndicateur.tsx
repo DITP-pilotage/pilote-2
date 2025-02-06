@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from 'react';
+import { ReactNode } from 'react';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { CartographieÉlémentsDeLégende } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { CartographieDonnées } from '@/client/components/_commons/Cartographie/Cartographie.interface';
@@ -65,58 +65,53 @@ function determinerRemplissage(valeur: number | null, elementsDeLegende: Cartogr
   else return elementsDeLegende.DÉFAUT.remplissage;
 }
 
-export default function useCartographieAvancementIndicateur(detailsIndicateurTerritoire: DétailsIndicateurTerritoire, elementsDeLegende: CartographieÉlémentsDeLégende, jalon: number, typeAvancement: 'JALON' | 'MANDAT') {
-  const donnees = objectEntries(detailsIndicateurTerritoire).
-    map(([territoireCode, détailsIndicateur]) => ({
-      valeur: détailsIndicateur.avancement.global,
-      valeurAnnuelle: détailsIndicateur.avancement.annuel,
-      territoireCode: territoireCode,
-      estApplicable: détailsIndicateur.est_applicable }));
-  
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
-
-  const legende = useMemo(() => {
+export function useCartographieAvancementIndicateur(detailsIndicateurTerritoire: DétailsIndicateurTerritoire, elementsDeLegende: CartographieÉlémentsDeLégende, jalon: number, typeAvancement: 'JALON' | 'MANDAT') {
+  const useRecupererDonnees = () => { 
+    const donnees = objectEntries(detailsIndicateurTerritoire).
+      map(([territoireCode, détailsIndicateur]) => ({
+        valeur: détailsIndicateur.avancement.global,
+        valeurAnnuelle: détailsIndicateur.avancement.annuel,
+        territoireCode: territoireCode,
+        estApplicable: détailsIndicateur.est_applicable }));
+    
+    const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
     const tousApplicables: Boolean = donnees.every(d => d.estApplicable);
     const tousNonNull: Boolean = donnees.every(d => d.valeur !== null);
 
-    let legendeAffichee = Object.values(elementsDeLegende);
+    let legende = Object.values(elementsDeLegende);
     if (tousApplicables) {
-      legendeAffichee = legendeAffichee
+      legende = legende
         .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s’applique pas');
     }
 
     if (tousNonNull) {
-      legendeAffichee = legendeAffichee
+      legende = legende
         .filter(el => el.libellé !== 'Territoire pour lequel la donnee n’est pas renseignee/disponible');
     }
 
-    legendeAffichee = legendeAffichee.map(({ remplissage, libellé }) => ({
-      libellé,
-      remplissage,
-    }));
 
-    return legendeAffichee;
+    const donneesCartographie = donnees.reduce((acc, val) => {
+      const territoireGeographique = récupérerDétailsSurUnTerritoire(val.territoireCode);
 
-  }, [elementsDeLegende, donnees]);
-
-  const donneesCartographie = donnees.reduce((acc, val) => {
-    const territoireGeographique = récupérerDétailsSurUnTerritoire(val.territoireCode);
+      return {
+        ...acc,
+        [val.territoireCode]: {
+          contenu: determinerValeurAffichee(val.valeur, val.valeurAnnuelle, val.estApplicable, jalon),
+          remplissage: determinerRemplissage(typeAvancement === 'JALON' ? val.valeurAnnuelle : val.valeur, elementsDeLegende, val.estApplicable),
+          libellé: territoireGeographique.nomAffiché,
+          estApplicable: val.estApplicable,
+        },
+      };
+    }, {} as CartographieDonnées);
 
     return {
-      ...acc,
-      [val.territoireCode]: {
-        contenu: determinerValeurAffichee(val.valeur, val.valeurAnnuelle, val.estApplicable, jalon),
-        remplissage: determinerRemplissage(typeAvancement === 'JALON' ? val.valeurAnnuelle : val.valeur, elementsDeLegende, val.estApplicable),
-        libellé: territoireGeographique.nomAffiché,
-        estApplicable: val.estApplicable,
-      },
+      legende,
+      donneesCartographie,
+      legendeDegrade: null,
     };
-  }, {} as CartographieDonnées);
-
+  };
   return {
-    legende,
-    donneesCartographie,
-    legendeDegrade: null,
+    useRecupererDonnees,
   };
 }

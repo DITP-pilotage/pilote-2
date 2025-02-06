@@ -78,14 +78,16 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
     indicateur.responsablesDonneesMails :
     mailsDirecteursProjets;
 
-  const [, setCartographieGaucheSelection] = useQueryState('cartographieGaucheIndicateur', parseAsString.withDefault('avancementMandat').withOptions({
+  const [, setCartographieGaucheSelection] = useQueryState('carteIndG', parseAsString.withDefault('avancementMandat').withOptions({
     shallow: false,
     history: 'push',
+    clearOnDefault: true,
   }));
   
-  const [, setCartographieDroiteSelection] = useQueryState('cartographieDroiteIndicateur', parseAsString.withDefault('valeurActuelle').withOptions({
+  const [, setCartographieDroiteSelection] = useQueryState('carteIndD', parseAsString.withDefault('valeurActuelle').withOptions({
     shallow: false,
     history: 'push',
+    clearOnDefault: true,
   }));
     
   return (
@@ -163,7 +165,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                         detailsIndicateurTerritoire={detailsIndicateursTerritoire[indicateur.id]} 
                         estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille} 
                         jalon={jalon} 
-                        listeCartographiesDesactives={[]} 
+                        listeCartographiesDesactives={[cartographieDroiteIndicateur]} 
                         mailleQuery={mailleQuery} 
                         territoireCode={territoireCode}      
                         unité={indicateur.unité}                
@@ -176,7 +178,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                         detailsIndicateurTerritoire={detailsIndicateursTerritoire[indicateur.id]} 
                         estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille} 
                         jalon={jalon} 
-                        listeCartographiesDesactives={[]} 
+                        listeCartographiesDesactives={[cartographieGaucheIndicateur]} 
                         mailleQuery={mailleQuery}
                         territoireCode={territoireCode}      
                         unité={indicateur.unité}                

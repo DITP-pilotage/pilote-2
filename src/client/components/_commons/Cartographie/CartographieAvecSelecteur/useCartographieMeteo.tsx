@@ -3,11 +3,12 @@ import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerrito
 import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
 import { CartographieÉlémentsDeLégende } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { CartographieDonnées } from '@/client/components/_commons/Cartographie/Cartographie.interface';
-import { MailleRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import { objectEntries } from '@/client/utils/objects/objects';
+import { TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
+import { Maille } from '@/server/domain/maille/Maille.interface';
 
 
-function determinerRemplissage(valeur: Météo | null, elementsDeLegende: CartographieÉlémentsDeLégende, estApplicable: boolean | null) {
+const determinerRemplissage = (valeur: Météo | null, elementsDeLegende: CartographieÉlémentsDeLégende, estApplicable: boolean | null) => {
 
   // eslint-disable-next-line unicorn/prefer-switch
   if (estApplicable === false) return elementsDeLegende.NON_APPLICABLE.remplissage;
@@ -16,61 +17,66 @@ function determinerRemplissage(valeur: Météo | null, elementsDeLegende: Cartog
   else if (valeur === 'NUAGE') return elementsDeLegende.NUAGE.remplissage;
   else if (valeur === 'SOLEIL') return elementsDeLegende.SOLEIL.remplissage;
   else return elementsDeLegende.DÉFAUT.remplissage;
-}
+};
 
-export default function useCartographieMeteo(chantierMailles: MailleRapportDetailleContrat, elementsDeLegende: CartographieÉlémentsDeLégende) {
-  const donnees = objectEntries({ ...chantierMailles.departementale, ...chantierMailles.regionale }).map(([territoireCodeDonnee, territoire]) => ({
-    valeur: territoire.météo,
-    territoireCode: territoireCodeDonnee as string,
-    estApplicable: territoire.estApplicable,
-  }));
-
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
-
-  const legende = useMemo(() => {
-    const tousApplicables: Boolean = donnees.every(d => d.estApplicable);
-    const tousNonNull: Boolean = donnees.every(d => d.valeur !== 'NON_RENSEIGNEE');
-
-    let legendeAffichee = Object.values(elementsDeLegende);
-    if (tousApplicables) {
-      legendeAffichee = legendeAffichee
-        .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s’applique pas');
-    }
-
-    if (tousNonNull) {
-      legendeAffichee = legendeAffichee
-        .filter(el => el.libellé !== 'Territoire pour lequel la meteo n’est pas renseignée');
-    }
-
-    legendeAffichee = legendeAffichee.map(({ remplissage, libellé }) => ({
-      libellé,
-      remplissage,
+export const useCartographieMeteo = (chantierMailles: Record<Maille, TerritoiresDonnées>, elementsDeLegende: CartographieÉlémentsDeLégende) => {
+  const useRecupererDonnees = () => { 
+    const donnees = objectEntries({ ...chantierMailles.departementale, ...chantierMailles.regionale }).map(([territoireCodeDonnee, territoire]) => ({
+      valeur: territoire.météo,
+      territoireCode: territoireCodeDonnee as string,
+      estApplicable: territoire.estApplicable,
     }));
 
-    return legendeAffichee;
+    const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
-  }, [elementsDeLegende, donnees]);
+    const legende = useMemo(() => {
+      const tousApplicables: Boolean = donnees.every(d => d.estApplicable);
+      const tousNonNull: Boolean = donnees.every(d => d.valeur !== 'NON_RENSEIGNEE');
 
-  const donneesCartographie = donnees.reduce((acc, val) => {
-    const territoireGeographique = récupérerDétailsSurUnTerritoire(val.territoireCode);
+      let legendeAffichee = Object.values(elementsDeLegende);
+      if (tousApplicables) {
+        legendeAffichee = legendeAffichee
+          .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s’applique pas');
+      }
+
+      if (tousNonNull) {
+        legendeAffichee = legendeAffichee
+          .filter(el => el.libellé !== 'Territoire pour lequel la meteo n’est pas renseignée');
+      }
+
+      legendeAffichee = legendeAffichee.map(({ remplissage, libellé }) => ({
+        libellé,
+        remplissage,
+      }));
+
+      return legendeAffichee;
+
+    }, [donnees]);
+
+    const donneesCartographie = donnees.reduce((acc, val) => {
+      const territoireGeographique = récupérerDétailsSurUnTerritoire(val.territoireCode);
+
+      return {
+        ...acc,
+        [val.territoireCode]: {
+          contenu: (
+            <div className='fr-text--bold'>
+              {val.estApplicable === false ? 'Non applicable' : libellésMétéos[val.valeur]}
+            </div>
+          ),
+          remplissage: determinerRemplissage(val.valeur, elementsDeLegende, val.estApplicable),
+          libellé: territoireGeographique.nomAffiché,
+          estApplicable: val.estApplicable,
+        },
+      };
+    }, {} as CartographieDonnées);
 
     return {
-      ...acc,
-      [val.territoireCode]: {
-        contenu: (
-          <div className='fr-text--bold'>
-            {val.estApplicable === false ? 'Non applicable' : libellésMétéos[val.valeur]}
-          </div>
-        ),
-        remplissage: determinerRemplissage(val.valeur, elementsDeLegende, val.estApplicable),
-        libellé: territoireGeographique.nomAffiché,
-        estApplicable: val.estApplicable,
-      },
+      legende,
+      donneesCartographie,
     };
-  }, {} as CartographieDonnées);
-
-  return {
-    legende,
-    donneesCartographie,
   };
-}
+  return {
+    useRecupererDonnees,
+  };
+};

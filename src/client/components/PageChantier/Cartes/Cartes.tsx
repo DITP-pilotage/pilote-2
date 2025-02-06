@@ -35,14 +35,16 @@ const Cartes: FunctionComponent<CartesProps> = ({
   cartographieGaucheChantier,
   cartographieDroiteChantier,
 }) => {
-  const [, setCartographieGaucheSelection] = useQueryState('cartographieGaucheChantier', parseAsString.withDefault('avancementMandat').withOptions({
+  const [, setCartographieGaucheSelection] = useQueryState('carteChG', parseAsString.withDefault('avancementMandat').withOptions({
     shallow: false,
     history: 'push',
+    clearOnDefault: true,
   }));
   
-  const [, setCartographieDroiteSelection] = useQueryState('cartographieDroiteChantier', parseAsString.withDefault('meteo').withOptions({
+  const [, setCartographieDroiteSelection] = useQueryState('carteChD', parseAsString.withDefault('meteo').withOptions({
     shallow: false,
     history: 'push',
+    clearOnDefault: true,
   }));
 
   return (

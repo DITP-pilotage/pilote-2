@@ -99,10 +99,10 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
 
   const chantierId = query.id as string;
   const jalon = Number.parseInt(query.jalon as string) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
-  const cartographieGaucheChantier = query.cartographieGaucheChantier as CartographieType || 'avancementMandat';
-  const cartographieDroiteChantier = query.cartographieDroiteChantier as CartographieType || 'meteo';
-  const cartographieGaucheIndicateur = query.cartographieGaucheIndicateur as CartographieIndicateurType || 'avancementMandat';
-  const cartographieDroiteIndicateur = query.cartographieDroiteIndicateur as CartographieIndicateurType || 'valeurActuelle';
+  const cartographieGaucheChantier = query.carteChG as CartographieType || 'avancementMandat';
+  const cartographieDroiteChantier = query.carteChD as CartographieType || 'meteo';
+  const cartographieGaucheIndicateur = query.carteIndG as CartographieIndicateurType || 'avancementMandat';
+  const cartographieDroiteIndicateur = query.carteIndD as CartographieIndicateurType || 'valeurActuelle';
 
   const session = await getServerSession(req, res, authOptions);
 

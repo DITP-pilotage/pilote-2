@@ -15,9 +15,9 @@ import { ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE } from '@/client/constants/légende
 import { CartographieLégendeDégradéContenu } from '@/client/components/_commons/Cartographie/Légende/Dégradé/CartographieLégendeDégradé.interface';
 import CartographieLégendeDégradé from '@/client/components/_commons/Cartographie/Légende/Dégradé/CartographieLégendeDégradé';
 import { CartographieIndicateurType } from '@/client/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
-import useCartographiePropositionValeurIndicateur from './useCartographiePropositionValeurIndicateur';
-import useCartographieAvancementIndicateur from './useCartographieAvancementIndicateur';
-import useCartographieValeurActuelleIndicateur from './useCartographieValeurActuelleIndicateur';
+import { useCartographieAvancementIndicateur } from './useCartographieAvancementIndicateur';
+import { useCartographiePropositionValeurIndicateur } from './useCartographiePropositionValeurIndicateur';
+import { useCartographieValeurActuelleIndicateur } from './useCartographieValeurActuelleIndicateur';
 
 const CartographieAvecSelecteurIndicateur: FunctionComponent<{
   detailsIndicateurTerritoire: DétailsIndicateurTerritoire
@@ -31,7 +31,7 @@ const CartographieAvecSelecteurIndicateur: FunctionComponent<{
   unité?: string | null
 }> = ({ detailsIndicateurTerritoire, estAutoriseAVoirLeSelecteurDeMaille, mailleQuery, territoireCode, jalon, cartographieSelectionnee, aLaSelectionCartographie, listeCartographiesDesactives, unité }) => {
 
-  const donneesEtLegendesCartographies: Record<CartographieIndicateurType, { donneesCartographie: CartographieDonnées, legende: CartographieÉlémentDeLégende[], legendeDegrade: CartographieLégendeDégradéContenu | null }> = {
+  const donneesEtLegendesCartographies: Record<CartographieIndicateurType, { useRecupererDonnees: () => { donneesCartographie: CartographieDonnées, legende: CartographieÉlémentDeLégende[], legendeDegrade: CartographieLégendeDégradéContenu | null } }> = {
     avancementMandat: useCartographieAvancementIndicateur(detailsIndicateurTerritoire, ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS, jalon, 'MANDAT'),
     avancementJalon: useCartographieAvancementIndicateur(detailsIndicateurTerritoire, ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS, jalon, 'JALON'),
     propositionValeur: useCartographiePropositionValeurIndicateur(detailsIndicateurTerritoire, ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS),
@@ -63,7 +63,9 @@ const CartographieAvecSelecteurIndicateur: FunctionComponent<{
       désactivée: listeCartographiesDesactives.includes('propositionValeur'),
     },
   ];
-  
+
+  const { legende, legendeDegrade, donneesCartographie } = donneesEtLegendesCartographies[cartographieSelectionnee].useRecupererDonnees();
+
   return (
     <>
       <Sélecteur 
@@ -83,18 +85,18 @@ const CartographieAvecSelecteurIndicateur: FunctionComponent<{
       <Cartographie
         auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
         contoursGris={cartographieSelectionnee === 'propositionValeur'}
-        données={donneesEtLegendesCartographies[cartographieSelectionnee].donneesCartographie}
+        données={donneesCartographie}
         mailleSelectionnee={mailleQuery}
         options={{ multiséléction: true }}
         pathname={pathname}
         territoireCode={territoireCode}
       >
         {
-          !!donneesEtLegendesCartographies[cartographieSelectionnee].legendeDegrade ? (
-            <CartographieLégendeDégradé contenu={donneesEtLegendesCartographies[cartographieSelectionnee].legendeDegrade!} />
+          !!legendeDegrade ? (
+            <CartographieLégendeDégradé contenu={legendeDegrade} />
           ) : null
         }
-        <CartographieLégendeListe contenu={donneesEtLegendesCartographies[cartographieSelectionnee].legende} />
+        <CartographieLégendeListe contenu={legende} />
       </Cartographie>
     </>
   );

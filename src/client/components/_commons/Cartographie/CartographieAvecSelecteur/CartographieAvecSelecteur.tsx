@@ -13,9 +13,9 @@ import { CartographieDonnées } from '@/client/components/_commons/Cartographie/
 import { ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS } from '@/client/constants/légendes/elementDeLegendesCartographiePropositionValeur';
 import { TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
 import { CartographieType } from '@/components/PageChantier/Cartes/Cartes';
-import useCartographieAvancement from './useCartographieAvancement';
-import useCartographieMeteo from './useCartographieMeteo';
-import useCartographiePropositionValeur from './useCartographiePropositionValeur';
+import { useCartographieMeteo } from './useCartographieMeteo';
+import { useCartographiePropositionValeur } from './useCartographiePropositionValeur';
+import { useCartographieAvancement } from './useCartographieAvancement';
  
 const CartographieAvecSelecteur: FunctionComponent<{
   chantierMailles: Record<Maille, TerritoiresDonnées>,
@@ -29,7 +29,7 @@ const CartographieAvecSelecteur: FunctionComponent<{
   listeCartographiesDesactives: CartographieType[]
 }> = ({ chantierMailles, estAutoriseAVoirLeSelecteurDeMaille, mailleQuery, estInteractif, territoireCode, jalon, cartographieSelectionnee, aLaSelectionCartographie, listeCartographiesDesactives }) => {
 
-  const donneesEtLegendesCartographies: Record<CartographieType, { donneesCartographie: CartographieDonnées; legende: CartographieÉlémentDeLégende[] }> = {
+  const donneesEtLegendesCartographies: Record<CartographieType, { useRecupererDonnees: () => { donneesCartographie: CartographieDonnées; legende: CartographieÉlémentDeLégende[] } } > = {
     avancementMandat: useCartographieAvancement(chantierMailles, ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS, jalon, 'MANDAT'),
     avancementJalon: useCartographieAvancement(chantierMailles, ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS, jalon, 'JALON'),
     meteo: useCartographieMeteo(chantierMailles, ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS),
@@ -62,6 +62,7 @@ const CartographieAvecSelecteur: FunctionComponent<{
     },
   ];
   
+  const { legende, donneesCartographie } = donneesEtLegendesCartographies[cartographieSelectionnee].useRecupererDonnees();
   return (
     <>
       <Sélecteur 
@@ -81,13 +82,13 @@ const CartographieAvecSelecteur: FunctionComponent<{
       <Cartographie
         auClicTerritoireCallback={auClicTerritoireCallback}
         contoursGris={cartographieSelectionnee === 'propositionValeur'}
-        données={donneesEtLegendesCartographies[cartographieSelectionnee].donneesCartographie}
+        données={donneesCartographie}
         mailleSelectionnee={mailleQuery}
         options={{ estInteractif }}
         pathname={pathname}
         territoireCode={territoireCode}
       >
-        <CartographieLégendeListe contenu={donneesEtLegendesCartographies[cartographieSelectionnee].legende} />
+        <CartographieLégendeListe contenu={legende} />
       </Cartographie>
     </>
   );

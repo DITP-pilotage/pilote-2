@@ -14,54 +14,59 @@ type DonneesCartographieProposition = {
 };
 
 
-function determinerRemplissage(valeur: TypeProposition | null, elementsDeLegende: CartographieÉlémentsDeLégende, estApplicable: boolean | null) {
+const determinerRemplissage = (valeur: TypeProposition | null, elementsDeLegende: CartographieÉlémentsDeLégende, estApplicable: boolean | null) => {
   if (!estApplicable) {
     return elementsDeLegende.NON_APPLICABLE.remplissage;
   }
   return !valeur ? elementsDeLegende.DEFAUT.remplissage : elementsDeLegende[valeur].remplissage;
-}
+};
 
-export default function useCartographiePropositionValeur(chantierMailles: Record<Maille, TerritoiresDonnées>, elementsDeLegende: CartographieÉlémentsDeLégende) {
-  const donnees: DonneesCartographieProposition[] = objectEntries({ ...chantierMailles.departementale, ...chantierMailles.regionale }).map(([territoireCodeDonnee, territoire]) => ({
-    valeur: territoire.nombrePropositionValeurPonderee > 0 ? 'PROPOSITION_AVEC_PONDERATION' : (territoire.nombrePropositionValeur > 0 ? 'PROPOSITION' : null),
-    territoireCode: territoireCodeDonnee as string,
-    estApplicable: territoire.estApplicable,
-  }));
-
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
-
-  const legende = useMemo(() => {
-    const tousApplicables: Boolean = donnees.every(d => d.estApplicable);
-
-    let legendeAffichee = Object.values(elementsDeLegende);
-    if (tousApplicables) {
-      legendeAffichee = legendeAffichee
-        .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s’applique pas');
-    }
-
-    return legendeAffichee.map(({ remplissage, libellé }) => ({
-      libellé,
-      remplissage,
+export const useCartographiePropositionValeur = (chantierMailles: Record<Maille, TerritoiresDonnées>, elementsDeLegende: CartographieÉlémentsDeLégende) => {
+  const useRecupererDonnees = () => {
+    const donnees: DonneesCartographieProposition[] = objectEntries({ ...chantierMailles.departementale, ...chantierMailles.regionale }).map(([territoireCodeDonnee, territoire]) => ({
+      valeur: territoire.nombrePropositionValeurPonderee > 0 ? 'PROPOSITION_AVEC_PONDERATION' : (territoire.nombrePropositionValeur > 0 ? 'PROPOSITION' : null),
+      territoireCode: territoireCodeDonnee as string,
+      estApplicable: territoire.estApplicable,
     }));
 
-  }, [elementsDeLegende, donnees]);
+    const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
-  const donneesCartographie = donnees.reduce((acc, val) => {
-    const territoireGeographique = récupérerDétailsSurUnTerritoire(val.territoireCode);
+    const legende = useMemo(() => {
+      const tousApplicables: Boolean = donnees.every(d => d.estApplicable);
+
+      let legendeAffichee = Object.values(elementsDeLegende);
+      if (tousApplicables) {
+        legendeAffichee = legendeAffichee
+          .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s’applique pas');
+      }
+
+      return legendeAffichee.map(({ remplissage, libellé }) => ({
+        libellé,
+        remplissage,
+      }));
+
+    }, [donnees]);
+
+    const donneesCartographie = donnees.reduce((acc, val) => {
+      const territoireGeographique = récupérerDétailsSurUnTerritoire(val.territoireCode);
+
+      return {
+        ...acc,
+        [val.territoireCode]: {
+          contenu: undefined,
+          remplissage: determinerRemplissage(val.valeur, elementsDeLegende, val.estApplicable),
+          libellé: territoireGeographique.nomAffiché,
+          estApplicable: val.estApplicable,
+        },
+      };
+    }, {} as CartographieDonnées);
 
     return {
-      ...acc,
-      [val.territoireCode]: {
-        contenu: undefined,
-        remplissage: determinerRemplissage(val.valeur, elementsDeLegende, val.estApplicable),
-        libellé: territoireGeographique.nomAffiché,
-        estApplicable: val.estApplicable,
-      },
+      legende,
+      donneesCartographie,
     };
-  }, {} as CartographieDonnées);
-
-  return {
-    legende,
-    donneesCartographie,
   };
-}
+  return {
+    useRecupererDonnees,
+  };
+};
