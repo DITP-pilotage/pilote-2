@@ -11,10 +11,10 @@ const PageCréerUtilisateurAideStyled = styled.div`
     position: sticky;
     bottom: 0.1px;
     z-index: 100;
-    background-color: white;
     width: 100%;
     padding-top: 1.2rem;
     padding-bottom: 1.2rem;
+    background-color: white;
   }
 `;
 
