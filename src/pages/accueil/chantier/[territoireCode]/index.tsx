@@ -26,7 +26,6 @@ import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
   presenterEnAvancementsStatistiquesAccueilContrat,
-  RépartitionsMétéos,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { AgrégateurListeChantiersParTerritoire } from '@/client/utils/chantier/agrégateurListeChantiers/agrégateur';
 import { objectEntries } from '@/client/utils/objects/objects';
@@ -37,11 +36,23 @@ import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteCh
 import { Chantier } from '@/server/chantiers/domain/Chantier';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import {
+  RecupererRepartitionsMeteoChantiersUseCase,
+} from '@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase';
+import {
+  presenterEnRépartitionsMétéosChantiersContrat,
+} from '@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat';
+import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { configuration } from '@/config';
 import IndexStyled from './index.styled';
 
 interface ChantierAccueil {
   chantiers: ChantierAccueilContrat[]
   nombreTotalChantiersAvecAlertes: number
+  jalon: number
   ministères: Ministère[]
   axes: Axe[]
   territoireCode: string
@@ -50,7 +61,7 @@ interface ChantierAccueil {
   filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
-  répartitionMétéos: RépartitionsMétéos
+  repartitionMeteosChantiers: RepartitionMeteoContrat
 }
 
 export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ req, res, query }) => {
@@ -58,6 +69,8 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
 
   const pageIndex = Number.parseInt(query.pageIndex as string) || 1;
   const pageSize = Number.parseInt(query.pageSize as string) || 50;
+  const jalon = Number.parseInt(query.jalon as string) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
+
 
   assert(query.territoireCode, 'Le territoire code est obligatoire pour afficher la page d\'accueil');
   assert(session, 'Vous devez être authentifié pour accéder a cette page');
@@ -98,6 +111,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     perimetres: query.perimetres ? (query.perimetres as string).split(',').filter(Boolean) : [],
     axes: query.axes ? (query.axes as string).split(',').filter(Boolean) : [],
     statut: query.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : !!query.statut ? [query.statut as string] : ['PUBLIE'],
+    meteos: query.meteos ? (query.meteos as string).split(',').filter(Boolean) : [],
     estTerritorialise: query.estTerritorialise === 'true',
     estBarometre: query.estBarometre === 'true',
     valeurDeLaRecherche: query.q as string,
@@ -119,16 +133,20 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     )
   );
 
+  const mapAxes = new Map<string, Axe>(axes.map(axe => [axe.id, axe]));
+
   const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
     dependencies.getChantierRepository(),
     dependencies.getTerritoireRepository(),
-  )
-    .run(session.habilitations, session.profil, territoireCode, mailleGlobalTerritoireSelectionnee === 'regionale' ? 'REG' : 'DEPT', mailleChantier || 'departementale', ministères, axes, filtres, sorting);
+  ).run(session.habilitations, session.profil, territoireCode, mailleChantier || 'departementale', ministères, mapAxes, filtres, sorting, jalon);
 
   const {
-    répartitionMétéos,
     filtresComptesCalculés,
   } = Chantier.recupererStatistiqueListeChantier(chantiers, mailleChantier, territoireCode);
+
+  const repartitionMeteosChantiers = await new RecupererRepartitionsMeteoChantiersUseCase({
+    chantierRepository: dependencies.getChantierRepository(),
+  }).run(session.habilitations, territoireCode, filtres, axes).then(presenterEnRépartitionsMétéosChantiersContrat);
 
   const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisse || filtresAlertes.estEnAlerteTauxAvancementNonCalculé || filtresAlertes.estEnAlerteMétéoNonRenseignée || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? chantiers.filter(chantier => {
     const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][territoireCode];
@@ -142,7 +160,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository());
 
   const avancementsAgrégés = await récupérerStatistiquesChantiersUseCase.run(chantiersAvecAlertes.map(chantier => chantier.id), mailleQuery, session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat);
-
   const donnéesTerritoiresAgrégées = new AgrégateurListeChantiersParTerritoire(chantiersAvecAlertes).agréger();
 
   if (avancementsAgrégés) {
@@ -172,12 +189,13 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
       ministères,
       axes,
       territoireCode,
+      jalon,
       mailleSelectionnee: mailleGlobalTerritoireSelectionnee,
       mailleQuery,
       filtresComptesCalculés,
       avancementsAgrégés,
       avancementsGlobauxTerritoriauxMoyens,
-      répartitionMétéos,
+      repartitionMeteosChantiers,
     },
   };
 };
@@ -207,7 +225,8 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   filtresComptesCalculés,
   avancementsAgrégés,
   avancementsGlobauxTerritoriauxMoyens,
-  répartitionMétéos,
+  repartitionMeteosChantiers,
+  jalon,
 }) => {
   const { data: session } = useSession();
 
@@ -273,11 +292,12 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             axes={axes}
             chantiers={chantiers}
             filtresComptesCalculés={filtresComptesCalculés}
+            jalon={jalon}
             mailleQuery={mailleQuery}
             mailleSelectionnee={mailleSelectionnee}
             ministères={ministères}
             nombreTotalChantiersAvecAlertes={nombreTotalChantiersAvecAlertes}
-            répartitionMétéos={répartitionMétéos}
+            repartitionMeteosChantiers={repartitionMeteosChantiers}
             territoireCode={territoireCode}
           />
         </IndexStyled>

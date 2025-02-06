@@ -1,4 +1,9 @@
-import { PrismaClient, decision_strategique as DécisionStratégiquePrisma, type_decision_strategique as TypeDécisionStratégiquePrisma, utilisateur } from '@prisma/client';
+import {
+  decision_strategique as DécisionStratégiquePrisma,
+  PrismaClient,
+  type_decision_strategique as TypeDécisionStratégiquePrisma,
+  utilisateur,
+} from '@prisma/client';
 import DécisionStratégique, { TypeDécisionStratégique } from '@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface';
 import DécisionStratégiqueRepository from '@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
@@ -12,12 +17,8 @@ export const CODES_TYPES_DÉCISION_STRATÉGIQUE: Record<TypeDécisionStratégiqu
 };
 
 export default class DécisionStratégiqueSQLRepository implements DécisionStratégiqueRepository {
-  private prisma: PrismaClient;
+  constructor(private prismaClient: PrismaClient) {}
 
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
-  }
-  
   private mapperVersDomaine(décisionStratégique: DécisionStratégiquePrisma & { auteur_decision_strategique: utilisateur | null }): DécisionStratégique {
     const auteurDecisionStrategique = décisionStratégique.auteur_decision_strategique;
     return {
@@ -30,7 +31,7 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
   }
   
   async récupérerLaPlusRécente(chantierId: string): Promise<DécisionStratégique> {
-    const décisionStratégiqueLaPlusRécente = await this.prisma.decision_strategique.findFirst({
+    const décisionStratégiqueLaPlusRécente = await this.prismaClient.decision_strategique.findFirst({
       where: {
         chantier_id: chantierId,
       },
@@ -39,12 +40,12 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
       },
       orderBy: { date: 'desc' },
     });
-  
+
     return décisionStratégiqueLaPlusRécente ? this.mapperVersDomaine(décisionStratégiqueLaPlusRécente) : null;
   }
 
   async récupérerHistorique(chantierId: string): Promise<DécisionStratégique[]> {
-    const décisionsStratégiques = await this.prisma.decision_strategique.findMany({
+    const décisionsStratégiques = await this.prismaClient.decision_strategique.findMany({
       where: {
         chantier_id: chantierId,
       },
@@ -58,7 +59,7 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
   }
 
   async créer(chantierId: string, id: string, contenu: string, type: TypeDécisionStratégique, auteur_id: string, date: Date): Promise<DécisionStratégique> {
-    const décisionStratégiqueCréée = await this.prisma.decision_strategique.create({
+    const décisionStratégiqueCréée = await this.prismaClient.decision_strategique.create({
       data: {
         id,
         chantier_id: chantierId,
@@ -76,7 +77,7 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
   }
 
   async récupérerLesPlusRécentesGroupéesParChantier(chantiersIds: Chantier['id'][]): Promise<Record<string, DécisionStratégique>> {
-    const décisionsStratégiques = await this.prisma.$queryRaw<(DécisionStratégiquePrisma & { prenom_auteur: string | null, nom_auteur: string | null })[]>`
+    const décisionsStratégiques = await this.prismaClient.$queryRaw<(DécisionStratégiquePrisma & { prenom_auteur: string | null, nom_auteur: string | null })[]>`
         SELECT d.*, utilisateur.prenom as prenom_auteur, utilisateur.nom as nom_auteur
         FROM decision_strategique d
           LEFT JOIN utilisateur on utilisateur.id = d.auteur_id

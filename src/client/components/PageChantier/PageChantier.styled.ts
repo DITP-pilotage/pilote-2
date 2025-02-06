@@ -15,9 +15,10 @@ const PageChantierStyled = styled.div`
   @media (min-width: 48rem) {
     .layout--nat {
       grid-template-areas:
-        "avancement synthèse"
-        "responsables   responsables";
-      grid-template-columns: auto minmax(16.5rem, 1fr);
+        "avancement"
+        "synthèse"
+        "responsables";
+        grid-template-columns: 1fr;
     }
   
     .layout--dept-reg {
@@ -27,12 +28,7 @@ const PageChantierStyled = styled.div`
         "responsables";
     }
   }  
-  
-  @media (min-width: 78rem) {
-    .layout--nat {
-      grid-template-columns: auto minmax(22.5rem, 1fr);
-    }
-  }
+
 
   #avancement {
     grid-area: avancement;

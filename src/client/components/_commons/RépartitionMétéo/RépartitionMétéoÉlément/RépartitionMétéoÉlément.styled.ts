@@ -18,7 +18,7 @@ const RépartitionMétéoÉlémentStyled = styled.div<RépartitionMétéosÉlém
   border-radius: 4px;
   box-shadow: 0 2px 6px rgb(0 0 18 / 16%);
   
-  .météo-picto {
+  .meteo-picto {
     width: auto;
     height: auto;
     filter: ${({ estArchive }) => estArchive ? 'grayscale(100%)' : undefined};

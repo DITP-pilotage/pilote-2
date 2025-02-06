@@ -12,11 +12,6 @@ export interface AvancementsStatistiquesAccueilContrat {
   }
 }
 
-export type RépartitionsMétéos = { ORAGE: number
-  COUVERT: number
-  NUAGE: number
-  SOLEIL: number
-};
 export type AvancementsGlobauxTerritoriauxMoyensContrat = { valeur: number | null, valeurAnnuelle: number | null, territoireCode: string, estApplicable: boolean | null }[];
 
 export const presenterEnAvancementsStatistiquesAccueilContrat = (avancementsStatistiques: AvancementsStatistiques): AvancementsStatistiquesAccueilContrat => {

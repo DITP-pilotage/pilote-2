@@ -53,7 +53,10 @@ const SélecteurMaille: FunctionComponent<{
                 onClick={() => changerMaille(maille)}
                 type='button'
               >
-                {libellé}
+                <p className='titre-ellipsis fr-text--sm'>
+                  {libellé}
+                </p>
+               
               </button>
             ))
         }

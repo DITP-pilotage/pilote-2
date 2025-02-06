@@ -176,15 +176,17 @@ describe('RécupérerListeChantierFicheTerritorialeUseCase', () => {
     indicateurRepository.recupererMapIndicateursNationalParListeIndicateurId.mockResolvedValue(mapIndicateursNational);
     ministereRepository.recupererMapMinistereParListeCodeMinistere.mockResolvedValue(mapMinistere);
 
+    const jalon = 2024;
+
     // When
-    const result = await récupérerListeChantierFicheTerritorialeUseCase.run({ territoireCode });
+    const result = await récupérerListeChantierFicheTerritorialeUseCase.run({ territoireCode, jalon });
 
     // Then
     expect(territoireRepository.recupererTerritoireParCode).toHaveBeenNthCalledWith(1, { territoireCode });
-    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'DEPT' });
+    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'DEPT', jalon });
     expect(syntheseDesResultatsRepository.recupererMapSyntheseDesResultatsParListeChantierIdEtTerritoire).toHaveBeenNthCalledWith(1, { listeChantierId: ['CH-002', 'CH-003', 'CH-001'], maille: 'DEPT', codeInsee: '34' });
-    expect(indicateurRepository.recupererMapIndicateursParListeChantierIdEtTerritoire).toHaveBeenNthCalledWith(1, { listeChantierId: ['CH-002', 'CH-003', 'CH-001'], maille: 'DEPT', codeInsee: '34' });
-    expect(indicateurRepository.recupererMapIndicateursNationalParListeIndicateurId).toHaveBeenNthCalledWith(1, { listeIndicateurId: ['IND-001', 'IND-002', 'IND-003', 'IND-004', 'IND-005'] });
+    expect(indicateurRepository.recupererMapIndicateursParListeChantierIdEtTerritoire).toHaveBeenNthCalledWith(1, { listeChantierId: ['CH-002', 'CH-003', 'CH-001'], maille: 'DEPT', codeInsee: '34', jalon });
+    expect(indicateurRepository.recupererMapIndicateursNationalParListeIndicateurId).toHaveBeenNthCalledWith(1, { listeIndicateurId: ['IND-001', 'IND-002', 'IND-003', 'IND-004', 'IND-005'], jalon });
     expect(ministereRepository.recupererMapMinistereParListeCodeMinistere).toHaveBeenNthCalledWith(1, { listeCodeMinistere: ['10', '10', '1009'] });
 
     expect(result).toHaveLength(3);
@@ -324,14 +326,16 @@ describe('RécupérerListeChantierFicheTerritorialeUseCase', () => {
     indicateurRepository.recupererMapIndicateursNationalParListeIndicateurId.mockResolvedValue(mapIndicateursNational);
     ministereRepository.recupererMapMinistereParListeCodeMinistere.mockResolvedValue(mapMinistere);
 
+    const jalon = 2024;
+
     // When
-    const result = await récupérerListeChantierFicheTerritorialeUseCase.run({ territoireCode });
+    const result = await récupérerListeChantierFicheTerritorialeUseCase.run({ territoireCode, jalon });
 
     // Then
     expect(territoireRepository.recupererTerritoireParCode).toHaveBeenNthCalledWith(1, { territoireCode });
-    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'REG' });
+    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'REG', jalon });
     expect(syntheseDesResultatsRepository.recupererMapSyntheseDesResultatsParListeChantierIdEtTerritoire).toHaveBeenNthCalledWith(1, { listeChantierId: ['CH-001', 'CH-002'], maille: 'REG', codeInsee: '35' });
-    expect(indicateurRepository.recupererMapIndicateursParListeChantierIdEtTerritoire).toHaveBeenNthCalledWith(1, { listeChantierId: ['CH-001', 'CH-002'], maille: 'REG', codeInsee: '35' });
+    expect(indicateurRepository.recupererMapIndicateursParListeChantierIdEtTerritoire).toHaveBeenNthCalledWith(1, { listeChantierId: ['CH-001', 'CH-002'], maille: 'REG', codeInsee: '35', jalon });
     expect(ministereRepository.recupererMapMinistereParListeCodeMinistere).toHaveBeenNthCalledWith(1, { listeCodeMinistere: ['1009', '10'] });
     expect(result).toHaveLength(2);
 

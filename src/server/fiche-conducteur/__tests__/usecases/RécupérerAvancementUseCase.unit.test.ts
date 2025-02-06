@@ -23,8 +23,10 @@ describe('RécupérerAvancementUseCase', () => {
     const chantierNat = new ChantierBuilder().withId('CH-168').withTauxAvancement(20).withTauxAvancementAnnuel(10).withMaille('NAT').build();
     chantierRepository.récupérerMailleNatEtDeptParId.mockResolvedValue([chantier1, chantier2, chantier3, chantier4, chantier5, chantierNat]);
 
+    const jalon = 2024;
+
     // When
-    const avancement = await récupérerAvancementUseCase.run({ chantierId });
+    const avancement = await récupérerAvancementUseCase.run({ chantierId, jalon });
     
     // Then
     expect(avancement.global).toEqual(20);
@@ -42,8 +44,10 @@ describe('RécupérerAvancementUseCase', () => {
     const chantierNat = new ChantierBuilder().withId('CH-168').withTauxAvancement(20).withMaille('NAT').build();
     chantierRepository.récupérerMailleNatEtDeptParId.mockResolvedValue([chantier1, chantier2, chantier3, chantier4, chantier5, chantierNat]);
 
+    const jalon = 2024;
+
     // When
-    const avancement = await récupérerAvancementUseCase.run({ chantierId });
+    const avancement = await récupérerAvancementUseCase.run({ chantierId, jalon });
 
     // Then
     expect(avancement.minimum).toEqual(40);
@@ -61,8 +65,10 @@ describe('RécupérerAvancementUseCase', () => {
     const chantierNat = new ChantierBuilder().withId('CH-168').withTauxAvancement(20).withMaille('NAT').build();
     chantierRepository.récupérerMailleNatEtDeptParId.mockResolvedValue([chantier1, chantier2, chantier3, chantier4, chantierNat]);
 
+    const jalon = 2024;
+
     // When
-    const avancement = await récupérerAvancementUseCase.run({ chantierId });
+    const avancement = await récupérerAvancementUseCase.run({ chantierId, jalon });
 
     // Then
     expect(avancement.minimum).toEqual(40);
@@ -81,8 +87,10 @@ describe('RécupérerAvancementUseCase', () => {
     const chantierNat = new ChantierBuilder().withId('CH-168').withTauxAvancement(20).withMaille('NAT').build();
     chantierRepository.récupérerMailleNatEtDeptParId.mockResolvedValue([chantier1, chantier2, chantier3, chantier4, chantier5, chantierNat]);
 
+    const jalon = 2024;
+
     // When
-    const avancement = await récupérerAvancementUseCase.run({ chantierId });
+    const avancement = await récupérerAvancementUseCase.run({ chantierId, jalon });
 
     // Then
     expect(avancement.minimum).toEqual(40);
@@ -101,8 +109,10 @@ describe('RécupérerAvancementUseCase', () => {
     const chantierNat = new ChantierBuilder().withId('CH-168').withTauxAvancement(null).withMaille('NAT').build();
     chantierRepository.récupérerMailleNatEtDeptParId.mockResolvedValue([chantier1, chantier2, chantier3, chantier4, chantier5, chantierNat]);
 
+    const jalon = 2024;
+
     // When
-    const avancement = await récupérerAvancementUseCase.run({ chantierId });
+    const avancement = await récupérerAvancementUseCase.run({ chantierId, jalon });
 
     // Then
     expect(avancement.global).toEqual(null);

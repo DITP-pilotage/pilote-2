@@ -25,6 +25,7 @@ import usePageProjetStructurant from './usePageProjetStructurant';
 
 interface PageProjetStructurantProps {
   projetStructurant: ProjetStructurant
+  jalon: number
   indicateurs: Indicateur[]
   détailsIndicateurs: DétailsIndicateurs
 }
@@ -33,6 +34,7 @@ const PageProjetStructurant: FunctionComponent<PageProjetStructurantProps> = ({
   projetStructurant,
   indicateurs,
   détailsIndicateurs,
+  jalon,
 }) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const {
@@ -167,6 +169,7 @@ const PageProjetStructurant: FunctionComponent<PageProjetStructurantProps> = ({
                 chantierEstTerritorialisé={false}
                 détailsIndicateurs={détailsIndicateurs}
                 indicateurs={indicateurs}
+                jalon={jalon}
                 listeRubriquesIndicateurs={listeRubriquesIndicateursProjetStructurant}
                 territoireProjetStructurant={projetStructurant.territoire}
                 typeDeRéforme='projet structurant'

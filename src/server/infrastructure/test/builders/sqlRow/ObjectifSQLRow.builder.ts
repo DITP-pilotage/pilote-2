@@ -13,7 +13,7 @@ export default class ObjectifSQLRowBuilder {
 
   private _date: objectif['date'];
 
-  private _chantierId: objectif['chantier_id'];
+  private _chantierId: string;
 
   constructor() {
     const chantierGénéré = new ChantierBuilder().build();

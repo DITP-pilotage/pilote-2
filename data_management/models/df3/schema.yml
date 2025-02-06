@@ -164,6 +164,8 @@ models:
           *Exemple d'utilisation:* Utile lorsque l'on veut mettre à jour le calcul de TA retrospectivement. Par exemple, nous sommes en 2024, et une VA de déc-2023 est mise à jour. Pour connaitre le TAA tel qu'il aurait été en déc-23, il faut regarder ce TAA (TAA *à date*).
       - name: taa_prev_year
         description: "TA de l'an dernier. Ex: si on est en 2025, retourne le dernier TA dispo en vigueur en 2024. Peut se faire grace à une VA de 2023 si c'est la dernière dispo."
+      - name: tap_prev_year
+        description: "Taux d'avancement proposé, pour l'année précédente. Se base sur `vca_prev_year` comme cible de l'année à considérer."
       - name: tag
         description: Taux d'Avancement Global (TAG). Indique l'avancement sur la période compète, utilise la VCG (déterminée dans `get_vcg`).
   - name: df3_indicateur

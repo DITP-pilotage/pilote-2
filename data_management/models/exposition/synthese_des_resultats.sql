@@ -20,6 +20,7 @@ SELECT
     COALESCE(meteo, 'NON_RENSEIGNEE') as meteo,
     date_meteo,
     contenu as commentaire,
-    date as date_commentaire
+    date as date_commentaire,
+    CONCAT(maille, '-', code_insee) as territoire_code
 FROM {{ ref('stg_import_massif__commentaires') }}
 WHERE type='synthese_des_resultats'

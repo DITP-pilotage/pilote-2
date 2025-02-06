@@ -20,12 +20,12 @@ const classesÀPartirDeTaille = {
     libellé: '',
   },
   md: {
-    valeur: 'jauge-valeur-au-centre fr-h4 texte-centre',
-    libellé: 'texte-centre',
+    valeur: 'jauge-valeur-au-centre fr-h4 text-center',
+    libellé: 'text-center',
   },
   lg: {
-    valeur: 'jauge-valeur-au-centre fr-h1 texte-centre',
-    libellé: 'texte-centre',
+    valeur: 'jauge-valeur-au-centre fr-h1 text-center',
+    libellé: 'text-center',
   },
 };
 
@@ -44,12 +44,12 @@ const JaugeDeProgression: FunctionComponent<JaugeDeProgressionProps> = ({
           pourcentage={pourcentage !== undefined ? pourcentage : null}
           taille={taille}
         />
-        <p className={`jauge-valeur jauge-valeur--${couleur} texte-centre ${classesÀPartirDeTaille[taille].valeur}`}>
+        <p className={`jauge-valeur jauge-valeur--${couleur} text-center ${classesÀPartirDeTaille[taille].valeur}`}>
           {`${pourcentage?.toFixed(0) ?? '- '}%`}
         </p>
       </div>
       <p
-        className={`fr-text--xs fr-mb-0 texte-centre ${classesÀPartirDeTaille[taille].libellé}${noWrap ? 'no-wrap' : ''}`}
+        className={`fr-text--xs fr-mb-0 text-center ${classesÀPartirDeTaille[taille].libellé}${noWrap ? 'no-wrap' : ''}`}
       >
         {libellé}
       </p>

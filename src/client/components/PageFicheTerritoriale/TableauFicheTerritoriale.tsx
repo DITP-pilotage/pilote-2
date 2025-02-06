@@ -3,7 +3,7 @@ import {
   ChantierFicheTerritorialeContrat,
 } from '@/server/fiche-territoriale/app/contrats/ChantierFicheTerritorialeContrat';
 import Icône from '@/components/_commons/Icône/Icône';
-import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
+import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
 import '@gouvfr/dsfr/dist/component/badge/badge.min.css';
 
 const classBadge = (tauxAvancement: number, tauxAvancementNational: number | null) => {
@@ -64,8 +64,8 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                 >
                   {
                     chantierFicheTerritoriale.meteo !== 'NON_RENSEIGNEE' ? (
-                      <MétéoPicto
-                        météo={chantierFicheTerritoriale.meteo}
+                      <MeteoPicto
+                        meteo={chantierFicheTerritoriale.meteo}
                       />
                     ) : (
                       <span className='fr-m-0 fr-text-mention--grey'>

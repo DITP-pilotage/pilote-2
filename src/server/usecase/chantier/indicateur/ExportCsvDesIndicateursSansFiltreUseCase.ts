@@ -28,9 +28,13 @@ const verifierOptionStatut = (optionsExport: OptionsExport, chantierStatut: stri
   return chantierStatut ? optionsExport.listeStatuts.length > 0 ? optionsExport.listeStatuts.includes(chantierStatut) : true : true;
 };
 
+const verifierOptionMeteo = (optionsExport: OptionsExport, chantierMeteo: string | null) => {
+  return optionsExport.listeMeteos.length > 0 ? chantierMeteo ? optionsExport.listeMeteos.includes(chantierMeteo) : false : true ;
+};
+
 export default class ExportCsvDesIndicateursSansFiltreUseCase {
 
-  public static readonly NOMS_COLONNES = [
+  public static readonly NOMS_COLONNES = (jalon: number): string[] => [
     'Maille',
     'Région',
     'Département',
@@ -40,7 +44,8 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
     'Chantier',
     'Chantier Id',
     'Chantier du baromètre',
-    'Taux d\'avancement à fin d\'échéance (chantier)',
+    "Taux d'avancement à fin d'échéance 2026 (chantier)",
+    `Taux d'avancement à fin d'échéance ${jalon} (chantier)`,
     'Météo',
     'Indicateur',
     'Valeur initiale',
@@ -49,10 +54,10 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
     'Date valeur actuelle',
     'Valeur cible année en cours',
     'Date valeur cible année en cours',
-    'Taux d\'avancement de l\'année en cours',
-    'Valeur cible à fin d\'échéance',
-    'Date valeur cible à fin d\'échéance',
-    'Taux d\'avancement à fin d\'échéance (indicateur)',
+    `Taux d'avancement à fin d'échéance ${jalon} (indicateur)`,
+    "Valeur cible à fin d'échéance",
+    "Date valeur cible à fin d'échéance 2026",
+    "Taux d'avancement à fin d'échéance 2026 (indicateur)",
   ];
 
   constructor(
@@ -60,15 +65,20 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
     private readonly _indicateurRepository: IndicateurRepository,
   ) {}
 
-  public async *run({ habilitation, profil, indicateurChunkSize, optionsExport }: { habilitation: Habilitation, profil: ProfilCode, indicateurChunkSize: number, optionsExport: OptionsExport }): AsyncGenerator<string[][]> {
+  public async *run({ habilitation, profil, indicateurChunkSize, optionsExport, jalon }: { habilitation: Habilitation, profil: ProfilCode, indicateurChunkSize: number, optionsExport: OptionsExport, jalon: number }): AsyncGenerator<string[][]> {
     const chantierIdsLecture = await this._chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation, optionsExport);
     const territoireCodesLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
     for (let i = 0; i < chantierIdsLecture.length; i += indicateurChunkSize) {
       const partialChantierIds = chantierIdsLecture.slice(i, i + indicateurChunkSize);
-      const indicateursPourExports = await this._indicateurRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
+      const indicateursPourExports = await this._indicateurRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture, jalon);
       yield indicateursPourExports
-        .filter(ind => !this.masquerIndicateurPourProfilDROM(profil, ind) && verifierOptionPerimetreIds(optionsExport, ind.périmètreIds) && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, ind.chantierEstBaromètre, ind.chantierEstTerritorialise) && verifierOptionStatut(optionsExport, ind.chantierStatut))
+        .filter(ind => !this.masquerIndicateurPourProfilDROM(profil, ind) 
+          && verifierOptionPerimetreIds(optionsExport, ind.périmètreIds) 
+          && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, ind.chantierEstBaromètre, ind.chantierEstTerritorialise) 
+          && verifierOptionStatut(optionsExport, ind.chantierStatut)
+          && verifierOptionMeteo(optionsExport, ind.météo),
+        )
         .map(ind => this.transformer(ind, profil));
     }
   }
@@ -89,6 +99,7 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
       indicateurPourExport.chantierId || NON_APPLICABLE,
       indicateurPourExport.chantierEstBaromètre ? OUI : NON,
       formaterNumérique(indicateurPourExport.chantierAvancementGlobal),
+      formaterNumérique(indicateurPourExport.chantierAvancementAnnuel),
       formaterMétéo(indicateurPourExport.météo),
       indicateurPourExport.nom || NON_APPLICABLE,
       formaterNumérique(indicateurPourExport.valeurInitiale),

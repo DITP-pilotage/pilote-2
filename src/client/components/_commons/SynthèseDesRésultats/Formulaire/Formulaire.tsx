@@ -5,7 +5,7 @@ import CompteurCaractères from '@/components/_commons/CompteurCaractères/Compt
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import { libellésMétéos, MétéoSaisissable, météosSaisissables } from '@/server/domain/météo/Météo.interface';
 import Titre from '@/components/_commons/Titre/Titre';
-import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
+import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import { LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS, validationSynthèseDesRésultatsFormulaire } from 'validation/synthèseDesRésultats';
 import SynthèseDesRésultatsFormulaireStyled from './Formulaire.styled';
@@ -71,7 +71,7 @@ const SynthèseDesRésultatsFormulaire: FunctionComponent<SynthèseDesRésultats
         <div className='fr-mx-3w météo-picto-conteneur'>
           {
             !!watch('météo') &&
-            <MétéoPicto météo={watch('météo')!} />
+            <MeteoPicto meteo={watch('météo')!} />
           }
         </div>
         <div className='actions'>

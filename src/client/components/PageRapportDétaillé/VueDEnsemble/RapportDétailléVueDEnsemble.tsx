@@ -5,7 +5,6 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import CartographieAvancement
   from '@/components/_commons/Cartographie/CartographieAvancementNew/CartographieAvancement';
 import Avancements from '@/components/_commons/Avancements/Avancements';
-import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
 import usePageRapportDétaillé from '@/components/PageRapportDétaillé/usePageRapportDétaillé';
 import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import {
@@ -21,11 +20,13 @@ import RemontéeAlerte from '@/components/_commons/RemontéeAlerte/RemontéeAler
 import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
-  RépartitionsMétéos,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
+import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import RepartitionsMeteosRapportDetaille
+  from '@/client/components/PageRapportDétaillé/FiltresSélectionnés/FiltresMétéos/RepartitionsMeteosRapportDetaille';
 import RapportDétailléTableauChantiers from './RapportDétailléTableauChantiers/RapportDétailléTableauChantiers';
 
 interface RapportDétailléVueDEnsembleProps {
@@ -33,19 +34,21 @@ interface RapportDétailléVueDEnsembleProps {
   filtresComptesCalculés: Record<TypeAlerteChantier, number>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
-  répartitionMétéos: RépartitionsMétéos
+  repartitionMeteosChantiers: RepartitionMeteoContrat
   territoireCode: string
   mailleSelectionnee: MailleInterne
+  jalon: number
 }
 
 const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnsembleProps> = ({
   chantiers,
-  répartitionMétéos,
+  repartitionMeteosChantiers,
   avancementsGlobauxTerritoriauxMoyens: donnéesCartographie,
   avancementsAgrégés,
   territoireCode,
   filtresComptesCalculés,
   mailleSelectionnee,
+  jalon,
 }) => {
   const {
     donnéesTableauChantiers,
@@ -77,7 +80,10 @@ const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnse
                 {INFOBULLE_CONTENUS.chantiers.jauges}
               </Infobulle>
             </TitreInfobulleConteneur>
-            <Avancements avancements={avancementsAgrégés} />
+            <Avancements
+              avancements={avancementsAgrégés}
+              jalon={jalon}
+            />
           </section>
           <hr className='fr-hr fr-my-3w fr-pb-1v' />
           <section>
@@ -93,7 +99,9 @@ const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnse
                 {INFOBULLE_CONTENUS.chantiers.météos}
               </Infobulle>
             </TitreInfobulleConteneur>
-            <RépartitionMétéo météos={répartitionMétéos} />
+            <RepartitionsMeteosRapportDetaille
+              repartitionMeteos={repartitionMeteosChantiers}
+            />
           </section>
         </Bloc>
         <Bloc>
@@ -107,6 +115,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnse
             <CartographieAvancement
               auClicTerritoireCallback={() => {}}
               données={donnéesCartographie}
+              jalon={jalon}
               mailleSelectionnee={mailleSelectionnee}
               options={{ estInteractif: false }}
               pathname={null}

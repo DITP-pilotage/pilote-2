@@ -1,12 +1,16 @@
 import { commentaire } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 import { Commentaire } from '@/server/domain/chantier/commentaire/Commentaire.interface';
-import CommentaireSQLRepository, { CODES_TYPES_COMMENTAIRES, NOMS_TYPES_COMMENTAIRES } from '@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository';
+import CommentaireSQLRepository, {
+  CODES_TYPES_COMMENTAIRES,
+  NOMS_TYPES_COMMENTAIRES,
+} from '@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository';
 import CommentaireSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from './RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
+import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase
+  from './RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
 
 function mapperVersDomaine(commentairePrisma: commentaire): Commentaire {
   return {
@@ -24,6 +28,7 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
 
   const auteur_id = randomUUID();
   const chantierId = 'CH-001';
+
   const commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale = new CommentaireSQLRowBuilder()
     .avecChantierId(chantierId)
     .avecMaille('NAT')
@@ -120,11 +125,38 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
       },
     });
 
-    // WHEN
+    await prisma.chantier_identite.createMany({
+      data: [{
+        id: 'CH-003',
+        nom: 'Chantier 003',
+      }, {
+        id: 'CH-004',
+        nom: 'Chantier 004',
+      }],
+    });
+
+    await prisma.chantier_territoire.createMany({
+      data: [{
+        id: 'CH-003',
+        zone_id: 'D75',
+        maille: 'DEPT',
+        code_insee: '75',
+        territoire_code: 'DEPT-75',
+      }, {
+        id: 'CH-004',
+        zone_id: 'D75',
+        maille: 'DEPT',
+        code_insee: '75',
+        territoire_code: 'DEPT-75',
+      }],
+    });
+
+    // When
     await prisma.commentaire.createMany({ data: [commentaireAvecAuteurId, commentaireSansAuteurId ] });
+
     const résultat = await récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run(['CH-003', 'CH-004'], 'DEPT-75', habilitation);
 
-    // THEN
+    // Then
     expect(résultat['CH-003'][0]?.auteur).toStrictEqual('Auteur Inconnu');
     expect(résultat['CH-004'][0]?.auteur).toStrictEqual('Paul Lasne');
 
@@ -136,18 +168,61 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
         territoires: ['NAT-FR'],
       } } as unknown as Utilisateur['habilitations'];
 
-      // WHEN
-      await prisma.commentaire.createMany({ data: [commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale, commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale, commentaireRisquesEtFreinsÀLeverMoinsRécent, commentaireRisquesEtFreinsÀLeverLePlusRécent, commentaireExemplesConcretsDeRéussite, commentaireAutresRésultatsObtenus, commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs, commentairesSurLesDonnéesDept93, commentairesSurLesDonnéesDept75] });
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          zone_id: 'FRANCE',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+        }, {
+          id: 'CH-001',
+          zone_id: 'D75',
+          maille: 'DEPT',
+          code_insee: '75',
+          territoire_code: 'DEPT-75',
+        }, {
+          id: 'CH-001',
+          zone_id: 'D93',
+          maille: 'DEPT',
+          code_insee: '93',
+          territoire_code: 'DEPT-93',
+        }],
+      });
+
+      await prisma.commentaire.createMany({
+        data: [
+          commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale,
+          commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale,
+          commentaireRisquesEtFreinsÀLeverLePlusRécent,
+          commentaireRisquesEtFreinsÀLeverMoinsRécent,
+          commentaireExemplesConcretsDeRéussite,
+          commentaireAutresRésultatsObtenus,
+          commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs,
+          commentairesSurLesDonnéesDept93,
+          commentairesSurLesDonnéesDept75,
+        ],
+      });
+
+      // When
       const résultat = await récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([chantierId], 'NAT-FR', habilitation);
 
-      // THEN
-      const attendu = { [chantierId]: [ 
-        mapperVersDomaine(commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale),
-        mapperVersDomaine(commentaireRisquesEtFreinsÀLeverLePlusRécent),
-        mapperVersDomaine(commentaireExemplesConcretsDeRéussite),
-        mapperVersDomaine(commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs),
-      ] };
-      expect(résultat).toStrictEqual(attendu);
+      // Then
+      expect(résultat).toStrictEqual({
+        [chantierId]: [
+          mapperVersDomaine(commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale),
+          mapperVersDomaine(commentaireRisquesEtFreinsÀLeverLePlusRécent),
+          mapperVersDomaine(commentaireExemplesConcretsDeRéussite),
+          mapperVersDomaine(commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs),
+        ],
+      });
     });
   });
 
@@ -158,11 +233,53 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
         territoires: ['REG-01'],
       } } as unknown as Utilisateur['habilitations'];
 
-      // WHEN
-      await prisma.commentaire.createMany({ data: [commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale, commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale, commentaireRisquesEtFreinsÀLeverMoinsRécent, commentaireRisquesEtFreinsÀLeverLePlusRécent, commentaireExemplesConcretsDeRéussite, commentaireAutresRésultatsObtenus, commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs, commentairesSurLesDonnéesDept93, commentairesSurLesDonnéesDept75] });
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          zone_id: 'FRANCE',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+        }, {
+          id: 'CH-001',
+          zone_id: 'D75',
+          maille: 'DEPT',
+          code_insee: '75',
+          territoire_code: 'DEPT-75',
+        }, {
+          id: 'CH-001',
+          zone_id: 'D93',
+          maille: 'DEPT',
+          code_insee: '93',
+          territoire_code: 'DEPT-93',
+        }],
+      });
+
+      await prisma.commentaire.createMany({
+        data: [
+          commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale,
+          commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale,
+          commentaireRisquesEtFreinsÀLeverMoinsRécent,
+          commentaireRisquesEtFreinsÀLeverLePlusRécent,
+          commentaireExemplesConcretsDeRéussite,
+          commentaireAutresRésultatsObtenus,
+          commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs,
+          commentairesSurLesDonnéesDept93,
+          commentairesSurLesDonnéesDept75,
+        ],
+      });
+
+      // When
       const résultat = await récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([chantierId], 'REG-01', habilitation);
 
-      // THEN
+      // Then
       expect(résultat).toStrictEqual({});
     });
 
@@ -172,11 +289,52 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
         territoires: ['DEPT-75'],
       } } as unknown as Utilisateur['habilitations'];
 
-      // WHEN
-      await prisma.commentaire.createMany({ data: [commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale, commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale, commentaireRisquesEtFreinsÀLeverMoinsRécent, commentaireRisquesEtFreinsÀLeverLePlusRécent, commentaireExemplesConcretsDeRéussite, commentaireAutresRésultatsObtenus, commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs, commentairesSurLesDonnéesDept93, commentairesSurLesDonnéesDept75] });
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          zone_id: 'FRANCE',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+        }, {
+          id: 'CH-001',
+          zone_id: 'D75',
+          maille: 'DEPT',
+          code_insee: '75',
+          territoire_code: 'DEPT-75',
+        }, {
+          id: 'CH-001',
+          zone_id: 'D93',
+          maille: 'DEPT',
+          code_insee: '93',
+          territoire_code: 'DEPT-93',
+        }],
+      });
+
+      // When
+      await prisma.commentaire.createMany({
+        data: [
+          commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale,
+          commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale,
+          commentaireRisquesEtFreinsÀLeverMoinsRécent,
+          commentaireRisquesEtFreinsÀLeverLePlusRécent,
+          commentaireExemplesConcretsDeRéussite,
+          commentaireAutresRésultatsObtenus,
+          commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs,
+          commentairesSurLesDonnéesDept93,
+          commentairesSurLesDonnéesDept75,
+        ],
+      });
       const résultat = await récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([chantierId], 'DEPT-75', habilitation);
       
-      // THEN
+      // Then
       const attendu = { [chantierId]: [
         mapperVersDomaine(commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale),
         mapperVersDomaine(commentaireAutresRésultatsObtenus),

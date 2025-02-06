@@ -14,7 +14,6 @@ export class RepartitionMeteo {
     this._nombreSoleil = nombreSoleil;
   }
 
-
   get nombreCouvert(): number {
     return this._nombreCouvert;
   }

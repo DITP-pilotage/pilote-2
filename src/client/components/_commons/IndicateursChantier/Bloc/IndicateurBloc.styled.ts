@@ -1,11 +1,17 @@
 import styled from '@emotion/styled';
 
 const IndicateurBlocStyled = styled.div`
-  table.fr-table tbody tr:nth-of-type(2n + 1) {
-    background-color: var(--background-contrast-grey);
-  }  
-  
-  table.fr-table tbody tr:nth-of-type(2n) {
+  .fr-select-group, .fr-select {
+    width: 3.2rem;
+    padding: 0.2rem 0;
+    margin: 0!important;
+    font-size: 0.875rem;
+    font-weight: bold;
+    color: var(--text-title-grey);
+    background-position: 100% 70%!important;
+  }
+
+  table.fr-table tbody tr {
     background-color: transparent;
   }
   
@@ -74,6 +80,10 @@ const IndicateurBlocStyled = styled.div`
     height: 1rem;
     font-size: 0.625rem;
     line-height: 1rem;
+  }
+
+  tr.table-comparaison-border {
+    border-top: 1px solid #DDD;
   }
 `;
 

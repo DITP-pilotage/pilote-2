@@ -4,7 +4,7 @@ export type MétéoSaisissable = typeof météosSaisissables[number];
 export const météos = ['NON_RENSEIGNEE', ...météosSaisissables, 'NON_NECESSAIRE'] as const;
 export type Météo = typeof météos[number];
 
-export const libellésMétéos: Record<Météo, string> = {
+export const libellésMétéos: Record<Météo | string, string> = {
   'ORAGE': 'Objectifs compromis',
   'NUAGE': 'Appuis nécessaires',
   'COUVERT': 'Objectifs atteignables',

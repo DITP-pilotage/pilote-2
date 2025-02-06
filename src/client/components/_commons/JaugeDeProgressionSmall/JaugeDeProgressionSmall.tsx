@@ -27,12 +27,12 @@ export const JaugeDeProgressionSmall: FunctionComponent<JaugeDeProgressionSmallP
         </div>
         <div className='flex flex-column justify-center'>
           <p
-            className={`jauge-valeur jauge-valeur--${couleur} texte-centre jauge-valeur-dessous fr-h5 fr-mb-0`}
+            className={`jauge-valeur jauge-valeur--${couleur} text-center jauge-valeur-dessous fr-h5 fr-mb-0`}
           >
             {`${pourcentage?.toFixed(0) ?? '- '}%`}
           </p>
           <p
-            className='fr-text--xs fr-mb-0 texte-centre'
+            className='fr-text--xs fr-mb-0 text-center'
           >
             {libellé}
           </p>

@@ -7,16 +7,13 @@ donnees AS
 (
   SELECT
     i.*,
-    t.zone_id,
     z.maille as zone_type 
   FROM
-    {{ ref('indicateur') }} i 
+    {{ ref('indicateur_territoire') }} i 
 	-- On ne garde que les indicateurs au baromètres
     RIGHT JOIN indic_baro b ON i.id = b.id 
-    -- pour: Ajout de la zone_id
-	LEFT JOIN {{ source('db_schema_public', 'territoire') }} t ON i.territoire_code = t.code 
     -- pour: Ajout de la zone_type (maille)
-    LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} z ON t.zone_id = z.id
+    LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} z ON i.zone_id = z.id
 ),
 
 -- Données VA
@@ -58,12 +55,12 @@ export_vc AS
     id AS indic_id,
     zone_id AS enforce_zone_id,
     zone_type AS "maille",
-    objectif_date_valeur_cible AS metric_enforce_date,
+    date_valeur_cible_mandat AS metric_enforce_date,
 	-- VC
-    objectif_valeur_cible AS indic_vc 
+    valeur_cible_mandat AS indic_vc 
   FROM donnees 
   -- On ne garde que les lignes où une VC est dispo
-  WHERE objectif_valeur_cible IS NOT NULL 
+  WHERE valeur_cible_mandat IS NOT NULL 
 ),
 
 -- Données TA
@@ -73,12 +70,12 @@ export_ta AS
     id AS indic_id,
     zone_id AS enforce_zone_id,
     zone_type AS "maille",
-    date_valeur_actuelle AS metric_enforce_date,
+    date_valeur_actuelle_mandat AS metric_enforce_date,
     -- TA
-    objectif_taux_avancement AS indic_ta 
+    taux_avancement_mandat AS indic_ta 
   FROM donnees 
   -- On ne garde que les lignes où un TA est dispo
-  WHERE objectif_taux_avancement IS NOT NULL 
+  WHERE taux_avancement_mandat IS NOT NULL 
 ),
 
 -- Combinaison des VI,VA,VC,TA

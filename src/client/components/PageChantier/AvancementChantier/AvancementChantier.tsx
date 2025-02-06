@@ -1,8 +1,8 @@
 import { FunctionComponent } from 'react';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import AvancementsTerritoire from '@/components/_commons/AvancementsTerritoire/AvancementsTerritoire';
-import Titre from '@/components/_commons/Titre/Titre';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
@@ -12,12 +12,13 @@ import SélecteurMaille
   from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import { JaugeDeProgressionSmall } from '@/components/_commons/JaugeDeProgressionSmall/JaugeDeProgressionSmall';
-import { getDateBasculeAffichageValeursAnneePrecedente } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
-import api from '@/server/infrastructure/api/trpc/api';
+import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
+import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import AvancementChantierStyled from './AvancementChantier.styled';
 
 const classeÀPartirDeLaMaille = {
-  'nationale': '',
+  'nationale': 'layout--nat',
   'departementale': 'layout--dept',
   'regionale': 'layout--reg',
 };
@@ -25,6 +26,7 @@ const classeÀPartirDeLaMaille = {
 interface AvancementChantierProps {
   territoireCode: string
   mailleSelectionnee: MailleInterne
+  jalon: number
   mailleQuery: MailleInterne
   estAutoriseAVoirLeSelecteurDeMaille: boolean
   avancements: {
@@ -56,17 +58,24 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   mailleQuery,
   estAutoriseAVoirLeSelecteurDeMaille,
   mailleSourceDonnees,
+  jalon,
 }) => {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+
+  const [, setJalon] = useQueryState('jalon', parseAsStringLiteral(['2024', '2025']).withDefault('2024').withOptions({
+    shallow: false,
+    history: 'push',
+  }));
+
+  const auClickSelecteurJalon = (valeur: '2024' | '2025') => {
+    sauvegarderFiltres({ jalon: valeur });
+    setJalon(valeur);
+  };
 
   const pathname = '/chantier/[id]/[territoireCode]';
 
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const territoireSélectionnéParent = territoireSélectionné.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné.codeParent) : null;
-
-  const { data: dateBasculeTauxAnnuelAnneeCouranteString } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE' });
-  const anneeCourante = (new Date).getFullYear();
-  const anneeJalon = getDateBasculeAffichageValeursAnneePrecedente(dateBasculeTauxAnnuelAnneeCouranteString as string).dateBasculeDepassee ? anneeCourante : anneeCourante - 1;
 
   return (
     <AvancementChantierStyled className={classeÀPartirDeLaMaille[territoireSélectionné.maille]}>
@@ -77,6 +86,10 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               <AvancementsTerritoire
                 avancementAnnuel={avancements.departementale.annuel.moyenne}
                 avancementGlobal={avancements.departementale.global.moyenne}
+                couleurBarreDeProgression='secondaire'
+                couleurJaugeDeProgression='bleu'
+                doitAfficherLeSelecteur={territoireCode.startsWith('DEPT')}
+                jalon={jalon}
                 territoireNom={territoireSélectionné.nom}
               />
               {
@@ -101,6 +114,10 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               <AvancementsTerritoire
                 avancementAnnuel={avancements.regionale.annuel.moyenne}
                 avancementGlobal={avancements.regionale.global.moyenne}
+                couleurBarreDeProgression={mailleSelectionnee === 'regionale' ? 'secondaire' : 'secondaire-light'}
+                couleurJaugeDeProgression={mailleSelectionnee === 'regionale' ? 'bleu' : 'bleu-clair'}
+                doitAfficherLeSelecteur={territoireCode.startsWith('REG')}
+                jalon={jalon}
                 territoireNom={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
               />
             </div>
@@ -108,25 +125,16 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         ) : null
       }
       <Bloc
-        contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
-        titre='National'
+        titre='France'
       >
-        <Titre
-          baliseHtml='h3'
-          className='fr-text--md fr-mb-1w fr-py-1v texte-centre break-keep flex justify-center w-full'
-        >
-          Taux d’avancement national
-        </Titre>
-        <div className='flex w-full justify-center'>
+        <div className='fr-py-1w jauge'>
           <JaugeDeProgression
-            couleur='bleu'
-            libellé='Taux d’avancement moyen pour le territoire '
+            couleur={territoireCode !== 'NAT-FR' ? 'bleu-clair' : 'bleu'}
+            libellé='France'
             pourcentage={avancements.nationale ? avancements.nationale.global.moyenne : null}
             taille='lg'
           />
-        </div>
-        <div className='fr-grid-row border-t fr-mt-1w '>
-          <div className='fr-mt-1w w-full'>
+          <div className='fr-mt-2w'>
             <p className='fr-text--xl fr-text--bold fr-mb-0 texte-gris'>
               {`${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancements.nationale?.annuel.moyenne?.toFixed(0) : null) ?? '- '}%`}
             </p>
@@ -137,11 +145,48 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               positionTexte='dessus'
               taille='xxs'
               valeur={!!avancements.nationale && process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancements.nationale.annuel.moyenne : null}
-              variante='secondaire'
+              variante='secondaire-light'
             />
-            <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-              {`Taux d\'avancement de l'année ${anneeJalon}`}
-            </p>
+            <div className='flex align-center justify-center fr-text--xs'>
+              <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
+                {`Avancement à échéance${!territoireCode.startsWith('NAT') ? ` ${jalon}` : ''}`}
+              </p>
+              {
+                territoireCode.startsWith('NAT') ? (
+                  <div className='select-sm flex align-center justify-center align-center'>
+                    <Sélecteur<'2024' | '2025'>
+                      htmlName='jalon'
+                      options={[{ libellé: '2024', valeur: '2024' }, { libellé: '2025', valeur: '2025' }]}
+                      texteFantôme='Sélectionner un jalon'
+                      valeurModifiéeCallback={auClickSelecteurJalon}
+                      valeurSélectionnée={`${jalon}` as '2024' | '2025'}
+                    />
+                    <Infobulle
+                      className='fr-pt-0'
+                      idHtml='infobulle-selecteur-jalon'
+                    >
+                      <div>
+                        <h5 className='fr-text--sm fr-mb-1w'>
+                          Avancement à échéance
+                        </h5>
+                        <p className='fr-text--xs'>
+                          Ce sélecteur vous permet d'afficher les valeurs prises successivement par le taux
+                          d'avancement :
+                        </p>
+                        <ul className='fr-text--xs fr-mb-0'>
+                          <li>
+                            valeurs observées à la fin des années passées
+                          </li>
+                          <li>
+                            valeur à date (année en cours)
+                          </li>
+                        </ul>
+                      </div>
+                    </Infobulle>
+                  </div>
+                ) : null
+              }
+            </div>
           </div>
         </div>
       </Bloc>

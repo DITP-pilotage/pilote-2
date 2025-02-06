@@ -90,6 +90,10 @@
   flex-direction: column;
 }
 
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
 .justify-end {
   justify-content: flex-end
 }
@@ -110,8 +114,8 @@
   text-align: right;
 }
 
-.texte-centre {
-  text-align: center;
+.text-center {
+  text-align: center !important;
 }
 
 .no-underline {
@@ -152,8 +156,24 @@
   color: var(--text-title-blue-france) !important;
 }
 
+.fr-text-title--high-blue-france {
+  color: var(--background-action-high-blue-france) !important;
+}
+
+.fr-text-title--light-blue-france {
+  color: var(--background-flat-info);
+}
+
 .fr-background-action-low-blue-france {
   background-color: var(--background-action-low-blue-france) !important
+}
+
+.fr-background-transparent {
+  background-color: transparent !important
+}
+
+.fr-background-contrast-grey {
+  background-color: var(--background-contrast-grey) !important;
 }
 
 .border-t {
@@ -169,9 +189,15 @@
 }
 
 .border-b {
-  border-bottom-width: 1px;
-  border-bottom-color: var(--border-default-grey);
-  border-bottom-style: solid;
+  border-bottom-width: 1px !important;
+  border-bottom-color: var(--border-default-grey) !important;
+  border-bottom-style: solid !important;
+}
+
+.border-b-2 {
+  border-bottom-width: 1px !important;
+  border-bottom-color: var(--border-action-high-grey) !important;
+  border-bottom-style: solid !important;
 }
 
 .border-l {

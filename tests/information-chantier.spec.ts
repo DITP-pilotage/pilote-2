@@ -6,7 +6,7 @@ test('doit pouvoir consulter les données des chantiers', async ({ page }) => {
 
   await test.step('Vérification de la structure de la page d\'accueil', async () => {
     await expect(page.getByRole('heading', { name: /\d+ chantiers/ })).toBeVisible();
-    await expect(page.getByRole('heading', { name: /Taux d’avancement moyen/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Taux d'avancement moyen/ })).toBeVisible();
     await expect(page.getByRole('heading', { name: /Taux d’avancement des chantiers par territoire/ })).toBeVisible();
     await expect(page.getByRole('heading', { name: /Répartition des météos renseignées/ })).toBeVisible();
 

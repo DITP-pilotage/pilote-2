@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'react';
-import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
+import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
 import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
 import { typeDeRéformeSélectionnéeStore } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
 import RépartitionMétéoÉlémentStyled from './RépartitionMétéoÉlément.styled';
@@ -17,8 +17,8 @@ const RépartitionMétéoÉlément: FunctionComponent<RépartitionMétéoÉléme
       estArchive={estArchive}
       typeDeRéforme={typeDeRéforme}
     >
-      <MétéoPicto
-        météo={météo}
+      <MeteoPicto
+        meteo={météo}
       />
       <p className='nombre-de-chantiers fr-h1 fr-mb-0'>
         {nombreDeChantiers}

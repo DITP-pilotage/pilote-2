@@ -12,7 +12,7 @@ export class ListerDonneesIndicateurParIndicIdUseCase {
     this.indicateurRepository = indicateurRepository;
   }
 
-  async run({ indicId }: { indicId: string }): Promise<DonneeIndicateur[]> {
-    return this.indicateurRepository.listerParIndicId({ indicId });
+  async run({ indicId, jalon }: { indicId: string, jalon: number }): Promise<DonneeIndicateur[]> {
+    return this.indicateurRepository.listerParIndicId({ indicId, jalon });
   }
 }

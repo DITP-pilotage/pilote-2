@@ -28,28 +28,28 @@ import {
 } from '@/server/fiche-territoriale/app/contrats/ChantierFicheTerritorialeContrat';
 
 export const ficheTerritorialeHandler = () => {
-  const recupererFicheTerritoriale = async (territoireCode: string): Promise<FicheTerritorialeContrat> => {
+  const recupererFicheTerritoriale = async (territoireCode: string, jalon: number): Promise<FicheTerritorialeContrat> => {
     const territoire = presenterEnTerritoireContrat(await new RécupérerTerritoireParCodeUseCase({ territoireRepository: dependencies.getFicheTerritorialeTerritoireRepository() }).run({ territoireCode: territoireCode as string }));
 
     const avancementGlobalTerritoire = await new RécupérerTauxAvancementGlobalTerritoireUseCase({
       chantierRepository: dependencies.getFicheTerritorialeChantierRepository(),
       territoireRepository: dependencies.getFicheTerritorialeTerritoireRepository(),
     })
-      .run({ territoireCode: territoireCode as string })
+      .run({ territoireCode, jalon })
       .then(presenterEnTauxAvancementGlobalTerritoireContrat);
 
     const avancementAnnuelTerritoire = await new RécupérerTauxAvancementAnnuelTerritoireUseCase({
       chantierRepository: dependencies.getFicheTerritorialeChantierRepository(),
       territoireRepository: dependencies.getFicheTerritorialeTerritoireRepository(),
     })
-      .run({ territoireCode: territoireCode as string })
+      .run({ territoireCode, jalon })
       .then(presenterEnTauxAvancementAnnuelTerritoireContrat);
 
     const répartitionMétéos = await new RécupérerRépartitionMétéoUseCase({
       chantierRepository: dependencies.getFicheTerritorialeChantierRepository(),
       territoireRepository: dependencies.getFicheTerritorialeTerritoireRepository(),
     })
-      .run({ territoireCode: territoireCode as string })
+      .run({ territoireCode, jalon })
       .then(presenterEnRépartitionsMétéosContrat);
 
     const chantiersFicheTerritoriale = await new RécupérerListeChantierFicheTerritorialeUseCase({
@@ -58,7 +58,7 @@ export const ficheTerritorialeHandler = () => {
       syntheseDesResultatsRepository: dependencies.getFicheTerritorialeSyntheseDesResultatsRepository(),
       indicateurRepository: dependencies.getFicheTerritorialeIndicateurRepository(),
       ministereRepository: dependencies.getFicheTerritorialeMinistereRepository(),
-    }).run({ territoireCode: territoireCode as string })
+    }).run({ territoireCode, jalon })
       .then(result => result.map(presenterEnChantierFicheTerritorialeContrat));
 
     return {
@@ -67,6 +67,7 @@ export const ficheTerritorialeHandler = () => {
       avancementAnnuelTerritoire,
       répartitionMétéos,
       chantiersFicheTerritoriale,
+      jalon,
     };
   };
 

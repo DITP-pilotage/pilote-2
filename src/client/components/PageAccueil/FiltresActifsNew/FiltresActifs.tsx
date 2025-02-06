@@ -7,18 +7,20 @@ import Ppg from '@/server/domain/ppg/Ppg.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import { reinitialiserFiltres, sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { libellésMétéos } from '@/server/domain/météo/Météo.interface';
 import FiltresActifsStyled from './FiltresActifs.styled';
 
 interface FiltresActifsProps {
   ministères: Ministère[]
   axes: Axe[]
-  mailleSelectionnee: MailleInterne
+  mailleSelectionnee: MailleInterne,
 }
 
 const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axes, mailleSelectionnee }) => {
   const [filtres, setFiltres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
     axes: parseAsString.withDefault(''),
+    meteos: parseAsString.withDefault(''),
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
@@ -34,6 +36,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
 
   const nombreFiltresActifs = filtres.axes.split(',').filter(Boolean).length
     + filtres.perimetres.split(',').filter(Boolean).length
+    + filtres.meteos.split(',').filter(Boolean).length
     + (filtres.estBarometre ? 1 : 0)
     + (filtres.estTerritorialise ? 1 : 0)
     + (filtres.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
@@ -60,6 +63,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
     return setFiltres({
       perimetres: '',
       axes: '',
+      meteos: '',
       estBarometre: false,
       estTerritorialise: false,
       estEnAlerteTauxAvancementNonCalculé: false,
@@ -117,6 +121,25 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
 
                   sauvegarderFiltres({ axes: arrFiltreAxes });
                   return setFiltres({ axes: arrFiltreAxes.join(',') });
+                }}
+              />
+            </li>
+          ),
+          )
+        }
+        {
+          filtres.meteos.split(',').filter(Boolean).map((meteo) => (
+            <li
+              key={`tag-axe-${meteo}`}
+            >
+              <Tag
+                libellé={libellésMétéos[meteo]}
+                suppressionCallback={() => {
+                  let arrFiltreMeteos = filtres.meteos.split(',').filter(Boolean);
+                  arrFiltreMeteos.splice(arrFiltreMeteos.indexOf(meteo), 1);
+
+                  sauvegarderFiltres({ meteos: arrFiltreMeteos });
+                  return setFiltres({ meteos: arrFiltreMeteos.join(',') });
                 }}
               />
             </li>

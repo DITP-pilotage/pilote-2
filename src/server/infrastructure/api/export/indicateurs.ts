@@ -9,8 +9,11 @@ import ExportCsvDesIndicateursSansFiltreUseCase
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { configuration } from '@/config';
-import { NON_APPLICABLE } from '@/server/infrastructure/export_csv/valeurs';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
 
 export default async function handleExportDesIndicateurs(request: NextApiRequest, response: NextApiResponse): Promise<void> {
   const session = await getServerSession(request, response, authOptions);
@@ -18,9 +21,13 @@ export default async function handleExportDesIndicateurs(request: NextApiRequest
 
   response.setHeader('Content-Type', 'text/csv');
 
+  const jalon = (!Number.isNaN(request.query?.jalon) && verifyValeurIsNotNullOrUndefined(+request.query.jalon!)) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
+
+  const headersColumns = ExportCsvDesIndicateursSansFiltreUseCase.NOMS_COLONNES(jalon);
+
   const stringifier = stringify({
     header: true,
-    columns: session.profil === ProfilEnum.DITP_ADMIN ? [...ExportCsvDesIndicateursSansFiltreUseCase.NOMS_COLONNES, 'Chantier statut' || NON_APPLICABLE] : ExportCsvDesIndicateursSansFiltreUseCase.NOMS_COLONNES,
+    columns: session.profil === ProfilEnum.DITP_ADMIN ? [...headersColumns, 'Chantier statut'] : headersColumns,
     delimiter: ';',
     bom: true,
     quoted_string: true,
@@ -29,16 +36,19 @@ export default async function handleExportDesIndicateurs(request: NextApiRequest
 
   const habilitation = new Habilitation(session.habilitations);
   const exportCsvDesIndicateursSansFiltreUseCase = new ExportCsvDesIndicateursSansFiltreUseCase(dependencies.getChantierRepository(), dependencies.getIndicateurRepository());
+
   for await (const partialResult of exportCsvDesIndicateursSansFiltreUseCase.run({
     habilitation,
     profil: session.profil,
     indicateurChunkSize: configuration.export.csvIndicateursChunkSize,
+    jalon,
     optionsExport: {
       perimetreIds: request.query.perimetreIds ? Array.isArray(request.query.perimetreIds) ? request.query.perimetreIds : [request.query.perimetreIds] as string[] : [],
       estBarometre: request.query.estBarometre === 'true',
       estTerritorialise: request.query.estTerritorialise === 'true',
       listeStatuts: request.query.statut ? Array.isArray(request.query.statut) ? request.query.statut : [request.query.statut] as string[] : [],
       listeChantierId: request.query.listeChantierId ? (request.query.listeChantierId as string).split(',') : [],
+      listeMeteos: request.query.meteos ? Array.isArray(request.query.meteos) ? request.query.meteos : [request.query.meteos] as string[] : [],
     },
 
   })) {

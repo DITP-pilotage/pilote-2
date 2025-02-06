@@ -31,12 +31,12 @@ export const errorBondary =
         }
       } catch (error) {
         if (error instanceof PiloteError) {
-          Logger.error('API: Une erreur est survenue', error.type, error.message);
+          Logger.error('(API) Une erreur est survenue', error.type, error.message);
           return response.status(error.status).json(
             { success: false, message: error.message },
           );
         } else {
-          Logger.error(`API: Une erreur interne est survenue : ${(error as Error).message}`);
+          Logger.error(`(API) Une erreur interne est survenue : ${(error as Error).message}`);
           return response.status(500).json(
             { success: false, message: 'Une erreur est survenue, veuillez contacter le support pour plus d\'information' },
           );

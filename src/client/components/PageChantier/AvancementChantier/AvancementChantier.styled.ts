@@ -5,10 +5,24 @@ const AvancementChantierStyled = styled.div`
   grid-template-areas: "nat";
   gap: 0.7rem;
 
+  .fr-select-group, .fr-select {
+    width: 3.5rem;
+    height: 1.5rem;
+    padding: 0.07rem 0 0 0.2rem;
+    margin: 0!important;
+    font-size: 0.75rem!important;
+    background-color: transparent;
+    background-position: 100% 70%!important;
+  }
+
+  .fr-select {
+    box-shadow: inset 0 -1px 0 0 var(--border-plain-grey)
+  }
+  
   &.layout--dept {
     @media (min-width: 1025px) {
       grid-template-areas: "dept reg nat nat";
-      grid-template-columns: 1fr 1fr 2fr 2fr;
+      grid-template-columns: 2fr 2fr 2fr 2fr;
     }
 
     @media (min-width: 768px) and (max-width: 1024px) {
@@ -22,16 +36,15 @@ const AvancementChantierStyled = styled.div`
   &.layout--reg {
     @media (min-width: 768px) {
       grid-template-areas: "reg nat";
-      grid-template-columns: 1fr 2fr;
-    }
-
-    @media (max-width: 767px) {
-      grid-template-areas: "reg" "nat";
+      grid-template-columns: 2fr 2fr 2fr;
     }
   }
-  
-  .avancement-national {
-    grid-area: nat;
+
+  &.layout--nat {
+    @media (min-width: 768px) {
+      grid-template-areas: "nat";
+      grid-template-columns: 2fr 2fr;
+    }
   }
 
   .jauge > div {
@@ -45,12 +58,17 @@ const AvancementChantierStyled = styled.div`
   @media print {
     &.layout--dept {
       grid-template-areas: "dept reg nat nat";
-      grid-template-columns: 1fr 1fr 2fr 2fr;
+      grid-template-columns: 2fr 2fr 2fr 2fr;
     }
 
     &.layout--reg {
       grid-template-areas: "reg nat";
-      grid-template-columns: 1fr 2fr;
+      grid-template-columns: 2fr 2fr 2fr;
+    }
+
+    &.layout--nat {
+      grid-template-areas: "nat";
+      grid-template-columns: 2fr 2fr;
     }
   } 
 `;

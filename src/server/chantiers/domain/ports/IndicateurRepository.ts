@@ -1,7 +1,7 @@
 import { DonneeIndicateur } from '@/server/chantiers/domain/DonneeIndicateur';
 
 export interface IndicateurRepository {
-  listerParIndicId({ indicId }: { indicId: string }): Promise<DonneeIndicateur[]>;
+  listerParIndicId({ indicId, jalon }: { indicId: string, jalon: number }): Promise<DonneeIndicateur[]>;
   supprimerPropositionValeurActuelle({
     indicId,
     territoireCode,

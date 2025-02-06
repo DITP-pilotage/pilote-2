@@ -26,7 +26,7 @@ const handle = async (request: NextApiRequest, response: NextApiResponse)=> {
   // eslint-disable-next-line sonarjs/no-small-switch
   switch (request.method) {
     case 'GET': {
-      logger.info('API: Export des données chantier', `Chantier : ${request.query.chantierId}`);
+      logger.info('(API) Export des données chantier', `Chantier : ${request.query.chantierId}`);
       if (!utilisateurAuthentifie.peutAccederAuChantier(request.query.chantierId as string)) {
         throw new ForbiddenError(`Vous n'êtes pas autorisé à accéder au chantier ${request.query.chantierId}`);
       }

@@ -1,14 +1,22 @@
 import styled from '@emotion/styled';
 
 const BlocStyled = styled.div`
+  min-width: 100%;
   background: white;
   border: 1px solid var(--border-disabled-grey);
-  border-radius: 8px;
+  border-radius: 8px; 
 
   .titre {
     background: var(--background-action-low-blue-france);
     border-bottom: 2px solid var(--border-plain-grey);
     border-radius: 7px 7px 0 0;
+  }
+  
+  .titre-ellipsis {
+    width: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   
   @media print {

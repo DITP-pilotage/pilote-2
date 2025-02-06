@@ -1,8 +1,12 @@
-import Chantier, { TypeStatut } from '@/server/domain/chantier/Chantier.interface';
-import { TerritoireDonnées, TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import { TypeStatut } from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
-import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
+import { PrismaChantier } from '@/server/infrastructure/accès_données/chantier/PrismaChantier';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
+import { créerDonnéesTerritoiresNew } from '@/server/infrastructure/accès_données/chantier/ChantierSQLParser';
+import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { Territoire } from '@/server/domain/territoire/Territoire.interface';
+import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
 
 interface TerritoireAvancementAccueilContrat {
   global: number | null
@@ -22,7 +26,6 @@ interface TerritoireDonnéeAccueilContrat {
 export type ListeTerritoiresDonnéeAccueilContrat = Record<string, TerritoireDonnéeAccueilContrat>;
 
 export type MailleChantierContrat = 'nationale' | 'regionale' | 'departementale';
-
 
 type MailleAccueilContrat = Record<MailleChantierContrat, ListeTerritoiresDonnéeAccueilContrat>;
 
@@ -58,69 +61,89 @@ export interface ChantierAccueilContrat {
   avancementGlobal: number | null;
 }
 
-const presenterEnTerritoireDonnéeAccueilContrat = (territoireDonnee: TerritoireDonnées): TerritoireDonnéeAccueilContrat => {
-  return {
-    estApplicable: territoireDonnee.estApplicable,
-    écart: territoireDonnee.écart,
-    tendance: territoireDonnee.tendance,
-    dateDeMàjDonnéesQualitatives: territoireDonnee.dateDeMàjDonnéesQualitatives,
-    dateDeMàjDonnéesQuantitatives: territoireDonnee.dateDeMàjDonnéesQuantitatives,
-    avancement: {
-      global: territoireDonnee.avancement.global,
-      annuel: territoireDonnee.avancement.annuel,
-    },
-    météo: territoireDonnee.météo,
-  };
-};
+class ErreurChantierSansMailleNationale extends Error {
+  constructor(idChantier: string) {
+    super(`Erreur: le chantier '${idChantier}' n'a pas de maille nationale.`);
+  }
+}
 
-// le double reduce doit être enlever, on a pas besoin d'un record, un Map<CodeInsee, TerritoireDonnee> conditionnée par la maille suffit
-const presenterEnMailleAccueilContrat = (mailles: Record<MailleChantierContrat, TerritoiresDonnées>): MailleAccueilContrat => {
-  return Object.keys(mailles).reduce((acc, val) => {
-    acc[val as MailleChantierContrat] = Object.keys(mailles[val as MailleChantierContrat]).reduce((accTerritoireDonnee, territoireCode) => {
-      accTerritoireDonnee[territoireCode] = presenterEnTerritoireDonnéeAccueilContrat(mailles[val as MailleChantierContrat][territoireCode]);
-      return accTerritoireDonnee;
-    }, {} as ListeTerritoiresDonnéeAccueilContrat);
-    return acc;
-  }, {} as MailleAccueilContrat);
-};
+export const presenterEnChantierAccueilContratNew = (
+  chantierIdentite: PrismaChantier,
+  territoires: Territoire[],
+  ministères: Ministère[],
+  territoireCode: string,
+  profil: ProfilCode,
+): ChantierAccueilContrat => {
+  const mailleChantier = territoireCode.startsWith('NAT') ? 'nationale' : territoireCode.startsWith('REG') ? 'regionale' : 'departementale';
 
-const presenterEnPerimetresMinisterielAccueilContrat = (périmètreMinistériel: PérimètreMinistériel) => {
-  return {
-    id: périmètreMinistériel.id,
-  };
-};
+  const chantierMailleNationale = chantierIdentite.chantier_territoire.find(c => c.maille === 'NAT');
+  const listeChantiersMailleDépartementale = chantierIdentite.chantier_territoire.filter(c => c.maille === 'DEPT');
+  const listeChantiersMailleRégionale = chantierIdentite.chantier_territoire.filter(c => c.maille === 'REG');
 
-export const presenterEnChantierAccueilContrat = (territoireCode: string) => (chantier: Chantier): ChantierAccueilContrat => {
-  const { maille } = territoireCodeVersMailleCodeInsee(territoireCode);
-  const mailleChantier = maille === 'NAT' ? 'nationale' : maille === 'REG' ? 'regionale' : 'departementale';
+  if (!chantierMailleNationale) {
+    throw new ErreurChantierSansMailleNationale(chantierIdentite.id);
+  }
 
-  const mailles = presenterEnMailleAccueilContrat(chantier.mailles);
+  const listeTerritoireDept = territoires.filter(territoire => territoire.code.startsWith('DEPT'));
+  const listeTerritoireReg = territoires.filter(territoire => territoire.code.startsWith('REG'));
 
-  return {
-    id: chantier.id,
-    nom: chantier.nom,
-    statut: chantier.statut,
-    cibleAttendu: chantier.cibleAttendu,
-    mailles,
-    périmètreIds: chantier.périmètreIds,
-    estTerritorialisé: chantier.estTerritorialisé,
-    estBaromètre: chantier.estBaromètre,
-    axe: chantier.axe,
-    ppg: chantier.ppg,
-    responsables: {
-      porteur: {
-        nom: chantier.responsables.porteur?.nom,
-        icône: chantier.responsables.porteur?.icône,
-        périmètresMinistériels: (chantier.responsables.porteur?.périmètresMinistériels || []).map(presenterEnPerimetresMinisterielAccueilContrat),
+  const newMaille: MailleAccueilContrat = {
+    nationale: {
+      'NAT-FR': profil === ProfilEnum.DROM && !chantierIdentite.perimetre_ids.includes('PER-018') ? {
+        avancement: { annuel: null, global: null },
+        météo: 'NON_RENSEIGNEE',
+        écart: null,
+        tendance: chantierMailleNationale.tendance,
+        dateDeMàjDonnéesQualitatives: chantierMailleNationale.derniere_maj_date_qualitative?.toISOString() ?? null,
+        dateDeMàjDonnéesQuantitatives: chantierMailleNationale.date_taux_avancement_mandat?.toISOString() ?? null,
+        estApplicable: chantierMailleNationale.est_applicable,
+      } : {
+        avancement: { annuel: verifyValeurIsNotNullOrUndefined(chantierMailleNationale.chantier_territoire_jalon.at(0)?.taux_avancement), global: verifyValeurIsNotNullOrUndefined(chantierMailleNationale.taux_avancement_mandat) },
+        météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
+        écart: null,
+        tendance: chantierMailleNationale.tendance,
+        dateDeMàjDonnéesQualitatives: chantierMailleNationale.derniere_maj_date_qualitative?.toISOString() ?? null,
+        dateDeMàjDonnéesQuantitatives: chantierMailleNationale.date_taux_avancement_mandat?.toISOString() ?? null,
+        estApplicable: chantierMailleNationale.est_applicable,
       },
     },
-    tauxAvancementDonnéeTerritorialisée: chantier.tauxAvancementDonnéeTerritorialisée,
-    météoDonnéeTerritorialisée: chantier.météoDonnéeTerritorialisée,
-    dateDeMàjDonnéesQuantitatives: mailles[mailleChantier][territoireCode].dateDeMàjDonnéesQuantitatives,
-    dateDeMàjDonnéesQualitatives: mailles[mailleChantier][territoireCode].dateDeMàjDonnéesQualitatives,
-    écart: mailles[mailleChantier][territoireCode].écart,
-    tendance: mailles[mailleChantier][territoireCode].tendance,
-    météo: mailles[mailleChantier][territoireCode].météo,
-    avancementGlobal: mailles[mailleChantier][territoireCode].avancement.global,
+    departementale: créerDonnéesTerritoiresNew(listeTerritoireDept, listeChantiersMailleDépartementale),
+    regionale: créerDonnéesTerritoiresNew(listeTerritoireReg, listeChantiersMailleRégionale),
+  };
+
+  const porteur = ministères.find(ministere => ministere.id === chantierIdentite.ministeres[0]) ?? null;
+
+  return {
+    id: chantierIdentite.id,
+    nom: chantierIdentite.nom,
+    statut: chantierIdentite.statut,
+    cibleAttendu: chantierIdentite.cible_attendue,
+    mailles: newMaille,
+    périmètreIds: chantierIdentite.perimetre_ids,
+    estTerritorialisé: !!chantierIdentite.est_territorialise,
+    estBaromètre: !!chantierIdentite.est_barometre,
+    axe: chantierIdentite.axe,
+    ppg: chantierIdentite.ppg,
+    responsables: {
+      porteur: {
+        nom: porteur?.nom,
+        icône: porteur?.icône,
+        périmètresMinistériels: (porteur?.périmètresMinistériels || []).map(({ id }) => ({ id })),
+      },
+    },
+    tauxAvancementDonnéeTerritorialisée: {
+      'departementale': !!chantierIdentite.possede_taux_avancement_departemental,
+      'regionale': !!chantierIdentite.possede_taux_avancement_regional,
+    },
+    météoDonnéeTerritorialisée: {
+      'departementale': !!chantierIdentite.possede_meteo_departemental,
+      'regionale': !!chantierIdentite.possede_meteo_regional,
+    },
+    dateDeMàjDonnéesQuantitatives: newMaille[mailleChantier][territoireCode].dateDeMàjDonnéesQuantitatives,
+    dateDeMàjDonnéesQualitatives: newMaille[mailleChantier][territoireCode].dateDeMàjDonnéesQualitatives,
+    écart: newMaille[mailleChantier][territoireCode].écart,
+    tendance: newMaille[mailleChantier][territoireCode].tendance,
+    météo: newMaille[mailleChantier][territoireCode].météo,
+    avancementGlobal: newMaille[mailleChantier][territoireCode].avancement.global,
   };
 };

@@ -15,12 +15,12 @@ import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 export default interface IndicateurRepository {
   récupérerChantierIdAssocié(indicateurId: string): Promise<string>
-  récupérerDétailsParMailles(IndicateurId: string, habilitations: Habilitations, profil: ProfilCode): Promise<DétailsIndicateurMailles>
-  récupérerDétailsTerritoire(indicateurId: string, habilitations: Habilitations, profil: ProfilCode): Promise<DétailsIndicateurTerritoire>
+  récupérerDétailsParMailles(IndicateurId: string, habilitations: Habilitations, profil: ProfilCode, jalon: number): Promise<DétailsIndicateurMailles>
+  récupérerDétailsTerritoirePourUnIndicateur(indicateurId: string, habilitations: Habilitations, profil: ProfilCode, jalon: number): Promise<DétailsIndicateurTerritoire>
   récupérerParChantierId(chantierId: string): Promise<Indicateur[]>;
-  récupérerDétails(indicateurId: string, maille: Maille): Promise<DétailsIndicateurs>;
-  récupererDétailsParChantierIdEtTerritoire(chantierId: string, territoireCodes: string[]): Promise<DétailsIndicateurs>;
-  récupérerGroupésParChantier(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<string, Indicateur[]>>
-  récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], DétailsIndicateurs>>
-  récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[]): Promise<IndicateurPourExport[]>;
+  récupérerDétailsParIndicIdEtMaille(indicateurId: string, maille: Maille, jalon: number): Promise<DétailsIndicateurs>;
+  récupererDétailsParChantierIdEtTerritoire(chantierId: string, territoireCodes: string[], jalon: number): Promise<DétailsIndicateurs>;
+  récupérerGroupésParChantier(chantiersIds: Chantier['id'][]): Promise<Record<string, Indicateur[]>>
+  récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee, jalon: number): Promise<Record<Chantier['id'], DétailsIndicateurs>>
+  récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[], jalon: number): Promise<IndicateurPourExport[]>;
 }

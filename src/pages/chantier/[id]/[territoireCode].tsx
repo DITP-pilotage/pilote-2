@@ -50,6 +50,10 @@ import {
 } from '@/server/usecase/chantier/indicateur/ListerDétailsIndicateurTerritoireUseCase';
 import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import {
+  getAnneeAffichageDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { configuration } from '@/config';
 
 interface NextPageChantierProps {
   indicateurs: Indicateur[],
@@ -70,7 +74,15 @@ interface NextPageChantierProps {
   chantier: Chantier
   listeResponsablesLocaux: ResponsableLocal[]
   listeCoordinateursTerritorials: CoordinateurTerritorial[]
+  jalon: number
 }
+
+const redirigeLaPage = (destination: string) => ({
+  redirect: {
+    destination,
+    permanent: true,
+  },
+});
 
 export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = async ({ req, res, query }) => {
   if (!query?.id) {
@@ -80,6 +92,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
   }
 
   const chantierId = query.id as string;
+  const jalon = Number.parseInt(query.jalon as string) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
 
   const session = await getServerSession(req, res, authOptions);
 
@@ -121,13 +134,13 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
         dependencies.getChantierRepository(),
         dependencies.getMinistèreRepository(),
         dependencies.getTerritoireRepository(),
-      ).run(chantierId, session.habilitations, session.profil),
+      ).run(chantierId, session.habilitations, session.profil, jalon),
       dependencies.getIndicateurRepository().récupérerParChantierId(chantierId),
       new RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase(dependencies.getSynthèseDesRésultatsRepository()).run(chantierId, territoireCode, session.habilitations),
       new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getCommentaireRepository()).run([chantierId], territoireCode, session.habilitations),
       new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getObjectifRepository()).run([chantierId], session.habilitations),
       new RécupérerDécisionStratégiqueLaPlusRécenteUseCase(dependencies.getDécisionStratégiqueRepository()).run(chantierId, session.habilitations).catch(() => null),
-      new RécupérerDétailsIndicateursUseCase(dependencies.getIndicateurRepository()).run(chantierId, territoireCodes, session.habilitations),
+      new RécupérerDétailsIndicateursUseCase(dependencies.getIndicateurRepository()).run(chantierId, territoireCodes, session.habilitations, jalon),
       new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository()).run([chantierId], mailleQuery, session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat),
       new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_PPG_ARCHIVE' }),
     ]);
@@ -136,19 +149,22 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
 
     const chantierTerritoireSélectionné = chantier.mailles[territoireSélectionné.maille ?? 'nationale'][territoireCode];
 
-    if (!chantierTerritoireSélectionné.estApplicable || (!chantier.estTerritorialisé && mailleTerritoireSelectionnee !== 'NAT')) {
-      return mailleTerritoireSelectionnee === 'DEPT' ? {
-        redirect: {
-          destination: `/chantier/${chantierId}/${territoireSélectionné.codeParent}?maille=regionale`,
-          permanent: true,
-        },
-      } : {
-        redirect: {
-          destination: `/chantier/${chantierId}/NAT-FR`,
-          permanent: true,
-        },
-      };
+    if (mailleQuery === 'departementale' && !chantier.maillesApplicables.includes('departementale')) {
+      const destination = mailleTerritoireSelectionnee === 'DEPT'
+        ? `/chantier/${chantierId}/${territoireSélectionné.codeParent}?maille=regionale`
+        : `/chantier/${chantierId}/${territoireCode}?maille=regionale`;
+
+      return redirigeLaPage(destination);
     }
+
+    if (!chantierTerritoireSélectionné.estApplicable || (!chantier.estTerritorialisé && mailleTerritoireSelectionnee !== 'NAT')) {
+      const destination = mailleTerritoireSelectionnee === 'DEPT'
+        ? `/chantier/${chantierId}/${territoireSélectionné.codeParent}?maille=regionale`
+        : `/chantier/${chantierId}/NAT-FR`;
+
+      return redirigeLaPage(destination);
+    }
+
 
     const avancements = calculerChantierAvancements(
       chantier as unknown as ChantierRapportDetailleContrat,
@@ -176,7 +192,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
 
     const listeIndicateurId = indicateurs.map(indicateur => indicateur.id);
 
-    const detailsIndicateursTerritoire = await new ListerDétailsIndicateurTerritoireUseCase(dependencies.getIndicateurRepository()).run(listeIndicateurId, chantierId, session.habilitations, session.profil);
+    const detailsIndicateursTerritoire = await new ListerDétailsIndicateurTerritoireUseCase(dependencies.getIndicateurRepository()).run(listeIndicateurId, chantierId, session.habilitations, session.profil, jalon);
 
     return {
       props: {
@@ -202,6 +218,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
         chantier,
         listeResponsablesLocaux,
         listeCoordinateursTerritorials,
+        jalon,
       },
     };
   } catch (error) {
@@ -232,6 +249,7 @@ const NextPageChantier: FunctionComponent<InferGetServerSidePropsType<typeof get
   chantier,
   listeResponsablesLocaux,
   listeCoordinateursTerritorials,
+  jalon,
 }) => {
   const estUnProfilDROM = profil === ProfilEnum.DROM;
   const estTerritoireNational = territoireCode === 'NAT-FR';
@@ -261,6 +279,7 @@ const NextPageChantier: FunctionComponent<InferGetServerSidePropsType<typeof get
             détailsIndicateurs={détailsIndicateurs}
             indicateurPondérations={indicateurPondérations}
             indicateurs={indicateurs}
+            jalon={jalon}
             listeCoordinateursTerritorials={listeCoordinateursTerritorials}
             listeResponsablesLocaux={listeResponsablesLocaux}
             mailleQuery={mailleQuery}

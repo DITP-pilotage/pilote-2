@@ -107,16 +107,16 @@ const presenterEnDonnéesCartographieContrat = (donnéesCartographie: DonnéeCar
 };
 
 export const ficheConducteurHandler = () => {
-  const recupererFicheConducteur = async (chantierId: string, territoireCode: string): Promise<FicheConducteurContrat> => {
+  const recupererFicheConducteur = async (chantierId: string, territoireCode: string, jalon: number): Promise<FicheConducteurContrat> => {
     const chantier = await new RécupererChantierFicheConducteurUseCase({
       chantierRepository: dependencies.getFicheConducteurChantierRepository(),
       indicateurRepository: dependencies.getFicheConducteurIndicateurRepository(),
     })
-      .run({ chantierId, territoireCode })
+      .run({ chantierId, territoireCode, jalon })
       .then(presenterEnChantierFicheConducteurContrat);
 
     const avancement = await new RécupérerAvancementUseCase({ chantierRepository: dependencies.getFicheConducteurChantierRepository() })
-      .run({ chantierId })
+      .run({ chantierId, jalon })
       .then(presenterEnAvancementFicheConducteurContrat);
 
     const synthèseDesRésultats = await new RécupérerDernièreSynthèseDesRésultatsUseCase({
@@ -128,7 +128,7 @@ export const ficheConducteurHandler = () => {
     const donnéesCartographie = await new RécupérerDonnéesCartographieUseCase({
       chantierRepository: dependencies.getFicheConducteurChantierRepository(),
     })
-      .run({ chantierId })
+      .run({ chantierId, jalon })
       .then(presenterEnDonnéesCartographieContrat);
 
     const publications = await new RécupérerPublicationsUseCase({

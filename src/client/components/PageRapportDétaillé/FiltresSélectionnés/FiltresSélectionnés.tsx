@@ -6,6 +6,7 @@ import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/Pé
 import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
+import { libellésMétéos } from '@/server/domain/météo/Météo.interface';
 import FiltresSélectionnésCatégorie from './Catégorie/FiltresSélectionnésCatégorie';
 import FiltresSélectionnésStyled from './FiltresSélectionnés.styled';
 
@@ -26,6 +27,7 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
     axes: parseAsString.withDefault(''),
+    meteos: parseAsString.withDefault(''),
     statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']),
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
@@ -78,6 +80,11 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
         filtres.estEnAlerteMétéoNonRenseignée ? 'Chantier(s) avec météo et synthèse des résultats non renseignés' : null,
         filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 'Chantier(s) sans taux d’avancement au niveau départemental' : null,
       ].filter(Boolean),
+    },
+    {
+      nom: 'Météos', 
+      filtresActifs : 
+        filtres.meteos.split(',').filter(Boolean).map(meteo => libellésMétéos[meteo]),
     },
   ];
 

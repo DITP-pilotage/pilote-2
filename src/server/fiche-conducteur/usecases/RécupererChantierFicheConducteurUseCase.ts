@@ -18,9 +18,9 @@ export class RécupererChantierFicheConducteurUseCase {
     this.indicateurRepository = indicateurRepository;
   }
 
-  async run({ chantierId, territoireCode }: { chantierId: string, territoireCode: string }): Promise<ChantierFicheConducteur> {
-    const chantier = await this.chantierRepository.récupérerParIdEtParTerritoireCode({ chantierId, territoireCode });
-    const indicateurs = await this.indicateurRepository.récupérerIndicImpactParChantierId(chantierId);
+  async run({ chantierId, territoireCode, jalon }: { chantierId: string, territoireCode: string, jalon: number }): Promise<ChantierFicheConducteur> {
+    const chantier = await this.chantierRepository.récupérerParIdEtParTerritoireCode({ chantierId, territoireCode, jalon });
+    const indicateurs = await this.indicateurRepository.récupérerIndicImpactParChantierId(chantierId, jalon);
     return ChantierFicheConducteur.creerChantierFicheConducteur({
       id: chantier.id,
       nom: chantier.nom,

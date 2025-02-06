@@ -12,7 +12,7 @@ import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Ut
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import MenuItemGestionContenu from '@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu';
 import api from '@/server/infrastructure/api/trpc/api';
-import { getFiltresActifs } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
+import { FiltreAccueil, getFiltresActifs } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import { récupérerUnCookie } from '@/client/utils/cookies';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
@@ -69,13 +69,18 @@ const Navigation: FunctionComponent<{}> = () => {
   const filtresActifs = getFiltresActifs();
 
   const territoireCodeURL = router.query.territoireCode as string | undefined;
+  const jalonUrl = router.query.jalon as string | undefined;
+
+  const init: Partial<FiltreAccueil> = {
+    jalon: jalonUrl,
+  };
 
   const territoireCodeStore = Boolean(filtresActifs?.territoireCode) ?
     filtresActifs.territoireCode :
     (session?.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : session?.habilitations.lecture.territoires[0]);
   const territoireCode = territoireCodeURL ?? territoireCodeStore;
 
-  const queryParamString = getQueryParamString(filtresActifs, new Set(['territoireCode']));
+  const queryParamString = getQueryParamString(filtresActifs, new Set(['territoireCode']), init);
 
   const aConsulteLaDerniereNouveaute = récupérerUnCookie('derniereVersionNouveauteConsulte') === derniereVersionNouveaute;
 

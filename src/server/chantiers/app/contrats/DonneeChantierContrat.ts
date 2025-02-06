@@ -2,17 +2,17 @@ import { DonneeChantier } from '@/server/chantiers/domain/DonneeChantier';
 import { formaterNumérique, NON_APPLICABLE } from '@/server/infrastructure/export_csv/valeurs';
 
 type DonneeChantierPublication = {
-  synthese_des_resultats: string
-  notre_ambition: string
-  ce_qui_a_deja_ete_fait: string
-  ce_qui_reste_a_faire: string
-  suivi_decisions_strategiques: string
-  autres_resultats_non_coreeles_aux_indic: string
-  risques_et_freins_a_lever: string
-  solutions: string
-  exemples_reussite: string
-  commentaires_sur_les_donnees: string
-  autres_resultats: string
+  synthese_des_resultats: string | null
+  notre_ambition: string | null
+  ce_qui_a_deja_ete_fait: string | null
+  ce_qui_reste_a_faire: string | null
+  suivi_decisions_strategiques: string | null
+  autres_resultats_non_coreeles_aux_indic: string | null
+  risques_et_freins_a_lever: string | null
+  solutions: string | null
+  exemples_reussite: string | null
+  commentaires_sur_les_donnees: string | null
+  autres_resultats: string | null
 };
 
 type DonneeTerritoireChantierContrat = {
@@ -42,7 +42,7 @@ export type DonneeChantierContrat = {
 };
 
 
-export const presenterEnDonneeTerritoireChantierContrat = (donneeChantier: DonneeChantier) => {
+export const presenterEnDonneeTerritoireChantierContrat = (donneeChantier: DonneeChantier): DonneeTerritoireChantierContrat => {
   return {
     maille: donneeChantier.maille,
     territoire_code: donneeChantier.territoireCode,

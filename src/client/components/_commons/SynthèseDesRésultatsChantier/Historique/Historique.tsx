@@ -1,7 +1,7 @@
 import { Fragment, FunctionComponent } from 'react';
 import Modale from '@/components/_commons/Modale/Modale';
-import MétéoBadge from '@/components/_commons/Météo/Badge/MétéoBadge';
-import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
+import MétéoBadge from '@/components/_commons/Meteo/Badge/MétéoBadge';
+import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
 import SynthèseDesRésultatsAffichage from '@/components/_commons/SynthèseDesRésultatsChantier/Affichage/Affichage';
 import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
@@ -62,7 +62,7 @@ const SynthèseDesRésultatsHistorique: FunctionComponent<SynthèseDesRésultats
                       {
                         !!synthèse &&
                         <div>
-                          <MétéoPicto météo={synthèse.météo} />
+                          <MeteoPicto meteo={synthèse.météo} />
                         </div>
                       }
                     </div>

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/dot-notation */
 import { formaterMétéo, formaterNumérique, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
 import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
 import { libellésTypesCommentaire } from '@/client/constants/libellésCommentaire';
@@ -22,8 +21,12 @@ const verifierOptionStatut = (optionsExport: OptionsExport, chantierStatut: stri
   return chantierStatut ? optionsExport.listeStatuts.length > 0 ? optionsExport.listeStatuts.includes(chantierStatut) : true : true;
 };
 
+const verifierOptionMeteo = (optionsExport: OptionsExport, chantierMeteo: string | null) => {
+  return optionsExport.listeMeteos.length > 0 ? chantierMeteo ? optionsExport.listeMeteos.includes(chantierMeteo) : false : true ;
+};
+
 export class ExportCsvDesChantiersUseCase {
-  public static readonly NOMS_COLONNES = [
+  public static readonly NOMS_COLONNES = (jalon: number): string[] => [
     'Maille',
     'Région',
     'Département',
@@ -38,10 +41,10 @@ export class ExportCsvDesChantiersUseCase {
     'Contact directeur projet',
     'Responsable local',
     'Contact responsable local',
-    'Taux d\'avancement de l\'année en cours',
-    'Taux d\'avancement départemental à fin d\'échéance',
-    'Taux d\'avancement régional à fin d\'échéance',
-    'Taux d\'avancement national à fin d\'échéance',
+    `Taux d'avancement à fin d'échéance ${jalon}`,
+    "Taux d'avancement départemental à fin d'échéance 2026",
+    "Taux d'avancement régional à fin d'échéance 2026",
+    "Taux d'avancement national à fin d'échéance 2026",
     'Météo',
     'Synthèse des résultats',
     libellésTypesObjectif['notreAmbition'],
@@ -60,15 +63,20 @@ export class ExportCsvDesChantiersUseCase {
     private readonly _chantierRepository: ChantierRepository,
   ) {}
 
-  public async* run({ habilitation, profil, chantierChunkSize, optionsExport }: { habilitation: Habilitation, profil: ProfilCode, chantierChunkSize: number, optionsExport: OptionsExport }): AsyncGenerator<string[][]> {
+  public async* run({ habilitation, profil, chantierChunkSize, optionsExport, jalon }: { habilitation: Habilitation, profil: ProfilCode, chantierChunkSize: number, optionsExport: OptionsExport, jalon: number }): AsyncGenerator<string[][]> {
     const chantierIdsLecture = await this._chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation, optionsExport);
     const territoireCodesLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
     for (let i = 0; i < chantierIdsLecture.length; i += chantierChunkSize) {
       const partialChantierIds = chantierIdsLecture.slice(i, i + chantierChunkSize);
-      const partialResult = await this._chantierRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
+      const partialResult = await this._chantierRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture, optionsExport, jalon);
       yield partialResult
-        .filter(chantier => !this.masquerChantierPourProfilDROM(profil, chantier) && verifierOptionPerimetreIds(optionsExport, chantier.périmètreIds) && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, chantier.estBaromètre, chantier.estTerritorialisé) && verifierOptionStatut(optionsExport, chantier.statut))
+        .filter(chantier => !this.masquerChantierPourProfilDROM(profil, chantier) 
+          && verifierOptionPerimetreIds(optionsExport, chantier.périmètreIds) 
+          && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, chantier.estBaromètre, chantier.estTerritorialisé) 
+          && verifierOptionStatut(optionsExport, chantier.statut)
+          && verifierOptionMeteo(optionsExport, chantier.météo),
+        )
         .map(chantier => this.transformer(chantier, profil));
     }
   }
