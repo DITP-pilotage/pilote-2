@@ -106,12 +106,6 @@ LEFT JOIN {{ ref('int_propositions_valeurs') }} AS pva
         meta_indic.id = pva.indic_id
         AND territoire.code = pva.territoire_code
         AND pva.date_valeur_actuelle::date = a.date_valeur_actuelle::date
-LEFT JOIN {{ ref('int_propositions_valeurs') }} AS pva_prev_year
-    ON
-        meta_indic.id = pva_prev_year.indic_id
-        AND territoire.code = pva_prev_year.territoire_code
-        AND pva_prev_year.date_valeur_actuelle::date
-        = a.date_valeur_actuelle::date
 LEFT JOIN get_evol_vaca AS evol_va
     ON meta_indic.id = evol_va.indic_id AND territoire.zone_id = evol_va.zone_id
 ORDER BY meta_indic.id, territoire.maille, territoire.code

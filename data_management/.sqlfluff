@@ -7,3 +7,6 @@ exclude_rules = L034
 [sqlfluff:rules:capitalisation.keywords]
 
 capitalisation_policy = upper
+
+[sqlfluff:templater:jinja]
+load_macros_from_path = macros

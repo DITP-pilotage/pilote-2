@@ -134,3 +134,5 @@ vars:
     vig_min_date: '2018-01-01'
     # Nombre de décimales renvoyées par le calcul des TAA et TAG
     ta_decimales: 2
+    # Premier jalon à étudier. Le dernier jalon est l'année en cours.
+    premier_jalon_va: 2022
