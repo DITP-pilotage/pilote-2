@@ -41,6 +41,7 @@ export type TerritoireDonnées = {
   responsableLocal: ResponsableLocal[],
   coordinateurTerritorial: CoordinateurTerritorial[],
   mailleSourceDonnees: Maille | null;
+  nombrePropositionsValeurActuelle: number,
 };
 
 export type Territoire = {

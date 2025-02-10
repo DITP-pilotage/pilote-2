@@ -47,6 +47,7 @@ type EntreePrismaChantierTerritoire = Pick<PrismaChantierTerritoire,
 | 'coordinateurs_territoriaux'
 | 'coordinateurs_territoriaux_mails'
 | 'taux_avancement_mandat'
+| 'nombre_propositions_valeur_actuelle'
 >;
 export type PrismaChantier = EntreePrismaChantierIdentite  & {
   chantier_territoire: (EntreePrismaChantierTerritoire & { chantier_territoire_jalon: (EntreePrismaChantierTerritoireJalon)[] })[]

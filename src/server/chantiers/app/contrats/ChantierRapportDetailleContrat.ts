@@ -29,6 +29,7 @@ interface TerritoireDonnéeRapportDetailleContrat {
   responsableLocal: ResponsableLocalRapportDetailleContrat[]
   coordinateurTerritorial: CoordinateurTerritorialRapportDetailleContrat[]
   météo: 'NON_RENSEIGNEE' | 'ORAGE' | 'NUAGE' | 'COUVERT' | 'SOLEIL' | 'NON_NECESSAIRE'
+  nombrePropositionsValeurActuelle: number,
 }
 
 export type ListeTerritoiresDonnéeRapportDetailleContrat = Record<string, TerritoireDonnéeRapportDetailleContrat>;
@@ -96,6 +97,7 @@ export interface ChantierRapportDetailleContrat {
   avancementGlobal: number | null;
   responsableLocalTerritoireSélectionné: ResponsableLocalRapportDetailleContrat[]
   coordinateurTerritorialTerritoireSélectionné: CoordinateurTerritorialRapportDetailleContrat[]
+  nombrePropositionsValeurActuelle: number,
 }
 
 class ErreurChantierSansMailleNationale extends Error {
@@ -136,6 +138,7 @@ export const presenterEnChantierRapportDetaille = (
         estApplicable: chantierMailleNationale.est_applicable,
         responsableLocal: [],
         coordinateurTerritorial: [],
+        nombrePropositionsValeurActuelle: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0) ? 1 : 0,
       } : {
         avancement: { annuel: verifyValeurIsNotNullOrUndefined(chantierMailleNationale.chantier_territoire_jalon.at(0)?.taux_avancement), global: chantierMailleNationale.taux_avancement_mandat },
         météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
@@ -146,6 +149,7 @@ export const presenterEnChantierRapportDetaille = (
         estApplicable: chantierMailleNationale.est_applicable,
         coordinateurTerritorial: [],
         responsableLocal: [],
+        nombrePropositionsValeurActuelle: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0) ? 1 : 0,
       },
     },
     departementale: créerDonnéesTerritoiresRapportDetailleNew(listeTerritoireDept, listeChantiersMailleDépartementale),
@@ -195,6 +199,6 @@ export const presenterEnChantierRapportDetaille = (
     avancementGlobal: newMaille[mailleChantier][territoireCode].avancement.global,
     responsableLocalTerritoireSélectionné: newMaille[mailleChantier][territoireCode].responsableLocal,
     coordinateurTerritorialTerritoireSélectionné: newMaille[mailleChantier][territoireCode].coordinateurTerritorial,
+    nombrePropositionsValeurActuelle: newMaille[mailleChantier][territoireCode].nombrePropositionsValeurActuelle,
   };
-
 };

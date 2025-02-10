@@ -270,6 +270,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
             coordinateurs_territoriaux: true,
             coordinateurs_territoriaux_mails: true,
             taux_avancement_mandat: true,
+            nombre_propositions_valeur_actuelle: true,
+            nombre_propositions_valeur_actuelle_ponderee: true,
             chantier_territoire_jalon: {
               select: {
                 taux_avancement: true,
