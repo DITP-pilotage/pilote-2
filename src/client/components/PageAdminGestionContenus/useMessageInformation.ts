@@ -20,7 +20,7 @@ export const useMessageInformation = ({ messageInformation, modificationReussie 
   const reactHookForm = useForm<ContenuForm>({
     resolver: zodResolver(validationContenu),
     defaultValues: {
-      bandeauTexte: messageInformation.bandeauTexte || 'Des opérations de maintenance sont en cours et peuvent perturber le fonctionnement normal de PILOTE. En cas de difficultés : support.ditp@modernisation.gouv.fr',
+      bandeauTexte: messageInformation.bandeauTexte || 'Des opérations de maintenance sont en cours et peuvent perturber le fonctionnement normal de PILOTE. En cas de difficultés : pilote.ditp@modernisation.gouv.fr',
       bandeauType: messageInformation.bandeauType || 'WARNING',
       isBandeauActif: messageInformation.isBandeauActif || false,
     },

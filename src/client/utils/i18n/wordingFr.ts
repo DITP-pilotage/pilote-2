@@ -42,7 +42,7 @@ export const wordingFr = {
         TITRE_ALERT_ERREUR: 'Le fichier ne peut pas être importé',
         MESSAGE_ALERT_ERREUR: 'Il contient des erreurs expliquées dans le rapport d’erreurs ci-dessous. Nous vous recommandons de consulter les ressources et/ou de remplir le modèle de fichier à remplir.',
         TITRE_ALERT_ERREUR_SUPPORT: 'Le fichier ne peut pas être importé',
-        MESSAGE_ALERT_ERREUR_SUPPORT: 'Il contient des erreurs non identifiées. Nous vous recommandons de consulter les ressources, de remplir le modèle de fichier à remplir ou de contacter le support de la DITP: support.ditp@modernisation.gouv.fr.',
+        MESSAGE_ALERT_ERREUR_SUPPORT: 'Il contient des erreurs non identifiées. Nous vous recommandons de consulter les ressources, de remplir le modèle de fichier à remplir ou de contacter le support de la DITP: pilote.ditp@modernisation.gouv.fr.',
         TABLEAU_ERREUR: {
           ENTETE: {
             NOM: "Type d'erreur",
@@ -159,7 +159,7 @@ export const wordingFr = {
       }, 
       SECTION_CONTACT: {
         MESSAGE_CONTACT: 'Si vous rencontrez des difficultés lors de l’import de votre fichier, merci de nous contacter à l’adresse : ',
-        ADRESSE_MAIL: 'support.ditp@modernisation.gouv.fr',
+        ADRESSE_MAIL: 'pilote.ditp@modernisation.gouv.fr',
       },
     },
   },
