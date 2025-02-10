@@ -31,6 +31,10 @@ const CartographieSVGStyled = styled.div`
       cursor: pointer;
     }
   }
+    
+  .stroke-dark {
+    stroke: #695240;
+  }
 `;
 
 export default CartographieSVGStyled;

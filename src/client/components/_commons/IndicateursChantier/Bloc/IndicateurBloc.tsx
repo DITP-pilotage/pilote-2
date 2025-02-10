@@ -3,7 +3,7 @@ import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
-import IndicateurDétails from '@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
+import IndicateurDétails, { CartographieIndicateurType } from '@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
 import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import IndicateurPonderation from '@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
@@ -48,6 +48,8 @@ interface IndicateurBlocProps {
   mailleQuery: MailleInterne
   mailsDirecteursProjets: string[]
   jalon: number
+  cartographieDroiteIndicateur: CartographieIndicateurType
+  cartographieGaucheIndicateur: CartographieIndicateurType
 }
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
@@ -64,6 +66,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   mailleQuery,
   mailsDirecteursProjets,
   jalon,
+  cartographieDroiteIndicateur,
+  cartographieGaucheIndicateur,
 }) => {
   const {
     maille: mailleTerritoireSelectionnee,
@@ -618,6 +622,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
           {
             estInteractif ? (
               <IndicateurDétails
+                cartographieDroiteIndicateur={cartographieDroiteIndicateur}
+                cartographieGaucheIndicateur={cartographieGaucheIndicateur}
                 chantierEstTerritorialisé={chantierEstTerritorialisé}
                 dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
                 dateProchaineDateMaj={dateProchaineDateMaj}
