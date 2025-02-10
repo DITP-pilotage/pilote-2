@@ -36,6 +36,7 @@ interface IndicateurDétailsProps {
   mailsDirecteursProjets: string[]
   cartographieDroiteIndicateur: CartographieIndicateurType
   cartographieGaucheIndicateur: CartographieIndicateurType
+  nomRubriqueIndicateur: string
 }
 
 const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
@@ -59,6 +60,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   mailsDirecteursProjets,
   cartographieDroiteIndicateur,
   cartographieGaucheIndicateur,
+  nomRubriqueIndicateur,
 }) => {
 
   const [futOuvert, setFutOuvert] = useState(false);
@@ -125,6 +127,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       indicateurId={indicateur.id}
                       indicateurNom={indicateur.nom}
                       modeDeCalcul={indicateur.modeDeCalcul}
+                      nomRubriqueIndicateur={nomRubriqueIndicateur}
                       periodicite={indicateur.periodicite}
                       responsablesMails={responsablesDonnees}
                       source={indicateur.source}

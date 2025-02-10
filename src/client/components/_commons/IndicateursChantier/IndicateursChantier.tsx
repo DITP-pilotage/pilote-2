@@ -55,7 +55,6 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   if (indicateurs.length === 0) {
     return null;
   }
-
   const { data: sousIndicateursDisponibles } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_SOUS_INDICATEURS' });
   const listeIndicateursParent = !!sousIndicateursDisponibles ?
     indicateurs.filter(indicateur => !indicateur.parentId) :
@@ -73,10 +72,34 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
           </div>
         ) : null
       }
+      <div>
+        <Titre
+          baliseHtml='h3'
+          className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
+        >
+          Indicateurs pris en compte dans le taux d’avancement du territoire
+        </Titre>
+        const 
+      </div>
+      <div>
+        <Titre
+          baliseHtml='h3'
+          className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
+        >
+          Indicateurs non pris en compte dans le taux d’avancement du territoire
+        </Titre>
+      </div>
+      <div>
+        <Titre
+          baliseHtml='h3'
+          className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
+        >
+          Autres indicateurs
+        </Titre>
+      </div>
       {
         listeRubriquesIndicateurs.map(rubriqueIndicateur => {
           const indicateursDeCetteRubrique = listeIndicateursParent.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
-
           if (indicateursDeCetteRubrique.length > 0) {
             return (
               <section
@@ -113,6 +136,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                           mailleQuery={mailleQuery}
                           mailleSelectionnee={mailleSelectionnee}
                           mailsDirecteursProjets={mailsDirecteursProjets}
+                          nomRubriqueIndicateur={rubriqueIndicateur.nom}
                           territoireCode={territoireCode}
                           territoiresCompares={territoiresCompares}
                         />
