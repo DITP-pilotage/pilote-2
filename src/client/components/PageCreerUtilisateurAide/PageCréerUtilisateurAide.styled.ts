@@ -10,11 +10,11 @@ const PageCréerUtilisateurAideStyled = styled.div`
   .bouton-sticky {
     position: sticky;
     bottom: 0.1px;
-    z-index: 100;
+    z-index: 10;
     width: 100%;
     padding-top: 1.2rem;
     padding-bottom: 1.2rem;
-    background-color: white;
+    background-color: #FFFFFFE6;
   }
 `;
 
