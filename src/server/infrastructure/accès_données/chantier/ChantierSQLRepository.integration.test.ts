@@ -181,7 +181,7 @@ describe('ChantierSQLRepository', () => {
 
       // Then
       expect(listeChantier.nom).toEqual('Chantier 001');
-      expect(listeChantier.chantier_territoire[0].territoire_code).toEqual('DEPT-87');
+      expect(listeChantier.chantier_territoire.map(chantierTerritoire => chantierTerritoire.territoire_code)).toContainEqual('DEPT-87');
     });
 
     test("quand on n'est pas un profil territorial, doit renvoyer la liste des chantiers avec la maille nationale", async () => {
@@ -286,12 +286,8 @@ describe('ChantierSQLRepository', () => {
       // Then
       expect(listeChantier.nom).toEqual('Chantier 001');
       expect(listeChantier.chantier_territoire).toHaveLength(2);
-      expect(listeChantier.chantier_territoire).toIncludeAllPartialMembers([{
-        territoire_code: 'DEPT-87',
-      }, {
-        territoire_code: 'NAT-FR',
-      }]);
-      expect(listeChantier.chantier_territoire[0]?.chantier_territoire_jalon).toIncludeAllPartialMembers<Partial<chantier_territoire_jalon>>([{
+      expect(listeChantier.chantier_territoire.map(chantierTerritoire => chantierTerritoire.territoire_code)).toIncludeAllMembers(['NAT-FR', 'DEPT-87']);
+      expect(listeChantier.chantier_territoire.find(chantierTerritoire => chantierTerritoire.territoire_code === 'DEPT-87')?.chantier_territoire_jalon).toIncludeAllPartialMembers<Partial<chantier_territoire_jalon>>([{
         taux_avancement: 10,
       }]);
     });

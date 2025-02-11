@@ -2,8 +2,7 @@ import { DetailValidationFichier } from '@/server/import-indicateur/domain/Detai
 import { MesureIndicateurTemporaire } from '@/server/import-indicateur/domain/MesureIndicateurTemporaire';
 import {
   ReportErrorTask,
-  ReportTask,
-  ReportValidata,
+  ReportValidataWithData,
 } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
 import {
   FichierIndicateurValidationService,
@@ -16,11 +15,6 @@ import logger from '@/server/infrastructure/Logger';
 interface Dependencies {
   httpClient: HttpClient
 }
-
-const extraireLesDonnees = (task: ReportTask): string[][] => {
-  const [, ...data] = task.resource.data;
-  return data;
-};
 
 enum EnTeteFichierEnum {
   INDIC_ID = 'identifiant_indic',
@@ -112,7 +106,7 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
     schema,
     utilisateurEmail,
   }: ValiderFichierPayload): Promise<DetailValidationFichier> {
-    let rapportValidata: ReportValidata;
+    let rapportValidata: ReportValidataWithData;
     let rapport: DetailValidationFichier;
 
     let listeErreursValidation: ErreurValidationFichier[] = [];
@@ -123,7 +117,7 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
 
       rapport = DetailValidationFichier.creerDetailValidationFichier({ estValide: rapportValidata.valid, utilisateurEmail });
 
-      const rawEnTete = rapportValidata.tasks[0].resource.data[0];
+      const [rawEnTete, ...donnees] = rapportValidata.resource_data;
 
       rawEnTete.forEach(enTetes => {
         if (enTetes.trim() !== enTetes) {
@@ -153,10 +147,9 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
       });
 
       const enTetes = recupererLesPositionsDesEnTetes(rawEnTete);
-      const donnees = rapportValidata.tasks.map(extraireLesDonnees);
 
-      if ((rapportValidata.tasks[0].resource.data[0]).includes('identifiant_indic')) {
-        listeIndicateursData = donnees.flat().map(donnee => MesureIndicateurTemporaire.createMesureIndicateurTemporaire({
+      if ((rawEnTete).includes('identifiant_indic')) {
+        listeIndicateursData = donnees.map(donnee => MesureIndicateurTemporaire.createMesureIndicateurTemporaire({
           rapportId: rapport.id,
           indicId: donnee[enTetes.indicId],
           zoneId: donnee[enTetes.zoneId],
@@ -177,13 +170,13 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
         }));
       }
 
-      const listeErreursReport = rapportValidata.tasks.flatMap(task => task.errors).map(taskError => ErreurValidationFichier.creerErreurValidationFichier({
+      const listeErreursReport = rapportValidata.errors.map(taskError => ErreurValidationFichier.creerErreurValidationFichier({
         rapportId: rapport.id,
         cellule: taskError.cell || 'Cellule non définie',
-        nom: taskError.name,
+        nom: taskError.type,
         message: personnaliserValidataMessage(taskError),
         numeroDeLigne: taskError.rowNumber || -1,
-        positionDeLigne: taskError.rowPosition || -1,
+        positionDeLigne: taskError.rowNumber ? taskError.rowNumber - 1 : -1,
         nomDuChamp: taskError.fieldName || '',
         positionDuChamp: taskError.fieldPosition || -1,
       }));
@@ -195,6 +188,8 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
 
       return rapport;
     } catch (error) {
+      logger.error((error as Error).message);
+
       rapport = DetailValidationFichier.creerDetailValidationFichier({ estValide: false, utilisateurEmail });
       listeErreursValidation.push(ErreurValidationFichier.creerErreurValidationFichier({
         rapportId: rapport.id,
@@ -207,7 +202,6 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
         positionDuChamp: 0,
       }));
       rapport.affecterListeErreursValidation(listeErreursValidation);
-      logger.error((error as Error).message);
 
       return rapport;
     }
