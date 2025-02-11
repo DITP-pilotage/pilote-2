@@ -9,7 +9,7 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 export class Chantier {
   static recupererStatistiqueListeChantier(chantiers: ChantierRapportDetailleContrat[] | ChantierAccueilContrat[], mailleChantier: Maille, territoireCode: string) {
     return chantiers.reduce((acc, chantier) => {
-      const { météo, écart, tendance, avancement, nombrePropositionsValeurActuelle } = chantier.mailles[mailleChantier][territoireCode];
+      const { météo, écart, tendance, avancement, aUnePropositionsValeurActuelle } = chantier.mailles[mailleChantier][territoireCode];
 
       acc.répartitionMétéos[météo] += 1;
       acc.filtresComptesCalculés = {
@@ -18,7 +18,7 @@ export class Chantier {
         estEnAlerteTauxAvancementNonCalculé: Alerte.estEnAlerteTauxAvancementNonCalculé(avancement.global, chantier.cibleAttendu) ? acc.filtresComptesCalculés.estEnAlerteTauxAvancementNonCalculé + 1 : acc.filtresComptesCalculés.estEnAlerteTauxAvancementNonCalculé,
         estEnAlerteAbscenceTauxAvancementDepartemental: Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.mailles.departementale, chantier.cibleAttendu) ? acc.filtresComptesCalculés.estEnAlerteAbscenceTauxAvancementDepartemental + 1 : acc.filtresComptesCalculés.estEnAlerteAbscenceTauxAvancementDepartemental,
         estEnAlerteMétéoNonRenseignée: Alerte.estEnAlerteMétéoNonRenseignée(météo) ? acc.filtresComptesCalculés.estEnAlerteMétéoNonRenseignée + 1 : acc.filtresComptesCalculés.estEnAlerteMétéoNonRenseignée,
-        estEnAlertePossedePropositionsValeurActuelle: Alerte.estEnAlertePossedePropositionsValeurActuelle(nombrePropositionsValeurActuelle) ? acc.filtresComptesCalculés.estEnAlertePossedePropositionsValeurActuelle + 1 : acc.filtresComptesCalculés.estEnAlertePossedePropositionsValeurActuelle,
+        estEnAlertePossedePropositionsValeurActuelle: Alerte.estEnAlertePossedePropositionsValeurActuelle(aUnePropositionsValeurActuelle) ? acc.filtresComptesCalculés.estEnAlertePossedePropositionsValeurActuelle + 1 : acc.filtresComptesCalculés.estEnAlertePossedePropositionsValeurActuelle,
       };
 
       return acc;

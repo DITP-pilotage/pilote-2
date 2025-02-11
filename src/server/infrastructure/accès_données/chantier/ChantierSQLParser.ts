@@ -4,10 +4,6 @@ import { Météo } from '@/server/domain/météo/Météo.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import { EntreePrismaChantier, PrismaChantier } from '@/server/infrastructure/accès_données/chantier/PrismaChantier';
-import { ListeTerritoiresDonnéeAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
-import {
-  ListeTerritoiresDonnéeRapportDetailleContrat,
-} from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
 
 class ErreurChantierSansMailleNationale extends Error {
@@ -61,61 +57,6 @@ export function créerDonnéesTerritoires(
   return donnéesTerritoires;
 }
 
-export function créerDonnéesTerritoiresNew(
-  territoires: Territoire[],
-  chantierRows: EntreePrismaChantier[],
-) {
-  let donnéesTerritoires: ListeTerritoiresDonnéeAccueilContrat = {};
-
-  territoires.forEach(t => {
-    const chantierRow = chantierRows.find(chantier => chantier.territoire_code === t.code);
-
-    donnéesTerritoires[t.code] = {
-      estApplicable: chantierRow?.est_applicable ?? null,
-      écart: chantierRow?.ecart ?? null,
-      tendance: chantierRow?.tendance || null,
-      dateDeMàjDonnéesQualitatives: chantierRow?.derniere_maj_date_qualitative?.toISOString() || null,
-      dateDeMàjDonnéesQuantitatives: chantierRow?.date_taux_avancement_mandat?.toISOString()  ?? null,
-      avancement: {
-        annuel: verifyValeurIsNotNullOrUndefined(chantierRow?.chantier_territoire_jalon.at(0)?.taux_avancement),
-        global: verifyValeurIsNotNullOrUndefined(chantierRow?.taux_avancement_mandat),
-      },
-      météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
-      nombrePropositionsValeurActuelle: chantierRow?.nombre_propositions_valeur_actuelle ?? 0,
-    };
-  });
-
-  return donnéesTerritoires;
-}
-
-export function créerDonnéesTerritoiresRapportDetailleNew(
-  territoires: Territoire[],
-  chantierRows: EntreePrismaChantier[],
-) {
-  let donnéesTerritoires: ListeTerritoiresDonnéeRapportDetailleContrat = {};
-
-  territoires.forEach(t => {
-    const chantierRow = chantierRows.find(c => c.territoire_code === t.code);
-
-    donnéesTerritoires[t.code] = {
-      estApplicable: chantierRow?.est_applicable ?? null,
-      écart: chantierRow?.ecart ?? null,
-      tendance: chantierRow?.tendance || null,
-      dateDeMàjDonnéesQualitatives: chantierRow?.derniere_maj_date_qualitative?.toISOString() || null,
-      dateDeMàjDonnéesQuantitatives: chantierRow?.date_taux_avancement_mandat?.toISOString()  ?? null,
-      avancement: {
-        annuel: chantierRow?.chantier_territoire_jalon.at(0)?.taux_avancement ?? null,
-        global: chantierRow?.taux_avancement_mandat ?? null,
-      },
-      météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
-      responsableLocal: (chantierRow?.responsables_locaux || []).map((value, index) => ({ nom: value, email: chantierRow?.responsables_locaux_mails[index]! })),
-      coordinateurTerritorial: (chantierRow?.coordinateurs_territoriaux || []).map((value, index) => ({ nom: value, email: chantierRow?.coordinateurs_territoriaux_mails[index]! })),
-      nombrePropositionsValeurActuelle: chantierRow?.nombre_propositions_valeur_actuelle ?? 0,
-    };
-  });
-
-  return donnéesTerritoires;
-}
 
 export const parseChantierNew = (
   chantierIdentite: PrismaChantier,
