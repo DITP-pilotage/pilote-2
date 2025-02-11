@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
 
 const IndicateurBlocStyled = styled.div`
-  .fr-select-group, .fr-select {
+  table .fr-select-group, 
+  table .fr-select {
     width: 3.2rem;
     padding: 0.2rem 0;
     margin: 0!important;

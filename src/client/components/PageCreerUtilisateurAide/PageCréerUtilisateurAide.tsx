@@ -67,14 +67,15 @@ export const PageCréerUtilisateurAide: FunctionComponent<{}> = () => {
               etapes={etapes}
             />
           </div>
-          <div className='flex justify-center align-center'>            
-            <Link 
-              className='fr-btn'
-              href='/admin/utilisateur/creer'
-            >
-              Créer un compte
-            </Link>
-          </div>
+        </div>
+        <div className='flex justify-center align-center bouton-sticky'>            
+          <Link 
+            className='fr-btn'
+            href='/admin/utilisateur/creer'
+            title='Créer un compte'
+          >
+            Créer un compte
+          </Link>
         </div>
       </main>
     </PageCréerUtilisateurAideStyled>

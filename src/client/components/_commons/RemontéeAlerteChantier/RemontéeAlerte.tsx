@@ -1,6 +1,7 @@
 import { parseAsBoolean, parseAsInteger, useQueryState } from 'nuqs';
 import { FunctionComponent } from 'react';
 import RemontéeAlerteStyled from '@/components/_commons/RemontéeAlerte/RemontéeAlerte.styled';
+import { sauvegarderFiltres } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
 
 interface RemontéeAlerteProps {
   nombre: number | null;
@@ -26,6 +27,7 @@ const RemontéeAlerte: FunctionComponent<RemontéeAlerteProps> = ({ nombre, libe
       disabled={nombre === null}
       onClick={() => {
         setPagination(1);
+        sauvegarderFiltres({ [nomCritère]: !filtreAlerte });
         setFiltreAlerte(!filtreAlerte);
       }}
     >

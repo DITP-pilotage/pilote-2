@@ -2,7 +2,7 @@ import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Fragment, FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
-import IndicateurDétails from '@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
+import IndicateurDétails, { CartographieIndicateurType } from '@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
@@ -37,6 +37,8 @@ interface SousIndicateurBlocProps {
   mailleSelectionnee: MailleInterne
   mailsDirecteursProjets: string[]
   jalon: number
+  cartographieDroiteIndicateur: CartographieIndicateurType
+  cartographieGaucheIndicateur: CartographieIndicateurType
 }
 
 const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
@@ -52,6 +54,8 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
   mailleSelectionnee,
   mailsDirecteursProjets,
   jalon,
+  cartographieDroiteIndicateur,
+  cartographieGaucheIndicateur,
 }) => {
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
 
@@ -317,6 +321,8 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
         {
           estInteractif ? (
             <IndicateurDétails
+              cartographieDroiteIndicateur={cartographieDroiteIndicateur}
+              cartographieGaucheIndicateur={cartographieGaucheIndicateur}
               chantierEstTerritorialisé={chantierEstTerritorialisé}
               dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
               dateProchaineDateMaj={dateProchaineDateMaj}

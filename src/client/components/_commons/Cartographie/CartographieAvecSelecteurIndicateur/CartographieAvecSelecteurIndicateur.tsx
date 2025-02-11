@@ -1,0 +1,105 @@
+import { FunctionComponent } from 'react';
+import SélecteurMaille from '@/client/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
+import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import useCartographie from '@/client/components/_commons/Cartographie/useCartographieNew';
+import Sélecteur from '@/client/components/_commons/Sélecteur/Sélecteur';
+import { SélecteurOption } from '@/client/components/_commons/Sélecteur/Sélecteur.interface';
+import Cartographie from '@/client/components/_commons/Cartographie/CartographieNew';
+import CartographieLégendeListe from '@/client/components/_commons/Cartographie/Légende/Liste/CartographieLégendeListe';
+import { CartographieÉlémentDeLégende } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
+import { CartographieDonnées } from '@/client/components/_commons/Cartographie/Cartographie.interface';
+import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS } from '@/client/constants/légendes/elementDeLegendesCartographiePropositionValeur';
+import { ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE } from '@/client/constants/légendes/élémentsDeLégendesCartographieValeurActuelle';
+import { CartographieLégendeDégradéContenu } from '@/client/components/_commons/Cartographie/Légende/Dégradé/CartographieLégendeDégradé.interface';
+import CartographieLégendeDégradé from '@/client/components/_commons/Cartographie/Légende/Dégradé/CartographieLégendeDégradé';
+import { CartographieIndicateurType } from '@/client/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
+import { useCartographieAvancementIndicateur } from './useCartographieAvancementIndicateur';
+import { useCartographiePropositionValeurIndicateur } from './useCartographiePropositionValeurIndicateur';
+import { useCartographieValeurActuelleIndicateur } from './useCartographieValeurActuelleIndicateur';
+
+const CartographieAvecSelecteurIndicateur: FunctionComponent<{
+  detailsIndicateurTerritoire: DétailsIndicateurTerritoire
+  territoireCode: string,
+  mailleQuery: MailleInterne
+  estAutoriseAVoirLeSelecteurDeMaille: boolean,
+  jalon: number,
+  cartographieSelectionnee: CartographieIndicateurType,
+  aLaSelectionCartographie: (valeur: CartographieIndicateurType) => void
+  listeCartographiesDesactives: CartographieIndicateurType[]
+  unité?: string | null
+}> = ({ detailsIndicateurTerritoire, estAutoriseAVoirLeSelecteurDeMaille, mailleQuery, territoireCode, jalon, cartographieSelectionnee, aLaSelectionCartographie, listeCartographiesDesactives, unité }) => {
+
+  const donneesEtLegendesCartographies: Record<CartographieIndicateurType, { useRecupererDonnees: () => { donneesCartographie: CartographieDonnées, legende: CartographieÉlémentDeLégende[], legendeDegrade: CartographieLégendeDégradéContenu | null } }> = {
+    avancementMandat: useCartographieAvancementIndicateur(detailsIndicateurTerritoire, ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS, jalon, 'MANDAT'),
+    avancementJalon: useCartographieAvancementIndicateur(detailsIndicateurTerritoire, ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS, jalon, 'JALON'),
+    propositionValeur: useCartographiePropositionValeurIndicateur(detailsIndicateurTerritoire, ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS),
+    valeurActuelle: useCartographieValeurActuelleIndicateur(detailsIndicateurTerritoire, ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE, jalon, unité),
+  };
+
+  const pathname = '/chantier/[id]/[territoireCode]';
+  const { auClicTerritoireMultiSélectionCallback } = useCartographie(territoireCode, pathname);
+
+  const optionsCartographie: SélecteurOption<CartographieIndicateurType>[] = [
+    {
+      valeur: 'avancementMandat',
+      libellé: 'Carte des taux d\'avancement 2026',
+      désactivée: listeCartographiesDesactives.includes('avancementMandat'),
+    },
+    {
+      valeur: 'avancementJalon',
+      libellé: `Carte des taux d\'avancement ${jalon}`,
+      désactivée: listeCartographiesDesactives.includes('avancementJalon'),
+    },
+    {
+      valeur: 'valeurActuelle',
+      libellé: 'Carte des valeurs actuelles',
+      désactivée: listeCartographiesDesactives.includes('valeurActuelle'),
+    },
+    {
+      valeur: 'propositionValeur',
+      libellé: 'Carte des propositions de valeur actuelle',
+      désactivée: listeCartographiesDesactives.includes('propositionValeur'),
+    },
+  ];
+
+  const { legende, legendeDegrade, donneesCartographie } = donneesEtLegendesCartographies[cartographieSelectionnee].useRecupererDonnees();
+
+  return (
+    <>
+      <Sélecteur 
+        htmlName='selecteur-carte' 
+        options={optionsCartographie}
+        valeurModifiéeCallback={aLaSelectionCartographie}
+        valeurSélectionnée={cartographieSelectionnee}      
+      />
+      {
+        estAutoriseAVoirLeSelecteurDeMaille ? (
+          <SélecteurMaille
+            mailleQuery={mailleQuery}
+            pathname={pathname}
+          />
+        ) : null
+      }
+      <Cartographie
+        auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
+        contoursGris={cartographieSelectionnee === 'propositionValeur'}
+        données={donneesCartographie}
+        mailleSelectionnee={mailleQuery}
+        options={{ multiséléction: true }}
+        pathname={pathname}
+        territoireCode={territoireCode}
+      >
+        {
+          !!legendeDegrade ? (
+            <CartographieLégendeDégradé contenu={legendeDegrade} />
+          ) : null
+        }
+        <CartographieLégendeListe contenu={legende} />
+      </Cartographie>
+    </>
+  );
+};
+
+export default CartographieAvecSelecteurIndicateur;

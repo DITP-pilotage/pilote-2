@@ -8,8 +8,8 @@ import Titre from '@/components/_commons/Titre/Titre';
 import { ResponsableRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
-import { getFiltresActifs } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
+import { getFiltresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
 import PageChantierEnTêteStyled from './EnTête.styled';
 import ResponsableChantierEnTete from './EnTêteResponsables';
 

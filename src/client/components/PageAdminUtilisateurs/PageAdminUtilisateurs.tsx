@@ -99,6 +99,7 @@ const PageAdminUtilisateurs: FunctionComponent<{}> = () => {
                 <Link
                   className='fr-btn fr-btn--icon-left fr-icon-checkbox-circle-line'
                   href={donneLaRedirection()}
+                  title='Créer un compte'
                 >
                   Créer un compte
                 </Link>

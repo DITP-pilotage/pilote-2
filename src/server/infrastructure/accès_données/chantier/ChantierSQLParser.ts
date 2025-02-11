@@ -39,6 +39,8 @@ export function créerDonnéesTerritoires(
       responsableLocal: [],
       coordinateurTerritorial: [],
       mailleSourceDonnees: chantierRow?.donnees_maille_source ? NOMS_MAILLES[chantierRow.donnees_maille_source] : null,
+      nombrePropositionValeur: chantierRow?.nombre_propositions_valeur_actuelle ?? 0,
+      nombrePropositionValeurPonderee: chantierRow?.nombre_propositions_valeur_actuelle_ponderee ?? 0,
     };
 
     if (!!chantierRow) {
@@ -79,6 +81,7 @@ export function créerDonnéesTerritoiresNew(
         global: verifyValeurIsNotNullOrUndefined(chantierRow?.taux_avancement_mandat),
       },
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
+      nombrePropositionsValeurActuelle: chantierRow?.nombre_propositions_valeur_actuelle ?? 0,
     };
   });
 
@@ -107,6 +110,7 @@ export function créerDonnéesTerritoiresRapportDetailleNew(
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
       responsableLocal: (chantierRow?.responsables_locaux || []).map((value, index) => ({ nom: value, email: chantierRow?.responsables_locaux_mails[index]! })),
       coordinateurTerritorial: (chantierRow?.coordinateurs_territoriaux || []).map((value, index) => ({ nom: value, email: chantierRow?.coordinateurs_territoriaux_mails[index]! })),
+      nombrePropositionsValeurActuelle: chantierRow?.nombre_propositions_valeur_actuelle ?? 0,
     };
   });
 
@@ -152,6 +156,8 @@ export const parseChantierNew = (
           responsableLocal: [],
           coordinateurTerritorial: [],
           mailleSourceDonnees: null,
+          nombrePropositionValeurPonderee: 0,
+          nombrePropositionValeur: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0) ? 1 : 0,
         },
       },
       departementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'departementale'), listeChantiersMailleDépartementale),
