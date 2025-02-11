@@ -4,16 +4,13 @@ import { stringify } from 'csv-stringify';
 import { Options } from 'csv-stringify/lib/sync';
 import assert from 'node:assert/strict';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
-import ExportCsvDesIndicateursSansFiltreUseCase
-  from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase';
+import ExportCsvDesIndicateursUseCase
+  from '@/server/chantiers/usecases/ExportCsvDesIndicateursUseCase';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import { configuration } from '@/config';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
-import {
-  getAnneeAffichageDateDeBascule,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+import { getChantiersContainer } from '@/server/chantiers/container';
+import { recupererJalon } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/recupererJalon';
 
 export default async function handleExportDesIndicateurs(request: NextApiRequest, response: NextApiResponse): Promise<void> {
   const session = await getServerSession(request, response, authOptions);
@@ -21,9 +18,9 @@ export default async function handleExportDesIndicateurs(request: NextApiRequest
 
   response.setHeader('Content-Type', 'text/csv');
 
-  const jalon = (!Number.isNaN(request.query?.jalon) && verifyValeurIsNotNullOrUndefined(+request.query.jalon!)) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
+  const jalon = recupererJalon(request.query?.jalon as string | undefined);
 
-  const headersColumns = ExportCsvDesIndicateursSansFiltreUseCase.NOMS_COLONNES(jalon);
+  const headersColumns = ExportCsvDesIndicateursUseCase.NOMS_COLONNES(jalon);
 
   const stringifier = stringify({
     header: true,
@@ -34,23 +31,32 @@ export default async function handleExportDesIndicateurs(request: NextApiRequest
   } satisfies Options);
   stringifier.pipe(response);
 
+  const chunkSize =  configuration.export.csvIndicateursChunkSize;
+
   const habilitation = new Habilitation(session.habilitations);
-  const exportCsvDesIndicateursSansFiltreUseCase = new ExportCsvDesIndicateursSansFiltreUseCase(dependencies.getChantierRepository(), dependencies.getIndicateurRepository());
 
-  for await (const partialResult of exportCsvDesIndicateursSansFiltreUseCase.run({
-    habilitation,
+  const territoireCodes = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
+
+  const optionsExport = {
+    perimetreIds: request.query.perimetreIds ? Array.isArray(request.query.perimetreIds) ? request.query.perimetreIds : [request.query.perimetreIds] as string[] : [],
+    estBarometre: request.query.estBarometre === 'true',
+    estTerritorialise: request.query.estTerritorialise === 'true',
+    listeStatuts: request.query.statut ? Array.isArray(request.query.statut) ? request.query.statut : [request.query.statut] as string[] : [],
+    listeChantierId: request.query.listeChantierId ? (request.query.listeChantierId as string).split(',') : [],
+    listeMeteos: request.query.meteos ? Array.isArray(request.query.meteos) ? request.query.meteos : [request.query.meteos] as string[] : [],
+  };
+
+  const chantierIds = await getChantiersContainer().resolve('chantierRepository').récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(), optionsExport);
+
+  const exportCsvDesIndicateursUseCase = getChantiersContainer().resolve('exportCsvDesIndicateursUseCase');
+
+  for await (const partialResult of exportCsvDesIndicateursUseCase.run({
+    chantierIds,
+    territoireCodes,
     profil: session.profil,
-    indicateurChunkSize: configuration.export.csvIndicateursChunkSize,
+    indicateurChunkSize: chunkSize,
     jalon,
-    optionsExport: {
-      perimetreIds: request.query.perimetreIds ? Array.isArray(request.query.perimetreIds) ? request.query.perimetreIds : [request.query.perimetreIds] as string[] : [],
-      estBarometre: request.query.estBarometre === 'true',
-      estTerritorialise: request.query.estTerritorialise === 'true',
-      listeStatuts: request.query.statut ? Array.isArray(request.query.statut) ? request.query.statut : [request.query.statut] as string[] : [],
-      listeChantierId: request.query.listeChantierId ? (request.query.listeChantierId as string).split(',') : [],
-      listeMeteos: request.query.meteos ? Array.isArray(request.query.meteos) ? request.query.meteos : [request.query.meteos] as string[] : [],
-    },
-
+    optionsExport,
   })) {
     for (const indicateurPourExport of partialResult) {
       stringifier.write(indicateurPourExport);

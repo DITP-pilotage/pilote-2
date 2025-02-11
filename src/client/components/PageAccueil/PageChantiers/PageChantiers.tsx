@@ -50,6 +50,7 @@ import RepartitionsMeteosChantiers from './FiltresMeteos/RepartitionsMeteosChant
 
 interface PageChantiersProps {
   chantiers: ChantierAccueilContrat[],
+  chantiersIdsExport: string[]
   nombreTotalChantiersAvecAlertes: number
   ministères: Ministère[]
   axes: Axe[],
@@ -65,6 +66,7 @@ interface PageChantiersProps {
 
 const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   chantiers,
+  chantiersIdsExport,
   nombreTotalChantiersAvecAlertes,
   ministères,
   axes,
@@ -206,7 +208,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   >
                     Exporter les données
                   </button>
-                  <ExportDesDonnées listeChantierId={chantiers.map(chantier => chantier.id)} />
+                  <ExportDesDonnées listeChantierId={chantiersIdsExport} />
                 </div>
               ) : null
             }

@@ -51,8 +51,8 @@ import {
 import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import {
-  getAnneeAffichageDateDeBascule,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+  getAnneeDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule';
 import { configuration } from '@/config';
 import { CartographieType } from '@/components/PageChantier/Cartes/Cartes';
 import { CartographieIndicateurType } from '@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
@@ -98,7 +98,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
   }
 
   const chantierId = query.id as string;
-  const jalon = Number.parseInt(query.jalon as string) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
+  const jalon = Number.parseInt(query.jalon as string) || getAnneeDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
   const cartographieGaucheChantier = query.carteChG as CartographieType || 'avancementMandat';
   const cartographieDroiteChantier = query.carteChD as CartographieType || 'meteo';
   const cartographieGaucheIndicateur = query.carteIndG as CartographieIndicateurType || 'avancementMandat';

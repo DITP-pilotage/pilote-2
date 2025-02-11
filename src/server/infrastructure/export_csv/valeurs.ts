@@ -7,6 +7,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export const NON_APPLICABLE = 'N/A';
+export const NON_RENSEIGNEE = 'Non renseignée';
 export const OUI = 'Oui';
 export const NON = 'Non';
 
