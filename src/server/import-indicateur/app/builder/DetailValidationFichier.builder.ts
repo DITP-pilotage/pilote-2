@@ -48,11 +48,6 @@ export class DetailValidationFichierBuilder {
     return this;
   }
   
-  avecListeIndicateursData(...listeIndicateursData: IndicateurData[]): DetailValidationFichierBuilder {
-    this.listeIndicateursData = listeIndicateursData;
-    return this;
-  }
-
   build(): DetailValidationFichier {
     return DetailValidationFichier.creerDetailValidationFichier({
       id: this.id,

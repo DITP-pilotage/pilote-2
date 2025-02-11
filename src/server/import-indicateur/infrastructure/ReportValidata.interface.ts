@@ -1,15 +1,16 @@
 export interface ReportValidata {
-  errors: ReportError[]
-  tasks: ReportTask[]
+  errors: ReportErrorTask[]
   valid: boolean
 }
 
-export interface ReportError {}
+export type ReportResourceData = string[][];
 
-export interface ReportTask {
+export type ReportValidataWithData = {
   errors: ReportErrorTask[]
-  resource: ReportResourceTask
-}
+  valid: boolean
+} & {
+  resource_data: ReportResourceData
+};
 
 export interface ReportErrorTask {
   cell?: string,
@@ -18,15 +19,9 @@ export interface ReportErrorTask {
   fieldPosition?: number,
   description: string,
   message: string,
-  name: string,
+  type: string,
   rowNumber?: number,
   rowPosition?: number,
   code: string,
   note: string
 }
-
-export interface ReportResourceTask {
-  data: ReportResourceTaskData
-}
-
-export type ReportResourceTaskData = string[][];
