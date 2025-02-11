@@ -81,7 +81,6 @@ const CartographieAvecSelecteur: FunctionComponent<{
       }
       <Cartographie
         auClicTerritoireCallback={auClicTerritoireCallback}
-        contoursGris={cartographieSelectionnee === 'propositionValeur'}
         données={donneesCartographie}
         mailleSelectionnee={mailleQuery}
         options={{ estInteractif }}

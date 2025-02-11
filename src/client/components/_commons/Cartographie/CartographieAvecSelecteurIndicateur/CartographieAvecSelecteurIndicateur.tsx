@@ -84,7 +84,6 @@ const CartographieAvecSelecteurIndicateur: FunctionComponent<{
       }
       <Cartographie
         auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
-        contoursGris={cartographieSelectionnee === 'propositionValeur'}
         données={donneesCartographie}
         mailleSelectionnee={mailleQuery}
         options={{ multiséléction: true }}
