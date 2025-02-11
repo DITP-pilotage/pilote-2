@@ -14,7 +14,7 @@ const PageCréerUtilisateurAideStyled = styled.div`
     width: 100%;
     padding-top: 1.2rem;
     padding-bottom: 1.2rem;
-    background-color: rgb(255, 255, 255, 0.9);
+    background-color: #FFFFFFE6;
   }
 `;
 
