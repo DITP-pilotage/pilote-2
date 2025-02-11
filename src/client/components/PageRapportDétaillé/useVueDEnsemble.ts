@@ -18,7 +18,6 @@ export default function useVueDEnsemble(chantiersFiltrés: ChantierRapportDetail
     écart: chantier.écart,
     dateDeMàjDonnéesQualitatives: chantier.dateDeMàjDonnéesQualitatives,
     dateDeMàjDonnéesQuantitatives: chantier.dateDeMàjDonnéesQuantitatives,
-    nombrePropositionsValeurActuelle: chantier.nombrePropositionsValeurActuelle,
   }));
 
   const { remontéesAlertes } = useRemontéesAlertesChantiers(territoireCode, filtresComptesCalculés);

@@ -1,8 +1,7 @@
 import { TypeStatut } from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
-import { PrismaChantier } from '@/server/infrastructure/accès_données/chantier/PrismaChantier';
+import { EntreePrismaChantier, PrismaChantier } from '@/server/infrastructure/accès_données/chantier/PrismaChantier';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
-import { créerDonnéesTerritoiresNew } from '@/server/infrastructure/accès_données/chantier/ChantierSQLParser';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
@@ -21,7 +20,7 @@ interface TerritoireDonnéeAccueilContrat {
   dateDeMàjDonnéesQuantitatives: string | null
   avancement: TerritoireAvancementAccueilContrat
   météo: 'NON_RENSEIGNEE' | 'ORAGE' | 'NUAGE' | 'COUVERT' | 'SOLEIL' | 'NON_NECESSAIRE'
-  nombrePropositionsValeurActuelle: number,
+  aUnePropositionsValeurActuelle: boolean,
 }
 
 export type ListeTerritoiresDonnéeAccueilContrat = Record<string, TerritoireDonnéeAccueilContrat>;
@@ -60,13 +59,49 @@ export interface ChantierAccueilContrat {
   tendance: 'BAISSE' | 'HAUSSE' | 'STAGNATION' | null;
   météo: Météo;
   avancementGlobal: number | null;
-  nombrePropositionsValeurActuelle: number,
+  aUnePropositionsValeurActuelle: boolean,
 }
 
 class ErreurChantierSansMailleNationale extends Error {
   constructor(idChantier: string) {
     super(`Erreur: le chantier '${idChantier}' n'a pas de maille nationale.`);
   }
+}
+
+export function créerDonnéesTerritoiresNew(
+  territoires: Territoire[],
+  chantierRows: EntreePrismaChantier[],
+  listeTerritoireEnfant?: Territoire[],
+  chantierRowsMailleEnfant?: EntreePrismaChantier[],
+) {
+  let donnéesTerritoires: ListeTerritoiresDonnéeAccueilContrat = {};
+
+  territoires.forEach(t => {
+    const chantierRow = chantierRows.find(chantier => chantier.territoire_code === t.code);
+
+    let aUnePropositionDeValeurActuelle = chantierRow?.nombre_propositions_valeur_actuelle ? chantierRow.nombre_propositions_valeur_actuelle > 0 : false;
+    if (chantierRowsMailleEnfant && listeTerritoireEnfant) {
+      const territoiresEnfantCodes = new Set(listeTerritoireEnfant.filter(territoireEnfant => territoireEnfant.codeParent === t.code).map(territoireEnfant => territoireEnfant.code));
+      const chantierRowsTerritoiresEnfant = chantierRowsMailleEnfant.filter(chantier => territoiresEnfantCodes.has(chantier.territoire_code));
+      aUnePropositionDeValeurActuelle = aUnePropositionDeValeurActuelle ? true : (chantierRowsTerritoiresEnfant.some(chantier => chantier.nombre_propositions_valeur_actuelle > 0));
+    }
+
+    donnéesTerritoires[t.code] = {
+      estApplicable: chantierRow?.est_applicable ?? null,
+      écart: chantierRow?.ecart ?? null,
+      tendance: chantierRow?.tendance || null,
+      dateDeMàjDonnéesQualitatives: chantierRow?.derniere_maj_date_qualitative?.toISOString() || null,
+      dateDeMàjDonnéesQuantitatives: chantierRow?.date_taux_avancement_mandat?.toISOString()  ?? null,
+      avancement: {
+        annuel: verifyValeurIsNotNullOrUndefined(chantierRow?.chantier_territoire_jalon.at(0)?.taux_avancement),
+        global: verifyValeurIsNotNullOrUndefined(chantierRow?.taux_avancement_mandat),
+      },
+      météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
+      aUnePropositionsValeurActuelle: aUnePropositionDeValeurActuelle,
+    };
+  });
+
+  return donnéesTerritoires;
 }
 
 export const presenterEnChantierAccueilContratNew = (
@@ -99,7 +134,7 @@ export const presenterEnChantierAccueilContratNew = (
         dateDeMàjDonnéesQualitatives: chantierMailleNationale.derniere_maj_date_qualitative?.toISOString() ?? null,
         dateDeMàjDonnéesQuantitatives: chantierMailleNationale.date_taux_avancement_mandat?.toISOString() ?? null,
         estApplicable: chantierMailleNationale.est_applicable,
-        nombrePropositionsValeurActuelle: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0) ? 1 : 0,
+        aUnePropositionsValeurActuelle: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0),
       } : {
         avancement: { annuel: verifyValeurIsNotNullOrUndefined(chantierMailleNationale.chantier_territoire_jalon.at(0)?.taux_avancement), global: verifyValeurIsNotNullOrUndefined(chantierMailleNationale.taux_avancement_mandat) },
         météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
@@ -108,11 +143,11 @@ export const presenterEnChantierAccueilContratNew = (
         dateDeMàjDonnéesQualitatives: chantierMailleNationale.derniere_maj_date_qualitative?.toISOString() ?? null,
         dateDeMàjDonnéesQuantitatives: chantierMailleNationale.date_taux_avancement_mandat?.toISOString() ?? null,
         estApplicable: chantierMailleNationale.est_applicable,
-        nombrePropositionsValeurActuelle: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0) ? 1 : 0,
+        aUnePropositionsValeurActuelle: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0),
       },
     },
     departementale: créerDonnéesTerritoiresNew(listeTerritoireDept, listeChantiersMailleDépartementale),
-    regionale: créerDonnéesTerritoiresNew(listeTerritoireReg, listeChantiersMailleRégionale),
+    regionale: créerDonnéesTerritoiresNew(listeTerritoireReg, listeChantiersMailleRégionale, listeTerritoireDept, listeChantiersMailleDépartementale),
   };
 
   const porteur = ministères.find(ministere => ministere.id === chantierIdentite.ministeres[0]) ?? null;
@@ -149,6 +184,6 @@ export const presenterEnChantierAccueilContratNew = (
     tendance: newMaille[mailleChantier][territoireCode].tendance,
     météo: newMaille[mailleChantier][territoireCode].météo,
     avancementGlobal: newMaille[mailleChantier][territoireCode].avancement.global,
-    nombrePropositionsValeurActuelle: newMaille[mailleChantier][territoireCode].nombrePropositionsValeurActuelle,
+    aUnePropositionsValeurActuelle: newMaille[mailleChantier][territoireCode].aUnePropositionsValeurActuelle,
   };
 };
