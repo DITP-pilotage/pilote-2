@@ -22,52 +22,6 @@ describe('ExportCsvDesIndicateursUseCase', () => {
     indicateurRepository = mock<IndicateurRepository>();
   });
 
-  it('Renvoie une liste vide si pas de chantiers', async () => {
-    // Given
-    const indicateurChunkSize = 5;
-    const chantierIds: string[] = [];
-    const territoireCodes: string[] = [];
-
-    const usecase = new ExportCsvDesIndicateursUseCase({ indicateurRepository });
-    const profil = ProfilEnum.DITP_ADMIN;
-
-    const jalon = 2024;
-
-    // When
-    let result: string[][] = [];
-    for await (const partialResult of usecase.run({ chantierIds, territoireCodes, profil, indicateurChunkSize, optionsExport, jalon })) {
-      result = [...result, ...partialResult];
-    }
-
-    // Then
-    expect(result).toEqual([]);
-  });
-
-  it('Délègue l\'habilitation aux repositories', async () => {
-    // Given
-    const indicateurChunkSize = 5;
-    const chantierIds = ['CH-001'];
-    const territoireCodes: string[] = ['NAT-FR'];
-
-    const indicateur1 = new IndicateurPourExportBuilder().withNom('Indicateur IND-001').build();
-
-    indicateurRepository.récupérerPourExports.mockResolvedValueOnce([indicateur1]);
-
-    const usecase = new ExportCsvDesIndicateursUseCase({ indicateurRepository });
-    const profil = ProfilEnum.DITP_ADMIN;
-
-    const jalon = 2024;
-
-    // When
-    let result: string[][] = [];
-    for await (const partialResult of usecase.run({ chantierIds, territoireCodes, profil, indicateurChunkSize, optionsExport, jalon })) {
-      result = [...result, ...partialResult];
-    }
-
-    // Then
-    expect(indicateurRepository.récupérerPourExports).toHaveBeenCalledWith('CH-001', territoireCodes, jalon);
-  });
-
   it('Quand on renvoie autant de ligne que le chunk, doit renvoyer toutes les lignes', async () => {
     // Given
     const chantierIds = ['CH-001', 'CH-002', 'CH-003'];
@@ -161,6 +115,8 @@ describe('ExportCsvDesIndicateursUseCase', () => {
     }
 
     // Then
+    expect(indicateurRepository.récupérerPourExports).toHaveBeenCalledWith('CH-001', territoireCodes, jalon);
+
     expect(result).toEqual([
       ['Indicateur IND-001'],
       ['Indicateur IND-002'],

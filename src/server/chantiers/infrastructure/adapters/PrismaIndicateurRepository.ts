@@ -1,9 +1,14 @@
-import { indicateur_identite as PrismaIndicateurIdentite, indicateur_territoire as PrismaIndicateurTerritoire, indicateur_territoire_jalon as PrismaIndicateurTerritoireJalon, PrismaClient } from '@prisma/client';
+import {
+  indicateur_identite as PrismaIndicateurIdentite,
+  indicateur_territoire as PrismaIndicateurTerritoire,
+  indicateur_territoire_jalon as PrismaIndicateurTerritoireJalon,
+} from '@prisma/client';
 import { DonneeIndicateur } from '@/server/chantiers/domain/DonneeIndicateur';
 import { IndicateurRepository } from '@/server/chantiers/domain/ports/IndicateurRepository';
 import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { IndicateurPourExport } from '@/server/chantiers/domain/IndicateurPourExport';
+import { prisma } from '@/server/db/prisma';
 
 const convertirEnDonneeIndicateur = (prismaIndicateurIdentite: PrismaIndicateurIdentite & {
   indicateur_territoire: (PrismaIndicateurTerritoire & { indicateur_territoire_jalon: PrismaIndicateurTerritoireJalon[] })[]
@@ -32,10 +37,8 @@ const convertirEnDonneeIndicateur = (prismaIndicateurIdentite: PrismaIndicateurI
 };
 
 export class PrismaIndicateurRepository implements IndicateurRepository {
-  constructor(private prismaClient: PrismaClient) {}
-
   async listerParIndicId({ indicId, jalon }: { indicId: string, jalon: number }): Promise<DonneeIndicateur[]> {
-    const indicateurIdentite = await this.prismaClient.indicateur_identite.findUnique({
+    const indicateurIdentite = await prisma.indicateur_identite.findUnique({
       where: { id: indicId },
       include: {
         indicateur_territoire: {
@@ -62,7 +65,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     territoireCode: string,
     auteurModification: string,
   }): Promise<void> {
-    await this.prismaClient.indicateur_territoire.update({
+    await prisma.indicateur_territoire.update({
       where: {
         id_territoire_code: {
           id: indicId,
@@ -79,7 +82,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       },
     });
 
-    await this.prismaClient.indicateur_territoire_jalon.update({
+    await prisma.indicateur_territoire_jalon.update({
       where: {
         id_territoire_code_jalon: {
           id: indicId,
@@ -94,7 +97,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
   }
 
   async récupérerPourExports(chantierId: string, territoireCodesLecture: string[], jalon: number): Promise<IndicateurPourExport[]> {
-    const result = await this.prismaClient.indicateur_territoire.findMany({
+    const result = await prisma.indicateur_territoire.findMany({
       where: {
         territoire_code: {
           in: territoireCodesLecture,
@@ -165,6 +168,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           select: {
             meteo: true,
             taux_avancement_mandat: true,
+            est_applicable: true,
             chantier_territoire_jalon: {
               select: {
                 taux_avancement: true,
@@ -191,6 +195,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         chantierNom: indicateurPourExport.indicateur_identite.chantier_identite.nom,
         chantierId: indicateurPourExport.indicateur_identite.chantier_id,
         chantierStatut: indicateurPourExport.indicateur_identite.chantier_identite.statut,
+        chantierEstApplicable: indicateurPourExport.chantier_territoire.est_applicable,
         chantierEstBaromètre: indicateurPourExport.indicateur_identite.chantier_identite.est_barometre,
         chantierEstTerritorialise: indicateurPourExport.indicateur_identite.chantier_identite.est_territorialise,
         chantierAvancementGlobal: verifyValeurIsNotNullOrUndefined(indicateurPourExport.chantier_territoire.taux_avancement_mandat),

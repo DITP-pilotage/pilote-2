@@ -1,4 +1,11 @@
-import { formaterMétéo, formaterNumérique, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
+import {
+  formaterMétéoOuNonRenseigne,
+  formaterNumériqueOuValeurManquante,
+  NON,
+  NON_APPLICABLE,
+  NON_RENSEIGNEE,
+  OUI,
+} from '@/server/infrastructure/export_csv/valeurs';
 import { libellésTypesCommentaire } from '@/client/constants/libellésCommentaire';
 import { libellésTypesObjectif } from '@/client/constants/libellésObjectif';
 import { libellésTypesDécisionStratégique } from '@/client/constants/libellésDécisionStratégique';
@@ -19,39 +26,39 @@ import {
 const presenterEnChantierExportContrat = (chantierPourExport: ChantierPourExport, profil: ProfilCode): string[] => {
   const donnees = [
     chantierPourExport.maille === 'NAT' ? '1 - NAT' : chantierPourExport.maille === 'REG' ? '2 - REG' : chantierPourExport.maille === 'DEPT' ? '3 - DEPT' : NON_APPLICABLE,
-    chantierPourExport.régionNom || NON_APPLICABLE,
-    chantierPourExport.départementNom || NON_APPLICABLE,
-    chantierPourExport.départementNom && chantierPourExport.codeInsee ? `${chantierPourExport.codeInsee === '2A' ? '20A' : chantierPourExport.codeInsee === '2B' ? '20B' : chantierPourExport.codeInsee?.padStart(2, '0')} - ${chantierPourExport.départementNom}` : NON_APPLICABLE,
-    chantierPourExport.ministèreNom || NON_APPLICABLE,
-    chantierPourExport.axe || NON_APPLICABLE,
-    chantierPourExport.nom || NON_APPLICABLE,
-    chantierPourExport.id || NON_APPLICABLE,
+    chantierPourExport.régionNom || NON_RENSEIGNEE,
+    chantierPourExport.départementNom || NON_RENSEIGNEE,
+    chantierPourExport.départementNom && chantierPourExport.codeInsee ? `${chantierPourExport.codeInsee === '2A' ? '20A' : chantierPourExport.codeInsee === '2B' ? '20B' : chantierPourExport.codeInsee?.padStart(2, '0')} - ${chantierPourExport.départementNom}` : NON_RENSEIGNEE,
+    chantierPourExport.ministèreNom || NON_RENSEIGNEE,
+    chantierPourExport.axe || NON_RENSEIGNEE,
+    chantierPourExport.nom || NON_RENSEIGNEE,
+    chantierPourExport.id || NON_RENSEIGNEE,
     chantierPourExport.estBaromètre ? OUI : NON,
     chantierPourExport.estTerritorialisé ? OUI : NON,
-    chantierPourExport.directeursProjet?.join(' ') || NON_APPLICABLE,
-    chantierPourExport.directeursProjetMails?.join(' ') || NON_APPLICABLE,
-    chantierPourExport.responsablesLocaux?.join(' ') || NON_APPLICABLE,
-    chantierPourExport.responsablesLocauxMails?.join(' ') || NON_APPLICABLE,
-    formaterNumérique(chantierPourExport.tauxDAvancementAnnuel),
-    formaterNumérique(chantierPourExport.tauxDAvancementDépartemental),
-    formaterNumérique(chantierPourExport.tauxDAvancementRégional),
+    chantierPourExport.directeursProjet?.join(' ') || NON_RENSEIGNEE,
+    chantierPourExport.directeursProjetMails?.join(' ') || NON_RENSEIGNEE,
+    chantierPourExport.responsablesLocaux?.join(' ') || NON_RENSEIGNEE,
+    chantierPourExport.responsablesLocauxMails?.join(' ') || NON_RENSEIGNEE,
+    formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementAnnuel),
+    formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementDépartemental),
+    formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementRégional),
     masquerPourProfilDROM(profil, chantierPourExport.périmètreIds)
       ?  NON_APPLICABLE
-      : formaterNumérique(chantierPourExport.tauxDAvancementNational),
-    formaterMétéo(chantierPourExport.météo),
-    chantierPourExport.synthèseDesRésultats || NON_APPLICABLE,
-    chantierPourExport.objNotreAmbition || NON_APPLICABLE,
-    chantierPourExport.objDéjàFait || NON_APPLICABLE,
-    chantierPourExport.objÀFaire || NON_APPLICABLE,
-    chantierPourExport.decStratSuiviDesDécisions || NON_APPLICABLE,
-    chantierPourExport.commAutresRésultatsNonCorrélésAuxIndicateurs || NON_APPLICABLE,
-    chantierPourExport.commFreinsÀLever || NON_APPLICABLE,
-    chantierPourExport.commActionsÀVenir || NON_APPLICABLE,
-    chantierPourExport.commActionsÀValoriser || NON_APPLICABLE,
-    chantierPourExport.commCommentairesSurLesDonnées || NON_APPLICABLE,
-    chantierPourExport.commAutresRésultats || NON_APPLICABLE,
+      : formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementNational),
+    formaterMétéoOuNonRenseigne(chantierPourExport.météo),
+    chantierPourExport.synthèseDesRésultats || NON_RENSEIGNEE,
+    chantierPourExport.objNotreAmbition || NON_RENSEIGNEE,
+    chantierPourExport.objDéjàFait || NON_RENSEIGNEE,
+    chantierPourExport.objÀFaire || NON_RENSEIGNEE,
+    chantierPourExport.decStratSuiviDesDécisions || NON_RENSEIGNEE,
+    chantierPourExport.commAutresRésultatsNonCorrélésAuxIndicateurs || NON_RENSEIGNEE,
+    chantierPourExport.commFreinsÀLever || NON_RENSEIGNEE,
+    chantierPourExport.commActionsÀVenir || NON_RENSEIGNEE,
+    chantierPourExport.commActionsÀValoriser || NON_RENSEIGNEE,
+    chantierPourExport.commCommentairesSurLesDonnées || NON_RENSEIGNEE,
+    chantierPourExport.commAutresRésultats || NON_RENSEIGNEE,
   ];
-  return profil === ProfilEnum.DITP_ADMIN ? [...donnees, chantierPourExport.statut || NON_APPLICABLE] : donnees;
+  return profil === ProfilEnum.DITP_ADMIN ? [...donnees, chantierPourExport.statut || NON_RENSEIGNEE] : donnees;
 };
 
 interface Dependencies {

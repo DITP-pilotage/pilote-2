@@ -6,7 +6,7 @@ describe('PrismaIndicateurRepository', () => {
   let prismaIndicateurRepository: PrismaIndicateurRepository;
 
   beforeEach(() => {
-    prismaIndicateurRepository = new PrismaIndicateurRepository(prisma);
+    prismaIndicateurRepository = new PrismaIndicateurRepository();
   });
 
   describe('#listerParIndicId', () => {
@@ -368,12 +368,14 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           zone_id: 'FRANCE',
           territoire_code: 'NAT-FR',
+          est_applicable: true,
         }, {
           id: 'CH-001',
           code_insee: '01',
           maille: 'DEPT',
           zone_id: 'D01',
           territoire_code: 'DEPT-01',
+          est_applicable: true,
           taux_avancement_mandat: 23,
           meteo: 'SOLEIL',
         }, {
@@ -382,36 +384,42 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'DEPT',
           zone_id: 'D02',
           territoire_code: 'DEPT-02',
+          est_applicable: true,
         }, {
           id: 'CH-001',
           code_insee: '01',
           maille: 'REG',
           zone_id: 'R01',
           territoire_code: 'REG-01',
+          est_applicable: true,
         }, {
           id: 'CH-002',
           code_insee: '01',
           maille: 'DEPT',
           zone_id: 'D01',
           territoire_code: 'DEPT-01',
+          est_applicable: true,
         }, {
           id: 'CH-002',
           code_insee: '87',
           maille: 'DEPT',
           zone_id: 'D87',
           territoire_code: 'DEPT-87',
+          est_applicable: true,
         },  {
           id: 'CH-002',
           code_insee: '01',
           maille: 'REG',
           zone_id: 'R01',
           territoire_code: 'REG-01',
+          est_applicable: true,
         }, {
           id: 'CH-003',
           code_insee: '01',
           maille: 'DEPT',
           zone_id: 'D01',
           territoire_code: 'DEPT-01',
+          est_applicable: true,
         }],
       });
 
@@ -729,6 +737,7 @@ describe('PrismaIndicateurRepository', () => {
         chantierStatut: 'PUBLIE',
         chantierEstBaromètre: true,
         chantierEstTerritorialise: true,
+        chantierEstApplicable: true,
         chantierAvancementGlobal: null,
         chantierAvancementAnnuel: null,
         périmètreIds: ['PER-01'],
@@ -756,6 +765,7 @@ describe('PrismaIndicateurRepository', () => {
         chantierStatut: 'PUBLIE',
         chantierEstBaromètre: true,
         chantierEstTerritorialise: true,
+        chantierEstApplicable: true,
         chantierAvancementGlobal: null,
         chantierAvancementAnnuel: null,
         périmètreIds: ['PER-01'],
@@ -783,6 +793,7 @@ describe('PrismaIndicateurRepository', () => {
         chantierStatut: 'PUBLIE',
         chantierEstBaromètre: true,
         chantierEstTerritorialise: true,
+        chantierEstApplicable: true,
         chantierAvancementGlobal: 23,
         chantierAvancementAnnuel: null,
         périmètreIds: ['PER-01'],

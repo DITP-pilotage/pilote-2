@@ -23,6 +23,8 @@ export class IndicateurPourExportBuilder {
 
   private chantierEstTerritorialise = null;
 
+  private chantierEstApplicable = null;
+
   private chantierAvancementGlobal = null;
 
   private chantierAvancementAnnuel = null;
@@ -82,6 +84,7 @@ export class IndicateurPourExportBuilder {
       chantierStatut: this.chantierStatut,
       chantierEstBaromètre: this.chantierEstBaromètre,
       chantierEstTerritorialise: this.chantierEstTerritorialise,
+      chantierEstApplicable: this.chantierEstApplicable,
       chantierAvancementGlobal: this.chantierAvancementGlobal,
       chantierAvancementAnnuel: this.chantierAvancementAnnuel,
       périmètreIds: this.périmètreIds,

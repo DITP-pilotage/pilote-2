@@ -1,5 +1,5 @@
 import { DonneeChantier } from '@/server/chantiers/domain/DonneeChantier';
-import { formaterNumérique, NON_APPLICABLE } from '@/server/infrastructure/export_csv/valeurs';
+import { formaterNumériqueOuValeurNonApplicable, NON_APPLICABLE } from '@/server/infrastructure/export_csv/valeurs';
 
 type DonneeChantierPublication = {
   synthese_des_resultats: string | null
@@ -49,10 +49,10 @@ export const presenterEnDonneeTerritoireChantierContrat = (donneeChantier: Donne
     meteo: donneeChantier.météo,
     responsables_locaux: donneeChantier.responsablesLocaux?.join(',') || NON_APPLICABLE,
     responsable_locaux_mails: donneeChantier.responsablesLocauxMails?.join(',') || NON_APPLICABLE,
-    taux_avancement_dept: formaterNumérique(donneeChantier.tauxDAvancementDépartemental),
-    taux_avancement_region: formaterNumérique(donneeChantier.tauxDAvancementRégional),
-    taux_avancement_nat: formaterNumérique(donneeChantier.tauxDAvancementNational),
-    taux_avancement_annuel: formaterNumérique(donneeChantier.tauxDAvancementAnnuel),
+    taux_avancement_dept: formaterNumériqueOuValeurNonApplicable(donneeChantier.tauxDAvancementDépartemental),
+    taux_avancement_region: formaterNumériqueOuValeurNonApplicable(donneeChantier.tauxDAvancementRégional),
+    taux_avancement_nat: formaterNumériqueOuValeurNonApplicable(donneeChantier.tauxDAvancementNational),
+    taux_avancement_annuel: formaterNumériqueOuValeurNonApplicable(donneeChantier.tauxDAvancementAnnuel),
     publication: {
       synthese_des_resultats: donneeChantier.synthèseDesRésultats,
       notre_ambition: donneeChantier.objNotreAmbition,
