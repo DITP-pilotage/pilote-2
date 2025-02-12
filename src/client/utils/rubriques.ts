@@ -16,6 +16,13 @@ export const listeRubriquesIndicateursChantier: ÉlémentPageIndicateursType[] =
   { nom: 'Indicateurs de suivi des externalités et effets rebond', ancre: 'suivi', typeIndicateur: 'REBOND' },
   { nom: 'Indicateurs de contexte', ancre: 'contexte', typeIndicateur: 'CONTEXTE' },
 ];
+
+
+export const listeSectionsIndicateursChantier: Rubrique[] = [
+  { nom: 'Indicateurs pris en compte dans le taux d’avancement du territoire', ancre: 'inclus' },
+  { nom: 'Indicateurs non pris en compte dans le taux d’avancement du territoire', ancre: 'nonInclus' },
+  { nom: 'Autres indicateurs', ancre: 'Autres' },
+];
   
 export const listeRubriquesChantier = (typesIndicateurs: TypeIndicateur[], maille: Maille): Rubrique[] => {
   const rubriquesIndicateursNonVides = listeRubriquesIndicateursChantier.filter(

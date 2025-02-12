@@ -59,7 +59,6 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   const listeIndicateursParent = !!sousIndicateursDisponibles ?
     indicateurs.filter(indicateur => !indicateur.parentId) :
     indicateurs;
-
   return (
     <IndicateursChantierStyled>
       {
@@ -72,55 +71,31 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
           </div>
         ) : null
       }
-      <div>
+      <section>
         <Titre
           baliseHtml='h3'
           className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
         >
           Indicateurs pris en compte dans le taux d’avancement du territoire
         </Titre>
-        const 
-      </div>
-      <div>
-        <Titre
-          baliseHtml='h3'
-          className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
-        >
-          Indicateurs non pris en compte dans le taux d’avancement du territoire
-        </Titre>
-      </div>
-      <div>
-        <Titre
-          baliseHtml='h3'
-          className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
-        >
-          Autres indicateurs
-        </Titre>
-      </div>
-      {
+        {
         listeRubriquesIndicateurs.map(rubriqueIndicateur => {
           const indicateursDeCetteRubrique = listeIndicateursParent.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
           if (indicateursDeCetteRubrique.length > 0) {
             return (
-              <section
-                className='fr-mb-3w sous-rubrique-indicateur'
-                id={rubriqueIndicateur.ancre}
-                key={rubriqueIndicateur.ancre}
-              >
-                <Titre
-                  baliseHtml='h3'
-                  className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
-                >
-                  {rubriqueIndicateur.nom}
-                </Titre>
-                {
-                  indicateursDeCetteRubrique
-                    .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireCode]?.pondération, détailsIndicateurs[b.id][territoireCode]?.pondération))
-                    .map(indicateur => {
-                      const listeSousIndicateurs = !!sousIndicateursDisponibles ?
-                        indicateurs.filter(ind => ind.parentId === indicateur.id) :
-                        [];
-                      return (
+              indicateursDeCetteRubrique
+                .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireCode]?.pondération, détailsIndicateurs[b.id][territoireCode]?.pondération))
+                .map(indicateur => {
+                  const listeSousIndicateurs = !!sousIndicateursDisponibles ?
+                    indicateurs.filter(ind => ind.parentId === indicateur.id) :
+                    [];
+
+                  return (
+                    <div
+                      className='fr-my-2w'
+                      key={rubriqueIndicateur.ancre}
+                    >             
+                      { détailsIndicateurs[indicateur.id][territoireCode].pondération ? (
                         <IndicateurBloc
                           cartographieDroiteIndicateur={cartographieDroiteIndicateur}
                           cartographieGaucheIndicateur={cartographieGaucheIndicateur}
@@ -140,15 +115,121 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                           territoireCode={territoireCode}
                           territoiresCompares={territoiresCompares}
                         />
-                      );
+                      ) : null}
+                    </div>
+                  );
+                })
+            );
+          }
+        })
+        }
+      </section>
+      <section> 
+        <Titre
+          baliseHtml='h3'
+          className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
+        >
+          Indicateurs non pris en compte dans le taux d’avancement du territoire
+        </Titre>
+        {
+        listeRubriquesIndicateurs.map(rubriqueIndicateur => {
+          const indicateursDeCetteRubrique = listeIndicateursParent.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
+          if (indicateursDeCetteRubrique.length > 0) {
+            return (
+              indicateursDeCetteRubrique
+                .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireCode]?.pondération, détailsIndicateurs[b.id][territoireCode]?.pondération))
+                .map(indicateur => {
+                  const listeSousIndicateurs = !!sousIndicateursDisponibles ?
+                    indicateurs.filter(ind => ind.parentId === indicateur.id) :
+                    [];
 
-                    })
-                }
-              </section>
+                  return (
+                    <div
+                      className='fr-my-2w'
+                      key={rubriqueIndicateur.ancre}
+                    >             
+                      { détailsIndicateurs[indicateur.id][territoireCode].pondération === 0 ? (
+                        <IndicateurBloc
+                          cartographieDroiteIndicateur={cartographieDroiteIndicateur}
+                          cartographieGaucheIndicateur={cartographieGaucheIndicateur}
+                          chantierEstTerritorialisé={chantierEstTerritorialisé}
+                          detailsIndicateursTerritoire={detailsIndicateursTerritoire}
+                          détailsIndicateurs={détailsIndicateurs}
+                          estAutoriseAProposerUneValeurActuelle={estAutoriseAProposerUneValeurActuelle}
+                          estInteractif={estInteractif}
+                          indicateur={indicateur}
+                          jalon={jalon}
+                          key={indicateur.id}
+                          listeSousIndicateurs={listeSousIndicateurs}
+                          mailleQuery={mailleQuery}
+                          mailleSelectionnee={mailleSelectionnee}
+                          mailsDirecteursProjets={mailsDirecteursProjets}
+                          nomRubriqueIndicateur={rubriqueIndicateur.nom}
+                          territoireCode={territoireCode}
+                          territoiresCompares={territoiresCompares}
+                        />
+                      ) : null}
+                    </div>
+                  );
+                })
+            );
+          }
+        })
+        }
+      </section>
+      <section>
+        <Titre
+          baliseHtml='h3'
+          className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
+        >
+          Autres indicateurs
+        </Titre>
+        {
+        listeRubriquesIndicateurs.map(rubriqueIndicateur => {
+          const indicateursDeCetteRubrique = listeIndicateursParent.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
+          if (indicateursDeCetteRubrique.length > 0) {
+            return (
+              indicateursDeCetteRubrique
+                .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireCode]?.pondération, détailsIndicateurs[b.id][territoireCode]?.pondération))
+                .map(indicateur => {
+                  const listeSousIndicateurs = !!sousIndicateursDisponibles ?
+                    indicateurs.filter(ind => ind.parentId === indicateur.id) :
+                    [];
+                    
+                  return (
+                    <div
+                      className='fr-my-2w'
+                      key={rubriqueIndicateur.ancre}
+                    >             
+                      { détailsIndicateurs[indicateur.id][territoireCode].pondération === null ? (
+                        <IndicateurBloc
+                          cartographieDroiteIndicateur={cartographieDroiteIndicateur}
+                          cartographieGaucheIndicateur={cartographieGaucheIndicateur}
+                          chantierEstTerritorialisé={chantierEstTerritorialisé}
+                          detailsIndicateursTerritoire={detailsIndicateursTerritoire}
+                          détailsIndicateurs={détailsIndicateurs}
+                          estAutoriseAProposerUneValeurActuelle={estAutoriseAProposerUneValeurActuelle}
+                          estInteractif={estInteractif}
+                          indicateur={indicateur}
+                          jalon={jalon}
+                          key={indicateur.id}
+                          listeSousIndicateurs={listeSousIndicateurs}
+                          mailleQuery={mailleQuery}
+                          mailleSelectionnee={mailleSelectionnee}
+                          mailsDirecteursProjets={mailsDirecteursProjets}
+                          nomRubriqueIndicateur={rubriqueIndicateur.nom}
+                          territoireCode={territoireCode}
+                          territoiresCompares={territoiresCompares}
+                        />
+                      ) : null}
+                    </div>
+                  );
+                })
             );
           }
         })
       }
+      </section>
     </IndicateursChantierStyled>
   );
 };
