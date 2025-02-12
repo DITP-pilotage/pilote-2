@@ -273,7 +273,7 @@ class Dependencies {
     this._ficheTerritorialeIndicateurRepository = new PrismaFicheTerritorialeIndicateurRepository(prisma);
     this._ficheTerritorialeSyntheseDesResultatsRepository = new PrismaSyntheseDesResultatsRepository(prisma);
     this._ficheTerritorialeMinistereRepository = new PrismaMinistereRepository(prisma);
-    this._chantierIndicateurRepository = new PrismaChantierIndicateurRepository(prisma);
+    this._chantierIndicateurRepository = new PrismaChantierIndicateurRepository();
     this._projetStructurantRepository = new ProjetStructurantSQLRepository(prisma);
     this._profilRepository = new ProfilSQLRepository(prisma);
     this._objectifProjetStructurantRepository = new ObjectifProjetStructurantSQLRepository(prisma);

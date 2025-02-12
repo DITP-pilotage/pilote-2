@@ -4,8 +4,8 @@ import { parseAsBoolean, parseAsString, parseAsStringLiteral, useQueryStates } f
 import Modale from '@/components/_commons/Modale/Modale';
 import { horodatage } from '@/client/utils/date/date';
 import {
-  getAnneeAffichageDateDeBascule,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+  getAnneeDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule';
 import api from '@/server/infrastructure/api/trpc/api';
 
 const ressources = {
@@ -53,7 +53,7 @@ const ExportDesDonnées: FunctionComponent<{ listeChantierId: string[] }> = ({ l
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
     statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']).withDefault('PUBLIE'),
-    jalon: parseAsStringLiteral(['2024', '2025']).withDefault(getAnneeAffichageDateDeBascule(new Date(), dataBasculeValeurAnneePrecedente as string).toString() as '2024' | '2025'),
+    jalon: parseAsStringLiteral(['2024', '2025']).withDefault(getAnneeDateDeBascule(new Date(), dataBasculeValeurAnneePrecedente as string).toString() as '2024' | '2025'),
   });
 
   const arrayOptionsExport: {

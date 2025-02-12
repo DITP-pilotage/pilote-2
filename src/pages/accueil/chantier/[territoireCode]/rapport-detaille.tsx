@@ -51,8 +51,8 @@ import {
   RecupererRepartitionsMeteoChantiersUseCase,
 } from '@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase';
 import {
-  getAnneeAffichageDateDeBascule,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+  getAnneeDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule';
 import { configuration } from '@/config';
 
 interface NextPageRapportDétailléProps {
@@ -95,7 +95,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   const { maille, codeInsee: codeInseeSelectionne } = territoireCodeVersMailleCodeInsee(territoireCode);
 
   const mailleQuery = query.maille as MailleInterne || 'departementale';
-  const jalon = Number.parseInt(query.jalon as string) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
+  const jalon = Number.parseInt(query.jalon as string) || getAnneeDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
 
   const mailleSelectionnee = maille === 'NAT'
     ? mailleQuery
@@ -154,11 +154,11 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     chantierRepository: dependencies.getChantierRepository(),
   }).run(session.habilitations, territoireCode, filtres, axes).then(presenterEnRépartitionsMétéosChantiersContrat);
 
-  const chantiersAvecAlertes = (filtresAlertes.estEnAlerteÉcart 
-    || filtresAlertes.estEnAlerteBaisse 
-    || filtresAlertes.estEnAlerteTauxAvancementNonCalculé 
-    || filtresAlertes.estEnAlerteMétéoNonRenseignée 
-    || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental 
+  const chantiersAvecAlertes = (filtresAlertes.estEnAlerteÉcart
+    || filtresAlertes.estEnAlerteBaisse
+    || filtresAlertes.estEnAlerteTauxAvancementNonCalculé
+    || filtresAlertes.estEnAlerteMétéoNonRenseignée
+    || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental
     || filtresAlertes.estEnAlertePossedePropositionsValeurActuelle) ? chantiers.filter(chantier => {
       const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][territoireCode];
       return (filtresAlertes.estEnAlerteÉcart && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))

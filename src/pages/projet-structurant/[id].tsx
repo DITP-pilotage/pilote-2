@@ -10,8 +10,8 @@ import { dependencies } from '@/server/infrastructure/Dependencies';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import {
-  getAnneeAffichageDateDeBascule,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+  getAnneeDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule';
 import { configuration } from '@/config';
 
 interface NextPageProjetStructurantProps {
@@ -30,7 +30,7 @@ export async function getServerSideProps({ req, res, params, query }: GetServerS
     };
   }
 
-  const jalon = Number.parseInt(query.jalon as string) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
+  const jalon = Number.parseInt(query.jalon as string) || getAnneeDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
 
   const session = await getServerSession(req, res, authOptions);
 

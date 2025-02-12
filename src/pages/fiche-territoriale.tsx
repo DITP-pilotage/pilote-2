@@ -7,8 +7,8 @@ import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-
 import { FicheTerritorialeContrat } from '@/server/fiche-territoriale/app/contrats/FicheTerritorialeContrat';
 import { ficheTerritorialeHandler } from '@/server/fiche-territoriale/infrastructure/handlers/FicheTerritorialeHandler';
 import {
-  getAnneeAffichageDateDeBascule,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+  getAnneeDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule';
 import { configuration } from '@/config';
 
 
@@ -30,7 +30,7 @@ export const getServerSideProps: GetServerSideProps<{
     throw new Error('Veuillez choisir un département ou une région');
   }
 
-  const jalon = Number.parseInt(query.jalon as string) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
+  const jalon = Number.parseInt(query.jalon as string) || getAnneeDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
 
   const ficheTerritoriale = await ficheTerritorialeHandler().recupererFicheTerritoriale(query.territoireCode as string, jalon);
 
