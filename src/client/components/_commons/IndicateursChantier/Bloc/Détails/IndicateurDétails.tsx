@@ -128,6 +128,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       periodicite={indicateur.periodicite}
                       responsablesMails={responsablesDonnees}
                       source={indicateur.source}
+                      type={indicateur.type}
                     />
                   ) : null
                 }

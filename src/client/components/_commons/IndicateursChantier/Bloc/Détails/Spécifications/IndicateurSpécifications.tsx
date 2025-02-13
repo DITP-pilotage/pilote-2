@@ -1,8 +1,9 @@
 import { FunctionComponent } from 'react';
 import Link from 'next/dist/client/link';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import IcôneEmail from '@/components/_commons/IcôneEmail/IcôneEmail';
 import api from '@/server/infrastructure/api/trpc/api';
+import { libellésRubriquesIndicateurs } from '@/client/utils/rubriques';
 import IndicateurSpécificationsStyled from './IndicateurSpécifications.styled';
 
 interface IndicateurSpécificationsProps {
@@ -19,6 +20,7 @@ interface IndicateurSpécificationsProps {
   responsablesMails: string[]
   indicateurId: string
   indicateurNom: string
+  type?: TypeIndicateur
 }
 
 const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProps> = ({
@@ -35,11 +37,11 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
   responsablesMails,
   indicateurId,
   indicateurNom,
+  type,
 }) => {
   const libelléValeurNull = 'Non renseignée';
   const objectMail = `PILOTE - Indicateur ${indicateurNom} (${indicateurId})`;
   const { data: variableContenuFFPoserUneQuestion } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR' });
-
 
   return (
     <IndicateurSpécificationsStyled>
@@ -49,19 +51,19 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
       <p className='fr-text--sm'>
         {description ?? libelléValeurNull}
       </p>
-      {/* {
-        nomRubriqueIndicateur ? 
+      {
+        type ? 
           (
             <div>
               <p className='fr-text--md sous-titre fr-mt-2w'>
                 Typologie de l'indicateur
               </p>
               <p className='fr-text--sm'>
-                {nomRubriqueIndicateur}
+                {libellésRubriquesIndicateurs[type]}
               </p>
             </div>
           ) : null
-      } */}
+      } 
       <p className='fr-text--md sous-titre fr-mt-2w'>
         Méthode de calcul
       </p>

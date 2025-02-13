@@ -20,7 +20,7 @@ import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import IndicateursChantier from '@/components/_commons/IndicateursChantier/IndicateursChantier';
-import { listeRubriquesChantier, listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
+import { listeRubriquesChantier } from '@/client/utils/rubriques';
 import Alerte from '@/client/components/_commons/Alerte/Alerte';
 import ResponsablesPageChantier from '@/components/PageChantier/ResponsablesChantier/ResponsablesChantier';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
@@ -386,7 +386,6 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     estAutoriseAProposerUneValeurActuelle={estAutoriseAProposerUneValeurActuelle}
                     indicateurs={indicateurs}
                     jalon={jalon}
-                    listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
                     mailleQuery={mailleQuery}
                     mailleSelectionnee={mailleSelectionnee}
                     mailsDirecteursProjets={chantier.responsables.directeursProjet.map(directeur => directeur.email).filter(Boolean)}

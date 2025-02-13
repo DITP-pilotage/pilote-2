@@ -5,7 +5,6 @@ import IndicateursChantierStyled from '@/components/_commons/IndicateursChantier
 import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import api from '@/server/infrastructure/api/trpc/api';
-import { ÉlémentPageIndicateursType } from '@/client/utils/rubriques';
 import {
   DétailsIndicateurs,
   DétailsIndicateurTerritoire,
@@ -18,7 +17,6 @@ interface IndicateursProps {
   indicateurs: Indicateur[];
   détailsIndicateurs: DétailsIndicateurs
   detailsIndicateursTerritoire: Record<string, DétailsIndicateurTerritoire>
-  listeRubriquesIndicateurs: ÉlémentPageIndicateursType[]
   chantierEstTerritorialisé: boolean,
   estInteractif?: boolean
   estAutoriseAProposerUneValeurActuelle?: boolean
@@ -37,7 +35,6 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   indicateurs,
   détailsIndicateurs,
   detailsIndicateursTerritoire,
-  listeRubriquesIndicateurs,
   chantierEstTerritorialisé,
   estInteractif = true,
   estAutoriseAProposerUneValeurActuelle = false,
@@ -74,56 +71,34 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
         ) : null
       }
       {
-        listeRubriquesIndicateurs.map(rubriqueIndicateur => {
-          const indicateursDeCetteRubrique = listeIndicateursParent.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
-
-          if (indicateursDeCetteRubrique.length > 0) {
+        listeIndicateursParent
+          .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireCode]?.pondération, détailsIndicateurs[b.id][territoireCode]?.pondération))
+          .map(indicateur => {
+            const listeSousIndicateurs = !!sousIndicateursDisponibles ?
+              indicateurs.filter(ind => ind.parentId === indicateur.id) :
+              [];
             return (
-              <section
-                className='fr-mb-3w sous-rubrique-indicateur'
-                id={rubriqueIndicateur.ancre}
-                key={rubriqueIndicateur.ancre}
-              >
-                <Titre
-                  baliseHtml='h3'
-                  className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
-                >
-                  {rubriqueIndicateur.nom}
-                </Titre>
-                {
-                  indicateursDeCetteRubrique
-                    .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireCode]?.pondération, détailsIndicateurs[b.id][territoireCode]?.pondération))
-                    .map(indicateur => {
-                      const listeSousIndicateurs = !!sousIndicateursDisponibles ?
-                        indicateurs.filter(ind => ind.parentId === indicateur.id) :
-                        [];
-                      return (
-                        <IndicateurBloc
-                          cartographieDroiteIndicateur={cartographieDroiteIndicateur}
-                          cartographieGaucheIndicateur={cartographieGaucheIndicateur}
-                          chantierEstTerritorialisé={chantierEstTerritorialisé}
-                          detailsIndicateursTerritoire={detailsIndicateursTerritoire}
-                          détailsIndicateurs={détailsIndicateurs}
-                          estAutoriseAProposerUneValeurActuelle={estAutoriseAProposerUneValeurActuelle}
-                          estInteractif={estInteractif}
-                          indicateur={indicateur}
-                          jalon={jalon}
-                          key={indicateur.id}
-                          listeSousIndicateurs={listeSousIndicateurs}
-                          mailleQuery={mailleQuery}
-                          mailleSelectionnee={mailleSelectionnee}
-                          mailsDirecteursProjets={mailsDirecteursProjets}
-                          territoireCode={territoireCode}
-                          territoiresCompares={territoiresCompares}
-                        />
-                      );
-
-                    })
-                }
-              </section>
+              <IndicateurBloc
+                cartographieDroiteIndicateur={cartographieDroiteIndicateur}
+                cartographieGaucheIndicateur={cartographieGaucheIndicateur}
+                chantierEstTerritorialisé={chantierEstTerritorialisé}
+                detailsIndicateursTerritoire={detailsIndicateursTerritoire}
+                détailsIndicateurs={détailsIndicateurs}
+                estAutoriseAProposerUneValeurActuelle={estAutoriseAProposerUneValeurActuelle}
+                estInteractif={estInteractif}
+                indicateur={indicateur}
+                jalon={jalon}
+                key={indicateur.id}
+                listeSousIndicateurs={listeSousIndicateurs}
+                mailleQuery={mailleQuery}
+                mailleSelectionnee={mailleSelectionnee}
+                mailsDirecteursProjets={mailsDirecteursProjets}
+                territoireCode={territoireCode}
+                territoiresCompares={territoiresCompares}
+              />
             );
-          }
-        })
+
+          })
       }
     </IndicateursChantierStyled>
   );

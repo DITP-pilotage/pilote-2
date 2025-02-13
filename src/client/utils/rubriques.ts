@@ -17,6 +17,13 @@ export const listeRubriquesIndicateursChantier: ÉlémentPageIndicateursType[] =
   { nom: 'Indicateurs de contexte', ancre: 'contexte', typeIndicateur: 'CONTEXTE' },
 ];
 
+export const libellésRubriquesIndicateurs: Record<TypeIndicateur | string, string> = {
+  'IMPACT': 'Indicateurs d\'impact',
+  'DEPL': 'Indicateurs de déploiement',
+  'Q_SERV': 'Indicateurs de qualité de service',
+  'REBOND': 'Indicateurs de suivi des externalités et effets rebond',
+  'CONTEXTE': 'Indicateurs de contexte',
+};
 
 export const listeSectionsIndicateursChantier: Rubrique[] = [
   { nom: 'Indicateurs pris en compte dans le taux d’avancement du territoire', ancre: 'inclus' },
