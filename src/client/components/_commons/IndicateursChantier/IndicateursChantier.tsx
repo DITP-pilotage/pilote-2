@@ -11,6 +11,7 @@ import {
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import Infobulle from '@/client/components/_commons/Infobulle/Infobulle';
 import { CartographieIndicateurType } from './Bloc/Détails/IndicateurDétails';
 
 interface IndicateursProps {
@@ -70,6 +71,40 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
           </div>
         ) : null
       }
+      <Titre
+        baliseHtml='h3'
+        className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
+      >
+        Indicateurs pris en compte dans le taux d’avancement du territoire
+      </Titre>
+      <Titre
+        baliseHtml='h3'
+        className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
+      >
+        Indicateurs non pris en compte dans le taux d’avancement du territoire
+        <Infobulle
+          className='fr-pt-0'
+          idHtml='infobulle-section-indicateurs-non-pris-en-compte'
+        >
+          <p className='fr-text--sm'>
+            Ces indicateurs ne sont pas pris en compte pour le territoire. Toutefois, il peut être pris en compte dans le calcul du taux d’avancement pour d’autres territoires ou d’autres mailles géographiques
+          </p>       
+        </Infobulle>
+      </Titre>
+      <Titre
+        baliseHtml='h3'
+        className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
+      >
+        Autres indicateurs
+        <Infobulle
+          className='fr-pt-0'
+          idHtml='infobulle-section-autres-indicateurs'
+        >
+          <p className='fr-text--sm'>
+            Ces indicateurs ne sont jamais pris en compte pour calculer le taux d’avancement de la PPG. Ils sont présentés pour donner des informations complémentaires sur l’impact et le déploiement de la PPG
+          </p>          
+        </Infobulle>
+      </Titre>
       {
         listeIndicateursParent
           .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireCode]?.pondération, détailsIndicateurs[b.id][territoireCode]?.pondération))
