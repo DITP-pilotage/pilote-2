@@ -158,14 +158,6 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
 
     const chantierTerritoireSélectionné = chantier.mailles[territoireSélectionné.maille ?? 'nationale'][territoireCode];
 
-    if (mailleQuery === 'departementale' && !chantier.maillesApplicables.includes('departementale')) {
-      const destination = mailleTerritoireSelectionnee === 'DEPT'
-        ? `/chantier/${chantierId}/${territoireSélectionné.codeParent}?maille=regionale`
-        : `/chantier/${chantierId}/${territoireCode}?maille=regionale`;
-
-      return redirigeLaPage(destination);
-    }
-
     if (!chantierTerritoireSélectionné.estApplicable || (!chantier.estTerritorialisé && mailleTerritoireSelectionnee !== 'NAT')) {
       const destination = mailleTerritoireSelectionnee === 'DEPT'
         ? `/chantier/${chantierId}/${territoireSélectionné.codeParent}?maille=regionale`
@@ -173,7 +165,6 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
 
       return redirigeLaPage(destination);
     }
-
 
     const avancements = calculerChantierAvancements(
       chantier as unknown as ChantierRapportDetailleContrat,

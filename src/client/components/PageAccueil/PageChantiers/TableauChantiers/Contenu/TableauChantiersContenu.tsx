@@ -60,20 +60,24 @@ const TableauChantiersContenu: FunctionComponent<TableauChantiersContenuProps> =
             key={row.id}
           >
             {
-              row.getVisibleCells().map(cell => (
-                <td
-                  className='fr-p-0'
-                  key={cell.id}
-                >
-                  <Link
-                    className='fr-p-1w'
-                    href={`/chantier/${row.original.id}/${territoireCode}?maille=${mailleSelectionnee}&jalon=${jalon}`}
-                    tabIndex={cell.column.columnDef.meta?.tabIndex}
+              row.getVisibleCells().map(cell => {
+                const mailleRedirection = mailleSelectionnee === 'departementale' && !row.original.maillesApplicables.includes('departementale') ? 'regionale' : 'departementale';
+                return (
+                  <td
+                    className='fr-p-0'
+                    key={cell.id}
                   >
-                    {afficherContenuDeLaCellule(cell)}
-                  </Link>
-                </td>
-              ))
+                    <Link
+                      className='fr-p-1w'
+                      href={`/chantier/${row.original.id}/${territoireCode}?maille=${mailleRedirection}&jalon=${jalon}`}
+                      tabIndex={cell.column.columnDef.meta?.tabIndex}
+                    >
+                      {afficherContenuDeLaCellule(cell)}
+                    </Link>
+                  </td>
+                );
+              })
+              
             }
           </tr>
         )

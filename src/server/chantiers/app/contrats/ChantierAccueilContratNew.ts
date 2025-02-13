@@ -6,6 +6,8 @@ import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
+import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
+import { Maille } from '@/server/domain/maille/Maille.interface';
 
 interface TerritoireAvancementAccueilContrat {
   global: number | null
@@ -50,6 +52,7 @@ export interface ChantierAccueilContrat {
   ppg: string
   tauxAvancementDonnéeTerritorialisée: Record<'regionale' | 'departementale', Boolean>
   météoDonnéeTerritorialisée: Record<'regionale' | 'departementale', Boolean>
+  maillesApplicables: Maille[]
   responsables: {
     porteur: MinistereAccueilPorteur | null
   }
@@ -163,6 +166,7 @@ export const presenterEnChantierAccueilContratNew = (
     estBaromètre: !!chantierIdentite.est_barometre,
     axe: chantierIdentite.axe,
     ppg: chantierIdentite.ppg,
+    maillesApplicables: chantierIdentite.mailles_applicables.map(maille => NOMS_MAILLES[maille]),
     responsables: {
       porteur: {
         nom: porteur?.nom,
