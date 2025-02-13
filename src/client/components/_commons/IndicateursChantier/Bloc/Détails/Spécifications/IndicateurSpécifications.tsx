@@ -19,7 +19,6 @@ interface IndicateurSpécificationsProps {
   responsablesMails: string[]
   indicateurId: string
   indicateurNom: string
-  nomRubriqueIndicateur: string
 }
 
 const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProps> = ({
@@ -36,7 +35,6 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
   responsablesMails,
   indicateurId,
   indicateurNom,
-  nomRubriqueIndicateur,
 }) => {
   const libelléValeurNull = 'Non renseignée';
   const objectMail = `PILOTE - Indicateur ${indicateurNom} (${indicateurId})`;
@@ -51,7 +49,7 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
       <p className='fr-text--sm'>
         {description ?? libelléValeurNull}
       </p>
-      {
+      {/* {
         nomRubriqueIndicateur ? 
           (
             <div>
@@ -63,7 +61,7 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
               </p>
             </div>
           ) : null
-      }
+      } */}
       <p className='fr-text--md sous-titre fr-mt-2w'>
         Méthode de calcul
       </p>
