@@ -9,6 +9,7 @@ import { EntreePrismaChantier, PrismaChantier } from '@/server/infrastructure/ac
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
+import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 
 
 interface TerritoireAvancementRapportDetailleContrat {
@@ -94,7 +95,8 @@ export interface ChantierRapportDetailleContrat {
   avancementGlobal: number | null;
   responsableLocalTerritoireSélectionné: ResponsableLocalRapportDetailleContrat[]
   coordinateurTerritorialTerritoireSélectionné: CoordinateurTerritorialRapportDetailleContrat[]
-  aUnePropositionsValeurActuelle: boolean,
+  aUnePropositionsValeurActuelle: boolean
+  maillesApplicables: Maille[]
 }
 
 class ErreurChantierSansMailleNationale extends Error {
@@ -204,6 +206,7 @@ export const presenterEnChantierRapportDetaille = (
     estBaromètre: !!chantierIdentite.est_barometre,
     axe: chantierIdentite.axe,
     ppg: chantierIdentite.ppg,
+    maillesApplicables: chantierIdentite.mailles_applicables.map(maille => NOMS_MAILLES[maille]),
     responsables: {
       porteur: {
         nom: porteur?.nom,

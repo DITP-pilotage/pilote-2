@@ -42,16 +42,17 @@ export default interface Chantier {
 export type ChantierTendance = 'BAISSE' | 'HAUSSE' | 'STAGNATION';
 
 export type ChantierVueDEnsemble = {
-  id: string;
-  nom: string;
-  avancement: number | null;
-  météo: Météo;
-  typologie: { estBaromètre: boolean, estTerritorialisé: boolean, estBrouillon: boolean };
-  porteur: MinistereAccueilPorteur | MinisterePorteurRapportDetailleContrat | null;
-  tendance: ChantierTendance | null,
-  écart: number | null,
-  dateDeMàjDonnéesQualitatives: string | null,
-  dateDeMàjDonnéesQuantitatives: string | null,
+  id: string
+  nom: string
+  avancement: number | null
+  météo: Météo
+  typologie: { estBaromètre: boolean, estTerritorialisé: boolean, estBrouillon: boolean }
+  porteur: MinistereAccueilPorteur | MinisterePorteurRapportDetailleContrat | null
+  tendance: ChantierTendance | null
+  écart: number | null
+  dateDeMàjDonnéesQualitatives: string | null
+  dateDeMàjDonnéesQuantitatives: string | null
+  maillesApplicables: Maille[]
 };
 
 export type ChantierDateMajMeteo = string | null;
