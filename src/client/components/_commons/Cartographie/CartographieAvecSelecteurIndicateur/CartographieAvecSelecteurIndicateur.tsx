@@ -10,7 +10,7 @@ import CartographieLégendeListe from '@/client/components/_commons/Cartographie
 import { CartographieÉlémentDeLégende } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { CartographieDonnées } from '@/client/components/_commons/Cartographie/Cartographie.interface';
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS } from '@/client/constants/légendes/elementDeLegendesCartographiePropositionValeur';
+import { ELEMENTS_LEGENDE_PROPOSITION_VALEUR_INDICATEURS } from '@/client/constants/légendes/elementDeLegendesCartographiePropositionValeur';
 import { ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE } from '@/client/constants/légendes/élémentsDeLégendesCartographieValeurActuelle';
 import { CartographieLégendeDégradéContenu } from '@/client/components/_commons/Cartographie/Légende/Dégradé/CartographieLégendeDégradé.interface';
 import CartographieLégendeDégradé from '@/client/components/_commons/Cartographie/Légende/Dégradé/CartographieLégendeDégradé';
@@ -34,7 +34,7 @@ const CartographieAvecSelecteurIndicateur: FunctionComponent<{
   const donneesEtLegendesCartographies: Record<CartographieIndicateurType, { useRecupererDonnees: () => { donneesCartographie: CartographieDonnées, legende: CartographieÉlémentDeLégende[], legendeDegrade: CartographieLégendeDégradéContenu | null } }> = {
     avancementMandat: useCartographieAvancementIndicateur(detailsIndicateurTerritoire, ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS, jalon, 'MANDAT'),
     avancementJalon: useCartographieAvancementIndicateur(detailsIndicateurTerritoire, ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS, jalon, 'JALON'),
-    propositionValeur: useCartographiePropositionValeurIndicateur(detailsIndicateurTerritoire, ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS),
+    propositionValeur: useCartographiePropositionValeurIndicateur(detailsIndicateurTerritoire, ELEMENTS_LEGENDE_PROPOSITION_VALEUR_INDICATEURS),
     valeurActuelle: useCartographieValeurActuelleIndicateur(detailsIndicateurTerritoire, ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE, jalon, unité),
   };
 

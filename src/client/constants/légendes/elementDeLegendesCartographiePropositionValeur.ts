@@ -14,3 +14,19 @@ export const ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS: CartographieÉlémen
     remplissage: 'url(#hachures-gris-blanc)',
   },
 };
+
+export const ELEMENTS_LEGENDE_PROPOSITION_VALEUR_INDICATEURS: CartographieÉlémentsDeLégende = {
+  'DEFAUT': {
+    libellé: 'Aucun indicateur ne fait l\'objet d\'une proposition',
+    remplissage: '#bababa',
+  },
+  'PROPOSITION': {
+    libellé: 'L\'indicateur fait l\'objet d\'une proposition',
+    remplissage: '#C3992A',
+  },
+  'NON_APPLICABLE': {
+    libellé: 'Territoire où le chantier prioritaire ne s’applique pas',
+    remplissage: 'url(#hachures-gris-blanc)',
+  },
+};
+
