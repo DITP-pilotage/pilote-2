@@ -17,7 +17,7 @@ export const ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS: CartographieÉlémen
 
 export const ELEMENTS_LEGENDE_PROPOSITION_VALEUR_INDICATEURS: CartographieÉlémentsDeLégende = {
   'DEFAUT': {
-    libellé: 'Aucun indicateur ne fait l\'objet d\'une proposition',
+    libellé: 'L\'indicateur ne fait pas l\'objet d\'une proposition',
     remplissage: '#bababa',
   },
   'PROPOSITION': {
