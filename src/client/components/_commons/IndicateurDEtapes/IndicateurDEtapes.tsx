@@ -4,9 +4,10 @@ import { FunctionComponent } from 'react';
 interface IndicateurDEtapesProps {
   étapes: string[],
   étapeCourante: number
+  sousTitreEtape?: string
 }
 
-const IndicateurDEtapes: FunctionComponent<IndicateurDEtapesProps> = ({ étapes, étapeCourante }) => {
+const IndicateurDEtapes: FunctionComponent<IndicateurDEtapesProps> = ({ étapes, étapeCourante, sousTitreEtape }) => {
   const nombreDEtapes = étapes.length;
   const indexEtape = étapeCourante - 1;
 
@@ -14,7 +15,7 @@ const IndicateurDEtapes: FunctionComponent<IndicateurDEtapesProps> = ({ étapes,
     <div className='fr-stepper'>
       <h2 className='fr-stepper__title'>
         <span className='fr-stepper__state'>
-          {`Étape ${étapeCourante} sur ${nombreDEtapes}`}
+          {`${sousTitreEtape ? `${sousTitreEtape} - ` : ''}Étape ${étapeCourante} sur ${nombreDEtapes}`}
         </span>
         {` ${étapes[indexEtape]}`}
       </h2>

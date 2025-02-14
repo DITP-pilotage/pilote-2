@@ -4,38 +4,19 @@ import { stringify } from 'csv-stringify';
 import { Options } from 'csv-stringify/lib/sync';
 import assert from 'node:assert/strict';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
-import ExportCsvDesIndicateursUseCase
-  from '@/server/chantiers/usecases/ExportCsvDesIndicateursUseCase';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { configuration } from '@/config';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { getChantiersContainer } from '@/server/chantiers/container';
 import { recupererJalon } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/recupererJalon';
+import { ExportCsvDesIndicateursUseCaseV2 } from '@/server/chantiers/usecases/ExportCsvDesIndicateursUseCaseV2';
 
-export default async function handleExportDesIndicateurs(request: NextApiRequest, response: NextApiResponse): Promise<void> {
+export const handleExportDesIndicateurs = async (request: NextApiRequest, response: NextApiResponse): Promise<void> => {
   const session = await getServerSession(request, response, authOptions);
   assert(session);
 
   response.setHeader('Content-Type', 'text/csv');
 
   const jalon = recupererJalon(request.query?.jalon as string | undefined);
-
-  const headersColumns = ExportCsvDesIndicateursUseCase.NOMS_COLONNES(jalon);
-
-  const stringifier = stringify({
-    header: true,
-    columns: session.profil === ProfilEnum.DITP_ADMIN ? [...headersColumns, 'Chantier statut'] : headersColumns,
-    delimiter: ';',
-    bom: true,
-    quoted_string: true,
-  } satisfies Options);
-  stringifier.pipe(response);
-
-  const chunkSize =  configuration.export.csvIndicateursChunkSize;
-
-  const habilitation = new Habilitation(session.habilitations);
-
-  const territoireCodes = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
   const optionsExport = {
     perimetreIds: request.query.perimetreIds ? Array.isArray(request.query.perimetreIds) ? request.query.perimetreIds : [request.query.perimetreIds] as string[] : [],
@@ -44,12 +25,29 @@ export default async function handleExportDesIndicateurs(request: NextApiRequest
     listeStatuts: request.query.statut ? Array.isArray(request.query.statut) ? request.query.statut : [request.query.statut] as string[] : [],
     listeChantierId: request.query.listeChantierId ? (request.query.listeChantierId as string).split(',') : [],
     listeMeteos: request.query.meteos ? Array.isArray(request.query.meteos) ? request.query.meteos : [request.query.meteos] as string[] : [],
-    listeOptionsExport: [],
+    listeOptionsExport: request.query.optionsExport ? Array.isArray(request.query.optionsExport) ? request.query.optionsExport : [request.query.optionsExport] as string[] : [],
   };
+
+  const headersColumns = ExportCsvDesIndicateursUseCaseV2.NOMS_COLONNES(jalon, optionsExport, session.profil);
+  const stringifier = stringify({
+    header: true,
+    columns: headersColumns,
+    delimiter: ';',
+    bom: true,
+    quoted_string: true,
+  } satisfies Options);
+
+  stringifier.pipe(response);
+
+  const chunkSize =  configuration.export.csvIndicateursChunkSize;
+
+  const habilitation = new Habilitation(session.habilitations);
+
+  const territoireCodes = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
   const chantierIds = await getChantiersContainer().resolve('chantierRepository').récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(), optionsExport);
 
-  const exportCsvDesIndicateursUseCase = getChantiersContainer().resolve('exportCsvDesIndicateursUseCase');
+  const exportCsvDesIndicateursUseCase = getChantiersContainer().resolve('exportCsvDesIndicateursUseCaseV2');
 
   for await (const partialResult of exportCsvDesIndicateursUseCase.run({
     chantierIds,
@@ -64,4 +62,4 @@ export default async function handleExportDesIndicateurs(request: NextApiRequest
     }
   }
   stringifier.end();
-}
+};
