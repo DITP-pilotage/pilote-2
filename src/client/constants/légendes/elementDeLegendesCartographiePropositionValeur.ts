@@ -7,10 +7,6 @@ export const ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS: CartographieÉlémen
   },
   'PROPOSITION': {
     libellé: 'Un ou plusieurs indicateurs font l\'objet d\'une proposition',
-    remplissage: '#FCC63A',
-  },
-  'PROPOSITION_AVEC_PONDERATION': {
-    libellé: 'La ou les propositions concernent au moins un indicateur participant au taux d\'avancement',
     remplissage: '#C3992A',
   },
   'NON_APPLICABLE': {
