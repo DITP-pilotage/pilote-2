@@ -4,21 +4,21 @@ import IndicateurBloc from '@/components/_commons/IndicateursChantier/Bloc/Indic
 import IndicateursChantierStyled from '@/components/_commons/IndicateursChantier/IndicateursChantier.styled';
 import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
 import Alerte from '@/components/_commons/Alerte/Alerte';
-import api from '@/server/infrastructure/api/trpc/api';
-import { ÉlémentPageIndicateursType } from '@/client/utils/rubriques';
+import { CategoriesIndicateur, listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
 import {
   DétailsIndicateurs,
   DétailsIndicateurTerritoire,
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import Infobulle from '@/client/components/_commons/Infobulle/Infobulle';
+import TitreInfobulleConteneur from '@/client/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import { CartographieIndicateurType } from './Bloc/Détails/IndicateurDétails';
 
 interface IndicateursProps {
   indicateurs: Indicateur[];
   détailsIndicateurs: DétailsIndicateurs
   detailsIndicateursTerritoire: Record<string, DétailsIndicateurTerritoire>
-  listeRubriquesIndicateurs: ÉlémentPageIndicateursType[]
   chantierEstTerritorialisé: boolean,
   estInteractif?: boolean
   estAutoriseAProposerUneValeurActuelle?: boolean
@@ -31,13 +31,14 @@ interface IndicateursProps {
   jalon: number
   cartographieDroiteIndicateur: CartographieIndicateurType
   cartographieGaucheIndicateur: CartographieIndicateurType
+  categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]>
+  sousIndicateursDisponibles: boolean
 }
 
 const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   indicateurs,
   détailsIndicateurs,
   detailsIndicateursTerritoire,
-  listeRubriquesIndicateurs,
   chantierEstTerritorialisé,
   estInteractif = true,
   estAutoriseAProposerUneValeurActuelle = false,
@@ -50,17 +51,14 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   jalon,
   cartographieDroiteIndicateur,
   cartographieGaucheIndicateur,
+  categoriesIndicateurRepartition,
+  sousIndicateursDisponibles,
 }) => {
 
   if (indicateurs.length === 0) {
     return null;
   }
-
-  const { data: sousIndicateursDisponibles } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_SOUS_INDICATEURS' });
-  const listeIndicateursParent = !!sousIndicateursDisponibles ?
-    indicateurs.filter(indicateur => !indicateur.parentId) :
-    indicateurs;
-
+  
   return (
     <IndicateursChantierStyled>
       {
@@ -74,8 +72,8 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
         ) : null
       }
       {
-        listeRubriquesIndicateurs.map(rubriqueIndicateur => {
-          const indicateursDeCetteRubrique = listeIndicateursParent.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
+        listeRubriquesIndicateursChantier.map(rubriqueIndicateur => {
+          const indicateursDeCetteRubrique = categoriesIndicateurRepartition[rubriqueIndicateur.categorieIndicateur];
 
           if (indicateursDeCetteRubrique.length > 0) {
             return (
@@ -84,12 +82,24 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                 id={rubriqueIndicateur.ancre}
                 key={rubriqueIndicateur.ancre}
               >
-                <Titre
-                  baliseHtml='h3'
-                  className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
-                >
-                  {rubriqueIndicateur.nom}
-                </Titre>
+                <TitreInfobulleConteneur className=''>
+                  <Titre
+                    baliseHtml='h3'
+                    className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
+                  >
+                    {rubriqueIndicateur.nom}
+                  </Titre>
+                  {
+                    rubriqueIndicateur.description ? (
+                      <Infobulle 
+                        className='fr-pb-2w' 
+                        idHtml=''
+                      >
+                        {rubriqueIndicateur.description}
+                      </Infobulle>
+                    ) : null
+                  }
+                </TitreInfobulleConteneur>
                 {
                   indicateursDeCetteRubrique
                     .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireCode]?.pondération, détailsIndicateurs[b.id][territoireCode]?.pondération))

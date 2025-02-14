@@ -193,7 +193,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
     const listeIndicateurId = indicateurs.map(indicateur => indicateur.id);
 
     const detailsIndicateursTerritoire = await new ListerDétailsIndicateurTerritoireUseCase(dependencies.getIndicateurRepository()).run(listeIndicateurId, chantierId, session.habilitations, session.profil, jalon);
-
+  
     return {
       props: {
         indicateurs,
