@@ -68,10 +68,6 @@ export class DetailValidationFichier {
     return this._listeMesuresIndicateurTemporaire;
   }
 
-  get listeIndicateursData(): IndicateurData[] {
-    return this._listeIndicateursData;
-  }
-
   static creerDetailValidationFichier({
     id,
     estValide,
