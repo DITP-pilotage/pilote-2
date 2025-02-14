@@ -196,6 +196,12 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
           .filter((indPond): indPond is IndicateurPondération => indPond.pondération !== null && indPond.pondération !== '0')
       );
 
+    const triIndicateur = !détailsIndicateurs || !territoireSélectionné
+      ? []
+      : (
+        indicateurs
+          .sort((indicateurA, indicateurB) => comparerIndicateur(indicateurA, indicateurB, détailsIndicateurs[indicateurA.id][territoireCode]?.pondération ?? null, détailsIndicateurs[indicateurB.id][territoireCode]?.pondération ?? null)));
+
     const listeResponsablesLocaux = chantierTerritoireSélectionné?.responsableLocal ?? [];
     const listeCoordinateursTerritorials = chantierTerritoireSélectionné?.coordinateurTerritorial ?? [];
 
@@ -205,7 +211,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
 
     return {
       props: {
-        indicateurs,
+        indicateurs: triIndicateur,
         chantierInformations: {
           id: chantier.id,
           nom: chantier.nom,

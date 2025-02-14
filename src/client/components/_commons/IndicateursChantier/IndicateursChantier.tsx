@@ -2,7 +2,6 @@ import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import IndicateurBloc from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc';
 import IndicateursChantierStyled from '@/components/_commons/IndicateursChantier/IndicateursChantier.styled';
-import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import api from '@/server/infrastructure/api/trpc/api';
 import {
@@ -107,7 +106,6 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
       </Titre>
       {
         listeIndicateursParent
-          .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireCode]?.pondération, détailsIndicateurs[b.id][territoireCode]?.pondération))
           .map(indicateur => {
             const listeSousIndicateurs = !!sousIndicateursDisponibles ?
               indicateurs.filter(ind => ind.parentId === indicateur.id) :
