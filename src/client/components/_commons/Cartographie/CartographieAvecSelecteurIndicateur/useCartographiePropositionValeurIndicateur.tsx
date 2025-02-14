@@ -22,7 +22,7 @@ function determinerRemplissage(valeur: TypeProposition | null, elementsDeLegende
 export function useCartographiePropositionValeurIndicateur(detailsIndicateurTerritoire: DétailsIndicateurTerritoire, elementsDeLegende: CartographieÉlémentsDeLégende) {
   const useRecupererDonnees = () => { 
     const donnees: DonneesCartographieProposition[] = objectEntries(detailsIndicateurTerritoire).map(([territoireCodeDonnee, detailsIndicateur]) => ({
-      valeur: detailsIndicateur.proposition !== null ? (detailsIndicateur.pondération !== null && detailsIndicateur.pondération > 0 ? 'PROPOSITION_AVEC_PONDERATION' : 'PROPOSITION') : null,
+      valeur: detailsIndicateur.proposition !== null ? 'PROPOSITION' : null,
       territoireCode: territoireCodeDonnee as string,
       estApplicable: detailsIndicateur.est_applicable,
     }));

@@ -24,7 +24,7 @@ const determinerRemplissage = (valeur: TypeProposition | null, elementsDeLegende
 export const useCartographiePropositionValeur = (chantierMailles: Record<Maille, TerritoiresDonnées>, elementsDeLegende: CartographieÉlémentsDeLégende) => {
   const useRecupererDonnees = () => {
     const donnees: DonneesCartographieProposition[] = objectEntries({ ...chantierMailles.departementale, ...chantierMailles.regionale }).map(([territoireCodeDonnee, territoire]) => ({
-      valeur: territoire.nombrePropositionValeurPonderee > 0 ? 'PROPOSITION_AVEC_PONDERATION' : (territoire.nombrePropositionValeur > 0 ? 'PROPOSITION' : null),
+      valeur: territoire.nombrePropositionValeur > 0 ? 'PROPOSITION' : null,
       territoireCode: territoireCodeDonnee as string,
       estApplicable: territoire.estApplicable,
     }));
