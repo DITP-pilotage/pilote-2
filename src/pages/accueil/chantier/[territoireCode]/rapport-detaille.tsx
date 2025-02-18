@@ -80,6 +80,7 @@ interface NextPageRapportDétailléProps {
     id: string,
     donnéesCartographieMétéo: CartographieDonnéesMétéo
   }[],
+  listeIndicateursPrisEnCompteAvancement: string[],
 }
 
 const PROFILS_AUTORISE_VOIR_BROUILLONS = new Set([ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE, ProfilEnum.DIR_PROJET, ProfilEnum.EQUIPE_DIR_PROJET]);
@@ -235,6 +236,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   const indicateursRepository = dependencies.getIndicateurRepository();
   const indicateursGroupésParChantier = await indicateursRepository.récupérerGroupésParChantier(chantiersIds);
   const détailsIndicateursGroupésParChantier = await indicateursRepository.récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds, mailleChantier, codeInseeSelectionne, jalon);
+  const listeIndicateursPrisEnCompteAvancement = await indicateursRepository.recupererListeIndicateursPrisEnCompteDansCalculAvancementSurAuMoinsUnTerritoire(chantiersIds);
 
   const synthèseDesRésultatsRepository = dependencies.getSynthèseDesRésultatsRepository();
   const synthèsesDesRésultatsGroupéesParChantier = await synthèseDesRésultatsRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds, mailleChantier, codeInseeSelectionne);
@@ -319,6 +321,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
         objectifs: objectifsGroupésParChantier,
         décisionStratégique: décisionStratégiquesGroupéesParChantier,
       },
+      listeIndicateursPrisEnCompteAvancement,
     },
   };
 };
@@ -342,6 +345,7 @@ const NextPageRapportDétaillé: FunctionComponent<NextPageRapportDétailléProp
   repartitionMeteosChantiers,
   listeDonnéesCartographieAvancement,
   listeDonnéesCartographieMétéo,
+  listeIndicateursPrisEnCompteAvancement,
 }) => {
   const mapChantierStatistiques = new Map<string, AvancementChantierRapportDetaille>();
   listeAvancementsStatistiques.forEach(itemAvancementsStatistique => {
@@ -373,6 +377,7 @@ const NextPageRapportDétaillé: FunctionComponent<NextPageRapportDétailléProp
         filtresComptesCalculés={filtresComptesCalculés}
         indicateursGroupésParChantier={indicateursGroupésParChantier}
         jalon={jalon}
+        listeIndicateursPrisEnCompteAvancement={listeIndicateursPrisEnCompteAvancement}
         mailleQuery={mailleQuery}
         mailleSelectionnee={mailleSelectionnee}
         mapChantierStatistiques={mapChantierStatistiques}

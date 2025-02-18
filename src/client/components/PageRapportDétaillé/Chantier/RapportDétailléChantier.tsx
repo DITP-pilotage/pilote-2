@@ -18,10 +18,12 @@ import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
 } from '@/server/domain/chantier/commentaire/Commentaire.interface';
-import { listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
+import { CategoriesIndicateur, listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
 import Cartes from '@/client/components/PageRapportDétaillé/Cartes/Cartes';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import AvancementChantier from '@/components/PageChantier/AvancementChantier/AvancementChantier';
+import api from '@/server/infrastructure/api/trpc/api';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import RapportDétailléChantierStyled from './RapportDétailléChantier.styled';
 
 const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProps> = ({
@@ -40,6 +42,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
   donnéesCartographieAvancement,
   donnéesCartographieMétéo,
   jalon,
+  listeIndicateursPrisEnCompteAvancement,
 }) => {
 
   const listeResponsablesLocaux = chantier?.responsableLocalTerritoireSélectionné ?? [];
@@ -47,6 +50,28 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
 
   const avancements = mapChantierStatistiques.get(chantier.id)!;
 
+  const { data: sousIndicateursDisponibles } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_SOUS_INDICATEURS' });
+
+  const listeIndicateursParent = !!sousIndicateursDisponibles ?
+    indicateurs.filter(indicateur => !indicateur.parentId) :
+    indicateurs;
+
+  const categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]> = listeIndicateursParent.reduce((acc, indicateur) => {  
+    if ((détailsIndicateurs[indicateur.id][territoireCode]?.pondération ?? 0) > 0) {
+      acc.participation_ta.push(indicateur);
+    } else if (listeIndicateursPrisEnCompteAvancement.includes(indicateur.id)) {
+      acc.non_participation_ta.push(indicateur);
+    } else {
+      acc.autre.push(indicateur);
+    }
+  
+    return acc;
+  }, {
+    participation_ta: [] as Indicateur[],
+    non_participation_ta: [] as Indicateur[],
+    autre: [] as Indicateur[],
+  });
+  
   return (
     <RapportDétailléChantierStyled
       className='fr-mt-4w fr-pb-4w chantier-item'
@@ -198,9 +223,11 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
                     Indicateurs
                   </Titre>
                   <IndicateursRapportDetaille
+                    categoriesIndicateurRepartition={categoriesIndicateurRepartition}
                     détailsIndicateurs={détailsIndicateurs}
                     indicateurs={indicateurs}
                     listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
+                    sousIndicateursDisponibles={!!sousIndicateursDisponibles}
                     territoireCode={territoireCode}
                     typeDeRéforme='chantier'
                   />
