@@ -46,6 +46,8 @@ import { HttpClient } from '@/server/import-indicateur/domain/ports/HttpClient.i
 import {
   ImportDonneeIndicateurAPIHandler,
 } from '@/server/import-indicateur/infrastructure/handlers/ImportDonneeIndicateurAPIHandler';
+import { PropositionValeurActuelleRepository } from './domain/ports/PropositionValeurActuelleRepository';
+import { PrismaPropositionValeurActuelleRepository } from './infrastructure/adapters/PrismaPropositionValeurActuelleRepository';
 
 export type ImportIndicateurDependencies = {
   httpClient: HttpClient
@@ -60,6 +62,7 @@ export type ImportIndicateurDependencies = {
   indicateurRepository: IndicateurRepository
   rapportRepository: RapportRepository
   importDonneeIndicateurAPIHandler: ImportDonneeIndicateurAPIHandler
+  propositionValeurActuelleRepository: PropositionValeurActuelleRepository
 };
 export const getImportIndicateurContainer = (): AwilixContainer<ImportIndicateurDependencies> => {
   const defaultOptions: ContainerOptions = { injectionMode: InjectionMode.PROXY, strict: true };
@@ -79,5 +82,6 @@ export const getImportIndicateurContainer = (): AwilixContainer<ImportIndicateur
     indicateurRepository: asClass(PrismaIndicateurRepository),
     rapportRepository: asClass(PrismaRapportRepository),
     importDonneeIndicateurAPIHandler: asClass(ImportDonneeIndicateurAPIHandler),
+    propositionValeurActuelleRepository: asClass(PrismaPropositionValeurActuelleRepository),
   });
 };

@@ -13,21 +13,25 @@ import {
 import {
   MesureIndicateurRepository,
 } from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface';
+import { PropositionValeurActuelleRepository } from '@/server/import-indicateur/domain/ports/PropositionValeurActuelleRepository';
 
 describe('PublierFichierIndicateurImporteUseCase', () => {
   let publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase;
   let mesureIndicateurTemporaireRepository: MockProxy<MesureIndicateurTemporaireRepository>;
   let mesureIndicateurRepository: MesureIndicateurRepository;
   let rapportRepository: RapportRepository;
+  let propositionValeurActuelleRepository: PropositionValeurActuelleRepository;
 
   beforeEach(() => {
     mesureIndicateurRepository = mock<MesureIndicateurRepository>();
     mesureIndicateurTemporaireRepository = mock<MesureIndicateurTemporaireRepository>();
     rapportRepository = mock<RapportRepository>();
+    propositionValeurActuelleRepository = mock<PropositionValeurActuelleRepository>();
     publierFichierIndicateurImporteUseCase = new PublierFichierIndicateurImporteUseCase({
       mesureIndicateurTemporaireRepository,
       mesureIndicateurRepository,
       rapportRepository,
+      propositionValeurActuelleRepository,
     });
   });
 
@@ -54,8 +58,6 @@ describe('PublierFichierIndicateurImporteUseCase', () => {
     ];
 
     mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(listeMesuresIndicateursTemporaires);
-
-
     // WHEN
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: '20a717e6-2de9-428c-b4e7-80f7b9f36ffc',
@@ -85,5 +87,62 @@ describe('PublierFichierIndicateurImporteUseCase', () => {
     expect(listeMesuresIndicateurs[1].metricType).toEqual('vc');
     expect(listeMesuresIndicateurs[1].metricValue).toEqual('15');
     expect(listeMesuresIndicateurs[1].zoneId).toEqual('D002');
+  });
+  it('doit supprimer les propositions de valeurs associés aux va importés', async () => {
+    // GIVEN
+    const propositionsASupprimerCaptor1 = captor<{ dateValeurImportee: Date, indicId: string, zoneId: string }>();
+    const propositionsASupprimerCaptor2 = captor<{ dateValeurImportee: Date, indicId: string, zoneId: string }>();
+
+    const listeMesuresIndicateursTemporaires = [
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId('IND-001')
+        .avecMetricDate('2022-12-01')
+        .avecMetricType('va')
+        .avecMetricValue('12')
+        .avecRapportId('20a717e6-2de9-428c-b4e7-80f7b9f36ffc')
+        .avecZoneId('D01')
+        .build(),
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId('IND-002')
+        .avecMetricDate('2024-12-01')
+        .avecMetricType('va')
+        .avecMetricValue('12')
+        .avecRapportId('20a717e6-2de9-428c-b4e7-80f7b9f36ffc')
+        .avecZoneId('D01')
+        .build(),
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId('IND-002')
+        .avecMetricDate('31/12/2022')
+        .avecMetricType('vc')
+        .avecMetricValue('15')
+        .avecRapportId('20a717e6-2de9-428c-b4e7-80f7b9f36ffc')
+        .avecZoneId('D02')
+        .build(),
+    ];
+
+    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(listeMesuresIndicateursTemporaires);
+    // WHEN
+    await publierFichierIndicateurImporteUseCase.execute({
+      rapportId: '20a717e6-2de9-428c-b4e7-80f7b9f36ffc',
+    });
+
+    // THEN
+    expect(mesureIndicateurTemporaireRepository.recupererToutParRapportId).toHaveBeenNthCalledWith(1, '20a717e6-2de9-428c-b4e7-80f7b9f36ffc');
+    expect(propositionValeurActuelleRepository.supprimerPropositionsValeurActuelleApresImport).toHaveBeenCalledTimes(2);
+    expect(propositionValeurActuelleRepository.supprimerPropositionsValeurActuelleApresImport).toHaveBeenNthCalledWith(1, propositionsASupprimerCaptor1);
+    expect(propositionValeurActuelleRepository.supprimerPropositionsValeurActuelleApresImport).toHaveBeenNthCalledWith(2, propositionsASupprimerCaptor2);
+    expect(mesureIndicateurTemporaireRepository.supprimerToutParRapportId).toHaveBeenNthCalledWith(1, '20a717e6-2de9-428c-b4e7-80f7b9f36ffc');
+
+    const propositionsASupprimer1 = propositionsASupprimerCaptor1.value;
+    const propositionsASupprimer2 = propositionsASupprimerCaptor2.value;
+
+    expect(propositionsASupprimer1.indicId).toEqual('IND-001');
+    expect(propositionsASupprimer1.zoneId).toEqual('D01');
+    expect(propositionsASupprimer1.dateValeurImportee).toEqual(new Date('2022-12-01'));
+
+    expect(propositionsASupprimer2.indicId).toEqual('IND-002');
+    expect(propositionsASupprimer2.zoneId).toEqual('D01');
+    expect(propositionsASupprimer2.dateValeurImportee).toEqual(new Date('2024-12-01'));
+
   });
 });

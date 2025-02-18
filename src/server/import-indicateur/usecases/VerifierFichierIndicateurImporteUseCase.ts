@@ -121,7 +121,6 @@ export class VerifierFichierIndicateurImporteUseCase {
     utilisateurAuteurDeLimportEmail: string
     isAdmin?: boolean
   }): Promise<DetailValidationFichier> {
-
     const informationIndicateur = await this.indicateurRepository.recupererInformationIndicateurParId(indicateurId);
 
     const schema = !informationIndicateur?.indicSchema || isAdmin ? DEFAULT_SCHEMA : informationIndicateur?.indicSchema;
