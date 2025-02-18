@@ -1,7 +1,7 @@
 import {
   ProfilCode,
   profilsDépartementaux,
-  profilsRégionaux,
+  profilsTerritoriaux,
 } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface';
@@ -20,15 +20,18 @@ export interface UtilisateurListeGestionContrat {
 }
 
 const recupererLesNomsDesTerritoires = (utilisateur: UtilisateurListeGestion, territoiresListe: Territoire[]): string[] => {
-  const mailleUtilisateur = profilsDépartementaux.includes(utilisateur.profil) ?
-    'departementale' :
-    profilsRégionaux.includes(utilisateur.profil) ? 'regionale' : 'nationale';
+  
+  if (!profilsTerritoriaux.includes(utilisateur.profil)) {
+    return ['Tous les territoire'];
+  }
 
-  return mailleUtilisateur === 'nationale' ?
-    ['Tous les territoire'] :
-    territoiresListe.
-      filter(territoire => utilisateur.habilitations.lecture.territoires.includes(territoire.code) && territoire.maille === mailleUtilisateur).
-      map(territoire => territoire.nom);
+  const maillesUtilisateur = profilsDépartementaux.includes(utilisateur.profil) ?
+    ['departementale', 'nationale'] :
+    ['regionale', 'nationale'];
+
+  return territoiresListe.
+    filter(territoire => utilisateur.habilitations.lecture.territoires.includes(territoire.code) && maillesUtilisateur.includes(territoire.maille)).
+    map(territoire => territoire.nom);
 };
 
 export const presenterEnUtilisateurListeGestionContrat = (utilisateur: UtilisateurListeGestion, territoiresListe: Territoire[]): UtilisateurListeGestionContrat => {

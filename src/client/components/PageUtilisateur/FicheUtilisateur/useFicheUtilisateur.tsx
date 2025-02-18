@@ -58,8 +58,13 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
     if (profil && profilsRégionaux.includes(profil.code)) {
       const régionsSaisies = u?.habilitations?.lecture?.territoires?.filter(territoireCode => territoireCode.startsWith('REG')) ?? [];
       const départementsEnfantsDesRégionsSaisies = régionsSaisies.flatMap(régionCode => départements.filter(d => d.codeParent === régionCode).map(d => d.nomAffiché));
+      const territoireAAfficher = [...régionsSaisies.map(code => récupérerDétailsSurUnTerritoire(code).nomAffiché), ...départementsEnfantsDesRégionsSaisies];
+      
+      if (u.habilitations?.lecture?.territoires?.includes('NAT-FR')) {
+        territoireAAfficher.unshift(récupérerDétailsSurUnTerritoire('NAT-FR').nomAffiché);
+      }
 
-      return [...régionsSaisies.map(code => récupérerDétailsSurUnTerritoire(code).nomAffiché), ...départementsEnfantsDesRégionsSaisies];
+      return territoireAAfficher;
     }
 
     return u.habilitations?.lecture?.territoires?.map(territoire => récupérerDétailsSurUnTerritoire(territoire).nomAffiché) ?? [];
