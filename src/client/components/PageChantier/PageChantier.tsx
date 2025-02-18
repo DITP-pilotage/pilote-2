@@ -20,7 +20,7 @@ import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import IndicateursChantier from '@/components/_commons/IndicateursChantier/IndicateursChantier';
-import { listeRubriquesChantier, listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
+import { CategoriesIndicateur, listeRubriquesChantier } from '@/client/utils/rubriques';
 import Alerte from '@/client/components/_commons/Alerte/Alerte';
 import ResponsablesPageChantier from '@/components/PageChantier/ResponsablesChantier/ResponsablesChantier';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
@@ -116,14 +116,40 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
     estAutoriseAVoirLeSelecteurDeMaille,
   } = usePageChantier(chantier, territoireSélectionné, territoireCode);
 
-  const listeRubriques = listeRubriquesChantier(indicateurs.map(indicateur => indicateur.type), territoireSélectionné.maille);
-
   const { data: alerteMiseAJourIndicateurEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR' });
   const alerteMiseAJourIndicateur = estAutoriseAVoirLesAlertesMAJIndicateurs && !!alerteMiseAJourIndicateurEstDisponible && Object.values(détailsIndicateurs).flatMap(values => Object.values(values)).reduce((acc, val) => {
     return !val.estAJour && (val.pondération || 0) > 0 && val.est_applicable ? true : acc;
   }, false);
 
   const mailleSourceDonnees = chantier.mailles[territoireSélectionné.maille][territoireCode].mailleSourceDonnees;
+
+  const { data: sousIndicateursDisponibles } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_SOUS_INDICATEURS' });
+
+  const listeIndicateursParent = !!sousIndicateursDisponibles ?
+    indicateurs.filter(indicateur => !indicateur.parentId) :
+    indicateurs;
+
+  const categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]> = listeIndicateursParent.reduce((acc, indicateur) => {  
+    if ((détailsIndicateurs[indicateur.id][territoireCode]?.pondération ?? 0) > 0) {
+      acc.participation_ta.push(indicateur);
+    } else if (Object.values(detailsIndicateursTerritoire[indicateur.id]).some(detail => detail.pondération !== null && detail.pondération > 0)) {
+      acc.non_participation_ta.push(indicateur);
+    } else {
+      acc.autre.push(indicateur);
+    }
+  
+    return acc;
+  }, {
+    participation_ta: [] as Indicateur[],
+    non_participation_ta: [] as Indicateur[],
+    autre: [] as Indicateur[],
+  });
+
+  const categoriesAvecElements = Object.keys(categoriesIndicateurRepartition).filter(
+    (key) => categoriesIndicateurRepartition[key as keyof typeof categoriesIndicateurRepartition].length > 0,
+  ) as CategoriesIndicateur[];
+  
+  const listeRubriques = listeRubriquesChantier(categoriesAvecElements, territoireSélectionné.maille);
 
   return (
     <PageChantierStyled className='flex'>
@@ -380,16 +406,17 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     alerteMiseAJourIndicateur={alerteMiseAJourIndicateur}
                     cartographieDroiteIndicateur={cartographieDroiteIndicateur}
                     cartographieGaucheIndicateur={cartographieGaucheIndicateur}
+                    categoriesIndicateurRepartition={categoriesIndicateurRepartition}
                     chantierEstTerritorialisé={chantier.estTerritorialisé}
                     detailsIndicateursTerritoire={detailsIndicateursTerritoire}
                     détailsIndicateurs={détailsIndicateurs}
                     estAutoriseAProposerUneValeurActuelle={estAutoriseAProposerUneValeurActuelle}
                     indicateurs={indicateurs}
                     jalon={jalon}
-                    listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
                     mailleQuery={mailleQuery}
                     mailleSelectionnee={mailleSelectionnee}
                     mailsDirecteursProjets={chantier.responsables.directeursProjet.map(directeur => directeur.email).filter(Boolean)}
+                    sousIndicateursDisponibles={!!sousIndicateursDisponibles}
                     territoireCode={territoireCode}
                     territoiresCompares={territoiresCompares}
                   />

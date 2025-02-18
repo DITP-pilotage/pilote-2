@@ -124,6 +124,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       indicateurEstApplicable={détailsIndicateurs[indicateur.id][territoireCode]?.est_applicable}
                       indicateurId={indicateur.id}
                       indicateurNom={indicateur.nom}
+                      indicateurType={indicateur.type}
                       modeDeCalcul={indicateur.modeDeCalcul}
                       periodicite={indicateur.periodicite}
                       responsablesMails={responsablesDonnees}

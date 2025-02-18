@@ -31,4 +31,5 @@ export default interface RapportDétailléChantierProps {
   donnéesCartographieAvancement: AvancementsGlobauxTerritoriauxMoyensContrat
   donnéesCartographieMétéo: CartographieDonnéesMétéo
   jalon: number
+  listeIndicateursPrisEnCompteAvancement: string[]
 }

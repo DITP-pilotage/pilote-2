@@ -2136,4 +2136,101 @@ describe('IndicateurSQLRepository', () => {
       });
     });
   });
+  describe('#recupererListeIndicateursPrisEnCompteDansCalculAvancementSurAuMoinsUnTerritoire', () => {
+    it("doit récupérer l'id des indicateurs qui font partis de la liste des chantiers et qui ont une pondération supérieur à 0 sur au moins un territoire", async () => {
+      // Given
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+        }, {
+          id: 'CH-002',
+          nom: 'Chantier 002',
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          code_insee: 'FR',
+          maille: 'NAT',
+          zone_id: 'FRANCE',
+          territoire_code: 'NAT-FR',
+        }, {
+          id: 'CH-001',
+          code_insee: '01',
+          maille: 'DEPT',
+          zone_id: 'D01',
+          territoire_code: 'DEPT-01',
+        }, {
+          id: 'CH-002',
+          code_insee: '87',
+          maille: 'NAT',
+          zone_id: 'FRANCE',
+          territoire_code: 'NAT-FR',
+        }],
+      });
+      await prisma.indicateur_identite.createMany({
+        data: [{
+          id: 'IND-001',
+          nom: 'Indicateur 001',
+          chantier_id: 'CH-001',
+        }, {
+          id: 'IND-002',
+          nom: 'Indicateur 002',
+          chantier_id: 'CH-002',
+        }, {
+          id: 'IND-003',
+          nom: 'Indicateur 003',
+          chantier_id: 'CH-001',
+        }],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: 'IND-001',
+            chantier_id: 'CH-001',
+            territoire_code: 'NAT-FR',
+            maille: 'NAT',
+            code_insee: 'FR',
+            zone_id: 'FRANCE',
+            ponderation_zone_reel: 0,
+          },
+          {
+            id: 'IND-002',
+            chantier_id: 'CH-002',
+            territoire_code: 'NAT-FR',
+            maille: 'NAT',
+            code_insee: 'FR',
+            zone_id: 'FRANCE',
+            ponderation_zone_reel: 10,
+          },
+          {
+            id: 'IND-003',
+            chantier_id: 'CH-001',
+            territoire_code: 'NAT-FR',
+            maille: 'NAT',
+            code_insee: 'FR',
+            zone_id: 'FRANCE',
+            ponderation_zone_reel: 0,
+          },
+          {
+            id: 'IND-003',
+            chantier_id: 'CH-001',
+            territoire_code: 'DEPT-01',
+            maille: 'DEPT',
+            code_insee: '01',
+            zone_id: 'D01',
+            ponderation_zone_reel: 10,
+          },
+        ],
+      });
+
+      // When
+      const result = await prismaIndicateurRepository.recupererListeIndicateursPrisEnCompteDansCalculAvancementSurAuMoinsUnTerritoire(['CH-001']);
+      // Then
+      expect(result).toEqual(['IND-003']);
+    });
+  });
 });

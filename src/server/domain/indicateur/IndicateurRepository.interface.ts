@@ -19,4 +19,5 @@ export default interface IndicateurRepository {
   récupererDétailsParChantierIdEtTerritoire(chantierId: string, territoireCodes: string[], jalon: number): Promise<DétailsIndicateurs>;
   récupérerGroupésParChantier(chantiersIds: Chantier['id'][]): Promise<Record<string, Indicateur[]>>
   récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee, jalon: number): Promise<Record<Chantier['id'], DétailsIndicateurs>>
+  recupererListeIndicateursPrisEnCompteDansCalculAvancementSurAuMoinsUnTerritoire(chantiersIds: Chantier['id'][]): Promise<Indicateur['id'][]>;
 }

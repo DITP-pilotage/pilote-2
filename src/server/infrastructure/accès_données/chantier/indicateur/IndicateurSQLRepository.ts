@@ -302,4 +302,24 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     });
     return this._mapDétailsToDomain(indicateurs);
   }
+
+  async recupererListeIndicateursPrisEnCompteDansCalculAvancementSurAuMoinsUnTerritoire(chantiersIds: Chantier['id'][]): Promise<Indicateur['id'][]> {
+    const listeIndicateurs = await this.prismaClient.indicateur_territoire.findMany({
+      where: {
+        chantier_id: {
+          in: chantiersIds,
+        },
+        ponderation_zone_reel: {
+          not: null,
+          gt: 0,
+        },
+      },
+      select: {
+        id: true,
+      },
+      distinct: ['id'],
+    });
+
+    return listeIndicateurs.map(indicateur => indicateur.id);
+  }
 }

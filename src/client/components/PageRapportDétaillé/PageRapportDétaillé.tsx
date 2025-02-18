@@ -52,6 +52,7 @@ interface PageRapportDétailléProps {
   estAutoriseAVoirLesBrouillons: boolean
   mapDonnéesCartographieAvancement: Map<string, AvancementsGlobauxTerritoriauxMoyensContrat>
   mapDonnéesCartographieMétéo: Map<string, CartographieDonnéesMétéo>
+  listeIndicateursPrisEnCompteAvancement: string[]
 }
 
 export const htmlId = {
@@ -78,6 +79,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   jalon,
   mapDonnéesCartographieAvancement,
   mapDonnéesCartographieMétéo,
+  listeIndicateursPrisEnCompteAvancement,
 }) => {
   const {
     récupérerDétailsSurUnTerritoire,
@@ -164,6 +166,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
                         indicateurs={indicateursGroupésParChantier[chantier.id] ?? []}
                         jalon={jalon}
                         key={chantier.id}
+                        listeIndicateursPrisEnCompteAvancement={listeIndicateursPrisEnCompteAvancement}
                         mailleQuery={mailleQuery}
                         mailleSelectionnee={mailleSelectionnee}
                         mapChantierStatistiques={mapChantierStatistiques}
