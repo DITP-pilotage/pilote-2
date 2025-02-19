@@ -26,9 +26,9 @@ import { IndicateurRepository } from '@/server/chantiers/domain/ports/Indicateur
 const presenterEnIndicateurExportContrat = (indicateurPourExport: IndicateurPourExport, profil: string, optionsExport: OptionsExport): string[] => {
   const donnees = [
     indicateurPourExport.maille === 'NAT' ? '1 - NAT' : indicateurPourExport.maille === 'REG' ? '2 - REG' : indicateurPourExport.maille === 'DEPT' ? '3 - DEPT' : NON_RENSEIGNEE,
-    indicateurPourExport.régionNom || NON_RENSEIGNEE,
-    indicateurPourExport.départementNom || NON_RENSEIGNEE,
-    indicateurPourExport.départementNom && indicateurPourExport.codeInsee ? `${indicateurPourExport.codeInsee === '2A' ? '20A' : indicateurPourExport.codeInsee === '2B' ? '20B' : indicateurPourExport.codeInsee?.padStart(2, '0')} - ${indicateurPourExport.départementNom}` : NON_RENSEIGNEE,
+    indicateurPourExport.régionNom || NON_APPLICABLE,
+    indicateurPourExport.départementNom || NON_APPLICABLE,
+    indicateurPourExport.départementNom && indicateurPourExport.codeInsee ? `${indicateurPourExport.codeInsee === '2A' ? '20A' : indicateurPourExport.codeInsee === '2B' ? '20B' : indicateurPourExport.codeInsee?.padStart(2, '0')} - ${indicateurPourExport.départementNom}` : NON_APPLICABLE,
     indicateurPourExport.chantierNom || NON_RENSEIGNEE,
     indicateurPourExport.chantierId || NON_RENSEIGNEE,
     indicateurPourExport.nom || NON_APPLICABLE,

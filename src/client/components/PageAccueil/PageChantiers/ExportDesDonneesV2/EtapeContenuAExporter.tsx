@@ -1,5 +1,6 @@
 import React from 'react';
 import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryState } from 'nuqs';
+import { MiseEnAvant } from '@/components/_commons/MiseEnAvant/MiseEnAvant';
 
 export const EtapeContenuAExporter = () => {
   const [typeExport, setTypeExport] = useQueryState('typeExport', parseAsStringLiteral(['ppg', 'indicateurs']).withDefault('ppg').withOptions({
@@ -21,6 +22,30 @@ export const EtapeContenuAExporter = () => {
 
   return (
     <div>
+      <p className='fr-mt-2w fr-mb-2w'>
+        La fonctionnalité d’export de PILOTE vous permet de récupérer les données qui vous intéressent sur les PPG et
+        leurs indicateurs dans les territoires.
+      </p>
+      <MiseEnAvant titre='Pour mener à bien votre export de données, vous allez être amené à :'>
+        <ul>
+          <li>
+            indiquer les contenus dont vous souhaitez récupérer les données : les PPG, les indicateurs ou l’historique
+            des indicateurs (étape 1);
+          </li>
+          <li>
+            préciser le périmètre de votre export : le cas échéant, filtrage des PPG / indicateurs et sélection des
+            territoires (étape 2);
+          </li>
+          <li>
+            enfin – s’il ne s’agit pas d’un export d’historique – choisir les données que vous souhaitez collecter pour
+            ces PPG / indicateurs, territoire par territoire : gouvernance, commentaires, données quantitatives, etc.
+            (étape 3)
+          </li>
+        </ul>
+      </MiseEnAvant>
+      <p className='fr-my-1w'>
+        Dans un premier temps, indiquez les contenus dont vous souhaitez exporter les données :
+      </p>
       <div
         className='fr-fieldset__element'
         key='ppg'

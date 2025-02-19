@@ -26,6 +26,31 @@ const ressources = {
   },
 };
 
+const chantierDonneesExportable = {
+  'identifiant': 'identifiants de la PPG et du territoire',
+  'gouvernance': 'gouvernance de la PPG',
+  'responsabilite': 'responsabilité de la PPG',
+  'objectif': 'objectifs de la PPG',
+  'description': 'données descriptives de la PPG sur le territoire',
+  'comparaison': 'données de comparaison de la PPG',
+  'synthese': 'météo et synthèse des résultats de la PPG sur le territoire',
+  'commentaire': 'commentaires de la PPG',
+  'decision': 'suivi des décisions stratégiques de la PPG',
+};
+
+const indicateurDonneesExportable = {
+  'identifiant': 'identifiants de l\'indicateur, de la PPG associée et du territoire',
+  'cadrage': 'cadrage de l\'indicateur',
+  'gouvernance': 'gouvernance de l\'indicateur et de la PPG associée',
+  'responsabilite': 'responsabilités de l\'indicateur et de la PPG associée',
+  'objectif': 'objectifs de la PPG associée : notre ambition, ce qui a déjà été fait, ce qui reste à faire',
+  'description': 'données descriptives de l\'indicateur et de la PPG associée sur le territoire',
+  'comparaison': 'données de comparaison de l\'indicateur',
+  'synthese': 'météo et synthèse des résultats de la PPG associée sur le territoire',
+  'commentaire': 'commentaires de la PPG associée',
+  'decision': 'suivi des décisions stratégiques de la PPG associée',
+};
+
 export const EtapeRecapitulatif = () => {
   const [, setEtapeCourante] = useQueryState('etapeCourante', parseAsInteger.withOptions({
     shallow: true,
@@ -58,10 +83,6 @@ export const EtapeRecapitulatif = () => {
     arrayOptionsExport.push({ name: 'estBarometre', value: true });
   }
 
-  filtres.optionsExport.split(',').filter(Boolean).forEach(filtreMeteo => {
-    arrayOptionsExport.push({ name: 'optionsExport', value: filtreMeteo });
-  });
-
   filtres.meteos.split(',').filter(Boolean).forEach(filtreMeteo => {
     arrayOptionsExport.push({ name: 'meteos', value: filtreMeteo });
   });
@@ -78,6 +99,65 @@ export const EtapeRecapitulatif = () => {
 
   return (
     <div>
+      <p className='fr-mt-2w fr-mb-2w'>
+        Veuillez vérifier ci-dessous le contenu de votre fichier d’export :
+      </p>
+      <h3 className='fr-text--md fr-mb-0 fr-mt-2w'>
+        Contenus à exporter
+      </h3>
+      <p>
+        <span
+          aria-hidden='true'
+          className='fr-icon-check-line texte-success fr-mr-1w'
+        />
+        {filtres.typeExport === 'ppg' ? (
+          <span>
+            PPG
+          </span>
+        ) : (
+          <span>
+            Indicateurs
+          </span>
+        )}
+      </p>
+      <h3 className='fr-text--md fr-mb-0 fr-mt-2w'>
+        Périmètre de l'export
+      </h3>
+      <p>
+        <span
+          aria-hidden='true'
+          className='fr-icon-check-line texte-success fr-mr-1w'
+        />
+        {
+          filtres.isAvecFiltre ? (
+            <span>
+              exporter les contenus de la sélection présentement active dans PILOTE
+            </span>
+          ) : (
+            <span>
+              exporter tous les contenus sur tous les territoires qui vous sont ouverts en lecture
+            </span>
+          )
+        }
+      </p>
+      <h3 className='fr-text--md fr-mb-0 fr-mt-2w'>
+        Données collectées
+      </h3>
+      <ul className='list-style-none fr-pl-0'>
+        {
+          Object.entries(filtres.typeExport === 'ppg' ? chantierDonneesExportable : indicateurDonneesExportable).filter(([key]) => filtres.optionsExport.includes(key)).map(([key, value]) => {
+            return (
+              <li key={key}>
+                <span
+                  aria-hidden='true'
+                  className='fr-icon-check-line texte-success fr-mr-1w'
+                />
+                {value}
+              </li>
+            );
+          })
+        }
+      </ul>
       <form
         className='fr-mt-2w'
         data-testid='form-export'
@@ -87,7 +167,7 @@ export const EtapeRecapitulatif = () => {
           if (url) {
             const a = window.document.createElement('a');
             const strOptionsExport = `${arrayOptionsExport.map(option => `${option.name}=${option.value}`).join('&')}`;
-            a.href = `${url}${filtres.isAvecFiltre && arrayOptionsExport.length > 0 ? `?${strOptionsExport}` : ''}`;
+            a.href = `${url}?${filtres.optionsExport.split(',').filter(Boolean).map(option => `optionsExport=${option}`).join('&')}${filtres.isAvecFiltre && arrayOptionsExport.length > 0 ? `&${strOptionsExport}` : ''}`;
             a.target = '_self';
             a.download = `${baseDuNomDeFichier}-${horodatage()}.csv`;
             document.body.append(a);

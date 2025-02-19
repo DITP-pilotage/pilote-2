@@ -13,6 +13,9 @@ export const EtapePerimetreExport = () => {
 
   return (
     <div>
+      <p className='fr-mb-1w'>
+        Précisez si vous souhaitez récupérer tous les contenus ou bien la sélection présentement active dans PILOTE :
+      </p>
       <div
         className='fr-fieldset__element'
         key='ppg'
@@ -52,7 +55,7 @@ export const EtapePerimetreExport = () => {
             exporter les contenus de la sélection présentement active dans PILOTE
           </label>
           <label
-            className='fr-label'
+            className='fr-label fr-text--xs texte-gris fr-pl-4w'
             htmlFor='indicateurs'
           >
             le cas échéant, le territoire sélectionné et tous les territoires inclus aux mailles inférieures seront

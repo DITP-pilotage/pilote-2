@@ -26,9 +26,9 @@ import {
 const presenterEnChantierExportContrat = (chantierPourExport: ChantierPourExport, profil: ProfilCode, optionsExport: OptionsExport): string[] => {
   const donnees = [
     chantierPourExport.maille === 'NAT' ? '1 - NAT' : chantierPourExport.maille === 'REG' ? '2 - REG' : chantierPourExport.maille === 'DEPT' ? '3 - DEPT' : NON_APPLICABLE,
-    chantierPourExport.régionNom || NON_RENSEIGNEE,
-    chantierPourExport.départementNom || NON_RENSEIGNEE,
-    chantierPourExport.départementNom && chantierPourExport.codeInsee ? `${chantierPourExport.codeInsee === '2A' ? '20A' : chantierPourExport.codeInsee === '2B' ? '20B' : chantierPourExport.codeInsee?.padStart(2, '0')} - ${chantierPourExport.départementNom}` : NON_RENSEIGNEE,
+    chantierPourExport.régionNom || NON_APPLICABLE,
+    chantierPourExport.départementNom || NON_APPLICABLE,
+    chantierPourExport.départementNom && chantierPourExport.codeInsee ? `${chantierPourExport.codeInsee === '2A' ? '20A' : chantierPourExport.codeInsee === '2B' ? '20B' : chantierPourExport.codeInsee?.padStart(2, '0')} - ${chantierPourExport.départementNom}` : NON_APPLICABLE,
     chantierPourExport.id || NON_RENSEIGNEE,
     chantierPourExport.nom || NON_RENSEIGNEE,
   ];

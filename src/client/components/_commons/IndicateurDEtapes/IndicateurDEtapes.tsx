@@ -12,7 +12,7 @@ const IndicateurDEtapes: FunctionComponent<IndicateurDEtapesProps> = ({ étapes,
   const indexEtape = étapeCourante - 1;
 
   return (
-    <div className='fr-stepper'>
+    <div className='fr-stepper fr-mb-1w'>
       <h2 className='fr-stepper__title'>
         <span className='fr-stepper__state'>
           {`${sousTitreEtape ? `${sousTitreEtape} - ` : ''}Étape ${étapeCourante} sur ${nombreDEtapes}`}

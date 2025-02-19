@@ -9,11 +9,24 @@ interface InterrupteurProps {
   libellé: string;
   register?: UseFormRegisterReturn;
   messageSecondaire?: string;
+  direction?: 'initial' | 'inverse'
+  className?: string
 }
 
-const Interrupteur: FunctionComponent<InterrupteurProps> = ({ checked, id, libellé, auChangement, register, messageSecondaire }) => {
+const Interrupteur: FunctionComponent<InterrupteurProps> = ({
+  checked,
+  id,
+  libellé,
+  auChangement,
+  register,
+  messageSecondaire,
+  direction,
+  className,
+}) => {
   return (
-    <div className='fr-toggle'>
+    <div
+      className={`fr-toggle${direction === 'inverse' ? ' fr-toggle--label-left' : ''}${className ? ` ${className}` : ''}`}
+    >
       <input
         checked={checked}
         className='fr-toggle__input'
