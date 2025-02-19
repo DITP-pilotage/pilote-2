@@ -8,7 +8,10 @@ interface SélecteurTypeDeRéformeProps {
   territoireCode: string
 }
 
-const SélecteurTypeDeRéforme: FunctionComponent<SélecteurTypeDeRéformeProps> = ({ typeDeRéformeSélectionné, territoireCode }) => {
+const SélecteurTypeDeRéforme: FunctionComponent<SélecteurTypeDeRéformeProps> = ({
+  typeDeRéformeSélectionné,
+  territoireCode,
+}) => {
   const typesDeRéformeÀAfficher: { label: string, valeur: TypeDeRéforme, href: string }[] = [
     {
       label: 'Chantiers',
@@ -21,24 +24,24 @@ const SélecteurTypeDeRéforme: FunctionComponent<SélecteurTypeDeRéformeProps>
       href: 'projet-structurant',
     },
   ];
-      
+
   return (
     <SélecteurRéformeStyled className='fr-p-1v'>
       {
-          typesDeRéformeÀAfficher.map(typeDeRéforme => (
-            <Link 
-              className={`${typeDeRéformeSélectionné === typeDeRéforme.valeur && 'sélectionné fr-text--bold'}`}
-              href={`/accueil/${typeDeRéforme.href}/${territoireCode}`}
-              key={typeDeRéforme.valeur}
+        typesDeRéformeÀAfficher.map(typeDeRéforme => (
+          <Link
+            className={`${typeDeRéformeSélectionné === typeDeRéforme.valeur && 'sélectionné fr-text--bold'}`}
+            href={`/accueil/${typeDeRéforme.href}/${territoireCode}`}
+            key={typeDeRéforme.valeur}
+          >
+            <button
+              type='button'
             >
-              <button
-                type='button'
-              >
-                {typeDeRéforme.label}
-              </button>
-            </Link>
-          ))
-        }
+              {typeDeRéforme.label}
+            </button>
+          </Link>
+        ))
+      }
     </SélecteurRéformeStyled>
   );
 };
