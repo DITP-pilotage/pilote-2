@@ -2,8 +2,10 @@
 -- depends_on: {{ ref('indicateur_identite') }}
 
 {{ config(
-    materialized = 'incremental', 
-    unique_key = ['id', 'territoire_code'])
+        materialized = 'incremental', 
+        unique_key = ['id', 'territoire_code'],
+        incremental_strategy='merge'
+    )
 }}
 
 
