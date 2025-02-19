@@ -37,6 +37,14 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   assert(session, 'Vous devez être authentifié pour accéder a cette page');
   assert(session.habilitations, 'La session ne dispose d\'aucune habilitation');
 
+  const estProjetStructurantDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS' });
+
+  if (!estProjetStructurantDisponible) {
+    return {
+      notFound: true,
+    };
+  }
+
   const estNouvellePageAccueilDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL' });
 
   if (!estNouvellePageAccueilDisponible && session.profil !== ProfilEnum.DITP_ADMIN) {
@@ -58,7 +66,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     )
   );
 
-  const estProjetStructurantDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS' });
 
   return {
     props: {

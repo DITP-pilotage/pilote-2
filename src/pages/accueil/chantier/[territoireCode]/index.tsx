@@ -63,6 +63,7 @@ interface ChantierAccueil {
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   repartitionMeteosChantiers: RepartitionMeteoContrat
+  estProjetStructurantDisponible: boolean
 }
 
 export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ req, res, query }) => {
@@ -205,6 +206,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
       avancementsAgrégés,
       avancementsGlobauxTerritoriauxMoyens,
       repartitionMeteosChantiers,
+      estProjetStructurantDisponible: configuration.featureFlip.projetsStructurants,
     },
   };
 };
@@ -237,6 +239,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   avancementsGlobauxTerritoriauxMoyens,
   repartitionMeteosChantiers,
   jalon,
+  estProjetStructurantDisponible,
 }) => {
   const { data: session } = useSession();
 
@@ -258,10 +261,14 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
           setEstOuvert={setEstOuverteBarreLatérale}
         >
           <BarreLatéraleEncart>
-            <SélecteurTypeDeRéforme
-              territoireCode={territoireCode}
-              typeDeRéformeSélectionné='chantier'
-            />
+            {
+              estProjetStructurantDisponible ? (
+                <SélecteurTypeDeRéforme
+                  territoireCode={territoireCode}
+                  typeDeRéformeSélectionné='chantier'
+                />
+              ) : null
+            }
             <SélecteursMaillesEtTerritoires
               pathname='/accueil/chantier/[territoireCode]'
               territoireCode={territoireCode}
