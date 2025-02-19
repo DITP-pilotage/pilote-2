@@ -16,6 +16,9 @@ import { EtapeRecapitulatif } from '@/components/PageAccueil/PageChantiers/Expor
 import {
   EtapeDonneeIndicateurACollecter,
 } from '@/components/PageAccueil/PageChantiers/ExportDesDonneesV2/EtapeDonneeIndicateurACollecter';
+import {
+  EtapeDonneeHistoriqueIndicateurACollecter,
+} from '@/components/PageAccueil/PageChantiers/ExportDesDonneesV2/EtapeDonneeHistoriqueIndicateurACollecter';
 
 const Stepper = {
   'ETAPE_CONTENU_A_EXPORTER': {
@@ -48,7 +51,7 @@ export const ExportDesDonneesV2: FunctionComponent<{
     history: 'push',
   }));
 
-  const [typeExport] = useQueryState('typeExport', parseAsStringLiteral(['ppg', 'indicateurs']).withDefault('ppg'));
+  const [typeExport] = useQueryState('typeExport', parseAsStringLiteral(['ppg', 'indicateurs', 'historique-indicateurs']).withDefault('ppg'));
 
   return (
     <Modale
@@ -67,7 +70,10 @@ export const ExportDesDonneesV2: FunctionComponent<{
         ) : etapeCourante === Stepper.ETAPE_PERIMETRE_EXPORT.numeroEtape ? (
           <EtapePerimetreExport />
         ) : etapeCourante === Stepper.ETAPE_DONNEE_A_COLLECTER.numeroEtape ? (
-          typeExport === 'ppg' ? <EtapeDonneeChantierACollecter /> : <EtapeDonneeIndicateurACollecter />
+          typeExport === 'ppg' ? <EtapeDonneeChantierACollecter />
+            : typeExport === 'indicateurs'
+              ? <EtapeDonneeIndicateurACollecter />
+              : <EtapeDonneeHistoriqueIndicateurACollecter />
         ) : etapeCourante === Stepper.ETAPE_RECAPITULATIF.numeroEtape ? (
           <EtapeRecapitulatif />
         ) : null

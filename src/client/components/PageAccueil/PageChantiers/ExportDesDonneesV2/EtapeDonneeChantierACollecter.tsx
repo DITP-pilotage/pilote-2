@@ -57,11 +57,13 @@ export const EtapeDonneeChantierACollecter = () => {
             className='fr-label fr-text--sm fr-mb-0'
             htmlFor='identifiant'
           >
-            <b className='fr-pr-1v'>
-              identifiants
-            </b>
-            {' '}
-            de la PPG et du territoire
+            <span>
+              <span className='fr-text--bold'>
+                identifiants
+              </span>
+              {' '}
+              de la PPG et du territoire
+            </span>
           </label>
         </div>
         <div className='fr-checkbox-group fr-mt-1w'>
@@ -79,23 +81,27 @@ export const EtapeDonneeChantierACollecter = () => {
                 className='fr-label fr-text--sm fr-mb-0'
                 htmlFor='gouvernance'
               >
-                <span className='fr-text--bold'>
-                  gouvernance
+                <span>
+                  <span className='fr-text--bold'>
+                    gouvernance
+                  </span>
+                  {' '}
+                  de la PPG : tutelle, axe, spécificités (statut, présence dans le Baromètre, territorialisation,
+                  restrictions géographiques)
                 </span>
-                {' '}
-                de la PPG : tutelle, axe, spécificités (statut, présence dans le Baromètre, territorialisation,
-                restrictions géographiques)
               </label>
             ) : (
               <label
                 className='fr-label fr-text--sm fr-mb-0'
                 htmlFor='gouvernance'
               >
-                <span className='fr-text--bold fr-pr-1v'>
-                  gouvernance
+                <span>
+                  <span className='fr-text--bold'>
+                    gouvernance
+                  </span>
+                  {' '}
+                  de la PPG
                 </span>
-                {' '}
-                de la PPG
               </label>
             )
           }
@@ -115,22 +121,26 @@ export const EtapeDonneeChantierACollecter = () => {
                 className='fr-label fr-text--sm fr-mb-0'
                 htmlFor='responsabilite'
               >
-                <span className='fr-text--bold fr-pr-1v'>
-                  responsabilité
+                <span>
+                  <span className='fr-text--bold'>
+                    responsabilité
+                  </span>
+                  {' '}
+                  de la PPG : directeurs, responsables et coordinateurs
                 </span>
-                {' '}
-                de la PPG : directeurs, responsables et coordinateurs
               </label>
             ) : (
               <label
                 className='fr-label fr-text--sm fr-mb-0'
                 htmlFor='responsabilite'
               >
-                <span className='fr-text--bold fr-pr-1v'>
-                  responsabilité
+                <span>
+                  <span className='fr-text--bold'>
+                    responsabilité
+                  </span>
+                  {' '}
+                  de la PPG
                 </span>
-                {' '}
-                de la PPG
               </label>
             )
           }
@@ -150,22 +160,26 @@ export const EtapeDonneeChantierACollecter = () => {
                 className='fr-label fr-text--sm fr-mb-0'
                 htmlFor='objectif'
               >
-                <span className='fr-text--bold fr-pr-1v'>
-                  objectifs
+                <span>
+                  <span className='fr-text--bold'>
+                    objectifs
+                  </span>
+                  {' '}
+                  de la PPG: notre ambition, ce qui a déjà été fait, ce qui reste à faire
                 </span>
-                {' '}
-                de la PPG: notre ambition, ce qui a déjà été fait, ce qui reste à faire
               </label>
             ) : (
               <label
                 className='fr-label fr-text--sm fr-mb-0'
                 htmlFor='objectif'
               >
-                <span className='fr-text--bold fr-pr-1v'>
-                  objectifs
+                <span>
+                  <span className='fr-text--bold'>
+                    objectifs
+                  </span>
+                  {' '}
+                  de la PPG
                 </span>
-                {' '}
-                de la PPG
               </label>
             )
           }
@@ -195,22 +209,26 @@ export const EtapeDonneeChantierACollecter = () => {
                 className='fr-label fr-text--sm fr-mb-0'
                 htmlFor='description'
               >
-                <span className='fr-text--bold fr-pr-1v'>
-                  données descriptives
+                <span>
+                  <span className='fr-text--bold'>
+                    données descriptives
+                  </span>
+                  {' '}
+                  de la PPG sur le territoire : taux d’avancement, tendance, écart
                 </span>
-                {' '}
-                de la PPG sur le territoire : taux d’avancement, tendance, écart
               </label>
             ) : (
               <label
                 className='fr-label fr-text--sm fr-mb-0'
                 htmlFor='description'
               >
-                <span className='fr-text--bold fr-pr-1v'>
-                  données descriptives
+                <span>
+                  <span className='fr-text--bold'>
+                    données descriptives
+                  </span>
+                  {' '}
+                  de la PPG sur le territoire
                 </span>
-                {' '}
-                de la PPG sur le territoire
               </label>
             )
           }
@@ -232,11 +250,13 @@ export const EtapeDonneeChantierACollecter = () => {
                   className='fr-label fr-text--sm fr-mb-0'
                   htmlFor='comparaison'
                 >
-                  <span className='fr-text--bold fr-pr-1v'>
-                    données de comparaison
+                  <span>
+                    <span className='fr-text--bold'>
+                      données de comparaison
+                    </span>
+                    {' '}
+                    de la PPG
                   </span>
-                  {' '}
-                  de la PPG
                 </label>
                 <ul className='fr-ml-4w fr-my-0 fr-text--sm'>
                   <li className='fr-pb-0'>
@@ -252,11 +272,13 @@ export const EtapeDonneeChantierACollecter = () => {
                 className='fr-label fr-text--sm fr-mb-0'
                 htmlFor='comparaison'
               >
-                <span className='fr-text--bold fr-pr-1v'>
-                  données de comparaison
+                <span>
+                  <span className='fr-text--bold'>
+                    données de comparaison
+                  </span>
+                  {' '}
+                  de la PPG
                 </span>
-                {' '}
-                de la PPG
               </label>
             )
           }
@@ -279,11 +301,13 @@ export const EtapeDonneeChantierACollecter = () => {
             className='fr-label fr-text--sm fr-mb-0'
             htmlFor='synthese'
           >
-            <span className='fr-text--bold fr-pr-1v'>
-              météo et synthèse des résultats
+            <span>
+              <span className='fr-text--bold'>
+                météo et synthèse des résultats
+              </span>
+              {' '}
+              de la PPG sur le territoire
             </span>
-            {' '}
-            de la PPG sur le territoire
           </label>
         </div>
         <div className='fr-checkbox-group fr-mt-1w'>
@@ -302,11 +326,13 @@ export const EtapeDonneeChantierACollecter = () => {
                   className='fr-label fr-text--sm fr-mb-0'
                   htmlFor='commentaire'
                 >
-                  <span className='fr-text--bold fr-pr-1v'>
-                    commentaires
+                  <span>
+                    <span className='fr-text--bold'>
+                      commentaires
+                    </span>
+                    {' '}
+                    de la PPG
                   </span>
-                  {' '}
-                  de la PPG
                 </label>
                 <ul className='fr-ml-4w fr-my-0 fr-text--sm'>
                   <li className='fr-pb-0'>
@@ -324,11 +350,13 @@ export const EtapeDonneeChantierACollecter = () => {
                 className='fr-label fr-text--sm fr-mb-0'
                 htmlFor='commentaire'
               >
-                <span className='fr-text--bold fr-pr-1v'>
-                  commentaires
+                <span>
+                  <span className='fr-text--bold'>
+                    commentaires
+                  </span>
+                  {' '}
+                  de la PPG
                 </span>
-                {' '}
-                de la PPG
               </label>
             )
           }
@@ -346,13 +374,15 @@ export const EtapeDonneeChantierACollecter = () => {
             className='fr-label fr-text--sm fr-mb-0'
             htmlFor='decision'
           >
-            suivi des
-            {' '}
-            <b className='fr-px-1v'>
-              décisions stratégiques
-            </b>
-            {' '}
-            de la PPG
+            <span>
+              suivi des
+              {' '}
+              <span className='fr-text--bold'>
+                décisions stratégiques
+              </span>
+              {' '}
+              de la PPG
+            </span>
           </label>
         </div>
       </div>

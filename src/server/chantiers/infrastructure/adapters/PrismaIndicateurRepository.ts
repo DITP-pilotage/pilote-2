@@ -9,6 +9,8 @@ import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsN
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { IndicateurPourExport } from '@/server/chantiers/domain/IndicateurPourExport';
 import { prisma } from '@/server/db/prisma';
+import { historique_valeurs } from '@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLRepository';
+import { HistoriqueIndicateurPourExport } from '@/server/chantiers/domain/HistoriqueIndicateurPourExport';
 
 const convertirEnDonneeIndicateur = (prismaIndicateurIdentite: PrismaIndicateurIdentite & {
   indicateur_territoire: (PrismaIndicateurTerritoire & { indicateur_territoire_jalon: PrismaIndicateurTerritoireJalon[] })[]
@@ -253,4 +255,127 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     });
   }
 
+  async récupérerHistoriquePourExports(chantierId: string, territoireCodesLecture: string[], jalon: number): Promise<HistoriqueIndicateurPourExport[]> {
+    const result = await prisma.indicateur_territoire.findMany({
+      where: {
+        territoire_code: {
+          in: territoireCodesLecture,
+        },
+        indicateur_identite: {
+          chantier_id: chantierId,
+          chantier_identite: {
+            NOT: [
+              {
+                ministeres: { isEmpty: true },
+              },
+            ],
+          },
+        },
+        est_applicable: true,
+      },
+      select: {
+        maille: true,
+        code_insee: true,
+        valeur_initiale: true,
+        date_valeur_initiale: true,
+        evolution_valeur_actuelle: true,
+        valeur_cible_mandat: true,
+        date_valeur_cible_mandat: true,
+        indicateur_territoire_jalon: {
+          where: {
+            jalon,
+          },
+          select: {
+            valeur_cible: true,
+            date_valeur_cible: true,
+            taux_avancement: true,
+            valeur_actuelle: true,
+            date_valeur_actuelle: true,
+          },
+        },
+        indicateur_identite: {
+          select: {
+            nom: true,
+            chantier_id: true,
+            chantier_identite: {
+              select: {
+                est_barometre: true,
+                est_territorialise: true,
+                nom: true,
+                perimetre_ids: true,
+                statut: true,
+              },
+            },
+          },
+        },
+        territoire: {
+          select: {
+            nom: true,
+            territoire_parent: {
+              select: {
+                nom: true,
+              },
+            },
+          },
+        },
+        chantier_territoire: {
+          select: {
+            est_applicable: true,
+            meteo: true,
+          },
+        },
+      },
+    });
+
+    return result.flatMap(indicateurPourExport => {
+      const indicateurTerritoireJalon = indicateurPourExport.indicateur_territoire_jalon.at(0);
+
+      return (indicateurPourExport.evolution_valeur_actuelle as unknown as historique_valeurs[]).map(historiqueIndicateur => ({
+        maille: indicateurPourExport.maille,
+        régionNom: indicateurPourExport.maille === 'DEPT' ? indicateurPourExport.territoire.territoire_parent?.nom || null : indicateurPourExport.territoire.nom,
+        départementNom: indicateurPourExport.maille === 'DEPT' ? indicateurPourExport.territoire.nom : null,
+        codeInsee: indicateurPourExport.code_insee,
+        chantierNom: indicateurPourExport.indicateur_identite.chantier_identite.nom,
+        chantierId: indicateurPourExport.indicateur_identite.chantier_id,
+        nom: indicateurPourExport.indicateur_identite.nom,
+        valeurInitiale: indicateurPourExport.valeur_initiale,
+        dateValeurInitiale: indicateurPourExport.date_valeur_initiale?.toISOString() || null,
+        valeurCibleAnnuelle:verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_cible),
+        dateValeurCibleAnnuelle: indicateurTerritoireJalon?.date_valeur_cible?.toISOString() || null,
+        valeurCible: indicateurPourExport.valeur_cible_mandat,
+        dateValeurCible: indicateurPourExport.date_valeur_cible_mandat?.toISOString() || null,
+        valeurActuelle: verifyValeurIsNotNullOrUndefined(historiqueIndicateur.valeur),
+        dateValeurActuelle: historiqueIndicateur.date,
+        périmètreIds: indicateurPourExport.indicateur_identite.chantier_identite.perimetre_ids,
+        météo: indicateurPourExport.chantier_territoire.meteo as Météo | null,
+        chantierEstBaromètre: indicateurPourExport.indicateur_identite.chantier_identite.est_barometre,
+        chantierEstTerritorialise: indicateurPourExport.indicateur_identite.chantier_identite.est_territorialise,
+        chantierStatut: indicateurPourExport.indicateur_identite.chantier_identite.statut,
+      }));
+    }).sort((indicA, indicB) => {
+      const orderMaille = { 'NAT': 1, 'REG': 2, 'DEPT': 3 };
+
+      // Comparer par nom_indicateur
+      if (indicB.nom !== indicA.nom) {
+        return indicB.nom.localeCompare(indicA.nom);
+      }
+
+      // Comparer par maille
+      if (indicA.maille !== indicB.maille) {
+        return orderMaille[indicA.maille] - orderMaille[indicB.maille];
+      }
+
+      // Comparer par nom_region
+      const nomRegionA = indicB.maille === 'DEPT' ? indicB.régionNom || null : indicB.maille === 'REG' ? indicB.départementNom : null;
+      const nomRegionB = indicA.maille === 'DEPT' ? indicA.régionNom || null : indicA.maille === 'REG' ? indicA.départementNom : null;
+      if (nomRegionA && nomRegionB && nomRegionA !== nomRegionB) {
+        return nomRegionA.localeCompare(nomRegionB);
+      }// Comparer par code insee
+      if (indicB.codeInsee !== indicA.codeInsee) {
+        return indicB.codeInsee.localeCompare(indicA.codeInsee);
+      }
+
+      return indicB.dateValeurActuelle.localeCompare(indicA.dateValeurActuelle);
+    });
+  }
 }
