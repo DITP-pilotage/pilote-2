@@ -1,4 +1,4 @@
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import { TypeCommentaireProjetStructurant } from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
 import CommentaireProjetStructurantRepository from '@/server/domain/projetStructurant/commentaire/CommentaireRepository.interface';
 import CommentaireProjetStructurantRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireProjetStructurantSQLRow.builder';
@@ -15,7 +15,7 @@ describe('CommentaireSQLRepository', () => {
       const auteur = 'Jean DUPONT';
       const type = 'partenariatsEtMoyensMobilisés';
 
-      const commentaireProjetStructurantRepository = new CommentaireProjetStructurantSQLRepository(prisma);
+      const commentaireProjetStructurantRepository = new CommentaireProjetStructurantSQLRepository();
 
       // When
       await commentaireProjetStructurantRepository.créer(projetStructurantId, id, contenu, auteur, type, date);
@@ -34,7 +34,7 @@ describe('CommentaireSQLRepository', () => {
       const auteur = 'Jean DUPONT';
       const type = 'partenariatsEtMoyensMobilisés';
 
-      const commentaireProjetStructurantRepository = new CommentaireProjetStructurantSQLRepository(prisma);
+      const commentaireProjetStructurantRepository = new CommentaireProjetStructurantSQLRepository();
 
       // When
       const commentaireCréée = await commentaireProjetStructurantRepository.créer(projetStructurantId, id, contenu, auteur, type, new Date(date));
@@ -55,7 +55,7 @@ describe('CommentaireSQLRepository', () => {
       // GIVEN
       const projetStructurantId = 'c4ff3bc7-878a-4449-b1a2-cc56692ecd27';
       const typeCommentaire: TypeCommentaireProjetStructurant = 'partenariatsEtMoyensMobilisés';
-      const commentaireRepository: CommentaireProjetStructurantRepository = new CommentaireProjetStructurantSQLRepository(prisma);
+      const commentaireRepository: CommentaireProjetStructurantRepository = new CommentaireProjetStructurantSQLRepository();
 
       const commentaires  = [
         new CommentaireProjetStructurantRowBuilder()

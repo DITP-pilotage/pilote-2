@@ -1,8 +1,8 @@
-import { PrismaClient } from '@prisma/client';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import CommentaireProjetStructurantRepository from '@/server/domain/projetStructurant/commentaire/CommentaireRepository.interface';
 import CommentaireProjetStructurant, { TypeCommentaireProjetStructurant } from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
 import { groupByAndTransform } from '@/client/utils/arrays';
+import { prisma } from '@/server/db/prisma';
 
 type CommentaireProjetStructurantPrisma = {
   id: string;
@@ -29,12 +29,6 @@ export const CODES_TYPES_COMMENTAIRES: Record<TypeCommentaireProjetStructurant, 
 
 
 export default class CommentaireProjetStructurantSQLRepository implements CommentaireProjetStructurantRepository {
-  private prisma: PrismaClient;
-
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
-  }
-
   private mapperVersDomaine(commentaire: CommentaireProjetStructurantPrisma | null): CommentaireProjetStructurant {
     if (commentaire === null) return null;
     return {
@@ -47,7 +41,7 @@ export default class CommentaireProjetStructurantSQLRepository implements Commen
   }
 
   async récupérerLePlusRécent(projetStructurantId: ProjetStructurant['id'], type: TypeCommentaireProjetStructurant): Promise<CommentaireProjetStructurant> {
-    const commentaireLePlusRécent = await this.prisma.commentaire_projet_structurant.findFirst({
+    const commentaireLePlusRécent = await prisma.commentaire_projet_structurant.findFirst({
       where: {
         projet_structurant_id: projetStructurantId,
         type: CODES_TYPES_COMMENTAIRES[type],
@@ -59,7 +53,7 @@ export default class CommentaireProjetStructurantSQLRepository implements Commen
   }
 
   async récupérerLesPlusRécentsGroupésParProjetsStructurants(projetStructurantIds: ProjetStructurant['id'][]): Promise<Record<ProjetStructurant['id'], CommentaireProjetStructurant[]>> {
-    const commentaires = await this.prisma.$queryRaw<CommentaireProjetStructurantPrisma[]>`
+    const commentaires = await prisma.$queryRaw<CommentaireProjetStructurantPrisma[]>`
       SELECT c.projet_structurant_id, c.contenu, c.auteur, c.type, id, date
       FROM commentaire_projet_structurant c
         INNER JOIN (
@@ -82,7 +76,7 @@ export default class CommentaireProjetStructurantSQLRepository implements Commen
 
   async récupérerHistorique(projetStructurantId: string, type: TypeCommentaireProjetStructurant): Promise<CommentaireProjetStructurant[]> {
 
-    const commentairesProjetStructurant: CommentaireProjetStructurantPrisma[] = await this.prisma.commentaire_projet_structurant.findMany({
+    const commentairesProjetStructurant: CommentaireProjetStructurantPrisma[] = await prisma.commentaire_projet_structurant.findMany({
       where: {
         projet_structurant_id: projetStructurantId,
         type: CODES_TYPES_COMMENTAIRES[type],
@@ -95,7 +89,7 @@ export default class CommentaireProjetStructurantSQLRepository implements Commen
 
   async créer(projetStructurantId: string, id: string, contenu: string, auteur: string, type: TypeCommentaireProjetStructurant, date: Date): Promise<CommentaireProjetStructurant> {
 
-    const commentaireCréé =  await this.prisma.commentaire_projet_structurant.create({
+    const commentaireCréé =  await prisma.commentaire_projet_structurant.create({
       data: {
         id: id,
         projet_structurant_id: projetStructurantId,

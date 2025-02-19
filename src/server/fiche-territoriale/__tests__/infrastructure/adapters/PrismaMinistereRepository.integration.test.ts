@@ -1,11 +1,11 @@
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import { PrismaMinistereRepository } from '@/server/fiche-territoriale/infrastructure/adapters/PrismaMinistereRepository';
 
 describe('PrismaMinistereRepository', () => {
   let prismaMinistereRepository: PrismaMinistereRepository;
 
   beforeEach(() => {
-    prismaMinistereRepository = new PrismaMinistereRepository(prisma);
+    prismaMinistereRepository = new PrismaMinistereRepository();
   });
 
   describe('#recupererMapMinistereParListeCodeMinistere', () => {

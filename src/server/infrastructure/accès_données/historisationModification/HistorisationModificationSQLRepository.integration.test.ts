@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import {
   PrismaHistorisationModificationRepository,
 } from '@/server/infrastructure/accès_données/historisationModification/PrismaHistorisationModificationRepository';

@@ -1,11 +1,11 @@
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import { PrismaChantierRepository } from '@/server/fiche-territoriale/infrastructure/adapters/PrismaChantierRepository';
 
 describe('PrismaChantierRepository', () => {
   let prismaChantierRepository: PrismaChantierRepository;
 
   beforeEach(() => {
-    prismaChantierRepository = new PrismaChantierRepository(prisma);
+    prismaChantierRepository = new PrismaChantierRepository();
   });
 
   describe('listerParTerritoireCodePourUnDepartement', () => {

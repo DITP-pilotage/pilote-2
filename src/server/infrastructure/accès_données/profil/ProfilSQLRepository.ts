@@ -1,22 +1,17 @@
-import { PrismaClient, profil as PrismaProfil } from '@prisma/client';
+import { profil as PrismaProfil } from '@prisma/client';
 import ProfilRepository from '@/server/domain/profil/ProfilRepository';
 import { Profil } from '@/server/domain/profil/Profil.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { prisma } from '@/server/db/prisma';
 
 export default class ProfilSQLRepository implements ProfilRepository {
-  private prisma: PrismaClient;
-
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
-  }
-
   async récupérerTous(): Promise<Profil[]> {
-    const tousLesProfils = await this.prisma.profil.findMany();
+    const tousLesProfils = await prisma.profil.findMany();
     return tousLesProfils.map(p => this._mapperVersLeDomaine(p));
   }
 
   async récupérer(profilCode: ProfilCode): Promise<Profil | null> {
-    const prismaProfil = await this.prisma.profil.findUnique({
+    const prismaProfil = await prisma.profil.findUnique({
       where: {
         code: profilCode,
       },

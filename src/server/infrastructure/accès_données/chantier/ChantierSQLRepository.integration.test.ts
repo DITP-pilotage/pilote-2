@@ -9,7 +9,7 @@ describe('ChantierSQLRepository', () => {
   let prismaChantierRepository: ChantierSQLRepository;
 
   beforeEach(() => {
-    prismaChantierRepository = new ChantierSQLRepository(prisma);
+    prismaChantierRepository = new ChantierSQLRepository();
   });
 
   describe('#récupérerChantiersSynthétisés', () => {

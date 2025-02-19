@@ -1,4 +1,4 @@
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import {
   PrismaSyntheseDesResultatsRepository,
 } from '@/server/fiche-territoriale/infrastructure/adapters/PrismaSyntheseDesResultatsRepository';
@@ -7,7 +7,7 @@ describe('PrismaSyntheseDesResultatsRepository', () => {
   let prismaSyntheseDesResultatsRepository: PrismaSyntheseDesResultatsRepository;
 
   beforeEach(() => {
-    prismaSyntheseDesResultatsRepository = new PrismaSyntheseDesResultatsRepository(prisma);
+    prismaSyntheseDesResultatsRepository = new PrismaSyntheseDesResultatsRepository();
   });
 
   describe('#recupererMapSyntheseDesResultatsParListeChantierIdEtTerritoire', () => {

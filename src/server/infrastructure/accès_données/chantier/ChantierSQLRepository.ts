@@ -4,7 +4,6 @@ import {
   chantier_territoire_jalon as PrismaChantierTerritoireJalon,
   Prisma,
   type_statut,
-  PrismaClient,
 } from '@prisma/client';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import Chantier, { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
@@ -21,6 +20,7 @@ import { calculerMoyenne, calculerMédiane } from '@/client/utils/statistiques/s
 import { PrismaChantier } from '@/server/infrastructure/accès_données/chantier/PrismaChantier';
 import { RepartitionMeteoChantiers } from '@/server/chantiers/domain/RepartitionMeteoChantiers';
 import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
+import { prisma } from '@/server/db/prisma';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -35,10 +35,8 @@ export class ErreurChantierPermission extends Error {
 }
 
 export default class ChantierSQLRepository implements ChantierRepository {
-  constructor(private prismaClient: PrismaClient) {}
-
   async récupérerChantiersSynthétisés(): Promise<ChantierSynthétisé[]> {
-    const listeChantiersIdentites = await this.prismaClient.chantier_identite.findMany({
+    const listeChantiersIdentites = await prisma.chantier_identite.findMany({
       include: {
         chantier_territoire: {
           where: {
@@ -79,7 +77,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       throw new ErreurChantierPermission(id);
     }
 
-    const chantier = await this.prismaClient.chantier_identite.findUnique({
+    const chantier = await prisma.chantier_identite.findUnique({
       where: {
         id,
       },
@@ -146,12 +144,12 @@ export default class ChantierSQLRepository implements ChantierRepository {
     if (filtres.valeurDeLaRecherche?.length > 0) {
       const testLower = removeAccents(filtres.valeurDeLaRecherche.toLowerCase());
 
-      chantierIds = await this.prismaClient.$queryRawUnsafe<{ id: string }[]>('SELECT distinct(id) FROM chantier_identite where (LOWER(unaccent(nom)) ILIKE $1 OR LOWER(unaccent(id)) ILIKE $1)', `%${testLower}%`)
+      chantierIds = await prisma.$queryRawUnsafe<{ id: string }[]>('SELECT distinct(id) FROM chantier_identite where (LOWER(unaccent(nom)) ILIKE $1 OR LOWER(unaccent(id)) ILIKE $1)', `%${testLower}%`)
         .then(chantiersMatched => chantiersMatched.map(chantierMatched => chantierMatched.id).filter(chantierId => chantiersLectureIds.includes(chantierId)));
     }
 
     if (filtres.meteos?.length > 0) {
-      chantierIds = await this.prismaClient.chantier_territoire.findMany({
+      chantierIds = await prisma.chantier_territoire.findMany({
         where: {
           id: { in: chantierIds },
           meteo: {
@@ -163,7 +161,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
         .then(chantiersMatched => chantiersMatched.map(chantierMatched => chantierMatched.id).filter(chantierId => chantierIds.includes(chantierId)));
     }
 
-    return this.prismaClient.chantier_identite.findMany({
+    return prisma.chantier_identite.findMany({
       where: {
         NOT: {
           ministeres: {
@@ -239,7 +237,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
   }
 
   async modifierMétéo(chantierId: string, territoireCode: string, météo: Météo) {
-    await this.prismaClient.chantier_territoire.update({
+    await prisma.chantier_territoire.update({
       data: {
         meteo: météo,
       },
@@ -257,7 +255,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     const chantiersAutorisés = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const chantiersLecture = listeChantier.filter((x) => chantiersAutorisés.includes(x));
 
-    const listeMoyenneParTerritoire = await this.prismaClient.chantier_territoire.groupBy({
+    const listeMoyenneParTerritoire = await prisma.chantier_territoire.groupBy({
       by: ['territoire_code'],
       _avg: {
         taux_avancement_mandat: true,
@@ -331,10 +329,10 @@ export default class ChantierSQLRepository implements ChantierRepository {
     if (filtres.valeurDeLaRecherche?.length > 0) {
       const testLower = removeAccents(filtres.valeurDeLaRecherche.toLowerCase());
 
-      chantierIds = await this.prismaClient.$queryRawUnsafe<{ id: string }[]>('SELECT distinct(id) FROM chantier_identite where (LOWER(unaccent(nom)) ILIKE $1 OR LOWER(unaccent(id)) ILIKE $1)', `%${testLower}%`)
+      chantierIds = await prisma.$queryRawUnsafe<{ id: string }[]>('SELECT distinct(id) FROM chantier_identite where (LOWER(unaccent(nom)) ILIKE $1 OR LOWER(unaccent(id)) ILIKE $1)', `%${testLower}%`)
         .then(chantiersMatched => chantiersMatched.map(chantierMatched => chantierMatched.id).filter(chantierId => chantiersLectureIds.includes(chantierId)));
     }
-    const meteosGroupee = await this.prismaClient.chantier_territoire.groupBy({
+    const meteosGroupee = await prisma.chantier_territoire.groupBy({
       by: ['meteo'],
       _count: true,
       where: {

@@ -97,15 +97,13 @@ async function main() {
   const outputName = process.argv[4];
   assert(filename, 'Nom de fichier CSV manquant');
 
-  const prisma = new PrismaClient();
-
   const keycloakUrl = process.env.IMPORT_KEYCLOAK_URL as string;
   const clientId = process.env.IMPORT_CLIENT_ID as string;
   const clientSecret = process.env.IMPORT_CLIENT_SECRET as string;
 
   const utilisateurIAMRepository = new UtilisateurIAMKeycloakRepository(keycloakUrl, clientId, clientSecret);
   const utilisateurRepository = new UtilisateurSQLRepository();
-  const territoireRepository = new TerritoireSQLRepository(prisma);
+  const territoireRepository = new TerritoireSQLRepository();
 
   const contenuParsé = new UtilisateurCSVParseur(filename).parse();
   let utilisateursFormatCsv = contenuParsé.csvRecords;
