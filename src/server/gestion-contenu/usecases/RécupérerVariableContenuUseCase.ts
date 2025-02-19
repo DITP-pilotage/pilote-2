@@ -66,10 +66,13 @@ export class RécupérerVariableContenuUseCase {
         return configuration.featureFlip.ppgArchive as VariableContenuDisponibleEnv[T];
       }
       case 'NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR': {
-        return configuration.featureFlip.PoserUneQuestionIndicateur as VariableContenuDisponibleEnv[T];
+        return configuration.featureFlip.poserUneQuestionIndicateur as VariableContenuDisponibleEnv[T];
       }
       case 'NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE': {
         return configuration.dateBasculeAffichageValeursAnneePrecedente as VariableContenuDisponibleEnv[T];
+      }
+      case 'NEXT_PUBLIC_FF_EXPORT_CSV_V2': {
+        return configuration.featureFlip.exportCSVV2 as VariableContenuDisponibleEnv[T];
       }
     }
   }

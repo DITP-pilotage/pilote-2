@@ -2,7 +2,9 @@ import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Fragment, FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
-import IndicateurDétails, { CartographieIndicateurType } from '@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
+import IndicateurDétails, {
+  CartographieIndicateurType,
+} from '@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
@@ -177,7 +179,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                   <th className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w' />
                   <th className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm' />
                   <th
-                    className='fr-background-contrast-grey border-b-2 text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                    className='fr-background-contrast-grey border-b-2 border-b-high-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
                     colSpan={3}
                   >
                     <div className='flex align-center justify-center fr-text--xs'>
@@ -194,13 +196,13 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                     </div>
                   </th>
                   <th
-                    className='fr-background-action-low-blue-france border-b-2 text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                    className='fr-background-action-low-blue-france border-b-2 border-b-high-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
                     colSpan={3}
                   >
                     DONNÉES À ÉCHÉANCE 2026
                   </th>
                 </tr>
-                <tr className='border-b-2'>
+                <tr className='border-b-2 border-b-high-grey'>
                   <th
                     className='fr-background-action-low-blue-france text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
                   >

@@ -286,6 +286,7 @@ describe('PrismaChantierRepository', () => {
           listeChantierId: [],
           listeMeteos: [],
           listeStatuts: [],
+          listeOptionsExport: [],
         };
 
         const jalon = 2024;
@@ -422,6 +423,7 @@ describe('PrismaChantierRepository', () => {
           listeChantierId: [],
           listeMeteos: ['SOLEIL'],
           listeStatuts: [],
+          listeOptionsExport: [],
         };
 
         const jalon = 2024;
@@ -515,8 +517,8 @@ describe('PrismaChantierRepository', () => {
           listeChantierId: [],
           listeMeteos: [],
           listeStatuts: [],
+          listeOptionsExport: [],
         };
-
 
         const jalon = 2024;
 
@@ -567,6 +569,7 @@ describe('PrismaChantierRepository', () => {
         listeChantierId: [],
         listeMeteos: [],
         listeStatuts: [],
+        listeOptionsExport: [],
       };
 
       // When
@@ -609,6 +612,7 @@ describe('PrismaChantierRepository', () => {
         listeChantierId: [],
         listeMeteos: [],
         listeStatuts: [],
+        listeOptionsExport: [],
       };
 
       // When
@@ -651,6 +655,7 @@ describe('PrismaChantierRepository', () => {
         listeChantierId: [],
         listeMeteos: [],
         listeStatuts: [],
+        listeOptionsExport: [],
       };
 
       // When
@@ -703,6 +708,7 @@ describe('PrismaChantierRepository', () => {
         listeChantierId: [],
         listeMeteos: [],
         listeStatuts: ['PUBLIE', 'BROUILLON'],
+        listeOptionsExport: [],
       };
 
       // When
@@ -760,6 +766,7 @@ describe('PrismaChantierRepository', () => {
         listeChantierId: [],
         listeMeteos: [],
         listeStatuts: [],
+        listeOptionsExport: [],
       };
 
       // When
@@ -817,6 +824,7 @@ describe('PrismaChantierRepository', () => {
         listeChantierId: ['CH-002', 'CH-003', 'CH-005'],
         listeMeteos: ['CH-002', 'CH-003', 'CH-005'],
         listeStatuts: [],
+        listeOptionsExport: [],
       };
 
       // When

@@ -1,3 +1,4 @@
+import api from '@/server/infrastructure/api/trpc/api';
 import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
 import {
   AvancementsStatistiquesAccueilContrat,
@@ -16,9 +17,12 @@ export default function usePageChantiers(chantiers: ChantierAccueilContrat[], te
 
   const estAutoriseAVoirLeSelecteurDeMaille = !PROFIL_INTERDIT_DE_VOIR_LE_SELECTEUR_DE_MAILLE.has(profil);
 
+  const { data: estExportV2Actif } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_EXPORT_CSV_V2' });
+
   return {
     donnéesTableauChantiers: chantiersVueDEnsemble,
     remontéesAlertes,
     estAutoriseAVoirLeSelecteurDeMaille,
+    estExportV2Actif,
   };
 }

@@ -12,6 +12,7 @@ const optionsExport: OptionsExport = {
   listeStatuts: [],
   listeChantierId: [],
   listeMeteos: [],
+  listeOptionsExport: [],
 };
 
 describe('ExportCsvDesChantiersUseCase', () => {

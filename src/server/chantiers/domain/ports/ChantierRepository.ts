@@ -6,5 +6,6 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 export interface ChantierRepository {
   récupérerDonneesChantier(chantierId: string, territoireCodesLecture: string[]): Promise<DonneeChantier[]>;
   récupérerPourExports(chantierId: string, territoireCodesLecture: string[], optionsExport: OptionsExport, jalon: number): Promise<ChantierPourExport[] | null>;
+  récupérerPourExportsV2(chantierId: string, territoireCodesLecture: string[], optionsExport: OptionsExport, jalon: number): Promise<ChantierPourExport[] | null>;
   récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(chantierIds: string[], optionsExport: OptionsExport): Promise<Chantier['id'][]>;
 }

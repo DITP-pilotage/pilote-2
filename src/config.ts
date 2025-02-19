@@ -249,10 +249,15 @@ const config = convict({
       default: false,
       env: 'NEXT_PUBLIC_FF_PPG_ARCHIVE',
     },
-    PoserUneQuestionIndicateur: {
+    poserUneQuestionIndicateur: {
       format: Boolean,
       default: false,
       env: 'NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR',
+    },
+    exportCSVV2: {
+      format: Boolean,
+      default: false,
+      env: 'NEXT_PUBLIC_FF_EXPORT_CSV_V2',
     },
   },
   analytics: {

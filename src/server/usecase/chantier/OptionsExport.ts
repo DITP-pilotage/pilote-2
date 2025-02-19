@@ -5,4 +5,5 @@ export interface OptionsExport {
   listeStatuts: string[],
   listeChantierId: string[],
   listeMeteos: string[],
+  listeOptionsExport: string[],
 }
