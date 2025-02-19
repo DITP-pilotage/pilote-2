@@ -36,7 +36,7 @@ export default function IndicateursRapportDetaille({
                   baliseHtml='h3'
                   className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
                 >
-                  {rubriqueIndicateur.nom}
+                  {`${rubriqueIndicateur.nom} (${indicateursDeCetteRubrique.length})`}
                 </Titre>
                 {
                   !!codeInseeSélectionnée && indicateursDeCetteRubrique
