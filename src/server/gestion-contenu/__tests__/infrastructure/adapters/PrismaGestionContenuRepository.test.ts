@@ -1,4 +1,4 @@
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import { VARIABLE_CONTENU_DISPONIBLE } from '@/server/gestion-contenu/domain/VariableContenuDisponible';
 import {
   PrismaGestionContenuRepository,

@@ -5,7 +5,7 @@ import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/b
 import {
   MesureIndicateurTemporaireBuilder,
 } from '@/server/import-indicateur/app/builder/MesureIndicateurTemporaire.builder';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { getContainer } from '@/server/dependances';
 

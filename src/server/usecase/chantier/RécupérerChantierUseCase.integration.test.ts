@@ -1,4 +1,4 @@
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import RécupérerChantierUseCase from '@/server/usecase/chantier/RécupérerChantierUseCase';
 import { objectEntries } from '@/client/utils/objects/objects';

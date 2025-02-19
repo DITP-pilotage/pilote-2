@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import { PrismaIndicateurRepository } from '@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository';
 
 describe('PrismaIndicateurRepository', () => {

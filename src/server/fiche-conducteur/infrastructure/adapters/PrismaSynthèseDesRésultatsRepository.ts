@@ -1,7 +1,8 @@
-import { PrismaClient, synthese_des_resultats as SyntheseDesResultatsModel } from '@prisma/client';
+import { synthese_des_resultats as SyntheseDesResultatsModel } from '@prisma/client';
 import { SynthèseDesRésultatsRepository } from '@/server/fiche-conducteur/domain/ports/SynthèseDesRésultatsRepository';
 import { SyntheseDesResultats } from '@/server/fiche-conducteur/domain/SyntheseDesResultats';
 import { Meteo } from '@/server/fiche-conducteur/domain/Meteo';
+import { prisma } from '@/server/db/prisma';
 
 const convertirEnSyntheseDesResultats = (syntheseDesResultatsModel: SyntheseDesResultatsModel): SyntheseDesResultats => {
   return SyntheseDesResultats.creerSyntheseDesResultats({
@@ -11,10 +12,8 @@ const convertirEnSyntheseDesResultats = (syntheseDesResultatsModel: SyntheseDesR
 };
 
 export class PrismaSynthèseDesRésultatsRepository implements SynthèseDesRésultatsRepository {
-  constructor(private prismaClient: PrismaClient) {}
-
   async recupererLaPlusRecenteMailleNatParChantierId(chantierId: string): Promise<SyntheseDesResultats | null> {
-    const result = await this.prismaClient.synthese_des_resultats.findFirst({
+    const result = await prisma.synthese_des_resultats.findFirst({
       where: {
         chantier_id: chantierId,
         maille: 'NAT',

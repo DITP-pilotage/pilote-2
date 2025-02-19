@@ -1,7 +1,8 @@
-import { PrismaClient, objectif_projet_structurant as ObjectifProjetStructurantPrisma, type_objectif_projet_structurant as TypeObjectifProjetStructurantPrisma } from '@prisma/client';
+import { objectif_projet_structurant as ObjectifProjetStructurantPrisma, type_objectif_projet_structurant as TypeObjectifProjetStructurantPrisma } from '@prisma/client';
 import ObjectifProjetStructurantRepository from '@/server/domain/projetStructurant/objectif/ObjectifRepository.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import ObjectifProjetStructurant, { TypeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
+import { prisma } from '@/server/db/prisma';
 
 export const NOMS_TYPES_OBJECTIFS: Record<TypeObjectifProjetStructurantPrisma, TypeObjectifProjetStructurant> = {
   suivi_des_objectifs: 'SuiviDesObjectifs',
@@ -12,12 +13,6 @@ export const CODES_TYPES_OBJECTIFS: Record<TypeObjectifProjetStructurant, TypeOb
 };
 
 export default class ObjectifProjetStructurantSQLRepository implements ObjectifProjetStructurantRepository {
-  private prisma: PrismaClient;
-
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
-  }
-
   private mapperVersDomaine(objectif: ObjectifProjetStructurantPrisma | null): ObjectifProjetStructurant {
     if (objectif === null) return null;
     return {
@@ -30,7 +25,7 @@ export default class ObjectifProjetStructurantSQLRepository implements ObjectifP
   }
 
   async récupérerLePlusRécent(projetStructurantId: ProjetStructurant['id']): Promise<ObjectifProjetStructurant> {
-    const objectifLePlusRécent = await this.prisma.objectif_projet_structurant.findFirst({
+    const objectifLePlusRécent = await prisma.objectif_projet_structurant.findFirst({
       where: {
         projet_structurant_id: projetStructurantId,
       },
@@ -41,7 +36,7 @@ export default class ObjectifProjetStructurantSQLRepository implements ObjectifP
   }
 
   async créer(projetStructurantId: string, id: string, contenu: string, auteur: string, type: TypeObjectifProjetStructurant, date: Date): Promise<ObjectifProjetStructurant> {
-    const objectifCréé =  await this.prisma.objectif_projet_structurant.create({
+    const objectifCréé =  await prisma.objectif_projet_structurant.create({
       data: {
         id: id,
         projet_structurant_id: projetStructurantId,
@@ -55,7 +50,7 @@ export default class ObjectifProjetStructurantSQLRepository implements ObjectifP
   }
 
   async récupérerHistorique(projetStructurantId: string, type: TypeObjectifProjetStructurant): Promise<ObjectifProjetStructurant[]> {
-    const objectifs: ObjectifProjetStructurantPrisma[] = await this.prisma.objectif_projet_structurant.findMany({
+    const objectifs: ObjectifProjetStructurantPrisma[] = await prisma.objectif_projet_structurant.findMany({
       where: {
         projet_structurant_id: projetStructurantId,
         type: CODES_TYPES_OBJECTIFS[type],

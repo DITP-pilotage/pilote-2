@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import {
   PrismaCommentaireRepository,
 } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaCommentaireRepository';
@@ -8,7 +8,7 @@ describe('PrismaCommentaireRepository', () => {
   let prismaCommentaireRepository: PrismaCommentaireRepository;
 
   beforeEach(() => {
-    prismaCommentaireRepository = new PrismaCommentaireRepository(prisma);
+    prismaCommentaireRepository = new PrismaCommentaireRepository();
   });
 
   describe('#listerObjectifParChantierId', () => {

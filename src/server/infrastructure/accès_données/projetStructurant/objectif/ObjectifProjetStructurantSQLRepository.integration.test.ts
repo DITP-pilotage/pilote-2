@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { Prisma } from '@prisma/client';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import { TypeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
 import ObjectifProjetStructurantRepository from '@/server/domain/projetStructurant/objectif/ObjectifRepository.interface';
 import ObjectifProjetStructurantSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifProjetStructurantSQLRow.builder';
@@ -8,7 +8,7 @@ import ObjectifProjetStructurantSQLRepository from './ObjectifProjetStructurantS
 
 describe('ObjectifSQLRepository', function () {
   const projetStructurantId = faker.datatype.uuid();
-  const objectifRepository: ObjectifProjetStructurantRepository = new ObjectifProjetStructurantSQLRepository(prisma);
+  const objectifRepository: ObjectifProjetStructurantRepository = new ObjectifProjetStructurantSQLRepository();
 
   describe('récupérerLePlusRécent', () => {
     test('retourne l\'objectif avec un contenu, un auteur et une date le plus récent', async () => {

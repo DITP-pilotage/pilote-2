@@ -1,11 +1,9 @@
-import { PrismaClient } from '@prisma/client';
 import { UtilisateurRepository } from '@/server/authentification/domain/ports/UtilisateurRepository';
+import { prisma } from '@/server/db/prisma';
 
 export class PrismaUtilisateurRepository implements UtilisateurRepository {
-  constructor(private prismaClient: PrismaClient) {}
-
   async estPresent({ email }: { email: string }): Promise<boolean> {
-    const utilisateur = await this.prismaClient.utilisateur.findUnique({ where: { email } });
+    const utilisateur = await prisma.utilisateur.findUnique({ where: { email } });
     return !!utilisateur;
   }
 }

@@ -1,6 +1,7 @@
-import { perimetre as PérimètreMinistérielPrisma, PrismaClient } from '@prisma/client';
+import { perimetre as PérimètreMinistérielPrisma } from '@prisma/client';
 import PérimètreMinistérielRepository from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import { prisma } from '@/server/db/prisma';
 
 class ErreurPérimètreNonTrouvé extends Error {
   constructor() {
@@ -15,12 +16,6 @@ class ErreurPérimètreSansMinistère extends Error {
 }
 
 export default class PérimètreMinistérielSQLRepository implements PérimètreMinistérielRepository {
-  private prisma: PrismaClient;
-
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
-  }
-
   private _mapperVersDomaine(périmètre: PérimètreMinistérielPrisma): PérimètreMinistériel {
     if (!périmètre.ministere_id || !périmètre.ministere) throw new ErreurPérimètreSansMinistère();
     return {
@@ -32,7 +27,7 @@ export default class PérimètreMinistérielSQLRepository implements Périmètre
   }
 
   async récupérer(id: string): Promise<PérimètreMinistériel> {
-    const périmètre = await this.prisma.perimetre.findUnique({
+    const périmètre = await prisma.perimetre.findUnique({
       where: { id: id },
     });
 
@@ -42,13 +37,13 @@ export default class PérimètreMinistérielSQLRepository implements Périmètre
   }
 
   async récupérerTous(): Promise<PérimètreMinistériel[]> {
-    const périmètres = await this.prisma.perimetre.findMany();
+    const périmètres = await prisma.perimetre.findMany();
 
     return périmètres.map(périmètre => this._mapperVersDomaine(périmètre));
   }
 
   async récupérerListe(ids: string[]): Promise<PérimètreMinistériel[]> {
-    const périmètres = await this.prisma.perimetre.findMany({
+    const périmètres = await prisma.perimetre.findMany({
       where: { id: { in: ids } },
     });
 

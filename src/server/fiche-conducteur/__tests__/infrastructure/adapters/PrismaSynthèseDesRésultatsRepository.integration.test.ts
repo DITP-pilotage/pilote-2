@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import {
   PrismaSynthèseDesRésultatsRepository,
 } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaSynthèseDesRésultatsRepository';
@@ -9,7 +9,7 @@ describe('PrismaSynthèseDesRésultatsRepository', () => {
 
   describe('#recupererLaPlusRecenteMailleNatParChantierId', () => {
     beforeEach(() => {
-      prismaSynthèseDesRésultatsRepository = new PrismaSynthèseDesRésultatsRepository(prisma);
+      prismaSynthèseDesRésultatsRepository = new PrismaSynthèseDesRésultatsRepository();
     });
 
     it('doit récupérer la synthèse la plus récente pour un chantier de maille nationale', async () => {

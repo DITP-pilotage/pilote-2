@@ -1,6 +1,7 @@
-import { gestion_contenu as GestionContenuModel, PrismaClient } from '@prisma/client';
+import { gestion_contenu as GestionContenuModel } from '@prisma/client';
 import { GestionContenuRepository } from '@/server/gestion-contenu/domain/ports/GestionContenuRepository';
 import { VARIABLE_CONTENU_DISPONIBLE } from '@/server/gestion-contenu/domain/VariableContenuDisponible';
+import { prisma } from '@/server/db/prisma';
 
 const convertirEnModel = ({ nomVariableContenu, valeurVariableContenu }: {
   nomVariableContenu: string,
@@ -22,11 +23,9 @@ const convertirEnVariableContenu = (listeGestionContenuModel: GestionContenuMode
 };
 
 export class PrismaGestionContenuRepository implements GestionContenuRepository {
-  constructor(private prismaClient: PrismaClient) {}
-  
   async mettreAJourContenu<K extends keyof VARIABLE_CONTENU_DISPONIBLE>(nomVariableContenu: K, valeurVariableContenu: VARIABLE_CONTENU_DISPONIBLE[K]): Promise<void> {
     const gestionContenuModel = convertirEnModel({ nomVariableContenu, valeurVariableContenu });
-    await this.prismaClient.gestion_contenu.upsert({
+    await prisma.gestion_contenu.upsert({
       where: {
         nom_variable_contenu: gestionContenuModel.nom_variable_contenu,
       },
@@ -36,7 +35,7 @@ export class PrismaGestionContenuRepository implements GestionContenuRepository 
   }
 
   async recupererMapVariableContenuParListeDeNom(listeNomVariableContenu: (keyof VARIABLE_CONTENU_DISPONIBLE)[]): Promise<Partial<VARIABLE_CONTENU_DISPONIBLE>> {
-    const result = await this.prismaClient.gestion_contenu.findMany({
+    const result = await prisma.gestion_contenu.findMany({
       where: {
         nom_variable_contenu: {
           in: listeNomVariableContenu,

@@ -1,7 +1,7 @@
 import {
   indicateur_identite as PrismaIndicateurIdentite,
   indicateur_territoire as PrismaIndicateurTerritoire,
-  indicateur_territoire_jalon as PrismaIndicateurTerritoireJalon, PrismaClient,
+  indicateur_territoire_jalon as PrismaIndicateurTerritoireJalon,
 } from '@prisma/client';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
@@ -24,6 +24,7 @@ import {
 import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { comparerDates } from '@/client/utils/date/date';
 import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
+import { prisma } from '@/server/db/prisma';
 
 export interface historique_valeurs {
   date: string
@@ -41,8 +42,6 @@ function formatDate(date: Date | null): string | null {
 }
 
 export default class IndicateurSQLRepository implements IndicateurRepository {
-  constructor(private prismaClient: PrismaClient) {}
-
   private _mapToDomain(prismaIndicateurIdentite: PrismaIndicateurIdentite): Indicateur {
     return ({
       id: prismaIndicateurIdentite.id,
@@ -116,7 +115,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
   }
   
   async récupérerChantierIdAssocié(id: string): Promise<string> {
-    const indicateur = await this.prismaClient.indicateur_identite.findFirst({
+    const indicateur = await prisma.indicateur_identite.findFirst({
       where: {
         id,
       },
@@ -130,7 +129,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
-    const listeIndicateursModel = await this.prismaClient.indicateur_territoire.findMany({
+    const listeIndicateursModel = await prisma.indicateur_territoire.findMany({
       where: {
         id: indicateurId,
         indicateur_identite: {
@@ -152,7 +151,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       throw new ErreurIndicateurNonTrouvé(indicateurId);
     }
 
-    const territoires = await this.prismaClient.territoire.findMany({
+    const territoires = await prisma.territoire.findMany({
       select: {
         code: true,
         code_insee: true,
@@ -167,7 +166,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
-    const indicateur = await this.prismaClient.indicateur_territoire.findMany({
+    const indicateur = await prisma.indicateur_territoire.findMany({
       where: {
         id,
         indicateur_identite: {
@@ -189,13 +188,13 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       throw new ErreurIndicateurNonTrouvé(id);
     }
 
-    const territoires = await this.prismaClient.territoire.findMany();
+    const territoires = await prisma.territoire.findMany();
 
     return parseDétailsIndicateur(indicateur, territoires);
   }
 
   async récupérerGroupésParChantier(chantiersIds: Chantier['id'][]): Promise<Record<string, Indicateur[]>> {
-    const listePrismaIndicateurIdentite = await this.prismaClient.indicateur_identite.findMany({
+    const listePrismaIndicateurIdentite = await prisma.indicateur_identite.findMany({
       where: {
         chantier_id: { in: chantiersIds },
         NOT: {
@@ -212,7 +211,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
   }
 
   async récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee, jalon: number): Promise<Record<Chantier['id'], DétailsIndicateurs>> {
-    const indicateurs = await this.prismaClient.indicateur_territoire.findMany({
+    const indicateurs = await prisma.indicateur_territoire.findMany({
       where: {
         maille: CODES_MAILLES[maille],
         code_insee: codeInsee,
@@ -244,7 +243,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
   }
 
   async récupérerParChantierId(chantierId: string): Promise<Indicateur[]> {
-    const listePrismaIndicateurIdentite = await this.prismaClient.indicateur_identite.findMany({
+    const listePrismaIndicateurIdentite = await prisma.indicateur_identite.findMany({
       where: {
         chantier_id: chantierId,
         NOT: {
@@ -257,7 +256,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
   }
 
   async récupérerDétailsParIndicIdEtMaille(indicateurId: string, maille: Maille, jalon: number): Promise<DétailsIndicateurs> {
-    const indicateurs = await this.prismaClient.indicateur_territoire.findMany({
+    const indicateurs = await prisma.indicateur_territoire.findMany({
       where: {
         id: indicateurId,
         maille: CODES_MAILLES[maille],
@@ -281,7 +280,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
   }
 
   async récupererDétailsParChantierIdEtTerritoire(chantierId: string, territoireCodes: string[], jalon: number): Promise<DétailsIndicateurs> {
-    const indicateurs = await this.prismaClient.indicateur_territoire.findMany({
+    const indicateurs = await prisma.indicateur_territoire.findMany({
       where: {
         territoire_code: { in: territoireCodes },
         indicateur_identite: {
@@ -304,7 +303,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
   }
 
   async recupererListeIndicateursPrisEnCompteDansCalculAvancementSurAuMoinsUnTerritoire(chantiersIds: Chantier['id'][]): Promise<Indicateur['id'][]> {
-    const listeIndicateurs = await this.prismaClient.indicateur_territoire.findMany({
+    const listeIndicateurs = await prisma.indicateur_territoire.findMany({
       where: {
         chantier_id: {
           in: chantiersIds,

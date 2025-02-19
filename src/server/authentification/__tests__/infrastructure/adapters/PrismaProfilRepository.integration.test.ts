@@ -1,5 +1,4 @@
 import { ProfilAPI } from '@/server/authentification/domain/ProfilAPI';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { PrismaProfilRepository } from '@/server/authentification/infrastructure/adapters/PrismaProfilRepository';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
@@ -7,7 +6,7 @@ describe('PrismaProfilRepository', () => {
   let prismaProfilRepository: PrismaProfilRepository;
 
   beforeEach(() => {
-    prismaProfilRepository = new PrismaProfilRepository(prisma);
+    prismaProfilRepository = new PrismaProfilRepository();
   });
 
   describe('#estAutoriseAAccederAuxChantiersBrouillons', () => {

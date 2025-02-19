@@ -1,4 +1,4 @@
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import {
   PrismaIndicateurRepository,
 } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaIndicateurRepository';
@@ -7,7 +7,7 @@ describe('PrismaIndicateurRepository', () => {
   let prismaIndicateurRepository: PrismaIndicateurRepository;
 
   beforeEach(() => {
-    prismaIndicateurRepository = new PrismaIndicateurRepository(prisma);
+    prismaIndicateurRepository = new PrismaIndicateurRepository();
   });
   describe('#récupérerIndicImpactParChantierId', () => {
     it('doit récupérer les indicateurs d\'impact avec une pondération national supérieur à 0 du chantier associé', async () => {

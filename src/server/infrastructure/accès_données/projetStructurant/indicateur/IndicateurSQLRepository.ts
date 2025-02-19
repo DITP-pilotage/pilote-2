@@ -1,16 +1,11 @@
-import { indicateur_projet_structurant as IndicateurProjetStructurantPrisma, PrismaClient } from '@prisma/client';
+import { indicateur_projet_structurant as IndicateurProjetStructurantPrisma } from '@prisma/client';
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import IndicateurProjetStructurantRepository
   from '@/server/domain/indicateur/IndicateurProjetStructurantRepository.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { prisma } from '@/server/db/prisma';
 
 export default class IndicateurProjetStructurantSQLRepository implements IndicateurProjetStructurantRepository {
-  private prisma: PrismaClient;
-
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
-  }
-  
   private _mapperVersDomaine(indicateur: IndicateurProjetStructurantPrisma): Indicateur {
     return {
       id: indicateur.id,
@@ -73,7 +68,7 @@ export default class IndicateurProjetStructurantSQLRepository implements Indicat
   }
   
   async récupérerParProjetStructurant(projetStructurantId: string, projetStructurantCodeInsee: string): Promise<{ indicateurs: Indicateur[], détails: DétailsIndicateurs }> {
-    const indicateurs: IndicateurProjetStructurantPrisma[] = await this.prisma.indicateur_projet_structurant.findMany({
+    const indicateurs: IndicateurProjetStructurantPrisma[] = await prisma.indicateur_projet_structurant.findMany({
       where: {
         projet_structurant_id: projetStructurantId,
         NOT: {

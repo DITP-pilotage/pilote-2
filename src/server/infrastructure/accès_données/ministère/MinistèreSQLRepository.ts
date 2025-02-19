@@ -1,15 +1,14 @@
-import { ministere, perimetre, Prisma, PrismaClient } from '@prisma/client';
+import { ministere, perimetre, Prisma } from '@prisma/client';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
+import { prisma } from '@/server/db/prisma';
 
 type MinistèreQueryResult = { nom: string, id: string, acronyme: string, icone: string, perimetre_ids: string[], perimetre_noms: string[] };
 
 export default class MinistèreSQLRepository implements MinistèreRepository {
-  constructor(private prismaClient: PrismaClient) {}
-
   async getListe(): Promise<Ministère[]> {
-    const queryResults: MinistèreQueryResult[] = await this.prismaClient.$queryRaw`
+    const queryResults: MinistèreQueryResult[] = await prisma.$queryRaw`
         select p.ministere_id as id,
                m.nom,
                m.acronyme,
@@ -46,7 +45,7 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
   }
 
   async getListePourChantiers(chantierIds: string[]): Promise<Ministère[]> {
-    const queryResults: MinistèreQueryResult[] = await this.prismaClient.$queryRaw`
+    const queryResults: MinistèreQueryResult[] = await prisma.$queryRaw`
         WITH perimetres_visibles AS (
             select DISTINCT unnest(c.perimetre_ids) as perimetre_id from chantier_identite c where c.id IN (${Prisma.join(chantierIds)})
         )
@@ -66,7 +65,7 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
   }
 
   async récupérerToutesLesIconesAssociéesÀLeurPérimètre(): Promise<{ perimetre_id: perimetre['id'], icone: ministere['icone'] }[]> {
-    return this.prismaClient.$queryRaw`
+    return prisma.$queryRaw`
       SELECT p.id AS perimetre_id, m.icone
       FROM perimetre p
       LEFT JOIN ministere m ON p.ministere_id = m.id
@@ -75,7 +74,7 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
   }
 
   async récupérerLesNomsAssociésÀLeurPérimètre(périmètresIds: perimetre['id'][]): Promise<{ perimetre_id: perimetre['id'], nom: ministere['nom'] }[]> {
-    return this.prismaClient.$queryRaw`
+    return prisma.$queryRaw`
       SELECT p.id AS perimetre_id, m.nom
       FROM perimetre p
       LEFT JOIN ministere m ON p.ministere_id = m.id
