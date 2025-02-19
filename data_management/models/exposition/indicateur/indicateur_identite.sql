@@ -1,10 +1,8 @@
 -- depends_on: {{ ref('chantier_identite') }}
 
 {{ config(
-        materialized = 'incremental', 
-        unique_key = ['id'],
-        incremental_strategy='merge'
-    )
+    materialized = 'incremental', 
+    unique_key = ['id'])
 }}
 
 SELECT 
