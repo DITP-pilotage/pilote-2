@@ -24,6 +24,11 @@ const ressources = {
     baseDuNomDeFichier: 'PILOTE-Indicateurs',
     url: '/api/export/indicateurs-v2',
   },
+  'historique-indicateurs': {
+    id: 'historique-indicateurs' as const,
+    baseDuNomDeFichier: 'PILOTE-Historique-Indicateurs',
+    url: '/api/export/historique-indicateurs',
+  },
 };
 
 const chantierDonneesExportable = {
@@ -51,6 +56,12 @@ const indicateurDonneesExportable = {
   'decision': 'suivi des décisions stratégiques de la PPG associée',
 };
 
+const historiqueIndicateurDonneesExportable = {
+  'identifiant': 'identifiants de l\'indicateur et du territoire',
+  'valeur-cible': 'valeur initiale et valeurs cibles de l\'indicateur sur le territoire les valeurs cibles sont exportées pour l\'année en cours et pour l\'année 2026',
+  'valeur-actuelle': 'valeurs actuelles de l\'indicateur sur le territoire, mois par mois',
+};
+
 export const EtapeRecapitulatif = () => {
   const [, setEtapeCourante] = useQueryState('etapeCourante', parseAsInteger.withOptions({
     shallow: true,
@@ -68,7 +79,7 @@ export const EtapeRecapitulatif = () => {
     jalon: parseAsStringLiteral(['2024', '2025']).withDefault(getAnneeDateDeBascule(new Date(), dataBasculeValeurAnneePrecedente as string).toString() as '2024' | '2025'),
     optionsExport: parseAsString.withDefault('identifiant'),
     isAvecFiltre: parseAsBoolean.withDefault(false),
-    typeExport: parseAsStringLiteral(['ppg', 'indicateurs']).withDefault('ppg'),
+    typeExport: parseAsStringLiteral(['ppg', 'indicateurs', 'historique-indicateurs']).withDefault('ppg'),
   });
 
   const arrayOptionsExport: {
@@ -97,6 +108,8 @@ export const EtapeRecapitulatif = () => {
 
   arrayOptionsExport.push({ name: 'jalon', value: filtres.jalon });
 
+  const arrayDonneeAExporter = filtres.typeExport === 'ppg' ? chantierDonneesExportable : filtres.typeExport === 'indicateurs' ? indicateurDonneesExportable : historiqueIndicateurDonneesExportable;
+
   return (
     <div>
       <p className='fr-mt-2w fr-mb-2w'>
@@ -110,15 +123,21 @@ export const EtapeRecapitulatif = () => {
           aria-hidden='true'
           className='fr-icon-check-line texte-success fr-mr-1w'
         />
-        {filtres.typeExport === 'ppg' ? (
-          <span>
-            PPG
-          </span>
-        ) : (
-          <span>
-            Indicateurs
-          </span>
-        )}
+        {
+          filtres.typeExport === 'ppg' ? (
+            <span>
+              PPG
+            </span>
+          ) : filtres.typeExport === 'indicateurs' ? (
+            <span>
+              Indicateurs
+            </span>
+          ) : (
+            <span>
+              Historique indicateurs
+            </span>
+          )
+        }
       </p>
       <h3 className='fr-text--md fr-mb-0 fr-mt-2w'>
         Périmètre de l'export
@@ -145,7 +164,7 @@ export const EtapeRecapitulatif = () => {
       </h3>
       <ul className='list-style-none fr-pl-0'>
         {
-          Object.entries(filtres.typeExport === 'ppg' ? chantierDonneesExportable : indicateurDonneesExportable).filter(([key]) => filtres.optionsExport.includes(key)).map(([key, value]) => {
+          Object.entries(arrayDonneeAExporter).filter(([key]) => filtres.optionsExport.includes(key)).map(([key, value]) => {
             return (
               <li key={key}>
                 <span

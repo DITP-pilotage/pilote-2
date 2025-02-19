@@ -59,11 +59,13 @@ export const EtapeDonneeIndicateurACollecter = () => {
             className='fr-label'
             htmlFor='identifiant'
           >
-            <span className='fr-text--bold fr-pr-1v'>
-              identifiants
+            <span>
+              <span className='fr-text--bold fr-pr-1v'>
+                identifiants
+              </span>
+              {' '}
+              de l'indicateur, de la PPG associée et du territoire
             </span>
-            {' '}
-            de l'indicateur, de la PPG associée et du territoire
           </label>
         </div>
         {/*
@@ -84,26 +86,29 @@ export const EtapeDonneeIndicateurACollecter = () => {
             className='fr-label'
             htmlFor='cadrage'
           >
-            <span className='fr-text--bold fr-pr-1v'>
-              cadrage
+            <span>
+              <span className='fr-text--bold fr-pr-1v'>
+                cadrage
+              </span>
+              {' '}
+               de l'indicateur : description, méthode de calcul, source, périodes de mise à jour et de disponibilité
             </span>
-            {' '}
-             de l'indicateur : description, méthode de calcul, source, périodes de mise à jour et de disponibilité
           </label>
           ) : (
           <label
             className='fr-label'
             htmlFor='cadrage'
           >
-            <span className='fr-text--bold fr-pr-1v'>
-              cadrage
+            <span>
+              <span className='fr-text--bold fr-pr-1v'>
+                cadrage
+              </span>
+              {' '}
+               de l'indicateur
             </span>
-            {' '}
-             de l'indicateur
           </label>
           )
           }
-
         </div>
         */}
         <div className='fr-checkbox-group fr-mt-1w'>
@@ -122,10 +127,12 @@ export const EtapeDonneeIndicateurACollecter = () => {
                   className='fr-label'
                   htmlFor='gouvernance'
                 >
-                  <span className='fr-text--bold fr-pr-1v'>
-                    gouvernance
+                  <span>
+                    <span className='fr-text--bold fr-pr-1v'>
+                      gouvernance
+                    </span>
+                    {' '}
                   </span>
-                  {' '}
                 </label>
                 <ul className='fr-ml-4w fr-my-0 fr-text--sm'>
                   <li className='fr-pb-0'>
@@ -142,12 +149,13 @@ export const EtapeDonneeIndicateurACollecter = () => {
                 className='fr-label'
                 htmlFor='gouvernance'
               >
-                <span className='fr-text--bold fr-pr-1v'>
-
-                  gouvernance
+                <span>
+                  <span className='fr-text--bold fr-pr-1v'>
+                    gouvernance
+                  </span>
+                  {' '}
+                  de l'indicateur et de la PPG associée
                 </span>
-                {' '}
-                de l'indicateur et de la PPG associée
               </label>
             )
           }
@@ -163,29 +171,32 @@ export const EtapeDonneeIndicateurACollecter = () => {
             onChange={() => onChangeOptionsExport('responsabilite')}
             type='checkbox'
           />
-
           {
             afficherDetail ? (
             <label
               className='fr-label'
               htmlFor='responsabilite'
             >
-              <span className='fr-text--bold fr-pr-1v'>
-                responsabilités
+              <span>
+                <span className='fr-text--bold fr-pr-1v'>
+                  responsabilités
+                </span>
+                {' '}
+                 de l’indicateur et de la PPG associée : directeurs, responsables et coordinateurs
               </span>
-              {' '}
-               de l’indicateur et de la PPG associée : directeurs, responsables et coordinateurs
             </label>
             ) : (
             <label
               className='fr-label'
               htmlFor='responsabilite'
             >
-              <span className='fr-text--bold fr-pr-1v'>
-                responsabilités
+              <span>
+                <span className='fr-text--bold fr-pr-1v'>
+                  responsabilités
+                </span>
+                {' '}
+                 de l'indicateur et de la PPG associée
               </span>
-              {' '}
-               de l'indicateur et de la PPG associée
             </label>
             )
           }
@@ -210,22 +221,26 @@ export const EtapeDonneeIndicateurACollecter = () => {
                 className='fr-label'
                 htmlFor='objectif'
               >
-                <span className='fr-text--bold fr-pr-1v'>
-                  objectifs
+                <span>
+                  <span className='fr-text--bold fr-pr-1v'>
+                    objectifs
+                  </span>
+                  {' '}
+                   de la PPG associée
                 </span>
-                {' '}
-                 de la PPG associée
               </label>
             ) : (
               <label
                 className='fr-label'
                 htmlFor='objectif'
               >
-                <span className='fr-text--bold fr-pr-1v'>
-                  objectifs
+                <span>
+                  <span className='fr-text--bold fr-pr-1v'>
+                    objectifs
+                  </span>
+                  {' '}
+                   de la PPG associée : notre ambition, ce qui a déjà été fait, ce qui reste à faire
                 </span>
-                {' '}
-                 de la PPG associée : notre ambition, ce qui a déjà été fait, ce qui reste à faire
               </label>
             )
           }
@@ -258,11 +273,13 @@ export const EtapeDonneeIndicateurACollecter = () => {
                   className='fr-label'
                   htmlFor='description'
                 >
-                  <span className='fr-text--bold fr-pr-1v'>
-                    données descriptives
+                  <span>
+                    <span className='fr-text--bold fr-pr-1v'>
+                      données descriptives
+                    </span>
+                    {' '}
+                    sur le territoire
                   </span>
-                  {' '}
-                  sur le territoire
                 </label>
                 <ul className='fr-ml-4w fr-my-0 fr-text--sm'>
                   <li className='fr-pb-0'>
@@ -278,11 +295,13 @@ export const EtapeDonneeIndicateurACollecter = () => {
                 className='fr-label'
                 htmlFor='description'
               >
-                <span className='fr-text--bold fr-pr-1v'>
-                  données descriptives
+                <span>
+                  <span className='fr-text--bold fr-pr-1v'>
+                    données descriptives
+                  </span>
+                  {' '}
+                  de l'indicateur et de la PPG associée sur le territoire
                 </span>
-                {' '}
-                de l'indicateur et de la PPG associée sur le territoire
               </label>
             )
           }
@@ -305,11 +324,13 @@ export const EtapeDonneeIndicateurACollecter = () => {
                   className='fr-label'
                   htmlFor='comparaison'
                 >
-                  <span className='fr-text--bold fr-pr-1v'>
-                    données de comparaison
+                  <span>
+                    <span className='fr-text--bold fr-pr-1v'>
+                      données de comparaison
+                    </span>
+                    {' '}
+                    de l'indicateur
                   </span>
-                  {' '}
-                  de l'indicateur
                 </label>
                 <ul className='fr-ml-4w fr-my-0 fr-text--sm'>
                   <li className='fr-pb-0'>
@@ -325,11 +346,13 @@ export const EtapeDonneeIndicateurACollecter = () => {
                 className='fr-label'
                 htmlFor='comparaison'
               >
-                <span className='fr-text--bold fr-pr-1v'>
-                  données de comparaison
+                <span>
+                  <span className='fr-text--bold fr-pr-1v'>
+                    données de comparaison
+                  </span>
+                  {' '}
+                  de l'indicateur
                 </span>
-                {' '}
-                de l'indicateur
               </label>
             )
           }
@@ -353,11 +376,13 @@ export const EtapeDonneeIndicateurACollecter = () => {
             className='fr-label'
             htmlFor='synthese'
           >
-            <span className='fr-text--bold fr-pr-1v'>
-              météo et synthèse des résultats
+            <span>
+              <span className='fr-text--bold fr-pr-1v'>
+                météo et synthèse des résultats
+              </span>
+              {' '}
+              de la PPG associée sur le territoire
             </span>
-            {' '}
-            de la PPG associée sur le territoire
           </label>
         </div>
         {/*
@@ -378,11 +403,13 @@ export const EtapeDonneeIndicateurACollecter = () => {
                   className='fr-label'
                   htmlFor='commentaire'
                 >
-                  <span className='fr-text--bold fr-pr-1v'>
-                    commentaires
+                  <span>
+                    <span className='fr-text--bold fr-pr-1v'>
+                      commentaires
+                    </span>
+                    {' '}
+                    de la PPG associée
                   </span>
-                  {' '}
-                  de la PPG associée
                 </label>
                 <ul className='fr-ml-4w fr-my-0 fr-text--sm'>
                   <li className='fr-pb-0'>
@@ -398,11 +425,13 @@ export const EtapeDonneeIndicateurACollecter = () => {
                 className='fr-label'
                 htmlFor='commentaire'
               >
-                <span className='fr-text--bold fr-pr-1v'>
-                  commentaires
+                <span>
+                  <span className='fr-text--bold fr-pr-1v'>
+                    commentaires
+                  </span>
+                  {' '}
+                  de la PPG associée
                 </span>
-                {' '}
-                de la PPG associée
               </label>
             )
           }
@@ -423,12 +452,15 @@ export const EtapeDonneeIndicateurACollecter = () => {
             className='fr-label'
             htmlFor='decision'
           >
-           suivi des
-            <b className='fr-px-1v'>
-              décisions stratégiques
+            <span>
+              suivi des
+              {' '}
+               <span className='fr-text--bold fr-pr-1v'>
+                décisions stratégiques
+              </span>
+              {' '}
+               de la PPG associée
             </span>
-            {' '}
-             de la PPG associée
           </label>
         </div>
       */}

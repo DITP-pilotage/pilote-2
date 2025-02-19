@@ -3,7 +3,7 @@ import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryState } fr
 import { MiseEnAvant } from '@/components/_commons/MiseEnAvant/MiseEnAvant';
 
 export const EtapeContenuAExporter = () => {
-  const [typeExport, setTypeExport] = useQueryState('typeExport', parseAsStringLiteral(['ppg', 'indicateurs']).withDefault('ppg').withOptions({
+  const [typeExport, setTypeExport] = useQueryState('typeExport', parseAsStringLiteral(['ppg', 'indicateurs', 'historique-indicateurs']).withDefault('ppg').withOptions({
     shallow: true,
   }));
   const [, setOptionsExport] = useQueryState('optionsExport', parseAsString.withDefault('identifiant').withOptions({
@@ -15,8 +15,13 @@ export const EtapeContenuAExporter = () => {
     history: 'push',
   }));
 
-  const modifierTypeExport = (typeExportADefinir: 'ppg' | 'indicateurs') => {
-    setOptionsExport('identifiant');
+  const modifierTypeExport = (typeExportADefinir: 'ppg' | 'indicateurs' | 'historique-indicateurs') => {
+    if (typeExportADefinir === 'ppg' || typeExportADefinir === 'indicateurs') {
+      setOptionsExport('identifiant');
+    }
+    if (typeExportADefinir === 'historique-indicateurs') {
+      setOptionsExport('identifiant,valeur-cible,valeur-actuelle');
+    }
     setTypeExport(typeExportADefinir);
   };
 
@@ -84,6 +89,31 @@ export const EtapeContenuAExporter = () => {
           >
             Les indicateurs des PPG
           </label>
+        </div>
+      </div>
+      <div
+        className='fr-fieldset__element'
+        key='historique-indicateurs'
+      >
+        <div className='fr-radio-group'>
+          <input
+            checked={typeExport === 'historique-indicateurs'}
+            id='historique-indicateurs'
+            name='ressource-à-exporter'
+            onChange={() => modifierTypeExport('historique-indicateurs')}
+            type='radio'
+          />
+          <label
+            className='fr-label'
+            htmlFor='historique-indicateurs'
+          >
+            L'historique des indicateurs
+          </label>
+          <span
+            className='fr-label fr-text--xs texte-gris fr-mb-0'
+          >
+            cet historique recense les valeurs actuelles prises successivement par les indicateurs des PPG, territoire par territoire
+          </span>
         </div>
       </div>
       <div className='w-full flex justify-end fr-mt-2w'>
