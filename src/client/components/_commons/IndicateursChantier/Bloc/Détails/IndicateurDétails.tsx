@@ -1,5 +1,4 @@
 import { FunctionComponent, useState } from 'react';
-import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
 import { parseAsString, useQueryState } from 'nuqs';
 import IndicateurÉvolution from '@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurÉvolution';
 import IndicateurSpécifications

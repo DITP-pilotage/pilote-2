@@ -1,5 +1,4 @@
 import { FunctionComponent } from 'react';
-import Titre from '@/components/_commons/Titre/Titre';
 import IndicateurBloc from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc';
 import IndicateursChantierStyled from '@/components/_commons/IndicateursChantier/IndicateursChantier.styled';
 import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
@@ -11,9 +10,8 @@ import {
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import Infobulle from '@/client/components/_commons/Infobulle/Infobulle';
-import TitreInfobulleConteneur from '@/client/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import { CartographieIndicateurType } from './Bloc/Détails/IndicateurDétails';
+import TitreRubrique from './Bloc/Détails/TitreRubrique/TitreRubrique';
 
 interface IndicateursProps {
   indicateurs: Indicateur[];
@@ -58,7 +56,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   if (indicateurs.length === 0) {
     return null;
   }
-  
+
   return (
     <IndicateursChantierStyled>
       {
@@ -82,54 +80,53 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                 id={rubriqueIndicateur.ancre}
                 key={rubriqueIndicateur.ancre}
               >
-                <TitreInfobulleConteneur className=''>
-                  <Titre
-                    baliseHtml='h3'
-                    className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
-                  >
-                    {`${rubriqueIndicateur.nom} (${indicateursDeCetteRubrique.length})`}
-                  </Titre>
+                <button 
+                  aria-controls={`accordion-rubrique-${rubriqueIndicateur.categorieIndicateur}`}
+                  aria-expanded={rubriqueIndicateur.estAccordeonOuvert}
+                  className='fr-accordion__btn fr-accordion_custom fr-py-0 fr-px-3v fr-icon-black'
+                  type='button'
+                >
+                  <TitreRubrique 
+                    nombreIndicateurRubrique={indicateursDeCetteRubrique.length}
+                    rubriqueDescription={rubriqueIndicateur.description}
+                    rubriqueNom={rubriqueIndicateur.nom}
+                  />
+                </button>       
+                <div
+                  className='fr-collapse'
+                  id={`accordion-rubrique-${rubriqueIndicateur.categorieIndicateur}`}
+                >
                   {
-                    rubriqueIndicateur.description ? (
-                      <Infobulle 
-                        className='fr-pb-2w' 
-                        idHtml=''
-                      >
-                        {rubriqueIndicateur.description}
-                      </Infobulle>
-                    ) : null
-                  }
-                </TitreInfobulleConteneur>
-                {
-                  indicateursDeCetteRubrique
-                    .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireCode]?.pondération, détailsIndicateurs[b.id][territoireCode]?.pondération))
-                    .map(indicateur => {
-                      const listeSousIndicateurs = !!sousIndicateursDisponibles ?
-                        indicateurs.filter(ind => ind.parentId === indicateur.id) :
-                        [];
-                      return (
-                        <IndicateurBloc
-                          cartographieDroiteIndicateur={cartographieDroiteIndicateur}
-                          cartographieGaucheIndicateur={cartographieGaucheIndicateur}
-                          chantierEstTerritorialisé={chantierEstTerritorialisé}
-                          detailsIndicateursTerritoire={detailsIndicateursTerritoire}
-                          détailsIndicateurs={détailsIndicateurs}
-                          estAutoriseAProposerUneValeurActuelle={estAutoriseAProposerUneValeurActuelle}
-                          estInteractif={estInteractif}
-                          indicateur={indicateur}
-                          jalon={jalon}
-                          key={indicateur.id}
-                          listeSousIndicateurs={listeSousIndicateurs}
-                          mailleQuery={mailleQuery}
-                          mailleSelectionnee={mailleSelectionnee}
-                          mailsDirecteursProjets={mailsDirecteursProjets}
-                          territoireCode={territoireCode}
-                          territoiresCompares={territoiresCompares}
-                        />
-                      );
+                    indicateursDeCetteRubrique
+                      .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireCode]?.pondération, détailsIndicateurs[b.id][territoireCode]?.pondération))
+                      .map(indicateur => {
+                        const listeSousIndicateurs = !!sousIndicateursDisponibles ?
+                          indicateurs.filter(ind => ind.parentId === indicateur.id) :
+                          [];
+                        return (
+                          <IndicateurBloc
+                            cartographieDroiteIndicateur={cartographieDroiteIndicateur}
+                            cartographieGaucheIndicateur={cartographieGaucheIndicateur}
+                            chantierEstTerritorialisé={chantierEstTerritorialisé}
+                            detailsIndicateursTerritoire={detailsIndicateursTerritoire}
+                            détailsIndicateurs={détailsIndicateurs}
+                            estAutoriseAProposerUneValeurActuelle={estAutoriseAProposerUneValeurActuelle}
+                            estInteractif={estInteractif}
+                            indicateur={indicateur}
+                            jalon={jalon}
+                            key={indicateur.id}
+                            listeSousIndicateurs={listeSousIndicateurs}
+                            mailleQuery={mailleQuery}
+                            mailleSelectionnee={mailleSelectionnee}
+                            mailsDirecteursProjets={mailsDirecteursProjets}
+                            territoireCode={territoireCode}
+                            territoiresCompares={territoiresCompares}
+                          />
+                        );
 
-                    })
-                }
+                      })
+                  }
+                </div>
               </section>
             );
           }

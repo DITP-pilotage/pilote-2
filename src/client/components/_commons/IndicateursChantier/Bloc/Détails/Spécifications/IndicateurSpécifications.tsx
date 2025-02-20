@@ -1,8 +1,9 @@
 import { FunctionComponent } from 'react';
 import Link from 'next/dist/client/link';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import IcôneEmail from '@/components/_commons/IcôneEmail/IcôneEmail';
 import api from '@/server/infrastructure/api/trpc/api';
+import { libellesTypologieIndicateur } from '@/client/utils/indicateur/indicateur';
 import IndicateurSpécificationsStyled from './IndicateurSpécifications.styled';
 
 interface IndicateurSpécificationsProps {
@@ -19,7 +20,7 @@ interface IndicateurSpécificationsProps {
   responsablesMails: string[]
   indicateurId: string
   indicateurNom: string
-  indicateurType: string
+  indicateurType: TypeIndicateur
 }
 
 const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProps> = ({
@@ -55,7 +56,7 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
         Typologie de l'indicateur
       </p>
       <p className='fr-text--sm'>
-        {indicateurType}
+        {libellesTypologieIndicateur[indicateurType]}
       </p>
       <p className='fr-text--md sous-titre fr-mt-2w'>
         Méthode de calcul

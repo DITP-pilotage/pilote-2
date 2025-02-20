@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
-import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
 import { ParametrageNouveautés } from '../../../../public/nouveautés/ParametrageNouveautés';
 
 const Nouveautés: FunctionComponent<{}> = () => {

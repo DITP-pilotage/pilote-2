@@ -1,5 +1,14 @@
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+
+export const libellesTypologieIndicateur: Record<TypeIndicateur, string> = {
+  'IMPACT': 'Impact',
+  'DEPL': 'Déploiement',
+  'Q_SERV': 'De qualité de service',
+  'REBOND': 'Effets rebonds',
+  'CONTEXTE': 'De contexte',
+  'FINANCIER': 'Financier',
+};
 
 const PROFIL_AUTORISE_A_IMPORTER  = new Set([ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE, ProfilEnum.SECRETARIAT_GENERAL, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.DIR_PROJET, ProfilEnum.DROM]);
 const PROFIL_AUTORISE_A_MODIFIER  = new Set([ProfilEnum.DITP_ADMIN]);

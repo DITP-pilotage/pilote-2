@@ -1,4 +1,3 @@
-import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
 import { FunctionComponent } from 'react';
 import { consignesDÉcritureObjectif, libellésTypesObjectif, TypeObjectif } from '@/client/constants/libellésObjectif';
 import Bloc from '@/components/_commons/Bloc/Bloc';

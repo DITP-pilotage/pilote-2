@@ -20,7 +20,6 @@ import SectionDétailsMetadataParametreIndicateurNationale
 import SectionDétailsMetadataParametrePonderationIndicateur
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametrePonderationIndicateur/SectionDétailsMetadataParametrePonderationIndicateur';
 import FicheIndicateurProps from './FicheIndicateur.interface';
-import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
 
 const FicheIndicateur: FunctionComponent<FicheIndicateurProps> = ({
   indicateur,
