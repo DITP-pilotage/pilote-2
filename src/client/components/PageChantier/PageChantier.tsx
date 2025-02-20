@@ -391,7 +391,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     baliseHtml='h2'
                     className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
                   >
-                    Indicateurs
+                    {`Indicateurs (${indicateurs.length})`}
                   </Titre>
                   {
                     mailleSourceDonnees === 'regionale' &&

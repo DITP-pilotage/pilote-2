@@ -122,7 +122,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
 
   return (
     <IndicateurBlocStyled
-      className='fr-mb-2w'
+      className='fr-mt-2w'
       key={indicateur.id}
     >
       <Bloc>
