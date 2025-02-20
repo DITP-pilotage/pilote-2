@@ -1,16 +1,29 @@
-
 import { Maille, territoire as TerritoireModel } from '@prisma/client';
 import { prisma } from '@/server/db/prisma';
 import seedProfil from '@/server/seeds/profil.json';
 import seedScope from '@/server/seeds/scope.json';
 import seedTerritoireArray from '@/server/seeds/territoire.json';
 
+type TerritoireSeed = {
+  code: string,
+  nom: string,
+  nom_affiche: string,
+  maille: string,
+  code_insee: number | string,
+  code_parent: string | null,
+  zone_id: string
+};
+
+const seedsDepartements: TerritoireSeed[] = seedTerritoireArray.filter(territoire => territoire.maille === 'dept');
+const seedsRegionsEtNational: TerritoireSeed[] = seedTerritoireArray.filter(territoire => territoire.maille != 'dept');
+
+const maillesTerritoireCorrespondance: Record<string, Maille> = {
+  'dept': Maille.DEPT,
+  'reg': Maille.REG,
+  'nat': Maille.NAT,
+};
 
 function upsertProfile() {
-
-  // Exemple pour créer des lignes en une requête
-  // await prisma.profil.createMany({ data: seedProfil, skipDuplicates: true });
-
   return Promise.all(
     seedProfil.map(profil => 
       prisma.profil.upsert({ 
@@ -23,7 +36,6 @@ function upsertProfile() {
 }
 
 function upsertScope() {
-
   return Promise.all(
     seedScope.map(scope => 
       prisma.scope.upsert({ 
@@ -35,20 +47,14 @@ function upsertScope() {
   );
 }
 
-function upsertTerritoire() {
+function upsertTerritoire(seedsTerritoires: TerritoireSeed[]) {
 
   return Promise.all(
-    seedTerritoireArray.map(territoireSeed => {
+    seedsTerritoires.map(territoireSeed => {
 
-      // Modification de certains types
-      const mailleTerritoire: Maille = {
-        'dept': Maille.DEPT,
-        'reg': Maille.REG,
-        'nat': Maille.NAT,
-      }[territoireSeed.maille] as Maille;
-      const codeInseeTerritoire: string = territoireSeed.code_insee.toString();
+      const mailleTerritoire = maillesTerritoireCorrespondance[territoireSeed.maille];
+      const codeInseeTerritoire = territoireSeed.code_insee.toString();
 
-      // Création du territoire avec les bons types
       const territoireACreer: TerritoireModel = {
         code: territoireSeed.code,
         code_insee: codeInseeTerritoire,
@@ -69,8 +75,9 @@ function upsertTerritoire() {
   );
 }
 
-
 Promise.resolve(true)
   .then(() => upsertProfile())
   .then(() => upsertScope())
-  .then(() => upsertTerritoire());
+  .then(() => upsertTerritoire(seedsRegionsEtNational))
+  .then(() => upsertTerritoire(seedsDepartements));
+

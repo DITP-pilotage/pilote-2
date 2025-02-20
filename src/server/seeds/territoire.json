@@ -5,8 +5,170 @@
       "nom_affiche": "France",
       "maille": "nat",
       "code_insee": "FR",
-      "code_parent": "",
+      "code_parent": null,
       "zone_id": "FRANCE"
+    },
+    {
+      "code": "REG-84",
+      "nom": "Auvergne-Rhône-Alpes",
+      "nom_affiche": "Auvergne-Rhône-Alpes",
+      "maille": "reg",
+      "code_insee": 84,
+      "code_parent": null,
+      "zone_id": "R84"
+    },
+    {
+      "code": "REG-27",
+      "nom": "Bourgogne-Franche-Comté",
+      "nom_affiche": "Bourgogne-Franche-Comté",
+      "maille": "reg",
+      "code_insee": 27,
+      "code_parent": null,
+      "zone_id": "R27"
+    },
+    {
+      "code": "REG-53",
+      "nom": "Bretagne",
+      "nom_affiche": "Bretagne",
+      "maille": "reg",
+      "code_insee": 53,
+      "code_parent": null,
+      "zone_id": "R53"
+    },
+    {
+      "code": "REG-24",
+      "nom": "Centre-Val de Loire",
+      "nom_affiche": "Centre-Val de Loire",
+      "maille": "reg",
+      "code_insee": 24,
+      "code_parent": null,
+      "zone_id": "R24"
+    },
+    {
+      "code": "REG-94",
+      "nom": "Corse",
+      "nom_affiche": "Corse",
+      "maille": "reg",
+      "code_insee": 94,
+      "code_parent": null,
+      "zone_id": "R94"
+    },
+    {
+      "code": "REG-44",
+      "nom": "Grand-Est",
+      "nom_affiche": "Grand-Est",
+      "maille": "reg",
+      "code_insee": 44,
+      "code_parent": null,
+      "zone_id": "R44"
+    },
+    {
+      "code": "REG-32",
+      "nom": "Hauts-de-France",
+      "nom_affiche": "Hauts-de-France",
+      "maille": "reg",
+      "code_insee": 32,
+      "code_parent": null,
+      "zone_id": "R32"
+    },
+    {
+      "code": "REG-11",
+      "nom": "Île-de-France",
+      "nom_affiche": "Île-de-France",
+      "maille": "reg",
+      "code_insee": 11,
+      "code_parent": null,
+      "zone_id": "R11"
+    },
+    {
+      "code": "REG-28",
+      "nom": "Normandie",
+      "nom_affiche": "Normandie",
+      "maille": "reg",
+      "code_insee": 28,
+      "code_parent": null,
+      "zone_id": "R28"
+    },
+    {
+      "code": "REG-75",
+      "nom": "Nouvelle Aquitaine",
+      "nom_affiche": "Nouvelle Aquitaine",
+      "maille": "reg",
+      "code_insee": 75,
+      "code_parent": null,
+      "zone_id": "R75"
+    },
+    {
+      "code": "REG-76",
+      "nom": "Occitanie",
+      "nom_affiche": "Occitanie",
+      "maille": "reg",
+      "code_insee": 76,
+      "code_parent": null,
+      "zone_id": "R76"
+    },
+    {
+      "code": "REG-52",
+      "nom": "Pays de la Loire",
+      "nom_affiche": "Pays de la Loire",
+      "maille": "reg",
+      "code_insee": 52,
+      "code_parent": null,
+      "zone_id": "R52"
+    },
+    {
+      "code": "REG-93",
+      "nom": "Provence - Alpes - Côte d'Azur",
+      "nom_affiche": "Provence - Alpes - Côte d'Azur",
+      "maille": "reg",
+      "code_insee": 93,
+      "code_parent": null,
+      "zone_id": "R93"
+    },
+    {
+      "code": "REG-01",
+      "nom": "Guadeloupe",
+      "nom_affiche": "Guadeloupe",
+      "maille": "reg",
+      "code_insee": "01",
+      "code_parent": null,
+      "zone_id": "R01"
+    },
+    {
+      "code": "REG-02",
+      "nom": "Martinique",
+      "nom_affiche": "Martinique",
+      "maille": "reg",
+      "code_insee": "02",
+      "code_parent": null,
+      "zone_id": "R02"
+    },
+    {
+      "code": "REG-03",
+      "nom": "Guyane",
+      "nom_affiche": "Guyane",
+      "maille": "reg",
+      "code_insee": "03",
+      "code_parent": null,
+      "zone_id": "R03"
+    },
+    {
+      "code": "REG-06",
+      "nom": "Mayotte",
+      "nom_affiche": "Mayotte",
+      "maille": "reg",
+      "code_insee": "06",
+      "code_parent": null,
+      "zone_id": "R06"
+    },
+    {
+      "code": "REG-04",
+      "nom": "La Réunion",
+      "nom_affiche": "La Réunion",
+      "maille": "reg",
+      "code_insee": "04",
+      "code_parent": null,
+      "zone_id": "R04"
     },
     {
       "code": "DEPT-08",
@@ -728,15 +890,7 @@
       "code_parent": "REG-28",
       "zone_id": "D76"
     },
-    {
-      "code": "REG-04",
-      "nom": "La Réunion",
-      "nom_affiche": "La Réunion",
-      "maille": "reg",
-      "code_insee": "04",
-      "code_parent": "",
-      "zone_id": "R04"
-    },
+
     {
       "code": "DEPT-77",
       "nom": "Seine-et-Marne",
@@ -925,158 +1079,6 @@
       "code_insee": 976,
       "code_parent": "REG-06",
       "zone_id": "D976"
-    },
-    {
-      "code": "REG-84",
-      "nom": "Auvergne-Rhône-Alpes",
-      "nom_affiche": "Auvergne-Rhône-Alpes",
-      "maille": "reg",
-      "code_insee": 84,
-      "code_parent": "",
-      "zone_id": "R84"
-    },
-    {
-      "code": "REG-27",
-      "nom": "Bourgogne-Franche-Comté",
-      "nom_affiche": "Bourgogne-Franche-Comté",
-      "maille": "reg",
-      "code_insee": 27,
-      "code_parent": "",
-      "zone_id": "R27"
-    },
-    {
-      "code": "REG-53",
-      "nom": "Bretagne",
-      "nom_affiche": "Bretagne",
-      "maille": "reg",
-      "code_insee": 53,
-      "code_parent": "",
-      "zone_id": "R53"
-    },
-    {
-      "code": "REG-24",
-      "nom": "Centre-Val de Loire",
-      "nom_affiche": "Centre-Val de Loire",
-      "maille": "reg",
-      "code_insee": 24,
-      "code_parent": "",
-      "zone_id": "R24"
-    },
-    {
-      "code": "REG-94",
-      "nom": "Corse",
-      "nom_affiche": "Corse",
-      "maille": "reg",
-      "code_insee": 94,
-      "code_parent": "",
-      "zone_id": "R94"
-    },
-    {
-      "code": "REG-44",
-      "nom": "Grand-Est",
-      "nom_affiche": "Grand-Est",
-      "maille": "reg",
-      "code_insee": 44,
-      "code_parent": "",
-      "zone_id": "R44"
-    },
-    {
-      "code": "REG-32",
-      "nom": "Hauts-de-France",
-      "nom_affiche": "Hauts-de-France",
-      "maille": "reg",
-      "code_insee": 32,
-      "code_parent": "",
-      "zone_id": "R32"
-    },
-    {
-      "code": "REG-11",
-      "nom": "Île-de-France",
-      "nom_affiche": "Île-de-France",
-      "maille": "reg",
-      "code_insee": 11,
-      "code_parent": "",
-      "zone_id": "R11"
-    },
-    {
-      "code": "REG-28",
-      "nom": "Normandie",
-      "nom_affiche": "Normandie",
-      "maille": "reg",
-      "code_insee": 28,
-      "code_parent": "",
-      "zone_id": "R28"
-    },
-    {
-      "code": "REG-75",
-      "nom": "Nouvelle Aquitaine",
-      "nom_affiche": "Nouvelle Aquitaine",
-      "maille": "reg",
-      "code_insee": 75,
-      "code_parent": "",
-      "zone_id": "R75"
-    },
-    {
-      "code": "REG-76",
-      "nom": "Occitanie",
-      "nom_affiche": "Occitanie",
-      "maille": "reg",
-      "code_insee": 76,
-      "code_parent": "",
-      "zone_id": "R76"
-    },
-    {
-      "code": "REG-52",
-      "nom": "Pays de la Loire",
-      "nom_affiche": "Pays de la Loire",
-      "maille": "reg",
-      "code_insee": 52,
-      "code_parent": "",
-      "zone_id": "R52"
-    },
-    {
-      "code": "REG-93",
-      "nom": "Provence - Alpes - Côte d'Azur",
-      "nom_affiche": "Provence - Alpes - Côte d'Azur",
-      "maille": "reg",
-      "code_insee": 93,
-      "code_parent": "",
-      "zone_id": "R93"
-    },
-    {
-      "code": "REG-01",
-      "nom": "Guadeloupe",
-      "nom_affiche": "Guadeloupe",
-      "maille": "reg",
-      "code_insee": "01",
-      "code_parent": "",
-      "zone_id": "R01"
-    },
-    {
-      "code": "REG-02",
-      "nom": "Martinique",
-      "nom_affiche": "Martinique",
-      "maille": "reg",
-      "code_insee": "02",
-      "code_parent": "",
-      "zone_id": "R02"
-    },
-    {
-      "code": "REG-03",
-      "nom": "Guyane",
-      "nom_affiche": "Guyane",
-      "maille": "reg",
-      "code_insee": "03",
-      "code_parent": "",
-      "zone_id": "R03"
-    },
-    {
-      "code": "REG-06",
-      "nom": "Mayotte",
-      "nom_affiche": "Mayotte",
-      "maille": "reg",
-      "code_insee": "06",
-      "code_parent": "",
-      "zone_id": "R06"
     }
+
   ]
