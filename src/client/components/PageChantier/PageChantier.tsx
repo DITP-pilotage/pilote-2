@@ -389,7 +389,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                 >
                   <Titre
                     baliseHtml='h2'
-                    className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                    className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0'
                   >
                     {`Indicateurs (${indicateurs.length})`}
                   </Titre>
@@ -458,7 +458,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
               className='rubrique'
               id='commentaires'
             >
-              <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+              <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0'>
                 <Titre
                   baliseHtml='h2'
                   className='fr-h4 fr-mb-0 fr-py-1v'
