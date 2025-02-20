@@ -7,6 +7,7 @@ const IndicateursChantierStyled = styled.section`
 
   .fr-accordion_custom {
     background-color: #E3E3FD;
+    border-bottom: 1px solid #000091;
     border-radius: 8px 8px 0 0;
   }
 `;
