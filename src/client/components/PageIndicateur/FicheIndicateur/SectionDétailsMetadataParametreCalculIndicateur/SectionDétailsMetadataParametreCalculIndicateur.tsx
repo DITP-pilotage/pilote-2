@@ -40,8 +40,11 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.param_vaca_decumul_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vaca_decumul_from')}
-            register={register('paramVacaDecumulFrom', { value: indicateur?.paramVacaDecumulFrom })}
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vaca_decumul_from', 'paramVacaDecumulFrom')}
+            valeurModifiéeCallback={(valeur) => {
+              setValue('paramVacgDecumulFrom', valeur);
+              setValue('paramVacaDecumulFrom', valeur);
+            }}
             values={getValues('paramVacaDecumulFrom')}
           />
         </div>
@@ -54,7 +57,9 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vaca_partition_date', 'paramVacaPartitionDate')}
             valeurModifiéeCallback={(valeur) => {
               setValue('paramVacaPartitionDate', valeur);
+              setValue('paramVacgPartitionDate', valeur);
               setValue('paramVacaOp', valeur === '_' ? 'current_value' : 'sum');
+              setValue('paramVacgOp', valeur === '_' ? 'current_value' : 'sum');
             }}
             values={getValues('paramVacaPartitionDate')}
           />
@@ -79,8 +84,11 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.param_vacg_decumul_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vacg_decumul_from')}
-            register={register('paramVacgDecumulFrom', { value: indicateur?.paramVacgDecumulFrom })}
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vacg_decumul_from', 'paramVacgDecumulFrom')}
+            valeurModifiéeCallback={(valeur) => {
+              setValue('paramVacgDecumulFrom', valeur);
+              setValue('paramVacaDecumulFrom', valeur);
+            }}
             values={getValues('paramVacgDecumulFrom')}
           />
         </div>
@@ -92,6 +100,8 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vacg_partition_date')}
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vacg_partition_date', 'paramVacgPartitionDate')}
             valeurModifiéeCallback={(valeur) => {
+              setValue('paramVacaPartitionDate', valeur);
+              setValue('paramVacaOp', valeur === '_' ? 'current_value' : 'sum');
               setValue('paramVacgPartitionDate', valeur);
               setValue('paramVacgOp', valeur === '_' ? 'current_value' : 'sum');
             }}
