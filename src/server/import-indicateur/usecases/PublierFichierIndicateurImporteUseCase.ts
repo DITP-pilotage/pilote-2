@@ -7,13 +7,11 @@ import {
   MesureIndicateurTemporaireRepository,
 } from '@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface';
 import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
-import { PropositionValeurActuelleRepository } from '@/server/import-indicateur/domain/ports/PropositionValeurActuelleRepository';
 
 interface Dependencies {
   mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository
   mesureIndicateurRepository: MesureIndicateurRepository
-  rapportRepository: RapportRepository
-  propositionValeurActuelleRepository: PropositionValeurActuelleRepository
+  rapportRepository: RapportRepository;
 }
 
 export class PublierFichierIndicateurImporteUseCase {
@@ -21,12 +19,9 @@ export class PublierFichierIndicateurImporteUseCase {
 
   private mesureIndicateurRepository: MesureIndicateurRepository;
 
-  private propositionValeurActuelleRepository: PropositionValeurActuelleRepository;
-
-  constructor({ mesureIndicateurTemporaireRepository, mesureIndicateurRepository, propositionValeurActuelleRepository }: Dependencies) {
+  constructor({ mesureIndicateurTemporaireRepository, mesureIndicateurRepository }: Dependencies) {
     this.mesureIndicateurTemporaireRepository = mesureIndicateurTemporaireRepository;
     this.mesureIndicateurRepository = mesureIndicateurRepository;
-    this.propositionValeurActuelleRepository = propositionValeurActuelleRepository;
   }
 
   async execute({ rapportId }: { rapportId: string }): Promise<void> {
@@ -45,16 +40,8 @@ export class PublierFichierIndicateurImporteUseCase {
       }),
     );
 
-    const listeValeursAvancementImportees = listeIndicateursData.filter(indicateur => indicateur.metricType === 'va');
-    
     await this.mesureIndicateurRepository.sauvegarder(listeIndicateursData);
-    await Promise.all(
-      listeValeursAvancementImportees.map(valeurAvancement => this.propositionValeurActuelleRepository.supprimerPropositionsValeurActuelleApresImport({ 
-        indicId: valeurAvancement.indicId, 
-        zoneId: valeurAvancement.zoneId, 
-        dateValeurImportee: new Date(valeurAvancement.metricDate),
-      })),
-    );
+
     await this.mesureIndicateurTemporaireRepository.supprimerToutParRapportId(rapportId);
   }
 }
