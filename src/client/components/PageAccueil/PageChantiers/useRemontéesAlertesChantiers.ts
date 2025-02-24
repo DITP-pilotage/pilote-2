@@ -13,6 +13,7 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
+    estEnAlertePossedePropositionsValeurActuelle: parseAsBoolean.withDefault(false),
   });
 
   const alerteAbscenceTauxAvancementDepartemental = {
@@ -50,8 +51,15 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
     estActivée: filtresAlertes.estEnAlerteMétéoNonRenseignée,
   };
 
-  const alertesNationales = [alerteTauxAvancementNonCalculé, alerteAbscenceTauxAvancementDepartemental, alerteMétéoNonRenseignée];
-  const alertesTerritoriales = [alerteEcart, alerteBaisse, alerteMétéoNonRenseignée];
+  const estEnAlertePossedePropositionsValeurActuelle = {
+    nomCritère: 'estEnAlertePossedePropositionsValeurActuelle',
+    libellé: 'Chantier(s) avec proposition(s) de valeur actuelle',
+    nombre: filtresComptesCalculés.estEnAlertePossedePropositionsValeurActuelle,
+    estActivée: filtresAlertes.estEnAlertePossedePropositionsValeurActuelle,
+  };
+
+  const alertesNationales = [alerteTauxAvancementNonCalculé, alerteAbscenceTauxAvancementDepartemental, alerteMétéoNonRenseignée, estEnAlertePossedePropositionsValeurActuelle];
+  const alertesTerritoriales = [alerteEcart, alerteBaisse, alerteMétéoNonRenseignée, estEnAlertePossedePropositionsValeurActuelle];
 
   return {
     remontéesAlertes: mailleChantier === 'nationale' ? alertesNationales : alertesTerritoriales,

@@ -1,13 +1,12 @@
 import {
   PrismaTerritoireRepository,
 } from '@/server/fiche-territoriale/infrastructure/adapters/PrismaTerritoireRepository';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 
 describe('PrismaTerritoireRepository', () => {
   let prismaTerritoireRepository: PrismaTerritoireRepository;
 
   beforeEach(() => {
-    prismaTerritoireRepository = new PrismaTerritoireRepository(prisma);
+    prismaTerritoireRepository = new PrismaTerritoireRepository();
   });
 
   describe('#recupererTerritoireParCode', () => {

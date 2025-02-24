@@ -251,7 +251,8 @@ sources:
                 { "order_id": 20, "value": "ZG-020", "name": "50 sites + émetteurs", "desc": "Territoires des 50 sites industriels les plus émetteurs" },
                 { "order_id": 21, "value": "ZG-021", "name": "Force aux Frontières", "desc": "Territoires de la PPG « Force aux Frontières »" },
                 { "order_id": 22, "value": "ZG-022", "name": "Stationnement vélo sécurisé en gare", "desc": "Territoires de l'indicateur Places de stationnement vélo sécurisé en gare (IND-215) de la PPG « Amplifier le plan vélo »" },
-                { "order_id": 23, "value": "ZG-023", "name": "Industrie décarbonnée", "desc": "Régions de la PPG « Devenir la première grande économie décarbonée »" }
+                { "order_id": 23, "value": "ZG-023", "name": "Industrie décarbonnée", "desc": "Régions de la PPG « Devenir la première grande économie décarbonée »" },
+                { "order_id": 24, "value": "ZG-024", "name": "Education prioritaire", "desc": "	Territoires contenant des écoles en Education Prioritaire (Cantal,Haute-Loire,Lot et Lozère n’ont pas de REP)" }
               ]
               pilote_create_mandatory: false
               pilote_create_defaultValue: ""

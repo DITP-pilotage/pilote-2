@@ -1,4 +1,4 @@
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import {
   PrismaTokenAPIInformationRepository,
 } from '@/server/authentification/infrastructure/adapters/PrismaTokenAPIInformationRepository';
@@ -7,7 +7,7 @@ describe('PrismaTokenAPIInformationRepository', () => {
   let prismaTokenAPIInformationRepository: PrismaTokenAPIInformationRepository;
 
   beforeEach(() => {
-    prismaTokenAPIInformationRepository = new PrismaTokenAPIInformationRepository(prisma);
+    prismaTokenAPIInformationRepository = new PrismaTokenAPIInformationRepository();
   });
 
   describe('recupererTokenAPIInformation', () => {

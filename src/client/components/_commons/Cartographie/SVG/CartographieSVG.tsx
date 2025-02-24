@@ -20,6 +20,7 @@ interface CartographieSVGProps {
   infoBulle: CartographieInfoBulle | null,
   setInfoBulle: (state: CartographieInfoBulle | null) => void,
   auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
+  contoursGris?: boolean
 }
 
 const getTraceSvg = function (svgAsJson: CartographieSVGContrat, territoireCode: string): string {
@@ -35,6 +36,7 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
   infoBulle,
   setInfoBulle,
   auClicTerritoireCallback,
+  contoursGris = false,
 }) => {
 
   const { sourceSvgAsJson } = useCartographieSVG();
@@ -59,7 +61,7 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
           />
         ) : null
       }
-      <div className='carte'>
+      <div className={`carte ${contoursGris ? 'stroke-dark' : ''}`}>
         <svg
           ref={svgRef}
           version='1.2'

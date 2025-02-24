@@ -1,18 +1,13 @@
-import { synthese_des_resultats_projet_structurant as SynthèseDesRésultatsProjetStructurantPrisma, PrismaClient } from '@prisma/client';
+import { synthese_des_resultats_projet_structurant as SynthèseDesRésultatsProjetStructurantPrisma } from '@prisma/client';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import SynthèseDesRésultatsProjetStructurantRepository from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import SynthèseDesRésultatsProjetStructurant from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultats.interface';
+import { prisma } from '@/server/db/prisma';
 
 export class SynthèseDesRésultatsProjetStructurantSQLRepository implements SynthèseDesRésultatsProjetStructurantRepository {
-  private prisma: PrismaClient;
-
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
-  }
-
   async créer(projetStructurantId: string, id: string, contenu: string, auteur: string, météo: Météo, date: Date): Promise<SynthèseDesRésultatsProjetStructurant> {
 
-    const synthèseDesRésultats =  await this.prisma.synthese_des_resultats_projet_structurant.create({
+    const synthèseDesRésultats =  await prisma.synthese_des_resultats_projet_structurant.create({
       data: {
         id: id,
         projet_structurant_id: projetStructurantId,
@@ -40,7 +35,7 @@ export class SynthèseDesRésultatsProjetStructurantSQLRepository implements Syn
 
   async récupérerHistorique(projetStructurantId: string): Promise<SynthèseDesRésultatsProjetStructurant[]> {
     
-    const synthèsesDesRésultats = await this.prisma.synthese_des_resultats_projet_structurant.findMany({
+    const synthèsesDesRésultats = await prisma.synthese_des_resultats_projet_structurant.findMany({
       where: {
         projet_structurant_id: projetStructurantId,
       },
@@ -53,7 +48,7 @@ export class SynthèseDesRésultatsProjetStructurantSQLRepository implements Syn
   }
   
   async récupérerLaPlusRécente(projetStructurantId: string): Promise<SynthèseDesRésultatsProjetStructurant> {
-    const synthèseDesRésultats = await this.prisma.synthese_des_resultats_projet_structurant.findFirst({
+    const synthèseDesRésultats = await prisma.synthese_des_resultats_projet_structurant.findFirst({
       where: {
         projet_structurant_id: projetStructurantId,
         NOT: [
@@ -72,7 +67,7 @@ export class SynthèseDesRésultatsProjetStructurantSQLRepository implements Syn
   }
 
   async récupérerToutesLesMétéosLesPlusRécentes(): Promise<{ projetStructurantId: string, météo: Météo }[]> {
-    const couplesPSetMétéo = await this.prisma.$queryRaw<{ projet_structurant_id: string, meteo: Météo }[]>`
+    const couplesPSetMétéo = await prisma.$queryRaw<{ projet_structurant_id: string, meteo: Météo }[]>`
         select projet_structurant_id, meteo
         from (
           select *,

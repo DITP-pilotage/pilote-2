@@ -33,7 +33,7 @@ const Sommaire: FunctionComponent<SommaireProps> = ({ rubriques, auClic }) => {
                     {
                       rubrique.sousRubriques.map(sousRubrique => (
                         <li
-                          className='fr-pb-0'
+                          className='line-height-xs'
                           key={sousRubrique.nom}
                         >
                           <a

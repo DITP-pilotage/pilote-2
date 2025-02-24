@@ -6,7 +6,7 @@ import CommentaireSQLRepository, {
   NOMS_TYPES_COMMENTAIRES,
 } from '@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository';
 import CommentaireSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase
@@ -23,7 +23,7 @@ function mapperVersDomaine(commentairePrisma: commentaire): Commentaire {
 }
 
 describe('RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase', () => {
-  const commentaireRepository = new CommentaireSQLRepository(prisma);
+  const commentaireRepository = new CommentaireSQLRepository();
   const récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase = new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(commentaireRepository);
 
   const auteur_id = randomUUID();

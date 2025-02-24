@@ -22,7 +22,7 @@ module.exports = {
           }
           return [true, ""];
         },
-      }
+      },
     }
   ],
   rules: {

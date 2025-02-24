@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import DécisionStratégiqueRepository from '@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import DécisionStratégiqueSQLRepository from './DécisionStratégiqueSQLRepository';
@@ -11,7 +11,7 @@ describe('DécisionStratégiqueSQLRepository', () => {
   let décisionStratégiqueRepository: DécisionStratégiqueRepository;
 
   beforeEach(() => {
-    décisionStratégiqueRepository = new DécisionStratégiqueSQLRepository(prisma);
+    décisionStratégiqueRepository = new DécisionStratégiqueSQLRepository();
   });
 
   describe('#récupérerLePlusRécent', () => {

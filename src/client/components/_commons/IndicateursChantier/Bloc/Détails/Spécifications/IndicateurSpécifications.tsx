@@ -1,8 +1,9 @@
 import { FunctionComponent } from 'react';
 import Link from 'next/dist/client/link';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import IcôneEmail from '@/components/_commons/IcôneEmail/IcôneEmail';
 import api from '@/server/infrastructure/api/trpc/api';
+import { libellesTypologieIndicateur } from '@/client/utils/indicateur/indicateur';
 import IndicateurSpécificationsStyled from './IndicateurSpécifications.styled';
 
 interface IndicateurSpécificationsProps {
@@ -19,6 +20,7 @@ interface IndicateurSpécificationsProps {
   responsablesMails: string[]
   indicateurId: string
   indicateurNom: string
+  indicateurType: TypeIndicateur
 }
 
 const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProps> = ({
@@ -35,6 +37,7 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
   responsablesMails,
   indicateurId,
   indicateurNom,
+  indicateurType,
 }) => {
   const libelléValeurNull = 'Non renseignée';
   const objectMail = `PILOTE - Indicateur ${indicateurNom} (${indicateurId})`;
@@ -48,6 +51,12 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
       </p>
       <p className='fr-text--sm'>
         {description ?? libelléValeurNull}
+      </p>
+      <p className='fr-text--md sous-titre fr-mt-2w'>
+        Typologie de l'indicateur
+      </p>
+      <p className='fr-text--sm'>
+        {libellesTypologieIndicateur[indicateurType]}
       </p>
       <p className='fr-text--md sous-titre fr-mt-2w'>
         Méthode de calcul

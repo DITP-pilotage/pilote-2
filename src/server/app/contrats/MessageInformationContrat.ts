@@ -7,7 +7,7 @@ export interface MessageInformationContrat {
   bandeauType: string
 }
 export const presenterEnMessageInformationContrat = (messageInformation: MessageInformation): MessageInformationContrat => ({
-  bandeauTexte: messageInformation.bandeauTexte || 'Des opérations de maintenance sont en cours et peuvent perturber le fonctionnement normal de PILOTE. En cas de difficultés : support.ditp@modernisation.gouv.fr',
+  bandeauTexte: messageInformation.bandeauTexte || 'Des opérations de maintenance sont en cours et peuvent perturber le fonctionnement normal de PILOTE. En cas de difficultés : pilote.ditp@modernisation.gouv.fr',
   bandeauType: messageInformation.bandeauType || 'WARNING',
   isBandeauActif: messageInformation.isBandeauActif || false,
 });

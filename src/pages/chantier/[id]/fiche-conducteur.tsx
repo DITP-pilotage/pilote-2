@@ -9,8 +9,8 @@ import { PageFicheConducteur } from '@/components/PageFicheConducteur/PageFicheC
 import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
 import { estAutoriséAConsulterLaFicheConducteur } from '@/client/utils/fiche-conducteur/fiche-conducteur';
 import {
-  getAnneeAffichageDateDeBascule,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+  getAnneeDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule';
 import { configuration } from '@/config';
 
 export const getServerSideProps: GetServerSideProps<{
@@ -25,7 +25,7 @@ export const getServerSideProps: GetServerSideProps<{
     throw new Error('Not connected or not authorized ?');
   }
 
-  const jalon = Number.parseInt(query.jalon as string) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
+  const jalon = Number.parseInt(query.jalon as string) || getAnneeDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
 
   const ficheConducteur = await ficheConducteurHandler().recupererFicheConducteur(query.id as string, 'NAT-FR', jalon);
 

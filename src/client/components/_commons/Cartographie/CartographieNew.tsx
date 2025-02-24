@@ -29,6 +29,7 @@ interface CartographieProps {
   territoireCode: string,
   mailleSelectionnee: MailleInterne,
   auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
+  contoursGris? : boolean
 }
 
 const Cartographie: FunctionComponent<CartographieProps> = ({
@@ -39,9 +40,9 @@ const Cartographie: FunctionComponent<CartographieProps> = ({
   territoireCode,
   pathname,
   mailleSelectionnee,
+  contoursGris = false,
 }) => {
   const départements = départementsTerritoiresStore();
-
   const {
     optionsParDéfaut,
     déterminerRégionsÀTracer,
@@ -83,6 +84,7 @@ const Cartographie: FunctionComponent<CartographieProps> = ({
       }
       <CartographieSVG
         auClicTerritoireCallback={auClicTerritoireCallback}
+        contoursGris={contoursGris}
         frontières={territoiresEtFrontières.frontières}
         infoBulle={infoBulle}
         options={optionsEffectives}

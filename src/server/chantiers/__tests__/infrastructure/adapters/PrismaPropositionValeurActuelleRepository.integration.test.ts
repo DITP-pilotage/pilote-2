@@ -1,5 +1,5 @@
 import { StatutProposition } from '@/server/chantiers/domain/StatutProposition';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import { PropositionValeurActuelleBuilder } from '@/server/chantiers/app/builder/PropositionValeurActuelleBuilder';
 import {
   PrismaPropositionValeurActuelleRepository,
@@ -9,7 +9,7 @@ describe('PrismaPropositionValeurActuelleRepository', () => {
   let prismaPropositionValeurActuelleRepository: PrismaPropositionValeurActuelleRepository;
 
   beforeEach(() => {
-    prismaPropositionValeurActuelleRepository = new PrismaPropositionValeurActuelleRepository(prisma);
+    prismaPropositionValeurActuelleRepository = new PrismaPropositionValeurActuelleRepository();
   });
 
   it('doit creer la proposition de valeur actuelle', async () => {

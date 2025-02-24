@@ -1,4 +1,4 @@
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import {
   PrismaIndicateurRepository,
 } from '@/server/fiche-territoriale/infrastructure/adapters/PrismaIndicateurRepository';
@@ -7,7 +7,7 @@ describe('PrismaIndicateurRepository', () => {
   let prismaIndicateurRepository: PrismaIndicateurRepository;
 
   beforeEach(() => {
-    prismaIndicateurRepository = new PrismaIndicateurRepository(prisma);
+    prismaIndicateurRepository = new PrismaIndicateurRepository();
   });
 
   describe('recupererMapIndicateursParListeChantierIdEtTerritoire', () => {

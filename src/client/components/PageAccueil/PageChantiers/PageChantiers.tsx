@@ -4,7 +4,14 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';
 import Link from 'next/link';
 import { FunctionComponent } from 'react';
 import { useSession } from 'next-auth/react';
-import { parseAsBoolean, parseAsString, parseAsStringLiteral, useQueryState, useQueryStates } from 'nuqs';
+import {
+  parseAsBoolean,
+  parseAsInteger,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryState,
+  useQueryStates,
+} from 'nuqs';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import CartographieAvancement
@@ -43,6 +50,10 @@ import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDe
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
+import {
+  ExportDesDonneesV2,
+  ID_HTML_MODALE_EXPORT_V2,
+} from '@/components/PageAccueil/PageChantiers/ExportDesDonneesV2/ExportDesDonneesV2';
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
@@ -50,6 +61,7 @@ import RepartitionsMeteosChantiers from './FiltresMeteos/RepartitionsMeteosChant
 
 interface PageChantiersProps {
   chantiers: ChantierAccueilContrat[],
+  chantiersIdsExport: string[]
   nombreTotalChantiersAvecAlertes: number
   ministères: Ministère[]
   axes: Axe[],
@@ -65,6 +77,7 @@ interface PageChantiersProps {
 
 const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   chantiers,
+  chantiersIdsExport,
   nombreTotalChantiersAvecAlertes,
   ministères,
   axes,
@@ -101,6 +114,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
+    estEnAlertePossedePropositionsValeurActuelle: parseAsBoolean.withDefault(false),
   });
 
   const nombreFiltresActifs = filtres.axes.split(',').filter(Boolean).length
@@ -112,12 +126,27 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     + (filtresAlertes.estEnAlerteÉcart ? 1 : 0)
     + (filtresAlertes.estEnAlerteBaisse ? 1 : 0)
     + (filtresAlertes.estEnAlerteMétéoNonRenseignée ? 1 : 0)
-    + (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0);
+    + (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0)
+    + (filtresAlertes.estEnAlertePossedePropositionsValeurActuelle ? 1 : 0);
 
   const [, setJalon] = useQueryState('jalon', parseAsStringLiteral(['2024', '2025']).withDefault('2024').withOptions({
     shallow: false,
     history: 'push',
   }));
+
+  const [optionsExport, setOptionsExport] = useQueryStates({
+    etapeCourante: parseAsInteger.withDefault(1).withOptions({
+      shallow: true,
+    }),
+    isModaleExportCsvOuverte: parseAsBoolean.withDefault(false).withOptions({
+      shallow: true,
+      clearOnDefault: true,
+      history: 'push',
+    }),
+    typeExport: parseAsStringLiteral(['ppg', 'indicateurs']).withDefault('ppg').withOptions({
+      shallow: true,
+    }),
+  });
 
   const auClickSelecteurJalon = (valeur: '2024' | '2025') => {
     sauvegarderFiltres({ jalon: valeur });
@@ -130,6 +159,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     donnéesTableauChantiers,
     remontéesAlertes,
     estAutoriseAVoirLeSelecteurDeMaille,
+    estExportV2Actif,
   } = usePageChantiers(chantiers, territoireCode, filtresComptesCalculés, avancementsAgrégés, session!.profil);
 
   const chantiersSontArchives = filtres.statut?.includes('ARCHIVE') ?? false;
@@ -204,7 +234,39 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   >
                     Exporter les données
                   </button>
-                  <ExportDesDonnées listeChantierId={chantiers.map(chantier => chantier.id)} />
+                  <ExportDesDonnées listeChantierId={chantiersIdsExport} />
+                </div>
+              ) : null
+            }
+            {
+              estExportV2Actif && !estVueMobile ? (
+                <div>
+                  <button
+                    aria-controls={ID_HTML_MODALE_EXPORT_V2}
+                    className='fr-btn fr-btn--tertiary-no-outline fr-icon-download-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
+                    data-fr-opened={optionsExport.isModaleExportCsvOuverte}
+                    onClick={() => {
+                      setOptionsExport({
+                        isModaleExportCsvOuverte: true,
+                        etapeCourante: 1,
+                        typeExport: 'ppg',
+                      });
+                    }}
+                    type='button'
+                  >
+                    Exporter les données V2
+                  </button>
+                  <ExportDesDonneesV2
+                    fermetureCallback={() => {
+                      setOptionsExport({
+                        etapeCourante: 1,
+                        typeExport: 'ppg',
+                      }, { clearOnDefault: true, shallow: true });
+                      setOptionsExport({
+                        isModaleExportCsvOuverte: false,
+                      }, { clearOnDefault: true, shallow: true });
+                    }}
+                  />
                 </div>
               ) : null
             }

@@ -1,9 +1,10 @@
-import { PrismaClient, proposition_valeur_actuelle as PrismaPropositionValeurActuelle } from '@prisma/client';
+import { proposition_valeur_actuelle as PrismaPropositionValeurActuelle } from '@prisma/client';
 import { PropositionValeurActuelle } from '@/server/chantiers/domain/PropositionValeurActuelle';
 import {
   PropositionValeurActuelleRepository,
 } from '@/server/chantiers/domain/ports/PropositionValeurActuelleRepository';
 import { StatutProposition } from '@/server/chantiers/domain/StatutProposition';
+import { prisma } from '@/server/db/prisma';
 
 const convertirEnModel = (propositionValeurActuelle: PropositionValeurActuelle): PrismaPropositionValeurActuelle => {
   return {
@@ -22,11 +23,9 @@ const convertirEnModel = (propositionValeurActuelle: PropositionValeurActuelle):
 };
 
 export class PrismaPropositionValeurActuelleRepository implements PropositionValeurActuelleRepository {
-  constructor(private prismaClient: PrismaClient) {}
-
   async creerPropositionValeurActuelle(propositionValeurActuelle: PropositionValeurActuelle): Promise<void> {
     const prismaPropositionValeurActuelle = convertirEnModel(propositionValeurActuelle);
-    await this.prismaClient.proposition_valeur_actuelle.create({
+    await prisma.proposition_valeur_actuelle.create({
       data: prismaPropositionValeurActuelle,
     });
   }
@@ -38,7 +37,7 @@ export class PrismaPropositionValeurActuelleRepository implements PropositionVal
     indicId: string,
     territoireCode: string,
   }): Promise<void> {
-    await this.prismaClient.proposition_valeur_actuelle.updateMany({
+    await prisma.proposition_valeur_actuelle.updateMany({
       where: {
         indic_id: indicId,
         territoire_code: territoireCode,

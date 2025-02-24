@@ -7,19 +7,36 @@ export type Rubrique = {
   sousRubriques?: Rubrique[]
 };
 
-export type ÉlémentPageIndicateursType = Rubrique & { typeIndicateur: TypeIndicateur };
+export type CategoriesIndicateur = 'participation_ta' | 'non_participation_ta' | 'autre';
+export type ÉlémentPageIndicateursType = Rubrique & { categorieIndicateur: CategoriesIndicateur, description: string | null, estAccordeonOuvert: boolean };
 
 export const listeRubriquesIndicateursChantier: ÉlémentPageIndicateursType[] = [
-  { nom: 'Indicateurs d\'impact', ancre: 'impact', typeIndicateur: 'IMPACT' },
-  { nom: 'Indicateurs de déploiement', ancre: 'déploiement', typeIndicateur: 'DEPL' },
-  { nom: 'Indicateurs de qualité de service', ancre: 'perception', typeIndicateur: 'Q_SERV' },
-  { nom: 'Indicateurs de suivi des externalités et effets rebond', ancre: 'suivi', typeIndicateur: 'REBOND' },
-  { nom: 'Indicateurs de contexte', ancre: 'contexte', typeIndicateur: 'CONTEXTE' },
+  { 
+    nom: 'Indicateurs pris en compte dans le taux d’avancement du territoire', 
+    ancre: 'participation_ta', 
+    categorieIndicateur: 'participation_ta',
+    description: null,
+    estAccordeonOuvert: true,
+  },
+  { 
+    nom: 'Indicateurs non pris en compte dans le taux d’avancement du territoire et/ou de la maille',
+    ancre: 'non_participation_ta',
+    categorieIndicateur: 'non_participation_ta',
+    description: 'Ces indicateurs ne sont pas pris en compte pour le territoire. Toutefois, ils peuvent être pris en compte dans le calcul du taux d’avancement pour d’autres territoires ou d’autres mailles géographiques',
+    estAccordeonOuvert: false,
+  },
+  { 
+    nom: 'Autres indicateurs', 
+    ancre: 'autre', 
+    categorieIndicateur: 'autre',
+    description: 'Ces indicateurs ne sont jamais pris en compte pour calculer le taux d’avancement de la PPG. Ils sont présentés pour donner des informations complémentaires sur l’impact et le déploiement de la PPG',
+    estAccordeonOuvert: false,
+  },
 ];
   
-export const listeRubriquesChantier = (typesIndicateurs: TypeIndicateur[], maille: Maille): Rubrique[] => {
+export const listeRubriquesChantier = (categorieIndicateur: CategoriesIndicateur[], maille: Maille): Rubrique[] => {
   const rubriquesIndicateursNonVides = listeRubriquesIndicateursChantier.filter(
-    rubriqueIndicateur => typesIndicateurs.includes(rubriqueIndicateur.typeIndicateur),
+    rubriqueIndicateur => categorieIndicateur.includes(rubriqueIndicateur.categorieIndicateur),
   );
 
   let rubriques = maille === 'nationale' ? [
@@ -48,7 +65,8 @@ export const listeRubriquesChantier = (typesIndicateurs: TypeIndicateur[], maill
   return rubriques;
 };
 
-export const listeRubriquesIndicateursProjetStructurant: ÉlémentPageIndicateursType[] = [
+export type ÉlémentPageIndicateursTypeProjetsStructurants = Rubrique & { typeIndicateur: TypeIndicateur };
+export const listeRubriquesIndicateursProjetStructurant: ÉlémentPageIndicateursTypeProjetsStructurants[] = [
   { nom: 'Indicateurs d\'impact', ancre: 'impact', typeIndicateur: 'IMPACT' },
   { nom: 'Indicateurs de déploiement', ancre: 'déploiement', typeIndicateur: 'DEPL' },
   { nom: 'Indicateurs financiers', ancre: 'financier', typeIndicateur: 'FINANCIER' },

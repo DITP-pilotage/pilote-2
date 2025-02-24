@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { synthese_des_resultats_projet_structurant } from '@prisma/client';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import SynthèseDesRésultatsProjetStructurantBuilder from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultats.builder';
 import SynthèseDesRésultatsProjetStructurantSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsProjetStructurantSQLRow.builder';
 import SynthèseDesRésultatsProjetStructurantRepository from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
@@ -18,7 +18,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       const auteur = 'Jean DUPONT';
       const météo = 'SOLEIL';
 
-      const synthèseDesRésultatsRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository(prisma);
+      const synthèseDesRésultatsRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository();
 
       // When
       await synthèseDesRésultatsRepository.créer(projetStructurantId, id, contenu, auteur, météo, date);
@@ -42,7 +42,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
         })
         .build()!;
 
-      const synthèseDesRésultatsRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository(prisma);
+      const synthèseDesRésultatsRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository();
 
       // When
       const synthèseDesRésultatsCréée = await synthèseDesRésultatsRepository.créer(projetStructurantId, id, contenu, auteur, météo, new Date(date));
@@ -61,7 +61,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
   describe('findNewestByProjetStructurantIdAndTerritoire', () => {
     test('Renvoie null si aucune synthèse des résultats n\'est présente en base', async () => {
       // Given
-      const synthèseDesRésultatsRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository(prisma);
+      const synthèseDesRésultatsRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository();
 
       // When
       const result = await synthèseDesRésultatsRepository.récupérerLaPlusRécente(faker.datatype.uuid());
@@ -73,7 +73,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
     test('renvoie la synthèse des résultats la plus récente et dont le commentaire est non nul', async () => {
       // Given
       const projetStructurantId = '4136cd0b-d90b-4af7-b485-5d1ded8db252';
-      const synthèseDesRésultatsRepository: SynthèseDesRésultatsProjetStructurantRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository(prisma);
+      const synthèseDesRésultatsRepository: SynthèseDesRésultatsProjetStructurantRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository();
 
 
       const synthesesDesResultats: synthese_des_resultats_projet_structurant[] = [
@@ -124,7 +124,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
   describe('récupérerHistoriqueDeLaSynthèseDesRésultats', () => {
     test('Retourne, par ordre antéchronologique, toutes les synthèses des résultats pour un projet structurant', async () => {
       // GIVEN
-      const synthèseDesRésultatsRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository(prisma);
+      const synthèseDesRésultatsRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository();
       const projetStructurantId = faker.datatype.uuid();
 
       const synthèsesDesResultats: synthese_des_resultats_projet_structurant[] = [

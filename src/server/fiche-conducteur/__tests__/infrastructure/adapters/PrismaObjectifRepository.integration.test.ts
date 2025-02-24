@@ -1,12 +1,12 @@
 import { randomUUID } from 'node:crypto';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import { PrismaObjectifRepository } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaObjectifRepository';
 
 describe('PrismaObjectifRepository', () => {
   let prismaObjectifRepository: PrismaObjectifRepository;
 
   beforeEach(() => {
-    prismaObjectifRepository = new PrismaObjectifRepository(prisma);
+    prismaObjectifRepository = new PrismaObjectifRepository();
   });
 
   describe('#listerObjectifParChantierId', () => {

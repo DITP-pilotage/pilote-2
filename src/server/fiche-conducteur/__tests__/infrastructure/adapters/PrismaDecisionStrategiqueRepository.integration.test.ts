@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import {
   PrismaDecisionStrategiqueRepository,
 } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaDecisionStrategiqueRepository';
@@ -8,7 +8,7 @@ describe('PrismaDecisionStrategiqueRepository', () => {
   let prismaDecisionStrategiqueRepository: PrismaDecisionStrategiqueRepository;
 
   beforeEach(() => {
-    prismaDecisionStrategiqueRepository = new PrismaDecisionStrategiqueRepository(prisma);
+    prismaDecisionStrategiqueRepository = new PrismaDecisionStrategiqueRepository();
   });
 
   describe('#listerObjectifParChantierId', () => {

@@ -2,6 +2,7 @@ import { FunctionComponent } from 'react';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { CartographieIndicateurType } from '@/client/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
 import SousIndicateurBloc from './Bloc/SousIndicateurBloc';
 
 interface SousIndicateursProps {
@@ -16,6 +17,8 @@ interface SousIndicateursProps {
   mailleSelectionnee: MailleInterne
   mailsDirecteursProjets: string[]
   jalon: number
+  cartographieDroiteIndicateur: CartographieIndicateurType
+  cartographieGaucheIndicateur: CartographieIndicateurType
 }
 
 
@@ -31,6 +34,8 @@ const SousIndicateurs: FunctionComponent<SousIndicateursProps> = ({
   jalon,
   mailleSelectionnee,
   mailsDirecteursProjets,
+  cartographieDroiteIndicateur,
+  cartographieGaucheIndicateur,
 }) => {
   const listeClassesCouleursFond = [
     'fr-background-contrast--grey',
@@ -42,6 +47,8 @@ const SousIndicateurs: FunctionComponent<SousIndicateursProps> = ({
       {
         listeSousIndicateurs.map((sousIndicateur, index) => (
           <SousIndicateurBloc
+            cartographieDroiteIndicateur={cartographieDroiteIndicateur}
+            cartographieGaucheIndicateur={cartographieGaucheIndicateur}
             chantierEstTerritorialisé={chantierEstTerritorialisé}
             classeCouleurFond={listeClassesCouleursFond[index % 2]}
             detailsIndicateursTerritoire={detailsIndicateursTerritoire}

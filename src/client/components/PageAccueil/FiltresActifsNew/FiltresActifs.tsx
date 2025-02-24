@@ -28,6 +28,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
+    estEnAlertePossedePropositionsValeurActuelle: parseAsBoolean.withDefault(false),
   }, {
     shallow: false,
     clearOnDefault: true,
@@ -43,7 +44,8 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
     + (filtres.estEnAlerteÉcart ? 1 : 0)
     + (filtres.estEnAlerteBaisse ? 1 : 0)
     + (filtres.estEnAlerteMétéoNonRenseignée ? 1 : 0)
-    + (filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0);
+    + (filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0)
+    + (filtres.estEnAlertePossedePropositionsValeurActuelle ? 1 : 0);
 
   const ministèresAvecUnSeulPérimètre = new Map(
     ministères
@@ -71,6 +73,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
       estEnAlerteBaisse: false,
       estEnAlerteMétéoNonRenseignée: false,
       estEnAlerteAbscenceTauxAvancementDepartemental: false,
+      estEnAlertePossedePropositionsValeurActuelle: false,
     });
   };
 
@@ -214,6 +217,21 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
                   filtres.estEnAlerteAbscenceTauxAvancementDepartemental = false;
 
                   sauvegarderFiltres({ estEnAlerteAbscenceTauxAvancementDepartemental: false });
+                  return setFiltres(filtres);
+                }}
+              />
+            </li>
+          ) : null
+        }
+        {
+          filtres.estEnAlertePossedePropositionsValeurActuelle ? (
+            <li>
+              <Tag
+                libellé='Chantier(s) avec proposition(s) de valeur actuelle'
+                suppressionCallback={() => {
+                  filtres.estEnAlertePossedePropositionsValeurActuelle = false;
+
+                  sauvegarderFiltres({ estEnAlertePossedePropositionsValeurActuelle: false });
                   return setFiltres(filtres);
                 }}
               />

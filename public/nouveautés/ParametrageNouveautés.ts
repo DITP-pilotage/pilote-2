@@ -8,6 +8,20 @@ interface Nouveautés {
 
 export const ParametrageNouveautés: Nouveautés[] = [
   {
+    version: 'Version 2.7.1',
+    date: '24 février 2025',
+    contenu: [
+      "Affichage des indicateurs sur les pages des chantiers : Les indicateurs sont désormais présentés en fonction de leur contribution au taux d'avancement de chaque territoire. Il est ainsi plus simple d’identifier si un indicateur est pris en compte pour le taux d’avancement d’un territoire donné, s’il est uniquement pris en compte pour un autre territoire ou à une autre maille, ou s’il ne contribue pas du tout au taux d’avancement. Le type de chaque indicateur est désormais précisé dans sa description, et le nombre total d’indicateurs est affiché pour chaque catégorie.",
+      "Personnalisation des cartes sur les pages chantiers : Il est désormais possible de choisir les cartes affichées sur les pages chantiers grâce à un menu déroulant. Ce nouveau sélecteur permet dorénavant de choisir d'afficher les taux d’avancement à horizon 2024.",
+      "Proposition de valeurs actuelles : nouvelles fonctionnalités : Sur la page d’accueil, un nouveau filtre dans la catégorie « Chantiers signalés » permet d’identifier les chantiers pour lesquels des propositions ont été réalisées sur chaque territoire. Sur la page chantier, le sélecteur de cartes (voir ci-dessus) permet également d’afficher une carte indiquant les territoires ayant soumis une proposition de valeurs actuelles pour un ou plusieurs indicateurs.",
+      "Amélioration des exports CSV : Lors de l’export d’un fichier CSV, les cellules vides sont désormais accompagnées d’une indication précisant la raison de l’absence de données (ex. : donnée non renseignée ou non applicable au territoire concerné).",
+    ],
+    correctifs: [
+      "Proposition de valeurs actuelles : Désormais, lorsqu’une direction de projet effectue un nouvel import pour un indicateur donné, la proposition du territoire concerné n’apparaît plus dans PILOTE. Un bug empêchait parfois cette mise à jour automatique, il est désormais corrigé.",
+      "Affichage des chantiers à l’échelle régionale : Pour les chantiers applicables uniquement à l’échelle régionale, l’affichage par défaut se fait désormais directement à cette maille, évitant ainsi une étape intermédiaire inutile."
+    ],
+  },
+  {
     version: 'Version 2.6.4',
     date: '06 février 2025',
     contenu: [
@@ -47,7 +61,6 @@ export const ParametrageNouveautés: Nouveautés[] = [
     date: '12 décembre 2024',
     contenu: [
       'PILOTE se dote d\'une nouvelle fonctionnalité permettant aux territoires de proposer des valeurs pour les indicateurs des PPG. Cette fonctionnalité permet de proposer une valeur pour un indicateur, affichée en parallèle des données importées par le Directeur de projet. Elle est réservée aux utilisateurs habilités à rédiger des commentaires pour une PPG sur un territoire. Pensée comme un outil de dialogue supplémentaire, cette fonctionnalité doit vous permettre d’indiquer si vous constatez une différence entre les résultats apportés par la direction de projet et la réalité du terrain. Plus d\'informations dans le centre d\'aide.',
-
     ],
     correctifs: [
     ],

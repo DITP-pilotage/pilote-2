@@ -1,4 +1,4 @@
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import ObjectifRepository from '@/server/domain/chantier/objectif/ObjectifRepository.interface';
 import ObjectifSQLRepository from '@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository';
 import { TypeObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
@@ -8,7 +8,7 @@ describe('ObjectifSQLRepository', function () {
   let objectifRepository: ObjectifRepository;
 
   beforeEach(() => {
-    objectifRepository = new ObjectifSQLRepository(prisma);
+    objectifRepository = new ObjectifSQLRepository();
   });
 
   describe('récupérerLePlusRécent', () => {

@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
 import logger from '@/server/infrastructure/Logger';
-
-export const prisma = new PrismaClient();
+import { prisma } from '@/server/db/prisma';
 
 beforeEach(async () => {
   try {

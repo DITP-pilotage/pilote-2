@@ -26,6 +26,7 @@ class TableauChantiersTest {
       dateDeMàjDonnéesQualitatives: new Date().toISOString(),
       écart: 0,
       tendance: 'STAGNATION',
+      maillesApplicables: ['nationale', 'regionale', 'departementale'],
     },
     {
       porteur: this.ministèresDisponibles[0],
@@ -38,6 +39,7 @@ class TableauChantiersTest {
       dateDeMàjDonnéesQualitatives: new Date().toISOString(),
       écart: 0,
       tendance: 'STAGNATION',
+      maillesApplicables: ['nationale', 'regionale', 'departementale'],
     },
     {
       porteur: this.ministèresDisponibles[0],
@@ -50,6 +52,7 @@ class TableauChantiersTest {
       dateDeMàjDonnéesQualitatives: new Date().toISOString(),
       écart: 0,
       tendance: 'STAGNATION',
+      maillesApplicables: ['nationale', 'regionale', 'departementale'],
     },
   ];
 

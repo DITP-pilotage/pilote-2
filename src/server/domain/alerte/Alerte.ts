@@ -28,6 +28,10 @@ const Alerte = {
   estEnAlerteMétéoNonRenseignée(météo: ChantierVueDEnsemble['météo']) {
     return météo === 'NON_RENSEIGNEE';
   },
+
+  estEnAlertePossedePropositionsValeurActuelle(aUnePropositionsValeurActuelle: boolean ) {
+    return aUnePropositionsValeurActuelle;
+  },
 };
 
 export default Alerte;

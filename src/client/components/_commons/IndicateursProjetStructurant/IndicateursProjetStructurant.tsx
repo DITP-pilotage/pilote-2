@@ -6,7 +6,7 @@ import IndicateursProjetStructurantStyled
 import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
-import { ÉlémentPageIndicateursType } from '@/client/utils/rubriques';
+import { ÉlémentPageIndicateursTypeProjetsStructurants } from '@/client/utils/rubriques';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
@@ -14,7 +14,7 @@ import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructura
 interface RubriquesIndicateursProps {
   indicateurs: Indicateur[];
   détailsIndicateurs: DétailsIndicateurs
-  listeRubriquesIndicateurs: ÉlémentPageIndicateursType[]
+  listeRubriquesIndicateurs: ÉlémentPageIndicateursTypeProjetsStructurants[]
   typeDeRéforme: TypeDeRéforme,
   chantierEstTerritorialisé: boolean,
   territoireProjetStructurant?: ProjetStructurant['territoire']

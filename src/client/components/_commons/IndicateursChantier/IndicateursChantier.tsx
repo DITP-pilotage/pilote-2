@@ -1,23 +1,22 @@
 import { FunctionComponent } from 'react';
-import Titre from '@/components/_commons/Titre/Titre';
 import IndicateurBloc from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc';
 import IndicateursChantierStyled from '@/components/_commons/IndicateursChantier/IndicateursChantier.styled';
 import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
 import Alerte from '@/components/_commons/Alerte/Alerte';
-import api from '@/server/infrastructure/api/trpc/api';
-import { ÉlémentPageIndicateursType } from '@/client/utils/rubriques';
+import { CategoriesIndicateur, listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
 import {
   DétailsIndicateurs,
   DétailsIndicateurTerritoire,
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { CartographieIndicateurType } from './Bloc/Détails/IndicateurDétails';
+import TitreRubrique from './Bloc/Détails/TitreRubrique/TitreRubrique';
 
 interface IndicateursProps {
   indicateurs: Indicateur[];
   détailsIndicateurs: DétailsIndicateurs
   detailsIndicateursTerritoire: Record<string, DétailsIndicateurTerritoire>
-  listeRubriquesIndicateurs: ÉlémentPageIndicateursType[]
   chantierEstTerritorialisé: boolean,
   estInteractif?: boolean
   estAutoriseAProposerUneValeurActuelle?: boolean
@@ -28,13 +27,16 @@ interface IndicateursProps {
   alerteMiseAJourIndicateur: boolean
   mailsDirecteursProjets: string[]
   jalon: number
+  cartographieDroiteIndicateur: CartographieIndicateurType
+  cartographieGaucheIndicateur: CartographieIndicateurType
+  categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]>
+  sousIndicateursDisponibles: boolean
 }
 
 const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   indicateurs,
   détailsIndicateurs,
   detailsIndicateursTerritoire,
-  listeRubriquesIndicateurs,
   chantierEstTerritorialisé,
   estInteractif = true,
   estAutoriseAProposerUneValeurActuelle = false,
@@ -45,16 +47,15 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   alerteMiseAJourIndicateur,
   mailsDirecteursProjets,
   jalon,
+  cartographieDroiteIndicateur,
+  cartographieGaucheIndicateur,
+  categoriesIndicateurRepartition,
+  sousIndicateursDisponibles,
 }) => {
 
   if (indicateurs.length === 0) {
     return null;
   }
-
-  const { data: sousIndicateursDisponibles } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_SOUS_INDICATEURS' });
-  const listeIndicateursParent = !!sousIndicateursDisponibles ?
-    indicateurs.filter(indicateur => !indicateur.parentId) :
-    indicateurs;
 
   return (
     <IndicateursChantierStyled>
@@ -69,8 +70,8 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
         ) : null
       }
       {
-        listeRubriquesIndicateurs.map(rubriqueIndicateur => {
-          const indicateursDeCetteRubrique = listeIndicateursParent.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
+        listeRubriquesIndicateursChantier.map(rubriqueIndicateur => {
+          const indicateursDeCetteRubrique = categoriesIndicateurRepartition[rubriqueIndicateur.categorieIndicateur];
 
           if (indicateursDeCetteRubrique.length > 0) {
             return (
@@ -79,40 +80,53 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                 id={rubriqueIndicateur.ancre}
                 key={rubriqueIndicateur.ancre}
               >
-                <Titre
-                  baliseHtml='h3'
-                  className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
+                <button 
+                  aria-controls={`accordion-rubrique-${rubriqueIndicateur.categorieIndicateur}`}
+                  aria-expanded={rubriqueIndicateur.estAccordeonOuvert}
+                  className='fr-accordion__btn fr-accordion_custom fr-py-0 fr-px-3v fr-icon-black'
+                  type='button'
                 >
-                  {rubriqueIndicateur.nom}
-                </Titre>
-                {
-                  indicateursDeCetteRubrique
-                    .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireCode]?.pondération, détailsIndicateurs[b.id][territoireCode]?.pondération))
-                    .map(indicateur => {
-                      const listeSousIndicateurs = !!sousIndicateursDisponibles ?
-                        indicateurs.filter(ind => ind.parentId === indicateur.id) :
-                        [];
-                      return (
-                        <IndicateurBloc
-                          chantierEstTerritorialisé={chantierEstTerritorialisé}
-                          detailsIndicateursTerritoire={detailsIndicateursTerritoire}
-                          détailsIndicateurs={détailsIndicateurs}
-                          estAutoriseAProposerUneValeurActuelle={estAutoriseAProposerUneValeurActuelle}
-                          estInteractif={estInteractif}
-                          indicateur={indicateur}
-                          jalon={jalon}
-                          key={indicateur.id}
-                          listeSousIndicateurs={listeSousIndicateurs}
-                          mailleQuery={mailleQuery}
-                          mailleSelectionnee={mailleSelectionnee}
-                          mailsDirecteursProjets={mailsDirecteursProjets}
-                          territoireCode={territoireCode}
-                          territoiresCompares={territoiresCompares}
-                        />
-                      );
+                  <TitreRubrique 
+                    nombreIndicateurRubrique={indicateursDeCetteRubrique.length}
+                    rubriqueDescription={rubriqueIndicateur.description}
+                    rubriqueNom={rubriqueIndicateur.nom}
+                  />
+                </button>       
+                <div
+                  className='fr-collapse'
+                  id={`accordion-rubrique-${rubriqueIndicateur.categorieIndicateur}`}
+                >
+                  {
+                    indicateursDeCetteRubrique
+                      .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireCode]?.pondération, détailsIndicateurs[b.id][territoireCode]?.pondération))
+                      .map(indicateur => {
+                        const listeSousIndicateurs = !!sousIndicateursDisponibles ?
+                          indicateurs.filter(ind => ind.parentId === indicateur.id) :
+                          [];
+                        return (
+                          <IndicateurBloc
+                            cartographieDroiteIndicateur={cartographieDroiteIndicateur}
+                            cartographieGaucheIndicateur={cartographieGaucheIndicateur}
+                            chantierEstTerritorialisé={chantierEstTerritorialisé}
+                            detailsIndicateursTerritoire={detailsIndicateursTerritoire}
+                            détailsIndicateurs={détailsIndicateurs}
+                            estAutoriseAProposerUneValeurActuelle={estAutoriseAProposerUneValeurActuelle}
+                            estInteractif={estInteractif}
+                            indicateur={indicateur}
+                            jalon={jalon}
+                            key={indicateur.id}
+                            listeSousIndicateurs={listeSousIndicateurs}
+                            mailleQuery={mailleQuery}
+                            mailleSelectionnee={mailleSelectionnee}
+                            mailsDirecteursProjets={mailsDirecteursProjets}
+                            territoireCode={territoireCode}
+                            territoiresCompares={territoiresCompares}
+                          />
+                        );
 
-                    })
-                }
+                      })
+                  }
+                </div>
               </section>
             );
           }

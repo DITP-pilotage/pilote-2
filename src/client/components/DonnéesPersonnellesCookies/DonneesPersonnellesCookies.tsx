@@ -26,10 +26,10 @@ const DonneesPersonnellesCookies: FunctionComponent<{}> = () => {
                 Pour toute question au sujet de la gestion des cookies, vous pouvez utiliser l’adresse suivante : 
                 {' '}
                 <Link
-                  href='mailto:support.ditp@modernisation.gouv.fr'
-                  title='Envoyer un courriel à support.ditp@modernisation.gouv.fr'
+                  href='mailto:pilote.ditp@modernisation.gouv.fr'
+                  title='Envoyer un courriel à pilote.ditp@modernisation.gouv.fr'
                 >
-                  support.ditp@modernisation.gouv.fr
+                  pilote.ditp@modernisation.gouv.fr
                 </Link>
               </p>  
             </div>
@@ -167,10 +167,10 @@ const DonneesPersonnellesCookies: FunctionComponent<{}> = () => {
               ou par courriel à :
               {' '}
               <Link
-                href='mailto:support.ditp@modernisation.gouv.fr'
-                title='Envoyer un courriel à support.ditp@modernisation.gouv.fr'
+                href='mailto:pilote.ditp@modernisation.gouv.fr'
+                title='Envoyer un courriel à pilote.ditp@modernisation.gouv.fr'
               >
-                support.ditp@modernisation.gouv.fr
+                pilote.ditp@modernisation.gouv.fr
               </Link>
             </p>
             <p className='fr-text fr-col-12'>

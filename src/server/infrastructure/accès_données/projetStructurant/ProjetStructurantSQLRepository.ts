@@ -1,6 +1,7 @@
-import { projet_structurant as ProjetStructurantPrisma, PrismaClient } from '@prisma/client';
+import { projet_structurant as ProjetStructurantPrisma } from '@prisma/client';
 import ProjetStructurantRepository from '@/server/domain/projetStructurant/ProjetStructurantRepository.interface';
 import { ProjetStructurantPrismaVersDomaine } from '@/server/domain/projetStructurant/ProjetStructurant.interface';
+import { prisma } from '@/server/db/prisma';
 
 class ErreurProjetStructurantNonTrouvé extends Error {
   constructor(id: string) {
@@ -9,13 +10,7 @@ class ErreurProjetStructurantNonTrouvé extends Error {
 }
 
 export default class ProjetStructurantSQLRepository implements ProjetStructurantRepository {
-  private prisma: PrismaClient;
-
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
-  }
-
-  private _mapperVersDomaine(projetStructurantPrisma: ProjetStructurantPrisma): ProjetStructurantPrismaVersDomaine {    
+  private _mapperVersDomaine(projetStructurantPrisma: ProjetStructurantPrisma): ProjetStructurantPrismaVersDomaine {
     return {
       id: projetStructurantPrisma.id,
       nom: projetStructurantPrisma.nom,
@@ -30,7 +25,7 @@ export default class ProjetStructurantSQLRepository implements ProjetStructurant
   }
 
   async récupérer(id: string) {
-    const projetStructurant = await this.prisma.projet_structurant.findFirst({
+    const projetStructurant = await prisma.projet_structurant.findFirst({
       where: { id  },
     });
 
@@ -40,7 +35,7 @@ export default class ProjetStructurantSQLRepository implements ProjetStructurant
   }
 
   async récupérerListe() {
-    const projetsStructurants = await this.prisma.projet_structurant.findMany();
+    const projetsStructurants = await prisma.projet_structurant.findMany();
     return projetsStructurants.map(p => this._mapperVersDomaine(p));   
   }
 

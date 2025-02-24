@@ -3,7 +3,9 @@ import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
-import IndicateurDétails from '@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
+import IndicateurDétails, {
+  CartographieIndicateurType,
+} from '@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
 import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import IndicateurPonderation from '@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
@@ -48,6 +50,8 @@ interface IndicateurBlocProps {
   mailleQuery: MailleInterne
   mailsDirecteursProjets: string[]
   jalon: number
+  cartographieDroiteIndicateur: CartographieIndicateurType
+  cartographieGaucheIndicateur: CartographieIndicateurType
 }
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
@@ -64,6 +68,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   mailleQuery,
   mailsDirecteursProjets,
   jalon,
+  cartographieDroiteIndicateur,
+  cartographieGaucheIndicateur,
 }) => {
   const {
     maille: mailleTerritoireSelectionnee,
@@ -116,7 +122,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
 
   return (
     <IndicateurBlocStyled
-      className='fr-mb-2w'
+      className='fr-mt-2w'
       key={indicateur.id}
     >
       <Bloc>
@@ -216,7 +222,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <th className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w' />
                     <th className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm' />
                     <th
-                      className='fr-background-contrast-grey border-b-2 text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                      className='fr-background-contrast-grey border-b-2 border-b-high-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
                       colSpan={3}
                     >
                       <div className='flex align-center justify-center'>
@@ -233,13 +239,13 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       </div>
                     </th>
                     <th
-                      className='fr-background-action-low-blue-france border-b-2 text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
+                      className='fr-background-action-low-blue-france border-b-2 border-b-high-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
                       colSpan={3}
                     >
                       DONNÉES À ÉCHÉANCE 2026
                     </th>
                   </tr>
-                  <tr className='border-b-2'>
+                  <tr className='border-b-2 border-b-high-grey'>
                     <th
                       className='fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold no-wrap'
                     >
@@ -618,6 +624,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
           {
             estInteractif ? (
               <IndicateurDétails
+                cartographieDroiteIndicateur={cartographieDroiteIndicateur}
+                cartographieGaucheIndicateur={cartographieGaucheIndicateur}
                 chantierEstTerritorialisé={chantierEstTerritorialisé}
                 dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
                 dateProchaineDateMaj={dateProchaineDateMaj}

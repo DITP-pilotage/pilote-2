@@ -40,7 +40,7 @@ const PageVide: FunctionComponent<PageVideProps> = ({ titre }) => {
                 </p>
                 <a
                   className='fr-btn fr-btn--secondary'
-                  href='mailto:support.ditp@modernisation.gouv.fr'
+                  href='mailto:pilote.ditp@modernisation.gouv.fr'
                 >
                   Contactez-nous
                 </a>

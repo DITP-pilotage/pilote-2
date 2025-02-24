@@ -1,12 +1,12 @@
 import { ministere, perimetre } from '@prisma/client';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import MinistèreSQLRepository from '@/server/infrastructure/accès_données/ministère/MinistèreSQLRepository';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 
 describe('MinistèreSQLRepository', () => {
   test('Accède à un ministère', async () => {
     // GIVEN
-    const repository: MinistèreRepository = new MinistèreSQLRepository(prisma);
+    const repository: MinistèreRepository = new MinistèreSQLRepository();
     const ministere1: ministere = { id: '1', nom: 'Agriculture', icone: 'remix::icon-1', a_supprimer: false, acronyme: 'MASA' };
     const ministere2: ministere = { id: '2', nom: 'Justice', icone: 'remix::icon-2', a_supprimer: false, acronyme: 'MINJ' };
     await prisma.ministere.createMany({ data: [ministere1, ministere2] });

@@ -2,14 +2,14 @@ import { randomUUID } from 'node:crypto';
 import {
   SynthèseDesRésultatsSQLRepository,
 } from '@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 describe('SynthèseDesRésultatsSQLRepository ', function () {
   let  synthèseDesRésultatsRepository: SynthèseDesRésultatsSQLRepository;
 
   beforeEach(() => {
-    synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
+    synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository();
   });
 
   describe('créer', () => {

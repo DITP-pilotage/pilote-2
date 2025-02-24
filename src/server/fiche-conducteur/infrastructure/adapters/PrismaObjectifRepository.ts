@@ -1,6 +1,7 @@
-import { PrismaClient, objectif as ObjectifModel } from '@prisma/client';
+import { objectif as ObjectifModel } from '@prisma/client';
 import { Objectif } from '@/server/fiche-conducteur/domain/Objectif';
 import { ObjectifRepository } from '@/server/fiche-conducteur/domain/ports/ObjectifRepository';
+import { prisma } from '@/server/db/prisma';
 
 const convertifEnObjectif = (objectifModel: ObjectifModel): Objectif => (Objectif.creerObjectif({
   type: objectifModel.type,
@@ -10,11 +11,8 @@ const convertifEnObjectif = (objectifModel: ObjectifModel): Objectif => (Objecti
 );
 
 export class PrismaObjectifRepository implements ObjectifRepository {
-
-  constructor(private prismaClient: PrismaClient) {}
-
   async listerObjectifParChantierId({ chantierId }: { chantierId: string }): Promise<Objectif[]> {
-    const objectifResult = await this.prismaClient.objectif.findMany({
+    const objectifResult = await prisma.objectif.findMany({
       where: {
         chantier_id: chantierId,
       },

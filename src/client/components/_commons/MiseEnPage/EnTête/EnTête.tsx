@@ -21,7 +21,7 @@ const EnTête: FunctionComponent<{}> = () => {
   const { messageInformation } = useEntete();
 
   const isBandeauActif = messageInformation?.isBandeauActif || false;
-  const bandeauTexte = messageInformation?.bandeauTexte || 'Des opérations de maintenance sont en cours et peuvent perturber le fonctionnement normal de PILOTE. En cas de difficultés : support.ditp@modernisation.gouv.fr';
+  const bandeauTexte = messageInformation?.bandeauTexte || 'Des opérations de maintenance sont en cours et peuvent perturber le fonctionnement normal de PILOTE. En cas de difficultés : pilote.ditp@modernisation.gouv.fr';
   const bandeauType = messageInformation?.bandeauType || 'WARNING';
 
   return (

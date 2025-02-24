@@ -51,8 +51,8 @@ import {
   RecupererRepartitionsMeteoChantiersUseCase,
 } from '@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase';
 import {
-  getAnneeAffichageDateDeBascule,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+  getAnneeDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule';
 import { configuration } from '@/config';
 
 interface NextPageRapportDétailléProps {
@@ -80,6 +80,7 @@ interface NextPageRapportDétailléProps {
     id: string,
     donnéesCartographieMétéo: CartographieDonnéesMétéo
   }[],
+  listeIndicateursPrisEnCompteAvancement: string[],
 }
 
 const PROFILS_AUTORISE_VOIR_BROUILLONS = new Set([ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE, ProfilEnum.DIR_PROJET, ProfilEnum.EQUIPE_DIR_PROJET]);
@@ -95,7 +96,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   const { maille, codeInsee: codeInseeSelectionne } = territoireCodeVersMailleCodeInsee(territoireCode);
 
   const mailleQuery = query.maille as MailleInterne || 'departementale';
-  const jalon = Number.parseInt(query.jalon as string) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
+  const jalon = Number.parseInt(query.jalon as string) || getAnneeDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
 
   const mailleSelectionnee = maille === 'NAT'
     ? mailleQuery
@@ -119,6 +120,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     estEnAlerteBaisse: query.estEnAlerteBaisse === 'true',
     estEnAlerteMétéoNonRenseignée: query.estEnAlerteMétéoNonRenseignée === 'true',
     estEnAlerteAbscenceTauxAvancementDepartemental: query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
+    estEnAlertePossedePropositionsValeurActuelle: query.estEnAlertePossedePropositionsValeurActuelle === 'true',
   };
 
 
@@ -153,14 +155,20 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     chantierRepository: dependencies.getChantierRepository(),
   }).run(session.habilitations, territoireCode, filtres, axes).then(presenterEnRépartitionsMétéosChantiersContrat);
 
-  const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisse || filtresAlertes.estEnAlerteTauxAvancementNonCalculé || filtresAlertes.estEnAlerteMétéoNonRenseignée || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? chantiers.filter(chantier => {
-    const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][territoireCode];
-    return (filtresAlertes.estEnAlerteÉcart && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
+  const chantiersAvecAlertes = (filtresAlertes.estEnAlerteÉcart
+    || filtresAlertes.estEnAlerteBaisse
+    || filtresAlertes.estEnAlerteTauxAvancementNonCalculé
+    || filtresAlertes.estEnAlerteMétéoNonRenseignée
+    || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental
+    || filtresAlertes.estEnAlertePossedePropositionsValeurActuelle) ? chantiers.filter(chantier => {
+      const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][territoireCode];
+      return (filtresAlertes.estEnAlerteÉcart && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
       || (filtresAlertes.estEnAlerteBaisse && Alerte.estEnAlerteBaisse(chantierDonnéesTerritoires.tendance))
       || (filtresAlertes.estEnAlerteTauxAvancementNonCalculé && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierDonnéesTerritoires.avancement.global, chantier.cibleAttendu))
       || (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental && Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.mailles.departementale, chantier.cibleAttendu))
-      || (filtresAlertes.estEnAlerteMétéoNonRenseignée && Alerte.estEnAlerteMétéoNonRenseignée(chantierDonnéesTerritoires.météo));
-  }) : chantiers;
+      || (filtresAlertes.estEnAlerteMétéoNonRenseignée && Alerte.estEnAlerteMétéoNonRenseignée(chantierDonnéesTerritoires.météo))
+      || (filtresAlertes.estEnAlertePossedePropositionsValeurActuelle && Alerte.estEnAlertePossedePropositionsValeurActuelle(chantierDonnéesTerritoires.aUnePropositionsValeurActuelle));
+    }) : chantiers;
 
   const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository());
 
@@ -228,6 +236,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   const indicateursRepository = dependencies.getIndicateurRepository();
   const indicateursGroupésParChantier = await indicateursRepository.récupérerGroupésParChantier(chantiersIds);
   const détailsIndicateursGroupésParChantier = await indicateursRepository.récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds, mailleChantier, codeInseeSelectionne, jalon);
+  const listeIndicateursPrisEnCompteAvancement = await indicateursRepository.recupererListeIndicateursPrisEnCompteDansCalculAvancementSurAuMoinsUnTerritoire(chantiersIds);
 
   const synthèseDesRésultatsRepository = dependencies.getSynthèseDesRésultatsRepository();
   const synthèsesDesRésultatsGroupéesParChantier = await synthèseDesRésultatsRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds, mailleChantier, codeInseeSelectionne);
@@ -312,6 +321,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
         objectifs: objectifsGroupésParChantier,
         décisionStratégique: décisionStratégiquesGroupéesParChantier,
       },
+      listeIndicateursPrisEnCompteAvancement,
     },
   };
 };
@@ -335,6 +345,7 @@ const NextPageRapportDétaillé: FunctionComponent<NextPageRapportDétailléProp
   repartitionMeteosChantiers,
   listeDonnéesCartographieAvancement,
   listeDonnéesCartographieMétéo,
+  listeIndicateursPrisEnCompteAvancement,
 }) => {
   const mapChantierStatistiques = new Map<string, AvancementChantierRapportDetaille>();
   listeAvancementsStatistiques.forEach(itemAvancementsStatistique => {
@@ -366,6 +377,7 @@ const NextPageRapportDétaillé: FunctionComponent<NextPageRapportDétailléProp
         filtresComptesCalculés={filtresComptesCalculés}
         indicateursGroupésParChantier={indicateursGroupésParChantier}
         jalon={jalon}
+        listeIndicateursPrisEnCompteAvancement={listeIndicateursPrisEnCompteAvancement}
         mailleQuery={mailleQuery}
         mailleSelectionnee={mailleSelectionnee}
         mapChantierStatistiques={mapChantierStatistiques}

@@ -1,11 +1,11 @@
 import { PrismaChantierRepository } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaChantierRepository';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 
 describe('PrismaChantierRepository', () => {
   let prismaChantierRepository: PrismaChantierRepository;
 
   beforeEach(() => {
-    prismaChantierRepository = new PrismaChantierRepository(prisma);
+    prismaChantierRepository = new PrismaChantierRepository();
   });
 
   describe('#récupérerParIdEtParTerritoireCode', () => {

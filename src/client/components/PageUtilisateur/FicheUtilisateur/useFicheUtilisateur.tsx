@@ -58,15 +58,19 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
     if (profil && profilsRégionaux.includes(profil.code)) {
       const régionsSaisies = u?.habilitations?.lecture?.territoires?.filter(territoireCode => territoireCode.startsWith('REG')) ?? [];
       const départementsEnfantsDesRégionsSaisies = régionsSaisies.flatMap(régionCode => départements.filter(d => d.codeParent === régionCode).map(d => d.nomAffiché));
+      const territoireAAfficher = [...régionsSaisies.map(code => récupérerDétailsSurUnTerritoire(code).nomAffiché), ...départementsEnfantsDesRégionsSaisies];
+      
+      if (u.habilitations?.lecture?.territoires?.includes('NAT-FR')) {
+        territoireAAfficher.unshift(récupérerDétailsSurUnTerritoire('NAT-FR').nomAffiché);
+      }
 
-      return [...régionsSaisies.map(code => récupérerDétailsSurUnTerritoire(code).nomAffiché), ...départementsEnfantsDesRégionsSaisies];
+      return territoireAAfficher;
     }
 
     return u.habilitations?.lecture?.territoires?.map(territoire => récupérerDétailsSurUnTerritoire(territoire).nomAffiché) ?? [];
   }, [départements, profil, récupérerDétailsSurUnTerritoire]);
 
   const déterminerLesNomÀAfficherPourLesChantiersLecture = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
-
     if (profil?.code === ProfilEnum.DROM)
       return ['Tous les chantiers territorialisés', 'Tous les chantiers DROM'];
 
@@ -76,7 +80,13 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
     if (profil?.chantiers.lecture.tousTerritorialisés)
       return ['Tous les chantiers territorialisés'];
 
-    return u.habilitations?.lecture?.chantiers?.map(chantierId => chantiers?.find(c => c.id === chantierId)?.nom ?? '') ?? [];
+    return u.habilitations?.lecture?.chantiers?.reduce((result, chantierId) => {
+      const chantier = chantiers?.find(c => c.id === chantierId);
+      if (chantier && u.habilitations?.lecture?.territoires?.some(territoire => chantier.territoiresApplicables.includes(territoire))) {
+        result.push(chantier.nom);
+      }
+      return result;
+    }, [] as string []) ?? [];
   }, [profil, chantiers]);
 
   const déterminerLesNomÀAfficherPourLesChantiersResponsabilite = (u: FicheUtilisateurProps['utilisateur']) => {
@@ -124,7 +134,7 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
 
       if ([ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(profil?.code ?? '')) {
         const chantiersFiltrés = chantiers
-          ?.filter(c => u.habilitations?.lecture?.chantiers?.includes(c.id) && c.ate !== 'hors_ate_centralise')
+          ?.filter(c => u.habilitations?.lecture?.chantiers?.includes(c.id) && c.ate !== 'hors_ate_centralise' && u.habilitations.lecture.territoires?.some(territoire => c.territoiresApplicables.includes(territoire)))
           .map(chantier => chantier.nom);
 
         return chantiersFiltrés ?? [];

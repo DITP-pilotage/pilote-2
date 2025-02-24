@@ -23,7 +23,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
 }) => {
-  const { register, getValues, errors } = useDétailsMetadataParametreCalculIndicateurForm();
+  const { register, getValues, errors, setValue } = useDétailsMetadataParametreCalculIndicateurForm();
 
   return (
     <SectionDétailsMetadataParametreCalculIndicateurStyled>
@@ -40,8 +40,11 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.param_vaca_decumul_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vaca_decumul_from')}
-            register={register('paramVacaDecumulFrom', { value: indicateur?.paramVacaDecumulFrom })}
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vaca_decumul_from', 'paramVacaDecumulFrom')}
+            valeurModifiéeCallback={(valeur) => {
+              setValue('paramVacgDecumulFrom', valeur);
+              setValue('paramVacaDecumulFrom', valeur);
+            }}
             values={getValues('paramVacaDecumulFrom')}
           />
         </div>
@@ -51,14 +54,20 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.param_vaca_partition_date}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vaca_partition_date')}
-            register={register('paramVacaPartitionDate', { value: indicateur?.paramVacaPartitionDate })}
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vaca_partition_date', 'paramVacaPartitionDate')}
+            valeurModifiéeCallback={(valeur) => {
+              setValue('paramVacaPartitionDate', valeur);
+              setValue('paramVacgPartitionDate', valeur);
+              setValue('paramVacaOp', valeur === '_' ? 'current_value' : 'sum');
+              setValue('paramVacgOp', valeur === '_' ? 'current_value' : 'sum');
+            }}
             values={getValues('paramVacaPartitionDate')}
           />
         </div>
         <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.paramVacaOp?.message}
+            estDesactive
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.param_vaca_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vaca_op')}
@@ -75,8 +84,11 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.param_vacg_decumul_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vacg_decumul_from')}
-            register={register('paramVacgDecumulFrom', { value: indicateur?.paramVacgDecumulFrom })}
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vacg_decumul_from', 'paramVacgDecumulFrom')}
+            valeurModifiéeCallback={(valeur) => {
+              setValue('paramVacgDecumulFrom', valeur);
+              setValue('paramVacaDecumulFrom', valeur);
+            }}
             values={getValues('paramVacgDecumulFrom')}
           />
         </div>
@@ -86,14 +98,20 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.param_vacg_partition_date}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vacg_partition_date')}
-            register={register('paramVacgPartitionDate', { value: indicateur?.paramVacgPartitionDate })}
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vacg_partition_date', 'paramVacgPartitionDate')}
+            valeurModifiéeCallback={(valeur) => {
+              setValue('paramVacaPartitionDate', valeur);
+              setValue('paramVacaOp', valeur === '_' ? 'current_value' : 'sum');
+              setValue('paramVacgPartitionDate', valeur);
+              setValue('paramVacgOp', valeur === '_' ? 'current_value' : 'sum');
+            }}
             values={getValues('paramVacgPartitionDate')}
           />
         </div>
         <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.paramVacgOp?.message}
+            estDesactive
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.param_vacg_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vacg_op')}

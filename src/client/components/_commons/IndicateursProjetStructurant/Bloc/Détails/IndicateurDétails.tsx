@@ -1,5 +1,4 @@
 import { FunctionComponent, useState } from 'react';
-import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
 import IndicateurÉvolution
   from '@/components/_commons/IndicateursProjetStructurant/Bloc/Détails/Évolution/IndicateurÉvolution';
 import Titre from '@/components/_commons/Titre/Titre';

@@ -3,32 +3,28 @@ import IndicateursProps from '@/components/PageRapportDétaillé/Chantier/Indica
 import IndicateurBloc from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/IndicateurBloc';
 import IndicateursStyled from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Indicateurs.styled';
 import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
-import api from '@/server/infrastructure/api/trpc/api';
+import { listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
 
 export default function IndicateursRapportDetaille({
   territoireCode,
   indicateurs,
   détailsIndicateurs,
-  listeRubriquesIndicateurs,
   territoireProjetStructurant,
   typeDeRéforme,
+  categoriesIndicateurRepartition,
+  sousIndicateursDisponibles,
 }: IndicateursProps) {
   const codeInseeSélectionnée = territoireCode?.split('-')[1];
   if (indicateurs.length === 0) {
     return null;
   }
-
-  const { data: sousIndicateursDisponibles } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_SOUS_INDICATEURS' });
-  const listeIndicateursParent = !!sousIndicateursDisponibles ? 
-    indicateurs.filter(indicateur => !indicateur.parentId) :
-    indicateurs;
   
   return (
     <IndicateursStyled>
       {
-        listeRubriquesIndicateurs.map(rubriqueIndicateur => {
-          const indicateursDeCetteRubrique = listeIndicateursParent.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
-
+        listeRubriquesIndicateursChantier.map(rubriqueIndicateur => {
+          const indicateursDeCetteRubrique = categoriesIndicateurRepartition[rubriqueIndicateur.categorieIndicateur];
+          
           if (indicateursDeCetteRubrique.length > 0) {
             return (
               <section
@@ -40,7 +36,7 @@ export default function IndicateursRapportDetaille({
                   baliseHtml='h3'
                   className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
                 >
-                  {rubriqueIndicateur.nom}
+                  {`${rubriqueIndicateur.nom} (${indicateursDeCetteRubrique.length})`}
                 </Titre>
                 {
                   !!codeInseeSélectionnée && indicateursDeCetteRubrique

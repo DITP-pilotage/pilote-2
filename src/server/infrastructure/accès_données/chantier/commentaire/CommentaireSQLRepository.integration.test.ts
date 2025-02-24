@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import CommentaireSQLRepository, {
   CODES_TYPES_COMMENTAIRES,
 } from '@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { prisma } from '@/server/db/prisma';
 import { TypeCommentaireChantier } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
@@ -12,7 +12,7 @@ describe('CommentaireSQLRepository', () => {
   let prismaCommentaireRepository: CommentaireSQLRepository;
 
   beforeEach(() => {
-    prismaCommentaireRepository = new CommentaireSQLRepository(prisma);
+    prismaCommentaireRepository = new CommentaireSQLRepository();
   });
 
   describe('#récupérerLePlusRécent', () => {

@@ -44,13 +44,14 @@ import {
 } from '@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import {
-  getAnneeAffichageDateDeBascule,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getDateBasculeAffichageValeursAnneePrecedente';
+  getAnneeDateDeBascule,
+} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule';
 import { configuration } from '@/config';
 import IndexStyled from './index.styled';
 
 interface ChantierAccueil {
   chantiers: ChantierAccueilContrat[]
+  chantiersIdsExport: string[]
   nombreTotalChantiersAvecAlertes: number
   jalon: number
   ministères: Ministère[]
@@ -62,6 +63,7 @@ interface ChantierAccueil {
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   repartitionMeteosChantiers: RepartitionMeteoContrat
+  estProjetStructurantDisponible: boolean
 }
 
 export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ req, res, query }) => {
@@ -69,7 +71,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
 
   const pageIndex = Number.parseInt(query.pageIndex as string) || 1;
   const pageSize = Number.parseInt(query.pageSize as string) || 50;
-  const jalon = Number.parseInt(query.jalon as string) || getAnneeAffichageDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
+  const jalon = Number.parseInt(query.jalon as string) || getAnneeDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
 
 
   assert(query.territoireCode, 'Le territoire code est obligatoire pour afficher la page d\'accueil');
@@ -123,6 +125,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     estEnAlerteBaisse: query.estEnAlerteBaisse === 'true',
     estEnAlerteMétéoNonRenseignée: query.estEnAlerteMétéoNonRenseignée === 'true',
     estEnAlerteAbscenceTauxAvancementDepartemental: query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
+    estEnAlertePossedePropositionsValeurActuelle: query.estEnAlertePossedePropositionsValeurActuelle === 'true',
   };
   const [ministères, axes] = session.habilitations.lecture.chantiers.length === 0 ? [[], []] : (
     await Promise.all(
@@ -148,14 +151,20 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     chantierRepository: dependencies.getChantierRepository(),
   }).run(session.habilitations, territoireCode, filtres, axes).then(presenterEnRépartitionsMétéosChantiersContrat);
 
-  const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisse || filtresAlertes.estEnAlerteTauxAvancementNonCalculé || filtresAlertes.estEnAlerteMétéoNonRenseignée || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? chantiers.filter(chantier => {
-    const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][territoireCode];
-    return (filtresAlertes.estEnAlerteÉcart && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
+  const chantiersAvecAlertes = (filtresAlertes.estEnAlerteÉcart
+    || filtresAlertes.estEnAlerteBaisse
+    || filtresAlertes.estEnAlerteTauxAvancementNonCalculé
+    || filtresAlertes.estEnAlerteMétéoNonRenseignée
+    || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental
+    || filtresAlertes.estEnAlertePossedePropositionsValeurActuelle) ? chantiers.filter(chantier => {
+      const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][territoireCode];
+      return (filtresAlertes.estEnAlerteÉcart && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
       || (filtresAlertes.estEnAlerteBaisse && Alerte.estEnAlerteBaisse(chantierDonnéesTerritoires.tendance))
       || (filtresAlertes.estEnAlerteTauxAvancementNonCalculé && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierDonnéesTerritoires.avancement.global, chantier.cibleAttendu))
       || (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental && Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.mailles.departementale, chantier.cibleAttendu))
-      || (filtresAlertes.estEnAlerteMétéoNonRenseignée && Alerte.estEnAlerteMétéoNonRenseignée(chantierDonnéesTerritoires.météo));
-  }) : chantiers;
+      || (filtresAlertes.estEnAlerteMétéoNonRenseignée && Alerte.estEnAlerteMétéoNonRenseignée(chantierDonnéesTerritoires.météo))
+      || (filtresAlertes.estEnAlertePossedePropositionsValeurActuelle && Alerte.estEnAlertePossedePropositionsValeurActuelle(chantierDonnéesTerritoires.aUnePropositionsValeurActuelle));
+    }) : chantiers;
 
   const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository());
 
@@ -185,6 +194,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
         delete chantier.mailles;
         return chantier;
       }),
+      chantiersIdsExport: chantiersAvecAlertes.map(chantier => chantier.id),
       nombreTotalChantiersAvecAlertes,
       ministères,
       axes,
@@ -196,6 +206,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
       avancementsAgrégés,
       avancementsGlobauxTerritoriauxMoyens,
       repartitionMeteosChantiers,
+      estProjetStructurantDisponible: configuration.featureFlip.projetsStructurants,
     },
   };
 };
@@ -216,6 +227,7 @@ const PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE = new Set([
 
 const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   chantiers,
+  chantiersIdsExport,
   nombreTotalChantiersAvecAlertes,
   axes,
   ministères,
@@ -227,6 +239,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   avancementsGlobauxTerritoriauxMoyens,
   repartitionMeteosChantiers,
   jalon,
+  estProjetStructurantDisponible,
 }) => {
   const { data: session } = useSession();
 
@@ -248,10 +261,14 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
           setEstOuvert={setEstOuverteBarreLatérale}
         >
           <BarreLatéraleEncart>
-            <SélecteurTypeDeRéforme
-              territoireCode={territoireCode}
-              typeDeRéformeSélectionné='chantier'
-            />
+            {
+              estProjetStructurantDisponible ? (
+                <SélecteurTypeDeRéforme
+                  territoireCode={territoireCode}
+                  typeDeRéformeSélectionné='chantier'
+                />
+              ) : null
+            }
             <SélecteursMaillesEtTerritoires
               pathname='/accueil/chantier/[territoireCode]'
               territoireCode={territoireCode}
@@ -291,6 +308,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             avancementsGlobauxTerritoriauxMoyens={avancementsGlobauxTerritoriauxMoyens}
             axes={axes}
             chantiers={chantiers}
+            chantiersIdsExport={chantiersIdsExport}
             filtresComptesCalculés={filtresComptesCalculés}
             jalon={jalon}
             mailleQuery={mailleQuery}

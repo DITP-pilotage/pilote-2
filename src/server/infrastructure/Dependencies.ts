@@ -1,5 +1,3 @@
-import { PrismaClient } from '@prisma/client';
-import process from 'node:process';
 import ChantierSQLRepository from '@/server/infrastructure/accès_données/chantier/ChantierSQLRepository';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
@@ -162,11 +160,6 @@ import PérimètreMinistérielSQLRepository from './accès_données/périmètreM
 import IndicateurProjetStructurantSQLRepository
   from './accès_données/projetStructurant/indicateur/IndicateurSQLRepository';
 
-// https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
-};
-
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
 
@@ -245,49 +238,44 @@ class Dependencies {
   private readonly _propositionValeurActuelleRepository: PropositionValeurActuelleRepository;
 
   constructor() {
-    const prisma = globalForPrisma.prisma ?? new PrismaClient();
-    if (process.env.NODE_ENV !== 'production') {
-      globalForPrisma.prisma = prisma;
-    }
-
-    this._chantierRepository = new ChantierSQLRepository(prisma);
-    this._axeRepository = new AxeSQLRepository(prisma);
-    this._ministèreRepository = new MinistèreSQLRepository(prisma);
-    this._indicateurRepository = new IndicateurSQLRepository(prisma);
-    this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
-    this._commentaireRepository = new CommentaireSQLRepository(prisma);
-    this._objectifRepository = new ObjectifSQLRepository(prisma);
-    this._décisionStratégiqueRepository = new DécisionStratégiqueSQLRepository(prisma);
+    this._chantierRepository = new ChantierSQLRepository();
+    this._axeRepository = new AxeSQLRepository();
+    this._ministèreRepository = new MinistèreSQLRepository();
+    this._indicateurRepository = new IndicateurSQLRepository();
+    this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository();
+    this._commentaireRepository = new CommentaireSQLRepository();
+    this._objectifRepository = new ObjectifSQLRepository();
+    this._décisionStratégiqueRepository = new DécisionStratégiqueSQLRepository();
     this._utilisateurRepository = new UtilisateurSQLRepository();
-    this._authentificationUtilisateurRepository = new PrismaUtilisateurRepository(prisma);
-    this._authentificationProfilRepository = new PrismaProfilRepository(prisma);
-    this._territoireRepository = new TerritoireSQLRepository(prisma);
-    this._ficheConducteurChantierRepository = new PrismaFicheConducteurChantierRepository(prisma);
-    this._ficheConducteurObjectifRepository = new PrismaFicheConducteurObjectifRepository(prisma);
-    this._ficheConducteurDecisionStrategiqueRepository = new PrismaFicheConducteurDecisionStrategiqueRepository(prisma);
-    this._ficheConducteurCommentaireRepository = new PrismaFicheConducteurCommentaireRepository(prisma);
-    this._ficheConducteurIndicateurRepository = new PrismaFicheConducteurIndicateurRepository(prisma);
-    this._ficheConducteurSynthèseDesRésultatsRepository = new PrismaFicheConducteurSynthèseDesRésultatsRepository(prisma);
-    this._ficheTerritorialeTerritoireRepository = new PrismaTerritoireRepository(prisma);
-    this._ficheTerritorialeChantierRepository = new PrismaChantierRepository(prisma);
-    this._ficheTerritorialeIndicateurRepository = new PrismaFicheTerritorialeIndicateurRepository(prisma);
-    this._ficheTerritorialeSyntheseDesResultatsRepository = new PrismaSyntheseDesResultatsRepository(prisma);
-    this._ficheTerritorialeMinistereRepository = new PrismaMinistereRepository(prisma);
-    this._chantierIndicateurRepository = new PrismaChantierIndicateurRepository(prisma);
-    this._projetStructurantRepository = new ProjetStructurantSQLRepository(prisma);
-    this._profilRepository = new ProfilSQLRepository(prisma);
-    this._objectifProjetStructurantRepository = new ObjectifProjetStructurantSQLRepository(prisma);
+    this._authentificationUtilisateurRepository = new PrismaUtilisateurRepository();
+    this._authentificationProfilRepository = new PrismaProfilRepository();
+    this._territoireRepository = new TerritoireSQLRepository();
+    this._ficheConducteurChantierRepository = new PrismaFicheConducteurChantierRepository();
+    this._ficheConducteurObjectifRepository = new PrismaFicheConducteurObjectifRepository();
+    this._ficheConducteurDecisionStrategiqueRepository = new PrismaFicheConducteurDecisionStrategiqueRepository();
+    this._ficheConducteurCommentaireRepository = new PrismaFicheConducteurCommentaireRepository();
+    this._ficheConducteurIndicateurRepository = new PrismaFicheConducteurIndicateurRepository();
+    this._ficheConducteurSynthèseDesRésultatsRepository = new PrismaFicheConducteurSynthèseDesRésultatsRepository();
+    this._ficheTerritorialeTerritoireRepository = new PrismaTerritoireRepository();
+    this._ficheTerritorialeChantierRepository = new PrismaChantierRepository();
+    this._ficheTerritorialeIndicateurRepository = new PrismaFicheTerritorialeIndicateurRepository();
+    this._ficheTerritorialeSyntheseDesResultatsRepository = new PrismaSyntheseDesResultatsRepository();
+    this._ficheTerritorialeMinistereRepository = new PrismaMinistereRepository();
+    this._chantierIndicateurRepository = new PrismaChantierIndicateurRepository();
+    this._projetStructurantRepository = new ProjetStructurantSQLRepository();
+    this._profilRepository = new ProfilSQLRepository();
+    this._objectifProjetStructurantRepository = new ObjectifProjetStructurantSQLRepository();
     this._rapportRepository = new PrismaRapportRepository();
-    this._commentaireProjetStructurantRepository = new CommentaireProjetStructurantSQLRepository(prisma);
-    this._périmètreMinistérielRepository = new PérimètreMinistérielSQLRepository(prisma);
-    this._synthèseDesRésultatsProjetStructurantRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository(prisma);
-    this._indicateurProjetStructurantRepository = new IndicateurProjetStructurantSQLRepository(prisma);
+    this._commentaireProjetStructurantRepository = new CommentaireProjetStructurantSQLRepository();
+    this._périmètreMinistérielRepository = new PérimètreMinistérielSQLRepository();
+    this._synthèseDesRésultatsProjetStructurantRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository();
+    this._indicateurProjetStructurantRepository = new IndicateurProjetStructurantSQLRepository();
     this._importIndicateurRepository = new PrismaIndicateurRepository();
     this._historisationModification = new PrismaHistorisationModificationRepository();
-    this._gestionContenuRepository = new PrismaGestionContenuRepository(prisma);
+    this._gestionContenuRepository = new PrismaGestionContenuRepository();
     this._tokenAPIService = new TokenAPIJWTService({ secret: configuration.tokenAPI.secret });
-    this._tokenAPIInformationRepository = new PrismaTokenAPIInformationRepository(prisma);
-    this._propositionValeurActuelleRepository = new PrismaPropositionValeurActuelleRepository(prisma);
+    this._tokenAPIInformationRepository = new PrismaTokenAPIInformationRepository();
+    this._propositionValeurActuelleRepository = new PrismaPropositionValeurActuelleRepository();
   }
 
   getGestionContenuRepository(): GestionContenuRepository {
