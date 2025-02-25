@@ -29,7 +29,7 @@ services:
     container_name: pilote_postgres
     depends_on:
       - pilote_traefik
-    image: postgres:14.6-alpine
+    image: postgres:15.10-alpine
     ports:
       - "5432:5432"
     environment:
@@ -43,7 +43,7 @@ services:
     container_name: pilote_postgres_test
     depends_on:
       - pilote_traefik
-    image: postgres:14.6-alpine
+    image: postgres:15.10-alpine
     ports:
       - "5433:5432"
     environment:
