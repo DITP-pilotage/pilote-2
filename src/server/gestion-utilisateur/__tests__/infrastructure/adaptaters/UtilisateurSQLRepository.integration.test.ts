@@ -179,6 +179,7 @@ describe('UtilisateurSQLRepository', () => {
       date_creation: new Date().toISOString(),
       email: 'utilisateuracreer@test.com',
       profilCode: ProfilEnum.DITP_ADMIN,
+      date_modification: new Date('2024-01-01'),
     };
 
     test('Si l\'email n\'exsite pas, ne fait rien', async () => {
@@ -201,11 +202,10 @@ describe('UtilisateurSQLRepository', () => {
       expect(utilisateurNonExistant).toBeNull();
       expect(utilisateurExistant?.date_desactivation).toBeNull();
     });
-    test('Si l\'email exsite, mets à jour la date de desactivation', async () => {
+    test('Si l\'email exsite, mets à jour la date de desactivation et la date de dernière modification', async () => {
       await prisma.utilisateur.create({
         data: utilisateurACreer,
       });
-
       await utilisateurRepository.desactiver('utilisateuracreer@test.com');
       const utilisateurDesactive = await prisma.utilisateur.findFirst({
         where: {
@@ -215,6 +215,7 @@ describe('UtilisateurSQLRepository', () => {
 
       expect(utilisateurDesactive).not.toBeNull();
       expect(utilisateurDesactive?.date_desactivation).not.toBeNull();
+      expect(utilisateurDesactive?.date_modification.toDateString()).toStrictEqual(new Date().toDateString());
     });
   });
   describe('reactiver', function () {
@@ -226,6 +227,7 @@ describe('UtilisateurSQLRepository', () => {
       email: 'utilisateuracreer@test.com',
       profilCode: ProfilEnum.DITP_ADMIN,
       date_desactivation: dateDesactivation,
+      date_modification: new Date('2024-01-01'),
     };
 
     test('Si l\'email n\'exsite pas, ne fait rien', async () => {
@@ -248,7 +250,7 @@ describe('UtilisateurSQLRepository', () => {
       expect(utilisateurNonExistant).toBeNull();
       expect(utilisateurExistant?.date_desactivation).toStrictEqual(dateDesactivation);
     });
-    test('Si l\'email exsite, mets la date de desactivation à null', async () => {
+    test('Si l\'email exsite, mets la date de desactivation à null et modifie la date de dernière modification', async () => {
       await prisma.utilisateur.create({
         data: utilisateurACreer,
       });
@@ -262,6 +264,7 @@ describe('UtilisateurSQLRepository', () => {
 
       expect(utilisateurDesactive).not.toBeNull();
       expect(utilisateurDesactive?.date_desactivation).toBeNull();
+      expect(utilisateurDesactive?.date_modification.toDateString()).toStrictEqual(new Date().toDateString());
     });
 
   });
