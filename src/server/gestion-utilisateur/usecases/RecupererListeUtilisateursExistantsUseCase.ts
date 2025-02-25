@@ -2,7 +2,7 @@ import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurReposi
 import Utilisateur, { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { HabilitationsÀCréerOuMettreÀJourCalculées } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
-export default class RécupérerListeUtilisateursExistantsUseCase {
+export class RecupererListeUtilisateursExistantsUseCase {
   constructor(
     private readonly utilisateurRepository: UtilisateurRepository,
   ) {}

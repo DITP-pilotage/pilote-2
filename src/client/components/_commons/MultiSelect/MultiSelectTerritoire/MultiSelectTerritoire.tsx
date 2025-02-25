@@ -44,7 +44,6 @@ const MultiSelectTerritoire: FunctionComponent<MultiSelectTerritoireProps> = ({
   territoiresSélectionnables,
   afficherBoutonsSélection,
   activerLaRestrictionDesTerritoires,
-
 }) => {
 
   const { data: territoires } = api.territoire.récupérerListe.useQuery({ territoireCodes: territoiresSélectionnables || null }, { staleTime: Number.POSITIVE_INFINITY });

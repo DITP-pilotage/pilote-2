@@ -1,5 +1,5 @@
-import { Territoire } from '@/server/domain/territoire/Territoire.interface';
-import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
+import { TerritoireRepository } from '@/server/gestion-utilisateur/domain/ports/TerritoireRepository';
+import { Territoire } from '@/server/gestion-utilisateur/domain/Territoire';
 
 interface Dependencies {
   territoireRepository: TerritoireRepository
@@ -13,6 +13,6 @@ export class RecupererTousLesTerritoiresUseCase {
   }
 
   async run(): Promise<Territoire[]> {
-    return this.territoireRepository.récupérerTous();
+    return this.territoireRepository.lister([]);
   }
 }

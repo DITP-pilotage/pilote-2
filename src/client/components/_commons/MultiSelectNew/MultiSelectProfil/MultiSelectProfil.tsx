@@ -1,11 +1,11 @@
 import { FunctionComponent, useEffect, useState } from 'react';
-import MultiSelect from '@/client/components/_commons/MultiSelect/MultiSelect';
+import MultiSelect from '@/client/components/_commons/MultiSelectNew/MultiSelect';
 import {
   MultiSelectOptions,
   MultiSelectOptionsGroupées,
-} from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
+} from '@/client/components/_commons/MultiSelectNew/MultiSelect.interface';
 import { deuxTableauxSontIdentiques, trierParOrdreAlphabétique } from '@/client/utils/arrays';
-import { Profil } from '@/server/domain/profil/Profil.interface';
+import { Profil } from '@/server/gestion-utilisateur/domain/Profil';
 
 interface MultiSelectProfilsProps {
   changementValeursSélectionnéesCallback: (profilsIdsSélectionnés: string[]) => void
@@ -15,7 +15,7 @@ interface MultiSelectProfilsProps {
   afficherBoutonsSélection?: boolean
 }
 
-const MultiSelectProfil: FunctionComponent<MultiSelectProfilsProps> = ({
+export const MultiSelectProfil: FunctionComponent<MultiSelectProfilsProps> = ({
   profilsIdsSélectionnésParDéfaut,
   changementValeursSélectionnéesCallback,
   valeursDésactivées,
@@ -42,7 +42,6 @@ const MultiSelectProfil: FunctionComponent<MultiSelectProfilsProps> = ({
     if (!deuxTableauxSontIdentiques(profilsIdsSélectionnésParDéfaut ?? [], valeursSélectionnéesParDéfaut ?? [])) {
       setValeursSélectionnéesParDéfaut(profilsIdsSélectionnésParDéfaut);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profilsIdsSélectionnésParDéfaut, valeursSélectionnéesParDéfaut, setValeursSélectionnéesParDéfaut]);
 
   return (
@@ -56,5 +55,3 @@ const MultiSelectProfil: FunctionComponent<MultiSelectProfilsProps> = ({
     />
   );
 };
-
-export default MultiSelectProfil;

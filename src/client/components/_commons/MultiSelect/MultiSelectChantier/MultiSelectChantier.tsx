@@ -24,7 +24,6 @@ const MultiSelectChantier: FunctionComponent<MultiSelectChantierProps> = ({
   afficherBoutonsSélection,
   desactive,
 }) => {
-  // const [valeursSélectionnéesParDéfaut, setValeursSélectionnéesParDéfaut] = useState(chantiersIdsSélectionnésParDéfaut);
   const [optionsGroupées, setOptionsGroupées] = useState<MultiSelectOptionsGroupées>([]);
 
   useEffect(() => {

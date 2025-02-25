@@ -8,10 +8,9 @@ import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { configuration } from '@/config';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { getChantiersContainer } from '@/server/chantiers/container';
-
 import { recupererJalon } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/recupererJalon';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
+import { getContainer } from '@/server/dependances';
 
 export default async function handleExportDesChantiers(request: NextApiRequest, response: NextApiResponse): Promise<void> {
   const session = await getServerSession(request, response, authOptions);
@@ -44,9 +43,9 @@ export default async function handleExportDesChantiers(request: NextApiRequest, 
     listeOptionsExport: [],
   } satisfies OptionsExport;
 
-  const chantierIds = await getChantiersContainer().resolve('chantierRepository').récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(), optionsExport);
+  const chantierIds = await getContainer('chantiers').resolve('chantierRepository').récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(), optionsExport);
 
-  const exportCsvDesChantiersUseCase = getChantiersContainer().resolve('exportCsvDesChantiersUseCase');
+  const exportCsvDesChantiersUseCase = getContainer('chantiers').resolve('exportCsvDesChantiersUseCase');
 
   for await (const partialResult of exportCsvDesChantiersUseCase.run({
     chantierIds,

@@ -3,12 +3,6 @@ import PérimètreMinistérielRepository from '@/server/domain/périmètreMinist
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import { prisma } from '@/server/db/prisma';
 
-class ErreurPérimètreNonTrouvé extends Error {
-  constructor() {
-    super('Erreur: périmètre ministériel non trouvé.');
-  }
-}
-
 class ErreurPérimètreSansMinistère extends Error {
   constructor() {
     super('Erreur: périmètre ministériel incohérent');
@@ -26,26 +20,8 @@ export default class PérimètreMinistérielSQLRepository implements Périmètre
     };
   }
 
-  async récupérer(id: string): Promise<PérimètreMinistériel> {
-    const périmètre = await prisma.perimetre.findUnique({
-      where: { id: id },
-    });
-
-    if (!périmètre) throw new ErreurPérimètreNonTrouvé();
-
-    return this._mapperVersDomaine(périmètre);
-  }
-
   async récupérerTous(): Promise<PérimètreMinistériel[]> {
     const périmètres = await prisma.perimetre.findMany();
-
-    return périmètres.map(périmètre => this._mapperVersDomaine(périmètre));
-  }
-
-  async récupérerListe(ids: string[]): Promise<PérimètreMinistériel[]> {
-    const périmètres = await prisma.perimetre.findMany({
-      where: { id: { in: ids } },
-    });
 
     return périmètres.map(périmètre => this._mapperVersDomaine(périmètre));
   }

@@ -6,11 +6,11 @@ import assert from 'node:assert/strict';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { configuration } from '@/config';
-import { getChantiersContainer } from '@/server/chantiers/container';
 import { recupererJalon } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/recupererJalon';
 import {
   ExportCsvDesHistoriquesIndicateursUseCase,
 } from '@/server/chantiers/usecases/ExportCsvDesHistoriquesIndicateursUseCase';
+import { getContainer } from '@/server/dependances';
 
 export const handleExportDesHistoriquesIndicateurs = async (request: NextApiRequest, response: NextApiResponse): Promise<void> => {
   const session = await getServerSession(request, response, authOptions);
@@ -47,9 +47,9 @@ export const handleExportDesHistoriquesIndicateurs = async (request: NextApiRequ
 
   const territoireCodes = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
-  const chantierIds = await getChantiersContainer().resolve('chantierRepository').récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(), optionsExport);
+  const chantierIds = await getContainer('chantiers').resolve('chantierRepository').récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(), optionsExport);
 
-  const exportCsvDesIndicateursUseCase = getChantiersContainer().resolve('exportCsvDesHistoriquesIndicateursUseCase');
+  const exportCsvDesIndicateursUseCase = getContainer('chantiers').resolve('exportCsvDesHistoriquesIndicateursUseCase');
 
   for await (const partialResult of exportCsvDesIndicateursUseCase.run({
     chantierIds,

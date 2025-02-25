@@ -1,13 +1,12 @@
 import { loadEnvConfig } from '@next/env';
 import { createObjectCsvWriter } from 'csv-writer';
-import { PrismaClient } from '@prisma/client';
 import process from 'node:process';
 import assert from 'node:assert/strict';
 import logger from '@/server/infrastructure/Logger';
 import UtilisateurCSVParseur from '@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur';
 import ImporterDesUtilisateursUseCase from '@/server/gestion-utilisateur/usecases/ImporterDesUtilisateursUseCase';
-import RécupérerListeUtilisateursExistantsUseCase
-  from '@/server/gestion-utilisateur/usecases/RécupérerListeUtilisateursExistantsUseCase';
+import { RecupererListeUtilisateursExistantsUseCase }
+  from '@/server/gestion-utilisateur/usecases/RecupererListeUtilisateursExistantsUseCase';
 import { CsvRecord } from '@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur.interface';
 import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/utilisateur/UtilisateurSQLRepository';
 import UtilisateurIAMKeycloakRepository
@@ -111,7 +110,7 @@ async function main() {
 
   if (importNouveauCompteUniquement) {
     assert(outputName, 'Nom du fichier de sortie manquant');
-    const utilisateursExistants = await new RécupérerListeUtilisateursExistantsUseCase(utilisateurRepository).run(utilisateurs);
+    const utilisateursExistants = await new RecupererListeUtilisateursExistantsUseCase(utilisateurRepository).run(utilisateurs);
     utilisateurs = utilisateurs.filter(utilisateur => !utilisateursExistants.includes(utilisateur.email));
     utilisateursFormatCsv = utilisateursFormatCsv.filter(utilisateur => utilisateursExistants.includes(utilisateur.email));
     if (utilisateursExistants.length > 0) {

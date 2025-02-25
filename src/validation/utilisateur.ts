@@ -23,7 +23,6 @@ const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
   return { message: ctx.defaultError };
 };
 
-
 z.setErrorMap(customErrorMap);
 
 export const validationInfosBaseUtilisateur = z.object( {
@@ -57,16 +56,6 @@ export const validationInfosHabilitationsUtilisateur = z.object({
     responsabilite: z.object({
       chantiers: z.string().array(),
     }),
-  }),
-});
-
-export const validationFiltresPourListeUtilisateur = z.object({
-  filtres: z.object({
-    chantiers: z.string().array(),
-    territoires: z.string().array(),
-    périmètresMinistériels: z.string().array(),
-    chantiersAssociésAuxPérimètres: z.string().array(),
-    profils: z.enum(profilsCodes).array(),
   }),
 });
 

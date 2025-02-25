@@ -11,14 +11,7 @@ import { ChangeEvent, useCallback } from 'react';
 import { parseAsArrayOf, parseAsInteger, parseAsJson, parseAsString, useQueryState, useQueryStates } from 'nuqs';
 import { z } from 'zod';
 import { useSession } from 'next-auth/react';
-import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
-import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { formaterDate } from '@/client/utils/date/date';
-import api from '@/server/infrastructure/api/trpc/api';
-import {
-  filtresUtilisateursActifsStore,
-  actions as actionsFiltresUtilisateursStore,
-} from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
 import { UtilisateurListeGestionContrat } from '@/server/app/contrats/UtilisateurListeGestionContrat';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
@@ -87,10 +80,8 @@ const colonnes = [
   }),
 ];
 
-export default function useTableauPageAdminUtilisateurs() {
+export const useTableauPageAdminUtilisateurs = (utilisateurs: UtilisateurListeGestionContrat[], nombreUtilisateur: number) => {
   const { data: session } = useSession();
-  const filtresActifs = filtresUtilisateursActifsStore();
-  const { modifierÉtatDuFiltre } = actionsFiltresUtilisateursStore();
 
   const estAutoriseAVoirLaColonneTerritoire = [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session!.profil);
 
@@ -102,12 +93,10 @@ export default function useTableauPageAdminUtilisateurs() {
     shallow: false,
   });
 
-  const ZodSchemaSorting = z.object(
-    {
-      id: z.string().regex(/email|nom|prénom|profil|fonction|Dernière modification/),
-      desc: z.boolean(),
-    },
-  );
+  const ZodSchemaSorting = z.object({
+    id: z.string().regex(/email|nom|prénom|profil|fonction|Dernière modification/),
+    desc: z.boolean(),
+  });
 
   const [sorting, setSorting] = useQueryState('sort', parseAsArrayOf<ColumnSort>(parseAsJson(ZodSchemaSorting.parse)).withDefault([{
     id: 'Dernière modification',
@@ -125,16 +114,6 @@ export default function useTableauPageAdminUtilisateurs() {
     throttleMs: 400,
   }));
 
-  const {
-    data: { count, utilisateurs } = { count: 0, utilisateurs: [] },
-    isLoading: estEnChargement,
-  } = api.utilisateur.récupérerUtilisateursFiltrésNew.useQuery({
-    filtres: filtresActifs,
-    pagination,
-    sorting,
-    valeurDeLaRecherche,
-  });
-
   const changementDeLaRechercheCallback = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setPagination({
       pageIndex: 1,
@@ -145,11 +124,6 @@ export default function useTableauPageAdminUtilisateurs() {
   const tableau = useReactTable({
     data: utilisateurs,
     columns: colonnes,
-
-    globalFilterFn: (ligne, colonneId, texteRecherché) => {
-      const valeurCellule = ligne.getValue<ProjetStructurant>(colonneId);
-      return valeurCellule !== null && rechercheUnTexteContenuDansUnContenant(texteRecherché, valeurCellule.toString());
-    },
     state: {
       pagination,
       sorting,
@@ -157,32 +131,21 @@ export default function useTableauPageAdminUtilisateurs() {
         territoire: estAutoriseAVoirLaColonneTerritoire,
       },
     },
-    initialState: {
-      sorting: [
-        {
-          id: 'Dernière modification',
-          desc: true,
-        },
-      ],
-    },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
     getPaginationRowModel: getPaginationRowModel(),
     onPaginationChange: setPagination,
-    pageCount: count % 10 === 0 ? Math.trunc(count / pagination.pageSize) : Math.trunc(count / pagination.pageSize) + 1,
+    pageCount: nombreUtilisateur % 10 === 0 ? Math.trunc(nombreUtilisateur / pagination.pageSize) : Math.trunc(nombreUtilisateur / pagination.pageSize) + 1,
     manualPagination: true,
   });
 
   return {
-    nombreElementPage: count,
+    nombreElementPage: nombreUtilisateur,
     tableau,
-    estEnChargement,
     valeurDeLaRecherche,
     changementDeLaRechercheCallback,
-    modifierÉtatDuFiltre,
-    filtresActifs,
     setPagination,
   };
-}
+};

@@ -38,7 +38,7 @@ function registerContainer(): ContainerDependencies {
     chantiers: getChantiersContainer().createScope(),
     parametrageIndicateur: getParametrageIndicateurContainer().createScope(),
     importIndicateur: getImportIndicateurContainer().createScope(),
-    gestionUtilisateur: getGestionUtilisateurContainer().createScope(),
+    gestionUtilisateur: getGestionUtilisateurContainer(initialContainer),
     ficheConducteur: getFicheConducteurContainer(initialContainer),
     main: initialContainer.createScope(),
   };
@@ -50,13 +50,9 @@ declare global {
   var __container: ContainerDependencies | undefined;
 }
 
-if (process.env.NODE_ENV === 'production') {
-  innerContainer = registerContainer();
-} else {
-  if (!global.__container) {
-    global.__container = registerContainer();
-  }
-  innerContainer = global.__container;
+if (!global.__container) {
+  global.__container = registerContainer();
 }
+innerContainer = global.__container;
 
 export const getContainer = <T extends keyof ContainerDependencies>(nameDependency: T) => innerContainer[nameDependency];

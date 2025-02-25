@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
@@ -8,19 +8,39 @@ import TableauAdminUtilisateurs
   from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/TableauAdminUtilisateurs';
 import Alerte from '@/client/components/_commons/Alerte/Alerte';
 import AlerteProps from '@/client/components/_commons/Alerte/Alerte.interface';
-import AdminUtilisateursBarreLatérale
+import { AdminUtilisateursBarreLatérale }
   from '@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale';
-import { réinitialiser } from '@/client/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
 import '@gouvfr/dsfr/dist/component/select/select.min.css';
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
+import { PerimetreMinisteriel } from '@/server/gestion-utilisateur/domain/PerimetreMinisteriel';
+import { Profil } from '@/server/gestion-utilisateur/domain/Profil';
+import { UtilisateurListeGestionContrat } from '@/server/app/contrats/UtilisateurListeGestionContrat';
+import { TerritoireAvecNombreUtilisateurs } from '@/server/gestion-utilisateur/domain/Territoire';
+import { ExportDesDonnees } from '@/components/PageAdminUtilisateurs/ExportDesDonnees/ExportDesDonnees';
 
-const PageAdminUtilisateurs: FunctionComponent<{}> = () => {
+const PageAdminUtilisateurs: FunctionComponent<{
+  listeUtilisateurs: UtilisateurListeGestionContrat[],
+  nombreUtilisateur: number,
+  listeChantiers: ChantierSynthétisé[]
+  listePerimetresMinisteriel: PerimetreMinisteriel[]
+  listePerimetresMinisterielSelectionnable: PerimetreMinisteriel[]
+  listeProfils: Profil[]
+  listeTerritoiresSelectionnable: TerritoireAvecNombreUtilisateurs[]
+}> = ({
+  listeUtilisateurs,
+  nombreUtilisateur,
+  listeChantiers,
+  listePerimetresMinisteriel,
+  listePerimetresMinisterielSelectionnable,
+  listeProfils,
+  listeTerritoiresSelectionnable,
+}) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const router = useRouter();
   const { data: session } = useSession();
-  const réinitialiserFiltres = réinitialiser();
 
   const donneLaRedirection = () => {
     if (!session) {
@@ -62,14 +82,15 @@ const PageAdminUtilisateurs: FunctionComponent<{}> = () => {
     }
   }, [router]);
 
-  useEffect(() => {
-    réinitialiserFiltres();
-  }, [réinitialiserFiltres]);
-
   return (
     <div className='flex'>
       <AdminUtilisateursBarreLatérale
         estOuverteBarreLatérale={estOuverteBarreLatérale}
+        listeChantiers={listeChantiers}
+        listePerimetresMinisteriel={listePerimetresMinisteriel}
+        listePerimetresMinisterielSelectionnable={listePerimetresMinisterielSelectionnable}
+        listeProfils={listeProfils}
+        listeTerritoiresSelectionnable={listeTerritoiresSelectionnable}
         setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
       />
       <main>
@@ -86,7 +107,7 @@ const PageAdminUtilisateurs: FunctionComponent<{}> = () => {
             ) : null
           }
           <div className='fr-grid-row fr-grid-row--middle fr-mb-3w'>
-            <div className='fr-col-12 fr-col-md-9'>
+            <div className='fr-col-12 fr-col-md-6'>
               <Titre
                 baliseHtml='h1'
                 className='fr-h1 fr-mb-0'
@@ -94,10 +115,11 @@ const PageAdminUtilisateurs: FunctionComponent<{}> = () => {
                 Gestion des comptes
               </Titre>
             </div>
-            <div className='fr-col-12 fr-col-md-3'>
-              <div className='fr-grid-row fr-grid-row--right'>
+            <div className='fr-col-12 fr-col-md-6'>
+              <div className='flex justify-end align-center'>
+                <ExportDesDonnees />
                 <Link
-                  className='fr-btn fr-btn--icon-left fr-icon-checkbox-circle-line'
+                  className='fr-btn fr-btn--icon-left fr-icon-checkbox-circle-line fr-ml-2w'
                   href={donneLaRedirection()}
                   title='Créer un compte'
                 >
@@ -107,7 +129,10 @@ const PageAdminUtilisateurs: FunctionComponent<{}> = () => {
             </div>
           </div>
           <Bloc>
-            <TableauAdminUtilisateurs />
+            <TableauAdminUtilisateurs
+              listeUtilisateurs={listeUtilisateurs}
+              nombreUtilisateur={nombreUtilisateur}
+            />
           </Bloc>
         </div>
       </main>

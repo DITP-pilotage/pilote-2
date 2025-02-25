@@ -23,7 +23,7 @@ export const profilsCodes = [
 
 export type ProfilCode = typeof profilsCodes[number];
 
-type Utilisateur = {
+export type Utilisateur = {
   id: string
   nom: string
   prénom: string
@@ -52,16 +52,3 @@ export type UtilisateurÀCréerOuMettreÀJour =  {
   gestionUtilisateur: boolean
   habilitations: HabilitationsÀCréerOuMettreÀJour
 };
-
-export type UtilisateurÀCréerOuMettreÀJourSansHabilitation =  {
-  nom: string
-  prénom: string
-  email: string
-  fonction: string | null
-  profil: ProfilCode,
-  saisieIndicateur: boolean
-  saisieCommentaire: boolean
-  gestionUtilisateur: boolean
-};
-
-export default Utilisateur;
