@@ -1,21 +1,23 @@
 import { randomUUID } from 'node:crypto';
-import { prisma } from '@/server/db/prisma';
 import {
   PrismaCommentaireRepository,
 } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaCommentaireRepository';
+import { PrismaPilote } from '@/server/db/PrismaPilote';
 
 describe('PrismaCommentaireRepository', () => {
+  let prisma: PrismaPilote;
   let prismaCommentaireRepository: PrismaCommentaireRepository;
 
   beforeEach(() => {
-    prismaCommentaireRepository = new PrismaCommentaireRepository();
+    prisma = new PrismaPilote();
+    prismaCommentaireRepository = new PrismaCommentaireRepository({ prisma });
   });
 
   describe('#listerObjectifParChantierId', () => {
     it('doit lister les commentaires associé au chantier', async () => {
       // Given
       const chantierId = 'CH-168';
-      await prisma.chantier_identite.createMany({ data: [{
+      await prisma.getInstance().chantier_identite.createMany({ data: [{
         id: 'CH-168',
         nom: 'Nom chantier OK',
       }, {
@@ -24,7 +26,7 @@ describe('PrismaCommentaireRepository', () => {
       }],
       });
 
-      await prisma.chantier_territoire.createMany({ data: [{
+      await prisma.getInstance().chantier_territoire.createMany({ data: [{
         id: 'CH-168',
         zone_id: 'FRANCE',
         maille: 'NAT',
@@ -39,7 +41,7 @@ describe('PrismaCommentaireRepository', () => {
       }],
       });
 
-      await prisma.commentaire.createMany({
+      await prisma.getInstance().commentaire.createMany({
         data: [
           {
             id: randomUUID(),

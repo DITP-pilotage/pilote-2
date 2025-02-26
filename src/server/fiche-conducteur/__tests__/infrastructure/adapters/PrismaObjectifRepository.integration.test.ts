@@ -1,12 +1,14 @@
 import { randomUUID } from 'node:crypto';
-import { prisma } from '@/server/db/prisma';
 import { PrismaObjectifRepository } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaObjectifRepository';
+import { PrismaPilote } from '@/server/db/PrismaPilote';
 
 describe('PrismaObjectifRepository', () => {
+  let prisma: PrismaPilote;
   let prismaObjectifRepository: PrismaObjectifRepository;
 
   beforeEach(() => {
-    prismaObjectifRepository = new PrismaObjectifRepository();
+    prisma = new PrismaPilote();
+    prismaObjectifRepository = new PrismaObjectifRepository({ prisma });
   });
 
   describe('#listerObjectifParChantierId', () => {
@@ -14,7 +16,7 @@ describe('PrismaObjectifRepository', () => {
       // Given
       const chantierId = 'CH-168';
       
-      await prisma.chantier_identite.createMany({ data: [{
+      await prisma.getInstance().chantier_identite.createMany({ data: [{
         id: 'CH-168',
         nom: 'Nom chantier OK',
       }, {
@@ -23,7 +25,7 @@ describe('PrismaObjectifRepository', () => {
       }],
       });
 
-      await prisma.objectif.createMany({
+      await prisma.getInstance().objectif.createMany({
         data: [
           {
             id: randomUUID(),

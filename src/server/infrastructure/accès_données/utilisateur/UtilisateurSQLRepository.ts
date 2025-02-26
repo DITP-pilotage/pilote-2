@@ -74,7 +74,6 @@ export const convertirEnModelModification = (utilisateurAConvertir: {
 };
 
 // TODO: TOUT TESTEEEEER
-
 export class UtilisateurSQLRepository implements UtilisateurRepository {
   private _territoires: string[] = [];
 

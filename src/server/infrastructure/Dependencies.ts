@@ -26,24 +26,6 @@ import {
 } from '@/server/authentification/domain/ports/ProfilRepository';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import {
-  ChantierRepository as FicheConducteurChantierRepository,
-} from '@/server/fiche-conducteur/domain/ports/ChantierRepository';
-import {
-  ObjectifRepository as FicheConducteurObjectifRepository,
-} from '@/server/fiche-conducteur/domain/ports/ObjectifRepository';
-import {
-  DecisionStrategiqueRepository as FicheConducteurDecisionStrategiqueRepository,
-} from '@/server/fiche-conducteur/domain/ports/DecisionStrategiqueRepository';
-import {
-  CommentaireRepository as FicheConducteurCommentaireRepository,
-} from '@/server/fiche-conducteur/domain/ports/CommentaireRepository';
-import {
-  IndicateurRepository as FicheConducteurIndicateurRepository,
-} from '@/server/fiche-conducteur/domain/ports/IndicateurRepository';
-import {
-  SynthèseDesRésultatsRepository as FicheConducteurSynthèseDesRésultatsRepository,
-} from '@/server/fiche-conducteur/domain/ports/SynthèseDesRésultatsRepository';
-import {
   TerritoireRepository as FicheTerritorialeTerritoireRepository,
 } from '@/server/fiche-territoriale/domain/ports/TerritoireRepository';
 import {
@@ -112,26 +94,8 @@ import {
   PrismaMinistereRepository,
 } from '@/server/fiche-territoriale/infrastructure/adapters/PrismaMinistereRepository';
 import {
-  PrismaChantierRepository as PrismaFicheConducteurChantierRepository,
-} from '@/server/fiche-conducteur/infrastructure/adapters/PrismaChantierRepository';
-import {
-  PrismaObjectifRepository as PrismaFicheConducteurObjectifRepository,
-} from '@/server/fiche-conducteur/infrastructure/adapters/PrismaObjectifRepository';
-import {
-  PrismaDecisionStrategiqueRepository as PrismaFicheConducteurDecisionStrategiqueRepository,
-} from '@/server/fiche-conducteur/infrastructure/adapters/PrismaDecisionStrategiqueRepository';
-import {
-  PrismaCommentaireRepository as PrismaFicheConducteurCommentaireRepository,
-} from '@/server/fiche-conducteur/infrastructure/adapters/PrismaCommentaireRepository';
-import {
-  PrismaIndicateurRepository as PrismaFicheConducteurIndicateurRepository,
-} from '@/server/fiche-conducteur/infrastructure/adapters/PrismaIndicateurRepository';
-import {
   PrismaIndicateurRepository as PrismaChantierIndicateurRepository,
 } from '@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository';
-import {
-  PrismaSynthèseDesRésultatsRepository as PrismaFicheConducteurSynthèseDesRésultatsRepository,
-} from '@/server/fiche-conducteur/infrastructure/adapters/PrismaSynthèseDesRésultatsRepository';
 import { TokenAPIInformationRepository } from '@/server/authentification/domain/ports/TokenAPIInformationRepository';
 import { TokenAPIService } from '@/server/authentification/domain/ports/TokenAPIService';
 import { TokenAPIJWTService } from '@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService';
@@ -184,18 +148,6 @@ class Dependencies {
   private readonly _authentificationProfilRepository: AuthentificationProfilRepository;
 
   private readonly _territoireRepository: TerritoireRepository;
-
-  private readonly _ficheConducteurChantierRepository: FicheConducteurChantierRepository;
-
-  private readonly _ficheConducteurObjectifRepository: FicheConducteurObjectifRepository;
-
-  private readonly _ficheConducteurDecisionStrategiqueRepository: FicheConducteurDecisionStrategiqueRepository;
-
-  private readonly _ficheConducteurCommentaireRepository: FicheConducteurCommentaireRepository;
-
-  private readonly _ficheConducteurIndicateurRepository: FicheConducteurIndicateurRepository;
-
-  private readonly _ficheConducteurSynthèseDesRésultatsRepository: FicheConducteurSynthèseDesRésultatsRepository;
 
   private readonly _ficheTerritorialeTerritoireRepository: FicheTerritorialeTerritoireRepository;
 
@@ -250,12 +202,6 @@ class Dependencies {
     this._authentificationUtilisateurRepository = new PrismaUtilisateurRepository();
     this._authentificationProfilRepository = new PrismaProfilRepository();
     this._territoireRepository = new TerritoireSQLRepository();
-    this._ficheConducteurChantierRepository = new PrismaFicheConducteurChantierRepository();
-    this._ficheConducteurObjectifRepository = new PrismaFicheConducteurObjectifRepository();
-    this._ficheConducteurDecisionStrategiqueRepository = new PrismaFicheConducteurDecisionStrategiqueRepository();
-    this._ficheConducteurCommentaireRepository = new PrismaFicheConducteurCommentaireRepository();
-    this._ficheConducteurIndicateurRepository = new PrismaFicheConducteurIndicateurRepository();
-    this._ficheConducteurSynthèseDesRésultatsRepository = new PrismaFicheConducteurSynthèseDesRésultatsRepository();
     this._ficheTerritorialeTerritoireRepository = new PrismaTerritoireRepository();
     this._ficheTerritorialeChantierRepository = new PrismaChantierRepository();
     this._ficheTerritorialeIndicateurRepository = new PrismaFicheTerritorialeIndicateurRepository();
@@ -340,30 +286,6 @@ class Dependencies {
 
   getTerritoireRepository() {
     return this._territoireRepository;
-  }
-
-  getFicheConducteurChantierRepository() {
-    return this._ficheConducteurChantierRepository;
-  }
-
-  getFicheConducteurObjectifRepository() {
-    return this._ficheConducteurObjectifRepository;
-  }
-
-  getFicheConducteurDecisionStrategiqueRepository() {
-    return this._ficheConducteurDecisionStrategiqueRepository;
-  }
-
-  getFicheConducteurCommentaireRepository() {
-    return this._ficheConducteurCommentaireRepository;
-  }
-
-  getFicheConducteurIndicateurRepository() {
-    return this._ficheConducteurIndicateurRepository;
-  }
-
-  getFicheConducteurSynthèseDesRésultatsRepository() {
-    return this._ficheConducteurSynthèseDesRésultatsRepository;
   }
 
   getFicheTerritorialeTerritoireRepository() {

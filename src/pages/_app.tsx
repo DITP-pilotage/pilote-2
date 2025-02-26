@@ -61,7 +61,6 @@ function MonApplication({ Component, pageProps }: AppProps) {
     };
   }, []);
 
-
   useEffect(() => {
     let timer = setTimeout(() => {});
 

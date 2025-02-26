@@ -1,13 +1,14 @@
 import {
   chantier_identite as ChantierIdentiteModel,
   chantier_territoire as ChantierTerritoireModel,
-  chantier_territoire_jalon as ChantierTerritoireJalonModel,
+  chantier_territoire_jalon as ChantierTerritoireJalonModel, PrismaClient,
 } from '@prisma/client';
 import { ChantierRepository } from '@/server/fiche-conducteur/domain/ports/ChantierRepository';
 import { Chantier } from '@/server/fiche-conducteur/domain/Chantier';
 import { Meteo } from '@/server/fiche-conducteur/domain/Meteo';
 import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
-import { prisma } from '@/server/db/prisma';
+
+import { PrismaPilote } from '@/server/db/PrismaPilote';
 
 const convertirChantierTerritoireEnChantier = (chantierTerritoireModel: ChantierTerritoireModel & { chantier_identite: ChantierIdentiteModel, chantier_territoire_jalon: ChantierTerritoireJalonModel[] }): Chantier => {
   return Chantier.creerChantier({
@@ -43,9 +44,19 @@ const convertirChantierIdentiteEnChantier = (chantierIdentiteModel: ChantierIden
   });
 };
 
+interface Dependencies {
+  prisma: PrismaPilote
+}
+
 export class PrismaChantierRepository implements ChantierRepository {
+  private prisma: PrismaClient;
+
+  constructor({ prisma }: Dependencies) {
+    this.prisma = prisma.getInstance();
+  }
+
   async récupérerParIdEtParTerritoireCode({ chantierId, territoireCode, jalon }: { chantierId: string; territoireCode: string, jalon: number }): Promise<Chantier> {
-    const result = await prisma.chantier_territoire.findUnique({
+    const result = await this.prisma.chantier_territoire.findUnique({
       where: {
         id_territoire_code: {
           id: chantierId,
@@ -70,7 +81,7 @@ export class PrismaChantierRepository implements ChantierRepository {
   }
 
   async récupérerMailleNatEtDeptParId(chantierId: string, jalon: number): Promise<Chantier[]> {
-    const result = await prisma.chantier_identite.findUnique({
+    const result = await this.prisma.chantier_identite.findUnique({
       where: {
         id: chantierId,
       },
