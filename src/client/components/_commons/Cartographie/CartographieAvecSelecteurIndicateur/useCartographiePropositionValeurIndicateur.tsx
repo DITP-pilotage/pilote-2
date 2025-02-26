@@ -13,10 +13,13 @@ type DonneesCartographieProposition = {
 
 
 function determinerRemplissage(valeur: TypeProposition | null, elementsDeLegende: CartographieÉlémentsDeLégende, estApplicable: boolean | null) {
+  if (valeur) {
+    return elementsDeLegende[valeur].remplissage;
+  }
   if (!estApplicable) {
     return elementsDeLegende.NON_APPLICABLE.remplissage;
   }
-  return !valeur ? elementsDeLegende.DEFAUT.remplissage : elementsDeLegende[valeur].remplissage;
+  return elementsDeLegende.DEFAUT.remplissage;
 }
 
 export function useCartographiePropositionValeurIndicateur(detailsIndicateurTerritoire: DétailsIndicateurTerritoire, elementsDeLegende: CartographieÉlémentsDeLégende) {

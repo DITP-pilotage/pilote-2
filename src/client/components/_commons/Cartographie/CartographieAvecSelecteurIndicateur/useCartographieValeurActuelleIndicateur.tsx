@@ -18,6 +18,37 @@ const REMPLISSAGE_PAR_DÉFAUT = ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS.DÉFAUT
 function déterminerValeurAffichée(valeur: number | null, valeurCible: number | null, valeurCibleAnnuelle: number | null, estApplicable: boolean | null, jalon: number, unité?: string | null) {
   const unitéAffichée = unité?.toLocaleLowerCase() === 'pourcentage' ? '%' : '';
 
+  if (valeur !== null) {
+    return (
+      <>
+        <div className='flex justify-center align-center fr-text--bold'>
+          <div className='fr-mr-1w'>
+            VA :
+          </div>
+          <div>
+            {valeur === null ? 'Non renseigné' : valeur.toLocaleString() + unitéAffichée}
+          </div>
+        </div>
+        <div className='flex justify-center align-center'>
+          <div className='fr-mr-1w'>
+            {`VC ${jalon} : `}
+          </div>
+          <div>
+            {valeurCibleAnnuelle === null ? 'Non renseigné' : valeurCibleAnnuelle.toLocaleString() + unitéAffichée}
+          </div>
+        </div>
+        <div className='flex justify-center align-center'>
+          <div className='fr-mr-1w'>
+            VC 2026 :
+          </div>
+          <div>
+            {valeurCible === null ? 'Non renseigné' : valeurCible.toLocaleString() + unitéAffichée}
+          </div>
+        </div>
+      </>
+    );    
+  }
+
   if (estApplicable === false) {
     return (
       <div className='fr-text--bold'>
@@ -25,50 +56,25 @@ function déterminerValeurAffichée(valeur: number | null, valeurCible: number |
       </div>
     );
   }
-  return (
-    <>
-      <div className='flex justify-center align-center fr-text--bold'>
-        <div className='fr-mr-1w'>
-          VA :
-        </div>
-        <div>
-          {valeur === null ? 'Non renseigné' : valeur.toLocaleString() + unitéAffichée}
-        </div>
-      </div>
-      <div className='flex justify-center align-center'>
-        <div className='fr-mr-1w'>
-          {`VC ${jalon} : `}
-        </div>
-        <div>
-          {valeurCibleAnnuelle === null ? 'Non renseigné' : valeurCibleAnnuelle.toLocaleString() + unitéAffichée}
-        </div>
-      </div>
-      <div className='flex justify-center align-center'>
-        <div className='fr-mr-1w'>
-          VC 2026 :
-        </div>
-        <div>
-          {valeurCible === null ? 'Non renseigné' : valeurCible.toLocaleString() + unitéAffichée}
-        </div>
-      </div>
-    </>
-  );
+
 }
 
 function déterminerRemplissage(valeur: number | null, valeurMin: number | null, valeurMax: number | null, estApplicable: boolean | null) {
+
+
+  if (valeur !== null && valeurMax !== null && valeurMin !== null ) {
+    if (valeurMin === valeurMax)
+      return COULEUR_DÉPART;
+  
+    const pourcentageInterpolation = 100 * (valeur - valeurMin) / (valeurMax - valeurMin);
+    return interpolerCouleurs(COULEUR_DÉPART, COULEUR_ARRIVÉE, pourcentageInterpolation);  
+  }
 
   if (estApplicable === false) {
     return ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS.NON_APPLICABLE.remplissage;
   }
 
-  if (valeur === null || valeurMin === null || valeurMax === null)
-    return REMPLISSAGE_PAR_DÉFAUT;
-
-  if (valeurMin === valeurMax)
-    return COULEUR_DÉPART;
-
-  const pourcentageInterpolation = 100 * (valeur - valeurMin) / (valeurMax - valeurMin);
-  return interpolerCouleurs(COULEUR_DÉPART, COULEUR_ARRIVÉE, pourcentageInterpolation);
+  return REMPLISSAGE_PAR_DÉFAUT;
 }
 
 export function useCartographieValeurActuelleIndicateur(detailsIndicateurTerritoire: DétailsIndicateurTerritoire, élémentsDeLégende: CartographieÉlémentsDeLégende, jalon: number, unité?: string | null) {

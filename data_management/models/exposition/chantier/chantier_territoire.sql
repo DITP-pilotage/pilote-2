@@ -8,23 +8,6 @@
 }}
 
 WITH
-mailles_applicables AS (
-    SELECT
-        meta_ch.id AS chantier_id,
-        TRUE AS maille_est_applicable,
-        UNNEST(m.maille_applicable) AS maille_applicable
-    FROM
-        {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch
-    CROSS JOIN LATERAL (
-        SELECT
-            CASE
-                WHEN
-                    meta_ch.est_territorialise
-                    THEN COALESCE(meta_ch.maille_applicable, '{NAT,DEPT,REG}')
-                ELSE COALESCE(meta_ch.maille_applicable, '{NAT}')
-            END AS maille_applicable
-    ) AS m
-),
 mediane_par_chantier AS (
     SELECT
         chantier_id,
@@ -158,7 +141,7 @@ LEFT JOIN
     {{ ref('int_chantiers_zone_applicables') }} AS chantier_za
     ON meta_ch.id = chantier_za.chantier_id AND z.zone_id = chantier_za.zone_id
 LEFT JOIN
-    mailles_applicables
+    {{ ref('int_chantiers_mailles_applicables') }} AS mailles_applicables
     ON
         meta_ch.id = mailles_applicables.chantier_id
         AND z.zone_type = mailles_applicables.maille_applicable

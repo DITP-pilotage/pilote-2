@@ -40,7 +40,10 @@ SELECT
     gvig.vig AS valeur_initiale,
     territoire.nom AS territoire_nom,
     gvcg.vcg_date::date AS date_valeur_cible_mandat,
-    coalesce(z_appl.est_applicable, true) AS est_applicable,
+    (coalesce(z_appl.est_applicable, true) 
+        AND COALESCE(chantier_za.zone_est_applicable, TRUE)
+        AND COALESCE(chantier_mailles_applicables.maille_est_applicable, FALSE)
+    ) AS est_applicable,
     pond_reelle.poids_zone_declaree AS ponderation_zone_declaree,
     pond_reelle.poids_zone_reel AS ponderation_zone_reel,
     CASE
@@ -112,4 +115,12 @@ LEFT JOIN {{ ref('int_propositions_valeurs') }} AS pva_prev_year
         = a.date_valeur_actuelle::date
 LEFT JOIN get_evol_vaca AS evol_va
     ON meta_indic.id = evol_va.indic_id AND territoire.zone_id = evol_va.zone_id
+LEFT JOIN
+    {{ ref('int_chantiers_zone_applicables') }} AS chantier_za
+    ON meta_indic.chantier_id = chantier_za.chantier_id AND meta_zone.id = chantier_za.zone_id
+LEFT JOIN
+    {{ ref('int_chantiers_mailles_applicables') }} AS chantier_mailles_applicables
+    ON
+        meta_indic.chantier_id = chantier_mailles_applicables.chantier_id
+        AND meta_zone.maille = chantier_mailles_applicables.maille_applicable
 ORDER BY meta_indic.id, territoire.maille, territoire.code
