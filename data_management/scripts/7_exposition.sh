@@ -18,14 +18,11 @@ fi
 dbt run --select intermediate
 
 psql "$DATABASE_URL" -f scripts/sql/1_set_flag_true.sql 
-psql "$DATABASE_URL" -f scripts/sql/2_create_temporary_tables.sql 
 
 dbt run --select exposition df3 barometre
 
 if [ $? -eq 0 ]; then
-  psql "$DATABASE_URL" -f scripts/sql/3_delete_flag_true.sql 
-  psql "$DATABASE_URL" -f scripts/sql/4_insert_from_temporary_tables.sql 
-  psql "$DATABASE_URL" -f scripts/sql/5_drop_temporary_tables.sql 
+  psql "$DATABASE_URL" -f scripts/sql/2_delete_flag_true.sql 
 
 else
   echo "dbt job failed. Skipping delete queries."
