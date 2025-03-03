@@ -2,7 +2,7 @@ import { parseAsBoolean, parseAsInteger, parseAsStringLiteral, useQueryState, us
 import { Fragment, FunctionComponent } from 'react';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 
-import Infobulle from '@/components/_commons/InfobulleNew/Infobulle';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import useSélecteurVueStatut from './useSelecteurVueStatut.interface';
 import SelecteurVueStatutStyled from './SelecteurVueStatut.styled';
 

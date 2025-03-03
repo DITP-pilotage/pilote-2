@@ -10,7 +10,7 @@ import {
 } from '@/components/PageFicheTerritoriale/AvancementsFicheTerritoriale/AvancementsFicheTerritoriale';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
-import Infobulle from '@/components/_commons/InfobulleNew/Infobulle';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
 import { TableauFicheTerritoriale } from '@/components/PageFicheTerritoriale/TableauFicheTerritoriale';

@@ -14,7 +14,7 @@ import RapportDétailléVueDEnsembleStyled
   from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble.styled';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
-import Infobulle from '@/components/_commons/InfobulleNew/Infobulle';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import RemontéeAlerte from '@/components/_commons/RemontéeAlerte/RemontéeAlerte';
 import {

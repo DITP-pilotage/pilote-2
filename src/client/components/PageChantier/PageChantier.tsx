@@ -16,7 +16,7 @@ import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
 } from '@/server/domain/chantier/commentaire/Commentaire.interface';
-import Infobulle from '@/components/_commons/InfobulleNew/Infobulle';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import IndicateursChantier from '@/components/_commons/IndicateursChantier/IndicateursChantier';

@@ -1,7 +1,7 @@
 import { FunctionComponent, PropsWithChildren } from 'react';
 import { InformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
 import { ChampObligatoire } from '@/components/PageIndicateur/ChampObligatoire';
-import Infobulle from '@/components/_commons/InfobulleNew/Infobulle';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 
 export const MetadataIndicateurChamp: FunctionComponent<PropsWithChildren<{
   informationMetadataIndicateur: InformationMetadataIndicateurContrat,

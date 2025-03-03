@@ -14,7 +14,7 @@ import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import { JaugeDeProgressionSmall } from '@/components/_commons/JaugeDeProgressionSmall/JaugeDeProgressionSmall';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
-import Infobulle from '@/components/_commons/InfobulleNew/Infobulle';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import AvancementChantierStyled from './AvancementChantier.styled';
 
 const classeÀPartirDeLaMaille = {

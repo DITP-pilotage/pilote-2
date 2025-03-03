@@ -136,13 +136,13 @@ const INFOBULLE_CONTENUS = {
   chantier: {
     avancement: {
       aucunIndicateur: (maille: Maille) => (
-        <p className='fr-text--sm'>
+        <p className='fr-text--sm fr-mb-0'>
           {`À la maille ${maille}, `}
           aucun indicateur de ce chantier n’est pris en compte dans le calcul du taux d’avancement global.
         </p>
       ),
       unSeulIndicateur: (maille: Maille, indicateurPondération: IndicateurPondération) => (
-        <p className='fr-text--sm'>
+        <p className='fr-text--sm fr-mb-0'>
           {`À la maille ${maille}, `}
           le taux d’avancement global correspond au taux d’avancement 2026 de l’indicateur&nbsp;:
           {` ${indicateurPondération.nom}`}
@@ -150,7 +150,7 @@ const INFOBULLE_CONTENUS = {
       ),
       plusieursIndicateurs: (maille: Maille, indicateurPondérations: IndicateurPondération[]) => (
         <>
-          <p className='fr-text--sm'>
+          <p className='fr-text--sm fr-mb-0'>
             {`À la maille ${maille}, `}
             le taux d’avancement global correspond à la somme des taux d’avancement 2026 des indicateurs, pondérés de la
             façon suivante&nbsp;:

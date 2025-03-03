@@ -20,7 +20,7 @@ import IndicateurBlocIndicateurTuile
   from '@/components/_commons/IndicateursChantier/Bloc/indicateurBlocIndicateurTuile';
 import ModalePropositionValeurActuelle
   from '@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurActuelle/ModalePropositionValeurActuelle';
-import Infobulle from '@/components/_commons/InfobulleNew/Infobulle';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import { formaterDate } from '@/client/utils/date/date';
 import IndicateurTendance from '@/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';

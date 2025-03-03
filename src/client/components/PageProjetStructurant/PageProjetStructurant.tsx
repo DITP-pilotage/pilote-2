@@ -12,7 +12,7 @@ import IndicateursProjetStructurant
   from '@/components/_commons/IndicateursProjetStructurant/IndicateursProjetStructurant';
 import TitreInfobulleConteneur from '@/client/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
-import Infobulle from '@/client/components/_commons/Infobulle/Infobulle';
+import Infobulle from '@/components/_commons/InfobulleProjetStructurant/Infobulle';
 import BoutonSousLigné from '@/client/components/_commons/BoutonSousLigné/BoutonSousLigné';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';

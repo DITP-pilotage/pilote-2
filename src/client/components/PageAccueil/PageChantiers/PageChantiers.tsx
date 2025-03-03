@@ -24,7 +24,7 @@ import {
   ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
 } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import FiltresActifs from '@/client/components/PageAccueil/FiltresActifsNew/FiltresActifs';
-import Infobulle from '@/components/_commons/InfobulleNew/Infobulle';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import RemontéeAlerte from '@/components/_commons/RemontéeAlerteChantier/RemontéeAlerte';

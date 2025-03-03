@@ -9,7 +9,7 @@ import {
 } from '@/client/components/_commons/JaugeDeProgression/JaugeDeProgression.interface';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
-import Infobulle from '@/components/_commons/InfobulleNew/Infobulle';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 
 interface AvancementsTerritoireProps {
