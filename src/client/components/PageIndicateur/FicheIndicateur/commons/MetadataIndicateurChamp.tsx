@@ -1,7 +1,7 @@
 import { FunctionComponent, PropsWithChildren } from 'react';
 import { InformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
 import { ChampObligatoire } from '@/components/PageIndicateur/ChampObligatoire';
-import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import Infobulle from '@/components/_commons/InfobulleNew/Infobulle';
 
 export const MetadataIndicateurChamp: FunctionComponent<PropsWithChildren<{
   informationMetadataIndicateur: InformationMetadataIndicateurContrat,
@@ -15,7 +15,7 @@ export const MetadataIndicateurChamp: FunctionComponent<PropsWithChildren<{
 }) => {
   return (
     <>
-      <div className='fr-text--md bold fr-mb-1v relative flex'>
+      <div className='fr-text--md bold fr-mb-1v relative flex align-center '>
         <p className='titre-input-metadata overflow-ellipsis'>
           {informationMetadataIndicateur.metaPiloteAlias}
         </p>
@@ -29,7 +29,9 @@ export const MetadataIndicateurChamp: FunctionComponent<PropsWithChildren<{
             }
             {
               informationMetadataIndicateur.metaPiloteDispDispDesc ? (
-                <Infobulle idHtml='indicParentCh'>
+                <Infobulle
+                  idHtml={`indicParentCh-${informationMetadataIndicateur.name}`}
+                >
                   {informationMetadataIndicateur.description}
                 </Infobulle>
               ) : null

@@ -15,15 +15,34 @@ const INFOBULLE_CONTENUS = {
           Le minimum, la médiane et le maximum dépendent des chantiers et de la maille sélectionnée (région ou
           département).
         </p>
-        <p className='fr-text--sm'>
+        <p className='fr-text--sm fr-mb-0'>
           La moyenne d’une maille supérieure (nationale ou régionale) ne correspond pas nécessairement à la moyenne des
           territoires des mailles inférieures parce que certains indicateurs qui entrent en compte dans le calcul du
           taux d’avancement sont spécifiques à une maille.
         </p>
       </>
     ),
+    jalon: (
+      <>
+        <h5 className='fr-text--sm fr-mb-1w'>
+          Avancement à échéance
+        </h5>
+        <p className='fr-text--sm'>
+          Ce sélecteur vous permet d'afficher les valeurs prises successivement par le taux
+          d'avancement :
+        </p>
+        <ul className='fr-text--sm fr-mb-0'>
+          <li>
+            valeurs observées à la fin des années passées
+          </li>
+          <li>
+            valeur à date (année en cours)
+          </li>
+        </ul>
+      </>
+    ),
     repartitions: (
-      <p className='fr-text--sm'>
+      <p className='fr-text--sm fr-mb-0'>
         Maximum, médiane et minimum des taux d’avancement observés sur les territoires de la maille
         sélectionnée
       </p>
@@ -34,7 +53,7 @@ const INFOBULLE_CONTENUS = {
           La météo désigne le niveau de confiance, estimé par le responsable, sur la possibilité d’atteindre les
           objectifs du chantier.
         </p>
-        <p className='fr-text--sm'>
+        <p className='fr-text--sm fr-mb-0'>
           Certains chantiers peuvent ne pas avoir de météo renseignée sur un territoire sélectionné. Les chantiers non
           territorialisés n’attendent pas de météo pour le niveau local.
         </p>
@@ -107,7 +126,7 @@ const INFOBULLE_CONTENUS = {
         <p className='fr-text--sm'>
           La tendance correspond à la progression du taux d’avancement.
         </p>
-        <p className='fr-text--sm'>
+        <p className='fr-text--sm fr-mb-0'>
           L’écart correspond à l’écart entre le taux d’avancement pour le territoire sélectionné et le taux d’avancement
           territorial médian.
         </p>
@@ -156,25 +175,25 @@ const INFOBULLE_CONTENUS = {
           La météo désigne le niveau de confiance, estimé par le responsable, sur la possibilité d’atteindre les
           objectifs du chantier.
         </p>
-        <p className='fr-text--sm'>
+        <p className='fr-text--sm fr-mb-0'>
           La synthèse est une présentation synthétique de l’état d’avancement du chantier, actualisé depuis la dernière
           mise à jour des données.
         </p>
       </>
     ),
     répartitionGéographiqueTauxAvancement: (
-      <p className='fr-text--sm'>
+      <p className='fr-text--sm fr-mb-0'>
         Territorialisation du taux d’avancement du chantier
       </p>
     ),
     répartitionGéographiqueNiveauDeConfiance: (
-      <p className='fr-text--sm'>
+      <p className='fr-text--sm fr-mb-0'>
         Répartition de la météo déclarée par chaque responsable local pour l’avancement de son chantier dans son
         territoire.
       </p>
     ),
     objectifs: (
-      <p className='fr-text--sm'>
+      <p className='fr-text--sm fr-mb-0'>
         Présentation des objectifs et des principales actions passées et à venir au niveau national. Si le chantier est
         territorialisé, ces éléments seront visibles par les services déconcentrés et doivent les aider à comprendre le
         chantier et à le faire avancer localement.

@@ -9,7 +9,7 @@ import {
 } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieMétéo';
 import CartesStyled from '@/components/PageChantier/Cartes/Cartes.styled';
-import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import Infobulle from '@/components/_commons/InfobulleNew/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import {

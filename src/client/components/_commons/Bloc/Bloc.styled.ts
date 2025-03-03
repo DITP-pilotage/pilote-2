@@ -10,6 +10,7 @@ const BlocStyled = styled.div`
     background: var(--background-action-low-blue-france);
     border-bottom: 2px solid var(--border-plain-grey);
     border-radius: 7px 7px 0 0;
+    height: 4rem;
   }
   
   .titre-ellipsis {

@@ -2,7 +2,7 @@ import { parseAsBoolean, parseAsInteger, parseAsStringLiteral, useQueryState, us
 import { Fragment, FunctionComponent } from 'react';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 
-import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import Infobulle from '@/components/_commons/InfobulleNew/Infobulle';
 import useSélecteurVueStatut from './useSelecteurVueStatut.interface';
 import SelecteurVueStatutStyled from './SelecteurVueStatut.styled';
 
@@ -59,7 +59,7 @@ const SelecteurVueStatuts: FunctionComponent<{}> = () => {
 
   return (
     <SelecteurVueStatutStyled>
-      <div className='fr-my-2w conteneur-tags'>
+      <div className='fr-my-2w flex align-center w-full relative'>
         {
           optionsGauche.map(option => (
             <button
@@ -90,16 +90,14 @@ const SelecteurVueStatuts: FunctionComponent<{}> = () => {
               </button>
               {
                 option.valeur === 'ARCHIVE' &&
-                <Infobulle
-                  className='fr-pl-0 fr-pb-2w'
-                  idHtml='infobulle-chantiers'
-                >
-                  Ces PPG ne sont dorénavant plus suivies dans PILOTE et leurs données ne sont plus mises à jour. Elles
-                  restent cependant accessibles avec les données correspondant à leur dernière mise à jour.
-                </Infobulle>
+                  <Infobulle
+                    idHtml='infobulle-chantiers'
+                  >
+                    Ces PPG ne sont dorénavant plus suivies dans PILOTE et leurs données ne sont plus mises à jour. Elles
+                    restent cependant accessibles avec les données correspondant à leur dernière mise à jour.
+                  </Infobulle>
               }
             </Fragment>
-
           ))
         }
       </div>

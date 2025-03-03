@@ -24,7 +24,7 @@ import {
   ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
 } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import FiltresActifs from '@/client/components/PageAccueil/FiltresActifsNew/FiltresActifs';
-import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import Infobulle from '@/components/_commons/InfobulleNew/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import RemontéeAlerte from '@/components/_commons/RemontéeAlerteChantier/RemontéeAlerte';
@@ -320,7 +320,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                             <p className='fr-text--xs fr-mb-0 fr-mt-1v text-center'>
                               Taux d'avancement à échéance
                             </p>
-                            <div className='select-sm flex align-center justify-center align-center'>
+                            <div className='select-sm flex align-center justify-center w-full relative'>
                               <Sélecteur<'2024' | '2025'>
                                 htmlName='jalon'
                                 options={[{ libellé: '2024', valeur: '2024' }, { libellé: '2025', valeur: '2025' }]}
@@ -329,26 +329,9 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                                 valeurSélectionnée={`${jalon}` as '2024' | '2025'}
                               />
                               <Infobulle
-                                className='fr-pt-0'
                                 idHtml='infobulle-selecteur-jalon'
                               >
-                                <div>
-                                  <h5 className='fr-text--sm fr-mb-1w'>
-                                    Avancement à échéance
-                                  </h5>
-                                  <p className='fr-text--xs'>
-                                    Ce sélecteur vous permet d'afficher les valeurs prises successivement par le taux
-                                    d'avancement :
-                                  </p>
-                                  <ul className='fr-text--xs fr-mb-0'>
-                                    <li>
-                                      valeurs observées à la fin des années passées
-                                    </li>
-                                    <li>
-                                      valeur à date (année en cours)
-                                    </li>
-                                  </ul>
-                                </div>
+                                {INFOBULLE_CONTENUS.chantiers.jalon}
                               </Infobulle>
                             </div>
                           </div>
@@ -371,7 +354,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                             Répartition territoriale
                           </Titre>
                           <Infobulle
-                            idHtml='infobulle-chantiers-jauges'
+                            idHtml='infobulle-chantiers-jauges-repartitions'
                           >
                             {INFOBULLE_CONTENUS.chantiers.repartitions}
                           </Infobulle>
