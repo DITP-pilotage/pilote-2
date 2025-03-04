@@ -76,6 +76,11 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
 
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const territoireSélectionnéParent = territoireSélectionné.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné.codeParent) : null;
+  const titreAvancementDepartemental = "Taux d'avancement départemental";
+  const titreAvancementRegional = "Taux d'avancement régional";
+  const titreAvancementNational = "Taux d'avancement national";
+  const titreRepartitionTerritorialeDepartementale = 'Répartition départementale';
+  const titreRepartitionTerritorialeRegionale = 'Répartition régionale';
 
   return (
     <AvancementChantierStyled className={classeÀPartirDeLaMaille[territoireSélectionné.maille]}>
@@ -91,6 +96,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 doitAfficherLeSelecteur={territoireCode.startsWith('DEPT')}
                 jalon={jalon}
                 territoireNom={territoireSélectionné.nom}
+                titreTauxAvancement={titreAvancementDepartemental}
               />
               {
                 mailleSourceDonnees === 'regionale' &&
@@ -119,6 +125,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 doitAfficherLeSelecteur={territoireCode.startsWith('REG')}
                 jalon={jalon}
                 territoireNom={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
+                titreTauxAvancement={titreAvancementRegional}
               />
             </div>
           </Bloc>
@@ -128,6 +135,14 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         titre='France'
       >
         <div className='fr-py-1w jauge'>
+          <div className='flex flex-direction-column flex-wrap justify-center align-center'>
+            <strong className='fr-text--sm fr-mb-0 text-center'>
+              {titreAvancementNational}
+            </strong>
+            <p className='fr-text--sm fr-ml-1v'>
+              2025
+            </p>   
+          </div>
           <JaugeDeProgression
             couleur={territoireCode !== 'NAT-FR' ? 'bleu-clair' : 'bleu'}
             libellé='France'
@@ -179,19 +194,38 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
       </Bloc>
       <Bloc
         className='h-full'
-        contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
+        contenuClassesSupplémentaires='fr-p-2w'
         contenuInfobulle={INFOBULLE_CONTENUS.chantiers.repartitions}
-        titre='Répartition territoriale'
+        titre="Répartition territoriale du taux d'avancement 2026"
       >
-        <div className='fr-container fr-px-md-1w fr-px-lg-2w'>
+        <div className='fr-px-md-1w fr-px-lg-2w fr-py-1w'>
+          {
+            mailleQuery === 'regionale' ? (
+              <div className='flex flex-direction-column flex-wrap justify-center align-center'>
+                <strong className='fr-text--sm fr-mb-0 text-center'>
+                  {titreRepartitionTerritorialeRegionale}
+                </strong>
+                <p className='fr-text--sm fr-ml-1v'>
+                  2026
+                </p>   
+              </div>
+            ) : (
+              <div className='flex flex-direction-column flex-wrap justify-center align-center'>
+                <strong className='fr-text--sm fr-mb-0 text-center'>
+                  {titreRepartitionTerritorialeDepartementale}
+                </strong>
+                <p className='fr-text--sm fr-ml-1w'>
+                  2026
+                </p>   
+              </div>
+            )
+          }
           {
             estAutoriseAVoirLeSelecteurDeMaille ? (
-              <div className='fr-grid-row fr-py-1w fr-text--sm'>
-                <SélecteurMaille
-                  mailleQuery={mailleQuery}
-                  pathname={pathname}
-                />
-              </div>
+              <SélecteurMaille
+                mailleQuery={mailleQuery}
+                pathname={pathname}
+              />
             ) : null
           }
           <div className='flex flex-column justify-center'>
@@ -212,6 +246,45 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
             />
           </div>
         </div>
+      </Bloc>
+      <Bloc
+        className='h-full'
+        contenuClassesSupplémentaires='fr-p-2w'
+        contenuInfobulle={INFOBULLE_CONTENUS.chantiers.repartitions}
+        titre="Données de comparaison de l'avancement 2026"
+      >
+        <div className='flex flex-direction-column flex-wrap justify-center align-center'>
+          <strong className='fr-text--xs fr-mb-0 text-center'>
+            SITUATION PAR RAPPORT AUX AUTRES DEPARTEMENTS
+          </strong>
+          <p className='fr-text--sm fr-ml-1v'>
+            2026
+          </p>   
+          <p className='fr-text--xs text-center'>
+            <strong>
+              écart
+            </strong>
+            {' '}
+            du taux d'avancement 2026 par rapport au taux médian des autres départements ()
+          </p>
+        </div>
+        <hr className='fr-hr fr-py-1w' />
+        <div className='flex flex-direction-column flex-wrap justify-center align-center'>
+          <strong className='fr-text--xs fr-mb-0 text-center'>
+            EVOLUTION TEMPORELLE
+          </strong>
+          <p className='fr-text--sm fr-ml-1v'>
+            2026
+          </p>
+          <p className='fr-text--xs text-center'>
+            <strong>
+              tendance
+            </strong>
+            {' '}
+            du taux d'avancement 2026 par rapport au taux d'avancement précédemment mesuré sur le département ()
+          </p>   
+        </div>
+
       </Bloc>
     </AvancementChantierStyled>
   );

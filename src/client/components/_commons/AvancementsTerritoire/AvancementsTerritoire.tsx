@@ -20,6 +20,7 @@ interface AvancementsTerritoireProps {
   couleurBarreDeProgression: BarreDeProgressionVariante
   couleurJaugeDeProgression: JaugeDeProgressionCouleur
   doitAfficherLeSelecteur: boolean
+  titreTauxAvancement: string
 }
 
 const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
@@ -30,6 +31,7 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
   couleurJaugeDeProgression,
   jalon,
   doitAfficherLeSelecteur,
+  titreTauxAvancement,
 }) => {
   const [, setJalon] = useQueryState('jalon', parseAsStringLiteral(['2024', '2025']).withDefault('2024').withOptions({
     shallow: false,
@@ -43,6 +45,14 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
 
   return (
     <>
+      <div className='flex flex-direction-column flex-wrap justify-center align-center'>
+        <strong className='fr-text--sm fr-mb-0 text-center'>
+          {titreTauxAvancement}
+        </strong>
+        <p className='fr-text--sm fr-ml-1v'>
+          2025
+        </p>   
+      </div>
       <JaugeDeProgression
         couleur={couleurJaugeDeProgression}
         libellé={territoireNom}

@@ -21,8 +21,8 @@ const AvancementChantierStyled = styled.div`
   
   &.layout--dept {
     @media (min-width: 1025px) {
-      grid-template-areas: "dept reg nat nat";
-      grid-template-columns: 2fr 2fr 2fr 2fr;
+      grid-template-areas: "dept reg nat";
+      grid-template-columns: 4fr 4fr 4fr;
     }
 
     @media (min-width: 768px) and (max-width: 1024px) {
@@ -36,14 +36,14 @@ const AvancementChantierStyled = styled.div`
   &.layout--reg {
     @media (min-width: 768px) {
       grid-template-areas: "reg nat";
-      grid-template-columns: 2fr 2fr 2fr;
+      grid-template-columns: 6fr 6fr;
     }
   }
 
   &.layout--nat {
     @media (min-width: 768px) {
       grid-template-areas: "nat";
-      grid-template-columns: 2fr 2fr;
+      grid-template-columns: 2fr 2fr 2fr;
     }
   }
 
