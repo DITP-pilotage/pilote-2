@@ -190,6 +190,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       }, 
       data: {
         date_desactivation: new Date(),
+        date_modification: new Date(),
       },
     });
   }
@@ -201,6 +202,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       }, 
       data: {
         date_desactivation: null,
+        date_modification: new Date(),
       },
     });
   }
