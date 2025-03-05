@@ -1,20 +1,22 @@
 import { randomUUID } from 'node:crypto';
-import { prisma } from '@/server/db/prisma';
 import {
   PrismaSynthèseDesRésultatsRepository,
 } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaSynthèseDesRésultatsRepository';
+import { PrismaPilote } from '@/server/db/PrismaPilote';
 
 describe('PrismaSynthèseDesRésultatsRepository', () => {
+  let prisma: PrismaPilote;
   let prismaSynthèseDesRésultatsRepository: PrismaSynthèseDesRésultatsRepository;
 
   describe('#recupererLaPlusRecenteMailleNatParChantierId', () => {
     beforeEach(() => {
-      prismaSynthèseDesRésultatsRepository = new PrismaSynthèseDesRésultatsRepository();
+      prisma = new PrismaPilote();
+      prismaSynthèseDesRésultatsRepository = new PrismaSynthèseDesRésultatsRepository({ prisma });
     });
 
     it('doit récupérer la synthèse la plus récente pour un chantier de maille nationale', async () => {
       // Given
-      await prisma.chantier_identite.createMany({ data: [{
+      await prisma.getInstance().chantier_identite.createMany({ data: [{
         id: 'CH-168',
         nom: 'Nom chantier OK',
       }, {
@@ -23,7 +25,7 @@ describe('PrismaSynthèseDesRésultatsRepository', () => {
       }],
       });
 
-      await prisma.chantier_territoire.createMany({ data: [{
+      await prisma.getInstance().chantier_territoire.createMany({ data: [{
         id: 'CH-168',
         zone_id: 'FRANCE',
         maille: 'NAT',
@@ -49,7 +51,7 @@ describe('PrismaSynthèseDesRésultatsRepository', () => {
         territoire_code: 'DEPT-34',
       }],
       });
-      await prisma.synthese_des_resultats.create({
+      await prisma.getInstance().synthese_des_resultats.create({
         data: {
           id: randomUUID(),
           chantier_id: 'CH-168',
@@ -61,7 +63,7 @@ describe('PrismaSynthèseDesRésultatsRepository', () => {
           commentaire: 'commentaire synthèse OK maille',
         },
       });
-      await prisma.synthese_des_resultats.create({
+      await prisma.getInstance().synthese_des_resultats.create({
         data: {
           id: randomUUID(),
           chantier_id: 'CH-168',
@@ -73,7 +75,7 @@ describe('PrismaSynthèseDesRésultatsRepository', () => {
           commentaire: 'commentaire synthèse KO ancienne',
         },
       });
-      await prisma.synthese_des_resultats.create({
+      await prisma.getInstance().synthese_des_resultats.create({
         data: {
           id: randomUUID(),
           chantier_id: 'CH-168',
@@ -84,7 +86,7 @@ describe('PrismaSynthèseDesRésultatsRepository', () => {
           commentaire: 'commentaire synthèse KO maille',
         },
       });
-      await prisma.synthese_des_resultats.create({
+      await prisma.getInstance().synthese_des_resultats.create({
         data: {
           id: randomUUID(),
           chantier_id: 'CH-169',

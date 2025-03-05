@@ -1,7 +1,8 @@
-import { decision_strategique as DecisionStrategiqueModel } from '@prisma/client';
+import { decision_strategique as DecisionStrategiqueModel, PrismaClient } from '@prisma/client';
 import { DecisionStrategique } from '@/server/fiche-conducteur/domain/DecisionStrategique';
 import { DecisionStrategiqueRepository } from '@/server/fiche-conducteur/domain/ports/DecisionStrategiqueRepository';
-import { prisma } from '@/server/db/prisma';
+
+import { PrismaPilote } from '@/server/db/PrismaPilote';
 
 const convertifEnDecisionStrategique = (decisionStrategiqueModel: DecisionStrategiqueModel): DecisionStrategique => (DecisionStrategique.creerDecisionStrategique({
   type: decisionStrategiqueModel.type,
@@ -10,9 +11,18 @@ const convertifEnDecisionStrategique = (decisionStrategiqueModel: DecisionStrate
 })
 );
 
+interface Dependencies {
+  prisma: PrismaPilote
+}
 export class PrismaDecisionStrategiqueRepository implements DecisionStrategiqueRepository {
+  private prisma: PrismaClient;
+
+  constructor({ prisma }: Dependencies) {
+    this.prisma = prisma.getInstance();
+  }
+
   async listerDecisionStrategiqueParChantierId({ chantierId }: { chantierId: string }): Promise<DecisionStrategique[]> {
-    const decisionStrategiqueResult = await prisma.decision_strategique.findMany({
+    const decisionStrategiqueResult = await this.prisma.decision_strategique.findMany({
       where: {
         chantier_id: chantierId,
       },

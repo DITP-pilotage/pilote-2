@@ -8,12 +8,6 @@ class AppLogger {
     this._logger = pino({
       level: configuration.logLevel,
     });
-    this._logger.info({
-      logLevel: configuration.logLevel,
-      env: configuration.env,
-      securedEnv: configuration.env === 'production',
-      isUsingDevCredentials: !!configuration.devPassword,
-    });
   }
 
   info(...obj: any): void {
