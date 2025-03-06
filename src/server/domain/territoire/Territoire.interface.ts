@@ -28,7 +28,7 @@ export type CoordinateurTerritorial = { nom: string, email: string };
 export type DonneesComparaisonDuTauxDAvancementType = {
   ppgEcartMedian: number | null,
   ppgTendanceChantier : ChantierTendance | null,
-  ppgTauxDAvancementValeurPrecedente : Avancement,
+  ppgTauxDAvancementValeurPrecedente : Avancement['global'],
 };
 
 export type TerritoiresDonnées = Record<CodeInsee, TerritoireDonnées>;

@@ -351,9 +351,9 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 </strong>
                 du taux d'avancement 2026 par rapport au taux d'avancement précédemment mesuré sur le département (
                 {
-                  donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente.global ? (
+                  donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente ? (
                     <strong className='fr-mr-1v tendance-pourcentage-couleur'>
-                      {`${donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente.global.toFixed(0) + '%'}`}
+                      {`${donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente.toFixed(0) + '%'}`}
                     </strong>
                   ) : (
                     <strong className='tendance-pourcentage-couleur'>

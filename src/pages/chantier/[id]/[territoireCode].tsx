@@ -194,7 +194,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
     const donneesComparaisonDuTauxDAvancement: DonneesComparaisonDuTauxDAvancementType = {
       ppgEcartMedian: chantierTerritoireSélectionné?.écart,
       ppgTendanceChantier : chantierTerritoireSélectionné?.tendance,
-      ppgTauxDAvancementValeurPrecedente : chantierTerritoireSélectionné?.avancementPrécédent,
+      ppgTauxDAvancementValeurPrecedente : chantierTerritoireSélectionné?.avancementPrécédent.global,
     };
     
     const listeIndicateurId = indicateurs.map(indicateur => indicateur.id);
