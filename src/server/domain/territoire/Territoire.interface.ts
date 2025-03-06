@@ -25,6 +25,12 @@ export type CodeInsee = string;
 export type ResponsableLocal = { nom: string, email: string };
 export type CoordinateurTerritorial = { nom: string, email: string };
 
+export type DonneesComparaisonDuTauxDAvancementType = {
+  ppgEcartMedian: number | null,
+  ppgTendanceChantier : ChantierTendance | null,
+  ppgTauxDAvancementValeurPrecedente : Avancement,
+};
+
 export type TerritoiresDonnées = Record<CodeInsee, TerritoireDonnées>;
 
 export type TerritoireDonnées = {

@@ -43,7 +43,7 @@ import {
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { AvancementChantierContrat } from '@/components/PageChantier/AvancementChantier';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { CoordinateurTerritorial, ResponsableLocal } from '@/server/domain/territoire/Territoire.interface';
+import { CoordinateurTerritorial, DonneesComparaisonDuTauxDAvancementType, ResponsableLocal } from '@/server/domain/territoire/Territoire.interface';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import {
   ListerDétailsIndicateurTerritoireUseCase,
@@ -81,6 +81,7 @@ interface NextPageChantierProps {
   cartographieDroiteChantier: CartographieType
   cartographieDroiteIndicateur: CartographieIndicateurType
   cartographieGaucheIndicateur: CartographieIndicateurType
+  donneesComparaisonDuTauxDAvancement: DonneesComparaisonDuTauxDAvancementType
 }
 
 const redirigeLaPage = (destination: string) => ({
@@ -190,6 +191,12 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
     const listeResponsablesLocaux = chantierTerritoireSélectionné?.responsableLocal ?? [];
     const listeCoordinateursTerritorials = chantierTerritoireSélectionné?.coordinateurTerritorial ?? [];
 
+    const donneesComparaisonDuTauxDAvancement: DonneesComparaisonDuTauxDAvancementType = {
+      ppgEcartMedian: chantierTerritoireSélectionné?.écart,
+      ppgTendanceChantier : chantierTerritoireSélectionné?.tendance,
+      ppgTauxDAvancementValeurPrecedente : chantierTerritoireSélectionné?.avancementPrécédent,
+    };
+    
     const listeIndicateurId = indicateurs.map(indicateur => indicateur.id);
 
     const detailsIndicateursTerritoire = await new ListerDétailsIndicateurTerritoireUseCase(dependencies.getIndicateurRepository()).run(listeIndicateurId, chantierId, session.habilitations, session.profil, jalon);
@@ -223,6 +230,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
         cartographieDroiteChantier,
         cartographieDroiteIndicateur,
         cartographieGaucheIndicateur,
+        donneesComparaisonDuTauxDAvancement,
       },
     };
   } catch (error) {
@@ -258,6 +266,7 @@ const NextPageChantier: FunctionComponent<InferGetServerSidePropsType<typeof get
   cartographieGaucheChantier,
   cartographieDroiteIndicateur,
   cartographieGaucheIndicateur,
+  donneesComparaisonDuTauxDAvancement,
 }) => {
   const estUnProfilDROM = profil === ProfilEnum.DROM;
   const estTerritoireNational = territoireCode === 'NAT-FR';
@@ -287,6 +296,7 @@ const NextPageChantier: FunctionComponent<InferGetServerSidePropsType<typeof get
             chantier={chantier}
             commentaires={commentaires}
             detailsIndicateursTerritoire={detailsIndicateursTerritoire}
+            donneesComparaisonDuTauxDAvancement={donneesComparaisonDuTauxDAvancement}
             décisionStratégique={décisionStratégique as DecisionStrategiqueChantierContrat}
             détailsIndicateurs={détailsIndicateurs}
             indicateurPondérations={indicateurPondérations}

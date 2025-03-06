@@ -2,15 +2,15 @@ import 'material-symbols/index.css';
 import 'material-icons/iconfont/material-icons.css';
 import { FunctionComponent } from 'react';
 import Badge from '@/components/_commons/Badge/Badge';
-import { DonnéesTableauChantiers } from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
+import { DonneesComparaisonDuTauxDAvancementType } from '@/server/domain/territoire/Territoire.interface';
 import { badgeTypeÀPartirDeLaTendance, libelléÀPartirDeLaTendance } from '@/client/utils/chantier/tendance/tendance';
-  
-interface TableauChantiersTendanceProps {
-  tendance: DonnéesTableauChantiers['tendance']
+
+interface TendanceTauxAvancementPPGProps {
+  tendance: DonneesComparaisonDuTauxDAvancementType['ppgTendanceChantier']
   estArchive?: boolean
 }
   
-const TableauChantiersTendance: FunctionComponent<TableauChantiersTendanceProps> = ({ tendance, estArchive }) => {
+const TendanceTauxAvancementPPG: FunctionComponent<TendanceTauxAvancementPPGProps> = ({ tendance, estArchive }) => {
 
   if (tendance === null) {
     return null;
@@ -40,4 +40,4 @@ const TableauChantiersTendance: FunctionComponent<TableauChantiersTendanceProps>
   );
 };
 
-export default TableauChantiersTendance;
+export default TendanceTauxAvancementPPG;

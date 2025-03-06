@@ -2,7 +2,7 @@ import { FunctionComponent } from 'react';
 import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
 import PictoTendance from '@/components/_commons/PictoTendance/PictoTendance';
 import TexteColoré from '@/components/_commons/TexteColoré/TexteColoré';
-import { définirCouleurÉcartArrondi } from '@/client/utils/chantier/écart/écart';
+import { definirCouleurEcartArrondi } from '@/client/utils/chantier/écart/écart';
 import TableauRéformesAvancement from '@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement';
 import TableauRéformesMétéo from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo';
 import TypologiesPictos
@@ -20,7 +20,7 @@ interface TableauChantiersTuileChantierProps {
 }
 
 const TableauChantiersTuileChantier: FunctionComponent<TableauChantiersTuileChantierProps> = ({ chantier, afficherIcône, chantiersSontArchives }) => {
-  const couleurÉcartArrondi = définirCouleurÉcartArrondi(chantier.écart, chantiersSontArchives);
+  const couleurEcartArrondi = definirCouleurEcartArrondi(chantier.écart, chantiersSontArchives);
 
   return (
     <TableauChantiersTuileChantierStyled>
@@ -64,12 +64,12 @@ const TableauChantiersTuileChantier: FunctionComponent<TableauChantiersTuileChan
           />
         }
         {
-          (process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true') && !!couleurÉcartArrondi &&
+          (process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true') && !!couleurEcartArrondi &&
           <TexteColoré
             alignement='droite'
-            couleur={couleurÉcartArrondi.couleur}
+            couleur={couleurEcartArrondi.couleur}
             estGras
-            texte={`${couleurÉcartArrondi.écartArrondi.toFixed(1)}`}
+            texte={`${couleurEcartArrondi.ecartArrondi.toFixed(1)}`}
           />
         }
       </div>
