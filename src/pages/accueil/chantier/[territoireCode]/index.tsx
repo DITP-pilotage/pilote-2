@@ -1,5 +1,4 @@
 import { FunctionComponent, useState } from 'react';
-import 'react-tooltip/dist/react-tooltip.css';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getServerSession } from 'next-auth/next';
 import Head from 'next/head';

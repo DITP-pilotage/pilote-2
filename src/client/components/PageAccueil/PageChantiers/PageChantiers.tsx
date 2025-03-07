@@ -348,7 +348,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                         <TitreInfobulleConteneur>
                           <Titre
                             baliseHtml='h2'
-                            className='fr-text--lg fr-m-0 fr-py-1v '
+                            className='fr-text--lg fr-py-1v'
                             estInline
                           >
                             Répartition territoriale
