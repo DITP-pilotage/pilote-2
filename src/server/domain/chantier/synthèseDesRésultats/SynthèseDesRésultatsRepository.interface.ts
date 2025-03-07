@@ -7,5 +7,4 @@ export default interface SynthèseDesRésultatsRepository {
   récupérerHistorique(chantierId: string, territoireCode: string): Promise<SynthèseDesRésultats[]>;
   créer(chantierId: string, territoireCode: string, id: string, contenu: string, auteur: string, météo: Météo, date: Date): Promise<SynthèseDesRésultats>;
   récupérerLesPlusRécentesGroupéesParChantier(chantiersIds: Chantier['id'][], maille: string, codeInsee: string): Promise<Record<Chantier['id'], SynthèseDesRésultats>>;
-  anonymiserAuteurs(auteursAAnonymiserIds: string[], emailAuteurRemplacement: string): Promise<void>
 }
