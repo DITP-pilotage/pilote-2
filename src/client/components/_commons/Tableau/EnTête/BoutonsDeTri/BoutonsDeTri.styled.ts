@@ -2,7 +2,13 @@ import styled from '@emotion/styled';
 
 const BoutonsDeTriStyled = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: center;
+
+  @media(min-width: 576px) {
+    flex-direction: row;
+    align-items: flex-start;
+  }
 
   .bouton-de-tri {
     width: 1.5rem;

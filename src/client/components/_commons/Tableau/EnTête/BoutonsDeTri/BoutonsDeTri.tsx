@@ -22,6 +22,7 @@ const BoutonsDeTri: FunctionComponent<BoutonsDeTriProps> = ({
         aria-label={`trier la colonne "${nomColonneÀTrier}" par ordre croissant`}
         className={`${directionDeTri === 'asc' ? 'actif' : ''} bouton-de-tri fr-mr-1v`}
         onClick={() => directionDeTri === 'asc' ? changementDirectionDeTriCallback(false) : changementDirectionDeTriCallback('asc')}
+        title='Ascendant'
         type='button'
       >
         <FlècheDeTri
@@ -33,6 +34,7 @@ const BoutonsDeTri: FunctionComponent<BoutonsDeTriProps> = ({
         aria-label={`trier la colonne "${nomColonneÀTrier}" par ordre décroissant`}
         className={`${directionDeTri === 'desc' ? 'actif' : ''} bouton-de-tri`}
         onClick={() => directionDeTri === 'desc' ? changementDirectionDeTriCallback(false) : changementDirectionDeTriCallback('desc')}
+        title='Descendant'
         type='button'
       >
         <FlècheDeTri

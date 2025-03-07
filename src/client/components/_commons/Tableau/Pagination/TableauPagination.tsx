@@ -38,6 +38,7 @@ const TableauPagination: FunctionComponent<PaginationProps> = ({ nombreDePages, 
             className='fr-pagination__link fr-pagination__link--first'
             disabled={numéroDePageCourante === 1}
             onClick={() => changerPage(1)}
+            title='Première page'
             type='button'
           >
             Première page
@@ -48,6 +49,7 @@ const TableauPagination: FunctionComponent<PaginationProps> = ({ nombreDePages, 
             className='fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label'
             disabled={numéroDePageCourante === 1}
             onClick={() => changerPage(numéroPagePrécédente)}
+            title='Page précédente'
             type='button'
           >
             Page précédente
@@ -162,6 +164,7 @@ const TableauPagination: FunctionComponent<PaginationProps> = ({ nombreDePages, 
             className='fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label'
             disabled={numéroDePageCourante === numéroDernièrePage}
             onClick={() => changerPage(numéroPageSuivante)}
+            title='Page suivante'
             type='button'
           >
             Page suivante
@@ -172,6 +175,7 @@ const TableauPagination: FunctionComponent<PaginationProps> = ({ nombreDePages, 
             className='fr-pagination__link fr-pagination__link--last'
             disabled={numéroDePageCourante === numéroDernièrePage}
             onClick={() => changerPage(numéroDernièrePage)}
+            title='Dernière page'
             type='button'
           >
             Dernière page
