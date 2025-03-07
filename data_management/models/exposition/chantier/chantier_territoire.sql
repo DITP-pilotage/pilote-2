@@ -71,6 +71,7 @@ SELECT
     t.nom AS territoire_nom,
     sr.meteo,
     ta_ch_prev_month.tag_ch AS taux_avancement_mandat_valeur_precedente,
+    ta_ch_prev_month.date_ta::date AS date_taux_avancement_mandat_valeur_precedente,
     COALESCE(chantier_za.zone_est_applicable, TRUE)
     AND COALESCE(
         mailles_applicables.maille_est_applicable, FALSE
