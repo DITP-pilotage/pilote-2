@@ -80,25 +80,25 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   const sousTitreTuileAvancementDepartemental = "Taux d'avancement départemental";
   const sousTitreTuileAvancementRegional = "Taux d'avancement régional";
 
-  const classeÀPartirDeLaMaille: Record<Maille, string> = {
+  const classeAPartirDeLaMaille: Record<Maille, string> = {
     'nationale': 'layout--nat',
     'departementale': 'layout--dept',
     'regionale': 'layout--reg',
   };
 
-  const tuileEcartTAÀPartirDeLaMaille: Record<string, string> = {
+  const tuileEcartTAAPartirDeLaMaille: Record<string, string> = {
     'departementale': 'départements',
     'regionale': 'régions',
   };
 
-  const tuileTendanceTAÀPartirDeLaMaille: Record<Maille, string> = {
+  const tuileTendanceTAAPartirDeLaMaille: Record<Maille, string> = {
     'nationale': 'le pays',
     'departementale': 'le département',
     'regionale': 'la région',
   };
 
   return (
-    <AvancementChantierStyled className={classeÀPartirDeLaMaille[territoireSélectionné.maille]}>
+    <AvancementChantierStyled className={classeAPartirDeLaMaille[territoireSélectionné.maille]}>
       {
         territoireCode !== 'NAT-FR' && mailleSelectionnee === 'departementale' ? (
           <Bloc titre={territoireSélectionné?.nomAffiché}>
@@ -276,7 +276,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                   <strong className='fr-text--xs fr-mb-0 text-center'>
                     SITUATION PAR RAPPORT AUX AUTRES 
                     {' '}
-                    {tuileEcartTAÀPartirDeLaMaille[territoireSélectionné.maille].toUpperCase()}
+                    {tuileEcartTAAPartirDeLaMaille[territoireSélectionné.maille].toUpperCase()}
                     {' '}
                   </strong>
                   <p className='fr-text--sm fr-ml-1v fr-mb-1w'>
@@ -289,7 +289,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                     </strong>
                     du taux d'avancement 2026 par rapport au taux médian des autres 
                     {' '}
-                    {tuileEcartTAÀPartirDeLaMaille[territoireSélectionné.maille]}
+                    {tuileEcartTAAPartirDeLaMaille[territoireSélectionné.maille]}
                     {' '}
                     (
                     {
@@ -325,7 +325,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
             </strong>
             du taux d'avancement 2026 par rapport au taux d'avancement précédemment mesuré sur
             {' '}
-            {tuileTendanceTAÀPartirDeLaMaille[territoireSélectionné.maille]}
+            {tuileTendanceTAAPartirDeLaMaille[territoireSélectionné.maille]}
             {' '}
             {
               donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente && donneesComparaisonDuTauxDAvancement.ppgDateTauxDAvancementValeurPrecedente ? (
