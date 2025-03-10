@@ -1,7 +1,7 @@
 {
   "jobs": [
     {
-      "command": "0 * * * * npx ts-node scripts/suppressionUtilisateursInactifs.ts"
+      "command": "*/15 * * * * /bin/bash scripts/run_suppression_utilisateurs.sh"
     }
   ]
 }
