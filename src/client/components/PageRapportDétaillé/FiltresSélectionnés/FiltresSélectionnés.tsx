@@ -79,8 +79,8 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
         filtres.estEnAlerteÉcart ? `Chantier(s) avec un retard de 10 points par rapport à leur médiane ${territoireSélectionné?.maille}` : null,
         filtres.estEnAlerteBaisse ? 'Chantier(s) avec tendance en baisse' : null,
         filtres.estEnAlerteMétéoNonRenseignée ? 'Chantier(s) avec météo et synthèse des résultats non renseignés' : null,
-        filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 'Chantier(s) sans taux d\'avancement au niveau départemental' : null,
-        filtres.estEnAlertePossedePropositionsValeurActuelle ? 'Chantier(s) avec proposition(s) de valeur actuelle' : null,
+        filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 'Chantier(s) sans taux d’avancement au niveau départemental' : null,
+        filtres.estEnAlertePossedePropositionsValeurActuelle ? 'Chantier(s) avec proposition(s) de valeur d’avancement' : null,
       ].filter(Boolean),
     },
     {

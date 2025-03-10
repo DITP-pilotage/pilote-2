@@ -89,17 +89,17 @@ export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
             checked={optionsExport.split(',').includes('valeur-actuelle')}
             className='fr-input'
             disabled
-            id='valeur-actuelle'
-            name='valeur-actuelle'
+            id='valeur-davancement'
+            name='valeur-davancement'
             type='checkbox'
           />
           <label
             className='fr-label'
-            htmlFor='valeur-actuelle'
+            htmlFor='valeur-davancement'
           >
             <span>
               <span className='fr-text--bold'>
-                valeurs actuelles
+                valeurs d’avancement
               </span>
               {' '}
               de l'indicateur sur le territoire, mois par mois

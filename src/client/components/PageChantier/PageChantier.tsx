@@ -207,7 +207,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
           alerteMiseAJourIndicateur ? (
             <BandeauInformationMajDonnees
               bandeauType='WARNING'
-              message="un ou plusieurs indicateurs de cette politique prioritaire nécessitent au moins une mise à jour de leur valeur actuelle par l'équipe projet."
+              message='un ou plusieurs indicateurs de cette politique prioritaire nécessitent au moins une mise à jour de leur valeur d’avancement par l’équipe projet.'
               titre='Mise à jour des données requises : '
             />
           ) : null

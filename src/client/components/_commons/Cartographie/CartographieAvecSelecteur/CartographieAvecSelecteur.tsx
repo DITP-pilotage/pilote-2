@@ -42,12 +42,12 @@ const CartographieAvecSelecteur: FunctionComponent<{
   const optionsCartographie: SélecteurOption<CartographieType>[] = [
     {
       valeur: 'avancementMandat',
-      libellé: 'Carte des taux d\'avancement 2026',
+      libellé: 'Carte des taux d’avancement 2026',
       désactivée: listeCartographiesDesactives.includes('avancementMandat'),
     },
     {
       valeur: 'avancementJalon',
-      libellé: `Carte des taux d\'avancement ${jalon}`,
+      libellé: `Carte des taux d’avancement ${jalon}`,
       désactivée: listeCartographiesDesactives.includes('avancementJalon'),
     },
     {
@@ -57,7 +57,7 @@ const CartographieAvecSelecteur: FunctionComponent<{
     },
     {
       valeur: 'propositionValeur',
-      libellé: 'Carte des propositions de valeur actuelle',
+      libellé: 'Carte des propositions de valeur d’avancement',
       désactivée: listeCartographiesDesactives.includes('propositionValeur'),
     },
   ];
