@@ -165,7 +165,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   </span>
                 </p>
                 <div
-                  className={`flex align-center relative${estIndicateurEnAlerte ? ' fr-text-warning' : ' texte-gris'}`}
+                  className={`flex align-center w-full relative${estIndicateurEnAlerte ? ' fr-text-warning' : ' texte-gris'}`}
                 >
                   <p className='fr-mb-0 fr-text--xs'>
                     Date prévisionnelle de la prochaine mise à jour des données (de l’indicateur) :
@@ -176,16 +176,16 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   </p>
                   <Infobulle
                     className='infobulle-date-previsionnelle'
-                    idHtml='infobulle-date-previsionnelle'
+                    idHtml={`infobulle-date-previsionnelle-${indicateur.id}`}
                   >
-                    <p className='fr-text-title--blue-france'>
+                    <p className='fr-text--sm fr-text-title--blue-france'>
                       Date prévisionnelle de mise à jour de l’indicateur :
                     </p>
-                    <p>
+                    <p className='fr-text--sm fr-mb-0'>
                       Elle est calculée à partir de la date de la valeur actuelle, de la période de mise à jour et du
                       délai de disponibilité
                       des données. Plus d'informations dans l'accordéon "Description de l’indicateur et calendrier de
-                      mise à jour
+                      mise à jour".
                     </p>
                   </Infobulle>
                 </div>
@@ -392,12 +392,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   key={informationIndicateur.territoireNom}
                                 >
                                   <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm'>
-                                    <div className='flex align-center'>
+                                    <div className='flex align-center selecteur-infobulle-conteneur'>
                                       <span className='texte-proposition'>
                                         Proposition du territoire
                                       </span>
-                                      <Infobulle idHtml='infobulle-proposition-valeur-actuelle'>
-                                        <p className='texte-proposition'>
+                                      <Infobulle idHtml={`infobulle-proposition-valeur-actuelle-${informationIndicateur.code}`}>
+                                        <p className='fr-text--sm texte-proposition'>
                                           Valeur actuelle proposée
                                           le
                                           {' '}
@@ -407,20 +407,20 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                           {' '}
                                           {informationIndicateur.données.proposition.auteur}
                                         </p>
-                                        <p>
+                                        <p className='fr-text--sm'>
                                           <b>
                                             Motif de la proposition
                                           </b>
                                         </p>
-                                        <p>
+                                        <p className='fr-text--sm'>
                                           {informationIndicateur.données.proposition.motif}
                                         </p>
-                                        <p>
+                                        <p className='fr-text--sm'>
                                           <b>
                                             Source des données et méthode de calcul
                                           </b>
                                         </p>
-                                        <p>
+                                        <p className='fr-text--sm fr-mb-0'>
                                           {informationIndicateur.données.proposition.sourceDonneeEtMethodeCalcul}
                                         </p>
                                       </Infobulle>

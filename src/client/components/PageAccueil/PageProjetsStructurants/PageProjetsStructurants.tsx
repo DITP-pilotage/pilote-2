@@ -8,7 +8,7 @@ import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_PROJETS_STRUCTURANTS } from '@/client/co
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
-import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import Infobulle from '@/components/_commons/InfobulleProjetStructurant/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import {

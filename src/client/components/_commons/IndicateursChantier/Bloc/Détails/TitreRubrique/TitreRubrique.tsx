@@ -8,8 +8,9 @@ const TitreRubrique: FunctionComponent<{
   rubriqueNom: string
   rubriqueDescription: string | null
   nombreIndicateurRubrique: number
+  rubriqueAncre: string
 
-}> = ({ rubriqueNom, rubriqueDescription, nombreIndicateurRubrique }) => {
+}> = ({ rubriqueNom, rubriqueDescription, nombreIndicateurRubrique, rubriqueAncre }) => {
 
   return (
     <TitreInfobulleConteneur>
@@ -23,7 +24,7 @@ const TitreRubrique: FunctionComponent<{
         rubriqueDescription ? (
           <Infobulle 
             className='fr-pb-2w' 
-            idHtml=''
+            idHtml={`infobulle-${rubriqueAncre}`}
           >
             {rubriqueDescription}
           </Infobulle>

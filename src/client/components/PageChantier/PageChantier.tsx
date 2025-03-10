@@ -241,7 +241,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     indicateurPondérations.length === 0
                       ? (
                         <Infobulle
-                          idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'
+                          idHtml='infobulle-chantier-météoEtSynthèseDesRésultats-aucun-indicateur'
                         >
                           {INFOBULLE_CONTENUS.chantier.avancement.aucunIndicateur(territoireSélectionné.maille)}
                         </Infobulle>
@@ -249,14 +249,14 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                         indicateurPondérations.length === 1
                           ? (
                             <Infobulle
-                              idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'
+                              idHtml='infobulle-chantier-météoEtSynthèseDesRésultats-un-seul-indicateur'
                             >
                               {INFOBULLE_CONTENUS.chantier.avancement.unSeulIndicateur(territoireSélectionné.maille, indicateurPondérations[0])}
                             </Infobulle>
                           )
                           : (
                             <Infobulle
-                              idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'
+                              idHtml='infobulle-chantier-météoEtSynthèseDesRésultats-plusieurs-indicateurs'
                             >
                               {INFOBULLE_CONTENUS.chantier.avancement.plusieursIndicateurs(territoireSélectionné.maille, indicateurPondérations)}
                             </Infobulle>

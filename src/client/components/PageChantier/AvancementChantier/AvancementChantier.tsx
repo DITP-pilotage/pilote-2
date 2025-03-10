@@ -147,42 +147,29 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               valeur={!!avancements.nationale && process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancements.nationale.annuel.moyenne : null}
               variante='secondaire-light'
             />
-            <div className='flex align-center justify-center fr-text--xs'>
+            <div className='flex align-center justify-center fr-text--xs  w-full relative'>
               <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
                 {`Avancement à échéance${!territoireCode.startsWith('NAT') ? ` ${jalon}` : ''}`}
               </p>
               {
                 territoireCode.startsWith('NAT') ? (
-                  <div className='select-sm flex align-center justify-center align-center'>
-                    <Sélecteur<'2024' | '2025'>
-                      htmlName='jalon'
-                      options={[{ libellé: '2024', valeur: '2024' }, { libellé: '2025', valeur: '2025' }]}
-                      texteFantôme='Sélectionner un jalon'
-                      valeurModifiéeCallback={auClickSelecteurJalon}
-                      valeurSélectionnée={`${jalon}` as '2024' | '2025'}
-                    />
-                    <Infobulle
-                      className='fr-pt-0'
-                      idHtml='infobulle-selecteur-jalon'
+                  <div className='flex flex-wrap justify-center'>
+                    <div
+                      className='select-sm flex align-center justify-center'
                     >
-                      <div>
-                        <h5 className='fr-text--sm fr-mb-1w'>
-                          Avancement à échéance
-                        </h5>
-                        <p className='fr-text--xs'>
-                          Ce sélecteur vous permet d'afficher les valeurs prises successivement par le taux
-                          d'avancement :
-                        </p>
-                        <ul className='fr-text--xs fr-mb-0'>
-                          <li>
-                            valeurs observées à la fin des années passées
-                          </li>
-                          <li>
-                            valeur à date (année en cours)
-                          </li>
-                        </ul>
-                      </div>
-                    </Infobulle>
+                      <Sélecteur<'2024' | '2025'>
+                        htmlName='jalon'
+                        options={[{ libellé: '2024', valeur: '2024' }, { libellé: '2025', valeur: '2025' }]}
+                        texteFantôme='Sélectionner un jalon'
+                        valeurModifiéeCallback={auClickSelecteurJalon}
+                        valeurSélectionnée={`${jalon}` as '2024' | '2025'}
+                      />
+                      <Infobulle
+                        idHtml='infobulle-selecteur-jalon'
+                      >
+                        {INFOBULLE_CONTENUS.chantiers.jalon}
+                      </Infobulle>
+                    </div>
                   </div>
                 ) : null
               }
