@@ -34,13 +34,13 @@ function registerContainer(): ContainerDependencies {
   });
 
   return {
-    authentification: getAuthentificationContainer().createScope(),
-    chantiers: getChantiersContainer().createScope(),
-    parametrageIndicateur: getParametrageIndicateurContainer().createScope(),
-    importIndicateur: getImportIndicateurContainer().createScope(),
+    main: initialContainer.createScope(),
+    authentification: getAuthentificationContainer(initialContainer),
+    chantiers: getChantiersContainer(initialContainer),
+    parametrageIndicateur: getParametrageIndicateurContainer(initialContainer),
+    importIndicateur: getImportIndicateurContainer(initialContainer),
     gestionUtilisateur: getGestionUtilisateurContainer(initialContainer),
     ficheConducteur: getFicheConducteurContainer(initialContainer),
-    main: initialContainer.createScope(),
   };
 }
 

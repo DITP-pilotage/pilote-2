@@ -57,6 +57,7 @@ export type GestionUtilisateurDependencies = {
   recupererTousLesTerritoiresUseCase: RecupererTousLesTerritoiresUseCase
   recupererListeUtilisateursUseCase: RecupererListeUtilisateursUseCase
 };
+
 export const getGestionUtilisateurContainer = (initialContainer: AwilixContainer<{ prisma: PrismaPilote }>): AwilixContainer<GestionUtilisateurDependencies & { prisma: PrismaPilote }> => {
   return initialContainer.createScope<GestionUtilisateurDependencies>().register({
     utilisateurRepository: asClass(PrismaUtilisateurRepository),

@@ -52,7 +52,7 @@ export const ExportDesDonnees: FunctionComponent<{}> = () => {
       onSubmit={(événement) => {
         événement.preventDefault();
         const url = '/api/export/utilisateurs';
-        const baseDuNomDeFichier = 'PILOTE-Utilisateur';
+        const baseDuNomDeFichier = 'PILOTE-Utilisateurs';
 
         const a = window.document.createElement('a');
         const strOptionsExport = `${arrayOptionsExport.map(option => `${option.name}=${option.value}`).join('&')}`;
