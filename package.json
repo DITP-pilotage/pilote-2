@@ -96,6 +96,7 @@
     "formidable": "3.5.1",
     "isomorphic-dompurify": "^1.2.0",
     "js-yaml-loader": "^1.2.2",
+    "marked": "^15.0.7",
     "material-icons": "^1.13.7",
     "material-symbols": "^0.5.5",
     "mime": "^3.0.0",

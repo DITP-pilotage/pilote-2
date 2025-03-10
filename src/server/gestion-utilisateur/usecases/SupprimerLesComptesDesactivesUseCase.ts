@@ -54,7 +54,7 @@ export class SupprimerLesComptesDesactivesUseCase {
     this.rapportRepository = rapportRepository;
   }
 
-  async run(): Promise<void> {
+  async run(): Promise<{ id: string, email: string }[]> {
     const dateDesactivationMax = new Date();
     dateDesactivationMax.setFullYear(dateDesactivationMax.getFullYear() - NOMBRE_ANNEE_AVANT_SUPPRESSION);
     const utilisateursInactifs = await this.utilisateurRepository.recupererComptesInactifs(dateDesactivationMax);
@@ -75,5 +75,6 @@ export class SupprimerLesComptesDesactivesUseCase {
     for (const email of listeUtilisateurASupprimerEmails) {
       await this.utilisateurIAMRepository.supprime(email);
     }
+    return utilisateursInactifs;
   }
 }

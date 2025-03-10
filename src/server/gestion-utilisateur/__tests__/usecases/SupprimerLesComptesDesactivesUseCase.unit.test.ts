@@ -36,7 +36,7 @@ describe('SupprimerLesComptesDesactivesUseCase', () => {
     utilisateurRepository.recupererComptesInactifs.mockResolvedValue(utilisateursAsupprimer);
   
     // When
-    await supprimerLesComptesDesactivesUseCase.run();
+    const utilisateursSupprimes = await supprimerLesComptesDesactivesUseCase.run();
 
     // Then
     expect(commentaireRepository.anonymiserAuteurs).toHaveBeenCalledWith(utilisateurAsupprimerId, EMAIL_AUTEUR_REMPLACEMENT);
@@ -48,5 +48,6 @@ describe('SupprimerLesComptesDesactivesUseCase', () => {
     expect(utilisateurIAMRepository.supprime).toHaveBeenCalledTimes(2);
     expect(utilisateurIAMRepository.supprime).toHaveBeenNthCalledWith(1, utilisateursAsupprimer[0].email);
     expect(utilisateurIAMRepository.supprime).toHaveBeenNthCalledWith(2, utilisateursAsupprimer[1].email);
+    expect(utilisateursSupprimes).toStrictEqual(utilisateursAsupprimer);
   });
 });
