@@ -92,7 +92,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   };
 
   const tuileTendanceTAAPartirDeLaMaille: Record<Maille, string> = {
-    'nationale': 'le pays',
+    'nationale': 'le territoire',
     'departementale': 'le département',
     'regionale': 'la région',
   };
