@@ -14,7 +14,7 @@ export default class SupprimerUnUtilisateurUseCase {
   async run(email: Utilisateur['email'], habilitations: Habilitations, profil: Profil | null): Promise<void> {
     const utilisateurASupprimer = await this.utilisateurRepository.récupérer(email);
     if (!utilisateurASupprimer) 
-      throw new Error('Le compte à supprimer n’existe pas.');
+      throw new Error("Le compte à supprimer n'existe pas.");
     
     const habilitationsUtilisateurASupprimer = utilisateurASupprimer.habilitations;
     const habilitation = new Habilitation(habilitations);

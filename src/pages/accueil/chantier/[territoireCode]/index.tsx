@@ -248,7 +248,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
     <>
       <Head>
         <title>
-          PILOTE - Piloter l’action publique par les résultats
+          PILOTE - Piloter l'action publique par les résultats
         </title>
       </Head>
       <div className='flex'>

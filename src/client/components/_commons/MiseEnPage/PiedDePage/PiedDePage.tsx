@@ -18,7 +18,7 @@ const PiedDePage: FunctionComponent<{}> = () => {
           <div className='fr-footer__brand fr-enlarge-link'>
             <Link
               href='/'
-              title='Retour à l’accueil du site'
+              title="Retour à l'accueil du site"
             >
               <p className='fr-logo'>
                 Gouvernement
@@ -27,7 +27,7 @@ const PiedDePage: FunctionComponent<{}> = () => {
           </div>
           <div className='fr-footer__content'>
             <p className='fr-footer__content-desc'>
-              PILOTE est le dispositif de suivi des politiques prioritaires du gouvernement. Il permet d’évaluer les
+              PILOTE est le dispositif de suivi des politiques prioritaires du gouvernement. Il permet d'évaluer les
               résultats des politiques publiques dans les territoires.
             </p>
           </div>

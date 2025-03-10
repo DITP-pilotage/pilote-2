@@ -153,7 +153,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           filtres.estEnAlerteTauxAvancementNonCalculé ? (
             <li>
               <Tag
-                libellé='Taux d’avancement non calculé en raison d’indicateurs non renseignés'
+                libellé="Taux d'avancement non calculé en raison d'indicateurs non renseignés"
                 suppressionCallback={() => {
                   filtres.estEnAlerteTauxAvancementNonCalculé = false;
                   sauvegarderFiltres({ estEnAlerteTauxAvancementNonCalculé: false });
@@ -212,7 +212,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? (
             <li>
               <Tag
-                libellé='Chantier(s) sans taux d’avancement au niveau départemental'
+                libellé="Chantier(s) sans taux d'avancement au niveau départemental"
                 suppressionCallback={() => {
                   filtres.estEnAlerteAbscenceTauxAvancementDepartemental = false;
 

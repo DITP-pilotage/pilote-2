@@ -246,7 +246,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     const utilisateurExiste = await this.utilisateurRepository.récupérer(email);
 
     if (utilisateurExistant && !utilisateurExiste)  {
-      throw new Error('Le compte à modifier n’existe pas.');
+      throw new Error("Le compte à modifier n'existe pas.");
     }
 
     if (!utilisateurExistant && utilisateurExiste) {

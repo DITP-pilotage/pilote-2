@@ -113,7 +113,7 @@ export const EtapeRecapitulatif = () => {
   return (
     <div>
       <p className='fr-mt-2w fr-mb-2w'>
-        Veuillez vérifier ci-dessous le contenu de votre fichier d’export :
+        Veuillez vérifier ci-dessous le contenu de votre fichier d'export :
       </p>
       <h3 className='fr-text--md fr-mb-0 fr-mt-2w'>
         Contenus à exporter

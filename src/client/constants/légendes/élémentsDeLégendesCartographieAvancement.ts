@@ -44,11 +44,11 @@ export const ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS: CartographieÉlémentsDeL
     remplissage: '#000091',
   },
   'DÉFAUT': {
-    libellé: 'Territoire pour lequel la donnée n’est pas renseignée/disponible',
+    libellé: "Territoire pour lequel la donnée n'est pas renseignée/disponible",
     remplissage: REMPLISSAGE_PAR_DÉFAUT,
   },
   'NON_APPLICABLE': {
-    libellé: 'Territoire où le chantier prioritaire ne s’applique pas',
+    libellé: "Territoire où le chantier prioritaire ne s'applique pas",
     remplissage: 'url(#hachures-gris-blanc)',
   },
 };
@@ -103,7 +103,7 @@ export const ÉLÉMENTS_LÉGENDE_AVANCEMENT_PROJETS_STRUCTURANTS: CartographieÉ
     remplissage: '#A94645',
   },
   'DÉFAUT': {
-    libellé: 'Territoire pour lequel la donnée n’est pas disponible',
+    libellé: "Territoire pour lequel la donnée n'est pas disponible",
     remplissage: REMPLISSAGE_PAR_DÉFAUT,
   },
 };

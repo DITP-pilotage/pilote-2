@@ -23,7 +23,7 @@ const IndicateurPondération: FunctionComponent<IndicateurPondérationProps> = (
           ? `La pondération n'est pas disponible pour le taux d'avancement ${adjectifÀPartirDeLaMaille[mailleSélectionnée]}.`
           : (
             indicateurPondération === 0
-              ? `Cet indicateur n’est pas pris en compte dans le taux d’avancement ${adjectifÀPartirDeLaMaille[mailleSélectionnée]} du chantier.`
+              ? `Cet indicateur n'est pas pris en compte dans le taux d'avancement ${adjectifÀPartirDeLaMaille[mailleSélectionnée]} du chantier.`
               : (
                 <>
                   Cet indicateur représente
@@ -33,7 +33,7 @@ const IndicateurPondération: FunctionComponent<IndicateurPondérationProps> = (
                     %
                   </span>
                   {' '}
-                  du taux d’avancement
+                  du taux d'avancement
                   {' '}
                   {adjectifÀPartirDeLaMaille[mailleSélectionnée]}
                   {' '}

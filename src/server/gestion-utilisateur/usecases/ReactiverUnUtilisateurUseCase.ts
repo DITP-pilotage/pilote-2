@@ -55,7 +55,7 @@ export default class ReactiverUnUtilisateurUseCase {
     const utilisateurAReactiver = await this.utilisateurRepository.récupérer(email, listeTerritoiresCodes, listePerimetresMinisteriels, listeInformationsChantiersUtilisateurs);
 
     if (!utilisateurAReactiver) {
-      throw new Error('Le compte à supprimer n’existe pas.');
+      throw new Error("Le compte à supprimer n'existe pas.");
     }
 
     const habilitation = new Habilitation(habilitations);

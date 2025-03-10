@@ -192,7 +192,7 @@ export const EtapeDonneeChantierACollecter = () => {
         <span
           className='fr-label fr-text--xs texte-gris fr-mb-0'
         >
-          les données quantitatives sont exportées pour l’année en cours et pour l’année 2026
+          les données quantitatives sont exportées pour l'année en cours et pour l'année 2026
         </span>
         <div className='fr-checkbox-group fr-mt-1w'>
           <input
@@ -214,7 +214,7 @@ export const EtapeDonneeChantierACollecter = () => {
                     données descriptives
                   </span>
                   {' '}
-                  de la PPG sur le territoire : taux d’avancement, tendance, écart
+                  de la PPG sur le territoire : taux d'avancement, tendance, écart
                 </span>
               </label>
             ) : (
@@ -260,10 +260,10 @@ export const EtapeDonneeChantierACollecter = () => {
                 </label>
                 <ul className='fr-ml-4w fr-my-0 fr-text--sm'>
                   <li className='fr-pb-0'>
-                    taux d’avancement, tendance, écart aux mailles inférieures et supérieures (si applicable)
+                    taux d'avancement, tendance, écart aux mailles inférieures et supérieures (si applicable)
                   </li>
                   <li className='fr-pb-0'>
-                    minimum, médiane et maximum du taux d’avancement à toutes les mailles (si applicable)
+                    minimum, médiane et maximum du taux d'avancement à toutes les mailles (si applicable)
                   </li>
                 </ul>
               </>

@@ -182,7 +182,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
                   responsabilités
                 </span>
                 {' '}
-                 de l’indicateur et de la PPG associée : directeurs, responsables et coordinateurs
+                 de l'indicateur et de la PPG associée : directeurs, responsables et coordinateurs
               </span>
             </label>
             ) : (
@@ -283,10 +283,10 @@ export const EtapeDonneeIndicateurACollecter = () => {
                 </label>
                 <ul className='fr-ml-4w fr-my-0 fr-text--sm'>
                   <li className='fr-pb-0'>
-                    de l’indicateur : valeurs initiale / actuelle / cible, taux d’avancement (si applicable)
+                    de l'indicateur : valeurs initiale / actuelle / cible, taux d'avancement (si applicable)
                   </li>
                   <li className='fr-pb-0'>
-                    de la PPG associée : taux d’avancement, tendance, écart
+                    de la PPG associée : taux d'avancement, tendance, écart
                   </li>
                 </ul>
               </>
@@ -334,10 +334,10 @@ export const EtapeDonneeIndicateurACollecter = () => {
                 </label>
                 <ul className='fr-ml-4w fr-my-0 fr-text--sm'>
                   <li className='fr-pb-0'>
-                    taux d’avancement aux mailles inférieures et supérieures (si applicable)
+                    taux d'avancement aux mailles inférieures et supérieures (si applicable)
                   </li>
                   <li className='fr-pb-0'>
-                    minimum, médiane et maximum du taux d’avancement à toutes les mailles (si applicable)
+                    minimum, médiane et maximum du taux d'avancement à toutes les mailles (si applicable)
                   </li>
                 </ul>
               </>

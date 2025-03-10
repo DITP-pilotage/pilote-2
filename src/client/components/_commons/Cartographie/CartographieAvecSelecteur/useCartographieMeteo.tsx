@@ -1,7 +1,9 @@
 import { useMemo } from 'react';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
-import { CartographieÉlémentsDeLégende } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
+import {
+  CartographieÉlémentsDeLégende,
+} from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { CartographieDonnées } from '@/client/components/_commons/Cartographie/Cartographie.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
@@ -20,7 +22,7 @@ const determinerRemplissage = (valeur: Météo | null, elementsDeLegende: Cartog
 };
 
 export const useCartographieMeteo = (chantierMailles: Record<Maille, TerritoiresDonnées>, elementsDeLegende: CartographieÉlémentsDeLégende) => {
-  const useRecupererDonnees = () => { 
+  const useRecupererDonnees = () => {
     const donnees = objectEntries({ ...chantierMailles.departementale, ...chantierMailles.regionale }).map(([territoireCodeDonnee, territoire]) => ({
       valeur: territoire.météo,
       territoireCode: territoireCodeDonnee as string,
@@ -36,12 +38,12 @@ export const useCartographieMeteo = (chantierMailles: Record<Maille, Territoires
       let legendeAffichee = Object.values(elementsDeLegende);
       if (tousApplicables) {
         legendeAffichee = legendeAffichee
-          .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s’applique pas');
+          .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s\'applique pas');
       }
 
       if (tousNonNull) {
         legendeAffichee = legendeAffichee
-          .filter(el => el.libellé !== 'Territoire pour lequel la meteo n’est pas renseignée');
+          .filter(el => el.libellé !== 'Territoire pour lequel la meteo n\'est pas renseignée');
       }
 
       legendeAffichee = legendeAffichee.map(({ remplissage, libellé }) => ({

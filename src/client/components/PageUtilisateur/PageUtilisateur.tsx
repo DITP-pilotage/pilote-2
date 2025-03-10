@@ -18,7 +18,7 @@ import usePageUtilisateur from './usePageUtilisateur';
 
 interface PageUtilisateurProps {
   utilisateur: Utilisateur,
-  tokenAPIInformation : TokenAPIInformationContrat
+  tokenAPIInformation: TokenAPIInformationContrat
 }
 
 const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({ utilisateur, tokenAPIInformation }) => {
@@ -86,10 +86,10 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({ utilisateur,
                       <button
                         className='fr-btn fr-btn--secondary fr-mr-2w'
                         onClick={() => creerTokenAPI({ email: utilisateur.email })}
-                        title='Générer un token d’authentification'
+                        title="Générer un token d'authentification"
                         type='submit'
                       >
-                        Générer un token d’authentification
+                        Générer un token d'authentification
                       </button>
                     ) : null
                   }
@@ -116,7 +116,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({ utilisateur,
                     tokenAPIInformation ? (
                       <div className='fr-alert fr-alert--info fr-alert--sm fr-mt-2w'>
                         <p className='fr-text--sm'>
-                          Information : Un token est déjà actif pour cet utilisateur. La génération d’un nouveau token
+                          Information : Un token est déjà actif pour cet utilisateur. La génération d'un nouveau token
                           supprimera ce token actif.
                         </p>
                       </div>
@@ -153,7 +153,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({ utilisateur,
                 </div>
               }
               {
-                (!!utilisateur.dateDesactivation && !modificationEstImpossible(session, utilisateur.habilitations, utilisateur.profil)) && 
+                (!!utilisateur.dateDesactivation && !modificationEstImpossible(session, utilisateur.habilitations, utilisateur.profil)) &&
                 <div className='fr-grid-row fr-mt-4w'>
                   <button
                     aria-controls='reactiver-compte'
@@ -190,7 +190,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({ utilisateur,
                         onClick={reactiverUtilisateur}
                       />
                     </div>
-                  </Modale>             
+                  </Modale>
                 </div>
               }
             </div>

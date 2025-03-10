@@ -24,7 +24,7 @@ const FilAriane: FunctionComponent<FilArianeProps> = ({ chemin, libelléPageCour
         onClick={() => setEstOuvert(!estOuvert)}
         type='button'
       >
-        Voir le fil d’Ariane
+        Voir le fil d'Ariane
       </button>
       <div
         className={estOuvert ? 'fr-collapse--expanded' : 'fr-collapse'}
@@ -39,7 +39,7 @@ const FilAriane: FunctionComponent<FilArianeProps> = ({ chemin, libelléPageCour
               Accueil
             </Link>
           </li>
-          { chemin ? 
+          {chemin ?
             chemin.map(page => (
               <li key={page.nom}>
                 <Link
@@ -50,7 +50,7 @@ const FilAriane: FunctionComponent<FilArianeProps> = ({ chemin, libelléPageCour
                 </Link>
               </li>
             ))
-            : null }
+            : null}
           <li>
             <span
               aria-current='page'

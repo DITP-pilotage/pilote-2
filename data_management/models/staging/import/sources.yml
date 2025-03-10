@@ -237,7 +237,7 @@ sources:
                 { "order_id": 6, "value": "ZG-006", "name": "Façades maritimes hors OM", "desc": "Ensemble des territoires avec façade maritime hors Outre-Mer" },
                 { "order_id": 7, "value": "ZG-007", "name": "ZFE", "desc": "Territoires avec au moins une ZFE" },
                 { "order_id": 8, "value": "ZG-008", "name": "Ports CH-049", "desc": "Ports de la PPG « Verdir les ports et les flottes »" },
-                { "order_id": 9, "value": "ZG-009", "name": "Ports CH-059", "desc": "Ports de la PPG « Devenir leader de l’hydrogène décarboné »" },
+                { "order_id": 9, "value": "ZG-009", "name": "Ports CH-059", "desc": "Ports de la PPG « Devenir leader de l'hydrogène décarboné »" },
                 { "order_id": 10, "value": "ZG-010", "name": "Façade maritime Méditerranée", "desc": "Territoires de la façade maritime méditerranéenne" },
                 { "order_id": 11, "value": "ZG-011", "name": "ANRU", "desc": "Territoires concernés par le programme Accélérer le renouvellement urbain des quartiers" },
                 { "order_id": 12, "value": "ZG-012", "name": "ACV", "desc": "Territoires concernés par le programme Action Coeur de Ville" },
@@ -252,7 +252,7 @@ sources:
                 { "order_id": 21, "value": "ZG-021", "name": "Force aux Frontières", "desc": "Territoires de la PPG « Force aux Frontières »" },
                 { "order_id": 22, "value": "ZG-022", "name": "Stationnement vélo sécurisé en gare", "desc": "Territoires de l'indicateur Places de stationnement vélo sécurisé en gare (IND-215) de la PPG « Amplifier le plan vélo »" },
                 { "order_id": 23, "value": "ZG-023", "name": "Industrie décarbonnée", "desc": "Régions de la PPG « Devenir la première grande économie décarbonée »" },
-                { "order_id": 24, "value": "ZG-024", "name": "Education prioritaire", "desc": "	Territoires contenant des écoles en Education Prioritaire (Cantal,Haute-Loire,Lot et Lozère n’ont pas de REP)" }
+                { "order_id": 24, "value": "ZG-024", "name": "Education prioritaire", "desc": "	Territoires contenant des écoles en Education Prioritaire (Cantal,Haute-Loire,Lot et Lozère n'ont pas de REP)" }
               ]
               pilote_create_mandatory: false
               pilote_create_defaultValue: ""

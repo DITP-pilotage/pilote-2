@@ -87,12 +87,12 @@ export default function useCartographieValeurActuelle(données: CartographieDonn
     let légendeAffichée = Object.values(élémentsDeLégende);
     if (tousApplicables) {
       légendeAffichée = légendeAffichée
-        .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s’applique pas');
+        .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s\'applique pas');
     }
 
     if (tousNonNull) {
       légendeAffichée = légendeAffichée
-        .filter(el => el.libellé !== 'Territoire pour lequel la donnée n’est pas renseignée/disponible');
+        .filter(el => el.libellé !== 'Territoire pour lequel la donnée n\'est pas renseignée/disponible');
     }
 
     légendeAffichée = légendeAffichée.map(({ remplissage, libellé }) => ({

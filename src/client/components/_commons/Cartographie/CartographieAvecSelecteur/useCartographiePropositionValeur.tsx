@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { CartographieÉlémentsDeLégende } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
+import {
+  CartographieÉlémentsDeLégende,
+} from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { CartographieDonnées } from '@/client/components/_commons/Cartographie/Cartographie.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
@@ -37,7 +39,7 @@ export const useCartographiePropositionValeur = (chantierMailles: Record<Maille,
       let legendeAffichee = Object.values(elementsDeLegende);
       if (tousApplicables) {
         legendeAffichee = legendeAffichee
-          .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s’applique pas');
+          .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s\'applique pas');
       }
 
       return legendeAffichee.map(({ remplissage, libellé }) => ({
