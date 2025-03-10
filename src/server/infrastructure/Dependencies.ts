@@ -41,24 +41,12 @@ import {
   MinistereRepository as FicheTerritorialeMinistereRepository,
 } from '@/server/fiche-territoriale/domain/ports/MinistereRepository';
 import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
-import ObjectifProjetStructurantRepository
-  from '@/server/domain/projetStructurant/objectif/ObjectifRepository.interface';
-import ProjetStructurantRepository from '@/server/domain/projetStructurant/ProjetStructurantRepository.interface';
 import { RapportRepository } from '@/server/import-indicateur/domain/ports/RapportRepository';
-import CommentaireProjetStructurantRepository
-  from '@/server/domain/projetStructurant/commentaire/CommentaireRepository.interface';
 import PérimètreMinistérielRepository
   from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
-import {
-  SynthèseDesRésultatsProjetStructurantSQLRepository,
-} from '@/server/infrastructure/accès_données/projetStructurant/synthèseDesRésultats/SynthèseDesRésultatsProjetStructurantSQLRepository';
-import SynthèseDesRésultatsProjetStructurantRepository
-  from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import ObjectifSQLRepository from '@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository';
 import DécisionStratégiqueSQLRepository
   from '@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository';
-import IndicateurProjetStructurantRepository
-  from '@/server/domain/indicateur/IndicateurProjetStructurantRepository.interface';
 import ProfilSQLRepository from '@/server/infrastructure/accès_données/profil/ProfilSQLRepository';
 import ProfilRepository from '@/server/domain/profil/ProfilRepository';
 import {
@@ -115,14 +103,7 @@ import {
 } from '@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurActuelleRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
 import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
-import ProjetStructurantSQLRepository from './accès_données/projetStructurant/ProjetStructurantSQLRepository';
-import ObjectifProjetStructurantSQLRepository
-  from './accès_données/projetStructurant/objectif/ObjectifProjetStructurantSQLRepository';
-import CommentaireProjetStructurantSQLRepository
-  from './accès_données/projetStructurant/commentaire/CommentaireProjetStructurantSQLRepository';
 import PérimètreMinistérielSQLRepository from './accès_données/périmètreMinistériel/PérimètreMinistérielSQLRepository';
-import IndicateurProjetStructurantSQLRepository
-  from './accès_données/projetStructurant/indicateur/IndicateurSQLRepository';
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
@@ -161,21 +142,11 @@ class Dependencies {
 
   private readonly _chantierIndicateurRepository: ChantierIndicateurRepository;
 
-  private readonly _projetStructurantRepository: ProjetStructurantRepository;
-
   private readonly _profilRepository: ProfilRepository;
-
-  private readonly _objectifProjetStructurantRepository: ObjectifProjetStructurantRepository;
 
   private readonly _rapportRepository: RapportRepository;
 
-  private readonly _commentaireProjetStructurantRepository: CommentaireProjetStructurantRepository;
-
   private readonly _périmètreMinistérielRepository: PérimètreMinistérielRepository;
-
-  private readonly _synthèseDesRésultatsProjetStructurantRepository: SynthèseDesRésultatsProjetStructurantRepository;
-
-  private readonly _indicateurProjetStructurantRepository: IndicateurProjetStructurantRepository;
 
   private readonly _importIndicateurRepository: ImportIndicateurRepository;
 
@@ -208,14 +179,9 @@ class Dependencies {
     this._ficheTerritorialeSyntheseDesResultatsRepository = new PrismaSyntheseDesResultatsRepository();
     this._ficheTerritorialeMinistereRepository = new PrismaMinistereRepository();
     this._chantierIndicateurRepository = new PrismaChantierIndicateurRepository();
-    this._projetStructurantRepository = new ProjetStructurantSQLRepository();
     this._profilRepository = new ProfilSQLRepository();
-    this._objectifProjetStructurantRepository = new ObjectifProjetStructurantSQLRepository();
     this._rapportRepository = new PrismaRapportRepository();
-    this._commentaireProjetStructurantRepository = new CommentaireProjetStructurantSQLRepository();
     this._périmètreMinistérielRepository = new PérimètreMinistérielSQLRepository();
-    this._synthèseDesRésultatsProjetStructurantRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository();
-    this._indicateurProjetStructurantRepository = new IndicateurProjetStructurantSQLRepository();
     this._importIndicateurRepository = new PrismaIndicateurRepository();
     this._historisationModification = new PrismaHistorisationModificationRepository();
     this._gestionContenuRepository = new PrismaGestionContenuRepository();
@@ -312,32 +278,12 @@ class Dependencies {
     return this._chantierIndicateurRepository;
   }
 
-  getProjetStructurantRepository() {
-    return this._projetStructurantRepository;
-  }
-
   getProfilRepository() {
     return this._profilRepository;
   }
 
-  getObjectifProjetStructurantRepository() {
-    return this._objectifProjetStructurantRepository;
-  }
-
-  getCommentaireProjetStructurantRepository(): CommentaireProjetStructurantRepository {
-    return this._commentaireProjetStructurantRepository;
-  }
-
   getPérimètreMinistérielRepository() {
     return this._périmètreMinistérielRepository;
-  }
-
-  getSynthèseDesRésultatsProjetStructurantRepository(): SynthèseDesRésultatsProjetStructurantRepository {
-    return this._synthèseDesRésultatsProjetStructurantRepository;
-  }
-
-  getIndicateurProjetStructurantRepository() {
-    return this._indicateurProjetStructurantRepository;
   }
 
   getTokenAPIService() {

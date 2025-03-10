@@ -18,14 +18,6 @@ export type Profil = {
       tousTerritoires: boolean
     },
   },
-  projetsStructurants: {
-    lecture: {
-      tousPérimètres: boolean
-      mêmePérimètresQueChantiers: boolean
-      tousTerritoires: boolean
-      mêmeTerritoiresQueChantiers: boolean
-    },
-  },
   utilisateurs: {
     modificationPossible: boolean
     tousTerritoires:  boolean

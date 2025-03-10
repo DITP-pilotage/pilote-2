@@ -72,9 +72,6 @@ describe('UtilisateurAuthentifieJWTService', () => {
         territoires: [],
         périmètres: [],        
       },
-      'projetsStructurants.lecture': {
-        projetsStructurants: [],
-      },
     });
     expect(utilisateurAuthentifie.email).toEqual('test@example.com');
     expect(utilisateurAuthentifie.profil).toEqual(ProfilEnum.CABINET_MTFP);

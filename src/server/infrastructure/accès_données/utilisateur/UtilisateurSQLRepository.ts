@@ -422,9 +422,6 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
         territoires: territoiresParDéfaut.gestionUtilisateur,
         périmètres: périmètresMinistérielsParDéfaut.gestionUtilisateur,
       },
-      'projetsStructurants.lecture': {
-        projetsStructurants: [],
-      },
       responsabilite: {
         chantiers: [],
         territoires: [],
@@ -434,30 +431,28 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
     for await (const h of habilitations) {
       const scopeCode = h.scopeCode as keyof Utilisateur['habilitations'];
-      if (scopeCode !== 'projetsStructurants.lecture') {
-        const listeChantier =
-          scopeCode == 'saisieCommentaire' && [ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(profilUtilisateur.code) ?
-            this._chantiers.donnéesBrutes.filter(c => c.ate !== 'hors_ate_centralise') :
-            this._chantiers.donnéesBrutes;
+      const listeChantier =
+        scopeCode == 'saisieCommentaire' && [ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(profilUtilisateur.code) ?
+          this._chantiers.donnéesBrutes.filter(c => c.ate !== 'hors_ate_centralise') :
+          this._chantiers.donnéesBrutes;
 
-        const chantiersSupplémentaires =
-          h.chantiers.length > 0 ?
-            listeChantier.filter(c => h.chantiers.includes(c.id)).map(c => c.id) :
-            h.chantiers;
+      const chantiersSupplémentaires =
+        h.chantiers.length > 0 ?
+          listeChantier.filter(c => h.chantiers.includes(c.id)).map(c => c.id) :
+          h.chantiers;
 
-        const chantiersAssociésAuxPérimètresMinistériels =
-          h.perimetres.length > 0 ?
-            listeChantier
-              .filter(c => c.perimetre_ids.some(p => h.perimetres.includes(p)))
-              .map(c => c.id) :
-            [] ;
+      const chantiersAssociésAuxPérimètresMinistériels =
+        h.perimetres.length > 0 ?
+          listeChantier
+            .filter(c => c.perimetre_ids.some(p => h.perimetres.includes(p)))
+            .map(c => c.id) :
+          [] ;
 
-        const habilitationsChantier = [... new Set([...habilitationsGénérées[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...chantiersSupplémentaires])];
+      const habilitationsChantier = [... new Set([...habilitationsGénérées[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...chantiersSupplémentaires])];
 
-        habilitationsGénérées[scopeCode].chantiers = profilUtilisateur.a_access_aux_chantiers_brouillons ? habilitationsChantier : habilitationsChantier.filter(c => !this._chantiersBrouillonsIds.includes(c));
-        habilitationsGénérées[scopeCode].territoires = [... new Set([...habilitationsGénérées[scopeCode].territoires, ...h.territoires])];
-        habilitationsGénérées[scopeCode].périmètres = [... new Set([...habilitationsGénérées[scopeCode].périmètres, ...h.perimetres])];
-      }
+      habilitationsGénérées[scopeCode].chantiers = profilUtilisateur.a_access_aux_chantiers_brouillons ? habilitationsChantier : habilitationsChantier.filter(c => !this._chantiersBrouillonsIds.includes(c));
+      habilitationsGénérées[scopeCode].territoires = [... new Set([...habilitationsGénérées[scopeCode].territoires, ...h.territoires])];
+      habilitationsGénérées[scopeCode].périmètres = [... new Set([...habilitationsGénérées[scopeCode].périmètres, ...h.perimetres])];
     }
 
     return habilitationsGénérées;

@@ -45,7 +45,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateur
   const { data: session } = useSession();
   const territoires = territoiresTerritoiresStore();
 
-  const profilCréateur = listeProfils?.find(profil => profil.code === session!.profil);
+  const profilCréateur = listeProfils?.find(profil => profil.code === session?.profil);
   const profilAccessibles = AAccesATousLesUtilisateurs(profilCréateur ?? null)
     ? (listeProfils ?? []) :
     listeProfils?.filter(profil => PROFILS_POSSIBLES_COORDINATEURS_LECTURE[profilCréateur?.code as keyof typeof PROFILS_POSSIBLES_COORDINATEURS_LECTURE].includes(profil.code));

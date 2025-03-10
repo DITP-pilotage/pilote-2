@@ -39,14 +39,6 @@ export default class ProfilSQLRepository implements ProfilRepository {
           tousTerritoires: prismaProfil.a_acces_tous_les_territoires_saisie_indicateur,
         },
       },
-      projetsStructurants: {
-        lecture: {
-          tousPérimètres: prismaProfil.projets_structurants_lecture_tous_perimetres,
-          mêmePérimètresQueChantiers: prismaProfil.projets_structurants_lecture_meme_perimetres_que_chantiers,
-          tousTerritoires: prismaProfil.projets_structurants_lecture_tous_territoires,
-          mêmeTerritoiresQueChantiers: prismaProfil.projets_structurants_lecture_meme_territoires_que_chantiers,
-        },
-      },
       utilisateurs: {
         modificationPossible: prismaProfil.peut_modifier_les_utilisateurs,
         tousTerritoires: prismaProfil.a_acces_a_tous_les_territoires_utilisateurs,

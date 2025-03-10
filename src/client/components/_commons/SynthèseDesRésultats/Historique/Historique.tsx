@@ -5,21 +5,20 @@ import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
 import SynthèseDesRésultatsAffichage from '@/components/_commons/SynthèseDesRésultats/Affichage/Affichage';
 import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import SynthèseDesRésultatsHistoriqueStyled from './Historique.styled';
 import useHistoriqueDeLaSynthèseDesRésultats from './useHistoriqueDeLaSynthèseDesRésultats';
 
 interface SynthèseDesRésultatsHistoriqueProps {
-  réformeId: Chantier['id'] | ProjetStructurant['id'];
+  réformeId: Chantier['id'];
 }
 
 const ID_HTML = 'historique-synthèse-des-résultats';
 
 const SynthèseDesRésultatsHistorique: FunctionComponent<SynthèseDesRésultatsHistoriqueProps> = ({ réformeId }) => {
-  const { 
-    historiqueDeLaSynthèseDesRésultats, 
-    territoireSélectionné, 
-    récupérerHistoriqueSynthèseDesRésultats, 
+  const {
+    historiqueDeLaSynthèseDesRésultats,
+    territoireSélectionné,
+    récupérerHistoriqueSynthèseDesRésultats,
   } = useHistoriqueDeLaSynthèseDesRésultats(réformeId);
 
   return (
