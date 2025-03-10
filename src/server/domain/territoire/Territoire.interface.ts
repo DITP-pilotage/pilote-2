@@ -29,6 +29,7 @@ export type DonneesComparaisonDuTauxDAvancementType = {
   ppgEcartMedian: number | null,
   ppgTendanceChantier : ChantierTendance | null,
   ppgTauxDAvancementValeurPrecedente : Avancement['global'],
+  ppgDateTauxDAvancementValeurPrecedente : string | null
 };
 
 export type TerritoiresDonnées = Record<CodeInsee, TerritoireDonnées>;
@@ -49,6 +50,7 @@ export type TerritoireDonnées = {
   mailleSourceDonnees: Maille | null;
   nombrePropositionValeur: number;
   nombrePropositionValeurPonderee: number;
+  dateTauxAvancementPrecedent: string | null,
 };
 
 export type Territoire = {

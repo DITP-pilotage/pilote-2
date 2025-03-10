@@ -17,15 +17,10 @@ import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import { DonneesComparaisonDuTauxDAvancementType } from '@/server/domain/territoire/Territoire.interface';
+import { formaterDate } from '@/client/utils/date/date';
 import AvancementChantierStyled from './AvancementChantier.styled';
 import EcartTauxAvancementPPG from './EcartTauxAvancementPPG/EcartTauxAvancementPPG';
 import TendanceTauxAvancementPPG from './TendanceTauxAvancementPPG/TendanceTauxAvancementPPG';
-
-const classeÀPartirDeLaMaille = {
-  'nationale': 'layout--nat',
-  'departementale': 'layout--dept',
-  'regionale': 'layout--reg',
-};
 
 interface AvancementChantierProps {
   territoireCode: string
@@ -84,6 +79,23 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   const territoireSélectionnéParent = territoireSélectionné.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné.codeParent) : null;
   const sousTitreTuileAvancementDepartemental = "Taux d'avancement départemental";
   const sousTitreTuileAvancementRegional = "Taux d'avancement régional";
+
+  const classeÀPartirDeLaMaille: Record<Maille, string> = {
+    'nationale': 'layout--nat',
+    'departementale': 'layout--dept',
+    'regionale': 'layout--reg',
+  };
+
+  const tuileEcartTAÀPartirDeLaMaille: Record<string, string> = {
+    'departementale': 'départements',
+    'regionale': 'régions',
+  };
+
+  const tuileTendanceTAÀPartirDeLaMaille: Record<Maille, string> = {
+    'nationale': 'le pays',
+    'departementale': 'le département',
+    'regionale': 'la région',
+  };
 
   return (
     <AvancementChantierStyled className={classeÀPartirDeLaMaille[territoireSélectionné.maille]}>
@@ -259,72 +271,47 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         {
           territoireCode !== 'NAT-FR' ? (
             <>
-              <div className='flex flex-direction-column flex-wrap justify-center align-center'>
-                {
-                  mailleSelectionnee === 'regionale' ? (
-                    <div className='flex flex-direction-column flex-wrap justify-center align-center'>
-                      <strong className='fr-text--xs fr-mb-0 text-center'>
-                        SITUATION PAR RAPPORT AUX AUTRES REGIONS
-                      </strong>
-                      <p className='fr-text--sm fr-ml-1v fr-mb-1w'>
-                        2026
-                      </p>
-                      <EcartTauxAvancementPPG ecart={donneesComparaisonDuTauxDAvancement.ppgEcartMedian} />
-                      <p className='fr-text--xs fr-mt-1w text-center jauge-tracé'>
-                        <strong className='fr-mr-1v'>
-                          écart
+              <div className='fr-py-1w flex flex-direction-column flex-wrap justify-center align-center'>
+                <div className='flex flex-direction-column flex-wrap justify-center align-center'>
+                  <strong className='fr-text--xs fr-mb-0 text-center'>
+                    SITUATION PAR RAPPORT AUX AUTRES 
+                    {' '}
+                    {tuileEcartTAÀPartirDeLaMaille[territoireSélectionné.maille].toUpperCase()}
+                    {' '}
+                  </strong>
+                  <p className='fr-text--sm fr-ml-1v fr-mb-1w'>
+                    2026
+                  </p>
+                  <EcartTauxAvancementPPG ecart={donneesComparaisonDuTauxDAvancement.ppgEcartMedian} />
+                  <p className='fr-text--xs fr-mt-1w text-center jauge-tracé'>
+                    <strong className='fr-mr-1v'>
+                      écart
+                    </strong>
+                    du taux d'avancement 2026 par rapport au taux médian des autres 
+                    {' '}
+                    {tuileEcartTAÀPartirDeLaMaille[territoireSélectionné.maille]}
+                    {' '}
+                    (
+                    {
+                      avancements.nationale && avancements.nationale.global.médiane ? (
+                        <strong className='ecart-pourcentage-couleur'>
+                          {avancements.nationale.global.médiane.toFixed(0) + '%'}
                         </strong>
-                        du taux d'avancement 2026 par rapport au taux médian des autres régions (
-                        {
-                          avancements.nationale && avancements.nationale.global.médiane ? (
-                            <strong className='ecart-pourcentage-couleur'>
-                              {avancements.nationale.global.médiane.toFixed(0) + '%'}
-                            </strong>
-                          ) : (
-                            <strong className='ecart-pourcentage-couleur'>
-                              Non défini
-                            </strong>
-                          )
-                        }
-                        ) 
-                      </p>
-                    </div>
-                  ) : (
-                    <div className='flex flex-direction-column flex-wrap justify-center align-center'>
-                      <strong className='fr-text--xs fr-mb-0 text-center'>
-                        SITUATION PAR RAPPORT AUX AUTRES DEPARTEMENTS
-                      </strong>
-                      <p className='fr-text--sm fr-ml-1v fr-mb-1w'>
-                        2026
-                      </p>
-                      <EcartTauxAvancementPPG ecart={donneesComparaisonDuTauxDAvancement.ppgEcartMedian} />
-                      <p className='fr-text--xs fr-mt-1w text-center'>
-                        <strong className='fr-mr-1v'>
-                          écart
+                      ) : (
+                        <strong className='ecart-pourcentage-couleur'>
+                          Non défini
                         </strong>
-                        du taux d'avancement 2026 par rapport au taux médian des autres départements (
-                        {
-                          avancements.nationale && avancements.nationale.global.médiane ? (
-                            <strong className='ecart-pourcentage-couleur'>
-                              {avancements.nationale.global.médiane.toFixed(0) + '%'}
-                            </strong>
-                          ) : (
-                            <strong className='ecart-pourcentage-couleur'>
-                              Non défini
-                            </strong>
-                          )
-                        }
-                        )
-                      </p>
-                    </div>
-                  )
-                }
+                      )
+                    }
+                    ) 
+                  </p>
+                </div>
               </div>
               <hr className='fr-hr fr-py-1w' />
             </>
           ) : null
         }
-        <div className='flex flex-direction-column flex-wrap justify-center align-center'>
+        <div className='fr-py-1w flex flex-direction-column flex-wrap justify-center align-center'>
           <strong className='fr-text--xs fr-mb-0 text-center'>
             EVOLUTION TEMPORELLE
           </strong>
@@ -332,39 +319,38 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
             2026
           </p>
           <TendanceTauxAvancementPPG tendance={donneesComparaisonDuTauxDAvancement.ppgTendanceChantier} />
-          {
-            mailleSelectionnee === 'regionale' ? (
-              <p className='fr-text--xs fr-mt-1w text-center'>
-                <strong className='fr-mr-1v'>
-                  tendance
-                </strong>
-                du taux d'avancement 2026 par rapport au taux d'avancement précédemment mesuré sur la région (
-                <strong className='fr-mr-1v'>
-                  {donneesComparaisonDuTauxDAvancement.ppgTendanceChantier}
-                </strong>
-                )
-              </p>   
-            ) : (
-              <p className='fr-text--xs fr-mt-1w text-center'>
-                <strong className='fr-mr-1v'>
-                  tendance
-                </strong>
-                du taux d'avancement 2026 par rapport au taux d'avancement précédemment mesuré sur le département (
-                {
-                  donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente ? (
-                    <strong className='fr-mr-1v tendance-pourcentage-couleur'>
-                      {`${donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente.toFixed(0) + '%'}`}
-                    </strong>
-                  ) : (
-                    <strong className='tendance-pourcentage-couleur'>
-                      Non défini
-                    </strong>
+          <div className='fr-text--xs fr-mb-0 fr-mt-1w text-center'>
+            <strong className='fr-mr-1v'>
+              tendance
+            </strong>
+            du taux d'avancement 2026 par rapport au taux d'avancement précédemment mesuré sur
+            {' '}
+            {tuileTendanceTAÀPartirDeLaMaille[territoireSélectionné.maille]}
+            {' '}
+            {
+              donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente && donneesComparaisonDuTauxDAvancement.ppgDateTauxDAvancementValeurPrecedente ? (
+                <div className='flex justify-center'>
+                  (
+                  <strong className='tendance-pourcentage-couleur'>
+                    {`${donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente.toFixed(0) + '%'}`}
+                  </strong>
+                  {', '}
+                  <p className='fr-text--xs fr-text-mention--grey fr-mb-0 fr-ml-1v'>
+                    {`${formaterDate(donneesComparaisonDuTauxDAvancement.ppgDateTauxDAvancementValeurPrecedente, 'MM/YYYY')}`}
+                  </p>
                   )
-                }
-                )
-              </p>   
-            )          
-          }
+                </div>
+              ) : (
+                <p className='fr-text--xs fr-m-0'>
+                  (
+                  <strong className='tendance-pourcentage-couleur'>
+                    Non défini
+                  </strong>
+                  )
+                </p>                
+              )
+            }
+          </div>
         </div>
       </Bloc>
     </AvancementChantierStyled>

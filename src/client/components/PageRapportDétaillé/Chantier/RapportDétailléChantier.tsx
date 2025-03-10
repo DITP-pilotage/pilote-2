@@ -61,6 +61,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
     ppgEcartMedian: chantier.écart,
     ppgTendanceChantier : chantier.tendance,
     ppgTauxDAvancementValeurPrecedente : chantier.avancementPrecedent,
+    ppgDateTauxDAvancementValeurPrecedente: chantier.dateTauxAvancementMandatValeurPrecedente,
   };
 
   const categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]> = listeIndicateursParent.reduce((acc, indicateur) => {  

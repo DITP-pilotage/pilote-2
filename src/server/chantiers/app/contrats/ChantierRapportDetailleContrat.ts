@@ -29,6 +29,7 @@ interface TerritoireDonnéeRapportDetailleContrat {
   coordinateurTerritorial: CoordinateurTerritorialRapportDetailleContrat[]
   météo: 'NON_RENSEIGNEE' | 'ORAGE' | 'NUAGE' | 'COUVERT' | 'SOLEIL' | 'NON_NECESSAIRE'
   aUnePropositionsValeurActuelle: boolean,
+  dateTauxAvancementMandatValeurPrecedente: string | null
 }
 
 export type ListeTerritoiresDonnéeRapportDetailleContrat = Record<string, TerritoireDonnéeRapportDetailleContrat>;
@@ -99,6 +100,7 @@ export interface ChantierRapportDetailleContrat {
   coordinateurTerritorialTerritoireSélectionné: CoordinateurTerritorialRapportDetailleContrat[]
   aUnePropositionsValeurActuelle: boolean
   maillesApplicables: Maille[]
+  dateTauxAvancementMandatValeurPrecedente: string | null
 }
 
 class ErreurChantierSansMailleNationale extends Error {
@@ -140,6 +142,7 @@ export function créerDonnéesTerritoiresRapportDetailleNew(
       responsableLocal: (chantierRow?.responsables_locaux || []).map((value, index) => ({ nom: value, email: chantierRow?.responsables_locaux_mails[index]! })),
       coordinateurTerritorial: (chantierRow?.coordinateurs_territoriaux || []).map((value, index) => ({ nom: value, email: chantierRow?.coordinateurs_territoriaux_mails[index]! })),
       aUnePropositionsValeurActuelle: aUnePropositionDeValeurActuelle,
+      dateTauxAvancementMandatValeurPrecedente: chantierRow?.date_taux_avancement_mandat_valeur_precedente?.toISOString() ?? null,
     };
   });
 
@@ -180,6 +183,7 @@ export const presenterEnChantierRapportDetaille = (
         responsableLocal: [],
         coordinateurTerritorial: [],
         aUnePropositionsValeurActuelle: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0),
+        dateTauxAvancementMandatValeurPrecedente: chantierMailleNationale?.date_taux_avancement_mandat_valeur_precedente?.toISOString() ?? null,
       } : {
         avancement: { annuel: verifyValeurIsNotNullOrUndefined(chantierMailleNationale.chantier_territoire_jalon.at(0)?.taux_avancement), global: chantierMailleNationale.taux_avancement_mandat },
         avancementPrecedent: chantierMailleNationale?.taux_avancement_mandat_valeur_precedente ?? null,
@@ -192,6 +196,7 @@ export const presenterEnChantierRapportDetaille = (
         coordinateurTerritorial: [],
         responsableLocal: [],
         aUnePropositionsValeurActuelle: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0),
+        dateTauxAvancementMandatValeurPrecedente: chantierMailleNationale?.date_taux_avancement_mandat_valeur_precedente?.toISOString() ?? null,
       },
     },
     departementale: créerDonnéesTerritoiresRapportDetailleNew(listeTerritoireDept, listeChantiersMailleDépartementale),
@@ -244,5 +249,6 @@ export const presenterEnChantierRapportDetaille = (
     responsableLocalTerritoireSélectionné: newMaille[mailleChantier][territoireCode].responsableLocal,
     coordinateurTerritorialTerritoireSélectionné: newMaille[mailleChantier][territoireCode].coordinateurTerritorial,
     aUnePropositionsValeurActuelle: newMaille[mailleChantier][territoireCode].aUnePropositionsValeurActuelle,
+    dateTauxAvancementMandatValeurPrecedente: newMaille[mailleChantier][territoireCode].dateTauxAvancementMandatValeurPrecedente,
   };
 };

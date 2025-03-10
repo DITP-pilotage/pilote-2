@@ -222,6 +222,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
             taux_avancement_mandat: true,
             nombre_propositions_valeur_actuelle: true,
             nombre_propositions_valeur_actuelle_ponderee: true,
+            date_taux_avancement_mandat_valeur_precedente: true,
             chantier_territoire_jalon: {
               select: {
                 taux_avancement: true,
