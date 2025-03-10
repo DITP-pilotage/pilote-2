@@ -13,6 +13,7 @@ const TableauPaginationÉlément: FunctionComponent<TableauPaginationÉlémentPr
         aria-current={estLaPageCourante ? 'page' : undefined}
         className='fr-pagination__link'
         onClick={() => changementDePageCallback(numéroDePage)}
+        title={numéroDePage.toString()}
         type='button'
       >
         {numéroDePage}

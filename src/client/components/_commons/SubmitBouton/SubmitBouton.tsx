@@ -12,6 +12,7 @@ const SubmitBouton: FunctionComponent<SubmitBoutonProps> = ({ label, disabled, c
     <button
       className={`fr-btn${className ? ' ' + className : ''}`}
       disabled={disabled}
+      title={label}
       type='submit'
     >
       {label}

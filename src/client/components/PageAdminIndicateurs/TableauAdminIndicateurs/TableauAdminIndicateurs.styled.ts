@@ -7,8 +7,32 @@ const TableauAdminIndicateursStyled = styled.section`
     max-width: 20.5rem;
   }
 
-  .titre-tableau{
-    color: var(--text-title-blue-france);
+  .boutons-formulaire {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    @media(min-width: 576px) {
+      align-items: flex-start;
+    }
+
+    @media(min-width: 1050px) {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+
+  .bouton-export {
+    display: flex;
+    justify-content: center;
+
+    @media(min-width: 576px) {
+      justify-content: flex-start;
+    }
+
+    @media(min-width: 1050px) {
+      justify-content: flex-end;
+    }
   }
   
   .fr-icon-red {
@@ -21,9 +45,8 @@ const TableauAdminIndicateursStyled = styled.section`
 
   table.tableau {
     display: table;
-    width: 100%;
     
-    tbody > tr {
+    tbody > tr{
       cursor: pointer;
       
       &:hover:nth-of-type(even) {
@@ -34,8 +57,8 @@ const TableauAdminIndicateursStyled = styled.section`
         background-color: var(--background-alt-grey-hover);
       }
 
-      td {
-        max-width: 20rem;
+      td{
+        max-width: 20px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
