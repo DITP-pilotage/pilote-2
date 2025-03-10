@@ -103,7 +103,7 @@ const TableauAdminIndicateurs: FunctionComponent<{}> = () => {
             </div>
           </div>
           <div className='fr-table'>
-            <table className='tableau fr-m-0 fr-p-0'>
+            <table className='tableau fr-m-0 fr-p-0 w-full'>
               <caption className='fr-sr-only'>
                 Tableau des indicateurs
               </caption>
