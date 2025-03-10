@@ -1,5 +1,5 @@
 import { prisma } from '@/server/db/prisma';
-import SyntheseDesResultatsRepository from '@/server/gestion-utilisateur/domain/ports/SyntheseDesResultatsRepository';
+import { SyntheseDesResultatsRepository } from '@/server/gestion-utilisateur/domain/ports/SyntheseDesResultatsRepository';
 
 export class PrismaSyntheseDesResultatsRepository implements SyntheseDesResultatsRepository {
   async anonymiserAuteurs(auteursAAnonymiserIds: string[], emailAuteurRemplacement: string): Promise<void> {

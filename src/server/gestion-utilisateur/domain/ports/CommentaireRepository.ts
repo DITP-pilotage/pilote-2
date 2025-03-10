@@ -1,3 +1,3 @@
-export default interface CommentaireRepository {
+export interface CommentaireRepository {
   anonymiserAuteurs(listeIds: string[], emailAuteurRemplacement: string): Promise<void>;
 }

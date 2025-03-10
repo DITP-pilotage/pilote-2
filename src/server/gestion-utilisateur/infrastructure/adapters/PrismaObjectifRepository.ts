@@ -1,5 +1,5 @@
 import { prisma } from '@/server/db/prisma';
-import ObjectifRepository from '@/server/gestion-utilisateur/domain/ports/ObjectifRepository';
+import { ObjectifRepository } from '@/server/gestion-utilisateur/domain/ports/ObjectifRepository';
 
 export class PrismaObjectifRepository implements ObjectifRepository {
   async anonymiserAuteurs(auteursAAnonymiserIds: string[], emailAuteurRemplacement: string): Promise<void> {

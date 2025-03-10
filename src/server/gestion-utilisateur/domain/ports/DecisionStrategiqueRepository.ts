@@ -1,3 +1,3 @@
-export default interface DecisionStrategiqueRepository {
+export interface DecisionStrategiqueRepository {
   anonymiserAuteurs(listeIds: string[], emailAuteurRemplacement: string): Promise<void>;
 }

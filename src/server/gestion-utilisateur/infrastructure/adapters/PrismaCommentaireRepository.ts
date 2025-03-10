@@ -1,5 +1,5 @@
 import { prisma } from '@/server/db/prisma';
-import CommentaireRepository from '@/server/gestion-utilisateur/domain/ports/CommentaireRepository';
+import { CommentaireRepository } from '@/server/gestion-utilisateur/domain/ports/CommentaireRepository';
 
 export class PrismaCommentaireRepository implements CommentaireRepository {
     
