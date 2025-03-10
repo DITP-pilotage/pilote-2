@@ -4,7 +4,7 @@ import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports
 import { PrismaUtilisateurRepository } from '@/server/gestion-utilisateur/infrastructure/adapters/PrismaUtilisateurRepository';
 import { PrismaPilote } from '@/server/db/PrismaPilote';
 
-describe('UtilisateurSQLRepository', () => {
+describe('PrismaUtilisateurRepository', () => {
   let utilisateurRepository: UtilisateurRepository;
   let prisma: PrismaPilote;
 
@@ -111,7 +111,7 @@ describe('UtilisateurSQLRepository', () => {
       date_modification: new Date('2024-01-01'),
     };
 
-    test('Si l\'email n\'exsite pas, ne fait rien', async () => {
+    test("Si l'email n'existe pas, ne fait rien", async () => {
       await prisma.getInstance().utilisateur.create({
         data: utilisateurACreer,
       });
@@ -131,7 +131,7 @@ describe('UtilisateurSQLRepository', () => {
       expect(utilisateurNonExistant).toBeNull();
       expect(utilisateurExistant?.date_desactivation).toBeNull();
     });
-    test('Si l\'email existe, mets à jour la date de desactivation et la date de dernière modification', async () => {
+    test("Si l'email existe, mets à jour la date de desactivation et la date de dernière modification", async () => {
       await prisma.getInstance().utilisateur.create({
         data: utilisateurACreer,
       });
@@ -160,7 +160,7 @@ describe('UtilisateurSQLRepository', () => {
       date_modification: new Date('2024-01-01'),
     };
 
-    test('Si l\'email n\'exsite pas, ne fait rien', async () => {
+    test("Si l'email n'existe pas, ne fait rien", async () => {
       await prisma.getInstance().utilisateur.create({
         data: utilisateurACreer,
       });
@@ -180,7 +180,7 @@ describe('UtilisateurSQLRepository', () => {
       expect(utilisateurNonExistant).toBeNull();
       expect(utilisateurExistant?.date_desactivation).toStrictEqual(dateDesactivation);
     });
-    test('Si l\'email exsite, mets la date de desactivation à null et modifie la date de dernière modification', async () => {
+    test("Si l'email existe, mets la date de desactivation à null et modifie la date de dernière modification", async () => {
       await prisma.getInstance().utilisateur.create({
         data: utilisateurACreer,
       });

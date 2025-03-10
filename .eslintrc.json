@@ -36,6 +36,13 @@
       "avoidEscape": true
     }],
     "jsx-quotes": ["error", "prefer-single"],
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "Literal[value=/’/]",
+        "message": "Utilisation interdite de l’apostrophe typographique. Utilisez ' à la place."
+      }
+    ],
     "no-relative-import-paths/no-relative-import-paths": [
       "warn",
       {

@@ -81,6 +81,7 @@ export interface RawMetadataParametrageIndicateurModel {
 }
 
 const makeStrSafer = (str: string | null): string | null => {
+  // eslint-disable-next-line no-restricted-syntax
   return str === null ? null : `'${(str || '').replaceAll('\'', '’')}'`;
 };
 
