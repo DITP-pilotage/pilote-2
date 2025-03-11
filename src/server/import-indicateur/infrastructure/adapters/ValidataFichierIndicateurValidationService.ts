@@ -48,8 +48,8 @@ const initialiserMapFieldNameErreurDITP: (taskError: ReportErrorTask) => Record<
     'constraint \"pattern\" is \"^IND-[0-9]{3}$\"': "L'identifiant de l'indicateur doit être renseigné dans le format IND-XXX. Vous pouvez vous référer au guide des indicateurs pour trouver l'identifiant de votre indicateur.",
   },
   [EnTeteFichierEnum.METRIC_TYPE]: {
-    "constraint \"enum\" is \"['vi', 'va', 'vc']\"": 'Le type de valeur doit être vi (valeur initiale), va (valeur actuelle) ou vc (valeur cible).',
-    "constraint \"enum\" is \"['va']\"": 'Le type de valeur doit être va (valeur actuelle). Vous ne pouvez saisir que des valeurs actuelles.',
+    "constraint \"enum\" is \"['vi', 'va', 'vc']\"": 'Le type de valeur doit être vi (valeur initiale), va (valeur d\'avancement) ou vc (valeur cible).',
+    "constraint \"enum\" is \"['va']\"": 'Le type de valeur doit être va (valeur d\'avancement). Vous ne pouvez saisir que des valeurs d\'avancement.',
   },
   [EnTeteFichierEnum.ZONE_ID]: {
     'constraint "pattern" is "^(R[0-9]{2,3})$"': `Veuillez entrer uniquement une zone régionale dans la colonne zone_id. '${taskError.cell}' n'est pas une zone régionale.`,

@@ -30,11 +30,11 @@ const IndicateurBlocStyled = styled.div`
     font-size: inherit;
   }
   
-  .ligne-creation-proposition-valeur-actuelle, .ligne-territoire-proposition-valeur-actuelle {
+  .ligne-creation-proposition-valeur-davancement, .ligne-territoire-proposition-valeur-davancement {
     background-color: transparent!important;
   }
   
-  tr.ligne-modification-proposition-valeur-actuelle {
+  tr.ligne-modification-proposition-valeur-davancement {
     background-color: var(--yellow-moutarde-975-75)!important;
     
     
@@ -45,7 +45,7 @@ const IndicateurBlocStyled = styled.div`
       color: var(--yellow-moutarde-main-679)!important;
     }
     
-    & .bouton-proposition-valeur-actuelle {
+    & .bouton-proposition-valeur-davancement {
       color: var(--yellow-moutarde-main-679)!important;
       box-shadow: inset 0 0 0 1px var(--yellow-moutarde-main-679)!important;
     }

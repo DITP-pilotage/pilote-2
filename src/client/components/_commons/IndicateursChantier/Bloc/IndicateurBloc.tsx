@@ -33,8 +33,8 @@ import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 import useIndicateurAlerteDateMaj from './useIndicateurAlerteDateMaj';
 
-export const ID_HTML_MODALE_SUPPRESSION_VALEUR_ACTUELLE = 'modale-suppression-valeur-actuelle';
-export const ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE = 'modale-proposition-valeur-actuelle';
+export const ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT = 'modale-suppression-valeur-davancement';
+export const ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT = 'modale-proposition-valeur-davancement';
 
 interface IndicateurBlocProps {
   indicateur: Indicateur
@@ -182,7 +182,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       Date prévisionnelle de mise à jour de l'indicateur :
                     </p>
                     <p className='fr-text--sm fr-mb-0'>
-                      Elle est calculée à partir de la date de la valeur actuelle, de la période de mise à jour et du
+                      Elle est calculée à partir de la date de la valeur d’avancement, de la période de mise à jour et du
                       délai de disponibilité
                       des données. Plus d'informations dans l'accordéon "Description de l'indicateur et calendrier de
                       mise à jour".
@@ -259,7 +259,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <th
                       className='fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
                     >
-                      valeur d'avancement
+                      valeur d’avancement
                     </th>
                     <th
                       className='fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
@@ -269,12 +269,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <th
                       className='fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
                     >
-                      taux d'avancement
+                      taux d’avancement
                     </th>
                     <th
                       className='fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
                     >
-                      valeur d'avancement
+                      valeur d’avancement
                     </th>
                     <th
                       className='fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
@@ -284,7 +284,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <th
                       className='fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
                     >
-                      taux d'avancement
+                      taux d’avancement
                     </th>
                   </tr>
                 </thead>
@@ -294,7 +294,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     return informationIndicateur.données ? ( // TODO supprimer une fois le refacto fait ! A cause de la react query y'a quelques frames où informationIndicateur.données est undefined
                       <Fragment key={informationIndicateur.territoireNom}>
                         <tr
-                          className={`${informationIndicateur.code === territoireCode ? 'ligne-territoire-proposition-valeur-actuelle' : null}`}
+                          className={`${informationIndicateur.code === territoireCode ? 'ligne-territoire-proposition-valeur-davancement' : null}`}
                           key={informationIndicateur.territoireNom}
                         >
                           <td
@@ -309,7 +309,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               valeur={informationIndicateur.données.valeurInitiale}
                             />
                           </td>
-                          { /* Valeur et date valeur actuelle de indicateurTerritoireJalon en fonction du jalon */}
+                          { /* Valeur et date valeur d’avancement de indicateurTerritoireJalon en fonction du jalon */}
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                             <ValeurEtDate
                               date={informationIndicateur.données.dateValeurActuelle}
@@ -334,7 +334,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               variante='secondaire'
                             />
                           </td>
-                          { /* Valeur et date valeur actuelle mandat de indicateurTerritoire */}
+                          { /* Valeur et date valeur d’avancement mandat de indicateurTerritoire */}
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                             <ValeurEtDate
                               date={informationIndicateur.données.dateValeurActuelleMandat}
@@ -364,22 +364,22 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           informationIndicateur.code === territoireCode ? (
                             variableContenuFFPropositionValeurActuelle ? estAutoriseAProposerUneValeurActuelle && informationIndicateur.données.valeurActuelle !== null && informationIndicateur.données.proposition === null ? (
                               <tr
-                                className='ligne-creation-proposition-valeur-actuelle'
+                                className='ligne-creation-proposition-valeur-davancement'
                               >
                                 <td colSpan={8}>
                                   <div className='flex w-full justify-end'>
                                     <button
-                                      aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
-                                      className='fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-actuelle'
+                                      aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id}
+                                      className='fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-davancement'
                                       data-fr-opened='false'
                                       type='button'
                                     >
-                                      Proposer une autre valeur actuelle
+                                      Proposer une autre valeur d’avancement
                                     </button>
                                   </div>
                                   <ModalePropositionValeurActuelle
                                     detailIndicateur={informationIndicateur.données}
-                                    generatedHTMLID={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
+                                    generatedHTMLID={ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id}
                                     indicateur={indicateur}
                                     territoireCode={territoireCode}
                                   />
@@ -388,7 +388,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                             ) : informationIndicateur.données.proposition !== null ? (
                               <>
                                 <tr
-                                  className='ligne-modification-proposition-valeur-actuelle'
+                                  className='ligne-modification-proposition-valeur-davancement'
                                   key={informationIndicateur.territoireNom}
                                 >
                                   <td className='fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm'>
@@ -396,9 +396,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                       <span className='texte-proposition'>
                                         Proposition du territoire
                                       </span>
-                                      <Infobulle idHtml={`infobulle-proposition-valeur-actuelle-${informationIndicateur.code}`}>
+                                      <Infobulle idHtml={`infobulle-proposition-valeur-davancement-${informationIndicateur.code}`}>
                                         <p className='fr-text--sm texte-proposition'>
-                                          Valeur actuelle proposée
+                                          Valeur d’avancement proposée
                                           le
                                           {' '}
                                           {formaterDate(informationIndicateur.données.proposition.dateProposition, 'DD/MM/YYYY')}
@@ -436,7 +436,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   {
                                     estPropositionSurLeBonJalon ? (
                                       <>
-                                        { /* Valeur actuelle en fonction de la proposition du jalon et date valeur actuelle en fonction du mandat */}
+                                        { /* Valeur d’avancement en fonction de la proposition du jalon et date valeur d’avancement en fonction du mandat */}
                                         <td
                                           className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center'
                                         >
@@ -470,7 +470,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                       <td colSpan={3} />
                                     )
                                   }
-                                  { /* Valeur actuelle en fonction de la proposition du jalon et date valeur actuelle en fonction du mandat */}
+                                  { /* Valeur d’avancement en fonction de la proposition du jalon et date valeur d’avancement en fonction du mandat */}
                                   <td
                                     className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center'
                                   >
@@ -500,20 +500,20 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 </tr>
                                 {
                                   estAutoriseAProposerUneValeurActuelle ? (
-                                    <tr className='ligne-modification-proposition-valeur-actuelle'>
+                                    <tr className='ligne-modification-proposition-valeur-davancement'>
                                       <td colSpan={8}>
                                         <div className='flex w-full justify-end'>
                                           <button
-                                            aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
-                                            className='fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-actuelle fr-mr-1w'
+                                            aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id}
+                                            className='fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-davancement fr-mr-1w'
                                             data-fr-opened='false'
                                             type='button'
                                           >
                                             Editer la proposition
                                           </button>
                                           <button
-                                            aria-controls={ID_HTML_MODALE_SUPPRESSION_VALEUR_ACTUELLE + indicateur.id}
-                                            className='fr-btn fr-btn--icon-left fr-icon-delete-line fr-btn--secondary bouton-proposition-valeur-actuelle'
+                                            aria-controls={ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT + indicateur.id}
+                                            className='fr-btn fr-btn--icon-left fr-icon-delete-line fr-btn--secondary bouton-proposition-valeur-davancement'
                                             data-fr-opened='false'
                                             type='button'
                                           >
@@ -522,12 +522,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                         </div>
                                         <ModalePropositionValeurActuelle
                                           detailIndicateur={informationIndicateur.données}
-                                          generatedHTMLID={ID_HTML_MODALE_PROPOSITION_VALEUR_ACTUELLE + indicateur.id}
+                                          generatedHTMLID={ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id}
                                           indicateur={indicateur}
                                           territoireCode={territoireCode}
                                         />
                                         <ModaleSuppressionValeurActuelle
-                                          generatedHTMLID={ID_HTML_MODALE_SUPPRESSION_VALEUR_ACTUELLE + indicateur.id}
+                                          generatedHTMLID={ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT + indicateur.id}
                                           indicateur={indicateur}
                                           territoireCode={territoireCode}
                                         />
@@ -548,7 +548,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     return informationIndicateurComparé.données ? ( // TODO supprimer une fois le refacto fait ! A cause de la react query y'a quelques frames où informationIndicateurComparé.données est undefined
                       <Fragment key={informationIndicateurComparé.territoireNom}>
                         <tr
-                          className={`${informationIndicateurComparé.code === territoireCode ? 'ligne-territoire-proposition-valeur-actuelle' : 'table-comparaison-border'}`}
+                          className={`${informationIndicateurComparé.code === territoireCode ? 'ligne-territoire-proposition-valeur-davancement' : 'table-comparaison-border'}`}
                           key={informationIndicateurComparé.territoireNom}
                         >
                           <td
@@ -587,7 +587,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               variante='secondaire-light'
                             />
                           </td>
-                          { /* Valeur et date valeur actuelle mandat de indicateurTerritoire */}
+                          { /* Valeur et date valeur d’avancement mandat de indicateurTerritoire */}
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                             <ValeurEtDate
                               date={informationIndicateurComparé.données.dateValeurActuelleMandat}

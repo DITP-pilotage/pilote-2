@@ -59,7 +59,7 @@ const indicateurDonneesExportable = {
 const historiqueIndicateurDonneesExportable = {
   'identifiant': 'identifiants de l\'indicateur et du territoire',
   'valeur-cible': 'valeur initiale et valeurs cibles de l\'indicateur sur le territoire les valeurs cibles sont exportées pour l\'année en cours et pour l\'année 2026',
-  'valeur-actuelle': 'valeurs actuelles de l\'indicateur sur le territoire, mois par mois',
+  'valeur-actuelle': 'valeurs d\'avancements de l\'indicateur sur le territoire, mois par mois',
 };
 
 export const EtapeRecapitulatif = () => {

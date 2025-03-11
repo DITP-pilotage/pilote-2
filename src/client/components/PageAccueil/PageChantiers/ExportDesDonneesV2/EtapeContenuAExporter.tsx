@@ -112,7 +112,7 @@ export const EtapeContenuAExporter = () => {
           <span
             className='fr-label fr-text--xs texte-gris fr-mb-0'
           >
-            cet historique recense les valeurs actuelles prises successivement par les indicateurs des PPG, territoire par territoire
+            cet historique recense les valeurs d’avancements prises successivement par les indicateurs des PPG, territoire par territoire
           </span>
         </div>
       </div>

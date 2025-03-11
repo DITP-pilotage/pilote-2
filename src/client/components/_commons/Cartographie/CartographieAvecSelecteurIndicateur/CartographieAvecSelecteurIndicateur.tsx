@@ -54,12 +54,12 @@ const CartographieAvecSelecteurIndicateur: FunctionComponent<{
     },
     {
       valeur: 'valeurActuelle',
-      libellé: 'Carte des valeurs actuelles',
+      libellé: 'Carte des valeurs d\'avancements',
       désactivée: listeCartographiesDesactives.includes('valeurActuelle'),
     },
     {
       valeur: 'propositionValeur',
-      libellé: 'Carte des propositions de valeur actuelle',
+      libellé: 'Carte des propositions de valeur d\'avancement',
       désactivée: listeCartographiesDesactives.includes('propositionValeur'),
     },
   ];

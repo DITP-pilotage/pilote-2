@@ -57,7 +57,7 @@ const CartographieAvecSelecteur: FunctionComponent<{
     },
     {
       valeur: 'propositionValeur',
-      libellé: 'Carte des propositions de valeur actuelle',
+      libellé: 'Carte des propositions de valeur d\'avancement',
       désactivée: listeCartographiesDesactives.includes('propositionValeur'),
     },
   ];
