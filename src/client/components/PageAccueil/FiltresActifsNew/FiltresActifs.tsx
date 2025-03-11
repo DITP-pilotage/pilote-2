@@ -227,7 +227,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           filtres.estEnAlertePossedePropositionsValeurActuelle ? (
             <li>
               <Tag
-                libellé='Chantier(s) avec proposition(s) de valeur d’avancement'
+                libellé="Chantier(s) avec proposition(s) de valeur d\'avancement"
                 suppressionCallback={() => {
                   filtres.estEnAlertePossedePropositionsValeurActuelle = false;
 

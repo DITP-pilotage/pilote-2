@@ -53,7 +53,7 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
 
   const estEnAlertePossedePropositionsValeurActuelle = {
     nomCritère: 'estEnAlertePossedePropositionsValeurActuelle',
-    libellé: 'Chantier(s) avec proposition(s) de valeur d’avancement',
+    libellé: 'Chantier(s) avec proposition(s) de valeur d\'avancement',
     nombre: filtresComptesCalculés.estEnAlertePossedePropositionsValeurActuelle,
     estActivée: filtresAlertes.estEnAlertePossedePropositionsValeurActuelle,
   };
