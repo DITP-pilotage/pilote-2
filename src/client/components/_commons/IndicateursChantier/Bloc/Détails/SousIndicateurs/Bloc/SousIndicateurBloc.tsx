@@ -216,7 +216,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                   <th
                     className='fr-background-contrast-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
                   >
-                    valeur d’avancement
+                    valeur d'avancement
                   </th>
                   <th
                     className='fr-background-contrast-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
@@ -226,12 +226,12 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                   <th
                     className='fr-background-contrast-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
                   >
-                    taux d’avancement
+                    taux d'avancement
                   </th>
                   <th
                     className='fr-background-action-low-blue-france text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
                   >
-                    valeur d’avancement
+                    valeur d'avancement
                   </th>
                   <th
                     className='fr-background-action-low-blue-france text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
@@ -241,7 +241,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                   <th
                     className='fr-background-action-low-blue-france text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold'
                   >
-                    taux d’avancement
+                    taux d'avancement
                   </th>
                 </tr>
               </thead>
@@ -261,7 +261,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                             valeur={informationIndicateur.données.valeurInitiale}
                           />
                         </td>
-                        { /* Valeur et date valeur d’avancement de indicateurTerritoireJalon en fonction du jalon */}
+                        { /* Valeur et date valeur d'avancement de indicateurTerritoireJalon en fonction du jalon */}
                         <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                           <ValeurEtDate
                             date={informationIndicateur.données.dateValeurActuelle}
@@ -286,7 +286,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                             variante='secondaire'
                           />
                         </td>
-                        { /* Valeur et date valeur d’avancement mandat de indicateurTerritoire */}
+                        { /* Valeur et date valeur d'avancement mandat de indicateurTerritoire */}
                         <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                           <ValeurEtDate
                             date={informationIndicateur.données.dateValeurActuelleMandat}

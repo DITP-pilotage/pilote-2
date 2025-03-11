@@ -88,13 +88,13 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
               </span>
             </p>
             <p className='fr-text--sm'>
-              La date de valeur d’avancement de cet indicateur est :
+              La date de valeur d'avancement de cet indicateur est :
               {' '}
               <span className='fr-text--bold'>
                 {`${dateValeurActuelle ?? libelléValeurNull}.`}
               </span>
               {' '}
-              La date de la prochaine valeur d’avancement sera donc :
+              La date de la prochaine valeur d'avancement sera donc :
               {' '}
               <span className='fr-text--bold'>
                 {`${dateProchaineDateValeurActuelle ?? libelléValeurNull}.`}
@@ -107,7 +107,7 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
                 {delaiDisponibilite ? `${delaiDisponibilite} mois.` : 'Non renseigné'}
               </span>
               {' '}
-              {`De ce fait, la mise à jour de la prochaine valeur d’avancement est requise ${indicateurEstAjour ? 'au plus tard à' : 'depuis'} la date :`}
+              {`De ce fait, la mise à jour de la prochaine valeur d'avancement est requise ${indicateurEstAjour ? 'au plus tard à' : 'depuis'} la date :`}
               {' '}
               <span className='fr-text--bold'>
                 {`${dateProchaineDateMaj ?? libelléValeurNull}.`}
@@ -123,12 +123,12 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
                 </p>
               ) : (
                 <p className='fr-text--sm'>
-                  La valeur d’avancement de cet indicateur est non renseignée.
+                  La valeur d'avancement de cet indicateur est non renseignée.
                 </p>                
               )
             }
             <p className='fr-text--sm'>
-              De ce fait, la mise à jour de la prochaine valeur d’avancement ne peut être calculée.
+              De ce fait, la mise à jour de la prochaine valeur d'avancement ne peut être calculée.
             </p>
           </>
         )

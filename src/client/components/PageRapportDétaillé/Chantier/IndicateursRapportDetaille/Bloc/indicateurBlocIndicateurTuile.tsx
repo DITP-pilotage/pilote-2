@@ -66,7 +66,7 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<IndicateurDétailsParTerr
           </tr>
           <tr>
             <td className='fr-pt-1w fr-pb-0 fr-pr-0 libellés'>
-              Valeur d’avancement
+              Valeur d'avancement
             </td>
             <td className='fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date'>
               <span>

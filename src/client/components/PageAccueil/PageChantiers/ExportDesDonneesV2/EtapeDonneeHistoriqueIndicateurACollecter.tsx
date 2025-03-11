@@ -99,7 +99,7 @@ export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
           >
             <span>
               <span className='fr-text--bold'>
-                valeurs d’avancement
+                valeurs d'avancement
               </span>
               {' '}
               de l'indicateur sur le territoire, mois par mois

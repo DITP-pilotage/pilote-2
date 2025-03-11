@@ -11,7 +11,7 @@ interface TableauChantiersActionsDeTriProps {
 
 const listeColonnesÀtrier = [
   {
-    libellé: 'Taux d\'avancement',
+    libellé: "Taux d'avancement",
     valeur: 'avancement',
     désactivé: false,
   },

@@ -43,7 +43,7 @@ const INFOBULLE_CONTENUS = {
     ),
     repartitions: (
       <p className='fr-text--sm fr-mb-0'>
-        Maximum, médiane et minimum des taux d’avancement observés sur les territoires de la maille
+        Maximum, médiane et minimum des taux d'avancement observés sur les territoires de la maille
         sélectionnée
       </p>
     ),
