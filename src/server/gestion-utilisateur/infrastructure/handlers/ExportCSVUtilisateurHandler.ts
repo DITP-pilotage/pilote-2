@@ -13,6 +13,7 @@ import { UtilisateurExportCSV } from '@/server/gestion-utilisateur/domain/Utilis
 import { recupererLesNomsDesTerritoires } from '@/server/app/RecupererLesNomsDesTerritoiresPourUnUtilisateur';
 import { Territoire } from '@/server/gestion-utilisateur/domain/Territoire';
 import { profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { InformationChantierUtilisateur } from '@/server/gestion-utilisateur/domain/InformationChantierUtilisateur';
 
 type UtilisateurPourExportCSVContrat = string[];
 
@@ -33,7 +34,11 @@ const HeadersExportCSVUtilisateur = (): string[] => {
   ];
 };
 
-const presenterEnUtilisateurPourExportCSVContrat = (utilisateurPourExport: UtilisateurExportCSV, listeDesTerritoires: Territoire[]): UtilisateurPourExportCSVContrat => {
+const recupererLesNomsDesChantiers = (listeChantiersIds: string[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[]): string[] => {
+  return listeChantiersIds.map(chantierId => listeInformationsChantiersUtilisateurs.find(chantier => chantier.id === chantierId)?.nom || null).filter(Boolean);
+};
+
+const presenterEnUtilisateurPourExportCSVContrat = (utilisateurPourExport: UtilisateurExportCSV, listeDesTerritoires: Territoire[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[]): UtilisateurPourExportCSVContrat => {
   return [
     utilisateurPourExport.prénom,
     utilisateurPourExport.nom,
@@ -42,11 +47,11 @@ const presenterEnUtilisateurPourExportCSVContrat = (utilisateurPourExport: Utili
     utilisateurPourExport.profil,
     recupererLesNomsDesTerritoires(utilisateurPourExport.profil, utilisateurPourExport.habilitations, listeDesTerritoires).join(', '),
     utilisateurPourExport.habilitations.lecture.périmètres.join(', ') || !profilsTerritoriaux.includes(utilisateurPourExport.profil) ? 'Tous les périmètres' : 'Aucun périmètre',
-    utilisateurPourExport.habilitations.lecture.chantiers.join(', ') || 'Aucun chantier',
-    utilisateurPourExport.habilitations.responsabilite.chantiers.join(', ') || 'Aucun chantier',
-    utilisateurPourExport.habilitations.saisieIndicateur.chantiers.join(', ') || 'Aucun chantier',
-    utilisateurPourExport.habilitations.saisieCommentaire.chantiers.join(', ') || 'Aucun chantier',
-    utilisateurPourExport.habilitations.gestionUtilisateur.chantiers.join(', ') || 'Aucun chantier',
+    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.lecture.chantiers, listeInformationsChantiersUtilisateurs).join(' '),
+    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.responsabilite.chantiers, listeInformationsChantiersUtilisateurs).join(' '),
+    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.saisieIndicateur.chantiers, listeInformationsChantiersUtilisateurs).join(' '),
+    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.saisieCommentaire.chantiers, listeInformationsChantiersUtilisateurs).join(' '),
+    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.gestionUtilisateur.chantiers, listeInformationsChantiersUtilisateurs).join(' '),
   ];
 };
 
@@ -101,7 +106,7 @@ export const handleExportDesUtilisateurs = async (request: NextApiRequest, respo
   const listeUtilisateurFiltré = getContainer('gestionUtilisateur').resolve('filtrerListeUtilisateursUseCase').run({ utilisateurs: listeUtilisateur, filtresActifs, profil: session.profil, habilitation });
 
   for (const utilisateurPourExport of listeUtilisateurFiltré) {
-    stringifier.write(presenterEnUtilisateurPourExportCSVContrat(utilisateurPourExport, listeDesTerritoires));
+    stringifier.write(presenterEnUtilisateurPourExportCSVContrat(utilisateurPourExport, listeDesTerritoires, listeInformationsChantiersUtilisateurs));
   }
   stringifier.end();
 };

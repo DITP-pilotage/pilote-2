@@ -8,9 +8,10 @@ interface Dependencies {
   prisma: PrismaPilote
 }
 
-const convertirEnInformationChantierUtilisateur = (prismaChantier: Pick<PrismaChantierIdentiteModel, 'id' | 'est_territorialise' | 'perimetre_ids' | 'statut' | 'ate'>): InformationChantierUtilisateur => {
+const convertirEnInformationChantierUtilisateur = (prismaChantier: Pick<PrismaChantierIdentiteModel, 'id' | 'nom' | 'est_territorialise' | 'perimetre_ids' | 'statut' | 'ate'>): InformationChantierUtilisateur => {
   return {
     id: prismaChantier.id,
+    nom: prismaChantier.nom,
     ate: prismaChantier.ate,
     statut: prismaChantier.statut,
     perimetreIds: prismaChantier.perimetre_ids,
@@ -62,6 +63,7 @@ export class PrismaChantierRepository implements ChantierRepository {
     const listePrismaChantiers = await this.prisma.chantier_identite.findMany({
       select: {
         id: true,
+        nom: true,
         est_territorialise: true,
         perimetre_ids: true,
         statut: true,
