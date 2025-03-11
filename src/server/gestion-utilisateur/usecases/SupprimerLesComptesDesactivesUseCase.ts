@@ -1,11 +1,11 @@
 import logger from '@/server/infrastructure/Logger';
-import UtilisateurRepository from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository.interface';
 import { UtilisateurIAMRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository';
 import { CommentaireRepository } from '@/server/gestion-utilisateur/domain/ports/CommentaireRepository';
 import { SyntheseDesResultatsRepository } from '@/server/gestion-utilisateur/domain/ports/SyntheseDesResultatsRepository';
 import { DecisionStrategiqueRepository } from '@/server/gestion-utilisateur/domain/ports/DecisionStrategiqueRepository';
 import { ObjectifRepository } from '@/server/gestion-utilisateur/domain/ports/ObjectifRepository';
 import { RapportRepository } from '@/server/gestion-utilisateur/domain/ports/RapportRepository';
+import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository';
 
 type Dependencies = {
   utilisateurRepository: UtilisateurRepository
@@ -19,7 +19,6 @@ type Dependencies = {
 
 export const EMAIL_AUTEUR_REMPLACEMENT = 'auteur.inconnu@modernisation.gouv.fr';
 const NOMBRE_ANNEE_AVANT_SUPPRESSION = 2;
-
 
 export class SupprimerLesComptesDesactivesUseCase {
   private utilisateurRepository: UtilisateurRepository;

@@ -2,12 +2,14 @@ import { loadEnvConfig } from '@next/env';
 import logger from '@/server/infrastructure/Logger';
 import { getGestionUtilisateurContainer } from '@/server/gestion-utilisateur/container';
 import { envoieMessageTchap } from '@/server/utils/notification-tchap';
+import { getInitialContainer } from '@/server/initial-container';
 
 const projectDir = process.cwd();
 loadEnvConfig(projectDir);
 
 async function main() {
-  return getGestionUtilisateurContainer().resolve('supprimerLesComptesDesactivesUseCase').run();
+  const initialContainer = getInitialContainer();
+  return getGestionUtilisateurContainer(initialContainer).resolve('supprimerLesComptesDesactivesUseCase').run();
 }
 
 const isMain = eval('require.main === module');

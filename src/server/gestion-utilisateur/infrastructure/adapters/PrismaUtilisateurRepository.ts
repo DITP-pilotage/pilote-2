@@ -338,6 +338,59 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     }, {});
   }
 
+  async supprimerListeUtilisateur(utilisateursASupprimerIds: string[]): Promise<void> {
+    await this.prisma.utilisateur.deleteMany({
+      where: { 
+        id: {
+          in: utilisateursASupprimerIds,
+        },
+      }, 
+    });
+  }
+
+  async recupererComptesInactifs(dateDesactivationMax: Date): Promise<{ id: string, email: string }[]> {
+    const utilisateursInactifs = await this.prisma.utilisateur.findMany({
+      where: {
+        date_desactivation: {
+          lt: dateDesactivationMax,
+        },
+      },
+    });
+
+    return utilisateursInactifs.map(utilisateurInactif => ({ id: utilisateurInactif.id, email: utilisateurInactif.email }));    
+  }
+
+  async anonymiserAuteurs(auteursAAnonymiserIds: string[], emailAuteurRemplacement: string): Promise<void> {
+    const auteurAnonyme = await this.prisma.utilisateur.findFirst({
+      where: {
+        email: emailAuteurRemplacement,
+      },
+    });
+
+    if (auteurAnonyme) {
+      await this.prisma.utilisateur.updateMany({
+        where: {
+          auteur_id_creation: {
+            in: auteursAAnonymiserIds,
+          },
+        },
+        data: {
+          auteur_id_creation: auteurAnonyme.id,
+        },
+      }); 
+      await this.prisma.utilisateur.updateMany({
+        where: {
+          auteur_id_modification: {
+            in: auteursAAnonymiserIds,
+          },
+        },
+        data: {
+          auteur_id_modification: auteurAnonyme.id,
+        },
+      }); 
+    }
+  }
+
   private _aDesDroitsdeSaisieCommentaire(habilitations: Habilitations, profilUtilisateur: PrismaProfilModel) {
     if (profilUtilisateur.a_acces_tous_chantiers) {
       return profilUtilisateur.peut_saisir_des_commentaires;

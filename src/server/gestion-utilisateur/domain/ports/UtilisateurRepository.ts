@@ -14,4 +14,7 @@ export interface UtilisateurRepository {
   recupererEtatVisualisationVideoAccueil(utilisateurId: string): Promise<boolean>
   desactiverVideoAccueil(utilisateurId: string, dateVisualisation: Date): Promise<void> 
   reinitialiserEtatVisualisationVideoAccueil(email: string): Promise<void>
+  recupererComptesInactifs(dateDesactivationMax: Date): Promise<{ id: string, email: string }[]>
+  anonymiserAuteurs(auteursAAnonymiserIds: string[], emailAuteurRemplacement: string): Promise<void>
+  supprimerListeUtilisateur(utilisateursASupprimerIds: string[]): Promise<void>
 }

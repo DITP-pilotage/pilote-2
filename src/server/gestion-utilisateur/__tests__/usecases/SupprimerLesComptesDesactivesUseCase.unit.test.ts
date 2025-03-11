@@ -1,5 +1,4 @@
 import { mock, MockProxy } from 'jest-mock-extended';
-import UtilisateurRepository from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository.interface';
 import { UtilisateurIAMRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository';
 import { CommentaireRepository } from '@/server/gestion-utilisateur/domain/ports/CommentaireRepository';
 import { SyntheseDesResultatsRepository } from '@/server/gestion-utilisateur/domain/ports/SyntheseDesResultatsRepository';
@@ -7,6 +6,7 @@ import { DecisionStrategiqueRepository } from '@/server/gestion-utilisateur/doma
 import { ObjectifRepository } from '@/server/gestion-utilisateur/domain/ports/ObjectifRepository';
 import { RapportRepository } from '@/server/gestion-utilisateur/domain/ports/RapportRepository';
 import { EMAIL_AUTEUR_REMPLACEMENT, SupprimerLesComptesDesactivesUseCase } from '@/server/gestion-utilisateur/usecases/SupprimerLesComptesDesactivesUseCase';
+import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository';
 
 describe('SupprimerLesComptesDesactivesUseCase', () => {
   let utilisateurRepository: MockProxy<UtilisateurRepository>;
