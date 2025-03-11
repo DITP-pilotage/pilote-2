@@ -58,17 +58,16 @@ export class UtilisateurIAMKeycloakRepository implements UtilisateurIAMRepositor
         { enabled: true },
       );
       logger.info(`Utilisateur ${email} réactivé.`);
+      await this.kcAdminClient.users.executeActionsEmail({
+        realm: KEYCLOAK_REALM,
+        clientId: configuration.import.clientId,
+        redirectUri: configuration.nextAuth.url,
+        id: utilisateur[0].id,
+        lifespan: 7 * DAY_IN_SECONDS,
+        actions: ['UPDATE_PASSWORD'],
+      });
+      logger.info('Email envoyé à l\'utilisateur.');
     }
-
-    await this.kcAdminClient.users.executeActionsEmail({
-      realm: KEYCLOAK_REALM,
-      clientId: configuration.import.clientId,
-      redirectUri: configuration.nextAuth.url,
-      id: utilisateur[0].id,
-      lifespan: 7 * DAY_IN_SECONDS,
-      actions: ['UPDATE_PASSWORD'],
-    });
-    logger.info('Email envoyé à l\'utilisateur.');
   }
 
   async ajouteUtilisateurs(utilisateurs: UtilisateurPourIAM[]): Promise<void> {

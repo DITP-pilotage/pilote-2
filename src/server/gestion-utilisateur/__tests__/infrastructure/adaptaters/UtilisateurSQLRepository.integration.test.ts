@@ -102,21 +102,36 @@ describe('PrismaUtilisateurRepository', () => {
   });
 
   describe('desactiver', function () {
-    const utilisateurACreer = {
-      nom: 'test',
-      prenom: 'test',
-      date_creation: new Date().toISOString(),
-      email: 'utilisateuracreer@test.com',
-      profilCode: ProfilEnum.DITP_ADMIN,
-      date_modification: new Date('2024-01-01'),
-    };
+    const auteurId = 'd8b953ff-b5c4-46e1-8a7d-953c1d603a1f';
+    const utilisateurACreer = [
+      {
+        nom: 'test',
+        prenom: 'test',
+        date_creation: new Date().toISOString(),
+        email: 'utilisateuracreer@test.com',
+        profilCode: ProfilEnum.DITP_ADMIN,
+        date_modification: new Date('2024-01-01'),
+      },
+      {
+        id: auteurId,
+        nom: 'auteur',
+        prenom: 'desactivation',
+        date_creation: new Date().toISOString(),
+        email: 'auteur.desactivation@test.com',
+        profilCode: ProfilEnum.DITP_ADMIN,
+      },
+    ];
 
     test("Si l'email n'existe pas, ne fait rien", async () => {
-      await prisma.getInstance().utilisateur.create({
+      // Given
+      await prisma.getInstance().utilisateur.createMany({
         data: utilisateurACreer,
       });
 
-      await utilisateurRepository.desactiver('utilisateurinexistant@test.com');
+      // When
+      await utilisateurRepository.desactiver('utilisateurinexistant@test.com', auteurId);
+
+      // Then
       const utilisateurNonExistant = await prisma.getInstance().utilisateur.findFirst({
         where: {
           email: 'utilisateurinexistant@test.com',
@@ -131,41 +146,61 @@ describe('PrismaUtilisateurRepository', () => {
       expect(utilisateurNonExistant).toBeNull();
       expect(utilisateurExistant?.date_desactivation).toBeNull();
     });
-    test("Si l'email existe, mets à jour la date de desactivation et la date de dernière modification", async () => {
-      await prisma.getInstance().utilisateur.create({
+    test("Si l'email existe, mets à jour la date de desactivation, la date de dernière modification et l\'auteur modification", async () => {
+      // Given
+      await prisma.getInstance().utilisateur.createMany({
         data: utilisateurACreer,
       });
 
-      await utilisateurRepository.desactiver('utilisateuracreer@test.com');
+
+      // When
+      await utilisateurRepository.desactiver('utilisateuracreer@test.com', auteurId);
       const utilisateurDesactive = await prisma.getInstance().utilisateur.findFirst({
         where: {
           email: 'utilisateuracreer@test.com',
         },
       });
 
+      // Then
       expect(utilisateurDesactive).not.toBeNull();
       expect(utilisateurDesactive?.date_desactivation).not.toBeNull();
       expect(utilisateurDesactive?.date_modification.toDateString()).toStrictEqual(new Date().toDateString());
+      expect(utilisateurDesactive?.auteur_id_modification).toStrictEqual(auteurId);
     });
   });
   describe('reactiver', function () {
+    const auteurId = '05991116-5503-4608-a6a8-74ea80938c67';
     const dateDesactivation = new Date();
-    const utilisateurACreer = {
-      nom: 'test',
-      prenom: 'test',
-      date_creation: new Date().toISOString(),
-      email: 'utilisateuracreer@test.com',
-      profilCode: ProfilEnum.DITP_ADMIN,
-      date_desactivation: dateDesactivation,
-      date_modification: new Date('2024-01-01'),
-    };
+    const utilisateurACreer = [
+      {
+        nom: 'test',
+        prenom: 'test',
+        date_creation: new Date().toISOString(),
+        email: 'utilisateuracreer@test.com',
+        profilCode: ProfilEnum.DITP_ADMIN,
+        date_desactivation: dateDesactivation,
+        date_modification: new Date('2024-01-01'),
+      },
+      {
+        id: auteurId,
+        nom: 'auteur',
+        prenom: 'desactivation',
+        date_creation: new Date().toISOString(),
+        email: 'auteur.desactivation@test.com',
+        profilCode: ProfilEnum.DITP_ADMIN,
+      },
+    ];
 
     test("Si l'email n'existe pas, ne fait rien", async () => {
-      await prisma.getInstance().utilisateur.create({
+      // Given 
+      await prisma.getInstance().utilisateur.createMany({
         data: utilisateurACreer,
       });
 
-      await utilisateurRepository.reactiver('utilisateurinexistant@test.com');
+      // When 
+      await utilisateurRepository.reactiver('utilisateurinexistant@test.com', auteurId);
+
+      // Then
       const utilisateurNonExistant = await prisma.getInstance().utilisateur.findFirst({
         where: {
           email: 'utilisateurinexistant@test.com',
@@ -181,11 +216,11 @@ describe('PrismaUtilisateurRepository', () => {
       expect(utilisateurExistant?.date_desactivation).toStrictEqual(dateDesactivation);
     });
     test("Si l'email existe, mets la date de desactivation à null et modifie la date de dernière modification", async () => {
-      await prisma.getInstance().utilisateur.create({
+      await prisma.getInstance().utilisateur.createMany({
         data: utilisateurACreer,
       });
 
-      await utilisateurRepository.reactiver('utilisateuracreer@test.com');
+      await utilisateurRepository.reactiver('utilisateuracreer@test.com', auteurId);
       const utilisateurDesactive = await prisma.getInstance().utilisateur.findFirst({
         where: {
           email: 'utilisateuracreer@test.com',
@@ -195,6 +230,7 @@ describe('PrismaUtilisateurRepository', () => {
       expect(utilisateurDesactive).not.toBeNull();
       expect(utilisateurDesactive?.date_desactivation).toBeNull();
       expect(utilisateurDesactive?.date_modification.toDateString()).toStrictEqual(new Date().toDateString());
+      expect(utilisateurDesactive?.auteur_id_modification).toStrictEqual(auteurId);
     });
 
   });

@@ -49,7 +49,7 @@ export default class DesactiverUnUtilisateurUseCase {
     this.tokenAPIInformationRepository = tokenAPIInformationRepository;
   }
 
-  async run(email: Utilisateur['email'], habilitations: Habilitations, profil: Profil | null): Promise<void> {
+  async run(email: Utilisateur['email'], habilitations: Habilitations, profil: Profil | null, auteurId: string): Promise<void> {
     const listeInformationsChantiersUtilisateurs = await this.chantierRepository.listerInformationsChantiersUtilisateurs();
     const listeTerritoiresCodes = await this.territoireRepository.listerCodes([]);
     const listePerimetresMinisteriels = await this.perimetreMinisterielRepository.listerIds([]);
@@ -68,7 +68,7 @@ export default class DesactiverUnUtilisateurUseCase {
       profil,
     );
 
-    await this.utilisateurRepository.desactiver(email);
+    await this.utilisateurRepository.desactiver(email, auteurId);
 
     if (process.env.IMPORT_KEYCLOAK_URL) {
       await this.utilisateurIAMRepository.desactive(email);
