@@ -13,7 +13,7 @@
         </div>
         <div class="fr-footer__content">
           <p class="fr-footer__content-desc">
-            PILOTE est le dispositif de suivi des politiques prioritaires du gouvernement. Il permet d’évaluer les résultats des politiques publiques dans les territoires.
+            PILOTE est le dispositif de suivi des politiques prioritaires du gouvernement. Il permet d'évaluer les résultats des politiques publiques dans les territoires.
           </p>
         </div>
       </div>

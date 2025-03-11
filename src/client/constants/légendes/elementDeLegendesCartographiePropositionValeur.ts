@@ -10,7 +10,7 @@ export const ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS: CartographieÉlémen
     remplissage: '#C3992A',
   },
   'NON_APPLICABLE': {
-    libellé: 'Territoire où le chantier prioritaire ne s’applique pas',
+    libellé: "Territoire où le chantier prioritaire ne s'applique pas",
     remplissage: 'url(#hachures-gris-blanc)',
   },
 };
@@ -25,7 +25,7 @@ export const ELEMENTS_LEGENDE_PROPOSITION_VALEUR_INDICATEURS: CartographieÉlém
     remplissage: '#C3992A',
   },
   'NON_APPLICABLE': {
-    libellé: 'Territoire où le chantier prioritaire ne s’applique pas',
+    libellé: "Territoire où le chantier prioritaire ne s'applique pas",
     remplissage: 'url(#hachures-gris-blanc)',
   },
 };

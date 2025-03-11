@@ -6,8 +6,8 @@ import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import api from '@/server/infrastructure/api/trpc/api';
 import { ProfilCode, profilsDépartementaux, profilsRégionaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { auMoinsUneValeurDuTableauEstContenueDansLAutreTableau } from '@/client/utils/arrays';
-import { Profil } from '@/server/domain/profil/Profil.interface';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
+import { Profil } from '@/server/gestion-utilisateur/domain/Profil';
 
 export const AAccesATousLesUtilisateurs = (profil: Profil | null) => {
   if (profil) {

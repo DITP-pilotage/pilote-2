@@ -43,7 +43,9 @@ import BandeauInformationMajDonnees
   from '@/components/PageChantier/BandeauInformationMajDonnees/BandeauInformationMajDonnees';
 import api from '@/server/infrastructure/api/trpc/api';
 import BandeauInformation from '@/client/components/_commons/BandeauInformation/BandeauInformation';
-import { CartographieIndicateurType } from '@/client/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
+import {
+  CartographieIndicateurType,
+} from '@/client/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import PageChantierEnTête from './EnTête/EnTête';
 import Cartes, { CartographieType } from './Cartes/Cartes';
@@ -129,7 +131,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
     indicateurs.filter(indicateur => !indicateur.parentId) :
     indicateurs;
 
-  const categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]> = listeIndicateursParent.reduce((acc, indicateur) => {  
+  const categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]> = listeIndicateursParent.reduce((acc, indicateur) => {
     if ((détailsIndicateurs[indicateur.id][territoireCode]?.pondération ?? 0) > 0) {
       acc.participation_ta.push(indicateur);
     } else if (Object.values(detailsIndicateursTerritoire[indicateur.id]).some(detail => detail.pondération !== null && detail.pondération > 0)) {
@@ -137,7 +139,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
     } else {
       acc.autre.push(indicateur);
     }
-  
+
     return acc;
   }, {
     participation_ta: [] as Indicateur[],
@@ -148,7 +150,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
   const categoriesAvecElements = Object.keys(categoriesIndicateurRepartition).filter(
     (key) => categoriesIndicateurRepartition[key as keyof typeof categoriesIndicateurRepartition].length > 0,
   ) as CategoriesIndicateur[];
-  
+
   const listeRubriques = listeRubriquesChantier(categoriesAvecElements, territoireSélectionné.maille);
 
   return (
@@ -216,7 +218,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
             bandeauType='INFO'
             fermable={false}
           >
-            En l’absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le
+            En l'absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le
             département.
           </BandeauInformation>
         }
@@ -397,7 +399,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     mailleSourceDonnees === 'regionale' &&
                     <Alerte
                       classesSupplementaires='fr-mb-2w'
-                      message='En l’absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le département.'
+                      message="En l'absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le département."
                       titre='Données régionales'
                       type='info'
                     />

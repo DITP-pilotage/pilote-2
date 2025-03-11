@@ -69,7 +69,7 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
     const habilitations = new Habilitation(session.habilitations);
 
     if (!habilitations.peutAccéderAuxTerritoiresUtilisateurs(utilisateurHabilitations.lecture.territoires)) {
-      return "Ce compte a des droits d'accès sur plusieurs territoires. Vous ne pouvez pas modifier ses droits ou désactiver l'utilisateur. Si vous avez besoin d’aide, veuillez contacter le support technique.";
+      return "Ce compte a des droits d'accès sur plusieurs territoires. Vous ne pouvez pas modifier ses droits ou désactiver l'utilisateur. Si vous avez besoin d'aide, veuillez contacter le support technique.";
     } else if ([ProfilEnum.COORDINATEUR_REGION, ProfilEnum.COORDINATEUR_DEPARTEMENT].includes(utilisateurProfil)) {
       return "Ce compte a un profil de coordinateur PILOTE. Vous ne pouvez le modifier ou le désactiver. Si vous avez besoin d'aide, veuillez contacter le support technique.";
     } else {

@@ -25,7 +25,7 @@ const NextPageAccueil: FunctionComponent<InferGetServerSidePropsType<typeof getS
   return (
     <Head>
       <title>
-        PILOTE - Piloter l’action publique par les résultats
+        PILOTE - Piloter l'action publique par les résultats
       </title>
     </Head>
   );

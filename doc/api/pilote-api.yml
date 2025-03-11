@@ -28,16 +28,16 @@ info:
       -H 'Authorization: Bearer <ACCESS_TOKEN>'
     ```
 
-    ## Comprendre le fichier d’import
+    ## Comprendre le fichier d'import
 
-    Pour mettre à jour vos données, vous devrez remplir un modèle d’import avec les champs suivants.
+    Pour mettre à jour vos données, vous devrez remplir un modèle d'import avec les champs suivants.
 
-    *   `identifiant_indic` • Identifiant unique de l’indicateur. Exemple : IND-001, IND-002, IND-003. (voir identifiant précisé plus haut sur la page)
+    *   `identifiant_indic` • Identifiant unique de l'indicateur. Exemple : IND-001, IND-002, IND-003. (voir identifiant précisé plus haut sur la page)
     *   `zone_id` • Identifiant du territoire pour lequel la donnée est renseignée. Il provient des référentiels INSEE et est interopérable. Exemple : D34, D20... (voir le référentiel ci-dessous)
-    *   `zone_nom` • Champ facultatif précisant les territoires auxquels correspondent les zone-id. Vous n’êtes pas obligé(e) d’inclure cette colonne.
+    *   `zone_nom` • Champ facultatif précisant les territoires auxquels correspondent les zone-id. Vous n'êtes pas obligé(e) d'inclure cette colonne.
     *   `date_valeur` • Date à laquelle se réfère la valeur numérique. La date doit être renseignée selon le modèle suivant année-mois-jour. Exemple : 2023-02-26, 2023-01-17...
     *   `type_valeur` • Type de données insérées : vi pour valeur initiale, va pour valeur actuelle, vc pour valeur cible
-    *   `valeur` • Valeur de l’indicateur. La valeur doit être numérique. Ne pas saisir de texte (par exemple “NC” ou “non renseigné”)
+    *   `valeur` • Valeur de l'indicateur. La valeur doit être numérique. Ne pas saisir de texte (par exemple “NC” ou “non renseigné”)
 
     Les formats acceptés sont csv et xlsx
 
@@ -51,22 +51,22 @@ info:
 
     ## Référentiels
 
-    Consultez les référentiels pour retrouver les codes de tous les territoires (départements, régions, et national). Vous pourrez copier dans ce référentiel les valeurs à indiquer pour les champs zone-id et zone dans le modèle d’import fourni.
+    Consultez les référentiels pour retrouver les codes de tous les territoires (départements, régions, et national). Vous pourrez copier dans ce référentiel les valeurs à indiquer pour les champs zone-id et zone dans le modèle d'import fourni.
 
     Il s'agit des codes INSEE des départements et régions précédés respectivement par `D` ou `R`. Pour désigner le niveau national, on utilise `FRANCE`.
 
     [Télécharger le référentiel des territoires XLSX – 12 ko](https://github.com/DITP-pilotage/pilote-2/raw/dev/public/referentiel/referentiel_territoires.xlsx)
 
-    ## Comment bien remplir le fichier d’import ?
+    ## Comment bien remplir le fichier d'import ?
 
     *   Si vous choisissez le format CSV pour importer les données, veuillez utiliser le point-virgule (;) pour délimiter les colonnes et les guillemets (") pour délimiter les chaines de caractères
     *   Si vous saisissez un taux, la valeur saisie doit se trouver entre 1 et 100. Par exemple, pour 78%, renseignez la valeur 78.
     *   L'encodage du fichier doit être en UTF-8
     *   Si vous importez une cellule vide, la valeur précédente sera écrasée (si existante)
-    *   Toutes les zones du template d'import ne sont pas nécessaires. Certaines lignes du fichier d'import peuvent être supprimées. Il n’est ainsi pas nécessaire d’importer la totalité des départements pour chaque mise à jour.
+    *   Toutes les zones du template d'import ne sont pas nécessaires. Certaines lignes du fichier d'import peuvent être supprimées. Il n'est ainsi pas nécessaire d'importer la totalité des départements pour chaque mise à jour.
     *   Il n'est pas possible d'importer plusieurs valeurs pour la même zone, date, identifiant d'indicateur et type de valeur. Cela générerait une erreur.
 
-    **Si vous rencontrez des difficultés, merci de nous contacter à l’adresse suivante** (en mentionnant *[api]* dans l'objet de votre mail): [pilote.ditp@modernisation.gouv.fr](mailto:pilote.ditp@modernisation.gouv.fr?subject=[api]%20&cc=colin.dugeai@modernisation.gouv.fr&body=%0D%0A%0D%0A%0D%0A%0D%0A%0D%0A%20tag:api)
+    **Si vous rencontrez des difficultés, merci de nous contacter à l'adresse suivante** (en mentionnant *[api]* dans l'objet de votre mail): [pilote.ditp@modernisation.gouv.fr](mailto:pilote.ditp@modernisation.gouv.fr?subject=[api]%20&cc=colin.dugeai@modernisation.gouv.fr&body=%0D%0A%0D%0A%0D%0A%0D%0A%0D%0A%20tag:api)
   contact: {}
 servers:
   - url: 'http://localhost:3000/api/open-api'

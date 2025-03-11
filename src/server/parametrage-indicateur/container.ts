@@ -1,4 +1,4 @@
-import { asClass, AwilixContainer, ContainerOptions, createContainer, InjectionMode } from 'awilix';
+import { asClass, AwilixContainer } from 'awilix';
 import {
   InformationMetadataIndicateurRepository,
 } from '@/server/parametrage-indicateur/domain/ports/InformationMetadataIndicateurRepository';
@@ -38,6 +38,7 @@ import {
 import {
   PrismaMetadataParametrageIndicateurQuery,
 } from '@/server/parametrage-indicateur/infrastructure/queries/PrismaMetadataParametrageIndicateurQuery';
+import { PrismaPilote } from '@/server/db/PrismaPilote';
 
 export type ParametrageIndicateurDependencies = {
   informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository,
@@ -55,12 +56,8 @@ export type ParametrageIndicateurDependencies = {
   metadataParametrageIndicateurQuery: PrismaMetadataParametrageIndicateurQuery
 };
 
-export const getParametrageIndicateurContainer = (): AwilixContainer<ParametrageIndicateurDependencies> => {
-  const defaultOptions: ContainerOptions = { injectionMode: InjectionMode.PROXY, strict: true };
-
-  const parametrageIndicateurDependencies = createContainer<ParametrageIndicateurDependencies>(defaultOptions);
-
-  return parametrageIndicateurDependencies.register({
+export const getParametrageIndicateurContainer = (initialContainer: AwilixContainer<{ prisma: PrismaPilote }>): AwilixContainer<ParametrageIndicateurDependencies & { prisma: PrismaPilote }> => {
+  return initialContainer.createScope<ParametrageIndicateurDependencies>().register({
     historisationModificationRepository: asClass(PrismaHistorisationModificationRepository),
     informationMetadataIndicateurRepository: asClass(YamlInformationMetadataIndicateurRepository),
     creerUneMetadataIndicateurUseCase: asClass(CreerUneMetadataIndicateurUseCase),

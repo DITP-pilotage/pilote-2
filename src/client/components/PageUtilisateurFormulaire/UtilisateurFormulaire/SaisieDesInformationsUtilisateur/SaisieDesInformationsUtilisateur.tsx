@@ -19,7 +19,7 @@ import useSaisieDesInformationsUtilisateur from './useSaisieDesInformationsUtili
 
 const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireProps> = ({ utilisateur }) => {
 
-  const { 
+  const {
     register,
     control,
     getValues,
@@ -50,8 +50,8 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
     <>
       <p>
         Il existe trois types de droits : les droits de lecture, les droits de saisie des données et les droits de
-        saisie des commentaires. Des droits sont attribués par défaut selon le profil. Pour les profils n’ayant accès
-        qu’à certains territoires, chantiers ou projets structurants, il faut spécifier lesquels dans la partie
+        saisie des commentaires. Des droits sont attribués par défaut selon le profil. Pour les profils n'ayant accès
+        qu'à certains territoires, chantiers ou projets structurants, il faut spécifier lesquels dans la partie
         “périmètre”. Pour certains profils, les droits de saisie sont facultatifs et à préciser.
       </p>
       <Titre
@@ -112,7 +112,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
         </Titre>
         <p className='fr-text--xs texte-gris fr-mb-4w'>
           {
-            `Afin de paramétrer l’espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
+            `Afin de paramétrer l'espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
              Le nombre d'utilisateurs est limité à ${MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT} comptes à la maille départementale et ${MAXIMUM_COMPTES_AUTORISE_PAR_REGION} comptes à la maille régionale.`
           }
         </p>
@@ -180,7 +180,10 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
             Responsabilités
           </Titre>
           <p className='fr-text--xs texte-gris fr-mb-4w'>
-            Parmi les chantiers autorisés en lecture, merci d'indiquer ceux pour lesquels l'utilisateur a des responsabilités spécifiques (directeur de projet ou responsable local). L'utilisateur apparaîtra nominativement comme directeur de projet ou responsable local de ces chantiers sur les pages des chantiers concernés dans PILOTE
+            Parmi les chantiers autorisés en lecture, merci d'indiquer ceux pour lesquels l'utilisateur a des
+            responsabilités spécifiques (directeur de projet ou responsable local). L'utilisateur apparaîtra
+            nominativement comme directeur de projet ou responsable local de ces chantiers sur les pages des chantiers
+            concernés dans PILOTE
           </p>
           <div className='fr-mb-4w'>
             <Controller

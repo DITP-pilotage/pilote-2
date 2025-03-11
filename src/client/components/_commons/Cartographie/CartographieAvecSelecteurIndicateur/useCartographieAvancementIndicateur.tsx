@@ -1,6 +1,8 @@
 import { ReactNode } from 'react';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { CartographieÉlémentsDeLégende } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
+import {
+  CartographieÉlémentsDeLégende,
+} from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { CartographieDonnées } from '@/client/components/_commons/Cartographie/Cartographie.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
@@ -66,14 +68,14 @@ function determinerRemplissage(valeur: number | null, elementsDeLegende: Cartogr
 }
 
 export function useCartographieAvancementIndicateur(detailsIndicateurTerritoire: DétailsIndicateurTerritoire, elementsDeLegende: CartographieÉlémentsDeLégende, jalon: number, typeAvancement: 'JALON' | 'MANDAT') {
-  const useRecupererDonnees = () => { 
-    const donnees = objectEntries(detailsIndicateurTerritoire).
-      map(([territoireCode, détailsIndicateur]) => ({
-        valeur: détailsIndicateur.avancement.global,
-        valeurAnnuelle: détailsIndicateur.avancement.annuel,
-        territoireCode: territoireCode,
-        estApplicable: détailsIndicateur.est_applicable }));
-    
+  const useRecupererDonnees = () => {
+    const donnees = objectEntries(detailsIndicateurTerritoire).map(([territoireCode, détailsIndicateur]) => ({
+      valeur: détailsIndicateur.avancement.global,
+      valeurAnnuelle: détailsIndicateur.avancement.annuel,
+      territoireCode: territoireCode,
+      estApplicable: détailsIndicateur.est_applicable,
+    }));
+
     const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
     const tousApplicables: Boolean = donnees.every(d => d.estApplicable);
@@ -82,12 +84,12 @@ export function useCartographieAvancementIndicateur(detailsIndicateurTerritoire:
     let legende = Object.values(elementsDeLegende);
     if (tousApplicables) {
       legende = legende
-        .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s’applique pas');
+        .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s\'applique pas');
     }
 
     if (tousNonNull) {
       legende = legende
-        .filter(el => el.libellé !== 'Territoire pour lequel la donnee n’est pas renseignee/disponible');
+        .filter(el => el.libellé !== 'Territoire pour lequel la donnee n\'est pas renseignee/disponible');
     }
 
 

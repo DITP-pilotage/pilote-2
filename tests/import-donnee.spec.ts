@@ -19,9 +19,9 @@ test('doit pouvoir importer des données', async ({ page }) => {
     await page.waitForURL('**/chantier/CH-027/indicateurs');
   });
 
-  await test.step("Sélection de l'indicateur IND-927 - Part d’entraînement de la réserve opérationnelle", async () => {
+  await test.step("Sélection de l'indicateur IND-927 - Part d'entraînement de la réserve opérationnelle", async () => {
     await expect(page).toHaveTitle(/Mettre à jour les données - Chantier 027 - PILOTE/);
-    await expect(page.getByRole('heading', { name: /Sélectionnez l’indicateur/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Sélectionnez l'indicateur/ })).toBeVisible();
     await page.getByLabel('Choix de l\'indicateur').selectOption({ label: 'Part d’entraînement de la réserve opérationnelle' });
   });
 
@@ -103,6 +103,6 @@ test('doit pouvoir importer des données', async ({ page }) => {
   });
 
   await test.step('Vérification que les données ont correctement été transmises', async () => {
-    await expect(page.getByText(/Les données ont été importées avec succès pour l’indicateur IND-927/)).toBeVisible();
+    await expect(page.getByText(/Les données ont été importées avec succès pour l'indicateur IND-927/)).toBeVisible();
   });
 });

@@ -69,7 +69,7 @@ export const PageFicheTerritoriale: FunctionComponent<FicheTerritorialeContrat> 
                         className='fr-text--md fr-mb-2w fr-py-1v'
                         estInline
                       >
-                        Taux d’avancement moyen
+                        Taux d'avancement moyen
                       </Titre>
                       <Infobulle idHtml='infobulle-chantiers-jauges'>
                         {INFOBULLE_CONTENUS.chantiers.jauges}
@@ -88,7 +88,7 @@ export const PageFicheTerritoriale: FunctionComponent<FicheTerritorialeContrat> 
                         className='fr-text--md fr-mb-2w fr-py-1v'
                         estInline
                       >
-                        Taux d’avancement de l’année en cours
+                        Taux d'avancement de l'année en cours
                       </Titre>
                     </TitreInfobulleConteneur>
                     <div className='fiche-territoriale__avancement--barre-progression'>

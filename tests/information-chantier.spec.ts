@@ -7,7 +7,7 @@ test('doit pouvoir consulter les données des chantiers', async ({ page }) => {
   await test.step('Vérification de la structure de la page d\'accueil', async () => {
     await expect(page.getByRole('heading', { name: /\d+ chantiers/ })).toBeVisible();
     await expect(page.getByRole('heading', { name: /Taux d'avancement moyen/ })).toBeVisible();
-    await expect(page.getByRole('heading', { name: /Taux d’avancement des chantiers par territoire/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Taux d'avancement des chantiers par territoire/ })).toBeVisible();
     await expect(page.getByRole('heading', { name: /Répartition des météos renseignées/ })).toBeVisible();
 
     await expect(page.getByRole('button', { name: /Transition écologique et Cohésion des territoires/ })).toBeVisible();
@@ -35,7 +35,6 @@ test('doit pouvoir consulter les données des chantiers', async ({ page }) => {
     await expect(page).toHaveTitle(/Chantier 046 - Développer le co-voiturage - PILOTE/);
   
     await expect(page.getByRole('heading', { name: /Avancement du chantier/ })).toBeVisible();
-    await expect(page.getByRole('heading', { name: /Taux d’avancement national/ })).toBeVisible();
     await expect(page.getByRole('heading', { name: /Responsables/ })).toBeVisible();
     await expect(page.getByText( /Minimum/ )).toBeVisible();
     await expect(page.getByText( /Médiane/ )).toBeVisible();

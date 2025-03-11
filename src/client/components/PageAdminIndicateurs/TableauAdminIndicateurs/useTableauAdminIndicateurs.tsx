@@ -8,7 +8,6 @@ import {
 } from '@tanstack/react-table';
 import { ChangeEvent, ChangeEventHandler, FormEventHandler, useCallback, useState } from 'react';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
-import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import api from '@/server/infrastructure/api/trpc/api';
 import {
   filtresModifierIndicateursActifsStore,
@@ -18,6 +17,7 @@ import {
 } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
 import { formaterDate, horodatage } from '@/client/utils/date/date';
 import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 
 const reactTableColonnesHelper = createColumnHelper<MetadataParametrageIndicateurInformationContrat>();
 const colonnes = [
@@ -124,7 +124,7 @@ export default function useTableauPageAdminIndicateurs() {
     columns: colonnes,
 
     globalFilterFn: (ligne, colonneId, texteRecherché) => {
-      const valeurCellule = ligne.getValue<ProjetStructurant>(colonneId);
+      const valeurCellule = ligne.getValue<Chantier>(colonneId);
       return valeurCellule !== null && rechercheUnTexteContenuDansUnContenant(texteRecherché, valeurCellule.toString());
     },
     state: {

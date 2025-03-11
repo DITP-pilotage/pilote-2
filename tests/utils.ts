@@ -18,6 +18,6 @@ export const loginFn = async ({ page }: { page: Page }) => {
 
     await page.getByRole('button').click();
 
-    await expect(page).toHaveTitle(/PILOTE - Piloter l’action publique par les résultats/);
+    await expect(page).toHaveTitle(/PILOTE - Piloter l'action publique par les résultats/);
   });
 };

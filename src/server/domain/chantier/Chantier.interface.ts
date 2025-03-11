@@ -55,6 +55,4 @@ export type ChantierVueDEnsemble = {
   maillesApplicables: Maille[]
 };
 
-export type ChantierDateMajMeteo = string | null;
-
 export type ChantierSynthétisé = Pick<Chantier, 'id' | 'nom' | 'estTerritorialisé' | 'périmètreIds' | 'statut'> & { ate: TypeAte, territoiresApplicables: string[] };

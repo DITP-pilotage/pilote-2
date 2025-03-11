@@ -10,9 +10,6 @@ export class RécupérerVariableContenuUseCase {
       case 'NEXT_PUBLIC_FF_RAPPORT_DETAILLE': {
         return configuration.featureFlip.rapportDetaille as VariableContenuDisponibleEnv[T];
       }
-      case 'NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS': {
-        return configuration.featureFlip.projetsStructurants as VariableContenuDisponibleEnv[T];
-      }
       case 'NEXT_PUBLIC_FF_INFOBULLE_PONDERATION': {
         return configuration.featureFlip.infobullePonderation as VariableContenuDisponibleEnv[T];
       }

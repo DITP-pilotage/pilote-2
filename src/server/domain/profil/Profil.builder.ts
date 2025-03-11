@@ -23,15 +23,6 @@ export class ProfilBuilder {
     },
   };
 
-  private projetsStructurants: Profil['projetsStructurants'] = {
-    lecture: {
-      tousPérimètres: true,
-      mêmePérimètresQueChantiers: true,
-      tousTerritoires: true,
-      mêmeTerritoiresQueChantiers: true,
-    },
-  };
-
   private utilisateurs: Profil['utilisateurs'] = {
     modificationPossible: true,
     tousTerritoires: true,
@@ -54,7 +45,6 @@ export class ProfilBuilder {
       code: this.code,
       nom: this.nom,
       chantiers: this.chantiers,
-      projetsStructurants: this.projetsStructurants,
       utilisateurs: this.utilisateurs,
     };
   }

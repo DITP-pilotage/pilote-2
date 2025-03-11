@@ -1,9 +1,7 @@
 import SynthèseDesRésultats from '@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface';
-import SynthèseDesRésultatsProjetStructurant
-  from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultats.interface';
 
 export interface SynthèseDesRésultatsProps {
-  synthèseDesRésultatsInitiale: SynthèseDesRésultats | SynthèseDesRésultatsProjetStructurant
+  synthèseDesRésultatsInitiale: SynthèseDesRésultats
   réformeId: string
   territoireCode: string
   nomTerritoire: string

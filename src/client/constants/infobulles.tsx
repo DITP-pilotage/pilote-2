@@ -16,9 +16,9 @@ const INFOBULLE_CONTENUS = {
           département).
         </p>
         <p className='fr-text--sm fr-mb-0'>
-          La moyenne d’une maille supérieure (nationale ou régionale) ne correspond pas nécessairement à la moyenne des
+          La moyenne d'une maille supérieure (nationale ou régionale) ne correspond pas nécessairement à la moyenne des
           territoires des mailles inférieures parce que certains indicateurs qui entrent en compte dans le calcul du
-          taux d’avancement sont spécifiques à une maille.
+          taux d'avancement sont spécifiques à une maille.
         </p>
       </>
     ),
@@ -50,12 +50,12 @@ const INFOBULLE_CONTENUS = {
     météos: (
       <>
         <p className='fr-text--sm'>
-          La météo désigne le niveau de confiance, estimé par le responsable, sur la possibilité d’atteindre les
+          La météo désigne le niveau de confiance, estimé par le responsable, sur la possibilité d'atteindre les
           objectifs du chantier.
         </p>
         <p className='fr-text--sm fr-mb-0'>
           Certains chantiers peuvent ne pas avoir de météo renseignée sur un territoire sélectionné. Les chantiers non
-          territorialisés n’attendent pas de météo pour le niveau local.
+          territorialisés n'attendent pas de météo pour le niveau local.
         </p>
       </>
     ),
@@ -65,14 +65,14 @@ const INFOBULLE_CONTENUS = {
           La première alerte signale :
           <ul className='fr-text--sm liste-niveau2'>
             <li>
-              lorsque le niveau national est sélectionné : les chantiers n’ayant pas de taux d’avancement au niveau
-              national en raison de l’absence de valeurs pour les indicateurs du chantier ou de paramètres manquants
+              lorsque le niveau national est sélectionné : les chantiers n'ayant pas de taux d'avancement au niveau
+              national en raison de l'absence de valeurs pour les indicateurs du chantier ou de paramètres manquants
               pour la pondération.
             </li>
             <li>
-              lorsqu’un territoire est sélectionné : les chantiers pour lesquels le territoire sélectionné a un retard
-              significatif vis-à-vis de la médiane des taux d’avancement du chantier concerné pour les départements ou
-              les régions. Pour qu’un résultat apparaisse sur cette alerte, il faut sélectionner une région ou un
+              lorsqu'un territoire est sélectionné : les chantiers pour lesquels le territoire sélectionné a un retard
+              significatif vis-à-vis de la médiane des taux d'avancement du chantier concerné pour les départements ou
+              les régions. Pour qu'un résultat apparaisse sur cette alerte, il faut sélectionner une région ou un
               département.
             </li>
           </ul>
@@ -85,8 +85,8 @@ const INFOBULLE_CONTENUS = {
               départemental.
             </li>
             <li>
-              lorsqu'un territoire est sélectionné : les chantiers pour lesquels le taux d’avancement a reculé lors de
-              la dernière mise à jour des données quantitatives. Pour qu’un résultat apparaisse sur cette alerte, il
+              lorsqu'un territoire est sélectionné : les chantiers pour lesquels le taux d'avancement a reculé lors de
+              la dernière mise à jour des données quantitatives. Pour qu'un résultat apparaisse sur cette alerte, il
               faut sélectionner une région ou un département.
             </li>
           </ul>
@@ -102,7 +102,7 @@ const INFOBULLE_CONTENUS = {
         <p className='fr-text--sm'>
           <PictoBaromètre />
           {' '}
-          : Chantier présent dans le baromètre des résultats de l’action publique
+          : Chantier présent dans le baromètre des résultats de l'action publique
         </p>
         <p className='fr-text--sm'>
           <PictoTerritorialisé />
@@ -117,17 +117,17 @@ const INFOBULLE_CONTENUS = {
         </p>
         <p className='fr-text--sm'>
           La date affichée sous la météo correspond à la date de la dernière modification de la météo, de la synthèse ou
-          d’un commentaire.
+          d'un commentaire.
         </p>
         <p className='fr-text--sm'>
-          La date affichée sous le taux d’avancement correspond à la dernière mise à jour des données pour au moins un
+          La date affichée sous le taux d'avancement correspond à la dernière mise à jour des données pour au moins un
           indicateur du chantier.
         </p>
         <p className='fr-text--sm'>
-          La tendance correspond à la progression du taux d’avancement.
+          La tendance correspond à la progression du taux d'avancement.
         </p>
         <p className='fr-text--sm fr-mb-0'>
-          L’écart correspond à l’écart entre le taux d’avancement pour le territoire sélectionné et le taux d’avancement
+          L'écart correspond à l'écart entre le taux d'avancement pour le territoire sélectionné et le taux d'avancement
           territorial médian.
         </p>
       </>
@@ -138,13 +138,13 @@ const INFOBULLE_CONTENUS = {
       aucunIndicateur: (maille: Maille) => (
         <p className='fr-text--sm fr-mb-0'>
           {`À la maille ${maille}, `}
-          aucun indicateur de ce chantier n’est pris en compte dans le calcul du taux d’avancement global.
+          aucun indicateur de ce chantier n'est pris en compte dans le calcul du taux d'avancement global.
         </p>
       ),
       unSeulIndicateur: (maille: Maille, indicateurPondération: IndicateurPondération) => (
         <p className='fr-text--sm fr-mb-0'>
           {`À la maille ${maille}, `}
-          le taux d’avancement global correspond au taux d’avancement 2026 de l’indicateur&nbsp;:
+          le taux d'avancement global correspond au taux d'avancement 2026 de l'indicateur&nbsp;:
           {` ${indicateurPondération.nom}`}
         </p>
       ),
@@ -152,7 +152,7 @@ const INFOBULLE_CONTENUS = {
         <>
           <p className='fr-text--sm fr-mb-0'>
             {`À la maille ${maille}, `}
-            le taux d’avancement global correspond à la somme des taux d’avancement 2026 des indicateurs, pondérés de la
+            le taux d'avancement global correspond à la somme des taux d'avancement 2026 des indicateurs, pondérés de la
             façon suivante&nbsp;:
           </p>
           <ul className='fr-text--sm fr-mb-0'>
@@ -160,7 +160,7 @@ const INFOBULLE_CONTENUS = {
               indicateurPondérations.map(({ pondération, nom }) => (
                 <li key={nom}>
                   {pondération}
-                  % du taux d’avancement 2026 de l’indicateur&nbsp;:
+                  % du taux d'avancement 2026 de l'indicateur&nbsp;:
                   {` ${nom}`}
                 </li>
               ))
@@ -172,23 +172,23 @@ const INFOBULLE_CONTENUS = {
     météoEtSynthèseDesRésultats: (
       <>
         <p className='fr-text--sm'>
-          La météo désigne le niveau de confiance, estimé par le responsable, sur la possibilité d’atteindre les
+          La météo désigne le niveau de confiance, estimé par le responsable, sur la possibilité d'atteindre les
           objectifs du chantier.
         </p>
         <p className='fr-text--sm fr-mb-0'>
-          La synthèse est une présentation synthétique de l’état d’avancement du chantier, actualisé depuis la dernière
+          La synthèse est une présentation synthétique de l'état d'avancement du chantier, actualisé depuis la dernière
           mise à jour des données.
         </p>
       </>
     ),
     répartitionGéographiqueTauxAvancement: (
       <p className='fr-text--sm fr-mb-0'>
-        Territorialisation du taux d’avancement du chantier
+        Territorialisation du taux d'avancement du chantier
       </p>
     ),
     répartitionGéographiqueNiveauDeConfiance: (
       <p className='fr-text--sm fr-mb-0'>
-        Répartition de la météo déclarée par chaque responsable local pour l’avancement de son chantier dans son
+        Répartition de la météo déclarée par chaque responsable local pour l'avancement de son chantier dans son
         territoire.
       </p>
     ),
@@ -242,81 +242,6 @@ const INFOBULLE_CONTENUS = {
         </>
       ),
     },
-  },
-  projetsStructurants: {
-    jauges: (
-      <p className='fr-text--sm'>
-        La moyenne affichée dépend des projets structurants et du territoire sélectionné.
-      </p>
-    ),
-    météos: (
-      <>
-        <p className='fr-text--sm'>
-          La météo désigne le niveau de confiance, estimé par le responsable, sur la possibilité d’atteindre les
-          objectifs du projet structurant.
-        </p>
-        <p className='fr-text--sm'>
-          Certains projets structurants peuvent ne pas avoir de météo renseignée sur un territoire sélectionné.
-        </p>
-      </>
-    ),
-    listeDesProjetsStructurants: (
-      <>
-        <p className='fr-text--sm'>
-          La date affichée sous la météo correspond à la date de la dernière modification de la météo, de la synthèse ou
-          d’un commentaire.
-        </p>
-        <p className='fr-text--sm'>
-          La date affichée sous le taux d’avancement correspond à la dernière mise à jour des données pour au moins un
-          indicateur du projet structurant.
-        </p>
-      </>
-    ),
-  },
-  projetStructurant: {
-    avancements: (
-      <p className='fr-text--sm'>
-        Le taux d’avancement global correspond à la moyenne des indicateurs.
-      </p>
-    ),
-    météoEtSynthèseDesRésultats: (
-      <>
-        <p className='fr-text--sm'>
-          La météo désigne le niveau de confiance, estimé par le responsable, sur la possibilité d’atteindre les
-          objectifs du projet structurant.
-        </p>
-        <p className='fr-text--sm'>
-          La synthèse est une présentation synthétique de l’état d’avancement du projet structurant, actualisé depuis la
-          dernière mise à jour des données.
-        </p>
-      </>
-    ),
-    objectifs: (
-      <p className='fr-text--sm'>
-        Présentation des objectifs et des principales actions passées et à venir.
-      </p>
-    ),
-    commentaires: (
-      <>
-        <p className='fr-text--sm'>
-          Diagnostic du directeur de projet.
-        </p>
-        <ul className='fr-text--sm fr-mb-0'>
-          <li>
-            Suivi des décisions et réalisations
-          </li>
-          <li>
-            Difficultés rencontrées et risques anticipés
-          </li>
-          <li>
-            Solutions proposées et prochaines étapes
-          </li>
-          <li>
-            Partenariats et moyens mobilisés.
-          </li>
-        </ul>
-      </>
-    ),
   },
 };
 

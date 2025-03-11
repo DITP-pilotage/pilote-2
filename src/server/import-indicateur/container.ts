@@ -1,4 +1,4 @@
-import { asClass, AwilixContainer, ContainerOptions, createContainer, InjectionMode } from 'awilix';
+import { asClass, AwilixContainer } from 'awilix';
 import {
   PublierFichierImportIndicateurHandler,
 } from '@/server/import-indicateur/infrastructure/handlers/PublierIndicateurHandler';
@@ -46,6 +46,7 @@ import { HttpClient } from '@/server/import-indicateur/domain/ports/HttpClient.i
 import {
   ImportDonneeIndicateurAPIHandler,
 } from '@/server/import-indicateur/infrastructure/handlers/ImportDonneeIndicateurAPIHandler';
+import { PrismaPilote } from '@/server/db/PrismaPilote';
 import { PropositionValeurActuelleRepository } from './domain/ports/PropositionValeurActuelleRepository';
 import { PrismaPropositionValeurActuelleRepository } from './infrastructure/adapters/PrismaPropositionValeurActuelleRepository';
 
@@ -64,12 +65,8 @@ export type ImportIndicateurDependencies = {
   importDonneeIndicateurAPIHandler: ImportDonneeIndicateurAPIHandler
   propositionValeurActuelleRepository: PropositionValeurActuelleRepository
 };
-export const getImportIndicateurContainer = (): AwilixContainer<ImportIndicateurDependencies> => {
-  const defaultOptions: ContainerOptions = { injectionMode: InjectionMode.PROXY, strict: true };
-
-  const importIndicateur = createContainer<ImportIndicateurDependencies>(defaultOptions);
-
-  return importIndicateur.register({
+export const getImportIndicateurContainer = (initialContainer: AwilixContainer<{ prisma: PrismaPilote }>): AwilixContainer<ImportIndicateurDependencies & { prisma: PrismaPilote }> => {
+  return initialContainer.createScope<ImportIndicateurDependencies>().register({
     httpClient: asClass(FetchHttpClient),
     publierFichierImportIndicateurHandler: asClass(PublierFichierImportIndicateurHandler),
     publierFichierIndicateurImporteUseCase: asClass(PublierFichierIndicateurImporteUseCase),

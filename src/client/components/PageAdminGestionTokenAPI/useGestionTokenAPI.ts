@@ -29,7 +29,7 @@ export const useGestionTokenAPI = () => {
 
       setAlerte({
         type: 'succès',
-        titre : 'Le token d’authentification est généré pour cet utilisateur et est sauvegardé dans votre presse-papier.',
+        titre : "Le token d'authentification est généré pour cet utilisateur et est sauvegardé dans votre presse-papier.",
         message: result,
       });
     },

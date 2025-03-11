@@ -209,10 +209,10 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                         </h3>
                         <p>
                           Nous vous rappelons que la valeur actuelle que vous proposez ne sera pas prise en compte dans
-                          le calcul du taux d’avancement global de la PPG. Cette proposition vise à engager un dialogue
+                          le calcul du taux d'avancement global de la PPG. Cette proposition vise à engager un dialogue
                           avec la direction de projet au niveau national, qui en sera informée. Si votre proposition
-                          n’est pas intégrée par la direction de projet, elle ne sera plus visible dans l’historique de
-                          l’indicateur à la prochaine mise à jour. Elle sera cependant conservée dans la base de données
+                          n'est pas intégrée par la direction de projet, elle ne sera plus visible dans l'historique de
+                          l'indicateur à la prochaine mise à jour. Elle sera cependant conservée dans la base de données
                           de PILOTE.
                         </p>
                       </div>
@@ -243,7 +243,7 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
               La proposition de valeur actuelle a correctement été prise en compte. Vous pouvez clore cette fenêtre.
             </h3>
             <span>
-              La proposition de valeur actuelle s’affichera dans le tableau des indicateurs dans une heure. Veuillez noter que dans cet intervalle, il n’est pas possible de faire une autre proposition pour cet indicateur.
+              La proposition de valeur actuelle s'affichera dans le tableau des indicateurs dans une heure. Veuillez noter que dans cet intervalle, il n'est pas possible de faire une autre proposition pour cet indicateur.
             </span>
           </div>
         )

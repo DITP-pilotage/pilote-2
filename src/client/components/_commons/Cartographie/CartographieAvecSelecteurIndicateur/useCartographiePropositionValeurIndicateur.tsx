@@ -1,5 +1,7 @@
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { CartographieÉlémentsDeLégende } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
+import {
+  CartographieÉlémentsDeLégende,
+} from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { CartographieDonnées } from '@/client/components/_commons/Cartographie/Cartographie.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
@@ -20,7 +22,7 @@ function determinerRemplissage(valeur: TypeProposition | null, elementsDeLegende
 }
 
 export function useCartographiePropositionValeurIndicateur(detailsIndicateurTerritoire: DétailsIndicateurTerritoire, elementsDeLegende: CartographieÉlémentsDeLégende) {
-  const useRecupererDonnees = () => { 
+  const useRecupererDonnees = () => {
     const donnees: DonneesCartographieProposition[] = objectEntries(detailsIndicateurTerritoire).map(([territoireCodeDonnee, detailsIndicateur]) => ({
       valeur: detailsIndicateur.proposition !== null ? 'PROPOSITION' : null,
       territoireCode: territoireCodeDonnee as string,
@@ -34,7 +36,7 @@ export function useCartographiePropositionValeurIndicateur(detailsIndicateurTerr
     let legende = Object.values(elementsDeLegende);
     if (tousApplicables) {
       legende = legende
-        .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s’applique pas');
+        .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s\'applique pas');
     }
 
     const donneesCartographie = donnees.reduce((acc, val) => {

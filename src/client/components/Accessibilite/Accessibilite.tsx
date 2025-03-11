@@ -22,21 +22,21 @@ const Accessibilite: FunctionComponent<{}> = () => {
                 Déclaration d'accessibilité
               </h4>
               <p>
-                La Direction interministérielle de la transformation publique s’engage à rendre son service accessible, 
-                conformément à l’article 47 de la loi n° 2005-102 du 11 février 2005.
+                La Direction interministérielle de la transformation publique s'engage à rendre son service accessible,
+                conformément à l'article 47 de la loi n° 2005-102 du 11 février 2005.
               </p>
               <p>
-                À cette fin, nous mettons en œuvre la stratégie et les actions suivantes : 
+                À cette fin, nous mettons en œuvre la stratégie et les actions suivantes :
                 <br />
                 <Link
                   href='https://www.modernisation.gouv.fr/files/2022-10/schema-pluriannuel-2022-2025-ditp.pdf'
-                  title='Schéma pluriannuel d’accessibilité 2022-2025'
+                  title="Schéma pluriannuel d'accessibilité 2022-2025"
                 >
                   https://www.modernisation.gouv.fr/files/2022-10/schema-pluriannuel-2022-2025-ditp.pdf
                 </Link>
               </p>
               <p>
-                Cette déclaration d’accessibilité s’applique à PILOTE (pilote.ditp@modernisation.gouv.fr).
+                Cette déclaration d'accessibilité s'applique à PILOTE (pilote.ditp@modernisation.gouv.fr).
               </p>
             </div>
           </div>
@@ -46,7 +46,7 @@ const Accessibilite: FunctionComponent<{}> = () => {
                 Etat de conformité
               </h4>
               <p>
-                PILOTE est non conforme avec le RGAA. Le site n’a pas encore été audité.
+                PILOTE est non conforme avec le RGAA. Le site n'a pas encore été audité.
               </p>
             </div>
           </div>
@@ -56,8 +56,9 @@ const Accessibilite: FunctionComponent<{}> = () => {
                 Amélioration et contact
               </h4>
               <p>
-                Si vous n’arrivez pas à accéder à un contenu ou à un service, 
-                vous pouvez contacter l’équipe de PILOTE pour être orienté vers une alternative accessible ou obtenir le contenu sous une autre forme.
+                Si vous n'arrivez pas à accéder à un contenu ou à un service,
+                vous pouvez contacter l'équipe de PILOTE pour être orienté vers une alternative accessible ou obtenir le
+                contenu sous une autre forme.
               </p>
               <ul>
                 <li>
@@ -68,7 +69,7 @@ const Accessibilite: FunctionComponent<{}> = () => {
                 </li>
               </ul>
               <p>
-                Nous essayons de répondre dans les 5 jours ouvrés suivant la demande. 
+                Nous essayons de répondre dans les 5 jours ouvrés suivant la demande.
               </p>
             </div>
           </div>
@@ -78,15 +79,17 @@ const Accessibilite: FunctionComponent<{}> = () => {
                 Voie de recours
               </h4>
               <p>
-                Cette procédure est à utiliser dans le cas suivant : vous avez signalé au responsable du site internet un défaut d’accessibilité qui vous empêche 
-                d’accéder à un contenu ou à un des services du portail et vous n’avez pas obtenu de réponse satisfaisante.
+                Cette procédure est à utiliser dans le cas suivant : vous avez signalé au responsable du site internet
+                un défaut d'accessibilité qui vous empêche
+                d'accéder à un contenu ou à un des services du portail et vous n'avez pas obtenu de réponse
+                satisfaisante.
               </p>
               <p className='fr-mb-0'>
-                Vous pouvez : 
+                Vous pouvez :
               </p>
               <ul>
                 <li>
-                  Écrire un message au 
+                  Écrire un message au
                   {' '}
                   <Link
                     href='https://formulaire.defenseurdesdroits.fr/formulaire_saisine/'
@@ -96,7 +99,7 @@ const Accessibilite: FunctionComponent<{}> = () => {
                   </Link>
                 </li>
                 <li>
-                  Contacter 
+                  Contacter
                   {' '}
                   <Link
                     href='https://www.defenseurdesdroits.fr/carte-des-delegues'
@@ -106,17 +109,18 @@ const Accessibilite: FunctionComponent<{}> = () => {
                   </Link>
                 </li>
                 <li>
-                  Envoyer un courrier par la poste (gratuit, ne pas mettre de timbre) : Défenseur des droitsLibre réponse 71120 75342 Paris CEDEX 07
+                  Envoyer un courrier par la poste (gratuit, ne pas mettre de timbre) : Défenseur des droitsLibre
+                  réponse 71120 75342 Paris CEDEX 07
                 </li>
               </ul>
-              <p>    
-                Cette déclaration d’accessibilité a été créé le 28 juillet 2023 grâce au 
+              <p>
+                Cette déclaration d'accessibilité a été créé le 28 juillet 2023 grâce au
                 {' '}
                 <Link
                   href='https://betagouv.github.io/a11y-generateur-declaration/#create'
-                  title='Générateur de Déclaration d’Accessibilité de BetaGouv'
+                  title="Générateur de Déclaration d'Accessibilité de BetaGouv"
                 >
-                  Générateur de Déclaration d’Accessibilité de BetaGouv.
+                  Générateur de Déclaration d'Accessibilité de BetaGouv.
                 </Link>
               </p>
             </div>
@@ -124,7 +128,7 @@ const Accessibilite: FunctionComponent<{}> = () => {
         </Bloc>
       </div>
     </main>
-  );   
+  );
 };
 
 export default Accessibilite;

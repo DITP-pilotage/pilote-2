@@ -14,7 +14,6 @@ import IndicateurTendance
 import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import useIndicateurBloc from './useIndicateurBloc';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import SousIndicateursRapportDetaille from './SousIndicateursRapportDetaille/SousIndicateursRapportDetaille';
@@ -22,7 +21,6 @@ import SousIndicateursRapportDetaille from './SousIndicateursRapportDetaille/Sou
 interface IndicateurBlocProps {
   indicateur: Indicateur
   détailsIndicateurs: DétailsIndicateurs
-  territoireProjetStructurant?: ProjetStructurant['territoire']
   territoireCode: string
   typeDeRéforme: TypeDeRéforme
   listeSousIndicateurs: Indicateur[]
@@ -31,7 +29,6 @@ interface IndicateurBlocProps {
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   indicateur,
   détailsIndicateurs,
-  territoireProjetStructurant,
   territoireCode,
   typeDeRéforme,
   listeSousIndicateurs,
@@ -43,7 +40,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   const {
     tableau,
     dateDeMiseAJourIndicateur,
-  } = useIndicateurBloc(détailsIndicateur, typeDeRéforme, territoireSélectionné, territoireProjetStructurant);
+  } = useIndicateurBloc(détailsIndicateur, typeDeRéforme, territoireSélectionné);
 
   return (
     <IndicateurBlocStyled
@@ -69,7 +66,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
               </Titre>
               <div className='fr-ml-2w fr-mb-3w'>
                 <p className='fr-mb-0 fr-text--xs texte-gris'>
-                  Dernière mise à jour des données (de l’indicateur, toutes zones confondues) :
+                  Dernière mise à jour des données (de l'indicateur, toutes zones confondues) :
                   {' '}
                   <span className='fr-text--bold'>
                     {dateDeMiseAJourIndicateur}

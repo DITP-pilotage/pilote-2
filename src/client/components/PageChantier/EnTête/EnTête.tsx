@@ -62,7 +62,7 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
         listeNomsResponsables={listeNomsResponsablesAutresMinistèresCoPorteurs}
       />
       <ResponsableChantierEnTete
-        libellé='Directeur(s) / directrice(s) d’Administration Centrale'
+        libellé="Directeur(s) / directrice(s) d'Administration Centrale"
         listeNomsResponsables={listeNomsDirecteursAdministrationCentrale}
       />
       <div className='flex flex-direction-row justify-start align-center fr-mt-md-2w format-mobile'>

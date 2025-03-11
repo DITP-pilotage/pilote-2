@@ -12,9 +12,7 @@ import {
   MapInformationMetadataIndicateurContrat,
   presenterEnMapInformationMetadataIndicateurContrat,
 } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
-import RécupérerChantiersSynthétisésUseCase from '@/server/usecase/chantier/RécupérerChantiersSynthétisésUseCase';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import { getContainer } from '@/server/dependances';
 import {
   InformationDerniereModificationMetadataIndicateurContrat,
@@ -63,8 +61,9 @@ export async function getServerSideProps({ req, res, params, query }: GetServerS
 
   const informationHistorisationIndicateur = await getContainer('parametrageIndicateur').resolve('metadataParametrageIndicateurQuery').recupererInformationDerniereModification({ indicId: params.id });
 
-  const récupérerChantiersSynthétisésUseCase = new RécupérerChantiersSynthétisésUseCase(dependencies.getChantierRepository());
-  const chantiers = await récupérerChantiersSynthétisésUseCase.run(session.habilitations);
+  const chantiers = await getContainer('gestionUtilisateur').resolve('recupererChantiersSynthetisesUseCase').run({
+    listeChantierIdLecture: session.habilitations.lecture.chantiers,
+  });
 
   const mapInformationMetadataIndicateur = presenterEnMapInformationMetadataIndicateurContrat(getContainer('parametrageIndicateur').resolve('récupérerInformationMetadataIndicateurUseCase').run());
 

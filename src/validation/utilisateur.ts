@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { ProfilCode, profilsCodes } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
-const customErrorMail = 'Vous essayez de créer un compte pour une adresse dont le domaine n’est pas en .gouv.fr. Veuillez contacter pilote.ditp@modernisation.gouv.fr pour plus d’informations.';
+const customErrorMail = "Vous essayez de créer un compte pour une adresse dont le domaine n'est pas en .gouv.fr. Veuillez contacter pilote.ditp@modernisation.gouv.fr pour plus d'informations.";
 
 const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
   if (issue.code === z.ZodIssueCode.invalid_string && issue.validation === 'email') {
@@ -22,7 +22,6 @@ const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
   }
   return { message: ctx.defaultError };
 };
-
 
 z.setErrorMap(customErrorMap);
 
@@ -57,16 +56,6 @@ export const validationInfosHabilitationsUtilisateur = z.object({
     responsabilite: z.object({
       chantiers: z.string().array(),
     }),
-  }),
-});
-
-export const validationFiltresPourListeUtilisateur = z.object({
-  filtres: z.object({
-    chantiers: z.string().array(),
-    territoires: z.string().array(),
-    périmètresMinistériels: z.string().array(),
-    chantiersAssociésAuxPérimètres: z.string().array(),
-    profils: z.enum(profilsCodes).array(),
   }),
 });
 

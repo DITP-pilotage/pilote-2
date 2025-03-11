@@ -7,15 +7,29 @@ import { libellésMétéos, MétéoSaisissable, météosSaisissables } from '@/s
 import Titre from '@/components/_commons/Titre/Titre';
 import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
 import Alerte from '@/components/_commons/Alerte/Alerte';
-import { LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS, validationSynthèseDesRésultatsFormulaire } from 'validation/synthèseDesRésultats';
+import {
+  LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS,
+  validationSynthèseDesRésultatsFormulaire,
+} from 'validation/synthèseDesRésultats';
 import SynthèseDesRésultatsFormulaireStyled from './Formulaire.styled';
 import SynthèseDesRésultatsFormulaireProps, { SynthèseDesRésultatsFormulaireInputs } from './Formulaire.interface';
 import useSynthèseDesRésultatsFormulaire from './useSynthèseDesRésultatsFormulaire';
 
-const SynthèseDesRésultatsFormulaire: FunctionComponent<SynthèseDesRésultatsFormulaireProps> = ({ contenuInitial, météoInitiale, synthèseDesRésultatsCrééeCallback, annulationCallback }) => {
-  const { créerSynthèseDesRésultats, alerte } = useSynthèseDesRésultatsFormulaire(synthèseDesRésultatsCrééeCallback);  
-  
-  const { register, handleSubmit, formState: { errors, isValid }, watch, getValues } = useForm<SynthèseDesRésultatsFormulaireInputs>({
+const SynthèseDesRésultatsFormulaire: FunctionComponent<SynthèseDesRésultatsFormulaireProps> = ({
+  contenuInitial,
+  météoInitiale,
+  synthèseDesRésultatsCrééeCallback,
+  annulationCallback,
+}) => {
+  const { créerSynthèseDesRésultats, alerte } = useSynthèseDesRésultatsFormulaire(synthèseDesRésultatsCrééeCallback);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    watch,
+    getValues,
+  } = useForm<SynthèseDesRésultatsFormulaireInputs>({
     mode: 'all',
     resolver: zodResolver(validationSynthèseDesRésultatsFormulaire),
     defaultValues: {
@@ -36,7 +50,7 @@ const SynthèseDesRésultatsFormulaire: FunctionComponent<SynthèseDesRésultats
         Modifier la météo et la synthèse des résultats
       </Titre>
       <p className='fr-text--xs fr-mb-1w texte-gris'>
-        {`Résumez l’état d’avancement du chantier et indiquez si vous souhaitez solliciter du soutien en quelques phrases (${LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS} caractères maximum). La météo doit indiquer votre niveau de confiance dans la possibilité d’atteindre les objectifs du chantier et le niveau d’appui nécessaire.`}
+        {`Résumez l'état d'avancement du chantier et indiquez si vous souhaitez solliciter du soutien en quelques phrases (${LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS} caractères maximum). La météo doit indiquer votre niveau de confiance dans la possibilité d'atteindre les objectifs du chantier et le niveau d'appui nécessaire.`}
       </p>
       <div className={`fr-mb-0 fr-input-group ${errors.contenu && 'fr-input-group--error'}`}>
         <textarea
@@ -48,9 +62,9 @@ const SynthèseDesRésultatsFormulaire: FunctionComponent<SynthèseDesRésultats
           <div>
             {
               !!errors.contenu &&
-                <p className='fr-error-text fr-mt-0 fr-mr-2w'>
-                  {errors.contenu.message}
-                </p>
+              <p className='fr-error-text fr-mt-0 fr-mr-2w'>
+                {errors.contenu.message}
+              </p>
             }
           </div>
           <CompteurCaractères
@@ -93,12 +107,12 @@ const SynthèseDesRésultatsFormulaire: FunctionComponent<SynthèseDesRésultats
       </div>
       {
         !!alerte && (
-        <div className='fr-mt-2w'>
-          <Alerte
-            titre={alerte.titre}
-            type={alerte.type}
-          />
-        </div>
+          <div className='fr-mt-2w'>
+            <Alerte
+              titre={alerte.titre}
+              type={alerte.type}
+            />
+          </div>
         )
       }
     </SynthèseDesRésultatsFormulaireStyled>

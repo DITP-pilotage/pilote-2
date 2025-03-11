@@ -34,13 +34,13 @@ function registerContainer(): ContainerDependencies {
   });
 
   return {
-    authentification: getAuthentificationContainer().createScope(),
-    chantiers: getChantiersContainer().createScope(),
-    parametrageIndicateur: getParametrageIndicateurContainer().createScope(),
-    importIndicateur: getImportIndicateurContainer().createScope(),
-    gestionUtilisateur: getGestionUtilisateurContainer().createScope(),
-    ficheConducteur: getFicheConducteurContainer(initialContainer),
     main: initialContainer.createScope(),
+    authentification: getAuthentificationContainer(initialContainer),
+    chantiers: getChantiersContainer(initialContainer),
+    parametrageIndicateur: getParametrageIndicateurContainer(initialContainer),
+    importIndicateur: getImportIndicateurContainer(initialContainer),
+    gestionUtilisateur: getGestionUtilisateurContainer(initialContainer),
+    ficheConducteur: getFicheConducteurContainer(initialContainer),
   };
 }
 
@@ -50,13 +50,9 @@ declare global {
   var __container: ContainerDependencies | undefined;
 }
 
-if (process.env.NODE_ENV === 'production') {
-  innerContainer = registerContainer();
-} else {
-  if (!global.__container) {
-    global.__container = registerContainer();
-  }
-  innerContainer = global.__container;
+if (!global.__container) {
+  global.__container = registerContainer();
 }
+innerContainer = global.__container;
 
 export const getContainer = <T extends keyof ContainerDependencies>(nameDependency: T) => innerContainer[nameDependency];

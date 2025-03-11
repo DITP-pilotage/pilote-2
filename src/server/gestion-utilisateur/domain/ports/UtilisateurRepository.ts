@@ -1,0 +1,14 @@
+import { Territoire } from '@/server/domain/territoire/Territoire.interface';
+import { Utilisateur } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
+import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface';
+import { UtilisateurExportCSV } from '@/server/gestion-utilisateur/domain/UtilisateurExportCSV';
+import { InformationChantierUtilisateur } from '@/server/gestion-utilisateur/domain/InformationChantierUtilisateur';
+
+export interface UtilisateurRepository {
+  récupérer(email: string, listeTerritoiresCodes: string[], listePerimetresMinisteriels: string[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[]): Promise<Utilisateur | null>
+  récupérerNombreUtilisateursParTerritoires(territoires: Territoire[]): Promise<Record<string, number>>
+  desactiver(email: string): Promise<void>
+  reactiver(email: string): Promise<void>
+  recupererTous({ sorting, valeurDeLaRecherche, listeTerritoiresCodes, listePerimetresMinisteriels, listeInformationsChantiersUtilisateurs }: { sorting: { id: string, desc: boolean }[], valeurDeLaRecherche: string, listeTerritoiresCodes: string[], listePerimetresMinisteriels: string[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[] }): Promise<UtilisateurListeGestion[]>
+  recupererPourExports({ valeurDeLaRecherche, listeTerritoiresCodes, listePerimetresMinisteriels, listeInformationsChantiersUtilisateurs }: { valeurDeLaRecherche: string, listeTerritoiresCodes: string[], listePerimetresMinisteriels: string[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[] }): Promise<UtilisateurExportCSV[]>
+}

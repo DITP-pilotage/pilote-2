@@ -11,7 +11,6 @@ import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcr
 import IndicateurBlocIndicateurTuile
   from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/indicateurBlocIndicateurTuile';
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 import { formaterDate } from '@/client/utils/date/date';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
@@ -49,24 +48,17 @@ const indicateurDétailsVide: IndicateurDétailsParTerritoire = {
 
 const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
 
-export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, typeDeRéforme: TypeDeRéforme, territoireSélectionné: DétailTerritoire, territoireProjetStructurant?: ProjetStructurant['territoire']) {
+export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, typeDeRéforme: TypeDeRéforme, territoireSélectionné: DétailTerritoire) {
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
 
   const [indicateurDétailsParTerritoires, setIndicateurDétailsParTerritoires] = useState<IndicateurDétailsParTerritoire[]>([indicateurDétailsVide]);
 
   const metÀJourDétailsParTerritoires = useCallback(() => {
-    if (typeDeRéforme === 'chantier') {
-      setIndicateurDétailsParTerritoires([{
-        territoireNom: territoireSélectionné.nomAffiché,
-        données: détailsIndicateur[territoireSélectionné.code],
-      }]);
-    } else if (typeDeRéforme === 'projet structurant' && territoireProjetStructurant) {
-      setIndicateurDétailsParTerritoires([{
-        territoireNom: territoireProjetStructurant.nomAffiché,
-        données: détailsIndicateur[territoireSélectionné.code],
-      }]);
-    }
-  }, [détailsIndicateur, territoireProjetStructurant, territoireSélectionné, typeDeRéforme]);
+    setIndicateurDétailsParTerritoires([{
+      territoireNom: territoireSélectionné.nomAffiché,
+      données: détailsIndicateur[territoireSélectionné.code],
+    }]);
+  }, [détailsIndicateur, territoireSélectionné]);
 
   useEffect(() => {
     if (détailsIndicateur) {

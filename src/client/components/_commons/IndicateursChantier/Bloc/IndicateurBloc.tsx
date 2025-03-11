@@ -158,7 +158,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   </strong>
                 </p>
                 <p className='fr-mb-0 fr-text--xs texte-gris'>
-                  Dernière mise à jour des données (de l’indicateur, toutes zones confondues) :
+                  Dernière mise à jour des données (de l'indicateur, toutes zones confondues) :
                   {' '}
                   <span className='fr-text--bold'>
                     {dateDeMiseAJourIndicateur ?? 'Non renseignée'}
@@ -168,7 +168,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   className={`flex align-center w-full relative${estIndicateurEnAlerte ? ' fr-text-warning' : ' texte-gris'}`}
                 >
                   <p className='fr-mb-0 fr-text--xs'>
-                    Date prévisionnelle de la prochaine mise à jour des données (de l’indicateur) :
+                    Date prévisionnelle de la prochaine mise à jour des données (de l'indicateur) :
                     {' '}
                     <span className='fr-text--bold'>
                       {indicateurEstApplicable ? (dateProchaineDateMaj ?? 'Données requises mais non renseignées par l\'équipe projet') : 'Non renseignée'}
@@ -179,12 +179,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     idHtml={`infobulle-date-previsionnelle-${indicateur.id}`}
                   >
                     <p className='fr-text--sm fr-text-title--blue-france'>
-                      Date prévisionnelle de mise à jour de l’indicateur :
+                      Date prévisionnelle de mise à jour de l'indicateur :
                     </p>
                     <p className='fr-text--sm fr-mb-0'>
                       Elle est calculée à partir de la date de la valeur actuelle, de la période de mise à jour et du
                       délai de disponibilité
-                      des données. Plus d'informations dans l'accordéon "Description de l’indicateur et calendrier de
+                      des données. Plus d'informations dans l'accordéon "Description de l'indicateur et calendrier de
                       mise à jour".
                     </p>
                   </Infobulle>

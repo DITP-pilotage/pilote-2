@@ -16,7 +16,7 @@ const HeaderFicheTerritoriale: FunctionComponent<{}> = () => {
             PILOTE
           </p>
           <p className='fr-text--sm fr-mb-0'>
-            Piloter l’action publique par les résultats
+            Piloter l'action publique par les résultats
           </p>
         </div>
       </header>

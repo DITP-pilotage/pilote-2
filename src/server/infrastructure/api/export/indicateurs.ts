@@ -9,8 +9,8 @@ import ExportCsvDesIndicateursUseCase
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { configuration } from '@/config';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { getChantiersContainer } from '@/server/chantiers/container';
 import { recupererJalon } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/recupererJalon';
+import { getContainer } from '@/server/dependances';
 
 export default async function handleExportDesIndicateurs(request: NextApiRequest, response: NextApiResponse): Promise<void> {
   const session = await getServerSession(request, response, authOptions);
@@ -47,9 +47,9 @@ export default async function handleExportDesIndicateurs(request: NextApiRequest
     listeOptionsExport: [],
   };
 
-  const chantierIds = await getChantiersContainer().resolve('chantierRepository').récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(), optionsExport);
+  const chantierIds = await getContainer('chantiers').resolve('chantierRepository').récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(), optionsExport);
 
-  const exportCsvDesIndicateursUseCase = getChantiersContainer().resolve('exportCsvDesIndicateursUseCase');
+  const exportCsvDesIndicateursUseCase = getContainer('chantiers').resolve('exportCsvDesIndicateursUseCase');
 
   for await (const partialResult of exportCsvDesIndicateursUseCase.run({
     chantierIds,
