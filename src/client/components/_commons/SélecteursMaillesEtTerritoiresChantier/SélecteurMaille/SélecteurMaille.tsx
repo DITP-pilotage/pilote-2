@@ -35,9 +35,9 @@ const SélecteurMaille: FunctionComponent<{
       pathname,
       query: { ...router.query, maille },
     },
-    undefined,
-    {},
-    );
+    undefined, {
+      scroll: false,
+    });
   };
 
   return (
@@ -56,7 +56,7 @@ const SélecteurMaille: FunctionComponent<{
                 <p className='titre-ellipsis fr-text--sm'>
                   {libellé}
                 </p>
-               
+
               </button>
             ))
         }

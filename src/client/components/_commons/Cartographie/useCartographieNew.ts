@@ -100,9 +100,9 @@ export default function useCartographie(territoireCode: string, pathname: '/accu
       pathname,
       query: { ...router.query },
     },
-    undefined,
-    {},
-    );
+    undefined, {
+      scroll: false,
+    });
   }
 
   function auClicTerritoireMultiSélectionCallback(territoireCodeSelectionnee: string, territoireSélectionnable: boolean) {
