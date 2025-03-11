@@ -243,7 +243,7 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
               La proposition de valeur d'avancement a correctement été prise en compte. Vous pouvez clore cette fenêtre.
             </h3>
             <span>
-              La proposition de valeur d'avancement s’affichera dans le tableau des indicateurs dans une heure. Veuillez noter que dans cet intervalle, il n’est pas possible de faire une autre proposition pour cet indicateur.
+              La proposition de valeur d'avancement s'affichera dans le tableau des indicateurs dans une heure. Veuillez noter que dans cet intervalle, il n'est pas possible de faire une autre proposition pour cet indicateur.
             </span>
           </div>
         )
