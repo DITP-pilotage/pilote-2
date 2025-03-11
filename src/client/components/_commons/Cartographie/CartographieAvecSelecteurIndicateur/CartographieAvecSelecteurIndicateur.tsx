@@ -44,22 +44,22 @@ const CartographieAvecSelecteurIndicateur: FunctionComponent<{
   const optionsCartographie: SélecteurOption<CartographieIndicateurType>[] = [
     {
       valeur: 'avancementMandat',
-      libellé: 'Carte des taux d\'avancement 2026',
+      libellé: "Carte des taux d'avancement 2026",
       désactivée: listeCartographiesDesactives.includes('avancementMandat'),
     },
     {
       valeur: 'avancementJalon',
-      libellé: `Carte des taux d\'avancement ${jalon}`,
+      libellé: `Carte des taux d'avancement ${jalon}`,
       désactivée: listeCartographiesDesactives.includes('avancementJalon'),
     },
     {
       valeur: 'valeurActuelle',
-      libellé: 'Carte des valeurs d\'avancements',
+      libellé: "Carte des valeurs d'avancements",
       désactivée: listeCartographiesDesactives.includes('valeurActuelle'),
     },
     {
       valeur: 'propositionValeur',
-      libellé: 'Carte des propositions de valeur d\'avancement',
+      libellé: "Carte des propositions de valeur d'avancement",
       désactivée: listeCartographiesDesactives.includes('propositionValeur'),
     },
   ];

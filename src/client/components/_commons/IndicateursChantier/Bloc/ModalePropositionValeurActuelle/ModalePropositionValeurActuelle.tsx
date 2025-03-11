@@ -45,7 +45,7 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                   {`${Stepper[etapePropositionValeurActuelle].titre}`}
                 </span>
                 <span className='fr-stepper__state'>
-                  {`Proposition d'une autre valeur d’avancement - Étape ${Stepper[etapePropositionValeurActuelle].numeroEtape} sur 2`}
+                  {`Proposition d'une autre valeur d'avancement - Étape ${Stepper[etapePropositionValeurActuelle].numeroEtape} sur 2`}
                 </span>
               </h2>
               <div
@@ -80,7 +80,7 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                       {
                         detailIndicateur.proposition !== null ? (
                           <p className='fr-text--sm fr-mt-1v'>
-                            La proposition de nouvelle valeur d’avancement que vous éditez a été faite
+                            La proposition de nouvelle valeur d'avancement que vous éditez a été faite
                             par
                             {' '}
                             {detailIndicateur.proposition.auteur}
@@ -96,7 +96,7 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                       <div className='w-full flex fr-mt-2w'>
                         <div className='w-half-full fr-mr-1w border flex flex-column'>
                           <span className='fr-background-action-low-blue-france flex justify-center fr-p-1w border'>
-                            Valeur d’avancement importée par la direction de projet
+                            Valeur d'avancement importée par la direction de projet
                           </span>
                           <div className='w-full flex flex-column justify-between fr-pt-1w'>
                             <span className='flex justify-center fr-mb-5v'>
@@ -111,7 +111,7 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                         </div>
                         <div className='w-half-full fr-ml-1w border'>
                           <span className='fr-background-action-low-blue-france w-full flex justify-center fr-p-1w'>
-                            Proposition de nouvelle valeur d’avancement
+                            Proposition de nouvelle valeur d'avancement
                           </span>
                           <div className='w-full flex flex-column align-center fr-pt-1w'>
                             <div className='w-half-full flex fr-mb-1w'>
@@ -171,7 +171,7 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                         </h3>
                         <p className='fr-callout__text fr-text--sm'>
                           <span className='fr-text--bold'>
-                            Valeur d’avancement proposée le
+                            Valeur d'avancement proposée le
                             {' '}
                             {`${formaterDate(new Date().toISOString(), 'DD/MM/YYYY')}`}
                             {' '}
@@ -208,8 +208,8 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                           Rappel sur le statut de votre proposition
                         </h3>
                         <p>
-                          Nous vous rappelons que la valeur d’avancement que vous proposez ne sera pas prise en compte dans
-                          le calcul du taux d’avancement global de la PPG. Cette proposition vise à engager un dialogue
+                          Nous vous rappelons que la valeur d'avancement que vous proposez ne sera pas prise en compte dans
+                          le calcul du taux d'avancement global de la PPG. Cette proposition vise à engager un dialogue
                           avec la direction de projet au niveau national, qui en sera informée. Si votre proposition
                           n'est pas intégrée par la direction de projet, elle ne sera plus visible dans l'historique de
                           l'indicateur à la prochaine mise à jour. Elle sera cependant conservée dans la base de données
@@ -240,10 +240,10 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
         ) : (
           <div className='fr-alert fr-alert--success fr-mt-2w'>
             <h3 className='fr-alert__title'>
-              La proposition de valeur d’avancement a correctement été prise en compte. Vous pouvez clore cette fenêtre.
+              La proposition de valeur d'avancement a correctement été prise en compte. Vous pouvez clore cette fenêtre.
             </h3>
             <span>
-              La proposition de valeur d’avancement s’affichera dans le tableau des indicateurs dans une heure. Veuillez noter que dans cet intervalle, il n’est pas possible de faire une autre proposition pour cet indicateur.
+              La proposition de valeur d'avancement s'affichera dans le tableau des indicateurs dans une heure. Veuillez noter que dans cet intervalle, il n'est pas possible de faire une autre proposition pour cet indicateur.
             </span>
           </div>
         )

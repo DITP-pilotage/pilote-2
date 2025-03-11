@@ -97,7 +97,7 @@ export const wordingFr = {
           },
           TYPE_VALEUR: {
             CHAMP: 'type_valeur',
-            EXPLICATION: 'Type de données insérées : vi pour valeur initiale, va pour valeur d\'avancement, vc pour valeur cible',
+            EXPLICATION: "Type de données insérées : vi pour valeur initiale, va pour valeur d'avancement, vc pour valeur cible",
           },
           VALEUR: {
             CHAMP: 'valeur',

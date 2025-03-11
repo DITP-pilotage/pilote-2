@@ -182,7 +182,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       Date prévisionnelle de mise à jour de l'indicateur :
                     </p>
                     <p className='fr-text--sm fr-mb-0'>
-                      Elle est calculée à partir de la date de la valeur d’avancement, de la période de mise à jour et du
+                      Elle est calculée à partir de la date de la valeur d'avancement, de la période de mise à jour et du
                       délai de disponibilité
                       des données. Plus d'informations dans l'accordéon "Description de l'indicateur et calendrier de
                       mise à jour".
@@ -259,7 +259,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <th
                       className='fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
                     >
-                      valeur d’avancement
+                      valeur d'avancement
                     </th>
                     <th
                       className='fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
@@ -269,12 +269,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <th
                       className='fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
                     >
-                      taux d’avancement
+                      taux d'avancement
                     </th>
                     <th
                       className='fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
                     >
-                      valeur d’avancement
+                      valeur d'avancement
                     </th>
                     <th
                       className='fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
@@ -284,7 +284,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <th
                       className='fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold'
                     >
-                      taux d’avancement
+                      taux d'avancement
                     </th>
                   </tr>
                 </thead>
@@ -309,7 +309,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               valeur={informationIndicateur.données.valeurInitiale}
                             />
                           </td>
-                          { /* Valeur et date valeur d’avancement de indicateurTerritoireJalon en fonction du jalon */}
+                          { /* Valeur et date valeur d'avancement de indicateurTerritoireJalon en fonction du jalon */}
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                             <ValeurEtDate
                               date={informationIndicateur.données.dateValeurActuelle}
@@ -334,7 +334,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               variante='secondaire'
                             />
                           </td>
-                          { /* Valeur et date valeur d’avancement mandat de indicateurTerritoire */}
+                          { /* Valeur et date valeur d'avancement mandat de indicateurTerritoire */}
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                             <ValeurEtDate
                               date={informationIndicateur.données.dateValeurActuelleMandat}
@@ -374,7 +374,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                       data-fr-opened='false'
                                       type='button'
                                     >
-                                      Proposer une autre valeur d’avancement
+                                      Proposer une autre valeur d'avancement
                                     </button>
                                   </div>
                                   <ModalePropositionValeurActuelle
@@ -398,7 +398,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                       </span>
                                       <Infobulle idHtml={`infobulle-proposition-valeur-davancement-${informationIndicateur.code}`}>
                                         <p className='fr-text--sm texte-proposition'>
-                                          Valeur d’avancement proposée
+                                          Valeur d'avancement proposée
                                           le
                                           {' '}
                                           {formaterDate(informationIndicateur.données.proposition.dateProposition, 'DD/MM/YYYY')}
@@ -436,7 +436,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   {
                                     estPropositionSurLeBonJalon ? (
                                       <>
-                                        { /* Valeur d’avancement en fonction de la proposition du jalon et date valeur d’avancement en fonction du mandat */}
+                                        { /* Valeur d'avancement en fonction de la proposition du jalon et date valeur d'avancement en fonction du mandat */}
                                         <td
                                           className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center'
                                         >
@@ -470,7 +470,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                       <td colSpan={3} />
                                     )
                                   }
-                                  { /* Valeur d’avancement en fonction de la proposition du jalon et date valeur d’avancement en fonction du mandat */}
+                                  { /* Valeur d'avancement en fonction de la proposition du jalon et date valeur d'avancement en fonction du mandat */}
                                   <td
                                     className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center'
                                   >
@@ -587,7 +587,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               variante='secondaire-light'
                             />
                           </td>
-                          { /* Valeur et date valeur d’avancement mandat de indicateurTerritoire */}
+                          { /* Valeur et date valeur d'avancement mandat de indicateurTerritoire */}
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                             <ValeurEtDate
                               date={informationIndicateurComparé.données.dateValeurActuelleMandat}
