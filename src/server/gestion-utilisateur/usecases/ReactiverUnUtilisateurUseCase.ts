@@ -47,7 +47,8 @@ export default class ReactiverUnUtilisateurUseCase {
     this.utilisateurIAMRepository = utilisateurIAMRepository;
   }
 
-  async run(email: Utilisateur['email'], habilitations: Habilitations, profilAuteur: Profil | null): Promise<void> {
+  async run(email: Utilisateur['email'], habilitations: Habilitations, profilAuteur: Profil | null, auteurId: string): Promise<void> {
+    
     const listeInformationsChantiersUtilisateurs = await this.chantierRepository.listerInformationsChantiersUtilisateurs();
     const listeTerritoiresCodes = await this.territoireRepository.listerCodes([]);
     const listePerimetresMinisteriels = await this.perimetreMinisterielRepository.listerIds([]);
@@ -65,8 +66,7 @@ export default class ReactiverUnUtilisateurUseCase {
       profilAuteur,
     );
 
-
-    await this.utilisateurRepository.reactiver(email);
+    await this.utilisateurRepository.reactiver(email, auteurId);
 
     if (process.env.IMPORT_KEYCLOAK_URL) {
       await this.utilisateurIAMRepository.reactive(email);

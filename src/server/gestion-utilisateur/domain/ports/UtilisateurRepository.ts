@@ -7,8 +7,8 @@ import { InformationChantierUtilisateur } from '@/server/gestion-utilisateur/dom
 export interface UtilisateurRepository {
   récupérer(email: string, listeTerritoiresCodes: string[], listePerimetresMinisteriels: string[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[]): Promise<Utilisateur | null>
   récupérerNombreUtilisateursParTerritoires(territoires: Territoire[]): Promise<Record<string, number>>
-  desactiver(email: string): Promise<void>
-  reactiver(email: string): Promise<void>
+  desactiver(email: string, auteurId: string): Promise<void>
+  reactiver(email: string, auteurId: string): Promise<void>
   recupererTous({ sorting, valeurDeLaRecherche, listeTerritoiresCodes, listePerimetresMinisteriels, listeInformationsChantiersUtilisateurs }: { sorting: { id: string, desc: boolean }[], valeurDeLaRecherche: string, listeTerritoiresCodes: string[], listePerimetresMinisteriels: string[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[] }): Promise<UtilisateurListeGestion[]>
   recupererPourExports({ valeurDeLaRecherche, listeTerritoiresCodes, listePerimetresMinisteriels, listeInformationsChantiersUtilisateurs }: { valeurDeLaRecherche: string, listeTerritoiresCodes: string[], listePerimetresMinisteriels: string[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[] }): Promise<UtilisateurExportCSV[]>
 }

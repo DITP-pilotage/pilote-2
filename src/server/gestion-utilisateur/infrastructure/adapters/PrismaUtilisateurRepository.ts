@@ -129,7 +129,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     this.prisma = prisma.getInstance();
   }
 
-  async desactiver(email: string): Promise<void> {
+  async desactiver(email: string, auteurId: string): Promise<void> {
     await this.prisma.utilisateur.updateMany({
       where: { 
         email: email.toLowerCase(),
@@ -137,11 +137,12 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       data: {
         date_desactivation: new Date(),
         date_modification: new Date(),
+        auteur_id_modification: auteurId,
       },
     });
   }
 
-  async reactiver(email: string): Promise<void> {
+  async reactiver(email: string, auteurId: string): Promise<void> {
     await this.prisma.utilisateur.updateMany({
       where: { 
         email: email.toLowerCase(),
@@ -149,6 +150,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       data: {
         date_desactivation: null,
         date_modification: new Date(),
+        auteur_id_modification: auteurId,
       },
     });
   }

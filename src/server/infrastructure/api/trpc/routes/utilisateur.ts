@@ -55,7 +55,7 @@ export const utilisateurRouter = créerRouteurTRPC({
       const profilAuteur = await new RécupérerUnProfilUseCase(
         dependencies.getProfilRepository(),
       ).run(ctx.session.profil);
-      await getContainer('gestionUtilisateur').resolve('desactiverUnUtilisateurUseCase').run(input.email, ctx.session.habilitations, profilAuteur);
+      await getContainer('gestionUtilisateur').resolve('desactiverUnUtilisateurUseCase').run(input.email, ctx.session.habilitations, profilAuteur, ctx.session.user.id);
     }),
   reactiver: procédureProtégée
     .input(validationReactiverUtilisateur.merge(zodValidateurCSRF))
@@ -64,6 +64,6 @@ export const utilisateurRouter = créerRouteurTRPC({
       const profilAuteur = await new RécupérerUnProfilUseCase(
         dependencies.getProfilRepository(),
       ).run(ctx.session.profil);
-      await getContainer('gestionUtilisateur').resolve('reactiverUnUtilisateurUseCase').run(input.email, ctx.session.habilitations, profilAuteur);
+      await getContainer('gestionUtilisateur').resolve('reactiverUnUtilisateurUseCase').run(input.email, ctx.session.habilitations, profilAuteur, ctx.session.user.id);
     }),
 });
