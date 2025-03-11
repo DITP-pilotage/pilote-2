@@ -1,5 +1,5 @@
 import { useSession } from 'next-auth/react';
-import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
+import { FunctionComponent, useCallback, useMemo, useState } from 'react';
 import PageLanding from '@/components/PageLanding/PageLanding';
 import Loader from '@/client/components/_commons/Loader/Loader';
 import MiseEnPageStyled from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
@@ -37,26 +37,32 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({ afficherLeLoader, chil
     }
   }, [récupérerLesTerritoires, status]);
 
-  useEffect(() => {
-    if (status === 'loading' || afficherLeLoader) {
-      window.scrollTo(0, 0);
-    }
-  }, [afficherLeLoader, status]);
-
   return (
     <MiseEnPageStyled>
       <EnTête />
       {
-        status === 'loading' || afficherLeLoader || (status === 'authenticated' && !aFiniDeChargerLesTerritoires)
+        status === 'loading' || (status === 'authenticated' && !aFiniDeChargerLesTerritoires)
           ?
             <Loader />
           : (
-            <>
+            <div className='relative'>
+              {
+                afficherLeLoader ? (
+                  <div className='toaster-chargement'>
+                    <div className='progress'>
+                      <div className='progress-bar-green' />
+                    </div>
+                    <p className='toaster-texte'>
+                      Chargement des données en cours...
+                    </p>
+                  </div>
+                ) : null
+              }
               {
                 status === 'unauthenticated' ? <PageLanding /> : children
               }
               <PiedDePage />
-            </>
+            </div>
           )
       }
     </MiseEnPageStyled>
