@@ -49,7 +49,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                   <div
                     className='fr-col-8 fr-text--bold flex align-center fr-p-1v'
                   >
-                    <div className='fr-pr-1w fr-text-title--blue-france'>
+                    <div className='fr-pr-1w fr-text-title--blue-france text-lg'>
                       <Icône
                         id={chantierFicheTerritoriale.ministereIcone}
                         key='une-icone'

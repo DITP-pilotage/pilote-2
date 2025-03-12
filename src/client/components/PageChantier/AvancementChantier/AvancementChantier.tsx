@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-child-element-spacing */
 import { FunctionComponent } from 'react';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import Bloc from '@/components/_commons/Bloc/Bloc';
@@ -87,8 +86,8 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   };
 
   const tuileEcartTAAPartirDeLaMaille: Record<string, string> = {
-    'departementale': 'départements',
-    'regionale': 'régions',
+    'departementale': ' départements ',
+    'regionale': ' régions ',
   };
 
   const tuileTendanceTAAPartirDeLaMaille: Record<Maille, string> = {
@@ -154,9 +153,9 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
             <strong className='fr-text--sm fr-mb-0 text-center'>
               Taux d'avancement national
             </strong>
-            <p className='fr-text--sm fr-ml-1v'>
+            <span className='fr-text--sm fr-ml-1v'>
               2025
-            </p>   
+            </span>   
           </div>
           <JaugeDeProgression
             couleur={territoireCode !== 'NAT-FR' ? 'bleu-clair' : 'bleu'}
@@ -220,18 +219,18 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 <strong className='fr-text--sm fr-mb-0 text-center'>
                   Répartition régionale
                 </strong>
-                <p className='fr-text--sm fr-ml-1v'>
+                <span className='fr-text--sm fr-ml-1v'>
                   2026
-                </p>   
+                </span>   
               </div>
             ) : (
               <div className='flex flex-direction-column flex-wrap justify-center align-center'>
                 <strong className='fr-text--sm fr-mb-0 text-center'>
                   Répartition départementale
                 </strong>
-                <p className='fr-text--sm fr-ml-1w'>
+                <span className='fr-text--sm fr-ml-1w'>
                   2026
-                </p>   
+                </span>   
               </div>
             )
           }
@@ -279,9 +278,9 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                     {tuileEcartTAAPartirDeLaMaille[territoireSélectionné.maille].toUpperCase()}
                     {' '}
                   </strong>
-                  <p className='fr-text--sm fr-ml-1v fr-mb-1w'>
+                  <span className='fr-text--sm fr-ml-1v fr-mb-1w'>
                     2026
-                  </p>
+                  </span>
                   <EcartTauxAvancementPPG ecart={donneesComparaisonDuTauxDAvancement.ppgEcartMedian} />
                   <p className='fr-text--xs fr-mt-1w text-center jauge-tracé'>
                     <strong className='fr-mr-1v'>
@@ -331,6 +330,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente && donneesComparaisonDuTauxDAvancement.ppgDateTauxDAvancementValeurPrecedente ? (
                 <div className='flex justify-center'>
                   (
+                  {' '}
                   <strong className='tendance-pourcentage-couleur'>
                     {`${donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente.toFixed(0) + '%'}`}
                   </strong>
@@ -341,13 +341,9 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                   )
                 </div>
               ) : (
-                <p className='fr-text--xs fr-m-0'>
-                  (
-                  <strong className='tendance-pourcentage-couleur'>
-                    Non défini
-                  </strong>
-                  )
-                </p>                
+                <p className='fr-text--xs fr-m-0 bold tendance-pourcentage-couleur'>
+                  (Non défini)
+                </p>
               )
             }
           </div>

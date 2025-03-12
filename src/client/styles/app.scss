@@ -99,7 +99,7 @@
 }
 
 .texte-gris {
-  color: var(--text-mention-grey)!important;
+  color: var(--text-mention-grey) !important;
 }
 
 .texte-success {
@@ -120,6 +120,10 @@
 
 .text-center {
   text-align: center !important;
+}
+
+.text-lg {
+  font-size: x-large;
 }
 
 .no-underline {

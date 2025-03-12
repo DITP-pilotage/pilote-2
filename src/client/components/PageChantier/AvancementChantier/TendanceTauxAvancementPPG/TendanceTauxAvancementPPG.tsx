@@ -1,9 +1,8 @@
-import 'material-symbols/index.css';
-import 'material-icons/iconfont/material-icons.css';
 import { FunctionComponent } from 'react';
 import Badge from '@/components/_commons/Badge/Badge';
 import { DonneesComparaisonDuTauxDAvancementType } from '@/server/domain/territoire/Territoire.interface';
 import { badgeTypeÀPartirDeLaTendance, libelléÀPartirDeLaTendance } from '@/client/utils/chantier/tendance/tendance';
+import Icône from '@/components/_commons/Icône/Icône';
 
 interface TendanceTauxAvancementPPGProps {
   tendance: DonneesComparaisonDuTauxDAvancementType['ppgTendanceChantier']
@@ -21,17 +20,20 @@ const TendanceTauxAvancementPPG: FunctionComponent<TendanceTauxAvancementPPGProp
       <div className='flex align-center'>
         {
           tendance === 'HAUSSE' ? (
-            <span className='material-symbols-outlined fr-text--xs fr-mr-1w'>
-              north_east
-            </span>
+            <Icône
+              className='fr-text--xs fr-mr-1v'
+              id='material-symbols::north_east::outlined'
+            />
           ) : tendance === 'BAISSE' ? (
-            <span className='material-symbols-outlined fr-text--xs fr-mr-1w'>
-              south_east
-            </span>
+            <Icône
+              className='fr-text--xs fr-mr-1v'
+              id='material-symbols::south_east::outlined'
+            />
           ) : (
-            <span className='material-symbols-outlined fr-text--xs fr-mr-1w'>
-              east
-            </span>
+            <Icône
+              className='fr-text--xs fr-mr-1v'
+              id='material-symbols::east::outlined'
+            />
           )
         }
       </div>
