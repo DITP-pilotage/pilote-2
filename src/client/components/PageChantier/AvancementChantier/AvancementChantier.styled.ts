@@ -65,18 +65,18 @@ const AvancementChantierStyled = styled.div`
   
   @media print {
     &.layout--dept {
-      grid-template-areas: "dept reg nat nat";
-      grid-template-columns: 2fr 2fr 2fr 2fr;
+      grid-template-areas: "dept reg nat";
+      grid-template-columns: 4fr 4fr 4fr;
     }
 
     &.layout--reg {
       grid-template-areas: "reg nat";
-      grid-template-columns: 2fr 2fr 2fr;
+      grid-template-columns: 6fr 6fr;
     }
 
     &.layout--nat {
       grid-template-areas: "nat";
-      grid-template-columns: 2fr 2fr;
+      grid-template-columns: 4fr 4fr;
     }
   } 
 `;
