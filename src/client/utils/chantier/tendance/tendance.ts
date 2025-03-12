@@ -1,8 +1,20 @@
 import { SortingState } from '@tanstack/react-table';
 import { ChantierTendance } from '@/server/domain/chantier/Chantier.interface';
+import { BadgeType } from '@/components/_commons/Badge/Badge.interface';
 
 const ORDRE_DES_TENDANCE: ChantierTendance[] = ['BAISSE', 'HAUSSE', 'STAGNATION'];
-
+ 
+export const badgeTypeÀPartirDeLaTendance: Record<NonNullable<ChantierTendance>, BadgeType> = {
+  'HAUSSE': 'vert',
+  'BAISSE': 'rouge',
+  'STAGNATION': 'bleu',
+};
+  
+export const libelléÀPartirDeLaTendance: Record<NonNullable<ChantierTendance>, string> = {
+  'HAUSSE': 'En hausse',
+  'BAISSE': 'En baisse',
+  'STAGNATION': 'Stable',
+};
 export function comparerTendance(tendanceA: ChantierTendance | null, tendanceB: ChantierTendance | null, tri: SortingState) {
 
   const sensDeTriDesc = tri[0].desc;

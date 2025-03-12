@@ -1,27 +1,27 @@
 import { FunctionComponent } from 'react';
 import Badge from '@/components/_commons/Badge/Badge';
-import { définirCouleurÉcartArrondi } from '@/client/utils/chantier/écart/écart';
+import { definirCouleurEcartArrondi } from '@/client/utils/chantier/écart/écart';
 import {
   DonnéesTableauChantiers,
 } from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
 
-interface TableauChantiersÉcartProps {
-  écart: DonnéesTableauChantiers['écart']
+interface TableauChantiersEcartProps {
+  ecart: DonnéesTableauChantiers['écart']
   estArchive?: boolean
 }
 
-const TableauChantiersÉcart: FunctionComponent<TableauChantiersÉcartProps> = ({ écart, estArchive }) => {
-  const couleurÉcartArrondi = définirCouleurÉcartArrondi(écart);
+const TableauChantiersEcart: FunctionComponent<TableauChantiersEcartProps> = ({ ecart, estArchive }) => {
+  const couleurEcartArrondi = definirCouleurEcartArrondi(ecart);
 
-  if (couleurÉcartArrondi === null) {
+  if (couleurEcartArrondi === null) {
     return null;
   }
 
   return (
-    <Badge type={estArchive ? 'gris' : couleurÉcartArrondi.couleur}>
-      {couleurÉcartArrondi.écartArrondi.toFixed(1)}
+    <Badge type={estArchive ? 'gris' : couleurEcartArrondi.couleur}>
+      {couleurEcartArrondi.ecartArrondi.toFixed(1)}
     </Badge>
   );
 };
 
-export default TableauChantiersÉcart;
+export default TableauChantiersEcart;

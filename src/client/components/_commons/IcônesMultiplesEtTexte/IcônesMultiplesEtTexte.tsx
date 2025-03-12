@@ -12,7 +12,7 @@ interface IcônesMultiplesEtTexteProps {
 const IcônesMultiplesEtTexte: FunctionComponent<IcônesMultiplesEtTexteProps> = ({ icônesId, largeurDesIcônes = '3.5rem', texteAlternatifPourIcônes, children }) => {
   return (
     <IcônesMultiplesEtTexteStyled largeurDesIcônes={largeurDesIcônes}>
-      <span className='icônes fr-pr-1w'>
+      <span className='icônes text-lg fr-pr-1w'>
         {
           icônesId.map(icôneId => (
             <Icône

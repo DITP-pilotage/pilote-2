@@ -15,13 +15,11 @@ import { JaugeDeProgressionSmall } from '@/components/_commons/JaugeDeProgressio
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import { DonneesComparaisonDuTauxDAvancementType } from '@/server/domain/territoire/Territoire.interface';
+import { formaterDate } from '@/client/utils/date/date';
 import AvancementChantierStyled from './AvancementChantier.styled';
-
-const classeÀPartirDeLaMaille = {
-  'nationale': 'layout--nat',
-  'departementale': 'layout--dept',
-  'regionale': 'layout--reg',
-};
+import EcartTauxAvancementPPG from './EcartTauxAvancementPPG/EcartTauxAvancementPPG';
+import TendanceTauxAvancementPPG from './TendanceTauxAvancementPPG/TendanceTauxAvancementPPG';
 
 interface AvancementChantierProps {
   territoireCode: string
@@ -49,6 +47,7 @@ interface AvancementChantierProps {
     }
   }
   mailleSourceDonnees?: Maille | null
+  donneesComparaisonDuTauxDAvancement: DonneesComparaisonDuTauxDAvancementType
 }
 
 const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
@@ -59,6 +58,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   estAutoriseAVoirLeSelecteurDeMaille,
   mailleSourceDonnees,
   jalon,
+  donneesComparaisonDuTauxDAvancement,
 }) => {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
@@ -76,9 +76,28 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
 
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const territoireSélectionnéParent = territoireSélectionné.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné.codeParent) : null;
+  const sousTitreTuileAvancementDepartemental = "Taux d'avancement départemental";
+  const sousTitreTuileAvancementRegional = "Taux d'avancement régional";
+
+  const classeAPartirDeLaMaille: Record<Maille, string> = {
+    'nationale': 'layout--nat',
+    'departementale': 'layout--dept',
+    'regionale': 'layout--reg',
+  };
+
+  const tuileEcartTAAPartirDeLaMaille: Record<string, string> = {
+    'departementale': ' départements ',
+    'regionale': ' régions ',
+  };
+
+  const tuileTendanceTAAPartirDeLaMaille: Record<Maille, string> = {
+    'nationale': 'le territoire',
+    'departementale': 'le département',
+    'regionale': 'la région',
+  };
 
   return (
-    <AvancementChantierStyled className={classeÀPartirDeLaMaille[territoireSélectionné.maille]}>
+    <AvancementChantierStyled className={classeAPartirDeLaMaille[territoireSélectionné.maille]}>
       {
         territoireCode !== 'NAT-FR' && mailleSelectionnee === 'departementale' ? (
           <Bloc titre={territoireSélectionné?.nomAffiché}>
@@ -91,6 +110,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 doitAfficherLeSelecteur={territoireCode.startsWith('DEPT')}
                 jalon={jalon}
                 territoireNom={territoireSélectionné.nom}
+                titreTauxAvancement={sousTitreTuileAvancementDepartemental}
               />
               {
                 mailleSourceDonnees === 'regionale' &&
@@ -119,6 +139,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 doitAfficherLeSelecteur={territoireCode.startsWith('REG')}
                 jalon={jalon}
                 territoireNom={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
+                titreTauxAvancement={sousTitreTuileAvancementRegional}
               />
             </div>
           </Bloc>
@@ -128,6 +149,14 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         titre='France'
       >
         <div className='fr-py-1w jauge'>
+          <div className='flex flex-direction-column flex-wrap justify-center align-center'>
+            <strong className='fr-text--sm fr-mb-0 text-center'>
+              Taux d'avancement national
+            </strong>
+            <span className='fr-text--sm fr-ml-1v'>
+              2025
+            </span>   
+          </div>
           <JaugeDeProgression
             couleur={territoireCode !== 'NAT-FR' ? 'bleu-clair' : 'bleu'}
             libellé='France'
@@ -179,19 +208,38 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
       </Bloc>
       <Bloc
         className='h-full'
-        contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
+        contenuClassesSupplémentaires='fr-p-2w'
         contenuInfobulle={INFOBULLE_CONTENUS.chantiers.repartitions}
-        titre='Répartition territoriale'
+        titre="Répartition territoriale du taux d'avancement 2026"
       >
-        <div className='fr-container fr-px-md-1w fr-px-lg-2w'>
+        <div className='fr-px-md-1w fr-px-lg-2w fr-py-1w'>
+          {
+            mailleQuery === 'regionale' ? (
+              <div className='flex flex-direction-column flex-wrap justify-center align-center'>
+                <strong className='fr-text--sm fr-mb-0 text-center'>
+                  Répartition régionale
+                </strong>
+                <span className='fr-text--sm fr-ml-1v'>
+                  2026
+                </span>   
+              </div>
+            ) : (
+              <div className='flex flex-direction-column flex-wrap justify-center align-center'>
+                <strong className='fr-text--sm fr-mb-0 text-center'>
+                  Répartition départementale
+                </strong>
+                <span className='fr-text--sm fr-ml-1w'>
+                  2026
+                </span>   
+              </div>
+            )
+          }
           {
             estAutoriseAVoirLeSelecteurDeMaille ? (
-              <div className='fr-grid-row fr-py-1w fr-text--sm'>
-                <SélecteurMaille
-                  mailleQuery={mailleQuery}
-                  pathname={pathname}
-                />
-              </div>
+              <SélecteurMaille
+                mailleQuery={mailleQuery}
+                pathname={pathname}
+              />
             ) : null
           }
           <div className='flex flex-column justify-center'>
@@ -210,6 +258,94 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               libellé='Minimum'
               pourcentage={avancements.nationale ? avancements.nationale.global.minimum : null}
             />
+          </div>
+        </div>
+      </Bloc>
+      <Bloc
+        className='h-full'
+        contenuClassesSupplémentaires='fr-p-2w'
+        contenuInfobulle={INFOBULLE_CONTENUS.chantiers.repartitions}
+        titre="Données de comparaison de l'avancement 2026"
+      >
+        {
+          territoireCode !== 'NAT-FR' ? (
+            <>
+              <div className='fr-py-1w flex flex-direction-column flex-wrap justify-center align-center'>
+                <div className='flex flex-direction-column flex-wrap justify-center align-center'>
+                  <strong className='fr-text--xs fr-mb-0 text-center'>
+                    SITUATION PAR RAPPORT AUX AUTRES 
+                    {' '}
+                    {tuileEcartTAAPartirDeLaMaille[territoireSélectionné.maille].toUpperCase()}
+                    {' '}
+                  </strong>
+                  <span className='fr-text--sm fr-ml-1v fr-mb-1w'>
+                    2026
+                  </span>
+                  <EcartTauxAvancementPPG ecart={donneesComparaisonDuTauxDAvancement.ppgEcartMedian} />
+                  <p className='fr-text--xs fr-mt-1w text-center jauge-tracé'>
+                    <strong className='fr-mr-1v'>
+                      écart
+                    </strong>
+                    du taux d'avancement 2026 par rapport au taux médian des autres 
+                    {' '}
+                    {tuileEcartTAAPartirDeLaMaille[territoireSélectionné.maille]}
+                    {' '}
+                    (
+                    {
+                      avancements.nationale && avancements.nationale.global.médiane ? (
+                        <strong className='ecart-pourcentage-couleur'>
+                          {avancements.nationale.global.médiane.toFixed(0) + '%'}
+                        </strong>
+                      ) : (
+                        <strong className='ecart-pourcentage-couleur'>
+                          Non défini
+                        </strong>
+                      )
+                    }
+                    ) 
+                  </p>
+                </div>
+              </div>
+              <hr className='fr-hr fr-py-1w' />
+            </>
+          ) : null
+        }
+        <div className='fr-py-1w flex flex-direction-column flex-wrap justify-center align-center'>
+          <strong className='fr-text--xs fr-mb-0 text-center'>
+            EVOLUTION TEMPORELLE
+          </strong>
+          <p className='fr-text--sm fr-ml-1v fr-mb-1w'>
+            2026
+          </p>
+          <TendanceTauxAvancementPPG tendance={donneesComparaisonDuTauxDAvancement.ppgTendanceChantier} />
+          <div className='fr-text--xs fr-mb-0 fr-mt-1w text-center'>
+            <strong className='fr-mr-1v'>
+              tendance
+            </strong>
+            du taux d'avancement 2026 par rapport au taux d'avancement précédemment mesuré sur
+            {' '}
+            {tuileTendanceTAAPartirDeLaMaille[territoireSélectionné.maille]}
+            {' '}
+            {
+              donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente && donneesComparaisonDuTauxDAvancement.ppgDateTauxDAvancementValeurPrecedente ? (
+                <div className='flex justify-center'>
+                  (
+                  {' '}
+                  <strong className='tendance-pourcentage-couleur'>
+                    {`${donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente.toFixed(0) + '%'}`}
+                  </strong>
+                  {', '}
+                  <p className='fr-text--xs fr-text-mention--grey fr-mb-0 fr-ml-1v'>
+                    {`${formaterDate(donneesComparaisonDuTauxDAvancement.ppgDateTauxDAvancementValeurPrecedente, 'MM/YYYY')}`}
+                  </p>
+                  )
+                </div>
+              ) : (
+                <p className='fr-text--xs fr-m-0 bold tendance-pourcentage-couleur'>
+                  (Non défini)
+                </p>
+              )
+            }
           </div>
         </div>
       </Bloc>

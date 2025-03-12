@@ -22,7 +22,8 @@ import { FunctionComponent, useMemo } from 'react';
 import IcôneStyled from '@/components/_commons/Icône/Icône.styled';
 
 interface IcôneProps {
-  id: string 
+  id: string
+  className?: string
 }
 
 const MATERIAL_SYMBOLS_CLASSES_CSS_À_PARTIR_DE_LA_VARIANTE: Record<string, string> = {
@@ -42,7 +43,7 @@ const MATERIAL_ICONS_CLASSES_CSS_À_PARTIR_DE_LA_VARIANTE: Record<string, string
 const DSFR_ICONS_VARIANTES = new Set(['fill', 'line']);
 const REMIX_ICONS_VARIANTES = new Set(['fill', 'line']);
 
-const Icône: FunctionComponent<IcôneProps> = ({ id }) => {
+const Icône: FunctionComponent<IcôneProps> = ({ id, className }) => {
   const identifiantIcône = useMemo(() => id.split('::'), [id]);
   if (identifiantIcône === null) {
     return null;
@@ -63,7 +64,7 @@ const Icône: FunctionComponent<IcôneProps> = ({ id }) => {
 
     return (
       <IcôneStyled
-        className={variante}
+        className={`${variante}${className ? ` ${className}` : ''}`}
       >
         { nomIcône }
       </IcôneStyled>
@@ -76,7 +77,7 @@ const Icône: FunctionComponent<IcôneProps> = ({ id }) => {
 
     return (
       <IcôneStyled
-        className={variante}
+        className={`${variante}${className ? ` ${className}` : ''}`}
       >
         { nomIcône }
       </IcôneStyled>

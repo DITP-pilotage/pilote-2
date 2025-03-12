@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const BadgeStyled = styled.p`
+const BadgeStyled = styled.div`
   width: auto !important;
   font-size: .75rem;
 

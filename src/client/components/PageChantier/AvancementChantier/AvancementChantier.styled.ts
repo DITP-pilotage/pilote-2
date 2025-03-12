@@ -19,10 +19,18 @@ const AvancementChantierStyled = styled.div`
     box-shadow: inset 0 -1px 0 0 var(--border-plain-grey)
   }
   
+  .ecart-pourcentage-couleur {
+    color: #8585F6;
+  }
+
+  .tendance-pourcentage-couleur {
+   color: var(--background-active-blue-france);
+  }
+  
   &.layout--dept {
     @media (min-width: 1025px) {
-      grid-template-areas: "dept reg nat nat";
-      grid-template-columns: 2fr 2fr 2fr 2fr;
+      grid-template-areas: "dept reg nat";
+      grid-template-columns: 4fr 4fr 4fr;
     }
 
     @media (min-width: 768px) and (max-width: 1024px) {
@@ -36,14 +44,14 @@ const AvancementChantierStyled = styled.div`
   &.layout--reg {
     @media (min-width: 768px) {
       grid-template-areas: "reg nat";
-      grid-template-columns: 2fr 2fr 2fr;
+      grid-template-columns: 6fr 6fr;
     }
   }
 
   &.layout--nat {
     @media (min-width: 768px) {
       grid-template-areas: "nat";
-      grid-template-columns: 2fr 2fr;
+      grid-template-columns: 4fr 4fr;
     }
   }
 

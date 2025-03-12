@@ -1,10 +1,12 @@
-type CouleurÉcart = 'rouge' | 'bleu' | 'vert' | 'gris';
+type CouleurEcart = 'rouge' | 'bleu' | 'vert' | 'gris';
+type Avancement = 'EN AVANCE' | 'DANS LA MEDIANE' | 'EN RETARD' | 'ARCHIVE';
 
-export function définirCouleurÉcartArrondi(écart: number | null, estArchive?: boolean) {
-  if (écart === null) return null;
+export function definirCouleurEcartArrondi(ecart: number | null, estArchive?: boolean) {
+  if (ecart === null) return null;
 
-  const écartArrondi = +écart.toFixed(1) || 0;
-  const couleur: CouleurÉcart = estArchive ? 'gris' : (écartArrondi <= -10 ? 'rouge' : écartArrondi >= 10 ? 'vert' : 'bleu');
+  const ecartArrondi = +ecart.toFixed(1) || 0;
+  const couleur: CouleurEcart = estArchive ? 'gris' : (ecartArrondi <= -10 ? 'rouge' : ecartArrondi >= 10 ? 'vert' : 'bleu');
+  const commentaire: Avancement = estArchive ? 'ARCHIVE' : (ecartArrondi <= -10 ? 'EN RETARD' : ecartArrondi >= 10 ? 'EN AVANCE' : 'DANS LA MEDIANE');
 
-  return { écartArrondi, couleur };
+  return { ecartArrondi, couleur, commentaire };
 }

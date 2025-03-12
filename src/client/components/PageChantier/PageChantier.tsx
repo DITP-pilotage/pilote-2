@@ -37,7 +37,7 @@ import {
   DétailsIndicateurTerritoire,
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { AvancementChantierContrat } from '@/components/PageChantier/AvancementChantier';
-import { CoordinateurTerritorial, ResponsableLocal } from '@/server/domain/territoire/Territoire.interface';
+import { CoordinateurTerritorial, DonneesComparaisonDuTauxDAvancementType, ResponsableLocal } from '@/server/domain/territoire/Territoire.interface';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import BandeauInformationMajDonnees
   from '@/components/PageChantier/BandeauInformationMajDonnees/BandeauInformationMajDonnees';
@@ -75,6 +75,7 @@ interface PageChantierProps {
   cartographieDroiteChantier: CartographieType
   cartographieDroiteIndicateur: CartographieIndicateurType
   cartographieGaucheIndicateur: CartographieIndicateurType
+  donneesComparaisonDuTauxDAvancement: DonneesComparaisonDuTauxDAvancementType
 }
 
 const PageChantier: FunctionComponent<PageChantierProps> = ({
@@ -99,11 +100,11 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
   cartographieGaucheChantier,
   cartographieDroiteIndicateur,
   cartographieGaucheIndicateur,
+  donneesComparaisonDuTauxDAvancement,
 }: PageChantierProps) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('md');
   const [estVisibleEnMobile, setEstVisibleEnMobile] = useState(false);
-
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
@@ -269,6 +270,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
               </TitreInfobulleConteneur>
               <AvancementChantier
                 avancements={avancements}
+                donneesComparaisonDuTauxDAvancement={donneesComparaisonDuTauxDAvancement}
                 estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
                 jalon={jalon}
                 mailleQuery={mailleQuery}

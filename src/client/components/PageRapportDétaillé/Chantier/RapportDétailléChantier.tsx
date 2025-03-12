@@ -24,6 +24,7 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import AvancementChantier from '@/components/PageChantier/AvancementChantier/AvancementChantier';
 import api from '@/server/infrastructure/api/trpc/api';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import { DonneesComparaisonDuTauxDAvancementType } from '@/server/domain/territoire/Territoire.interface';
 import RapportDétailléChantierStyled from './RapportDétailléChantier.styled';
 
 const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProps> = ({
@@ -55,6 +56,13 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
   const listeIndicateursParent = !!sousIndicateursDisponibles ?
     indicateurs.filter(indicateur => !indicateur.parentId) :
     indicateurs;
+
+  const donneesComparaisonDuTauxDAvancement: DonneesComparaisonDuTauxDAvancementType = {
+    ppgEcartMedian: chantier.écart,
+    ppgTendanceChantier : chantier.tendance,
+    ppgTauxDAvancementValeurPrecedente : chantier.avancementPrecedent,
+    ppgDateTauxDAvancementValeurPrecedente: chantier.dateTauxAvancementMandatValeurPrecedente,
+  };
 
   const categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]> = listeIndicateursParent.reduce((acc, indicateur) => {  
     if ((détailsIndicateurs[indicateur.id][territoireCode]?.pondération ?? 0) > 0) {
@@ -108,6 +116,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
                 </Titre>
                 <AvancementChantier
                   avancements={avancements}
+                  donneesComparaisonDuTauxDAvancement={donneesComparaisonDuTauxDAvancement}
                   estAutoriseAVoirLeSelecteurDeMaille={false}
                   jalon={jalon}
                   mailleQuery={mailleQuery}

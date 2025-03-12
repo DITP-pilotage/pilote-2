@@ -75,8 +75,8 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({ minist
                     onClick={() => auClicSurUnMinistèreCallback(ministère)}
                     type='button'
                   >
-                    <div className='tuile-ministère-contenu'>
-                      <span className='icône'>
+                    <div className='tuile-ministère-contenu text-lg'>
+                      <span className='icône text-lg'>
                         {
                           !!ministère.icône &&
                           <Icône id={ministère.icône} />
