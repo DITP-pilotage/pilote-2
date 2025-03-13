@@ -29,7 +29,6 @@ export class ChantierFicheTerritoriale {
     this._indicateurs = indicateurs;
   }
 
-
   get tauxAvancement(): number | null {
     return this._tauxAvancement;
   }

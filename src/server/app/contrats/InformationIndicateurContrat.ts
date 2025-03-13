@@ -1,6 +1,5 @@
 import { InformationIndicateur } from '@/server/import-indicateur/domain/InformationIndicateur';
 
-
 export interface InformationIndicateurContrat {
   indicId: string,
   indicSchema: string,

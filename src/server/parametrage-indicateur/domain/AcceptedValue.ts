@@ -7,7 +7,6 @@ export class AcceptedValue {
 
   private _desc;
 
-
   private constructor({ orderId, value, name, desc }: { orderId: number, value: string, name: string, desc: string }) {
     this._orderId = orderId;
     this._value = value;

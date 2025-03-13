@@ -13,7 +13,6 @@ type DonneesCartographieProposition = {
   estApplicable: boolean | null
 };
 
-
 function determinerRemplissage(valeur: TypeProposition | null, elementsDeLegende: CartographieÉlémentsDeLégende, estApplicable: boolean | null) {
   if (!estApplicable) {
     return elementsDeLegende.NON_APPLICABLE.remplissage;

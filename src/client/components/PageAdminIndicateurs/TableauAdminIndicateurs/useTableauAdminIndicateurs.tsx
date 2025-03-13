@@ -83,7 +83,6 @@ export default function useTableauPageAdminIndicateurs() {
 
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
 
-
   const [file, setFile] = useState<File | null>(null);
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 

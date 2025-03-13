@@ -12,13 +12,24 @@ import { Profil } from '@/server/domain/profil/Profil.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { ProfilCode } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
 import { UnauthorizedError } from '@/server/app/error-boundary/unauthorized-error';
+import {
+  PropositionValeurAvancementChantierInformation,
+} from '@/server/chantiers/domain/PropositionValeurAvancementChantierInformation';
 import { Habilitations } from './Habilitation.interface';
 
 const PROFIL_AUTORISE_A_MODIFICATION_TOKEN_API = new Set([ProfilEnum.DITP_ADMIN]);
 const PROFIL_AUTORISE_A_LECTURE_METADATA_INDICATEUR = new Set([ProfilEnum.DITP_ADMIN]);
 const PROFIL_AUTORISE_A_MODIFICATION_METADATA_INDICATEUR = new Set([ProfilEnum.DITP_ADMIN]);
 const PROFIL_AUTORISE_A_MODIFICATION_GESTION_CONTENU = new Set([ProfilEnum.DITP_ADMIN]);
-const PROFIL_AUTORISE_A_LECTURE_GESTION_CONTENU = new Set([ProfilEnum.DITP_ADMIN]);
+const PROFIL_AUTORISE_A_MODIFICATION_PROPOSITION_VALEUR_AVANCEMENT = new Set([
+  ProfilEnum.DITP_ADMIN,
+  ProfilEnum.PREFET_DEPARTEMENT,
+  ProfilEnum.PREFET_REGION,
+  ProfilEnum.COORDINATEUR_REGION,
+  ProfilEnum.COORDINATEUR_DEPARTEMENT,
+  ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+  ProfilEnum.SERVICES_DECONCENTRES_REGION,
+]);
 
 export default class Habilitation {
   constructor(private _habilitations: Habilitations) {}
@@ -67,6 +78,12 @@ export default class Habilitation {
 
   verifierAutorisationModificationGestionContenu(profil: ProfilCode | null) {
     if (!profil || !PROFIL_AUTORISE_A_MODIFICATION_GESTION_CONTENU.has(profil)) {
+      throw new UnauthorizedError("Vous n'êtes pas autorisé a effectuer cette action");
+    }
+  }
+
+  verifierAutorisationModificationPropositionValeurAvancement(profil: ProfilCode | null, chantiersIdsAutorisés: string[], propositionValeurAvancementChantierInformation: PropositionValeurAvancementChantierInformation) {
+    if (!profil || !PROFIL_AUTORISE_A_MODIFICATION_PROPOSITION_VALEUR_AVANCEMENT.has(profil) || propositionValeurAvancementChantierInformation.statut === 'ARCHIVE' || chantiersIdsAutorisés.includes(propositionValeurAvancementChantierInformation.id)) {
       throw new UnauthorizedError("Vous n'êtes pas autorisé a effectuer cette action");
     }
   }

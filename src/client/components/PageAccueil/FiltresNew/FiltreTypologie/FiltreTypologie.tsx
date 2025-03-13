@@ -15,7 +15,6 @@ const FiltreTypologie: FunctionComponent<FiltreTypologieProps> = ({ filtre, cate
     history: 'push',
   }));
 
-
   const [, setPagination] = useQueryState('pageIndex', parseAsInteger.withDefault(1).withOptions({
     shallow: false,
   }));

@@ -15,7 +15,7 @@ export const useModaleSuppressionValeurActuelle = ({ indicateur, territoireCode 
 
   const [estSupprime, setEstSupprime] = useState<boolean>(false);
 
-  const mutationCreerPropositonValeurActuelle = api.propositionValeurActuelle.supprimer.useMutation({
+  const mutationCreerPropositonValeurActuelle = api.propositionValeurAvancement.supprimer.useMutation({
     onSuccess: () => {
       setEstSupprime(true);
     },

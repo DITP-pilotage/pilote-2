@@ -6,7 +6,6 @@ import useSélecteurAvecRecherche from './useSélecteurAvecRecherche';
 import '@gouvfr/dsfr/dist/component/radio/radio.css';
 import '@gouvfr/dsfr/dist/component/select/select.min.css';
 
-
 const SélecteurAvecRecherche = <T extends string>({
   htmlName,
   libellé,

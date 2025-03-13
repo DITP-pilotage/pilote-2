@@ -24,7 +24,6 @@ describe('RécupérerChantierUseCase', () => {
     récupérerChantierUseCase = new RécupérerChantierUseCase(chantierRepository, ministèreRepository, territoireRepository);
   });
 
-
   const profil = ProfilEnum.DITP_ADMIN;
 
   test('Accède à un chantier par son id, vérification de quelques champs', async () => {

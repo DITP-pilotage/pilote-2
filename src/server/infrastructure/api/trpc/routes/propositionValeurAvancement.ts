@@ -1,27 +1,25 @@
 import { créerRouteurTRPC, procédureProtégée } from '@/server/infrastructure/api/trpc/trpc';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import {
-  validationPropositionValeurActuelle,
+  validationPropositionValeurAvancement,
   validationSuppressionValeurActuelle,
 } from '@/validation/proposition-valeur-actuelle';
-import {
-  CreerPropositionValeurActuelleUseCase,
-} from '@/server/chantiers/usecases/CreerPropositionValeurActuelleUseCase';
 import { StatutProposition } from '@/server/chantiers/domain/StatutProposition';
-import {
-  ModifierPropositionValeurActuelleUseCase,
-} from '@/server/chantiers/usecases/ModifierPropositionValeurActuelleUseCase';
+import Habilitation from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
+import { getContainer } from '@/server/dependances';
 
-export const propositionValeurActuelleRouter = créerRouteurTRPC({
+export const propositionValeurAvancementRouter = créerRouteurTRPC({
   creer: procédureProtégée
-    .input(validationPropositionValeurActuelle)
+    .input(validationPropositionValeurAvancement)
     .mutation(async ({ input, ctx }) => {
       const auteur = ctx.session.user.name ?? '';
       const idAuteur = ctx.session.user.id ?? '';
 
-      return new CreerPropositionValeurActuelleUseCase({
-        propositionValeurActuelleRepository: dependencies.getPropositionValeurActuelleRepository(),
-      }).run({
+      const propositionValeurAvancementChantierInformation = await getContainer('chantiers').resolve('chantierRepository').recupererPropositionValeurAvancementChantierInformationParIndicId({ indicId: input.indicId });
+
+      const habilitations = new Habilitation(ctx.session.habilitations);
+      habilitations.verifierAutorisationModificationPropositionValeurAvancement(ctx.session.profil, ctx.session.habilitations.saisieCommentaire.chantiers, propositionValeurAvancementChantierInformation);
+
+      await getContainer('chantiers').resolve('creerPropositionValeurActuelleUseCase').run({
         auteurModification: auteur,
         dateProposition: new Date(),
         dateValeurActuelle: new Date(input.dateValeurActuelle),
@@ -39,10 +37,7 @@ export const propositionValeurActuelleRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       const auteur = ctx.session.user.name ?? '';
 
-      await new ModifierPropositionValeurActuelleUseCase({
-        propositionValeurActuelleRepository: dependencies.getPropositionValeurActuelleRepository(),
-        indicateurRepository: dependencies.getChantierIndicateurRepository(),
-      }).run({
+      await getContainer('chantiers').resolve('modifierPropositionValeurActuelleUseCase').run({
         indicId: input.indicId,
         territoireCode: input.territoireCode,
         auteurModification: auteur,

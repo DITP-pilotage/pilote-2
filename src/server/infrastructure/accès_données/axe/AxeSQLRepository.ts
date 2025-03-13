@@ -3,7 +3,6 @@ import AxeRepository from '@/server/domain/axe/AxeRepository.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import { prisma } from '@/server/db/prisma';
 
-
 export default class AxeSQLRepository implements AxeRepository {
   async getListe(): Promise<Axe[]> {
     return prisma.axe.findMany();

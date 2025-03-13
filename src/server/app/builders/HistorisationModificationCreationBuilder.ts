@@ -13,14 +13,8 @@ export class HistorisationModificationCreationBuilder {
   
   private utilisateurNom: string = 'utilisateurNom';
 
-
   withId(id: string) {
     this.id = id;
-    return this;
-  }
-
-  withUtilisateurNom(utilisateurNom: string) {
-    this.utilisateurNom = utilisateurNom;
     return this;
   }
 

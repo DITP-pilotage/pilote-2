@@ -104,7 +104,6 @@ export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async ({
     habilitation,
   });
 
-
   const listeTerritoiresSelectionnable = await getContainer('gestionUtilisateur').resolve('recupererTerritoiresAvecNombreUtilisateursUseCase').run({ territoireCodes: session.habilitations.gestionUtilisateur.territoires });
 
   const nombreUtilisateur = utilisateursFiltrés.length;

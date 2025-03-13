@@ -30,5 +30,4 @@ const NextPageIndicateurs: FunctionComponent<{}> = () => {
   );
 };
 
-
 export default NextPageIndicateurs;

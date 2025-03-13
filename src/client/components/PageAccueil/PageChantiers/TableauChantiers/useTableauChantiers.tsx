@@ -33,7 +33,6 @@ import TableauChantiersTuileChantier from './Tuile/Chantier/TableauChantiersTuil
 import TableauChantiersTuileMinistère from './Tuile/Ministère/TableauChantiersTuileMinistère';
 import TableauChantiersTuileMinistèreProps from './Tuile/Ministère/TableauChantiersTuileMinistère.interface';
 
-
 export const useTableauChantiers = (données: TableauChantiersProps['données'], ministèresDisponibles: Ministère[], nombreTotalChantiersAvecAlertes: number, chantiersSontArchives: boolean) => {
 
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useQueryState('q', parseAsString.withDefault('').withOptions({

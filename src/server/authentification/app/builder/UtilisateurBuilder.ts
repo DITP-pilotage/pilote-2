@@ -6,7 +6,6 @@ import {
 import { ProfilAPI } from '@/server/authentification/domain/ProfilAPI';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
-
 export class UtilisateurBuilder {
   private email: string = 'test@test.com';
 

@@ -9,7 +9,6 @@ interface SousIndicateursProps {
   territoireCode: string
 }
 
-
 const SousIndicateursRapportDetaille: FunctionComponent<SousIndicateursProps> = ({
   listeSousIndicateurs,
   détailsIndicateurs,

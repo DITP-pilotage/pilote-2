@@ -6,9 +6,12 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import { wording } from '@/client/utils/i18n/i18n';
-import EtapeSelectionIndicateur from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapeSelectionIndicateur';
-import EtapeChargerFichier from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapeChargerFichier';
-import EtapePublierFichier from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapePublierFichier';
+import EtapeSelectionIndicateur
+  from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapeSelectionIndicateur';
+import EtapeChargerFichier
+  from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapeChargerFichier';
+import EtapePublierFichier
+  from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapePublierFichier';
 import { EtapesImport } from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapesImport';
 import { RapportContrat } from '@/server/app/contrats/RapportContrat';
 import { InformationIndicateurContrat } from '@/server/app/contrats/InformationIndicateurContrat';
@@ -33,13 +36,10 @@ const PageImportIndicateurSectionImport: FunctionComponent<PageImportIndicateurS
 }) => {
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
   const [estFichierPublie, setEstFichierPublie] = useState<boolean>(false);
-
-
   const optionsSélecteur = indicateurs.map(elem => ({
     libellé: elem.nom,
     valeur: elem.id,
   }));
-
 
   const { query } = useRouter();
   const etapeCourante = (query.etapeCourante || 1) as number;

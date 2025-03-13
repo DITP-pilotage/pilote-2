@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 
-
 const BarreDeProgressionStyled = styled.div`
   max-width: 100%;
   

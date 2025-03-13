@@ -152,7 +152,6 @@ describe('PrismaUtilisateurRepository', () => {
         data: utilisateurACreer,
       });
 
-
       // When
       await utilisateurRepository.desactiver('utilisateuracreer@test.com', auteurId);
       const utilisateurDesactive = await prisma.getInstance().utilisateur.findFirst({

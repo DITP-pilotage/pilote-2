@@ -43,7 +43,6 @@ export class MesureIndicateurTemporaire {
     this._metricValue = metricValue;
   }
 
-
   get id(): string {
     return this._id;
   }

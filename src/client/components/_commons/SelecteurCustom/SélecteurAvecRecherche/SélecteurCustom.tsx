@@ -5,7 +5,6 @@ import useSélecteurCustom from './useSélecteurCustom';
 import '@gouvfr/dsfr/dist/component/radio/radio.css';
 import '@gouvfr/dsfr/dist/component/select/select.min.css';
 
-
 export default function SélecteurCustom<T extends string>({
   htmlName,
   options,

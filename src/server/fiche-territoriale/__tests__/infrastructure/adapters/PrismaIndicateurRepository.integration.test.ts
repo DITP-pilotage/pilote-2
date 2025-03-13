@@ -254,7 +254,6 @@ describe('PrismaIndicateurRepository', () => {
       expect(result.get('CH-001')?.at(1)?.valeurCible).toEqual(23.3);
       expect(result.get('CH-001')?.at(1)?.uniteMesure).toEqual('Pourcentage');
 
-
       expect(result.get('CH-002')?.at(0)?.id).toEqual('IND-003');
       expect(result.get('CH-002')?.at(0)?.nom).toEqual('Un nom indicateur 3 OK pondération et maille');
       expect(result.get('CH-002')?.at(0)?.dateValeurActuelle).toEqual('2022-08-02T00:00:00.000Z');
@@ -486,7 +485,6 @@ describe('PrismaIndicateurRepository', () => {
       expect([...result.keys()]).toEqual(['CH-001', 'CH-002']);
       expect(result.get('CH-001')?.at(0)?.dateValeurActuelle).toEqual('2021-01-01T00:00:00.000Z');
       expect(result.get('CH-001')?.at(1)?.dateValeurActuelle).toEqual('2023-02-04T00:00:00.000Z');
-
 
       expect(result.get('CH-002')?.at(0)?.dateValeurActuelle).toEqual('2022-08-02T00:00:00.000Z');
     });

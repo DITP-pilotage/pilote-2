@@ -50,7 +50,6 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
     height: 100,
   };
 
-
   return (
     <CartographieSVGStyled>
       {

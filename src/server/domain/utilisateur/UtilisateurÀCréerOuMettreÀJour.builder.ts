@@ -23,7 +23,6 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
 
   private _gestionUtilisateur: UtilisateurÀCréerOuMettreÀJour['gestionUtilisateur'];
 
-
   constructor() {
     this._nom = faker.name.lastName();
     this._prénom = faker.name.firstName();
@@ -104,7 +103,6 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
     }
     return this;
   }
-
 
   build(): UtilisateurÀCréerOuMettreÀJour {
     return {

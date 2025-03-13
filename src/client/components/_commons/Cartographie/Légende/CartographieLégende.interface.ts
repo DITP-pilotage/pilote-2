@@ -10,5 +10,3 @@ export type CartographieÉlémentDeLégende = {
 };
 
 export type CartographieÉlémentsDeLégende = Record<string, CartographieÉlémentDeLégende>;
-
-

@@ -41,7 +41,6 @@ export type DonneeChantierContrat = {
   donnees_territoires: DonneeTerritoireChantierContrat[];
 };
 
-
 export const presenterEnDonneeTerritoireChantierContrat = (donneeChantier: DonneeChantier): DonneeTerritoireChantierContrat => {
   return {
     maille: donneeChantier.maille,

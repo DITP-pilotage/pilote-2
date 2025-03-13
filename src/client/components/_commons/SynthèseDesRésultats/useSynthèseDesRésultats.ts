@@ -19,7 +19,6 @@ export default function useSynthèseDesRésultats(synthèseDesRésultatsInitiale
     setModeÉdition(true);
   };
 
-
   const synthèseDesRésultatsCréée = (synthèse: SynthèseDesRésultats) => {
     rechargerChantier();
     setSynthèseDesRésultats(synthèse);
@@ -35,7 +34,6 @@ export default function useSynthèseDesRésultats(synthèseDesRésultatsInitiale
     setAlerte(null);
     désactiverLeModeÉdition();
   }, [synthèseDesRésultatsInitiale, territoireSélectionné]);
-
 
   return {
     activerLeModeÉdition,

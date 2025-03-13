@@ -5,7 +5,6 @@ import InputGroupeItem from '@/components/_commons/InputGroupe/InputGroupeItem';
 import InputGroupeStyled from './InputGroupe.styled';
 import useInputGroupe from './useInputGroupe';
 
-
 const InputGroupe: FunctionComponent<InputGroupeProps> = ({
   optionsGroupées,
   valeurSelectionneeParDefaut,

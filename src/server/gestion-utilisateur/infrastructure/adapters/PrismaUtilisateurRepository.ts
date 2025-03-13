@@ -48,7 +48,6 @@ const récupérerChantiersParDéfaut = (profilUtilisateur: PrismaProfilModel, li
     }, [] as string[])
     : listeChantiersAccessiblesIds;
 
-  
   return {
     lecture: listeChantiersAccessiblesIds,
     saisieCommentaire: chantiersAccessiblesEnSaisieCommentaire,

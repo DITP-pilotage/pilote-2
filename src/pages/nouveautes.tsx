@@ -14,9 +14,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async ({ res }) => {
   };
 };
 
-
 const NextPageNouveautés: FunctionComponent<{}> = () => {
-
   return (
     <>
       <Head>

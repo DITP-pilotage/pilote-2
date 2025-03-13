@@ -95,12 +95,6 @@ import {
   PrismaUtilisateurRepository,
 } from '@/server/authentification/infrastructure/adapters/PrismaUtilisateurRepository';
 import { PrismaProfilRepository } from '@/server/authentification/infrastructure/adapters/PrismaProfilRepository';
-import {
-  PropositionValeurActuelleRepository,
-} from '@/server/chantiers/domain/ports/PropositionValeurActuelleRepository';
-import {
-  PrismaPropositionValeurActuelleRepository,
-} from '@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurActuelleRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
 import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
 import PérimètreMinistérielSQLRepository from './accès_données/périmètreMinistériel/PérimètreMinistérielSQLRepository';
@@ -158,8 +152,6 @@ class Dependencies {
 
   private readonly _tokenAPIInformationRepository: TokenAPIInformationRepository;
 
-  private readonly _propositionValeurActuelleRepository: PropositionValeurActuelleRepository;
-
   constructor() {
     this._chantierRepository = new ChantierSQLRepository();
     this._axeRepository = new AxeSQLRepository();
@@ -187,7 +179,6 @@ class Dependencies {
     this._gestionContenuRepository = new PrismaGestionContenuRepository();
     this._tokenAPIService = new TokenAPIJWTService({ secret: configuration.tokenAPI.secret });
     this._tokenAPIInformationRepository = new PrismaTokenAPIInformationRepository();
-    this._propositionValeurActuelleRepository = new PrismaPropositionValeurActuelleRepository();
   }
 
   getGestionContenuRepository(): GestionContenuRepository {
@@ -292,10 +283,6 @@ class Dependencies {
 
   getTokenAPIInformationRepository() {
     return this._tokenAPIInformationRepository;
-  }
-
-  getPropositionValeurActuelleRepository() {
-    return this._propositionValeurActuelleRepository;
   }
 }
 

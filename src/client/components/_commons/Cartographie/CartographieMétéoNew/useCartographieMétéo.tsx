@@ -7,7 +7,6 @@ import {
 } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { CartographieDonnéesMétéo } from './CartographieMétéo.interface';
 
-
 function déterminerRemplissage(valeur: Météo | null, élémentsDeLégende: CartographieÉlémentsDeLégende, estApplicable: boolean | null) {
 
   // eslint-disable-next-line unicorn/prefer-switch

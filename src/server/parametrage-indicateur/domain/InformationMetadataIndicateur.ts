@@ -44,7 +44,6 @@ export class InformationMetadataIndicateur {
     this._acceptedValues = acceptedValues;
   }
 
-
   get name(): string {
     return this._name;
   }

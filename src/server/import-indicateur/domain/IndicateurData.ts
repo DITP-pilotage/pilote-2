@@ -33,7 +33,6 @@ export class IndicateurData {
     this._metricValue = metricValue;
   }
 
-
   get id(): string {
     return this._id;
   }

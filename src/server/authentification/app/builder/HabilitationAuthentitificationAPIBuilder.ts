@@ -42,7 +42,6 @@ export class HabilitationAuthentitificationAPIBuilder {
     return this;
   }
 
-
   build(): HabilitationAuthentitificationAPI {
     return {
       gestionUtilisateur: this.gestionUtilisateur,

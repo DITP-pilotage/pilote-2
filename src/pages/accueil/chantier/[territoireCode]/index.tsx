@@ -71,7 +71,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   const pageSize = Number.parseInt(query.pageSize as string) || 50;
   const jalon = Number.parseInt(query.jalon as string) || getAnneeDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
 
-
   assert(query.territoireCode, 'Le territoire code est obligatoire pour afficher la page d\'accueil');
   assert(session, 'Vous devez être authentifié pour accéder a cette page');
   assert(session.habilitations, 'La session ne dispose d\'aucune habilitation');
