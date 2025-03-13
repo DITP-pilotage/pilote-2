@@ -12,7 +12,7 @@ export const gestionTokenAPIRouter = créerRouteurTRPC({
 
       const habilitations = new Habilitation(ctx.session.habilitations);
 
-      habilitations.verifierAutorisationCreerTokenAPI(ctx.session.profil);
+      habilitations.verifierAutorisationModificationTokenAPI(ctx.session.profil);
 
       return new CreerTokenAPIUseCase({
         tokenAPIService: dependencies.getTokenAPIService(),
@@ -26,7 +26,7 @@ export const gestionTokenAPIRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       const habilitations = new Habilitation(ctx.session.habilitations);
 
-      habilitations.verifierAutorisationCreerTokenAPI(ctx.session.profil);
+      habilitations.verifierAutorisationModificationTokenAPI(ctx.session.profil);
 
       return new SupprimerTokenAPIUseCase({
         tokenAPIInformationRepository: dependencies.getTokenAPIInformationRepository(),

@@ -14,8 +14,11 @@ import { ProfilCode } from '@/server/gestion-utilisateur/domain/Utilisateur.inte
 import { UnauthorizedError } from '@/server/app/error-boundary/unauthorized-error';
 import { Habilitations } from './Habilitation.interface';
 
-const PROFIL_AUTORISE_A_CREER_UN_TOKEN_API = new Set([ProfilEnum.DITP_ADMIN]);
-const PROFIL_AUTORISE_A_SUPPRIMER_UN_TOKEN_API = new Set([ProfilEnum.DITP_ADMIN]);
+const PROFIL_AUTORISE_A_MODIFICATION_TOKEN_API = new Set([ProfilEnum.DITP_ADMIN]);
+const PROFIL_AUTORISE_A_LECTURE_METADATA_INDICATEUR = new Set([ProfilEnum.DITP_ADMIN]);
+const PROFIL_AUTORISE_A_MODIFICATION_METADATA_INDICATEUR = new Set([ProfilEnum.DITP_ADMIN]);
+const PROFIL_AUTORISE_A_MODIFICATION_GESTION_CONTENU = new Set([ProfilEnum.DITP_ADMIN]);
+const PROFIL_AUTORISE_A_LECTURE_GESTION_CONTENU = new Set([ProfilEnum.DITP_ADMIN]);
 
 export default class Habilitation {
   constructor(private _habilitations: Habilitations) {}
@@ -44,15 +47,27 @@ export default class Habilitation {
       throw new ChantiersNonAutorisésCreationModificationUtilisateurErreur();
   }
 
-  verifierAutorisationCreerTokenAPI(profil: ProfilCode | null) {
-    if (!profil || !PROFIL_AUTORISE_A_CREER_UN_TOKEN_API.has(profil)) {
-      throw new UnauthorizedError("Vous n'êtes pas autorisé a créer un token API");
+  verifierAutorisationModificationTokenAPI(profil: ProfilCode | null) {
+    if (!profil || !PROFIL_AUTORISE_A_MODIFICATION_TOKEN_API.has(profil)) {
+      throw new UnauthorizedError("Vous n'êtes pas autorisé a effectuer cette action");
     }
   }
 
-  verifierAutorisationSupprimerTokenAPI(profil: ProfilCode | null) {
-    if (!profil || !PROFIL_AUTORISE_A_SUPPRIMER_UN_TOKEN_API.has(profil)) {
-      throw new UnauthorizedError("Vous n'êtes pas autorisé a créer un token API");
+  verifierAutorisationLectureMetadataIndicateur(profil: ProfilCode | null) {
+    if (!profil || !PROFIL_AUTORISE_A_LECTURE_METADATA_INDICATEUR.has(profil)) {
+      throw new UnauthorizedError("Vous n'êtes pas autorisé a effectuer cette action");
+    }
+  }
+
+  verifierAutorisationModificationMetadataIndicateur(profil: ProfilCode | null) {
+    if (!profil || !PROFIL_AUTORISE_A_MODIFICATION_METADATA_INDICATEUR.has(profil)) {
+      throw new UnauthorizedError("Vous n'êtes pas autorisé a effectuer cette action");
+    }
+  }
+
+  verifierAutorisationModificationGestionContenu(profil: ProfilCode | null) {
+    if (!profil || !PROFIL_AUTORISE_A_MODIFICATION_GESTION_CONTENU.has(profil)) {
+      throw new UnauthorizedError("Vous n'êtes pas autorisé a effectuer cette action");
     }
   }
 }

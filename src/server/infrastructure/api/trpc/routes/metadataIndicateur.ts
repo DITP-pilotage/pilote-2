@@ -14,6 +14,7 @@ import {
 } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateurInputForm';
 import { getContainer } from '@/server/dependances';
 import { defaultHistoriqueInformation } from '@/server/parametrage-indicateur/domain/DefaultHistoriqueInformation';
+import Habilitation from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
 
 const convertirEnMetadataParametrageIndicateurForm = (input: any): MetadataParametrageIndicateurForm =>  {
   return {
@@ -87,30 +88,47 @@ const convertirEnMetadataParametrageIndicateurForm = (input: any): MetadataParam
 export const metadataIndicateurRouter = créerRouteurTRPC({
   récupérerMetadataIndicateurFiltrés: procédureProtégée
     .input(validationFiltresPourListeMetadataIndicateur)
-    .query(async ({ input }): Promise<MetadataParametrageIndicateurContrat[]> => {
+    .query(async ({ input, ctx }): Promise<MetadataParametrageIndicateurContrat[]> => {
+      const habilitations = new Habilitation(ctx.session.habilitations);
+
+      habilitations.verifierAutorisationLectureMetadataIndicateur(ctx.session.profil);
+
       const listeMetadataIndicateur = await getContainer('parametrageIndicateur').resolve('récupérerListeMetadataIndicateurUseCase').run(input.filtres.chantiers, input.filtres.perimetresMinisteriels, input.filtres.estTerritorialise, input.filtres.estBarometre);
       return listeMetadataIndicateur.map(presenterEnMetadataParametrageIndicateurContrat);
     }),
   listerMetadataIndicateurFiltrés: procédureProtégée
     .input(validationFiltresPourListeMetadataIndicateur)
-    .query(async ({ input }): Promise<MetadataParametrageIndicateurInformationContrat[]> => {
+    .query(async ({ input, ctx }): Promise<MetadataParametrageIndicateurInformationContrat[]> => {
+      const habilitations = new Habilitation(ctx.session.habilitations);
+
+      habilitations.verifierAutorisationLectureMetadataIndicateur(ctx.session.profil);
+
       const listeMetadataIndicateur = await getContainer('parametrageIndicateur').resolve('récupérerListeMetadataIndicateurUseCase').run(input.filtres.chantiers, input.filtres.perimetresMinisteriels, input.filtres.estTerritorialise, input.filtres.estBarometre);
       const mapHistorisationIndicateur = await getContainer('parametrageIndicateur').resolve('metadataParametrageIndicateurQuery').listerInformationDerniereModification({ listeIndicId: listeMetadataIndicateur.map(metadataIndicateur => metadataIndicateur.indicId) });
       return listeMetadataIndicateur.map(indicateur => presenterEnMetadataParametrageIndicateurInformationContrat(indicateur, mapHistorisationIndicateur.get(indicateur.indicId) || defaultHistoriqueInformation));
     }),
   récupérerMetadataIndicateurIdentifiantGénéré: procédureProtégée
-    .query(async ({}): Promise<string> => {
+    .query(async ({ ctx }): Promise<string> => {
+      const habilitations = new Habilitation(ctx.session.habilitations);
+      habilitations.verifierAutorisationLectureMetadataIndicateur(ctx.session.profil);
+
       return getContainer('parametrageIndicateur').resolve('récupérerMetadataIndicateurIdentifiantGénéréUseCase').run();
     }),
   modifier: procédureProtégée.input(zodValidateurCSRF.merge(validationMetadataIndicateurFormulaire).and(validationMetadataIndicateurContexte))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
+      const habilitations = new Habilitation(ctx.session.habilitations);
+      habilitations.verifierAutorisationModificationMetadataIndicateur(ctx.session.profil);
+
       return getContainer('parametrageIndicateur').resolve('modifierUneMetadataIndicateurUseCase').run(ctx.session.user.email as string, convertirEnMetadataParametrageIndicateurForm(input));
     }),
   creer: procédureProtégée.input(zodValidateurCSRF.merge(validationMetadataIndicateurFormulaire).and(validationMetadataIndicateurContexte))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+
+      const habilitations = new Habilitation(ctx.session.habilitations);
+      habilitations.verifierAutorisationModificationMetadataIndicateur(ctx.session.profil);
 
       return getContainer('parametrageIndicateur').resolve('creerUneMetadataIndicateurUseCase').run(ctx.session.user.email as string, convertirEnMetadataParametrageIndicateurForm(input));
     }),
