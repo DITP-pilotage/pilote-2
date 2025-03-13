@@ -9,7 +9,13 @@ import {
 } from '@/server/utils/errors';
 import { toutesLesValeursDuTableauSontContenuesDansLAutreTableau } from '@/client/utils/arrays';
 import { Profil } from '@/server/domain/profil/Profil.interface';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { ProfilCode } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
+import { UnauthorizedError } from '@/server/app/error-boundary/unauthorized-error';
 import { Habilitations } from './Habilitation.interface';
+
+const PROFIL_AUTORISE_A_CREER_UN_TOKEN_API = new Set([ProfilEnum.DITP_ADMIN]);
+const PROFIL_AUTORISE_A_SUPPRIMER_UN_TOKEN_API = new Set([ProfilEnum.DITP_ADMIN]);
 
 export default class Habilitation {
   constructor(private _habilitations: Habilitations) {}
@@ -36,5 +42,17 @@ export default class Habilitation {
     }
     if (profil.utilisateurs.tousTerritoires && !toutesLesValeursDuTableauSontContenuesDansLAutreTableau(chantiersIds, this._habilitations.gestionUtilisateur.chantiers))
       throw new ChantiersNonAutorisésCreationModificationUtilisateurErreur();
+  }
+
+  verifierAutorisationCreerTokenAPI(profil: ProfilCode | null) {
+    if (!profil || !PROFIL_AUTORISE_A_CREER_UN_TOKEN_API.has(profil)) {
+      throw new UnauthorizedError("Vous n'êtes pas autorisé a créer un token API");
+    }
+  }
+
+  verifierAutorisationSupprimerTokenAPI(profil: ProfilCode | null) {
+    if (!profil || !PROFIL_AUTORISE_A_SUPPRIMER_UN_TOKEN_API.has(profil)) {
+      throw new UnauthorizedError("Vous n'êtes pas autorisé a créer un token API");
+    }
   }
 }

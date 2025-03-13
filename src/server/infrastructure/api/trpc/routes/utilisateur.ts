@@ -19,6 +19,7 @@ export const utilisateurRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const auteurModification = ctx.session.user.email ?? '';
+
       const profilAuteur = await new RécupérerUnProfilUseCase(
         dependencies.getProfilRepository(),
       ).run(ctx.session.profil);

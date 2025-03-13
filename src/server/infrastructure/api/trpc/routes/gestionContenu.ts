@@ -13,6 +13,7 @@ import { VARIABLE_CONTENU_DISPONIBLE_ENV } from '@/server/gestion-contenu/domain
 export const validationVariableContenu = z.object({
   nomVariableContenu: z.enum(VARIABLE_CONTENU_DISPONIBLE_ENV),
 });
+
 export const gestionContenuRouter = créerRouteurTRPC({
   modifierBandeauIndisponibilite: procédureProtégée
     .input(validationContenu)
@@ -21,9 +22,10 @@ export const gestionContenuRouter = créerRouteurTRPC({
       return modifierMessageInformationUseCase.run({ bandeauType: input.bandeauType, isBandeauActif: input.isBandeauActif, bandeauTexte: input.bandeauTexte });
     }),
   récupérerMessageInformation: procédureProtégée
-    .query(() => {
+    .query(async () => {
       const récupérerMessageInformationUseCase = new RécupérerMessageInformationUseCase({ gestionContenuRepository: dependencies.getGestionContenuRepository() });
-      return récupérerMessageInformationUseCase.run().then(presenterEnMessageInformationContrat);
+      const messageInformation = await récupérerMessageInformationUseCase.run();
+      return presenterEnMessageInformationContrat(messageInformation);
     }),
   récupérerVariableContenu: procédureProtégée
     .input(validationVariableContenu)
