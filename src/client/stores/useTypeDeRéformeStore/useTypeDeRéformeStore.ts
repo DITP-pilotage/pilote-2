@@ -16,4 +16,3 @@ const useTypeDeRéformeStore = create<TypeDeRéformeStore>((set, get) => ({
 }));
 
 export const typeDeRéformeSélectionnéeStore = () => useTypeDeRéformeStore(étatActuel => étatActuel.typeDeRéformeSélectionné);
-export const actionsTypeDeRéformeStore = () => useTypeDeRéformeStore(étatActuel => étatActuel.actions);

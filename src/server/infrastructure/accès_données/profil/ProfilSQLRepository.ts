@@ -7,7 +7,7 @@ import { prisma } from '@/server/db/prisma';
 export default class ProfilSQLRepository implements ProfilRepository {
   async récupérerTous(): Promise<Profil[]> {
     const tousLesProfils = await prisma.profil.findMany();
-    return tousLesProfils.map(p => this._mapperVersLeDomaine(p));
+    return tousLesProfils.map(profil => this._mapperVersLeDomaine(profil));
   }
 
   async récupérer(profilCode: ProfilCode): Promise<Profil | null> {

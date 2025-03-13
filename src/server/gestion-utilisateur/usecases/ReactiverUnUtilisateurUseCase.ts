@@ -2,14 +2,14 @@ import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports
 import { UtilisateurIAMRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository';
 import { Utilisateur } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
 import { TokenAPIInformationRepository } from '@/server/gestion-utilisateur/domain/ports/TokenAPIInformationRepository';
-import { Habilitations } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface';
-import Habilitation from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
 import { Profil } from '@/server/domain/profil/Profil.interface';
 import { TerritoireRepository } from '@/server/gestion-utilisateur/domain/ports/TerritoireRepository';
 import {
   PerimetreMinisterielRepository,
 } from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository';
 import { ChantierRepository } from '@/server/gestion-utilisateur/domain/ports/ChantierRepository';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 
 type Dependencies = {
   utilisateurRepository: UtilisateurRepository,
@@ -25,13 +25,11 @@ export default class ReactiverUnUtilisateurUseCase {
 
   private chantierRepository: ChantierRepository;
 
-
   private territoireRepository: TerritoireRepository;
 
   private perimetreMinisterielRepository: PerimetreMinisterielRepository;
 
   private utilisateurIAMRepository: UtilisateurIAMRepository;
-
 
   constructor({
     utilisateurRepository,
@@ -60,6 +58,7 @@ export default class ReactiverUnUtilisateurUseCase {
     }
 
     const habilitation = new Habilitation(habilitations);
+
     habilitation.vérifierLesHabilitationsEnCréationModificationUtilisateur(
       utilisateurAReactiver.habilitations.lecture.chantiers, 
       utilisateurAReactiver.habilitations.lecture.territoires,

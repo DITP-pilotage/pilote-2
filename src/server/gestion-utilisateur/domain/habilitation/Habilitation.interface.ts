@@ -8,20 +8,29 @@ export const scopesChantiers = ['lecture', 'saisieCommentaire', 'saisieIndicateu
 export type ScopeUtilisateurs = typeof scopesUtilisateurs[number];
 export type ScopeChantiers = typeof scopesChantiers[number];
 
+type MetaInformation = {
+  aAccesTousLesChantiers: boolean
+  aAccesTousLesTerritoires: boolean
+  aAccesTousLesPerimetres: boolean
+};
+
 export type HabilitationChantiers = {
+  __meta: MetaInformation
   chantiers: Chantier['id'][]
   territoires: string[]
   périmètres: PérimètreMinistériel['id'][]
 };
 
 type HabilitationUtilisateurs = {
+  __meta: MetaInformation
   chantiers: Chantier['id'][]
   territoires: string[]
   périmètres: PérimètreMinistériel['id'][]
 };
 
+
 export type Habilitations = Record<ScopeUtilisateurs, HabilitationUtilisateurs>
-& Record<ScopeChantiers, HabilitationChantiers>; 
+& Record<ScopeChantiers, HabilitationChantiers>;
 
 export type HabilitationsÀCréerOuMettreÀJour = {
   lecture: {

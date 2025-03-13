@@ -5,13 +5,7 @@ import {
   profil as PrismaProfilModel,
   utilisateur as PrismaUtilisateurModel,
 } from '@prisma/client';
-import Utilisateur, {
-  ProfilCode,
-  profilsDépartementaux,
-  profilsRégionaux,
-} from '@/server/domain/utilisateur/Utilisateur.interface';
 import {
-  Habilitations,
   ScopeChantiers,
   ScopeUtilisateurs,
 } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
@@ -25,6 +19,12 @@ import { removeAccents } from '@/server/utils/remove-accents';
 import { estUnProfilTerritorialise } from '@/server/app/domain/ProfilTerritorialise';
 import { UtilisateurExportCSV } from '@/server/gestion-utilisateur/domain/UtilisateurExportCSV';
 import { InformationChantierUtilisateur } from '@/server/gestion-utilisateur/domain/InformationChantierUtilisateur';
+import { Habilitations } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface';
+import {
+  ProfilCode,
+  profilsDépartementaux, profilsRégionaux,
+  Utilisateur,
+} from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
 
 interface Dependencies {
   prisma: PrismaPilote
@@ -58,28 +58,53 @@ const récupérerChantiersParDéfaut = (profilUtilisateur: PrismaProfilModel, li
 const créerLesHabilitations = (profilUtilisateur: PrismaProfilModel, habilitations: PrismaHabilitationModel[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[], territoires: string[], perimetresMinisteriels: string[]) => {
   const chantiersParDéfaut = récupérerChantiersParDéfaut(profilUtilisateur, listeInformationsChantiersUtilisateurs);
 
-  let habilitationsGénérées: Utilisateur['habilitations'] = {
+  let habilitationsGénérées: Habilitations = {
     lecture: {
+      __meta: {
+        aAccesTousLesChantiers: profilUtilisateur.a_acces_tous_chantiers,
+        aAccesTousLesTerritoires: profilUtilisateur.a_acces_tous_les_territoires_lecture,
+        aAccesTousLesPerimetres: profilUtilisateur.a_acces_tous_chantiers,
+      },
       chantiers: chantiersParDéfaut.lecture,
       territoires: profilUtilisateur.a_acces_tous_les_territoires_lecture ? territoires : [],
       périmètres: profilUtilisateur.a_acces_tous_chantiers ? perimetresMinisteriels : [],
     },
     saisieCommentaire: {
+      __meta: {
+        aAccesTousLesChantiers: profilUtilisateur.a_acces_tous_chantiers,
+        aAccesTousLesTerritoires: profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire,
+        aAccesTousLesPerimetres: false,
+      },
       chantiers: chantiersParDéfaut.saisieCommentaire,
       territoires: profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire ? territoires : [],
       périmètres: [],
     },
     saisieIndicateur: {
+      __meta: {
+        aAccesTousLesChantiers: profilUtilisateur.a_acces_tous_chantiers,
+        aAccesTousLesTerritoires: profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur,
+        aAccesTousLesPerimetres: false,
+      },
       chantiers: chantiersParDéfaut.saisieIndicateur,
       territoires: profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur ? territoires : [],
       périmètres: [],
     },
     gestionUtilisateur: {
+      __meta: {
+        aAccesTousLesChantiers: profilUtilisateur.a_acces_a_tous_les_chantiers_utilisateurs,
+        aAccesTousLesTerritoires: profilUtilisateur.a_acces_a_tous_les_territoires_utilisateurs,
+        aAccesTousLesPerimetres: false,
+      },
       chantiers: chantiersParDéfaut.gestionUtilisateur,
       territoires: [ProfilEnum.DITP_PILOTAGE, ProfilEnum.DITP_ADMIN].includes(profilUtilisateur.code) ? territoires : [],
       périmètres: [],
     },
     responsabilite: {
+      __meta: {
+        aAccesTousLesChantiers: false,
+        aAccesTousLesTerritoires: false,
+        aAccesTousLesPerimetres: false,
+      },
       chantiers: [],
       territoires: [],
       périmètres: [],
@@ -88,10 +113,14 @@ const créerLesHabilitations = (profilUtilisateur: PrismaProfilModel, habilitati
 
   habilitations.forEach(habilitation => {
     const scopeCode = habilitation.scopeCode as keyof Utilisateur['habilitations'];
+    const listeInformationsChantiersUtilisateursApplicableSurTerritoire = estUnProfilTerritorialise(profilUtilisateur.code as ProfilCode)
+      ? listeInformationsChantiersUtilisateurs.filter(informationChantier => informationChantier.territoiresApplicables.some(territoire => habilitation.territoires.includes(territoire)))
+      : listeInformationsChantiersUtilisateurs;
+
     const listeChantier =
-      scopeCode == 'saisieCommentaire' && [ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(profilUtilisateur.code) ?
-        listeInformationsChantiersUtilisateurs.filter(chantier => chantier.ate !== 'hors_ate_centralise') :
-        listeInformationsChantiersUtilisateurs;
+      scopeCode == 'saisieCommentaire' && [ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(profilUtilisateur.code) 
+        ? listeInformationsChantiersUtilisateursApplicableSurTerritoire.filter(chantier => chantier.ate !== 'hors_ate_centralise') 
+        : listeInformationsChantiersUtilisateursApplicableSurTerritoire;
 
     const chantiersSupplémentaires =
       habilitation.chantiers.length > 0 ?

@@ -1,15 +1,15 @@
 import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository';
 import { UtilisateurIAMRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository';
 import { Utilisateur } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
-import { Habilitations } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface';
 import { Profil } from '@/server/domain/profil/Profil.interface';
-import Habilitation from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
 import { TokenAPIInformationRepository } from '@/server/gestion-utilisateur/domain/ports/TokenAPIInformationRepository';
 import { TerritoireRepository } from '@/server/gestion-utilisateur/domain/ports/TerritoireRepository';
 import {
   PerimetreMinisterielRepository,
 } from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository';
 import { ChantierRepository } from '@/server/gestion-utilisateur/domain/ports/ChantierRepository';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
 type Dependencies = {
   utilisateurRepository: UtilisateurRepository,

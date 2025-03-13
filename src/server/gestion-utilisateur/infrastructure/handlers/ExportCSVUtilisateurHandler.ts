@@ -13,6 +13,7 @@ import { UtilisateurExportCSV } from '@/server/gestion-utilisateur/domain/Utilis
 import { recupererLesNomsDesTerritoires } from '@/server/app/RecupererLesNomsDesTerritoiresPourUnUtilisateur';
 import { Territoire } from '@/server/gestion-utilisateur/domain/Territoire';
 import { profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { InformationChantierUtilisateur } from '@/server/gestion-utilisateur/domain/InformationChantierUtilisateur';
 
 type UtilisateurPourExportCSVContrat = string[];
 
@@ -33,20 +34,29 @@ const HeadersExportCSVUtilisateur = (): string[] => {
   ];
 };
 
-const presenterEnUtilisateurPourExportCSVContrat = (utilisateurPourExport: UtilisateurExportCSV, listeDesTerritoires: Territoire[]): UtilisateurPourExportCSVContrat => {
+const recupererLesNomsDesChantiers = (listeChantiersIds: string[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[], aAccesTousLesChantiers: boolean): string[] => {
+  if (aAccesTousLesChantiers) {
+    return ['Tous les chantiers'];
+  }
+
+  const listeNomsChantiers = listeChantiersIds.map(chantierId => listeInformationsChantiersUtilisateurs.find(chantier => chantier.id === chantierId)?.nom || null).filter(Boolean);
+  return listeChantiersIds.length === 0 ? ['Aucun chantier'] : listeNomsChantiers;
+};
+
+const presenterEnUtilisateurPourExportCSVContrat = (utilisateurPourExport: UtilisateurExportCSV, listeDesTerritoires: Territoire[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[]): UtilisateurPourExportCSVContrat => {
   return [
     utilisateurPourExport.prénom,
     utilisateurPourExport.nom,
     utilisateurPourExport.email,
     utilisateurPourExport.fonction || '',
     utilisateurPourExport.profil,
-    recupererLesNomsDesTerritoires(utilisateurPourExport.profil, utilisateurPourExport.habilitations, listeDesTerritoires).join(', '),
-    utilisateurPourExport.habilitations.lecture.périmètres.join(', ') || !profilsTerritoriaux.includes(utilisateurPourExport.profil) ? 'Tous les périmètres' : 'Aucun périmètre',
-    utilisateurPourExport.habilitations.lecture.chantiers.join(', ') || 'Aucun chantier',
-    utilisateurPourExport.habilitations.responsabilite.chantiers.join(', ') || 'Aucun chantier',
-    utilisateurPourExport.habilitations.saisieIndicateur.chantiers.join(', ') || 'Aucun chantier',
-    utilisateurPourExport.habilitations.saisieCommentaire.chantiers.join(', ') || 'Aucun chantier',
-    utilisateurPourExport.habilitations.gestionUtilisateur.chantiers.join(', ') || 'Aucun chantier',
+    recupererLesNomsDesTerritoires(utilisateurPourExport.profil, utilisateurPourExport.habilitations, listeDesTerritoires).join('\n'),
+    utilisateurPourExport.habilitations.lecture.périmètres.join('\n') || !profilsTerritoriaux.includes(utilisateurPourExport.profil) ? 'Tous les périmètres' : 'Aucun périmètre',
+    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.lecture.chantiers, listeInformationsChantiersUtilisateurs, utilisateurPourExport.habilitations.lecture.__meta.aAccesTousLesChantiers).join('\n'),
+    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.responsabilite.chantiers, listeInformationsChantiersUtilisateurs, utilisateurPourExport.habilitations.lecture.__meta.aAccesTousLesChantiers).join('\n'),
+    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.saisieIndicateur.chantiers, listeInformationsChantiersUtilisateurs, utilisateurPourExport.habilitations.lecture.__meta.aAccesTousLesChantiers).join('\n'),
+    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.saisieCommentaire.chantiers, listeInformationsChantiersUtilisateurs, utilisateurPourExport.habilitations.lecture.__meta.aAccesTousLesChantiers).join('\n'),
+    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.gestionUtilisateur.chantiers, listeInformationsChantiersUtilisateurs, utilisateurPourExport.habilitations.lecture.__meta.aAccesTousLesChantiers).join('\n'),
   ];
 };
 
@@ -99,9 +109,8 @@ export const handleExportDesUtilisateurs = async (request: NextApiRequest, respo
 
   const listeUtilisateur = await getContainer('gestionUtilisateur').resolve('utilisateurRepository').recupererPourExports({ valeurDeLaRecherche: optionsExport.queryString, listeTerritoiresCodes: listeDesTerritoires.map(territoire => territoire.code), listePerimetresMinisteriels, listeInformationsChantiersUtilisateurs });
   const listeUtilisateurFiltré = getContainer('gestionUtilisateur').resolve('filtrerListeUtilisateursUseCase').run({ utilisateurs: listeUtilisateur, filtresActifs, profil: session.profil, habilitation });
-
   for (const utilisateurPourExport of listeUtilisateurFiltré) {
-    stringifier.write(presenterEnUtilisateurPourExportCSVContrat(utilisateurPourExport, listeDesTerritoires));
+    stringifier.write(presenterEnUtilisateurPourExportCSVContrat(utilisateurPourExport, listeDesTerritoires, listeInformationsChantiersUtilisateurs));
   }
   stringifier.end();
 };
