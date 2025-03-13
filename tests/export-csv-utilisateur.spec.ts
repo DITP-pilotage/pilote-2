@@ -25,7 +25,6 @@ test('doit pouvoir exporter les données des chantiers sous format CSV', async (
         expect(download.suggestedFilename()).toMatch(/PILOTE-Utilisateurs-.*\.csv/);
       });
 
-
       await test.step('vérification du fichier identifiant et cadrage', async () => {
         const contents = await fs.promises.readFile(await download.path());
 
