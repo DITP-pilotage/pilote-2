@@ -27,13 +27,13 @@ const presenterEnHistoriqueIndicateurExportContrat = (historiqueIndicateurPourEx
     historiqueIndicateurPourExport.chantierId || NON_RENSEIGNEE,
     historiqueIndicateurPourExport.nom || NON_APPLICABLE,
     formaterNumériqueOuValeurNonRenseignee(historiqueIndicateurPourExport.valeurInitiale, historiqueIndicateurPourExport.estApplicable),
-    formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurInitiale, historiqueIndicateurPourExport.estApplicable),
+    formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurInitiale, historiqueIndicateurPourExport.estApplicable, 'MM-YYYY'),
     formaterNumériqueOuValeurNonRenseignee(historiqueIndicateurPourExport.valeurCibleAnnuelle, historiqueIndicateurPourExport.estApplicable),
-    formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurCibleAnnuelle, historiqueIndicateurPourExport.estApplicable),
+    formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurCibleAnnuelle, historiqueIndicateurPourExport.estApplicable, 'MM-YYYY'),
     formaterNumériqueOuValeurNonRenseignee(historiqueIndicateurPourExport.valeurCible, historiqueIndicateurPourExport.estApplicable),
-    formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurCible, historiqueIndicateurPourExport.estApplicable),
+    formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurCible, historiqueIndicateurPourExport.estApplicable, 'MM-YYYY'),
     formaterNumériqueOuValeurNonRenseignee(historiqueIndicateurPourExport.valeurActuelle, historiqueIndicateurPourExport.estApplicable),
-    formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurActuelle, historiqueIndicateurPourExport.estApplicable),
+    formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurActuelle, historiqueIndicateurPourExport.estApplicable, 'MM-YYYY'),
   ];
 };
 
