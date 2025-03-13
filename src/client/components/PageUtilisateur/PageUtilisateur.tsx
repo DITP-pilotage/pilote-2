@@ -178,6 +178,8 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({ utilisateur,
                         {utilisateur.nom}
                         .
                       </span>
+                      {' '}
+                      Un message de réinitialisation de mot de passe lui sera transmis automatiquement.
                     </div>
                     <div className='fr-grid-row fr-grid-row--right fr-mt-4w'>
                       <Bouton
