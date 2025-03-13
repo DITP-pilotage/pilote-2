@@ -5,4 +5,5 @@ export interface InformationChantierUtilisateur {
   perimetreIds: string[],
   statut: string,
   ate: string | null
+  territoiresApplicables: string[]
 }

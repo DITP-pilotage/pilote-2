@@ -109,7 +109,6 @@ export const handleExportDesUtilisateurs = async (request: NextApiRequest, respo
 
   const listeUtilisateur = await getContainer('gestionUtilisateur').resolve('utilisateurRepository').recupererPourExports({ valeurDeLaRecherche: optionsExport.queryString, listeTerritoiresCodes: listeDesTerritoires.map(territoire => territoire.code), listePerimetresMinisteriels, listeInformationsChantiersUtilisateurs });
   const listeUtilisateurFiltré = getContainer('gestionUtilisateur').resolve('filtrerListeUtilisateursUseCase').run({ utilisateurs: listeUtilisateur, filtresActifs, profil: session.profil, habilitation });
-
   for (const utilisateurPourExport of listeUtilisateurFiltré) {
     stringifier.write(presenterEnUtilisateurPourExportCSVContrat(utilisateurPourExport, listeDesTerritoires, listeInformationsChantiersUtilisateurs));
   }

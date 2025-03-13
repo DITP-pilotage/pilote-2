@@ -113,10 +113,14 @@ const créerLesHabilitations = (profilUtilisateur: PrismaProfilModel, habilitati
 
   habilitations.forEach(habilitation => {
     const scopeCode = habilitation.scopeCode as keyof Utilisateur['habilitations'];
+    const listeInformationsChantiersUtilisateursApplicableSurTerritoire = estUnProfilTerritorialise(profilUtilisateur.code as ProfilCode)
+      ? listeInformationsChantiersUtilisateurs.filter(informationChantier => informationChantier.territoiresApplicables.some(territoire => habilitation.territoires.includes(territoire)))
+      : listeInformationsChantiersUtilisateurs;
+
     const listeChantier =
-      scopeCode == 'saisieCommentaire' && [ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(profilUtilisateur.code) ?
-        listeInformationsChantiersUtilisateurs.filter(chantier => chantier.ate !== 'hors_ate_centralise') :
-        listeInformationsChantiersUtilisateurs;
+      scopeCode == 'saisieCommentaire' && [ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(profilUtilisateur.code) 
+        ? listeInformationsChantiersUtilisateursApplicableSurTerritoire.filter(chantier => chantier.ate !== 'hors_ate_centralise') 
+        : listeInformationsChantiersUtilisateursApplicableSurTerritoire;
 
     const chantiersSupplémentaires =
       habilitation.chantiers.length > 0 ?
