@@ -21,6 +21,9 @@ export const profilsCodes = [
   ProfilEnum.DROM,
 ] as const;
 
+export const profilsDépartementaux = [ProfilEnum.PREFET_DEPARTEMENT, ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT];
+export const profilsRégionaux = [ProfilEnum.PREFET_REGION, ProfilEnum.COORDINATEUR_REGION, ProfilEnum.SERVICES_DECONCENTRES_REGION];
+
 export type ProfilCode = typeof profilsCodes[number];
 
 export type Utilisateur = {

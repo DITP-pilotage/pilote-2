@@ -34,8 +34,13 @@ const HeadersExportCSVUtilisateur = (): string[] => {
   ];
 };
 
-const recupererLesNomsDesChantiers = (listeChantiersIds: string[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[]): string[] => {
-  return listeChantiersIds.map(chantierId => listeInformationsChantiersUtilisateurs.find(chantier => chantier.id === chantierId)?.nom || null).filter(Boolean);
+const recupererLesNomsDesChantiers = (listeChantiersIds: string[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[], aAccesTousLesChantiers: boolean): string[] => {
+  if (aAccesTousLesChantiers) {
+    return ['Tous les chantiers'];
+  }
+
+  const listeNomsChantiers = listeChantiersIds.map(chantierId => listeInformationsChantiersUtilisateurs.find(chantier => chantier.id === chantierId)?.nom || null).filter(Boolean);
+  return listeChantiersIds.length === 0 ? ['Aucun chantier'] : listeNomsChantiers;
 };
 
 const presenterEnUtilisateurPourExportCSVContrat = (utilisateurPourExport: UtilisateurExportCSV, listeDesTerritoires: Territoire[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[]): UtilisateurPourExportCSVContrat => {
@@ -45,13 +50,13 @@ const presenterEnUtilisateurPourExportCSVContrat = (utilisateurPourExport: Utili
     utilisateurPourExport.email,
     utilisateurPourExport.fonction || '',
     utilisateurPourExport.profil,
-    recupererLesNomsDesTerritoires(utilisateurPourExport.profil, utilisateurPourExport.habilitations, listeDesTerritoires).join(', '),
-    utilisateurPourExport.habilitations.lecture.périmètres.join(', ') || !profilsTerritoriaux.includes(utilisateurPourExport.profil) ? 'Tous les périmètres' : 'Aucun périmètre',
-    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.lecture.chantiers, listeInformationsChantiersUtilisateurs).join(' '),
-    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.responsabilite.chantiers, listeInformationsChantiersUtilisateurs).join(' '),
-    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.saisieIndicateur.chantiers, listeInformationsChantiersUtilisateurs).join(' '),
-    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.saisieCommentaire.chantiers, listeInformationsChantiersUtilisateurs).join(' '),
-    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.gestionUtilisateur.chantiers, listeInformationsChantiersUtilisateurs).join(' '),
+    recupererLesNomsDesTerritoires(utilisateurPourExport.profil, utilisateurPourExport.habilitations, listeDesTerritoires).join('\n'),
+    utilisateurPourExport.habilitations.lecture.périmètres.join('\n') || !profilsTerritoriaux.includes(utilisateurPourExport.profil) ? 'Tous les périmètres' : 'Aucun périmètre',
+    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.lecture.chantiers, listeInformationsChantiersUtilisateurs, utilisateurPourExport.habilitations.lecture.__meta.aAccesTousLesChantiers).join('\n'),
+    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.responsabilite.chantiers, listeInformationsChantiersUtilisateurs, utilisateurPourExport.habilitations.lecture.__meta.aAccesTousLesChantiers).join('\n'),
+    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.saisieIndicateur.chantiers, listeInformationsChantiersUtilisateurs, utilisateurPourExport.habilitations.lecture.__meta.aAccesTousLesChantiers).join('\n'),
+    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.saisieCommentaire.chantiers, listeInformationsChantiersUtilisateurs, utilisateurPourExport.habilitations.lecture.__meta.aAccesTousLesChantiers).join('\n'),
+    recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.gestionUtilisateur.chantiers, listeInformationsChantiersUtilisateurs, utilisateurPourExport.habilitations.lecture.__meta.aAccesTousLesChantiers).join('\n'),
   ];
 };
 
