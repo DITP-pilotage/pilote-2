@@ -23,7 +23,7 @@ const TitreRubrique: FunctionComponent<{
       {
         rubriqueDescription ? (
           <Infobulle 
-            className='fr-pb-2w' 
+            classNameBouton='fr-pb-2w' 
             idHtml={`infobulle-${rubriqueAncre}`}
           >
             {rubriqueDescription}

@@ -29,7 +29,7 @@ const Bloc: FunctionComponent<BlocProps> = ({
               {
                 titre && contenuInfobulle ? (
                   <Infobulle
-                    className='fr-pl-2w'
+                    classNameBouton='fr-pl-2w'
                     idHtml='infobulle-chantiers-jauges'
                   >
                     {contenuInfobulle}

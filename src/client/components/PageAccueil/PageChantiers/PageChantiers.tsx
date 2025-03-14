@@ -460,7 +460,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   Chantiers signalés
                 </Titre>
                 <Infobulle
-                  className='titre-remontée-alertes'
+                  classNameBouton='titre-remontée-alertes'
                   idHtml='infobulle-chantiers-alertes'
                 >
                   {INFOBULLE_CONTENUS.chantiers.alertes}
