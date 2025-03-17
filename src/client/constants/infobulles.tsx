@@ -168,6 +168,25 @@ const INFOBULLE_CONTENUS = {
           </ul>
         </>
       ),
+      comparaisonDeLAvancementRegDep: (
+        <>
+          <p className='fr-text--sm'>
+            L'écart correspond à l'écart entre le taux d'avancement pour le territoire sélectionné et le taux d'avancement territorial (régional ou départemental) médian.
+          </p>
+          <p className='fr-text--sm fr-mb-0'>
+            L'évolution temporelle (ou tendance) correspond à la progression du taux d'avancement. Elle est calculée par rapport au taux d'avancement précédent du chantier sur le territoire. 
+            Elle est considérée en hausse si le taux d'avancement a augmenté de plus de 1 point par rapport au taux précédent. 
+            Elle est considérée en baisse si le taux d'avancement a diminué de plus de 1 point par rapport au taux précédent.
+          </p>
+        </>
+      ),
+      comparaisonDeLAvancementNat: (
+        <p className='fr-text--sm fr-mb-0'>
+          L'évolution temporelle (ou tendance) correspond à la progression du taux d'avancement. Elle est calculée par rapport au taux d'avancement précédent du chantier sur le territoire. 
+          Elle est considérée en hausse si le taux d'avancement a augmenté de plus de 1 point par rapport au taux précédent. 
+          Elle est considérée en baisse si le taux d'avancement a diminué de plus de 1 point par rapport au taux précédent.
+        </p>
+      ),
     },
     météoEtSynthèseDesRésultats: (
       <>
