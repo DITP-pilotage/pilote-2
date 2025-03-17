@@ -19,7 +19,7 @@ const PictoTendance: FunctionComponent<PictoTendanceProps> = ({ tendance, estArc
     tendance === 'STAGNATION' ? (
       <PictoTendanceStyled
         aria-hidden='true'
-        className='fr-icon-subtract-line picto-tendance--stagnation'
+        className='fr-icon-arrow-right-line picto-tendance--stagnation'
         estArchive={estArchive}
       />
     ) : (
