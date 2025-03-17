@@ -210,6 +210,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         className='h-full'
         contenuClassesSupplémentaires='fr-p-2w'
         contenuInfobulle={INFOBULLE_CONTENUS.chantiers.repartitions}
+        idhtml='repartition-territoriale'
         titre="Répartition territoriale du taux d'avancement 2026"
       >
         <div className='fr-px-md-1w fr-px-lg-2w fr-py-1w'>
@@ -264,7 +265,8 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
       <Bloc
         className='h-full'
         contenuClassesSupplémentaires='fr-p-2w'
-        contenuInfobulle={INFOBULLE_CONTENUS.chantiers.repartitions}
+        contenuInfobulle={territoireCode !== 'NAT-FR' ? INFOBULLE_CONTENUS.chantier.avancement.comparaisonDeLAvancementRegDep : INFOBULLE_CONTENUS.chantier.avancement.comparaisonDeLAvancementNat}
+        idhtml='donnees-de-comparaison-de-lavancement'
         titre="Données de comparaison de l'avancement 2026"
       >
         {
@@ -327,7 +329,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
             {tuileTendanceTAAPartirDeLaMaille[territoireSélectionné.maille]}
             {' '}
             {
-              donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente && donneesComparaisonDuTauxDAvancement.ppgDateTauxDAvancementValeurPrecedente ? (
+              donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente !== null && donneesComparaisonDuTauxDAvancement.ppgDateTauxDAvancementValeurPrecedente !== null ? (
                 <div className='flex justify-center'>
                   (
                   {' '}
