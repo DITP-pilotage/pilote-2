@@ -131,8 +131,8 @@ describe('PageImportIndicateur', () => {
       );
 
       // THEN
-      const titreCatégorieIndicateur1 = screen.getByText('IND-CH-123 nom indicateur');
-      const titreCatégorieIndicateur2 = screen.getByText('IND-CH-124 nom indicateur 2');
+      const titreCatégorieIndicateur1 = screen.getByText('IND-CH-123 : nom indicateur');
+      const titreCatégorieIndicateur2 = screen.getByText('IND-CH-124 : nom indicateur 2');
 
       expect(titreCatégorieIndicateur1).toBeInTheDocument();
       expect(titreCatégorieIndicateur2).toBeInTheDocument();
