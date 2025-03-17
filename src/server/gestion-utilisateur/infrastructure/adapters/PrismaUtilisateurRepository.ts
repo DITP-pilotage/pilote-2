@@ -32,24 +32,27 @@ interface Dependencies {
 
 const récupérerChantiersParDéfaut = (profilUtilisateur: PrismaProfilModel, listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[]): Record<ScopeChantiers | ScopeUtilisateurs, InformationChantierUtilisateur['id'][]> => {
   let chantiersAccessibles = profilUtilisateur.a_acces_tous_chantiers
-    ? listeInformationsChantiersUtilisateurs.map(chantier => chantier.id)
+    ? listeInformationsChantiersUtilisateurs
     : profilUtilisateur.a_acces_tous_chantiers_territorialises
-      ? listeInformationsChantiersUtilisateurs.reduce((acc, chantier) =>  chantier.estTerritorialise ?  [...acc, chantier.id] :  acc, [] as string[])
+      ? listeInformationsChantiersUtilisateurs.reduce((acc, chantier) =>  chantier.estTerritorialise ?  [...acc, chantier] :  acc, [] as InformationChantierUtilisateur[])
       : [];
 
+  const listeChantiersAccessiblesIds = chantiersAccessibles.map(chantier => chantier.id);
+
   let chantiersAccessiblesEnSaisieCommentaire = estUnProfilTerritorialise(profilUtilisateur.code as ProfilCode)
-    ? listeInformationsChantiersUtilisateurs.reduce((acc, chantier) => {
+    ? chantiersAccessibles.reduce((acc, chantier) => {
       if (chantier.estTerritorialise && chantier.ate === 'ate') {
         return [...acc, chantier.id];
       }
       return acc;
     }, [] as string[])
-    : chantiersAccessibles;
+    : listeChantiersAccessiblesIds;
 
+  
   return {
-    lecture: chantiersAccessibles,
+    lecture: listeChantiersAccessiblesIds,
     saisieCommentaire: chantiersAccessiblesEnSaisieCommentaire,
-    saisieIndicateur: [ProfilEnum.DITP_PILOTAGE, ProfilEnum.DITP_ADMIN].includes(profilUtilisateur.code) ? chantiersAccessibles : [],
+    saisieIndicateur: [ProfilEnum.DITP_PILOTAGE, ProfilEnum.DITP_ADMIN].includes(profilUtilisateur.code) ? listeChantiersAccessiblesIds : [],
     gestionUtilisateur: profilUtilisateur.peut_modifier_les_utilisateurs ? chantiersAccessiblesEnSaisieCommentaire : [],
     responsabilite: [],
   };
