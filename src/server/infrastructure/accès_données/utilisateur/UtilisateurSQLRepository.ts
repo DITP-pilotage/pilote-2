@@ -100,7 +100,13 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
   async _récupérerChantiers() {
     if (this._chantiers.donnéesBrutes.length === 0) {
-      const tousLesChantiers = await prisma.chantier_identite.findMany();
+      const tousLesChantiers = await prisma.chantier_identite.findMany({
+        where: {
+          NOT: {
+            statut: 'ARCHIVE',
+          },
+        },
+      });
 
       this._chantiers.donnéesBrutes = tousLesChantiers;
 
