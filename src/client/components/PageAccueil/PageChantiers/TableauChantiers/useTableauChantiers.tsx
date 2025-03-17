@@ -174,7 +174,7 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
         ),
         enableGrouping: false,
         meta: {
-          width: '7.5rem',
+          width: '9rem',
           tabIndex: -1,
         },
       }),

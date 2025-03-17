@@ -41,7 +41,7 @@ const SélecteurMaille: FunctionComponent<{
   };
 
   return (
-    <SélecteurMailleStyled className='fr-px-1v fr-pb-3w'>
+    <SélecteurMailleStyled className='fr-px-1v fr-pb-3w w-full'>
       <div className='flex justify-center tag-liste'>
         {
           objectEntries(mailles)

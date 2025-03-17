@@ -50,7 +50,7 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
           {titreTauxAvancement}
         </strong>
         <span className='fr-text--sm fr-ml-1v'>
-          2025
+          2026
         </span>   
       </div>
       <JaugeDeProgression
