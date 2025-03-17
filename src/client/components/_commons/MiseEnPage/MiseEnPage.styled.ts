@@ -39,7 +39,7 @@ const MiseEnPageStyled = styled.div`
     position: fixed;
     right: 4rem;
     bottom: 4rem;
-    z-index: 10;
+    z-index: 1751;
     width: 20rem;
     background-color: var(--background-alt-overlap-grey);
     filter: drop-shadow(var(--overlap-shadow));
