@@ -54,6 +54,7 @@ const EtapeSelectionIndicateur: FunctionComponent<{
               value={2}
             />
             <Sélecteur
+              afficheValeurEtLibelle
               htmlName='indicateurId'
               libellé="Choix de l'indicateur"
               options={options}
