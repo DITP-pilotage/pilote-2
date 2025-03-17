@@ -399,6 +399,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                         Proposition du territoire
                                       </span>
                                       <Infobulle 
+                                        classNameBouton='texte-proposition'
                                         classNameInfoBulle='tooltip-accordeon'
                                         idHtml={`infobulle-proposition-valeur-davancement-${informationIndicateur.code}`}
                                         positionStrategy='fixed'
