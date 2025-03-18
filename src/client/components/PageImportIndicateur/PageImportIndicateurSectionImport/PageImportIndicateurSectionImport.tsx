@@ -37,7 +37,7 @@ const PageImportIndicateurSectionImport: FunctionComponent<PageImportIndicateurS
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
   const [estFichierPublie, setEstFichierPublie] = useState<boolean>(false);
   const optionsSélecteur = indicateurs.map(elem => ({
-    libellé: elem.nom,
+    libellé: `${elem.id + ' : ' + elem.nom}`,
     valeur: elem.id,
   }));
 

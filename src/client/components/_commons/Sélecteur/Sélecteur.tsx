@@ -13,7 +13,6 @@ const Sélecteur = <T extends string>({
   valeurModifiéeCallback,
   valeurSélectionnée,
   estDesactive,
-  afficheValeurEtLibelle,
 }: SélecteurProps<T>) => {
   return (
     <div className={`fr-select-group${erreur !== undefined || errorMessage ? ' fr-select-group--error' : ''} ${estDesactive ? 'fr-select-group--disabled' : ''}`}>
@@ -53,33 +52,16 @@ const Sélecteur = <T extends string>({
           </option>
         }
         {
-          afficheValeurEtLibelle ? (
-            options.map(option => (
-              <option
-                disabled={option.désactivée ?? false}
-                hidden={option.cachée ?? false}
-                key={option.valeur}
-                value={option.valeur}
-              >
-                {option.valeur}
-                {' '}
-                :
-                {' '}
-                {option.libellé}
-              </option>
-            ))
-          ) : (
-            options.map(option => (
-              <option
-                disabled={option.désactivée ?? false}
-                hidden={option.cachée ?? false}
-                key={option.valeur}
-                value={option.valeur}
-              >
-                {option.libellé}
-              </option>
-            ))
-          )
+          options.map(option => (
+            <option
+              disabled={option.désactivée ?? false}
+              hidden={option.cachée ?? false}
+              key={option.valeur}
+              value={option.valeur}
+            >
+              {option.libellé}
+            </option>
+          ))
         }
       </select>
       {

@@ -20,5 +20,4 @@ export default interface SélecteurProps<T> {
   texteFantôme?: string,
   register?: UseFormRegisterReturn
   estDesactive?: boolean
-  afficheValeurEtLibelle?: boolean
 }
