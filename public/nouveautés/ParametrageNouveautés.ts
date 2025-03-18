@@ -12,8 +12,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
     version: 'Version 2.7.3',
     date: '18 mars 2025',
     contenu: [
-      "Sur les pages de chaque chantier, vous pouvez désormais mieux suivre et comparer l'évolution des résultats d'un territoire. Dans la nouvelle tuile « Données de comparaison de l'avancement », vous pouvez ainsi retrouver la situation par rapport aux autres départements avec l'écart par rapport à la médiane. De plus, vous pouvez également suivre l'évolution du taux d'avancemenbt grâce à la tendance.",
-      'Gestion des comptes (profils coordinateurs PILOTE uniquement) : vous pouvez désormais exporter les données concernant les utilisateurs de votre territoire en format .csv, exploitable sur des logiciels de tableau (libre office ou excel)',
+      "Sur les pages de chaque chantier, vous pouvez désormais mieux suivre et comparer l'évolution des résultats d'un territoire. Dans la nouvelle tuile « Données de comparaison de l'avancement », vous pouvez ainsi retrouver la situation par rapport aux autres départements avec l'écart par rapport à la médiane. De plus, vous pouvez également suivre l'évolution temporelle du taux d'avancement grâce à la tendance.",
+      'Gestion des comptes (profils coordinateurs PILOTE uniquement) : vous pouvez désormais exporter les données concernant les utilisateurs de votre territoire en format .csv, exploitables sur des logiciels de tableur (libre office ou excel)',
       "Pour permettre une meilleure compréhension du calcul du taux d'avancement, la notion de « Valeur Actuelle », précédemment affichée dans PILOTE, est dorénavant renommée « Valeur d'avancement » sur l'ensemble des pages. Ce terme reflète plus clairement la définition de cette valeur : l'état d'avancement d'un indicateur à une date donnée.",
     ],
     correctifs: [
