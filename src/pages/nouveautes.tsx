@@ -21,7 +21,7 @@ const NextPageNouveautés: FunctionComponent<{}> = () => {
     <>
       <Head>
         <title>
-          Nouveautés : Service bientôt disponible ! - PILOTE
+          Nouveautés
         </title>
       </Head>
       <Nouveautés />
