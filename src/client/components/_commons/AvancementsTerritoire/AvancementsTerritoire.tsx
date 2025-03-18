@@ -10,6 +10,7 @@ import {
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 
 interface AvancementsTerritoireProps {
   territoireNom: string
@@ -19,6 +20,7 @@ interface AvancementsTerritoireProps {
   couleurBarreDeProgression: BarreDeProgressionVariante
   couleurJaugeDeProgression: JaugeDeProgressionCouleur
   doitAfficherLeSelecteur: boolean
+  titreTauxAvancement: string
 }
 
 const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
@@ -29,6 +31,7 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
   couleurJaugeDeProgression,
   jalon,
   doitAfficherLeSelecteur,
+  titreTauxAvancement,
 }) => {
   const [, setJalon] = useQueryState('jalon', parseAsStringLiteral(['2024', '2025']).withDefault('2024').withOptions({
     shallow: false,
@@ -42,6 +45,14 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
 
   return (
     <>
+      <div className='flex flex-direction-column flex-wrap justify-center align-center'>
+        <strong className='fr-text--sm fr-mb-0 text-center'>
+          {titreTauxAvancement}
+        </strong>
+        <span className='fr-text--sm fr-ml-1v'>
+          2026
+        </span>   
+      </div>
       <JaugeDeProgression
         couleur={couleurJaugeDeProgression}
         libellé={territoireNom}
@@ -63,13 +74,13 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
             valeur={avancementAnnuel}
             variante={couleurBarreDeProgression}
           />
-          <div className='flex align-center justify-center fr-text--xs'>
+          <div className='flex align-center justify-center fr-text--xs  w-full relative'>
             <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
               {`Avancement à échéance${!doitAfficherLeSelecteur ? ` ${jalon}` : ''}`}
             </p>
             {
               doitAfficherLeSelecteur ? (
-                <div className='select-sm flex align-center justify-center align-center'>
+                <div className='select-sm flex align-center justify-center'>
                   <Sélecteur<'2024' | '2025'>
                     htmlName='jalon'
                     options={[{ libellé: '2024', valeur: '2024' }, { libellé: '2025', valeur: '2025' }]}
@@ -78,26 +89,9 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
                     valeurSélectionnée={`${jalon}` as '2024' | '2025'}
                   />
                   <Infobulle
-                    className='fr-pt-0'
                     idHtml='infobulle-selecteur-jalon'
                   >
-                    <div>
-                      <h5 className='fr-text--sm fr-mb-1w'>
-                        Avancement à échéance
-                      </h5>
-                      <p className='fr-text--xs'>
-                        Ce sélecteur vous permet d'afficher les valeurs prises successivement par le taux
-                        d'avancement :
-                      </p>
-                      <ul className='fr-text--xs fr-mb-0'>
-                        <li>
-                          valeurs observées à la fin des années passées
-                        </li>
-                        <li>
-                          valeur à date (année en cours)
-                        </li>
-                      </ul>
-                    </div>
+                    {INFOBULLE_CONTENUS.chantiers.jalon}
                   </Infobulle>
                 </div>
               ) : null
@@ -105,7 +99,6 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
           </div>
         </div>
       }
-
     </>
   );
 };

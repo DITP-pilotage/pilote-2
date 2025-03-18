@@ -53,7 +53,6 @@ export default class UtilisateurBuilder {
       saisieIndicateur: { chantiers: [], territoires: [], périmètres: [] },
       gestionUtilisateur: { chantiers: [], territoires:[], périmètres: [] },
       responsabilite: { chantiers: [], territoires: [], périmètres: [] },
-      'projetsStructurants.lecture': { projetsStructurants: [] },
 
     };
   }

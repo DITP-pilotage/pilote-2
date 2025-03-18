@@ -37,6 +37,7 @@ export function créerDonnéesTerritoires(
       mailleSourceDonnees: chantierRow?.donnees_maille_source ? NOMS_MAILLES[chantierRow.donnees_maille_source] : null,
       nombrePropositionValeur: chantierRow?.nombre_propositions_valeur_actuelle ?? 0,
       nombrePropositionValeurPonderee: chantierRow?.nombre_propositions_valeur_actuelle_ponderee ?? 0,
+      dateTauxAvancementPrecedent: chantierRow?.date_taux_avancement_mandat_valeur_precedente?.toISOString() ?? null,
     };
 
     if (!!chantierRow) {
@@ -99,6 +100,7 @@ export const parseChantierNew = (
           mailleSourceDonnees: null,
           nombrePropositionValeurPonderee: 0,
           nombrePropositionValeur: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0) ? 1 : 0,
+          dateTauxAvancementPrecedent: chantierMailleNationale.date_taux_avancement_mandat_valeur_precedente?.toISOString() ?? null,
         },
       },
       departementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'departementale'), listeChantiersMailleDépartementale),

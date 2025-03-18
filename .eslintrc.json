@@ -32,10 +32,28 @@
     "sonarjs/cognitive-complexity": "off",
     "sonarjs/no-nested-template-literals": "off",
     "@typescript-eslint/dot-notation": "off",
-    "quotes": ["error", "single", {
-      "avoidEscape": true
-    }],
-    "jsx-quotes": ["error", "prefer-single"],
+    "quotes": [
+      "error",
+      "single",
+      {
+        "avoidEscape": true
+      }
+    ],
+    "jsx-quotes": [
+      "error",
+      "prefer-single"
+    ],
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "Literal[value=/’/]",
+        "message": "Utilisation interdite de l’apostrophe typographique. Utilisez ' à la place."
+      },
+      {
+        "selector": "JSXText[value=/’/]",
+        "message": "Évitez d'utiliser l’apostrophe typographique dans le texte JSX. Utilisez ' à la place."
+      }
+    ],
     "no-relative-import-paths/no-relative-import-paths": [
       "warn",
       {

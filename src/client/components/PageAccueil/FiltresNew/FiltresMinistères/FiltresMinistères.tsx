@@ -98,10 +98,12 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
                     type='button'
                   >
                     <div className='tuile-ministère-contenu'>
-                      <span className='icône'>
+                      <span className='icône text-lg'>
                         {
                           !!ministère.icône &&
-                          <Icône id={ministère.icône} />
+                          <Icône
+                            id={ministère.icône}
+                          />
                         }
                       </span>
                       <span>

@@ -77,9 +77,9 @@ const SélecteursMaillesEtTerritoires: FunctionComponent<SélecteursMaillesEtTer
       pathname,
       query: { ...router.query, territoireCode: territoireCodeSelectionne },
     },
-    undefined,
-    {},
-    );
+    undefined, {
+      scroll: false,
+    });
   };
 
   return (

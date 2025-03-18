@@ -18,7 +18,6 @@ import { dependencies } from '@/server/infrastructure/Dependencies';
 import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
-import SélecteurTypeDeRéforme from '@/components/PageAccueil/SélecteurTypeDeRéformeNew/SélecteurTypeDeRéforme';
 import Alerte from '@/server/domain/alerte/Alerte';
 import RécupérerStatistiquesAvancementChantiersUseCase
   from '@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase';
@@ -63,7 +62,6 @@ interface ChantierAccueil {
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   repartitionMeteosChantiers: RepartitionMeteoContrat
-  estProjetStructurantDisponible: boolean
 }
 
 export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ req, res, query }) => {
@@ -206,7 +204,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
       avancementsAgrégés,
       avancementsGlobauxTerritoriauxMoyens,
       repartitionMeteosChantiers,
-      estProjetStructurantDisponible: configuration.featureFlip.projetsStructurants,
     },
   };
 };
@@ -239,7 +236,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   avancementsGlobauxTerritoriauxMoyens,
   repartitionMeteosChantiers,
   jalon,
-  estProjetStructurantDisponible,
 }) => {
   const { data: session } = useSession();
 
@@ -252,7 +248,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
     <>
       <Head>
         <title>
-          PILOTE - Piloter l’action publique par les résultats
+          PILOTE - Piloter l'action publique par les résultats
         </title>
       </Head>
       <div className='flex'>
@@ -261,14 +257,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
           setEstOuvert={setEstOuverteBarreLatérale}
         >
           <BarreLatéraleEncart>
-            {
-              estProjetStructurantDisponible ? (
-                <SélecteurTypeDeRéforme
-                  territoireCode={territoireCode}
-                  typeDeRéformeSélectionné='chantier'
-                />
-              ) : null
-            }
             <SélecteursMaillesEtTerritoires
               pathname='/accueil/chantier/[territoireCode]'
               territoireCode={territoireCode}

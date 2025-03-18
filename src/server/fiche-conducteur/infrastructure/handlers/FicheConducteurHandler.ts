@@ -10,7 +10,6 @@ import {
   RécupererChantierFicheConducteurUseCase,
 } from '@/server/fiche-conducteur/usecases/RécupererChantierFicheConducteurUseCase';
 import { ChantierFicheConducteur } from '@/server/fiche-conducteur/domain/ChantierFicheConducteur';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import { RécupérerAvancementUseCase } from '@/server/fiche-conducteur/usecases/RécupérerAvancementUseCase';
 import { AvancementFicheConducteur } from '@/server/fiche-conducteur/domain/AvancementFicheConducteur';
 import {
@@ -26,7 +25,6 @@ import { RécupérerPublicationsUseCase } from '@/server/fiche-conducteur/usecas
 import { ObjectifType } from '@/server/fiche-conducteur/domain/ObjectifType';
 import { DecisionStrategiqueType } from '@/server/fiche-conducteur/domain/DecisionStrategiqueType';
 import { CommentaireType } from '@/server/fiche-conducteur/domain/CommentaireType';
-
 
 const numberWithSpaces = (nombreATransformer: number) => {
   const parts = nombreATransformer.toString().split('.');
@@ -106,36 +104,52 @@ const presenterEnDonnéesCartographieContrat = (donnéesCartographie: DonnéeCar
   } as DonnéesCartographieContrat);
 };
 
-export const ficheConducteurHandler = () => {
-  const recupererFicheConducteur = async (chantierId: string, territoireCode: string, jalon: number): Promise<FicheConducteurContrat> => {
-    const chantier = await new RécupererChantierFicheConducteurUseCase({
-      chantierRepository: dependencies.getFicheConducteurChantierRepository(),
-      indicateurRepository: dependencies.getFicheConducteurIndicateurRepository(),
-    })
+interface Dependencies {
+  recupererChantierFicheConducteurUseCase: RécupererChantierFicheConducteurUseCase
+  recupererAvancementUseCase: RécupérerAvancementUseCase;
+  recupererDerniereSyntheseDesResultatsUseCase: RécupérerDernièreSynthèseDesRésultatsUseCase;
+  recupererDonneesCartographieUseCase: RécupérerDonnéesCartographieUseCase;
+  recupererPublicationsUseCase: RécupérerPublicationsUseCase;
+}
+
+export class FicheConducteurHandler {
+  private recupererChantierFicheConducteurUseCase: RécupererChantierFicheConducteurUseCase;
+
+  private recupererAvancementUseCase: RécupérerAvancementUseCase;
+
+  private recupererDerniereSyntheseDesResultatsUseCase: RécupérerDernièreSynthèseDesRésultatsUseCase;
+
+  private recupererDonneesCartographieUseCase: RécupérerDonnéesCartographieUseCase;
+
+  private recupererPublicationsUseCase: RécupérerPublicationsUseCase;
+
+
+  constructor({ recupererChantierFicheConducteurUseCase, recupererAvancementUseCase, recupererDerniereSyntheseDesResultatsUseCase, recupererDonneesCartographieUseCase, recupererPublicationsUseCase }: Dependencies) {
+    this.recupererChantierFicheConducteurUseCase = recupererChantierFicheConducteurUseCase;
+    this.recupererAvancementUseCase = recupererAvancementUseCase;
+    this.recupererDerniereSyntheseDesResultatsUseCase = recupererDerniereSyntheseDesResultatsUseCase;
+    this.recupererDonneesCartographieUseCase = recupererDonneesCartographieUseCase;
+    this.recupererPublicationsUseCase = recupererPublicationsUseCase;
+  }
+
+  async recupererFicheConducteur(chantierId: string, territoireCode: string, jalon: number): Promise<FicheConducteurContrat> {
+    const chantier = await this.recupererChantierFicheConducteurUseCase
       .run({ chantierId, territoireCode, jalon })
       .then(presenterEnChantierFicheConducteurContrat);
 
-    const avancement = await new RécupérerAvancementUseCase({ chantierRepository: dependencies.getFicheConducteurChantierRepository() })
+    const avancement = await this.recupererAvancementUseCase
       .run({ chantierId, jalon })
       .then(presenterEnAvancementFicheConducteurContrat);
 
-    const synthèseDesRésultats = await new RécupérerDernièreSynthèseDesRésultatsUseCase({
-      synthèseDesRésultatsRepository: dependencies.getFicheConducteurSynthèseDesRésultatsRepository(),
-    })
+    const synthèseDesRésultats = await this.recupererDerniereSyntheseDesResultatsUseCase
       .run({ chantierId })
       .then(presenterEnSynthèseDesResultatsContrat);
 
-    const donnéesCartographie = await new RécupérerDonnéesCartographieUseCase({
-      chantierRepository: dependencies.getFicheConducteurChantierRepository(),
-    })
+    const donnéesCartographie = await this.recupererDonneesCartographieUseCase
       .run({ chantierId, jalon })
       .then(presenterEnDonnéesCartographieContrat);
 
-    const publications = await new RécupérerPublicationsUseCase({
-      objectifRepository: dependencies.getFicheConducteurObjectifRepository(),
-      decisionStrategiqueRepository: dependencies.getFicheConducteurDecisionStrategiqueRepository(),
-      commentaireRepository: dependencies.getFicheConducteurCommentaireRepository(),
-    })
+    const publications = await this.recupererPublicationsUseCase
       .run({ chantierId })
       .then(presenterEnObjectifsContrat);
 
@@ -149,9 +163,5 @@ export const ficheConducteurHandler = () => {
       publications,
       doitAfficherDonnéesCartographie,
     };
-  };
-  
-  return {
-    recupererFicheConducteur,
-  };
-};
+  }
+}

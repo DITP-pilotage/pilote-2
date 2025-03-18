@@ -6,12 +6,10 @@ import {
   ChantiersNonAutorisésCreationModificationUtilisateurErreur,
   ChantiersNonAutorisésSuppressionUtilisateurErreur,
   ProfilNonAutorisésSuppressionUtilisateurErreur,
-  ProjetStructurantNonAutoriséErreur,
   TerritoireNonAutoriséErreur,
   TerritoiresNonAutorisésCreationModificationUtilisateurErreur,
   TerritoiresNonAutorisésSuppressionUtilisateurErreur,
 } from '@/server/utils/errors';
-import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { toutesLesValeursDuTableauSontContenuesDansLAutreTableau } from '@/client/utils/arrays';
 import { Profil } from '@/server/domain/profil/Profil.interface';
 import { Habilitations } from './Habilitation.interface';
@@ -25,11 +23,6 @@ export default class Habilitation {
 
     if (territoireCode && !this._habilitations.lecture.territoires.includes(territoireCode))
       throw new TerritoireNonAutoriséErreur();
-  }
-
-  vérifierLesHabilitationsEnLectureProjetStructurant(projetStructurantId: ProjetStructurant['id']): Error | void {
-    if (!this._habilitations['projetsStructurants.lecture'].projetsStructurants.includes(projetStructurantId))
-      throw new ProjetStructurantNonAutoriséErreur();
   }
 
   vérifierLesHabilitationsEnSaisieDesPublications(chantierId: Chantier['id'], territoireCode: string): Error | void {
@@ -124,10 +117,6 @@ export default class Habilitation {
 
   récupérerListeChantiersIdsAccessiblesEnLecture(): Chantier['id'][] {
     return [...this._habilitations.lecture.chantiers];
-  }
-
-  récupérerListeProjetsStructurantsIdsAccessiblesEnLecture(): ProjetStructurant['id'][] {
-    return [...this._habilitations['projetsStructurants.lecture'].projetsStructurants];
   }
 
   récupérerListeTerritoireCodesAccessiblesEnLecture(): string[] {

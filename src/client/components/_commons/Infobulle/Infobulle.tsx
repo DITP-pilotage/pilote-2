@@ -1,45 +1,34 @@
-import { FunctionComponent, ReactNode, useState } from 'react';
-import InfobulleStyled from '@/components/_commons/Infobulle/Infobulle.styled';
-import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
+import { ReactNode, FunctionComponent } from 'react';
+import { Tooltip } from 'react-tooltip';
+import { InfobulleStyled } from './Infobulle.styled';
 
 interface InfobulleProps {
   idHtml: string;
-  className?: string;
+  classNameBouton?: string;
   children: ReactNode;
+  classNameInfoBulle?: string;
+  positionStrategy?: 'fixed' | 'absolute'
 }
 
-const Infobulle: FunctionComponent<InfobulleProps> = ({ idHtml, children, className }) => {
-  const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
-  const [estVisible, setEstVisible] = useState(false);
-
+const Infobulle: FunctionComponent<InfobulleProps> = ({ idHtml, children, classNameBouton, classNameInfoBulle, positionStrategy = 'absolute' }) => {
   return (
-    <InfobulleStyled
-      className='infobulle relative'
-      onBlur={() => setEstVisible(false)}
-      onFocus={() => !estVueMobile && setEstVisible(true)}
-      onMouseEnter={() => setEstVisible(true)}
-      onMouseLeave={() => setEstVisible(false)}
-      role='tooltip'
-    >
+    <InfobulleStyled>
       <button
         aria-describedby={idHtml}
-        className={`fr-btn fr-btn--tertiary-no-outline fr-icon-information-fill infobulle-bouton${className ? ` ${className}` : ''}`}
-        onClick={() => estVueMobile && setEstVisible(!estVisible)}
-        onKeyDown={(keyEvent) => keyEvent.key === 'Escape' && setEstVisible(false)}
+        className={`fr-btn fr-btn--tertiary-no-outline flex justify-center align-center fr-icon-information-fill${classNameBouton ? ` ${classNameBouton}` : ''}`}
+        id={idHtml}
         type='button'
       />
-      {
-        estVisible ? (
-          <div
-            className='fr-p-1w fr-p-md-3v infobulle-texte'
-            id={idHtml}
-          >
-            {children}
-          </div>
-        ) : null
-      }
-    </InfobulleStyled>
+      <Tooltip
+        anchorSelect={`#${idHtml}`}
+        border='1px solid var(--background-action-high-blue-france)'
+        className={`tooltip-infobulle ${classNameInfoBulle ? ` ${classNameInfoBulle}` : ''}`}
+        opacity={1}
+        positionStrategy={positionStrategy}
+      >
+        {children}
+      </Tooltip>  
+    </InfobulleStyled> 
   );
 };
-
 export default Infobulle;

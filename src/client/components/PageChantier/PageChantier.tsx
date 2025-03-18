@@ -37,13 +37,15 @@ import {
   DétailsIndicateurTerritoire,
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { AvancementChantierContrat } from '@/components/PageChantier/AvancementChantier';
-import { CoordinateurTerritorial, ResponsableLocal } from '@/server/domain/territoire/Territoire.interface';
+import { CoordinateurTerritorial, DonneesComparaisonDuTauxDAvancementType, ResponsableLocal } from '@/server/domain/territoire/Territoire.interface';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import BandeauInformationMajDonnees
   from '@/components/PageChantier/BandeauInformationMajDonnees/BandeauInformationMajDonnees';
 import api from '@/server/infrastructure/api/trpc/api';
 import BandeauInformation from '@/client/components/_commons/BandeauInformation/BandeauInformation';
-import { CartographieIndicateurType } from '@/client/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
+import {
+  CartographieIndicateurType,
+} from '@/client/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import PageChantierEnTête from './EnTête/EnTête';
 import Cartes, { CartographieType } from './Cartes/Cartes';
@@ -73,6 +75,7 @@ interface PageChantierProps {
   cartographieDroiteChantier: CartographieType
   cartographieDroiteIndicateur: CartographieIndicateurType
   cartographieGaucheIndicateur: CartographieIndicateurType
+  donneesComparaisonDuTauxDAvancement: DonneesComparaisonDuTauxDAvancementType
 }
 
 const PageChantier: FunctionComponent<PageChantierProps> = ({
@@ -97,11 +100,11 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
   cartographieGaucheChantier,
   cartographieDroiteIndicateur,
   cartographieGaucheIndicateur,
+  donneesComparaisonDuTauxDAvancement,
 }: PageChantierProps) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('md');
   const [estVisibleEnMobile, setEstVisibleEnMobile] = useState(false);
-
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
@@ -129,7 +132,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
     indicateurs.filter(indicateur => !indicateur.parentId) :
     indicateurs;
 
-  const categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]> = listeIndicateursParent.reduce((acc, indicateur) => {  
+  const categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]> = listeIndicateursParent.reduce((acc, indicateur) => {
     if ((détailsIndicateurs[indicateur.id][territoireCode]?.pondération ?? 0) > 0) {
       acc.participation_ta.push(indicateur);
     } else if (Object.values(detailsIndicateursTerritoire[indicateur.id]).some(detail => detail.pondération !== null && detail.pondération > 0)) {
@@ -137,7 +140,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
     } else {
       acc.autre.push(indicateur);
     }
-  
+
     return acc;
   }, {
     participation_ta: [] as Indicateur[],
@@ -148,7 +151,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
   const categoriesAvecElements = Object.keys(categoriesIndicateurRepartition).filter(
     (key) => categoriesIndicateurRepartition[key as keyof typeof categoriesIndicateurRepartition].length > 0,
   ) as CategoriesIndicateur[];
-  
+
   const listeRubriques = listeRubriquesChantier(categoriesAvecElements, territoireSélectionné.maille);
 
   return (
@@ -205,7 +208,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
           alerteMiseAJourIndicateur ? (
             <BandeauInformationMajDonnees
               bandeauType='WARNING'
-              message="un ou plusieurs indicateurs de cette politique prioritaire nécessitent au moins une mise à jour de leur valeur actuelle par l'équipe projet."
+              message="un ou plusieurs indicateurs de cette politique prioritaire nécessitent au moins une mise à jour de leur valeur d'avancement par l'équipe projet."
               titre='Mise à jour des données requises : '
             />
           ) : null
@@ -216,7 +219,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
             bandeauType='INFO'
             fermable={false}
           >
-            En l’absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le
+            En l'absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le
             département.
           </BandeauInformation>
         }
@@ -241,7 +244,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     indicateurPondérations.length === 0
                       ? (
                         <Infobulle
-                          idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'
+                          idHtml='infobulle-chantier-météoEtSynthèseDesRésultats-aucun-indicateur'
                         >
                           {INFOBULLE_CONTENUS.chantier.avancement.aucunIndicateur(territoireSélectionné.maille)}
                         </Infobulle>
@@ -249,14 +252,14 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                         indicateurPondérations.length === 1
                           ? (
                             <Infobulle
-                              idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'
+                              idHtml='infobulle-chantier-météoEtSynthèseDesRésultats-un-seul-indicateur'
                             >
                               {INFOBULLE_CONTENUS.chantier.avancement.unSeulIndicateur(territoireSélectionné.maille, indicateurPondérations[0])}
                             </Infobulle>
                           )
                           : (
                             <Infobulle
-                              idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'
+                              idHtml='infobulle-chantier-météoEtSynthèseDesRésultats-plusieurs-indicateurs'
                             >
                               {INFOBULLE_CONTENUS.chantier.avancement.plusieursIndicateurs(territoireSélectionné.maille, indicateurPondérations)}
                             </Infobulle>
@@ -267,6 +270,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
               </TitreInfobulleConteneur>
               <AvancementChantier
                 avancements={avancements}
+                donneesComparaisonDuTauxDAvancement={donneesComparaisonDuTauxDAvancement}
                 estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
                 jalon={jalon}
                 mailleQuery={mailleQuery}
@@ -397,7 +401,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     mailleSourceDonnees === 'regionale' &&
                     <Alerte
                       classesSupplementaires='fr-mb-2w'
-                      message='En l’absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le département.'
+                      message="En l'absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le département."
                       titre='Données régionales'
                       type='info'
                     />

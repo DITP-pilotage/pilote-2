@@ -18,14 +18,14 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
 
   const alerteAbscenceTauxAvancementDepartemental = {
     nomCritère: 'estEnAlerteAbscenceTauxAvancementDepartemental',
-    libellé: 'Chantier(s) sans taux d’avancement au niveau départemental',
+    libellé: "Chantier(s) sans taux d'avancement au niveau départemental",
     nombre: filtresComptesCalculés.estEnAlerteAbscenceTauxAvancementDepartemental,
     estActivée: filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental,
   };
 
   const alerteTauxAvancementNonCalculé = {
     nomCritère: 'estEnAlerteTauxAvancementNonCalculé',
-    libellé: 'Taux d’avancement non calculé(s) en raison d’indicateurs non renseignés',
+    libellé: "Taux d'avancement non calculé(s) en raison d'indicateurs non renseignés",
     nombre: filtresComptesCalculés.estEnAlerteTauxAvancementNonCalculé,
     estActivée: filtresAlertes.estEnAlerteTauxAvancementNonCalculé,
   };
@@ -53,7 +53,7 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
 
   const estEnAlertePossedePropositionsValeurActuelle = {
     nomCritère: 'estEnAlertePossedePropositionsValeurActuelle',
-    libellé: 'Chantier(s) avec proposition(s) de valeur actuelle',
+    libellé: "Chantier(s) avec proposition(s) de valeur d'avancement",
     nombre: filtresComptesCalculés.estEnAlertePossedePropositionsValeurActuelle,
     estActivée: filtresAlertes.estEnAlertePossedePropositionsValeurActuelle,
   };

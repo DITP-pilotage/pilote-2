@@ -34,7 +34,7 @@ const ModaleSuppressionValeurActuelle: FunctionComponent<{
         !estSupprime ? (
           <>
             <p>
-              Vous êtes sur le point de supprimer la proposition de valeur actuelle du territoire.
+              Vous êtes sur le point de supprimer la proposition de valeur d'avancement du territoire.
             </p>
             <div className='w-full flex justify-end fr-mt-2w'>
               <button

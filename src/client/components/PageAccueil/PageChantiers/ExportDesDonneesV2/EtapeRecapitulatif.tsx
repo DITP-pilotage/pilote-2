@@ -57,9 +57,9 @@ const indicateurDonneesExportable = {
 };
 
 const historiqueIndicateurDonneesExportable = {
-  'identifiant': 'identifiants de l\'indicateur et du territoire',
-  'valeur-cible': 'valeur initiale et valeurs cibles de l\'indicateur sur le territoire les valeurs cibles sont exportées pour l\'année en cours et pour l\'année 2026',
-  'valeur-actuelle': 'valeurs actuelles de l\'indicateur sur le territoire, mois par mois',
+  'identifiant': "identifiants de l'indicateur et du territoire",
+  'valeur-cible': "valeur initiale et valeurs cibles de l'indicateur sur le territoire les valeurs cibles sont exportées pour l'année en cours et pour l'année 2026",
+  'valeur-actuelle': "valeurs d'avancements de l'indicateur sur le territoire, mois par mois",
 };
 
 export const EtapeRecapitulatif = () => {
@@ -113,7 +113,7 @@ export const EtapeRecapitulatif = () => {
   return (
     <div>
       <p className='fr-mt-2w fr-mb-2w'>
-        Veuillez vérifier ci-dessous le contenu de votre fichier d’export :
+        Veuillez vérifier ci-dessous le contenu de votre fichier d'export :
       </p>
       <h3 className='fr-text--md fr-mb-0 fr-mt-2w'>
         Contenus à exporter

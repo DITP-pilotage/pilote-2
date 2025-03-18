@@ -1,8 +1,14 @@
-import { indicateur_territoire as PrismaIndicateurTerritoire, indicateur_identite as PrismaIndicateurIdentite, indicateur_territoire_jalon as PrismaIndicateurTerritoireJalon } from '@prisma/client';
+import {
+  indicateur_territoire as PrismaIndicateurTerritoire,
+  indicateur_identite as PrismaIndicateurIdentite,
+  indicateur_territoire_jalon as PrismaIndicateurTerritoireJalon,
+  PrismaClient,
+} from '@prisma/client';
 import { IndicateurRepository } from '@/server/fiche-conducteur/domain/ports/IndicateurRepository';
 import { Indicateur } from '@/server/fiche-conducteur/domain/Indicateur';
 import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
-import { prisma } from '@/server/db/prisma';
+
+import { PrismaPilote } from '@/server/db/PrismaPilote';
 
 const convertirEnIndicateur = (prismaIndicateurTerritoire: PrismaIndicateurTerritoire & { indicateur_identite: PrismaIndicateurIdentite, indicateur_territoire_jalon: PrismaIndicateurTerritoireJalon[] }): Indicateur => {
   const prismaIndicateurTerritoireJalon = prismaIndicateurTerritoire.indicateur_territoire_jalon.at(0);
@@ -20,9 +26,19 @@ const convertirEnIndicateur = (prismaIndicateurTerritoire: PrismaIndicateurTerri
   });
 };
 
+interface Dependencies {
+  prisma: PrismaPilote
+}
+
 export class PrismaIndicateurRepository implements IndicateurRepository {
+  private prisma: PrismaClient;
+
+  constructor({ prisma }: Dependencies) {
+    this.prisma = prisma.getInstance();
+  }
+
   async récupérerIndicImpactParChantierId(chantierId: string, jalon: number): Promise<Indicateur[]> {
-    const result = await prisma.indicateur_territoire.findMany({
+    const result = await this.prisma.indicateur_territoire.findMany({
       where: {
         indicateur_identite: {
           chantier_id: chantierId,

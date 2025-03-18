@@ -7,6 +7,7 @@ const BlocStyled = styled.div`
   border-radius: 8px; 
 
   .titre {
+    height: 4rem;
     background: var(--background-action-low-blue-france);
     border-bottom: 2px solid var(--border-plain-grey);
     border-radius: 7px 7px 0 0;

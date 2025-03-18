@@ -9,7 +9,7 @@ import {
 } from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
 import TableauChantiersTendance
   from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance';
-import TableauChantiersÉcart from '@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart';
+import TableauChantiersEcart from '@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart';
 import RapportDétailléTableauChantiersProps from './RapportDétailléTableauChantiers.interface';
 
 const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
@@ -86,7 +86,7 @@ const colonnesTableauChantiers = [
       id: 'écart',
       enableSorting: false,
       cell: cellContext => (
-        <TableauChantiersÉcart écart={cellContext.getValue()} />
+        <TableauChantiersEcart ecart={cellContext.getValue()} />
       ),
       enableGrouping: false,
       meta: {

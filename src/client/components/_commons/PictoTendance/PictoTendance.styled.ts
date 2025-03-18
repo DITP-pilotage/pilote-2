@@ -13,7 +13,7 @@ const PictoTendanceStyled = styled.span<{
   }
   
   &.picto-tendance--hausse {
-    color: ${({ estArchive }) => (estArchive ? 'var(--text-disabled-grey)' : 'var(--background-flat-info)')};
+    color: ${({ estArchive }) => (estArchive ? 'var(--text-disabled-grey)' : 'var(--background-flat-success)')};
   }
 `;
 

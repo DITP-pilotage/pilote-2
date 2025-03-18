@@ -134,7 +134,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
             </Titre>
             <div className='fr-ml-2w fr-mb-3w'>
               <p className='fr-mb-0 fr-text--xs texte-gris'>
-                Dernière mise à jour des données (de l’indicateur, toutes zones confondues) :
+                Dernière mise à jour des données (de l'indicateur, toutes zones confondues) :
                 {' '}
                 <span className='fr-text--bold'>
                   {dateDeMiseAJourIndicateur ?? 'Non renseignée'}
@@ -261,7 +261,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                             valeur={informationIndicateur.données.valeurInitiale}
                           />
                         </td>
-                        { /* Valeur et date valeur actuelle de indicateurTerritoireJalon en fonction du jalon */}
+                        { /* Valeur et date valeur d'avancement de indicateurTerritoireJalon en fonction du jalon */}
                         <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                           <ValeurEtDate
                             date={informationIndicateur.données.dateValeurActuelle}
@@ -286,7 +286,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                             variante='secondaire'
                           />
                         </td>
-                        { /* Valeur et date valeur actuelle mandat de indicateurTerritoire */}
+                        { /* Valeur et date valeur d'avancement mandat de indicateurTerritoire */}
                         <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                           <ValeurEtDate
                             date={informationIndicateur.données.dateValeurActuelleMandat}

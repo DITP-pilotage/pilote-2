@@ -74,7 +74,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnse
                 className='fr-text--lg fr-mb-2w fr-py-1v'
                 estInline
               >
-                Taux d’avancement moyen
+                Taux d'avancement moyen
               </Titre>
               <Infobulle idHtml='infobulle-chantiers-jauges'>
                 {INFOBULLE_CONTENUS.chantiers.jauges}
@@ -110,7 +110,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnse
               baliseHtml='h3'
               className='fr-text--lg fr-mb-0 fr-py-1v'
             >
-              Taux d’avancement des chantiers par territoire
+              Taux d'avancement des chantiers par territoire
             </Titre>
             <CartographieAvancement
               auClicTerritoireCallback={() => {}}

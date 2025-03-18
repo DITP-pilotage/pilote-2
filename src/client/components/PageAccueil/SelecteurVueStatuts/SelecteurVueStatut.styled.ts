@@ -3,11 +3,8 @@ import { breakpointL } from '@/components/_commons/MiseEnPage/MiseEnPage.styled'
 
 const SelecteurVueStatutStyled = styled.div`
   display: flex;
+  justify-content: flex-start;
 
-  .conteneur-tags {
-    display:flex;
-  }
-    
   @media screen and (max-width: ${breakpointL}) {   
     .conteneur-tags {
       overflow-x: scroll;

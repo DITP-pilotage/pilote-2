@@ -88,6 +88,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                 >
                   <TitreRubrique 
                     nombreIndicateurRubrique={indicateursDeCetteRubrique.length}
+                    rubriqueAncre={rubriqueIndicateur.ancre}
                     rubriqueDescription={rubriqueIndicateur.description}
                     rubriqueNom={rubriqueIndicateur.nom}
                   />

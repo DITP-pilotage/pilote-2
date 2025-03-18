@@ -72,14 +72,14 @@ function déterminerRemplissage(valeur: number | null, valeurMin: number | null,
 }
 
 export function useCartographieValeurActuelleIndicateur(detailsIndicateurTerritoire: DétailsIndicateurTerritoire, élémentsDeLégende: CartographieÉlémentsDeLégende, jalon: number, unité?: string | null) {
-  const useRecupererDonnees = () => { 
-    const donnees = objectEntries(detailsIndicateurTerritoire).
-      map(([territoireCode, détailsIndicateur]) => ({
-        valeur: détailsIndicateur.valeurActuelle ?? null, 
-        valeurCible: détailsIndicateur.valeurCible ?? null,
-        valeurCibleAnnuelle: détailsIndicateur.valeurCibleAnnuelle ?? null,
-        territoireCode: territoireCode,
-        estApplicable: détailsIndicateur.est_applicable }));
+  const useRecupererDonnees = () => {
+    const donnees = objectEntries(detailsIndicateurTerritoire).map(([territoireCode, détailsIndicateur]) => ({
+      valeur: détailsIndicateur.valeurActuelle ?? null,
+      valeurCible: détailsIndicateur.valeurCible ?? null,
+      valeurCibleAnnuelle: détailsIndicateur.valeurCibleAnnuelle ?? null,
+      territoireCode: territoireCode,
+      estApplicable: détailsIndicateur.est_applicable,
+    }));
 
     const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
@@ -92,12 +92,12 @@ export function useCartographieValeurActuelleIndicateur(detailsIndicateurTerrito
     let legende = Object.values(élémentsDeLégende);
     if (tousApplicables) {
       legende = legende
-        .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s’applique pas');
+        .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s\'applique pas');
     }
 
     if (tousNonNull) {
       legende = legende
-        .filter(el => el.libellé !== 'Territoire pour lequel la donnée n’est pas renseignée/disponible');
+        .filter(el => el.libellé !== 'Territoire pour lequel la donnée n\'est pas renseignée/disponible');
     }
 
     const legendeDegrade = {

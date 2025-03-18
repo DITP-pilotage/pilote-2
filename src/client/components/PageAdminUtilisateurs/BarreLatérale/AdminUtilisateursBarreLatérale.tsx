@@ -1,50 +1,55 @@
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
 import { useSession } from 'next-auth/react';
 import { FunctionComponent } from 'react';
-import { parseAsInteger, useQueryStates } from 'nuqs';
-import {
-  actions as actionsFiltresUtilisateursStore,
-  filtresUtilisateursActifsStore,
-  réinitialiser,
-} from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
+import { parseAsInteger, parseAsString, useQueryStates } from 'nuqs';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Titre from '@/components/_commons/Titre/Titre';
-import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
-import MultiSelectPérimètreMinistériel
-  from '@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
-import MultiSelectChantier from '@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier';
+import {
+  MultiSelectTerritoire,
+} from '@/components/_commons/MultiSelectNew/MultiSelectTerritoire/MultiSelectTerritoire';
+import { MultiSelectPérimètreMinistériel }
+  from '@/components/_commons/MultiSelectNew/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
+import { MultiSelectChantier } from '@/components/_commons/MultiSelectNew/MultiSelectChantier/MultiSelectChantier';
 import Tag from '@/components/_commons/Tag/Tag';
 import { territoiresTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import api from '@/server/infrastructure/api/trpc/api';
-import MultiSelectProfil from '@/components/_commons/MultiSelect/MultiSelectProfil/MultiSelectProfil';
+import { MultiSelectProfil } from '@/components/_commons/MultiSelectNew/MultiSelectProfil/MultiSelectProfil';
 import {
   AAccesATousLesUtilisateurs,
   PROFILS_POSSIBLES_COORDINATEURS_LECTURE,
 } from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
+import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
+import { PerimetreMinisteriel } from '@/server/gestion-utilisateur/domain/PerimetreMinisteriel';
+import { Profil } from '@/server/gestion-utilisateur/domain/Profil';
+import { TerritoireAvecNombreUtilisateurs } from '@/server/gestion-utilisateur/domain/Territoire';
 
 interface AdminUtilisateursBarreLatéraleProps {
   estOuverteBarreLatérale: boolean
   setEstOuverteBarreLatérale: (valeur: boolean) => void
+  listeChantiers: ChantierSynthétisé[]
+  listePerimetresMinisteriel: PerimetreMinisteriel[]
+  listePerimetresMinisterielSelectionnable: PerimetreMinisteriel[]
+  listeProfils: Profil[]
+  listeTerritoiresSelectionnable: TerritoireAvecNombreUtilisateurs[]
 }
 
-const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateursBarreLatéraleProps> = ({
+export const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateursBarreLatéraleProps> = ({
   estOuverteBarreLatérale,
   setEstOuverteBarreLatérale,
+  listeChantiers,
+  listePerimetresMinisteriel,
+  listePerimetresMinisterielSelectionnable,
+  listeProfils,
+  listeTerritoiresSelectionnable,
 }) => {
-  const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
-  const { data: périmètresMinistériels } = api.périmètreMinistériel.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
-  const { data: profils } = api.profil.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
   const { data: session } = useSession();
-  const { modifierÉtatDuFiltre, désactiverFiltre } = actionsFiltresUtilisateursStore();
   const territoires = territoiresTerritoiresStore();
-  const filtresActifs = filtresUtilisateursActifsStore();
-  const réinitialiserFiltres = réinitialiser();
-  const territoiresAccessibles = session!.habilitations.lecture.territoires;
-  const profilCréateur = profils?.find(profil => profil.code === session!.profil);
+
+  const profilCréateur = listeProfils?.find(profil => profil.code === session?.profil);
   const profilAccessibles = AAccesATousLesUtilisateurs(profilCréateur ?? null)
-    ? (profils ?? []) :
-    profils?.filter(profil => PROFILS_POSSIBLES_COORDINATEURS_LECTURE[profilCréateur?.code as keyof typeof PROFILS_POSSIBLES_COORDINATEURS_LECTURE].includes(profil.code));
+    ? (listeProfils ?? []) :
+    listeProfils?.filter(profil => PROFILS_POSSIBLES_COORDINATEURS_LECTURE[profilCréateur?.code as keyof typeof PROFILS_POSSIBLES_COORDINATEURS_LECTURE].includes(profil.code));
+
   const [, setPagination] = useQueryStates({
     pageIndex: parseAsInteger.withDefault(1),
     pageSize: parseAsInteger.withDefault(20),
@@ -52,6 +57,26 @@ const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateursBarreL
     history: 'push',
     shallow: false,
   });
+
+  const [filtres, setFiltres] = useQueryStates({
+    territoires: parseAsString.withDefault(''),
+    perimetresMinisteriels: parseAsString.withDefault(''),
+    chantiers: parseAsString.withDefault(''),
+    profils: parseAsString.withDefault(''),
+  }, {
+    shallow: false,
+    clearOnDefault: true,
+    history: 'push',
+  });
+
+  const modifierFiltre = (listeValues: string[], idFiltre: 'territoires' | 'perimetresMinisteriels' | 'chantiers' | 'profils') => {
+    if (filtres[idFiltre].split(',').sort().join(',').localeCompare(listeValues.filter(Boolean).sort().join(','))) {
+      setPagination({
+        pageIndex: 1,
+      });
+      setFiltres({ [idFiltre]: listeValues.filter(Boolean).join(',') });
+    }
+  };
 
   return (
     <BarreLatérale
@@ -62,52 +87,41 @@ const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateursBarreL
         <div className='fr-mb-2w'>
           <MultiSelectTerritoire
             changementValeursSélectionnéesCallback={(territoire) => {
-              setPagination({
-                pageIndex: 1,
-              });
-              modifierÉtatDuFiltre(territoire, 'territoires');
+              modifierFiltre(territoire, 'territoires');
             }}
             groupesÀAfficher={{
-              nationale: territoiresAccessibles.includes('NAT-FR'),
+              nationale: listeTerritoiresSelectionnable.map(territoire => territoire.codeInsee).includes('NAT-FR'),
               regionale: true,
               departementale: true,
             }}
-            territoiresCodesSélectionnésParDéfaut={filtresActifs.territoires}
-            territoiresSélectionnables={territoiresAccessibles}
+            listeTerritoiresSelectionnable={listeTerritoiresSelectionnable}
+            territoiresCodesSélectionnésParDéfaut={filtres.territoires.split(',')}
           />
         </div>
         <div className='fr-mb-2w'>
           <MultiSelectPérimètreMinistériel
             changementValeursSélectionnéesCallback={(périmètreMinistériel) => {
-              setPagination({
-                pageIndex: 1,
-              });
-              modifierÉtatDuFiltre(périmètreMinistériel, 'périmètresMinistériels', chantiers);
+              modifierFiltre(périmètreMinistériel, 'perimetresMinisteriels');
             }}
-            périmètresMinistérielsIdsSélectionnésParDéfaut={filtresActifs.périmètresMinistériels}
+            listePerimetresMinisteriel={listePerimetresMinisterielSelectionnable}
+            périmètresMinistérielsIdsSélectionnésParDéfaut={filtres.perimetresMinisteriels.split(',')}
           />
         </div>
         <div className='fr-mb-2w'>
           <MultiSelectChantier
-            changementValeursSélectionnéesCallback={(chantier) => {
-              setPagination({
-                pageIndex: 1,
-              });
-              modifierÉtatDuFiltre(chantier, 'chantiers');
+            changementValeursSélectionnéesCallback={(chantiers) => {
+              modifierFiltre(chantiers, 'chantiers');
             }}
-            chantiers={chantiers ?? []}
-            chantiersIdsSélectionnésParDéfaut={filtresActifs.chantiers}
+            chantiers={listeChantiers ?? []}
+            chantiersIdsSélectionnésParDéfaut={filtres.chantiers.split(',')}
           />
         </div>
         <MultiSelectProfil
           changementValeursSélectionnéesCallback={(profil) => {
-            setPagination({
-              pageIndex: 1,
-            });
-            modifierÉtatDuFiltre(profil, 'profils');
+            modifierFiltre(profil, 'profils');
           }}
           profils={profilAccessibles ?? []}
-          profilsIdsSélectionnésParDéfaut={filtresActifs.profils}
+          profilsIdsSélectionnésParDéfaut={filtres.profils.split(',')}
         />
       </BarreLatéraleEncart>
       <div className='fr-px-3w fr-py-2w'>
@@ -119,7 +133,14 @@ const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateursBarreL
         </Titre>
         <button
           className='fr-btn fr-btn--secondary'
-          onClick={réinitialiserFiltres}
+          onClick={() => {
+            setFiltres({
+              territoires: '',
+              chantiers: '',
+              profils: '',
+              perimetresMinisteriels: '',
+            });
+          }}
           type='button'
         >
           Réinitialiser les filtres
@@ -137,14 +158,15 @@ const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateursBarreL
           id='fr-sidemenu-item-territoires'
         >
           {
-            filtresActifs.territoires.map(territoireCode => {
+            filtres.territoires.split(',').map(territoireCode => {
               const libellé = territoires.find(t => t.code === territoireCode)?.nomAffiché ?? null;
               return libellé === null ? null : (
                 <Tag
                   key={territoireCode}
                   libellé={libellé}
                   suppressionCallback={() => {
-                    désactiverFiltre(territoireCode, 'territoires');
+                    const arrFiltre = filtres.territoires.split(',');
+                    modifierFiltre(arrFiltre.splice(arrFiltre.indexOf(territoireCode), 1), 'territoires');
                   }}
                 />
               );
@@ -164,14 +186,15 @@ const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateursBarreL
           id='fr-sidemenu-item-périmètresMinistériels'
         >
           {
-            filtresActifs.périmètresMinistériels.map(périmètreMinistérielId => {
-              let libellé = périmètresMinistériels?.find(périmètre => périmètre.id === périmètreMinistérielId)?.nom ?? null;
+            filtres.perimetresMinisteriels.split(',').map(perimetreMinisterielId => {
+              let libellé = listePerimetresMinisteriel.find(perimetreMinisteriel => perimetreMinisteriel.id === perimetreMinisterielId)?.nom ?? null;
               return libellé === null ? null : (
                 <Tag
-                  key={périmètreMinistérielId}
+                  key={perimetreMinisterielId}
                   libellé={libellé}
                   suppressionCallback={() => {
-                    désactiverFiltre(périmètreMinistérielId, 'périmètresMinistériels');
+                    const arrFiltre = filtres.perimetresMinisteriels.split(',');
+                    modifierFiltre(arrFiltre.splice(arrFiltre.indexOf(perimetreMinisterielId), 1), 'perimetresMinisteriels');
                   }}
                 />
               );
@@ -191,14 +214,15 @@ const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateursBarreL
           id='fr-sidemenu-item-chantiers'
         >
           {
-            filtresActifs.chantiers.map(chantierId => {
-              let libellé = chantiers?.find(c => c.id === chantierId)?.nom ?? null;
+            filtres.chantiers.split(',').map(chantierId => {
+              let libellé = listeChantiers?.find(chantierSynthetise => chantierSynthetise.id === chantierId)?.nom ?? null;
               return libellé === null ? null : (
                 <Tag
                   key={chantierId}
                   libellé={libellé}
                   suppressionCallback={() => {
-                    désactiverFiltre(chantierId, 'chantiers');
+                    const arrFiltre = filtres.chantiers.split(',');
+                    modifierFiltre(arrFiltre.splice(arrFiltre.indexOf(chantierId), 1), 'chantiers');
                   }}
                 />
               );
@@ -218,14 +242,15 @@ const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateursBarreL
           id='fr-sidemenu-item-profils'
         >
           {
-            filtresActifs.profils.map(profilCode => {
-              let libellé = profils?.find(c => c.code === profilCode)?.nom ?? null;
+            filtres.profils.split(',').map(profilCode => {
+              let libellé = listeProfils?.find(c => c.code === profilCode)?.nom ?? null;
               return libellé === null ? null : (
                 <Tag
                   key={profilCode}
                   libellé={libellé}
                   suppressionCallback={() => {
-                    désactiverFiltre(profilCode, 'profils');
+                    const arrFiltre = filtres.profils.split(',');
+                    modifierFiltre(arrFiltre.splice(arrFiltre.indexOf(profilCode), 1), 'profils');
                   }}
                 />
               );
@@ -236,5 +261,3 @@ const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateursBarreL
     </BarreLatérale>
   );
 };
-
-export default AdminUtilisateursBarreLatérale;

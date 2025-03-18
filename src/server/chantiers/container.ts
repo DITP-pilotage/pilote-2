@@ -1,4 +1,4 @@
-import { asClass, AwilixContainer, ContainerOptions, createContainer, InjectionMode } from 'awilix';
+import { asClass, AwilixContainer } from 'awilix';
 import { ChantierRepository } from '@/server/chantiers/domain/ports/ChantierRepository';
 import { RecupererDonneesChantierQuery } from '@/server/chantiers/infrastructure/queries/RecupererDonneesChantierQuery';
 import { PrismaChantierRepository } from '@/server/chantiers/infrastructure/adapters/PrismaChantierRepository';
@@ -10,6 +10,7 @@ import { ExportCsvDesIndicateursUseCaseV2 } from '@/server/chantiers/usecases/Ex
 import {
   ExportCsvDesHistoriquesIndicateursUseCase,
 } from '@/server/chantiers/usecases/ExportCsvDesHistoriquesIndicateursUseCase';
+import { PrismaPilote } from '@/server/db/PrismaPilote';
 import { ExportCsvDesChantiersUseCaseV2 } from './usecases/ExportCsvDesChantiersUseCaseV2';
 
 export type ChantierDependencies = {
@@ -22,12 +23,9 @@ export type ChantierDependencies = {
   exportCsvDesIndicateursUseCaseV2: ExportCsvDesIndicateursUseCaseV2
   exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase
 };
-export const getChantiersContainer = (): AwilixContainer<ChantierDependencies> => {
-  const defaultOptions: ContainerOptions = { injectionMode: InjectionMode.PROXY, strict: true };
 
-  const chantier = createContainer<ChantierDependencies>(defaultOptions);
-
-  return chantier.register({
+export const getChantiersContainer = (initialContainer: AwilixContainer<{ prisma: PrismaPilote }>): AwilixContainer<ChantierDependencies & { prisma: PrismaPilote }> => {
+  return initialContainer.createScope<ChantierDependencies>().register({
     chantierRepository: asClass(PrismaChantierRepository),
     indicateurRepository: asClass(PrismaIndicateurRepository),
     recupererDonneesChantierQuery: asClass(RecupererDonneesChantierQuery),

@@ -5,7 +5,7 @@ test('doit arriver sur la landing page', async ({ page }) => {
   await page.goto('http://localhost:3000');
 
   // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/PILOTE - Piloter l’action publique par les résultats/);
+  await expect(page).toHaveTitle(/PILOTE - Piloter l'action publique par les résultats/);
 });
 
 test('doit pouvoir se connecter', async ({ page }) => {

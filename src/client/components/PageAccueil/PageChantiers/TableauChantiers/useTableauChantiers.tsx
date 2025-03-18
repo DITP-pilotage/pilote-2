@@ -26,7 +26,7 @@ import TypologiesPictos
 import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
 import TableauChantiersTendance
   from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance';
-import TableauChantiersÉcart from '@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart';
+import TableauChantiersEcart from '@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import TableauChantiersProps, { DonnéesTableauChantiers } from './TableauChantiers.interface';
 import TableauChantiersTuileChantier from './Tuile/Chantier/TableauChantiersTuileChantier';
@@ -174,7 +174,7 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
         ),
         enableGrouping: false,
         meta: {
-          width: '7.5rem',
+          width: '9rem',
           tabIndex: -1,
         },
       }),
@@ -182,9 +182,9 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
         header: 'Écart',
         id: 'écart',
         cell: cellContext => (
-          <TableauChantiersÉcart
+          <TableauChantiersEcart
+            ecart={cellContext.getValue()}
             estArchive={chantiersSontArchives}
-            écart={cellContext.getValue()}
           />
         ),
         enableGrouping: false,

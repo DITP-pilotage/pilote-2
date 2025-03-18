@@ -6,9 +6,10 @@ import assert from 'node:assert/strict';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { configuration } from '@/config';
-import { getChantiersContainer } from '@/server/chantiers/container';
 import { recupererJalon } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/recupererJalon';
 import { ExportCsvDesIndicateursUseCaseV2 } from '@/server/chantiers/usecases/ExportCsvDesIndicateursUseCaseV2';
+import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
+import { getContainer } from '@/server/dependances';
 
 export const handleExportDesIndicateurs = async (request: NextApiRequest, response: NextApiResponse): Promise<void> => {
   const session = await getServerSession(request, response, authOptions);
@@ -26,7 +27,7 @@ export const handleExportDesIndicateurs = async (request: NextApiRequest, respon
     listeChantierId: request.query.listeChantierId ? (request.query.listeChantierId as string).split(',') : [],
     listeMeteos: request.query.meteos ? Array.isArray(request.query.meteos) ? request.query.meteos : [request.query.meteos] as string[] : [],
     listeOptionsExport: request.query.optionsExport ? Array.isArray(request.query.optionsExport) ? request.query.optionsExport : [request.query.optionsExport] as string[] : [],
-  };
+  } satisfies OptionsExport;
 
   const headersColumns = ExportCsvDesIndicateursUseCaseV2.NOMS_COLONNES(jalon, optionsExport, session.profil);
   const stringifier = stringify({
@@ -45,9 +46,9 @@ export const handleExportDesIndicateurs = async (request: NextApiRequest, respon
 
   const territoireCodes = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
-  const chantierIds = await getChantiersContainer().resolve('chantierRepository').récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(), optionsExport);
+  const chantierIds = await getContainer('chantiers').resolve('chantierRepository').récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(), optionsExport);
 
-  const exportCsvDesIndicateursUseCase = getChantiersContainer().resolve('exportCsvDesIndicateursUseCaseV2');
+  const exportCsvDesIndicateursUseCase = getContainer('chantiers').resolve('exportCsvDesIndicateursUseCaseV2');
 
   for await (const partialResult of exportCsvDesIndicateursUseCase.run({
     chantierIds,

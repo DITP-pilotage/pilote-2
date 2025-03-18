@@ -33,10 +33,10 @@ const PageVide: FunctionComponent<PageVideProps> = ({ titre }) => {
                   Service bientôt disponible
                 </p>
                 <p>
-                  Merci de bien vouloir revenir ultérieurement, vous serez bientôt en mesure d’accéder au service.
+                  Merci de bien vouloir revenir ultérieurement, vous serez bientôt en mesure d'accéder au service.
                   <br />
                   <br />
-                  Si vous avez besoin d’une aide immédiate, merci de nous contacter.
+                  Si vous avez besoin d'une aide immédiate, merci de nous contacter.
                 </p>
                 <a
                   className='fr-btn fr-btn--secondary'
@@ -49,7 +49,7 @@ const PageVide: FunctionComponent<PageVideProps> = ({ titre }) => {
                 <svg
                   aria-hidden='true'
                   className='fr-responsive-img fr-artwork'
-                  height='150' 
+                  height='150'
                   viewBox='0 0 160 200'
                   width='160'
                   xmlns='http://www.w3.org/2000/svg'

@@ -72,11 +72,11 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<PremièrePageI
     estAutoriseAVoirLesBrouillons ? filtres.statut === 'BROUILLON_ET_PUBLIE' ? 'Chantiers validés et en cours de publication' : filtres.statut === 'BROUILLON' ? 'Chantiers en cours de publication' : 'Chantiers validés' : null,
   ].filter(Boolean);
   const filtresAlertes = [
-    filtres.estEnAlerteTauxAvancementNonCalculé ? 'Taux d’avancement non calculé en raison d’indicateurs non renseignés' : null,
+    filtres.estEnAlerteTauxAvancementNonCalculé ? "Taux d'avancement non calculé en raison d\'indicateurs non renseignés" : null,
     filtres.estEnAlerteÉcart ? `Chantier(s) avec un retard de 10 points par rapport à leur médiane ${territoireSélectionné?.maille}` : null,
     filtres.estEnAlerteBaisse ? 'Chantier(s) avec tendance en baisse' : null,
     filtres.estEnAlerteMétéoNonRenseignée ? 'Chantier(s) avec météo et synthèse des résultats non renseignés' : null,
-    filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 'Chantier(s) sans taux d’avancement au niveau départemental' : null,
+    filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? "Chantier(s) sans taux d'avancement au niveau départemental" : null,
   ].filter(Boolean);
 
   const filtresAxes = filtres.axes.split(',').filter(Boolean).map(axeId => retrouverNomFiltre(axeId, axes));
@@ -95,13 +95,13 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<PremièrePageI
             PILOTE
           </p>
           <p className='fr-text--sm fr-mb-0'>
-            Piloter l’action publique par les résultats
+            Piloter l'action publique par les résultats
           </p>
         </div>
       </header>
       <div className='fr-pt-6w fr-pb-3w fond-bleu-clair'>
         <div className='fr-mb-6w fr-display--md text-center titre-rapport-détaillé'>
-          État des lieux de l’avancement
+          État des lieux de l'avancement
           <br />
           des politiques prioritaires
           <br />

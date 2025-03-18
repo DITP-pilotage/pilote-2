@@ -21,9 +21,12 @@ export const profilsCodes = [
   ProfilEnum.DROM,
 ] as const;
 
+export const profilsDépartementaux = [ProfilEnum.PREFET_DEPARTEMENT, ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT];
+export const profilsRégionaux = [ProfilEnum.PREFET_REGION, ProfilEnum.COORDINATEUR_REGION, ProfilEnum.SERVICES_DECONCENTRES_REGION];
+
 export type ProfilCode = typeof profilsCodes[number];
 
-type Utilisateur = {
+export type Utilisateur = {
   id: string
   nom: string
   prénom: string
@@ -52,16 +55,3 @@ export type UtilisateurÀCréerOuMettreÀJour =  {
   gestionUtilisateur: boolean
   habilitations: HabilitationsÀCréerOuMettreÀJour
 };
-
-export type UtilisateurÀCréerOuMettreÀJourSansHabilitation =  {
-  nom: string
-  prénom: string
-  email: string
-  fonction: string | null
-  profil: ProfilCode,
-  saisieIndicateur: boolean
-  saisieCommentaire: boolean
-  gestionUtilisateur: boolean
-};
-
-export default Utilisateur;

@@ -59,14 +59,14 @@ const EnTête: FunctionComponent<{}> = () => {
               <div className='fr-header__service'>
                 <Link
                   href='/'
-                  title='Retour à l’accueil du site'
+                  title="Retour à l'accueil du site"
                 >
                   <p className='fr-header__service-title'>
                     PILOTE
                   </p>
                 </Link>
                 <p className='fr-header__service-tagline fr-text--sm'>
-                  Piloter l’action publique par les résultats
+                  Piloter l'action publique par les résultats
                 </p>
               </div>
             </div>

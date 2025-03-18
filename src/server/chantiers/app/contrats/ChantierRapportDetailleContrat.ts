@@ -24,10 +24,12 @@ interface TerritoireDonnéeRapportDetailleContrat {
   dateDeMàjDonnéesQualitatives: string | null
   dateDeMàjDonnéesQuantitatives: string | null
   avancement: TerritoireAvancementRapportDetailleContrat
+  avancementPrecedent: TerritoireAvancementRapportDetailleContrat['global'],
   responsableLocal: ResponsableLocalRapportDetailleContrat[]
   coordinateurTerritorial: CoordinateurTerritorialRapportDetailleContrat[]
   météo: 'NON_RENSEIGNEE' | 'ORAGE' | 'NUAGE' | 'COUVERT' | 'SOLEIL' | 'NON_NECESSAIRE'
   aUnePropositionsValeurActuelle: boolean,
+  dateTauxAvancementMandatValeurPrecedente: string | null
 }
 
 export type ListeTerritoiresDonnéeRapportDetailleContrat = Record<string, TerritoireDonnéeRapportDetailleContrat>;
@@ -76,9 +78,9 @@ export interface CoordinateurTerritorialRapportDetailleContrat {
 export interface ChantierRapportDetailleContrat {
   id: string
   nom: string
-  statut: TypeStatut,
-  cibleAttendu: boolean,
-  mailles: MailleRapportDetailleContrat;
+  statut: TypeStatut
+  cibleAttendu: boolean
+  mailles: MailleRapportDetailleContrat
   périmètreIds: string[]
   estTerritorialisé: boolean
   estBaromètre: boolean
@@ -87,16 +89,18 @@ export interface ChantierRapportDetailleContrat {
   tauxAvancementDonnéeTerritorialisée: Record<MailleInterne, Boolean>
   météoDonnéeTerritorialisée: Record<MailleInterne, Boolean>
   responsables: ResponsableRapportDetailleContrat
-  dateDeMàjDonnéesQuantitatives: string | null;
-  dateDeMàjDonnéesQualitatives: string | null;
-  écart: number | null;
+  dateDeMàjDonnéesQuantitatives: string | null
+  dateDeMàjDonnéesQualitatives: string | null
+  écart: number | null
   tendance: 'BAISSE' | 'HAUSSE' | 'STAGNATION' | null;
-  météo: Météo;
-  avancementGlobal: number | null;
+  météo: Météo
+  avancementGlobal: TerritoireAvancementRapportDetailleContrat['global']
+  avancementPrecedent: TerritoireAvancementRapportDetailleContrat['global']
   responsableLocalTerritoireSélectionné: ResponsableLocalRapportDetailleContrat[]
   coordinateurTerritorialTerritoireSélectionné: CoordinateurTerritorialRapportDetailleContrat[]
   aUnePropositionsValeurActuelle: boolean
   maillesApplicables: Maille[]
+  dateTauxAvancementMandatValeurPrecedente: string | null
 }
 
 class ErreurChantierSansMailleNationale extends Error {
@@ -133,10 +137,12 @@ export function créerDonnéesTerritoiresRapportDetailleNew(
         annuel: chantierRow?.chantier_territoire_jalon.at(0)?.taux_avancement ?? null,
         global: chantierRow?.taux_avancement_mandat ?? null,
       },
+      avancementPrecedent: chantierRow?.taux_avancement_mandat_valeur_precedente ?? null,
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
       responsableLocal: (chantierRow?.responsables_locaux || []).map((value, index) => ({ nom: value, email: chantierRow?.responsables_locaux_mails[index]! })),
       coordinateurTerritorial: (chantierRow?.coordinateurs_territoriaux || []).map((value, index) => ({ nom: value, email: chantierRow?.coordinateurs_territoriaux_mails[index]! })),
       aUnePropositionsValeurActuelle: aUnePropositionDeValeurActuelle,
+      dateTauxAvancementMandatValeurPrecedente: chantierRow?.date_taux_avancement_mandat_valeur_precedente?.toISOString() ?? null,
     };
   });
 
@@ -167,6 +173,7 @@ export const presenterEnChantierRapportDetaille = (
     nationale: {
       'NAT-FR': profil === ProfilEnum.DROM && !chantierIdentite.perimetre_ids.includes('PER-018') ? {
         avancement: { annuel: null, global: null },
+        avancementPrecedent: null,
         météo: 'NON_RENSEIGNEE',
         écart: null,
         tendance: chantierMailleNationale.tendance,
@@ -176,8 +183,10 @@ export const presenterEnChantierRapportDetaille = (
         responsableLocal: [],
         coordinateurTerritorial: [],
         aUnePropositionsValeurActuelle: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0),
+        dateTauxAvancementMandatValeurPrecedente: chantierMailleNationale?.date_taux_avancement_mandat_valeur_precedente?.toISOString() ?? null,
       } : {
         avancement: { annuel: verifyValeurIsNotNullOrUndefined(chantierMailleNationale.chantier_territoire_jalon.at(0)?.taux_avancement), global: chantierMailleNationale.taux_avancement_mandat },
+        avancementPrecedent: chantierMailleNationale?.taux_avancement_mandat_valeur_precedente ?? null,
         météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
         écart: null,
         tendance: chantierMailleNationale.tendance,
@@ -187,6 +196,7 @@ export const presenterEnChantierRapportDetaille = (
         coordinateurTerritorial: [],
         responsableLocal: [],
         aUnePropositionsValeurActuelle: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0),
+        dateTauxAvancementMandatValeurPrecedente: chantierMailleNationale?.date_taux_avancement_mandat_valeur_precedente?.toISOString() ?? null,
       },
     },
     departementale: créerDonnéesTerritoiresRapportDetailleNew(listeTerritoireDept, listeChantiersMailleDépartementale),
@@ -235,8 +245,10 @@ export const presenterEnChantierRapportDetaille = (
     tendance: newMaille[mailleChantier][territoireCode].tendance,
     météo: newMaille[mailleChantier][territoireCode].météo,
     avancementGlobal: newMaille[mailleChantier][territoireCode].avancement.global,
+    avancementPrecedent: newMaille[mailleChantier][territoireCode].avancementPrecedent,
     responsableLocalTerritoireSélectionné: newMaille[mailleChantier][territoireCode].responsableLocal,
     coordinateurTerritorialTerritoireSélectionné: newMaille[mailleChantier][territoireCode].coordinateurTerritorial,
     aUnePropositionsValeurActuelle: newMaille[mailleChantier][territoireCode].aUnePropositionsValeurActuelle,
+    dateTauxAvancementMandatValeurPrecedente: newMaille[mailleChantier][territoireCode].dateTauxAvancementMandatValeurPrecedente,
   };
 };

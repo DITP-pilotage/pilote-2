@@ -76,8 +76,8 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
       {
         !!!indicateurEstApplicable ? (
           <p className='fr-text--sm'>
-            L'indicateur n’est pas applicable sur le territoire.
-          </p>            
+            L'indicateur n'est pas applicable sur le territoire.
+          </p>
         ) : !!dateProchaineDateMaj ? (
           <>
             <p className='fr-text--sm'>
@@ -88,26 +88,26 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
               </span>
             </p>
             <p className='fr-text--sm'>
-              La date de valeur actuelle de cet indicateur est :
+              La date de valeur d'avancement de cet indicateur est :
               {' '}
               <span className='fr-text--bold'>
                 {`${dateValeurActuelle ?? libelléValeurNull}.`}
               </span>
               {' '}
-              La date de la prochaine valeur actuelle sera donc :
+              La date de la prochaine valeur d'avancement sera donc :
               {' '}
               <span className='fr-text--bold'>
                 {`${dateProchaineDateValeurActuelle ?? libelléValeurNull}.`}
               </span>
             </p>
             <p className='fr-text--sm'>
-              La mise à disposition d’une nouvelle valeur pour cet indicateur nécessite un délai de disponibilité de
+              La mise à disposition d'une nouvelle valeur pour cet indicateur nécessite un délai de disponibilité de
               {' '}
               <span className='fr-text--bold'>
                 {delaiDisponibilite ? `${delaiDisponibilite} mois.` : 'Non renseigné'}
               </span>
               {' '}
-              {`De ce fait, la mise à jour de la prochaine valeur actuelle est requise ${indicateurEstAjour ? 'au plus tard à' : 'depuis'} la date :`}
+              {`De ce fait, la mise à jour de la prochaine valeur d'avancement est requise ${indicateurEstAjour ? 'au plus tard à' : 'depuis'} la date :`}
               {' '}
               <span className='fr-text--bold'>
                 {`${dateProchaineDateMaj ?? libelléValeurNull}.`}
@@ -123,12 +123,12 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
                 </p>
               ) : (
                 <p className='fr-text--sm'>
-                  La valeur actuelle de cet indicateur est non renseignée.
+                  La valeur d'avancement de cet indicateur est non renseignée.
                 </p>                
               )
             }
             <p className='fr-text--sm'>
-              De ce fait, la mise à jour de la prochaine valeur actuelle ne peut être calculée.
+              De ce fait, la mise à jour de la prochaine valeur d'avancement ne peut être calculée.
             </p>
           </>
         )
@@ -146,7 +146,9 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
                   Poser une question sur cet indicateur
                 </p>
                 <p className='fr-text fr-text--sm fr-mb-0'>
-                  Des questions ou des remarques sur cet indicateur (définition de l’indicateur, données source, méthode de calcul, mise à jour, etc.) ? Contactez le responsable des données de la politique prioritaire désigné par le directeur de projet pour obtenir plus d’informations.
+                  Des questions ou des remarques sur cet indicateur (définition de l'indicateur, données source, méthode
+                  de calcul, mise à jour, etc.) ? Contactez le responsable des données de la politique prioritaire désigné
+                  par le directeur de projet pour obtenir plus d'informations.
                 </p>
               </div>
 
@@ -157,9 +159,9 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
                 className='fr-link'
                 href={`mailto:${responsablesMails.join(', ')}?subject=${objectMail}`}
                 title={`Contacter ${responsablesMails.join(', ')}`}
-              >  
+              >
                 Contacter
-              </Link> 
+              </Link>
             </div>
           </div>
         )

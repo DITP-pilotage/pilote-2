@@ -1,13 +1,21 @@
-import UtilisateurRepository from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository.interface';
+import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository';
 import { UtilisateurIAMRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository';
-import Utilisateur from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
-import { Habilitations } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface';
+import { Utilisateur } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
 import { Profil } from '@/server/domain/profil/Profil.interface';
-import Habilitation from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
 import { TokenAPIInformationRepository } from '@/server/gestion-utilisateur/domain/ports/TokenAPIInformationRepository';
+import { TerritoireRepository } from '@/server/gestion-utilisateur/domain/ports/TerritoireRepository';
+import {
+  PerimetreMinisterielRepository,
+} from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository';
+import { ChantierRepository } from '@/server/gestion-utilisateur/domain/ports/ChantierRepository';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
 type Dependencies = {
   utilisateurRepository: UtilisateurRepository,
+  chantierRepository: ChantierRepository,
+  territoireRepository: TerritoireRepository,
+  perimetreMinisterielRepository: PerimetreMinisterielRepository,
   utilisateurIAMRepository: UtilisateurIAMRepository,
   tokenAPIInformationRepository: TokenAPIInformationRepository,
 };
@@ -15,24 +23,41 @@ type Dependencies = {
 export default class DesactiverUnUtilisateurUseCase {
   private utilisateurRepository: UtilisateurRepository;
 
+  private territoireRepository: TerritoireRepository;
+
+  private chantierRepository: ChantierRepository;
+
+  private perimetreMinisterielRepository: PerimetreMinisterielRepository;
+
   private utilisateurIAMRepository: UtilisateurIAMRepository;
 
   private tokenAPIInformationRepository: TokenAPIInformationRepository;
 
   constructor({
     utilisateurRepository,
+    chantierRepository,
+    territoireRepository,
+    perimetreMinisterielRepository,
     utilisateurIAMRepository,
     tokenAPIInformationRepository,
   }: Dependencies) {
     this.utilisateurRepository = utilisateurRepository;
+    this.chantierRepository = chantierRepository;
+    this.territoireRepository = territoireRepository;
+    this.perimetreMinisterielRepository = perimetreMinisterielRepository;
     this.utilisateurIAMRepository = utilisateurIAMRepository;
     this.tokenAPIInformationRepository = tokenAPIInformationRepository;
   }
 
-  async run(email: Utilisateur['email'], habilitations: Habilitations, profil: Profil | null): Promise<void> {
-    const utilisateurASupprimer = await this.utilisateurRepository.récupérer(email);
+  async run(email: Utilisateur['email'], habilitations: Habilitations, profil: Profil | null, auteurId: string): Promise<void> {
+    const listeInformationsChantiersUtilisateurs = await this.chantierRepository.listerInformationsChantiersUtilisateurs();
+    const listeTerritoiresCodes = await this.territoireRepository.listerCodes([]);
+    const listePerimetresMinisteriels = await this.perimetreMinisterielRepository.listerIds([]);
+
+    const utilisateurASupprimer = await this.utilisateurRepository.récupérer(email, listeTerritoiresCodes, listePerimetresMinisteriels, listeInformationsChantiersUtilisateurs);
+
     if (!utilisateurASupprimer) {
-      throw new Error('Le compte à supprimer n’existe pas.');
+      throw new Error("Le compte à supprimer n'existe pas.");
     }
     
     const habilitationsUtilisateurASupprimer = utilisateurASupprimer.habilitations;
@@ -43,7 +68,7 @@ export default class DesactiverUnUtilisateurUseCase {
       profil,
     );
 
-    await this.utilisateurRepository.desactiver(email);
+    await this.utilisateurRepository.desactiver(email, auteurId);
 
     if (process.env.IMPORT_KEYCLOAK_URL) {
       await this.utilisateurIAMRepository.desactive(email);

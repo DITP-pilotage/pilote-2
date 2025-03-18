@@ -1,10 +1,7 @@
-import {
-  ProfilCode,
-  profilsDépartementaux,
-  profilsTerritoriaux,
-} from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface';
+import { recupererLesNomsDesTerritoires } from '@/server/app/RecupererLesNomsDesTerritoiresPourUnUtilisateur';
 
 export interface UtilisateurListeGestionContrat {
   id: string
@@ -19,21 +16,6 @@ export interface UtilisateurListeGestionContrat {
   statut: 'actif' | 'desactive'
 }
 
-const recupererLesNomsDesTerritoires = (utilisateur: UtilisateurListeGestion, territoiresListe: Territoire[]): string[] => {
-  
-  if (!profilsTerritoriaux.includes(utilisateur.profil)) {
-    return ['Tous les territoire'];
-  }
-
-  const maillesUtilisateur = profilsDépartementaux.includes(utilisateur.profil) ?
-    ['departementale', 'nationale'] :
-    ['regionale', 'nationale'];
-
-  return territoiresListe.
-    filter(territoire => utilisateur.habilitations.lecture.territoires.includes(territoire.code) && maillesUtilisateur.includes(territoire.maille)).
-    map(territoire => territoire.nom);
-};
-
 export const presenterEnUtilisateurListeGestionContrat = (utilisateur: UtilisateurListeGestion, territoiresListe: Territoire[]): UtilisateurListeGestionContrat => {
   return {
     id: utilisateur.id,
@@ -44,7 +26,7 @@ export const presenterEnUtilisateurListeGestionContrat = (utilisateur: Utilisate
     fonction: utilisateur.fonction,
     dateModification: utilisateur.dateModification,
     auteurModification: utilisateur.auteurModification,
-    listeNomsTerritoires: recupererLesNomsDesTerritoires(utilisateur, territoiresListe),
+    listeNomsTerritoires: recupererLesNomsDesTerritoires(utilisateur.profil, utilisateur.habilitations, territoiresListe),
     statut: utilisateur.dateDesactivation ? 'desactive' : 'actif',
   };
 };

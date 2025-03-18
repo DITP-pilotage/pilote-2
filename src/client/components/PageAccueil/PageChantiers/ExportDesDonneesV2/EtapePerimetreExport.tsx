@@ -59,7 +59,7 @@ export const EtapePerimetreExport = () => {
             htmlFor='indicateurs'
           >
             le cas échéant, le territoire sélectionné et tous les territoires inclus aux mailles inférieures seront
-            intégrés dans l’export
+            intégrés dans l'export
           </label>
         </div>
       </div>

@@ -1,0 +1,89 @@
+import {
+  PROFILS_POSSIBLES_COORDINATEURS_LECTURE,
+} from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
+import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface';
+import { FiltreQueryParams } from '@/server/gestion-utilisateur/app/contrats/FiltreQueryParams';
+
+export class FiltrerListeUtilisateursUseCase {
+  private utilisateurPasseLeFiltreTerritoire(utilisateur: UtilisateurListeGestion, listeTerritoires: string[]) {
+    if (listeTerritoires.length === 0) {
+      return true;
+    }
+
+    return utilisateur.habilitations.lecture.territoires.some((territoire) => listeTerritoires.includes(territoire));
+  }
+
+  private utilisateurPasseLeFiltrePérimètreMinistériel(utilisateur: UtilisateurListeGestion, listePerimetresMinisteriels: string[], listeChantiersAssociesAuxPerimetres: string[]) {
+    if (listePerimetresMinisteriels.length === 0) {
+      return true;
+    }
+
+    return utilisateur.habilitations.lecture.périmètres.some((périmètre) => listePerimetresMinisteriels.includes(périmètre)) ||
+      utilisateur.habilitations.lecture.chantiers.some((chantier) => listeChantiersAssociesAuxPerimetres.includes(chantier));
+  }
+
+  private utilisateurPasseLeFiltreChantier(utilisateur: UtilisateurListeGestion, listeChantiers: string[]) {
+    if (listeChantiers.length === 0) {
+      return true;
+    }
+
+    return utilisateur.habilitations.lecture.chantiers.some((chantier) => listeChantiers.includes(chantier));
+  }
+
+  private utilisateurPasseLeFiltreProfil(utilisateur: UtilisateurListeGestion, listeProfils: string[]) {
+    if (listeProfils.length === 0) {
+      return true;
+    }
+
+    return listeProfils.includes(utilisateur.profil);
+  }
+  
+  private utilisateurEstActif(utilisateur: UtilisateurListeGestion) {
+    return utilisateur.dateDesactivation === null;
+  }
+
+  private utilisateurPasseLeFiltreTypeCompte(utilisateur: UtilisateurListeGestion, listeTypesComptes: string[]) {
+    if (listeTypesComptes.includes('actif') && listeTypesComptes.includes('desactive')) {
+      return true;
+    } else if (listeTypesComptes.includes('actif')) {
+      return this.utilisateurEstActif(utilisateur);
+    } else {
+      return !this.utilisateurEstActif(utilisateur);
+    }
+  }
+
+  private utilisateurPasseLesFiltres(utilisateur: UtilisateurListeGestion, filtresActifs: FiltreQueryParams) {
+    return this.utilisateurPasseLeFiltreTerritoire(utilisateur, filtresActifs.territoires)
+      && this.utilisateurPasseLeFiltreChantier(utilisateur, filtresActifs.chantiers)
+      && this.utilisateurPasseLeFiltrePérimètreMinistériel(utilisateur, filtresActifs.perimetresMinisteriels, filtresActifs.chantiersAssociésAuxPérimètres)
+      && this.utilisateurPasseLeFiltreProfil(utilisateur, filtresActifs.profils)
+      && this.utilisateurPasseLeFiltreTypeCompte(utilisateur, filtresActifs.typeCompte);
+  }
+
+  private profilEstAutorisé(utilisateur: UtilisateurListeGestion, profil: ProfilCode) {
+    return PROFILS_POSSIBLES_COORDINATEURS_LECTURE[profil as keyof typeof PROFILS_POSSIBLES_COORDINATEURS_LECTURE].includes(utilisateur.profil);
+  }
+
+  private territoireEstAutorisé(utilisateur: UtilisateurListeGestion, habilitation: Habilitation) {
+    return utilisateur.habilitations.lecture.territoires.some(territoire => habilitation.peutAccéderAuTerritoire(territoire));
+  }
+
+  private utilisateurEstAutorisé(utilisateur: UtilisateurListeGestion, profil: ProfilCode, habilitation: Habilitation) {
+    if (!Object.keys(PROFILS_POSSIBLES_COORDINATEURS_LECTURE).includes(profil))
+      return true;
+    
+    return this.profilEstAutorisé(utilisateur, profil) && this.territoireEstAutorisé(utilisateur, habilitation);
+  }
+
+  run({ utilisateurs, filtresActifs, profil, habilitation }: {
+    utilisateurs: UtilisateurListeGestion[],
+    filtresActifs: FiltreQueryParams,
+    profil: ProfilCode,
+    habilitation: Habilitation,
+  },
+  ) {
+    return utilisateurs.filter(utilisateur => this.utilisateurPasseLesFiltres(utilisateur, filtresActifs) && this.utilisateurEstAutorisé(utilisateur, profil, habilitation));
+  }
+}

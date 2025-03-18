@@ -164,11 +164,6 @@ const config = convict({
       default: true,
       env: 'NEXT_PUBLIC_FF_RAPPORT_DETAILLE',
     },
-    projetsStructurants: {
-      format: Boolean,
-      default: true,
-      env: 'NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS',
-    },
     infobullePonderation: {
       format: Boolean,
       default: false,

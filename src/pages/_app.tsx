@@ -12,7 +12,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Head from 'next/head';
 import { TRPCClientError } from '@trpc/client';
 import init from '@socialgouv/matomo-next';
-import { Router, useRouter } from 'next/router';
+import { Router } from 'next/router';
 import MiseEnPage from '@/client/components/_commons/MiseEnPage/MiseEnPage';
 import useDétecterLargeurDÉcran from '@/client/hooks/useDétecterLargeurDÉcran';
 import api from '@/server/infrastructure/api/trpc/api';
@@ -36,10 +36,6 @@ const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
 function MonApplication({ Component, pageProps }: AppProps) {
   useDétecterLargeurDÉcran();
 
-  const router = useRouter();
-
-  const estNouvellePageAccueil = router.pathname.startsWith('/accueil');
-
   const [afficherLeLoader, setAfficherLeLoader] = useState(false);
   const [pageEnCoursDeChargement, setPageEnCoursDeChargement] = useState(false);
 
@@ -60,7 +56,6 @@ function MonApplication({ Component, pageProps }: AppProps) {
       Router.events.off('routeChangeError', finChargement);
     };
   }, []);
-
 
   useEffect(() => {
     let timer = setTimeout(() => {});
@@ -121,7 +116,7 @@ function MonApplication({ Component, pageProps }: AppProps) {
       </Head>
       <QueryClientProvider client={queryClient}>
         <SessionProvider session={pageProps.session}>
-          <MiseEnPage afficherLeLoader={!estNouvellePageAccueil && afficherLeLoader}>
+          <MiseEnPage afficherLeLoader={afficherLeLoader}>
             <Component {...pageProps} />
           </MiseEnPage>
         </SessionProvider>

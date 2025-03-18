@@ -13,7 +13,10 @@ const adjectifÀPartirDeLaMaille: Record<MailleTerritoireSelectionne, string> = 
   REG: 'régional',
 };
 
-const IndicateurPonderation: FunctionComponent<IndicateurPondérationProps> = ({ indicateurPondération, mailleSélectionnée }) => {
+const IndicateurPonderation: FunctionComponent<IndicateurPondérationProps> = ({
+  indicateurPondération,
+  mailleSélectionnée,
+}) => {
   return (
     <p className='fr-text--xs texte-gris'>
       {
@@ -21,7 +24,7 @@ const IndicateurPonderation: FunctionComponent<IndicateurPondérationProps> = ({
           ? `La pondération n'est pas disponible pour le taux d'avancement ${adjectifÀPartirDeLaMaille[mailleSélectionnée]}.`
           : (
             indicateurPondération === 0
-              ? `Cet indicateur n’est pas pris en compte dans le taux d’avancement ${adjectifÀPartirDeLaMaille[mailleSélectionnée]} du chantier.`
+              ? `Cet indicateur n'est pas pris en compte dans le taux d'avancement ${adjectifÀPartirDeLaMaille[mailleSélectionnée]} du chantier.`
               : (
                 <>
                   Cet indicateur représente
@@ -31,7 +34,7 @@ const IndicateurPonderation: FunctionComponent<IndicateurPondérationProps> = ({
                     %
                   </span>
                   {' '}
-                  du taux d’avancement
+                  du taux d'avancement
                   {' '}
                   {adjectifÀPartirDeLaMaille[mailleSélectionnée]}
                   {' '}

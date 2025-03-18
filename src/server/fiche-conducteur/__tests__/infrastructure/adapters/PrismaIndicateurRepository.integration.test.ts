@@ -1,18 +1,20 @@
-import { prisma } from '@/server/db/prisma';
 import {
   PrismaIndicateurRepository,
 } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaIndicateurRepository';
+import { PrismaPilote } from '@/server/db/PrismaPilote';
 
 describe('PrismaIndicateurRepository', () => {
+  let prisma: PrismaPilote;
   let prismaIndicateurRepository: PrismaIndicateurRepository;
 
   beforeEach(() => {
-    prismaIndicateurRepository = new PrismaIndicateurRepository();
+    prisma = new PrismaPilote();
+    prismaIndicateurRepository = new PrismaIndicateurRepository({ prisma });
   });
   describe('#récupérerIndicImpactParChantierId', () => {
     it('doit récupérer les indicateurs d\'impact avec une pondération national supérieur à 0 du chantier associé', async () => {
       // Given
-      await prisma.chantier_identite.createMany({
+      await prisma.getInstance().chantier_identite.createMany({
         data: [{
           id: 'CH-001',
           nom: 'Chantier 001',
@@ -21,7 +23,7 @@ describe('PrismaIndicateurRepository', () => {
           directeurs_projet: ['DP 1', 'DP 2'],
         }],
       });
-      await prisma.chantier_territoire.createMany({
+      await prisma.getInstance().chantier_territoire.createMany({
         data: [{
           id: 'CH-001',
           zone_id: 'FRANCE',
@@ -37,7 +39,7 @@ describe('PrismaIndicateurRepository', () => {
         }],
       });
 
-      await prisma.indicateur_identite.createMany({
+      await prisma.getInstance().indicateur_identite.createMany({
         data: [{
           id: 'IND-001',
           chantier_id: 'CH-001',
@@ -71,7 +73,7 @@ describe('PrismaIndicateurRepository', () => {
         }],
       });
 
-      await prisma.indicateur_territoire.createMany({
+      await prisma.getInstance().indicateur_territoire.createMany({
         data: [{
           id: 'IND-001',
           chantier_id: 'CH-001',
@@ -135,7 +137,7 @@ describe('PrismaIndicateurRepository', () => {
         }],
       });
 
-      await prisma.indicateur_territoire_jalon.createMany({
+      await prisma.getInstance().indicateur_territoire_jalon.createMany({
         data: [{
           id: 'IND-001',
           code_insee: 'FR',

@@ -320,7 +320,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                             <p className='fr-text--xs fr-mb-0 fr-mt-1v text-center'>
                               Taux d'avancement à échéance
                             </p>
-                            <div className='select-sm flex align-center justify-center align-center'>
+                            <div className='select-sm flex align-center justify-center w-full relative'>
                               <Sélecteur<'2024' | '2025'>
                                 htmlName='jalon'
                                 options={[{ libellé: '2024', valeur: '2024' }, { libellé: '2025', valeur: '2025' }]}
@@ -329,26 +329,9 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                                 valeurSélectionnée={`${jalon}` as '2024' | '2025'}
                               />
                               <Infobulle
-                                className='fr-pt-0'
                                 idHtml='infobulle-selecteur-jalon'
                               >
-                                <div>
-                                  <h5 className='fr-text--sm fr-mb-1w'>
-                                    Avancement à échéance
-                                  </h5>
-                                  <p className='fr-text--xs'>
-                                    Ce sélecteur vous permet d'afficher les valeurs prises successivement par le taux
-                                    d'avancement :
-                                  </p>
-                                  <ul className='fr-text--xs fr-mb-0'>
-                                    <li>
-                                      valeurs observées à la fin des années passées
-                                    </li>
-                                    <li>
-                                      valeur à date (année en cours)
-                                    </li>
-                                  </ul>
-                                </div>
+                                {INFOBULLE_CONTENUS.chantiers.jalon}
                               </Infobulle>
                             </div>
                           </div>
@@ -365,13 +348,13 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                         <TitreInfobulleConteneur>
                           <Titre
                             baliseHtml='h2'
-                            className='fr-text--lg fr-m-0 fr-py-1v '
+                            className='fr-text--lg fr-py-1v'
                             estInline
                           >
                             Répartition territoriale
                           </Titre>
                           <Infobulle
-                            idHtml='infobulle-chantiers-jauges'
+                            idHtml='infobulle-chantiers-jauges-repartitions'
                           >
                             {INFOBULLE_CONTENUS.chantiers.repartitions}
                           </Infobulle>
@@ -476,7 +459,10 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 >
                   Chantiers signalés
                 </Titre>
-                <Infobulle idHtml='infobulle-chantiers-alertes'>
+                <Infobulle
+                  classNameBouton='titre-remontée-alertes'
+                  idHtml='infobulle-chantiers-alertes'
+                >
                   {INFOBULLE_CONTENUS.chantiers.alertes}
                 </Infobulle>
               </TitreInfobulleConteneur>

@@ -4,7 +4,6 @@ import { getServerSession } from 'next-auth/next';
 import Head from 'next/head';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { FicheConducteurContrat } from '@/server/fiche-conducteur/app/contrats/FicheConducteurContrat';
-import { ficheConducteurHandler } from '@/server/fiche-conducteur/infrastructure/handlers/FicheConducteurHandler';
 import { PageFicheConducteur } from '@/components/PageFicheConducteur/PageFicheConducteur';
 import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
 import { estAutoriséAConsulterLaFicheConducteur } from '@/client/utils/fiche-conducteur/fiche-conducteur';
@@ -12,6 +11,7 @@ import {
   getAnneeDateDeBascule,
 } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule';
 import { configuration } from '@/config';
+import { getContainer } from '@/server/dependances';
 
 export const getServerSideProps: GetServerSideProps<{
   ficheConducteur: FicheConducteurContrat,
@@ -27,7 +27,7 @@ export const getServerSideProps: GetServerSideProps<{
 
   const jalon = Number.parseInt(query.jalon as string) || getAnneeDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
 
-  const ficheConducteur = await ficheConducteurHandler().recupererFicheConducteur(query.id as string, 'NAT-FR', jalon);
+  const ficheConducteur = await getContainer('ficheConducteur').resolve('ficheConducteurHandler').recupererFicheConducteur(query.id as string, 'NAT-FR', jalon);
 
   return {
     props: {

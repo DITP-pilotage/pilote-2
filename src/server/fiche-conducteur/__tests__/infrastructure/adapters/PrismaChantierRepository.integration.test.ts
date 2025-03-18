@@ -1,17 +1,19 @@
 import { PrismaChantierRepository } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaChantierRepository';
-import { prisma } from '@/server/db/prisma';
+import { PrismaPilote } from '@/server/db/PrismaPilote';
 
 describe('PrismaChantierRepository', () => {
+  let prisma: PrismaPilote;
   let prismaChantierRepository: PrismaChantierRepository;
 
   beforeEach(() => {
-    prismaChantierRepository = new PrismaChantierRepository();
+    prisma = new PrismaPilote();
+    prismaChantierRepository = new PrismaChantierRepository({ prisma });
   });
 
   describe('#récupérerParIdEtParTerritoireCode', () => {
     it('doit récupérer le chantier associé', async () => {
       // Given
-      await prisma.chantier_identite.createMany({
+      await prisma.getInstance().chantier_identite.createMany({
         data: [{
           id: 'CH-168',
           nom: 'Chantier 168',
@@ -26,7 +28,7 @@ describe('PrismaChantierRepository', () => {
           directeurs_projet: ['DP 5', 'DP 6'],
         }],
       });
-      await prisma.chantier_territoire.createMany({
+      await prisma.getInstance().chantier_territoire.createMany({
         data: [{
           id: 'CH-168',
           zone_id: 'FRANCE',
@@ -48,7 +50,7 @@ describe('PrismaChantierRepository', () => {
         }],
       });
 
-      await prisma.chantier_territoire_jalon.createMany({
+      await prisma.getInstance().chantier_territoire_jalon.createMany({
         data: [{
           id: 'CH-168',
           code_insee: 'FR',
@@ -100,7 +102,7 @@ describe('PrismaChantierRepository', () => {
   describe('#récupérerMailleNatEtDeptParId', () => {
     it('doit récupérer le chantier associé', async () => {
       // Given
-      await prisma.chantier_identite.createMany({
+      await prisma.getInstance().chantier_identite.createMany({
         data: [{
           id: 'CH-168',
           nom: 'Chantier 168',
@@ -115,7 +117,7 @@ describe('PrismaChantierRepository', () => {
           directeurs_projet: ['DP 5', 'DP 6'],
         }],
       });
-      await prisma.chantier_territoire.createMany({
+      await prisma.getInstance().chantier_territoire.createMany({
         data: [{
           id: 'CH-168',
           zone_id: 'FRANCE',
@@ -163,7 +165,7 @@ describe('PrismaChantierRepository', () => {
           est_applicable: false,
         }],
       });
-      await prisma.chantier_territoire_jalon.createMany({
+      await prisma.getInstance().chantier_territoire_jalon.createMany({
         data: [{
           id: 'CH-168',
           zone_id: 'FRANCE',

@@ -7,7 +7,7 @@ import { prisma } from '@/server/db/prisma';
 export default class ProfilSQLRepository implements ProfilRepository {
   async récupérerTous(): Promise<Profil[]> {
     const tousLesProfils = await prisma.profil.findMany();
-    return tousLesProfils.map(p => this._mapperVersLeDomaine(p));
+    return tousLesProfils.map(profil => this._mapperVersLeDomaine(profil));
   }
 
   async récupérer(profilCode: ProfilCode): Promise<Profil | null> {
@@ -37,14 +37,6 @@ export default class ProfilSQLRepository implements ProfilRepository {
         },
         saisieIndicateur: {
           tousTerritoires: prismaProfil.a_acces_tous_les_territoires_saisie_indicateur,
-        },
-      },
-      projetsStructurants: {
-        lecture: {
-          tousPérimètres: prismaProfil.projets_structurants_lecture_tous_perimetres,
-          mêmePérimètresQueChantiers: prismaProfil.projets_structurants_lecture_meme_perimetres_que_chantiers,
-          tousTerritoires: prismaProfil.projets_structurants_lecture_tous_territoires,
-          mêmeTerritoiresQueChantiers: prismaProfil.projets_structurants_lecture_meme_territoires_que_chantiers,
         },
       },
       utilisateurs: {

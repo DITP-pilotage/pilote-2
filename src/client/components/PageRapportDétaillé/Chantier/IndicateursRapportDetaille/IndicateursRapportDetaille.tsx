@@ -1,5 +1,6 @@
 import Titre from '@/components/_commons/Titre/Titre';
-import IndicateursProps from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Indicateurs.interface';
+import IndicateursProps
+  from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Indicateurs.interface';
 import IndicateurBloc from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/IndicateurBloc';
 import IndicateursStyled from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Indicateurs.styled';
 import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
@@ -9,7 +10,6 @@ export default function IndicateursRapportDetaille({
   territoireCode,
   indicateurs,
   détailsIndicateurs,
-  territoireProjetStructurant,
   typeDeRéforme,
   categoriesIndicateurRepartition,
   sousIndicateursDisponibles,
@@ -18,13 +18,13 @@ export default function IndicateursRapportDetaille({
   if (indicateurs.length === 0) {
     return null;
   }
-  
+
   return (
     <IndicateursStyled>
       {
         listeRubriquesIndicateursChantier.map(rubriqueIndicateur => {
           const indicateursDeCetteRubrique = categoriesIndicateurRepartition[rubriqueIndicateur.categorieIndicateur];
-          
+
           if (indicateursDeCetteRubrique.length > 0) {
             return (
               <section
@@ -42,9 +42,9 @@ export default function IndicateursRapportDetaille({
                   !!codeInseeSélectionnée && indicateursDeCetteRubrique
                     .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][codeInseeSélectionnée]?.pondération, détailsIndicateurs[b.id][codeInseeSélectionnée]?.pondération))
                     .map(indicateur => {
-                      const listeSousIndicateurs = !!sousIndicateursDisponibles ? 
+                      const listeSousIndicateurs = sousIndicateursDisponibles ?
                         indicateurs.filter(ind => ind.parentId === indicateur.id) :
-                        [];                      
+                        [];
                       return (
                         <IndicateurBloc
                           détailsIndicateurs={détailsIndicateurs}
@@ -52,7 +52,6 @@ export default function IndicateursRapportDetaille({
                           key={indicateur.id}
                           listeSousIndicateurs={listeSousIndicateurs}
                           territoireCode={territoireCode}
-                          territoireProjetStructurant={territoireProjetStructurant}
                           typeDeRéforme={typeDeRéforme}
                         />
                       );

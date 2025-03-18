@@ -44,54 +44,66 @@ const TableauAdminIndicateurs: FunctionComponent<{}> = () => {
           </div>
         )
       }
-      <div className='fr-mt-2w flex justify-between w-full'>
-        <div className='barre-de-recherche'>
-          <BarreDeRecherche
-            changementDeLaRechercheCallback={changementDeLaRechercheCallback}
-            valeur={valeurDeLaRecherche}
-          />
+      <div className='fr-container--fluid'>
+        <div className='fr-grid-row fr-grid-row--middle fr-grid-row--gutters'>
+          <div className='fr-col-12 fr-col-md-6'>
+            <div className='barre-de-recherche'>
+              <BarreDeRecherche
+                changementDeLaRechercheCallback={changementDeLaRechercheCallback}
+                valeur={valeurDeLaRecherche}
+              />
+            </div>
+          </div>
+          <div className='fr-col-12 fr-col-md-6'>
+            <form
+              className='boutons-formulaire'
+              onSubmit={verifierLeFichier}
+            >
+              <InputFichier
+                accept='.csv'
+                onChange={définirLeFichier}
+              />
+              <SubmitBouton
+                className='fr-my-2w fr-my-md-1w fr-text--sm no-wrap'
+                disabled={!file}
+                label='Importer en masse'
+              />
+            </form>
+          </div>
         </div>
-        <form
-          className='flex align-center'
-          onSubmit={verifierLeFichier}
-        >
-          <InputFichier
-            accept='.csv'
-            onChange={définirLeFichier}
-          />
-          <SubmitBouton
-            disabled={!file}
-            label='Importer en masse'
-          />
-        </form>
       </div>
       {
         estEnChargement ? <Loader /> :
         <>
-          <div className='flex justify-between fr-my-2w'>
-            <Titre
-              baliseHtml='h2'
-              className='fr-h4 fr-mb-0 titre-tableau flex align-center'
-            >
-              {tableau.getFilteredRowModel().rows.length}
-              {' '}
-              {tableau.getFilteredRowModel().rows.length > 1 ? 'indicateurs' : 'indicateur'}
-            </Titre>
-            <div>
-              <button
-                className='fr-btn fr-text'
-                disabled={tableau.getFilteredRowModel().rows.length === 0}
-                onClick={exporterLesIndicateurs}
-                type='button'
-              >
-                Exporter
-                {' '}
-                {`${tableau.getFilteredRowModel().rows.length === 1 ? 'l\'indicateur' : `les ${tableau.getFilteredRowModel().rows.length} indicateurs`}`}
-              </button>
+          <div className='fr-container--fluid fr-mb-2w fr-mt-4w'>
+            <div className='fr-grid-row fr-grid-row--middle fr-grid-row--gutters'>
+              <div className='fr-col-12 fr-col-md-6'>
+                <Titre
+                  baliseHtml='h2'
+                  className='fr-h4 fr-mb-0 fr-text-title--blue-france'
+                >
+                  {tableau.getFilteredRowModel().rows.length}
+                  {' '}
+                  {tableau.getFilteredRowModel().rows.length > 1 ? 'indicateurs' : 'indicateur'}
+                </Titre>
+              </div>        
+              <div className='fr-col-12 fr-col-md-6 bouton-export'>
+                <button
+                  className='fr-btn fr-text'
+                  disabled={tableau.getFilteredRowModel().rows.length === 0}
+                  onClick={exporterLesIndicateurs}
+                  title='Export les indicateurs'
+                  type='button'
+                >
+                  Exporter
+                  {' '}
+                  {`${tableau.getFilteredRowModel().rows.length === 1 ? 'l\'indicateur' : `les ${tableau.getFilteredRowModel().rows.length} indicateurs`}`}
+                </button>
+              </div>
             </div>
           </div>
           <div className='fr-table'>
-            <table className='tableau fr-m-0 fr-p-0'>
+            <table className='tableau fr-m-0 fr-p-0 w-full'>
               <caption className='fr-sr-only'>
                 Tableau des indicateurs
               </caption>

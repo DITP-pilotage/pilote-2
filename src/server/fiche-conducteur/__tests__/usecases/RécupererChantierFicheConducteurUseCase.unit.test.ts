@@ -33,7 +33,7 @@ describe('RécupererChantierFicheConducteurUseCase', () => {
       .withListeDirecteursProjet('DP 1', 'DP 2')
       .withNom('Chantier 1')
       .build();
-    chantierRepository.récupérerParIdEtParTerritoireCode.mockResolvedValue( chantier);
+    chantierRepository.récupérerParIdEtParTerritoireCode.mockResolvedValue(chantier);
     indicateurRepository.récupérerIndicImpactParChantierId.mockResolvedValue([]);
 
     const jalon = 2024;

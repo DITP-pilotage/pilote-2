@@ -7,10 +7,10 @@ import { ExportCsvDesChantiersUseCaseV2 } from '@/server/chantiers/usecases/Expo
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { configuration } from '@/config';
-import { getChantiersContainer } from '@/server/chantiers/container';
 
 import { recupererJalon } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/recupererJalon';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
+import { getContainer } from '@/server/dependances';
 
 export const handleExportDesChantiers = async (request: NextApiRequest, response: NextApiResponse): Promise<void> =>{
   const session = await getServerSession(request, response, authOptions);
@@ -44,9 +44,9 @@ export const handleExportDesChantiers = async (request: NextApiRequest, response
   const territoireCodes = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
   const chunkSize =  configuration.export.csvChantiersChunkSize;
 
-  const chantierIds = await getChantiersContainer().resolve('chantierRepository').récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(), optionsExport);
+  const chantierIds = await getContainer('chantiers').resolve('chantierRepository').récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(), optionsExport);
 
-  const exportCsvDesChantiersUseCase = getChantiersContainer().resolve('exportCsvDesChantiersUseCaseV2');
+  const exportCsvDesChantiersUseCase = getContainer('chantiers').resolve('exportCsvDesChantiersUseCaseV2');
 
   for await (const partialResult of exportCsvDesChantiersUseCase.run({
     chantierIds,

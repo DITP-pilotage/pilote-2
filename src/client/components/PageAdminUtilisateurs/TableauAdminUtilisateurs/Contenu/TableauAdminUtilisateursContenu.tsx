@@ -9,6 +9,7 @@ interface TableauAdminUtilisateursContenuProps {
 
 const TableauAdminUtilisateursContenu: FunctionComponent<TableauAdminUtilisateursContenuProps> = ({ tableau }) => {
   const router = useRouter();
+
   const auClicSurLaLigne = useCallback((row: Row<UtilisateurListeGestionContrat>) => {
     router.push(`/admin/utilisateur/${row.original.id}`);
   }, [router]);

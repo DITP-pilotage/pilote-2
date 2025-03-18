@@ -18,7 +18,7 @@ const PageLanding: FunctionComponent<{}> = () => {
     <>
       <Head>
         <title>
-          PILOTE - Piloter l’action publique par les résultats
+          PILOTE - Piloter l'action publique par les résultats
         </title>
       </Head>
       <PageLandingStyled>
@@ -29,13 +29,17 @@ const PageLanding: FunctionComponent<{}> = () => {
                 <Titre
                   baliseHtml='h1'
                 >
-                  Piloter l’action publique par les résultats
+                  Piloter l'action publique par les résultats
                 </Titre>
                 <p className='fr-text--xl'>
-                  PILOTE est l’outil de pilotage territorialisé des politiques prioritaires du Gouvernement. Il permet de partager les objectifs assignés à chaque chantier et les résultats obtenus afin d’identifier les freins et obstacles rencontrés.
+                  PILOTE est l'outil de pilotage territorialisé des politiques prioritaires du Gouvernement. Il permet
+                  de partager les objectifs assignés à chaque chantier et les résultats obtenus afin d'identifier les
+                  freins et obstacles rencontrés.
                   <br />
                   <br />
-                  PILOTE sert ainsi à ajuster les actions entreprises, organiser l’appui des administrations centrales et rendre les arbitrages nécessaires pour garantir l’atteinte des objectifs de la feuille de route du Gouvernement.
+                  PILOTE sert ainsi à ajuster les actions entreprises, organiser l'appui des administrations centrales
+                  et rendre les arbitrages nécessaires pour garantir l'atteinte des objectifs de la feuille de route du
+                  Gouvernement.
                 </p>
                 <button
                   className='fr-btn fr-mr-2w'
@@ -62,10 +66,11 @@ const PageLanding: FunctionComponent<{}> = () => {
                   baliseHtml='h2'
                   className='fr-h3'
                 >
-                  À qui s’adresse PILOTE ?
+                  À qui s'adresse PILOTE ?
                 </Titre>
-                <p className='fr-text--lg' >
-                  PILOTE mobilise l’ensemble des responsables de la mise en œuvre des politiques prioritaires du Gouvernement à tous les niveaux de l’organisation administrative.
+                <p className='fr-text--lg'>
+                  PILOTE mobilise l'ensemble des responsables de la mise en œuvre des politiques prioritaires du
+                  Gouvernement à tous les niveaux de l'organisation administrative.
                 </p>
               </div>
             </div>
@@ -73,7 +78,7 @@ const PageLanding: FunctionComponent<{}> = () => {
               <div className='fr-col-12 fr-col-md-4'>
                 <div className='fr-card'>
                   <div className='conteneur-pictogramme'>
-                    <Image 
+                    <Image
                       alt=''
                       fill
                       src={carteFranceSvg}
@@ -86,8 +91,11 @@ const PageLanding: FunctionComponent<{}> = () => {
                     >
                       Pour les administrations centrales
                     </Titre>
-                    <p className='fr-text--lg fr-mb-0' >
-                      PILOTE permet de fixer les objectifs aux services déconcentrés, de suivre l’avancement des chantiers et d’en rendre compte. Il permet d’identifier les freins et blocages pour apporter l’appui aux équipes opérationnelles sur le terrain ou susciter des arbitrages ministériels ou interministériels pour les lever.
+                    <p className='fr-text--lg fr-mb-0'>
+                      PILOTE permet de fixer les objectifs aux services déconcentrés, de suivre l'avancement des
+                      chantiers et d'en rendre compte. Il permet d'identifier les freins et blocages pour apporter
+                      l'appui aux équipes opérationnelles sur le terrain ou susciter des arbitrages ministériels ou
+                      interministériels pour les lever.
                     </p>
                   </div>
                 </div>
@@ -95,7 +103,7 @@ const PageLanding: FunctionComponent<{}> = () => {
               <div className='fr-col-12 fr-col-md-4'>
                 <div className='fr-card'>
                   <div className='conteneur-pictogramme'>
-                    <Image 
+                    <Image
                       alt=''
                       fill
                       src={visualisationDonnéesSvg}
@@ -109,7 +117,10 @@ const PageLanding: FunctionComponent<{}> = () => {
                       Pour les préfets
                     </Titre>
                     <p className='fr-text--lg fr-mb-0'>
-                      PILOTE offre aux préfets une vision transversale des objectifs et résultats de la feuille de route du Gouvernement dans le territoire pour lequel ils sont chargés d’en superviser la mise en œuvre. Dans une logique de « management par exception », il leur permet d’identifier les chantiers sur lesquels un appui est nécessaire.
+                      PILOTE offre aux préfets une vision transversale des objectifs et résultats de la feuille de route
+                      du Gouvernement dans le territoire pour lequel ils sont chargés d'en superviser la mise en œuvre.
+                      Dans une logique de « management par exception », il leur permet d'identifier les chantiers sur
+                      lesquels un appui est nécessaire.
                     </p>
                   </div>
                 </div>
@@ -117,7 +128,7 @@ const PageLanding: FunctionComponent<{}> = () => {
               <div className='fr-col-12 fr-col-md-4'>
                 <div className='fr-card'>
                   <div className='conteneur-pictogramme'>
-                    <Image 
+                    <Image
                       alt=''
                       fill
                       src={téléchargementFichierSvg}
@@ -131,7 +142,10 @@ const PageLanding: FunctionComponent<{}> = () => {
                       Pour les services déconcentrés
                     </Titre>
                     <p className='fr-text--lg fr-mb-0'>
-                      PILOTE permet de s’entendre avec l’administration centrale sur les objectifs de chaque chantier prioritaire et de rendre compte des résultats obtenus. Il permet aussi d’alerter sur les obstacles rencontrés afin de demander des arbitrages, des ressources ou un appui du préfet, des équipes régionales ou des administrations centrales.
+                      PILOTE permet de s'entendre avec l'administration centrale sur les objectifs de chaque chantier
+                      prioritaire et de rendre compte des résultats obtenus. Il permet aussi d'alerter sur les obstacles
+                      rencontrés afin de demander des arbitrages, des ressources ou un appui du préfet, des équipes
+                      régionales ou des administrations centrales.
                     </p>
                   </div>
                 </div>
@@ -150,13 +164,18 @@ const PageLanding: FunctionComponent<{}> = () => {
                   Le pilotage des politiques prioritaires
                 </Titre>
                 <p className='fr-text--lg'>
-                  Les politiques prioritaires du Gouvernement font l'objet d'un suivi régulier à haut niveau dans chaque ministère mais aussi au niveau interministériel. Chaque trimestre, les ministères présentent leurs résultats dans des réunions présidées par le secrétaire général de la Présidence de la République et le directeur du cabinet de la Première ministre.
+                  Les politiques prioritaires du Gouvernement font l'objet d'un suivi régulier à haut niveau dans chaque
+                  ministère mais aussi au niveau interministériel. Chaque trimestre, les ministères présentent leurs
+                  résultats dans des réunions présidées par le secrétaire général de la Présidence de la République et
+                  le directeur du cabinet de la Première ministre.
                 </p>
                 <p className='fr-text--lg bold'>
-                  Objectif : veiller en continu à la cohérence des objectifs et des décisions, au rythme de mise en œuvre des chantiers et rendre les arbitrages pour lever les freins rencontrés.
+                  Objectif : veiller en continu à la cohérence des objectifs et des décisions, au rythme de mise en
+                  œuvre des chantiers et rendre les arbitrages pour lever les freins rencontrés.
                 </p>
                 <p className='fr-text--lg'>
-                  La DITP est chargée d’animer, sous l’autorité de la Première ministre, le déploiement des politiques prioritaires du Gouvernement et la supervision interministérielle de leur mise en œuvre.
+                  La DITP est chargée d'animer, sous l'autorité de la Première ministre, le déploiement des politiques
+                  prioritaires du Gouvernement et la supervision interministérielle de leur mise en œuvre.
                 </p>
                 <Link
                   className='fr-btn fr-btn--secondary fr-mt-3w'
@@ -179,11 +198,12 @@ const PageLanding: FunctionComponent<{}> = () => {
                           href='https://www.gouvernement.fr/les-actions-du-gouvernement'
                           target='_blank'
                         >
-                          Le baromètre des résultats de l’action publique
+                          Le baromètre des résultats de l'action publique
                         </Link>
                       </Titre>
                       <p className='fr-card__desc'>
-                        Le baromètre des résultats de l’action publique reprend les données de PILOTE pour rendre compte de l’avancement des politiques publiques aux citoyens.
+                        Le baromètre des résultats de l'action publique reprend les données de PILOTE pour rendre compte
+                        de l'avancement des politiques publiques aux citoyens.
                       </p>
                     </div>
                   </div>
