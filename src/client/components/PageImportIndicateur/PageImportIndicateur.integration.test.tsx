@@ -110,15 +110,15 @@ describe('PageImportIndicateur', () => {
     it('doit afficher la liste des titres des indicateurs', async () => {
       // GIVEN
       const indicateurs: Indicateur[] = [
-        new IndicateurBuilder().avecType('IMPACT').avecNom('IND-CH-123 nom indicateur').build(),
-        new IndicateurBuilder().avecType('CONTEXTE').avecNom('IND-CH-124 nom indicateur 2').build(),
+        new IndicateurBuilder().avecType('IMPACT').avecId('IND-156798').avecNom('IND-156798-CH-123 nom indicateur').build(),
+        new IndicateurBuilder().avecType('CONTEXTE').avecId('IND-156799').avecNom('IND-156799-CH-124 nom indicateur 2').build(),
       ];
 
       const chantierInformation: ChantierInformations = {
         id: 'chantierId',
         nom: CHANTIER_NOM,
       };
-
+    
       // WHEN
       render(
         <PageImportIndicateur
@@ -131,8 +131,8 @@ describe('PageImportIndicateur', () => {
       );
 
       // THEN
-      const titreCatégorieIndicateur1 = screen.getByText('IND-CH-123 nom indicateur');
-      const titreCatégorieIndicateur2 = screen.getByText('IND-CH-124 nom indicateur 2');
+      const titreCatégorieIndicateur1 = screen.getByText('IND-156798 : IND-156798-CH-123 nom indicateur');
+      const titreCatégorieIndicateur2 = screen.getByText('IND-156799 : IND-156799-CH-124 nom indicateur 2');
 
       expect(titreCatégorieIndicateur1).toBeInTheDocument();
       expect(titreCatégorieIndicateur2).toBeInTheDocument();
