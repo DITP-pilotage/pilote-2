@@ -4,9 +4,26 @@ interface Nouveautés {
   lienCentreAide?: string;
   contenu: string[];
   correctifs: string[];
+  centreAide: string[]
 }
 
 export const ParametrageNouveautés: Nouveautés[] = [
+  {
+    version: 'Version 2.7.3',
+    date: '18 mars 2025',
+    contenu: [
+      "Sur les pages de chaque chantier, vous pouvez désormais mieux suivre et comparer l'évolution des résultats d'un territoire. Dans la nouvelle tuile « Données de comparaison de l'avancement », vous pouvez ainsi retrouver la situation par rapport aux autres départements avec l'écart par rapport à la médiane. De plus, vous pouvez également suivre l'évolution du taux d'avancemenbt grâce à la tendance.",
+      'Gestion des comptes (profils coordinateurs PILOTE uniquement) : vous pouvez désormais exporter les données concernant les utilisateurs de votre territoire en format .csv, exploitable sur des logiciels de tableau (libre office ou excel)',
+      "Pour permettre une meilleure compréhension du calcul du taux d'avancement, la notion de « Valeur Actuelle », précédemment affichée dans PILOTE, est dorénavant renommée « Valeur d'avancement » sur l'ensemble des pages. Ce terme reflète plus clairement la définition de cette valeur : l'état d'avancement d'un indicateur à une date donnée.",
+    ],
+    correctifs: [
+      "Gestion des comptes (profils coordinateurs uniquement) : lors de la désactivation ou la réactivation d'un compte précédemment désactivé, une erreur empêchait l'envoi automatique d'un mail de réinitialisation de mot de passe. Cette erreur est désormais corrigée.",
+      "Affichage des infobulles : celles-ci ont été modifiées pour optimiser leur affichage sur l'ensemble des écrans et navigateurs.",
+    ],
+    centreAide: [
+      "L'article concernant les propositions de valeur d'avancement territoriale a été mis à jour afin d'expliquer les nouvelles fonctionnalités permettant d'identifier ces propositions sur tous les territoires.",
+    ],
+  },
   {
     version: 'Version 2.7.2',
     date: '28 février 2025',
@@ -14,6 +31,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
       "Affichage des projets structurants locaux : ces projets ne sont plus suivis dans PILOTE. Dans le cadre de l'amélioration continue de l'outil, ils ne sont plus affichés dans l'outil à partir du 28 février 2025. L'onglet permettant d'y accéder sur la page d'accueil est supprimé à partir de cette date",
     ],
     correctifs: [
+    ],
+    centreAide: [
     ],
   },
   {
@@ -29,6 +48,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
       "Proposition de valeurs actuelles : Lorsqu'une direction de projet effectue un nouvel import pour un indicateur donné, la proposition du territoire concerné n'apparaît plus dans PILOTE. Un bug empêchait parfois cette mise à jour automatique, il est désormais corrigé.",
       "Affichage des chantiers à l'échelle régionale : Pour les chantiers applicables uniquement à l'échelle régionale, l'affichage par défaut se fait désormais directement à cette maille, évitant ainsi une étape intermédiaire inutile.",
     ],
+    centreAide: [
+    ],
   },
   {
     version: 'Version 2.6.4',
@@ -40,6 +61,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
     ],
     correctifs: [
       'Cartes de répartition géographique : une erreur empêchait de visualiser correctement les infobulles pour certains départements.',
+    ],
+    centreAide: [
     ],
   },
   {
@@ -53,6 +76,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
       "Rapport détaillé : une erreur empêchait la génération d'un rapport détaillé en format PDF en cas de sélection d'un filtre 'Chantiers signalés' sur la page d'accueil de PILOTE. Celle-ci est désormais corrigé.",
       'Gestion des comptes : Les contacts des coordinateurs PILOTE et des responsables locaux figurent sur la page PPG de chaque territoire. Lors de la suppression de ce compte, il pouvait arriver que leurs contacts restent affichés sur la page PPG. Cette erreur est désormais corrigée.',
     ],
+    centreAide: [
+    ],
   },
   {
     version: 'Version 2.6.2',
@@ -64,6 +89,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
     ],
     correctifs: [
     ],
+    centreAide: [
+    ],
   },
   {
     version: 'Version 2.6.1',
@@ -72,6 +99,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
       "PILOTE se dote d'une nouvelle fonctionnalité permettant aux territoires de proposer des valeurs pour les indicateurs des PPG. Cette fonctionnalité permet de proposer une valeur pour un indicateur, affichée en parallèle des données importées par le Directeur de projet. Elle est réservée aux utilisateurs habilités à rédiger des commentaires pour une PPG sur un territoire. Pensée comme un outil de dialogue supplémentaire, cette fonctionnalité doit vous permettre d'indiquer si vous constatez une différence entre les résultats apportés par la direction de projet et la réalité du terrain. Plus d'informations dans le centre d'aide.",
     ],
     correctifs: [
+    ],
+    centreAide: [
     ],
   },
   
@@ -84,11 +113,12 @@ export const ParametrageNouveautés: Nouveautés[] = [
       "Export du rapport détaillé : l'export en format PDF a été amélioré. Afin de faciliter la lecture des commentaires, un commentaire rédigé pour un territoire n'est plus divisé sur plusieurs pages. L'affichage d'un seul commentaire est limitée sur une seule page.",
       "Gestion des comptes (profil DITP et coordinateurs PILOTE uniquement) : Lors de la création d'un compte, le menu déroulant permettant de sélectionner les PPG à attribuer pour un compte s'adapte désormais au territoire sélectionné. Les PPG non applicables sur un territoire n'apparaissent plus dans ce menu.",
       "Déclaration d'accessibilité : la déclaration d'accessibilité de PILOTE a été mise à jour.",
-
     ],
     correctifs: [
       "Page d'accueil : dans la liste des PPG, pour certaines PPG, lorsque l'écart par rapport à la médiane était égal à 0, il pouvait ne pas s'afficher. Désormais, l'écart à la médiane s'affiche pour l'ensemble des PPG, même si celui-ci est nul.",
       'Gestion des comptes (profil DITP uniquement) : la procédure de désactivation des comptes a été modifiée afin de corriger un comportement qui pouvait empêcher la suppression de certains comptes utilisateurs.',
+    ],
+    centreAide: [
     ],
   },
   {
@@ -102,6 +132,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
       "Page d'accueil : correction d'une erreur dans la fonctionnalité de tri des PPG. Celle-ci empechait l'affichage correct des PPG lorsque le type de tri était modifié",
       'Gestion des comptes (profils DITP et coordinateurs PILOTE uniquement) : amélioration de la stabilité du formulaire de création de compte',
     ],
+    centreAide: [
+    ],
   },
   {
     version: 'Version 2.5.8',
@@ -112,6 +144,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
       "Page PPG : correction d'une erreur sur les graphiques d'évolution pour chaque indicateur. Les valeurs des indicateurs pouvaient ne pas apparaître dans l'ordre chronologique.",
       "Page PPG : correction d'une erreur d'affichage dans les historiques de commentaires. L'ensemble des commentaires est à nouveau disponible.",
     ],
+    centreAide: [
+    ],
   },
   {
     version: 'Version 2.5.7',
@@ -121,6 +155,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
       "Export des données en format csv : ajout du taux d'avancement annuel dans l'export des chantiers",
       "Page d'accueil : ajout d'un bouton permettant de contacter l'équipe PILOTE à partir de la nouvelle adresse pilote.ditp@modernisation.gouv.fr. L'adresse support.ditp@modernisation.gouv.fr sera progressivement remplacée par cette adresse et les messages seront automatiquement transmis sur la nouvelle adresse.",
       "Interface de gestion des indicateurs (réservée aux profils DITP) : amélioration de l'interface (ajout de filtres, modification des champs, etc.)",
+    ],
+    centreAide: [
     ],
     correctifs: [
       "Page d'accueil : sur le menu 'filtres actifs sur cette page', correction d'une erreur qui empechait la suppression des filtres",
@@ -146,6 +182,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
       "Page PPG : Amélioration du temps de chargement de la page chantier pour se conformer aux standards d'eco-conception de produits numériques.",
       "Version mobile : Amélioration de l'accès aux filtres.",
     ],
+    centreAide: [
+    ],
   },
   {
     version: 'Version 2.5.5',
@@ -158,6 +196,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
     ],
     correctifs : [
     ],
+    centreAide: [
+    ],
   },
   {
     version: 'Version 2.5.4',
@@ -168,6 +208,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
     ],
     correctifs : [
       "Rapport détaillé : au format PDF, la page de garde prend désormais en compte l'ensemble des filtres appliqués lors de la création ou de l'impression du rapport. Une erreur empêchant l'affichage de l'ensemble des chantiers dans le rapport sous certaines versions du navigateur Mozilla Firefox a également été corrigée. De prochaines améliorations sont à venir.",
+    ],
+    centreAide: [
     ],
   },
   {
@@ -181,6 +223,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
     ],
     correctifs : [
     ],
+    centreAide: [
+    ],
   },
   {
     version: 'Version 2.5.2',
@@ -189,6 +233,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
       "Bienvenue sur cette nouvelle page Nouveautés ! Dorénavant, vous retrouverez ici l'ensemble des informations sur les évolutions de PILOTE et les dernières fonctionnalités disponibles ! Une pastille rouge visible depuis la page d'accueil vous indique lorsque des mises à jour de cette page ont été réalisées",
       "Gestion des comptes : Les coordinateurs PILOTE dans les départements et régions ont maintenant pleinement la main pour gérer les comptes d'utilisateur sur leur territoire. Afin de garantir le maintien des règles d'utilisation de PILOTE, le nombre de comptes par territoires a été limité à 150 pour les départements et à 200 pour les régions.",
       "Page PPG : Afin de faciliter la lecture et la compréhension des indicateurs, les champs \"Définition de l'indicateur\" et \"Répartititon géographique du taux d'avancement\" ont été séparés dans deux accordéons distincts.",
+    ],
+    centreAide: [
     ],
     correctifs : [
       "Correction du calcul des jauges de répartition géographique des taux d'avancement : une erreur empêchait l'affichage du minimum pour certaines PPG.",
@@ -201,6 +247,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
       "La fonctionnalité Chantiers signalés est désormais disponible. Elle vous permet d'identifier rapidement les Politiques prioritaires du Gouvernement nécessitant une attention particulière et, le cas échéant, la mise en place de mesures adéquates afin de garantir la réussite de leur déploiement sur votre territoire. Plus d'informations à venir dans le centre d'aide prochainement.",
     ],
     correctifs : [],
+    centreAide: [
+    ],
   }, {
     version: 'Version 2.4.5',
     date: '27 mai 2024',
@@ -208,6 +256,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
     correctifs : [ 
       "Navigation entre les pages de PILOTE : les filtres sélectionnés sur la page d'accueil sont conservés même lorsque l'on navigue entre plusieurs pages.",
       'Rapport détaillé : il peut désormais être téléchargé à tous les niveaux du territoire, y compris avec le détail des chantiers.',
+    ],
+    centreAide: [
     ],
   }, {
     version: 'Version 2.4.4',
@@ -217,6 +267,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
       "Affichage des données : les 'référents PILOTE' sont dorénavant renommés en tant que coordinateur PILOTE départemental ou régional.",
     ],
     correctifs: [],
+    centreAide: [
+    ],
   }, {
     version: 'Version 2.4.3',
     date: '14 mai 2024',
@@ -226,6 +278,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
       "Groupement des taux d'avancement par ministère sur la page d'accueil : les PPG ne sont plus groupés par ministères par défaut sur la page d'accueil.",
       'Navigation sur PILOTE : des améliorations techniques ont été apportées afin de diminuer considérablement le temps de chargement des pages.',
     ],
+    centreAide: [
+    ],
   }, {
     version: 'Version 2.4.2',
     date: '9 avril 2024',
@@ -234,6 +288,8 @@ export const ParametrageNouveautés: Nouveautés[] = [
       "Exports des données : les exports .csv réalisés à partir du bouton 'exporter les données' peuvent prendre en compte les filtres sélectionnés sur la page d'accueil.",
     ],
     correctifs: [],
+    centreAide: [
+    ],
   },
 ];
 
