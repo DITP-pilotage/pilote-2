@@ -110,8 +110,8 @@ describe('PageImportIndicateur', () => {
     it('doit afficher la liste des titres des indicateurs', async () => {
       // GIVEN
       const indicateurs: Indicateur[] = [
-        new IndicateurBuilder().avecType('IMPACT').avecNom('IND-CH-123 nom indicateur').build(),
-        new IndicateurBuilder().avecType('CONTEXTE').avecNom('IND-CH-124 nom indicateur 2').build(),
+        new IndicateurBuilder().avecType('IMPACT').avecNom('IND-CH-123 : nom indicateur').build(),
+        new IndicateurBuilder().avecType('CONTEXTE').avecNom('IND-CH-124 : nom indicateur 2').build(),
       ];
 
       const chantierInformation: ChantierInformations = {
