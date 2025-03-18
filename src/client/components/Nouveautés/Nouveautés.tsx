@@ -63,12 +63,35 @@ const Nouveautés: FunctionComponent<{}> = () => {
                           <h3 className='fr-h6'>
                             Correctifs
                           </h3>
+                          <div className='fr-mb-2w'>
+                            <ul>
+                              {
+                                ParametrageNouveautés[0].correctifs.map((elementCorrectif, indexCorrectif) => {
+                                  return (
+                                    <li key={`correctif-0-${indexCorrectif}`}>
+                                      {elementCorrectif}
+                                    </li>
+                                  );
+                                },
+                                )
+                              }
+                            </ul>
+                          </div>
+                        </>
+                      ) : null
+                    }
+                    {
+                      ParametrageNouveautés[0].centreAide.length > 0 ? (
+                        <>
+                          <h3 className='fr-h6'>
+                            Mise à jour du centre d'aide
+                          </h3>
                           <ul>
                             {
-                              ParametrageNouveautés[0].correctifs.map((elementCorrectif, indexCorrectif) => {
+                              ParametrageNouveautés[0].centreAide.map((elementCentreAide, indexCentreAide) => {
                                 return (
-                                  <li key={`correctif-0-${indexCorrectif}`}>
-                                    {elementCorrectif}
+                                  <li key={`maj-centre-aide-0-${indexCentreAide}`}>
+                                    {elementCentreAide}
                                   </li>
                                 );
                               },
@@ -152,6 +175,27 @@ const Nouveautés: FunctionComponent<{}> = () => {
                                   </>
                                 ) : null
                               }
+                              {
+                                element.centreAide.length > 0 ? (
+                                  <>
+                                    <h3 className='fr-h6'>
+                                      Mise à jour du centre d'aide
+                                    </h3>
+                                    <ul>
+                                      {
+                                        ParametrageNouveautés[0].centreAide.map((elementCentreAide, indexCentreAide) => {
+                                          return (
+                                            <li key={`maj-centre-aide-${index}-${indexCentreAide}`}>
+                                              {elementCentreAide}
+                                            </li>
+                                          );
+                                        },
+                                        )
+                                      }
+                                    </ul>
+                                  </>
+                                ) : null
+                              }                              
                             </div>
                           </section>
                         </div>
