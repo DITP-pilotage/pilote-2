@@ -6,7 +6,7 @@ info:
   version: 0.1.0
   summary: API Pilote.
   description: |-
-    Cette API permet d'interagir avec  Pilote, le tableau de bord territorialisé de suivi des résultats des principaux chantiers du Gouvernement.
+    Cette API permet d'interagir avec Pilote, le tableau de bord territorialisé de suivi des résultats des principaux chantiers du Gouvernement.
 
     # Ce que l’API PILOTE vous permet de faire : 
 - importer et mettre à jour les valeurs des indicateurs des chantiers 
