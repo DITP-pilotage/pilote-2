@@ -11,7 +11,6 @@ import {
 } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule';
 import { configuration } from '@/config';
 
-
 export const getServerSideProps: GetServerSideProps<{
   ficheTerritoriale: FicheTerritorialeContrat,
   jalon: number

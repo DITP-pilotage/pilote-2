@@ -8,7 +8,11 @@ interface PaginationProps {
   numéroDePageInitiale: number,
 }
 
-const TableauPagination: FunctionComponent<PaginationProps> = ({ nombreDePages, changementDePageCallback, numéroDePageInitiale }) => {
+const TableauPagination: FunctionComponent<PaginationProps> = ({
+  nombreDePages,
+  changementDePageCallback,
+  numéroDePageInitiale,
+}) => {
   const [numéroDePageCourante, setNuméroDePageCourante] = useState(numéroDePageInitiale);
 
   if (nombreDePages <= 1) {
@@ -25,7 +29,7 @@ const TableauPagination: FunctionComponent<PaginationProps> = ({ nombreDePages, 
   const numéroPagePrécédente = numéroDePageCourante - 1;
   const aLaPremièreTroncature = () => numéroDePageCourante > 3;
   const aLaDeuxièmeTroncature = () => numéroDePageCourante <= numéroDernièrePage - 3;
-  
+
   return (
     <nav
       aria-label='Pagination'
@@ -56,7 +60,7 @@ const TableauPagination: FunctionComponent<PaginationProps> = ({ nombreDePages, 
           </button>
         </li>
         {
-          nombreDePages <= 5 ? 
+          nombreDePages <= 5 ?
             [...Array.from({ length: nombreDePages }).keys()].map((page) => (
               <TableauPaginationÉlément
                 changementDePageCallback={() => changerPage(page + 1)}
@@ -65,7 +69,7 @@ const TableauPagination: FunctionComponent<PaginationProps> = ({ nombreDePages, 
                 numéroDePage={page + 1}
               />
             ))
-            : 
+            :
             <>
               <TableauPaginationÉlément
                 changementDePageCallback={() => changerPage(1)}
@@ -74,11 +78,11 @@ const TableauPagination: FunctionComponent<PaginationProps> = ({ nombreDePages, 
               />
               {
                 !aLaPremièreTroncature() &&
-                  <TableauPaginationÉlément
-                    changementDePageCallback={() => changerPage(2)}
-                    estLaPageCourante={numéroDePageCourante === 2}
-                    numéroDePage={2}
-                  />
+                <TableauPaginationÉlément
+                  changementDePageCallback={() => changerPage(2)}
+                  estLaPageCourante={numéroDePageCourante === 2}
+                  numéroDePage={2}
+                />
               }
               {
                 !aLaPremièreTroncature() && numéroDePageCourante >= 2 &&
@@ -158,7 +162,7 @@ const TableauPagination: FunctionComponent<PaginationProps> = ({ nombreDePages, 
                 numéroDePage={numéroDernièrePage}
               />
             </>
-          }
+        }
         <li className='fr-unhidden-sm fr-hidden'>
           <button
             className='fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label'
@@ -185,6 +189,5 @@ const TableauPagination: FunctionComponent<PaginationProps> = ({ nombreDePages, 
     </nav>
   );
 };
-
 
 export default TableauPagination;

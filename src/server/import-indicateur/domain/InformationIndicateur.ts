@@ -8,7 +8,6 @@ export class InformationIndicateur {
     this._indicSchema = indicSchema;
   }
 
-
   get indicId(): string {
     return this._indicId;
   }

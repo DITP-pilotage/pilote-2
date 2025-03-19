@@ -1,6 +1,6 @@
 import { DefaultSession } from 'next-auth';
-import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import { ProfilCode } from '@/server/domain/utilisateur/utilisateur.interface';
+import { Habilitations } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface';
+import { ProfilCode } from '@/server/gestion-utilisateur/domain/utilisateur/utilisateur.interface';
 
 declare module 'next-auth' {
   interface Session {

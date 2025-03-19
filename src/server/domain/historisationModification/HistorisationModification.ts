@@ -123,7 +123,6 @@ export class HistorisationModification<K extends keyof HistorisationModification
       return acc;
     }, [{}, {}] as [Partial<HistorisationModificationDisponible[K]>, Partial<HistorisationModificationDisponible[K]>]);
 
-
     return new HistorisationModification({
       id: id || randomUUID(),
       idObjetModifie: tableRecuperationId[tableModifieId](ancienneValeur),

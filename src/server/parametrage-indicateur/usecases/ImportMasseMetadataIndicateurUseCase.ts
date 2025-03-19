@@ -80,7 +80,6 @@ const convertirEnImportMetadataIndicateur = (record: RecordCSVImport): ImportMet
   commentaire: record.commentaire || null,
 });
 
-
 const AvailableHeaderCSVImport = [
   'indic_id',
   'indic_parent_indic',

@@ -24,7 +24,7 @@ export default function usePageChantier(chantier: Chantier, territoireSélection
   const { data: session } = useSession();
   const territoires = territoiresTerritoiresStore();
 
-  let estAutoriseAModifierLesPublications = territoireSélectionné!.accèsSaisiePublication && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantier.id) && chantier.statut !== 'ARCHIVE';
+  let estAutoriseAModifierLesPublications = territoireSélectionné.accèsSaisiePublication && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantier.id) && chantier.statut !== 'ARCHIVE';
 
   const estAutoriseAProposerUneValeurActuelle = territoireCode !== 'NAT-FR' && PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE.has(session!.profil) && estAutoriseAModifierLesPublications && chantier.statut !== 'ARCHIVE';
 

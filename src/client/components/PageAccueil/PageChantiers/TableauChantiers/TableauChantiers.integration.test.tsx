@@ -166,7 +166,6 @@ describe.skip('TableauChantiers', () => {
       const pictoBaromère = queryByText(ligneDUnChantierTerritorialisé, 'élément du baromètre');
       const pictoBrouillon = queryByText(ligneDUnChantierTerritorialisé, 'chantier brouillon');
 
-
       // THEN
       expect(pictoTerritorialisé).toBeInTheDocument();
       expect(pictoBaromère).toBeInTheDocument();

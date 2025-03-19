@@ -17,7 +17,6 @@ export class PrismaMinistereRepository implements MinistereRepository {
       },
     });
 
-
     return result.reduce((acc, val) => {
       acc.set(val.id, Ministere.creerMinistere({
         code: val.id,

@@ -126,5 +126,4 @@ const SynthèseDesRésultatsFormulaire: FunctionComponent<SynthèseDesRésultats
   );
 };
 
-
 export default SynthèseDesRésultatsFormulaire;

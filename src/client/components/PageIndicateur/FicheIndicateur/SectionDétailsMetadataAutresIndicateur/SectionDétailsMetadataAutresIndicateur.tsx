@@ -14,7 +14,6 @@ import {
   MetadataIndicateurInterrupteur,
 } from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInterrupteur';
 
-
 const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat
   estEnCoursDeModification: boolean

@@ -15,7 +15,6 @@ export class IndicateurDataBuilder {
 
   private metricValue: string = '20';
 
-
   avecId(id: string): IndicateurDataBuilder {
     this.id = id;
     return this;

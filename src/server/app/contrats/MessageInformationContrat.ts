@@ -1,6 +1,5 @@
 import { MessageInformation } from '@/server/gestion-contenu/domain/MessageInformation';
 
-
 export interface MessageInformationContrat {
   bandeauTexte: string
   isBandeauActif: boolean

@@ -65,7 +65,6 @@ export class ChantierPourExportBuilder {
 
   private synthèseDesRésultats = null;
 
-
   public avecId(id: string): ChantierPourExportBuilder {
     this.id = id;
     return this;

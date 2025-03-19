@@ -23,7 +23,6 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
     return queryResults.map(queryResult => this.parseMinistère(queryResult));
   }
 
-
   private parseMinistère(ministèreQueryResult: MinistèreQueryResult): Ministère {
     const périmètres: PérimètreMinistériel[] = [];
     for (let i = 0; i < ministèreQueryResult.perimetre_ids.length; ++i) {

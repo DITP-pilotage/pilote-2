@@ -134,7 +134,6 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     expect(stubUtilisateurIAMRepository.ajouteUtilisateurs).toHaveBeenNthCalledWith(1, [{ nom: utilisateur.nom, prénom: utilisateur.prénom, email: utilisateur.email }]);
   }
 
-
   describe("Si la variable d'env IMPORT_KEYCLOAK_URL n'est pas définie", () => {
     it("ne créé pas l'utilisateur sur Keycloak", async () => {
       // GIVEN 
@@ -168,7 +167,6 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
       await testCasPassant(ProfilEnum.PR, habilitationsVides, true, true, false);
     });
   });
-
 
   describe("L'utilisateur a un profil PM_ET_CABINET", () => {
     it("Crée l'utilisateur en base de données sans lui ajouter d'habilitations", async () => {
@@ -323,7 +321,6 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
       await testCasPassant(ProfilEnum.COORDINATEUR_DEPARTEMENT, habilitationsAttendues, false, true, false, ['DEPT-75']);
     });
   });
-
 
   describe("L'utilisateur a un profil PREFET_DEPARTEMENT", () => {
     it("Crée l'utilisateur en base de données en prenant une liste de terrioires contenant des départements en lecture et en accordant les droits de saisie commentaires", async () => {

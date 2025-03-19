@@ -36,7 +36,6 @@ describe('statistiques', () => {
     });
   });
 
-
   describe('Calculer moyenne', () => {
     describe('À partir d\'un tableau de nombres et valeurs nulles', () => {
       it('Retourne la moyenne des nombres', () => {

@@ -58,7 +58,6 @@ export function créerDonnéesTerritoires(
   return donnéesTerritoires;
 }
 
-
 export const parseChantierNew = (
   chantierIdentite: PrismaChantier,
   territoires: Territoire[],

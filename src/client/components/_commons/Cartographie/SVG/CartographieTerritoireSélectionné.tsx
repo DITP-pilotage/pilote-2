@@ -4,7 +4,6 @@ import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/use
 import { CartographieSVGContrat } from '@/server/cartographie/app/contrats/CartographieSVGContrat';
 import { useCartographieSVG } from './useCartographieSVG';
 
-
 // TODO refacto, mise en commun avec CartographieSVG.tsx
 const getTraceSvg = function (svgAsJson: CartographieSVGContrat, territoireCode: string): string {
   const pathCorrespondantAuTerritoireCode = svgAsJson.svg.g.path.find(path => path['attr-territoire-code'] === territoireCode);

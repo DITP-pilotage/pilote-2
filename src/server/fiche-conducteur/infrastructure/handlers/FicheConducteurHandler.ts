@@ -123,7 +123,6 @@ export class FicheConducteurHandler {
 
   private recupererPublicationsUseCase: RécupérerPublicationsUseCase;
 
-
   constructor({ recupererChantierFicheConducteurUseCase, recupererAvancementUseCase, recupererDerniereSyntheseDesResultatsUseCase, recupererDonneesCartographieUseCase, recupererPublicationsUseCase }: Dependencies) {
     this.recupererChantierFicheConducteurUseCase = recupererChantierFicheConducteurUseCase;
     this.recupererAvancementUseCase = recupererAvancementUseCase;

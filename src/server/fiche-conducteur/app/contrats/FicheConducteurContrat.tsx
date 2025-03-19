@@ -49,7 +49,6 @@ export interface PublicationContrat {
   valeur: string
 }
 
-
 export interface FicheConducteurContrat {
   chantier: ChantierFicheConducteurContrat
   avancement: AvancementFicheConducteurContrat

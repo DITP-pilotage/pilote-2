@@ -29,7 +29,6 @@ export default function useAffichage(synthèseDesRésultats: RouterOutputs['synt
       );
     }
   }, [synthèseDesRésultats, afficherContenuComplet]);
-  
 
   return {
     contenuAAfficher, 

@@ -3,7 +3,6 @@ import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import Titre from '@/components/_commons/Titre/Titre';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 
-
 const TitreRubrique: FunctionComponent<{
   rubriqueNom: string
   rubriqueDescription: string | null

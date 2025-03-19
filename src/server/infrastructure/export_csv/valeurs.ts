@@ -27,16 +27,11 @@ export const formaterMétéoOuNonRenseigne = (meteo: Météo | null) => {
   return formaterMétéoOuErreur(meteo, NON_RENSEIGNEE);
 };
 
-
 const formaterDateHeureOuErreur = (date: string | null, erreurMessage: string) => {
   if (date === null) {
     return erreurMessage;
   }
   return dayjs.tz(date, 'CET').format('DD-MM-YYYY');
-};
-
-export const formaterDateHeureOuNonApplicable = (date: string | null) => {
-  return formaterDateHeureOuErreur(date, NON_APPLICABLE);
 };
 
 export const formaterDateHeureOuNonRenseignee = (date: string | null) => {
@@ -61,5 +56,3 @@ export const formaterNumériqueOuValeurNonRenseignee = (numerique: Number | null
 export const formaterNumériqueOuValeurManquante = (numerique: Number | null) => {
   return formaterNumeriqueOuErreur(numerique, NON_CALCULE_INFO_MANQUANTES);
 };
-
-

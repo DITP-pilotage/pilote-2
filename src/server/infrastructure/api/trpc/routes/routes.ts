@@ -7,7 +7,7 @@ import { chantierRouter } from './chantier';
 import { synthèseDesRésultatsRouter } from './synthèseDesRésultats';
 import { publicationRouter } from './publication';
 import { indicateurRouter } from './indicateur';
-import { propositionValeurActuelleRouter } from './propositionValeurActuelle';
+import { propositionValeurAvancementRouter } from './propositionValeurAvancement';
 import { territoireRouter } from './territoire';
 import { périmètreMinistérielRouter } from './périmètreMinistériel';
 import { profilRouter } from './profil';
@@ -21,7 +21,7 @@ export const appRouter = créerRouteurTRPC({
   territoire: territoireRouter,
   utilisateur: utilisateurRouter,
   metadataIndicateur: metadataIndicateurRouter,
-  propositionValeurActuelle: propositionValeurActuelleRouter,
+  propositionValeurAvancement: propositionValeurAvancementRouter,
   gestionContenu: gestionContenuRouter,
   gestionTokenAPI: gestionTokenAPIRouter,
   périmètreMinistériel: périmètreMinistérielRouter,

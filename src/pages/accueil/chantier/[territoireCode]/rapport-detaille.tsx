@@ -123,7 +123,6 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     estEnAlertePossedePropositionsValeurActuelle: query.estEnAlertePossedePropositionsValeurActuelle === 'true',
   };
 
-
   const [ministères, axes] = session.habilitations.lecture.chantiers.length === 0 ? [[], []] : (
     await Promise.all(
       [

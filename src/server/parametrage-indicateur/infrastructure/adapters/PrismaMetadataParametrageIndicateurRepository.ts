@@ -216,7 +216,6 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
     }
   }
 
-
   async modifier(inputs: MetadataParametrageIndicateur): Promise<MetadataParametrageIndicateur> {
     const queryIndicateur = `UPDATE raw_data.metadata_indicateurs_hidden
                                  SET indic_parent_indic   = ${makeStrSafer(inputs.indicParentIndic)},
@@ -649,7 +648,6 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  contact_technique_email = ${makeStrSafer(indicateur.contactTechniqueEmail)}, 
                                                  commentaire = ${makeStrSafer(indicateur.commentaire)};`;
     } ;
-
 
     const listePromise = listeMetadataIndicateur.flatMap(indicateur => {
       return [

@@ -346,7 +346,6 @@ describe('RécupérerListeChantierFicheTerritorialeUseCase', () => {
     expect(result.at(0)?.tauxAvancement).toEqual(40);
     expect(result.at(0)?.dateQuantitative).toEqual('2023-02-02T00:00:00.000Z');
 
-
     expect(result.at(1)?.nom).toEqual('Déployer le programme France 2030');
     expect(result.at(1)?.ministerePorteur.icone).toEqual('remix::basket::fill');
     expect(result.at(1)?.meteo).toEqual('ORAGE');

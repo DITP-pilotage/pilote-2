@@ -102,7 +102,6 @@ export const handleExportDesUtilisateurs = async (request: NextApiRequest, respo
     chantiersAssociésAuxPérimètres: filtresChantiersSupplémentaires?.map(chantier => chantier.id) ?? [],
   } satisfies FiltreQueryParams;
 
-
   const listeDesTerritoires = await getContainer('gestionUtilisateur').resolve('recupererTousLesTerritoiresUseCase').run();
   const listePerimetresMinisteriels = await getContainer('gestionUtilisateur').resolve('perimetreMinisterielRepository').listerIds([]);
   const listeInformationsChantiersUtilisateurs = await getContainer('gestionUtilisateur').resolve('chantierRepository').listerInformationsChantiersUtilisateurs();

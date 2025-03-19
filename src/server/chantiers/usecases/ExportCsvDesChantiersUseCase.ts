@@ -106,7 +106,6 @@ export class ExportCsvDesChantiersUseCase {
     this.chantierRepository = chantierRepository;
   }
 
-
   public async* run({ chantierIds, territoireCodes, profil, chantierChunkSize, optionsExport, jalon }: { chantierIds: string[], territoireCodes: string[], profil: ProfilCode, chantierChunkSize: number, optionsExport: OptionsExport, jalon: number }): AsyncGenerator<string[][]> {
     for (let i = 0; i < chantierIds.length; i += chantierChunkSize) {
       const partialChantierIds = chantierIds.slice(i, i + chantierChunkSize);
