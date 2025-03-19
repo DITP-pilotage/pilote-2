@@ -6,11 +6,20 @@ info:
   version: 0.1.0
   summary: API Pilote.
   description: |-
-    Cette API permet d'interagir avec Pilote. Via cette API, il est possible de récupérer les données de Pilote et d'importer de nouvelles données.
+    Cette API permet d'interagir avec Pilote, le tableau de bord territorialisé de suivi des résultats des principaux chantiers du Gouvernement.
 
-    # Autorisations
+    # Ce que l’API PILOTE vous permet de faire : 
+- importer et mettre à jour les valeurs des indicateurs des chantiers 
+- exporter les résultats des indicateurs et des chantiers 
+- exporter les commentaires des chantiers
 
-    Les autorisations sont identiques à celles de votre compte Pilote existant. Vous ne pourrez accéder et modifier que des données auxquelles vous avez déjà accès via Pilote.
+Cette API n'est accessible que pour les utilisateurs de PILOTE, agents de l'Etat. Les habilitations par API sont identiques à celles que vous avez sur PILOTE. Cela signifie que vous ne pouvez avoir accès qu'aux données qui vous sont déjà accessibles sur l'application. De même, vous pourrez uniquement réaliser des actions qui vous sont possibles depuis votre compte PILOTE. A ce titre, l’import et la mise à jour des indicateurs ne sont ouverts que pour les utilisateurs en administration centrale.
+
+
+    # Accès à l'environnement de test
+
+    Avant d'utiliser l'API en production, nous vous demandons de réaliser des tests sur un environnement dédié. Pour y avoir accès, merci de bien vouloir contacter pilote.ditp@modernisation.gouv.fr 
+Nous vous fournirons l'accès à l'environnement ainsi que les moyens de vous identifier
 
     # Détails techniques
     ## Authentification
