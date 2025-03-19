@@ -166,7 +166,8 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateur
                   libellé={libellé}
                   suppressionCallback={() => {
                     const arrFiltre = filtres.territoires.split(',');
-                    modifierFiltre(arrFiltre.splice(arrFiltre.indexOf(territoireCode), 1), 'territoires');
+                    arrFiltre.splice(arrFiltre.indexOf(territoireCode), 1);
+                    modifierFiltre(arrFiltre, 'territoires');
                   }}
                 />
               );
@@ -194,7 +195,8 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateur
                   libellé={libellé}
                   suppressionCallback={() => {
                     const arrFiltre = filtres.perimetresMinisteriels.split(',');
-                    modifierFiltre(arrFiltre.splice(arrFiltre.indexOf(perimetreMinisterielId), 1), 'perimetresMinisteriels');
+                    arrFiltre.splice(arrFiltre.indexOf(perimetreMinisterielId), 1);
+                    modifierFiltre(arrFiltre, 'perimetresMinisteriels');
                   }}
                 />
               );
@@ -222,7 +224,8 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateur
                   libellé={libellé}
                   suppressionCallback={() => {
                     const arrFiltre = filtres.chantiers.split(',');
-                    modifierFiltre(arrFiltre.splice(arrFiltre.indexOf(chantierId), 1), 'chantiers');
+                    arrFiltre.splice(arrFiltre.indexOf(chantierId), 1);
+                    modifierFiltre(arrFiltre, 'chantiers');
                   }}
                 />
               );
@@ -250,7 +253,8 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateur
                   libellé={libellé}
                   suppressionCallback={() => {
                     const arrFiltre = filtres.profils.split(',');
-                    modifierFiltre(arrFiltre.splice(arrFiltre.indexOf(profilCode), 1), 'profils');
+                    arrFiltre.splice(arrFiltre.indexOf(profilCode), 1);
+                    modifierFiltre(arrFiltre, 'profils');
                   }}
                 />
               );
