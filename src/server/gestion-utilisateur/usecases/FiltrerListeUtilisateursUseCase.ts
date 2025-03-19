@@ -5,6 +5,7 @@ import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface';
 import { FiltreQueryParams } from '@/server/gestion-utilisateur/app/contrats/FiltreQueryParams';
+import { UtilisateurExportCSV } from '@/server/gestion-utilisateur/domain/UtilisateurExportCSV';
 
 export class FiltrerListeUtilisateursUseCase {
   private utilisateurPasseLeFiltreTerritoire(utilisateur: UtilisateurListeGestion, listeTerritoires: string[]) {
@@ -77,13 +78,13 @@ export class FiltrerListeUtilisateursUseCase {
     return this.profilEstAutorisé(utilisateur, profil) && this.territoireEstAutorisé(utilisateur, habilitation);
   }
 
-  run({ utilisateurs, filtresActifs, profil, habilitation }: {
-    utilisateurs: UtilisateurListeGestion[],
+  run<T extends UtilisateurListeGestion | UtilisateurExportCSV>({ utilisateurs, filtresActifs, profil, habilitation }: {
+    utilisateurs: T[],
     filtresActifs: FiltreQueryParams,
     profil: ProfilCode,
     habilitation: Habilitation,
   },
-  ) {
+  ): T[] {
     return utilisateurs.filter(utilisateur => this.utilisateurPasseLesFiltres(utilisateur, filtresActifs) && this.utilisateurEstAutorisé(utilisateur, profil, habilitation));
   }
 }
