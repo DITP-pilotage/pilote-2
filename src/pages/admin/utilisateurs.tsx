@@ -70,7 +70,7 @@ export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async ({
   const pageIndex = Number.parseInt(query.pageIndex as string) || 1;
   const pageSize = Number.parseInt(query.pageSize as string) || 50;
 
-  const sorting = query.sort ? JSON.parse(query.sort as string) as { id: string, desc: boolean }[] : [{
+  const sorting = query.sort ? JSON.parse(decodeURIComponent(query.sort as string)) as { id: string, desc: boolean }[] : [{
     id: 'Dernière modification',
     desc: true,
   }];
@@ -89,7 +89,7 @@ export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async ({
 
   const [tousLesUtilisateurs, territoiresListe] = await Promise.all([
     getContainer('gestionUtilisateur').resolve('recupererListeUtilisateursUseCase').run({
-      sorting,
+      sorting: Array.isArray(sorting) ? sorting : [sorting],
       valeurDeLaRecherche: valeurDeLaRecherche,
     }),
     getContainer('gestionUtilisateur').resolve('recupererTousLesTerritoiresUseCase').run(),
