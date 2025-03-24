@@ -17,6 +17,7 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
       const propositionValeurAvancementChantierInformation = await getContainer('chantiers').resolve('chantierRepository').recupererPropositionValeurAvancementChantierInformationParIndicId({ indicId: input.indicId });
 
       const habilitations = new Habilitation(ctx.session.habilitations);
+
       habilitations.verifierAutorisationModificationPropositionValeurAvancement(ctx.session.profil, ctx.session.habilitations.saisieCommentaire.chantiers, propositionValeurAvancementChantierInformation);
 
       await getContainer('chantiers').resolve('creerPropositionValeurActuelleUseCase').run({
