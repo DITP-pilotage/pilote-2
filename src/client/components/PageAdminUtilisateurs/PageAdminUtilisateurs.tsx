@@ -76,7 +76,7 @@ const PageAdminUtilisateurs: FunctionComponent<{
     if (router.query['compteDésactivé']) {
       setAlerte({
         titre: 'Le compte a bien été désactivé.',
-        type: 'erreur',
+        type: 'succès',
       });
       window.scroll(0, 0);
     }
