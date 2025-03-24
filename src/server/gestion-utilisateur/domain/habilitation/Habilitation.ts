@@ -83,7 +83,7 @@ export default class Habilitation {
   }
 
   verifierAutorisationModificationPropositionValeurAvancement(profil: ProfilCode | null, chantiersIdsAutorisés: string[], propositionValeurAvancementChantierInformation: PropositionValeurAvancementChantierInformation) {
-    if (!profil || !PROFIL_AUTORISE_A_MODIFICATION_PROPOSITION_VALEUR_AVANCEMENT.has(profil) || propositionValeurAvancementChantierInformation.statut === 'ARCHIVE' || chantiersIdsAutorisés.includes(propositionValeurAvancementChantierInformation.id)) {
+    if (!profil || !PROFIL_AUTORISE_A_MODIFICATION_PROPOSITION_VALEUR_AVANCEMENT.has(profil) || propositionValeurAvancementChantierInformation.statut === 'ARCHIVE' || !chantiersIdsAutorisés.includes(propositionValeurAvancementChantierInformation.id)) {
       throw new UnauthorizedError("Vous n'êtes pas autorisé a effectuer cette action");
     }
   }
