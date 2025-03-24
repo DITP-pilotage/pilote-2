@@ -4,7 +4,7 @@ import { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateu
 import { Météo } from '@/server/domain/météo/Météo.interface';
 
 export type HistoriqueIndicateurPourExport = {
-  maille: string | null,
+  maille: string,
   régionNom: string | null,
   départementNom: string | null,
   codeInsee: string | null,
@@ -24,4 +24,6 @@ export type HistoriqueIndicateurPourExport = {
   chantierEstBaromètre: Chantier['estBaromètre'] | null,
   chantierStatut: Chantier['statut'] | null,
   chantierEstTerritorialise: Chantier['estTerritorialisé'] | null,
+  maillesApplicables: string[]
+  estApplicable: boolean | null
 };
