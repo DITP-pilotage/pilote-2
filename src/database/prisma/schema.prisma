@@ -184,6 +184,7 @@ model indicateur_identite {
   parent_id                  String?
   responsables_donnees_mails String[]
   indicateur_territoire      indicateur_territoire[]
+  mailles_applicables        Maille[]
   chantier_identite          chantier_identite       @relation(fields: [chantier_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@schema("public")
