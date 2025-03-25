@@ -62,7 +62,7 @@ const useModalePropositionValeurActuelle = ({ detailIndicateur, indicateur, terr
       csrf: récupérerUnCookie('csrf') ?? '',
       ...data,
       valeurActuelle: data.valeurActuelle,
-      dateValeurActuelle: detailIndicateur.dateValeurActuelle!,
+      dateValeurActuelle: data.dateValeurActuelle!,
       indicId: indicateur.id,
       auteurModification,
       territoireCode,
