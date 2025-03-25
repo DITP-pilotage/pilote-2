@@ -65,6 +65,8 @@ export class ChantierPourExportBuilder {
 
   private synthèseDesRésultats = null;
 
+  private estApplicable = null;
+
   public avecId(id: string): ChantierPourExportBuilder {
     this.id = id;
     return this;
@@ -109,6 +111,7 @@ export class ChantierPourExportBuilder {
       objDéjàFait: this.objDéjàFait,
       objÀFaire: this.objÀFaire,
       synthèseDesRésultats: this.synthèseDesRésultats,
+      estApplicable: this.estApplicable,
     };
   }
 }

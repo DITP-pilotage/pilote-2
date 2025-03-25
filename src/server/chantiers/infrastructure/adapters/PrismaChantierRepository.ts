@@ -265,9 +265,6 @@ export class PrismaChantierRepository implements ChantierRepository {
       },
       include: {
         chantier_territoire: {
-          where: {
-            est_applicable: true,
-          },
           include: {
             territoire: true,
             chantier_territoire_jalon: {
@@ -392,7 +389,8 @@ export class PrismaChantierRepository implements ChantierRepository {
     return prismaChantierIdentite.chantier_territoire
       .reduce((acc, prismaChantierTerritoire) => {
         if (territoireCodesLecture.includes(prismaChantierTerritoire.territoire_code)
-            && (optionsExport.listeMeteos.length > 0 ? optionsExport.listeMeteos.includes(prismaChantierTerritoire.meteo || '') : true)) {
+            && (optionsExport.listeMeteos.length > 0 ? optionsExport.listeMeteos.includes(prismaChantierTerritoire.meteo || '') : true)
+            && prismaChantierIdentite.mailles_applicables.includes(prismaChantierTerritoire.maille)) {
           let prismaChantierTerritoireReg = prismaChantierTerritoire;
           let prismaChantierTerritoireNat = prismaChantierTerritoire;
 
@@ -436,6 +434,7 @@ export class PrismaChantierRepository implements ChantierRepository {
             objDéjàFait: prismaChantierTerritoire.maille === 'NAT' ? mapDejaFait.get(prismaChantierIdentite.id) || null : null,
             objÀFaire: prismaChantierTerritoire.maille === 'NAT' ? mapAFaire.get(prismaChantierIdentite.id) || null : null,
             synthèseDesRésultats: mapSynthesesDesResultats.get(`${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`) || null,
+            estApplicable: prismaChantierTerritoire.est_applicable,
           }];
         }
         return acc;
@@ -488,9 +487,6 @@ export class PrismaChantierRepository implements ChantierRepository {
       },
       include: {
         chantier_territoire: {
-          where: {
-            est_applicable: true,
-          },
           include: {
             territoire: true,
             chantier_territoire_jalon: {
@@ -710,6 +706,7 @@ export class PrismaChantierRepository implements ChantierRepository {
             objDéjàFait: prismaChantierTerritoire.maille === 'NAT' ? mapDejaFait?.get(prismaChantierIdentite.id) || null : null,
             objÀFaire: prismaChantierTerritoire.maille === 'NAT' ? mapAFaire?.get(prismaChantierIdentite.id) || null : null,
             synthèseDesRésultats: mapSynthesesDesResultats?.get(`${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`) || null,
+            estApplicable: prismaChantierTerritoire.est_applicable,
           }];
         }
         return acc;

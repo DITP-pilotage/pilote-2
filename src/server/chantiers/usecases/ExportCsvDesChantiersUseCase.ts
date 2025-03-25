@@ -39,13 +39,13 @@ const presenterEnChantierExportContrat = (chantierPourExport: ChantierPourExport
     chantierPourExport.directeursProjetMails?.join(' ') || NON_RENSEIGNEE,
     chantierPourExport.responsablesLocaux?.join(' ') || NON_RENSEIGNEE,
     chantierPourExport.responsablesLocauxMails?.join(' ') || NON_RENSEIGNEE,
-    formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementAnnuel),
-    formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementDépartemental),
-    formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementRégional),
+    formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementAnnuel, chantierPourExport.estApplicable),
+    formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementDépartemental, chantierPourExport.maille === 'DEPT' && chantierPourExport.estApplicable),
+    formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementRégional, chantierPourExport.maille === 'DEPT' || (chantierPourExport.maille === 'REG' && chantierPourExport.estApplicable)),
     masquerPourProfilDROM(profil, chantierPourExport.périmètreIds)
       ?  NON_APPLICABLE
-      : formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementNational),
-    formaterMétéoOuNonRenseigne(chantierPourExport.météo),
+      : formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementNational, true),
+    formaterMétéoOuNonRenseigne(chantierPourExport.météo, chantierPourExport.estApplicable),
     chantierPourExport.synthèseDesRésultats || NON_RENSEIGNEE,
     chantierPourExport.objNotreAmbition || NON_RENSEIGNEE,
     chantierPourExport.objDéjàFait || NON_RENSEIGNEE,

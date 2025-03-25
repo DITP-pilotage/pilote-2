@@ -67,22 +67,22 @@ const presenterEnChantierExportContrat = (chantierPourExport: ChantierPourExport
   }
 
   if (optionsExport.listeOptionsExport.includes('description')) {
-    donnees.push(formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementAnnuel));
+    donnees.push(formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementAnnuel, chantierPourExport.estApplicable));
   }
 
   if (optionsExport.listeOptionsExport.includes('comparaison')) {
     donnees.push(
-      formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementDépartemental),
-      formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementRégional),
+      formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementDépartemental, chantierPourExport.maille === 'DEPT' && chantierPourExport.estApplicable),
+      formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementRégional, chantierPourExport.maille === 'DEPT' || (chantierPourExport.maille === 'REG' && chantierPourExport.estApplicable)),
       masquerPourProfilDROM(profil, chantierPourExport.périmètreIds)
         ?  NON_APPLICABLE
-        : formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementNational),
+        : formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementNational, true),
     );
   }
 
   if (optionsExport.listeOptionsExport.includes('synthese')) {
     donnees.push(
-      formaterMétéoOuNonRenseigne(chantierPourExport.météo),
+      formaterMétéoOuNonRenseigne(chantierPourExport.météo, chantierPourExport.estApplicable),
       chantierPourExport.synthèseDesRésultats || NON_RENSEIGNEE,
     );
   }

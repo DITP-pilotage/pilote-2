@@ -36,6 +36,7 @@ export type ChantierPourExport = {
   objDéjàFait: string | null,
   objÀFaire: string | null,
   synthèseDesRésultats: string | null,
+  estApplicable: boolean | null
 };
 
 export const verifierOptionPerimetreIds = (optionsExport: OptionsExport, perimetreIds: string[]) => {

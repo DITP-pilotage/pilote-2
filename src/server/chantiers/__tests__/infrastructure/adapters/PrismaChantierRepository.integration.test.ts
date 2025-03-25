@@ -24,6 +24,7 @@ describe('PrismaChantierRepository', () => {
             ministeres_acronymes: ['MINA'],
             est_barometre: true,
             est_territorialise: false,
+            mailles_applicables: ['NAT', 'REG', 'DEPT'],
           }, {
             id: 'CH-002',
             nom: 'Chantier 002',
@@ -351,16 +352,19 @@ describe('PrismaChantierRepository', () => {
             nom: 'Chantier 001',
             ministeres: ['1009'],
             ministeres_acronymes: ['MINA'],
+            mailles_applicables: ['NAT', 'REG', 'DEPT'],
           }, {
             id: 'CH-002',
             nom: 'Chantier 002',
             ministeres: ['1009'],
             ministeres_acronymes: ['MINA'],
+            mailles_applicables: ['NAT', 'REG', 'DEPT'],
           }, {
             id: 'CH-003',
             nom: 'Chantier 003',
             ministeres: ['1009'],
             ministeres_acronymes: ['MINA'],
+            mailles_applicables: ['NAT', 'REG', 'DEPT'],
           }],
         });
 
@@ -451,16 +455,19 @@ describe('PrismaChantierRepository', () => {
             nom: 'Chantier 001',
             ministeres: ['1009'],
             ministeres_acronymes: ['MINA'],
+            mailles_applicables: ['NAT', 'REG', 'DEPT'],
           }, {
             id: 'CH-002',
             nom: 'Chantier 002',
             ministeres: ['1009'],
             ministeres_acronymes: ['MINA'],
+            mailles_applicables: ['NAT', 'REG', 'DEPT'],
           }, {
             id: 'CH-003',
             nom: 'Chantier 003',
             ministeres: ['1009'],
             ministeres_acronymes: ['MINA'],
+            mailles_applicables: ['NAT', 'REG', 'DEPT'],
           }],
         });
 
@@ -531,6 +538,150 @@ describe('PrismaChantierRepository', () => {
           nom: 'Chantier 001',
           maille: 'DEPT',
         });
+      });
+      it('retourne seulement les données sur les mailles applicables', async () => {
+        // Given
+        const territoireCodesLecture = ['DEPT-01', 'REG-11', 'REG-84', 'DEPT-26', 'NAT-FR', 'DEPT-69'];
+
+        await prisma.chantier_identite.createMany({
+          data: [{
+            id: 'CH-001',
+            nom: 'Chantier 001',
+            ministeres: ['1009'],
+            ministeres_acronymes: ['MINA'],
+            mailles_applicables: ['NAT', 'REG'],
+          }, {
+            id: 'CH-002',
+            nom: 'Chantier 002',
+            ministeres: ['1009'],
+            ministeres_acronymes: ['MINA'],
+            mailles_applicables: ['NAT'],
+          }, {
+            id: 'CH-003',
+            nom: 'Chantier 003',
+            ministeres: ['1009'],
+            ministeres_acronymes: ['MINA'],
+            mailles_applicables: ['NAT', 'REG', 'DEPT'],
+          }],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [{
+            id: 'CH-001',
+            zone_id: 'FRANCE',
+            maille: 'NAT',
+            code_insee: 'FR',
+            territoire_code: 'NAT-FR',
+            est_applicable: true,
+            meteo: 'NUAGE',
+          },
+          {
+            id: 'CH-001',
+            zone_id: 'D26',
+            maille: 'DEPT',
+            code_insee: '01',
+            territoire_code: 'DEPT-01',
+            est_applicable: true,
+            meteo: 'SOLEIL',
+          }, {
+            id: 'CH-001',
+            zone_id: 'R84',
+            maille: 'REG',
+            code_insee: '84',
+            territoire_code: 'REG-84',
+            est_applicable: true,
+            meteo: 'ORAGE',
+          }, {
+            id: 'CH-002',
+            zone_id: 'D26',
+            maille: 'DEPT',
+            code_insee: '26',
+            territoire_code: 'DEPT-26',
+            est_applicable: true,
+            meteo: 'COUVERT',
+          }, {
+            id: 'CH-002',
+            zone_id: 'FRANCE',
+            maille: 'NAT',
+            code_insee: 'FR',
+            territoire_code: 'NAT-FR',
+            est_applicable: true,
+            meteo: 'COUVERT',
+          }, {
+            id: 'CH-002',
+            zone_id: 'R84',
+            maille: 'REG',
+            code_insee: '84',
+            territoire_code: 'REG-84',
+            est_applicable: true,
+            meteo: 'COUVERT',
+          }, {
+            id: 'CH-003',
+            zone_id: 'R11',
+            maille: 'REG',
+            code_insee: '11',
+            territoire_code: 'REG-11',
+            est_applicable: true,
+            meteo: 'COUVERT',
+          }, {
+            id: 'CH-003',
+            zone_id: 'R84',
+            maille: 'REG',
+            code_insee: '84',
+            territoire_code: 'REG-84',
+            est_applicable: false,
+            meteo: 'COUVERT',
+          }, {
+            id: 'CH-003',
+            zone_id: 'D69',
+            maille: 'DEPT',
+            code_insee: '69',
+            territoire_code: 'DEPT-69',
+            est_applicable: true,
+            meteo: 'COUVERT',
+          },
+          {
+            id: 'CH-003',
+            zone_id: 'FRANCE',
+            maille: 'NAT',
+            code_insee: 'FR',
+            territoire_code: 'NAT-FR',
+            est_applicable: true,
+            meteo: 'SOLEIL',
+          }],
+        });
+
+        const optionsPourExport: OptionsExport = {
+          estBarometre: true,
+          estTerritorialise: true,
+          perimetreIds: [],
+          listeChantierId: [],
+          listeMeteos: [],
+          listeStatuts: [],
+          listeOptionsExport: [],
+        };
+
+        const jalon = 2024;
+
+        // When
+        const donneesChantier1 = await prismaChantierRepository.récupérerPourExports('CH-001', territoireCodesLecture, optionsPourExport, jalon);
+        const donneesChantier2 = await prismaChantierRepository.récupérerPourExports('CH-002', territoireCodesLecture, optionsPourExport, jalon);
+        const donneesChantier3 = await prismaChantierRepository.récupérerPourExports('CH-003', territoireCodesLecture, optionsPourExport, jalon);
+
+        // Then 
+        expect(donneesChantier1).toHaveLength(2);
+        expect(donneesChantier1![0].maille).toStrictEqual('NAT');
+        expect(donneesChantier1![1].maille).toStrictEqual('REG');
+
+        expect(donneesChantier2).toHaveLength(1);
+        expect(donneesChantier2![0].maille).toStrictEqual('NAT');
+
+        expect(donneesChantier3).toHaveLength(4);
+        expect(donneesChantier3![0].maille).toStrictEqual('NAT');
+        expect(donneesChantier3![1].maille).toStrictEqual('REG');
+        expect(donneesChantier3![2].maille).toStrictEqual('REG');
+        expect(donneesChantier3![3].maille).toStrictEqual('DEPT');
+
       });
     });
   });
