@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
@@ -33,21 +34,21 @@ const nextConfig = {
             value: 'no-referrer',
           },
           {
-            key: 'Content-Security-Policy',
-            value: `default-src 'self' data: 'unsafe-inline'; frame-src https://video.finances.gouv.fr/ https://app.livestorm.co/; connect-src https://api.validata.etalab.studio/ https://stats.beta.gouv.fr/ 'self' data: 'unsafe-inline' ws:; script-src 'self' https://stats.beta.gouv.fr/ 'unsafe-eval' 'unsafe-inline';`,
-          },
-          {
             key: 'X-Frame-Options',
             value: 'DENY',
           },
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains'
           },
           {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on'
           },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          }
         ],
       },
     ];

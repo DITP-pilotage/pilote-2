@@ -178,7 +178,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     classNameBouton='infobulle-date-previsionnelle'
                     classNameInfoBulle='tooltip-accordeon'
                     idHtml={`infobulle-date-previsionnelle-${indicateur.id}`}
-                    positionStrategy='fixed'
                   >
                     <p className='fr-text--sm fr-text-title--blue-france'>
                       Date prévisionnelle de mise à jour de l'indicateur :
@@ -402,7 +401,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                         classNameBouton='texte-proposition'
                                         classNameInfoBulle='tooltip-accordeon'
                                         idHtml={`infobulle-proposition-valeur-davancement-${informationIndicateur.code}`}
-                                        positionStrategy='fixed'
                                       >
                                         <p className='fr-text--sm texte-proposition'>
                                           Valeur d'avancement proposée
