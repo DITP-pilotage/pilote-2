@@ -16,13 +16,14 @@ info:
     Cette API n'est accessible que pour les utilisateurs de PILOTE, agents de l'Etat. Les habilitations par API sont identiques à celles que vous avez sur PILOTE. Cela signifie que vous ne pouvez avoir accès qu'aux données qui vous sont déjà accessibles sur l'application. De même, vous pourrez uniquement réaliser des actions qui vous sont possibles depuis votre compte PILOTE. A ce titre, l’import et la mise à jour des indicateurs ne sont ouverts que pour les utilisateurs en administration centrale.
 
 
-    # Accès à l'environnement de test
+    # Détails techniques
+
+    ### Accès à l'environnement de test
 
     Avant d'utiliser l'API en production, nous vous demandons de réaliser des tests sur un environnement dédié. Pour y avoir accès, merci de bien vouloir contacter pilote.ditp@modernisation.gouv.fr 
     Nous vous fournirons l'accès à l'environnement ainsi que les moyens de vous identifier.
-
-    # Détails techniques
-    ## Authentification
+    
+    ### Authentification et habilitations sur l'environnement de production
 
     Pour utiliser l'API, vous devrez **récupérer un token d'API**. Celui-ci sera à demander par email à l'adresse [pilote.ditp@modernisation.gouv.fr](mailto:pilote.ditp@modernisation.gouv.fr?subject=[api.token]%20&cc=johan.boucaut@modernisation.gouv.fr&body=%0D%0A%0D%0A%0D%0A%0D%0A%0D%0A%20tag:api.token) avec en début d'objet *[api.token]*.
 
@@ -37,7 +38,9 @@ info:
       -H 'Authorization: Bearer <ACCESS_TOKEN>'
     ```
 
-    ## Comprendre le fichier d'import
+    ### Réaliser un import avec l'API
+
+    #### Comprendre le fichier d'import
 
     Pour mettre à jour vos données, vous devrez remplir un modèle d'import avec les champs suivants.
 
@@ -58,7 +61,9 @@ info:
 
     Ce fichier d'import sera envoyé à l'endpoint `POST: /indicateur/<ID-indicateur>/donnees` (voir documentation plus bas).
 
-    ## Référentiels
+    Veuillez noter que, comme pour un import via un fichier .csv ou .xls, vos données seront affichées dans PILOTE après un délai maximal de deux heures. 
+
+    #### Référentiels
 
     Consultez les référentiels pour retrouver les codes de tous les territoires (départements, régions, et national). Vous pourrez copier dans ce référentiel les valeurs à indiquer pour les champs zone-id et zone dans le modèle d'import fourni.
 
@@ -66,7 +71,7 @@ info:
 
     [Télécharger le référentiel des territoires XLSX – 12 ko](https://github.com/DITP-pilotage/pilote-2/raw/dev/public/referentiel/referentiel_territoires.xlsx)
 
-    ## Comment bien remplir le fichier d'import ?
+    #### Comment bien remplir le fichier d'import ?
 
     *   Si vous choisissez le format CSV pour importer les données, veuillez utiliser le point-virgule (;) pour délimiter les colonnes et les guillemets (") pour délimiter les chaines de caractères
     *   Si vous saisissez un taux, la valeur saisie doit se trouver entre 1 et 100. Par exemple, pour 78%, renseignez la valeur 78.
