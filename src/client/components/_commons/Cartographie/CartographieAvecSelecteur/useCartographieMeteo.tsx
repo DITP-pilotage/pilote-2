@@ -9,7 +9,6 @@ import { objectEntries } from '@/client/utils/objects/objects';
 import { TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 
-
 const determinerRemplissage = (valeur: Météo | null, elementsDeLegende: CartographieÉlémentsDeLégende, estApplicable: boolean | null) => {
 
   // eslint-disable-next-line unicorn/prefer-switch

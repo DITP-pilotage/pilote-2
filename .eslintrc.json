@@ -90,7 +90,10 @@
     ],
     "no-console": "error",
     "no-unused-vars": "off",
-    "no-multiple-empty-lines": "error",
+    "no-multiple-empty-lines": [
+      "error", {
+      "max": 1
+    }],
     "@typescript-eslint/naming-convention": [
       "error",
       {

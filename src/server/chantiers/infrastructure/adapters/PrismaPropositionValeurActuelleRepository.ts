@@ -47,6 +47,4 @@ export class PrismaPropositionValeurActuelleRepository implements PropositionVal
       },
     });
   }
-
-
 }

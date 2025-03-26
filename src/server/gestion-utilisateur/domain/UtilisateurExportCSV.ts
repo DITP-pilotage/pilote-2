@@ -12,4 +12,5 @@ export interface UtilisateurExportCSV {
   auteurModification: string
   profil: ProfilCode
   dateDesactivation: string | null
+  statut: string
 }

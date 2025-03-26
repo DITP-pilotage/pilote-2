@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const validationPropositionValeurActuelle =
+export const validationPropositionValeurAvancement =
   z.object({
     valeurActuelle: z.string()
       .refine((value) => new RegExp(/^-?\d+$|^-?\d+(,|\.)\d+$/).test(value), 'Le champ doit être un nombre'),

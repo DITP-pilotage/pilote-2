@@ -39,7 +39,6 @@ export class ProfilBuilder {
     return this;
   }
 
-
   build(): Profil {
     return {
       code: this.code,

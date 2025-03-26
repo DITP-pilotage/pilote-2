@@ -110,7 +110,6 @@ export default function useCartographie(territoireCode: string, pathname: '/accu
 
     const listeTerritoiresCompares = territoiresCompares.split(',').filter(Boolean);
 
-
     if (territoireCode === territoireCodeSelectionnee) {
       delete router.query.territoiresCompares;
       return auClicTerritoireCallback(territoireCodeSelectionnee, territoireSélectionnable);

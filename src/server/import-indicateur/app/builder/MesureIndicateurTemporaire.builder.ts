@@ -15,7 +15,6 @@ export class MesureIndicateurTemporaireBuilder {
 
   private metricValue: string = '20';
 
-
   avecId(id: string): MesureIndicateurTemporaireBuilder {
     this.id = id;
     return this;

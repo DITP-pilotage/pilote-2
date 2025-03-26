@@ -11,7 +11,6 @@ import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
 import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 
-
 interface TerritoireAvancementRapportDetailleContrat {
   global: number | null
   annuel: number | null

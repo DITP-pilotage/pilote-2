@@ -32,7 +32,6 @@ import {
   MetadataParametrageParametrePonderationIndicateurForm,
 } from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametrePonderationIndicateur/useDétailsMetadataParametrePonderationndicateurForm';
 
-
 type MetadataIndicateurForm = MetadataParametrageIndicateurForm
 & MetadataParametrageParametreCalculIndicateurForm
 & MetadataParametrageParametreIndicateurDepartementaleForm
@@ -71,7 +70,6 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
     },
   );
 
-
   const mutationModifierMetadataIndicateur = api.metadataIndicateur.modifier.useMutation({
     onSuccess: () => {
       setEstEnCoursDeModification(false);
@@ -107,7 +105,6 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
       ...data,
       indicParentIndic: data.indicParentIndic === 'Aucun indicateur selectionné' ? null : data.indicParentIndic,
     };
-
 
     mutationCreerMetadataIndicateur.mutate(inputs);
   };

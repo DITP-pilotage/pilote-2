@@ -31,6 +31,7 @@ const HeadersExportCSVUtilisateur = (): string[] => {
     'Droits de saisie des données quantitatives',
     'Droits de saisie des commentaires',
     'Droits de gestion des utilisateurs',
+    'Statut',
   ];
 };
 
@@ -57,6 +58,7 @@ const presenterEnUtilisateurPourExportCSVContrat = (utilisateurPourExport: Utili
     recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.saisieIndicateur.chantiers, listeInformationsChantiersUtilisateurs, utilisateurPourExport.habilitations.lecture.__meta.aAccesTousLesChantiers).join('\n'),
     recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.saisieCommentaire.chantiers, listeInformationsChantiersUtilisateurs, utilisateurPourExport.habilitations.lecture.__meta.aAccesTousLesChantiers).join('\n'),
     recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.gestionUtilisateur.chantiers, listeInformationsChantiersUtilisateurs, utilisateurPourExport.habilitations.lecture.__meta.aAccesTousLesChantiers).join('\n'),
+    utilisateurPourExport.statut,
   ];
 };
 
@@ -101,7 +103,6 @@ export const handleExportDesUtilisateurs = async (request: NextApiRequest, respo
     typeCompte: optionsExport.typeCompte,
     chantiersAssociésAuxPérimètres: filtresChantiersSupplémentaires?.map(chantier => chantier.id) ?? [],
   } satisfies FiltreQueryParams;
-
 
   const listeDesTerritoires = await getContainer('gestionUtilisateur').resolve('recupererTousLesTerritoiresUseCase').run();
   const listePerimetresMinisteriels = await getContainer('gestionUtilisateur').resolve('perimetreMinisterielRepository').listerIds([]);

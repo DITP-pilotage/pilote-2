@@ -75,7 +75,6 @@ const MultiSelectTerritoire: FunctionComponent<MultiSelectTerritoireProps> = ({
     groupesÀAfficher.departementale ? optionsDépartements : null,
   ].filter((option): option is MultiSelectOptionGroupée => option !== null);
 
-
   return (
     <MultiSelect
       afficherBoutonsSélection={afficherBoutonsSélection}

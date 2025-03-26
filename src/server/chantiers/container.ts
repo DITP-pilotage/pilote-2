@@ -11,28 +11,46 @@ import {
   ExportCsvDesHistoriquesIndicateursUseCase,
 } from '@/server/chantiers/usecases/ExportCsvDesHistoriquesIndicateursUseCase';
 import { PrismaPilote } from '@/server/db/PrismaPilote';
+import {
+  PropositionValeurActuelleRepository,
+} from '@/server/chantiers/domain/ports/PropositionValeurActuelleRepository';
+import {
+  PrismaPropositionValeurActuelleRepository,
+} from '@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurActuelleRepository';
+import {
+  CreerPropositionValeurActuelleUseCase,
+} from '@/server/chantiers/usecases/CreerPropositionValeurActuelleUseCase';
+import {
+  ModifierPropositionValeurActuelleUseCase,
+} from '@/server/chantiers/usecases/ModifierPropositionValeurActuelleUseCase';
 import { ExportCsvDesChantiersUseCaseV2 } from './usecases/ExportCsvDesChantiersUseCaseV2';
 
 export type ChantierDependencies = {
   chantierRepository: ChantierRepository
   indicateurRepository: IndicateurRepository
+  propositionValeurActuelleRepository: PropositionValeurActuelleRepository
   recupererDonneesChantierQuery: RecupererDonneesChantierQuery
   exportCsvDesChantiersUseCase: ExportCsvDesChantiersUseCase
   exportCsvDesChantiersUseCaseV2: ExportCsvDesChantiersUseCaseV2
   exportCsvDesIndicateursUseCase: ExportCsvDesIndicateursUseCase
   exportCsvDesIndicateursUseCaseV2: ExportCsvDesIndicateursUseCaseV2
   exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase
+  creerPropositionValeurActuelleUseCase: CreerPropositionValeurActuelleUseCase
+  modifierPropositionValeurActuelleUseCase: ModifierPropositionValeurActuelleUseCase
 };
 
 export const getChantiersContainer = (initialContainer: AwilixContainer<{ prisma: PrismaPilote }>): AwilixContainer<ChantierDependencies & { prisma: PrismaPilote }> => {
   return initialContainer.createScope<ChantierDependencies>().register({
     chantierRepository: asClass(PrismaChantierRepository),
     indicateurRepository: asClass(PrismaIndicateurRepository),
+    propositionValeurActuelleRepository: asClass(PrismaPropositionValeurActuelleRepository),
     recupererDonneesChantierQuery: asClass(RecupererDonneesChantierQuery),
     exportCsvDesChantiersUseCase: asClass(ExportCsvDesChantiersUseCase),
     exportCsvDesChantiersUseCaseV2: asClass(ExportCsvDesChantiersUseCaseV2),
     exportCsvDesIndicateursUseCase: asClass(ExportCsvDesIndicateursUseCase),
     exportCsvDesIndicateursUseCaseV2: asClass(ExportCsvDesIndicateursUseCaseV2),
     exportCsvDesHistoriquesIndicateursUseCase: asClass(ExportCsvDesHistoriquesIndicateursUseCase),
+    creerPropositionValeurActuelleUseCase: asClass(CreerPropositionValeurActuelleUseCase),
+    modifierPropositionValeurActuelleUseCase: asClass(ModifierPropositionValeurActuelleUseCase),
   });
 };

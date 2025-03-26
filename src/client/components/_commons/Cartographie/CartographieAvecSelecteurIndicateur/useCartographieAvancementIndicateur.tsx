@@ -92,7 +92,6 @@ export function useCartographieAvancementIndicateur(detailsIndicateurTerritoire:
         .filter(el => el.libellé !== 'Territoire pour lequel la donnee n\'est pas renseignee/disponible');
     }
 
-
     const donneesCartographie = donnees.reduce((acc, val) => {
       const territoireGeographique = récupérerDétailsSurUnTerritoire(val.territoireCode);
 

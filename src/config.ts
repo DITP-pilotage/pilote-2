@@ -224,7 +224,7 @@ const config = convict({
       default: false,
       env: 'NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR',
     },
-    propositionValeurActuelle: {
+    propositionValeurAvancement: {
       format: Boolean,
       default: false,
       env: 'NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE',
@@ -327,5 +327,4 @@ config.set('keycloak.logoutUrl', config.get('keycloak.issuer') + '/protocol/open
 config.validate({ allowed: 'strict' });
 
 export const configuration = config.get();
-
 

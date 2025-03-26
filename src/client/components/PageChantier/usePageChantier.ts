@@ -23,8 +23,8 @@ const PROFIL_INTERDIT_DE_VOIR_LE_SELECTEUR_DE_MAILLE = new Set([ProfilEnum.COORD
 export default function usePageChantier(chantier: Chantier, territoireSélectionné: DétailTerritoire, territoireCode: string) {
   const { data: session } = useSession();
   const territoires = territoiresTerritoiresStore();
-
-  let estAutoriseAModifierLesPublications = territoireSélectionné!.accèsSaisiePublication && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantier.id) && chantier.statut !== 'ARCHIVE';
+  
+  let estAutoriseAModifierLesPublications = territoireSélectionné.accèsSaisiePublication && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantier.id) && chantier.statut !== 'ARCHIVE';
 
   const estAutoriseAProposerUneValeurActuelle = territoireCode !== 'NAT-FR' && PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE.has(session!.profil) && estAutoriseAModifierLesPublications && chantier.statut !== 'ARCHIVE';
 

@@ -6,7 +6,6 @@ import {
 } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { CartographieDonnéesAvancement } from './CartographieAvancement.interface';
 
-
 function déterminerValeurAffichée(valeur: number | null, valeurAnnuelle: number | null, estApplicable: boolean | null): ReactNode {
   if (estApplicable === false) {
     return (

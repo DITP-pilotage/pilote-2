@@ -86,7 +86,6 @@ export class ReportErrorBuilder {
     return this;
   }
 
-
   build(): ReportErrorTask {
     return {
       cell: this.cell,

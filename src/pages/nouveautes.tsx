@@ -14,14 +14,12 @@ export const getServerSideProps: GetServerSideProps<{}> = async ({ res }) => {
   };
 };
 
-
 const NextPageNouveautés: FunctionComponent<{}> = () => {
-
   return (
     <>
       <Head>
         <title>
-          Nouveautés : Service bientôt disponible ! - PILOTE
+          Nouveautés
         </title>
       </Head>
       <Nouveautés />

@@ -65,7 +65,6 @@ export class IndicateurPourExportBuilder {
     return this;
   }
 
-
   withPerimetreIds(perimetresIds: string[]) {
     this.périmètreIds = perimetresIds;
     return this;

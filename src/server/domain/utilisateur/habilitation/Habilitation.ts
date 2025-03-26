@@ -33,12 +33,6 @@ export default class Habilitation {
       throw new TerritoireNonAutoriséErreur();
   }
 
-  vérifierLesHabilitationsEnSaisieDesPublicationsProjetsStructurants(territoireCode: string): Error | void {
-    // Vérifications des habilitations à compléter
-    if (!this._habilitations['saisieCommentaire'].territoires.includes(territoireCode))
-      throw new TerritoireNonAutoriséErreur();
-  }
-
   vérifierLesHabilitationsEnCréationModificationUtilisateur(chantiersIds: Chantier['id'][], territoiresCodes: Territoire['code'][], profil: Profil | null) {
     if (!profil || !profil.utilisateurs.modificationPossible) {
       throw new ProfilNonAutorisésSuppressionUtilisateurErreur();

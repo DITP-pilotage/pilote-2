@@ -21,7 +21,6 @@ export class DonnéeCartographie {
     this._estApplicable = estApplicable;
   }
 
-
   get territoireCode(): string {
     return this._territoireCode;
   }

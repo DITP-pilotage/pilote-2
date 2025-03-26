@@ -9,7 +9,6 @@ interface BoutonsDeTriProps {
   changementDirectionDeTriCallback: (tri: DirectionDeTri) => void;
 }
 
-
 export default function BoutonsDeTri({
   nomColonneÀTrier,
   directionDeTri,

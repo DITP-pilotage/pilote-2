@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import type { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { validationPropositionValeurActuelle } from '@/validation/proposition-valeur-actuelle';
+import { validationPropositionValeurAvancement } from '@/validation/proposition-valeur-actuelle';
 import api from '@/server/infrastructure/api/trpc/api';
 import { récupérerUnCookie } from '@/client/utils/cookies';
 
@@ -51,7 +51,7 @@ const useModalePropositionValeurActuelle = ({ detailIndicateur, indicateur, terr
 
   const [etapePropositionValeurActuelle, setEtapePropositionValeurActuelle] = useState<EtapePropositionValeurActuelle | null>(EtapePropositionValeurActuelle.SAISIE_VALEUR_ACTUELLE);
 
-  const mutationCreerPropositonValeurActuelle = api.propositionValeurActuelle.creer.useMutation({
+  const mutationCreerPropositonValeurActuelle = api.propositionValeurAvancement.creer.useMutation({
     onSuccess: () => {
       setEtapePropositionValeurActuelle(null);
     },
@@ -62,19 +62,18 @@ const useModalePropositionValeurActuelle = ({ detailIndicateur, indicateur, terr
       csrf: récupérerUnCookie('csrf') ?? '',
       ...data,
       valeurActuelle: data.valeurActuelle,
-      dateValeurActuelle: detailIndicateur.dateValeurActuelle!,
+      dateValeurActuelle: data.dateValeurActuelle!,
       indicId: indicateur.id,
       auteurModification,
       territoireCode,
     };
-
 
     mutationCreerPropositonValeurActuelle.mutate(inputs);
   };
 
   const reactHookForm = useForm<PropositionValeurActuelleForm>({
     mode: 'all',
-    resolver: zodResolver(validationPropositionValeurActuelle),
+    resolver: zodResolver(validationPropositionValeurAvancement),
     defaultValues: detailIndicateur.proposition === null ? {
       valeurActuelle: `${detailIndicateur.valeurActuelleMandat}`,
       motifProposition: '',

@@ -5,7 +5,6 @@ import BoutonToutSélectionner from '@/components/_commons/BoutonsToutSélection
 import MultiSelectStyled from './MultiSelect.styled';
 import useMultiSelect from './useMultiSelect';
 
-
 const MultiSelect: FunctionComponent<MultiSelectProps> = ({
   suffixeLibellé,
   optionsGroupées,

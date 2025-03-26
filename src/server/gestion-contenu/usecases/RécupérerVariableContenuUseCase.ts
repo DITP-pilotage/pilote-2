@@ -47,7 +47,7 @@ export class RécupérerVariableContenuUseCase {
         return configuration.featureFlip.alerteMAJIndicateur as VariableContenuDisponibleEnv[T];
       }
       case 'NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE': {
-        return configuration.featureFlip.propositionValeurActuelle as VariableContenuDisponibleEnv[T];
+        return configuration.featureFlip.propositionValeurAvancement as VariableContenuDisponibleEnv[T];
       }
       case 'NEXT_PUBLIC_SCHEMA_VALIDATA_URL': {
         return configuration.schemaValidataUrl as VariableContenuDisponibleEnv[T];

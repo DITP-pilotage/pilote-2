@@ -13,7 +13,6 @@ export default function useSélecteurCustom<T extends string>(
     return options.find(option => option.valeur === valeurSélectionnée)?.libellé;
   }, [options, valeurSélectionnée]);
 
-
   useEffect(() => {
     setIsOpen(false);
   }, [valeurSélectionnée, setIsOpen]);

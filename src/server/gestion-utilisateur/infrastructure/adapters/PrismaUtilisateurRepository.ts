@@ -48,7 +48,6 @@ const récupérerChantiersParDéfaut = (profilUtilisateur: PrismaProfilModel, li
     }, [] as string[])
     : listeChantiersAccessiblesIds;
 
-  
   return {
     lecture: listeChantiersAccessiblesIds,
     saisieCommentaire: chantiersAccessiblesEnSaisieCommentaire,
@@ -442,6 +441,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         auteurModification: auteurModification ? `${auteurModification.prenom} ${auteurModification.nom}` : 'Auteur Inconnu',
         profil: utilisateurBrut.profilCode as ProfilCode,
         dateDesactivation: utilisateurBrut.date_desactivation?.toISOString() ?? null,
+        statut: utilisateurBrut.date_desactivation ? 'Désactivé' : 'Activé',
       };
     };
   }

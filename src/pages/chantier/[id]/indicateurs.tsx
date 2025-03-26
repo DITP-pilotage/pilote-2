@@ -50,7 +50,6 @@ export async function getServerSideProps({
   }
   const jalon = Number.parseInt(query.jalon as string) || getAnneeDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
 
-
   const session = await getServerSession(req, res, authOptions);
   if (!session || !estAutoriséAImporterDesIndicateurs(session.profil)) {
     throw new Error('Not connected or not authorized ?');

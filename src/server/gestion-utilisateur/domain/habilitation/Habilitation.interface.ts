@@ -28,7 +28,6 @@ type HabilitationUtilisateurs = {
   périmètres: PérimètreMinistériel['id'][]
 };
 
-
 export type Habilitations = Record<ScopeUtilisateurs, HabilitationUtilisateurs>
 & Record<ScopeChantiers, HabilitationChantiers>;
 

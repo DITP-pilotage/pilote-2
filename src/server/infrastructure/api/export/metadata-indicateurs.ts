@@ -81,7 +81,6 @@ export async function handleExportMetadataIndicateurs(request: NextApiRequest, r
   } satisfies Options);
   stringifier.pipe(response);
 
-
   const listeMetadataIndicateur = 
     await getContainer('parametrageIndicateur').resolve('récupérerListeMetadataIndicateurUseCase')
       .run((request.query?.chantierIds as string[]) || [], (request.query?.perimetreIds as string[]) || [], request.query?.estTerritorialise === 'true', request.query?.estBarometre === 'true');

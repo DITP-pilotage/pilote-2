@@ -2,7 +2,9 @@ import { FunctionComponent } from 'react';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import { CartographieIndicateurType } from '@/client/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
+import {
+  CartographieIndicateurType,
+} from '@/client/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
 import SousIndicateurBloc from './Bloc/SousIndicateurBloc';
 
 interface SousIndicateursProps {
@@ -20,7 +22,6 @@ interface SousIndicateursProps {
   cartographieDroiteIndicateur: CartographieIndicateurType
   cartographieGaucheIndicateur: CartographieIndicateurType
 }
-
 
 const SousIndicateurs: FunctionComponent<SousIndicateursProps> = ({
   listeSousIndicateurs,

@@ -43,7 +43,6 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
   const objectMail = `PILOTE - Indicateur ${indicateurNom} (${indicateurId})`;
   const { data: variableContenuFFPoserUneQuestion } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR' });
 
-
   return (
     <IndicateurSpécificationsStyled>
       <p className='fr-text--md sous-titre'>
@@ -124,7 +123,7 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
               ) : (
                 <p className='fr-text--sm'>
                   La valeur d'avancement de cet indicateur est non renseignée.
-                </p>                
+                </p>
               )
             }
             <p className='fr-text--sm'>
@@ -166,8 +165,6 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
           </div>
         )
       }
-
-
     </IndicateurSpécificationsStyled>
   );
 };

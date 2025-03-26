@@ -10,7 +10,6 @@ interface RemontéeAlerteProps {
   estActivée: boolean;
 }
 
-
 const RemontéeAlerte: FunctionComponent<RemontéeAlerteProps> = ({ nombre, libellé, nomCritère, estActivée }) => {
   const [filtreAlerte, setFiltreAlerte] = useQueryState(nomCritère, parseAsBoolean.withDefault(false).withOptions({
     shallow: false,

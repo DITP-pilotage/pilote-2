@@ -10,6 +10,10 @@ import { Météo } from '@/server/domain/météo/Météo.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
 import { ChantierPourExport } from '@/server/chantiers/domain/ChantierPourExport';
+import {
+  PropositionValeurAvancementChantierInformation,
+} from '@/server/chantiers/domain/PropositionValeurAvancementChantierInformation';
+import { NotFoundError } from '@/server/app/error-boundary/not-found-error';
 
 export class PrismaChantierRepository implements ChantierRepository {
   async récupérerDonneesChantier(chantierId: string, territoireCodesLecture: string[]): Promise<DonneeChantier[]> {
@@ -174,7 +178,6 @@ export class PrismaChantierRepository implements ChantierRepository {
       ))),
     ]);
 
-
     return listePrismaChantierIdentite.flatMap(prismaChantierIdentite => {
       return prismaChantierIdentite.chantier_territoire
         .filter(chantierTerritoire => territoireCodesLecture.includes(chantierTerritoire.territoire_code))
@@ -188,7 +191,6 @@ export class PrismaChantierRepository implements ChantierRepository {
           } else if (prismaChantierTerritoire.maille === 'REG') {
             prismaChantierTerritoireNat = prismaChantierIdentite.chantier_territoire.find(chantierTerritoire => chantierTerritoire.territoire_code === 'NAT-FR')!;
           }
-
 
           return {
             nom: prismaChantierIdentite.nom,
@@ -281,7 +283,6 @@ export class PrismaChantierRepository implements ChantierRepository {
     if (!prismaChantierIdentite) {
       return null;
     }
-
 
     const listeTypesCommentaires = [
       'actions_a_venir',
@@ -505,7 +506,6 @@ export class PrismaChantierRepository implements ChantierRepository {
     if (!prismaChantierIdentite) {
       return null;
     }
-
 
     const listeTypesCommentaires = [
       'actions_a_venir',
@@ -791,5 +791,30 @@ export class PrismaChantierRepository implements ChantierRepository {
     });
 
     return chantiers.map(chantier => chantier.id);
+  }
+
+  async recupererPropositionValeurAvancementChantierInformationParIndicId({ indicId }: { indicId: string }): Promise<PropositionValeurAvancementChantierInformation> {
+    const propositionValeurAvancementChantierInformation = await prisma.indicateur_identite.findUnique({
+      where: {
+        id: indicId,
+      },
+      select: {
+        chantier_identite: {
+          select: {
+            id: true,
+            statut: true,
+          },
+        },
+      },
+    });
+
+    if (!propositionValeurAvancementChantierInformation) {
+      throw new NotFoundError("L'indicateur n'existe pas");
+    }
+
+    return {
+      id: propositionValeurAvancementChantierInformation.chantier_identite.id,
+      statut: propositionValeurAvancementChantierInformation.chantier_identite.statut,
+    };
   }
 }
