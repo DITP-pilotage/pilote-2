@@ -5,7 +5,7 @@ import Loader from '@/components/_commons/Loader/Loader';
 import SélecteursMaillesEtTerritoires
   from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires';
 import PageChantierEnTête from '@/components/PageChantier/EnTête/EnTête';
-import Cartographie from '@/components/_commons/Cartographie/CartographieNew';
+import Cartographie from '@/components/_commons/Cartographie/Cartographie';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
@@ -32,7 +32,7 @@ const ChoixTerritoire: FunctionComponent<ChoixTerritoireProps> = ({
   const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('md');
   const [estVisibleEnMobile, setEstVisibleEnMobile] = useState(false);
   const { donnéesCartographie } = useChoixTerritoire(mailleSelectionnee);
-  const { auClicTerritoireCallback } = useCartographie();
+  const { auClicTerritoireCallback } = useCartographie(territoireCode, '/chantier/[id]/[territoireCode]');
 
   return (
     <div className='flex'>

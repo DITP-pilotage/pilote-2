@@ -1,12 +1,13 @@
-import { FunctionComponent, useRef } from 'react';
+import { FunctionComponent, useRef, useState } from 'react';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import hachuresGrisBlanc from '@/client/constants/légendes/hachure/hachuresGrisBlanc';
 import {
-  CartographieInfoBulle,
   CartographieOptions,
   CartographieTerritoires,
+  CartographieTerritoire,
 } from '@/components/_commons/Cartographie/useCartographie.interface';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { CartographieSVGContrat } from '@/server/cartographie/app/contrats/CartographieSVGContrat';
+import SecureTooltip from '@/components/_commons/SecureTooltip/SecureTooltip';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
 import { CartographieTerritoireSélectionné } from './CartographieTerritoireSélectionné';
@@ -17,8 +18,6 @@ interface CartographieSVGProps {
   options: CartographieOptions,
   territoires: CartographieTerritoires['territoires'],
   frontières: CartographieTerritoires['frontières'],
-  infoBulle: CartographieInfoBulle | null,
-  setInfoBulle: (state: CartographieInfoBulle | null) => void,
   auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
   contoursGris?: boolean
 }
@@ -33,14 +32,14 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
   options,
   territoires,
   frontières,
-  infoBulle,
-  setInfoBulle,
   auClicTerritoireCallback,
   contoursGris = false,
 }) => {
 
   const { sourceSvgAsJson } = useCartographieSVG();
 
+  const [hoveredTerritoire, setHoveredTerritoire] = useState<CartographieTerritoire | null>(null);
+  const [hoveredElement, setHoveredElement] = useState<HTMLElement | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   const viewbox = {
@@ -61,6 +60,22 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
         ) : null
       }
       <div className={`carte ${contoursGris ? 'stroke-dark' : ''}`}>
+        <SecureTooltip
+          anchorEl={hoveredElement}
+          classNameInfoBulle='infobull--sm'
+          isVisible={!!hoveredTerritoire}
+        >
+          {hoveredTerritoire ? (
+            <div className='fr-text--sm'>
+              <p className='fr-text--sm fr-background-contrast-grey fr-p-2w'>
+                {hoveredTerritoire.libellé}
+              </p>
+              <div className='fr-text--sm fr-p-2w'>
+                {hoveredTerritoire.contenuInfoBulle}
+              </div>
+            </div>
+          ) : null}
+        </SecureTooltip>
         <svg
           ref={svgRef}
           version='1.2'
@@ -72,9 +87,6 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
           </defs>
           <g
             className='canvas'
-            onMouseLeave={() => {
-              setInfoBulle(null);
-            }}
           >
             {
               territoires.map(territoire => (
@@ -85,15 +97,15 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
                     fill={territoire.remplissage}
                     key={`territoire-${territoire.codeInsee}`}
                     onClick={() => territoire.estApplicable && options.estInteractif && territoire.estInteractif && auClicTerritoireCallback(territoire.code, options.territoireSélectionnable)}
-                    onMouseEnter={() => {
-                      if (options.estInteractif && territoire.libellé !== infoBulle?.libellé) {
-                        setInfoBulle({
-                          libellé: territoire.libellé,
-                          contenu: territoire.contenuInfoBulle,
-                        });
-                      } else {
-                        setInfoBulle(null);
+                    onMouseEnter={(e) => {
+                      if (options.estInteractif) {
+                        setHoveredTerritoire(territoire);
+                        setHoveredElement(e.currentTarget as unknown as HTMLElement);
                       }
+                    }}
+                    onMouseLeave={() => {
+                      setHoveredTerritoire(null);
+                      setHoveredElement(null);
                     }}
                   />
                 ) : null),
