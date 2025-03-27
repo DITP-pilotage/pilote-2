@@ -515,95 +515,6 @@ model decision_strategique {
   @@schema("public")
 }
 
-model projet_structurant {
-  id                       String    @id
-  code                     String
-  nom                      String
-  territoire_code          String
-  perimetres_ids           String[]
-  direction_administration String[]
-  chefferie_de_projet      String[]
-  co_porteurs              String[]
-  taux_avancement          Float?
-  date_taux_avancement     DateTime? @db.Timestamp
-  date_donnees_qualitative DateTime? @db.Timestamp
-  a_supprimer              Boolean   @default(true)
-
-  @@schema("public")
-}
-
-model indicateur_projet_structurant {
-  id                      String    @id
-  nom                     String
-  projet_structurant_code String
-  type_id                 String?
-  description             String?
-  source                  String?
-  mode_de_calcul          String?
-  valeur_actuelle         Float?
-  valeur_initiale         Float?
-  valeur_cible            Float?
-  taux_avancement         Float?
-  date_valeur_actuelle    DateTime? @db.Timestamp
-  date_valeur_initiale    DateTime? @db.Timestamp
-  date_valeur_cible       DateTime? @db.Timestamp
-  date_taux_avancement    DateTime? @db.Timestamp
-  projet_structurant_id   String
-  a_supprimer             Boolean   @default(true)
-
-  @@schema("public")
-}
-
-enum type_objectif_projet_structurant {
-  suivi_des_objectifs
-
-  @@schema("public")
-}
-
-model objectif_projet_structurant {
-  id                    String                           @id
-  projet_structurant_id String
-  type                  type_objectif_projet_structurant
-  contenu               String
-  date                  DateTime                         @db.Timestamp
-  auteur                String?
-
-  @@schema("public")
-}
-
-model synthese_des_resultats_projet_structurant {
-  id                    String    @id
-  projet_structurant_id String
-  meteo                 String?
-  date_meteo            DateTime? @db.Timestamp
-  commentaire           String?
-  date_commentaire      DateTime? @db.Timestamp
-  auteur                String?
-
-  @@schema("public")
-}
-
-model commentaire_projet_structurant {
-  id                    String   @id @db.Uuid
-  projet_structurant_id String
-  type                  String
-  contenu               String
-  date                  DateTime @db.Timestamp
-  auteur                String?
-
-  @@schema("public")
-}
-
-model perimetre_projet_structurant {
-  id                 String  @id
-  perimetres_ppg_nom String
-  perimetres_ppg_id  String
-  perimetre_ps_nom   String
-  a_supprimer        Boolean @default(true)
-
-  @@schema("public")
-}
-
 model utilisateur {
   id                               String                             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email                            String                             @unique
@@ -638,10 +549,6 @@ model profil {
   nom                                                         String
   a_acces_tous_chantiers                                      Boolean       @default(false)
   a_acces_tous_chantiers_territorialises                      Boolean       @default(false)
-  projets_structurants_lecture_tous_perimetres                Boolean       @default(false)
-  projets_structurants_lecture_meme_perimetres_que_chantiers  Boolean       @default(false)
-  projets_structurants_lecture_tous_territoires               Boolean       @default(false)
-  projets_structurants_lecture_meme_territoires_que_chantiers Boolean       @default(false)
   a_acces_tous_les_territoires_lecture                        Boolean       @default(false)
   a_acces_tous_les_territoires_saisie_commentaire             Boolean       @default(false)
   a_acces_tous_les_territoires_saisie_indicateur              Boolean       @default(false)

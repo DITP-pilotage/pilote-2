@@ -1,7 +1,6 @@
 import { FunctionComponent } from 'react';
 import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
 import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
-import { typeDeRéformeSélectionnéeStore } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
 import RépartitionMétéoÉlémentStyled from './RépartitionMétéoÉlément.styled';
 
 interface RépartitionMétéoÉlémentProps {
@@ -11,11 +10,9 @@ interface RépartitionMétéoÉlémentProps {
 }
 
 const RépartitionMétéoÉlément: FunctionComponent<RépartitionMétéoÉlémentProps> = ({ météo, nombreDeChantiers, estArchive }) => {
-  const typeDeRéforme = typeDeRéformeSélectionnéeStore();
   return (
     <RépartitionMétéoÉlémentStyled 
       estArchive={estArchive}
-      typeDeRéforme={typeDeRéforme}
     >
       <MeteoPicto
         meteo={météo}

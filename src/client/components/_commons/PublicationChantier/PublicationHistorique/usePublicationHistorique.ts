@@ -3,7 +3,6 @@ import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoires
 import api from '@/server/infrastructure/api/trpc/api';
 import { RouterOutputs } from '@/server/infrastructure/api/trpc/trpc.interface';
 import { validationPublicationContexte, zodValidateurEntitéType } from '@/validation/publication';
-import { typeDeRéformeSélectionnéeStore } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
 import PublicationHistoriqueProps from './PublicationHistorique.interface';
 
 export default function usePublicationHistorique(
@@ -13,7 +12,7 @@ export default function usePublicationHistorique(
   maille: PublicationHistoriqueProps['maille'],
 ) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-  const typeDeRéforme = typeDeRéformeSélectionnéeStore();
+  const typeDeRéforme = 'chantier';
 
   const [publications, setPublications] = useState<RouterOutputs['publication']['récupérerHistorique']>();
 

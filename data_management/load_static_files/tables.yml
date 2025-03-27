@@ -27,9 +27,6 @@ groups:
       metadata_perimetres:
         schema: "raw_data"
         path_in_repo: "views/perimetre/view_meta_perimetre.csv"
-      metadata_perimetres_projet_structurant:
-        schema: "raw_data"
-        path_in_repo: "views/perimetre/mapping_per_pst.csv"
       metadata_indicateur_types:
         schema: "raw_data"
         path_in_repo: "models/indicateur/ref_indic_type.csv"

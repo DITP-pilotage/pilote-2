@@ -1,15 +1,8 @@
 import styled from '@emotion/styled';
-import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 
 interface RépartitionMétéosÉlémentStyledProps {
-  typeDeRéforme: TypeDeRéforme
   estArchive?: boolean
 }
-
-const couleurs = {
-  chantier: 'var(--text-title-blue-france)',
-  'projet structurant': 'var(--text-action-high-pink-tuile)',
-};
 
 const RépartitionMétéoÉlémentStyled = styled.div<RépartitionMétéosÉlémentStyledProps>`
   height: 100%;
@@ -25,7 +18,7 @@ const RépartitionMétéoÉlémentStyled = styled.div<RépartitionMétéosÉlém
   }
 
   .nombre-de-chantiers {
-    color: ${({ typeDeRéforme, estArchive }) => estArchive ? 'var(--text-disabled-grey)' : couleurs[typeDeRéforme]};
+    color: ${({ estArchive }) => estArchive ? 'var(--text-disabled-grey)' : 'var(--text-title-blue-france)'};
   }
 
   .label {

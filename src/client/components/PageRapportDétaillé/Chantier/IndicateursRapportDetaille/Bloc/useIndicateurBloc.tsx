@@ -11,7 +11,6 @@ import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcr
 import IndicateurBlocIndicateurTuile
   from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/indicateurBlocIndicateurTuile';
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 import { formaterDate } from '@/client/utils/date/date';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import ValeurEtDate from './ValeurEtDate/ValeurEtDate';
@@ -48,7 +47,7 @@ const indicateurDétailsVide: IndicateurDétailsParTerritoire = {
 
 const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
 
-export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, typeDeRéforme: TypeDeRéforme, territoireSélectionné: DétailTerritoire) {
+export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, typeDeRéforme: 'chantier', territoireSélectionné: DétailTerritoire) {
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
 
   const [indicateurDétailsParTerritoires, setIndicateurDétailsParTerritoires] = useState<IndicateurDétailsParTerritoire[]>([indicateurDétailsVide]);
@@ -66,7 +65,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
     }
   }, [détailsIndicateur, metÀJourDétailsParTerritoires, typeDeRéforme]);
 
-  const colonnes = typeDeRéforme === 'chantier' ? [
+  const colonnes = [
     reactTableColonnesHelper.accessor('territoireNom', {
       header: 'Territoire(s)',
       id: 'territoire',
@@ -156,75 +155,6 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
         <IndicateurBlocIndicateurTuile
           indicateurDétailsParTerritoire={indicateurCellContext.row.original}
           typeDeRéforme='chantier'
-          unité={indicateurCellContext.row.original.données.unité}
-        />
-      ),
-      enableSorting: false,
-      enableGrouping: false,
-    }),
-  ] : [
-    reactTableColonnesHelper.accessor('territoireNom', {
-      header: 'Territoire',
-      id: 'territoire',
-      enableSorting: false,
-    }),
-    reactTableColonnesHelper.accessor('données.valeurInitiale', {
-      header: 'Valeur initiale',
-      id: 'valeurInitiale',
-      cell: valeurInitiale => (
-        <ValeurEtDate
-          date={valeurInitiale.row.original.données.dateValeurInitiale}
-          unité={valeurInitiale.row.original.données.unité}
-          valeur={valeurInitiale.getValue()}
-        />
-      ),
-      enableSorting: false,
-    }),
-    reactTableColonnesHelper.accessor('données.valeurActuelle', {
-      header: 'Valeur actuelle',
-      id: 'valeurActuelle',
-      cell: valeurActuelle => (
-        <ValeurEtDate
-          date={valeurActuelle.row.original.données.dateValeurActuelle}
-          unité={valeurActuelle.row.original.données.unité}
-          valeur={valeurActuelle.getValue()}
-        />
-      ),
-      enableSorting: false,
-    }),
-    reactTableColonnesHelper.accessor('données.valeurCible', {
-      header: 'Cible',
-      id: 'cible',
-      cell: valeurCible => (
-        <ValeurEtDate
-          date={valeurCible.row.original.données.dateValeurCible}
-          unité={valeurCible.row.original.données.unité}
-          valeur={valeurCible.getValue()}
-        />
-      ),
-      enableSorting: false,
-    }),
-    reactTableColonnesHelper.accessor('données.avancement.global', {
-      header: 'Avancement',
-      id: 'avancement',
-      cell: avancementGlobal => (
-        <BarreDeProgression
-          afficherTexte
-          fond='gris-clair'
-          positionTexte='dessus'
-          taille='md'
-          valeur={avancementGlobal.getValue()}
-          variante='rose'
-        />
-      ),
-      enableSorting: false,
-    }),
-    reactTableColonnesHelper.display({
-      id: 'indicateurTuile',
-      cell: indicateurCellContext => (
-        <IndicateurBlocIndicateurTuile
-          indicateurDétailsParTerritoire={indicateurCellContext.row.original}
-          typeDeRéforme='projet structurant'
           unité={indicateurCellContext.row.original.données.unité}
         />
       ),
