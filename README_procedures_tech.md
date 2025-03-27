@@ -35,7 +35,7 @@ Via Docker:
 ## (1) et (2) Lancer la db et la webapp
 docker compose up
 ## (3) Initialiser la base de données
-docker compose run --rm pilote_webapp /bin/bash scripts/prisma_reset_and_migrate.sh
+docker compose run --rm pilote_webapp /bin/bash scripts/prisma_reset_migrate_seed.sh
 ## (4) Lancer les datajobs en mode *full*
 cd data_management
 FULL_DJ=true docker compose run --rm -e FULL_DJ pilote_datajobs
@@ -58,7 +58,7 @@ En local:
 ## (2) Lancer la webapp
 npm run dev
 ## (3) Initialiser la base de données
-bash scripts/prisma_reset_and_migrate.sh
+bash scripts/prisma_reset_migrate_seed.sh
 ## (4) Lancer les datajobs en mode *full*
 cd data_management
 FULL_DJ=true pipenv run bash scripts/run_datajobs.sh

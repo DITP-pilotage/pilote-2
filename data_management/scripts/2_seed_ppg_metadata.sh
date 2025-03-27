@@ -15,5 +15,5 @@ then
   fi
 fi
 
-python3 load_ppg_metadata/load.py ppg_metadata
+python3 load_static_files/load.py ppg_metadata
 dbt run --select raw.ppg_metadata.metadata_indicateurs
