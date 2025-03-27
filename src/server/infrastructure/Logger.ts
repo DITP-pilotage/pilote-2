@@ -1,12 +1,11 @@
 import pino, { Logger } from 'pino';
-import { configuration } from '@/config';
 
 class AppLogger {
   private readonly _logger: Logger;
 
   constructor() {
     this._logger = pino({
-      level: configuration.logLevel,
+      level: 'info',
     });
   }
 

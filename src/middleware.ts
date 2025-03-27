@@ -1,6 +1,8 @@
+import { getToken } from 'next-auth/jwt';
 import { withAuth } from 'next-auth/middleware';
 import { NextFetchEvent, NextRequest, NextResponse } from 'next/server';
 
+import logger from './server/infrastructure/Logger';
 const pages = { signIn: '/' };
 
 function generateNonce(): string {
@@ -29,6 +31,35 @@ function generateNonce(): string {
   return nonce;
 }
 
+async function validateKeycloakToken(token: string): Promise<boolean> {
+  try {
+    const params = new URLSearchParams({
+      client_id: process.env.KEYCLOAK_CLIENT_ID || '',
+      client_secret: process.env.KEYCLOAK_CLIENT_SECRET || '',
+      token,
+    });
+
+    const response = await fetch(`${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token/introspect`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: params,
+    });
+
+    if (!response.ok) {
+      return false;
+    }
+
+    const data = (await response.json()) as { active: boolean };
+    return data.active === true;
+
+  } catch (error) {
+    logger.error('Error validating Keycloak token:', error);
+    return false;
+  }
+}
+
 export const middleware = async (request: NextRequest, event: NextFetchEvent)=> {
   const nonce = generateNonce();
 
@@ -39,7 +70,7 @@ export const middleware = async (request: NextRequest, event: NextFetchEvent)=> 
   response.headers.set('x-nonce', nonce);
 
   // Ajout du CSP pour empecher les attaques XSS côté serveur
-  if (isDev) {
+  if (isDev || request.nextUrl.pathname.startsWith('/centreaide')) {
     response.headers.set(
       'Content-Security-Policy',
       "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' ws: wss:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'",
@@ -48,7 +79,7 @@ export const middleware = async (request: NextRequest, event: NextFetchEvent)=> 
     response.headers.set(
       'Content-Security-Policy',
       `default-src 'self'; 
-       script-src 'self' 'nonce-${nonce}'; 
+       script-src 'self' 'nonce-${nonce}' https://plausible.4p-analyse.fr https://app.livestorm.co/; 
        style-src 'self' 'unsafe-inline';
        img-src 'self' data: blob:; 
        font-src 'self' data:; 
@@ -62,8 +93,14 @@ export const middleware = async (request: NextRequest, event: NextFetchEvent)=> 
 
   if (!request.nextUrl.pathname.startsWith('/api/open-api')) {
     const authMiddleware = withAuth(
-      function middleware2(requestAuth) {
+      async function middleware2(requestAuth) {
         const cookie = requestAuth.cookies.get('csrf');
+
+        const token = await getToken({ req: requestAuth });
+
+        if (!process.env.DEV_PASSWORD && !await validateKeycloakToken(token?.accessToken as string)) {
+          return NextResponse.json({ message: "Vous n'êtes pas autorisé à effectuer cette action" }, { status: 403 });
+        }
 
         if (requestAuth.nextauth.token && (cookie === undefined || cookie !== requestAuth.nextauth.token.jti)) {
           const jti = String(requestAuth.nextauth.token.jti);
