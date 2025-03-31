@@ -1,9 +1,7 @@
 import {
   formaterDateHeureOuNonRenseignee,
-  formaterMétéoOuNonApplicable,
   formaterMétéoOuNonRenseigne,
   formaterNumériqueOuValeurManquante,
-  formaterNumériqueOuValeurNonApplicable,
   formaterNumériqueOuValeurNonRenseignee,
   NON,
   NON_APPLICABLE,
@@ -13,7 +11,7 @@ import {
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { IndicateurPourExport } from '@/server/chantiers/domain/IndicateurPourExport';
+import { IndicateurPourExport, verifierApplicabiliteMaille } from '@/server/chantiers/domain/IndicateurPourExport';
 import {
   masquerPourProfilDROMEtMailleNat,
   verifierOptionEstBarometreEtEstTerritorialise,
@@ -34,20 +32,20 @@ const presenterEnIndicateurExportContrat = (indicateurPourExport: IndicateurPour
     indicateurPourExport.chantierNom || NON_RENSEIGNEE,
     indicateurPourExport.chantierId || NON_RENSEIGNEE,
     indicateurPourExport.chantierEstBaromètre ? OUI : NON,
-    indicateurPourExport.chantierEstApplicable ? formaterNumériqueOuValeurManquante(indicateurPourExport.chantierAvancementGlobal) : formaterNumériqueOuValeurNonApplicable(indicateurPourExport.chantierAvancementGlobal),
-    indicateurPourExport.chantierEstApplicable ? formaterNumériqueOuValeurManquante(indicateurPourExport.chantierAvancementAnnuel) : formaterNumériqueOuValeurNonApplicable(indicateurPourExport.chantierAvancementAnnuel),
-    indicateurPourExport.chantierEstApplicable ? formaterMétéoOuNonRenseigne(indicateurPourExport.météo) : formaterMétéoOuNonApplicable(indicateurPourExport.météo),
+    formaterNumériqueOuValeurManquante(indicateurPourExport.chantierAvancementGlobal, indicateurPourExport.chantierEstApplicable),
+    formaterNumériqueOuValeurManquante(indicateurPourExport.chantierAvancementAnnuel, indicateurPourExport.chantierEstApplicable),
+    formaterMétéoOuNonRenseigne(indicateurPourExport.météo, indicateurPourExport.chantierEstApplicable),
     indicateurPourExport.nom || NON_APPLICABLE,
-    formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurInitiale),
-    formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurInitiale),
-    formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurActuelle),
-    formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurActuelle),
-    formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurCibleAnnuelle),
-    formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurCibleAnnuelle),
-    formaterNumériqueOuValeurManquante(indicateurPourExport.avancementAnnuel),
-    formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurCible),
-    formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurCible),
-    formaterNumériqueOuValeurManquante(indicateurPourExport.avancementGlobal),
+    formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurInitiale, indicateurPourExport.estApplicable),
+    formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurInitiale, indicateurPourExport.estApplicable),
+    formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurActuelle, indicateurPourExport.estApplicable),
+    formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurActuelle, indicateurPourExport.estApplicable),
+    formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurCibleAnnuelle, indicateurPourExport.estApplicable),
+    formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurCibleAnnuelle, indicateurPourExport.estApplicable),
+    formaterNumériqueOuValeurManquante(indicateurPourExport.avancementAnnuel, indicateurPourExport.estApplicable),
+    formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurCible, indicateurPourExport.estApplicable),
+    formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurCible, indicateurPourExport.estApplicable),
+    formaterNumériqueOuValeurManquante(indicateurPourExport.avancementGlobal, indicateurPourExport.estApplicable),
   ];
 
   return profil === ProfilEnum.DITP_ADMIN ? [...donnees, indicateurPourExport.chantierStatut || NON_APPLICABLE] : donnees;
@@ -100,6 +98,7 @@ export default class ExportCsvDesIndicateursUseCase {
           if (
             indicateursPourExport &&
               !masquerPourProfilDROMEtMailleNat(profil, indicateursPourExport.périmètreIds, indicateursPourExport.maille)
+              && verifierApplicabiliteMaille(indicateursPourExport.maillesApplicables, indicateursPourExport.maille)
               && verifierOptionPerimetreIds(optionsExport, indicateursPourExport.périmètreIds)
               && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, indicateursPourExport.chantierEstBaromètre, indicateursPourExport.chantierEstTerritorialise)
               && verifierOptionStatut(optionsExport, indicateursPourExport.chantierStatut)

@@ -55,6 +55,10 @@ export class IndicateurPourExportBuilder {
 
   private avancementGlobal = null;
 
+  private estApplicable = true;
+
+  private maillesApplicables = ['NAT', 'REG', 'DEPT'];
+
   withNom(nom: string) {
     this.nom = nom;
     return this;
@@ -99,6 +103,8 @@ export class IndicateurPourExportBuilder {
       valeurCible: this.valeurCible,
       dateValeurCible: this.dateValeurCible,
       avancementGlobal: this.avancementGlobal,
+      estApplicable: this.estApplicable,
+      maillesApplicables: this.maillesApplicables,
     };
   }
 }

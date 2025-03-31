@@ -114,7 +114,6 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             ],
           },
         },
-        est_applicable: true,
       },
       select: {
         maille: true,
@@ -126,6 +125,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         valeur_cible_mandat: true,
         date_valeur_cible_mandat: true,
         taux_avancement_mandat: true,
+        est_applicable: true,
         indicateur_territoire_jalon: {
           where: {
             jalon,
@@ -142,6 +142,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           select: {
             nom: true,
             chantier_id: true,
+            mailles_applicables: true,
             chantier_identite: {
               select: {
                 ministeres_acronymes: true,
@@ -215,6 +216,8 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         valeurCible: indicateurPourExport.valeur_cible_mandat,
         dateValeurCible: indicateurPourExport.date_valeur_cible_mandat?.toISOString() || null,
         avancementGlobal: indicateurPourExport.taux_avancement_mandat,
+        maillesApplicables: indicateurPourExport.indicateur_identite.mailles_applicables,
+        estApplicable: indicateurPourExport.est_applicable,
       });
     }).sort((indicA, indicB) => {
       const orderMaille = { 'NAT': 1, 'REG': 2, 'DEPT': 3 };
@@ -271,7 +274,6 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             ],
           },
         },
-        est_applicable: true,
       },
       select: {
         maille: true,
@@ -281,6 +283,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         evolution_valeur_actuelle: true,
         valeur_cible_mandat: true,
         date_valeur_cible_mandat: true,
+        est_applicable: true,
         indicateur_territoire_jalon: {
           where: {
             jalon,
@@ -297,6 +300,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           select: {
             nom: true,
             chantier_id: true,
+            mailles_applicables: true,
             chantier_identite: {
               select: {
                 est_barometre: true,
@@ -351,6 +355,8 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         chantierEstBaromètre: indicateurPourExport.indicateur_identite.chantier_identite.est_barometre,
         chantierEstTerritorialise: indicateurPourExport.indicateur_identite.chantier_identite.est_territorialise,
         chantierStatut: indicateurPourExport.indicateur_identite.chantier_identite.statut,
+        estApplicable: indicateurPourExport.est_applicable,
+        maillesApplicables: indicateurPourExport.indicateur_identite.mailles_applicables,
       }));
     }).sort((indicA, indicB) => {
       const orderMaille = { 'NAT': 1, 'REG': 2, 'DEPT': 3 };

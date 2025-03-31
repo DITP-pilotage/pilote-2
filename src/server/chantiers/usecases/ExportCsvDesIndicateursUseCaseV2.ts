@@ -1,9 +1,7 @@
 import {
   formaterDateHeureOuNonRenseignee,
-  formaterMétéoOuNonApplicable,
   formaterMétéoOuNonRenseigne,
   formaterNumériqueOuValeurManquante,
-  formaterNumériqueOuValeurNonApplicable,
   formaterNumériqueOuValeurNonRenseignee,
   NON,
   NON_APPLICABLE,
@@ -13,7 +11,7 @@ import {
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { IndicateurPourExport } from '@/server/chantiers/domain/IndicateurPourExport';
+import { IndicateurPourExport, verifierApplicabiliteMaille } from '@/server/chantiers/domain/IndicateurPourExport';
 import {
   masquerPourProfilDROMEtMailleNat,
   verifierOptionEstBarometreEtEstTerritorialise,
@@ -63,18 +61,18 @@ const presenterEnIndicateurExportContrat = (indicateurPourExport: IndicateurPour
 
   if (optionsExport.listeOptionsExport.includes('description')) {
     donnees.push(
-      formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurInitiale),
-      formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurInitiale),
-      formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurActuelle),
-      formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurActuelle),
-      formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurCibleAnnuelle),
-      formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurCibleAnnuelle),
-      formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurCible),
-      formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurCible),
-      formaterNumériqueOuValeurManquante(indicateurPourExport.avancementAnnuel),
-      formaterNumériqueOuValeurManquante(indicateurPourExport.avancementGlobal),
-      indicateurPourExport.chantierEstApplicable ? formaterNumériqueOuValeurManquante(indicateurPourExport.chantierAvancementGlobal) : formaterNumériqueOuValeurNonApplicable(indicateurPourExport.chantierAvancementGlobal),
-      indicateurPourExport.chantierEstApplicable ? formaterNumériqueOuValeurManquante(indicateurPourExport.chantierAvancementAnnuel) : formaterNumériqueOuValeurNonApplicable(indicateurPourExport.chantierAvancementAnnuel),
+      formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurInitiale, indicateurPourExport.estApplicable),
+      formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurInitiale, indicateurPourExport.estApplicable),
+      formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurActuelle, indicateurPourExport.estApplicable),
+      formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurActuelle, indicateurPourExport.estApplicable),
+      formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurCibleAnnuelle, indicateurPourExport.estApplicable),
+      formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurCibleAnnuelle, indicateurPourExport.estApplicable),
+      formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurCible, indicateurPourExport.estApplicable),
+      formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurCible, indicateurPourExport.estApplicable),
+      formaterNumériqueOuValeurManquante(indicateurPourExport.avancementAnnuel, indicateurPourExport.estApplicable),
+      formaterNumériqueOuValeurManquante(indicateurPourExport.avancementGlobal, indicateurPourExport.estApplicable),
+      formaterNumériqueOuValeurManquante(indicateurPourExport.chantierAvancementGlobal, indicateurPourExport.chantierEstApplicable),
+      formaterNumériqueOuValeurManquante(indicateurPourExport.chantierAvancementAnnuel, indicateurPourExport.chantierEstApplicable),
     );
   }
 
@@ -84,7 +82,7 @@ const presenterEnIndicateurExportContrat = (indicateurPourExport: IndicateurPour
 
   if (optionsExport.listeOptionsExport.includes('synthese')) {
     donnees.push(
-      indicateurPourExport.chantierEstApplicable ? formaterMétéoOuNonRenseigne(indicateurPourExport.météo) : formaterMétéoOuNonApplicable(indicateurPourExport.météo),
+      formaterMétéoOuNonRenseigne(indicateurPourExport.météo, indicateurPourExport.chantierEstApplicable),
     );
   }
 
@@ -194,6 +192,7 @@ export class ExportCsvDesIndicateursUseCaseV2 {
           if (
             indicateursPourExport &&
               !masquerPourProfilDROMEtMailleNat(profil, indicateursPourExport.périmètreIds, indicateursPourExport.maille)
+              && verifierApplicabiliteMaille(indicateursPourExport.maillesApplicables, indicateursPourExport.maille)
               && verifierOptionPerimetreIds(optionsExport, indicateursPourExport.périmètreIds)
               && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, indicateursPourExport.chantierEstBaromètre, indicateursPourExport.chantierEstTerritorialise)
               && verifierOptionStatut(optionsExport, indicateursPourExport.chantierStatut)
