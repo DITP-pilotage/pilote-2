@@ -49,10 +49,11 @@ export class PublierFichierIndicateurImporteUseCase {
     
     await this.mesureIndicateurRepository.sauvegarder(listeIndicateursData);
     await Promise.all(
-      listeValeursAvancementImportees.map(valeurAvancement => this.propositionValeurActuelleRepository.supprimerPropositionsValeurActuelleApresImport({ 
+      listeValeursAvancementImportees.map(valeurAvancement => this.propositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport({ 
         indicId: valeurAvancement.indicId, 
         zoneId: valeurAvancement.zoneId, 
         dateValeurImportee: new Date(valeurAvancement.metricDate),
+        valeurImportee: Number.parseFloat(valeurAvancement.metricValue),
       })),
     );
     await this.mesureIndicateurTemporaireRepository.supprimerToutParRapportId(rapportId);

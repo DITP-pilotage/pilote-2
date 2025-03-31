@@ -90,8 +90,8 @@ describe('PublierFichierIndicateurImporteUseCase', () => {
   });
   it('doit supprimer les propositions de valeurs associés aux va importés', async () => {
     // GIVEN
-    const propositionsASupprimerCaptor1 = captor<{ dateValeurImportee: Date, indicId: string, zoneId: string }>();
-    const propositionsASupprimerCaptor2 = captor<{ dateValeurImportee: Date, indicId: string, zoneId: string }>();
+    const propositionsAModifierCaptor1 = captor<{ dateValeurImportee: Date, indicId: string, zoneId: string, valeurImportee: number }>();
+    const propositionsAModifierCaptor2 = captor<{ dateValeurImportee: Date, indicId: string, zoneId: string, valeurImportee: number }>();
 
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
@@ -106,7 +106,7 @@ describe('PublierFichierIndicateurImporteUseCase', () => {
         .avecIndicId('IND-002')
         .avecMetricDate('2024-12-01')
         .avecMetricType('va')
-        .avecMetricValue('12')
+        .avecMetricValue('11.3')
         .avecRapportId('20a717e6-2de9-428c-b4e7-80f7b9f36ffc')
         .avecZoneId('D01')
         .build(),
@@ -128,21 +128,23 @@ describe('PublierFichierIndicateurImporteUseCase', () => {
 
     // THEN
     expect(mesureIndicateurTemporaireRepository.recupererToutParRapportId).toHaveBeenNthCalledWith(1, '20a717e6-2de9-428c-b4e7-80f7b9f36ffc');
-    expect(propositionValeurActuelleRepository.supprimerPropositionsValeurActuelleApresImport).toHaveBeenCalledTimes(2);
-    expect(propositionValeurActuelleRepository.supprimerPropositionsValeurActuelleApresImport).toHaveBeenNthCalledWith(1, propositionsASupprimerCaptor1);
-    expect(propositionValeurActuelleRepository.supprimerPropositionsValeurActuelleApresImport).toHaveBeenNthCalledWith(2, propositionsASupprimerCaptor2);
+    expect(propositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport).toHaveBeenCalledTimes(2);
+    expect(propositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport).toHaveBeenNthCalledWith(1, propositionsAModifierCaptor1);
+    expect(propositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport).toHaveBeenNthCalledWith(2, propositionsAModifierCaptor2);
     expect(mesureIndicateurTemporaireRepository.supprimerToutParRapportId).toHaveBeenNthCalledWith(1, '20a717e6-2de9-428c-b4e7-80f7b9f36ffc');
 
-    const propositionsASupprimer1 = propositionsASupprimerCaptor1.value;
-    const propositionsASupprimer2 = propositionsASupprimerCaptor2.value;
+    const propositionsAModifier1 = propositionsAModifierCaptor1.value;
+    const propositionsAModifier2 = propositionsAModifierCaptor2.value;
 
-    expect(propositionsASupprimer1.indicId).toEqual('IND-001');
-    expect(propositionsASupprimer1.zoneId).toEqual('D01');
-    expect(propositionsASupprimer1.dateValeurImportee).toEqual(new Date('2022-12-01'));
+    expect(propositionsAModifier1.indicId).toEqual('IND-001');
+    expect(propositionsAModifier1.zoneId).toEqual('D01');
+    expect(propositionsAModifier1.dateValeurImportee).toEqual(new Date('2022-12-01'));
+    expect(propositionsAModifier1.valeurImportee).toEqual(12);
 
-    expect(propositionsASupprimer2.indicId).toEqual('IND-002');
-    expect(propositionsASupprimer2.zoneId).toEqual('D01');
-    expect(propositionsASupprimer2.dateValeurImportee).toEqual(new Date('2024-12-01'));
+    expect(propositionsAModifier2.indicId).toEqual('IND-002');
+    expect(propositionsAModifier2.zoneId).toEqual('D01');
+    expect(propositionsAModifier2.dateValeurImportee).toEqual(new Date('2024-12-01'));
+    expect(propositionsAModifier2.valeurImportee).toEqual(11.3);
 
   });
 });

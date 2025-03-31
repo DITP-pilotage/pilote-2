@@ -43,7 +43,7 @@ export class PrismaPropositionValeurActuelleRepository implements PropositionVal
         territoire_code: territoireCode,
       },
       data: {
-        statut: StatutProposition.SUPPRIME,
+        statut: StatutProposition.RETIREE,
       },
     });
   }

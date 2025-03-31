@@ -25,7 +25,7 @@ describe('PrismaPropositionValeurActuelleRepository', () => {
       .avecDateProposition(new Date('2024-05-13'))
       .avecMotifProposition('Un motif excellent')
       .avecSourceDonneeEtMethodeCalcul('Une source encore mieux')
-      .avecStatut(StatutProposition.REFUSE)
+      .avecStatut(StatutProposition.EN_COURS)
       .build();
     // When
     await prismaPropositionValeurActuelleRepository.creerPropositionValeurActuelle(propositionValeurActuelle);
