@@ -38,6 +38,8 @@ export class CreerPropositionValeurActuelleUseCase {
     sourceDonneeEtMethodeCalcul: string,
     statut: StatutProposition
   }) {
+    await this.propositionValeurActuelleRepository.annulePropositionValeurActuellePrecedente({ indicId, territoireCode });
+    
     const propositionValeurActuelle = PropositionValeurActuelle.creerPropositionValeurActuelle({
       indicId,
       valeurActuelleProposee,

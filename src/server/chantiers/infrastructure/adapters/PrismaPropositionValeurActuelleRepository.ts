@@ -48,4 +48,23 @@ export class PrismaPropositionValeurActuelleRepository implements PropositionVal
       },
     });
   }
+
+  async annulePropositionValeurActuellePrecedente({
+    indicId,
+    territoireCode,
+  }: {
+    indicId: string,
+    territoireCode: string,
+  }): Promise<void> {
+    await prisma.proposition_valeur_actuelle.updateMany({
+      where: {
+        indic_id: indicId,
+        territoire_code: territoireCode,
+        statut: StatutProposition.EN_COURS,
+      },
+      data: {
+        statut: StatutProposition.ANNULEE,
+      },
+    });
+  }
 }

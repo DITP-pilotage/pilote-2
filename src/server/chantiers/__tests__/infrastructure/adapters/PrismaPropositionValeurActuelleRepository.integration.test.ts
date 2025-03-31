@@ -69,6 +69,63 @@ describe('PrismaPropositionValeurActuelleRepository', () => {
     });
   });
 
+  describe('#annulePropositionValeurActuellePrecedente', () => {
+    it('doit appliquer le statut ANNULEE à la proposition de valeur actuelle avec le statut EN_COURS', async () => {
+      // Given
+      await prisma.proposition_valeur_actuelle.createMany({
+        data: [
+          {
+            id: '4cba3d15-fdc2-4d7c-b614-f0a009d5126e',
+            indic_id: 'IND-001',
+            territoire_code: 'DEPT-34',
+            date_valeur_actuelle: new Date('2024-12-01'),
+            date_proposition: new Date('2025-01-01'),
+            valeur_actuelle_proposee: 10,
+            auteur_modification: 'auteur',
+            id_auteur_modification: '7d9ba603-d510-46f6-bda3-736210467521',
+            motif_proposition: 'motif',
+            source_donnee_methode_calcul: 'source',
+            statut: StatutProposition.EN_COURS,
+          },
+          {
+            id: '1f690d37-6c39-4f9c-ae98-283f66fd6574',
+            indic_id: 'IND-001',
+            territoire_code: 'DEPT-34',
+            date_valeur_actuelle: new Date('2024-12-01'),
+            date_proposition: new Date('2025-02-01'),
+            valeur_actuelle_proposee: 8,
+            auteur_modification: 'auteur',
+            id_auteur_modification: '7d9ba603-d510-46f6-bda3-736210467521',
+            motif_proposition: 'motif',
+            source_donnee_methode_calcul: 'source',
+            statut: StatutProposition.ACCEPTEE_VIA_IMPORT,           
+          },
+        ],
+      });
+
+      // When
+      await prismaPropositionValeurActuelleRepository.annulePropositionValeurActuellePrecedente({
+        indicId: 'IND-001',
+        territoireCode: 'DEPT-34',
+      });
+
+      // Then
+      const propositions = await prisma.proposition_valeur_actuelle.findMany({
+        where: {
+          indic_id: 'IND-001',
+          territoire_code: 'DEPT-34',
+        },
+        orderBy: {
+          date_proposition: 'asc',
+        },
+      });
+      expect(propositions).toHaveLength(2);
+      expect(propositions[0].statut).toStrictEqual(StatutProposition.ANNULEE);
+      expect(propositions[1].statut).toStrictEqual(StatutProposition.ACCEPTEE_VIA_IMPORT);
+
+    });
+  });
+
   describe('#creerPropositionValeurActuelle', () => {
     it('doit creer la proposition de valeur actuelle', async () => {
       // Given
