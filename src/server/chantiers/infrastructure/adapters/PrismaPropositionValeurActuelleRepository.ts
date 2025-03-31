@@ -41,6 +41,7 @@ export class PrismaPropositionValeurActuelleRepository implements PropositionVal
       where: {
         indic_id: indicId,
         territoire_code: territoireCode,
+        statut: StatutProposition.EN_COURS,
       },
       data: {
         statut: StatutProposition.RETIREE,
