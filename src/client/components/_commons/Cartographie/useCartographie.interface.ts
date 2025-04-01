@@ -1,11 +1,6 @@
 import { ReactNode } from 'react';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
-export type CartographieInfoBulle = {
-  libellé: string
-  contenu: ReactNode
-};
-
 export type CartographieTerritoire = {
   codeInsee: CodeInsee
   code: string

@@ -19,6 +19,15 @@ const TooltipContent = styled.div<{ isVisible: boolean }>`
   white-space: normal;
   word-wrap: break-word;
 
+  &.infobull--sm {
+    min-width: 250px;
+    padding: 0;
+  }
+
+  .fr-text--sm {
+    margin: 0 !important;
+  }
+
   &.tooltip-accordeon {
     max-width: 50%;
   }

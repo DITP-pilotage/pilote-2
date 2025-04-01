@@ -1,8 +1,8 @@
 import { FunctionComponent } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import CartographieAvancement
-  from '@/components/_commons/Cartographie/CartographieAvancementNew/CartographieAvancement';
-import CartographieMétéo from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo';
+  from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
+import CartographieMétéo from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo';
 import Titre from '@/components/_commons/Titre/Titre';
 import {
   ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
@@ -17,7 +17,7 @@ import {
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import {
   CartographieDonnéesMétéo,
-} from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo.interface';
+} from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 interface CartesProps {

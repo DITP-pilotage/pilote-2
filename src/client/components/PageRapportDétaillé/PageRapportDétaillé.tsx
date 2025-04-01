@@ -26,7 +26,7 @@ import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/
 import { AvancementChantierRapportDetaille } from '@/components/PageRapportDétaillé/AvancementChantierRapportDetaille';
 import {
   CartographieDonnéesMétéo,
-} from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo.interface';
+} from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo.interface';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
