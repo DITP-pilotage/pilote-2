@@ -1,4 +1,4 @@
-import { StatutProposition } from '@/server/chantiers/domain/StatutProposition';
+import { StatutProposition, StatutPropositionType } from '@/server/chantiers/domain/StatutProposition';
 import { PropositionValeurActuelle } from '@/server/chantiers/domain/PropositionValeurActuelle';
 
 export class PropositionValeurActuelleBuilder {
@@ -22,7 +22,7 @@ export class PropositionValeurActuelleBuilder {
 
   private sourceDonneeEtMethodeCalcul: string = 'Une source mieux que l\'ancienne';
 
-  private statut: string = StatutProposition.EN_COURS;
+  private statut: StatutPropositionType = StatutProposition.EN_COURS;
 
   avecId(id: string): PropositionValeurActuelleBuilder {
     this.id = id;
@@ -74,7 +74,7 @@ export class PropositionValeurActuelleBuilder {
     return this;
   }
 
-  avecStatut(statut: string): PropositionValeurActuelleBuilder {
+  avecStatut(statut: StatutPropositionType): PropositionValeurActuelleBuilder {
     this.statut = statut;
     return this;
   }
