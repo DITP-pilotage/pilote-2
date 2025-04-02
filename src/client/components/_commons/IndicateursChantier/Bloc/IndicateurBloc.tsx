@@ -559,7 +559,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                       infobulleId={`infobulle-taux-avancement-proposition-global-${informationIndicateur.code}`}
                                       positionTexte='dessus'
                                       taille='md'
-                                      texteInfobulle={getCalculAvancementMessage(informationIndicateur.données.valeurInitiale, informationIndicateur.données.proposition.valeurActuelle, informationIndicateur.données.valeurCible, informationIndicateur.données.proposition.tauxAvancement, 2026)}
                                       valeur={informationIndicateur.données.proposition.tauxAvancement}
                                       variante='jaune-moutarde'
                                     />
