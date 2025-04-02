@@ -86,7 +86,7 @@ const CartographieAvecSelecteurIndicateur: FunctionComponent<{
         auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
         données={donneesCartographie}
         mailleSelectionnee={mailleQuery}
-        options={{ multiséléction: true }}
+        options={{ multiséléction: true, hasTooltip: cartographieSelectionnee !== 'propositionValeur' }}
         pathname={pathname}
         territoireCode={territoireCode}
       >

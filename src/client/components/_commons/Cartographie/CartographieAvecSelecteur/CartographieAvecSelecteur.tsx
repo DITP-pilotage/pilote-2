@@ -83,7 +83,7 @@ const CartographieAvecSelecteur: FunctionComponent<{
         auClicTerritoireCallback={auClicTerritoireCallback}
         données={donneesCartographie}
         mailleSelectionnee={mailleQuery}
-        options={{ estInteractif }}
+        options={{ estInteractif, hasTooltip: cartographieSelectionnee !== 'propositionValeur' }}
         pathname={pathname}
         territoireCode={territoireCode}
       >

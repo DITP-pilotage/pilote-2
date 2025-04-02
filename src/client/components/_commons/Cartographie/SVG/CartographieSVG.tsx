@@ -19,7 +19,8 @@ interface CartographieSVGProps {
   territoires: CartographieTerritoires['territoires'],
   frontières: CartographieTerritoires['frontières'],
   auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
-  contoursGris?: boolean
+  contoursGris?: boolean,
+  hasTooltip: boolean
 }
 
 const getTraceSvg = function (svgAsJson: CartographieSVGContrat, territoireCode: string): string {
@@ -34,6 +35,7 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
   frontières,
   auClicTerritoireCallback,
   contoursGris = false,
+  hasTooltip,
 }) => {
 
   const { sourceSvgAsJson } = useCartographieSVG();
@@ -60,22 +62,26 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
         ) : null
       }
       <div className={`carte ${contoursGris ? 'stroke-dark' : ''}`}>
-        <SecureTooltip
-          anchorEl={hoveredElement}
-          classNameInfoBulle='infobull--sm'
-          isVisible={!!hoveredTerritoire}
-        >
-          {hoveredTerritoire ? (
-            <div className='fr-text--sm'>
-              <p className='fr-text--sm fr-background-contrast-grey fr-p-2w'>
-                {hoveredTerritoire.libellé}
-              </p>
-              <div className='fr-text--sm fr-p-2w'>
-                {hoveredTerritoire.contenuInfoBulle}
-              </div>
-            </div>
-          ) : null}
-        </SecureTooltip>
+        {
+          hasTooltip ? (
+            <SecureTooltip
+              anchorEl={hoveredElement}
+              classNameInfoBulle='infobull--sm'
+              isVisible={!!hoveredTerritoire}
+            >
+              {hoveredTerritoire ? (
+                <div className='fr-text--sm'>
+                  <p className='fr-text--sm fr-background-contrast-grey fr-p-2w'>
+                    {hoveredTerritoire.libellé}
+                  </p>
+                  <div className='fr-text--sm fr-p-2w'>
+                    {hoveredTerritoire.contenuInfoBulle}
+                  </div>
+                </div>
+              ) : null}
+            </SecureTooltip>
+          ) : null
+        }
         <svg
           ref={svgRef}
           version='1.2'

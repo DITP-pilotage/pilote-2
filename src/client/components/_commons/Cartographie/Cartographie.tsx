@@ -64,6 +64,7 @@ const Cartographie: FunctionComponent<CartographieProps> = ({
         auClicTerritoireCallback={auClicTerritoireCallback}
         contoursGris={contoursGris}
         frontières={territoiresEtFrontières.frontières}
+        hasTooltip={optionsEffectives.hasTooltip ?? true}
         options={optionsEffectives}
         territoireCode={territoireCodeAAfficher}
         territoires={territoiresEtFrontières.territoires}
