@@ -9,6 +9,19 @@ interface Nouveautés {
 
 export const ParametrageNouveautés: Nouveautés[] = [
   {
+    version: 'Version 2.7.4',
+    date: '03 avril 2025',
+    contenu: [
+      "Explication de la formule du taux d'avancement : Sur les pages chantiers, pour chaque indicateur, vous pourrez dorénavant retrouver le détail de la formule du calcul du taux d'avancement dans une infobulle dédiée.",
+      "Exporter les données en format CSV : Dorénavant, lorsqu'une PPG ou un indicateur ne sont pas applicables sur un territoire, ils n'apparaissent plus dans l'export pour celui-ci.",
+      "Import des données des indicateurs (profils administration centrale uniquement) : Dans l'interface d'import, dans le menu déroulant permettant de sélectionner l'indicateur, l'identifiant a été ajouté.",
+    ],
+    correctifs: [
+    ],
+    centreAide: [
+    ],
+  },
+  {
     version: 'Version 2.7.3',
     date: '18 mars 2025',
     contenu: [
