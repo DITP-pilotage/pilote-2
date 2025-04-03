@@ -1,6 +1,9 @@
 import styled from '@emotion/styled';
 
-export const InfobulleStyled = styled.div`
+const InfobulleStyled = styled.span`
+  position: relative;
+  display: inline-block;
+
   .tooltip-infobulle {
     z-index: 10000;
     max-width: 100%;
@@ -11,6 +14,8 @@ export const InfobulleStyled = styled.div`
   }
 
   .tooltip-accordeon {
-    max-width: 50%; !important;
+    max-width: 50% !important;
   }
 `;
+
+export default InfobulleStyled;

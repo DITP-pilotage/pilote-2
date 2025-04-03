@@ -40,22 +40,22 @@ SELECT
     gvig.vig AS valeur_initiale,
     territoire.nom AS territoire_nom,
     gvcg.vcg_date::date AS date_valeur_cible_mandat,
-    coalesce(z_appl.est_applicable, true) AS est_applicable,
+    coalesce(z_appl.est_applicable, true) AND maille_appl.maille_est_applicable AS est_applicable,
     pond_reelle.poids_zone_declaree AS ponderation_zone_declaree,
     pond_reelle.poids_zone_reel AS ponderation_zone_reel,
     CASE
-        WHEN coalesce(z_appl.est_applicable, true) THEN date_pro_maj.est_a_jour
+        WHEN coalesce(z_appl.est_applicable, true) AND maille_appl.maille_est_applicable THEN date_pro_maj.est_a_jour
     END AS est_a_jour,
     -- Si l'indic n'est pas applicable sur la zone, prochaine_date_maj=NULL
     --	peu importe la date calculée pour la maille correspondant à cette zone
     CASE
         WHEN
-            coalesce(z_appl.est_applicable, true)
+            coalesce(z_appl.est_applicable, true) AND maille_appl.maille_est_applicable
             THEN date_pro_maj.prochaine_date_maj
     END AS prochaine_date_maj,
     CASE
         WHEN
-            coalesce(z_appl.est_applicable, true)
+            coalesce(z_appl.est_applicable, true) AND maille_appl.maille_est_applicable
             THEN date_pro_maj.prochaine_date_maj_jours
     END AS prochaine_date_maj_jours,
     meta_indic_parametrage.tendance,
@@ -67,7 +67,7 @@ SELECT
     a.tap_global AS taux_avancement_mandat_proposition,
     CASE
         WHEN
-            coalesce(z_appl.est_applicable, true)
+            coalesce(z_appl.est_applicable, true) AND maille_appl.maille_est_applicable
             THEN date_pro_maj.prochaine_date_va
     END AS prochaine_date_valeur_actuelle,
     coalesce(
@@ -87,6 +87,8 @@ LEFT JOIN {{ ref('get_vig') }} AS gvig
     ON meta_indic.id = gvig.indic_id AND territoire.zone_id = gvig.zone_id
 LEFT JOIN {{ ref('int_indicateurs_zones_applicables') }} AS z_appl
     ON meta_indic.id = z_appl.indic_id AND territoire.zone_id = z_appl.zone_id
+LEFT JOIN {{ ref( 'int_indicateurs_mailles_applicables') }} as maille_appl
+    ON meta_indic.id = maille_appl.id AND territoire.maille = LOWER(maille_appl.maille)::maille
 LEFT JOIN {{ ref('int_ponderation_reelle') }} AS pond_reelle
     ON
         meta_indic.id = pond_reelle.indic_id

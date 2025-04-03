@@ -2,7 +2,20 @@ import styled from '@emotion/styled';
 
 const BarreDeProgressionStyled = styled.div`
   max-width: 100%;
-  
+
+  .fr-btn {
+    width: var(--icon-size)!important;
+    min-width: var(--icon-size)!important;
+    height: var(--icon-size)!important;
+    min-height: var(--icon-size)!important;
+    padding: 0!important;
+    margin: 0!important;
+
+    &::before {
+      margin-right: 0!important;
+    }
+  }
+
   .barre {
     progress {
       display: block;

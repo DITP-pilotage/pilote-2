@@ -12,7 +12,7 @@ import {
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import {
   CartographieDonnéesMétéo,
-} from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo.interface';
+} from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 export default interface RapportDétailléChantierProps {

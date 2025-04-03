@@ -22,7 +22,7 @@ test('doit pouvoir importer des données', async ({ page }) => {
   await test.step("Sélection de l'indicateur IND-927 - Part d'entraînement de la réserve opérationnelle", async () => {
     await expect(page).toHaveTitle(/Mettre à jour les données - Chantier 027 - PILOTE/);
     await expect(page.getByRole('heading', { name: /Sélectionnez l'indicateur/ })).toBeVisible();
-    await page.getByLabel('Choix de l\'indicateur').selectOption({ label: 'Part d’entraînement de la réserve opérationnelle' });
+    await page.getByLabel('Choix de l\'indicateur').selectOption({ label: 'IND-927 : Part d’entraînement de la réserve opérationnelle' });
   });
 
   await test.step("Passage à l'étape suivante 'Charger le fichier'", async () => {

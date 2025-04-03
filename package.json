@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "18"
+    "node": "18 || 20"
   },
   "scripts": {
     "dev": "next dev | pino-pretty",
-    "build": "next build && bash scripts/clone_centre_aide.sh && node copy-assets.js  && prisma migrate deploy",
-    "build:dev": "next build && node copy-assets.js  && prisma migrate deploy",
+    "build": "next build && bash scripts/clone_centre_aide.sh && node copy-assets.js  && prisma migrate deploy && prisma db seed",
+    "build:dev": "next build && node copy-assets.js  && prisma migrate deploy && prisma db seed",
     "start": "node .next/standalone/server.js",
     "lint": "prisma generate && npm run lint:eslint && npm run lint:tsc && npm run lint:stylelint",
     "lint:fix": "npm run lint:eslint -- --fix && npm run lint:stylelint -- --fix",
@@ -34,7 +34,8 @@
     "database:migration": "prisma migrate dev"
   },
   "prisma": {
-    "schema": "src/database/prisma/schema.prisma"
+   "schema": "src/database/prisma/schema.prisma",
+   "seed": "ts-node src/database/prisma/seed.ts"
   },
   "browserslist": {
     "production": [
@@ -100,7 +101,6 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.9",
     "react-select": "^5.7.3",
-    "react-tooltip": "^5.28.0",
     "remixicon": "^3.2.0",
     "sharp": "^0.33.5",
     "superjson": "^1.12.2",

@@ -46,6 +46,7 @@ export class ImportDonneeIndicateurAPIHandler {
   async handle({ request, response, email, profil }: { request: NextApiRequest, response: NextApiResponse, email: string, profil: string }) {
     const contentType = request.headers['content-type'];
     if (contentType?.startsWith('application/json')) {
+
       const readable = request.read();
 
       const buffer = Buffer.from(readable);
@@ -96,6 +97,7 @@ export class ImportDonneeIndicateurAPIHandler {
       }
     }
     if (contentType?.startsWith('multipart/form-data')) {
+
       const formData = await parseForm(request);
       const fichier = <File>formData.file![0];
       await this.importDonneeIndicateur({

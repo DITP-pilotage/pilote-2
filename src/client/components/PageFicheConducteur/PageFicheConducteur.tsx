@@ -282,7 +282,9 @@ FicheConducteurContrat & { jalon: number }
                         <CartographieAvancement
                           auClicTerritoireCallback={() => {}}
                           données={donnéesCartographie.tauxAvancement}
-                          options={{ estInteractif: false, territoireSélectionnable: false }}
+                          jalon={jalon}
+                          mailleSelectionnee='departementale'
+                          pathname={null}
                           élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
                         />
                       </Bloc>
@@ -300,7 +302,8 @@ FicheConducteurContrat & { jalon: number }
                         <CartographieMétéo
                           auClicTerritoireCallback={() => {}}
                           données={donnéesCartographie.meteo}
-                          options={{ estInteractif: false, territoireSélectionnable: false }}
+                          mailleSelectionnee='departementale'
+                          pathname={null}
                           élémentsDeLégende={ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS}
                         />
                       </Bloc>

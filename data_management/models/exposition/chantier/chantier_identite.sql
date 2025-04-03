@@ -130,10 +130,10 @@ SELECT
     ARRAY(
         SELECT LOWER(maille)::maille
         FROM UNNEST(
-            COALESCE(
-                meta_ch.maille_applicable_declaree,
-                ARRAY['NAT', 'REG', 'DEPT']
-            )
+            CASE 
+                WHEN meta_ch.est_territorialise THEN COALESCE(meta_ch.maille_applicable_declaree, ARRAY['NAT', 'REG', 'DEPT'])
+                ELSE ARRAY['NAT']
+            END
         ) AS maille
     ) AS mailles_applicables,
     FALSE AS a_supprimer

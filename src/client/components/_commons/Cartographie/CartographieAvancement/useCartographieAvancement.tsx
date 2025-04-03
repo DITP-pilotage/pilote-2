@@ -6,7 +6,8 @@ import {
 } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { CartographieDonnéesAvancement } from './CartographieAvancement.interface';
 
-function déterminerValeurAffichée(valeur: number | null, valeurAnnuelle: number | null, estApplicable: boolean | null): ReactNode {
+function déterminerValeurAffichée(valeur: number | null, valeurAnnuelle: number | null, estApplicable: boolean | null, jalon: number): ReactNode {
+
   if (estApplicable === false) {
     return (
       <span className='fr-text--bold'>
@@ -33,7 +34,7 @@ function déterminerValeurAffichée(valeur: number | null, valeurAnnuelle: numbe
 
   return (
     <>
-      {`TA 2024: ${valeurAnnuelle.toFixed(0)}% | `}
+      {`TA ${jalon} : ${valeurAnnuelle.toFixed(0)}% | `}
       <span className='fr-text--bold'>
         {`TA 2026 : ${valeur.toFixed(0)}%`}
       </span>
@@ -41,7 +42,6 @@ function déterminerValeurAffichée(valeur: number | null, valeurAnnuelle: numbe
   );
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
 function déterminerRemplissage(valeur: number | null, élémentsDeLégende: CartographieÉlémentsDeLégende, estApplicable: boolean | null) {
 
   if (estApplicable === false) {
@@ -66,12 +66,12 @@ function déterminerRemplissage(valeur: number | null, élémentsDeLégende: Car
   else return élémentsDeLégende.DÉFAUT.remplissage;
 }
 
-export default function useCartographieAvancement(données: CartographieDonnéesAvancement, élémentsDeLégende: CartographieÉlémentsDeLégende) {
+export default function useCartographieAvancement(données: CartographieDonnéesAvancement, élémentsDeLégende: CartographieÉlémentsDeLégende, jalon: number) {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
   const légende = useMemo(() => {
 
-    const tousApplicables: Boolean = données.every(d => d.estApplicable !== false);
+    const tousApplicables: Boolean = données.every(d => d.estApplicable);
     const tousNonNull: Boolean = données.every(d => d.valeur !== null);
 
     let légendeAffichée = Object.values(élémentsDeLégende);
@@ -94,22 +94,19 @@ export default function useCartographieAvancement(données: CartographieDonnées
 
   }, [élémentsDeLégende, données]);
 
-  const donnéesCartographie = useMemo(() => {
-    const donnéesFormatées: CartographieDonnées = {};
+  const donnéesCartographie = données.reduce((acc, val) => {
+    const territoireGéographique = récupérerDétailsSurUnTerritoire(val.territoireCode);
 
-    données.forEach(({ valeur, valeurAnnuelle, territoireCode, estApplicable }) => {
-      const territoireGéographique = récupérerDétailsSurUnTerritoire(territoireCode);
-
-      donnéesFormatées[territoireCode] = {
-        contenu: déterminerValeurAffichée(valeur, valeurAnnuelle, estApplicable),
-        remplissage: déterminerRemplissage(valeur, élémentsDeLégende, estApplicable),
+    return {
+      ...acc,
+      [val.territoireCode]: {
+        contenu: déterminerValeurAffichée(val.valeur, val.valeurAnnuelle, val.estApplicable, jalon),
+        remplissage: déterminerRemplissage(val.valeur, élémentsDeLégende, val.estApplicable),
         libellé: territoireGéographique.nomAffiché,
-        estApplicable,
-      };
-    });
-
-    return donnéesFormatées;
-  }, [données, récupérerDétailsSurUnTerritoire, élémentsDeLégende]);
+        estApplicable: val.estApplicable,
+      },
+    };
+  }, {} as CartographieDonnées);
 
   return {
     légende,

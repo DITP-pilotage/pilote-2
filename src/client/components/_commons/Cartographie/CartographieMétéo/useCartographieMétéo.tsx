@@ -45,26 +45,23 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
 
   }, [élémentsDeLégende, données]);
 
-  const donnéesCartographie = useMemo(() => {
-    let donnéesFormatées: CartographieDonnées = {};
+  const donnéesCartographie = données.reduce((acc, val) => {
+    const territoireGéographique = récupérerDétailsSurUnTerritoire(val.territoireCode);
 
-    données.forEach(({ valeur, territoireCode, estApplicable }) => {
-      const territoireGéographique = récupérerDétailsSurUnTerritoire(territoireCode);
-
-      donnéesFormatées[territoireCode] = {
+    return {
+      ...acc,
+      [val.territoireCode]: {
         contenu: (
           <div className='fr-text--bold'>
-            {estApplicable === false ? 'Non applicable' : libellésMétéos[valeur]}
+            {val.estApplicable === false ? 'Non applicable' : libellésMétéos[val.valeur]}
           </div>
         ),
-        remplissage: déterminerRemplissage(valeur, élémentsDeLégende, estApplicable),
+        remplissage: déterminerRemplissage(val.valeur, élémentsDeLégende, val.estApplicable),
         libellé: territoireGéographique.nomAffiché,
-        estApplicable,
-      };
-    });
-
-    return donnéesFormatées;
-  }, [données, récupérerDétailsSurUnTerritoire, élémentsDeLégende]);
+        estApplicable: val.estApplicable,
+      },
+    };
+  }, {} as CartographieDonnées);
 
   return {
     légende,

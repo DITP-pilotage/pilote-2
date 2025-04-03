@@ -36,7 +36,7 @@ import {
 import { AvancementChantierRapportDetaille } from '@/components/PageRapportDétaillé/AvancementChantierRapportDetaille';
 import {
   CartographieDonnéesMétéo,
-} from '@/components/_commons/Cartographie/CartographieMétéoNew/CartographieMétéo.interface';
+} from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';

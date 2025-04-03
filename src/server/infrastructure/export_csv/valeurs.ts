@@ -23,8 +23,8 @@ export const formaterMétéoOuNonApplicable = (meteo: Météo | null) => {
   return formaterMétéoOuErreur(meteo, NON_APPLICABLE);
 };
 
-export const formaterMétéoOuNonRenseigne = (meteo: Météo | null) => {
-  return formaterMétéoOuErreur(meteo, NON_RENSEIGNEE);
+export const formaterMétéoOuNonRenseigne = (meteo: Météo | null, estApplicable: boolean | null) => {
+  return formaterMétéoOuErreur(meteo, estApplicable ? NON_RENSEIGNEE : NON_APPLICABLE);
 };
 
 const formaterDateHeureOuErreur = (date: string | null, erreurMessage: string) => {
@@ -34,8 +34,8 @@ const formaterDateHeureOuErreur = (date: string | null, erreurMessage: string) =
   return dayjs.tz(date, 'CET').format('DD-MM-YYYY');
 };
 
-export const formaterDateHeureOuNonRenseignee = (date: string | null) => {
-  return formaterDateHeureOuErreur(date, NON_RENSEIGNEE);
+export const formaterDateHeureOuNonRenseignee = (date: string | null, estApplicable: boolean | null) => {
+  return formaterDateHeureOuErreur(date, estApplicable ? NON_RENSEIGNEE : NON_APPLICABLE);
 };
 
 const formaterNumeriqueOuErreur = (numerique: Number | null, errorMessage: string) => {
@@ -49,10 +49,10 @@ export const formaterNumériqueOuValeurNonApplicable = (numerique: Number | null
   return formaterNumeriqueOuErreur(numerique, NON_APPLICABLE);
 };
 
-export const formaterNumériqueOuValeurNonRenseignee = (numerique: Number | null) => {
-  return formaterNumeriqueOuErreur(numerique, NON_RENSEIGNEE);
+export const formaterNumériqueOuValeurNonRenseignee = (numerique: Number | null, estApplicable: boolean | null) => {
+  return formaterNumeriqueOuErreur(numerique, estApplicable ? NON_RENSEIGNEE : NON_APPLICABLE);
 };
 
-export const formaterNumériqueOuValeurManquante = (numerique: Number | null) => {
-  return formaterNumeriqueOuErreur(numerique, NON_CALCULE_INFO_MANQUANTES);
+export const formaterNumériqueOuValeurManquante = (numerique: Number | null, estApplicable: boolean | null) => {
+  return formaterNumeriqueOuErreur(numerique, estApplicable ? NON_CALCULE_INFO_MANQUANTES : NON_APPLICABLE);
 };

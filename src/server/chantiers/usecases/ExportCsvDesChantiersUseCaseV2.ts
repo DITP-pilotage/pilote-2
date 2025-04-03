@@ -67,22 +67,22 @@ const presenterEnChantierExportContrat = (chantierPourExport: ChantierPourExport
   }
 
   if (optionsExport.listeOptionsExport.includes('description')) {
-    donnees.push(formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementAnnuel));
+    donnees.push(formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementAnnuel, true));
   }
 
   if (optionsExport.listeOptionsExport.includes('comparaison')) {
     donnees.push(
-      formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementDépartemental),
-      formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementRégional),
+      formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementDépartemental, true),
+      formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementRégional, true),
       masquerPourProfilDROM(profil, chantierPourExport.périmètreIds)
         ?  NON_APPLICABLE
-        : formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementNational),
+        : formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementNational, true),
     );
   }
 
   if (optionsExport.listeOptionsExport.includes('synthese')) {
     donnees.push(
-      formaterMétéoOuNonRenseigne(chantierPourExport.météo),
+      formaterMétéoOuNonRenseigne(chantierPourExport.météo, true),
       chantierPourExport.synthèseDesRésultats || NON_RENSEIGNEE,
     );
   }
