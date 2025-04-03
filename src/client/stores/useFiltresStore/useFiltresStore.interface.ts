@@ -1,5 +1,5 @@
-import Axe from '@/server/domain/axe/Axe.interface';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import Axe from '@/server/chantiers/domain/Axe';
+import PérimètreMinistériel from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisteriel.interface';
 
 export type FiltreCatégorie = keyof FiltresActifs;
 

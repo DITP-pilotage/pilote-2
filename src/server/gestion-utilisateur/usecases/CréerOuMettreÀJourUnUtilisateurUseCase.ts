@@ -1,39 +1,61 @@
-import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
-import Utilisateur, {
-  profilsDépartementaux,
-  profilsRégionaux,
-  UtilisateurÀCréerOuMettreÀJour,
-} from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ChantierRepository } from '@/server/gestion-utilisateur/domain/ports/ChantierRepository';
+import { TerritoireRepository } from '@/server/domain/territoire/TerritoireRepository.interface';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
-import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
+import { UtilisateurRepository } from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import {
   Habilitations,
   HabilitationsÀCréerOuMettreÀJourCalculées,
-} from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+} from '@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface';
 import { codesTerritoiresDROM } from '@/validation/utilisateur';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import PérimètreMinistérielRepository
-  from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
+import { Habilitation } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
+import { PerimetreMinisterielRepository } from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
-import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import { ChantierSynthétisé } from '@/server/chantiers/domain/Chantier.interface';
+import { PerimetreMinisteriel } from '@/server/gestion-utilisateur/domain/PerimetreMinisteriel';
 import {
   HistorisationModificationRepository,
 } from '@/server/domain/historisationModification/HistorisationModificationRepository';
 import { HistorisationModification } from '@/server/domain/historisationModification/HistorisationModification';
 import { Profil } from '@/server/domain/profil/Profil.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { profilsDépartementaux, profilsRégionaux, Utilisateur, UtilisateurÀCréerOuMettreÀJour } from '@/server/gestion-utilisateur/domain/Utilisateur';
 
-export default class CréerOuMettreÀJourUnUtilisateurUseCase {
-  constructor(
-    private readonly utilisateurIAMRepository: UtilisateurIAMRepository,
-    private readonly utilisateurRepository: UtilisateurRepository,
-    private readonly territoireRepository: TerritoireRepository,
-    private readonly chantierRepository: ChantierRepository,
-    private readonly périmètreMinistérielRepository: PérimètreMinistérielRepository,
-    private readonly historisationModification: HistorisationModificationRepository,
-  ) {}
+type Dependencies = {
+  utilisateurIAMRepository: UtilisateurIAMRepository,
+  utilisateurRepository: UtilisateurRepository,
+  territoireRepository: TerritoireRepository,
+  chantierRepository: ChantierRepository,
+  périmètreMinistérielRepository: PerimetreMinisterielRepository,
+  historisationModificationRepository: HistorisationModificationRepository,
+};  
+export class CréerOuMettreÀJourUnUtilisateurUseCase {
+  private readonly utilisateurIAMRepository: UtilisateurIAMRepository;
+
+  private readonly utilisateurRepository: UtilisateurRepository;
+
+  private readonly territoireRepository: TerritoireRepository;
+
+  private readonly chantierRepository: ChantierRepository;
+
+  private readonly périmètreMinistérielRepository: PerimetreMinisterielRepository;
+
+  private readonly historisationModificationRepository: HistorisationModificationRepository;
+
+  constructor({
+    utilisateurIAMRepository,
+    utilisateurRepository,
+    territoireRepository,
+    chantierRepository,
+    périmètreMinistérielRepository,
+    historisationModificationRepository,
+  }: Dependencies) {
+    this.utilisateurIAMRepository = utilisateurIAMRepository;
+    this.utilisateurRepository = utilisateurRepository;
+    this.territoireRepository = territoireRepository;
+    this.chantierRepository = chantierRepository;
+    this.périmètreMinistérielRepository = périmètreMinistérielRepository;
+    this.historisationModificationRepository = historisationModificationRepository;
+  }
 
   async run(utilisateur: UtilisateurÀCréerOuMettreÀJour, auteur: string, auteurId: string, utilisateurExistant: boolean, habilitations: Habilitations, profil: Profil | null): Promise<void> {
     const habilitationsFormatées = await this._définirLesHabilitations(utilisateur);
@@ -63,7 +85,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
       nouvelleValeur: utilisateurApresExecution,
     });
 
-    await this.historisationModification.sauvegarderModificationHistorisation(historisationModification);
+    await this.historisationModificationRepository.sauvegarderModificationHistorisation(historisationModification);
 
     if (process.env.IMPORT_KEYCLOAK_URL && !utilisateurExistant) {
       const utilisateursPourIAM = [{ nom: utilisateur.nom, prénom: utilisateur.prénom, email: utilisateur.email }];
@@ -173,7 +195,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return [];    
   }
 
-  private _déterminerPérimètresAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
+  private _déterminerPérimètresAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PerimetreMinisteriel[]): string[] {
     const tousLesPérimètresIds = new Set(périmètres.map(p => p.id));
 
     if (utilisateur.profil === ProfilEnum.DROM)
@@ -185,21 +207,21 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return [];
   }
 
-  private _déterminerPérimètresAccessiblesEnSaisieIndicateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
+  private _déterminerPérimètresAccessiblesEnSaisieIndicateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PerimetreMinisteriel[]): string[] {
     if (utilisateur.saisieIndicateur)
       return this._déterminerPérimètresAccessiblesEnLecture(utilisateur, périmètres);
 
     return [];
   }
 
-  private _déterminerPérimètresAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
+  private _déterminerPérimètresAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PerimetreMinisteriel[]): string[] {
     if (utilisateur.saisieCommentaire)
       return this._déterminerPérimètresAccessiblesEnLecture(utilisateur, périmètres);
 
     return [];
   }
 
-  private _déterminerPérimètresAccessiblesEnGestionUtilisateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
+  private _déterminerPérimètresAccessiblesEnGestionUtilisateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PerimetreMinisteriel[]): string[] {
     if (utilisateur.gestionUtilisateur)
       return this._déterminerPérimètresAccessiblesEnSaisieCommentaire(utilisateur, périmètres);
 
@@ -207,7 +229,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   }
 
   private async _définirLesHabilitations(utilisateur: UtilisateurÀCréerOuMettreÀJour): Promise<HabilitationsÀCréerOuMettreÀJourCalculées> {
-    const chantiers = await this.chantierRepository.récupérerChantiersSynthétisés();
+    const chantiers = await this.chantierRepository.récupérerChantiersSynthétisés({ listeChantierIdLecture: utilisateur.habilitations.lecture.chantiers });
     const territoires = await this.territoireRepository.récupérerTous();
     const périmètres = await this.périmètreMinistérielRepository.récupérerTous();
 

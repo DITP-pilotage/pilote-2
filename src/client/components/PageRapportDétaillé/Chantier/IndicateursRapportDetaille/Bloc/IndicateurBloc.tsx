@@ -11,8 +11,8 @@ import IndicateurPondération
   from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/Pondération/IndicateurPondération';
 import IndicateurTendance
   from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/Tendance/IndicateurTendance';
-import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import { DétailsIndicateurs } from '@/server/chantiers/domain/DétailsIndicateur';
+import Indicateur from '@/server/chantiers/domain/Indicateur';
 import useIndicateurBloc from './useIndicateurBloc';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import SousIndicateursRapportDetaille from './SousIndicateursRapportDetaille/SousIndicateursRapportDetaille';

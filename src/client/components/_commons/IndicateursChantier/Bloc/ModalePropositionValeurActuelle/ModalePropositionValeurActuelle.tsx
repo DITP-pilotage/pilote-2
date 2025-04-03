@@ -1,8 +1,8 @@
 import { FunctionComponent } from 'react';
 import { FormProvider } from 'react-hook-form';
 import Modale from '@/components/_commons/Modale/Modale';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import type { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import Indicateur from '@/server/chantiers/domain/Indicateur';
+import type { DétailsIndicateur } from '@/server/chantiers/domain/DétailsIndicateur';
 
 import useModalePropositionValeurActuelle, {
   EtapePropositionValeurActuelle,

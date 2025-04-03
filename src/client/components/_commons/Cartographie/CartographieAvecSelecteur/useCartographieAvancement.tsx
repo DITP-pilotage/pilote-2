@@ -6,7 +6,7 @@ import {
 import { CartographieDonnées } from '@/client/components/_commons/Cartographie/Cartographie.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import { Maille } from '@/server/chantiers/domain/Maille';
 
 const determinerValeurAffichee = (valeur: number | null, valeurAnnuelle: number | null, estApplicable: boolean | null, jalon: number): ReactNode => {
 

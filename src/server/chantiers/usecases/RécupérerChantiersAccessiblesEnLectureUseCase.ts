@@ -1,6 +1,6 @@
-import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { ChantierRepository } from '@/server/chantiers/domain/ports/ChantierRepository';
+import { Habilitation } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
+import { Habilitations } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { FiltreQueryParams, SortingParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 import {
@@ -8,11 +8,11 @@ import {
   MailleChantierContrat,
   presenterEnChantierAccueilContratNew,
 } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
-import Ministère from '@/server/domain/ministère/Ministère.interface';
-import Axe from '@/server/domain/axe/Axe.interface';
+import { Ministere } from '@/server/chantiers/domain/Ministere';
+import { Axe } from '@/server/chantiers/domain/Axe';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { PrismaChantier } from '@/server/infrastructure/accès_données/chantier/PrismaChantier';
-import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
+import { PrismaChantier } from '@/server/chantiers/infrastructure/adapters/PrismaChantier';
+import { TerritoireRepository } from '@/server/chantiers/domain/ports/TerritoireRepository';
 
 const masquerPourDROM = (sessionProfil: string, mailleChantier: MailleChantierContrat) => {
   return sessionProfil === ProfilEnum.DROM && mailleChantier === 'nationale';
@@ -130,13 +130,13 @@ const appliquerTri = (sorting: SortingParams, mailleChantier: MailleChantierCont
   return 0;
 };
 
-export default class RécupérerChantiersAccessiblesEnLectureUseCase {
+export class RécupérerChantiersAccessiblesEnLectureUseCase {
   constructor(
     private readonly chantierRepository: ChantierRepository,
     private readonly territoireRepository: TerritoireRepository,
   ) {}
 
-  async run(habilitations: Habilitations, profil: ProfilCode, territoireCode: string, mailleChantier: MailleChantierContrat, ministères: Ministère[], mapAxe: Map<string, Axe>, filtres: FiltreQueryParams, sorting: SortingParams, jalon: number): Promise<ChantierAccueilContrat[]> {
+  async run(habilitations: Habilitations, profil: ProfilCode, territoireCode: string, mailleChantier: MailleChantierContrat, ministères: Ministere[], mapAxe: Map<string, Axe>, filtres: FiltreQueryParams, sorting: SortingParams, jalon: number): Promise<ChantierAccueilContrat[]> {
     const habilitation = new Habilitation(habilitations);
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();

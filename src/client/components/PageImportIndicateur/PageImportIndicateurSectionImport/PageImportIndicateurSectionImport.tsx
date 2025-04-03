@@ -3,7 +3,7 @@ import { FunctionComponent, useState } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import IndicateurDEtapes from '@/components/_commons/IndicateurDEtapes/IndicateurDEtapes';
 import Bloc from '@/components/_commons/Bloc/Bloc';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur from '@/server/chantiers/domain/Indicateur';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import { wording } from '@/client/utils/i18n/i18n';
 import EtapeSelectionIndicateur

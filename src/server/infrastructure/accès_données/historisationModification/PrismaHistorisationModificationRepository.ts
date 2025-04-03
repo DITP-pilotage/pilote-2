@@ -1,6 +1,6 @@
-import { historisation_modification as HistorisationModificationModel, Prisma } from '@prisma/client';
-import { prisma } from '@/server/db/prisma';
+import { historisation_modification as HistorisationModificationModel, Prisma, PrismaClient } from '@prisma/client';
 import { HistorisationModification } from '@/server/domain/historisationModification/HistorisationModification';
+import { PrismaPilote } from '@/server/db/PrismaPilote';
 import {
   HistorisationModificationRepository,
 } from '@/server/domain/historisationModification/HistorisationModificationRepository';
@@ -20,11 +20,21 @@ const convertirEnModel = <K extends keyof HistorisationModificationDisponible>(h
   };
 };
 
+type Dependencies = {
+  prisma: PrismaPilote;
+};
+
 export class PrismaHistorisationModificationRepository implements HistorisationModificationRepository {
+  private prisma: PrismaClient;
+
+  constructor({ prisma }: Dependencies) {
+    this.prisma = prisma.getInstance();
+  }
+
   async sauvegarderModificationHistorisation<K extends keyof HistorisationModificationDisponible>(historisationModification: HistorisationModification<K>) {
     const historisationModificationModel = convertirEnModel(historisationModification);
 
-    await prisma.historisation_modification.create({
+    await this.prisma.historisation_modification.create({
       data: {
         ...historisationModificationModel,
         ancienne_valeur: historisationModification.ancienneValeur as JsonValue || Prisma.JsonNull,

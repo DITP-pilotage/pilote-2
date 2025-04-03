@@ -1,4 +1,4 @@
-import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { DétailsIndicateurTerritoire } from '@/server/chantiers/domain/DétailsIndicateur';
 import { formaterDate } from '@/client/utils/date/date';
 
 export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, territoireCode: string) {

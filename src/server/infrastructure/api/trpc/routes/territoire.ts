@@ -1,12 +1,8 @@
 import { z } from 'zod';
 import { DétailTerritoire, TerritoireAvecNombreUtilisateurs } from '@/server/domain/territoire/Territoire.interface';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { dependencies } from '@/server/infrastructure/Dependencies';
+import { Habilitation } from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { créerRouteurTRPC, procédureProtégée } from '@/server/infrastructure/api/trpc/trpc';
-import {
-  RécupérerTerritoiresAvecNombreUtilisateursUseCase,
-} from '@/server/usecase/territoire/RécupérerTerritoiresAvecNombreUtilisateursUseCase';
-
+import { getContainer } from '@/server/dependances';
 const validation = z.object({
   territoireCodes: z.array(z.string()).nullable(),
 });
@@ -26,10 +22,6 @@ export const territoireRouter = créerRouteurTRPC({
   récupérerListe: procédureProtégée
     .input(validation)
     .query(async ({ input }): Promise<TerritoireAvecNombreUtilisateurs[]> => {
-      return new RécupérerTerritoiresAvecNombreUtilisateursUseCase({
-        territoireRepository: dependencies.getTerritoireRepository(),
-        utilisateurRepository: dependencies.getUtilisateurRepository(),
-      })
-        .run({ territoireCodes: input.territoireCodes });
+      return getContainer('gestionUtilisateur').resolve('recupererTerritoiresAvecNombreUtilisateursUseCase').run({ territoireCodes: input.territoireCodes });
     }),
 });

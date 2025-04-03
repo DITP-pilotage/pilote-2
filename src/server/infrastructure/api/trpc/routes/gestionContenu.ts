@@ -9,7 +9,7 @@ import {
 import { presenterEnMessageInformationContrat } from '@/server/app/contrats/MessageInformationContrat';
 import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
 import { VARIABLE_CONTENU_DISPONIBLE_ENV } from '@/server/gestion-contenu/domain/VariableContenuDisponible';
-import Habilitation from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
+import { Habilitation } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
 
 export const validationVariableContenu = z.object({
   nomVariableContenu: z.enum(VARIABLE_CONTENU_DISPONIBLE_ENV),

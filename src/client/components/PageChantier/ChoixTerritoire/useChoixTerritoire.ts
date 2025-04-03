@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { territoiresTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 
 export default function useChoixTerritoire(mailleSélectionnée: MailleInterne) {
   const territoires = territoiresTerritoiresStore();

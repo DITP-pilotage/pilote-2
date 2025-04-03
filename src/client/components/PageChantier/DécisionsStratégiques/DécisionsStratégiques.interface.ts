@@ -1,4 +1,4 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier from '@/server/chantiers/domain/Chantier.interface';
 import { RouterOutputs } from '@/server/infrastructure/api/trpc/trpc.interface';
 
 export default interface DécisionsStratégiquesProps {

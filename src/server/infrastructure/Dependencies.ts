@@ -1,22 +1,18 @@
-import ChantierSQLRepository from '@/server/infrastructure/accès_données/chantier/ChantierSQLRepository';
-import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
-import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
-import IndicateurSQLRepository from '@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLRepository';
-import MinistèreSQLRepository from '@/server/infrastructure/accès_données/ministère/MinistèreSQLRepository';
-import SynthèseDesRésultatsRepository
+import { MinistereRepository } from '@/server/chantiers/domain/ports/MinistereRepository';
+import { IndicateurRepository } from '@/server/domain/indicateur/IndicateurRepository.interface';
+import IndicateurSQLRepository from '@/server/infrastructure/accès_données/chantier/indicateur/PrismaIndicateurRepository';
+import MinistèreSQLRepository from '@/server/infrastructure/accès_données/ministere/PrismaMinistereRepository';
+import { SyntheseDesResultatsRepository }
   from '@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import {
   SynthèseDesRésultatsSQLRepository,
-} from '@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
-import AxeRepository from '@/server/domain/axe/AxeRepository.interface';
-import AxeSQLRepository from '@/server/infrastructure/accès_données/axe/AxeSQLRepository';
-import CommentaireRepository from '@/server/domain/chantier/commentaire/CommentaireRepository.interface';
+} from '@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/PrismaSyntheseDesResultatsRepository';
+import { CommentaireRepository } from '@/server/domain/chantier/commentaire/CommentaireRepository.interface';
 import CommentaireSQLRepository
-  from '@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository';
-import ObjectifRepository from '@/server/domain/chantier/objectif/ObjectifRepository.interface';
-import DécisionStratégiqueRepository
-  from '@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface';
+  from '@/server/infrastructure/accès_données/chantier/commentaire/PrismaCommentaireRepository';
+import { ObjectifRepository } from '@/server/domain/chantier/objectif/ObjectifRepository.interface';
+import {DecisionStrategiqueRepository}
+  from '@/server/chantiers/domain/ports/DecisionStrategiqueRepository';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import {
   UtilisateurRepository as AuthentificationUtilisateurRepository,
@@ -24,16 +20,16 @@ import {
 import {
   ProfilRepository as AuthentificationProfilRepository,
 } from '@/server/authentification/domain/ports/ProfilRepository';
-import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
+import { TerritoireRepository } from '@/server/domain/territoire/TerritoireRepository.interface';
 import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
 import { RapportRepository } from '@/server/import-indicateur/domain/ports/RapportRepository';
-import PérimètreMinistérielRepository
-  from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
-import ObjectifSQLRepository from '@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository';
+import { PerimetreMinisterielRepository }
+  from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository.interface';
+import ObjectifSQLRepository from '@/server/infrastructure/accès_données/chantier/objectif/PrismaObjectifRepository';
 import DécisionStratégiqueSQLRepository
-  from '@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository';
-import ProfilSQLRepository from '@/server/infrastructure/accès_données/profil/ProfilSQLRepository';
-import ProfilRepository from '@/server/domain/profil/ProfilRepository';
+  from '@/server/infrastructure/accès_données/chantier/decisionStratégique/PrismaDecisionStrategiqueRepository';
+import ProfilSQLRepository from '@/server/infrastructure/accès_données/profil/PrismaProfilRepository';
+import { ProfilRepository } from '@/server/domain/profil/ProfilRepository';
 import {
   PrismaIndicateurRepository,
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaIndicateurRepository';
@@ -67,18 +63,15 @@ import {
   PrismaUtilisateurRepository,
 } from '@/server/authentification/infrastructure/adapters/PrismaUtilisateurRepository';
 import { PrismaProfilRepository } from '@/server/authentification/infrastructure/adapters/PrismaProfilRepository';
-import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
-import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
-import PérimètreMinistérielSQLRepository from './accès_données/périmètreMinistériel/PérimètreMinistérielSQLRepository';
+import { TerritoireSQLRepository } from '@/server/chantiers/infrastructure/adapters/PrismaTerritoireRepository';
+import { UtilisateurSQLRepository } from './accès_données/utilisateur/PrismaUtilisateurRepository';
+import PérimètreMinistérielSQLRepository from './accès_données/perimètreMinistériel/PrismaPerimetreMinisterielRepository';
+import ChantierSQLRepository from '@/server/infrastructure/accès_données/chantier/PrismaChantierRepository';
 
 class Dependencies {
-  private readonly _chantierRepository: ChantierRepository;
+  private readonly _synthèseDesRésultatsRepository: SyntheseDesResultatsRepository;
 
-  private readonly _axeRepository: AxeRepository;
-
-  private readonly _synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
-
-  private readonly _ministèreRepository: MinistèreRepository;
+  private readonly _ministèreRepository: MinistereRepository;
 
   private readonly _indicateurRepository: IndicateurRepository;
 
@@ -86,7 +79,7 @@ class Dependencies {
 
   private readonly _objectifRepository: ObjectifRepository;
 
-  private readonly _décisionStratégiqueRepository: DécisionStratégiqueRepository;
+  private readonly _décisionStratégiqueRepository: DecisionStrategiqueRepository;
 
   private readonly _utilisateurRepository: UtilisateurRepository;
 
@@ -102,7 +95,7 @@ class Dependencies {
 
   private readonly _rapportRepository: RapportRepository;
 
-  private readonly _périmètreMinistérielRepository: PérimètreMinistérielRepository;
+  private readonly _périmètreMinistérielRepository: PerimetreMinisterielRepository;
 
   private readonly _importIndicateurRepository: ImportIndicateurRepository;
 
@@ -116,7 +109,6 @@ class Dependencies {
 
   constructor() {
     this._chantierRepository = new ChantierSQLRepository();
-    this._axeRepository = new AxeSQLRepository();
     this._ministèreRepository = new MinistèreSQLRepository();
     this._indicateurRepository = new IndicateurSQLRepository();
     this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository();
@@ -148,10 +140,6 @@ class Dependencies {
 
   getChantierRepository(): ChantierRepository {
     return this._chantierRepository;
-  }
-
-  getAxeRepository(): AxeRepository {
-    return this._axeRepository;
   }
 
   getSynthèseDesRésultatsRepository(): SynthèseDesRésultatsRepository {

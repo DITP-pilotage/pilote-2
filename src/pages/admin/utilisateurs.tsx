@@ -4,12 +4,12 @@ import { FunctionComponent } from 'react';
 import { getServerAuthSession } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import PageAdminUtilisateurs from '@/components/PageAdminUtilisateurs/PageAdminUtilisateurs';
-import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
+import { ChantierSynthétisé } from '@/server/chantiers/domain/Chantier.interface';
 import { getContainer } from '@/server/dependances';
 import { FiltreQueryParams } from '@/server/gestion-utilisateur/app/contrats/FiltreQueryParams';
 import { Profil } from '@/server/gestion-utilisateur/domain/Profil';
 import { PerimetreMinisteriel } from '@/server/gestion-utilisateur/domain/PerimetreMinisteriel';
-import { ProfilCode } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
+import { ProfilCode } from '@/server/gestion-utilisateur/domain/Utilisateur';
 import {
   presenterEnUtilisateurListeGestionContrat,
   UtilisateurListeGestionContrat,

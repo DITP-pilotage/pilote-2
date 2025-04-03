@@ -1,7 +1,6 @@
-import ObjectifRepository
-  from '@/server/domain/chantier/objectif/ObjectifRepository.interface';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
-import CréerUnObjectifUseCase from './CréerUnObjectifUseCase';
+import { ObjectifRepository } from '@/server/domain/chantier/objectif/ObjectifRepository.interface';
+import { Utilisateur } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { CréerUnObjectifUseCase } from './CréerUnObjectifUseCase';
 
 const RANDOM_UUID = '123';
 
@@ -20,7 +19,7 @@ describe('CréerUnObjectifUseCase', () => {
 
     jest.useFakeTimers().setSystemTime(date);
     const stubObjectifRepository = { créer: jest.fn() } as unknown as ObjectifRepository;
-    const créerUnObjectif = new CréerUnObjectifUseCase(stubObjectifRepository);
+    const créerUnObjectif = new CréerUnObjectifUseCase({ objectifRepository: stubObjectifRepository });
 
     const habilitation = { 'saisieCommentaire': {
       chantiers: [chantierId],
@@ -48,7 +47,7 @@ describe('CréerUnObjectifUseCase', () => {
       auteur,
       date,
     }) } as unknown as ObjectifRepository;
-    const créerUnObjectif = new CréerUnObjectifUseCase(stubObjectifRepository);
+    const créerUnObjectif = new CréerUnObjectifUseCase({ objectifRepository: stubObjectifRepository });
 
     const habilitation = { 'saisieCommentaire': {
       chantiers: [chantierId],

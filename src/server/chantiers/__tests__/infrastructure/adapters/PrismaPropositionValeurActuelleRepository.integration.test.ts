@@ -1,15 +1,19 @@
+import { PrismaClient } from '@prisma/client';
 import { StatutProposition } from '@/server/chantiers/domain/StatutProposition';
-import { prisma } from '@/server/db/prisma';
 import { PropositionValeurActuelleBuilder } from '@/server/chantiers/app/builder/PropositionValeurActuelleBuilder';
 import {
   PrismaPropositionValeurActuelleRepository,
 } from '@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurActuelleRepository';
+import { PrismaPilote } from '@/server/db/PrismaPilote';
 
 describe('PrismaPropositionValeurActuelleRepository', () => {
   let prismaPropositionValeurActuelleRepository: PrismaPropositionValeurActuelleRepository;
+  let prisma: PrismaClient;
 
   beforeEach(() => {
-    prismaPropositionValeurActuelleRepository = new PrismaPropositionValeurActuelleRepository();
+    const prismaPilote = new PrismaPilote();
+    prisma = prismaPilote.getInstance();
+    prismaPropositionValeurActuelleRepository = new PrismaPropositionValeurActuelleRepository({ prisma: prismaPilote });
   });
 
   it('doit creer la proposition de valeur actuelle', async () => {

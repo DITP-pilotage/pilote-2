@@ -1,4 +1,4 @@
-import { ProfilCode } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
+import { ProfilCode } from '@/server/gestion-utilisateur/domain/Utilisateur';
 
 export type FiltreQueryParams = {
   territoires: string[]

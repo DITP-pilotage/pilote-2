@@ -1,9 +1,9 @@
-import Ministère from '@/server/domain/ministère/Ministère.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import Avancement from '@/server/domain/chantier/avancement/Avancement.interface';
-import { Météo } from '@/server/domain/météo/Météo.interface';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { Ministère } from '@/server/domain/ministère/Ministère.interface';
+import { Chantier } from '@/server/chantiers/domain/Chantier.interface';
+import { Avancement } from '@/server/chantiers/domain/Avancement';
+import { Météo } from '@/server/chantiers/domain/Meteo';
+import { Indicateur } from '@/server/chantiers/domain/Indicateur';
+import { DétailsIndicateur } from '@/server/chantiers/domain/DétailsIndicateur';
 
 export type IndicateurPourExport = {
   maille: string

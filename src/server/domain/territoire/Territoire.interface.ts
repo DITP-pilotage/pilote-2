@@ -1,7 +1,7 @@
-import Avancement from '@/server/domain/chantier/avancement/Avancement.interface';
-import { Météo } from '@/server/domain/météo/Météo.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
-import { ChantierTendance } from '@/server/domain/chantier/Chantier.interface';
+import { Avancement } from '@/server/chantiers/domain/Avancement';
+import { Météo } from '@/server/chantiers/domain/Meteo';
+import { Maille } from '@/server/chantiers/domain/Maille';
+import { ChantierTendance } from '@/server/chantiers/domain/Chantier.interface';
 
 export const codesInseeDépartements = [
   '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13',

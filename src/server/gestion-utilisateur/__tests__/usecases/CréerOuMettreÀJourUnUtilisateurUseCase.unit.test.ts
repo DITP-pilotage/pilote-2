@@ -1,21 +1,21 @@
 import { mock } from 'jest-mock-extended';
 import { randomUUID } from 'node:crypto';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import { PerimetreMinisteriel } from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisteriel.interface';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
-import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
-import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
-import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
+import { UtilisateurRepository } from '@/server/domain/utilisateur/UtilisateurRepository.interface';
+import { UtilisateurÀCréerOuMettreÀJourBuilder } from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
+import { TerritoireRepository } from '@/server/domain/territoire/TerritoireRepository.interface';
 import { fakeTerritoires } from '@/server/domain/territoire/Territoire.builder';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { codesTerritoiresDROM } from '@/validation/utilisateur';
-import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
+import { ChantierRepository } from '@/server/gestion-utilisateur/domain/ports/ChantierRepository';
+import { ChantierSynthétisé } from '@/server/chantiers/domain/Chantier.interface';
 import {
   Habilitations,
   HabilitationsÀCréerOuMettreÀJourCalculées,
 } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import PérimètreMinistérielRepository
-  from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
+import { PerimetreMinisterielRepository }
+  from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import {
   HistorisationModificationRepository,
@@ -23,7 +23,7 @@ import {
 import { Profil } from '@/server/domain/profil/Profil.interface';
 import { ProfilBuilder } from '@/server/domain/profil/Profil.builder';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import CréerOuMettreÀJourUnUtilisateurUseCase from '@/server/gestion-utilisateur/usecases/CréerOuMettreÀJourUnUtilisateurUseCase';
+import { CréerOuMettreÀJourUnUtilisateurUseCase } from '@/server/gestion-utilisateur/usecases/CréerOuMettreÀJourUnUtilisateurUseCase';
 
 describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
   const fakeChantiersSynthétisés: ChantierSynthétisé[] = [
@@ -51,7 +51,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     { id: 'PER-12' },
     { id: 'PER-13' },
     { id: 'PER-018' },
-  ] as PérimètreMinistériel[];
+  ] as PerimetreMinisteriel[];
 
   const habilitations = { 
     gestionUtilisateur: { 
@@ -92,14 +92,21 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
   const stubUtilisateurIAMRepository = mock<UtilisateurIAMRepository>();
   const stubTerritoireRepository =  mock<TerritoireRepository>();
   const stubChantierRepository = mock<ChantierRepository>();
-  const stubPérimètreMinistérielRepository = mock<PérimètreMinistérielRepository>();
+  const stubPérimètreMinistérielRepository = mock<PerimetreMinisterielRepository>();
   const stubHistorisationModificationRepository = mock<HistorisationModificationRepository>();
 
   stubTerritoireRepository.récupérerTous.mockResolvedValue(fakeTerritoires as Territoire[]);
   stubChantierRepository.récupérerChantiersSynthétisés.mockResolvedValue(fakeChantiersSynthétisés);
   stubPérimètreMinistérielRepository.récupérerTous.mockResolvedValue(fakePérimètres);
 
-  const créerOuMettreÀJourUnUtilisateurUseCase = new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository, stubUtilisateurRepository, stubTerritoireRepository, stubChantierRepository, stubPérimètreMinistérielRepository, stubHistorisationModificationRepository);
+  const créerOuMettreÀJourUnUtilisateurUseCase = new CréerOuMettreÀJourUnUtilisateurUseCase({
+    utilisateurIAMRepository: stubUtilisateurIAMRepository,
+    utilisateurRepository: stubUtilisateurRepository,
+    territoireRepository: stubTerritoireRepository,
+    chantierRepository: stubChantierRepository,
+    périmètreMinistérielRepository: stubPérimètreMinistérielRepository,
+    historisationModificationRepository: stubHistorisationModificationRepository,
+  });
 
   const oldEnv = process.env;
 
@@ -117,7 +124,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
   });
 
   async function testCasPassant(profilCode: ProfilCode, habilitationsAttendues: HabilitationsÀCréerOuMettreÀJourCalculées, saisieIndicateur: boolean, saisieCommentaire: boolean, gestionUtilisateur: boolean, territoiresCodes?: string[], chantiersIds?: string[], périmètresIds?: string[], chantiersIdsResponsabilite?: string[], profilGestionUtilisateur?: Profil['utilisateurs']) {
-    //GIVEN
+    // Given
     const auteurId = randomUUID();
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecSaisieCommentaire(saisieCommentaire).avecSaisieIndicateur(saisieIndicateur).avecGestionUtilisateur(gestionUtilisateur).avecProfil(profilCode).avecHabilitationsLecture(territoiresCodes, chantiersIds, périmètresIds).avecResponsabiliteChantiers(chantiersIdsResponsabilite).build();
     let profilBuilder = new ProfilBuilder().withCode(profilCode);
@@ -126,25 +133,25 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     }
     const profil = profilBuilder.build();
 
-    //WHEN
+    // When
     await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto', auteurId, false, habilitations, profil);
     
-    //THEN
+    // Then
     expect(stubUtilisateurRepository.créerOuMettreÀJour).toHaveBeenNthCalledWith(1, { ...utilisateur, habilitations: habilitationsAttendues }, auteurId);
     expect(stubUtilisateurIAMRepository.ajouteUtilisateurs).toHaveBeenNthCalledWith(1, [{ nom: utilisateur.nom, prénom: utilisateur.prénom, email: utilisateur.email }]);
   }
 
   describe("Si la variable d'env IMPORT_KEYCLOAK_URL n'est pas définie", () => {
     it("ne créé pas l'utilisateur sur Keycloak", async () => {
-      // GIVEN 
+      // Given
       process.env.IMPORT_KEYCLOAK_URL = undefined;
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecProfil(ProfilEnum.DITP_ADMIN).build();
       const profil = new ProfilBuilder().build();
 
-      //WHEN
+      // When
       await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto', randomUUID(), false, habilitations, profil);
         
-      //THEN
+      // Then
       expect(stubUtilisateurIAMRepository.ajouteUtilisateurs).toHaveBeenCalledTimes(0);
     });
   });

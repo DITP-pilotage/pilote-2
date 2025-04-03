@@ -1,5 +1,5 @@
-import Avancement from '@/server/domain/chantier/avancement/Avancement.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import Avancement from '@/server/chantiers/domain/Avancement';
+import { Maille } from '@/server/chantiers/domain/Maille';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 type RépartitionAvancementsMaille = {

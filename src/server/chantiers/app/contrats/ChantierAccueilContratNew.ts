@@ -1,13 +1,13 @@
-import { TypeStatut } from '@/server/domain/chantier/Chantier.interface';
-import { Météo } from '@/server/domain/météo/Météo.interface';
+import { TypeStatut } from '@/server/chantiers/domain/Chantier.interface';
+import { Météo } from '@/server/chantiers/domain/Meteo';
 import { EntreePrismaChantier, PrismaChantier } from '@/server/infrastructure/accès_données/chantier/PrismaChantier';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
-import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/PrismamailleParser';
+import { Maille } from '@/server/chantiers/domain/Maille';
 
 interface TerritoireAvancementAccueilContrat {
   global: number | null

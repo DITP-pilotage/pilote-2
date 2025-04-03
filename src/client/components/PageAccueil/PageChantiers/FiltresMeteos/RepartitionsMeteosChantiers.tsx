@@ -1,6 +1,6 @@
 import { FunctionComponent, useCallback } from 'react';
 import { parseAsInteger, parseAsString, useQueryState } from 'nuqs';
-import { libellésMétéos, MétéoSaisissable, météosSaisissables } from '@/server/domain/météo/Météo.interface';
+import { libellésMétéos, MétéoSaisissable, météosSaisissables } from '@/server/chantiers/domain/Meteo';
 import { sauvegarderFiltres } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
 import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';

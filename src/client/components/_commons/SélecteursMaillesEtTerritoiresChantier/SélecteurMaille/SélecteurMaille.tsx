@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { FunctionComponent } from 'react';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 import { maillesAccessiblesEnLectureStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';

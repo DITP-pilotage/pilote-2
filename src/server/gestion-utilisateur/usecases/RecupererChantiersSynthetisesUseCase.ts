@@ -1,4 +1,4 @@
-import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
+import { ChantierSynthétisé } from '@/server/chantiers/domain/Chantier.interface';
 import { ChantierRepository } from '@/server/gestion-utilisateur/domain/ports/ChantierRepository';
 
 interface Dependencies {

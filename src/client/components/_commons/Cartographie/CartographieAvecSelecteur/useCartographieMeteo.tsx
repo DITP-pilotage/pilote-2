@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
+import { libellésMétéos, Météo } from '@/server/chantiers/domain/Meteo';
 import {
   CartographieÉlémentsDeLégende,
 } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { CartographieDonnées } from '@/client/components/_commons/Cartographie/Cartographie.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import { Maille } from '@/server/chantiers/domain/Maille';
 
 const determinerRemplissage = (valeur: Météo | null, elementsDeLegende: CartographieÉlémentsDeLégende, estApplicable: boolean | null) => {
 

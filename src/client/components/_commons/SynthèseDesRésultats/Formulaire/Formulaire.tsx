@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { FunctionComponent } from 'react';
 import CompteurCaractères from '@/components/_commons/CompteurCaractères/CompteurCaractères';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
-import { libellésMétéos, MétéoSaisissable, météosSaisissables } from '@/server/domain/météo/Météo.interface';
+import { libellésMétéos, MétéoSaisissable, météosSaisissables } from '@/server/chantiers/domain/Meteo';
 import Titre from '@/components/_commons/Titre/Titre';
 import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
 import Alerte from '@/components/_commons/Alerte/Alerte';

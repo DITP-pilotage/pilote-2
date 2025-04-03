@@ -1,4 +1,4 @@
-import { Météo } from '@/server/domain/météo/Météo.interface';
+import { Météo } from '@/server/chantiers/domain/Meteo';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';

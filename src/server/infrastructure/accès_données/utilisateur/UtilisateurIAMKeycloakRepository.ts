@@ -8,14 +8,8 @@ import { configuration } from '@/config';
 const KEYCLOAK_REALM = 'DITP';
 
 const DAY_IN_SECONDS = 3600 * 24;
-export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMRepository {
-  private kcAdminClient: any;
-
-  constructor(
-    private readonly keycloakUrl: string,
-    private readonly clientId: string,
-    private readonly clientSecret: string,
-  ) {}
+export class UtilisateurIAMKeycloakRepository implements UtilisateurIAMRepository {
+  private kcAdminClient: any; // modifier pour ne pas être any
 
   async supprime(email: string): Promise<void> {
     await this.loginKcAdminClient();
@@ -43,15 +37,15 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
 
   private async loginKcAdminClient() {
     this.kcAdminClient = new KcAdminClient({
-      baseUrl: this.keycloakUrl,
+      baseUrl: configuration.import.keycloakUrl,
       realmName: KEYCLOAK_REALM,
       requestArgOptions: {},
     });
 
     await this.kcAdminClient.auth({
       grantType: 'client_credentials',
-      clientId: this.clientId,
-      clientSecret: this.clientSecret,
+      clientId: configuration.import.clientId,
+      clientSecret: configuration.import.clientSecret,
     });
 
     return this.kcAdminClient;
@@ -76,7 +70,7 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
       // pour le client en question (du script d'import donc).
       await this.kcAdminClient.users.executeActionsEmail({
         realm: KEYCLOAK_REALM,
-        clientId: this.clientId,
+        clientId: configuration.import.clientId,
         redirectUri: configuration.nextAuth.url,
         id: utilisateurIAM.id,
         lifespan: 7 * DAY_IN_SECONDS,

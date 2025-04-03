@@ -5,12 +5,12 @@ import Head from 'next/head';
 import { FunctionComponent } from 'react';
 import { useSession } from 'next-auth/react';
 import PageImportIndicateur from '@/components/PageImportIndicateur/PageImportIndicateur';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier from '@/server/chantiers/domain/Chantier.interface';
 import { ChantierInformations } from '@/components/PageImportIndicateur/ChantierInformation.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur from '@/server/chantiers/domain/Indicateur';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
-import RécupérerChantierUseCase from '@/server/usecase/chantier/RécupérerChantierUseCase';
+import RécupérerChantierUseCase from '@/server/chantiers/usecases/page-accueil/RécupérerChantierUseCase';
 import { presenterEnRapportContrat, RapportContrat } from '@/server/app/contrats/RapportContrat';
 import { estAutoriséAImporterDesIndicateurs } from '@/client/utils/indicateur/indicateur';
 import {

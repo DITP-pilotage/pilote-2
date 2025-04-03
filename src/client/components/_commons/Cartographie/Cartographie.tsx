@@ -7,7 +7,7 @@ import {
   départementsTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 import { CartographieSVG } from './SVG/CartographieSVG';
 
 type CartographieDonnées = {

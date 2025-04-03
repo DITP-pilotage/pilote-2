@@ -1,19 +1,35 @@
 import { objectEntries } from '@/client/utils/objects/objects';
-import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
+import { TerritoireRepository } from '@/server/domain/territoire/TerritoireRepository.interface';
 import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
-import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
+import { UtilisateurRepository } from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import {
   HabilitationsÀCréerOuMettreÀJourCalculées,
 } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
-export default class ImporterDesUtilisateursUseCase {
-  constructor(
-    private readonly utilisateurRepository: UtilisateurRepository,
-    private readonly utilisateurIAMRepository: UtilisateurIAMRepository,
-    private readonly territoireRepository: TerritoireRepository,
-  ) {}
+type Dependencies = {
+  utilisateurRepository: UtilisateurRepository,
+  utilisateurIAMRepository: UtilisateurIAMRepository,
+  territoireRepository: TerritoireRepository,
+};
+
+export class ImporterDesUtilisateursUseCase {
+  private readonly utilisateurRepository: UtilisateurRepository;
+
+  private readonly utilisateurIAMRepository: UtilisateurIAMRepository;
+
+  private readonly territoireRepository: TerritoireRepository;
+
+  constructor({
+    utilisateurRepository,
+    utilisateurIAMRepository,
+    territoireRepository,
+  }: Dependencies) {
+    this.utilisateurRepository = utilisateurRepository;
+    this.utilisateurIAMRepository = utilisateurIAMRepository;
+    this.territoireRepository = territoireRepository;
+  }
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
   async run(utilisateurs: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées; auteurEmail: string })[]): Promise<void> {

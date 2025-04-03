@@ -2,11 +2,11 @@ import { parseAsBoolean, parseAsString, parseAsStringLiteral, useQueryStates } f
 import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
-import Axe from '@/server/domain/axe/Axe.interface';
+import PérimètreMinistériel from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisteriel.interface';
+import Axe from '@/server/chantiers/domain/Axe';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
-import { libellésMétéos } from '@/server/domain/météo/Météo.interface';
+import { libellésMétéos } from '@/server/chantiers/domain/Meteo';
 import FiltresSélectionnésCatégorie from './Catégorie/FiltresSélectionnésCatégorie';
 import FiltresSélectionnésStyled from './FiltresSélectionnés.styled';
 

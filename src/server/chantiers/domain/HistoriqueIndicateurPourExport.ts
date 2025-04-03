@@ -1,7 +1,7 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { Météo } from '@/server/domain/météo/Météo.interface';
+import Chantier from '@/server/chantiers/domain/Chantier.interface';
+import Indicateur from '@/server/chantiers/domain/Indicateur';
+import { DétailsIndicateur } from '@/server/chantiers/domain/DétailsIndicateur';
+import { Météo } from '@/server/chantiers/domain/Meteo';
 
 export type HistoriqueIndicateurPourExport = {
   maille: string,

@@ -9,7 +9,7 @@ import {
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import SélecteurAvecRecherche from '@/components/_commons/SélecteurAvecRecherche/SélecteurAvecRecherche';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier from '@/server/chantiers/domain/Chantier.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 interface SélecteurTerritoiresProps {

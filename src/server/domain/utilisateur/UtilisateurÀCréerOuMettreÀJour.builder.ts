@@ -1,10 +1,10 @@
 import { faker } from '@faker-js/faker/locale/fr';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import { Chantier } from '@/server/chantiers/domain/Chantier.interface';
+import { PerimetreMinisteriel } from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisteriel.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { profilsCodes, UtilisateurÀCréerOuMettreÀJour } from './Utilisateur.interface';
 
-export default class UtilisateurÀCréerOuMettreÀJourBuilder {
+export class UtilisateurÀCréerOuMettreÀJourBuilder {
   private readonly _nom: UtilisateurÀCréerOuMettreÀJour['nom'];
 
   private readonly _prénom: UtilisateurÀCréerOuMettreÀJour['prénom'];
@@ -79,12 +79,12 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
     return this;
   }
 
-  private _avecHabilitationLecturePérimètres(périmètresIds: PérimètreMinistériel['id'][]): UtilisateurÀCréerOuMettreÀJourBuilder {
+  private _avecHabilitationLecturePérimètres(périmètresIds: PerimetreMinisteriel['id'][]): UtilisateurÀCréerOuMettreÀJourBuilder {
     this._habilitations.lecture.périmètres = périmètresIds;
     return this;
   }
 
-  avecHabilitationsLecture(territoiresCodes?: Territoire['code'][], chantierIds?: Chantier['id'][], périmètresIds?: PérimètreMinistériel['id'][]) {
+  avecHabilitationsLecture(territoiresCodes?: Territoire['code'][], chantierIds?: Chantier['id'][], périmètresIds?: PerimetreMinisteriel['id'][]) {
     if (territoiresCodes)
       this._avecHabilitationLectureTerritoires(territoiresCodes);
 

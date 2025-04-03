@@ -1,5 +1,5 @@
 import { créerRouteurTRPC, procédureProtégée } from '@/server/infrastructure/api/trpc/trpc';
-import RécupérerUnProfilUseCase from '@/server/usecase/profil/RécupérerUnProfilUseCase';
+import { RécupérerUnProfilUseCase } from '@/server/gestion-utilisateur/usecases/RécupérerUnProfilUseCase';
 import { validationProfilContexte } from '@/validation/profil';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { getContainer } from '@/server/dependances';

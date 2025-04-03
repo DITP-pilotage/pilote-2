@@ -1,7 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import PageImportIndicateur from '@/components/PageImportIndicateur/PageImportIndicateur';
 import { ChantierInformations } from '@/components/PageImportIndicateur/ChantierInformation.interface';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur from '@/server/chantiers/domain/Indicateur';
 import IndicateurBuilder from '@/server/domain/indicateur/Indicateur.builder';
 
 const CHANTIER_NOM = 'Offrir à chaque enfant une éducation culturelle et artistique';

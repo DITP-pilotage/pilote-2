@@ -1,9 +1,9 @@
 import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
-import Alerte from '@/server/domain/alerte/Alerte';
+import Alerte from '@/server/chantiers/domain/Alerte';
 import { MeteoDisponible } from '@/server/fiche-territoriale/domain/MeteoDisponible';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import { Maille } from '@/server/chantiers/domain/Maille';
 
 // eslint-disable-next-line unicorn/no-static-only-class
 export class Chantier {

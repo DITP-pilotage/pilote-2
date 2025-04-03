@@ -4,12 +4,12 @@ import IndicateurÉvolution from '@/components/_commons/IndicateursChantier/Bloc
 import IndicateurSpécifications
   from '@/components/_commons/IndicateursChantier/Bloc/Détails/Spécifications/IndicateurSpécifications';
 import SousIndicateurs from '@/components/_commons/IndicateursChantier/Bloc/Détails/SousIndicateurs/SousIndicateurs';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur from '@/server/chantiers/domain/Indicateur';
 import {
   IndicateurDétailsParTerritoire,
 } from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface';
-import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { DétailsIndicateurs } from '@/server/chantiers/domain/DétailsIndicateur';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 import CartographieAvecSelecteurIndicateur from '@/components/_commons/Cartographie/CartographieAvecSelecteurIndicateur/CartographieAvecSelecteurIndicateur';
 import { useIndicateurDétails } from './useIndicateurDétails';
 

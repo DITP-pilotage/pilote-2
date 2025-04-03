@@ -1,12 +1,18 @@
-import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
-import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { IndicateurRepository } from '@/server/chantiers/domain/ports/IndicateurRepository';
+import { Habilitation } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
+import { Habilitations } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface';
+import { ProfilCode } from '@/server/gestion-utilisateur/domain/Profil';
 
-export default class RécupérerDétailsIndicateurUseCase {
-  constructor(
-    private readonly indicateurRepository: IndicateurRepository,
-  ) {}
+type Dependencies = {
+  indicateurRepository: IndicateurRepository;
+};
+
+export class RécupérerDétailsIndicateurUseCase {
+  private readonly indicateurRepository: IndicateurRepository;
+
+  constructor({ indicateurRepository }: Dependencies) {
+    this.indicateurRepository = indicateurRepository;
+  }
 
   async run(indicateurId: string, habilitations: Habilitations, profil: ProfilCode, jalon: number) {
     const chantierId = await this.indicateurRepository.récupérerChantierIdAssocié(indicateurId);

@@ -2,7 +2,7 @@ import { Cell, flexRender, Table } from '@tanstack/react-table';
 import Link from 'next/link';
 import { FunctionComponent } from 'react';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
-import { ChantierVueDEnsemble } from '@/server/domain/chantier/Chantier.interface';
+import { ChantierVueDEnsemble } from '@/server/chantiers/domain/Chantier.interface';
 import {
   DonnéesTableauChantiers,
 } from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';

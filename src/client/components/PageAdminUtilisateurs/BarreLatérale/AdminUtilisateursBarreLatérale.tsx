@@ -18,7 +18,7 @@ import {
   AAccesATousLesUtilisateurs,
   PROFILS_POSSIBLES_COORDINATEURS_LECTURE,
 } from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
-import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
+import { ChantierSynthétisé } from '@/server/chantiers/domain/Chantier.interface';
 import { PerimetreMinisteriel } from '@/server/gestion-utilisateur/domain/PerimetreMinisteriel';
 import { Profil } from '@/server/gestion-utilisateur/domain/Profil';
 import { TerritoireAvecNombreUtilisateurs } from '@/server/gestion-utilisateur/domain/Territoire';

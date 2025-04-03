@@ -1,7 +1,7 @@
 import { FunctionComponent } from 'react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier from '@/server/chantiers/domain/Chantier.interface';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';

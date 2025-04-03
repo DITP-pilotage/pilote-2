@@ -1,4 +1,4 @@
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import { Maille } from '@/server/chantiers/domain/Maille';
 
 export type Rubrique = {
   nom: string,

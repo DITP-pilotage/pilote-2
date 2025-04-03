@@ -6,7 +6,7 @@ import { FunctionComponent } from 'react';
 import BoutonImpression from '@/components/_commons/BoutonImpression/BoutonImpression';
 import Titre from '@/components/_commons/Titre/Titre';
 import { ResponsableRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier from '@/server/chantiers/domain/Chantier.interface';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import { getFiltresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';

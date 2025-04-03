@@ -2,7 +2,7 @@ import {
   PROFILS_POSSIBLES_COORDINATEURS_LECTURE,
 } from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { Habilitation } from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface';
 import { FiltreQueryParams } from '@/server/gestion-utilisateur/app/contrats/FiltreQueryParams';
 import { UtilisateurExportCSV } from '@/server/gestion-utilisateur/domain/UtilisateurExportCSV';

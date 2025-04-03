@@ -4,7 +4,7 @@ import {
 } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { CartographieDonnées } from '@/client/components/_commons/Cartographie/Cartographie.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
-import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { DétailsIndicateurTerritoire } from '@/server/chantiers/domain/DétailsIndicateur';
 
 type TypeProposition = 'PROPOSITION' | 'PROPOSITION_AVEC_PONDERATION';
 type DonneesCartographieProposition = {

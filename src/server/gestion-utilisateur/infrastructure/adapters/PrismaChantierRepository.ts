@@ -1,6 +1,6 @@
 import { PrismaClient, chantier_identite as PrismaChantierIdentiteModel, chantier_territoire as PrismaChantierTerritoireModel } from '@prisma/client';
 import { ChantierRepository } from '@/server/gestion-utilisateur/domain/ports/ChantierRepository';
-import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
+import { ChantierSynthétisé } from '@/server/chantiers/domain/Chantier.interface';
 import { InformationChantierUtilisateur } from '@/server/gestion-utilisateur/domain/InformationChantierUtilisateur';
 import { PrismaPilote } from '@/server/db/PrismaPilote';
 

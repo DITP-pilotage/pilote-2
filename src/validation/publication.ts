@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import { typesObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
-import { typesDécisionStratégique } from '@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface';
+import { typesDécisionStratégique } from '@/server/chantiers/domain/DecisionStrategique.interface';
 
 export const LIMITE_CARACTÈRES_PUBLICATION = Number.parseInt(process.env.NEXT_PUBLIC_LIMITE_CARACTERES_PUBLICATION || '5000');
 

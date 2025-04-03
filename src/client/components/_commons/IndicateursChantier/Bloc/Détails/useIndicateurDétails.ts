@@ -1,5 +1,5 @@
 import { useSession } from 'next-auth/react';
-import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { DétailsIndicateurTerritoire } from '@/server/chantiers/domain/DétailsIndicateur';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 

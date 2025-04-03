@@ -2,12 +2,12 @@ import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
 import { FunctionComponent } from 'react';
 import Tag from '@/components/_commons/Tag/Tag';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
-import Axe from '@/server/domain/axe/Axe.interface';
+import Axe from '@/server/chantiers/domain/Axe';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import PérimètreMinistériel from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisteriel.interface';
 import { reinitialiserFiltres, sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import { libellésMétéos } from '@/server/domain/météo/Météo.interface';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
+import { libellésMétéos } from '@/server/chantiers/domain/Meteo';
 import FiltresActifsStyled from './FiltresActifs.styled';
 
 interface FiltresActifsProps {

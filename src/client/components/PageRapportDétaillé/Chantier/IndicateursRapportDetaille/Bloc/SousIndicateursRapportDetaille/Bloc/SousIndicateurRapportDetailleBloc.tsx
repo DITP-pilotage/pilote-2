@@ -3,8 +3,8 @@ import Titre from '@/components/_commons/Titre/Titre';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
-import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import { DétailsIndicateurs } from '@/server/chantiers/domain/DétailsIndicateur';
+import Indicateur from '@/server/chantiers/domain/Indicateur';
 import IndicateurPonderation from '@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import {

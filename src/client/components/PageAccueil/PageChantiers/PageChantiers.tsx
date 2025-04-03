@@ -34,7 +34,7 @@ import { JaugeDeProgressionSmall } from '@/components/_commons/JaugeDeProgressio
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
-import Axe from '@/server/domain/axe/Axe.interface';
+import Axe from '@/server/chantiers/domain/Axe';
 import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
@@ -45,7 +45,7 @@ import SelecteurVueStatuts from '@/client/components/PageAccueil/SelecteurVueSta
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import SélecteurMaille
   from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';

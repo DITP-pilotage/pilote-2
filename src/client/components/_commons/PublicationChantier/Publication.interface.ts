@@ -1,5 +1,5 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import Chantier from '@/server/chantiers/domain/Chantier.interface';
+import { Maille } from '@/server/chantiers/domain/Maille';
 import { RouterInputs, RouterOutputs } from '@/server/infrastructure/api/trpc/trpc.interface';
 
 export type PublicationCaractéristiques = {

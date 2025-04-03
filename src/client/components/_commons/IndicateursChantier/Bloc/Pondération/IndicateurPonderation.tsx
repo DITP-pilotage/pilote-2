@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
 import { convertitEnPondération } from '@/client/utils/ponderation/ponderation';
-import { MailleTerritoireSelectionne } from '@/server/domain/maille/Maille.interface';
+import { MailleTerritoireSelectionne } from '@/server/chantiers/domain/Maille';
 
 interface IndicateurPondérationProps {
   indicateurPondération: number | null;

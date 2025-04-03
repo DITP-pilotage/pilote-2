@@ -1,6 +1,6 @@
 import { créerRouteurTRPC, procédureProtégée, vérifierSiLeCSRFEstValide } from '@/server/infrastructure/api/trpc/trpc';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import CréerUnCommentaireUseCase from '@/server/usecase/chantier/commentaire/CréerUnCommentaireUseCase';
+import { CréerUnCommentaireUseCase} from '@/server/usecase/chantier/commentaire/CréerUnCommentaireUseCase';
 import {
   validationPublicationContexte,
   validationPublicationFormulaire,
@@ -8,23 +8,16 @@ import {
   zodValidateurEntité,
   zodValidateurEntitéType,
 } from 'validation/publication';
-import RécupérerCommentaireLePlusRécentUseCase
-  from '@/server/usecase/chantier/commentaire/RécupérerCommentaireLePlusRécentUseCase';
-import RécupérerHistoriqueCommentaireUseCase
-  from '@/server/usecase/chantier/commentaire/RécupérerHistoriqueCommentaireUseCase';
-import CréerUnObjectifUseCase from '@/server/usecase/chantier/objectif/CréerUnObjectifUseCase';
-import RécupérerObjectifLePlusRécentUseCase
-  from '@/server/usecase/chantier/objectif/RécupérerObjectifLePlusRécentUseCase';
-import RécupérerHistoriqueObjectifUseCase from '@/server/usecase/chantier/objectif/RécupérerHistoriqueObjectifUseCase';
-import RécupérerDécisionStratégiqueLaPlusRécenteUseCase
-  from '@/server/usecase/chantier/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase';
-import CréerUneDécisionStratégiqueUseCase from '@/server/usecase/chantier/décision/CréerUneDécisionStratégiqueUseCase';
-import RécupérerHistoriqueDécisionStratégiqueUseCase
-  from '@/server/usecase/chantier/décision/RécupérerHistoriqueDécisionStratégiqueUseCase';
-import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase
-  from '@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
-import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase
-  from '@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase';
+import { RécupérerCommentaireLePlusRécentUseCase } from '@/server/usecase/chantier/commentaire/RécupérerCommentaireLePlusRécentUseCase';
+import { RécupérerHistoriqueCommentaireUseCase } from '@/server/usecase/chantier/commentaire/RécupérerHistoriqueCommentaireUseCase';
+import { CréerUnObjectifUseCase } from '@/server/usecase/chantier/objectif/CréerUnObjectifUseCase';
+import { RécupérerObjectifLePlusRécentUseCase } from '@/server/usecase/chantier/objectif/RécupérerObjectifLePlusRécentUseCase';
+import { RécupérerHistoriqueObjectifUseCase } from '@/server/usecase/chantier/objectif/RécupérerHistoriqueObjectifUseCase';
+import { RécupérerDécisionStratégiqueLaPlusRécenteUseCase } from '@/server/chantiers/usecases/page-accueil/RécupérerDécisionStratégiqueLaPlusRécenteUseCase';
+import { CréerUneDécisionStratégiqueUseCase } from '@/server/usecase/chantier/décision/CréerUneDécisionStratégiqueUseCase';
+import { RécupérerHistoriqueDécisionStratégiqueUseCase } from '@/server/usecase/chantier/décision/RécupérerHistoriqueDécisionStratégiqueUseCase';
+import { RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase } from '@/server/chantiers/usecases/page-accueil/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
+import { RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase } from '@/server/chantiers/usecases/page-accueil/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase';
 import { TypeObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
 import { TypeCommentaireChantier } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 

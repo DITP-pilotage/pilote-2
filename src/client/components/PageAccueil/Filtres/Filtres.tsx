@@ -3,7 +3,7 @@ import FiltresSélectionMultiple
   from '@/components/PageAccueil/Filtres/FiltresSélectionMultiple/FiltresSélectionMultiple';
 import { FiltreTypologieType } from '@/client/stores/useFiltresStore/useFiltresStore.interface';
 import { filtresActifs } from '@/client/stores/useFiltresStore/useFiltresStore';
-import Axe from '@/server/domain/axe/Axe.interface';
+import Axe from '@/server/chantiers/domain/Axe';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import FiltresGroupe from './FiltresGroupe/FiltresGroupe';
 import FiltresMinistères from './FiltresMinistères/FiltresMinistères';

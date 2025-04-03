@@ -5,7 +5,7 @@ import { ProfilCode, UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@
 import { HabilitationsÀCréerOuMettreÀJourCalculées, ScopeChantiers } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { CsvRecord } from './UtilisateurCSVParseur.interface';
 
-export default class UtilisateurCSVParseur {
+export class UtilisateurCSVParseur {
   private _CSV_PARSE_OPTIONS: Options = {
     columns: true,
     skipEmptyLines: true,

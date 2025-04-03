@@ -4,7 +4,7 @@ import { stringify } from 'csv-stringify';
 import { Options } from 'csv-stringify/lib/sync';
 import assert from 'node:assert/strict';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { Habilitation } from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { configuration } from '@/config';
 import { recupererJalon } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/recupererJalon';
 import {

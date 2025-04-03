@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur from '@/server/chantiers/domain/Indicateur';
 import api from '@/server/infrastructure/api/trpc/api';
 import { récupérerUnCookie } from '@/client/utils/cookies';
 

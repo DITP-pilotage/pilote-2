@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
-import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import { DétailsIndicateurs } from '@/server/chantiers/domain/DétailsIndicateur';
+import Indicateur from '@/server/chantiers/domain/Indicateur';
 import SousIndicateurRapportDetailleBloc from './Bloc/SousIndicateurRapportDetailleBloc';
 
 interface SousIndicateursProps {

@@ -1,4 +1,4 @@
-import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur, { TypeIndicateur } from '@/server/chantiers/domain/Indicateur';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 
 export const libellesTypologieIndicateur: Record<TypeIndicateur, string> = {

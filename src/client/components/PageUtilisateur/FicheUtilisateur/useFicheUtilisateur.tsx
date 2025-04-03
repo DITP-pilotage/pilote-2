@@ -5,7 +5,7 @@ import {
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { ScopeChantiers, ScopeUtilisateurs } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier from '@/server/chantiers/domain/Chantier.interface';
 import api from '@/server/infrastructure/api/trpc/api';
 import { profilsRégionaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import {

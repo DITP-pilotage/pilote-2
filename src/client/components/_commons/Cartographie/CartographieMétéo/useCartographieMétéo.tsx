@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
-import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
+import { libellésMétéos, Météo } from '@/server/chantiers/domain/Meteo';
 import {
   CartographieÉlémentsDeLégende,
 } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';

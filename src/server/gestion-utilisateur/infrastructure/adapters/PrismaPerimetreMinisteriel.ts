@@ -1,9 +1,9 @@
-import { perimetre as PerimetreMinisterielPrisma } from '@prisma/client';
-import { prisma } from '@/server/db/prisma';
+import { perimetre as PerimetreMinisterielPrisma, PrismaClient } from '@prisma/client';
 import {
   PerimetreMinisterielRepository,
 } from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository';
 import { PerimetreMinisteriel } from '@/server/gestion-utilisateur/domain/PerimetreMinisteriel';
+import { PrismaPilote } from '@/server/db/PrismaPilote';
 
 class ErreurPérimètreSansMinistère extends Error {
   constructor() {
@@ -24,9 +24,19 @@ const convertirEnPerimetreMinisteriel = (périmètre: PerimetreMinisterielPrisma
   };
 };
 
+interface Dependencies {
+  prisma: PrismaPilote;
+}
+
 export class PrismaPerimetreMinisterielRepository implements PerimetreMinisterielRepository {
+  private prisma: PrismaClient;
+
+  constructor({ prisma }: Dependencies) {
+    this.prisma = prisma.getInstance();
+  }
+
   async lister(listePerimetresMinisterielsIds: string[]): Promise<PerimetreMinisteriel[]> {
-    const listePrismaPerimetreMinisteriel = await prisma.perimetre.findMany({
+    const listePrismaPerimetreMinisteriel = await this.prisma.perimetre.findMany({
       where: { id: listePerimetresMinisterielsIds.length > 0 ? { in: listePerimetresMinisterielsIds } : undefined },
     });
 
@@ -34,7 +44,7 @@ export class PrismaPerimetreMinisterielRepository implements PerimetreMinisterie
   }
   
   async listerIds(listePerimetresMinisterielsIds: string[]): Promise<string[]> {
-    const listePrismaPerimetreMinisteriel = await prisma.perimetre.findMany({
+    const listePrismaPerimetreMinisteriel = await this.prisma.perimetre.findMany({
       where: { id: listePerimetresMinisterielsIds.length > 0 ? { in: listePerimetresMinisterielsIds } : undefined },
       select: {
         id: true,

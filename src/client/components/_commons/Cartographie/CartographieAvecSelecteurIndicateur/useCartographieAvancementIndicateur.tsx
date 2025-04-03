@@ -5,7 +5,7 @@ import {
 } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { CartographieDonnées } from '@/client/components/_commons/Cartographie/Cartographie.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
-import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { DétailsIndicateurTerritoire } from '@/server/chantiers/domain/DétailsIndicateur';
 
 function determinerValeurAffichee(valeur: number | null, valeurAnnuelle: number | null, estApplicable: boolean | null, jalon: number): ReactNode {
 

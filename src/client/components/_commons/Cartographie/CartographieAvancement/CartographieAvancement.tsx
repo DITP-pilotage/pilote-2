@@ -6,7 +6,7 @@ import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import {
   CartographieÉlémentsDeLégende,
 } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 import useCartographieAvancement from './useCartographieAvancement';
 import { CartographieDonnéesAvancement } from './CartographieAvancement.interface';
 

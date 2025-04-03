@@ -1,5 +1,5 @@
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
-import { météos } from '@/server/domain/météo/Météo.interface';
+import { météos } from '@/server/chantiers/domain/Meteo';
 
 describe('comparerMétéo', () => {
   test('retourne 0 si les météos sont identiques', () => {

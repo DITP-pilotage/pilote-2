@@ -7,7 +7,7 @@ interface Dependencies {
   perimetreMinisterielRepository: PerimetreMinisterielRepository
 }
 
-export default class RecupererPerimetresMinisterielsUseCase {
+export class RecupererPerimetresMinisterielsUseCase {
   private readonly perimetreMinisterielRepository: PerimetreMinisterielRepository;
 
   constructor({ perimetreMinisterielRepository }: Dependencies) {

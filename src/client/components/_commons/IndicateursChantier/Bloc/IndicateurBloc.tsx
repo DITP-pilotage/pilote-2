@@ -11,8 +11,8 @@ import IndicateurPonderation from '@/components/_commons/IndicateursChantier/Blo
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import api from '@/server/infrastructure/api/trpc/api';
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import Indicateur from '@/server/chantiers/domain/Indicateur';
+import { DétailsIndicateurs } from '@/server/chantiers/domain/DétailsIndicateur';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import ValeurEtDate from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
@@ -24,7 +24,7 @@ import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import { formaterDate } from '@/client/utils/date/date';
 import IndicateurTendance from '@/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 import ModaleSuppressionValeurActuelle
   from '@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurActuelle/ModaleSuppressionValeurActuelle';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';

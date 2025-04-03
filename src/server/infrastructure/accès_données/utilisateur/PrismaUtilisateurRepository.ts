@@ -1,0 +1,424 @@
+import {
+  chantier_identite as PrismaChantierIdentite,
+  PrismaClient,
+  habilitation as PrismaHabilitation,
+  perimetre,
+  profil,
+  territoire,
+  utilisateur,
+} from '@prisma/client';
+import { UtilisateurRepository } from '@/server/domain/utilisateur/UtilisateurRepository.interface';
+import { objectEntries } from '@/client/utils/objects/objects';
+import { Territoire } from '@/server/domain/territoire/Territoire.interface';
+import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { PrismaPilote } from '@/server/db/PrismaPilote';
+import { profilsDépartementaux, profilsRégionaux, Utilisateur, UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@/server/gestion-utilisateur/domain/Utilisateur';
+import { Habilitations, HabilitationsÀCréerOuMettreÀJourCalculées, ScopeChantiers, ScopeUtilisateurs } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface';
+import { Habilitation } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
+
+export const convertirEnModel = (utilisateurAConvertir: {
+  email: string
+  nom: string
+  prenom: string
+  profilCode: string
+  fonction: string | null
+  auteurIdModification: string
+  dateModification: Date
+  auteurIdCreation: string
+  dateCreation: Date
+}): Omit<utilisateur, 'id' | 'auteur_email_creation' | 'auteur_email_modification' | 'date_desactivation'> => {
+  return {
+    email: utilisateurAConvertir.email,
+    nom: utilisateurAConvertir.nom,
+    prenom: utilisateurAConvertir.prenom,
+    profilCode: utilisateurAConvertir.profilCode,
+    fonction: utilisateurAConvertir.fonction,
+    auteur_id_modification: utilisateurAConvertir.auteurIdModification,
+    date_modification: utilisateurAConvertir.dateModification,
+    auteur_id_creation: utilisateurAConvertir.auteurIdCreation,
+    date_creation: utilisateurAConvertir.dateCreation,
+  };
+};
+
+export const convertirEnModelModification = (utilisateurAConvertir: {
+  email: string
+  nom: string
+  prenom: string
+  profilCode: string
+  fonction: string | null
+  auteurIdModification: string
+  dateModification: Date
+}): Omit<utilisateur, 'id' | 'auteur_id_creation' | 'date_creation' | 'auteur_email_creation' | 'auteur_email_modification' | 'date_desactivation'> => {
+  return {
+    email: utilisateurAConvertir.email,
+    nom: utilisateurAConvertir.nom,
+    prenom: utilisateurAConvertir.prenom,
+    profilCode: utilisateurAConvertir.profilCode,
+    fonction: utilisateurAConvertir.fonction,
+    auteur_id_modification: utilisateurAConvertir.auteurIdModification,
+    date_modification: utilisateurAConvertir.dateModification,
+  };
+};
+
+type Dependencies = {
+  prisma: PrismaPilote;
+};
+
+// TODO: TOUT TESTEEEEER
+export class PrismaUtilisateurRepository implements UtilisateurRepository {
+  private prisma: PrismaClient;
+
+  constructor({ prisma }: Dependencies) {
+    this.prisma = prisma.getInstance();
+  }
+
+  private _territoires: string[] = [];
+
+  private _chantiers: {
+    donnéesBrutes: PrismaChantierIdentite[]
+    groupésParId: Record<PrismaChantierIdentite['id'], PrismaChantierIdentite>
+    chantiersIdsPérimètresIds: Record<PrismaChantierIdentite['id'], perimetre['id'][]>
+    ids: PrismaChantierIdentite['id'][]
+  } = {
+      donnéesBrutes: [],
+      groupésParId: {},
+      chantiersIdsPérimètresIds: {},
+      ids: [],
+    };
+
+  private _chantiersTerritorialisésIds: string[] = [];
+
+  private _chantiersBrouillonsIds: string [] = [];
+
+  private _périmètresMinistériels: string[] = [];
+
+  async _récupérerTerritoires() {
+    if (this._territoires.length === 0) {
+      const tousLesTerritoires = await this.prisma.territoire.findMany();
+      this._territoires = tousLesTerritoires.map(c => c.code);
+    }
+  }
+
+  async _récupérerChantiers() {
+    if (this._chantiers.donnéesBrutes.length === 0) {
+      const tousLesChantiers = await this.prisma.chantier_identite.findMany({
+        where: {
+          NOT: {
+            statut: 'ARCHIVE',
+          },
+        },
+      });
+
+      this._chantiers.donnéesBrutes = tousLesChantiers;
+
+      tousLesChantiers.forEach(chantier => {
+        this._chantiers.groupésParId[chantier.id] = chantier;
+        this._chantiers.ids.push(chantier.id);
+        this._chantiers.chantiersIdsPérimètresIds[chantier.id] = chantier.perimetre_ids;
+
+        if (chantier.est_territorialise === true) {
+          this._chantiersTerritorialisésIds.push(chantier.id);
+        }
+
+        if (chantier.statut === 'BROUILLON') {
+          this._chantiersBrouillonsIds.push(chantier.id);
+        }
+      });
+    }
+  }
+
+  async _récupérerPérimètresMinistériels() {
+    if (this._périmètresMinistériels.length === 0) {
+      const tousLesPérimètresMinistériels = await this.prisma.perimetre.findMany();
+      this._périmètresMinistériels = tousLesPérimètresMinistériels.map(périmètre => périmètre.id);
+    }
+  }
+
+  async récupérerNombreUtilisateursParTerritoires(territoires: Territoire[]): Promise<Record<string, number>> {
+
+    const territoireCodes = territoires.map(territoireElement => territoireElement.code);
+    const utilisateurs = await this.prisma.utilisateur.findMany({
+      where: {
+        OR: [
+          {
+            profilCode: {
+              in: profilsDépartementaux,
+            },
+            date_desactivation: null,
+            habilitation: {
+              some: {
+                scopeCode: 'lecture',
+                territoires: {
+                  hasSome: territoireCodes,
+                },
+              },
+            },
+          },
+          {
+            profilCode: {
+              in: profilsRégionaux,
+            },
+            date_desactivation: null,
+            habilitation: {
+              some: {
+                scopeCode: 'lecture',
+                territoires: {
+                  hasSome: territoireCodes,
+                },
+              },
+            },
+          },
+        ],
+      },
+      select: {
+        email: true,
+        profilCode: true,
+        habilitation: {
+          select: {
+            territoires: true,
+          },
+          where: {
+            scopeCode: 'lecture',
+          },
+        },
+      },
+    });
+
+    return territoires.reduce((acc: { [key: string]: number }, { code, maille }: Territoire) => {
+      const profilsCodes = maille === 'departementale' ? profilsDépartementaux : profilsRégionaux;
+
+      acc[code] = utilisateurs.filter(({ habilitation: habilitationUtilisateur, profilCode }) =>
+        habilitationUtilisateur.some(h => h.territoires.includes(code)) && profilsCodes.includes(profilCode),
+      ).length;
+
+      return acc;
+    }, {});
+
+  }
+
+  async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurId: string): Promise<void> {
+
+    const utilisateurCrééOuMisÀJour = await this.prisma.utilisateur.upsert({
+      create: convertirEnModel({
+        email: u.email.toLocaleLowerCase(),
+        nom: u.nom,
+        prenom: u.prénom,
+        profilCode: u.profil,
+        fonction: u.fonction,
+        auteurIdCreation: auteurId,
+        dateCreation: new Date(),
+        auteurIdModification: auteurId,
+        dateModification: new Date(),
+      }),
+      update: convertirEnModelModification({
+        email: u.email.toLocaleLowerCase(),
+        nom: u.nom,
+        prenom: u.prénom,
+        profilCode: u.profil,
+        fonction: u.fonction,
+        auteurIdModification: auteurId,
+        dateModification: new Date(),
+      }),
+      where: {
+        email: u.email.toLowerCase(),
+      },
+    });
+
+    const habilitationsÀCréer = Object.entries(u.habilitations).map(h => ({
+      utilisateurId: utilisateurCrééOuMisÀJour.id,
+      scopeCode: h[0],
+      territoires: h[1].territoires,
+      perimetres: h[1].périmètres,
+      chantiers: h[1].chantiers,
+    }));
+
+    await this.prisma.habilitation.deleteMany({
+      where: {
+        utilisateurId: utilisateurCrééOuMisÀJour.id,
+      },
+    });
+
+    await this.prisma.habilitation.createMany({
+      data: habilitationsÀCréer,
+    });
+  }
+
+  private async _récupérerChantiersParDéfaut(profilUtilisateur: profil): Promise<Record<ScopeChantiers | ScopeUtilisateurs, PrismaChantierIdentite['id'][]>> {
+    let chantiersAccessibles: PrismaChantierIdentite['id'][] = [];
+    let chantiersAccessiblesEnSaisieCommentaire: PrismaChantierIdentite['id'][];
+
+    if (profilUtilisateur.a_acces_tous_chantiers) {
+      chantiersAccessibles = this._chantiers.ids;
+    } else if (profilUtilisateur.a_acces_tous_chantiers_territorialises) {
+      chantiersAccessibles = this._chantiersTerritorialisésIds;
+    }
+
+    // eslint-disable-next-line unicorn/prefer-ternary
+    if ([ProfilEnum.COORDINATEUR_REGION, ProfilEnum.PREFET_REGION, ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.PREFET_DEPARTEMENT].includes(profilUtilisateur.code)) {
+      chantiersAccessiblesEnSaisieCommentaire = objectEntries(this._chantiers.groupésParId)
+        .filter(([_, chantier]) => chantier.est_territorialise && chantier.ate === 'ate')
+        .map(([_, chantier]) => chantier.id);
+    } else {
+      chantiersAccessiblesEnSaisieCommentaire = chantiersAccessibles;
+    }
+
+    if (profilUtilisateur.a_acces_tous_chantiers) {
+      chantiersAccessibles = this._chantiers.ids;
+    }
+
+    return {
+      lecture: chantiersAccessibles,
+      saisieCommentaire: chantiersAccessiblesEnSaisieCommentaire,
+      saisieIndicateur: [ProfilEnum.DITP_PILOTAGE, ProfilEnum.DITP_ADMIN].includes(profilUtilisateur.code) ? chantiersAccessibles : [],
+      gestionUtilisateur: profilUtilisateur.peut_modifier_les_utilisateurs ? chantiersAccessiblesEnSaisieCommentaire : [],
+      responsabilite: [],
+    };
+  }
+
+  private async _récupérerTerritoiresParDéfaut(profilUtilisateur: profil): Promise<Record<ScopeChantiers | ScopeUtilisateurs, territoire['code'][]>> {
+    return {
+      lecture: profilUtilisateur.a_acces_tous_les_territoires_lecture ? this._territoires : [],
+      saisieCommentaire: profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire ? this._territoires : [],
+      saisieIndicateur: profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur ? this._territoires : [],
+      gestionUtilisateur: [ProfilEnum.DITP_PILOTAGE, ProfilEnum.DITP_ADMIN].includes(profilUtilisateur.code) ? this._territoires : [],
+      responsabilite: [],
+    };
+  }
+
+  private async _récupérerPérimètresMinistérielsParDéfaut(profilUtilisateur: profil): Promise<Record<ScopeChantiers | ScopeUtilisateurs, perimetre['id'][]>> {
+    return {
+      // on dit que ceux qui ont accès à tous les chantiers ont accès à tous les périmètres ministériels
+      lecture: profilUtilisateur.a_acces_tous_chantiers ? this._périmètresMinistériels : [],
+      saisieCommentaire: [],
+      saisieIndicateur: [],
+      gestionUtilisateur: [],
+      responsabilite: [],
+    };
+  }
+
+  private _aDesDroitsdeSaisieCommentaire(habilitations: Habilitations, profilUtilisateur: profil) {
+    if (profilUtilisateur.a_acces_tous_chantiers) {
+      return profilUtilisateur.peut_saisir_des_commentaires;
+    } else {
+      const habilitationSaisieCommentaire = habilitations.saisieCommentaire;
+      return profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire
+        ? habilitationSaisieCommentaire.périmètres.length > 0 || habilitationSaisieCommentaire.chantiers.length > 0
+        : habilitationSaisieCommentaire.territoires.length > 0;
+    }
+  }
+
+  private _aDesDroitsdeSaisieIndicateur(habilitations: Habilitations, profilUtilisateur: profil) {
+    if (profilUtilisateur.a_acces_tous_chantiers && profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur) {
+      return true;
+    } else {
+      const habilitationSaisieIndicateur = habilitations.saisieIndicateur;
+      return profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur
+        ? habilitationSaisieIndicateur.périmètres.length > 0 || habilitationSaisieIndicateur.chantiers.length > 0
+        : habilitationSaisieIndicateur.territoires.length > 0;
+    }
+  }
+
+  private _aDesDroitsdeGestionUtilisateur(habilitations: Habilitations, profilUtilisateur: profil) {
+    const habilitationsFormatés = new Habilitation(habilitations);
+    if (!profilUtilisateur.peut_modifier_les_utilisateurs)
+      return false;
+
+    if (profilUtilisateur.a_acces_a_tous_les_chantiers_utilisateurs && profilUtilisateur.a_acces_a_tous_les_territoires_utilisateurs)
+      return true;
+
+    if (profilUtilisateur.a_acces_a_tous_les_chantiers_utilisateurs)
+      return habilitationsFormatés.possedeAuMoinsUnTerritoireEnGestionUtilisateur();
+
+    if (profilUtilisateur.a_acces_a_tous_les_territoires_utilisateurs)
+      return habilitationsFormatés.possedeAuMoinsUnChantierEnGestionUtilisateur();
+
+    return false;
+  }
+
+  private async _créerLesHabilitations(profilUtilisateur: profil, habilitations: PrismaHabilitation[]) {
+    const [chantiersParDéfaut, territoiresParDéfaut, périmètresMinistérielsParDéfaut] = await Promise.all([
+      this._récupérerChantiersParDéfaut(profilUtilisateur),
+      this._récupérerTerritoiresParDéfaut(profilUtilisateur),
+      this._récupérerPérimètresMinistérielsParDéfaut(profilUtilisateur),
+    ]);
+
+    let habilitationsGénérées: Utilisateur['habilitations'] = {
+      lecture: {
+        chantiers: chantiersParDéfaut.lecture,
+        territoires: territoiresParDéfaut.lecture,
+        périmètres: périmètresMinistérielsParDéfaut.lecture,
+      },
+      saisieCommentaire: {
+        chantiers: chantiersParDéfaut.saisieCommentaire,
+        territoires: territoiresParDéfaut.saisieCommentaire,
+        périmètres: périmètresMinistérielsParDéfaut.saisieCommentaire,
+      },
+      saisieIndicateur: {
+        chantiers: chantiersParDéfaut.saisieIndicateur,
+        territoires: territoiresParDéfaut.saisieIndicateur,
+        périmètres: périmètresMinistérielsParDéfaut.saisieIndicateur,
+      },
+      gestionUtilisateur: {
+        chantiers: chantiersParDéfaut.gestionUtilisateur,
+        territoires: territoiresParDéfaut.gestionUtilisateur,
+        périmètres: périmètresMinistérielsParDéfaut.gestionUtilisateur,
+      },
+      responsabilite: {
+        chantiers: [],
+        territoires: [],
+        périmètres: [],
+      },
+    };
+
+    for await (const h of habilitations) {
+      const scopeCode = h.scopeCode as keyof Utilisateur['habilitations'];
+      const listeChantier =
+        scopeCode == 'saisieCommentaire' && [ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(profilUtilisateur.code) ?
+          this._chantiers.donnéesBrutes.filter(c => c.ate !== 'hors_ate_centralise') :
+          this._chantiers.donnéesBrutes;
+
+      const chantiersSupplémentaires =
+        h.chantiers.length > 0 ?
+          listeChantier.filter(c => h.chantiers.includes(c.id)).map(c => c.id) :
+          h.chantiers;
+
+      const chantiersAssociésAuxPérimètresMinistériels =
+        h.perimetres.length > 0 ?
+          listeChantier
+            .filter(c => c.perimetre_ids.some(p => h.perimetres.includes(p)))
+            .map(c => c.id) :
+          [] ;
+
+      const habilitationsChantier = [... new Set([...habilitationsGénérées[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...chantiersSupplémentaires])];
+
+      habilitationsGénérées[scopeCode].chantiers = profilUtilisateur.a_access_aux_chantiers_brouillons ? habilitationsChantier : habilitationsChantier.filter(c => !this._chantiersBrouillonsIds.includes(c));
+      habilitationsGénérées[scopeCode].territoires = [... new Set([...habilitationsGénérées[scopeCode].territoires, ...h.territoires])];
+      habilitationsGénérées[scopeCode].périmètres = [... new Set([...habilitationsGénérées[scopeCode].périmètres, ...h.perimetres])];
+    }
+
+    return habilitationsGénérées;
+  }
+
+  private async _mapperVersDomaine(utilisateurBrut: utilisateur & { profil: profil; habilitation: PrismaHabilitation[]; auteur_creation: utilisateur | null; auteur_modification: utilisateur | null }): Promise<Utilisateur> {
+    const habilitations = await this._créerLesHabilitations(utilisateurBrut.profil, utilisateurBrut.habilitation);
+    const auteurCreation = utilisateurBrut.auteur_creation;
+    const auteurModification = utilisateurBrut.auteur_modification;
+    return {
+      id: utilisateurBrut.id,
+      nom: utilisateurBrut.nom || 'Inconnu',
+      prénom: utilisateurBrut.prenom || 'Inconnu',
+      email: utilisateurBrut.email,
+      profil: utilisateurBrut.profilCode as ProfilCode,
+      dateModification: utilisateurBrut.date_modification?.toISOString(),
+      auteurModification: auteurModification ? `${auteurModification.prenom} ${auteurModification.nom}` : 'Auteur Inconnu',
+      dateCreation: utilisateurBrut.date_creation?.toISOString() || null,
+      auteurCreation: auteurCreation ? `${auteurCreation.prenom} ${auteurCreation.nom}` : 'Auteur Inconnu',
+      fonction: utilisateurBrut.fonction,
+      saisieCommentaire: this._aDesDroitsdeSaisieCommentaire(habilitations, utilisateurBrut.profil),
+      saisieIndicateur: this._aDesDroitsdeSaisieIndicateur(habilitations, utilisateurBrut.profil),
+      gestionUtilisateur: this._aDesDroitsdeGestionUtilisateur(habilitations, utilisateurBrut.profil),
+      habilitations: habilitations,
+      dateDesactivation: utilisateurBrut.date_desactivation?.toISOString() ?? null,
+    };
+  }
+}

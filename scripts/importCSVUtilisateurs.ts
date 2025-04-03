@@ -2,20 +2,19 @@ import { loadEnvConfig } from '@next/env';
 import { createObjectCsvWriter } from 'csv-writer';
 import process from 'node:process';
 import assert from 'node:assert/strict';
-import logger from '@/server/infrastructure/Logger';
-import UtilisateurCSVParseur from '@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur';
-import ImporterDesUtilisateursUseCase from '@/server/gestion-utilisateur/usecases/ImporterDesUtilisateursUseCase';
+import { logger } from '@/server/infrastructure/Logger';
+import { UtilisateurCSVParseur } from '@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur';
+import { ImporterDesUtilisateursUseCase } from '@/server/gestion-utilisateur/usecases/ImporterDesUtilisateursUseCase';
 import { RecupererListeUtilisateursExistantsUseCase }
   from '@/server/gestion-utilisateur/usecases/RecupererListeUtilisateursExistantsUseCase';
 import { CsvRecord } from '@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur.interface';
-import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/utilisateur/UtilisateurSQLRepository';
-import UtilisateurIAMKeycloakRepository
-  from '@/server/infrastructure/accès_données/utilisateur/UtilisateurIAMKeycloakRepository';
-import { TerritoireSQLRepository } from '@/server/infrastructure/accès_données/territoire/TerritoireSQLRepository';
+import { UtilisateurIAMKeycloakRepository } from '@/server/infrastructure/accès_données/utilisateur/UtilisateurIAMKeycloakRepository';
+import { PrismaTerritoireRepository } from '@/server/chantiers/infrastructure/adapters/PrismaTerritoireRepository';
+import { PrismaPilote } from '@/server/db/PrismaPilote';
+import { PrismaUtilisateurRepository } from '@/server/gestion-utilisateur/infrastructure/adapters/PrismaUtilisateurRepository';
 
 const projectDir = process.cwd();
 loadEnvConfig(projectDir);  // ⚠️ À appeler avant nos imports, because Configuration.ts est aussi chargée côté front
-
 
 /**
  - Format CSV attendu:
@@ -95,14 +94,11 @@ async function main() {
   const importNouveauCompteUniquement = process.argv[3] === 'true';
   const outputName = process.argv[4];
   assert(filename, 'Nom de fichier CSV manquant');
+  const prismaPilote = new PrismaPilote();
 
-  const keycloakUrl = process.env.IMPORT_KEYCLOAK_URL as string;
-  const clientId = process.env.IMPORT_CLIENT_ID as string;
-  const clientSecret = process.env.IMPORT_CLIENT_SECRET as string;
-
-  const utilisateurIAMRepository = new UtilisateurIAMKeycloakRepository(keycloakUrl, clientId, clientSecret);
-  const utilisateurRepository = new UtilisateurSQLRepository();
-  const territoireRepository = new TerritoireSQLRepository();
+  const utilisateurIAMRepository = new UtilisateurIAMKeycloakRepository();
+  const utilisateurRepository = new PrismaUtilisateurRepository({ prisma: prismaPilote });
+  const territoireRepository = new PrismaTerritoireRepository({ prisma: prismaPilote });
 
   const contenuParsé = new UtilisateurCSVParseur(filename).parse();
   let utilisateursFormatCsv = contenuParsé.csvRecords;
@@ -119,7 +115,11 @@ async function main() {
     }
   }
 
-  await new ImporterDesUtilisateursUseCase(utilisateurRepository, utilisateurIAMRepository, territoireRepository).run(utilisateurs);
+  await new ImporterDesUtilisateursUseCase({
+    utilisateurRepository,
+    utilisateurIAMRepository,
+    territoireRepository,
+  }).run(utilisateurs);
 }
 
 const isMain = eval('require.main === module');

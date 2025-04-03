@@ -1,7 +1,7 @@
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
 import { parseAsInteger, parseAsString, useQueryState } from 'nuqs';
 import { FunctionComponent, useCallback } from 'react';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import PérimètreMinistériel from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisteriel.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Icône from '@/components/_commons/Icône/Icône';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';

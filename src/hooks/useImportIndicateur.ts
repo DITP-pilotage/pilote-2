@@ -4,8 +4,8 @@ import {
   territoiresComparésTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import Chantier from '@/server/chantiers/domain/Chantier.interface';
+import { DétailsIndicateurs } from '@/server/chantiers/domain/DétailsIndicateur';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 
 function récupérerDétailIndicateursPourUnChantierDunTerritoireSelectionné(chantierId: Chantier['id'], codeInsee: string, mailleAssociéeAuTerritoireSélectionné: string) {

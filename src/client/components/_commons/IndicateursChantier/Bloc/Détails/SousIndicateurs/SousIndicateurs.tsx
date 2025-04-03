@@ -1,7 +1,7 @@
 import { FunctionComponent } from 'react';
-import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { DétailsIndicateurs } from '@/server/chantiers/domain/DétailsIndicateur';
+import Indicateur from '@/server/chantiers/domain/Indicateur';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 import {
   CartographieIndicateurType,
 } from '@/client/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';

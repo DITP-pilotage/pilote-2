@@ -7,7 +7,7 @@ import {
   CartographieÉlémentsDeLégende,
 } from '@/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 import useCartographieValeurActuelle from './useCartographieValeurActuelle';
 import { CartographieDonnéesValeurActuelle } from './CartographieValeurActuelle.interface';
 

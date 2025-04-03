@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'react';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier from '@/server/chantiers/domain/Chantier.interface';
 import SélecteurMaille from './SélecteurMaille/SélecteurMaille';
 import SélecteurTerritoire from './SélecteurTerritoire/SélecteurTerritoire';
 

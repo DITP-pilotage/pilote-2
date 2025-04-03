@@ -1,7 +1,7 @@
-import { profil as PrismaProfil } from '@prisma/client';
-import { prisma } from '@/server/db/prisma';
+import { profil as PrismaProfil, PrismaClient } from '@prisma/client';
 import { ProfilRepository } from '@/server/gestion-utilisateur/domain/ports/ProfilRepository';
 import { Profil, ProfilCode } from '@/server/gestion-utilisateur/domain/Profil';
+import { PrismaPilote } from '@/server/db/PrismaPilote';
 
 const convertirEnProfil = (prismaProfil: PrismaProfil): Profil => {
   return {
@@ -29,9 +29,20 @@ const convertirEnProfil = (prismaProfil: PrismaProfil): Profil => {
     },
   };
 };
+
+interface Dependencies {
+  prisma: PrismaPilote;
+}
+
 export class PrismaProfilRepository implements ProfilRepository {
+  private prisma: PrismaClient;
+
+  constructor({ prisma }: Dependencies) {
+    this.prisma = prisma.getInstance();
+  }
+
   async recupererTous(): Promise<Profil[]> {
-    const listePrimaProfil = await prisma.profil.findMany();
+    const listePrimaProfil = await this.prisma.profil.findMany();
     return listePrimaProfil.map(convertirEnProfil);
   }
 }

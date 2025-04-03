@@ -18,7 +18,7 @@ import {
 import {
   CartographieDonnéesMétéo,
 } from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 
 interface CartesProps {
   afficheCarteAvancement: boolean,

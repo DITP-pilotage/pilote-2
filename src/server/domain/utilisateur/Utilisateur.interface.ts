@@ -1,5 +1,5 @@
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { Habilitations, HabilitationsÀCréerOuMettreÀJour } from './habilitation/Habilitation.interface';
+import { Habilitations, HabilitationsÀCréerOuMettreÀJour } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface';
 
 export const profilsCodes = [
   ProfilEnum.DITP_ADMIN,
@@ -36,7 +36,7 @@ export const profilsTerritoriaux = [
 export const profilsDépartementaux = [ProfilEnum.PREFET_DEPARTEMENT, ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT];
 export const profilsRégionaux = [ProfilEnum.PREFET_REGION, ProfilEnum.COORDINATEUR_REGION, ProfilEnum.SERVICES_DECONCENTRES_REGION];
 
-type Utilisateur = {
+export type Utilisateur = {
   id: string
   nom: string
   prénom: string
@@ -76,5 +76,3 @@ export type UtilisateurÀCréerOuMettreÀJourSansHabilitation =  {
   saisieCommentaire: boolean
   gestionUtilisateur: boolean
 };
-
-export default Utilisateur;

@@ -6,22 +6,15 @@ import assert from 'node:assert/strict';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import PageRapportDétaillé from '@/components/PageRapportDétaillé/PageRapportDétaillé';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { DétailsIndicateurs } from '@/server/chantiers/domain/DétailsIndicateur';
 import { PublicationsGroupéesParChantier } from '@/components/PageRapportDétaillé/PageRapportDétaillé.interface';
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase
-  from '@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
+  from '@/server/chantiers/usecases/page-accueil/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
 import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase
-  from '@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import DécisionStratégique from '@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface';
-import RécupérerChantiersAccessiblesEnLectureUseCase
-  from '@/server/chantiers/usecases/RécupérerChantiersAccessiblesEnLectureUseCaseRapportDetaille';
-import Ministère from '@/server/domain/ministère/Ministère.interface';
+  from '@/server/chantiers/usecases/page-accueil/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
-import Alerte from '@/server/domain/alerte/Alerte';
-import RécupérerStatistiquesAvancementChantiersUseCase
-  from '@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase';
+import {RécupérerStatistiquesAvancementChantiersUseCase}
+  from '@/server/chantiers/usecases/page-accueil/RécupérerStatistiquesAvancementChantiersUseCase';
 import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
@@ -29,7 +22,6 @@ import {
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { AgrégateurListeChantiersParTerritoire } from '@/client/utils/chantier/agrégateurListeChantiers/agrégateur';
 import { objectEntries } from '@/client/utils/objects/objects';
-import Axe from '@/server/domain/axe/Axe.interface';
 import {
   AgrégateurChantierRapportDetailleParTerritoire,
 } from '@/client/utils/chantier/agrégateurRapportDetailleNew/agrégateur';
@@ -42,7 +34,7 @@ import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import { Chantier } from '@/server/chantiers/domain/Chantier';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import {
   presenterEnRépartitionsMétéosChantiersContrat,
@@ -54,10 +46,17 @@ import {
   getAnneeDateDeBascule,
 } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule';
 import { configuration } from '@/config';
+import { getContainer } from '@/server/dependances';
+import { Ministere } from '@/server/chantiers/domain/Ministere';
+import { Axe } from '@/server/chantiers/domain/Axe';
+import { Habilitation } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
+import { Alerte } from '@/server/chantiers/domain/Alerte';
+import { DecisionStrategique } from '@/server/chantiers/domain/DecisionStrategique.interface';
+import { Indicateur } from '@/server/chantiers/domain/Indicateur';
 
 interface NextPageRapportDétailléProps {
   chantiers: ChantierRapportDetailleContrat[]
-  ministères: Ministère[]
+  ministères: Ministere[]
   axes: Axe[]
   indicateursGroupésParChantier: Record<string, Indicateur[]>
   détailsIndicateursGroupésParChantier: Record<string, DétailsIndicateurs>
@@ -126,8 +125,8 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   const [ministères, axes] = session.habilitations.lecture.chantiers.length === 0 ? [[], []] : (
     await Promise.all(
       [
-        dependencies.getMinistèreRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
-        dependencies.getAxeRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
+        getContainer('chantiers').resolve('ministereRepository').getListePourChantiers(session.habilitations.lecture.chantiers),
+        getContainer('chantiers').resolve('axeRepository').getListePourChantiers(session.habilitations.lecture.chantiers),
       ],
     )
   );
@@ -144,10 +143,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
 
   const mapAxes = new Map<string, Axe>(axes.map(axe => [axe.id, axe]));
 
-  const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
-    dependencies.getChantierRepository(),
-    dependencies.getTerritoireRepository(),
-  )
+  const chantiers = await getContainer('chantiers').resolve('recupererChantiersAccessiblesEnLectureUseCaseRapportDetaille')
     .run(session.habilitations, session.profil, territoireCode, mailleChantier || 'departementale', ministères, mapAxes, filtres, sorting, jalon);
 
   const repartitionMeteosChantiers = await new RecupererRepartitionsMeteoChantiersUseCase({
@@ -240,7 +236,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
   const synthèseDesRésultatsRepository = dependencies.getSynthèseDesRésultatsRepository();
   const synthèsesDesRésultatsGroupéesParChantier = await synthèseDesRésultatsRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds, mailleChantier, codeInseeSelectionne);
 
-  let décisionStratégiquesGroupéesParChantier: Record<string, DécisionStratégique | null> = Object.fromEntries(chantiersIds.map(id => [id, null]));
+  let décisionStratégiquesGroupéesParChantier: Record<string, DecisionStrategique | null> = Object.fromEntries(chantiersIds.map(id => [id, null]));
   if (habilitation.peutAccéderAuTerritoire('NAT-FR')) {
     const décisionStratégiqueRepository = dependencies.getDécisionStratégiqueRepository();
     décisionStratégiquesGroupéesParChantier = await décisionStratégiqueRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds);

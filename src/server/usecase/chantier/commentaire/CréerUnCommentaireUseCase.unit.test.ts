@@ -1,8 +1,8 @@
-import CommentaireRepository
-  from '@/server/domain/chantier/commentaire/CommentaireRepository.interface';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
-import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
-import CréerUnCommentaireUseCase from './CréerUnCommentaireUseCase';
+import { mock, MockProxy } from 'jest-mock-extended';
+import { CommentaireRepository } from '@/server/domain/chantier/commentaire/CommentaireRepository.interface';
+import { Utilisateur } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/PrismamailleParser';
+import { CréerUnCommentaireUseCase } from './CréerUnCommentaireUseCase';
 
 const RANDOM_UUID = '123';
 
@@ -11,6 +11,12 @@ jest.mock('node:crypto', () => ({
 }));
 
 describe('CréerUnCommentaireUseCase', () => {
+  let commentaireRepository: MockProxy<CommentaireRepository>;
+
+  beforeEach(() => {
+    commentaireRepository = mock<CommentaireRepository>();
+  });
+
   test('créé un commentaire', async () => {
     //GIVEN
     const contenu = 'test contenu';
@@ -22,8 +28,8 @@ describe('CréerUnCommentaireUseCase', () => {
     const type = 'risquesEtFreinsÀLever';
 
     jest.useFakeTimers().setSystemTime(date);
-    const stubCommentaireRepository = { créer: jest.fn() } as unknown as CommentaireRepository;
-    const créerUnCommentaire = new CréerUnCommentaireUseCase(stubCommentaireRepository);
+    
+    const créerUnCommentaire = new CréerUnCommentaireUseCase({ commentaireRepository });
 
     const territoireCode = `${CODES_MAILLES[maille]}-${codeInsee}`;
 
@@ -36,7 +42,7 @@ describe('CréerUnCommentaireUseCase', () => {
     await créerUnCommentaire.run(chantierId, territoireCode, contenu, auteur, type, habilitation);
 
     //THEN
-    expect(stubCommentaireRepository.créer).toHaveBeenNthCalledWith(1, chantierId, territoireCode, RANDOM_UUID, contenu, auteur, type, date);
+    expect(commentaireRepository.créer).toHaveBeenNthCalledWith(1, chantierId, territoireCode, RANDOM_UUID, contenu, auteur, type, date);
   });
 
   test('retourne le commentaire créé', async () => {
@@ -50,12 +56,15 @@ describe('CréerUnCommentaireUseCase', () => {
     const type = 'risquesEtFreinsÀLever';
 
     jest.useFakeTimers().setSystemTime(date);
-    const stubCommentaireRepository = { créer: jest.fn().mockReturnValue({
+
+    commentaireRepository.créer.mockResolvedValue({
+      id: RANDOM_UUID,
       contenu,
       auteur,
-      date,
-    }) } as unknown as CommentaireRepository;
-    const créerUnCommentaire = new CréerUnCommentaireUseCase(stubCommentaireRepository);
+      date: date.toISOString(),
+      type,
+    });
+    const créerUnCommentaire = new CréerUnCommentaireUseCase({ commentaireRepository });
 
     const territoireCode = `${CODES_MAILLES[maille]}-${codeInsee}`;
 

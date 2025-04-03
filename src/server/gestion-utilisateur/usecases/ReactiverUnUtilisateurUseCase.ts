@@ -1,6 +1,6 @@
 import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository';
 import { UtilisateurIAMRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository';
-import { Utilisateur } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
+import { Utilisateur } from '@/server/gestion-utilisateur/domain/Utilisateur';
 import { TokenAPIInformationRepository } from '@/server/gestion-utilisateur/domain/ports/TokenAPIInformationRepository';
 import { Profil } from '@/server/domain/profil/Profil.interface';
 import { TerritoireRepository } from '@/server/gestion-utilisateur/domain/ports/TerritoireRepository';
@@ -9,7 +9,7 @@ import {
 } from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository';
 import { ChantierRepository } from '@/server/gestion-utilisateur/domain/ports/ChantierRepository';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { Habilitation } from '@/server/domain/utilisateur/habilitation/Habilitation';
 
 type Dependencies = {
   utilisateurRepository: UtilisateurRepository,
@@ -20,7 +20,7 @@ type Dependencies = {
   tokenAPIInformationRepository: TokenAPIInformationRepository,
 };
 
-export default class ReactiverUnUtilisateurUseCase {
+export class ReactiverUnUtilisateurUseCase {
   private utilisateurRepository: UtilisateurRepository;
 
   private chantierRepository: ChantierRepository;

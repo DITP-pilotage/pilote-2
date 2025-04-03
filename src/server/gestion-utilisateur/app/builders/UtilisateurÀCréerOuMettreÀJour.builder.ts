@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker/locale/fr';
-import { profilsCodes, UtilisateurÀCréerOuMettreÀJour } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
+import { profilsCodes, UtilisateurÀCréerOuMettreÀJour } from '@/server/gestion-utilisateur/domain/Utilisateur';
 
 export default class UtilisateurÀCréerOuMettreÀJourBuilder {
   private readonly _nom: UtilisateurÀCréerOuMettreÀJour['nom'];

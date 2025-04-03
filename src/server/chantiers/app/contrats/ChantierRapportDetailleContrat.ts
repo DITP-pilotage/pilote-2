@@ -1,15 +1,15 @@
-import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { Maille, MailleInterne } from '@/server/chantiers/domain/Maille';
 import {
   TypeStatut,
-} from '@/server/domain/chantier/Chantier.interface';
+} from '@/server/chantiers/domain/Chantier.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
-import { Météo } from '@/server/domain/météo/Météo.interface';
+import { Météo } from '@/server/chantiers/domain/Meteo';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { EntreePrismaChantier, PrismaChantier } from '@/server/infrastructure/accès_données/chantier/PrismaChantier';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { verifyValeurIsNotNullOrUndefined } from '@/server/utils/VerifyValeurIsNotNullOrUndefined';
-import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
+import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/PrismamailleParser';
 
 interface TerritoireAvancementRapportDetailleContrat {
   global: number | null

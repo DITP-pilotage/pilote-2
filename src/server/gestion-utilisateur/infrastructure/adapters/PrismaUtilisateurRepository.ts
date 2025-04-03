@@ -9,7 +9,7 @@ import {
   ScopeChantiers,
   ScopeUtilisateurs,
 } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { Habilitation } from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository';
@@ -24,7 +24,7 @@ import {
   ProfilCode,
   profilsDépartementaux, profilsRégionaux,
   Utilisateur,
-} from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
+} from '@/server/gestion-utilisateur/domain/Utilisateur';
 
 interface Dependencies {
   prisma: PrismaPilote
@@ -184,6 +184,72 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         auteur_id_modification: auteurId,
       },
     });
+  }
+
+  async supprimer(email: string): Promise<void> {
+    await this.prisma.utilisateur.delete({
+      where: { email: email.toLowerCase() }, 
+      include: { 
+        habilitation: true, 
+      },
+    });
+  }
+
+  async récupérer(email: string): Promise<Utilisateur | null> {
+    await this._récupérerTerritoires();
+    await this._récupérerChantiers();
+    await this._récupérerPérimètresMinistériels();
+
+    const row = await this.prisma.utilisateur.findUnique({
+      where: { email: email.toLowerCase() }, 
+      include: { 
+        profil: true, 
+        habilitation: true, 
+        auteur_creation: true,
+        auteur_modification: true,
+      },
+    });
+
+    if (!row) {
+      return null;
+    }
+
+    return this.convertirEnUtilisateur(row);
+  }
+
+  async getById(id: string): Promise<Utilisateur | null> {
+    await this._récupérerTerritoires();
+    await this._récupérerChantiers();
+    await this._récupérerPérimètresMinistériels();
+
+    const row = await this.prisma.utilisateur.findUnique({
+      where: { id },
+      include: {
+        profil: true,
+        habilitation: true,
+        auteur_creation: true,
+        auteur_modification: true,
+      },
+    });
+
+    if (!row) {
+      return null;
+    }
+
+    return this._mapperVersDomaine(row);
+  }
+
+  async récupérerExistants(utilisateurs: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[]): Promise<Utilisateur['email'][]> {
+
+    const utilisateursExistants = await this.prisma.utilisateur.findMany({
+      where: {
+        email: {
+          in: utilisateurs.map(u => u.email),
+        },
+      },
+    });
+
+    return utilisateursExistants.map(u => u.email);
   }
   
   async recupererTous({

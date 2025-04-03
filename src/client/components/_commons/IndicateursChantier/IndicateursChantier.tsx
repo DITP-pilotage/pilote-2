@@ -7,9 +7,9 @@ import { CategoriesIndicateur, listeRubriquesIndicateursChantier } from '@/clien
 import {
   DétailsIndicateurs,
   DétailsIndicateurTerritoire,
-} from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+} from '@/server/chantiers/domain/DétailsIndicateur';
+import Indicateur from '@/server/chantiers/domain/Indicateur';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 import { CartographieIndicateurType } from './Bloc/Détails/IndicateurDétails';
 import TitreRubrique from './Bloc/Détails/TitreRubrique/TitreRubrique';
 

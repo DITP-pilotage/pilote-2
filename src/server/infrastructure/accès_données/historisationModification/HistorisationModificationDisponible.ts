@@ -1,8 +1,7 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
+import { Chantier } from '@/server/chantiers/domain/Chantier.interface';
 import {
   convertirEnModel as convertirEnUtilisateurModel,
-} from '@/server/infrastructure/accès_données/utilisateur/UtilisateurSQLRepository';
+} from '@/server/infrastructure/accès_données/utilisateur/PrismaUtilisateurRepository';
 import {
   convertirEnHistorisationMetadataParametrageIndicateurModel,
 } from '@/server/domain/historisationModification/ClassConversion/HistorisationMetadataParametrageIndicateur';
@@ -13,6 +12,7 @@ import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/d
 import {
   convertirEnHistorisationMetadataIndicateurComplementaireModel,
 } from '@/server/domain/historisationModification/ClassConversion/HistorisationMetadataIndicateurComplementaire';
+import { Utilisateur } from '@/server/gestion-utilisateur/domain/Utilisateur';
 
 export type HistorisationModificationDisponible = {
   'metadata_indicateurs': MetadataParametrageIndicateur
@@ -21,6 +21,7 @@ export type HistorisationModificationDisponible = {
   'chantier': Chantier
   'utilisateur': Utilisateur
 };
+
 export const tableConversionModification: { [key in keyof HistorisationModificationDisponible]: (obj: any) => any } = {
   metadata_indicateurs: convertirEnHistorisationMetadataIndicateurModel,
   metadata_parametrages_indicateurs: convertirEnHistorisationMetadataParametrageIndicateurModel,
@@ -28,6 +29,7 @@ export const tableConversionModification: { [key in keyof HistorisationModificat
   chantier: (chantier: Chantier) => chantier,
   utilisateur: convertirEnUtilisateurModel,
 };
+
 export const tableRecuperationId: { [key in keyof HistorisationModificationDisponible]: (obj: any) => string } = {
   metadata_indicateurs: (obj: HistorisationModificationDisponible['metadata_indicateurs']) => obj.indicId,
   metadata_parametrages_indicateurs: (obj: HistorisationModificationDisponible['metadata_parametrages_indicateurs']) => obj.indicId,

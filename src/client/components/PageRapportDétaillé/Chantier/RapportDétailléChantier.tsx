@@ -23,7 +23,7 @@ import Cartes from '@/client/components/PageRapportDétaillé/Cartes/Cartes';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import AvancementChantier from '@/components/PageChantier/AvancementChantier/AvancementChantier';
 import api from '@/server/infrastructure/api/trpc/api';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur from '@/server/chantiers/domain/Indicateur';
 import { DonneesComparaisonDuTauxDAvancementType } from '@/server/domain/territoire/Territoire.interface';
 import RapportDétailléChantierStyled from './RapportDétailléChantier.styled';
 

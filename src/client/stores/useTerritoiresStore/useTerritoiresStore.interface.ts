@@ -1,4 +1,4 @@
-import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { Maille, MailleInterne } from '@/server/chantiers/domain/Maille';
 import { CodeInsee, DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 
 export default interface TerritoiresStore {

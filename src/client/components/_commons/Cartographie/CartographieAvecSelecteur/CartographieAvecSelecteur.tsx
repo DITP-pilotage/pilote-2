@@ -1,7 +1,7 @@
 import { FunctionComponent } from 'react';
 import SélecteurMaille from '@/client/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
-import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { Maille, MailleInterne } from '@/server/chantiers/domain/Maille';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import Sélecteur from '@/client/components/_commons/Sélecteur/Sélecteur';
 import { SélecteurOption } from '@/client/components/_commons/Sélecteur/Sélecteur.interface';

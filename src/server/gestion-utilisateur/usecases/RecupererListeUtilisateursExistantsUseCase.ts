@@ -1,6 +1,7 @@
-import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
-import Utilisateur, { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@/server/domain/utilisateur/Utilisateur.interface';
-import { HabilitationsÀCréerOuMettreÀJourCalculées } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { HabilitationsÀCréerOuMettreÀJourCalculées } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface';
+import { Utilisateur } from '@/server/gestion-utilisateur/domain/Utilisateur';
+import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository';
 
 export class RecupererListeUtilisateursExistantsUseCase {
   constructor(

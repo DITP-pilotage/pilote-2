@@ -1,4 +1,4 @@
-import { ProfilCode } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
+import { ProfilCode } from '@/server/gestion-utilisateur/domain/Utilisateur';
 import { Habilitations } from './habilitation/Habilitation.interface';
 
 export interface UtilisateurExportCSV {

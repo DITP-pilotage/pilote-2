@@ -1,0 +1,35 @@
+import { ListeTerritoiresDonnéeAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
+import { ChantierTendance, ChantierVueDEnsemble } from '@/server/chantiers/domain/Chantier.interface';
+
+export const Alerte = {
+  estEnAlerteÉcart(écart: number | null) {
+    if (écart === null) {
+      return false;
+    }
+    return écart < -10;
+  },
+
+  estEnAlerteBaisse: (tendance: ChantierTendance | null) => {
+    if (!tendance)
+      return false;
+
+    return tendance === 'BAISSE';
+  },
+
+  estEnAlerteTauxAvancementNonCalculé(tauxAvancement: number | null, cibleAttendu: boolean) {
+    return cibleAttendu && tauxAvancement === null;
+  },
+
+  estEnAlerteAbscenceTauxAvancementDepartemental(departementsDonnées: ListeTerritoiresDonnéeAccueilContrat, cibleAttendu: boolean) {
+    const donnéesApplicables = Object.values(departementsDonnées).filter(donnée => donnée.estApplicable);
+    return cibleAttendu && donnéesApplicables.length > 0 && donnéesApplicables.every(donnée => donnée.avancement.global === null);
+  },
+
+  estEnAlerteMétéoNonRenseignée(météo: ChantierVueDEnsemble['météo']) {
+    return météo === 'NON_RENSEIGNEE';
+  },
+
+  estEnAlertePossedePropositionsValeurActuelle(aUnePropositionsValeurActuelle: boolean ) {
+    return aUnePropositionsValeurActuelle;
+  },
+};

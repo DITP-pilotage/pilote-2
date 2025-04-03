@@ -23,9 +23,9 @@ import IndicateursChantier from '@/components/_commons/IndicateursChantier/Indic
 import { CategoriesIndicateur, listeRubriquesChantier } from '@/client/utils/rubriques';
 import Alerte from '@/client/components/_commons/Alerte/Alerte';
 import ResponsablesPageChantier from '@/components/PageChantier/ResponsablesChantier/ResponsablesChantier';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import Indicateur from '@/server/chantiers/domain/Indicateur';
+import Chantier from '@/server/chantiers/domain/Chantier.interface';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { IndicateurPondération } from '@/components/PageChantier/PageChantier.interface';
 import { SynthèseDesRésultatsContrat } from '@/server/chantiers/app/contrats/SynthèseDesRésultatsContrat';
@@ -35,7 +35,7 @@ import { DecisionStrategiqueChantierContrat } from '@/server/chantiers/app/contr
 import {
   DétailsIndicateurs,
   DétailsIndicateurTerritoire,
-} from '@/server/domain/indicateur/DétailsIndicateur.interface';
+} from '@/server/chantiers/domain/DétailsIndicateur';
 import { AvancementChantierContrat } from '@/components/PageChantier/AvancementChantier';
 import { CoordinateurTerritorial, DonneesComparaisonDuTauxDAvancementType, ResponsableLocal } from '@/server/domain/territoire/Territoire.interface';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';

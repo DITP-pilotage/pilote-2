@@ -2,7 +2,7 @@ import { FunctionComponent } from 'react';
 import { parseAsString, useQueryState } from 'nuqs';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import CartesStyled from '@/components/PageChantier/Cartes/Cartes.styled';
-import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { Maille, MailleInterne } from '@/server/chantiers/domain/Maille';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import CartographieAvecSelecteur from '@/components/_commons/Cartographie/CartographieAvecSelecteur/CartographieAvecSelecteur';
 import { TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';

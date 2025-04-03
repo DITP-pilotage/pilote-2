@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'react';
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import { Maille } from '@/server/chantiers/domain/Maille';
 
 interface IndicateurPondérationProps {
   indicateurPondération: number | null;

@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
 import Link from 'next/dist/client/link';
-import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur, { TypeIndicateur } from '@/server/chantiers/domain/Indicateur';
 import IcôneEmail from '@/components/_commons/IcôneEmail/IcôneEmail';
 import api from '@/server/infrastructure/api/trpc/api';
 import { libellesTypologieIndicateur } from '@/client/utils/indicateur/indicateur';

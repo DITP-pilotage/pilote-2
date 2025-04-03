@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'react';
-import { libellésMétéos, MétéoSaisissable } from '@/server/domain/météo/Météo.interface';
+import { libellésMétéos, MétéoSaisissable } from '@/server/chantiers/domain/Meteo';
 import RépartitionMétéoÉlément from './RépartitionMétéoÉlément/RépartitionMétéoÉlément';
 import RépartitionMétéoStyled from './RépartitionMétéo.styled';
 

@@ -1,18 +1,18 @@
-import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { ChantierRepository } from '@/server/chantiers/domain/ports/ChantierRepository';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { FiltreQueryParams, SortingParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
-import Ministère from '@/server/domain/ministère/Ministère.interface';
-import Axe from '@/server/domain/axe/Axe.interface';
+import { Axe } from '@/server/chantiers/domain/Axe';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { PrismaChantier } from '@/server/infrastructure/accès_données/chantier/PrismaChantier';
-import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
+import { TerritoireRepository } from '@/server/chantiers/domain/ports/TerritoireRepository';
 import {
   ChantierRapportDetailleContrat,
   presenterEnChantierRapportDetaille,
 } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import { MailleChantierContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
+import { PrismaChantier } from '@/server/chantiers/infrastructure/adapters/PrismaChantier';
+import { Habilitation } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
+import { Habilitations } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface';
+import { Ministere } from '@/server/chantiers/domain/Ministere';
 
 const masquerPourDROM = (sessionProfil: string, mailleChantier: MailleChantierContrat) => {
   return sessionProfil === ProfilEnum.DROM && mailleChantier === 'nationale';
@@ -130,13 +130,25 @@ const appliquerTri = (sorting: SortingParams, mailleChantier: MailleChantierCont
   return 0;
 };
 
-export default class RécupérerChantiersAccessiblesEnLectureUseCase {
-  constructor(
-    private readonly chantierRepository: ChantierRepository,
-    private readonly territoireRepository: TerritoireRepository,
-  ) {}
+interface Dependencies {
+  chantierRepository: ChantierRepository;
+  territoireRepository: TerritoireRepository;
+}
 
-  async run(habilitations: Habilitations, profil: ProfilCode, territoireCode: string, mailleChantier: MailleChantierContrat, ministères: Ministère[], mapAxe: Map<string, Axe>, filtres: FiltreQueryParams, sorting: SortingParams, jalon: number): Promise<ChantierRapportDetailleContrat[]> {
+export class RécupérerChantiersAccessiblesEnLectureUseCase {
+  private readonly chantierRepository: ChantierRepository;
+
+  private readonly territoireRepository: TerritoireRepository;
+
+  constructor({
+    chantierRepository,
+    territoireRepository,
+  }: Dependencies) {
+    this.chantierRepository = chantierRepository;
+    this.territoireRepository = territoireRepository;
+  }
+
+  async run(habilitations: Habilitations, profil: ProfilCode, territoireCode: string, mailleChantier: MailleChantierContrat, ministères: Ministere[], mapAxe: Map<string, Axe>, filtres: FiltreQueryParams, sorting: SortingParams, jalon: number): Promise<ChantierRapportDetailleContrat[]> {
     const habilitation = new Habilitation(habilitations);
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();

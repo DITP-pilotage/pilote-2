@@ -17,7 +17,7 @@ import {
 } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
 import { formaterDate, horodatage } from '@/client/utils/date/date';
 import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier from '@/server/chantiers/domain/Chantier.interface';
 
 const reactTableColonnesHelper = createColumnHelper<MetadataParametrageIndicateurInformationContrat>();
 const colonnes = [

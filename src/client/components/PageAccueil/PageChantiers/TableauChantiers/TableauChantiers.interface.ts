@@ -1,4 +1,4 @@
-import { ChantierVueDEnsemble } from '@/server/domain/chantier/Chantier.interface';
+import { ChantierVueDEnsemble } from '@/server/chantiers/domain/Chantier.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 
 export default interface TableauChantiersProps {

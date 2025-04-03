@@ -1,8 +1,7 @@
-import { Territoire } from '@/server/domain/territoire/Territoire.interface';
-import { HabilitationsÀCréerOuMettreÀJourCalculées } from './habilitation/Habilitation.interface';
-import Utilisateur, { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from './Utilisateur.interface';
+import { HabilitationsÀCréerOuMettreÀJourCalculées } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface';
+import { Utilisateur, UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@/server/gestion-utilisateur/domain/Utilisateur';
 
-export default interface UtilisateurRepository {
+export interface UtilisateurRepository {
   récupérer(email: string): Promise<Utilisateur | null>
   getById(id: string): Promise<Utilisateur | null>
   supprimer(email: string): Promise<void>

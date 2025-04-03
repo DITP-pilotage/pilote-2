@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { météosSaisissables } from '@/server/domain/météo/Météo.interface';
+import { météosSaisissables } from '@/server/chantiers/domain/Meteo';
 
 export const LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS = 1000;
 export const LIMITE_CARACTÈRES_AFFICHAGE_SYNTHÈSE_DES_RÉSULTATS = 250;

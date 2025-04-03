@@ -1,5 +1,5 @@
 import { SortingState } from '@tanstack/react-table';
-import { Météo, météos } from '@/server/domain/météo/Météo.interface';
+import { Météo, météos } from '@/server/chantiers/domain/Meteo';
 
 const ORDRE_DES_MÉTÉOS: typeof météos = ['NON_RENSEIGNEE', 'ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL', 'NON_NECESSAIRE'];
 

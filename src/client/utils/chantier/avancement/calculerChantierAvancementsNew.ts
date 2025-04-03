@@ -1,16 +1,16 @@
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
-export default function calculerChantierAvancements(
+export const calculerChantierAvancements = (
   chantier: ChantierRapportDetailleContrat,
   mailleSélectionnée: MailleInterne,
   territoireCode: string,
   territoireCodeParent: string | null,
   avancementsAgrégés: AvancementsStatistiques,
-) {
+) => {
 
   const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire(chantier).agréger();
 

@@ -6,7 +6,7 @@ import AvancementsTerritoire from '@/components/_commons/AvancementsTerritoire/A
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
-import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { Maille, MailleInterne } from '@/server/chantiers/domain/Maille';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import SélecteurMaille
   from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';

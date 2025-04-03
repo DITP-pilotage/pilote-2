@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { create } from 'zustand';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import TerritoiresStore from './useTerritoiresStore.interface';
 

@@ -26,6 +26,5 @@ class AppLogger {
   }
 }
 
-const logger = new AppLogger();
+export const logger = new AppLogger();
 
-export default logger;

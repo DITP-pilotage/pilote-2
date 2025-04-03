@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker/locale/fr';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
-import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
+import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/PrismamailleParser';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 
 const infosTerritoiresSansMailleNationale: { code: Territoire['code'], codeParent: Territoire['codeParent'], nom: Territoire['nom'] }[] = [
   { code: 'DEPT-75', codeParent: 'REG-11', nom: 'Paris' },  { code: 'DEPT-07', codeParent: 'REG-84', nom: 'Ardèche' },  { code: 'DEPT-06', codeParent: 'REG-93', nom: 'Alpes-Maritimes' },
@@ -48,7 +48,7 @@ const infosTerritoiresSansMailleNationale: { code: Territoire['code'], codeParen
 
 export const fakeTerritoires = [...infosTerritoiresSansMailleNationale, { code: 'NAT-FR', codeParent: null, nom: 'France' }];
 
-export default class TerritoireBuilder {
+export class TerritoireBuilder {
 
   private _territoire: typeof infosTerritoiresSansMailleNationale[number];
 

@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
 import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
-import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
+import { libellésMétéos, Météo } from '@/server/chantiers/domain/Meteo';
 import {
   TableauChantiersMétéoTaille,
 } from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo.interface';

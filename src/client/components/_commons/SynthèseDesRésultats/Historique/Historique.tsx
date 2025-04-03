@@ -4,7 +4,7 @@ import MétéoBadge from '@/components/_commons/Meteo/Badge/MétéoBadge';
 import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
 import SynthèseDesRésultatsAffichage from '@/components/_commons/SynthèseDesRésultats/Affichage/Affichage';
 import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier from '@/server/chantiers/domain/Chantier.interface';
 import SynthèseDesRésultatsHistoriqueStyled from './Historique.styled';
 import useHistoriqueDeLaSynthèseDesRésultats from './useHistoriqueDeLaSynthèseDesRésultats';
 

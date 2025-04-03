@@ -8,7 +8,7 @@ import {
 } from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
 import { trierParOrdreAlphabétique } from '@/client/utils/arrays';
 import api from '@/server/infrastructure/api/trpc/api';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 
 interface MultiSelectTerritoireProps {
   changementValeursSélectionnéesCallback: (territoiresCodesSélectionnés: string[]) => void

@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'react';
-import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
+import { libellésMétéos, Météo } from '@/server/chantiers/domain/Meteo';
 import Badge from '@/components/_commons/Badge/Badge';
 import { BadgeType } from '@/components/_commons/Badge/Badge.interface';
 

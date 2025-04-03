@@ -1,7 +1,7 @@
 export const typesObjectif = ['notreAmbition', 'déjàFait', 'àFaire'] as const;
 export type TypeObjectif = typeof typesObjectif[number];
 
-type Objectif = {
+export type Objectif = {
   id: string
   contenu: string
   date: string
@@ -10,5 +10,3 @@ type Objectif = {
 } | null;
 
 export type Objectifs = Record<TypeObjectif, Objectif>;
-
-export default Objectif;

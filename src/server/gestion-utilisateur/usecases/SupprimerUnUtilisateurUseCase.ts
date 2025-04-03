@@ -1,20 +1,30 @@
-import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
+import { UtilisateurRepository } from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import { Profil } from '@/server/domain/profil/Profil.interface';
+import { Habilitation } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
+import { Habilitations } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface';
+import { Profil } from '@/server/gestion-utilisateur/domain/Profil';
+import { Utilisateur } from '@/server/gestion-utilisateur/domain/Utilisateur';
 
-export default class SupprimerUnUtilisateurUseCase {
-  constructor(
-    private readonly utilisateurRepository: UtilisateurRepository,
-    private readonly utilisateurIAMRepository: UtilisateurIAMRepository,
-  ) {}
+type Dependencies = {
+  utilisateurRepository: UtilisateurRepository;
+  utilisateurIAMRepository: UtilisateurIAMRepository;
+};
+
+export class SupprimerUnUtilisateurUseCase {
+  private readonly utilisateurRepository: UtilisateurRepository;
+
+  private readonly utilisateurIAMRepository: UtilisateurIAMRepository;
+
+  constructor({ utilisateurRepository, utilisateurIAMRepository }: Dependencies) {
+    this.utilisateurRepository = utilisateurRepository;
+    this.utilisateurIAMRepository = utilisateurIAMRepository;
+  }
 
   async run(email: Utilisateur['email'], habilitations: Habilitations, profil: Profil | null): Promise<void> {
     const utilisateurASupprimer = await this.utilisateurRepository.récupérer(email);
-    if (!utilisateurASupprimer) 
+    if (!utilisateurASupprimer) {
       throw new Error("Le compte à supprimer n'existe pas.");
+    }
     
     const habilitationsUtilisateurASupprimer = utilisateurASupprimer.habilitations;
     const habilitation = new Habilitation(habilitations);

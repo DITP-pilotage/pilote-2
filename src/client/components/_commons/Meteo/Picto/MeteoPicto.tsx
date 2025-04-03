@@ -3,7 +3,7 @@ import pictoCouvert from '/public/img/météo/couvert.svg';
 import pictoNuage from '/public/img/météo/nuage.svg';
 import pictoOrage from '/public/img/météo/orage.svg';
 import Image from 'next/image';
-import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
+import { libellésMétéos, Météo } from '@/server/chantiers/domain/Meteo';
 import { FunctionComponent } from 'react';
 
 interface MeteoPictoProps {

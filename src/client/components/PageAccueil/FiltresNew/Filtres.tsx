@@ -2,7 +2,7 @@ import { FunctionComponent } from 'react';
 import FiltresSélectionMultiple
   from '@/components/PageAccueil/FiltresNew/FiltresSélectionMultiple/FiltresSélectionMultiple';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
-import Axe from '@/server/domain/axe/Axe.interface';
+import Axe from '@/server/chantiers/domain/Axe';
 import FiltresGroupe from './FiltresGroupe/FiltresGroupe';
 import FiltresMinistères from './FiltresMinistères/FiltresMinistères';
 import FiltreTypologie from './FiltreTypologie/FiltreTypologie';

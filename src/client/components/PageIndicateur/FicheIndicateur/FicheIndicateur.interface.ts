@@ -1,6 +1,6 @@
 import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
 import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
-import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
+import { ChantierSynthétisé } from '@/server/chantiers/domain/Chantier.interface';
 import {
   InformationDerniereModificationMetadataIndicateurContrat,
 } from '@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat';

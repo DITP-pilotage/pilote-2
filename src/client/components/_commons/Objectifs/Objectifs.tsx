@@ -2,8 +2,8 @@ import { FunctionComponent } from 'react';
 import { consignesDÉcritureObjectif, libellésTypesObjectif, TypeObjectif } from '@/client/constants/libellésObjectif';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Publication from '@/components/_commons/Publication/Publication';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import Chantier from '@/server/chantiers/domain/Chantier.interface';
+import { Maille } from '@/server/chantiers/domain/Maille';
 import Objectif, { typesObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
 
 interface ObjectifsProps {

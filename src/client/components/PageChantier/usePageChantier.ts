@@ -4,7 +4,7 @@ import { estAutoriséAImporterDesIndicateurs } from '@/client/utils/indicateur/i
 import { estAutoriséAConsulterLaFicheConducteur } from '@/client/utils/fiche-conducteur/fiche-conducteur';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { territoiresTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier from '@/server/chantiers/domain/Chantier.interface';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import { PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS } from '@/client/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj';
 

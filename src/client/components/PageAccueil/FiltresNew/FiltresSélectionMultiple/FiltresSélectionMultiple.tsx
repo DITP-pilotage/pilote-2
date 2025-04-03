@@ -1,7 +1,7 @@
 import { parseAsInteger, parseAsString, useQueryState } from 'nuqs';
 import { FunctionComponent } from 'react';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
-import Axe from '@/server/domain/axe/Axe.interface';
+import Axe from '@/server/chantiers/domain/Axe';
 import FiltresSélectionMultipleStyled from './FiltresSélectionMultiple.styled';
 
 interface FiltresSélectionMultipleProps {

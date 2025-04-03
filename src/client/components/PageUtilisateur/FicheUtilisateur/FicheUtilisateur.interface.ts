@@ -1,5 +1,5 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import Chantier from '@/server/chantiers/domain/Chantier.interface';
+import PérimètreMinistériel from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisteriel.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 

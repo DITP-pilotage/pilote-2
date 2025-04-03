@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
 import PictoTendanceStyled from '@/components/_commons/PictoTendance/PictoTendance.styled';
-import { ChantierTendance } from '@/server/domain/chantier/Chantier.interface';
+import { ChantierTendance } from '@/server/chantiers/domain/Chantier.interface';
 
 type Tendance = ChantierTendance;
 

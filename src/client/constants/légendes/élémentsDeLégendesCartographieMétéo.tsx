@@ -2,7 +2,7 @@ import {
   CartographieÉlémentsDeLégende,
 } from '@/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
-import { libellésMétéos } from '@/server/domain/météo/Météo.interface';
+import { libellésMétéos } from '@/server/chantiers/domain/Meteo';
 
 const REMPLISSAGE_PAR_DÉFAUT = '#bababa';
 

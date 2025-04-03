@@ -1,5 +1,5 @@
 import { SortingState } from '@tanstack/react-table';
-import { ChantierTendance } from '@/server/domain/chantier/Chantier.interface';
+import { ChantierTendance } from '@/server/chantiers/domain/Chantier.interface';
 import { BadgeType } from '@/components/_commons/Badge/Badge.interface';
 
 const ORDRE_DES_TENDANCE: ChantierTendance[] = ['BAISSE', 'HAUSSE', 'STAGNATION'];

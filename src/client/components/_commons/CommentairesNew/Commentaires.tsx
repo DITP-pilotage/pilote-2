@@ -6,13 +6,13 @@ import {
   libellésTypesCommentaire,
   TypeCommentaire,
 } from '@/client/constants/libellésCommentaire';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier from '@/server/chantiers/domain/Chantier.interface';
 import {
   Commentaire,
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
 } from '@/server/domain/chantier/commentaire/Commentaire.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import { Maille } from '@/server/chantiers/domain/Maille';
 
 interface CommentairesProps {
   commentaires: Commentaire[] | null

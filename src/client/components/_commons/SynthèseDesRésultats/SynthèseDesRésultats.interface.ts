@@ -1,5 +1,5 @@
 import SynthèseDesRésultats from '@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import { Maille } from '@/server/chantiers/domain/Maille';
 
 export interface SynthèseDesRésultatsProps {
   synthèseDesRésultatsInitiale: SynthèseDesRésultats

@@ -1,5 +1,5 @@
 import { mock, MockProxy } from 'jest-mock-extended';
-import TerritoireBuilder from '@/server/domain/territoire/Territoire.builder';
+import { TerritoireBuilder } from '@/server/domain/territoire/Territoire.builder';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import {
   RecupererTerritoiresAvecNombreUtilisateursUseCase,

@@ -12,7 +12,7 @@ import {
   MapInformationMetadataIndicateurContrat,
   presenterEnMapInformationMetadataIndicateurContrat,
 } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
-import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
+import { ChantierSynthétisé } from '@/server/chantiers/domain/Chantier.interface';
 import { getContainer } from '@/server/dependances';
 import {
   InformationDerniereModificationMetadataIndicateurContrat,

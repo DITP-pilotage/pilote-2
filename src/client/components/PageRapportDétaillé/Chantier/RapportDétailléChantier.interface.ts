@@ -1,7 +1,7 @@
-import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import { DétailsIndicateurs } from '@/server/chantiers/domain/DétailsIndicateur';
+import Indicateur from '@/server/chantiers/domain/Indicateur';
 import SynthèseDesRésultats from '@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface';
-import DécisionStratégique from '@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface';
+import DécisionStratégique from '@/server/chantiers/domain/DecisionStrategique.interface';
 import { Commentaire } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import Objectif from '@/server/domain/chantier/objectif/Objectif.interface';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
@@ -13,7 +13,7 @@ import {
 import {
   CartographieDonnéesMétéo,
 } from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 
 export default interface RapportDétailléChantierProps {
   territoireSélectionné: DétailTerritoire,

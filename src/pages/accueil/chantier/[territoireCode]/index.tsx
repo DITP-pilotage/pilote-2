@@ -12,15 +12,10 @@ import SélecteursMaillesEtTerritoires
 import Titre from '@/components/_commons/Titre/Titre';
 import Filtres from '@/components/PageAccueil/FiltresNew/Filtres';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
-import RécupérerChantiersAccessiblesEnLectureUseCase
-  from '@/server/chantiers/usecases/RécupérerChantiersAccessiblesEnLectureUseCase';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
-import Ministère from '@/server/domain/ministère/Ministère.interface';
-import Axe from '@/server/domain/axe/Axe.interface';
-import Alerte from '@/server/domain/alerte/Alerte';
-import RécupérerStatistiquesAvancementChantiersUseCase
-  from '@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase';
+import { RécupérerStatistiquesAvancementChantiersUseCase }
+  from '@/server/chantiers/usecases/page-accueil/RécupérerStatistiquesAvancementChantiersUseCase';
 import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
@@ -34,7 +29,7 @@ import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLarge
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import { Chantier } from '@/server/chantiers/domain/Chantier';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 import {
   RecupererRepartitionsMeteoChantiersUseCase,
 } from '@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase';
@@ -49,6 +44,9 @@ import { configuration } from '@/config';
 import { ModaleVideoAccueil } from '@/components/PageAccueil/PageChantiers/ModaleVideoAccueil/ModaleVideoAccueil';
 import { getContainer } from '@/server/dependances';
 import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
+import { Ministere } from '@/server/chantiers/domain/Ministere';
+import { Axe } from '@/server/chantiers/domain/Axe';
+import { Alerte } from '@/server/chantiers/domain/Alerte';
 import IndexStyled from './index.styled';
 
 interface ChantierAccueil {
@@ -56,7 +54,7 @@ interface ChantierAccueil {
   chantiersIdsExport: string[]
   nombreTotalChantiersAvecAlertes: number
   jalon: number
-  ministères: Ministère[]
+  ministères: Ministere[]
   axes: Axe[]
   territoireCode: string
   mailleSelectionnee: MailleInterne
@@ -131,18 +129,15 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   const [ministères, axes] = session.habilitations.lecture.chantiers.length === 0 ? [[], []] : (
     await Promise.all(
       [
-        dependencies.getMinistèreRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
-        dependencies.getAxeRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
+        getContainer('chantiers').resolve('ministereRepository').getListePourChantiers(session.habilitations.lecture.chantiers),
+        getContainer('chantiers').resolve('axeRepository').getListePourChantiers(session.habilitations.lecture.chantiers),
       ],
     )
   );
 
   const mapAxes = new Map<string, Axe>(axes.map(axe => [axe.id, axe]));
 
-  const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
-    dependencies.getChantierRepository(),
-    dependencies.getTerritoireRepository(),
-  ).run(session.habilitations, session.profil, territoireCode, mailleChantier || 'departementale', ministères, mapAxes, filtres, sorting, jalon);
+  const chantiers = await getContainer('chantiers').resolve('recupererChantiersAccessiblesEnLectureUseCase').run(session.habilitations, session.profil, territoireCode, mailleChantier || 'departementale', ministères, mapAxes, filtres, sorting, jalon);
 
   const {
     filtresComptesCalculés,

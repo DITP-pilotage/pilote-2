@@ -1,7 +1,7 @@
 import { FunctionComponent } from 'react';
 import { useRouter } from 'next/router';
 import Modale from '@/components/_commons/Modale/Modale';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur from '@/server/chantiers/domain/Indicateur';
 
 import { useModaleSuppressionValeurActuelle }
   from '@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurActuelle/useModaleSuppressionValeurActuelle';

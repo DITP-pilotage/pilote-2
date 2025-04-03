@@ -1,5 +1,5 @@
 import { Habilitations } from './habilitation/Habilitation.interface';
-import { ProfilCode } from './Utilisateur.interface';
+import { ProfilCode } from './Utilisateur';
 
 export interface UtilisateurListeGestion {
   id: string

@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
 import { parseAsString, useQueryState } from 'nuqs';
-import { libellésMétéos, météosSaisissables } from '@/server/domain/météo/Météo.interface';
+import { libellésMétéos, météosSaisissables } from '@/server/chantiers/domain/Meteo';
 import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import RepartitionsMeteosRapportDetailleStyled from './RepartitionsMeteosRapportDetailleStyled.styled';

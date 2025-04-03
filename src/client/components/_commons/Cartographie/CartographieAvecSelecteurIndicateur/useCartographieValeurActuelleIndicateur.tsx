@@ -8,7 +8,7 @@ import {
 import {
   CartographieÉlémentsDeLégende,
 } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
-import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { DétailsIndicateurTerritoire } from '@/server/chantiers/domain/DétailsIndicateur';
 import { objectEntries } from '@/client/utils/objects/objects';
 
 const COULEUR_DÉPART = '#8bcdb1';

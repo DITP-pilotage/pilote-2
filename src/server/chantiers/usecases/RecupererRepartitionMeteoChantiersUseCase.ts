@@ -1,10 +1,9 @@
-
-import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import { ChantierRepository } from '@/server/chantiers/domain/ports/ChantierRepository';
 import { RepartitionMeteoChantiers } from '@/server/chantiers/domain/RepartitionMeteoChantiers';
-import Axe from '@/server/domain/axe/Axe.interface';
+import { Axe } from '@/server/chantiers/domain/Axe';
+import { Habilitation } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
+import { Habilitations } from '@/server/gestion-utilisateur/domain/habilitation/Habilitation.interface';
 
 interface Dependencies {
   chantierRepository: ChantierRepository

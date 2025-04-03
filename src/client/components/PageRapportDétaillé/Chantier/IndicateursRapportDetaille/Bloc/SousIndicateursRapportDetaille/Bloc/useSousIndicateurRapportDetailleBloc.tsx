@@ -10,7 +10,7 @@ import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDe
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import IndicateurBlocIndicateurTuile
   from '@/components/_commons/IndicateursChantier/Bloc/indicateurBlocIndicateurTuile';
-import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { DétailsIndicateurTerritoire } from '@/server/chantiers/domain/DétailsIndicateur';
 import { formaterDate } from '@/client/utils/date/date';
 import {
   IndicateurDétailsParTerritoire,

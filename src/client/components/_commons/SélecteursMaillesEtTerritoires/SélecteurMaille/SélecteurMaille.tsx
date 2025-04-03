@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'react';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { MailleInterne } from '@/server/chantiers/domain/Maille';
 import {
   actionsTerritoiresStore,
   mailleSélectionnéeTerritoiresStore,
