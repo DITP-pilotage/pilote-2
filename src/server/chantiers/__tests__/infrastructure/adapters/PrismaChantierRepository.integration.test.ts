@@ -539,9 +539,9 @@ describe('PrismaChantierRepository', () => {
           maille: 'DEPT',
         });
       });
-      it('retourne seulement les données sur les mailles applicables', async () => {
+      it('retourne seulement les données sur les territoires applicables', async () => {
         // Given
-        const territoireCodesLecture = ['DEPT-01', 'REG-11', 'REG-84', 'DEPT-26', 'NAT-FR', 'DEPT-69'];
+        const territoireCodesLecture = ['DEPT-01', 'REG-11', 'REG-84', 'DEPT-26', 'NAT-FR', 'DEPT-69', 'REG-01'];
 
         await prisma.chantier_identite.createMany({
           data: [{
@@ -549,19 +549,16 @@ describe('PrismaChantierRepository', () => {
             nom: 'Chantier 001',
             ministeres: ['1009'],
             ministeres_acronymes: ['MINA'],
-            mailles_applicables: ['NAT', 'REG'],
           }, {
             id: 'CH-002',
             nom: 'Chantier 002',
             ministeres: ['1009'],
             ministeres_acronymes: ['MINA'],
-            mailles_applicables: ['NAT'],
           }, {
             id: 'CH-003',
             nom: 'Chantier 003',
             ministeres: ['1009'],
             ministeres_acronymes: ['MINA'],
-            mailles_applicables: ['NAT', 'REG', 'DEPT'],
           }],
         });
 
@@ -581,7 +578,7 @@ describe('PrismaChantierRepository', () => {
             maille: 'DEPT',
             code_insee: '01',
             territoire_code: 'DEPT-01',
-            est_applicable: true,
+            est_applicable: false,
             meteo: 'SOLEIL',
           }, {
             id: 'CH-001',
@@ -597,7 +594,7 @@ describe('PrismaChantierRepository', () => {
             maille: 'DEPT',
             code_insee: '26',
             territoire_code: 'DEPT-26',
-            est_applicable: true,
+            est_applicable: false,
             meteo: 'COUVERT',
           }, {
             id: 'CH-002',
@@ -613,22 +610,22 @@ describe('PrismaChantierRepository', () => {
             maille: 'REG',
             code_insee: '84',
             territoire_code: 'REG-84',
-            est_applicable: true,
+            est_applicable: false,
             meteo: 'COUVERT',
           }, {
             id: 'CH-003',
             zone_id: 'R11',
             maille: 'REG',
             code_insee: '11',
-            territoire_code: 'REG-11',
-            est_applicable: true,
+            territoire_code: 'REG-84',
+            est_applicable: false,
             meteo: 'COUVERT',
           }, {
             id: 'CH-003',
             zone_id: 'R84',
             maille: 'REG',
             code_insee: '84',
-            territoire_code: 'REG-84',
+            territoire_code: 'REG-01',
             est_applicable: false,
             meteo: 'COUVERT',
           }, {
@@ -666,22 +663,15 @@ describe('PrismaChantierRepository', () => {
         // When
         const donneesChantier1 = await prismaChantierRepository.récupérerPourExports('CH-001', territoireCodesLecture, optionsPourExport, jalon);
         const donneesChantier2 = await prismaChantierRepository.récupérerPourExports('CH-002', territoireCodesLecture, optionsPourExport, jalon);
-        const donneesChantier3 = await prismaChantierRepository.récupérerPourExports('CH-003', territoireCodesLecture, optionsPourExport, jalon);
 
         // Then 
         expect(donneesChantier1).toHaveLength(2);
         expect(donneesChantier1![0].maille).toStrictEqual('NAT');
         expect(donneesChantier1![1].maille).toStrictEqual('REG');
+        expect(donneesChantier1![1].codeInsee).toStrictEqual('84');
 
         expect(donneesChantier2).toHaveLength(1);
         expect(donneesChantier2![0].maille).toStrictEqual('NAT');
-
-        expect(donneesChantier3).toHaveLength(4);
-        expect(donneesChantier3![0].maille).toStrictEqual('NAT');
-        expect(donneesChantier3![1].maille).toStrictEqual('REG');
-        expect(donneesChantier3![2].maille).toStrictEqual('REG');
-        expect(donneesChantier3![3].maille).toStrictEqual('DEPT');
-
       });
     });
   });

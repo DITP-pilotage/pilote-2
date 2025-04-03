@@ -114,6 +114,9 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             ],
           },
         },
+        chantier_territoire: {
+          est_applicable: true,
+        },
       },
       select: {
         maille: true,
