@@ -1,9 +1,15 @@
-import { Maille } from '@prisma/client';
+import { Maille, PrismaClient } from '@prisma/client';
 import { IndicateurRepository } from '@/server/fiche-territoriale/domain/ports/IndicateurRepository';
 import { Indicateur } from '@/server/fiche-territoriale/domain/Indicateur';
-import { prisma } from '@/server/db/prisma';
+import { PrismaPilote } from '@/server/db/PrismaPilote';
 
 export class PrismaIndicateurRepository implements IndicateurRepository {
+  private prisma: PrismaClient;
+
+  constructor({ prisma }: { prisma: PrismaPilote }) {
+    this.prisma = prisma.getInstance();
+  }
+
   async recupererMapIndicateursParListeChantierIdEtTerritoire({ listeChantierId, maille, codeInsee, jalon }: {
     listeChantierId: string[],
     maille: string,
@@ -11,7 +17,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     jalon: number,
   }): Promise<Map<string, Indicateur[]>> {
 
-    const result = await prisma.indicateur_identite.findMany({
+    const result = await this.prisma.indicateur_identite.findMany({
       where: {
         chantier_id: {
           in: listeChantierId,
@@ -83,7 +89,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     listeIndicateurId: string[]
     jalon: number
   }): Promise<Map<string, Indicateur>> {
-    const result = await prisma.indicateur_identite.findMany({
+    const result = await this.prisma.indicateur_identite.findMany({
       where: {
         id: {
           in: listeIndicateurId,

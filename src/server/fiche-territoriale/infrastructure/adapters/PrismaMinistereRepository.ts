@@ -1,12 +1,19 @@
+import { PrismaClient } from '@prisma/client';
 import { MinistereRepository } from '@/server/fiche-territoriale/domain/ports/MinistereRepository';
 import { Ministere } from '@/server/fiche-territoriale/domain/Ministere';
-import { prisma } from '@/server/db/prisma';
+import { PrismaPilote } from '@/server/db/PrismaPilote' ;
 
 export class PrismaMinistereRepository implements MinistereRepository {
+  private prisma: PrismaClient;
+
+  constructor({ prisma }: { prisma: PrismaPilote }) {
+    this.prisma = prisma.getInstance();
+  }
+
   async recupererMapMinistereParListeCodeMinistere({ listeCodeMinistere }: {
     listeCodeMinistere: string[]
   }): Promise<Map<string, Ministere>> {
-    const result = await prisma.ministere.findMany({
+    const result = await this.prisma.ministere.findMany({
       orderBy: {
         id: 'asc',
       },

@@ -25,21 +25,6 @@ import {
   ProfilRepository as AuthentificationProfilRepository,
 } from '@/server/authentification/domain/ports/ProfilRepository';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
-import {
-  TerritoireRepository as FicheTerritorialeTerritoireRepository,
-} from '@/server/fiche-territoriale/domain/ports/TerritoireRepository';
-import {
-  ChantierRepository as FicheTerritorialeChantierRepository,
-} from '@/server/fiche-territoriale/domain/ports/ChantierRepository';
-import {
-  IndicateurRepository as FicheTerritorialeIndicateurRepository,
-} from '@/server/fiche-territoriale/domain/ports/IndicateurRepository';
-import {
-  SyntheseDesResultatsRepository as FicheTerritorialeSyntheseDesResultatsRepository,
-} from '@/server/fiche-territoriale/domain/ports/SyntheseDesResultatsRepository';
-import {
-  MinistereRepository as FicheTerritorialeMinistereRepository,
-} from '@/server/fiche-territoriale/domain/ports/MinistereRepository';
 import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
 import { RapportRepository } from '@/server/import-indicateur/domain/ports/RapportRepository';
 import PérimètreMinistérielRepository
@@ -68,19 +53,6 @@ import { GestionContenuRepository } from '@/server/gestion-contenu/domain/ports/
 import {
   PrismaGestionContenuRepository,
 } from '@/server/gestion-contenu/infrastructure/adapters/PrismaGestionContenuRepository';
-import {
-  PrismaTerritoireRepository,
-} from '@/server/fiche-territoriale/infrastructure/adapters/PrismaTerritoireRepository';
-import { PrismaChantierRepository } from '@/server/fiche-territoriale/infrastructure/adapters/PrismaChantierRepository';
-import {
-  PrismaSyntheseDesResultatsRepository,
-} from '@/server/fiche-territoriale/infrastructure/adapters/PrismaSyntheseDesResultatsRepository';
-import {
-  PrismaIndicateurRepository as PrismaFicheTerritorialeIndicateurRepository,
-} from '@/server/fiche-territoriale/infrastructure/adapters/PrismaIndicateurRepository';
-import {
-  PrismaMinistereRepository,
-} from '@/server/fiche-territoriale/infrastructure/adapters/PrismaMinistereRepository';
 import {
   PrismaIndicateurRepository as PrismaChantierIndicateurRepository,
 } from '@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository';
@@ -124,16 +96,6 @@ class Dependencies {
 
   private readonly _territoireRepository: TerritoireRepository;
 
-  private readonly _ficheTerritorialeTerritoireRepository: FicheTerritorialeTerritoireRepository;
-
-  private readonly _ficheTerritorialeChantierRepository: FicheTerritorialeChantierRepository;
-
-  private readonly _ficheTerritorialeIndicateurRepository: FicheTerritorialeIndicateurRepository;
-
-  private readonly _ficheTerritorialeSyntheseDesResultatsRepository: FicheTerritorialeSyntheseDesResultatsRepository;
-
-  private readonly _ficheTerritorialeMinistereRepository: FicheTerritorialeMinistereRepository;
-
   private readonly _chantierIndicateurRepository: ChantierIndicateurRepository;
 
   private readonly _profilRepository: ProfilRepository;
@@ -165,11 +127,6 @@ class Dependencies {
     this._authentificationUtilisateurRepository = new PrismaUtilisateurRepository();
     this._authentificationProfilRepository = new PrismaProfilRepository();
     this._territoireRepository = new TerritoireSQLRepository();
-    this._ficheTerritorialeTerritoireRepository = new PrismaTerritoireRepository();
-    this._ficheTerritorialeChantierRepository = new PrismaChantierRepository();
-    this._ficheTerritorialeIndicateurRepository = new PrismaFicheTerritorialeIndicateurRepository();
-    this._ficheTerritorialeSyntheseDesResultatsRepository = new PrismaSyntheseDesResultatsRepository();
-    this._ficheTerritorialeMinistereRepository = new PrismaMinistereRepository();
     this._chantierIndicateurRepository = new PrismaChantierIndicateurRepository();
     this._profilRepository = new ProfilSQLRepository();
     this._rapportRepository = new PrismaRapportRepository();
@@ -243,26 +200,6 @@ class Dependencies {
 
   getTerritoireRepository() {
     return this._territoireRepository;
-  }
-
-  getFicheTerritorialeTerritoireRepository() {
-    return this._ficheTerritorialeTerritoireRepository;
-  }
-
-  getFicheTerritorialeChantierRepository() {
-    return this._ficheTerritorialeChantierRepository;
-  }
-
-  getFicheTerritorialeIndicateurRepository() {
-    return this._ficheTerritorialeIndicateurRepository;
-  }
-
-  getFicheTerritorialeSyntheseDesResultatsRepository() {
-    return this._ficheTerritorialeSyntheseDesResultatsRepository;
-  }
-
-  getFicheTerritorialeMinistereRepository() {
-    return this._ficheTerritorialeMinistereRepository;
   }
 
   getChantierIndicateurRepository() {

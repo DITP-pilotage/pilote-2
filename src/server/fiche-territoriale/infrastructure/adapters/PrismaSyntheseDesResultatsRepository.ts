@@ -1,14 +1,21 @@
+import { PrismaClient } from '@prisma/client';
 import { SyntheseDesResultatsRepository } from '@/server/fiche-territoriale/domain/ports/SyntheseDesResultatsRepository';
 import { SyntheseDesResultats } from '@/server/fiche-territoriale/domain/SyntheseDesResultats';
-import { prisma } from '@/server/db/prisma';
+import { PrismaPilote } from '@/server/db/PrismaPilote';
 
 export class PrismaSyntheseDesResultatsRepository implements SyntheseDesResultatsRepository {
+  private prisma: PrismaClient;
+
+  constructor({ prisma }: { prisma: PrismaPilote }) {
+    this.prisma = prisma.getInstance();
+  }
+
   async recupererMapSyntheseDesResultatsParListeChantierIdEtTerritoire({ listeChantierId, maille, codeInsee }: {
     listeChantierId: string[],
     maille: string,
     codeInsee: string
   }): Promise<Map<string, SyntheseDesResultats[]>> {
-    const result = await prisma.synthese_des_resultats.findMany({
+    const result = await this.prisma.synthese_des_resultats.findMany({
       where: {
         chantier_id: {
           in: listeChantierId,

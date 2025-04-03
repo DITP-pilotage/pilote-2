@@ -5,11 +5,11 @@ import { PageFicheTerritoriale } from '@/components/PageFicheTerritoriale/PageFi
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
 import { FicheTerritorialeContrat } from '@/server/fiche-territoriale/app/contrats/FicheTerritorialeContrat';
-import { ficheTerritorialeHandler } from '@/server/fiche-territoriale/infrastructure/handlers/FicheTerritorialeHandler';
 import {
   getAnneeDateDeBascule,
 } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule';
 import { configuration } from '@/config';
+import { getContainer } from '@/server/dependances';
 
 export const getServerSideProps: GetServerSideProps<{
   ficheTerritoriale: FicheTerritorialeContrat,
@@ -31,7 +31,7 @@ export const getServerSideProps: GetServerSideProps<{
 
   const jalon = Number.parseInt(query.jalon as string) || getAnneeDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
 
-  const ficheTerritoriale = await ficheTerritorialeHandler().recupererFicheTerritoriale(query.territoireCode as string, jalon);
+  const ficheTerritoriale = await getContainer('ficheTerritoriale').resolve('ficheTerritorialeHandler').recupererFicheTerritoriale(query.territoireCode as string, jalon);
 
   return {
     props: {

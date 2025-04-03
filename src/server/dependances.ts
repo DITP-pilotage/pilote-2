@@ -8,7 +8,8 @@ import { getImportIndicateurContainer, ImportIndicateurDependencies } from '@/se
 import { AuthentificationDependencies, getAuthentificationContainer } from '@/server/authentification/container';
 import { FicheConducteurDependencies, getFicheConducteurContainer } from '@/server/fiche-conducteur/container';
 import { PrismaPilote } from '@/server/db/PrismaPilote';
-import { GestionUtilisateurDependencies, getGestionUtilisateurContainer } from './gestion-utilisateur/container';
+import { FicheTerritorialeDependencies, getFicheTerritorialeContainer } from '@/server/fiche-territoriale/container';
+import { GestionUtilisateurDependencies, getGestionUtilisateurContainer } from '@/server/gestion-utilisateur/container';
 import { getParametrageNouveautesContainer, ParametrageNouveautesDependencies } from './parametrage-nouveautes/container';
 
 interface InitialDependencies {
@@ -23,6 +24,7 @@ export type ContainerDependencies = {
   gestionUtilisateur: AwilixContainer<GestionUtilisateurDependencies>
   ficheConducteur: AwilixContainer<FicheConducteurDependencies>
   parametrageNouveautes: AwilixContainer<ParametrageNouveautesDependencies>
+  ficheTerritoriale: AwilixContainer<FicheTerritorialeDependencies>
   main: AwilixContainer<InitialDependencies>
 };
 
@@ -44,6 +46,7 @@ function registerContainer(): ContainerDependencies {
     gestionUtilisateur: getGestionUtilisateurContainer(initialContainer),
     ficheConducteur: getFicheConducteurContainer(initialContainer),
     parametrageNouveautes: getParametrageNouveautesContainer(initialContainer),
+    ficheTerritoriale: getFicheTerritorialeContainer(initialContainer),
   };
 }
 
