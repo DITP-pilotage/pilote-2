@@ -15,8 +15,8 @@ import {
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import CartographieAvancement
-  from '@/components/_commons/Cartographie/CartographieAvancementNew/CartographieAvancement';
-import useCartographie from '@/components/_commons/Cartographie/useCartographieNew';
+  from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
+import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import ExportDesDonnées, {
   ID_HTML_MODALE_EXPORT,
 } from '@/components/PageAccueil/PageChantiers/ExportDesDonnées/ExportDesDonnées';

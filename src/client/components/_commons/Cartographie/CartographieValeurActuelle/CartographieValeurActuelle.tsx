@@ -7,10 +7,9 @@ import {
   CartographieÉlémentsDeLégende,
 } from '@/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
-import {
-  CartographieDonnéesValeurActuelle,
-} from '@/components/_commons/Cartographie/CartographieValeurActuelleNew/CartographieValeurActuelle.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import useCartographieValeurActuelle from './useCartographieValeurActuelle';
+import { CartographieDonnéesValeurActuelle } from './CartographieValeurActuelle.interface';
 
 interface CartographieValeurActuelleProps {
   données: CartographieDonnéesValeurActuelle,
@@ -18,6 +17,10 @@ interface CartographieValeurActuelleProps {
   unité?: string | null,
   élémentsDeLégende: CartographieÉlémentsDeLégende,
   auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void
+  territoireCode: string
+  pathname: '/accueil/chantier/[territoireCode]' | '/chantier/[id]/[territoireCode]'
+  mailleSelectionnee: MailleInterne
+  jalon: number
 }
 
 const CartographieValeurActuelle: FunctionComponent<CartographieValeurActuelleProps> = ({
@@ -26,18 +29,25 @@ const CartographieValeurActuelle: FunctionComponent<CartographieValeurActuellePr
   unité,
   auClicTerritoireCallback,
   élémentsDeLégende,
+  territoireCode,
+  mailleSelectionnee,
+  jalon,
+  pathname,
 }) => {
   const {
     donnéesCartographie,
     légende,
     légendeAdditionnelle,
-  } = useCartographieValeurActuelle(données, élémentsDeLégende, unité);
+  } = useCartographieValeurActuelle(données, élémentsDeLégende, jalon, unité);
 
   return (
     <Cartographie
       auClicTerritoireCallback={auClicTerritoireCallback}
       données={donnéesCartographie}
+      mailleSelectionnee={mailleSelectionnee}
       options={options}
+      pathname={pathname}
+      territoireCode={territoireCode}
     >
       <CartographieLégendeDégradé contenu={légende} />
       <CartographieLégendeListe contenu={légendeAdditionnelle} />

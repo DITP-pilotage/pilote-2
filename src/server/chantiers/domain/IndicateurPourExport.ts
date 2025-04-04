@@ -6,7 +6,7 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 
 export type IndicateurPourExport = {
-  maille: string | null,
+  maille: string
   régionNom: string | null,
   départementNom: string | null,
   codeInsee: string | null,
@@ -33,4 +33,10 @@ export type IndicateurPourExport = {
   valeurCible: DétailsIndicateur['valeurCible'] | null,
   dateValeurCible: DétailsIndicateur['dateValeurCible'] | null,
   avancementGlobal: DétailsIndicateur['avancement']['global'] | null,
+  maillesApplicables: string[]
+  estApplicable: boolean | null
+};
+
+export const verifierApplicabiliteMaille = (maillesApplicablesIndicateur: string[], maille: string) => {
+  return maillesApplicablesIndicateur.includes(maille);
 };

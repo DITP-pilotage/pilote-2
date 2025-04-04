@@ -7,6 +7,15 @@
     )
 }}
 
+WITH mailles_applicables AS (
+    SELECT 
+        id as indic_id, 
+        ARRAY_AGG(LOWER(maille)::maille) AS mailles_applicables
+    FROM {{ ref('int_indicateurs_mailles_applicables') }}
+    WHERE maille_est_applicable
+    GROUP BY id
+)
+
 SELECT 
     meta_indic.id AS id,
     meta_indic.nom,
@@ -25,10 +34,12 @@ SELECT
     complementaires.delai_disponibilite,
     complementaires.periodicite,
     STRING_TO_ARRAY(REPLACE(complementaires.resp_donnees_email, ' ', ''), ',') AS responsables_donnees_mails,
-    last_update_indic.dernier_import_date_indic AS dernier_import_date_indic
+    last_update_indic.dernier_import_date_indic AS dernier_import_date_indic,
+    mailles_applicables.mailles_applicables
 
 FROM {{ ref('stg_ppg_metadata__indicateurs') }} meta_indic
 LEFT JOIN {{ source('parametrage_indicateurs', 'metadata_indicateurs_complementaire') }} AS complementaires ON meta_indic.id=complementaires.indic_id
 LEFT JOIN {{ ref('stg_ppg_metadata__indicateur_types') }} meta_indic_types ON meta_indic_types.id = meta_indic.indicateur_type_id 
 LEFT JOIN {{ ref('last_update_indic') }} last_update_indic ON meta_indic.id = last_update_indic.indic_id
+LEFT JOIN mailles_applicables ON mailles_applicables.indic_id = meta_indic.id
 ORDER BY meta_indic.id

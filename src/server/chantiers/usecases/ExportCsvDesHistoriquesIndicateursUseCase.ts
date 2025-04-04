@@ -15,6 +15,7 @@ import {
   verifierOptionStatut,
 } from '@/server/chantiers/domain/ChantierPourExport';
 import { IndicateurRepository } from '@/server/chantiers/domain/ports/IndicateurRepository';
+import { verifierApplicabiliteMaille } from '@/server/chantiers/domain/IndicateurPourExport';
 
 const presenterEnHistoriqueIndicateurExportContrat = (historiqueIndicateurPourExport: HistoriqueIndicateurPourExport): string[] => {
   return [
@@ -25,14 +26,14 @@ const presenterEnHistoriqueIndicateurExportContrat = (historiqueIndicateurPourEx
     historiqueIndicateurPourExport.chantierNom || NON_RENSEIGNEE,
     historiqueIndicateurPourExport.chantierId || NON_RENSEIGNEE,
     historiqueIndicateurPourExport.nom || NON_APPLICABLE,
-    formaterNumériqueOuValeurNonRenseignee(historiqueIndicateurPourExport.valeurInitiale),
-    formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurInitiale),
-    formaterNumériqueOuValeurNonRenseignee(historiqueIndicateurPourExport.valeurCibleAnnuelle),
-    formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurCibleAnnuelle),
-    formaterNumériqueOuValeurNonRenseignee(historiqueIndicateurPourExport.valeurCible),
-    formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurCible),
-    formaterNumériqueOuValeurNonRenseignee(historiqueIndicateurPourExport.valeurActuelle),
-    formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurActuelle),
+    formaterNumériqueOuValeurNonRenseignee(historiqueIndicateurPourExport.valeurInitiale, historiqueIndicateurPourExport.estApplicable),
+    formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurInitiale, historiqueIndicateurPourExport.estApplicable),
+    formaterNumériqueOuValeurNonRenseignee(historiqueIndicateurPourExport.valeurCibleAnnuelle, historiqueIndicateurPourExport.estApplicable),
+    formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurCibleAnnuelle, historiqueIndicateurPourExport.estApplicable),
+    formaterNumériqueOuValeurNonRenseignee(historiqueIndicateurPourExport.valeurCible, historiqueIndicateurPourExport.estApplicable),
+    formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurCible, historiqueIndicateurPourExport.estApplicable),
+    formaterNumériqueOuValeurNonRenseignee(historiqueIndicateurPourExport.valeurActuelle, historiqueIndicateurPourExport.estApplicable),
+    formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurActuelle, historiqueIndicateurPourExport.estApplicable),
   ];
 };
 
@@ -77,6 +78,7 @@ export class ExportCsvDesHistoriquesIndicateursUseCase {
           if (
             historiqueIndicateursPourExport &&
               !masquerPourProfilDROMEtMailleNat(profil, historiqueIndicateursPourExport.périmètreIds, historiqueIndicateursPourExport.maille)
+              && verifierApplicabiliteMaille(historiqueIndicateursPourExport.maillesApplicables, historiqueIndicateursPourExport.maille)
               && verifierOptionPerimetreIds(optionsExport, historiqueIndicateursPourExport.périmètreIds)
               && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, historiqueIndicateursPourExport.chantierEstBaromètre, historiqueIndicateursPourExport.chantierEstTerritorialise)
               && verifierOptionStatut(optionsExport, historiqueIndicateursPourExport.chantierStatut)

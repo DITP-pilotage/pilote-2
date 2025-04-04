@@ -23,61 +23,55 @@ const maillesTerritoireCorrespondance: Record<string, Maille> = {
   'nat': Maille.NAT,
 };
 
-function upsertProfile() {
-  return Promise.all(
-    seedProfil.map(profil => 
-      prisma.profil.upsert({ 
-        where: { code: profil.code },
-        create: profil,
-        update: profil,
-      }),
-    ),
-  );
+async function upsertProfile() {
+  for (const profil of seedProfil) {
+    await prisma.profil.upsert({ 
+      where: { code: profil.code },
+      create: profil,
+      update: profil,
+    });
+  }
 }
 
-function upsertScope() {
-  return Promise.all(
-    seedScope.map(scope => 
-      prisma.scope.upsert({ 
-        where: { code: scope.code },
-        create: scope,
-        update: scope,
-      }),
-    ),
-  );
+async function upsertScope() {
+  for (const scope of seedScope) {
+    await prisma.scope.upsert({ 
+      where: { code: scope.code },
+      create: scope,
+      update: scope,
+    });
+  }
 }
 
-function upsertTerritoire(seedsTerritoires: TerritoireSeed[]) {
+async function upsertTerritoire(seedsTerritoires: TerritoireSeed[]) {
+  for (const territoireSeed of seedsTerritoires) {
+    const mailleTerritoire = maillesTerritoireCorrespondance[territoireSeed.maille];
+    const codeInseeTerritoire = territoireSeed.code_insee.toString();
 
-  return Promise.all(
-    seedsTerritoires.map(territoireSeed => {
+    const territoireACreer: TerritoireModel = {
+      code: territoireSeed.code,
+      code_insee: codeInseeTerritoire,
+      code_parent: territoireSeed.code_parent,
+      maille: mailleTerritoire,
+      nom: territoireSeed.nom,
+      nom_affiche: territoireSeed.nom_affiche,
+      zone_id: territoireSeed.zone_id,
+    };
 
-      const mailleTerritoire = maillesTerritoireCorrespondance[territoireSeed.maille];
-      const codeInseeTerritoire = territoireSeed.code_insee.toString();
-
-      const territoireACreer: TerritoireModel = {
-        code: territoireSeed.code,
-        code_insee: codeInseeTerritoire,
-        code_parent: territoireSeed.code_parent,
-        maille: mailleTerritoire,
-        nom: territoireSeed.nom,
-        nom_affiche: territoireSeed.nom_affiche,
-        zone_id: territoireSeed.zone_id,
-      };
-
-      return prisma.territoire.upsert({ 
-        where: { code: territoireSeed.code },
-        create: territoireACreer,
-        update: territoireACreer,
-      });
-    },
-    ),
-  );
+    await prisma.territoire.upsert({ 
+      where: { code: territoireSeed.code },
+      create: territoireACreer,
+      update: territoireACreer,
+    });
+  }
 }
 
-Promise.resolve(true)
-  .then(() => upsertProfile())
-  .then(() => upsertScope())
-  .then(() => upsertTerritoire(seedsRegionsEtNational))
-  .then(() => upsertTerritoire(seedsDepartements));
+async function main() {
+  await upsertProfile();
+  await upsertScope();
+  await upsertTerritoire(seedsRegionsEtNational);
+  await upsertTerritoire(seedsDepartements);
+}
 
+// eslint-disable-next-line no-console
+main().catch(console.error);

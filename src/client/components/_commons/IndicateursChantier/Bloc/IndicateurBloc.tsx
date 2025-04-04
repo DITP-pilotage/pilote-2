@@ -120,6 +120,57 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
 
   const estPropositionSurLeBonJalon = détailsIndicateur[territoireCode].dateValeurActuelleMandat !== null ? new Date(détailsIndicateur[territoireCode].dateValeurActuelleMandat!).getFullYear() <= jalon : false;
 
+  const getCalculAvancementMessage = (valeurInitiale: number | null, valeurActuelle: number | null, valeurCible: number | null, tauxAvancement: number | null, jalonAAfficher: number) => {
+    if (valeurInitiale === null || valeurActuelle === null || valeurCible === null || tauxAvancement === null) {
+      return (
+        <span className='fr-text--sm'>
+          Le taux d'avancement n'est pas calculé car des données sont manquantes ou non applicables.
+        </span>
+      );
+    }
+
+    return (
+      <>
+        Il correspond au chemin parcouru depuis le point de départ (valeur initiale de l'indicateur) pour atteindre l'objectif fixé (valeur cible pour l'année
+        {' '}
+        <b>
+          {jalonAAfficher}
+        </b>
+        {' '}
+        ). Il est calculé selon la formule suivante (valeur d'avancement - valeur initiale) / (valeur cible - valeur initiale) soit (
+        <b>
+          {valeurActuelle}
+        </b>
+        {' '}
+        -
+        {' '}
+        <b>
+          {valeurInitiale}
+        </b>
+        {' '}
+        ) / (
+        <b>
+          {valeurCible}
+        </b>
+        {' '}
+        -
+        {' '}
+        <b>
+          {valeurInitiale}
+        </b>
+        {' '}
+        ) = 
+        {' '}
+        <b>
+          {tauxAvancement.toFixed(0)}
+        </b>
+        {' '}
+        %
+        . Pour plus d'informations, veuillez consulter le centre d'aide.
+      </>
+    );
+  };
+
   return (
     <IndicateurBlocStyled
       className='fr-mt-2w'
@@ -325,12 +376,16 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               valeur={informationIndicateur.données.valeurCibleAnnuelle}
                             />
                           </td>
-                          <td className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm'>
+                          <td className='fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm flex'>
                             <BarreDeProgression
                               afficherTexte
                               fond='gris-clair'
+                              infobulleId={`infobulle-taux-avancement-jalon-${informationIndicateur.code}`}
                               positionTexte='dessus'
                               taille='md'
+                              texteInfobulle={
+                                getCalculAvancementMessage(informationIndicateur.données.valeurInitiale, informationIndicateur.données.valeurActuelle, informationIndicateur.données.valeurCibleAnnuelle, informationIndicateur.données.avancement.annuel, jalon)
+                              }
                               valeur={informationIndicateur.données.avancement.annuel}
                               variante='secondaire'
                             />
@@ -354,8 +409,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                             <BarreDeProgression
                               afficherTexte
                               fond='gris-clair'
+                              infobulleId={`infobulle-taux-avancement-global-${informationIndicateur.code}`}
                               positionTexte='dessus'
                               taille='md'
+                              texteInfobulle={
+                                getCalculAvancementMessage(informationIndicateur.données.valeurInitiale, informationIndicateur.données.valeurActuelleMandat, informationIndicateur.données.valeurCible, informationIndicateur.données.avancement.global, 2026)
+                              }
                               valeur={informationIndicateur.données.avancement.global}
                               variante='primaire'
                             />
@@ -464,6 +523,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                           <BarreDeProgression
                                             afficherTexte
                                             fond='gris-clair'
+                                            infobulleId={`infobulle-taux-avancement-proposition-jalon-${informationIndicateur.code}`}
                                             positionTexte='dessus'
                                             taille='md'
                                             valeur={informationIndicateur.données.proposition.tauxAvancementIntermediaire}
@@ -496,6 +556,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     <BarreDeProgression
                                       afficherTexte
                                       fond='gris-clair'
+                                      infobulleId={`infobulle-taux-avancement-proposition-global-${informationIndicateur.code}`}
                                       positionTexte='dessus'
                                       taille='md'
                                       valeur={informationIndicateur.données.proposition.tauxAvancement}
