@@ -25,12 +25,6 @@ TRUNCATE TABLE
     raw_data.metadata_parametrage_indicateurs,
     public.mesure_indicateur_temporaire,
     public.objectif,
-    public.commentaire_projet_structurant,
-    public.indicateur_projet_structurant,
-    public.objectif_projet_structurant,
-    public.perimetre_projet_structurant,
-    public.projet_structurant,
-    public.synthese_des_resultats_projet_structurant,
     public.utilisateur,
     public.erreur_validation_fichier,
     public.proposition_valeur_actuelle;"

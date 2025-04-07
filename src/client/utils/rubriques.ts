@@ -1,4 +1,3 @@
-import { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 
 export type Rubrique = {
@@ -53,34 +52,6 @@ export const listeRubriquesChantier = (categorieIndicateur: CategoriesIndicateur
     { nom: 'Météo et synthèse des résultats', ancre: 'synthèse' },
     { nom: 'Responsables', ancre: 'responsables' },
     { nom: 'Répartition géographique', ancre: 'cartes' },
-    { nom: 'Objectifs', ancre: 'objectifs' },
-    { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: rubriquesIndicateursNonVides },
-    { nom: 'Commentaires', ancre: 'commentaires' },
-  ];
-
-  if (rubriquesIndicateursNonVides.length === 0) {
-    rubriques = rubriques.filter(rubrique => rubrique.nom != 'Indicateurs');
-  }
-
-  return rubriques;
-};
-
-export type ÉlémentPageIndicateursTypeProjetsStructurants = Rubrique & { typeIndicateur: TypeIndicateur };
-export const listeRubriquesIndicateursProjetStructurant: ÉlémentPageIndicateursTypeProjetsStructurants[] = [
-  { nom: 'Indicateurs d\'impact', ancre: 'impact', typeIndicateur: 'IMPACT' },
-  { nom: 'Indicateurs de déploiement', ancre: 'déploiement', typeIndicateur: 'DEPL' },
-  { nom: 'Indicateurs financiers', ancre: 'financier', typeIndicateur: 'FINANCIER' },
-];
-  
-export const listeRubriquesProjetStructurant = (typesIndicateurs: TypeIndicateur[]): Rubrique[] => {
-  const rubriquesIndicateursNonVides = listeRubriquesIndicateursProjetStructurant.filter(
-    rubriqueIndicateur => typesIndicateurs.includes(rubriqueIndicateur.typeIndicateur),
-  );
-  
-  let rubriques = [
-    { nom: 'Avancement du projet', ancre: 'avancement' },
-    { nom: 'Responsables', ancre: 'responsables' },
-    { nom: 'Météo et synthèse des résultats', ancre: 'synthèse' },
     { nom: 'Objectifs', ancre: 'objectifs' },
     { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: rubriquesIndicateursNonVides },
     { nom: 'Commentaires', ancre: 'commentaires' },

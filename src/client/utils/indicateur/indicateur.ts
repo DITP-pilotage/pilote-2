@@ -7,7 +7,6 @@ export const libellesTypologieIndicateur: Record<TypeIndicateur, string> = {
   'Q_SERV': 'De qualité de service',
   'REBOND': 'Effets rebonds',
   'CONTEXTE': 'De contexte',
-  'FINANCIER': 'Financier',
 };
 
 const PROFIL_AUTORISE_A_IMPORTER  = new Set([ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE, ProfilEnum.SECRETARIAT_GENERAL, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.DIR_PROJET, ProfilEnum.DROM]);

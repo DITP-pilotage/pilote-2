@@ -1,6 +1,5 @@
 import { FunctionComponent } from 'react';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import { typeDeRéformeSélectionnéeStore } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
 import { formaterDate } from '@/client/utils/date/date';
 import TableauRéformesAvancementStyled from '@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement.styled';
 
@@ -11,7 +10,7 @@ interface TableauRéformesAvancementProps {
 }
 
 const TableauRéformesAvancement: FunctionComponent<TableauRéformesAvancementProps> = ({ avancement, dateDeMàjDonnéesQuantitatives, estArchive }) => {
-  const typeDeRéforme = typeDeRéformeSélectionnéeStore();
+  const typeDeRéforme = 'chantier';
   
   return (
     <TableauRéformesAvancementStyled>

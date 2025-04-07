@@ -51,7 +51,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
       <p>
         Il existe trois types de droits : les droits de lecture, les droits de saisie des données et les droits de
         saisie des commentaires. Des droits sont attribués par défaut selon le profil. Pour les profils n'ayant accès
-        qu'à certains territoires, chantiers ou projets structurants, il faut spécifier lesquels dans la partie
+        qu'à certains territoires ou chantiers, il faut spécifier lesquels dans la partie
         “périmètre”. Pour certains profils, les droits de saisie sont facultatifs et à préciser.
       </p>
       <Titre

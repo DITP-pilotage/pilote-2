@@ -33,14 +33,6 @@ const MenuItemGestionContenu: FunctionComponent<{ urlActuelle: string }> = ({ ur
       nom: 'Indicateurs des chantiers',
       lien: '/admin/indicateurs',
       accessible: true,
-    }, {
-      nom: 'Projets structurants',
-      lien: '/admin/projets-structurants',
-      accessible: false,
-    }, {
-      nom: 'Indicateurs des projets structurants',
-      lien: '/admin/indicateurs-projets-structurants',
-      accessible: false,
     },
   ];
   return (
