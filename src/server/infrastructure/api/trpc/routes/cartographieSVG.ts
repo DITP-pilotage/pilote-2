@@ -4,3 +4,5 @@ import { créerRouteurTRPC, procédureProtégée } from '@/server/infrastructure
 export const cartographieSVGRouter = créerRouteurTRPC({
   récupérerCartographieSVG: procédureProtégée.query(() => SVGService.loadSvgAsJson()),
 });
+
+export default cartographieSVGRouter;
