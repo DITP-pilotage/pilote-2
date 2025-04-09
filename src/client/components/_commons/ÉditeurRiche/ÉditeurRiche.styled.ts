@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 
 export const ÉditeurRicheStyled = styled.div`
+  /* stylelint-disable selector-class-pattern */
   .ProseMirror {
     min-height: 200px;
+    padding: 1rem;
     border: 1px solid #ddd;
     border-radius: 4px;
-    padding: 1rem;
     outline: none;
 
     > * + * {
@@ -22,14 +23,15 @@ export const ÉditeurRicheStyled = styled.div`
     }
 
     h4 {
-      margin-bottom: .5rem!important;
       margin-top: .5rem!important;
+      margin-bottom: .5rem!important;
     }
 
 
     hr {
-      margin-top: .5rem;
-      margin-bottom: .5rem;
+      margin: 2rem .5rem;
+      border: none;
+      border-top: 2px solid rgba(13 13 13 / 10%);
     }
 
     h1,
@@ -42,24 +44,24 @@ export const ÉditeurRicheStyled = styled.div`
     }
 
     code {
-      background-color: rgba(97, 97, 97, 0.1);
-      color: #616161;
       padding: 0.2em 0.4em;
+      color: #616161;
+      background-color: rgba(97 97 97 / 10%);
       border-radius: 3px;
     }
 
     pre {
-      background: #0d0d0d;
-      color: #fff;
-      font-family: 'JetBrainsMono', monospace;
       padding: 0.75rem 1rem;
+      font-family: JetBrainsMono, monospace;
+      color: #fff;
+      background: #0d0d0d;
       border-radius: 0.5rem;
 
       code {
-        color: inherit;
         padding: 0;
-        background: none;
         font-size: 0.8rem;
+        color: inherit;
+        background: none;
       }
     }
 
@@ -70,13 +72,7 @@ export const ÉditeurRicheStyled = styled.div`
 
     blockquote {
       padding-left: 1rem;
-      border-left: 2px solid rgba(13, 13, 13, 0.1);
-    }
-
-    hr {
-      border: none;
-      border-top: 2px solid rgba(13, 13, 13, 0.1);
-      margin: 2rem 0;
+      border-left: 2px solid rgba(13 13 13 / 10%);
     }
 
     a {

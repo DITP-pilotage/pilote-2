@@ -1,11 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from 'react';
 
-import { useEffect } from 'react';
-import { useQueryState } from 'nuqs';
-import { useRouter } from 'next/router';
+import { useQueryState, parseAsString } from 'nuqs';
 import api from '@/server/infrastructure/api/trpc/api';
-import { NouveauteContrat } from "@/server/parametrage-nouveautes/app/contrats/NouveauteContrat";
-import { parseAsString } from "nuqs";
 
 const initialContenu = `
 <h4>Nouvelles fonctionnalités</h4>
@@ -26,7 +22,6 @@ const initialContenu = `
 `;
 
 export const useNouveautés = () => {
-  const router = useRouter();
   const { data: listeNouveautes, isLoading: estChargementListeNouveautes, refetch: refetchListeNouveautes } = api.parametrageNouveautes.lister.useQuery(undefined, { keepPreviousData: true });
 
   const [estUnModeEdition, setEstUnModeEdition] = useState<boolean>(false);
@@ -44,7 +39,7 @@ export const useNouveautés = () => {
 
   useEffect(() => {
     setVersion(idAModifier ? listeNouveautes?.[0]?.version || nextVersion : nextVersion);
-  }, [nextVersion, idAModifier]);
+  }, [nextVersion, idAModifier, listeNouveautes]);
 
   const [date, setDate] = useState<string>(listeNouveautes?.[0]?.date || new Date().toISOString().split('T')[0]);
 
@@ -70,20 +65,20 @@ export const useNouveautés = () => {
     },
   }); 
 
-  const sauvegarderContenuNouveautés = ({ contenu, version, date }: { contenu: string, version: string, date: string }) => {
+  const sauvegarderContenuNouveautés = ({ contenu: contenuAAjouter, version: versionAAjouter, date: dateAAjouter }: { contenu: string, version: string, date: string }) => {
     mutationSauvegarderContenuNouveautés.mutate({
-      contenu,
-      version,
-      date,
+      contenu: contenuAAjouter,
+      version: versionAAjouter,
+      date: dateAAjouter,
     });
   };
 
-  const modifierContenuNouveautés = ({ id, contenu, version, date }: { id: string, contenu: string, version: string, date: string }) => {
+  const modifierContenuNouveautés = ({ id, contenu: contenuAModifier, version: versionAModifier, date: dateAModifier }: { id: string, contenu: string, version: string, date: string }) => {
     mutationModifierContenuNouveautés.mutate({
       id,
-      contenu,
-      version,
-      date,
+      contenu: contenuAModifier,
+      version: versionAModifier,
+      date: dateAModifier,
     });
     refetchListeNouveautes();
   };

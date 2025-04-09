@@ -19,7 +19,7 @@ export const parametrageNouveautesRouter = créerRouteurTRPC({
     return getContainer('parametrageNouveautes').resolve('creerNouveauteUseCase').execute({ contenu: input.contenu, version: input.version, date: input.date });
   }),
 
-  lister: procédureProtégée.query(async ({ ctx }) => {
+  lister: procédureProtégée.query(async () => {
     return presenterEnListeNouveauteContrat(await getContainer('parametrageNouveautes').resolve('listerNouveautesUseCase').execute());
   }),
 

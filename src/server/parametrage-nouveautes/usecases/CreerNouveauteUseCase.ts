@@ -1,4 +1,3 @@
-import { BadRequestError } from '@/server/app/error-boundary/bad-request-error';
 import { NouveauteRepository } from '@/server/parametrage-nouveautes/domain/ports/NouveauteRepository';
 import { Nouveaute } from '@/server/parametrage-nouveautes/domain/Nouveaute';
 

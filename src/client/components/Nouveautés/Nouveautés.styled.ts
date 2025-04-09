@@ -6,8 +6,8 @@ export const NouveautésStyled = styled.div`
   }
 
   h4 {
-    margin-bottom: .5rem;
     margin-top: .5rem;
+    margin-bottom: .5rem;
   }
 
   hr {

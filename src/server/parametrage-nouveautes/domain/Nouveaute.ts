@@ -1,5 +1,5 @@
-import { BadRequestError } from '@/server/app/error-boundary/bad-request-error';
 import { randomUUID } from 'node:crypto';
+import { BadRequestError } from '@/server/app/error-boundary/bad-request-error';
 
 export class Nouveaute {
   private _id: string;
@@ -45,7 +45,7 @@ export class Nouveaute {
   }
 
   static verifyVersion(version: string): string {
-    if (!version.match(/^\d+\.\d+\.\d+$/)) {
+    if (!/^\d+\.\d+\.\d+$/.test(version)) {
       throw new BadRequestError('La version doit être un nombre entier');
     }
     return version;

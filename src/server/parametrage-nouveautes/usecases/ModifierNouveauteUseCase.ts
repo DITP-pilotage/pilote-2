@@ -1,5 +1,6 @@
-import { Nouveaute } from "../domain/Nouveaute";
-import { NouveauteRepository } from "../domain/ports/NouveauteRepository";
+import { Nouveaute } from '@/server/parametrage-nouveautes/domain/Nouveaute';
+
+import { NouveauteRepository } from '@/server/parametrage-nouveautes/domain/ports/NouveauteRepository';
 
 type Dependencies = {
   nouveauteRepository: NouveauteRepository;

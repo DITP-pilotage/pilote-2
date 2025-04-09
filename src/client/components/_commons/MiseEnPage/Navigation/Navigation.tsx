@@ -17,7 +17,6 @@ import { récupérerUnCookie } from '@/client/utils/cookies';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import IcôneEmail from '@/components/_commons/IcôneEmail/IcôneEmail';
-import { derniereVersionNouveaute } from '../../../../../../public/nouveautés/ParametrageNouveautés';
 
 const fermerLaModaleDuMenu = () => {
   if (typeof window.dsfr === 'function') {
@@ -82,7 +81,11 @@ const Navigation: FunctionComponent<{}> = () => {
 
   const queryParamString = getQueryParamString(filtresActifs, new Set(['territoireCode']), init);
 
-  const aConsulteLaDerniereNouveaute = récupérerUnCookie('derniereVersionNouveauteConsulte') === derniereVersionNouveaute;
+  const { data: listerNouveautes } = api.parametrageNouveautes.lister.useQuery(undefined, {
+    keepPreviousData: true,
+  });
+
+  const aConsulteLaDerniereNouveaute = listerNouveautes ? récupérerUnCookie('derniereVersionNouveauteConsulte') === listerNouveautes[0].version : true;
 
   const pages = [
     {

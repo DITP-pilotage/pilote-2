@@ -1,7 +1,7 @@
-import { CreerNouveauteUseCase } from "@/server/parametrage-nouveautes/usecases/CreerNouveauteUseCase";
-import { NouveauteRepository } from "@/server/parametrage-nouveautes/domain/ports/NouveauteRepository";
-import { MockProxy, mock } from "jest-mock-extended";
-import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
+import { MockProxy, mock } from 'jest-mock-extended';
+import { CreerNouveauteUseCase } from '@/server/parametrage-nouveautes/usecases/CreerNouveauteUseCase';
+import { NouveauteRepository } from '@/server/parametrage-nouveautes/domain/ports/NouveauteRepository';
+import { BadRequestError } from '@/server/app/error-boundary/bad-request-error';
 
 describe('CreerNouveauteUseCase', () => {
   let creerNouveauteUseCase: CreerNouveauteUseCase;

@@ -1,5 +1,6 @@
-import { Editor } from '@tiptap/core';
+import { Editor } from '@tiptap/react';
 import '@gouvfr/dsfr/dist/component/tag/tag.min.css';
+
 export const MenuBar = ({ editor }: { editor: Editor; }) => {
   if (!editor) {
     return null;
