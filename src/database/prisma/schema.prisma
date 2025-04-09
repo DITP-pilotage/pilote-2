@@ -626,3 +626,13 @@ model token_api_information {
 
   @@schema("public")
 }
+
+model nouveaute {
+  id String @id
+  contenu String
+  date_creation DateTime @default(now())
+  version String
+  date String
+
+  @@schema("public")
+}

@@ -1,128 +1,167 @@
-import Link from 'next/link';
 import { FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
-import { ParametrageNouveautés } from '../../../../public/nouveautés/ParametrageNouveautés';
+import { ÉditeurRiche } from '@/client/components/_commons/ÉditeurRiche/ÉditeurRiche';
+import { useNouveautés } from './useNouveautés';
 import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
+import '@gouvfr/dsfr/dist/component/input/input.min.css';
+import { NouveautésStyled } from './Nouveautés.styled';
 
-const Nouveautés: FunctionComponent<{}> = () => {
+const Nouveautés: FunctionComponent<{ estAutoriseAModifierLesNouveautés: boolean }> = ({ estAutoriseAModifierLesNouveautés }) => {
+  const { sauvegarderContenuNouveautés, modifierContenuNouveautés, listeNouveautes, estChargementListeNouveautes, contenu, estUnModeEdition, idAModifier, version, date, setContenu, setVersion, setDate, setEstUnModeEdition, setIdAModifier } = useNouveautés();
+
   return (
-    <main>
-      <div className='fr-container fr-pb-2w'>
-        <div className='fr-grid-row fr-py-4w'>
-          <Titre
-            baliseHtml='h1'
-            className='fr-my-auto'
-          >
-            Nouveautés
-          </Titre>
-        </div>
-        <Bloc>
-          {
-            !ParametrageNouveautés || ParametrageNouveautés.length === 0 ? (
-              <h2 className='fr-h3'>
-                Aucune nouveautés sur le projet
-              </h2>
-            ) : (
-              <>
-                <div className='fr-grid-row'>
-                  <div className='fr-col-12'>
-                    <h2 className='fr-h3'>
-                      {`${ParametrageNouveautés[0].version} du ${ParametrageNouveautés[0].date}`}
-                      {ParametrageNouveautés[0].lienCentreAide ? (
-                        <Link
-                          className='fr-link fr-ml-2w'
-                          href={ParametrageNouveautés[0].lienCentreAide}
-                          rel='noopener external'
-                          target='_blank'
+    <NouveautésStyled>
+      <main>
+        <div className='fr-container fr-pb-2w'>
+          <div className='fr-grid-row fr-py-4w'>
+            <Titre
+              baliseHtml='h1'
+              className='fr-my-auto'
+            >
+              Nouveautés
+            </Titre>
+          </div>
+          { !estChargementListeNouveautes ? (
+            <Bloc>
+              <div className='fr-grid-row'>
+                {
+                  estAutoriseAModifierLesNouveautés ? (
+                    estUnModeEdition && !idAModifier ? (
+                      <>
+                        <div className='fr-col-12'>
+                          <div className='fr-grid-row fr-grid-row--gutters'>
+                            <div className='fr-col-6'>
+                              <input
+                                className='fr-input'
+                                onChange={(e) => setVersion(e.target.value)}
+                                type='text'
+                                value={version}
+                              />
+                            </div>
+                            <div className='fr-col-6'>
+                              <input
+                                className='fr-input'
+                                onChange={(e) => setDate(e.target.value)}
+                                type='date'
+                                value={date}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div className='fr-col-12 fr-mb-2w'>
+                          <ÉditeurRiche
+                            contenu={contenu}
+                            onChange={setContenu}
+                            placeholder='Saisissez les nouvelles fonctionnalités...'
+                          />
+                        </div>
+                        <div className='fr-col-12 fr-mb-2w flex justify-end'>
+                          <button
+                            className='fr-btn fr-mr-2w'
+                            onClick={() => setEstUnModeEdition(false)}
+                            type='button'
+                          >
+                            Annuler
+                          </button>
+                          <button
+                            className='fr-btn'
+                            onClick={() => sauvegarderContenuNouveautés({ contenu, version, date })}
+                            type='button'
+                          >
+                            Sauvegarder
+                          </button>
+                        </div>
+                      </>
+                    ) : !idAModifier ? (
+                      <div className='fr-col-12 fr-my-2w flex justify-end'>
+                        <button
+                          className='fr-btn'
+                          onClick={() => setEstUnModeEdition(true)}
+                          type='button'
                         >
-                          Lien vers le centre d'aide
-                        </Link>
-                      ) : null}
-                    </h2>
-                    <h3 className='fr-h6'>
-                      Nouvelles fonctionnalités
-                    </h3>
-                    <div className='fr-mb-2w'>
-                      <ul>
-                        {
-                          ParametrageNouveautés[0].contenu.map((elementContenu, indexContenu) => (
-                            <li
-                              className='fr-m-0'
-                              key={`element-contenu-${ParametrageNouveautés[0].version}-${indexContenu}`}
-                            >
-                              {elementContenu}
-                            </li>
-                          ))
-                        }
-                      </ul>
+                          Créer une nouveauté
+                        </button>
+                      </div>
+                    ) : null  
+                  ) : null
+                }
+              </div>
+              {
+                !listeNouveautes || listeNouveautes.length === 0 ? (
+                  <h2 className='fr-h3'>
+                    Aucune nouveautés sur le projet
+                  </h2>
+                ) : (
+                  <>
+                    <div className='fr-grid-row'>
+                      <div className='fr-col-12'>
+                        <h2 className='fr-h3'>
+                          Version 
+                          {' '}
+                          {`${listeNouveautes[0].version} du ${new Date(listeNouveautes[0].date).toLocaleDateString('fr-FR')}`}
+                        </h2>
+                        <div className='fr-mb-2w'>
+                          {
+                            estAutoriseAModifierLesNouveautés && listeNouveautes[0].id === idAModifier ? (
+                              <ÉditeurRiche
+                                contenu={listeNouveautes[0].contenu}
+                                onChange={setContenu}
+                                placeholder='Saisissez les nouvelles fonctionnalités...'
+                              />
+                            ) : (
+                              <div
+                                className='fr-content'
+                                // eslint-disable-next-line react/no-danger
+                                dangerouslySetInnerHTML={{ __html: listeNouveautes[0].contenu }}
+                              />
+                            )
+                          }
+                          <div className='fr-mt-2w flex justify-end'>
+                            {
+                              estAutoriseAModifierLesNouveautés && listeNouveautes[0].id !== idAModifier ? (
+                                <button
+                                  className='fr-btn'
+                                  onClick={() => setIdAModifier(listeNouveautes[0].id)}
+                                  type='button'
+                                >
+                                  Modifier
+                                </button>
+                              ) : estAutoriseAModifierLesNouveautés && listeNouveautes[0].id === idAModifier ? (
+                                <>
+                                  <button
+                                    className='fr-btn fr-mr-2w'
+                                    onClick={() => setIdAModifier('')}
+                                    type='button'
+                                  >
+                                    Annuler
+                                  </button>
+                                  <button
+                                    className='fr-btn'
+                                    onClick={() => modifierContenuNouveautés({ id: listeNouveautes[0].id, contenu, version, date })}
+                                    type='button'
+                                  >
+                                    Sauvegarder
+                                  </button> 
+                                </>
+                              ) : null
+                            }
+                          </div>
+                        </div>
+                      </div>
                     </div>
                     {
-                      ParametrageNouveautés[0].correctifs.length > 0 ? (
-                        <>
-                          <h3 className='fr-h6'>
-                            Correctifs
-                          </h3>
-                          <div className='fr-mb-2w'>
-                            <ul>
-                              {
-                                ParametrageNouveautés[0].correctifs.map((elementCorrectif, indexCorrectif) => {
-                                  return (
-                                    <li key={`correctif-0-${indexCorrectif}`}>
-                                      {elementCorrectif}
-                                    </li>
-                                  );
-                                },
-                                )
-                              }
-                            </ul>
-                          </div>
-                        </>
-                      ) : null
-                    }
-                    {
-                      ParametrageNouveautés[0].centreAide.length > 0 ? (
-                        <>
-                          <h3 className='fr-h6'>
-                            Mise à jour du centre d'aide
-                          </h3>
-                          <ul>
-                            {
-                              ParametrageNouveautés[0].centreAide.map((elementCentreAide, indexCentreAide) => {
-                                return (
-                                  <li key={`maj-centre-aide-0-${indexCentreAide}`}>
-                                    {elementCentreAide}
-                                  </li>
-                                );
-                              },
-                              )
-                            }
-                          </ul>
-                        </>
-                      ) : null
-                    }
-                  </div>
-                </div>
-                {
-                  ParametrageNouveautés.slice(1, ParametrageNouveautés.length).map((element, index) => {
+                  listeNouveautes.slice(1, listeNouveautes.length).map((element, index) => {
                     return (
                       <div
                         className='fr-grid-row fr-mb-2w fr-mt-2w'
-                        key={`nouveauté-${element.date}`}
+                        key={`nouveauté-${element.date}-${element.id}`}
                       >
                         <div className='fr-col-12'>
                           <h2 className='fr-h3'>
-                            {`${element.version} du ${element.date}`}
-                            {element.lienCentreAide ? (
-                              <Link
-                                className='fr-link fr-ml-2w'
-                                href={element.lienCentreAide}
-                                rel='noopener external'
-                                target='_blank'
-                              >
-                                Lien vers le centre d'aide
-                              </Link>
-                            ) : null}
+                            Version
+                            {' '}
+                            {`${element.version} du ${new Date(element.date).toLocaleDateString('fr-FR')}`}
                           </h2>
                           <section className='fr-accordion'>
                             <h3 className='fr-accordion__title'>
@@ -139,63 +178,53 @@ const Nouveautés: FunctionComponent<{}> = () => {
                               className='fr-collapse'
                               id={`accordion-${index}`}
                             >
-                              <h3 className='fr-h6'>
-                                Nouvelles fonctionnalités
-                              </h3>
-                              <ul className='fr-mb-2w'>
+                              <div className='fr-mb-2w'>
                                 {
-                                  element.contenu.map((elementContenu, indexContenu) => (
-                                    <li
-                                      className='fr-m-0'
-                                      key={`element-contenu-${element.version}-${indexContenu}`}
-                                    >
-                                      {elementContenu}
-                                    </li>
-                                  ))
+                                  estAutoriseAModifierLesNouveautés && element.id === idAModifier ? (
+                                    <ÉditeurRiche
+                                      contenu={element.contenu}
+                                      onChange={setContenu}
+                                      placeholder='Saisissez les nouvelles fonctionnalités...'
+                                    />
+                                  ) : (
+                                    <div
+                                      className='fr-content'
+                                      // eslint-disable-next-line react/no-danger
+                                      dangerouslySetInnerHTML={{ __html: element.contenu }}
+                                    />
+                                  )
                                 }
-                              </ul>
-                              {
-                                element.correctifs.length > 0 ? (
-                                  <>
-                                    <h3 className='fr-h6'>
-                                      Correctifs
-                                    </h3>
-                                    <ul>
-                                      {
-                                        element.correctifs.map((elementCorrectif, indexCorrectif) => {
-                                          return (
-                                            <li key={`correctif-${index}-${indexCorrectif}`}>
-                                              {elementCorrectif}
-                                            </li>
-                                          );
-                                        },
-                                        )
-                                      }
-                                    </ul>
-                                  </>
-                                ) : null
-                              }
-                              {
-                                element.centreAide.length > 0 ? (
-                                  <>
-                                    <h3 className='fr-h6'>
-                                      Mise à jour du centre d'aide
-                                    </h3>
-                                    <ul>
-                                      {
-                                        ParametrageNouveautés[0].centreAide.map((elementCentreAide, indexCentreAide) => {
-                                          return (
-                                            <li key={`maj-centre-aide-${index}-${indexCentreAide}`}>
-                                              {elementCentreAide}
-                                            </li>
-                                          );
-                                        },
-                                        )
-                                      }
-                                    </ul>
-                                  </>
-                                ) : null
-                              }                              
+                                <div className='fr-mt-2w flex justify-end'>
+                                  {
+                                    estAutoriseAModifierLesNouveautés && element.id !== idAModifier ? (
+                                      <button
+                                        className='fr-btn'
+                                        onClick={() => setIdAModifier(element.id)}
+                                        type='button'
+                                      >
+                                        Modifier
+                                      </button>
+                                    ) : estAutoriseAModifierLesNouveautés && element.id === idAModifier ? (
+                                      <>
+                                        <button
+                                          className='fr-btn fr-mr-2w'
+                                          onClick={() => setIdAModifier('')}
+                                          type='button'
+                                        >
+                                          Annuler
+                                        </button>
+                                        <button
+                                          className='fr-btn'
+                                          onClick={() => modifierContenuNouveautés({ id: element.id, contenu, version, date })}
+                                          type='button'
+                                        >
+                                          Sauvegarder
+                                        </button>
+                                      </>
+                                    ) : null
+                                  }
+                                </div>
+                              </div>
                             </div>
                           </section>
                         </div>
@@ -203,12 +232,14 @@ const Nouveautés: FunctionComponent<{}> = () => {
                     );
                   })
                 }
-              </>
-            )
+                  </>
+                )
           }
-        </Bloc>
-      </div>
-    </main>
+            </Bloc>
+          ) : null}
+        </div>
+      </main>
+    </NouveautésStyled>
   );
 };
 

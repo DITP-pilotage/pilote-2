@@ -12,6 +12,7 @@ import { territoireRouter } from './territoire';
 import { périmètreMinistérielRouter } from './périmètreMinistériel';
 import { profilRouter } from './profil';
 import { cartographieSVGRouter } from './cartographieSVG';
+import { parametrageNouveautesRouter } from './parametrageNouveautes';
 
 export const appRouter = créerRouteurTRPC({
   chantier: chantierRouter,
@@ -27,4 +28,5 @@ export const appRouter = créerRouteurTRPC({
   périmètreMinistériel: périmètreMinistérielRouter,
   profil: profilRouter,
   cartographieSVG: cartographieSVGRouter,
+  parametrageNouveautes: parametrageNouveautesRouter,
 });
