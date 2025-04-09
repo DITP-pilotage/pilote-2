@@ -45,8 +45,7 @@ export class Nouveaute {
   }
 
   static verifyVersion(version: string): string {
-    const [major, minor, patch] = version.split('.');
-    if (!Number.isInteger(+major) || !Number.isInteger(+minor) || !Number.isInteger(+patch)) {
+    if (!version.match(/^\d+\.\d+\.\d+$/)) {
       throw new BadRequestError('La version doit être un nombre entier');
     }
     return version;
