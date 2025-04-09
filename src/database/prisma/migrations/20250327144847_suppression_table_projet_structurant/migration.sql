@@ -20,22 +20,22 @@ DROP COLUMN "projets_structurants_lecture_tous_perimetres",
 DROP COLUMN "projets_structurants_lecture_tous_territoires";
 
 -- DropTable
-DROP TABLE "public"."commentaire_projet_structurant";
+DROP TABLE "public"."commentaire_projet_structurant" CASCADE;
 
 -- DropTable
-DROP TABLE "public"."indicateur_projet_structurant";
+DROP TABLE "public"."indicateur_projet_structurant" CASCADE;
 
 -- DropTable
-DROP TABLE "public"."objectif_projet_structurant";
+DROP TABLE "public"."objectif_projet_structurant" CASCADE;
 
 -- DropTable
-DROP TABLE "public"."perimetre_projet_structurant";
+DROP TABLE "public"."perimetre_projet_structurant" CASCADE;
 
 -- DropTable
-DROP TABLE "public"."projet_structurant";
+DROP TABLE "public"."projet_structurant" CASCADE;
 
 -- DropTable
-DROP TABLE "public"."synthese_des_resultats_projet_structurant";
+DROP TABLE "public"."synthese_des_resultats_projet_structurant" CASCADE;
 
 -- DropEnum
-DROP TYPE "public"."type_objectif_projet_structurant";
+DROP TYPE "public"."type_objectif_projet_structurant" CASCADE;
