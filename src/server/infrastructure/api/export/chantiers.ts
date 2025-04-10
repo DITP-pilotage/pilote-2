@@ -41,6 +41,7 @@ export default async function handleExportDesChantiers(request: NextApiRequest, 
     listeChantierId: [],
     listeMeteos: request.query.meteos ? Array.isArray(request.query.meteos) ? request.query.meteos : [request.query.meteos] as string[] : [],
     listeOptionsExport: [],
+    territoireCode: request.query.territoireCode as string,
   } satisfies OptionsExport;
 
   const chantierIds = await getContainer('chantiers').resolve('chantierRepository').récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(), optionsExport);

@@ -130,15 +130,15 @@ export const EtapeRecapitulatif = ({ territoireCodeSelectionne }: { territoireCo
         {
           filtres.typeExport === 'chantiers' ? (
             <span>
-              Chantiers
+              chantiers
             </span>
           ) : filtres.typeExport === 'indicateurs' ? (
             <span>
-              Indicateurs
+              indicateurs
             </span>
           ) : (
             <span>
-              Historique indicateurs
+              historique des indicateurs
             </span>
           )
         }

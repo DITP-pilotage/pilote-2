@@ -10,31 +10,31 @@ test('doit pouvoir exporter les données des chantiers sous format CSV', async (
     await page.getByRole('button', { name: /Exporter les données V2/ }).click();
     await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=1&typeExport=chantiers');
     await expect(page.getByRole('heading', { name: /Éléments à exporter/ })).toBeVisible();
-    await expect(page.getByRole('heading', { name: /Exporter les données - Étape 1 sur 4/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Exporter les données - Étape 1 sur 5/ })).toBeVisible();
   });
 
   await test.step("Choix de l'export chantier", async () => {
-    await page.getByLabel(/Les chantiers/).check();
-    await expect(page.getByLabel('Les chantiers')).toBeChecked();
+    await page.getByLabel(/les chantiers/).check();
+    await expect(page.getByLabel(/les chantiers/)).toBeChecked();
   });
 
   await test.step("Passage à l'étape 2 - Périmètre de l'export", async () => {
     await page.getByRole('button', { name: /Étape suivante/ }).click();
     await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=2&typeExport=chantiers');
     await expect(page.getByRole('heading', { name: /Périmètre de l'export/ })).toBeVisible();
-    await expect(page.getByRole('heading', { name: /Exporter les données - Étape 2 sur 4/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Exporter les données - Étape 2 sur 5/ })).toBeVisible();
   });
 
   await test.step("Choix de l'export chantier sans filtres", async () => {
     await page.getByLabel(/exporter tous les éléments/).check();
-    await expect(page.getByLabel('exporter tous les éléments')).toBeChecked();
+    await expect(page.getByLabel(/exporter tous les éléments/)).toBeChecked();
   });
 
   await test.step("Passage à l'étape 3 - Données à collecter", async () => {
     await page.getByRole('button', { name: /Étape suivante/ }).click();
     await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=chantiers');
     await expect(page.getByRole('heading', { name: /Données à collecter/ })).toBeVisible();
-    await expect(page.getByRole('heading', { name: /Exporter les données - Étape 3 sur 4/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Exporter les données - Étape 3 sur 5/ })).toBeVisible();
   });
 
   await test.step("Vérification des possibilités de choix d'export - identifiants", async () => {
@@ -102,7 +102,7 @@ test('doit pouvoir exporter les données des chantiers sous format CSV', async (
     await page.getByRole('button', { name: /Étape suivante/ }).click();
     await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=chantiers&optionsExport=identifiant,gouvernance,responsabilite,objectif,description,comparaison,synthese,commentaire,decision');
     await expect(page.getByRole('heading', { name: /Récapitulatif et validation/ })).toBeVisible();
-    await expect(page.getByRole('heading', { name: /Exporter les données - Étape 4 sur 4/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Exporter les données - Étape 4 sur 5/ })).toBeVisible();
   });
 
   await test.step("Retour à l'étape 3 - Suppression des champs (Pour pouvoir tester le fichier après sinon trop de temps à DL)", async () => {
@@ -124,7 +124,7 @@ test('doit pouvoir exporter les données des chantiers sous format CSV', async (
       await page.getByRole('button', { name: /Étape suivante/ }).click();
       await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=chantiers&optionsExport=identifiant,gouvernance');
       await expect(page.getByRole('heading', { name: /Récapitulatif et validation/ })).toBeVisible();
-      await expect(page.getByRole('heading', { name: /Exporter les données - Étape 4 sur 4/ })).toBeVisible();
+      await expect(page.getByRole('heading', { name: /Exporter les données - Étape 4 sur 5/ })).toBeVisible();
 
       const downloadPromise = page.waitForEvent('download', {
         timeout: 120_000,
@@ -136,7 +136,6 @@ test('doit pouvoir exporter les données des chantiers sous format CSV', async (
 
       expect(download.suggestedFilename()).toMatch(/PILOTE-Chantiers-.*\.csv/);
     });
-
 
     await test.step('vérification du fichier identifiant et gouvernance', async () => {
       const contents = await fs.promises.readFile(await download.path());

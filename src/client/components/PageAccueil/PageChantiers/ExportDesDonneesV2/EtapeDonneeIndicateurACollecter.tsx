@@ -63,7 +63,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
                 identifiants
               </span>
               {' '}
-              de l'indicateur, du chantier et du territoire
+              de l'indicateur, du chantier associé et du territoire
             </span>
           </label>
         </div>
