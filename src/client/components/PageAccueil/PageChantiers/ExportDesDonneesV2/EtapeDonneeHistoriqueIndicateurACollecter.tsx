@@ -65,23 +65,16 @@ export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
           >
             <span>
               <span className='fr-text--bold'>
-                valeur initiale
+                valeur initiale et valeurs cibles*
               </span>
               {' '}
-              et
-              {' '}
-              <span className='fr-text--bold'>
-                valeurs cibles
-              </span>
-              {' '}
-              de l'indicateur sur le territoire les valeurs cibles sont exportées pour l'année en cours et pour l'année
-              2026
+              de l'indicateur sur le territoire
             </span>
           </label>
           <span
             className='fr-label fr-text--xs texte-gris fr-mb-0 fr-ml-4w'
           >
-            les valeurs cibles sont exportées pour l'année en cours et pour l'année 2026
+            *les valeurs cibles sont fournies pour l'année en cours et à échéance
           </span>
         </div>
         <div className='fr-checkbox-group fr-mt-1w'>
