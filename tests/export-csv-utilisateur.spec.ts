@@ -29,7 +29,7 @@ test('doit pouvoir exporter les données des chantiers sous format CSV', async (
       await test.step('vérification du fichier identifiant et cadrage', async () => {
         const contents = await fs.promises.readFile(await download.path());
 
-        expect(contents.toString()).toMatch('"Prénom";"Nom";"Email";"Fonction";"Profil";"Territoire";"Périmètre";"Droit de lecture";"Responsabilité";"Droits de saisie des données quantitatives";"Droits de saisie des commentaires";"Droits de gestion des utilisateurs"\n');
+        expect(contents.toString()).toMatch('"Prénom";"Nom";"Email";"Fonction";"Profil";"Territoire";"Périmètre";"Droit de lecture";"Responsabilité";"Droits de saisie des données quantitatives";"Droits de saisie des commentaires";"Droits de gestion des utilisateurs";"Statut"\n');
       });
     });
   });

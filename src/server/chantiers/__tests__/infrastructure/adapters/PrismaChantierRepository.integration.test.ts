@@ -288,6 +288,7 @@ describe('PrismaChantierRepository', () => {
           listeMeteos: [],
           listeStatuts: [],
           listeOptionsExport: [],
+          territoireCode: undefined,
         };
 
         const jalon = 2024;
@@ -428,6 +429,7 @@ describe('PrismaChantierRepository', () => {
           listeMeteos: ['SOLEIL'],
           listeStatuts: [],
           listeOptionsExport: [],
+          territoireCode: undefined,
         };
 
         const jalon = 2024;
@@ -525,6 +527,7 @@ describe('PrismaChantierRepository', () => {
           listeMeteos: [],
           listeStatuts: [],
           listeOptionsExport: [],
+          territoireCode: undefined,
         };
 
         const jalon = 2024;
@@ -656,6 +659,7 @@ describe('PrismaChantierRepository', () => {
           listeMeteos: [],
           listeStatuts: [],
           listeOptionsExport: [],
+          territoireCode: undefined,
         };
 
         const jalon = 2024;
@@ -711,6 +715,7 @@ describe('PrismaChantierRepository', () => {
         listeMeteos: [],
         listeStatuts: [],
         listeOptionsExport: [],
+        territoireCode: undefined,
       };
 
       // When
@@ -754,6 +759,7 @@ describe('PrismaChantierRepository', () => {
         listeMeteos: [],
         listeStatuts: [],
         listeOptionsExport: [],
+        territoireCode: undefined,
       };
 
       // When
@@ -797,6 +803,7 @@ describe('PrismaChantierRepository', () => {
         listeMeteos: [],
         listeStatuts: [],
         listeOptionsExport: [],
+        territoireCode: undefined,
       };
 
       // When
@@ -850,6 +857,7 @@ describe('PrismaChantierRepository', () => {
         listeMeteos: [],
         listeStatuts: ['PUBLIE', 'BROUILLON'],
         listeOptionsExport: [],
+        territoireCode: undefined,
       };
 
       // When
@@ -908,6 +916,7 @@ describe('PrismaChantierRepository', () => {
         listeMeteos: [],
         listeStatuts: [],
         listeOptionsExport: [],
+        territoireCode: undefined,
       };
 
       // When
@@ -966,6 +975,7 @@ describe('PrismaChantierRepository', () => {
         listeMeteos: ['CH-002', 'CH-003', 'CH-005'],
         listeStatuts: [],
         listeOptionsExport: [],
+        territoireCode: undefined,
       };
 
       // When

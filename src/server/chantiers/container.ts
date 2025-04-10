@@ -24,10 +24,13 @@ import {
   ModifierPropositionValeurActuelleUseCase,
 } from '@/server/chantiers/usecases/ModifierPropositionValeurActuelleUseCase';
 import { ExportCsvDesChantiersUseCaseV2 } from './usecases/ExportCsvDesChantiersUseCaseV2';
+import { TerritoireRepository } from './domain/ports/TerritoireRepository';
+import { PrismaTerritoireRepository } from './infrastructure/adapters/PrismaTerritoireRepository';
 
 export type ChantierDependencies = {
   chantierRepository: ChantierRepository
   indicateurRepository: IndicateurRepository
+  territoireRepository: TerritoireRepository
   propositionValeurActuelleRepository: PropositionValeurActuelleRepository
   recupererDonneesChantierQuery: RecupererDonneesChantierQuery
   exportCsvDesChantiersUseCase: ExportCsvDesChantiersUseCase
@@ -43,6 +46,7 @@ export const getChantiersContainer = (initialContainer: AwilixContainer<{ prisma
   return initialContainer.createScope<ChantierDependencies>().register({
     chantierRepository: asClass(PrismaChantierRepository),
     indicateurRepository: asClass(PrismaIndicateurRepository),
+    territoireRepository: asClass(PrismaTerritoireRepository),
     propositionValeurActuelleRepository: asClass(PrismaPropositionValeurActuelleRepository),
     recupererDonneesChantierQuery: asClass(RecupererDonneesChantierQuery),
     exportCsvDesChantiersUseCase: asClass(ExportCsvDesChantiersUseCase),

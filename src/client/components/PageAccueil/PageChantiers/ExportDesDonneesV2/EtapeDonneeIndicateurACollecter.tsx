@@ -28,7 +28,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
   return (
     <div>
       <p className='fr-mt-2w fr-mb-0'>
-        Sélectionnez les données que vous souhaitez collecter pour chaque indicateur et sa PPG associée, territoire par
+        Sélectionnez les données que vous souhaitez collecter pour chaque indicateur et son chantier associé, territoire par
         territoire :
       </p>
       <div className='flex justify-end'>
@@ -63,7 +63,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
                 identifiants
               </span>
               {' '}
-              de l'indicateur, de la PPG associée et du territoire
+              de l'indicateur, du chantier associé et du territoire
             </span>
           </label>
         </div>
@@ -139,7 +139,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
                     Baromètre, pondérations aux différentes mailles
                   </li>
                   <li className='fr-pb-0'>
-                    de la PPG associée: tutelle, axe et spécificités (statut, territorialisation, etc.)
+                    du chantier associé: tutelle, axe et spécificités (statut, territorialisation, etc.)
                   </li>
                 </ul>
               </>
@@ -153,7 +153,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
                     gouvernance
                   </span>
                   {' '}
-                  de l'indicateur et de la PPG associée
+                  de l'indicateur et du chantier associé
                 </span>
               </label>
             )
@@ -181,7 +181,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
                   responsabilités
                 </span>
                 {' '}
-                 de l'indicateur et de la PPG associée : directeurs, responsables et coordinateurs
+                 de l'indicateur et du chantier associé : directeurs, responsables et coordinateurs
               </span>
             </label>
             ) : (
@@ -194,7 +194,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
                   responsabilités
                 </span>
                 {' '}
-                 de l'indicateur et de la PPG associée
+                 de l'indicateur et du chantier associé
               </span>
             </label>
             )
@@ -225,7 +225,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
                     objectifs
                   </span>
                   {' '}
-                   de la PPG associée
+                    du chantier associé
                 </span>
               </label>
             ) : (
@@ -238,7 +238,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
                     objectifs
                   </span>
                   {' '}
-                   de la PPG associée : notre ambition, ce qui a déjà été fait, ce qui reste à faire
+                   du chantier associé : notre ambition, ce qui a déjà été fait, ce qui reste à faire
                 </span>
               </label>
             )
@@ -251,11 +251,6 @@ export const EtapeDonneeIndicateurACollecter = () => {
         <h3 className='fr-text--md underline fr-mb-0 fr-mt-2w'>
           DONNÉES QUANTITATIVES
         </h3>
-        <span
-          className='fr-label fr-text--xs texte-gris fr-mb-0'
-        >
-          les données quantitatives sont exportées pour l'année en cours et pour l'année 2026
-        </span>
         <div className='fr-checkbox-group fr-mt-1w'>
           <input
             checked={optionsExport.split(',').includes('description')}
@@ -285,7 +280,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
                     de l'indicateur : valeurs initiale / actuelle / cible, taux d'avancement (si applicable)
                   </li>
                   <li className='fr-pb-0'>
-                    de la PPG associée : taux d'avancement, tendance, écart
+                    du chantier associé : taux d'avancement, tendance, écart
                   </li>
                 </ul>
               </>
@@ -299,7 +294,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
                     données descriptives
                   </span>
                   {' '}
-                  de l'indicateur et de la PPG associée sur le territoire
+                  de l'indicateur et du chantier associé sur le territoire
                 </span>
               </label>
             )
@@ -380,7 +375,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
                 météo et synthèse des résultats
               </span>
               {' '}
-              de la PPG associée sur le territoire
+              du chantier associé sur le territoire
             </span>
           </label>
         </div>
@@ -407,7 +402,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
                       commentaires
                     </span>
                     {' '}
-                    de la PPG associée
+                    du chantier associé
                   </span>
                 </label>
                 <ul className='fr-ml-4w fr-my-0 fr-text--sm'>
@@ -429,7 +424,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
                     commentaires
                   </span>
                   {' '}
-                  de la PPG associée
+                  du chantier associé
                 </span>
               </label>
             )
@@ -458,7 +453,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
                 décisions stratégiques
               </span>
               {' '}
-               de la PPG associée
+               du chantier associé
             </span>
           </label>
         </div>

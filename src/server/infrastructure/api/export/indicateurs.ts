@@ -45,6 +45,7 @@ export default async function handleExportDesIndicateurs(request: NextApiRequest
     listeChantierId: request.query.listeChantierId ? (request.query.listeChantierId as string).split(',') : [],
     listeMeteos: request.query.meteos ? Array.isArray(request.query.meteos) ? request.query.meteos : [request.query.meteos] as string[] : [],
     listeOptionsExport: [],
+    territoireCode: request.query.territoireCode as string,
   };
 
   const chantierIds = await getContainer('chantiers').resolve('chantierRepository').récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(), optionsExport);

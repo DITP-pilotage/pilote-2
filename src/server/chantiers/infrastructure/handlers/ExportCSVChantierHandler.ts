@@ -27,6 +27,7 @@ export const handleExportDesChantiers = async (request: NextApiRequest, response
     listeChantierId: [],
     listeMeteos: request.query.meteos ? Array.isArray(request.query.meteos) ? request.query.meteos : [request.query.meteos] as string[] : [],
     listeOptionsExport: request.query.optionsExport ? Array.isArray(request.query.optionsExport) ? request.query.optionsExport : [request.query.optionsExport] as string[] : [],
+    territoireCode: request.query.territoireCode as string | undefined,
   } satisfies OptionsExport;
 
   const headersColumn = ExportCsvDesChantiersUseCaseV2.NOMS_COLONNES(jalon, optionsExport, session.profil);
@@ -44,13 +45,20 @@ export const handleExportDesChantiers = async (request: NextApiRequest, response
   const territoireCodes = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
   const chunkSize =  configuration.export.csvChantiersChunkSize;
 
+  let territoireARecuperer = territoireCodes;
+
+  if (optionsExport.territoireCode && optionsExport.territoireCode !== 'NAT-FR') {
+    territoireARecuperer = await getContainer('chantiers').resolve('territoireRepository').recupererTerritoireCodesEtTerritoiresCodesEnfantsParTerritoireCode({ territoireCode: optionsExport.territoireCode });
+    territoireARecuperer = territoireARecuperer.filter((territoireCode) => territoireCodes.includes(territoireCode));
+  }
+
   const chantierIds = await getContainer('chantiers').resolve('chantierRepository').récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(), optionsExport);
 
   const exportCsvDesChantiersUseCase = getContainer('chantiers').resolve('exportCsvDesChantiersUseCaseV2');
 
   for await (const partialResult of exportCsvDesChantiersUseCase.run({
     chantierIds,
-    territoireCodes,
+    territoireCodes: territoireARecuperer,
     profil: session.profil,
     chantierChunkSize: chunkSize,
     jalon,
