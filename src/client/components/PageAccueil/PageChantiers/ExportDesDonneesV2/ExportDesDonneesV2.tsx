@@ -19,6 +19,7 @@ import {
 import {
   EtapeDonneeHistoriqueIndicateurACollecter,
 } from '@/components/PageAccueil/PageChantiers/ExportDesDonneesV2/EtapeDonneeHistoriqueIndicateurACollecter';
+import { EtapeDonneeEnCoursDeTelechargement } from './EtapeDonneeEnCoursDeTelechargement';
 
 const Stepper = {
   'ETAPE_CONTENU_A_EXPORTER': {
@@ -37,21 +38,26 @@ const Stepper = {
     numeroEtape: 4,
     titreEtape: 'Récapitulatif et validation',
   },
+  'ETAPE_DONNEE_EN_COURS_DE_TELECHARGEMENT': {
+    numeroEtape: 5,
+    titreEtape: 'Donnée en cours de téléchargement',
+  },
 };
 
 export const ID_HTML_MODALE_EXPORT_V2 = 'modale-exporter-les-données-v2';
 
 export const ExportDesDonneesV2: FunctionComponent<{
   fermetureCallback: () => void
-}> = ({ fermetureCallback }) => {
-  const étapes = [Stepper.ETAPE_CONTENU_A_EXPORTER.titreEtape, Stepper.ETAPE_PERIMETRE_EXPORT.titreEtape, Stepper.ETAPE_DONNEE_A_COLLECTER.titreEtape, Stepper.ETAPE_RECAPITULATIF.titreEtape];
+  territoireCodeSelectionne: string
+}> = ({ fermetureCallback, territoireCodeSelectionne }) => {
+  const étapes = [Stepper.ETAPE_CONTENU_A_EXPORTER.titreEtape, Stepper.ETAPE_PERIMETRE_EXPORT.titreEtape, Stepper.ETAPE_DONNEE_A_COLLECTER.titreEtape, Stepper.ETAPE_RECAPITULATIF.titreEtape, Stepper.ETAPE_DONNEE_EN_COURS_DE_TELECHARGEMENT.titreEtape];
 
   const [etapeCourante] = useQueryState('etapeCourante', parseAsInteger.withDefault(Stepper.ETAPE_CONTENU_A_EXPORTER.numeroEtape).withOptions({
     shallow: false,
     history: 'push',
   }));
 
-  const [typeExport] = useQueryState('typeExport', parseAsStringLiteral(['ppg', 'indicateurs', 'historique-indicateurs']).withDefault('ppg'));
+  const [typeExport] = useQueryState('typeExport', parseAsStringLiteral(['chantiers', 'indicateurs', 'historique-indicateurs']).withDefault('chantiers'));
 
   return (
     <Modale
@@ -70,12 +76,14 @@ export const ExportDesDonneesV2: FunctionComponent<{
         ) : etapeCourante === Stepper.ETAPE_PERIMETRE_EXPORT.numeroEtape ? (
           <EtapePerimetreExport />
         ) : etapeCourante === Stepper.ETAPE_DONNEE_A_COLLECTER.numeroEtape ? (
-          typeExport === 'ppg' ? <EtapeDonneeChantierACollecter />
+          typeExport === 'chantiers' ? <EtapeDonneeChantierACollecter />
             : typeExport === 'indicateurs'
               ? <EtapeDonneeIndicateurACollecter />
               : <EtapeDonneeHistoriqueIndicateurACollecter />
         ) : etapeCourante === Stepper.ETAPE_RECAPITULATIF.numeroEtape ? (
-          <EtapeRecapitulatif />
+          <EtapeRecapitulatif territoireCodeSelectionne={territoireCodeSelectionne} />
+        ) : etapeCourante === Stepper.ETAPE_DONNEE_EN_COURS_DE_TELECHARGEMENT.numeroEtape ? (
+          <EtapeDonneeEnCoursDeTelechargement />
         ) : null
       }
     </Modale>

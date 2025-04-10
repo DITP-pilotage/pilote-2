@@ -14,7 +14,7 @@ import {
 } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule';
 
 const ressources = {
-  'ppg': {
+  'chantiers': {
     id: 'chantiers' as const,
     baseDuNomDeFichier: 'PILOTE-Chantiers',
     url: '/api/export/chantiers-v2',
@@ -32,28 +32,28 @@ const ressources = {
 };
 
 const chantierDonneesExportable = {
-  'identifiant': 'identifiants de la PPG et du territoire',
-  'gouvernance': 'gouvernance de la PPG',
-  'responsabilite': 'responsabilité de la PPG',
-  'objectif': 'objectifs de la PPG',
-  'description': 'données descriptives de la PPG sur le territoire',
-  'comparaison': 'données de comparaison de la PPG',
-  'synthese': 'météo et synthèse des résultats de la PPG sur le territoire',
-  'commentaire': 'commentaires de la PPG',
-  'decision': 'suivi des décisions stratégiques de la PPG',
+  'identifiant': 'identifiants du chantier et du territoire',
+  'gouvernance': 'gouvernance du chantier',
+  'responsabilite': 'responsabilité du chantier',
+  'objectif': 'objectifs du chantier',
+  'description': 'données descriptives du chantier sur le territoire',
+  'comparaison': 'données de comparaison du chantier',
+  'synthese': 'météo et synthèse des résultats du chantier sur le territoire',
+  'commentaire': 'commentaires du chantier',
+  'decision': 'suivi des décisions stratégiques du chantier',
 };
 
 const indicateurDonneesExportable = {
-  'identifiant': 'identifiants de l\'indicateur, de la PPG associée et du territoire',
+  'identifiant': 'identifiants de l\'indicateur, de la chantier associée et du territoire',
   'cadrage': 'cadrage de l\'indicateur',
-  'gouvernance': 'gouvernance de l\'indicateur et de la PPG associée',
-  'responsabilite': 'responsabilités de l\'indicateur et de la PPG associée',
-  'objectif': 'objectifs de la PPG associée : notre ambition, ce qui a déjà été fait, ce qui reste à faire',
-  'description': 'données descriptives de l\'indicateur et de la PPG associée sur le territoire',
+  'gouvernance': 'gouvernance de l\'indicateur et du chantier associé',
+  'responsabilite': 'responsabilités de l\'indicateur et du chantier associé',
+  'objectif': 'objectifs du chantier associé : notre ambition, ce qui a déjà été fait, ce qui reste à faire',
+  'description': 'données descriptives de l\'indicateur et du chantier associé sur le territoire',
   'comparaison': 'données de comparaison de l\'indicateur',
-  'synthese': 'météo et synthèse des résultats de la PPG associée sur le territoire',
-  'commentaire': 'commentaires de la PPG associée',
-  'decision': 'suivi des décisions stratégiques de la PPG associée',
+  'synthese': 'météo et synthèse des résultats du chantier associé sur le territoire',
+  'commentaire': 'commentaires du chantier associé',
+  'decision': 'suivi des décisions stratégiques du chantier associé',
 };
 
 const historiqueIndicateurDonneesExportable = {
@@ -62,7 +62,7 @@ const historiqueIndicateurDonneesExportable = {
   'valeur-actuelle': "valeurs d'avancements de l'indicateur sur le territoire, mois par mois",
 };
 
-export const EtapeRecapitulatif = () => {
+export const EtapeRecapitulatif = ({ territoireCodeSelectionne }: { territoireCodeSelectionne: string }) => {
   const [, setEtapeCourante] = useQueryState('etapeCourante', parseAsInteger.withOptions({
     shallow: true,
     history: 'push',
@@ -79,7 +79,7 @@ export const EtapeRecapitulatif = () => {
     jalon: parseAsStringLiteral(['2024', '2025']).withDefault(getAnneeDateDeBascule(new Date(), dataBasculeValeurAnneePrecedente as string).toString() as '2024' | '2025'),
     optionsExport: parseAsString.withDefault('identifiant'),
     isAvecFiltre: parseAsBoolean.withDefault(false),
-    typeExport: parseAsStringLiteral(['ppg', 'indicateurs', 'historique-indicateurs']).withDefault('ppg'),
+    typeExport: parseAsStringLiteral(['chantiers', 'indicateurs', 'historique-indicateurs']).withDefault('chantiers'),
   });
 
   const arrayOptionsExport: {
@@ -102,13 +102,17 @@ export const EtapeRecapitulatif = () => {
     arrayOptionsExport.push({ name: 'estTerritorialise', value: true });
   }
 
+  if (filtres.isAvecFiltre) {
+    arrayOptionsExport.push({ name: 'territoireCode', value: territoireCodeSelectionne });
+  }
+
   (filtres.statut === 'BROUILLON' ? ['PUBLIE'] : filtres.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : ['PUBLIE']).forEach(statut => {
     arrayOptionsExport.push({ name: 'statut', value: statut });
   });
 
   arrayOptionsExport.push({ name: 'jalon', value: filtres.jalon });
 
-  const arrayDonneeAExporter = filtres.typeExport === 'ppg' ? chantierDonneesExportable : filtres.typeExport === 'indicateurs' ? indicateurDonneesExportable : historiqueIndicateurDonneesExportable;
+  const arrayDonneeAExporter = filtres.typeExport === 'chantiers' ? chantierDonneesExportable : filtres.typeExport === 'indicateurs' ? indicateurDonneesExportable : historiqueIndicateurDonneesExportable;
 
   return (
     <div>
@@ -124,9 +128,9 @@ export const EtapeRecapitulatif = () => {
           className='fr-icon-check-line texte-success fr-mr-1w'
         />
         {
-          filtres.typeExport === 'ppg' ? (
+          filtres.typeExport === 'chantiers' ? (
             <span>
-              PPG
+              Chantiers
             </span>
           ) : filtres.typeExport === 'indicateurs' ? (
             <span>
@@ -192,6 +196,7 @@ export const EtapeRecapitulatif = () => {
             document.body.append(a);
             a.click();
             a.remove();
+            setEtapeCourante(5);
           }
         }}
       >

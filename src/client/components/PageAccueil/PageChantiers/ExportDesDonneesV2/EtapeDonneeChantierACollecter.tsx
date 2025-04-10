@@ -28,7 +28,7 @@ export const EtapeDonneeChantierACollecter = () => {
   return (
     <div>
       <p className='fr-mt-2w fr-mb-0'>
-        Sélectionnez les données que vous souhaitez collecter pour chaque PPG, territoire par territoire :
+        Sélectionnez les données que vous souhaitez collecter pour chaque chantier, territoire par territoire :
       </p>
       <div className='flex justify-end'>
         <Interrupteur
@@ -62,7 +62,7 @@ export const EtapeDonneeChantierACollecter = () => {
                 identifiants
               </span>
               {' '}
-              de la PPG et du territoire
+              du chantier et du territoire
             </span>
           </label>
         </div>
@@ -86,7 +86,7 @@ export const EtapeDonneeChantierACollecter = () => {
                     gouvernance
                   </span>
                   {' '}
-                  de la PPG : tutelle, axe, spécificités (statut, présence dans le Baromètre, territorialisation,
+                  du chantier : tutelle, axe, spécificités (statut, présence dans le Baromètre, territorialisation,
                   restrictions géographiques)
                 </span>
               </label>
@@ -100,7 +100,7 @@ export const EtapeDonneeChantierACollecter = () => {
                     gouvernance
                   </span>
                   {' '}
-                  de la PPG
+                  du chantier
                 </span>
               </label>
             )
@@ -126,7 +126,7 @@ export const EtapeDonneeChantierACollecter = () => {
                     responsabilité
                   </span>
                   {' '}
-                  de la PPG : directeurs, responsables et coordinateurs
+                  du chantier : directeurs, responsables et coordinateurs
                 </span>
               </label>
             ) : (
@@ -139,7 +139,7 @@ export const EtapeDonneeChantierACollecter = () => {
                     responsabilité
                   </span>
                   {' '}
-                  de la PPG
+                  du chantier
                 </span>
               </label>
             )
@@ -165,7 +165,7 @@ export const EtapeDonneeChantierACollecter = () => {
                     objectifs
                   </span>
                   {' '}
-                  de la PPG: notre ambition, ce qui a déjà été fait, ce qui reste à faire
+                  du chantier: notre ambition, ce qui a déjà été fait, ce qui reste à faire
                 </span>
               </label>
             ) : (
@@ -178,7 +178,7 @@ export const EtapeDonneeChantierACollecter = () => {
                     objectifs
                   </span>
                   {' '}
-                  de la PPG
+                  du chantier
                 </span>
               </label>
             )
@@ -214,7 +214,7 @@ export const EtapeDonneeChantierACollecter = () => {
                     données descriptives
                   </span>
                   {' '}
-                  de la PPG sur le territoire : taux d'avancement, tendance, écart
+                  du chantier sur le territoire : taux d'avancement, tendance, écart
                 </span>
               </label>
             ) : (
@@ -227,7 +227,7 @@ export const EtapeDonneeChantierACollecter = () => {
                     données descriptives
                   </span>
                   {' '}
-                  de la PPG sur le territoire
+                  du chantier sur le territoire
                 </span>
               </label>
             )
@@ -255,7 +255,7 @@ export const EtapeDonneeChantierACollecter = () => {
                       données de comparaison
                     </span>
                     {' '}
-                    de la PPG
+                    du chantier
                   </span>
                 </label>
                 <ul className='fr-ml-4w fr-my-0 fr-text--sm'>
@@ -277,7 +277,7 @@ export const EtapeDonneeChantierACollecter = () => {
                     données de comparaison
                   </span>
                   {' '}
-                  de la PPG
+                  du chantier
                 </span>
               </label>
             )
@@ -306,7 +306,7 @@ export const EtapeDonneeChantierACollecter = () => {
                 météo et synthèse des résultats
               </span>
               {' '}
-              de la PPG sur le territoire
+              du chantier sur le territoire
             </span>
           </label>
         </div>
@@ -331,7 +331,7 @@ export const EtapeDonneeChantierACollecter = () => {
                       commentaires
                     </span>
                     {' '}
-                    de la PPG
+                    du chantier
                   </span>
                 </label>
                 <ul className='fr-ml-4w fr-my-0 fr-text--sm'>
@@ -355,7 +355,7 @@ export const EtapeDonneeChantierACollecter = () => {
                     commentaires
                   </span>
                   {' '}
-                  de la PPG
+                  du chantier
                 </span>
               </label>
             )
@@ -381,7 +381,7 @@ export const EtapeDonneeChantierACollecter = () => {
                 décisions stratégiques
               </span>
               {' '}
-              de la PPG
+              du chantier
             </span>
           </label>
         </div>
