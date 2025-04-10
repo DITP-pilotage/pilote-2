@@ -22,9 +22,9 @@ import {
 import { EtapeDonneeEnCoursDeTelechargement } from './EtapeDonneeEnCoursDeTelechargement';
 
 const Stepper = {
-  'ETAPE_CONTENU_A_EXPORTER': {
+  'ETAPE_ELEMENTS_A_EXPORTER': {
     numeroEtape: 1,
-    titreEtape: 'Contenus à exporter',
+    titreEtape: 'Éléments à exporter',
   },
   'ETAPE_PERIMETRE_EXPORT': {
     numeroEtape: 2,
@@ -50,9 +50,9 @@ export const ExportDesDonneesV2: FunctionComponent<{
   fermetureCallback: () => void
   territoireCodeSelectionne: string
 }> = ({ fermetureCallback, territoireCodeSelectionne }) => {
-  const étapes = [Stepper.ETAPE_CONTENU_A_EXPORTER.titreEtape, Stepper.ETAPE_PERIMETRE_EXPORT.titreEtape, Stepper.ETAPE_DONNEE_A_COLLECTER.titreEtape, Stepper.ETAPE_RECAPITULATIF.titreEtape, Stepper.ETAPE_DONNEE_EN_COURS_DE_TELECHARGEMENT.titreEtape];
+  const étapes = [Stepper.ETAPE_ELEMENTS_A_EXPORTER.titreEtape, Stepper.ETAPE_PERIMETRE_EXPORT.titreEtape, Stepper.ETAPE_DONNEE_A_COLLECTER.titreEtape, Stepper.ETAPE_RECAPITULATIF.titreEtape, Stepper.ETAPE_DONNEE_EN_COURS_DE_TELECHARGEMENT.titreEtape];
 
-  const [etapeCourante] = useQueryState('etapeCourante', parseAsInteger.withDefault(Stepper.ETAPE_CONTENU_A_EXPORTER.numeroEtape).withOptions({
+  const [etapeCourante] = useQueryState('etapeCourante', parseAsInteger.withDefault(Stepper.ETAPE_ELEMENTS_A_EXPORTER.numeroEtape).withOptions({
     shallow: false,
     history: 'push',
   }));
@@ -71,7 +71,7 @@ export const ExportDesDonneesV2: FunctionComponent<{
         étapes={étapes}
       />
       {
-        etapeCourante === Stepper.ETAPE_CONTENU_A_EXPORTER.numeroEtape ? (
+        etapeCourante === Stepper.ETAPE_ELEMENTS_A_EXPORTER.numeroEtape ? (
           <EtapeContenuAExporter />
         ) : etapeCourante === Stepper.ETAPE_PERIMETRE_EXPORT.numeroEtape ? (
           <EtapePerimetreExport />

@@ -251,11 +251,6 @@ export const EtapeDonneeIndicateurACollecter = () => {
         <h3 className='fr-text--md underline fr-mb-0 fr-mt-2w'>
           DONNÉES QUANTITATIVES
         </h3>
-        <span
-          className='fr-label fr-text--xs texte-gris fr-mb-0'
-        >
-          les données quantitatives sont exportées pour l'année en cours et pour l'année 2026
-        </span>
         <div className='fr-checkbox-group fr-mt-1w'>
           <input
             checked={optionsExport.split(',').includes('description')}

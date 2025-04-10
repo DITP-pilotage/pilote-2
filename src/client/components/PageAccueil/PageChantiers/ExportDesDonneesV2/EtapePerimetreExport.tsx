@@ -14,25 +14,25 @@ export const EtapePerimetreExport = () => {
   return (
     <div>
       <p className='fr-mb-1w'>
-        Précisez si vous souhaitez récupérer tous les contenus ou bien la sélection présentement active dans PILOTE :
+        Précisez le périmètre de votre export :
       </p>
       <div
         className='fr-fieldset__element'
-        key='ppg'
+        key='chantiers'
       >
         <div className='fr-radio-group'>
           <input
             checked={!isAvecFiltre}
-            id='ppg'
+            id='chantiers'
             name='ressource-à-exporter'
             onChange={() => setIsAvecFiltre(false)}
             type='radio'
           />
           <label
             className='fr-label'
-            htmlFor='ppg'
+            htmlFor='chantiers'
           >
-            exporter tous les contenus sur tous les territoires qui vous sont ouverts en lecture
+            exporter tous les éléments sur tous les territoires qui vous sont ouverts en lecture
           </label>
         </div>
       </div>
@@ -52,7 +52,7 @@ export const EtapePerimetreExport = () => {
             className='fr-label'
             htmlFor='indicateurs'
           >
-            exporter les contenus de la sélection présentement active dans PILOTE
+            exporter les éléments de la sélection présentement active dans PILOTE
           </label>
           <label
             className='fr-label fr-text--xs texte-gris fr-pl-4w'

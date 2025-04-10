@@ -6,10 +6,10 @@ test('doit pouvoir exporter les données des chantiers sous format CSV', async (
   await loginFn({ page });
   test.setTimeout(150_000);
 
-  await test.step("Ouverture de la modale d'export csv à l'étape 1 - Contenus à exporter", async () => {
+  await test.step("Ouverture de la modale d'export csv à l'étape 1 - Éléments à exporter", async () => {
     await page.getByRole('button', { name: /Exporter les données V2/ }).click();
     await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=1&typeExport=chantiers');
-    await expect(page.getByRole('heading', { name: /Contenus à exporter/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Éléments à exporter/ })).toBeVisible();
     await expect(page.getByRole('heading', { name: /Exporter les données - Étape 1 sur 4/ })).toBeVisible();
   });
 
@@ -26,8 +26,8 @@ test('doit pouvoir exporter les données des chantiers sous format CSV', async (
   });
 
   await test.step("Choix de l'export chantier sans filtres", async () => {
-    await page.getByLabel(/exporter tous les contenus/).check();
-    await expect(page.getByLabel('exporter tous les contenus')).toBeChecked();
+    await page.getByLabel(/exporter tous les éléments/).check();
+    await expect(page.getByLabel('exporter tous les éléments')).toBeChecked();
   });
 
   await test.step("Passage à l'étape 3 - Données à collecter", async () => {

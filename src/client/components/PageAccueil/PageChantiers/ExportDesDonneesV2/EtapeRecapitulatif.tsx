@@ -120,7 +120,7 @@ export const EtapeRecapitulatif = ({ territoireCodeSelectionne }: { territoireCo
         Veuillez vérifier ci-dessous le contenu de votre fichier d'export :
       </p>
       <h3 className='fr-text--md fr-mb-0 fr-mt-2w'>
-        Contenus à exporter
+        Éléments à exporter
       </h3>
       <p>
         <span
@@ -154,11 +154,11 @@ export const EtapeRecapitulatif = ({ territoireCodeSelectionne }: { territoireCo
         {
           filtres.isAvecFiltre ? (
             <span>
-              exporter les contenus de la sélection présentement active dans PILOTE
+              export des éléments correspondant aux filtres activés dans PILOTE :
             </span>
           ) : (
             <span>
-              exporter tous les contenus sur tous les territoires qui vous sont ouverts en lecture
+              export de tous les éléments sur tous les territoires ouverts en lecture :
             </span>
           )
         }

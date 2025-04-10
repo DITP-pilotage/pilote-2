@@ -28,28 +28,45 @@ export const EtapeContenuAExporter = () => {
   return (
     <div>
       <p className='fr-mt-2w fr-mb-2w'>
-        La fonctionnalité d'export de PILOTE vous permet de récupérer les données qui vous intéressent sur les chantiers et
-        leurs indicateurs dans les territoires.
+        Sélectionnez et exportez les éléments de votre choix, selon vos besoins
       </p>
       <MiseEnAvant titre='Pour mener à bien votre export de données, vous allez être amené à :'>
         <ul>
           <li>
-            indiquer les contenus dont vous souhaitez récupérer les données : les chantiers, les indicateurs ou l'historique
-            des indicateurs (étape 1);
+            indiquer les 
+            {' '}
+            <span className='fr-text--bold'>
+              éléments
+            </span>
+            {' '}
+            dont vous souhaitez récupérer les données : les chantiers, les indicateurs ou l'historique
+            des indicateurs (étape 1) ;
           </li>
           <li>
-            préciser le périmètre de votre export : le cas échéant, filtrage des chantiers / indicateurs et sélection des
-            territoires (étape 2);
+            préciser le 
+            {' '}
+            <span className='fr-text--bold'>
+              périmètre
+            </span>
+            {' '}
+            de votre export : le cas échéant, filtrage des chantiers ou indicateurs et sélection des
+            territoires (étape 2) ;
           </li>
           <li>
-            enfin – s'il ne s'agit pas d'un export d'historique – choisir les données que vous souhaitez collecter pour
-            ces chantiers / indicateurs, territoire par territoire : gouvernance, commentaires, données quantitatives, etc.
+            enfin – s'il ne s'agit pas d'un export d'historique – choisir les 
+            {' '}
+            <span className='fr-text--bold'>
+              données
+            </span>
+            {' '}
+            que vous souhaitez collecter pour
+            ces chantiers ou indicateurs, territoire par territoire : gouvernance, commentaires, données quantitatives, etc.
             (étape 3)
           </li>
         </ul>
       </MiseEnAvant>
       <p className='fr-my-1w'>
-        Dans un premier temps, indiquez les contenus dont vous souhaitez exporter les données :
+        Pour mener à bien votre export personnalisé, vous devrez :
       </p>
       <div
         className='fr-fieldset__element'
@@ -67,7 +84,7 @@ export const EtapeContenuAExporter = () => {
             className='fr-label'
             htmlFor='chantiers'
           >
-            Les chantiers
+            les chantiers
           </label>
         </div>
       </div>
@@ -87,7 +104,7 @@ export const EtapeContenuAExporter = () => {
             className='fr-label'
             htmlFor='indicateurs'
           >
-            Les indicateurs des chantiers
+            les indicateurs des chantiers
           </label>
         </div>
       </div>
@@ -107,12 +124,12 @@ export const EtapeContenuAExporter = () => {
             className='fr-label'
             htmlFor='historique-indicateurs'
           >
-            L'historique des indicateurs
+            l'historique des indicateurs
           </label>
           <span
             className='fr-label fr-text--xs texte-gris fr-mb-0'
           >
-            cet historique recense les valeurs d'avancements prises successivement par les indicateurs des chantiers, territoire par territoire
+            cet historique recense l'ensemble des valeurs d'avancement pour chaque indicateur et chaque territoire
           </span>
         </div>
       </div>
