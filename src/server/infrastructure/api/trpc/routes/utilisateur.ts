@@ -1,5 +1,6 @@
 import { créerRouteurTRPC, procédureProtégée, vérifierSiLeCSRFEstValide } from '@/server/infrastructure/api/trpc/trpc';
 import {
+  validationDesactiverVideoAccueil,
   validationInfosBaseUtilisateur,
   validationInfosHabilitationsUtilisateur,
   validationReactiverUtilisateur,
@@ -66,5 +67,11 @@ export const utilisateurRouter = créerRouteurTRPC({
         dependencies.getProfilRepository(),
       ).run(ctx.session.profil);
       await getContainer('gestionUtilisateur').resolve('reactiverUnUtilisateurUseCase').run(input.email, ctx.session.habilitations, profilAuteur, ctx.session.user.id);
+    }),
+  desactiverVideoAccueil: procédureProtégée
+    .input(validationDesactiverVideoAccueil.merge(zodValidateurCSRF))
+    .mutation(async ({ input, ctx }) => {
+      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      await getContainer('gestionUtilisateur').resolve('desactiverVideoAccueilUseCase').execute(input.utilisateurId);
     }),
 });

@@ -38,6 +38,8 @@ import { PrismaUtilisateurRepository } from './infrastructure/adapters/PrismaUti
 import { UtilisateurIAMKeycloakRepository } from './infrastructure/adapters/UtilisateurIAMKeycloakRepository';
 import { PrismaTokenAPIInformationRepository } from './infrastructure/adapters/PrismaTokenAPIInformationRepository';
 import ReactiverUnUtilisateurUseCase from './usecases/ReactiverUnUtilisateurUseCase';
+import { RecupererEtatVisualisationVideoAccueilUseCase } from './usecases/RecupererEtatVisualisationVideoAccueilUseCase';
+import { DesactiverVideoAccueilUseCase } from './usecases/DesactiverVideoAccueilUseCase';
 
 export type GestionUtilisateurDependencies = {
   utilisateurRepository: UtilisateurRepository
@@ -56,6 +58,8 @@ export type GestionUtilisateurDependencies = {
   filtrerListeUtilisateursUseCase: FiltrerListeUtilisateursUseCase
   recupererTousLesTerritoiresUseCase: RecupererTousLesTerritoiresUseCase
   recupererListeUtilisateursUseCase: RecupererListeUtilisateursUseCase
+  recupererEtatVisualisationVideoAccueilUseCase: RecupererEtatVisualisationVideoAccueilUseCase
+  desactiverVideoAccueilUseCase: DesactiverVideoAccueilUseCase
 };
 
 export const getGestionUtilisateurContainer = (initialContainer: AwilixContainer<{ prisma: PrismaPilote }>): AwilixContainer<GestionUtilisateurDependencies & { prisma: PrismaPilote }> => {
@@ -76,5 +80,7 @@ export const getGestionUtilisateurContainer = (initialContainer: AwilixContainer
     filtrerListeUtilisateursUseCase: asClass(FiltrerListeUtilisateursUseCase),
     recupererTousLesTerritoiresUseCase: asClass(RecupererTousLesTerritoiresUseCase),
     recupererListeUtilisateursUseCase: asClass(RecupererListeUtilisateursUseCase),
+    recupererEtatVisualisationVideoAccueilUseCase: asClass(RecupererEtatVisualisationVideoAccueilUseCase),
+    desactiverVideoAccueilUseCase: asClass(DesactiverVideoAccueilUseCase),
   });
 };

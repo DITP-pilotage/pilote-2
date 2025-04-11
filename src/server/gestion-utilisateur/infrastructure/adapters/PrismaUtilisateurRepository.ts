@@ -403,6 +403,31 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     return false;
   }
 
+  async recupererEtatVisualisationVideoAccueil(utilisateurId: string): Promise<boolean> {
+    const etatVisualisationVideoAccueil = await this.prisma.utilisateur.findUnique({
+      where: { id: utilisateurId },
+      select: {
+        date_visualisation_video_accueil: true,
+      },
+    });
+
+    return !!etatVisualisationVideoAccueil?.date_visualisation_video_accueil || false;
+  }
+
+  async desactiverVideoAccueil(utilisateurId: string, dateVisualisation: Date): Promise<void> {
+    await this.prisma.utilisateur.update({
+      where: { id: utilisateurId },
+      data: { date_visualisation_video_accueil: dateVisualisation },
+    });
+  }
+
+  async reinitialiserEtatVisualisationVideoAccueil(email: string): Promise<void> {
+    await this.prisma.utilisateur.update({
+      where: { email },
+      data: { date_visualisation_video_accueil: null },
+    });
+  }
+
   private convertirEnUtilisateurListeGestion({ listeTerritoiresCodes, listePerimetresMinisteriels, listeInformationsChantiersUtilisateurs }: { listeTerritoiresCodes: string[], listePerimetresMinisteriels: string[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[] }) {
     return (utilisateurBrut: PrismaUtilisateurModel & { profil: PrismaProfilModel; habilitation: PrismaHabilitationModel[]; auteur_modification: PrismaUtilisateurModel | null; }): UtilisateurListeGestion => {
       const habilitations = créerLesHabilitations(utilisateurBrut.profil, utilisateurBrut.habilitation, listeInformationsChantiersUtilisateurs, listeTerritoiresCodes, listePerimetresMinisteriels);

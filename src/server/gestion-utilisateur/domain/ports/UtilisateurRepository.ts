@@ -11,4 +11,7 @@ export interface UtilisateurRepository {
   reactiver(email: string, auteurId: string): Promise<void>
   recupererTous({ sorting, valeurDeLaRecherche, listeTerritoiresCodes, listePerimetresMinisteriels, listeInformationsChantiersUtilisateurs }: { sorting: { id: string, desc: boolean }[], valeurDeLaRecherche: string, listeTerritoiresCodes: string[], listePerimetresMinisteriels: string[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[] }): Promise<UtilisateurListeGestion[]>
   recupererPourExports({ valeurDeLaRecherche, listeTerritoiresCodes, listePerimetresMinisteriels, listeInformationsChantiersUtilisateurs }: { valeurDeLaRecherche: string, listeTerritoiresCodes: string[], listePerimetresMinisteriels: string[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[] }): Promise<UtilisateurExportCSV[]>
+  recupererEtatVisualisationVideoAccueil(utilisateurId: string): Promise<boolean>
+  desactiverVideoAccueil(utilisateurId: string, dateVisualisation: Date): Promise<void> 
+  reinitialiserEtatVisualisationVideoAccueil(email: string): Promise<void>
 }

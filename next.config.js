@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+const https = require('https');
 
 const nextConfig = {
   reactStrictMode: true,
@@ -48,7 +49,11 @@ const nextConfig = {
           {
             key: 'X-Content-Type-Options',
             value: 'nosniff',
-          }
+          },
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: 'https://video.finances.gouv.fr/',
+          },
         ],
       },
     ];

@@ -35,6 +35,7 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
     <Modale
       idHtml={generatedHTMLID}
       tailleModale='lg'
+      
     >
       {
         etapePropositionValeurActuelle ? (
