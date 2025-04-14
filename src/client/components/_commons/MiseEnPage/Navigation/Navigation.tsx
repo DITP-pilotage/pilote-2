@@ -85,7 +85,7 @@ const Navigation: FunctionComponent<{}> = () => {
     keepPreviousData: true,
   });
 
-  const aConsulteLaDerniereNouveaute = listerNouveautes ? récupérerUnCookie('derniereVersionNouveauteConsulte') === listerNouveautes[0].version : true;
+  const aConsulteLaDerniereNouveaute = listerNouveautes && listerNouveautes[0] ? récupérerUnCookie('derniereVersionNouveauteConsulte') === listerNouveautes[0].version : true;
 
   const pages = [
     {
