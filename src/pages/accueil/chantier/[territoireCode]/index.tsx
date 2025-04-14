@@ -46,6 +46,9 @@ import {
   getAnneeDateDeBascule,
 } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule';
 import { configuration } from '@/config';
+import { ModaleVideoAccueil } from '@/components/PageAccueil/PageChantiers/ModaleVideoAccueil/ModaleVideoAccueil';
+import { getContainer } from '@/server/dependances';
+import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
 import IndexStyled from './index.styled';
 
 interface ChantierAccueil {
@@ -62,6 +65,7 @@ interface ChantierAccueil {
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   repartitionMeteosChantiers: RepartitionMeteoContrat
+  doitAfficherModaleVideoAccueil: boolean
 }
 
 export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ req, res, query }) => {
@@ -184,6 +188,10 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
 
   const chantiersPaginesAvecAlertes = chantiersAvecAlertes.splice((pageIndex - 1) * pageSize, pageSize);
 
+  const estVideoAccueilActive = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_VIDEO_ACCUEIL' }) as boolean;
+
+  const doitAfficherModaleVideoAccueil = await getContainer('gestionUtilisateur').resolve('recupererEtatVisualisationVideoAccueilUseCase').execute(session.user.id);
+
   return {
     props: {
       chantiers: chantiersPaginesAvecAlertes.map(chantier => {
@@ -203,6 +211,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
       avancementsAgrégés,
       avancementsGlobauxTerritoriauxMoyens,
       repartitionMeteosChantiers,
+      doitAfficherModaleVideoAccueil: estVideoAccueilActive && doitAfficherModaleVideoAccueil,
     },
   };
 };
@@ -235,6 +244,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   avancementsGlobauxTerritoriauxMoyens,
   repartitionMeteosChantiers,
   jalon,
+  doitAfficherModaleVideoAccueil,
 }) => {
   const { data: session } = useSession();
 
@@ -250,7 +260,9 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
           PILOTE - Piloter l'action publique par les résultats
         </title>
       </Head>
-      <div className='flex'>
+      <div
+        className='flex'
+      >
         <BarreLatérale
           estOuvert={estOuverteBarreLatérale}
           setEstOuvert={setEstOuverteBarreLatérale}
@@ -305,6 +317,17 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             repartitionMeteosChantiers={repartitionMeteosChantiers}
             territoireCode={territoireCode}
           />
+          {
+            !doitAfficherModaleVideoAccueil ? (
+              <>
+                <ModaleVideoAccueil />
+                <div
+                  aria-controls='modale-video-accueil'
+                  data-fr-opened='true'
+                />
+              </>
+            ) : null  
+          }
         </IndexStyled>
       </div>
     </>

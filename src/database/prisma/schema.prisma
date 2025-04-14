@@ -541,6 +541,7 @@ model utilisateur {
   utilisateurs_crees               utilisateur[]                      @relation("creation")
   utilisateur_modifies             utilisateur[]                      @relation("modification")
   date_desactivation               DateTime?
+  date_visualisation_video_accueil DateTime?
 
   @@schema("public")
 }

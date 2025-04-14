@@ -73,7 +73,7 @@ export const middleware = async (request: NextRequest, event: NextFetchEvent)=> 
   if (isDev || request.nextUrl.pathname.startsWith('/centreaide')) {
     response.headers.set(
       'Content-Security-Policy',
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' ws: wss:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' ws: wss:; frame-src 'self' https://video.finances.gouv.fr/; object-src 'none'; base-uri 'self'; form-action 'self'; media-src 'self' https://video.finances.gouv.fr/",
     );
   } else {
     response.headers.set(
@@ -84,9 +84,10 @@ export const middleware = async (request: NextRequest, event: NextFetchEvent)=> 
        img-src 'self' data: blob:; 
        font-src 'self' data:; 
        connect-src 'self'; 
-       frame-src 'self'; 
+       frame-src 'self' https://video.finances.gouv.fr/; 
        object-src 'none'; 
        base-uri 'self'; 
+       media-src 'self' https://video.finances.gouv.fr/;
        form-action 'self'`.replace(/\n\s+/g, ' '),
     );
   }

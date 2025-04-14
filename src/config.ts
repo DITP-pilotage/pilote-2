@@ -254,6 +254,11 @@ const config = convict({
       default: false,
       env: 'NEXT_PUBLIC_FF_EXPORT_CSV_V2',
     },
+    videoAccueil: {
+      format: Boolean,
+      default: false,
+      env: 'NEXT_PUBLIC_FF_VIDEO_ACCUEIL',
+    },
   },
   analytics: {
     doc: 'Matomo Analytics',
