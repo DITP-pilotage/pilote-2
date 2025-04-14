@@ -211,7 +211,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
       avancementsAgrégés,
       avancementsGlobauxTerritoriauxMoyens,
       repartitionMeteosChantiers,
-      doitAfficherModaleVideoAccueil: estVideoAccueilActive && doitAfficherModaleVideoAccueil,
+      doitAfficherModaleVideoAccueil: !estVideoAccueilActive && doitAfficherModaleVideoAccueil,
     },
   };
 };
