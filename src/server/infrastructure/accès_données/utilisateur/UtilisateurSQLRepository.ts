@@ -1,4 +1,5 @@
 import {
+  Prisma,
   chantier_identite as PrismaChantierIdentite,
   habilitation as PrismaHabilitation,
   perimetre,
@@ -24,6 +25,7 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { prisma } from '@/server/db/prisma';
+import { configuration } from '@/config';
 
 export const convertirEnModel = (utilisateurAConvertir: {
   email: string
@@ -99,13 +101,15 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   }
 
   async _récupérerChantiers() {
+    const whereOptions: Prisma.chantier_identiteWhereInput = configuration.featureFlip.ppgArchive ? {} : {
+      NOT: {
+        statut: 'ARCHIVE',
+      },
+    };
+    
     if (this._chantiers.donnéesBrutes.length === 0) {
       const tousLesChantiers = await prisma.chantier_identite.findMany({
-        where: {
-          NOT: {
-            statut: 'ARCHIVE',
-          },
-        },
+        where: whereOptions,
       });
 
       this._chantiers.donnéesBrutes = tousLesChantiers;
