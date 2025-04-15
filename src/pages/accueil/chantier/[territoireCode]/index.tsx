@@ -211,7 +211,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
       avancementsAgrégés,
       avancementsGlobauxTerritoriauxMoyens,
       repartitionMeteosChantiers,
-      doitAfficherModaleVideoAccueil: !estVideoAccueilActive && doitAfficherModaleVideoAccueil,
+      doitAfficherModaleVideoAccueil: estVideoAccueilActive && !doitAfficherModaleVideoAccueil,
     },
   };
 };
@@ -318,7 +318,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             territoireCode={territoireCode}
           />
           {
-            !doitAfficherModaleVideoAccueil ? (
+            doitAfficherModaleVideoAccueil ? (
               <>
                 <ModaleVideoAccueil />
                 <div
