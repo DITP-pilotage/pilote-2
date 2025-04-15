@@ -176,9 +176,6 @@ const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnse
               >
                 Liste des chantiers
               </Titre>
-              <Infobulle idHtml='infobulle-chantiers-listeDesChantiers'>
-                {INFOBULLE_CONTENUS.chantiers.listeDesChantiers}
-              </Infobulle>
             </TitreInfobulleConteneur>
             <RapportDétailléTableauChantiers
               données={donnéesTableauChantiers}

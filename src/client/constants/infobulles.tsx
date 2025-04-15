@@ -97,7 +97,7 @@ const INFOBULLE_CONTENUS = {
         </li>
       </ul>
     ),
-    listeDesChantiers: (
+    listeDesChantiersHeaderTypologie: (
       <>
         <p className='fr-text--sm'>
           <PictoBaromètre />
@@ -115,22 +115,30 @@ const INFOBULLE_CONTENUS = {
           : Chantier en cours de publication et visible uniquement par la direction de projet en administration
           centrale.
         </p>
-        <p className='fr-text--sm'>
-          La date affichée sous la météo correspond à la date de la dernière modification de la météo, de la synthèse ou
-          d'un commentaire.
-        </p>
-        <p className='fr-text--sm'>
-          La date affichée sous le taux d'avancement correspond à la dernière mise à jour des données pour au moins un
-          indicateur du chantier.
-        </p>
-        <p className='fr-text--sm'>
-          La tendance correspond à la progression du taux d'avancement.
-        </p>
-        <p className='fr-text--sm fr-mb-0'>
-          L'écart correspond à l'écart entre le taux d'avancement pour le territoire sélectionné et le taux d'avancement
-          territorial médian.
-        </p>
       </>
+    ),
+    listeDesChantiersHeaderMeteo: (
+      <p className='fr-text--sm'>
+        La date affichée sous la météo correspond à la date de la dernière modification de la météo, de la synthèse ou
+        d'un commentaire.
+      </p>
+    ),
+    listeDesChantiersHeaderTauxAvancement: (
+      <p className='fr-text--sm'>
+        La date affichée sous le taux d'avancement correspond à la dernière mise à jour des données pour au moins un
+        indicateur du chantier.
+      </p>
+    ),
+    listeDesChantiersHeaderTendance: (
+      <p className='fr-text--sm'>
+        La tendance correspond à la progression du taux d'avancement.
+      </p>
+    ),
+    listeDesChantiersHeaderEcart: (
+      <p className='fr-text--sm fr-mb-0'>
+        L'écart correspond à l'écart entre le taux d'avancement pour le territoire sélectionné et le taux d'avancement
+        territorial médian.
+      </p>
     ),
   },
   chantier: {

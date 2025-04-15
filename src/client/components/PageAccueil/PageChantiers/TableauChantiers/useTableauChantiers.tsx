@@ -28,6 +28,8 @@ import TableauChantiersTendance
   from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance';
 import TableauChantiersEcart from '@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import infobulles from '@/client/constants/infobulles';
 import TableauChantiersProps, { DonnéesTableauChantiers } from './TableauChantiers.interface';
 import TableauChantiersTuileChantier from './Tuile/Chantier/TableauChantiersTuileChantier';
 import TableauChantiersTuileMinistère from './Tuile/Ministère/TableauChantiersTuileMinistère';
@@ -56,6 +58,49 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('md');
 
   const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
+
+  const test = estGroupe ? [
+    reactTableColonnesHelper.display({
+      id: 'dérouler-groupe',
+
+      aggregatedCell: (aggregatedCellContext => (
+        <button
+          className={`${aggregatedCellContext.row.getIsExpanded() ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line'} chevron-accordéon`}
+          type='button'
+        />
+      )),
+      meta: {
+        width: '3.5rem',
+        tabIndex: -1,
+      },
+    }),
+    reactTableColonnesHelper.display({
+      id: 'chantier-tuile',
+      cell: chantierCellContext => (
+        <TableauChantiersTuileChantier
+          afficherIcône={!chantierCellContext.table.getColumn('porteur')?.getIsGrouped()}
+          chantier={chantierCellContext.row.original}
+          chantiersSontArchives={chantiersSontArchives}
+        />
+      ),
+      aggregatedCell: aggregatedCellContext => (
+        <TableauChantiersTuileMinistère
+          estArchive={chantiersSontArchives}
+          estDéroulé={aggregatedCellContext.row.getIsExpanded()}
+          ministère={aggregatedCellContext.getValue() as TableauChantiersTuileMinistèreProps['ministère']}
+        />
+      ),
+      aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
+        return {
+          nom: chantiersDuMinistèreRow[0].original.porteur?.nom ?? '',
+          icône: chantiersDuMinistèreRow[0].original.porteur?.icône ?? null,
+          avancement: calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement)),
+        } as TableauChantiersTuileMinistèreProps['ministère'];
+      },
+      enableSorting: false,
+      enableGrouping: false,
+    }),
+  ] : [];
 
   const colonnesTableauChantiers = [
     reactTableColonnesHelper.accessor('porteur.nom', {
@@ -98,7 +143,20 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
       },
     }),
     reactTableColonnesHelper.accessor('typologie', {
-      header: 'Typologie',
+      header: () => (
+        <div className='flex align-center no-wrap'>
+          <span>
+            Typologie
+          </span>
+          <Infobulle
+            classNameBouton='infobulle-header-typologie'
+            idHtml='infobulle-header-typologie'
+            styleIconInfoBulle='question'
+          >
+            {infobulles.chantiers.listeDesChantiersHeaderTypologie}
+          </Infobulle>
+        </div>
+      ),
       id: 'typologie',
       enableSorting: false,
       cell: cellContext => <TypologiesPictos typologies={cellContext.getValue()} />,
@@ -109,7 +167,20 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
       },
     }),
     reactTableColonnesHelper.accessor('météo', {
-      header: 'Météo',
+      header: () => (
+        <div className='flex align-center no-wrap'>
+          <span>
+            Météo
+          </span>
+          <Infobulle
+            classNameBouton='infobulle-header-meteo'
+            idHtml='infobulle-header-meteo'
+            styleIconInfoBulle='question'
+          >
+            {infobulles.chantiers.listeDesChantiersHeaderMeteo}
+          </Infobulle>
+        </div>
+      ),
       id: 'météo',
       cell: cellContext => (
         <TableauRéformesMétéo
@@ -131,7 +202,20 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
       enableGrouping: false,
     }),
     reactTableColonnesHelper.accessor('avancement', {
-      header: 'Avancement 2026',
+      header: () => (
+        <div className='flex align-center no-wrap'>
+          <span className='whitespace-normal break-normal'>
+            Avancement 2026
+          </span>
+          <Infobulle
+            classNameBouton='infobulle-header-taux-avancement'
+            idHtml='infobulle-header-taux-avancement'
+            styleIconInfoBulle='question'
+          >
+            {infobulles.chantiers.listeDesChantiersHeaderTauxAvancement}
+          </Infobulle>
+        </div>
+      ),
       id: 'avancement',
       cell: cellContext => (
         <TableauRéformesAvancement
@@ -163,7 +247,20 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
     }),
     ...(process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true' ? [
       reactTableColonnesHelper.accessor('tendance', {
-        header: 'Tendance',
+        header: () => (
+          <div className='flex align-center no-wrap'>
+            <span>
+              Tendance
+            </span>
+            <Infobulle
+              classNameBouton='infobulle-header-tendance'
+              idHtml='infobulle-header-tendance'
+              styleIconInfoBulle='question'
+            >
+              {infobulles.chantiers.listeDesChantiersHeaderTendance}
+            </Infobulle>
+          </div>
+        ),
         id: 'tendance',
         cell: cellContext => (
           <TableauChantiersTendance
@@ -178,7 +275,20 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
         },
       }),
       reactTableColonnesHelper.accessor('écart', {
-        header: 'Écart',
+        header: () => (
+          <div className='flex align-center no-wrap'>
+            <span>
+              Écart
+            </span>
+            <Infobulle
+              classNameBouton='infobulle-header-écart'
+              idHtml='infobulle-header-écart'
+              styleIconInfoBulle='question'
+            >
+              {infobulles.chantiers.listeDesChantiersHeaderEcart}
+            </Infobulle>
+          </div>
+        ),
         id: 'écart',
         cell: cellContext => (
           <TableauChantiersEcart
@@ -194,45 +304,7 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
         },
       }),
     ] : []),
-    reactTableColonnesHelper.display({
-      id: 'dérouler-groupe',
-      aggregatedCell: (aggregatedCellContext => (
-        <button
-          className={`${aggregatedCellContext.row.getIsExpanded() ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line'} chevron-accordéon`}
-          type='button'
-        />
-      )),
-      meta: {
-        width: '3.5rem',
-        tabIndex: -1,
-      },
-    }),
-    reactTableColonnesHelper.display({
-      id: 'chantier-tuile',
-      cell: chantierCellContext => (
-        <TableauChantiersTuileChantier
-          afficherIcône={!chantierCellContext.table.getColumn('porteur')?.getIsGrouped()}
-          chantier={chantierCellContext.row.original}
-          chantiersSontArchives={chantiersSontArchives}
-        />
-      ),
-      aggregatedCell: aggregatedCellContext => (
-        <TableauChantiersTuileMinistère
-          estArchive={chantiersSontArchives}
-          estDéroulé={aggregatedCellContext.row.getIsExpanded()}
-          ministère={aggregatedCellContext.getValue() as TableauChantiersTuileMinistèreProps['ministère']}
-        />
-      ),
-      aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
-        return {
-          nom: chantiersDuMinistèreRow[0].original.porteur?.nom ?? '',
-          icône: chantiersDuMinistèreRow[0].original.porteur?.icône ?? null,
-          avancement: calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement)),
-        } as TableauChantiersTuileMinistèreProps['ministère'];
-      },
-      enableSorting: false,
-      enableGrouping: false,
-    }),
+    ...test,
   ];
 
   const tableau = useReactTable({
