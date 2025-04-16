@@ -503,9 +503,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 >
                   {`Liste des chantiers (${nombreTotalChantiersAvecAlertes})`}
                 </Titre>
-                <Infobulle idHtml='infobulle-chantiers-listeDesChantiers'>
-                  {INFOBULLE_CONTENUS.chantiers.listeDesChantiers}
-                </Infobulle>
               </TitreInfobulleConteneur>
               {
                 profilPeutAccederAuxBrouillons || !!variableContenuFFPpgArchive ? (

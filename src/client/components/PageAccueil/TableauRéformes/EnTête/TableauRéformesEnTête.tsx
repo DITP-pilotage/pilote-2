@@ -23,7 +23,9 @@ const TableauRéformesEnTête: FunctionComponent<TableauRéformesEnTêteProps> =
     <TableauRéformesEnTêteStyled>
       {
         tableau.getHeaderGroups().map(headerGroup => (
-          <tr key={headerGroup.id}>
+          <tr
+            key={headerGroup.id}
+          >
             {headerGroup.headers.map(header => (
               <th
                 aria-sort={renseignerAttributAriaSort(header.column.getIsSorted())}
