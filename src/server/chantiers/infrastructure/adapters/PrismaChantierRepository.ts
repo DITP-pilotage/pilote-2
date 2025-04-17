@@ -696,6 +696,8 @@ export class PrismaChantierRepository implements ChantierRepository {
             directeursProjetMails: prismaChantierIdentite.directeurs_projet_mails,
             responsablesLocaux: prismaChantierTerritoire.responsables_locaux,
             responsablesLocauxMails: prismaChantierTerritoire.responsables_locaux_mails,
+            coordinateur: prismaChantierTerritoire.coordinateurs_territoriaux,
+            coordinateurMails: prismaChantierTerritoire.coordinateurs_territoriaux_mails,
             statut: prismaChantierIdentite.statut,
             estBaromètre: prismaChantierIdentite.est_barometre,
             estTerritorialisé: prismaChantierIdentite.est_territorialise,

@@ -40,7 +40,7 @@ const Stepper = {
   },
   'ETAPE_DONNEE_EN_COURS_DE_TELECHARGEMENT': {
     numeroEtape: 5,
-    titreEtape: 'Donnée en cours de téléchargement',
+    titreEtape: 'Données en cours de téléchargement',
   },
 };
 

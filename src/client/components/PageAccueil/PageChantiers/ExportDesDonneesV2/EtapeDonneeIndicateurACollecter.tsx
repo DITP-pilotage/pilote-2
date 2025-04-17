@@ -59,7 +59,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
             htmlFor='identifiant'
           >
             <span>
-              <span className='fr-text--bold fr-pr-1v'>
+              <span className='fr-text--bold'>
                 identifiants
               </span>
               {' '}
@@ -86,7 +86,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
             htmlFor='cadrage'
           >
             <span>
-              <span className='fr-text--bold fr-pr-1v'>
+              <span className='fr-text--bold'>
                 cadrage
               </span>
               {' '}
@@ -99,7 +99,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
             htmlFor='cadrage'
           >
             <span>
-              <span className='fr-text--bold fr-pr-1v'>
+              <span className='fr-text--bold'>
                 cadrage
               </span>
               {' '}
@@ -126,11 +126,8 @@ export const EtapeDonneeIndicateurACollecter = () => {
                   className='fr-label'
                   htmlFor='gouvernance'
                 >
-                  <span>
-                    <span className='fr-text--bold fr-pr-1v'>
-                      gouvernance
-                    </span>
-                    {' '}
+                  <span className='fr-text--bold'>
+                    gouvernance
                   </span>
                 </label>
                 <ul className='fr-ml-4w fr-my-0 fr-text--sm'>
@@ -149,7 +146,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
                 htmlFor='gouvernance'
               >
                 <span>
-                  <span className='fr-text--bold fr-pr-1v'>
+                  <span className='fr-text--bold'>
                     gouvernance
                   </span>
                   {' '}
@@ -262,39 +259,68 @@ export const EtapeDonneeIndicateurACollecter = () => {
           />
           {
             afficherDetail ? (
-              <>
-                <label
-                  className='fr-label'
-                  htmlFor='description'
-                >
-                  <span>
-                    <span className='fr-text--bold fr-pr-1v'>
-                      données descriptives
-                    </span>
-                    {' '}
-                    sur le territoire
+              <label
+                className='fr-label'
+                htmlFor='description'
+              >
+                <span>
+                  <span className='fr-text--bold'>
+                    données de l'indicateur
                   </span>
-                </label>
-                <ul className='fr-ml-4w fr-my-0 fr-text--sm'>
-                  <li className='fr-pb-0'>
-                    de l'indicateur : valeurs initiale / actuelle / cible, taux d'avancement (si applicable)
-                  </li>
-                  <li className='fr-pb-0'>
-                    du chantier associé : taux d'avancement, tendance, écart
-                  </li>
-                </ul>
-              </>
+                  {' '}
+                  sur le territoire : valeurs initiale / actuelle / cible, taux d'avancement (si applicable)
+                </span>
+              </label>
             ) : (
               <label
                 className='fr-label'
                 htmlFor='description'
               >
                 <span>
-                  <span className='fr-text--bold fr-pr-1v'>
-                    données descriptives
+                  <span className='fr-text--bold'>
+                    données de l'indicateur
                   </span>
                   {' '}
-                  de l'indicateur et du chantier associé sur le territoire
+                  sur le territoire
+                </span>
+              </label>
+            )
+          }
+        </div>
+        <div className='fr-checkbox-group fr-mt-1w'>
+          <input
+            checked={optionsExport.split(',').includes('description-chantier')}
+            className='fr-input'
+            id='description-chantier'
+            name='description-chantier'
+            onChange={() => onChangeOptionsExport('description-chantier')}
+            type='checkbox'
+          />
+          {
+            afficherDetail ? (
+              <label
+                className='fr-label'
+                htmlFor='description-chantier'
+              >
+                <span>
+                  <span className='fr-text--bold'>
+                    données du chantier
+                  </span>
+                  {' '}
+                  associé : taux d'avancement, tendance, écart
+                </span>
+              </label>
+            ) : (
+              <label
+                className='fr-label'
+                htmlFor='description-chantier'
+              >
+                <span>
+                  <span className='fr-text--bold'>
+                    données du chantier
+                  </span>
+                  {' '}
+                  associé sur le territoire
                 </span>
               </label>
             )
@@ -371,7 +397,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
             htmlFor='synthese'
           >
             <span>
-              <span className='fr-text--bold fr-pr-1v'>
+              <span className='fr-text--bold'>
                 météo et synthèse des résultats
               </span>
               {' '}
@@ -461,7 +487,15 @@ export const EtapeDonneeIndicateurACollecter = () => {
       </div>
       <div className='w-full flex justify-end fr-mt-2w'>
         <button
-          className='fr-btn fr-mr-2w'
+          aria-controls='modale-exporter-les-données-v2'
+          className='fr-link fr-mr-2w'
+          title='Fermer la fenêtre modale'
+          type='button'
+        >
+          Annuler
+        </button>
+        <button
+          className='fr-btn fr-btn--secondary fr-mr-2w'
           onClick={() => setEtapeCourante(2)}
           type='button'
         >

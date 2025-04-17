@@ -19,6 +19,7 @@ export const handleExportDesIndicateurs = async (request: NextApiRequest, respon
 
   const jalon = recupererJalon(request.query?.jalon as string | undefined);
 
+  /* Pourra être amélioré avec nuqs server */
   const optionsExport = {
     perimetreIds: request.query.perimetreIds ? Array.isArray(request.query.perimetreIds) ? request.query.perimetreIds : [request.query.perimetreIds] as string[] : [],
     estBarometre: request.query.estBarometre === 'true',
