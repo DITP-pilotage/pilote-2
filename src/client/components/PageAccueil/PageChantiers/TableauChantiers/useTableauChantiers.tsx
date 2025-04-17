@@ -59,49 +59,6 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
 
   const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
 
-  const test = estGroupe ? [
-    reactTableColonnesHelper.display({
-      id: 'dérouler-groupe',
-
-      aggregatedCell: (aggregatedCellContext => (
-        <button
-          className={`${aggregatedCellContext.row.getIsExpanded() ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line'} chevron-accordéon`}
-          type='button'
-        />
-      )),
-      meta: {
-        width: '3.5rem',
-        tabIndex: -1,
-      },
-    }),
-    reactTableColonnesHelper.display({
-      id: 'chantier-tuile',
-      cell: chantierCellContext => (
-        <TableauChantiersTuileChantier
-          afficherIcône={!chantierCellContext.table.getColumn('porteur')?.getIsGrouped()}
-          chantier={chantierCellContext.row.original}
-          chantiersSontArchives={chantiersSontArchives}
-        />
-      ),
-      aggregatedCell: aggregatedCellContext => (
-        <TableauChantiersTuileMinistère
-          estArchive={chantiersSontArchives}
-          estDéroulé={aggregatedCellContext.row.getIsExpanded()}
-          ministère={aggregatedCellContext.getValue() as TableauChantiersTuileMinistèreProps['ministère']}
-        />
-      ),
-      aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
-        return {
-          nom: chantiersDuMinistèreRow[0].original.porteur?.nom ?? '',
-          icône: chantiersDuMinistèreRow[0].original.porteur?.icône ?? null,
-          avancement: calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement)),
-        } as TableauChantiersTuileMinistèreProps['ministère'];
-      },
-      enableSorting: false,
-      enableGrouping: false,
-    }),
-  ] : [];
-
   const colonnesTableauChantiers = [
     reactTableColonnesHelper.accessor('porteur.nom', {
       header: 'Porteur',
@@ -304,7 +261,45 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
         },
       }),
     ] : []),
-    ...test,
+    reactTableColonnesHelper.display({
+      id: 'dérouler-groupe',
+      aggregatedCell: (aggregatedCellContext => (
+        <button
+          className={`${aggregatedCellContext.row.getIsExpanded() ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line'} chevron-accordéon`}
+          type='button'
+        />
+      )),
+      meta: {
+        width: '3.5rem',
+        tabIndex: -1,
+      },
+    }),
+    reactTableColonnesHelper.display({
+      id: 'chantier-tuile',
+      cell: chantierCellContext => (
+        <TableauChantiersTuileChantier
+          afficherIcône={!chantierCellContext.table.getColumn('porteur')?.getIsGrouped()}
+          chantier={chantierCellContext.row.original}
+          chantiersSontArchives={chantiersSontArchives}
+        />
+      ),
+      aggregatedCell: aggregatedCellContext => (
+        <TableauChantiersTuileMinistère
+          estArchive={chantiersSontArchives}
+          estDéroulé={aggregatedCellContext.row.getIsExpanded()}
+          ministère={aggregatedCellContext.getValue() as TableauChantiersTuileMinistèreProps['ministère']}
+        />
+      ),
+      aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
+        return {
+          nom: chantiersDuMinistèreRow[0].original.porteur?.nom ?? '',
+          icône: chantiersDuMinistèreRow[0].original.porteur?.icône ?? null,
+          avancement: calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement)),
+        } as TableauChantiersTuileMinistèreProps['ministère'];
+      },
+      enableSorting: false,
+      enableGrouping: false,
+    }),
   ];
 
   const tableau = useReactTable({
@@ -329,6 +324,7 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
         'chantier-tuile': false,
         dateDeMàjDonnéesQualitatives: false,
         dateDeMàjDonnéesQuantitatives: false,
+        'dérouler-groupe': estGroupe,
       }),
     },
     manualPagination: true,

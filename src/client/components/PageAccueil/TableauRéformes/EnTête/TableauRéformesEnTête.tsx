@@ -35,9 +35,9 @@ const TableauRéformesEnTête: FunctionComponent<TableauRéformesEnTêteProps> =
                   width: header.column.columnDef.meta?.width ?? undefined,
                 }}
               >
-                <p className='fr-mb-0 fr-text fr-text--sm title'>
+                <div className='fr-mb-0 fr-text fr-text--sm title'>
                   { flexRender(header.column.columnDef.header, header.getContext()) }
-                </p>
+                </div>
               </th>
             ))}
           </tr>
