@@ -71,6 +71,11 @@ const presenterEnIndicateurExportContrat = (indicateurPourExport: IndicateurPour
       formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurCible, indicateurPourExport.estApplicable),
       formaterNumériqueOuValeurManquante(indicateurPourExport.avancementAnnuel, indicateurPourExport.estApplicable),
       formaterNumériqueOuValeurManquante(indicateurPourExport.avancementGlobal, indicateurPourExport.estApplicable),
+    );
+  }
+
+  if (optionsExport.listeOptionsExport.includes('description-chantier')) {
+    donnees.push(
       formaterNumériqueOuValeurManquante(indicateurPourExport.chantierAvancementGlobal, indicateurPourExport.chantierEstApplicable),
       formaterNumériqueOuValeurManquante(indicateurPourExport.chantierAvancementAnnuel, indicateurPourExport.chantierEstApplicable),
     );
@@ -153,6 +158,11 @@ export class ExportCsvDesIndicateursUseCaseV2 {
         "Date valeur cible à fin d'échéance 2026",
         `Taux d'avancement à fin d'échéance ${jalon} (indicateur)`,
         "Taux d'avancement à fin d'échéance 2026 (indicateur)",
+      );
+    }
+
+    if (optionsExport.listeOptionsExport.includes('description-chantier')) {
+      headersColumn.push(
         `Taux d'avancement à fin d'échéance ${jalon} (chantier)`,
         "Taux d'avancement à fin d'échéance 2026 (chantier)",
       );

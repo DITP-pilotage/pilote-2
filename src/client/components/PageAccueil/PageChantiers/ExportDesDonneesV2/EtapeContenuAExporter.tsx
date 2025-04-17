@@ -28,7 +28,7 @@ export const EtapeContenuAExporter = () => {
   return (
     <div>
       <p className='fr-mt-2w fr-mb-2w'>
-        Sélectionnez et exportez les éléments de votre choix, selon vos besoins
+        Sélectionnez et exportez les données de votre choix, selon vos besoins
       </p>
       <MiseEnAvant titre='Pour mener à bien votre export de données, vous allez être amené à :'>
         <ul>
@@ -66,7 +66,7 @@ export const EtapeContenuAExporter = () => {
         </ul>
       </MiseEnAvant>
       <p className='fr-my-1w'>
-        Pour mener à bien votre export personnalisé, vous devrez :
+        Dans un premier temps, indiquez les éléments dont vous souhaitez exporter les données :
       </p>
       <div
         className='fr-fieldset__element'
@@ -129,11 +129,19 @@ export const EtapeContenuAExporter = () => {
           <span
             className='fr-label fr-text--xs texte-gris fr-mb-0'
           >
-            cet historique recense l'ensemble des valeurs d'avancement pour chaque indicateur et chaque territoire
+            Cet historique recense l'ensemble des valeurs d'avancement pour chaque indicateur et chaque territoire.
           </span>
         </div>
       </div>
       <div className='w-full flex justify-end fr-mt-2w'>
+        <button
+          aria-controls='modale-exporter-les-données-v2'
+          className='fr-link fr-mr-2w'
+          title='Fermer la fenêtre modale'
+          type='button'
+        >
+          Annuler
+        </button>
         <button
           className='fr-btn fr-mr-2w'
           onClick={() => setEtapeCourante(2)}
