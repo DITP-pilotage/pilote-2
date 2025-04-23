@@ -108,7 +108,6 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
           <Infobulle
             classNameBouton='infobulle-header-typologie'
             idHtml='infobulle-header-typologie'
-            styleIconInfoBulle='question'
           >
             {infobulles.chantiers.listeDesChantiersHeaderTypologie}
           </Infobulle>
@@ -132,7 +131,6 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
           <Infobulle
             classNameBouton='infobulle-header-meteo'
             idHtml='infobulle-header-meteo'
-            styleIconInfoBulle='question'
           >
             {infobulles.chantiers.listeDesChantiersHeaderMeteo}
           </Infobulle>
@@ -167,7 +165,6 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
           <Infobulle
             classNameBouton='infobulle-header-taux-avancement'
             idHtml='infobulle-header-taux-avancement'
-            styleIconInfoBulle='question'
           >
             {infobulles.chantiers.listeDesChantiersHeaderTauxAvancement}
           </Infobulle>
@@ -212,7 +209,6 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
             <Infobulle
               classNameBouton='infobulle-header-tendance'
               idHtml='infobulle-header-tendance'
-              styleIconInfoBulle='question'
             >
               {infobulles.chantiers.listeDesChantiersHeaderTendance}
             </Infobulle>
@@ -240,7 +236,6 @@ export const useTableauChantiers = (données: TableauChantiersProps['données'],
             <Infobulle
               classNameBouton='infobulle-header-écart'
               idHtml='infobulle-header-écart'
-              styleIconInfoBulle='question'
             >
               {infobulles.chantiers.listeDesChantiersHeaderEcart}
             </Infobulle>
