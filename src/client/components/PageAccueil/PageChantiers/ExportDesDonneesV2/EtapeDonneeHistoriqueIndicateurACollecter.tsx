@@ -2,7 +2,7 @@ import React from 'react';
 import { parseAsInteger, parseAsString, useQueryState } from 'nuqs';
 
 export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
-  const [optionsExport] = useQueryState('optionsExport', parseAsString.withDefault('identifiant,valeur-cible,valeur-actuelle').withOptions({
+  const [optionsExport] = useQueryState('optionsExport', parseAsString.withDefault('identifiant,valeur-cible,valeur-avancement').withOptions({
     shallow: true,
   }));
 
@@ -79,16 +79,16 @@ export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
         </div>
         <div className='fr-checkbox-group fr-mt-1w'>
           <input
-            checked={optionsExport.split(',').includes('valeur-actuelle')}
+            checked={optionsExport.split(',').includes('valeur-avancement')}
             className='fr-input'
             disabled
-            id='valeur-davancement'
-            name='valeur-davancement'
+            id='valeur-avancement'
+            name='valeur-avancement'
             type='checkbox'
           />
           <label
             className='fr-label'
-            htmlFor='valeur-davancement'
+            htmlFor='valeur-avancement'
           >
             <span>
               <span className='fr-text--bold'>
