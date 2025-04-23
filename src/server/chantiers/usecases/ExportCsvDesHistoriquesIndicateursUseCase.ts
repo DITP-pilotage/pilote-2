@@ -58,8 +58,8 @@ export class ExportCsvDesHistoriquesIndicateursUseCase {
       'Date valeur cible année en cours',
       "Valeur cible à fin d'échéance",
       "Date valeur cible à fin d'échéance 2026",
-      'Valeur actuelle',
-      'Date valeur actuelle',
+      'Valeur avancement',
+      'Date valeur avancement',
     ];
   };
 

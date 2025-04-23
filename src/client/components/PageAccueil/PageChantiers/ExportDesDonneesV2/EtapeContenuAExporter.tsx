@@ -20,7 +20,7 @@ export const EtapeContenuAExporter = () => {
       setOptionsExport('identifiant');
     }
     if (typeExportADefinir === 'historique-indicateurs') {
-      setOptionsExport('identifiant,valeur-cible,valeur-actuelle');
+      setOptionsExport('identifiant,valeur-cible,valeur-avancement');
     }
     setTypeExport(typeExportADefinir);
   };

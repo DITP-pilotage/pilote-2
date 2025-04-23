@@ -139,7 +139,7 @@ test('doit pouvoir exporter les données des chantiers sous format CSV', async (
 
     await test.step('vérification du fichier identifiant et gouvernance', async () => {
       const contents = await fs.promises.readFile(await download.path());
-      expect(contents.toString()).toMatch('"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier";"Chantier Id";"Ministère";"Axe";"Statut";"Chantier territorialisé";"Chantier du baromètre"\n');
+      expect(contents.toString()).toMatch('"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier Id";"Chantier";"Ministère";"Axe";"Statut";"Chantier territorialisé";"Chantier du baromètre"\n');
     });
   });
 
@@ -162,7 +162,7 @@ test('doit pouvoir exporter les données des chantiers sous format CSV', async (
 
     await test.step('vérification du fichier identifiant, gouvernance, responsabilite et objectif', async () => {
       const contents = await fs.promises.readFile(await download.path());
-      expect(contents.toString()).toMatch('"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier";"Chantier Id";"Ministère";"Axe";"Statut";"Chantier territorialisé";"Chantier du baromètre";"Directeur projet";"Contact directeur projet";"Responsable local";"Contact responsable local";"Notre ambition";"Ce qui a déjà été fait";"Ce qui reste à faire"\n');
+      expect(contents.toString()).toMatch('"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier Id";"Chantier";"Ministère";"Axe";"Statut";"Chantier territorialisé";"Chantier du baromètre";"Directeur projet";"Contact directeur projet";"Responsable local";"Contact responsable local";"Coordinateur territorial";"Contact coordinateur territorial";"Notre ambition";"Ce qui a déjà été fait";"Ce qui reste à faire"\n');
     });
   });
 });

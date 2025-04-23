@@ -137,7 +137,7 @@ const INFOBULLE_CONTENUS = {
     listeDesChantiersHeaderEcart: (
       <p className='fr-text--sm fr-mb-0'>
         L'écart correspond à l'écart entre le taux d'avancement pour le territoire sélectionné et le taux d'avancement
-        territorial médian.
+        territorial médian. Il s'affiche si un département ou une région est sélectionné.
       </p>
     ),
   },

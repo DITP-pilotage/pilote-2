@@ -268,7 +268,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
                     données de l'indicateur
                   </span>
                   {' '}
-                  sur le territoire : valeurs initiale / actuelle / cible, taux d'avancement (si applicable)
+                  sur le territoire : valeurs initiale / avancement / cible, taux d'avancement (si applicable)
                 </span>
               </label>
             ) : (

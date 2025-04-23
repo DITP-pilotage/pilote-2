@@ -150,8 +150,8 @@ export class ExportCsvDesIndicateursUseCaseV2 {
       headersColumn.push(
         'Valeur initiale',
         'Date valeur initiale',
-        'Valeur actuelle',
-        'Date valeur actuelle',
+        'Valeur avancement',
+        'Date valeur avancement',
         'Valeur cible année en cours',
         'Date valeur cible année en cours',
         "Valeur cible à fin d'échéance",
