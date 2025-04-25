@@ -31,7 +31,7 @@ export const handleExportDesHistoriquesIndicateurs = async (request: NextApiRequ
     territoireCode: request.query.territoireCode as string | undefined,
   };
 
-  const headersColumns = ExportCsvDesHistoriquesIndicateursUseCase.NOMS_COLONNES();
+  const headersColumns = ExportCsvDesHistoriquesIndicateursUseCase.NOMS_COLONNES(jalon);
   const stringifier = stringify({
     header: true,
     columns: headersColumns,
