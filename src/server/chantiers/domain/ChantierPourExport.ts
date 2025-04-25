@@ -22,6 +22,8 @@ export type ChantierPourExport = {
   directeursProjetMails: string[] | null,
   responsablesLocaux: string[] | null,
   responsablesLocauxMails: string[] | null,
+  coordinateursTerritoriaux: string[] | null,
+  coordinateursTerritoriauxMails: string[] | null,
   estBaromètre: boolean | null,
   estTerritorialisé: boolean | null,
   statut: string | null,

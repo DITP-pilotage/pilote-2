@@ -55,6 +55,8 @@ const presenterEnChantierExportContrat = (chantierPourExport: ChantierPourExport
       chantierPourExport.directeursProjetMails?.join(' ') || NON_RENSEIGNEE,
       chantierPourExport.responsablesLocaux?.join(' ') || NON_RENSEIGNEE,
       chantierPourExport.responsablesLocauxMails?.join(' ') || NON_RENSEIGNEE,
+      chantierPourExport.coordinateursTerritoriaux?.join(' ') || NON_RENSEIGNEE,
+      chantierPourExport.coordinateursTerritoriauxMails?.join(' ') || NON_RENSEIGNEE,
     );
   }
 

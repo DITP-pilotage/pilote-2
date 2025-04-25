@@ -43,7 +43,7 @@ interface Dependencies {
 
 export class ExportCsvDesHistoriquesIndicateursUseCase {
 
-  public static readonly NOMS_COLONNES = (): string[] => {
+  public static readonly NOMS_COLONNES = (jalon: number): string[] => {
     return [
       'Maille',
       'Région',
@@ -54,10 +54,10 @@ export class ExportCsvDesHistoriquesIndicateursUseCase {
       'Indicateur',
       'Valeur initiale',
       'Date valeur initiale',
-      'Valeur cible année en cours',
-      'Date valeur cible année en cours',
-      "Valeur cible à fin d'échéance",
-      "Date valeur cible à fin d'échéance 2026",
+      `Valeur cible année ${jalon}`,
+      `Date valeur cible année ${jalon}`,
+      'Valeur cible année 2026',
+      'Date valeur cible année 2026',
       'Valeur avancement',
       'Date valeur avancement',
     ];
