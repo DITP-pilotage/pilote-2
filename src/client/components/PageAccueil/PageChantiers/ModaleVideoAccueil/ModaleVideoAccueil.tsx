@@ -27,7 +27,6 @@ export const ModaleVideoAccueil: FunctionComponent = () => {
       }}
       idHtml={ID_HTML_MODALE_VIDEO_ACCUEIL}
       tailleModale='lg'
-      titre='Découvrez les principales fonctionnalités de PILOTE'
     >
       <div>
         <iframe
@@ -38,7 +37,10 @@ export const ModaleVideoAccueil: FunctionComponent = () => {
           title="Vidéo d'accueil"
           width='100%'
         />
-        <div className='fr-mt-4w flex justify-end gap-2'>
+        <div className='fr-mt-4w flex justify-between gap-2'>
+          <p>
+            Retrouvez cette vidéo et d'autres ressources dans le centre d'aide de PILOTE
+          </p>
           <button
             aria-controls={ID_HTML_MODALE_VIDEO_ACCUEIL}
             className='fr-btn'
