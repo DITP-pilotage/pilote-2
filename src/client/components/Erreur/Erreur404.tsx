@@ -5,7 +5,7 @@ const Erreur404: FunctionComponent<{}> = () => {
   return (
     <PageErreur
       message=" Si vous avez tapé l'adresse web dans le navigateur, vérifiez qu'elle est correcte. La page n'est peut-être plus disponible."
-      sousTitre='La page que vous cherchez est introuvable. Excusez-nous pour la gène occasionnée.'
+      sousTitre='La page que vous cherchez est introuvable. Nous vous prions de bien vouloir nous excuser pour la gêne occasionnée.'
       titre='Page non trouvée'
     />
   );
