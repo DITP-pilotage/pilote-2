@@ -16,7 +16,6 @@ sources:
       - name: metadata_zonegroup
       - name: metadata_chantier_meteos
       - name: metadata_indicateur_types
-      - name: metadata_perimetres_projet_structurant
       - name: metadata_porteurs
 
   - name: python_load_seeds

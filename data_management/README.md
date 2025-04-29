@@ -312,14 +312,6 @@ DFAK(Dump Dfakto Chantier) --> PG
 PG --> BE(Back-end) --> FE(Front-end)
 ```
 
-### Pour les projets structurants 
-``` mermaid
-graph LR
-PM(PPG_metadata) --> PG[(Base PG Pilote 2)]
-DFAK(Dump Dfakto PS) --> PG
-PG --> BE(Back-end) --> FE(Front-end)
-```
-
 ### Zoom moyenne maille dans la base PG Pilote
 ``` mermaid
 graph LR
@@ -357,4 +349,3 @@ Afin de voir les étapes qui précèdent et sont nécessaires à l'exécution du
 De même, pour les étapes qui succèdent, on peut écrire `marts+`.
 
 Enfin si vous souhaitez comprendre comment une table d'exposition est construite, vous pouvez écrire `+ma_table`.
-Par exemple pour la table `objectif_projet_structurant`, on écrira simplement `+objectif_projet_structurant`.

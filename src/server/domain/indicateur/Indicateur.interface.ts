@@ -1,7 +1,6 @@
 export const typesIndicateur = ['IMPACT', 'DEPL', 'Q_SERV', 'REBOND', 'CONTEXTE'] as const;
-export const typesIndicateurProjetStructurant = ['IMPACT', 'DEPL', 'FINANCIER'] as const;
 
-export type TypeIndicateur = typeof typesIndicateur[number] | typeof typesIndicateurProjetStructurant[number];
+export type TypeIndicateur = typeof typesIndicateur[number];
 
 export default interface Indicateur {
   id: string

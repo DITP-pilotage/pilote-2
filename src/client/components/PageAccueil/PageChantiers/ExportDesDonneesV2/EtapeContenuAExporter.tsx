@@ -3,7 +3,7 @@ import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryState } fr
 import { MiseEnAvant } from '@/components/_commons/MiseEnAvant/MiseEnAvant';
 
 export const EtapeContenuAExporter = () => {
-  const [typeExport, setTypeExport] = useQueryState('typeExport', parseAsStringLiteral(['ppg', 'indicateurs', 'historique-indicateurs']).withDefault('ppg').withOptions({
+  const [typeExport, setTypeExport] = useQueryState('typeExport', parseAsStringLiteral(['chantiers', 'indicateurs', 'historique-indicateurs']).withDefault('chantiers').withOptions({
     shallow: true,
   }));
   const [, setOptionsExport] = useQueryState('optionsExport', parseAsString.withDefault('identifiant').withOptions({
@@ -15,12 +15,12 @@ export const EtapeContenuAExporter = () => {
     history: 'push',
   }));
 
-  const modifierTypeExport = (typeExportADefinir: 'ppg' | 'indicateurs' | 'historique-indicateurs') => {
-    if (typeExportADefinir === 'ppg' || typeExportADefinir === 'indicateurs') {
+  const modifierTypeExport = (typeExportADefinir: 'chantiers' | 'indicateurs' | 'historique-indicateurs') => {
+    if (typeExportADefinir === 'chantiers' || typeExportADefinir === 'indicateurs') {
       setOptionsExport('identifiant');
     }
     if (typeExportADefinir === 'historique-indicateurs') {
-      setOptionsExport('identifiant,valeur-cible,valeur-actuelle');
+      setOptionsExport('identifiant,valeur-cible,valeur-avancement');
     }
     setTypeExport(typeExportADefinir);
   };
@@ -28,46 +28,63 @@ export const EtapeContenuAExporter = () => {
   return (
     <div>
       <p className='fr-mt-2w fr-mb-2w'>
-        La fonctionnalité d'export de PILOTE vous permet de récupérer les données qui vous intéressent sur les PPG et
-        leurs indicateurs dans les territoires.
+        Sélectionnez et exportez les données de votre choix, selon vos besoins
       </p>
       <MiseEnAvant titre='Pour mener à bien votre export de données, vous allez être amené à :'>
         <ul>
           <li>
-            indiquer les contenus dont vous souhaitez récupérer les données : les PPG, les indicateurs ou l'historique
-            des indicateurs (étape 1);
+            indiquer les 
+            {' '}
+            <span className='fr-text--bold'>
+              éléments
+            </span>
+            {' '}
+            dont vous souhaitez récupérer les données : les chantiers, les indicateurs ou l'historique
+            des indicateurs (étape 1) ;
           </li>
           <li>
-            préciser le périmètre de votre export : le cas échéant, filtrage des PPG / indicateurs et sélection des
-            territoires (étape 2);
+            préciser le 
+            {' '}
+            <span className='fr-text--bold'>
+              périmètre
+            </span>
+            {' '}
+            de votre export : le cas échéant, filtrage des chantiers ou indicateurs et sélection des
+            territoires (étape 2) ;
           </li>
           <li>
-            enfin – s'il ne s'agit pas d'un export d'historique – choisir les données que vous souhaitez collecter pour
-            ces PPG / indicateurs, territoire par territoire : gouvernance, commentaires, données quantitatives, etc.
+            enfin – s'il ne s'agit pas d'un export d'historique – choisir les 
+            {' '}
+            <span className='fr-text--bold'>
+              données
+            </span>
+            {' '}
+            que vous souhaitez collecter pour
+            ces chantiers ou indicateurs, territoire par territoire : gouvernance, commentaires, données quantitatives, etc.
             (étape 3)
           </li>
         </ul>
       </MiseEnAvant>
       <p className='fr-my-1w'>
-        Dans un premier temps, indiquez les contenus dont vous souhaitez exporter les données :
+        Dans un premier temps, indiquez les éléments dont vous souhaitez exporter les données :
       </p>
       <div
         className='fr-fieldset__element'
-        key='ppg'
+        key='chantiers'
       >
         <div className='fr-radio-group'>
           <input
-            checked={typeExport === 'ppg'}
-            id='ppg'
+            checked={typeExport === 'chantiers'}
+            id='chantiers'
             name='ressource-à-exporter'
-            onChange={() => modifierTypeExport('ppg')}
+            onChange={() => modifierTypeExport('chantiers')}
             type='radio'
           />
           <label
             className='fr-label'
-            htmlFor='ppg'
+            htmlFor='chantiers'
           >
-            Les PPG
+            les chantiers
           </label>
         </div>
       </div>
@@ -87,7 +104,7 @@ export const EtapeContenuAExporter = () => {
             className='fr-label'
             htmlFor='indicateurs'
           >
-            Les indicateurs des PPG
+            les indicateurs des chantiers
           </label>
         </div>
       </div>
@@ -107,16 +124,24 @@ export const EtapeContenuAExporter = () => {
             className='fr-label'
             htmlFor='historique-indicateurs'
           >
-            L'historique des indicateurs
+            l'historique des indicateurs
           </label>
           <span
             className='fr-label fr-text--xs texte-gris fr-mb-0'
           >
-            cet historique recense les valeurs d'avancements prises successivement par les indicateurs des PPG, territoire par territoire
+            Cet historique recense l'ensemble des valeurs d'avancement pour chaque indicateur et chaque territoire.
           </span>
         </div>
       </div>
       <div className='w-full flex justify-end fr-mt-2w'>
+        <button
+          aria-controls='modale-exporter-les-données-v2'
+          className='fr-link fr-mr-2w'
+          title='Fermer la fenêtre modale'
+          type='button'
+        >
+          Annuler
+        </button>
         <button
           className='fr-btn fr-mr-2w'
           onClick={() => setEtapeCourante(2)}

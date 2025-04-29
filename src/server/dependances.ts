@@ -9,6 +9,7 @@ import { AuthentificationDependencies, getAuthentificationContainer } from '@/se
 import { FicheConducteurDependencies, getFicheConducteurContainer } from '@/server/fiche-conducteur/container';
 import { PrismaPilote } from '@/server/db/PrismaPilote';
 import { GestionUtilisateurDependencies, getGestionUtilisateurContainer } from './gestion-utilisateur/container';
+import { getParametrageNouveautesContainer, ParametrageNouveautesDependencies } from './parametrage-nouveautes/container';
 
 interface InitialDependencies {
   prisma: PrismaPilote
@@ -21,6 +22,7 @@ export type ContainerDependencies = {
   importIndicateur: AwilixContainer<ImportIndicateurDependencies>
   gestionUtilisateur: AwilixContainer<GestionUtilisateurDependencies>
   ficheConducteur: AwilixContainer<FicheConducteurDependencies>
+  parametrageNouveautes: AwilixContainer<ParametrageNouveautesDependencies>
   main: AwilixContainer<InitialDependencies>
 };
 
@@ -41,6 +43,7 @@ function registerContainer(): ContainerDependencies {
     importIndicateur: getImportIndicateurContainer(initialContainer),
     gestionUtilisateur: getGestionUtilisateurContainer(initialContainer),
     ficheConducteur: getFicheConducteurContainer(initialContainer),
+    parametrageNouveautes: getParametrageNouveautesContainer(initialContainer),
   };
 }
 

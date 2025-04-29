@@ -19,6 +19,7 @@ export const handleExportDesIndicateurs = async (request: NextApiRequest, respon
 
   const jalon = recupererJalon(request.query?.jalon as string | undefined);
 
+  /* Pourra être amélioré avec nuqs server */
   const optionsExport = {
     perimetreIds: request.query.perimetreIds ? Array.isArray(request.query.perimetreIds) ? request.query.perimetreIds : [request.query.perimetreIds] as string[] : [],
     estBarometre: request.query.estBarometre === 'true',
@@ -27,6 +28,7 @@ export const handleExportDesIndicateurs = async (request: NextApiRequest, respon
     listeChantierId: request.query.listeChantierId ? (request.query.listeChantierId as string).split(',') : [],
     listeMeteos: request.query.meteos ? Array.isArray(request.query.meteos) ? request.query.meteos : [request.query.meteos] as string[] : [],
     listeOptionsExport: request.query.optionsExport ? Array.isArray(request.query.optionsExport) ? request.query.optionsExport : [request.query.optionsExport] as string[] : [],
+    territoireCode: request.query.territoireCode as string | undefined,
   } satisfies OptionsExport;
 
   const headersColumns = ExportCsvDesIndicateursUseCaseV2.NOMS_COLONNES(jalon, optionsExport, session.profil);
@@ -46,13 +48,20 @@ export const handleExportDesIndicateurs = async (request: NextApiRequest, respon
 
   const territoireCodes = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
+  let territoireARecuperer = territoireCodes;
+
+  if (optionsExport.territoireCode && optionsExport.territoireCode !== 'NAT-FR') {
+    territoireARecuperer = await getContainer('chantiers').resolve('territoireRepository').recupererTerritoireCodesEtTerritoiresCodesEnfantsParTerritoireCode({ territoireCode: optionsExport.territoireCode });
+    territoireARecuperer = territoireARecuperer.filter((territoireCode) => territoireCodes.includes(territoireCode));
+  }
+
   const chantierIds = await getContainer('chantiers').resolve('chantierRepository').récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(), optionsExport);
 
   const exportCsvDesIndicateursUseCase = getContainer('chantiers').resolve('exportCsvDesIndicateursUseCaseV2');
 
   for await (const partialResult of exportCsvDesIndicateursUseCase.run({
     chantierIds,
-    territoireCodes,
+    territoireCodes: territoireARecuperer,
     profil: session.profil,
     indicateurChunkSize: chunkSize,
     jalon,

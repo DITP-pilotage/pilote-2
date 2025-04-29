@@ -2,7 +2,7 @@ import React from 'react';
 import { parseAsInteger, parseAsString, useQueryState } from 'nuqs';
 
 export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
-  const [optionsExport] = useQueryState('optionsExport', parseAsString.withDefault('identifiant,valeur-cible,valeur-actuelle').withOptions({
+  const [optionsExport] = useQueryState('optionsExport', parseAsString.withDefault('identifiant,valeur-cible,valeur-avancement').withOptions({
     shallow: true,
   }));
 
@@ -65,37 +65,30 @@ export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
           >
             <span>
               <span className='fr-text--bold'>
-                valeur initiale
+                valeur initiale et valeurs cibles*
               </span>
               {' '}
-              et
-              {' '}
-              <span className='fr-text--bold'>
-                valeurs cibles
-              </span>
-              {' '}
-              de l'indicateur sur le territoire les valeurs cibles sont exportées pour l'année en cours et pour l'année
-              2026
+              de l'indicateur sur le territoire
             </span>
           </label>
           <span
             className='fr-label fr-text--xs texte-gris fr-mb-0 fr-ml-4w'
           >
-            les valeurs cibles sont exportées pour l'année en cours et pour l'année 2026
+            *les valeurs cibles sont fournies pour l'année en cours et à échéance
           </span>
         </div>
         <div className='fr-checkbox-group fr-mt-1w'>
           <input
-            checked={optionsExport.split(',').includes('valeur-actuelle')}
+            checked={optionsExport.split(',').includes('valeur-avancement')}
             className='fr-input'
             disabled
-            id='valeur-davancement'
-            name='valeur-davancement'
+            id='valeur-avancement'
+            name='valeur-avancement'
             type='checkbox'
           />
           <label
             className='fr-label'
-            htmlFor='valeur-davancement'
+            htmlFor='valeur-avancement'
           >
             <span>
               <span className='fr-text--bold'>
@@ -109,7 +102,15 @@ export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
       </div>
       <div className='w-full flex justify-end fr-mt-2w'>
         <button
-          className='fr-btn fr-mr-2w'
+          aria-controls='modale-exporter-les-données-v2'
+          className='fr-link fr-mr-2w'
+          title='Fermer la fenêtre modale'
+          type='button'
+        >
+          Annuler
+        </button>
+        <button
+          className='fr-btn fr-btn--secondary fr-mr-2w'
           onClick={() => setEtapeCourante(2)}
           type='button'
         >

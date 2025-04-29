@@ -5,14 +5,13 @@ import { FunctionComponent } from 'react';
 import { LIMITE_CARACTÈRES_PUBLICATION, validationPublicationFormulaire } from 'validation/publication';
 import CompteurCaractères from '@/components/_commons/CompteurCaractères/CompteurCaractères';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
-import { typeDeRéformeSélectionnéeStore } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
 import PublicationFormulaireStyled from './PublicationFormulaire.styled';
 import PublicationFormulaireProps, { PublicationFormulaireInputs } from './PublicationFormulaire.interface';
 import usePublicationFormulaire from './usePublicationFormulaire';
 
 const PublicationFormulaire: FunctionComponent<PublicationFormulaireProps> = ({ caractéristiques, contenuInitial, succèsCallback, erreurCallback, annulationCallback }) => {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-  const typeDeRéforme = typeDeRéformeSélectionnéeStore();
+  const typeDeRéforme = 'chantier';
   const { créerPublication } = usePublicationFormulaire(succèsCallback, erreurCallback);
   
   const { register, handleSubmit, formState: { errors, isValid }, watch } = useForm<PublicationFormulaireInputs>({

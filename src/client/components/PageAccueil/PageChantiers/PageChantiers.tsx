@@ -144,7 +144,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
       clearOnDefault: true,
       history: 'push',
     }),
-    typeExport: parseAsStringLiteral(['ppg', 'indicateurs']).withDefault('ppg').withOptions({
+    typeExport: parseAsStringLiteral(['chantiers', 'indicateurs']).withDefault('chantiers').withOptions({
       shallow: true,
     }),
   });
@@ -252,7 +252,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                       setOptionsExport({
                         isModaleExportCsvOuverte: true,
                         etapeCourante: 1,
-                        typeExport: 'ppg',
+                        typeExport: 'chantiers',
                       });
                     }}
                     type='button'
@@ -263,12 +263,13 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                     fermetureCallback={() => {
                       setOptionsExport({
                         etapeCourante: 1,
-                        typeExport: 'ppg',
+                        typeExport: 'chantiers',
                       }, { clearOnDefault: true, shallow: true });
                       setOptionsExport({
                         isModaleExportCsvOuverte: false,
                       }, { clearOnDefault: true, shallow: true });
                     }}
+                    territoireCodeSelectionne={territoireCode}
                   />
                 </div>
               ) : null
@@ -502,9 +503,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 >
                   {`Liste des chantiers (${nombreTotalChantiersAvecAlertes})`}
                 </Titre>
-                <Infobulle idHtml='infobulle-chantiers-listeDesChantiers'>
-                  {INFOBULLE_CONTENUS.chantiers.listeDesChantiers}
-                </Infobulle>
               </TitreInfobulleConteneur>
               {
                 profilPeutAccederAuxBrouillons || !!variableContenuFFPpgArchive ? (

@@ -11,7 +11,6 @@ import IndicateurPondération
   from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/Pondération/IndicateurPondération';
 import IndicateurTendance
   from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/Tendance/IndicateurTendance';
-import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import useIndicateurBloc from './useIndicateurBloc';
@@ -22,7 +21,7 @@ interface IndicateurBlocProps {
   indicateur: Indicateur
   détailsIndicateurs: DétailsIndicateurs
   territoireCode: string
-  typeDeRéforme: TypeDeRéforme
+  typeDeRéforme: 'chantier'
   listeSousIndicateurs: Indicateur[]
 }
 

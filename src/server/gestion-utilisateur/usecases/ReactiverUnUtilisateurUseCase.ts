@@ -65,8 +65,10 @@ export default class ReactiverUnUtilisateurUseCase {
       profilAuteur,
     );
 
-    await this.utilisateurRepository.reactiver(email, auteurId);
+    await this.utilisateurRepository.reinitialiserEtatVisualisationVideoAccueil(email);
 
+    await this.utilisateurRepository.reactiver(email, auteurId);
+    
     if (process.env.IMPORT_KEYCLOAK_URL) {
       await this.utilisateurIAMRepository.reactive(email);
     }

@@ -13,6 +13,7 @@ const optionsExport: OptionsExport = {
   listeChantierId: [],
   listeMeteos: [],
   listeOptionsExport: [],
+  territoireCode: undefined,
 };
 
 describe('ExportCsvDesChantiersUseCase', () => {

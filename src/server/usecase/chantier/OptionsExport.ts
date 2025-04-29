@@ -6,4 +6,5 @@ export interface OptionsExport {
   listeChantierId: string[],
   listeMeteos: string[],
   listeOptionsExport: string[],
+  territoireCode: string | undefined,
 }

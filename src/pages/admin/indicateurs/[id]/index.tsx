@@ -17,6 +17,7 @@ import { getContainer } from '@/server/dependances';
 import {
   InformationDerniereModificationMetadataIndicateurContrat,
 } from '@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat';
+import Habilitation from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
 
 export interface NextPageAdminUtilisateurProps {
   indicateur: MetadataParametrageIndicateurContrat,
@@ -45,6 +46,10 @@ export async function getServerSideProps({ req, res, params, query }: GetServerS
   if (!params?.id || !session || !session.habilitations) {
     return redirigerVersPageAccueil;
   }
+
+  const habilitations = new Habilitation(session.habilitations);
+
+  habilitations.verifierAutorisationLectureMetadataIndicateur(session.profil);
 
   let indicateurDemandé: MetadataParametrageIndicateurContrat;
   let creationReussie = query._action === 'creation-reussie';

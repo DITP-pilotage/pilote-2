@@ -28,7 +28,7 @@ function generateNonce(): string {
 }
 
 export function middleware(_request: NextRequest): NextResponse {
-  const nonce = generateNonce();
+  const nonce = generateNonce();  
   const response = NextResponse.next();
 
   // Ajouter le nonce aux en-têtes de réponse
@@ -39,8 +39,8 @@ export function middleware(_request: NextRequest): NextResponse {
 
   // Ajout du CSP pour empecher les attaques XSS côté webapp
   const cspValue = isDevelopment
-    ? "default-src 'self' data:; frame-src https://video.finances.gouv.fr/ https://app.livestorm.co/; connect-src https://api.validata.etalab.studio/ https://stats.beta.gouv.fr/ 'self' data: ws:; script-src 'self' https://stats.beta.gouv.fr/ 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;"
-    : `default-src 'self' data:; frame-src https://video.finances.gouv.fr/ https://app.livestorm.co/; connect-src https://api.validata.etalab.studio/ https://stats.beta.gouv.fr/ 'self' data:; script-src 'self' https://stats.beta.gouv.fr/ 'nonce-${nonce}' 'strict-dynamic'; style-src 'self' 'nonce-${nonce}' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; block-all-mixed-content; upgrade-insecure-requests;`;
+    ? "default-src 'self' data:; frame-src https://video.finances.gouv.fr/ https://app.livestorm.co/; connect-src https://api.validata.etalab.studio/ https://stats.beta.gouv.fr/ 'self' data: ws:; script-src 'self' https://stats.beta.gouv.fr/ 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests; media-src 'self' https://video.finances.gouv.fr/;"
+    : `default-src 'self' data:; frame-src https://video.finances.gouv.fr/ https://app.livestorm.co/; connect-src https://api.validata.etalab.studio/ https://stats.beta.gouv.fr/ 'self' data:; script-src 'self' https://stats.beta.gouv.fr/ 'nonce-${nonce}' 'strict-dynamic'; style-src 'self' 'nonce-${nonce}' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; block-all-mixed-content; upgrade-insecure-requests; media-src 'self' https://video.finances.gouv.fr/;`;
 
   // Définir l'en-tête CSP
   response.headers.set('Content-Security-Policy', cspValue);

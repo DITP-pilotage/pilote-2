@@ -28,9 +28,10 @@ export const handleExportDesHistoriquesIndicateurs = async (request: NextApiRequ
     listeChantierId: request.query.listeChantierId ? (request.query.listeChantierId as string).split(',') : [],
     listeMeteos: request.query.meteos ? Array.isArray(request.query.meteos) ? request.query.meteos : [request.query.meteos] as string[] : [],
     listeOptionsExport: request.query.optionsExport ? Array.isArray(request.query.optionsExport) ? request.query.optionsExport : [request.query.optionsExport] as string[] : [],
+    territoireCode: request.query.territoireCode as string | undefined,
   };
 
-  const headersColumns = ExportCsvDesHistoriquesIndicateursUseCase.NOMS_COLONNES();
+  const headersColumns = ExportCsvDesHistoriquesIndicateursUseCase.NOMS_COLONNES(jalon);
   const stringifier = stringify({
     header: true,
     columns: headersColumns,
@@ -47,13 +48,20 @@ export const handleExportDesHistoriquesIndicateurs = async (request: NextApiRequ
 
   const territoireCodes = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
+  let territoireARecuperer = territoireCodes;
+
+  if (optionsExport.territoireCode && optionsExport.territoireCode !== 'NAT-FR') {
+    territoireARecuperer = await getContainer('chantiers').resolve('territoireRepository').recupererTerritoireCodesEtTerritoiresCodesEnfantsParTerritoireCode({ territoireCode: optionsExport.territoireCode });
+    territoireARecuperer = territoireARecuperer.filter((territoireCode) => territoireCodes.includes(territoireCode));
+  }
+  
   const chantierIds = await getContainer('chantiers').resolve('chantierRepository').récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(), optionsExport);
 
   const exportCsvDesIndicateursUseCase = getContainer('chantiers').resolve('exportCsvDesHistoriquesIndicateursUseCase');
 
   for await (const partialResult of exportCsvDesIndicateursUseCase.run({
     chantierIds,
-    territoireCodes,
+    territoireCodes: territoireARecuperer,
     profil: session.profil,
     indicateurChunkSize: chunkSize,
     jalon,

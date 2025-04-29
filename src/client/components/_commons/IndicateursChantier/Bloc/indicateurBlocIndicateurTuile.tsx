@@ -3,14 +3,13 @@ import IndicateurBlocIndicateurTuileStyled
   from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBlocIndicateurTuile.styled';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { formaterDate } from '@/client/utils/date/date';
-import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 import {
   IndicateurDétailsParTerritoire,
 } from '@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface';
 
 interface IndicateurDétailsParTerritoireProps {
   indicateurDétailsParTerritoire: IndicateurDétailsParTerritoire
-  typeDeRéforme: TypeDeRéforme
+  typeDeRéforme: 'chantier'
   unité?: string | null
 }
 

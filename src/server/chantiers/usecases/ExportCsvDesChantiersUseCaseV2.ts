@@ -55,6 +55,8 @@ const presenterEnChantierExportContrat = (chantierPourExport: ChantierPourExport
       chantierPourExport.directeursProjetMails?.join(' ') || NON_RENSEIGNEE,
       chantierPourExport.responsablesLocaux?.join(' ') || NON_RENSEIGNEE,
       chantierPourExport.responsablesLocauxMails?.join(' ') || NON_RENSEIGNEE,
+      chantierPourExport.coordinateursTerritoriaux?.join(' ') || NON_RENSEIGNEE,
+      chantierPourExport.coordinateursTerritoriauxMails?.join(' ') || NON_RENSEIGNEE,
     );
   }
 
@@ -119,8 +121,8 @@ export class ExportCsvDesChantiersUseCaseV2 {
       'Région',
       'Département',
       'Code INSEE - Nom du département',
-      'Chantier',
       'Chantier Id',
+      'Chantier',
     ];
 
     if (optionsExport.listeOptionsExport.includes('gouvernance')) {
@@ -141,7 +143,7 @@ export class ExportCsvDesChantiersUseCaseV2 {
     }
 
     if (optionsExport.listeOptionsExport.includes('responsabilite')) {
-      headersColumn.push('Directeur projet', 'Contact directeur projet', 'Responsable local', 'Contact responsable local');
+      headersColumn.push('Directeur projet', 'Contact directeur projet', 'Responsable local', 'Contact responsable local', 'Coordinateur territorial', 'Contact coordinateur territorial');
     }
 
     if (optionsExport.listeOptionsExport.includes('objectif')) {

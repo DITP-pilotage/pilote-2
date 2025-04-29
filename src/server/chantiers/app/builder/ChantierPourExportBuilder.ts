@@ -37,6 +37,10 @@ export class ChantierPourExportBuilder {
 
   private responsablesLocauxMails = null;
 
+  private coordinateursTerritoriaux = null;
+
+  private coordinateursTerritoriauxMails = null;
+
   private estBaromètre = null;
 
   private estTerritorialisé = null;
@@ -95,6 +99,8 @@ export class ChantierPourExportBuilder {
       directeursProjetMails: this.directeursProjetMails,
       responsablesLocaux: this.responsablesLocaux,
       responsablesLocauxMails: this.responsablesLocauxMails,
+      coordinateursTerritoriaux: this.coordinateursTerritoriaux,
+      coordinateursTerritoriauxMails: this.coordinateursTerritoriauxMails,
       estBaromètre: this.estBaromètre,
       estTerritorialisé: this.estTerritorialisé,
       statut: this.statut,

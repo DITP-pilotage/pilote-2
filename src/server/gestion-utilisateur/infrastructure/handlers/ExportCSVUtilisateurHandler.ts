@@ -14,6 +14,7 @@ import { recupererLesNomsDesTerritoires } from '@/server/app/RecupererLesNomsDes
 import { Territoire } from '@/server/gestion-utilisateur/domain/Territoire';
 import { profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { InformationChantierUtilisateur } from '@/server/gestion-utilisateur/domain/InformationChantierUtilisateur';
+import { UnauthorizedError } from '@/server/app/error-boundary/unauthorized-error';
 
 type UtilisateurPourExportCSVContrat = string[];
 
@@ -69,6 +70,10 @@ export const handleExportDesUtilisateurs = async (request: NextApiRequest, respo
   response.setHeader('Content-Type', 'text/csv');
 
   const habilitation = new Habilitation(session.habilitations);
+
+  if (!habilitation.peutConsulterLaListeDesUtilisateurs()) {
+    throw new UnauthorizedError('Vous n\'avez pas les droits pour exporter les utilisateurs');
+  }
 
   const optionsExport = {
     territoires: request.query.territoires ? Array.isArray(request.query.territoires) ? request.query.territoires : [request.query.territoires] as string[] : [],
