@@ -1,4 +1,4 @@
-import { asClass, AwilixContainer, ContainerOptions, createContainer, InjectionMode, Lifetime } from 'awilix';
+import { AwilixContainer } from 'awilix';
 import {
   getParametrageIndicateurContainer,
   ParametrageIndicateurDependencies,
@@ -10,8 +10,9 @@ import { FicheConducteurDependencies, getFicheConducteurContainer } from '@/serv
 import { PrismaPilote } from '@/server/db/PrismaPilote';
 import { GestionUtilisateurDependencies, getGestionUtilisateurContainer } from './gestion-utilisateur/container';
 import { getParametrageNouveautesContainer, ParametrageNouveautesDependencies } from './parametrage-nouveautes/container';
+import { getInitialContainer } from './initial-container';
 
-interface InitialDependencies {
+export interface InitialDependencies {
   prisma: PrismaPilote
 }
 
@@ -27,13 +28,7 @@ export type ContainerDependencies = {
 };
 
 function registerContainer(): ContainerDependencies {
-  const defaultOptions: ContainerOptions = { injectionMode: InjectionMode.PROXY, strict: true };
-
-  const initialContainer = createContainer<InitialDependencies>(defaultOptions);
-
-  initialContainer.register({
-    prisma: asClass(PrismaPilote, { lifetime: Lifetime.SINGLETON }),
-  });
+  const initialContainer = getInitialContainer();
 
   return {
     main: initialContainer.createScope(),

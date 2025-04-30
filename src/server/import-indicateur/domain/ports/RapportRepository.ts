@@ -2,6 +2,5 @@ import { DetailValidationFichier } from '@/server/import-indicateur/domain/Detai
 
 export interface RapportRepository {
   sauvegarder(rapport: DetailValidationFichier): Promise<void>;
-
   récupérerRapportParId(rapportId: string): Promise<DetailValidationFichier>;
 }
