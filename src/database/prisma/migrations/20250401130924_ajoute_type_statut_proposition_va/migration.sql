@@ -9,7 +9,7 @@ UPDATE "public"."proposition_valeur_actuelle"
 SET "statut_tmp" = "statut"::"public"."type_statut_proposition";
 
 ALTER TABLE "public"."proposition_valeur_actuelle"
-DROP COLUMN "statut";
+DROP COLUMN "statut" CASCADE;
 
 ALTER TABLE "public"."proposition_valeur_actuelle"
 RENAME COLUMN "statut_tmp" TO "statut";
