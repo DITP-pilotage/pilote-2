@@ -1,4 +1,3 @@
-import { formaterDate } from '@/client/utils/date/date';
 import { DonneeIndicateur } from '@/server/chantiers/domain/DonneeIndicateur';
 
 export interface DonneeTerritoireContrat {
@@ -6,15 +5,15 @@ export interface DonneeTerritoireContrat {
   territoire_code: string;
   valeur_cible_annuelle: number | null;
   code_insee: string;
-  date_valeur_cible: string | null;
+  date_valeur_cible: Date | null;
   valeur_initiale: number | null;
-  date_valeur_actuelle: string | null;
+  date_valeur_actuelle: Date | null;
   zone_id: string;
   valeur_actuelle: number | null;
-  date_valeur_initiale: string | null;
+  date_valeur_initiale: Date | null;
   maille: string;
   taux_avancement: number | null;
-  date_valeur_cible_annuelle: string | null;
+  date_valeur_cible_annuelle: Date | null;
   taux_avancement_annuel: number | null
 }
 
@@ -36,14 +35,14 @@ export const presenterEnDonneeIndicateurContrat = (chantierId: string, listeDonn
       territoire_code: donneeIndicateur.territoireCode,
       zone_id: donneeIndicateur.zoneId,
       valeur_initiale: donneeIndicateur.valeurInitiale,
-      date_valeur_initiale: formaterDate(donneeIndicateur.dateValeurInitiale?.toISOString(), 'MM-YYYY'),
+      date_valeur_initiale: donneeIndicateur.dateValeurInitiale,
       valeur_actuelle: donneeIndicateur.valeurActuelle,
-      date_valeur_actuelle: formaterDate(donneeIndicateur.dateValeurActuelle?.toISOString(), 'MM-YYYY'),
+      date_valeur_actuelle: donneeIndicateur.dateValeurActuelle,
       valeur_cible: donneeIndicateur.valeurCibleGlobale,
-      date_valeur_cible: formaterDate(donneeIndicateur.dateValeurCibleGlobale?.toISOString(), 'MM-YYYY'),
+      date_valeur_cible: donneeIndicateur.dateValeurCibleGlobale,
       taux_avancement: donneeIndicateur.tauxAvancementGlobale,
       valeur_cible_annuelle: donneeIndicateur.valeurCibleAnnuelle,
-      date_valeur_cible_annuelle: formaterDate(donneeIndicateur.dateValeurCibleAnnuelle?.toISOString(), 'MM-YYYY'),
+      date_valeur_cible_annuelle: donneeIndicateur.dateValeurCibleAnnuelle,
       taux_avancement_annuel: donneeIndicateur.tauxAvancementAnnuel,
     })),
   };
