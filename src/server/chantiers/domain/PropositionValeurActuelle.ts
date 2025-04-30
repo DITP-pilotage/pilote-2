@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { StatutPropositionType } from './StatutProposition';
 
 export class PropositionValeurActuelle {
   private readonly _id: string;
@@ -21,7 +22,7 @@ export class PropositionValeurActuelle {
 
   private readonly _sourceDonneeEtMethodeCalcul: string;
 
-  private readonly _statut: string;
+  private readonly _statut: StatutPropositionType;
 
   private constructor({
     id,
@@ -46,7 +47,7 @@ export class PropositionValeurActuelle {
     dateProposition: Date,
     motifProposition: string,
     sourceDonneeEtMethodeCalcul: string,
-    statut: string
+    statut: StatutPropositionType
   }) {
     this._id = id;
     this._indicId = indicId;
@@ -101,7 +102,7 @@ export class PropositionValeurActuelle {
     return this._sourceDonneeEtMethodeCalcul;
   }
 
-  get statut(): string {
+  get statut(): StatutPropositionType {
     return this._statut;
   }
 
@@ -128,7 +129,7 @@ export class PropositionValeurActuelle {
     dateProposition: Date,
     motifProposition: string,
     sourceDonneeEtMethodeCalcul: string,
-    statut: string
+    statut: StatutPropositionType
   }) {
     return new PropositionValeurActuelle({
       id: id || randomUUID(),

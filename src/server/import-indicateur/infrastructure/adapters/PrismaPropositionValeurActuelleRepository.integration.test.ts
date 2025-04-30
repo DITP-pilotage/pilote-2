@@ -1,4 +1,5 @@
 import { prisma } from '@/server/db/prisma';
+import { StatutProposition } from '@/server/chantiers/domain/StatutProposition';
 import { PrismaPropositionValeurActuelleRepository } from './PrismaPropositionValeurActuelleRepository';
 
 describe('PrismaPropositionValeurActuelle', () => {
@@ -8,8 +9,8 @@ describe('PrismaPropositionValeurActuelle', () => {
     prismaPropositionValeurActuelleRepository = new PrismaPropositionValeurActuelleRepository();
   });
 
-  describe('#supprimerPropositionsValeurActuelleApresImport', () => {
-    it('si la date de valeur actuelle associée à la proposition est égale à la date donnée, doit appliquer le statut SUPPRIME pour l\'id indicateur et la zone demandée', async () => {
+  describe('#modifierStatutPropositionsValeurActuelleApresImport', () => {
+    it("si la date de valeur actuelle de l'import est égale à la date de valeur actuelle de la proposition et la valeur actuelle importée est égale à la proposition, applique le statut ACCEPTEE_VIA_IMPORT", async () => {
       // GIVEN
       await prisma.proposition_valeur_actuelle.create({
         data: {
@@ -23,21 +24,22 @@ describe('PrismaPropositionValeurActuelle', () => {
           id_auteur_modification: '7d9ba603-d510-46f6-bda3-736210467521',
           motif_proposition: 'motif',
           source_donnee_methode_calcul: 'source',
-          statut: 'EN COURS',
+          statut: 'EN_COURS',
         },
       });
       // WHEN
-      await prismaPropositionValeurActuelleRepository.supprimerPropositionsValeurActuelleApresImport({
+      await prismaPropositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport({
         indicId: 'IND-001', 
         zoneId: 'D34', 
         dateValeurImportee: new Date('2024-12-01'),
+        valeurImportee: 10,
       });
 
       // THEN
       const proposition = await prisma.proposition_valeur_actuelle.findFirst();
-      expect(proposition?.statut).toStrictEqual('SUPPRIME');
-    });
-    it('si la date de valeur actuelle associée à la proposition est inférieure à la date donnée, doit appliquer le statut SUPPRIME pour l\'id indicateur et la zone demandée', async () => {
+      expect(proposition?.statut).toStrictEqual(StatutProposition.ACCEPTEE_VIA_IMPORT);
+    }); 
+    it("si la date de valeur actuelle de l'import est égale à la date de valeur actuelle de la proposition et la valeur actuelle importée est différente la proposition, applique le statut TRAITEE_VIA_IMPORT", async () => {
       // GIVEN
       await prisma.proposition_valeur_actuelle.create({
         data: {
@@ -51,21 +53,22 @@ describe('PrismaPropositionValeurActuelle', () => {
           id_auteur_modification: '7d9ba603-d510-46f6-bda3-736210467521',
           motif_proposition: 'motif',
           source_donnee_methode_calcul: 'source',
-          statut: 'EN COURS',
+          statut: 'EN_COURS',
         },
       });
       // WHEN
-      await prismaPropositionValeurActuelleRepository.supprimerPropositionsValeurActuelleApresImport({
+      await prismaPropositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport({
         indicId: 'IND-001', 
         zoneId: 'D34', 
-        dateValeurImportee: new Date('2025-01-01'),
+        dateValeurImportee: new Date('2024-12-01'),
+        valeurImportee: 12,
       });
 
       // THEN
       const proposition = await prisma.proposition_valeur_actuelle.findFirst();
-      expect(proposition?.statut).toStrictEqual('SUPPRIME');
-    });
-    it('si la date de valeur actuelle associée à la proposition est supérieure à la date donnée, ne doit pas modifier le statut pour l\'id indicateur et la zone demandée', async () => {
+      expect(proposition?.statut).toStrictEqual(StatutProposition.TRAITEE_VIA_IMPORT);      
+    }); 
+    it("si la date de valeur actuelle de l'import est postérieure à la date de valeur actuelle de la proposition, applique le statut IGNOREE_VIA_IMPORT", async () => {
       // GIVEN
       await prisma.proposition_valeur_actuelle.create({
         data: {
@@ -79,21 +82,22 @@ describe('PrismaPropositionValeurActuelle', () => {
           id_auteur_modification: '7d9ba603-d510-46f6-bda3-736210467521',
           motif_proposition: 'motif',
           source_donnee_methode_calcul: 'source',
-          statut: 'EN COURS',
+          statut: 'EN_COURS',
         },
       });
       // WHEN
-      await prismaPropositionValeurActuelleRepository.supprimerPropositionsValeurActuelleApresImport({
+      await prismaPropositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport({
         indicId: 'IND-001', 
         zoneId: 'D34', 
-        dateValeurImportee: new Date('2024-01-01'),
+        dateValeurImportee: new Date('2025-12-01'),
+        valeurImportee: 10,
       });
 
       // THEN
       const proposition = await prisma.proposition_valeur_actuelle.findFirst();
-      expect(proposition?.statut).toStrictEqual('EN COURS');
+      expect(proposition?.statut).toStrictEqual(StatutProposition.IGNOREE_VIA_IMPORT);
     });
-    it('si l\'indicateur ne correspond pas à l\'id, ne modifie pas le statut', async () => {
+    it("si la date de valeur actuelle de l'import est antérieure à la date de valeur actuelle de la proposition, ne modifie pas le statut", async () => {
       // GIVEN
       await prisma.proposition_valeur_actuelle.create({
         data: {
@@ -107,47 +111,49 @@ describe('PrismaPropositionValeurActuelle', () => {
           id_auteur_modification: '7d9ba603-d510-46f6-bda3-736210467521',
           motif_proposition: 'motif',
           source_donnee_methode_calcul: 'source',
-          statut: 'EN COURS',
+          statut: 'EN_COURS',
         },
       });
       // WHEN
-      await prismaPropositionValeurActuelleRepository.supprimerPropositionsValeurActuelleApresImport({
-        indicId: 'IND-002', 
-        zoneId: 'D34', 
-        dateValeurImportee: new Date('2025-01-01'),
-      });
-
-      // THEN
-      const proposition = await prisma.proposition_valeur_actuelle.findFirst();
-      expect(proposition?.statut).toStrictEqual('EN COURS');
-    });
-    it('si le territoire ne correspond pas à celui demandé, ne modifie pas le statut', async () => {
-      // GIVEN
-      await prisma.proposition_valeur_actuelle.create({
-        data: {
-          id: '4cba3d15-fdc2-4d7c-b614-f0a009d5126e',
-          indic_id: 'IND-001',
-          territoire_code: 'DEPT-34',
-          date_valeur_actuelle: new Date('2024-12-01'),
-          date_proposition: new Date(),
-          valeur_actuelle_proposee: 10,
-          auteur_modification: 'auteur',
-          id_auteur_modification: '7d9ba603-d510-46f6-bda3-736210467521',
-          motif_proposition: 'motif',
-          source_donnee_methode_calcul: 'source',
-          statut: 'EN COURS',
-        },
-      });
-      // WHEN
-      await prismaPropositionValeurActuelleRepository.supprimerPropositionsValeurActuelleApresImport({
+      await prismaPropositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport({
         indicId: 'IND-001', 
-        zoneId: 'D35', 
-        dateValeurImportee: new Date('2025-01-01'),
+        zoneId: 'D34', 
+        dateValeurImportee: new Date('2023-12-01'),
+        valeurImportee: 10,
       });
 
       // THEN
       const proposition = await prisma.proposition_valeur_actuelle.findFirst();
-      expect(proposition?.statut).toStrictEqual('EN COURS');
+      expect(proposition?.statut).toStrictEqual(StatutProposition.EN_COURS);
     });
-  });  
+    it("si le statut de la proposition n'est pas EN_COURS, ne modifie pas le statut", async () => {
+      // GIVEN
+      await prisma.proposition_valeur_actuelle.create({
+        data: {
+          id: '4cba3d15-fdc2-4d7c-b614-f0a009d5126e',
+          indic_id: 'IND-001',
+          territoire_code: 'DEPT-34',
+          date_valeur_actuelle: new Date('2024-12-01'),
+          date_proposition: new Date(),
+          valeur_actuelle_proposee: 10,
+          auteur_modification: 'auteur',
+          id_auteur_modification: '7d9ba603-d510-46f6-bda3-736210467521',
+          motif_proposition: 'motif',
+          source_donnee_methode_calcul: 'source',
+          statut: 'IGNOREE_VIA_IMPORT',
+        },
+      });
+      // WHEN
+      await prismaPropositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport({
+        indicId: 'IND-001', 
+        zoneId: 'D34', 
+        dateValeurImportee: new Date('2024-12-01'),
+        valeurImportee: 10,
+      });
+
+      // THEN
+      const proposition = await prisma.proposition_valeur_actuelle.findFirst();
+      expect(proposition?.statut).toStrictEqual(StatutProposition.IGNOREE_VIA_IMPORT);
+    }); 
+  });
 });

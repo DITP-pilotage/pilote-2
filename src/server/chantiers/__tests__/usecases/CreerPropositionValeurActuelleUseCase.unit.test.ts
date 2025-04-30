@@ -34,6 +34,7 @@ describe('CreerPropositionValeurActuelleUseCase', () => {
     await creerPropositionValeurActuelleUseCase.run({ indicId, valeurActuelleProposee, territoireCode, dateValeurActuelle, idAuteurModification, auteurModification, dateProposition, motifProposition, sourceDonneeEtMethodeCalcul, statut });
     // Then
     const propositionValeurActuelleCaptor = captor<PropositionValeurActuelle>();
+    expect(propositionValeurActuelleRepository.annulePropositionValeurActuellePrecedente).toHaveBeenCalledWith({ indicId, territoireCode });
     expect(propositionValeurActuelleRepository.creerPropositionValeurActuelle).toHaveBeenNthCalledWith(1, propositionValeurActuelleCaptor);
   });
 });

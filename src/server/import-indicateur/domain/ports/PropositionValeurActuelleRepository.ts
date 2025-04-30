@@ -1,11 +1,13 @@
 export interface PropositionValeurActuelleRepository {
-  supprimerPropositionsValeurActuelleApresImport: ({ 
+  modifierStatutPropositionsValeurActuelleApresImport: ({ 
     indicId,
     zoneId,
     dateValeurImportee,
+    valeurImportee,
   }: {
     indicId: string,
     zoneId: string,
     dateValeurImportee: Date
+    valeurImportee: number
   }) => Promise<void>;
 }
