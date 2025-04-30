@@ -51,12 +51,77 @@ describe('PrismaObjectifRepository', () => {
         ],
       });
 
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: 'CH-001',
+            territoire_code: 'DEPT-01',
+            code_insee: '01',
+            maille: 'DEPT',
+            zone_id: 'D01',
+          },
+          {
+            id: 'CH-001',
+            territoire_code: 'DEPT-02',
+            code_insee: '01',
+            maille: 'DEPT',
+            zone_id: 'D01',
+          },
+          {
+            id: 'CH-001',
+            territoire_code: 'DEPT-03',
+            code_insee: '01',
+            maille: 'DEPT',
+            zone_id: 'D01',
+          },
+        ],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [
+          {
+            id: 'IND-001',
+            nom: 'indicateur 1',
+            chantier_id: 'CH-001',
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: 'IND-001',
+            chantier_id: 'CH-001',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-01',
+            code_insee: '01',
+            zone_id: 'D01',
+          },
+          {
+            id: 'IND-001',
+            chantier_id: 'CH-001',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-02',
+            code_insee: '01',
+            zone_id: 'D01',
+          },
+          {
+            id: 'IND-001',
+            chantier_id: 'CH-001',
+            maille: 'DEPT',
+            territoire_code: 'DEPT-03',
+            code_insee: '01',
+            zone_id: 'D01',
+          },
+        ],
+      });
+
       await prisma.proposition_valeur_actuelle.createMany({
         data: [
           {
             id: '77053976-1a8e-49f0-b68a-df01da2fc277',
             indic_id: 'IND-001',
-            territoire_code: 'D01',
+            territoire_code: 'DEPT-01',
             id_auteur_modification: auteurId1,
             valeur_actuelle_proposee: 12,
             date_valeur_actuelle: new Date('2025-01-01'),
@@ -68,7 +133,7 @@ describe('PrismaObjectifRepository', () => {
           {
             id: 'b699907e-43c4-43be-8d8d-185fca1b2e50',
             indic_id: 'IND-001',
-            territoire_code: 'D02',
+            territoire_code: 'DEPT-02',
             id_auteur_modification: auteurId2,
             valeur_actuelle_proposee: 12,
             date_valeur_actuelle: new Date('2025-01-01'),
@@ -80,7 +145,7 @@ describe('PrismaObjectifRepository', () => {
           {
             id: 'e3885e40-caab-4fb6-acf4-0c8f66c9e290',
             indic_id: 'IND-001',
-            territoire_code: 'D03',
+            territoire_code: 'DEPT-03',
             id_auteur_modification: auteurId2,
             valeur_actuelle_proposee: 12,
             date_valeur_actuelle: new Date('2025-01-01'),

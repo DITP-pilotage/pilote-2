@@ -5,8 +5,46 @@ import { PrismaPropositionValeurActuelleRepository } from './PrismaPropositionVa
 describe('PrismaPropositionValeurActuelle', () => {
   let prismaPropositionValeurActuelleRepository: PrismaPropositionValeurActuelleRepository;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     prismaPropositionValeurActuelleRepository = new PrismaPropositionValeurActuelleRepository();
+    await prisma.chantier_identite.create({
+      data: {
+        id: 'CH-001',
+        nom: 'Chantier 001',
+      },
+    });
+    await prisma.chantier_territoire.createMany({
+      data: [
+        {
+          id: 'CH-001',
+          territoire_code: 'DEPT-34',
+          code_insee: '34',
+          maille: 'DEPT',
+          zone_id: 'D34',
+        },
+      ],
+    });
+    await prisma.indicateur_identite.createMany({
+      data: [
+        {
+          id: 'IND-001',
+          nom: 'indicateur 1',
+          chantier_id: 'CH-001',
+        },
+      ],
+    });
+    await prisma.indicateur_territoire.createMany({
+      data: [
+        {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-34',
+          code_insee: '34',
+          zone_id: 'D34',
+        },
+      ],
+    });
   });
 
   describe('#modifierStatutPropositionsValeurActuelleApresImport', () => {

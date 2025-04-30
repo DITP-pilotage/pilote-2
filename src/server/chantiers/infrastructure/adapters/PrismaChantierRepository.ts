@@ -851,7 +851,9 @@ export class PrismaChantierRepository implements ChantierRepository {
         chantier_identite: {
           select: {
             id: true,
+            nom: true,
             statut: true,
+            conseiller_mail: true,
           },
         },
       },
@@ -863,7 +865,32 @@ export class PrismaChantierRepository implements ChantierRepository {
 
     return {
       id: propositionValeurAvancementChantierInformation.chantier_identite.id,
+      nom: propositionValeurAvancementChantierInformation.chantier_identite.nom,
       statut: propositionValeurAvancementChantierInformation.chantier_identite.statut,
+      conseillerMail: propositionValeurAvancementChantierInformation.chantier_identite.conseiller_mail ?? '',
     };
+  }
+
+  async recupererListePropositionValeurAvancementChantierInformationParChantiersIds({ listeChantiersIds }: { listeChantiersIds: string[] }): Promise<PropositionValeurAvancementChantierInformation[]> {
+    const listeChantiersInformations = await prisma.chantier_identite.findMany({
+      where: {
+        id: {
+          in: listeChantiersIds,
+        },
+      },
+      select: {
+        id: true,
+        nom: true,
+        statut: true,
+        conseiller_mail: true,
+      },
+    });
+
+    return listeChantiersInformations.map(chantierInformation => ({
+      id: chantierInformation.id,
+      nom: chantierInformation.nom,
+      statut: chantierInformation.statut,
+      conseillerMail: chantierInformation.conseiller_mail ?? '',
+    }));
   }
 }
