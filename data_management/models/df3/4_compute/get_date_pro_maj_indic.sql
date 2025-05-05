@@ -54,6 +54,7 @@ b.periodicite, b.delai_disponibilite,
 -- 	On ajouter X mois suivant la valeur de periodicite renseignée
 CASE b.periodicite
         WHEN 'Mensuelle' 		THEN a.last_va_date + interval '1 month'
+	WHEN 'Bimestrielle'	THEN a.last_va_date + interval '2 months'
         WHEN 'Trimestrielle' 	THEN a.last_va_date + interval '3 months'
         WHEN 'Semestrielle' 	THEN a.last_va_date + interval '6 months'
         WHEN 'Annuelle' 		THEN a.last_va_date + interval '1 year'
