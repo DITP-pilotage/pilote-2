@@ -11,7 +11,7 @@ import {
 import { MultiSelectPérimètreMinistériel }
   from '@/components/_commons/MultiSelectNew/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
 import { MultiSelectChantier } from '@/components/_commons/MultiSelectNew/MultiSelectChantier/MultiSelectChantier';
-import Tag from '@/components/_commons/Tag/Tag';
+import { Tag } from '@/components/_commons/Tag/Tag';
 import { territoiresTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { MultiSelectProfil } from '@/components/_commons/MultiSelectNew/MultiSelectProfil/MultiSelectProfil';
 import {
@@ -163,7 +163,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateur
               return libellé === null ? null : (
                 <Tag
                   key={territoireCode}
-                  libellé={libellé}
+                  libelle={libellé}
                   suppressionCallback={() => {
                     const arrFiltre = filtres.territoires.split(',');
                     arrFiltre.splice(arrFiltre.indexOf(territoireCode), 1);
@@ -192,7 +192,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateur
               return libellé === null ? null : (
                 <Tag
                   key={perimetreMinisterielId}
-                  libellé={libellé}
+                  libelle={libellé}
                   suppressionCallback={() => {
                     const arrFiltre = filtres.perimetresMinisteriels.split(',');
                     arrFiltre.splice(arrFiltre.indexOf(perimetreMinisterielId), 1);
@@ -221,7 +221,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateur
               return libellé === null ? null : (
                 <Tag
                   key={chantierId}
-                  libellé={libellé}
+                  libelle={libellé}
                   suppressionCallback={() => {
                     const arrFiltre = filtres.chantiers.split(',');
                     arrFiltre.splice(arrFiltre.indexOf(chantierId), 1);
@@ -250,7 +250,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateur
               return libellé === null ? null : (
                 <Tag
                   key={profilCode}
-                  libellé={libellé}
+                  libelle={libellé}
                   suppressionCallback={() => {
                     const arrFiltre = filtres.profils.split(',');
                     arrFiltre.splice(arrFiltre.indexOf(profilCode), 1);
