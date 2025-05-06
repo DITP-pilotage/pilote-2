@@ -36,7 +36,7 @@ export const validationInfosBaseUtilisateur = z.object( {
   gestionUtilisateur: z.boolean(),
 });
 
-export const validationInfosBaseUtilisateurCoordinateurs = z.object( {
+export const validationInfosBaseUtilisateurNonAdmin = z.object( {
   email: z.string().email().min(1).max(100).refine((value) => value.endsWith('.gouv.fr'), { message : customErrorMail }),
   nom: z.string().min(1).max(100),
   prénom: z.string().min(1).max(100),
@@ -94,5 +94,5 @@ export const validationDesactiverVideoAccueil = z.object({
 export const codesTerritoiresDROM = ['NAT-FR', 'REG-01', 'REG-02', 'REG-03', 'REG-04', 'REG-06', 'DEPT-971', 'DEPT-972', 'DEPT-973', 'DEPT-974', 'DEPT-976'];
 
 export const donneValidationInfosBaseUtilisateur = (profil: ProfilCode) => {
-  return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(profil) ? validationInfosBaseUtilisateur : validationInfosBaseUtilisateurCoordinateurs;
+  return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(profil) ? validationInfosBaseUtilisateur : validationInfosBaseUtilisateurNonAdmin;
 };

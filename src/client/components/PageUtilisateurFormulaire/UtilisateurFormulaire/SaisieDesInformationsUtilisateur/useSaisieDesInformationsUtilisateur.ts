@@ -17,7 +17,7 @@ export const AAccesATousLesUtilisateurs = (profil: Profil | null) => {
   return false;
 };
 
-export const PROFILS_POSSIBLES_COORDINATEURS_MODIFICATION = {
+export const PROFILS_POSSIBLES_GESTION_UTILISATEUR_MODIFICATION = {
   COORDINATEUR_REGION: [
     ProfilEnum.PREFET_REGION,
     ProfilEnum.PREFET_DEPARTEMENT,
@@ -28,9 +28,17 @@ export const PROFILS_POSSIBLES_COORDINATEURS_MODIFICATION = {
     ProfilEnum.PREFET_DEPARTEMENT,
     ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
   ],
+  SECRETARIAT_GENERAL: [
+    ProfilEnum.PREFET_REGION,
+    ProfilEnum.PREFET_DEPARTEMENT,
+    ProfilEnum.SERVICES_DECONCENTRES_REGION,
+    ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+    ProfilEnum.COORDINATEUR_DEPARTEMENT,
+    ProfilEnum.COORDINATEUR_REGION,
+  ],
 };
 
-export const PROFILS_POSSIBLES_COORDINATEURS_LECTURE = {
+export const PROFILS_POSSIBLES_GESTION_UTILISATEUR_LECTURE = {
   COORDINATEUR_REGION: [
     ProfilEnum.PREFET_REGION,
     ProfilEnum.PREFET_DEPARTEMENT,
@@ -44,6 +52,14 @@ export const PROFILS_POSSIBLES_COORDINATEURS_LECTURE = {
     ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
     ProfilEnum.COORDINATEUR_DEPARTEMENT,
   ],
+  SECRETARIAT_GENERAL: [
+    ProfilEnum.PREFET_REGION,
+    ProfilEnum.PREFET_DEPARTEMENT,
+    ProfilEnum.SERVICES_DECONCENTRES_REGION,
+    ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+    ProfilEnum.COORDINATEUR_DEPARTEMENT,
+    ProfilEnum.COORDINATEUR_REGION,
+  ],
 };
 
 export const PROFILS_POSSIBLES_RESPONSABLES = new Set([
@@ -56,12 +72,12 @@ export const PROFILS_POSSIBLES_RESPONSABLES = new Set([
   ProfilEnum.EQUIPE_DIR_PROJET,
 ]);
 
-function utilisateurEstCoordinateur(profilCode: ProfilCode) {
-  return [ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.COORDINATEUR_REGION].includes(profilCode);
+function utilisateurAAccesATousLesProfils(profilCode: ProfilCode) {
+  return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(profilCode);
 }
 
-function profilsPeutEtreCreeParUnCoordinateur(profilCodeCreateur: ProfilCode, profilCode: ProfilCode) {
-  return PROFILS_POSSIBLES_COORDINATEURS_MODIFICATION[profilCodeCreateur as keyof typeof PROFILS_POSSIBLES_COORDINATEURS_MODIFICATION].includes(profilCode);
+function profilsPeutEtreCreeParUtilisateur(profilCodeCreateur: ProfilCode, profilCode: ProfilCode) {
+  return PROFILS_POSSIBLES_GESTION_UTILISATEUR_MODIFICATION[profilCodeCreateur as keyof typeof PROFILS_POSSIBLES_GESTION_UTILISATEUR_MODIFICATION].includes(profilCode);
 }
 
 function AAccesUniquementAuxChantiersTerritorialises(profilCodeSelectionne: ProfilCode) {
@@ -89,9 +105,9 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
   const [chantiersIdsAppartenantsAuxPerimetresSelectionnes, setChantiersIdsAppartenantsAuxPerimetresSelectionnes] = useState<string[]>([]);
   const [chantiersApplicablesPourLesTerrioiresSelectionnes, setChantiersApplicablesPourLesTerrioiresSelectionnes] = useState<Set<string>>(new Set());
 
-  const listeProfils = utilisateurEstCoordinateur(session!.profil) ?
-    profils?.filter(profil => profilsPeutEtreCreeParUnCoordinateur(session!.profil, profil.code)) :
-    profils;
+  const listeProfils = utilisateurAAccesATousLesProfils(session!.profil) ?
+    profils :
+    profils?.filter(profil => profilsPeutEtreCreeParUtilisateur(session!.profil, profil.code));
   const optionsProfil =  listeProfils ? listeProfils.map(profil => ({ libellé: profil.nom, valeur: profil.code })) : [];
   const profilCodeSelectionne = getValues('profil');
   const profilSelectionne = profils?.find(profil => profil.code === profilCodeSelectionne);

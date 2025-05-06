@@ -79,9 +79,22 @@ export default class Habilitation {
     return this._habilitations.gestionUtilisateur.territoires.includes(territoireCode);
   }
 
+  peutAccéderAuChantierUtilisateurs(chantier: string): boolean {
+    return this._habilitations.gestionUtilisateur.chantiers.includes(chantier);
+  }
+
   peutAccéderAuxTerritoiresUtilisateurs(territoiresCodes: string[]): boolean {
     for (const territoiresCode of territoiresCodes) {
       if (!this.peutAccéderAuTerritoireUtilisateurs(territoiresCode)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  peutAccéderAuxChantiersUtilisateurs(chantiersIds: string[]): boolean {
+    for (const chantierId of chantiersIds) {
+      if (!this.peutAccéderAuChantierUtilisateurs(chantierId)) {
         return false;
       }
     }
