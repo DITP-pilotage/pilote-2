@@ -8,7 +8,7 @@ import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
 
 import { FunctionComponent } from 'react';
-import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
+import Utilisateur from '@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import MenuItemGestionContenu from '@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu';
 import api from '@/server/infrastructure/api/trpc/api';

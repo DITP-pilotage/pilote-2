@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { FunctionComponent } from 'react';
 import Navigation from '@/components/_commons/MiseEnPage/Navigation/Navigation';
-import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
+import Utilisateur from '@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur';
 import BandeauInformation from '@/components/_commons/BandeauInformation/BandeauInformation';
 import api from '@/server/infrastructure/api/trpc/api';
 import IcôneEmail from '@/components/_commons/IcôneEmail/IcôneEmail';
@@ -16,7 +16,7 @@ const useEntete = () => {
   };
 };
 
-const EnTête: FunctionComponent<{}> = () => {
+export const EnTete: FunctionComponent<{}> = () => {
   const { data: session } = useSession();
   const { messageInformation } = useEntete();
 
@@ -33,41 +33,42 @@ const EnTête: FunctionComponent<{}> = () => {
         <div className='fr-container'>
           <div className='fr-header__body-row'>
             <div className='fr-header__brand fr-enlarge-link'>
-              <div className='fr-header__brand-top'>
-                <div className='fr-header__logo'>
-                  <p className='fr-logo'>
+              <div className='fr-header__brand-top fr-grid-row'>
+                <div className='fr-header__logo flex align-center fr-col-10 fr-col-md-11 fr-col-lg-12'>
+                  <p className='fr-logo fr-mr-5v'>
                     Gouvernement
                   </p>
+                  <div>
+                    <Link
+                      href='/'
+                      title="Retour à l'accueil du site"
+                    >
+                      <p className='fr-header__service-title'>
+                        PILOTE
+                      </p>
+                    </Link>
+                    <p className='fr-header__service-tagline fr-text--sm'>
+                      Piloter l'action publique par les résultats
+                    </p>
+                  </div>
                 </div>
                 {
-                  !!session &&
-                  <div className='fr-header__navbar'>
-                    <button
-                      aria-controls='modale-menu-principal'
-                      aria-haspopup='menu'
-                      className='fr-btn--menu fr-btn'
-                      data-fr-opened='false'
-                      id='bouton-menu-principal'
-                      title='Menu'
-                      type='button'
-                    >
-                      Menu
-                    </button>
-                  </div>
+                  !!session ? (
+                    <div className='fr-header__navbar fr-col-2 fr-col-md-1 fr-lg-col-0'>
+                      <button
+                        aria-controls='modale-menu-principal'
+                        aria-haspopup='menu'
+                        className='fr-btn--menu fr-btn'
+                        data-fr-opened='false'
+                        id='bouton-menu-principal'
+                        title='Menu'
+                        type='button'
+                      >
+                        Menu
+                      </button>
+                    </div>
+                  ) : null
                 }
-              </div>
-              <div className='fr-header__service'>
-                <Link
-                  href='/'
-                  title="Retour à l'accueil du site"
-                >
-                  <p className='fr-header__service-title'>
-                    PILOTE
-                  </p>
-                </Link>
-                <p className='fr-header__service-tagline fr-text--sm'>
-                  Piloter l'action publique par les résultats
-                </p>
               </div>
             </div>
             <div className='fr-header__tools'>
@@ -108,5 +109,3 @@ const EnTête: FunctionComponent<{}> = () => {
     </header>
   );
 };
-
-export default EnTête;

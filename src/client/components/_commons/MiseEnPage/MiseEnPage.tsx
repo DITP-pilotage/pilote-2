@@ -5,7 +5,7 @@ import Loader from '@/client/components/_commons/Loader/Loader';
 import MiseEnPageStyled from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
 import api from '@/server/infrastructure/api/trpc/api';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import EnTête from './EnTête/EnTête';
+import { EnTete } from './EnTete/EnTete';
 import PiedDePage from './PiedDePage/PiedDePage';
 
 interface MiseEnPageProps {
@@ -39,7 +39,7 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({ afficherLeLoader, chil
 
   return (
     <MiseEnPageStyled>
-      <EnTête />
+      <EnTete />
       {
         status === 'loading' || (status === 'authenticated' && !aFiniDeChargerLesTerritoires)
           ?
