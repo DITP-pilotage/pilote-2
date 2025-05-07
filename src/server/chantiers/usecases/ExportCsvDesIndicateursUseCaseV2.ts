@@ -62,13 +62,13 @@ const presenterEnIndicateurExportContrat = (indicateurPourExport: IndicateurPour
   if (optionsExport.listeOptionsExport.includes('description')) {
     donnees.push(
       formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurInitiale, indicateurPourExport.estApplicable),
-      formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurInitiale, indicateurPourExport.estApplicable),
+      formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurInitiale, indicateurPourExport.estApplicable, 'MM-YYYY'),
       formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurActuelle, indicateurPourExport.estApplicable),
-      formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurActuelle, indicateurPourExport.estApplicable),
+      formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurActuelle, indicateurPourExport.estApplicable, 'MM-YYYY'),
       formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurCibleAnnuelle, indicateurPourExport.estApplicable),
-      formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurCibleAnnuelle, indicateurPourExport.estApplicable),
+      formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurCibleAnnuelle, indicateurPourExport.estApplicable, 'MM-YYYY'),
       formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurCible, indicateurPourExport.estApplicable),
-      formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurCible, indicateurPourExport.estApplicable),
+      formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurCible, indicateurPourExport.estApplicable, 'MM-YYYY'),
       formaterNumériqueOuValeurManquante(indicateurPourExport.avancementAnnuel, indicateurPourExport.estApplicable),
       formaterNumériqueOuValeurManquante(indicateurPourExport.avancementGlobal, indicateurPourExport.estApplicable),
     );

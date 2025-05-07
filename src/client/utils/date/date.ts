@@ -5,7 +5,7 @@ import { SortingState } from '@tanstack/react-table';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-type FormatDeDate = 'MM/YYYY' | 'MM/YY' | 'DD/MM/YYYY' | 'DD/MM/YYYY [à] H[h]mm';
+type FormatDeDate = 'MM/YYYY' | 'MM/YY' | 'DD/MM/YYYY' | 'DD/MM/YYYY [à] H[h]mm' | 'MM-YYYY';
 
 export function formaterDate(dateISO: string | null | undefined, format: FormatDeDate) {
   if (!dateISO)
