@@ -1,12 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
-import Tag from '@/components/_commons/Tag/Tag';
+import { Tag } from '@/components/_commons/Tag/Tag';
 
 test('le tag comporte le texte précisé', () => {
   render(
     <Tag
-      libellé='Texte du tag'
+      libelle='Texte du tag'
       suppressionCallback={() => {}}
     />,
   );
@@ -16,7 +16,7 @@ test('le tag comporte le texte précisé', () => {
 test('le tag comporte un bouton', () => {
   render(
     <Tag
-      libellé='Texte du tag'
+      libelle='Texte du tag'
       suppressionCallback={() => {}}
     />,
   );
@@ -28,7 +28,7 @@ test('le tag lance un event au clic', async () => {
 
   render(
     <Tag
-      libellé='Texte du tag'
+      libelle='Texte du tag'
       suppressionCallback={auClicCallback}
     />,
   );
