@@ -1,0 +1,370 @@
+[
+  {
+    "email": "ditp.admin@example.com",
+    "nom": "DITP",
+    "prenom": "Admin",
+    "profilCode": "DITP_ADMIN",
+    "habilitations": [
+      {
+        "scopeCode": "lecture",
+        "territoires": [],
+        "perimetres": [],
+        "chantiers": []
+      },
+      {
+        "scopeCode": "saisieCommentaire",
+        "territoires": [],
+        "perimetres": [],
+        "chantiers": []
+      },
+      {
+        "scopeCode": "saisieIndicateur",
+        "territoires": [],
+        "perimetres": [],
+        "chantiers": []
+      }
+    ]
+  },
+  {
+    "email": "ditp.pilotage@example.com",
+    "nom": "DITP",
+    "prenom": "Pilotage",
+    "profilCode": "DITP_PILOTAGE",
+    "habilitations": [
+      {
+        "scopeCode": "lecture",
+        "territoires": [],
+        "perimetres": [],
+        "chantiers": []
+      },
+      {
+        "scopeCode": "saisieCommentaire",
+        "territoires": [],
+        "perimetres": [],
+        "chantiers": []
+      }
+    ]
+  },
+  {
+    "email": "premiere.ministre@example.com",
+    "nom": "Premiere",
+    "prenom": "Ministre",
+    "profilCode": "PM_ET_CABINET",
+    "habilitations": [
+      {
+        "scopeCode": "lecture",
+        "territoires": [],
+        "perimetres": [],
+        "chantiers": []
+      }
+    ]
+  },
+  {
+    "email": "presidence@example.com",
+    "nom": "Presidence",
+    "prenom": "Republique",
+    "profilCode": "PR",
+    "habilitations": [
+      {
+        "scopeCode": "lecture",
+        "territoires": [],
+        "perimetres": [],
+        "chantiers": []
+      }
+    ]
+  },
+  {
+    "email": "cabinet.mtfp@example.com",
+    "nom": "Cabinet",
+    "prenom": "MTFP",
+    "profilCode": "CABINET_MTFP",
+    "habilitations": [
+      {
+        "scopeCode": "lecture",
+        "territoires": [],
+        "perimetres": [],
+        "chantiers": []
+      }
+    ]
+  },
+  {
+    "email": "cabinet.ministeriel@example.com",
+    "nom": "Cabinet",
+    "prenom": "Ministériel",
+    "profilCode": "CABINET_MINISTERIEL",
+    "habilitations": [
+      {
+        "scopeCode": "lecture",
+        "territoires": [],
+        "perimetres": [],
+        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
+      }
+    ]
+  },
+  {
+    "email": "direction.admin.centrale@example.com",
+    "nom": "Direction",
+    "prenom": "Admin centrale",
+    "profilCode": "DIR_ADMIN_CENTRALE",
+    "habilitations": [
+      {
+        "scopeCode": "lecture",
+        "territoires": [],
+        "perimetres": [],
+        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
+      }
+    ]
+  },
+  {
+    "email": "secretariat.general@example.com",
+    "nom": "Secretariat",
+    "prenom": "General",
+    "profilCode": "SECRETARIAT_GENERAL",
+    "habilitations": [
+      {
+        "scopeCode": "lecture",
+        "territoires": [],
+        "perimetres": [],
+        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
+      },
+      {
+        "scopeCode": "saisieCommentaire",
+        "territoires": ["NAT"],
+        "perimetres": [],
+        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
+      },
+      {
+        "scopeCode": "saisieIndicateur",
+        "territoires": [],
+        "perimetres": [],
+        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
+      }
+    ]
+  },
+  {
+    "email": "directeur.projet@example.com",
+    "nom": "Directeur",
+    "prenom": "Projet",
+    "profilCode": "EQUIPE_DIR_PROJET",
+    "habilitations": [
+      {
+        "scopeCode": "lecture",
+        "territoires": [],
+        "perimetres": [],
+        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
+      },
+      {
+        "scopeCode": "saisieCommentaire",
+        "territoires": ["NAT"],
+        "perimetres": [],
+        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
+      },
+      {
+        "scopeCode": "saisieIndicateur",
+        "territoires": [],
+        "perimetres": [],
+        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
+      }
+    ]
+  },
+  {
+    "email": "equipe.dir.projet@example.com",
+    "nom": "Equipe Directeur",
+    "prenom": "Projet",
+    "profilCode": "EQUIPE_DIR_PROJET",
+    "habilitations": [
+      {
+        "scopeCode": "lecture",
+        "territoires": [],
+        "perimetres": [],
+        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
+      },
+      {
+        "scopeCode": "saisieCommentaire",
+        "territoires": ["NAT"],
+        "perimetres": [],
+        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
+      },
+      {
+        "scopeCode": "saisieIndicateur",
+        "territoires": [],
+        "perimetres": [],
+        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
+      }
+    ]
+  },
+  {
+    "email": "referent.region@example.com",
+    "nom": "Referent",
+    "prenom": "Region",
+    "profilCode": "SERVICES_DECONCENTRES_REGION",
+    "habilitations": [
+      {
+        "scopeCode": "lecture",
+        "territoires": ["REG-53", "DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
+        "perimetres": [],
+        "chantiers": []
+      },
+      {
+        "scopeCode": "saisieCommentaire",
+        "territoires": ["REG-53", "DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
+        "perimetres": [],
+        "chantiers": []
+      }
+    ]
+  },
+  {
+    "email": "prefet.region@example.com",
+    "nom": "Prefet",
+    "prenom": "Region",
+    "profilCode": "PREFET_REGION",
+    "habilitations": [
+      {
+        "scopeCode": "lecture",
+        "territoires": ["REG-53", "DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
+        "perimetres": [],
+        "chantiers": []
+      },
+      {
+        "scopeCode": "saisieCommentaire",
+        "territoires": ["REG-53", "DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
+        "perimetres": [],
+        "chantiers": []
+      }
+    ]
+  },
+  {
+    "email": "services.deconcentres.region@example.com",
+    "nom": "Services deconcentres",
+    "prenom": "Region",
+    "profilCode": "SERVICES_DECONCENTRES_REGION",
+    "habilitations": [
+      {
+        "scopeCode": "lecture",
+        "territoires": ["REG-53", "DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
+        "perimetres": [],
+        "chantiers": ["CH-058"]
+      },
+      {
+        "scopeCode": "saisieCommentaire",
+        "territoires": ["REG-53", "DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
+        "perimetres": [],
+        "chantiers": ["CH-058"]
+      }
+    ]
+  },
+  {
+    "email": "referent.departement@example.com",
+    "nom": "Referent",
+    "prenom": "Departement",
+    "profilCode": "SERVICES_DECONCENTRES_DEPARTEMENT",
+    "habilitations": [
+      {
+        "scopeCode": "lecture",
+        "territoires": ["DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
+        "perimetres": [],
+        "chantiers": []
+      },
+      {
+        "scopeCode": "saisieCommentaire",
+        "territoires": ["DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
+        "perimetres": [],
+        "chantiers": []
+      }
+    ]
+  },
+  {
+    "email": "prefet.departement@example.com",
+    "nom": "Prefet",
+    "prenom": "Departement",
+    "profilCode": "PREFET_DEPARTEMENT",
+    "habilitations": [
+      {
+        "scopeCode": "lecture",
+        "territoires": ["DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
+        "perimetres": [],
+        "chantiers": []
+      },
+      {
+        "scopeCode": "saisieCommentaire",
+        "territoires": ["DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
+        "perimetres": [],
+        "chantiers": []
+      }
+    ]
+  },
+  {
+    "email": "services.deconcentres.departement@example.com",
+    "nom": "Services deconcentres",
+    "prenom": "Departement",
+    "profilCode": "SERVICES_DECONCENTRES_DEPARTEMENT",
+    "habilitations": [
+      {
+        "scopeCode": "lecture",
+        "territoires": ["DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
+        "perimetres": [],
+        "chantiers": ["CH-058"]
+      },
+      {
+        "scopeCode": "saisieCommentaire",
+        "territoires": ["DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
+        "perimetres": [],
+        "chantiers": ["CH-058"]
+      }
+    ]
+  },
+  {
+    "email": "drom@example.com",
+    "nom": "DROM",
+    "prenom": "MIOM",
+    "profilCode": "DROM",
+    "habilitations": [
+      {
+        "scopeCode": "lecture",
+        "territoires": ["NAT", "REG-01", "REG-02", "REG-03", "REG-04", "REG-06", "DEPT-971", "DEPT-972", "DEPT-973", "DEPT-974", "DEPT-976"],
+        "perimetres": [],
+        "chantiers": []
+      },
+      {
+        "scopeCode": "saisieCommentaire",
+        "territoires": ["NAT"],
+        "perimetres": ["PER-018"],
+        "chantiers": []
+      },
+      {
+        "scopeCode": "saisieIndicateur",
+        "territoires": ["NAT", "REG-01", "REG-02", "REG-03", "REG-04", "REG-06", "DEPT-971", "DEPT-972", "DEPT-973", "DEPT-974", "DEPT-976"],
+        "perimetres": [],
+        "chantiers": []
+      }
+    ]
+  },
+  {
+    "email": "responsable.regional@example.com",
+    "nom": "Responsable local régional",
+    "prenom": "",
+    "profilCode": "SERVICES_DECONCENTRES_REGION",
+    "habilitations": [
+      {
+        "scopeCode": "saisieCommentaire",
+        "territoires": [],
+        "perimetres": [],
+        "chantiers": []
+      }
+    ]
+  },
+  {
+    "email": "responsable.departemental@example.com",
+    "nom": "Responsable local départemental",
+    "prenom": "",
+    "profilCode": "SERVICES_DECONCENTRES_DEPARTEMENT",
+    "habilitations": [
+      {
+        "scopeCode": "saisieCommentaire",
+        "territoires": [],
+        "perimetres": [],
+        "chantiers": []
+      }
+    ]
+  }
+] 
