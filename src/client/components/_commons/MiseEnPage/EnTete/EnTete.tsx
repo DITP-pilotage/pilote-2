@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { FunctionComponent } from 'react';
 import Navigation from '@/components/_commons/MiseEnPage/Navigation/Navigation';
-import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
+import Utilisateur from '@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur';
 import BandeauInformation from '@/components/_commons/BandeauInformation/BandeauInformation';
 import api from '@/server/infrastructure/api/trpc/api';
 import IcôneEmail from '@/components/_commons/IcôneEmail/IcôneEmail';
@@ -16,7 +16,7 @@ const useEntete = () => {
   };
 };
 
-const EnTête: FunctionComponent<{}> = () => {
+export const EnTete: FunctionComponent<{}> = () => {
   const { data: session } = useSession();
   const { messageInformation } = useEntete();
 
@@ -53,23 +53,23 @@ const EnTête: FunctionComponent<{}> = () => {
                   </div>
                 </div>
                 {
-                  !!session &&
-                  <div className='fr-header__navbar fr-col-2 fr-col-md-1 fr-lg-col-0'>
-                    <button
-                      aria-controls='modale-menu-principal'
-                      aria-haspopup='menu'
-                      className='fr-btn--menu fr-btn'
-                      data-fr-opened='false'
-                      id='bouton-menu-principal'
-                      title='Menu'
-                      type='button'
-                    >
-                      Menu
-                    </button>
-                  </div>
+                  !!session ? (
+                    <div className='fr-header__navbar fr-col-2 fr-col-md-1 fr-lg-col-0'>
+                      <button
+                        aria-controls='modale-menu-principal'
+                        aria-haspopup='menu'
+                        className='fr-btn--menu fr-btn'
+                        data-fr-opened='false'
+                        id='bouton-menu-principal'
+                        title='Menu'
+                        type='button'
+                      >
+                        Menu
+                      </button>
+                    </div>
+                  ) : null
                 }
               </div>
-              
             </div>
             <div className='fr-header__tools'>
               <div className='fr-header__tools-links'>
@@ -109,5 +109,3 @@ const EnTête: FunctionComponent<{}> = () => {
     </header>
   );
 };
-
-export default EnTête;
