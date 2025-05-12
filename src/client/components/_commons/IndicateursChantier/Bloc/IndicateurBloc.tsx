@@ -210,7 +210,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     Date prévisionnelle de la prochaine mise à jour des données (de l'indicateur) :
                     {' '}
                     <span className='fr-text--bold'>
-                      {indicateurEstApplicable ? (dateProchaineDateMaj ?? 'Données requises mais non renseignées par l\'équipe projet') : 'Non renseignée'}
+                      {indicateurEstApplicable ? (dateProchaineDateMaj ?? 'Données requises mais non renseignées par l\'équipe projet') : 'Non applicable'}
                     </span>
                   </p>
                   <Infobulle
