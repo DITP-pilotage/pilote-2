@@ -6,6 +6,7 @@ import { DecisionStrategiqueRepository } from '@/server/gestion-utilisateur/doma
 import { ObjectifRepository } from '@/server/gestion-utilisateur/domain/ports/ObjectifRepository';
 import { RapportRepository } from '@/server/gestion-utilisateur/domain/ports/RapportRepository';
 import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository';
+import { PropositionValeurAvancementRepository } from '@/server/gestion-utilisateur/domain/ports/PropositionValeurAvancementRepository';
 
 type Dependencies = {
   utilisateurRepository: UtilisateurRepository
@@ -15,6 +16,7 @@ type Dependencies = {
   decisionStrategiqueRepository: DecisionStrategiqueRepository
   objectifRepository: ObjectifRepository
   rapportRepository: RapportRepository
+  propositionValeurAvancementRepository: PropositionValeurAvancementRepository
 };
 
 export const EMAIL_AUTEUR_REMPLACEMENT = 'auteur.inconnu@modernisation.gouv.fr';
@@ -35,6 +37,8 @@ export class SupprimerLesComptesDesactivesUseCase {
   
   private rapportRepository: RapportRepository;
 
+  private propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
+
   constructor({
     utilisateurRepository,
     utilisateurIAMRepository,
@@ -43,6 +47,7 @@ export class SupprimerLesComptesDesactivesUseCase {
     decisionStrategiqueRepository,
     objectifRepository,
     rapportRepository,
+    propositionValeurAvancementRepository,
   }: Dependencies) {
     this.utilisateurRepository = utilisateurRepository;
     this.utilisateurIAMRepository = utilisateurIAMRepository;
@@ -51,6 +56,7 @@ export class SupprimerLesComptesDesactivesUseCase {
     this.decisionStrategiqueRepository = decisionStrategiqueRepository;
     this.objectifRepository = objectifRepository;
     this.rapportRepository = rapportRepository;
+    this.propositionValeurAvancementRepository = propositionValeurAvancementRepository;
   }
 
   async run(): Promise<{ id: string, email: string }[]> {
@@ -70,6 +76,7 @@ export class SupprimerLesComptesDesactivesUseCase {
     await this.objectifRepository.anonymiserAuteurs(listeUtilisateurASupprimerIds, EMAIL_AUTEUR_REMPLACEMENT);
     await this.utilisateurRepository.anonymiserAuteurs(listeUtilisateurASupprimerIds, EMAIL_AUTEUR_REMPLACEMENT);
     await this.rapportRepository.anonymiserAuteurs(listeUtilisateurASupprimerEmails, EMAIL_AUTEUR_REMPLACEMENT);
+    await this.propositionValeurAvancementRepository.anonymiserAuteurs(listeUtilisateurASupprimerIds, EMAIL_AUTEUR_REMPLACEMENT);
     await this.utilisateurRepository.supprimerListeUtilisateur(listeUtilisateurASupprimerIds);
     for (const email of listeUtilisateurASupprimerEmails) {
       await this.utilisateurIAMRepository.supprime(email);

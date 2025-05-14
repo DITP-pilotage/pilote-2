@@ -616,7 +616,7 @@ model proposition_valeur_actuelle {
   source_donnee_methode_calcul String
   statut                       type_statut_proposition
   auteur_proposition           utilisateur?            @relation(fields: [id_auteur_modification], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  date_modification_statut     DateTime? @db.Timestamp()
+  date_modification_statut     DateTime?               @db.Timestamp()
 
   @@schema("public")
 }
