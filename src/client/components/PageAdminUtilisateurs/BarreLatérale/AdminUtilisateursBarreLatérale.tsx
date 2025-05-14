@@ -16,7 +16,7 @@ import { territoiresTerritoiresStore } from '@/stores/useTerritoiresStore/useTer
 import { MultiSelectProfil } from '@/components/_commons/MultiSelectNew/MultiSelectProfil/MultiSelectProfil';
 import {
   AAccesATousLesUtilisateurs,
-  PROFILS_POSSIBLES_COORDINATEURS_LECTURE,
+  PROFILS_POSSIBLES_GESTION_UTILISATEUR_LECTURE,
 } from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import { PerimetreMinisteriel } from '@/server/gestion-utilisateur/domain/PerimetreMinisteriel';
@@ -48,7 +48,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<AdminUtilisateur
   const profilCréateur = listeProfils?.find(profil => profil.code === session?.profil);
   const profilAccessibles = AAccesATousLesUtilisateurs(profilCréateur ?? null)
     ? (listeProfils ?? []) :
-    listeProfils?.filter(profil => PROFILS_POSSIBLES_COORDINATEURS_LECTURE[profilCréateur?.code as keyof typeof PROFILS_POSSIBLES_COORDINATEURS_LECTURE].includes(profil.code));
+    listeProfils?.filter(profil => PROFILS_POSSIBLES_GESTION_UTILISATEUR_LECTURE[profilCréateur?.code as keyof typeof PROFILS_POSSIBLES_GESTION_UTILISATEUR_LECTURE].includes(profil.code));
 
   const [, setPagination] = useQueryStates({
     pageIndex: parseAsInteger.withDefault(1),

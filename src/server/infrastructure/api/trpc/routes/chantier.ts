@@ -9,5 +9,10 @@ export const chantierRouter = créerRouteurTRPC({
         listeChantierIdLecture: ctx.session.habilitations.lecture.chantiers,
       });
     }),
+  recupererTousLesInformationsChantiers: procédureProtégée
+    .query(() => {
+      const recupererLaListeDesInfomrationsChantiersUse = getContainer('gestionUtilisateur').resolve('recupererLaListeDesInfomrationsChantiersUse');
+      return recupererLaListeDesInfomrationsChantiersUse.run();
+    }),
 });
 

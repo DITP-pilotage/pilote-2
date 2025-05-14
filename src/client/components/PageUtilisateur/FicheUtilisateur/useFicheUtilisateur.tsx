@@ -17,7 +17,7 @@ import FicheUtilisateurProps from './FicheUtilisateur.interface';
 export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['utilisateur']) {
   const départements = départementsTerritoiresStore();
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
-  const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
+  const { data: chantiers } = api.chantier.recupererTousLesInformationsChantiers.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
   const { data: profil } = api.profil.récupérer.useQuery({ profilCode: utilisateur.profil }, { staleTime: Number.POSITIVE_INFINITY });
 
   const [scopes, setScopes] = useState<{
@@ -80,6 +80,10 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
     if (profil?.chantiers.lecture.tousTerritorialisés)
       return ['Tous les chantiers territorialisés'];
 
+    if (profil?.chantiers.lecture.tousTerritoires) {
+      return u.habilitations?.lecture?.chantiers?.map(chantierId => chantiers?.find(c => c.id === chantierId)?.nom ?? '') ?? [];
+    }
+
     return u.habilitations?.lecture?.chantiers?.reduce((result, chantierId) => {
       const chantier = chantiers?.find(c => c.id === chantierId);
       if (chantier && u.habilitations?.lecture?.territoires?.some(territoire => chantier.territoiresApplicables.includes(territoire))) {
@@ -122,9 +126,15 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
   }, [déterminerLesNomÀAfficherPourLesTerritoiresLecture, profil]);
 
   const déterminerLesNomÀAfficherPourLesTerritoiresGestionUtilisateur = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
-    return u.gestionUtilisateur ? déterminerLesNomÀAfficherPourLesTerritoiresLecture(u) : [];
+    if (u.gestionUtilisateur) {
+      if (profil?.code === 'SECRETARIAT_GENERAL') {
+        return ['Tous les départements', 'Toutes les régions'];
+      }
+      return déterminerLesNomÀAfficherPourLesTerritoiresLecture(u);
+    }
+    return [];
 
-  }, [déterminerLesNomÀAfficherPourLesTerritoiresLecture]);
+  }, [déterminerLesNomÀAfficherPourLesTerritoiresLecture, profil]);
 
   const déterminerLesNomÀAfficherPourLesChantiersSaisieCommentaire = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
     if (u.saisieCommentaire) {

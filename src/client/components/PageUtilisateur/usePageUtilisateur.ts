@@ -58,7 +58,9 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
     }
 
     const habilitations = new Habilitation(session.habilitations);
-    return !habilitations.peutAccéderAuxTerritoiresUtilisateurs(utilisateurHabilitations.lecture.territoires) || [ProfilEnum.COORDINATEUR_REGION, ProfilEnum.COORDINATEUR_DEPARTEMENT].includes(utilisateurProfil);
+    return !habilitations.peutAccéderAuxTerritoiresUtilisateurs(utilisateurHabilitations.lecture.territoires) 
+      || !habilitations.peutAccéderAuxChantiersUtilisateurs(utilisateurHabilitations.lecture.chantiers) 
+      || [ProfilEnum.COORDINATEUR_REGION, ProfilEnum.COORDINATEUR_DEPARTEMENT].includes(utilisateurProfil);
   };
 
   const donnneContenuBandeau = (session: Session | null, utilisateurHabilitations: Habilitations, utilisateurProfil: ProfilCode) => {
@@ -70,6 +72,8 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
 
     if (!habilitations.peutAccéderAuxTerritoiresUtilisateurs(utilisateurHabilitations.lecture.territoires)) {
       return "Ce compte a des droits d'accès sur plusieurs territoires. Vous ne pouvez pas modifier ses droits ou désactiver l'utilisateur. Si vous avez besoin d'aide, veuillez contacter le support technique.";
+    } else if (!habilitations.peutAccéderAuxChantiersUtilisateurs(utilisateurHabilitations.lecture.chantiers)) {
+      return "Ce compte a des droits d'accès sur plusieurs chantiers. Vous ne pouvez pas modifier ses droits ou désactiver l'utilisateur. Si vous avez besoin d'aide, veuillez contacter le support technique.";
     } else if ([ProfilEnum.COORDINATEUR_REGION, ProfilEnum.COORDINATEUR_DEPARTEMENT].includes(utilisateurProfil)) {
       return "Ce compte a un profil de coordinateur PILOTE. Vous ne pouvez le modifier ou le désactiver. Si vous avez besoin d'aide, veuillez contacter le support technique.";
     } else {

@@ -51,6 +51,7 @@ import { PrismaObjectifRepository } from './infrastructure/adapters/PrismaObject
 import { PrismaRapportRepository } from './infrastructure/adapters/PrismaRapportRepository';
 import { PrismaSyntheseDesResultatsRepository } from './infrastructure/adapters/PrismaSyntheseDesResultatsRepository';
 import { SupprimerLesComptesDesactivesUseCase } from './usecases/SupprimerLesComptesDesactivesUseCase';
+import { RecupererLaListeDesInfomrationsChantiersUse } from './usecases/RecupererLaListeDesInfomrationsChantiersUse';
 
 export type GestionUtilisateurDependencies = {
   utilisateurRepository: UtilisateurRepository
@@ -77,6 +78,7 @@ export type GestionUtilisateurDependencies = {
   recupererListeUtilisateursUseCase: RecupererListeUtilisateursUseCase
   recupererEtatVisualisationVideoAccueilUseCase: RecupererEtatVisualisationVideoAccueilUseCase
   desactiverVideoAccueilUseCase: DesactiverVideoAccueilUseCase
+  recupererLaListeDesInfomrationsChantiersUse: RecupererLaListeDesInfomrationsChantiersUse
 };
 
 export const getGestionUtilisateurContainer = (initialContainer: AwilixContainer<{ prisma: PrismaPilote }>): AwilixContainer<GestionUtilisateurDependencies & { prisma: PrismaPilote }> => {
@@ -105,5 +107,6 @@ export const getGestionUtilisateurContainer = (initialContainer: AwilixContainer
     rapportRepository: asClass(PrismaRapportRepository),
     syntheseDesResultatsRepository: asClass(PrismaSyntheseDesResultatsRepository),
     supprimerLesComptesDesactivesUseCase: asClass(SupprimerLesComptesDesactivesUseCase),
+    recupererLaListeDesInfomrationsChantiersUse: asClass(RecupererLaListeDesInfomrationsChantiersUse),
   });
 };

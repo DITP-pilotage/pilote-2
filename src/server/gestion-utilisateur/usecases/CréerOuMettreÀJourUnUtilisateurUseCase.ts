@@ -126,7 +126,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
 
   private _déterminerChantierAccessiblesEnGestionUtilisateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
     if (utilisateur.gestionUtilisateur) {
-      return this._déterminerChantiersAccessiblesEnSaisieCommentaire(utilisateur, chantiers);
+      return this._déterminerChantiersAccessiblesEnLecture(utilisateur, chantiers);
     }
     
     return [];
@@ -167,7 +167,9 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
 
   private _déterminerTerritoiresAccessiblesEnGestionUtilisateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[]): string[] {
     if (utilisateur.gestionUtilisateur) {
-      return this._déterminerTerritoiresAccessiblesEnLecture(utilisateur, territoires);
+      return utilisateur.profil === 'SECRETARIAT_GENERAL' 
+        ? territoires.filter(territoire => territoire.code !== 'NAT-FR').map(territoire => territoire.code)
+        : this._déterminerTerritoiresAccessiblesEnLecture(utilisateur, territoires);
     }
     
     return [];    
@@ -201,7 +203,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
 
   private _déterminerPérimètresAccessiblesEnGestionUtilisateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
     if (utilisateur.gestionUtilisateur)
-      return this._déterminerPérimètresAccessiblesEnSaisieCommentaire(utilisateur, périmètres);
+      return this._déterminerPérimètresAccessiblesEnLecture(utilisateur, périmètres);
 
     return [];
   }
