@@ -551,6 +551,7 @@ model utilisateur {
   syntheses                        synthese_des_resultats[]
   utilisateurs_crees               utilisateur[]                      @relation("creation")
   utilisateur_modifies             utilisateur[]                      @relation("modification")
+  propositions_valeur_actuelle     proposition_valeur_actuelle[]
   date_desactivation               DateTime?
   date_visualisation_video_accueil DateTime?
 
@@ -558,19 +559,19 @@ model utilisateur {
 }
 
 model profil {
-  code                                                        String        @id
-  nom                                                         String
-  a_acces_tous_chantiers                                      Boolean       @default(false)
-  a_acces_tous_chantiers_territorialises                      Boolean       @default(false)
-  a_acces_tous_les_territoires_lecture                        Boolean       @default(false)
-  a_acces_tous_les_territoires_saisie_commentaire             Boolean       @default(false)
-  a_acces_tous_les_territoires_saisie_indicateur              Boolean       @default(false)
-  peut_modifier_les_utilisateurs                              Boolean       @default(false)
-  a_acces_a_tous_les_territoires_utilisateurs                 Boolean       @default(false)
-  a_acces_a_tous_les_chantiers_utilisateurs                   Boolean       @default(false)
-  peut_saisir_des_commentaires                                Boolean       @default(false)
-  a_access_aux_chantiers_brouillons                           Boolean       @default(false)
-  utilisateur                                                 utilisateur[]
+  code                                            String        @id
+  nom                                             String
+  a_acces_tous_chantiers                          Boolean       @default(false)
+  a_acces_tous_chantiers_territorialises          Boolean       @default(false)
+  a_acces_tous_les_territoires_lecture            Boolean       @default(false)
+  a_acces_tous_les_territoires_saisie_commentaire Boolean       @default(false)
+  a_acces_tous_les_territoires_saisie_indicateur  Boolean       @default(false)
+  peut_modifier_les_utilisateurs                  Boolean       @default(false)
+  a_acces_a_tous_les_territoires_utilisateurs     Boolean       @default(false)
+  a_acces_a_tous_les_chantiers_utilisateurs       Boolean       @default(false)
+  peut_saisir_des_commentaires                    Boolean       @default(false)
+  a_access_aux_chantiers_brouillons               Boolean       @default(false)
+  utilisateur                                     utilisateur[]
 
   @@schema("public")
 }
@@ -610,17 +611,18 @@ model historisation_modification {
 }
 
 model proposition_valeur_actuelle {
-  id                           String    @id @db.Uuid
+  id                           String                  @id @db.Uuid
   indic_id                     String
   valeur_actuelle_proposee     Float
   territoire_code              String
-  date_valeur_actuelle         DateTime? @db.Timestamp()
+  date_valeur_actuelle         DateTime?               @db.Timestamp()
   auteur_modification          String
-  id_auteur_modification       String
-  date_proposition             DateTime? @db.Timestamp()
+  id_auteur_modification       String                  @db.Uuid
+  date_proposition             DateTime?               @db.Timestamp()
   motif_proposition            String
   source_donnee_methode_calcul String
   statut                       type_statut_proposition
+  auteur_proposition           utilisateur?            @relation(fields: [id_auteur_modification], references: [id], onDelete: Cascade, onUpdate: Cascade)
   date_modification_statut     DateTime? @db.Timestamp()
 
   @@schema("public")
@@ -641,11 +643,11 @@ model token_api_information {
 }
 
 model nouveaute {
-  id String @id
-  contenu String
+  id            String   @id
+  contenu       String
   date_creation DateTime @default(now())
-  version String
-  date String
+  version       String
+  date          String
 
   @@schema("public")
 }
