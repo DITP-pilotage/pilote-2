@@ -14,7 +14,6 @@ const convertirEnModel = (propositionValeurActuelle: PropositionValeurActuelle):
     territoire_code: propositionValeurActuelle.territoireCode,
     date_valeur_actuelle: propositionValeurActuelle.dateValeurActuelle,
     id_auteur_modification: propositionValeurActuelle.idAuteurModification,
-    auteur_modification: propositionValeurActuelle.auteurModification,
     date_proposition: propositionValeurActuelle.dateProposition,
     motif_proposition: propositionValeurActuelle.motifProposition,
     source_donnee_methode_calcul: propositionValeurActuelle.sourceDonneeEtMethodeCalcul,

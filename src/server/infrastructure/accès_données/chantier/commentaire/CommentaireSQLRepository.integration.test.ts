@@ -151,7 +151,6 @@ describe('CommentaireSQLRepository', () => {
           type: CODES_TYPES_COMMENTAIRES['risquesEtFreinsÀLever'],
           date: new Date('2023-04-20'),
           contenu: 'contenu commentaire risquesEtFreinsÀLever 1',
-          auteur: 'John doe',
         }, {
           id: '05948d49-bd6f-468a-a241-f5f42524aab4',
           chantier_id: chantierId,
@@ -161,7 +160,6 @@ describe('CommentaireSQLRepository', () => {
           type: CODES_TYPES_COMMENTAIRES['risquesEtFreinsÀLever'],
           date: new Date('2022-12-31'),
           contenu: 'contenu commentaire risquesEtFreinsÀLever 2',
-          auteur: 'Jane doe',
         }, {
           id: '24c06783-9588-42e8-97e5-27a4cbddfd2f',
           chantier_id: chantierId,
@@ -171,7 +169,6 @@ describe('CommentaireSQLRepository', () => {
           type: CODES_TYPES_COMMENTAIRES['solutionsEtActionsÀVenir'],
           date: new Date('2023-04-21'),
           contenu: 'contenu commentaire solutionsEtActionsÀVenir',
-          auteur: 'Jack doe',
         }],
       });
 
