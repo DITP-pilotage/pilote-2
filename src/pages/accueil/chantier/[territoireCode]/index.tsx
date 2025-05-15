@@ -10,7 +10,7 @@ import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLat�
 import SélecteursMaillesEtTerritoires
   from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires';
 import Titre from '@/components/_commons/Titre/Titre';
-import Filtres from '@/components/PageAccueil/FiltresNew/Filtres';
+import { Filtres } from '@/components/PageAccueil/Filtres/Filtres';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import RécupérerChantiersAccessiblesEnLectureUseCase
   from '@/server/chantiers/usecases/RécupérerChantiersAccessiblesEnLectureUseCase';
@@ -30,7 +30,6 @@ import { AgrégateurListeChantiersParTerritoire } from '@/client/utils/chantier/
 import { objectEntries } from '@/client/utils/objects/objects';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
-import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import { Chantier } from '@/server/chantiers/domain/Chantier';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
@@ -249,8 +248,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   const { data: session } = useSession();
 
   const estProfilTerritorialise = PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE.has(session?.profil || '');
-  const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('md');
-  const [estVisibleEnMobile, setEstVisibleEnMobile] = useState(false);
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
@@ -284,8 +281,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
               afficherToutLesFiltres
               axes={axes}
               estProfilTerritorialise={estProfilTerritorialise}
-              estVisibleEnMobile={estVisibleEnMobile}
-              estVueMobile={estVueMobile}
               ministères={ministères}
             />
           </section>
@@ -295,7 +290,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             className='fr-hidden-lg bouton-filtrer fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-equalizer-fill fr-text-title--blue-france fr-py-2w fr-px-5v'
             onClick={() => {
               setEstOuverteBarreLatérale(true);
-              setEstVisibleEnMobile(true);
             }}
             title='Filtrer'
             type='button'
