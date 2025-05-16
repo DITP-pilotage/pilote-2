@@ -41,7 +41,6 @@ import {
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
-import SelecteurVueStatuts from '@/client/components/PageAccueil/SelecteurVueStatuts/SelecteurVueStatuts';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import SélecteurMaille
   from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
@@ -54,7 +53,6 @@ import {
   ExportDesDonneesV2,
   ID_HTML_MODALE_EXPORT_V2,
 } from '@/components/PageAccueil/PageChantiers/ExportDesDonneesV2/ExportDesDonneesV2';
-import api from '@/server/infrastructure/api/trpc/api';
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
@@ -164,8 +162,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   } = usePageChantiers(chantiers, territoireCode, filtresComptesCalculés, avancementsAgrégés, session!.profil);
 
   const chantiersSontArchives = filtres.statut?.includes('ARCHIVE') ?? false;
-  const { data: variableContenuFFPpgArchive } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_PPG_ARCHIVE' });
-  const profilPeutAccederAuxBrouillons = !!session?.profilAAccèsAuxChantiersBrouillons;
 
   return (
     <PageChantiersStyled>
@@ -504,11 +500,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   {`Liste des chantiers (${nombreTotalChantiersAvecAlertes})`}
                 </Titre>
               </TitreInfobulleConteneur>
-              {
-                profilPeutAccederAuxBrouillons || !!variableContenuFFPpgArchive ? (
-                  <SelecteurVueStatuts /> 
-                ) : null
-              }
               <TableauChantiers
                 chantiersSontArchives={chantiersSontArchives ?? false}
                 données={donnéesTableauChantiers}

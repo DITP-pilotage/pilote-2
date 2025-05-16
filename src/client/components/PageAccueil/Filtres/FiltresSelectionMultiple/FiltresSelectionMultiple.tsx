@@ -11,12 +11,12 @@ interface Filtre {
 interface FiltresSelectionMultipleProps {
   catégorieDeFiltre: 'axes' | 'autres',
   filtres: Filtre[],
-  libellé: string,
+  libelle: string,
 }
 
 export const FiltresSelectionMultiple: FunctionComponent<FiltresSelectionMultipleProps> = ({
   catégorieDeFiltre,
-  libellé,
+  libelle,
   filtres,
 }) => {
 
@@ -38,7 +38,7 @@ export const FiltresSelectionMultiple: FunctionComponent<FiltresSelectionMultipl
         className='fr-sidemenu__btn fr-m-0 fr-text--sm'
         type='button'
       >
-        {libellé}
+        {libelle}
       </button>
       <div
         className='fr-collapse'
