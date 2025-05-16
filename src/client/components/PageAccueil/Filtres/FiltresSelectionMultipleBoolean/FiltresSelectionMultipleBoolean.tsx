@@ -12,12 +12,12 @@ const valuesFiltres: Record<typeof availableFiltres[number], string> = {
 
 interface FiltresSelectionMultipleBooleanProps {
   listeCategorieDeFiltre: Array<typeof availableFiltres[number]>,
-  libellé: string,
+  libelle: string,
 }
 
 export const FiltresSelectionMultipleBoolean: FunctionComponent<FiltresSelectionMultipleBooleanProps> = ({
   listeCategorieDeFiltre,
-  libellé,
+  libelle,
 }) => {
 
   const listesFiltres: Record<typeof availableFiltres[number], ParserBuilder<boolean>> = listeCategorieDeFiltre.reduce((acc, catégorieDeFiltre) => {
@@ -47,7 +47,7 @@ export const FiltresSelectionMultipleBoolean: FunctionComponent<FiltresSelection
         className='fr-sidemenu__btn fr-m-0 fr-text--sm'
         type='button'
       >
-        {libellé}
+        {libelle}
       </button>
       <div
         className='fr-collapse'

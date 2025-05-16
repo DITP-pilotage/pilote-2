@@ -1,14 +1,17 @@
 import { FunctionComponent } from 'react';
 import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
+import { useSession } from 'next-auth/react';
 import { FiltresSelectionMultiple }
   from '@/components/PageAccueil/Filtres/FiltresSelectionMultiple/FiltresSelectionMultiple';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import Titre from '@/components/_commons/Titre/Titre';
 import { reinitialiserFiltres } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
+import api from '@/server/infrastructure/api/trpc/api';
 import FiltresGroupe from './FiltresGroupe/FiltresGroupe';
 import FiltresMinistères from './FiltresMinistères/FiltresMinistères';
 import { FiltresSelectionMultipleBoolean } from './FiltresSelectionMultipleBoolean/FiltresSelectionMultipleBoolean';
+import { FiltresSelectionUnique } from './FiltresSelectionUnique/FiltresSelectionUnique';
 
 interface FiltresProps {
   ministères: Ministère[],
@@ -23,6 +26,7 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
   afficherToutLesFiltres,
   estProfilTerritorialise,
 }) => {
+  const { data: session } = useSession();
 
   const [, setFiltres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
@@ -60,6 +64,9 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
     });
   };
 
+  const { data: variableContenuFFPpgArchive } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_PPG_ARCHIVE' });
+  const profilPeutAccederAuxBrouillons = !!session?.profilAAccèsAuxChantiersBrouillons;
+
   return (
     <>
       <div className='flex justify-between align-center fr-mb-1w fr-px-3w fr-mt-3w'>
@@ -89,10 +96,18 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
             <FiltresSelectionMultiple
               catégorieDeFiltre='axes'
               filtres={axes}
-              libellé='Filtrer par axes'
+              libelle='Filtrer par axes'
             />
+            {
+              variableContenuFFPpgArchive && profilPeutAccederAuxBrouillons ? (
+                <FiltresSelectionUnique
+                  categorieDeFiltre='statut'
+                  libelle='Filtrer par statut'
+                />
+              ) : null
+            }
             <FiltresSelectionMultipleBoolean
-              libellé='Autres critères'
+              libelle='Autres filtres'
               listeCategorieDeFiltre={estProfilTerritorialise ? ['estBarometre', 'estTerritorialise'] : ['estBarometre']}
             />
           </FiltresGroupe>
