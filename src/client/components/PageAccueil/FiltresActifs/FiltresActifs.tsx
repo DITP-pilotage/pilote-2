@@ -17,7 +17,7 @@ interface FiltresActifsProps {
 }
 
 const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axes, mailleSelectionnee }) => {
-  const [estOuvert, setEstOuvert] = useState(false);
+  const [estOuvert, setEstOuvert] = useState(true);
 
   const [filtres, setFiltres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
@@ -123,12 +123,12 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
         {
           filtres.estEnAlerteTauxAvancementNonCalculé || filtres.estEnAlerteÉcart || filtres.estEnAlerteBaisse || filtres.estEnAlerteMétéoNonRenseignée || filtres.estEnAlerteAbscenceTauxAvancementDepartemental || filtres.estEnAlertePossedePropositionsValeurActuelle ? (
             <div className='fr-grid-row'>
-              <div className='fr-col-5 fr-col-sm-3 fr-col-md-2 fr-col-xl-1 flex justify-end fr-pr-1w fr-pt-1v'>
+              <div className='fr-col-5 fr-col-sm-3 fr-col-md-2 flex justify-end fr-pr-1w fr-pt-1v'>
                 <span className='bold fr-text--xs fr-mb-0'>
                   SIGNALEMENT :
                 </span> 
               </div>
-              <div className='fr-col-sm-9 fr-col-7 fr-col-md-10 fr-col-xl-11'>
+              <div className='fr-col-sm-9 fr-col-7 fr-col-md-10'>
                 <ul
                   aria-label='liste des tags des filtres ministère actifs'
                   className='conteneur-tags fr-my-0'
@@ -138,8 +138,8 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
                       <li>
                         <Tag
                           color='warning'
+                          doitAvoirUneTailleFixe
                           libelle="Taux d'avancement non calculé en raison d'indicateurs non renseignés"
-                          size='sm'
                           suppressionCallback={() => {
                             filtres.estEnAlerteTauxAvancementNonCalculé = false;
                             sauvegarderFiltres({ estEnAlerteTauxAvancementNonCalculé: false });
@@ -154,6 +154,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
                       <li>
                         <Tag
                           color='warning'
+                          doitAvoirUneTailleFixe
                           libelle={`Chantier(s) avec un retard de 10 points par rapport à leur médiane ${mailleSelectionnee}`}
                           size='sm'
                           suppressionCallback={() => {
@@ -171,6 +172,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
                       <li>
                         <Tag
                           color='warning'
+                          doitAvoirUneTailleFixe
                           libelle='Chantier(s) avec tendance en baisse'
                           size='sm'
                           suppressionCallback={() => {
@@ -188,6 +190,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
                       <li>
                         <Tag
                           color='warning'
+                          doitAvoirUneTailleFixe
                           libelle='Chantier(s) avec météo et synthèse des résultats non renseignés'
                           size='sm'
                           suppressionCallback={() => {
@@ -205,6 +208,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
                       <li>
                         <Tag
                           color='warning'
+                          doitAvoirUneTailleFixe
                           libelle="Chantier(s) sans taux d'avancement au niveau départemental"
                           size='sm'
                           suppressionCallback={() => {
@@ -222,6 +226,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
                       <li>
                         <Tag
                           color='warning'
+                          doitAvoirUneTailleFixe
                           libelle="Chantier(s) avec proposition(s) de valeur d'avancement"
                           size='sm'
                           suppressionCallback={() => {
@@ -242,12 +247,12 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
         {
           filtres.meteos ? (
             <div className='fr-grid-row'>
-              <div className='fr-col-5 fr-col-sm-3 fr-col-md-2 fr-col-xl-1 flex justify-end fr-pr-1w fr-pt-1v'>
+              <div className='fr-col-5 fr-col-sm-3 fr-col-md-2 flex justify-end fr-pr-1w fr-pt-1v'>
                 <span className='bold fr-text--xs fr-mb-0'>
                   MÉTÉO :
                 </span>
               </div>
-              <div className='fr-col-sm-9 fr-col-7 fr-col-md-10 fr-col-xl-11'>
+              <div className='fr-col-sm-9 fr-col-7 fr-col-md-10'>
                 <ul
                   aria-label='liste des tags des filtres météo actifs'
                   className='conteneur-tags fr-my-0'
@@ -259,6 +264,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
                   >
                     <Tag
                       color='yellow-moutarde'
+                      doitAvoirUneTailleFixe
                       libelle={libellésMétéos[meteo]}
                       size='sm'
                       suppressionCallback={() => {
@@ -280,12 +286,12 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
         {
           filtres.perimetres ? (
             <div className='fr-grid-row'>
-              <div className='fr-col-5 fr-col-sm-3 fr-col-md-2 fr-col-xl-1 flex justify-end fr-pr-1w fr-pt-1v'>
+              <div className='fr-col-5 fr-col-sm-3 fr-col-md-2 flex justify-end fr-pr-1w fr-pt-1v'>
                 <span className='bold fr-text--xs fr-mb-0'>
                   MINISTÈRE :
                 </span>
               </div>
-              <div className='fr-col-sm-9 fr-col-7 fr-col-md-10 fr-col-xl-11'>
+              <div className='fr-col-sm-9 fr-col-7 fr-col-md-10'>
                 <ul
                   aria-label='liste des tags des filtres ministère actifs'
                   className='conteneur-tags fr-my-0'
@@ -296,6 +302,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
                     key={`tag-axe-${perimetreId}`}
                   >
                     <Tag
+                      doitAvoirUneTailleFixe
                       libelle={ministèresAvecUnSeulPérimètre.has(perimetreId) ? retrouverNomFiltre(ministèresAvecUnSeulPérimètre.get(perimetreId)!, ministères) : retrouverNomFiltre(perimetreId, listePerimetres)}
                       size='sm'
                       suppressionCallback={() => {
@@ -317,12 +324,12 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
         {
           filtres.axes ? (
             <div className='fr-grid-row'>
-              <div className='fr-col-5 fr-col-sm-3 fr-col-md-2 fr-col-xl-1 flex justify-end fr-pr-1w fr-pt-1v'>
+              <div className='fr-col-5 fr-col-sm-3 fr-col-md-2 flex justify-end fr-pr-1w fr-pt-1v'>
                 <span className='bold fr-text--xs fr-mb-0'>
                   AXE :
                 </span>
               </div>
-              <div className='fr-col-sm-9 fr-col-7 fr-col-md-10 fr-col-xl-11'>
+              <div className='fr-col-sm-9 fr-col-7 fr-col-md-10'>
                 <ul
                   aria-label='liste des tags des filtres axes actifs'
                   className='conteneur-tags fr-my-0'
@@ -333,6 +340,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
                     key={`tag-axe-${axeId}`}
                   >
                     <Tag
+                      doitAvoirUneTailleFixe
                       libelle={retrouverNomFiltre(axeId, axes)}
                       size='sm'
                       suppressionCallback={() => {
@@ -355,12 +363,12 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
         {
           filtres.estBarometre || filtres.estTerritorialise ? (
             <div className='fr-grid-row'>
-              <div className='fr-col-5 fr-col-sm-3 fr-col-md-2 fr-col-xl-1 flex justify-end fr-pr-1w fr-pt-1v'>
+              <div className='fr-col-5 fr-col-sm-3 fr-col-md-2 flex justify-end fr-pr-1w fr-pt-1v'>
                 <span className='bold fr-text--xs fr-mb-0'>
                   AUTRE :
                 </span>
               </div>
-              <div className='fr-col-sm-9 fr-col-7 fr-col-md-10 fr-col-xl-11'>
+              <div className='fr-col-sm-9 fr-col-7 fr-col-md-10'>
                 <ul
                   aria-label='liste des tags des filtres baromètre actifs'
                   className='conteneur-tags fr-my-0'
@@ -369,6 +377,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
                     filtres.estBarometre ? (
                       <li>
                         <Tag
+                          doitAvoirUneTailleFixe
                           libelle='Chantiers du baromètre'
                           size='sm'
                           suppressionCallback={() => {
@@ -385,6 +394,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
                     filtres.estTerritorialise ? (
                       <li>
                         <Tag
+                          doitAvoirUneTailleFixe
                           libelle='Chantiers territorialisés'
                           size='sm'
                           suppressionCallback={() => {
