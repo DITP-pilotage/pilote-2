@@ -19,6 +19,16 @@ const TagStyled = styled.span`
   &.red-cranberry {
     background-color: var(--red-cranberry-850-200);
   }
+
+  &.fr-tag--fixed-width {
+    max-width: 30ch;
+    
+    & span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
 `;
 
 export default TagStyled;
