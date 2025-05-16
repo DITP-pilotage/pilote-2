@@ -19,6 +19,7 @@ const convertirEnModel = (propositionValeurActuelle: PropositionValeurActuelle):
     motif_proposition: propositionValeurActuelle.motifProposition,
     source_donnee_methode_calcul: propositionValeurActuelle.sourceDonneeEtMethodeCalcul,
     statut: propositionValeurActuelle.statut,
+    date_modification_statut: null,
   };
 };
 
@@ -45,6 +46,7 @@ export class PrismaPropositionValeurActuelleRepository implements PropositionVal
       },
       data: {
         statut: StatutProposition.RETIREE,
+        date_modification_statut: new Date(),
       },
     });
   }
@@ -64,6 +66,7 @@ export class PrismaPropositionValeurActuelleRepository implements PropositionVal
       },
       data: {
         statut: StatutProposition.ANNULEE,
+        date_modification_statut: new Date(),
       },
     });
   }
