@@ -1,59 +1,48 @@
 import { FunctionComponent } from 'react';
-import FiltresSélectionMultiple
-  from '@/components/PageAccueil/Filtres/FiltresSélectionMultiple/FiltresSélectionMultiple';
-import { FiltreTypologieType } from '@/client/stores/useFiltresStore/useFiltresStore.interface';
-import { filtresActifs } from '@/client/stores/useFiltresStore/useFiltresStore';
-import Axe from '@/server/domain/axe/Axe.interface';
+import { FiltresSelectionMultiple }
+  from '@/components/PageAccueil/Filtres/FiltresSelectionMultiple/FiltresSelectionMultiple';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
+import Axe from '@/server/domain/axe/Axe.interface';
 import FiltresGroupe from './FiltresGroupe/FiltresGroupe';
 import FiltresMinistères from './FiltresMinistères/FiltresMinistères';
-import FiltreTypologie from './FiltreTypologie/FiltreTypologie';
+import { FiltresSelectionMultipleBoolean } from './FiltresSelectionMultipleBoolean/FiltresSelectionMultipleBoolean';
 
-interface BarreLatéraleProps {
+interface FiltresProps {
   ministères: Ministère[],
   axes: Axe[],
   afficherToutLesFiltres: boolean
+  estProfilTerritorialise: boolean
 }
 
-const filtreBaromètre: FiltreTypologieType = {
-  id: 'filtreBaromètre',
-  attribut: 'estBaromètre',
-  nom: 'Chantiers du baromètre',
-};
-const filtreTerritorialisé: FiltreTypologieType = {
-  id: 'filtreTerritorialisé',
-  attribut: 'estTerritorialisé',
-  nom: 'Chantiers territorialisés',
-};
-
-const Filtres: FunctionComponent<BarreLatéraleProps> = ({ ministères, axes, afficherToutLesFiltres }) => {
-  filtresActifs();
+export const Filtres: FunctionComponent<FiltresProps> = ({
+  ministères,
+  axes,
+  afficherToutLesFiltres,
+  estProfilTerritorialise,
+}) => {
 
   return (
     <>
       <section className='fr-px-3w'>
-        <FiltresMinistères ministères={ministères} />
+        <FiltresMinistères
+          ministères={ministères}
+        />
       </section>
       {
         afficherToutLesFiltres ? (
-          <>
-            <FiltresGroupe>
-              <FiltresSélectionMultiple
-                catégorieDeFiltre='axes'
-                filtres={axes}
-                libellé='Axes'
-              />
-            </FiltresGroupe>
-            <hr className='fr-hr fr-mt-3w fr-pb-2w' />
-            <FiltresGroupe libellé='Autres critères'>
-              <FiltreTypologie filtre={filtreTerritorialisé} />
-              <FiltreTypologie filtre={filtreBaromètre} />
-            </FiltresGroupe>
-          </>
+          <FiltresGroupe>
+            <FiltresSelectionMultiple
+              catégorieDeFiltre='axes'
+              filtres={axes}
+              libellé='Filtrer par axes'
+            />
+            <FiltresSelectionMultipleBoolean
+              libellé='Autres critères'
+              listeCategorieDeFiltre={estProfilTerritorialise ? ['estBarometre', 'estTerritorialise'] : ['estBarometre']}
+            />
+          </FiltresGroupe>
         ) : null
-}
+      }
     </>
   );
 };
-
-export default Filtres;

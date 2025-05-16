@@ -6,11 +6,12 @@ interface TagProps {
   libelle: string,
   suppressionCallback: () => void,
   color?: 'blue-france' | 'warning' | 'yellow-moutarde',
+  size?: 'sm' | 'md',
 }
 
-export const Tag: FunctionComponent<TagProps> = ({ libelle, suppressionCallback, color = 'blue-france' }) => {
+export const Tag: FunctionComponent<TagProps> = ({ libelle, suppressionCallback, color = 'blue-france', size = 'md' }) => {
   return (
-    <TagStyled className={`fr-tag fr-mr-1w fr-mb-1w ${color}`}>
+    <TagStyled className={`fr-tag${size === 'sm' ? ' fr-tag--sm' : ''} fr-mr-1-5v fr-mb-1-5v ${color}`}>
       {libelle}
       <button
         aria-label={`Retirer le tag ${libelle}`}

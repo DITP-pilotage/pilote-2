@@ -1,4 +1,3 @@
-
 import { FunctionComponent, ReactNode } from 'react';
 
 interface FiltresGroupeProps {

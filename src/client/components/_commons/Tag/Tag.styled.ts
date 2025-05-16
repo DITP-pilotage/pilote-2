@@ -12,7 +12,8 @@ const TagStyled = styled.span`
     }
 
   &.yellow-moutarde {
-    background-color: var(--yellow-moutarde-main-679);
+    color: black;
+    background-color: var(--yellow-moutarde-850-200);
   }
 
   &.red-cranberry {

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const FiltresSélectionMultipleStyled = styled.div`
+export const FiltresSélectionMultipleStyled = styled.div`
   button {
     width: 100%;
     text-align: left;
@@ -24,5 +24,3 @@ const FiltresSélectionMultipleStyled = styled.div`
     background-color: var(--background-active-blue-france-hover);
   }
 `;
-
-export default FiltresSélectionMultipleStyled;
