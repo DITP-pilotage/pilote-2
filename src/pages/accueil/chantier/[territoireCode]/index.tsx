@@ -9,7 +9,6 @@ import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale'
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import SélecteursMaillesEtTerritoires
   from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires';
-import Titre from '@/components/_commons/Titre/Titre';
 import { Filtres } from '@/components/PageAccueil/Filtres/Filtres';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import RécupérerChantiersAccessiblesEnLectureUseCase
@@ -271,12 +270,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             />
           </BarreLatéraleEncart>
           <section>
-            <Titre
-              baliseHtml='h1'
-              className='fr-h4 fr-mb-1w fr-px-3w fr-mt-3w fr-col-8'
-            >
-              Filtres
-            </Titre>
             <Filtres
               afficherToutLesFiltres
               axes={axes}
