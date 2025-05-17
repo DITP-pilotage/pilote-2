@@ -240,28 +240,18 @@ export const EtapeDonneeChantierACollecter = () => {
           />
           {
             afficherDetail ? (
-              <>
-                <label
-                  className='fr-label fr-text--sm fr-mb-0'
-                  htmlFor='comparaison'
-                >
-                  <span>
-                    <span className='fr-text--bold'>
-                      données de comparaison
-                    </span>
-                    {' '}
-                    du chantier
+              <label
+                className='fr-label fr-text--sm fr-mb-0'
+                htmlFor='comparaison'
+              >
+                <span>
+                  <span className='fr-text--bold'>
+                    données de comparaison
                   </span>
-                </label>
-                <ul className='fr-ml-4w fr-my-0 fr-text--sm'>
-                  <li className='fr-pb-0'>
-                    taux d'avancement, tendance, écart aux mailles inférieures et supérieures (si applicable)
-                  </li>
-                  <li className='fr-pb-0'>
-                    minimum, médiane et maximum du taux d'avancement à toutes les mailles (si applicable)
-                  </li>
-                </ul>
-              </>
+                  {' '}
+                  du chantier aux mailles inférieures et supérieures (si applicable) : taux d'avancement, écart 
+                </span>
+              </label>
             ) : (
               <label
                 className='fr-label fr-text--sm fr-mb-0'
