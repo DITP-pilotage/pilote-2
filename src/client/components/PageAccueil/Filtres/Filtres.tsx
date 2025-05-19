@@ -18,6 +18,7 @@ interface FiltresProps {
   axes: Axe[],
   afficherToutLesFiltres: boolean
   estProfilTerritorialise: boolean
+  estProfilRegionalAutoriseAVoirLaTerritorialisation: boolean
 }
 
 export const Filtres: FunctionComponent<FiltresProps> = ({
@@ -25,6 +26,7 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
   axes,
   afficherToutLesFiltres,
   estProfilTerritorialise,
+  estProfilRegionalAutoriseAVoirLaTerritorialisation,
 }) => {
   const { data: session } = useSession();
 
@@ -67,7 +69,16 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
   const { data: variableContenuFFPpgArchive } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_PPG_ARCHIVE' });
   const profilPeutAccederAuxBrouillons = !!session?.profilAAccèsAuxChantiersBrouillons;
 
-  const filtresTerritorialisation = [
+  const filtresTerritorialisation = estProfilRegionalAutoriseAVoirLaTerritorialisation ? [
+    {
+      id: 'regionale',
+      nom: 'régionale',
+    },
+    {
+      id: 'departementale',
+      nom: 'départementale',
+    },
+  ] : [
     {
       id: 'nationale',
       nom: 'nationale',
