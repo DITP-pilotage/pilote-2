@@ -80,7 +80,7 @@ export class ExportCsvDesHistoriquesIndicateursUseCase {
               !masquerPourProfilDROMEtMailleNat(profil, historiqueIndicateursPourExport.périmètreIds, historiqueIndicateursPourExport.maille)
               && verifierApplicabiliteMaille(historiqueIndicateursPourExport.maillesApplicables, historiqueIndicateursPourExport.maille)
               && verifierOptionPerimetreIds(optionsExport, historiqueIndicateursPourExport.périmètreIds)
-              && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, historiqueIndicateursPourExport.chantierEstBaromètre, historiqueIndicateursPourExport.chantierEstTerritorialise)
+              && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, historiqueIndicateursPourExport.chantierEstBaromètre)
               && verifierOptionStatut(optionsExport, historiqueIndicateursPourExport.chantierStatut)
               && verifierOptionMeteo(optionsExport, historiqueIndicateursPourExport.météo)
           ) {

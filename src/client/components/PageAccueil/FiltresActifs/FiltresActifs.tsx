@@ -6,8 +6,9 @@ import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import { reinitialiserFiltres, sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { libellésMétéos } from '@/server/domain/météo/Météo.interface';
+import { NOMS_CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import FiltresActifsStyled from './FiltresActifs.styled';
 
 interface FiltresActifsProps {
@@ -16,7 +17,7 @@ interface FiltresActifsProps {
   mailleSelectionnee: MailleInterne,
 }
 
-const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axes, mailleSelectionnee }) => {
+export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axes, mailleSelectionnee }) => {
   const [estOuvert, setEstOuvert] = useState(true);
 
   const [filtres, setFiltres] = useQueryStates({
@@ -24,7 +25,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
     axes: parseAsString.withDefault(''),
     meteos: parseAsString.withDefault(''),
     estBarometre: parseAsBoolean.withDefault(false),
-    estTerritorialise: parseAsBoolean.withDefault(false),
+    territorialisation: parseAsString.withDefault(''),
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
@@ -41,7 +42,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
     + filtres.perimetres.split(',').filter(Boolean).length
     + filtres.meteos.split(',').filter(Boolean).length
     + (filtres.estBarometre ? 1 : 0)
-    + (filtres.estTerritorialise ? 1 : 0)
+    + (filtres.territorialisation.split(',').filter(Boolean).length)
     + (filtres.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
     + (filtres.estEnAlerteÉcart ? 1 : 0)
     + (filtres.estEnAlerteBaisse ? 1 : 0)
@@ -72,7 +73,7 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
       axes: '',
       meteos: '',
       estBarometre: false,
-      estTerritorialise: false,
+      territorialisation: '',
       estEnAlerteTauxAvancementNonCalculé: false,
       estEnAlerteÉcart: false,
       estEnAlerteBaisse: false,
@@ -92,8 +93,8 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
         aria-expanded={estOuvert}
         className={`fr-accordion__btn flex align-center justify-between${estOuvert ? ' fr-mb-2w ' : ''}`}
         onClick={() => setEstOuvert(!estOuvert)}
-        onKeyDown={e => {
-          if (e.key === 'Enter' || e.key === ' ') {
+        onKeyDown={event => {
+          if (event.key === 'Enter' || event.key === ' ') {
             setEstOuvert(!estOuvert);
           }
         }}
@@ -123,12 +124,12 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
         {
           filtres.estEnAlerteTauxAvancementNonCalculé || filtres.estEnAlerteÉcart || filtres.estEnAlerteBaisse || filtres.estEnAlerteMétéoNonRenseignée || filtres.estEnAlerteAbscenceTauxAvancementDepartemental || filtres.estEnAlertePossedePropositionsValeurActuelle ? (
             <div className='fr-grid-row'>
-              <div className='fr-col-5 fr-col-sm-3 fr-col-md-2 flex justify-end fr-pr-1w fr-pt-1v'>
+              <div className='fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
                 <span className='bold fr-text--xs fr-mb-0'>
                   SIGNALEMENT :
                 </span> 
               </div>
-              <div className='fr-col-sm-9 fr-col-7 fr-col-md-10'>
+              <div className='fr-col-sm-9 fr-col-7'>
                 <ul
                   aria-label='liste des tags des filtres ministère actifs'
                   className='conteneur-tags fr-my-0'
@@ -247,12 +248,12 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
         {
           filtres.meteos ? (
             <div className='fr-grid-row'>
-              <div className='fr-col-5 fr-col-sm-3 fr-col-md-2 flex justify-end fr-pr-1w fr-pt-1v'>
+              <div className='fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
                 <span className='bold fr-text--xs fr-mb-0'>
                   MÉTÉO :
                 </span>
               </div>
-              <div className='fr-col-sm-9 fr-col-7 fr-col-md-10'>
+              <div className='fr-col-sm-9 fr-col-7'>
                 <ul
                   aria-label='liste des tags des filtres météo actifs'
                   className='conteneur-tags fr-my-0'
@@ -286,12 +287,12 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
         {
           filtres.perimetres ? (
             <div className='fr-grid-row'>
-              <div className='fr-col-5 fr-col-sm-3 fr-col-md-2 flex justify-end fr-pr-1w fr-pt-1v'>
+              <div className='fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
                 <span className='bold fr-text--xs fr-mb-0'>
                   MINISTÈRE :
                 </span>
               </div>
-              <div className='fr-col-sm-9 fr-col-7 fr-col-md-10'>
+              <div className='fr-col-sm-9 fr-col-7'>
                 <ul
                   aria-label='liste des tags des filtres ministère actifs'
                   className='conteneur-tags fr-my-0'
@@ -324,12 +325,12 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
         {
           filtres.axes ? (
             <div className='fr-grid-row'>
-              <div className='fr-col-5 fr-col-sm-3 fr-col-md-2 flex justify-end fr-pr-1w fr-pt-1v'>
+              <div className='fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
                 <span className='bold fr-text--xs fr-mb-0'>
                   AXE :
                 </span>
               </div>
-              <div className='fr-col-sm-9 fr-col-7 fr-col-md-10'>
+              <div className='fr-col-sm-9 fr-col-7'>
                 <ul
                   aria-label='liste des tags des filtres axes actifs'
                   className='conteneur-tags fr-my-0'
@@ -361,14 +362,50 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
           ) : null
         }
         {
-          filtres.estBarometre || filtres.estTerritorialise ? (
+          filtres.territorialisation ? (
             <div className='fr-grid-row'>
-              <div className='fr-col-5 fr-col-sm-3 fr-col-md-2 flex justify-end fr-pr-1w fr-pt-1v'>
+              <div className='fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
+                <span className='bold fr-text--xs fr-mb-0'>
+                  TERRITORIALISATION :
+                </span>
+              </div>
+              <div className='fr-col-sm-9 fr-col-7'>
+                <ul
+                  aria-label='liste des tags des filtres territorialisation actifs'
+                  className='conteneur-tags fr-my-0'
+                >
+                  {
+                    filtres.territorialisation.split(',').filter(Boolean).map(territorialisation => (
+                      <li key={`tag-territorialisation-${territorialisation}`}>
+                        <Tag
+                          doitAvoirUneTailleFixe
+                          libelle={NOMS_CODES_MAILLES[territorialisation as Maille]}
+                          size='sm'
+                          suppressionCallback={() => {
+                            let arrFiltreTerritorialisation = filtres.territorialisation.split(',').filter(Boolean);
+                            arrFiltreTerritorialisation.splice(arrFiltreTerritorialisation.indexOf(territorialisation), 1);
+
+                            sauvegarderFiltres({ territorialisation: arrFiltreTerritorialisation });
+                            return setFiltres({ territorialisation: arrFiltreTerritorialisation.join(',') });
+                          }}
+                        />
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
+            </div>
+          ) : null
+        }
+        {
+          filtres.estBarometre ? (
+            <div className='fr-grid-row'>
+              <div className='fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
                 <span className='bold fr-text--xs fr-mb-0'>
                   AUTRE :
                 </span>
               </div>
-              <div className='fr-col-sm-9 fr-col-7 fr-col-md-10'>
+              <div className='fr-col-sm-9 fr-col-7'>
                 <ul
                   aria-label='liste des tags des filtres baromètre actifs'
                   className='conteneur-tags fr-my-0'
@@ -390,23 +427,6 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
                       </li>
                     ) : null
                   }
-                  {
-                    filtres.estTerritorialise ? (
-                      <li>
-                        <Tag
-                          doitAvoirUneTailleFixe
-                          libelle='Chantiers territorialisés'
-                          size='sm'
-                          suppressionCallback={() => {
-                            filtres.estTerritorialise = false;
-
-                            sauvegarderFiltres({ estTerritorialise: false });
-                            return setFiltres(filtres);
-                          }}
-                        />
-                      </li>
-                    ) : null
-                  }
                 </ul>
               </div>
             </div>
@@ -416,5 +436,3 @@ const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministères, axe
     </FiltresActifsStyled>
   );
 };
-
-export default FiltresActifs;

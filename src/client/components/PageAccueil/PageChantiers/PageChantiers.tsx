@@ -23,7 +23,7 @@ import ExportDesDonnées, {
 import {
   ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
 } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
-import FiltresActifs from '@/components/PageAccueil/FiltresActifs/FiltresActifs';
+import { FiltresActifs } from '@/components/PageAccueil/FiltresActifs/FiltresActifs';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
@@ -101,7 +101,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     axes: parseAsString.withDefault(''),
     meteos: parseAsString.withDefault(''),
     estBarometre: parseAsBoolean.withDefault(false),
-    estTerritorialise: parseAsBoolean.withDefault(false),
+    territorialisation: parseAsString.withDefault(''),
     maille: parseAsString.withDefault(''),
     statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']),
     jalon: parseAsStringLiteral(['2024', '2025']),
@@ -120,7 +120,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     + filtres.perimetres.split(',').filter(Boolean).length
     + filtres.meteos.split(',').filter(Boolean).length
     + (filtres.estBarometre ? 1 : 0)
-    + (filtres.estTerritorialise ? 1 : 0)
+    + (filtres.territorialisation.split(',').filter(Boolean).length)
     + (filtresAlertes.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
     + (filtresAlertes.estEnAlerteÉcart ? 1 : 0)
     + (filtresAlertes.estEnAlerteBaisse ? 1 : 0)

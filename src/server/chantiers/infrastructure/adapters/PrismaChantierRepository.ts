@@ -758,16 +758,8 @@ export class PrismaChantierRepository implements ChantierRepository {
     const listeChantierId = optionsExport.listeChantierId.length > 0 ? chantierIds.filter(value => optionsExport.listeChantierId.includes(value)) : chantierIds;
     const whereOptions: Prisma.chantier_identiteWhereInput = {};
 
-    if (optionsExport.estBarometre && optionsExport.estTerritorialise) {
-      whereOptions.OR = [{
-        est_barometre: true,
-      }, {
-        est_territorialise: true,
-      }];
-    } else if (optionsExport.estBarometre) {
+    if (optionsExport.estBarometre) {
       whereOptions.est_barometre = true;
-    } else if (optionsExport.estTerritorialise) {
-      whereOptions.est_territorialise = true;
     }
 
     if (optionsExport.listeStatuts && optionsExport.listeStatuts.length > 0) {
@@ -780,6 +772,59 @@ export class PrismaChantierRepository implements ChantierRepository {
       whereOptions.perimetre_ids = {
         hasSome: optionsExport.perimetreIds,
       };
+    }
+
+    if (optionsExport.territorialisation?.length > 0) {
+      // Mise en place du bon where en fonction de la territorialisation choisie
+      if (optionsExport.territorialisation?.length === 1) {
+        if (optionsExport.territorialisation[0] === 'nationale') {
+          whereOptions.mailles_applicables = {
+            equals: ['NAT'],
+          };
+        } else if (optionsExport.territorialisation[0] === 'regionale') {
+          whereOptions.NOT = {
+            mailles_applicables: {
+              has: 'DEPT',
+            },
+          };
+          whereOptions.est_territorialise = true;
+        } else if (optionsExport.territorialisation[0] === 'departementale') {
+          whereOptions.mailles_applicables = {
+            has: 'DEPT',
+          };
+          whereOptions.est_territorialise = true;
+        }
+      } else if (optionsExport.territorialisation?.length === 2) {
+        if (optionsExport.territorialisation.includes('nationale') && optionsExport.territorialisation.includes('regionale')) {
+          whereOptions.OR = [
+            {
+              est_territorialise: null,
+            },
+            {
+              est_territorialise: true,
+              NOT: {
+                mailles_applicables: {
+                  has: 'DEPT',
+                },
+              },
+            },
+          ];
+        } else if (optionsExport.territorialisation.includes('regionale') && optionsExport.territorialisation.includes('departementale')) {
+          whereOptions.est_territorialise = true;
+        } else if (optionsExport.territorialisation.includes('nationale') && optionsExport.territorialisation.includes('departementale')) {
+          whereOptions.OR = [
+            {
+              est_territorialise: null,
+            },
+            {
+              est_territorialise: true,
+              mailles_applicables: {
+                has: 'DEPT',
+              },
+            },
+          ];
+        }
+      }
     }
 
     const chantiers = await prisma.chantier_identite.findMany({

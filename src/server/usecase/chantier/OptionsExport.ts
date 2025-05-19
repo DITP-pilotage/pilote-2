@@ -1,7 +1,9 @@
+import { Maille } from '@/server/domain/maille/Maille.interface';
+
 export interface OptionsExport {
   perimetreIds: string[],
   estBarometre: boolean,
-  estTerritorialise: boolean
+  territorialisation: Maille[],
   listeStatuts: string[],
   listeChantierId: string[],
   listeMeteos: string[],

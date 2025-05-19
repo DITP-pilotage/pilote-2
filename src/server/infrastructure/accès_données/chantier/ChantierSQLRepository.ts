@@ -127,19 +127,64 @@ export default class ChantierSQLRepository implements ChantierRepository {
       };
     }
 
-    if (filtres.estTerritorialise && filtres.estBarometre) {
-      whereOptions.OR = [{
-        est_barometre: true,
-      }, {
-        est_territorialise: true,
-      }];
-    } else if (filtres.estTerritorialise) {
-      whereOptions.est_territorialise = true;
-    } else if (filtres.estBarometre) {
+    if (filtres.estBarometre) {
       whereOptions.est_barometre = true;
     }
 
     let chantierIds = chantiersLectureIds;
+
+    if (filtres.territorialisation?.length > 0) {
+      // Mise en place du bon where en fonction de la territorialisation choisie
+      if (filtres.territorialisation?.length === 1) {
+        if (filtres.territorialisation[0] === 'nationale') {
+          whereOptions.mailles_applicables = {
+            equals: ['NAT'],
+          };
+        } else if (filtres.territorialisation[0] === 'regionale') {
+          whereOptions.NOT = {
+            mailles_applicables: {
+              has: 'DEPT',
+            },
+          };
+          whereOptions.est_territorialise = true;
+        } else if (filtres.territorialisation[0] === 'departementale') {
+          whereOptions.mailles_applicables = {
+            has: 'DEPT',
+          };
+          whereOptions.est_territorialise = true;
+        }
+      } else if (filtres.territorialisation?.length === 2) {
+        if (filtres.territorialisation.includes('nationale') && filtres.territorialisation.includes('regionale')) {
+          whereOptions.OR = [
+            {
+              est_territorialise: null,
+            },
+            {
+              est_territorialise: true,
+              NOT: {
+                mailles_applicables: {
+                  has: 'DEPT',
+                },
+              },
+            },
+          ];
+        } else if (filtres.territorialisation.includes('regionale') && filtres.territorialisation.includes('departementale')) {
+          whereOptions.est_territorialise = true;
+        } else if (filtres.territorialisation.includes('nationale') && filtres.territorialisation.includes('departementale')) {
+          whereOptions.OR = [
+            {
+              est_territorialise: null,
+            },
+            {
+              est_territorialise: true,
+              mailles_applicables: {
+                has: 'DEPT',
+              },
+            },
+          ];
+        }
+      }
+    }
 
     if (filtres.valeurDeLaRecherche?.length > 0) {
       const testLower = removeAccents(filtres.valeurDeLaRecherche.toLowerCase());
@@ -313,15 +358,60 @@ export default class ChantierSQLRepository implements ChantierRepository {
       };
     }
 
-    if (filtres.estTerritorialise && filtres.estBarometre) {
-      whereOptions.OR = [{
-        est_barometre: true,
-      }, {
-        est_territorialise: true,
-      }];
-    } else if (filtres.estTerritorialise) {
-      whereOptions.est_territorialise = true;
-    } else if (filtres.estBarometre) {
+    if (filtres.territorialisation?.length > 0) {
+      // Mise en place du bon where en fonction de la territorialisation choisie
+      if (filtres.territorialisation?.length === 1) {
+        if (filtres.territorialisation[0] === 'nationale') {
+          whereOptions.mailles_applicables = {
+            equals: ['NAT'],
+          };
+        } else if (filtres.territorialisation[0] === 'regionale') {
+          whereOptions.NOT = {
+            mailles_applicables: {
+              has: 'DEPT',
+            },
+          };
+          whereOptions.est_territorialise = true;
+        } else if (filtres.territorialisation[0] === 'departementale') {
+          whereOptions.mailles_applicables = {
+            has: 'DEPT',
+          };
+          whereOptions.est_territorialise = true;
+        }
+      } else if (filtres.territorialisation?.length === 2) {
+        if (filtres.territorialisation.includes('nationale') && filtres.territorialisation.includes('regionale')) {
+          whereOptions.OR = [
+            {
+              est_territorialise: null,
+            },
+            {
+              est_territorialise: true,
+              NOT: {
+                mailles_applicables: {
+                  has: 'DEPT',
+                },
+              },
+            },
+          ];
+        } else if (filtres.territorialisation.includes('regionale') && filtres.territorialisation.includes('departementale')) {
+          whereOptions.est_territorialise = true;
+        } else if (filtres.territorialisation.includes('nationale') && filtres.territorialisation.includes('departementale')) {
+          whereOptions.OR = [
+            {
+              est_territorialise: null,
+            },
+            {
+              est_territorialise: true,
+              mailles_applicables: {
+                has: 'DEPT',
+              },
+            },
+          ];
+        }
+      }
+    }
+
+    if (filtres.estBarometre) {
       whereOptions.est_barometre = true;
     }
 

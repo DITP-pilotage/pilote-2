@@ -146,7 +146,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
       axes: filtres.axes.map(filtre => mapAxe.get(filtre)!.nom),
       statut: filtres.statut,
       meteos: filtres.meteos,
-      estTerritorialise: filtres.estTerritorialise,
+      territorialisation: filtres.territorialisation,
       estBarometre: filtres.estBarometre,
       valeurDeLaRecherche: filtres.valeurDeLaRecherche,
     };
