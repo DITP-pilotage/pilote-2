@@ -12,3 +12,9 @@ export const CODES_MAILLES: Record<Maille, MaillePrisma> = {
   departementale: 'DEPT',
   regionale: 'REG',
 };
+
+export const NOMS_CODES_MAILLES: Record<Maille, string> = {
+  nationale: 'Nationale',
+  regionale: 'Régionale',
+  departementale: 'Départementale',
+};

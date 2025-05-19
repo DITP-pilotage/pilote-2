@@ -116,7 +116,7 @@ export class ExportCsvDesChantiersUseCase {
             chantierTerritoireExport &&
             !masquerPourProfilDROMEtMailleNat(profil, chantierTerritoireExport.périmètreIds, chantierTerritoireExport.maille)
             && verifierOptionPerimetreIds(optionsExport, chantierTerritoireExport.périmètreIds)
-            && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, chantierTerritoireExport.estBaromètre, chantierTerritoireExport.estTerritorialisé)
+            && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, chantierTerritoireExport.estBaromètre)
             && verifierOptionStatut(optionsExport, chantierTerritoireExport.statut)
             && verifierOptionMeteo(optionsExport, chantierTerritoireExport.météo)
           ) {

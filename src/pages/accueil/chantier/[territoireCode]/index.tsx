@@ -32,7 +32,7 @@ import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import { Chantier } from '@/server/chantiers/domain/Chantier';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 import {
   RecupererRepartitionsMeteoChantiersUseCase,
 } from '@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase';
@@ -113,7 +113,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     axes: query.axes ? (query.axes as string).split(',').filter(Boolean) : [],
     statut: query.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : !!query.statut ? [query.statut as string] : ['PUBLIE'],
     meteos: query.meteos ? (query.meteos as string).split(',').filter(Boolean) : [],
-    estTerritorialise: query.estTerritorialise === 'true',
+    territorialisation: query.territorialisation ? (query.territorialisation as string).split(',').filter(Boolean) as Maille[] : [],
     estBarometre: query.estBarometre === 'true',
     valeurDeLaRecherche: query.q as string,
   };

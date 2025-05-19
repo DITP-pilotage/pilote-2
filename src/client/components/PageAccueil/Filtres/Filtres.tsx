@@ -33,7 +33,7 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
     axes: parseAsString.withDefault(''),
     meteos: parseAsString.withDefault(''),
     estBarometre: parseAsBoolean.withDefault(false),
-    estTerritorialise: parseAsBoolean.withDefault(false),
+    territorialisation: parseAsString.withDefault(''),
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
@@ -54,7 +54,7 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
       axes: '',
       meteos: '',
       estBarometre: false,
-      estTerritorialise: false,
+      territorialisation: '',
       estEnAlerteTauxAvancementNonCalculé: false,
       estEnAlerteÉcart: false,
       estEnAlerteBaisse: false,
@@ -66,6 +66,21 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
 
   const { data: variableContenuFFPpgArchive } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_PPG_ARCHIVE' });
   const profilPeutAccederAuxBrouillons = !!session?.profilAAccèsAuxChantiersBrouillons;
+
+  const filtresTerritorialisation = [
+    {
+      id: 'nationale',
+      nom: 'nationale',
+    },
+    {
+      id: 'regionale',
+      nom: 'régionale',
+    },
+    {
+      id: 'departementale',
+      nom: 'départementale',
+    },
+  ];
 
   return (
     <>
@@ -99,6 +114,15 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
               libelle='Filtrer par axes'
             />
             {
+              estProfilTerritorialise ? (
+                <FiltresSelectionMultiple
+                  catégorieDeFiltre='territorialisation'
+                  filtres={filtresTerritorialisation}
+                  libelle='Filtrer par territorialisation'
+                />
+              ) : null
+            }
+            {
               variableContenuFFPpgArchive && profilPeutAccederAuxBrouillons ? (
                 <FiltresSelectionUnique
                   categorieDeFiltre='statut'
@@ -108,7 +132,7 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
             }
             <FiltresSelectionMultipleBoolean
               libelle='Autres filtres'
-              listeCategorieDeFiltre={estProfilTerritorialise ? ['estBarometre', 'estTerritorialise'] : ['estBarometre']}
+              listeCategorieDeFiltre={['estBarometre']}
             />
           </FiltresGroupe>
         ) : null

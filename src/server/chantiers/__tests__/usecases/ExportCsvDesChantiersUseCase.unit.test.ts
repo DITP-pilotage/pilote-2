@@ -7,7 +7,7 @@ import { ChantierPourExportBuilder } from '@/server/chantiers/app/builder/Chanti
 
 const optionsExport: OptionsExport = {
   perimetreIds: [],
-  estTerritorialise: false,
+  territorialisation: [],
   estBarometre: false,
   listeStatuts: [],
   listeChantierId: [],

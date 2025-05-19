@@ -24,6 +24,7 @@ describe('PrismaTerritoireRepository', () => {
         expect((error as Error).message).toStrictEqual("Le territoire n'existe pas");
       }
     });
+    
     test('quand territoire associé au code existe, doit récupérer le territoire associé au code', async () => {
       // Given
       const territoireCode = 'DEPT-34';

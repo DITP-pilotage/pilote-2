@@ -10,6 +10,7 @@ import { recupererJalon } from '@/components/_commons/IndicateursChantier/Bloc/V
 import { ExportCsvDesIndicateursUseCaseV2 } from '@/server/chantiers/usecases/ExportCsvDesIndicateursUseCaseV2';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import { getContainer } from '@/server/dependances';
+import { Maille } from '@/server/domain/maille/Maille.interface';
 
 export const handleExportDesIndicateurs = async (request: NextApiRequest, response: NextApiResponse): Promise<void> => {
   const session = await getServerSession(request, response, authOptions);
@@ -23,7 +24,7 @@ export const handleExportDesIndicateurs = async (request: NextApiRequest, respon
   const optionsExport = {
     perimetreIds: request.query.perimetreIds ? Array.isArray(request.query.perimetreIds) ? request.query.perimetreIds : [request.query.perimetreIds] as string[] : [],
     estBarometre: request.query.estBarometre === 'true',
-    estTerritorialise: request.query.estTerritorialise === 'true',
+    territorialisation: request.query.territorialisation ? Array.isArray(request.query.territorialisation) ? request.query.territorialisation.map(maille => maille as Maille) : [request.query.territorialisation as Maille] : [],
     listeStatuts: request.query.statut ? Array.isArray(request.query.statut) ? request.query.statut : [request.query.statut] as string[] : [],
     listeChantierId: request.query.listeChantierId ? (request.query.listeChantierId as string).split(',') : [],
     listeMeteos: request.query.meteos ? Array.isArray(request.query.meteos) ? request.query.meteos : [request.query.meteos] as string[] : [],
