@@ -621,6 +621,7 @@ model proposition_valeur_actuelle {
   motif_proposition            String
   source_donnee_methode_calcul String
   statut                       type_statut_proposition
+  date_modification_statut     DateTime? @db.Timestamp()
 
   @@schema("public")
 }

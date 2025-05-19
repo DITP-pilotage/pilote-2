@@ -42,6 +42,7 @@ export class PrismaPropositionValeurActuelleRepository implements PropositionVal
         },
         data: {
           statut: nouveauStatut,
+          date_modification_statut: new Date(),
         },
       });
     }
