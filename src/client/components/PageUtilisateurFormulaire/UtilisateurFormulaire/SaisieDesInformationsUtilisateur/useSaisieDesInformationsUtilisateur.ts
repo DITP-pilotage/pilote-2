@@ -29,12 +29,9 @@ export const PROFILS_POSSIBLES_GESTION_UTILISATEUR_MODIFICATION = {
     ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
   ],
   SECRETARIAT_GENERAL: [
-    ProfilEnum.PREFET_REGION,
-    ProfilEnum.PREFET_DEPARTEMENT,
     ProfilEnum.SERVICES_DECONCENTRES_REGION,
     ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-    ProfilEnum.COORDINATEUR_DEPARTEMENT,
-    ProfilEnum.COORDINATEUR_REGION,
+
   ],
 };
 
@@ -53,12 +50,8 @@ export const PROFILS_POSSIBLES_GESTION_UTILISATEUR_LECTURE = {
     ProfilEnum.COORDINATEUR_DEPARTEMENT,
   ],
   SECRETARIAT_GENERAL: [
-    ProfilEnum.PREFET_REGION,
-    ProfilEnum.PREFET_DEPARTEMENT,
     ProfilEnum.SERVICES_DECONCENTRES_REGION,
     ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-    ProfilEnum.COORDINATEUR_DEPARTEMENT,
-    ProfilEnum.COORDINATEUR_REGION,
   ],
 };
 
@@ -88,10 +81,16 @@ function AAccesATousLesTerritoires(profilCode: ProfilCode) {
   return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(profilCode);
 }
 
+function ProfilNePeutPasDonnerDesAccesSurTousLesPerimetres(profilCode: ProfilCode) {
+  return profilCode === 'SECRETARIAT_GENERAL';
+}
+
 export default function useSectionDétailsMetadataAutresIndicateurForm() {
   const { data: profils } = api.profil.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
   const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
   const { data: territoires } = api.territoire.récupérerListe.useQuery({ territoireCodes: null }, { staleTime: Number.POSITIVE_INFINITY });
+  const { data: perimetresMinisteriels } = api.périmètreMinistériel.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
+
   const { data: session } = useSession();
   const {
     register,
@@ -176,6 +175,9 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
     setValue('habilitations.responsabilite.chantiers', chantiersIdsResponsabilite.filter(chantierId => valeursSelectionnees.includes(chantierId)));
   };
   
+  const perimetresSelectionnables = (ProfilNePeutPasDonnerDesAccesSurTousLesPerimetres(session!.profil)
+    ? perimetresMinisteriels?.filter(perimetre => session!.habilitations.gestionUtilisateur.périmètres.includes(perimetre.id))
+    : perimetresMinisteriels) ?? [];
   const afficherChampLecturePérimètres = profilSelectionne && !profilSelectionne.chantiers.lecture.tous && !profilSelectionne.chantiers.lecture.tousTerritorialisés;
   const recupererChantiersIdsAPartirDesPerimetres = (listePerimetresIds: string[]) => {
     return chantiersAccessiblesLecture?.
@@ -237,5 +239,6 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
     afficherChampSaisieIndicateur,
     afficherChampSaisieCommentaire,
     afficherChampGestionCompte,
+    perimetresSelectionnables,
   };
 }
