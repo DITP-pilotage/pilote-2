@@ -100,7 +100,7 @@ export default class ExportCsvDesIndicateursUseCase {
               !masquerPourProfilDROMEtMailleNat(profil, indicateursPourExport.périmètreIds, indicateursPourExport.maille)
               && verifierApplicabiliteMaille(indicateursPourExport.maillesApplicables, indicateursPourExport.maille)
               && verifierOptionPerimetreIds(optionsExport, indicateursPourExport.périmètreIds)
-              && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, indicateursPourExport.chantierEstBaromètre, indicateursPourExport.chantierEstTerritorialise)
+              && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, indicateursPourExport.chantierEstBaromètre)
               && verifierOptionStatut(optionsExport, indicateursPourExport.chantierStatut)
               && verifierOptionMeteo(optionsExport, indicateursPourExport.météo)
           ) {

@@ -7,6 +7,8 @@ import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import { libellésMétéos } from '@/server/domain/météo/Météo.interface';
+import { Maille } from '@/server/domain/maille/Maille.interface';
+import { NOMS_CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import FiltresSélectionnésCatégorie from './Catégorie/FiltresSélectionnésCatégorie';
 import FiltresSélectionnésStyled from './FiltresSélectionnés.styled';
 
@@ -30,7 +32,7 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
     meteos: parseAsString.withDefault(''),
     statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']),
     estBarometre: parseAsBoolean.withDefault(false),
-    estTerritorialise: parseAsBoolean.withDefault(false),
+    territorialisation: parseAsString.withDefault(''),
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
@@ -62,9 +64,12 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
       filtresActifs: filtres.axes.split(',').filter(Boolean).map(axeId => retrouverNomFiltre(axeId, axes)),
     },
     {
+      nom: 'Territorialisation',
+      filtresActifs: filtres.territorialisation.split(',').filter(Boolean).map(maille => NOMS_CODES_MAILLES[maille as Maille]),
+    },
+    {
       nom: 'Autres critères', filtresActifs: [
         filtres.estBarometre ? 'Chantiers du baromètre' : null,
-        filtres.estTerritorialise ? 'Chantiers territorialisés' : null,
         estAutoriseAVoirLesBrouillons ? filtres.statut === 'BROUILLON_ET_PUBLIE'
           ? 'Chantiers validés et en cours de publication'
           : filtres.statut === 'BROUILLON'
@@ -85,8 +90,7 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
     },
     {
       nom: 'Météos',
-      filtresActifs:
-        filtres.meteos.split(',').filter(Boolean).map(meteo => libellésMétéos[meteo]),
+      filtresActifs: filtres.meteos.split(',').filter(Boolean).map(meteo => libellésMétéos[meteo]),
     },
   ];
 

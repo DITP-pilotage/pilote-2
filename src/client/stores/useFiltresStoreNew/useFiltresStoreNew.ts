@@ -6,6 +6,7 @@ export interface FiltreAccueil {
   axes: string[]
   meteos: string[]
   maille: string
+  territorialisation: string[]
   statut: string
   jalon: string
   groupeParMinistere: boolean
@@ -34,6 +35,7 @@ const etatInitial = {
   meteos: [] as string[],
   territoireCode: '',
   maille: '',
+  territorialisation: [] as string[],
   statut: 'PUBLIE',
   jalon: '2024',
   groupeParMinistere: false,

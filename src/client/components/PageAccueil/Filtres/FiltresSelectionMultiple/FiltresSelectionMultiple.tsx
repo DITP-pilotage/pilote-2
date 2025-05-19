@@ -9,7 +9,7 @@ interface Filtre {
 }
 
 interface FiltresSelectionMultipleProps {
-  catégorieDeFiltre: 'axes' | 'autres',
+  catégorieDeFiltre: 'axes' | 'territorialisation',
   filtres: Filtre[],
   libelle: string,
 }

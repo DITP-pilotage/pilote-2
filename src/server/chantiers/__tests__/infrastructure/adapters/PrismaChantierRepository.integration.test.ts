@@ -282,7 +282,7 @@ describe('PrismaChantierRepository', () => {
 
         const optionsPourExport: OptionsExport = {
           estBarometre: true,
-          estTerritorialise: true,
+          territorialisation: ['regionale', 'departementale'],
           perimetreIds: [],
           listeChantierId: [],
           listeMeteos: [],
@@ -423,7 +423,7 @@ describe('PrismaChantierRepository', () => {
 
         const optionsPourExport: OptionsExport = {
           estBarometre: true,
-          estTerritorialise: true,
+          territorialisation: ['regionale', 'departementale'],
           perimetreIds: [],
           listeChantierId: [],
           listeMeteos: ['SOLEIL'],
@@ -521,7 +521,7 @@ describe('PrismaChantierRepository', () => {
 
         const optionsPourExport: OptionsExport = {
           estBarometre: true,
-          estTerritorialise: true,
+          territorialisation: ['regionale', 'departementale'],
           perimetreIds: [],
           listeChantierId: [],
           listeMeteos: [],
@@ -653,7 +653,7 @@ describe('PrismaChantierRepository', () => {
 
         const optionsPourExport: OptionsExport = {
           estBarometre: true,
-          estTerritorialise: true,
+          territorialisation: ['regionale', 'departementale'],
           perimetreIds: [],
           listeChantierId: [],
           listeMeteos: [],
@@ -681,7 +681,7 @@ describe('PrismaChantierRepository', () => {
   });
 
   describe('#récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions', () => {
-    it("quand on a l'option estBarometre et estTerritorialise à true, doit remonter les chantiers ids contenant soit les chantiers du barometre soit territorialisé", async () => {
+    it("quand on a l'option estBarometre et territorialisation à ['regionale', 'departementale'], doit remonter les chantiers ids contenant soit les chantiers du barometre soit territorialisé", async () => {
       // Given
       await prisma.chantier_identite.createMany({
         data: [{
@@ -709,7 +709,7 @@ describe('PrismaChantierRepository', () => {
 
       const optionsPourExport: OptionsExport = {
         estBarometre: true,
-        estTerritorialise: true,
+        territorialisation: ['regionale', 'departementale'],
         perimetreIds: [],
         listeChantierId: [],
         listeMeteos: [],
@@ -722,7 +722,7 @@ describe('PrismaChantierRepository', () => {
       const result = await prismaChantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(['CH-001', 'CH-002', 'CH-003', 'CH-004'], optionsPourExport);
 
       // Then
-      expect(result).toEqual(['CH-001', 'CH-002', 'CH-003']);
+      expect(result).toEqual(['CH-001']);
     });
 
     it("quand on a l'option estBarometre est a false et estTerritorialise à false, doit remonter les chantiers ids contenant les chantiers du barometre", async () => {
@@ -753,7 +753,7 @@ describe('PrismaChantierRepository', () => {
 
       const optionsPourExport: OptionsExport = {
         estBarometre: true,
-        estTerritorialise: false,
+        territorialisation: [],
         perimetreIds: [],
         listeChantierId: [],
         listeMeteos: [],
@@ -769,7 +769,7 @@ describe('PrismaChantierRepository', () => {
       expect(result).toEqual(['CH-001', 'CH-002']);
     });
 
-    it("quand on a l'option estBarometre est a true et estTerritorialise à true, doit remonter les chantiers ids contenant les chantiers territorialise", async () => {
+    it("quand on a l'option estBarometre est a false et territorialisation à ['regionale', 'departementale'], doit remonter les chantiers ids contenant les chantiers territorialise", async () => {
       // Given
       await prisma.chantier_identite.createMany({
         data: [{
@@ -777,27 +777,31 @@ describe('PrismaChantierRepository', () => {
           nom: 'Chantier 001',
           est_barometre: true,
           est_territorialise: true,
+          mailles_applicables: ['REG', 'DEPT'],
         }, {
           id: 'CH-002',
           nom: 'Chantier 002',
           est_barometre: true,
           est_territorialise: false,
+          mailles_applicables: ['NAT'],
         }, {
           id: 'CH-003',
           nom: 'Chantier 003',
           est_barometre: false,
           est_territorialise: true,
+          mailles_applicables: ['REG', 'DEPT'],
         }, {
           id: 'CH-004',
           nom: 'Chantier 004',
           est_barometre: false,
           est_territorialise: false,
+          mailles_applicables: ['NAT'],
         }],
       });
 
       const optionsPourExport: OptionsExport = {
         estBarometre: false,
-        estTerritorialise: true,
+        territorialisation: ['regionale', 'departementale'],
         perimetreIds: [],
         listeChantierId: [],
         listeMeteos: [],
@@ -851,7 +855,7 @@ describe('PrismaChantierRepository', () => {
 
       const optionsPourExport: OptionsExport = {
         estBarometre: false,
-        estTerritorialise: false,
+        territorialisation: [],
         perimetreIds: [],
         listeChantierId: [],
         listeMeteos: [],
@@ -910,7 +914,7 @@ describe('PrismaChantierRepository', () => {
 
       const optionsPourExport: OptionsExport = {
         estBarometre: false,
-        estTerritorialise: false,
+        territorialisation: [],
         perimetreIds: ['PER-01', 'PER-02'],
         listeChantierId: [],
         listeMeteos: [],
@@ -969,7 +973,7 @@ describe('PrismaChantierRepository', () => {
 
       const optionsPourExport: OptionsExport = {
         estBarometre: false,
-        estTerritorialise: false,
+        territorialisation: [],
         perimetreIds: [],
         listeChantierId: ['CH-002', 'CH-003', 'CH-005'],
         listeMeteos: ['CH-002', 'CH-003', 'CH-005'],

@@ -302,7 +302,7 @@ describe('ChantierSQLRepository', () => {
         axes: [],
         statut: [],
         meteos: [],
-        estTerritorialise: false,
+        territorialisation: [],
         estBarometre: false,
         valeurDeLaRecherche: '',
       };
@@ -429,7 +429,7 @@ describe('ChantierSQLRepository', () => {
         axes: [],
         statut: [],
         meteos: [],
-        estTerritorialise: false,
+        territorialisation: [],
         estBarometre: false,
         valeurDeLaRecherche: '',
       };
@@ -550,7 +550,7 @@ describe('ChantierSQLRepository', () => {
           axes: [],
           meteos: [],
           statut: [],
-          estTerritorialise: false,
+          territorialisation: [],
           estBarometre: false,
           valeurDeLaRecherche: '',
         };
@@ -646,7 +646,7 @@ describe('ChantierSQLRepository', () => {
           axes: [],
           meteos: [],
           statut: ['PUBLIE', 'BROUILLON'],
-          estTerritorialise: false,
+          territorialisation: [],
           estBarometre: false,
           valeurDeLaRecherche: '',
         };
@@ -743,7 +743,7 @@ describe('ChantierSQLRepository', () => {
           axes: [],
           meteos: ['SOLEIL'],
           statut: [],
-          estTerritorialise: false,
+          territorialisation: [],
           estBarometre: false,
           valeurDeLaRecherche: '',
         };
@@ -834,7 +834,7 @@ describe('ChantierSQLRepository', () => {
           perimetres: [],
           axes: ['axe 1', 'axe 2'],
           meteos: [],
-          estTerritorialise: false,
+          territorialisation: [],
           estBarometre: false,
           valeurDeLaRecherche: '',
           statut: [],
@@ -920,7 +920,7 @@ describe('ChantierSQLRepository', () => {
         }]);
       });
 
-      it('quand on est profil territoriale et que le filtres est barometre et est territorialise est defini, doit remonter les chantiers demandés', async () => {
+      it('quand on est profil territoriale et que le filtres est barometre et territorialisation est defini en regionale et departementale, doit remonter les chantiers demandés', async () => {
         // Given
         const chantiersLectureIds = ['CH-001', 'CH-002', 'CH-003', 'CH-004'];
         const territoiresLectureIds = ['DEPT-87', 'DEPT-88', 'REG-01'];
@@ -930,7 +930,7 @@ describe('ChantierSQLRepository', () => {
           axes: [],
           meteos: [],
           statut: [],
-          estTerritorialise: true,
+          territorialisation: ['regionale', 'departementale'],
           estBarometre: true,
           valeurDeLaRecherche: '',
         };
@@ -945,6 +945,7 @@ describe('ChantierSQLRepository', () => {
             ministeres_acronymes: ['MINA'],
             est_barometre: true,
             est_territorialise: true,
+            mailles_applicables: ['REG', 'DEPT'],
           }, {
             id: 'CH-002',
             nom: 'Chantier 002',
@@ -952,6 +953,7 @@ describe('ChantierSQLRepository', () => {
             ministeres_acronymes: ['MINA'],
             est_barometre: true,
             est_territorialise: false,
+            mailles_applicables: ['NAT'],
           }, {
             id: 'CH-003',
             nom: 'Chantier 003',
@@ -959,6 +961,7 @@ describe('ChantierSQLRepository', () => {
             ministeres_acronymes: ['MINA'],
             est_barometre: false,
             est_territorialise: true,
+            mailles_applicables: ['REG', 'DEPT'],
           }, {
             id: 'CH-004',
             nom: 'Chantier 004',
@@ -966,6 +969,7 @@ describe('ChantierSQLRepository', () => {
             ministeres_acronymes: ['MINA'],
             est_barometre: false,
             est_territorialise: false,
+            mailles_applicables: ['NAT'],
           }],
         });
 
@@ -1021,16 +1025,6 @@ describe('ChantierSQLRepository', () => {
             chantier_territoire: [
               { territoire_code: 'DEPT-87', taux_avancement_mandat: 2 },
             ],
-          }, {
-            nom: 'Chantier 002',
-            chantier_territoire: [
-              { territoire_code: 'DEPT-88', taux_avancement_mandat: 3  },
-            ],
-          }, {
-            nom: 'Chantier 003',
-            chantier_territoire: [
-              { territoire_code: 'REG-01', taux_avancement_mandat: 4  },
-            ],
           },
         ]);
       });
@@ -1045,7 +1039,7 @@ describe('ChantierSQLRepository', () => {
           axes: [],
           meteos: [],
           statut: [],
-          estTerritorialise: false,
+          territorialisation: [],
           estBarometre: true,
           valeurDeLaRecherche: '',
         };
@@ -1155,7 +1149,7 @@ describe('ChantierSQLRepository', () => {
           axes: [],
           meteos: [],
           statut: [],
-          estTerritorialise: true,
+          territorialisation: ['regionale', 'departementale'],
           estBarometre: false,
           valeurDeLaRecherche: '',
         };
@@ -1170,6 +1164,7 @@ describe('ChantierSQLRepository', () => {
             ministeres_acronymes: ['MINA'],
             est_barometre: true,
             est_territorialise: true,
+            mailles_applicables: ['REG', 'DEPT'],
           }, {
             id: 'CH-002',
             nom: 'Chantier 002',
@@ -1177,6 +1172,7 @@ describe('ChantierSQLRepository', () => {
             ministeres_acronymes: ['MINA'],
             est_barometre: true,
             est_territorialise: false,
+            mailles_applicables: ['NAT'],
           }, {
             id: 'CH-003',
             nom: 'Chantier 003',
@@ -1184,6 +1180,7 @@ describe('ChantierSQLRepository', () => {
             ministeres_acronymes: ['MINA'],
             est_barometre: false,
             est_territorialise: true,
+            mailles_applicables: ['REG', 'DEPT'],
           }, {
             id: 'CH-004',
             nom: 'Chantier 004',
@@ -1191,6 +1188,7 @@ describe('ChantierSQLRepository', () => {
             ministeres_acronymes: ['MINA'],
             est_barometre: false,
             est_territorialise: false,
+            mailles_applicables: ['NAT'],
           }],
         });
 
@@ -1265,7 +1263,7 @@ describe('ChantierSQLRepository', () => {
           axes: [],
           meteos: [],
           statut: [],
-          estTerritorialise: false,
+          territorialisation: [],
           estBarometre: false,
           valeurDeLaRecherche: 'maValeur recherche',
         };
@@ -1628,7 +1626,7 @@ describe('ChantierSQLRepository', () => {
   });
 
   describe('#recupererLaRepartitionMeteo', () => {
-    it("quand on a l'option estBarometre et estTerritorialise à true, doit remonter la répartition météo des chantiers qui sont soit du barometre soit territorialisés", async () => {
+    it("quand on a l'option estBarometre et territorialisation à ['regionale', 'departementale'], doit remonter la répartition météo des chantiers qui sont du barometre et territorialisés", async () => {
       // Given
       await prisma.chantier_identite.create({
         data: {
@@ -1636,6 +1634,7 @@ describe('ChantierSQLRepository', () => {
           nom: 'Chantier 001',
           est_barometre: true,
           est_territorialise: true,
+          mailles_applicables: ['REG', 'DEPT'],
           ministeres: ['MINA'],
           chantier_territoire: {
             createMany: {
@@ -1656,7 +1655,8 @@ describe('ChantierSQLRepository', () => {
           id: 'CH-002',
           nom: 'Chantier 002',
           est_barometre: true,
-          est_territorialise: false,
+          est_territorialise: true,
+          mailles_applicables: ['REG', 'DEPT'],
           ministeres: ['MINA'],
           chantier_territoire: {
             createMany: {
@@ -1678,6 +1678,7 @@ describe('ChantierSQLRepository', () => {
           nom: 'Chantier 003',
           est_barometre: true,
           est_territorialise: false,
+          mailles_applicables: ['NAT'],
           ministeres: ['MINA'],
           chantier_territoire: {
             createMany: {
@@ -1700,6 +1701,7 @@ describe('ChantierSQLRepository', () => {
           nom: 'Chantier 004',
           est_barometre: false,
           est_territorialise: false,
+          mailles_applicables: ['NAT'],
           ministeres: ['MINA'],
           chantier_territoire: {
             createMany: {
@@ -1716,12 +1718,12 @@ describe('ChantierSQLRepository', () => {
         },
       });
 
-      const filtres = {
+      const filtres: FiltreQueryParams = {
         perimetres: [],
         axes: [],
         statut: [],
         meteos: [],
-        estTerritorialise: true,
+        territorialisation: ['regionale', 'departementale'],
         estBarometre: true,
         valeurDeLaRecherche: '',
       };
@@ -1731,7 +1733,7 @@ describe('ChantierSQLRepository', () => {
 
       // Then
       expect(result.nombreCouvert).toEqual(1);
-      expect(result.nombreSoleil).toEqual(2);
+      expect(result.nombreSoleil).toEqual(1);
       expect(result.nombreNuage).toEqual(0);
       expect(result.nombreOrage).toEqual(0);
     });
@@ -1824,12 +1826,12 @@ describe('ChantierSQLRepository', () => {
         },
       });
 
-      const filtres = {
+      const filtres: FiltreQueryParams = {
         perimetres: [],
         axes: [],
         statut: [],
         meteos: [],
-        estTerritorialise: false,
+        territorialisation: [],
         estBarometre: true,
         valeurDeLaRecherche: '',
       };
@@ -1844,7 +1846,7 @@ describe('ChantierSQLRepository', () => {
       expect(result.nombreOrage).toEqual(0);
     });
 
-    it("quand on a l'option estBarometre est a false et estTerritorialise à true, doit remonter les chantiers ids contenant les chantiers territorialise", async () => {
+    it("quand on a l'option estBarometre est a false et territorialisation est defini en regionale et departementale, doit remonter les chantiers ids contenant les chantiers territorialise", async () => {
       // Given
       await prisma.chantier_identite.create({
         data: {
@@ -1852,6 +1854,7 @@ describe('ChantierSQLRepository', () => {
           nom: 'Chantier 001',
           est_barometre: true,
           est_territorialise: true,
+          mailles_applicables: ['REG', 'DEPT'],
           ministeres: ['MINA'],
           chantier_territoire: {
             createMany: {
@@ -1873,6 +1876,7 @@ describe('ChantierSQLRepository', () => {
           nom: 'Chantier 002',
           est_barometre: true,
           est_territorialise: false,
+          mailles_applicables: ['NAT'],
           ministeres: ['MINA'],
           chantier_territoire: {
             createMany: {
@@ -1894,6 +1898,7 @@ describe('ChantierSQLRepository', () => {
           nom: 'Chantier 003',
           est_barometre: false,
           est_territorialise: true,
+          mailles_applicables: ['REG', 'DEPT'],
           ministeres: ['MINA'],
           chantier_territoire: {
             createMany: {
@@ -1916,6 +1921,7 @@ describe('ChantierSQLRepository', () => {
           nom: 'Chantier 004',
           est_barometre: false,
           est_territorialise: false,
+          mailles_applicables: ['NAT'],
           ministeres: ['MINA'],
           chantier_territoire: {
             createMany: {
@@ -1932,12 +1938,12 @@ describe('ChantierSQLRepository', () => {
         },
       });
 
-      const filtres = {
+      const filtres: FiltreQueryParams = {
         perimetres: [],
         axes: [],
         statut: [],
         meteos: [],
-        estTerritorialise: true,
+        territorialisation: ['regionale', 'departementale'],
         estBarometre: false,
         valeurDeLaRecherche: '',
       };
@@ -2067,12 +2073,12 @@ describe('ChantierSQLRepository', () => {
         },
       });
 
-      const filtres = {
+      const filtres: FiltreQueryParams = {
         perimetres: [],
         axes: [],
         statut: ['PUBLIE', 'BROUILLON'],
         meteos: [],
-        estTerritorialise: false,
+        territorialisation: [],
         estBarometre: false,
         valeurDeLaRecherche: '',
       };
@@ -2202,12 +2208,12 @@ describe('ChantierSQLRepository', () => {
         },
       });
 
-      const filtres = {
+      const filtres: FiltreQueryParams = {
         perimetres: ['PER-01', 'PER-02'],
         axes: [],
         statut: [],
         meteos: [],
-        estTerritorialise: false,
+        territorialisation: [],
         estBarometre: false,
         valeurDeLaRecherche: '',
       };
@@ -2337,12 +2343,12 @@ describe('ChantierSQLRepository', () => {
         },
       });
 
-      const filtres = {
+      const filtres: FiltreQueryParams = {
         perimetres: [],
         axes: [],
         statut: [],
         meteos: [],
-        estTerritorialise: false,
+        territorialisation: [],
         estBarometre: false,
         valeurDeLaRecherche: '',
       };
@@ -2456,12 +2462,12 @@ describe('ChantierSQLRepository', () => {
         },
       });
 
-      const filtres = {
+      const filtres: FiltreQueryParams = {
         perimetres: [],
         axes: [],
         statut: [],
         meteos: [],
-        estTerritorialise: false,
+        territorialisation: [],
         estBarometre: false,
         valeurDeLaRecherche: '',
       };

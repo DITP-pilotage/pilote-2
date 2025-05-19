@@ -75,7 +75,7 @@ export const EtapeRecapitulatif = ({ territoireCodeSelectionne }: { territoireCo
     perimetres: parseAsString.withDefault(''),
     meteos: parseAsString.withDefault(''),
     estBarometre: parseAsBoolean.withDefault(false),
-    estTerritorialise: parseAsBoolean.withDefault(false),
+    territorialisation: parseAsString.withDefault(''),
     statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']).withDefault('PUBLIE'),
     jalon: parseAsStringLiteral(['2024', '2025']).withDefault(getAnneeDateDeBascule(new Date(), dataBasculeValeurAnneePrecedente as string).toString() as '2024' | '2025'),
     optionsExport: parseAsString.withDefault('identifiant'),
@@ -99,8 +99,8 @@ export const EtapeRecapitulatif = ({ territoireCodeSelectionne }: { territoireCo
     arrayOptionsExport.push({ name: 'meteos', value: filtreMeteo });
   });
 
-  if (filtres.estTerritorialise) {
-    arrayOptionsExport.push({ name: 'estTerritorialise', value: true });
+  if (filtres.territorialisation) {
+    arrayOptionsExport.push({ name: 'territorialisation', value: filtres.territorialisation });
   }
 
   if (filtres.isAvecFiltre) {

@@ -32,7 +32,7 @@ import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
 import { Chantier } from '@/server/chantiers/domain/Chantier';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 import {
   RecupererRepartitionsMeteoChantiersUseCase,
 } from '@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase';
@@ -47,6 +47,7 @@ import { configuration } from '@/config';
 import { ModaleVideoAccueil } from '@/components/PageAccueil/PageChantiers/ModaleVideoAccueil/ModaleVideoAccueil';
 import { getContainer } from '@/server/dependances';
 import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
+import { profilsRégionaux } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
 import IndexStyled from './index.styled';
 
 interface ChantierAccueil {
@@ -113,7 +114,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     axes: query.axes ? (query.axes as string).split(',').filter(Boolean) : [],
     statut: query.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : !!query.statut ? [query.statut as string] : ['PUBLIE'],
     meteos: query.meteos ? (query.meteos as string).split(',').filter(Boolean) : [],
-    estTerritorialise: query.estTerritorialise === 'true',
+    territorialisation: query.territorialisation ? (query.territorialisation as string).split(',').filter(Boolean) as Maille[] : [],
     estBarometre: query.estBarometre === 'true',
     valeurDeLaRecherche: query.q as string,
   };
@@ -226,7 +227,13 @@ const PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE = new Set([
   ProfilEnum.EQUIPE_DIR_PROJET,
   ProfilEnum.DITP_ADMIN,
   ProfilEnum.DITP_PILOTAGE,
+  ProfilEnum.PREFET_REGION,
+  ProfilEnum.COORDINATEUR_REGION,
+  ProfilEnum.SERVICES_DECONCENTRES_REGION,
+  ProfilEnum.RESPONSABLE_REGION,
 ]);
+
+const PROFIL_REGIONAUX_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE = new Set(profilsRégionaux);
 
 const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   chantiers,
@@ -247,6 +254,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   const { data: session } = useSession();
 
   const estProfilTerritorialise = PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE.has(session?.profil || '');
+  const estProfilRegionalAutoriseAVoirLaTerritorialisation = PROFIL_REGIONAUX_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE.has(session?.profil || '');
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
@@ -273,6 +281,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             <Filtres
               afficherToutLesFiltres
               axes={axes}
+              estProfilRegionalAutoriseAVoirLaTerritorialisation={estProfilRegionalAutoriseAVoirLaTerritorialisation}
               estProfilTerritorialise={estProfilTerritorialise}
               ministères={ministères}
             />

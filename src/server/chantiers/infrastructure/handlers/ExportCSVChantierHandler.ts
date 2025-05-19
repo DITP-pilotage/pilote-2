@@ -7,10 +7,10 @@ import { ExportCsvDesChantiersUseCaseV2 } from '@/server/chantiers/usecases/Expo
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { configuration } from '@/config';
-
 import { recupererJalon } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/recupererJalon';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import { getContainer } from '@/server/dependances';
+import { Maille } from '@/server/domain/maille/Maille.interface';
 
 export const handleExportDesChantiers = async (request: NextApiRequest, response: NextApiResponse): Promise<void> =>{
   const session = await getServerSession(request, response, authOptions);
@@ -22,7 +22,7 @@ export const handleExportDesChantiers = async (request: NextApiRequest, response
   const optionsExport = {
     perimetreIds: request.query.perimetreIds ? Array.isArray(request.query.perimetreIds) ? request.query.perimetreIds : [request.query.perimetreIds] as string[] : [],
     estBarometre: request.query.estBarometre === 'true',
-    estTerritorialise: request.query.estTerritorialise === 'true',
+    territorialisation: request.query.territorialisation ? Array.isArray(request.query.territorialisation) ? request.query.territorialisation.map(maille => maille as Maille) : [request.query.territorialisation as Maille] : [],
     listeStatuts: request.query.statut ? Array.isArray(request.query.statut) ? request.query.statut : [request.query.statut] as string[] : [],
     listeChantierId: [],
     listeMeteos: request.query.meteos ? Array.isArray(request.query.meteos) ? request.query.meteos : [request.query.meteos] as string[] : [],
