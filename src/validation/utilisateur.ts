@@ -36,8 +36,10 @@ export const validationInfosBaseUtilisateur = z.object( {
   gestionUtilisateur: z.boolean(),
 });
 
-export const validationInfosBaseUtilisateurNonAdmin = z.object( {
-  email: z.string().email().min(1).max(100).refine((value) => value.endsWith('.gouv.fr'), { message : customErrorMail }),
+export const validationInfosBaseUtilisateurNonAdmin = z.object({
+  email: z.string().email().min(1).max(100).refine((value) =>
+    value.endsWith('.gouv.fr') || /^.+@ac-[\da-z\-]+\.fr$/i.test(value), { message: customErrorMail },
+  ),
   nom: z.string().min(1).max(100),
   prénom: z.string().min(1).max(100),
   fonction: z.string().max(100).nullable(),

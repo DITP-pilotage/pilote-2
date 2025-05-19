@@ -179,7 +179,7 @@
       "peut_saisir_des_commentaires": true,
       "a_access_aux_chantiers_brouillons": false,
       "a_acces_a_tous_les_chantiers_utilisateurs": false,
-      "a_acces_a_tous_les_territoires_utilisateurs": false
+      "a_acces_a_tous_les_territoires_utilisateurs": true
     },
     {
       "code": "EQUIPE_DIR_PROJET",

@@ -44,6 +44,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
     afficherChampSaisieIndicateur,
     afficherChampGestionCompte,
     afficherChampSaisieCommentaire,
+    perimetresSelectionnables,
   } = useSaisieDesInformationsUtilisateur();
 
   return (
@@ -144,6 +145,8 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
                 <MultiSelectPérimètreMinistériel
                   afficherBoutonsSélection
                   changementValeursSélectionnéesCallback={changementPerimetresSelectionnes}
+                  desactive={perimetresSelectionnables.length === 0}
+                  perimetresSelectionnables={perimetresSelectionnables}
                   périmètresMinistérielsIdsSélectionnésParDéfaut={getValues('habilitations.lecture.périmètres')}
                 />
               )}

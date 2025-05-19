@@ -43,6 +43,7 @@ const AdminIndicateurBarreLatérale: FunctionComponent<AdminIndicateursBarreLat�
             changementValeursSélectionnéesCallback={(perimetresMinisteriel) => {
               sauvegarderFiltres({ 'perimetresMinisteriels': perimetresMinisteriel });
             }}
+            perimetresSelectionnables={périmètresMinistériels ?? []}
             périmètresMinistérielsIdsSélectionnésParDéfaut={filtresActifs.perimetresMinisteriels}
           />
         </div>
