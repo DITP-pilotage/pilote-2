@@ -209,7 +209,7 @@ export const EtapeDonneeChantierACollecter = () => {
                     données descriptives
                   </span>
                   {' '}
-                  du chantier sur le territoire : taux d'avancement, tendance, écart
+                  du chantier sur le territoire : taux d'avancement, écart
                 </span>
               </label>
             ) : (
