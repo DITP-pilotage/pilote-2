@@ -37,6 +37,10 @@ const PageChantierEnTêteStyled = styled.header`
   @media print {
     margin-top: 1rem;
   }
+
+  .lien-menu {
+    background-image: none;
+  }
 `;
 
 export default PageChantierEnTêteStyled;

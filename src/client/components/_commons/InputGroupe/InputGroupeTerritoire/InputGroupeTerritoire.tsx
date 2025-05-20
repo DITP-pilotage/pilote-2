@@ -9,12 +9,14 @@ interface InputGroupeTerritoireProps {
   changementValeurSelectionneeCallback: (territoireCodeSelectionne: string) => void
   territoireCodeSelectionneParDefaut: string
   options: InputGroupeOptionsGroupées
+  direction: 'horizontal' | 'vertical'
 }
 
-const InputGroupeTerritoire: FunctionComponent<InputGroupeTerritoireProps> = ({
+export const InputGroupeTerritoire: FunctionComponent<InputGroupeTerritoireProps> = ({
   territoireCodeSelectionneParDefaut,
   changementValeurSelectionneeCallback,
   options,
+  direction,
 }) => {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCodeSelectionneParDefaut);
@@ -22,6 +24,7 @@ const InputGroupeTerritoire: FunctionComponent<InputGroupeTerritoireProps> = ({
   return (
     <InputGroupe
       changementValeurSelectionneeCallback={changementValeurSelectionneeCallback}
+      direction={direction}
       label='Territoire'
       libelle={territoireSélectionné.nomAffiché}
       optionsGroupées={options}
@@ -29,5 +32,3 @@ const InputGroupeTerritoire: FunctionComponent<InputGroupeTerritoireProps> = ({
     />
   );
 };
-
-export default InputGroupeTerritoire;

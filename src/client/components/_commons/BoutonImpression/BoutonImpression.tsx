@@ -6,7 +6,7 @@ const BoutonImpression: FunctionComponent = () => {
   return (
     <BoutonImpressionStyled>
       <button
-        className='fr-btn fr-btn--secondary fr-icon-printer-line fr-btn--icon-left no-wrap bouton-format-mobile'
+        className='fr-link fr-link--icon-left fr-icon-printer-line fr-btn--icon-left fr-text--sm fr-p-0 border-b border-blue-france'
         onClick={() => window.print()}
         title='Imprimer'
         type='button'

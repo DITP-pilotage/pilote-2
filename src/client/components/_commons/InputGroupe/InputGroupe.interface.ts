@@ -6,6 +6,7 @@ export default interface InputGroupeProps {
   label: string,
   libelle: string,
   desactive?: boolean
+  direction: 'horizontal' | 'vertical'
 }
 
 export type InputGroupeOption = {

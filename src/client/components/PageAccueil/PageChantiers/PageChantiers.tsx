@@ -1,12 +1,9 @@
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';
-import Link from 'next/link';
 import { FunctionComponent } from 'react';
-import { useSession } from 'next-auth/react';
 import {
   parseAsBoolean,
-  parseAsInteger,
   parseAsString,
   parseAsStringLiteral,
   useQueryState,
@@ -17,9 +14,6 @@ import Titre from '@/components/_commons/Titre/Titre';
 import CartographieAvancement
   from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
-import ExportDesDonnées, {
-  ID_HTML_MODALE_EXPORT,
-} from '@/components/PageAccueil/PageChantiers/ExportDesDonnées/ExportDesDonnées';
 import {
   ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
 } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
@@ -29,7 +23,6 @@ import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import RemontéeAlerte from '@/components/_commons/RemontéeAlerteChantier/RemontéeAlerte';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
-import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
 import { JaugeDeProgressionSmall } from '@/components/_commons/JaugeDeProgressionSmall/JaugeDeProgressionSmall';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
@@ -39,20 +32,12 @@ import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
-import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
-import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
-import SélecteurMaille
-  from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
-import {
-  ExportDesDonneesV2,
-  ID_HTML_MODALE_EXPORT_V2,
-} from '@/components/PageAccueil/PageChantiers/ExportDesDonneesV2/ExportDesDonneesV2';
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
@@ -60,7 +45,6 @@ import RepartitionsMeteosChantiers from './FiltresMeteos/RepartitionsMeteosChant
 
 interface PageChantiersProps {
   chantiers: ChantierAccueilContrat[],
-  chantiersIdsExport: string[]
   nombreTotalChantiersAvecAlertes: number
   ministères: Ministère[]
   axes: Axe[],
@@ -76,7 +60,6 @@ interface PageChantiersProps {
 
 const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   chantiers,
-  chantiersIdsExport,
   nombreTotalChantiersAvecAlertes,
   ministères,
   axes,
@@ -89,10 +72,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   repartitionMeteosChantiers,
   jalon,
 }) => {
-
-  const { data: session } = useSession();
-  const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
-
   const pathname = '/accueil/chantier/[territoireCode]';
   const { auClicTerritoireCallback } = useCartographie(territoireCode, pathname);
 
@@ -133,33 +112,15 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     history: 'push',
   }));
 
-  const [optionsExport, setOptionsExport] = useQueryStates({
-    etapeCourante: parseAsInteger.withDefault(1).withOptions({
-      shallow: true,
-    }),
-    isModaleExportCsvOuverte: parseAsBoolean.withDefault(false).withOptions({
-      shallow: true,
-      clearOnDefault: true,
-      history: 'push',
-    }),
-    typeExport: parseAsStringLiteral(['chantiers', 'indicateurs']).withDefault('chantiers').withOptions({
-      shallow: true,
-    }),
-  });
-
   const auClickSelecteurJalon = (valeur: '2024' | '2025') => {
     sauvegarderFiltres({ jalon: valeur });
     setJalon(valeur);
   };
 
-  const queryParamString = getQueryParamString({ ...filtres, ...filtresAlertes });
-
   const {
     donnéesTableauChantiers,
     remontéesAlertes,
-    estAutoriseAVoirLeSelecteurDeMaille,
-    estExportV2Actif,
-  } = usePageChantiers(chantiers, territoireCode, filtresComptesCalculés, avancementsAgrégés, session!.profil);
+  } = usePageChantiers(chantiers, territoireCode, filtresComptesCalculés, avancementsAgrégés);
 
   const chantiersSontArchives = filtres.statut?.includes('ARCHIVE') ?? false;
 
@@ -175,103 +136,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
         ) : null
       }
       <div className='fr-py-2w fr-px-md-2w fr-container--fluid'>
-        <div className='fr-mb-2w titre flex align-center'>
-          <Titre
-            baliseHtml='h1'
-            className={`fr-h4 fr-px-2w fr-px-md-0 fr-mb-0 ${chantiersSontArchives ? 'titre-gris' : ''}`}
-          >
-            {`${nombreTotalChantiersAvecAlertes} ${nombreTotalChantiersAvecAlertes >= 2 ? 'chantiers' : 'chantier'}`}
-          </Titre>
-          <div className='titre-liens'>
-            {
-              process.env.NEXT_PUBLIC_FF_FICHE_TERRITORIALE === 'true' && estAutoriséAConsulterLaFicheTerritoriale(session?.profil || '') && !estVueMobile ? (
-                <div>
-                  {
-                    territoireCode === 'NAT-FR' ? (
-                      <button
-                        className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm'
-                        disabled
-                        title='Veuillez séléctionner un territoire pour accéder à sa fiche territoriale'
-                        type='button'
-                      >
-                        Fiche territoriale
-                      </button>
-                    ) : (
-                      <Link
-                        className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
-                        href={`/fiche-territoriale?territoireCode=${territoireCode}`}
-                        title='Voir la fiche territoriale'
-                      >
-                        Fiche territoriale
-                      </Link>
-                    )
-                  }
-                </div>
-              ) : null
-            }
-            {
-              process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' && !estVueMobile ? (
-                <div>
-                  <Link
-                    className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
-                    href={`${territoireCode}/rapport-detaille${queryParamString.length > 0 ? `?${queryParamString}` : ''}`}
-                    title='Voir le rapport détaillé'
-                  >
-                    Voir le rapport détaillé
-                  </Link>
-                </div>
-              ) : null
-            }
-            {
-              process.env.NEXT_PUBLIC_FF_EXPORT_CSV === 'true' && !estVueMobile ? (
-                <div>
-                  <button
-                    aria-controls={ID_HTML_MODALE_EXPORT}
-                    className='fr-btn fr-btn--tertiary-no-outline fr-icon-download-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
-                    data-fr-opened='false'
-                    type='button'
-                  >
-                    Exporter les données
-                  </button>
-                  <ExportDesDonnées listeChantierId={chantiersIdsExport} />
-                </div>
-              ) : null
-            }
-            {
-              estExportV2Actif && !estVueMobile ? (
-                <div>
-                  <button
-                    aria-controls={ID_HTML_MODALE_EXPORT_V2}
-                    className='fr-btn fr-btn--tertiary-no-outline fr-icon-download-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
-                    data-fr-opened={optionsExport.isModaleExportCsvOuverte}
-                    onClick={() => {
-                      setOptionsExport({
-                        isModaleExportCsvOuverte: true,
-                        etapeCourante: 1,
-                        typeExport: 'chantiers',
-                      });
-                    }}
-                    type='button'
-                  >
-                    Exporter les données V2
-                  </button>
-                  <ExportDesDonneesV2
-                    fermetureCallback={() => {
-                      setOptionsExport({
-                        etapeCourante: 1,
-                        typeExport: 'chantiers',
-                      }, { clearOnDefault: true, shallow: true });
-                      setOptionsExport({
-                        isModaleExportCsvOuverte: false,
-                      }, { clearOnDefault: true, shallow: true });
-                    }}
-                    territoireCodeSelectionne={territoireCode}
-                  />
-                </div>
-              ) : null
-            }
-          </div>
-        </div>
         <div className='fr-grid-row'>
           <div className='fr-col-12 fr-col-lg-7 fr-col-xl-6 flex flex-column'>
             <section className='flex flex-1'>
@@ -359,18 +223,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                             {INFOBULLE_CONTENUS.chantiers.repartitions}
                           </Infobulle>
                         </TitreInfobulleConteneur>
-                        {
-                          estAutoriseAVoirLeSelecteurDeMaille ? (
-                            <div
-                              className='fr-grid-row fr-pb-2w fr-text--sm repartition-selecteur-maille'
-                            >
-                              <SélecteurMaille
-                                mailleQuery={mailleQuery}
-                                pathname={pathname}
-                              />
-                            </div>
-                          ) : null
-                        }
                         <div className='flex flex-column items-center fr-px-3v'>
                           <JaugeDeProgressionSmall
                             couleur={chantiersSontArchives ? 'gris' : 'vert'}
@@ -425,14 +277,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 >
                   Taux d'avancement des chantiers par territoire
                 </Titre>
-                {
-                  estAutoriseAVoirLeSelecteurDeMaille ? (
-                    <SélecteurMaille
-                      mailleQuery={mailleQuery}
-                      pathname={pathname}
-                    />
-                  ) : null
-                }
                 <CartographieAvancement
                   auClicTerritoireCallback={auClicTerritoireCallback}
                   données={avancementsGlobauxTerritoriauxMoyens}

@@ -10,6 +10,7 @@ import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { libellésMétéos } from '@/server/domain/météo/Météo.interface';
 import { NOMS_CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import FiltresActifsStyled from './FiltresActifs.styled';
+import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
 
 interface FiltresActifsProps {
   ministères: Ministère[]
@@ -85,13 +86,12 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
 
   return (
     <FiltresActifsStyled
-      className='fr-px-2w fr-py-2w'
       id='filtres-actifs'
     >
       <div
         aria-controls='filtres-actifs'
         aria-expanded={estOuvert}
-        className={`fr-accordion__btn flex align-center justify-between${estOuvert ? ' fr-mb-2w ' : ''}`}
+        className='fr-accordion__btn flex align-center justify-between'
         onClick={() => setEstOuvert(!estOuvert)}
         onKeyDown={event => {
           if (event.key === 'Enter' || event.key === ' ') {
@@ -118,7 +118,6 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
             Réinitialiser les filtres
           </button>
         </div>
-        <span className={estOuvert ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line'} />
       </div>
       <div className={`${estOuvert ? 'fr-collapse--expanded' : 'fr-collapse'}`}>
         {
@@ -141,6 +140,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
                           color='warning'
                           doitAvoirUneTailleFixe
                           libelle="Taux d'avancement non calculé en raison d'indicateurs non renseignés"
+                          size='sm'
                           suppressionCallback={() => {
                             filtres.estEnAlerteTauxAvancementNonCalculé = false;
                             sauvegarderFiltres({ estEnAlerteTauxAvancementNonCalculé: false });

@@ -3,8 +3,6 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-media/icons-media.min.css';
 import { FunctionComponent, useState } from 'react';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
-import SélecteursMaillesEtTerritoires
-  from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Commentaires from '@/components/_commons/CommentairesNew/Commentaires';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultatsChantier/SynthèseDesRésultats';
@@ -38,7 +36,6 @@ import {
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { AvancementChantierContrat } from '@/components/PageChantier/AvancementChantier';
 import { CoordinateurTerritorial, DonneesComparaisonDuTauxDAvancementType, ResponsableLocal } from '@/server/domain/territoire/Territoire.interface';
-import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import BandeauInformationMajDonnees
   from '@/components/PageChantier/BandeauInformationMajDonnees/BandeauInformationMajDonnees';
 import api from '@/server/infrastructure/api/trpc/api';
@@ -46,13 +43,13 @@ import BandeauInformation from '@/client/components/_commons/BandeauInformation/
 import {
   CartographieIndicateurType,
 } from '@/client/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
+import { PanelMenuNavigation } from '@/components/_commons/PanelMenuNavigation/PanelMenuNavigation';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import PageChantierEnTête from './EnTête/EnTête';
 import Cartes, { CartographieType } from './Cartes/Cartes';
 import PageChantierStyled from './PageChantier.styled';
 import usePageChantier from './usePageChantier';
 import DécisionsStratégiques from './DécisionsStratégiques/DécisionsStratégiques';
-
 interface PageChantierProps {
   indicateurs: Indicateur[]
   chantier: Chantier
@@ -103,8 +100,6 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
   donneesComparaisonDuTauxDAvancement,
 }: PageChantierProps) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('md');
-  const [estVisibleEnMobile, setEstVisibleEnMobile] = useState(false);
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
@@ -154,6 +149,8 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
 
   const listeRubriques = listeRubriquesChantier(categoriesAvecElements, territoireSélectionné.maille);
 
+  const pathname = '/chantier/[id]/[territoireCode]';
+
   return (
     <PageChantierStyled className='flex'>
       <BarreLatérale
@@ -161,19 +158,12 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
-          {
-            estVueMobile && estVisibleEnMobile ? (
-              <Titre
-                baliseHtml='h3'
-                className='fr-h6 fr-mb-2w fr-mt-0 fr-col-8'
-              >
-                Maille géographique
-              </Titre>
-            ) : null
-          }
-          <SélecteursMaillesEtTerritoires
-            chantierMailles={chantier.mailles}
-            pathname='/chantier/[id]/[territoireCode]'
+          <PageChantierEnTête
+            afficheLeBoutonFicheConducteur={estAutoriseAVoirLeBoutonFicheConducteur}
+            afficheLeBoutonImpression
+            afficheLeBoutonMiseAJourDonnee={estAutoriseAImporterDesIndicateurs}
+            chantier={chantier}
+            responsables={chantier.responsables}
             territoireCode={territoireCode}
           />
         </BarreLatéraleEncart>
@@ -183,25 +173,12 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
         />
       </BarreLatérale>
       <main className='fr-pb-5w w-full'>
-        <div className='bouton-filtrer fr-hidden-lg fr-py-1w fr-px-1v'>
-          <button
-            className='fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-equalizer-fill fr-text-title--blue-france'
-            onClick={() => {
-              setEstOuverteBarreLatérale(true);
-              setEstVisibleEnMobile(true);
-            }}
-            title='Filtrer'
-            type='button'
-          >
-            Filtrer
-          </button>
-        </div>
-        <PageChantierEnTête
-          afficheLeBoutonFicheConducteur={estAutoriseAVoirLeBoutonFicheConducteur}
-          afficheLeBoutonImpression
-          afficheLeBoutonMiseAJourDonnee={estAutoriseAImporterDesIndicateurs}
-          chantier={chantier}
-          responsables={chantier.responsables}
+        <PanelMenuNavigation
+          estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
+          libelleMenuNavigation='Informations du chantier'
+          mailleQuery={mailleQuery}
+          pathname={pathname}
+          setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
           territoireCode={territoireCode}
         />
         {
