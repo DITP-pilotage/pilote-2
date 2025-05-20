@@ -13,13 +13,14 @@ import {
   InputGroupeOptionsGroupées,
 } from '@/components/_commons/InputGroupe/InputGroupe.interface';
 import { MultiSelectOption } from '@/components/_commons/MultiSelect/MultiSelect.interface';
-import InputGroupeTerritoire from '@/components/_commons/InputGroupe/InputGroupeTerritoire/InputGroupeTerritoire';
+import { InputGroupeTerritoire } from '@/components/_commons/InputGroupe/InputGroupeTerritoire/InputGroupeTerritoire';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
 interface SélecteursMaillesEtTerritoiresProps {
   chantierMailles?: Chantier['mailles'];
   territoireCode: string
   pathname: string
+  direction?: 'horizontal' | 'vertical'
 }
 
 const générerLesOptions = (nom: string, code: string, disabled: boolean): MultiSelectOption => ({
@@ -34,12 +35,12 @@ const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerri
 
   const optionsRégions = {
     label: 'Régions',
-    options: trierParOrdreAlphabétique<InputGroupeOptions>(territoiresDisponiblesReg.map(region => générerLesOptions(region.nomAffiché, region.code, !!chantierMailles ? !chantierMailles['regionale'][region.code].estApplicable ?? true : false)), 'label'),
+    options: trierParOrdreAlphabétique<InputGroupeOptions>(territoiresDisponiblesReg.map(region => générerLesOptions(region.nomAffiché, region.code, !!chantierMailles ? !chantierMailles['regionale'][region.code].estApplicable : true)), 'label'),
   };
 
   const optionsDépartements = {
     label: 'Départements',
-    options: trierParOrdreAlphabétique<InputGroupeOptions>(territoiresDisponiblesDept.map(departement => générerLesOptions(departement.nomAffiché, departement.code, !!chantierMailles ? !chantierMailles['departementale'][departement.code].estApplicable ?? true : false)), 'label'),
+    options: trierParOrdreAlphabétique<InputGroupeOptions>(territoiresDisponiblesDept.map(departement => générerLesOptions(departement.nomAffiché, departement.code, !!chantierMailles ? !chantierMailles['departementale'][departement.code].estApplicable : true)), 'label'),
   };
 
   return [
@@ -52,6 +53,7 @@ const SélecteursMaillesEtTerritoires: FunctionComponent<SélecteursMaillesEtTer
   chantierMailles,
   territoireCode,
   pathname,
+  direction = 'vertical',
 }) => {
 
   const router = useRouter();
@@ -85,6 +87,7 @@ const SélecteursMaillesEtTerritoires: FunctionComponent<SélecteursMaillesEtTer
   return (
     <InputGroupeTerritoire
       changementValeurSelectionneeCallback={(valeurSélectionne: string) => changerTerritoire(valeurSélectionne)}
+      direction={direction}
       options={construireLaListeDOptions(territoiresAccessiblesEnLecture, session?.profil, chantierMailles)}
       territoireCodeSelectionneParDefaut={territoireCode}
     />

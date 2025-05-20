@@ -72,24 +72,24 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
   const filtresTerritorialisation = estProfilRegionalAutoriseAVoirLaTerritorialisation ? [
     {
       id: 'regionale',
-      nom: 'régionale',
+      nom: 'Régionale',
     },
     {
       id: 'departementale',
-      nom: 'départementale',
+      nom: 'Départementale',
     },
   ] : [
     {
       id: 'nationale',
-      nom: 'nationale',
+      nom: 'Nationale',
     },
     {
       id: 'regionale',
-      nom: 'régionale',
+      nom: 'Régionale',
     },
     {
       id: 'departementale',
-      nom: 'départementale',
+      nom: 'Départementale',
     },
   ];
 

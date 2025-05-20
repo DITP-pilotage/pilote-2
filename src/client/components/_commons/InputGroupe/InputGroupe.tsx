@@ -12,6 +12,7 @@ const InputGroupe: FunctionComponent<InputGroupeProps> = ({
   label,
   desactive,
   libelle,
+  direction,
 }) => {
   const id = useId();
   const ref = useRef(null);
@@ -33,22 +34,30 @@ const InputGroupe: FunctionComponent<InputGroupeProps> = ({
 
   return (
     <InputGroupeStyled>
-      <label
-        className='fr-label'
-        htmlFor={id}
-      >
-        {label}
-      </label>
-      <button
-        className='fr-select fr-ellipsis'
-        disabled={desactive}
-        id={id}
-        title={libelle}
-        type='button'
-        {...multiSelectBoutonProps}
-      >
-        {libelle}
-      </button>
+      <div className={`${direction === 'horizontal' ? ' flex align-center' : ''}`}>
+        <label
+          className={`fr-label no-wrap ${direction === 'horizontal' ? 'fr-mr-1w' : ''}`}
+          htmlFor={id}
+        >
+          {label}
+          {direction === 'horizontal' ? (
+            <span className='fr-text-title--blue-france'>
+              {' '}
+              :
+            </span>
+          ) : null}
+        </label>
+        <button
+          className={`fr-select fr-ellipsis ${direction === 'horizontal' ? 'fr-mt-0' : ''}`}
+          disabled={desactive}
+          id={id}
+          title={libelle}
+          type='button'
+          {...multiSelectBoutonProps}
+        >
+          {libelle}
+        </button>
+      </div>
       <div
         className={estOuvert ? 'visible' : ''}
         ref={ref}

@@ -1,14 +1,14 @@
 import { FunctionComponent, useState } from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getServerSession } from 'next-auth/next';
+import Link from 'next/link';
 import Head from 'next/head';
 import { useSession } from 'next-auth/react';
+import { parseAsBoolean, useQueryState, parseAsStringLiteral, parseAsString, useQueryStates, parseAsInteger } from 'nuqs';
 import assert from 'node:assert/strict';
 import PageChantiers from '@/components/PageAccueil/PageChantiers/PageChantiers';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
-import SélecteursMaillesEtTerritoires
-  from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires';
 import { Filtres } from '@/components/PageAccueil/Filtres/Filtres';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import RécupérerChantiersAccessiblesEnLectureUseCase
@@ -48,7 +48,14 @@ import { ModaleVideoAccueil } from '@/components/PageAccueil/PageChantiers/Modal
 import { getContainer } from '@/server/dependances';
 import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
 import { profilsRégionaux } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
-import IndexStyled from './index.styled';
+import Titre from '@/components/_commons/Titre/Titre';
+import { getQueryParamString } from '@/client/utils/getQueryParamString';
+import api from '@/server/infrastructure/api/trpc/api';
+import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
+import { ExportDesDonneesV2, ID_HTML_MODALE_EXPORT_V2 } from '@/components/PageAccueil/PageChantiers/ExportDesDonneesV2/ExportDesDonneesV2';
+import ExportDesDonnées, { ID_HTML_MODALE_EXPORT } from '@/components/PageAccueil/PageChantiers/ExportDesDonnées/ExportDesDonnées';
+import { PanelMenuNavigation } from '@/components/_commons/PanelMenuNavigation/PanelMenuNavigation';
+import { IndexStyled } from './index.styled';
 
 interface ChantierAccueil {
   chantiers: ChantierAccueilContrat[]
@@ -127,6 +134,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     estEnAlerteAbscenceTauxAvancementDepartemental: query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
     estEnAlertePossedePropositionsValeurActuelle: query.estEnAlertePossedePropositionsValeurActuelle === 'true',
   };
+
   const [ministères, axes] = session.habilitations.lecture.chantiers.length === 0 ? [[], []] : (
     await Promise.all(
       [
@@ -257,8 +265,53 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   const estProfilRegionalAutoriseAVoirLaTerritorialisation = PROFIL_REGIONAUX_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE.has(session?.profil || '');
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
+  const filtresStatut = useQueryState('statut', parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']));
+  const chantiersSontArchives = filtresStatut?.includes('ARCHIVE') ?? false;
+  const PROFIL_INTERDIT_DE_VOIR_LE_SELECTEUR_DE_MAILLE = new Set([ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.RESPONSABLE_DEPARTEMENT]);
+  const estAutoriseAVoirLeSelecteurDeMaille = !PROFIL_INTERDIT_DE_VOIR_LE_SELECTEUR_DE_MAILLE.has(session?.profil || '');
+
+  const pathname = '/accueil/chantier/[territoireCode]';
+
+  const [filtres] = useQueryStates({
+    perimetres: parseAsString.withDefault(''),
+    axes: parseAsString.withDefault(''),
+    meteos: parseAsString.withDefault(''),
+    estBarometre: parseAsBoolean.withDefault(false),
+    territorialisation: parseAsString.withDefault(''),
+    maille: parseAsString.withDefault(''),
+    statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']),
+    jalon: parseAsStringLiteral(['2024', '2025']),
+  });
+
+  const [filtresAlertes] = useQueryStates({
+    estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
+    estEnAlerteÉcart: parseAsBoolean.withDefault(false),
+    estEnAlerteBaisse: parseAsBoolean.withDefault(false),
+    estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
+    estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
+    estEnAlertePossedePropositionsValeurActuelle: parseAsBoolean.withDefault(false),
+  });
+
+  const [optionsExport, setOptionsExport] = useQueryStates({
+    etapeCourante: parseAsInteger.withDefault(1).withOptions({
+      shallow: true,
+    }),
+    isModaleExportCsvOuverte: parseAsBoolean.withDefault(false).withOptions({
+      shallow: true,
+      clearOnDefault: true,
+      history: 'push',
+    }),
+    typeExport: parseAsStringLiteral(['chantiers', 'indicateurs']).withDefault('chantiers').withOptions({
+      shallow: true,
+    }),
+  });
+  
+  const { data: estExportV2Actif } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_EXPORT_CSV_V2' });
+
+  const queryParamString = getQueryParamString({ ...filtres, ...filtresAlertes });
+
   return (
-    <>
+    <IndexStyled>
       <Head>
         <title>
           PILOTE - Piloter l'action publique par les résultats
@@ -272,10 +325,103 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
           setEstOuvert={setEstOuverteBarreLatérale}
         >
           <BarreLatéraleEncart>
-            <SélecteursMaillesEtTerritoires
-              pathname='/accueil/chantier/[territoireCode]'
-              territoireCode={territoireCode}
-            />
+            <Titre
+              baliseHtml='h1'
+              className={`fr-h2 fr-p-0 fr-mb-1w${chantiersSontArchives ? ' titre-gris' : ' fr-text-title--blue-france'}`}
+            >
+              {`${nombreTotalChantiersAvecAlertes} ${nombreTotalChantiersAvecAlertes >= 2 ? 'chantiers' : 'chantier'}`}
+            </Titre>
+            <div className='titre flex align-center'>
+              <div className='titre-liens'>
+                {
+                process.env.NEXT_PUBLIC_FF_FICHE_TERRITORIALE === 'true' && estAutoriséAConsulterLaFicheTerritoriale(session?.profil || '') ? (
+                  <div>
+                    {
+                      territoireCode === 'NAT-FR' ? (
+                        <button
+                          className='lien-menu fr-link fr-link--icon-left fr-icon-article-line fr-btn--icon-left fr-text--sm'
+                          disabled
+                          title='Veuillez séléctionner un territoire pour accéder à sa fiche territoriale'
+                          type='button'
+                        >
+                          Fiche territoriale
+                        </button>
+                      ) : (
+                        <Link
+                          className='lien-menu fr-link fr-link--icon-left fr-icon-article-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france'
+                          href={`/fiche-territoriale?territoireCode=${territoireCode}`}
+                          title='Voir la fiche territoriale'
+                        >
+                          Fiche territoriale
+                        </Link>
+                      )
+                    }
+                  </div>
+                ) : null
+              }
+                {
+                process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' ? (
+                  <div>
+                    <Link
+                      className='lien-menu fr-link fr-link--icon-left fr-icon-article-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france'
+                      href={`${territoireCode}/rapport-detaille${queryParamString.length > 0 ? `?${queryParamString}` : ''}`}
+                      title='Voir le rapport détaillé'
+                    >
+                      Voir le rapport détaillé
+                    </Link>
+                  </div>
+                ) : null
+              }
+                {
+                process.env.NEXT_PUBLIC_FF_EXPORT_CSV === 'true' ? (
+                  <div>
+                    <button
+                      aria-controls={ID_HTML_MODALE_EXPORT}
+                      className='fr-link fr-link--icon-left fr-icon-download-line fr-btn--icon-left fr-text--sm fr-p-0 border-b border-blue-france'
+                      data-fr-opened='false'
+                      type='button'
+                    >
+                      Exporter les données
+                    </button>
+                    <ExportDesDonnées listeChantierId={chantiersIdsExport} />
+                  </div>
+                ) : null
+              }
+                {
+                estExportV2Actif ? (
+                  <div>
+                    <button
+                      aria-controls={ID_HTML_MODALE_EXPORT_V2}
+                      className='fr-link fr-link--icon-left fr-icon-download-line fr-btn--icon-left fr-text--sm fr-p-0 border-b border-blue-france'
+                      data-fr-opened={optionsExport.isModaleExportCsvOuverte}
+                      onClick={() => {
+                        setOptionsExport({
+                          isModaleExportCsvOuverte: true,
+                          etapeCourante: 1,
+                          typeExport: 'chantiers',
+                        });
+                      }}
+                      type='button'
+                    >
+                      Exporter les données V2
+                    </button>
+                    <ExportDesDonneesV2
+                      fermetureCallback={() => {
+                        setOptionsExport({
+                          etapeCourante: 1,
+                          typeExport: 'chantiers',
+                        }, { clearOnDefault: true, shallow: true });
+                        setOptionsExport({
+                          isModaleExportCsvOuverte: false,
+                        }, { clearOnDefault: true, shallow: true });
+                      }}
+                      territoireCodeSelectionne={territoireCode}
+                    />
+                  </div>
+                ) : null
+              }
+              </div>
+            </div>
           </BarreLatéraleEncart>
           <section>
             <Filtres
@@ -287,23 +433,19 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             />
           </section>
         </BarreLatérale>
-        <IndexStyled className='w-full'>
-          <button
-            className='fr-hidden-lg bouton-filtrer fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-equalizer-fill fr-text-title--blue-france fr-py-2w fr-px-5v'
-            onClick={() => {
-              setEstOuverteBarreLatérale(true);
-            }}
-            title='Filtrer'
-            type='button'
-          >
-            Filtrer
-          </button>
+        <div className='w-full'>
+          <PanelMenuNavigation
+            estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
+            mailleQuery={mailleQuery}
+            pathname={pathname}
+            setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
+            territoireCode={territoireCode}
+          />
           <PageChantiers
             avancementsAgrégés={avancementsAgrégés}
             avancementsGlobauxTerritoriauxMoyens={avancementsGlobauxTerritoriauxMoyens}
             axes={axes}
             chantiers={chantiers}
-            chantiersIdsExport={chantiersIdsExport}
             filtresComptesCalculés={filtresComptesCalculés}
             jalon={jalon}
             mailleQuery={mailleQuery}
@@ -324,9 +466,9 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
               </>
             ) : null  
           }
-        </IndexStyled>
+        </div>
       </div>
-    </>
+    </IndexStyled>
   );
 };
 

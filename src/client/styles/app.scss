@@ -188,6 +188,18 @@
   background-color: var(--background-action-low-blue-france) !important
 }
 
+.fr-background-blue-france-850 {
+  background-color: var(--blue-france-850-200) !important;
+}
+
+.fr-background-blue-france-925 {
+  background-color: var(--blue-france-925-125) !important;
+}
+
+.fr-background-blue-france-975 {
+  background-color: var(--blue-france-975-75) !important;
+}
+
 .fr-background-transparent {
   background-color: transparent !important
 }
@@ -228,6 +240,10 @@
   border-left-width: 1px;
   border-left-color: var(--border-default-grey);
   border-left-style: solid;
+}
+
+.border-blue-france {
+  border-color: var(--text-action-high-blue-france) !important;
 }
 
 .border {
