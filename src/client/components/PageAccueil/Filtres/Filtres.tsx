@@ -32,6 +32,7 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
 
   const [, setFiltres] = useQueryStates({
     perimetres: parseAsString.withDefault(''),
+    statut: parseAsString.withDefault(''),
     axes: parseAsString.withDefault(''),
     meteos: parseAsString.withDefault(''),
     estBarometre: parseAsBoolean.withDefault(false),
@@ -55,6 +56,7 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
       perimetres: '',
       axes: '',
       meteos: '',
+      statut: 'PUBLIE',
       estBarometre: false,
       territorialisation: '',
       estEnAlerteTauxAvancementNonCalculé: false,

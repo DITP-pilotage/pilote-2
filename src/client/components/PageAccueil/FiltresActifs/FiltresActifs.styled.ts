@@ -3,6 +3,7 @@ import { breakpointL } from '@/components/_commons/MiseEnPage/MiseEnPage.styled'
 
 const FiltresActifsStyled = styled.div`
   position: sticky;
+  width: 100%;
   top: 0;
   z-index: 2;
   background: var(--blue-france-925-125);

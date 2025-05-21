@@ -25,6 +25,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
     perimetres: parseAsString.withDefault(''),
     axes: parseAsString.withDefault(''),
     meteos: parseAsString.withDefault(''),
+    statut: parseAsString.withDefault(''),
     estBarometre: parseAsBoolean.withDefault(false),
     territorialisation: parseAsString.withDefault(''),
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
@@ -73,6 +74,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
       perimetres: '',
       axes: '',
       meteos: '',
+      statut: 'PUBLIE',
       estBarometre: false,
       territorialisation: '',
       estEnAlerteTauxAvancementNonCalculé: false,
@@ -91,7 +93,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
       <div
         aria-controls='filtres-actifs'
         aria-expanded={estOuvert}
-        className='fr-accordion__btn flex align-center justify-between'
+        className='fr-accordion__btn flex align-center justify-between fr-px-3w fr-pt-3w fr-pb-2w'
         onClick={() => setEstOuvert(!estOuvert)}
         onKeyDown={event => {
           if (event.key === 'Enter' || event.key === ' ') {
@@ -119,16 +121,16 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
           </button>
         </div>
       </div>
-      <div className={`${estOuvert ? 'fr-collapse--expanded' : 'fr-collapse'}`}>
+      <div className={`${estOuvert ? 'fr-collapse--expanded fr-px-3w fr-pb-2w' : 'fr-collapse'}`}>
         {
           filtres.estEnAlerteTauxAvancementNonCalculé || filtres.estEnAlerteÉcart || filtres.estEnAlerteBaisse || filtres.estEnAlerteMétéoNonRenseignée || filtres.estEnAlerteAbscenceTauxAvancementDepartemental || filtres.estEnAlertePossedePropositionsValeurActuelle ? (
             <div className='fr-grid-row'>
-              <div className='fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
+              <div className='fr-col-lg-2 fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
                 <span className='bold fr-text--xs fr-mb-0'>
                   SIGNALEMENT :
                 </span> 
               </div>
-              <div className='fr-col-sm-9 fr-col-7'>
+              <div className='fr-col-lg-10 fr-col-sm-9 fr-col-7'>
                 <ul
                   aria-label='liste des tags des filtres ministère actifs'
                   className='conteneur-tags fr-my-0'
@@ -248,12 +250,12 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
         {
           filtres.meteos ? (
             <div className='fr-grid-row'>
-              <div className='fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
+              <div className='fr-col-lg-2 fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
                 <span className='bold fr-text--xs fr-mb-0'>
                   MÉTÉO :
                 </span>
               </div>
-              <div className='fr-col-sm-9 fr-col-7'>
+              <div className='fr-col-lg-10 fr-col-sm-9 fr-col-7'>
                 <ul
                   aria-label='liste des tags des filtres météo actifs'
                   className='conteneur-tags fr-my-0'
@@ -287,12 +289,12 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
         {
           filtres.perimetres ? (
             <div className='fr-grid-row'>
-              <div className='fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
+              <div className='fr-col-lg-2 fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
                 <span className='bold fr-text--xs fr-mb-0'>
                   MINISTÈRE :
                 </span>
               </div>
-              <div className='fr-col-sm-9 fr-col-7'>
+              <div className='fr-col-lg-10 fr-col-sm-9 fr-col-7'>
                 <ul
                   aria-label='liste des tags des filtres ministère actifs'
                   className='conteneur-tags fr-my-0'
@@ -325,12 +327,12 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
         {
           filtres.axes ? (
             <div className='fr-grid-row'>
-              <div className='fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
+              <div className='fr-col-lg-2 fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
                 <span className='bold fr-text--xs fr-mb-0'>
                   AXE :
                 </span>
               </div>
-              <div className='fr-col-sm-9 fr-col-7'>
+              <div className='fr-col-lg-10 fr-col-sm-9 fr-col-7'>
                 <ul
                   aria-label='liste des tags des filtres axes actifs'
                   className='conteneur-tags fr-my-0'
@@ -364,12 +366,12 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
         {
           filtres.territorialisation ? (
             <div className='fr-grid-row'>
-              <div className='fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
+              <div className='fr-col-lg-2 fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
                 <span className='bold fr-text--xs fr-mb-0'>
                   TERRITORIALISATION :
                 </span>
               </div>
-              <div className='fr-col-sm-9 fr-col-7'>
+              <div className='fr-col-lg-10 fr-col-sm-9 fr-col-7'>
                 <ul
                   aria-label='liste des tags des filtres territorialisation actifs'
                   className='conteneur-tags fr-my-0'
@@ -400,12 +402,12 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
         {
           filtres.estBarometre ? (
             <div className='fr-grid-row'>
-              <div className='fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
+              <div className='fr-col-lg-2 fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
                 <span className='bold fr-text--xs fr-mb-0'>
                   AUTRE :
                 </span>
               </div>
-              <div className='fr-col-sm-9 fr-col-7'>
+              <div className='fr-col-lg-10 fr-col-sm-9 fr-col-7'>
                 <ul
                   aria-label='liste des tags des filtres baromètre actifs'
                   className='conteneur-tags fr-my-0'

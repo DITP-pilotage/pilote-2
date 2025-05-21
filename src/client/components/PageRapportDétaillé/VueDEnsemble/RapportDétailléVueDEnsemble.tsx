@@ -82,7 +82,6 @@ const RapportDétailléVueDEnsemble: FunctionComponent<RapportDétailléVueDEnse
             </TitreInfobulleConteneur>
             <Avancements
               avancements={avancementsAgrégés}
-              jalon={jalon}
             />
           </section>
           <hr className='fr-hr fr-my-3w fr-pb-1v' />
