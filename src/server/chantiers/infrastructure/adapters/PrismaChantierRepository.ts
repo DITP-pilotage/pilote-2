@@ -403,6 +403,21 @@ export class PrismaChantierRepository implements ChantierRepository {
             prismaChantierTerritoireNat = prismaChantierIdentite.chantier_territoire.find(chantierTerritoire => chantierTerritoire.territoire_code === 'NAT-FR')!;
           }
 
+          let aUnePropositionsValeurActuelle = false;
+          const maille = prismaChantierTerritoire.maille;
+          if (maille === 'DEPT') {
+            aUnePropositionsValeurActuelle = prismaChantierTerritoire.nombre_propositions_valeur_actuelle > 0;
+          } else if (maille === 'REG') {
+            const codeRegion = prismaChantierTerritoire.territoire_code;
+            aUnePropositionsValeurActuelle = prismaChantierTerritoire.nombre_propositions_valeur_actuelle > 0 || 
+              prismaChantierIdentite.chantier_territoire
+                .filter(chantierTerritoire => chantierTerritoire.territoire.code_parent === codeRegion)
+                .some(chantierTerritoire => chantierTerritoire.nombre_propositions_valeur_actuelle > 0);
+          } else {
+            aUnePropositionsValeurActuelle = prismaChantierIdentite.chantier_territoire.some(chantierTerritoire => chantierTerritoire.nombre_propositions_valeur_actuelle > 0);
+          }
+
+          const chantiersTerritoiresMailleDepartementale = prismaChantierIdentite.chantier_territoire.filter(chantierTerritoire => chantierTerritoire.maille === 'DEPT' && chantierTerritoire.est_applicable);
           return [...acc, {
             nom: prismaChantierIdentite.nom,
             id: prismaChantierIdentite.id,
@@ -438,6 +453,12 @@ export class PrismaChantierRepository implements ChantierRepository {
             objDéjàFait: prismaChantierTerritoire.maille === 'NAT' ? mapDejaFait.get(prismaChantierIdentite.id) || null : null,
             objÀFaire: prismaChantierTerritoire.maille === 'NAT' ? mapAFaire.get(prismaChantierIdentite.id) || null : null,
             synthèseDesRésultats: mapSynthesesDesResultats.get(`${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`) || null,
+            ecart: prismaChantierTerritoire.ecart,
+            tendance: prismaChantierTerritoire.tendance,
+            cibleAttendu: prismaChantierIdentite.cible_attendue,
+            avancementTerritoire: prismaChantierTerritoire.taux_avancement_mandat,
+            aUnePropositionsValeurActuelle: aUnePropositionsValeurActuelle,
+            aUnTauxAvancementDepartemental: chantiersTerritoiresMailleDepartementale.length === 0 || chantiersTerritoiresMailleDepartementale.some(chantierTerritoire => chantierTerritoire.taux_avancement_mandat !== null),
           }];
         }
         return acc;
@@ -679,6 +700,20 @@ export class PrismaChantierRepository implements ChantierRepository {
             prismaChantierTerritoireNat = prismaChantierIdentite.chantier_territoire.find(chantierTerritoire => chantierTerritoire.territoire_code === 'NAT-FR')!;
           }
 
+          let aUnePropositionsValeurActuelle = false;
+          const maille = prismaChantierTerritoire.maille;
+          if (maille === 'DEPT') {
+            aUnePropositionsValeurActuelle = prismaChantierTerritoire.nombre_propositions_valeur_actuelle > 0;
+          } else if (maille === 'REG') {
+            const codeRegion = prismaChantierTerritoire.territoire_code;
+            aUnePropositionsValeurActuelle = prismaChantierTerritoire.nombre_propositions_valeur_actuelle > 0 || 
+              prismaChantierIdentite.chantier_territoire
+                .filter(chantierTerritoire => chantierTerritoire.territoire.code_parent === codeRegion)
+                .some(chantierTerritoire => chantierTerritoire.nombre_propositions_valeur_actuelle > 0);
+          } else {
+            aUnePropositionsValeurActuelle = prismaChantierIdentite.chantier_territoire.some(chantierTerritoire => chantierTerritoire.nombre_propositions_valeur_actuelle > 0);
+          }
+
           return [...acc, {
             nom: prismaChantierIdentite.nom,
             id: prismaChantierIdentite.id,
@@ -714,6 +749,14 @@ export class PrismaChantierRepository implements ChantierRepository {
             objDéjàFait: prismaChantierTerritoire.maille === 'NAT' ? mapDejaFait?.get(prismaChantierIdentite.id) || null : null,
             objÀFaire: prismaChantierTerritoire.maille === 'NAT' ? mapAFaire?.get(prismaChantierIdentite.id) || null : null,
             synthèseDesRésultats: mapSynthesesDesResultats?.get(`${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`) || null,
+            ecart: prismaChantierTerritoire.ecart,
+            tendance: prismaChantierTerritoire.tendance,
+            cibleAttendu: prismaChantierIdentite.cible_attendue,
+            avancementTerritoire: prismaChantierTerritoire.taux_avancement_mandat,
+            aUnePropositionsValeurActuelle: aUnePropositionsValeurActuelle,
+            aUnTauxAvancementDepartemental: prismaChantierIdentite.chantier_territoire
+              .filter(chantierTerritoire => chantierTerritoire.maille === 'DEPT' && chantierTerritoire.est_applicable)
+              .some(chantierTerritoire => chantierTerritoire.taux_avancement_mandat !== null),
           }];
         }
         return acc;

@@ -289,6 +289,12 @@ describe('PrismaChantierRepository', () => {
           listeStatuts: [],
           listeOptionsExport: [],
           territoireCode: undefined,
+          estEnAlerteTauxAvancementNonCalculé: false,
+          estEnAlerteÉcart: false, 
+          estEnAlerteBaisse: false,
+          estEnAlerteAbscenceTauxAvancementDepartemental: false,
+          estEnAlerteMétéoNonRenseignée: false,
+          estEnAlertePossedePropositionsValeurActuelle: false,
         };
 
         const jalon = 2024;
@@ -430,6 +436,12 @@ describe('PrismaChantierRepository', () => {
           listeStatuts: [],
           listeOptionsExport: [],
           territoireCode: undefined,
+          estEnAlerteTauxAvancementNonCalculé: false,
+          estEnAlerteÉcart: false, 
+          estEnAlerteBaisse: false,
+          estEnAlerteAbscenceTauxAvancementDepartemental: false,
+          estEnAlerteMétéoNonRenseignée: false,
+          estEnAlertePossedePropositionsValeurActuelle: false,
         };
 
         const jalon = 2024;
@@ -528,6 +540,12 @@ describe('PrismaChantierRepository', () => {
           listeStatuts: [],
           listeOptionsExport: [],
           territoireCode: undefined,
+          estEnAlerteTauxAvancementNonCalculé: false,
+          estEnAlerteÉcart: false, 
+          estEnAlerteBaisse: false,
+          estEnAlerteAbscenceTauxAvancementDepartemental: false,
+          estEnAlerteMétéoNonRenseignée: false,
+          estEnAlertePossedePropositionsValeurActuelle: false,
         };
 
         const jalon = 2024;
@@ -660,6 +678,12 @@ describe('PrismaChantierRepository', () => {
           listeStatuts: [],
           listeOptionsExport: [],
           territoireCode: undefined,
+          estEnAlerteTauxAvancementNonCalculé: false,
+          estEnAlerteÉcart: false, 
+          estEnAlerteBaisse: false,
+          estEnAlerteAbscenceTauxAvancementDepartemental: false,
+          estEnAlerteMétéoNonRenseignée: false,
+          estEnAlertePossedePropositionsValeurActuelle: false,
         };
 
         const jalon = 2024;
@@ -716,6 +740,12 @@ describe('PrismaChantierRepository', () => {
         listeStatuts: [],
         listeOptionsExport: [],
         territoireCode: undefined,
+        estEnAlerteTauxAvancementNonCalculé: false,
+        estEnAlerteÉcart: false, 
+        estEnAlerteBaisse: false,
+        estEnAlerteAbscenceTauxAvancementDepartemental: false,
+        estEnAlerteMétéoNonRenseignée: false,
+        estEnAlertePossedePropositionsValeurActuelle: false,
       };
 
       // When
@@ -760,6 +790,12 @@ describe('PrismaChantierRepository', () => {
         listeStatuts: [],
         listeOptionsExport: [],
         territoireCode: undefined,
+        estEnAlerteTauxAvancementNonCalculé: false,
+        estEnAlerteÉcart: false, 
+        estEnAlerteBaisse: false,
+        estEnAlerteAbscenceTauxAvancementDepartemental: false,
+        estEnAlerteMétéoNonRenseignée: false,
+        estEnAlertePossedePropositionsValeurActuelle: false,
       };
 
       // When
@@ -808,6 +844,12 @@ describe('PrismaChantierRepository', () => {
         listeStatuts: [],
         listeOptionsExport: [],
         territoireCode: undefined,
+        estEnAlerteTauxAvancementNonCalculé: false,
+        estEnAlerteÉcart: false, 
+        estEnAlerteBaisse: false,
+        estEnAlerteAbscenceTauxAvancementDepartemental: false,
+        estEnAlerteMétéoNonRenseignée: false,
+        estEnAlertePossedePropositionsValeurActuelle: false,
       };
 
       // When
@@ -862,6 +904,12 @@ describe('PrismaChantierRepository', () => {
         listeStatuts: ['PUBLIE', 'BROUILLON'],
         listeOptionsExport: [],
         territoireCode: undefined,
+        estEnAlerteTauxAvancementNonCalculé: false,
+        estEnAlerteÉcart: false, 
+        estEnAlerteBaisse: false,
+        estEnAlerteAbscenceTauxAvancementDepartemental: false,
+        estEnAlerteMétéoNonRenseignée: false,
+        estEnAlertePossedePropositionsValeurActuelle: false,
       };
 
       // When
@@ -921,6 +969,12 @@ describe('PrismaChantierRepository', () => {
         listeStatuts: [],
         listeOptionsExport: [],
         territoireCode: undefined,
+        estEnAlerteTauxAvancementNonCalculé: false,
+        estEnAlerteÉcart: false, 
+        estEnAlerteBaisse: false,
+        estEnAlerteAbscenceTauxAvancementDepartemental: false,
+        estEnAlerteMétéoNonRenseignée: false,
+        estEnAlertePossedePropositionsValeurActuelle: false,
       };
 
       // When
@@ -980,6 +1034,12 @@ describe('PrismaChantierRepository', () => {
         listeStatuts: [],
         listeOptionsExport: [],
         territoireCode: undefined,
+        estEnAlerteTauxAvancementNonCalculé: false,
+        estEnAlerteÉcart: false, 
+        estEnAlerteBaisse: false,
+        estEnAlerteAbscenceTauxAvancementDepartemental: false,
+        estEnAlerteMétéoNonRenseignée: false,
+        estEnAlertePossedePropositionsValeurActuelle: false,
       };
 
       // When

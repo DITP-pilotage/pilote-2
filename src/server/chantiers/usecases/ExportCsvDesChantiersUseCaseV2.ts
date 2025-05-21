@@ -17,6 +17,7 @@ import {
   ChantierPourExport,
   masquerPourProfilDROM,
   masquerPourProfilDROMEtMailleNat,
+  verifierOptionChantiersSignales,
   verifierOptionEstBarometreEtEstTerritorialise,
   verifierOptionMeteo,
   verifierOptionPerimetreIds,
@@ -200,6 +201,7 @@ export class ExportCsvDesChantiersUseCaseV2 {
             && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, chantierTerritoireExport.estBaromètre)
             && verifierOptionStatut(optionsExport, chantierTerritoireExport.statut)
             && verifierOptionMeteo(optionsExport, chantierTerritoireExport.météo)
+            && verifierOptionChantiersSignales(optionsExport, chantierTerritoireExport)
           ) {
             return [...acc, presenterEnChantierExportContrat(chantierTerritoireExport, profil, optionsExport)];
           }

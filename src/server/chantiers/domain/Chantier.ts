@@ -16,7 +16,7 @@ export class Chantier {
         estEnAlerteÉcart: Alerte.estEnAlerteÉcart(écart) ? acc.filtresComptesCalculés.estEnAlerteÉcart + 1 : acc.filtresComptesCalculés.estEnAlerteÉcart,
         estEnAlerteBaisse: Alerte.estEnAlerteBaisse(tendance) ? acc.filtresComptesCalculés.estEnAlerteBaisse + 1 : acc.filtresComptesCalculés.estEnAlerteBaisse,
         estEnAlerteTauxAvancementNonCalculé: Alerte.estEnAlerteTauxAvancementNonCalculé(avancement.global, chantier.cibleAttendu) ? acc.filtresComptesCalculés.estEnAlerteTauxAvancementNonCalculé + 1 : acc.filtresComptesCalculés.estEnAlerteTauxAvancementNonCalculé,
-        estEnAlerteAbscenceTauxAvancementDepartemental: Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.mailles.departementale, chantier.cibleAttendu) ? acc.filtresComptesCalculés.estEnAlerteAbscenceTauxAvancementDepartemental + 1 : acc.filtresComptesCalculés.estEnAlerteAbscenceTauxAvancementDepartemental,
+        estEnAlerteAbscenceTauxAvancementDepartemental: Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.aUnTauxAvancementDepartemental, chantier.cibleAttendu) ? acc.filtresComptesCalculés.estEnAlerteAbscenceTauxAvancementDepartemental + 1 : acc.filtresComptesCalculés.estEnAlerteAbscenceTauxAvancementDepartemental,
         estEnAlerteMétéoNonRenseignée: Alerte.estEnAlerteMétéoNonRenseignée(météo) ? acc.filtresComptesCalculés.estEnAlerteMétéoNonRenseignée + 1 : acc.filtresComptesCalculés.estEnAlerteMétéoNonRenseignée,
         estEnAlertePossedePropositionsValeurActuelle: Alerte.estEnAlertePossedePropositionsValeurActuelle(aUnePropositionsValeurActuelle) ? acc.filtresComptesCalculés.estEnAlertePossedePropositionsValeurActuelle + 1 : acc.filtresComptesCalculés.estEnAlertePossedePropositionsValeurActuelle,
       };

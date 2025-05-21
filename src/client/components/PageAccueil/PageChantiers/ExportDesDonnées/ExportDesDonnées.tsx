@@ -54,7 +54,12 @@ const ExportDesDonnées: FunctionComponent<{ listeChantierId: string[] }> = ({ l
     territorialisation: parseAsString.withDefault(''),
     statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']).withDefault('PUBLIE'),
     jalon: parseAsStringLiteral(['2024', '2025']).withDefault(getAnneeDateDeBascule(new Date(), dataBasculeValeurAnneePrecedente as string).toString() as '2024' | '2025'),
-
+    estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
+    estEnAlerteÉcart: parseAsBoolean.withDefault(false),
+    estEnAlerteBaisse: parseAsBoolean.withDefault(false),
+    estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
+    estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
+    estEnAlertePossedePropositionsValeurActuelle: parseAsBoolean.withDefault(false),
   });
 
   const arrayOptionsExport: {
@@ -86,6 +91,30 @@ const ExportDesDonnées: FunctionComponent<{ listeChantierId: string[] }> = ({ l
   });
 
   arrayOptionsExport.push({ name: 'jalon', value: filtres.jalon });
+
+  if (filtres.estEnAlerteAbscenceTauxAvancementDepartemental) {
+    arrayOptionsExport.push({ name: 'estEnAlerteAbscenceTauxAvancementDepartemental', value: true });
+  }
+
+  if (filtres.estEnAlerteBaisse) {
+    arrayOptionsExport.push({ name: 'estEnAlerteBaisse', value: true });
+  }
+
+  if (filtres.estEnAlerteMétéoNonRenseignée) {
+    arrayOptionsExport.push({ name: 'estEnAlerteMétéoNonRenseignée', value: true });
+  }
+
+  if (filtres.estEnAlertePossedePropositionsValeurActuelle) {
+    arrayOptionsExport.push({ name: 'estEnAlertePossedePropositionsValeurActuelle', value: true });
+  }
+
+  if (filtres.estEnAlerteTauxAvancementNonCalculé) {
+    arrayOptionsExport.push({ name: 'estEnAlerteTauxAvancementNonCalculé', value: true });
+  }
+
+  if (filtres.estEnAlerteÉcart) {
+    arrayOptionsExport.push({ name: 'estEnAlerteÉcart', value: true });
+  }
 
   return (
     <Modale

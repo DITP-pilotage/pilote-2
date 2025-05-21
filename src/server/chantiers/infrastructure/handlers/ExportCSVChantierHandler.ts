@@ -28,6 +28,12 @@ export const handleExportDesChantiers = async (request: NextApiRequest, response
     listeMeteos: request.query.meteos ? Array.isArray(request.query.meteos) ? request.query.meteos : [request.query.meteos] as string[] : [],
     listeOptionsExport: request.query.optionsExport ? Array.isArray(request.query.optionsExport) ? request.query.optionsExport : [request.query.optionsExport] as string[] : [],
     territoireCode: request.query.territoireCode as string | undefined,
+    estEnAlerteTauxAvancementNonCalculé: request.query.estEnAlerteTauxAvancementNonCalculé === 'true',
+    estEnAlerteÉcart: request.query.estEnAlerteÉcart === 'true',
+    estEnAlerteBaisse: request.query.estEnAlerteBaisse === 'true',
+    estEnAlerteMétéoNonRenseignée: request.query.estEnAlerteMétéoNonRenseignée === 'true',
+    estEnAlerteAbscenceTauxAvancementDepartemental: request.query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
+    estEnAlertePossedePropositionsValeurActuelle: request.query.estEnAlertePossedePropositionsValeurActuelle === 'true', 
   } satisfies OptionsExport;
 
   const headersColumn = ExportCsvDesChantiersUseCaseV2.NOMS_COLONNES(jalon, optionsExport, session.profil);
