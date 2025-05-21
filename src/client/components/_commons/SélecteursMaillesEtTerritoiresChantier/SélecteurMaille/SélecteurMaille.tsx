@@ -41,7 +41,7 @@ const SélecteurMaille: FunctionComponent<{
   };
 
   return (
-    <SélecteurMailleStyled className='w-full'>
+    <SélecteurMailleStyled className='w-full flex align-center'>
       <label
         className='fr-label fr-mr-1w no-wrap'
         htmlFor='maille'
