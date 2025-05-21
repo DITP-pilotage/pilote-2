@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const IndexStyled = styled.div `
+const IndexStyled = styled.div `
     .horizontal-panel {
       position: sticky;
       top: 0;
@@ -19,3 +19,5 @@ export const IndexStyled = styled.div `
       line-height: 2.25rem!important;
     }
 `;
+
+export default IndexStyled;

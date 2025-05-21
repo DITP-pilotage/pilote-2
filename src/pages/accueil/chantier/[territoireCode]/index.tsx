@@ -55,7 +55,7 @@ import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-
 import { ExportDesDonneesV2, ID_HTML_MODALE_EXPORT_V2 } from '@/components/PageAccueil/PageChantiers/ExportDesDonneesV2/ExportDesDonneesV2';
 import ExportDesDonnées, { ID_HTML_MODALE_EXPORT } from '@/components/PageAccueil/PageChantiers/ExportDesDonnées/ExportDesDonnées';
 import { PanelMenuNavigation } from '@/components/_commons/PanelMenuNavigation/PanelMenuNavigation';
-import { IndexStyled } from './index.styled';
+import IndexStyled from './index.styled';
 
 interface ChantierAccueil {
   chantiers: ChantierAccueilContrat[]
