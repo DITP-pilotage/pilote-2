@@ -99,6 +99,28 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
   }
 
   async récupérerPourExports(chantierId: string, territoireCodesLecture: string[], jalon: number): Promise<IndicateurPourExport[]> {
+
+    const listeChantierTerritoires = await prisma.chantier_territoire.findMany({
+      where: {
+        id: chantierId,
+      },
+      select: {
+        territoire_code: true,
+        maille: true,
+        taux_avancement_mandat: true,
+        est_applicable: true,
+        nombre_propositions_valeur_actuelle: true,
+        territoire: {
+          select: {
+            code_parent: true,
+          },
+        },
+      },
+    });
+
+    const chantiersTerritoiresMailleDepartement = listeChantierTerritoires.filter(chantierTerritoire => chantierTerritoire.maille === 'DEPT');
+    const chantierTerritoireMailleDepartementApplicables = chantiersTerritoiresMailleDepartement.filter(chantierTerritoire => chantierTerritoire.est_applicable);
+
     const result = await prisma.indicateur_territoire.findMany({
       where: {
         territoire_code: {
@@ -156,6 +178,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
                 nom: true,
                 axe: true,
                 perimetre_ids: true,
+                cible_attendue: true,
               },
             },
           },
@@ -172,9 +195,14 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         },
         chantier_territoire: {
           select: {
+            maille: true,
+            territoire_code: true,
+            nombre_propositions_valeur_actuelle: true,
             meteo: true,
             taux_avancement_mandat: true,
             est_applicable: true,
+            ecart: true,
+            tendance: true,
             chantier_territoire_jalon: {
               select: {
                 taux_avancement: true,
@@ -191,6 +219,22 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     return result.map(indicateurPourExport => {
       const indicateurTerritoireJalon = indicateurPourExport.indicateur_territoire_jalon.at(0);
       const chantierTerritoireJalon = indicateurPourExport.chantier_territoire.chantier_territoire_jalon.at(0);
+
+      const prismaChantierTerritoire = indicateurPourExport.chantier_territoire;
+      let aUnePropositionsValeurActuelle = false;
+      const maille = prismaChantierTerritoire.maille;
+      if (maille === 'DEPT') {
+        aUnePropositionsValeurActuelle = prismaChantierTerritoire.nombre_propositions_valeur_actuelle > 0;
+      } else if (maille === 'REG') {
+        const codeRegion = prismaChantierTerritoire.territoire_code;
+        aUnePropositionsValeurActuelle = prismaChantierTerritoire.nombre_propositions_valeur_actuelle > 0 || 
+          listeChantierTerritoires
+            .filter(chantierTerritoire => chantierTerritoire.territoire.code_parent === codeRegion)
+            .some(chantierTerritoire => chantierTerritoire.nombre_propositions_valeur_actuelle > 0);
+      } else {
+        aUnePropositionsValeurActuelle = listeChantierTerritoires.some(chantierTerritoire => chantierTerritoire.nombre_propositions_valeur_actuelle > 0);
+      }
+
       return ({
         maille: indicateurPourExport.maille,
         régionNom: indicateurPourExport.maille === 'DEPT' ? indicateurPourExport.territoire.territoire_parent?.nom || null : indicateurPourExport.territoire.nom,
@@ -221,6 +265,12 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         avancementGlobal: indicateurPourExport.taux_avancement_mandat,
         maillesApplicables: indicateurPourExport.indicateur_identite.mailles_applicables,
         estApplicable: indicateurPourExport.est_applicable,
+        chantierEcart: indicateurPourExport.chantier_territoire.ecart,
+        chantierTendance: indicateurPourExport.chantier_territoire.tendance,
+        chantierCibleAttendue: indicateurPourExport.indicateur_identite.chantier_identite.cible_attendue,
+        chantierAUnTauxAvancementDepartemental: chantierTerritoireMailleDepartementApplicables.length === 0 
+          || chantierTerritoireMailleDepartementApplicables.some(chantierTerritoire => chantierTerritoire.taux_avancement_mandat !== null),
+        chantierAUnePropositionValeurAvancement: aUnePropositionsValeurActuelle,
       });
     }).sort((indicA, indicB) => {
       const orderMaille = { 'NAT': 1, 'REG': 2, 'DEPT': 3 };
@@ -311,6 +361,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
                 nom: true,
                 perimetre_ids: true,
                 statut: true,
+                cible_attendue: true,
               },
             },
           },
@@ -329,6 +380,9 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           select: {
             est_applicable: true,
             meteo: true,
+            ecart: true,
+            tendance: true,
+            taux_avancement_mandat: true,
           },
         },
       },
@@ -360,6 +414,12 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         chantierStatut: indicateurPourExport.indicateur_identite.chantier_identite.statut,
         estApplicable: indicateurPourExport.est_applicable,
         maillesApplicables: indicateurPourExport.indicateur_identite.mailles_applicables,
+        chantierEcart: indicateurPourExport.chantier_territoire.ecart,
+        chantierTendance: indicateurPourExport.chantier_territoire.tendance,
+        chantierCibleAttendue: indicateurPourExport.indicateur_identite.chantier_identite.cible_attendue,
+        chantierAUnTauxAvancementDepartemental: true, // TODO
+        chantierAUnePropositionValeurAvancement: true, // TODO
+        chantierAvancementGlobal: indicateurPourExport.chantier_territoire.taux_avancement_mandat,
       }));
     }).sort((indicA, indicB) => {
       const orderMaille = { 'NAT': 1, 'REG': 2, 'DEPT': 3 };

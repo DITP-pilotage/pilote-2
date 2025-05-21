@@ -1,4 +1,4 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier, { ChantierTendance } from '@/server/domain/chantier/Chantier.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
@@ -26,4 +26,10 @@ export type HistoriqueIndicateurPourExport = {
   chantierEstTerritorialise: Chantier['estTerritorialisé'] | null,
   maillesApplicables: string[]
   estApplicable: boolean | null
+  chantierEcart: number | null
+  chantierTendance: ChantierTendance | null
+  chantierCibleAttendue: boolean
+  chantierAUnTauxAvancementDepartemental: boolean
+  chantierAUnePropositionValeurAvancement: boolean
+  chantierAvancementGlobal: number | null
 };

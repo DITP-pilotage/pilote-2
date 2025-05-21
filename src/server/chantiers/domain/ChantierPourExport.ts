@@ -72,7 +72,16 @@ export const masquerPourProfilDROMEtMailleNat = (profil: ProfilCode, périmètre
   return masquerPourProfilDROM(profil, périmètreIds) && maille === 'NAT';
 };
 
-export const verifierOptionChantiersSignales = (optionsExport: OptionsExport, chantier: ChantierPourExport) => {
+export const verifierOptionChantiersSignales = (
+  optionsExport: OptionsExport, 
+  chantierEcart: number | null,
+  chantierTendance: ChantierTendance | null,
+  chantierAvancementTerritoire: number | null,
+  chantierCibleAttendue: boolean,
+  chantierAUnTauxAvancementDepartemental: boolean,
+  chantierMeteo: Météo,
+  chantierAUnePropositionsValeurActuelle: boolean,
+) => {
   // eslint-disable-next-line unicorn/prefer-ternary
   if (optionsExport.estEnAlerteAbscenceTauxAvancementDepartemental 
     || optionsExport.estEnAlerteBaisse 
@@ -81,12 +90,12 @@ export const verifierOptionChantiersSignales = (optionsExport: OptionsExport, ch
     || optionsExport.estEnAlerteTauxAvancementNonCalculé
     || optionsExport.estEnAlerteÉcart
   ) {
-    return (optionsExport.estEnAlerteÉcart && Alerte.estEnAlerteÉcart(chantier.ecart))
-    || (optionsExport.estEnAlerteBaisse && Alerte.estEnAlerteBaisse(chantier.tendance))
-    || (optionsExport.estEnAlerteTauxAvancementNonCalculé && Alerte.estEnAlerteTauxAvancementNonCalculé(chantier.avancementTerritoire, chantier.cibleAttendu))
-    || (optionsExport.estEnAlerteAbscenceTauxAvancementDepartemental && Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.aUnTauxAvancementDepartemental, chantier.cibleAttendu))
-    || (optionsExport.estEnAlerteMétéoNonRenseignée && Alerte.estEnAlerteMétéoNonRenseignée(chantier.météo ?? 'NON_RENSEIGNEE'))
-    || (optionsExport.estEnAlertePossedePropositionsValeurActuelle && Alerte.estEnAlertePossedePropositionsValeurActuelle(chantier.aUnePropositionsValeurActuelle));
+    return (optionsExport.estEnAlerteÉcart && Alerte.estEnAlerteÉcart(chantierEcart))
+    || (optionsExport.estEnAlerteBaisse && Alerte.estEnAlerteBaisse(chantierTendance))
+    || (optionsExport.estEnAlerteTauxAvancementNonCalculé && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierAvancementTerritoire, chantierCibleAttendue))
+    || (optionsExport.estEnAlerteAbscenceTauxAvancementDepartemental && Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantierAUnTauxAvancementDepartemental, chantierCibleAttendue))
+    || (optionsExport.estEnAlerteMétéoNonRenseignée && Alerte.estEnAlerteMétéoNonRenseignée(chantierMeteo))
+    || (optionsExport.estEnAlertePossedePropositionsValeurActuelle && Alerte.estEnAlertePossedePropositionsValeurActuelle(chantierAUnePropositionsValeurActuelle));
   } else {
     return true;
   }

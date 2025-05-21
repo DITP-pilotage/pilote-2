@@ -348,16 +348,19 @@ describe('PrismaIndicateurRepository', () => {
           perimetre_ids: ['PER-01'],
           est_barometre: true,
           est_territorialise: true,
+          cible_attendue: true,
         }, {
           id: 'CH-002',
           nom: 'Chantier 002',
           ministeres: ['MINA'],
           ministeres_acronymes: ['MINA'],
+          cible_attendue: true,
         }, {
           id: 'CH-003',
           nom: 'Chantier 003',
           ministeres: ['MINA'],
           ministeres_acronymes: ['MINA'],
+          cible_attendue: true,
         }],
       });
 
@@ -369,6 +372,9 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'FRANCE',
           territoire_code: 'NAT-FR',
           est_applicable: true,
+          ecart: null,
+          tendance: null,
+          taux_avancement_mandat: null,
         }, {
           id: 'CH-001',
           code_insee: '01',
@@ -378,6 +384,8 @@ describe('PrismaIndicateurRepository', () => {
           est_applicable: true,
           taux_avancement_mandat: 23,
           meteo: 'SOLEIL',
+          ecart: null,
+          tendance: null,
         }, {
           id: 'CH-001',
           code_insee: '02',
@@ -385,6 +393,8 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'D02',
           territoire_code: 'DEPT-02',
           est_applicable: true,
+          ecart: null,
+          tendance: null,
         }, {
           id: 'CH-001',
           code_insee: '01',
@@ -392,6 +402,8 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'R01',
           territoire_code: 'REG-01',
           est_applicable: true,
+          ecart: null,
+          tendance: null,
         }, {
           id: 'CH-002',
           code_insee: '01',
@@ -399,6 +411,8 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'D01',
           territoire_code: 'DEPT-01',
           est_applicable: true,
+          ecart: null,
+          tendance: null,
         }, {
           id: 'CH-002',
           code_insee: '87',
@@ -406,6 +420,8 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'D87',
           territoire_code: 'DEPT-87',
           est_applicable: true,
+          ecart: null,
+          tendance: null,
         },  {
           id: 'CH-002',
           code_insee: '01',
@@ -413,6 +429,8 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'R01',
           territoire_code: 'REG-01',
           est_applicable: true,
+          ecart: null,
+          tendance: null,
         }, {
           id: 'CH-003',
           code_insee: '01',
@@ -420,6 +438,8 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'D01',
           territoire_code: 'DEPT-01',
           est_applicable: true,
+          ecart: null,
+          tendance: null,
         }],
       });
 
@@ -754,6 +774,11 @@ describe('PrismaIndicateurRepository', () => {
         avancementGlobal: 13,
         estApplicable: true,
         maillesApplicables: [],
+        chantierEcart: null,
+        chantierTendance: null,
+        chantierCibleAttendue: true,
+        chantierAUnTauxAvancementDepartemental: true,
+        chantierAUnePropositionValeurAvancement: false,
       }, {
         nom: 'Indicateur 001',
         maille: 'DEPT',
@@ -784,6 +809,11 @@ describe('PrismaIndicateurRepository', () => {
         avancementGlobal: null,
         estApplicable: true,
         maillesApplicables: [],
+        chantierEcart: null,
+        chantierTendance: null,
+        chantierCibleAttendue: true,
+        chantierAUnTauxAvancementDepartemental: true,
+        chantierAUnePropositionValeurAvancement: false,
       }, {
         nom: 'Indicateur 001',
         maille: 'DEPT',
@@ -814,6 +844,11 @@ describe('PrismaIndicateurRepository', () => {
         avancementGlobal: 13,
         estApplicable: true,
         maillesApplicables: [],
+        chantierEcart: null,
+        chantierTendance: null,
+        chantierCibleAttendue: true,
+        chantierAUnTauxAvancementDepartemental: true,
+        chantierAUnePropositionValeurAvancement: false,
       }, {
         avancementAnnuel: 13,
         avancementGlobal: 13,
@@ -845,7 +880,11 @@ describe('PrismaIndicateurRepository', () => {
         valeurActuelle: 20,
         valeurCible: 11,
         valeurCibleAnnuelle: 22,
-        valeurInitiale: 12,
+        valeurInitiale: 12,        chantierEcart: null,
+        chantierTendance: null,
+        chantierCibleAttendue: true,
+        chantierAUnTauxAvancementDepartemental: true,
+        chantierAUnePropositionValeurAvancement: false,
       }]);
     });
   });

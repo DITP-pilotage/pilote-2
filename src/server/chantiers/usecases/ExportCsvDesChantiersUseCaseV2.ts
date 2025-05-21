@@ -201,7 +201,16 @@ export class ExportCsvDesChantiersUseCaseV2 {
             && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, chantierTerritoireExport.estBaromètre)
             && verifierOptionStatut(optionsExport, chantierTerritoireExport.statut)
             && verifierOptionMeteo(optionsExport, chantierTerritoireExport.météo)
-            && verifierOptionChantiersSignales(optionsExport, chantierTerritoireExport)
+            && verifierOptionChantiersSignales(
+              optionsExport, 
+              chantierTerritoireExport.ecart,
+              chantierTerritoireExport.tendance,
+              chantierTerritoireExport.avancementTerritoire,
+              chantierTerritoireExport.cibleAttendu,
+              chantierTerritoireExport.aUnTauxAvancementDepartemental,
+              chantierTerritoireExport.météo ?? 'NON_RENSEIGNEE',
+              chantierTerritoireExport.aUnePropositionsValeurActuelle,
+            )
           ) {
             return [...acc, presenterEnChantierExportContrat(chantierTerritoireExport, profil, optionsExport)];
           }
