@@ -55,6 +55,7 @@ import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-
 import { ExportDesDonneesV2, ID_HTML_MODALE_EXPORT_V2 } from '@/components/PageAccueil/PageChantiers/ExportDesDonneesV2/ExportDesDonneesV2';
 import ExportDesDonnées, { ID_HTML_MODALE_EXPORT } from '@/components/PageAccueil/PageChantiers/ExportDesDonnées/ExportDesDonnées';
 import { PanelMenuNavigation } from '@/components/_commons/PanelMenuNavigation/PanelMenuNavigation';
+import { FiltresActifs } from '@/components/PageAccueil/FiltresActifs/FiltresActifs';
 import IndexStyled from './index.styled';
 
 interface ChantierAccueil {
@@ -292,6 +293,18 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
     estEnAlertePossedePropositionsValeurActuelle: parseAsBoolean.withDefault(false),
   });
 
+  const nombreFiltresActifs = filtres.axes.split(',').filter(Boolean).length
+    + filtres.perimetres.split(',').filter(Boolean).length
+    + filtres.meteos.split(',').filter(Boolean).length
+    + (filtres.estBarometre ? 1 : 0)
+    + (filtres.territorialisation.split(',').filter(Boolean).length)
+    + (filtresAlertes.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
+    + (filtresAlertes.estEnAlerteÉcart ? 1 : 0)
+    + (filtresAlertes.estEnAlerteBaisse ? 1 : 0)
+    + (filtresAlertes.estEnAlerteMétéoNonRenseignée ? 1 : 0)
+    + (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0)
+    + (filtresAlertes.estEnAlertePossedePropositionsValeurActuelle ? 1 : 0);
+
   const [optionsExport, setOptionsExport] = useQueryStates({
     etapeCourante: parseAsInteger.withDefault(1).withOptions({
       shallow: true,
@@ -434,22 +447,31 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
           </section>
         </BarreLatérale>
         <div className='w-full'>
-          <PanelMenuNavigation
-            estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
-            mailleQuery={mailleQuery}
-            pathname={pathname}
-            setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
-            territoireCode={territoireCode}
-          />
+          <div className='horizontal-panel fr-background-blue-france-850 fr-grid-row fr-pt-2w'>
+            <PanelMenuNavigation
+              estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
+              mailleQuery={mailleQuery}
+              pathname={pathname}
+              setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
+              territoireCode={territoireCode}
+            />
+            {
+              nombreFiltresActifs > 0 ? (
+                <FiltresActifs
+                  axes={axes}
+                  mailleSelectionnee={mailleSelectionnee}
+                  ministères={ministères}
+                />
+              ) : null
+            }
+          </div>
           <PageChantiers
             avancementsAgrégés={avancementsAgrégés}
             avancementsGlobauxTerritoriauxMoyens={avancementsGlobauxTerritoriauxMoyens}
-            axes={axes}
             chantiers={chantiers}
             filtresComptesCalculés={filtresComptesCalculés}
             jalon={jalon}
             mailleQuery={mailleQuery}
-            mailleSelectionnee={mailleSelectionnee}
             ministères={ministères}
             nombreTotalChantiersAvecAlertes={nombreTotalChantiersAvecAlertes}
             repartitionMeteosChantiers={repartitionMeteosChantiers}

@@ -1,5 +1,4 @@
 import { FunctionComponent } from 'react';
-import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression, {
   BarreDeProgressionVariante,
@@ -7,10 +6,6 @@ import BarreDeProgression, {
 import {
   JaugeDeProgressionCouleur,
 } from '@/client/components/_commons/JaugeDeProgression/JaugeDeProgression.interface';
-import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
-import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
-import Infobulle from '@/components/_commons/Infobulle/Infobulle';
-import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 
 interface AvancementsTerritoireProps {
   territoireNom: string
@@ -33,16 +28,6 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
   doitAfficherLeSelecteur,
   titreTauxAvancement,
 }) => {
-  const [, setJalon] = useQueryState('jalon', parseAsStringLiteral(['2024', '2025']).withDefault('2024').withOptions({
-    shallow: false,
-    history: 'push',
-  }));
-
-  const auClickSelecteurJalon = (valeur: '2024' | '2025') => {
-    sauvegarderFiltres({ jalon: valeur });
-    setJalon(valeur);
-  };
-
   return (
     <>
       <div className='flex flex-direction-column flex-wrap justify-center align-center'>
@@ -78,24 +63,6 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
             <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
               {`Avancement à échéance${!doitAfficherLeSelecteur ? ` ${jalon}` : ''}`}
             </p>
-            {
-              doitAfficherLeSelecteur ? (
-                <div className='select-sm flex align-center justify-center'>
-                  <Sélecteur<'2024' | '2025'>
-                    htmlName='jalon'
-                    options={[{ libellé: '2024', valeur: '2024' }, { libellé: '2025', valeur: '2025' }]}
-                    texteFantôme='Sélectionner un jalon'
-                    valeurModifiéeCallback={auClickSelecteurJalon}
-                    valeurSélectionnée={`${jalon}` as '2024' | '2025'}
-                  />
-                  <Infobulle
-                    idHtml='infobulle-selecteur-jalon'
-                  >
-                    {INFOBULLE_CONTENUS.chantiers.jalon}
-                  </Infobulle>
-                </div>
-              ) : null
-            }
           </div>
         </div>
       }

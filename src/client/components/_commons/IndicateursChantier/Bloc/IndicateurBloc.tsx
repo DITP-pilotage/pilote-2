@@ -1,5 +1,4 @@
 import { Fragment, FunctionComponent } from 'react';
-import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
@@ -27,8 +26,6 @@ import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import ModaleSuppressionValeurActuelle
   from '@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurActuelle/ModaleSuppressionValeurActuelle';
-import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
-import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 import useIndicateurAlerteDateMaj from './useIndicateurAlerteDateMaj';
@@ -75,16 +72,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     maille: mailleTerritoireSelectionnee,
   } = territoireCodeVersMailleCodeInsee(territoireCode);
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
-
-  const [, setJalon] = useQueryState('jalon', parseAsStringLiteral(['2024', '2025']).withDefault('2024').withOptions({
-    shallow: false,
-    history: 'push',
-  }));
-
-  const auClickSelecteurJalon = (valeur: '2024' | '2025') => {
-    sauvegarderFiltres({ jalon: valeur });
-    setJalon(valeur);
-  };
 
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
   const detailTerritoiresCompares = territoiresCompares.map(récupérerDétailsSurUnTerritoire);
@@ -279,15 +266,10 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     >
                       <div className='flex align-center justify-center'>
                         <span className='fr-pr-1v'>
-                          DONNÉES À ÉCHÉANCE
+                          DONNÉES À ÉCHÉANCE 
+                          {' '}
+                          {jalon}
                         </span>
-                        <Sélecteur<'2024' | '2025'>
-                          htmlName='jalon'
-                          options={[{ libellé: '2024', valeur: '2024' }, { libellé: '2025', valeur: '2025' }]}
-                          texteFantôme='Sélectionner un jalon'
-                          valeurModifiéeCallback={auClickSelecteurJalon}
-                          valeurSélectionnée={`${jalon}` as '2024' | '2025'}
-                        />
                       </div>
                     </th>
                     <th

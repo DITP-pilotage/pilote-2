@@ -1,5 +1,4 @@
 import { FunctionComponent } from 'react';
-import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import AvancementsTerritoire from '@/components/_commons/AvancementsTerritoire/AvancementsTerritoire';
@@ -8,13 +7,8 @@ import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDe
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
 import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 import Alerte from '@/components/_commons/Alerte/Alerte';
-import SélecteurMaille
-  from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import { JaugeDeProgressionSmall } from '@/components/_commons/JaugeDeProgressionSmall/JaugeDeProgressionSmall';
-import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
-import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
-import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import { DonneesComparaisonDuTauxDAvancementType } from '@/server/domain/territoire/Territoire.interface';
 import { formaterDate } from '@/client/utils/date/date';
 import AvancementChantierStyled from './AvancementChantier.styled';
@@ -26,7 +20,6 @@ interface AvancementChantierProps {
   mailleSelectionnee: MailleInterne
   jalon: number
   mailleQuery: MailleInterne
-  estAutoriseAVoirLeSelecteurDeMaille: boolean
   avancements: {
     nationale: AvancementsStatistiques
     departementale: {
@@ -55,24 +48,11 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   territoireCode,
   mailleSelectionnee,
   mailleQuery,
-  estAutoriseAVoirLeSelecteurDeMaille,
   mailleSourceDonnees,
   jalon,
   donneesComparaisonDuTauxDAvancement,
 }) => {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
-
-  const [, setJalon] = useQueryState('jalon', parseAsStringLiteral(['2024', '2025']).withDefault('2024').withOptions({
-    shallow: false,
-    history: 'push',
-  }));
-
-  const auClickSelecteurJalon = (valeur: '2024' | '2025') => {
-    sauvegarderFiltres({ jalon: valeur });
-    setJalon(valeur);
-  };
-
-  const pathname = '/chantier/[id]/[territoireCode]';
 
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const territoireSélectionnéParent = territoireSélectionné.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné.codeParent) : null;
@@ -180,28 +160,6 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
                 {`Avancement à échéance${!territoireCode.startsWith('NAT') ? ` ${jalon}` : ''}`}
               </p>
-              {
-                territoireCode.startsWith('NAT') ? (
-                  <div className='flex flex-wrap justify-center'>
-                    <div
-                      className='select-sm flex align-center justify-center'
-                    >
-                      <Sélecteur<'2024' | '2025'>
-                        htmlName='jalon'
-                        options={[{ libellé: '2024', valeur: '2024' }, { libellé: '2025', valeur: '2025' }]}
-                        texteFantôme='Sélectionner un jalon'
-                        valeurModifiéeCallback={auClickSelecteurJalon}
-                        valeurSélectionnée={`${jalon}` as '2024' | '2025'}
-                      />
-                      <Infobulle
-                        idHtml='infobulle-selecteur-jalon'
-                      >
-                        {INFOBULLE_CONTENUS.chantiers.jalon}
-                      </Infobulle>
-                    </div>
-                  </div>
-                ) : null
-              }
             </div>
           </div>
         </div>
@@ -234,14 +192,6 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 </span>   
               </div>
             )
-          }
-          {
-            estAutoriseAVoirLeSelecteurDeMaille ? (
-              <SélecteurMaille
-                mailleQuery={mailleQuery}
-                pathname={pathname}
-              />
-            ) : null
           }
           <div className='flex flex-column justify-center'>
             <JaugeDeProgressionSmall

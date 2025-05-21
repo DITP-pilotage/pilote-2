@@ -1,4 +1,3 @@
-import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Fragment, FunctionComponent } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
@@ -21,8 +20,6 @@ import ValeurEtDate from '@/components/_commons/IndicateursChantier/Bloc/ValeurE
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
-import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import useSousIndicateurBloc from './useSousIndicateurBloc';
 import SousIndicateurBlocStyled from './SousIndicateurBloc.styled';
 
@@ -60,16 +57,6 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
   cartographieGaucheIndicateur,
 }) => {
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
-
-  const [, setJalon] = useQueryState('jalon', parseAsStringLiteral(['2024', '2025']).withDefault('2024').withOptions({
-    shallow: false,
-    history: 'push',
-  }));
-
-  const auClickSelecteurJalon = (valeur: '2024' | '2025') => {
-    sauvegarderFiltres({ jalon: valeur });
-    setJalon(valeur);
-  };
 
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
@@ -184,15 +171,10 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                   >
                     <div className='flex align-center justify-center fr-text--xs'>
                       <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-                        DONNÉES À ÉCHÉANCE
+                        DONNÉES À ÉCHÉANCE 
+                        {' '}
+                        {jalon}
                       </p>
-                      <Sélecteur<'2024' | '2025'>
-                        htmlName='jalon'
-                        options={[{ libellé: '2024', valeur: '2024' }, { libellé: '2025', valeur: '2025' }]}
-                        texteFantôme='Sélectionner un jalon'
-                        valeurModifiéeCallback={auClickSelecteurJalon}
-                        valeurSélectionnée={`${jalon}` as '2024' | '2025'}
-                      />
                     </div>
                   </th>
                   <th

@@ -3,6 +3,8 @@ import SélecteursMaillesEtTerritoires
   from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import SélecteurMaille from '@/client/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
+import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
+import Infobulle from '@/client/components/_commons/Infobulle/Infobulle';
 
 type PanelMenuNavigationProps = {
   pathname: string;
@@ -14,7 +16,6 @@ type PanelMenuNavigationProps = {
 };
 
 export const PanelMenuNavigation = ({ pathname, territoireCode, mailleQuery, estAutoriseAVoirLeSelecteurDeMaille, setEstOuverteBarreLatérale, libelleMenuNavigation = 'Filtrer' }: PanelMenuNavigationProps) => {
-
   const [jalon, setJalon] = useQueryState('jalon', parseAsString.withDefault('').withOptions({
     shallow: false,
     clearOnDefault: true,
@@ -22,7 +23,7 @@ export const PanelMenuNavigation = ({ pathname, territoireCode, mailleQuery, est
   }));
   
   return (
-    <div className='horizontal-panel fr-background-blue-france-850 fr-grid-row fr-pt-2w'>
+    <>
       <div className='fr-col-12 fr-col-md-3 fr-pb-2w fr-px-2w'>
         <SélecteursMaillesEtTerritoires
           direction='horizontal'
@@ -39,7 +40,7 @@ export const PanelMenuNavigation = ({ pathname, territoireCode, mailleQuery, est
             Jalon :
           </label>
           <select 
-            className='fr-select fr-mt-0'
+            className='fr-select fr-mt-0 fr-mr-1w'
             id='jalon'
             onChange={(e) => setJalon(e.target.value)}
             value={jalon}
@@ -51,6 +52,11 @@ export const PanelMenuNavigation = ({ pathname, territoireCode, mailleQuery, est
               2025
             </option>
           </select>
+          <Infobulle
+            idHtml='infobulle-selecteur-jalon'
+          >
+            {INFOBULLE_CONTENUS.chantiers.jalon}
+          </Infobulle>
         </div>
       </div>
       {
@@ -75,6 +81,6 @@ export const PanelMenuNavigation = ({ pathname, territoireCode, mailleQuery, est
           {libelleMenuNavigation}
         </button>
       </div>
-    </div>
+    </>
   );
 };

@@ -173,14 +173,16 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
         />
       </BarreLatérale>
       <main className='fr-pb-5w w-full'>
-        <PanelMenuNavigation
-          estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
-          libelleMenuNavigation='Informations du chantier'
-          mailleQuery={mailleQuery}
-          pathname={pathname}
-          setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
-          territoireCode={territoireCode}
-        />
+        <div className='horizontal-panel fr-background-blue-france-850 fr-grid-row fr-pt-2w'>
+          <PanelMenuNavigation
+            estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
+            libelleMenuNavigation='Informations du chantier'
+            mailleQuery={mailleQuery}
+            pathname={pathname}
+            setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
+            territoireCode={territoireCode}
+          />
+        </div>
         {
           alerteMiseAJourIndicateur ? (
             <BandeauInformationMajDonnees
@@ -248,7 +250,6 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
               <AvancementChantier
                 avancements={avancements}
                 donneesComparaisonDuTauxDAvancement={donneesComparaisonDuTauxDAvancement}
-                estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
                 jalon={jalon}
                 mailleQuery={mailleQuery}
                 mailleSelectionnee={mailleSelectionnee}

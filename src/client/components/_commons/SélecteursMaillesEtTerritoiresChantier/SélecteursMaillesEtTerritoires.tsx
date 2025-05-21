@@ -35,12 +35,12 @@ const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerri
 
   const optionsRégions = {
     label: 'Régions',
-    options: trierParOrdreAlphabétique<InputGroupeOptions>(territoiresDisponiblesReg.map(region => générerLesOptions(region.nomAffiché, region.code, !!chantierMailles ? !chantierMailles['regionale'][region.code].estApplicable : true)), 'label'),
+    options: trierParOrdreAlphabétique<InputGroupeOptions>(territoiresDisponiblesReg.map(region => générerLesOptions(region.nomAffiché, region.code, !!chantierMailles ? !chantierMailles['regionale'][region.code].estApplicable ?? true : false)), 'label'),  
   };
 
   const optionsDépartements = {
     label: 'Départements',
-    options: trierParOrdreAlphabétique<InputGroupeOptions>(territoiresDisponiblesDept.map(departement => générerLesOptions(departement.nomAffiché, departement.code, !!chantierMailles ? !chantierMailles['departementale'][departement.code].estApplicable : true)), 'label'),
+    options: trierParOrdreAlphabétique<InputGroupeOptions>(territoiresDisponiblesDept.map(departement => générerLesOptions(departement.nomAffiché, departement.code, !!chantierMailles ? !chantierMailles['departementale'][departement.code].estApplicable ?? true : false)), 'label'),  
   };
 
   return [
