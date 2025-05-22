@@ -9,7 +9,7 @@ import {
 import { libellésTypesCommentaire } from '@/client/constants/libellésCommentaire';
 import { libellésTypesObjectif } from '@/client/constants/libellésObjectif';
 import { libellésTypesDécisionStratégique } from '@/client/constants/libellésDécisionStratégique';
-import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { ChantierRepository } from '@/server/chantiers/domain/ports/ChantierRepository';
@@ -23,8 +23,8 @@ import {
   verifierOptionStatut,
 } from '@/server/chantiers/domain/ChantierPourExport';
 
-const presenterEnChantierExportContrat = (chantierPourExport: ChantierPourExport, profil: ProfilCode): string[] => {
-  const donnees = [
+const presenterEnChantierExportContrat = (chantierPourExport: ChantierPourExport, profilCode: ProfilCode): string[] => {
+  const donneesCommunes = [
     chantierPourExport.maille === 'NAT' ? '1 - NAT' : chantierPourExport.maille === 'REG' ? '2 - REG' : chantierPourExport.maille === 'DEPT' ? '3 - DEPT' : NON_APPLICABLE,
     chantierPourExport.régionNom || NON_APPLICABLE,
     chantierPourExport.départementNom || NON_APPLICABLE,
@@ -42,7 +42,7 @@ const presenterEnChantierExportContrat = (chantierPourExport: ChantierPourExport
     formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementAnnuel, true),
     formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementDépartemental, true),
     formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementRégional, true),
-    masquerPourProfilDROM(profil, chantierPourExport.périmètreIds)
+    masquerPourProfilDROM(profilCode, chantierPourExport.périmètreIds)
       ?  NON_APPLICABLE
       : formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementNational, true),
     formaterMétéoOuNonRenseigne(chantierPourExport.météo, true),
@@ -50,15 +50,26 @@ const presenterEnChantierExportContrat = (chantierPourExport: ChantierPourExport
     chantierPourExport.objNotreAmbition || NON_RENSEIGNEE,
     chantierPourExport.objDéjàFait || NON_RENSEIGNEE,
     chantierPourExport.objÀFaire || NON_RENSEIGNEE,
+  ];
+
+  const donneesCommentairesNationaux = [
     chantierPourExport.decStratSuiviDesDécisions || NON_RENSEIGNEE,
     chantierPourExport.commAutresRésultatsNonCorrélésAuxIndicateurs || NON_RENSEIGNEE,
     chantierPourExport.commFreinsÀLever || NON_RENSEIGNEE,
     chantierPourExport.commActionsÀVenir || NON_RENSEIGNEE,
     chantierPourExport.commActionsÀValoriser || NON_RENSEIGNEE,
+  ];
+
+  const donneesCommentairesGeneraux = [
     chantierPourExport.commCommentairesSurLesDonnées || NON_RENSEIGNEE,
     chantierPourExport.commAutresRésultats || NON_RENSEIGNEE,
   ];
-  return profil === ProfilEnum.DITP_ADMIN ? [...donnees, chantierPourExport.statut || NON_RENSEIGNEE] : donnees;
+
+  const donneesProfil = profilsTerritoriaux.includes(profilCode) 
+    ? [...donneesCommunes, ...donneesCommentairesGeneraux]  
+    : [...donneesCommunes, ...donneesCommentairesNationaux, ...donneesCommentairesGeneraux];
+
+  return profilCode === ProfilEnum.DITP_ADMIN ? [...donneesProfil, chantierPourExport.statut || NON_RENSEIGNEE] : donneesProfil;
 };
 
 interface Dependencies {
@@ -67,38 +78,52 @@ interface Dependencies {
 
 export class ExportCsvDesChantiersUseCase {
 
-  public static readonly NOMS_COLONNES = (jalon: number): string[] => [
-    'Maille',
-    'Région',
-    'Département',
-    'Code INSEE - Nom du département',
-    'Ministère',
-    'Axe',
-    'Chantier',
-    'Chantier Id',
-    'Chantier du baromètre',
-    'Chantier territorialisé',
-    'Directeur projet',
-    'Contact directeur projet',
-    'Responsable local',
-    'Contact responsable local',
-    `Taux d'avancement à fin d'échéance ${jalon}`,
-    "Taux d'avancement départemental à fin d'échéance 2026",
-    "Taux d'avancement régional à fin d'échéance 2026",
-    "Taux d'avancement national à fin d'échéance 2026",
-    'Météo',
-    'Synthèse des résultats',
-    libellésTypesObjectif['notreAmbition'],
-    libellésTypesObjectif['déjàFait'],
-    libellésTypesObjectif['àFaire'],
-    libellésTypesDécisionStratégique['suiviDesDécisionsStratégiques'],
-    libellésTypesCommentaire['autresRésultatsObtenusNonCorrélésAuxIndicateurs'],
-    libellésTypesCommentaire['risquesEtFreinsÀLever'],
-    libellésTypesCommentaire['solutionsEtActionsÀVenir'],
-    libellésTypesCommentaire['exemplesConcretsDeRéussite'],
-    libellésTypesCommentaire['commentairesSurLesDonnées'],
-    libellésTypesCommentaire['autresRésultatsObtenus'],
-  ];
+  public static readonly NOMS_COLONNES = (jalon: number, profilCode: ProfilCode): string[] => {
+    const colonnesCommunes = [
+      'Maille',
+      'Région',
+      'Département',
+      'Code INSEE - Nom du département',
+      'Ministère',
+      'Axe',
+      'Chantier',
+      'Chantier Id',
+      'Chantier du baromètre',
+      'Chantier territorialisé',
+      'Directeur projet',
+      'Contact directeur projet',
+      'Responsable local',
+      'Contact responsable local',
+      `Taux d'avancement à fin d'échéance ${jalon}`,
+      "Taux d'avancement départemental à fin d'échéance 2026",
+      "Taux d'avancement régional à fin d'échéance 2026",
+      "Taux d'avancement national à fin d'échéance 2026",
+      'Météo',
+      'Synthèse des résultats',
+      libellésTypesObjectif['notreAmbition'],
+      libellésTypesObjectif['déjàFait'],
+      libellésTypesObjectif['àFaire'],
+    ];
+
+    const colonnesCommentairesNationaux = [
+      libellésTypesDécisionStratégique['suiviDesDécisionsStratégiques'],
+      libellésTypesCommentaire['autresRésultatsObtenusNonCorrélésAuxIndicateurs'],
+      libellésTypesCommentaire['risquesEtFreinsÀLever'],
+      libellésTypesCommentaire['solutionsEtActionsÀVenir'],
+      libellésTypesCommentaire['exemplesConcretsDeRéussite'],
+    ];
+
+    const colonnesCommentairesGeneraux = [
+      libellésTypesCommentaire['commentairesSurLesDonnées'],
+      libellésTypesCommentaire['autresRésultatsObtenus'],
+    ];
+  
+    const colonnesProfil = profilsTerritoriaux.includes(profilCode) 
+      ? [...colonnesCommunes, ...colonnesCommentairesGeneraux]  
+      : [...colonnesCommunes, ...colonnesCommentairesNationaux, ...colonnesCommentairesGeneraux];
+  
+    return profilCode === ProfilEnum.DITP_ADMIN ? [...colonnesProfil, 'Statut'] : colonnesProfil;
+  };
 
   private readonly chantierRepository: ChantierRepository;
 
