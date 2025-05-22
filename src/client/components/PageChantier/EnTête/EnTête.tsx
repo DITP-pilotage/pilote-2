@@ -49,11 +49,6 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
       >
         Retour
       </Link>
-      <ResponsableChantierEnTete
-        icone={responsables?.porteur?.icône || 'remix::government::fill'}
-        iconeStyle='icone'
-        listeNomsResponsables={listeNomsResponsablesMinistèrePorteur}
-      />
       <div className='container-titre-chantier'>
         <Titre
           baliseHtml='h1'
@@ -62,31 +57,42 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
           {nomChantier}
         </Titre>
       </div>
+      <div className='fr-mb-1w'>
+        <ResponsableChantierEnTete
+          icone={responsables?.porteur?.icône || 'remix::government::fill'}
+          iconeStyle='icone'
+          listeNomsResponsables={listeNomsResponsablesMinistèrePorteur}
+        />
+      </div>
       <ResponsableChantierEnTete
         icone='fr-icon-government-fill'
         libellé='Autres ministères co-porteurs'
         listeNomsResponsables={listeNomsResponsablesAutresMinistèresCoPorteurs}
+        size='sm'
       />
       <ResponsableChantierEnTete
         icone='fr-icon-account-circle-fill'
         libellé="Directeur(s) / directrice(s) d'Administration Centrale"
         listeNomsResponsables={listeNomsDirecteursAdministrationCentrale}
+        size='sm'
       />
-      <div className='fr-mt-md-2w format-mobile'>
+      <div className='fr-mt-md-2w format-mobile fr-ml-1w'>
         {
           afficheLeBoutonMiseAJourDonnee && !estVueMobile ? (
-            <Link
-              className='lien-menu fr-link fr-link--icon-left fr-icon-download-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france'
-              href={`/chantier/${chantier.id}/indicateurs`}
-              title='Mettre à jour les données'
-            >
-              Mettre à jour les données
-            </Link>
+            <div className='fr-mb-1v'>
+              <Link
+                className='lien-menu fr-link fr-link--icon-left fr-icon-download-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france'
+                href={`/chantier/${chantier.id}/indicateurs`}
+                title='Mettre à jour les données'
+              >
+                Mettre à jour les données
+              </Link>
+            </div>
           ) : null
         }
         {
           afficheLeBoutonImpression && !estVueMobile ? (
-            <div className='format-mobile-bouton-impression'>
+            <div className='format-mobile-bouton-impression fr-mb-1v'>
               <BoutonImpression />
             </div>
           ) : null

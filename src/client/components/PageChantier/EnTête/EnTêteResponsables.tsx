@@ -6,10 +6,11 @@ interface ResponsableEnTete {
   libellé?: string,
   listeNomsResponsables: string[],
   icone: string,
-  iconeStyle?: 'icone' | 'span'
+  iconeStyle?: 'icone' | 'span',
+  size?: 'sm' | 'md'
 }
 
-const ResponsableChantierEnTete: FunctionComponent<ResponsableEnTete> = ({ libellé, listeNomsResponsables, icone, iconeStyle = 'span' }) => {
+const ResponsableChantierEnTete: FunctionComponent<ResponsableEnTete> = ({ libellé, listeNomsResponsables, icone, iconeStyle = 'span', size = 'md' }) => {
   const nomResponsable = listeNomsResponsables.join(', ') || 'Non renseigné';
 
   return (
@@ -21,11 +22,11 @@ const ResponsableChantierEnTete: FunctionComponent<ResponsableEnTete> = ({ libel
             id={icone}
           />
         ) : (
-          <span className={icone} />
+          <span className={`${icone} ${size === 'sm' ? 'fr-pl-1v fr-pr-1v' : ''}`} />
         )}
       </p>
       <div>
-        <p className='fr-mb-0 fr-text-title--blue-france'>
+        <p className={`fr-mb-0 fr-text-title--blue-france ${size === 'sm' ? 'fr-text--xs' : ''}`}>
           {
             libellé ? (
               <>
@@ -38,7 +39,7 @@ const ResponsableChantierEnTete: FunctionComponent<ResponsableEnTete> = ({ libel
             ) : null 
           }
         </p>
-        <p className='fr-text--sm fr-mb-0 fr-text-title--blue-france'>
+        <p className={`fr-mb-0 fr-text-title--blue-france ${size === 'sm' ? 'fr-text--xs' : ''}`}>
           {nomResponsable}
         </p>
       </div>
