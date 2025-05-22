@@ -175,11 +175,11 @@
       "a_acces_tous_les_territoires_lecture": true,
       "a_acces_tous_les_territoires_saisie_commentaire": true,
       "a_acces_tous_les_territoires_saisie_indicateur": true,
-      "peut_modifier_les_utilisateurs": false,
+      "peut_modifier_les_utilisateurs": true,
       "peut_saisir_des_commentaires": true,
       "a_access_aux_chantiers_brouillons": false,
       "a_acces_a_tous_les_chantiers_utilisateurs": false,
-      "a_acces_a_tous_les_territoires_utilisateurs": false
+      "a_acces_a_tous_les_territoires_utilisateurs": true
     },
     {
       "code": "EQUIPE_DIR_PROJET",

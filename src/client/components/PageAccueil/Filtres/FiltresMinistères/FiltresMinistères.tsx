@@ -1,56 +1,74 @@
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
+import { parseAsInteger, parseAsString, useQueryState } from 'nuqs';
 import { FunctionComponent, useCallback } from 'react';
-import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
-import { FiltreCatégorie } from '@/client/stores/useFiltresStore/useFiltresStore.interface';
 import Icône from '@/components/_commons/Icône/Icône';
+import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import FiltresMinistèresStyled from './FiltresMinistères.styled';
 
 interface FiltresMinistèresProps {
-  ministères: Ministère[]
+  ministères: Ministère[],
 }
 
-const catégorieDeFiltre: FiltreCatégorie = 'périmètresMinistériels';
+const catégorieDeFiltre: 'périmètresMinistériels' = 'périmètresMinistériels';
 
-const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({ ministères }) => {
-  const { activerUnFiltre, désactiverUnFiltre, estActif } = actionsFiltresStore();
+const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
+  ministères,
+}) => {
+  const [perimetres, setPerimetres] = useQueryState('perimetres', parseAsString.withDefault('').withOptions({
+    shallow: false,
+    clearOnDefault: true,
+    history: 'push',
+  }));
+  const [, setPagination] = useQueryState('pageIndex', parseAsInteger.withDefault(1).withOptions({
+    shallow: false,
+  }));
 
   const estDéroulé = useCallback((ministère: Ministère) => {
-    return ministère.périmètresMinistériels.some(périmètre => estActif(périmètre.id, catégorieDeFiltre));
-  }, [estActif]);
+    return ministère.périmètresMinistériels.some(périmètre => perimetres.split(',').filter(Boolean).includes(périmètre.id));
+  }, [perimetres]);
 
   const auClicSurUnMinistèreCallback = useCallback(
     (ministère: Ministère) => {
+      let arrPerimetreFiltre = perimetres.split(',').filter(Boolean);
       if (estDéroulé(ministère)) {
-        ministère.périmètresMinistériels.forEach(périmètre => désactiverUnFiltre(périmètre.id, catégorieDeFiltre));
+        ministère.périmètresMinistériels.forEach(périmètre => arrPerimetreFiltre.splice(arrPerimetreFiltre.indexOf(périmètre.id), 1));
       } else {
-        ministère.périmètresMinistériels.forEach(périmètre => activerUnFiltre(périmètre, catégorieDeFiltre));
+        ministère.périmètresMinistériels.forEach(périmètre => arrPerimetreFiltre.push(périmètre.id));
       }
+      setPagination(1);
+      sauvegarderFiltres({ perimetres: arrPerimetreFiltre });
+      return setPerimetres(arrPerimetreFiltre.join(','));
     },
-    [activerUnFiltre, désactiverUnFiltre, estDéroulé],
+    [estDéroulé, perimetres, setPagination, setPerimetres],
   );
 
   const auClicSurUnPérimètreCallback = useCallback(
     (périmètre: PérimètreMinistériel) => {
-      if (estActif(périmètre.id, catégorieDeFiltre)) {
-        désactiverUnFiltre(périmètre.id, catégorieDeFiltre);
+      let arrPerimetreFiltre = perimetres.split(',').filter(Boolean);
+
+      if (perimetres.includes(périmètre.id)) {
+        arrPerimetreFiltre.splice(arrPerimetreFiltre.indexOf(périmètre.id), 1);
       } else {
-        activerUnFiltre(périmètre, catégorieDeFiltre);
+        arrPerimetreFiltre.push(périmètre.id);
       }
+      setPagination(1);
+      sauvegarderFiltres({ perimetres: arrPerimetreFiltre });
+      return setPerimetres(arrPerimetreFiltre.join(','));
     },
-    [activerUnFiltre, désactiverUnFiltre, estActif],
+    [perimetres, setPagination, setPerimetres],
   );
 
   return (
     <FiltresMinistèresStyled className='fr-form-group'>
       <button
         aria-controls={`fr-sidemenu-item-${catégorieDeFiltre}`}
-        aria-expanded='true'
-        className='fr-sidemenu__btn fr-m-0'
+        aria-expanded='false'
+        className='fr-sidemenu__btn fr-m-0 fr-text--sm'
         type='button'
       >
-        Ministères
+        Filtrer par ministères
       </button>
       <div
         className='fr-collapse'
@@ -75,11 +93,13 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({ minist
                     onClick={() => auClicSurUnMinistèreCallback(ministère)}
                     type='button'
                   >
-                    <div className='tuile-ministère-contenu text-lg'>
+                    <div className='tuile-ministère-contenu'>
                       <span className='icône text-lg'>
                         {
                           !!ministère.icône &&
-                          <Icône id={ministère.icône} />
+                          <Icône
+                            id={ministère.icône}
+                          />
                         }
                       </span>
                       <span>
@@ -102,7 +122,7 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({ minist
                             <button
                               className={`
                                 fr-m-0 fr-p-1w fr-text--md tuile
-                                ${estActif(périmètre.id, catégorieDeFiltre) ? 'actif' : ''}
+                                ${perimetres.includes(périmètre.id) ? 'actif' : ''}
                               `}
                               onClick={() => auClicSurUnPérimètreCallback(périmètre)}
                               tabIndex={!estDéroulé(ministère) ? -1 : undefined}

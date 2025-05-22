@@ -17,7 +17,7 @@ export const AAccesATousLesUtilisateurs = (profil: Profil | null) => {
   return false;
 };
 
-export const PROFILS_POSSIBLES_COORDINATEURS_MODIFICATION = {
+export const PROFILS_POSSIBLES_GESTION_UTILISATEUR_MODIFICATION = {
   COORDINATEUR_REGION: [
     ProfilEnum.PREFET_REGION,
     ProfilEnum.PREFET_DEPARTEMENT,
@@ -28,9 +28,14 @@ export const PROFILS_POSSIBLES_COORDINATEURS_MODIFICATION = {
     ProfilEnum.PREFET_DEPARTEMENT,
     ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
   ],
+  SECRETARIAT_GENERAL: [
+    ProfilEnum.SERVICES_DECONCENTRES_REGION,
+    ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+
+  ],
 };
 
-export const PROFILS_POSSIBLES_COORDINATEURS_LECTURE = {
+export const PROFILS_POSSIBLES_GESTION_UTILISATEUR_LECTURE = {
   COORDINATEUR_REGION: [
     ProfilEnum.PREFET_REGION,
     ProfilEnum.PREFET_DEPARTEMENT,
@@ -44,6 +49,10 @@ export const PROFILS_POSSIBLES_COORDINATEURS_LECTURE = {
     ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
     ProfilEnum.COORDINATEUR_DEPARTEMENT,
   ],
+  SECRETARIAT_GENERAL: [
+    ProfilEnum.SERVICES_DECONCENTRES_REGION,
+    ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+  ],
 };
 
 export const PROFILS_POSSIBLES_RESPONSABLES = new Set([
@@ -56,12 +65,12 @@ export const PROFILS_POSSIBLES_RESPONSABLES = new Set([
   ProfilEnum.EQUIPE_DIR_PROJET,
 ]);
 
-function utilisateurEstCoordinateur(profilCode: ProfilCode) {
-  return [ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.COORDINATEUR_REGION].includes(profilCode);
+function utilisateurAAccesATousLesProfils(profilCode: ProfilCode) {
+  return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(profilCode);
 }
 
-function profilsPeutEtreCreeParUnCoordinateur(profilCodeCreateur: ProfilCode, profilCode: ProfilCode) {
-  return PROFILS_POSSIBLES_COORDINATEURS_MODIFICATION[profilCodeCreateur as keyof typeof PROFILS_POSSIBLES_COORDINATEURS_MODIFICATION].includes(profilCode);
+function profilsPeutEtreCreeParUtilisateur(profilCodeCreateur: ProfilCode, profilCode: ProfilCode) {
+  return PROFILS_POSSIBLES_GESTION_UTILISATEUR_MODIFICATION[profilCodeCreateur as keyof typeof PROFILS_POSSIBLES_GESTION_UTILISATEUR_MODIFICATION].includes(profilCode);
 }
 
 function AAccesUniquementAuxChantiersTerritorialises(profilCodeSelectionne: ProfilCode) {
@@ -72,10 +81,16 @@ function AAccesATousLesTerritoires(profilCode: ProfilCode) {
   return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(profilCode);
 }
 
+function ProfilNePeutPasDonnerDesAccesSurTousLesPerimetres(profilCode: ProfilCode) {
+  return profilCode === 'SECRETARIAT_GENERAL';
+}
+
 export default function useSectionDétailsMetadataAutresIndicateurForm() {
   const { data: profils } = api.profil.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
   const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
   const { data: territoires } = api.territoire.récupérerListe.useQuery({ territoireCodes: null }, { staleTime: Number.POSITIVE_INFINITY });
+  const { data: perimetresMinisteriels } = api.périmètreMinistériel.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
+
   const { data: session } = useSession();
   const {
     register,
@@ -89,9 +104,9 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
   const [chantiersIdsAppartenantsAuxPerimetresSelectionnes, setChantiersIdsAppartenantsAuxPerimetresSelectionnes] = useState<string[]>([]);
   const [chantiersApplicablesPourLesTerrioiresSelectionnes, setChantiersApplicablesPourLesTerrioiresSelectionnes] = useState<Set<string>>(new Set());
 
-  const listeProfils = utilisateurEstCoordinateur(session!.profil) ?
-    profils?.filter(profil => profilsPeutEtreCreeParUnCoordinateur(session!.profil, profil.code)) :
-    profils;
+  const listeProfils = utilisateurAAccesATousLesProfils(session!.profil) ?
+    profils :
+    profils?.filter(profil => profilsPeutEtreCreeParUtilisateur(session!.profil, profil.code));
   const optionsProfil =  listeProfils ? listeProfils.map(profil => ({ libellé: profil.nom, valeur: profil.code })) : [];
   const profilCodeSelectionne = getValues('profil');
   const profilSelectionne = profils?.find(profil => profil.code === profilCodeSelectionne);
@@ -160,6 +175,9 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
     setValue('habilitations.responsabilite.chantiers', chantiersIdsResponsabilite.filter(chantierId => valeursSelectionnees.includes(chantierId)));
   };
   
+  const perimetresSelectionnables = (ProfilNePeutPasDonnerDesAccesSurTousLesPerimetres(session!.profil)
+    ? perimetresMinisteriels?.filter(perimetre => session!.habilitations.gestionUtilisateur.périmètres.includes(perimetre.id))
+    : perimetresMinisteriels) ?? [];
   const afficherChampLecturePérimètres = profilSelectionne && !profilSelectionne.chantiers.lecture.tous && !profilSelectionne.chantiers.lecture.tousTerritorialisés;
   const recupererChantiersIdsAPartirDesPerimetres = (listePerimetresIds: string[]) => {
     return chantiersAccessiblesLecture?.
@@ -221,5 +239,6 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
     afficherChampSaisieIndicateur,
     afficherChampSaisieCommentaire,
     afficherChampGestionCompte,
+    perimetresSelectionnables,
   };
 }

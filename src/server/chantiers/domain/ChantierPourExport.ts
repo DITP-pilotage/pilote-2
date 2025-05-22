@@ -44,8 +44,8 @@ export const verifierOptionPerimetreIds = (optionsExport: OptionsExport, perimet
   return optionsExport.perimetreIds.length > 0 ? optionsExport.perimetreIds.some(perimetreId => perimetreIds.includes(perimetreId)) : true;
 };
 
-export const verifierOptionEstBarometreEtEstTerritorialise = (optionsExport: OptionsExport, estBaromètre: boolean | null, estTerritorialisé: boolean | null) => {
-  return optionsExport.estBarometre && optionsExport.estTerritorialise ? estBaromètre || estTerritorialisé : optionsExport.estBarometre ? !!estBaromètre : optionsExport.estTerritorialise ? !!estTerritorialisé : true;
+export const verifierOptionEstBarometreEtEstTerritorialise = (optionsExport: OptionsExport, estBaromètre: boolean | null) => {
+  return optionsExport.estBarometre ? !!estBaromètre : true;
 };
 
 export const verifierOptionStatut = (optionsExport: OptionsExport, chantierStatut: string | null) => {

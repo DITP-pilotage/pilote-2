@@ -1,5 +1,5 @@
 import {
-  PROFILS_POSSIBLES_COORDINATEURS_LECTURE,
+  PROFILS_POSSIBLES_GESTION_UTILISATEUR_LECTURE,
 } from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
@@ -64,18 +64,22 @@ export class FiltrerListeUtilisateursUseCase {
   }
 
   private profilEstAutorisé(utilisateur: UtilisateurListeGestion, profil: ProfilCode) {
-    return PROFILS_POSSIBLES_COORDINATEURS_LECTURE[profil as keyof typeof PROFILS_POSSIBLES_COORDINATEURS_LECTURE].includes(utilisateur.profil);
+    return PROFILS_POSSIBLES_GESTION_UTILISATEUR_LECTURE[profil as keyof typeof PROFILS_POSSIBLES_GESTION_UTILISATEUR_LECTURE].includes(utilisateur.profil);
   }
 
   private territoireEstAutorisé(utilisateur: UtilisateurListeGestion, habilitation: Habilitation) {
-    return utilisateur.habilitations.lecture.territoires.some(territoire => habilitation.peutAccéderAuTerritoire(territoire));
+    return utilisateur.habilitations.lecture.territoires.some(territoire => habilitation.peutAccéderAuTerritoireUtilisateurs(territoire));
+  }
+
+  private chantierEstAutorisé(utilisateur: UtilisateurListeGestion, habilitation: Habilitation) {
+    return utilisateur.habilitations.lecture.chantiers.some(chantier => habilitation.peutAccéderAuChantierUtilisateurs(chantier));
   }
 
   private utilisateurEstAutorisé(utilisateur: UtilisateurListeGestion, profil: ProfilCode, habilitation: Habilitation) {
-    if (!Object.keys(PROFILS_POSSIBLES_COORDINATEURS_LECTURE).includes(profil))
+    if (!Object.keys(PROFILS_POSSIBLES_GESTION_UTILISATEUR_LECTURE).includes(profil))
       return true;
     
-    return this.profilEstAutorisé(utilisateur, profil) && this.territoireEstAutorisé(utilisateur, habilitation);
+    return this.profilEstAutorisé(utilisateur, profil) && this.territoireEstAutorisé(utilisateur, habilitation) && this.chantierEstAutorisé(utilisateur, habilitation);
   }
 
   run<T extends UtilisateurListeGestion | UtilisateurExportCSV>({ utilisateurs, filtresActifs, profil, habilitation }: {

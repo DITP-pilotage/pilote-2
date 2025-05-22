@@ -82,7 +82,9 @@ export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async ({
   });
 
   const listePerimetresMinisterielSelectionnable = await getContainer('gestionUtilisateur').resolve('recupererPerimetresMinisterielsUseCase').run({
-    perimetresMinisterielsIds: [],
+    perimetresMinisterielsIds: [
+      ...new Set([...listeChantiers.flatMap(chantier => chantier.périmètreIds), ...session.habilitations.gestionUtilisateur.périmètres]),
+    ],
   });
 
   const listeProfils = await getContainer('gestionUtilisateur').resolve('recupererListeProfilUseCase').run();

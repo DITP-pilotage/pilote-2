@@ -7,10 +7,10 @@ import { ExportCsvDesChantiersUseCase } from '@/server/chantiers/usecases/Export
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { configuration } from '@/config';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { recupererJalon } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/recupererJalon';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import { getContainer } from '@/server/dependances';
+import { Maille } from '@/server/domain/maille/Maille.interface';
 
 export default async function handleExportDesChantiers(request: NextApiRequest, response: NextApiResponse): Promise<void> {
   const session = await getServerSession(request, response, authOptions);
@@ -19,11 +19,11 @@ export default async function handleExportDesChantiers(request: NextApiRequest, 
   response.setHeader('Content-Type', 'text/csv');
   const jalon = recupererJalon(request.query?.jalon as string | undefined);
 
-  const headersColumn = ExportCsvDesChantiersUseCase.NOMS_COLONNES(jalon);
+  const headersColumn = ExportCsvDesChantiersUseCase.NOMS_COLONNES(jalon, session.profil);
 
   const stringifier = stringify({
     header: true,
-    columns: session.profil === ProfilEnum.DITP_ADMIN ? [...headersColumn, 'statut'] : headersColumn,
+    columns: headersColumn,
     delimiter: ';',
     bom: true,
     quoted_string: true,
@@ -36,7 +36,7 @@ export default async function handleExportDesChantiers(request: NextApiRequest, 
   const optionsExport = {
     perimetreIds: request.query.perimetreIds ? Array.isArray(request.query.perimetreIds) ? request.query.perimetreIds : [request.query.perimetreIds] as string[] : [],
     estBarometre: request.query.estBarometre === 'true',
-    estTerritorialise: request.query.estTerritorialise === 'true',
+    territorialisation: request.query.territorialisation ? Array.isArray(request.query.territorialisation) ? request.query.territorialisation.map(maille => maille as Maille) : [request.query.territorialisation as Maille] : [],
     listeStatuts: request.query.statut ? Array.isArray(request.query.statut) ? request.query.statut : [request.query.statut] as string[] : [],
     listeChantierId: [],
     listeMeteos: request.query.meteos ? Array.isArray(request.query.meteos) ? request.query.meteos : [request.query.meteos] as string[] : [],

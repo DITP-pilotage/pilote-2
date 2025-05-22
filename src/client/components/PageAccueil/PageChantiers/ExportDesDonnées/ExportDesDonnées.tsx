@@ -51,7 +51,7 @@ const ExportDesDonnées: FunctionComponent<{ listeChantierId: string[] }> = ({ l
     perimetres: parseAsString.withDefault(''),
     meteos: parseAsString.withDefault(''),
     estBarometre: parseAsBoolean.withDefault(false),
-    estTerritorialise: parseAsBoolean.withDefault(false),
+    territorialisation: parseAsString.withDefault(''),
     statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']).withDefault('PUBLIE'),
     jalon: parseAsStringLiteral(['2024', '2025']).withDefault(getAnneeDateDeBascule(new Date(), dataBasculeValeurAnneePrecedente as string).toString() as '2024' | '2025'),
 
@@ -77,8 +77,8 @@ const ExportDesDonnées: FunctionComponent<{ listeChantierId: string[] }> = ({ l
     arrayOptionsExport.push({ name: 'meteos', value: filtreMeteo });
   });
 
-  if (filtres.estTerritorialise) {
-    arrayOptionsExport.push({ name: 'estTerritorialise', value: true });
+  if (filtres.territorialisation) {
+    arrayOptionsExport.push({ name: 'territorialisation', value: filtres.territorialisation });
   }
 
   (filtres.statut === 'BROUILLON' ? ['PUBLIE'] : filtres.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : ['PUBLIE']).forEach(statut => {

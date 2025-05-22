@@ -97,63 +97,66 @@ export const middleware = async (request: NextRequest, event: NextFetchEvent)=> 
       async function middleware2(requestAuth) {
         const cookie = requestAuth.cookies.get('csrf');
 
-        const token = await getToken({ req: requestAuth });
-        
-        const isValidToken = await validateKeycloakToken(token?.accessToken as string);
+        if (!process.env.DEV_PASSWORD) {
 
-        if (!process.env.DEV_PASSWORD && !isValidToken) {
+          const token = await getToken({ req: requestAuth });
+        
+          const isValidToken = await validateKeycloakToken(token?.accessToken as string);
+
+          if (!isValidToken) {
           // Créer une redirection vers la racine
-          const redirectResponse = NextResponse.redirect(new URL('/', requestAuth.url), { status: 303 });
+            const redirectResponse = NextResponse.redirect(new URL('/', requestAuth.url), { status: 303 });
           
-          // Supprimer les cookies d'authentification
-          redirectResponse.cookies.set('next-auth.session-token', '', { 
-            expires: new Date(0),
-            path: '/',
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-          });
-          // Supprimer les cookies d'authentification
-          redirectResponse.cookies.set('__Secure-next-auth.session-token.0', '', { 
-            expires: new Date(0),
-            path: '/',
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-          });
-          // Supprimer les cookies d'authentification
-          redirectResponse.cookies.set('__Secure-next-auth.session-token.1', '', { 
-            expires: new Date(0),
-            path: '/',
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-          });
+            // Supprimer les cookies d'authentification
+            redirectResponse.cookies.set('next-auth.session-token', '', { 
+              expires: new Date(0),
+              path: '/',
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'lax',
+            });
+            // Supprimer les cookies d'authentification
+            redirectResponse.cookies.set('__Secure-next-auth.session-token.0', '', { 
+              expires: new Date(0),
+              path: '/',
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'lax',
+            });
+            // Supprimer les cookies d'authentification
+            redirectResponse.cookies.set('__Secure-next-auth.session-token.1', '', { 
+              expires: new Date(0),
+              path: '/',
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'lax',
+            });
           
-          redirectResponse.cookies.set('next-auth.callback-url', '', {
-            expires: new Date(0),
-            path: '/',
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-          });
+            redirectResponse.cookies.set('next-auth.callback-url', '', {
+              expires: new Date(0),
+              path: '/',
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'lax',
+            });
           
-          redirectResponse.cookies.set('next-auth.csrf-token', '', {
-            expires: new Date(0),
-            path: '/',
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-          });
+            redirectResponse.cookies.set('next-auth.csrf-token', '', {
+              expires: new Date(0),
+              path: '/',
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'lax',
+            });
           
-          // Supprimer également le cookie csrf personnalisé si utilisé
-          redirectResponse.cookies.set('csrf', '', {
-            expires: new Date(0),
-            path: '/',
-            sameSite: 'lax',
-          });
+            // Supprimer également le cookie csrf personnalisé si utilisé
+            redirectResponse.cookies.set('csrf', '', {
+              expires: new Date(0),
+              path: '/',
+              sameSite: 'lax',
+            });
           
-          return redirectResponse;
+            return redirectResponse;
+          }
         }
 
         if (requestAuth.nextauth.token && (cookie === undefined || cookie !== requestAuth.nextauth.token.jti)) {

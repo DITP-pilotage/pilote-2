@@ -9,7 +9,7 @@ import {
 import { libellésTypesCommentaire } from '@/client/constants/libellésCommentaire';
 import { libellésTypesObjectif } from '@/client/constants/libellésObjectif';
 import { libellésTypesDécisionStratégique } from '@/client/constants/libellésDécisionStratégique';
-import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { ChantierRepository } from '@/server/chantiers/domain/ports/ChantierRepository';
@@ -92,15 +92,19 @@ const presenterEnChantierExportContrat = (chantierPourExport: ChantierPourExport
   if (optionsExport.listeOptionsExport.includes('commentaire')) {
     donnees.push(
       chantierPourExport.commCommentairesSurLesDonnées || NON_RENSEIGNEE,
-      chantierPourExport.commAutresRésultatsNonCorrélésAuxIndicateurs || NON_RENSEIGNEE,
       chantierPourExport.commAutresRésultats || NON_RENSEIGNEE,
-      chantierPourExport.commFreinsÀLever || NON_RENSEIGNEE,
-      chantierPourExport.commActionsÀVenir || NON_RENSEIGNEE,
-      chantierPourExport.commActionsÀValoriser || NON_RENSEIGNEE,
     );
+    if (!profilsTerritoriaux.includes(profil)) {
+      donnees.push(
+        chantierPourExport.commAutresRésultatsNonCorrélésAuxIndicateurs || NON_RENSEIGNEE,
+        chantierPourExport.commFreinsÀLever || NON_RENSEIGNEE,
+        chantierPourExport.commActionsÀVenir || NON_RENSEIGNEE,
+        chantierPourExport.commActionsÀValoriser || NON_RENSEIGNEE,
+      );  
+    }
   }
 
-  if (optionsExport.listeOptionsExport.includes('decision')) {
+  if (optionsExport.listeOptionsExport.includes('decision') && !profilsTerritoriaux.includes(profil)) {
     donnees.push(
       chantierPourExport.decStratSuiviDesDécisions || NON_RENSEIGNEE,
     );
@@ -163,10 +167,14 @@ export class ExportCsvDesChantiersUseCaseV2 {
     }
 
     if (optionsExport.listeOptionsExport.includes('commentaire')) {
-      headersColumn.push(libellésTypesCommentaire['commentairesSurLesDonnées'], libellésTypesCommentaire['autresRésultatsObtenusNonCorrélésAuxIndicateurs'], libellésTypesCommentaire['autresRésultatsObtenus'], libellésTypesCommentaire['risquesEtFreinsÀLever'], libellésTypesCommentaire['solutionsEtActionsÀVenir'], libellésTypesCommentaire['exemplesConcretsDeRéussite']);
+      headersColumn.push(libellésTypesCommentaire['commentairesSurLesDonnées'], libellésTypesCommentaire['autresRésultatsObtenus']);
+
+      if (!profilsTerritoriaux.includes(profil)) {
+        headersColumn.push(libellésTypesCommentaire['autresRésultatsObtenusNonCorrélésAuxIndicateurs'], libellésTypesCommentaire['risquesEtFreinsÀLever'], libellésTypesCommentaire['solutionsEtActionsÀVenir'], libellésTypesCommentaire['exemplesConcretsDeRéussite']);
+      }
     }
 
-    if (optionsExport.listeOptionsExport.includes('decision')) {
+    if (optionsExport.listeOptionsExport.includes('decision') && !profilsTerritoriaux.includes(profil)) {
       headersColumn.push(libellésTypesDécisionStratégique['suiviDesDécisionsStratégiques']);
     }
 
@@ -189,7 +197,7 @@ export class ExportCsvDesChantiersUseCaseV2 {
             chantierTerritoireExport &&
             !masquerPourProfilDROMEtMailleNat(profil, chantierTerritoireExport.périmètreIds, chantierTerritoireExport.maille)
             && verifierOptionPerimetreIds(optionsExport, chantierTerritoireExport.périmètreIds)
-            && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, chantierTerritoireExport.estBaromètre, chantierTerritoireExport.estTerritorialisé)
+            && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, chantierTerritoireExport.estBaromètre)
             && verifierOptionStatut(optionsExport, chantierTerritoireExport.statut)
             && verifierOptionMeteo(optionsExport, chantierTerritoireExport.météo)
           ) {

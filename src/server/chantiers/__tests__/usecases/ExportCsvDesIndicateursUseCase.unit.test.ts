@@ -8,7 +8,7 @@ import { IndicateurPourExportBuilder } from '@/server/chantiers/app/builder/Indi
 
 const optionsExport: OptionsExport = {
   perimetreIds: [],
-  estTerritorialise: false,
+  territorialisation: [],
   estBarometre: false,
   listeStatuts: [],
   listeChantierId: [],

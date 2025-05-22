@@ -40,6 +40,18 @@ import { PrismaTokenAPIInformationRepository } from './infrastructure/adapters/P
 import ReactiverUnUtilisateurUseCase from './usecases/ReactiverUnUtilisateurUseCase';
 import { RecupererEtatVisualisationVideoAccueilUseCase } from './usecases/RecupererEtatVisualisationVideoAccueilUseCase';
 import { DesactiverVideoAccueilUseCase } from './usecases/DesactiverVideoAccueilUseCase';
+import { CommentaireRepository } from './domain/ports/CommentaireRepository';
+import { DecisionStrategiqueRepository } from './domain/ports/DecisionStrategiqueRepository';
+import { ObjectifRepository } from './domain/ports/ObjectifRepository';
+import { RapportRepository } from './domain/ports/RapportRepository';
+import { SyntheseDesResultatsRepository } from './domain/ports/SyntheseDesResultatsRepository';
+import { PrismaCommentaireRepository } from './infrastructure/adapters/PrismaCommentaireRepository';
+import { PrismaDecisionStrategiqueRepository } from './infrastructure/adapters/PrismaDecisionStrategiqueRepository';
+import { PrismaObjectifRepository } from './infrastructure/adapters/PrismaObjectifRepository';
+import { PrismaRapportRepository } from './infrastructure/adapters/PrismaRapportRepository';
+import { PrismaSyntheseDesResultatsRepository } from './infrastructure/adapters/PrismaSyntheseDesResultatsRepository';
+import { SupprimerLesComptesDesactivesUseCase } from './usecases/SupprimerLesComptesDesactivesUseCase';
+import { RecupererLaListeDesInfomrationsChantiersUse } from './usecases/RecupererLaListeDesInfomrationsChantiersUse';
 
 export type GestionUtilisateurDependencies = {
   utilisateurRepository: UtilisateurRepository
@@ -51,6 +63,12 @@ export type GestionUtilisateurDependencies = {
   tokenAPIInformationRepository: TokenAPIInformationRepository
   desactiverUnUtilisateurUseCase: DesactiverUnUtilisateurUseCase
   reactiverUnUtilisateurUseCase: ReactiverUnUtilisateurUseCase
+  commentaireRepository: CommentaireRepository
+  decisionStrategiqueRepository: DecisionStrategiqueRepository
+  objectifRepository: ObjectifRepository
+  rapportRepository: RapportRepository
+  syntheseDesResultatsRepository: SyntheseDesResultatsRepository
+  supprimerLesComptesDesactivesUseCase: SupprimerLesComptesDesactivesUseCase
   recupererChantiersSynthetisesUseCase: RecupererChantiersSynthetisesUseCase
   recupererPerimetresMinisterielsUseCase: RecupererPerimetresMinisterielsUseCase
   recupererListeProfilUseCase: RecupererListeProfilUseCase
@@ -60,6 +78,7 @@ export type GestionUtilisateurDependencies = {
   recupererListeUtilisateursUseCase: RecupererListeUtilisateursUseCase
   recupererEtatVisualisationVideoAccueilUseCase: RecupererEtatVisualisationVideoAccueilUseCase
   desactiverVideoAccueilUseCase: DesactiverVideoAccueilUseCase
+  recupererLaListeDesInfomrationsChantiersUse: RecupererLaListeDesInfomrationsChantiersUse
 };
 
 export const getGestionUtilisateurContainer = (initialContainer: AwilixContainer<{ prisma: PrismaPilote }>): AwilixContainer<GestionUtilisateurDependencies & { prisma: PrismaPilote }> => {
@@ -82,5 +101,12 @@ export const getGestionUtilisateurContainer = (initialContainer: AwilixContainer
     recupererListeUtilisateursUseCase: asClass(RecupererListeUtilisateursUseCase),
     recupererEtatVisualisationVideoAccueilUseCase: asClass(RecupererEtatVisualisationVideoAccueilUseCase),
     desactiverVideoAccueilUseCase: asClass(DesactiverVideoAccueilUseCase),
+    commentaireRepository: asClass(PrismaCommentaireRepository),
+    decisionStrategiqueRepository: asClass(PrismaDecisionStrategiqueRepository),
+    objectifRepository: asClass(PrismaObjectifRepository),
+    rapportRepository: asClass(PrismaRapportRepository),
+    syntheseDesResultatsRepository: asClass(PrismaSyntheseDesResultatsRepository),
+    supprimerLesComptesDesactivesUseCase: asClass(SupprimerLesComptesDesactivesUseCase),
+    recupererLaListeDesInfomrationsChantiersUse: asClass(RecupererLaListeDesInfomrationsChantiersUse),
   });
 };

@@ -117,7 +117,6 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
                 <AvancementChantier
                   avancements={avancements}
                   donneesComparaisonDuTauxDAvancement={donneesComparaisonDuTauxDAvancement}
-                  estAutoriseAVoirLeSelecteurDeMaille={false}
                   jalon={jalon}
                   mailleQuery={mailleQuery}
                   mailleSelectionnee={mailleSelectionnee}

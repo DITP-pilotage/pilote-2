@@ -19,6 +19,7 @@ const convertirEnModel = (propositionValeurActuelle: PropositionValeurActuelle):
     motif_proposition: propositionValeurActuelle.motifProposition,
     source_donnee_methode_calcul: propositionValeurActuelle.sourceDonneeEtMethodeCalcul,
     statut: propositionValeurActuelle.statut,
+    date_modification_statut: null,
   };
 };
 
@@ -41,9 +42,31 @@ export class PrismaPropositionValeurActuelleRepository implements PropositionVal
       where: {
         indic_id: indicId,
         territoire_code: territoireCode,
+        statut: StatutProposition.EN_COURS,
       },
       data: {
-        statut: StatutProposition.SUPPRIME,
+        statut: StatutProposition.RETIREE,
+        date_modification_statut: new Date(),
+      },
+    });
+  }
+
+  async annulePropositionValeurActuellePrecedente({
+    indicId,
+    territoireCode,
+  }: {
+    indicId: string,
+    territoireCode: string,
+  }): Promise<void> {
+    await prisma.proposition_valeur_actuelle.updateMany({
+      where: {
+        indic_id: indicId,
+        territoire_code: territoireCode,
+        statut: StatutProposition.EN_COURS,
+      },
+      data: {
+        statut: StatutProposition.ANNULEE,
+        date_modification_statut: new Date(),
       },
     });
   }

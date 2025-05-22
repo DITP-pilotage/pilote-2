@@ -3,16 +3,21 @@ import { FunctionComponent } from 'react';
 import TagStyled from './Tag.styled';
 
 interface TagProps {
-  libellé: string,
+  libelle: string,
   suppressionCallback: () => void,
+  color?: 'blue-france' | 'warning' | 'yellow-moutarde',
+  size?: 'sm' | 'md',
+  doitAvoirUneTailleFixe?: boolean,
 }
 
-const Tag: FunctionComponent<TagProps> = ({ libellé, suppressionCallback }) => {
+export const Tag: FunctionComponent<TagProps> = ({ libelle, suppressionCallback, color = 'blue-france', size = 'md', doitAvoirUneTailleFixe = false }) => {
   return (
-    <TagStyled className='fr-tag fr-mr-1w fr-mb-1w'>
-      {libellé}
+    <TagStyled className={`fr-tag${size === 'sm' ? ' fr-tag--sm' : ''} fr-mr-1-5v fr-mb-1-5v ${color} ${doitAvoirUneTailleFixe ? 'fr-tag--fixed-width' : ''}`}>
+      <span>
+        {libelle}
+      </span>
       <button
-        aria-label={`Retirer le tag ${libellé}`}
+        aria-label={`Retirer le tag ${libelle}`}
         className='fr-icon--sm fr-icon-close-line fr-ml-1v'
         onClick={suppressionCallback}
         title='Supprimer filtre'

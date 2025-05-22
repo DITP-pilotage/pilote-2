@@ -17,7 +17,6 @@ interface CartesProps {
   jalon: number,
   mailleQuery: MailleInterne
   mailleSourceDonnees?: Maille | null
-  estAutoriseAVoirLeSelecteurDeMaille: boolean
   cartographieGaucheChantier: CartographieType
   cartographieDroiteChantier: CartographieType
 }
@@ -31,7 +30,6 @@ const Cartes: FunctionComponent<CartesProps> = ({
   jalon,
   mailleQuery,
   mailleSourceDonnees,
-  estAutoriseAVoirLeSelecteurDeMaille,
   cartographieGaucheChantier,
   cartographieDroiteChantier,
 }) => {
@@ -58,7 +56,6 @@ const Cartes: FunctionComponent<CartesProps> = ({
                   aLaSelectionCartographie={(valeur: CartographieType) => setCartographieGaucheSelection(valeur)}
                   cartographieSelectionnee={cartographieGaucheChantier} 
                   chantierMailles={chantierMailles}
-                  estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
                   estInteractif={estInteractif} 
                   jalon={jalon}
                   listeCartographiesDesactives={[cartographieDroiteChantier]}
@@ -87,7 +84,6 @@ const Cartes: FunctionComponent<CartesProps> = ({
                   aLaSelectionCartographie={(valeur: CartographieType) => setCartographieDroiteSelection(valeur)}
                   cartographieSelectionnee={cartographieDroiteChantier} 
                   chantierMailles={chantierMailles}
-                  estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
                   estInteractif={estInteractif} 
                   jalon={jalon}    
                   listeCartographiesDesactives={[cartographieGaucheChantier]}

@@ -15,8 +15,9 @@ const InputGroupeItem: FunctionComponent<MultiSelectGroupeProps> = ({
 }) => {
   const id = useId();
 
-  if (groupeOptions.options.length === 0)
+  if (groupeOptions.options.length === 0) {
     return null;
+  }
 
   return (
     <>

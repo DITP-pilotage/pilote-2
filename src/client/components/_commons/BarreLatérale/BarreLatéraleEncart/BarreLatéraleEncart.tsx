@@ -7,7 +7,7 @@ interface BarreLatéraleEncartProps {
 
 const BarreLatéraleEncart: FunctionComponent<BarreLatéraleEncartProps> = ({ children }) => {
   return (
-    <BarreLatéraleEncartStyled className='fr-p-3w'>
+    <BarreLatéraleEncartStyled className='fr-p-3w fr-background-blue-france-925 w-full'>
       { children }
     </BarreLatéraleEncartStyled>
   );

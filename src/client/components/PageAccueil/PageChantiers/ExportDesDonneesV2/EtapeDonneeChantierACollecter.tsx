@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { parseAsInteger, parseAsString, useQueryState } from 'nuqs';
+import { useSession } from 'next-auth/react';
 import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
+import { profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 export const EtapeDonneeChantierACollecter = () => {
+  const { data: session } = useSession();
+
   const [optionsExport, setOptionsExport] = useQueryState('optionsExport', parseAsString.withDefault('identifiant').withOptions({
     shallow: true,
   }));
@@ -24,6 +28,8 @@ export const EtapeDonneeChantierACollecter = () => {
 
     setOptionsExport(arrOptionsExport.join(','));
   };
+
+  const estAutoriseASelectionnerLesDecisionsStrategiques = !profilsTerritoriaux.includes(session!.profil);
 
   return (
     <div>
@@ -209,7 +215,7 @@ export const EtapeDonneeChantierACollecter = () => {
                     données descriptives
                   </span>
                   {' '}
-                  du chantier sur le territoire : taux d'avancement, tendance, écart
+                  du chantier sur le territoire : taux d'avancement, écart
                 </span>
               </label>
             ) : (
@@ -240,28 +246,18 @@ export const EtapeDonneeChantierACollecter = () => {
           />
           {
             afficherDetail ? (
-              <>
-                <label
-                  className='fr-label fr-text--sm fr-mb-0'
-                  htmlFor='comparaison'
-                >
-                  <span>
-                    <span className='fr-text--bold'>
-                      données de comparaison
-                    </span>
-                    {' '}
-                    du chantier
+              <label
+                className='fr-label fr-text--sm fr-mb-0'
+                htmlFor='comparaison'
+              >
+                <span>
+                  <span className='fr-text--bold'>
+                    données de comparaison
                   </span>
-                </label>
-                <ul className='fr-ml-4w fr-my-0 fr-text--sm'>
-                  <li className='fr-pb-0'>
-                    taux d'avancement, tendance, écart aux mailles inférieures et supérieures (si applicable)
-                  </li>
-                  <li className='fr-pb-0'>
-                    minimum, médiane et maximum du taux d'avancement à toutes les mailles (si applicable)
-                  </li>
-                </ul>
-              </>
+                  {' '}
+                  du chantier aux mailles inférieures et supérieures (si applicable) : taux d'avancement, écart 
+                </span>
+              </label>
             ) : (
               <label
                 className='fr-label fr-text--sm fr-mb-0'
@@ -356,30 +352,34 @@ export const EtapeDonneeChantierACollecter = () => {
             )
           }
         </div>
-        <div className='fr-checkbox-group fr-mt-1w'>
-          <input
-            checked={optionsExport.split(',').includes('decision')}
-            className='fr-input'
-            id='decision'
-            name='decision'
-            onChange={() => onChangeOptionsExport('decision')}
-            type='checkbox'
-          />
-          <label
-            className='fr-label fr-text--sm fr-mb-0'
-            htmlFor='decision'
-          >
-            <span>
-              suivi des
-              {' '}
-              <span className='fr-text--bold'>
-                décisions stratégiques
-              </span>
-              {' '}
-              du chantier
-            </span>
-          </label>
-        </div>
+        {
+          estAutoriseASelectionnerLesDecisionsStrategiques ? (
+            <div className='fr-checkbox-group fr-mt-1w'>
+              <input
+                checked={optionsExport.split(',').includes('decision')}
+                className='fr-input'
+                id='decision'
+                name='decision'
+                onChange={() => onChangeOptionsExport('decision')}
+                type='checkbox'
+              />
+              <label
+                className='fr-label fr-text--sm fr-mb-0'
+                htmlFor='decision'
+              >
+                <span>
+                  suivi des
+                  {' '}
+                  <span className='fr-text--bold'>
+                    décisions stratégiques
+                  </span>
+                  {' '}
+                  du chantier
+                </span>
+              </label>
+            </div>
+          ) : null
+        }
       </div>
       <div className='w-full flex justify-end fr-mt-2w'>
         <button

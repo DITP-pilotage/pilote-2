@@ -1,23 +1,10 @@
 import { FunctionComponent } from 'react';
-import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import AvancementsStyled from '@/components/_commons/Avancements/Avancements.styled';
-import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
-import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import AvancementsProps from './Avancements.interface';
 
 const Avancements: FunctionComponent<AvancementsProps> = ({ avancements, jalon }) => {
-  const [, setJalon] = useQueryState('jalon', parseAsStringLiteral(['2024', '2025']).withDefault('2024').withOptions({
-    shallow: false,
-    history: 'push',
-  }));
-
-  const auClickSelecteurJalon = (valeur: '2024' | '2025') => {
-    sauvegarderFiltres({ jalon: valeur });
-    setJalon(valeur);
-  };
-
   return (
     <AvancementsStyled>
       <JaugeDeProgression
@@ -64,15 +51,10 @@ const Avancements: FunctionComponent<AvancementsProps> = ({ avancements, jalon }
           />
           <div className='flex align-center justify-center fr-text--xs'>
             <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-              Taux d'avancement à échéance
+              Taux d'avancement à échéance 
+              {' '}
+              {jalon}
             </p>
-            <Sélecteur<'2024' | '2025'>
-              htmlName='jalon'
-              options={[{ libellé: '2024', valeur: '2024' }, { libellé: '2025', valeur: '2025' }]}
-              texteFantôme='Sélectionner un jalon'
-              valeurModifiéeCallback={auClickSelecteurJalon}
-              valeurSélectionnée={`${jalon}` as '2024' | '2025'}
-            />
           </div>
         </div>
       </div>

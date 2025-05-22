@@ -5,6 +5,10 @@ export const breakpointL = '992px';
 const MiseEnPageStyled = styled.div`
   word-break: break-word;
 
+  .fr-header {
+      z-index: 2;
+    }
+
   @media print {
     @page {
       margin: 1.5cm 1cm;
@@ -13,7 +17,7 @@ const MiseEnPageStyled = styled.div`
     .barre-latérale, .fr-btn, .fr-link, .fr-header, .fr-footer {
       display: none !important;
     }
-    
+
     *::-webkit-scrollbar {
       display: none;
     }

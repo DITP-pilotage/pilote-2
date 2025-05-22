@@ -4,14 +4,16 @@ import { prisma } from '@/server/db/prisma';
 
 export class PrismaPropositionValeurActuelleRepository implements PropositionValeurActuelleRepository {
 
-  async supprimerPropositionsValeurActuelleApresImport({
+  async modifierStatutPropositionsValeurActuelleApresImport({
     indicId,
     zoneId,
     dateValeurImportee,
+    valeurImportee,
   }: {
     indicId: string,
     zoneId: string,
     dateValeurImportee: Date
+    valeurImportee: number
   }): Promise<void> {
     const territoire = await prisma.territoire.findFirst({
       where: {
@@ -19,17 +21,30 @@ export class PrismaPropositionValeurActuelleRepository implements PropositionVal
       },
     });
 
-    await prisma.proposition_valeur_actuelle.updateMany({
+    const proposition = await prisma.proposition_valeur_actuelle.findFirst({
       where: {
         indic_id: indicId,
         territoire_code: territoire?.code,
-        date_valeur_actuelle: {
-          lte: dateValeurImportee,
-        },
-      },
-      data: {
-        statut: StatutProposition.SUPPRIME,
+        statut: StatutProposition.EN_COURS,
       },
     });
+
+    const dateValeurImporteeString = dateValeurImportee.toISOString();
+    if (proposition && proposition.date_valeur_actuelle && dateValeurImporteeString >= proposition.date_valeur_actuelle.toISOString()) {
+      const dateValeurProposeeString = proposition.date_valeur_actuelle.toISOString();
+      const nouveauStatut = dateValeurImporteeString === dateValeurProposeeString
+        ? (valeurImportee === proposition.valeur_actuelle_proposee ? StatutProposition.ACCEPTEE_VIA_IMPORT : StatutProposition.TRAITEE_VIA_IMPORT)
+        : StatutProposition.IGNOREE_VIA_IMPORT;
+
+      await prisma.proposition_valeur_actuelle.update({
+        where: {
+          id: proposition.id,
+        },
+        data: {
+          statut: nouveauStatut,
+          date_modification_statut: new Date(),
+        },
+      });
+    }
   }
 }

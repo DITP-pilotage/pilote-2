@@ -38,8 +38,10 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
   const queryParamString = getQueryParamString(getFiltresActifs());
   const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`;
 
+  const nomChantier = chantier.nom.length > 50 ? `${chantier.nom.slice(0, 50)}...` : chantier.nom;
+
   return (
-    <PageChantierEnTêteStyled className='fr-px-2w fr-px-md-2w fr-py-2w'>
+    <PageChantierEnTêteStyled>
       <Link
         aria-label="Retour à l'accueil"
         className='fr-link fr-fi-arrow-left-line fr-link--icon-left fr-mb-3w fr-mt-2w btn-retour'
@@ -47,39 +49,51 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
       >
         Retour
       </Link>
-      <Titre
-        baliseHtml='h1'
-        className='fr-h2 fr-mb-2w'
-      >
-        {chantier.nom}
-      </Titre>
+      <div className='container-titre-chantier'>
+        <Titre
+          baliseHtml='h1'
+          className='fr-h2 fr-mb-2w fr-mt-1w titre-chantier'
+        >
+          {nomChantier}
+        </Titre>
+      </div>
+      <div className='fr-pb-3w fr-mb-3w border-b border-blue-france'>
+        <ResponsableChantierEnTete
+          icone={responsables?.porteur?.icône || 'remix::government::fill'}
+          iconeStyle='icone'
+          isUppercase
+          listeNomsResponsables={listeNomsResponsablesMinistèrePorteur}
+        />
+      </div>
       <ResponsableChantierEnTete
-        libellé='Ministère porteur'
-        listeNomsResponsables={listeNomsResponsablesMinistèrePorteur}
-      />
-      <ResponsableChantierEnTete
+        icone='fr-icon-government-fill'
         libellé='Autres ministères co-porteurs'
         listeNomsResponsables={listeNomsResponsablesAutresMinistèresCoPorteurs}
+        size='sm'
       />
       <ResponsableChantierEnTete
+        icone='fr-icon-account-circle-fill'
         libellé="Directeur(s) / directrice(s) d'Administration Centrale"
         listeNomsResponsables={listeNomsDirecteursAdministrationCentrale}
+        size='sm'
       />
-      <div className='flex flex-direction-row justify-start align-center fr-mt-md-2w format-mobile'>
+      <div className='fr-mt-md-2w format-mobile fr-ml-1w'>
         {
           afficheLeBoutonMiseAJourDonnee && !estVueMobile ? (
-            <Link
-              className='fr-btn fr-btn--primary fr-mr-md-2w format-mobile-bouton'
-              href={`/chantier/${chantier.id}/indicateurs`}
-              title='Mettre à jour les données'
-            >
-              Mettre à jour les données
-            </Link>
+            <div className='fr-mb-1v'>
+              <Link
+                className='lien-menu fr-link fr-link--icon-left fr-icon-download-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france'
+                href={`/chantier/${chantier.id}/indicateurs`}
+                title='Mettre à jour les données'
+              >
+                Mettre à jour les données
+              </Link>
+            </div>
           ) : null
         }
         {
           afficheLeBoutonImpression && !estVueMobile ? (
-            <div className='format-mobile-bouton-impression'>
+            <div className='format-mobile-bouton-impression fr-mb-1v'>
               <BoutonImpression />
             </div>
           ) : null
@@ -87,7 +101,7 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
         {
           afficheLeBoutonFicheConducteur && !estVueMobile ? (
             <Link
-              className='fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left fr-px-1w fr-px-md-2w fr-ml-md-2w format-mobile-bouton'
+              className='lien-menu fr-link fr-link--icon-left fr-icon-article-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france'
               href={`/chantier/${chantier.id}/fiche-conducteur`}
               title='Fiche conducteur'
             >

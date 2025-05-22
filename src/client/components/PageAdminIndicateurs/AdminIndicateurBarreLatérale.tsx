@@ -10,7 +10,7 @@ import api from '@/server/infrastructure/api/trpc/api';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import MultiSelectPérimètreMinistériel from '@/client/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
 import Interrupteur from '@/client/components/_commons/Interrupteur/Interrupteur';
-import Tag from '@/client/components/_commons/Tag/Tag';
+import { Tag } from '@/client/components/_commons/Tag/Tag';
 import Titre from '@/client/components/_commons/Titre/Titre';
 
 interface AdminIndicateursBarreLatéraleProps {
@@ -43,6 +43,7 @@ const AdminIndicateurBarreLatérale: FunctionComponent<AdminIndicateursBarreLat�
             changementValeursSélectionnéesCallback={(perimetresMinisteriel) => {
               sauvegarderFiltres({ 'perimetresMinisteriels': perimetresMinisteriel });
             }}
+            perimetresSelectionnables={périmètresMinistériels ?? []}
             périmètresMinistérielsIdsSélectionnésParDéfaut={filtresActifs.perimetresMinisteriels}
           />
         </div>
@@ -104,7 +105,7 @@ const AdminIndicateurBarreLatérale: FunctionComponent<AdminIndicateursBarreLat�
               return label === null ? null : (
                 <Tag
                   key={perimetreId}
-                  libellé={label}
+                  libelle={label}
                   suppressionCallback={() => {
                     const filtresApresSuppression = filtresActifs.perimetresMinisteriels.toSpliced(filtresActifs.perimetresMinisteriels.indexOf(perimetreId), 1);
                     sauvegarderFiltres({ 'perimetresMinisteriels': filtresApresSuppression });
@@ -132,7 +133,7 @@ const AdminIndicateurBarreLatérale: FunctionComponent<AdminIndicateursBarreLat�
               return label === null ? null : (
                 <Tag
                   key={chantierId}
-                  libellé={label}
+                  libelle={label}
                   suppressionCallback={() => {
                     const filtresApresSuppression = filtresActifs.chantiers.toSpliced(filtresActifs.chantiers.indexOf(chantierId), 1);
                     sauvegarderFiltres({ 'chantiers': filtresApresSuppression });
@@ -155,24 +156,26 @@ const AdminIndicateurBarreLatérale: FunctionComponent<AdminIndicateursBarreLat�
           id='fr-sidemenu-item-autres-filtres'
         >
           {
-            !!filtresActifs.estTerritorialise && 
+            !!filtresActifs.estTerritorialise ? (
               <Tag
                 key='estTerritorialise'
-                libellé='Indicateurs territorialisés'
+                libelle='Indicateurs territorialisés'
                 suppressionCallback={() => {
                   sauvegarderFiltres({ 'estTerritorialise': false });
                 }}
               />
+            ) : null
           }
           {
-            !!filtresActifs.estBarometre && 
+            !!filtresActifs.estBarometre ? (
               <Tag
                 key='estBarometre'
-                libellé='Indicateurs du baromètre'
+                libelle='Indicateurs du baromètre'
                 suppressionCallback={() => {
                   sauvegarderFiltres({ 'estBarometre': false });
                 }}
               />
+            ) : null
           }
         </div>
       </div>

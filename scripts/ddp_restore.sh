@@ -4,7 +4,7 @@ source .env
 
 # [import]
 echo ">> TRUNCATE content of these tables..."
-time psql -d $CONN_STR_DEST -c "
+time psql -d $DATABASE_URL -c "
 TRUNCATE TABLE
     public.indicateur_territoire_jalon,
     public.indicateur_territoire,
@@ -30,6 +30,6 @@ TRUNCATE TABLE
     public.proposition_valeur_actuelle;"
 
 echo ">> pg_restore dumped file..."
-time pg_restore -d $CONN_STR_DEST --verbose \
+time pg_restore -d $DATABASE_URL --verbose \
     --no-owner --no-privileges --exit-on-error \
     $DUMP_DEST

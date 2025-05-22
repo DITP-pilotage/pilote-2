@@ -37,14 +37,14 @@ const presenterEnIndicateurExportContrat = (indicateurPourExport: IndicateurPour
     formaterMétéoOuNonRenseigne(indicateurPourExport.météo, indicateurPourExport.chantierEstApplicable),
     indicateurPourExport.nom || NON_APPLICABLE,
     formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurInitiale, indicateurPourExport.estApplicable),
-    formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurInitiale, indicateurPourExport.estApplicable),
+    formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurInitiale, indicateurPourExport.estApplicable, 'MM-YYYY'),
     formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurActuelle, indicateurPourExport.estApplicable),
-    formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurActuelle, indicateurPourExport.estApplicable),
+    formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurActuelle, indicateurPourExport.estApplicable, 'MM-YYYY'),
     formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurCibleAnnuelle, indicateurPourExport.estApplicable),
-    formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurCibleAnnuelle, indicateurPourExport.estApplicable),
+    formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurCibleAnnuelle, indicateurPourExport.estApplicable, 'MM-YYYY'),
     formaterNumériqueOuValeurManquante(indicateurPourExport.avancementAnnuel, indicateurPourExport.estApplicable),
     formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurCible, indicateurPourExport.estApplicable),
-    formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurCible, indicateurPourExport.estApplicable),
+    formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurCible, indicateurPourExport.estApplicable, 'MM-YYYY'),
     formaterNumériqueOuValeurManquante(indicateurPourExport.avancementGlobal, indicateurPourExport.estApplicable),
   ];
 
@@ -100,7 +100,7 @@ export default class ExportCsvDesIndicateursUseCase {
               !masquerPourProfilDROMEtMailleNat(profil, indicateursPourExport.périmètreIds, indicateursPourExport.maille)
               && verifierApplicabiliteMaille(indicateursPourExport.maillesApplicables, indicateursPourExport.maille)
               && verifierOptionPerimetreIds(optionsExport, indicateursPourExport.périmètreIds)
-              && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, indicateursPourExport.chantierEstBaromètre, indicateursPourExport.chantierEstTerritorialise)
+              && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, indicateursPourExport.chantierEstBaromètre)
               && verifierOptionStatut(optionsExport, indicateursPourExport.chantierStatut)
               && verifierOptionMeteo(optionsExport, indicateursPourExport.météo)
           ) {

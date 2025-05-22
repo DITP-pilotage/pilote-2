@@ -9,4 +9,11 @@ export interface PropositionValeurActuelleRepository {
     indicId: string,
     territoireCode: string,
   }) => Promise<void>;
+  annulePropositionValeurActuellePrecedente: ({
+    indicId,
+    territoireCode,
+  }: {
+    indicId: string,
+    territoireCode: string,
+  }) => Promise<void>;
 }
