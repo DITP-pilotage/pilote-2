@@ -312,115 +312,151 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
   }
 
   async récupérerHistoriquePourExports(chantierId: string, territoireCodesLecture: string[], jalon: number): Promise<HistoriqueIndicateurPourExport[]> {
-    const result = await prisma.indicateur_territoire.findMany({
+    const result = await prisma.indicateur_identite.findMany({
       where: {
-        territoire_code: {
-          in: territoireCodesLecture,
-        },
-        indicateur_identite: {
-          chantier_id: chantierId,
-          chantier_identite: {
-            NOT: [
-              {
-                ministeres: { isEmpty: true },
-              },
-            ],
-          },
+        chantier_id: chantierId,
+        chantier_identite: {
+          NOT: [
+            {
+              ministeres: { isEmpty: true },
+            },
+          ],
         },
       },
       select: {
-        maille: true,
-        code_insee: true,
-        valeur_initiale: true,
-        date_valeur_initiale: true,
-        evolution_valeur_actuelle: true,
-        valeur_cible_mandat: true,
-        date_valeur_cible_mandat: true,
-        est_applicable: true,
-        indicateur_territoire_jalon: {
+        nom: true,
+        chantier_id: true,
+        mailles_applicables: true,
+        chantier_identite: {
+          select: {
+            est_barometre: true,
+            est_territorialise: true,
+            nom: true,
+            perimetre_ids: true,
+            statut: true,
+            cible_attendue: true,
+            chantier_territoire: {
+              select: {
+                maille: true,
+                territoire_code: true,
+                nombre_propositions_valeur_actuelle: true,
+                est_applicable: true,
+                taux_avancement_mandat: true,
+                territoire: {
+                  select: {
+                    code_parent: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        indicateur_territoire: {
           where: {
-            jalon,
-          },
-          select: {
-            valeur_cible: true,
-            date_valeur_cible: true,
-            taux_avancement: true,
-            valeur_actuelle: true,
-            date_valeur_actuelle: true,
-          },
-        },
-        indicateur_identite: {
-          select: {
-            nom: true,
-            chantier_id: true,
-            mailles_applicables: true,
-            chantier_identite: {
-              select: {
-                est_barometre: true,
-                est_territorialise: true,
-                nom: true,
-                perimetre_ids: true,
-                statut: true,
-                cible_attendue: true,
-              },
+            territoire_code: {
+              in: territoireCodesLecture,
             },
           },
-        },
-        territoire: {
           select: {
-            nom: true,
-            territoire_parent: {
-              select: {
-                nom: true,
-              },
-            },
-          },
-        },
-        chantier_territoire: {
-          select: {
+            maille: true,
+            code_insee: true,
+            territoire_code: true,
+            valeur_initiale: true,
+            date_valeur_initiale: true,
+            evolution_valeur_actuelle: true,
+            valeur_cible_mandat: true,
+            date_valeur_cible_mandat: true,
             est_applicable: true,
-            meteo: true,
-            ecart: true,
-            tendance: true,
-            taux_avancement_mandat: true,
+            indicateur_territoire_jalon: {
+              where: {
+                jalon,
+              },
+              select: {
+                valeur_cible: true,
+                date_valeur_cible: true,
+                taux_avancement: true,
+                valeur_actuelle: true,
+                date_valeur_actuelle: true,
+              },
+            },
+            territoire: {
+              select: {
+                nom: true,
+                code_parent: true,
+                territoire_parent: {
+                  select: {
+                    nom: true,
+                  },
+                },
+              },
+            },
+            chantier_territoire: {
+              select: {
+                territoire_code: true,
+                est_applicable: true,
+                meteo: true,
+                ecart: true,
+                tendance: true,
+                taux_avancement_mandat: true,
+                nombre_propositions_valeur_actuelle: true,
+              },
+            },
           },
         },
       },
     });
 
-    return result.flatMap(indicateurPourExport => {
-      const indicateurTerritoireJalon = indicateurPourExport.indicateur_territoire_jalon.at(0);
+    return result.flatMap(indicateurIdentite => {
+      const listeTerritoireChantier = indicateurIdentite.chantier_identite.chantier_territoire;
+      const chantierTerritoiresMailleDepartementale = listeTerritoireChantier.filter(territoireChantier => territoireChantier.maille === 'DEPT' && territoireChantier.est_applicable);
 
-      return (indicateurPourExport.evolution_valeur_actuelle as unknown as historique_valeurs[]).map(historiqueIndicateur => ({
-        maille: indicateurPourExport.maille,
-        régionNom: indicateurPourExport.maille === 'DEPT' ? indicateurPourExport.territoire.territoire_parent?.nom || null : indicateurPourExport.territoire.nom,
-        départementNom: indicateurPourExport.maille === 'DEPT' ? indicateurPourExport.territoire.nom : null,
-        codeInsee: indicateurPourExport.code_insee,
-        chantierNom: indicateurPourExport.indicateur_identite.chantier_identite.nom,
-        chantierId: indicateurPourExport.indicateur_identite.chantier_id,
-        nom: indicateurPourExport.indicateur_identite.nom,
-        valeurInitiale: indicateurPourExport.valeur_initiale,
-        dateValeurInitiale: indicateurPourExport.date_valeur_initiale?.toISOString() || null,
-        valeurCibleAnnuelle:verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_cible),
-        dateValeurCibleAnnuelle: indicateurTerritoireJalon?.date_valeur_cible?.toISOString() || null,
-        valeurCible: indicateurPourExport.valeur_cible_mandat,
-        dateValeurCible: indicateurPourExport.date_valeur_cible_mandat?.toISOString() || null,
-        valeurActuelle: verifyValeurIsNotNullOrUndefined(historiqueIndicateur.valeur),
-        dateValeurActuelle: historiqueIndicateur.date,
-        périmètreIds: indicateurPourExport.indicateur_identite.chantier_identite.perimetre_ids,
-        météo: indicateurPourExport.chantier_territoire.meteo as Météo | null,
-        chantierEstBaromètre: indicateurPourExport.indicateur_identite.chantier_identite.est_barometre,
-        chantierEstTerritorialise: indicateurPourExport.indicateur_identite.chantier_identite.est_territorialise,
-        chantierStatut: indicateurPourExport.indicateur_identite.chantier_identite.statut,
-        estApplicable: indicateurPourExport.est_applicable,
-        maillesApplicables: indicateurPourExport.indicateur_identite.mailles_applicables,
-        chantierEcart: indicateurPourExport.chantier_territoire.ecart,
-        chantierTendance: indicateurPourExport.chantier_territoire.tendance,
-        chantierCibleAttendue: indicateurPourExport.indicateur_identite.chantier_identite.cible_attendue,
-        chantierAUnTauxAvancementDepartemental: true, // TODO
-        chantierAUnePropositionValeurAvancement: true, // TODO
-        chantierAvancementGlobal: indicateurPourExport.chantier_territoire.taux_avancement_mandat,
-      }));
+      return indicateurIdentite.indicateur_territoire.flatMap(indicateurPourExport => {
+        const indicateurTerritoireJalon = indicateurPourExport.indicateur_territoire_jalon.at(0);
+        const chantierTerritoire = indicateurPourExport.chantier_territoire;
+        let aUnePropositionsValeurActuelle = false;
+        const maille = indicateurPourExport.maille;
+        if (maille === 'DEPT') {
+          aUnePropositionsValeurActuelle = chantierTerritoire.nombre_propositions_valeur_actuelle > 0;
+        } else if (maille === 'REG') {
+          const codeRegion = chantierTerritoire.territoire_code;
+          aUnePropositionsValeurActuelle = chantierTerritoire.nombre_propositions_valeur_actuelle > 0 || 
+          listeTerritoireChantier
+            .filter(chantier => chantier.territoire.code_parent === codeRegion)
+            .some(chantier => chantier.nombre_propositions_valeur_actuelle > 0);
+        } else {
+          aUnePropositionsValeurActuelle = listeTerritoireChantier.some(chantier => chantier.nombre_propositions_valeur_actuelle > 0);
+        }
+        return (indicateurPourExport.evolution_valeur_actuelle as unknown as historique_valeurs[]).map(historiqueIndicateur => ({
+          maille: indicateurPourExport.maille,
+          régionNom: indicateurPourExport.maille === 'DEPT' ? indicateurPourExport.territoire.territoire_parent?.nom || null : indicateurPourExport.territoire.nom,
+          départementNom: indicateurPourExport.maille === 'DEPT' ? indicateurPourExport.territoire.nom : null,
+          codeInsee: indicateurPourExport.code_insee,
+          chantierNom: indicateurIdentite.chantier_identite.nom,
+          chantierId: indicateurIdentite.chantier_id,
+          nom: indicateurIdentite.nom,
+          valeurInitiale: indicateurPourExport.valeur_initiale,
+          dateValeurInitiale: indicateurPourExport.date_valeur_initiale?.toISOString() || null,
+          valeurCibleAnnuelle:verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_cible),
+          dateValeurCibleAnnuelle: indicateurTerritoireJalon?.date_valeur_cible?.toISOString() || null,
+          valeurCible: indicateurPourExport.valeur_cible_mandat,
+          dateValeurCible: indicateurPourExport.date_valeur_cible_mandat?.toISOString() || null,
+          valeurActuelle: verifyValeurIsNotNullOrUndefined(historiqueIndicateur.valeur),
+          dateValeurActuelle: historiqueIndicateur.date,
+          périmètreIds: indicateurIdentite.chantier_identite.perimetre_ids,
+          météo: indicateurPourExport.chantier_territoire.meteo as Météo | null,
+          chantierEstBaromètre: indicateurIdentite.chantier_identite.est_barometre,
+          chantierEstTerritorialise: indicateurIdentite.chantier_identite.est_territorialise,
+          chantierStatut: indicateurIdentite.chantier_identite.statut,
+          estApplicable: indicateurPourExport.est_applicable,
+          maillesApplicables: indicateurIdentite.mailles_applicables,
+          chantierEcart: indicateurPourExport.chantier_territoire.ecart,
+          chantierTendance: indicateurPourExport.chantier_territoire.tendance,
+          chantierCibleAttendue: indicateurIdentite.chantier_identite.cible_attendue,
+          chantierAUnTauxAvancementDepartemental: chantierTerritoiresMailleDepartementale.length === 0 || chantierTerritoiresMailleDepartementale.some(chantier => chantier.taux_avancement_mandat !== null),
+          chantierAUnePropositionValeurAvancement: aUnePropositionsValeurActuelle,
+          chantierAvancementGlobal: indicateurPourExport.chantier_territoire.taux_avancement_mandat,
+        }));
+      });
     }).sort((indicA, indicB) => {
       const orderMaille = { 'NAT': 1, 'REG': 2, 'DEPT': 3 };
 
