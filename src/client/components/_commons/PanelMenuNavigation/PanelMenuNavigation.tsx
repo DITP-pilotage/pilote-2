@@ -1,4 +1,4 @@
-import { parseAsString, useQueryState } from 'nuqs';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import SélecteursMaillesEtTerritoires
   from '@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
@@ -16,7 +16,7 @@ type PanelMenuNavigationProps = {
 };
 
 export const PanelMenuNavigation = ({ pathname, territoireCode, mailleQuery, estAutoriseAVoirLeSelecteurDeMaille, setEstOuverteBarreLatérale, libelleMenuNavigation = 'Filtrer' }: PanelMenuNavigationProps) => {
-  const [jalon, setJalon] = useQueryState('jalon', parseAsString.withDefault('').withOptions({
+  const [jalon, setJalon] = useQueryState('jalon', parseAsStringLiteral(['2024', '2025']).withDefault('2025').withOptions({
     shallow: false,
     clearOnDefault: true,
     history: 'push',
@@ -42,7 +42,7 @@ export const PanelMenuNavigation = ({ pathname, territoireCode, mailleQuery, est
           <select 
             className='fr-select fr-mt-0 fr-mr-1w'
             id='jalon'
-            onChange={(e) => setJalon(e.target.value)}
+            onChange={(e) => setJalon(e.target.value as '2024' | '2025')}
             value={jalon}
           >
             <option value='2024'>

@@ -37,7 +37,7 @@ const etatInitial = {
   maille: '',
   territorialisation: [] as string[],
   statut: 'PUBLIE',
-  jalon: '2024',
+  jalon: '2025',
   groupeParMinistere: false,
   estBarometre: false,
   estTerritorialise: false,
