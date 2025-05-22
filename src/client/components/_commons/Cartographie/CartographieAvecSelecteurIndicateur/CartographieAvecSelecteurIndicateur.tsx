@@ -1,5 +1,4 @@
 import { FunctionComponent } from 'react';
-import SélecteurMaille from '@/client/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
@@ -23,13 +22,12 @@ const CartographieAvecSelecteurIndicateur: FunctionComponent<{
   detailsIndicateurTerritoire: DétailsIndicateurTerritoire
   territoireCode: string,
   mailleQuery: MailleInterne
-  estAutoriseAVoirLeSelecteurDeMaille: boolean,
   jalon: number,
   cartographieSelectionnee: CartographieIndicateurType,
   aLaSelectionCartographie: (valeur: CartographieIndicateurType) => void
   listeCartographiesDesactives: CartographieIndicateurType[]
   unité?: string | null
-}> = ({ detailsIndicateurTerritoire, estAutoriseAVoirLeSelecteurDeMaille, mailleQuery, territoireCode, jalon, cartographieSelectionnee, aLaSelectionCartographie, listeCartographiesDesactives, unité }) => {
+}> = ({ detailsIndicateurTerritoire, mailleQuery, territoireCode, jalon, cartographieSelectionnee, aLaSelectionCartographie, listeCartographiesDesactives, unité }) => {
 
   const donneesEtLegendesCartographies: Record<CartographieIndicateurType, { useRecupererDonnees: () => { donneesCartographie: CartographieDonnées, legende: CartographieÉlémentDeLégende[], legendeDegrade: CartographieLégendeDégradéContenu | null } }> = {
     avancementMandat: useCartographieAvancementIndicateur(detailsIndicateurTerritoire, ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS, jalon, 'MANDAT'),
@@ -74,14 +72,6 @@ const CartographieAvecSelecteurIndicateur: FunctionComponent<{
         valeurModifiéeCallback={aLaSelectionCartographie}
         valeurSélectionnée={cartographieSelectionnee}      
       />
-      {
-        estAutoriseAVoirLeSelecteurDeMaille ? (
-          <SélecteurMaille
-            mailleQuery={mailleQuery}
-            pathname={pathname}
-          />
-        ) : null
-      }
       <Cartographie
         auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
         données={donneesCartographie}

@@ -87,7 +87,6 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 avancementGlobal={avancements.departementale.global.moyenne}
                 couleurBarreDeProgression='secondaire'
                 couleurJaugeDeProgression='bleu'
-                doitAfficherLeSelecteur={territoireCode.startsWith('DEPT')}
                 jalon={jalon}
                 territoireNom={territoireSélectionné.nom}
                 titreTauxAvancement={sousTitreTuileAvancementDepartemental}
@@ -116,7 +115,6 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 avancementGlobal={avancements.regionale.global.moyenne}
                 couleurBarreDeProgression={mailleSelectionnee === 'regionale' ? 'secondaire' : 'secondaire-light'}
                 couleurJaugeDeProgression={mailleSelectionnee === 'regionale' ? 'bleu' : 'bleu-clair'}
-                doitAfficherLeSelecteur={territoireCode.startsWith('REG')}
                 jalon={jalon}
                 territoireNom={territoireSélectionnéParent ? territoireSélectionnéParent.nomAffiché : territoireSélectionné.nomAffiché}
                 titreTauxAvancement={sousTitreTuileAvancementRegional}

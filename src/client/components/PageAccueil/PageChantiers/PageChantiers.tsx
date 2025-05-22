@@ -133,7 +133,9 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                           />
                           <div className='flex flex-wrap justify-center'>
                             <p className='fr-text--xs fr-mb-0 fr-mt-1v text-center'>
-                              Taux d'avancement à échéance
+                              Taux d'avancement à échéance 
+                              {' '}
+                              {jalon}
                             </p>
                           </div>
                         </div>
