@@ -7,7 +7,6 @@ import { ExportCsvDesChantiersUseCase } from '@/server/chantiers/usecases/Export
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { configuration } from '@/config';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { recupererJalon } from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/recupererJalon';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import { getContainer } from '@/server/dependances';
@@ -20,11 +19,11 @@ export default async function handleExportDesChantiers(request: NextApiRequest, 
   response.setHeader('Content-Type', 'text/csv');
   const jalon = recupererJalon(request.query?.jalon as string | undefined);
 
-  const headersColumn = ExportCsvDesChantiersUseCase.NOMS_COLONNES(jalon);
+  const headersColumn = ExportCsvDesChantiersUseCase.NOMS_COLONNES(jalon, session.profil);
 
   const stringifier = stringify({
     header: true,
-    columns: session.profil === ProfilEnum.DITP_ADMIN ? [...headersColumn, 'statut'] : headersColumn,
+    columns: headersColumn,
     delimiter: ';',
     bom: true,
     quoted_string: true,
