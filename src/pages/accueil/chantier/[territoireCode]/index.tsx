@@ -386,21 +386,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
                 ) : null
               }
                 {
-                process.env.NEXT_PUBLIC_FF_EXPORT_CSV === 'true' ? (
-                  <div>
-                    <button
-                      aria-controls={ID_HTML_MODALE_EXPORT}
-                      className='fr-link fr-link--icon-left fr-icon-download-line fr-btn--icon-left fr-text--sm fr-p-0 border-b border-blue-france'
-                      data-fr-opened='false'
-                      type='button'
-                    >
-                      Exporter les données
-                    </button>
-                    <ExportDesDonnées listeChantierId={chantiersIdsExport} />
-                  </div>
-                ) : null
-              }
-                {
                 estExportV2Actif ? (
                   <div>
                     <button
@@ -416,7 +401,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
                       }}
                       type='button'
                     >
-                      Exporter les données V2
+                      Exporter les données
                     </button>
                     <ExportDesDonneesV2
                       fermetureCallback={() => {
@@ -431,7 +416,19 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
                       territoireCodeSelectionne={territoireCode}
                     />
                   </div>
-                ) : null
+                ) : (
+                  <div>
+                    <button
+                      aria-controls={ID_HTML_MODALE_EXPORT}
+                      className='fr-link fr-link--icon-left fr-icon-download-line fr-btn--icon-left fr-text--sm fr-p-0 border-b border-blue-france'
+                      data-fr-opened='false'
+                      type='button'
+                    >
+                      Exporter les données
+                    </button>
+                    <ExportDesDonnées listeChantierId={chantiersIdsExport} />
+                  </div>
+                )
               }
               </div>
             </div>
