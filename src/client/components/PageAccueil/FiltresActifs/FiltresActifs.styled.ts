@@ -5,7 +5,7 @@ const FiltresActifsStyled = styled.div`
   position: sticky;
   width: 100%;
   top: 0;
-  z-index: 2;
+  z-index: 1;
   background: var(--blue-france-925-125);
   box-shadow: 0 6px 18px var(--shadow-color);
 

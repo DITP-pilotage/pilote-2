@@ -340,7 +340,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
           <BarreLatéraleEncart>
             <Titre
               baliseHtml='h1'
-              className={`fr-h2 fr-p-0 fr-mb-1w${chantiersSontArchives ? ' titre-gris' : ' fr-text-title--blue-france'}`}
+              className={`fr-h2 fr-p-0 fr-mb-3w${chantiersSontArchives ? ' titre-gris' : ' fr-text-title--blue-france'}`}
             >
               {`${nombreTotalChantiersAvecAlertes} ${nombreTotalChantiersAvecAlertes >= 2 ? 'chantiers' : 'chantier'}`}
             </Titre>
@@ -348,7 +348,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
               <div className='titre-liens'>
                 {
                 process.env.NEXT_PUBLIC_FF_FICHE_TERRITORIALE === 'true' && estAutoriséAConsulterLaFicheTerritoriale(session?.profil || '') ? (
-                  <div>
+                  <div className='fr-mb-1v'>
                     {
                       territoireCode === 'NAT-FR' ? (
                         <button
@@ -374,7 +374,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
               }
                 {
                 process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' ? (
-                  <div>
+                  <div className='fr-mb-1v'>
                     <Link
                       className='lien-menu fr-link fr-link--icon-left fr-icon-article-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france'
                       href={`${territoireCode}/rapport-detaille${queryParamString.length > 0 ? `?${queryParamString}` : ''}`}
