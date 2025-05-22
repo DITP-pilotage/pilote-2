@@ -57,10 +57,11 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
           {nomChantier}
         </Titre>
       </div>
-      <div className='fr-mb-1w'>
+      <div className='fr-pb-3w fr-mb-3w border-b border-blue-france'>
         <ResponsableChantierEnTete
           icone={responsables?.porteur?.icône || 'remix::government::fill'}
           iconeStyle='icone'
+          isUppercase
           listeNomsResponsables={listeNomsResponsablesMinistèrePorteur}
         />
       </div>

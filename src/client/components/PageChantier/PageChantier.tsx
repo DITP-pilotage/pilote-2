@@ -323,7 +323,6 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     cartographieDroiteChantier={cartographieDroiteChantier}
                     cartographieGaucheChantier={cartographieGaucheChantier}
                     chantierMailles={chantier.mailles}
-                    estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille}
                     jalon={jalon}
                     mailleQuery={mailleQuery}
                     mailleSourceDonnees={mailleSourceDonnees}

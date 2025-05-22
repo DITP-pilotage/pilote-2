@@ -4,7 +4,7 @@ import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDe
 import AvancementsStyled from '@/components/_commons/Avancements/Avancements.styled';
 import AvancementsProps from './Avancements.interface';
 
-const Avancements: FunctionComponent<AvancementsProps> = ({ avancements }) => {
+const Avancements: FunctionComponent<AvancementsProps> = ({ avancements, jalon }) => {
   return (
     <AvancementsStyled>
       <JaugeDeProgression
@@ -51,7 +51,9 @@ const Avancements: FunctionComponent<AvancementsProps> = ({ avancements }) => {
           />
           <div className='flex align-center justify-center fr-text--xs'>
             <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-              Taux d'avancement à échéance
+              Taux d'avancement à échéance 
+              {' '}
+              {jalon}
             </p>
           </div>
         </div>

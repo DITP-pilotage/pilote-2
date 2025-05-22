@@ -14,7 +14,6 @@ interface AvancementsTerritoireProps {
   jalon: number
   couleurBarreDeProgression: BarreDeProgressionVariante
   couleurJaugeDeProgression: JaugeDeProgressionCouleur
-  doitAfficherLeSelecteur: boolean
   titreTauxAvancement: string
 }
 
@@ -25,7 +24,6 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
   couleurBarreDeProgression,
   couleurJaugeDeProgression,
   jalon,
-  doitAfficherLeSelecteur,
   titreTauxAvancement,
 }) => {
   return (
@@ -61,7 +59,9 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
           />
           <div className='flex align-center justify-center fr-text--xs  w-full relative'>
             <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-              {`Avancement à échéance${!doitAfficherLeSelecteur ? ` ${jalon}` : ''}`}
+              Avancement à échéance
+              {' '}
+              {jalon}
             </p>
           </div>
         </div>

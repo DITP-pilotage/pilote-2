@@ -12,4 +12,5 @@ export type AvancementsStatistiques = {
 
 export default interface AvancementsProps {
   avancements: AvancementsStatistiques
+  jalon: number
 }

@@ -1,5 +1,4 @@
 import { FunctionComponent } from 'react';
-import SélecteurMaille from '@/client/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille';
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
@@ -22,12 +21,11 @@ const CartographieAvecSelecteur: FunctionComponent<{
   estInteractif?: boolean,
   territoireCode: string,
   mailleQuery: MailleInterne
-  estAutoriseAVoirLeSelecteurDeMaille: boolean,
   jalon: number,
   cartographieSelectionnee: CartographieType,
   aLaSelectionCartographie: (valeur: CartographieType) => void
   listeCartographiesDesactives: CartographieType[]
-}> = ({ chantierMailles, estAutoriseAVoirLeSelecteurDeMaille, mailleQuery, estInteractif, territoireCode, jalon, cartographieSelectionnee, aLaSelectionCartographie, listeCartographiesDesactives }) => {
+}> = ({ chantierMailles, mailleQuery, estInteractif, territoireCode, jalon, cartographieSelectionnee, aLaSelectionCartographie, listeCartographiesDesactives }) => {
 
   const donneesEtLegendesCartographies: Record<CartographieType, { useRecupererDonnees: () => { donneesCartographie: CartographieDonnées; legende: CartographieÉlémentDeLégende[] } } > = {
     avancementMandat: useCartographieAvancement(chantierMailles, ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS, jalon, 'MANDAT'),
@@ -71,14 +69,6 @@ const CartographieAvecSelecteur: FunctionComponent<{
         valeurModifiéeCallback={aLaSelectionCartographie}
         valeurSélectionnée={cartographieSelectionnee}      
       />
-      {
-        estAutoriseAVoirLeSelecteurDeMaille ? (
-          <SélecteurMaille
-            mailleQuery={mailleQuery}
-            pathname={pathname}
-          />
-        ) : null
-      }
       <Cartographie
         auClicTerritoireCallback={auClicTerritoireCallback}
         données={donneesCartographie}

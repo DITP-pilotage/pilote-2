@@ -65,7 +65,6 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   const {
     donnéesCartographieAvancementTerritorialisées,
     donnéesCartographieValeurActuelleTerritorialisées,
-    estAutoriseAVoirLeSelecteurDeMaille,
   } = useIndicateurDétails(detailsIndicateursTerritoire[indicateur.id]);
 
   const indicateurSiTypeDeReformeEstChantier = futOuvert;
@@ -163,7 +162,6 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                         aLaSelectionCartographie={(valeur: CartographieIndicateurType) => setCartographieGaucheSelection(valeur)} 
                         cartographieSelectionnee={cartographieGaucheIndicateur} 
                         detailsIndicateurTerritoire={detailsIndicateursTerritoire[indicateur.id]} 
-                        estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille} 
                         jalon={jalon} 
                         listeCartographiesDesactives={[cartographieDroiteIndicateur]} 
                         mailleQuery={mailleQuery} 
@@ -176,7 +174,6 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                         aLaSelectionCartographie={(valeur: CartographieIndicateurType) => setCartographieDroiteSelection(valeur)} 
                         cartographieSelectionnee={cartographieDroiteIndicateur} 
                         detailsIndicateurTerritoire={detailsIndicateursTerritoire[indicateur.id]} 
-                        estAutoriseAVoirLeSelecteurDeMaille={estAutoriseAVoirLeSelecteurDeMaille} 
                         jalon={jalon} 
                         listeCartographiesDesactives={[cartographieGaucheIndicateur]} 
                         mailleQuery={mailleQuery}
