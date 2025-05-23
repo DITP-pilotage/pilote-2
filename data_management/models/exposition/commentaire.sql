@@ -1,3 +1,5 @@
+-- depends_on: {{ ref('chantier_territoire') }}
+
 SELECT
     {{
     dbt_utils.surrogate_key(
