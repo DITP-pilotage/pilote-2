@@ -20,7 +20,7 @@ ALTER TABLE "public"."decision_strategique" DROP COLUMN "auteur";
 ALTER TABLE "public"."objectif" DROP COLUMN "auteur";
 
 -- AlterTable
-ALTER TABLE "public"."proposition_valeur_actuelle" DROP COLUMN "auteur_modification";
+ALTER TABLE "public"."proposition_valeur_actuelle" DROP COLUMN "auteur_modification" CASCADE;
 
 -- AlterTable
 ALTER TABLE "public"."synthese_des_resultats" DROP COLUMN "auteur";
