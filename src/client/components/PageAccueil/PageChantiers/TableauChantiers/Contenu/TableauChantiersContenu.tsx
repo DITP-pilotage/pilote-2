@@ -61,7 +61,9 @@ const TableauChantiersContenu: FunctionComponent<TableauChantiersContenuProps> =
           >
             {
               row.getVisibleCells().map(cell => {
-                const mailleRedirection = mailleSelectionnee === 'departementale' && !row.original.maillesApplicables.includes('departementale') ? 'regionale' : 'departementale';
+                const mailleRedirection = !row.original.maillesApplicables.includes('departementale') 
+                  ? row.original.maillesApplicables.includes('regionale') ? 'regionale' : mailleSelectionnee
+                  : mailleSelectionnee;
                 return (
                   <td
                     className='fr-p-0'
