@@ -2,18 +2,16 @@ import { FunctionComponent } from 'react';
 import Icône from '@/components/_commons/Icône/Icône';
 import EnteteResponsablesStyled from './EnTêteResponsables.styled';
 
-interface ResponsableEnTete {
+interface ResponsableEnTeteElement {
   libellé?: string,
-  listeNomsResponsables: string[],
+  listeNomsResponsables: React.ReactNode[],
   icone: string,
   iconeStyle?: 'icone' | 'span',
   size?: 'sm' | 'md',
   isUppercase?: boolean
 }
 
-export const ResponsableChantierEnTete: FunctionComponent<ResponsableEnTete> = ({ libellé, listeNomsResponsables, icone, iconeStyle = 'span', size = 'md', isUppercase = false }) => {
-  const nomResponsable = listeNomsResponsables.join(', ') || 'Non renseigné';
-
+export const ResponsableChantierEnTeteElement: FunctionComponent<ResponsableEnTeteElement> = ({ libellé, listeNomsResponsables, icone, iconeStyle = 'span', size = 'md', isUppercase = false }) => {
   return (
     <EnteteResponsablesStyled className='flex'>
       <div className='icone-entete fr-text-title--blue-france fr-mb-1w fr-pr-1w'>
@@ -40,9 +38,13 @@ export const ResponsableChantierEnTete: FunctionComponent<ResponsableEnTete> = (
             ) : null 
           }
         </p>
-        <p className={`fr-mb-0 fr-text-title--blue-france ${size === 'sm' ? 'fr-text--xs' : ''}${isUppercase ? ' uppercase' : ''}`}>
-          {nomResponsable}
-        </p>
+        <ul className={`fr-mb-0 fr-text-title--blue-france ${size === 'sm' ? 'fr-text--xs' : ''}${isUppercase ? ' uppercase' : ''}`}>
+          {listeNomsResponsables.map((nomResponsable, index) => (
+            <li key={index}>
+              {nomResponsable}
+            </li>
+          ))}
+        </ul>
       </div>
     </EnteteResponsablesStyled>
   );
