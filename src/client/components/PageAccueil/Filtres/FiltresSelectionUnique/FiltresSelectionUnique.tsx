@@ -1,21 +1,11 @@
 import { parseAsInteger, parseAsString, useQueryState } from 'nuqs';
 import { FunctionComponent } from 'react';
+import { useSession } from 'next-auth/react';
 import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
+import api from '@/server/infrastructure/api/trpc/api';
 import { FiltresSélectionUniqueStyled } from './FiltresSelectionUnique.styled';
 
 const availableFiltres = ['statut'] as const;
-
-const valuesFiltres = {
-  statut: {
-    valeurDisponible: [
-      { valeur: 'PUBLIE', libelle: 'Chantiers validés (par défaut)' },
-      { valeur: 'BROUILLON', libelle: 'Chantiers en cours de publication' },
-      { valeur: 'BROUILLON_ET_PUBLIE', libelle: 'Tous les chantiers suivis' },
-      { valeur: 'ARCHIVE', libelle: 'Chantiers précédemment suivis' },
-    ],
-    valeurParDéfaut: 'PUBLIE',
-  },
-};
 
 interface FiltresSelectionUniqueProps {
   categorieDeFiltre: typeof availableFiltres[number],
@@ -26,6 +16,22 @@ export const FiltresSelectionUnique: FunctionComponent<FiltresSelectionUniquePro
   categorieDeFiltre,
   libelle,
 }) => {
+  const { data: session } = useSession();
+
+  const { data: variableContenuFFPpgArchive } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_PPG_ARCHIVE' });
+  const profilPeutAccederAuxBrouillons = !!session?.profilAAccèsAuxChantiersBrouillons;
+
+  const valuesFiltres = {
+    statut: {
+      valeurDisponible: [
+        { valeur: 'PUBLIE', libelle: 'Chantiers validés (par défaut)' },
+        { valeur: 'BROUILLON', libelle: 'Chantiers en cours de publication' },
+        { valeur: 'BROUILLON_ET_PUBLIE', libelle: 'Tous les chantiers suivis' },
+        variableContenuFFPpgArchive && profilPeutAccederAuxBrouillons ? { valeur: 'ARCHIVE', libelle: 'Chantiers précédemment suivis' } : null,
+      ].filter(Boolean),
+      valeurParDéfaut: 'PUBLIE',
+    },
+  };
 
   const [filtresNew, setListeFiltresNew] = useQueryState(categorieDeFiltre, parseAsString.withDefault(valuesFiltres[categorieDeFiltre].valeurParDéfaut).withOptions({
     shallow: false,
