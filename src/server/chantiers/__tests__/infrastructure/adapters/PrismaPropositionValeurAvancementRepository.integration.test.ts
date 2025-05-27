@@ -8,10 +8,47 @@ import {
 describe('PrismaPropositionValeurAvancementRepository', () => {
   let prismaPropositionValeurAvancementRepository: PrismaPropositionValeurAvancementRepository;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     prismaPropositionValeurAvancementRepository = new PrismaPropositionValeurAvancementRepository();
+    await prisma.chantier_identite.create({
+      data: {
+        id: 'CH-001',
+        nom: 'Chantier 001',
+      },
+    });
+    await prisma.chantier_territoire.createMany({
+      data: [
+        {
+          id: 'CH-001',
+          territoire_code: 'DEPT-34',
+          code_insee: '34',
+          maille: 'DEPT',
+          zone_id: 'D34',
+        },
+      ],
+    });
+    await prisma.indicateur_identite.createMany({
+      data: [
+        {
+          id: 'IND-001',
+          nom: 'indicateur 1',
+          chantier_id: 'CH-001',
+        },
+      ],
+    });
+    await prisma.indicateur_territoire.createMany({
+      data: [
+        {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-34',
+          code_insee: '34',
+          zone_id: 'D34',
+        },
+      ],
+    });
   });
-
   describe('#supprimerPropositionValeurAvancement', () => {
     it('doit appliquer le statut RETIREE à la proposition de valeur avancement avec le statut EN_COURS', async () => {
       // Given
@@ -157,9 +194,9 @@ describe('PrismaPropositionValeurAvancementRepository', () => {
       });
       const propositionValeurAvancement = new PropositionValeurAvancementBuilder()
         .avecId('c2afe41e-51df-493a-b140-b9380c625197')
-        .avecIndicId('IND-002')
+        .avecIndicId('IND-001')
         .avecValeurAvancementProposee(23.2)
-        .avecTerritoireCode('DEPT-87')
+        .avecTerritoireCode('DEPT-34')
         .avecDateValeurAvancement(new Date('2024-03-13'))
         .avecIdAuteurModification('7d9ba603-d510-46f6-bda3-736210467521')
         .avecAuteurModification('jane.doe@test.com')

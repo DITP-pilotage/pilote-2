@@ -296,6 +296,7 @@ components:
           x-stoplight:
             id: monbziy7nf30t
           example: 15.45
+          description: "Ce champ est déprécié. Utilisez plutôt le champ 'valeur_avancement'"
         date_valeur_actuelle:
           type: string
           deprecated: true
@@ -303,6 +304,7 @@ components:
             id: sijpmsct93j94
           format: date
           example: '2024-07-01'
+          description: "Ce champ est déprécié. Utilisez plutôt le champ 'date_valeur_avancement'"
         valeur_avancement:
           type: number
           x-stoplight:
