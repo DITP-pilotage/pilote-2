@@ -1,38 +1,38 @@
-import { proposition_valeur_actuelle as PrismaPropositionValeurActuelle } from '@prisma/client';
-import { PropositionValeurActuelle } from '@/server/chantiers/domain/PropositionValeurActuelle';
+import { proposition_valeur_actuelle as PrismaPropositionValeurAvancement } from '@prisma/client';
+import { PropositionValeurAvancement } from '@/server/chantiers/domain/PropositionValeurAvancement';
 import {
-  PropositionValeurActuelleRepository,
+  PropositionValeurAvancementRepository,
   PropositionValeurAvancementRapport,
-} from '@/server/chantiers/domain/ports/PropositionValeurActuelleRepository';
+} from '@/server/chantiers/domain/ports/PropositionValeurAvancementRepository';
 import { StatutProposition } from '@/server/chantiers/domain/StatutProposition';
 import { prisma } from '@/server/db/prisma';
 import { formaterDate } from '@/client/utils/date/date';
 
-const convertirEnModel = (propositionValeurActuelle: PropositionValeurActuelle): PrismaPropositionValeurActuelle => {
+const convertirEnModel = (propositionValeurAvancement: PropositionValeurAvancement): PrismaPropositionValeurAvancement => {
   return {
-    id: propositionValeurActuelle.id,
-    indic_id: propositionValeurActuelle.indicId,
-    valeur_actuelle_proposee: propositionValeurActuelle.valeurActuelleProposee,
-    territoire_code: propositionValeurActuelle.territoireCode,
-    date_valeur_actuelle: propositionValeurActuelle.dateValeurActuelle,
-    id_auteur_modification: propositionValeurActuelle.idAuteurModification,
-    date_proposition: propositionValeurActuelle.dateProposition,
-    motif_proposition: propositionValeurActuelle.motifProposition,
-    source_donnee_methode_calcul: propositionValeurActuelle.sourceDonneeEtMethodeCalcul,
-    statut: propositionValeurActuelle.statut,
+    id: propositionValeurAvancement.id,
+    indic_id: propositionValeurAvancement.indicId,
+    valeur_actuelle_proposee: propositionValeurAvancement.valeurAvancementProposee,
+    territoire_code: propositionValeurAvancement.territoireCode,
+    date_valeur_actuelle: propositionValeurAvancement.dateValeurAvancement,
+    id_auteur_modification: propositionValeurAvancement.idAuteurModification,
+    date_proposition: propositionValeurAvancement.dateProposition,
+    motif_proposition: propositionValeurAvancement.motifProposition,
+    source_donnee_methode_calcul: propositionValeurAvancement.sourceDonneeEtMethodeCalcul,
+    statut: propositionValeurAvancement.statut,
     date_modification_statut: null,
   };
 };
 
-export class PrismaPropositionValeurActuelleRepository implements PropositionValeurActuelleRepository {
-  async creerPropositionValeurActuelle(propositionValeurActuelle: PropositionValeurActuelle): Promise<void> {
-    const prismaPropositionValeurActuelle = convertirEnModel(propositionValeurActuelle);
+export class PrismaPropositionValeurAvancementRepository implements PropositionValeurAvancementRepository {
+  async creerPropositionValeurAvancement(propositionValeurAvancement: PropositionValeurAvancement): Promise<void> {
+    const prismaPropositionValeurAvancement = convertirEnModel(propositionValeurAvancement);
     await prisma.proposition_valeur_actuelle.create({
-      data: prismaPropositionValeurActuelle,
+      data: prismaPropositionValeurAvancement,
     });
   }
 
-  async supprimerPropositionValeurActuelle({
+  async supprimerPropositionValeurAvancement({
     indicId,
     territoireCode,
   }: {
@@ -52,7 +52,7 @@ export class PrismaPropositionValeurActuelleRepository implements PropositionVal
     });
   }
 
-  async annulePropositionValeurActuellePrecedente({
+  async annulePropositionValeurAvancementPrecedente({
     indicId,
     territoireCode,
   }: {
@@ -191,3 +191,4 @@ export class PrismaPropositionValeurActuelleRepository implements PropositionVal
     }, new Map<string, Map<string, PropositionValeurAvancementRapport[]>>());
   }
 }
+

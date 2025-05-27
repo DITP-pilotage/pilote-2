@@ -228,7 +228,7 @@ FicheConducteurContrat & { jalon: number }
                       <div
                         className='fr-col-2 flex align-center fr-pr-1w'
                       >
-                        {`${indicateur.valeurActuelle} ${indicateur.dateValeurActuelle}`}
+                        {`${indicateur.valeurAvancement} ${indicateur.dateValeurAvancement}`}
                       </div>
                       <div
                         className='fr-col-2 flex align-center'

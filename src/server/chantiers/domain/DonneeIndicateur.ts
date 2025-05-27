@@ -13,9 +13,9 @@ export class DonneeIndicateur {
 
   private readonly _dateValeurInitiale: Date | null;
 
-  private readonly _valeurActuelle: number | null;
+  private readonly _valeurAvancement: number | null;
 
-  private readonly _dateValeurActuelle: Date | null;
+  private readonly _dateValeurAvancement: Date | null;
 
   private readonly _valeurCibleAnnuelle: number | null;
 
@@ -39,8 +39,8 @@ export class DonneeIndicateur {
     territoireCode,
     valeurInitiale,
     dateValeurInitiale,
-    valeurActuelle,
-    dateValeurActuelle,
+    valeurAvancement,
+    dateValeurAvancement,
     valeurCibleAnnuelle,
     dateValeurCibleAnnuelle,
     tauxAvancementAnnuel,
@@ -56,8 +56,8 @@ export class DonneeIndicateur {
     territoireCode: string,
     valeurInitiale: number | null,
     dateValeurInitiale: Date | null,
-    valeurActuelle: number | null,
-    dateValeurActuelle: Date | null,
+    valeurAvancement: number | null,
+    dateValeurAvancement: Date | null,
     valeurCibleAnnuelle: number | null,
     dateValeurCibleAnnuelle: Date | null,
     tauxAvancementAnnuel: number | null,
@@ -73,8 +73,8 @@ export class DonneeIndicateur {
     this._territoireCode = territoireCode;
     this._valeurInitiale = valeurInitiale;
     this._dateValeurInitiale = dateValeurInitiale;
-    this._valeurActuelle = valeurActuelle;
-    this._dateValeurActuelle = dateValeurActuelle;
+    this._valeurAvancement = valeurAvancement;
+    this._dateValeurAvancement = dateValeurAvancement;
     this._valeurCibleAnnuelle = valeurCibleAnnuelle;
     this._dateValeurCibleAnnuelle = dateValeurCibleAnnuelle;
     this._tauxAvancementAnnuel = tauxAvancementAnnuel;
@@ -112,12 +112,12 @@ export class DonneeIndicateur {
     return this._dateValeurInitiale;
   }
 
-  get valeurActuelle(): number | null {
-    return this._valeurActuelle;
+  get valeurAvancement(): number | null {
+    return this._valeurAvancement;
   }
 
-  get dateValeurActuelle(): Date | null {
-    return this._dateValeurActuelle;
+  get dateValeurAvancement(): Date | null {
+    return this._dateValeurAvancement;
   }
 
   get valeurCibleAnnuelle(): number | null {
@@ -156,8 +156,8 @@ export class DonneeIndicateur {
     territoireCode,
     valeurInitiale,
     dateValeurInitiale,
-    valeurActuelle,
-    dateValeurActuelle,
+    valeurAvancement,
+    dateValeurAvancement,
     valeurCibleAnnuelle,
     dateValeurCibleAnnuelle,
     tauxAvancementAnnuel,
@@ -173,8 +173,8 @@ export class DonneeIndicateur {
     territoireCode: string,
     valeurInitiale: number | null,
     dateValeurInitiale: Date | null,
-    valeurActuelle: number | null,
-    dateValeurActuelle: Date | null,
+    valeurAvancement: number | null,
+    dateValeurAvancement: Date | null,
     valeurCibleAnnuelle: number | null,
     dateValeurCibleAnnuelle: Date | null,
     tauxAvancementAnnuel: number | null,
@@ -191,8 +191,8 @@ export class DonneeIndicateur {
       territoireCode,
       valeurInitiale,
       dateValeurInitiale,
-      valeurActuelle,
-      dateValeurActuelle,
+      valeurAvancement,
+      dateValeurAvancement,
       valeurCibleAnnuelle,
       dateValeurCibleAnnuelle,
       tauxAvancementAnnuel,

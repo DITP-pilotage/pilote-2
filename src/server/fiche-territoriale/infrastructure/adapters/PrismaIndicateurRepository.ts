@@ -68,9 +68,9 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       const indicateur = Indicateur.creerIndicateur({
         id: val.id,
         nom: val.nom,
-        dateValeurActuelle: val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.date_valeur_actuelle?.toISOString() || '',
+        dateValeurAvancement: val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.date_valeur_actuelle?.toISOString() || '',
         objectifTauxAvancement: val.indicateur_territoire[0].taux_avancement_mandat,
-        valeurActuelle: val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.valeur_actuelle,
+        valeurAvancement: val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.valeur_actuelle,
         valeurCible: val.indicateur_territoire[0].valeur_cible_mandat,
         uniteMesure: val.unite_mesure,
       });
@@ -115,9 +115,9 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       const indicateur = Indicateur.creerIndicateur({
         id: val.id,
         nom: val.nom,
-        dateValeurActuelle: val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.date_valeur_actuelle?.toISOString() || '',
+        dateValeurAvancement: val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.date_valeur_actuelle?.toISOString() || '',
         objectifTauxAvancement: val.indicateur_territoire[0].taux_avancement_mandat,
-        valeurActuelle: val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.valeur_actuelle,
+        valeurAvancement: val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.valeur_actuelle,
         valeurCible: val.indicateur_territoire[0].valeur_cible_mandat,
         uniteMesure: val.unite_mesure,
       });

@@ -79,8 +79,8 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
   const {
     dateDeMiseAJourIndicateur,
     dateProchaineDateMaj,
-    dateProchaineDateValeurActuelle,
-    dateValeurActuelle,
+    dateProchaineDateValeurAvancement,
+    dateValeurAvancement,
     indicateurNonAJour,
     indicateurEstApplicable,
   } = useSousIndicateurBloc(détailsIndicateur, territoireCode);
@@ -246,9 +246,9 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                         { /* Valeur et date valeur d'avancement de indicateurTerritoireJalon en fonction du jalon */}
                         <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                           <ValeurEtDate
-                            date={informationIndicateur.données.dateValeurActuelle}
+                            date={informationIndicateur.données.dateValeurAvancement}
                             unité={informationIndicateur.données.unité}
-                            valeur={informationIndicateur.données.valeurActuelle}
+                            valeur={informationIndicateur.données.valeurAvancement}
                           />
                         </td>
                         <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
@@ -271,9 +271,9 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
                         { /* Valeur et date valeur d'avancement mandat de indicateurTerritoire */}
                         <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                           <ValeurEtDate
-                            date={informationIndicateur.données.dateValeurActuelleMandat}
+                            date={informationIndicateur.données.dateValeurAvancementMandat}
                             unité={informationIndicateur.données.unité}
-                            valeur={informationIndicateur.données.valeurActuelleMandat}
+                            valeur={informationIndicateur.données.valeurAvancementMandat}
                           />
                         </td>
                         <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
@@ -310,8 +310,8 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
               chantierEstTerritorialisé={chantierEstTerritorialisé}
               dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
               dateProchaineDateMaj={dateProchaineDateMaj}
-              dateProchaineDateValeurActuelle={dateProchaineDateValeurActuelle}
-              dateValeurActuelle={dateValeurActuelle}
+              dateProchaineDateValeurAvancement={dateProchaineDateValeurAvancement}
+              dateValeurAvancement={dateValeurAvancement}
               detailsIndicateursTerritoire={detailsIndicateursTerritoire}
               détailsIndicateurs={détailsIndicateurs}
               estSousIndicateur

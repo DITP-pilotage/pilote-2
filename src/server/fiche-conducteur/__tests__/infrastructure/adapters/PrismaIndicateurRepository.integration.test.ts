@@ -220,7 +220,7 @@ describe('PrismaIndicateurRepository', () => {
         objectifTauxAvancementIntermediaire: 10,
         objectifValeurCible: 10,
         objectifTauxAvancement: 30,
-        dateValeurActuelle: new Date('2024-12-01').toISOString(),
+        dateValeurAvancement: new Date('2024-12-01').toISOString(),
       }, {
         nom: 'Indicateur 002',
         type: 'IMPACT',

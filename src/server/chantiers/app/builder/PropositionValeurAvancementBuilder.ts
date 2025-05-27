@@ -1,16 +1,16 @@
 import { StatutProposition, StatutPropositionType } from '@/server/chantiers/domain/StatutProposition';
-import { PropositionValeurActuelle } from '@/server/chantiers/domain/PropositionValeurActuelle';
+import { PropositionValeurAvancement } from '@/server/chantiers/domain/PropositionValeurAvancement';
 
-export class PropositionValeurActuelleBuilder {
+export class PropositionValeurAvancementBuilder {
   private id: string = 'cb6e5af4-065a-4a82-8a49-be3dea248330';
 
   private indicId: string = 'IND-001';
 
-  private valeurActuelleProposee: number = 12.3;
+  private valeurAvancementProposee: number = 12.3;
 
   private territoireCode: string = 'DEPT-01';
 
-  private dateValeurActuelle: Date = new Date('2023-03-12');
+  private dateValeurAvancement: Date = new Date('2023-03-12');
 
   private idAuteurModification: string = 'b962181f-087c-442e-a899-dae59e3533cd';
 
@@ -24,68 +24,68 @@ export class PropositionValeurActuelleBuilder {
 
   private statut: StatutPropositionType = StatutProposition.EN_COURS;
 
-  avecId(id: string): PropositionValeurActuelleBuilder {
+  avecId(id: string): PropositionValeurAvancementBuilder {
     this.id = id;
     return this;
   }
 
-  avecIndicId(indicId: string): PropositionValeurActuelleBuilder {
+  avecIndicId(indicId: string): PropositionValeurAvancementBuilder {
     this.indicId = indicId;
     return this;
   }
 
-  avecValeurActuelleProposee(valeurActuelleProposee: number): PropositionValeurActuelleBuilder {
-    this.valeurActuelleProposee = valeurActuelleProposee;
+  avecValeurAvancementProposee(valeurAvancementProposee: number): PropositionValeurAvancementBuilder {
+    this.valeurAvancementProposee = valeurAvancementProposee;
     return this;
   }
 
-  avecTerritoireCode(territoireCode: string): PropositionValeurActuelleBuilder {
+  avecTerritoireCode(territoireCode: string): PropositionValeurAvancementBuilder {
     this.territoireCode = territoireCode;
     return this;
   }
 
-  avecDateValeurActuelle(dateValeurActuelle: Date): PropositionValeurActuelleBuilder {
-    this.dateValeurActuelle = dateValeurActuelle;
+  avecDateValeurAvancement(dateValeurAvancement: Date): PropositionValeurAvancementBuilder {
+    this.dateValeurAvancement = dateValeurAvancement;
     return this;
   }
 
-  avecIdAuteurModification(idAuteurModification: string): PropositionValeurActuelleBuilder {
+  avecIdAuteurModification(idAuteurModification: string): PropositionValeurAvancementBuilder {
     this.idAuteurModification = idAuteurModification;
     return this;
   }
 
-  avecAuteurModification(auteurModification: string): PropositionValeurActuelleBuilder {
+  avecAuteurModification(auteurModification: string): PropositionValeurAvancementBuilder {
     this.auteurModification = auteurModification;
     return this;
   }
 
-  avecDateProposition(dateProposition: Date): PropositionValeurActuelleBuilder {
+  avecDateProposition(dateProposition: Date): PropositionValeurAvancementBuilder {
     this.dateProposition = dateProposition;
     return this;
   }
 
-  avecMotifProposition(motifProposition: string): PropositionValeurActuelleBuilder {
+  avecMotifProposition(motifProposition: string): PropositionValeurAvancementBuilder {
     this.motifProposition = motifProposition;
     return this;
   }
 
-  avecSourceDonneeEtMethodeCalcul(sourceDonneeEtMethodeCalcul: string): PropositionValeurActuelleBuilder {
+  avecSourceDonneeEtMethodeCalcul(sourceDonneeEtMethodeCalcul: string): PropositionValeurAvancementBuilder {
     this.sourceDonneeEtMethodeCalcul = sourceDonneeEtMethodeCalcul;
     return this;
   }
 
-  avecStatut(statut: StatutPropositionType): PropositionValeurActuelleBuilder {
+  avecStatut(statut: StatutPropositionType): PropositionValeurAvancementBuilder {
     this.statut = statut;
     return this;
   }
 
-  build(): PropositionValeurActuelle {
-    return PropositionValeurActuelle.creerPropositionValeurActuelle({
+  build(): PropositionValeurAvancement {
+    return PropositionValeurAvancement.creerPropositionValeurAvancement({
       id: this.id,
       indicId: this.indicId,
-      valeurActuelleProposee: this.valeurActuelleProposee,
+      valeurAvancementProposee: this.valeurAvancementProposee,
       territoireCode: this.territoireCode,
-      dateValeurActuelle: this.dateValeurActuelle,
+      dateValeurAvancement: this.dateValeurAvancement,
       idAuteurModification: this.idAuteurModification,
       auteurModification: this.auteurModification,
       dateProposition: this.dateProposition,

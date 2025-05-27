@@ -18,7 +18,7 @@ export interface FiltreAccueil {
   estEnAlerteBaisse: boolean
   estEnAlerteMétéoNonRenseignée: boolean
   estEnAlerteAbscenceTauxAvancementDepartemental: boolean
-  estEnAlertePossedePropositionsValeurActuelle: boolean
+  estEnAlertePossedePropositionsValeurAvancement: boolean
 }
 
 interface FiltresStore {
@@ -48,7 +48,7 @@ const etatInitial = {
   estEnAlerteBaisse: false,
   estEnAlerteMétéoNonRenseignée: false,
   estEnAlerteAbscenceTauxAvancementDepartemental: false,
-  estEnAlertePossedePropositionsValeurActuelle: false,
+  estEnAlertePossedePropositionsValeurAvancement: false,
 };
 const useFiltresStoreNew = create<FiltresStore>((set, get) => ({
   filtresActifs: etatInitial,

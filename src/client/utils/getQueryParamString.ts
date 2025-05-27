@@ -32,7 +32,7 @@ export const useGetFullQueryParamString = (): string => {
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
-    estEnAlertePossedePropositionsValeurActuelle: parseAsBoolean.withDefault(false),
+    estEnAlertePossedePropositionsValeurAvancement: parseAsBoolean.withDefault(false),
   });
 
   return getQueryParamString({ ...filtres, ...filtresAlertes });

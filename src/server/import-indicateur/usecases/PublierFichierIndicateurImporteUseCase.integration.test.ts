@@ -13,25 +13,25 @@ import {
 import {
   MesureIndicateurRepository,
 } from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface';
-import { PropositionValeurActuelleRepository } from '@/server/import-indicateur/domain/ports/PropositionValeurActuelleRepository';
+import { PropositionValeurAvancementRepository } from '@/server/import-indicateur/domain/ports/PropositionValeurAvancementRepository';
 
 describe('PublierFichierIndicateurImporteUseCase', () => {
   let publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase;
   let mesureIndicateurTemporaireRepository: MockProxy<MesureIndicateurTemporaireRepository>;
   let mesureIndicateurRepository: MesureIndicateurRepository;
   let rapportRepository: RapportRepository;
-  let propositionValeurActuelleRepository: PropositionValeurActuelleRepository;
+  let propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
 
   beforeEach(() => {
     mesureIndicateurRepository = mock<MesureIndicateurRepository>();
     mesureIndicateurTemporaireRepository = mock<MesureIndicateurTemporaireRepository>();
     rapportRepository = mock<RapportRepository>();
-    propositionValeurActuelleRepository = mock<PropositionValeurActuelleRepository>();
+    propositionValeurAvancementRepository = mock<PropositionValeurAvancementRepository>();
     publierFichierIndicateurImporteUseCase = new PublierFichierIndicateurImporteUseCase({
       mesureIndicateurTemporaireRepository,
       mesureIndicateurRepository,
       rapportRepository,
-      propositionValeurActuelleRepository,
+      propositionValeurAvancementRepository,
     });
   });
 
@@ -128,9 +128,9 @@ describe('PublierFichierIndicateurImporteUseCase', () => {
 
     // THEN
     expect(mesureIndicateurTemporaireRepository.recupererToutParRapportId).toHaveBeenNthCalledWith(1, '20a717e6-2de9-428c-b4e7-80f7b9f36ffc');
-    expect(propositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport).toHaveBeenCalledTimes(2);
-    expect(propositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport).toHaveBeenNthCalledWith(1, propositionsAModifierCaptor1);
-    expect(propositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport).toHaveBeenNthCalledWith(2, propositionsAModifierCaptor2);
+    expect(propositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport).toHaveBeenCalledTimes(2);
+    expect(propositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport).toHaveBeenNthCalledWith(1, propositionsAModifierCaptor1);
+    expect(propositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport).toHaveBeenNthCalledWith(2, propositionsAModifierCaptor2);
     expect(mesureIndicateurTemporaireRepository.supprimerToutParRapportId).toHaveBeenNthCalledWith(1, '20a717e6-2de9-428c-b4e7-80f7b9f36ffc');
 
     const propositionsAModifier1 = propositionsAModifierCaptor1.value;

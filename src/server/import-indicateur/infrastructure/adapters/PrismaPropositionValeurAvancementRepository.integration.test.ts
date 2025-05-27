@@ -1,53 +1,16 @@
+
 import { prisma } from '@/server/db/prisma';
 import { StatutProposition } from '@/server/chantiers/domain/StatutProposition';
-import { PrismaPropositionValeurActuelleRepository } from './PrismaPropositionValeurActuelleRepository';
+import { PrismaPropositionValeurAvancementRepository } from './PrismaPropositionValeurAvancementRepository';
 
-describe('PrismaPropositionValeurActuelle', () => {
-  let prismaPropositionValeurActuelleRepository: PrismaPropositionValeurActuelleRepository;
+describe('PrismaPropositionValeurAvancement', () => {
+  let prismaPropositionValeurAvancementRepository: PrismaPropositionValeurAvancementRepository;
 
-  beforeEach(async () => {
-    prismaPropositionValeurActuelleRepository = new PrismaPropositionValeurActuelleRepository();
-    await prisma.chantier_identite.create({
-      data: {
-        id: 'CH-001',
-        nom: 'Chantier 001',
-      },
-    });
-    await prisma.chantier_territoire.createMany({
-      data: [
-        {
-          id: 'CH-001',
-          territoire_code: 'DEPT-34',
-          code_insee: '34',
-          maille: 'DEPT',
-          zone_id: 'D34',
-        },
-      ],
-    });
-    await prisma.indicateur_identite.createMany({
-      data: [
-        {
-          id: 'IND-001',
-          nom: 'indicateur 1',
-          chantier_id: 'CH-001',
-        },
-      ],
-    });
-    await prisma.indicateur_territoire.createMany({
-      data: [
-        {
-          id: 'IND-001',
-          chantier_id: 'CH-001',
-          maille: 'DEPT',
-          territoire_code: 'DEPT-34',
-          code_insee: '34',
-          zone_id: 'D34',
-        },
-      ],
-    });
+  beforeEach(() => {
+    prismaPropositionValeurAvancementRepository = new PrismaPropositionValeurAvancementRepository();
   });
 
-  describe('#modifierStatutPropositionsValeurActuelleApresImport', () => {
+  describe('#modifierStatutPropositionsValeurAvancementApresImport', () => {
     it("si la date de valeur actuelle de l'import est égale à la date de valeur actuelle de la proposition et la valeur actuelle importée est égale à la proposition, applique le statut ACCEPTEE_VIA_IMPORT", async () => {
       // GIVEN
       await prisma.utilisateur.create({
@@ -76,7 +39,7 @@ describe('PrismaPropositionValeurActuelle', () => {
         },
       });
       // WHEN
-      await prismaPropositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport({
+      await prismaPropositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport({
         indicId: 'IND-001', 
         zoneId: 'D34', 
         dateValeurImportee: new Date('2024-12-01'),
@@ -115,7 +78,7 @@ describe('PrismaPropositionValeurActuelle', () => {
         },
       });
       // WHEN
-      await prismaPropositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport({
+      await prismaPropositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport({
         indicId: 'IND-001', 
         zoneId: 'D34', 
         dateValeurImportee: new Date('2024-12-01'),
@@ -154,7 +117,7 @@ describe('PrismaPropositionValeurActuelle', () => {
         },
       });
       // WHEN
-      await prismaPropositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport({
+      await prismaPropositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport({
         indicId: 'IND-001', 
         zoneId: 'D34', 
         dateValeurImportee: new Date('2025-12-01'),
@@ -193,7 +156,7 @@ describe('PrismaPropositionValeurActuelle', () => {
         },
       });
       // WHEN
-      await prismaPropositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport({
+      await prismaPropositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport({
         indicId: 'IND-001', 
         zoneId: 'D34', 
         dateValeurImportee: new Date('2023-12-01'),
@@ -232,7 +195,7 @@ describe('PrismaPropositionValeurActuelle', () => {
         },
       });
       // WHEN
-      await prismaPropositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport({
+      await prismaPropositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport({
         indicId: 'IND-001', 
         zoneId: 'D34', 
         dateValeurImportee: new Date('2024-12-01'),

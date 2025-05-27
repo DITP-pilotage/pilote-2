@@ -7,9 +7,9 @@ export class Indicateur {
 
   private readonly _dateValeurInitiale: string | null;
 
-  private readonly _valeurActuelle: number | null;
+  private readonly _valeurAvancement: number | null;
 
-  private readonly _dateValeurActuelle: string | null;
+  private readonly _dateValeurAvancement: string | null;
 
   private readonly _objectifValeurCibleIntermediaire: number | null;
 
@@ -24,8 +24,8 @@ export class Indicateur {
     type,
     valeurInitiale,
     dateValeurInitiale,
-    valeurActuelle,
-    dateValeurActuelle,
+    valeurAvancement,
+    dateValeurAvancement,
     objectifValeurCibleIntermediaire,
     objectifTauxAvancementIntermediaire,
     objectifValeurCible,
@@ -35,8 +35,8 @@ export class Indicateur {
     type: string | null
     valeurInitiale: number | null
     dateValeurInitiale: string | null
-    valeurActuelle: number | null
-    dateValeurActuelle: string | null
+    valeurAvancement: number | null
+    dateValeurAvancement: string | null
     objectifValeurCibleIntermediaire: number | null
     objectifTauxAvancementIntermediaire: number | null
     objectifValeurCible: number | null
@@ -46,8 +46,8 @@ export class Indicateur {
     this._type = type;
     this._valeurInitiale = valeurInitiale;
     this._dateValeurInitiale = dateValeurInitiale;
-    this._valeurActuelle = valeurActuelle;
-    this._dateValeurActuelle = dateValeurActuelle;
+    this._valeurAvancement = valeurAvancement;
+    this._dateValeurAvancement = dateValeurAvancement;
     this._objectifValeurCibleIntermediaire = objectifValeurCibleIntermediaire;
     this._objectifTauxAvancementIntermediaire = objectifTauxAvancementIntermediaire;
     this._objectifValeurCible = objectifValeurCible;
@@ -70,12 +70,12 @@ export class Indicateur {
     return this._dateValeurInitiale;
   }
 
-  get valeurActuelle(): number | null {
-    return this._valeurActuelle;
+  get valeurAvancement(): number | null {
+    return this._valeurAvancement;
   }
 
-  get dateValeurActuelle(): string | null {
-    return this._dateValeurActuelle;
+  get dateValeurAvancement(): string | null {
+    return this._dateValeurAvancement;
   }
 
   get objectifValeurCibleIntermediaire(): number | null {
@@ -99,8 +99,8 @@ export class Indicateur {
     type,
     valeurInitiale,
     dateValeurInitiale,
-    valeurActuelle,
-    dateValeurActuelle,
+    valeurAvancement,
+    dateValeurAvancement,
     objectifValeurCibleIntermediaire,
     objectifTauxAvancementIntermediaire,
     objectifValeurCible,
@@ -110,8 +110,8 @@ export class Indicateur {
     type: string | null
     valeurInitiale: number | null
     dateValeurInitiale: string | null
-    valeurActuelle: number | null
-    dateValeurActuelle: string | null
+    valeurAvancement: number | null
+    dateValeurAvancement: string | null
     objectifValeurCibleIntermediaire: number | null
     objectifTauxAvancementIntermediaire: number | null
     objectifValeurCible: number | null
@@ -122,8 +122,8 @@ export class Indicateur {
       type,
       valeurInitiale,
       dateValeurInitiale,
-      valeurActuelle,
-      dateValeurActuelle,
+      valeurAvancement,
+      dateValeurAvancement,
       objectifValeurCibleIntermediaire,
       objectifTauxAvancementIntermediaire,
       objectifValeurCible,

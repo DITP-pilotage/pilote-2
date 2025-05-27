@@ -1,56 +1,19 @@
 import { StatutProposition } from '@/server/chantiers/domain/StatutProposition';
 import { prisma } from '@/server/db/prisma';
-import { PropositionValeurActuelleBuilder } from '@/server/chantiers/app/builder/PropositionValeurActuelleBuilder';
+import { PropositionValeurAvancementBuilder } from '@/server/chantiers/app/builder/PropositionValeurAvancementBuilder';
 import {
-  PrismaPropositionValeurActuelleRepository,
-} from '@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurActuelleRepository';
+  PrismaPropositionValeurAvancementRepository,
+} from '@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurAvancementRepository';
 
-describe('PrismaPropositionValeurActuelleRepository', () => {
-  let prismaPropositionValeurActuelleRepository: PrismaPropositionValeurActuelleRepository;
+describe('PrismaPropositionValeurAvancementRepository', () => {
+  let prismaPropositionValeurAvancementRepository: PrismaPropositionValeurAvancementRepository;
 
-  beforeEach(async () => {
-    prismaPropositionValeurActuelleRepository = new PrismaPropositionValeurActuelleRepository();
-    await prisma.chantier_identite.create({
-      data: {
-        id: 'CH-001',
-        nom: 'Chantier 001',
-      },
-    });
-    await prisma.chantier_territoire.createMany({
-      data: [
-        {
-          id: 'CH-001',
-          territoire_code: 'DEPT-34',
-          code_insee: '34',
-          maille: 'DEPT',
-          zone_id: 'D34',
-        },
-      ],
-    });
-    await prisma.indicateur_identite.createMany({
-      data: [
-        {
-          id: 'IND-001',
-          nom: 'indicateur 1',
-          chantier_id: 'CH-001',
-        },
-      ],
-    });
-    await prisma.indicateur_territoire.createMany({
-      data: [
-        {
-          id: 'IND-001',
-          chantier_id: 'CH-001',
-          maille: 'DEPT',
-          territoire_code: 'DEPT-34',
-          code_insee: '34',
-          zone_id: 'D34',
-        },
-      ],
-    });
+  beforeEach(() => {
+    prismaPropositionValeurAvancementRepository = new PrismaPropositionValeurAvancementRepository();
   });
-  describe('#supprimerPropositionValeurActuelle', () => {
-    it('doit appliquer le statut RETIREE à la proposition de valeur actuelle avec le statut EN_COURS', async () => {
+
+  describe('#supprimerPropositionValeurAvancement', () => {
+    it('doit appliquer le statut RETIREE à la proposition de valeur avancement avec le statut EN_COURS', async () => {
       // Given
       await prisma.utilisateur.create({
         data: {
@@ -92,7 +55,7 @@ describe('PrismaPropositionValeurActuelleRepository', () => {
       });
 
       // When
-      await prismaPropositionValeurActuelleRepository.supprimerPropositionValeurActuelle({
+      await prismaPropositionValeurAvancementRepository.supprimerPropositionValeurAvancement({
         indicId: 'IND-001',
         territoireCode: 'DEPT-34',
       });
@@ -114,8 +77,8 @@ describe('PrismaPropositionValeurActuelleRepository', () => {
     });
   });
 
-  describe('#annulePropositionValeurActuellePrecedente', () => {
-    it('doit appliquer le statut ANNULEE à la proposition de valeur actuelle avec le statut EN_COURS', async () => {
+  describe('#annulePropositionValeurAvancementPrecedente', () => {
+    it('doit appliquer le statut ANNULEE à la proposition de valeur avancement avec le statut EN_COURS', async () => {
       // Given
       await prisma.utilisateur.create({
         data: {
@@ -157,7 +120,7 @@ describe('PrismaPropositionValeurActuelleRepository', () => {
       });
 
       // When
-      await prismaPropositionValeurActuelleRepository.annulePropositionValeurActuellePrecedente({
+      await prismaPropositionValeurAvancementRepository.annulePropositionValeurAvancementPrecedente({
         indicId: 'IND-001',
         territoireCode: 'DEPT-34',
       });
@@ -179,8 +142,8 @@ describe('PrismaPropositionValeurActuelleRepository', () => {
     });
   });
 
-  describe('#creerPropositionValeurActuelle', () => {
-    it('doit creer la proposition de valeur actuelle', async () => {
+  describe('#creerPropositionValeurAvancement', () => {
+    it('doit creer la proposition de valeur avancement', async () => {
       // Given
       await prisma.utilisateur.create({
         data: {
@@ -192,12 +155,12 @@ describe('PrismaPropositionValeurActuelleRepository', () => {
           profilCode: 'DITP_ADMIN',
         },
       });
-      const propositionValeurActuelle = new PropositionValeurActuelleBuilder()
+      const propositionValeurAvancement = new PropositionValeurAvancementBuilder()
         .avecId('c2afe41e-51df-493a-b140-b9380c625197')
-        .avecIndicId('IND-001')
-        .avecValeurActuelleProposee(23.2)
-        .avecTerritoireCode('DEPT-34')
-        .avecDateValeurActuelle(new Date('2024-03-13'))
+        .avecIndicId('IND-002')
+        .avecValeurAvancementProposee(23.2)
+        .avecTerritoireCode('DEPT-87')
+        .avecDateValeurAvancement(new Date('2024-03-13'))
         .avecIdAuteurModification('7d9ba603-d510-46f6-bda3-736210467521')
         .avecAuteurModification('jane.doe@test.com')
         .avecDateProposition(new Date('2024-05-13'))
@@ -206,15 +169,15 @@ describe('PrismaPropositionValeurActuelleRepository', () => {
         .avecStatut(StatutProposition.EN_COURS)
         .build();
       // When
-      await prismaPropositionValeurActuelleRepository.creerPropositionValeurActuelle(propositionValeurActuelle);
+      await prismaPropositionValeurAvancementRepository.creerPropositionValeurAvancement(propositionValeurAvancement);
       // Then
-      const propositionValeurActuelleCree = await prisma.proposition_valeur_actuelle.findFirst({
+      const propositionValeurAvancementCree = await prisma.proposition_valeur_actuelle.findFirst({
         where: {
           id: 'c2afe41e-51df-493a-b140-b9380c625197',
         },
       });
   
-      expect(propositionValeurActuelleCree).toBeDefined();
+      expect(propositionValeurAvancementCree).toBeDefined();
     });
   });
 });

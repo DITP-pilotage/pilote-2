@@ -1,4 +1,4 @@
-import { PropositionValeurAvancementRapport } from '@/server/chantiers/domain/ports/PropositionValeurActuelleRepository';
+import { PropositionValeurAvancementRapport } from '@/server/chantiers/domain/ports/PropositionValeurAvancementRepository';
 import { PropositionValeurAvancementChantierInformation } from '@/server/chantiers/domain/PropositionValeurAvancementChantierInformation';
 
 type ParamIndicateur = {

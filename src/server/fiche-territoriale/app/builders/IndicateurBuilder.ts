@@ -3,11 +3,11 @@ import { Indicateur } from '@/server/fiche-territoriale/domain/Indicateur';
 export class IndicateurBuilder {
   private id: string = 'IND-001';
 
-  private dateValeurActuelle: string = '2019-02-02T00:00:00.000Z';
+  private dateValeurAvancement: string = '2019-02-02T00:00:00.000Z';
 
   private nom: string = 'Un nom indicateur';
 
-  private valeurActuelle: number = 12.3;
+  private valeurAvancement: number = 12.3;
 
   private valeurCible: number = 31.3;
 
@@ -25,8 +25,8 @@ export class IndicateurBuilder {
     return this;
   }
 
-  withDateValeurActuelle(dateValeurActuelle: string): IndicateurBuilder {
-    this.dateValeurActuelle = dateValeurActuelle;
+  withDateValeurAvancement(dateValeurAvancement: string): IndicateurBuilder {
+    this.dateValeurAvancement = dateValeurAvancement;
     return this;
   }
 
@@ -35,8 +35,8 @@ export class IndicateurBuilder {
     return this;
   }
 
-  withValeurActuelle(valeurActuelle: number): IndicateurBuilder {
-    this.valeurActuelle = valeurActuelle;
+  withValeurAvancement(valeurAvancement: number): IndicateurBuilder {
+    this.valeurAvancement = valeurAvancement;
     return this;
   }
 
@@ -54,9 +54,9 @@ export class IndicateurBuilder {
     return Indicateur.creerIndicateur({
       id: this.id,
       nom: this.nom,
-      dateValeurActuelle: this.dateValeurActuelle,
+      dateValeurAvancement: this.dateValeurAvancement,
       objectifTauxAvancement: this.objectifTauxAvancement,
-      valeurActuelle: this.valeurActuelle,
+      valeurAvancement: this.valeurAvancement,
       valeurCible: this.valeurCible,
       uniteMesure: this.uniteMesure,
     });

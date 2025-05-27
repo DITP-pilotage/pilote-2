@@ -13,7 +13,7 @@ import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import CartographieAvecSelecteurIndicateur from '@/components/_commons/Cartographie/CartographieAvecSelecteurIndicateur/CartographieAvecSelecteurIndicateur';
 import { useIndicateurDétails } from './useIndicateurDétails';
 
-export type CartographieIndicateurType = 'avancementMandat' | 'avancementJalon' | 'propositionValeur' | 'valeurActuelle';
+export type CartographieIndicateurType = 'avancementMandat' | 'avancementJalon' | 'propositionValeur' | 'valeurAvancement';
 interface IndicateurDétailsProps {
   indicateur: Indicateur
   indicateurDétailsParTerritoires: IndicateurDétailsParTerritoire[]
@@ -23,9 +23,9 @@ interface IndicateurDétailsProps {
   détailsIndicateurs: DétailsIndicateurs
   detailsIndicateursTerritoire: DétailsIndicateurs
   estSousIndicateur?: boolean
-  dateValeurActuelle: string | null
+  dateValeurAvancement: string | null
   dateProchaineDateMaj: string | null
-  dateProchaineDateValeurActuelle: string | null
+  dateProchaineDateValeurAvancement: string | null
   territoireCode: string
   territoiresCompares: string[]
   mailleSelectionnee: MailleInterne
@@ -45,9 +45,9 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   listeSousIndicateurs,
   détailsIndicateurs,
   detailsIndicateursTerritoire,
-  dateValeurActuelle,
+  dateValeurAvancement,
   dateProchaineDateMaj,
-  dateProchaineDateValeurActuelle,
+  dateProchaineDateValeurAvancement,
   estSousIndicateur = false,
   territoireCode,
   territoiresCompares,
@@ -64,7 +64,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
 
   const {
     donnéesCartographieAvancementTerritorialisées,
-    donnéesCartographieValeurActuelleTerritorialisées,
+    donnéesCartographieValeurAvancementTerritorialisées,
   } = useIndicateurDétails(detailsIndicateursTerritoire[indicateur.id]);
 
   const indicateurSiTypeDeReformeEstChantier = futOuvert;
@@ -82,7 +82,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
     clearOnDefault: true,
   }));
   
-  const [, setCartographieDroiteSelection] = useQueryState('carteIndD', parseAsString.withDefault('valeurActuelle').withOptions({
+  const [, setCartographieDroiteSelection] = useQueryState('carteIndD', parseAsString.withDefault('valeurAvancement').withOptions({
     shallow: false,
     history: 'push',
     clearOnDefault: true,
@@ -114,8 +114,8 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                   indicateurSiTypeDeReformeEstChantier ? (
                     <IndicateurSpécifications
                       dateProchaineDateMaj={dateProchaineDateMaj}
-                      dateProchaineDateValeurActuelle={dateProchaineDateValeurActuelle}
-                      dateValeurActuelle={dateValeurActuelle}
+                      dateProchaineDateValeurAvancement={dateProchaineDateValeurAvancement}
+                      dateValeurAvancement={dateValeurAvancement}
                       delaiDisponibilite={indicateur.delaiDisponibilite}
                       description={indicateur.description}
                       indicateurEstAjour={indicateurEstAjour}
@@ -155,7 +155,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
           <div className='fr-container'>
             <div className='fr-grid-row fr-grid-row--gutters fr-my-1w'>
               {
-                indicateurSiTypeDeReformeEstChantier && (donnéesCartographieAvancementTerritorialisées || donnéesCartographieValeurActuelleTerritorialisées || chantierEstTerritorialisé) ? (
+                indicateurSiTypeDeReformeEstChantier && (donnéesCartographieAvancementTerritorialisées || donnéesCartographieValeurAvancementTerritorialisées || chantierEstTerritorialisé) ? (
                   <>
                     <section className='fr-col-12 fr-col-xl-6'>
                       <CartographieAvecSelecteurIndicateur 

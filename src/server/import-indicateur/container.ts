@@ -47,8 +47,8 @@ import {
   ImportDonneeIndicateurAPIHandler,
 } from '@/server/import-indicateur/infrastructure/handlers/ImportDonneeIndicateurAPIHandler';
 import { PrismaPilote } from '@/server/db/PrismaPilote';
-import { PropositionValeurActuelleRepository } from './domain/ports/PropositionValeurActuelleRepository';
-import { PrismaPropositionValeurActuelleRepository } from './infrastructure/adapters/PrismaPropositionValeurActuelleRepository';
+import { PropositionValeurAvancementRepository } from './domain/ports/PropositionValeurAvancementRepository';
+import { PrismaPropositionValeurAvancementRepository } from './infrastructure/adapters/PrismaPropositionValeurAvancementRepository';
 
 export type ImportIndicateurDependencies = {
   httpClient: HttpClient
@@ -63,7 +63,7 @@ export type ImportIndicateurDependencies = {
   indicateurRepository: IndicateurRepository
   rapportRepository: RapportRepository
   importDonneeIndicateurAPIHandler: ImportDonneeIndicateurAPIHandler
-  propositionValeurActuelleRepository: PropositionValeurActuelleRepository
+  propositionValeurAvancementRepository: PropositionValeurAvancementRepository
 };
 export const getImportIndicateurContainer = (initialContainer: AwilixContainer<{ prisma: PrismaPilote }>): AwilixContainer<ImportIndicateurDependencies & { prisma: PrismaPilote }> => {
   return initialContainer.createScope<ImportIndicateurDependencies>().register({
@@ -79,6 +79,6 @@ export const getImportIndicateurContainer = (initialContainer: AwilixContainer<{
     indicateurRepository: asClass(PrismaIndicateurRepository),
     rapportRepository: asClass(PrismaRapportRepository),
     importDonneeIndicateurAPIHandler: asClass(ImportDonneeIndicateurAPIHandler),
-    propositionValeurActuelleRepository: asClass(PrismaPropositionValeurActuelleRepository),
+    propositionValeurAvancementRepository: asClass(PrismaPropositionValeurAvancementRepository),
   });
 };

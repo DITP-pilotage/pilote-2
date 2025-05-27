@@ -3,10 +3,10 @@ import { useRouter } from 'next/router';
 import Modale from '@/components/_commons/Modale/Modale';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 
-import { useModaleSuppressionValeurActuelle }
-  from '@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurActuelle/useModaleSuppressionValeurActuelle';
+import { useModaleSuppressionValeurAvancement }
+  from '@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurAvancement/useModaleSuppressionValeurAvancement';
 
-const ModaleSuppressionValeurActuelle: FunctionComponent<{
+export const ModaleSuppressionValeurAvancement: FunctionComponent<{
   indicateur: Indicateur,
   generatedHTMLID: string
   territoireCode: string
@@ -14,9 +14,9 @@ const ModaleSuppressionValeurActuelle: FunctionComponent<{
   const router = useRouter();
 
   const {
-    supprimerPropositionValeurActuelle,
+    supprimerPropositionValeurAvancement,
     estSupprime,
-  } = useModaleSuppressionValeurActuelle({
+  } = useModaleSuppressionValeurAvancement({
     indicateur,
     territoireCode,
   });
@@ -47,7 +47,7 @@ const ModaleSuppressionValeurActuelle: FunctionComponent<{
               </button>
               <button
                 className='fr-btn'
-                onClick={() => supprimerPropositionValeurActuelle()}
+                onClick={() => supprimerPropositionValeurAvancement()}
                 type='button'
               >
                 Supprimer la proposition
@@ -64,5 +64,3 @@ const ModaleSuppressionValeurActuelle: FunctionComponent<{
     </Modale>
   );
 };
-
-export default ModaleSuppressionValeurActuelle;

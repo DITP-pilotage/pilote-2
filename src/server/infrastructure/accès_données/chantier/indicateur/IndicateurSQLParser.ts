@@ -21,8 +21,8 @@ export function créerDonnéesTerritoires(territoires: Pick<PrismaTerritoire, 'c
       codeInsee: territoire.code_insee,
       dateValeurCible: indicateurRow?.date_valeur_cible_mandat?.toLocaleString() ?? null,
       dateValeurInitiale: indicateurRow?.date_valeur_initiale?.toLocaleString() ?? null,
-      dateValeurActuelle: indicateurTerritoireJalon?.date_valeur_actuelle?.toLocaleString() ?? null,
-      dateValeurActuelleMandat: indicateurRow?.date_valeur_actuelle_mandat?.toLocaleString() ?? null,
+      dateValeurAvancement: indicateurTerritoireJalon?.date_valeur_actuelle?.toLocaleString() ?? null,
+      dateValeurAvancementMandat: indicateurRow?.date_valeur_actuelle_mandat?.toLocaleString() ?? null,
       dateValeurCibleAnnuelle: indicateurTerritoireJalon?.date_valeur_cible?.toLocaleString() ?? null,
       // TODO(Tristan-10/10/2024) : Trouver une moyen de se débarasser du as unknown
       historiquesValeurs: indicateurRow ? 
@@ -30,15 +30,15 @@ export function créerDonnéesTerritoires(territoires: Pick<PrismaTerritoire, 'c
         [],
       valeurCible: verifyValeurIsNotNullOrUndefined(indicateurRow?.valeur_cible_mandat),
       valeurInitiale: verifyValeurIsNotNullOrUndefined(indicateurRow?.valeur_initiale),
-      valeurActuelle: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_actuelle),
+      valeurAvancement: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_actuelle),
       valeurCibleAnnuelle: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_cible),
-      valeurActuelleMandat: verifyValeurIsNotNullOrUndefined(indicateurRow?.valeur_actuelle_mandat),
+      valeurAvancementMandat: verifyValeurIsNotNullOrUndefined(indicateurRow?.valeur_actuelle_mandat),
       avancement: {
         annuel: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.taux_avancement),
         global: verifyValeurIsNotNullOrUndefined(indicateurRow?.taux_avancement_mandat),
       },
       proposition: indicateurRow?.valeur_actuelle_proposition !== null && indicateurRow?.valeur_actuelle_proposition !== undefined ? { // Pour autoriser une valeur actuelle proposé à 0
-        valeurActuelle: indicateurRow?.valeur_actuelle_proposition,
+        valeurAvancement: indicateurRow?.valeur_actuelle_proposition,
         tauxAvancement: indicateurRow?.taux_avancement_mandat_proposition,
         tauxAvancementIntermediaire: indicateurTerritoireJalon?.taux_avancement_proposition !== null && indicateurTerritoireJalon?.taux_avancement_proposition !== undefined ? indicateurTerritoireJalon?.taux_avancement_proposition! : null,
         auteur: indicateurRow?.auteur_proposition,
@@ -52,7 +52,7 @@ export function créerDonnéesTerritoires(territoires: Pick<PrismaTerritoire, 'c
       pondération: indicateurRow?.ponderation_zone_reel ?? null,
       prochaineDateMaj: indicateurRow?.prochaine_date_maj?.toLocaleString() ?? null,
       prochaineDateMajJours: indicateurRow?.prochaine_date_maj_jours ?? null,
-      prochaineDateValeurActuelle: indicateurRow?.prochaine_date_valeur_actuelle?.toLocaleString() ?? null,
+      prochaineDateValeurAvancement: indicateurRow?.prochaine_date_valeur_actuelle?.toLocaleString() ?? null,
       estAJour: indicateurRow?.est_a_jour ?? null,
       tendance: indicateurRow?.tendance ?? null,
     };

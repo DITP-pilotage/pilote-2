@@ -13,7 +13,7 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
-    estEnAlertePossedePropositionsValeurActuelle: parseAsBoolean.withDefault(false),
+    estEnAlertePossedePropositionsValeurAvancement: parseAsBoolean.withDefault(false),
   });
 
   const alerteAbscenceTauxAvancementDepartemental = {
@@ -51,15 +51,15 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
     estActivée: filtresAlertes.estEnAlerteMétéoNonRenseignée,
   };
 
-  const estEnAlertePossedePropositionsValeurActuelle = {
-    nomCritère: 'estEnAlertePossedePropositionsValeurActuelle',
+  const estEnAlertePossedePropositionsValeurAvancement = {
+    nomCritère: 'estEnAlertePossedePropositionsValeurAvancement',
     libellé: "Chantier(s) avec proposition(s) de valeur d'avancement",
-    nombre: filtresComptesCalculés.estEnAlertePossedePropositionsValeurActuelle,
-    estActivée: filtresAlertes.estEnAlertePossedePropositionsValeurActuelle,
+    nombre: filtresComptesCalculés.estEnAlertePossedePropositionsValeurAvancement,
+    estActivée: filtresAlertes.estEnAlertePossedePropositionsValeurAvancement,
   };
 
-  const alertesNationales = [alerteTauxAvancementNonCalculé, alerteAbscenceTauxAvancementDepartemental, alerteMétéoNonRenseignée, estEnAlertePossedePropositionsValeurActuelle];
-  const alertesTerritoriales = [alerteEcart, alerteBaisse, alerteMétéoNonRenseignée, estEnAlertePossedePropositionsValeurActuelle];
+  const alertesNationales = [alerteTauxAvancementNonCalculé, alerteAbscenceTauxAvancementDepartemental, alerteMétéoNonRenseignée, estEnAlertePossedePropositionsValeurAvancement];
+  const alertesTerritoriales = [alerteEcart, alerteBaisse, alerteMétéoNonRenseignée, estEnAlertePossedePropositionsValeurAvancement];
 
   return {
     remontéesAlertes: mailleChantier === 'nationale' ? alertesNationales : alertesTerritoriales,

@@ -1,4 +1,4 @@
-export type CartographieDonnéesValeurActuelle = {
+export type CartographieDonnéesValeurAvancement = {
   valeur: number | null
   valeurCible: number | null
   valeurCibleAnnuelle: number | null

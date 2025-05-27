@@ -9,9 +9,9 @@ export class IndicateurBuilder {
 
   private dateValeurInitiale: string = '2021-01-01T00:00:00.000Z';
 
-  private valeurActuelle: number = 14.5;
+  private valeurAvancement: number = 14.5;
 
-  private dateValeurActuelle: string = '2022-01-01T00:00:00.000Z';
+  private dateValeurAvancement: string = '2022-01-01T00:00:00.000Z';
 
   private objectifValeurCibleIntermediaire: number = 17.3;
 
@@ -41,13 +41,13 @@ export class IndicateurBuilder {
     return this;
   }
 
-  withValeurActuelle(valeurActuelle: number): IndicateurBuilder {
-    this.valeurActuelle = valeurActuelle;
+  withValeurAvancement(valeurAvancement: number): IndicateurBuilder {
+    this.valeurAvancement = valeurAvancement;
     return this;
   }
 
-  withDateValeurActuelle(dateValeurActuelle: string): IndicateurBuilder {
-    this.dateValeurActuelle = dateValeurActuelle;
+  withDateValeurAvancement(dateValeurAvancement: string): IndicateurBuilder {
+    this.dateValeurAvancement = dateValeurAvancement;
     return this;
   }
 
@@ -77,8 +77,8 @@ export class IndicateurBuilder {
       type: this.type,
       valeurInitiale: this.valeurInitiale,
       dateValeurInitiale: this.dateValeurInitiale,
-      valeurActuelle: this.valeurActuelle,
-      dateValeurActuelle: this.dateValeurActuelle,
+      valeurAvancement: this.valeurAvancement,
+      dateValeurAvancement: this.dateValeurAvancement,
       objectifValeurCibleIntermediaire: this.objectifValeurCibleIntermediaire,
       objectifTauxAvancementIntermediaire: this.objectifTauxAvancementIntermediaire,
       objectifValeurCible: this.objectifCible,

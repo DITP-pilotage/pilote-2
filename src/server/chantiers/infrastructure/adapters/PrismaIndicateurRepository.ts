@@ -25,8 +25,8 @@ const convertirEnDonneeIndicateur = (prismaIndicateurIdentite: PrismaIndicateurI
       territoireCode: prismaIndicateurTerritoire.territoire_code,
       valeurInitiale: prismaIndicateurTerritoire.valeur_initiale,
       dateValeurInitiale: prismaIndicateurTerritoire.date_valeur_initiale,
-      valeurActuelle: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_actuelle),
-      dateValeurActuelle: indicateurTerritoireJalon?.date_valeur_actuelle || null,
+      valeurAvancement: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_actuelle),
+      dateValeurAvancement: indicateurTerritoireJalon?.date_valeur_actuelle || null,
       valeurCibleAnnuelle: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_cible),
       dateValeurCibleAnnuelle: indicateurTerritoireJalon?.date_valeur_cible || null,
       tauxAvancementAnnuel: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.taux_avancement),
@@ -58,7 +58,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     return indicateurIdentite ? convertirEnDonneeIndicateur(indicateurIdentite) : [];
   }
 
-  async supprimerPropositionValeurActuelle({
+  async supprimerPropositionValeurAvancement({
     indicId,
     territoireCode,
     auteurModification,
@@ -221,18 +221,18 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       const chantierTerritoireJalon = indicateurPourExport.chantier_territoire.chantier_territoire_jalon.at(0);
 
       const prismaChantierTerritoire = indicateurPourExport.chantier_territoire;
-      let aUnePropositionsValeurActuelle = false;
+      let aUnePropositionsValeurAvancement = false;
       const maille = prismaChantierTerritoire.maille;
       if (maille === 'DEPT') {
-        aUnePropositionsValeurActuelle = prismaChantierTerritoire.nombre_propositions_valeur_actuelle > 0;
+        aUnePropositionsValeurAvancement = prismaChantierTerritoire.nombre_propositions_valeur_actuelle > 0;
       } else if (maille === 'REG') {
         const codeRegion = prismaChantierTerritoire.territoire_code;
-        aUnePropositionsValeurActuelle = prismaChantierTerritoire.nombre_propositions_valeur_actuelle > 0 || 
+        aUnePropositionsValeurAvancement = prismaChantierTerritoire.nombre_propositions_valeur_actuelle > 0 || 
           listeChantierTerritoires
             .filter(chantierTerritoire => chantierTerritoire.territoire.code_parent === codeRegion)
             .some(chantierTerritoire => chantierTerritoire.nombre_propositions_valeur_actuelle > 0);
       } else {
-        aUnePropositionsValeurActuelle = listeChantierTerritoires.some(chantierTerritoire => chantierTerritoire.nombre_propositions_valeur_actuelle > 0);
+        aUnePropositionsValeurAvancement = listeChantierTerritoires.some(chantierTerritoire => chantierTerritoire.nombre_propositions_valeur_actuelle > 0);
       }
 
       return ({
@@ -255,8 +255,8 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         nom: indicateurPourExport.indicateur_identite.nom,
         valeurInitiale: indicateurPourExport.valeur_initiale,
         dateValeurInitiale: indicateurPourExport.date_valeur_initiale?.toISOString() || null,
-        valeurActuelle: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_actuelle),
-        dateValeurActuelle: indicateurTerritoireJalon?.date_valeur_actuelle?.toISOString() || null,
+        valeurAvancement: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_actuelle),
+        dateValeurAvancement: indicateurTerritoireJalon?.date_valeur_actuelle?.toISOString() || null,
         valeurCibleAnnuelle:verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_cible),
         dateValeurCibleAnnuelle: indicateurTerritoireJalon?.date_valeur_cible?.toISOString() || null,
         avancementAnnuel: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.taux_avancement),
@@ -270,7 +270,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         chantierCibleAttendue: indicateurPourExport.indicateur_identite.chantier_identite.cible_attendue,
         chantierAUnTauxAvancementDepartemental: chantierTerritoireMailleDepartementApplicables.length === 0 
           || chantierTerritoireMailleDepartementApplicables.some(chantierTerritoire => chantierTerritoire.taux_avancement_mandat !== null),
-        chantierAUnePropositionValeurAvancement: aUnePropositionsValeurActuelle,
+        chantierAUnePropositionValeurAvancement: aUnePropositionsValeurAvancement,
       });
     }).sort((indicA, indicB) => {
       const orderMaille = { 'NAT': 1, 'REG': 2, 'DEPT': 3 };
@@ -413,18 +413,18 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       return indicateurIdentite.indicateur_territoire.flatMap(indicateurPourExport => {
         const indicateurTerritoireJalon = indicateurPourExport.indicateur_territoire_jalon.at(0);
         const chantierTerritoire = indicateurPourExport.chantier_territoire;
-        let aUnePropositionsValeurActuelle = false;
+        let aUnePropositionsValeurAvancement = false;
         const maille = indicateurPourExport.maille;
         if (maille === 'DEPT') {
-          aUnePropositionsValeurActuelle = chantierTerritoire.nombre_propositions_valeur_actuelle > 0;
+          aUnePropositionsValeurAvancement = chantierTerritoire.nombre_propositions_valeur_actuelle > 0;
         } else if (maille === 'REG') {
           const codeRegion = chantierTerritoire.territoire_code;
-          aUnePropositionsValeurActuelle = chantierTerritoire.nombre_propositions_valeur_actuelle > 0 || 
+          aUnePropositionsValeurAvancement = chantierTerritoire.nombre_propositions_valeur_actuelle > 0 || 
           listeTerritoireChantier
             .filter(chantier => chantier.territoire.code_parent === codeRegion)
             .some(chantier => chantier.nombre_propositions_valeur_actuelle > 0);
         } else {
-          aUnePropositionsValeurActuelle = listeTerritoireChantier.some(chantier => chantier.nombre_propositions_valeur_actuelle > 0);
+          aUnePropositionsValeurAvancement = listeTerritoireChantier.some(chantier => chantier.nombre_propositions_valeur_actuelle > 0);
         }
         return (indicateurPourExport.evolution_valeur_actuelle as unknown as historique_valeurs[]).map(historiqueIndicateur => ({
           maille: indicateurPourExport.maille,
@@ -440,8 +440,8 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           dateValeurCibleAnnuelle: indicateurTerritoireJalon?.date_valeur_cible?.toISOString() || null,
           valeurCible: indicateurPourExport.valeur_cible_mandat,
           dateValeurCible: indicateurPourExport.date_valeur_cible_mandat?.toISOString() || null,
-          valeurActuelle: verifyValeurIsNotNullOrUndefined(historiqueIndicateur.valeur),
-          dateValeurActuelle: historiqueIndicateur.date,
+          valeurAvancement: verifyValeurIsNotNullOrUndefined(historiqueIndicateur.valeur),
+          dateValeurAvancement: historiqueIndicateur.date,
           périmètreIds: indicateurIdentite.chantier_identite.perimetre_ids,
           météo: indicateurPourExport.chantier_territoire.meteo as Météo | null,
           chantierEstBaromètre: indicateurIdentite.chantier_identite.est_barometre,
@@ -453,7 +453,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           chantierTendance: indicateurPourExport.chantier_territoire.tendance,
           chantierCibleAttendue: indicateurIdentite.chantier_identite.cible_attendue,
           chantierAUnTauxAvancementDepartemental: chantierTerritoiresMailleDepartementale.length === 0 || chantierTerritoiresMailleDepartementale.some(chantier => chantier.taux_avancement_mandat !== null),
-          chantierAUnePropositionValeurAvancement: aUnePropositionsValeurActuelle,
+          chantierAUnePropositionValeurAvancement: aUnePropositionsValeurAvancement,
           chantierAvancementGlobal: indicateurPourExport.chantier_territoire.taux_avancement_mandat,
         }));
       });
@@ -480,7 +480,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         return indicB.codeInsee.localeCompare(indicA.codeInsee);
       }
 
-      return indicB.dateValeurActuelle.localeCompare(indicA.dateValeurActuelle);
+      return indicB.dateValeurAvancement.localeCompare(indicA.dateValeurAvancement);
     });
   }
 }

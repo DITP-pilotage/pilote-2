@@ -91,46 +91,46 @@ describe('RécupérerListeChantierFicheTerritorialeUseCase', () => {
       .withId('IND-001')
       .withNom('Un nom indicateur 1 chantier 1')
       .withObjectifTauxAvancement(10.1)
-      .withValeurActuelle(11.1)
+      .withValeurAvancement(11.1)
       .withValeurCible(12.1)
       .withUniteMesure('Pourcentage')
-      .withDateValeurActuelle('2024-01-02T00:00:00.000Z')
+      .withDateValeurAvancement('2024-01-02T00:00:00.000Z')
       .build();
     const indicateur2CH1 = new IndicateurBuilder()
       .withId('IND-002')
       .withNom('Un nom indicateur 2 chantier 1')
       .withObjectifTauxAvancement(20.1)
-      .withValeurActuelle(21.1)
+      .withValeurAvancement(21.1)
       .withValeurCible(22.1)
       .withUniteMesure('Pourcentage')
-      .withDateValeurActuelle('2023-01-01T00:00:00.000Z')
+      .withDateValeurAvancement('2023-01-01T00:00:00.000Z')
       .build();
     const indicateur1CH2 = new IndicateurBuilder()
       .withId('IND-003')
       .withNom('Un nom indicateur 1 chantier 2')
       .withObjectifTauxAvancement(30.1)
-      .withValeurActuelle(31.1)
+      .withValeurAvancement(31.1)
       .withValeurCible(32.1)
-      .withDateValeurActuelle('2020-08-01T00:00:00.000Z')
+      .withDateValeurAvancement('2020-08-01T00:00:00.000Z')
       .withUniteMesure('million habitant')
       .build();
     const indicateur2CH2 = new IndicateurBuilder()
       .withId('IND-004')
       .withNom('Un nom indicateur 2 chantier 2')
       .withObjectifTauxAvancement(40.1)
-      .withValeurActuelle(41.1)
+      .withValeurAvancement(41.1)
       .withValeurCible(42.1)
       .withUniteMesure('million habitant')
-      .withDateValeurActuelle('2021-01-02T00:00:00.000Z')
+      .withDateValeurAvancement('2021-01-02T00:00:00.000Z')
       .build();
     const indicateur1CH3 = new IndicateurBuilder()
       .withId('IND-005')
       .withNom('Un nom indicateur 1 chantier 3')
       .withObjectifTauxAvancement(40.1)
-      .withValeurActuelle(41.1)
+      .withValeurAvancement(41.1)
       .withValeurCible(42.1)
       .withUniteMesure('million habitant')
-      .withDateValeurActuelle('2021-01-02T00:00:00.000Z')
+      .withDateValeurAvancement('2021-01-02T00:00:00.000Z')
       .build();
     mapIndicateurs.set('CH-001', [indicateur1CH1, indicateur2CH1]);
     mapIndicateurs.set('CH-002', [indicateur1CH2, indicateur2CH2]);
@@ -200,13 +200,13 @@ describe('RécupérerListeChantierFicheTerritorialeUseCase', () => {
     expect(result.at(0)?.indicateurs).toHaveLength(2);
     expect(result.at(0)?.indicateurs.at(0)?.nom).toEqual('Un nom indicateur 1 chantier 2');
     expect(result.at(0)?.indicateurs.at(0)?.tauxAvancement).toEqual(30.1);
-    expect(result.at(0)?.indicateurs.at(0)?.valeurActuelle).toEqual(31.1);
+    expect(result.at(0)?.indicateurs.at(0)?.valeurAvancement).toEqual(31.1);
     expect(result.at(0)?.indicateurs.at(0)?.valeurCible).toEqual(32.1);
     expect(result.at(0)?.indicateurs.at(0)?.tauxAvancementNational).toEqual(30.1);
     expect(result.at(0)?.indicateurs.at(0)?.uniteMesure).toEqual('million habitant');
     expect(result.at(0)?.indicateurs.at(1)?.nom).toEqual('Un nom indicateur 2 chantier 2');
     expect(result.at(0)?.indicateurs.at(1)?.tauxAvancement).toEqual(40.1);
-    expect(result.at(0)?.indicateurs.at(1)?.valeurActuelle).toEqual(41.1);
+    expect(result.at(0)?.indicateurs.at(1)?.valeurAvancement).toEqual(41.1);
     expect(result.at(0)?.indicateurs.at(1)?.valeurCible).toEqual(42.1);
     expect(result.at(0)?.indicateurs.at(1)?.tauxAvancementNational).toEqual(40.1);
     expect(result.at(0)?.indicateurs.at(1)?.uniteMesure).toEqual('million habitant');
@@ -222,13 +222,13 @@ describe('RécupérerListeChantierFicheTerritorialeUseCase', () => {
     expect(result.at(2)?.indicateurs).toHaveLength(2);
     expect(result.at(2)?.indicateurs.at(0)?.nom).toEqual('Un nom indicateur 1 chantier 1');
     expect(result.at(2)?.indicateurs.at(0)?.tauxAvancement).toEqual(10.1);
-    expect(result.at(2)?.indicateurs.at(0)?.valeurActuelle).toEqual(11.1);
+    expect(result.at(2)?.indicateurs.at(0)?.valeurAvancement).toEqual(11.1);
     expect(result.at(2)?.indicateurs.at(0)?.valeurCible).toEqual(12.1);
     expect(result.at(2)?.indicateurs.at(0)?.tauxAvancementNational).toEqual(10.1);
     expect(result.at(2)?.indicateurs.at(0)?.uniteMesure).toEqual('Pourcentage');
     expect(result.at(2)?.indicateurs.at(1)?.nom).toEqual('Un nom indicateur 2 chantier 1');
     expect(result.at(2)?.indicateurs.at(1)?.tauxAvancement).toEqual(20.1);
-    expect(result.at(2)?.indicateurs.at(1)?.valeurActuelle).toEqual(21.1);
+    expect(result.at(2)?.indicateurs.at(1)?.valeurAvancement).toEqual(21.1);
     expect(result.at(2)?.indicateurs.at(1)?.valeurCible).toEqual(22.1);
     expect(result.at(2)?.indicateurs.at(1)?.tauxAvancementNational).toEqual(20.1);
     expect(result.at(2)?.indicateurs.at(1)?.uniteMesure).toEqual('Pourcentage');
@@ -277,16 +277,16 @@ describe('RécupérerListeChantierFicheTerritorialeUseCase', () => {
 
     const mapIndicateurs = new Map<string, Indicateur[]>();
     const indicateur1CH1 = new IndicateurBuilder()
-      .withDateValeurActuelle('2023-02-02T00:00:00.000Z')
+      .withDateValeurAvancement('2023-02-02T00:00:00.000Z')
       .build();
     const indicateur2CH1 = new IndicateurBuilder()
-      .withDateValeurActuelle('2023-01-01T00:00:00.000Z')
+      .withDateValeurAvancement('2023-01-01T00:00:00.000Z')
       .build();
     const indicateur1CH2 = new IndicateurBuilder()
-      .withDateValeurActuelle('2019-02-02T00:00:00.000Z')
+      .withDateValeurAvancement('2019-02-02T00:00:00.000Z')
       .build();
     const indicateur2CH2 = new IndicateurBuilder()
-      .withDateValeurActuelle('2020-08-01T00:00:00.000Z')
+      .withDateValeurAvancement('2020-08-01T00:00:00.000Z')
       .build();
     mapIndicateurs.set('CH-001', [indicateur1CH1, indicateur2CH1]);
     mapIndicateurs.set('CH-002', [indicateur1CH2, indicateur2CH2]);

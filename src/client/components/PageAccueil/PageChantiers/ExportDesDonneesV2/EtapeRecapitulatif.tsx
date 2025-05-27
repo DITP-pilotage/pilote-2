@@ -86,7 +86,7 @@ export const EtapeRecapitulatif = ({ territoireCodeSelectionne }: { territoireCo
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
-    estEnAlertePossedePropositionsValeurActuelle: parseAsBoolean.withDefault(false),
+    estEnAlertePossedePropositionsValeurAvancement: parseAsBoolean.withDefault(false),
   });
 
   const arrayOptionsExport: {
@@ -132,8 +132,8 @@ export const EtapeRecapitulatif = ({ territoireCodeSelectionne }: { territoireCo
     arrayOptionsExport.push({ name: 'estEnAlerteMétéoNonRenseignée', value: true });
   }
 
-  if (filtres.estEnAlertePossedePropositionsValeurActuelle) {
-    arrayOptionsExport.push({ name: 'estEnAlertePossedePropositionsValeurActuelle', value: true });
+  if (filtres.estEnAlertePossedePropositionsValeurAvancement) {
+    arrayOptionsExport.push({ name: 'estEnAlertePossedePropositionsValeurAvancement', value: true });
   }
 
   if (filtres.estEnAlerteTauxAvancementNonCalculé) {

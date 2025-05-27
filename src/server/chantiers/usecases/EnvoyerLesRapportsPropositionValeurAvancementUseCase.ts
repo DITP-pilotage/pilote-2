@@ -1,11 +1,11 @@
-import { PropositionValeurActuelleRepository } from '@/server/chantiers/domain/ports/PropositionValeurActuelleRepository';
+import { PropositionValeurAvancementRepository } from '@/server/chantiers/domain/ports/PropositionValeurAvancementRepository';
 import { ChantierRepository } from '@/server/chantiers/domain/ports/ChantierRepository';
 import { EnvoieEmailService } from '@/server/chantiers/domain/ports/EnvoieEmailService';
 import { UtilisateurRepository } from '@/server/chantiers/domain/ports/UtilisateurRepository';
 import { genererParametresEnvoieRapportProposition } from '@/server/chantiers/app/contrats/ParametresEnvoieEmailRapportProposition';
 
 interface Dependencies {
-  propositionValeurActuelleRepository: PropositionValeurActuelleRepository;
+  propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
   chantierRepository: ChantierRepository;
   utilisateurRepository: UtilisateurRepository;
   envoieEmailService: EnvoieEmailService;
@@ -13,7 +13,7 @@ interface Dependencies {
 
 export class EnvoyerLesRapportsPropositionValeurAvancementUseCase {
 
-  private propositionValeurActuelleRepository: PropositionValeurActuelleRepository;
+  private propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
   
   private chantierRepository: ChantierRepository;
   
@@ -22,23 +22,23 @@ export class EnvoyerLesRapportsPropositionValeurAvancementUseCase {
   private envoieEmailService: EnvoieEmailService;
 
   constructor({ 
-    propositionValeurActuelleRepository, 
+    propositionValeurAvancementRepository, 
     chantierRepository,
     utilisateurRepository,
     envoieEmailService,
   }: Dependencies) {
-    this.propositionValeurActuelleRepository = propositionValeurActuelleRepository;
+    this.propositionValeurAvancementRepository = propositionValeurAvancementRepository;
     this.chantierRepository = chantierRepository;
     this.utilisateurRepository = utilisateurRepository;
     this.envoieEmailService = envoieEmailService;
   }
 
   async run(): Promise<{ emailsEnEchec: string[] }> {
-    const listeChantiersIdsAvecProposition = await this.propositionValeurActuelleRepository.recupererLaListeDesChantiersIdsAvecPropositionEnCours();
+    const listeChantiersIdsAvecProposition = await this.propositionValeurAvancementRepository.recupererLaListeDesChantiersIdsAvecPropositionEnCours();
     const listeDirecteursDeProjet = await this.utilisateurRepository.recupererUtilisateursParProfilEtChantierIds('EQUIPE_DIR_PROJET', listeChantiersIdsAvecProposition);
   
     const listeChantiersProposition = await this.chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds({ listeChantiersIds: listeChantiersIdsAvecProposition });
-    const propositionsParChantier = await this.propositionValeurActuelleRepository.recupererLesPropositionsEnCoursParChantierIds();
+    const propositionsParChantier = await this.propositionValeurAvancementRepository.recupererLesPropositionsEnCoursParChantierIds();
     
     const mapChantiersPropositionInformation = new Map(listeChantiersProposition.map(chantier => [chantier.id, chantier]));
 

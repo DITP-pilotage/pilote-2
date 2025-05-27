@@ -48,7 +48,7 @@ info:
     *   `zone_id` • Identifiant du territoire pour lequel la donnée est renseignée. Il provient des référentiels INSEE et est interopérable. Exemple : D34, D20... (voir le référentiel ci-dessous)
     *   `zone_nom` • Champ facultatif précisant les territoires auxquels correspondent les zone-id. Vous n'êtes pas obligé(e) d'inclure cette colonne.
     *   `date_valeur` • Date à laquelle se réfère la valeur numérique. La date doit être renseignée selon le modèle suivant année-mois-jour. Exemple : 2023-02-26, 2023-01-17...
-    *   `type_valeur` • Type de données insérées : vi pour valeur initiale, va pour valeur actuelle, vc pour valeur cible
+    *   `type_valeur` • Type de données insérées : vi pour valeur initiale, va pour valeur avancement, vc pour valeur cible
     *   `valeur` • Valeur de l'indicateur. La valeur doit être numérique. Ne pas saisir de texte (par exemple “NC” ou “non renseigné”)
 
     Les formats acceptés sont csv et xlsx
@@ -292,10 +292,23 @@ components:
           description: Date de la VI
         valeur_actuelle:
           type: number
+          deprecated: true
           x-stoplight:
             id: monbziy7nf30t
           example: 15.45
         date_valeur_actuelle:
+          type: string
+          deprecated: true
+          x-stoplight:
+            id: sijpmsct93j94
+          format: date
+          example: '2024-07-01'
+        valeur_avancement:
+          type: number
+          x-stoplight:
+            id: monbziy7nf30t
+          example: 15.45
+        date_valeur_avancement:
           type: string
           x-stoplight:
             id: sijpmsct93j94

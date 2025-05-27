@@ -7,13 +7,13 @@ import {
   MesureIndicateurTemporaireRepository,
 } from '@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface';
 import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
-import { PropositionValeurActuelleRepository } from '@/server/import-indicateur/domain/ports/PropositionValeurActuelleRepository';
+import { PropositionValeurAvancementRepository } from '@/server/import-indicateur/domain/ports/PropositionValeurAvancementRepository';
 
 interface Dependencies {
   mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository
   mesureIndicateurRepository: MesureIndicateurRepository
   rapportRepository: RapportRepository
-  propositionValeurActuelleRepository: PropositionValeurActuelleRepository
+  propositionValeurAvancementRepository: PropositionValeurAvancementRepository
 }
 
 export class PublierFichierIndicateurImporteUseCase {
@@ -21,12 +21,12 @@ export class PublierFichierIndicateurImporteUseCase {
 
   private mesureIndicateurRepository: MesureIndicateurRepository;
 
-  private propositionValeurActuelleRepository: PropositionValeurActuelleRepository;
+  private propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
 
-  constructor({ mesureIndicateurTemporaireRepository, mesureIndicateurRepository, propositionValeurActuelleRepository }: Dependencies) {
+  constructor({ mesureIndicateurTemporaireRepository, mesureIndicateurRepository, propositionValeurAvancementRepository }: Dependencies) {
     this.mesureIndicateurTemporaireRepository = mesureIndicateurTemporaireRepository;
     this.mesureIndicateurRepository = mesureIndicateurRepository;
-    this.propositionValeurActuelleRepository = propositionValeurActuelleRepository;
+    this.propositionValeurAvancementRepository = propositionValeurAvancementRepository;
   }
 
   async execute({ rapportId }: { rapportId: string }): Promise<void> {
@@ -49,7 +49,7 @@ export class PublierFichierIndicateurImporteUseCase {
     
     await this.mesureIndicateurRepository.sauvegarder(listeIndicateursData);
     await Promise.all(
-      listeValeursAvancementImportees.map(valeurAvancement => this.propositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport({ 
+      listeValeursAvancementImportees.map(valeurAvancement => this.propositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport({ 
         indicId: valeurAvancement.indicId, 
         zoneId: valeurAvancement.zoneId, 
         dateValeurImportee: new Date(valeurAvancement.metricDate),

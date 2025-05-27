@@ -77,7 +77,7 @@ export class ChantierPourExportBuilder {
 
   private cibleAttendue = true;
 
-  private aUnePropositionsValeurActuelle = true;
+  private aUnePropositionsValeurAvancement = true;
 
   private aUnTauxAvancementDepartemental = true;
 
@@ -131,7 +131,7 @@ export class ChantierPourExportBuilder {
       tendance: this.tendance, 
       avancementTerritoire: this.avancementTerritoire, 
       cibleAttendu: this.cibleAttendue,
-      aUnePropositionsValeurActuelle: this.aUnePropositionsValeurActuelle,
+      aUnePropositionsValeurAvancement: this.aUnePropositionsValeurAvancement,
       aUnTauxAvancementDepartemental: this.aUnTauxAvancementDepartemental,
     };
   }

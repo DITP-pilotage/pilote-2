@@ -53,7 +53,7 @@ export default async function handleExportDesIndicateurs(request: NextApiRequest
     estEnAlerteBaisse: request.query.estEnAlerteBaisse === 'true',
     estEnAlerteMétéoNonRenseignée: request.query.estEnAlerteMétéoNonRenseignée === 'true',
     estEnAlerteAbscenceTauxAvancementDepartemental: request.query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
-    estEnAlertePossedePropositionsValeurActuelle: request.query.estEnAlertePossedePropositionsValeurActuelle === 'true', 
+    estEnAlertePossedePropositionsValeurAvancement: request.query.estEnAlertePossedePropositionsValeurAvancement === 'true', 
   } satisfies OptionsExport;
 
   const chantierIds = await getContainer('chantiers').resolve('chantierRepository').récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation.récupérerListeChantiersIdsAccessiblesEnLecture(), optionsExport);

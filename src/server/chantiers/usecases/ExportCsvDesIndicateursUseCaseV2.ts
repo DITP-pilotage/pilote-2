@@ -64,8 +64,8 @@ const presenterEnIndicateurExportContrat = (indicateurPourExport: IndicateurPour
     donnees.push(
       formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurInitiale, indicateurPourExport.estApplicable),
       formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurInitiale, indicateurPourExport.estApplicable, 'MM-YYYY'),
-      formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurActuelle, indicateurPourExport.estApplicable),
-      formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurActuelle, indicateurPourExport.estApplicable, 'MM-YYYY'),
+      formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurAvancement, indicateurPourExport.estApplicable),
+      formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurAvancement, indicateurPourExport.estApplicable, 'MM-YYYY'),
       formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurCibleAnnuelle, indicateurPourExport.estApplicable),
       formaterDateHeureOuNonRenseignee(indicateurPourExport.dateValeurCibleAnnuelle, indicateurPourExport.estApplicable, 'MM-YYYY'),
       formaterNumériqueOuValeurNonRenseignee(indicateurPourExport.valeurCible, indicateurPourExport.estApplicable),
