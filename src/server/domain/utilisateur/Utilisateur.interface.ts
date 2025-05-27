@@ -36,6 +36,13 @@ export const profilsTerritoriaux = [
 export const profilsDépartementaux = [ProfilEnum.PREFET_DEPARTEMENT, ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT];
 export const profilsRégionaux = [ProfilEnum.PREFET_REGION, ProfilEnum.COORDINATEUR_REGION, ProfilEnum.SERVICES_DECONCENTRES_REGION];
 
+export const profilsInfolettreCoordinateur = [
+  ProfilEnum.COORDINATEUR_DEPARTEMENT,
+  ProfilEnum.COORDINATEUR_REGION,
+  ProfilEnum.DITP_ADMIN,
+  ProfilEnum.DITP_PILOTAGE,
+];
+
 type Utilisateur = {
   id: string
   nom: string
