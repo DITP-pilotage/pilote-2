@@ -16,7 +16,7 @@ export const ResponsabiliteChantierEnTete: FunctionComponent<ResponsableEnTeteEl
   
   return (
     <EnteteResponsablesStyled>
-      <div className='flex'>
+      <div className='flex fr-pl-1v'>
         <div className='icone-entete fr-text-title--blue-france fr-mb-1w fr-pr-3v'>
           <span className='fr-icon-draft-line' />
         </div>
