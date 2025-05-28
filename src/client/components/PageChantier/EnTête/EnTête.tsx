@@ -12,8 +12,7 @@ import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLarge
 import { getFiltresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
 import PageChantierEnTêteStyled from './EnTête.styled';
 import { ResponsableChantierEnTete } from './EnTêteResponsables';
-import { ResponsableChantierEnTeteElement } from './EnTêteResponsablesElement';
-import { recupererResponsabiliteTerritoriale } from './responsabiliteAte';
+import { ResponsabiliteChantierEnTete } from './ResponsabiliteChantierEnTete';
 
 interface PageChantierEnTêteProps {
   chantier: Chantier
@@ -42,12 +41,6 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
 
   const nomChantier = chantier.nom.length > 50 ? `${chantier.nom.slice(0, 50)}...` : chantier.nom;
 
-  const estChantierNational = chantier.maillesApplicables.length === 1 && chantier.maillesApplicables.includes('nationale');
-  const estChantierDepartemental = chantier.maillesApplicables.length === 2 && chantier.maillesApplicables.includes('departementale') || chantier.maillesApplicables.length === 3;
-  const estChantierRegional = chantier.maillesApplicables.length === 2 && chantier.maillesApplicables.includes('regionale');
-
-  let listeResponsabiliteTerritoriale = recupererResponsabiliteTerritoriale(estChantierRegional, estChantierDepartemental, chantier.ate);
-
   return (
     <PageChantierEnTêteStyled>
       <Link
@@ -73,37 +66,25 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
           listeNomsResponsables={listeNomsResponsablesMinistèrePorteur}
         />
       </div>
-      <ResponsableChantierEnTete
-        icone='fr-icon-government-fill'
-        libellé='Autres ministères co-porteurs'
-        listeNomsResponsables={listeNomsResponsablesAutresMinistèresCoPorteurs}
-        size='sm'
+      <div className='fr-mb-1w'>
+        <ResponsableChantierEnTete
+          icone='fr-icon-government-fill'
+          libellé='Autres ministères co-porteurs'
+          listeNomsResponsables={listeNomsResponsablesAutresMinistèresCoPorteurs}
+          size='sm'
+        />
+      </div>
+      <div className='fr-mb-1w'>
+        <ResponsableChantierEnTete
+          icone='fr-icon-account-circle-fill'
+          libellé="Directeur(s) / directrice(s) d'Administration Centrale"
+          listeNomsResponsables={listeNomsDirecteursAdministrationCentrale}
+          size='sm'
+        />
+      </div>
+      <ResponsabiliteChantierEnTete
+        chantier={chantier}
       />
-      <ResponsableChantierEnTete
-        icone='fr-icon-account-circle-fill'
-        libellé="Directeur(s) / directrice(s) d'Administration Centrale"
-        listeNomsResponsables={listeNomsDirecteursAdministrationCentrale}
-        size='sm'
-      />
-      {
-        estChantierNational ? (
-          <div className='flex'>
-            <div className='icone-entete fr-text-title--blue-france fr-mb-1w fr-pr-3v'>
-              <span className='fr-icon-draft-line' />
-            </div>
-            <span className='fr-mb-0 fr-text-title--blue-france fr-text--xs'>
-              Chantier piloté à la maille nationale uniquement
-            </span>
-          </div>
-        ) : (
-          <ResponsableChantierEnTeteElement
-            icone='fr-icon-draft-line'
-            libellé='Commentaires locaux'
-            listeNomsResponsables={listeResponsabiliteTerritoriale}
-            size='sm'
-          />
-        )
-      }
       <div className='fr-mt-md-2w format-mobile fr-ml-1w'>
         {
           afficheLeBoutonMiseAJourDonnee && !estVueMobile ? (
