@@ -106,7 +106,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour, indicateurEstApplicable);
 
   const estPropositionSurLeBonJalon = détailsIndicateur[territoireCode].dateValeurActuelleMandat !== null ? new Date(détailsIndicateur[territoireCode].dateValeurActuelleMandat!).getFullYear() <= jalon : false;
-  const propositionSurMailleDesactivee = indicateur.mailleRegAgregee && mailleSelectionnee == 'regionale';
 
   const getCalculAvancementMessage = (valeurInitiale: number | null, valeurActuelle: number | null, valeurCible: number | null, tauxAvancement: number | null, jalonAAfficher: number) => {
     if (valeurInitiale === null || valeurActuelle === null || valeurCible === null || tauxAvancement === null) {
@@ -411,23 +410,10 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               >
                                 <td colSpan={8}>
                                   <div className='flex w-full justify-end'>
-                                    {
-                                      propositionSurMailleDesactivee ? (
-                                        <Infobulle
-                                          classNameInfoBulle='tooltip-accordeon'
-                                          idHtml={`infobulle-proposition-desactivee-${indicateur.id}`}
-                                        >
-                                          <p className='fr-text--sm'>
-                                            Les résultats de cet indicateur sont agrégés depuis le niveau départemental. Il n'est donc pas possible de proposer une valeur à une autre maille.
-                                          </p>
-                                        </Infobulle>
-                                      ) : null
-                                    }
                                     <button
                                       aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id}
                                       className='fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-davancement'
                                       data-fr-opened='false'
-                                      disabled={propositionSurMailleDesactivee}
                                       type='button'
                                     >
                                       Proposer une autre valeur d'avancement

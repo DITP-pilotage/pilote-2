@@ -15,6 +15,4 @@ export default interface Indicateur {
   periodicite: string | null
   delaiDisponibilite: string | null
   responsablesDonneesMails: string[]
-  mailleNatAgregee: boolean
-  mailleRegAgregee: boolean
 }
