@@ -27,10 +27,6 @@ export default class IndicateurBuilder {
 
   private _responsablesDonneesMails: Indicateur['responsablesDonneesMails'];
 
-  private _mailleNatAgregee: Indicateur['mailleNatAgregee'];
-
-  private _mailleRegAgregee: Indicateur['mailleRegAgregee'];
-
   constructor() {
     this._id = générerUnIdentifiantUnique('IND');
     this._nom = `${this._id} ${faker.lorem.words()}`;
@@ -44,8 +40,6 @@ export default class IndicateurBuilder {
     this._periodicite = faker.helpers.arrayElement(['Annuelle', 'Mensuelle', '3 ans']);
     this._delaiDisponibilite = faker.datatype.bigInt({ min: 10, max: 100 }).toString();
     this._responsablesDonneesMails = [];
-    this._mailleNatAgregee = faker.datatype.boolean();
-    this._mailleRegAgregee = faker.datatype.boolean();
   }
 
   avecId(id: Indicateur['id']): IndicateurBuilder {
@@ -77,8 +71,6 @@ export default class IndicateurBuilder {
       periodicite: this._periodicite,
       delaiDisponibilite: this._delaiDisponibilite,
       responsablesDonneesMails: this._responsablesDonneesMails,
-      mailleNatAgregee: this._mailleNatAgregee,
-      mailleRegAgregee: this._mailleRegAgregee,
     };
   }
 }

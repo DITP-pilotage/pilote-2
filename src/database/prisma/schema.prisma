@@ -194,8 +194,6 @@ model indicateur_identite {
   delai_disponibilite        Int?
   parent_id                  String?
   responsables_donnees_mails String[]
-  maille_nat_agregee         Boolean                 @default(false)
-  maille_reg_agregee         Boolean                 @default(false)
   indicateur_territoire      indicateur_territoire[]
   mailles_applicables        Maille[]
   chantier_identite          chantier_identite       @relation(fields: [chantier_id], references: [id], onDelete: Cascade, onUpdate: Cascade)

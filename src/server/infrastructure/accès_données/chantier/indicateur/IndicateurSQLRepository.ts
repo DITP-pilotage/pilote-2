@@ -56,8 +56,6 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       periodicite: prismaIndicateurIdentite.periodicite ?? 'Non renseignée',
       delaiDisponibilite: prismaIndicateurIdentite.delai_disponibilite?.toString() ?? 'Non renseignée',
       responsablesDonneesMails: prismaIndicateurIdentite.responsables_donnees_mails,
-      mailleNatAgregee: prismaIndicateurIdentite.maille_nat_agregee,
-      mailleRegAgregee: prismaIndicateurIdentite.maille_reg_agregee,
     });
   }
 
