@@ -3,11 +3,7 @@ const saisieAte = (
     saisis par les 
     {' '}
     <span className='fr-text--bold'>
-      responsables
-    </span>
-    {' '}
-    <span className='fr-text--bold'>
-      locaux
+      responsables locaux
     </span>
     {' '}
     sous l'autorité des
@@ -45,13 +41,23 @@ const saisieHorsAteDeconcentre = (
 );
 
 const mailleAttendu = (mailleAttendue: 'departementale' | 'regionale') => (
-  <span>
-    attendue à la maille
-    {' '}
-    <span className='fr-text--bold'>
-      {mailleAttendue}
+  mailleAttendue === 'departementale' ? (
+    <span>
+      attendue jusqu'à la maille
+      {' '}
+      <span className='fr-text--bold'>
+        départementale
+      </span>
     </span>
-  </span>
+  ) : (
+    <span>
+      attendue à la maille
+      {' '}
+      <span className='fr-text--bold'>
+        régionale
+      </span>
+    </span>
+  )
 );
 
 export const recupererResponsabiliteTerritoriale = (estChantierRegional: boolean, estChantierDepartemental: boolean, ate: 'ate' | 'hors_ate_centralise' | 'hors_ate_deconcentre' | null) => {
