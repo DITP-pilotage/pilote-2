@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth/next';
 import Link from 'next/link';
 import Head from 'next/head';
 import { useSession } from 'next-auth/react';
-import { parseAsBoolean, useQueryState, parseAsStringLiteral, parseAsString, useQueryStates, parseAsInteger } from 'nuqs';
+import { parseAsBoolean, useQueryState, parseAsStringLiteral, useQueryStates, parseAsInteger } from 'nuqs';
 import assert from 'node:assert/strict';
 import PageChantiers from '@/components/PageAccueil/PageChantiers/PageChantiers';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
@@ -49,7 +49,7 @@ import { getContainer } from '@/server/dependances';
 import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
 import { profilsRégionaux } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
 import Titre from '@/components/_commons/Titre/Titre';
-import { getQueryParamString } from '@/client/utils/getQueryParamString';
+import { useGetFullQueryParamString } from '@/client/utils/getQueryParamString';
 import api from '@/server/infrastructure/api/trpc/api';
 import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
 import { ExportDesDonneesV2, ID_HTML_MODALE_EXPORT_V2 } from '@/components/PageAccueil/PageChantiers/ExportDesDonneesV2/ExportDesDonneesV2';
@@ -273,38 +273,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
 
   const pathname = '/accueil/chantier/[territoireCode]';
 
-  const [filtres] = useQueryStates({
-    perimetres: parseAsString.withDefault(''),
-    axes: parseAsString.withDefault(''),
-    meteos: parseAsString.withDefault(''),
-    estBarometre: parseAsBoolean.withDefault(false),
-    territorialisation: parseAsString.withDefault(''),
-    maille: parseAsString.withDefault(''),
-    statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']),
-    jalon: parseAsStringLiteral(['2024', '2025']),
-  });
-
-  const [filtresAlertes] = useQueryStates({
-    estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
-    estEnAlerteÉcart: parseAsBoolean.withDefault(false),
-    estEnAlerteBaisse: parseAsBoolean.withDefault(false),
-    estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
-    estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
-    estEnAlertePossedePropositionsValeurActuelle: parseAsBoolean.withDefault(false),
-  });
-
-  const nombreFiltresActifs = filtres.axes.split(',').filter(Boolean).length
-    + filtres.perimetres.split(',').filter(Boolean).length
-    + filtres.meteos.split(',').filter(Boolean).length
-    + (filtres.estBarometre ? 1 : 0)
-    + (filtres.territorialisation.split(',').filter(Boolean).length)
-    + (filtresAlertes.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
-    + (filtresAlertes.estEnAlerteÉcart ? 1 : 0)
-    + (filtresAlertes.estEnAlerteBaisse ? 1 : 0)
-    + (filtresAlertes.estEnAlerteMétéoNonRenseignée ? 1 : 0)
-    + (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0)
-    + (filtresAlertes.estEnAlertePossedePropositionsValeurActuelle ? 1 : 0);
-
   const [optionsExport, setOptionsExport] = useQueryStates({
     etapeCourante: parseAsInteger.withDefault(1).withOptions({
       shallow: true,
@@ -321,7 +289,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   
   const { data: estExportV2Actif } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_EXPORT_CSV_V2' });
 
-  const queryParamString = getQueryParamString({ ...filtres, ...filtresAlertes });
+  const queryParamString = useGetFullQueryParamString();
 
   return (
     <IndexStyled>
@@ -452,15 +420,11 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
               setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
               territoireCode={territoireCode}
             />
-            {
-              nombreFiltresActifs > 0 ? (
-                <FiltresActifs
-                  axes={axes}
-                  mailleSelectionnee={mailleSelectionnee}
-                  ministères={ministères}
-                />
-              ) : null
-            }
+            <FiltresActifs
+              axes={axes}
+              mailleSelectionnee={mailleSelectionnee}
+              ministères={ministères}
+            />
           </div>
           <PageChantiers
             avancementsAgrégés={avancementsAgrégés}

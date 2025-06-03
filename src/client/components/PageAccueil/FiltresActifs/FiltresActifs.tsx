@@ -9,6 +9,7 @@ import { reinitialiserFiltres, sauvegarderFiltres } from '@/stores/useFiltresSto
 import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { libellésMétéos } from '@/server/domain/météo/Météo.interface';
 import { NOMS_CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
+import { listeStatuts } from '@/client/constants/statut';
 import FiltresActifsStyled from './FiltresActifs.styled';
 import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
 
@@ -25,9 +26,10 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
     perimetres: parseAsString.withDefault(''),
     axes: parseAsString.withDefault(''),
     meteos: parseAsString.withDefault(''),
-    statut: parseAsString.withDefault(''),
+    statut: parseAsString.withDefault('PUBLIE'),
     estBarometre: parseAsBoolean.withDefault(false),
     territorialisation: parseAsString.withDefault(''),
+    q: parseAsString.withDefault(''),
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
@@ -43,6 +45,8 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
   const nombreFiltresActifs = filtres.axes.split(',').filter(Boolean).length
     + filtres.perimetres.split(',').filter(Boolean).length
     + filtres.meteos.split(',').filter(Boolean).length
+    + (filtres.q ? 1 : 0)
+    + (filtres.statut !== 'PUBLIE' ? 1 : 0)
     + (filtres.estBarometre ? 1 : 0)
     + (filtres.territorialisation.split(',').filter(Boolean).length)
     + (filtres.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
@@ -52,13 +56,17 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
     + (filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0)
     + (filtres.estEnAlertePossedePropositionsValeurActuelle ? 1 : 0);
 
+  if (nombreFiltresActifs === 0) {
+    return null;
+  }
+
   const ministèresAvecUnSeulPérimètre = new Map(
     ministères
       .filter((ministère) => ministère.périmètresMinistériels.length === 1)
       .map((ministère) => [ministère.périmètresMinistériels[0].id, ministère.id]),
   );
 
-  const retrouverNomFiltre = (idItemRecherche: string, listItems: Ministère[] | PérimètreMinistériel[] | Axe[] | Ppg[]) => {
+  const retrouverNomFiltre = (idItemRecherche: string, listItems: Ministère[] | PérimètreMinistériel[] | Axe[] | Ppg[] | typeof listeStatuts) => {
     return listItems.find(item => item.id === idItemRecherche)!.nom;
   };
 
@@ -73,6 +81,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
     return setFiltres({
       perimetres: '',
       axes: '',
+      q: '',
       meteos: '',
       statut: 'PUBLIE',
       estBarometre: false,
@@ -364,6 +373,37 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
           ) : null
         }
         {
+          filtres.statut && filtres.statut !== 'PUBLIE' ? (
+            <div className='fr-grid-row'>
+              <div className='fr-col-lg-2 fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
+                <span className='bold fr-text--xs fr-mb-0'>
+                  STATUT :
+                </span>
+              </div>
+              <div className='fr-col-lg-10 fr-col-sm-9 fr-col-7'>
+                <ul
+                  aria-label='liste des tags des filtres statut actifs'
+                  className='conteneur-tags fr-my-0'
+                >
+                  <li
+                    key={`tag-statut-${filtres.statut}`}
+                  >
+                    <Tag
+                      doitAvoirUneTailleFixe
+                      libelle={retrouverNomFiltre(filtres.statut, listeStatuts)}
+                      size='sm'
+                      suppressionCallback={() => {
+                        sauvegarderFiltres({ statut: 'PUBLIE' });
+                        return setFiltres({ statut: 'PUBLIE' });
+                      }}
+                    />
+                  </li>
+                </ul>
+              </div>
+            </div>
+          ) : null
+        }
+        {
           filtres.territorialisation ? (
             <div className='fr-grid-row'>
               <div className='fr-col-lg-2 fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
@@ -429,6 +469,36 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
                       </li>
                     ) : null
                   }
+                </ul>
+              </div>
+            </div>
+          ) : null
+        }
+        {
+          filtres.q ? (
+            <div className='fr-grid-row'>
+              <div className='fr-col-lg-2 fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
+                <span className='bold fr-text--xs fr-mb-0'>
+                  RECHERCHE :
+                </span>
+              </div>
+              <div className='fr-col-lg-10 fr-col-sm-9 fr-col-7'>
+                <ul
+                  aria-label='liste des tags des filtres recherche actifs'
+                  className='conteneur-tags fr-my-0'
+                >
+                  <li>
+                    <Tag
+                      color='blue-info-main'
+                      doitAvoirUneTailleFixe
+                      libelle={filtres.q}
+                      size='sm'
+                      suppressionCallback={() => {
+                        sauvegarderFiltres({ q: '' });
+                        return setFiltres({ q: '' });
+                      }}
+                    />
+                  </li>
                 </ul>
               </div>
             </div>

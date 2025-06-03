@@ -7,6 +7,10 @@ const TagStyled = styled.span`
     background-color: var(--blue-france-sun-113-625);
   }
 
+  &.blue-info-main {
+    background-color: #0078f3;
+  }
+
   &.warning {
     background-color: var(--warning-425-625);
     }
