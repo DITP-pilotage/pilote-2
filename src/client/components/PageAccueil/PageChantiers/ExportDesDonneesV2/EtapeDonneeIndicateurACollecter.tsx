@@ -307,7 +307,7 @@ export const EtapeDonneeIndicateurACollecter = () => {
                     données du chantier
                   </span>
                   {' '}
-                  associé : taux d'avancement, écart
+                  associé : taux d'avancement, tendance, écart
                 </span>
               </label>
             ) : (

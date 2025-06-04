@@ -69,7 +69,7 @@ const presenterEnChantierExportContrat = (chantierPourExport: ChantierPourExport
   }
 
   if (optionsExport.listeOptionsExport.includes('description')) {
-    donnees.push(formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementAnnuel, true));
+    donnees.push(formaterNumériqueOuValeurManquante(chantierPourExport.tauxDAvancementAnnuel, true), chantierPourExport.tendance || NON_RENSEIGNEE, formaterNumériqueOuValeurManquante(chantierPourExport.écart, true));
   }
 
   if (optionsExport.listeOptionsExport.includes('comparaison')) {
@@ -155,11 +155,11 @@ export class ExportCsvDesChantiersUseCaseV2 {
     }
 
     if (optionsExport.listeOptionsExport.includes('description')) {
-      headersColumn.push(`Taux d'avancement à fin d'échéance ${jalon}`);
+      headersColumn.push(`Taux d'avancement à fin d'échéance ${jalon}`, 'tendance', 'écart');
     }
 
     if (optionsExport.listeOptionsExport.includes('comparaison')) {
-      headersColumn.push('Taux d\'avancement départemental à fin d\'échéance 2026', 'Taux d\'avancement régional à fin d\'échéance 2026', 'Taux d\'avancement national à fin d\'échéance 2026');
+      headersColumn.push("Taux d'avancement départemental à fin d'échéance 2026", "Taux d'avancement régional à fin d'échéance 2026", "Taux d'avancement national à fin d'échéance 2026");
     }
 
     if (optionsExport.listeOptionsExport.includes('synthese')) {

@@ -14,6 +14,8 @@ export type ChantierPourExport = {
   axe: string | null,
   périmètreIds: string[],
   tauxDAvancementAnnuel: number | null,
+  tendance: string | null,
+  écart: number | null,
   tauxDAvancementNational: number | null,
   tauxDAvancementRégional: number | null,
   tauxDAvancementDépartemental: number | null,

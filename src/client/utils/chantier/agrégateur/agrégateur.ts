@@ -70,7 +70,6 @@ export class AgrégateurChantiersParTerritoire {
   private _calculerLaRépartitionDesAvancementsParTerritoire(maille: Maille, avancements: AvancementRegroupementDonnéesBrutesTerritoire, territoireCode: string) {
     this.agrégat[maille].territoires[territoireCode].répartition.avancements.global = avancements.global;
     this.agrégat[maille].territoires[territoireCode].répartition.avancements.annuel = avancements.annuel;
-
   }
 
   private _calculerLaRépartitionDesAvancementsParMaille(maille: Maille, avancements: AvancementRegroupementDonnéesBrutesMaille) {
@@ -80,7 +79,6 @@ export class AgrégateurChantiersParTerritoire {
     this.agrégat[maille].répartition.avancements.global.médiane = calculerMédiane(avancements.global);
 
     this.agrégat[maille].répartition.avancements.annuel.moyenne = calculerMoyenne(avancements.annuel);
-
   }
 
   private _créerDonnéesInitialesPourUnTerritoire() {

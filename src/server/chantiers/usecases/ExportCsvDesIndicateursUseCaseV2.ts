@@ -78,6 +78,8 @@ const presenterEnIndicateurExportContrat = (indicateurPourExport: IndicateurPour
     donnees.push(
       formaterNumériqueOuValeurManquante(indicateurPourExport.chantierAvancementGlobal, indicateurPourExport.chantierEstApplicable),
       formaterNumériqueOuValeurManquante(indicateurPourExport.chantierAvancementAnnuel, indicateurPourExport.chantierEstApplicable),
+      indicateurPourExport.chantierTendance || NON_RENSEIGNEE,
+      formaterNumériqueOuValeurManquante(indicateurPourExport.chantierEcart, indicateurPourExport.chantierEstApplicable),
     );
   }
 
@@ -165,6 +167,8 @@ export class ExportCsvDesIndicateursUseCaseV2 {
       headersColumn.push(
         `Taux d'avancement à fin d'échéance ${jalon} (chantier)`,
         "Taux d'avancement à fin d'échéance 2026 (chantier)",
+        'Tendance (chantier)',
+        'Écart (chantier)',
       );
     }
 

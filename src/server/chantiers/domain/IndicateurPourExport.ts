@@ -18,6 +18,8 @@ export type IndicateurPourExport = {
   chantierEstBaromètre: Chantier['estBaromètre'] | null,
   chantierEstTerritorialise: Chantier['estTerritorialisé'] | null,
   chantierEstApplicable: boolean | null,
+  chantierTendance: string | null,
+  chantierEcart: number | null,
   chantierAvancementGlobal: Avancement['global'] | null,
   chantierAvancementAnnuel: Avancement['annuel'] | null,
   périmètreIds: string[],

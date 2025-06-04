@@ -175,6 +175,8 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             meteo: true,
             taux_avancement_mandat: true,
             est_applicable: true,
+            tendance: true,
+            ecart: true,
             chantier_territoire_jalon: {
               select: {
                 taux_avancement: true,
@@ -204,6 +206,8 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         chantierEstApplicable: indicateurPourExport.chantier_territoire.est_applicable,
         chantierEstBaromètre: indicateurPourExport.indicateur_identite.chantier_identite.est_barometre,
         chantierEstTerritorialise: indicateurPourExport.indicateur_identite.chantier_identite.est_territorialise,
+        chantierTendance: indicateurPourExport.chantier_territoire.tendance,
+        chantierEcart: indicateurPourExport.chantier_territoire.ecart,
         chantierAvancementGlobal: verifyValeurIsNotNullOrUndefined(indicateurPourExport.chantier_territoire.taux_avancement_mandat),
         chantierAvancementAnnuel: verifyValeurIsNotNullOrUndefined(chantierTerritoireJalon?.taux_avancement),
         périmètreIds: indicateurPourExport.indicateur_identite.chantier_identite.perimetre_ids,
