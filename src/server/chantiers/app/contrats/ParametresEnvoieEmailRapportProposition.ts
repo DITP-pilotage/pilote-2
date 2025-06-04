@@ -16,7 +16,7 @@ type ParamIndicateur = {
 type ParametreEnvoieRapportProposition = {
   nom_chantier: string;
   id_chantier: string;
-  nombre_propositions: number;
+  nombre_propositions: string;
   conseiller_email: string;
   indicateurs: ParamIndicateur[];
 };
@@ -25,7 +25,10 @@ export const genererParametresEnvoieRapportProposition = (
   listeChantierIds: string[],
   mapChantiersPropositionInformation: Map<string, PropositionValeurAvancementChantierInformation>,
   propositionsParChantier: Map<string, Map<string, PropositionValeurAvancementRapport[]>>,
-): ParametreEnvoieRapportProposition[] => {
+): {
+  chantiers: ParametreEnvoieRapportProposition[],
+  conseillerEmail: string,
+} => {
 
   const params: ParametreEnvoieRapportProposition[] = [];
   for (const chantierId of listeChantierIds) {
@@ -67,12 +70,12 @@ export const genererParametresEnvoieRapportProposition = (
       params.push({
         nom_chantier: chantier.nom,
         id_chantier: chantier.id,
-        nombre_propositions: nombrePropositions,
+        nombre_propositions: nombrePropositions > 1 ? `${nombrePropositions} propositions territoriales de valeur d'avancement` : "1 proposition territoriale de valeur d'avancement",
         conseiller_email: chantier.conseillerMail,
         indicateurs,
       });
     }
   }
 
-  return params;
+  return { chantiers: params, conseillerEmail: params[0].conseiller_email };
 };
