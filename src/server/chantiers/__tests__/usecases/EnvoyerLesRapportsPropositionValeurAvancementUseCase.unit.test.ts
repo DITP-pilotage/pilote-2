@@ -138,9 +138,9 @@ describe('EnvoyerLesRapportsPropositionValeurAvancementUseCase', () => {
     expect(chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds).toHaveBeenCalledTimes(1);
     expect(propositionValeurActuelleRepository.recupererLesPropositionsEnCoursParChantierIds).toHaveBeenCalledTimes(1);
     expect(envoieEmailService.envoieUnEmail).toHaveBeenCalledTimes(3);
-    expect(envoieEmailService.envoieUnEmail).toHaveBeenNthCalledWith(1, [{ email: listeDirecteursDeProjet[0].email }], 4, { chantiers : paramsDirecteur1 });
-    expect(envoieEmailService.envoieUnEmail).toHaveBeenNthCalledWith(2, [{ email: listeDirecteursDeProjet[1].email }], 4, { chantiers : paramsDirecteur2 });
-    expect(envoieEmailService.envoieUnEmail).toHaveBeenNthCalledWith(3, [{ email: listeDirecteursDeProjet[2].email }], 4, { chantiers : paramsDirecteur3 });
+    expect(envoieEmailService.envoieUnEmail).toHaveBeenNthCalledWith(1, [{ email: listeDirecteursDeProjet[0].email }], 4, { chantiers : paramsDirecteur1.chantiers, conseiller_email: paramsDirecteur1.conseillerEmail });
+    expect(envoieEmailService.envoieUnEmail).toHaveBeenNthCalledWith(2, [{ email: listeDirecteursDeProjet[1].email }], 4, { chantiers : paramsDirecteur2.chantiers, conseiller_email: paramsDirecteur2.conseillerEmail });
+    expect(envoieEmailService.envoieUnEmail).toHaveBeenNthCalledWith(3, [{ email: listeDirecteursDeProjet[2].email }], 4, { chantiers : paramsDirecteur3.chantiers, conseiller_email: paramsDirecteur3.conseillerEmail });
   });
 });
 

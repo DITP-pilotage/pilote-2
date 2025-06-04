@@ -43,8 +43,8 @@ export class EnvoyerLesRapportsPropositionValeurAvancementUseCase {
     const mapChantiersPropositionInformation = new Map(listeChantiersProposition.map(chantier => [chantier.id, chantier]));
 
     for (const directeur of listeDirecteursDeProjet) {
-      const params = genererParametresEnvoieRapportProposition(directeur.listeChantiers, mapChantiersPropositionInformation, propositionsParChantier);
-      this.envoieEmailService.envoieUnEmail([{ email: directeur.email }], 4, { chantiers: params });      
+      const { chantiers, conseillerEmail } = genererParametresEnvoieRapportProposition(directeur.listeChantiers, mapChantiersPropositionInformation, propositionsParChantier);
+      this.envoieEmailService.envoieUnEmail([{ email: directeur.email }], 4, { chantiers: chantiers, conseiller_email: conseillerEmail });      
     }
 
   }
