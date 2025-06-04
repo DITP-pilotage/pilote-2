@@ -7,6 +7,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     const utilisateurs = await prisma.utilisateur.findMany({
       where: {
         profilCode: profilCode,
+        date_desactivation: null,
         habilitation: {
           some: {
             scopeCode: 'lecture',

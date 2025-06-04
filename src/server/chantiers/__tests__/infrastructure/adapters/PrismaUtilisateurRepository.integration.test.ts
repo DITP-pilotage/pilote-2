@@ -9,7 +9,7 @@ describe('PrismaUtilisateurRepository', () => {
   });
 
   describe('#recupererUtilisateursParProfilEtChantierIds', () => {
-    it('doit récupérer tous les utilisateur ayant le profil demandé et les habilitations en lecture sur au moins un chantier de la liste', async () => {
+    it('doit récupérer tous les utilisateur actifs ayant le profil demandé et les habilitations en lecture sur au moins un chantier de la liste', async () => {
       // Given
       await prisma.utilisateur.createMany({
         data: [
@@ -45,6 +45,15 @@ describe('PrismaUtilisateurRepository', () => {
             profilCode: 'COORDINATEUR_REGION',
             date_creation: new Date(),
           },
+          {
+            id: 'dce03af2-e6c6-4f9c-8162-6afb98de6318',
+            email: 'dir.projet.desactive@test.com',
+            nom: 'desactive',
+            prenom: 'dir',
+            profilCode: 'EQUIPE_DIR_PROJET',
+            date_creation: new Date(),
+            date_desactivation: new Date(),
+          },
         ],
       });
 
@@ -69,6 +78,11 @@ describe('PrismaUtilisateurRepository', () => {
             utilisateurId: 'c57f3b57-f4d7-40e2-81fe-65e27fbd8ad0',
             scopeCode: 'lecture',
             chantiers: ['CH-001', 'CH-004'],
+          },
+          {
+            utilisateurId: 'dce03af2-e6c6-4f9c-8162-6afb98de6318',
+            scopeCode: 'lecture',
+            chantiers: ['CH-001', 'CH-003'],
           },
         ],
       });
