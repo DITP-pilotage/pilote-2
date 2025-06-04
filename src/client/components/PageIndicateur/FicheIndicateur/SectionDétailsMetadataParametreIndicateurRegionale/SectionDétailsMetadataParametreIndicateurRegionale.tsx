@@ -89,6 +89,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
             erreurMessage={errors.viRegOp?.message}
             estDesactive={valeursRegFromDesactiveRegOp.has(getValues('viRegFrom'))}
             estEnCoursDeModification={estEnCoursDeModification}
+            estMandatory={!valeursRegFromDesactiveRegOp.has(getValues('viRegFrom'))}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vi_reg_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_reg_op')}
             register={register('viRegOp')}
@@ -101,6 +102,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
             erreurMessage={errors.vaRegOp?.message}
             estDesactive={valeursRegFromDesactiveRegOp.has(getValues('vaRegFrom'))}
             estEnCoursDeModification={estEnCoursDeModification}
+            estMandatory={!valeursRegFromDesactiveRegOp.has(getValues('vaRegFrom'))}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.va_reg_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_reg_op')}
             register={register('vaRegOp')}
@@ -113,6 +115,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
             erreurMessage={errors.vcRegOp?.message}
             estDesactive={valeursRegFromDesactiveRegOp.has(getValues('vcRegFrom'))}
             estEnCoursDeModification={estEnCoursDeModification}
+            estMandatory={!valeursRegFromDesactiveRegOp.has(getValues('vcRegFrom'))}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vc_reg_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_reg_op')}
             register={register('vcRegOp')}
