@@ -24,7 +24,7 @@ export const ResponsabiliteChantierEnTete: FunctionComponent<ResponsableEnTeteEl
           <span className='fr-mb-0 fr-text-title--blue-france fr-text--xs'>
             Chantier piloté 
             {' '}
-            {estChantierNational ? 'à la' : "jusqu'à"}
+            {estChantierNational ? 'à la' : "jusqu'à la"}
             {' '}
             <span className='fr-text--bold'>
               maille 

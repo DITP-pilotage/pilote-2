@@ -43,7 +43,7 @@ const saisieHorsAteDeconcentre = (
 const mailleAttendu = (mailleAttendue: 'departementale' | 'regionale') => (
   mailleAttendue === 'departementale' ? (
     <span>
-      attendue jusqu'à la maille
+      attendus jusqu'à la maille
       {' '}
       <span className='fr-text--bold'>
         départementale
@@ -51,7 +51,7 @@ const mailleAttendu = (mailleAttendue: 'departementale' | 'regionale') => (
     </span>
   ) : (
     <span>
-      attendue à la maille
+      attendus à la maille
       {' '}
       <span className='fr-text--bold'>
         régionale
