@@ -43,8 +43,8 @@ renamed AS (
             when ch_territo and maille_applicable = 'REG | NAT' 	then 'REG'
             when ch_territo and maille_applicable is null 			then 'DEPT'
             else 'NAT'
-        end as "maille_pilotage"
-
+        end as "maille_pilotage",
+        conseiller_mail
     FROM source
 
 ),

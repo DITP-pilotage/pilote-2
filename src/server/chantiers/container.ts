@@ -26,12 +26,19 @@ import {
 import { ExportCsvDesChantiersUseCaseV2 } from './usecases/ExportCsvDesChantiersUseCaseV2';
 import { TerritoireRepository } from './domain/ports/TerritoireRepository';
 import { PrismaTerritoireRepository } from './infrastructure/adapters/PrismaTerritoireRepository';
+import { UtilisateurRepository } from './domain/ports/UtilisateurRepository';
+import { PrismaUtilisateurRepository } from './infrastructure/adapters/PrismaUtilisateurRepository';
+import { EnvoyerLesRapportsPropositionValeurAvancementUseCase } from './usecases/EnvoyerLesRapportsPropositionValeurAvancementUseCase';
+import { EnvoieEmailService } from './domain/ports/EnvoieEmailService';
+import { BrevoEnvoieEmailService } from './infrastructure/adapters/BrevoEnvoieEmailService';
 
 export type ChantierDependencies = {
   chantierRepository: ChantierRepository
   indicateurRepository: IndicateurRepository
   territoireRepository: TerritoireRepository
   propositionValeurActuelleRepository: PropositionValeurActuelleRepository
+  utilisateurRepository: UtilisateurRepository
+  envoieEmailService: EnvoieEmailService
   recupererDonneesChantierQuery: RecupererDonneesChantierQuery
   exportCsvDesChantiersUseCase: ExportCsvDesChantiersUseCase
   exportCsvDesChantiersUseCaseV2: ExportCsvDesChantiersUseCaseV2
@@ -40,6 +47,7 @@ export type ChantierDependencies = {
   exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase
   creerPropositionValeurActuelleUseCase: CreerPropositionValeurActuelleUseCase
   modifierPropositionValeurActuelleUseCase: ModifierPropositionValeurActuelleUseCase
+  envoyerLesRapportsPropositionValeurAvancementUseCase: EnvoyerLesRapportsPropositionValeurAvancementUseCase
 };
 
 export const getChantiersContainer = (initialContainer: AwilixContainer<{ prisma: PrismaPilote }>): AwilixContainer<ChantierDependencies & { prisma: PrismaPilote }> => {
@@ -48,6 +56,8 @@ export const getChantiersContainer = (initialContainer: AwilixContainer<{ prisma
     indicateurRepository: asClass(PrismaIndicateurRepository),
     territoireRepository: asClass(PrismaTerritoireRepository),
     propositionValeurActuelleRepository: asClass(PrismaPropositionValeurActuelleRepository),
+    utilisateurRepository: asClass(PrismaUtilisateurRepository),
+    envoieEmailService: asClass(BrevoEnvoieEmailService),
     recupererDonneesChantierQuery: asClass(RecupererDonneesChantierQuery),
     exportCsvDesChantiersUseCase: asClass(ExportCsvDesChantiersUseCase),
     exportCsvDesChantiersUseCaseV2: asClass(ExportCsvDesChantiersUseCaseV2),
@@ -56,5 +66,6 @@ export const getChantiersContainer = (initialContainer: AwilixContainer<{ prisma
     exportCsvDesHistoriquesIndicateursUseCase: asClass(ExportCsvDesHistoriquesIndicateursUseCase),
     creerPropositionValeurActuelleUseCase: asClass(CreerPropositionValeurActuelleUseCase),
     modifierPropositionValeurActuelleUseCase: asClass(ModifierPropositionValeurActuelleUseCase),
+    envoyerLesRapportsPropositionValeurAvancementUseCase: asClass(EnvoyerLesRapportsPropositionValeurAvancementUseCase),
   });
 };

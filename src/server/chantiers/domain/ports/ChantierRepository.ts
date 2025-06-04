@@ -12,4 +12,5 @@ export interface ChantierRepository {
   récupérerPourExportsV2(chantierId: string, territoireCodesLecture: string[], optionsExport: OptionsExport, jalon: number): Promise<ChantierPourExport[] | null>;
   récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(chantierIds: string[], optionsExport: OptionsExport): Promise<Chantier['id'][]>;
   recupererPropositionValeurAvancementChantierInformationParIndicId({ indicId }: { indicId: string }): Promise<PropositionValeurAvancementChantierInformation>;
+  recupererListePropositionValeurAvancementChantierInformationParChantiersIds({ listeChantiersIds }: { listeChantiersIds: string[] }): Promise<PropositionValeurAvancementChantierInformation[]>;
 }
