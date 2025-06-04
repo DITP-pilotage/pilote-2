@@ -132,9 +132,13 @@ export class PrismaPropositionValeurActuelleRepository implements PropositionVal
       const rapport: PropositionValeurAvancementRapport = {
         indicateurId,
         territoireCode: p.territoire_code,
-        valeurAvancementProposee: p.valeur_actuelle_proposee.toString(),
+        valeurAvancementProposee: Number.isInteger(p.valeur_actuelle_proposee)
+          ? p.valeur_actuelle_proposee.toString()
+          : p.valeur_actuelle_proposee.toFixed(1).toString(),
         dateValeurAvancement: formaterDate(p.date_valeur_actuelle?.toISOString(), 'DD/MM/YYYY')!,
-        valeurAvancementReference: p.indicateur_territoire.valeur_actuelle_mandat?.toString() ?? '',
+        valeurAvancementReference: Number.isInteger(p.indicateur_territoire.valeur_actuelle_mandat) 
+          ? p.indicateur_territoire.valeur_actuelle_mandat?.toString() ?? ''
+          : p.indicateur_territoire.valeur_actuelle_mandat?.toFixed(1).toString() ?? '',
         nomIndicateur: p.indicateur_territoire.indicateur_identite.nom,
         uniteIndicateur: p.indicateur_territoire.indicateur_identite.unite_mesure ?? '',
         nomTerritoire: p.indicateur_territoire.territoire.nom,
