@@ -52,6 +52,8 @@ import { PrismaRapportRepository } from './infrastructure/adapters/PrismaRapport
 import { PrismaSyntheseDesResultatsRepository } from './infrastructure/adapters/PrismaSyntheseDesResultatsRepository';
 import { SupprimerLesComptesDesactivesUseCase } from './usecases/SupprimerLesComptesDesactivesUseCase';
 import { RecupererLaListeDesInfomrationsChantiersUse } from './usecases/RecupererLaListeDesInfomrationsChantiersUse';
+import { PropositionValeurAvancementRepository } from './domain/ports/PropositionValeurAvancementRepository';
+import { PrismaPropositionValeurAvancementRepository } from './infrastructure/adapters/PrismaPropositionValeurAvancementRepository';
 
 export type GestionUtilisateurDependencies = {
   utilisateurRepository: UtilisateurRepository
@@ -68,6 +70,7 @@ export type GestionUtilisateurDependencies = {
   objectifRepository: ObjectifRepository
   rapportRepository: RapportRepository
   syntheseDesResultatsRepository: SyntheseDesResultatsRepository
+  propositionValeurAvancementRepository: PropositionValeurAvancementRepository
   supprimerLesComptesDesactivesUseCase: SupprimerLesComptesDesactivesUseCase
   recupererChantiersSynthetisesUseCase: RecupererChantiersSynthetisesUseCase
   recupererPerimetresMinisterielsUseCase: RecupererPerimetresMinisterielsUseCase
@@ -106,6 +109,7 @@ export const getGestionUtilisateurContainer = (initialContainer: AwilixContainer
     objectifRepository: asClass(PrismaObjectifRepository),
     rapportRepository: asClass(PrismaRapportRepository),
     syntheseDesResultatsRepository: asClass(PrismaSyntheseDesResultatsRepository),
+    propositionValeurAvancementRepository: asClass(PrismaPropositionValeurAvancementRepository),
     supprimerLesComptesDesactivesUseCase: asClass(SupprimerLesComptesDesactivesUseCase),
     recupererLaListeDesInfomrationsChantiersUse: asClass(RecupererLaListeDesInfomrationsChantiersUse),
   });

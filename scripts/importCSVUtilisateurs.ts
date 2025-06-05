@@ -16,7 +16,6 @@ import { TerritoireSQLRepository } from '@/server/infrastructure/accès_données
 const projectDir = process.cwd();
 loadEnvConfig(projectDir);  // ⚠️ À appeler avant nos imports, because Configuration.ts est aussi chargée côté front
 
-
 /**
  - Format CSV attendu:
       nom,prénom,email,profil,scope,territoires,périmètreIds,chantierIds,auteurEmail

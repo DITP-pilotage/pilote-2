@@ -1,0 +1,7 @@
+{
+  "jobs": [
+    {
+      "command": "0 8 * * 1 /bin/bash scripts/run_rapport_pva.sh"
+    }
+  ]
+}

@@ -11,7 +11,7 @@ interface ResponsableEnTete {
   isUppercase?: boolean
 }
 
-const ResponsableChantierEnTete: FunctionComponent<ResponsableEnTete> = ({ libellé, listeNomsResponsables, icone, iconeStyle = 'span', size = 'md', isUppercase = false }) => {
+export const ResponsableChantierEnTete: FunctionComponent<ResponsableEnTete> = ({ libellé, listeNomsResponsables, icone, iconeStyle = 'span', size = 'md', isUppercase = false }) => {
   const nomResponsable = listeNomsResponsables.join(', ') || 'Non renseigné';
 
   return (
@@ -26,7 +26,7 @@ const ResponsableChantierEnTete: FunctionComponent<ResponsableEnTete> = ({ libel
           <span className={`${icone} ${size === 'sm' ? 'fr-pl-1v fr-pr-1v' : ''}`} />
         )}
       </div>
-      <div>
+      <div className='fr-pl-1v fr-mt-1v'>
         <p className={`fr-mb-0 fr-text-title--blue-france ${size === 'sm' ? 'fr-text--xs' : ''}`}>
           {
             libellé ? (
@@ -47,5 +47,3 @@ const ResponsableChantierEnTete: FunctionComponent<ResponsableEnTete> = ({ libel
     </EnteteResponsablesStyled>
   );
 };
-
-export default ResponsableChantierEnTete;

@@ -9,6 +9,8 @@ time pg_dump -d $CONN_STR_PROD --verbose \
     --no-owner --data-only --format custom --compress 9 \
     --table public.chantier_identite \
     --table public.chantier_territoire \
+    --table public.indicateur_identite \
+    --table public.indicateur_territoire \
     --table public.rapport_import_mesure_indicateur \
     --table public.commentaire \
     --table public.decision_strategique \

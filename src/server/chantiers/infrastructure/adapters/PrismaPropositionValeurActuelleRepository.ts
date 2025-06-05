@@ -2,9 +2,11 @@ import { proposition_valeur_actuelle as PrismaPropositionValeurActuelle } from '
 import { PropositionValeurActuelle } from '@/server/chantiers/domain/PropositionValeurActuelle';
 import {
   PropositionValeurActuelleRepository,
+  PropositionValeurAvancementRapport,
 } from '@/server/chantiers/domain/ports/PropositionValeurActuelleRepository';
 import { StatutProposition } from '@/server/chantiers/domain/StatutProposition';
 import { prisma } from '@/server/db/prisma';
+import { formaterDate } from '@/client/utils/date/date';
 
 const convertirEnModel = (propositionValeurActuelle: PropositionValeurActuelle): PrismaPropositionValeurActuelle => {
   return {
@@ -14,7 +16,6 @@ const convertirEnModel = (propositionValeurActuelle: PropositionValeurActuelle):
     territoire_code: propositionValeurActuelle.territoireCode,
     date_valeur_actuelle: propositionValeurActuelle.dateValeurActuelle,
     id_auteur_modification: propositionValeurActuelle.idAuteurModification,
-    auteur_modification: propositionValeurActuelle.auteurModification,
     date_proposition: propositionValeurActuelle.dateProposition,
     motif_proposition: propositionValeurActuelle.motifProposition,
     source_donnee_methode_calcul: propositionValeurActuelle.sourceDonneeEtMethodeCalcul,
@@ -69,5 +70,93 @@ export class PrismaPropositionValeurActuelleRepository implements PropositionVal
         date_modification_statut: new Date(),
       },
     });
+  }
+
+  async recupererLaListeDesChantiersIdsAvecPropositionEnCours(): Promise<string[]> {
+    const result = await prisma.indicateur_identite.findMany({
+      where: {
+        indicateur_territoire: {
+          some: {
+            proposition_valeur_actuelle: {
+              some: {
+                statut: 'EN_COURS',
+              },
+            },
+          },
+        },
+      },
+      select: {
+        chantier_id: true,
+      },
+      distinct: ['chantier_id'],
+    });
+  
+    return result.map(r => r.chantier_id);
+  }  
+
+  async recupererLesPropositionsEnCoursParChantierIds() {
+    const listePropositions = await prisma.proposition_valeur_actuelle.findMany({
+      where: {
+        statut: 'EN_COURS',
+      },
+      select: {
+        indic_id: true,
+        territoire_code: true,
+        valeur_actuelle_proposee: true,
+        date_valeur_actuelle: true,
+        indicateur_territoire: {
+          select: {
+            valeur_actuelle_mandat: true,
+            indicateur_identite: {
+              select: {
+                id: true,
+                chantier_id: true,
+                nom: true,
+                unite_mesure: true,
+              },
+            },
+            territoire: {
+              select: {
+                nom: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  
+    return listePropositions.reduce((acc, p) => {
+      const chantierId = p.indicateur_territoire.indicateur_identite.chantier_id;
+      const indicateurId = p.indic_id;
+  
+      const rapport: PropositionValeurAvancementRapport = {
+        indicateurId,
+        territoireCode: p.territoire_code,
+        valeurAvancementProposee: Number.isInteger(p.valeur_actuelle_proposee)
+          ? p.valeur_actuelle_proposee.toString()
+          : p.valeur_actuelle_proposee.toFixed(1).toString(),
+        dateValeurAvancement: formaterDate(p.date_valeur_actuelle?.toISOString(), 'DD/MM/YYYY')!,
+        valeurAvancementReference: Number.isInteger(p.indicateur_territoire.valeur_actuelle_mandat) 
+          ? p.indicateur_territoire.valeur_actuelle_mandat?.toString() ?? ''
+          : p.indicateur_territoire.valeur_actuelle_mandat?.toFixed(1).toString() ?? '',
+        nomIndicateur: p.indicateur_territoire.indicateur_identite.nom,
+        uniteIndicateur: p.indicateur_territoire.indicateur_identite.unite_mesure ?? '',
+        nomTerritoire: p.indicateur_territoire.territoire.nom,
+      };
+  
+      if (!acc.has(chantierId)) {
+        acc.set(chantierId, new Map());
+      }
+  
+      const indicateurMap = acc.get(chantierId)!;
+  
+      if (!indicateurMap.has(indicateurId)) {
+        indicateurMap.set(indicateurId, []);
+      }
+  
+      indicateurMap.get(indicateurId)!.push(rapport);
+  
+      return acc;
+    }, new Map<string, Map<string, PropositionValeurAvancementRapport[]>>());
   }
 }

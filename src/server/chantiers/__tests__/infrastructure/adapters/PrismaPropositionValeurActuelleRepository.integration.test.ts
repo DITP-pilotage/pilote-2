@@ -8,13 +8,60 @@ import {
 describe('PrismaPropositionValeurActuelleRepository', () => {
   let prismaPropositionValeurActuelleRepository: PrismaPropositionValeurActuelleRepository;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     prismaPropositionValeurActuelleRepository = new PrismaPropositionValeurActuelleRepository();
+    await prisma.chantier_identite.create({
+      data: {
+        id: 'CH-001',
+        nom: 'Chantier 001',
+      },
+    });
+    await prisma.chantier_territoire.createMany({
+      data: [
+        {
+          id: 'CH-001',
+          territoire_code: 'DEPT-34',
+          code_insee: '34',
+          maille: 'DEPT',
+          zone_id: 'D34',
+        },
+      ],
+    });
+    await prisma.indicateur_identite.createMany({
+      data: [
+        {
+          id: 'IND-001',
+          nom: 'indicateur 1',
+          chantier_id: 'CH-001',
+        },
+      ],
+    });
+    await prisma.indicateur_territoire.createMany({
+      data: [
+        {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-34',
+          code_insee: '34',
+          zone_id: 'D34',
+        },
+      ],
+    });
   });
-
   describe('#supprimerPropositionValeurActuelle', () => {
     it('doit appliquer le statut RETIREE à la proposition de valeur actuelle avec le statut EN_COURS', async () => {
       // Given
+      await prisma.utilisateur.create({
+        data: {
+          id: '7d9ba603-d510-46f6-bda3-736210467521',
+          nom: 'auteur',
+          email: 'auteur@example.com',
+          prenom: 'Prénom',
+          date_creation: new Date(),
+          profilCode: 'DITP_ADMIN',
+        },
+      });
       await prisma.proposition_valeur_actuelle.createMany({
         data: [
           {
@@ -24,7 +71,6 @@ describe('PrismaPropositionValeurActuelleRepository', () => {
             date_valeur_actuelle: new Date('2024-12-01'),
             date_proposition: new Date('2025-01-01'),
             valeur_actuelle_proposee: 10,
-            auteur_modification: 'auteur',
             id_auteur_modification: '7d9ba603-d510-46f6-bda3-736210467521',
             motif_proposition: 'motif',
             source_donnee_methode_calcul: 'source',
@@ -37,7 +83,6 @@ describe('PrismaPropositionValeurActuelleRepository', () => {
             date_valeur_actuelle: new Date('2024-12-01'),
             date_proposition: new Date('2025-02-01'),
             valeur_actuelle_proposee: 8,
-            auteur_modification: 'auteur',
             id_auteur_modification: '7d9ba603-d510-46f6-bda3-736210467521',
             motif_proposition: 'motif',
             source_donnee_methode_calcul: 'source',
@@ -72,6 +117,16 @@ describe('PrismaPropositionValeurActuelleRepository', () => {
   describe('#annulePropositionValeurActuellePrecedente', () => {
     it('doit appliquer le statut ANNULEE à la proposition de valeur actuelle avec le statut EN_COURS', async () => {
       // Given
+      await prisma.utilisateur.create({
+        data: {
+          id: '7d9ba603-d510-46f6-bda3-736210467521',
+          nom: 'auteur',
+          email: 'auteur@example.com',
+          prenom: 'Prénom',
+          date_creation: new Date(),
+          profilCode: 'DITP_ADMIN',
+        },
+      });
       await prisma.proposition_valeur_actuelle.createMany({
         data: [
           {
@@ -81,7 +136,6 @@ describe('PrismaPropositionValeurActuelleRepository', () => {
             date_valeur_actuelle: new Date('2024-12-01'),
             date_proposition: new Date('2025-01-01'),
             valeur_actuelle_proposee: 10,
-            auteur_modification: 'auteur',
             id_auteur_modification: '7d9ba603-d510-46f6-bda3-736210467521',
             motif_proposition: 'motif',
             source_donnee_methode_calcul: 'source',
@@ -94,7 +148,6 @@ describe('PrismaPropositionValeurActuelleRepository', () => {
             date_valeur_actuelle: new Date('2024-12-01'),
             date_proposition: new Date('2025-02-01'),
             valeur_actuelle_proposee: 8,
-            auteur_modification: 'auteur',
             id_auteur_modification: '7d9ba603-d510-46f6-bda3-736210467521',
             motif_proposition: 'motif',
             source_donnee_methode_calcul: 'source',
@@ -129,11 +182,21 @@ describe('PrismaPropositionValeurActuelleRepository', () => {
   describe('#creerPropositionValeurActuelle', () => {
     it('doit creer la proposition de valeur actuelle', async () => {
       // Given
+      await prisma.utilisateur.create({
+        data: {
+          id: '7d9ba603-d510-46f6-bda3-736210467521',
+          nom: 'auteur',
+          email: 'auteur@example.com',
+          prenom: 'Prénom',
+          date_creation: new Date(),
+          profilCode: 'DITP_ADMIN',
+        },
+      });
       const propositionValeurActuelle = new PropositionValeurActuelleBuilder()
         .avecId('c2afe41e-51df-493a-b140-b9380c625197')
-        .avecIndicId('IND-002')
+        .avecIndicId('IND-001')
         .avecValeurActuelleProposee(23.2)
-        .avecTerritoireCode('DEPT-87')
+        .avecTerritoireCode('DEPT-34')
         .avecDateValeurActuelle(new Date('2024-03-13'))
         .avecIdAuteurModification('7d9ba603-d510-46f6-bda3-736210467521')
         .avecAuteurModification('jane.doe@test.com')

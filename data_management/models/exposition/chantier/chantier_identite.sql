@@ -136,6 +136,7 @@ SELECT
             END
         ) AS maille
     ) AS mailles_applicables,
+    meta_ch.conseiller_mail,
     FALSE AS a_supprimer
 
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch

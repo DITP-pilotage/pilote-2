@@ -94,6 +94,7 @@ model chantier_identite {
   possede_meteo_regional                Boolean?
   statut                                type_statut            @default(PUBLIE)
   cible_attendue                        Boolean                @default(true)
+  conseiller_mail                       String?
   a_supprimer                           Boolean                @default(true)
   mailles_applicables                   Maille[]
   chantier_territoire                   chantier_territoire[]
@@ -235,7 +236,7 @@ model indicateur_territoire {
   indicateur_identite                      indicateur_identite           @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   chantier_territoire                      chantier_territoire           @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
   indicateur_territoire_jalon              indicateur_territoire_jalon[]
-
+  proposition_valeur_actuelle              proposition_valeur_actuelle[]
   @@id([id, territoire_code])
   @@schema("public")
 }
@@ -269,7 +270,6 @@ model synthese_des_resultats {
   date_meteo          DateTime?           @db.Timestamp
   commentaire         String?
   date_commentaire    DateTime?           @db.Timestamp
-  auteur              String?
   auteur_synthese     utilisateur?        @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   auteur_id           String?             @db.Uuid
   chantier_territoire chantier_territoire @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
@@ -302,7 +302,6 @@ model commentaire {
   maille              String
   code_insee          String
   territoire_code     String
-  auteur              String?
   auteur_commentaire  utilisateur?        @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   chantier_territoire chantier_territoire @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
   auteur_id           String?             @db.Uuid
@@ -499,7 +498,6 @@ model objectif {
   contenu           String
   date              DateTime          @db.Timestamp
   chantier_id       String
-  auteur            String?
   auteur_objectif   utilisateur?      @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   auteur_id         String?           @db.Uuid
   chantier_identite chantier_identite @relation(fields: [chantier_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -519,7 +517,6 @@ model decision_strategique {
   contenu                     String
   date                        DateTime                  @db.Timestamp
   chantier_id                 String
-  auteur                      String?
   auteur_decision_strategique utilisateur?              @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   auteur_id                   String?                   @db.Uuid
   chantier_identite           chantier_identite         @relation(fields: [chantier_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -538,11 +535,9 @@ model utilisateur {
   habilitation                     habilitation[]
   rapport_import_mesure_indicateur rapport_import_mesure_indicateur[]
   date_modification                DateTime                           @default(now())
-  auteur_email_modification        String?
   auteur_modification              utilisateur?                       @relation("modification", fields: [auteur_id_modification], references: [id])
   auteur_id_modification           String?                            @db.Uuid
   date_creation                    DateTime
-  auteur_email_creation            String?
   auteur_creation                  utilisateur?                       @relation("creation", fields: [auteur_id_creation], references: [id])
   auteur_id_creation               String?                            @db.Uuid
   commentaires                     commentaire[]
@@ -551,6 +546,7 @@ model utilisateur {
   syntheses                        synthese_des_resultats[]
   utilisateurs_crees               utilisateur[]                      @relation("creation")
   utilisateur_modifies             utilisateur[]                      @relation("modification")
+  propositions_valeur_actuelle     proposition_valeur_actuelle[]
   date_desactivation               DateTime?
   date_visualisation_video_accueil DateTime?
 
@@ -558,19 +554,19 @@ model utilisateur {
 }
 
 model profil {
-  code                                                        String        @id
-  nom                                                         String
-  a_acces_tous_chantiers                                      Boolean       @default(false)
-  a_acces_tous_chantiers_territorialises                      Boolean       @default(false)
-  a_acces_tous_les_territoires_lecture                        Boolean       @default(false)
-  a_acces_tous_les_territoires_saisie_commentaire             Boolean       @default(false)
-  a_acces_tous_les_territoires_saisie_indicateur              Boolean       @default(false)
-  peut_modifier_les_utilisateurs                              Boolean       @default(false)
-  a_acces_a_tous_les_territoires_utilisateurs                 Boolean       @default(false)
-  a_acces_a_tous_les_chantiers_utilisateurs                   Boolean       @default(false)
-  peut_saisir_des_commentaires                                Boolean       @default(false)
-  a_access_aux_chantiers_brouillons                           Boolean       @default(false)
-  utilisateur                                                 utilisateur[]
+  code                                            String        @id
+  nom                                             String
+  a_acces_tous_chantiers                          Boolean       @default(false)
+  a_acces_tous_chantiers_territorialises          Boolean       @default(false)
+  a_acces_tous_les_territoires_lecture            Boolean       @default(false)
+  a_acces_tous_les_territoires_saisie_commentaire Boolean       @default(false)
+  a_acces_tous_les_territoires_saisie_indicateur  Boolean       @default(false)
+  peut_modifier_les_utilisateurs                  Boolean       @default(false)
+  a_acces_a_tous_les_territoires_utilisateurs     Boolean       @default(false)
+  a_acces_a_tous_les_chantiers_utilisateurs       Boolean       @default(false)
+  peut_saisir_des_commentaires                    Boolean       @default(false)
+  a_access_aux_chantiers_brouillons               Boolean       @default(false)
+  utilisateur                                     utilisateur[]
 
   @@schema("public")
 }
@@ -610,18 +606,20 @@ model historisation_modification {
 }
 
 model proposition_valeur_actuelle {
-  id                           String    @id @db.Uuid
+  id                           String                  @id @db.Uuid
   indic_id                     String
   valeur_actuelle_proposee     Float
   territoire_code              String
-  date_valeur_actuelle         DateTime? @db.Timestamp()
-  auteur_modification          String
-  id_auteur_modification       String
-  date_proposition             DateTime? @db.Timestamp()
+  date_valeur_actuelle         DateTime?               @db.Timestamp()
+  id_auteur_modification       String                  @db.Uuid
+  date_proposition             DateTime?               @db.Timestamp()
   motif_proposition            String
   source_donnee_methode_calcul String
   statut                       type_statut_proposition
-  date_modification_statut     DateTime? @db.Timestamp()
+  indicateur_territoire        indicateur_territoire @relation(fields: [indic_id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
+
+  auteur_proposition           utilisateur?            @relation(fields: [id_auteur_modification], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  date_modification_statut     DateTime?               @db.Timestamp()
 
   @@schema("public")
 }
@@ -641,11 +639,11 @@ model token_api_information {
 }
 
 model nouveaute {
-  id String @id
-  contenu String
+  id            String   @id
+  contenu       String
   date_creation DateTime @default(now())
-  version String
-  date String
+  version       String
+  date          String
 
   @@schema("public")
 }

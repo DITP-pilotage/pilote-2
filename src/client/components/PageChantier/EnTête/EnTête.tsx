@@ -11,7 +11,8 @@ import { getQueryParamString } from '@/client/utils/getQueryParamString';
 import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import { getFiltresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
 import PageChantierEnTêteStyled from './EnTête.styled';
-import ResponsableChantierEnTete from './EnTêteResponsables';
+import { ResponsableChantierEnTete } from './EnTêteResponsables';
+import { ResponsabiliteChantierEnTete } from './ResponsabiliteChantierEnTete';
 
 interface PageChantierEnTêteProps {
   chantier: Chantier
@@ -65,17 +66,24 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
           listeNomsResponsables={listeNomsResponsablesMinistèrePorteur}
         />
       </div>
-      <ResponsableChantierEnTete
-        icone='fr-icon-government-fill'
-        libellé='Autres ministères co-porteurs'
-        listeNomsResponsables={listeNomsResponsablesAutresMinistèresCoPorteurs}
-        size='sm'
-      />
-      <ResponsableChantierEnTete
-        icone='fr-icon-account-circle-fill'
-        libellé="Directeur(s) / directrice(s) d'Administration Centrale"
-        listeNomsResponsables={listeNomsDirecteursAdministrationCentrale}
-        size='sm'
+      <div className='fr-mb-1w'>
+        <ResponsableChantierEnTete
+          icone='fr-icon-government-fill'
+          libellé='Autres ministères co-porteurs'
+          listeNomsResponsables={listeNomsResponsablesAutresMinistèresCoPorteurs}
+          size='sm'
+        />
+      </div>
+      <div className='fr-mb-1w'>
+        <ResponsableChantierEnTete
+          icone='fr-icon-account-circle-fill'
+          libellé="Directeur(s) / directrice(s) d'Administration Centrale"
+          listeNomsResponsables={listeNomsDirecteursAdministrationCentrale}
+          size='sm'
+        />
+      </div>
+      <ResponsabiliteChantierEnTete
+        chantier={chantier}
       />
       <div className='fr-mt-md-2w format-mobile fr-ml-1w'>
         {
