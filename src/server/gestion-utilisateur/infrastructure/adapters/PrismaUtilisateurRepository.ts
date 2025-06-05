@@ -243,6 +243,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         profil: true,
         habilitation: true,
         auteur_modification: true,
+        auteur_creation: true,
       },
       where: {
         id: {
@@ -503,10 +504,11 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   }
 
   private convertirEnUtilisateurExportCSV({ listeTerritoiresCodes, listePerimetresMinisteriels, listeInformationsChantiersUtilisateurs }: { listeTerritoiresCodes: string[], listePerimetresMinisteriels: string[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[] }) {
-    return (utilisateurBrut: PrismaUtilisateurModel & { profil: PrismaProfilModel; habilitation: PrismaHabilitationModel[]; auteur_modification: PrismaUtilisateurModel | null; }): UtilisateurExportCSV => {
+    return (utilisateurBrut: PrismaUtilisateurModel & { profil: PrismaProfilModel; habilitation: PrismaHabilitationModel[]; auteur_modification: PrismaUtilisateurModel | null; auteur_creation: PrismaUtilisateurModel | null }): UtilisateurExportCSV => {
       const habilitations = créerLesHabilitations(utilisateurBrut.profil, utilisateurBrut.habilitation, listeInformationsChantiersUtilisateurs, listeTerritoiresCodes, listePerimetresMinisteriels);
 
       const auteurModification = utilisateurBrut.auteur_modification;
+      const auteurCreation = utilisateurBrut.auteur_creation;
 
       return {
         id: utilisateurBrut.id,
@@ -520,6 +522,8 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         profil: utilisateurBrut.profilCode as ProfilCode,
         dateDesactivation: utilisateurBrut.date_desactivation?.toISOString() ?? null,
         statut: utilisateurBrut.date_desactivation ? 'Désactivé' : 'Activé',
+        dateCreation: utilisateurBrut.date_creation.toISOString(),
+        auteurCreation: auteurCreation ? `${auteurCreation.prenom} ${auteurCreation.nom}` : 'Auteur Inconnu',
       };
     };
   }
