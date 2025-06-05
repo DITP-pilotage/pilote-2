@@ -59,6 +59,16 @@ export class IndicateurPourExportBuilder {
 
   private maillesApplicables = ['NAT', 'REG', 'DEPT'];
 
+  private chantierEcart = null;
+  
+  private chantierTendance = null;
+  
+  private chantierCibleAttendue = true;
+  
+  private chantierAUnTauxAvancementDepartemental = true;
+  
+  private chantierAUnePropositionValeurAvancement = true;
+
   withNom(nom: string) {
     this.nom = nom;
     return this;
@@ -105,6 +115,11 @@ export class IndicateurPourExportBuilder {
       avancementGlobal: this.avancementGlobal,
       estApplicable: this.estApplicable,
       maillesApplicables: this.maillesApplicables,
+      chantierEcart: this.chantierEcart,
+      chantierAUnePropositionValeurAvancement: this.chantierAUnePropositionValeurAvancement,
+      chantierAUnTauxAvancementDepartemental: this.chantierAUnTauxAvancementDepartemental,
+      chantierCibleAttendue: this.chantierCibleAttendue,
+      chantierTendance: this.chantierTendance,
     };
   }
 }

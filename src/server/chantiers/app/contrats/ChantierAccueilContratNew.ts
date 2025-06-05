@@ -62,7 +62,8 @@ export interface ChantierAccueilContrat {
   tendance: 'BAISSE' | 'HAUSSE' | 'STAGNATION' | null;
   météo: Météo;
   avancementGlobal: number | null;
-  aUnePropositionsValeurActuelle: boolean,
+  aUnePropositionsValeurActuelle: boolean
+  aUnTauxAvancementDepartemental: boolean
 }
 
 class ErreurChantierSansMailleNationale extends Error {
@@ -81,7 +82,7 @@ export function créerDonnéesTerritoiresNew(
 
   territoires.forEach(t => {
     const chantierRow = chantierRows.find(chantier => chantier.territoire_code === t.code);
-
+                                                                                      
     let aUnePropositionDeValeurActuelle = chantierRow?.nombre_propositions_valeur_actuelle ? chantierRow.nombre_propositions_valeur_actuelle > 0 : false;
     if (chantierRowsMailleEnfant && listeTerritoireEnfant) {
       const territoiresEnfantCodes = new Set(listeTerritoireEnfant.filter(territoireEnfant => territoireEnfant.codeParent === t.code).map(territoireEnfant => territoireEnfant.code));
@@ -119,6 +120,8 @@ export const presenterEnChantierAccueilContratNew = (
   const chantierMailleNationale = chantierIdentite.chantier_territoire.find(c => c.maille === 'NAT');
   const listeChantiersMailleDépartementale = chantierIdentite.chantier_territoire.filter(c => c.maille === 'DEPT');
   const listeChantiersMailleRégionale = chantierIdentite.chantier_territoire.filter(c => c.maille === 'REG');
+
+  const listeChantiersMailleDepartementaleApplicables = listeChantiersMailleDépartementale.filter(chantier => chantier.est_applicable);
 
   if (!chantierMailleNationale) {
     throw new ErreurChantierSansMailleNationale(chantierIdentite.id);
@@ -189,5 +192,7 @@ export const presenterEnChantierAccueilContratNew = (
     météo: newMaille[mailleChantier][territoireCode].météo,
     avancementGlobal: newMaille[mailleChantier][territoireCode].avancement.global,
     aUnePropositionsValeurActuelle: newMaille[mailleChantier][territoireCode].aUnePropositionsValeurActuelle,
+    aUnTauxAvancementDepartemental: listeChantiersMailleDepartementaleApplicables.length === 0 
+      || listeChantiersMailleDepartementaleApplicables.some(chantier => chantier.taux_avancement_mandat !== null),
   };
 };

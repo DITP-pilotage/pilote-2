@@ -100,6 +100,7 @@ export interface ChantierRapportDetailleContrat {
   aUnePropositionsValeurActuelle: boolean
   maillesApplicables: Maille[]
   dateTauxAvancementMandatValeurPrecedente: string | null
+  aUnTauxAvancementDepartemental: boolean
 }
 
 class ErreurChantierSansMailleNationale extends Error {
@@ -160,6 +161,8 @@ export const presenterEnChantierRapportDetaille = (
   const chantierMailleNationale = chantierIdentite.chantier_territoire.find(c => c.maille === 'NAT');
   const listeChantiersMailleDépartementale = chantierIdentite.chantier_territoire.filter(c => c.maille === 'DEPT');
   const listeChantiersMailleRégionale = chantierIdentite.chantier_territoire.filter(c => c.maille === 'REG');
+
+  const listeChantiersMailleDepartementaleApplicables = listeChantiersMailleDépartementale.filter(chantier => chantier.est_applicable);
 
   if (!chantierMailleNationale) {
     throw new ErreurChantierSansMailleNationale(chantierIdentite.id);
@@ -249,5 +252,7 @@ export const presenterEnChantierRapportDetaille = (
     coordinateurTerritorialTerritoireSélectionné: newMaille[mailleChantier][territoireCode].coordinateurTerritorial,
     aUnePropositionsValeurActuelle: newMaille[mailleChantier][territoireCode].aUnePropositionsValeurActuelle,
     dateTauxAvancementMandatValeurPrecedente: newMaille[mailleChantier][territoireCode].dateTauxAvancementMandatValeurPrecedente,
+    aUnTauxAvancementDepartemental: listeChantiersMailleDepartementaleApplicables.length === 0 
+    || listeChantiersMailleDepartementaleApplicables.some(chantier => chantier.taux_avancement_mandat !== null),
   };
 };

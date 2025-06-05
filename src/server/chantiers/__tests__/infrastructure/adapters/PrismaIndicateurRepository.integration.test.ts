@@ -348,16 +348,19 @@ describe('PrismaIndicateurRepository', () => {
           perimetre_ids: ['PER-01'],
           est_barometre: true,
           est_territorialise: true,
+          cible_attendue: true,
         }, {
           id: 'CH-002',
           nom: 'Chantier 002',
           ministeres: ['MINA'],
           ministeres_acronymes: ['MINA'],
+          cible_attendue: true,
         }, {
           id: 'CH-003',
           nom: 'Chantier 003',
           ministeres: ['MINA'],
           ministeres_acronymes: ['MINA'],
+          cible_attendue: true,
         }],
       });
 
@@ -369,6 +372,9 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'FRANCE',
           territoire_code: 'NAT-FR',
           est_applicable: true,
+          ecart: null,
+          tendance: null,
+          taux_avancement_mandat: null,
         }, {
           id: 'CH-001',
           code_insee: '01',
@@ -378,6 +384,8 @@ describe('PrismaIndicateurRepository', () => {
           est_applicable: true,
           taux_avancement_mandat: 23,
           meteo: 'SOLEIL',
+          ecart: null,
+          tendance: null,
         }, {
           id: 'CH-001',
           code_insee: '02',
@@ -385,6 +393,8 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'D02',
           territoire_code: 'DEPT-02',
           est_applicable: true,
+          ecart: null,
+          tendance: null,
         }, {
           id: 'CH-001',
           code_insee: '01',
@@ -392,6 +402,8 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'R01',
           territoire_code: 'REG-01',
           est_applicable: true,
+          ecart: null,
+          tendance: null,
         }, {
           id: 'CH-002',
           code_insee: '01',
@@ -399,6 +411,8 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'D01',
           territoire_code: 'DEPT-01',
           est_applicable: true,
+          ecart: null,
+          tendance: null,
         }, {
           id: 'CH-002',
           code_insee: '87',
@@ -406,6 +420,8 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'D87',
           territoire_code: 'DEPT-87',
           est_applicable: true,
+          ecart: null,
+          tendance: null,
         },  {
           id: 'CH-002',
           code_insee: '01',
@@ -413,6 +429,8 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'R01',
           territoire_code: 'REG-01',
           est_applicable: true,
+          ecart: null,
+          tendance: null,
         }, {
           id: 'CH-003',
           code_insee: '01',
@@ -420,6 +438,8 @@ describe('PrismaIndicateurRepository', () => {
           zone_id: 'D01',
           territoire_code: 'DEPT-01',
           est_applicable: true,
+          ecart: null,
+          tendance: null,
         }],
       });
 
@@ -754,6 +774,11 @@ describe('PrismaIndicateurRepository', () => {
         avancementGlobal: 13,
         estApplicable: true,
         maillesApplicables: [],
+        chantierEcart: null,
+        chantierTendance: null,
+        chantierCibleAttendue: true,
+        chantierAUnTauxAvancementDepartemental: true,
+        chantierAUnePropositionValeurAvancement: false,
       }, {
         nom: 'Indicateur 001',
         maille: 'DEPT',
@@ -784,6 +809,11 @@ describe('PrismaIndicateurRepository', () => {
         avancementGlobal: null,
         estApplicable: true,
         maillesApplicables: [],
+        chantierEcart: null,
+        chantierTendance: null,
+        chantierCibleAttendue: true,
+        chantierAUnTauxAvancementDepartemental: true,
+        chantierAUnePropositionValeurAvancement: false,
       }, {
         nom: 'Indicateur 001',
         maille: 'DEPT',
@@ -814,6 +844,11 @@ describe('PrismaIndicateurRepository', () => {
         avancementGlobal: 13,
         estApplicable: true,
         maillesApplicables: [],
+        chantierEcart: null,
+        chantierTendance: null,
+        chantierCibleAttendue: true,
+        chantierAUnTauxAvancementDepartemental: true,
+        chantierAUnePropositionValeurAvancement: false,
       }, {
         avancementAnnuel: 13,
         avancementGlobal: 13,
@@ -845,8 +880,988 @@ describe('PrismaIndicateurRepository', () => {
         valeurActuelle: 20,
         valeurCible: 11,
         valeurCibleAnnuelle: 22,
-        valeurInitiale: 12,
+        valeurInitiale: 12,        chantierEcart: null,
+        chantierTendance: null,
+        chantierCibleAttendue: true,
+        chantierAUnTauxAvancementDepartemental: true,
+        chantierAUnePropositionValeurAvancement: false,
       }]);
+    });
+    it('chantierAUnePropositionValeurAvancement est faux au niveau national, si le chantier ne possède aucune proposition sur aucun territoire', async () => {
+      // Given
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          ministeres: ['1009'],
+          ministeres_acronymes: ['MINA'],
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          zone_id: 'FRANCE',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '01',
+          territoire_code: 'DEPT-01',
+          zone_id: 'D01',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '02',
+          territoire_code: 'DEPT-02',
+          zone_id: 'D02',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'REG',
+          code_insee: '84',
+          territoire_code: 'REG-84',
+          zone_id: 'R84',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [{
+          id: 'IND-001',
+          nom: 'Indicateur 001',
+          chantier_id: 'CH-001',
+          dernier_import_date_indic: new Date('2026-01-12'),
+          type_id: 'IMPACT',
+          unite_mesure: 'kg',
+        }],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [{
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          code_insee: 'FR',
+          zone_id: 'FRANCE',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-01',
+          code_insee: '01',
+          zone_id: 'D01',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-02',
+          code_insee: '02',
+          zone_id: 'D02',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'REG',
+          territoire_code: 'REG-84',
+          code_insee: '84',
+          zone_id: 'D84',
+        }],
+      });
+
+      // When 
+      const result = await prismaIndicateurRepository.récupérerPourExports('CH-001', ['NAT-FR'], 2025);
+
+      // Then
+      expect(result).toHaveLength(1);
+      expect(result![0].chantierAUnePropositionValeurAvancement).toBeFalse();
+    });
+    it('chantierAUnePropositionValeurAvancement est vrai au niveau national, si le chantier possède au moins une proposition sur un territoire', async () => {
+      // Given
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          ministeres: ['1009'],
+          ministeres_acronymes: ['MINA'],
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          zone_id: 'FRANCE',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '01',
+          territoire_code: 'DEPT-01',
+          zone_id: 'D01',
+          nombre_propositions_valeur_actuelle: 1,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '02',
+          territoire_code: 'DEPT-02',
+          zone_id: 'D02',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'REG',
+          code_insee: '84',
+          territoire_code: 'REG-84',
+          zone_id: 'R84',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [{
+          id: 'IND-001',
+          nom: 'Indicateur 001',
+          chantier_id: 'CH-001',
+          dernier_import_date_indic: new Date('2026-01-12'),
+          type_id: 'IMPACT',
+          unite_mesure: 'kg',
+        }],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [{
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          code_insee: 'FR',
+          zone_id: 'FRANCE',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-01',
+          code_insee: '01',
+          zone_id: 'D01',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-02',
+          code_insee: '02',
+          zone_id: 'D02',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'REG',
+          territoire_code: 'REG-84',
+          code_insee: '84',
+          zone_id: 'D84',
+        }],
+      });
+
+      // When 
+      const result = await prismaIndicateurRepository.récupérerPourExports('CH-001', ['NAT-FR'], 2025);
+
+      // Then
+      expect(result).toHaveLength(1);
+      expect(result![0].chantierAUnePropositionValeurAvancement).toBeTrue();
+    });
+    it('chantierAUnePropositionValeurAvancement est vrai au niveau regional, si le chantier possède une proposition sur la région', async () => {
+      // Given
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          ministeres: ['1009'],
+          ministeres_acronymes: ['MINA'],
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          zone_id: 'FRANCE',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '01',
+          territoire_code: 'DEPT-01',
+          zone_id: 'D01',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '02',
+          territoire_code: 'DEPT-02',
+          zone_id: 'D02',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'REG',
+          code_insee: '84',
+          territoire_code: 'REG-84',
+          zone_id: 'R84',
+          nombre_propositions_valeur_actuelle: 1,
+          est_applicable: true,
+        }],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [{
+          id: 'IND-001',
+          nom: 'Indicateur 001',
+          chantier_id: 'CH-001',
+          dernier_import_date_indic: new Date('2026-01-12'),
+          type_id: 'IMPACT',
+          unite_mesure: 'kg',
+        }],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [{
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          code_insee: 'FR',
+          zone_id: 'FRANCE',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-01',
+          code_insee: '01',
+          zone_id: 'D01',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-02',
+          code_insee: '02',
+          zone_id: 'D02',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'REG',
+          territoire_code: 'REG-84',
+          code_insee: '84',
+          zone_id: 'D84',
+        }],
+      });
+
+      // When 
+      const result = await prismaIndicateurRepository.récupérerPourExports('CH-001', ['REG-84'], 2025);
+
+      // Then
+      expect(result).toHaveLength(1);
+      expect(result![0].chantierAUnePropositionValeurAvancement).toBeTrue();
+    });
+    it('chantierAUnePropositionValeurAvancement est vrai au niveau regional, si le chantier possède une proposition sur un département enfant', async () => {
+      // Given
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          ministeres: ['1009'],
+          ministeres_acronymes: ['MINA'],
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          zone_id: 'FRANCE',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '01',
+          territoire_code: 'DEPT-01',
+          zone_id: 'D01',
+          nombre_propositions_valeur_actuelle: 1,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '02',
+          territoire_code: 'DEPT-02',
+          zone_id: 'D02',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'REG',
+          code_insee: '84',
+          territoire_code: 'REG-84',
+          zone_id: 'R84',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [{
+          id: 'IND-001',
+          nom: 'Indicateur 001',
+          chantier_id: 'CH-001',
+          dernier_import_date_indic: new Date('2026-01-12'),
+          type_id: 'IMPACT',
+          unite_mesure: 'kg',
+        }],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [{
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          code_insee: 'FR',
+          zone_id: 'FRANCE',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-01',
+          code_insee: '01',
+          zone_id: 'D01',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-02',
+          code_insee: '02',
+          zone_id: 'D02',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'REG',
+          territoire_code: 'REG-84',
+          code_insee: '84',
+          zone_id: 'D84',
+        }],
+      });
+
+      // When 
+      const result = await prismaIndicateurRepository.récupérerPourExports('CH-001', ['REG-84'], 2025);
+
+      // Then
+      expect(result).toHaveLength(1);
+      expect(result![0].chantierAUnePropositionValeurAvancement).toBeTrue();
+    });
+    it('chantierAUnePropositionValeurAvancement est faux au niveau regional, si le chantier ne possède aucune proposition sur la région ou sur un département enfant', async () => {
+      // Given
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          ministeres: ['1009'],
+          ministeres_acronymes: ['MINA'],
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          zone_id: 'FRANCE',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '01',
+          territoire_code: 'DEPT-01',
+          zone_id: 'D01',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '02',
+          territoire_code: 'DEPT-02',
+          zone_id: 'D02',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'REG',
+          code_insee: '84',
+          territoire_code: 'REG-84',
+          zone_id: 'R84',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [{
+          id: 'IND-001',
+          nom: 'Indicateur 001',
+          chantier_id: 'CH-001',
+          dernier_import_date_indic: new Date('2026-01-12'),
+          type_id: 'IMPACT',
+          unite_mesure: 'kg',
+        }],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [{
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          code_insee: 'FR',
+          zone_id: 'FRANCE',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-01',
+          code_insee: '01',
+          zone_id: 'D01',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-02',
+          code_insee: '02',
+          zone_id: 'D02',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'REG',
+          territoire_code: 'REG-84',
+          code_insee: '84',
+          zone_id: 'D84',
+        }],
+      });
+
+      // When 
+      const result = await prismaIndicateurRepository.récupérerPourExports('CH-001', ['REG-84'], 2025);
+
+      // Then
+      expect(result).toHaveLength(1);
+      expect(result![0].chantierAUnePropositionValeurAvancement).toBeFalse();
+    });
+    it('chantierAUnePropositionValeurAvancement est vrai au niveau departemental, si le chantier possède une proposition sur le département', async () => {
+      // Given
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          ministeres: ['1009'],
+          ministeres_acronymes: ['MINA'],
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          zone_id: 'FRANCE',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '01',
+          territoire_code: 'DEPT-01',
+          zone_id: 'D01',
+          nombre_propositions_valeur_actuelle: 1,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '02',
+          territoire_code: 'DEPT-02',
+          zone_id: 'D02',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'REG',
+          code_insee: '84',
+          territoire_code: 'REG-84',
+          zone_id: 'R84',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [{
+          id: 'IND-001',
+          nom: 'Indicateur 001',
+          chantier_id: 'CH-001',
+          dernier_import_date_indic: new Date('2026-01-12'),
+          type_id: 'IMPACT',
+          unite_mesure: 'kg',
+        }],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [{
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          code_insee: 'FR',
+          zone_id: 'FRANCE',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-01',
+          code_insee: '01',
+          zone_id: 'D01',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-02',
+          code_insee: '02',
+          zone_id: 'D02',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'REG',
+          territoire_code: 'REG-84',
+          code_insee: '84',
+          zone_id: 'D84',
+        }],
+      });
+
+      // When 
+      const result = await prismaIndicateurRepository.récupérerPourExports('CH-001', ['DEPT-01'], 2025);
+
+      // Then
+      expect(result).toHaveLength(1);
+      expect(result![0].chantierAUnePropositionValeurAvancement).toBeTrue();
+    });
+    it('chantierAUnePropositionValeurAvancement est faux au niveau departemental, si le chantier ne possède pas de proposition sur le département', async () => {
+      // Given
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          ministeres: ['1009'],
+          ministeres_acronymes: ['MINA'],
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          zone_id: 'FRANCE',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '01',
+          territoire_code: 'DEPT-01',
+          zone_id: 'D01',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '02',
+          territoire_code: 'DEPT-02',
+          zone_id: 'D02',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'REG',
+          code_insee: '84',
+          territoire_code: 'REG-84',
+          zone_id: 'R84',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [{
+          id: 'IND-001',
+          nom: 'Indicateur 001',
+          chantier_id: 'CH-001',
+          dernier_import_date_indic: new Date('2026-01-12'),
+          type_id: 'IMPACT',
+          unite_mesure: 'kg',
+        }],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [{
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          code_insee: 'FR',
+          zone_id: 'FRANCE',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-01',
+          code_insee: '01',
+          zone_id: 'D01',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-02',
+          code_insee: '02',
+          zone_id: 'D02',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'REG',
+          territoire_code: 'REG-84',
+          code_insee: '84',
+          zone_id: 'D84',
+        }],
+      });
+
+      // When 
+      const result = await prismaIndicateurRepository.récupérerPourExports('CH-001', ['DEPT-01'], 2025);
+
+      // Then
+      expect(result).toHaveLength(1);
+      expect(result![0].chantierAUnePropositionValeurAvancement).toBeFalse();
+    });
+    it('aUnTauxAvancementDepartemental est vrai, si le chantier ne possède aucun département applicable', async () => {
+      // Given
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          ministeres: ['1009'],
+          ministeres_acronymes: ['MINA'],
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          zone_id: 'FRANCE',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '01',
+          territoire_code: 'DEPT-01',
+          zone_id: 'D01',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: false,
+          taux_avancement_mandat: null,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '02',
+          territoire_code: 'DEPT-02',
+          zone_id: 'D02',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: false,
+          taux_avancement_mandat: null,
+        }, {
+          id: 'CH-001',
+          maille: 'REG',
+          code_insee: '84',
+          territoire_code: 'REG-84',
+          zone_id: 'R84',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [{
+          id: 'IND-001',
+          nom: 'Indicateur 001',
+          chantier_id: 'CH-001',
+          dernier_import_date_indic: new Date('2026-01-12'),
+          type_id: 'IMPACT',
+          unite_mesure: 'kg',
+        }],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [{
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          code_insee: 'FR',
+          zone_id: 'FRANCE',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-01',
+          code_insee: '01',
+          zone_id: 'D01',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-02',
+          code_insee: '02',
+          zone_id: 'D02',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'REG',
+          territoire_code: 'REG-84',
+          code_insee: '84',
+          zone_id: 'D84',
+        }],
+      });
+
+      // When 
+      const result = await prismaIndicateurRepository.récupérerPourExports('CH-001', ['NAT-FR'], 2025);
+
+      // Then
+      expect(result).toHaveLength(1);
+      expect(result![0].chantierAUnTauxAvancementDepartemental).toBeTrue();
+    });
+    it("aUnTauxAvancementDepartemental est vrai, si le chantier possède au moins un département avec un taux d'avancement non null", async () => {
+      // Given
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          ministeres: ['1009'],
+          ministeres_acronymes: ['MINA'],
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          zone_id: 'FRANCE',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '01',
+          territoire_code: 'DEPT-01',
+          zone_id: 'D01',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+          taux_avancement_mandat: 10,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '02',
+          territoire_code: 'DEPT-02',
+          zone_id: 'D02',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+          taux_avancement_mandat: null,
+        }, {
+          id: 'CH-001',
+          maille: 'REG',
+          code_insee: '84',
+          territoire_code: 'REG-84',
+          zone_id: 'R84',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [{
+          id: 'IND-001',
+          nom: 'Indicateur 001',
+          chantier_id: 'CH-001',
+          dernier_import_date_indic: new Date('2026-01-12'),
+          type_id: 'IMPACT',
+          unite_mesure: 'kg',
+        }],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [{
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          code_insee: 'FR',
+          zone_id: 'FRANCE',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-01',
+          code_insee: '01',
+          zone_id: 'D01',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-02',
+          code_insee: '02',
+          zone_id: 'D02',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'REG',
+          territoire_code: 'REG-84',
+          code_insee: '84',
+          zone_id: 'D84',
+        }],
+      });
+
+      // When 
+      const result = await prismaIndicateurRepository.récupérerPourExports('CH-001', ['NAT-FR'], 2025);
+
+      // Then
+      expect(result).toHaveLength(1);
+      expect(result![0].chantierAUnTauxAvancementDepartemental).toBeTrue();
+    });
+    it("aUnTauxAvancementDepartemental est faux, si le chantier ne possède aucun département avec un taux d'avancement non null", async () => {
+      // Given
+      await prisma.chantier_identite.createMany({
+        data: [{
+          id: 'CH-001',
+          nom: 'Chantier 001',
+          ministeres: ['1009'],
+          ministeres_acronymes: ['MINA'],
+        }],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [{
+          id: 'CH-001',
+          maille: 'NAT',
+          code_insee: 'FR',
+          territoire_code: 'NAT-FR',
+          zone_id: 'FRANCE',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '01',
+          territoire_code: 'DEPT-01',
+          zone_id: 'D01',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+          taux_avancement_mandat: null,
+        }, {
+          id: 'CH-001',
+          maille: 'DEPT',
+          code_insee: '02',
+          territoire_code: 'DEPT-02',
+          zone_id: 'D02',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+          taux_avancement_mandat: null,
+        }, {
+          id: 'CH-001',
+          maille: 'REG',
+          code_insee: '84',
+          territoire_code: 'REG-84',
+          zone_id: 'R84',
+          nombre_propositions_valeur_actuelle: 0,
+          est_applicable: true,
+        }],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [{
+          id: 'IND-001',
+          nom: 'Indicateur 001',
+          chantier_id: 'CH-001',
+          dernier_import_date_indic: new Date('2026-01-12'),
+          type_id: 'IMPACT',
+          unite_mesure: 'kg',
+        }],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [{
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          code_insee: 'FR',
+          zone_id: 'FRANCE',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-01',
+          code_insee: '01',
+          zone_id: 'D01',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'DEPT',
+          territoire_code: 'DEPT-02',
+          code_insee: '02',
+          zone_id: 'D02',
+        }, {
+          id: 'IND-001',
+          chantier_id: 'CH-001',
+          maille: 'REG',
+          territoire_code: 'REG-84',
+          code_insee: '84',
+          zone_id: 'D84',
+        }],
+      });
+
+      // When 
+      const result = await prismaIndicateurRepository.récupérerPourExports('CH-001', ['NAT-FR'], 2025);
+
+      // Then
+      expect(result).toHaveLength(1);
+      expect(result![0].chantierAUnTauxAvancementDepartemental).toBeFalse();
     });
   });
 });

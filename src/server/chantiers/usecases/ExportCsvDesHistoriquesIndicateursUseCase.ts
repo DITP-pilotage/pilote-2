@@ -9,6 +9,7 @@ import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import { HistoriqueIndicateurPourExport } from '@/server/chantiers/domain/HistoriqueIndicateurPourExport';
 import {
   masquerPourProfilDROMEtMailleNat,
+  verifierOptionChantiersSignales,
   verifierOptionEstBarometreEtEstTerritorialise,
   verifierOptionMeteo,
   verifierOptionPerimetreIds,
@@ -83,6 +84,16 @@ export class ExportCsvDesHistoriquesIndicateursUseCase {
               && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, historiqueIndicateursPourExport.chantierEstBaromètre)
               && verifierOptionStatut(optionsExport, historiqueIndicateursPourExport.chantierStatut)
               && verifierOptionMeteo(optionsExport, historiqueIndicateursPourExport.météo)
+              && verifierOptionChantiersSignales(
+                optionsExport, 
+                historiqueIndicateursPourExport.chantierEcart,
+                historiqueIndicateursPourExport.chantierTendance,
+                historiqueIndicateursPourExport.chantierAvancementGlobal,
+                historiqueIndicateursPourExport.chantierCibleAttendue,
+                historiqueIndicateursPourExport.chantierAUnTauxAvancementDepartemental,
+                historiqueIndicateursPourExport.météo ?? 'NON_RENSEIGNEE',
+                historiqueIndicateursPourExport.chantierAUnePropositionValeurAvancement,
+              )
           ) {
             return [...acc, presenterEnHistoriqueIndicateurExportContrat(historiqueIndicateursPourExport)];
           }

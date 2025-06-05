@@ -81,6 +81,12 @@ export const EtapeRecapitulatif = ({ territoireCodeSelectionne }: { territoireCo
     optionsExport: parseAsString.withDefault('identifiant'),
     isAvecFiltre: parseAsBoolean.withDefault(false),
     typeExport: parseAsStringLiteral(['chantiers', 'indicateurs', 'historique-indicateurs']).withDefault('chantiers'),
+    estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
+    estEnAlerteÉcart: parseAsBoolean.withDefault(false),
+    estEnAlerteBaisse: parseAsBoolean.withDefault(false),
+    estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
+    estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
+    estEnAlertePossedePropositionsValeurActuelle: parseAsBoolean.withDefault(false),
   });
 
   const arrayOptionsExport: {
@@ -112,6 +118,30 @@ export const EtapeRecapitulatif = ({ territoireCodeSelectionne }: { territoireCo
   });
 
   arrayOptionsExport.push({ name: 'jalon', value: filtres.jalon });
+
+  if (filtres.estEnAlerteAbscenceTauxAvancementDepartemental) {
+    arrayOptionsExport.push({ name: 'estEnAlerteAbscenceTauxAvancementDepartemental', value: true });
+  }
+
+  if (filtres.estEnAlerteBaisse) {
+    arrayOptionsExport.push({ name: 'estEnAlerteBaisse', value: true });
+  }
+
+  if (filtres.estEnAlerteMétéoNonRenseignée) {
+    arrayOptionsExport.push({ name: 'estEnAlerteMétéoNonRenseignée', value: true });
+  }
+
+  if (filtres.estEnAlertePossedePropositionsValeurActuelle) {
+    arrayOptionsExport.push({ name: 'estEnAlertePossedePropositionsValeurActuelle', value: true });
+  }
+
+  if (filtres.estEnAlerteTauxAvancementNonCalculé) {
+    arrayOptionsExport.push({ name: 'estEnAlerteTauxAvancementNonCalculé', value: true });
+  }
+
+  if (filtres.estEnAlerteÉcart) {
+    arrayOptionsExport.push({ name: 'estEnAlerteÉcart', value: true });
+  }
 
   const arrayDonneeAExporter = filtres.typeExport === 'chantiers' ? chantierDonneesExportable : filtres.typeExport === 'indicateurs' ? indicateurDonneesExportable : historiqueIndicateurDonneesExportable;
 
