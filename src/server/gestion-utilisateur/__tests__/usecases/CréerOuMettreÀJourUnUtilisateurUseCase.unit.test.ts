@@ -1,21 +1,13 @@
 import { mock } from 'jest-mock-extended';
 import { randomUUID } from 'node:crypto';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
-import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
-import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
-import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { fakeTerritoires } from '@/server/domain/territoire/Territoire.builder';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { codesTerritoiresDROM } from '@/validation/utilisateur';
-import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import {
   Habilitations,
   HabilitationsÀCréerOuMettreÀJourCalculées,
 } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import PérimètreMinistérielRepository
-  from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import {
   HistorisationModificationRepository,
@@ -24,14 +16,22 @@ import { Profil } from '@/server/domain/profil/Profil.interface';
 import { ProfilBuilder } from '@/server/domain/profil/Profil.builder';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import CréerOuMettreÀJourUnUtilisateurUseCase from '@/server/gestion-utilisateur/usecases/CréerOuMettreÀJourUnUtilisateurUseCase';
+import { ContactInfoLettresService } from '@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService';
+import { UtilisateurIAMRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository';
+import { TerritoireRepository } from '@/server/gestion-utilisateur/domain/ports/TerritoireRepository';
+import { ChantierRepository } from '@/server/gestion-utilisateur/domain/ports/ChantierRepository';
+import { InformationChantierUtilisateur } from '@/server/gestion-utilisateur/domain/InformationChantierUtilisateur';
+import { PerimetreMinisterielRepository } from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository';
 
 describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
-  const fakeChantiersSynthétisés: ChantierSynthétisé[] = [
+  const fakeChantiers: InformationChantierUtilisateur[] = [
     {
       id: '123',
       nom: 'Salut',
-      estTerritorialisé: true,
-      périmètreIds: ['PER-12'],
+      estTerritorialise: true,
+      perimetreIds: ['PER-12'],
       ate: 'hors_ate_deconcentre',
       statut: 'PUBLIE',
       territoiresApplicables: [],
@@ -39,8 +39,8 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     {
       id: '124',
       nom: 'hoo',
-      estTerritorialisé: false,
-      périmètreIds: ['PER-13'],
+      estTerritorialise: false,
+      perimetreIds: ['PER-13'],
       ate: null,
       statut: 'PUBLIE',
       territoiresApplicables: [],
@@ -55,7 +55,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
 
   const habilitations = { 
     gestionUtilisateur: { 
-      chantiers: fakeChantiersSynthétisés.map(c => c.id), 
+      chantiers: fakeChantiers.map(c => c.id), 
       territoires: fakeTerritoires.map(t => t.code), 
     }, 
   } as Habilitations;
@@ -92,14 +92,29 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
   const stubUtilisateurIAMRepository = mock<UtilisateurIAMRepository>();
   const stubTerritoireRepository =  mock<TerritoireRepository>();
   const stubChantierRepository = mock<ChantierRepository>();
-  const stubPérimètreMinistérielRepository = mock<PérimètreMinistérielRepository>();
+  const stubPérimètreMinistérielRepository = mock<PerimetreMinisterielRepository>();
   const stubHistorisationModificationRepository = mock<HistorisationModificationRepository>();
+  const stubContactInfolettreService = mock<ContactInfoLettresService>();
 
-  stubTerritoireRepository.récupérerTous.mockResolvedValue(fakeTerritoires as Territoire[]);
-  stubChantierRepository.récupérerChantiersSynthétisés.mockResolvedValue(fakeChantiersSynthétisés);
-  stubPérimètreMinistérielRepository.récupérerTous.mockResolvedValue(fakePérimètres);
+  stubTerritoireRepository.lister.mockResolvedValue(fakeTerritoires as Territoire[]);
+  stubTerritoireRepository.listerCodes.mockResolvedValue(fakeTerritoires.map(territoire => territoire.code));
 
-  const créerOuMettreÀJourUnUtilisateurUseCase = new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository, stubUtilisateurRepository, stubTerritoireRepository, stubChantierRepository, stubPérimètreMinistérielRepository, stubHistorisationModificationRepository);
+  stubChantierRepository.listerInformationsChantiersUtilisateurs.mockResolvedValue(fakeChantiers);
+
+  stubPérimètreMinistérielRepository.lister.mockResolvedValue(fakePérimètres);
+  stubPérimètreMinistérielRepository.listerIds.mockResolvedValue(fakePérimètres.map(perimetre => perimetre.id));
+
+  const créerOuMettreÀJourUnUtilisateurUseCase = new CréerOuMettreÀJourUnUtilisateurUseCase(
+    {
+      utilisateurIAMRepository: stubUtilisateurIAMRepository,
+      utilisateurRepository: stubUtilisateurRepository,
+      territoireRepository: stubTerritoireRepository,
+      chantierRepository: stubChantierRepository,
+      perimetreMinisterielRepository: stubPérimètreMinistérielRepository,
+      historisationModification: stubHistorisationModificationRepository,
+      contactInfoLettresService: stubContactInfolettreService,
+    },
+  );
 
   const oldEnv = process.env;
 

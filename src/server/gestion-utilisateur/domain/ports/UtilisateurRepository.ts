@@ -3,6 +3,8 @@ import { Utilisateur } from '@/server/gestion-utilisateur/domain/Utilisateur.int
 import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface';
 import { UtilisateurExportCSV } from '@/server/gestion-utilisateur/domain/UtilisateurExportCSV';
 import { InformationChantierUtilisateur } from '@/server/gestion-utilisateur/domain/InformationChantierUtilisateur';
+import { HabilitationsÀCréerOuMettreÀJourCalculées } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 export interface UtilisateurRepository {
   récupérer(email: string, listeTerritoiresCodes: string[], listePerimetresMinisteriels: string[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[]): Promise<Utilisateur | null>
@@ -17,4 +19,6 @@ export interface UtilisateurRepository {
   recupererComptesInactifs(dateDesactivationMax: Date): Promise<{ id: string, email: string }[]>
   anonymiserAuteurs(auteursAAnonymiserIds: string[], emailAuteurRemplacement: string): Promise<void>
   supprimerListeUtilisateur(utilisateursASupprimerIds: string[]): Promise<void>
+  verifierExistenceUtilisateur(email: string): Promise<boolean>
+  créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurModification: string): Promise<void>
 }

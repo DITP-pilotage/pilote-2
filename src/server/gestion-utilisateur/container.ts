@@ -30,6 +30,8 @@ import { RecupererTousLesTerritoiresUseCase } from '@/server/usecase/territoire/
 import {
   RecupererListeUtilisateursUseCase,
 } from '@/server/gestion-utilisateur/usecases/RecupererListeUtilisateursUseCase';
+import { PrismaHistorisationModificationRepository } from '@/server/infrastructure/accès_données/historisationModification/PrismaHistorisationModificationRepository';
+import { HistorisationModificationRepository } from '@/server/domain/historisationModification/HistorisationModificationRepository';
 import { UtilisateurRepository } from './domain/ports/UtilisateurRepository';
 import { UtilisateurIAMRepository } from './domain/ports/UtilisateurIAMRepository';
 import { TokenAPIInformationRepository } from './domain/ports/TokenAPIInformationRepository';
@@ -54,6 +56,9 @@ import { SupprimerLesComptesDesactivesUseCase } from './usecases/SupprimerLesCom
 import { RecupererLaListeDesInfomrationsChantiersUse } from './usecases/RecupererLaListeDesInfomrationsChantiersUse';
 import { PropositionValeurAvancementRepository } from './domain/ports/PropositionValeurAvancementRepository';
 import { PrismaPropositionValeurAvancementRepository } from './infrastructure/adapters/PrismaPropositionValeurAvancementRepository';
+import { ContactInfoLettresService } from './domain/ports/ContactInfoLettresService';
+import { BrevoContactInfoLettresService } from './infrastructure/adapters/BrevoContactInfoLettresService';
+import CréerOuMettreÀJourUnUtilisateurUseCase from './usecases/CréerOuMettreÀJourUnUtilisateurUseCase';
 
 export type GestionUtilisateurDependencies = {
   utilisateurRepository: UtilisateurRepository
@@ -82,6 +87,9 @@ export type GestionUtilisateurDependencies = {
   recupererEtatVisualisationVideoAccueilUseCase: RecupererEtatVisualisationVideoAccueilUseCase
   desactiverVideoAccueilUseCase: DesactiverVideoAccueilUseCase
   recupererLaListeDesInfomrationsChantiersUse: RecupererLaListeDesInfomrationsChantiersUse
+  contactInfoLettresService: ContactInfoLettresService
+  historisationModification: HistorisationModificationRepository
+  créerOuMettreÀJourUnUtilisateurUseCase: CréerOuMettreÀJourUnUtilisateurUseCase
 };
 
 export const getGestionUtilisateurContainer = (initialContainer: AwilixContainer<{ prisma: PrismaPilote }>): AwilixContainer<GestionUtilisateurDependencies & { prisma: PrismaPilote }> => {
@@ -112,5 +120,8 @@ export const getGestionUtilisateurContainer = (initialContainer: AwilixContainer
     propositionValeurAvancementRepository: asClass(PrismaPropositionValeurAvancementRepository),
     supprimerLesComptesDesactivesUseCase: asClass(SupprimerLesComptesDesactivesUseCase),
     recupererLaListeDesInfomrationsChantiersUse: asClass(RecupererLaListeDesInfomrationsChantiersUse),
+    contactInfoLettresService: asClass(BrevoContactInfoLettresService),
+    historisationModification: asClass(PrismaHistorisationModificationRepository),
+    créerOuMettreÀJourUnUtilisateurUseCase: asClass(CréerOuMettreÀJourUnUtilisateurUseCase),
   });
 };
