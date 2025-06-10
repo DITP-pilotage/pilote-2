@@ -5,7 +5,7 @@ import TagStyled from './Tag.styled';
 interface TagProps {
   libelle: string,
   suppressionCallback: () => void,
-  color?: 'blue-france' | 'warning' | 'yellow-moutarde',
+  color?: 'blue-france' | 'warning' | 'yellow-moutarde' | 'blue-info-main',
   size?: 'sm' | 'md',
   doitAvoirUneTailleFixe?: boolean,
 }
