@@ -44,6 +44,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
     metadataIndicateurs,
     optionsIndicateurParent,
   } = useDetailMetadataIndicateurForm();
+  
   const optionsParentCh = [...chantiers.map(chantier => ({
     valeur: chantier.id,
     libellé: `${chantier.id} - ${chantier.nom}`,

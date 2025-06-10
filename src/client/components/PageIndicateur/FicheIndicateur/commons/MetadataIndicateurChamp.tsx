@@ -7,11 +7,13 @@ export const MetadataIndicateurChamp: FunctionComponent<PropsWithChildren<{
   informationMetadataIndicateur: InformationMetadataIndicateurContrat,
   estEnCoursDeModification: boolean,
   valeurAffiché: string,
+  estMandatory?: boolean,
 }>> = ({
   children,
   informationMetadataIndicateur,
   estEnCoursDeModification,
   valeurAffiché,
+  estMandatory = informationMetadataIndicateur.metaPiloteMandatory,
 }) => {
   return (
     <>
@@ -22,7 +24,7 @@ export const MetadataIndicateurChamp: FunctionComponent<PropsWithChildren<{
         {estEnCoursDeModification ? (
           <>
             {
-              informationMetadataIndicateur.metaPiloteMandatory
+              estMandatory
                 ? (
                   <ChampObligatoire />
                 ) : null

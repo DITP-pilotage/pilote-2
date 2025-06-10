@@ -88,6 +88,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
             erreurMessage={errors.viNatOp?.message}
             estDesactive={valeursNatFromDesactiveNatOp.has(getValues('viNatFrom'))}
             estEnCoursDeModification={estEnCoursDeModification}
+            estMandatory={!valeursNatFromDesactiveNatOp.has(getValues('viNatFrom'))}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vi_nat_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_nat_op')}
             register={register('viNatOp')}
@@ -100,6 +101,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
             erreurMessage={errors.vaNatOp?.message}
             estDesactive={valeursNatFromDesactiveNatOp.has(getValues('vaNatFrom'))}
             estEnCoursDeModification={estEnCoursDeModification}
+            estMandatory={!valeursNatFromDesactiveNatOp.has(getValues('vaNatFrom'))}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.va_nat_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_nat_op')}
             register={register('vaNatOp')}
@@ -112,6 +114,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
             erreurMessage={errors.vcNatOp?.message}
             estDesactive={valeursNatFromDesactiveNatOp.has(getValues('vcNatFrom'))}
             estEnCoursDeModification={estEnCoursDeModification}
+            estMandatory={!valeursNatFromDesactiveNatOp.has(getValues('vcNatFrom'))}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vc_nat_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_nat_op')}
             register={register('vcNatOp')}

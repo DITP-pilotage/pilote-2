@@ -88,6 +88,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
             erreurMessage={errors.viDeptOp?.message}
             estDesactive={valeursDeptFromDesactiveDeptOp.has(getValues('viDeptFrom'))}
             estEnCoursDeModification={estEnCoursDeModification}
+            estMandatory={!valeursDeptFromDesactiveDeptOp.has(getValues('viDeptFrom'))}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vi_dept_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_dept_op')}
             register={register('viDeptOp')}
@@ -100,6 +101,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
             erreurMessage={errors.vaDeptOp?.message}
             estDesactive={valeursDeptFromDesactiveDeptOp.has(getValues('vaDeptFrom'))}
             estEnCoursDeModification={estEnCoursDeModification}
+            estMandatory={!valeursDeptFromDesactiveDeptOp.has(getValues('vaDeptFrom'))}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.va_dept_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_dept_op')}
             register={register('vaDeptOp')}
@@ -112,6 +114,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
             erreurMessage={errors.vcDeptOp?.message}
             estDesactive={valeursDeptFromDesactiveDeptOp.has(getValues('vcDeptFrom'))}
             estEnCoursDeModification={estEnCoursDeModification}
+            estMandatory={!valeursDeptFromDesactiveDeptOp.has(getValues('vcDeptFrom'))}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vc_dept_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_dept_op')}
             register={register('vcDeptOp')}
