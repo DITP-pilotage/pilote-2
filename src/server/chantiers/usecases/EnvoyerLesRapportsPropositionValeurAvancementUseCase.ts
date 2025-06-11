@@ -46,6 +46,5 @@ export class EnvoyerLesRapportsPropositionValeurAvancementUseCase {
       const { chantiers, conseillerEmail } = genererParametresEnvoieRapportProposition(directeur.listeChantiers, mapChantiersPropositionInformation, propositionsParChantier);
       this.envoieEmailService.envoieUnEmail([{ email: directeur.email }], 4, { chantiers: chantiers, conseiller_email: conseillerEmail });      
     }
-
   }
 }
