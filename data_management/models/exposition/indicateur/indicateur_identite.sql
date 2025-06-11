@@ -35,9 +35,11 @@ SELECT
     complementaires.periodicite,
     STRING_TO_ARRAY(REPLACE(complementaires.resp_donnees_email, ' ', ''), ',') AS responsables_donnees_mails,
     last_update_indic.dernier_import_date_indic AS dernier_import_date_indic,
-    mailles_applicables.mailles_applicables
-
+    mailles_applicables.mailles_applicables,
+    meta_parametrage_indicateurs.va_nat_from IN ('REG', 'DEPT') as maille_nat_agregee,
+    meta_parametrage_indicateurs.va_reg_from IN ('DEPT') as maille_reg_agregee
 FROM {{ ref('stg_ppg_metadata__indicateurs') }} meta_indic
+LEFT JOIN {{ ref('stg_ppg_metadata__parametrage_indicateurs') }} meta_parametrage_indicateurs ON meta_indic.id = meta_parametrage_indicateurs.indicateur_id
 LEFT JOIN {{ source('parametrage_indicateurs', 'metadata_indicateurs_complementaire') }} AS complementaires ON meta_indic.id=complementaires.indic_id
 LEFT JOIN {{ ref('stg_ppg_metadata__indicateur_types') }} meta_indic_types ON meta_indic_types.id = meta_indic.indicateur_type_id 
 LEFT JOIN {{ ref('last_update_indic') }} last_update_indic ON meta_indic.id = last_update_indic.indic_id
