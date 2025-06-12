@@ -33,7 +33,7 @@ export class EnvoyerLesRapportsPropositionValeurAvancementUseCase {
     this.envoieEmailService = envoieEmailService;
   }
 
-  async run(): Promise<void> {
+  async run(): Promise<{ emailsEnEchec: string[] }> {
     const listeChantiersIdsAvecProposition = await this.propositionValeurActuelleRepository.recupererLaListeDesChantiersIdsAvecPropositionEnCours();
     const listeDirecteursDeProjet = await this.utilisateurRepository.recupererUtilisateursParProfilEtChantierIds('EQUIPE_DIR_PROJET', listeChantiersIdsAvecProposition);
   
@@ -42,10 +42,16 @@ export class EnvoyerLesRapportsPropositionValeurAvancementUseCase {
     
     const mapChantiersPropositionInformation = new Map(listeChantiersProposition.map(chantier => [chantier.id, chantier]));
 
-    for (const directeur of listeDirecteursDeProjet) {
-      const { chantiers, conseillerEmail } = genererParametresEnvoieRapportProposition(directeur.listeChantiers, mapChantiersPropositionInformation, propositionsParChantier);
-      this.envoieEmailService.envoieUnEmail([{ email: directeur.email }], 4, { chantiers: chantiers, conseiller_email: conseillerEmail });      
-    }
+    const emailsEnEchec: string[] = [];
 
+    for (const directeur of listeDirecteursDeProjet) {
+      try {
+        const { chantiers, conseillerEmail } = genererParametresEnvoieRapportProposition(directeur.listeChantiers, mapChantiersPropositionInformation, propositionsParChantier);
+        await this.envoieEmailService.envoieUnEmail([{ email: directeur.email }], 4, { chantiers, conseiller_email: conseillerEmail });
+      } catch {
+        emailsEnEchec.push(directeur.email);
+      }
+    }
+    return { emailsEnEchec }; 
   }
 }

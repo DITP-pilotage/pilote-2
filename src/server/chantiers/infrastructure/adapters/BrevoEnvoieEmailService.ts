@@ -10,6 +10,6 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
     email.to = destinataires;
     email.templateId = templateId;
     email.params = parametres;
-    apiInstance.sendTransacEmail(email);
+    await apiInstance.sendTransacEmail(email);
   }
 }

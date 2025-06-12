@@ -75,15 +75,33 @@ export class PrismaPropositionValeurActuelleRepository implements PropositionVal
   async recupererLaListeDesChantiersIdsAvecPropositionEnCours(): Promise<string[]> {
     const result = await prisma.indicateur_identite.findMany({
       where: {
-        indicateur_territoire: {
-          some: {
-            proposition_valeur_actuelle: {
+        OR: [
+          {
+            maille_reg_agregee: false,
+            indicateur_territoire: {
               some: {
-                statut: 'EN_COURS',
+                maille: 'REG',
+                proposition_valeur_actuelle: {
+                  some: {
+                    statut: 'EN_COURS',
+                  },
+                },
               },
             },
           },
-        },
+          {
+            indicateur_territoire: {
+              some: {
+                maille: 'DEPT',
+                proposition_valeur_actuelle: {
+                  some: {
+                    statut: 'EN_COURS',
+                  },
+                },
+              },
+            },
+          },
+        ],
       },
       select: {
         chantier_id: true,
@@ -98,6 +116,19 @@ export class PrismaPropositionValeurActuelleRepository implements PropositionVal
     const listePropositions = await prisma.proposition_valeur_actuelle.findMany({
       where: {
         statut: 'EN_COURS',
+        indicateur_territoire: {
+          OR: [
+            {
+              maille: 'DEPT',
+            },
+            {
+              maille: 'REG',
+              indicateur_identite: {
+                maille_reg_agregee: false,
+              },
+            },
+          ],
+        },
       },
       select: {
         indic_id: true,
