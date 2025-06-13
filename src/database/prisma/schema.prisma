@@ -531,30 +531,32 @@ model decision_strategique {
 }
 
 model utilisateur {
-  id                               String                             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email                            String                             @unique
-  nom                              String
-  prenom                           String
-  fonction                         String?
-  profil                           profil                             @relation(fields: [profilCode], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  profilCode                       String                             @map("profil_code")
-  habilitation                     habilitation[]
-  rapport_import_mesure_indicateur rapport_import_mesure_indicateur[]
-  date_modification                DateTime                           @default(now())
-  auteur_modification              utilisateur?                       @relation("modification", fields: [auteur_id_modification], references: [id])
-  auteur_id_modification           String?                            @db.Uuid
-  date_creation                    DateTime
-  auteur_creation                  utilisateur?                       @relation("creation", fields: [auteur_id_creation], references: [id])
-  auteur_id_creation               String?                            @db.Uuid
-  commentaires                     commentaire[]
-  decisions_strategique            decision_strategique[]
-  objectifs                        objectif[]
-  syntheses                        synthese_des_resultats[]
-  utilisateurs_crees               utilisateur[]                      @relation("creation")
-  utilisateur_modifies             utilisateur[]                      @relation("modification")
-  propositions_valeur_actuelle     proposition_valeur_actuelle[]
-  date_desactivation               DateTime?
-  date_visualisation_video_accueil DateTime?
+  id                                  String                             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                               String                             @unique
+  nom                                 String
+  prenom                              String
+  fonction                            String?
+  profil                              profil                             @relation(fields: [profilCode], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  profilCode                          String                             @map("profil_code")
+  habilitation                        habilitation[]
+  rapport_import_mesure_indicateur    rapport_import_mesure_indicateur[]
+  date_modification                   DateTime                           @default(now())
+  auteur_modification                 utilisateur?                       @relation("modification", fields: [auteur_id_modification], references: [id])
+  auteur_id_modification              String?                            @db.Uuid
+  date_creation                       DateTime
+  auteur_creation                     utilisateur?                       @relation("creation", fields: [auteur_id_creation], references: [id])
+  auteur_id_creation                  String?                            @db.Uuid
+  commentaires                        commentaire[]
+  decisions_strategique               decision_strategique[]
+  objectifs                           objectif[]
+  syntheses                           synthese_des_resultats[]
+  utilisateurs_crees                  utilisateur[]                      @relation("creation")
+  utilisateur_modifies                utilisateur[]                      @relation("modification")
+  propositions_valeur_actuelle        proposition_valeur_actuelle[]
+  date_desactivation                  DateTime?
+  date_visualisation_video_accueil    DateTime?
+  date_visualisation_popup_infolettre DateTime?
+  date_inscription_infolettre         DateTime?
   historisations_modification      historisation_modification[]
 
   @@schema("public")

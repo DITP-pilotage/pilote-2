@@ -15,6 +15,7 @@ interface MiseEnPageProps {
 
 const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({ afficherLeLoader, children }) => {
   const { status } = useSession();
+  
   const { initialiserLesTerritoires, initialiserLeTerritoireSélectionnéParDéfaut } = actionsTerritoiresStore();
   const [aFiniDeChargerLesTerritoires, setAFiniDeChargerLesTerritoires] = useState(false);
   const { refetch: fetchRécupérerLesTerritoires } = api.territoire.récupérerTous.useQuery(undefined, {

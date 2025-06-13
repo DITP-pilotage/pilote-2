@@ -1,0 +1,54 @@
+import { useSession } from 'next-auth/react';
+import { useForm } from 'react-hook-form';
+import api from '@/server/infrastructure/api/trpc/api';
+import { récupérerUnCookie } from '@/client/utils/cookies';
+
+interface InscriptionInfoLettreForm {
+  consentement: boolean;
+  emailUtilisateur: string;
+}
+
+export const useModaleInscriptionInfolettre = () => {
+  const { data: session } = useSession();
+
+  const envoyerMailInscriptionInfolettre = api.utilisateur.envoyerMailInscriptionInfolettre.useMutation();
+  const desactiverPopupInfolettre = api.utilisateur.desactiverPopupInfolettre.useMutation();
+
+  const { handleSubmit, register, watch } = useForm<InscriptionInfoLettreForm>({
+    mode: 'all',
+    defaultValues: {
+      consentement: false,
+      emailUtilisateur: session?.user.email ?? '',
+    },
+  });
+
+  const handleFermetureModale = () => {
+    if (session?.user.id) {
+      desactiverPopupInfolettre.mutate({
+        csrf: récupérerUnCookie('csrf') ?? '',
+        utilisateurId: session.user.id,
+      });
+    }
+  };
+
+  const handleSubmitForm = handleSubmit((data: InscriptionInfoLettreForm) => {
+    envoyerMailInscriptionInfolettre.mutate({
+      csrf: récupérerUnCookie('csrf') ?? '',
+      utilisateurEmail: data.emailUtilisateur,
+      lienConfirmationInscription: `${process.env.NEXT_PUBLIC_BASE_URL}/inscription`,
+    });
+  });
+
+  const AConsentiALinscription = watch('consentement');
+
+  return {
+    session,
+    register,
+    watch,
+    handleFermetureModale,
+    handleSubmitForm,
+    AConsentiALinscription,
+    isSubmitting: envoyerMailInscriptionInfolettre.isLoading,
+    isDesactivating: desactiverPopupInfolettre.isLoading,
+  };
+}; 

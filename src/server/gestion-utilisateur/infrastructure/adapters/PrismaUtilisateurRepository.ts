@@ -42,7 +42,7 @@ const convertirEnModel = (utilisateurAConvertir: {
   dateModification: Date
   auteurIdCreation: string
   dateCreation: Date
-}): Omit<PrismaUtilisateurModel, 'id' | 'auteur_email_creation' | 'auteur_email_modification' | 'date_desactivation' | 'date_visualisation_video_accueil'> => {
+}): Omit<PrismaUtilisateurModel, 'id' | 'auteur_email_creation' | 'auteur_email_modification' | 'date_desactivation' | 'date_visualisation_video_accueil' | 'date_visualisation_popup_infolettre' | 'date_inscription_infolettre'> => {
   return {
     email: utilisateurAConvertir.email,
     nom: utilisateurAConvertir.nom,
@@ -64,7 +64,7 @@ const convertirEnModelModification = (utilisateurAConvertir: {
   fonction: string | null
   auteurIdModification: string
   dateModification: Date
-}): Omit<PrismaUtilisateurModel, 'id' | 'auteur_id_creation' | 'date_creation' | 'auteur_email_creation' | 'auteur_email_modification' | 'date_desactivation' | 'date_visualisation_video_accueil'> => {
+}): Omit<PrismaUtilisateurModel, 'id' | 'auteur_id_creation' | 'date_creation' | 'auteur_email_creation' | 'auteur_email_modification' | 'date_desactivation' | 'date_visualisation_video_accueil' | 'date_visualisation_popup_infolettre' | 'date_inscription_infolettre'> => {
   return {
     email: utilisateurAConvertir.email,
     nom: utilisateurAConvertir.nom,
@@ -524,10 +524,46 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     return !!etatVisualisationVideoAccueil?.date_visualisation_video_accueil || false;
   }
 
+  async recupererDateInscriptionInfolettre(utilisateurId: string): Promise<Date | null> {
+    const utilisateur = await this.prisma.utilisateur.findUnique({
+      where: { id: utilisateurId },
+      select: {
+        date_inscription_infolettre: true,
+      },
+    });
+
+    return utilisateur?.date_inscription_infolettre || null;
+  }
+
+  async recupererDateVisualisationPopupInfolettre(utilisateurId: string): Promise<Date | null> {
+    const utilisateur = await this.prisma.utilisateur.findUnique({
+      where: { id: utilisateurId },
+      select: {
+        date_visualisation_popup_infolettre: true,
+      },
+    });
+
+    return utilisateur?.date_visualisation_popup_infolettre || null;
+  }
+
   async desactiverVideoAccueil(utilisateurId: string, dateVisualisation: Date): Promise<void> {
     await this.prisma.utilisateur.update({
       where: { id: utilisateurId },
       data: { date_visualisation_video_accueil: dateVisualisation },
+    });
+  }
+
+  async mettreAJourLaDateInscriptionInfolettre(email: string, dateInscriptionInfolettre: Date): Promise<void> {
+    await this.prisma.utilisateur.update({
+      where: { email: email },
+      data: { date_inscription_infolettre: dateInscriptionInfolettre },
+    });
+  }
+
+  async mettreAJourLaDateVisulationPopupInfolettre(utilisateurId: string, dateVisualisationPopupInfolettre: Date): Promise<void> {
+    await this.prisma.utilisateur.update({
+      where: { id: utilisateurId },
+      data: { date_visualisation_popup_infolettre: dateVisualisationPopupInfolettre },
     });
   }
 
@@ -609,6 +645,19 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         dateDesactivation: utilisateurBrut.date_desactivation?.toISOString() ?? null,
       };
     };
+  }
+
+  async recupererUtilisateurEmail(utilisateurId: string): Promise<string | null> {
+    const utilisateur = await this.prisma.utilisateur.findUnique({
+      where: { id: utilisateurId },
+      select: { email: true },
+    });
+    
+    if (utilisateur) {
+      return utilisateur.email;
+    }
+
+    return null;
   }
 
   async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurId: string): Promise<void> {

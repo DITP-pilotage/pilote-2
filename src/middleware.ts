@@ -91,8 +91,9 @@ export const middleware = async (request: NextRequest, event: NextFetchEvent)=> 
        form-action 'self'`.replace(/\n\s+/g, ' '),
     );
   }
-
-  if (!request.nextUrl.pathname.startsWith('/api/open-api')) {
+  
+  const pathname = request.nextUrl.pathname;
+  if (!pathname.startsWith('/api/open-api')) {
     const authMiddleware = withAuth(
       async function middleware2(requestAuth) {
         const cookie = requestAuth.cookies.get('csrf');
