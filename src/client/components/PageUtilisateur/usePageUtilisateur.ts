@@ -58,8 +58,8 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
     }
 
     const habilitations = new Habilitation(session.habilitations);
-    return !habilitations.peutAccéderAuxTerritoiresUtilisateurs(utilisateurHabilitations.lecture.territoires) 
-      || !habilitations.peutAccéderAuxChantiersUtilisateurs(utilisateurHabilitations.lecture.chantiers) 
+    return (!habilitations.peutAccéderAuxTerritoiresUtilisateurs(utilisateurHabilitations.lecture.territoires) && [ProfilEnum.COORDINATEUR_REGION, ProfilEnum.COORDINATEUR_DEPARTEMENT].includes(session.profil))
+      || (!habilitations.peutAccéderAuxChantiersUtilisateurs(utilisateurHabilitations.lecture.chantiers) && session.profil === ProfilEnum.SECRETARIAT_GENERAL)
       || [ProfilEnum.COORDINATEUR_REGION, ProfilEnum.COORDINATEUR_DEPARTEMENT].includes(utilisateurProfil);
   };
 
