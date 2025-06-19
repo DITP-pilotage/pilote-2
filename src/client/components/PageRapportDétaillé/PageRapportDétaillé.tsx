@@ -40,7 +40,6 @@ interface PageRapportDétailléProps {
   indicateursGroupésParChantier: Record<string, Indicateur[]>
   détailsIndicateursGroupésParChantier: Record<Chantier['id'], DétailsIndicateurs>
   publicationsGroupéesParChantier: PublicationsGroupéesParChantier
-  mailleQuery: MailleInterne
   mailleSelectionnee: MailleInterne
   mapChantierStatistiques: Map<string, AvancementChantierRapportDetaille>
   territoireCode: string
@@ -67,7 +66,6 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   indicateursGroupésParChantier,
   détailsIndicateursGroupésParChantier,
   publicationsGroupéesParChantier,
-  mailleQuery,
   mailleSelectionnee,
   mapChantierStatistiques,
   filtresComptesCalculés,
@@ -167,7 +165,6 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
                         jalon={jalon}
                         key={chantier.id}
                         listeIndicateursPrisEnCompteAvancement={listeIndicateursPrisEnCompteAvancement}
-                        mailleQuery={mailleQuery}
                         mailleSelectionnee={mailleSelectionnee}
                         mapChantierStatistiques={mapChantierStatistiques}
                         objectifs={publicationsGroupéesParChantier.objectifs[chantier.id] ?? []}

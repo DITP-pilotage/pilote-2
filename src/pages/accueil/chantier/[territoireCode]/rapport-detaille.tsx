@@ -62,7 +62,6 @@ interface NextPageRapportDétailléProps {
   indicateursGroupésParChantier: Record<string, Indicateur[]>
   détailsIndicateursGroupésParChantier: Record<string, DétailsIndicateurs>
   publicationsGroupéesParChantier: PublicationsGroupéesParChantier
-  mailleQuery: MailleInterne
   mailleSelectionnee: MailleInterne
   listeAvancementsStatistiques: { id: string, avancementChantierRapportDetaille: AvancementChantierRapportDetaille }[]
   territoireCode: string
@@ -332,7 +331,6 @@ const NextPageRapportDétaillé: FunctionComponent<NextPageRapportDétailléProp
   indicateursGroupésParChantier,
   détailsIndicateursGroupésParChantier,
   publicationsGroupéesParChantier,
-  mailleQuery,
   mailleSelectionnee,
   listeAvancementsStatistiques,
   filtresComptesCalculés,
@@ -377,7 +375,6 @@ const NextPageRapportDétaillé: FunctionComponent<NextPageRapportDétailléProp
         indicateursGroupésParChantier={indicateursGroupésParChantier}
         jalon={jalon}
         listeIndicateursPrisEnCompteAvancement={listeIndicateursPrisEnCompteAvancement}
-        mailleQuery={mailleQuery}
         mailleSelectionnee={mailleSelectionnee}
         mapChantierStatistiques={mapChantierStatistiques}
         mapDonnéesCartographieAvancement={mapDonnéesCartographieAvancement}
