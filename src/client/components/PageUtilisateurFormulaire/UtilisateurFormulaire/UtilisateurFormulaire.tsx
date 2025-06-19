@@ -27,7 +27,6 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({ 
       fonction: utilisateur?.fonction,
       profil: utilisateur?.profil,
       gestionUtilisateur: utilisateur?.gestionUtilisateur,
-      saisieCommentaire: utilisateur?.saisieCommentaire,
       saisieIndicateur: utilisateur?.saisieIndicateur,
       habilitations: {
         lecture: {
@@ -37,6 +36,9 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({ 
         },
         responsabilite: {
           chantiers: utilisateur?.habilitations.responsabilite.chantiers,
+        },
+        saisieCommentaire: {
+          chantiers: utilisateur?.habilitations.saisieCommentaire.chantiers,
         },
       },
     },

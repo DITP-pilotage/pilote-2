@@ -31,7 +31,10 @@ export type HabilitationsÀCréerOuMettreÀJour = {
   },
   responsabilite: {
     chantiers: Chantier['id'][]
-  }
+  },
+  saisieCommentaire: {
+    chantiers: Chantier['id'][]
+  },
 };
 
 export type HabilitationsÀCréerOuMettreÀJourCalculées = Record<ScopeChantiers | ScopeUtilisateurs, HabilitationChantiers & { périmètres: PérimètreMinistériel['id'][] }>;

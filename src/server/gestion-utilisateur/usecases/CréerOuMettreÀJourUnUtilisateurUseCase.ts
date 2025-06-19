@@ -161,25 +161,15 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return utilisateur.habilitations.responsabilite.chantiers;
   }
 
+  private _déterminerChantiersSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour): string[] {
+    return utilisateur.habilitations.saisieCommentaire.chantiers;
+  }
+
   private _déterminerChantiersAccessiblesEnSaisieIndicateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: InformationChantierUtilisateur[]): string[] {
     if (utilisateur.saisieIndicateur) {
       return this._déterminerChantiersAccessiblesEnLecture(utilisateur, chantiers);
     }
 
-    return [];
-  }
-
-  private _déterminerChantiersAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: InformationChantierUtilisateur[]): string[] {
-    if (utilisateur.saisieCommentaire) {
-      const chantiersIdsAccessiblesEnLecture = this._déterminerChantiersAccessiblesEnLecture(utilisateur, chantiers);
-
-      if ([ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(utilisateur.profil)) {
-        return chantiers.filter(c => c.ate !== 'hors_ate_centralise' && chantiersIdsAccessiblesEnLecture.includes(c.id)).map(c => c.id);
-      }
-
-      return chantiersIdsAccessiblesEnLecture;
-    }
-    
     return [];
   }
 
@@ -212,16 +202,8 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return chantiersResponsabilite.length > 0 ? this._déterminerTerritoiresAccessiblesEnLecture(utilisateur, territoires) : [];
   }
 
-  private _déterminerTerritoiresAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[]): string[] {
-    if (utilisateur.saisieCommentaire) {
-      if ([ProfilEnum.DITP_PILOTAGE, ProfilEnum.DROM].includes(utilisateur.profil))
-        return ['NAT-FR'];
-
-      return this._déterminerTerritoiresAccessiblesEnLecture(utilisateur, territoires);
-
-    }
-    
-    return [];
+  private _déterminerTerritoiresAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[], chantiersSaisieCommentaire: string[]): string[] {
+    return chantiersSaisieCommentaire.length > 0 ? this._déterminerTerritoiresAccessiblesEnLecture(utilisateur, territoires) : [];
   }
 
   private _déterminerTerritoiresAccessiblesEnGestionUtilisateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[]): string[] {
@@ -253,13 +235,6 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return [];
   }
 
-  private _déterminerPérimètresAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
-    if (utilisateur.saisieCommentaire)
-      return this._déterminerPérimètresAccessiblesEnLecture(utilisateur, périmètres);
-
-    return [];
-  }
-
   private _déterminerPérimètresAccessiblesEnGestionUtilisateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
     if (utilisateur.gestionUtilisateur)
       return this._déterminerPérimètresAccessiblesEnLecture(utilisateur, périmètres);
@@ -272,6 +247,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     const périmètres = await this.perimetreMinisterielRepository.lister([]);
 
     const chantiersResponsabilite = this._déterminerChantiersResponsabilite(utilisateur);
+    const chantiersSaisieCommentaire = this._déterminerChantiersSaisieCommentaire(utilisateur);
       
     return {
       lecture: {
@@ -285,9 +261,9 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
         périmètres: this._déterminerPérimètresAccessiblesEnSaisieIndicateur(utilisateur, périmètres),
       },
       saisieCommentaire: {
-        chantiers: this._déterminerChantiersAccessiblesEnSaisieCommentaire(utilisateur, chantiers),
-        territoires: this._déterminerTerritoiresAccessiblesEnSaisieCommentaire(utilisateur, territoires),
-        périmètres: this._déterminerPérimètresAccessiblesEnSaisieCommentaire(utilisateur, périmètres),
+        chantiers: chantiersSaisieCommentaire,
+        territoires: this._déterminerTerritoiresAccessiblesEnSaisieCommentaire(utilisateur, territoires, chantiersSaisieCommentaire),
+        périmètres: [],
       },
       gestionUtilisateur: {
         chantiers: this._déterminerChantierAccessiblesEnGestionUtilisateur(utilisateur, chantiers),

@@ -94,7 +94,6 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
   }, [profil, chantiers]);
 
   const déterminerLesNomÀAfficherPourLesChantiersResponsabilite = (u: FicheUtilisateurProps['utilisateur']) => {
-    
     return u.habilitations?.responsabilite?.chantiers?.map(chantierId => chantiers?.find(c => c.id === chantierId)?.nom ?? '') ?? [];
   };
 
@@ -111,19 +110,11 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
   }, [déterminerLesNomÀAfficherPourLesChantiersLecture]);
 
   const déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
-    if (u.saisieCommentaire) {
-      if ([ProfilEnum.SECRETARIAT_GENERAL, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.DIR_PROJET].includes(profil?.code ?? ''))
-        return ['France', 'Régions (uniquement les chantiers hors ate centralisés)', 'Départements (uniquement les chantiers hors ate centralisés)'];
+    return u.habilitations?.saisieCommentaire?.chantiers !== undefined &&  u.habilitations?.saisieCommentaire?.chantiers.length > 0 
+      ? déterminerLesNomÀAfficherPourLesTerritoiresLecture(u) 
+      : [];
 
-      if ([ProfilEnum.DITP_PILOTAGE, ProfilEnum.DROM].includes(profil?.code ?? ''))
-        return ['France'];
-
-      return déterminerLesNomÀAfficherPourLesTerritoiresLecture(u);
-    } else {
-      return [];
-    }
-
-  }, [déterminerLesNomÀAfficherPourLesTerritoiresLecture, profil]);
+  }, [déterminerLesNomÀAfficherPourLesTerritoiresLecture]);
 
   const déterminerLesNomÀAfficherPourLesTerritoiresGestionUtilisateur = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
     if (u.gestionUtilisateur) {
@@ -137,25 +128,9 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
   }, [déterminerLesNomÀAfficherPourLesTerritoiresLecture, profil]);
 
   const déterminerLesNomÀAfficherPourLesChantiersSaisieCommentaire = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
-    if (u.saisieCommentaire) {
+    return u.habilitations?.saisieCommentaire?.chantiers?.map(chantierId => chantiers?.find(c => c.id === chantierId)?.nom ?? '') ?? [];
 
-      if ([ProfilEnum.COORDINATEUR_REGION, ProfilEnum.PREFET_REGION, ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.PREFET_DEPARTEMENT].includes(profil?.code ?? ''))
-        return ['Tous les chantiers ATE territorialisés'];
-
-      if ([ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(profil?.code ?? '')) {
-        const chantiersFiltrés = chantiers
-          ?.filter(c => u.habilitations?.lecture?.chantiers?.includes(c.id) && c.ate !== 'hors_ate_centralise' && u.habilitations.lecture.territoires?.some(territoire => c.territoiresApplicables.includes(territoire)))
-          .map(chantier => chantier.nom);
-
-        return chantiersFiltrés ?? [];
-      }
-
-      return déterminerLesNomÀAfficherPourLesChantiersLecture(u);
-    } else {
-      return [];
-    }
-
-  }, [déterminerLesNomÀAfficherPourLesChantiersLecture, chantiers, profil]);
+  }, [chantiers]);
 
   const déterminerLesNomÀAfficherPourLesChantiersGestionDesUtilisateurs = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
     if (u.gestionUtilisateur) {
