@@ -28,7 +28,7 @@ if (isMain) {
           emailsEnEchec.map(email => `* ${email}`).join('\n'),
         );
       } else {
-        message.push('Tous les emails ont été envoyées');
+        message.push("Tous les emails ont été envoyés (l'état de réception des emails est à vérifier via les analytics dédiés)");
       }
       envoieMessageTchap(message.join('\n'), baseUrl, roomId, accessToken);    
     })
