@@ -76,7 +76,7 @@ export default class ReactiverUnUtilisateurUseCase {
 
     await this.utilisateurRepository.reactiver(email, auteurId);
     
-    if (process.env.ENVIRONMENT === 'PROD') {
+    if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === 'true') {
       const listesDiffusion = profilsInfolettreCoordinateur.includes(utilisateurAReactiver.profil) ? [3] : [];
       await this.contactInfoLettresService.creerContact(utilisateurAReactiver.email, utilisateurAReactiver.nom, utilisateurAReactiver.prénom, listesDiffusion);
     }

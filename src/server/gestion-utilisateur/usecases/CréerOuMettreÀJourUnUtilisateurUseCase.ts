@@ -113,7 +113,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
 
     await this.historisationModification.sauvegarderModificationHistorisation(historisationModification);
 
-    if (process.env.ENVIRONMENT === 'PROD' && !utilisateurExistant) {
+    if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === 'true' && !utilisateurExistant) {
       const listesDiffusion = profilsInfolettreCoordinateur.includes(utilisateur.profil) ? [3] : [];
       await this.contactInfoLettresService.creerContact(utilisateur.email, utilisateur.nom, utilisateur.prénom, listesDiffusion);
     }
