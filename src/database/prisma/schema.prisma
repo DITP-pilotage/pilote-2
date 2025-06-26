@@ -552,6 +552,7 @@ model utilisateur {
   propositions_valeur_actuelle     proposition_valeur_actuelle[]
   date_desactivation               DateTime?
   date_visualisation_video_accueil DateTime?
+  historisations_modification      historisation_modification[]
 
   @@schema("public")
 }
@@ -596,14 +597,16 @@ model scope {
 }
 
 model historisation_modification {
-  id                   String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                   String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   id_objet_modifie     String
-  utilisateur_nom      String
+  utilisateur_nom      String?
   type_de_modification String
   date_de_modification String
   table_modifie_id     String
   ancienne_valeur      Json?
   nouvelle_valeur      Json?
+  id_auteur            String?      @db.Uuid
+  auteur_modification  utilisateur? @relation(fields: [id_auteur], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@schema("public")
 }

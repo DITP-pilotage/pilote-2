@@ -19,8 +19,8 @@ export class PrismaMetadataParametrageIndicateurQuery {
         date_de_modification: 'desc',
       },
       select: {
-        utilisateur_nom: true,
         date_de_modification: true,
+        auteur_modification: true,
       },
     });
     
@@ -35,15 +35,15 @@ export class PrismaMetadataParametrageIndicateurQuery {
         date_de_modification: 'desc',
       },
       select: {
-        utilisateur_nom: true,
+        auteur_modification: true,
         date_de_modification: true,
       },
     });
 
     return {
-      auteurCreation: creation ? creation.utilisateur_nom : defaultHistoriqueInformation.auteurCreation,
+      auteurCreation: creation?.auteur_modification?.email ?? defaultHistoriqueInformation.auteurCreation,
       dateCreation: creation ? creation.date_de_modification : defaultHistoriqueInformation.dateCreation,
-      auteurModification: derniereModification ? derniereModification.utilisateur_nom : defaultHistoriqueInformation.auteurModification,
+      auteurModification: derniereModification?.auteur_modification?.email ?? defaultHistoriqueInformation.auteurModification,
       dateDerniereModification: derniereModification ? derniereModification.date_de_modification : defaultHistoriqueInformation.dateDerniereModification,
     } satisfies InformationHistorisationMetadataIndicateurContrat;
   }  
@@ -63,7 +63,7 @@ export class PrismaMetadataParametrageIndicateurQuery {
       },
       select: {
         id_objet_modifie: true,
-        utilisateur_nom: true,
+        auteur_modification: true,
         date_de_modification: true,
       },
     });
@@ -75,7 +75,7 @@ export class PrismaMetadataParametrageIndicateurQuery {
     return new Map<string, InformationDerniereModificationMetadataIndicateurContrat>(listeIndicId.map(indicId => {
       const result = listeHistorisationResult.find(historisationResult => historisationResult.id_objet_modifie === indicId);
       return result ? [indicId, {
-        auteurModification: result.utilisateur_nom,
+        auteurModification: result.auteur_modification?.email ?? defaultDeniereModificationInformation.auteurModification,
         dateDerniereModification: result.date_de_modification,
       } satisfies InformationDerniereModificationMetadataIndicateurContrat] : [indicId, defaultDeniereModificationInformation];
     }));

@@ -27,7 +27,7 @@ export default class ModifierUneMetadataIndicateurUseCase {
     this.historisationModificationRepository = historisationModificationRepository;
   }
 
-  async run(utilisateurNom: string, inputs: MetadataParametrageIndicateurForm) {
+  async run(auteurId: string, inputs: MetadataParametrageIndicateurForm) {
     const metadataParametrageIndicateurAncien = await this.metadataParametrageIndicateurRepository.recupererMetadataParametrageIndicateurParIndicId(inputs.indicId);
 
     const metadataParametrageIndicateurNouveau = MetadataParametrageIndicateur.creerMetadataParametrageIndicateur({
@@ -36,19 +36,19 @@ export default class ModifierUneMetadataIndicateurUseCase {
     });
 
     const historisationModification = HistorisationModification.creerHistorisationModification({
-      utilisateurNom,
+      auteurId,
       tableModifieId: 'metadata_indicateurs',
       ancienneValeur: metadataParametrageIndicateurAncien,
       nouvelleValeur: metadataParametrageIndicateurNouveau,
     });
     const historisationParametrageModification = HistorisationModification.creerHistorisationModification({
-      utilisateurNom,
+      auteurId,
       tableModifieId: 'metadata_parametrages_indicateurs',
       ancienneValeur: metadataParametrageIndicateurAncien,
       nouvelleValeur: metadataParametrageIndicateurNouveau,
     });
     const historisationIndicateurComplementaireModification = HistorisationModification.creerHistorisationModification({
-      utilisateurNom,
+      auteurId,
       tableModifieId: 'metadata_indicateurs_complementaire',
       ancienneValeur: metadataParametrageIndicateurAncien,
       nouvelleValeur: metadataParametrageIndicateurNouveau,

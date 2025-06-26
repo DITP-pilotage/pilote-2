@@ -28,7 +28,7 @@ export default class CreerUneMetadataIndicateurUseCase {
 
   }
 
-  async run(utilisateurNom: string, inputs: MetadataParametrageIndicateurForm) {
+  async run(auteurId: string, inputs: MetadataParametrageIndicateurForm) {
     const metadataParametrageIndicateurNouveau = MetadataParametrageIndicateur.creerMetadataParametrageIndicateur({
       ...inputs,
       chantierNom: 'Non défini en création',
@@ -36,17 +36,17 @@ export default class CreerUneMetadataIndicateurUseCase {
 
     const result = await this.metadataParametrageIndicateurRepository.creer(metadataParametrageIndicateurNouveau);
     const historisationModification = HistorisationModification.creerHistorisationCreation({
-      utilisateurNom,
+      auteurId,
       tableModifieId: 'metadata_indicateurs',
       nouvelleValeur: result,
     });
     const historisationParametrageModification = HistorisationModification.creerHistorisationCreation({
-      utilisateurNom,
+      auteurId,
       tableModifieId: 'metadata_parametrages_indicateurs',
       nouvelleValeur: result,
     });
     const historisationComplementaireModification = HistorisationModification.creerHistorisationCreation({
-      utilisateurNom,
+      auteurId,
       tableModifieId: 'metadata_indicateurs_complementaire',
       nouvelleValeur: result,
     });

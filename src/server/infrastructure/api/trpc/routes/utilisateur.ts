@@ -16,26 +16,23 @@ export const utilisateurRouter = créerRouteurTRPC({
     .input(validationInfosBaseUtilisateur.merge(zodValidateurCSRF).merge(validationInfosHabilitationsUtilisateur))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      const auteurModification = ctx.session.user.email ?? '';
-
       const profilAuteur = await new RécupérerUnProfilUseCase(
         dependencies.getProfilRepository(),
       ).run(ctx.session.profil);
       await getContainer('gestionUtilisateur')
         .resolve('créerOuMettreÀJourUnUtilisateurUseCase')
-        .run(input, auteurModification, ctx.session.user.id, false, ctx.session.habilitations, profilAuteur);
+        .run(input, ctx.session.user.id, false, ctx.session.habilitations, profilAuteur);
     }),
   modifier: procédureProtégée
     .input(validationInfosBaseUtilisateur.merge(zodValidateurCSRF).merge(validationInfosHabilitationsUtilisateur))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      const auteurModification = ctx.session.user.email ?? '';
       const profilAuteur = await new RécupérerUnProfilUseCase(
         dependencies.getProfilRepository(),
       ).run(ctx.session.profil);
       await getContainer('gestionUtilisateur')
         .resolve('créerOuMettreÀJourUnUtilisateurUseCase')
-        .run(input, auteurModification, ctx.session.user.id, true, ctx.session.habilitations, profilAuteur);
+        .run(input, ctx.session.user.id, true, ctx.session.habilitations, profilAuteur);
     }),
   desactiver: procédureProtégée
     .input(validationSupprimerUtilisateur.merge(zodValidateurCSRF))

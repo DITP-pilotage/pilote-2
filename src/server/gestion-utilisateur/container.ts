@@ -76,6 +76,7 @@ export type GestionUtilisateurDependencies = {
   rapportRepository: RapportRepository
   syntheseDesResultatsRepository: SyntheseDesResultatsRepository
   propositionValeurAvancementRepository: PropositionValeurAvancementRepository
+  historisationModification: HistorisationModificationRepository
   supprimerLesComptesDesactivesUseCase: SupprimerLesComptesDesactivesUseCase
   recupererChantiersSynthetisesUseCase: RecupererChantiersSynthetisesUseCase
   recupererPerimetresMinisterielsUseCase: RecupererPerimetresMinisterielsUseCase
@@ -88,7 +89,6 @@ export type GestionUtilisateurDependencies = {
   desactiverVideoAccueilUseCase: DesactiverVideoAccueilUseCase
   recupererLaListeDesInfomrationsChantiersUse: RecupererLaListeDesInfomrationsChantiersUse
   contactInfoLettresService: ContactInfoLettresService
-  historisationModification: HistorisationModificationRepository
   créerOuMettreÀJourUnUtilisateurUseCase: CréerOuMettreÀJourUnUtilisateurUseCase
 };
 
@@ -101,6 +101,7 @@ export const getGestionUtilisateurContainer = (initialContainer: AwilixContainer
     perimetreMinisterielRepository: asClass(PrismaPerimetreMinisterielRepository),
     profilRepository: asClass(PrismaProfilRepository),
     tokenAPIInformationRepository: asClass(PrismaTokenAPIInformationRepository),
+    historisationModification: asClass(PrismaHistorisationModificationRepository),
     desactiverUnUtilisateurUseCase: asClass(DesactiverUnUtilisateurUseCase),
     reactiverUnUtilisateurUseCase: asClass(ReactiverUnUtilisateurUseCase),
     recupererChantiersSynthetisesUseCase: asClass(RecupererChantiersSynthetisesUseCase),
@@ -121,7 +122,6 @@ export const getGestionUtilisateurContainer = (initialContainer: AwilixContainer
     supprimerLesComptesDesactivesUseCase: asClass(SupprimerLesComptesDesactivesUseCase),
     recupererLaListeDesInfomrationsChantiersUse: asClass(RecupererLaListeDesInfomrationsChantiersUse),
     contactInfoLettresService: asClass(BrevoContactInfoLettresService),
-    historisationModification: asClass(PrismaHistorisationModificationRepository),
     créerOuMettreÀJourUnUtilisateurUseCase: asClass(CréerOuMettreÀJourUnUtilisateurUseCase),
   });
 };

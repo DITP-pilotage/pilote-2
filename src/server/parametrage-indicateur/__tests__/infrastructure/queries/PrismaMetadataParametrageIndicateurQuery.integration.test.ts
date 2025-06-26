@@ -7,8 +7,58 @@ import { prisma } from '@/server/db/prisma';
 describe('PrismaMetadataParametrageIndicateurQuery', () => {
   let prismaMetadataParametrageIndicateurQuery: PrismaMetadataParametrageIndicateurQuery;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     prismaMetadataParametrageIndicateurQuery = getContainer('parametrageIndicateur').resolve('metadataParametrageIndicateurQuery');
+    await prisma.utilisateur.create({
+      data: {
+        id: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
+        email: 'Eloge', 
+        nom: 'Eloge', 
+        prenom: 'Eloge', 
+        date_creation: new Date(),
+        profilCode: 'DITP_ADMIN',
+      },
+    });
+    await prisma.utilisateur.create({
+      data: {
+        id: '175fd28c-8129-419e-b2c1-78538461e094',
+        email: 'Zakaria', 
+        nom: 'Zakaria', 
+        prenom: 'Zakaria', 
+        date_creation: new Date(),
+        profilCode: 'DITP_ADMIN',
+      },
+    });
+    await prisma.utilisateur.create({
+      data: {
+        id: 'c2454574-45b0-4214-b9a2-8025c329b73f',
+        email: 'Gaelle', 
+        nom: 'Gaelle', 
+        prenom: 'Gaelle', 
+        date_creation: new Date(),
+        profilCode: 'DITP_ADMIN',
+      },
+    });
+    await prisma.utilisateur.create({
+      data: {
+        id: '988c3812-16c9-4b59-b08c-b81612c426a5',
+        email: 'Cécile', 
+        nom: 'Cécile', 
+        prenom: 'Cécile', 
+        date_creation: new Date(),
+        profilCode: 'DITP_ADMIN',
+      },
+    });
+    await prisma.utilisateur.create({
+      data: {
+        id: 'ee9bb9f6-e365-4d09-9631-f278518fe31e',
+        email: 'Laurène', 
+        nom: 'Laurène', 
+        prenom: 'Laurène', 
+        date_creation: new Date(),
+        profilCode: 'DITP_ADMIN',
+      },
+    });
   });
 
   describe('recupererInformationHistorisation', () => {
@@ -31,6 +81,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
     it("Quand il existe un historique de modification mais que ca n'appartient pas à notre indicateur, doit remonter des informations de base", async () => {
       // Given
       const indicId = 'a1217dba-f725-4b70-af96-5d3b6e393853';
+
       await prisma.metadata_indicateurs.create({
         data: {
           indic_id: indicId,
@@ -45,7 +96,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'indicateur',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Eloge',
+          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
           date_de_modification: '2024-04-31',
           type_de_modification: 'creation',
         },
@@ -80,7 +131,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'utilisateur',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Eloge',
+          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
           date_de_modification: '2024-04-29',
           type_de_modification: 'creation',
         },
@@ -115,7 +166,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'metadata_indicateurs',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Eloge',
+          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
           date_de_modification: '2024-04-29',
           type_de_modification: 'creation',
         },
@@ -150,7 +201,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'metadata_indicateurs',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Eloge',
+          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
           date_de_modification: '2024-04-29',
           type_de_modification: 'creation',
         },
@@ -163,7 +214,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'metadata_indicateurs',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Zakaria',
+          id_auteur: '175fd28c-8129-419e-b2c1-78538461e094',
           date_de_modification: '2024-05-01',
           type_de_modification: 'modification',
         },
@@ -198,7 +249,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'metadata_indicateurs',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Eloge',
+          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
           date_de_modification: '2024-04-29',
           type_de_modification: 'creation',
         },
@@ -211,7 +262,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'metadata_indicateurs',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Gaelle',
+          id_auteur: 'c2454574-45b0-4214-b9a2-8025c329b73f',
           date_de_modification: '2024-05-10',
           type_de_modification: 'modification',
         },
@@ -224,7 +275,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'metadata_indicateurs',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Zakaria',
+          id_auteur: '175fd28c-8129-419e-b2c1-78538461e094',
           date_de_modification: '2024-05-01',
           type_de_modification: 'modification',
         },
@@ -287,7 +338,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'indicateur',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Eloge',
+          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
           date_de_modification: '2024-04-31',
           type_de_modification: 'creation',
         },
@@ -332,7 +383,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'indicateur',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Eloge',
+          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
           date_de_modification: '2024-04-31',
           type_de_modification: 'creation',
         },
@@ -378,7 +429,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'metadata_indicateurs',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Eloge',
+          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
           date_de_modification: '2024-04-29',
           type_de_modification: 'creation',
         },
@@ -422,7 +473,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'metadata_indicateurs',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Eloge',
+          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
           date_de_modification: '2024-04-29',
           type_de_modification: 'creation',
         },
@@ -435,7 +486,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'metadata_indicateurs',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Zakaria',
+          id_auteur: '175fd28c-8129-419e-b2c1-78538461e094',
           date_de_modification: '2024-05-01',
           type_de_modification: 'modification',
         },
@@ -479,7 +530,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'metadata_indicateurs',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Eloge',
+          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
           date_de_modification: '2024-04-29',
           type_de_modification: 'creation',
         },
@@ -492,7 +543,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'metadata_indicateurs',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Gaelle',
+          id_auteur: 'c2454574-45b0-4214-b9a2-8025c329b73f',
           date_de_modification: '2024-05-10',
           type_de_modification: 'modification',
         },
@@ -505,7 +556,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'metadata_indicateurs',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Zakaria',
+          id_auteur: '175fd28c-8129-419e-b2c1-78538461e094',
           date_de_modification: '2024-05-01',
           type_de_modification: 'modification',
         },
@@ -550,7 +601,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'metadata_indicateurs',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Eloge',
+          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
           date_de_modification: '2024-04-29',
           type_de_modification: 'creation',
         },
@@ -563,7 +614,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'metadata_indicateurs',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Gaelle',
+          id_auteur: 'c2454574-45b0-4214-b9a2-8025c329b73f',
           date_de_modification: '2024-05-10',
           type_de_modification: 'modification',
         },
@@ -576,7 +627,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'metadata_indicateurs',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Zakaria',
+          id_auteur: '175fd28c-8129-419e-b2c1-78538461e094',
           date_de_modification: '2024-05-01',
           type_de_modification: 'modification',
         },
@@ -589,7 +640,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'metadata_indicateurs',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Cecile',
+          id_auteur: '988c3812-16c9-4b59-b08c-b81612c426a5',
           date_de_modification: '2024-05-29',
           type_de_modification: 'creation',
         },
@@ -602,7 +653,7 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
           table_modifie_id: 'metadata_indicateurs',
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          utilisateur_nom: 'Laurène',
+          id_auteur: 'ee9bb9f6-e365-4d09-9631-f278518fe31e',
           date_de_modification: '2024-06-10',
           type_de_modification: 'modification',
         },
