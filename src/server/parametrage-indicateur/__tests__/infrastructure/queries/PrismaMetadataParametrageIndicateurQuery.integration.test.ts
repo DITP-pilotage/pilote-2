@@ -11,16 +11,18 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
     prismaMetadataParametrageIndicateurQuery = getContainer('parametrageIndicateur').resolve('metadataParametrageIndicateurQuery');
   });
 
-  describe('recupererInformationDerniereModification', () => {
+  describe('recupererInformationHistorisation', () => {
     it("Quand il n'y a pas historique de modification concernant l'indicateur, doit remonter des informations de base", async () => {
       // Given
       const indicId = 'a1217dba-f725-4b70-af96-5d3b6e393853';
 
       // When
-      const informationDerniereModification = await prismaMetadataParametrageIndicateurQuery.recupererInformationDerniereModification({ indicId });
+      const informationDerniereModification = await prismaMetadataParametrageIndicateurQuery.recupererInformationHistorisation({ indicId });
 
       // Then
       expect(informationDerniereModification).toEqual({
+        auteurCreation: 'DITP Admin',
+        dateCreation: '2024-01-31',
         auteurModification: 'DITP Admin',
         dateDerniereModification: '2024-01-31',
       });
@@ -50,10 +52,12 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
       });
 
       // When
-      const informationDerniereModification = await prismaMetadataParametrageIndicateurQuery.recupererInformationDerniereModification({ indicId });
+      const informationDerniereModification = await prismaMetadataParametrageIndicateurQuery.recupererInformationHistorisation({ indicId });
 
       // Then
       expect(informationDerniereModification).toEqual({
+        auteurCreation: 'DITP Admin',
+        dateCreation: '2024-01-31',
         auteurModification: 'DITP Admin',
         dateDerniereModification: '2024-01-31',
       });
@@ -83,10 +87,12 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
       });
 
       // When
-      const informationDerniereModification = await prismaMetadataParametrageIndicateurQuery.recupererInformationDerniereModification({ indicId });
+      const informationDerniereModification = await prismaMetadataParametrageIndicateurQuery.recupererInformationHistorisation({ indicId });
 
       // Then
       expect(informationDerniereModification).toEqual({
+        auteurCreation: 'DITP Admin',
+        dateCreation: '2024-01-31',
         auteurModification: 'DITP Admin',
         dateDerniereModification: '2024-01-31',
       });
@@ -116,10 +122,12 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
       });
 
       // When
-      const informationDerniereModification = await prismaMetadataParametrageIndicateurQuery.recupererInformationDerniereModification({ indicId });
+      const informationDerniereModification = await prismaMetadataParametrageIndicateurQuery.recupererInformationHistorisation({ indicId });
 
       // Then
       expect(informationDerniereModification).toEqual({
+        auteurCreation: 'Eloge',
+        dateCreation: '2024-04-29',
         auteurModification: 'Eloge',
         dateDerniereModification: '2024-04-29',
       });
@@ -162,10 +170,12 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
       });
 
       // When
-      const informationDerniereModification = await prismaMetadataParametrageIndicateurQuery.recupererInformationDerniereModification({ indicId });
+      const informationDerniereModification = await prismaMetadataParametrageIndicateurQuery.recupererInformationHistorisation({ indicId });
 
       // Then
       expect(informationDerniereModification).toEqual({
+        auteurCreation: 'Eloge',
+        dateCreation: '2024-04-29',
         auteurModification: 'Zakaria',
         dateDerniereModification: '2024-05-01',
       });
@@ -221,10 +231,12 @@ describe('PrismaMetadataParametrageIndicateurQuery', () => {
       });
 
       // When
-      const informationDerniereModification = await prismaMetadataParametrageIndicateurQuery.recupererInformationDerniereModification({ indicId });
+      const informationDerniereModification = await prismaMetadataParametrageIndicateurQuery.recupererInformationHistorisation({ indicId });
 
       // Then
       expect(informationDerniereModification).toEqual({
+        auteurCreation: 'Eloge',
+        dateCreation: '2024-04-29',
         auteurModification: 'Gaelle',
         dateDerniereModification: '2024-05-10',
       });

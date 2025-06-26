@@ -13,12 +13,12 @@ import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/Meta
 import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import {
-  InformationDerniereModificationMetadataIndicateurContrat,
+  InformationHistorisationMetadataIndicateurContrat,
 } from '@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat';
 
 interface PageIndicateurProps {
   indicateur: MetadataParametrageIndicateurContrat,
-  informationHistorisationIndicateur: InformationDerniereModificationMetadataIndicateurContrat,
+  informationHistorisationIndicateur: InformationHistorisationMetadataIndicateurContrat,
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
   estUneCréation: boolean
   modificationReussie: boolean
