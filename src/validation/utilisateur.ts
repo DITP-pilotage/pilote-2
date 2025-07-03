@@ -36,9 +36,15 @@ export const validationInfosBaseUtilisateur = z.object( {
   gestionUtilisateur: z.boolean(),
 });
 
+const adresseEstValide = (adresse: string) => {
+  return adresse.endsWith('.gouv.fr') 
+    || /^.+@ac-[\da-z\-]+\.fr$/i.test(adresse) 
+    || /^.+@region-academique-[\da-z\-]+\.fr$/i.test(adresse);
+};
+
 export const validationInfosBaseUtilisateurNonAdmin = z.object({
   email: z.string().email().min(1).max(100).refine((value) =>
-    value.endsWith('.gouv.fr') || /^.+@ac-[\da-z\-]+\.fr$/i.test(value), { message: customErrorMail },
+    adresseEstValide(value), { message: customErrorMail },
   ),
   nom: z.string().min(1).max(100),
   prénom: z.string().min(1).max(100),
