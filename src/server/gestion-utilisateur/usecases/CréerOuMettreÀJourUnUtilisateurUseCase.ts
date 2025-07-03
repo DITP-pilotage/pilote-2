@@ -113,9 +113,15 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
 
     await this.historisationModification.sauvegarderModificationHistorisation(historisationModification);
 
-    if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === 'true' && !utilisateurExistant) {
-      const listesDiffusion = profilsInfolettreCoordinateur.includes(utilisateur.profil) ? [3] : [];
-      await this.contactInfoLettresService.creerContact(utilisateur.email, utilisateur.nom, utilisateur.prénom, listesDiffusion);
+    if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === 'true') {
+      if (utilisateurExistant && utilisateurAvantModification) {
+        const listesDiffusionAAjouter = profilsInfolettreCoordinateur.includes(utilisateur.profil) && !profilsInfolettreCoordinateur.includes(utilisateurAvantModification?.profil) ? [3] : [];
+        const listesDiffusionASupprimer = profilsInfolettreCoordinateur.includes(utilisateurAvantModification?.profil) && !profilsInfolettreCoordinateur.includes(utilisateur.profil) ? [3] : [];
+        await this.contactInfoLettresService.modifierContact(utilisateur.email, utilisateur.nom, utilisateur.prénom, listesDiffusionAAjouter, listesDiffusionASupprimer);
+      } else {
+        const listesDiffusion = profilsInfolettreCoordinateur.includes(utilisateur.profil) ? [3] : [];
+        await this.contactInfoLettresService.creerContact(utilisateur.email, utilisateur.nom, utilisateur.prénom, listesDiffusion);
+      }
     }
 
     if (process.env.IMPORT_KEYCLOAK_URL && !utilisateurExistant) {
