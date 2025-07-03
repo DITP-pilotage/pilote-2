@@ -19,4 +19,15 @@ export class BrevoContactInfoLettresService implements ContactInfoLettresService
   async supprimerContact(email: string): Promise<void> {
     await contactsApi.deleteContact(email);
   }
+
+  async modifierContact(email: string, nom: string, prenom: string, listesDiffusionAAjouterIds: number[], listesDiffusionASupprimerIds: number[]): Promise<void> {
+    await contactsApi.updateContact(email, {
+      attributes: {
+        PRENOM: prenom,
+        NOM: nom,
+      },
+      listIds: listesDiffusionAAjouterIds,
+      unlinkListIds: listesDiffusionASupprimerIds,
+    });
+  }
 }
