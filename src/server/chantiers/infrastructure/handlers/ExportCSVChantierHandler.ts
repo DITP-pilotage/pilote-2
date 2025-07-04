@@ -23,7 +23,7 @@ export const handleExportDesChantiers = async (request: NextApiRequest, response
     perimetreIds: request.query.perimetreIds ? Array.isArray(request.query.perimetreIds) ? request.query.perimetreIds : [request.query.perimetreIds] as string[] : [],
     estBarometre: request.query.estBarometre === 'true',
     territorialisation: request.query.territorialisation ? Array.isArray(request.query.territorialisation) ? request.query.territorialisation.map(maille => maille as Maille) : [request.query.territorialisation as Maille] : [],
-    listeStatuts: request.query.statut ? Array.isArray(request.query.statut) ? request.query.statut : [request.query.statut] as string[] : [],
+    listeStatuts: request.query.statut ? Array.isArray(request.query.statut) ? request.query.statut : [request.query.statut] as string[] : (session.profilAAccèsAuxChantiersBrouillons ? [] : ['PUBLIE', 'BROUILLON']),
     listeChantierId: [],
     listeMeteos: request.query.meteos ? Array.isArray(request.query.meteos) ? request.query.meteos : [request.query.meteos] as string[] : [],
     listeOptionsExport: request.query.optionsExport ? Array.isArray(request.query.optionsExport) ? request.query.optionsExport : [request.query.optionsExport] as string[] : [],
