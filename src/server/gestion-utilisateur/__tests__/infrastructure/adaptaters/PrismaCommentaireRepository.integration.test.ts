@@ -51,7 +51,7 @@ describe('PrismaCommentaireRepository', () => {
           },
           {
             id: auteurId3,
-            email: 'auteur.inconnu@modernisation.gouv.fr',
+            email: 'utilisateur.supprime@modernisation.gouv.fr',
             nom: 'inconnu',
             prenom: 'auteur',
             date_creation: new Date().toISOString(),
@@ -99,7 +99,7 @@ describe('PrismaCommentaireRepository', () => {
       });
 
       // When
-      await prismaCommentaireRepository.anonymiserAuteurs([auteurId2], 'auteur.inconnu@modernisation.gouv.fr');
+      await prismaCommentaireRepository.anonymiserAuteurs([auteurId2], 'utilisateur.supprime@modernisation.gouv.fr');
 
       // Then
       const commentairesAvecAuteurAnonyme = await prisma.commentaire.findMany({ where: { auteur_id: auteurId3 } });
