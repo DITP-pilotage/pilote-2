@@ -27,6 +27,7 @@ export const useFormulaireIndicateur = (chantierId: string, indicateurId: string
 
     body.append('file', file);
 
+    // TODO(JOTA: 03/07/2025): Utiliser react-query pour gérer la requête
     const detailValidationFichier: DetailValidationFichierContrat = await fetch(`/api/chantier/${chantierId}/indicateur/${indicateurId}/verifier`, {
       method: 'POST',
       body,

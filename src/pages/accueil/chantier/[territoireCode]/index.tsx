@@ -56,6 +56,7 @@ import { ExportDesDonneesV2, ID_HTML_MODALE_EXPORT_V2 } from '@/components/PageA
 import ExportDesDonnées, { ID_HTML_MODALE_EXPORT } from '@/components/PageAccueil/PageChantiers/ExportDesDonnées/ExportDesDonnées';
 import { PanelMenuNavigation } from '@/components/_commons/PanelMenuNavigation/PanelMenuNavigation';
 import { FiltresActifs } from '@/components/PageAccueil/FiltresActifs/FiltresActifs';
+import { apiClient } from 'lib/api-client';
 import IndexStyled from './index.styled';
 
 interface ChantierAccueil {
@@ -244,6 +245,81 @@ const PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE = new Set([
 
 const PROFIL_REGIONAUX_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE = new Set(profilsRégionaux);
 
+export function usePresentation() {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [taskId, setTaskId] = useState<string | null>(null);
+  const [status, setStatus] = useState<string>('idle');
+  const [error, setError] = useState<string | null>(null);
+
+  const generatePresentation = async (params: { territoire_code: string, maille: string }) => {
+    try {
+      setIsGenerating(true);
+      setError(null);
+      
+      const result = await apiClient.generatePresentation(params);
+      setTaskId(result.task_id);
+      setStatus(result.status);
+      
+      // Polling pour vérifier le statut
+      const checkStatus = async () => {
+        try {
+          const statusResult = await apiClient.checkStatus(result.task_id);
+          setStatus(statusResult.status);
+          
+          if (statusResult.status === 'completed') {
+            setIsGenerating(false);
+          } else if (statusResult.status === 'failed') {
+            setError(statusResult.error || 'Génération échouée');
+            setIsGenerating(false);
+          } else {
+            // Continuer le polling
+            setTimeout(checkStatus, 3000);
+          }
+        } catch (error_: any) {
+          setError(error_.message);
+          setIsGenerating(false);
+        }
+      };
+
+      // Démarrer le polling après 2 secondes
+      setTimeout(checkStatus, 2000);
+      
+    } catch (error_: any) {
+      setError(error_.message);
+      setIsGenerating(false);
+    }
+  };
+
+  const downloadPresentation = async () => {
+    if (!taskId) return;
+    
+    try {
+      const blob = await apiClient.downloadPresentation(taskId);
+      
+      // Créer un lien de téléchargement
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `presentation_${taskId}.pptx`;
+      document.body.append(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    } catch (error_: any) {
+      setError(error_.message);
+    }
+  };
+
+  return {
+    generatePresentation,
+    downloadPresentation,
+    isGenerating,
+    status,
+    error,
+    taskId,
+  };
+}
+
 const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   chantiers,
   chantiersIdsExport,
@@ -291,6 +367,8 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
 
   const queryParamString = useGetFullQueryParamString();
 
+  const { generatePresentation, downloadPresentation, isGenerating, status, error, taskId } = usePresentation();
+
   return (
     <IndexStyled>
       <Head>
@@ -315,89 +393,124 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             <div className='titre flex align-center'>
               <div className='titre-liens'>
                 {
-                process.env.NEXT_PUBLIC_FF_FICHE_TERRITORIALE === 'true' && estAutoriséAConsulterLaFicheTerritoriale(session?.profil || '') ? (
-                  <div className='fr-mb-1v'>
-                    {
-                      territoireCode === 'NAT-FR' ? (
-                        <button
-                          className='lien-menu fr-link fr-link--icon-left fr-icon-article-line fr-btn--icon-left fr-text--sm'
-                          disabled
-                          title='Veuillez séléctionner un territoire pour accéder à sa fiche territoriale'
-                          type='button'
-                        >
-                          Fiche territoriale
-                        </button>
-                      ) : (
-                        <Link
-                          className='lien-menu fr-link fr-link--icon-left fr-icon-article-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france'
-                          href={`/fiche-territoriale?territoireCode=${territoireCode}`}
-                          title='Voir la fiche territoriale'
-                        >
-                          Fiche territoriale
-                        </Link>
-                      )
-                    }
-                  </div>
-                ) : null
-              }
+                  process.env.NEXT_PUBLIC_FF_FICHE_TERRITORIALE === 'true' && estAutoriséAConsulterLaFicheTerritoriale(session?.profil || '') ? (
+                    <div className='fr-mb-1v'>
+                      {
+                        territoireCode === 'NAT-FR' ? (
+                          <button
+                            className='lien-menu fr-link fr-link--icon-left fr-icon-article-line fr-btn--icon-left fr-text--sm'
+                            disabled
+                            title='Veuillez séléctionner un territoire pour accéder à sa fiche territoriale'
+                            type='button'
+                          >
+                            Fiche territoriale
+                          </button>
+                        ) : (
+                          <Link
+                            className='lien-menu fr-link fr-link--icon-left fr-icon-article-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france'
+                            href={`/fiche-territoriale?territoireCode=${territoireCode}`}
+                            title='Voir la fiche territoriale'
+                          >
+                            Fiche territoriale
+                          </Link>
+                        )
+                      }
+                    </div>
+                  ) : null
+                }
                 {
-                process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' ? (
-                  <div className='fr-mb-1v'>
-                    <Link
-                      className='lien-menu fr-link fr-link--icon-left fr-icon-article-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france'
-                      href={`${territoireCode}/rapport-detaille${queryParamString.length > 0 ? `?${queryParamString}` : ''}`}
-                      title='Voir le rapport détaillé'
-                    >
-                      Voir le rapport détaillé
-                    </Link>
-                  </div>
-                ) : null
-              }
+                  process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' ? (
+                    <div className='fr-mb-1v'>
+                      <Link
+                        className='lien-menu fr-link fr-link--icon-left fr-icon-article-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france'
+                        href={`${territoireCode}/rapport-detaille${queryParamString.length > 0 ? `?${queryParamString}` : ''}`}
+                        title='Voir le rapport détaillé'
+                      >
+                        Voir le rapport détaillé
+                      </Link>
+                    </div>
+                  ) : null
+                }
                 {
-                estExportV2Actif ? (
-                  <div>
-                    <button
-                      aria-controls={ID_HTML_MODALE_EXPORT_V2}
-                      className='fr-link fr-link--icon-left fr-icon-download-line fr-btn--icon-left fr-text--sm fr-p-0 border-b border-blue-france'
-                      data-fr-opened={optionsExport.isModaleExportCsvOuverte}
-                      onClick={() => {
-                        setOptionsExport({
-                          isModaleExportCsvOuverte: true,
-                          etapeCourante: 1,
-                          typeExport: 'chantiers',
-                        });
-                      }}
-                      type='button'
-                    >
-                      Exporter les données
-                    </button>
-                    <ExportDesDonneesV2
-                      fermetureCallback={() => {
-                        setOptionsExport({
-                          etapeCourante: 1,
-                          typeExport: 'chantiers',
-                        }, { clearOnDefault: true, shallow: true });
-                        setOptionsExport({
-                          isModaleExportCsvOuverte: false,
-                        }, { clearOnDefault: true, shallow: true });
-                      }}
-                      territoireCodeSelectionne={territoireCode}
-                    />
-                  </div>
-                ) : (
-                  <div>
-                    <button
-                      aria-controls={ID_HTML_MODALE_EXPORT}
-                      className='fr-link fr-link--icon-left fr-icon-download-line fr-btn--icon-left fr-text--sm fr-p-0 border-b border-blue-france'
-                      data-fr-opened='false'
-                      type='button'
-                    >
-                      Exporter les données
-                    </button>
-                    <ExportDesDonnées listeChantierId={chantiersIdsExport} />
-                  </div>
-                )
-              }
+                  process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' ? (
+                    <div className='fr-mb-1v'>
+                      {
+                        !isGenerating && status === 'completed' && taskId ? (
+                          <button
+                            className='lien-menu fr-link fr-link--icon-left fr-icon-article-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france'
+                            onClick={() => {
+                              downloadPresentation();
+                            }}
+                            type='button'
+                          >
+                            Télécharger le rapport détaillé
+                          </button>
+                        ) : (
+                          <button
+                            className='lien-menu fr-link fr-link--icon-left fr-icon-article-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france'
+                            disabled={isGenerating}
+                            onClick={() => {
+                              generatePresentation({
+                                territoire_code: territoireCode,
+                                maille: mailleQuery,
+                              });
+                            }}
+                            title='Voir le rapport détaillé'
+                            type='button'
+                          >
+                            {isGenerating ? 'Génération en cours...' : 'Voir le rapport détaillé POC'}
+                          </button>
+                        )
+                      }
+                      
+                    </div>
+                  ) : null
+                }
+                {
+                  estExportV2Actif ? (
+                    <div>
+                      <button
+                        aria-controls={ID_HTML_MODALE_EXPORT_V2}
+                        className='fr-link fr-link--icon-left fr-icon-download-line fr-btn--icon-left fr-text--sm fr-p-0 border-b border-blue-france'
+                        data-fr-opened={optionsExport.isModaleExportCsvOuverte}
+                        onClick={() => {
+                          setOptionsExport({
+                            isModaleExportCsvOuverte: true,
+                            etapeCourante: 1,
+                            typeExport: 'chantiers',
+                          });
+                        }}
+                        type='button'
+                      >
+                        Exporter les données
+                      </button>
+                      <ExportDesDonneesV2
+                        fermetureCallback={() => {
+                          setOptionsExport({
+                            etapeCourante: 1,
+                            typeExport: 'chantiers',
+                          }, { clearOnDefault: true, shallow: true });
+                          setOptionsExport({
+                            isModaleExportCsvOuverte: false,
+                          }, { clearOnDefault: true, shallow: true });
+                        }}
+                        territoireCodeSelectionne={territoireCode}
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <button
+                        aria-controls={ID_HTML_MODALE_EXPORT}
+                        className='fr-link fr-link--icon-left fr-icon-download-line fr-btn--icon-left fr-text--sm fr-p-0 border-b border-blue-france'
+                        data-fr-opened='false'
+                        type='button'
+                      >
+                        Exporter les données
+                      </button>
+                      <ExportDesDonnées listeChantierId={chantiersIdsExport} />
+                    </div>
+                  )
+                }
               </div>
             </div>
           </BarreLatéraleEncart>

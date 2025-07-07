@@ -8,6 +8,7 @@ export const usePublierIndicateur = (chantierId: string, indicateurId: string, r
   const publierLeFichier: FormEventHandler<UploadFichierFormulaireElement> = async (event) => {
     event.preventDefault();
 
+    // TODO(JOTA: 03/07/2025): Utiliser react-query pour gérer la requête
     await fetch(`/api/chantier/${chantierId}/indicateur/${indicateurId}?rapportId=${rapportId}`, {
       method: 'POST',
     }).catch(error => {
