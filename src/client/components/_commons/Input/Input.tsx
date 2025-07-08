@@ -21,6 +21,7 @@ interface InputProps {
   register: UseFormRegisterReturn;
   disabled?: boolean;
   className?: string;
+  classNameGroupe?: string;
 }
 
 const Input: FunctionComponent<PropsWithChildren<InputProps>> = ({
@@ -32,10 +33,11 @@ const Input: FunctionComponent<PropsWithChildren<InputProps>> = ({
   register,
   disabled,
   className,
+  classNameGroupe,
 }) => {
   return (
     <div
-      className={`fr-input-group ${erreur !== undefined || erreurMessage ? "fr-input-group--error" : ""}`}
+      className={`fr-input-group ${erreur !== undefined || erreurMessage ? "fr-input-group--error" : ""}${classNameGroupe !== undefined ? " " + classNameGroupe : ""}`}
     >
       {children}
       <input

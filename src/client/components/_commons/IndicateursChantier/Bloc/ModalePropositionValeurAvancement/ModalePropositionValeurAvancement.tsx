@@ -11,19 +11,31 @@ import useModalePropositionValeurAvancement, {
 import Input from "@/components/_commons/Input/Input";
 import { formaterDate } from "@/client/utils/date/date";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
+import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
 
 export const ModalePropositionValeurAvancement: FunctionComponent<{
   indicateur: Indicateur;
   detailIndicateur: DétailsIndicateur;
   generatedHTMLID: string;
   territoireCode: string;
-}> = ({ indicateur, detailIndicateur, generatedHTMLID, territoireCode }) => {
+  territoireCodeInsee: string;
+  territoireNom: string;
+}> = ({
+  indicateur,
+  detailIndicateur,
+  generatedHTMLID,
+  territoireCode,
+  territoireCodeInsee,
+  territoireNom,
+}) => {
   const {
     reactHookForm,
     creerPropositonValeurAvancement,
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
     auteurModification,
+    EtapeSuivanteEstDesactive,
+    estUneModificationDeProposition,
   } = useModalePropositionValeurAvancement({
     indicateur,
     detailIndicateur,
@@ -40,7 +52,9 @@ export const ModalePropositionValeurAvancement: FunctionComponent<{
                 {`${Stepper[etapePropositionValeurAvancement].titre}`}
               </span>
               <span className="fr-stepper__state">
-                {`Proposition d'une autre valeur d'avancement - Étape ${Stepper[etapePropositionValeurAvancement].numeroEtape} sur 2`}
+                {estUneModificationDeProposition
+                  ? `Modifier la proposition de valeur d'avancement - Étape ${Stepper[etapePropositionValeurAvancement].numeroEtape} sur 2`
+                  : `Proposer une autre valeur d'avancement - Étape ${Stepper[etapePropositionValeurAvancement].numeroEtape} sur 2`}
               </span>
             </h2>
             <div
@@ -67,11 +81,19 @@ export const ModalePropositionValeurAvancement: FunctionComponent<{
               {etapePropositionValeurAvancement ===
               EtapePropositionValeurAvancement.SAISIE_VALEUR_ACTUELLE ? (
                 <>
-                  <h2 className="fr-h4">{indicateur.nom}</h2>
+                  <h2 className="fr-h4">
+                    {`${indicateur.id} ${indicateur.nom}`}
+                  </h2>
+                  <p className="fr-text fr-text--sm fr-mb-1w">
+                    {`${territoireCodeInsee} - ${territoireNom}`}
+                  </p>
+                  <p className="fr-text texte-warning fr-text--xs text-italic fr-mb-2w">
+                    *tous les champs sont obligatoires
+                  </p>
                   {detailIndicateur.proposition !== null ? (
                     <p className="fr-text--sm fr-mt-1v">
                       La proposition de nouvelle valeur d'avancement que vous
-                      éditez a été faite par{" "}
+                      modifiez a été faite par{" "}
                       {detailIndicateur.proposition.auteur} le{" "}
                       {formaterDate(
                         detailIndicateur.proposition.dateProposition,
@@ -88,7 +110,9 @@ export const ModalePropositionValeurAvancement: FunctionComponent<{
                       </span>
                       <div className="w-full flex flex-column justify-between fr-pt-1w">
                         <span className="flex justify-center fr-mb-5v">
-                          {detailIndicateur.valeurAvancementMandat?.toLocaleString()}
+                          {detailIndicateur.valeurAvancementMandat?.toLocaleString(
+                            "fr-FR",
+                          )}
                         </span>
                         <span className="flex justify-center align-end texte-gris">
                           (
@@ -101,24 +125,38 @@ export const ModalePropositionValeurAvancement: FunctionComponent<{
                       </div>
                     </div>
                     <div className="w-half-full fr-ml-1w border">
-                      <span className="fr-background-action-low-blue-france w-full flex justify-center fr-p-1w">
-                        Proposition de nouvelle valeur d'avancement
-                      </span>
+                      {estUneModificationDeProposition ? (
+                        <span className="fr-background-action-low-blue-france w-full flex justify-center fr-p-1w">
+                          {`Valeur d'avancement proposée par ${detailIndicateur.proposition?.auteur} le ${formaterDate(detailIndicateur.proposition!.dateProposition, "DD/MM/YYYY")}`}
+                        </span>
+                      ) : (
+                        <span className="fr-background-action-low-blue-france w-full flex justify-center fr-p-1w">
+                          Proposition de nouvelle valeur d'avancement
+                          <ChampObligatoire />
+                        </span>
+                      )}
                       <div className="w-full flex flex-column align-center fr-pt-1w">
-                        <div className="w-half-full flex fr-mb-1w">
-                          <Input
-                            className="text-center"
-                            erreurMessage={
-                              reactHookForm.formState.errors.valeurAvancement
-                                ?.message
-                            }
-                            htmlName="valeurAvancement"
-                            register={reactHookForm.register(
-                              "valeurAvancement",
-                            )}
-                            type="text"
-                          />
-                        </div>
+                        {estUneModificationDeProposition ? (
+                          <span className="flex justify-center fr-mb-5v">
+                            {detailIndicateur.proposition?.valeurAvancement}
+                          </span>
+                        ) : (
+                          <div className="w-half-full flex fr-mb-1w">
+                            <Input
+                              className="text-center"
+                              erreurMessage={
+                                reactHookForm.formState.errors.valeurAvancement
+                                  ?.message
+                              }
+                              htmlName="valeurAvancement"
+                              register={reactHookForm.register(
+                                "valeurAvancement",
+                              )}
+                              type="text"
+                            />
+                          </div>
+                        )}
+
                         <span className="flex justify-center texte-gris">
                           (
                           {formaterDate(
@@ -130,7 +168,34 @@ export const ModalePropositionValeurAvancement: FunctionComponent<{
                       </div>
                     </div>
                   </div>
-                  <div className="fr-mt-1w">
+                  {estUneModificationDeProposition ? (
+                    <div className="fr-mt-2w">
+                      <label className="fr-label" htmlFor="valeurAvancement">
+                        Valeur modifiée
+                        <ChampObligatoire />
+                      </label>
+                      <Input
+                        className="fr-mt-1v input--sm"
+                        classNameGroupe="fr-mb-1v"
+                        erreurMessage={
+                          reactHookForm.formState.errors.valeurAvancement
+                            ?.message
+                        }
+                        htmlName="valeurAvancement"
+                        register={reactHookForm.register("valeurAvancement")}
+                        type="text"
+                      />
+                      <span className="flex texte-gris fr-text--xs">
+                        (
+                        {formaterDate(
+                          detailIndicateur.dateValeurAvancementMandat,
+                          "MM/YYYY",
+                        )}
+                        )
+                      </span>
+                    </div>
+                  ) : null}
+                  <div className="fr-mt-2w">
                     <TextAreaAvecLabel
                       erreurMessage={
                         reactHookForm.formState.errors.motifProposition?.message
@@ -138,12 +203,13 @@ export const ModalePropositionValeurAvancement: FunctionComponent<{
                       htmlName="motifProposition"
                       isRequired
                       libellé="Motif de la proposition"
+                      placeholder="Indiquez ici d'où provient la différence entre la valeur actuelle que vous proposez et celle qui a été importée initialement par la direction de projet."
                       register={reactHookForm.register("motifProposition", {
                         required: true,
                       })}
                     />
                   </div>
-                  <div className="fr-mt-1w">
+                  <div className="fr-mt-2w">
                     <TextAreaAvecLabel
                       erreurMessage={
                         reactHookForm.formState.errors
@@ -152,6 +218,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<{
                       htmlName="sourceDonneeEtMethodeCalcul"
                       isRequired
                       libellé="Sources des données et méthode de calcul"
+                      placeholder="Afin de documenter votre proposition, indiquez ici la source de vos données ainsi que la méthode de calcul qui vous a permis d'aboutir à la valeur proposée. Le cas échéant, précisez en quoi cette méthode est différente de celle mise en œuvre par la direction de projet"
                       register={reactHookForm.register(
                         "sourceDonneeEtMethodeCalcul",
                         { required: true },
@@ -161,14 +228,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<{
                   <div className="w-full flex justify-end fr-mt-2w">
                     <button
                       className="fr-btn"
-                      disabled={
-                        Object.keys(reactHookForm.formState.errors).length >
-                          0 ||
-                        reactHookForm.getValues("motifProposition").length ===
-                          0 ||
-                        reactHookForm.getValues("sourceDonneeEtMethodeCalcul")
-                          .length === 0
-                      }
+                      disabled={EtapeSuivanteEstDesactive}
                       onClick={() =>
                         setEtapePropositionValeurAvancement(
                           EtapePropositionValeurAvancement.VALIDATION_VALEUR_ACTUELLE,
@@ -189,7 +249,12 @@ export const ModalePropositionValeurAvancement: FunctionComponent<{
                     votre proposition.
                   </span>
                   <div className="fr-callout fr-py-2w fr-mt-2w">
-                    <h3 className="fr-callout__title">{indicateur.nom}</h3>
+                    <h3 className="fr-callout__title fr-mb-0">
+                      {`${indicateur.id} ${indicateur.nom}`}
+                    </h3>
+                    <p className="fr-text fr-text--sm fr-mb-1w">
+                      {`${territoireCodeInsee} - ${territoireNom}`}
+                    </p>
                     <p className="fr-callout__text fr-text--sm">
                       <span className="fr-text--bold">
                         Valeur d'avancement proposée le{" "}
@@ -207,13 +272,17 @@ export const ModalePropositionValeurAvancement: FunctionComponent<{
                       <span className="fr-text--bold">
                         Motif de la proposition :
                       </span>{" "}
-                      {reactHookForm.getValues("motifProposition")}
+                      <span className="text-italic">
+                        {reactHookForm.getValues("motifProposition")}
+                      </span>
                     </p>
                     <p className="fr-callout__text fr-text--sm">
                       <span className="fr-text--bold">
                         Source des données et méthode de calcul :
                       </span>{" "}
-                      {reactHookForm.getValues("sourceDonneeEtMethodeCalcul")}
+                      <span className="text-italic">
+                        {reactHookForm.getValues("sourceDonneeEtMethodeCalcul")}
+                      </span>
                     </p>
                   </div>
                   <div className="fr-alert fr-alert--info">
@@ -223,8 +292,8 @@ export const ModalePropositionValeurAvancement: FunctionComponent<{
                     <p>
                       Nous vous rappelons que la valeur d'avancement que vous
                       proposez ne sera pas prise en compte dans le calcul du
-                      taux d'avancement global de la PPG. Cette proposition vise
-                      à engager un dialogue avec la direction de projet au
+                      taux d'avancement global du chantier. Cette proposition
+                      vise à engager un dialogue avec la direction de projet au
                       niveau national, qui en sera informée. Si votre
                       proposition n'est pas intégrée par la direction de projet,
                       elle ne sera plus visible dans l'historique de
@@ -257,11 +326,11 @@ export const ModalePropositionValeurAvancement: FunctionComponent<{
         <div className="fr-alert fr-alert--success fr-mt-2w">
           <h3 className="fr-alert__title">
             La proposition de valeur d'avancement a correctement été prise en
-            compte. Vous pouvez clore cette fenêtre.
+            compte
           </h3>
           <span>
             La proposition de valeur d'avancement s'affichera dans le tableau
-            des indicateurs dans une heure. Veuillez noter que dans cet
+            des indicateurs dans une heure. Veuillez noter que, dans cet
             intervalle, il n'est pas possible de faire une autre proposition
             pour cet indicateur.
           </span>

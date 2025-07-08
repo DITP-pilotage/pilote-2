@@ -20,6 +20,7 @@ interface TexteAreaLabelProps {
   className?: string;
   texteAide?: string;
   type?: HTMLInputTypeAttribute;
+  placeholder?: string;
 }
 
 const TextAreaAvecLabel: FunctionComponent<TexteAreaLabelProps> = ({
@@ -32,6 +33,7 @@ const TextAreaAvecLabel: FunctionComponent<TexteAreaLabelProps> = ({
   register,
   disabled,
   className,
+  placeholder,
 }) => {
   return (
     <div
@@ -46,6 +48,7 @@ const TextAreaAvecLabel: FunctionComponent<TexteAreaLabelProps> = ({
         className={`fr-input${erreur !== undefined || erreurMessage ? " fr-input-group--error" : ""}${className !== undefined ? " " + className : ""}`}
         disabled={disabled}
         id={htmlName}
+        placeholder={placeholder}
         {...register}
       />
       {(erreur !== undefined || erreurMessage !== undefined) && (

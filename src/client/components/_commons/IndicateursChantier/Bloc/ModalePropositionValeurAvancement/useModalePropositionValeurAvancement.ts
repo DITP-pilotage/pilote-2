@@ -100,7 +100,7 @@ const useModalePropositionValeurAvancement = ({
             territoireCode,
           }
         : {
-            valeurAvancement: `${detailIndicateur.valeurAvancementMandat}`,
+            valeurAvancement: `${detailIndicateur.proposition.valeurAvancement}`,
             motifProposition: detailIndicateur.proposition.motif || "",
             sourceDonneeEtMethodeCalcul:
               detailIndicateur.proposition.sourceDonneeEtMethodeCalcul || "",
@@ -110,8 +110,18 @@ const useModalePropositionValeurAvancement = ({
           },
   });
 
+  const estUneModificationDeProposition = detailIndicateur.proposition !== null;
+
   reactHookForm.watch("motifProposition");
   reactHookForm.watch("sourceDonneeEtMethodeCalcul");
+  reactHookForm.watch("valeurAvancement");
+
+  const EtapeSuivanteEstDesactive =
+    Object.keys(reactHookForm.formState.errors).length > 0 ||
+    reactHookForm.getValues("motifProposition").length === 0 ||
+    reactHookForm.getValues("sourceDonneeEtMethodeCalcul").length === 0 ||
+    Number.parseFloat(reactHookForm.getValues("valeurAvancement")) ===
+      detailIndicateur.valeurAvancementMandat;
 
   return {
     reactHookForm,
@@ -119,6 +129,8 @@ const useModalePropositionValeurAvancement = ({
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
     auteurModification,
+    EtapeSuivanteEstDesactive,
+    estUneModificationDeProposition,
   };
 };
 
