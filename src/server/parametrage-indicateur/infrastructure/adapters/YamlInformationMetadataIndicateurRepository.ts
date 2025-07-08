@@ -6,7 +6,6 @@ import { AcceptedValue } from '@/server/parametrage-indicateur/domain/AcceptedVa
 import data from '../../../../../data_management/models/staging/import/sources.yml';
 
 interface YamlAcceptedValue {
-
   order_id: number,
   value: string,
   name: string,

@@ -78,6 +78,9 @@ export interface RawMetadataParametrageIndicateurModel {
   contact_technique: string,
   contact_technique_email: string,
   commentaire: string,
+  maille_pilotage: string,
+  cible_attendue: string,
+  couverture_temporelle: string,
 }
 
 const makeStrSafer = (str: string | null): string | null => {
@@ -152,6 +155,9 @@ function convertirEnMetadataParametrageIndicateur(rawMetadataParametrageIndicate
     contactTechnique: rawMetadataParametrageIndicateur.contact_technique,
     contactTechniqueEmail: rawMetadataParametrageIndicateur.contact_technique_email,
     commentaire: rawMetadataParametrageIndicateur.commentaire,
+    maillePilotage: rawMetadataParametrageIndicateur.maille_pilotage,
+    cibleAttendue: rawMetadataParametrageIndicateur.cible_attendue,
+    couvertureTemporelle: rawMetadataParametrageIndicateur.couverture_temporelle,
   });
 }
 export class PrismaMetadataParametrageIndicateurRepository implements MetadataParametrageIndicateurRepository {
@@ -285,7 +291,10 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                              resp_donnees_email               = ${makeStrSafer(inputs.respDonneesEmail)},
                                              contact_technique                 = ${makeStrSafer(inputs.contactTechnique)},
                                              contact_technique_email               = ${makeStrSafer(inputs.contactTechniqueEmail)},
-                                             commentaire                 = ${makeStrSafer(inputs.commentaire)}
+                                             commentaire                 = ${makeStrSafer(inputs.commentaire)},
+                                             maille_pilotage               = ${makeStrSafer(inputs.maillePilotage)},
+                                             cible_attendue               = ${makeStrSafer(inputs.cibleAttendue)},
+                                             couverture_temporelle               = ${makeStrSafer(inputs.couvertureTemporelle)}
                                          WHERE indic_id = '${inputs.indicId}'`;
 
     await prisma.$transaction([
@@ -412,7 +421,10 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                                                                 resp_donnees_email,
                                                                                                 contact_technique,
                                                                                                 contact_technique_email,
-                                                                                                commentaire)
+                                                                                                commentaire,
+                                                                                                maille_pilotage,
+                                                                                                cible_attendue,
+                                                                                                couverture_temporelle)
                                          VALUES ('${inputs.indicId}',
                                                  ${makeStrSafer(inputs.reformePrioritaire)}, 
                                                  '${inputs.projetAnnuelPerf}', 
@@ -431,7 +443,10 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  ${makeStrSafer(inputs.respDonneesEmail)}, 
                                                  ${makeStrSafer(inputs.contactTechnique)},
                                                  ${makeStrSafer(inputs.contactTechniqueEmail)},
-                                                 ${makeStrSafer(inputs.commentaire)})`;
+                                                 ${makeStrSafer(inputs.commentaire)},
+                                                 ${makeStrSafer(inputs.maillePilotage)},
+                                                 ${makeStrSafer(inputs.cibleAttendue)},
+                                                 ${makeStrSafer(inputs.couvertureTemporelle)})`;
     await prisma.$transaction([
       prisma.$queryRaw`${Prisma.raw(queryIndicateur)}`,
       prisma.$queryRaw`${Prisma.raw(queryMetadataIndicateur)}`,
@@ -607,7 +622,10 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                                         resp_donnees_email,
                                                                         contact_technique,
                                                                         contact_technique_email,
-                                                                        commentaire)
+                                                                        commentaire,
+                                                                        maille_pilotage,
+                                                                        cible_attendue,
+                                                                        couverture_temporelle)
                                          VALUES ('${indicateur.indicId}',
                                                  ${makeStrSafer(indicateur.reformePrioritaire)}, 
                                                  '${indicateur.projetAnnuelPerf}', 
@@ -626,7 +644,10 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  ${makeStrSafer(indicateur.respDonneesEmail)}, 
                                                  ${makeStrSafer(indicateur.contactTechnique)},
                                                  ${makeStrSafer(indicateur.contactTechniqueEmail)}, 
-                                                 ${makeStrSafer(indicateur.commentaire)})
+                                                 ${makeStrSafer(indicateur.commentaire)},
+                                                 ${makeStrSafer(indicateur.maillePilotage)},
+                                                 ${makeStrSafer(indicateur.cibleAttendue)},
+                                                 ${makeStrSafer(indicateur.couvertureTemporelle)})
 
                                            ON CONFLICT (indic_id) DO UPDATE
                                                  SET reforme_prioritaire = ${makeStrSafer(indicateur.reformePrioritaire)}, 
@@ -646,7 +667,10 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  resp_donnees_email = ${makeStrSafer(indicateur.respDonneesEmail)}, 
                                                  contact_technique = ${makeStrSafer(indicateur.contactTechnique)},
                                                  contact_technique_email = ${makeStrSafer(indicateur.contactTechniqueEmail)}, 
-                                                 commentaire = ${makeStrSafer(indicateur.commentaire)};`;
+                                                 commentaire = ${makeStrSafer(indicateur.commentaire)},
+                                                 maille_pilotage = ${makeStrSafer(indicateur.maillePilotage)},
+                                                 cible_attendue = ${makeStrSafer(indicateur.cibleAttendue)},
+                                                 couverture_temporelle = ${makeStrSafer(indicateur.couvertureTemporelle)};`;
     } ;
 
     const listePromise = listeMetadataIndicateur.flatMap(indicateur => {

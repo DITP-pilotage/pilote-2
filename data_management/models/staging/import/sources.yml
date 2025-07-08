@@ -805,9 +805,9 @@ sources:
           - name: mailles
             data_type: text
             description: |
-              Mailles géographiques pour lesquelles les données peuvent être fournies
+              Mailles données pour lesquelles les données peuvent être fournies
             meta:
-              pilote_alias: "Mailles géographiques"
+              pilote_alias: "Mailles données"
               pilote_edit_boxType: multi-select
               pilote_disp_dispDesc: true
               pilote_create_defaultValue: ""
@@ -959,6 +959,57 @@ sources:
               pilote_disp_blocId: 7
               pilote_edit_regex: null
               pilote_edit_regexViolationMessage: null
+
+          - name: maille_pilotage
+            data_type: text
+            description: >
+              Maille de pilotage de l'indicateur.
+            meta:
+              pilote_alias: "Maille de pilotage"
+              pilote_edit_boxType: multi-select
+              pilote_disp_dispDesc: true
+              pilote_create_defaultValue: "_"
+              pilote_disp_blocId: 2
+              pilote_edit_acceptedValues: [
+                { "order_id": 1, "value": "_", "name": "Aucune maille", "desc": "Aucune maille" },
+                { "order_id": 2, "value": "REG", "name": "Région", "desc": "Région" },
+                { "order_id": 3, "value": "NAT", "name": "Nation", "desc": "Nation" },
+                { "order_id": 4, "value": "DEPT", "name": "Département", "desc": "Département" },
+              ]
+
+          - name: cible_attendue
+            data_type: text
+            description: >
+              Cible attendue de l'indicateur.
+            meta:
+              pilote_alias: "Cible attendue"
+              pilote_edit_boxType: multi-select
+              pilote_disp_dispDesc: true
+              pilote_create_defaultValue: "_"
+              pilote_disp_blocId: 2
+              pilote_edit_acceptedValues: [
+                { "order_id": 1, "value": "_", "name": "Aucune cible", "desc": "Aucune cible" },
+                { "order_id": 2, "value": "cible_1", "name": "Cible 1", "desc": "Cible 1" },
+                { "order_id": 3, "value": "cible_2", "name": "Cible 2", "desc": "Cible 2" },
+                { "order_id": 4, "value": "cible_3", "name": "Cible 3", "desc": "Cible 3" }
+              ]
+
+          - name: couverture_temporelle
+            data_type: text
+            description: >
+              Couverture temporelle de l'indicateur.
+            meta:
+              pilote_alias: "Couverture temporelle"
+              pilote_edit_boxType: multi-select
+              pilote_disp_dispDesc: true
+              pilote_create_defaultValue: "_"
+              pilote_disp_blocId: 2
+              pilote_edit_acceptedValues: [
+                { "order_id": 1, "value": "_", "name": "Aucune couverture", "desc": "Aucune couverture" },
+                { "order_id": 2, "value": "couverture_1", "name": "Couverture 1", "desc": "Couverture 1" },
+                { "order_id": 3, "value": "couverture_2", "name": "Couverture 2", "desc": "Couverture 2" },
+                { "order_id": 4, "value": "couverture_3", "name": "Couverture 3", "desc": "Couverture 3" }
+              ]
 
   - name: import_from_files
     description: "Cette base de données correspond à la base Pilote de production."

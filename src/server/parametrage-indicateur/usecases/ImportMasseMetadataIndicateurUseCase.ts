@@ -77,6 +77,9 @@ const convertirEnImportMetadataIndicateur = (record: RecordCSVImport): ImportMet
   contactTechnique: record.contact_technique || null,
   contactTechniqueEmail: record.contact_technique_email,
   commentaire: record.commentaire || null,
+  maillePilotage: record.maille_pilotage || null,
+  cibleAttendue: record.cible_attendue || null,
+  couvertureTemporelle: record.couverture_temporelle || null,
 });
 
 const AvailableHeaderCSVImport = [
@@ -144,6 +147,9 @@ const AvailableHeaderCSVImport = [
   'contact_technique',
   'contact_technique_email',
   'commentaire',
+  'maille_pilotage',
+  'cible_attendue',
+  'couverture_temporelle',
 ] as const;
 
 const TEXT_LABEL_CREATION_ID = 'CREATE-ID';
