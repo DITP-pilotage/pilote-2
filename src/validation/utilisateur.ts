@@ -32,7 +32,6 @@ export const validationInfosBaseUtilisateur = z.object( {
   fonction: z.string().max(100).nullable(),
   profil: z.enum(profilsCodes),
   saisieIndicateur: z.boolean(),
-  saisieCommentaire: z.boolean(),
   gestionUtilisateur: z.boolean(),
 });
 
@@ -62,6 +61,9 @@ export const validationInfosHabilitationsUtilisateur = z.object({
       périmètres: z.string().array(),
     }),
     responsabilite: z.object({
+      chantiers: z.string().array(),
+    }),
+    saisieCommentaire: z.object({
       chantiers: z.string().array(),
     }),
   }),

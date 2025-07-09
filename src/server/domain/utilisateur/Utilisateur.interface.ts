@@ -55,7 +55,6 @@ type Utilisateur = {
   auteurCreation: string | null
   fonction: string | null
   saisieIndicateur: boolean
-  saisieCommentaire: boolean
   gestionUtilisateur: boolean
   habilitations: Habilitations
   dateDesactivation: string | null
@@ -68,7 +67,6 @@ export type UtilisateurÀCréerOuMettreÀJour =  {
   fonction: string | null
   profil: ProfilCode
   saisieIndicateur: boolean
-  saisieCommentaire: boolean
   gestionUtilisateur: boolean
   habilitations: HabilitationsÀCréerOuMettreÀJour
 };
@@ -80,7 +78,6 @@ export type UtilisateurÀCréerOuMettreÀJourSansHabilitation =  {
   fonction: string | null
   profil: ProfilCode,
   saisieIndicateur: boolean
-  saisieCommentaire: boolean
   gestionUtilisateur: boolean
 };
 

@@ -45,6 +45,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
     afficherChampGestionCompte,
     afficherChampSaisieCommentaire,
     perimetresSelectionnables,
+    chantiersAccessibleSaisieCommentaire,
   } = useSaisieDesInformationsUtilisateur();
 
   return (
@@ -227,9 +228,19 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
         >
           Droits de saisie des commentaires
         </Titre>
-        <CaseACocher
-          libellé='Accorder les droits de saisie des commentaires'
-          register={register('saisieCommentaire')}
+        <Controller
+          control={control}
+          name='habilitations.saisieCommentaire.chantiers'
+          render={() => (
+            <MultiSelectChantier
+              afficherBoutonsSélection
+              changementValeursSélectionnéesCallback={(valeursSélectionnées) => setValue('habilitations.saisieCommentaire.chantiers', valeursSélectionnées)}
+              chantiers={chantiersAccessibleSaisieCommentaire}
+              chantiersIdsSélectionnésParDéfaut={getValues('habilitations.saisieCommentaire.chantiers')}
+              desactive={chantiersAccessibleSaisieCommentaire.length === 0}
+            />
+          )}
+          rules={{ required: true }}
         />
       </div>
       <div className={`${afficherChampGestionCompte ? '' : 'fr-hidden'}`}>
