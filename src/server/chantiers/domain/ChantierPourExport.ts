@@ -1,7 +1,10 @@
+/* eslint-disable sonarjs/prefer-single-boolean-return */
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import Alerte from '@/server/domain/alerte/Alerte';
+import { ChantierTendance } from '@/server/domain/chantier/Chantier.interface';
 
 export type ChantierPourExport = {
   nom: string | null,
@@ -38,6 +41,12 @@ export type ChantierPourExport = {
   objDéjàFait: string | null,
   objÀFaire: string | null,
   synthèseDesRésultats: string | null
+  ecart: number | null
+  tendance: ChantierTendance | null
+  avancementTerritoire: number | null
+  cibleAttendu: boolean
+  aUnePropositionsValeurActuelle: boolean
+  aUnTauxAvancementDepartemental: boolean
 };
 
 export const verifierOptionPerimetreIds = (optionsExport: OptionsExport, perimetreIds: string[]) => {
@@ -49,7 +58,7 @@ export const verifierOptionEstBarometreEtEstTerritorialise = (optionsExport: Opt
 };
 
 export const verifierOptionStatut = (optionsExport: OptionsExport, chantierStatut: string | null) => {
-  return chantierStatut ? optionsExport.listeStatuts.length > 0 ? optionsExport.listeStatuts.includes(chantierStatut) : true : true;
+  return chantierStatut ? (optionsExport.listeStatuts.length > 0 ? optionsExport.listeStatuts.includes(chantierStatut) : true) : true;
 };
 
 export const verifierOptionMeteo = (optionsExport: OptionsExport, chantierMeteo: string | null) => {
@@ -61,4 +70,33 @@ export const masquerPourProfilDROM = (profil: ProfilCode, périmètreIds : strin
 };
 export const masquerPourProfilDROMEtMailleNat = (profil: ProfilCode, périmètreIds : string[], maille: string | null) => {
   return masquerPourProfilDROM(profil, périmètreIds) && maille === 'NAT';
+};
+
+export const verifierOptionChantiersSignales = (
+  optionsExport: OptionsExport, 
+  chantierEcart: number | null,
+  chantierTendance: ChantierTendance | null,
+  chantierAvancementTerritoire: number | null,
+  chantierCibleAttendue: boolean,
+  chantierAUnTauxAvancementDepartemental: boolean,
+  chantierMeteo: Météo,
+  chantierAUnePropositionsValeurActuelle: boolean,
+) => {
+  // eslint-disable-next-line unicorn/prefer-ternary
+  if (optionsExport.estEnAlerteAbscenceTauxAvancementDepartemental 
+    || optionsExport.estEnAlerteBaisse 
+    || optionsExport.estEnAlerteMétéoNonRenseignée 
+    || optionsExport.estEnAlertePossedePropositionsValeurActuelle
+    || optionsExport.estEnAlerteTauxAvancementNonCalculé
+    || optionsExport.estEnAlerteÉcart
+  ) {
+    return (optionsExport.estEnAlerteÉcart && Alerte.estEnAlerteÉcart(chantierEcart))
+    || (optionsExport.estEnAlerteBaisse && Alerte.estEnAlerteBaisse(chantierTendance))
+    || (optionsExport.estEnAlerteTauxAvancementNonCalculé && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierAvancementTerritoire, chantierCibleAttendue))
+    || (optionsExport.estEnAlerteAbscenceTauxAvancementDepartemental && Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantierAUnTauxAvancementDepartemental, chantierCibleAttendue))
+    || (optionsExport.estEnAlerteMétéoNonRenseignée && Alerte.estEnAlerteMétéoNonRenseignée(chantierMeteo))
+    || (optionsExport.estEnAlertePossedePropositionsValeurActuelle && Alerte.estEnAlertePossedePropositionsValeurActuelle(chantierAUnePropositionsValeurActuelle));
+  } else {
+    return true;
+  }
 };

@@ -1,5 +1,5 @@
 import Ministère from '@/server/domain/ministère/Ministère.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier, { ChantierTendance } from '@/server/domain/chantier/Chantier.interface';
 import Avancement from '@/server/domain/chantier/avancement/Avancement.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
@@ -35,6 +35,11 @@ export type IndicateurPourExport = {
   avancementGlobal: DétailsIndicateur['avancement']['global'] | null,
   maillesApplicables: string[]
   estApplicable: boolean | null
+  chantierEcart: number | null
+  chantierTendance: ChantierTendance | null
+  chantierCibleAttendue: boolean
+  chantierAUnTauxAvancementDepartemental: boolean
+  chantierAUnePropositionValeurAvancement: boolean
 };
 
 export const verifierApplicabiliteMaille = (maillesApplicablesIndicateur: string[], maille: string) => {

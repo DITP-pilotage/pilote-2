@@ -42,7 +42,7 @@ describe('PrismaDecisionStrategiqueRepository', () => {
           },
           {
             id: auteurId3,
-            email: 'auteur.inconnu@modernisation.gouv.fr',
+            email: 'utilisateur.supprime@modernisation.gouv.fr',
             nom: 'inconnu',
             prenom: 'auteur',
             date_creation: new Date().toISOString(),
@@ -81,7 +81,7 @@ describe('PrismaDecisionStrategiqueRepository', () => {
       });
 
       // When
-      await prismaDecisionStrategiqueRepository.anonymiserAuteurs([auteurId2], 'auteur.inconnu@modernisation.gouv.fr');
+      await prismaDecisionStrategiqueRepository.anonymiserAuteurs([auteurId2], 'utilisateur.supprime@modernisation.gouv.fr');
 
       // Then
       const decisionsAvecAuteurAnonyme = await prisma.decision_strategique.findMany({ where: { auteur_id: auteurId3 } });

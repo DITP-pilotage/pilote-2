@@ -23,11 +23,17 @@ export const handleExportDesChantiers = async (request: NextApiRequest, response
     perimetreIds: request.query.perimetreIds ? Array.isArray(request.query.perimetreIds) ? request.query.perimetreIds : [request.query.perimetreIds] as string[] : [],
     estBarometre: request.query.estBarometre === 'true',
     territorialisation: request.query.territorialisation ? Array.isArray(request.query.territorialisation) ? request.query.territorialisation.map(maille => maille as Maille) : [request.query.territorialisation as Maille] : [],
-    listeStatuts: request.query.statut ? Array.isArray(request.query.statut) ? request.query.statut : [request.query.statut] as string[] : [],
+    listeStatuts: request.query.statut ? Array.isArray(request.query.statut) ? request.query.statut : [request.query.statut] as string[] : (session.profilAAccèsAuxChantiersBrouillons ? [] : ['PUBLIE', 'BROUILLON']),
     listeChantierId: [],
     listeMeteos: request.query.meteos ? Array.isArray(request.query.meteos) ? request.query.meteos : [request.query.meteos] as string[] : [],
     listeOptionsExport: request.query.optionsExport ? Array.isArray(request.query.optionsExport) ? request.query.optionsExport : [request.query.optionsExport] as string[] : [],
     territoireCode: request.query.territoireCode as string | undefined,
+    estEnAlerteTauxAvancementNonCalculé: request.query.estEnAlerteTauxAvancementNonCalculé === 'true',
+    estEnAlerteÉcart: request.query.estEnAlerteÉcart === 'true',
+    estEnAlerteBaisse: request.query.estEnAlerteBaisse === 'true',
+    estEnAlerteMétéoNonRenseignée: request.query.estEnAlerteMétéoNonRenseignée === 'true',
+    estEnAlerteAbscenceTauxAvancementDepartemental: request.query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
+    estEnAlertePossedePropositionsValeurActuelle: request.query.estEnAlertePossedePropositionsValeurActuelle === 'true', 
   } satisfies OptionsExport;
 
   const headersColumn = ExportCsvDesChantiersUseCaseV2.NOMS_COLONNES(jalon, optionsExport, session.profil);

@@ -10,6 +10,8 @@ import {
 import { ChantierRepository } from '@/server/gestion-utilisateur/domain/ports/ChantierRepository';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { profilsInfolettreCoordinateur } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ContactInfoLettresService } from '@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService';
 
 type Dependencies = {
   utilisateurRepository: UtilisateurRepository,
@@ -18,6 +20,7 @@ type Dependencies = {
   perimetreMinisterielRepository: PerimetreMinisterielRepository,
   utilisateurIAMRepository: UtilisateurIAMRepository,
   tokenAPIInformationRepository: TokenAPIInformationRepository,
+  contactInfoLettresService: ContactInfoLettresService,
 };
 
 export default class ReactiverUnUtilisateurUseCase {
@@ -31,18 +34,22 @@ export default class ReactiverUnUtilisateurUseCase {
 
   private utilisateurIAMRepository: UtilisateurIAMRepository;
 
+  private contactInfoLettresService: ContactInfoLettresService;
+
   constructor({
     utilisateurRepository,
     chantierRepository,
     territoireRepository,
     perimetreMinisterielRepository,
     utilisateurIAMRepository,
+    contactInfoLettresService,
   }: Dependencies) {
     this.utilisateurRepository = utilisateurRepository;
     this.chantierRepository = chantierRepository;
     this.territoireRepository = territoireRepository;
     this.perimetreMinisterielRepository = perimetreMinisterielRepository;
     this.utilisateurIAMRepository = utilisateurIAMRepository;
+    this.contactInfoLettresService = contactInfoLettresService;
   }
 
   async run(email: Utilisateur['email'], habilitations: Habilitations, profilAuteur: Profil | null, auteurId: string): Promise<void> {
@@ -69,6 +76,11 @@ export default class ReactiverUnUtilisateurUseCase {
 
     await this.utilisateurRepository.reactiver(email, auteurId);
     
+    if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === 'true') {
+      const listesDiffusion = profilsInfolettreCoordinateur.includes(utilisateurAReactiver.profil) ? [3] : [];
+      await this.contactInfoLettresService.creerContact(utilisateurAReactiver.email, utilisateurAReactiver.nom, utilisateurAReactiver.prénom, listesDiffusion);
+    }
+
     if (process.env.IMPORT_KEYCLOAK_URL) {
       await this.utilisateurIAMRepository.reactive(email);
     }

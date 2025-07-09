@@ -15,6 +15,12 @@ const optionsExport: OptionsExport = {
   listeMeteos: [],
   listeOptionsExport: [],
   territoireCode: undefined,
+  estEnAlerteTauxAvancementNonCalculé: false,
+  estEnAlerteÉcart: false, 
+  estEnAlerteBaisse: false,
+  estEnAlerteAbscenceTauxAvancementDepartemental: false,
+  estEnAlerteMétéoNonRenseignée: false,
+  estEnAlertePossedePropositionsValeurActuelle: false,
 };
 
 describe('ExportCsvDesIndicateursUseCase', () => {

@@ -51,7 +51,7 @@ describe('PrismaSyntheseDesResultatsRepository', () => {
           },
           {
             id: auteurId3,
-            email: 'auteur.inconnu@modernisation.gouv.fr',
+            email: 'utilisateur.supprime@modernisation.gouv.fr',
             nom: 'inconnu',
             prenom: 'auteur',
             date_creation: new Date().toISOString(),
@@ -90,7 +90,7 @@ describe('PrismaSyntheseDesResultatsRepository', () => {
       });
 
       // When
-      await prismaSyntheseDesResultatsRepository.anonymiserAuteurs([auteurId2], 'auteur.inconnu@modernisation.gouv.fr');
+      await prismaSyntheseDesResultatsRepository.anonymiserAuteurs([auteurId2], 'utilisateur.supprime@modernisation.gouv.fr');
 
       // Then
       const synthesesAvecAuteurAnonyme = await prisma.synthese_des_resultats.findMany({ where: { auteur_id: auteurId3 } });

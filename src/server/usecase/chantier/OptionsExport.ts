@@ -9,4 +9,10 @@ export interface OptionsExport {
   listeMeteos: string[],
   listeOptionsExport: string[],
   territoireCode: string | undefined,
+  estEnAlerteTauxAvancementNonCalculé: boolean
+  estEnAlerteÉcart: boolean
+  estEnAlerteBaisse: boolean
+  estEnAlerteMétéoNonRenseignée: boolean
+  estEnAlerteAbscenceTauxAvancementDepartemental: boolean
+  estEnAlertePossedePropositionsValeurActuelle: boolean
 }

@@ -10,6 +10,7 @@ import {
 import { ChantierRepository } from '@/server/gestion-utilisateur/domain/ports/ChantierRepository';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { ContactInfoLettresService } from '@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService';
 
 type Dependencies = {
   utilisateurRepository: UtilisateurRepository,
@@ -18,6 +19,7 @@ type Dependencies = {
   perimetreMinisterielRepository: PerimetreMinisterielRepository,
   utilisateurIAMRepository: UtilisateurIAMRepository,
   tokenAPIInformationRepository: TokenAPIInformationRepository,
+  contactInfoLettresService: ContactInfoLettresService,
 };
 
 export default class DesactiverUnUtilisateurUseCase {
@@ -33,6 +35,8 @@ export default class DesactiverUnUtilisateurUseCase {
 
   private tokenAPIInformationRepository: TokenAPIInformationRepository;
 
+  private contactInfoLettresService: ContactInfoLettresService;
+
   constructor({
     utilisateurRepository,
     chantierRepository,
@@ -40,6 +44,7 @@ export default class DesactiverUnUtilisateurUseCase {
     perimetreMinisterielRepository,
     utilisateurIAMRepository,
     tokenAPIInformationRepository,
+    contactInfoLettresService,
   }: Dependencies) {
     this.utilisateurRepository = utilisateurRepository;
     this.chantierRepository = chantierRepository;
@@ -47,6 +52,7 @@ export default class DesactiverUnUtilisateurUseCase {
     this.perimetreMinisterielRepository = perimetreMinisterielRepository;
     this.utilisateurIAMRepository = utilisateurIAMRepository;
     this.tokenAPIInformationRepository = tokenAPIInformationRepository;
+    this.contactInfoLettresService = contactInfoLettresService;
   }
 
   async run(email: Utilisateur['email'], habilitations: Habilitations, profil: Profil | null, auteurId: string): Promise<void> {
@@ -69,6 +75,10 @@ export default class DesactiverUnUtilisateurUseCase {
     );
 
     await this.utilisateurRepository.desactiver(email, auteurId);
+
+    if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === 'true') {
+      await this.contactInfoLettresService.supprimerContact(email);
+    }
 
     if (process.env.IMPORT_KEYCLOAK_URL) {
       await this.utilisateurIAMRepository.desactive(email);

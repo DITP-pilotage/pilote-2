@@ -69,6 +69,18 @@ export class ChantierPourExportBuilder {
 
   private synthèseDesRésultats = null;
 
+  private  ecart = null;
+
+  private tendance = null;
+
+  private avancementTerritoire = null;
+
+  private cibleAttendue = true;
+
+  private aUnePropositionsValeurActuelle = true;
+
+  private aUnTauxAvancementDepartemental = true;
+
   public avecId(id: string): ChantierPourExportBuilder {
     this.id = id;
     return this;
@@ -115,6 +127,12 @@ export class ChantierPourExportBuilder {
       objDéjàFait: this.objDéjàFait,
       objÀFaire: this.objÀFaire,
       synthèseDesRésultats: this.synthèseDesRésultats,
+      ecart: this.ecart,
+      tendance: this.tendance, 
+      avancementTerritoire: this.avancementTerritoire, 
+      cibleAttendu: this.cibleAttendue,
+      aUnePropositionsValeurActuelle: this.aUnePropositionsValeurActuelle,
+      aUnTauxAvancementDepartemental: this.aUnTauxAvancementDepartemental,
     };
   }
 }

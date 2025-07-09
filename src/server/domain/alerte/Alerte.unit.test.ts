@@ -1,4 +1,3 @@
-import { ListeTerritoiresDonnéeAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
 import Alerte from '@/server/domain/alerte/Alerte';
 
 describe('Alerte', () => {
@@ -154,51 +153,12 @@ describe('Alerte', () => {
   });
 
   describe('estEnAlerteAbscenceTauxAvancementDepartemental', () => {
-    test('le chantier est en alerte si tous les départements applicables ont un avancement global null et qu\'une valeur cible est attendue', () => {
+    test('le chantier est en alerte s\'il n\'a pas de taux avancement au niveau departemental et qu\'une valeur cible est attendue', () => {
       // Given
-      const départementsDonnées: ListeTerritoiresDonnéeAccueilContrat = {
-        '01': {
-          estApplicable: true,
-          avancement: {
-            'global': null,
-            'annuel': null,
-          },
-          écart: null,
-          tendance: null,
-          dateDeMàjDonnéesQualitatives: null,
-          dateDeMàjDonnéesQuantitatives: null,
-          météo: 'NON_RENSEIGNEE',
-          aUnePropositionsValeurActuelle: false,
-        },
-        '02': {
-          estApplicable: false,
-          avancement: {
-            'global': 12,
-            'annuel': null,
-          },
-          écart: null,
-          tendance: null,
-          dateDeMàjDonnéesQualitatives: null,
-          dateDeMàjDonnéesQuantitatives: null,
-          météo: 'NON_RENSEIGNEE',
-          aUnePropositionsValeurActuelle: false,
-        },
-        '03': {
-          estApplicable: true,
-          avancement: {
-            'global': null,
-            'annuel': null,
-          },
-          écart: null,
-          tendance: null,
-          dateDeMàjDonnéesQualitatives: null,
-          dateDeMàjDonnéesQuantitatives: null,
-          météo: 'NON_RENSEIGNEE',
-          aUnePropositionsValeurActuelle: false,
-        },
-      };
+      const aUnTauxAvancementDepartemental = false;
+      const cibleAttendue = true;
       // When
-      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(départementsDonnées, true);
+      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(aUnTauxAvancementDepartemental, cibleAttendue);
 
       // Then
       expect(estEnAlerteAbscenceTauxAvancementDepartemental).toBeTruthy();
@@ -206,154 +166,14 @@ describe('Alerte', () => {
 
     test('le chantier n\'est pas en alerte si une valeur cible n\'est pas attendue', () => {
       // Given
-      const départementsDonnées: ListeTerritoiresDonnéeAccueilContrat = {
-        '01': {
-          estApplicable: true,
-          avancement: {
-            'global': null,
-            'annuel': null,
-          },
-          écart: null,
-          tendance: null,
-          dateDeMàjDonnéesQualitatives: null,
-          dateDeMàjDonnéesQuantitatives: null,
-          météo: 'NON_RENSEIGNEE',
-          aUnePropositionsValeurActuelle: false,
-        },
-        '02': {
-          estApplicable: false,
-          avancement: {
-            'global': 12,
-            'annuel': null,
-          },
-          écart: null,
-          tendance: null,
-          dateDeMàjDonnéesQualitatives: null,
-          dateDeMàjDonnéesQuantitatives: null,
-          météo: 'NON_RENSEIGNEE',
-          aUnePropositionsValeurActuelle: false,
-        },
-        '03': {
-          estApplicable: true,
-          avancement: {
-            'global': null,
-            'annuel': null,
-          },
-          écart: null,
-          tendance: null,
-          dateDeMàjDonnéesQualitatives: null,
-          dateDeMàjDonnéesQuantitatives: null,
-          météo: 'NON_RENSEIGNEE',
-          aUnePropositionsValeurActuelle: false,
-        },
-      };
+      const aUnTauxAvancementDepartemental = false;
+      const cibleAttendue = false;
+     
       // When
-      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(départementsDonnées, false);
+      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(aUnTauxAvancementDepartemental, cibleAttendue);
 
       // Then
       expect(estEnAlerteAbscenceTauxAvancementDepartemental).toBeFalse();
-    });
-
-    test("le chantier n'est pas en alerte si aucun département est applicable", () => {
-      // Given
-      const départementsDonnées: ListeTerritoiresDonnéeAccueilContrat = {
-        '01': {
-          estApplicable: false,
-          avancement: {
-            'global': 12,
-            'annuel': null,
-          },
-          écart: null,
-          tendance: null,
-          dateDeMàjDonnéesQualitatives: null,
-          dateDeMàjDonnéesQuantitatives: null,
-          météo: 'NON_RENSEIGNEE',
-          aUnePropositionsValeurActuelle: false,
-        },
-        '02': {
-          estApplicable: false,
-          avancement: {
-            'global': 12,
-            'annuel': null,
-          },
-          écart: null,
-          tendance: null,
-          dateDeMàjDonnéesQualitatives: null,
-          dateDeMàjDonnéesQuantitatives: null,
-          météo: 'NON_RENSEIGNEE',
-          aUnePropositionsValeurActuelle: false,
-        },
-        '03': {
-          estApplicable: false,
-          avancement: {
-            'global': 12,
-            'annuel': null,
-          },
-          écart: null,
-          tendance: null,
-          dateDeMàjDonnéesQualitatives: null,
-          dateDeMàjDonnéesQuantitatives: null,
-          météo: 'NON_RENSEIGNEE',
-          aUnePropositionsValeurActuelle: false,
-        },
-      };
-
-      // When
-      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(départementsDonnées, true);
-
-      // Then
-      expect(estEnAlerteAbscenceTauxAvancementDepartemental).toBeFalsy();
-    });
-
-    test("le chantier n'est pas en alerte si au moins un département applicable a un avancement global non null", () => {
-      // Given
-      const départementsDonnées: ListeTerritoiresDonnéeAccueilContrat = {
-        '01': {
-          estApplicable: true,
-          avancement: {
-            'global': 12,
-            'annuel': null,
-          },
-          écart: null,
-          tendance: null,
-          dateDeMàjDonnéesQualitatives: null,
-          dateDeMàjDonnéesQuantitatives: null,
-          météo: 'NON_RENSEIGNEE',
-          aUnePropositionsValeurActuelle: false,
-        },
-        '02': {
-          estApplicable: false,
-          avancement: {
-            'global': null,
-            'annuel': null,
-          },
-          écart: null,
-          tendance: null,
-          dateDeMàjDonnéesQualitatives: null,
-          dateDeMàjDonnéesQuantitatives: null,
-          météo: 'NON_RENSEIGNEE',
-          aUnePropositionsValeurActuelle: false,
-        },
-        '03': {
-          estApplicable: true,
-          avancement: {
-            'global': null,
-            'annuel': null,
-          },
-          écart: null,
-          tendance: null,
-          dateDeMàjDonnéesQualitatives: null,
-          dateDeMàjDonnéesQuantitatives: null,
-          météo: 'NON_RENSEIGNEE',
-          aUnePropositionsValeurActuelle: false,
-        },
-      };
-
-      // When
-      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(départementsDonnées, true);
-
-      // Then
-      expect(estEnAlerteAbscenceTauxAvancementDepartemental).toBeFalsy();
     });
   });
 

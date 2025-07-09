@@ -14,6 +14,7 @@ export const MetadataIndicateurSelecteur: FunctionComponent<{
   valeurAffiché: string,
   estDesactive?: boolean,
   valeurModifiéeCallback?: (valeur: string) => void,
+  estMandatory?: boolean,
 }> = ({
   informationMetadataIndicateur,
   estEnCoursDeModification,
@@ -24,11 +25,13 @@ export const MetadataIndicateurSelecteur: FunctionComponent<{
   valeurAffiché,
   estDesactive,
   valeurModifiéeCallback,
+  estMandatory = informationMetadataIndicateur.metaPiloteMandatory,
 }) => {
 
   return (
     <MetadataIndicateurChamp
       estEnCoursDeModification={estEnCoursDeModification}
+      estMandatory={estMandatory}
       informationMetadataIndicateur={informationMetadataIndicateur}
       valeurAffiché={valeurAffiché}
     >

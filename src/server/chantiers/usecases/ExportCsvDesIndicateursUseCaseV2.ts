@@ -14,6 +14,7 @@ import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import { IndicateurPourExport, verifierApplicabiliteMaille } from '@/server/chantiers/domain/IndicateurPourExport';
 import {
   masquerPourProfilDROMEtMailleNat,
+  verifierOptionChantiersSignales,
   verifierOptionEstBarometreEtEstTerritorialise,
   verifierOptionMeteo,
   verifierOptionPerimetreIds,
@@ -207,6 +208,16 @@ export class ExportCsvDesIndicateursUseCaseV2 {
               && verifierOptionEstBarometreEtEstTerritorialise(optionsExport, indicateursPourExport.chantierEstBaromètre)
               && verifierOptionStatut(optionsExport, indicateursPourExport.chantierStatut)
               && verifierOptionMeteo(optionsExport, indicateursPourExport.météo)
+              && verifierOptionChantiersSignales(
+                optionsExport, 
+                indicateursPourExport.chantierEcart,
+                indicateursPourExport.chantierTendance,
+                indicateursPourExport.chantierAvancementGlobal,
+                indicateursPourExport.chantierCibleAttendue,
+                indicateursPourExport.chantierAUnTauxAvancementDepartemental,
+                indicateursPourExport.météo ?? 'NON_RENSEIGNEE',
+                indicateursPourExport.chantierAUnePropositionValeurAvancement,
+              )
           ) {
             return [...acc, presenterEnIndicateurExportContrat(indicateursPourExport, profil, optionsExport)];
           }

@@ -79,7 +79,7 @@ export const middleware = async (request: NextRequest, event: NextFetchEvent)=> 
     response.headers.set(
       'Content-Security-Policy',
       `default-src 'self'; 
-       script-src 'self' 'nonce-${nonce}' https://plausible.4p-analyse.fr https://app.livestorm.co/; 
+       script-src 'self' 'nonce-${nonce}' https://plausible.4p-analyse.fr https://app.livestorm.co/ https://stats.beta.gouv.fr/;
        style-src 'self' 'unsafe-inline';
        img-src 'self' data: blob:; 
        font-src 'self' data:; 

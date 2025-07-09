@@ -6,6 +6,7 @@ import {
   utilisateur as PrismaUtilisateurModel,
 } from '@prisma/client';
 import {
+  HabilitationsÀCréerOuMettreÀJourCalculées,
   ScopeChantiers,
   ScopeUtilisateurs,
 } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
@@ -25,10 +26,55 @@ import {
   profilsDépartementaux, profilsRégionaux,
   Utilisateur,
 } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
+import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 interface Dependencies {
   prisma: PrismaPilote
 }
+
+const convertirEnModel = (utilisateurAConvertir: {
+  email: string
+  nom: string
+  prenom: string
+  profilCode: string
+  fonction: string | null
+  auteurIdModification: string
+  dateModification: Date
+  auteurIdCreation: string
+  dateCreation: Date
+}): Omit<PrismaUtilisateurModel, 'id' | 'auteur_email_creation' | 'auteur_email_modification' | 'date_desactivation' | 'date_visualisation_video_accueil'> => {
+  return {
+    email: utilisateurAConvertir.email,
+    nom: utilisateurAConvertir.nom,
+    prenom: utilisateurAConvertir.prenom,
+    profilCode: utilisateurAConvertir.profilCode,
+    fonction: utilisateurAConvertir.fonction,
+    auteur_id_modification: utilisateurAConvertir.auteurIdModification,
+    date_modification: utilisateurAConvertir.dateModification,
+    auteur_id_creation: utilisateurAConvertir.auteurIdCreation,
+    date_creation: utilisateurAConvertir.dateCreation,
+  };
+};
+
+const convertirEnModelModification = (utilisateurAConvertir: {
+  email: string
+  nom: string
+  prenom: string
+  profilCode: string
+  fonction: string | null
+  auteurIdModification: string
+  dateModification: Date
+}): Omit<PrismaUtilisateurModel, 'id' | 'auteur_id_creation' | 'date_creation' | 'auteur_email_creation' | 'auteur_email_modification' | 'date_desactivation' | 'date_visualisation_video_accueil'> => {
+  return {
+    email: utilisateurAConvertir.email,
+    nom: utilisateurAConvertir.nom,
+    prenom: utilisateurAConvertir.prenom,
+    profilCode: utilisateurAConvertir.profilCode,
+    fonction: utilisateurAConvertir.fonction,
+    auteur_id_modification: utilisateurAConvertir.auteurIdModification,
+    date_modification: utilisateurAConvertir.dateModification,
+  };
+};
 
 const récupérerChantiersParDéfaut = (profilUtilisateur: PrismaProfilModel, listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[]): Record<ScopeChantiers | ScopeUtilisateurs, InformationChantierUtilisateur['id'][]> => {
   let chantiersAccessibles = profilUtilisateur.a_acces_tous_chantiers
@@ -159,6 +205,16 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   constructor({ prisma }: Dependencies) {
     this.prisma = prisma.getInstance();
   }
+  
+  async verifierExistenceUtilisateur(email: string): Promise<boolean> {
+    const utilisateur = await this.prisma.utilisateur.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    return utilisateur !== null;
+  }
 
   async desactiver(email: string, auteurId: string): Promise<void> {
     await this.prisma.utilisateur.updateMany({
@@ -243,6 +299,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         profil: true,
         habilitation: true,
         auteur_modification: true,
+        auteur_creation: true,
       },
       where: {
         id: {
@@ -503,10 +560,11 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   }
 
   private convertirEnUtilisateurExportCSV({ listeTerritoiresCodes, listePerimetresMinisteriels, listeInformationsChantiersUtilisateurs }: { listeTerritoiresCodes: string[], listePerimetresMinisteriels: string[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[] }) {
-    return (utilisateurBrut: PrismaUtilisateurModel & { profil: PrismaProfilModel; habilitation: PrismaHabilitationModel[]; auteur_modification: PrismaUtilisateurModel | null; }): UtilisateurExportCSV => {
+    return (utilisateurBrut: PrismaUtilisateurModel & { profil: PrismaProfilModel; habilitation: PrismaHabilitationModel[]; auteur_modification: PrismaUtilisateurModel | null; auteur_creation: PrismaUtilisateurModel | null }): UtilisateurExportCSV => {
       const habilitations = créerLesHabilitations(utilisateurBrut.profil, utilisateurBrut.habilitation, listeInformationsChantiersUtilisateurs, listeTerritoiresCodes, listePerimetresMinisteriels);
 
       const auteurModification = utilisateurBrut.auteur_modification;
+      const auteurCreation = utilisateurBrut.auteur_creation;
 
       return {
         id: utilisateurBrut.id,
@@ -520,6 +578,8 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         profil: utilisateurBrut.profilCode as ProfilCode,
         dateDesactivation: utilisateurBrut.date_desactivation?.toISOString() ?? null,
         statut: utilisateurBrut.date_desactivation ? 'Désactivé' : 'Activé',
+        dateCreation: utilisateurBrut.date_creation.toISOString(),
+        auteurCreation: auteurCreation ? `${auteurCreation.prenom} ${auteurCreation.nom}` : 'Auteur Inconnu',
       };
     };
   }
@@ -549,5 +609,52 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         dateDesactivation: utilisateurBrut.date_desactivation?.toISOString() ?? null,
       };
     };
+  }
+
+  async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurId: string): Promise<void> {
+
+    const utilisateurCrééOuMisÀJour = await this.prisma.utilisateur.upsert({
+      create: convertirEnModel({
+        email: u.email.toLocaleLowerCase(),
+        nom: u.nom,
+        prenom: u.prénom,
+        profilCode: u.profil,
+        fonction: u.fonction,
+        auteurIdCreation: auteurId,
+        dateCreation: new Date(),
+        auteurIdModification: auteurId,
+        dateModification: new Date(),
+      }),
+      update: convertirEnModelModification({
+        email: u.email.toLocaleLowerCase(),
+        nom: u.nom,
+        prenom: u.prénom,
+        profilCode: u.profil,
+        fonction: u.fonction,
+        auteurIdModification: auteurId,
+        dateModification: new Date(),
+      }),
+      where: {
+        email: u.email.toLowerCase(),
+      },
+    });
+
+    const habilitationsÀCréer = Object.entries(u.habilitations).map(h => ({
+      utilisateurId: utilisateurCrééOuMisÀJour.id,
+      scopeCode: h[0],
+      territoires: h[1].territoires,
+      perimetres: h[1].périmètres,
+      chantiers: h[1].chantiers,
+    }));
+
+    await this.prisma.habilitation.deleteMany({
+      where: {
+        utilisateurId: utilisateurCrééOuMisÀJour.id,
+      },
+    });
+
+    await this.prisma.habilitation.createMany({
+      data: habilitationsÀCréer,
+    });
   }
 }

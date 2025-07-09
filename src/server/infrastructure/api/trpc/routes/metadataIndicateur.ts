@@ -1,7 +1,6 @@
 import { créerRouteurTRPC, procédureProtégée, vérifierSiLeCSRFEstValide } from '@/server/infrastructure/api/trpc/trpc';
 import {
   validationFiltresPourListeMetadataIndicateur,
-  validationMetadataIndicateurContexte,
   validationMetadataIndicateurFormulaire,
 } from '@/validation/metadataIndicateur';
 import {
@@ -114,7 +113,7 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
 
       return getContainer('parametrageIndicateur').resolve('récupérerMetadataIndicateurIdentifiantGénéréUseCase').run();
     }),
-  modifier: procédureProtégée.input(zodValidateurCSRF.merge(validationMetadataIndicateurFormulaire).and(validationMetadataIndicateurContexte))
+  modifier: procédureProtégée.input(validationMetadataIndicateurFormulaire.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
@@ -123,7 +122,7 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
 
       return getContainer('parametrageIndicateur').resolve('modifierUneMetadataIndicateurUseCase').run(ctx.session.user.email as string, convertirEnMetadataParametrageIndicateurForm(input));
     }),
-  creer: procédureProtégée.input(zodValidateurCSRF.merge(validationMetadataIndicateurFormulaire).and(validationMetadataIndicateurContexte))
+  creer: procédureProtégée.input(validationMetadataIndicateurFormulaire.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 

@@ -8,7 +8,6 @@ import logger from '@/server/infrastructure/Logger';
 import { supprimerLeFichier } from '@/server/import-indicateur/infrastructure/adapters/FichierService';
 import {
   validationImportMetadataIndicateurFormulaire,
-  validationMetadataIndicateurContexte,
 } from '@/validation/metadataIndicateur';
 
 type RecordCSVImport = Record<typeof AvailableHeaderCSVImport[number], string>;
@@ -204,7 +203,7 @@ export default class ImportMasseMetadataIndicateurUseCase {
             indic_id: indicId,
           });
 
-          validationImportMetadataIndicateurFormulaire.and(validationMetadataIndicateurContexte).parse(importMetadataIndicateur);
+          validationImportMetadataIndicateurFormulaire.parse(importMetadataIndicateur);
 
           return importMetadataIndicateur;
         });

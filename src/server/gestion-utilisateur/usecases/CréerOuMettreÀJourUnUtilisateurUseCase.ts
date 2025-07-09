@@ -1,22 +1,16 @@
-import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import Utilisateur, {
   profilsDépartementaux,
+  profilsInfolettreCoordinateur,
   profilsRégionaux,
   UtilisateurÀCréerOuMettreÀJour,
 } from '@/server/domain/utilisateur/Utilisateur.interface';
-import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
-import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import {
   Habilitations,
   HabilitationsÀCréerOuMettreÀJourCalculées,
 } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { codesTerritoiresDROM } from '@/validation/utilisateur';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import PérimètreMinistérielRepository
-  from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
-import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import {
   HistorisationModificationRepository,
@@ -24,19 +18,63 @@ import {
 import { HistorisationModification } from '@/server/domain/historisationModification/HistorisationModification';
 import { Profil } from '@/server/domain/profil/Profil.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { ContactInfoLettresService } from '@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService';
+import { PerimetreMinisterielRepository } from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository';
+import { TerritoireRepository } from '@/server/gestion-utilisateur/domain/ports/TerritoireRepository';
+import { ChantierRepository } from '@/server/gestion-utilisateur/domain/ports/ChantierRepository';
+import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository';
+import { InformationChantierUtilisateur } from '@/server/gestion-utilisateur/domain/InformationChantierUtilisateur';
+import { UtilisateurIAMRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository';
+
+type Dependencies = {
+  utilisateurIAMRepository: UtilisateurIAMRepository,
+  utilisateurRepository: UtilisateurRepository,
+  territoireRepository: TerritoireRepository,
+  chantierRepository: ChantierRepository,
+  perimetreMinisterielRepository: PerimetreMinisterielRepository,
+  historisationModification: HistorisationModificationRepository,
+  contactInfoLettresService: ContactInfoLettresService,
+};
 
 export default class CréerOuMettreÀJourUnUtilisateurUseCase {
-  constructor(
-    private readonly utilisateurIAMRepository: UtilisateurIAMRepository,
-    private readonly utilisateurRepository: UtilisateurRepository,
-    private readonly territoireRepository: TerritoireRepository,
-    private readonly chantierRepository: ChantierRepository,
-    private readonly périmètreMinistérielRepository: PérimètreMinistérielRepository,
-    private readonly historisationModification: HistorisationModificationRepository,
-  ) {}
+  private utilisateurIAMRepository: UtilisateurIAMRepository;
+
+  private utilisateurRepository: UtilisateurRepository;
+
+  private territoireRepository: TerritoireRepository;
+
+  private chantierRepository: ChantierRepository;
+
+  private perimetreMinisterielRepository: PerimetreMinisterielRepository;
+
+  private historisationModification: HistorisationModificationRepository;
+
+  private contactInfoLettresService: ContactInfoLettresService;
+
+  constructor({
+    utilisateurIAMRepository,
+    utilisateurRepository,
+    territoireRepository,
+    chantierRepository,
+    perimetreMinisterielRepository,
+    historisationModification,
+    contactInfoLettresService,
+  }: Dependencies) {
+    this.utilisateurIAMRepository = utilisateurIAMRepository;
+    this.utilisateurRepository = utilisateurRepository;
+    this.territoireRepository = territoireRepository;
+    this.chantierRepository = chantierRepository;
+    this.perimetreMinisterielRepository = perimetreMinisterielRepository;
+    this.historisationModification = historisationModification;
+    this.contactInfoLettresService = contactInfoLettresService;
+  }
 
   async run(utilisateur: UtilisateurÀCréerOuMettreÀJour, auteur: string, auteurId: string, utilisateurExistant: boolean, habilitations: Habilitations, profil: Profil | null): Promise<void> {
-    const habilitationsFormatées = await this._définirLesHabilitations(utilisateur);
+    const listeInformationsChantiersUtilisateurs = await this.chantierRepository.listerInformationsChantiersUtilisateurs();
+    const listeTerritoiresCodes = await this.territoireRepository.listerCodes([]);
+    const listePerimetresMinisteriels = await this.perimetreMinisterielRepository.listerIds([]);
+    
+    const habilitationsFormatées = await this._définirLesHabilitations(utilisateur, listeInformationsChantiersUtilisateurs);
     let utilisateurAvantModification: Utilisateur | null = null;
 
     const habilitation = new Habilitation(habilitations);
@@ -45,12 +83,22 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     await this._vérifierExistenceUtilisateur(utilisateur.email, utilisateurExistant);
 
     if (utilisateurExistant) {
-      utilisateurAvantModification = await this.utilisateurRepository.récupérer(utilisateur.email) as Utilisateur;
+      utilisateurAvantModification = await this.utilisateurRepository.récupérer(
+        utilisateur.email, 
+        listeTerritoiresCodes,
+        listePerimetresMinisteriels,
+        listeInformationsChantiersUtilisateurs,
+      ) as Utilisateur;
     }
 
     await this.utilisateurRepository.créerOuMettreÀJour({ ...utilisateur, habilitations: habilitationsFormatées }, auteurId);
 
-    const utilisateurApresExecution = await this.utilisateurRepository.récupérer(utilisateur.email) as Utilisateur;
+    const utilisateurApresExecution = await this.utilisateurRepository.récupérer(
+      utilisateur.email,
+      listeTerritoiresCodes,
+      listePerimetresMinisteriels,
+      listeInformationsChantiersUtilisateurs,      
+    ) as Utilisateur;
 
     const historisationModification = utilisateurExistant ? HistorisationModification.creerHistorisationModification({
       utilisateurNom: auteur,
@@ -65,22 +113,33 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
 
     await this.historisationModification.sauvegarderModificationHistorisation(historisationModification);
 
+    if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === 'true') {
+      if (utilisateurExistant && utilisateurAvantModification) {
+        const listesDiffusionAAjouter = profilsInfolettreCoordinateur.includes(utilisateur.profil) && !profilsInfolettreCoordinateur.includes(utilisateurAvantModification?.profil) ? [3] : [];
+        const listesDiffusionASupprimer = profilsInfolettreCoordinateur.includes(utilisateurAvantModification?.profil) && !profilsInfolettreCoordinateur.includes(utilisateur.profil) ? [3] : [];
+        await this.contactInfoLettresService.modifierContact(utilisateur.email, utilisateur.nom, utilisateur.prénom, listesDiffusionAAjouter, listesDiffusionASupprimer);
+      } else {
+        const listesDiffusion = profilsInfolettreCoordinateur.includes(utilisateur.profil) ? [3] : [];
+        await this.contactInfoLettresService.creerContact(utilisateur.email, utilisateur.nom, utilisateur.prénom, listesDiffusion);
+      }
+    }
+
     if (process.env.IMPORT_KEYCLOAK_URL && !utilisateurExistant) {
       const utilisateursPourIAM = [{ nom: utilisateur.nom, prénom: utilisateur.prénom, email: utilisateur.email }];
       await this.utilisateurIAMRepository.ajouteUtilisateurs(utilisateursPourIAM);
     }
   }
 
-  private _déterminerChantiersPasEnDoublonsAvecLesPérimètres(chantiersSélectionnés: string[], périmètreSélectionnés: string[], chantiers: ChantierSynthétisé[]): string[] {
+  private _déterminerChantiersPasEnDoublonsAvecLesPérimètres(chantiersSélectionnés: string[], périmètreSélectionnés: string[], chantiers: InformationChantierUtilisateur[]): string[] {
     return chantiersSélectionnés.filter(chantierId => {
       const chantier = chantiers.find(c => c.id === chantierId);
-      return périmètreSélectionnés.every(p => !chantier?.périmètreIds.includes(p));
+      return périmètreSélectionnés.every(p => !chantier?.perimetreIds.includes(p));
     });
   }
 
-  private _déterminerChantiersAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
+  private _déterminerChantiersAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: InformationChantierUtilisateur[]): string[] {
     const touslesChantiersIds = new Set(chantiers.map(chantier => chantier.id));
-    const touslesChantiersTerritorialisésIds = new Set(chantiers.filter(chantier => chantier.estTerritorialisé).map(chantier => chantier.id));
+    const touslesChantiersTerritorialisésIds = new Set(chantiers.filter(chantier => chantier.estTerritorialise).map(chantier => chantier.id));
 
     const chantiersPasEnDoublonsAvecLesPérimètres = this._déterminerChantiersPasEnDoublonsAvecLesPérimètres(
       utilisateur.habilitations.lecture.chantiers,
@@ -102,7 +161,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return utilisateur.habilitations.responsabilite.chantiers;
   }
 
-  private _déterminerChantiersAccessiblesEnSaisieIndicateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
+  private _déterminerChantiersAccessiblesEnSaisieIndicateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: InformationChantierUtilisateur[]): string[] {
     if (utilisateur.saisieIndicateur) {
       return this._déterminerChantiersAccessiblesEnLecture(utilisateur, chantiers);
     }
@@ -110,7 +169,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return [];
   }
 
-  private _déterminerChantiersAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
+  private _déterminerChantiersAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: InformationChantierUtilisateur[]): string[] {
     if (utilisateur.saisieCommentaire) {
       const chantiersIdsAccessiblesEnLecture = this._déterminerChantiersAccessiblesEnLecture(utilisateur, chantiers);
 
@@ -124,7 +183,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return [];
   }
 
-  private _déterminerChantierAccessiblesEnGestionUtilisateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
+  private _déterminerChantierAccessiblesEnGestionUtilisateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: InformationChantierUtilisateur[]): string[] {
     if (utilisateur.gestionUtilisateur) {
       return this._déterminerChantiersAccessiblesEnLecture(utilisateur, chantiers);
     }
@@ -208,10 +267,9 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return [];
   }
 
-  private async _définirLesHabilitations(utilisateur: UtilisateurÀCréerOuMettreÀJour): Promise<HabilitationsÀCréerOuMettreÀJourCalculées> {
-    const chantiers = await this.chantierRepository.récupérerChantiersSynthétisés();
-    const territoires = await this.territoireRepository.récupérerTous();
-    const périmètres = await this.périmètreMinistérielRepository.récupérerTous();
+  private async _définirLesHabilitations(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: InformationChantierUtilisateur[]): Promise<HabilitationsÀCréerOuMettreÀJourCalculées> {
+    const territoires = await this.territoireRepository.lister([]);
+    const périmètres = await this.perimetreMinisterielRepository.lister([]);
 
     const chantiersResponsabilite = this._déterminerChantiersResponsabilite(utilisateur);
       
@@ -245,7 +303,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   }
 
   private async _vérifierExistenceUtilisateur(email: string, utilisateurExistant: boolean) {
-    const utilisateurExiste = await this.utilisateurRepository.récupérer(email);
+    const utilisateurExiste = await this.utilisateurRepository.verifierExistenceUtilisateur(email);
 
     if (utilisateurExistant && !utilisateurExiste)  {
       throw new Error("Le compte à modifier n'existe pas.");

@@ -33,6 +33,10 @@ const HeadersExportCSVUtilisateur = (): string[] => {
     'Droits de saisie des commentaires',
     'Droits de gestion des utilisateurs',
     'Statut',
+    'Date de création',
+    'Auteur création',
+    'Date de dernière modification',
+    'Auteur dernière modification',
   ];
 };
 
@@ -60,6 +64,10 @@ const presenterEnUtilisateurPourExportCSVContrat = (utilisateurPourExport: Utili
     recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.saisieCommentaire.chantiers, listeInformationsChantiersUtilisateurs, utilisateurPourExport.habilitations.lecture.__meta.aAccesTousLesChantiers).join('\n'),
     recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.gestionUtilisateur.chantiers, listeInformationsChantiersUtilisateurs, utilisateurPourExport.habilitations.lecture.__meta.aAccesTousLesChantiers).join('\n'),
     utilisateurPourExport.statut,
+    utilisateurPourExport.dateCreation,
+    utilisateurPourExport.auteurCreation,
+    utilisateurPourExport.dateModification,
+    utilisateurPourExport.auteurModification,
   ];
 };
 

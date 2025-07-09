@@ -17,6 +17,11 @@ export const validationFiltresPourListeMetadataIndicateur = z.object({
 
 const metadata = presenterEnMapInformationMetadataIndicateurContrat(new YamlInformationMetadataIndicateurRepository().récupererInformationMetadataIndicateur());
 
+const validationMetadataIndicateurContexte = z.object({
+  indicId: z.string()
+    .refine((value) => new RegExp(metadata.indic_id.metaPiloteEditRegex).test(value), value => ({ message: `valeur: '${value}'. message: ${metadata.indic_id.metaPiloteEditRegexViolationMessage}` })),
+});
+
 export const validationMetadataIndicateurFormulaire = z.object({
   indicParentIndic: z
     .string()
@@ -83,39 +88,48 @@ export const validationMetadataIndicateurFormulaire = z.object({
   viDeptFrom: z
     .string(),
   viDeptOp: z
-    .string(),
+    .string()
+    .optional(),
   vaDeptFrom: z
     .string(),
   vaDeptOp: z
-    .string(),
+    .string()
+    .optional(),
   vcDeptFrom: z
     .string(),
   vcDeptOp: z
-    .string(),
+    .string()
+    .optional(),
   viRegFrom: z
     .string(),
   viRegOp: z
-    .string(),
+    .string()
+    .optional(),
   vaRegFrom: z
     .string(),
   vaRegOp: z
-    .string(),
+    .string()
+    .optional(),
   vcRegFrom: z
     .string(),
   vcRegOp: z
-    .string(),
+    .string()
+    .optional(),
   viNatFrom: z
     .string(),
   viNatOp: z
-    .string(),
+    .string()
+    .optional(),
   vaNatFrom: z
     .string(),
   vaNatOp: z
-    .string(),
+    .string()
+    .optional(),
   vcNatFrom: z
     .string(),
   vcNatOp: z
-    .string(),
+    .string()
+    .optional(),
   paramVacaDecumulFrom: z
     .string()
     .refine((value) => new RegExp(metadata.param_vaca_decumul_from.metaPiloteEditRegex).test(value), metadata.param_vaca_decumul_from.metaPiloteEditRegexViolationMessage),
@@ -195,7 +209,30 @@ export const validationMetadataIndicateurFormulaire = z.object({
   commentaire: z
     .string()
     .nullable(),
-});
+}).and(validationMetadataIndicateurContexte)
+  .superRefine((data, ctx) => {
+    const validations = [
+      { from: data.viDeptFrom, op: data.viDeptOp, field: 'viDeptOp' },
+      { from: data.vaDeptFrom, op: data.vaDeptOp, field: 'vaDeptOp' },
+      { from: data.vcDeptFrom, op: data.vcDeptOp, field: 'vcDeptOp' },
+      { from: data.viRegFrom, op: data.viRegOp, field: 'viRegOp' },
+      { from: data.vaRegFrom, op: data.vaRegOp, field: 'vaRegOp' },
+      { from: data.vcRegFrom, op: data.vcRegOp, field: 'vcRegOp' },
+      { from: data.viNatFrom, op: data.viNatOp, field: 'viNatOp' },
+      { from: data.vaNatFrom, op: data.vaNatOp, field: 'vaNatOp' },
+      { from: data.vcNatFrom, op: data.vcNatOp, field: 'vcNatOp' },
+    ];
+
+    validations.forEach(({ from, op, field }) => {
+      if (from !== 'user_input' && from !== '_' && (op === undefined || op === '' || op === '_')) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "La méthode d'agrégation est requise",
+          path: [field],
+        });
+      }
+    });
+  });
 
 export const validationImportMetadataIndicateurFormulaire = z.object({
   indicParentIndic: z
@@ -263,39 +300,48 @@ export const validationImportMetadataIndicateurFormulaire = z.object({
   viDeptFrom: z
     .string(),
   viDeptOp: z
-    .string(),
+    .string()
+    .optional(),
   vaDeptFrom: z
     .string(),
   vaDeptOp: z
-    .string(),
+    .string()
+    .optional(),
   vcDeptFrom: z
     .string(),
   vcDeptOp: z
-    .string(),
+    .string()
+    .optional(),
   viRegFrom: z
     .string(),
   viRegOp: z
-    .string(),
+    .string()
+    .optional(),
   vaRegFrom: z
     .string(),
   vaRegOp: z
-    .string(),
+    .string()
+    .optional(),
   vcRegFrom: z
     .string(),
   vcRegOp: z
-    .string(),
+    .string()
+    .optional(),
   viNatFrom: z
     .string(),
   viNatOp: z
-    .string(),
+    .string()
+    .optional(),
   vaNatFrom: z
     .string(),
   vaNatOp: z
-    .string(),
+    .string()
+    .optional(),
   vcNatFrom: z
     .string(),
   vcNatOp: z
-    .string(),
+    .string()
+    .optional(),
   paramVacaDecumulFrom: z
     .string()
     .refine((value) => new RegExp(metadata.param_vaca_decumul_from.metaPiloteEditRegex).test(value), metadata.param_vaca_decumul_from.metaPiloteEditRegexViolationMessage),
@@ -373,9 +419,27 @@ export const validationImportMetadataIndicateurFormulaire = z.object({
   commentaire: z
     .string()
     .nullable(),
-});
+}).and(validationMetadataIndicateurContexte)
+  .superRefine((data, ctx) => {
+    const validations = [
+      { from: data.viDeptFrom, op: data.viDeptOp, field: 'viDeptOp' },
+      { from: data.vaDeptFrom, op: data.vaDeptOp, field: 'vaDeptOp' },
+      { from: data.vcDeptFrom, op: data.vcDeptOp, field: 'vcDeptOp' },
+      { from: data.viRegFrom, op: data.viRegOp, field: 'viRegOp' },
+      { from: data.vaRegFrom, op: data.vaRegOp, field: 'vaRegOp' },
+      { from: data.vcRegFrom, op: data.vcRegOp, field: 'vcRegOp' },
+      { from: data.viNatFrom, op: data.viNatOp, field: 'viNatOp' },
+      { from: data.vaNatFrom, op: data.vaNatOp, field: 'vaNatOp' },
+      { from: data.vcNatFrom, op: data.vcNatOp, field: 'vcNatOp' },
+    ];
 
-export const validationMetadataIndicateurContexte = z.object({
-  indicId: z.string()
-    .refine((value) => new RegExp(metadata.indic_id.metaPiloteEditRegex).test(value), value => ({ message: `valeur: '${value}'. message: ${metadata.indic_id.metaPiloteEditRegexViolationMessage}` })),
-});
+    validations.forEach(({ from, op, field }) => {
+      if (from !== 'user_input' && from !== '_' && (op === undefined || op === '' || op === '_')) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "La méthode d'agrégation est requise",
+          path: [field],
+        });
+      }
+    });
+  });

@@ -1,3 +1,4 @@
+import { parseAsString, parseAsStringLiteral, useQueryStates, parseAsBoolean } from 'nuqs';
 import { FiltreAccueil } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 
 const listeKeyPositiveBooleanExclusion = new Set(['brouillon']);
@@ -11,4 +12,28 @@ export const getQueryParamString = (filtres: object, filtresExclus: Set<string> 
   },
   )
     .filter(value => value.length > 0)).toString();
+};
+
+export const useGetFullQueryParamString = (): string => {
+  const [filtres] = useQueryStates({
+    perimetres: parseAsString.withDefault(''),
+    axes: parseAsString.withDefault(''),
+    meteos: parseAsString.withDefault(''),
+    estBarometre: parseAsBoolean.withDefault(false),
+    territorialisation: parseAsString.withDefault(''),
+    maille: parseAsString.withDefault(''),
+    statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']),
+    jalon: parseAsStringLiteral(['2024', '2025']),
+  });
+
+  const [filtresAlertes] = useQueryStates({
+    estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
+    estEnAlerteÉcart: parseAsBoolean.withDefault(false),
+    estEnAlerteBaisse: parseAsBoolean.withDefault(false),
+    estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
+    estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
+    estEnAlertePossedePropositionsValeurActuelle: parseAsBoolean.withDefault(false),
+  });
+
+  return getQueryParamString({ ...filtres, ...filtresAlertes });
 };
