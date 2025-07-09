@@ -19,7 +19,7 @@ type Dependencies = {
   propositionValeurAvancementRepository: PropositionValeurAvancementRepository
 };
 
-export const EMAIL_AUTEUR_REMPLACEMENT = 'auteur.inconnu@modernisation.gouv.fr';
+export const EMAIL_AUTEUR_REMPLACEMENT = 'utilisateur.supprime@modernisation.gouv.fr';
 const NOMBRE_ANNEE_AVANT_SUPPRESSION = 2;
 
 export class SupprimerLesComptesDesactivesUseCase {

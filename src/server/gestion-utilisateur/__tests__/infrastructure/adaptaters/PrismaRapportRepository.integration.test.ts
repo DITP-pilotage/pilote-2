@@ -43,7 +43,7 @@ describe('PrismaRapportRepository', () => {
           },
           {
             id: auteurId3,
-            email: 'auteur.inconnu@modernisation.gouv.fr',
+            email: 'utilisateur.supprime@modernisation.gouv.fr',
             nom: 'inconnu',
             prenom: 'auteur',
             date_creation: new Date().toISOString(),
@@ -73,10 +73,10 @@ describe('PrismaRapportRepository', () => {
       });
 
       // When
-      await prismaRapportRepository.anonymiserAuteurs(['auteur.import@test.com'], 'auteur.inconnu@modernisation.gouv.fr');
+      await prismaRapportRepository.anonymiserAuteurs(['auteur.import@test.com'], 'utilisateur.supprime@modernisation.gouv.fr');
 
       // Then
-      const rapportsAvecAuteurAnonyme = await prisma.rapport_import_mesure_indicateur.findMany({ where: { utilisateurEmail: 'auteur.inconnu@modernisation.gouv.fr' } });
+      const rapportsAvecAuteurAnonyme = await prisma.rapport_import_mesure_indicateur.findMany({ where: { utilisateurEmail: 'utilisateur.supprime@modernisation.gouv.fr' } });
       expect(rapportsAvecAuteurAnonyme).toHaveLength(2);
       expect(rapportsAvecAuteurAnonyme[0].id).toStrictEqual('b699907e-43c4-43be-8d8d-185fca1b2e50');
       expect(rapportsAvecAuteurAnonyme[1].id).toStrictEqual('e3885e40-caab-4fb6-acf4-0c8f66c9e290');

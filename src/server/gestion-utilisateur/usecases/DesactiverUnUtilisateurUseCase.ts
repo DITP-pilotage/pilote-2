@@ -76,7 +76,7 @@ export default class DesactiverUnUtilisateurUseCase {
 
     await this.utilisateurRepository.desactiver(email, auteurId);
 
-    if (process.env.ENVIRONMENT === 'PROD') {
+    if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === 'true') {
       await this.contactInfoLettresService.supprimerContact(email);
     }
 

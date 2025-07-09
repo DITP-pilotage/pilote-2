@@ -85,6 +85,10 @@ function ProfilNePeutPasDonnerDesAccesSurTousLesPerimetres(profilCode: ProfilCod
   return profilCode === 'SECRETARIAT_GENERAL';
 }
 
+function PeutDonnerDesAccesSurDesPerimetre(profilCode: ProfilCode) {
+  return ![ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.COORDINATEUR_REGION].includes(profilCode);
+}
+
 export default function useSectionDétailsMetadataAutresIndicateurForm() {
   const { data: profils } = api.profil.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
   const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
@@ -178,7 +182,7 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
   const perimetresSelectionnables = (ProfilNePeutPasDonnerDesAccesSurTousLesPerimetres(session!.profil)
     ? perimetresMinisteriels?.filter(perimetre => session!.habilitations.gestionUtilisateur.périmètres.includes(perimetre.id))
     : perimetresMinisteriels) ?? [];
-  const afficherChampLecturePérimètres = profilSelectionne && !profilSelectionne.chantiers.lecture.tous && !profilSelectionne.chantiers.lecture.tousTerritorialisés;
+  const afficherChampLecturePérimètres = PeutDonnerDesAccesSurDesPerimetre(session!.profil) && profilSelectionne && !profilSelectionne.chantiers.lecture.tous && !profilSelectionne.chantiers.lecture.tousTerritorialisés;
   const recupererChantiersIdsAPartirDesPerimetres = (listePerimetresIds: string[]) => {
     return chantiersAccessiblesLecture?.
       filter(chantier => auMoinsUneValeurDuTableauEstContenueDansLAutreTableau(chantier.périmètreIds, listePerimetresIds)).

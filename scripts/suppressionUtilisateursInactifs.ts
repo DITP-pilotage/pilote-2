@@ -7,6 +7,10 @@ import { getInitialContainer } from '@/server/initial-container';
 const projectDir = process.cwd();
 loadEnvConfig(projectDir);
 
+const baseUrl = process.env.TCHAP_BASE_URL ?? '';
+const roomId = process.env.TCHAP_ROOM_ID ?? '';
+const accessToken = process.env.TCHAP_ACCESS_TOKEN ?? '';
+
 async function main() {
   const initialContainer = getInitialContainer();
   return getGestionUtilisateurContainer(initialContainer).resolve('supprimerLesComptesDesactivesUseCase').run();
@@ -22,7 +26,7 @@ if (isMain) {
         `${utilisateursSupprimes.length} utilisateurs supprimés :`,
         utilisateursSupprimes.map(utilisateur => `* ${utilisateur.email}`).join('\n'),
       ].join('\n');
-      envoieMessageTchap(messageSuccesSuppression);
+      envoieMessageTchap(messageSuccesSuppression, baseUrl, roomId, accessToken);
     })
     .catch((error) => {
       const messageEchecSuppression = [
@@ -30,7 +34,7 @@ if (isMain) {
         'Veuillez regarder les logs pour en savoir plus :',
         `- [Logs](${process.env.SCALINGO_LOGS_URL})`,
       ].join('\n');
-      envoieMessageTchap(messageEchecSuppression);
+      envoieMessageTchap(messageEchecSuppression, baseUrl, roomId, accessToken);
       logger.error(error);
     });
 }

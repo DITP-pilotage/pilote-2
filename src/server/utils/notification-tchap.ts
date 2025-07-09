@@ -1,11 +1,8 @@
 import { marked } from 'marked';
 import logger from '@/server/infrastructure/Logger';
 
-export function envoieMessageTchap(messageErreur: string): void {
+export function envoieMessageTchap(messageErreur: string, baseUrl: string, roomId: string, accessToken: string): void {
   const messageId = Date.now() * 1_000_000;
-  const baseUrl = process.env.TCHAP_BASE_URL;
-  const roomId = process.env.TCHAP_ROOM_ID;
-  const accessToken = process.env.TCHAP_ACCESS_TOKEN;
 
   const url = `${baseUrl}/_matrix/client/v3/rooms/${roomId}/send/m.room.message/${messageId}?access_token=${accessToken}`;
 

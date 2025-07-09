@@ -58,7 +58,7 @@ export const verifierOptionEstBarometreEtEstTerritorialise = (optionsExport: Opt
 };
 
 export const verifierOptionStatut = (optionsExport: OptionsExport, chantierStatut: string | null) => {
-  return chantierStatut ? optionsExport.listeStatuts.length > 0 ? optionsExport.listeStatuts.includes(chantierStatut) : true : true;
+  return chantierStatut ? (optionsExport.listeStatuts.length > 0 ? optionsExport.listeStatuts.includes(chantierStatut) : true) : true;
 };
 
 export const verifierOptionMeteo = (optionsExport: OptionsExport, chantierMeteo: string | null) => {

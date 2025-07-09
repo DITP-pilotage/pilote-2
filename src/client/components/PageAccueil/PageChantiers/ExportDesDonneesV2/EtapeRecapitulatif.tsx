@@ -113,7 +113,8 @@ export const EtapeRecapitulatif = ({ territoireCodeSelectionne }: { territoireCo
     arrayOptionsExport.push({ name: 'territoireCode', value: territoireCodeSelectionne });
   }
 
-  (filtres.statut === 'BROUILLON' ? ['PUBLIE'] : filtres.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : ['PUBLIE']).forEach(statut => {
+  const listeStatuts = filtres.statut === 'BROUILLON_ET_PUBLIE' ? ['BROUILLON', 'PUBLIE'] : [filtres.statut];
+  listeStatuts.forEach(statut => {
     arrayOptionsExport.push({ name: 'statut', value: statut });
   });
 

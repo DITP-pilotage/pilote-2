@@ -42,7 +42,7 @@ describe('PrismaObjectifRepository', () => {
           },
           {
             id: auteurId3,
-            email: 'auteur.inconnu@modernisation.gouv.fr',
+            email: 'utilisateur.supprime@modernisation.gouv.fr',
             nom: 'inconnu',
             prenom: 'auteur',
             date_creation: new Date().toISOString(),
@@ -158,7 +158,7 @@ describe('PrismaObjectifRepository', () => {
       });
 
       // When
-      await prismaPropositionValeurAvancement.anonymiserAuteurs([auteurId2], 'auteur.inconnu@modernisation.gouv.fr');
+      await prismaPropositionValeurAvancement.anonymiserAuteurs([auteurId2], 'utilisateur.supprime@modernisation.gouv.fr');
 
       // Then
       const propositionsAvecAuteurAnonyme = await prisma.proposition_valeur_actuelle.findMany({ where: { id_auteur_modification: auteurId3 } });
