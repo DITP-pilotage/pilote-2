@@ -7,6 +7,7 @@ import { ObjectifRepository } from '@/server/gestion-utilisateur/domain/ports/Ob
 import { RapportRepository } from '@/server/gestion-utilisateur/domain/ports/RapportRepository';
 import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository';
 import { PropositionValeurAvancementRepository } from '@/server/gestion-utilisateur/domain/ports/PropositionValeurAvancementRepository';
+import { HistorisationModificationRepository } from '@/server/domain/historisationModification/HistorisationModificationRepository';
 
 type Dependencies = {
   utilisateurRepository: UtilisateurRepository
@@ -17,6 +18,7 @@ type Dependencies = {
   objectifRepository: ObjectifRepository
   rapportRepository: RapportRepository
   propositionValeurAvancementRepository: PropositionValeurAvancementRepository
+  historisationModification: HistorisationModificationRepository
 };
 
 export const EMAIL_AUTEUR_REMPLACEMENT = 'utilisateur.supprime@modernisation.gouv.fr';
@@ -39,6 +41,8 @@ export class SupprimerLesComptesDesactivesUseCase {
 
   private propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
 
+  private historisationModification: HistorisationModificationRepository;
+
   constructor({
     utilisateurRepository,
     utilisateurIAMRepository,
@@ -48,6 +52,7 @@ export class SupprimerLesComptesDesactivesUseCase {
     objectifRepository,
     rapportRepository,
     propositionValeurAvancementRepository,
+    historisationModification,
   }: Dependencies) {
     this.utilisateurRepository = utilisateurRepository;
     this.utilisateurIAMRepository = utilisateurIAMRepository;
@@ -57,6 +62,7 @@ export class SupprimerLesComptesDesactivesUseCase {
     this.objectifRepository = objectifRepository;
     this.rapportRepository = rapportRepository;
     this.propositionValeurAvancementRepository = propositionValeurAvancementRepository;
+    this.historisationModification = historisationModification;
   }
 
   async run(): Promise<{ id: string, email: string }[]> {
@@ -64,7 +70,7 @@ export class SupprimerLesComptesDesactivesUseCase {
     dateDesactivationMax.setFullYear(dateDesactivationMax.getFullYear() - NOMBRE_ANNEE_AVANT_SUPPRESSION);
     const utilisateursInactifs = await this.utilisateurRepository.recupererComptesInactifs(dateDesactivationMax);
     logger.info(`${utilisateursInactifs.length} utilisateurs à supprimer`);
-  
+
     const { listeUtilisateurASupprimerIds, listeUtilisateurASupprimerEmails } = utilisateursInactifs.reduce((acc, utilisateur) => {
       acc.listeUtilisateurASupprimerIds.push(utilisateur.id);
       acc.listeUtilisateurASupprimerEmails.push(utilisateur.email);
@@ -77,6 +83,7 @@ export class SupprimerLesComptesDesactivesUseCase {
     await this.utilisateurRepository.anonymiserAuteurs(listeUtilisateurASupprimerIds, EMAIL_AUTEUR_REMPLACEMENT);
     await this.rapportRepository.anonymiserAuteurs(listeUtilisateurASupprimerEmails, EMAIL_AUTEUR_REMPLACEMENT);
     await this.propositionValeurAvancementRepository.anonymiserAuteurs(listeUtilisateurASupprimerIds, EMAIL_AUTEUR_REMPLACEMENT);
+    await this.historisationModification.anonymiserAuteurs(listeUtilisateurASupprimerIds, EMAIL_AUTEUR_REMPLACEMENT);
     await this.utilisateurRepository.supprimerListeUtilisateur(listeUtilisateurASupprimerIds);
     for (const email of listeUtilisateurASupprimerEmails) {
       await this.utilisateurIAMRepository.supprime(email);

@@ -141,7 +141,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     const profil = profilBuilder.build();
 
     //WHEN
-    await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto', auteurId, false, habilitations, profil);
+    await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, auteurId, false, habilitations, profil);
     
     //THEN
     expect(stubUtilisateurRepository.créerOuMettreÀJour).toHaveBeenNthCalledWith(1, { ...utilisateur, habilitations: habilitationsAttendues }, auteurId);
@@ -156,7 +156,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
       const profil = new ProfilBuilder().build();
 
       //WHEN
-      await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto', randomUUID(), false, habilitations, profil);
+      await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, randomUUID(), false, habilitations, profil);
         
       //THEN
       expect(stubUtilisateurIAMRepository.ajouteUtilisateurs).toHaveBeenCalledTimes(0);

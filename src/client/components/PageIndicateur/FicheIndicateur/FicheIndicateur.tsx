@@ -34,9 +34,11 @@ const FicheIndicateur: FunctionComponent<FicheIndicateurProps> = ({
       <div className='fr-mb-2w'>
         <SectionSelectionIndicateur
           estEnCoursDeModification={estEnCoursDeModification}
+        />
+        <SectionTableauIndicateur 
+          indicateur={indicateur} 
           informationHistorisationIndicateur={informationHistorisationIndicateur}
         />
-        <SectionTableauIndicateur indicateur={indicateur} />
         <section className='fr-accordion'>
           <h2 className='fr-accordion__title'>
             <button

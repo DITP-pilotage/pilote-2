@@ -20,11 +20,11 @@ export class HistorisationModification<K extends keyof HistorisationModification
 
   private readonly _nouvelleValeur: Partial<HistorisationModificationDisponible[K]> | null;
 
-  private readonly _utilisateurNom: string;
+  private readonly _auteur_id: string;
 
   private constructor({
     id,
-    utilisateurNom,
+    auteurId,
     idObjetModifie,
     typeDeModification,
     dateDeModification,
@@ -33,7 +33,7 @@ export class HistorisationModification<K extends keyof HistorisationModification
     nouvelleValeur,
   }: {
     id: string,
-    utilisateurNom: string,
+    auteurId: string,
     idObjetModifie: string,
     typeDeModification: 'creation' | 'modification' | 'suppression',
     dateDeModification: string,
@@ -42,7 +42,7 @@ export class HistorisationModification<K extends keyof HistorisationModification
     nouvelleValeur: Partial<HistorisationModificationDisponible[K]> | null
   }) {
     this._id = id;
-    this._utilisateurNom = utilisateurNom;
+    this._auteur_id = auteurId;
     this._idObjetModifie = idObjetModifie;
     this._typeDeModification = typeDeModification;
     this._dateDeModification = dateDeModification;
@@ -75,8 +75,8 @@ export class HistorisationModification<K extends keyof HistorisationModification
     return this._nouvelleValeur;
   }
 
-  get utilisateurNom(): string {
-    return this._utilisateurNom;
+  get auteurId(): string {
+    return this._auteur_id;
   }
 
   get idObjetModifie(): string {
@@ -85,19 +85,19 @@ export class HistorisationModification<K extends keyof HistorisationModification
 
   static creerHistorisationCreation<K extends keyof HistorisationModificationDisponible>({
     id,
-    utilisateurNom,
+    auteurId,
     tableModifieId,
     nouvelleValeur,
   }: {
     id?: string,
-    utilisateurNom: string,
+    auteurId: string,
     tableModifieId: K,
     nouvelleValeur: HistorisationModificationDisponible[K]
   }) {
     return new HistorisationModification({
       id: id || randomUUID(),
       idObjetModifie: tableRecuperationId[tableModifieId](nouvelleValeur),
-      utilisateurNom,
+      auteurId,
       typeDeModification: 'creation',
       dateDeModification: new Date().toISOString(),
       tableModifieId,
@@ -106,9 +106,9 @@ export class HistorisationModification<K extends keyof HistorisationModification
     });
   }
 
-  static creerHistorisationModification<K extends keyof HistorisationModificationDisponible>({ id, utilisateurNom, tableModifieId, nouvelleValeur, ancienneValeur }: {
+  static creerHistorisationModification<K extends keyof HistorisationModificationDisponible>({ id, auteurId, tableModifieId, nouvelleValeur, ancienneValeur }: {
     id?: string,
-    utilisateurNom: string,
+    auteurId: string,
     tableModifieId: K,
     ancienneValeur: HistorisationModificationDisponible[K]
     nouvelleValeur: HistorisationModificationDisponible[K]
@@ -128,7 +128,7 @@ export class HistorisationModification<K extends keyof HistorisationModification
       idObjetModifie: tableRecuperationId[tableModifieId](ancienneValeur),
       typeDeModification: 'modification',
       dateDeModification: new Date().toISOString(),
-      utilisateurNom,
+      auteurId,
       tableModifieId,
       ancienneValeur: diffAncienneValeur && tableConversionModification[tableModifieId](diffAncienneValeur),
       nouvelleValeur: diffNouvelleValeur && tableConversionModification[tableModifieId](diffNouvelleValeur),

@@ -8,6 +8,7 @@ import { RapportRepository } from '@/server/gestion-utilisateur/domain/ports/Rap
 import { EMAIL_AUTEUR_REMPLACEMENT, SupprimerLesComptesDesactivesUseCase } from '@/server/gestion-utilisateur/usecases/SupprimerLesComptesDesactivesUseCase';
 import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository';
 import { PropositionValeurAvancementRepository } from '@/server/gestion-utilisateur/domain/ports/PropositionValeurAvancementRepository';
+import { HistorisationModificationRepository } from '@/server/domain/historisationModification/HistorisationModificationRepository';
 
 describe('SupprimerLesComptesDesactivesUseCase', () => {
   let utilisateurRepository: MockProxy<UtilisateurRepository>;
@@ -18,6 +19,7 @@ describe('SupprimerLesComptesDesactivesUseCase', () => {
   let objectifRepository: MockProxy<ObjectifRepository>;
   let rapportRepository: MockProxy<RapportRepository>;
   let propositionValeurAvancementRepository: MockProxy<PropositionValeurAvancementRepository>;
+  let historisationModification: MockProxy<HistorisationModificationRepository>;
 
   let supprimerLesComptesDesactivesUseCase: SupprimerLesComptesDesactivesUseCase;
 
@@ -30,7 +32,8 @@ describe('SupprimerLesComptesDesactivesUseCase', () => {
     objectifRepository = mock<ObjectifRepository>();
     rapportRepository = mock<RapportRepository>();
     propositionValeurAvancementRepository = mock<PropositionValeurAvancementRepository>();
-    supprimerLesComptesDesactivesUseCase = new SupprimerLesComptesDesactivesUseCase({ utilisateurRepository, utilisateurIAMRepository, syntheseDesResultatsRepository, commentaireRepository, decisionStrategiqueRepository, objectifRepository, rapportRepository, propositionValeurAvancementRepository });
+    historisationModification = mock<HistorisationModificationRepository>();
+    supprimerLesComptesDesactivesUseCase = new SupprimerLesComptesDesactivesUseCase({ utilisateurRepository, utilisateurIAMRepository, syntheseDesResultatsRepository, commentaireRepository, decisionStrategiqueRepository, objectifRepository, rapportRepository, propositionValeurAvancementRepository, historisationModification });
   });
   it('Supprime les comptes qui sont désactivés depuis plus de 2 ans et anonymise les saisies', async () => {
     // Given
@@ -47,6 +50,7 @@ describe('SupprimerLesComptesDesactivesUseCase', () => {
     expect(objectifRepository.anonymiserAuteurs).toHaveBeenCalledWith(utilisateurAsupprimerId, EMAIL_AUTEUR_REMPLACEMENT);
     expect(decisionStrategiqueRepository.anonymiserAuteurs).toHaveBeenCalledWith(utilisateurAsupprimerId, EMAIL_AUTEUR_REMPLACEMENT);
     expect(propositionValeurAvancementRepository.anonymiserAuteurs).toHaveBeenCalledWith(utilisateurAsupprimerId, EMAIL_AUTEUR_REMPLACEMENT);
+    expect(historisationModification.anonymiserAuteurs).toHaveBeenCalledWith(utilisateurAsupprimerId, EMAIL_AUTEUR_REMPLACEMENT);
     expect(rapportRepository.anonymiserAuteurs).toHaveBeenCalledWith(utilisateursAsupprimer.map(utilisateur => utilisateur.email), EMAIL_AUTEUR_REMPLACEMENT);
     expect(utilisateurRepository.supprimerListeUtilisateur).toHaveBeenCalledWith(utilisateurAsupprimerId);
     expect(utilisateurIAMRepository.supprime).toHaveBeenCalledTimes(2);

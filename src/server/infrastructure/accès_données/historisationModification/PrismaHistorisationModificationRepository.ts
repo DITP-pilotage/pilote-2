@@ -13,10 +13,11 @@ const convertirEnModel = <K extends keyof HistorisationModificationDisponible>(h
   return {
     id: historisationModification.id,
     id_objet_modifie: historisationModification.idObjetModifie,
-    utilisateur_nom: historisationModification.utilisateurNom,
     type_de_modification: historisationModification.typeDeModification,
     date_de_modification: historisationModification.dateDeModification,
     table_modifie_id: historisationModification.tableModifieId,
+    id_auteur: historisationModification.auteurId,
+    utilisateur_nom: null,
   };
 };
 
@@ -31,5 +32,26 @@ export class PrismaHistorisationModificationRepository implements HistorisationM
         nouvelle_valeur: historisationModification.nouvelleValeur as JsonValue || Prisma.JsonNull,
       },
     });
+  }
+
+  async anonymiserAuteurs(auteursAAnonymiserIds: string[], emailAuteurRemplacement: string): Promise<void> {
+    const auteurAnonyme = await prisma.utilisateur.findFirst({
+      where: {
+        email: emailAuteurRemplacement,
+      },
+    });
+
+    if (auteurAnonyme) {
+      await prisma.historisation_modification.updateMany({
+        where: {
+          id_auteur: {
+            in: auteursAAnonymiserIds,
+          },
+        },
+        data: {
+          id_auteur: auteurAnonyme.id,
+        },
+      }); 
+    }
   }
 }

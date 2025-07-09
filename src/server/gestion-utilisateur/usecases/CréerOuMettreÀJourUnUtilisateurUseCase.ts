@@ -69,7 +69,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     this.contactInfoLettresService = contactInfoLettresService;
   }
 
-  async run(utilisateur: UtilisateurÀCréerOuMettreÀJour, auteur: string, auteurId: string, utilisateurExistant: boolean, habilitations: Habilitations, profil: Profil | null): Promise<void> {
+  async run(utilisateur: UtilisateurÀCréerOuMettreÀJour, auteurId: string, utilisateurExistant: boolean, habilitations: Habilitations, profil: Profil | null): Promise<void> {
     const listeInformationsChantiersUtilisateurs = await this.chantierRepository.listerInformationsChantiersUtilisateurs();
     const listeTerritoiresCodes = await this.territoireRepository.listerCodes([]);
     const listePerimetresMinisteriels = await this.perimetreMinisterielRepository.listerIds([]);
@@ -101,12 +101,12 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     ) as Utilisateur;
 
     const historisationModification = utilisateurExistant ? HistorisationModification.creerHistorisationModification({
-      utilisateurNom: auteur,
+      auteurId,
       tableModifieId: 'utilisateur',
       ancienneValeur: utilisateurAvantModification as Utilisateur,
       nouvelleValeur: utilisateurApresExecution,
     }) : HistorisationModification.creerHistorisationCreation({
-      utilisateurNom: auteur,
+      auteurId,
       tableModifieId: 'utilisateur',
       nouvelleValeur: utilisateurApresExecution,
     });
