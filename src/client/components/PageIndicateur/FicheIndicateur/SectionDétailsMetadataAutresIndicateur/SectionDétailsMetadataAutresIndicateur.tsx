@@ -13,6 +13,8 @@ import {
 import {
   MetadataIndicateurInterrupteur,
 } from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInterrupteur';
+import { MetadataIndicateurSelecteur } from '@/client/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur';
+import { mappingAcceptedValues, mappingDisplayAcceptedValues } from '@/client/components/PageIndicateur/FicheIndicateur/commons/utils';
 
 const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat
@@ -209,6 +211,41 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
         </div>
       </div>
       <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-6'>
+          <MetadataIndicateurSelecteur
+            erreurMessage={errors.maillePilotage?.message}
+            estEnCoursDeModification={estEnCoursDeModification}
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.maille_pilotage}
+            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'maille_pilotage')}
+            register={register('maillePilotage')}
+            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'maille_pilotage', 'maillePilotage')}
+            values={getValues('maillePilotage') || ''}
+          />
+        </div>
+        <div className='fr-col-12 fr-col-md-6'>
+          <MetadataIndicateurSelecteur
+            erreurMessage={errors.cibleAttendue?.message}
+            estEnCoursDeModification={estEnCoursDeModification}
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.cible_attendue}
+            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'cible_attendue')}
+            register={register('cibleAttendue')}
+            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'cible_attendue', 'cibleAttendue')}
+            values={getValues('cibleAttendue') || ''}
+          />
+        </div>
+      </div>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-6'>
+          <MetadataIndicateurSelecteur
+            erreurMessage={errors.couvertureTemporelle?.message}
+            estEnCoursDeModification={estEnCoursDeModification}
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.couverture_temporelle}
+            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'couverture_temporelle')}
+            register={register('couvertureTemporelle')}
+            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'couverture_temporelle', 'couvertureTemporelle')}
+            values={getValues('couvertureTemporelle') || ''}
+          />
+        </div>
         <div className='fr-col-12 fr-col-md-6'>
           <MetadataIndicateurInterrupteur
             estEnCoursDeModification={estEnCoursDeModification}

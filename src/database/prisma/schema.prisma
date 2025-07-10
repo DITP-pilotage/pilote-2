@@ -426,6 +426,9 @@ model metadata_indicateurs_complementaire {
   contact_technique         String?
   contact_technique_email   String?
   commentaire               String?
+  maille_pilotage           String?
+  cible_attendue            String?
+  couverture_temporelle       String?
 
   @@schema("raw_data")
 }
