@@ -365,17 +365,6 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     };
   }
 
-  private _aDesDroitsdeSaisieCommentaire(habilitations: Habilitations, profilUtilisateur: profil) {
-    if (profilUtilisateur.a_acces_tous_chantiers) {
-      return profilUtilisateur.peut_saisir_des_commentaires;
-    } else {
-      const habilitationSaisieCommentaire = habilitations.saisieCommentaire;
-      return profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire
-        ? habilitationSaisieCommentaire.périmètres.length > 0 || habilitationSaisieCommentaire.chantiers.length > 0
-        : habilitationSaisieCommentaire.territoires.length > 0;
-    }
-  }
-
   private _aDesDroitsdeSaisieIndicateur(habilitations: Habilitations, profilUtilisateur: profil) {
     if (profilUtilisateur.a_acces_tous_chantiers && profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur) {
       return true;
@@ -483,7 +472,6 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       dateCreation: utilisateurBrut.date_creation?.toISOString() || null,
       auteurCreation: auteurCreation ? `${auteurCreation.prenom} ${auteurCreation.nom}` : 'Auteur Inconnu',
       fonction: utilisateurBrut.fonction,
-      saisieCommentaire: this._aDesDroitsdeSaisieCommentaire(habilitations, utilisateurBrut.profil),
       saisieIndicateur: this._aDesDroitsdeSaisieIndicateur(habilitations, utilisateurBrut.profil),
       gestionUtilisateur: this._aDesDroitsdeGestionUtilisateur(habilitations, utilisateurBrut.profil),
       habilitations: habilitations,

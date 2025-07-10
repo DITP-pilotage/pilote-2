@@ -19,8 +19,6 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
 
   private _saisieIndicateur: UtilisateurÀCréerOuMettreÀJour['saisieIndicateur'];
 
-  private _saisieCommentaire: UtilisateurÀCréerOuMettreÀJour['saisieCommentaire'];
-
   private _gestionUtilisateur: UtilisateurÀCréerOuMettreÀJour['gestionUtilisateur'];
 
   constructor() {
@@ -30,7 +28,6 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
     this._profil = faker.helpers.arrayElement(profilsCodes);
     this._fonction = 'fonction';
     this._saisieIndicateur = faker.datatype.boolean();
-    this._saisieCommentaire = faker.datatype.boolean();
     this._gestionUtilisateur = faker.datatype.boolean();
     this._habilitations = {
       lecture: {
@@ -39,6 +36,9 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
         territoires: [],
       },
       responsabilite: {
+        chantiers: [],
+      },
+      saisieCommentaire: {
         chantiers: [],
       },
     };
@@ -59,12 +59,7 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
     return this;
   }
 
-  avecSaisieCommentaire(saisieCommentaire: UtilisateurÀCréerOuMettreÀJour['saisieCommentaire']): UtilisateurÀCréerOuMettreÀJourBuilder {
-    this._saisieCommentaire = saisieCommentaire;
-    return this;
-  }
-
-  avecGestionUtilisateur(gestionUtilisateur: UtilisateurÀCréerOuMettreÀJour['saisieCommentaire']): UtilisateurÀCréerOuMettreÀJourBuilder {
+  avecGestionUtilisateur(gestionUtilisateur: UtilisateurÀCréerOuMettreÀJour['gestionUtilisateur']): UtilisateurÀCréerOuMettreÀJourBuilder {
     this._gestionUtilisateur = gestionUtilisateur;
     return this;
   }
@@ -104,6 +99,13 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
     return this;
   }
 
+  avecResponsabiliteSaisieCommentaire(chantierIds?: Chantier['id'][]): UtilisateurÀCréerOuMettreÀJourBuilder {
+    if (chantierIds) {
+      this._habilitations.saisieCommentaire.chantiers = chantierIds;
+    }
+    return this;
+  }
+
   build(): UtilisateurÀCréerOuMettreÀJour {
     return {
       nom: this._nom,
@@ -112,7 +114,6 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
       profil: this._profil,
       fonction: this._fonction,
       saisieIndicateur: this._saisieIndicateur,
-      saisieCommentaire: this._saisieCommentaire,
       gestionUtilisateur: this._gestionUtilisateur,
       habilitations: this._habilitations,
     };

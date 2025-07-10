@@ -14,7 +14,6 @@ export default interface FicheUtilisateurProps {
     dateDesactivation?: string | null
     fonction: string | null
     saisieIndicateur?: boolean
-    saisieCommentaire?: boolean
     gestionUtilisateur?: boolean
     habilitations?: {
       lecture?: {

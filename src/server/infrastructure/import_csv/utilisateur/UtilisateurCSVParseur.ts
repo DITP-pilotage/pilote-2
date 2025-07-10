@@ -85,7 +85,6 @@ export default class UtilisateurCSVParseur {
       profil: csvRecord[this._colonnes.profil].toUpperCase() as ProfilCode,
       auteurEmail: csvRecord[this._colonnes.auteurEmail],
       fonction: null,
-      saisieCommentaire: true,
       saisieIndicateur: true,
       gestionUtilisateur: true,
       habilitations: {

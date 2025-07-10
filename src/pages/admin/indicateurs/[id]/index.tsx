@@ -15,13 +15,13 @@ import {
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import { getContainer } from '@/server/dependances';
 import {
-  InformationDerniereModificationMetadataIndicateurContrat,
+  InformationHistorisationMetadataIndicateurContrat,
 } from '@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat';
 import Habilitation from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
 
 export interface NextPageAdminUtilisateurProps {
   indicateur: MetadataParametrageIndicateurContrat,
-  informationHistorisationIndicateur: InformationDerniereModificationMetadataIndicateurContrat,
+  informationHistorisationIndicateur: InformationHistorisationMetadataIndicateurContrat,
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
   estUneCréation: boolean
   modificationReussie: boolean
@@ -64,7 +64,7 @@ export async function getServerSideProps({ req, res, params, query }: GetServerS
     }
   }
 
-  const informationHistorisationIndicateur = await getContainer('parametrageIndicateur').resolve('metadataParametrageIndicateurQuery').recupererInformationDerniereModification({ indicId: params.id });
+  const informationHistorisationIndicateur = await getContainer('parametrageIndicateur').resolve('metadataParametrageIndicateurQuery').recupererInformationHistorisation({ indicId: params.id });
 
   const chantiers = await getContainer('gestionUtilisateur').resolve('recupererChantiersSynthetisesUseCase').run({
     listeChantierIdLecture: session.habilitations.lecture.chantiers,

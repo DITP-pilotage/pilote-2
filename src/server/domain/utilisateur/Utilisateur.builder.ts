@@ -24,8 +24,6 @@ export default class UtilisateurBuilder {
 
   private _habilitations: Utilisateur['habilitations'];
 
-  private _saisieCommentaire: Utilisateur['saisieCommentaire'];
-
   private _saisieIndicateur: Utilisateur['saisieIndicateur'];
 
   private _gestionUtilisateur: Utilisateur['gestionUtilisateur'];
@@ -43,7 +41,6 @@ export default class UtilisateurBuilder {
     this._dateCreation = faker.date.recent(60, '2023-05-01T00:00:00.000Z').toISOString();
     this._auteurCreation = faker.name.firstName();
     this._fonction = faker.helpers.arrayElement([faker.lorem.words(6), null]);
-    this._saisieCommentaire = faker.datatype.boolean();
     this._saisieIndicateur = faker.datatype.boolean();
     this._gestionUtilisateur = faker.datatype.boolean();
     this._dateDesactivation = null;
@@ -53,7 +50,6 @@ export default class UtilisateurBuilder {
       saisieIndicateur: { chantiers: [], territoires: [], périmètres: [] },
       gestionUtilisateur: { chantiers: [], territoires:[], périmètres: [] },
       responsabilite: { chantiers: [], territoires: [], périmètres: [] },
-
     };
   }
 
@@ -99,7 +95,6 @@ export default class UtilisateurBuilder {
       dateCreation: this._dateCreation,
       auteurCreation: this._auteurCreation,
       fonction: this._fonction,
-      saisieCommentaire: this._saisieCommentaire,
       saisieIndicateur: this._saisieIndicateur,
       gestionUtilisateur: this._gestionUtilisateur,
       habilitations: this._habilitations,

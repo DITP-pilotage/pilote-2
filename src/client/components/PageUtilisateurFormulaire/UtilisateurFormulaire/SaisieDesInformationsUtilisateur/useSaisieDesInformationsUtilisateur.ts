@@ -116,9 +116,6 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
   const profilSelectionne = profils?.find(profil => profil.code === profilCodeSelectionne);
   const changementProfilSelectionne = (profilCode: ProfilCode) => {
     const profilUtilisateur = profils?.find(profil => profil.code === profilCode);
-    const valeurDefautSaisieCommentaire = profilUtilisateur?.chantiers.saisieCommentaire.saisiePossible ?
-      profilUtilisateur.chantiers.lecture.tous :
-      false;
     const valeurDefautSaisieIndicateur = profilUtilisateur?.chantiers.saisieIndicateur.tousTerritoires ?
       profilUtilisateur.chantiers.lecture.tous :
       false;
@@ -131,9 +128,9 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
     setValue('habilitations.lecture.périmètres', []);
     setValue('habilitations.lecture.chantiers', []);
     setValue('habilitations.responsabilite.chantiers', []);
+    setValue('habilitations.saisieCommentaire.chantiers', []);
     setValue('gestionUtilisateur', valeurDefautGestionUtilisateur);
     setValue('saisieIndicateur', valeurDefautSaisieIndicateur);
-    setValue('saisieCommentaire', valeurDefautSaisieCommentaire);
   };
 
   const afficherChampLectureTerritoires = (profilsDépartementaux.includes(profilCodeSelectionne) || profilsRégionaux.includes(profilCodeSelectionne));
@@ -204,17 +201,17 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
     setValue('habilitations.responsabilite.chantiers', nouveauxChantiersIdsResponsabilite);
   };
 
-  const afficherChampResponsabiliteChantiers = PROFILS_POSSIBLES_RESPONSABLES.has(profilCodeSelectionne);
-  let chantiersAccessibleResponsabilite: ChantierSynthétisé[] = 
-  !afficherChampResponsabiliteChantiers 
-    ? [] 
-    : afficherChampLectureChantiers 
-      ? chantiersAccessiblesLecture?.filter(chantier => watch('habilitations.lecture.chantiers').includes(chantier.id)) ?? [] 
-      : chantiersAccessiblesLecture ?? [];
+  const chantiersSelectionnesLecture: ChantierSynthétisé[] = afficherChampLectureChantiers ?
+    chantiersAccessiblesLecture?.filter(chantier => watch('habilitations.lecture.chantiers').includes(chantier.id)) ?? [] :
+    chantiersAccessiblesLecture ?? [];
 
+  const afficherChampResponsabiliteChantiers = PROFILS_POSSIBLES_RESPONSABLES.has(profilCodeSelectionne);
   const afficherChampSaisieIndicateur = profilSelectionne && !profilSelectionne.chantiers.lecture.tous && profilSelectionne.chantiers.saisieIndicateur.tousTerritoires;
   const afficherChampSaisieCommentaire = profilSelectionne && !profilSelectionne.chantiers.lecture.tous;
   const afficherChampGestionCompte = profilSelectionne && profilSelectionne.utilisateurs.modificationPossible && !AAccesATousLesUtilisateurs(profilSelectionne);
+
+  const chantiersAccessibleResponsabilite: ChantierSynthétisé[] = !afficherChampResponsabiliteChantiers ? [] : chantiersSelectionnesLecture;
+  const chantiersAccessibleSaisieCommentaire: ChantierSynthétisé[] = !afficherChampSaisieCommentaire ? [] : chantiersSelectionnesLecture;
 
   watch('profil');
 
@@ -244,5 +241,6 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
     afficherChampSaisieCommentaire,
     afficherChampGestionCompte,
     perimetresSelectionnables,
+    chantiersAccessibleSaisieCommentaire,
   };
 }
