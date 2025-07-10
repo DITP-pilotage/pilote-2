@@ -332,6 +332,26 @@ const config = convict({
       default: 'TBD',
       env: 'DEV_PASSWORD',
     },
+    apiDITPADMINUsername: {
+      format: String,
+      default: 'TBD',
+      env: 'API_DITP_USERNAME',
+    },
+    apiDirProjetUsername: {
+      format: String,
+      default: 'TBD',
+      env: 'API_DIR_PROJET_USERNAME',
+    },
+    apiDirProjetChantierAssocie: {
+      format: String,
+      default: 'TBD',
+      env: 'API_DIR_PROJET_CHANTIER_ASSOCIE',
+    },
+    apiDirProjetIndicateurAssocie: {
+      format: String,
+      default: 'TBD',
+      env: 'API_DIR_PROJET_INDICATEUR_ASSOCIE',
+    },  
   },
 });
 

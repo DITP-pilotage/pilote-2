@@ -16,12 +16,20 @@ export default defineConfig({
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
+  retries: 2,
   globalTimeout: 120_000,
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [['html', { open: 'always' }]],
+  /* Reporter à utiliser. Voir https://playwright.dev/docs/test-reporters */
+  reporter: process.env.ENVIRONMENT === 'E2E'
+    ? [
+        ['./src/utils/TchapReporter.ts', {
+          baseUrl: process.env.TCHAP_BASE_URL,
+          accessToken: process.env.TCHAP_ACCESS_TOKEN,
+          roomId: process.env.TCHAP_ROOM_ID,
+        }],
+      ]
+    : [['html', { open: 'always' }]], // HTML en développement
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -35,7 +43,9 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+      },
     },
     /* Test against mobile viewports. */
 
