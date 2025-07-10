@@ -1,25 +1,25 @@
 import { APIRequestContext, APIResponse, expect, test } from '@playwright/test';
-import { configuration } from '@/config';
 import { DonneeChantierContrat } from '@/server/chantiers/app/contrats/DonneeChantierContrat';
+import { authentificationApiDirProjetFn, suppressionAuthentificationApiFn } from '../utils';
+import { configuration } from '@/config';
 
 let apiContext: APIRequestContext;
 let result: APIResponse;
 
-const localTokenAPIEquipeDirProjet =  configuration.tokenAPI.localTokenAPIE2EUtilisateurEquipeDirProjet;
-const chantierIdAccessibleParUtilisateurEquipeDirProjet =  configuration.tokenAPI.chantierIdAccessibleParUtilisateurEquipeDirProjet;
-
-test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les données de l'indicateur", async ({ playwright }) => {
+test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les données de l'indicateur", async ({ playwright, page }) => {
+  const { apiDirProjetToken, apiDirProjetUsername, apiDirProjetChantierAssocie } = await authentificationApiDirProjetFn({ page });
+  
   await test.step('Création du context - Authorization Pilote - equipe.dir.projet@example.com - EQUIPE_DIR_PROJET', async () => {
     apiContext = await playwright.request.newContext({
-      baseURL: 'http://localhost:3000',
+      baseURL: configuration.nextAuth.url,
       extraHTTPHeaders: {
-        'Authorization': `Bearer ${localTokenAPIEquipeDirProjet}`,
+        'Authorization': `Bearer ${apiDirProjetToken}`,
       },
     });
   });
 
-  await test.step(`Appel du endpoint /api/open-api/chantier/${chantierIdAccessibleParUtilisateurEquipeDirProjet}/donnees`, async () => {
-    result = await apiContext.get(`/api/open-api/chantier/${chantierIdAccessibleParUtilisateurEquipeDirProjet}/donnees`);
+  await test.step(`Appel du endpoint /api/open-api/chantier/${apiDirProjetChantierAssocie}/donnees`, async () => {
+    result = await apiContext.get(`/api/open-api/chantier/${apiDirProjetChantierAssocie}/donnees`);
   });
 
   await test.step('Vérification status égal 200 OK', async () => {
@@ -32,8 +32,8 @@ test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les 
     donneeChantier = await result.json() as DonneeChantierContrat;
   });
 
-  await test.step(`Vérification données appartiennent bien au ${chantierIdAccessibleParUtilisateurEquipeDirProjet}`, async () => {
-    expect(donneeChantier.chantier_id).toEqual(`${chantierIdAccessibleParUtilisateurEquipeDirProjet}`);
+  await test.step(`Vérification données appartiennent bien au ${apiDirProjetChantierAssocie}`, async () => {
+    expect(donneeChantier.chantier_id).toEqual(`${apiDirProjetChantierAssocie}`);
     expect(donneeChantier.nom).toBeDefined();
   });
 
@@ -63,4 +63,6 @@ test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les 
     expect(donneeChantier.donnees_territoires[0].publication.commentaires_sur_les_donnees).toBeDefined();
     expect(donneeChantier.donnees_territoires[0].publication.autres_resultats).toBeDefined();
   });
+
+  await suppressionAuthentificationApiFn({ page, apiUsername: apiDirProjetUsername });
 });
