@@ -314,7 +314,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
   private async _récupérerChantiersParDéfaut(profilUtilisateur: profil): Promise<Record<ScopeChantiers | ScopeUtilisateurs, PrismaChantierIdentite['id'][]>> {
     let chantiersAccessibles: PrismaChantierIdentite['id'][] = [];
-    let chantiersAccessiblesEnSaisieCommentaire: PrismaChantierIdentite['id'][];
+    let chantiersAccessiblesEnGestionUtilisateur: PrismaChantierIdentite['id'][];
 
     if (profilUtilisateur.a_acces_tous_chantiers) {
       chantiersAccessibles = this._chantiers.ids;
@@ -324,11 +324,11 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
     // eslint-disable-next-line unicorn/prefer-ternary
     if ([ProfilEnum.COORDINATEUR_REGION, ProfilEnum.PREFET_REGION, ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.PREFET_DEPARTEMENT].includes(profilUtilisateur.code)) {
-      chantiersAccessiblesEnSaisieCommentaire = objectEntries(this._chantiers.groupésParId)
+      chantiersAccessiblesEnGestionUtilisateur = objectEntries(this._chantiers.groupésParId)
         .filter(([_, chantier]) => chantier.est_territorialise && chantier.ate === 'ate')
         .map(([_, chantier]) => chantier.id);
     } else {
-      chantiersAccessiblesEnSaisieCommentaire = chantiersAccessibles;
+      chantiersAccessiblesEnGestionUtilisateur = chantiersAccessibles;
     }
 
     if (profilUtilisateur.a_acces_tous_chantiers) {
@@ -337,9 +337,9 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
     return {
       lecture: chantiersAccessibles,
-      saisieCommentaire: chantiersAccessiblesEnSaisieCommentaire,
+      saisieCommentaire: profilUtilisateur.a_acces_tous_chantiers ? chantiersAccessibles : [],
       saisieIndicateur: [ProfilEnum.DITP_PILOTAGE, ProfilEnum.DITP_ADMIN].includes(profilUtilisateur.code) ? chantiersAccessibles : [],
-      gestionUtilisateur: profilUtilisateur.peut_modifier_les_utilisateurs ? chantiersAccessiblesEnSaisieCommentaire : [],
+      gestionUtilisateur: profilUtilisateur.peut_modifier_les_utilisateurs ? chantiersAccessiblesEnGestionUtilisateur : [],
       responsabilite: [],
     };
   }
