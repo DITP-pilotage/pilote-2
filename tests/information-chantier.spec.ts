@@ -10,14 +10,14 @@ test('doit pouvoir consulter les données des chantiers', async ({ page }) => {
     await expect(page.getByRole('heading', { name: /Taux d'avancement des chantiers par territoire/ })).toBeVisible();
     await expect(page.getByRole('heading', { name: /Répartition des météos renseignées/ })).toBeVisible();
 
-    await expect(page.getByRole('button', { name: /Transition écologique et Cohésion des territoires/ })).toBeVisible();
   });
 
   await test.step('Ajout du filtre ministère \'Transition écologique et Cohésion des territoires\'', async () => {
+    await page.getByRole('button', { name: /Filtrer par ministères/ }).click();
     await page.getByRole('button', { name: /Transition écologique et Cohésion des territoires/ }).click();
   });
 
-  await test.step('Vérification filtre ministère actif \'Transition écologique et Cohésion des territoires\'', async () => {
+  await test.step("Vérification filtre ministère actif 'Transition écologique et Cohésion des territoires'", async () => {
     await expect(page.locator("button[aria-label='Retirer le tag Cohésion des territoires, Ville']")).toBeVisible();
     await expect(page.locator("button[aria-label='Retirer le tag Logement']")).toBeVisible();
     await expect(page.locator("button[aria-label='Retirer le tag Transition Écologique']")).toBeVisible();
