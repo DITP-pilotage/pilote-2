@@ -50,7 +50,6 @@ export const validationInfosBaseUtilisateurNonAdmin = z.object({
   fonction: z.string().max(100).nullable(),
   profil: z.enum(profilsCodes),
   saisieIndicateur: z.boolean(),
-  saisieCommentaire: z.boolean(),
 });
 
 export const validationInfosHabilitationsUtilisateur = z.object({
