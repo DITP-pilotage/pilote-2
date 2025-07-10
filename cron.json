@@ -2,6 +2,8 @@
   "jobs": [
     {
       "command": "0 6 * * 1 /bin/bash scripts/run_rapport_pva.sh"
+    }, {
+      "command": "*/10 * * * * /bin/bash scripts/run_test_e2e.sh"
     }
   ]
 }

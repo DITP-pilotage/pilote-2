@@ -1,13 +1,14 @@
 import { Download, expect, test } from '@playwright/test';
 import fs from 'node:fs';
 import { loginFn } from './utils';
+import { configuration } from '@/config';
 
 test('doit pouvoir exporter les données des chantiers sous format CSV', async ({ page }) => {
   await loginFn({ page });
   test.setTimeout(150_000);
 
   await test.step("Ouverture de la modale d'export csv à l'étape 1 - Éléments à exporter", async () => {
-    await page.getByRole('button', { name: /Exporter les données V2/ }).click();
+    await page.getByRole('button', { name: /Exporter les données/ }).click();
     await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=1&typeExport=chantiers');
     await expect(page.getByRole('heading', { name: /Éléments à exporter/ })).toBeVisible();
     await expect(page.getByRole('heading', { name: /Exporter les données - Étape 1 sur 5/ })).toBeVisible();
@@ -104,24 +105,11 @@ test('doit pouvoir exporter les données des chantiers sous format CSV', async (
     await expect(page.getByRole('heading', { name: /Récapitulatif et validation/ })).toBeVisible();
     await expect(page.getByRole('heading', { name: /Exporter les données - Étape 4 sur 5/ })).toBeVisible();
   });
-
-  await test.step("Retour à l'étape 3 - Suppression des champs (Pour pouvoir tester le fichier après sinon trop de temps à DL)", async () => {
-    await page.getByRole('button', { name: /Étape précédente/ }).click();
-    await page.getByRole('checkbox', { name: 'responsabilité du chantier' }).setChecked(false, { force: true });
-    await page.getByRole('checkbox', { name: 'objectifs du chantier' }).setChecked(false, { force: true });
-    await page.getByRole('checkbox', { name: 'données descriptives du chantier sur le territoire' }).setChecked(false, { force: true });
-    await page.getByRole('checkbox', { name: 'données de comparaison du chantier' }).setChecked(false, { force: true });
-    await page.getByRole('checkbox', { name: 'météo et synthèse des résultats du chantier sur le territoire' }).setChecked(false, { force: true });
-    await page.getByRole('checkbox', { name: 'commentaires du chantier' }).setChecked(false, { force: true });
-    await page.getByRole('checkbox', { name: 'suivi des décisions stratégiques du chantier' }).setChecked(false, { force: true });
-    await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=chantiers&optionsExport=identifiant,gouvernance');
-  });
-
   let download: Download;
 
   await test.step("Retour à l'étape 4 - Récapitulatif et validation - partie téléchargement et vérification du fichier", async () => {
     await test.step('Téléchargement du fichier', async () => {
-      await page.getByRole('button', { name: /Étape suivante/ }).click();
+      await page.goto(`${configuration.nextAuth.url}/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=chantiers&optionsExport=identifiant,gouvernance`);
       await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=chantiers&optionsExport=identifiant,gouvernance');
       await expect(page.getByRole('heading', { name: /Récapitulatif et validation/ })).toBeVisible();
       await expect(page.getByRole('heading', { name: /Exporter les données - Étape 4 sur 5/ })).toBeVisible();
@@ -145,7 +133,7 @@ test('doit pouvoir exporter les données des chantiers sous format CSV', async (
 
   await test.step("Étape 4 - Récapitulatif et validation - partie téléchargement et vérification du fichier avec d'autres colonnes", async () => {
     await test.step('Téléchargement du fichier', async () => {
-      await page.goto('http://localhost:3000/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=chantiers&optionsExport=identifiant,gouvernance,responsabilite,objectif');
+      await page.goto(`${configuration.nextAuth.url}/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=chantiers&optionsExport=identifiant,gouvernance,responsabilite,objectif`);
 
       await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=chantiers&optionsExport=identifiant,gouvernance,responsabilite,objectif');
 
