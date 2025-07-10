@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { configuration } from '@/config';
 import { loginFn } from './utils';
 
 test('doit arriver sur la landing page', async ({ page }) => {
@@ -11,5 +12,5 @@ test('doit arriver sur la landing page', async ({ page }) => {
 test('doit pouvoir se connecter', async ({ page }) => {
   await loginFn({ page });
 
-  await expect(page.getByRole('banner').getByRole('button', { name: 'tristan.conti@seenovate.com' })).toBeVisible();
+  await expect(page.getByRole('banner').getByRole('button', { name: configuration.e2e.username })).toBeVisible();
 });

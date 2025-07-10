@@ -152,8 +152,8 @@ const credentialsProvider = CredentialsProvider({
   // e.g. domain, username, password, 2FA token, etc.
   // You can pass any HTML attribute to the <input> tag through the object.
   credentials: {
-    username: { label: 'Email', type: 'text', placeholder: 'alicerichard@example.com' },
-    password: { label: 'Mot de Passe', type: 'password' },
+    username: { label: 'Identifiant', type: 'text', placeholder: 'alicerichard@example.com' },
+    password: { label: 'Mot de passe', type: 'password' },
   },
 
   async authorize(credentials, _req): Promise<User | null> {

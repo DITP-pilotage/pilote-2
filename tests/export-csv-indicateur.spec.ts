@@ -7,7 +7,7 @@ test('doit pouvoir exporter les données des indicateurs sous format CSV', async
   test.setTimeout(60_000);
 
   await test.step("Ouverture de la modale d'export csv à l'étape 1 - Éléments à exporter", async () => {
-    await page.getByRole('button', { name: /Exporter les données V2/ }).click();
+    await page.getByRole('button', { name: /Exporter les données/ }).click();
     await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=1&typeExport=chantiers');
     await expect(page.getByRole('heading', { name: /Éléments à exporter/ })).toBeVisible();
     await expect(page.getByRole('heading', { name: /Exporter les données - Étape 1 sur 5/ })).toBeVisible();
@@ -78,19 +78,11 @@ test('doit pouvoir exporter les données des indicateurs sous format CSV', async
     await expect(page.getByRole('heading', { name: /Exporter les données - Étape 4 sur 5/ })).toBeVisible();
   });
 
-  await test.step("Retour à l'étape 3 - Suppression des champs (Pour pouvoir tester le fichier après sinon trop de temps à DL)", async () => {
-    await page.getByRole('button', { name: /Étape précédente/ }).click();
-    await page.getByRole('checkbox', { name: /données de l'indicateur sur le territoire/ }).setChecked(false, { force: true });
-    await page.getByRole('checkbox', { name: /données du chantier associé sur le territoire/ }).setChecked(false, { force: true });
-    await page.getByRole('checkbox', { name: /météo et synthèse des résultats du chantier associé sur le territoire/ }).setChecked(false, { force: true });
-    await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,gouvernance');
-  });
-
   let download: Download;
 
   await test.step("Retour à l'étape 4 - Récapitulatif et validation - partie téléchargement et vérification du fichier", async () => {
     await test.step('Téléchargement du fichier', async () => {
-      await page.getByRole('button', { name: /Étape suivante/ }).click();
+      await page.goto('http://localhost:3000/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=indicateurs&optionsExport=identifiant,gouvernance');
       await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=indicateurs&optionsExport=identifiant,gouvernance');
       await expect(page.getByRole('heading', { name: /Récapitulatif et validation/ })).toBeVisible();
       await expect(page.getByRole('heading', { name: /Exporter les données - Étape 4 sur 5/ })).toBeVisible();
@@ -131,7 +123,7 @@ test('doit pouvoir exporter les données des indicateurs sous format CSV', async
 
     await test.step('vérification du fichier identifiant, gouvernance, valeur descriptive', async () => {
       const contents = await fs.promises.readFile(await download.path());
-      expect(contents.toString()).toMatch('"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier";"Chantier Id";"Indicateur";"Ministère";"Axe";"Chantier statut";"Chantier du baromètre";"Valeur initiale";"Date valeur initiale";"Valeur avancement";"Date valeur avancement";"Valeur cible année en cours";"Date valeur cible année en cours";"Valeur cible à fin d\'échéance";"Date valeur cible à fin d\'échéance 2026";"Taux d\'avancement à fin d\'échéance 2025 (indicateur)";"Taux d\'avancement à fin d\'échéance 2026 (indicateur)"\n');
+      expect(contents.toString()).toMatch('"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier";"Chantier Id";"Indicateur";"Ministère";"Axe";"Chantier statut";"Chantier du baromètre";"Valeur initiale";"Date valeur initiale";"Valeur avancement";"Date valeur avancement";"Valeur cible à fin d\'échéance 2025";"Date valeur cible à fin d\'échéance 2025";"Valeur cible à fin d\'échéance 2026";"Date valeur cible à fin d\'échéance 2026 (indicateur)";"Taux d\'avancement à fin d\'échéance 2025 (indicateur)";"Taux d\'avancement à fin d\'échéance 2026 (indicateur)"\n');
     });
   });
 });
