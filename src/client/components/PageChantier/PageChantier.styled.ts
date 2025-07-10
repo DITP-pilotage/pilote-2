@@ -72,6 +72,16 @@ const PageChantierStyled = styled.div`
       margin-left: 12mm;
     }
     
+    .titre-chantier-impression {
+      display: block !important;
+      margin-bottom: 1rem;
+      page-break-after: avoid;
+    }
+    
+    .horizontal-panel {
+      display: none !important;
+    }
+    
     .layout--nat {
       grid-template-areas:
         "avancement synthèse"
@@ -113,6 +123,10 @@ const PageChantierStyled = styled.div`
   .fr-h2 {
     font-size: 1.875rem!important;
     line-height: 2.25rem!important;
+  }
+
+  .titre-chantier-impression {
+    display: none;
   }
 `;
 
