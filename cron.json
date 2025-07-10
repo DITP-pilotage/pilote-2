@@ -3,7 +3,7 @@
     {
       "command": "0 6 * * 1 /bin/bash scripts/run_rapport_pva.sh"
     }, {
-      "command": "*/5 * * * * /bin/bash scripts/run_test_e2e.sh"
+      "command": "0 8,14 * * 1-5 /bin/bash scripts/run_test_e2e.sh"
     }
   ]
 }
