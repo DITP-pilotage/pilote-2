@@ -652,48 +652,43 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       where: { id: utilisateurId },
       select: { email: true },
     });
-    
-    if (utilisateur) {
-      return utilisateur.email;
-    }
 
-    return null;
+    return utilisateur?.email ?? null;
   }
 
-  async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurId: string): Promise<void> {
-
+  async créerOuMettreÀJour(utilisateur: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurId: string): Promise<void> {
     const utilisateurCrééOuMisÀJour = await this.prisma.utilisateur.upsert({
       create: convertirEnModel({
-        email: u.email.toLocaleLowerCase(),
-        nom: u.nom,
-        prenom: u.prénom,
-        profilCode: u.profil,
-        fonction: u.fonction,
+        email: utilisateur.email.toLocaleLowerCase(),
+        nom: utilisateur.nom,
+        prenom: utilisateur.prénom,
+        profilCode: utilisateur.profil,
+        fonction: utilisateur.fonction,
         auteurIdCreation: auteurId,
         dateCreation: new Date(),
         auteurIdModification: auteurId,
         dateModification: new Date(),
       }),
       update: convertirEnModelModification({
-        email: u.email.toLocaleLowerCase(),
-        nom: u.nom,
-        prenom: u.prénom,
-        profilCode: u.profil,
-        fonction: u.fonction,
+        email: utilisateur.email.toLocaleLowerCase(),
+        nom: utilisateur.nom,
+        prenom: utilisateur.prénom,
+        profilCode: utilisateur.profil,
+        fonction: utilisateur.fonction,
         auteurIdModification: auteurId,
         dateModification: new Date(),
       }),
       where: {
-        email: u.email.toLowerCase(),
+        email: utilisateur.email.toLowerCase(),
       },
     });
 
-    const habilitationsÀCréer = Object.entries(u.habilitations).map(h => ({
+    const habilitationsÀCréer = Object.entries(utilisateur.habilitations).map(habilitation => ({
       utilisateurId: utilisateurCrééOuMisÀJour.id,
-      scopeCode: h[0],
-      territoires: h[1].territoires,
-      perimetres: h[1].périmètres,
-      chantiers: h[1].chantiers,
+      scopeCode: habilitation[0],
+      territoires: habilitation[1].territoires,
+      perimetres: habilitation[1].périmètres,
+      chantiers: habilitation[1].chantiers,
     }));
 
     await this.prisma.habilitation.deleteMany({

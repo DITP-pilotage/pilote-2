@@ -39,7 +39,7 @@ export const useModaleInscriptionInfolettre = () => {
     });
   });
 
-  const AConsentiALinscription = watch('consentement');
+  const estConsentantALinscription = watch('consentement');
 
   return {
     session,
@@ -47,7 +47,7 @@ export const useModaleInscriptionInfolettre = () => {
     watch,
     handleFermetureModale,
     handleSubmitForm,
-    AConsentiALinscription,
+    estConsentantALinscription,
     isSubmitting: envoyerMailInscriptionInfolettre.isLoading,
     isDesactivating: desactiverPopupInfolettre.isLoading,
   };

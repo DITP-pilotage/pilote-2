@@ -353,6 +353,13 @@ const config = convict({
       env: 'API_DIR_PROJET_INDICATEUR_ASSOCIE',
     },  
   },
+  brevo: {
+    apiKey: {
+      format: String,
+      default: 'ToBeDefined',
+      env: 'BREVO_API_KEY',
+    },
+  },
 });
 
 config.set('keycloak.tokenUrl', config.get('keycloak.issuer') + '/protocol/openid-connect/token');

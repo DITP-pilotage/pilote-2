@@ -1,11 +1,12 @@
 import { CreateContact, ContactsApi, UpdateContact, SendSmtpEmail, TransactionalEmailsApi } from '@getbrevo/brevo';
 import { ContactInfoLettresService } from '@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService';
+import { configuration } from '@/config';
 
 const contactsApi = new ContactsApi();
-contactsApi.setApiKey(0, process.env.BREVO_API_KEY ?? '');
+contactsApi.setApiKey(0, configuration.brevo.apiKey);
 
 const emailApi = new TransactionalEmailsApi();
-emailApi.setApiKey(0, process.env.BREVO_API_KEY ?? '');
+emailApi.setApiKey(0, configuration.brevo.apiKey);
 
 export class BrevoContactInfoLettresService implements ContactInfoLettresService {
   async creerContact(email: string, nom: string, prenom: string, listesDiffusionIds: number[]): Promise<void> {

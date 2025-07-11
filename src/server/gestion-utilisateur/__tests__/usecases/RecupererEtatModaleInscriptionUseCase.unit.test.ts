@@ -92,5 +92,4 @@ describe('RecupererEtatModaleInscriptionUseCase', () => {
     // Then
     expect(etatModale).toBeFalse();
   });
-
 });

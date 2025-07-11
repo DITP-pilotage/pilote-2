@@ -11,7 +11,7 @@ export const ModaleInscriptionInfolettre: FunctionComponent = () => {
     register,
     handleFermetureModale,
     handleSubmitForm,
-    AConsentiALinscription,
+    estConsentantALinscription,
   } = useModaleInscriptionInfolettre();
 
   return (
@@ -91,7 +91,7 @@ export const ModaleInscriptionInfolettre: FunctionComponent = () => {
           <button 
             aria-controls={ID_HTML_MODALE_INSCRIPTION_INFOLETTRE} 
             className='fr-btn fr-mt-3w'
-            disabled={!AConsentiALinscription}
+            disabled={!estConsentantALinscription}
             type='submit'
           >
             M'inscrire maintenant

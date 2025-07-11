@@ -3,9 +3,7 @@ import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports
 
 type Dependencies = {
   contactInfoLettresService: ContactInfoLettresService
-   
   utilisateurRepository: UtilisateurRepository;
-
 };
 
 export class AjouterUnContactAUneInfoLettreUseCase {
