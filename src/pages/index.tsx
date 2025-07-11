@@ -4,18 +4,19 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { FunctionComponent } from 'react';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 
-export const getServerSideProps: GetServerSideProps<{}> = async ({ req, res }) => {
+export const getServerSideProps: GetServerSideProps<{}> = async ({ req, res, query }) => {
   const session = await getServerSession(req, res, authOptions);
 
-  if (session) {
-    const territoireCode = session.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : session.habilitations.lecture.territoires[0];
+  if (session && query.callbackUrl) {
+    const callbackUrl = decodeURIComponent(query.callbackUrl as string);
     return {
       redirect: {
-        permanent: true,
-        destination: `/accueil/chantier/${territoireCode}`,
+        destination: callbackUrl,
+        permanent: false,
       },
     };
   }
+
   return {
     props: {},
   };

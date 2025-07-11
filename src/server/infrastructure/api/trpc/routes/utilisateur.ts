@@ -1,6 +1,7 @@
 import { créerRouteurTRPC, procédureProtégée, vérifierSiLeCSRFEstValide } from '@/server/infrastructure/api/trpc/trpc';
 import {
   validationDesactiverVideoAccueil,
+  validationEnvoyerMailInscriptionInfolettre,
   validationInfosBaseUtilisateur,
   validationInfosHabilitationsUtilisateur,
   validationReactiverUtilisateur,
@@ -57,5 +58,17 @@ export const utilisateurRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       await getContainer('gestionUtilisateur').resolve('desactiverVideoAccueilUseCase').execute(input.utilisateurId);
+    }),
+  envoyerMailInscriptionInfolettre: procédureProtégée
+    .input(validationEnvoyerMailInscriptionInfolettre.merge(zodValidateurCSRF))
+    .mutation(async ({ input, ctx }) => {
+      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      await getContainer('gestionUtilisateur').resolve('envoyerMailInscriptionInfolettreUseCase').execute(input.utilisateurEmail, input.lienConfirmationInscription);
+    }),
+  desactiverPopupInfolettre: procédureProtégée
+    .input(validationDesactiverVideoAccueil.merge(zodValidateurCSRF))
+    .mutation(async ({ input, ctx }) => {
+      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      await getContainer('gestionUtilisateur').resolve('desactiverPopupInfolettreUseCase').execute(input.utilisateurId);
     }),
 });

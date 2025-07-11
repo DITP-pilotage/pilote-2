@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { UtilisateurFormInputs } from '@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
 import api from '@/server/infrastructure/api/trpc/api';
-import { ProfilCode, profilsDépartementaux, profilsRégionaux } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilCode, profilsDépartementaux, profilsRégionaux, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { auMoinsUneValeurDuTableauEstContenueDansLAutreTableau } from '@/client/utils/arrays';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import { Profil } from '@/server/gestion-utilisateur/domain/Profil';
@@ -74,7 +74,7 @@ function profilsPeutEtreCreeParUtilisateur(profilCodeCreateur: ProfilCode, profi
 }
 
 function AAccesUniquementAuxChantiersTerritorialises(profilCodeSelectionne: ProfilCode) {
-  return [ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, ProfilEnum.SERVICES_DECONCENTRES_REGION].includes(profilCodeSelectionne);
+  return profilsTerritoriaux.includes(profilCodeSelectionne);
 }
 
 function AAccesATousLesTerritoires(profilCode: ProfilCode) {

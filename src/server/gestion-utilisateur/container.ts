@@ -59,6 +59,10 @@ import { PrismaPropositionValeurAvancementRepository } from './infrastructure/ad
 import { ContactInfoLettresService } from './domain/ports/ContactInfoLettresService';
 import { BrevoContactInfoLettresService } from './infrastructure/adapters/BrevoContactInfoLettresService';
 import CréerOuMettreÀJourUnUtilisateurUseCase from './usecases/CréerOuMettreÀJourUnUtilisateurUseCase';
+import { EnvoyerMailInscriptionInfolettreUseCase } from './usecases/EnvoyerMailInscriptionInfolettreUseCase';
+import { RecupererEtatModaleInscriptionUseCase } from './usecases/RecupererEtatModaleInscriptionUseCase';
+import { DesactiverPopupInfolettreUseCase } from './usecases/DesactiverPopupInfolettreUseCase';
+import { AjouterUnContactAUneInfoLettreUseCase } from './usecases/AjouterUnContactAUneInfoLettreUseCase';
 
 export type GestionUtilisateurDependencies = {
   utilisateurRepository: UtilisateurRepository
@@ -90,6 +94,10 @@ export type GestionUtilisateurDependencies = {
   recupererLaListeDesInfomrationsChantiersUse: RecupererLaListeDesInfomrationsChantiersUse
   contactInfoLettresService: ContactInfoLettresService
   créerOuMettreÀJourUnUtilisateurUseCase: CréerOuMettreÀJourUnUtilisateurUseCase
+  envoyerMailInscriptionInfolettreUseCase: EnvoyerMailInscriptionInfolettreUseCase
+  recupererEtatModaleInscriptionUseCase: RecupererEtatModaleInscriptionUseCase
+  desactiverPopupInfolettreUseCase: DesactiverPopupInfolettreUseCase
+  ajouterUnContactAUneInfoLettreUseCase: AjouterUnContactAUneInfoLettreUseCase
 };
 
 export const getGestionUtilisateurContainer = (initialContainer: AwilixContainer<{ prisma: PrismaPilote }>): AwilixContainer<GestionUtilisateurDependencies & { prisma: PrismaPilote }> => {
@@ -123,5 +131,9 @@ export const getGestionUtilisateurContainer = (initialContainer: AwilixContainer
     recupererLaListeDesInfomrationsChantiersUse: asClass(RecupererLaListeDesInfomrationsChantiersUse),
     contactInfoLettresService: asClass(BrevoContactInfoLettresService),
     créerOuMettreÀJourUnUtilisateurUseCase: asClass(CréerOuMettreÀJourUnUtilisateurUseCase),
+    envoyerMailInscriptionInfolettreUseCase: asClass(EnvoyerMailInscriptionInfolettreUseCase),
+    recupererEtatModaleInscriptionUseCase: asClass(RecupererEtatModaleInscriptionUseCase),
+    desactiverPopupInfolettreUseCase: asClass(DesactiverPopupInfolettreUseCase),
+    ajouterUnContactAUneInfoLettreUseCase: asClass(AjouterUnContactAUneInfoLettreUseCase),
   });
 };

@@ -21,4 +21,9 @@ export interface UtilisateurRepository {
   supprimerListeUtilisateur(utilisateursASupprimerIds: string[]): Promise<void>
   verifierExistenceUtilisateur(email: string): Promise<boolean>
   créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurModification: string): Promise<void>
+  recupererDateInscriptionInfolettre(utilisateurId: string): Promise<Date | null>
+  recupererDateVisualisationPopupInfolettre(utilisateurId: string): Promise<Date | null>
+  mettreAJourLaDateInscriptionInfolettre(email: string, dateInscriptionInfolettre: Date): Promise<void>
+  mettreAJourLaDateVisulationPopupInfolettre(utilisateurId: string, dateVisualisationPopupInfolettre: Date): Promise<void>
+  recupererUtilisateurEmail(id: string): Promise<string | null>
 }

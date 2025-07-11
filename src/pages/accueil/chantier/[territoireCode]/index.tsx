@@ -56,6 +56,7 @@ import { ExportDesDonneesV2, ID_HTML_MODALE_EXPORT_V2 } from '@/components/PageA
 import ExportDesDonnées, { ID_HTML_MODALE_EXPORT } from '@/components/PageAccueil/PageChantiers/ExportDesDonnées/ExportDesDonnées';
 import { PanelMenuNavigation } from '@/components/_commons/PanelMenuNavigation/PanelMenuNavigation';
 import { FiltresActifs } from '@/components/PageAccueil/FiltresActifs/FiltresActifs';
+import { ModaleInscriptionInfolettre } from '@/components/PageAccueil/PageChantiers/ModaleInscriptionInfoLettre/ModaleInscriptionInfolettre';
 import IndexStyled from './index.styled';
 
 interface ChantierAccueil {
@@ -73,6 +74,7 @@ interface ChantierAccueil {
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   repartitionMeteosChantiers: RepartitionMeteoContrat
   doitAfficherModaleVideoAccueil: boolean
+  doitAfficherLaModaleInfolettre: boolean
 }
 
 export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ req, res, query }) => {
@@ -199,6 +201,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   const estVideoAccueilActive = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_VIDEO_ACCUEIL' }) as boolean;
 
   const doitAfficherModaleVideoAccueil = await getContainer('gestionUtilisateur').resolve('recupererEtatVisualisationVideoAccueilUseCase').execute(session.user.id);
+  const doitAfficherLaModaleInfolettre = await getContainer('gestionUtilisateur').resolve('recupererEtatModaleInscriptionUseCase').execute(session.user.id);
 
   return {
     props: {
@@ -220,6 +223,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
       avancementsGlobauxTerritoriauxMoyens,
       repartitionMeteosChantiers,
       doitAfficherModaleVideoAccueil: estVideoAccueilActive && !doitAfficherModaleVideoAccueil,
+      doitAfficherLaModaleInfolettre,
     },
   };
 };
@@ -259,6 +263,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   repartitionMeteosChantiers,
   jalon,
   doitAfficherModaleVideoAccueil,
+  doitAfficherLaModaleInfolettre,
 }) => {
   const { data: session } = useSession();
 
@@ -444,6 +449,17 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
                 <ModaleVideoAccueil />
                 <div
                   aria-controls='modale-video-accueil'
+                  data-fr-opened='true'
+                />
+              </>
+            ) : null  
+          }
+          {
+            doitAfficherLaModaleInfolettre ? (
+              <>
+                <ModaleInscriptionInfolettre />
+                <div
+                  aria-controls='modale-inscription-infolettre'
                   data-fr-opened='true'
                 />
               </>
