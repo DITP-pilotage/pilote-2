@@ -15,6 +15,11 @@ const config = convict({
     default: 'development',
     env: 'NODE_ENV',
   },
+  baseUrl: {
+    format: String,
+    default: 'http://localhost:3000',
+    env: 'BASE_URL',
+  },
   logLevel: {
     format: String,
     default: 'info',

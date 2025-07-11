@@ -8,7 +8,7 @@ export const loginFn = async ({ page }: { page: Page }) => {
   const password = configuration.e2e.password;
 
   await test.step(`Authentification de l'utilisateur ${username} avec le rôle DITP_ADMIN`, async () => {
-    await page.goto(configuration.nextAuth.url);
+    await page.goto(configuration.baseUrl);
 
     // Click the get started link.
     await page.getByRole('banner').getByRole('button', { name: 'Se connecter' }).click();
@@ -33,7 +33,7 @@ export const authentificationApiFn = async ({ page, apiUsername }: { page: Page,
   await loginFn({ page });
 
   await test.step(`Création du token API pour l'utilisateur ${apiUsername}`, async () => {
-    await page.goto(`${configuration.nextAuth.url}/admin/gestion-token-api`);
+    await page.goto(`${configuration.baseUrl}/admin/gestion-token-api`);
     await page.waitForURL('**/admin/gestion-token-api')
 
     expect(page.getByText(apiUsername)).not.toBeVisible()
@@ -78,7 +78,7 @@ export const suppressionAuthentificationApiFn = async ({ page, apiUsername }: { 
   let apiToken: string = '';
 
   await test.step(`Suppression du token API pour l'utilisateur ${apiUsername}`, async () => {
-    await page.goto(`${configuration.nextAuth.url}/admin/gestion-token-api`);
+    await page.goto(`${configuration.baseUrl}/admin/gestion-token-api`);
     await page.waitForURL('**/admin/gestion-token-api');
 
     expect(page.getByText(apiUsername)).toBeVisible()

@@ -3,7 +3,7 @@ import { configuration } from '@/config';
 import { loginFn } from './utils';
 
 test('doit arriver sur la landing page', async ({ page }) => {
-  await page.goto(configuration.nextAuth.url);
+  await page.goto(configuration.baseUrl);
 
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/PILOTE - Piloter l'action publique par les résultats/);

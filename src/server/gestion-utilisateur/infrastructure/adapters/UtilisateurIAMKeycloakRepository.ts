@@ -61,7 +61,7 @@ export class UtilisateurIAMKeycloakRepository implements UtilisateurIAMRepositor
       await this.kcAdminClient.users.executeActionsEmail({
         realm: KEYCLOAK_REALM,
         clientId: configuration.import.clientId,
-        redirectUri: configuration.nextAuth.url,
+        redirectUri: configuration.baseUrl,
         id: utilisateur[0].id,
         lifespan: 7 * DAY_IN_SECONDS,
         actions: ['UPDATE_PASSWORD'],
@@ -113,7 +113,7 @@ export class UtilisateurIAMKeycloakRepository implements UtilisateurIAMRepositor
       await this.kcAdminClient.users.executeActionsEmail({
         realm: KEYCLOAK_REALM,
         clientId: configuration.import.clientId,
-        redirectUri: configuration.nextAuth.url,
+        redirectUri: configuration.baseUrl,
         id: utilisateurIAM.id,
         lifespan: 7 * DAY_IN_SECONDS,
         actions: ['UPDATE_PASSWORD'],

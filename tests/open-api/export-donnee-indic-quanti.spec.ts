@@ -14,7 +14,7 @@ test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les 
 
   await test.step('Création du context - Authorization Pilote - equipe.dir.projet@example.com - EQUIPE_DIR_PROJET', async () => {
     apiContext = await playwright.request.newContext({
-      baseURL: configuration.nextAuth.url,
+      baseURL: configuration.baseUrl,
       extraHTTPHeaders: {
         'Authorization': `Bearer ${apiDirProjetToken}`,
       },

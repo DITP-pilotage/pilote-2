@@ -15,9 +15,9 @@ class TchapReporter implements Reporter {
     accessToken?: string; 
     roomId?: string; 
   } = {}) {
-    this.tchapBaseUrl = options.baseUrl || process.env.TCHAP_BASE_URL || 'https://matrix.agent.finances.tchap.gouv.fr';
+    this.tchapBaseUrl = options.baseUrl || process.env.TCHAP_BASE_URL || '';
     this.accessToken = options.accessToken || process.env.TCHAP_ACCESS_TOKEN || '';
-    this.roomId = options.roomId || process.env.TCHAP_ROOM_ID || '';
+    this.roomId = options.roomId || process.env.TCHAP_ROOM_ID_E2E || '';
   }
 
   onTestEnd(test: TestCase, result: TestResult) {

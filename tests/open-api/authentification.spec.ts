@@ -9,7 +9,7 @@ test.describe('Authentification', () => {
   test('quand on ne dispose pas d\'un header Authorization, doit remonter une erreur 401 Unauthorized', async ({ playwright }) => {
     await test.step('Création du context sans header Authorization', async () => {
       apiContext = await playwright.request.newContext({
-        baseURL: configuration.nextAuth.url,
+        baseURL: configuration.baseUrl,
       });
     });
 
@@ -27,7 +27,7 @@ test.describe('Authentification', () => {
   test('quand on dispose d\'un header Authorization invalide, doit remonter une erreur 400 Bad Request', async ({ playwright }) => {
     await test.step('Création du context avec header Authorization + valeur incorrect', async () => {
       apiContext = await playwright.request.newContext({
-        baseURL: configuration.nextAuth.url,
+        baseURL: configuration.baseUrl,
         extraHTTPHeaders: {
           'Authorization': 'invalid',
         },
@@ -48,7 +48,7 @@ test.describe('Authentification', () => {
   test('quand on dispose d\'un header Authorization valide mais que le token n\'a pas été forgé par notre API, doit remonter une erreur 400 Request', async ({ playwright }) => {
     await test.step('Création du context avec header Authorization et valeur Bearer + JWT non pilote', async () => {
       apiContext = await playwright.request.newContext({
-        baseURL: configuration.nextAuth.url,
+        baseURL: configuration.baseUrl,
         extraHTTPHeaders: {
           'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
         },
@@ -72,7 +72,7 @@ test.describe('Authentification', () => {
 
       await test.step('Création du context avec header Authorization et valeur Bearer + JWT pilote', async () => {
         apiContext = await playwright.request.newContext({
-          baseURL: configuration.nextAuth.url,
+          baseURL: configuration.baseUrl,
           extraHTTPHeaders: {
             'Authorization': `Bearer ${apiDITPADMINToken}`,
           },
