@@ -972,26 +972,21 @@ sources:
               pilote_disp_blocId: 2
               pilote_edit_acceptedValues: [
                 { "order_id": 1, "value": "_", "name": "Non piloté", "desc": "Indicateur non utilisé pour le pilotage, sans cible attendue." },
-                { "order_id": 2, "value": "REG", "name": "Régional", "desc": "Pilotage régional et national" },
-                { "order_id": 3, "value": "NAT", "name": "National", "desc": "Pilotage national" },
-                { "order_id": 4, "value": "DEPT", "name": "Départemental", "desc": "Pilotage départemental, régional et national." },
+                { "order_id": 2, "value": "DEPT", "name": "Départemental", "desc": "Pilotage départemental, régional et national" },
+                { "order_id": 3, "value": "REG", "name": "Régional", "desc": "Pilotage régional et national" },
+                { "order_id": 4, "value": "NAT", "name": "National", "desc": "Pilotage national" }
               ]
 
           - name: cible_attendue
-            data_type: text
-            description: >
-              Cible attendue de l'indicateur.
+            data_type: boolean
+            description: |
+              Avec cible : l'indicateur a vocation à atteindre une cible / sans cible : l'indicateur n'est comparé à aucune valeur de référence. Il s'agit des indicateurs de contexte et de certains indicateurs déclarés sans cible (par conseillers).
             meta:
               pilote_alias: "Cible attendue"
-              pilote_edit_boxType: multi-select
+              pilote_edit_boxType: null
               pilote_disp_dispDesc: true
-              pilote_create_defaultValue: "_"
+              pilote_create_defaultValue: true
               pilote_disp_blocId: 2
-              pilote_edit_acceptedValues: [
-                { "order_id": 1, "value": "_", "name": "Aucune cible", "desc": "Aucune cible" },
-                { "order_id": 2, "value": "cible_1", "name": "Cible 1", "desc": "Cible 1" },
-                { "order_id": 3, "value": "cible_2", "name": "Cible 2", "desc": "Cible 2" },
-                { "order_id": 4, "value": "cible_3", "name": "Cible 3", "desc": "Cible 3" }
               ]
 
           - name: couverture_temporelle
