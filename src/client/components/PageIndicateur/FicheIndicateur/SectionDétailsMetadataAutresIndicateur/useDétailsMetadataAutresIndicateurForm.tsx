@@ -20,7 +20,7 @@ export type MetadataParametrageAutresIndicateurForm = {
   contactTechniqueEmail: string;
   commentaire: string | null;
   maillePilotage: string;
-  cibleAttendue: string;
+  cibleAttendue: boolean;
   couvertureTemporelle: string;
 };
 
@@ -29,6 +29,9 @@ function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageAutresI
   watch('indicIsPhare');
   watch('projetAnnuelPerf');
   watch('indicTerritorialise');
+  watch('cibleAttendue');
+  watch('couvertureTemporelle');
+  watch('maillePilotage');
   watch('donneeOuverte');
 }
 

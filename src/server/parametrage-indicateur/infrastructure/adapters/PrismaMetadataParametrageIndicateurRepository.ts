@@ -1,6 +1,5 @@
 /*
-Cette classe ne possède pas encore de test car la récupération/création des données de la table raw_data.metadata_indicateur se fait par dbt
-On ne peut donc pas utiliser la creation de table par migration prisma 
+  On a maintenant la possibilité de créer des indicateurs avec la table raw_data.metadata_indicateurs_complementaire
  */
 
 import { Prisma } from '@prisma/client';
@@ -79,7 +78,7 @@ export interface RawMetadataParametrageIndicateurModel {
   contact_technique_email: string,
   commentaire: string,
   maille_pilotage: string,
-  cible_attendue: string,
+  cible_attendue: boolean,
   couverture_temporelle: string,
 }
 
@@ -293,7 +292,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                              contact_technique_email               = ${makeStrSafer(inputs.contactTechniqueEmail)},
                                              commentaire                 = ${makeStrSafer(inputs.commentaire)},
                                              maille_pilotage               = ${makeStrSafer(inputs.maillePilotage)},
-                                             cible_attendue               = ${makeStrSafer(inputs.cibleAttendue)},
+                                             cible_attendue               = ${inputs.cibleAttendue},
                                              couverture_temporelle               = ${makeStrSafer(inputs.couvertureTemporelle)}
                                          WHERE indic_id = '${inputs.indicId}'`;
 
@@ -445,7 +444,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  ${makeStrSafer(inputs.contactTechniqueEmail)},
                                                  ${makeStrSafer(inputs.commentaire)},
                                                  ${makeStrSafer(inputs.maillePilotage)},
-                                                 ${makeStrSafer(inputs.cibleAttendue)},
+                                                 ${inputs.cibleAttendue},
                                                  ${makeStrSafer(inputs.couvertureTemporelle)})`;
     await prisma.$transaction([
       prisma.$queryRaw`${Prisma.raw(queryIndicateur)}`,

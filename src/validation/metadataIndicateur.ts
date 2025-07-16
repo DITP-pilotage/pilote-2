@@ -213,8 +213,7 @@ export const validationMetadataIndicateurFormulaire = z.object({
     .string()
     .min(1, 'Veuillez choisir une option valide pour la maille de pilotage'),
   cibleAttendue: z
-    .string()
-    .min(1, 'Veuillez choisir une option valide pour la cible attendue'),
+    .boolean(),
   couvertureTemporelle: z
     .string()
     .min(1, 'Veuillez choisir une option valide pour la couverture temporelle'),
