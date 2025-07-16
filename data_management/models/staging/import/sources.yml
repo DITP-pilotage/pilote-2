@@ -963,7 +963,7 @@ sources:
           - name: maille_pilotage
             data_type: text
             description: >
-              Maille de pilotage de l'indicateur.
+              Maille de pilotage de l'indicateur. Maille la plus fine à laquelle des valeurs cibles sont attendues.
             meta:
               pilote_alias: "Maille de pilotage"
               pilote_edit_boxType: multi-select
@@ -971,10 +971,10 @@ sources:
               pilote_create_defaultValue: "_"
               pilote_disp_blocId: 2
               pilote_edit_acceptedValues: [
-                { "order_id": 1, "value": "_", "name": "Aucune maille", "desc": "Aucune maille" },
-                { "order_id": 2, "value": "REG", "name": "Région", "desc": "Région" },
-                { "order_id": 3, "value": "NAT", "name": "Nation", "desc": "Nation" },
-                { "order_id": 4, "value": "DEPT", "name": "Département", "desc": "Département" },
+                { "order_id": 1, "value": "_", "name": "Non piloté", "desc": "Indicateur non utilisé pour le pilotage, sans cible attendue." },
+                { "order_id": 2, "value": "REG", "name": "Régional", "desc": "Pilotage régional et national" },
+                { "order_id": 3, "value": "NAT", "name": "National", "desc": "Pilotage national" },
+                { "order_id": 4, "value": "DEPT", "name": "Départemental", "desc": "Pilotage départemental, régional et national." },
               ]
 
           - name: cible_attendue
