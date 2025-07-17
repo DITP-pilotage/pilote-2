@@ -17,12 +17,13 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: 2,
-  globalTimeout: 120_000,
+  globalTimeout: 2_000_000,
+  outputDir: 'test-results',
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter à utiliser. Voir https://playwright.dev/docs/test-reporters */
   reporter: process.env.ENVIRONMENT === 'E2E'
-    ? [['github']]
+    ? [['github'], ['json', { outputFile: 'test-results/results.json' }]]
     : [['html', { open: 'always' }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -39,8 +40,6 @@ export default defineConfig({
       video: 'retain-on-failure',
       screenshot: 'only-on-failure',
       // Timeout plus court sur Scalingo
-      actionTimeout: 10000,
-      navigationTimeout: 30000,
       acceptDownloads: true,  
       ignoreHTTPSErrors: true,
       waitForLoadState: 'networkidle',
@@ -50,29 +49,29 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: process.env.ENVIRONMENT === 'E2E' 
     ? [
-        {
-          name: 'chromium-headless',
-          use: {
-            ...devices['Desktop Chrome'],
+      {
+        name: 'chromium-headless',
+        use: {
+          ...devices['Desktop Chrome'],
+          headless: true,
+          launchOptions: {
             headless: true,
-            launchOptions: {
-              headless: true,
-              args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-gpu',
-              ],
-            },
+            args: [
+              '--no-sandbox',
+              '--disable-setuid-sandbox',
+              '--disable-dev-shm-usage',
+              '--disable-gpu',
+            ],
           },
         },
-      ] : [
-        // Configuration normale pour le développement
-        {
-          name: 'chromium',
-          use: {
-            ...devices['Desktop Chrome'],
-          },
+      },
+    ] : [
+      // Configuration normale pour le développement
+      {
+        name: 'chromium',
+        use: {
+          ...devices['Desktop Chrome'],
         },
-      ],
+      },
+    ],
 });

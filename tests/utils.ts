@@ -34,15 +34,15 @@ export const authentificationApiFn = async ({ page, apiUsername }: { page: Page,
 
   await test.step(`Création du token API pour l'utilisateur ${apiUsername}`, async () => {
     await page.goto(`${configuration.baseUrl}/admin/gestion-token-api`);
-    await page.waitForURL('**/admin/gestion-token-api')
+    await page.waitForURL('**/admin/gestion-token-api');
 
-    expect(page.getByText(apiUsername)).not.toBeVisible()
+    expect(page.getByText(apiUsername)).not.toBeVisible();
 
     await page.getByLabel('Émail').fill(apiUsername);
 
     const responsePromise = page.waitForResponse(response => 
       response.url().includes('/api/trpc/gestionTokenAPI.creerTokenAPI') && 
-      response.request().method() === 'POST'
+      response.request().method() === 'POST',
     );
 
     await page.getByRole('button', { name: /Créer un token API/ }).click();
@@ -50,7 +50,7 @@ export const authentificationApiFn = async ({ page, apiUsername }: { page: Page,
     const response = await responsePromise;
     const responseBody = await response.json();
 
-    apiToken = responseBody[0].result.data.json
+    apiToken = responseBody[0].result.data.json;
   });
 
   return { apiToken };
@@ -59,7 +59,7 @@ export const authentificationApiFn = async ({ page, apiUsername }: { page: Page,
 export const authentificationApiDITPADMINFn = async ({ page }: { page: Page }): Promise<{ apiDITPADMINToken: string; apiDITPADMINUsername: string }> => {
   const apiDITPADMINUsername = configuration.e2e.apiDITPADMINUsername;
 
-  const  { apiToken } = await authentificationApiFn({ page, apiUsername: apiDITPADMINUsername })
+  const  { apiToken } = await authentificationApiFn({ page, apiUsername: apiDITPADMINUsername });
   
   return { apiDITPADMINUsername, apiDITPADMINToken: apiToken };
 };
@@ -69,7 +69,7 @@ export const authentificationApiDirProjetFn = async ({ page }: { page: Page }): 
   const apiDirProjetChantierAssocie = configuration.e2e.apiDirProjetChantierAssocie;
   const apiDirProjetIndicateurAssocie = configuration.e2e.apiDirProjetIndicateurAssocie;
 
-  const  { apiToken } = await authentificationApiFn({ page, apiUsername: apiDirProjetUsername })
+  const  { apiToken } = await authentificationApiFn({ page, apiUsername: apiDirProjetUsername });
 
   return { apiDirProjetUsername, apiDirProjetToken: apiToken, apiDirProjetChantierAssocie, apiDirProjetIndicateurAssocie };
 };
@@ -81,7 +81,7 @@ export const suppressionAuthentificationApiFn = async ({ page, apiUsername }: { 
     await page.goto(`${configuration.baseUrl}/admin/gestion-token-api`);
     await page.waitForURL('**/admin/gestion-token-api');
 
-    expect(page.getByText(apiUsername)).toBeVisible()
+    expect(page.getByText(apiUsername)).toBeVisible();
 
     await page.getByText(apiUsername).locator('..').getByRole('button', { name: /Supprimer le token API/ }).click();
 
