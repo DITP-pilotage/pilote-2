@@ -7,11 +7,16 @@ import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 export const getServerSideProps: GetServerSideProps<{}> = async ({ req, res, query }) => {
   const session = await getServerSession(req, res, authOptions);
 
-  if (session && query.callbackUrl) {
-    const callbackUrl = decodeURIComponent(query.callbackUrl as string);
+  if (session) {
+    const territoireCode = session.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : session.habilitations.lecture.territoires[0];
+
+    const callbackUrl = query.callbackUrl ? decodeURIComponent(query.callbackUrl as string) : `/accueil/chantier/${territoireCode}`;
+
+    const destination = req.url !== '/' && query.callbackUrl ? callbackUrl : `/accueil/chantier/${territoireCode}`;
+
     return {
       redirect: {
-        destination: callbackUrl,
+        destination,
         permanent: false,
       },
     };
