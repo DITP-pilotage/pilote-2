@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { TokenAPIJWTService } from "@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService";
-import { errorBondary } from "@/server/app/error-boundary/error-boundary";
+import { errorBoundary } from "@/server/app/error-boundary/error-boundary";
 import { configuration } from "@/config";
 
 const handle = async (request: NextApiRequest, response: NextApiResponse) => {
@@ -9,9 +9,11 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
   const decodedToken = await new TokenAPIJWTService({
     secret: configuration.tokenAPI.secret,
   }).decoderTokenAPI((token || "").split(" ")[1]);
-  response.status(200).json({
-    resultat: `Bonjour ${decodedToken?.email}, vous pouvez utiliser l'API.`,
-  });
+  response
+    .status(200)
+    .json({
+      resultat: `Bonjour ${decodedToken?.email}, vous pouvez utiliser l'API.`,
+    });
 };
 
-export default errorBondary(handle);
+export default errorBoundary(handle);

@@ -4,7 +4,7 @@ import { UtilisateurAuthentifieJWTService } from "@/server/authentification/infr
 import { dependencies } from "@/server/infrastructure/Dependencies";
 import { handleListerIndicateurs } from "@/server/chantiers/infrastructure/handlers/ListerIndicateursHandler";
 import { getContainer } from "@/server/dependances";
-import { errorBondary } from "@/server/app/error-boundary/error-boundary";
+import { errorBoundary } from "@/server/app/error-boundary/error-boundary";
 import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 
@@ -80,4 +80,4 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
   }
 };
 
-export default errorBondary(handle);
+export default errorBoundary(handle);
