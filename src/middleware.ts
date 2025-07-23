@@ -73,7 +73,7 @@ export const middleware = async (request: NextRequest, event: NextFetchEvent)=> 
   if (isDev || request.nextUrl.pathname.startsWith('/centreaide')) {
     response.headers.set(
       'Content-Security-Policy',
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' ws: wss:; frame-src 'self' https://video.finances.gouv.fr/; object-src 'none'; base-uri 'self'; form-action 'self'; media-src 'self' https://video.finances.gouv.fr/",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src https://api.validata.etalab.studio/ https://stats.beta.gouv.fr/ 'self' ws: wss:; frame-src 'self' https://video.finances.gouv.fr/; object-src 'none'; base-uri 'self'; form-action 'self'; media-src 'self' https://video.finances.gouv.fr/",
     );
   } else {
     response.headers.set(
@@ -83,7 +83,7 @@ export const middleware = async (request: NextRequest, event: NextFetchEvent)=> 
        style-src 'self' 'unsafe-inline';
        img-src 'self' data: blob:; 
        font-src 'self' data:; 
-       connect-src 'self'; 
+       connect-src https://api.validata.etalab.studio/ https://stats.beta.gouv.fr/ 'self'; 
        frame-src 'self' https://video.finances.gouv.fr/; 
        object-src 'none'; 
        base-uri 'self'; 
