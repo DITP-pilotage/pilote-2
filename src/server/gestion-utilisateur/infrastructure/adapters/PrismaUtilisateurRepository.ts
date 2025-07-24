@@ -524,6 +524,17 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     return !!etatVisualisationVideoAccueil?.date_visualisation_video_accueil || false;
   }
 
+  async recupererDateVisualisationVideoAccueil(utilisateurId: string): Promise<Date | null > {
+    const utilisateur = await this.prisma.utilisateur.findUnique({
+      where: { id: utilisateurId },
+      select: {
+        date_visualisation_video_accueil: true,
+      },
+    });
+
+    return utilisateur?.date_visualisation_video_accueil || null;
+  }
+
   async recupererDateInscriptionInfolettre(utilisateurId: string): Promise<Date | null> {
     const utilisateur = await this.prisma.utilisateur.findUnique({
       where: { id: utilisateurId },
