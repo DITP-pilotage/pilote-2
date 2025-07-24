@@ -116,6 +116,20 @@ export const middleware = async (request: NextRequest, event: NextFetchEvent)=> 
               secure: process.env.NODE_ENV === 'production',
               sameSite: 'lax',
             });
+            redirectResponse.cookies.set('next-auth.session-token.0', '', {
+              expires: new Date(0),
+              path: '/',
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'lax',
+            });
+            redirectResponse.cookies.set('next-auth.session-token.1', '', {
+              expires: new Date(0),
+              path: '/',
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'lax',
+            });
             // Supprimer les cookies d'authentification
             redirectResponse.cookies.set('__Secure-next-auth.session-token.0', '', { 
               expires: new Date(0),
