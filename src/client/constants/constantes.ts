@@ -1,0 +1,2 @@
+export const PAGE_INDEX_DEFAUT = 1;
+export const TAILLE_DEFAUT_PAGINATION_UTILISATEUR = 50;

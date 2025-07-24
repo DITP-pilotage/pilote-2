@@ -15,6 +15,7 @@ import {
   UtilisateurListeGestionContrat,
 } from '@/server/app/contrats/UtilisateurListeGestionContrat';
 import { TerritoireAvecNombreUtilisateurs } from '@/server/gestion-utilisateur/domain/Territoire';
+import { PAGE_INDEX_DEFAUT, TAILLE_DEFAUT_PAGINATION_UTILISATEUR } from '@/client/constants/constantes';
 
 type UtilisateurProps = {
   listeChantiers: ChantierSynthétisé[]
@@ -67,8 +68,8 @@ export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async ({
     chantiersAssociésAuxPérimètres: filtresChantiersSupplémentaires?.map(chantier => chantier.id) ?? [],
   };
 
-  const pageIndex = Number.parseInt(query.pageIndex as string) || 1;
-  const pageSize = Number.parseInt(query.pageSize as string) || 50;
+  const pageIndex = Number.parseInt(query.pageIndex as string) || PAGE_INDEX_DEFAUT;
+  const pageSize = Number.parseInt(query.pageSize as string) || TAILLE_DEFAUT_PAGINATION_UTILISATEUR;
 
   const sorting = query.sort ? JSON.parse(decodeURIComponent(query.sort as string)) as { id: string, desc: boolean }[] : [{
     id: 'Dernière modification',
