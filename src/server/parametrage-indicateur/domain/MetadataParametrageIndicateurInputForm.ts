@@ -64,6 +64,6 @@ export interface MetadataParametrageIndicateurForm {
   contactTechniqueEmail: string;
   commentaire: string | null;
   maillePilotage: string;
-  cibleAttendue: string;
+  cibleAttendue: boolean;
   couvertureTemporelle: string;
 }

@@ -224,19 +224,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
         </div>
         <div className='fr-col-12 fr-col-md-6'>
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.cibleAttendue?.message}
-            estEnCoursDeModification={estEnCoursDeModification}
-            informationMetadataIndicateur={mapInformationMetadataIndicateur.cible_attendue}
-            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'cible_attendue')}
-            register={register('cibleAttendue')}
-            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'cible_attendue', 'cibleAttendue')}
-            values={getValues('cibleAttendue') || ''}
-          />
-        </div>
-      </div>
-      <div className='fr-grid-row fr-grid-row--gutters'>
-        <div className='fr-col-12 fr-col-md-6'>
-          <MetadataIndicateurSelecteur
             erreurMessage={errors.couvertureTemporelle?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.couverture_temporelle}
@@ -244,6 +231,18 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             register={register('couvertureTemporelle')}
             valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'couverture_temporelle', 'couvertureTemporelle')}
             values={getValues('couvertureTemporelle') || ''}
+          />
+        </div>
+      </div>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-6'>
+          <MetadataIndicateurInterrupteur
+            estEnCoursDeModification={estEnCoursDeModification}
+            htmlName='cibleAttendue'
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.cible_attendue}
+            isChecked={getValues('cibleAttendue')}
+            register={register('cibleAttendue')}
+            valeurAffiché={indicateur.cibleAttendue ? 'Oui' : 'Non'}
           />
         </div>
         <div className='fr-col-12 fr-col-md-6'>

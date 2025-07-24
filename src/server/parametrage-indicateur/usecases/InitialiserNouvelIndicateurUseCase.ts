@@ -87,7 +87,7 @@ export default class InitialiserNouvelIndicateurUseCase {
       contactTechnique: listeInformation.contact_technique.metaPiloteDefaultValue as string,
       contactTechniqueEmail: listeInformation.contact_technique_email.metaPiloteDefaultValue as string,
       commentaire: listeInformation.commentaire.metaPiloteDefaultValue as string,
-      cibleAttendue: listeInformation.cible_attendue.metaPiloteDefaultValue as string,
+      cibleAttendue: listeInformation.cible_attendue.metaPiloteDefaultValue as boolean,
       couvertureTemporelle: listeInformation.couverture_temporelle.metaPiloteDefaultValue as string,
       maillePilotage: listeInformation.maille_pilotage.metaPiloteDefaultValue as string,
     });

@@ -65,7 +65,7 @@ interface InputMetadataParametrageIndicateur {
   contactTechniqueEmail: string;
   commentaire: string | null;
   maillePilotage: string;
-  cibleAttendue: string;
+  cibleAttendue: boolean;
   couvertureTemporelle: string;
 }
 
@@ -202,7 +202,7 @@ export class MetadataParametrageIndicateur {
 
   private readonly _maillePilotage: string;
 
-  private readonly _cibleAttendue: string;
+  private readonly _cibleAttendue: boolean;
 
   private readonly _couvertureTemporelle: string;
 
@@ -610,7 +610,7 @@ export class MetadataParametrageIndicateur {
     return this._maillePilotage;
   }
 
-  get cibleAttendue(): string {
+  get cibleAttendue(): boolean {
     return this._cibleAttendue;
   }
 
