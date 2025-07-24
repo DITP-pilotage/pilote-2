@@ -27,7 +27,7 @@ interface TerritoireDonnéeRapportDetailleContrat {
   responsableLocal: ResponsableLocalRapportDetailleContrat[]
   coordinateurTerritorial: CoordinateurTerritorialRapportDetailleContrat[]
   météo: 'NON_RENSEIGNEE' | 'ORAGE' | 'NUAGE' | 'COUVERT' | 'SOLEIL' | 'NON_NECESSAIRE'
-  aUnePropositionsValeurActuelle: boolean,
+  aUnePropositionsValeurAvancement: boolean,
   dateTauxAvancementMandatValeurPrecedente: string | null
 }
 
@@ -97,7 +97,7 @@ export interface ChantierRapportDetailleContrat {
   avancementPrecedent: TerritoireAvancementRapportDetailleContrat['global']
   responsableLocalTerritoireSélectionné: ResponsableLocalRapportDetailleContrat[]
   coordinateurTerritorialTerritoireSélectionné: CoordinateurTerritorialRapportDetailleContrat[]
-  aUnePropositionsValeurActuelle: boolean
+  aUnePropositionsValeurAvancement: boolean
   maillesApplicables: Maille[]
   dateTauxAvancementMandatValeurPrecedente: string | null
   aUnTauxAvancementDepartemental: boolean
@@ -120,11 +120,11 @@ export function créerDonnéesTerritoiresRapportDetailleNew(
   territoires.forEach(t => {
     const chantierRow = chantierRows.find(c => c.territoire_code === t.code);
 
-    let aUnePropositionDeValeurActuelle = chantierRow?.nombre_propositions_valeur_actuelle ? chantierRow.nombre_propositions_valeur_actuelle > 0 : false;
+    let aUnePropositionDeValeurAvancement = chantierRow?.nombre_propositions_valeur_actuelle ? chantierRow.nombre_propositions_valeur_actuelle > 0 : false;
     if (chantierRowsMailleEnfant && listeTerritoireEnfant) {
       const territoiresEnfantCodes = new Set(listeTerritoireEnfant.filter(territoireEnfant => territoireEnfant.codeParent === t.code).map(territoireEnfant => territoireEnfant.code));
       const chantierRowsTerritoiresEnfant = chantierRowsMailleEnfant.filter(chantier => territoiresEnfantCodes.has(chantier.territoire_code));
-      aUnePropositionDeValeurActuelle = aUnePropositionDeValeurActuelle ? true : (chantierRowsTerritoiresEnfant.some(chantier => chantier.nombre_propositions_valeur_actuelle > 0));
+      aUnePropositionDeValeurAvancement = aUnePropositionDeValeurAvancement ? true : (chantierRowsTerritoiresEnfant.some(chantier => chantier.nombre_propositions_valeur_actuelle > 0));
     }
 
     donnéesTerritoires[t.code] = {
@@ -141,7 +141,7 @@ export function créerDonnéesTerritoiresRapportDetailleNew(
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
       responsableLocal: (chantierRow?.responsables_locaux || []).map((value, index) => ({ nom: value, email: chantierRow?.responsables_locaux_mails[index]! })),
       coordinateurTerritorial: (chantierRow?.coordinateurs_territoriaux || []).map((value, index) => ({ nom: value, email: chantierRow?.coordinateurs_territoriaux_mails[index]! })),
-      aUnePropositionsValeurActuelle: aUnePropositionDeValeurActuelle,
+      aUnePropositionsValeurAvancement: aUnePropositionDeValeurAvancement,
       dateTauxAvancementMandatValeurPrecedente: chantierRow?.date_taux_avancement_mandat_valeur_precedente?.toISOString() ?? null,
     };
   });
@@ -184,7 +184,7 @@ export const presenterEnChantierRapportDetaille = (
         estApplicable: chantierMailleNationale.est_applicable,
         responsableLocal: [],
         coordinateurTerritorial: [],
-        aUnePropositionsValeurActuelle: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0),
+        aUnePropositionsValeurAvancement: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0),
         dateTauxAvancementMandatValeurPrecedente: chantierMailleNationale?.date_taux_avancement_mandat_valeur_precedente?.toISOString() ?? null,
       } : {
         avancement: { annuel: verifyValeurIsNotNullOrUndefined(chantierMailleNationale.chantier_territoire_jalon.at(0)?.taux_avancement), global: chantierMailleNationale.taux_avancement_mandat },
@@ -197,7 +197,7 @@ export const presenterEnChantierRapportDetaille = (
         estApplicable: chantierMailleNationale.est_applicable,
         coordinateurTerritorial: [],
         responsableLocal: [],
-        aUnePropositionsValeurActuelle: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0),
+        aUnePropositionsValeurAvancement: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0),
         dateTauxAvancementMandatValeurPrecedente: chantierMailleNationale?.date_taux_avancement_mandat_valeur_precedente?.toISOString() ?? null,
       },
     },
@@ -250,7 +250,7 @@ export const presenterEnChantierRapportDetaille = (
     avancementPrecedent: newMaille[mailleChantier][territoireCode].avancementPrecedent,
     responsableLocalTerritoireSélectionné: newMaille[mailleChantier][territoireCode].responsableLocal,
     coordinateurTerritorialTerritoireSélectionné: newMaille[mailleChantier][territoireCode].coordinateurTerritorial,
-    aUnePropositionsValeurActuelle: newMaille[mailleChantier][territoireCode].aUnePropositionsValeurActuelle,
+    aUnePropositionsValeurAvancement: newMaille[mailleChantier][territoireCode].aUnePropositionsValeurAvancement,
     dateTauxAvancementMandatValeurPrecedente: newMaille[mailleChantier][territoireCode].dateTauxAvancementMandatValeurPrecedente,
     aUnTauxAvancementDepartemental: listeChantiersMailleDepartementaleApplicables.length === 0 
     || listeChantiersMailleDepartementaleApplicables.some(chantier => chantier.taux_avancement_mandat !== null),

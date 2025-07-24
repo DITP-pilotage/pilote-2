@@ -14,5 +14,5 @@ export interface OptionsExport {
   estEnAlerteBaisse: boolean
   estEnAlerteMétéoNonRenseignée: boolean
   estEnAlerteAbscenceTauxAvancementDepartemental: boolean
-  estEnAlertePossedePropositionsValeurActuelle: boolean
+  estEnAlertePossedePropositionsValeurAvancement: boolean
 }

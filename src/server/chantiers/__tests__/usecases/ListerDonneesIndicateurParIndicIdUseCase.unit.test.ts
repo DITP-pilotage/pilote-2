@@ -24,8 +24,8 @@ describe('ListerDonneesIndicateurParIndicIdUseCase', () => {
       .withZoneId('D75')
       .withValeurInitiale(20.2)
       .withDateValeurInitiale(new Date('2025-06-12'))
-      .withValeurActuelle(27.8)
-      .withDateValeurActuelle(new Date('2025-06-12'))
+      .withValeurAvancement(27.8)
+      .withDateValeurAvancement(new Date('2025-06-12'))
       .withValeurCibleAnnuelle(30.1)
       .withDateValeurCibleAnnuelle(new Date('2025-06-12'))
       .withTauxAvancementAnnuel(31.1)
@@ -41,8 +41,8 @@ describe('ListerDonneesIndicateurParIndicIdUseCase', () => {
       .withZoneId('D75')
       .withValeurInitiale(21.2)
       .withDateValeurInitiale(new Date('2026-06-12'))
-      .withValeurActuelle(28.8)
-      .withDateValeurActuelle(new Date('2026-06-12'))
+      .withValeurAvancement(28.8)
+      .withDateValeurAvancement(new Date('2026-06-12'))
       .withValeurCibleAnnuelle(40.1)
       .withDateValeurCibleAnnuelle(new Date('2026-06-12'))
       .withTauxAvancementAnnuel(41.1)
@@ -67,8 +67,8 @@ describe('ListerDonneesIndicateurParIndicIdUseCase', () => {
     expect(listeDonneesIndicateurs.at(0)?.zoneId).toEqual('D75');
     expect(listeDonneesIndicateurs.at(0)?.valeurInitiale).toEqual(20.2);
     expect(listeDonneesIndicateurs.at(0)?.dateValeurInitiale?.toISOString()).toContain('2025-06-12');
-    expect(listeDonneesIndicateurs.at(0)?.valeurActuelle).toEqual(27.8);
-    expect(listeDonneesIndicateurs.at(0)?.dateValeurActuelle?.toISOString()).toContain('2025-06-12');
+    expect(listeDonneesIndicateurs.at(0)?.valeurAvancement).toEqual(27.8);
+    expect(listeDonneesIndicateurs.at(0)?.dateValeurAvancement?.toISOString()).toContain('2025-06-12');
     expect(listeDonneesIndicateurs.at(0)?.valeurCibleAnnuelle).toEqual(30.1);
     expect(listeDonneesIndicateurs.at(0)?.dateValeurCibleAnnuelle?.toISOString()).toContain('2025-06-12');
     expect(listeDonneesIndicateurs.at(0)?.tauxAvancementAnnuel).toEqual(31.1);
@@ -83,8 +83,8 @@ describe('ListerDonneesIndicateurParIndicIdUseCase', () => {
     expect(listeDonneesIndicateurs.at(1)?.zoneId).toEqual('D75');
     expect(listeDonneesIndicateurs.at(1)?.valeurInitiale).toEqual(21.2);
     expect(listeDonneesIndicateurs.at(1)?.dateValeurInitiale?.toISOString()).toContain('2026-06-12');
-    expect(listeDonneesIndicateurs.at(1)?.valeurActuelle).toEqual(28.8);
-    expect(listeDonneesIndicateurs.at(1)?.dateValeurActuelle?.toISOString()).toContain('2026-06-12');
+    expect(listeDonneesIndicateurs.at(1)?.valeurAvancement).toEqual(28.8);
+    expect(listeDonneesIndicateurs.at(1)?.dateValeurAvancement?.toISOString()).toContain('2026-06-12');
     expect(listeDonneesIndicateurs.at(1)?.valeurCibleAnnuelle).toEqual(40.1);
     expect(listeDonneesIndicateurs.at(1)?.dateValeurCibleAnnuelle?.toISOString()).toContain('2026-06-12');
     expect(listeDonneesIndicateurs.at(1)?.tauxAvancementAnnuel).toEqual(41.1);

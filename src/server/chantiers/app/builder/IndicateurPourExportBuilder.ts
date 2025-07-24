@@ -39,9 +39,9 @@ export class IndicateurPourExportBuilder {
 
   private dateValeurInitiale = null;
 
-  private valeurActuelle = null;
+  private valeurAvancement = null;
 
-  private dateValeurActuelle = null;
+  private dateValeurAvancement = null;
 
   private valeurCibleAnnuelle = null;
 
@@ -105,8 +105,8 @@ export class IndicateurPourExportBuilder {
       nom: this.nom,
       valeurInitiale: this.valeurInitiale,
       dateValeurInitiale: this.dateValeurInitiale,
-      valeurActuelle: this.valeurActuelle,
-      dateValeurActuelle: this.dateValeurActuelle,
+      valeurAvancement: this.valeurAvancement,
+      dateValeurAvancement: this.dateValeurAvancement,
       valeurCibleAnnuelle: this.valeurCibleAnnuelle,
       dateValeurCibleAnnuelle: this.dateValeurCibleAnnuelle,
       avancementAnnuel: this.avancementAnnuel,

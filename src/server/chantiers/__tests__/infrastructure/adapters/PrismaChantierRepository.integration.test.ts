@@ -294,7 +294,7 @@ describe('PrismaChantierRepository', () => {
           estEnAlerteBaisse: false,
           estEnAlerteAbscenceTauxAvancementDepartemental: false,
           estEnAlerteMétéoNonRenseignée: false,
-          estEnAlertePossedePropositionsValeurActuelle: false,
+          estEnAlertePossedePropositionsValeurAvancement: false,
         };
 
         const jalon = 2024;
@@ -441,7 +441,7 @@ describe('PrismaChantierRepository', () => {
           estEnAlerteBaisse: false,
           estEnAlerteAbscenceTauxAvancementDepartemental: false,
           estEnAlerteMétéoNonRenseignée: false,
-          estEnAlertePossedePropositionsValeurActuelle: false,
+          estEnAlertePossedePropositionsValeurAvancement: false,
         };
 
         const jalon = 2024;
@@ -545,7 +545,7 @@ describe('PrismaChantierRepository', () => {
           estEnAlerteBaisse: false,
           estEnAlerteAbscenceTauxAvancementDepartemental: false,
           estEnAlerteMétéoNonRenseignée: false,
-          estEnAlertePossedePropositionsValeurActuelle: false,
+          estEnAlertePossedePropositionsValeurAvancement: false,
         };
 
         const jalon = 2024;
@@ -683,7 +683,7 @@ describe('PrismaChantierRepository', () => {
           estEnAlerteBaisse: false,
           estEnAlerteAbscenceTauxAvancementDepartemental: false,
           estEnAlerteMétéoNonRenseignée: false,
-          estEnAlertePossedePropositionsValeurActuelle: false,
+          estEnAlertePossedePropositionsValeurAvancement: false,
         };
 
         const jalon = 2024;
@@ -721,7 +721,7 @@ describe('PrismaChantierRepository', () => {
         estEnAlerteBaisse: false,
         estEnAlerteAbscenceTauxAvancementDepartemental: false,
         estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurActuelle: false,
+        estEnAlertePossedePropositionsValeurAvancement: false,
       };
 
       await prisma.chantier_identite.createMany({
@@ -792,7 +792,7 @@ describe('PrismaChantierRepository', () => {
         estEnAlerteBaisse: false,
         estEnAlerteAbscenceTauxAvancementDepartemental: false,
         estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurActuelle: false,
+        estEnAlertePossedePropositionsValeurAvancement: false,
       };
 
       await prisma.chantier_identite.createMany({
@@ -860,7 +860,7 @@ describe('PrismaChantierRepository', () => {
         estEnAlerteBaisse: false,
         estEnAlerteAbscenceTauxAvancementDepartemental: false,
         estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurActuelle: false,
+        estEnAlertePossedePropositionsValeurAvancement: false,
       };
 
       await prisma.chantier_identite.createMany({
@@ -915,7 +915,7 @@ describe('PrismaChantierRepository', () => {
       expect(result).toHaveLength(1);
       expect(result![0].aUnTauxAvancementDepartemental).toBeFalse();
     });
-    it('aUnePropositionsValeurActuelle est faux au niveau national, si le chantier ne possède aucune proposition sur aucun territoire', async () => {
+    it('aUnePropositionsValeurAvancement est faux au niveau national, si le chantier ne possède aucune proposition sur aucun territoire', async () => {
       // Given
       const optionsPourExport: OptionsExport = {
         estBarometre: true,
@@ -931,7 +931,7 @@ describe('PrismaChantierRepository', () => {
         estEnAlerteBaisse: false,
         estEnAlerteAbscenceTauxAvancementDepartemental: false,
         estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurActuelle: false,
+        estEnAlertePossedePropositionsValeurAvancement: false,
       };
 
       await prisma.chantier_identite.createMany({
@@ -984,9 +984,9 @@ describe('PrismaChantierRepository', () => {
 
       // Then
       expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurActuelle).toBeFalse();
+      expect(result![0].aUnePropositionsValeurAvancement).toBeFalse();
     });
-    it('aUnePropositionsValeurActuelle est vrai au niveau national, si le chantier possède au moins une proposition sur un territoire', async () => {
+    it('aUnePropositionsValeurAvancement est vrai au niveau national, si le chantier possède au moins une proposition sur un territoire', async () => {
       // Given
       const optionsPourExport: OptionsExport = {
         estBarometre: true,
@@ -1002,7 +1002,7 @@ describe('PrismaChantierRepository', () => {
         estEnAlerteBaisse: false,
         estEnAlerteAbscenceTauxAvancementDepartemental: false,
         estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurActuelle: false,
+        estEnAlertePossedePropositionsValeurAvancement: false,
       };
 
       await prisma.chantier_identite.createMany({
@@ -1055,9 +1055,9 @@ describe('PrismaChantierRepository', () => {
 
       // Then
       expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurActuelle).toBeTrue();
+      expect(result![0].aUnePropositionsValeurAvancement).toBeTrue();
     });
-    it('aUnePropositionsValeurActuelle est vrai au niveau regional, si le chantier possède une proposition sur la région', async () => {
+    it('aUnePropositionsValeurAvancement est vrai au niveau regional, si le chantier possède une proposition sur la région', async () => {
       // Given
       const optionsPourExport: OptionsExport = {
         estBarometre: true,
@@ -1073,7 +1073,7 @@ describe('PrismaChantierRepository', () => {
         estEnAlerteBaisse: false,
         estEnAlerteAbscenceTauxAvancementDepartemental: false,
         estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurActuelle: false,
+        estEnAlertePossedePropositionsValeurAvancement: false,
       };
 
       await prisma.chantier_identite.createMany({
@@ -1126,9 +1126,9 @@ describe('PrismaChantierRepository', () => {
 
       // Then
       expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurActuelle).toBeTrue();
+      expect(result![0].aUnePropositionsValeurAvancement).toBeTrue();
     });
-    it('aUnePropositionsValeurActuelle est vrai au niveau regional, si le chantier possède une proposition sur un département enfant', async () => {
+    it('aUnePropositionsValeurAvancement est vrai au niveau regional, si le chantier possède une proposition sur un département enfant', async () => {
       // Given
       const optionsPourExport: OptionsExport = {
         estBarometre: true,
@@ -1144,7 +1144,7 @@ describe('PrismaChantierRepository', () => {
         estEnAlerteBaisse: false,
         estEnAlerteAbscenceTauxAvancementDepartemental: false,
         estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurActuelle: false,
+        estEnAlertePossedePropositionsValeurAvancement: false,
       };
 
       await prisma.chantier_identite.createMany({
@@ -1197,9 +1197,9 @@ describe('PrismaChantierRepository', () => {
 
       // Then
       expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurActuelle).toBeTrue();
+      expect(result![0].aUnePropositionsValeurAvancement).toBeTrue();
     });
-    it('aUnePropositionsValeurActuelle est faux au niveau regional, si le chantier ne possède aucune proposition sur la région ou sur un département enfant', async () => {
+    it('aUnePropositionsValeurAvancement est faux au niveau regional, si le chantier ne possède aucune proposition sur la région ou sur un département enfant', async () => {
       // Given
       const optionsPourExport: OptionsExport = {
         estBarometre: true,
@@ -1215,7 +1215,7 @@ describe('PrismaChantierRepository', () => {
         estEnAlerteBaisse: false,
         estEnAlerteAbscenceTauxAvancementDepartemental: false,
         estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurActuelle: false,
+        estEnAlertePossedePropositionsValeurAvancement: false,
       };
 
       await prisma.chantier_identite.createMany({
@@ -1268,9 +1268,9 @@ describe('PrismaChantierRepository', () => {
 
       // Then
       expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurActuelle).toBeFalse();
+      expect(result![0].aUnePropositionsValeurAvancement).toBeFalse();
     });
-    it('aUnePropositionsValeurActuelle est vrai au niveau departemental, si le chantier possède une proposition sur le département', async () => {
+    it('aUnePropositionsValeurAvancement est vrai au niveau departemental, si le chantier possède une proposition sur le département', async () => {
       // Given
       const optionsPourExport: OptionsExport = {
         estBarometre: true,
@@ -1286,7 +1286,7 @@ describe('PrismaChantierRepository', () => {
         estEnAlerteBaisse: false,
         estEnAlerteAbscenceTauxAvancementDepartemental: false,
         estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurActuelle: false,
+        estEnAlertePossedePropositionsValeurAvancement: false,
       };
 
       await prisma.chantier_identite.createMany({
@@ -1339,9 +1339,9 @@ describe('PrismaChantierRepository', () => {
 
       // Then
       expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurActuelle).toBeTrue();
+      expect(result![0].aUnePropositionsValeurAvancement).toBeTrue();
     });
-    it('aUnePropositionsValeurActuelle est faux au niveau departemental, si le chantier ne possède pas de proposition sur le département', async () => {
+    it('aUnePropositionsValeurAvancement est faux au niveau departemental, si le chantier ne possède pas de proposition sur le département', async () => {
       // Given
       const optionsPourExport: OptionsExport = {
         estBarometre: true,
@@ -1357,7 +1357,7 @@ describe('PrismaChantierRepository', () => {
         estEnAlerteBaisse: false,
         estEnAlerteAbscenceTauxAvancementDepartemental: false,
         estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurActuelle: false,
+        estEnAlertePossedePropositionsValeurAvancement: false,
       };
 
       await prisma.chantier_identite.createMany({
@@ -1410,7 +1410,7 @@ describe('PrismaChantierRepository', () => {
 
       // Then
       expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurActuelle).toBeFalse();
+      expect(result![0].aUnePropositionsValeurAvancement).toBeFalse();
     });
   });
 
@@ -1455,7 +1455,7 @@ describe('PrismaChantierRepository', () => {
         estEnAlerteBaisse: false,
         estEnAlerteAbscenceTauxAvancementDepartemental: false,
         estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurActuelle: false,
+        estEnAlertePossedePropositionsValeurAvancement: false,
       };
 
       // When
@@ -1505,7 +1505,7 @@ describe('PrismaChantierRepository', () => {
         estEnAlerteBaisse: false,
         estEnAlerteAbscenceTauxAvancementDepartemental: false,
         estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurActuelle: false,
+        estEnAlertePossedePropositionsValeurAvancement: false,
       };
 
       // When
@@ -1559,7 +1559,7 @@ describe('PrismaChantierRepository', () => {
         estEnAlerteBaisse: false,
         estEnAlerteAbscenceTauxAvancementDepartemental: false,
         estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurActuelle: false,
+        estEnAlertePossedePropositionsValeurAvancement: false,
       };
 
       // When
@@ -1619,7 +1619,7 @@ describe('PrismaChantierRepository', () => {
         estEnAlerteBaisse: false,
         estEnAlerteAbscenceTauxAvancementDepartemental: false,
         estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurActuelle: false,
+        estEnAlertePossedePropositionsValeurAvancement: false,
       };
 
       // When
@@ -1684,7 +1684,7 @@ describe('PrismaChantierRepository', () => {
         estEnAlerteBaisse: false,
         estEnAlerteAbscenceTauxAvancementDepartemental: false,
         estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurActuelle: false,
+        estEnAlertePossedePropositionsValeurAvancement: false,
       };
 
       // When
@@ -1749,7 +1749,7 @@ describe('PrismaChantierRepository', () => {
         estEnAlerteBaisse: false,
         estEnAlerteAbscenceTauxAvancementDepartemental: false,
         estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurActuelle: false,
+        estEnAlertePossedePropositionsValeurAvancement: false,
       };
 
       // When

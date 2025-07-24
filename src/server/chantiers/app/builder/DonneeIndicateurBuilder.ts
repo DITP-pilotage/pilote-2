@@ -15,9 +15,9 @@ export class DonneeIndicateurBuilder {
 
   private dateValeurInitiale: Date = new Date('2024-06-12');
 
-  private valeurActuelle: number = 13.4;
+  private valeurAvancement: number = 13.4;
 
-  private dateValeurActuelle: Date = new Date('2024-06-20');
+  private dateValeurAvancement: Date = new Date('2024-06-20');
 
   private valeurCibleAnnuelle: number = 20.4;
 
@@ -68,13 +68,13 @@ export class DonneeIndicateurBuilder {
     return this;
   }
 
-  withValeurActuelle(valeurActuelle: number): DonneeIndicateurBuilder {
-    this.valeurActuelle = valeurActuelle;
+  withValeurAvancement(valeurAvancement: number): DonneeIndicateurBuilder {
+    this.valeurAvancement = valeurAvancement;
     return this;
   }
 
-  withDateValeurActuelle(dateValeurActuelle: Date): DonneeIndicateurBuilder {
-    this.dateValeurActuelle = dateValeurActuelle;
+  withDateValeurAvancement(dateValeurAvancement: Date): DonneeIndicateurBuilder {
+    this.dateValeurAvancement = dateValeurAvancement;
     return this;
   }
 
@@ -122,8 +122,8 @@ export class DonneeIndicateurBuilder {
       territoireCode: this.territoireCode,
       valeurInitiale: this.valeurInitiale,
       dateValeurInitiale: this.dateValeurInitiale,
-      valeurActuelle: this.valeurActuelle,
-      dateValeurActuelle: this.dateValeurActuelle,
+      valeurAvancement: this.valeurAvancement,
+      dateValeurAvancement: this.dateValeurAvancement,
       valeurCibleAnnuelle: this.valeurCibleAnnuelle,
       dateValeurCibleAnnuelle: this.dateValeurCibleAnnuelle,
       tauxAvancementAnnuel: this.tauxAvancementAnnuel,

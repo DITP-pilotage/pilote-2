@@ -1,10 +1,10 @@
-import { PropositionValeurActuelleRepository } from '@/server/import-indicateur/domain/ports/PropositionValeurActuelleRepository';
+import { PropositionValeurAvancementRepository } from '@/server/import-indicateur/domain/ports/PropositionValeurAvancementRepository';
 import { StatutProposition } from '@/server/chantiers/domain/StatutProposition';
 import { prisma } from '@/server/db/prisma';
 
-export class PrismaPropositionValeurActuelleRepository implements PropositionValeurActuelleRepository {
+export class PrismaPropositionValeurAvancementRepository implements PropositionValeurAvancementRepository {
 
-  async modifierStatutPropositionsValeurActuelleApresImport({
+  async modifierStatutPropositionsValeurAvancementApresImport({
     indicId,
     zoneId,
     dateValeurImportee,

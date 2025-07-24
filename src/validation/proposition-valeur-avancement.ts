@@ -2,18 +2,18 @@ import { z } from 'zod';
 
 export const validationPropositionValeurAvancement =
   z.object({
-    valeurActuelle: z.string()
+    valeurAvancement: z.string()
       .refine((value) => new RegExp(/^-?\d+$|^-?\d+(,|\.)\d+$/).test(value), 'Le champ doit être un nombre'),
     motifProposition: z.string()
       .refine((value) => new RegExp(/^\w.*$/).test(value), 'Veuillez saisir un motif de proposition'),
     sourceDonneeEtMethodeCalcul: z.string()
       .refine((value) => new RegExp(/^\w.*$/).test(value), 'Veuillez saisir une source de donnée ainsi que la méthode de calcul'),
-    dateValeurActuelle: z.string(),
+    dateValeurAvancement: z.string(),
     indicId: z.string(),
     territoireCode: z.string(),
   });
 
-export const validationSuppressionValeurActuelle =
+export const validationSuppressionValeurAvancement =
   z.object({
     auteurModification: z.string(),
     indicId: z.string(),

@@ -44,9 +44,9 @@ const presenterEnChantierFicheConducteurContrat = (chantierFicheConducteur: Chan
     indicateurs: chantierFicheConducteur.indicateurs.map(indicateurFicheConducteur => ({
       nom: indicateurFicheConducteur.nom,
       type: indicateurFicheConducteur.type,
-      dateValeurActuelle: indicateurFicheConducteur.dateValeurActuelle ? `(${formaterDate(indicateurFicheConducteur.dateValeurActuelle, 'MM/YY')})` : '',
+      dateValeurAvancement: indicateurFicheConducteur.dateValeurAvancement ? `(${formaterDate(indicateurFicheConducteur.dateValeurAvancement, 'MM/YY')})` : '',
       valeurInitiale: indicateurFicheConducteur.valeurInitiale ? numberWithSpaces(indicateurFicheConducteur.valeurInitiale) : '-',
-      valeurActuelle: indicateurFicheConducteur.valeurActuelle ? numberWithSpaces(indicateurFicheConducteur.valeurActuelle) : '-',
+      valeurAvancement: indicateurFicheConducteur.valeurAvancement ? numberWithSpaces(indicateurFicheConducteur.valeurAvancement) : '-',
       objectifValeurCibleIntermediaire: indicateurFicheConducteur.objectifValeurCibleIntermediaire ? numberWithSpaces(indicateurFicheConducteur.objectifValeurCibleIntermediaire) : '-',
       objectifTauxAvancementIntermediaire: indicateurFicheConducteur.objectifTauxAvancementIntermediaire ? numberWithSpaces(indicateurFicheConducteur.objectifTauxAvancementIntermediaire) : '-',
       objectifValeurCible: indicateurFicheConducteur.objectifValeurCible ? numberWithSpaces(indicateurFicheConducteur.objectifValeurCible) : '-',

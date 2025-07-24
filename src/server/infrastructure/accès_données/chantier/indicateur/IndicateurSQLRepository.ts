@@ -73,15 +73,15 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       const indicateurTerritoireJalon = indicateurRow.indicateur_territoire_jalon.at(0);
 
       détailsIndicateurs[indicateurRow.id][indicateurRow.territoire_code] = {
-        dateValeurActuelleMandat: formatDate(indicateurRow.date_valeur_actuelle_mandat),
-        valeurActuelleMandat: indicateurRow.valeur_actuelle_mandat,
+        dateValeurAvancementMandat: formatDate(indicateurRow.date_valeur_actuelle_mandat),
+        valeurAvancementMandat: indicateurRow.valeur_actuelle_mandat,
         codeInsee: indicateurRow.code_insee,
         valeurInitiale: indicateurRow.valeur_initiale,
         dateValeurInitiale: formatDate(indicateurRow.date_valeur_initiale),
         // TODO(Tristan-10/10/2024) : Trouver une moyen de se débarasser du as unknown
         historiquesValeurs: (indicateurRow.evolution_valeur_actuelle as unknown as historique_valeurs[]).sort((a, b) => comparerDates(a.date, b.date)),
-        valeurActuelle: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_actuelle),
-        dateValeurActuelle: formatDate(indicateurTerritoireJalon?.date_valeur_actuelle || null),
+        valeurAvancement: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_actuelle),
+        dateValeurAvancement: formatDate(indicateurTerritoireJalon?.date_valeur_actuelle || null),
         valeurCible: indicateurRow.valeur_cible_mandat,
         dateValeurCible: formatDate(indicateurRow.date_valeur_cible_mandat),
         valeurCibleAnnuelle: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.valeur_cible),
@@ -91,7 +91,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
           annuel: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.taux_avancement),
         },
         proposition: indicateurRow.valeur_actuelle_proposition !== null && indicateurRow.valeur_actuelle_proposition !== undefined ? { // Pour autoriser une valeur actuelle proposé à 0
-          valeurActuelle: indicateurRow.valeur_actuelle_proposition,
+          valeurAvancement: indicateurRow.valeur_actuelle_proposition,
           tauxAvancement: indicateurRow.taux_avancement_mandat_proposition,
           tauxAvancementIntermediaire: verifyValeurIsNotNullOrUndefined(indicateurTerritoireJalon?.taux_avancement_proposition),
           auteur: indicateurRow.auteur_proposition,
@@ -103,7 +103,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         est_applicable: indicateurRow.est_applicable,
         dateImport: formatDate(indicateurRow.indicateur_identite.dernier_import_date_indic),
         pondération: indicateurRow.ponderation_zone_reel,
-        prochaineDateValeurActuelle: formatDate(indicateurRow.prochaine_date_valeur_actuelle),
+        prochaineDateValeurAvancement: formatDate(indicateurRow.prochaine_date_valeur_actuelle),
         prochaineDateMaj: formatDate(indicateurRow.prochaine_date_maj),
         prochaineDateMajJours: indicateurRow.prochaine_date_maj_jours,
         estAJour: indicateurRow.est_a_jour,

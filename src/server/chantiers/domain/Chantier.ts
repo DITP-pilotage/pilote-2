@@ -9,7 +9,7 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 export class Chantier {
   static recupererStatistiqueListeChantier(chantiers: ChantierRapportDetailleContrat[] | ChantierAccueilContrat[], mailleChantier: Maille, territoireCode: string) {
     return chantiers.reduce((acc, chantier) => {
-      const { météo, écart, tendance, avancement, aUnePropositionsValeurActuelle } = chantier.mailles[mailleChantier][territoireCode];
+      const { météo, écart, tendance, avancement, aUnePropositionsValeurAvancement } = chantier.mailles[mailleChantier][territoireCode];
 
       acc.répartitionMétéos[météo] += 1;
       acc.filtresComptesCalculés = {
@@ -18,7 +18,7 @@ export class Chantier {
         estEnAlerteTauxAvancementNonCalculé: Alerte.estEnAlerteTauxAvancementNonCalculé(avancement.global, chantier.cibleAttendu) ? acc.filtresComptesCalculés.estEnAlerteTauxAvancementNonCalculé + 1 : acc.filtresComptesCalculés.estEnAlerteTauxAvancementNonCalculé,
         estEnAlerteAbscenceTauxAvancementDepartemental: Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.aUnTauxAvancementDepartemental, chantier.cibleAttendu) ? acc.filtresComptesCalculés.estEnAlerteAbscenceTauxAvancementDepartemental + 1 : acc.filtresComptesCalculés.estEnAlerteAbscenceTauxAvancementDepartemental,
         estEnAlerteMétéoNonRenseignée: Alerte.estEnAlerteMétéoNonRenseignée(météo) ? acc.filtresComptesCalculés.estEnAlerteMétéoNonRenseignée + 1 : acc.filtresComptesCalculés.estEnAlerteMétéoNonRenseignée,
-        estEnAlertePossedePropositionsValeurActuelle: Alerte.estEnAlertePossedePropositionsValeurActuelle(aUnePropositionsValeurActuelle) ? acc.filtresComptesCalculés.estEnAlertePossedePropositionsValeurActuelle + 1 : acc.filtresComptesCalculés.estEnAlertePossedePropositionsValeurActuelle,
+        estEnAlertePossedePropositionsValeurAvancement: Alerte.estEnAlertePossedePropositionsValeurAvancement(aUnePropositionsValeurAvancement) ? acc.filtresComptesCalculés.estEnAlertePossedePropositionsValeurAvancement + 1 : acc.filtresComptesCalculés.estEnAlertePossedePropositionsValeurAvancement,
       };
 
       return acc;
@@ -37,7 +37,7 @@ export class Chantier {
         estEnAlerteTauxAvancementNonCalculé: 0,
         estEnAlerteAbscenceTauxAvancementDepartemental: 0,
         estEnAlerteMétéoNonRenseignée: 0,
-        estEnAlertePossedePropositionsValeurActuelle: 0,
+        estEnAlertePossedePropositionsValeurAvancement: 0,
       },
     } satisfies {
       répartitionMétéos: Record<MeteoDisponible | 'NON_RENSEIGNEE' | 'NON_NECESSAIRE', number>,

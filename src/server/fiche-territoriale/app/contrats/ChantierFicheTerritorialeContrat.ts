@@ -5,7 +5,7 @@ import { IndicateurFicheTerritoriale } from '@/server/fiche-territoriale/domain/
 interface IndicateurFicheTerritorialeContrat {
   tauxAvancementNational: number | null;
   tauxAvancement: number | null;
-  valeurActuelle: number | null;
+  valeurAvancement: number | null;
   valeurCible: number | null;
   nom: string
   uniteMesure: string | null
@@ -23,7 +23,7 @@ export interface ChantierFicheTerritorialeContrat {
 
 const presenterEnIndicateurFicheTerritorialeContrat = (indicateur: IndicateurFicheTerritoriale): IndicateurFicheTerritorialeContrat => ({
   nom: indicateur.nom,
-  valeurActuelle: indicateur.valeurActuelle,
+  valeurAvancement: indicateur.valeurAvancement,
   valeurCible: indicateur.valeurCible,
   tauxAvancement: indicateur.tauxAvancement,
   tauxAvancementNational: indicateur.tauxAvancementNational,

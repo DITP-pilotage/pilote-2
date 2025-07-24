@@ -7,9 +7,9 @@ export class IndicateurFicheConducteur {
 
   private readonly _dateValeurInitiale: string | null;
 
-  private readonly _valeurActuelle: number | null;
+  private readonly _valeurAvancement: number | null;
 
-  private readonly _dateValeurActuelle: string | null;
+  private readonly _dateValeurAvancement: string | null;
 
   private readonly _objectifValeurCibleIntermediaire: number | null;
 
@@ -23,8 +23,8 @@ export class IndicateurFicheConducteur {
     nom,
     type,
     valeurInitiale,
-    valeurActuelle,
-    dateValeurActuelle,
+    valeurAvancement,
+    dateValeurAvancement,
     dateValeurInitiale,
     objectifValeurCibleIntermediaire,
     objectifTauxAvancementIntermediaire,
@@ -34,8 +34,8 @@ export class IndicateurFicheConducteur {
     nom: string
     type: string | null
     valeurInitiale: number | null
-    valeurActuelle: number | null
-    dateValeurActuelle: string | null
+    valeurAvancement: number | null
+    dateValeurAvancement: string | null
     dateValeurInitiale: string | null
     objectifValeurCibleIntermediaire: number | null
     objectifTauxAvancementIntermediaire: number | null
@@ -45,8 +45,8 @@ export class IndicateurFicheConducteur {
     this._nom = nom;
     this._type = type;
     this._valeurInitiale = valeurInitiale;
-    this._valeurActuelle = valeurActuelle;
-    this._dateValeurActuelle = dateValeurActuelle;
+    this._valeurAvancement = valeurAvancement;
+    this._dateValeurAvancement = dateValeurAvancement;
     this._dateValeurInitiale = dateValeurInitiale;
     this._objectifValeurCibleIntermediaire = objectifValeurCibleIntermediaire;
     this._objectifTauxAvancementIntermediaire = objectifTauxAvancementIntermediaire;
@@ -66,12 +66,12 @@ export class IndicateurFicheConducteur {
     return this._valeurInitiale;
   }
 
-  get valeurActuelle(): number | null {
-    return this._valeurActuelle;
+  get valeurAvancement(): number | null {
+    return this._valeurAvancement;
   }
 
-  get dateValeurActuelle(): string | null {
-    return this._dateValeurActuelle;
+  get dateValeurAvancement(): string | null {
+    return this._dateValeurAvancement;
   }
 
   get dateValeurInitiale(): string | null {
@@ -98,8 +98,8 @@ export class IndicateurFicheConducteur {
     nom,
     type,
     valeurInitiale,
-    valeurActuelle,
-    dateValeurActuelle,
+    valeurAvancement,
+    dateValeurAvancement,
     dateValeurInitiale,
     objectifValeurCibleIntermediaire,
     objectifTauxAvancementIntermediaire,
@@ -109,8 +109,8 @@ export class IndicateurFicheConducteur {
     nom: string
     type: string | null
     valeurInitiale: number | null
-    valeurActuelle: number | null
-    dateValeurActuelle: string | null
+    valeurAvancement: number | null
+    dateValeurAvancement: string | null
     dateValeurInitiale: string | null
     objectifValeurCibleIntermediaire: number | null
     objectifTauxAvancementIntermediaire: number | null
@@ -121,8 +121,8 @@ export class IndicateurFicheConducteur {
       nom,
       type,
       valeurInitiale,
-      valeurActuelle,
-      dateValeurActuelle,
+      valeurAvancement,
+      dateValeurAvancement,
       dateValeurInitiale,
       objectifValeurCibleIntermediaire,
       objectifTauxAvancementIntermediaire,

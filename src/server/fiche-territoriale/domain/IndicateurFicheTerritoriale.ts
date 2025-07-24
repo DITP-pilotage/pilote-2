@@ -1,7 +1,7 @@
 export class IndicateurFicheTerritoriale {
   private readonly _nom: string;
 
-  private readonly _valeurActuelle: number | null;
+  private readonly _valeurAvancement: number | null;
 
   private readonly _valeurCible: number | null;
 
@@ -11,16 +11,16 @@ export class IndicateurFicheTerritoriale {
 
   private readonly _uniteMesure: string | null;
 
-  private constructor({ nom, valeurActuelle, valeurCible, tauxAvancement, tauxAvancementNational, uniteMesure }: {
+  private constructor({ nom, valeurAvancement, valeurCible, tauxAvancement, tauxAvancementNational, uniteMesure }: {
     nom: string,
-    valeurActuelle: number | null,
+    valeurAvancement: number | null,
     valeurCible: number | null,
     tauxAvancement: number | null,
     tauxAvancementNational: number | null,
     uniteMesure: string | null
   }) {
     this._nom = nom;
-    this._valeurActuelle = valeurActuelle;
+    this._valeurAvancement = valeurAvancement;
     this._valeurCible = valeurCible;
     this._tauxAvancement = tauxAvancement;
     this._tauxAvancementNational = tauxAvancementNational;
@@ -31,8 +31,8 @@ export class IndicateurFicheTerritoriale {
     return this._nom;
   }
 
-  get valeurActuelle(): number | null {
-    return this._valeurActuelle;
+  get valeurAvancement(): number | null {
+    return this._valeurAvancement;
   }
 
   get valeurCible(): number | null {
@@ -53,14 +53,14 @@ export class IndicateurFicheTerritoriale {
 
   static creerIndicateurFicheTerritoriale({
     nom,
-    valeurActuelle,
+    valeurAvancement,
     valeurCible,
     tauxAvancement,
     tauxAvancementNational,
     uniteMesure,
   }: {
     nom: string,
-    valeurActuelle: number | null,
+    valeurAvancement: number | null,
     valeurCible: number | null,
     tauxAvancement: number | null,
     tauxAvancementNational: number | null,
@@ -68,7 +68,7 @@ export class IndicateurFicheTerritoriale {
   }) {
     return new IndicateurFicheTerritoriale({
       nom,
-      valeurActuelle,
+      valeurAvancement,
       valeurCible,
       tauxAvancement,
       tauxAvancementNational,

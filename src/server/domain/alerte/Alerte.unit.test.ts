@@ -177,27 +177,27 @@ describe('Alerte', () => {
     });
   });
 
-  describe('estEnAlertePossedePropositionsValeurActuelle', () => {
+  describe('estEnAlertePossedePropositionsValeurAvancement', () => {
     test("le chantier est en alerte s'il possède au moins une proposition de valeur actuelle", () => {
       //Given
-      const aUnePropositionsValeurActuelle = true;
+      const aUnePropositionsValeurAvancement = true;
 
       // When
-      const estEnAlertePossedePropositionsValeurActuelle = Alerte.estEnAlertePossedePropositionsValeurActuelle(aUnePropositionsValeurActuelle);
+      const estEnAlertePossedePropositionsValeurAvancement = Alerte.estEnAlertePossedePropositionsValeurAvancement(aUnePropositionsValeurAvancement);
 
       // Then
-      expect(estEnAlertePossedePropositionsValeurActuelle).toBeTruthy();
+      expect(estEnAlertePossedePropositionsValeurAvancement).toBeTruthy();
     });
 
     test("le chantier n'est pas en alerte s'il possède aucune proposition de valeur actuelle", () => {
       //Given
-      const aUnePropositionsValeurActuelle = false;
+      const aUnePropositionsValeurAvancement = false;
 
       // When
-      const estEnAlertePossedePropositionsValeurActuelle = Alerte.estEnAlertePossedePropositionsValeurActuelle(aUnePropositionsValeurActuelle);
+      const estEnAlertePossedePropositionsValeurAvancement = Alerte.estEnAlertePossedePropositionsValeurAvancement(aUnePropositionsValeurAvancement);
 
       // Then
-      expect(estEnAlertePossedePropositionsValeurActuelle).toBeFalsy();
+      expect(estEnAlertePossedePropositionsValeurAvancement).toBeFalsy();
     });
   });
 });

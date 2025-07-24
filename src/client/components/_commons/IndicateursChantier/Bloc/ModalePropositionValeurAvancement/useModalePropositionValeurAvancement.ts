@@ -4,42 +4,42 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import type { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { validationPropositionValeurAvancement } from '@/validation/proposition-valeur-actuelle';
+import { validationPropositionValeurAvancement } from '@/validation/proposition-valeur-avancement';
 import api from '@/server/infrastructure/api/trpc/api';
 import { récupérerUnCookie } from '@/client/utils/cookies';
 
-interface PropositionValeurActuelleForm {
-  valeurActuelle: string
+interface PropositionValeurAvancementForm {
+  valeurAvancement: string
   motifProposition: string
   sourceDonneeEtMethodeCalcul: string
-  dateValeurActuelle: string
+  dateValeurAvancement: string
   indicId: string
   territoireCode: string
 }
 
-export enum EtapePropositionValeurActuelle {
+export enum EtapePropositionValeurAvancement {
   SAISIE_VALEUR_ACTUELLE = 'SAISIE_VALEUR_ACTUELLE',
   VALIDATION_VALEUR_ACTUELLE = 'VALIDATION_VALEUR_ACTUELLE',
 }
 
-export const Stepper: Record<EtapePropositionValeurActuelle[keyof EtapePropositionValeurActuelle & number], {
+export const Stepper: Record<EtapePropositionValeurAvancement[keyof EtapePropositionValeurAvancement & number], {
   numeroEtape: number,
   titre: string,
   etapeSuivante: string | null
 }> = {
-  [EtapePropositionValeurActuelle.SAISIE_VALEUR_ACTUELLE]: {
+  [EtapePropositionValeurAvancement.SAISIE_VALEUR_ACTUELLE]: {
     numeroEtape: 1,
     titre: 'Saisie de la proposition',
     etapeSuivante: 'Validation de la proposition',
   },
-  [EtapePropositionValeurActuelle.VALIDATION_VALEUR_ACTUELLE]: {
+  [EtapePropositionValeurAvancement.VALIDATION_VALEUR_ACTUELLE]: {
     numeroEtape: 2,
     titre: 'Validation de la proposition',
     etapeSuivante: null,
   },
 };
 
-const useModalePropositionValeurActuelle = ({ detailIndicateur, indicateur, territoireCode }: {
+const useModalePropositionValeurAvancement = ({ detailIndicateur, indicateur, territoireCode }: {
   indicateur: Indicateur,
   detailIndicateur: DétailsIndicateur,
   territoireCode: string
@@ -49,43 +49,43 @@ const useModalePropositionValeurActuelle = ({ detailIndicateur, indicateur, terr
 
   const auteurModification = session?.user.name;
 
-  const [etapePropositionValeurActuelle, setEtapePropositionValeurActuelle] = useState<EtapePropositionValeurActuelle | null>(EtapePropositionValeurActuelle.SAISIE_VALEUR_ACTUELLE);
+  const [etapePropositionValeurAvancement, setEtapePropositionValeurAvancement] = useState<EtapePropositionValeurAvancement | null>(EtapePropositionValeurAvancement.SAISIE_VALEUR_ACTUELLE);
 
-  const mutationCreerPropositonValeurActuelle = api.propositionValeurAvancement.creer.useMutation({
+  const mutationCreerPropositonValeurAvancement = api.propositionValeurAvancement.creer.useMutation({
     onSuccess: () => {
-      setEtapePropositionValeurActuelle(null);
+      setEtapePropositionValeurAvancement(null);
     },
   });
 
-  const creerPropositonValeurActuelle: SubmitHandler<PropositionValeurActuelleForm > = async (data) => {
+  const creerPropositonValeurAvancement: SubmitHandler<PropositionValeurAvancementForm > = async (data) => {
     const inputs = {
       csrf: récupérerUnCookie('csrf') ?? '',
       ...data,
-      valeurActuelle: data.valeurActuelle,
-      dateValeurActuelle: data.dateValeurActuelle!,
+      valeurAvancement: data.valeurAvancement,
+      dateValeurAvancement: data.dateValeurAvancement!,
       indicId: indicateur.id,
       auteurModification,
       territoireCode,
     };
 
-    mutationCreerPropositonValeurActuelle.mutate(inputs);
+    mutationCreerPropositonValeurAvancement.mutate(inputs);
   };
 
-  const reactHookForm = useForm<PropositionValeurActuelleForm>({
+  const reactHookForm = useForm<PropositionValeurAvancementForm>({
     mode: 'all',
     resolver: zodResolver(validationPropositionValeurAvancement),
     defaultValues: detailIndicateur.proposition === null ? {
-      valeurActuelle: `${detailIndicateur.valeurActuelleMandat}`,
+      valeurAvancement: `${detailIndicateur.valeurAvancementMandat}`,
       motifProposition: '',
       sourceDonneeEtMethodeCalcul: '',
-      dateValeurActuelle: detailIndicateur.dateValeurActuelleMandat!,
+      dateValeurAvancement: detailIndicateur.dateValeurAvancementMandat!,
       indicId: indicateur.id,
       territoireCode,
     } : {
-      valeurActuelle: `${detailIndicateur.valeurActuelleMandat}`,
+      valeurAvancement: `${detailIndicateur.valeurAvancementMandat}`,
       motifProposition: detailIndicateur.proposition.motif || '',
       sourceDonneeEtMethodeCalcul: detailIndicateur.proposition.sourceDonneeEtMethodeCalcul || '',
-      dateValeurActuelle: detailIndicateur.dateValeurActuelleMandat!,
+      dateValeurAvancement: detailIndicateur.dateValeurAvancementMandat!,
       indicId: indicateur.id,
       territoireCode,
     },
@@ -96,11 +96,11 @@ const useModalePropositionValeurActuelle = ({ detailIndicateur, indicateur, terr
 
   return {
     reactHookForm,
-    creerPropositonValeurActuelle,
-    etapePropositionValeurActuelle,
-    setEtapePropositionValeurActuelle,
+    creerPropositonValeurAvancement,
+    etapePropositionValeurAvancement,
+    setEtapePropositionValeurAvancement,
     auteurModification,
   };
 };
 
-export default useModalePropositionValeurActuelle;
+export default useModalePropositionValeurAvancement;

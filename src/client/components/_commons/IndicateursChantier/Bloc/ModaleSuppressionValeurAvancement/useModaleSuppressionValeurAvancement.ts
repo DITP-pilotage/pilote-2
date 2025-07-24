@@ -4,7 +4,7 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import api from '@/server/infrastructure/api/trpc/api';
 import { récupérerUnCookie } from '@/client/utils/cookies';
 
-export const useModaleSuppressionValeurActuelle = ({ indicateur, territoireCode }: {
+export const useModaleSuppressionValeurAvancement = ({ indicateur, territoireCode }: {
   indicateur: Indicateur,
   territoireCode: string
 }) => {
@@ -15,13 +15,13 @@ export const useModaleSuppressionValeurActuelle = ({ indicateur, territoireCode 
 
   const [estSupprime, setEstSupprime] = useState<boolean>(false);
 
-  const mutationCreerPropositonValeurActuelle = api.propositionValeurAvancement.supprimer.useMutation({
+  const mutationSupprimerPropositionValeurAvancement = api.propositionValeurAvancement.supprimer.useMutation({
     onSuccess: () => {
       setEstSupprime(true);
     },
   });
 
-  const supprimerPropositionValeurActuelle = async () => {
+  const supprimerPropositionValeurAvancement = async () => {
     const inputs = {
       csrf: récupérerUnCookie('csrf') ?? '',
       indicId: indicateur.id,
@@ -29,11 +29,11 @@ export const useModaleSuppressionValeurActuelle = ({ indicateur, territoireCode 
       territoireCode,
     };
 
-    mutationCreerPropositonValeurActuelle.mutate(inputs);
+    mutationSupprimerPropositionValeurAvancement.mutate(inputs);
   };
 
   return {
-    supprimerPropositionValeurActuelle,
+    supprimerPropositionValeurAvancement,
     estSupprime,
   };
 };

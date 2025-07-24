@@ -26,7 +26,7 @@ export default function usePageChantier(chantier: Chantier, territoireSélection
   
   let estAutoriseAModifierLesPublications = territoireSélectionné.accèsSaisiePublication && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantier.id) && chantier.statut !== 'ARCHIVE';
 
-  const estAutoriseAProposerUneValeurActuelle = territoireCode !== 'NAT-FR' && PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE.has(session!.profil) && estAutoriseAModifierLesPublications && chantier.statut !== 'ARCHIVE';
+  const estAutoriseAProposerUneValeurAvancement = territoireCode !== 'NAT-FR' && PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE.has(session!.profil) && estAutoriseAModifierLesPublications && chantier.statut !== 'ARCHIVE';
 
   if (session && [ProfilEnum.DIR_PROJET, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.SECRETARIAT_GENERAL].includes(session.profil) && territoireSélectionné?.maille != 'nationale') {
     estAutoriseAModifierLesPublications = estAutoriseAModifierLesPublications && chantier?.ate === 'hors_ate_centralise';
@@ -46,7 +46,7 @@ export default function usePageChantier(chantier: Chantier, territoireSélection
   return {
     estAutoriseAImporterDesIndicateurs,
     estAutoriseAVoirLeBoutonFicheConducteur,
-    estAutoriseAProposerUneValeurActuelle,
+    estAutoriseAProposerUneValeurAvancement,
     estAutoriseAModifierLesPublications,
     estAutoriseAModifierLesObjectifs,
     estAutoriseAVoirLesAlertesMAJIndicateurs,

@@ -19,7 +19,7 @@ interface IndicateursProps {
   detailsIndicateursTerritoire: Record<string, DétailsIndicateurTerritoire>
   chantierEstTerritorialisé: boolean,
   estInteractif?: boolean
-  estAutoriseAProposerUneValeurActuelle?: boolean
+  estAutoriseAProposerUneValeurAvancement?: boolean
   territoireCode: string
   territoiresCompares: string[]
   mailleQuery: MailleInterne
@@ -39,7 +39,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   detailsIndicateursTerritoire,
   chantierEstTerritorialisé,
   estInteractif = true,
-  estAutoriseAProposerUneValeurActuelle = false,
+  estAutoriseAProposerUneValeurAvancement: estAutoriseAProposerUneValeurAvancement = false,
   territoireCode,
   territoiresCompares,
   mailleQuery,
@@ -111,7 +111,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                             chantierEstTerritorialisé={chantierEstTerritorialisé}
                             detailsIndicateursTerritoire={detailsIndicateursTerritoire}
                             détailsIndicateurs={détailsIndicateurs}
-                            estAutoriseAProposerUneValeurActuelle={estAutoriseAProposerUneValeurActuelle}
+                            estAutoriseAProposerUneValeurAvancement={estAutoriseAProposerUneValeurAvancement}
                             estInteractif={estInteractif}
                             indicateur={indicateur}
                             jalon={jalon}

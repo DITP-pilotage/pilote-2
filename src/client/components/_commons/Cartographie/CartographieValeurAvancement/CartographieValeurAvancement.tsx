@@ -8,11 +8,11 @@ import {
 } from '@/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import useCartographieValeurActuelle from './useCartographieValeurActuelle';
-import { CartographieDonnéesValeurActuelle } from './CartographieValeurActuelle.interface';
+import useCartographieValeurAvancement from './useCartographieValeurAvancement';
+import { CartographieDonnéesValeurAvancement } from './CartographieValeurAvancement.interface';
 
-interface CartographieValeurActuelleProps {
-  données: CartographieDonnéesValeurActuelle,
+interface CartographieValeurAvancementProps {
+  données: CartographieDonnéesValeurAvancement,
   options?: Partial<CartographieOptions>,
   unité?: string | null,
   élémentsDeLégende: CartographieÉlémentsDeLégende,
@@ -23,7 +23,7 @@ interface CartographieValeurActuelleProps {
   jalon: number
 }
 
-const CartographieValeurActuelle: FunctionComponent<CartographieValeurActuelleProps> = ({
+const CartographieValeurAvancement: FunctionComponent<CartographieValeurAvancementProps> = ({
   données,
   options,
   unité,
@@ -38,7 +38,7 @@ const CartographieValeurActuelle: FunctionComponent<CartographieValeurActuellePr
     donnéesCartographie,
     légende,
     légendeAdditionnelle,
-  } = useCartographieValeurActuelle(données, élémentsDeLégende, jalon, unité);
+  } = useCartographieValeurAvancement(données, élémentsDeLégende, jalon, unité);
 
   return (
     <Cartographie
@@ -55,4 +55,4 @@ const CartographieValeurActuelle: FunctionComponent<CartographieValeurActuellePr
   );
 };
 
-export default CartographieValeurActuelle;
+export default CartographieValeurAvancement;

@@ -1,16 +1,16 @@
 import { randomUUID } from 'node:crypto';
 import { StatutPropositionType } from './StatutProposition';
 
-export class PropositionValeurActuelle {
+export class PropositionValeurAvancement {
   private readonly _id: string;
 
   private readonly _indicId: string;
 
-  private readonly _valeurActuelleProposee: number;
+  private readonly _valeurAvancementProposee: number;
 
   private readonly _territoireCode: string;
 
-  private readonly _dateValeurActuelle: Date;
+  private readonly _dateValeurAvancement: Date;
 
   private readonly _idAuteurModification: string;
   
@@ -27,9 +27,9 @@ export class PropositionValeurActuelle {
   private constructor({
     id,
     indicId,
-    valeurActuelleProposee,
+    valeurAvancementProposee,
     territoireCode,
-    dateValeurActuelle,
+    dateValeurAvancement,
     idAuteurModification,
     auteurModification,
     dateProposition,
@@ -39,9 +39,9 @@ export class PropositionValeurActuelle {
   }: {
     id: string,
     indicId: string,
-    valeurActuelleProposee: number,
+    valeurAvancementProposee: number,
     territoireCode: string,
-    dateValeurActuelle: Date,
+    dateValeurAvancement: Date,
     idAuteurModification: string,
     auteurModification: string,
     dateProposition: Date,
@@ -51,9 +51,9 @@ export class PropositionValeurActuelle {
   }) {
     this._id = id;
     this._indicId = indicId;
-    this._valeurActuelleProposee = valeurActuelleProposee;
+    this._valeurAvancementProposee = valeurAvancementProposee;
     this._territoireCode = territoireCode;
-    this._dateValeurActuelle = dateValeurActuelle;
+    this._dateValeurAvancement = dateValeurAvancement;
     this._idAuteurModification = idAuteurModification;
     this._auteurModification = auteurModification;
     this._dateProposition = dateProposition;
@@ -70,16 +70,16 @@ export class PropositionValeurActuelle {
     return this._indicId;
   }
 
-  get valeurActuelleProposee(): number {
-    return this._valeurActuelleProposee;
+  get valeurAvancementProposee(): number {
+    return this._valeurAvancementProposee;
   }
 
   get territoireCode(): string {
     return this._territoireCode;
   }
 
-  get dateValeurActuelle(): Date {
-    return this._dateValeurActuelle;
+  get dateValeurAvancement(): Date {
+    return this._dateValeurAvancement;
   }
 
   get idAuteurModification(): string {
@@ -106,12 +106,12 @@ export class PropositionValeurActuelle {
     return this._statut;
   }
 
-  static creerPropositionValeurActuelle({
+  static creerPropositionValeurAvancement({
     id,
     indicId,
-    valeurActuelleProposee,
+    valeurAvancementProposee,
     territoireCode,
-    dateValeurActuelle,
+    dateValeurAvancement,
     idAuteurModification,
     auteurModification,
     dateProposition,
@@ -121,9 +121,9 @@ export class PropositionValeurActuelle {
   }: {
     id?: string,
     indicId: string,
-    valeurActuelleProposee: number,
+    valeurAvancementProposee: number,
     territoireCode: string,
-    dateValeurActuelle: Date,
+    dateValeurAvancement: Date,
     idAuteurModification: string,
     auteurModification: string,
     dateProposition: Date,
@@ -131,12 +131,12 @@ export class PropositionValeurActuelle {
     sourceDonneeEtMethodeCalcul: string,
     statut: StatutPropositionType
   }) {
-    return new PropositionValeurActuelle({
+    return new PropositionValeurAvancement({
       id: id || randomUUID(),
       indicId,
-      valeurActuelleProposee,
+      valeurAvancementProposee,
       territoireCode,
-      dateValeurActuelle,
+      dateValeurAvancement,
       idAuteurModification,
       auteurModification,
       dateProposition,

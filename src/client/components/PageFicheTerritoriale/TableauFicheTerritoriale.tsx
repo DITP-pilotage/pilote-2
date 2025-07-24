@@ -151,9 +151,9 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                           className='fr-col-2 flex flex-column justify-center'
                         >
                           {
-                            indicateur.valeurActuelle !== null ? (
+                            indicateur.valeurAvancement !== null ? (
                               <span className='fr-text--xs fr-m-0'>
-                                {`${indicateur.valeurActuelle.toFixed(0)}${indicateur.uniteMesure?.toLocaleLowerCase() === 'pourcentage' ? '%' : ''}`}
+                                {`${indicateur.valeurAvancement.toFixed(0)}${indicateur.uniteMesure?.toLocaleLowerCase() === 'pourcentage' ? '%' : ''}`}
                               </span>
                             ) : (
                               <span className='fiche-territoriale--contenu--xs'>

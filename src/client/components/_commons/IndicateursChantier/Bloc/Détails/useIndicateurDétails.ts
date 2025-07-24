@@ -5,11 +5,11 @@ export const useIndicateurDétails = (detailsIndicateurTerritoire: DétailsIndic
 
   const donnéesCartographieAvancementTerritorialisées = objectEntries(detailsIndicateurTerritoire).
     some(([, détailsIndicateur]) => (détailsIndicateur.avancement.global != null ));
-  const donnéesCartographieValeurActuelleTerritorialisées = objectEntries(detailsIndicateurTerritoire).
-    some(([, détailsIndicateur]) => (détailsIndicateur.valeurActuelle != null ));
+  const donnéesCartographieValeurAvancementTerritorialisées = objectEntries(detailsIndicateurTerritoire).
+    some(([, détailsIndicateur]) => (détailsIndicateur.valeurAvancement != null ));
 
   return {
     donnéesCartographieAvancementTerritorialisées,
-    donnéesCartographieValeurActuelleTerritorialisées,
+    donnéesCartographieValeurAvancementTerritorialisées,
   };
 };

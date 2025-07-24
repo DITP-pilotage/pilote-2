@@ -153,7 +153,7 @@ export class ExportCsvDesChantiersUseCase {
               chantierTerritoireExport.cibleAttendu,
               chantierTerritoireExport.aUnTauxAvancementDepartemental,
               chantierTerritoireExport.météo ?? 'NON_RENSEIGNEE',
-              chantierTerritoireExport.aUnePropositionsValeurActuelle,
+              chantierTerritoireExport.aUnePropositionsValeurAvancement,
             )
           ) {
             return [...acc, presenterEnChantierExportContrat(chantierTerritoireExport, profil)];

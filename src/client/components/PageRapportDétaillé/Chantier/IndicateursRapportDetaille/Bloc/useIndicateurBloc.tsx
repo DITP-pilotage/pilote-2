@@ -23,10 +23,10 @@ const indicateurDétailsVide: IndicateurDétailsParTerritoire = {
     valeurInitiale: null,
     dateValeurInitiale: null,
     historiquesValeurs: [],
-    valeurActuelle: null,
-    dateValeurActuelle: null,
-    valeurActuelleMandat: null,
-    dateValeurActuelleMandat: null,
+    valeurAvancement: null,
+    dateValeurAvancement: null,
+    valeurAvancementMandat: null,
+    dateValeurAvancementMandat: null,
     valeurCible: null,
     dateValeurCible: null,
     valeurCibleAnnuelle: null,
@@ -39,7 +39,7 @@ const indicateurDétailsVide: IndicateurDétailsParTerritoire = {
     pondération: null,
     prochaineDateMaj: null,
     prochaineDateMajJours: null,
-    prochaineDateValeurActuelle: null,
+    prochaineDateValeurAvancement: null,
     estAJour: null,
     tendance: null,
   },
@@ -83,14 +83,14 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       ),
       enableSorting: false,
     }),
-    reactTableColonnesHelper.accessor('données.valeurActuelle', {
+    reactTableColonnesHelper.accessor('données.valeurAvancement', {
       header: 'Valeur actuelle',
-      id: 'valeurActuelle',
-      cell: valeurActuelle => (
+      id: 'valeurAvancement',
+      cell: valeurAvancement => (
         <ValeurEtDate
-          date={valeurActuelle.row.original.données.dateValeurActuelle}
-          unité={valeurActuelle.row.original.données.unité}
-          valeur={valeurActuelle.getValue()}
+          date={valeurAvancement.row.original.données.dateValeurAvancement}
+          unité={valeurAvancement.row.original.données.unité}
+          valeur={valeurAvancement.getValue()}
         />
       ),
       enableSorting: false,
@@ -170,7 +170,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       columnVisibility: estVueTuile ? ({
         territoire: false,
         valeurInitiale: false,
-        valeurActuelle: false,
+        valeurAvancement: false,
         cibleAnnuelle: false,
         avancementAnnuel: false,
         cible: false,

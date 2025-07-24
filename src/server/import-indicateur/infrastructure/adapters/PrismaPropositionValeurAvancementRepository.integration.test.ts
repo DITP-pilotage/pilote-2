@@ -1,12 +1,12 @@
 import { prisma } from '@/server/db/prisma';
 import { StatutProposition } from '@/server/chantiers/domain/StatutProposition';
-import { PrismaPropositionValeurActuelleRepository } from './PrismaPropositionValeurActuelleRepository';
+import { PrismaPropositionValeurAvancementRepository } from './PrismaPropositionValeurAvancementRepository';
 
-describe('PrismaPropositionValeurActuelle', () => {
-  let prismaPropositionValeurActuelleRepository: PrismaPropositionValeurActuelleRepository;
+describe('PrismaPropositionValeurAvancement', () => {
+  let prismaPropositionValeurAvancementRepository: PrismaPropositionValeurAvancementRepository;
 
   beforeEach(async () => {
-    prismaPropositionValeurActuelleRepository = new PrismaPropositionValeurActuelleRepository();
+    prismaPropositionValeurAvancementRepository = new PrismaPropositionValeurAvancementRepository();
     await prisma.chantier_identite.create({
       data: {
         id: 'CH-001',
@@ -47,8 +47,8 @@ describe('PrismaPropositionValeurActuelle', () => {
     });
   });
 
-  describe('#modifierStatutPropositionsValeurActuelleApresImport', () => {
-    it("si la date de valeur actuelle de l'import est égale à la date de valeur actuelle de la proposition et la valeur actuelle importée est égale à la proposition, applique le statut ACCEPTEE_VIA_IMPORT", async () => {
+  describe('#modifierStatutPropositionsValeurAvancementApresImport', () => {
+    it("si la date de valeur avancement de l'import est égale à la date de valeur avancement de la proposition et la valeur avancement importée est égale à la proposition, applique le statut ACCEPTEE_VIA_IMPORT", async () => {
       // GIVEN
       await prisma.utilisateur.create({
         data: {
@@ -76,7 +76,7 @@ describe('PrismaPropositionValeurActuelle', () => {
         },
       });
       // WHEN
-      await prismaPropositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport({
+      await prismaPropositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport({
         indicId: 'IND-001', 
         zoneId: 'D34', 
         dateValeurImportee: new Date('2024-12-01'),
@@ -87,7 +87,7 @@ describe('PrismaPropositionValeurActuelle', () => {
       const proposition = await prisma.proposition_valeur_actuelle.findFirst();
       expect(proposition?.statut).toStrictEqual(StatutProposition.ACCEPTEE_VIA_IMPORT);
     }); 
-    it("si la date de valeur actuelle de l'import est égale à la date de valeur actuelle de la proposition et la valeur actuelle importée est différente la proposition, applique le statut TRAITEE_VIA_IMPORT", async () => {
+    it("si la date de valeur avancement de l'import est égale à la date de valeur avancement de la proposition et la valeur avancement importée est différente la proposition, applique le statut TRAITEE_VIA_IMPORT", async () => {
       // GIVEN
       await prisma.utilisateur.create({
         data: {
@@ -115,7 +115,7 @@ describe('PrismaPropositionValeurActuelle', () => {
         },
       });
       // WHEN
-      await prismaPropositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport({
+      await prismaPropositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport({
         indicId: 'IND-001', 
         zoneId: 'D34', 
         dateValeurImportee: new Date('2024-12-01'),
@@ -126,7 +126,7 @@ describe('PrismaPropositionValeurActuelle', () => {
       const proposition = await prisma.proposition_valeur_actuelle.findFirst();
       expect(proposition?.statut).toStrictEqual(StatutProposition.TRAITEE_VIA_IMPORT);      
     }); 
-    it("si la date de valeur actuelle de l'import est postérieure à la date de valeur actuelle de la proposition, applique le statut IGNOREE_VIA_IMPORT", async () => {
+    it("si la date de valeur avancement de l'import est postérieure à la date de valeur avancement de la proposition, applique le statut IGNOREE_VIA_IMPORT", async () => {
       // GIVEN
       await prisma.utilisateur.create({
         data: {
@@ -154,7 +154,7 @@ describe('PrismaPropositionValeurActuelle', () => {
         },
       });
       // WHEN
-      await prismaPropositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport({
+      await prismaPropositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport({
         indicId: 'IND-001', 
         zoneId: 'D34', 
         dateValeurImportee: new Date('2025-12-01'),
@@ -165,7 +165,7 @@ describe('PrismaPropositionValeurActuelle', () => {
       const proposition = await prisma.proposition_valeur_actuelle.findFirst();
       expect(proposition?.statut).toStrictEqual(StatutProposition.IGNOREE_VIA_IMPORT);
     });
-    it("si la date de valeur actuelle de l'import est antérieure à la date de valeur actuelle de la proposition, ne modifie pas le statut", async () => {
+    it("si la date de valeur avancement de l'import est antérieure à la date de valeur avancement de la proposition, ne modifie pas le statut", async () => {
       // GIVEN
       await prisma.utilisateur.create({
         data: {
@@ -193,7 +193,7 @@ describe('PrismaPropositionValeurActuelle', () => {
         },
       });
       // WHEN
-      await prismaPropositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport({
+      await prismaPropositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport({
         indicId: 'IND-001', 
         zoneId: 'D34', 
         dateValeurImportee: new Date('2023-12-01'),
@@ -232,7 +232,7 @@ describe('PrismaPropositionValeurActuelle', () => {
         },
       });
       // WHEN
-      await prismaPropositionValeurActuelleRepository.modifierStatutPropositionsValeurActuelleApresImport({
+      await prismaPropositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport({
         indicId: 'IND-001', 
         zoneId: 'D34', 
         dateValeurImportee: new Date('2024-12-01'),

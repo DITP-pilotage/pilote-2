@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
 import { valeurMaximum, valeurMinimum } from '@/client/utils/statistiques/statistiques';
@@ -8,8 +9,7 @@ import {
 import {
   CartographieÉlémentsDeLégende,
 } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
-import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { objectEntries } from '@/client/utils/objects/objects';
+import { CartographieDonnéesValeurAvancement } from './CartographieValeurAvancement.interface';
 
 const COULEUR_DÉPART = '#8bcdb1';
 const COULEUR_ARRIVÉE = '#083a25';
@@ -71,46 +71,48 @@ function déterminerRemplissage(valeur: number | null, valeurMin: number | null,
   return interpolerCouleurs(COULEUR_DÉPART, COULEUR_ARRIVÉE, pourcentageInterpolation);
 }
 
-export function useCartographieValeurActuelleIndicateur(detailsIndicateurTerritoire: DétailsIndicateurTerritoire, élémentsDeLégende: CartographieÉlémentsDeLégende, jalon: number, unité?: string | null) {
-  const useRecupererDonnees = () => {
-    const donnees = objectEntries(detailsIndicateurTerritoire).map(([territoireCode, détailsIndicateur]) => ({
-      valeur: détailsIndicateur.valeurActuelle ?? null,
-      valeurCible: détailsIndicateur.valeurCible ?? null,
-      valeurCibleAnnuelle: détailsIndicateur.valeurCibleAnnuelle ?? null,
-      territoireCode: territoireCode,
-      estApplicable: détailsIndicateur.est_applicable,
-    }));
+export default function useCartographieValeurAvancement(données: CartographieDonnéesValeurAvancement, élémentsDeLégende: CartographieÉlémentsDeLégende, jalon: number, unité?: string | null) {
+  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
-    const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+  const valeurMin = useMemo(() => valeurMinimum(données.map(donnée => donnée.valeur)), [données]);
+  const valeurMax = useMemo(() => valeurMaximum(données.map(donnée => donnée.valeur)), [données]);
 
-    const valeurMin = valeurMinimum(donnees.map(donnee => donnee.valeur));
-    const valeurMax = valeurMaximum(donnees.map(donnee => donnee.valeur));
+  const légendeAdditionnelle = useMemo(() => {
+    const tousApplicables: Boolean = données.every(donnee => donnee.estApplicable);
+    const tousNonNull: Boolean = données.every(donnee => donnee.valeur !== null);
 
-    const tousApplicables: Boolean = donnees.every(donnee => donnee.estApplicable);
-    const tousNonNull: Boolean = donnees.every(donnee => donnee.valeur !== null);
-
-    let legende = Object.values(élémentsDeLégende);
+    let légendeAffichée = Object.values(élémentsDeLégende);
     if (tousApplicables) {
-      legende = legende
+      légendeAffichée = légendeAffichée
         .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s\'applique pas');
     }
 
     if (tousNonNull) {
-      legende = legende
+      légendeAffichée = légendeAffichée
         .filter(el => el.libellé !== 'Territoire pour lequel la donnée n\'est pas renseignée/disponible');
     }
 
-    const legendeDegrade = {
-      libellé: unité === null || unité == undefined ? '' : `En ${unité.toLocaleLowerCase()}`,
-      valeurMin: valeurMin !== null ? valeurMin.toLocaleString() : '-',
-      valeurMax: valeurMax !== null ? valeurMax.toLocaleString() : '-',
-      couleurMin: COULEUR_DÉPART,
-      couleurMax: COULEUR_ARRIVÉE,
-    };
+    légendeAffichée = légendeAffichée.map(({ remplissage, libellé }) => ({
+      libellé,
+      remplissage,
+    }));
 
+    return légendeAffichée;
+
+  }, [élémentsDeLégende, données]);
+
+  const légende = useMemo(() => ({
+    libellé: unité === null || unité == undefined ? '' : `En ${unité.toLocaleLowerCase()}`,
+    valeurMin: valeurMin !== null ? valeurMin.toLocaleString() : '-',
+    valeurMax: valeurMax !== null ? valeurMax.toLocaleString() : '-',
+    couleurMin: COULEUR_DÉPART,
+    couleurMax: COULEUR_ARRIVÉE,
+  }), [valeurMax, valeurMin, unité]);
+
+  const donnéesCartographie = useMemo(() => {
     let donnéesFormatées: CartographieDonnées = {};
 
-    donnees.forEach(({ valeur, valeurCible, valeurCibleAnnuelle, territoireCode, estApplicable }) => {
+    données.forEach(({ valeur, valeurCible, valeurCibleAnnuelle, territoireCode, estApplicable }) => {
       const territoireGéographique = récupérerDétailsSurUnTerritoire(territoireCode);
 
       donnéesFormatées[territoireCode] = {
@@ -121,13 +123,12 @@ export function useCartographieValeurActuelleIndicateur(detailsIndicateurTerrito
       };
     });
 
-    return {
-      legendeDegrade,
-      donneesCartographie: donnéesFormatées,
-      legende,
-    };
-  };
+    return donnéesFormatées;
+  }, [données, récupérerDétailsSurUnTerritoire, unité, valeurMin, valeurMax, jalon]);
+
   return {
-    useRecupererDonnees,
+    légende,
+    donnéesCartographie,
+    légendeAdditionnelle,
   };
 }

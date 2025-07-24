@@ -4,15 +4,15 @@ import Modale from '@/components/_commons/Modale/Modale';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import type { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 
-import useModalePropositionValeurActuelle, {
-  EtapePropositionValeurActuelle,
+import useModalePropositionValeurAvancement, {
+  EtapePropositionValeurAvancement,
   Stepper,
-} from '@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurActuelle/useModalePropositionValeurActuelle';
+} from '@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurAvancement/useModalePropositionValeurAvancement';
 import Input from '@/components/_commons/Input/Input';
 import { formaterDate } from '@/client/utils/date/date';
 import TextAreaAvecLabel from '@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel';
 
-const ModalePropositionValeurActuelle: FunctionComponent<{
+export const ModalePropositionValeurAvancement: FunctionComponent<{
   indicateur: Indicateur,
   detailIndicateur: DétailsIndicateur
   generatedHTMLID: string
@@ -21,11 +21,11 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
 
   const {
     reactHookForm,
-    creerPropositonValeurActuelle,
-    etapePropositionValeurActuelle,
-    setEtapePropositionValeurActuelle,
+    creerPropositonValeurAvancement,
+    etapePropositionValeurAvancement,
+    setEtapePropositionValeurAvancement,
     auteurModification,
-  } = useModalePropositionValeurActuelle({
+  } = useModalePropositionValeurAvancement({
     indicateur,
     detailIndicateur,
     territoireCode,
@@ -38,29 +38,29 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
       
     >
       {
-        etapePropositionValeurActuelle ? (
+        etapePropositionValeurAvancement ? (
           <>
             <div className='fr-stepper fr-mb-1w'>
               <h2 className='fr-stepper__title'>
                 <span>
-                  {`${Stepper[etapePropositionValeurActuelle].titre}`}
+                  {`${Stepper[etapePropositionValeurAvancement].titre}`}
                 </span>
                 <span className='fr-stepper__state'>
-                  {`Proposition d'une autre valeur d'avancement - Étape ${Stepper[etapePropositionValeurActuelle].numeroEtape} sur 2`}
+                  {`Proposition d'une autre valeur d'avancement - Étape ${Stepper[etapePropositionValeurAvancement].numeroEtape} sur 2`}
                 </span>
               </h2>
               <div
                 className='fr-stepper__steps'
-                data-fr-current-step={Stepper[etapePropositionValeurActuelle].numeroEtape}
+                data-fr-current-step={Stepper[etapePropositionValeurAvancement].numeroEtape}
                 data-fr-steps='2'
               />
               {
-                Stepper[etapePropositionValeurActuelle].etapeSuivante ? (
+                Stepper[etapePropositionValeurAvancement].etapeSuivante ? (
                   <p className='fr-stepper__details'>
                     <span className='fr-text--bold'>
                       Étape suivante :
                     </span>
-                    {` ${Stepper[etapePropositionValeurActuelle].etapeSuivante}`}
+                    {` ${Stepper[etapePropositionValeurAvancement].etapeSuivante}`}
                   </p>
                 ) : null
               }
@@ -69,11 +69,11 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
               <form
                 method='post'
                 onSubmit={reactHookForm.handleSubmit((data) => {
-                  creerPropositonValeurActuelle(data);
+                  creerPropositonValeurAvancement(data);
                 })}
               >
                 {
-                  etapePropositionValeurActuelle === EtapePropositionValeurActuelle.SAISIE_VALEUR_ACTUELLE ? (
+                  etapePropositionValeurAvancement === EtapePropositionValeurAvancement.SAISIE_VALEUR_ACTUELLE ? (
                     <>
                       <h2 className='fr-h4'>
                         {indicateur.nom}
@@ -101,11 +101,11 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                           </span>
                           <div className='w-full flex flex-column justify-between fr-pt-1w'>
                             <span className='flex justify-center fr-mb-5v'>
-                              {detailIndicateur.valeurActuelleMandat?.toLocaleString()}
+                              {detailIndicateur.valeurAvancementMandat?.toLocaleString()}
                             </span>
                             <span className='flex justify-center align-end texte-gris'>
                               (
-                              {formaterDate(detailIndicateur.dateValeurActuelleMandat, 'MM/YYYY')}
+                              {formaterDate(detailIndicateur.dateValeurAvancementMandat, 'MM/YYYY')}
                               )
                             </span>
                           </div>
@@ -118,15 +118,15 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                             <div className='w-half-full flex fr-mb-1w'>
                               <Input
                                 className='text-center'
-                                erreurMessage={reactHookForm.formState.errors.valeurActuelle?.message}
-                                htmlName='valeurActuelle'
-                                register={reactHookForm.register('valeurActuelle')}
+                                erreurMessage={reactHookForm.formState.errors.valeurAvancement?.message}
+                                htmlName='valeurAvancement'
+                                register={reactHookForm.register('valeurAvancement')}
                                 type='text'
                               />
                             </div>
                             <span className='flex justify-center texte-gris'>
                               (
-                              {formaterDate(detailIndicateur.dateValeurActuelleMandat, 'MM/YYYY')}
+                              {formaterDate(detailIndicateur.dateValeurAvancementMandat, 'MM/YYYY')}
                               )
                             </span>
                           </div>
@@ -154,7 +154,7 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                         <button
                           className='fr-btn'
                           disabled={Object.keys(reactHookForm.formState.errors).length > 0 || reactHookForm.getValues('motifProposition').length === 0 || reactHookForm.getValues('sourceDonneeEtMethodeCalcul').length === 0}
-                          onClick={() => setEtapePropositionValeurActuelle(EtapePropositionValeurActuelle.VALIDATION_VALEUR_ACTUELLE)}
+                          onClick={() => setEtapePropositionValeurAvancement(EtapePropositionValeurAvancement.VALIDATION_VALEUR_ACTUELLE)}
                           type='button'
                         >
                           Étape suivante
@@ -182,10 +182,10 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                             {' '}
                             :
                             {' '}
-                            {reactHookForm.getValues('valeurActuelle')}
+                            {reactHookForm.getValues('valeurAvancement')}
                             {' '}
                             (
-                            {formaterDate(detailIndicateur.dateValeurActuelle, 'MM/YYYY')}
+                            {formaterDate(detailIndicateur.dateValeurAvancement, 'MM/YYYY')}
                             )
                           </span>
                         </p>
@@ -220,7 +220,7 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
                       <div className='w-full flex justify-end fr-mt-2w'>
                         <button
                           className='fr-btn fr-btn--secondary fr-mr-2w'
-                          onClick={() => setEtapePropositionValeurActuelle(EtapePropositionValeurActuelle.SAISIE_VALEUR_ACTUELLE)}
+                          onClick={() => setEtapePropositionValeurAvancement(EtapePropositionValeurAvancement.SAISIE_VALEUR_ACTUELLE)}
                           type='button'
                         >
                           Étape précédente
@@ -252,5 +252,3 @@ const ModalePropositionValeurActuelle: FunctionComponent<{
     </Modale>
   );
 };
-
-export default ModalePropositionValeurActuelle;

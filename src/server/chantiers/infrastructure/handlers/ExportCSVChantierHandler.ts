@@ -33,7 +33,7 @@ export const handleExportDesChantiers = async (request: NextApiRequest, response
     estEnAlerteBaisse: request.query.estEnAlerteBaisse === 'true',
     estEnAlerteMétéoNonRenseignée: request.query.estEnAlerteMétéoNonRenseignée === 'true',
     estEnAlerteAbscenceTauxAvancementDepartemental: request.query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
-    estEnAlertePossedePropositionsValeurActuelle: request.query.estEnAlertePossedePropositionsValeurActuelle === 'true', 
+    estEnAlertePossedePropositionsValeurAvancement: request.query.estEnAlertePossedePropositionsValeurAvancement === 'true', 
   } satisfies OptionsExport;
 
   const headersColumn = ExportCsvDesChantiersUseCaseV2.NOMS_COLONNES(jalon, optionsExport, session.profil);

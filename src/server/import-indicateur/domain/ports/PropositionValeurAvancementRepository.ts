@@ -1,5 +1,5 @@
-export interface PropositionValeurActuelleRepository {
-  modifierStatutPropositionsValeurActuelleApresImport: ({ 
+export interface PropositionValeurAvancementRepository {
+  modifierStatutPropositionsValeurAvancementApresImport: ({ 
     indicId,
     zoneId,
     dateValeurImportee,

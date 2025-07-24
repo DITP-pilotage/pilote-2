@@ -103,7 +103,7 @@ export const getServerSideProps: GetServerSideProps<NextPageChantierProps> = asy
   const cartographieGaucheChantier = query.carteChG as CartographieType || 'avancementMandat';
   const cartographieDroiteChantier = query.carteChD as CartographieType || 'meteo';
   const cartographieGaucheIndicateur = query.carteIndG as CartographieIndicateurType || 'avancementMandat';
-  const cartographieDroiteIndicateur = query.carteIndD as CartographieIndicateurType || 'valeurActuelle';
+  const cartographieDroiteIndicateur = query.carteIndD as CartographieIndicateurType || 'valeurAvancement';
 
   const session = await getServerSession(req, res, authOptions);
 

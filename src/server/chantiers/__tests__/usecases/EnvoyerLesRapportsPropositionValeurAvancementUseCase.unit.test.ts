@@ -1,5 +1,5 @@
 import { mock, MockProxy } from 'jest-mock-extended';
-import { PropositionValeurActuelleRepository, PropositionValeurAvancementRapport } from '@/server/chantiers/domain/ports/PropositionValeurActuelleRepository';
+import { PropositionValeurAvancementRepository, PropositionValeurAvancementRapport } from '@/server/chantiers/domain/ports/PropositionValeurAvancementRepository';
 import { ChantierRepository } from '@/server/chantiers/domain/ports/ChantierRepository';
 import { EnvoieEmailService } from '@/server/chantiers/domain/ports/EnvoieEmailService';
 import { EnvoyerLesRapportsPropositionValeurAvancementUseCase } from '@/server/chantiers/usecases/EnvoyerLesRapportsPropositionValeurAvancementUseCase';
@@ -10,7 +10,7 @@ import { genererParametresEnvoieRapportProposition } from '@/server/chantiers/ap
 
 describe('EnvoyerLesRapportsPropositionValeurAvancementUseCase', () => {
   let utilisateurRepository: MockProxy<UtilisateurRepository>;
-  let propositionValeurActuelleRepository: MockProxy<PropositionValeurActuelleRepository>;
+  let propositionValeurAvancementRepository: MockProxy<PropositionValeurAvancementRepository>;
   let chantierRepository: MockProxy<ChantierRepository>;
   let envoieEmailService: MockProxy<EnvoieEmailService>;
 
@@ -18,11 +18,11 @@ describe('EnvoyerLesRapportsPropositionValeurAvancementUseCase', () => {
 
   beforeEach(() => {
     utilisateurRepository = mock<UtilisateurRepository>();
-    propositionValeurActuelleRepository = mock<PropositionValeurActuelleRepository>();
+    propositionValeurAvancementRepository = mock<PropositionValeurAvancementRepository>();
     chantierRepository = mock<ChantierRepository>();
     envoieEmailService = mock<EnvoieEmailService>();
 
-    envoyerLesRapportsPropositionValeurAvancementUseCase = new EnvoyerLesRapportsPropositionValeurAvancementUseCase({ propositionValeurActuelleRepository, chantierRepository, utilisateurRepository, envoieEmailService });
+    envoyerLesRapportsPropositionValeurAvancementUseCase = new EnvoyerLesRapportsPropositionValeurAvancementUseCase({ propositionValeurAvancementRepository, chantierRepository, utilisateurRepository, envoieEmailService });
   });
   it('Supprime les comptes qui sont désactivés depuis plus de 2 ans et anonymise les saisies', async () => {
     // Given
@@ -125,18 +125,18 @@ describe('EnvoyerLesRapportsPropositionValeurAvancementUseCase', () => {
     const paramsDirecteur2 = genererParametresEnvoieRapportProposition(listeDirecteursDeProjet[1].listeChantiers, mapChantiersPropositionInformation, propositionsParChantier);
     const paramsDirecteur3 = genererParametresEnvoieRapportProposition(listeDirecteursDeProjet[2].listeChantiers, mapChantiersPropositionInformation, propositionsParChantier);
 
-    propositionValeurActuelleRepository.recupererLaListeDesChantiersIdsAvecPropositionEnCours.mockResolvedValue(listeChantiersIdsAvecProposition);
+    propositionValeurAvancementRepository.recupererLaListeDesChantiersIdsAvecPropositionEnCours.mockResolvedValue(listeChantiersIdsAvecProposition);
     utilisateurRepository.recupererUtilisateursParProfilEtChantierIds.mockResolvedValue(listeDirecteursDeProjet);
     chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds.mockResolvedValue(listeChantiersProposition);
-    propositionValeurActuelleRepository.recupererLesPropositionsEnCoursParChantierIds.mockResolvedValue(propositionsParChantier);
+    propositionValeurAvancementRepository.recupererLesPropositionsEnCoursParChantierIds.mockResolvedValue(propositionsParChantier);
     // When
     await envoyerLesRapportsPropositionValeurAvancementUseCase.run();
 
     // Then
-    expect(propositionValeurActuelleRepository.recupererLaListeDesChantiersIdsAvecPropositionEnCours).toHaveBeenCalledTimes(1);
+    expect(propositionValeurAvancementRepository.recupererLaListeDesChantiersIdsAvecPropositionEnCours).toHaveBeenCalledTimes(1);
     expect(utilisateurRepository.recupererUtilisateursParProfilEtChantierIds).toHaveBeenCalledTimes(1);
     expect(chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds).toHaveBeenCalledTimes(1);
-    expect(propositionValeurActuelleRepository.recupererLesPropositionsEnCoursParChantierIds).toHaveBeenCalledTimes(1);
+    expect(propositionValeurAvancementRepository.recupererLesPropositionsEnCoursParChantierIds).toHaveBeenCalledTimes(1);
     expect(envoieEmailService.envoieUnEmail).toHaveBeenCalledTimes(3);
     expect(envoieEmailService.envoieUnEmail).toHaveBeenNthCalledWith(1, [{ email: listeDirecteursDeProjet[0].email }], 4, { chantiers : paramsDirecteur1.chantiers, conseiller_email: paramsDirecteur1.conseillerEmail });
     expect(envoieEmailService.envoieUnEmail).toHaveBeenNthCalledWith(2, [{ email: listeDirecteursDeProjet[1].email }], 4, { chantiers : paramsDirecteur2.chantiers, conseiller_email: paramsDirecteur2.conseillerEmail });

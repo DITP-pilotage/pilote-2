@@ -116,12 +116,12 @@ describe('PrismaIndicateurRepository', () => {
       expect(listeDonneesIndicateurs[0].valeurCibleAnnuelle).toEqual(22);
       expect(listeDonneesIndicateurs[0].dateValeurCibleAnnuelle?.toISOString()).toStartWith('2025-12-06');
       expect(listeDonneesIndicateurs[0].tauxAvancementAnnuel).toEqual(13);
-      expect(listeDonneesIndicateurs[0].valeurActuelle).toEqual(25);
-      expect(listeDonneesIndicateurs[0].dateValeurActuelle?.toISOString()).toStartWith('2025-12-06');
+      expect(listeDonneesIndicateurs[0].valeurAvancement).toEqual(25);
+      expect(listeDonneesIndicateurs[0].dateValeurAvancement?.toISOString()).toStartWith('2025-12-06');
       expect(listeDonneesIndicateurs[1].indicId).toEqual('IND-001');
       expect(listeDonneesIndicateurs[1].territoireCode).toEqual('REG-01');
-      expect(listeDonneesIndicateurs[1].valeurActuelle).toEqual(30);
-      expect(listeDonneesIndicateurs[1].dateValeurActuelle?.toISOString()).toStartWith('2025-12-06');
+      expect(listeDonneesIndicateurs[1].valeurAvancement).toEqual(30);
+      expect(listeDonneesIndicateurs[1].dateValeurAvancement?.toISOString()).toStartWith('2025-12-06');
     });
 
     it("quand on donne un jalon, doit récupérer les données associés à l'indicateur", async () => {
@@ -230,16 +230,16 @@ describe('PrismaIndicateurRepository', () => {
       expect(listeDonneesIndicateurs[0].valeurCibleAnnuelle).toEqual(20);
       expect(listeDonneesIndicateurs[0].dateValeurCibleAnnuelle?.toISOString()).toStartWith('2024-12-06');
       expect(listeDonneesIndicateurs[0].tauxAvancementAnnuel).toEqual(13);
-      expect(listeDonneesIndicateurs[0].valeurActuelle).toEqual(20);
-      expect(listeDonneesIndicateurs[0].dateValeurActuelle?.toISOString()).toStartWith('2024-12-06');
+      expect(listeDonneesIndicateurs[0].valeurAvancement).toEqual(20);
+      expect(listeDonneesIndicateurs[0].dateValeurAvancement?.toISOString()).toStartWith('2024-12-06');
       expect(listeDonneesIndicateurs[1].indicId).toEqual('IND-001');
       expect(listeDonneesIndicateurs[1].territoireCode).toEqual('REG-01');
-      expect(listeDonneesIndicateurs[1].valeurActuelle).toEqual(null);
-      expect(listeDonneesIndicateurs[1].dateValeurActuelle).toEqual(null);
+      expect(listeDonneesIndicateurs[1].valeurAvancement).toEqual(null);
+      expect(listeDonneesIndicateurs[1].dateValeurAvancement).toEqual(null);
     });
   });
 
-  describe('#supprimerPropositionValeurActuelle', () => {
+  describe('#supprimerPropositionValeurAvancement', () => {
     it("doit supprimer les données associés à la proposition de valeur actuelle de l'indicateur", async () => {
       // Given
       const indicId = 'IND-001';
@@ -302,7 +302,7 @@ describe('PrismaIndicateurRepository', () => {
       });
 
       // When
-      await prismaIndicateurRepository.supprimerPropositionValeurActuelle({ indicId, territoireCode: 'NAT-FR', auteurModification: 'Jane Doe' });
+      await prismaIndicateurRepository.supprimerPropositionValeurAvancement({ indicId, territoireCode: 'NAT-FR', auteurModification: 'Jane Doe' });
 
       // Then
       const indicateur = await prisma.indicateur_identite.findUnique({
@@ -764,8 +764,8 @@ describe('PrismaIndicateurRepository', () => {
         météo: 'NON_RENSEIGNEE',
         valeurInitiale: 12,
         dateValeurInitiale: new Date('2025-01-13').toISOString(),
-        valeurActuelle: 10,
-        dateValeurActuelle: new Date('2024-01-13').toISOString(),
+        valeurAvancement: 10,
+        dateValeurAvancement: new Date('2024-01-13').toISOString(),
         valeurCibleAnnuelle: 22,
         dateValeurCibleAnnuelle: new Date('2024-12-06').toISOString(),
         avancementAnnuel: 13,
@@ -799,8 +799,8 @@ describe('PrismaIndicateurRepository', () => {
         météo: 'NON_RENSEIGNEE',
         valeurInitiale: 12,
         dateValeurInitiale: new Date('2025-01-13').toISOString(),
-        valeurActuelle: 10,
-        dateValeurActuelle: new Date('2024-01-13').toISOString(),
+        valeurAvancement: 10,
+        dateValeurAvancement: new Date('2024-01-13').toISOString(),
         valeurCibleAnnuelle: 22,
         dateValeurCibleAnnuelle: new Date('2024-12-06').toISOString(),
         avancementAnnuel: 13,
@@ -834,8 +834,8 @@ describe('PrismaIndicateurRepository', () => {
         météo: 'SOLEIL',
         valeurInitiale: 12,
         dateValeurInitiale: new Date('2025-01-13').toISOString(),
-        valeurActuelle: 10,
-        dateValeurActuelle: new Date('2024-01-13').toISOString(),
+        valeurAvancement: 10,
+        dateValeurAvancement: new Date('2024-01-13').toISOString(),
         valeurCibleAnnuelle: 22,
         dateValeurCibleAnnuelle: new Date('2024-12-06').toISOString(),
         avancementAnnuel: 13,
@@ -863,7 +863,7 @@ describe('PrismaIndicateurRepository', () => {
         chantierNom: 'Chantier 001',
         chantierStatut: 'PUBLIE',
         codeInsee: '01',
-        dateValeurActuelle: '2024-03-13T00:00:00.000Z',
+        dateValeurAvancement: '2024-03-13T00:00:00.000Z',
         dateValeurCible: '2025-01-13T00:00:00.000Z',
         dateValeurCibleAnnuelle: '2024-12-06T00:00:00.000Z',
         dateValeurInitiale: '2025-01-13T00:00:00.000Z',
@@ -877,7 +877,7 @@ describe('PrismaIndicateurRepository', () => {
           'PER-01',
         ],
         régionNom: 'Guadeloupe',
-        valeurActuelle: 20,
+        valeurAvancement: 20,
         valeurCible: 11,
         valeurCibleAnnuelle: 22,
         valeurInitiale: 12,        chantierEcart: null,

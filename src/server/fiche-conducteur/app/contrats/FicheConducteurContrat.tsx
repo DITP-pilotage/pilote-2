@@ -9,8 +9,8 @@ interface IndicateurFicheConducteurContrat {
   nom: string
   type: string | null
   valeurInitiale: string
-  valeurActuelle: string
-  dateValeurActuelle: string
+  valeurAvancement: string
+  dateValeurAvancement: string
   objectifValeurCibleIntermediaire: string
   objectifTauxAvancementIntermediaire: string
   objectifValeurCible: string

@@ -3,30 +3,30 @@ export class Indicateur {
 
   private readonly _nom: string;
 
-  private readonly _dateValeurActuelle: string;
+  private readonly _dateValeurAvancement: string;
 
   private readonly _objectifTauxAvancement: number | null;
 
-  private readonly _valeurActuelle: number | null;
+  private readonly _valeurAvancement: number | null;
 
   private readonly _valeurCible: number | null;
 
   private readonly _uniteMesure: string | null;
 
-  private constructor({ id, nom, dateValeurActuelle, objectifTauxAvancement, valeurActuelle, valeurCible, uniteMesure }: {
+  private constructor({ id, nom, dateValeurAvancement, objectifTauxAvancement, valeurAvancement, valeurCible, uniteMesure }: {
     id: string,
     nom: string,
-    dateValeurActuelle: string,
+    dateValeurAvancement: string,
     objectifTauxAvancement: number | null,
-    valeurActuelle: number | null,
+    valeurAvancement: number | null,
     valeurCible: number | null,
     uniteMesure: string | null
   }) {
     this._id = id;
     this._nom = nom;
-    this._dateValeurActuelle = dateValeurActuelle;
+    this._dateValeurAvancement = dateValeurAvancement;
     this._objectifTauxAvancement = objectifTauxAvancement;
-    this._valeurActuelle = valeurActuelle;
+    this._valeurAvancement = valeurAvancement;
     this._valeurCible = valeurCible;
     this._uniteMesure = uniteMesure;
     this._objectifTauxAvancement = objectifTauxAvancement;
@@ -40,16 +40,16 @@ export class Indicateur {
     return this._nom;
   }
 
-  get dateValeurActuelle(): string {
-    return this._dateValeurActuelle;
+  get dateValeurAvancement(): string {
+    return this._dateValeurAvancement;
   }
 
   get objectifTauxAvancement(): number | null {
     return this._objectifTauxAvancement;
   }
 
-  get valeurActuelle(): number | null {
-    return this._valeurActuelle;
+  get valeurAvancement(): number | null {
+    return this._valeurAvancement;
   }
 
   get valeurCible(): number | null {
@@ -60,15 +60,15 @@ export class Indicateur {
     return this._uniteMesure;
   }
 
-  static creerIndicateur({ id, nom, dateValeurActuelle, objectifTauxAvancement, valeurActuelle, valeurCible, uniteMesure }: {
+  static creerIndicateur({ id, nom, dateValeurAvancement, objectifTauxAvancement, valeurAvancement, valeurCible, uniteMesure }: {
     id: string,
     nom: string,
-    dateValeurActuelle: string,
+    dateValeurAvancement: string,
     objectifTauxAvancement: number | null,
-    valeurActuelle: number | null,
+    valeurAvancement: number | null,
     valeurCible: number | null,
     uniteMesure: string | null
   }) {
-    return new Indicateur({ id, nom, dateValeurActuelle, objectifTauxAvancement, valeurActuelle, valeurCible, uniteMesure });
+    return new Indicateur({ id, nom, dateValeurAvancement, objectifTauxAvancement, valeurAvancement, valeurCible, uniteMesure });
   }
 }

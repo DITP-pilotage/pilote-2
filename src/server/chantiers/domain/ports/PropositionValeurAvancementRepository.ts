@@ -1,4 +1,4 @@
-import { PropositionValeurActuelle } from '@/server/chantiers/domain/PropositionValeurActuelle';
+import { PropositionValeurAvancement } from '@/server/chantiers/domain/PropositionValeurAvancement';
 
 export type PropositionValeurAvancementRapport = {
   indicateurId: string
@@ -11,16 +11,16 @@ export type PropositionValeurAvancementRapport = {
   nomTerritoire: string
 };
 
-export interface PropositionValeurActuelleRepository {
-  creerPropositionValeurActuelle: (propositionValeurActuelle: PropositionValeurActuelle) => Promise<void>;
-  supprimerPropositionValeurActuelle: ({
+export interface PropositionValeurAvancementRepository {
+  creerPropositionValeurAvancement: (propositionValeurAvancement: PropositionValeurAvancement) => Promise<void>;
+  supprimerPropositionValeurAvancement: ({
     indicId,
     territoireCode,
   }: {
     indicId: string,
     territoireCode: string,
   }) => Promise<void>;
-  annulePropositionValeurActuellePrecedente: ({
+  annulePropositionValeurAvancementPrecedente: ({
     indicId,
     territoireCode,
   }: {
