@@ -18,7 +18,6 @@ import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 export default interface RapportDétailléChantierProps {
   territoireSélectionné: DétailTerritoire,
   mailleSelectionnee: MailleInterne,
-  mailleQuery: MailleInterne,
   territoireCode: string,
   chantier: ChantierRapportDetailleContrat
   indicateurs: Indicateur[]
