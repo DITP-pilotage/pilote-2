@@ -996,10 +996,10 @@ sources:
               pilote_alias: "Couverture temporelle"
               pilote_edit_boxType: multi-select
               pilote_disp_dispDesc: true
-              pilote_create_defaultValue: "continu"
+              pilote_create_defaultValue: "continue"
               pilote_disp_blocId: 2
               pilote_edit_acceptedValues: [
-                { "order_id": 1, "value": "continu", "name": "Période d'observation", "desc": "Valeur mesurée depuis le début de la période d'observation. Par exemple, depuis une date précise de lancement du programme." },
+                { "order_id": 1, "value": "continue", "name": "Période d'observation", "desc": "Valeur mesurée depuis le début de la période d'observation. Par exemple, depuis une date précise de lancement du programme." },
                 { "order_id": 2, "value": "a_date", "name": "A date", "desc": "Calcul de l'indicateur à date." },
                 { "order_id": 3, "value": "annee", "name": "Année", "desc": "Indicateur observé depuis le début de l'année civile en cours." },
                 { "order_id": 4, "value": "annee_glissante", "name": "Année glissante", "desc": "Indicateur observé sur les 12 derniers mois." }
