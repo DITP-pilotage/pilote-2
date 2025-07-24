@@ -1,19 +1,19 @@
 import { APIRequestContext, APIResponse, expect, test } from '@playwright/test';
 import { configuration } from '@/config';
-
+import { authentificationApiDirProjetFn, suppressionAuthentificationApiFn } from '../utils';
 
 let apiContext: APIRequestContext;
 let result: APIResponse;
 
-const localTokenAPIEquipeDirProjet =  configuration.tokenAPI.localTokenAPIE2EUtilisateurEquipeDirProjet;
-
 test.describe('Error - endpoint chantier', async () => {
-  test('quand on a pas accès au chantier, doit remonter une erreur 403 ForbiddenError', async ({ playwright }) => {
+  test('quand on a pas accès au chantier, doit remonter une erreur 403 ForbiddenError', async ({ playwright, page }) => {
+    const { apiDirProjetToken, apiDirProjetUsername } = await authentificationApiDirProjetFn({ page });
+   
     await test.step('Création du context - Authorization Pilote - cecile - EQUIPE_DIR_PROJET', async () => {
       apiContext = await playwright.request.newContext({
-        baseURL: 'http://localhost:3000',
+        baseURL: configuration.baseUrl,
         extraHTTPHeaders: {
-          'Authorization': `Bearer ${localTokenAPIEquipeDirProjet}`,
+          'Authorization': `Bearer ${apiDirProjetToken}`,
         },
       });
     });
@@ -32,16 +32,21 @@ test.describe('Error - endpoint chantier', async () => {
         success: false,
       });
     });
+
+    await suppressionAuthentificationApiFn({ page, apiUsername: apiDirProjetUsername });
   });
 });
 
 test.describe('Error - endpoint indicateur', async () => {
-  test('quand on a pas accès à l\'indicateur, doit remonter une erreur 403 ForbiddenError', async ({ playwright }) => {
+  test('quand on a pas accès à l\'indicateur, doit remonter une erreur 403 ForbiddenError', async ({ playwright, page }) => {
+
+    const { apiDirProjetToken, apiDirProjetUsername } = await authentificationApiDirProjetFn({ page });
+
     await test.step('Création du context - Authorization Pilote - equipe.dir.projet@example.com - EQUIPE_DIR_PROJET', async () => {
       apiContext = await playwright.request.newContext({
-        baseURL: 'http://localhost:3000',
+        baseURL: configuration.baseUrl,
         extraHTTPHeaders: {
-          'Authorization': `Bearer ${localTokenAPIEquipeDirProjet}`,
+          'Authorization': `Bearer ${apiDirProjetToken}`,
         },
       });
     });
@@ -60,14 +65,18 @@ test.describe('Error - endpoint indicateur', async () => {
         success: false,
       });
     });
+
+    await suppressionAuthentificationApiFn({ page, apiUsername: apiDirProjetUsername });
   });
 
-  test('quand une erreur inattendue intervient, doit remonter une erreur 500 InternalServerError', async ({ playwright }) => {
+  test('quand une erreur inattendue intervient, doit remonter une erreur 500 InternalServerError', async ({ playwright, page }) => {
+    const { apiDirProjetToken, apiDirProjetUsername } = await authentificationApiDirProjetFn({ page });
+    
     await test.step('Création du context - Authorization Pilote - equipe.dir.projet@example.com - EQUIPE_DIR_PROJET', async () => {
       apiContext = await playwright.request.newContext({
-        baseURL: 'http://localhost:3000',
+        baseURL: configuration.baseUrl,
         extraHTTPHeaders: {
-          'Authorization': `Bearer ${localTokenAPIEquipeDirProjet}`,
+          'Authorization': `Bearer ${apiDirProjetToken}`,
         },
       });
     });
@@ -86,5 +95,7 @@ test.describe('Error - endpoint indicateur', async () => {
         success: false,
       });
     });
+
+    await suppressionAuthentificationApiFn({ page, apiUsername: apiDirProjetUsername });
   });
 });

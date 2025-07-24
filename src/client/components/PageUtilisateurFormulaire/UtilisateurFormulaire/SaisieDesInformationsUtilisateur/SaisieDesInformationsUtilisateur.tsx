@@ -228,6 +228,10 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<UtilisateurFormulaireP
         >
           Droits de saisie des commentaires
         </Titre>
+        <p className='fr-text--xs texte-gris fr-mb-4w'>
+          Parmi les chantiers autorisés en lecture, merci d'indiquer, le cas échéant, ceux pour lesquels l'utilisateur est autorisé à saisir 
+          des commentaires qualitatifs (dont la météo et la synthèse des résultats).
+        </p>
         <Controller
           control={control}
           name='habilitations.saisieCommentaire.chantiers'

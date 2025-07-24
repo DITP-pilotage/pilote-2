@@ -12,9 +12,9 @@ import { ProfilCode } from '@/server/gestion-utilisateur/domain/Utilisateur.inte
 import { UtilisateurExportCSV } from '@/server/gestion-utilisateur/domain/UtilisateurExportCSV';
 import { recupererLesNomsDesTerritoires } from '@/server/app/RecupererLesNomsDesTerritoiresPourUnUtilisateur';
 import { Territoire } from '@/server/gestion-utilisateur/domain/Territoire';
-import { profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { InformationChantierUtilisateur } from '@/server/gestion-utilisateur/domain/InformationChantierUtilisateur';
 import { UnauthorizedError } from '@/server/app/error-boundary/unauthorized-error';
+import { PerimetreMinisteriel } from '@/server/gestion-utilisateur/domain/PerimetreMinisteriel';
 
 type UtilisateurPourExportCSVContrat = string[];
 
@@ -49,7 +49,13 @@ const recupererLesNomsDesChantiers = (listeChantiersIds: string[], listeInformat
   return listeChantiersIds.length === 0 ? ['Aucun chantier'] : listeNomsChantiers;
 };
 
-const presenterEnUtilisateurPourExportCSVContrat = (utilisateurPourExport: UtilisateurExportCSV, listeDesTerritoires: Territoire[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[]): UtilisateurPourExportCSVContrat => {
+const presenterEnUtilisateurPourExportCSVContrat = (utilisateurPourExport: UtilisateurExportCSV, listeDesTerritoires: Territoire[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[], listePerimetresMinisteriels: PerimetreMinisteriel[]): UtilisateurPourExportCSVContrat => {
+  const listeNomsPerimetresMinisteriels = utilisateurPourExport.habilitations.lecture.périmètres.length === listePerimetresMinisteriels.length 
+    ? ['Tous les périmètres'] 
+    : utilisateurPourExport.habilitations.lecture.périmètres.length === 0
+      ? ['Aucun périmètre sélectionné']
+      : utilisateurPourExport.habilitations.lecture.périmètres.map(perimetre => listePerimetresMinisteriels.find(périmètreMinisteriel => périmètreMinisteriel.id === perimetre)?.nom || null).filter(Boolean);
+  
   return [
     utilisateurPourExport.prénom,
     utilisateurPourExport.nom,
@@ -57,7 +63,7 @@ const presenterEnUtilisateurPourExportCSVContrat = (utilisateurPourExport: Utili
     utilisateurPourExport.fonction || '',
     utilisateurPourExport.profil,
     recupererLesNomsDesTerritoires(utilisateurPourExport.profil, utilisateurPourExport.habilitations, listeDesTerritoires).join('\n'),
-    utilisateurPourExport.habilitations.lecture.périmètres.join('\n') || !profilsTerritoriaux.includes(utilisateurPourExport.profil) ? 'Tous les périmètres' : 'Aucun périmètre',
+    listeNomsPerimetresMinisteriels.join('\n'),
     recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.lecture.chantiers, listeInformationsChantiersUtilisateurs, utilisateurPourExport.habilitations.lecture.__meta.aAccesTousLesChantiers).join('\n'),
     recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.responsabilite.chantiers, listeInformationsChantiersUtilisateurs, utilisateurPourExport.habilitations.lecture.__meta.aAccesTousLesChantiers).join('\n'),
     recupererLesNomsDesChantiers(utilisateurPourExport.habilitations.saisieIndicateur.chantiers, listeInformationsChantiersUtilisateurs, utilisateurPourExport.habilitations.lecture.__meta.aAccesTousLesChantiers).join('\n'),
@@ -118,13 +124,25 @@ export const handleExportDesUtilisateurs = async (request: NextApiRequest, respo
   } satisfies FiltreQueryParams;
 
   const listeDesTerritoires = await getContainer('gestionUtilisateur').resolve('recupererTousLesTerritoiresUseCase').run();
-  const listePerimetresMinisteriels = await getContainer('gestionUtilisateur').resolve('perimetreMinisterielRepository').listerIds([]);
+  const listePerimetresMinisteriels = await getContainer('gestionUtilisateur').resolve('perimetreMinisterielRepository').lister([]);
+
   const listeInformationsChantiersUtilisateurs = await getContainer('gestionUtilisateur').resolve('chantierRepository').listerInformationsChantiersUtilisateurs();
 
-  const listeUtilisateur = await getContainer('gestionUtilisateur').resolve('utilisateurRepository').recupererPourExports({ valeurDeLaRecherche: optionsExport.queryString, listeTerritoiresCodes: listeDesTerritoires.map(territoire => territoire.code), listePerimetresMinisteriels, listeInformationsChantiersUtilisateurs });
+  const listeTerritoiresCodes = listeDesTerritoires.map(territoire => territoire.code);
+
+  const parametresRecuperationUtilisateurs = {
+    valeurDeLaRecherche: optionsExport.queryString,
+    listeTerritoiresCodes,
+    listePerimetresMinisteriels: listePerimetresMinisteriels.map(perimetre => perimetre.id),
+    listeInformationsChantiersUtilisateurs,
+  };
+  
+  const listeUtilisateur = await getContainer('gestionUtilisateur').resolve('utilisateurRepository').recupererPourExports(parametresRecuperationUtilisateurs);
+
   const listeUtilisateurFiltré = getContainer('gestionUtilisateur').resolve('filtrerListeUtilisateursUseCase').run({ utilisateurs: listeUtilisateur, filtresActifs, profil: session.profil, habilitation });
+
   for (const utilisateurPourExport of listeUtilisateurFiltré) {
-    stringifier.write(presenterEnUtilisateurPourExportCSVContrat(utilisateurPourExport, listeDesTerritoires, listeInformationsChantiersUtilisateurs));
+    stringifier.write(presenterEnUtilisateurPourExportCSVContrat(utilisateurPourExport, listeDesTerritoires, listeInformationsChantiersUtilisateurs, listePerimetresMinisteriels));
   }
   stringifier.end();
 };

@@ -9,9 +9,12 @@ const TokenAPIForm: FunctionComponent<{}> = () => {
       <div className='fr-grid-row'>
 
         <div className='fr-col-4'>
-          <p className='fr-text--md bold fr-mb-1v relative'>
+          <label 
+            className='fr-text--md bold fr-mb-1v relative' 
+            htmlFor='email' 
+          >
             Émail
-          </p>
+          </label>
           <Input
             erreur={errors.email}
             htmlName='email'

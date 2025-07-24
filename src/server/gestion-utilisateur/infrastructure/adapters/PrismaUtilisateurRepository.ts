@@ -42,7 +42,7 @@ const convertirEnModel = (utilisateurAConvertir: {
   dateModification: Date
   auteurIdCreation: string
   dateCreation: Date
-}): Omit<PrismaUtilisateurModel, 'id' | 'auteur_email_creation' | 'auteur_email_modification' | 'date_desactivation' | 'date_visualisation_video_accueil'> => {
+}): Omit<PrismaUtilisateurModel, 'id' | 'auteur_email_creation' | 'auteur_email_modification' | 'date_desactivation' | 'date_visualisation_video_accueil' | 'date_visualisation_popup_infolettre' | 'date_inscription_infolettre'> => {
   return {
     email: utilisateurAConvertir.email,
     nom: utilisateurAConvertir.nom,
@@ -64,7 +64,7 @@ const convertirEnModelModification = (utilisateurAConvertir: {
   fonction: string | null
   auteurIdModification: string
   dateModification: Date
-}): Omit<PrismaUtilisateurModel, 'id' | 'auteur_id_creation' | 'date_creation' | 'auteur_email_creation' | 'auteur_email_modification' | 'date_desactivation' | 'date_visualisation_video_accueil'> => {
+}): Omit<PrismaUtilisateurModel, 'id' | 'auteur_id_creation' | 'date_creation' | 'auteur_email_creation' | 'auteur_email_modification' | 'date_desactivation' | 'date_visualisation_video_accueil' | 'date_visualisation_popup_infolettre' | 'date_inscription_infolettre'> => {
   return {
     email: utilisateurAConvertir.email,
     nom: utilisateurAConvertir.nom,
@@ -524,10 +524,46 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     return !!etatVisualisationVideoAccueil?.date_visualisation_video_accueil || false;
   }
 
+  async recupererDateInscriptionInfolettre(utilisateurId: string): Promise<Date | null> {
+    const utilisateur = await this.prisma.utilisateur.findUnique({
+      where: { id: utilisateurId },
+      select: {
+        date_inscription_infolettre: true,
+      },
+    });
+
+    return utilisateur?.date_inscription_infolettre || null;
+  }
+
+  async recupererDateVisualisationPopupInfolettre(utilisateurId: string): Promise<Date | null> {
+    const utilisateur = await this.prisma.utilisateur.findUnique({
+      where: { id: utilisateurId },
+      select: {
+        date_visualisation_popup_infolettre: true,
+      },
+    });
+
+    return utilisateur?.date_visualisation_popup_infolettre || null;
+  }
+
   async desactiverVideoAccueil(utilisateurId: string, dateVisualisation: Date): Promise<void> {
     await this.prisma.utilisateur.update({
       where: { id: utilisateurId },
       data: { date_visualisation_video_accueil: dateVisualisation },
+    });
+  }
+
+  async mettreAJourLaDateInscriptionInfolettre(email: string, dateInscriptionInfolettre: Date): Promise<void> {
+    await this.prisma.utilisateur.update({
+      where: { email: email },
+      data: { date_inscription_infolettre: dateInscriptionInfolettre },
+    });
+  }
+
+  async mettreAJourLaDateVisulationPopupInfolettre(utilisateurId: string, dateVisualisationPopupInfolettre: Date): Promise<void> {
+    await this.prisma.utilisateur.update({
+      where: { id: utilisateurId },
+      data: { date_visualisation_popup_infolettre: dateVisualisationPopupInfolettre },
     });
   }
 
@@ -611,40 +647,48 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     };
   }
 
-  async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurId: string): Promise<void> {
+  async recupererUtilisateurEmail(utilisateurId: string): Promise<string | null> {
+    const utilisateur = await this.prisma.utilisateur.findUnique({
+      where: { id: utilisateurId },
+      select: { email: true },
+    });
 
+    return utilisateur?.email ?? null;
+  }
+
+  async créerOuMettreÀJour(utilisateur: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurId: string): Promise<void> {
     const utilisateurCrééOuMisÀJour = await this.prisma.utilisateur.upsert({
       create: convertirEnModel({
-        email: u.email.toLocaleLowerCase(),
-        nom: u.nom,
-        prenom: u.prénom,
-        profilCode: u.profil,
-        fonction: u.fonction,
+        email: utilisateur.email.toLocaleLowerCase(),
+        nom: utilisateur.nom,
+        prenom: utilisateur.prénom,
+        profilCode: utilisateur.profil,
+        fonction: utilisateur.fonction,
         auteurIdCreation: auteurId,
         dateCreation: new Date(),
         auteurIdModification: auteurId,
         dateModification: new Date(),
       }),
       update: convertirEnModelModification({
-        email: u.email.toLocaleLowerCase(),
-        nom: u.nom,
-        prenom: u.prénom,
-        profilCode: u.profil,
-        fonction: u.fonction,
+        email: utilisateur.email.toLocaleLowerCase(),
+        nom: utilisateur.nom,
+        prenom: utilisateur.prénom,
+        profilCode: utilisateur.profil,
+        fonction: utilisateur.fonction,
         auteurIdModification: auteurId,
         dateModification: new Date(),
       }),
       where: {
-        email: u.email.toLowerCase(),
+        email: utilisateur.email.toLowerCase(),
       },
     });
 
-    const habilitationsÀCréer = Object.entries(u.habilitations).map(h => ({
+    const habilitationsÀCréer = Object.entries(utilisateur.habilitations).map(habilitation => ({
       utilisateurId: utilisateurCrééOuMisÀJour.id,
-      scopeCode: h[0],
-      territoires: h[1].territoires,
-      perimetres: h[1].périmètres,
-      chantiers: h[1].chantiers,
+      scopeCode: habilitation[0],
+      territoires: habilitation[1].territoires,
+      perimetres: habilitation[1].périmètres,
+      chantiers: habilitation[1].chantiers,
     }));
 
     await this.prisma.habilitation.deleteMany({

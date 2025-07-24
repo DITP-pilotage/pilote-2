@@ -50,7 +50,6 @@ export const validationInfosBaseUtilisateurNonAdmin = z.object({
   fonction: z.string().max(100).nullable(),
   profil: z.enum(profilsCodes),
   saisieIndicateur: z.boolean(),
-  saisieCommentaire: z.boolean(),
 });
 
 export const validationInfosHabilitationsUtilisateur = z.object({
@@ -99,6 +98,11 @@ export const validationReactiverUtilisateur = z.object({
 
 export const validationDesactiverVideoAccueil = z.object({
   utilisateurId: z.string(),
+});
+
+export const validationEnvoyerMailInscriptionInfolettre = z.object({
+  utilisateurEmail: z.string(),
+  lienConfirmationInscription: z.string(),
 });
 
 export const codesTerritoiresDROM = ['NAT-FR', 'REG-01', 'REG-02', 'REG-03', 'REG-04', 'REG-06', 'DEPT-971', 'DEPT-972', 'DEPT-973', 'DEPT-974', 'DEPT-976'];
