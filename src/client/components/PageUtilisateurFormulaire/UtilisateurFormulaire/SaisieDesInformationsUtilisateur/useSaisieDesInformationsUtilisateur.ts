@@ -210,10 +210,19 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
   const afficherChampSaisieCommentaire = profilSelectionne && !profilSelectionne.chantiers.lecture.tous;
   const afficherChampGestionCompte = profilSelectionne && profilSelectionne.utilisateurs.modificationPossible && !AAccesATousLesUtilisateurs(profilSelectionne);
 
-  const chantiersAccessibleResponsabilite: ChantierSynthétisé[] = !afficherChampResponsabiliteChantiers ? [] : chantiersSelectionnesLecture;
-  const chantiersAccessibleSaisieCommentaire: ChantierSynthétisé[] = !afficherChampSaisieCommentaire ? [] : chantiersSelectionnesLecture;
-
-  watch('profil');
+  const chantiersAccessibleResponsabilite: ChantierSynthétisé[] =
+    !afficherChampResponsabiliteChantiers ? [] : chantiersSelectionnesLecture;
+  const chantiersAccessibleSaisieCommentaire: ChantierSynthétisé[] =
+    !afficherChampSaisieCommentaire
+      ? []
+      : [ProfilEnum.PREFET_DEPARTEMENT, ProfilEnum.PREFET_REGION].includes(
+            profilCodeSelectionne,
+          )
+        ? chantiersSelectionnesLecture.filter(
+            (chantier) => chantier.ate === "ate",
+          )
+        : chantiersSelectionnesLecture;
+  watch("profil");
 
   return {
     register,
