@@ -82,7 +82,7 @@ const convertirEnMetadataParametrageIndicateurForm = (input: any): MetadataParam
     contactTechniqueEmail: input.contactTechniqueEmail || '',
     commentaire: input.commentaire || null,
     maillePilotage: input.maillePilotage || null,
-    cibleAttendue: input.cibleAttendue || null,
+    cibleAttendue: input.cibleAttendue,
     couvertureTemporelle: input.couvertureTemporelle || null,
   };
 };

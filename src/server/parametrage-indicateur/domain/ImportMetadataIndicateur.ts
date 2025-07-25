@@ -64,6 +64,6 @@ export interface ImportMetadataIndicateur {
   contactTechniqueEmail: string
   commentaire: string | null
   maillePilotage: string | null
-  cibleAttendue: string | null
+  cibleAttendue: boolean
   couvertureTemporelle: string | null
 }

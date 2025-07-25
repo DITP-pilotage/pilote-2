@@ -155,7 +155,7 @@ export async function handleExportMetadataIndicateurs(request: NextApiRequest, r
       metadataIndicateur.contactTechniqueEmail,
       metadataIndicateur.commentaire,
       metadataIndicateur.maillePilotage,
-      metadataIndicateur.cibleAttendue,
+      metadataIndicateur.cibleAttendue ? 'true' : 'false',
       metadataIndicateur.couvertureTemporelle,
     ]);
   });
