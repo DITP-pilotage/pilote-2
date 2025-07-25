@@ -645,7 +645,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  ${makeStrSafer(indicateur.contactTechniqueEmail)}, 
                                                  ${makeStrSafer(indicateur.commentaire)},
                                                  ${makeStrSafer(indicateur.maillePilotage)},
-                                                 ${makeStrSafer(indicateur.cibleAttendue)},
+                                                 ${indicateur.cibleAttendue},
                                                  ${makeStrSafer(indicateur.couvertureTemporelle)})
 
                                            ON CONFLICT (indic_id) DO UPDATE
@@ -668,7 +668,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  contact_technique_email = ${makeStrSafer(indicateur.contactTechniqueEmail)}, 
                                                  commentaire = ${makeStrSafer(indicateur.commentaire)},
                                                  maille_pilotage = ${makeStrSafer(indicateur.maillePilotage)},
-                                                 cible_attendue = ${makeStrSafer(indicateur.cibleAttendue)},
+                                                 cible_attendue = ${indicateur.cibleAttendue},
                                                  couverture_temporelle = ${makeStrSafer(indicateur.couvertureTemporelle)};`;
     } ;
 
