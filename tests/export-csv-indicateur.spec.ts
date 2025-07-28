@@ -44,31 +44,38 @@ test('doit pouvoir exporter les données des indicateurs sous format CSV', async
     await expect(page.getByLabel(/identifiants de l'indicateur, du chantier associé et du territoire/)).toBeChecked();
   });
 
+  await test.step("Vérification des possibilités de choix d'export - cadrage de l'indicateur", async () => {
+    await expect(page.getByLabel(/cadrage de l'indicateur/)).toBeVisible();
+    await page.getByRole('checkbox', { name: /cadrage de l'indicateur/ }).setChecked(true, { force: true });
+    await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,cadrage');
+    await expect(page.getByLabel(/cadrage de l'indicateur/)).toBeChecked();
+  });
+
   await test.step("Vérification des possibilités de choix d'export - gouvernance de l'indicateur et du chantier associé", async () => {
     await expect(page.getByLabel(/gouvernance de l'indicateur et du chantier associé/)).toBeVisible();
     await page.getByRole('checkbox', { name: /gouvernance de l'indicateur et du chantier associé/ }).setChecked(true, { force: true });
-    await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,gouvernance');
+    await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,cadrage,gouvernance');
     await expect(page.getByLabel(/gouvernance de l'indicateur et du chantier associé/)).toBeChecked();
   });
 
   await test.step("Vérification des possibilités de choix d'export - données descriptives de l'indicateur sur le territoire", async () => {
     await expect(page.getByLabel(/données de l'indicateur sur le territoire/)).toBeVisible();
     await page.getByRole('checkbox', { name: /données de l'indicateur sur le territoire/ }).setChecked(true, { force: true });
-    await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,gouvernance,description');
+    await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,cadrage,gouvernance,description');
     await expect(page.getByLabel(/données de l'indicateur sur le territoire/)).toBeChecked();
   });
 
   await test.step("Vérification des possibilités de choix d'export - données descriptives du chantier associé sur le territoire", async () => {
     await expect(page.getByLabel(/données du chantier associé sur le territoire/)).toBeVisible();
     await page.getByRole('checkbox', { name: /données du chantier associé sur le territoire/ }).setChecked(true, { force: true });
-    await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,gouvernance,description,description-chantier');
+    await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,cadrage,gouvernance,description,description-chantier');
     await expect(page.getByLabel(/données du chantier associé sur le territoire/)).toBeChecked();
   });
 
   await test.step("Vérification des possibilités de choix d'export - météo et synthèse des résultats du chantier associé sur le territoire", async () => {
     await expect(page.getByLabel(/météo et synthèse des résultats du chantier associé sur le territoire/)).toBeVisible();
     await page.getByRole('checkbox', { name: /météo et synthèse des résultats du chantier associé sur le territoire/ }).setChecked(true, { force: true });
-    await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,gouvernance,description,description-chantier,synthese');
+    await page.waitForURL('**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,cadrage,gouvernance,description,description-chantier,synthese');
     await expect(page.getByLabel(/météo et synthèse des résultats du chantier associé sur le territoire/)).toBeChecked();
   });
 
