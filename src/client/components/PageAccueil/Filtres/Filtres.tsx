@@ -8,6 +8,7 @@ import Axe from '@/server/domain/axe/Axe.interface';
 import Titre from '@/components/_commons/Titre/Titre';
 import { reinitialiserFiltres, sauvegarderFiltres } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
 import { calculerNouvelleMaille } from '@/components/PageAccueil/Filtres/utils';
+import { Maille } from '@/server/domain/maille/Maille.interface';
 import FiltresGroupe from './FiltresGroupe/FiltresGroupe';
 import FiltresMinistères from './FiltresMinistères/FiltresMinistères';
 import { FiltresSelectionMultipleBoolean } from './FiltresSelectionMultipleBoolean/FiltresSelectionMultipleBoolean';
@@ -136,8 +137,8 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
                   categorieDeFiltre='territorialisation'
                   filtres={filtresTerritorialisation}
                   libelle='Filtrer par territorialisation'
-                  onChange={nouveauFiltre => {
-                    const nouvelleMaille = calculerNouvelleMaille(nouveauFiltre);
+                  onChange={(nouveauFiltre) => {
+                    const nouvelleMaille = calculerNouvelleMaille(nouveauFiltre as Maille[]);
 
                     sauvegarderFiltres({ territorialisation: nouveauFiltre, maille: nouvelleMaille });
                     return setFiltres({

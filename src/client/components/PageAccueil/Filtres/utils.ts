@@ -1,7 +1,8 @@
-export const calculerNouvelleMaille = (nouveauFiltre: string[]) => {
-  let nouvelleMaille = 'departementale';
+import { Maille } from '@/server/domain/maille/Maille.interface';
+
+export const calculerNouvelleMaille = (nouveauFiltre: Maille[]) => {
   if (nouveauFiltre.includes('regionale') && !nouveauFiltre.includes('departementale')) {
-    nouvelleMaille = 'regionale';
+    return 'regionale';
   }
-  return nouvelleMaille;
+  return 'departementale';
 };
