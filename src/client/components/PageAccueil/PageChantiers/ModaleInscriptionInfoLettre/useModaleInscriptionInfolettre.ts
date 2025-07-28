@@ -1,5 +1,6 @@
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import api from '@/server/infrastructure/api/trpc/api';
 import { récupérerUnCookie } from '@/client/utils/cookies';
 
@@ -10,8 +11,13 @@ interface InscriptionInfoLettreForm {
 
 export const useModaleInscriptionInfolettre = () => {
   const { data: session } = useSession();
+  const [succesEnvoieEmail, setSuccesEnvoieEmail] = useState<boolean>(false);
 
-  const envoyerMailInscriptionInfolettre = api.utilisateur.envoyerMailInscriptionInfolettre.useMutation();
+  const envoyerMailInscriptionInfolettre = api.utilisateur.envoyerMailInscriptionInfolettre.useMutation({
+    onSuccess: () => {
+      setSuccesEnvoieEmail(true);
+    },
+  });
   const desactiverPopupInfolettre = api.utilisateur.desactiverPopupInfolettre.useMutation();
 
   const { handleSubmit, register, watch } = useForm<InscriptionInfoLettreForm>({
@@ -50,5 +56,6 @@ export const useModaleInscriptionInfolettre = () => {
     estConsentantALinscription,
     isSubmitting: envoyerMailInscriptionInfolettre.isLoading,
     isDesactivating: desactiverPopupInfolettre.isLoading,
+    succesEnvoieEmail,
   };
 }; 
