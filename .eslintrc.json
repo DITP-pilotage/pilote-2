@@ -19,7 +19,8 @@
     "react-hooks",
     "import",
     "jsx-a11y",
-    "no-relative-import-paths"
+    "no-relative-import-paths",
+    "prettier"
   ],
   "settings": {
     "react": {
@@ -124,6 +125,7 @@
     "react/no-unescaped-entities": "off",
     "react/jsx-props-no-spreading": "off",
     "react/no-array-index-key": "off",
-    "react/prefer-read-only-props": "off"
+    "react/prefer-read-only-props": "off",
+    "prettier/prettier": "error"
   }
 }
