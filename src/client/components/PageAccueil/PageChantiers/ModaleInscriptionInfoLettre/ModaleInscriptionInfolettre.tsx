@@ -28,13 +28,13 @@ export const ModaleInscriptionInfolettre: FunctionComponent = () => {
               baliseHtml='h1'
               className='fr-modal__title fr-mb-1w fr-text-title--blue-france flex justify-center'
             >
-              Ne manquez pas les actualités de la plateforme PILOTE
+              Ne manquez pas les actualités de PILOTE
             </Titre>
             <p className='fr-mt-3w'>
               Inscrivez-vous à notre infolettre 
               {' '}
               <strong>
-                pour rester informé des évolutions de la plateforme PILOTE.
+                pour rester informé des évolutions de PILOTE.
               </strong>
             </p>
             <ul>
