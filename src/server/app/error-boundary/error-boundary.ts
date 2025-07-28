@@ -48,13 +48,11 @@ export const errorBondary =
         Logger.error(
           `(API) Une erreur interne est survenue : ${(error as Error).message}`,
         );
-        return response
-          .status(500)
-          .json({
-            success: false,
-            message:
-              "Une erreur est survenue, veuillez contacter le support pour plus d'information",
-          });
+        return response.status(500).json({
+          success: false,
+          message:
+            "Une erreur est survenue, veuillez contacter le support pour plus d'information",
+        });
       }
     }
   };
