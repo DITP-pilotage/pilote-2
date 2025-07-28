@@ -121,6 +121,7 @@ export default class Habilitation {
     );
   }
 
+  // eslint-disable-next-line sonarjs/no-identical-functions
   peutConsulterLaListeDesUtilisateurs() {
     return (
       this.possedeAuMoinsUnTerritoireEnGestionUtilisateur() &&

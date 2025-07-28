@@ -14,10 +14,10 @@ jest.mock(
       return <span>Carto</span>;
     },
 );
-// eslint-disable-next-line react/no-multi-comp
 jest.mock(
   "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurÉvolution.tsx",
   () =>
+    // eslint-disable-next-line react/no-multi-comp
     function IndicateurChart() {
       return <span>Indicateur Chart</span>;
     },
