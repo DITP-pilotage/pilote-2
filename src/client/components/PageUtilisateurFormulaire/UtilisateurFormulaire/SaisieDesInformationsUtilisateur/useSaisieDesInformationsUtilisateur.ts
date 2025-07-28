@@ -141,16 +141,16 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
     departementale: afficherChampLectureTerritoires && profilsDépartementaux.includes(profilCodeSelectionne),
   };
   const territoiresSélectionnables = session?.habilitations.gestionUtilisateur.territoires;
-  const changementTerritoiresSelectionnes = (valeursSelectionnees: string[]) => {
+  const changementTerritoiresSelectionnes = (listeTerritoiresSelectionnes: string[]) => {
     const territoiresEnfants = territoires?.
-      filter(territoire => valeursSelectionnees.includes(territoire.codeParent ?? '')).
+      filter(territoire => listeTerritoiresSelectionnes.includes(territoire.codeParent ?? '')).
       map(territoire => territoire.code) ?? [];
-    const listeTerritoiresProfil = new Set([...valeursSelectionnees, ...territoiresEnfants]);
+    const listeTerritoiresProfil = new Set([...listeTerritoiresSelectionnes, ...territoiresEnfants]);
     const chantiersIdSelectionnes = getValues('habilitations.lecture.chantiers');
 
     if (listeTerritoiresProfil.size > 0) {
       const chantiersApplicablesIds = new Set(chantiers?.
-        filter(chantier => chantier.territoiresApplicables.some(chantierApplicable => listeTerritoiresProfil.has(chantierApplicable))).
+        filter(chantier => chantier.territoiresApplicables.some(territoireApplicable => listeTerritoiresProfil.has(territoireApplicable))).
         map(chantier => chantier.id));
       setChantiersApplicablesPourLesTerrioiresSelectionnes(chantiersApplicablesIds);
       setValue('habilitations.lecture.chantiers', chantiersIdSelectionnes?.filter(chantierId => chantiersApplicablesIds.has(chantierId)));
@@ -158,14 +158,14 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
       setChantiersApplicablesPourLesTerrioiresSelectionnes(new Set(chantiers?.map(chantier => chantier.id)));
     }
     
-    setValue('habilitations.lecture.territoires', valeursSelectionnees);
+    setValue('habilitations.lecture.territoires', listeTerritoiresSelectionnes);
   };
 
   const afficherChampLectureChantiers = profilSelectionne && !profilSelectionne.chantiers.lecture.tous && !profilSelectionne.chantiers.lecture.tousTerritorialisés;
   let chantiersAccessiblesLecture = chantiers?.filter(chantier => session?.habilitations.gestionUtilisateur.chantiers.includes(chantier.id));
   if (AAccesUniquementAuxChantiersTerritorialises(profilCodeSelectionne)) {
     chantiersAccessiblesLecture = chantiersAccessiblesLecture?.filter(chantier => chantier.estTerritorialisé && chantiersApplicablesPourLesTerrioiresSelectionnes.has(chantier.id));
-  } 
+  }
   if (!profilSelectionne?.chantiers.lecture.brouillons) {
     chantiersAccessiblesLecture = chantiersAccessiblesLecture?.filter(chantier => chantier.statut !== 'BROUILLON');
   }
