@@ -461,7 +461,7 @@ export const validationImportMetadataIndicateurFormulaire = z
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "La méthode d'agrégation est requise",
+          message: `La méthode d'agrégation est requise, from: ${from}, op: ${op}, field: ${field}, id: ${data.indicId}`,
           path: [field],
         });
       }
