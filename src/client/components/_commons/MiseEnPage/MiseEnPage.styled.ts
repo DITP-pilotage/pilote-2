@@ -80,13 +80,13 @@ const MiseEnPageStyled = styled.div`
       transition-timing-function: cubic-bezier(1, 0, 0.65, 0.85);
     }
 
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
     0% {
-      /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
       width: 0;
     }
 
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
     100% {
-      /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
       width: 100%;
     }
   }
@@ -97,13 +97,13 @@ const MiseEnPageStyled = styled.div`
       transition-timing-function: cubic-bezier(1, 0, 0.65, 0.85);
     }
 
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
     0% {
-      /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
       width: 0;
     }
 
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
     100% {
-      /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
       width: 100%;
     }
   }
@@ -114,13 +114,13 @@ const MiseEnPageStyled = styled.div`
       transition-timing-function: cubic-bezier(1, 0, 0.65, 0.85);
     }
 
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
     0% {
-      /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
       width: 0;
     }
 
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
     100% {
-      /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
       width: 100%;
     }
   }
@@ -131,13 +131,13 @@ const MiseEnPageStyled = styled.div`
       transition-timing-function: cubic-bezier(1, 0, 0.65, 0.85);
     }
 
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
     0% {
-      /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
       width: 0;
     }
 
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
     100% {
-      /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
       width: 100%;
     }
   }
@@ -148,13 +148,13 @@ const MiseEnPageStyled = styled.div`
       transition-timing-function: cubic-bezier(1, 0, 0.65, 0.85);
     }
 
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
     0% {
-      /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
       width: 0;
     }
 
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
     100% {
-      /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
       width: 100%;
     }
   }
