@@ -27,8 +27,8 @@ const Alerte = {
     return météo === 'NON_RENSEIGNEE';
   },
 
-  estEnAlertePossedePropositionsValeurActuelle(aUnePropositionsValeurActuelle: boolean ) {
-    return aUnePropositionsValeurActuelle;
+  estEnAlertePossedePropositionsValeurAvancement(aUnePropositionsValeurAvancement: boolean ) {
+    return aUnePropositionsValeurAvancement;
   },
 };
 

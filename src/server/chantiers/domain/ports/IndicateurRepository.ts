@@ -4,7 +4,7 @@ import { HistoriqueIndicateurPourExport } from '@/server/chantiers/domain/Histor
 
 export interface IndicateurRepository {
   listerParIndicId({ indicId, jalon }: { indicId: string, jalon: number }): Promise<DonneeIndicateur[]>;
-  supprimerPropositionValeurActuelle({
+  supprimerPropositionValeurAvancement({
     indicId,
     territoireCode,
     auteurModification,

@@ -10,13 +10,13 @@ import { CartographieÉlémentDeLégende } from '@/client/components/_commons/Ca
 import { CartographieDonnées } from '@/client/components/_commons/Cartographie/Cartographie.interface';
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { ELEMENTS_LEGENDE_PROPOSITION_VALEUR_INDICATEURS } from '@/client/constants/légendes/elementDeLegendesCartographiePropositionValeur';
-import { ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE } from '@/client/constants/légendes/élémentsDeLégendesCartographieValeurActuelle';
+import { ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE } from '@/client/constants/légendes/élémentsDeLégendesCartographieValeurAvancement';
 import { CartographieLégendeDégradéContenu } from '@/client/components/_commons/Cartographie/Légende/Dégradé/CartographieLégendeDégradé.interface';
 import CartographieLégendeDégradé from '@/client/components/_commons/Cartographie/Légende/Dégradé/CartographieLégendeDégradé';
 import { CartographieIndicateurType } from '@/client/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails';
 import { useCartographieAvancementIndicateur } from './useCartographieAvancementIndicateur';
 import { useCartographiePropositionValeurIndicateur } from './useCartographiePropositionValeurIndicateur';
-import { useCartographieValeurActuelleIndicateur } from './useCartographieValeurActuelleIndicateur';
+import { useCartographieValeurAvancementIndicateur } from './useCartographieValeurAvancementIndicateur';
 
 const CartographieAvecSelecteurIndicateur: FunctionComponent<{
   detailsIndicateurTerritoire: DétailsIndicateurTerritoire
@@ -33,7 +33,7 @@ const CartographieAvecSelecteurIndicateur: FunctionComponent<{
     avancementMandat: useCartographieAvancementIndicateur(detailsIndicateurTerritoire, ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS, jalon, 'MANDAT'),
     avancementJalon: useCartographieAvancementIndicateur(detailsIndicateurTerritoire, ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS, jalon, 'JALON'),
     propositionValeur: useCartographiePropositionValeurIndicateur(detailsIndicateurTerritoire, ELEMENTS_LEGENDE_PROPOSITION_VALEUR_INDICATEURS),
-    valeurActuelle: useCartographieValeurActuelleIndicateur(detailsIndicateurTerritoire, ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE, jalon, unité),
+    valeurAvancement: useCartographieValeurAvancementIndicateur(detailsIndicateurTerritoire, ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE, jalon, unité),
   };
 
   const pathname = '/chantier/[id]/[territoireCode]';
@@ -51,9 +51,9 @@ const CartographieAvecSelecteurIndicateur: FunctionComponent<{
       désactivée: listeCartographiesDesactives.includes('avancementJalon'),
     },
     {
-      valeur: 'valeurActuelle',
+      valeur: 'valeurAvancement',
       libellé: "Carte des valeurs d'avancement",
-      désactivée: listeCartographiesDesactives.includes('valeurActuelle'),
+      désactivée: listeCartographiesDesactives.includes('valeurAvancement'),
     },
     {
       valeur: 'propositionValeur',

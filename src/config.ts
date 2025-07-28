@@ -1,14 +1,12 @@
 import convict from 'convict';
 import dotenv from 'dotenv';
-import dotenvExpand from 'dotenv-expand';
 import { join } from 'node:path';
 
 const env = process.env.NODE_ENV ? `.${process.env.NODE_ENV}` : '';
 
 const envPath = join(process.cwd(), `/.env${env}`);
 
-const envVars = dotenv.config({ path: envPath, override: true });
-dotenvExpand.expand(envVars);
+dotenv.config({ path: envPath, override: true });
 
 const config = convict({
   env: {
@@ -16,6 +14,11 @@ const config = convict({
     format: ['production', 'development', 'test'],
     default: 'development',
     env: 'NODE_ENV',
+  },
+  baseUrl: {
+    format: String,
+    default: 'http://localhost:3000',
+    env: 'BASE_URL',
   },
   logLevel: {
     format: String,
@@ -322,6 +325,45 @@ const config = convict({
     format: String,
     default: 'https://raw.githubusercontent.com/DITP-pilotage/pilote-2/dev/public/schema/',
     env: 'NEXT_PUBLIC_SCHEMA_VALIDATA_URL',
+  },
+  e2e: {
+    username: {
+      format: String,
+      default: 'TBD',
+      env: 'E2E_USERNAME',
+    },
+    password: {
+      format: String,
+      default: 'TBD',
+      env: 'DEV_PASSWORD',
+    },
+    apiDITPADMINUsername: {
+      format: String,
+      default: 'TBD',
+      env: 'API_DITP_USERNAME',
+    },
+    apiDirProjetUsername: {
+      format: String,
+      default: 'TBD',
+      env: 'API_DIR_PROJET_USERNAME',
+    },
+    apiDirProjetChantierAssocie: {
+      format: String,
+      default: 'TBD',
+      env: 'API_DIR_PROJET_CHANTIER_ASSOCIE',
+    },
+    apiDirProjetIndicateurAssocie: {
+      format: String,
+      default: 'TBD',
+      env: 'API_DIR_PROJET_INDICATEUR_ASSOCIE',
+    },  
+  },
+  brevo: {
+    apiKey: {
+      format: String,
+      default: 'ToBeDefined',
+      env: 'BREVO_API_KEY',
+    },
   },
 });
 

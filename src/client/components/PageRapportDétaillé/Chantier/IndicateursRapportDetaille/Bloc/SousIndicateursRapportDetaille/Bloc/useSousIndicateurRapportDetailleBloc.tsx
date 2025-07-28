@@ -48,14 +48,14 @@ export default function useSousIndicateurBloc(détailsIndicateur: DétailsIndica
       ),
       enableSorting: false,
     }),
-    reactTableColonnesHelper.accessor('données.valeurActuelle', {
+    reactTableColonnesHelper.accessor('données.valeurAvancement', {
       header: 'Valeur actuelle',
-      id: 'valeurActuelle',
-      cell: valeurActuelle => (
+      id: 'valeurAvancement',
+      cell: valeurAvancement => (
         <ValeurEtDate
-          date={valeurActuelle.row.original.données.dateValeurActuelle}
-          unité={valeurActuelle.row.original.données.unité}
-          valeur={valeurActuelle.getValue()}
+          date={valeurAvancement.row.original.données.dateValeurAvancement}
+          unité={valeurAvancement.row.original.données.unité}
+          valeur={valeurAvancement.getValue()}
         />
       ),
       enableSorting: false,
@@ -135,7 +135,7 @@ export default function useSousIndicateurBloc(détailsIndicateur: DétailsIndica
       columnVisibility: estVueTuile ? ({
         territoire: false,
         valeurInitiale: false,
-        valeurActuelle: false,
+        valeurAvancement: false,
         cibleAnnuelle: false,
         avancementAnnuel: false,
         cible: false,

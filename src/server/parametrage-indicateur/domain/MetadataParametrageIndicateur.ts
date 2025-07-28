@@ -64,6 +64,9 @@ interface InputMetadataParametrageIndicateur {
   contactTechnique: string | null;
   contactTechniqueEmail: string;
   commentaire: string | null;
+  maillePilotage: string;
+  cibleAttendue: boolean;
+  couvertureTemporelle: string;
 }
 
 export class MetadataParametrageIndicateur {
@@ -197,6 +200,12 @@ export class MetadataParametrageIndicateur {
 
   private readonly _commentaire: string | null;
 
+  private readonly _maillePilotage: string;
+
+  private readonly _cibleAttendue: boolean;
+
+  private readonly _couvertureTemporelle: string;
+
   private constructor({
     indicId,
     viDeptFrom,
@@ -263,6 +272,9 @@ export class MetadataParametrageIndicateur {
     contactTechnique,
     contactTechniqueEmail,
     commentaire,
+    maillePilotage,
+    cibleAttendue,
+    couvertureTemporelle,
   }: InputMetadataParametrageIndicateur) {
     this._indicId = indicId;
     this._viDeptFrom = viDeptFrom;
@@ -329,6 +341,9 @@ export class MetadataParametrageIndicateur {
     this._contactTechnique = contactTechnique;
     this._contactTechniqueEmail = contactTechniqueEmail;
     this._commentaire = commentaire;
+    this._maillePilotage = maillePilotage;
+    this._cibleAttendue = cibleAttendue;
+    this._couvertureTemporelle = couvertureTemporelle;
   }
 
   get indicId(): string {
@@ -591,6 +606,18 @@ export class MetadataParametrageIndicateur {
     return this._commentaire;
   }
 
+  get maillePilotage(): string {
+    return this._maillePilotage;
+  }
+
+  get cibleAttendue(): boolean {
+    return this._cibleAttendue;
+  }
+
+  get couvertureTemporelle(): string {
+    return this._couvertureTemporelle;
+  }
+
   static creerMetadataParametrageIndicateur({
     indicId,
     viDeptFrom,
@@ -657,6 +684,9 @@ export class MetadataParametrageIndicateur {
     contactTechnique,
     contactTechniqueEmail,
     commentaire,
+    maillePilotage,
+    cibleAttendue,
+    couvertureTemporelle,
   }: InputMetadataParametrageIndicateur): MetadataParametrageIndicateur {
     return new MetadataParametrageIndicateur({
       indicId,
@@ -724,6 +754,9 @@ export class MetadataParametrageIndicateur {
       contactTechnique,
       contactTechniqueEmail,
       commentaire,
+      maillePilotage,
+      cibleAttendue,
+      couvertureTemporelle,
     });
   }
 }

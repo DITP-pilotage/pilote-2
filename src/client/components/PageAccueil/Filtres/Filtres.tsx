@@ -38,7 +38,7 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
-    estEnAlertePossedePropositionsValeurActuelle: parseAsBoolean.withDefault(false),
+    estEnAlertePossedePropositionsValeurAvancement: parseAsBoolean.withDefault(false),
   }, {
     shallow: false,
     clearOnDefault: true,
@@ -60,7 +60,7 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
       estEnAlerteBaisse: false,
       estEnAlerteMétéoNonRenseignée: false,
       estEnAlerteAbscenceTauxAvancementDepartemental: false,
-      estEnAlertePossedePropositionsValeurActuelle: false,
+      estEnAlertePossedePropositionsValeurAvancement: false,
     });
   };
 

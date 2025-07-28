@@ -14,6 +14,7 @@ import { useSession } from 'next-auth/react';
 import { formaterDate } from '@/client/utils/date/date';
 import { UtilisateurListeGestionContrat } from '@/server/app/contrats/UtilisateurListeGestionContrat';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { PAGE_INDEX_DEFAUT, TAILLE_DEFAUT_PAGINATION_UTILISATEUR } from '@/client/constants/constantes';
 
 const reactTableColonnesHelper = createColumnHelper<UtilisateurListeGestionContrat>();
 const colonnes = [
@@ -86,8 +87,8 @@ export const useTableauPageAdminUtilisateurs = (utilisateurs: UtilisateurListeGe
   const estAutoriseAVoirLaColonneTerritoire = [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session!.profil);
 
   const [pagination, setPagination] = useQueryStates({
-    pageIndex: parseAsInteger.withDefault(1),
-    pageSize: parseAsInteger.withDefault(20),
+    pageIndex: parseAsInteger.withDefault(PAGE_INDEX_DEFAUT),
+    pageSize: parseAsInteger.withDefault(TAILLE_DEFAUT_PAGINATION_UTILISATEUR),
   }, {
     history: 'push',
     shallow: false,
@@ -137,7 +138,7 @@ export const useTableauPageAdminUtilisateurs = (utilisateurs: UtilisateurListeGe
     onSortingChange: setSorting,
     getPaginationRowModel: getPaginationRowModel(),
     onPaginationChange: setPagination,
-    pageCount: nombreUtilisateur % 10 === 0 ? Math.trunc(nombreUtilisateur / pagination.pageSize) : Math.trunc(nombreUtilisateur / pagination.pageSize) + 1,
+    pageCount: Math.ceil(nombreUtilisateur / pagination.pageSize),
     manualPagination: true,
   });
 

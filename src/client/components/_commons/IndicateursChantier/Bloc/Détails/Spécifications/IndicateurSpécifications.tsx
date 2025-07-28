@@ -12,9 +12,9 @@ interface IndicateurSpécificationsProps {
   source: Indicateur['source']
   periodicite: Indicateur['periodicite']
   delaiDisponibilite: Indicateur['delaiDisponibilite']
-  dateValeurActuelle: string | null
+  dateValeurAvancement: string | null
   dateProchaineDateMaj: string | null
-  dateProchaineDateValeurActuelle: string | null
+  dateProchaineDateValeurAvancement: string | null
   indicateurEstAjour: boolean
   indicateurEstApplicable: boolean | null
   responsablesMails: string[]
@@ -30,8 +30,8 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
   periodicite,
   delaiDisponibilite,
   dateProchaineDateMaj,
-  dateProchaineDateValeurActuelle,
-  dateValeurActuelle,
+  dateProchaineDateValeurAvancement,
+  dateValeurAvancement,
   indicateurEstAjour,
   indicateurEstApplicable,
   responsablesMails,
@@ -90,13 +90,13 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
               La date de valeur d'avancement de cet indicateur est :
               {' '}
               <span className='fr-text--bold'>
-                {`${dateValeurActuelle ?? libelléValeurNull}.`}
+                {`${dateValeurAvancement ?? libelléValeurNull}.`}
               </span>
               {' '}
               La date de la prochaine valeur d'avancement sera donc :
               {' '}
               <span className='fr-text--bold'>
-                {`${dateProchaineDateValeurActuelle ?? libelléValeurNull}.`}
+                {`${dateProchaineDateValeurAvancement ?? libelléValeurNull}.`}
               </span>
             </p>
             <p className='fr-text--sm'>
@@ -116,7 +116,7 @@ const IndicateurSpécifications: FunctionComponent<IndicateurSpécificationsProp
         ) : (
           <>
             {
-              !!dateValeurActuelle ? (
+              !!dateValeurAvancement ? (
                 <p className='fr-text--sm'>
                   La période de mise à jour pour cet indicateur et/ou le délai de disponibilité ne sont pas renseignés.
                 </p>

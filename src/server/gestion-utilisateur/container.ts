@@ -59,6 +59,10 @@ import { PrismaPropositionValeurAvancementRepository } from './infrastructure/ad
 import { ContactInfoLettresService } from './domain/ports/ContactInfoLettresService';
 import { BrevoContactInfoLettresService } from './infrastructure/adapters/BrevoContactInfoLettresService';
 import CréerOuMettreÀJourUnUtilisateurUseCase from './usecases/CréerOuMettreÀJourUnUtilisateurUseCase';
+import { EnvoyerMailInscriptionInfolettreUseCase } from './usecases/EnvoyerMailInscriptionInfolettreUseCase';
+import { RecupererEtatModaleInscriptionUseCase } from './usecases/RecupererEtatModaleInscriptionUseCase';
+import { DesactiverPopupInfolettreUseCase } from './usecases/DesactiverPopupInfolettreUseCase';
+import { AjouterUnContactAUneInfoLettreUseCase } from './usecases/AjouterUnContactAUneInfoLettreUseCase';
 
 export type GestionUtilisateurDependencies = {
   utilisateurRepository: UtilisateurRepository
@@ -76,6 +80,7 @@ export type GestionUtilisateurDependencies = {
   rapportRepository: RapportRepository
   syntheseDesResultatsRepository: SyntheseDesResultatsRepository
   propositionValeurAvancementRepository: PropositionValeurAvancementRepository
+  historisationModification: HistorisationModificationRepository
   supprimerLesComptesDesactivesUseCase: SupprimerLesComptesDesactivesUseCase
   recupererChantiersSynthetisesUseCase: RecupererChantiersSynthetisesUseCase
   recupererPerimetresMinisterielsUseCase: RecupererPerimetresMinisterielsUseCase
@@ -88,8 +93,11 @@ export type GestionUtilisateurDependencies = {
   desactiverVideoAccueilUseCase: DesactiverVideoAccueilUseCase
   recupererLaListeDesInfomrationsChantiersUse: RecupererLaListeDesInfomrationsChantiersUse
   contactInfoLettresService: ContactInfoLettresService
-  historisationModification: HistorisationModificationRepository
   créerOuMettreÀJourUnUtilisateurUseCase: CréerOuMettreÀJourUnUtilisateurUseCase
+  envoyerMailInscriptionInfolettreUseCase: EnvoyerMailInscriptionInfolettreUseCase
+  recupererEtatModaleInscriptionUseCase: RecupererEtatModaleInscriptionUseCase
+  desactiverPopupInfolettreUseCase: DesactiverPopupInfolettreUseCase
+  ajouterUnContactAUneInfoLettreUseCase: AjouterUnContactAUneInfoLettreUseCase
 };
 
 export const getGestionUtilisateurContainer = (initialContainer: AwilixContainer<{ prisma: PrismaPilote }>): AwilixContainer<GestionUtilisateurDependencies & { prisma: PrismaPilote }> => {
@@ -101,6 +109,7 @@ export const getGestionUtilisateurContainer = (initialContainer: AwilixContainer
     perimetreMinisterielRepository: asClass(PrismaPerimetreMinisterielRepository),
     profilRepository: asClass(PrismaProfilRepository),
     tokenAPIInformationRepository: asClass(PrismaTokenAPIInformationRepository),
+    historisationModification: asClass(PrismaHistorisationModificationRepository),
     desactiverUnUtilisateurUseCase: asClass(DesactiverUnUtilisateurUseCase),
     reactiverUnUtilisateurUseCase: asClass(ReactiverUnUtilisateurUseCase),
     recupererChantiersSynthetisesUseCase: asClass(RecupererChantiersSynthetisesUseCase),
@@ -121,7 +130,10 @@ export const getGestionUtilisateurContainer = (initialContainer: AwilixContainer
     supprimerLesComptesDesactivesUseCase: asClass(SupprimerLesComptesDesactivesUseCase),
     recupererLaListeDesInfomrationsChantiersUse: asClass(RecupererLaListeDesInfomrationsChantiersUse),
     contactInfoLettresService: asClass(BrevoContactInfoLettresService),
-    historisationModification: asClass(PrismaHistorisationModificationRepository),
     créerOuMettreÀJourUnUtilisateurUseCase: asClass(CréerOuMettreÀJourUnUtilisateurUseCase),
+    envoyerMailInscriptionInfolettreUseCase: asClass(EnvoyerMailInscriptionInfolettreUseCase),
+    recupererEtatModaleInscriptionUseCase: asClass(RecupererEtatModaleInscriptionUseCase),
+    desactiverPopupInfolettreUseCase: asClass(DesactiverPopupInfolettreUseCase),
+    ajouterUnContactAUneInfoLettreUseCase: asClass(AjouterUnContactAUneInfoLettreUseCase),
   });
 };

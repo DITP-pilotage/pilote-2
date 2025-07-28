@@ -19,7 +19,7 @@ const optionsExport: OptionsExport = {
   estEnAlerteBaisse: false,
   estEnAlerteAbscenceTauxAvancementDepartemental: false,
   estEnAlerteMétéoNonRenseignée: false,
-  estEnAlertePossedePropositionsValeurActuelle: false,
+  estEnAlertePossedePropositionsValeurAvancement: false,
 };
 
 describe('ExportCsvDesChantiersUseCase', () => {

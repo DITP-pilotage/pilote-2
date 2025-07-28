@@ -1,8 +1,8 @@
 import { créerRouteurTRPC, procédureProtégée } from '@/server/infrastructure/api/trpc/trpc';
 import {
   validationPropositionValeurAvancement,
-  validationSuppressionValeurActuelle,
-} from '@/validation/proposition-valeur-actuelle';
+  validationSuppressionValeurAvancement,
+} from '@/validation/proposition-valeur-avancement';
 import { StatutProposition } from '@/server/chantiers/domain/StatutProposition';
 import Habilitation from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
 import { getContainer } from '@/server/dependances';
@@ -20,25 +20,25 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
 
       habilitations.verifierAutorisationModificationPropositionValeurAvancement(ctx.session.profil, ctx.session.habilitations.saisieCommentaire.chantiers, propositionValeurAvancementChantierInformation);
 
-      await getContainer('chantiers').resolve('creerPropositionValeurActuelleUseCase').run({
+      await getContainer('chantiers').resolve('creerPropositionValeurAvancementUseCase').run({
         auteurModification: auteur,
         dateProposition: new Date(),
-        dateValeurActuelle: new Date(input.dateValeurActuelle),
+        dateValeurAvancement: new Date(input.dateValeurAvancement),
         idAuteurModification: idAuteur,
         indicId: input.indicId,
         territoireCode: input.territoireCode,
-        valeurActuelleProposee: +(input.valeurActuelle.replace(',', '.')),
+        valeurAvancementProposee: +(input.valeurAvancement.replace(',', '.')),
         motifProposition: input.motifProposition,
         sourceDonneeEtMethodeCalcul: input.sourceDonneeEtMethodeCalcul,
         statut: StatutProposition.EN_COURS,
       });
     }),
   supprimer: procédureProtégée
-    .input(validationSuppressionValeurActuelle)
+    .input(validationSuppressionValeurAvancement)
     .mutation(async ({ input, ctx }) => {
       const auteur = ctx.session.user.name ?? '';
 
-      await getContainer('chantiers').resolve('modifierPropositionValeurActuelleUseCase').run({
+      await getContainer('chantiers').resolve('modifierPropositionValeurAvancementUseCase').run({
         indicId: input.indicId,
         territoireCode: input.territoireCode,
         auteurModification: auteur,

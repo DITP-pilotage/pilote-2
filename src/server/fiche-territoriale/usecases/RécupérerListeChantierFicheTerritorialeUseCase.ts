@@ -84,7 +84,7 @@ export class RécupérerListeChantierFicheTerritorialeUseCase {
       dateQuantitative: ChantierFicheTerritoriale.calculerDateQuantitative(mapIndicateurs.get(chantier.id) || []),
       indicateurs: mapIndicateurs.get(chantier.id)?.map(indicateur => {
         return IndicateurFicheTerritoriale.creerIndicateurFicheTerritoriale({
-          valeurActuelle: indicateur.valeurActuelle,
+          valeurAvancement: indicateur.valeurAvancement,
           nom: indicateur.nom,
           uniteMesure: indicateur.uniteMesure,
           tauxAvancement: indicateur.objectifTauxAvancement,

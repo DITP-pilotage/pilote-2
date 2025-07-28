@@ -11,7 +11,7 @@ export class HistorisationModificationCreationBuilder {
 
   private nouvelleValeur: object = {};
   
-  private utilisateurNom: string = 'utilisateurNom';
+  private auteurId: string = randomUUID();
 
   withId(id: string) {
     this.id = id;
@@ -28,10 +28,15 @@ export class HistorisationModificationCreationBuilder {
     return this;
   }
 
+  withAuteurId(auteurId: string) {
+    this.auteurId = auteurId;
+    return this;
+  }
+
   build<K extends keyof HistorisationModificationDisponible>(): HistorisationModification<K> {
     return HistorisationModification.creerHistorisationCreation<K>({
       id: this.id,
-      utilisateurNom: this.utilisateurNom,
+      auteurId: this.auteurId,
       tableModifieId: this.tableModifieId as K,
       nouvelleValeur: this.nouvelleValeur as HistorisationModificationDisponible[K],
     });

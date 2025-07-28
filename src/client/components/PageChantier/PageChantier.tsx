@@ -107,7 +107,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
   const {
     estAutoriseAImporterDesIndicateurs,
     estAutoriseAVoirLeBoutonFicheConducteur,
-    estAutoriseAProposerUneValeurActuelle,
+    estAutoriseAProposerUneValeurAvancement,
     estAutoriseAModifierLesPublications,
     estAutoriseAModifierLesObjectifs,
     estAutoriseAVoirLesAlertesMAJIndicateurs,
@@ -182,6 +182,14 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
             setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
             territoireCode={territoireCode}
           />
+        </div>
+        <div className='fr-container--fluid fr-py-2w fr-px-md-2w titre-chantier-impression'>
+          <Titre
+            baliseHtml='h1'
+            className='fr-h2 fr-mb-0 fr-text--center'
+          >
+            {chantier.nom}
+          </Titre>
         </div>
         {
           alerteMiseAJourIndicateur ? (
@@ -391,7 +399,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                     chantierEstTerritorialisé={chantier.estTerritorialisé}
                     detailsIndicateursTerritoire={detailsIndicateursTerritoire}
                     détailsIndicateurs={détailsIndicateurs}
-                    estAutoriseAProposerUneValeurActuelle={estAutoriseAProposerUneValeurActuelle}
+                    estAutoriseAProposerUneValeurAvancement={estAutoriseAProposerUneValeurAvancement}
                     indicateurs={indicateurs}
                     jalon={jalon}
                     mailleQuery={mailleQuery}

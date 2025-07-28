@@ -22,7 +22,7 @@ interface TerritoireDonnéeAccueilContrat {
   dateDeMàjDonnéesQuantitatives: string | null
   avancement: TerritoireAvancementAccueilContrat
   météo: 'NON_RENSEIGNEE' | 'ORAGE' | 'NUAGE' | 'COUVERT' | 'SOLEIL' | 'NON_NECESSAIRE'
-  aUnePropositionsValeurActuelle: boolean,
+  aUnePropositionsValeurAvancement: boolean,
 }
 
 export type ListeTerritoiresDonnéeAccueilContrat = Record<string, TerritoireDonnéeAccueilContrat>;
@@ -62,7 +62,7 @@ export interface ChantierAccueilContrat {
   tendance: 'BAISSE' | 'HAUSSE' | 'STAGNATION' | null;
   météo: Météo;
   avancementGlobal: number | null;
-  aUnePropositionsValeurActuelle: boolean
+  aUnePropositionsValeurAvancement: boolean
   aUnTauxAvancementDepartemental: boolean
 }
 
@@ -83,11 +83,11 @@ export function créerDonnéesTerritoiresNew(
   territoires.forEach(t => {
     const chantierRow = chantierRows.find(chantier => chantier.territoire_code === t.code);
                                                                                       
-    let aUnePropositionDeValeurActuelle = chantierRow?.nombre_propositions_valeur_actuelle ? chantierRow.nombre_propositions_valeur_actuelle > 0 : false;
+    let aUnePropositionDeValeurAvancement = chantierRow?.nombre_propositions_valeur_actuelle ? chantierRow.nombre_propositions_valeur_actuelle > 0 : false;
     if (chantierRowsMailleEnfant && listeTerritoireEnfant) {
       const territoiresEnfantCodes = new Set(listeTerritoireEnfant.filter(territoireEnfant => territoireEnfant.codeParent === t.code).map(territoireEnfant => territoireEnfant.code));
       const chantierRowsTerritoiresEnfant = chantierRowsMailleEnfant.filter(chantier => territoiresEnfantCodes.has(chantier.territoire_code));
-      aUnePropositionDeValeurActuelle = aUnePropositionDeValeurActuelle ? true : (chantierRowsTerritoiresEnfant.some(chantier => chantier.nombre_propositions_valeur_actuelle > 0));
+      aUnePropositionDeValeurAvancement = aUnePropositionDeValeurAvancement ? true : (chantierRowsTerritoiresEnfant.some(chantier => chantier.nombre_propositions_valeur_actuelle > 0));
     }
 
     donnéesTerritoires[t.code] = {
@@ -101,7 +101,7 @@ export function créerDonnéesTerritoiresNew(
         global: verifyValeurIsNotNullOrUndefined(chantierRow?.taux_avancement_mandat),
       },
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
-      aUnePropositionsValeurActuelle: aUnePropositionDeValeurActuelle,
+      aUnePropositionsValeurAvancement: aUnePropositionDeValeurAvancement,
     };
   });
 
@@ -140,7 +140,7 @@ export const presenterEnChantierAccueilContratNew = (
         dateDeMàjDonnéesQualitatives: chantierMailleNationale.derniere_maj_date_qualitative?.toISOString() ?? null,
         dateDeMàjDonnéesQuantitatives: chantierMailleNationale.date_taux_avancement_mandat?.toISOString() ?? null,
         estApplicable: chantierMailleNationale.est_applicable,
-        aUnePropositionsValeurActuelle: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0),
+        aUnePropositionsValeurAvancement: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0),
       } : {
         avancement: { annuel: verifyValeurIsNotNullOrUndefined(chantierMailleNationale.chantier_territoire_jalon.at(0)?.taux_avancement), global: verifyValeurIsNotNullOrUndefined(chantierMailleNationale.taux_avancement_mandat) },
         météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
@@ -149,7 +149,7 @@ export const presenterEnChantierAccueilContratNew = (
         dateDeMàjDonnéesQualitatives: chantierMailleNationale.derniere_maj_date_qualitative?.toISOString() ?? null,
         dateDeMàjDonnéesQuantitatives: chantierMailleNationale.date_taux_avancement_mandat?.toISOString() ?? null,
         estApplicable: chantierMailleNationale.est_applicable,
-        aUnePropositionsValeurActuelle: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0),
+        aUnePropositionsValeurAvancement: [...listeChantiersMailleDépartementale, ...listeChantiersMailleRégionale].some(chantier => chantier.nombre_propositions_valeur_actuelle > 0),
       },
     },
     departementale: créerDonnéesTerritoiresNew(listeTerritoireDept, listeChantiersMailleDépartementale),
@@ -191,7 +191,7 @@ export const presenterEnChantierAccueilContratNew = (
     tendance: newMaille[mailleChantier][territoireCode].tendance,
     météo: newMaille[mailleChantier][territoireCode].météo,
     avancementGlobal: newMaille[mailleChantier][territoireCode].avancement.global,
-    aUnePropositionsValeurActuelle: newMaille[mailleChantier][territoireCode].aUnePropositionsValeurActuelle,
+    aUnePropositionsValeurAvancement: newMaille[mailleChantier][territoireCode].aUnePropositionsValeurAvancement,
     aUnTauxAvancementDepartemental: listeChantiersMailleDepartementaleApplicables.length === 0 
       || listeChantiersMailleDepartementaleApplicables.some(chantier => chantier.taux_avancement_mandat !== null),
   };

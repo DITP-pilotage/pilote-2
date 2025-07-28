@@ -21,10 +21,10 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<IndicateurDétailsParTerr
   const {
     dateValeurInitiale,
     valeurInitiale,
-    valeurActuelle,
+    valeurAvancement,
     valeurCible,
     dateValeurCible,
-    dateValeurActuelle,
+    dateValeurAvancement,
     avancement,
     dateValeurCibleAnnuelle,
     valeurCibleAnnuelle,
@@ -69,13 +69,13 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<IndicateurDétailsParTerr
             </td>
             <td className='fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date'>
               <span>
-                {valeurActuelle !== null && valeurActuelle !== undefined ? valeurActuelle?.toLocaleString() + unitéAffichée : ''}
+                {valeurAvancement !== null && valeurAvancement !== undefined ? valeurAvancement?.toLocaleString() + unitéAffichée : ''}
               </span>
               {
-              dateValeurActuelle !== null &&
+              dateValeurAvancement !== null &&
               <span className='texte-gris'>
                 (
-                {formaterDate(dateValeurActuelle, 'MM/YYYY')}
+                {formaterDate(dateValeurAvancement, 'MM/YYYY')}
                 )
               </span>
             }

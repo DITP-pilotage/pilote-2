@@ -81,6 +81,9 @@ const convertirEnMetadataParametrageIndicateurForm = (input: any): MetadataParam
     contactTechnique: input.contactTechnique || null,
     contactTechniqueEmail: input.contactTechniqueEmail || '',
     commentaire: input.commentaire || null,
+    maillePilotage: input.maillePilotage || null,
+    cibleAttendue: input.cibleAttendue,
+    couvertureTemporelle: input.couvertureTemporelle || null,
   };
 };
 
@@ -120,7 +123,7 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
       const habilitations = new Habilitation(ctx.session.habilitations);
       habilitations.verifierAutorisationModificationMetadataIndicateur(ctx.session.profil);
 
-      return getContainer('parametrageIndicateur').resolve('modifierUneMetadataIndicateurUseCase').run(ctx.session.user.email as string, convertirEnMetadataParametrageIndicateurForm(input));
+      return getContainer('parametrageIndicateur').resolve('modifierUneMetadataIndicateurUseCase').run(ctx.session.user.id as string, convertirEnMetadataParametrageIndicateurForm(input));
     }),
   creer: procédureProtégée.input(validationMetadataIndicateurFormulaire.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
@@ -129,6 +132,6 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
       const habilitations = new Habilitation(ctx.session.habilitations);
       habilitations.verifierAutorisationModificationMetadataIndicateur(ctx.session.profil);
 
-      return getContainer('parametrageIndicateur').resolve('creerUneMetadataIndicateurUseCase').run(ctx.session.user.email as string, convertirEnMetadataParametrageIndicateurForm(input));
+      return getContainer('parametrageIndicateur').resolve('creerUneMetadataIndicateurUseCase').run(ctx.session.user.id as string, convertirEnMetadataParametrageIndicateurForm(input));
     }),
 });

@@ -12,17 +12,17 @@ import {
 } from '@/server/chantiers/usecases/ExportCsvDesHistoriquesIndicateursUseCase';
 import { PrismaPilote } from '@/server/db/PrismaPilote';
 import {
-  PropositionValeurActuelleRepository,
-} from '@/server/chantiers/domain/ports/PropositionValeurActuelleRepository';
+  PropositionValeurAvancementRepository,
+} from '@/server/chantiers/domain/ports/PropositionValeurAvancementRepository';
 import {
-  PrismaPropositionValeurActuelleRepository,
-} from '@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurActuelleRepository';
+  PrismaPropositionValeurAvancementRepository,
+} from '@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurAvancementRepository';
 import {
-  CreerPropositionValeurActuelleUseCase,
-} from '@/server/chantiers/usecases/CreerPropositionValeurActuelleUseCase';
+  CreerPropositionValeurAvancementUseCase,
+} from '@/server/chantiers/usecases/CreerPropositionValeurAvancementUseCase';
 import {
-  ModifierPropositionValeurActuelleUseCase,
-} from '@/server/chantiers/usecases/ModifierPropositionValeurActuelleUseCase';
+  ModifierPropositionValeurAvancementUseCase,
+} from '@/server/chantiers/usecases/ModifierPropositionValeurAvancementUseCase';
 import { ExportCsvDesChantiersUseCaseV2 } from './usecases/ExportCsvDesChantiersUseCaseV2';
 import { TerritoireRepository } from './domain/ports/TerritoireRepository';
 import { PrismaTerritoireRepository } from './infrastructure/adapters/PrismaTerritoireRepository';
@@ -36,7 +36,7 @@ export type ChantierDependencies = {
   chantierRepository: ChantierRepository
   indicateurRepository: IndicateurRepository
   territoireRepository: TerritoireRepository
-  propositionValeurActuelleRepository: PropositionValeurActuelleRepository
+  propositionValeurAvancementRepository: PropositionValeurAvancementRepository
   utilisateurRepository: UtilisateurRepository
   envoieEmailService: EnvoieEmailService
   recupererDonneesChantierQuery: RecupererDonneesChantierQuery
@@ -45,8 +45,8 @@ export type ChantierDependencies = {
   exportCsvDesIndicateursUseCase: ExportCsvDesIndicateursUseCase
   exportCsvDesIndicateursUseCaseV2: ExportCsvDesIndicateursUseCaseV2
   exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase
-  creerPropositionValeurActuelleUseCase: CreerPropositionValeurActuelleUseCase
-  modifierPropositionValeurActuelleUseCase: ModifierPropositionValeurActuelleUseCase
+  creerPropositionValeurAvancementUseCase: CreerPropositionValeurAvancementUseCase
+  modifierPropositionValeurAvancementUseCase: ModifierPropositionValeurAvancementUseCase
   envoyerLesRapportsPropositionValeurAvancementUseCase: EnvoyerLesRapportsPropositionValeurAvancementUseCase
 };
 
@@ -55,7 +55,7 @@ export const getChantiersContainer = (initialContainer: AwilixContainer<{ prisma
     chantierRepository: asClass(PrismaChantierRepository),
     indicateurRepository: asClass(PrismaIndicateurRepository),
     territoireRepository: asClass(PrismaTerritoireRepository),
-    propositionValeurActuelleRepository: asClass(PrismaPropositionValeurActuelleRepository),
+    propositionValeurAvancementRepository: asClass(PrismaPropositionValeurAvancementRepository),
     utilisateurRepository: asClass(PrismaUtilisateurRepository),
     envoieEmailService: asClass(BrevoEnvoieEmailService),
     recupererDonneesChantierQuery: asClass(RecupererDonneesChantierQuery),
@@ -64,8 +64,8 @@ export const getChantiersContainer = (initialContainer: AwilixContainer<{ prisma
     exportCsvDesIndicateursUseCase: asClass(ExportCsvDesIndicateursUseCase),
     exportCsvDesIndicateursUseCaseV2: asClass(ExportCsvDesIndicateursUseCaseV2),
     exportCsvDesHistoriquesIndicateursUseCase: asClass(ExportCsvDesHistoriquesIndicateursUseCase),
-    creerPropositionValeurActuelleUseCase: asClass(CreerPropositionValeurActuelleUseCase),
-    modifierPropositionValeurActuelleUseCase: asClass(ModifierPropositionValeurActuelleUseCase),
+    creerPropositionValeurAvancementUseCase: asClass(CreerPropositionValeurAvancementUseCase),
+    modifierPropositionValeurAvancementUseCase: asClass(ModifierPropositionValeurAvancementUseCase),
     envoyerLesRapportsPropositionValeurAvancementUseCase: asClass(EnvoyerLesRapportsPropositionValeurAvancementUseCase),
   });
 };

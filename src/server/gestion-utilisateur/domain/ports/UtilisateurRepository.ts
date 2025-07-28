@@ -14,6 +14,7 @@ export interface UtilisateurRepository {
   recupererTous({ sorting, valeurDeLaRecherche, listeTerritoiresCodes, listePerimetresMinisteriels, listeInformationsChantiersUtilisateurs }: { sorting: { id: string, desc: boolean }[], valeurDeLaRecherche: string, listeTerritoiresCodes: string[], listePerimetresMinisteriels: string[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[] }): Promise<UtilisateurListeGestion[]>
   recupererPourExports({ valeurDeLaRecherche, listeTerritoiresCodes, listePerimetresMinisteriels, listeInformationsChantiersUtilisateurs }: { valeurDeLaRecherche: string, listeTerritoiresCodes: string[], listePerimetresMinisteriels: string[], listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[] }): Promise<UtilisateurExportCSV[]>
   recupererEtatVisualisationVideoAccueil(utilisateurId: string): Promise<boolean>
+  recupererDateVisualisationVideoAccueil(utilisateurId: string): Promise<Date | null>
   desactiverVideoAccueil(utilisateurId: string, dateVisualisation: Date): Promise<void> 
   reinitialiserEtatVisualisationVideoAccueil(email: string): Promise<void>
   recupererComptesInactifs(dateDesactivationMax: Date): Promise<{ id: string, email: string }[]>
@@ -21,4 +22,9 @@ export interface UtilisateurRepository {
   supprimerListeUtilisateur(utilisateursASupprimerIds: string[]): Promise<void>
   verifierExistenceUtilisateur(email: string): Promise<boolean>
   créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurModification: string): Promise<void>
+  recupererDateInscriptionInfolettre(utilisateurId: string): Promise<Date | null>
+  recupererDateVisualisationPopupInfolettre(utilisateurId: string): Promise<Date | null>
+  mettreAJourLaDateInscriptionInfolettre(email: string, dateInscriptionInfolettre: Date): Promise<void>
+  mettreAJourLaDateVisulationPopupInfolettre(utilisateurId: string, dateVisualisationPopupInfolettre: Date): Promise<void>
+  recupererUtilisateurEmail(id: string): Promise<string | null>
 }

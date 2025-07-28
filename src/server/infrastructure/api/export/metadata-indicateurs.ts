@@ -68,6 +68,9 @@ const EXPORT_METADATA_INDICATEURS_COLUMN = [
   'contact_technique',
   'contact_technique_email',
   'commentaire',
+  'maille_pilotage',
+  'cible_attendue',
+  'couverture_temporelle',
 ];
 
 export async function handleExportMetadataIndicateurs(request: NextApiRequest, response: NextApiResponse) {
@@ -151,6 +154,9 @@ export async function handleExportMetadataIndicateurs(request: NextApiRequest, r
       metadataIndicateur.contactTechnique,
       metadataIndicateur.contactTechniqueEmail,
       metadataIndicateur.commentaire,
+      metadataIndicateur.maillePilotage,
+      metadataIndicateur.cibleAttendue ? 'true' : 'false',
+      metadataIndicateur.couvertureTemporelle,
     ]);
   });
 

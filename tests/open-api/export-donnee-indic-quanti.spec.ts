@@ -3,27 +3,26 @@ import {
   DonneeIndicateurContrat,
   DonneeTerritoireContrat,
 } from '@/server/chantiers/app/contrats/DonneeIndicateurContrat';
+import { authentificationApiDirProjetFn, suppressionAuthentificationApiFn } from '../utils';
 import { configuration } from '@/config';
 
 let apiContext: APIRequestContext;
 let result: APIResponse;
 
-const localTokenAPIEquipeDirProjet =  configuration.tokenAPI.localTokenAPIE2EUtilisateurEquipeDirProjet;
-const chantierIdAccessibleParUtilisateurEquipeDirProjet =  configuration.tokenAPI.chantierIdAccessibleParUtilisateurEquipeDirProjet;
-const indicateurIdAccessibleParUtilisateurEquipeDirProjet =  configuration.tokenAPI.indicateurIdAccessibleParUtilisateurEquipeDirProjet;
+test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les données de l'indicateur", async ({ playwright, page }) => {
+  const { apiDirProjetToken, apiDirProjetUsername, apiDirProjetChantierAssocie, apiDirProjetIndicateurAssocie } = await authentificationApiDirProjetFn({ page });
 
-test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les données de l'indicateur", async ({ playwright }) => {
   await test.step('Création du context - Authorization Pilote - equipe.dir.projet@example.com - EQUIPE_DIR_PROJET', async () => {
     apiContext = await playwright.request.newContext({
-      baseURL: 'http://localhost:3000',
+      baseURL: configuration.baseUrl,
       extraHTTPHeaders: {
-        'Authorization': `Bearer ${localTokenAPIEquipeDirProjet}`,
+        'Authorization': `Bearer ${apiDirProjetToken}`,
       },
     });
   });
 
-  await test.step(`Appel du endpoint /api/open-api/chantier/${chantierIdAccessibleParUtilisateurEquipeDirProjet}/indicateur/${indicateurIdAccessibleParUtilisateurEquipeDirProjet}/donnees`, async () => {
-    result = await apiContext.get(`/api/open-api/chantier/${chantierIdAccessibleParUtilisateurEquipeDirProjet}/indicateur/${indicateurIdAccessibleParUtilisateurEquipeDirProjet}/donnees`);
+  await test.step(`Appel du endpoint /api/open-api/chantier/${apiDirProjetChantierAssocie}/indicateur/${apiDirProjetIndicateurAssocie}/donnees`, async () => {
+    result = await apiContext.get(`/api/open-api/chantier/${apiDirProjetChantierAssocie}/indicateur/${apiDirProjetIndicateurAssocie}/donnees`);
   });
 
   await test.step('Vérification status égal 200 OK', async () => {
@@ -36,9 +35,9 @@ test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les 
     donneeIndicateur = await result.json() as DonneeIndicateurContrat;
   });
 
-  await test.step(`Vérification donnees appartiennent bien au ${chantierIdAccessibleParUtilisateurEquipeDirProjet} et ${indicateurIdAccessibleParUtilisateurEquipeDirProjet}`, async () => {
-    expect(donneeIndicateur.chantier_id).toEqual(chantierIdAccessibleParUtilisateurEquipeDirProjet);
-    expect(donneeIndicateur.indic_id).toEqual(indicateurIdAccessibleParUtilisateurEquipeDirProjet);
+  await test.step(`Vérification donnees appartiennent bien au ${apiDirProjetChantierAssocie} et ${apiDirProjetIndicateurAssocie}`, async () => {
+    expect(donneeIndicateur.chantier_id).toEqual(apiDirProjetChantierAssocie);
+    expect(donneeIndicateur.indic_id).toEqual(apiDirProjetIndicateurAssocie);
   });
 
   await test.step('Vérification donnees territoires possèdes bien 101 données departementales, 18 données régionales et 1 donnée nationale', async () => {
@@ -80,4 +79,6 @@ test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les 
   await test.step("Vérification qu'une donnée territoire possède une 'zone_id'", async () => {
     expect(donneeTerritoire.zone_id).toBeDefined();
   });
+
+  await suppressionAuthentificationApiFn({ page, apiUsername: apiDirProjetUsername });
 });

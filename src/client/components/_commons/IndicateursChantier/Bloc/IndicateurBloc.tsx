@@ -17,15 +17,15 @@ import ValeurEtDate from '@/components/_commons/IndicateursChantier/Bloc/ValeurE
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import IndicateurBlocIndicateurTuile
   from '@/components/_commons/IndicateursChantier/Bloc/indicateurBlocIndicateurTuile';
-import ModalePropositionValeurActuelle
-  from '@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurActuelle/ModalePropositionValeurActuelle';
+import { ModalePropositionValeurAvancement }
+  from '@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurAvancement/ModalePropositionValeurAvancement';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import { formaterDate } from '@/client/utils/date/date';
 import IndicateurTendance from '@/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import ModaleSuppressionValeurActuelle
-  from '@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurActuelle/ModaleSuppressionValeurActuelle';
+import { ModaleSuppressionValeurAvancement }
+  from '@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurAvancement/ModaleSuppressionValeurAvancement';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 import useIndicateurAlerteDateMaj from './useIndicateurAlerteDateMaj';
@@ -39,7 +39,7 @@ interface IndicateurBlocProps {
   detailsIndicateursTerritoire: DétailsIndicateurs
   estInteractif: boolean
   chantierEstTerritorialisé: boolean
-  estAutoriseAProposerUneValeurActuelle: boolean
+  estAutoriseAProposerUneValeurAvancement: boolean
   listeSousIndicateurs: Indicateur[]
   territoireCode: string
   territoiresCompares: string[]
@@ -57,7 +57,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   detailsIndicateursTerritoire,
   estInteractif,
   chantierEstTerritorialisé,
-  estAutoriseAProposerUneValeurActuelle = false,
+  estAutoriseAProposerUneValeurAvancement: estAutoriseAProposerUneValeurAvancement = false,
   listeSousIndicateurs,
   territoireCode,
   territoiresCompares,
@@ -80,13 +80,13 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
 
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
 
-  const { data: variableContenuFFPropositionValeurActuelle } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE' });
+  const { data: variableContenuFFPropositionValeurAvancement } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE' });
 
   const {
     dateDeMiseAJourIndicateur,
     dateProchaineDateMaj,
-    dateProchaineDateValeurActuelle,
-    dateValeurActuelle,
+    dateProchaineDateValeurAvancement,
+    dateValeurAvancement,
     indicateurNonAJour,
     indicateurEstApplicable,
   } = useIndicateurBloc(détailsIndicateur, territoireCode);
@@ -105,10 +105,11 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
 
   const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(indicateurNonAJour, indicateurEstApplicable);
 
-  const estPropositionSurLeBonJalon = détailsIndicateur[territoireCode].dateValeurActuelleMandat !== null ? new Date(détailsIndicateur[territoireCode].dateValeurActuelleMandat!).getFullYear() <= jalon : false;
+  const estPropositionSurLeBonJalon = détailsIndicateur[territoireCode].dateValeurAvancementMandat !== null ? new Date(détailsIndicateur[territoireCode].dateValeurAvancementMandat!).getFullYear() <= jalon : false;
+  const propositionSurMailleDesactivee = indicateur.mailleRegAgregee && mailleSelectionnee == 'regionale';
 
-  const getCalculAvancementMessage = (valeurInitiale: number | null, valeurActuelle: number | null, valeurCible: number | null, tauxAvancement: number | null, jalonAAfficher: number) => {
-    if (valeurInitiale === null || valeurActuelle === null || valeurCible === null || tauxAvancement === null) {
+  const getCalculAvancementMessage = (valeurInitiale: number | null, valeurAvancement: number | null, valeurCible: number | null, tauxAvancement: number | null, jalonAAfficher: number) => {
+    if (valeurInitiale === null || valeurAvancement === null || valeurCible === null || tauxAvancement === null) {
       return (
         <span className='fr-text--sm'>
           Le taux d'avancement n'est pas calculé car des données sont manquantes ou non applicables.
@@ -126,7 +127,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
         {' '}
         ). Il est calculé selon la formule suivante (valeur d'avancement - valeur initiale) / (valeur cible - valeur initiale) soit (
         <b>
-          {valeurActuelle}
+          {valeurAvancement}
         </b>
         {' '}
         -
@@ -346,9 +347,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           { /* Valeur et date valeur d'avancement de indicateurTerritoireJalon en fonction du jalon */}
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                             <ValeurEtDate
-                              date={informationIndicateur.données.dateValeurActuelle}
+                              date={informationIndicateur.données.dateValeurAvancement}
                               unité={informationIndicateur.données.unité}
-                              valeur={informationIndicateur.données.valeurActuelle}
+                              valeur={informationIndicateur.données.valeurAvancement}
                             />
                           </td>
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
@@ -366,7 +367,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               positionTexte='dessus'
                               taille='md'
                               texteInfobulle={
-                                getCalculAvancementMessage(informationIndicateur.données.valeurInitiale, informationIndicateur.données.valeurActuelle, informationIndicateur.données.valeurCibleAnnuelle, informationIndicateur.données.avancement.annuel, jalon)
+                                getCalculAvancementMessage(informationIndicateur.données.valeurInitiale, informationIndicateur.données.valeurAvancement, informationIndicateur.données.valeurCibleAnnuelle, informationIndicateur.données.avancement.annuel, jalon)
                               }
                               valeur={informationIndicateur.données.avancement.annuel}
                               variante='secondaire'
@@ -375,9 +376,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           { /* Valeur et date valeur d'avancement mandat de indicateurTerritoire */}
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                             <ValeurEtDate
-                              date={informationIndicateur.données.dateValeurActuelleMandat}
+                              date={informationIndicateur.données.dateValeurAvancementMandat}
                               unité={informationIndicateur.données.unité}
-                              valeur={informationIndicateur.données.valeurActuelleMandat}
+                              valeur={informationIndicateur.données.valeurAvancementMandat}
                             />
                           </td>
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
@@ -395,7 +396,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               positionTexte='dessus'
                               taille='md'
                               texteInfobulle={
-                                getCalculAvancementMessage(informationIndicateur.données.valeurInitiale, informationIndicateur.données.valeurActuelleMandat, informationIndicateur.données.valeurCible, informationIndicateur.données.avancement.global, 2026)
+                                getCalculAvancementMessage(informationIndicateur.données.valeurInitiale, informationIndicateur.données.valeurAvancementMandat, informationIndicateur.données.valeurCible, informationIndicateur.données.avancement.global, 2026)
                               }
                               valeur={informationIndicateur.données.avancement.global}
                               variante='primaire'
@@ -404,22 +405,35 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                         </tr>
                         {
                           informationIndicateur.code === territoireCode ? (
-                            variableContenuFFPropositionValeurActuelle ? estAutoriseAProposerUneValeurActuelle && informationIndicateur.données.valeurActuelle !== null && informationIndicateur.données.proposition === null ? (
+                            variableContenuFFPropositionValeurAvancement ? estAutoriseAProposerUneValeurAvancement && informationIndicateur.données.valeurAvancement !== null && informationIndicateur.données.proposition === null ? (
                               <tr
                                 className='ligne-creation-proposition-valeur-davancement'
                               >
                                 <td colSpan={8}>
                                   <div className='flex w-full justify-end'>
+                                    {
+                                      propositionSurMailleDesactivee ? (
+                                        <Infobulle
+                                          classNameInfoBulle='tooltip-accordeon'
+                                          idHtml={`infobulle-proposition-desactivee-${indicateur.id}`}
+                                        >
+                                          <p className='fr-text--sm'>
+                                            Les résultats de cet indicateur sont agrégés depuis le niveau départemental. Il n'est donc pas possible de proposer une valeur à une autre maille. Vous pouvez, soit proposer une valeur directement au niveau d'un département ou contacter directement le directeur de projet via l'onglet Responsables.
+                                          </p>
+                                        </Infobulle>
+                                      ) : null
+                                    }
                                     <button
                                       aria-controls={ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id}
                                       className='fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-davancement'
                                       data-fr-opened='false'
+                                      disabled={propositionSurMailleDesactivee}
                                       type='button'
                                     >
                                       Proposer une autre valeur d'avancement
                                     </button>
                                   </div>
-                                  <ModalePropositionValeurActuelle
+                                  <ModalePropositionValeurAvancement
                                     detailIndicateur={informationIndicateur.données}
                                     generatedHTMLID={ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id}
                                     indicateur={indicateur}
@@ -487,9 +501,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                           className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center'
                                         >
                                           <ValeurEtDate
-                                            date={informationIndicateur.données.dateValeurActuelleMandat}
+                                            date={informationIndicateur.données.dateValeurAvancementMandat}
                                             unité={informationIndicateur.données.unité}
-                                            valeur={informationIndicateur.données.proposition.valeurActuelle}
+                                            valeur={informationIndicateur.données.proposition.valeurAvancement}
                                           />
                                         </td>
                                         <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
@@ -522,9 +536,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center'
                                   >
                                     <ValeurEtDate
-                                      date={informationIndicateur.données.dateValeurActuelleMandat}
+                                      date={informationIndicateur.données.dateValeurAvancementMandat}
                                       unité={informationIndicateur.données.unité}
-                                      valeur={informationIndicateur.données.proposition.valeurActuelle}
+                                      valeur={informationIndicateur.données.proposition.valeurAvancement}
                                     />
                                   </td>
                                   <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
@@ -547,7 +561,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   </td>
                                 </tr>
                                 {
-                                  estAutoriseAProposerUneValeurActuelle ? (
+                                  estAutoriseAProposerUneValeurAvancement ? (
                                     <tr className='ligne-modification-proposition-valeur-davancement'>
                                       <td colSpan={8}>
                                         <div className='flex w-full justify-end'>
@@ -568,13 +582,13 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                             Supprimer la proposition
                                           </button>
                                         </div>
-                                        <ModalePropositionValeurActuelle
+                                        <ModalePropositionValeurAvancement
                                           detailIndicateur={informationIndicateur.données}
                                           generatedHTMLID={ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id}
                                           indicateur={indicateur}
                                           territoireCode={territoireCode}
                                         />
-                                        <ModaleSuppressionValeurActuelle
+                                        <ModaleSuppressionValeurAvancement
                                           generatedHTMLID={ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT + indicateur.id}
                                           indicateur={indicateur}
                                           territoireCode={territoireCode}
@@ -613,9 +627,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           </td>
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                             <ValeurEtDate
-                              date={informationIndicateurComparé.données.dateValeurActuelle}
+                              date={informationIndicateurComparé.données.dateValeurAvancement}
                               unité={informationIndicateurComparé.données.unité}
-                              valeur={informationIndicateurComparé.données.valeurActuelle}
+                              valeur={informationIndicateurComparé.données.valeurAvancement}
                             />
                           </td>
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
@@ -638,9 +652,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           { /* Valeur et date valeur d'avancement mandat de indicateurTerritoire */}
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
                             <ValeurEtDate
-                              date={informationIndicateurComparé.données.dateValeurActuelleMandat}
+                              date={informationIndicateurComparé.données.dateValeurAvancementMandat}
                               unité={informationIndicateurComparé.données.unité}
-                              valeur={informationIndicateurComparé.données.valeurActuelleMandat}
+                              valeur={informationIndicateurComparé.données.valeurAvancementMandat}
                             />
                           </td>
                           <td className='fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center'>
@@ -677,8 +691,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 chantierEstTerritorialisé={chantierEstTerritorialisé}
                 dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
                 dateProchaineDateMaj={dateProchaineDateMaj}
-                dateProchaineDateValeurActuelle={dateProchaineDateValeurActuelle}
-                dateValeurActuelle={dateValeurActuelle}
+                dateProchaineDateValeurAvancement={dateProchaineDateValeurAvancement}
+                dateValeurAvancement={dateValeurAvancement}
                 detailsIndicateursTerritoire={detailsIndicateursTerritoire}
                 détailsIndicateurs={détailsIndicateurs}
                 indicateur={indicateur}

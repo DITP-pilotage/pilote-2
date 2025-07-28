@@ -50,17 +50,15 @@ import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usec
 import { profilsRégionaux } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
 import Titre from '@/components/_commons/Titre/Titre';
 import { useGetFullQueryParamString } from '@/client/utils/getQueryParamString';
-import api from '@/server/infrastructure/api/trpc/api';
 import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
 import { ExportDesDonneesV2, ID_HTML_MODALE_EXPORT_V2 } from '@/components/PageAccueil/PageChantiers/ExportDesDonneesV2/ExportDesDonneesV2';
-import ExportDesDonnées, { ID_HTML_MODALE_EXPORT } from '@/components/PageAccueil/PageChantiers/ExportDesDonnées/ExportDesDonnées';
 import { PanelMenuNavigation } from '@/components/_commons/PanelMenuNavigation/PanelMenuNavigation';
 import { FiltresActifs } from '@/components/PageAccueil/FiltresActifs/FiltresActifs';
+import { ModaleInscriptionInfolettre } from '@/components/PageAccueil/PageChantiers/ModaleInscriptionInfoLettre/ModaleInscriptionInfolettre';
 import IndexStyled from './index.styled';
 
 interface ChantierAccueil {
   chantiers: ChantierAccueilContrat[]
-  chantiersIdsExport: string[]
   nombreTotalChantiersAvecAlertes: number
   jalon: number
   ministères: Ministère[]
@@ -73,6 +71,7 @@ interface ChantierAccueil {
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   repartitionMeteosChantiers: RepartitionMeteoContrat
   doitAfficherModaleVideoAccueil: boolean
+  doitAfficherLaModaleInfolettre: boolean
 }
 
 export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ req, res, query }) => {
@@ -133,7 +132,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     estEnAlerteBaisse: query.estEnAlerteBaisse === 'true',
     estEnAlerteMétéoNonRenseignée: query.estEnAlerteMétéoNonRenseignée === 'true',
     estEnAlerteAbscenceTauxAvancementDepartemental: query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
-    estEnAlertePossedePropositionsValeurActuelle: query.estEnAlertePossedePropositionsValeurActuelle === 'true',
+    estEnAlertePossedePropositionsValeurAvancement: query.estEnAlertePossedePropositionsValeurAvancement === 'true',
   };
 
   const [ministères, axes] = session.habilitations.lecture.chantiers.length === 0 ? [[], []] : (
@@ -165,14 +164,14 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     || filtresAlertes.estEnAlerteTauxAvancementNonCalculé
     || filtresAlertes.estEnAlerteMétéoNonRenseignée
     || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental
-    || filtresAlertes.estEnAlertePossedePropositionsValeurActuelle) ? chantiers.filter(chantier => {
+    || filtresAlertes.estEnAlertePossedePropositionsValeurAvancement) ? chantiers.filter(chantier => {
       const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][territoireCode];
       return (filtresAlertes.estEnAlerteÉcart && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
       || (filtresAlertes.estEnAlerteBaisse && Alerte.estEnAlerteBaisse(chantierDonnéesTerritoires.tendance))
       || (filtresAlertes.estEnAlerteTauxAvancementNonCalculé && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierDonnéesTerritoires.avancement.global, chantier.cibleAttendu))
       || (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental && Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.aUnTauxAvancementDepartemental, chantier.cibleAttendu))
       || (filtresAlertes.estEnAlerteMétéoNonRenseignée && Alerte.estEnAlerteMétéoNonRenseignée(chantierDonnéesTerritoires.météo))
-      || (filtresAlertes.estEnAlertePossedePropositionsValeurActuelle && Alerte.estEnAlertePossedePropositionsValeurActuelle(chantierDonnéesTerritoires.aUnePropositionsValeurActuelle));
+      || (filtresAlertes.estEnAlertePossedePropositionsValeurAvancement && Alerte.estEnAlertePossedePropositionsValeurAvancement(chantierDonnéesTerritoires.aUnePropositionsValeurAvancement));
     }) : chantiers;
 
   const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository());
@@ -199,6 +198,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   const estVideoAccueilActive = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_VIDEO_ACCUEIL' }) as boolean;
 
   const doitAfficherModaleVideoAccueil = await getContainer('gestionUtilisateur').resolve('recupererEtatVisualisationVideoAccueilUseCase').execute(session.user.id);
+  const doitAfficherLaModaleInfolettre = await getContainer('gestionUtilisateur').resolve('recupererEtatModaleInscriptionUseCase').execute(session.user.id);
 
   return {
     props: {
@@ -207,7 +207,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
         delete chantier.mailles;
         return chantier;
       }),
-      chantiersIdsExport: chantiersAvecAlertes.map(chantier => chantier.id),
       nombreTotalChantiersAvecAlertes,
       ministères,
       axes,
@@ -220,6 +219,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
       avancementsGlobauxTerritoriauxMoyens,
       repartitionMeteosChantiers,
       doitAfficherModaleVideoAccueil: estVideoAccueilActive && !doitAfficherModaleVideoAccueil,
+      doitAfficherLaModaleInfolettre,
     },
   };
 };
@@ -246,7 +246,6 @@ const PROFIL_REGIONAUX_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE = new Set(profilsR�
 
 const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   chantiers,
-  chantiersIdsExport,
   nombreTotalChantiersAvecAlertes,
   axes,
   ministères,
@@ -259,6 +258,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   repartitionMeteosChantiers,
   jalon,
   doitAfficherModaleVideoAccueil,
+  doitAfficherLaModaleInfolettre,
 }) => {
   const { data: session } = useSession();
 
@@ -287,8 +287,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
     }),
   });
   
-  const { data: estExportV2Actif } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_EXPORT_CSV_V2' });
-
   const queryParamString = useGetFullQueryParamString();
 
   return (
@@ -341,63 +339,47 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
                 ) : null
               }
                 {
-                process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' ? (
-                  <div className='fr-mb-1v'>
-                    <Link
-                      className='lien-menu fr-link fr-link--icon-left fr-icon-article-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france'
-                      href={`${territoireCode}/rapport-detaille${queryParamString.length > 0 ? `?${queryParamString}` : ''}`}
-                      title='Voir le rapport détaillé'
-                    >
-                      Voir le rapport détaillé
-                    </Link>
-                  </div>
-                ) : null
-              }
-                {
-                estExportV2Actif ? (
-                  <div>
-                    <button
-                      aria-controls={ID_HTML_MODALE_EXPORT_V2}
-                      className='fr-link fr-link--icon-left fr-icon-download-line fr-btn--icon-left fr-text--sm fr-p-0 border-b border-blue-france'
-                      data-fr-opened={optionsExport.isModaleExportCsvOuverte}
-                      onClick={() => {
-                        setOptionsExport({
-                          isModaleExportCsvOuverte: true,
-                          etapeCourante: 1,
-                          typeExport: 'chantiers',
-                        });
-                      }}
-                      type='button'
-                    >
-                      Exporter les données
-                    </button>
-                    <ExportDesDonneesV2
-                      fermetureCallback={() => {
-                        setOptionsExport({
-                          etapeCourante: 1,
-                          typeExport: 'chantiers',
-                        }, { clearOnDefault: true, shallow: true });
-                        setOptionsExport({
-                          isModaleExportCsvOuverte: false,
-                        }, { clearOnDefault: true, shallow: true });
-                      }}
-                      territoireCodeSelectionne={territoireCode}
-                    />
-                  </div>
-                ) : (
-                  <div>
-                    <button
-                      aria-controls={ID_HTML_MODALE_EXPORT}
-                      className='fr-link fr-link--icon-left fr-icon-download-line fr-btn--icon-left fr-text--sm fr-p-0 border-b border-blue-france'
-                      data-fr-opened='false'
-                      type='button'
-                    >
-                      Exporter les données
-                    </button>
-                    <ExportDesDonnées listeChantierId={chantiersIdsExport} />
-                  </div>
-                )
-              }
+                  process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' ? (
+                    <div className='fr-mb-1v'>
+                      <Link
+                        className='lien-menu fr-link fr-link--icon-left fr-icon-article-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france'
+                        href={`${territoireCode}/rapport-detaille${queryParamString.length > 0 ? `?${queryParamString}` : ''}`}
+                        title='Voir le rapport détaillé'
+                      >
+                        Voir le rapport détaillé
+                      </Link>
+                    </div>
+                  ) : null
+                }
+                <div>
+                  <button
+                    aria-controls={ID_HTML_MODALE_EXPORT_V2}
+                    className='fr-link fr-link--icon-left fr-icon-download-line fr-btn--icon-left fr-text--sm fr-p-0 border-b border-blue-france'
+                    data-fr-opened={optionsExport.isModaleExportCsvOuverte}
+                    onClick={() => {
+                      setOptionsExport({
+                        isModaleExportCsvOuverte: true,
+                        etapeCourante: 1,
+                        typeExport: 'chantiers',
+                      });
+                    }}
+                    type='button'
+                  >
+                    Exporter les données
+                  </button>
+                  <ExportDesDonneesV2
+                    fermetureCallback={() => {
+                      setOptionsExport({
+                        etapeCourante: 1,
+                        typeExport: 'chantiers',
+                      }, { clearOnDefault: true, shallow: true });
+                      setOptionsExport({
+                        isModaleExportCsvOuverte: false,
+                      }, { clearOnDefault: true, shallow: true });
+                    }}
+                    territoireCodeSelectionne={territoireCode}
+                  />
+                </div>
               </div>
             </div>
           </BarreLatéraleEncart>
@@ -444,6 +426,17 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
                 <ModaleVideoAccueil />
                 <div
                   aria-controls='modale-video-accueil'
+                  data-fr-opened='true'
+                />
+              </>
+            ) : null  
+          }
+          {
+            doitAfficherLaModaleInfolettre ? (
+              <>
+                <ModaleInscriptionInfolettre />
+                <div
+                  aria-controls='modale-inscription-infolettre'
                   data-fr-opened='true'
                 />
               </>

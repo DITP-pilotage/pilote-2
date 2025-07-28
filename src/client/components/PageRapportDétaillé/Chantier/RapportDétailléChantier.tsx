@@ -29,7 +29,6 @@ import RapportDétailléChantierStyled from './RapportDétailléChantier.styled'
 
 const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProps> = ({
   mailleSelectionnee,
-  mailleQuery,
   territoireSélectionné,
   territoireCode,
   chantier,
@@ -118,7 +117,7 @@ const RapportDétailléChantier: FunctionComponent<RapportDétailléChantierProp
                   avancements={avancements}
                   donneesComparaisonDuTauxDAvancement={donneesComparaisonDuTauxDAvancement}
                   jalon={jalon}
-                  mailleQuery={mailleQuery}
+                  mailleQuery={mailleSelectionnee}
                   mailleSelectionnee={mailleSelectionnee}
                   territoireCode={territoireCode}
                 />

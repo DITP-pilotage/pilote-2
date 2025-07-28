@@ -7,9 +7,11 @@ export interface DonneeTerritoireContrat {
   code_insee: string;
   date_valeur_cible: Date | null;
   valeur_initiale: number | null;
-  date_valeur_actuelle: Date | null;
+  valeur_actuelle: number | null; // TODO: supprimer cette colonne
+  date_valeur_actuelle: Date | null; // TODO: supprimer cette colonne
+  valeur_avancement: number | null;
+  date_valeur_avancement: Date | null;
   zone_id: string;
-  valeur_actuelle: number | null;
   date_valeur_initiale: Date | null;
   maille: string;
   taux_avancement: number | null;
@@ -36,8 +38,10 @@ export const presenterEnDonneeIndicateurContrat = (chantierId: string, listeDonn
       zone_id: donneeIndicateur.zoneId,
       valeur_initiale: donneeIndicateur.valeurInitiale,
       date_valeur_initiale: donneeIndicateur.dateValeurInitiale,
-      valeur_actuelle: donneeIndicateur.valeurActuelle,
-      date_valeur_actuelle: donneeIndicateur.dateValeurActuelle,
+      valeur_actuelle: donneeIndicateur.valeurAvancement,
+      date_valeur_actuelle: donneeIndicateur.dateValeurAvancement,
+      valeur_avancement: donneeIndicateur.valeurAvancement,
+      date_valeur_avancement: donneeIndicateur.dateValeurAvancement,
       valeur_cible: donneeIndicateur.valeurCibleGlobale,
       date_valeur_cible: donneeIndicateur.dateValeurCibleGlobale,
       taux_avancement: donneeIndicateur.tauxAvancementGlobale,

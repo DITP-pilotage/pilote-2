@@ -805,9 +805,9 @@ sources:
           - name: mailles
             data_type: text
             description: |
-              Mailles géographiques pour lesquelles les données peuvent être fournies
+              Mailles données pour lesquelles les données peuvent être fournies
             meta:
-              pilote_alias: "Mailles géographiques"
+              pilote_alias: "Mailles données"
               pilote_edit_boxType: multi-select
               pilote_disp_dispDesc: true
               pilote_create_defaultValue: ""
@@ -959,6 +959,51 @@ sources:
               pilote_disp_blocId: 7
               pilote_edit_regex: null
               pilote_edit_regexViolationMessage: null
+
+          - name: maille_pilotage
+            data_type: text
+            description: >
+              Maille de pilotage de l'indicateur. Maille la plus fine à laquelle des valeurs cibles sont attendues.
+            meta:
+              pilote_alias: "Maille de pilotage"
+              pilote_edit_boxType: multi-select
+              pilote_disp_dispDesc: true
+              pilote_create_defaultValue: "_"
+              pilote_disp_blocId: 2
+              pilote_edit_acceptedValues: [
+                { "order_id": 1, "value": "_", "name": "Non piloté", "desc": "Indicateur non utilisé pour le pilotage, sans cible attendue." },
+                { "order_id": 2, "value": "DEPT", "name": "Départemental", "desc": "Pilotage départemental, régional et national" },
+                { "order_id": 3, "value": "REG", "name": "Régional", "desc": "Pilotage régional et national" },
+                { "order_id": 4, "value": "NAT", "name": "National", "desc": "Pilotage national" }
+              ]
+
+          - name: cible_attendue
+            data_type: boolean
+            description: |
+              Avec cible : l'indicateur a vocation à atteindre une cible / sans cible : l'indicateur n'est comparé à aucune valeur de référence. Il s'agit des indicateurs de contexte et de certains indicateurs déclarés sans cible (par conseillers).
+            meta:
+              pilote_alias: "Cible attendue"
+              pilote_edit_boxType: null
+              pilote_disp_dispDesc: true
+              pilote_create_defaultValue: true
+              pilote_disp_blocId: 2
+
+          - name: couverture_temporelle
+            data_type: text
+            description: >
+              Période couverte par la valeur de l'indicateur. Période sur laquelle s'appuie l'observation pour le calcul de l'indicateur.
+            meta:
+              pilote_alias: "Couverture temporelle"
+              pilote_edit_boxType: multi-select
+              pilote_disp_dispDesc: true
+              pilote_create_defaultValue: "continue"
+              pilote_disp_blocId: 2
+              pilote_edit_acceptedValues: [
+                { "order_id": 1, "value": "continue", "name": "Période d'observation", "desc": "Valeur mesurée depuis le début de la période d'observation. Par exemple, depuis une date précise de lancement du programme." },
+                { "order_id": 2, "value": "a_date", "name": "A date", "desc": "Calcul de l'indicateur à date." },
+                { "order_id": 3, "value": "annee", "name": "Année", "desc": "Indicateur observé depuis le début de l'année civile en cours." },
+                { "order_id": 4, "value": "annee_glissante", "name": "Année glissante", "desc": "Indicateur observé sur les 12 derniers mois." }
+              ]
 
   - name: import_from_files
     description: "Cette base de données correspond à la base Pilote de production."

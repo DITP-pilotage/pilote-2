@@ -35,7 +35,7 @@ export const handleExportDesHistoriquesIndicateurs = async (request: NextApiRequ
     estEnAlerteBaisse: request.query.estEnAlerteBaisse === 'true',
     estEnAlerteMétéoNonRenseignée: request.query.estEnAlerteMétéoNonRenseignée === 'true',
     estEnAlerteAbscenceTauxAvancementDepartemental: request.query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
-    estEnAlertePossedePropositionsValeurActuelle: request.query.estEnAlertePossedePropositionsValeurActuelle === 'true', 
+    estEnAlertePossedePropositionsValeurAvancement: request.query.estEnAlertePossedePropositionsValeurAvancement === 'true', 
   };
 
   const headersColumns = ExportCsvDesHistoriquesIndicateursUseCase.NOMS_COLONNES(jalon);

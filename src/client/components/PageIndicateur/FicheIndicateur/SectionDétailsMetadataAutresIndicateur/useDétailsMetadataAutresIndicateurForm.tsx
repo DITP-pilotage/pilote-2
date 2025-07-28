@@ -19,6 +19,9 @@ export type MetadataParametrageAutresIndicateurForm = {
   contactTechnique: string | null;
   contactTechniqueEmail: string;
   commentaire: string | null;
+  maillePilotage: string;
+  cibleAttendue: boolean;
+  couvertureTemporelle: string;
 };
 
 function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageAutresIndicateurForm>) {
@@ -26,6 +29,9 @@ function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageAutresI
   watch('indicIsPhare');
   watch('projetAnnuelPerf');
   watch('indicTerritorialise');
+  watch('cibleAttendue');
+  watch('couvertureTemporelle');
+  watch('maillePilotage');
   watch('donneeOuverte');
 }
 

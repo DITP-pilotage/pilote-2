@@ -6,9 +6,9 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
 
   const dateProchaineDateMaj = formaterDate(détailsIndicateur[territoireCode]?.prochaineDateMaj, 'MM/YYYY') ?? null;
 
-  const dateProchaineDateValeurActuelle = formaterDate(détailsIndicateur[territoireCode]?.prochaineDateValeurActuelle, 'MM/YYYY') ?? null;
+  const dateProchaineDateValeurAvancement = formaterDate(détailsIndicateur[territoireCode]?.prochaineDateValeurAvancement, 'MM/YYYY') ?? null;
 
-  const dateValeurActuelle = formaterDate(détailsIndicateur[territoireCode]?.dateValeurActuelle, 'MM/YYYY') ?? null;
+  const dateValeurAvancement = formaterDate(détailsIndicateur[territoireCode]?.dateValeurAvancement, 'MM/YYYY') ?? null;
 
   const indicateurNonAJour = !détailsIndicateur[territoireCode]?.estAJour;
 
@@ -17,8 +17,8 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
   return {
     dateDeMiseAJourIndicateur,
     dateProchaineDateMaj,
-    dateProchaineDateValeurActuelle,
-    dateValeurActuelle,
+    dateProchaineDateValeurAvancement,
+    dateValeurAvancement,
     indicateurNonAJour,
     indicateurEstApplicable,
   };

@@ -35,7 +35,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
-    estEnAlertePossedePropositionsValeurActuelle: parseAsBoolean.withDefault(false),
+    estEnAlertePossedePropositionsValeurAvancement: parseAsBoolean.withDefault(false),
   }, {
     shallow: false,
     clearOnDefault: true,
@@ -54,7 +54,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
     + (filtres.estEnAlerteBaisse ? 1 : 0)
     + (filtres.estEnAlerteMétéoNonRenseignée ? 1 : 0)
     + (filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0)
-    + (filtres.estEnAlertePossedePropositionsValeurActuelle ? 1 : 0);
+    + (filtres.estEnAlertePossedePropositionsValeurAvancement ? 1 : 0);
 
   if (nombreFiltresActifs === 0) {
     return null;
@@ -91,7 +91,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
       estEnAlerteBaisse: false,
       estEnAlerteMétéoNonRenseignée: false,
       estEnAlerteAbscenceTauxAvancementDepartemental: false,
-      estEnAlertePossedePropositionsValeurActuelle: false,
+      estEnAlertePossedePropositionsValeurAvancement: false,
     });
   };
 
@@ -132,7 +132,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
       </div>
       <div className={`${estOuvert ? 'fr-collapse--expanded fr-px-3w fr-pb-2w' : 'fr-collapse'}`}>
         {
-          filtres.estEnAlerteTauxAvancementNonCalculé || filtres.estEnAlerteÉcart || filtres.estEnAlerteBaisse || filtres.estEnAlerteMétéoNonRenseignée || filtres.estEnAlerteAbscenceTauxAvancementDepartemental || filtres.estEnAlertePossedePropositionsValeurActuelle ? (
+          filtres.estEnAlerteTauxAvancementNonCalculé || filtres.estEnAlerteÉcart || filtres.estEnAlerteBaisse || filtres.estEnAlerteMétéoNonRenseignée || filtres.estEnAlerteAbscenceTauxAvancementDepartemental || filtres.estEnAlertePossedePropositionsValeurAvancement ? (
             <div className='fr-grid-row'>
               <div className='fr-col-lg-2 fr-col-5 fr-col-sm-3 flex justify-end fr-pr-1w fr-pt-1v'>
                 <span className='bold fr-text--xs fr-mb-0'>
@@ -234,7 +234,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
                     ) : null
                   }
                   {
-                    filtres.estEnAlertePossedePropositionsValeurActuelle ? (
+                    filtres.estEnAlertePossedePropositionsValeurAvancement ? (
                       <li>
                         <Tag
                           color='warning'
@@ -242,9 +242,9 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({ ministèr
                           libelle="Chantier(s) avec proposition(s) de valeur d'avancement"
                           size='sm'
                           suppressionCallback={() => {
-                            filtres.estEnAlertePossedePropositionsValeurActuelle = false;
+                            filtres.estEnAlertePossedePropositionsValeurAvancement = false;
 
-                            sauvegarderFiltres({ estEnAlertePossedePropositionsValeurActuelle: false });
+                            sauvegarderFiltres({ estEnAlertePossedePropositionsValeurAvancement: false });
                             return setFiltres(filtres);
                           }}
                         />

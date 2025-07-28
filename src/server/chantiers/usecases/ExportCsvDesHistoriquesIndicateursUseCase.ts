@@ -33,8 +33,8 @@ const presenterEnHistoriqueIndicateurExportContrat = (historiqueIndicateurPourEx
     formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurCibleAnnuelle, historiqueIndicateurPourExport.estApplicable, 'MM-YYYY'),
     formaterNumériqueOuValeurNonRenseignee(historiqueIndicateurPourExport.valeurCible, historiqueIndicateurPourExport.estApplicable),
     formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurCible, historiqueIndicateurPourExport.estApplicable, 'MM-YYYY'),
-    formaterNumériqueOuValeurNonRenseignee(historiqueIndicateurPourExport.valeurActuelle, historiqueIndicateurPourExport.estApplicable),
-    formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurActuelle, historiqueIndicateurPourExport.estApplicable, 'MM-YYYY'),
+    formaterNumériqueOuValeurNonRenseignee(historiqueIndicateurPourExport.valeurAvancement, historiqueIndicateurPourExport.estApplicable),
+    formaterDateHeureOuNonRenseignee(historiqueIndicateurPourExport.dateValeurAvancement, historiqueIndicateurPourExport.estApplicable, 'MM-YYYY'),
   ];
 };
 

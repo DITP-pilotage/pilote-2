@@ -79,6 +79,9 @@ export interface MetadataParametrageIndicateurContrat {
   contactTechnique: string | null;
   contactTechniqueEmail: string;
   commentaire: string | null;
+  maillePilotage: string;
+  cibleAttendue: boolean;
+  couvertureTemporelle: string;
 }
 
 export const presenterEnMetadataParametrageIndicateurContrat = (metadataParametrageIndicateur: MetadataParametrageIndicateur): MetadataParametrageIndicateurContrat => ({
@@ -147,6 +150,9 @@ export const presenterEnMetadataParametrageIndicateurContrat = (metadataParametr
   contactTechnique: metadataParametrageIndicateur.contactTechnique,
   contactTechniqueEmail: metadataParametrageIndicateur.contactTechniqueEmail,
   commentaire: metadataParametrageIndicateur.commentaire,
+  maillePilotage: metadataParametrageIndicateur.maillePilotage,
+  cibleAttendue: metadataParametrageIndicateur.cibleAttendue,
+  couvertureTemporelle: metadataParametrageIndicateur.couvertureTemporelle,
 });
 
 export const presenterEnMetadataParametrageIndicateurInformationContrat = (metadataParametrageIndicateur: MetadataParametrageIndicateur, informationDerniereModificationMetadataIndicateurContrat: InformationDerniereModificationMetadataIndicateurContrat): MetadataParametrageIndicateurInformationContrat => ({

@@ -45,7 +45,7 @@ export type ChantierPourExport = {
   tendance: ChantierTendance | null
   avancementTerritoire: number | null
   cibleAttendu: boolean
-  aUnePropositionsValeurActuelle: boolean
+  aUnePropositionsValeurAvancement: boolean
   aUnTauxAvancementDepartemental: boolean
 };
 
@@ -80,13 +80,13 @@ export const verifierOptionChantiersSignales = (
   chantierCibleAttendue: boolean,
   chantierAUnTauxAvancementDepartemental: boolean,
   chantierMeteo: Météo,
-  chantierAUnePropositionsValeurActuelle: boolean,
+  chantierAUnePropositionsValeurAvancement: boolean,
 ) => {
   // eslint-disable-next-line unicorn/prefer-ternary
   if (optionsExport.estEnAlerteAbscenceTauxAvancementDepartemental 
     || optionsExport.estEnAlerteBaisse 
     || optionsExport.estEnAlerteMétéoNonRenseignée 
-    || optionsExport.estEnAlertePossedePropositionsValeurActuelle
+    || optionsExport.estEnAlertePossedePropositionsValeurAvancement
     || optionsExport.estEnAlerteTauxAvancementNonCalculé
     || optionsExport.estEnAlerteÉcart
   ) {
@@ -95,7 +95,7 @@ export const verifierOptionChantiersSignales = (
     || (optionsExport.estEnAlerteTauxAvancementNonCalculé && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierAvancementTerritoire, chantierCibleAttendue))
     || (optionsExport.estEnAlerteAbscenceTauxAvancementDepartemental && Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantierAUnTauxAvancementDepartemental, chantierCibleAttendue))
     || (optionsExport.estEnAlerteMétéoNonRenseignée && Alerte.estEnAlerteMétéoNonRenseignée(chantierMeteo))
-    || (optionsExport.estEnAlertePossedePropositionsValeurActuelle && Alerte.estEnAlertePossedePropositionsValeurActuelle(chantierAUnePropositionsValeurActuelle));
+    || (optionsExport.estEnAlertePossedePropositionsValeurAvancement && Alerte.estEnAlertePossedePropositionsValeurAvancement(chantierAUnePropositionsValeurAvancement));
   } else {
     return true;
   }

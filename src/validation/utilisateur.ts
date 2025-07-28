@@ -32,20 +32,24 @@ export const validationInfosBaseUtilisateur = z.object( {
   fonction: z.string().max(100).nullable(),
   profil: z.enum(profilsCodes),
   saisieIndicateur: z.boolean(),
-  saisieCommentaire: z.boolean(),
   gestionUtilisateur: z.boolean(),
 });
 
+const adresseEstValide = (adresse: string) => {
+  return adresse.endsWith('.gouv.fr') 
+    || /^.+@ac-[\da-z\-]+\.fr$/i.test(adresse) 
+    || /^.+@region-academique-[\da-z\-]+\.fr$/i.test(adresse);
+};
+
 export const validationInfosBaseUtilisateurNonAdmin = z.object({
   email: z.string().email().min(1).max(100).refine((value) =>
-    value.endsWith('.gouv.fr') || /^.+@ac-[\da-z\-]+\.fr$/i.test(value), { message: customErrorMail },
+    adresseEstValide(value), { message: customErrorMail },
   ),
   nom: z.string().min(1).max(100),
   prénom: z.string().min(1).max(100),
   fonction: z.string().max(100).nullable(),
   profil: z.enum(profilsCodes),
   saisieIndicateur: z.boolean(),
-  saisieCommentaire: z.boolean(),
 });
 
 export const validationInfosHabilitationsUtilisateur = z.object({
@@ -56,6 +60,9 @@ export const validationInfosHabilitationsUtilisateur = z.object({
       périmètres: z.string().array(),
     }),
     responsabilite: z.object({
+      chantiers: z.string().array(),
+    }),
+    saisieCommentaire: z.object({
       chantiers: z.string().array(),
     }),
   }),
@@ -91,6 +98,11 @@ export const validationReactiverUtilisateur = z.object({
 
 export const validationDesactiverVideoAccueil = z.object({
   utilisateurId: z.string(),
+});
+
+export const validationEnvoyerMailInscriptionInfolettre = z.object({
+  utilisateurEmail: z.string(),
+  lienConfirmationInscription: z.string(),
 });
 
 export const codesTerritoiresDROM = ['NAT-FR', 'REG-01', 'REG-02', 'REG-03', 'REG-04', 'REG-06', 'DEPT-971', 'DEPT-972', 'DEPT-973', 'DEPT-974', 'DEPT-976'];

@@ -59,7 +59,7 @@ const ExportDesDonnées: FunctionComponent<{ listeChantierId: string[] }> = ({ l
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
-    estEnAlertePossedePropositionsValeurActuelle: parseAsBoolean.withDefault(false),
+    estEnAlertePossedePropositionsValeurAvancement: parseAsBoolean.withDefault(false),
   });
 
   const arrayOptionsExport: {
@@ -104,8 +104,8 @@ const ExportDesDonnées: FunctionComponent<{ listeChantierId: string[] }> = ({ l
     arrayOptionsExport.push({ name: 'estEnAlerteMétéoNonRenseignée', value: true });
   }
 
-  if (filtres.estEnAlertePossedePropositionsValeurActuelle) {
-    arrayOptionsExport.push({ name: 'estEnAlertePossedePropositionsValeurActuelle', value: true });
+  if (filtres.estEnAlertePossedePropositionsValeurAvancement) {
+    arrayOptionsExport.push({ name: 'estEnAlertePossedePropositionsValeurAvancement', value: true });
   }
 
   if (filtres.estEnAlerteTauxAvancementNonCalculé) {

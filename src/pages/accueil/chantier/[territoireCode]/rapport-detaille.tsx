@@ -62,7 +62,6 @@ interface NextPageRapportDétailléProps {
   indicateursGroupésParChantier: Record<string, Indicateur[]>
   détailsIndicateursGroupésParChantier: Record<string, DétailsIndicateurs>
   publicationsGroupéesParChantier: PublicationsGroupéesParChantier
-  mailleQuery: MailleInterne
   mailleSelectionnee: MailleInterne
   listeAvancementsStatistiques: { id: string, avancementChantierRapportDetaille: AvancementChantierRapportDetaille }[]
   territoireCode: string
@@ -120,7 +119,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     estEnAlerteBaisse: query.estEnAlerteBaisse === 'true',
     estEnAlerteMétéoNonRenseignée: query.estEnAlerteMétéoNonRenseignée === 'true',
     estEnAlerteAbscenceTauxAvancementDepartemental: query.estEnAlerteAbscenceTauxAvancementDepartemental === 'true',
-    estEnAlertePossedePropositionsValeurActuelle: query.estEnAlertePossedePropositionsValeurActuelle === 'true',
+    estEnAlertePossedePropositionsValeurAvancement: query.estEnAlertePossedePropositionsValeurAvancement === 'true',
   };
 
   const [ministères, axes] = session.habilitations.lecture.chantiers.length === 0 ? [[], []] : (
@@ -159,14 +158,14 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     || filtresAlertes.estEnAlerteTauxAvancementNonCalculé
     || filtresAlertes.estEnAlerteMétéoNonRenseignée
     || filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental
-    || filtresAlertes.estEnAlertePossedePropositionsValeurActuelle) ? chantiers.filter(chantier => {
+    || filtresAlertes.estEnAlertePossedePropositionsValeurAvancement) ? chantiers.filter(chantier => {
       const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][territoireCode];
       return (filtresAlertes.estEnAlerteÉcart && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
       || (filtresAlertes.estEnAlerteBaisse && Alerte.estEnAlerteBaisse(chantierDonnéesTerritoires.tendance))
       || (filtresAlertes.estEnAlerteTauxAvancementNonCalculé && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierDonnéesTerritoires.avancement.global, chantier.cibleAttendu))
       || (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental && Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.aUnTauxAvancementDepartemental, chantier.cibleAttendu))
       || (filtresAlertes.estEnAlerteMétéoNonRenseignée && Alerte.estEnAlerteMétéoNonRenseignée(chantierDonnéesTerritoires.météo))
-      || (filtresAlertes.estEnAlertePossedePropositionsValeurActuelle && Alerte.estEnAlertePossedePropositionsValeurActuelle(chantierDonnéesTerritoires.aUnePropositionsValeurActuelle));
+      || (filtresAlertes.estEnAlertePossedePropositionsValeurAvancement && Alerte.estEnAlertePossedePropositionsValeurAvancement(chantierDonnéesTerritoires.aUnePropositionsValeurAvancement));
     }) : chantiers;
 
   const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository());
@@ -332,7 +331,6 @@ const NextPageRapportDétaillé: FunctionComponent<NextPageRapportDétailléProp
   indicateursGroupésParChantier,
   détailsIndicateursGroupésParChantier,
   publicationsGroupéesParChantier,
-  mailleQuery,
   mailleSelectionnee,
   listeAvancementsStatistiques,
   filtresComptesCalculés,
@@ -377,7 +375,6 @@ const NextPageRapportDétaillé: FunctionComponent<NextPageRapportDétailléProp
         indicateursGroupésParChantier={indicateursGroupésParChantier}
         jalon={jalon}
         listeIndicateursPrisEnCompteAvancement={listeIndicateursPrisEnCompteAvancement}
-        mailleQuery={mailleQuery}
         mailleSelectionnee={mailleSelectionnee}
         mapChantierStatistiques={mapChantierStatistiques}
         mapDonnéesCartographieAvancement={mapDonnéesCartographieAvancement}

@@ -66,6 +66,6 @@ export class ChantierFicheTerritoriale {
   }
 
   static calculerDateQuantitative(indicateurs: Indicateur[]) {
-    return indicateurs.map(indicateur => indicateur.dateValeurActuelle).sort().reverse()[0] || '';
+    return indicateurs.map(indicateur => indicateur.dateValeurAvancement).sort().reverse()[0] || '';
   }
 }

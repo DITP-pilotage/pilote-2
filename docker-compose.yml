@@ -7,7 +7,7 @@ services:
     image: postgres:16.2-alpine
     shm_size: 1g
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     environment:
       - POSTGRES_USER=${PGUSER}
       - POSTGRES_PASSWORD=${PGPASSWORD}
@@ -22,7 +22,7 @@ services:
     image: postgres:16.2-alpine
     shm_size: 1g
     ports:
-      - "5433:5432"
+      - "${POSTGRES_TEST_PORT:-5433}:5432"
     environment:
       - POSTGRES_USER=${PGUSER}
       - POSTGRES_PASSWORD=${PGPASSWORD}
@@ -32,8 +32,8 @@ services:
     image: traefik:v2.10
     command: --api.insecure=true --providers.docker
     ports:
-      - "80:80"
-      #- "8080:8080"
+      - "${TRAEFIK_PORT:-80}:80"
+      #- "${TRAEFIK_API_PORT:-8080}:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 

@@ -403,18 +403,18 @@ export class PrismaChantierRepository implements ChantierRepository {
             prismaChantierTerritoireNat = prismaChantierIdentite.chantier_territoire.find(chantierTerritoire => chantierTerritoire.territoire_code === 'NAT-FR')!;
           }
 
-          let aUnePropositionsValeurActuelle = false;
+          let aUnePropositionsValeurAvancement = false;
           const maille = prismaChantierTerritoire.maille;
           if (maille === 'DEPT') {
-            aUnePropositionsValeurActuelle = prismaChantierTerritoire.nombre_propositions_valeur_actuelle > 0;
+            aUnePropositionsValeurAvancement = prismaChantierTerritoire.nombre_propositions_valeur_actuelle > 0;
           } else if (maille === 'REG') {
             const codeRegion = prismaChantierTerritoire.territoire_code;
-            aUnePropositionsValeurActuelle = prismaChantierTerritoire.nombre_propositions_valeur_actuelle > 0 || 
+            aUnePropositionsValeurAvancement = prismaChantierTerritoire.nombre_propositions_valeur_actuelle > 0 || 
               prismaChantierIdentite.chantier_territoire
                 .filter(chantierTerritoire => chantierTerritoire.territoire.code_parent === codeRegion)
                 .some(chantierTerritoire => chantierTerritoire.nombre_propositions_valeur_actuelle > 0);
           } else {
-            aUnePropositionsValeurActuelle = prismaChantierIdentite.chantier_territoire.some(chantierTerritoire => chantierTerritoire.nombre_propositions_valeur_actuelle > 0);
+            aUnePropositionsValeurAvancement = prismaChantierIdentite.chantier_territoire.some(chantierTerritoire => chantierTerritoire.nombre_propositions_valeur_actuelle > 0);
           }
 
           const chantiersTerritoiresMailleDepartementale = prismaChantierIdentite.chantier_territoire.filter(chantierTerritoire => chantierTerritoire.maille === 'DEPT' && chantierTerritoire.est_applicable);
@@ -457,7 +457,7 @@ export class PrismaChantierRepository implements ChantierRepository {
             tendance: prismaChantierTerritoire.tendance,
             cibleAttendu: prismaChantierIdentite.cible_attendue,
             avancementTerritoire: prismaChantierTerritoire.taux_avancement_mandat,
-            aUnePropositionsValeurActuelle: aUnePropositionsValeurActuelle,
+            aUnePropositionsValeurAvancement: aUnePropositionsValeurAvancement,
             aUnTauxAvancementDepartemental: chantiersTerritoiresMailleDepartementale.length === 0 || chantiersTerritoiresMailleDepartementale.some(chantierTerritoire => chantierTerritoire.taux_avancement_mandat !== null),
           }];
         }
@@ -700,18 +700,18 @@ export class PrismaChantierRepository implements ChantierRepository {
             prismaChantierTerritoireNat = prismaChantierIdentite.chantier_territoire.find(chantierTerritoire => chantierTerritoire.territoire_code === 'NAT-FR')!;
           }
 
-          let aUnePropositionsValeurActuelle = false;
+          let aUnePropositionsValeurAvancement = false;
           const maille = prismaChantierTerritoire.maille;
           if (maille === 'DEPT') {
-            aUnePropositionsValeurActuelle = prismaChantierTerritoire.nombre_propositions_valeur_actuelle > 0;
+            aUnePropositionsValeurAvancement = prismaChantierTerritoire.nombre_propositions_valeur_actuelle > 0;
           } else if (maille === 'REG') {
             const codeRegion = prismaChantierTerritoire.territoire_code;
-            aUnePropositionsValeurActuelle = prismaChantierTerritoire.nombre_propositions_valeur_actuelle > 0 || 
+            aUnePropositionsValeurAvancement = prismaChantierTerritoire.nombre_propositions_valeur_actuelle > 0 || 
               prismaChantierIdentite.chantier_territoire
                 .filter(chantierTerritoire => chantierTerritoire.territoire.code_parent === codeRegion)
                 .some(chantierTerritoire => chantierTerritoire.nombre_propositions_valeur_actuelle > 0);
           } else {
-            aUnePropositionsValeurActuelle = prismaChantierIdentite.chantier_territoire.some(chantierTerritoire => chantierTerritoire.nombre_propositions_valeur_actuelle > 0);
+            aUnePropositionsValeurAvancement = prismaChantierIdentite.chantier_territoire.some(chantierTerritoire => chantierTerritoire.nombre_propositions_valeur_actuelle > 0);
           }
 
           const chantiersTerritoiresMailleDepartementale = prismaChantierIdentite.chantier_territoire.filter(chantierTerritoire => chantierTerritoire.maille === 'DEPT' && chantierTerritoire.est_applicable);
@@ -754,7 +754,7 @@ export class PrismaChantierRepository implements ChantierRepository {
             tendance: prismaChantierTerritoire.tendance,
             cibleAttendu: prismaChantierIdentite.cible_attendue,
             avancementTerritoire: prismaChantierTerritoire.taux_avancement_mandat,
-            aUnePropositionsValeurActuelle: aUnePropositionsValeurActuelle,
+            aUnePropositionsValeurAvancement: aUnePropositionsValeurAvancement,
             aUnTauxAvancementDepartemental: chantiersTerritoiresMailleDepartementale.length === 0 || chantiersTerritoiresMailleDepartementale.some(chantierTerritoire => chantierTerritoire.taux_avancement_mandat !== null),
           }];
         }

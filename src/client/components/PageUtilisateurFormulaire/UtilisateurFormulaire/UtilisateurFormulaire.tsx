@@ -10,6 +10,7 @@ import IndicateurDEtapes from '@/components/_commons/IndicateurDEtapes/Indicateu
 import { donneValidationInfosBaseUtilisateur } from '@/validation/utilisateur';
 import RécapitulatifUtilisateur
   from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/RécapitulatifUtilisateur/RécapitulatifUtilisateur';
+import api from '@/server/infrastructure/api/trpc/api';
 import { UtilisateurFormInputs, UtilisateurFormulaireProps } from './UtilisateurFormulaire.interface';
 import SaisieDesInformationsUtilisateur from './SaisieDesInformationsUtilisateur/SaisieDesInformationsUtilisateur';
 
@@ -17,6 +18,8 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({ 
   const étapes = ['Identifier l\'utilisateur', 'Vérifier les droits attribués au compte'];
   const [etapeCourante, setEtapeCourante] = useState(1);
   const { data: session } = useSession();
+  const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
+  const { data: territoires } = api.territoire.récupérerListe.useQuery({ territoireCodes: null }, { staleTime: Number.POSITIVE_INFINITY });
 
   const reactHookForm = useForm<UtilisateurFormInputs>({
     resolver: zodResolver(donneValidationInfosBaseUtilisateur(session!.profil)),
@@ -27,7 +30,6 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({ 
       fonction: utilisateur?.fonction,
       profil: utilisateur?.profil,
       gestionUtilisateur: utilisateur?.gestionUtilisateur,
-      saisieCommentaire: utilisateur?.saisieCommentaire,
       saisieIndicateur: utilisateur?.saisieIndicateur,
       habilitations: {
         lecture: {
@@ -37,6 +39,9 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({ 
         },
         responsabilite: {
           chantiers: utilisateur?.habilitations.responsabilite.chantiers,
+        },
+        saisieCommentaire: {
+          chantiers: utilisateur?.habilitations.saisieCommentaire.chantiers,
         },
       },
     },
@@ -49,6 +54,10 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({ 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [etapeCourante]);
+
+  // FIXME - il y a une race condition dans le multi select qui fait que le formulaire ne s'initialise pas
+  //  avec les bons chantiers. Ici, on s'assure quel les données sont chargées avant de rendre le formulaire.
+  if (chantiers == null || territoires == null) return null;
 
   return (
     <>
