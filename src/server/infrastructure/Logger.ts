@@ -1,11 +1,11 @@
-import pino, { Logger } from 'pino';
+import pino, { Logger } from "pino";
 
 class AppLogger {
   private readonly _logger: Logger;
 
   constructor() {
     this._logger = pino({
-      level: 'info',
+      level: "info",
     });
   }
 

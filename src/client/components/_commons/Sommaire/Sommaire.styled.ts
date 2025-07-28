@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const SommaireStyled = styled.div`
   position: sticky;
@@ -13,7 +13,7 @@ const SommaireStyled = styled.div`
     a:not(:hover, :active) {
       --underline-idle-width: 0;
     }
-    
+
     .line-height-xs {
       padding-bottom: 0.75rem;
       line-height: 1.25rem;

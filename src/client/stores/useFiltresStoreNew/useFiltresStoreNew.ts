@@ -1,45 +1,45 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 export interface FiltreAccueil {
-  territoireCode: string
-  perimetres: string[]
-  axes: string[]
-  meteos: string[]
-  maille: string
-  territorialisation: string[]
-  q: string
-  statut: string
-  jalon: string
-  groupeParMinistere: boolean
-  estBarometre: boolean
-  estTerritorialise: boolean
-  estEnAlerteTauxAvancementNonCalculé: boolean
-  estEnAlerteÉcart: boolean
-  estEnAlerteBaisse: boolean
-  estEnAlerteMétéoNonRenseignée: boolean
-  estEnAlerteAbscenceTauxAvancementDepartemental: boolean
-  estEnAlertePossedePropositionsValeurAvancement: boolean
+  territoireCode: string;
+  perimetres: string[];
+  axes: string[];
+  meteos: string[];
+  maille: string;
+  territorialisation: string[];
+  q: string;
+  statut: string;
+  jalon: string;
+  groupeParMinistere: boolean;
+  estBarometre: boolean;
+  estTerritorialise: boolean;
+  estEnAlerteTauxAvancementNonCalculé: boolean;
+  estEnAlerteÉcart: boolean;
+  estEnAlerteBaisse: boolean;
+  estEnAlerteMétéoNonRenseignée: boolean;
+  estEnAlerteAbscenceTauxAvancementDepartemental: boolean;
+  estEnAlertePossedePropositionsValeurAvancement: boolean;
 }
 
 interface FiltresStore {
-  filtresActifs: FiltreAccueil,
+  filtresActifs: FiltreAccueil;
   actions: {
-    sauvegarderFiltres: (filtre: Partial<FiltreAccueil>) => void
-    reinitialiserFiltres: () => void
-    get: () => FiltreAccueil
-  }
+    sauvegarderFiltres: (filtre: Partial<FiltreAccueil>) => void;
+    reinitialiserFiltres: () => void;
+    get: () => FiltreAccueil;
+  };
 }
 
 const etatInitial = {
   perimetres: [] as string[],
   axes: [] as string[],
   meteos: [] as string[],
-  territoireCode: '',
-  maille: '',
+  territoireCode: "",
+  maille: "",
   territorialisation: [] as string[],
-  q: '',
-  statut: 'PUBLIE',
-  jalon: '2025',
+  q: "",
+  statut: "PUBLIE",
+  jalon: "2025",
   groupeParMinistere: false,
   estBarometre: false,
   estTerritorialise: false,
@@ -53,21 +53,24 @@ const etatInitial = {
 const useFiltresStoreNew = create<FiltresStore>((set, get) => ({
   filtresActifs: etatInitial,
   actions: {
-    sauvegarderFiltres: (filtre: Partial<FiltreAccueil>) => set((etatActuel) => ({
-      filtresActifs: {
-        ...etatActuel.filtresActifs,
-        ...filtre,
-      },
-    })),
-    reinitialiserFiltres: () => set(() => ({
-      filtresActifs: etatInitial,
-    })),
+    sauvegarderFiltres: (filtre: Partial<FiltreAccueil>) =>
+      set((etatActuel) => ({
+        filtresActifs: {
+          ...etatActuel.filtresActifs,
+          ...filtre,
+        },
+      })),
+    reinitialiserFiltres: () =>
+      set(() => ({
+        filtresActifs: etatInitial,
+      })),
     get: () => get().filtresActifs,
   },
 }));
 
 // eslint-disable-next-line react-hooks/rules-of-hooks
-export const sauvegarderFiltres = useFiltresStoreNew.getState().actions.sauvegarderFiltres;
-export const reinitialiserFiltres = useFiltresStoreNew.getState().actions.reinitialiserFiltres;
+export const sauvegarderFiltres =
+  useFiltresStoreNew.getState().actions.sauvegarderFiltres;
+export const reinitialiserFiltres =
+  useFiltresStoreNew.getState().actions.reinitialiserFiltres;
 export const getFiltresActifs = useFiltresStoreNew.getState().actions.get;
-

@@ -1,30 +1,48 @@
-import { AwilixContainer } from 'awilix';
+import { AwilixContainer } from "awilix";
 import {
   getParametrageIndicateurContainer,
   ParametrageIndicateurDependencies,
-} from '@/server/parametrage-indicateur/container';
-import { ChantierDependencies, getChantiersContainer } from '@/server/chantiers/container';
-import { getImportIndicateurContainer, ImportIndicateurDependencies } from '@/server/import-indicateur/container';
-import { AuthentificationDependencies, getAuthentificationContainer } from '@/server/authentification/container';
-import { FicheConducteurDependencies, getFicheConducteurContainer } from '@/server/fiche-conducteur/container';
-import { PrismaPilote } from '@/server/db/PrismaPilote';
-import { GestionUtilisateurDependencies, getGestionUtilisateurContainer } from './gestion-utilisateur/container';
-import { getParametrageNouveautesContainer, ParametrageNouveautesDependencies } from './parametrage-nouveautes/container';
-import { getInitialContainer } from './initial-container';
+} from "@/server/parametrage-indicateur/container";
+import {
+  ChantierDependencies,
+  getChantiersContainer,
+} from "@/server/chantiers/container";
+import {
+  getImportIndicateurContainer,
+  ImportIndicateurDependencies,
+} from "@/server/import-indicateur/container";
+import {
+  AuthentificationDependencies,
+  getAuthentificationContainer,
+} from "@/server/authentification/container";
+import {
+  FicheConducteurDependencies,
+  getFicheConducteurContainer,
+} from "@/server/fiche-conducteur/container";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
+import {
+  GestionUtilisateurDependencies,
+  getGestionUtilisateurContainer,
+} from "./gestion-utilisateur/container";
+import {
+  getParametrageNouveautesContainer,
+  ParametrageNouveautesDependencies,
+} from "./parametrage-nouveautes/container";
+import { getInitialContainer } from "./initial-container";
 
 export interface InitialDependencies {
-  prisma: PrismaPilote
+  prisma: PrismaPilote;
 }
 
 export type ContainerDependencies = {
-  authentification: AwilixContainer<AuthentificationDependencies>
-  chantiers: AwilixContainer<ChantierDependencies>,
-  parametrageIndicateur: AwilixContainer<ParametrageIndicateurDependencies>
-  importIndicateur: AwilixContainer<ImportIndicateurDependencies>
-  gestionUtilisateur: AwilixContainer<GestionUtilisateurDependencies>
-  ficheConducteur: AwilixContainer<FicheConducteurDependencies>
-  parametrageNouveautes: AwilixContainer<ParametrageNouveautesDependencies>
-  main: AwilixContainer<InitialDependencies>
+  authentification: AwilixContainer<AuthentificationDependencies>;
+  chantiers: AwilixContainer<ChantierDependencies>;
+  parametrageIndicateur: AwilixContainer<ParametrageIndicateurDependencies>;
+  importIndicateur: AwilixContainer<ImportIndicateurDependencies>;
+  gestionUtilisateur: AwilixContainer<GestionUtilisateurDependencies>;
+  ficheConducteur: AwilixContainer<FicheConducteurDependencies>;
+  parametrageNouveautes: AwilixContainer<ParametrageNouveautesDependencies>;
+  main: AwilixContainer<InitialDependencies>;
 };
 
 function registerContainer(): ContainerDependencies {
@@ -53,4 +71,6 @@ if (!global.__container) {
 }
 innerContainer = global.__container;
 
-export const getContainer = <T extends keyof ContainerDependencies>(nameDependency: T) => innerContainer[nameDependency];
+export const getContainer = <T extends keyof ContainerDependencies>(
+  nameDependency: T,
+) => innerContainer[nameDependency];

@@ -1,4 +1,4 @@
-export type DirectionDeTri = 'asc' | 'desc' | false;
+export type DirectionDeTri = "asc" | "desc" | false;
 
 export default interface BoutonsDeTriProps {
   nomColonneÀTrier: string;

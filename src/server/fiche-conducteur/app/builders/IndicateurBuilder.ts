@@ -1,17 +1,17 @@
-import { Indicateur } from '@/server/fiche-conducteur/domain/Indicateur';
+import { Indicateur } from "@/server/fiche-conducteur/domain/Indicateur";
 
 export class IndicateurBuilder {
-  private nom: string = 'Un nom';
+  private nom: string = "Un nom";
 
-  private type: string | null = 'IMPACT';
+  private type: string | null = "IMPACT";
 
   private valeurInitiale: number = 12.2;
 
-  private dateValeurInitiale: string = '2021-01-01T00:00:00.000Z';
+  private dateValeurInitiale: string = "2021-01-01T00:00:00.000Z";
 
   private valeurAvancement: number = 14.5;
 
-  private dateValeurAvancement: string = '2022-01-01T00:00:00.000Z';
+  private dateValeurAvancement: string = "2022-01-01T00:00:00.000Z";
 
   private objectifValeurCibleIntermediaire: number = 17.3;
 
@@ -51,13 +51,18 @@ export class IndicateurBuilder {
     return this;
   }
 
-  withObjectifValeurCibleIntermediaire(objectifValeurCibleIntermediaire: number): IndicateurBuilder {
+  withObjectifValeurCibleIntermediaire(
+    objectifValeurCibleIntermediaire: number,
+  ): IndicateurBuilder {
     this.objectifValeurCibleIntermediaire = objectifValeurCibleIntermediaire;
     return this;
   }
 
-  withObjectifTauxAvancementIntermediaire(objectifTauxAvancementIntermediaire: number): IndicateurBuilder {
-    this.objectifTauxAvancementIntermediaire = objectifTauxAvancementIntermediaire;
+  withObjectifTauxAvancementIntermediaire(
+    objectifTauxAvancementIntermediaire: number,
+  ): IndicateurBuilder {
+    this.objectifTauxAvancementIntermediaire =
+      objectifTauxAvancementIntermediaire;
     return this;
   }
 
@@ -66,7 +71,9 @@ export class IndicateurBuilder {
     return this;
   }
 
-  withObjectifTauxAvancement(objectifTauxAvancement: number): IndicateurBuilder {
+  withObjectifTauxAvancement(
+    objectifTauxAvancement: number,
+  ): IndicateurBuilder {
     this.objectifTauxAvancement = objectifTauxAvancement;
     return this;
   }
@@ -80,7 +87,8 @@ export class IndicateurBuilder {
       valeurAvancement: this.valeurAvancement,
       dateValeurAvancement: this.dateValeurAvancement,
       objectifValeurCibleIntermediaire: this.objectifValeurCibleIntermediaire,
-      objectifTauxAvancementIntermediaire: this.objectifTauxAvancementIntermediaire,
+      objectifTauxAvancementIntermediaire:
+        this.objectifTauxAvancementIntermediaire,
       objectifValeurCible: this.objectifCible,
       objectifTauxAvancement: this.objectifTauxAvancement,
     });

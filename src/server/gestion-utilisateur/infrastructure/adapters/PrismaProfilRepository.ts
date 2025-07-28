@@ -1,7 +1,7 @@
-import { profil as PrismaProfil } from '@prisma/client';
-import { prisma } from '@/server/db/prisma';
-import { ProfilRepository } from '@/server/gestion-utilisateur/domain/ports/ProfilRepository';
-import { Profil, ProfilCode } from '@/server/gestion-utilisateur/domain/Profil';
+import { profil as PrismaProfil } from "@prisma/client";
+import { prisma } from "@/server/db/prisma";
+import { ProfilRepository } from "@/server/gestion-utilisateur/domain/ports/ProfilRepository";
+import { Profil, ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
 
 const convertirEnProfil = (prismaProfil: PrismaProfil): Profil => {
   return {
@@ -10,16 +10,19 @@ const convertirEnProfil = (prismaProfil: PrismaProfil): Profil => {
     chantiers: {
       lecture: {
         tous: prismaProfil.a_acces_tous_chantiers,
-        tousTerritorialisés: prismaProfil.a_acces_tous_chantiers_territorialises,
+        tousTerritorialisés:
+          prismaProfil.a_acces_tous_chantiers_territorialises,
         tousTerritoires: prismaProfil.a_acces_tous_les_territoires_lecture,
         brouillons: prismaProfil.a_access_aux_chantiers_brouillons,
       },
       saisieCommentaire: {
-        tousTerritoires: prismaProfil.a_acces_tous_les_territoires_saisie_commentaire,
+        tousTerritoires:
+          prismaProfil.a_acces_tous_les_territoires_saisie_commentaire,
         saisiePossible: prismaProfil.peut_saisir_des_commentaires,
       },
       saisieIndicateur: {
-        tousTerritoires: prismaProfil.a_acces_tous_les_territoires_saisie_indicateur,
+        tousTerritoires:
+          prismaProfil.a_acces_tous_les_territoires_saisie_indicateur,
       },
     },
     utilisateurs: {

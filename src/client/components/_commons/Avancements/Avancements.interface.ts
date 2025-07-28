@@ -1,16 +1,16 @@
 export type AvancementsStatistiques = {
   global: {
-    moyenne: number | null,
-    médiane: number | null | undefined,
-    minimum: number | null | undefined,
-    maximum: number | null | undefined
-  },
+    moyenne: number | null;
+    médiane: number | null | undefined;
+    minimum: number | null | undefined;
+    maximum: number | null | undefined;
+  };
   annuel: {
-    moyenne: number | null,
-  }
+    moyenne: number | null;
+  };
 } | null;
 
 export default interface AvancementsProps {
-  avancements: AvancementsStatistiques
-  jalon: number
+  avancements: AvancementsStatistiques;
+  jalon: number;
 }

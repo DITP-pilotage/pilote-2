@@ -1,8 +1,8 @@
-import { PrismaClient, territoire as TerritoirePrisma } from '@prisma/client';
-import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
-import { Territoire } from '@/server/domain/territoire/Territoire.interface';
-import { TerritoireRepository } from '@/server/gestion-utilisateur/domain/ports/TerritoireRepository';
-import { PrismaPilote } from '@/server/db/PrismaPilote';
+import { PrismaClient, territoire as TerritoirePrisma } from "@prisma/client";
+import { NOMS_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
+import { Territoire } from "@/server/domain/territoire/Territoire.interface";
+import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 const convertirEnTerritoire = (territoire: TerritoirePrisma): Territoire => {
   return {
@@ -16,7 +16,7 @@ const convertirEnTerritoire = (territoire: TerritoirePrisma): Territoire => {
 };
 
 interface Dependencies {
-  prisma: PrismaPilote
+  prisma: PrismaPilote;
 }
 
 export class PrismaTerritoireRepository implements TerritoireRepository {
@@ -42,6 +42,6 @@ export class PrismaTerritoireRepository implements TerritoireRepository {
       },
     });
 
-    return territoires.map(territoire => territoire.code);
+    return territoires.map((territoire) => territoire.code);
   }
 }

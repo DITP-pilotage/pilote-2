@@ -1,5 +1,5 @@
-import { HabilitationAuthentitificationAPI } from '@/server/authentification/domain/HabilitationAuthentitificationAPI';
-import { ProfilAPI } from '@/server/authentification/domain/ProfilAPI';
+import { HabilitationAuthentitificationAPI } from "@/server/authentification/domain/HabilitationAuthentitificationAPI";
+import { ProfilAPI } from "@/server/authentification/domain/ProfilAPI";
 
 export class Utilisateur {
   private readonly _email: string;
@@ -8,7 +8,15 @@ export class Utilisateur {
 
   private readonly _habilitations: HabilitationAuthentitificationAPI;
 
-  private constructor({ email, profil, habilitations }: { email: string, profil: ProfilAPI, habilitations: HabilitationAuthentitificationAPI }) {
+  private constructor({
+    email,
+    profil,
+    habilitations,
+  }: {
+    email: string;
+    profil: ProfilAPI;
+    habilitations: HabilitationAuthentitificationAPI;
+  }) {
     this._email = email;
     this._profil = profil;
     this._habilitations = habilitations;
@@ -26,7 +34,15 @@ export class Utilisateur {
     return this._habilitations;
   }
 
-  static creerUtilisateur({ email, habilitations, profil }: { email: string; habilitations: HabilitationAuthentitificationAPI, profil: ProfilAPI }) {
+  static creerUtilisateur({
+    email,
+    habilitations,
+    profil,
+  }: {
+    email: string;
+    habilitations: HabilitationAuthentitificationAPI;
+    profil: ProfilAPI;
+  }) {
     return new Utilisateur({ email, habilitations, profil });
   }
 }

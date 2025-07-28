@@ -1,12 +1,12 @@
-import { Commentaire } from '@/server/fiche-conducteur/domain/Commentaire';
-import { CommentaireType } from '@/server/fiche-conducteur/domain/CommentaireType';
+import { Commentaire } from "@/server/fiche-conducteur/domain/Commentaire";
+import { CommentaireType } from "@/server/fiche-conducteur/domain/CommentaireType";
 
 export class CommentaireBuilder {
-  private type: CommentaireType = 'freins_a_lever';
+  private type: CommentaireType = "freins_a_lever";
 
-  private contenu: string = 'un contenu pour une decision strategique';
+  private contenu: string = "un contenu pour une decision strategique";
 
-  private date: string = '2022-05-01T00:00:00.000Z';
+  private date: string = "2022-05-01T00:00:00.000Z";
 
   withType(type: CommentaireType): CommentaireBuilder {
     this.type = type;
@@ -21,7 +21,6 @@ export class CommentaireBuilder {
   withDate(date: string) {
     this.date = date;
     return this;
-
   }
 
   build(): Commentaire {

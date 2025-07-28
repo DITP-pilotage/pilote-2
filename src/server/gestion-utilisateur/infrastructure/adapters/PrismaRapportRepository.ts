@@ -1,8 +1,11 @@
-import { prisma } from '@/server/db/prisma';
-import { RapportRepository } from '@/server/gestion-utilisateur/domain/ports/RapportRepository';
+import { prisma } from "@/server/db/prisma";
+import { RapportRepository } from "@/server/gestion-utilisateur/domain/ports/RapportRepository";
 
 export class PrismaRapportRepository implements RapportRepository {
-  async anonymiserAuteurs(auteursAAnonymiserEmails: string[], emailAuteurRemplacement: string): Promise<void> {
+  async anonymiserAuteurs(
+    auteursAAnonymiserEmails: string[],
+    emailAuteurRemplacement: string,
+  ): Promise<void> {
     await prisma.rapport_import_mesure_indicateur.updateMany({
       where: {
         utilisateurEmail: {
@@ -12,6 +15,6 @@ export class PrismaRapportRepository implements RapportRepository {
       data: {
         utilisateurEmail: emailAuteurRemplacement,
       },
-    }); 
+    });
   }
 }

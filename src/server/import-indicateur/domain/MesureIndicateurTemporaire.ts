@@ -1,6 +1,6 @@
-import { randomUUID } from 'node:crypto';
+import { randomUUID } from "node:crypto";
 
-import { ACCEPTED_DATE_FORMAT } from '@/server/import-indicateur/domain/enum/ACCEPTED_DATE_FORMAT';
+import { ACCEPTED_DATE_FORMAT } from "@/server/import-indicateur/domain/enum/ACCEPTED_DATE_FORMAT";
 
 export class MesureIndicateurTemporaire {
   private readonly _id: string;
@@ -26,13 +26,13 @@ export class MesureIndicateurTemporaire {
     metricType,
     metricValue,
   }: {
-    id: string,
-    rapportId: string,
+    id: string;
+    rapportId: string;
     indicId: string | null;
     metricType: string | null;
     metricValue: string | null;
     zoneId: string | null;
-    metricDate: string | null
+    metricDate: string | null;
   }) {
     this._id = id;
     this._rapportId = rapportId;
@@ -80,13 +80,13 @@ export class MesureIndicateurTemporaire {
     metricType,
     metricValue,
   }: {
-    id?: string,
-    rapportId: string,
-    indicId: string | null,
-    zoneId: string | null,
-    metricDate: string | null,
-    metricType: string | null,
-    metricValue: string | null,
+    id?: string;
+    rapportId: string;
+    indicId: string | null;
+    zoneId: string | null;
+    metricDate: string | null;
+    metricType: string | null;
+    metricValue: string | null;
   }) {
     return new MesureIndicateurTemporaire({
       id: id || randomUUID(),
@@ -103,17 +103,21 @@ export class MesureIndicateurTemporaire {
     if (!this._metricDate) return;
     switch (acceptedDateFormat) {
       case ACCEPTED_DATE_FORMAT.DD_MM_YYYY: {
-        this._metricDate = this._metricDate.split('/').reverse().map(valeur => valeur.padStart(2, '0')).join('-');
+        this._metricDate = this._metricDate
+          .split("/")
+          .reverse()
+          .map((valeur) => valeur.padStart(2, "0"))
+          .join("-");
         break;
       }
       case ACCEPTED_DATE_FORMAT.DD_MM_YY: {
-        const tmpDate = this._metricDate.split('/');
-        this._metricDate = `20${tmpDate[2]}-${tmpDate[1].padStart(2, '0')}-${tmpDate[0].padStart(2, '0')}`;
+        const tmpDate = this._metricDate.split("/");
+        this._metricDate = `20${tmpDate[2]}-${tmpDate[1].padStart(2, "0")}-${tmpDate[0].padStart(2, "0")}`;
         break;
       }
       case ACCEPTED_DATE_FORMAT.MM_DD_YY: {
-        const tmpDate = this._metricDate.split('-');
-        this._metricDate = `20${tmpDate[2]}-${tmpDate[0].padStart(2, '0')}-${tmpDate[1].padStart(2, '0')}`;
+        const tmpDate = this._metricDate.split("-");
+        this._metricDate = `20${tmpDate[2]}-${tmpDate[0].padStart(2, "0")}-${tmpDate[1].padStart(2, "0")}`;
         break;
       }
     }

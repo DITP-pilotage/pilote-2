@@ -1,6 +1,6 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import { Territoire } from '@/server/domain/territoire/Territoire.interface';
+import Chantier from "@/server/domain/chantier/Chantier.interface";
+import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { Territoire } from "@/server/domain/territoire/Territoire.interface";
 import {
   ChantierNonAutoriséErreur,
   ChantiersNonAutorisésCreationModificationUtilisateurErreur,
@@ -9,53 +9,100 @@ import {
   TerritoireNonAutoriséErreur,
   TerritoiresNonAutorisésCreationModificationUtilisateurErreur,
   TerritoiresNonAutorisésSuppressionUtilisateurErreur,
-} from '@/server/utils/errors';
-import { toutesLesValeursDuTableauSontContenuesDansLAutreTableau } from '@/client/utils/arrays';
-import { Profil } from '@/server/domain/profil/Profil.interface';
-import { Habilitations } from './Habilitation.interface';
+} from "@/server/utils/errors";
+import { toutesLesValeursDuTableauSontContenuesDansLAutreTableau } from "@/client/utils/arrays";
+import { Profil } from "@/server/domain/profil/Profil.interface";
+import { Habilitations } from "./Habilitation.interface";
 
 export default class Habilitation {
   constructor(private _habilitations: Habilitations) {}
-  
-  vérifierLesHabilitationsEnLecture(chantierId: Chantier['id'], territoireCode: string | null): Error | void {
+
+  vérifierLesHabilitationsEnLecture(
+    chantierId: Chantier["id"],
+    territoireCode: string | null,
+  ): Error | void {
     if (!this._habilitations.lecture.chantiers.includes(chantierId))
       throw new ChantierNonAutoriséErreur();
 
-    if (territoireCode && !this._habilitations.lecture.territoires.includes(territoireCode))
+    if (
+      territoireCode &&
+      !this._habilitations.lecture.territoires.includes(territoireCode)
+    )
       throw new TerritoireNonAutoriséErreur();
   }
 
-  vérifierLesHabilitationsEnSaisieDesPublications(chantierId: Chantier['id'], territoireCode: string): Error | void {
-    if (!this._habilitations['saisieCommentaire'].chantiers.includes(chantierId))
+  vérifierLesHabilitationsEnSaisieDesPublications(
+    chantierId: Chantier["id"],
+    territoireCode: string,
+  ): Error | void {
+    if (
+      !this._habilitations["saisieCommentaire"].chantiers.includes(chantierId)
+    )
       throw new ChantierNonAutoriséErreur();
 
-    if (!this._habilitations['saisieCommentaire'].territoires.includes(territoireCode))
+    if (
+      !this._habilitations["saisieCommentaire"].territoires.includes(
+        territoireCode,
+      )
+    )
       throw new TerritoireNonAutoriséErreur();
   }
 
-  vérifierLesHabilitationsEnCréationModificationUtilisateur(chantiersIds: Chantier['id'][], territoiresCodes: Territoire['code'][], profil: Profil | null) {
+  vérifierLesHabilitationsEnCréationModificationUtilisateur(
+    chantiersIds: Chantier["id"][],
+    territoiresCodes: Territoire["code"][],
+    profil: Profil | null,
+  ) {
     if (!profil || !profil.utilisateurs.modificationPossible) {
       throw new ProfilNonAutorisésSuppressionUtilisateurErreur();
     }
 
-    if (profil.utilisateurs.tousChantiers && !toutesLesValeursDuTableauSontContenuesDansLAutreTableau(territoiresCodes, this._habilitations.gestionUtilisateur.territoires)) {
+    if (
+      profil.utilisateurs.tousChantiers &&
+      !toutesLesValeursDuTableauSontContenuesDansLAutreTableau(
+        territoiresCodes,
+        this._habilitations.gestionUtilisateur.territoires,
+      )
+    ) {
       throw new TerritoiresNonAutorisésCreationModificationUtilisateurErreur();
     }
 
-    if (profil.utilisateurs.tousTerritoires && !toutesLesValeursDuTableauSontContenuesDansLAutreTableau(chantiersIds, this._habilitations.gestionUtilisateur.chantiers)) 
+    if (
+      profil.utilisateurs.tousTerritoires &&
+      !toutesLesValeursDuTableauSontContenuesDansLAutreTableau(
+        chantiersIds,
+        this._habilitations.gestionUtilisateur.chantiers,
+      )
+    )
       throw new ChantiersNonAutorisésCreationModificationUtilisateurErreur();
   }
 
-  vérifierLesHabilitationsEnSuppressionUtilisateur(chantiersIds: Chantier['id'][], territoiresCodes: Territoire['code'][], profil: Profil | null) {
+  vérifierLesHabilitationsEnSuppressionUtilisateur(
+    chantiersIds: Chantier["id"][],
+    territoiresCodes: Territoire["code"][],
+    profil: Profil | null,
+  ) {
     if (!profil || !profil.utilisateurs.modificationPossible) {
       throw new ProfilNonAutorisésSuppressionUtilisateurErreur();
     }
 
-    if (profil.utilisateurs.tousChantiers && !toutesLesValeursDuTableauSontContenuesDansLAutreTableau(territoiresCodes, this._habilitations.gestionUtilisateur.territoires)) {
+    if (
+      profil.utilisateurs.tousChantiers &&
+      !toutesLesValeursDuTableauSontContenuesDansLAutreTableau(
+        territoiresCodes,
+        this._habilitations.gestionUtilisateur.territoires,
+      )
+    ) {
       throw new TerritoiresNonAutorisésSuppressionUtilisateurErreur();
     }
 
-    if (profil.utilisateurs.tousTerritoires && !toutesLesValeursDuTableauSontContenuesDansLAutreTableau(chantiersIds, this._habilitations.gestionUtilisateur.chantiers)) 
+    if (
+      profil.utilisateurs.tousTerritoires &&
+      !toutesLesValeursDuTableauSontContenuesDansLAutreTableau(
+        chantiersIds,
+        this._habilitations.gestionUtilisateur.chantiers,
+      )
+    )
       throw new ChantiersNonAutorisésSuppressionUtilisateurErreur();
   }
 
@@ -68,15 +115,23 @@ export default class Habilitation {
   }
 
   peutCréerEtModifierUnUtilisateur() {
-    return this.possedeAuMoinsUnTerritoireEnGestionUtilisateur() && this.possedeAuMoinsUnChantierEnGestionUtilisateur();
+    return (
+      this.possedeAuMoinsUnTerritoireEnGestionUtilisateur() &&
+      this.possedeAuMoinsUnChantierEnGestionUtilisateur()
+    );
   }
 
   peutConsulterLaListeDesUtilisateurs() {
-    return this.possedeAuMoinsUnTerritoireEnGestionUtilisateur() && this.possedeAuMoinsUnChantierEnGestionUtilisateur();
+    return (
+      this.possedeAuMoinsUnTerritoireEnGestionUtilisateur() &&
+      this.possedeAuMoinsUnChantierEnGestionUtilisateur()
+    );
   }
 
   peutAccéderAuTerritoireUtilisateurs(territoireCode: string): boolean {
-    return this._habilitations.gestionUtilisateur.territoires.includes(territoireCode);
+    return this._habilitations.gestionUtilisateur.territoires.includes(
+      territoireCode,
+    );
   }
 
   peutAccéderAuChantierUtilisateurs(chantier: string): boolean {
@@ -115,14 +170,18 @@ export default class Habilitation {
   }
 
   peutSaisirDesPublicationsPourUnTerritoire(territoireCode: string): boolean {
-    return this._habilitations['saisieCommentaire'].territoires.includes(territoireCode);
+    return this._habilitations["saisieCommentaire"].territoires.includes(
+      territoireCode,
+    );
   }
 
   peutSaisirDesIndicateursPourUnTerritoire(territoireCode: string): boolean {
-    return this._habilitations['saisieIndicateur'].territoires.includes(territoireCode);
+    return this._habilitations["saisieIndicateur"].territoires.includes(
+      territoireCode,
+    );
   }
 
-  récupérerListeChantiersIdsAccessiblesEnLecture(): Chantier['id'][] {
+  récupérerListeChantiersIdsAccessiblesEnLecture(): Chantier["id"][] {
     return [...this._habilitations.lecture.chantiers];
   }
 
@@ -131,14 +190,18 @@ export default class Habilitation {
   }
 
   recupererListeMailleEnLectureDisponible(): MailleInterne[] {
-    const territoires = this.récupérerListeTerritoireCodesAccessiblesEnLecture();
+    const territoires =
+      this.récupérerListeTerritoireCodesAccessiblesEnLecture();
     let result: MailleInterne[] = [];
 
     for (const codeTerritoire of territoires) {
-      if (codeTerritoire.startsWith('REG') && !result.includes('regionale')) {
-        result.push('regionale');
-      } else if (codeTerritoire.startsWith('DEPT') && !result.includes('departementale')) {
-        result.push('departementale');
+      if (codeTerritoire.startsWith("REG") && !result.includes("regionale")) {
+        result.push("regionale");
+      } else if (
+        codeTerritoire.startsWith("DEPT") &&
+        !result.includes("departementale")
+      ) {
+        result.push("departementale");
       }
     }
     return result;

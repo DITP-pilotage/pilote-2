@@ -1,45 +1,37 @@
-import { flexRender, Table } from '@tanstack/react-table';
-import { FunctionComponent } from 'react';
-import {
-  MetadataParametrageIndicateurInformationContrat,
-} from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
+import { flexRender, Table } from "@tanstack/react-table";
+import { FunctionComponent } from "react";
+import { MetadataParametrageIndicateurInformationContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 
 interface TableauAdminIndicateursContenuProps {
-  tableau: Table<MetadataParametrageIndicateurInformationContrat>
+  tableau: Table<MetadataParametrageIndicateurInformationContrat>;
 }
 
-const TableauAdminIndicateursContenu: FunctionComponent<TableauAdminIndicateursContenuProps> = ({ tableau }) => {
+const TableauAdminIndicateursContenu: FunctionComponent<
+  TableauAdminIndicateursContenuProps
+> = ({ tableau }) => {
   return (
     <tbody>
-      {
-      tableau.getRowModel().rows.filter(Boolean).map(row => (
-        <tr
-          key={row.id}
-        >
-          {
-            row.getVisibleCells().map(cell => (
+      {tableau
+        .getRowModel()
+        .rows.filter(Boolean)
+        .map((row) => (
+          <tr key={row.id}>
+            {row.getVisibleCells().map((cell) => (
               <td
-                className='fr-p-1w'
+                className="fr-p-1w"
                 key={cell.id}
-                title={cell.row.getValue(cell.column.id) || ''}
+                title={cell.row.getValue(cell.column.id) || ""}
               >
                 <a
-                  className='no-underline bg-none'
+                  className="no-underline bg-none"
                   href={`/admin/indicateurs/${row.original.indicId}`}
                 >
-                  {
-                    flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext(),
-                    )
-                  }
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </a>
               </td>
-            ))
-          }
-        </tr>
-      ))
-    }
+            ))}
+          </tr>
+        ))}
     </tbody>
   );
 };

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const RapportDétailléTableauChantiersEnTêteStyled = styled.thead`
   background-color: var(--background-action-low-blue-france) !important;
@@ -12,7 +12,7 @@ const RapportDétailléTableauChantiersEnTêteStyled = styled.thead`
     &:last-child {
       border-radius: 0 8px 0 0;
     }
-    
+
     p {
       display: inline-block;
     }

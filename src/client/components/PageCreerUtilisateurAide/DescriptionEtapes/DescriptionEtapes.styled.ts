@@ -1,16 +1,16 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
-const DescriptionEtapesStyled = styled.div` 
+const DescriptionEtapesStyled = styled.div`
   .c-stepper {
     display: flex;
   }
-  
+
   .c-stepper__item {
     display: flex;
     flex: 1;
     flex-direction: column;
     text-align: center;
-  
+
     &::before {
       display: block;
       width: 2.5rem;
@@ -24,7 +24,7 @@ const DescriptionEtapesStyled = styled.div`
       background-color: var(--background-action-high-blue-france);
       border-radius: 50%;
     }
-  
+
     &:not(:last-child) {
       &::after {
         position: relative;
@@ -40,7 +40,6 @@ const DescriptionEtapesStyled = styled.div`
       }
     }
   }
-
 `;
 
 export default DescriptionEtapesStyled;

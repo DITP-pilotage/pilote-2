@@ -1,21 +1,16 @@
-import { FunctionComponent } from 'react';
-import useTableauPageAdminIndicateurs
-  from '@/components/PageAdminIndicateurs/TableauAdminIndicateurs/useTableauAdminIndicateurs';
-import TableauAdminIndicateursStyled
-  from '@/components/PageAdminIndicateurs/TableauAdminIndicateurs/TableauAdminIndicateurs.styled';
-import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
-import Loader from '@/components/_commons/Loader/Loader';
-import Titre from '@/components/_commons/Titre/Titre';
-import TableauEnTête from '@/components/_commons/Tableau/EnTête/TableauEnTête';
-import {
-  MetadataParametrageIndicateurInformationContrat,
-} from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
-import TableauAdminIndicateursContenu
-  from '@/components/PageAdminIndicateurs/TableauAdminIndicateurs/Contenu/TableauAdminIndicateursContenu';
-import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
-import InputFichier from '@/components/_commons/InputFichier/InputFichier';
-import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
-import Alerte from '@/components/_commons/Alerte/Alerte';
+import { FunctionComponent } from "react";
+import useTableauPageAdminIndicateurs from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/useTableauAdminIndicateurs";
+import TableauAdminIndicateursStyled from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/TableauAdminIndicateurs.styled";
+import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
+import Loader from "@/components/_commons/Loader/Loader";
+import Titre from "@/components/_commons/Titre/Titre";
+import TableauEnTête from "@/components/_commons/Tableau/EnTête/TableauEnTête";
+import { MetadataParametrageIndicateurInformationContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
+import TableauAdminIndicateursContenu from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/Contenu/TableauAdminIndicateursContenu";
+import TableauPagination from "@/components/_commons/Tableau/Pagination/TableauPagination";
+import InputFichier from "@/components/_commons/InputFichier/InputFichier";
+import SubmitBouton from "@/components/_commons/SubmitBouton/SubmitBouton";
+import Alerte from "@/components/_commons/Alerte/Alerte";
 
 const TableauAdminIndicateurs: FunctionComponent<{}> = () => {
   const {
@@ -33,81 +28,76 @@ const TableauAdminIndicateurs: FunctionComponent<{}> = () => {
 
   return (
     <TableauAdminIndicateursStyled>
-      {
-        !!alerte && (
-          <div className='fr-mt-2w'>
-            <Alerte
-              message={alerte.message}
-              titre={alerte.titre}
-              type={alerte.type}
-            />
-          </div>
-        )
-      }
-      <div className='fr-container--fluid'>
-        <div className='fr-grid-row fr-grid-row--middle fr-grid-row--gutters'>
-          <div className='fr-col-12 fr-col-md-6'>
-            <div className='barre-de-recherche'>
+      {!!alerte && (
+        <div className="fr-mt-2w">
+          <Alerte
+            message={alerte.message}
+            titre={alerte.titre}
+            type={alerte.type}
+          />
+        </div>
+      )}
+      <div className="fr-container--fluid">
+        <div className="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
+          <div className="fr-col-12 fr-col-md-6">
+            <div className="barre-de-recherche">
               <BarreDeRecherche
-                changementDeLaRechercheCallback={changementDeLaRechercheCallback}
+                changementDeLaRechercheCallback={
+                  changementDeLaRechercheCallback
+                }
                 valeur={valeurDeLaRecherche}
               />
             </div>
           </div>
-          <div className='fr-col-12 fr-col-md-6'>
-            <form
-              className='boutons-formulaire'
-              onSubmit={verifierLeFichier}
-            >
-              <InputFichier
-                accept='.csv'
-                onChange={définirLeFichier}
-              />
+          <div className="fr-col-12 fr-col-md-6">
+            <form className="boutons-formulaire" onSubmit={verifierLeFichier}>
+              <InputFichier accept=".csv" onChange={définirLeFichier} />
               <SubmitBouton
-                className='fr-my-2w fr-my-md-1w fr-text--sm no-wrap'
+                className="fr-my-2w fr-my-md-1w fr-text--sm no-wrap"
                 disabled={!file}
-                label='Importer en masse'
+                label="Importer en masse"
               />
             </form>
           </div>
         </div>
       </div>
-      {
-        estEnChargement ? <Loader /> :
+      {estEnChargement ? (
+        <Loader />
+      ) : (
         <>
-          <div className='fr-container--fluid fr-mb-2w fr-mt-4w'>
-            <div className='fr-grid-row fr-grid-row--middle fr-grid-row--gutters'>
-              <div className='fr-col-12 fr-col-md-6'>
+          <div className="fr-container--fluid fr-mb-2w fr-mt-4w">
+            <div className="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
+              <div className="fr-col-12 fr-col-md-6">
                 <Titre
-                  baliseHtml='h2'
-                  className='fr-h4 fr-mb-0 fr-text-title--blue-france'
+                  baliseHtml="h2"
+                  className="fr-h4 fr-mb-0 fr-text-title--blue-france"
                 >
-                  {tableau.getFilteredRowModel().rows.length}
-                  {' '}
-                  {tableau.getFilteredRowModel().rows.length > 1 ? 'indicateurs' : 'indicateur'}
+                  {tableau.getFilteredRowModel().rows.length}{" "}
+                  {tableau.getFilteredRowModel().rows.length > 1
+                    ? "indicateurs"
+                    : "indicateur"}
                 </Titre>
-              </div>        
-              <div className='fr-col-12 fr-col-md-6 bouton-export'>
+              </div>
+              <div className="fr-col-12 fr-col-md-6 bouton-export">
                 <button
-                  className='fr-btn fr-text'
+                  className="fr-btn fr-text"
                   disabled={tableau.getFilteredRowModel().rows.length === 0}
                   onClick={exporterLesIndicateurs}
-                  title='Export les indicateurs'
-                  type='button'
+                  title="Export les indicateurs"
+                  type="button"
                 >
-                  Exporter
-                  {' '}
-                  {`${tableau.getFilteredRowModel().rows.length === 1 ? 'l\'indicateur' : `les ${tableau.getFilteredRowModel().rows.length} indicateurs`}`}
+                  Exporter{" "}
+                  {`${tableau.getFilteredRowModel().rows.length === 1 ? "l'indicateur" : `les ${tableau.getFilteredRowModel().rows.length} indicateurs`}`}
                 </button>
               </div>
             </div>
           </div>
-          <div className='fr-table'>
-            <table className='tableau fr-m-0 fr-p-0 w-full'>
-              <caption className='fr-sr-only'>
-                Tableau des indicateurs
-              </caption>
-              <TableauEnTête<MetadataParametrageIndicateurInformationContrat> tableau={tableau} />
+          <div className="fr-table">
+            <table className="tableau fr-m-0 fr-p-0 w-full">
+              <caption className="fr-sr-only">Tableau des indicateurs</caption>
+              <TableauEnTête<MetadataParametrageIndicateurInformationContrat>
+                tableau={tableau}
+              />
               <TableauAdminIndicateursContenu tableau={tableau} />
             </table>
             <TableauPagination
@@ -117,7 +107,7 @@ const TableauAdminIndicateurs: FunctionComponent<{}> = () => {
             />
           </div>
         </>
-      }
+      )}
     </TableauAdminIndicateursStyled>
   );
 };

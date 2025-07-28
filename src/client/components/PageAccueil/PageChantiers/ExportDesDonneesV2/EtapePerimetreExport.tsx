@@ -1,88 +1,82 @@
-import React from 'react';
-import { parseAsBoolean, parseAsInteger, useQueryState } from 'nuqs';
+import React from "react";
+import { parseAsBoolean, parseAsInteger, useQueryState } from "nuqs";
 
 export const EtapePerimetreExport = () => {
-  const [isAvecFiltre, setIsAvecFiltre] = useQueryState('isAvecFiltre', parseAsBoolean.withDefault(false).withOptions({
-    shallow: true,
-  }));
+  const [isAvecFiltre, setIsAvecFiltre] = useQueryState(
+    "isAvecFiltre",
+    parseAsBoolean.withDefault(false).withOptions({
+      shallow: true,
+    }),
+  );
 
-  const [, setEtapeCourante] = useQueryState('etapeCourante', parseAsInteger.withOptions({
-    shallow: true,
-    history: 'push',
-  }));
+  const [, setEtapeCourante] = useQueryState(
+    "etapeCourante",
+    parseAsInteger.withOptions({
+      shallow: true,
+      history: "push",
+    }),
+  );
 
   return (
     <div>
-      <p className='fr-mb-1w'>
-        Précisez le périmètre de votre export :
-      </p>
-      <div
-        className='fr-fieldset__element'
-        key='chantiers'
-      >
-        <div className='fr-radio-group'>
+      <p className="fr-mb-1w">Précisez le périmètre de votre export :</p>
+      <div className="fr-fieldset__element" key="chantiers">
+        <div className="fr-radio-group">
           <input
             checked={!isAvecFiltre}
-            id='chantiers'
-            name='ressource-à-exporter'
+            id="chantiers"
+            name="ressource-à-exporter"
             onChange={() => setIsAvecFiltre(false)}
-            type='radio'
+            type="radio"
           />
-          <label
-            className='fr-label'
-            htmlFor='chantiers'
-          >
-            exporter tous les éléments sur tous les territoires qui vous sont ouverts en lecture
+          <label className="fr-label" htmlFor="chantiers">
+            exporter tous les éléments sur tous les territoires qui vous sont
+            ouverts en lecture
           </label>
         </div>
       </div>
-      <div
-        className='fr-fieldset__element'
-        key='indicateurs'
-      >
-        <div className='fr-radio-group'>
+      <div className="fr-fieldset__element" key="indicateurs">
+        <div className="fr-radio-group">
           <input
             checked={isAvecFiltre}
-            id='indicateurs'
-            name='ressource-à-exporter'
+            id="indicateurs"
+            name="ressource-à-exporter"
             onChange={() => setIsAvecFiltre(true)}
-            type='radio'
+            type="radio"
           />
-          <label
-            className='fr-label'
-            htmlFor='indicateurs'
-          >
-            exporter les éléments de la sélection présentement active dans PILOTE
+          <label className="fr-label" htmlFor="indicateurs">
+            exporter les éléments de la sélection présentement active dans
+            PILOTE
           </label>
           <label
-            className='fr-label fr-text--xs texte-gris fr-pl-4w'
-            htmlFor='indicateurs'
+            className="fr-label fr-text--xs texte-gris fr-pl-4w"
+            htmlFor="indicateurs"
           >
-            le cas échéant, le territoire sélectionné et tous les territoires inclus aux mailles inférieures seront
-            intégrés dans l'export
+            le cas échéant, le territoire sélectionné et tous les territoires
+            inclus aux mailles inférieures seront intégrés dans l'export
           </label>
         </div>
       </div>
-      <div className='w-full flex justify-end fr-mt-2w'>
+      <div className="w-full flex justify-end fr-mt-2w">
         <button
-          aria-controls='modale-exporter-les-données-v2'
-          className='fr-link fr-mr-2w'
-          title='Fermer la fenêtre modale'
-          type='button'
+          aria-controls="modale-exporter-les-données-v2"
+          className="fr-link fr-mr-2w"
+          title="Fermer la fenêtre modale"
+          type="button"
         >
           Annuler
         </button>
         <button
-          className='fr-btn fr-btn--secondary fr-mr-2w'
+          className="fr-btn fr-btn--secondary fr-mr-2w"
           onClick={() => setEtapeCourante(1)}
-          type='button'
+          type="button"
         >
           Étape précédente
         </button>
         <button
-          className='fr-btn fr-mr-2w'
+          className="fr-btn fr-mr-2w"
           onClick={() => setEtapeCourante(3)}
-          type='button'
+          type="button"
         >
           Étape suivante
         </button>

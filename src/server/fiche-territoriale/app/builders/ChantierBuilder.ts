@@ -1,8 +1,8 @@
-import { Chantier } from '@/server/fiche-territoriale/domain/Chantier';
-import { MeteoDisponible } from '@/server/fiche-territoriale/domain/MeteoDisponible';
+import { Chantier } from "@/server/fiche-territoriale/domain/Chantier";
+import { MeteoDisponible } from "@/server/fiche-territoriale/domain/MeteoDisponible";
 
 export class ChantierBuilder {
-  private id: string = 'CH-009';
+  private id: string = "CH-009";
 
   private tauxAvancement: number | null = 0;
 
@@ -10,10 +10,10 @@ export class ChantierBuilder {
 
   private meteo: MeteoDisponible | null = null;
 
-  private nom: string = 'Un nom de chantier';
+  private nom: string = "Un nom de chantier";
 
-  private codeMinisterePorteur: string = '1009';
-  
+  private codeMinisterePorteur: string = "1009";
+
   withId(id: string): ChantierBuilder {
     this.id = id;
     return this;
@@ -24,7 +24,9 @@ export class ChantierBuilder {
     return this;
   }
 
-  withTauxAvancementAnnuel(tauxAvancementAnnuel: number | null): ChantierBuilder {
+  withTauxAvancementAnnuel(
+    tauxAvancementAnnuel: number | null,
+  ): ChantierBuilder {
     this.tauxAvancementAnnuel = tauxAvancementAnnuel;
     return this;
   }

@@ -1,13 +1,11 @@
-import {
-  ReportValidataWithData,
-} from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
+import { ReportValidataWithData } from "@/server/import-indicateur/infrastructure/ReportValidata.interface";
 
 export type ValidataValidationFichierPayload = {
-  cheminCompletDuFichier: string
-  nomDuFichier: string
-  schema: string
+  cheminCompletDuFichier: string;
+  nomDuFichier: string;
+  schema: string;
 };
 
 export interface HttpClient {
-  post(body: ValidataValidationFichierPayload): Promise<ReportValidataWithData>
+  post(body: ValidataValidationFichierPayload): Promise<ReportValidataWithData>;
 }

@@ -1,72 +1,80 @@
-import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
-import TerritoireBuilder from '@/server/domain/territoire/Territoire.builder';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { prisma } from '@/server/db/prisma';
-import { UtilisateurSQLRepository } from './UtilisateurSQLRepository';
+import UtilisateurRepository from "@/server/domain/utilisateur/UtilisateurRepository.interface";
+import TerritoireBuilder from "@/server/domain/territoire/Territoire.builder";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { prisma } from "@/server/db/prisma";
+import { UtilisateurSQLRepository } from "./UtilisateurSQLRepository";
 
-describe('UtilisateurSQLRepository', () => {
+describe("UtilisateurSQLRepository", () => {
   let utilisateurRepository: UtilisateurRepository;
 
   beforeEach(() => {
     utilisateurRepository = new UtilisateurSQLRepository();
   });
 
-  describe('récupérerNombreUtilisateursParTerritoires', function () {
-
+  describe("récupérerNombreUtilisateursParTerritoires", function () {
     test("retourne les nombres d'utilisateurs pour une liste de territoires", async () => {
       // Given
       const territoires = [
-        new TerritoireBuilder().avecCode('DEPT-34').avecMaille('departementale').build(),
-        new TerritoireBuilder().avecCode('DEPT-75').avecMaille('departementale').build(),
-        new TerritoireBuilder().avecCode('REG-84').avecMaille('regionale').build(),
+        new TerritoireBuilder()
+          .avecCode("DEPT-34")
+          .avecMaille("departementale")
+          .build(),
+        new TerritoireBuilder()
+          .avecCode("DEPT-75")
+          .avecMaille("departementale")
+          .build(),
+        new TerritoireBuilder()
+          .avecCode("REG-84")
+          .avecMaille("regionale")
+          .build(),
       ];
 
       const randomUtilisateur = {
-        nom: '',
-        prenom: '',
+        nom: "",
+        prenom: "",
         date_creation: new Date().toISOString(),
       };
 
       const habilitationsTerritoires: Record<string, string[]> = {
-        'prefet_herault@test.com': ['DEPT-34'],
-        'responsable_ara@test.com': ['REG-84', 'DEPT-69'],
-        'sd_occ@test.com': ['REG-76', 'DEPT-34'],
-        'sd_herault@test.com': ['DEPT-34'],
-        'ditp_admin@test.com': ['REG-84'],
-        'compte_desactive_herault@test.com': ['DEPT-34'],
+        "prefet_herault@test.com": ["DEPT-34"],
+        "responsable_ara@test.com": ["REG-84", "DEPT-69"],
+        "sd_occ@test.com": ["REG-76", "DEPT-34"],
+        "sd_herault@test.com": ["DEPT-34"],
+        "ditp_admin@test.com": ["REG-84"],
+        "compte_desactive_herault@test.com": ["DEPT-34"],
       };
 
       await prisma.utilisateur.createMany({
         data: [
           {
-            ...randomUtilisateur, 
-            email: 'prefet_herault@test.com',
+            ...randomUtilisateur,
+            email: "prefet_herault@test.com",
             profilCode: ProfilEnum.PREFET_DEPARTEMENT,
           },
           {
-            ...randomUtilisateur, 
-            email: 'compte_desactive_herault@test.com',
+            ...randomUtilisateur,
+            email: "compte_desactive_herault@test.com",
             profilCode: ProfilEnum.PREFET_DEPARTEMENT,
             date_desactivation: new Date(),
           },
           {
-            ...randomUtilisateur, 
-            email: 'responsable_ara@test.com',
+            ...randomUtilisateur,
+            email: "responsable_ara@test.com",
             profilCode: ProfilEnum.SERVICES_DECONCENTRES_REGION,
           },
           {
-            ...randomUtilisateur, 
-            email: 'sd_occ@test.com',
+            ...randomUtilisateur,
+            email: "sd_occ@test.com",
             profilCode: ProfilEnum.SERVICES_DECONCENTRES_REGION,
           },
           {
-            ...randomUtilisateur, 
-            email: 'ditp_admin@test.com',
+            ...randomUtilisateur,
+            email: "ditp_admin@test.com",
             profilCode: ProfilEnum.DITP_ADMIN,
           },
           {
-            ...randomUtilisateur, 
-            email: 'sd_herault@test.com',
+            ...randomUtilisateur,
+            email: "sd_herault@test.com",
             profilCode: ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
           },
         ],
@@ -76,7 +84,7 @@ describe('UtilisateurSQLRepository', () => {
 
       const DonnéesHabilitations = utilisateursCréés.map((utilisateur) => ({
         utilisateurId: utilisateur.id,
-        scopeCode: 'lecture',
+        scopeCode: "lecture",
         territoires: habilitationsTerritoires[utilisateur.email],
         perimetres: [],
         chantiers: [],
@@ -87,13 +95,16 @@ describe('UtilisateurSQLRepository', () => {
       });
 
       // When
-      const nombresUtilisateurs = await utilisateurRepository.récupérerNombreUtilisateursParTerritoires(territoires);
-      
+      const nombresUtilisateurs =
+        await utilisateurRepository.récupérerNombreUtilisateursParTerritoires(
+          territoires,
+        );
+
       // Then
       expect(nombresUtilisateurs).toStrictEqual({
-        'DEPT-34': 2,
-        'REG-84': 1,
-        'DEPT-75': 0,
+        "DEPT-34": 2,
+        "REG-84": 1,
+        "DEPT-75": 0,
       });
     });
   });

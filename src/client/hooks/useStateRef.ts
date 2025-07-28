@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from "react";
 
 export default function useStateRef<T>(valeurInitiale: T) {
   // eslint-disable-next-line react/hook-use-state

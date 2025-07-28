@@ -1,19 +1,19 @@
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import api from '@/server/infrastructure/api/trpc/api';
-import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
-import { récupérerUnCookie } from '@/client/utils/cookies';
-import { validationCreationTokenAPI } from '@/validation/gestion-token-api';
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useRouter } from "next/router";
+import api from "@/server/infrastructure/api/trpc/api";
+import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
+import { récupérerUnCookie } from "@/client/utils/cookies";
+import { validationCreationTokenAPI } from "@/validation/gestion-token-api";
 
 export type TokenAPIForm = {
-  email: string
+  email: string;
 };
 
 export const useGestionTokenAPI = () => {
   const router = useRouter();
-  const [alerte, setAlerte] = useState <AlerteProps | null>(null);
+  const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
   const reactHookForm = useForm<TokenAPIForm>({
     resolver: zodResolver(validationCreationTokenAPI),
@@ -28,38 +28,40 @@ export const useGestionTokenAPI = () => {
       }
 
       setAlerte({
-        type: 'succès',
-        titre : "Le token d'authentification est généré pour cet utilisateur et est sauvegardé dans votre presse-papier.",
+        type: "succès",
+        titre:
+          "Le token d'authentification est généré pour cet utilisateur et est sauvegardé dans votre presse-papier.",
         message: result,
       });
     },
-    onError: error => {
-      if (error.data?.code === 'INTERNAL_SERVER_ERROR') {
+    onError: (error) => {
+      if (error.data?.code === "INTERNAL_SERVER_ERROR") {
         setAlerte({
-          type: 'erreur',
-          titre : error.message,
+          type: "erreur",
+          titre: error.message,
         });
       }
     },
   });
 
-  const mutationSupprimerTokenAPI = api.gestionTokenAPI.supprimerTokenAPI.useMutation({
-    onSuccess: () => {
-      router.push('/admin/gestion-token-api?_action=suppression-reussie');
-    },
-    onError: error => {
-      if (error.data?.code === 'INTERNAL_SERVER_ERROR') {
-        setAlerte({
-          type: 'erreur',
-          titre : error.message,
-        });
-      }
-    },
-  });
+  const mutationSupprimerTokenAPI =
+    api.gestionTokenAPI.supprimerTokenAPI.useMutation({
+      onSuccess: () => {
+        router.push("/admin/gestion-token-api?_action=suppression-reussie");
+      },
+      onError: (error) => {
+        if (error.data?.code === "INTERNAL_SERVER_ERROR") {
+          setAlerte({
+            type: "erreur",
+            titre: error.message,
+          });
+        }
+      },
+    });
 
   const creerTokenAPI: SubmitHandler<TokenAPIForm> = async (data) => {
     const inputs = {
-      csrf: récupérerUnCookie('csrf') ?? '',
+      csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
     };
 
@@ -68,7 +70,7 @@ export const useGestionTokenAPI = () => {
 
   const supprimerTokenAPI: SubmitHandler<TokenAPIForm> = async (data) => {
     const inputs = {
-      csrf: récupérerUnCookie('csrf') ?? '',
+      csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
     };
 

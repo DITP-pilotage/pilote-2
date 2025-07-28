@@ -1,8 +1,8 @@
-import { IndicateurRepository } from '@/server/chantiers/domain/ports/IndicateurRepository';
-import { DonneeIndicateur } from '@/server/chantiers/domain/DonneeIndicateur';
+import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
+import { DonneeIndicateur } from "@/server/chantiers/domain/DonneeIndicateur";
 
 interface Dependencies {
-  indicateurRepository: IndicateurRepository
+  indicateurRepository: IndicateurRepository;
 }
 
 export class ListerDonneesIndicateurParIndicIdUseCase {
@@ -12,7 +12,13 @@ export class ListerDonneesIndicateurParIndicIdUseCase {
     this.indicateurRepository = indicateurRepository;
   }
 
-  async run({ indicId, jalon }: { indicId: string, jalon: number }): Promise<DonneeIndicateur[]> {
+  async run({
+    indicId,
+    jalon,
+  }: {
+    indicId: string;
+    jalon: number;
+  }): Promise<DonneeIndicateur[]> {
     return this.indicateurRepository.listerParIndicId({ indicId, jalon });
   }
 }

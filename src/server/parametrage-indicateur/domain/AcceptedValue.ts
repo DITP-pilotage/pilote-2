@@ -7,7 +7,17 @@ export class AcceptedValue {
 
   private _desc;
 
-  private constructor({ orderId, value, name, desc }: { orderId: number, value: string, name: string, desc: string }) {
+  private constructor({
+    orderId,
+    value,
+    name,
+    desc,
+  }: {
+    orderId: number;
+    value: string;
+    name: string;
+    desc: string;
+  }) {
     this._orderId = orderId;
     this._value = value;
     this._name = name;
@@ -30,11 +40,16 @@ export class AcceptedValue {
     return this._desc;
   }
 
-  static créerAcceptedValue({ orderId, value, name, desc }: {
-    orderId: number,
-    value: string,
-    name: string,
-    desc: string
+  static créerAcceptedValue({
+    orderId,
+    value,
+    name,
+    desc,
+  }: {
+    orderId: number;
+    value: string;
+    name: string;
+    desc: string;
   }) {
     return new AcceptedValue({ orderId, value, name, desc });
   }

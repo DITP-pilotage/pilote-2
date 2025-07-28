@@ -1,5 +1,5 @@
-import PérimètreMinistériel from './PérimètreMinistériel.interface';
+import PérimètreMinistériel from "./PérimètreMinistériel.interface";
 
 export default interface PérimètreMinistérielRepository {
-  récupérerTous(): Promise<PérimètreMinistériel[]>
+  récupérerTous(): Promise<PérimètreMinistériel[]>;
 }

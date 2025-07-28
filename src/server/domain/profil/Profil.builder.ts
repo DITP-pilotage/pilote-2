@@ -1,13 +1,12 @@
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { Profil } from './Profil.interface';
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { Profil } from "./Profil.interface";
 
 export class ProfilBuilder {
+  private code: Profil["code"] = ProfilEnum.DITP_ADMIN;
 
-  private code: Profil['code'] = ProfilEnum.DITP_ADMIN;
+  private nom: Profil["nom"] = "ditp admin";
 
-  private nom: Profil['nom'] = 'ditp admin';
-
-  private chantiers: Profil['chantiers'] = {
+  private chantiers: Profil["chantiers"] = {
     lecture: {
       tous: true,
       tousTerritorialisés: true,
@@ -23,18 +22,18 @@ export class ProfilBuilder {
     },
   };
 
-  private utilisateurs: Profil['utilisateurs'] = {
+  private utilisateurs: Profil["utilisateurs"] = {
     modificationPossible: true,
     tousTerritoires: true,
     tousChantiers: true,
   };
 
-  withUtilisateurs(utilisateurs: Profil['utilisateurs']): ProfilBuilder {
+  withUtilisateurs(utilisateurs: Profil["utilisateurs"]): ProfilBuilder {
     this.utilisateurs = utilisateurs;
     return this;
   }
 
-  withCode(code: Profil['code']): ProfilBuilder {
+  withCode(code: Profil["code"]): ProfilBuilder {
     this.code = code;
     return this;
   }

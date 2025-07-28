@@ -1,19 +1,21 @@
-import { FunctionComponent, PropsWithChildren } from 'react';
-import Encart from '@/components/_commons/Encart/Encart';
-import Titre from '@/components/_commons/Titre/Titre';
-import BoutonImpression from '@/components/_commons/BoutonImpression/BoutonImpression';
+import { FunctionComponent, PropsWithChildren } from "react";
+import Encart from "@/components/_commons/Encart/Encart";
+import Titre from "@/components/_commons/Titre/Titre";
+import BoutonImpression from "@/components/_commons/BoutonImpression/BoutonImpression";
 
-export const EnteteFicheConducteur: FunctionComponent<PropsWithChildren<{}>> = ({ children }) => {
+export const EnteteFicheConducteur: FunctionComponent<
+  PropsWithChildren<{}>
+> = ({ children }) => {
   return (
     <Encart>
-      <div className='flex justify-between align-center'>
+      <div className="flex justify-between align-center">
         <Titre
-          baliseHtml='h2'
-          className='fr-h6 fr-mb-0 fr-text-title--blue-france'
+          baliseHtml="h2"
+          className="fr-h6 fr-mb-0 fr-text-title--blue-france"
         >
           {children}
         </Titre>
-        <div className='flex align-center'>
+        <div className="flex align-center">
           <BoutonImpression />
         </div>
       </div>

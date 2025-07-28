@@ -1,77 +1,83 @@
-import { FunctionComponent } from 'react';
-import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
-import PictoTendance from '@/components/_commons/PictoTendance/PictoTendance';
-import TexteColoré from '@/components/_commons/TexteColoré/TexteColoré';
-import { definirCouleurEcartArrondi } from '@/client/utils/chantier/écart/écart';
-import TableauRéformesAvancement from '@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement';
-import TableauRéformesMétéo from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo';
-import TypologiesPictos
-  from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
-import TableauChantiersTuileChantierStyled
-  from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tuile/Chantier/TableauChantiersTuileChantier.styled';
-import {
-  DonnéesTableauChantiers,
-} from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
+import { FunctionComponent } from "react";
+import IcônesMultiplesEtTexte from "@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte";
+import PictoTendance from "@/components/_commons/PictoTendance/PictoTendance";
+import TexteColoré from "@/components/_commons/TexteColoré/TexteColoré";
+import { definirCouleurEcartArrondi } from "@/client/utils/chantier/écart/écart";
+import TableauRéformesAvancement from "@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement";
+import TableauRéformesMétéo from "@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo";
+import TypologiesPictos from "@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos";
+import TableauChantiersTuileChantierStyled from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tuile/Chantier/TableauChantiersTuileChantier.styled";
+import { DonnéesTableauChantiers } from "@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface";
 
 interface TableauChantiersTuileChantierProps {
-  chantier: DonnéesTableauChantiers
-  afficherIcône: boolean
-  chantiersSontArchives: boolean
+  chantier: DonnéesTableauChantiers;
+  afficherIcône: boolean;
+  chantiersSontArchives: boolean;
 }
 
-const TableauChantiersTuileChantier: FunctionComponent<TableauChantiersTuileChantierProps> = ({ chantier, afficherIcône, chantiersSontArchives }) => {
-  const couleurEcartArrondi = definirCouleurEcartArrondi(chantier.écart, chantiersSontArchives);
+const TableauChantiersTuileChantier: FunctionComponent<
+  TableauChantiersTuileChantierProps
+> = ({ chantier, afficherIcône, chantiersSontArchives }) => {
+  const couleurEcartArrondi = definirCouleurEcartArrondi(
+    chantier.écart,
+    chantiersSontArchives,
+  );
 
   return (
     <TableauChantiersTuileChantierStyled>
-      <div className='tuile-chantier-entête'>
-        <div className='fr-mb-0 fr-ml-n1w'>
+      <div className="tuile-chantier-entête">
+        <div className="fr-mb-0 fr-ml-n1w">
           <IcônesMultiplesEtTexte
-            icônesId={afficherIcône && chantier.porteur?.icône ? [chantier.porteur.icône] : []}
-            largeurDesIcônes='1.75rem'
+            icônesId={
+              afficherIcône && chantier.porteur?.icône
+                ? [chantier.porteur.icône]
+                : []
+            }
+            largeurDesIcônes="1.75rem"
             texteAlternatifPourIcônes={chantier.porteur?.nom ?? undefined}
           >
-            <span className='fr-text--sm'>
-              {chantier.nom}
-            </span>
+            <span className="fr-text--sm">{chantier.nom}</span>
           </IcônesMultiplesEtTexte>
         </div>
-        <div className='fr-ml-2w'>
+        <div className="fr-ml-2w">
           <TypologiesPictos typologies={chantier.typologie} />
         </div>
       </div>
-      <div className='fr-mt-1w fr-ml-5v tuile-chantier-corps'>
-        <div className='météo'>
+      <div className="fr-mt-1w fr-ml-5v tuile-chantier-corps">
+        <div className="météo">
           <TableauRéformesMétéo
             chantiersSontArchives={chantiersSontArchives}
             dateDeMàjDonnéesQualitatives={chantier.dateDeMàjDonnéesQualitatives}
             météo={chantier.météo}
-            taille='sm'
+            taille="sm"
           />
         </div>
-        <div className='avancement'>
+        <div className="avancement">
           <TableauRéformesAvancement
             avancement={chantier.avancement}
-            dateDeMàjDonnéesQuantitatives={chantier.dateDeMàjDonnéesQuantitatives}
+            dateDeMàjDonnéesQuantitatives={
+              chantier.dateDeMàjDonnéesQuantitatives
+            }
             estArchive={chantiersSontArchives}
           />
         </div>
-        {
-          (process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true') &&
-          <PictoTendance 
-            estArchive={chantiersSontArchives}
-            tendance={chantier.tendance}
-          />
-        }
-        {
-          (process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true') && !!couleurEcartArrondi &&
-          <TexteColoré
-            alignement='droite'
-            couleur={couleurEcartArrondi.couleur}
-            estGras
-            texte={`${couleurEcartArrondi.ecartArrondi.toFixed(1)}`}
-          />
-        }
+        {process.env.NEXT_PUBLIC_FF_ALERTES === "true" &&
+          process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === "true" && (
+            <PictoTendance
+              estArchive={chantiersSontArchives}
+              tendance={chantier.tendance}
+            />
+          )}
+        {process.env.NEXT_PUBLIC_FF_ALERTES === "true" &&
+          process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === "true" &&
+          !!couleurEcartArrondi && (
+            <TexteColoré
+              alignement="droite"
+              couleur={couleurEcartArrondi.couleur}
+              estGras
+              texte={`${couleurEcartArrondi.ecartArrondi.toFixed(1)}`}
+            />
+          )}
       </div>
     </TableauChantiersTuileChantierStyled>
   );

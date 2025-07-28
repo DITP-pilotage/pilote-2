@@ -1,11 +1,11 @@
-import { mesure_indicateur_temporaire as MesureIndicateurTemporaireModel } from '@prisma/client';
-import {
-  MesureIndicateurTemporaireRepository,
-} from '@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface';
-import { MesureIndicateurTemporaire } from '@/server/import-indicateur/domain/MesureIndicateurTemporaire';
-import { prisma } from '@/server/db/prisma';
+import { mesure_indicateur_temporaire as MesureIndicateurTemporaireModel } from "@prisma/client";
+import { MesureIndicateurTemporaireRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface";
+import { MesureIndicateurTemporaire } from "@/server/import-indicateur/domain/MesureIndicateurTemporaire";
+import { prisma } from "@/server/db/prisma";
 
-const convertirEnModel = (mesureIndicateurTemporaire: MesureIndicateurTemporaire): Omit<MesureIndicateurTemporaireModel, 'date_import'> => {
+const convertirEnModel = (
+  mesureIndicateurTemporaire: MesureIndicateurTemporaire,
+): Omit<MesureIndicateurTemporaireModel, "date_import"> => {
   return {
     id: mesureIndicateurTemporaire.id,
     rapport_id: mesureIndicateurTemporaire.rapportId,
@@ -17,7 +17,9 @@ const convertirEnModel = (mesureIndicateurTemporaire: MesureIndicateurTemporaire
   };
 };
 
-const convertirEnMesureIndicateurTemporaire = (mesureIndicateur: MesureIndicateurTemporaireModel): MesureIndicateurTemporaire => {
+const convertirEnMesureIndicateurTemporaire = (
+  mesureIndicateur: MesureIndicateurTemporaireModel,
+): MesureIndicateurTemporaire => {
   return MesureIndicateurTemporaire.createMesureIndicateurTemporaire({
     id: mesureIndicateur.id,
     rapportId: mesureIndicateur.rapport_id,
@@ -29,20 +31,32 @@ const convertirEnMesureIndicateurTemporaire = (mesureIndicateur: MesureIndicateu
   });
 };
 
-export class PrismaMesureIndicateurTemporaireRepository implements MesureIndicateurTemporaireRepository {
-  async sauvegarder(listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[]): Promise<void> {
-    const listeMesuresIndicateursModel = listeMesuresIndicateurTemporaire.map(convertirEnModel);
+export class PrismaMesureIndicateurTemporaireRepository
+  implements MesureIndicateurTemporaireRepository
+{
+  async sauvegarder(
+    listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[],
+  ): Promise<void> {
+    const listeMesuresIndicateursModel =
+      listeMesuresIndicateurTemporaire.map(convertirEnModel);
 
-    await prisma.mesure_indicateur_temporaire.createMany({ data: listeMesuresIndicateursModel });
+    await prisma.mesure_indicateur_temporaire.createMany({
+      data: listeMesuresIndicateursModel,
+    });
   }
 
-  async recupererToutParRapportId(rapportId: string): Promise<MesureIndicateurTemporaire[]> {
-    const listeMesuresIndicateurTemporaireModel = await prisma.mesure_indicateur_temporaire.findMany({
-      where: {
-        rapport_id: rapportId,
-      },
-    });
-    return listeMesuresIndicateurTemporaireModel.map(convertirEnMesureIndicateurTemporaire);
+  async recupererToutParRapportId(
+    rapportId: string,
+  ): Promise<MesureIndicateurTemporaire[]> {
+    const listeMesuresIndicateurTemporaireModel =
+      await prisma.mesure_indicateur_temporaire.findMany({
+        where: {
+          rapport_id: rapportId,
+        },
+      });
+    return listeMesuresIndicateurTemporaireModel.map(
+      convertirEnMesureIndicateurTemporaire,
+    );
   }
 
   async supprimerToutParRapportId(rapportId: string): Promise<void> {

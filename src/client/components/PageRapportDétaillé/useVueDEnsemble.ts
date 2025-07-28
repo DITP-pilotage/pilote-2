@@ -1,27 +1,39 @@
-import { ChantierVueDEnsemble } from '@/server/domain/chantier/Chantier.interface';
-import {
-  AvancementsStatistiquesAccueilContrat,
-} from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
-import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
-import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
-import { useRemontéesAlertesChantiers } from './useRemontéesAlertesChantiers';
+import { ChantierVueDEnsemble } from "@/server/domain/chantier/Chantier.interface";
+import { AvancementsStatistiquesAccueilContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
+import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
+import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
+import { useRemontéesAlertesChantiers } from "./useRemontéesAlertesChantiers";
 
-export default function useVueDEnsemble(chantiersFiltrés: ChantierRapportDetailleContrat[], territoireCode: string, filtresComptesCalculés: Record<TypeAlerteChantier, number>, avancementsAgrégés: AvancementsStatistiquesAccueilContrat) {
-  const chantiersVueDEnsemble: ChantierVueDEnsemble[] = chantiersFiltrés.map(chantier => ({
-    id: chantier.id,
-    nom: chantier.nom,
-    avancement: chantier.avancementGlobal,
-    météo: chantier.météo,
-    typologie: { estBaromètre: chantier.estBaromètre, estTerritorialisé: chantier.estTerritorialisé, estBrouillon: chantier.statut === 'BROUILLON' },
-    porteur: chantier.responsables.porteur,
-    tendance: chantier.tendance,
-    écart: chantier.écart,
-    dateDeMàjDonnéesQualitatives: chantier.dateDeMàjDonnéesQualitatives,
-    dateDeMàjDonnéesQuantitatives: chantier.dateDeMàjDonnéesQuantitatives,
-    maillesApplicables: chantier.maillesApplicables,
-  }));
+export default function useVueDEnsemble(
+  chantiersFiltrés: ChantierRapportDetailleContrat[],
+  territoireCode: string,
+  filtresComptesCalculés: Record<TypeAlerteChantier, number>,
+  avancementsAgrégés: AvancementsStatistiquesAccueilContrat,
+) {
+  const chantiersVueDEnsemble: ChantierVueDEnsemble[] = chantiersFiltrés.map(
+    (chantier) => ({
+      id: chantier.id,
+      nom: chantier.nom,
+      avancement: chantier.avancementGlobal,
+      météo: chantier.météo,
+      typologie: {
+        estBaromètre: chantier.estBaromètre,
+        estTerritorialisé: chantier.estTerritorialisé,
+        estBrouillon: chantier.statut === "BROUILLON",
+      },
+      porteur: chantier.responsables.porteur,
+      tendance: chantier.tendance,
+      écart: chantier.écart,
+      dateDeMàjDonnéesQualitatives: chantier.dateDeMàjDonnéesQualitatives,
+      dateDeMàjDonnéesQuantitatives: chantier.dateDeMàjDonnéesQuantitatives,
+      maillesApplicables: chantier.maillesApplicables,
+    }),
+  );
 
-  const { remontéesAlertes } = useRemontéesAlertesChantiers(territoireCode, filtresComptesCalculés);
+  const { remontéesAlertes } = useRemontéesAlertesChantiers(
+    territoireCode,
+    filtresComptesCalculés,
+  );
 
   return {
     avancementsAgrégés: avancementsAgrégés ?? null,

@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client';
-import { TerritoireRepository } from '@/server/chantiers/domain/ports/TerritoireRepository';
-import { PrismaPilote } from '@/server/db/PrismaPilote';
+import { PrismaClient } from "@prisma/client";
+import { TerritoireRepository } from "@/server/chantiers/domain/ports/TerritoireRepository";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export class PrismaTerritoireRepository implements TerritoireRepository {
   private readonly prisma: PrismaClient;
@@ -9,7 +9,11 @@ export class PrismaTerritoireRepository implements TerritoireRepository {
     this.prisma = prisma.getInstance();
   }
 
-  async recupererTerritoireCodesEtTerritoiresCodesEnfantsParTerritoireCode({ territoireCode }: { territoireCode: string }): Promise<string[]> {
+  async recupererTerritoireCodesEtTerritoiresCodesEnfantsParTerritoireCode({
+    territoireCode,
+  }: {
+    territoireCode: string;
+  }): Promise<string[]> {
     const territoire = await this.prisma.territoire.findUnique({
       where: {
         code: territoireCode,
@@ -20,9 +24,14 @@ export class PrismaTerritoireRepository implements TerritoireRepository {
     });
 
     if (!territoire) {
-      throw new Error('Territoire non trouvé');
+      throw new Error("Territoire non trouvé");
     }
 
-    return [territoire.code, ...territoire.territoire_enfant.map(territoireEnfant => territoireEnfant.code)];
+    return [
+      territoire.code,
+      ...territoire.territoire_enfant.map(
+        (territoireEnfant) => territoireEnfant.code,
+      ),
+    ];
   }
 }

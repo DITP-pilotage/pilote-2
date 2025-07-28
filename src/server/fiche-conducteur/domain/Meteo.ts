@@ -1,1 +1,7 @@
-export type Meteo = 'ORAGE' | 'NUAGE' | 'COUVERT' | 'SOLEIL' | 'NON_NECESSAIRE' | 'NON_RENSEIGNEE';
+export type Meteo =
+  | "ORAGE"
+  | "NUAGE"
+  | "COUVERT"
+  | "SOLEIL"
+  | "NON_NECESSAIRE"
+  | "NON_RENSEIGNEE";

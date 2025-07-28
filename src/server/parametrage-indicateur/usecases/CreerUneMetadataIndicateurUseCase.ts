@@ -1,18 +1,12 @@
-import {
-  MetadataParametrageIndicateurRepository,
-} from '@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository';
-import {
-  MetadataParametrageIndicateurForm,
-} from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateurInputForm';
-import {
-  HistorisationModificationRepository,
-} from '@/server/domain/historisationModification/HistorisationModificationRepository';
-import { HistorisationModification } from '@/server/domain/historisationModification/HistorisationModification';
-import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur';
+import { MetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository";
+import { MetadataParametrageIndicateurForm } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateurInputForm";
+import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
+import { HistorisationModification } from "@/server/domain/historisationModification/HistorisationModification";
+import { MetadataParametrageIndicateur } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur";
 
 type Dependencies = {
-  metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository,
-  historisationModificationRepository: HistorisationModificationRepository,
+  metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
+  historisationModificationRepository: HistorisationModificationRepository;
 };
 export default class CreerUneMetadataIndicateurUseCase {
   private metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
@@ -23,36 +17,49 @@ export default class CreerUneMetadataIndicateurUseCase {
     metadataParametrageIndicateurRepository,
     historisationModificationRepository,
   }: Dependencies) {
-    this.metadataParametrageIndicateurRepository = metadataParametrageIndicateurRepository;
-    this.historisationModificationRepository = historisationModificationRepository;
-
+    this.metadataParametrageIndicateurRepository =
+      metadataParametrageIndicateurRepository;
+    this.historisationModificationRepository =
+      historisationModificationRepository;
   }
 
   async run(auteurId: string, inputs: MetadataParametrageIndicateurForm) {
-    const metadataParametrageIndicateurNouveau = MetadataParametrageIndicateur.creerMetadataParametrageIndicateur({
-      ...inputs,
-      chantierNom: 'Non défini en création',
-    });
+    const metadataParametrageIndicateurNouveau =
+      MetadataParametrageIndicateur.creerMetadataParametrageIndicateur({
+        ...inputs,
+        chantierNom: "Non défini en création",
+      });
 
-    const result = await this.metadataParametrageIndicateurRepository.creer(metadataParametrageIndicateurNouveau);
-    const historisationModification = HistorisationModification.creerHistorisationCreation({
-      auteurId,
-      tableModifieId: 'metadata_indicateurs',
-      nouvelleValeur: result,
-    });
-    const historisationParametrageModification = HistorisationModification.creerHistorisationCreation({
-      auteurId,
-      tableModifieId: 'metadata_parametrages_indicateurs',
-      nouvelleValeur: result,
-    });
-    const historisationComplementaireModification = HistorisationModification.creerHistorisationCreation({
-      auteurId,
-      tableModifieId: 'metadata_indicateurs_complementaire',
-      nouvelleValeur: result,
-    });
-    await this.historisationModificationRepository.sauvegarderModificationHistorisation(historisationModification);
-    await this.historisationModificationRepository.sauvegarderModificationHistorisation(historisationParametrageModification);
-    await this.historisationModificationRepository.sauvegarderModificationHistorisation(historisationComplementaireModification);
+    const result = await this.metadataParametrageIndicateurRepository.creer(
+      metadataParametrageIndicateurNouveau,
+    );
+    const historisationModification =
+      HistorisationModification.creerHistorisationCreation({
+        auteurId,
+        tableModifieId: "metadata_indicateurs",
+        nouvelleValeur: result,
+      });
+    const historisationParametrageModification =
+      HistorisationModification.creerHistorisationCreation({
+        auteurId,
+        tableModifieId: "metadata_parametrages_indicateurs",
+        nouvelleValeur: result,
+      });
+    const historisationComplementaireModification =
+      HistorisationModification.creerHistorisationCreation({
+        auteurId,
+        tableModifieId: "metadata_indicateurs_complementaire",
+        nouvelleValeur: result,
+      });
+    await this.historisationModificationRepository.sauvegarderModificationHistorisation(
+      historisationModification,
+    );
+    await this.historisationModificationRepository.sauvegarderModificationHistorisation(
+      historisationParametrageModification,
+    );
+    await this.historisationModificationRepository.sauvegarderModificationHistorisation(
+      historisationComplementaireModification,
+    );
     return result;
   }
 }

@@ -1,9 +1,13 @@
-import { calculerMoyenne, calculerMédiane, filtrerValeurs } from './statistiques';
+import {
+  calculerMoyenne,
+  calculerMédiane,
+  filtrerValeurs,
+} from "./statistiques";
 
-describe('statistiques', () => {
-  describe('Filtrer valeurs', () => {
-    describe('À partir d\'un tableau de nombres et valeurs nulles', () => {
-      it('Retourne le tableau de nombres sans valeurs nulles', () => {
+describe("statistiques", () => {
+  describe("Filtrer valeurs", () => {
+    describe("À partir d'un tableau de nombres et valeurs nulles", () => {
+      it("Retourne le tableau de nombres sans valeurs nulles", () => {
         //GIVEN
         const valeursInitiales = [null, 1, 2, null, 3, 4];
         //WHEN
@@ -13,8 +17,8 @@ describe('statistiques', () => {
       });
     });
 
-    describe('À partir d\'un tableau de valeurs uniquement nulles', () => {
-      it('Retourne un tabelau vide', () => {
+    describe("À partir d'un tableau de valeurs uniquement nulles", () => {
+      it("Retourne un tabelau vide", () => {
         //GIVEN
         const valeursInitiales = [null, null, null];
         //WHEN
@@ -24,8 +28,8 @@ describe('statistiques', () => {
       });
     });
 
-    describe('À partir d\'un tableau vide', () => {
-      it('Retourne un tableau vide', () => {
+    describe("À partir d'un tableau vide", () => {
+      it("Retourne un tableau vide", () => {
         //GIVEN
         const valeursInitiales: (number | null)[] = [];
         //WHEN
@@ -36,9 +40,9 @@ describe('statistiques', () => {
     });
   });
 
-  describe('Calculer moyenne', () => {
-    describe('À partir d\'un tableau de nombres et valeurs nulles', () => {
-      it('Retourne la moyenne des nombres', () => {
+  describe("Calculer moyenne", () => {
+    describe("À partir d'un tableau de nombres et valeurs nulles", () => {
+      it("Retourne la moyenne des nombres", () => {
         //GIVEN
         const valeursInitiales = [null, 1, 2, null, 3, 4];
         //WHEN
@@ -48,8 +52,8 @@ describe('statistiques', () => {
       });
     });
 
-    describe('À partir d\'un tableau de valeurs uniquement nulles', () => {
-      it('Retourne null', () => {
+    describe("À partir d'un tableau de valeurs uniquement nulles", () => {
+      it("Retourne null", () => {
         //GIVEN
         const valeursInitiales = [null, null, null];
         //WHEN
@@ -59,8 +63,8 @@ describe('statistiques', () => {
       });
     });
 
-    describe('À partir d\'un tableau vide', () => {
-      it('Retourne null', () => {
+    describe("À partir d'un tableau vide", () => {
+      it("Retourne null", () => {
         //GIVEN
         const valeursInitiales: (number | null)[] = [];
         //WHEN
@@ -71,9 +75,9 @@ describe('statistiques', () => {
     });
   });
 
-  describe('Calculer médiane', () => {
-    describe('À partir d\'un tableau de nombres et valeurs nulles', () => {
-      it('Retourne la moyenne des nombres', () => {
+  describe("Calculer médiane", () => {
+    describe("À partir d'un tableau de nombres et valeurs nulles", () => {
+      it("Retourne la moyenne des nombres", () => {
         //GIVEN
         const valeursInitiales = [7, null, 2, null, 3, 2, 8, 1, 8];
         //WHEN
@@ -83,8 +87,8 @@ describe('statistiques', () => {
       });
     });
 
-    describe('À partir d\'un tableau de valeurs uniquement nulles', () => {
-      it('Retourne null', () => {
+    describe("À partir d'un tableau de valeurs uniquement nulles", () => {
+      it("Retourne null", () => {
         //GIVEN
         const valeursInitiales = [null, null, null];
         //WHEN
@@ -94,8 +98,8 @@ describe('statistiques', () => {
       });
     });
 
-    describe('À partir d\'un tableau vide', () => {
-      it('Retourne null', () => {
+    describe("À partir d'un tableau vide", () => {
+      it("Retourne null", () => {
         //GIVEN
         const valeursInitiales: (number | null)[] = [];
         //WHEN
@@ -105,5 +109,4 @@ describe('statistiques', () => {
       });
     });
   });
-
 });

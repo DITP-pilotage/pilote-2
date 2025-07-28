@@ -1,5 +1,5 @@
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 
 export class HabilitationBuilder {
   private readonly _habilitations: Habilitations;
@@ -9,10 +9,9 @@ export class HabilitationBuilder {
       lecture: { chantiers: [], territoires: [], périmètres: [] },
       saisieCommentaire: { chantiers: [], territoires: [], périmètres: [] },
       saisieIndicateur: { chantiers: [], territoires: [], périmètres: [] },
-      gestionUtilisateur: { chantiers: [], territoires:[], périmètres: [] },
+      gestionUtilisateur: { chantiers: [], territoires: [], périmètres: [] },
       responsabilite: { chantiers: [], territoires: [], périmètres: [] },
     };
-
   }
 
   avecTerritoireCodesLecture(territoireCodes: string[]) {

@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import { breakpointL } from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
+import styled from "@emotion/styled";
+import { breakpointL } from "@/components/_commons/MiseEnPage/MiseEnPage.styled";
 
 const FiltresActifsStyled = styled.div`
   position: sticky;
@@ -15,14 +15,14 @@ const FiltresActifsStyled = styled.div`
     overflow-y: auto;
     list-style: none;
 
-    >li {
+    > li {
       display: inline;
     }
   }
-  
+
   @media screen and (max-width: ${breakpointL}) {
     top: 3.5rem;
-    
+
     .conteneur-tags {
       overflow-x: auto;
       white-space: nowrap;

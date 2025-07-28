@@ -1,19 +1,19 @@
-import { MesureIndicateurTemporaire } from '@/server/import-indicateur/domain/MesureIndicateurTemporaire';
+import { MesureIndicateurTemporaire } from "@/server/import-indicateur/domain/MesureIndicateurTemporaire";
 
 export class MesureIndicateurTemporaireBuilder {
-  private id: string = 'idIndicateur';
+  private id: string = "idIndicateur";
 
-  private rapportId: string = 'rapportId';
+  private rapportId: string = "rapportId";
 
-  private indicId: string | null = 'IND-001';
+  private indicId: string | null = "IND-001";
 
-  private zoneId: string = 'D009';
+  private zoneId: string = "D009";
 
-  private metricDate: string = '30/02/2022';
+  private metricDate: string = "30/02/2022";
 
-  private metricType: string = 'vi';
+  private metricType: string = "vi";
 
-  private metricValue: string = '20';
+  private metricValue: string = "20";
 
   avecId(id: string): MesureIndicateurTemporaireBuilder {
     this.id = id;

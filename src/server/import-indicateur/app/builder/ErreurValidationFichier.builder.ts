@@ -1,21 +1,21 @@
-import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
+import { ErreurValidationFichier } from "@/server/import-indicateur/domain/ErreurValidationFichier";
 
 export class ErreurValidationFichierBuilder {
-  private id: string = '4c92c525-b64e-4a4c-9ae2-1b74fd55d38a';
-  
-  private rapportId: string = 'db08d46d-1231-4cdd-82ac-eeadce68df4d';
+  private id: string = "4c92c525-b64e-4a4c-9ae2-1b74fd55d38a";
 
-  private cellule: string = 'IND-12';
+  private rapportId: string = "db08d46d-1231-4cdd-82ac-eeadce68df4d";
 
-  private nom: string = 'Indicateur invalide';
+  private cellule: string = "IND-12";
 
-  private message: string = 'L\'indicateur est invalide';
+  private nom: string = "Indicateur invalide";
+
+  private message: string = "L'indicateur est invalide";
 
   private numeroDeLigne: number = 0;
 
   private positionDeLigne: number = 0;
 
-  private nomDuChamp: string = 'indic_id';
+  private nomDuChamp: string = "indic_id";
 
   private positionDuChamp: number = 0;
 

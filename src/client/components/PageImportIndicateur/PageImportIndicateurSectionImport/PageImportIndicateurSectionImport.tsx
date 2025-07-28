@@ -1,66 +1,69 @@
-import { useRouter } from 'next/router';
-import { FunctionComponent, useState } from 'react';
-import Titre from '@/components/_commons/Titre/Titre';
-import IndicateurDEtapes from '@/components/_commons/IndicateurDEtapes/IndicateurDEtapes';
-import Bloc from '@/components/_commons/Bloc/Bloc';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
-import { wording } from '@/client/utils/i18n/i18n';
-import EtapeSelectionIndicateur
-  from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapeSelectionIndicateur';
-import EtapeChargerFichier
-  from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapeChargerFichier';
-import EtapePublierFichier
-  from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapePublierFichier';
-import { EtapesImport } from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapesImport';
-import { RapportContrat } from '@/server/app/contrats/RapportContrat';
-import { InformationIndicateurContrat } from '@/server/app/contrats/InformationIndicateurContrat';
-import PageImportIndicateurSectionImportStyled from './PageImportIndicateurSectionImport.styled';
+import { useRouter } from "next/router";
+import { FunctionComponent, useState } from "react";
+import Titre from "@/components/_commons/Titre/Titre";
+import IndicateurDEtapes from "@/components/_commons/IndicateurDEtapes/IndicateurDEtapes";
+import Bloc from "@/components/_commons/Bloc/Bloc";
+import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
+import { DetailValidationFichierContrat } from "@/server/app/contrats/DetailValidationFichierContrat.interface";
+import { wording } from "@/client/utils/i18n/i18n";
+import EtapeSelectionIndicateur from "@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapeSelectionIndicateur";
+import EtapeChargerFichier from "@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapeChargerFichier";
+import EtapePublierFichier from "@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapePublierFichier";
+import { EtapesImport } from "@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapesImport";
+import { RapportContrat } from "@/server/app/contrats/RapportContrat";
+import { InformationIndicateurContrat } from "@/server/app/contrats/InformationIndicateurContrat";
+import PageImportIndicateurSectionImportStyled from "./PageImportIndicateurSectionImport.styled";
 
 interface PageImportIndicateurSectionImportProps {
-  indicateurs: Indicateur[]
-  rapport: RapportContrat | null
-  informationsIndicateur: InformationIndicateurContrat[],
+  indicateurs: Indicateur[];
+  rapport: RapportContrat | null;
+  informationsIndicateur: InformationIndicateurContrat[];
 }
 
 const étapes = [
-  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_EXPLICATION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.SOUS_TITRE_SELECTEUR,
-  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_EXPLICATION_ETAPE_IMPORT.ETAPE_CHARGER_FICHIER.SOUS_TITRE_SELECTEUR,
-  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_EXPLICATION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.SOUS_TITRE_SELECTEUR,
+  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_EXPLICATION_ETAPE_IMPORT
+    .ETAPE_SELECTION_INDICATEUR.SOUS_TITRE_SELECTEUR,
+  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_EXPLICATION_ETAPE_IMPORT
+    .ETAPE_CHARGER_FICHIER.SOUS_TITRE_SELECTEUR,
+  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_EXPLICATION_ETAPE_IMPORT
+    .ETAPE_PUBLIER_FICHIER.SOUS_TITRE_SELECTEUR,
 ];
 
-const PageImportIndicateurSectionImport: FunctionComponent<PageImportIndicateurSectionImportProps> = ({
-  indicateurs,
-  informationsIndicateur,
-  rapport: rapportImport,
-}) => {
-  const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
+const PageImportIndicateurSectionImport: FunctionComponent<
+  PageImportIndicateurSectionImportProps
+> = ({ indicateurs, informationsIndicateur, rapport: rapportImport }) => {
+  const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(
+    null,
+  );
   const [estFichierPublie, setEstFichierPublie] = useState<boolean>(false);
-  const optionsSélecteur = indicateurs.map(elem => ({
-    libellé: `${elem.id + ' : ' + elem.nom}`,
+  const optionsSélecteur = indicateurs.map((elem) => ({
+    libellé: `${elem.id + " : " + elem.nom}`,
     valeur: elem.id,
   }));
 
   const { query } = useRouter();
   const etapeCourante = (query.etapeCourante || 1) as number;
-  const indicateur = indicateurs.find(indic => indic.id === query.indicateurId) as Indicateur;
+  const indicateur = indicateurs.find(
+    (indic) => indic.id === query.indicateurId,
+  ) as Indicateur;
   const chantierId = query.id as string;
   const indicateurId = query.indicateurId as string;
   const rapportId = query.rapportId as string;
-  const [indicateurSelectionné, setIndicateurSelectionné] = useState<string>(optionsSélecteur[0]?.valeur || '');
+  const [indicateurSelectionné, setIndicateurSelectionné] = useState<string>(
+    optionsSélecteur[0]?.valeur || "",
+  );
 
   return (
     <PageImportIndicateurSectionImportStyled>
-      <div className='fr-container fr-py-3w'>
-        <Titre baliseHtml='h2'>
+      <div className="fr-container fr-py-3w">
+        <Titre baliseHtml="h2">
           {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.TITRE}
         </Titre>
         <Bloc>
-          <IndicateurDEtapes
-            étapeCourante={etapeCourante}
-            étapes={étapes}
-          />
-          <div className={`${etapeCourante != EtapesImport.SELECTION_INDICATEUR && 'fr-hidden'}`}>
+          <IndicateurDEtapes étapeCourante={etapeCourante} étapes={étapes} />
+          <div
+            className={`${etapeCourante != EtapesImport.SELECTION_INDICATEUR && "fr-hidden"}`}
+          >
             <EtapeSelectionIndicateur
               informationsIndicateur={informationsIndicateur}
               options={optionsSélecteur}
@@ -68,7 +71,9 @@ const PageImportIndicateurSectionImport: FunctionComponent<PageImportIndicateurS
               valeurSélectionnée={indicateurSelectionné}
             />
           </div>
-          <div className={`${etapeCourante != EtapesImport.VERIFIER_FICHIER && 'fr-hidden'}`}>
+          <div
+            className={`${etapeCourante != EtapesImport.VERIFIER_FICHIER && "fr-hidden"}`}
+          >
             <EtapeChargerFichier
               chantierId={chantierId}
               indicateur={indicateur}
@@ -77,7 +82,9 @@ const PageImportIndicateurSectionImport: FunctionComponent<PageImportIndicateurS
               setRapport={setRapport}
             />
           </div>
-          <div className={`${etapeCourante != EtapesImport.IMPORT_FICHIER && 'fr-hidden'}`}>
+          <div
+            className={`${etapeCourante != EtapesImport.IMPORT_FICHIER && "fr-hidden"}`}
+          >
             <EtapePublierFichier
               chantierId={chantierId}
               estFichierPublie={estFichierPublie}

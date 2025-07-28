@@ -1,13 +1,13 @@
-import { useEditor, EditorContent } from '@tiptap/react';
-import { StarterKit } from '@tiptap/starter-kit';
-import { Link } from '@tiptap/extension-link';
-import { Image } from '@tiptap/extension-image';
-import { TextStyle } from '@tiptap/extension-text-style';
-import { Color } from '@tiptap/extension-color';
-import { Placeholder } from '@tiptap/extension-placeholder';
-import { FunctionComponent } from 'react';
-import { ÉditeurRicheStyled } from './ÉditeurRiche.styled';
-import { MenuBar } from './MenuBar';
+import { useEditor, EditorContent } from "@tiptap/react";
+import { StarterKit } from "@tiptap/starter-kit";
+import { Link } from "@tiptap/extension-link";
+import { Image } from "@tiptap/extension-image";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { Color } from "@tiptap/extension-color";
+import { Placeholder } from "@tiptap/extension-placeholder";
+import { FunctionComponent } from "react";
+import { ÉditeurRicheStyled } from "./ÉditeurRiche.styled";
+import { MenuBar } from "./MenuBar";
 
 interface ÉditeurRicheProps {
   contenu: string;
@@ -19,7 +19,7 @@ interface ÉditeurRicheProps {
 export const ÉditeurRiche: FunctionComponent<ÉditeurRicheProps> = ({
   contenu,
   onChange,
-  placeholder = 'Saisissez votre texte...',
+  placeholder = "Saisissez votre texte...",
   estEnLectureSeule = false,
 }) => {
   const editor = useEditor({
@@ -37,7 +37,7 @@ export const ÉditeurRiche: FunctionComponent<ÉditeurRicheProps> = ({
     ],
     content: contenu,
     immediatelyRender: true,
-    
+
     editable: !estEnLectureSeule,
     onUpdate: ({ editor: editor2 }) => {
       onChange(editor2.getHTML());
@@ -46,9 +46,8 @@ export const ÉditeurRiche: FunctionComponent<ÉditeurRicheProps> = ({
 
   return (
     <ÉditeurRicheStyled>
-      <MenuBar editor={editor} /> 
+      <MenuBar editor={editor} />
       <EditorContent editor={editor} />
     </ÉditeurRicheStyled>
   );
 };
-

@@ -1,8 +1,13 @@
-import { prisma } from '@/server/db/prisma';
-import { PropositionValeurAvancementRepository } from '@/server/gestion-utilisateur/domain/ports/PropositionValeurAvancementRepository';
+import { prisma } from "@/server/db/prisma";
+import { PropositionValeurAvancementRepository } from "@/server/gestion-utilisateur/domain/ports/PropositionValeurAvancementRepository";
 
-export class PrismaPropositionValeurAvancementRepository implements PropositionValeurAvancementRepository {
-  async anonymiserAuteurs(auteursAAnonymiserIds: string[], emailAuteurRemplacement: string): Promise<void> {
+export class PrismaPropositionValeurAvancementRepository
+  implements PropositionValeurAvancementRepository
+{
+  async anonymiserAuteurs(
+    auteursAAnonymiserIds: string[],
+    emailAuteurRemplacement: string,
+  ): Promise<void> {
     const auteurAnonyme = await prisma.utilisateur.findFirst({
       where: {
         email: emailAuteurRemplacement,
@@ -19,7 +24,7 @@ export class PrismaPropositionValeurAvancementRepository implements PropositionV
         data: {
           id_auteur_modification: auteurAnonyme.id,
         },
-      }); 
+      });
     }
   }
 }

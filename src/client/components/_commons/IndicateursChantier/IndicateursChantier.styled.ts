@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const IndicateursChantierStyled = styled.section`
   .sous-rubrique-indicateur:last-of-type {
@@ -6,7 +6,7 @@ const IndicateursChantierStyled = styled.section`
   }
 
   .fr-accordion_custom {
-    background-color: #E3E3FD;
+    background-color: #e3e3fd;
     border-bottom: 1px solid #000091;
     border-radius: 8px 8px 0 0;
   }

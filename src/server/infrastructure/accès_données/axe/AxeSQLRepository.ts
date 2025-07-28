@@ -1,7 +1,7 @@
-import { Prisma } from '@prisma/client';
-import AxeRepository from '@/server/domain/axe/AxeRepository.interface';
-import Axe from '@/server/domain/axe/Axe.interface';
-import { prisma } from '@/server/db/prisma';
+import { Prisma } from "@prisma/client";
+import AxeRepository from "@/server/domain/axe/AxeRepository.interface";
+import Axe from "@/server/domain/axe/Axe.interface";
+import { prisma } from "@/server/db/prisma";
 
 export default class AxeSQLRepository implements AxeRepository {
   async getListe(): Promise<Axe[]> {

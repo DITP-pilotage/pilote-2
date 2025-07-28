@@ -1,19 +1,19 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { create } from 'zustand';
+import { create } from "zustand";
 
 export type FiltresIndicateurs = {
-  chantiers: string[]
-  perimetresMinisteriels: string[]
-  estTerritorialise: boolean
-  estBarometre: boolean
+  chantiers: string[];
+  perimetresMinisteriels: string[];
+  estTerritorialise: boolean;
+  estBarometre: boolean;
 };
 
 export default interface FiltresModifierIndicateursStore {
-  filtresActifs: FiltresIndicateurs,
+  filtresActifs: FiltresIndicateurs;
   actions: {
-    sauvegarderFiltres: (filtre: Partial<FiltresIndicateurs>) => void
-    réinitialiser: () => void,
-  }
+    sauvegarderFiltres: (filtre: Partial<FiltresIndicateurs>) => void;
+    réinitialiser: () => void;
+  };
 }
 
 const filtresActifsInitiaux: FiltresIndicateurs = {
@@ -23,22 +23,26 @@ const filtresActifsInitiaux: FiltresIndicateurs = {
   estBarometre: false,
 };
 
-const useFiltresModifierIndicateursStore = create<FiltresModifierIndicateursStore>((set) => ({
-  filtresActifs: filtresActifsInitiaux,
-  actions: {
-    sauvegarderFiltres: (filtre: Partial<FiltresIndicateurs>) => set((etatActuel) => ({
-      filtresActifs: {
-        ...etatActuel.filtresActifs,
-        ...filtre,
+const useFiltresModifierIndicateursStore =
+  create<FiltresModifierIndicateursStore>((set) => ({
+    filtresActifs: filtresActifsInitiaux,
+    actions: {
+      sauvegarderFiltres: (filtre: Partial<FiltresIndicateurs>) =>
+        set((etatActuel) => ({
+          filtresActifs: {
+            ...etatActuel.filtresActifs,
+            ...filtre,
+          },
+        })),
+      réinitialiser: () => {
+        set(() => ({
+          filtresActifs: { ...filtresActifsInitiaux },
+        }));
       },
-    })),
-    réinitialiser: () => {
-      set(() => ({
-        filtresActifs: { ...filtresActifsInitiaux },
-      }));
     },
-  },
-}));
+  }));
 
-export const actions = () => useFiltresModifierIndicateursStore(étatActuel => étatActuel.actions);
-export const filtresModifierIndicateursActifsStore = () => useFiltresModifierIndicateursStore(étatActuel => étatActuel.filtresActifs);
+export const actions = () =>
+  useFiltresModifierIndicateursStore((étatActuel) => étatActuel.actions);
+export const filtresModifierIndicateursActifsStore = () =>
+  useFiltresModifierIndicateursStore((étatActuel) => étatActuel.filtresActifs);

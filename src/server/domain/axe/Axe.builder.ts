@@ -1,23 +1,23 @@
-import { faker } from '@faker-js/faker/locale/fr';
-import Axe from '@/server/domain/axe/Axe.interface';
-import { générerUnIdentifiantUnique } from '@/server/infrastructure/test/builders/utils';
+import { faker } from "@faker-js/faker/locale/fr";
+import Axe from "@/server/domain/axe/Axe.interface";
+import { générerUnIdentifiantUnique } from "@/server/infrastructure/test/builders/utils";
 
 export default class AxeBuilder {
-  private _id: Axe['id'];
+  private _id: Axe["id"];
 
-  private _nom: Axe['nom'];
+  private _nom: Axe["nom"];
 
   constructor() {
-    this._id = générerUnIdentifiantUnique('AXE');
+    this._id = générerUnIdentifiantUnique("AXE");
     this._nom = `${this._id} ${faker.lorem.words()}`;
   }
 
-  avecId(id: Axe['id']): AxeBuilder {
+  avecId(id: Axe["id"]): AxeBuilder {
     this._id = id;
     return this;
   }
 
-  avecNom(nom: Axe['nom']): AxeBuilder {
+  avecNom(nom: Axe["nom"]): AxeBuilder {
     this._nom = nom;
     return this;
   }

@@ -1,8 +1,11 @@
-import chroma from 'chroma-js';
-import { CouleurHexa, CouleurRVB } from '@/client/utils/couleur/couleur.interface';
+import chroma from "chroma-js";
+import {
+  CouleurHexa,
+  CouleurRVB,
+} from "@/client/utils/couleur/couleur.interface";
 
 function déterminerValeursNumériques(couleur: CouleurHexa): CouleurRVB {
-  const couleurValeursHexa = couleur.replace('#', '');
+  const couleurValeursHexa = couleur.replace("#", "");
   return {
     r: Number.parseInt(couleurValeursHexa.slice(0, 2), 16),
     v: Number.parseInt(couleurValeursHexa.slice(2, 4), 16),
@@ -10,7 +13,10 @@ function déterminerValeursNumériques(couleur: CouleurHexa): CouleurRVB {
   };
 }
 
-function soustraireCouleurs(couleurA: CouleurRVB, couleurB: CouleurRVB): CouleurRVB {
+function soustraireCouleurs(
+  couleurA: CouleurRVB,
+  couleurB: CouleurRVB,
+): CouleurRVB {
   return {
     r: couleurB.r - couleurA.r,
     v: couleurB.v - couleurA.v,
@@ -18,7 +24,11 @@ function soustraireCouleurs(couleurA: CouleurRVB, couleurB: CouleurRVB): Couleur
   };
 }
 
-function restreintLaCouleurDansUnIntervalle(couleur: CouleurRVB, borne1: CouleurRVB, borne2: CouleurRVB): CouleurRVB {
+function restreintLaCouleurDansUnIntervalle(
+  couleur: CouleurRVB,
+  borne1: CouleurRVB,
+  borne2: CouleurRVB,
+): CouleurRVB {
   const rougeMin = Math.min(borne1.r, borne2.r);
   const vertMin = Math.min(borne1.v, borne2.v);
   const bleuMin = Math.min(borne1.b, borne2.b);
@@ -34,26 +44,42 @@ function restreintLaCouleurDansUnIntervalle(couleur: CouleurRVB, borne1: Couleur
   };
 }
 
-function interpolerCouleursRVB(couleurRVBDépart: CouleurRVB, couleurRVBArrivée: CouleurRVB, pourcentage: number): CouleurRVB {
+function interpolerCouleursRVB(
+  couleurRVBDépart: CouleurRVB,
+  couleurRVBArrivée: CouleurRVB,
+  pourcentage: number,
+): CouleurRVB {
   const différences = soustraireCouleurs(couleurRVBDépart, couleurRVBArrivée);
   const couleurRVBInterpolée = {
-    r: ((différences.r * pourcentage / 100) + couleurRVBDépart.r),
-    v: ((différences.v * pourcentage / 100) + couleurRVBDépart.v),
-    b: ((différences.b * pourcentage / 100) + couleurRVBDépart.b),
+    r: (différences.r * pourcentage) / 100 + couleurRVBDépart.r,
+    v: (différences.v * pourcentage) / 100 + couleurRVBDépart.v,
+    b: (différences.b * pourcentage) / 100 + couleurRVBDépart.b,
   };
-  return restreintLaCouleurDansUnIntervalle(couleurRVBInterpolée, couleurRVBDépart, couleurRVBArrivée);
+  return restreintLaCouleurDansUnIntervalle(
+    couleurRVBInterpolée,
+    couleurRVBDépart,
+    couleurRVBArrivée,
+  );
 }
 
 function convertitEnHexadécimal(valeur: number): string {
   const hexadécimal = valeur.toString(16);
-  const hexadécimalSansDécimale = hexadécimal.split('.')[0];
-  return hexadécimalSansDécimale.padStart(2, '0');
+  const hexadécimalSansDécimale = hexadécimal.split(".")[0];
+  return hexadécimalSansDécimale.padStart(2, "0");
 }
 
-export const interpolerCouleurs = (couleurDépart: CouleurHexa, couleurArrivée: CouleurHexa, pourcentage: number): CouleurHexa => {
+export const interpolerCouleurs = (
+  couleurDépart: CouleurHexa,
+  couleurArrivée: CouleurHexa,
+  pourcentage: number,
+): CouleurHexa => {
   const couleurRVBDépart = déterminerValeursNumériques(couleurDépart);
   const couleurRVBArrivée = déterminerValeursNumériques(couleurArrivée);
-  const couleurRVB = interpolerCouleursRVB(couleurRVBDépart, couleurRVBArrivée, pourcentage);
+  const couleurRVB = interpolerCouleursRVB(
+    couleurRVBDépart,
+    couleurRVBArrivée,
+    pourcentage,
+  );
 
   let hexaRouge = convertitEnHexadécimal(couleurRVB.r);
   let hexaVert = convertitEnHexadécimal(couleurRVB.v);
@@ -62,6 +88,13 @@ export const interpolerCouleurs = (couleurDépart: CouleurHexa, couleurArrivée:
   return `#${hexaRouge}${hexaVert}${hexaBleu}`;
 };
 
-export function générerCouleursAléatoiresEntreDeuxCouleurs(couleurClair: CouleurHexa, couleurFoncée: CouleurHexa, nombreDeCouleurs: number) {
-  return chroma.scale([couleurFoncée, couleurClair]).mode('lch').colors(nombreDeCouleurs);
+export function générerCouleursAléatoiresEntreDeuxCouleurs(
+  couleurClair: CouleurHexa,
+  couleurFoncée: CouleurHexa,
+  nombreDeCouleurs: number,
+) {
+  return chroma
+    .scale([couleurFoncée, couleurClair])
+    .mode("lch")
+    .colors(nombreDeCouleurs);
 }

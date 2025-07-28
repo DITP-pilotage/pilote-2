@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const SynthèseDesRésultatsHistoriqueStyled = styled.div`
   .conteneur-météo {
@@ -9,11 +9,11 @@ const SynthèseDesRésultatsHistoriqueStyled = styled.div`
     width: auto;
     height: 5rem;
   }
-  
+
   .conteneur {
     display: grid;
   }
-  
+
   @media (min-width: 48rem) {
     .conteneur {
       grid-template-columns: 1fr 4fr;

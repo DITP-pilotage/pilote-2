@@ -1,14 +1,16 @@
-import { FunctionComponent, PropsWithChildren } from 'react';
-import { InformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
-import { ChampObligatoire } from '@/components/PageIndicateur/ChampObligatoire';
-import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import { FunctionComponent, PropsWithChildren } from "react";
+import { InformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
+import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
+import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 
-export const MetadataIndicateurChamp: FunctionComponent<PropsWithChildren<{
-  informationMetadataIndicateur: InformationMetadataIndicateurContrat,
-  estEnCoursDeModification: boolean,
-  valeurAffiché: string,
-  estMandatory?: boolean,
-}>> = ({
+export const MetadataIndicateurChamp: FunctionComponent<
+  PropsWithChildren<{
+    informationMetadataIndicateur: InformationMetadataIndicateurContrat;
+    estEnCoursDeModification: boolean;
+    valeurAffiché: string;
+    estMandatory?: boolean;
+  }>
+> = ({
   children,
   informationMetadataIndicateur,
   estEnCoursDeModification,
@@ -17,43 +19,28 @@ export const MetadataIndicateurChamp: FunctionComponent<PropsWithChildren<{
 }) => {
   return (
     <>
-      <div className='fr-text--md bold fr-mb-1v relative flex align-center '>
-        <p className='titre-input-metadata overflow-ellipsis'>
+      <div className="fr-text--md bold fr-mb-1v relative flex align-center ">
+        <p className="titre-input-metadata overflow-ellipsis">
           {informationMetadataIndicateur.metaPiloteAlias}
         </p>
         {estEnCoursDeModification ? (
           <>
-            {
-              estMandatory
-                ? (
-                  <ChampObligatoire />
-                ) : null
-            }
-            {
-              informationMetadataIndicateur.metaPiloteDispDispDesc ? (
-                <Infobulle
-                  idHtml={`indicParentCh-${informationMetadataIndicateur.name}`}
-                >
-                  {informationMetadataIndicateur.description}
-                </Infobulle>
-              ) : null
-            }
+            {estMandatory ? <ChampObligatoire /> : null}
+            {informationMetadataIndicateur.metaPiloteDispDispDesc ? (
+              <Infobulle
+                idHtml={`indicParentCh-${informationMetadataIndicateur.name}`}
+              >
+                {informationMetadataIndicateur.description}
+              </Infobulle>
+            ) : null}
           </>
         ) : null}
       </div>
-      {
-        estEnCoursDeModification
-          ? (
-            <div className='fr-mt-1w'>
-              {children}
-            </div>
-          )
-          : (
-            <span>
-              {valeurAffiché}
-            </span>
-          )
-      }
+      {estEnCoursDeModification ? (
+        <div className="fr-mt-1w">{children}</div>
+      ) : (
+        <span>{valeurAffiché}</span>
+      )}
     </>
   );
 };

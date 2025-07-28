@@ -1,40 +1,45 @@
-import {
-  PrismaTerritoireRepository,
-} from '@/server/fiche-territoriale/infrastructure/adapters/PrismaTerritoireRepository';
+import { PrismaTerritoireRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaTerritoireRepository";
 
-describe('PrismaTerritoireRepository', () => {
+describe("PrismaTerritoireRepository", () => {
   let prismaTerritoireRepository: PrismaTerritoireRepository;
 
   beforeEach(() => {
     prismaTerritoireRepository = new PrismaTerritoireRepository();
   });
 
-  describe('#recupererTerritoireParCode', () => {
+  describe("#recupererTerritoireParCode", () => {
     test("quand il n'existe pas de territoire associé au code, doit remonter une erreur", async () => {
       // Given
-      const territoireCode = 'UN-CODE';
+      const territoireCode = "UN-CODE";
       expect.assertions(2);
 
       // When
       try {
-        await prismaTerritoireRepository.recupererTerritoireParCode({ territoireCode });
+        await prismaTerritoireRepository.recupererTerritoireParCode({
+          territoireCode,
+        });
       } catch (error) {
         // Then
         expect(error).toBeDefined();
-        expect((error as Error).message).toStrictEqual("Le territoire n'existe pas");
+        expect((error as Error).message).toStrictEqual(
+          "Le territoire n'existe pas",
+        );
       }
     });
-    
-    test('quand territoire associé au code existe, doit récupérer le territoire associé au code', async () => {
+
+    test("quand territoire associé au code existe, doit récupérer le territoire associé au code", async () => {
       // Given
-      const territoireCode = 'DEPT-34';
+      const territoireCode = "DEPT-34";
 
       // When
-      const result = await prismaTerritoireRepository.recupererTerritoireParCode({ territoireCode });
+      const result =
+        await prismaTerritoireRepository.recupererTerritoireParCode({
+          territoireCode,
+        });
 
       // Then
-      expect(result.nomAffiché).toStrictEqual('34 - Hérault');
-      expect(result.codeInsee).toStrictEqual('34');
+      expect(result.nomAffiché).toStrictEqual("34 - Hérault");
+      expect(result.codeInsee).toStrictEqual("34");
     });
   });
 });

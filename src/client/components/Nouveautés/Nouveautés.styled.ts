@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 export const NouveautésStyled = styled.div`
   p {
@@ -6,12 +6,12 @@ export const NouveautésStyled = styled.div`
   }
 
   h4 {
-    margin-top: .5rem;
-    margin-bottom: .5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
   }
 
   hr {
-    margin-top: .5rem!important;
-    margin-bottom: .5rem!important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
   }
 `;

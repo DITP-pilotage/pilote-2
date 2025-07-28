@@ -1,19 +1,19 @@
-import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
+import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
 
 export class IndicateurDataBuilder {
-  private id: string = 'idIndicateur';
+  private id: string = "idIndicateur";
 
-  private rapportId: string = 'rapportId';
+  private rapportId: string = "rapportId";
 
-  private indicId: string = 'IND-001';
+  private indicId: string = "IND-001";
 
-  private zoneId: string = 'D009';
+  private zoneId: string = "D009";
 
-  private metricDate: string = '30/02/2022';
+  private metricDate: string = "30/02/2022";
 
-  private metricType: string = 'vi';
+  private metricType: string = "vi";
 
-  private metricValue: string = '20';
+  private metricValue: string = "20";
 
   avecId(id: string): IndicateurDataBuilder {
     this.id = id;

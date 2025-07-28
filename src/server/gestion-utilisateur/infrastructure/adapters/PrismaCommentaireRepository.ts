@@ -1,9 +1,11 @@
-import { prisma } from '@/server/db/prisma';
-import { CommentaireRepository } from '@/server/gestion-utilisateur/domain/ports/CommentaireRepository';
+import { prisma } from "@/server/db/prisma";
+import { CommentaireRepository } from "@/server/gestion-utilisateur/domain/ports/CommentaireRepository";
 
 export class PrismaCommentaireRepository implements CommentaireRepository {
-    
-  async anonymiserAuteurs(auteursAAnonymiserIds: string[], emailAuteurRemplacement: string): Promise<void> {
+  async anonymiserAuteurs(
+    auteursAAnonymiserIds: string[],
+    emailAuteurRemplacement: string,
+  ): Promise<void> {
     const auteurAnonyme = await prisma.utilisateur.findFirst({
       where: {
         email: emailAuteurRemplacement,
@@ -20,7 +22,7 @@ export class PrismaCommentaireRepository implements CommentaireRepository {
         data: {
           auteur_id: auteurAnonyme.id,
         },
-      });       
+      });
     }
   }
 }

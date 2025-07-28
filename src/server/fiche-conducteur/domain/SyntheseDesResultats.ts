@@ -1,11 +1,17 @@
-import { Meteo } from '@/server/fiche-conducteur/domain/Meteo';
+import { Meteo } from "@/server/fiche-conducteur/domain/Meteo";
 
 export class SyntheseDesResultats {
   private readonly _meteo: Meteo | null;
 
   private readonly _commentaire: string;
 
-  private constructor({ meteo, commentaire }: { meteo: Meteo | null, commentaire: string }) {
+  private constructor({
+    meteo,
+    commentaire,
+  }: {
+    meteo: Meteo | null;
+    commentaire: string;
+  }) {
     this._meteo = meteo;
     this._commentaire = commentaire;
   }
@@ -18,7 +24,13 @@ export class SyntheseDesResultats {
     return this._commentaire;
   }
 
-  static creerSyntheseDesResultats({ meteo, commentaire }: { meteo: Meteo | null, commentaire: string }) {
+  static creerSyntheseDesResultats({
+    meteo,
+    commentaire,
+  }: {
+    meteo: Meteo | null;
+    commentaire: string;
+  }) {
     return new SyntheseDesResultats({ meteo, commentaire });
   }
 }

@@ -1,31 +1,46 @@
-import { perimetre } from '@prisma/client';
-import { faker } from '@faker-js/faker/locale/fr';
-import PérimètreMinistérielBuilder from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.builder';
-import { générerPeutÊtreNull, générerUnLibellé } from '@/server/infrastructure/test/builders/utils';
+import { perimetre } from "@prisma/client";
+import { faker } from "@faker-js/faker/locale/fr";
+import PérimètreMinistérielBuilder from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.builder";
+import {
+  générerPeutÊtreNull,
+  générerUnLibellé,
+} from "@/server/infrastructure/test/builders/utils";
 
-type MinistèreDUnPérimètreMinistériel = { nom: perimetre['ministere'], id: perimetre['ministere_id'] };
+type MinistèreDUnPérimètreMinistériel = {
+  nom: perimetre["ministere"];
+  id: perimetre["ministere_id"];
+};
 export default class PérimètreMinistérielSQLRowBuilder {
-  private _id: perimetre['id'];
+  private _id: perimetre["id"];
 
-  private _nom: perimetre['nom'];
+  private _nom: perimetre["nom"];
 
-  private _ministère: perimetre['ministere'];
+  private _ministère: perimetre["ministere"];
 
-  private _ministère_id: perimetre['ministere_id'];
+  private _ministère_id: perimetre["ministere_id"];
 
-  private _a_supprimer: perimetre['a_supprimer'];
+  private _a_supprimer: perimetre["a_supprimer"];
 
   constructor() {
-    const périmètreMinistérielGénéré = new PérimètreMinistérielBuilder().build();
-    
+    const périmètreMinistérielGénéré =
+      new PérimètreMinistérielBuilder().build();
+
     this._id = périmètreMinistérielGénéré.id;
     this._nom = périmètreMinistérielGénéré.nom;
-    this._ministère = générerPeutÊtreNull(0.2, `${générerUnLibellé(1, 3)} ministère`);
-    this._ministère_id = this._ministère ? `MIN-${faker.datatype.number()}` : null;
+    this._ministère = générerPeutÊtreNull(
+      0.2,
+      `${générerUnLibellé(1, 3)} ministère`,
+    );
+    this._ministère_id = this._ministère
+      ? `MIN-${faker.datatype.number()}`
+      : null;
     this._a_supprimer = false;
   }
 
-  avecMinistère({ nom, id }: MinistèreDUnPérimètreMinistériel): PérimètreMinistérielSQLRowBuilder {
+  avecMinistère({
+    nom,
+    id,
+  }: MinistèreDUnPérimètreMinistériel): PérimètreMinistérielSQLRowBuilder {
     this._ministère = nom;
     this._ministère_id = id;
     return this;

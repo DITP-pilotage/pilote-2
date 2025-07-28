@@ -1,16 +1,25 @@
-import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import Indicateur, {
+  TypeIndicateur,
+} from "@/server/domain/indicateur/Indicateur.interface";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 export const libellesTypologieIndicateur: Record<TypeIndicateur, string> = {
-  'IMPACT': 'Impact',
-  'DEPL': 'Déploiement',
-  'Q_SERV': 'De qualité de service',
-  'REBOND': 'Effets rebonds',
-  'CONTEXTE': 'De contexte',
+  IMPACT: "Impact",
+  DEPL: "Déploiement",
+  Q_SERV: "De qualité de service",
+  REBOND: "Effets rebonds",
+  CONTEXTE: "De contexte",
 };
 
-const PROFIL_AUTORISE_A_IMPORTER  = new Set([ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE, ProfilEnum.SECRETARIAT_GENERAL, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.DIR_PROJET, ProfilEnum.DROM]);
-const PROFIL_AUTORISE_A_MODIFIER  = new Set([ProfilEnum.DITP_ADMIN]);
+const PROFIL_AUTORISE_A_IMPORTER = new Set([
+  ProfilEnum.DITP_ADMIN,
+  ProfilEnum.DITP_PILOTAGE,
+  ProfilEnum.SECRETARIAT_GENERAL,
+  ProfilEnum.EQUIPE_DIR_PROJET,
+  ProfilEnum.DIR_PROJET,
+  ProfilEnum.DROM,
+]);
+const PROFIL_AUTORISE_A_MODIFIER = new Set([ProfilEnum.DITP_ADMIN]);
 
 export function estAutoriséAImporterDesIndicateurs(profil: string): boolean {
   return PROFIL_AUTORISE_A_IMPORTER.has(profil);
@@ -19,14 +28,25 @@ export function estAutoriséAModifierDesIndicateurs(profil: string): boolean {
   return PROFIL_AUTORISE_A_MODIFIER.has(profil);
 }
 
-export function comparerIndicateur(a: Indicateur, b: Indicateur, pondérationA: number | null, pondérationB: number | null) {
+export function comparerIndicateur(
+  a: Indicateur,
+  b: Indicateur,
+  pondérationA: number | null,
+  pondérationB: number | null,
+) {
   if (pondérationA === null) {
-    return pondérationB === null ? a.nom.localeCompare(b.nom, 'fr', { ignorePunctuation: true }) : 1;
+    return pondérationB === null
+      ? a.nom.localeCompare(b.nom, "fr", { ignorePunctuation: true })
+      : 1;
   } else {
     if (pondérationB === null) {
       return -1;
     } else {
-      return pondérationA !== pondérationB ? (pondérationA < pondérationB ? 1 : -1) : a.nom.localeCompare(b.nom, 'fr', { ignorePunctuation: true });
+      return pondérationA !== pondérationB
+        ? pondérationA < pondérationB
+          ? 1
+          : -1
+        : a.nom.localeCompare(b.nom, "fr", { ignorePunctuation: true });
     }
   }
 }

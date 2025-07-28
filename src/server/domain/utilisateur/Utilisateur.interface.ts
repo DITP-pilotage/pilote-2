@@ -1,5 +1,8 @@
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { Habilitations, HabilitationsÀCréerOuMettreÀJour } from './habilitation/Habilitation.interface';
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import {
+  Habilitations,
+  HabilitationsÀCréerOuMettreÀJour,
+} from "./habilitation/Habilitation.interface";
 
 export const profilsCodes = [
   ProfilEnum.DITP_ADMIN,
@@ -21,7 +24,7 @@ export const profilsCodes = [
   ProfilEnum.DROM,
 ] as const;
 
-export type ProfilCode = typeof profilsCodes[number];
+export type ProfilCode = (typeof profilsCodes)[number];
 
 export const profilsTerritoriaux = [
   ProfilEnum.COORDINATEUR_REGION,
@@ -33,8 +36,16 @@ export const profilsTerritoriaux = [
   ProfilEnum.DROM,
 ] as const;
 
-export const profilsDépartementaux = [ProfilEnum.PREFET_DEPARTEMENT, ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT];
-export const profilsRégionaux = [ProfilEnum.PREFET_REGION, ProfilEnum.COORDINATEUR_REGION, ProfilEnum.SERVICES_DECONCENTRES_REGION];
+export const profilsDépartementaux = [
+  ProfilEnum.PREFET_DEPARTEMENT,
+  ProfilEnum.COORDINATEUR_DEPARTEMENT,
+  ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+];
+export const profilsRégionaux = [
+  ProfilEnum.PREFET_REGION,
+  ProfilEnum.COORDINATEUR_REGION,
+  ProfilEnum.SERVICES_DECONCENTRES_REGION,
+];
 
 export const profilsInfolettreCoordinateur = [
   ProfilEnum.COORDINATEUR_DEPARTEMENT,
@@ -44,41 +55,41 @@ export const profilsInfolettreCoordinateur = [
 ];
 
 type Utilisateur = {
-  id: string
-  nom: string
-  prénom: string
-  email: string
-  profil: ProfilCode
-  dateModification: string
-  auteurModification: string
-  dateCreation: string | null
-  auteurCreation: string | null
-  fonction: string | null
-  saisieIndicateur: boolean
-  gestionUtilisateur: boolean
-  habilitations: Habilitations
-  dateDesactivation: string | null
+  id: string;
+  nom: string;
+  prénom: string;
+  email: string;
+  profil: ProfilCode;
+  dateModification: string;
+  auteurModification: string;
+  dateCreation: string | null;
+  auteurCreation: string | null;
+  fonction: string | null;
+  saisieIndicateur: boolean;
+  gestionUtilisateur: boolean;
+  habilitations: Habilitations;
+  dateDesactivation: string | null;
 };
 
-export type UtilisateurÀCréerOuMettreÀJour =  {
-  nom: string
-  prénom: string
-  email: string
-  fonction: string | null
-  profil: ProfilCode
-  saisieIndicateur: boolean
-  gestionUtilisateur: boolean
-  habilitations: HabilitationsÀCréerOuMettreÀJour
+export type UtilisateurÀCréerOuMettreÀJour = {
+  nom: string;
+  prénom: string;
+  email: string;
+  fonction: string | null;
+  profil: ProfilCode;
+  saisieIndicateur: boolean;
+  gestionUtilisateur: boolean;
+  habilitations: HabilitationsÀCréerOuMettreÀJour;
 };
 
-export type UtilisateurÀCréerOuMettreÀJourSansHabilitation =  {
-  nom: string
-  prénom: string
-  email: string
-  fonction: string | null
-  profil: ProfilCode,
-  saisieIndicateur: boolean
-  gestionUtilisateur: boolean
+export type UtilisateurÀCréerOuMettreÀJourSansHabilitation = {
+  nom: string;
+  prénom: string;
+  email: string;
+  fonction: string | null;
+  profil: ProfilCode;
+  saisieIndicateur: boolean;
+  gestionUtilisateur: boolean;
 };
 
 export default Utilisateur;

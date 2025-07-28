@@ -1,18 +1,18 @@
-import { objectif as ObjectifModel, PrismaClient } from '@prisma/client';
-import { Objectif } from '@/server/fiche-conducteur/domain/Objectif';
-import { ObjectifRepository } from '@/server/fiche-conducteur/domain/ports/ObjectifRepository';
+import { objectif as ObjectifModel, PrismaClient } from "@prisma/client";
+import { Objectif } from "@/server/fiche-conducteur/domain/Objectif";
+import { ObjectifRepository } from "@/server/fiche-conducteur/domain/ports/ObjectifRepository";
 
-import { PrismaPilote } from '@/server/db/PrismaPilote';
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
-const convertifEnObjectif = (objectifModel: ObjectifModel): Objectif => (Objectif.creerObjectif({
-  type: objectifModel.type,
-  contenu: objectifModel.contenu,
-  date: objectifModel.date.toISOString(),
-})
-);
+const convertifEnObjectif = (objectifModel: ObjectifModel): Objectif =>
+  Objectif.creerObjectif({
+    type: objectifModel.type,
+    contenu: objectifModel.contenu,
+    date: objectifModel.date.toISOString(),
+  });
 
 interface Dependencies {
-  prisma: PrismaPilote
+  prisma: PrismaPilote;
 }
 
 export class PrismaObjectifRepository implements ObjectifRepository {
@@ -22,7 +22,11 @@ export class PrismaObjectifRepository implements ObjectifRepository {
     this.prisma = prisma.getInstance();
   }
 
-  async listerObjectifParChantierId({ chantierId }: { chantierId: string }): Promise<Objectif[]> {
+  async listerObjectifParChantierId({
+    chantierId,
+  }: {
+    chantierId: string;
+  }): Promise<Objectif[]> {
     const objectifResult = await this.prisma.objectif.findMany({
       where: {
         chantier_id: chantierId,

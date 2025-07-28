@@ -1,11 +1,11 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
-import { parseChantierNew } from '@/server/infrastructure/accès_données/chantier/ChantierSQLParser';
-import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
-import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
+import Chantier from "@/server/domain/chantier/Chantier.interface";
+import ChantierRepository from "@/server/domain/chantier/ChantierRepository.interface";
+import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import MinistèreRepository from "@/server/domain/ministère/MinistèreRepository.interface";
+import { parseChantierNew } from "@/server/infrastructure/accès_données/chantier/ChantierSQLParser";
+import TerritoireRepository from "@/server/domain/territoire/TerritoireRepository.interface";
+import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 
 export default class RécupérerChantierUseCase {
   constructor(
@@ -14,13 +14,24 @@ export default class RécupérerChantierUseCase {
     private readonly territoireRepository: TerritoireRepository,
   ) {}
 
-  async run(chantierId: string, habilitations: Habilitations, profil: ProfilCode, jalon: number): Promise<Chantier> {
+  async run(
+    chantierId: string,
+    habilitations: Habilitations,
+    profil: ProfilCode,
+    jalon: number,
+  ): Promise<Chantier> {
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnLecture(chantierId, null);
 
     const ministères = await this.ministèreRepository.getListe();
     const territoires = await this.territoireRepository.récupérerTous();
-    const chantierRows = await this.chantierRepository.récupérerLesEntréesDUnChantier(chantierId, habilitations, profil, jalon);
+    const chantierRows =
+      await this.chantierRepository.récupérerLesEntréesDUnChantier(
+        chantierId,
+        habilitations,
+        profil,
+        jalon,
+      );
     return parseChantierNew(chantierRows, territoires, ministères);
   }
 }

@@ -1,8 +1,7 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-export const validationContenu =
-  z.object({
-    isBandeauActif: z.boolean(),
-    bandeauTexte: z.string(),
-    bandeauType: z.string(),
-  });
+export const validationContenu = z.object({
+  isBandeauActif: z.boolean(),
+  bandeauTexte: z.string(),
+  bandeauType: z.string(),
+});

@@ -1,4 +1,4 @@
-import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur';
+import { MetadataParametrageIndicateur } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur";
 
 export interface HistorisationMetadataParametrageIndicateur {
   indic_id: string;
@@ -60,7 +60,9 @@ export interface HistorisationMetadataParametrageIndicateur {
   tendance: string;
 }
 
-export function convertirEnHistorisationMetadataParametrageIndicateurModel(metadataParametrageIndicateur: MetadataParametrageIndicateur): HistorisationMetadataParametrageIndicateur {
+export function convertirEnHistorisationMetadataParametrageIndicateurModel(
+  metadataParametrageIndicateur: MetadataParametrageIndicateur,
+): HistorisationMetadataParametrageIndicateur {
   return {
     indic_id: metadataParametrageIndicateur.indicId,
     vi_dept_from: metadataParametrageIndicateur.viDeptFrom,
@@ -82,12 +84,15 @@ export function convertirEnHistorisationMetadataParametrageIndicateurModel(metad
     vc_nat_from: metadataParametrageIndicateur.vcNatFrom,
     vc_nat_op: metadataParametrageIndicateur.vcNatOp,
     param_vaca_decumul_from: metadataParametrageIndicateur.paramVacaDecumulFrom,
-    param_vaca_partition_date: metadataParametrageIndicateur.paramVacaPartitionDate,
+    param_vaca_partition_date:
+      metadataParametrageIndicateur.paramVacaPartitionDate,
     param_vaca_op: metadataParametrageIndicateur.paramVacaOp,
     param_vacg_decumul_from: metadataParametrageIndicateur.paramVacgDecumulFrom,
-    param_vacg_partition_date: metadataParametrageIndicateur.paramVacgPartitionDate,
+    param_vacg_partition_date:
+      metadataParametrageIndicateur.paramVacgPartitionDate,
     param_vacg_op: metadataParametrageIndicateur.paramVacgOp,
-    poids_pourcent_dept_declaree: metadataParametrageIndicateur.poidsPourcentDept,
+    poids_pourcent_dept_declaree:
+      metadataParametrageIndicateur.poidsPourcentDept,
     poids_pourcent_reg_declaree: metadataParametrageIndicateur.poidsPourcentReg,
     poids_pourcent_nat_declaree: metadataParametrageIndicateur.poidsPourcentNat,
     tendance: metadataParametrageIndicateur.tendance,

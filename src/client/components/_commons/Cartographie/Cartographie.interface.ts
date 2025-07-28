@@ -1,12 +1,11 @@
-import { ReactNode } from 'react';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { ReactNode } from "react";
+import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
 
 export type CartographieDonnées = {
   [key in CodeInsee]: {
-    contenu: ReactNode, 
-    remplissage: string, 
-    libellé: string
-    estApplicable: boolean | null
-  }
+    contenu: ReactNode;
+    remplissage: string;
+    libellé: string;
+    estApplicable: boolean | null;
+  };
 };
-

@@ -1,10 +1,10 @@
-import { SyntheseDesResultats } from '@/server/fiche-conducteur/domain/SyntheseDesResultats';
-import { Meteo } from '@/server/fiche-conducteur/domain/Meteo';
+import { SyntheseDesResultats } from "@/server/fiche-conducteur/domain/SyntheseDesResultats";
+import { Meteo } from "@/server/fiche-conducteur/domain/Meteo";
 
 export class SyntheseDesResultatsBuilder {
-  private meteo: Meteo | null = 'COUVERT';
+  private meteo: Meteo | null = "COUVERT";
 
-  private commentaire: string = 'Un commentaire de base';
+  private commentaire: string = "Un commentaire de base";
 
   withMeteo(meteo: Meteo | null): SyntheseDesResultatsBuilder {
     this.meteo = meteo;

@@ -1,8 +1,7 @@
-import { definirCouleurEcartArrondi } from '@/client/utils/chantier/écart/écart';
+import { definirCouleurEcartArrondi } from "@/client/utils/chantier/écart/écart";
 
-describe('définirCouleurÉcartArrondi', () => {
-
-  test("renvoie \"null\" quand l'écart est inconnu", () => {
+describe("définirCouleurÉcartArrondi", () => {
+  test('renvoie "null" quand l\'écart est inconnu', () => {
     // When
     const couleurÉcartArrondi = definirCouleurEcartArrondi(null);
 
@@ -10,36 +9,36 @@ describe('définirCouleurÉcartArrondi', () => {
     expect(couleurÉcartArrondi).toStrictEqual(null);
   });
 
-  describe('couleur', () => {
-    test("renvoie \"vert\" quand l'écart est supérieur à 10 points", () => {
+  describe("couleur", () => {
+    test('renvoie "vert" quand l\'écart est supérieur à 10 points', () => {
       // When
       const couleurÉcartArrondi = definirCouleurEcartArrondi(11);
 
       // Then
       expect(couleurÉcartArrondi).not.toBeNull();
-      expect(couleurÉcartArrondi!.couleur).toStrictEqual('vert');
+      expect(couleurÉcartArrondi!.couleur).toStrictEqual("vert");
     });
 
-    test("renvoie \"rouge\" quand l'écart est inférieur à -10 points", () => {
+    test('renvoie "rouge" quand l\'écart est inférieur à -10 points', () => {
       // When
       const couleurÉcartArrondi = definirCouleurEcartArrondi(-15);
 
       // Then
       expect(couleurÉcartArrondi).not.toBeNull();
-      expect(couleurÉcartArrondi!.couleur).toStrictEqual('rouge');
+      expect(couleurÉcartArrondi!.couleur).toStrictEqual("rouge");
     });
 
-    test("renvoie \"bleu\" quand l'écart est compris entre -10 points et 10 points", () => {
+    test('renvoie "bleu" quand l\'écart est compris entre -10 points et 10 points', () => {
       // When
       const couleurÉcartArrondi = definirCouleurEcartArrondi(0);
 
       // Then
       expect(couleurÉcartArrondi).not.toBeNull();
-      expect(couleurÉcartArrondi!.couleur).toStrictEqual('bleu');
+      expect(couleurÉcartArrondi!.couleur).toStrictEqual("bleu");
     });
   });
 
-  describe('arrondi', () => {
+  describe("arrondi", () => {
     test("renvoie l'écart arrondi à un chiffre après la virgule", () => {
       // When
       const couleurÉcartArrondi = definirCouleurEcartArrondi(12.34);

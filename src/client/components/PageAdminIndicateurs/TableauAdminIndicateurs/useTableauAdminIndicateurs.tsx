@@ -5,118 +5,137 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table';
-import { ChangeEvent, ChangeEventHandler, FormEventHandler, useCallback, useState } from 'react';
-import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
-import api from '@/server/infrastructure/api/trpc/api';
+} from "@tanstack/react-table";
 import {
-  filtresModifierIndicateursActifsStore,
-} from '@/stores/useFiltresModifierIndicateursStore/useFiltresModifierIndicateursStore';
-import {
-  MetadataParametrageIndicateurInformationContrat,
-} from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
-import { formaterDate, horodatage } from '@/client/utils/date/date';
-import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+  ChangeEvent,
+  ChangeEventHandler,
+  FormEventHandler,
+  useCallback,
+  useState,
+} from "react";
+import rechercheUnTexteContenuDansUnContenant from "@/client/utils/rechercheUnTexteContenuDansUnContenant";
+import api from "@/server/infrastructure/api/trpc/api";
+import { filtresModifierIndicateursActifsStore } from "@/stores/useFiltresModifierIndicateursStore/useFiltresModifierIndicateursStore";
+import { MetadataParametrageIndicateurInformationContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
+import { formaterDate, horodatage } from "@/client/utils/date/date";
+import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
+import Chantier from "@/server/domain/chantier/Chantier.interface";
 
-const reactTableColonnesHelper = createColumnHelper<MetadataParametrageIndicateurInformationContrat>();
+const reactTableColonnesHelper =
+  createColumnHelper<MetadataParametrageIndicateurInformationContrat>();
 const colonnes = [
-  reactTableColonnesHelper.accessor('indicParentCh', {
-    header: 'Chantier associé',
-    cell: props => props.getValue(),
+  reactTableColonnesHelper.accessor("indicParentCh", {
+    header: "Chantier associé",
+    cell: (props) => props.getValue(),
   }),
-  reactTableColonnesHelper.accessor('chantierNom', {
-    header: 'Nom du chantier',
-    cell: props => props.getValue(),
+  reactTableColonnesHelper.accessor("chantierNom", {
+    header: "Nom du chantier",
+    cell: (props) => props.getValue(),
   }),
-  reactTableColonnesHelper.accessor('indicId', {
-    header: 'Identifiant indicateur',
-    sortingFn: 'alphanumericCaseSensitive',
-    cell: props => props.getValue(),
+  reactTableColonnesHelper.accessor("indicId", {
+    header: "Identifiant indicateur",
+    sortingFn: "alphanumericCaseSensitive",
+    cell: (props) => props.getValue(),
   }),
-  reactTableColonnesHelper.accessor('indicNom', {
-    header: 'Nom de l\'indicateur',
-    sortingFn: 'auto',
-    cell: props => props.getValue(),
+  reactTableColonnesHelper.accessor("indicNom", {
+    header: "Nom de l'indicateur",
+    sortingFn: "auto",
+    cell: (props) => props.getValue(),
   }),
-  reactTableColonnesHelper.accessor(row => `${formaterDate(row.dateDerniereModification, 'DD/MM/YYYY')} par ${row.auteurDerniereModification}`, {
-    header: 'Dernière modification',
-    cell: props => props.getValue(),
-    sortingFn: (a, b) => {
-      const dateA = new Date(a.original.dateDerniereModification);
-      const dateB = new Date(b.original.dateDerniereModification);
+  reactTableColonnesHelper.accessor(
+    (row) =>
+      `${formaterDate(row.dateDerniereModification, "DD/MM/YYYY")} par ${row.auteurDerniereModification}`,
+    {
+      header: "Dernière modification",
+      cell: (props) => props.getValue(),
+      sortingFn: (a, b) => {
+        const dateA = new Date(a.original.dateDerniereModification);
+        const dateB = new Date(b.original.dateDerniereModification);
 
-      if (dateA.getTime() > dateB.getTime()) {
-        return 1;
-      }
+        if (dateA.getTime() > dateB.getTime()) {
+          return 1;
+        }
 
-      if (dateA.getTime() < dateB.getTime()) {
-        return -1;
-      }
+        if (dateA.getTime() < dateB.getTime()) {
+          return -1;
+        }
 
-      return 0;
+        return 0;
+      },
     },
-  }),
-  reactTableColonnesHelper.accessor('indicHiddenPilote', {
-    header: 'Actif / Inactif',
-    sortingFn: 'auto',
-    cell: props => props.getValue() ? (
-      <div className='flex justify-center'>
-        <span
-          aria-hidden='true'
-          className='fr-icon-close-circle-fill fr-icon-red'
-        />
-      </div>
-    ) : (
-      <div className='flex justify-center'>
-        <span
-          aria-hidden='true'
-          className='fr-icon-checkbox-circle-fill fr-icon-green'
-        />
-      </div>
-    ),
+  ),
+  reactTableColonnesHelper.accessor("indicHiddenPilote", {
+    header: "Actif / Inactif",
+    sortingFn: "auto",
+    cell: (props) =>
+      props.getValue() ? (
+        <div className="flex justify-center">
+          <span
+            aria-hidden="true"
+            className="fr-icon-close-circle-fill fr-icon-red"
+          />
+        </div>
+      ) : (
+        <div className="flex justify-center">
+          <span
+            aria-hidden="true"
+            className="fr-icon-checkbox-circle-fill fr-icon-green"
+          />
+        </div>
+      ),
   }),
 ];
 
 export default function useTableauPageAdminIndicateurs() {
   const filtresActifs = filtresModifierIndicateursActifsStore();
 
-  const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
+  const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState("");
 
   const [file, setFile] = useState<File | null>(null);
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
-  const {
-    data: metadataIndicateurs = [],
-    isLoading: estEnChargement,
-  } = api.metadataIndicateur.listerMetadataIndicateurFiltrés.useQuery({
-    filtres: filtresActifs,
-  });
+  const { data: metadataIndicateurs = [], isLoading: estEnChargement } =
+    api.metadataIndicateur.listerMetadataIndicateurFiltrés.useQuery({
+      filtres: filtresActifs,
+    });
 
   const exporterLesIndicateurs = () => {
     let queryParam = `?estTerritorialise=${filtresActifs.estTerritorialise}&estBarometre=${filtresActifs.estBarometre}`;
 
     if (filtresActifs.chantiers.length > 0) {
-      queryParam = queryParam + '&' + filtresActifs.chantiers.map(chantier => (`chantierIds=${chantier}`)).join('&');
+      queryParam =
+        queryParam +
+        "&" +
+        filtresActifs.chantiers
+          .map((chantier) => `chantierIds=${chantier}`)
+          .join("&");
     }
 
     if (filtresActifs.perimetresMinisteriels.length > 0) {
-      queryParam = queryParam + '&' + filtresActifs.perimetresMinisteriels.map(perimetre => (`perimetreIds=${perimetre}`)).join('&');
+      queryParam =
+        queryParam +
+        "&" +
+        filtresActifs.perimetresMinisteriels
+          .map((perimetre) => `perimetreIds=${perimetre}`)
+          .join("&");
     }
 
     const url = `/api/export/metadata-indicateurs${queryParam}`;
-    const a = window.document.createElement('a');
+    const a = window.document.createElement("a");
     a.href = url;
-    a.target = '_self';
+    a.target = "_self";
     a.download = `metadata-indicateurs-${horodatage()}.csv`;
     document.body.append(a);
     a.click();
     a.remove();
   };
 
-  const changementDeLaRechercheCallback = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setValeurDeLaRecherche(event.target.value);
-  }, [setValeurDeLaRecherche]);
+  const changementDeLaRechercheCallback = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setValeurDeLaRecherche(event.target.value);
+    },
+    [setValeurDeLaRecherche],
+  );
 
   const tableau = useReactTable({
     data: metadataIndicateurs,
@@ -124,7 +143,13 @@ export default function useTableauPageAdminIndicateurs() {
 
     globalFilterFn: (ligne, colonneId, texteRecherché) => {
       const valeurCellule = ligne.getValue<Chantier>(colonneId);
-      return valeurCellule !== null && rechercheUnTexteContenuDansUnContenant(texteRecherché, valeurCellule.toString());
+      return (
+        valeurCellule !== null &&
+        rechercheUnTexteContenuDansUnContenant(
+          texteRecherché,
+          valeurCellule.toString(),
+        )
+      );
     },
     state: {
       globalFilter: valeurDeLaRecherche,
@@ -136,7 +161,7 @@ export default function useTableauPageAdminIndicateurs() {
       },
       sorting: [
         {
-          id: 'Dernière modification',
+          id: "Dernière modification",
           desc: true,
         },
       ],
@@ -147,9 +172,10 @@ export default function useTableauPageAdminIndicateurs() {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  const changementDePageCallback = useCallback((numéroDePage: number) => (
-    tableau.setPageIndex(numéroDePage - 1)
-  ), [tableau]);
+  const changementDePageCallback = useCallback(
+    (numéroDePage: number) => tableau.setPageIndex(numéroDePage - 1),
+    [tableau],
+  );
 
   const définirLeFichier: ChangeEventHandler<HTMLInputElement> = (event) => {
     if (event.target.files && event.target.files[0]) {
@@ -157,40 +183,43 @@ export default function useTableauPageAdminIndicateurs() {
     }
   };
 
-  type UploadFichierFormulaireElement = { 'file-upload': HTMLInputElement } & HTMLFormElement;
+  type UploadFichierFormulaireElement = {
+    "file-upload": HTMLInputElement;
+  } & HTMLFormElement;
 
-  const verifierLeFichier: FormEventHandler<UploadFichierFormulaireElement> = async (event) => {
+  const verifierLeFichier: FormEventHandler<
+    UploadFichierFormulaireElement
+  > = async (event) => {
     event.preventDefault();
 
     if (!file) {
       return;
     }
 
-    event.currentTarget['file-upload'].value = '';
+    event.currentTarget["file-upload"].value = "";
 
     const body = new FormData();
 
-    body.append('file', file);
+    body.append("file", file);
 
-    const result = await fetch('/api/import/metadata-indicateurs', {
-      method: 'POST',
+    const result = await fetch("/api/import/metadata-indicateurs", {
+      method: "POST",
       body,
     });
 
     if (result.status === 200) {
       setAlerte({
-        type: 'succès',
-        titre: 'Import de masse réussie',
+        type: "succès",
+        titre: "Import de masse réussie",
       });
     } else {
-      const errorResponse = await result.json() as { message: string };
+      const errorResponse = (await result.json()) as { message: string };
       setAlerte({
-        type: 'erreur',
-        titre: 'Une erreur est survenue',
-        message: `Une erreur interne est survenu : ${(errorResponse.message)}`,
+        type: "erreur",
+        titre: "Une erreur est survenue",
+        message: `Une erreur interne est survenu : ${errorResponse.message}`,
       });
     }
-
   };
 
   return {
