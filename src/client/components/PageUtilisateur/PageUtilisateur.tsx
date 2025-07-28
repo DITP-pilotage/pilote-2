@@ -85,25 +85,23 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                     >
                       Modifier
                     </Link>
-                    {
+                    {vérifierFFTokenAPIEstDisponible &&
+                    habilitationsAGenererUnTokenDAuthentification(
                       // @ts-expect-error session est forcément not null içi
-                      vérifierFFTokenAPIEstDisponible &&
-                      habilitationsAGenererUnTokenDAuthentification(
-                        session,
-                        utilisateur.profil,
-                      ) ? (
-                        <button
-                          className="fr-btn fr-btn--secondary fr-mr-2w"
-                          onClick={() =>
-                            creerTokenAPI({ email: utilisateur.email })
-                          }
-                          title="Générer un token d'authentification"
-                          type="submit"
-                        >
-                          Générer un token d'authentification
-                        </button>
-                      ) : null
-                    }
+                      session,
+                      utilisateur.profil,
+                    ) ? (
+                      <button
+                        className="fr-btn fr-btn--secondary fr-mr-2w"
+                        onClick={() =>
+                          creerTokenAPI({ email: utilisateur.email })
+                        }
+                        title="Générer un token d'authentification"
+                        type="submit"
+                      >
+                        Générer un token d'authentification
+                      </button>
+                    ) : null}
                     <button
                       aria-controls="desactiver-compte"
                       className="fr-text desactiver"
