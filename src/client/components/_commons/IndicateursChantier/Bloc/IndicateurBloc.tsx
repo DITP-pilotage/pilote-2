@@ -418,7 +418,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                           idHtml={`infobulle-proposition-desactivee-${indicateur.id}`}
                                         >
                                           <p className='fr-text--sm'>
-                                            Les résultats de cet indicateur sont agrégés depuis le niveau départemental. Il n'est donc pas possible de proposer une valeur à une autre maille.
+                                            Les résultats de cet indicateur sont agrégés depuis le niveau départemental. Il n'est donc pas possible de proposer une valeur à une autre maille. Vous pouvez, soit proposer une valeur directement au niveau d'un département ou contacter directement le directeur de projet via l'onglet Responsables.
                                           </p>
                                         </Infobulle>
                                       ) : null
