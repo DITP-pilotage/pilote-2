@@ -1,11 +1,11 @@
 import { FunctionComponent } from 'react';
-import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
+import { parseAsBoolean, parseAsInteger, parseAsString, useQueryStates } from 'nuqs';
 import { FiltresSelectionMultiple }
   from '@/components/PageAccueil/Filtres/FiltresSelectionMultiple/FiltresSelectionMultiple';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import Titre from '@/components/_commons/Titre/Titre';
-import { reinitialiserFiltres } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
+import { reinitialiserFiltres, sauvegarderFiltres } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
 import FiltresGroupe from './FiltresGroupe/FiltresGroupe';
 import FiltresMinistères from './FiltresMinistères/FiltresMinistères';
 import { FiltresSelectionMultipleBoolean } from './FiltresSelectionMultipleBoolean/FiltresSelectionMultipleBoolean';
@@ -27,6 +27,8 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
   estProfilRegionalAutoriseAVoirLaTerritorialisation,
 }) => {
   const [, setFiltres] = useQueryStates({
+    maille: parseAsString.withDefault(''),
+    pageIndex: parseAsInteger.withDefault(1),
     perimetres: parseAsString.withDefault(''),
     statut: parseAsString.withDefault(''),
     axes: parseAsString.withDefault(''),
@@ -118,6 +120,13 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
               categorieDeFiltre='axes'
               filtres={axes}
               libelle='Filtrer par axes'
+              onChange={nouveauFiltre => {
+                sauvegarderFiltres({ axes: nouveauFiltre });
+                return setFiltres({
+                  axes: nouveauFiltre.join(','),
+                  pageIndex: 1,
+                });
+              }}
             />
             {
               estProfilTerritorialise ? (
@@ -125,6 +134,13 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
                   categorieDeFiltre='territorialisation'
                   filtres={filtresTerritorialisation}
                   libelle='Filtrer par territorialisation'
+                  onChange={nouveauFiltre => {
+                    sauvegarderFiltres({ territorialisation: nouveauFiltre });
+                    return setFiltres({
+                      territorialisation: nouveauFiltre.join(','),
+                      pageIndex: 1,
+                    });
+                  }}
                 />
               ) : null
             }

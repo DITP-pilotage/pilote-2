@@ -1,6 +1,5 @@
-import { parseAsInteger, parseAsString, useQueryState } from 'nuqs';
+import { parseAsString, useQueryState } from 'nuqs';
 import { FunctionComponent } from 'react';
-import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import FiltresSélectionMultipleStyled from './FiltresSelectionMultiple.styled';
 
 interface Filtre {
@@ -12,22 +11,19 @@ interface FiltresSelectionMultipleProps {
   categorieDeFiltre: 'axes' | 'territorialisation',
   filtres: Filtre[],
   libelle: string,
+  onChange: (valeur: string[]) => void,
 }
 
 export const FiltresSelectionMultiple: FunctionComponent<FiltresSelectionMultipleProps> = ({
   categorieDeFiltre,
   libelle,
   filtres,
+  onChange,
 }) => {
-
-  const [filtresNew, setListeFiltresNew] = useQueryState(categorieDeFiltre, parseAsString.withDefault('').withOptions({
+  const [filtresNew] = useQueryState(categorieDeFiltre, parseAsString.withDefault('').withOptions({
     shallow: false,
     clearOnDefault: true,
     history: 'push',
-  }));
-
-  const [, setPagination] = useQueryState('pageIndex', parseAsInteger.withDefault(1).withOptions({
-    shallow: false,
   }));
 
   return (
@@ -62,9 +58,7 @@ export const FiltresSelectionMultiple: FunctionComponent<FiltresSelectionMultipl
                     } else {
                       arrFiltresNew.push(filtre.id);
                     }
-                    sauvegarderFiltres({ [categorieDeFiltre]: arrFiltresNew });
-                    setPagination(1);
-                    return setListeFiltresNew(arrFiltresNew.join(','));
+                    onChange(arrFiltresNew);
                   }}
                   type='checkbox'
                 />
