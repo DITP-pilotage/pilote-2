@@ -1,11 +1,13 @@
 import { FunctionComponent } from 'react';
 import { parseAsBoolean, parseAsInteger, parseAsString, useQueryStates } from 'nuqs';
-import { FiltresSelectionMultiple }
-  from '@/components/PageAccueil/Filtres/FiltresSelectionMultiple/FiltresSelectionMultiple';
+import {
+  FiltresSelectionMultiple,
+} from '@/components/PageAccueil/Filtres/FiltresSelectionMultiple/FiltresSelectionMultiple';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import Titre from '@/components/_commons/Titre/Titre';
 import { reinitialiserFiltres, sauvegarderFiltres } from '@/client/stores/useFiltresStoreNew/useFiltresStoreNew';
+import { calculerNouvelleMaille } from '@/components/PageAccueil/Filtres/utils';
 import FiltresGroupe from './FiltresGroupe/FiltresGroupe';
 import FiltresMinistères from './FiltresMinistères/FiltresMinistères';
 import { FiltresSelectionMultipleBoolean } from './FiltresSelectionMultipleBoolean/FiltresSelectionMultipleBoolean';
@@ -135,9 +137,12 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
                   filtres={filtresTerritorialisation}
                   libelle='Filtrer par territorialisation'
                   onChange={nouveauFiltre => {
-                    sauvegarderFiltres({ territorialisation: nouveauFiltre });
+                    const nouvelleMaille = calculerNouvelleMaille(nouveauFiltre);
+
+                    sauvegarderFiltres({ territorialisation: nouveauFiltre, maille: nouvelleMaille });
                     return setFiltres({
                       territorialisation: nouveauFiltre.join(','),
+                      maille: nouvelleMaille,
                       pageIndex: 1,
                     });
                   }}
