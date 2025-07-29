@@ -7,6 +7,7 @@ import { MesureIndicateurTemporaireBuilder } from "@/server/import-indicateur/ap
 import { MesureIndicateurRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface";
 import { PropositionValeurAvancementRepository } from "@/server/import-indicateur/domain/ports/PropositionValeurAvancementRepository";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/import-indicateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import { ValeurIndicateurTerritoireEvenement } from "@/server/import-indicateur/domain/ValeurIndicateurTerritoireEvenement";
 
 describe("PublierFichierIndicateurImporteUseCase", () => {
   let publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase;
@@ -188,11 +189,153 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(propositionsAModifier2.valeurImportee).toEqual(11.3);
   });
 
-  it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type], doit créer une ligne d'évènement (VALEUR_CREEE)", async () => {});
+  it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type], doit créer une ligne d'évènement (VALEUR_CREEE)", async () => {
+    // GIVEN
+    const evenementCaptor = captor<ValeurIndicateurTerritoireEvenement>();
+    const listeMesuresIndicateursTemporaires = [
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-01-15")
+        .avecMetricType("va")
+        .avecMetricValue("75")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D001")
+        .build(),
+    ];
 
-  it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] avec un tuple pour une date antérieure, doit créer 2 lignes d'évènement (VALEUR_HISTORISEE + VALEUR_CREEE)", async () => {});
+    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
+      listeMesuresIndicateursTemporaires,
+    );
 
-  it("quand la valeur est différente de la dernière valeur importée pour le tuple [indicateur, territoire, date, type], doit créer une ligne d'évènement (VALEUR_MODIFIEE)", async () => {});
+    // WHEN
+    await publierFichierIndicateurImporteUseCase.execute({
+      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+    });
 
-  it("quand la valeur est identique à la dernière valeur importée pour le tuple [indicateur, territoire, date, type], ne doit pas créer de ligne d'évènement", async () => {});
+    // THEN
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrer,
+    ).toHaveBeenNthCalledWith(1, evenementCaptor);
+
+    const evenement = evenementCaptor.value;
+    expect(evenement.indicId).toEqual("IND-001");
+    expect(evenement.territoireCode).toEqual("D001");
+    expect(evenement.typeEvenement).toEqual("VALEUR_CREE");
+    expect(evenement.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenement.dateValeur).toEqual(new Date("2023-01-15"));
+  });
+
+  it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] avec un tuple pour une date antérieure, doit créer 2 lignes d'évènement (VALEUR_HISTORISEE + VALEUR_CREEE)", async () => {
+    // GIVEN
+    const evenementCaptor1 = captor<ValeurIndicateurTerritoireEvenement>();
+    const evenementCaptor2 = captor<ValeurIndicateurTerritoireEvenement>();
+    const listeMesuresIndicateursTemporaires = [
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-01-15")
+        .avecMetricType("va")
+        .avecMetricValue("75")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D001")
+        .build(),
+    ];
+
+    indicateurTerritoireValeurEvenementRepository.recuperer.mockResolvedValue();
+    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
+      listeMesuresIndicateursTemporaires,
+    );
+
+    // WHEN
+    await publierFichierIndicateurImporteUseCase.execute({
+      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+    });
+
+    // THEN
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrer,
+    ).toHaveBeenNthCalledWith(1, evenementCaptor1);
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrer,
+    ).toHaveBeenNthCalledWith(2, evenementCaptor2);
+
+    const evenementHistorise = evenementCaptor1.value;
+    expect(evenementHistorise.indicId).toEqual("IND-001");
+    expect(evenementHistorise.territoireCode).toEqual("D001");
+    expect(evenementHistorise.typeEvenement).toEqual("VALEUR_HISTORISEE");
+    expect(evenementHistorise.typeValeur).toEqual("VALEUR_AVANCEMENT");
+
+    const evenementCree = evenementCaptor2.value;
+    expect(evenementCree.indicId).toEqual("IND-001");
+    expect(evenementCree.territoireCode).toEqual("D001");
+    expect(evenementCree.typeEvenement).toEqual("VALEUR_CREE");
+    expect(evenementCree.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementCree.dateValeur).toEqual(new Date("2023-01-15"));
+  });
+
+  it("quand la valeur est différente de la dernière valeur importée pour le tuple [indicateur, territoire, date, type], doit créer une ligne d'évènement (VALEUR_MODIFIEE)", async () => {
+    // GIVEN
+    const evenementCaptor = captor<ValeurIndicateurTerritoireEvenement>();
+    const listeMesuresIndicateursTemporaires = [
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-01-15")
+        .avecMetricType("va")
+        .avecMetricValue("85")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D001")
+        .build(),
+    ];
+
+    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
+      listeMesuresIndicateursTemporaires,
+    );
+
+    // WHEN
+    await publierFichierIndicateurImporteUseCase.execute({
+      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+    });
+
+    // THEN
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrer,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrer,
+    ).toHaveBeenNthCalledWith(1, evenementCaptor);
+
+    const evenement = evenementCaptor.value;
+    expect(evenement.indicId).toEqual("IND-001");
+    expect(evenement.territoireCode).toEqual("D001");
+    expect(evenement.typeEvenement).toEqual("VALEUR_MODIFIEE");
+    expect(evenement.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenement.dateValeur).toEqual(new Date("2023-01-15"));
+  });
+
+  it("quand la valeur est identique à la dernière valeur importée pour le tuple [indicateur, territoire, date, type], ne doit pas créer de ligne d'évènement", async () => {
+    // GIVEN
+    const listeMesuresIndicateursTemporaires = [
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-01-15")
+        .avecMetricType("va")
+        .avecMetricValue("75")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D001")
+        .build(),
+    ];
+
+    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
+      listeMesuresIndicateursTemporaires,
+    );
+
+    // WHEN
+    await publierFichierIndicateurImporteUseCase.execute({
+      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+    });
+
+    // THEN
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrer,
+    ).not.toHaveBeenCalled();
+  });
 });
