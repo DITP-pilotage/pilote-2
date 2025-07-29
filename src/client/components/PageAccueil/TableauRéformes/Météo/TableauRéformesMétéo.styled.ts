@@ -1,16 +1,14 @@
-import styled from '@emotion/styled';
-import {
-  TableauChantiersMétéoTaille,
-} from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo.interface';
+import styled from "@emotion/styled";
+import { TableauChantiersMétéoTaille } from "@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo.interface";
 
 interface TableauRéformesMétéoStyledProps {
   taille: TableauChantiersMétéoTaille;
-  estArchive?: boolean 
+  estArchive?: boolean;
 }
 
 const hauteurMétéoPictoÀPartirDeLaTaille = {
-  'sm': '1.65rem',
-  'md': '1.75rem',
+  sm: "1.65rem",
+  md: "1.75rem",
 };
 
 const TableauRéformesMétéoStyled = styled.div<TableauRéformesMétéoStyledProps>`
@@ -19,11 +17,11 @@ const TableauRéformesMétéoStyled = styled.div<TableauRéformesMétéoStyledPr
   align-items: center;
   width: 100%;
   font-size: 0.625rem;
-  
+
   .météo-picto {
     width: auto;
     height: ${({ taille }) => hauteurMétéoPictoÀPartirDeLaTaille[taille]};
-    filter: ${({ estArchive }) => estArchive ? 'grayscale(100%)' : undefined};
+    filter: ${({ estArchive }) => (estArchive ? "grayscale(100%)" : undefined)};
   }
 `;
 

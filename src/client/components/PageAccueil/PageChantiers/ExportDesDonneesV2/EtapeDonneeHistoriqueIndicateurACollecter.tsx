@@ -1,125 +1,111 @@
-import React from 'react';
-import { parseAsInteger, parseAsString, useQueryState } from 'nuqs';
+import React from "react";
+import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 
 export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
-  const [optionsExport] = useQueryState('optionsExport', parseAsString.withDefault('identifiant,valeur-cible,valeur-avancement').withOptions({
-    shallow: true,
-  }));
+  const [optionsExport] = useQueryState(
+    "optionsExport",
+    parseAsString
+      .withDefault("identifiant,valeur-cible,valeur-avancement")
+      .withOptions({
+        shallow: true,
+      }),
+  );
 
-  const [, setEtapeCourante] = useQueryState('etapeCourante', parseAsInteger.withOptions({
-    shallow: true,
-    history: 'push',
-  }));
+  const [, setEtapeCourante] = useQueryState(
+    "etapeCourante",
+    parseAsInteger.withOptions({
+      shallow: true,
+      history: "push",
+    }),
+  );
 
   return (
     <div>
-      <p className='fr-mt-2w fr-mb-0'>
-        Vous avez choisi d'exporter
-        {' '}
-        <strong>
-          l'historique des indicateurs.
-        </strong>
+      <p className="fr-mt-2w fr-mb-0">
+        Vous avez choisi d'exporter{" "}
+        <strong>l'historique des indicateurs.</strong>
       </p>
-      <p className='fr-mt-1w fr-mb-0'>
-        Pour chacun des indicateurs et des territoires inclus dans le périmètre d'export, les données collectées sont
-        les suivantes :
+      <p className="fr-mt-1w fr-mb-0">
+        Pour chacun des indicateurs et des territoires inclus dans le périmètre
+        d'export, les données collectées sont les suivantes :
       </p>
-      <div className='fr-fieldset__element fr-pl-0 fr-pb-2w'>
-        <h3 className='fr-text--md underline fr-mb-1w'>
-          DÉFINITION
-        </h3>
-        <div className='fr-checkbox-group'>
+      <div className="fr-fieldset__element fr-pl-0 fr-pb-2w">
+        <h3 className="fr-text--md underline fr-mb-1w">DÉFINITION</h3>
+        <div className="fr-checkbox-group">
           <input
-            checked={optionsExport.split(',').includes('identifiant')}
-            className='fr-input'
+            checked={optionsExport.split(",").includes("identifiant")}
+            className="fr-input"
             disabled
-            id='identifiant'
-            name='identifiant'
-            type='checkbox'
+            id="identifiant"
+            name="identifiant"
+            type="checkbox"
           />
-          <label
-            className='fr-label'
-            htmlFor='identifiant'
-          >
+          <label className="fr-label" htmlFor="identifiant">
             <span>
-              <span className='fr-text--bold'>
-                identifiants
-              </span>
-              {' '}
-              de l'indicateur et du territoire
+              <span className="fr-text--bold">identifiants</span> de
+              l'indicateur et du territoire
             </span>
           </label>
         </div>
-        <div className='fr-checkbox-group fr-mt-1w'>
+        <div className="fr-checkbox-group fr-mt-1w">
           <input
-            checked={optionsExport.split(',').includes('valeur-cible')}
-            className='fr-input'
+            checked={optionsExport.split(",").includes("valeur-cible")}
+            className="fr-input"
             disabled
-            id='valeur-cible'
-            name='valeur-cible'
-            type='checkbox'
+            id="valeur-cible"
+            name="valeur-cible"
+            type="checkbox"
           />
-          <label
-            className='fr-label'
-            htmlFor='valeur-cible'
-          >
+          <label className="fr-label" htmlFor="valeur-cible">
             <span>
-              <span className='fr-text--bold'>
+              <span className="fr-text--bold">
                 valeur initiale et valeurs cibles*
-              </span>
-              {' '}
+              </span>{" "}
               de l'indicateur sur le territoire
             </span>
           </label>
-          <span
-            className='fr-label fr-text--xs texte-gris fr-mb-0 fr-ml-4w'
-          >
-            *les valeurs cibles sont fournies pour l'année en cours et à échéance
+          <span className="fr-label fr-text--xs texte-gris fr-mb-0 fr-ml-4w">
+            *les valeurs cibles sont fournies pour l'année en cours et à
+            échéance
           </span>
         </div>
-        <div className='fr-checkbox-group fr-mt-1w'>
+        <div className="fr-checkbox-group fr-mt-1w">
           <input
-            checked={optionsExport.split(',').includes('valeur-avancement')}
-            className='fr-input'
+            checked={optionsExport.split(",").includes("valeur-avancement")}
+            className="fr-input"
             disabled
-            id='valeur-avancement'
-            name='valeur-avancement'
-            type='checkbox'
+            id="valeur-avancement"
+            name="valeur-avancement"
+            type="checkbox"
           />
-          <label
-            className='fr-label'
-            htmlFor='valeur-avancement'
-          >
+          <label className="fr-label" htmlFor="valeur-avancement">
             <span>
-              <span className='fr-text--bold'>
-                valeurs d'avancement
-              </span>
-              {' '}
-              de l'indicateur sur le territoire, mois par mois
+              <span className="fr-text--bold">valeurs d'avancement</span> de
+              l'indicateur sur le territoire, mois par mois
             </span>
           </label>
         </div>
       </div>
-      <div className='w-full flex justify-end fr-mt-2w'>
+      <div className="w-full flex justify-end fr-mt-2w">
         <button
-          aria-controls='modale-exporter-les-données-v2'
-          className='fr-link fr-mr-2w'
-          title='Fermer la fenêtre modale'
-          type='button'
+          aria-controls="modale-exporter-les-données-v2"
+          className="fr-link fr-mr-2w"
+          title="Fermer la fenêtre modale"
+          type="button"
         >
           Annuler
         </button>
         <button
-          className='fr-btn fr-btn--secondary fr-mr-2w'
+          className="fr-btn fr-btn--secondary fr-mr-2w"
           onClick={() => setEtapeCourante(2)}
-          type='button'
+          type="button"
         >
           Étape précédente
         </button>
         <button
-          className='fr-btn fr-mr-2w'
+          className="fr-btn fr-mr-2w"
           onClick={() => setEtapeCourante(4)}
-          type='button'
+          type="button"
         >
           Étape suivante
         </button>

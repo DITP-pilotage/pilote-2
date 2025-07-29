@@ -9,7 +9,8 @@
     "plugin:jsx-a11y/recommended",
     "plugin:react/jsx-runtime",
     "next",
-    "airbnb-typescript"
+    "airbnb-typescript",
+    "prettier"
   ],
   "plugins": [
     "unicorn",
@@ -18,7 +19,8 @@
     "react-hooks",
     "import",
     "jsx-a11y",
-    "no-relative-import-paths"
+    "no-relative-import-paths",
+    "prettier"
   ],
   "settings": {
     "react": {
@@ -33,17 +35,6 @@
     "sonarjs/no-nested-template-literals": "off",
     "@typescript-eslint/dot-notation": "off",
     "@typescript-eslint/no-explicit-any": "warn",
-    "quotes": [
-      "error",
-      "single",
-      {
-        "avoidEscape": true
-      }
-    ],
-    "jsx-quotes": [
-      "error",
-      "prefer-single"
-    ],
     "no-restricted-syntax": [
       "error",
       {
@@ -91,10 +82,6 @@
     ],
     "no-console": "error",
     "no-unused-vars": "off",
-    "no-multiple-empty-lines": [
-      "error", {
-      "max": 1
-    }],
     "@typescript-eslint/naming-convention": [
       "error",
       {
@@ -139,29 +126,6 @@
     "react/jsx-props-no-spreading": "off",
     "react/no-array-index-key": "off",
     "react/prefer-read-only-props": "off",
-    "eol-last": [
-      "error",
-      "always"
-    ],
-    "react/jsx-max-props-per-line": [
-      2,
-      {
-        "maximum": 1
-      }
-    ],
-    "react/jsx-indent": [
-      2,
-      2
-    ],
-    "react/jsx-indent-props": [
-      2,
-      2
-    ],
-    "react/jsx-newline": [
-      2,
-      {
-        "prevent": true
-      }
-    ]
+    "prettier/prettier": "error"
   }
 }

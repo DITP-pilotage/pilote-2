@@ -1,9 +1,9 @@
-import { FunctionComponent, useId, useRef } from 'react';
-import MultiSelectProps from '@/components/_commons/MultiSelectNew/MultiSelect.interface';
-import MultiSelectGroupe from '@/components/_commons/MultiSelectNew/MultiSelectGroupe';
-import BoutonToutSélectionner from '@/components/_commons/BoutonsToutSélectionner/BoutonsToutSélectionner';
-import MultiSelectStyled from './MultiSelect.styled';
-import useMultiSelect from './useMultiSelect';
+import { FunctionComponent, useId, useRef } from "react";
+import MultiSelectProps from "@/components/_commons/MultiSelectNew/MultiSelect.interface";
+import MultiSelectGroupe from "@/components/_commons/MultiSelectNew/MultiSelectGroupe";
+import BoutonToutSélectionner from "@/components/_commons/BoutonsToutSélectionner/BoutonsToutSélectionner";
+import MultiSelectStyled from "./MultiSelect.styled";
+import useMultiSelect from "./useMultiSelect";
 
 const MultiSelect: FunctionComponent<MultiSelectProps> = ({
   suffixeLibellé,
@@ -26,57 +26,62 @@ const MultiSelect: FunctionComponent<MultiSelectProps> = ({
     valeursSélectionnées,
     uniqueId,
     libellé,
-  } = useMultiSelect(optionsGroupées, suffixeLibellé, changementValeursSélectionnéesCallback, ref, valeursSélectionnéesParDéfaut);
+  } = useMultiSelect(
+    optionsGroupées,
+    suffixeLibellé,
+    changementValeursSélectionnéesCallback,
+    ref,
+    valeursSélectionnéesParDéfaut,
+  );
 
   return (
     <MultiSelectStyled>
-      <label
-        className='fr-label'
-        htmlFor={id}
-      >
+      <label className="fr-label" htmlFor={id}>
         {label}
       </label>
-      {
-        afficherBoutonsSélection ? (
-          <BoutonToutSélectionner
-            className='fr-mt-2w'
-            onClickToutDésélectionner={() => changementValeursSélectionnéesCallback([])}
-            onClickToutSélectionner={() => changementValeursSélectionnéesCallback(optionsGroupéesFiltrées.flatMap(groupe => groupe.options.map(option => option.value)))}
-          />
-        ) : null
-      }
+      {afficherBoutonsSélection ? (
+        <BoutonToutSélectionner
+          className="fr-mt-2w"
+          onClickToutDésélectionner={() =>
+            changementValeursSélectionnéesCallback([])
+          }
+          onClickToutSélectionner={() =>
+            changementValeursSélectionnéesCallback(
+              optionsGroupéesFiltrées.flatMap((groupe) =>
+                groupe.options.map((option) => option.value),
+              ),
+            )
+          }
+        />
+      ) : null}
       <button
-        className='fr-select fr-ellipsis'
+        className="fr-select fr-ellipsis"
         disabled={desactive}
         id={id}
         title={libellé}
-        type='button'
+        type="button"
         {...multiSelectBoutonProps}
       >
         {libellé}
       </button>
-      <div
-        className={estOuvert ? 'visible' : ''}
-        ref={ref}
-        role='menu'
-      >
+      <div className={estOuvert ? "visible" : ""} ref={ref} role="menu">
         <input
-          className='fr-input'
+          className="fr-input"
           onChange={(e) => setRecherche(e.target.value)}
-          placeholder='Rechercher...'
-          type='text'
+          placeholder="Rechercher..."
+          type="text"
           value={recherche}
         />
-        {
-          optionsGroupéesFiltrées.map(groupe => (
-            <MultiSelectGroupe
-              changementÉtatCallback={valeur => mettreÀJourLesValeursSélectionnées(valeur)}
-              groupeOptions={groupe}
-              key={`${groupe.label} ${uniqueId}`}
-              valeursSélectionnées={valeursSélectionnées}
-            />
-          ))
-        }
+        {optionsGroupéesFiltrées.map((groupe) => (
+          <MultiSelectGroupe
+            changementÉtatCallback={(valeur) =>
+              mettreÀJourLesValeursSélectionnées(valeur)
+            }
+            groupeOptions={groupe}
+            key={`${groupe.label} ${uniqueId}`}
+            valeursSélectionnées={valeursSélectionnées}
+          />
+        ))}
       </div>
     </MultiSelectStyled>
   );

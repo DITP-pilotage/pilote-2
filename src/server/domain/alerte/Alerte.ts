@@ -1,4 +1,7 @@
-import { ChantierTendance, ChantierVueDEnsemble } from '@/server/domain/chantier/Chantier.interface';
+import {
+  ChantierTendance,
+  ChantierVueDEnsemble,
+} from "@/server/domain/chantier/Chantier.interface";
 
 const Alerte = {
   estEnAlerteÉcart(écart: number | null) {
@@ -9,25 +12,32 @@ const Alerte = {
   },
 
   estEnAlerteBaisse: (tendance: ChantierTendance | null) => {
-    if (!tendance)
-      return false;
+    if (!tendance) return false;
 
-    return tendance === 'BAISSE';
+    return tendance === "BAISSE";
   },
 
-  estEnAlerteTauxAvancementNonCalculé(tauxAvancement: number | null, cibleAttendu: boolean) {
+  estEnAlerteTauxAvancementNonCalculé(
+    tauxAvancement: number | null,
+    cibleAttendu: boolean,
+  ) {
     return cibleAttendu && tauxAvancement === null;
   },
 
-  estEnAlerteAbscenceTauxAvancementDepartemental(aUnTauxAvancementDepartemental: boolean, cibleAttendu: boolean) {
+  estEnAlerteAbscenceTauxAvancementDepartemental(
+    aUnTauxAvancementDepartemental: boolean,
+    cibleAttendu: boolean,
+  ) {
     return cibleAttendu && !aUnTauxAvancementDepartemental;
   },
 
-  estEnAlerteMétéoNonRenseignée(météo: ChantierVueDEnsemble['météo']) {
-    return météo === 'NON_RENSEIGNEE';
+  estEnAlerteMétéoNonRenseignée(météo: ChantierVueDEnsemble["météo"]) {
+    return météo === "NON_RENSEIGNEE";
   },
 
-  estEnAlertePossedePropositionsValeurAvancement(aUnePropositionsValeurAvancement: boolean ) {
+  estEnAlertePossedePropositionsValeurAvancement(
+    aUnePropositionsValeurAvancement: boolean,
+  ) {
     return aUnePropositionsValeurAvancement;
   },
 };

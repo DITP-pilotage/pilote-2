@@ -1,35 +1,68 @@
-import { mock, MockProxy } from 'jest-mock-extended';
-import { ChantierBuilder } from '@/server/fiche-conducteur/app/builders/ChantierBuilder';
-import { ChantierRepository } from '@/server/fiche-conducteur/domain/ports/ChantierRepository';
-import {
-  RécupérerDonnéesCartographieUseCase,
-} from '@/server/fiche-conducteur/usecases/RécupérerDonnéesCartographieUseCase';
+import { mock, MockProxy } from "jest-mock-extended";
+import { ChantierBuilder } from "@/server/fiche-conducteur/app/builders/ChantierBuilder";
+import { ChantierRepository } from "@/server/fiche-conducteur/domain/ports/ChantierRepository";
+import { RécupérerDonnéesCartographieUseCase } from "@/server/fiche-conducteur/usecases/RécupérerDonnéesCartographieUseCase";
 
-describe('RécupérerDonnéesCartographieUseCase', () => {
+describe("RécupérerDonnéesCartographieUseCase", () => {
   let récupérerDonnéesCartographieUseCase: RécupérerDonnéesCartographieUseCase;
   let chantierRepository: MockProxy<ChantierRepository>;
 
   beforeEach(() => {
     chantierRepository = mock<ChantierRepository>();
-    récupérerDonnéesCartographieUseCase = new RécupérerDonnéesCartographieUseCase({ chantierRepository });
+    récupérerDonnéesCartographieUseCase =
+      new RécupérerDonnéesCartographieUseCase({ chantierRepository });
   });
 
-  it('doit récupérer les données des cartographies de la fiche conducteur', async () => {
+  it("doit récupérer les données des cartographies de la fiche conducteur", async () => {
     // Given
-    const chantierId = 'CH-168';
-    const chantier1 = new ChantierBuilder().withId('CH-168').withTerritoireCode('DEPT-87').withMeteo('SOLEIL').withEstApplicable(true).withTauxAvancement(90.3).withMaille('DEPT').build();
-    const chantier2 = new ChantierBuilder().withId('CH-168').withTerritoireCode('DEPT-36').withMeteo('COUVERT').withEstApplicable(true).withTauxAvancement(15.2).withMaille('DEPT').build();
-    const chantier3 = new ChantierBuilder().withId('CH-168').withTerritoireCode('FR').withMeteo('COUVERT').withEstApplicable(false).withTauxAvancement(17.2).withMaille('NAT').build();
-    chantierRepository.récupérerMailleNatEtDeptParId.mockResolvedValue([chantier1, chantier2, chantier3]);
+    const chantierId = "CH-168";
+    const chantier1 = new ChantierBuilder()
+      .withId("CH-168")
+      .withTerritoireCode("DEPT-87")
+      .withMeteo("SOLEIL")
+      .withEstApplicable(true)
+      .withTauxAvancement(90.3)
+      .withMaille("DEPT")
+      .build();
+    const chantier2 = new ChantierBuilder()
+      .withId("CH-168")
+      .withTerritoireCode("DEPT-36")
+      .withMeteo("COUVERT")
+      .withEstApplicable(true)
+      .withTauxAvancement(15.2)
+      .withMaille("DEPT")
+      .build();
+    const chantier3 = new ChantierBuilder()
+      .withId("CH-168")
+      .withTerritoireCode("FR")
+      .withMeteo("COUVERT")
+      .withEstApplicable(false)
+      .withTauxAvancement(17.2)
+      .withMaille("NAT")
+      .build();
+    chantierRepository.récupérerMailleNatEtDeptParId.mockResolvedValue([
+      chantier1,
+      chantier2,
+      chantier3,
+    ]);
 
     const jalon = 2024;
 
     // When
-    const donnéesCartographieResult = await récupérerDonnéesCartographieUseCase.run({ chantierId, jalon });
+    const donnéesCartographieResult =
+      await récupérerDonnéesCartographieUseCase.run({ chantierId, jalon });
     // Then
-    expect(donnéesCartographieResult.map(donnee => donnee.territoireCode)).toIncludeSameMembers(['DEPT-87', 'DEPT-36']);
-    expect(donnéesCartographieResult.map(donnee => donnee.météo)).toIncludeSameMembers(['SOLEIL', 'COUVERT']);
-    expect(donnéesCartographieResult.map(donnee => donnee.tauxAvancement)).toIncludeSameMembers([90.3, 15.2]);
-    expect(donnéesCartographieResult.map(donnee => donnee.estApplicable)).toIncludeSameMembers([true, true]);
+    expect(
+      donnéesCartographieResult.map((donnee) => donnee.territoireCode),
+    ).toIncludeSameMembers(["DEPT-87", "DEPT-36"]);
+    expect(
+      donnéesCartographieResult.map((donnee) => donnee.météo),
+    ).toIncludeSameMembers(["SOLEIL", "COUVERT"]);
+    expect(
+      donnéesCartographieResult.map((donnee) => donnee.tauxAvancement),
+    ).toIncludeSameMembers([90.3, 15.2]);
+    expect(
+      donnéesCartographieResult.map((donnee) => donnee.estApplicable),
+    ).toIncludeSameMembers([true, true]);
   });
 });

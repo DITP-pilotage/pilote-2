@@ -1,7 +1,6 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const RapportDétailléChantierStyled = styled.section`
-
   .grid-template {
     display: grid;
     grid-template-areas:
@@ -37,20 +36,20 @@ const RapportDétailléChantierStyled = styled.section`
   .rubrique.synthèse {
     grid-area: synthèse;
   }
-  
+
   .rubrique {
     break-inside: avoid;
-    
+
     & .rubrique__conteneur > div {
       height: auto;
     }
   }
-  
+
   .chantier-item {
     content-visibility: auto;
     break-before: page;
   }
-  
+
   @media print {
     .impression-section {
       break-inside: avoid;

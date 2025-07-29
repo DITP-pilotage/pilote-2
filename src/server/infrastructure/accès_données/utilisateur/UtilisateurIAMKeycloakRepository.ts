@@ -1,14 +1,16 @@
-import KcAdminClient from '@keycloak/keycloak-admin-client';
+import KcAdminClient from "@keycloak/keycloak-admin-client";
 
-import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
-import logger from '@/server/infrastructure/Logger';
-import UtilisateurPourIAM from '@/server/domain/utilisateur/UtilisateurIAM.interface';
-import { configuration } from '@/config';
+import { UtilisateurIAMRepository } from "@/server/domain/utilisateur/UtilisateurIAMRepository";
+import logger from "@/server/infrastructure/Logger";
+import UtilisateurPourIAM from "@/server/domain/utilisateur/UtilisateurIAM.interface";
+import { configuration } from "@/config";
 
-const KEYCLOAK_REALM = 'DITP';
+const KEYCLOAK_REALM = "DITP";
 
 const DAY_IN_SECONDS = 3600 * 24;
-export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMRepository {
+export default class UtilisateurIAMKeycloakRepository
+  implements UtilisateurIAMRepository
+{
   private kcAdminClient: any;
 
   constructor(
@@ -23,13 +25,13 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
     const utilisateur = await this.kcAdminClient.users.findOne({
       realm: KEYCLOAK_REALM,
       email: email,
-    }); 
+    });
 
     if (utilisateur.length > 0) {
       await this.kcAdminClient.users.del({
         realm: KEYCLOAK_REALM,
         id: utilisateur[0].id,
-      }); 
+      });
       logger.info(`Utilisateur ${email} supprimé.`);
     }
   }
@@ -49,7 +51,7 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
     });
 
     await this.kcAdminClient.auth({
-      grantType: 'client_credentials',
+      grantType: "client_credentials",
       clientId: this.clientId,
       clientSecret: this.clientSecret,
     });
@@ -68,7 +70,7 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
         lastName: utilisateur.nom,
         enabled: true,
         emailVerified: true,
-        requiredActions: ['UPDATE_PASSWORD'],
+        requiredActions: ["UPDATE_PASSWORD"],
       });
       logger.info(`Utilisateur ${email} créé.`, utilisateurIAM.id);
 
@@ -80,12 +82,14 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
         redirectUri: configuration.nextAuth.url,
         id: utilisateurIAM.id,
         lifespan: 7 * DAY_IN_SECONDS,
-        actions: ['UPDATE_PASSWORD'],
+        actions: ["UPDATE_PASSWORD"],
       });
-      logger.info('Email envoyé à l\'utilisateur.');
-
+      logger.info("Email envoyé à l'utilisateur.");
     } catch (error: any) {
-      if (error.message == 'Request failed with status code 409' || error?.responseData?.errorMessage === 'User exists with same username') {
+      if (
+        error.message == "Request failed with status code 409" ||
+        error?.responseData?.errorMessage === "User exists with same username"
+      ) {
         logger.warn(`L'email ${email} existe déjà.`);
       } else {
         logger.error(error);

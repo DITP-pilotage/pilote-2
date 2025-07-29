@@ -1,4 +1,4 @@
-import { Nouveaute } from '@/server/parametrage-nouveautes/domain/Nouveaute';
+import { Nouveaute } from "@/server/parametrage-nouveautes/domain/Nouveaute";
 
 export type NouveauteContrat = {
   id: string;
@@ -7,7 +7,9 @@ export type NouveauteContrat = {
   contenu: string;
 };
 
-export const presenterEnNouveauteContrat = (nouveaute: Nouveaute): NouveauteContrat => {
+export const presenterEnNouveauteContrat = (
+  nouveaute: Nouveaute,
+): NouveauteContrat => {
   return {
     id: nouveaute.id,
     version: nouveaute.version,
@@ -16,7 +18,8 @@ export const presenterEnNouveauteContrat = (nouveaute: Nouveaute): NouveauteCont
   };
 };
 
-export const presenterEnListeNouveauteContrat = (nouveautes: Nouveaute[]): NouveauteContrat[] => {
+export const presenterEnListeNouveauteContrat = (
+  nouveautes: Nouveaute[],
+): NouveauteContrat[] => {
   return nouveautes.map(presenterEnNouveauteContrat);
 };
-

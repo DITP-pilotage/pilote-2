@@ -1,45 +1,48 @@
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
-import { SortingState } from '@tanstack/react-table';
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import { SortingState } from "@tanstack/react-table";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-type FormatDeDate = 'MM/YYYY' | 'MM/YY' | 'DD/MM/YYYY' | 'DD/MM/YYYY [à] H[h]mm' | 'MM-YYYY';
+type FormatDeDate =
+  | "MM/YYYY"
+  | "MM/YY"
+  | "DD/MM/YYYY"
+  | "DD/MM/YYYY [à] H[h]mm"
+  | "MM-YYYY";
 
-export function formaterDate(dateISO: string | null | undefined, format: FormatDeDate) {
-  if (!dateISO)
-    return null;
+export function formaterDate(
+  dateISO: string | null | undefined,
+  format: FormatDeDate,
+) {
+  if (!dateISO) return null;
 
-  if (Number.isNaN(Date.parse(dateISO)))
-    return null;
+  if (Number.isNaN(Date.parse(dateISO))) return null;
 
   return dayjs.tz(new Date(dateISO), dayjs.tz.guess()).format(format);
 }
 
 export function horodatage() {
-  return dayjs.tz(new Date, dayjs.tz.guess()).format('YYYY-MM-DD-HH-mm-ss');
+  return dayjs.tz(new Date(), dayjs.tz.guess()).format("YYYY-MM-DD-HH-mm-ss");
 }
 
 export const comparerDates = (a: string, b: string) => {
-  if (a < b)
-    return -1;
-  if (a > b)
-    return 1;
+  if (a < b) return -1;
+  if (a > b) return 1;
   return 0;
 };
 
-export const comparerDateDeMàjDonnées = (a: string | null, b: string | null, tri: SortingState | null) => {
+export const comparerDateDeMàjDonnées = (
+  a: string | null,
+  b: string | null,
+  tri: SortingState | null,
+) => {
   const sensDeTriDesc = tri === null ? true : tri[0].desc;
-  if (a === null && b === null)
-    return 0;
-  if (a === null)
-    return sensDeTriDesc ? -1 : 1; 
-  if (b === null)
-    return sensDeTriDesc ? 1 : -1;
-  if (a < b)
-    return 1;
-  if (a > b)
-    return -1;
+  if (a === null && b === null) return 0;
+  if (a === null) return sensDeTriDesc ? -1 : 1;
+  if (b === null) return sensDeTriDesc ? 1 : -1;
+  if (a < b) return 1;
+  if (a > b) return -1;
   return 0;
 };

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const SectionTableauIndicateurStyled = styled.section`
   .fr-table {
@@ -11,7 +11,6 @@ const SectionTableauIndicateurStyled = styled.section`
       }
     }
   }
-
 `;
 
 export default SectionTableauIndicateurStyled;

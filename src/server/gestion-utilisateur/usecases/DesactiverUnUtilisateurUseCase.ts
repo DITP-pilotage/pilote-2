@@ -1,25 +1,23 @@
-import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository';
-import { UtilisateurIAMRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository';
-import { Utilisateur } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
-import { Profil } from '@/server/domain/profil/Profil.interface';
-import { TokenAPIInformationRepository } from '@/server/gestion-utilisateur/domain/ports/TokenAPIInformationRepository';
-import { TerritoireRepository } from '@/server/gestion-utilisateur/domain/ports/TerritoireRepository';
-import {
-  PerimetreMinisterielRepository,
-} from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository';
-import { ChantierRepository } from '@/server/gestion-utilisateur/domain/ports/ChantierRepository';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import { ContactInfoLettresService } from '@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService';
+import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
+import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository";
+import { Utilisateur } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
+import { Profil } from "@/server/domain/profil/Profil.interface";
+import { TokenAPIInformationRepository } from "@/server/gestion-utilisateur/domain/ports/TokenAPIInformationRepository";
+import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";
+import { PerimetreMinisterielRepository } from "@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository";
+import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
+import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 
 type Dependencies = {
-  utilisateurRepository: UtilisateurRepository,
-  chantierRepository: ChantierRepository,
-  territoireRepository: TerritoireRepository,
-  perimetreMinisterielRepository: PerimetreMinisterielRepository,
-  utilisateurIAMRepository: UtilisateurIAMRepository,
-  tokenAPIInformationRepository: TokenAPIInformationRepository,
-  contactInfoLettresService: ContactInfoLettresService,
+  utilisateurRepository: UtilisateurRepository;
+  chantierRepository: ChantierRepository;
+  territoireRepository: TerritoireRepository;
+  perimetreMinisterielRepository: PerimetreMinisterielRepository;
+  utilisateurIAMRepository: UtilisateurIAMRepository;
+  tokenAPIInformationRepository: TokenAPIInformationRepository;
+  contactInfoLettresService: ContactInfoLettresService;
 };
 
 export default class DesactiverUnUtilisateurUseCase {
@@ -55,18 +53,33 @@ export default class DesactiverUnUtilisateurUseCase {
     this.contactInfoLettresService = contactInfoLettresService;
   }
 
-  async run(email: Utilisateur['email'], habilitations: Habilitations, profil: Profil | null, auteurId: string): Promise<void> {
-    const listeInformationsChantiersUtilisateurs = await this.chantierRepository.listerInformationsChantiersUtilisateurs();
-    const listeTerritoiresCodes = await this.territoireRepository.listerCodes([]);
-    const listePerimetresMinisteriels = await this.perimetreMinisterielRepository.listerIds([]);
+  async run(
+    email: Utilisateur["email"],
+    habilitations: Habilitations,
+    profil: Profil | null,
+    auteurId: string,
+  ): Promise<void> {
+    const listeInformationsChantiersUtilisateurs =
+      await this.chantierRepository.listerInformationsChantiersUtilisateurs();
+    const listeTerritoiresCodes = await this.territoireRepository.listerCodes(
+      [],
+    );
+    const listePerimetresMinisteriels =
+      await this.perimetreMinisterielRepository.listerIds([]);
 
-    const utilisateurASupprimer = await this.utilisateurRepository.récupérer(email, listeTerritoiresCodes, listePerimetresMinisteriels, listeInformationsChantiersUtilisateurs);
+    const utilisateurASupprimer = await this.utilisateurRepository.récupérer(
+      email,
+      listeTerritoiresCodes,
+      listePerimetresMinisteriels,
+      listeInformationsChantiersUtilisateurs,
+    );
 
     if (!utilisateurASupprimer) {
       throw new Error("Le compte à supprimer n'existe pas.");
     }
-    
-    const habilitationsUtilisateurASupprimer = utilisateurASupprimer.habilitations;
+
+    const habilitationsUtilisateurASupprimer =
+      utilisateurASupprimer.habilitations;
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnSuppressionUtilisateur(
       habilitationsUtilisateurASupprimer.lecture.chantiers,
@@ -76,13 +89,15 @@ export default class DesactiverUnUtilisateurUseCase {
 
     await this.utilisateurRepository.desactiver(email, auteurId);
 
-    if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === 'true') {
+    if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === "true") {
       await this.contactInfoLettresService.supprimerContact(email);
     }
 
     if (process.env.IMPORT_KEYCLOAK_URL) {
       await this.utilisateurIAMRepository.desactive(email);
     }
-    await this.tokenAPIInformationRepository.supprimerTokenAPIInformation({ email });
+    await this.tokenAPIInformationRepository.supprimerTokenAPIInformation({
+      email,
+    });
   }
 }

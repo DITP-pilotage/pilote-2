@@ -1,4 +1,4 @@
 export default interface Ppg {
-  id: string,
-  nom: string
+  id: string;
+  nom: string;
 }

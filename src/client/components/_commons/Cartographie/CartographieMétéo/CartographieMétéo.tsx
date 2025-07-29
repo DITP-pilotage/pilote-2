@@ -1,23 +1,27 @@
-import { FunctionComponent } from 'react';
-import Cartographie from '@/components/_commons/Cartographie/Cartographie';
-import CartographieLégendeListe from '@/components/_commons/Cartographie/Légende/Liste/CartographieLégendeListe';
-import { CartographieOptions } from '@/components/_commons/Cartographie/useCartographie.interface';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
-import {
-  CartographieÉlémentsDeLégende,
-} from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import useCartographieMétéo from './useCartographieMétéo';
-import { CartographieDonnéesMétéo } from './CartographieMétéo.interface';
+import { FunctionComponent } from "react";
+import Cartographie from "@/components/_commons/Cartographie/Cartographie";
+import CartographieLégendeListe from "@/components/_commons/Cartographie/Légende/Liste/CartographieLégendeListe";
+import { CartographieOptions } from "@/components/_commons/Cartographie/useCartographie.interface";
+import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
+import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
+import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import useCartographieMétéo from "./useCartographieMétéo";
+import { CartographieDonnéesMétéo } from "./CartographieMétéo.interface";
 
 interface CartographieMétéoProps {
-  données: CartographieDonnéesMétéo,
-  options?: Partial<CartographieOptions>,
-  élémentsDeLégende: CartographieÉlémentsDeLégende,
-  auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
-  territoireCode?: string,
-  pathname: '/accueil/chantier/[territoireCode]' | '/chantier/[id]/[territoireCode]' | null,
-  mailleSelectionnee: MailleInterne,
+  données: CartographieDonnéesMétéo;
+  options?: Partial<CartographieOptions>;
+  élémentsDeLégende: CartographieÉlémentsDeLégende;
+  auClicTerritoireCallback: (
+    territoireCodeInsee: CodeInsee,
+    territoireSélectionnable: boolean,
+  ) => void;
+  territoireCode?: string;
+  pathname:
+    | "/accueil/chantier/[territoireCode]"
+    | "/chantier/[id]/[territoireCode]"
+    | null;
+  mailleSelectionnee: MailleInterne;
 }
 
 const CartographieMétéo: FunctionComponent<CartographieMétéoProps> = ({
@@ -25,11 +29,14 @@ const CartographieMétéo: FunctionComponent<CartographieMétéoProps> = ({
   options,
   auClicTerritoireCallback,
   élémentsDeLégende,
-  territoireCode = '',
+  territoireCode = "",
   pathname,
   mailleSelectionnee,
 }) => {
-  const { donnéesCartographie, légende } = useCartographieMétéo(données, élémentsDeLégende);
+  const { donnéesCartographie, légende } = useCartographieMétéo(
+    données,
+    élémentsDeLégende,
+  );
 
   return (
     <Cartographie

@@ -2,92 +2,92 @@
   On a maintenant la possibilité de créer des indicateurs avec la table raw_data.metadata_indicateurs_complementaire
  */
 
-import { Prisma } from '@prisma/client';
-import { prisma } from '@/server/db/prisma';
-import Logger from '@/server/infrastructure/Logger';
-import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur';
-import {
-  MetadataParametrageIndicateurRepository,
-} from '@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository';
-import { ImportMetadataIndicateur } from '@/server/parametrage-indicateur/domain/ImportMetadataIndicateur';
+import { Prisma } from "@prisma/client";
+import { prisma } from "@/server/db/prisma";
+import Logger from "@/server/infrastructure/Logger";
+import { MetadataParametrageIndicateur } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur";
+import { MetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository";
+import { ImportMetadataIndicateur } from "@/server/parametrage-indicateur/domain/ImportMetadataIndicateur";
 
 export interface RawMetadataParametrageIndicateurModel {
-  indic_id: string,
-  vi_dept_from: string,
-  vi_dept_op: string,
-  va_dept_from: string,
-  va_dept_op: string,
-  vc_dept_from: string,
-  vc_dept_op: string,
-  vi_reg_from: string,
-  vi_reg_op: string,
-  va_reg_from: string,
-  va_reg_op: string,
-  vc_reg_from: string,
-  vc_reg_op: string,
-  vi_nat_from: string,
-  vi_nat_op: string,
-  va_nat_from: string,
-  va_nat_op: string,
-  vc_nat_from: string,
-  vc_nat_op: string,
-  param_vaca_decumul_from: string,
-  param_vaca_partition_date: string,
-  param_vaca_op: string,
-  param_vacg_decumul_from: string,
-  param_vacg_partition_date: string,
-  param_vacg_op: string,
-  poids_pourcent_dept_declaree: number,
-  poids_pourcent_reg_declaree: number,
-  poids_pourcent_nat_declaree: number,
-  tendance: string,
-  indic_parent_indic: string,
-  indic_parent_ch: string,
-  indic_nom: string,
-  indic_nom_baro: string,
-  indic_descr: string,
-  indic_descr_baro: string,
-  indic_is_perseverant: boolean,
-  indic_is_phare: boolean,
-  indic_is_baro: boolean,
-  indic_type: string,
-  indic_source: string,
-  indic_source_url: string,
-  indic_methode_calcul: string,
-  indic_unite: string,
-  indic_hidden_pilote: boolean | null,
-  indic_schema: string,
-  zg_applicable: string,
-  ch_nom: string,
-  reforme_prioritaire: string,
-  projet_annuel_perf: boolean,
-  detail_projet_annuel_perf: string,
-  periodicite: string,
-  delai_disponibilite: number,
-  indic_territorialise: boolean,
-  frequence_territoriale: string,
-  mailles: string,
-  admin_source: string,
-  methode_collecte: string,
-  si_source: string,
-  donnee_ouverte: boolean,
-  modalites_donnee_ouverte: string,
-  resp_donnees: string,
-  resp_donnees_email: string,
-  contact_technique: string,
-  contact_technique_email: string,
-  commentaire: string,
-  maille_pilotage: string,
-  cible_attendue: boolean,
-  couverture_temporelle: string,
+  indic_id: string;
+  vi_dept_from: string;
+  vi_dept_op: string;
+  va_dept_from: string;
+  va_dept_op: string;
+  vc_dept_from: string;
+  vc_dept_op: string;
+  vi_reg_from: string;
+  vi_reg_op: string;
+  va_reg_from: string;
+  va_reg_op: string;
+  vc_reg_from: string;
+  vc_reg_op: string;
+  vi_nat_from: string;
+  vi_nat_op: string;
+  va_nat_from: string;
+  va_nat_op: string;
+  vc_nat_from: string;
+  vc_nat_op: string;
+  param_vaca_decumul_from: string;
+  param_vaca_partition_date: string;
+  param_vaca_op: string;
+  param_vacg_decumul_from: string;
+  param_vacg_partition_date: string;
+  param_vacg_op: string;
+  poids_pourcent_dept_declaree: number;
+  poids_pourcent_reg_declaree: number;
+  poids_pourcent_nat_declaree: number;
+  tendance: string;
+  indic_parent_indic: string;
+  indic_parent_ch: string;
+  indic_nom: string;
+  indic_nom_baro: string;
+  indic_descr: string;
+  indic_descr_baro: string;
+  indic_is_perseverant: boolean;
+  indic_is_phare: boolean;
+  indic_is_baro: boolean;
+  indic_type: string;
+  indic_source: string;
+  indic_source_url: string;
+  indic_methode_calcul: string;
+  indic_unite: string;
+  indic_hidden_pilote: boolean | null;
+  indic_schema: string;
+  zg_applicable: string;
+  ch_nom: string;
+  reforme_prioritaire: string;
+  projet_annuel_perf: boolean;
+  detail_projet_annuel_perf: string;
+  periodicite: string;
+  delai_disponibilite: number;
+  indic_territorialise: boolean;
+  frequence_territoriale: string;
+  mailles: string;
+  admin_source: string;
+  methode_collecte: string;
+  si_source: string;
+  donnee_ouverte: boolean;
+  modalites_donnee_ouverte: string;
+  resp_donnees: string;
+  resp_donnees_email: string;
+  contact_technique: string;
+  contact_technique_email: string;
+  commentaire: string;
+  maille_pilotage: string;
+  cible_attendue: boolean;
+  couverture_temporelle: string;
 }
 
 const makeStrSafer = (str: string | null): string | null => {
   // eslint-disable-next-line no-restricted-syntax
-  return str === null ? null : `'${(str || '').replaceAll('\'', '’')}'`;
+  return str === null ? null : `'${(str || "").replaceAll("'", "’")}'`;
 };
 
-function convertirEnMetadataParametrageIndicateur(rawMetadataParametrageIndicateur: RawMetadataParametrageIndicateurModel): MetadataParametrageIndicateur {
+function convertirEnMetadataParametrageIndicateur(
+  rawMetadataParametrageIndicateur: RawMetadataParametrageIndicateurModel,
+): MetadataParametrageIndicateur {
   return MetadataParametrageIndicateur.creerMetadataParametrageIndicateur({
     indicId: rawMetadataParametrageIndicateur.indic_id,
     viDeptFrom: rawMetadataParametrageIndicateur.vi_dept_from,
@@ -108,15 +108,22 @@ function convertirEnMetadataParametrageIndicateur(rawMetadataParametrageIndicate
     vaNatOp: rawMetadataParametrageIndicateur.va_nat_op,
     vcNatFrom: rawMetadataParametrageIndicateur.vc_nat_from,
     vcNatOp: rawMetadataParametrageIndicateur.vc_nat_op,
-    paramVacaDecumulFrom: rawMetadataParametrageIndicateur.param_vaca_decumul_from,
-    paramVacaPartitionDate: rawMetadataParametrageIndicateur.param_vaca_partition_date,
+    paramVacaDecumulFrom:
+      rawMetadataParametrageIndicateur.param_vaca_decumul_from,
+    paramVacaPartitionDate:
+      rawMetadataParametrageIndicateur.param_vaca_partition_date,
     paramVacaOp: rawMetadataParametrageIndicateur.param_vaca_op,
-    paramVacgDecumulFrom: rawMetadataParametrageIndicateur.param_vacg_decumul_from,
-    paramVacgPartitionDate: rawMetadataParametrageIndicateur.param_vacg_partition_date,
+    paramVacgDecumulFrom:
+      rawMetadataParametrageIndicateur.param_vacg_decumul_from,
+    paramVacgPartitionDate:
+      rawMetadataParametrageIndicateur.param_vacg_partition_date,
     paramVacgOp: rawMetadataParametrageIndicateur.param_vacg_op,
-    poidsPourcentDept: rawMetadataParametrageIndicateur.poids_pourcent_dept_declaree,
-    poidsPourcentReg: rawMetadataParametrageIndicateur.poids_pourcent_reg_declaree,
-    poidsPourcentNat: rawMetadataParametrageIndicateur.poids_pourcent_nat_declaree,
+    poidsPourcentDept:
+      rawMetadataParametrageIndicateur.poids_pourcent_dept_declaree,
+    poidsPourcentReg:
+      rawMetadataParametrageIndicateur.poids_pourcent_reg_declaree,
+    poidsPourcentNat:
+      rawMetadataParametrageIndicateur.poids_pourcent_nat_declaree,
     tendance: rawMetadataParametrageIndicateur.tendance,
     indicParentIndic: rawMetadataParametrageIndicateur.indic_parent_indic,
     indicParentCh: rawMetadataParametrageIndicateur.indic_parent_ch,
@@ -132,74 +139,105 @@ function convertirEnMetadataParametrageIndicateur(rawMetadataParametrageIndicate
     indicSourceUrl: rawMetadataParametrageIndicateur.indic_source_url,
     indicMethodeCalcul: rawMetadataParametrageIndicateur.indic_methode_calcul,
     indicUnite: rawMetadataParametrageIndicateur.indic_unite,
-    indicHiddenPilote: rawMetadataParametrageIndicateur.indic_hidden_pilote === true,
+    indicHiddenPilote:
+      rawMetadataParametrageIndicateur.indic_hidden_pilote === true,
     indicSchema: rawMetadataParametrageIndicateur.indic_schema,
     zgApplicable: rawMetadataParametrageIndicateur.zg_applicable,
     chantierNom: rawMetadataParametrageIndicateur.ch_nom,
     reformePrioritaire: rawMetadataParametrageIndicateur.reforme_prioritaire,
     projetAnnuelPerf: rawMetadataParametrageIndicateur.projet_annuel_perf,
-    detailProjetAnnuelPerf: rawMetadataParametrageIndicateur.detail_projet_annuel_perf,
+    detailProjetAnnuelPerf:
+      rawMetadataParametrageIndicateur.detail_projet_annuel_perf,
     periodicite: rawMetadataParametrageIndicateur.periodicite,
-    delaiDisponibilite: Number(rawMetadataParametrageIndicateur.delai_disponibilite),
+    delaiDisponibilite: Number(
+      rawMetadataParametrageIndicateur.delai_disponibilite,
+    ),
     indicTerritorialise: rawMetadataParametrageIndicateur.indic_territorialise,
-    frequenceTerritoriale: Number(rawMetadataParametrageIndicateur.frequence_territoriale),
+    frequenceTerritoriale: Number(
+      rawMetadataParametrageIndicateur.frequence_territoriale,
+    ),
     mailles: rawMetadataParametrageIndicateur.mailles,
     adminSource: rawMetadataParametrageIndicateur.admin_source,
     methodeCollecte: rawMetadataParametrageIndicateur.methode_collecte,
     siSource: rawMetadataParametrageIndicateur.si_source,
     donneeOuverte: rawMetadataParametrageIndicateur.donnee_ouverte,
-    modalitesDonneeOuverte: rawMetadataParametrageIndicateur.modalites_donnee_ouverte,
+    modalitesDonneeOuverte:
+      rawMetadataParametrageIndicateur.modalites_donnee_ouverte,
     respDonnees: rawMetadataParametrageIndicateur.resp_donnees,
     respDonneesEmail: rawMetadataParametrageIndicateur.resp_donnees_email,
     contactTechnique: rawMetadataParametrageIndicateur.contact_technique,
-    contactTechniqueEmail: rawMetadataParametrageIndicateur.contact_technique_email,
+    contactTechniqueEmail:
+      rawMetadataParametrageIndicateur.contact_technique_email,
     commentaire: rawMetadataParametrageIndicateur.commentaire,
     maillePilotage: rawMetadataParametrageIndicateur.maille_pilotage,
     cibleAttendue: rawMetadataParametrageIndicateur.cible_attendue,
-    couvertureTemporelle: rawMetadataParametrageIndicateur.couverture_temporelle,
+    couvertureTemporelle:
+      rawMetadataParametrageIndicateur.couverture_temporelle,
   });
 }
-export class PrismaMetadataParametrageIndicateurRepository implements MetadataParametrageIndicateurRepository {
-  async recupererListeMetadataParametrageIndicateurEnFonctionDesFiltres(chantierIds: string[], perimetreIds: string[], estTerritorialise: boolean, estBarometre: boolean): Promise<MetadataParametrageIndicateur[]> {
+export class PrismaMetadataParametrageIndicateurRepository
+  implements MetadataParametrageIndicateurRepository
+{
+  async recupererListeMetadataParametrageIndicateurEnFonctionDesFiltres(
+    chantierIds: string[],
+    perimetreIds: string[],
+    estTerritorialise: boolean,
+    estBarometre: boolean,
+  ): Promise<MetadataParametrageIndicateur[]> {
     try {
-      let query = 'SELECT mi.*, mpi.*, mic.*, mc.ch_nom FROM raw_data.metadata_indicateurs_hidden mi ' +
-                'INNER JOIN raw_data.metadata_parametrage_indicateurs mpi ON mpi.indic_id = mi.indic_id ' +
-                'INNER JOIN raw_data.metadata_indicateurs_complementaire mic ON mic.indic_id = mi.indic_id ' +
-                'LEFT JOIN raw_data.metadata_chantiers mc on mi.indic_parent_ch = mc.chantier_id';
+      let query =
+        "SELECT mi.*, mpi.*, mic.*, mc.ch_nom FROM raw_data.metadata_indicateurs_hidden mi " +
+        "INNER JOIN raw_data.metadata_parametrage_indicateurs mpi ON mpi.indic_id = mi.indic_id " +
+        "INNER JOIN raw_data.metadata_indicateurs_complementaire mic ON mic.indic_id = mi.indic_id " +
+        "LEFT JOIN raw_data.metadata_chantiers mc on mi.indic_parent_ch = mc.chantier_id";
       if (chantierIds.length > 0) {
-        const listeStringChantierId = (Array.isArray(chantierIds) ? chantierIds : [chantierIds]).map(i => `'${i}'`).join(',');
+        const listeStringChantierId = (
+          Array.isArray(chantierIds) ? chantierIds : [chantierIds]
+        )
+          .map((i) => `'${i}'`)
+          .join(",");
         query = `${query} WHERE mi.indic_parent_ch IN (${listeStringChantierId})`;
       }
 
       if (perimetreIds.length > 0) {
-        const listeStringPerimetreId = (Array.isArray(perimetreIds) ? perimetreIds : [perimetreIds]).map(i => `'${i}'`).join(',');
-        query = `${query} ${chantierIds.length > 0 ? 'AND' : 'WHERE'} mc.ch_per IN (${listeStringPerimetreId})`;
+        const listeStringPerimetreId = (
+          Array.isArray(perimetreIds) ? perimetreIds : [perimetreIds]
+        )
+          .map((i) => `'${i}'`)
+          .join(",");
+        query = `${query} ${chantierIds.length > 0 ? "AND" : "WHERE"} mc.ch_per IN (${listeStringPerimetreId})`;
       }
 
       if (estTerritorialise) {
-        query = `${query} ${chantierIds.length > 0 || perimetreIds.length > 0 ? 'AND' : 'WHERE'} mic.indic_territorialise`;
+        query = `${query} ${chantierIds.length > 0 || perimetreIds.length > 0 ? "AND" : "WHERE"} mic.indic_territorialise`;
       }
 
       if (estBarometre) {
-        query = `${query} ${chantierIds.length > 0 || perimetreIds.length > 0 || estTerritorialise ? 'AND' : 'WHERE'} mi.indic_is_baro`;
+        query = `${query} ${chantierIds.length > 0 || perimetreIds.length > 0 || estTerritorialise ? "AND" : "WHERE"} mi.indic_is_baro`;
       }
 
       query = `${query} ORDER BY mi.indic_id`;
 
-      const listeRawMetadataParametrageIndicateur = await prisma.$queryRaw<RawMetadataParametrageIndicateurModel[]>`${Prisma.raw(query)}`;
+      const listeRawMetadataParametrageIndicateur = await prisma.$queryRaw<
+        RawMetadataParametrageIndicateurModel[]
+      >`${Prisma.raw(query)}`;
 
       if (listeRawMetadataParametrageIndicateur.length === 0) {
         return [];
       }
 
-      return listeRawMetadataParametrageIndicateur.map(convertirEnMetadataParametrageIndicateur);
+      return listeRawMetadataParametrageIndicateur.map(
+        convertirEnMetadataParametrageIndicateur,
+      );
     } catch (error: unknown) {
       Logger.error(error);
       return [];
     }
   }
 
-  async recupererMetadataParametrageIndicateurParIndicId(indicId: string): Promise<MetadataParametrageIndicateur> {
+  async recupererMetadataParametrageIndicateurParIndicId(
+    indicId: string,
+  ): Promise<MetadataParametrageIndicateur> {
     try {
       let query = `SELECT *, mi.zg_applicable as zg_applicable
                          FROM raw_data.metadata_indicateurs_hidden mi
@@ -208,20 +246,26 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                   LEFT JOIN raw_data.metadata_chantiers mc ON mi.indic_parent_ch = mc.chantier_id
                          WHERE mpi.indic_id LIKE '${indicId}'
             `;
-      const listeRawMetadataParametrageIndicateur = await prisma.$queryRaw<RawMetadataParametrageIndicateurModel[]>`${Prisma.raw(query)}`;
+      const listeRawMetadataParametrageIndicateur = await prisma.$queryRaw<
+        RawMetadataParametrageIndicateurModel[]
+      >`${Prisma.raw(query)}`;
 
       if (listeRawMetadataParametrageIndicateur.length === 0) {
-        throw new Error('invalid indic_id');
+        throw new Error("invalid indic_id");
       }
 
-      return convertirEnMetadataParametrageIndicateur(listeRawMetadataParametrageIndicateur[0]);
+      return convertirEnMetadataParametrageIndicateur(
+        listeRawMetadataParametrageIndicateur[0],
+      );
     } catch (error: unknown) {
       Logger.error(error);
       throw new Error((error as Error).message);
     }
   }
 
-  async modifier(inputs: MetadataParametrageIndicateur): Promise<MetadataParametrageIndicateur> {
+  async modifier(
+    inputs: MetadataParametrageIndicateur,
+  ): Promise<MetadataParametrageIndicateur> {
     const queryIndicateur = `UPDATE raw_data.metadata_indicateurs_hidden
                                  SET indic_parent_indic   = ${makeStrSafer(inputs.indicParentIndic)},
                                      indic_parent_ch   = '${inputs.indicParentCh}',
@@ -302,11 +346,14 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
       prisma.$queryRaw`${Prisma.raw(queryMetadataIndicateurComplementaire)}`,
     ]);
 
-    return this.recupererMetadataParametrageIndicateurParIndicId(inputs.indicId);
+    return this.recupererMetadataParametrageIndicateurParIndicId(
+      inputs.indicId,
+    );
   }
 
-  async creer(inputs: MetadataParametrageIndicateur): Promise<MetadataParametrageIndicateur> {
-
+  async creer(
+    inputs: MetadataParametrageIndicateur,
+  ): Promise<MetadataParametrageIndicateur> {
     const queryIndicateur = `INSERT INTO raw_data.metadata_indicateurs_hidden (indic_id,
                                                                             indic_parent_indic,
                                                                             indic_parent_ch,
@@ -452,11 +499,14 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
       prisma.$queryRaw`${Prisma.raw(queryMetadataIndicateurComplementaire)}`,
     ]);
 
-    return this.recupererMetadataParametrageIndicateurParIndicId(inputs.indicId);
+    return this.recupererMetadataParametrageIndicateurParIndicId(
+      inputs.indicId,
+    );
   }
 
-  async importerEnMasseLesMetadataIndicateurs(listeMetadataIndicateur: ImportMetadataIndicateur[]): Promise<void> {
-
+  async importerEnMasseLesMetadataIndicateurs(
+    listeMetadataIndicateur: ImportMetadataIndicateur[],
+  ): Promise<void> {
     const queryIndicateurFn = (indicateur: ImportMetadataIndicateur) => {
       return `INSERT INTO raw_data.metadata_indicateurs_hidden (indic_id,
                                                                             indic_parent_indic,
@@ -510,9 +560,10 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                        indic_unite = ${makeStrSafer(indicateur.indicUnite)},
                                        indic_hidden_pilote = ${indicateur.indicHiddenPilote},
                                        indic_schema = ${makeStrSafer(indicateur.indicSchema)};`;
-
     };
-    const queryMetadataIndicateurFn = (indicateur: ImportMetadataIndicateur) => {
+    const queryMetadataIndicateurFn = (
+      indicateur: ImportMetadataIndicateur,
+    ) => {
       return `INSERT INTO raw_data.metadata_parametrage_indicateurs (indic_id,
                                                                                                 vi_dept_from,
                                                                                                 vi_dept_op,
@@ -601,8 +652,10 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                      poids_pourcent_reg_declaree = '${indicateur.poidsPourcentReg}',
                                                      poids_pourcent_nat_declaree = '${indicateur.poidsPourcentNat}',
                                                      tendance = ${makeStrSafer(indicateur.tendance)};`;
-    } ;
-    const queryMetadataIndicateurComplementaireFn = (indicateur: ImportMetadataIndicateur) => {
+    };
+    const queryMetadataIndicateurComplementaireFn = (
+      indicateur: ImportMetadataIndicateur,
+    ) => {
       return `INSERT INTO raw_data.metadata_indicateurs_complementaire (indic_id,
                                                                         reforme_prioritaire,
                                                                         projet_annuel_perf,
@@ -670,9 +723,9 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  maille_pilotage = ${makeStrSafer(indicateur.maillePilotage)},
                                                  cible_attendue = ${indicateur.cibleAttendue},
                                                  couverture_temporelle = ${makeStrSafer(indicateur.couvertureTemporelle)};`;
-    } ;
+    };
 
-    const listePromise = listeMetadataIndicateur.flatMap(indicateur => {
+    const listePromise = listeMetadataIndicateur.flatMap((indicateur) => {
       return [
         prisma.$queryRaw`${Prisma.raw(queryIndicateurFn(indicateur))}`,
         prisma.$queryRaw`${Prisma.raw(queryMetadataIndicateurFn(indicateur))}`,
@@ -681,5 +734,4 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
     });
     await prisma.$transaction(listePromise);
   }
-
 }

@@ -1,11 +1,10 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const JaugeDeProgressionSmallStyled = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-
 
   .jauge-tracé--sm {
     width: 3.75rem;
@@ -39,15 +38,15 @@ const JaugeDeProgressionSmallStyled = styled.div`
     }
 
     .jauge-barre-valeur--violet {
-      fill: #8585F6;
+      fill: #8585f6;
     }
 
     .jauge-barre-valeur--orange {
-      fill: #FC5D00;
+      fill: #fc5d00;
     }
 
     .jauge-barre-valeur--vert {
-      fill: #27A658;
+      fill: #27a658;
     }
 
     .jauge-barre-valeur--rose {
@@ -68,15 +67,15 @@ const JaugeDeProgressionSmallStyled = styled.div`
   }
 
   .jauge-valeur--violet {
-    color: #8585F6;
+    color: #8585f6;
   }
 
   .jauge-valeur--orange {
-    color: #FC5D00;
+    color: #fc5d00;
   }
 
   .jauge-valeur--vert {
-    color: #27A658;
+    color: #27a658;
   }
 
   .jauge-valeur--rose {

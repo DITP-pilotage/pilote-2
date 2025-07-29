@@ -1,20 +1,26 @@
-import { FunctionComponent } from 'react';
-import { consignesDÉcritureObjectif, libellésTypesObjectif, TypeObjectif } from '@/client/constants/libellésObjectif';
-import Bloc from '@/components/_commons/Bloc/Bloc';
-import Publication from '@/components/_commons/Publication/Publication';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
-import Objectif, { typesObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
+import { FunctionComponent } from "react";
+import {
+  consignesDÉcritureObjectif,
+  libellésTypesObjectif,
+  TypeObjectif,
+} from "@/client/constants/libellésObjectif";
+import Bloc from "@/components/_commons/Bloc/Bloc";
+import Publication from "@/components/_commons/Publication/Publication";
+import Chantier from "@/server/domain/chantier/Chantier.interface";
+import { Maille } from "@/server/domain/maille/Maille.interface";
+import Objectif, {
+  typesObjectif,
+} from "@/server/domain/chantier/objectif/Objectif.interface";
 
 interface ObjectifsProps {
-  objectifs: Objectif[] | null
-  réformeId: Chantier['id']
-  maille: Maille
-  nomTerritoire: string
-  tousLesTypesDObjectif: typeof typesObjectif
-  estEtendu: boolean
-  modeÉcriture?: boolean
-  estInteractif?: boolean
+  objectifs: Objectif[] | null;
+  réformeId: Chantier["id"];
+  maille: Maille;
+  nomTerritoire: string;
+  tousLesTypesDObjectif: typeof typesObjectif;
+  estEtendu: boolean;
+  modeÉcriture?: boolean;
+  estInteractif?: boolean;
 }
 
 const Objectifs: FunctionComponent<ObjectifsProps> = ({
@@ -28,49 +34,40 @@ const Objectifs: FunctionComponent<ObjectifsProps> = ({
   estInteractif = true,
 }) => {
   return (
-    <Bloc
-      contenuClassesSupplémentaires=''
-      titre={nomTerritoire}
-    >
-      {
-        tousLesTypesDObjectif.map((type) => (
-          <section
-            className='fr-accordion'
-            key={type}
-          >
-            <h3 className='fr-accordion__title'>
-              <button
-                aria-controls={`accordion-${type}`}
-                aria-expanded={estEtendu}
-                className='fr-accordion__btn'
-                title={libellésTypesObjectif[type as TypeObjectif]}
-                type='button'
-              >
-                {libellésTypesObjectif[type as TypeObjectif]}
-              </button>
-            </h3>
-            <div
-              className='fr-collapse'
-              id={`accordion-${type}`}
+    <Bloc contenuClassesSupplémentaires="" titre={nomTerritoire}>
+      {tousLesTypesDObjectif.map((type) => (
+        <section className="fr-accordion" key={type}>
+          <h3 className="fr-accordion__title">
+            <button
+              aria-controls={`accordion-${type}`}
+              aria-expanded={estEtendu}
+              className="fr-accordion__btn"
+              title={libellésTypesObjectif[type as TypeObjectif]}
+              type="button"
             >
-              <Publication
-                caractéristiques={{
-                  type: type,
-                  entité: 'objectifs',
-                  libelléType: libellésTypesObjectif[type as TypeObjectif],
-                  consigneDÉcriture: consignesDÉcritureObjectif[type as TypeObjectif],
-                }}
-                estInteractif={estInteractif}
-                maille={maille}
-                modeÉcriture={modeÉcriture}
-                publicationInitiale={objectifs?.find(objectif => objectif?.type === type) || null}
-                réformeId={réformeId}
-              />
-            </div>
-          </section>
-
-        ))
-      }
+              {libellésTypesObjectif[type as TypeObjectif]}
+            </button>
+          </h3>
+          <div className="fr-collapse" id={`accordion-${type}`}>
+            <Publication
+              caractéristiques={{
+                type: type,
+                entité: "objectifs",
+                libelléType: libellésTypesObjectif[type as TypeObjectif],
+                consigneDÉcriture:
+                  consignesDÉcritureObjectif[type as TypeObjectif],
+              }}
+              estInteractif={estInteractif}
+              maille={maille}
+              modeÉcriture={modeÉcriture}
+              publicationInitiale={
+                objectifs?.find((objectif) => objectif?.type === type) || null
+              }
+              réformeId={réformeId}
+            />
+          </div>
+        </section>
+      ))}
     </Bloc>
   );
 };

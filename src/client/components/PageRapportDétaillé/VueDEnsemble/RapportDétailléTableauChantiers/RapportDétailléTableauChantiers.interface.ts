@@ -1,7 +1,7 @@
-import { ChantierVueDEnsemble } from '@/server/domain/chantier/Chantier.interface';
+import { ChantierVueDEnsemble } from "@/server/domain/chantier/Chantier.interface";
 
 export default interface RapportDétailléTableauChantiersProps {
-  données: DonnéesTableauChantiers[],
+  données: DonnéesTableauChantiers[];
 }
 
 export type DonnéesTableauChantiers = ChantierVueDEnsemble;

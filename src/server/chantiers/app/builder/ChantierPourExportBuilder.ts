@@ -1,9 +1,9 @@
-import { ChantierPourExport } from '@/server/chantiers/domain/ChantierPourExport';
+import { ChantierPourExport } from "@/server/chantiers/domain/ChantierPourExport";
 
 export class ChantierPourExportBuilder {
   private nom: string | null = null;
 
-  private id: string = 'chantierId';
+  private id: string = "chantierId";
 
   private maille = null;
 
@@ -69,7 +69,7 @@ export class ChantierPourExportBuilder {
 
   private synthèseDesRésultats = null;
 
-  private  ecart = null;
+  private ecart = null;
 
   private tendance = null;
 
@@ -121,15 +121,16 @@ export class ChantierPourExportBuilder {
       commFreinsÀLever: this.commFreinsÀLever,
       commCommentairesSurLesDonnées: this.commCommentairesSurLesDonnées,
       commAutresRésultats: this.commAutresRésultats,
-      commAutresRésultatsNonCorrélésAuxIndicateurs: this.commAutresRésultatsNonCorrélésAuxIndicateurs,
+      commAutresRésultatsNonCorrélésAuxIndicateurs:
+        this.commAutresRésultatsNonCorrélésAuxIndicateurs,
       decStratSuiviDesDécisions: this.decStratSuiviDesDécisions,
       objNotreAmbition: this.objNotreAmbition,
       objDéjàFait: this.objDéjàFait,
       objÀFaire: this.objÀFaire,
       synthèseDesRésultats: this.synthèseDesRésultats,
       ecart: this.ecart,
-      tendance: this.tendance, 
-      avancementTerritoire: this.avancementTerritoire, 
+      tendance: this.tendance,
+      avancementTerritoire: this.avancementTerritoire,
       cibleAttendu: this.cibleAttendue,
       aUnePropositionsValeurAvancement: this.aUnePropositionsValeurAvancement,
       aUnTauxAvancementDepartemental: this.aUnTauxAvancementDepartemental,

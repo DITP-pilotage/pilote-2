@@ -1,24 +1,22 @@
-import { prisma } from '@/server/db/prisma';
-import {
-  PrismaUtilisateurRepository,
-} from '@/server/authentification/infrastructure/adapters/PrismaUtilisateurRepository';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { prisma } from "@/server/db/prisma";
+import { PrismaUtilisateurRepository } from "@/server/authentification/infrastructure/adapters/PrismaUtilisateurRepository";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
-describe('PrismaUtilisateurRepository', () => {
+describe("PrismaUtilisateurRepository", () => {
   let prismaUtilisateurRepository: PrismaUtilisateurRepository;
 
   beforeEach(() => {
     prismaUtilisateurRepository = new PrismaUtilisateurRepository();
   });
 
-  describe('#estPresent', () => {
+  describe("#estPresent", () => {
     it("doit remonter true si l'email appartient à un utilisateur", async () => {
       // Given
       await prisma.utilisateur.create({
         data: {
-          email: 'john.doe@test.com',
-          nom: 'John',
-          prenom: 'Doe',
+          email: "john.doe@test.com",
+          nom: "John",
+          prenom: "Doe",
           date_creation: new Date().toISOString(),
           profil: {
             connect: {
@@ -28,16 +26,18 @@ describe('PrismaUtilisateurRepository', () => {
         },
       });
       // When
-      const estPresent = await prismaUtilisateurRepository.estPresent({ email: 'john.doe@test.com' });
+      const estPresent = await prismaUtilisateurRepository.estPresent({
+        email: "john.doe@test.com",
+      });
       // Then
       expect(estPresent).toEqual(true);
     });
     it("doit remonter false si l'email appartient à aucun utilisateur", async () => {
       await prisma.utilisateur.create({
         data: {
-          email: 'jane.doe@test.com',
-          nom: 'Jane',
-          prenom: 'Doe',
+          email: "jane.doe@test.com",
+          nom: "Jane",
+          prenom: "Doe",
           date_creation: new Date().toISOString(),
           profil: {
             connect: {
@@ -47,7 +47,9 @@ describe('PrismaUtilisateurRepository', () => {
         },
       });
       // When
-      const estPresent = await prismaUtilisateurRepository.estPresent({ email: 'john.doe@test.com' });
+      const estPresent = await prismaUtilisateurRepository.estPresent({
+        email: "john.doe@test.com",
+      });
       // Then
       expect(estPresent).toEqual(false);
     });

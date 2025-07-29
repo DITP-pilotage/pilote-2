@@ -1,39 +1,45 @@
-import { prisma } from '@/server/db/prisma';
-import { VARIABLE_CONTENU_DISPONIBLE } from '@/server/gestion-contenu/domain/VariableContenuDisponible';
-import {
-  PrismaGestionContenuRepository,
-} from '@/server/gestion-contenu/infrastructure/adapters/PrismaGestionContenuRepository';
+import { prisma } from "@/server/db/prisma";
+import { VARIABLE_CONTENU_DISPONIBLE } from "@/server/gestion-contenu/domain/VariableContenuDisponible";
+import { PrismaGestionContenuRepository } from "@/server/gestion-contenu/infrastructure/adapters/PrismaGestionContenuRepository";
 
-describe('PrismaGestionContenuRepository', () => {
+describe("PrismaGestionContenuRepository", () => {
   let prismaGestionContenuRepository: PrismaGestionContenuRepository;
-  it('quand la valeur est un string, doit mettre à jour variable de contenu', async () => {
+  it("quand la valeur est un string, doit mettre à jour variable de contenu", async () => {
     // Given
-    const nomVariableContenu : keyof VARIABLE_CONTENU_DISPONIBLE = 'NEXT_BD_FF_BANDEAU_INDISPONIBILITE_TYPE';
-    const valeurVariableContenu = 'ma valeur';
+    const nomVariableContenu: keyof VARIABLE_CONTENU_DISPONIBLE =
+      "NEXT_BD_FF_BANDEAU_INDISPONIBILITE_TYPE";
+    const valeurVariableContenu = "ma valeur";
     // When
-    await prismaGestionContenuRepository.mettreAJourContenu(nomVariableContenu, valeurVariableContenu);
+    await prismaGestionContenuRepository.mettreAJourContenu(
+      nomVariableContenu,
+      valeurVariableContenu,
+    );
     // Then
     const result = await prisma.gestion_contenu.findUnique({
       where: {
-        nom_variable_contenu: 'NEXT_BD_FF_BANDEAU_INDISPONIBILITE_TYPE',
+        nom_variable_contenu: "NEXT_BD_FF_BANDEAU_INDISPONIBILITE_TYPE",
       },
     });
-    
-    expect(result?.valeur_variable_contenu).toEqual('ma valeur');
+
+    expect(result?.valeur_variable_contenu).toEqual("ma valeur");
   });
-  it('quand la valeur est un boolean, doit mettre à jour variable de contenu', async () => {
+  it("quand la valeur est un boolean, doit mettre à jour variable de contenu", async () => {
     // Given
-    const nomVariableContenu : keyof VARIABLE_CONTENU_DISPONIBLE = 'NEXT_BD_FF_BANDEAU_INDISPONIBILITE';
+    const nomVariableContenu: keyof VARIABLE_CONTENU_DISPONIBLE =
+      "NEXT_BD_FF_BANDEAU_INDISPONIBILITE";
     const valeurVariableContenu = true;
     // When
-    await prismaGestionContenuRepository.mettreAJourContenu(nomVariableContenu, valeurVariableContenu);
+    await prismaGestionContenuRepository.mettreAJourContenu(
+      nomVariableContenu,
+      valeurVariableContenu,
+    );
     // Then
     const result = await prisma.gestion_contenu.findUnique({
       where: {
-        nom_variable_contenu: 'NEXT_BD_FF_BANDEAU_INDISPONIBILITE',
+        nom_variable_contenu: "NEXT_BD_FF_BANDEAU_INDISPONIBILITE",
       },
     });
 
-    expect(result?.valeur_variable_contenu).toEqual('true');
+    expect(result?.valeur_variable_contenu).toEqual("true");
   });
 });

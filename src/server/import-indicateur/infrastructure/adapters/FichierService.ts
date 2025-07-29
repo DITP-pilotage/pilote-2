@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+import fs from "node:fs";
 
 export function recupererFichier(cheminCompletDuFichier: string) {
   return fs.createReadStream(cheminCompletDuFichier);

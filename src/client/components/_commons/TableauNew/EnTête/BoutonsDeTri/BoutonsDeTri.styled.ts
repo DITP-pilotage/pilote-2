@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const BoutonsDeTriStyled = styled.div`
   display: inline-block;
@@ -15,7 +15,7 @@ const BoutonsDeTriStyled = styled.div`
 
     &.actif {
       background-color: var(--background-active-blue-france);
-      
+
       &:hover {
         background-color: var(--background-active-blue-france-hover);
       }

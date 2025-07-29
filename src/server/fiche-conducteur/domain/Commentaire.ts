@@ -1,4 +1,4 @@
-import { CommentaireType } from '@/server/fiche-conducteur/domain/CommentaireType';
+import { CommentaireType } from "@/server/fiche-conducteur/domain/CommentaireType";
 
 export class Commentaire {
   private readonly _type: CommentaireType;
@@ -7,7 +7,15 @@ export class Commentaire {
 
   private readonly _date: string;
 
-  private constructor({ type, contenu, date }: { type: CommentaireType, contenu: string, date: string }) {
+  private constructor({
+    type,
+    contenu,
+    date,
+  }: {
+    type: CommentaireType;
+    contenu: string;
+    date: string;
+  }) {
     this._type = type;
     this._contenu = contenu;
     this._date = date;
@@ -25,7 +33,15 @@ export class Commentaire {
     return this._date;
   }
 
-  static creerCommentaire({ type, contenu, date }: { type: CommentaireType, contenu: string, date: string }) {
+  static creerCommentaire({
+    type,
+    contenu,
+    date,
+  }: {
+    type: CommentaireType;
+    contenu: string;
+    date: string;
+  }) {
     return new Commentaire({ type, contenu, date });
   }
 }

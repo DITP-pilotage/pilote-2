@@ -1,1 +1,8 @@
-export type JaugeDeProgressionSmallCouleur = 'bleu' | 'bleu-clair' | 'violet' | 'orange' | 'vert' | 'rose' | 'gris';
+export type JaugeDeProgressionSmallCouleur =
+  | "bleu"
+  | "bleu-clair"
+  | "violet"
+  | "orange"
+  | "vert"
+  | "rose"
+  | "gris";

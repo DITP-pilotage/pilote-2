@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const PageErreurStyled = styled.div`
   background: var(--background-alt-blue-france);
-    
+
   h1 {
     color: var(--background-action-high-blue-france);
   }

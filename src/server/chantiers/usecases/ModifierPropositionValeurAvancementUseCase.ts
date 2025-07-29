@@ -1,11 +1,9 @@
-import {
-  PropositionValeurAvancementRepository,
-} from '@/server/chantiers/domain/ports/PropositionValeurAvancementRepository';
-import { IndicateurRepository } from '@/server/chantiers/domain/ports/IndicateurRepository';
+import { PropositionValeurAvancementRepository } from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
+import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
 
 interface Dependencies {
-  propositionValeurAvancementRepository: PropositionValeurAvancementRepository
-  indicateurRepository: IndicateurRepository
+  propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
+  indicateurRepository: IndicateurRepository;
 }
 
 export class ModifierPropositionValeurAvancementUseCase {
@@ -13,8 +11,12 @@ export class ModifierPropositionValeurAvancementUseCase {
 
   private indicateurRepository: IndicateurRepository;
 
-  constructor({ propositionValeurAvancementRepository, indicateurRepository }: Dependencies) {
-    this.propositionValeurAvancementRepository = propositionValeurAvancementRepository;
+  constructor({
+    propositionValeurAvancementRepository,
+    indicateurRepository,
+  }: Dependencies) {
+    this.propositionValeurAvancementRepository =
+      propositionValeurAvancementRepository;
     this.indicateurRepository = indicateurRepository;
   }
 
@@ -23,9 +25,9 @@ export class ModifierPropositionValeurAvancementUseCase {
     territoireCode,
     auteurModification,
   }: {
-    indicId: string,
-    territoireCode: string,
-    auteurModification: string,
+    indicId: string;
+    territoireCode: string;
+    auteurModification: string;
   }) {
     await this.indicateurRepository.supprimerPropositionValeurAvancement({
       indicId,
@@ -33,10 +35,11 @@ export class ModifierPropositionValeurAvancementUseCase {
       auteurModification,
     });
 
-    await this.propositionValeurAvancementRepository.supprimerPropositionValeurAvancement({
-      indicId,
-      territoireCode,
-    });
+    await this.propositionValeurAvancementRepository.supprimerPropositionValeurAvancement(
+      {
+        indicId,
+        territoireCode,
+      },
+    );
   }
 }
-

@@ -3,7 +3,13 @@ export class TokenAPIInformation {
 
   private readonly _dateCreation: string;
 
-  private constructor({ email, dateCreation }: { email: string, dateCreation: string }) {
+  private constructor({
+    email,
+    dateCreation,
+  }: {
+    email: string;
+    dateCreation: string;
+  }) {
     this._email = email;
     this._dateCreation = dateCreation;
   }
@@ -16,7 +22,13 @@ export class TokenAPIInformation {
     return this._dateCreation;
   }
 
-  static creerTokenAPIInformation({ email, dateCreation }: { email: string, dateCreation: string }) {
+  static creerTokenAPIInformation({
+    email,
+    dateCreation,
+  }: {
+    email: string;
+    dateCreation: string;
+  }) {
     return new TokenAPIInformation({ email, dateCreation });
   }
 }

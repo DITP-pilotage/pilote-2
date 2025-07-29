@@ -1,34 +1,34 @@
-import { ministere } from '@prisma/client';
-import { générerUnIdentifiantUnique } from '@/server/infrastructure/test/builders/utils';
-import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
+import { ministere } from "@prisma/client";
+import { générerUnIdentifiantUnique } from "@/server/infrastructure/test/builders/utils";
+import MinistèreBuilder from "@/server/domain/ministère/Ministère.builder";
 
 export default class MinistèreSQLRowBuilder {
-  private _id: ministere['id'];
+  private _id: ministere["id"];
 
-  private _acronyme: ministere['acronyme'];
+  private _acronyme: ministere["acronyme"];
 
   private _nom: string;
 
   private _icone: string | null;
 
   private _a_supprimer: boolean;
-  
+
   constructor() {
     const ministèreGénéré = new MinistèreBuilder().build();
-    
-    this._id = générerUnIdentifiantUnique('MIN');
+
+    this._id = générerUnIdentifiantUnique("MIN");
     this._acronyme = ministèreGénéré.acronyme;
     this._nom = ministèreGénéré.nom;
     this._icone = ministèreGénéré.icône;
     this._a_supprimer = false;
   }
 
-  avecId(id: ministere['id']): MinistèreSQLRowBuilder {
+  avecId(id: ministere["id"]): MinistèreSQLRowBuilder {
     this._id = id;
     return this;
   }
 
-  avecNom(nom: ministere['nom']): MinistèreSQLRowBuilder {
+  avecNom(nom: ministere["nom"]): MinistèreSQLRowBuilder {
     this._nom = nom;
     return this;
   }

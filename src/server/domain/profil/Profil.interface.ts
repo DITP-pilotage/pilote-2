@@ -1,26 +1,26 @@
-import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 
 export type Profil = {
-  code: ProfilCode
-  nom: string
+  code: ProfilCode;
+  nom: string;
   chantiers: {
     lecture: {
-      tous: boolean
-      tousTerritorialisés: boolean
-      tousTerritoires: boolean,
-      brouillons: boolean,
-    },
+      tous: boolean;
+      tousTerritorialisés: boolean;
+      tousTerritoires: boolean;
+      brouillons: boolean;
+    };
     saisieCommentaire: {
-      tousTerritoires: boolean
-      saisiePossible: boolean
-    },
+      tousTerritoires: boolean;
+      saisiePossible: boolean;
+    };
     saisieIndicateur: {
-      tousTerritoires: boolean
-    },
-  },
+      tousTerritoires: boolean;
+    };
+  };
   utilisateurs: {
-    modificationPossible: boolean
-    tousTerritoires:  boolean
-    tousChantiers: boolean
-  },
+    modificationPossible: boolean;
+    tousTerritoires: boolean;
+    tousChantiers: boolean;
+  };
 };

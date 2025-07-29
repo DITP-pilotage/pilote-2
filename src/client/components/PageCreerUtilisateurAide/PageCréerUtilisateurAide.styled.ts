@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const PageCréerUtilisateurAideStyled = styled.div`
   background: var(--background-alt-blue-france);
@@ -14,7 +14,7 @@ const PageCréerUtilisateurAideStyled = styled.div`
     width: 100%;
     padding-top: 1.2rem;
     padding-bottom: 1.2rem;
-    background-color: #FFFFFFE6;
+    background-color: #ffffffe6;
   }
 `;
 

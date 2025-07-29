@@ -1,8 +1,8 @@
-import { FunctionComponent } from 'react';
-import FlècheDeTri from '@/components/_commons/Tableau/EnTête/FlècheDeTri/FlècheDeTri';
-import BoutonsDeTriStyled from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.styled';
+import { FunctionComponent } from "react";
+import FlècheDeTri from "@/components/_commons/Tableau/EnTête/FlècheDeTri/FlècheDeTri";
+import BoutonsDeTriStyled from "@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.styled";
 
-export type DirectionDeTri = 'asc' | 'desc' | false;
+export type DirectionDeTri = "asc" | "desc" | false;
 
 interface BoutonsDeTriProps {
   nomColonneÀTrier: string;
@@ -15,32 +15,33 @@ const BoutonsDeTri: FunctionComponent<BoutonsDeTriProps> = ({
   directionDeTri,
   changementDirectionDeTriCallback,
 }) => {
-
   return (
     <BoutonsDeTriStyled>
       <button
         aria-label={`trier la colonne "${nomColonneÀTrier}" par ordre croissant`}
-        className={`${directionDeTri === 'asc' ? 'actif' : ''} bouton-de-tri fr-mr-1v`}
-        onClick={() => directionDeTri === 'asc' ? changementDirectionDeTriCallback(false) : changementDirectionDeTriCallback('asc')}
-        title='Ascendant'
-        type='button'
+        className={`${directionDeTri === "asc" ? "actif" : ""} bouton-de-tri fr-mr-1v`}
+        onClick={() =>
+          directionDeTri === "asc"
+            ? changementDirectionDeTriCallback(false)
+            : changementDirectionDeTriCallback("asc")
+        }
+        title="Ascendant"
+        type="button"
       >
-        <FlècheDeTri
-          direction='asc'
-          estActif={directionDeTri === 'asc'}
-        />
+        <FlècheDeTri direction="asc" estActif={directionDeTri === "asc"} />
       </button>
       <button
         aria-label={`trier la colonne "${nomColonneÀTrier}" par ordre décroissant`}
-        className={`${directionDeTri === 'desc' ? 'actif' : ''} bouton-de-tri`}
-        onClick={() => directionDeTri === 'desc' ? changementDirectionDeTriCallback(false) : changementDirectionDeTriCallback('desc')}
-        title='Descendant'
-        type='button'
+        className={`${directionDeTri === "desc" ? "actif" : ""} bouton-de-tri`}
+        onClick={() =>
+          directionDeTri === "desc"
+            ? changementDirectionDeTriCallback(false)
+            : changementDirectionDeTriCallback("desc")
+        }
+        title="Descendant"
+        type="button"
       >
-        <FlècheDeTri
-          direction='desc'
-          estActif={directionDeTri === 'desc'}
-        />
+        <FlècheDeTri direction="desc" estActif={directionDeTri === "desc"} />
       </button>
     </BoutonsDeTriStyled>
   );

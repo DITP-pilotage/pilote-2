@@ -1,7 +1,7 @@
-import { randomUUID } from 'node:crypto';
-import { MesureIndicateurTemporaire } from '@/server/import-indicateur/domain/MesureIndicateurTemporaire';
-import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
-import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
+import { randomUUID } from "node:crypto";
+import { MesureIndicateurTemporaire } from "@/server/import-indicateur/domain/MesureIndicateurTemporaire";
+import { ErreurValidationFichier } from "@/server/import-indicateur/domain/ErreurValidationFichier";
+import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
 
 export class DetailValidationFichier {
   private readonly _id: string;
@@ -27,13 +27,13 @@ export class DetailValidationFichier {
     listeMesuresIndicateurTemporaire,
     listeIndicateursData,
   }: {
-    id: string,
-    estValide: boolean,
-    dateCreation: Date,
-    utilisateurEmail: string,
-    listeErreursValidation: ErreurValidationFichier[],
-    listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[],
-    listeIndicateursData: IndicateurData[]
+    id: string;
+    estValide: boolean;
+    dateCreation: Date;
+    utilisateurEmail: string;
+    listeErreursValidation: ErreurValidationFichier[];
+    listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[];
+    listeIndicateursData: IndicateurData[];
   }) {
     this._id = id;
     this._estValide = estValide;
@@ -77,13 +77,13 @@ export class DetailValidationFichier {
     listeMesuresIndicateurTemporaire = [],
     listeIndicateursData = [],
   }: {
-    id?: string,
-    estValide: boolean,
-    dateCreation?: Date,
-    utilisateurEmail: string,
-    listeErreursValidation?: ErreurValidationFichier[],
-    listeMesuresIndicateurTemporaire?: MesureIndicateurTemporaire[]
-    listeIndicateursData?: IndicateurData[]
+    id?: string;
+    estValide: boolean;
+    dateCreation?: Date;
+    utilisateurEmail: string;
+    listeErreursValidation?: ErreurValidationFichier[];
+    listeMesuresIndicateurTemporaire?: MesureIndicateurTemporaire[];
+    listeIndicateursData?: IndicateurData[];
   }) {
     return new DetailValidationFichier({
       id: id || randomUUID(),
@@ -96,11 +96,17 @@ export class DetailValidationFichier {
     });
   }
 
-  affecterListeMesuresIndicateurTemporaire(listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[]) {
-    this._listeMesuresIndicateurTemporaire.push(...listeMesuresIndicateurTemporaire);
+  affecterListeMesuresIndicateurTemporaire(
+    listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[],
+  ) {
+    this._listeMesuresIndicateurTemporaire.push(
+      ...listeMesuresIndicateurTemporaire,
+    );
   }
 
-  affecterListeErreursValidation(listeErreursValidation: ErreurValidationFichier[]) {
+  affecterListeErreursValidation(
+    listeErreursValidation: ErreurValidationFichier[],
+  ) {
     this._listeErreursValidation.push(...listeErreursValidation);
   }
 }

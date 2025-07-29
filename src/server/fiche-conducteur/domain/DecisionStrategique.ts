@@ -1,4 +1,4 @@
-import { DecisionStrategiqueType } from '@/server/fiche-conducteur/domain/DecisionStrategiqueType';
+import { DecisionStrategiqueType } from "@/server/fiche-conducteur/domain/DecisionStrategiqueType";
 
 export class DecisionStrategique {
   private readonly _type: DecisionStrategiqueType;
@@ -7,7 +7,15 @@ export class DecisionStrategique {
 
   private readonly _date: string;
 
-  private constructor({ type, contenu, date }: { type: DecisionStrategiqueType, contenu: string, date: string }) {
+  private constructor({
+    type,
+    contenu,
+    date,
+  }: {
+    type: DecisionStrategiqueType;
+    contenu: string;
+    date: string;
+  }) {
     this._type = type;
     this._contenu = contenu;
     this._date = date;
@@ -25,7 +33,15 @@ export class DecisionStrategique {
     return this._date;
   }
 
-  static creerDecisionStrategique({ type, contenu, date }: { type: DecisionStrategiqueType, contenu: string, date: string }) {
+  static creerDecisionStrategique({
+    type,
+    contenu,
+    date,
+  }: {
+    type: DecisionStrategiqueType;
+    contenu: string;
+    date: string;
+  }) {
     return new DecisionStrategique({ type, contenu, date });
   }
 }

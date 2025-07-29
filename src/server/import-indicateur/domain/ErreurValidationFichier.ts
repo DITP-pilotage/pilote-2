@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { randomUUID } from "node:crypto";
 
 export class ErreurValidationFichier {
   private readonly _id: string;
@@ -30,15 +30,15 @@ export class ErreurValidationFichier {
     nomDuChamp,
     positionDuChamp,
   }: {
-    id: string,
-    rapportId: string,
-    cellule: string,
-    nom: string,
-    message: string,
-    numeroDeLigne: number,
-    positionDeLigne: number,
-    nomDuChamp: string,
-    positionDuChamp: number
+    id: string;
+    rapportId: string;
+    cellule: string;
+    nom: string;
+    message: string;
+    numeroDeLigne: number;
+    positionDeLigne: number;
+    nomDuChamp: string;
+    positionDuChamp: number;
   }) {
     this._id = id;
     this._rapportId = rapportId;
@@ -98,15 +98,15 @@ export class ErreurValidationFichier {
     nomDuChamp,
     positionDuChamp,
   }: {
-    id?: string,
-    rapportId: string,
-    cellule: string,
-    nom: string,
-    message: string,
-    numeroDeLigne: number,
-    positionDeLigne: number,
-    nomDuChamp: string,
-    positionDuChamp: number
+    id?: string;
+    rapportId: string;
+    cellule: string;
+    nom: string;
+    message: string;
+    numeroDeLigne: number;
+    positionDeLigne: number;
+    nomDuChamp: string;
+    positionDuChamp: number;
   }) {
     return new ErreurValidationFichier({
       id: id || randomUUID(),

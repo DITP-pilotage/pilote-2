@@ -1,27 +1,27 @@
-import { useFormContext } from 'react-hook-form';
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import { récupérerUnCookie } from '@/client/utils/cookies';
-import api from '@/server/infrastructure/api/trpc/api';
-import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
-import { UtilisateurFormInputs } from '@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
+import { useFormContext } from "react-hook-form";
+import { useState } from "react";
+import { useRouter } from "next/router";
+import { récupérerUnCookie } from "@/client/utils/cookies";
+import api from "@/server/infrastructure/api/trpc/api";
+import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
+import { UtilisateurFormInputs } from "@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface";
 
 export default function useRécapitulatifUtilisateur() {
   const { getValues } = useFormContext<UtilisateurFormInputs>();
   const utilisateur = getValues();
-  
+
   const router = useRouter();
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
   const mutationCréerUtilisateur = api.utilisateur.créer.useMutation({
     onSuccess: () => {
-      router.push('/admin/utilisateurs?compteCréé=true');
+      router.push("/admin/utilisateurs?compteCréé=true");
     },
     onError: (error) => {
-      if (error.data?.code === 'INTERNAL_SERVER_ERROR') {
+      if (error.data?.code === "INTERNAL_SERVER_ERROR") {
         setAlerte({
-          type: 'erreur',
-          titre : error.message,
+          type: "erreur",
+          titre: error.message,
         });
       }
     },
@@ -29,23 +29,29 @@ export default function useRécapitulatifUtilisateur() {
 
   const mutationModifierUtilisateur = api.utilisateur.modifier.useMutation({
     onSuccess: () => {
-      router.push('/admin/utilisateurs?compteModifié=true');
+      router.push("/admin/utilisateurs?compteModifié=true");
     },
     onError: (error) => {
-      if (error.data?.code === 'INTERNAL_SERVER_ERROR') {
+      if (error.data?.code === "INTERNAL_SERVER_ERROR") {
         setAlerte({
-          type: 'erreur',
-          titre : error.message,
+          type: "erreur",
+          titre: error.message,
         });
       }
     },
   });
 
   const envoyerFormulaireUtilisateur = (utilisateurExistant: boolean) => {
-    if (utilisateurExistant) 
-      mutationModifierUtilisateur.mutate({ ...utilisateur, 'csrf': récupérerUnCookie('csrf') ?? '' });
+    if (utilisateurExistant)
+      mutationModifierUtilisateur.mutate({
+        ...utilisateur,
+        csrf: récupérerUnCookie("csrf") ?? "",
+      });
     else
-      mutationCréerUtilisateur.mutate({ ...utilisateur, 'csrf': récupérerUnCookie('csrf') ?? '' });
+      mutationCréerUtilisateur.mutate({
+        ...utilisateur,
+        csrf: récupérerUnCookie("csrf") ?? "",
+      });
   };
 
   return {
@@ -54,4 +60,3 @@ export default function useRécapitulatifUtilisateur() {
     alerte,
   };
 }
-

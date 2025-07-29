@@ -1,9 +1,9 @@
-import { InformationIndicateur } from '@/server/import-indicateur/domain/InformationIndicateur';
+import { InformationIndicateur } from "@/server/import-indicateur/domain/InformationIndicateur";
 
 export class InformationIndicateurBuilder {
-  private indicId: string = 'IND-110';
+  private indicId: string = "IND-110";
 
-  private indicSchema: string = 'sans-contraintes.json';
+  private indicSchema: string = "sans-contraintes.json";
 
   withIndicId(indicId: string): InformationIndicateurBuilder {
     this.indicId = indicId;

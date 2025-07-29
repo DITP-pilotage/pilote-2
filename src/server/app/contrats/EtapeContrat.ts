@@ -1,4 +1,4 @@
 export interface Etape {
-  titre: string,
-  texte: string, 
+  titre: string;
+  texte: string;
 }

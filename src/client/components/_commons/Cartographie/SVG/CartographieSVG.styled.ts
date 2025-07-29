@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const CartographieSVGStyled = styled.div`
   position: relative;
@@ -31,7 +31,7 @@ const CartographieSVGStyled = styled.div`
       cursor: pointer;
     }
   }
-    
+
   .stroke-dark {
     stroke: #695240;
   }

@@ -1,7 +1,7 @@
-import Alerte from '@/server/domain/alerte/Alerte';
+import Alerte from "@/server/domain/alerte/Alerte";
 
-describe('Alerte', () => {
-  describe('estEnAlerteÉcart', () => {
+describe("Alerte", () => {
+  describe("estEnAlerteÉcart", () => {
     test("le chantier est en alerte si le taux d'avancement du territoire à au minimum 10 points de moins que le taux d'avancement du territoire national", () => {
       // Given
       const tauxAvancementDuTerritoire = 50;
@@ -42,7 +42,7 @@ describe('Alerte', () => {
     });
   });
 
-  describe('estEnAlerteBaisse', () => {
+  describe("estEnAlerteBaisse", () => {
     test("le chantier n'est pas en alerte si la tendance est null", () => {
       // Given
       const tendance = null;
@@ -54,9 +54,9 @@ describe('Alerte', () => {
       expect(estEnAlerteBaisse).toBeFalsy();
     });
 
-    test('le chantier est en alerte si la tendance est en baisse', () => {
+    test("le chantier est en alerte si la tendance est en baisse", () => {
       // Given
-      const tendance = 'BAISSE';
+      const tendance = "BAISSE";
 
       // When
       const estEnAlerteBaisse = Alerte.estEnAlerteBaisse(tendance);
@@ -67,7 +67,7 @@ describe('Alerte', () => {
 
     test("le chantier n'est pas en alerte si la tendance est en hausse", () => {
       // Given
-      const tendance = 'HAUSSE';
+      const tendance = "HAUSSE";
 
       // When
       const estEnAlerteBaisse = Alerte.estEnAlerteBaisse(tendance);
@@ -78,7 +78,7 @@ describe('Alerte', () => {
 
     test("le chantier n'est pas en alerte si la tendance est en stagnation", () => {
       // Given
-      const tendance = 'STAGNATION';
+      const tendance = "STAGNATION";
 
       // When
       const estEnAlerteBaisse = Alerte.estEnAlerteBaisse(tendance);
@@ -88,13 +88,14 @@ describe('Alerte', () => {
     });
   });
 
-  describe('estEnAlerteTauxAvancementNonCalculé', () => {
+  describe("estEnAlerteTauxAvancementNonCalculé", () => {
     test("le chantier est en alerte si le taux d'avancement est null et qu'une cible est attendu", () => {
       // Given
       const tauxAvancement = null;
 
       // When
-      const estEnAlerteTauxAvancementNonCalculé = Alerte.estEnAlerteTauxAvancementNonCalculé(tauxAvancement, true);
+      const estEnAlerteTauxAvancementNonCalculé =
+        Alerte.estEnAlerteTauxAvancementNonCalculé(tauxAvancement, true);
 
       // Then
       expect(estEnAlerteTauxAvancementNonCalculé).toBeTruthy();
@@ -105,7 +106,8 @@ describe('Alerte', () => {
       const tauxAvancement = 55;
 
       // When
-      const estEnAlerteTauxAvancementNonCalculé = Alerte.estEnAlerteTauxAvancementNonCalculé(tauxAvancement, true);
+      const estEnAlerteTauxAvancementNonCalculé =
+        Alerte.estEnAlerteTauxAvancementNonCalculé(tauxAvancement, true);
 
       // Then
       expect(estEnAlerteTauxAvancementNonCalculé).toBeFalsy();
@@ -115,7 +117,8 @@ describe('Alerte', () => {
       const tauxAvancement = null;
 
       // When
-      const estEnAlerteTauxAvancementNonCalculé = Alerte.estEnAlerteTauxAvancementNonCalculé(tauxAvancement, false);
+      const estEnAlerteTauxAvancementNonCalculé =
+        Alerte.estEnAlerteTauxAvancementNonCalculé(tauxAvancement, false);
 
       // Then
       expect(estEnAlerteTauxAvancementNonCalculé).toBeFalsy();
@@ -125,65 +128,79 @@ describe('Alerte', () => {
       const tauxAvancement = 55;
 
       // When
-      const estEnAlerteTauxAvancementNonCalculé = Alerte.estEnAlerteTauxAvancementNonCalculé(tauxAvancement, false);
+      const estEnAlerteTauxAvancementNonCalculé =
+        Alerte.estEnAlerteTauxAvancementNonCalculé(tauxAvancement, false);
 
       // Then
       expect(estEnAlerteTauxAvancementNonCalculé).toBeFalsy();
     });
   });
 
-  describe('estEnAlerteMétéoNonRenseignée', () =>{
-    test('Le chantier est en alerte si la météo n est pas renseignée', () =>{
+  describe("estEnAlerteMétéoNonRenseignée", () => {
+    test("Le chantier est en alerte si la météo n est pas renseignée", () => {
       // Given
-      const meteo = 'NON_RENSEIGNEE';
+      const meteo = "NON_RENSEIGNEE";
       // When
-      const estEnAlerteMétéoNonRenseignée = Alerte.estEnAlerteMétéoNonRenseignée(meteo);
+      const estEnAlerteMétéoNonRenseignée =
+        Alerte.estEnAlerteMétéoNonRenseignée(meteo);
       // Then
       expect(estEnAlerteMétéoNonRenseignée).toBeTruthy();
     });
 
-    test('Le chantier n est pas en alerte si la météo est renseignée', () =>{
+    test("Le chantier n est pas en alerte si la météo est renseignée", () => {
       // Given
-      const meteo = 'SOLEIL';
+      const meteo = "SOLEIL";
       // When
-      const estEnAlerteMétéoNonRenseignée = Alerte.estEnAlerteMétéoNonRenseignée(meteo);
+      const estEnAlerteMétéoNonRenseignée =
+        Alerte.estEnAlerteMétéoNonRenseignée(meteo);
       // Then
       expect(estEnAlerteMétéoNonRenseignée).toBeFalsy();
     });
   });
 
-  describe('estEnAlerteAbscenceTauxAvancementDepartemental', () => {
-    test('le chantier est en alerte s\'il n\'a pas de taux avancement au niveau departemental et qu\'une valeur cible est attendue', () => {
+  describe("estEnAlerteAbscenceTauxAvancementDepartemental", () => {
+    test("le chantier est en alerte s'il n'a pas de taux avancement au niveau departemental et qu'une valeur cible est attendue", () => {
       // Given
       const aUnTauxAvancementDepartemental = false;
       const cibleAttendue = true;
       // When
-      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(aUnTauxAvancementDepartemental, cibleAttendue);
+      const estEnAlerteAbscenceTauxAvancementDepartemental =
+        Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(
+          aUnTauxAvancementDepartemental,
+          cibleAttendue,
+        );
 
       // Then
       expect(estEnAlerteAbscenceTauxAvancementDepartemental).toBeTruthy();
     });
 
-    test('le chantier n\'est pas en alerte si une valeur cible n\'est pas attendue', () => {
+    test("le chantier n'est pas en alerte si une valeur cible n'est pas attendue", () => {
       // Given
       const aUnTauxAvancementDepartemental = false;
       const cibleAttendue = false;
-     
+
       // When
-      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(aUnTauxAvancementDepartemental, cibleAttendue);
+      const estEnAlerteAbscenceTauxAvancementDepartemental =
+        Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(
+          aUnTauxAvancementDepartemental,
+          cibleAttendue,
+        );
 
       // Then
       expect(estEnAlerteAbscenceTauxAvancementDepartemental).toBeFalse();
     });
   });
 
-  describe('estEnAlertePossedePropositionsValeurAvancement', () => {
+  describe("estEnAlertePossedePropositionsValeurAvancement", () => {
     test("le chantier est en alerte s'il possède au moins une proposition de valeur actuelle", () => {
       //Given
       const aUnePropositionsValeurAvancement = true;
 
       // When
-      const estEnAlertePossedePropositionsValeurAvancement = Alerte.estEnAlertePossedePropositionsValeurAvancement(aUnePropositionsValeurAvancement);
+      const estEnAlertePossedePropositionsValeurAvancement =
+        Alerte.estEnAlertePossedePropositionsValeurAvancement(
+          aUnePropositionsValeurAvancement,
+        );
 
       // Then
       expect(estEnAlertePossedePropositionsValeurAvancement).toBeTruthy();
@@ -194,11 +211,13 @@ describe('Alerte', () => {
       const aUnePropositionsValeurAvancement = false;
 
       // When
-      const estEnAlertePossedePropositionsValeurAvancement = Alerte.estEnAlertePossedePropositionsValeurAvancement(aUnePropositionsValeurAvancement);
+      const estEnAlertePossedePropositionsValeurAvancement =
+        Alerte.estEnAlertePossedePropositionsValeurAvancement(
+          aUnePropositionsValeurAvancement,
+        );
 
       // Then
       expect(estEnAlertePossedePropositionsValeurAvancement).toBeFalsy();
     });
   });
 });
-

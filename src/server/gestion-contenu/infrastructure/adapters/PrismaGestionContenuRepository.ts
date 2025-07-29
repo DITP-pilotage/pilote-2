@@ -1,11 +1,14 @@
-import { gestion_contenu as GestionContenuModel } from '@prisma/client';
-import { GestionContenuRepository } from '@/server/gestion-contenu/domain/ports/GestionContenuRepository';
-import { VARIABLE_CONTENU_DISPONIBLE } from '@/server/gestion-contenu/domain/VariableContenuDisponible';
-import { prisma } from '@/server/db/prisma';
+import { gestion_contenu as GestionContenuModel } from "@prisma/client";
+import { GestionContenuRepository } from "@/server/gestion-contenu/domain/ports/GestionContenuRepository";
+import { VARIABLE_CONTENU_DISPONIBLE } from "@/server/gestion-contenu/domain/VariableContenuDisponible";
+import { prisma } from "@/server/db/prisma";
 
-const convertirEnModel = ({ nomVariableContenu, valeurVariableContenu }: {
-  nomVariableContenu: string,
-  valeurVariableContenu: string | boolean
+const convertirEnModel = ({
+  nomVariableContenu,
+  valeurVariableContenu,
+}: {
+  nomVariableContenu: string;
+  valeurVariableContenu: string | boolean;
 }): GestionContenuModel => {
   return {
     nom_variable_contenu: nomVariableContenu,
@@ -13,18 +16,35 @@ const convertirEnModel = ({ nomVariableContenu, valeurVariableContenu }: {
   };
 };
 
-const convertirEnVariableContenu = (listeGestionContenuModel: GestionContenuModel[]): Partial<VARIABLE_CONTENU_DISPONIBLE> => {
-  return listeGestionContenuModel.reduce((acc, { nom_variable_contenu, valeur_variable_contenu }) => {
-    return {
-      [nom_variable_contenu as keyof VARIABLE_CONTENU_DISPONIBLE]: valeur_variable_contenu === 'true' || valeur_variable_contenu === 'false' ? valeur_variable_contenu === 'true' : valeur_variable_contenu,
-      ...acc,
-    };
-  }, {} as Partial<VARIABLE_CONTENU_DISPONIBLE>);
+const convertirEnVariableContenu = (
+  listeGestionContenuModel: GestionContenuModel[],
+): Partial<VARIABLE_CONTENU_DISPONIBLE> => {
+  return listeGestionContenuModel.reduce(
+    (acc, { nom_variable_contenu, valeur_variable_contenu }) => {
+      return {
+        [nom_variable_contenu as keyof VARIABLE_CONTENU_DISPONIBLE]:
+          valeur_variable_contenu === "true" ||
+          valeur_variable_contenu === "false"
+            ? valeur_variable_contenu === "true"
+            : valeur_variable_contenu,
+        ...acc,
+      };
+    },
+    {} as Partial<VARIABLE_CONTENU_DISPONIBLE>,
+  );
 };
 
-export class PrismaGestionContenuRepository implements GestionContenuRepository {
-  async mettreAJourContenu<K extends keyof VARIABLE_CONTENU_DISPONIBLE>(nomVariableContenu: K, valeurVariableContenu: VARIABLE_CONTENU_DISPONIBLE[K]): Promise<void> {
-    const gestionContenuModel = convertirEnModel({ nomVariableContenu, valeurVariableContenu });
+export class PrismaGestionContenuRepository
+  implements GestionContenuRepository
+{
+  async mettreAJourContenu<K extends keyof VARIABLE_CONTENU_DISPONIBLE>(
+    nomVariableContenu: K,
+    valeurVariableContenu: VARIABLE_CONTENU_DISPONIBLE[K],
+  ): Promise<void> {
+    const gestionContenuModel = convertirEnModel({
+      nomVariableContenu,
+      valeurVariableContenu,
+    });
     await prisma.gestion_contenu.upsert({
       where: {
         nom_variable_contenu: gestionContenuModel.nom_variable_contenu,
@@ -34,7 +54,9 @@ export class PrismaGestionContenuRepository implements GestionContenuRepository 
     });
   }
 
-  async recupererMapVariableContenuParListeDeNom(listeNomVariableContenu: (keyof VARIABLE_CONTENU_DISPONIBLE)[]): Promise<Partial<VARIABLE_CONTENU_DISPONIBLE>> {
+  async recupererMapVariableContenuParListeDeNom(
+    listeNomVariableContenu: (keyof VARIABLE_CONTENU_DISPONIBLE)[],
+  ): Promise<Partial<VARIABLE_CONTENU_DISPONIBLE>> {
     const result = await prisma.gestion_contenu.findMany({
       where: {
         nom_variable_contenu: {

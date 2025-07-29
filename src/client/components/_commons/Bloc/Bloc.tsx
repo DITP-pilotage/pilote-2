@@ -1,48 +1,44 @@
-import { FunctionComponent } from 'react';
-import BlocStyled from '@/components/_commons/Bloc/Bloc.styled';
-import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import { FunctionComponent } from "react";
+import BlocStyled from "@/components/_commons/Bloc/Bloc.styled";
+import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 
 interface BlocProps {
-  children: React.ReactNode
-  contenuClassesSupplémentaires?: string
-  className?: string
-  titre?: string
-  contenuInfobulle?: React.ReactNode
-  idhtml?: string
+  children: React.ReactNode;
+  contenuClassesSupplémentaires?: string;
+  className?: string;
+  titre?: string;
+  contenuInfobulle?: React.ReactNode;
+  idhtml?: string;
 }
 
 const Bloc: FunctionComponent<BlocProps> = ({
   children,
-  contenuClassesSupplémentaires = 'fr-p-2w',
+  contenuClassesSupplémentaires = "fr-p-2w",
   titre,
   contenuInfobulle,
-  className = '',
+  className = "",
   idhtml,
 }) => {
   return (
-    <BlocStyled className={`bloc-container${className ? ` ${className}` : ''}`}>
-      {
-        titre ? (
-          <div className='titre fr-mb-0 fr-p-2w fr-text--sm fr-text--bold flex align-center justify-start relative w-full'>
-            <div className='titre-ellipsis'>
-              {titre}
-            </div>
-            <div>
-              {
-                titre && contenuInfobulle && idhtml ? (
-                  <Infobulle
-                    classNameBouton='fr-pl-2w'
-                    idHtml={`infobulle-chantiers-${idhtml}`}
-                  >
-                    {contenuInfobulle}
-                  </Infobulle>
-                ) : null
-              }        
-            </div>    
+    <BlocStyled className={`bloc-container${className ? ` ${className}` : ""}`}>
+      {titre ? (
+        <div className="titre fr-mb-0 fr-p-2w fr-text--sm fr-text--bold flex align-center justify-start relative w-full">
+          <div className="titre-ellipsis">{titre}</div>
+          <div>
+            {titre && contenuInfobulle && idhtml ? (
+              <Infobulle
+                classNameBouton="fr-pl-2w"
+                idHtml={`infobulle-chantiers-${idhtml}`}
+              >
+                {contenuInfobulle}
+              </Infobulle>
+            ) : null}
           </div>
-        ) : null
-      }
-      <div className={`bloc__contenu${contenuClassesSupplémentaires ? ` ${contenuClassesSupplémentaires}` : ''}`}>
+        </div>
+      ) : null}
+      <div
+        className={`bloc__contenu${contenuClassesSupplémentaires ? ` ${contenuClassesSupplémentaires}` : ""}`}
+      >
         {children}
       </div>
     </BlocStyled>

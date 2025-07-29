@@ -1,33 +1,33 @@
-import { DonneeIndicateur } from '@/server/chantiers/domain/DonneeIndicateur';
+import { DonneeIndicateur } from "@/server/chantiers/domain/DonneeIndicateur";
 
 export class DonneeIndicateurBuilder {
-  private indicId: string = 'IND-001';
+  private indicId: string = "IND-001";
 
-  private zoneId: string = 'D75';
+  private zoneId: string = "D75";
 
-  private maille: string = 'REG';
+  private maille: string = "REG";
 
-  private codeInsee: string = '01';
+  private codeInsee: string = "01";
 
-  private territoireCode: string = 'REG-01';
+  private territoireCode: string = "REG-01";
 
   private valeurInitiale: number = 10.1;
 
-  private dateValeurInitiale: Date = new Date('2024-06-12');
+  private dateValeurInitiale: Date = new Date("2024-06-12");
 
   private valeurAvancement: number = 13.4;
 
-  private dateValeurAvancement: Date = new Date('2024-06-20');
+  private dateValeurAvancement: Date = new Date("2024-06-20");
 
   private valeurCibleAnnuelle: number = 20.4;
 
-  private dateValeurCibleAnnuelle: Date = new Date('2024-07-12');
+  private dateValeurCibleAnnuelle: Date = new Date("2024-07-12");
 
   private tauxAvancementAnnuel: number = 15.3;
 
   private valeurCibleGlobale: number = 17.8;
 
-  private dateValeurCibleGlobale: Date = new Date('2024-06-12');
+  private dateValeurCibleGlobale: Date = new Date("2024-06-12");
 
   private tauxAvancementGlobale: number = 20.1;
 
@@ -73,22 +73,30 @@ export class DonneeIndicateurBuilder {
     return this;
   }
 
-  withDateValeurAvancement(dateValeurAvancement: Date): DonneeIndicateurBuilder {
+  withDateValeurAvancement(
+    dateValeurAvancement: Date,
+  ): DonneeIndicateurBuilder {
     this.dateValeurAvancement = dateValeurAvancement;
     return this;
   }
 
-  withValeurCibleAnnuelle(valeurCibleAnnuelle: number): DonneeIndicateurBuilder {
+  withValeurCibleAnnuelle(
+    valeurCibleAnnuelle: number,
+  ): DonneeIndicateurBuilder {
     this.valeurCibleAnnuelle = valeurCibleAnnuelle;
     return this;
   }
 
-  withDateValeurCibleAnnuelle(dateValeurCibleAnnuelle: Date): DonneeIndicateurBuilder {
+  withDateValeurCibleAnnuelle(
+    dateValeurCibleAnnuelle: Date,
+  ): DonneeIndicateurBuilder {
     this.dateValeurCibleAnnuelle = dateValeurCibleAnnuelle;
     return this;
   }
 
-  withTauxAvancementAnnuel(tauxAvancementAnnuel: number): DonneeIndicateurBuilder {
+  withTauxAvancementAnnuel(
+    tauxAvancementAnnuel: number,
+  ): DonneeIndicateurBuilder {
     this.tauxAvancementAnnuel = tauxAvancementAnnuel;
     return this;
   }
@@ -98,12 +106,16 @@ export class DonneeIndicateurBuilder {
     return this;
   }
 
-  withDateValeurCibleGlobale(dateValeurCibleGlobale: Date): DonneeIndicateurBuilder {
+  withDateValeurCibleGlobale(
+    dateValeurCibleGlobale: Date,
+  ): DonneeIndicateurBuilder {
     this.dateValeurCibleGlobale = dateValeurCibleGlobale;
     return this;
   }
 
-  withTauxAvancementGlobale(tauxAvancementGlobale: number): DonneeIndicateurBuilder {
+  withTauxAvancementGlobale(
+    tauxAvancementGlobale: number,
+  ): DonneeIndicateurBuilder {
     this.tauxAvancementGlobale = tauxAvancementGlobale;
     return this;
   }

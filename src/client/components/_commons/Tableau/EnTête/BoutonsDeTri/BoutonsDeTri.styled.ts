@@ -1,11 +1,11 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const BoutonsDeTriStyled = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
 
-  @media(min-width: 576px) {
+  @media (min-width: 576px) {
     flex-direction: row;
     align-items: flex-start;
   }
@@ -22,7 +22,7 @@ const BoutonsDeTriStyled = styled.div`
 
     &.actif {
       background-color: var(--background-active-blue-france);
-      
+
       &:hover {
         background-color: var(--background-active-blue-france-hover);
       }

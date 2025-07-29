@@ -1,19 +1,23 @@
-import '@gouvfr/dsfr/dist/component/button/button.min.css';
-import { FunctionComponent } from 'react';
+import "@gouvfr/dsfr/dist/component/button/button.min.css";
+import { FunctionComponent } from "react";
 
 interface SubmitBoutonProps {
-  label: string
-  disabled?: boolean
-  className?: string
-}  
+  label: string;
+  disabled?: boolean;
+  className?: string;
+}
 
-const SubmitBouton: FunctionComponent<SubmitBoutonProps> = ({ label, disabled, className }) => {
+const SubmitBouton: FunctionComponent<SubmitBoutonProps> = ({
+  label,
+  disabled,
+  className,
+}) => {
   return (
     <button
-      className={`fr-btn${className ? ' ' + className : ''}`}
+      className={`fr-btn${className ? " " + className : ""}`}
       disabled={disabled}
       title={label}
-      type='submit'
+      type="submit"
     >
       {label}
     </button>
@@ -21,7 +25,7 @@ const SubmitBouton: FunctionComponent<SubmitBoutonProps> = ({ label, disabled, c
 };
 
 SubmitBouton.defaultProps = {
-  className: '',
+  className: "",
   disabled: false,
 };
 

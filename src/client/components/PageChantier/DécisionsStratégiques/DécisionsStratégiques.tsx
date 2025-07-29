@@ -1,7 +1,7 @@
-import Bloc from '@/components/_commons/Bloc/Bloc';
-import Publication from '@/components/_commons/PublicationChantier/Publication';
-import { libellésTypesDécisionStratégique } from '@/client/constants/libellésDécisionStratégique';
-import DécisionsStratégiquesProps from './DécisionsStratégiques.interface';
+import Bloc from "@/components/_commons/Bloc/Bloc";
+import Publication from "@/components/_commons/PublicationChantier/Publication";
+import { libellésTypesDécisionStratégique } from "@/client/constants/libellésDécisionStratégique";
+import DécisionsStratégiquesProps from "./DécisionsStratégiques.interface";
 
 export default function DécisionsStratégiques({
   décisionStratégique,
@@ -11,16 +11,18 @@ export default function DécisionsStratégiques({
   territoireCode,
 }: DécisionsStratégiquesProps) {
   return (
-    <Bloc titre='France'>
+    <Bloc titre="France">
       <Publication
         caractéristiques={{
-          type: 'suiviDesDécisionsStratégiques',
-          libelléType: libellésTypesDécisionStratégique.suiviDesDécisionsStratégiques,
-          entité: 'décisions stratégiques',
-          consigneDÉcriture: 'Notez les décisions prises lors des réunions Elysée <> Matignon et indiquez les actions envisagées et/ou réalisées pour mettre en œuvre ou répondre à ces décisions.',
+          type: "suiviDesDécisionsStratégiques",
+          libelléType:
+            libellésTypesDécisionStratégique.suiviDesDécisionsStratégiques,
+          entité: "décisions stratégiques",
+          consigneDÉcriture:
+            "Notez les décisions prises lors des réunions Elysée <> Matignon et indiquez les actions envisagées et/ou réalisées pour mettre en œuvre ou répondre à ces décisions.",
         }}
         estInteractif={estInteractif}
-        maille='nationale'
+        maille="nationale"
         modeÉcriture={modeÉcriture}
         publicationInitiale={décisionStratégique}
         réformeId={chantierId}

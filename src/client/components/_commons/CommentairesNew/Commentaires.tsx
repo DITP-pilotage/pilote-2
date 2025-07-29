@@ -1,28 +1,30 @@
-import { Fragment, FunctionComponent } from 'react';
-import Bloc from '@/components/_commons/Bloc/Bloc';
-import Publication from '@/components/_commons/PublicationChantier/Publication';
+import { Fragment, FunctionComponent } from "react";
+import Bloc from "@/components/_commons/Bloc/Bloc";
+import Publication from "@/components/_commons/PublicationChantier/Publication";
 import {
   consignesDÉcritureCommentaire,
   libellésTypesCommentaire,
   TypeCommentaire,
-} from '@/client/constants/libellésCommentaire';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+} from "@/client/constants/libellésCommentaire";
+import Chantier from "@/server/domain/chantier/Chantier.interface";
 import {
   Commentaire,
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
-} from '@/server/domain/chantier/commentaire/Commentaire.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
+} from "@/server/domain/chantier/commentaire/Commentaire.interface";
+import { Maille } from "@/server/domain/maille/Maille.interface";
 
 interface CommentairesProps {
-  commentaires: Commentaire[] | null
-  réformeId: Chantier['id']
-  maille: Maille
-  nomTerritoire: string
-  typesCommentaire: typeof typesCommentaireMailleNationale | typeof typesCommentaireMailleRégionaleOuDépartementale
-  modeÉcriture?: boolean
-  estInteractif?: boolean
-  territoireCode: string
+  commentaires: Commentaire[] | null;
+  réformeId: Chantier["id"];
+  maille: Maille;
+  nomTerritoire: string;
+  typesCommentaire:
+    | typeof typesCommentaireMailleNationale
+    | typeof typesCommentaireMailleRégionaleOuDépartementale;
+  modeÉcriture?: boolean;
+  estInteractif?: boolean;
+  territoireCode: string;
 }
 
 const Commentaires: FunctionComponent<CommentairesProps> = ({
@@ -35,34 +37,31 @@ const Commentaires: FunctionComponent<CommentairesProps> = ({
   estInteractif = true,
   territoireCode,
 }) => {
-
   return (
     <Bloc titre={nomTerritoire}>
-      {
-        typesCommentaire.map((type, i) => (
-          <Fragment key={type}>
-            {
-              i !== 0 && (
-                <hr className='fr-hr fr-mx-n2w' />
-              )
+      {typesCommentaire.map((type, i) => (
+        <Fragment key={type}>
+          {i !== 0 && <hr className="fr-hr fr-mx-n2w" />}
+          <Publication
+            caractéristiques={{
+              entité: "commentaires",
+              type: type,
+              libelléType: libellésTypesCommentaire[type as TypeCommentaire],
+              consigneDÉcriture:
+                consignesDÉcritureCommentaire[type as TypeCommentaire],
+            }}
+            estInteractif={estInteractif}
+            maille={maille}
+            modeÉcriture={modeÉcriture}
+            publicationInitiale={
+              commentaires?.find((commentaire) => commentaire?.type === type) ||
+              null
             }
-            <Publication
-              caractéristiques={{
-                entité: 'commentaires',
-                type: type,
-                libelléType: libellésTypesCommentaire[type as TypeCommentaire],
-                consigneDÉcriture: consignesDÉcritureCommentaire[type as TypeCommentaire],
-              }}
-              estInteractif={estInteractif}
-              maille={maille}
-              modeÉcriture={modeÉcriture}
-              publicationInitiale={commentaires?.find(commentaire => commentaire?.type === type) || null}
-              réformeId={réformeId}
-              territoireCode={territoireCode}
-            />
-          </Fragment>
-        ))
-      }
+            réformeId={réformeId}
+            territoireCode={territoireCode}
+          />
+        </Fragment>
+      ))}
     </Bloc>
   );
 };

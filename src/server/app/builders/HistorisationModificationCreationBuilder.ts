@@ -1,16 +1,15 @@
-import { randomUUID } from 'node:crypto';
-import { HistorisationModification } from '@/server/domain/historisationModification/HistorisationModification';
-import {
-  HistorisationModificationDisponible,
-} from '@/server/infrastructure/accès_données/historisationModification/HistorisationModificationDisponible';
+import { randomUUID } from "node:crypto";
+import { HistorisationModification } from "@/server/domain/historisationModification/HistorisationModification";
+import { HistorisationModificationDisponible } from "@/server/infrastructure/accès_données/historisationModification/HistorisationModificationDisponible";
 
 export class HistorisationModificationCreationBuilder {
   private id: string = randomUUID();
 
-  private tableModifieId: keyof HistorisationModificationDisponible = 'metadata_indicateurs';
+  private tableModifieId: keyof HistorisationModificationDisponible =
+    "metadata_indicateurs";
 
   private nouvelleValeur: object = {};
-  
+
   private auteurId: string = randomUUID();
 
   withId(id: string) {
@@ -18,7 +17,9 @@ export class HistorisationModificationCreationBuilder {
     return this;
   }
 
-  withTableModifieId(tableModifieId: keyof HistorisationModificationDisponible) {
+  withTableModifieId(
+    tableModifieId: keyof HistorisationModificationDisponible,
+  ) {
     this.tableModifieId = tableModifieId;
     return this;
   }
@@ -33,12 +34,15 @@ export class HistorisationModificationCreationBuilder {
     return this;
   }
 
-  build<K extends keyof HistorisationModificationDisponible>(): HistorisationModification<K> {
+  build<
+    K extends keyof HistorisationModificationDisponible,
+  >(): HistorisationModification<K> {
     return HistorisationModification.creerHistorisationCreation<K>({
       id: this.id,
       auteurId: this.auteurId,
       tableModifieId: this.tableModifieId as K,
-      nouvelleValeur: this.nouvelleValeur as HistorisationModificationDisponible[K],
+      nouvelleValeur: this
+        .nouvelleValeur as HistorisationModificationDisponible[K],
     });
   }
 }

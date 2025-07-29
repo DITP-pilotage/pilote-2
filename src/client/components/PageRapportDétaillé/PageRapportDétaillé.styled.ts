@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const PageRapportDétailléStyled = styled.div`
   main {
@@ -6,7 +6,7 @@ const PageRapportDétailléStyled = styled.div`
     padding-bottom: 2rem;
     overflow-x: hidden;
   }
-  
+
   h2 {
     color: var(--text-title-blue-france);
   }
@@ -22,7 +22,7 @@ const PageRapportDétailléStyled = styled.div`
     }
 
     margin: 12mm;
-    
+
     main {
       padding: 0;
     }
@@ -30,10 +30,10 @@ const PageRapportDétailléStyled = styled.div`
     .interrupteur-chantiers {
       display: none;
     }
-    
+
     table {
       overflow: hidden;
-      
+
       td {
         background-color: var(--grey-1000-50);
       }

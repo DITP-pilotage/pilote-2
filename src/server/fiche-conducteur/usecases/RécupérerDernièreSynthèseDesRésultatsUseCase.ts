@@ -1,8 +1,8 @@
-import { SynthèseDesRésultatsRepository } from '@/server/fiche-conducteur/domain/ports/SynthèseDesRésultatsRepository';
-import { SyntheseDesResultats } from '@/server/fiche-conducteur/domain/SyntheseDesResultats';
+import { SynthèseDesRésultatsRepository } from "@/server/fiche-conducteur/domain/ports/SynthèseDesRésultatsRepository";
+import { SyntheseDesResultats } from "@/server/fiche-conducteur/domain/SyntheseDesResultats";
 
 interface Dependencies {
-  synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository
+  synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
 }
 
 export class RécupérerDernièreSynthèseDesRésultatsUseCase {
@@ -12,7 +12,13 @@ export class RécupérerDernièreSynthèseDesRésultatsUseCase {
     this.synthèseDesRésultatsRepository = synthèseDesRésultatsRepository;
   }
 
-  async run({ chantierId }: { chantierId: string }): Promise<SyntheseDesResultats | null> {
-    return this.synthèseDesRésultatsRepository.recupererLaPlusRecenteMailleNatParChantierId(chantierId);
+  async run({
+    chantierId,
+  }: {
+    chantierId: string;
+  }): Promise<SyntheseDesResultats | null> {
+    return this.synthèseDesRésultatsRepository.recupererLaPlusRecenteMailleNatParChantierId(
+      chantierId,
+    );
   }
 }

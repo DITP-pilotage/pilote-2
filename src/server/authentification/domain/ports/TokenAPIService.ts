@@ -1,3 +1,3 @@
 export interface TokenAPIService {
-  creerTokenAPI({ email }: { email: string }): Promise<string>
+  creerTokenAPI({ email }: { email: string }): Promise<string>;
 }

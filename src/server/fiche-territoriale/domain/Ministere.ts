@@ -3,7 +3,7 @@ export class Ministere {
 
   private readonly _code: string;
 
-  private constructor({ icone, code }: { icone: string, code: string }) {
+  private constructor({ icone, code }: { icone: string; code: string }) {
     this._icone = icone;
     this._code = code;
   }
@@ -16,7 +16,7 @@ export class Ministere {
     return this._code;
   }
 
-  static creerMinistere({ icone, code }: { icone: string, code: string }) {
+  static creerMinistere({ icone, code }: { icone: string; code: string }) {
     return new Ministere({ icone, code });
   }
 }

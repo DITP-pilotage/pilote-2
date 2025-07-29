@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-import { useQueryState, parseAsString } from 'nuqs';
-import api from '@/server/infrastructure/api/trpc/api';
+import { useQueryState, parseAsString } from "nuqs";
+import api from "@/server/infrastructure/api/trpc/api";
 
 const initialContenu = `
 <h4>Nouvelles fonctionnalités</h4>
@@ -22,50 +22,77 @@ const initialContenu = `
 `;
 
 export const useNouveautés = () => {
-  const { data: listeNouveautes, isLoading: estChargementListeNouveautes, refetch: refetchListeNouveautes } = api.parametrageNouveautes.lister.useQuery(undefined, { keepPreviousData: true });
-
-  const [estUnModeEdition, setEstUnModeEdition] = useState<boolean>(false);
-  const [idAModifier, setIdAModifier] = useQueryState<string>('id', parseAsString.withDefault('').withOptions({
-    shallow: false,
-    history: 'push',
-    clearOnDefault: true,
-  }));
-
-  const [majorVersion, minorVersion, patchVersion] = (listeNouveautes?.[0]?.version || '1.0.0').split('.');
-  const nextVersion = [majorVersion, minorVersion, +patchVersion + 1].join('.');
-  
-  const [contenu, setContenu] = useState<string>(initialContenu);
-  const [version, setVersion] = useState<string>(idAModifier ? listeNouveautes?.[0]?.version || nextVersion : nextVersion);
-
-  useEffect(() => {
-    setVersion(idAModifier ? listeNouveautes?.[0]?.version || nextVersion : nextVersion);
-  }, [nextVersion, idAModifier, listeNouveautes]);
-
-  const [date, setDate] = useState<string>(listeNouveautes?.[0]?.date || new Date().toISOString().split('T')[0]);
-
-  const mutationSauvegarderContenuNouveautés = api.parametrageNouveautes.creer.useMutation({
-    onSuccess: () => {
-      refetchListeNouveautes();
-      setIdAModifier('');
-      setEstUnModeEdition(false);
-      setContenu(initialContenu);
-      setVersion(nextVersion);
-      setDate(new Date().toISOString().split('T')[0]);
-    },
+  const {
+    data: listeNouveautes,
+    isLoading: estChargementListeNouveautes,
+    refetch: refetchListeNouveautes,
+  } = api.parametrageNouveautes.lister.useQuery(undefined, {
+    keepPreviousData: true,
   });
 
-  const mutationModifierContenuNouveautés = api.parametrageNouveautes.modifier.useMutation({
-    onSuccess: () => {
-      refetchListeNouveautes();
-      setIdAModifier('');
-      setEstUnModeEdition(false);
-      setContenu(initialContenu);
-      setVersion(nextVersion);
-      setDate(new Date().toISOString().split('T')[0]);
-    },
-  }); 
+  const [estUnModeEdition, setEstUnModeEdition] = useState<boolean>(false);
+  const [idAModifier, setIdAModifier] = useQueryState<string>(
+    "id",
+    parseAsString.withDefault("").withOptions({
+      shallow: false,
+      history: "push",
+      clearOnDefault: true,
+    }),
+  );
 
-  const sauvegarderContenuNouveautés = ({ contenu: contenuAAjouter, version: versionAAjouter, date: dateAAjouter }: { contenu: string, version: string, date: string }) => {
+  const [majorVersion, minorVersion, patchVersion] = (
+    listeNouveautes?.[0]?.version || "1.0.0"
+  ).split(".");
+  const nextVersion = [majorVersion, minorVersion, +patchVersion + 1].join(".");
+
+  const [contenu, setContenu] = useState<string>(initialContenu);
+  const [version, setVersion] = useState<string>(
+    idAModifier ? listeNouveautes?.[0]?.version || nextVersion : nextVersion,
+  );
+
+  useEffect(() => {
+    setVersion(
+      idAModifier ? listeNouveautes?.[0]?.version || nextVersion : nextVersion,
+    );
+  }, [nextVersion, idAModifier, listeNouveautes]);
+
+  const [date, setDate] = useState<string>(
+    listeNouveautes?.[0]?.date || new Date().toISOString().split("T")[0],
+  );
+
+  const mutationSauvegarderContenuNouveautés =
+    api.parametrageNouveautes.creer.useMutation({
+      onSuccess: () => {
+        refetchListeNouveautes();
+        setIdAModifier("");
+        setEstUnModeEdition(false);
+        setContenu(initialContenu);
+        setVersion(nextVersion);
+        setDate(new Date().toISOString().split("T")[0]);
+      },
+    });
+
+  const mutationModifierContenuNouveautés =
+    api.parametrageNouveautes.modifier.useMutation({
+      onSuccess: () => {
+        refetchListeNouveautes();
+        setIdAModifier("");
+        setEstUnModeEdition(false);
+        setContenu(initialContenu);
+        setVersion(nextVersion);
+        setDate(new Date().toISOString().split("T")[0]);
+      },
+    });
+
+  const sauvegarderContenuNouveautés = ({
+    contenu: contenuAAjouter,
+    version: versionAAjouter,
+    date: dateAAjouter,
+  }: {
+    contenu: string;
+    version: string;
+    date: string;
+  }) => {
     mutationSauvegarderContenuNouveautés.mutate({
       contenu: contenuAAjouter,
       version: versionAAjouter,
@@ -73,7 +100,17 @@ export const useNouveautés = () => {
     });
   };
 
-  const modifierContenuNouveautés = ({ id, contenu: contenuAModifier, version: versionAModifier, date: dateAModifier }: { id: string, contenu: string, version: string, date: string }) => {
+  const modifierContenuNouveautés = ({
+    id,
+    contenu: contenuAModifier,
+    version: versionAModifier,
+    date: dateAModifier,
+  }: {
+    id: string;
+    contenu: string;
+    version: string;
+    date: string;
+  }) => {
     mutationModifierContenuNouveautés.mutate({
       id,
       contenu: contenuAModifier,
@@ -83,5 +120,20 @@ export const useNouveautés = () => {
     refetchListeNouveautes();
   };
 
-  return { sauvegarderContenuNouveautés, modifierContenuNouveautés, listeNouveautes, estChargementListeNouveautes, contenu, estUnModeEdition, idAModifier, version, date, setContenu, setVersion, setDate, setEstUnModeEdition, setIdAModifier };
+  return {
+    sauvegarderContenuNouveautés,
+    modifierContenuNouveautés,
+    listeNouveautes,
+    estChargementListeNouveautes,
+    contenu,
+    estUnModeEdition,
+    idAModifier,
+    version,
+    date,
+    setContenu,
+    setVersion,
+    setDate,
+    setEstUnModeEdition,
+    setIdAModifier,
+  };
 };

@@ -1,19 +1,21 @@
-import '@testing-library/jest-dom';
-import { render, within } from '@testing-library/react';
-import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
+import "@testing-library/jest-dom";
+import { render, within } from "@testing-library/react";
+import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 
-describe('Barre de progression', () => {
-  test('la barre de progression est complété de son pourcentage', () => {
+describe("Barre de progression", () => {
+  test("la barre de progression est complété de son pourcentage", () => {
     render(
       <BarreDeProgression
         afficherTexte
-        taille='sm'
+        taille="sm"
         valeur={20}
-        variante='primaire'
+        variante="primaire"
       />,
     );
-    const pourcentage = document.querySelectorAll('.pourcentage')[0] as HTMLElement;
-    const valeur = within(pourcentage).getByText('20 %');
+    const pourcentage = document.querySelectorAll(
+      ".pourcentage",
+    )[0] as HTMLElement;
+    const valeur = within(pourcentage).getByText("20 %");
     expect(valeur).toBeInTheDocument();
   });
 
@@ -21,40 +23,44 @@ describe('Barre de progression', () => {
     render(
       <BarreDeProgression
         afficherTexte={false}
-        taille='sm'
+        taille="sm"
         valeur={20}
-        variante='primaire'
+        variante="primaire"
       />,
     );
-    const pourcentage = document.querySelectorAll('.pourcentage').length;
+    const pourcentage = document.querySelectorAll(".pourcentage").length;
     expect(pourcentage).toBe(0);
   });
 
-  test('le pourcentage est placé au dessus de la barre de progression', () => {
+  test("le pourcentage est placé au dessus de la barre de progression", () => {
     render(
       <BarreDeProgression
-        positionTexte='dessus'
-        taille='sm'
+        positionTexte="dessus"
+        taille="sm"
         valeur={20}
-        variante='primaire'
+        variante="primaire"
       />,
     );
-    const barreDeProgression = document.querySelectorAll('.barre-de-progression')[0];
-    expect(barreDeProgression).toHaveClass('texte-dessus');
-    expect(barreDeProgression).toHaveStyle('flex-direction: column-reverse');
+    const barreDeProgression = document.querySelectorAll(
+      ".barre-de-progression",
+    )[0];
+    expect(barreDeProgression).toHaveClass("texte-dessus");
+    expect(barreDeProgression).toHaveStyle("flex-direction: column-reverse");
   });
 
-  test('le pourcentage est placé à côté de la barre de progression', () => {
+  test("le pourcentage est placé à côté de la barre de progression", () => {
     render(
       <BarreDeProgression
-        positionTexte='côté'
-        taille='sm'
+        positionTexte="côté"
+        taille="sm"
         valeur={20}
-        variante='primaire'
+        variante="primaire"
       />,
     );
-    const barreDeProgression = document.querySelectorAll('.barre-de-progression')[0];
-    expect(barreDeProgression).toHaveClass('texte-côté');
-    expect(barreDeProgression).toHaveStyle('flex-direction: row');
+    const barreDeProgression = document.querySelectorAll(
+      ".barre-de-progression",
+    )[0];
+    expect(barreDeProgression).toHaveClass("texte-côté");
+    expect(barreDeProgression).toHaveStyle("flex-direction: row");
   });
 });

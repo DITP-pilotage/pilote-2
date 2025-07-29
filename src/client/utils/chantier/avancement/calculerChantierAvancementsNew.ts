@@ -1,8 +1,8 @@
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
-import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
-import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
-import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
+import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { AgrégateurChantiersParTerritoire } from "@/client/utils/chantier/agrégateur/agrégateur";
+import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
+import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
+import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 
 export default function calculerChantierAvancements(
   chantier: ChantierRapportDetailleContrat,
@@ -11,51 +11,62 @@ export default function calculerChantierAvancements(
   territoireCodeParent: string | null,
   avancementsAgrégés: AvancementsStatistiques,
 ) {
+  const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire(
+    chantier,
+  ).agréger();
 
-  const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire(chantier).agréger();
-
-  const avancementRégional = ( typeTauxAvancement: 'global' | 'annuel' ) => {
+  const avancementRégional = (typeTauxAvancement: "global" | "annuel") => {
     const { maille } = territoireCodeVersMailleCodeInsee(territoireCode);
 
-    return maille === 'REG'
-      ? donnéesTerritoiresAgrégées.regionale.territoires[territoireCode].répartition.avancements[typeTauxAvancement]
-      : maille === 'DEPT' && territoireCodeParent
-        ? donnéesTerritoiresAgrégées.regionale.territoires[territoireCodeParent].répartition.avancements[typeTauxAvancement]
+    return maille === "REG"
+      ? donnéesTerritoiresAgrégées.regionale.territoires[territoireCode]
+          .répartition.avancements[typeTauxAvancement]
+      : maille === "DEPT" && territoireCodeParent
+        ? donnéesTerritoiresAgrégées.regionale.territoires[territoireCodeParent]
+            .répartition.avancements[typeTauxAvancement]
         : null;
   };
 
-  const avancementDépartemental = ( typeTauxAvancement: 'global' | 'annuel' ) => {
+  const avancementDépartemental = (typeTauxAvancement: "global" | "annuel") => {
     const { maille } = territoireCodeVersMailleCodeInsee(territoireCode);
 
-    return maille === 'DEPT' ? donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[territoireCode].répartition.avancements[typeTauxAvancement] : null;
+    return maille === "DEPT"
+      ? donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[
+          territoireCode
+        ].répartition.avancements[typeTauxAvancement]
+      : null;
   };
 
   return {
     nationale: {
       global: {
-        moyenne: donnéesTerritoiresAgrégées.nationale.répartition.avancements.global.moyenne,
+        moyenne:
+          donnéesTerritoiresAgrégées.nationale.répartition.avancements.global
+            .moyenne,
         médiane: avancementsAgrégés?.global.médiane ?? null,
         minimum: avancementsAgrégés?.global.minimum ?? null,
         maximum: avancementsAgrégés?.global.maximum ?? null,
       },
       annuel: {
-        moyenne: donnéesTerritoiresAgrégées.nationale.répartition.avancements.annuel.moyenne,
+        moyenne:
+          donnéesTerritoiresAgrégées.nationale.répartition.avancements.annuel
+            .moyenne,
       },
     },
     departementale: {
       global: {
-        moyenne: avancementDépartemental('global'),
+        moyenne: avancementDépartemental("global"),
       },
       annuel: {
-        moyenne: avancementDépartemental('annuel'),
+        moyenne: avancementDépartemental("annuel"),
       },
     },
     regionale: {
       global: {
-        moyenne: avancementRégional('global'),
+        moyenne: avancementRégional("global"),
       },
       annuel: {
-        moyenne: avancementRégional('annuel'),
+        moyenne: avancementRégional("annuel"),
       },
     },
   };

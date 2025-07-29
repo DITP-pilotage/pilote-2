@@ -1,13 +1,16 @@
 /* eslint-disable sonarjs/no-duplicate-string */
-import fs from 'node:fs';
-import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
-import UtilisateurCSVParseur from './UtilisateurCSVParseur';
+import fs from "node:fs";
+import UtilisateurÀCréerOuMettreÀJourBuilder from "@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder";
+import UtilisateurCSVParseur from "./UtilisateurCSVParseur";
 
-describe('UtilisateurCSVParseur', () => {
+describe("UtilisateurCSVParseur", () => {
   it("lit un fichier CSV et retourne un tableau d'utilisateur à créer ou mettre à jour", () => {
-    const utilisateurÀImporter1 = new UtilisateurÀCréerOuMettreÀJourBuilder().avecSaisieIndicateur(true).build();
+    const utilisateurÀImporter1 = new UtilisateurÀCréerOuMettreÀJourBuilder()
+      .avecSaisieIndicateur(true)
+      .build();
 
-    const utilisateurÀImporter2 = new UtilisateurÀCréerOuMettreÀJourBuilder().build();
+    const utilisateurÀImporter2 =
+      new UtilisateurÀCréerOuMettreÀJourBuilder().build();
 
     const contenuFichierCSV = `nom,prénom,email,profil,scope,territoires,périmètreIds,chantierIds,auteurEmail\n
       ${utilisateurÀImporter1.nom},${utilisateurÀImporter1.prénom},"${utilisateurÀImporter1.email}",${utilisateurÀImporter1.profil},lecture,REG-12|DEPT-13,PER-15,CH-001|CH-002|CH-003,ditp.admin@example.com\n
@@ -18,9 +21,10 @@ describe('UtilisateurCSVParseur', () => {
       ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},gestionUtilisateur,DEPT-34,,CH-004,\n
       ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},responsabilite,DEPT-34,,CH-004,`;
 
-    jest.spyOn(fs, 'readFileSync').mockReturnValueOnce(contenuFichierCSV);
+    jest.spyOn(fs, "readFileSync").mockReturnValueOnce(contenuFichierCSV);
 
-    const result = new UtilisateurCSVParseur('monfichier.csv').parse().parsedCsvRecords;
+    const result = new UtilisateurCSVParseur("monfichier.csv").parse()
+      .parsedCsvRecords;
     const habilitationVide = {
       chantiers: [],
       territoires: [],
@@ -35,12 +39,12 @@ describe('UtilisateurCSVParseur', () => {
         fonction: null,
         saisieIndicateur: true,
         gestionUtilisateur: true,
-        auteurEmail: 'ditp.admin@example.com',
+        auteurEmail: "ditp.admin@example.com",
         habilitations: {
           lecture: {
-            chantiers: ['CH-001', 'CH-002', 'CH-003'],
-            territoires: ['REG-12', 'DEPT-13'],
-            périmètres:  ['PER-15'],
+            chantiers: ["CH-001", "CH-002", "CH-003"],
+            territoires: ["REG-12", "DEPT-13"],
+            périmètres: ["PER-15"],
           },
           saisieIndicateur: {
             chantiers: [],
@@ -48,8 +52,8 @@ describe('UtilisateurCSVParseur', () => {
             périmètres: [],
           },
           saisieCommentaire: {
-            chantiers: ['CH-001', 'CH-002'],
-            territoires: ['DEPT-13'],
+            chantiers: ["CH-001", "CH-002"],
+            territoires: ["DEPT-13"],
             périmètres: [],
           },
           gestionUtilisateur: habilitationVide,
@@ -65,34 +69,35 @@ describe('UtilisateurCSVParseur', () => {
         fonction: null,
         saisieIndicateur: true,
         gestionUtilisateur: true,
-        auteurEmail: '',
+        auteurEmail: "",
         habilitations: {
           lecture: {
-            chantiers: ['CH-004', 'CH-008', 'CH-012'],
+            chantiers: ["CH-004", "CH-008", "CH-012"],
             territoires: [],
-            périmètres:  ['PER-25'],
+            périmètres: ["PER-25"],
           },
           saisieIndicateur: {
             chantiers: [],
             territoires: [],
-            périmètres: ['PER-25'],
+            périmètres: ["PER-25"],
           },
           saisieCommentaire: {
-            chantiers: ['CH-004'],
+            chantiers: ["CH-004"],
             territoires: [],
             périmètres: [],
           },
           gestionUtilisateur: {
-            chantiers: ['CH-004'],
-            territoires: ['DEPT-34'],
+            chantiers: ["CH-004"],
+            territoires: ["DEPT-34"],
             périmètres: [],
           },
           responsabilite: {
-            chantiers: ['CH-004'],
-            territoires: ['DEPT-34'],
+            chantiers: ["CH-004"],
+            territoires: ["DEPT-34"],
             périmètres: [],
           },
         },
-      }]);
+      },
+    ]);
   });
 });

@@ -1,16 +1,16 @@
-import { FunctionComponent } from 'react';
-import { InformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
-import { MetadataIndicateurChamp } from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp';
-import SélecteurAvecRecherche from '@/components/_commons/SélecteurAvecRecherche/SélecteurAvecRecherche';
+import { FunctionComponent } from "react";
+import { InformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
+import { MetadataIndicateurChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp";
+import SélecteurAvecRecherche from "@/components/_commons/SélecteurAvecRecherche/SélecteurAvecRecherche";
 
 export const MetadataIndicateurSelecteurAvecRecherche: FunctionComponent<{
-  informationMetadataIndicateur: InformationMetadataIndicateurContrat,
-  estEnCoursDeModification: boolean,
-  erreurMessage?: string,
-  listeValeur: { valeur: string; libellé: string }[],
-  values: string | boolean,
-  valeurAffiché: string,
-  valeurModifiéeCallback: (chantierSelectionné: string) => void
+  informationMetadataIndicateur: InformationMetadataIndicateurContrat;
+  estEnCoursDeModification: boolean;
+  erreurMessage?: string;
+  listeValeur: { valeur: string; libellé: string }[];
+  values: string | boolean;
+  valeurAffiché: string;
+  valeurModifiéeCallback: (chantierSelectionné: string) => void;
 }> = ({
   informationMetadataIndicateur,
   erreurMessage,
@@ -30,10 +30,10 @@ export const MetadataIndicateurSelecteurAvecRecherche: FunctionComponent<{
         erreurMessage={erreurMessage}
         estVisibleEnMobile
         estVueMobile={false}
-        htmlName='indicParentCh'
+        htmlName="indicParentCh"
         options={listeValeur}
         valeurModifiéeCallback={valeurModifiéeCallback}
-        valeurSélectionnée={`${values || '_'}`}
+        valeurSélectionnée={`${values || "_"}`}
       />
     </MetadataIndicateurChamp>
   );

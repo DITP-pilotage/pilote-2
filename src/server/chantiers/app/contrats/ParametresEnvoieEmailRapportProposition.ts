@@ -1,5 +1,5 @@
-import { PropositionValeurAvancementRapport } from '@/server/chantiers/domain/ports/PropositionValeurAvancementRepository';
-import { PropositionValeurAvancementChantierInformation } from '@/server/chantiers/domain/PropositionValeurAvancementChantierInformation';
+import { PropositionValeurAvancementRapport } from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
+import { PropositionValeurAvancementChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
 
 type ParamIndicateur = {
   id: string;
@@ -23,13 +23,18 @@ type ParametreEnvoieRapportProposition = {
 
 export const genererParametresEnvoieRapportProposition = (
   listeChantierIds: string[],
-  mapChantiersPropositionInformation: Map<string, PropositionValeurAvancementChantierInformation>,
-  propositionsParChantier: Map<string, Map<string, PropositionValeurAvancementRapport[]>>,
+  mapChantiersPropositionInformation: Map<
+    string,
+    PropositionValeurAvancementChantierInformation
+  >,
+  propositionsParChantier: Map<
+    string,
+    Map<string, PropositionValeurAvancementRapport[]>
+  >,
 ): {
-  chantiers: ParametreEnvoieRapportProposition[],
-  conseillerEmail: string,
+  chantiers: ParametreEnvoieRapportProposition[];
+  conseillerEmail: string;
 } => {
-
   const params: ParametreEnvoieRapportProposition[] = [];
   for (const chantierId of listeChantierIds) {
     const chantier = mapChantiersPropositionInformation.get(chantierId);
@@ -45,16 +50,19 @@ export const genererParametresEnvoieRapportProposition = (
     let nombrePropositions = 0;
 
     const indicateurs: ParamIndicateur[] = [];
-    for (const [indicId, propositionsTerritoire] of mapPropositionsChantier.entries()) {
+    for (const [
+      indicId,
+      propositionsTerritoire,
+    ] of mapPropositionsChantier.entries()) {
       const unite = propositionsTerritoire[0].uniteIndicateur;
       const nom = propositionsTerritoire[0].nomIndicateur;
-      const suffixe = unite?.toLocaleLowerCase() === 'pourcentage' ? ' %' : '';
+      const suffixe = unite?.toLocaleLowerCase() === "pourcentage" ? " %" : "";
 
       indicateurs.push({
         id: indicId,
         nom: nom,
-        unite: unite ? `(en ${unite})` : '',
-        territoires: propositionsTerritoire.map(p => ({
+        unite: unite ? `(en ${unite})` : "",
+        territoires: propositionsTerritoire.map((p) => ({
           code: p.territoireCode,
           nom: p.nomTerritoire,
           valeur_avancement: p.valeurAvancementReference + suffixe,
@@ -70,7 +78,10 @@ export const genererParametresEnvoieRapportProposition = (
       params.push({
         nom_chantier: chantier.nom,
         id_chantier: chantier.id,
-        nombre_propositions: nombrePropositions > 1 ? `${nombrePropositions} propositions territoriales de valeur d'avancement` : "1 proposition territoriale de valeur d'avancement",
+        nombre_propositions:
+          nombrePropositions > 1
+            ? `${nombrePropositions} propositions territoriales de valeur d'avancement`
+            : "1 proposition territoriale de valeur d'avancement",
         conseiller_email: chantier.conseillerMail,
         indicateurs,
       });

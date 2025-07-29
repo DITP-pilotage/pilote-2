@@ -1,8 +1,8 @@
-import { ChantierRepository } from '@/server/fiche-conducteur/domain/ports/ChantierRepository';
-import { AvancementFicheConducteur } from '@/server/fiche-conducteur/domain/AvancementFicheConducteur';
+import { ChantierRepository } from "@/server/fiche-conducteur/domain/ports/ChantierRepository";
+import { AvancementFicheConducteur } from "@/server/fiche-conducteur/domain/AvancementFicheConducteur";
 
 interface Dependencies {
-  chantierRepository: ChantierRepository
+  chantierRepository: ChantierRepository;
 }
 
 export class RécupérerAvancementUseCase {
@@ -12,25 +12,57 @@ export class RécupérerAvancementUseCase {
     this.chantierRepository = chantierRepository;
   }
 
-  async run({ chantierId, jalon }: { chantierId: string, jalon: number }): Promise<AvancementFicheConducteur> {
-    const listeChantiers = await this.chantierRepository.récupérerMailleNatEtDeptParId(chantierId, jalon);
+  async run({
+    chantierId,
+    jalon,
+  }: {
+    chantierId: string;
+    jalon: number;
+  }): Promise<AvancementFicheConducteur> {
+    const listeChantiers =
+      await this.chantierRepository.récupérerMailleNatEtDeptParId(
+        chantierId,
+        jalon,
+      );
 
-    const chantierNational = listeChantiers.find(chantier => chantier.maille === 'NAT')!;
-    const listeAscChantiersDepartementTauxAvancement = listeChantiers.filter(chantier => chantier.maille === 'DEPT').map(chantier => chantier.tauxAvancement).filter(Boolean).sort((a, b) => a - b);
+    const chantierNational = listeChantiers.find(
+      (chantier) => chantier.maille === "NAT",
+    )!;
+    const listeAscChantiersDepartementTauxAvancement = listeChantiers
+      .filter((chantier) => chantier.maille === "DEPT")
+      .map((chantier) => chantier.tauxAvancement)
+      .filter(Boolean)
+      .sort((a, b) => a - b);
 
     let mediane: number;
-    const indexMilieu = Math.floor(listeAscChantiersDepartementTauxAvancement.length / 2);
+    const indexMilieu = Math.floor(
+      listeAscChantiersDepartementTauxAvancement.length / 2,
+    );
 
-    mediane = listeAscChantiersDepartementTauxAvancement.length % 2 === 0
-      ? (listeAscChantiersDepartementTauxAvancement[indexMilieu - 1] + listeAscChantiersDepartementTauxAvancement[indexMilieu]) / 2
-      : listeAscChantiersDepartementTauxAvancement[indexMilieu];
+    mediane =
+      listeAscChantiersDepartementTauxAvancement.length % 2 === 0
+        ? (listeAscChantiersDepartementTauxAvancement[indexMilieu - 1] +
+            listeAscChantiersDepartementTauxAvancement[indexMilieu]) /
+          2
+        : listeAscChantiersDepartementTauxAvancement[indexMilieu];
 
     return AvancementFicheConducteur.creerAvancementFicheConducteur({
       global: chantierNational.tauxAvancement,
       annuel: chantierNational.tauxAvancementAnnuel,
-      minimum: listeAscChantiersDepartementTauxAvancement.length === 0 ? null : listeAscChantiersDepartementTauxAvancement[0],
-      mediane: listeAscChantiersDepartementTauxAvancement.length === 0 ? null : mediane,
-      maximum: listeAscChantiersDepartementTauxAvancement.length === 0 ? null : listeAscChantiersDepartementTauxAvancement[listeAscChantiersDepartementTauxAvancement.length - 1],
+      minimum:
+        listeAscChantiersDepartementTauxAvancement.length === 0
+          ? null
+          : listeAscChantiersDepartementTauxAvancement[0],
+      mediane:
+        listeAscChantiersDepartementTauxAvancement.length === 0
+          ? null
+          : mediane,
+      maximum:
+        listeAscChantiersDepartementTauxAvancement.length === 0
+          ? null
+          : listeAscChantiersDepartementTauxAvancement[
+              listeAscChantiersDepartementTauxAvancement.length - 1
+            ],
     });
   }
 }

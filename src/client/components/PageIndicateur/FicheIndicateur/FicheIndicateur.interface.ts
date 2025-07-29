@@ -1,14 +1,12 @@
-import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
-import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
-import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
-import {
-  InformationHistorisationMetadataIndicateurContrat,
-} from '@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat';
+import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
+import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
+import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
+import { InformationHistorisationMetadataIndicateurContrat } from "@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat";
 
 export default interface FicheIndicateurProps {
-  indicateur: MetadataParametrageIndicateurContrat
-  informationHistorisationIndicateur: InformationHistorisationMetadataIndicateurContrat
-  estEnCoursDeModification: boolean
-  mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
-  chantiers: ChantierSynthétisé[]
+  indicateur: MetadataParametrageIndicateurContrat;
+  informationHistorisationIndicateur: InformationHistorisationMetadataIndicateurContrat;
+  estEnCoursDeModification: boolean;
+  mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat;
+  chantiers: ChantierSynthétisé[];
 }

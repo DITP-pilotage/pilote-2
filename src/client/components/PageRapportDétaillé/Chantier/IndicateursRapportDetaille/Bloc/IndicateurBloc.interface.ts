@@ -1,6 +1,6 @@
-import { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 
 export type IndicateurDétailsParTerritoire = {
-  territoireNom: string
-  données: DétailsIndicateur
+  territoireNom: string;
+  données: DétailsIndicateur;
 };
