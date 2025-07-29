@@ -1,14 +1,12 @@
 import { captor, mock, MockProxy } from "jest-mock-extended";
-import {
-  IndicateurTerritoireValeurEvenementRepository,
-  PublierFichierIndicateurImporteUseCase,
-} from "@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase";
+import { PublierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase";
 import { MesureIndicateurTemporaireRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface";
 import { RapportRepository } from "@/server/import-indicateur/domain/ports/RapportRepository";
 import { MesureIndicateurTemporaire } from "@/server/import-indicateur/domain/MesureIndicateurTemporaire";
 import { MesureIndicateurTemporaireBuilder } from "@/server/import-indicateur/app/builder/MesureIndicateurTemporaire.builder";
 import { MesureIndicateurRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface";
 import { PropositionValeurAvancementRepository } from "@/server/import-indicateur/domain/ports/PropositionValeurAvancementRepository";
+import { IndicateurTerritoireValeurEvenementRepository } from "@/server/import-indicateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 
 describe("PublierFichierIndicateurImporteUseCase", () => {
   let publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase;
@@ -190,5 +188,11 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(propositionsAModifier2.valeurImportee).toEqual(11.3);
   });
 
-  it("doit creer une ligne d'évènement pour la valeur associée au territoire et à l'indicateur", async () => {});
+  it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type], doit créer une ligne d'évènement (VALEUR_CREEE)", async () => {});
+
+  it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] avec un tuple pour une date antérieure, doit créer 2 lignes d'évènement (VALEUR_HISTORISEE + VALEUR_CREEE)", async () => {});
+
+  it("quand la valeur est différente de la dernière valeur importée pour le tuple [indicateur, territoire, date, type], doit créer une ligne d'évènement (VALEUR_MODIFIEE)", async () => {});
+
+  it("quand la valeur est identique à la dernière valeur importée pour le tuple [indicateur, territoire, date, type], ne doit pas créer de ligne d'évènement", async () => {});
 });

@@ -4,12 +4,7 @@ import { RapportRepository } from "@/server/import-indicateur/domain/ports/Rappo
 import { MesureIndicateurTemporaireRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface";
 import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
 import { PropositionValeurAvancementRepository } from "@/server/import-indicateur/domain/ports/PropositionValeurAvancementRepository";
-
-class ValeurIndicateurTerritoireEvenement {}
-
-export interface IndicateurTerritoireValeurEvenementRepository {
-  enregistrer(evenement: ValeurIndicateurTerritoireEvenement): Promise<void>;
-}
+import { IndicateurTerritoireValeurEvenementRepository } from "@/server/import-indicateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 
 interface Dependencies {
   mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
@@ -26,16 +21,21 @@ export class PublierFichierIndicateurImporteUseCase {
 
   private propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
 
+  private indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+
   constructor({
     mesureIndicateurTemporaireRepository,
     mesureIndicateurRepository,
     propositionValeurAvancementRepository,
+    indicateurTerritoireValeurEvenementRepository,
   }: Dependencies) {
     this.mesureIndicateurTemporaireRepository =
       mesureIndicateurTemporaireRepository;
     this.mesureIndicateurRepository = mesureIndicateurRepository;
     this.propositionValeurAvancementRepository =
       propositionValeurAvancementRepository;
+    this.indicateurTerritoireValeurEvenementRepository =
+      indicateurTerritoireValeurEvenementRepository;
   }
 
   async execute({ rapportId }: { rapportId: string }): Promise<void> {
