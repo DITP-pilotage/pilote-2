@@ -125,7 +125,9 @@ model chantier_territoire {
   coordinateurs_territoriaux_mails              String[]
   derniere_maj_date_qualitative                 DateTime?                   @db.Date
   tendance                                      type_tendance?
+  tendance_int_index                            Float?
   ecart                                         Float?
+  meteo_int_index                               Float?
   donnees_maille_source                         Maille?
   nombre_propositions_valeur_actuelle           Int                         @default(0)
   nombre_propositions_valeur_actuelle_ponderee  Int                         @default(0)
