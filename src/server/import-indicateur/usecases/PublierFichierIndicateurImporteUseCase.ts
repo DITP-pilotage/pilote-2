@@ -5,11 +5,18 @@ import { MesureIndicateurTemporaireRepository } from "@/server/import-indicateur
 import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
 import { PropositionValeurAvancementRepository } from "@/server/import-indicateur/domain/ports/PropositionValeurAvancementRepository";
 
+class ValeurIndicateurTerritoireEvenement {}
+
+export interface IndicateurTerritoireValeurEvenementRepository {
+  enregistrer(evenement: ValeurIndicateurTerritoireEvenement): Promise<void>;
+}
+
 interface Dependencies {
   mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
   mesureIndicateurRepository: MesureIndicateurRepository;
   rapportRepository: RapportRepository;
   propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
+  indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
 }
 
 export class PublierFichierIndicateurImporteUseCase {

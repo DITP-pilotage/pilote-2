@@ -1,5 +1,8 @@
 import { captor, mock, MockProxy } from "jest-mock-extended";
-import { PublierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase";
+import {
+  IndicateurTerritoireValeurEvenementRepository,
+  PublierFichierIndicateurImporteUseCase,
+} from "@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase";
 import { MesureIndicateurTemporaireRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface";
 import { RapportRepository } from "@/server/import-indicateur/domain/ports/RapportRepository";
 import { MesureIndicateurTemporaire } from "@/server/import-indicateur/domain/MesureIndicateurTemporaire";
@@ -13,6 +16,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
   let mesureIndicateurRepository: MesureIndicateurRepository;
   let rapportRepository: RapportRepository;
   let propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
+  let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
 
   beforeEach(() => {
     mesureIndicateurRepository = mock<MesureIndicateurRepository>();
@@ -21,12 +25,15 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     rapportRepository = mock<RapportRepository>();
     propositionValeurAvancementRepository =
       mock<PropositionValeurAvancementRepository>();
+    indicateurTerritoireValeurEvenementRepository =
+      mock<IndicateurTerritoireValeurEvenementRepository>();
     publierFichierIndicateurImporteUseCase =
       new PublierFichierIndicateurImporteUseCase({
         mesureIndicateurTemporaireRepository,
         mesureIndicateurRepository,
         rapportRepository,
         propositionValeurAvancementRepository,
+        indicateurTerritoireValeurEvenementRepository,
       });
   });
 
@@ -97,6 +104,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(listeMesuresIndicateurs[1].metricValue).toEqual("15");
     expect(listeMesuresIndicateurs[1].zoneId).toEqual("D002");
   });
+
   it("doit supprimer les propositions de valeurs associés aux va importés", async () => {
     // GIVEN
     const propositionsAModifierCaptor1 = captor<{
@@ -181,4 +189,6 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     );
     expect(propositionsAModifier2.valeurImportee).toEqual(11.3);
   });
+
+  it("doit creer une ligne d'évènement pour la valeur associée au territoire et à l'indicateur", async () => {});
 });
