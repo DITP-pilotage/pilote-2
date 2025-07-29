@@ -849,10 +849,11 @@ describe("PrismaIndicateurRepository", () => {
       const jalon = 2024;
 
       // When
-      const result = await prismaIndicateurRepository.récupérerPourExports(
+      const result = await prismaIndicateurRepository.recupererPourExports(
         "CH-001",
         ["DEPT-01", "DEPT-02", "REG-01"],
         jalon,
+        false,
       );
 
       // Then
@@ -892,6 +893,11 @@ describe("PrismaIndicateurRepository", () => {
           chantierCibleAttendue: true,
           chantierAUnTauxAvancementDepartemental: true,
           chantierAUnePropositionValeurAvancement: false,
+          description: null,
+          methodeCalcul: null,
+          source: null,
+          periodesMiseAJour: null,
+          delaiDisponibilite: null,
         },
         {
           nom: "Indicateur 001",
@@ -928,6 +934,11 @@ describe("PrismaIndicateurRepository", () => {
           chantierCibleAttendue: true,
           chantierAUnTauxAvancementDepartemental: true,
           chantierAUnePropositionValeurAvancement: false,
+          description: null,
+          methodeCalcul: null,
+          source: null,
+          periodesMiseAJour: null,
+          delaiDisponibilite: null,
         },
         {
           nom: "Indicateur 001",
@@ -964,6 +975,11 @@ describe("PrismaIndicateurRepository", () => {
           chantierCibleAttendue: true,
           chantierAUnTauxAvancementDepartemental: true,
           chantierAUnePropositionValeurAvancement: false,
+          description: null,
+          methodeCalcul: null,
+          source: null,
+          periodesMiseAJour: null,
+          delaiDisponibilite: null,
         },
         {
           avancementAnnuel: 13,
@@ -1000,6 +1016,11 @@ describe("PrismaIndicateurRepository", () => {
           chantierCibleAttendue: true,
           chantierAUnTauxAvancementDepartemental: true,
           chantierAUnePropositionValeurAvancement: false,
+          description: null,
+          methodeCalcul: null,
+          source: null,
+          periodesMiseAJour: null,
+          delaiDisponibilite: null,
         },
       ]);
     });
@@ -1108,10 +1129,11 @@ describe("PrismaIndicateurRepository", () => {
       });
 
       // When
-      const result = await prismaIndicateurRepository.récupérerPourExports(
+      const result = await prismaIndicateurRepository.recupererPourExports(
         "CH-001",
         ["NAT-FR"],
         2025,
+        false,
       );
 
       // Then
@@ -1223,10 +1245,11 @@ describe("PrismaIndicateurRepository", () => {
       });
 
       // When
-      const result = await prismaIndicateurRepository.récupérerPourExports(
+      const result = await prismaIndicateurRepository.recupererPourExports(
         "CH-001",
         ["NAT-FR"],
         2025,
+        false,
       );
 
       // Then
@@ -1338,10 +1361,11 @@ describe("PrismaIndicateurRepository", () => {
       });
 
       // When
-      const result = await prismaIndicateurRepository.récupérerPourExports(
+      const result = await prismaIndicateurRepository.recupererPourExports(
         "CH-001",
         ["REG-84"],
         2025,
+        false,
       );
 
       // Then
@@ -1453,10 +1477,11 @@ describe("PrismaIndicateurRepository", () => {
       });
 
       // When
-      const result = await prismaIndicateurRepository.récupérerPourExports(
+      const result = await prismaIndicateurRepository.recupererPourExports(
         "CH-001",
         ["REG-84"],
         2025,
+        false,
       );
 
       // Then
@@ -1568,10 +1593,11 @@ describe("PrismaIndicateurRepository", () => {
       });
 
       // When
-      const result = await prismaIndicateurRepository.récupérerPourExports(
+      const result = await prismaIndicateurRepository.recupererPourExports(
         "CH-001",
         ["REG-84"],
         2025,
+        false,
       );
 
       // Then
@@ -1683,10 +1709,11 @@ describe("PrismaIndicateurRepository", () => {
       });
 
       // When
-      const result = await prismaIndicateurRepository.récupérerPourExports(
+      const result = await prismaIndicateurRepository.recupererPourExports(
         "CH-001",
         ["DEPT-01"],
         2025,
+        false,
       );
 
       // Then
@@ -1798,10 +1825,11 @@ describe("PrismaIndicateurRepository", () => {
       });
 
       // When
-      const result = await prismaIndicateurRepository.récupérerPourExports(
+      const result = await prismaIndicateurRepository.recupererPourExports(
         "CH-001",
         ["DEPT-01"],
         2025,
+        false,
       );
 
       // Then
@@ -1915,10 +1943,11 @@ describe("PrismaIndicateurRepository", () => {
       });
 
       // When
-      const result = await prismaIndicateurRepository.récupérerPourExports(
+      const result = await prismaIndicateurRepository.recupererPourExports(
         "CH-001",
         ["NAT-FR"],
         2025,
+        false,
       );
 
       // Then
@@ -2032,10 +2061,11 @@ describe("PrismaIndicateurRepository", () => {
       });
 
       // When
-      const result = await prismaIndicateurRepository.récupérerPourExports(
+      const result = await prismaIndicateurRepository.recupererPourExports(
         "CH-001",
         ["NAT-FR"],
         2025,
+        false,
       );
 
       // Then
@@ -2149,10 +2179,11 @@ describe("PrismaIndicateurRepository", () => {
       });
 
       // When
-      const result = await prismaIndicateurRepository.récupérerPourExports(
+      const result = await prismaIndicateurRepository.recupererPourExports(
         "CH-001",
         ["NAT-FR"],
         2025,
+        false,
       );
 
       // Then

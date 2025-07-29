@@ -42,6 +42,11 @@ export type IndicateurPourExport = {
   chantierCibleAttendue: boolean;
   chantierAUnTauxAvancementDepartemental: boolean;
   chantierAUnePropositionValeurAvancement: boolean;
+  description: string | null;
+  methodeCalcul: string | null;
+  source: string | null;
+  periodesMiseAJour: string | null;
+  delaiDisponibilite: number | null;
 };
 
 export const verifierApplicabiliteMaille = (

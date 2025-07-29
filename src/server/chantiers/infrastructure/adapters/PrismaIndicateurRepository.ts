@@ -123,10 +123,11 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     });
   }
 
-  async récupérerPourExports(
+  async recupererPourExports(
     chantierId: string,
     territoireCodesLecture: string[],
     jalon: number,
+    estAvecCadrage: boolean = false,
   ): Promise<IndicateurPourExport[]> {
     const listeChantierTerritoires = await prisma.chantier_territoire.findMany({
       where: {
@@ -199,6 +200,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         },
         indicateur_identite: {
           select: {
+            id: true,
             nom: true,
             chantier_id: true,
             mailles_applicables: true,
@@ -250,6 +252,49 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       },
     });
 
+    let listeMetadataIndicateurs: {
+      indic_id: string;
+      indic_descr: string | null;
+      indic_methode_calcul: string | null;
+      indic_source: string | null;
+    }[] = [];
+
+    let listeMetadataIndicateursComplementaires: {
+      indic_id: string;
+      delai_disponibilite: number | null;
+      periodicite: string | null;
+    }[] = [];
+
+    if (estAvecCadrage) {
+      listeMetadataIndicateurs = await prisma.metadata_indicateurs.findMany({
+        where: {
+          indic_id: {
+            in: result.map((indicateur) => indicateur.indicateur_identite.id),
+          },
+        },
+        select: {
+          indic_id: true,
+          indic_descr: true,
+          indic_methode_calcul: true,
+          indic_source: true,
+        },
+      });
+
+      listeMetadataIndicateursComplementaires =
+        await prisma.metadata_indicateurs_complementaire.findMany({
+          where: {
+            indic_id: {
+              in: result.map((indicateur) => indicateur.indicateur_identite.id),
+            },
+          },
+          select: {
+            indic_id: true,
+            delai_disponibilite: true,
+            periodicite: true,
+          },
+        });
+    }
+
     return result
       .map((indicateurPourExport) => {
         const indicateurTerritoireJalon =
@@ -285,6 +330,42 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
               chantierTerritoire.nombre_propositions_valeur_actuelle > 0,
           );
         }
+
+        const informationMetadataIndicateur = estAvecCadrage
+          ? listeMetadataIndicateurs.find(
+              (metadataIndicateur) =>
+                metadataIndicateur.indic_id ===
+                indicateurPourExport.indicateur_identite.id,
+            )
+          : null;
+        const informationMetadataIndicateurComplementaire = estAvecCadrage
+          ? listeMetadataIndicateursComplementaires.find(
+              (metadataIndicateurComplementaire) =>
+                metadataIndicateurComplementaire.indic_id ===
+                indicateurPourExport.indicateur_identite.id,
+            )
+          : null;
+
+        const informationCadrage = estAvecCadrage
+          ? {
+              description: informationMetadataIndicateur?.indic_descr || null,
+              methodeCalcul:
+                informationMetadataIndicateur?.indic_methode_calcul || null,
+              source: informationMetadataIndicateur?.indic_source || null,
+              periodesMiseAJour:
+                informationMetadataIndicateurComplementaire?.periodicite ||
+                null,
+              delaiDisponibilite:
+                informationMetadataIndicateurComplementaire?.delai_disponibilite ||
+                null,
+            }
+          : {
+              description: null,
+              methodeCalcul: null,
+              source: null,
+              periodesMiseAJour: null,
+              delaiDisponibilite: null,
+            };
 
         return {
           maille: indicateurPourExport.maille,
@@ -365,6 +446,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             ),
           chantierAUnePropositionValeurAvancement:
             aUnePropositionsValeurAvancement,
+          ...informationCadrage,
         };
       })
       .sort((indicA, indicB) => {

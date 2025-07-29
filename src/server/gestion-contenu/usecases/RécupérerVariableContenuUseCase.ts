@@ -90,10 +90,6 @@ export class RécupérerVariableContenuUseCase {
       case "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE": {
         return configuration.dateBasculeAffichageValeursAnneePrecedente as VariableContenuDisponibleEnv[T];
       }
-      case "NEXT_PUBLIC_FF_EXPORT_CSV_V2": {
-        return configuration.featureFlip
-          .exportCSVV2 as VariableContenuDisponibleEnv[T];
-      }
       case "NEXT_PUBLIC_FF_VIDEO_ACCUEIL": {
         return configuration.featureFlip
           .videoAccueil as VariableContenuDisponibleEnv[T];

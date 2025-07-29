@@ -4,8 +4,6 @@ import { RecupererDonneesChantierQuery } from "@/server/chantiers/infrastructure
 import { PrismaChantierRepository } from "@/server/chantiers/infrastructure/adapters/PrismaChantierRepository";
 import { PrismaIndicateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository";
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
-import { ExportCsvDesChantiersUseCase } from "@/server/chantiers/usecases/ExportCsvDesChantiersUseCase";
-import ExportCsvDesIndicateursUseCase from "@/server/chantiers/usecases/ExportCsvDesIndicateursUseCase";
 import { ExportCsvDesIndicateursUseCaseV2 } from "@/server/chantiers/usecases/ExportCsvDesIndicateursUseCaseV2";
 import { ExportCsvDesHistoriquesIndicateursUseCase } from "@/server/chantiers/usecases/ExportCsvDesHistoriquesIndicateursUseCase";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
@@ -30,9 +28,7 @@ export type ChantierDependencies = {
   utilisateurRepository: UtilisateurRepository;
   envoieEmailService: EnvoieEmailService;
   recupererDonneesChantierQuery: RecupererDonneesChantierQuery;
-  exportCsvDesChantiersUseCase: ExportCsvDesChantiersUseCase;
   exportCsvDesChantiersUseCaseV2: ExportCsvDesChantiersUseCaseV2;
-  exportCsvDesIndicateursUseCase: ExportCsvDesIndicateursUseCase;
   exportCsvDesIndicateursUseCaseV2: ExportCsvDesIndicateursUseCaseV2;
   exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase;
   creerPropositionValeurAvancementUseCase: CreerPropositionValeurAvancementUseCase;
@@ -53,9 +49,7 @@ export const getChantiersContainer = (
     utilisateurRepository: asClass(PrismaUtilisateurRepository),
     envoieEmailService: asClass(BrevoEnvoieEmailService),
     recupererDonneesChantierQuery: asClass(RecupererDonneesChantierQuery),
-    exportCsvDesChantiersUseCase: asClass(ExportCsvDesChantiersUseCase),
     exportCsvDesChantiersUseCaseV2: asClass(ExportCsvDesChantiersUseCaseV2),
-    exportCsvDesIndicateursUseCase: asClass(ExportCsvDesIndicateursUseCase),
     exportCsvDesIndicateursUseCaseV2: asClass(ExportCsvDesIndicateursUseCaseV2),
     exportCsvDesHistoriquesIndicateursUseCase: asClass(
       ExportCsvDesHistoriquesIndicateursUseCase,

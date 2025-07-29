@@ -49,7 +49,15 @@ const presenterEnIndicateurExportContrat = (
   ];
 
   if (optionsExport.listeOptionsExport.includes("cadrage")) {
-    // Aucune donnée pour le moment
+    donnees.push(
+      indicateurPourExport.description || NON_RENSEIGNEE,
+      indicateurPourExport.methodeCalcul || NON_RENSEIGNEE,
+      indicateurPourExport.source || NON_RENSEIGNEE,
+      indicateurPourExport.periodesMiseAJour || NON_RENSEIGNEE,
+      Number.isNaN(indicateurPourExport.delaiDisponibilite)
+        ? NON_RENSEIGNEE
+        : `${indicateurPourExport.delaiDisponibilite} mois`,
+    );
   }
 
   if (optionsExport.listeOptionsExport.includes("gouvernance")) {
@@ -184,7 +192,13 @@ export class ExportCsvDesIndicateursUseCaseV2 {
     ];
 
     if (optionsExport.listeOptionsExport.includes("cadrage")) {
-      // Aucune donnée pour le moment
+      headersColumn.push(
+        "Description",
+        "Méthode de calcul",
+        "Source",
+        "Périodes de mise à jour",
+        "Délai de disponibilité",
+      );
     }
 
     if (optionsExport.listeOptionsExport.includes("gouvernance")) {
@@ -268,9 +282,12 @@ export class ExportCsvDesIndicateursUseCaseV2 {
     for (let i = 0; i < chantierIds.length; i += indicateurChunkSize) {
       const partialChantierIds = chantierIds.slice(i, i + indicateurChunkSize);
 
+      const estAvecCadrage =
+        optionsExport.listeOptionsExport.includes("cadrage");
+
       const input = partialChantierIds.map((id) =>
         this.indicateurRepository
-          .récupérerPourExports(id, territoireCodes, jalon)
+          .recupererPourExports(id, territoireCodes, jalon, estAvecCadrage)
           .then((listeIndicateurTerritoireExport) =>
             (listeIndicateurTerritoireExport || []).reduce(
               (acc, indicateursPourExport) => {

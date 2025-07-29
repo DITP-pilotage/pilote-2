@@ -65,49 +65,31 @@ export const EtapeDonneeIndicateurACollecter = () => {
             </span>
           </label>
         </div>
-        {/*
-        Désactivé avant de rajouter les nouvelles colonnes
-        <div className='fr-checkbox-group fr-mt-1w'>
+        <div className="fr-checkbox-group fr-mt-1w">
           <input
-            checked={optionsExport.split(',').includes('cadrage')}
-            className='fr-input'
-            id='cadrage'
-            name='cadrage'
-            onChange={() => onChangeOptionsExport('cadrage')}
-            type='checkbox'
+            checked={optionsExport.split(",").includes("cadrage")}
+            className="fr-input"
+            id="cadrage"
+            name="cadrage"
+            onChange={() => onChangeOptionsExport("cadrage")}
+            type="checkbox"
           />
-
-          {
-            afficherDetail ? (
-            <label
-            className='fr-label'
-            htmlFor='cadrage'
-          >
-            <span>
-              <span className='fr-text--bold'>
-                cadrage
+          {afficherDetail ? (
+            <label className="fr-label" htmlFor="cadrage">
+              <span>
+                <span className="fr-text--bold">cadrage</span> de l'indicateur :
+                description, méthode de calcul, source, périodes de mise à jour
+                et de disponibilité
               </span>
-              {' '}
-               de l'indicateur : description, méthode de calcul, source, périodes de mise à jour et de disponibilité
-            </span>
-          </label>
+            </label>
           ) : (
-          <label
-            className='fr-label'
-            htmlFor='cadrage'
-          >
-            <span>
-              <span className='fr-text--bold'>
-                cadrage
+            <label className="fr-label" htmlFor="cadrage">
+              <span>
+                <span className="fr-text--bold">cadrage</span> de l'indicateur
               </span>
-              {' '}
-               de l'indicateur
-            </span>
-          </label>
-          )
-          }
+            </label>
+          )}
         </div>
-        */}
         <div className="fr-checkbox-group fr-mt-1w">
           <input
             checked={optionsExport.split(",").includes("gouvernance")}

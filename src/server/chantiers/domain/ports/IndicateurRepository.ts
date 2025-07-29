@@ -19,10 +19,11 @@ export interface IndicateurRepository {
     territoireCode: string;
     auteurModification: string;
   }): Promise<void>;
-  récupérerPourExports(
+  recupererPourExports(
     chantierIdsLecture: string,
     territoireCodesLecture: string[],
     jalon: number,
+    estAvecCadrage: boolean,
   ): Promise<IndicateurPourExport[]>;
   récupérerHistoriquePourExports(
     chantierIdsLecture: string,
