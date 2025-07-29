@@ -1,86 +1,100 @@
-import { APIRequestContext, APIResponse, expect, test } from '@playwright/test';
-import { configuration } from '@/config';
-import { authentificationApiDITPADMINFn, suppressionAuthentificationApiFn } from '../utils';
+import { APIRequestContext, APIResponse, expect, test } from "@playwright/test";
+import { configuration } from "@/config";
+import {
+  authentificationApiDITPADMINFn,
+  suppressionAuthentificationApiFn,
+} from "../utils";
 
 let apiContext: APIRequestContext;
 let result: APIResponse;
 
-test.describe('Authentification', () => {
-  test('quand on ne dispose pas d\'un header Authorization, doit remonter une erreur 401 Unauthorized', async ({ playwright }) => {
-    await test.step('Création du context sans header Authorization', async () => {
+test.describe("Authentification", () => {
+  test("quand on ne dispose pas d'un header Authorization, doit remonter une erreur 401 Unauthorized", async ({
+    playwright,
+  }) => {
+    await test.step("Création du context sans header Authorization", async () => {
       apiContext = await playwright.request.newContext({
         baseURL: configuration.baseUrl,
       });
     });
 
-    await test.step('Appel du endpoint /api/open-api/healthcheck', async () => {
-      result = await apiContext.get('/api/open-api/healthcheck');
+    await test.step("Appel du endpoint /api/open-api/healthcheck", async () => {
+      result = await apiContext.get("/api/open-api/healthcheck");
     });
 
-    await test.step('Vérification status égal 401', async () => {
+    await test.step("Vérification status égal 401", async () => {
       expect(result.status()).toEqual(401);
     });
 
     await apiContext.dispose();
   });
 
-  test('quand on dispose d\'un header Authorization invalide, doit remonter une erreur 400 Bad Request', async ({ playwright }) => {
-    await test.step('Création du context avec header Authorization + valeur incorrect', async () => {
+  test("quand on dispose d'un header Authorization invalide, doit remonter une erreur 400 Bad Request", async ({
+    playwright,
+  }) => {
+    await test.step("Création du context avec header Authorization + valeur incorrect", async () => {
       apiContext = await playwright.request.newContext({
         baseURL: configuration.baseUrl,
         extraHTTPHeaders: {
-          'Authorization': 'invalid',
+          Authorization: "invalid",
         },
       });
     });
 
-    await test.step('Appel du endpoint /api/open-api/healthcheck', async () => {
-      result = await apiContext.get('/api/open-api/healthcheck');
+    await test.step("Appel du endpoint /api/open-api/healthcheck", async () => {
+      result = await apiContext.get("/api/open-api/healthcheck");
     });
 
-    await test.step('Vérification status égal 400', async () => {
+    await test.step("Vérification status égal 400", async () => {
       expect(result.status()).toEqual(400);
     });
 
     await apiContext.dispose();
   });
 
-  test('quand on dispose d\'un header Authorization valide mais que le token n\'a pas été forgé par notre API, doit remonter une erreur 400 Request', async ({ playwright }) => {
-    await test.step('Création du context avec header Authorization et valeur Bearer + JWT non pilote', async () => {
+  test("quand on dispose d'un header Authorization valide mais que le token n'a pas été forgé par notre API, doit remonter une erreur 400 Request", async ({
+    playwright,
+  }) => {
+    await test.step("Création du context avec header Authorization et valeur Bearer + JWT non pilote", async () => {
       apiContext = await playwright.request.newContext({
         baseURL: configuration.baseUrl,
         extraHTTPHeaders: {
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
         },
       });
     });
 
-    await test.step('Appel du endpoint /api/open-api/healthcheck', async () => {
-      result = await apiContext.get('/api/open-api/healthcheck');
+    await test.step("Appel du endpoint /api/open-api/healthcheck", async () => {
+      result = await apiContext.get("/api/open-api/healthcheck");
     });
 
-    await test.step('Vérification status égal 400', async () => {
+    await test.step("Vérification status égal 400", async () => {
       expect(result.status()).toEqual(400);
     });
 
     await apiContext.dispose();
   });
 
-  test.describe('quand on dispose d\'un header Authorization valide et que le token a été forgé par notre API', () => {
-    test('quand on dispose d\'un header Authorization valide et que le token a été forgé par notre API, doit remonter une réponse 200 OK', async ({ page, playwright }) => {
-      const { apiDITPADMINUsername, apiDITPADMINToken } = await authentificationApiDITPADMINFn({ page });
+  test.describe("quand on dispose d'un header Authorization valide et que le token a été forgé par notre API", () => {
+    test("quand on dispose d'un header Authorization valide et que le token a été forgé par notre API, doit remonter une réponse 200 OK", async ({
+      page,
+      playwright,
+    }) => {
+      const { apiDITPADMINUsername, apiDITPADMINToken } =
+        await authentificationApiDITPADMINFn({ page });
 
-      await test.step('Création du context avec header Authorization et valeur Bearer + JWT pilote', async () => {
+      await test.step("Création du context avec header Authorization et valeur Bearer + JWT pilote", async () => {
         apiContext = await playwright.request.newContext({
           baseURL: configuration.baseUrl,
           extraHTTPHeaders: {
-            'Authorization': `Bearer ${apiDITPADMINToken}`,
+            Authorization: `Bearer ${apiDITPADMINToken}`,
           },
         });
       });
 
-      await test.step('Appel du endpoint /api/open-api/healthcheck', async () => {
-        result = await apiContext.get('/api/open-api/healthcheck');
+      await test.step("Appel du endpoint /api/open-api/healthcheck", async () => {
+        result = await apiContext.get("/api/open-api/healthcheck");
       });
 
       await test.step(`Vérification status égal 200 et que l'utilisateur appelant est bien '${apiDITPADMINUsername}'`, async () => {
@@ -90,7 +104,10 @@ test.describe('Authentification', () => {
         });
       });
 
-      await suppressionAuthentificationApiFn({ page, apiUsername: apiDITPADMINUsername });
+      await suppressionAuthentificationApiFn({
+        page,
+        apiUsername: apiDITPADMINUsername,
+      });
 
       await apiContext.dispose();
     });

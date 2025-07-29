@@ -130,7 +130,7 @@ jobs:
         retention-days: 2
 
     - name: Notify Tchap on failure
-      if: failure() && inputs.notify_tchap != false
+      if: failure()
       uses: indiesdev/curl@v1.1
       with:
         url: "https://matrix.agent.dinum.tchap.gouv.fr/_matrix/client/r0/rooms/${{ secrets.TCHAP_ROOM_ID_E2E }}/send/m.room.message"
