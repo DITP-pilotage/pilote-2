@@ -1,6 +1,6 @@
 import { interpolerCouleurs } from "@/client/utils/couleur/couleur";
 
-describe("interpolerCouleur", () => {
+describe("#interpolerCouleur", () => {
   it("pourcentage à 0 : renvoie la couleur de départ", () => {
     const couleurDépart = "#000000";
     const couleurArrivée = "#888888";

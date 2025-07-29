@@ -1,10 +1,20 @@
 import { FunctionComponent } from "react";
-import { parseAsBoolean, parseAsString, useQueryStates } from "nuqs";
+import {
+  parseAsBoolean,
+  parseAsInteger,
+  parseAsString,
+  useQueryStates,
+} from "nuqs";
 import { FiltresSelectionMultiple } from "@/components/PageAccueil/Filtres/FiltresSelectionMultiple/FiltresSelectionMultiple";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
 import Axe from "@/server/domain/axe/Axe.interface";
 import Titre from "@/components/_commons/Titre/Titre";
-import { reinitialiserFiltres } from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
+import {
+  reinitialiserFiltres,
+  sauvegarderFiltres,
+} from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { calculerNouvelleMaille } from "@/components/PageAccueil/Filtres/utils";
+import { Maille } from "@/server/domain/maille/Maille.interface";
 import FiltresGroupe from "./FiltresGroupe/FiltresGroupe";
 import FiltresMinistères from "./FiltresMinistères/FiltresMinistères";
 import { FiltresSelectionMultipleBoolean } from "./FiltresSelectionMultipleBoolean/FiltresSelectionMultipleBoolean";
@@ -27,6 +37,8 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
 }) => {
   const [, setFiltres] = useQueryStates(
     {
+      maille: parseAsString.withDefault(""),
+      pageIndex: parseAsInteger.withDefault(1),
       perimetres: parseAsString.withDefault(""),
       statut: parseAsString.withDefault(""),
       axes: parseAsString.withDefault(""),
@@ -116,15 +128,37 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
       {afficherToutLesFiltres ? (
         <FiltresGroupe>
           <FiltresSelectionMultiple
-            catégorieDeFiltre="axes"
+            categorieDeFiltre="axes"
             filtres={axes}
             libelle="Filtrer par axes"
+            onChange={(nouveauFiltre) => {
+              sauvegarderFiltres({ axes: nouveauFiltre });
+              return setFiltres({
+                axes: nouveauFiltre.join(","),
+                pageIndex: 1,
+              });
+            }}
           />
           {estProfilTerritorialise ? (
             <FiltresSelectionMultiple
-              catégorieDeFiltre="territorialisation"
+              categorieDeFiltre="territorialisation"
               filtres={filtresTerritorialisation}
               libelle="Filtrer par territorialisation"
+              onChange={(nouveauFiltre) => {
+                const nouvelleMaille = calculerNouvelleMaille(
+                  nouveauFiltre as Maille[],
+                );
+
+                sauvegarderFiltres({
+                  territorialisation: nouveauFiltre,
+                  maille: nouvelleMaille,
+                });
+                return setFiltres({
+                  territorialisation: nouveauFiltre.join(","),
+                  maille: nouvelleMaille,
+                  pageIndex: 1,
+                });
+              }}
             />
           ) : null}
           <FiltresSelectionUnique

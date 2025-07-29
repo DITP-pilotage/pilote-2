@@ -1,6 +1,5 @@
-import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
+import { parseAsString, useQueryState } from "nuqs";
 import { FunctionComponent } from "react";
-import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
 import FiltresSélectionMultipleStyled from "./FiltresSelectionMultiple.styled";
 
 interface Filtre {
@@ -9,16 +8,17 @@ interface Filtre {
 }
 
 interface FiltresSelectionMultipleProps {
-  catégorieDeFiltre: "axes" | "territorialisation";
+  categorieDeFiltre: "axes" | "territorialisation";
   filtres: Filtre[];
   libelle: string;
+  onChange: (valeur: string[]) => void;
 }
 
 export const FiltresSelectionMultiple: FunctionComponent<
   FiltresSelectionMultipleProps
-> = ({ catégorieDeFiltre, libelle, filtres }) => {
-  const [filtresNew, setListeFiltresNew] = useQueryState(
-    catégorieDeFiltre,
+> = ({ categorieDeFiltre, libelle, filtres, onChange }) => {
+  const [filtresNew] = useQueryState(
+    categorieDeFiltre,
     parseAsString.withDefault("").withOptions({
       shallow: false,
       clearOnDefault: true,
@@ -26,24 +26,17 @@ export const FiltresSelectionMultiple: FunctionComponent<
     }),
   );
 
-  const [, setPagination] = useQueryState(
-    "pageIndex",
-    parseAsInteger.withDefault(1).withOptions({
-      shallow: false,
-    }),
-  );
-
   return (
     <FiltresSélectionMultipleStyled>
       <button
-        aria-controls={`fr-sidemenu-item-${catégorieDeFiltre}`}
+        aria-controls={`fr-sidemenu-item-${categorieDeFiltre}`}
         aria-expanded="false"
         className="fr-sidemenu__btn fr-m-0 fr-text--sm"
         type="button"
       >
         {libelle}
       </button>
-      <div className="fr-collapse" id={`fr-sidemenu-item-${catégorieDeFiltre}`}>
+      <div className="fr-collapse" id={`fr-sidemenu-item-${categorieDeFiltre}`}>
         <ul className="fr-p-0 fr-m-0 fr-mb-1w fr-pl-1w">
           {filtres.map((filtre) => (
             <li className="fr-p-0 fr-my-1w fr-mr-0" key={filtre.id}>
@@ -59,9 +52,7 @@ export const FiltresSelectionMultiple: FunctionComponent<
                     } else {
                       arrFiltresNew.push(filtre.id);
                     }
-                    sauvegarderFiltres({ [catégorieDeFiltre]: arrFiltresNew });
-                    setPagination(1);
-                    return setListeFiltresNew(arrFiltresNew.join(","));
+                    onChange(arrFiltresNew);
                   }}
                   type="checkbox"
                 />
