@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 interface IcônesMultiplesEtTexteStyledProps {
   largeurDesIcônes: `${number}rem`;
@@ -9,7 +9,6 @@ const IcônesMultiplesEtTexteStyled = styled.div<IcônesMultiplesEtTexteStyledPr
   grid-template-columns: ${(props) => props.largeurDesIcônes} auto;
   align-items: center;
 
-  
   .icônes {
     display: flex;
     flex-flow: column wrap;

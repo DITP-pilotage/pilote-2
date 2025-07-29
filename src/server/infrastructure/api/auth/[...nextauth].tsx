@@ -1,11 +1,16 @@
-import NextAuth, { Account, AuthOptions, getServerSession, User } from 'next-auth';
-import KeycloakProvider from 'next-auth/providers/keycloak';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import type { JWT } from 'next-auth/jwt';
-import { GetServerSidePropsContext } from 'next';
-import logger from '@/server/infrastructure/Logger';
-import { dependencies } from '@/server/infrastructure/Dependencies';
-import { configuration } from '@/config';
+import NextAuth, {
+  Account,
+  AuthOptions,
+  getServerSession,
+  User,
+} from "next-auth";
+import KeycloakProvider from "next-auth/providers/keycloak";
+import CredentialsProvider from "next-auth/providers/credentials";
+import type { JWT } from "next-auth/jwt";
+import { GetServerSidePropsContext } from "next";
+import logger from "@/server/infrastructure/Logger";
+import { dependencies } from "@/server/infrastructure/Dependencies";
+import { configuration } from "@/config";
 
 export const keycloak = KeycloakProvider({
   clientId: configuration.keycloak.clientId,
@@ -13,7 +18,10 @@ export const keycloak = KeycloakProvider({
   issuer: configuration.keycloak.issuer,
 });
 
-async function _assertResponseOk(response: Response, errorMessage: string): Promise<void> {
+async function _assertResponseOk(
+  response: Response,
+  errorMessage: string,
+): Promise<void> {
   if (response && !response.ok) {
     try {
       const json = await response.json();
@@ -32,7 +40,7 @@ async function _assertResponseOk(response: Response, errorMessage: string): Prom
  * perform the action for other providers as well
  */
 async function doFinalSignoutHandshake(token: PiloteJWTPayload) {
-  logger.info({ userId: token.user.id }, 'Logout');
+  logger.info({ userId: token.user.id }, "Logout");
   logger.debug({ token });
   const { provider, idToken } = token;
   if (provider == keycloak.id) {
@@ -44,43 +52,46 @@ async function doFinalSignoutHandshake(token: PiloteJWTPayload) {
 
       const response = await fetch(configuration.keycloak.logoutUrl, {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        method: 'POST',
+        method: "POST",
         body: params,
       });
-      logger.debug({
-        response,
-        ok: response?.ok,
-        statusText: response?.statusText,
-        body: response?.body,
-      }, 'Logout response');
-      await _assertResponseOk(response, 'Failed to logout');
+      logger.debug(
+        {
+          response,
+          ok: response?.ok,
+          statusText: response?.statusText,
+          body: response?.body,
+        },
+        "Logout response",
+      );
+      await _assertResponseOk(response, "Failed to logout");
 
-      logger.info('Completed post-logout handshake');
+      logger.info("Completed post-logout handshake");
     } catch (error: any) {
-      logger.error(error, 'Unable to perform post-logout handshake');
+      logger.error(error, "Unable to perform post-logout handshake");
     }
   }
 }
 
 // https://openid.net/specs/openid-connect-core-1_0.html#TokenResponse
 type OpenIdTokenResponse = {
-  access_token: string,
-  token_type: string,
-  refresh_token: string,
-  expires_in: number,
-  id_token: string,
+  access_token: string;
+  token_type: string;
+  refresh_token: string;
+  expires_in: number;
+  id_token: string;
 };
 
 type PiloteJWTPayload = {
-  accessToken: string,
-  accessTokenExpires: number,
-  refreshToken: string,
-  idToken: string,
-  provider: string,
-  user: User,
-  error?: string
+  accessToken: string;
+  accessTokenExpires: number;
+  refreshToken: string;
+  idToken: string;
+  provider: string;
+  user: User;
+  error?: string;
 };
 
 // https://next-auth.js.org/tutorials/refresh-token-rotation
@@ -89,8 +100,10 @@ type PiloteJWTPayload = {
  * `accessToken` and `accessTokenExpires`. If an error occurs,
  * returns the old token and an error property
  */
-async function refreshAccessToken(token: PiloteJWTPayload): Promise<PiloteJWTPayload> {
-  logger.info({ userId: token.user.id }, 'Refreshing access token...');
+async function refreshAccessToken(
+  token: PiloteJWTPayload,
+): Promise<PiloteJWTPayload> {
+  logger.info({ userId: token.user.id }, "Refreshing access token...");
   const { provider, refreshToken } = token as JWT & { refreshToken: string };
 
   if (provider == keycloak.id) {
@@ -98,22 +111,23 @@ async function refreshAccessToken(token: PiloteJWTPayload): Promise<PiloteJWTPay
       const fields = {
         client_id: configuration.keycloak.clientId,
         client_secret: configuration.keycloak.clientSecret,
-        grant_type: 'refresh_token',
+        grant_type: "refresh_token",
         refresh_token: refreshToken,
       };
       const sendData = new URLSearchParams(fields);
 
       const response = await fetch(configuration.keycloak.tokenUrl, {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        method: 'POST',
+        method: "POST",
         body: sendData,
       });
-      await _assertResponseOk(response, 'Failed to refresh token');
+      await _assertResponseOk(response, "Failed to refresh token");
 
-      const openIdTokenResponse = (await response.json()) as OpenIdTokenResponse;
-      logger.debug({ openIdTokenResponse }, 'openid-connect/token response');
+      const openIdTokenResponse =
+        (await response.json()) as OpenIdTokenResponse;
+      logger.debug({ openIdTokenResponse }, "openid-connect/token response");
 
       const result = {
         ...token,
@@ -122,38 +136,42 @@ async function refreshAccessToken(token: PiloteJWTPayload): Promise<PiloteJWTPay
         refreshToken: openIdTokenResponse.refresh_token ?? token.refreshToken, // Fall back to old refresh token
       };
 
-      logger.debug({ result }, 'Refresh token result');
+      logger.debug({ result }, "Refresh token result");
       return result;
     } catch (error) {
-      const errorMessage = 'Bad in refresh_token';
+      const errorMessage = "Bad in refresh_token";
       logger.error({ error }, errorMessage);
       logger.debug({ token }, errorMessage);
       return {
         ...token,
-        error: 'RefreshAccessTokenError',
+        error: "RefreshAccessTokenError",
       };
     }
   } else {
-    const errorMessage = 'Provider: Not Supported';
+    const errorMessage = "Provider: Not Supported";
     logger.error({ provider }, errorMessage);
     logger.debug({ token }, errorMessage);
     return {
       ...token,
-      error: 'RefreshAccessTokenError',
+      error: "RefreshAccessTokenError",
     };
   }
 }
 
 const credentialsProvider = CredentialsProvider({
   // The name to display on the sign in form (e.g. 'Sign in with...')
-  name: 'credentials',
+  name: "credentials",
   // The credentials is used to generate a suitable form on the sign in page.
   // You can specify whatever fields you are expecting to be submitted.
   // e.g. domain, username, password, 2FA token, etc.
   // You can pass any HTML attribute to the <input> tag through the object.
   credentials: {
-    username: { label: 'Identifiant', type: 'text', placeholder: 'alicerichard@example.com' },
-    password: { label: 'Mot de passe', type: 'password' },
+    username: {
+      label: "Identifiant",
+      type: "text",
+      placeholder: "alicerichard@example.com",
+    },
+    password: { label: "Mot de passe", type: "password" },
   },
 
   async authorize(credentials, _req): Promise<User | null> {
@@ -161,7 +179,6 @@ const credentialsProvider = CredentialsProvider({
     const username = credentials?.username;
     if (!username || password != configuration.devPassword) {
       return null;
-
     }
     const utilisateurRepository = dependencies.getUtilisateurRepository();
     const utilisateur = await utilisateurRepository.récupérer(username);
@@ -183,7 +200,7 @@ function _isLogingIn(account: Account, user: User): Boolean {
 }
 
 function _hasExpired(token: PiloteJWTPayload): Boolean {
-  if (token.provider == 'credentials') {
+  if (token.provider == "credentials") {
     return false;
   }
   const now = Date.now();
@@ -191,20 +208,27 @@ function _hasExpired(token: PiloteJWTPayload): Boolean {
 }
 
 export const authOptions: AuthOptions = {
-  providers: !!configuration.devPassword
-    ? [credentialsProvider]
-    : [keycloak],
+  providers: !!configuration.devPassword ? [credentialsProvider] : [keycloak],
   debug: configuration.nextAuth.debug,
   session: {
     maxAge: configuration.nextAuth.sessionMaxAge,
   },
   callbacks: {
-    async jwt({ token, account, user, profile, isNewUser }: any & {
-      token: JWT | PiloteJWTPayload,
-      account: Account
+    async jwt({
+      token,
+      account,
+      user,
+      profile,
+      isNewUser,
+    }: any & {
+      token: JWT | PiloteJWTPayload;
+      account: Account;
     }): Promise<PiloteJWTPayload> {
       if (_isLogingIn(account, user)) {
-        logger.info({ userId: user.id }, 'NextAuth JWT callback called from login');
+        logger.info(
+          { userId: user.id },
+          "NextAuth JWT callback called from login",
+        );
         logger.debug({ token, user, account, profile, isNewUser });
 
         return {
@@ -221,18 +245,28 @@ export const authOptions: AuthOptions = {
         return token;
       }
 
-      logger.info('NextAuth JWT callback triggers refreshing (Access Token has expired)');
+      logger.info(
+        "NextAuth JWT callback triggers refreshing (Access Token has expired)",
+      );
       return refreshAccessToken(token);
     },
 
-    async session({ session, token }: any & { token: PiloteJWTPayload }): Promise<any> {
+    async session({
+      session,
+      token,
+    }: any & { token: PiloteJWTPayload }): Promise<any> {
       const utilisateurRepository = dependencies.getUtilisateurRepository();
-      const utilisateur = await utilisateurRepository.récupérer(token.user.email);
+      const utilisateur = await utilisateurRepository.récupérer(
+        token.user.email,
+      );
 
       const profilRepository = dependencies.getProfilRepository();
       const profil = await profilRepository.récupérer(utilisateur!.profil);
 
-      logger.debug({ userId: utilisateur?.id }, 'Session callback, adding habilitations to session');
+      logger.debug(
+        { userId: utilisateur?.id },
+        "Session callback, adding habilitations to session",
+      );
 
       // Send properties to the client
       session.user = {
@@ -243,7 +277,8 @@ export const authOptions: AuthOptions = {
       session.error = token.error;
       session.profil = utilisateur?.profil;
       session.habilitations = utilisateur!.habilitations;
-      session.profilAAccèsAuxChantiersBrouillons = profil?.chantiers.lecture.brouillons;
+      session.profilAAccèsAuxChantiersBrouillons =
+        profil?.chantiers.lecture.brouillons;
 
       return session;
     },
@@ -256,8 +291,8 @@ export const authOptions: AuthOptions = {
 };
 
 export const getServerAuthSession = (ctx: {
-  req: GetServerSidePropsContext['req'];
-  res: GetServerSidePropsContext['res'];
+  req: GetServerSidePropsContext["req"];
+  res: GetServerSidePropsContext["res"];
 }) => {
   return getServerSession(ctx.req, ctx.res, authOptions);
 };

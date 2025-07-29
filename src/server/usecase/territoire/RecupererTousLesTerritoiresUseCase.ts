@@ -1,8 +1,8 @@
-import { TerritoireRepository } from '@/server/gestion-utilisateur/domain/ports/TerritoireRepository';
-import { Territoire } from '@/server/gestion-utilisateur/domain/Territoire';
+import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";
+import { Territoire } from "@/server/gestion-utilisateur/domain/Territoire";
 
 interface Dependencies {
-  territoireRepository: TerritoireRepository
+  territoireRepository: TerritoireRepository;
 }
 
 export class RecupererTousLesTerritoiresUseCase {

@@ -1,8 +1,18 @@
-import { TokenAPIInformation } from '@/server/gestion-utilisateur/domain/TokenAPIInformation';
+import { TokenAPIInformation } from "@/server/gestion-utilisateur/domain/TokenAPIInformation";
 
 export interface TokenAPIInformationRepository {
-  recupererTokenAPIInformation({ email }: { email: string }): Promise<TokenAPIInformation | null>
-  listerTokenAPIInformation(): Promise<TokenAPIInformation[]>
-  sauvegarderTokenAPIInformation({ email, dateCreation }: { email: string, dateCreation: string }): Promise<void>
-  supprimerTokenAPIInformation({ email }: { email: string }): Promise<void>
+  recupererTokenAPIInformation({
+    email,
+  }: {
+    email: string;
+  }): Promise<TokenAPIInformation | null>;
+  listerTokenAPIInformation(): Promise<TokenAPIInformation[]>;
+  sauvegarderTokenAPIInformation({
+    email,
+    dateCreation,
+  }: {
+    email: string;
+    dateCreation: string;
+  }): Promise<void>;
+  supprimerTokenAPIInformation({ email }: { email: string }): Promise<void>;
 }

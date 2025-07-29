@@ -1,17 +1,17 @@
-import { Indicateur } from '@/server/fiche-territoriale/domain/Indicateur';
+import { Indicateur } from "@/server/fiche-territoriale/domain/Indicateur";
 
 export class IndicateurBuilder {
-  private id: string = 'IND-001';
+  private id: string = "IND-001";
 
-  private dateValeurAvancement: string = '2019-02-02T00:00:00.000Z';
+  private dateValeurAvancement: string = "2019-02-02T00:00:00.000Z";
 
-  private nom: string = 'Un nom indicateur';
+  private nom: string = "Un nom indicateur";
 
   private valeurAvancement: number = 12.3;
 
   private valeurCible: number = 31.3;
 
-  private uniteMesure: string = 'Pourcentage';
+  private uniteMesure: string = "Pourcentage";
 
   private objectifTauxAvancement: number | null = 10.3;
 
@@ -30,7 +30,9 @@ export class IndicateurBuilder {
     return this;
   }
 
-  withObjectifTauxAvancement(objectifTauxAvancement: number | null): IndicateurBuilder {
+  withObjectifTauxAvancement(
+    objectifTauxAvancement: number | null,
+  ): IndicateurBuilder {
     this.objectifTauxAvancement = objectifTauxAvancement;
     return this;
   }

@@ -1,40 +1,42 @@
-import { GetServerSidePropsResult } from 'next';
-import { GetServerSidePropsContext } from 'next/types';
-import { getServerSession } from 'next-auth/next';
-import Head from 'next/head';
-import { FunctionComponent } from 'react';
-import { useSession } from 'next-auth/react';
-import PageImportIndicateur from '@/components/PageImportIndicateur/PageImportIndicateur';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { ChantierInformations } from '@/components/PageImportIndicateur/ChantierInformation.interface';
-import { dependencies } from '@/server/infrastructure/Dependencies';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
-import RécupérerChantierUseCase from '@/server/usecase/chantier/RécupérerChantierUseCase';
-import { presenterEnRapportContrat, RapportContrat } from '@/server/app/contrats/RapportContrat';
-import { estAutoriséAImporterDesIndicateurs } from '@/client/utils/indicateur/indicateur';
+import { GetServerSidePropsResult } from "next";
+import { GetServerSidePropsContext } from "next/types";
+import { getServerSession } from "next-auth/next";
+import Head from "next/head";
+import { FunctionComponent } from "react";
+import { useSession } from "next-auth/react";
+import PageImportIndicateur from "@/components/PageImportIndicateur/PageImportIndicateur";
+import Chantier from "@/server/domain/chantier/Chantier.interface";
+import { ChantierInformations } from "@/components/PageImportIndicateur/ChantierInformation.interface";
+import { dependencies } from "@/server/infrastructure/Dependencies";
+import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
+import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import RécupérerChantierUseCase from "@/server/usecase/chantier/RécupérerChantierUseCase";
+import {
+  presenterEnRapportContrat,
+  RapportContrat,
+} from "@/server/app/contrats/RapportContrat";
+import { estAutoriséAImporterDesIndicateurs } from "@/client/utils/indicateur/indicateur";
 import {
   InformationIndicateurContrat,
   presenterEnInformationIndicateurContrat,
-} from '@/server/app/contrats/InformationIndicateurContrat';
-import { getFiltresActifs } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
-import {
-  getAnneeDateDeBascule,
-} from '@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule';
-import { configuration } from '@/config';
+} from "@/server/app/contrats/InformationIndicateurContrat";
+import { getFiltresActifs } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
+import { configuration } from "@/config";
 
 interface NextPageImportIndicateurProps {
-  chantierInformations: ChantierInformations
-  indicateurs: Indicateur[],
-  rapport: RapportContrat | null,
-  informationsIndicateur: InformationIndicateurContrat[],
+  chantierInformations: ChantierInformations;
+  indicateurs: Indicateur[];
+  rapport: RapportContrat | null;
+  informationsIndicateur: InformationIndicateurContrat[];
 }
 
-type GetServerSideProps = GetServerSidePropsResult<NextPageImportIndicateurProps>;
+type GetServerSideProps =
+  GetServerSidePropsResult<NextPageImportIndicateurProps>;
 type Params = {
-  id: Chantier['id'],
-  indicateurId: string,
-  rapportId: string
+  id: Chantier["id"];
+  indicateurId: string;
+  rapportId: string;
 };
 
 export async function getServerSideProps({
@@ -48,11 +50,16 @@ export async function getServerSideProps({
       notFound: true,
     };
   }
-  const jalon = Number.parseInt(query.jalon as string) || getAnneeDateDeBascule(new Date(), configuration.dateBasculeAffichageValeursAnneePrecedente);
+  const jalon =
+    Number.parseInt(query.jalon as string) ||
+    getAnneeDateDeBascule(
+      new Date(),
+      configuration.dateBasculeAffichageValeursAnneePrecedente,
+    );
 
   const session = await getServerSession(req, res, authOptions);
   if (!session || !estAutoriséAImporterDesIndicateurs(session.profil)) {
-    throw new Error('Not connected or not authorized ?');
+    throw new Error("Not connected or not authorized ?");
   }
 
   const chantier: Chantier = await new RécupérerChantierUseCase(
@@ -62,17 +69,29 @@ export async function getServerSideProps({
   ).run(params.id, session.habilitations, session.profil, jalon);
 
   const indicateurRepository = dependencies.getIndicateurRepository();
-  const indicateurs = await indicateurRepository.récupérerParChantierId(params.id);
+  const indicateurs = await indicateurRepository.récupérerParChantierId(
+    params.id,
+  );
 
   let rapport: RapportContrat | null = null;
 
   if (query.rapportId) {
-    rapport = presenterEnRapportContrat(await dependencies.getRapportRepository().récupérerRapportParId(query.rapportId as string));
+    rapport = presenterEnRapportContrat(
+      await dependencies
+        .getRapportRepository()
+        .récupérerRapportParId(query.rapportId as string),
+    );
   }
 
-  const informationsIndicateur = await Promise.all<(InformationIndicateurContrat)>(
-    indicateurs.map(indicateur => dependencies.getImportIndicateurRepository().recupererInformationIndicateurParId(indicateur.id).then(result => presenterEnInformationIndicateurContrat(result))),
-  );
+  const informationsIndicateur =
+    await Promise.all<InformationIndicateurContrat>(
+      indicateurs.map((indicateur) =>
+        dependencies
+          .getImportIndicateurRepository()
+          .recupererInformationIndicateurParId(indicateur.id)
+          .then((result) => presenterEnInformationIndicateurContrat(result)),
+      ),
+    );
 
   return {
     props: {
@@ -87,7 +106,9 @@ export async function getServerSideProps({
   };
 }
 
-const NextPageImportIndicateur: FunctionComponent<NextPageImportIndicateurProps> = ({
+const NextPageImportIndicateur: FunctionComponent<
+  NextPageImportIndicateurProps
+> = ({
   chantierInformations,
   indicateurs,
   informationsIndicateur,
@@ -96,9 +117,11 @@ const NextPageImportIndicateur: FunctionComponent<NextPageImportIndicateurProps>
   const { data: session } = useSession();
   const filtresActifs = getFiltresActifs();
 
-  const territoireCode = Boolean(filtresActifs?.territoireCode) ?
-    filtresActifs.territoireCode :
-    (session!.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : session!.habilitations.lecture.territoires[0]);
+  const territoireCode = Boolean(filtresActifs?.territoireCode)
+    ? filtresActifs.territoireCode
+    : session!.habilitations.lecture.territoires.includes("NAT-FR")
+      ? "NAT-FR"
+      : session!.habilitations.lecture.territoires[0];
 
   const hrefBoutonRetour = `/chantier/${chantierInformations.id}/${territoireCode}`;
 
@@ -106,7 +129,7 @@ const NextPageImportIndicateur: FunctionComponent<NextPageImportIndicateurProps>
     <>
       <Head>
         <title>
-          {`Mettre à jour les données - Chantier ${chantierInformations.id.replace('CH-', '')} - PILOTE`}
+          {`Mettre à jour les données - Chantier ${chantierInformations.id.replace("CH-", "")} - PILOTE`}
         </title>
       </Head>
       <PageImportIndicateur

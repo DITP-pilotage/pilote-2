@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const RapportDétailléTableauChantiersStyled = styled.section`
   overflow-x: auto;
@@ -14,11 +14,11 @@ const RapportDétailléTableauChantiersStyled = styled.section`
 
       .ligne-chantier {
         cursor: pointer;
-        
+
         &:hover:nth-of-type(even) {
           background-color: var(--background-contrast-grey-hover);
         }
-        
+
         &:hover:nth-of-type(odd) {
           background-color: var(--background-alt-grey-hover);
         }

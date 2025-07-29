@@ -7,7 +7,17 @@ export class RepartitionMeteo {
 
   private readonly _nombreSoleil: number;
 
-  private constructor({ nombreCouvert, nombreNuage, nombreOrage, nombreSoleil }: { nombreCouvert: number, nombreNuage: number, nombreOrage: number, nombreSoleil: number }) {
+  private constructor({
+    nombreCouvert,
+    nombreNuage,
+    nombreOrage,
+    nombreSoleil,
+  }: {
+    nombreCouvert: number;
+    nombreNuage: number;
+    nombreOrage: number;
+    nombreSoleil: number;
+  }) {
     this._nombreCouvert = nombreCouvert;
     this._nombreNuage = nombreNuage;
     this._nombreOrage = nombreOrage;
@@ -30,7 +40,17 @@ export class RepartitionMeteo {
     return this._nombreSoleil;
   }
 
-  static creerRepartitionMeteo({ nombreCouvert, nombreNuage, nombreOrage, nombreSoleil }: { nombreCouvert: number, nombreNuage: number, nombreOrage: number, nombreSoleil: number }) {
+  static creerRepartitionMeteo({
+    nombreCouvert,
+    nombreNuage,
+    nombreOrage,
+    nombreSoleil,
+  }: {
+    nombreCouvert: number;
+    nombreNuage: number;
+    nombreOrage: number;
+    nombreSoleil: number;
+  }) {
     return new RepartitionMeteo({
       nombreCouvert,
       nombreNuage,

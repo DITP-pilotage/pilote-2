@@ -1,4 +1,4 @@
-import { useFormContext, UseFormWatch } from 'react-hook-form';
+import { useFormContext, UseFormWatch } from "react-hook-form";
 
 export type MetadataParametrageParametreIndicateurDepartementaleForm = {
   viDeptFrom: string;
@@ -9,17 +9,25 @@ export type MetadataParametrageParametreIndicateurDepartementaleForm = {
   vcDeptOp: string;
 };
 
-function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageParametreIndicateurDepartementaleForm>) {
-  watch('viDeptFrom');
-  watch('viDeptOp');
-  watch('vaDeptFrom');
-  watch('vaDeptOp');
-  watch('vcDeptFrom');
-  watch('vcDeptOp');
+function activerWatchSurSelecteur(
+  watch: UseFormWatch<MetadataParametrageParametreIndicateurDepartementaleForm>,
+) {
+  watch("viDeptFrom");
+  watch("viDeptOp");
+  watch("vaDeptFrom");
+  watch("vaDeptOp");
+  watch("vcDeptFrom");
+  watch("vcDeptOp");
 }
 
 export default function useDétailsMetadataParametreIndicateurDepartementaleForm() {
-  const { register, watch, getValues, setValue, formState: { errors } } = useFormContext<MetadataParametrageParametreIndicateurDepartementaleForm>();
+  const {
+    register,
+    watch,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = useFormContext<MetadataParametrageParametreIndicateurDepartementaleForm>();
 
   activerWatchSurSelecteur(watch);
 

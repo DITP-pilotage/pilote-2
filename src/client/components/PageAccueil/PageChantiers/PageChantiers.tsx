@@ -1,54 +1,51 @@
-import '@gouvfr/dsfr/dist/component/form/form.min.css';
-import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
-import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';
-import { FunctionComponent } from 'react';
+import "@gouvfr/dsfr/dist/component/form/form.min.css";
+import "@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css";
+import "@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css";
+import { FunctionComponent } from "react";
 import {
   parseAsBoolean,
   parseAsString,
   parseAsStringLiteral,
   useQueryStates,
-} from 'nuqs';
-import Bloc from '@/components/_commons/Bloc/Bloc';
-import Titre from '@/components/_commons/Titre/Titre';
-import CartographieAvancement
-  from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
-import useCartographie from '@/components/_commons/Cartographie/useCartographie';
-import {
-  ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
-} from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
-import Infobulle from '@/components/_commons/Infobulle/Infobulle';
-import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
-import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
-import RemontéeAlerte from '@/components/_commons/RemontéeAlerteChantier/RemontéeAlerte';
-import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
-import { JaugeDeProgressionSmall } from '@/components/_commons/JaugeDeProgressionSmall/JaugeDeProgressionSmall';
-import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import Ministère from '@/server/domain/ministère/Ministère.interface';
-import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
+} from "nuqs";
+import Bloc from "@/components/_commons/Bloc/Bloc";
+import Titre from "@/components/_commons/Titre/Titre";
+import CartographieAvancement from "@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement";
+import useCartographie from "@/components/_commons/Cartographie/useCartographie";
+import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
+import Infobulle from "@/components/_commons/Infobulle/Infobulle";
+import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
+import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
+import RemontéeAlerte from "@/components/_commons/RemontéeAlerteChantier/RemontéeAlerte";
+import BadgeIcône from "@/components/_commons/BadgeIcône/BadgeIcône";
+import { JaugeDeProgressionSmall } from "@/components/_commons/JaugeDeProgressionSmall/JaugeDeProgressionSmall";
+import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
+import Ministère from "@/server/domain/ministère/Ministère.interface";
+import { ChantierAccueilContrat } from "@/server/chantiers/app/contrats/ChantierAccueilContratNew";
 import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
-} from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
-import { TypeAlerteChantier } from '@/server/chantiers/app/contrats/TypeAlerteChantier';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
-import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
-import PageChantiersStyled from './PageChantiers.styled';
-import TableauChantiers from './TableauChantiers/TableauChantiers';
-import usePageChantiers from './usePageChantiers';
-import RepartitionsMeteosChantiers from './FiltresMeteos/RepartitionsMeteosChantiers';
+} from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
+import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
+import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
+import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
+import PageChantiersStyled from "./PageChantiers.styled";
+import TableauChantiers from "./TableauChantiers/TableauChantiers";
+import usePageChantiers from "./usePageChantiers";
+import RepartitionsMeteosChantiers from "./FiltresMeteos/RepartitionsMeteosChantiers";
 
 interface PageChantiersProps {
-  chantiers: ChantierAccueilContrat[],
-  nombreTotalChantiersAvecAlertes: number
-  ministères: Ministère[]
-  territoireCode: string
-  mailleQuery: MailleInterne
-  filtresComptesCalculés: Record<TypeAlerteChantier, number>
-  avancementsAgrégés: AvancementsStatistiquesAccueilContrat
-  avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
-  repartitionMeteosChantiers: RepartitionMeteoContrat
-  jalon: number
+  chantiers: ChantierAccueilContrat[];
+  nombreTotalChantiersAvecAlertes: number;
+  ministères: Ministère[];
+  territoireCode: string;
+  mailleQuery: MailleInterne;
+  filtresComptesCalculés: Record<TypeAlerteChantier, number>;
+  avancementsAgrégés: AvancementsStatistiquesAccueilContrat;
+  avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat;
+  repartitionMeteosChantiers: RepartitionMeteoContrat;
+  jalon: number;
 }
 
 const PageChantiers: FunctionComponent<PageChantiersProps> = ({
@@ -63,120 +60,139 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   repartitionMeteosChantiers,
   jalon,
 }) => {
-  const pathname = '/accueil/chantier/[territoireCode]';
-  const { auClicTerritoireCallback } = useCartographie(territoireCode, pathname);
+  const pathname = "/accueil/chantier/[territoireCode]";
+  const { auClicTerritoireCallback } = useCartographie(
+    territoireCode,
+    pathname,
+  );
 
   const [filtres] = useQueryStates({
-    perimetres: parseAsString.withDefault(''),
-    axes: parseAsString.withDefault(''),
-    meteos: parseAsString.withDefault(''),
+    perimetres: parseAsString.withDefault(""),
+    axes: parseAsString.withDefault(""),
+    meteos: parseAsString.withDefault(""),
     estBarometre: parseAsBoolean.withDefault(false),
-    territorialisation: parseAsString.withDefault(''),
-    maille: parseAsString.withDefault(''),
-    statut: parseAsStringLiteral(['BROUILLON', 'PUBLIE', 'BROUILLON_ET_PUBLIE', 'ARCHIVE']),
-    jalon: parseAsStringLiteral(['2024', '2025']),
+    territorialisation: parseAsString.withDefault(""),
+    maille: parseAsString.withDefault(""),
+    statut: parseAsStringLiteral([
+      "BROUILLON",
+      "PUBLIE",
+      "BROUILLON_ET_PUBLIE",
+      "ARCHIVE",
+    ]),
+    jalon: parseAsStringLiteral(["2024", "2025"]),
   });
 
-  const {
-    donnéesTableauChantiers,
-    remontéesAlertes,
-  } = usePageChantiers(chantiers, territoireCode, filtresComptesCalculés, avancementsAgrégés);
+  const { donnéesTableauChantiers, remontéesAlertes } = usePageChantiers(
+    chantiers,
+    territoireCode,
+    filtresComptesCalculés,
+    avancementsAgrégés,
+  );
 
-  const chantiersSontArchives = filtres.statut?.includes('ARCHIVE') ?? false;
+  const chantiersSontArchives = filtres.statut?.includes("ARCHIVE") ?? false;
 
   return (
     <PageChantiersStyled>
-      <div className='fr-py-2w fr-px-md-2w fr-container--fluid'>
-        <div className='fr-grid-row'>
-          <div className='fr-col-12 fr-col-lg-7 fr-col-xl-6 flex flex-column'>
-            <section className='flex flex-1'>
-              <div className='fr-container fr-p-0 flex flex-1'>
-                <div className='fr-grid-row fr-grid-row--gutters fr-mb-0 fr-mt-0 w-full fr-mr-md-2w'>
-                  <div className='fr-col-12 fr-col-xl-6 flex flex-column align-center fr-pr-0 fr-pt-0'>
+      <div className="fr-py-2w fr-px-md-2w fr-container--fluid">
+        <div className="fr-grid-row">
+          <div className="fr-col-12 fr-col-lg-7 fr-col-xl-6 flex flex-column">
+            <section className="flex flex-1">
+              <div className="fr-container fr-p-0 flex flex-1">
+                <div className="fr-grid-row fr-grid-row--gutters fr-mb-0 fr-mt-0 w-full fr-mr-md-2w">
+                  <div className="fr-col-12 fr-col-xl-6 flex flex-column align-center fr-pr-0 fr-pt-0">
                     <Bloc
-                      className='w-full h-full'
-                      contenuClassesSupplémentaires='fr-p-2w'
+                      className="w-full h-full"
+                      contenuClassesSupplémentaires="fr-p-2w"
                     >
                       <TitreInfobulleConteneur>
                         <Titre
-                          baliseHtml='h2'
-                          className='fr-text--lg fr-mb-0 fr-py-1v'
+                          baliseHtml="h2"
+                          className="fr-text--lg fr-mb-0 fr-py-1v"
                           estInline
                         >
                           Taux d'avancement moyen
                         </Titre>
-                        <Infobulle idHtml='infobulle-chantiers-jauges'>
+                        <Infobulle idHtml="infobulle-chantiers-jauges">
                           {INFOBULLE_CONTENUS.chantiers.jauges}
                         </Infobulle>
                       </TitreInfobulleConteneur>
-                      <div className='flex w-full justify-center fr-px-1w fr-mt-1w'>
+                      <div className="flex w-full justify-center fr-px-1w fr-mt-1w">
                         <JaugeDeProgression
-                          couleur={chantiersSontArchives ? 'gris' : 'bleu'}
+                          couleur={chantiersSontArchives ? "gris" : "bleu"}
                           libellé="Taux d'avancement à échéance 2026"
-                          pourcentage={avancementsAgrégés?.global.moyenne || null}
-                          taille='lg'
+                          pourcentage={
+                            avancementsAgrégés?.global.moyenne || null
+                          }
+                          taille="lg"
                         />
                       </div>
-                      <div className='fr-grid-row border-t fr-mt-1w'>
-                        <div className='fr-mt-1w w-full'>
-                          <p className='fr-text--xl fr-text--bold fr-mb-0 texte-gris'>
-                            {`${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancementsAgrégés?.annuel.moyenne?.toFixed(0) : null) ?? '- '}%`}
+                      <div className="fr-grid-row border-t fr-mt-1w">
+                        <div className="fr-mt-1w w-full">
+                          <p className="fr-text--xl fr-text--bold fr-mb-0 texte-gris">
+                            {`${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === "true" ? avancementsAgrégés?.annuel.moyenne?.toFixed(0) : null) ?? "- "}%`}
                           </p>
                           <BarreDeProgression
                             afficherTexte={false}
                             bordure={null}
-                            fond='gris-clair'
-                            positionTexte='dessus'
-                            taille='xxs'
-                            valeur={!!avancementsAgrégés && process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancementsAgrégés.annuel.moyenne : null}
-                            variante='secondaire'
+                            fond="gris-clair"
+                            positionTexte="dessus"
+                            taille="xxs"
+                            valeur={
+                              !!avancementsAgrégés &&
+                              process.env.NEXT_PUBLIC_FF_TA_ANNUEL === "true"
+                                ? avancementsAgrégés.annuel.moyenne
+                                : null
+                            }
+                            variante="secondaire"
                           />
-                          <div className='flex flex-wrap justify-center'>
-                            <p className='fr-text--xs fr-mb-0 fr-mt-1v text-center'>
-                              Taux d'avancement à échéance 
-                              {' '}
-                              {jalon}
+                          <div className="flex flex-wrap justify-center">
+                            <p className="fr-text--xs fr-mb-0 fr-mt-1v text-center">
+                              Taux d'avancement à échéance {jalon}
                             </p>
                           </div>
                         </div>
                       </div>
                     </Bloc>
                   </div>
-                  <div className='fr-col-12 fr-col-xl-6 fr-pr-0 fr-pt-0'>
+                  <div className="fr-col-12 fr-col-xl-6 fr-pr-0 fr-pt-0">
                     <Bloc
-                      className='h-full fr-ml-xl-1w'
-                      contenuClassesSupplémentaires='fr-p-2w'
+                      className="h-full fr-ml-xl-1w"
+                      contenuClassesSupplémentaires="fr-p-2w"
                     >
-                      <div className='fr-container fr-p-0'>
+                      <div className="fr-container fr-p-0">
                         <TitreInfobulleConteneur>
                           <Titre
-                            baliseHtml='h2'
-                            className='fr-text--lg fr-py-1v'
+                            baliseHtml="h2"
+                            className="fr-text--lg fr-py-1v"
                             estInline
                           >
                             Répartition territoriale
                           </Titre>
-                          <Infobulle
-                            idHtml='infobulle-chantiers-jauges-repartitions'
-                          >
+                          <Infobulle idHtml="infobulle-chantiers-jauges-repartitions">
                             {INFOBULLE_CONTENUS.chantiers.repartitions}
                           </Infobulle>
                         </TitreInfobulleConteneur>
-                        <div className='flex flex-column items-center fr-px-3v'>
+                        <div className="flex flex-column items-center fr-px-3v">
                           <JaugeDeProgressionSmall
-                            couleur={chantiersSontArchives ? 'gris' : 'vert'}
-                            libellé='Maximum'
-                            pourcentage={avancementsAgrégés?.global.maximum || null}
+                            couleur={chantiersSontArchives ? "gris" : "vert"}
+                            libellé="Maximum"
+                            pourcentage={
+                              avancementsAgrégés?.global.maximum || null
+                            }
                           />
                           <JaugeDeProgressionSmall
-                            couleur={chantiersSontArchives ? 'gris' : 'violet'}
-                            libellé='Médiane'
-                            pourcentage={avancementsAgrégés?.global.médiane || null}
+                            couleur={chantiersSontArchives ? "gris" : "violet"}
+                            libellé="Médiane"
+                            pourcentage={
+                              avancementsAgrégés?.global.médiane || null
+                            }
                           />
                           <JaugeDeProgressionSmall
-                            couleur={chantiersSontArchives ? 'gris' : 'orange'}
-                            libellé='Minimum'
-                            pourcentage={avancementsAgrégés?.global.minimum || null}
+                            couleur={chantiersSontArchives ? "gris" : "orange"}
+                            libellé="Minimum"
+                            pourcentage={
+                              avancementsAgrégés?.global.minimum || null
+                            }
                           />
                         </div>
                       </div>
@@ -185,19 +201,17 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 </div>
               </div>
             </section>
-            <section className='fr-mr-md-2w fr-mr-xl-0'>
-              <Bloc
-                contenuClassesSupplémentaires='fr-py-2w fr-px-3w'
-              >
+            <section className="fr-mr-md-2w fr-mr-xl-0">
+              <Bloc contenuClassesSupplémentaires="fr-py-2w fr-px-3w">
                 <TitreInfobulleConteneur>
                   <Titre
-                    baliseHtml='h2'
-                    className='fr-text--lg fr-mb-0 fr-py-1v'
+                    baliseHtml="h2"
+                    className="fr-text--lg fr-mb-0 fr-py-1v"
                     estInline
                   >
                     Répartition des météos renseignées
                   </Titre>
-                  <Infobulle idHtml='infobulle-chantiers-météos'>
+                  <Infobulle idHtml="infobulle-chantiers-météos">
                     {INFOBULLE_CONTENUS.chantiers.météos}
                   </Infobulle>
                 </TitreInfobulleConteneur>
@@ -207,12 +221,12 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
               </Bloc>
             </section>
           </div>
-          <div className='fr-col-12 fr-col-lg-5 fr-col-xl-6 fr-pl-xl-1w'>
+          <div className="fr-col-12 fr-col-lg-5 fr-col-xl-6 fr-pl-xl-1w">
             <Bloc>
               <section>
                 <Titre
-                  baliseHtml='h2'
-                  className='fr-text--lg break-keep fr-mb-0 fr-py-1v'
+                  baliseHtml="h2"
+                  className="fr-text--lg break-keep fr-mb-0 fr-py-1v"
                 >
                   Taux d'avancement des chantiers par territoire
                 </Titre>
@@ -221,7 +235,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   données={avancementsGlobauxTerritoriauxMoyens}
                   jalon={jalon}
                   mailleSelectionnee={mailleQuery}
-                  pathname='/accueil/chantier/[territoireCode]'
+                  pathname="/accueil/chantier/[territoireCode]"
                   territoireCode={territoireCode}
                   élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
                 />
@@ -229,55 +243,56 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
             </Bloc>
           </div>
         </div>
-        {
-          process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && !chantiersSontArchives &&
-          <div className='fr-pt-2w fr-px-2w fr-px-md-0 alertes'>
-            <div className='fr-mb-2w'>
-              <TitreInfobulleConteneur>
-                <BadgeIcône type='warning' />
-                <Titre
-                  baliseHtml='h2'
-                  className='fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w titre-remontée-alertes'
-                  estInline
-                >
-                  Chantiers signalés
-                </Titre>
-                <Infobulle
-                  classNameBouton='titre-remontée-alertes'
-                  idHtml='infobulle-chantiers-alertes'
-                >
-                  {INFOBULLE_CONTENUS.chantiers.alertes}
-                </Infobulle>
-              </TitreInfobulleConteneur>
-            </div>
-            <div className='fr-grid-row fr-mx-n1v fr-mx-md-n1w'>
-              {
-                remontéesAlertes.map(({ nomCritère, libellé, nombre, estActivée }) => (
-                  (process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true' || nomCritère !== 'estEnAlerteBaisse') &&
-                  <div
-                    className='fr-col fr-px-1v fr-px-md-1w'
-                    key={libellé}
-                    title={libellé}
+        {process.env.NEXT_PUBLIC_FF_ALERTES === "true" &&
+          !chantiersSontArchives && (
+            <div className="fr-pt-2w fr-px-2w fr-px-md-0 alertes">
+              <div className="fr-mb-2w">
+                <TitreInfobulleConteneur>
+                  <BadgeIcône type="warning" />
+                  <Titre
+                    baliseHtml="h2"
+                    className="fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w titre-remontée-alertes"
+                    estInline
                   >
-                    <RemontéeAlerte
-                      estActivée={estActivée}
-                      libellé={libellé}
-                      nomCritère={nomCritère}
-                      nombre={nombre}
-                    />
-                  </div>
-                ))
-              }
+                    Chantiers signalés
+                  </Titre>
+                  <Infobulle
+                    classNameBouton="titre-remontée-alertes"
+                    idHtml="infobulle-chantiers-alertes"
+                  >
+                    {INFOBULLE_CONTENUS.chantiers.alertes}
+                  </Infobulle>
+                </TitreInfobulleConteneur>
+              </div>
+              <div className="fr-grid-row fr-mx-n1v fr-mx-md-n1w">
+                {remontéesAlertes.map(
+                  ({ nomCritère, libellé, nombre, estActivée }) =>
+                    (process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === "true" ||
+                      nomCritère !== "estEnAlerteBaisse") && (
+                      <div
+                        className="fr-col fr-px-1v fr-px-md-1w"
+                        key={libellé}
+                        title={libellé}
+                      >
+                        <RemontéeAlerte
+                          estActivée={estActivée}
+                          libellé={libellé}
+                          nomCritère={nomCritère}
+                          nombre={nombre}
+                        />
+                      </div>
+                    ),
+                )}
+              </div>
             </div>
-          </div>
-        }
-        <div className='fr-grid-row fr-mt-7v'>
-          <div className='fr-col-12'>
+          )}
+        <div className="fr-grid-row fr-mt-7v">
+          <div className="fr-col-12">
             <Bloc>
               <TitreInfobulleConteneur>
                 <Titre
-                  baliseHtml='h2'
-                  className='fr-text--lg fr-mb-0 fr-py-1v'
+                  baliseHtml="h2"
+                  className="fr-text--lg fr-mb-0 fr-py-1v"
                   estInline
                 >
                   {`Liste des chantiers (${nombreTotalChantiersAvecAlertes})`}
@@ -288,7 +303,9 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 données={donnéesTableauChantiers}
                 jalon={jalon}
                 ministèresDisponibles={ministères}
-                nombreTotalChantiersAvecAlertes={nombreTotalChantiersAvecAlertes}
+                nombreTotalChantiersAvecAlertes={
+                  nombreTotalChantiersAvecAlertes
+                }
                 territoireCode={territoireCode}
               />
             </Bloc>

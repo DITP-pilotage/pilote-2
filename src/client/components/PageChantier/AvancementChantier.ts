@@ -1,21 +1,21 @@
-import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
+import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
 
 export type AvancementChantierContrat = {
-  nationale: AvancementsStatistiques
+  nationale: AvancementsStatistiques;
   departementale: {
     global: {
-      moyenne: number | null
-    },
+      moyenne: number | null;
+    };
     annuel: {
-      moyenne: number | null
-    },
-  }
+      moyenne: number | null;
+    };
+  };
   regionale: {
     global: {
-      moyenne: number | null
-    },
+      moyenne: number | null;
+    };
     annuel: {
-      moyenne: number | null
-    },
-  }
+      moyenne: number | null;
+    };
+  };
 };

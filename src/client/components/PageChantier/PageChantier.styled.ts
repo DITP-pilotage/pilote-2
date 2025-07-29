@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const PageChantierStyled = styled.div`
   background: var(--background-contrast-grey);
@@ -18,17 +18,16 @@ const PageChantierStyled = styled.div`
         "avancement"
         "synthèse"
         "responsables";
-        grid-template-columns: 1fr;
+      grid-template-columns: 1fr;
     }
-  
+
     .layout--dept-reg {
       grid-template-areas:
         "avancement"
-        "synthèse" 
+        "synthèse"
         "responsables";
     }
-  }  
-
+  }
 
   #avancement {
     grid-area: avancement;
@@ -41,7 +40,7 @@ const PageChantierStyled = styled.div`
   #synthèse {
     grid-area: synthèse;
   }
-  
+
   .rubrique {
     display: grid;
     grid-template-rows: auto 1fr;
@@ -54,34 +53,34 @@ const PageChantierStyled = styled.div`
   tbody {
     background: none;
   }
-  
+
   .loader {
     height: 100vh;
   }
-  
+
   @media print {
     @page {
       margin: 12mm 0;
       size: 280mm 396mm;
     }
-    
+
     background: #fff;
-    
+
     main {
       margin-right: 12mm;
       margin-left: 12mm;
     }
-    
+
     .titre-chantier-impression {
       display: block !important;
       margin-bottom: 1rem;
       page-break-after: avoid;
     }
-    
+
     .horizontal-panel {
       display: none !important;
     }
-    
+
     .layout--nat {
       grid-template-areas:
         "avancement synthèse"
@@ -92,7 +91,7 @@ const PageChantierStyled = styled.div`
     .layout--dept-reg {
       grid-template-areas:
         "avancement"
-        "synthèse" 
+        "synthèse"
         "responsables";
     }
 
@@ -121,8 +120,8 @@ const PageChantierStyled = styled.div`
   }
 
   .fr-h2 {
-    font-size: 1.875rem!important;
-    line-height: 2.25rem!important;
+    font-size: 1.875rem !important;
+    line-height: 2.25rem !important;
   }
 
   .titre-chantier-impression {

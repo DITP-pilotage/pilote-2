@@ -1,9 +1,15 @@
-import { TokenAPIInformationRepository } from '@/server/authentification/domain/ports/TokenAPIInformationRepository';
-import { TokenAPIInformation } from '@/server/authentification/domain/TokenAPIInformation';
-import { prisma } from '@/server/db/prisma';
+import { TokenAPIInformationRepository } from "@/server/authentification/domain/ports/TokenAPIInformationRepository";
+import { TokenAPIInformation } from "@/server/authentification/domain/TokenAPIInformation";
+import { prisma } from "@/server/db/prisma";
 
-export class PrismaTokenAPIInformationRepository implements TokenAPIInformationRepository {
-  async recupererTokenAPIInformation({ email }: { email: string }): Promise<TokenAPIInformation | null> {
+export class PrismaTokenAPIInformationRepository
+  implements TokenAPIInformationRepository
+{
+  async recupererTokenAPIInformation({
+    email,
+  }: {
+    email: string;
+  }): Promise<TokenAPIInformation | null> {
     const result = await prisma.token_api_information.findUnique({
       where: { email },
     });
@@ -21,19 +27,24 @@ export class PrismaTokenAPIInformationRepository implements TokenAPIInformationR
   async listerTokenAPIInformation(): Promise<TokenAPIInformation[]> {
     const result = await prisma.token_api_information.findMany({
       orderBy: {
-        date_creation: 'asc',
+        date_creation: "asc",
       },
     });
 
-    return result.map(tokenAPI => TokenAPIInformation.creerTokenAPIInformation({
-      email: tokenAPI.email,
-      dateCreation: tokenAPI.date_creation,
-    }));
+    return result.map((tokenAPI) =>
+      TokenAPIInformation.creerTokenAPIInformation({
+        email: tokenAPI.email,
+        dateCreation: tokenAPI.date_creation,
+      }),
+    );
   }
 
-  async sauvegarderTokenAPIInformation({ email, dateCreation }: {
+  async sauvegarderTokenAPIInformation({
+    email,
+    dateCreation,
+  }: {
     email: string;
-    dateCreation: string
+    dateCreation: string;
   }): Promise<void> {
     await prisma.token_api_information.create({
       data: {
@@ -43,7 +54,9 @@ export class PrismaTokenAPIInformationRepository implements TokenAPIInformationR
     });
   }
 
-  async supprimerTokenAPIInformation({ email }: {
+  async supprimerTokenAPIInformation({
+    email,
+  }: {
     email: string;
   }): Promise<void> {
     await prisma.token_api_information.delete({

@@ -1,675 +1,791 @@
-import { getContainer } from '@/server/dependances';
-import {
-  PrismaMetadataParametrageIndicateurQuery,
-} from '@/server/parametrage-indicateur/infrastructure/queries/PrismaMetadataParametrageIndicateurQuery';
-import { prisma } from '@/server/db/prisma';
+import { getContainer } from "@/server/dependances";
+import { PrismaMetadataParametrageIndicateurQuery } from "@/server/parametrage-indicateur/infrastructure/queries/PrismaMetadataParametrageIndicateurQuery";
+import { prisma } from "@/server/db/prisma";
 
-describe('PrismaMetadataParametrageIndicateurQuery', () => {
+describe("PrismaMetadataParametrageIndicateurQuery", () => {
   let prismaMetadataParametrageIndicateurQuery: PrismaMetadataParametrageIndicateurQuery;
 
   beforeEach(async () => {
-    prismaMetadataParametrageIndicateurQuery = getContainer('parametrageIndicateur').resolve('metadataParametrageIndicateurQuery');
+    prismaMetadataParametrageIndicateurQuery = getContainer(
+      "parametrageIndicateur",
+    ).resolve("metadataParametrageIndicateurQuery");
     await prisma.utilisateur.create({
       data: {
-        id: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
-        email: 'Eloge', 
-        nom: 'Eloge', 
-        prenom: 'Eloge', 
+        id: "416af1ab-a297-42fa-b89a-771cc8d89d0c",
+        email: "Eloge",
+        nom: "Eloge",
+        prenom: "Eloge",
         date_creation: new Date(),
-        profilCode: 'DITP_ADMIN',
+        profilCode: "DITP_ADMIN",
       },
     });
     await prisma.utilisateur.create({
       data: {
-        id: '175fd28c-8129-419e-b2c1-78538461e094',
-        email: 'Zakaria', 
-        nom: 'Zakaria', 
-        prenom: 'Zakaria', 
+        id: "175fd28c-8129-419e-b2c1-78538461e094",
+        email: "Zakaria",
+        nom: "Zakaria",
+        prenom: "Zakaria",
         date_creation: new Date(),
-        profilCode: 'DITP_ADMIN',
+        profilCode: "DITP_ADMIN",
       },
     });
     await prisma.utilisateur.create({
       data: {
-        id: 'c2454574-45b0-4214-b9a2-8025c329b73f',
-        email: 'Gaelle', 
-        nom: 'Gaelle', 
-        prenom: 'Gaelle', 
+        id: "c2454574-45b0-4214-b9a2-8025c329b73f",
+        email: "Gaelle",
+        nom: "Gaelle",
+        prenom: "Gaelle",
         date_creation: new Date(),
-        profilCode: 'DITP_ADMIN',
+        profilCode: "DITP_ADMIN",
       },
     });
     await prisma.utilisateur.create({
       data: {
-        id: '988c3812-16c9-4b59-b08c-b81612c426a5',
-        email: 'Cécile', 
-        nom: 'Cécile', 
-        prenom: 'Cécile', 
+        id: "988c3812-16c9-4b59-b08c-b81612c426a5",
+        email: "Cécile",
+        nom: "Cécile",
+        prenom: "Cécile",
         date_creation: new Date(),
-        profilCode: 'DITP_ADMIN',
+        profilCode: "DITP_ADMIN",
       },
     });
     await prisma.utilisateur.create({
       data: {
-        id: 'ee9bb9f6-e365-4d09-9631-f278518fe31e',
-        email: 'Laurène', 
-        nom: 'Laurène', 
-        prenom: 'Laurène', 
+        id: "ee9bb9f6-e365-4d09-9631-f278518fe31e",
+        email: "Laurène",
+        nom: "Laurène",
+        prenom: "Laurène",
         date_creation: new Date(),
-        profilCode: 'DITP_ADMIN',
+        profilCode: "DITP_ADMIN",
       },
     });
   });
 
-  describe('recupererInformationHistorisation', () => {
+  describe("recupererInformationHistorisation", () => {
     it("Quand il n'y a pas historique de modification concernant l'indicateur, doit remonter des informations de base", async () => {
       // Given
-      const indicId = 'a1217dba-f725-4b70-af96-5d3b6e393853';
+      const indicId = "a1217dba-f725-4b70-af96-5d3b6e393853";
 
       // When
-      const informationDerniereModification = await prismaMetadataParametrageIndicateurQuery.recupererInformationHistorisation({ indicId });
+      const informationDerniereModification =
+        await prismaMetadataParametrageIndicateurQuery.recupererInformationHistorisation(
+          { indicId },
+        );
 
       // Then
       expect(informationDerniereModification).toEqual({
-        auteurCreation: 'DITP Admin',
-        dateCreation: '2024-01-31',
-        auteurModification: 'DITP Admin',
-        dateDerniereModification: '2024-01-31',
+        auteurCreation: "DITP Admin",
+        dateCreation: "2024-01-31",
+        auteurModification: "DITP Admin",
+        dateDerniereModification: "2024-01-31",
       });
     });
 
     it("Quand il existe un historique de modification mais que ca n'appartient pas à notre indicateur, doit remonter des informations de base", async () => {
       // Given
-      const indicId = 'a1217dba-f725-4b70-af96-5d3b6e393853';
+      const indicId = "a1217dba-f725-4b70-af96-5d3b6e393853";
 
       await prisma.metadata_indicateurs.create({
         data: {
           indic_id: indicId,
-          indic_nom: 'Un indicateur',
-          indic_parent_ch: '',
+          indic_nom: "Un indicateur",
+          indic_parent_ch: "",
         },
       });
       await prisma.historisation_modification.create({
         data: {
-          id: '1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d',
-          id_objet_modifie: '5d657551-baf4-4a67-9752-b3c59effabb1',
-          table_modifie_id: 'indicateur',
+          id: "1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d",
+          id_objet_modifie: "5d657551-baf4-4a67-9752-b3c59effabb1",
+          table_modifie_id: "indicateur",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
-          date_de_modification: '2024-04-31',
-          type_de_modification: 'creation',
+          id_auteur: "416af1ab-a297-42fa-b89a-771cc8d89d0c",
+          date_de_modification: "2024-04-31",
+          type_de_modification: "creation",
         },
       });
 
       // When
-      const informationDerniereModification = await prismaMetadataParametrageIndicateurQuery.recupererInformationHistorisation({ indicId });
+      const informationDerniereModification =
+        await prismaMetadataParametrageIndicateurQuery.recupererInformationHistorisation(
+          { indicId },
+        );
 
       // Then
       expect(informationDerniereModification).toEqual({
-        auteurCreation: 'DITP Admin',
-        dateCreation: '2024-01-31',
-        auteurModification: 'DITP Admin',
-        dateDerniereModification: '2024-01-31',
+        auteurCreation: "DITP Admin",
+        dateCreation: "2024-01-31",
+        auteurModification: "DITP Admin",
+        dateDerniereModification: "2024-01-31",
       });
     });
 
-    it('Quand il existe un historique de modification en création et ça appartient à un autre type de table, doit remonter des informations de base', async () => {
+    it("Quand il existe un historique de modification en création et ça appartient à un autre type de table, doit remonter des informations de base", async () => {
       // Given
-      const indicId = 'a1217dba-f725-4b70-af96-5d3b6e393853';
+      const indicId = "a1217dba-f725-4b70-af96-5d3b6e393853";
       await prisma.metadata_indicateurs.create({
         data: {
           indic_id: indicId,
-          indic_nom: 'Un indicateur',
-          indic_parent_ch: '',
+          indic_nom: "Un indicateur",
+          indic_parent_ch: "",
         },
       });
       await prisma.historisation_modification.create({
         data: {
-          id: '1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d',
+          id: "1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d",
           id_objet_modifie: indicId,
-          table_modifie_id: 'utilisateur',
+          table_modifie_id: "utilisateur",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
-          date_de_modification: '2024-04-29',
-          type_de_modification: 'creation',
+          id_auteur: "416af1ab-a297-42fa-b89a-771cc8d89d0c",
+          date_de_modification: "2024-04-29",
+          type_de_modification: "creation",
         },
       });
 
       // When
-      const informationDerniereModification = await prismaMetadataParametrageIndicateurQuery.recupererInformationHistorisation({ indicId });
+      const informationDerniereModification =
+        await prismaMetadataParametrageIndicateurQuery.recupererInformationHistorisation(
+          { indicId },
+        );
 
       // Then
       expect(informationDerniereModification).toEqual({
-        auteurCreation: 'DITP Admin',
-        dateCreation: '2024-01-31',
-        auteurModification: 'DITP Admin',
-        dateDerniereModification: '2024-01-31',
+        auteurCreation: "DITP Admin",
+        dateCreation: "2024-01-31",
+        auteurModification: "DITP Admin",
+        dateDerniereModification: "2024-01-31",
       });
     });
 
     it("Quand il existe un historique de modification en création et ça appartient à notre indicateur, doit remonter les informations d'historisation", async () => {
       // Given
-      const indicId = 'a1217dba-f725-4b70-af96-5d3b6e393853';
+      const indicId = "a1217dba-f725-4b70-af96-5d3b6e393853";
       await prisma.metadata_indicateurs.create({
         data: {
           indic_id: indicId,
-          indic_nom: 'Un indicateur',
-          indic_parent_ch: '',
+          indic_nom: "Un indicateur",
+          indic_parent_ch: "",
         },
       });
       await prisma.historisation_modification.create({
         data: {
-          id: '1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d',
+          id: "1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d",
           id_objet_modifie: indicId,
-          table_modifie_id: 'metadata_indicateurs',
+          table_modifie_id: "metadata_indicateurs",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
-          date_de_modification: '2024-04-29',
-          type_de_modification: 'creation',
+          id_auteur: "416af1ab-a297-42fa-b89a-771cc8d89d0c",
+          date_de_modification: "2024-04-29",
+          type_de_modification: "creation",
         },
       });
 
       // When
-      const informationDerniereModification = await prismaMetadataParametrageIndicateurQuery.recupererInformationHistorisation({ indicId });
+      const informationDerniereModification =
+        await prismaMetadataParametrageIndicateurQuery.recupererInformationHistorisation(
+          { indicId },
+        );
 
       // Then
       expect(informationDerniereModification).toEqual({
-        auteurCreation: 'Eloge',
-        dateCreation: '2024-04-29',
-        auteurModification: 'Eloge',
-        dateDerniereModification: '2024-04-29',
+        auteurCreation: "Eloge",
+        dateCreation: "2024-04-29",
+        auteurModification: "Eloge",
+        dateDerniereModification: "2024-04-29",
       });
     });
 
     it("Quand il existe un historique de modification en création et en modification et ça appartient à notre indicateur, doit remonter les dernieres informations d'historisation", async () => {
       // Given
-      const indicId = 'a1217dba-f725-4b70-af96-5d3b6e393853';
+      const indicId = "a1217dba-f725-4b70-af96-5d3b6e393853";
       await prisma.metadata_indicateurs.create({
         data: {
           indic_id: indicId,
-          indic_nom: 'Un indicateur',
-          indic_parent_ch: '',
+          indic_nom: "Un indicateur",
+          indic_parent_ch: "",
         },
       });
       await prisma.historisation_modification.create({
         data: {
-          id: '1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d',
+          id: "1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d",
           id_objet_modifie: indicId,
-          table_modifie_id: 'metadata_indicateurs',
+          table_modifie_id: "metadata_indicateurs",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
-          date_de_modification: '2024-04-29',
-          type_de_modification: 'creation',
+          id_auteur: "416af1ab-a297-42fa-b89a-771cc8d89d0c",
+          date_de_modification: "2024-04-29",
+          type_de_modification: "creation",
         },
       });
 
       await prisma.historisation_modification.create({
         data: {
-          id: 'f5824077-2db1-42b3-9092-6ce280e4b425',
+          id: "f5824077-2db1-42b3-9092-6ce280e4b425",
           id_objet_modifie: indicId,
-          table_modifie_id: 'metadata_indicateurs',
+          table_modifie_id: "metadata_indicateurs",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: '175fd28c-8129-419e-b2c1-78538461e094',
-          date_de_modification: '2024-05-01',
-          type_de_modification: 'modification',
+          id_auteur: "175fd28c-8129-419e-b2c1-78538461e094",
+          date_de_modification: "2024-05-01",
+          type_de_modification: "modification",
         },
       });
 
       // When
-      const informationDerniereModification = await prismaMetadataParametrageIndicateurQuery.recupererInformationHistorisation({ indicId });
+      const informationDerniereModification =
+        await prismaMetadataParametrageIndicateurQuery.recupererInformationHistorisation(
+          { indicId },
+        );
 
       // Then
       expect(informationDerniereModification).toEqual({
-        auteurCreation: 'Eloge',
-        dateCreation: '2024-04-29',
-        auteurModification: 'Zakaria',
-        dateDerniereModification: '2024-05-01',
+        auteurCreation: "Eloge",
+        dateCreation: "2024-04-29",
+        auteurModification: "Zakaria",
+        dateDerniereModification: "2024-05-01",
       });
     });
 
     it("Quand il existe un historique de modification en création et plusieurs modifications et ça appartient à notre indicateur, doit remonter les dernieres informations d'historisation", async () => {
       // Given
-      const indicId = 'a1217dba-f725-4b70-af96-5d3b6e393853';
+      const indicId = "a1217dba-f725-4b70-af96-5d3b6e393853";
       await prisma.metadata_indicateurs.create({
         data: {
           indic_id: indicId,
-          indic_nom: 'Un indicateur',
-          indic_parent_ch: '',
+          indic_nom: "Un indicateur",
+          indic_parent_ch: "",
         },
       });
       await prisma.historisation_modification.create({
         data: {
-          id: '1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d',
+          id: "1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d",
           id_objet_modifie: indicId,
-          table_modifie_id: 'metadata_indicateurs',
+          table_modifie_id: "metadata_indicateurs",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
-          date_de_modification: '2024-04-29',
-          type_de_modification: 'creation',
-        },
-      });
-
-      await prisma.historisation_modification.create({
-        data: {
-          id: '21aff297-d683-448b-930a-0b7ad4e07ee2',
-          id_objet_modifie: indicId,
-          table_modifie_id: 'metadata_indicateurs',
-          ancienne_valeur: {},
-          nouvelle_valeur: {},
-          id_auteur: 'c2454574-45b0-4214-b9a2-8025c329b73f',
-          date_de_modification: '2024-05-10',
-          type_de_modification: 'modification',
+          id_auteur: "416af1ab-a297-42fa-b89a-771cc8d89d0c",
+          date_de_modification: "2024-04-29",
+          type_de_modification: "creation",
         },
       });
 
       await prisma.historisation_modification.create({
         data: {
-          id: 'f5824077-2db1-42b3-9092-6ce280e4b425',
+          id: "21aff297-d683-448b-930a-0b7ad4e07ee2",
           id_objet_modifie: indicId,
-          table_modifie_id: 'metadata_indicateurs',
+          table_modifie_id: "metadata_indicateurs",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: '175fd28c-8129-419e-b2c1-78538461e094',
-          date_de_modification: '2024-05-01',
-          type_de_modification: 'modification',
+          id_auteur: "c2454574-45b0-4214-b9a2-8025c329b73f",
+          date_de_modification: "2024-05-10",
+          type_de_modification: "modification",
+        },
+      });
+
+      await prisma.historisation_modification.create({
+        data: {
+          id: "f5824077-2db1-42b3-9092-6ce280e4b425",
+          id_objet_modifie: indicId,
+          table_modifie_id: "metadata_indicateurs",
+          ancienne_valeur: {},
+          nouvelle_valeur: {},
+          id_auteur: "175fd28c-8129-419e-b2c1-78538461e094",
+          date_de_modification: "2024-05-01",
+          type_de_modification: "modification",
         },
       });
 
       // When
-      const informationDerniereModification = await prismaMetadataParametrageIndicateurQuery.recupererInformationHistorisation({ indicId });
+      const informationDerniereModification =
+        await prismaMetadataParametrageIndicateurQuery.recupererInformationHistorisation(
+          { indicId },
+        );
 
       // Then
       expect(informationDerniereModification).toEqual({
-        auteurCreation: 'Eloge',
-        dateCreation: '2024-04-29',
-        auteurModification: 'Gaelle',
-        dateDerniereModification: '2024-05-10',
+        auteurCreation: "Eloge",
+        dateCreation: "2024-04-29",
+        auteurModification: "Gaelle",
+        dateDerniereModification: "2024-05-10",
       });
     });
   });
 
-  describe('listerInformationDerniereModification', () => {
+  describe("listerInformationDerniereModification", () => {
     it("Quand il n'y a pas historique de modification concernant les indicateurs, doit remonter des informations de base", async () => {
       // Given
-      const listeIndicId = ['a1217dba-f725-4b70-af96-5d3b6e393853', 'd0fcac64-c020-4682-8824-92e9dec2c914'];
+      const listeIndicId = [
+        "a1217dba-f725-4b70-af96-5d3b6e393853",
+        "d0fcac64-c020-4682-8824-92e9dec2c914",
+      ];
 
       // When
-      const mapInformationDerniereModification = await prismaMetadataParametrageIndicateurQuery.listerInformationDerniereModification({ listeIndicId });
+      const mapInformationDerniereModification =
+        await prismaMetadataParametrageIndicateurQuery.listerInformationDerniereModification(
+          { listeIndicId },
+        );
 
       // Then
-      expect(mapInformationDerniereModification.get('a1217dba-f725-4b70-af96-5d3b6e393853')).toEqual({
-        auteurModification: 'DITP Admin',
-        dateDerniereModification: '2024-01-31',
+      expect(
+        mapInformationDerniereModification.get(
+          "a1217dba-f725-4b70-af96-5d3b6e393853",
+        ),
+      ).toEqual({
+        auteurModification: "DITP Admin",
+        dateDerniereModification: "2024-01-31",
       });
-      expect(mapInformationDerniereModification.get('d0fcac64-c020-4682-8824-92e9dec2c914')).toEqual({
-        auteurModification: 'DITP Admin',
-        dateDerniereModification: '2024-01-31',
+      expect(
+        mapInformationDerniereModification.get(
+          "d0fcac64-c020-4682-8824-92e9dec2c914",
+        ),
+      ).toEqual({
+        auteurModification: "DITP Admin",
+        dateDerniereModification: "2024-01-31",
       });
     });
 
     it("Quand il existe un historique de modification mais que ca n'appartient pas à nos indicateurs, doit remonter des informations de base", async () => {
       // Given
-      const listeIndicId = ['a1217dba-f725-4b70-af96-5d3b6e393853', 'd0fcac64-c020-4682-8824-92e9dec2c914'];
+      const listeIndicId = [
+        "a1217dba-f725-4b70-af96-5d3b6e393853",
+        "d0fcac64-c020-4682-8824-92e9dec2c914",
+      ];
       await prisma.metadata_indicateurs.create({
         data: {
-          indic_id: 'a1217dba-f725-4b70-af96-5d3b6e393853',
-          indic_nom: 'Un indicateur 1',
-          indic_parent_ch: '',
+          indic_id: "a1217dba-f725-4b70-af96-5d3b6e393853",
+          indic_nom: "Un indicateur 1",
+          indic_parent_ch: "",
         },
       });
       await prisma.metadata_indicateurs.create({
         data: {
-          indic_id: 'd0fcac64-c020-4682-8824-92e9dec2c914',
-          indic_nom: 'Un indicateur 2',
-          indic_parent_ch: '',
+          indic_id: "d0fcac64-c020-4682-8824-92e9dec2c914",
+          indic_nom: "Un indicateur 2",
+          indic_parent_ch: "",
         },
       });
 
       await prisma.historisation_modification.create({
         data: {
-          id: '1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d',
-          id_objet_modifie: '5d657551-baf4-4a67-9752-b3c59effabb1',
-          table_modifie_id: 'indicateur',
+          id: "1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d",
+          id_objet_modifie: "5d657551-baf4-4a67-9752-b3c59effabb1",
+          table_modifie_id: "indicateur",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
-          date_de_modification: '2024-04-31',
-          type_de_modification: 'creation',
+          id_auteur: "416af1ab-a297-42fa-b89a-771cc8d89d0c",
+          date_de_modification: "2024-04-31",
+          type_de_modification: "creation",
         },
       });
 
       // When
-      const mapInformationDerniereModification = await prismaMetadataParametrageIndicateurQuery.listerInformationDerniereModification({ listeIndicId });
+      const mapInformationDerniereModification =
+        await prismaMetadataParametrageIndicateurQuery.listerInformationDerniereModification(
+          { listeIndicId },
+        );
 
       // Then
-      expect(mapInformationDerniereModification.get('a1217dba-f725-4b70-af96-5d3b6e393853')).toEqual({
-        auteurModification: 'DITP Admin',
-        dateDerniereModification: '2024-01-31',
+      expect(
+        mapInformationDerniereModification.get(
+          "a1217dba-f725-4b70-af96-5d3b6e393853",
+        ),
+      ).toEqual({
+        auteurModification: "DITP Admin",
+        dateDerniereModification: "2024-01-31",
       });
-      expect(mapInformationDerniereModification.get('d0fcac64-c020-4682-8824-92e9dec2c914')).toEqual({
-        auteurModification: 'DITP Admin',
-        dateDerniereModification: '2024-01-31',
+      expect(
+        mapInformationDerniereModification.get(
+          "d0fcac64-c020-4682-8824-92e9dec2c914",
+        ),
+      ).toEqual({
+        auteurModification: "DITP Admin",
+        dateDerniereModification: "2024-01-31",
       });
     });
 
-    it('Quand il existe un historique de modification en création et ça appartient à un autre type de table, doit remonter des informations de base', async () => {
+    it("Quand il existe un historique de modification en création et ça appartient à un autre type de table, doit remonter des informations de base", async () => {
       // Given
-      const listeIndicId = ['a1217dba-f725-4b70-af96-5d3b6e393853', 'd0fcac64-c020-4682-8824-92e9dec2c914'];
+      const listeIndicId = [
+        "a1217dba-f725-4b70-af96-5d3b6e393853",
+        "d0fcac64-c020-4682-8824-92e9dec2c914",
+      ];
       await prisma.metadata_indicateurs.create({
         data: {
-          indic_id: 'a1217dba-f725-4b70-af96-5d3b6e393853',
-          indic_nom: 'Un indicateur 1',
-          indic_parent_ch: '',
+          indic_id: "a1217dba-f725-4b70-af96-5d3b6e393853",
+          indic_nom: "Un indicateur 1",
+          indic_parent_ch: "",
         },
       });
       await prisma.metadata_indicateurs.create({
         data: {
-          indic_id: 'd0fcac64-c020-4682-8824-92e9dec2c914',
-          indic_nom: 'Un indicateur 2',
-          indic_parent_ch: '',
+          indic_id: "d0fcac64-c020-4682-8824-92e9dec2c914",
+          indic_nom: "Un indicateur 2",
+          indic_parent_ch: "",
         },
       });
 
       await prisma.historisation_modification.create({
         data: {
-          id: '1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d',
-          id_objet_modifie: 'a1217dba-f725-4b70-af96-5d3b6e393853',
-          table_modifie_id: 'indicateur',
+          id: "1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d",
+          id_objet_modifie: "a1217dba-f725-4b70-af96-5d3b6e393853",
+          table_modifie_id: "indicateur",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
-          date_de_modification: '2024-04-31',
-          type_de_modification: 'creation',
+          id_auteur: "416af1ab-a297-42fa-b89a-771cc8d89d0c",
+          date_de_modification: "2024-04-31",
+          type_de_modification: "creation",
         },
       });
 
       // When
-      const mapInformationDerniereModification = await prismaMetadataParametrageIndicateurQuery.listerInformationDerniereModification({ listeIndicId });
+      const mapInformationDerniereModification =
+        await prismaMetadataParametrageIndicateurQuery.listerInformationDerniereModification(
+          { listeIndicId },
+        );
 
       // Then
-      expect(mapInformationDerniereModification.get('a1217dba-f725-4b70-af96-5d3b6e393853')).toEqual({
-        auteurModification: 'DITP Admin',
-        dateDerniereModification: '2024-01-31',
+      expect(
+        mapInformationDerniereModification.get(
+          "a1217dba-f725-4b70-af96-5d3b6e393853",
+        ),
+      ).toEqual({
+        auteurModification: "DITP Admin",
+        dateDerniereModification: "2024-01-31",
       });
-      expect(mapInformationDerniereModification.get('d0fcac64-c020-4682-8824-92e9dec2c914')).toEqual({
-        auteurModification: 'DITP Admin',
-        dateDerniereModification: '2024-01-31',
+      expect(
+        mapInformationDerniereModification.get(
+          "d0fcac64-c020-4682-8824-92e9dec2c914",
+        ),
+      ).toEqual({
+        auteurModification: "DITP Admin",
+        dateDerniereModification: "2024-01-31",
       });
     });
 
     it("Quand il existe un historique de modification en création et ça appartient à notre indicateur, doit remonter des informations de associé à l'historique", async () => {
       // Given
       // Given
-      const listeIndicId = ['a1217dba-f725-4b70-af96-5d3b6e393853', 'd0fcac64-c020-4682-8824-92e9dec2c914'];
+      const listeIndicId = [
+        "a1217dba-f725-4b70-af96-5d3b6e393853",
+        "d0fcac64-c020-4682-8824-92e9dec2c914",
+      ];
       await prisma.metadata_indicateurs.create({
         data: {
-          indic_id: 'a1217dba-f725-4b70-af96-5d3b6e393853',
-          indic_nom: 'Un indicateur 1',
-          indic_parent_ch: '',
+          indic_id: "a1217dba-f725-4b70-af96-5d3b6e393853",
+          indic_nom: "Un indicateur 1",
+          indic_parent_ch: "",
         },
       });
       await prisma.metadata_indicateurs.create({
         data: {
-          indic_id: 'd0fcac64-c020-4682-8824-92e9dec2c914',
-          indic_nom: 'Un indicateur 2',
-          indic_parent_ch: '',
+          indic_id: "d0fcac64-c020-4682-8824-92e9dec2c914",
+          indic_nom: "Un indicateur 2",
+          indic_parent_ch: "",
         },
       });
 
       await prisma.historisation_modification.create({
         data: {
-          id: '1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d',
-          id_objet_modifie: 'a1217dba-f725-4b70-af96-5d3b6e393853',
-          table_modifie_id: 'metadata_indicateurs',
+          id: "1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d",
+          id_objet_modifie: "a1217dba-f725-4b70-af96-5d3b6e393853",
+          table_modifie_id: "metadata_indicateurs",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
-          date_de_modification: '2024-04-29',
-          type_de_modification: 'creation',
+          id_auteur: "416af1ab-a297-42fa-b89a-771cc8d89d0c",
+          date_de_modification: "2024-04-29",
+          type_de_modification: "creation",
         },
       });
 
       // When
-      const mapInformationDerniereModification = await prismaMetadataParametrageIndicateurQuery.listerInformationDerniereModification({ listeIndicId });
+      const mapInformationDerniereModification =
+        await prismaMetadataParametrageIndicateurQuery.listerInformationDerniereModification(
+          { listeIndicId },
+        );
 
       // Then
-      expect(mapInformationDerniereModification.get('a1217dba-f725-4b70-af96-5d3b6e393853')).toEqual({
-        auteurModification: 'Eloge',
-        dateDerniereModification: '2024-04-29',
+      expect(
+        mapInformationDerniereModification.get(
+          "a1217dba-f725-4b70-af96-5d3b6e393853",
+        ),
+      ).toEqual({
+        auteurModification: "Eloge",
+        dateDerniereModification: "2024-04-29",
       });
-      expect(mapInformationDerniereModification.get('d0fcac64-c020-4682-8824-92e9dec2c914')).toEqual({
-        auteurModification: 'DITP Admin',
-        dateDerniereModification: '2024-01-31',
+      expect(
+        mapInformationDerniereModification.get(
+          "d0fcac64-c020-4682-8824-92e9dec2c914",
+        ),
+      ).toEqual({
+        auteurModification: "DITP Admin",
+        dateDerniereModification: "2024-01-31",
       });
     });
 
-    it('Quand il existe un historique de modification en création et en modification et ça appartient à notre indicateur, doit remonter des informations de pour le premier indicateur et ceux de base pour le second', async () => {
+    it("Quand il existe un historique de modification en création et en modification et ça appartient à notre indicateur, doit remonter des informations de pour le premier indicateur et ceux de base pour le second", async () => {
       // Given
-      const listeIndicId = ['a1217dba-f725-4b70-af96-5d3b6e393853', 'd0fcac64-c020-4682-8824-92e9dec2c914'];
+      const listeIndicId = [
+        "a1217dba-f725-4b70-af96-5d3b6e393853",
+        "d0fcac64-c020-4682-8824-92e9dec2c914",
+      ];
       await prisma.metadata_indicateurs.create({
         data: {
-          indic_id: 'a1217dba-f725-4b70-af96-5d3b6e393853',
-          indic_nom: 'Un indicateur 1',
-          indic_parent_ch: '',
+          indic_id: "a1217dba-f725-4b70-af96-5d3b6e393853",
+          indic_nom: "Un indicateur 1",
+          indic_parent_ch: "",
         },
       });
       await prisma.metadata_indicateurs.create({
         data: {
-          indic_id: 'd0fcac64-c020-4682-8824-92e9dec2c914',
-          indic_nom: 'Un indicateur 2',
-          indic_parent_ch: '',
+          indic_id: "d0fcac64-c020-4682-8824-92e9dec2c914",
+          indic_nom: "Un indicateur 2",
+          indic_parent_ch: "",
         },
       });
       await prisma.historisation_modification.create({
         data: {
-          id: '1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d',
-          id_objet_modifie: 'a1217dba-f725-4b70-af96-5d3b6e393853',
-          table_modifie_id: 'metadata_indicateurs',
+          id: "1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d",
+          id_objet_modifie: "a1217dba-f725-4b70-af96-5d3b6e393853",
+          table_modifie_id: "metadata_indicateurs",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
-          date_de_modification: '2024-04-29',
-          type_de_modification: 'creation',
+          id_auteur: "416af1ab-a297-42fa-b89a-771cc8d89d0c",
+          date_de_modification: "2024-04-29",
+          type_de_modification: "creation",
         },
       });
 
       await prisma.historisation_modification.create({
         data: {
-          id: 'f5824077-2db1-42b3-9092-6ce280e4b425',
-          id_objet_modifie: 'a1217dba-f725-4b70-af96-5d3b6e393853',
-          table_modifie_id: 'metadata_indicateurs',
+          id: "f5824077-2db1-42b3-9092-6ce280e4b425",
+          id_objet_modifie: "a1217dba-f725-4b70-af96-5d3b6e393853",
+          table_modifie_id: "metadata_indicateurs",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: '175fd28c-8129-419e-b2c1-78538461e094',
-          date_de_modification: '2024-05-01',
-          type_de_modification: 'modification',
+          id_auteur: "175fd28c-8129-419e-b2c1-78538461e094",
+          date_de_modification: "2024-05-01",
+          type_de_modification: "modification",
         },
       });
 
       // When
-      const mapInformationDerniereModification = await prismaMetadataParametrageIndicateurQuery.listerInformationDerniereModification({ listeIndicId });
+      const mapInformationDerniereModification =
+        await prismaMetadataParametrageIndicateurQuery.listerInformationDerniereModification(
+          { listeIndicId },
+        );
 
       // Then
-      expect(mapInformationDerniereModification.get('a1217dba-f725-4b70-af96-5d3b6e393853')).toEqual({
-        auteurModification: 'Zakaria',
-        dateDerniereModification: '2024-05-01',
+      expect(
+        mapInformationDerniereModification.get(
+          "a1217dba-f725-4b70-af96-5d3b6e393853",
+        ),
+      ).toEqual({
+        auteurModification: "Zakaria",
+        dateDerniereModification: "2024-05-01",
       });
-      expect(mapInformationDerniereModification.get('d0fcac64-c020-4682-8824-92e9dec2c914')).toEqual({
-        auteurModification: 'DITP Admin',
-        dateDerniereModification: '2024-01-31',
+      expect(
+        mapInformationDerniereModification.get(
+          "d0fcac64-c020-4682-8824-92e9dec2c914",
+        ),
+      ).toEqual({
+        auteurModification: "DITP Admin",
+        dateDerniereModification: "2024-01-31",
       });
     });
 
     it("Quand il existe un historique de modification en création et plusieurs modifications et ça appartient à notre indicateur, doit remonter la dernière historisation de l'indicateur", async () => {
       // Given
-      const listeIndicId = ['a1217dba-f725-4b70-af96-5d3b6e393853', 'd0fcac64-c020-4682-8824-92e9dec2c914'];
+      const listeIndicId = [
+        "a1217dba-f725-4b70-af96-5d3b6e393853",
+        "d0fcac64-c020-4682-8824-92e9dec2c914",
+      ];
       await prisma.metadata_indicateurs.create({
         data: {
-          indic_id: 'a1217dba-f725-4b70-af96-5d3b6e393853',
-          indic_nom: 'Un indicateur 1',
-          indic_parent_ch: '',
+          indic_id: "a1217dba-f725-4b70-af96-5d3b6e393853",
+          indic_nom: "Un indicateur 1",
+          indic_parent_ch: "",
         },
       });
       await prisma.metadata_indicateurs.create({
         data: {
-          indic_id: 'd0fcac64-c020-4682-8824-92e9dec2c914',
-          indic_nom: 'Un indicateur 2',
-          indic_parent_ch: '',
+          indic_id: "d0fcac64-c020-4682-8824-92e9dec2c914",
+          indic_nom: "Un indicateur 2",
+          indic_parent_ch: "",
         },
       });
       await prisma.historisation_modification.create({
         data: {
-          id: '1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d',
-          id_objet_modifie: 'a1217dba-f725-4b70-af96-5d3b6e393853',
-          table_modifie_id: 'metadata_indicateurs',
+          id: "1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d",
+          id_objet_modifie: "a1217dba-f725-4b70-af96-5d3b6e393853",
+          table_modifie_id: "metadata_indicateurs",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
-          date_de_modification: '2024-04-29',
-          type_de_modification: 'creation',
+          id_auteur: "416af1ab-a297-42fa-b89a-771cc8d89d0c",
+          date_de_modification: "2024-04-29",
+          type_de_modification: "creation",
         },
       });
 
       await prisma.historisation_modification.create({
         data: {
-          id: '21aff297-d683-448b-930a-0b7ad4e07ee2',
-          id_objet_modifie: 'a1217dba-f725-4b70-af96-5d3b6e393853',
-          table_modifie_id: 'metadata_indicateurs',
+          id: "21aff297-d683-448b-930a-0b7ad4e07ee2",
+          id_objet_modifie: "a1217dba-f725-4b70-af96-5d3b6e393853",
+          table_modifie_id: "metadata_indicateurs",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: 'c2454574-45b0-4214-b9a2-8025c329b73f',
-          date_de_modification: '2024-05-10',
-          type_de_modification: 'modification',
+          id_auteur: "c2454574-45b0-4214-b9a2-8025c329b73f",
+          date_de_modification: "2024-05-10",
+          type_de_modification: "modification",
         },
       });
 
       await prisma.historisation_modification.create({
         data: {
-          id: 'f5824077-2db1-42b3-9092-6ce280e4b425',
-          id_objet_modifie: 'a1217dba-f725-4b70-af96-5d3b6e393853',
-          table_modifie_id: 'metadata_indicateurs',
+          id: "f5824077-2db1-42b3-9092-6ce280e4b425",
+          id_objet_modifie: "a1217dba-f725-4b70-af96-5d3b6e393853",
+          table_modifie_id: "metadata_indicateurs",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: '175fd28c-8129-419e-b2c1-78538461e094',
-          date_de_modification: '2024-05-01',
-          type_de_modification: 'modification',
+          id_auteur: "175fd28c-8129-419e-b2c1-78538461e094",
+          date_de_modification: "2024-05-01",
+          type_de_modification: "modification",
         },
       });
 
       // When
-      const mapInformationDerniereModification = await prismaMetadataParametrageIndicateurQuery.listerInformationDerniereModification({ listeIndicId });
+      const mapInformationDerniereModification =
+        await prismaMetadataParametrageIndicateurQuery.listerInformationDerniereModification(
+          { listeIndicId },
+        );
 
       // Then
-      expect(mapInformationDerniereModification.get('a1217dba-f725-4b70-af96-5d3b6e393853')).toEqual({
-        auteurModification: 'Gaelle',
-        dateDerniereModification: '2024-05-10',
+      expect(
+        mapInformationDerniereModification.get(
+          "a1217dba-f725-4b70-af96-5d3b6e393853",
+        ),
+      ).toEqual({
+        auteurModification: "Gaelle",
+        dateDerniereModification: "2024-05-10",
       });
-      expect(mapInformationDerniereModification.get('d0fcac64-c020-4682-8824-92e9dec2c914')).toEqual({
-        auteurModification: 'DITP Admin',
-        dateDerniereModification: '2024-01-31',
+      expect(
+        mapInformationDerniereModification.get(
+          "d0fcac64-c020-4682-8824-92e9dec2c914",
+        ),
+      ).toEqual({
+        auteurModification: "DITP Admin",
+        dateDerniereModification: "2024-01-31",
       });
     });
 
-    it('Quand il existe un historique de modification en création et plusieurs modifications et ça appartient pour chaque indicateur, doit remonter la dernière historisation des indicateurs', async () => {
+    it("Quand il existe un historique de modification en création et plusieurs modifications et ça appartient pour chaque indicateur, doit remonter la dernière historisation des indicateurs", async () => {
       // Given
-      const listeIndicId = ['a1217dba-f725-4b70-af96-5d3b6e393853', 'd0fcac64-c020-4682-8824-92e9dec2c914'];
+      const listeIndicId = [
+        "a1217dba-f725-4b70-af96-5d3b6e393853",
+        "d0fcac64-c020-4682-8824-92e9dec2c914",
+      ];
       await prisma.metadata_indicateurs.create({
         data: {
-          indic_id: 'a1217dba-f725-4b70-af96-5d3b6e393853',
-          indic_nom: 'Un indicateur 1',
-          indic_parent_ch: '',
+          indic_id: "a1217dba-f725-4b70-af96-5d3b6e393853",
+          indic_nom: "Un indicateur 1",
+          indic_parent_ch: "",
         },
       });
       await prisma.metadata_indicateurs.create({
         data: {
-          indic_id: 'd0fcac64-c020-4682-8824-92e9dec2c914',
-          indic_nom: 'Un indicateur 2',
-          indic_parent_ch: '',
+          indic_id: "d0fcac64-c020-4682-8824-92e9dec2c914",
+          indic_nom: "Un indicateur 2",
+          indic_parent_ch: "",
         },
       });
 
       await prisma.historisation_modification.create({
         data: {
-          id: '1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d',
-          id_objet_modifie: 'a1217dba-f725-4b70-af96-5d3b6e393853',
-          table_modifie_id: 'metadata_indicateurs',
+          id: "1b6b26f3-90a3-4e36-9c12-2dd4c4f5049d",
+          id_objet_modifie: "a1217dba-f725-4b70-af96-5d3b6e393853",
+          table_modifie_id: "metadata_indicateurs",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: '416af1ab-a297-42fa-b89a-771cc8d89d0c',
-          date_de_modification: '2024-04-29',
-          type_de_modification: 'creation',
+          id_auteur: "416af1ab-a297-42fa-b89a-771cc8d89d0c",
+          date_de_modification: "2024-04-29",
+          type_de_modification: "creation",
         },
       });
 
       await prisma.historisation_modification.create({
         data: {
-          id: '21aff297-d683-448b-930a-0b7ad4e07ee2',
-          id_objet_modifie: 'a1217dba-f725-4b70-af96-5d3b6e393853',
-          table_modifie_id: 'metadata_indicateurs',
+          id: "21aff297-d683-448b-930a-0b7ad4e07ee2",
+          id_objet_modifie: "a1217dba-f725-4b70-af96-5d3b6e393853",
+          table_modifie_id: "metadata_indicateurs",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: 'c2454574-45b0-4214-b9a2-8025c329b73f',
-          date_de_modification: '2024-05-10',
-          type_de_modification: 'modification',
+          id_auteur: "c2454574-45b0-4214-b9a2-8025c329b73f",
+          date_de_modification: "2024-05-10",
+          type_de_modification: "modification",
         },
       });
 
       await prisma.historisation_modification.create({
         data: {
-          id: 'f5824077-2db1-42b3-9092-6ce280e4b425',
-          id_objet_modifie: 'a1217dba-f725-4b70-af96-5d3b6e393853',
-          table_modifie_id: 'metadata_indicateurs',
+          id: "f5824077-2db1-42b3-9092-6ce280e4b425",
+          id_objet_modifie: "a1217dba-f725-4b70-af96-5d3b6e393853",
+          table_modifie_id: "metadata_indicateurs",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: '175fd28c-8129-419e-b2c1-78538461e094',
-          date_de_modification: '2024-05-01',
-          type_de_modification: 'modification',
+          id_auteur: "175fd28c-8129-419e-b2c1-78538461e094",
+          date_de_modification: "2024-05-01",
+          type_de_modification: "modification",
         },
       });
 
       await prisma.historisation_modification.create({
         data: {
-          id: '1ed8b75d-163c-444e-a45d-2f697613b650',
-          id_objet_modifie: 'd0fcac64-c020-4682-8824-92e9dec2c914',
-          table_modifie_id: 'metadata_indicateurs',
+          id: "1ed8b75d-163c-444e-a45d-2f697613b650",
+          id_objet_modifie: "d0fcac64-c020-4682-8824-92e9dec2c914",
+          table_modifie_id: "metadata_indicateurs",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: '988c3812-16c9-4b59-b08c-b81612c426a5',
-          date_de_modification: '2024-05-29',
-          type_de_modification: 'creation',
+          id_auteur: "988c3812-16c9-4b59-b08c-b81612c426a5",
+          date_de_modification: "2024-05-29",
+          type_de_modification: "creation",
         },
       });
 
       await prisma.historisation_modification.create({
         data: {
-          id: '5e6bc681-32b2-467c-855c-e0326cb35c1b',
-          id_objet_modifie: 'd0fcac64-c020-4682-8824-92e9dec2c914',
-          table_modifie_id: 'metadata_indicateurs',
+          id: "5e6bc681-32b2-467c-855c-e0326cb35c1b",
+          id_objet_modifie: "d0fcac64-c020-4682-8824-92e9dec2c914",
+          table_modifie_id: "metadata_indicateurs",
           ancienne_valeur: {},
           nouvelle_valeur: {},
-          id_auteur: 'ee9bb9f6-e365-4d09-9631-f278518fe31e',
-          date_de_modification: '2024-06-10',
-          type_de_modification: 'modification',
+          id_auteur: "ee9bb9f6-e365-4d09-9631-f278518fe31e",
+          date_de_modification: "2024-06-10",
+          type_de_modification: "modification",
         },
       });
 
       // When
-      const mapInformationDerniereModification = await prismaMetadataParametrageIndicateurQuery.listerInformationDerniereModification({ listeIndicId });
+      const mapInformationDerniereModification =
+        await prismaMetadataParametrageIndicateurQuery.listerInformationDerniereModification(
+          { listeIndicId },
+        );
 
       // Then
-      expect(mapInformationDerniereModification.get('a1217dba-f725-4b70-af96-5d3b6e393853')).toEqual({
-        auteurModification: 'Gaelle',
-        dateDerniereModification: '2024-05-10',
+      expect(
+        mapInformationDerniereModification.get(
+          "a1217dba-f725-4b70-af96-5d3b6e393853",
+        ),
+      ).toEqual({
+        auteurModification: "Gaelle",
+        dateDerniereModification: "2024-05-10",
       });
-      expect(mapInformationDerniereModification.get('d0fcac64-c020-4682-8824-92e9dec2c914')).toEqual({
-        auteurModification: 'Laurène',
-        dateDerniereModification: '2024-06-10',
+      expect(
+        mapInformationDerniereModification.get(
+          "d0fcac64-c020-4682-8824-92e9dec2c914",
+        ),
+      ).toEqual({
+        auteurModification: "Laurène",
+        dateDerniereModification: "2024-06-10",
       });
     });
   });

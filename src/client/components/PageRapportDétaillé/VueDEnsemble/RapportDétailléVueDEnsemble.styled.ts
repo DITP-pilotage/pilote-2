@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const RapportDétailléVueDEnsembleStyled = styled.section`
   break-after: always;
-  
+
   .avancements-météos-carto {
     display: grid;
     grid-template-columns: 1fr;
@@ -14,7 +14,7 @@ const RapportDétailléVueDEnsembleStyled = styled.section`
       grid-template-columns: 1fr 1fr;
     }
   }
-  
+
   h2.titre-liste-chantiers {
     color: var(--text-title-grey);
   }
@@ -28,13 +28,13 @@ const RapportDétailléVueDEnsembleStyled = styled.section`
       color: var(--text-default-warning);
     }
   }
-  
+
   @media print {
     .avancements-météos-carto {
       grid-template-columns: 1fr 1fr;
     }
-      
-    .impression-section{
+
+    .impression-section {
       break-inside: avoid;
     }
   }

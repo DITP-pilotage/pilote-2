@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const IndicateurBlocIndicateurTuile = styled.div`
   table {
@@ -6,7 +6,7 @@ const IndicateurBlocIndicateurTuile = styled.div`
     overflow: hidden;
     background-color: var(--grey-1000-50);
   }
-  
+
   thead {
     background-color: var(--background-action-low-blue-france);
     background-image: unset;
@@ -29,7 +29,7 @@ const IndicateurBlocIndicateurTuile = styled.div`
 
     td {
       line-height: 1.25rem;
-      
+
       &.libellés {
         width: 9rem;
         font-weight: bold;
@@ -39,10 +39,10 @@ const IndicateurBlocIndicateurTuile = styled.div`
 
   .indicateur-bloc--avec-date {
     display: flex;
-    gap: .25rem;
+    gap: 0.25rem;
 
     & span:nth-of-type(2) {
-      font-size: .625rem;
+      font-size: 0.625rem;
     }
   }
 `;

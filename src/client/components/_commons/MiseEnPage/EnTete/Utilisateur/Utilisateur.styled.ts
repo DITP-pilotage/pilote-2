@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 interface UtilisateurStyledProps {
-  estDéplié: boolean
+  estDéplié: boolean;
 }
 
 const UtilisateurStyled = styled.div<UtilisateurStyledProps>`
@@ -10,7 +10,8 @@ const UtilisateurStyled = styled.div<UtilisateurStyledProps>`
   .fr-icon-arrow-right-s-line {
     ::before {
       transition: transform ease-in-out 0.2s;
-      transform: ${(props) => props.estDéplié ? 'rotate(90deg)' : 'rotate(0)'};
+      transform: ${(props) =>
+        props.estDéplié ? "rotate(90deg)" : "rotate(0)"};
     }
   }
 `;

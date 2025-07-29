@@ -1,8 +1,11 @@
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
-import { RouterInputs } from '@/server/infrastructure/api/trpc/trpc.interface';
+import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
+import { RouterInputs } from "@/server/infrastructure/api/trpc/trpc.interface";
 
 export interface UtilisateurFormulaireProps {
-  utilisateur?: Utilisateur
+  utilisateur?: Utilisateur;
 }
 
-export type UtilisateurFormInputs =  Omit<RouterInputs['utilisateur']['créer'], 'csrf'>;
+export type UtilisateurFormInputs = Omit<
+  RouterInputs["utilisateur"]["créer"],
+  "csrf"
+>;

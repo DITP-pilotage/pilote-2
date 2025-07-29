@@ -1,33 +1,31 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { useSession } from 'next-auth/react';
-import Titre from '@/components/_commons/Titre/Titre';
-import Bloc from '@/components/_commons/Bloc/Bloc';
-import TableauAdminUtilisateurs
-  from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/TableauAdminUtilisateurs';
-import Alerte from '@/client/components/_commons/Alerte/Alerte';
-import AlerteProps from '@/client/components/_commons/Alerte/Alerte.interface';
-import { AdminUtilisateursBarreLatérale }
-  from '@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale';
-import '@gouvfr/dsfr/dist/component/select/select.min.css';
-import '@gouvfr/dsfr/dist/component/form/form.min.css';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
-import { PerimetreMinisteriel } from '@/server/gestion-utilisateur/domain/PerimetreMinisteriel';
-import { Profil } from '@/server/gestion-utilisateur/domain/Profil';
-import { UtilisateurListeGestionContrat } from '@/server/app/contrats/UtilisateurListeGestionContrat';
-import { TerritoireAvecNombreUtilisateurs } from '@/server/gestion-utilisateur/domain/Territoire';
-import { ExportDesDonnees } from '@/components/PageAdminUtilisateurs/ExportDesDonnees/ExportDesDonnees';
+import React, { FunctionComponent, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import Titre from "@/components/_commons/Titre/Titre";
+import Bloc from "@/components/_commons/Bloc/Bloc";
+import TableauAdminUtilisateurs from "@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/TableauAdminUtilisateurs";
+import Alerte from "@/client/components/_commons/Alerte/Alerte";
+import AlerteProps from "@/client/components/_commons/Alerte/Alerte.interface";
+import { AdminUtilisateursBarreLatérale } from "@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale";
+import "@gouvfr/dsfr/dist/component/select/select.min.css";
+import "@gouvfr/dsfr/dist/component/form/form.min.css";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
+import { PerimetreMinisteriel } from "@/server/gestion-utilisateur/domain/PerimetreMinisteriel";
+import { Profil } from "@/server/gestion-utilisateur/domain/Profil";
+import { UtilisateurListeGestionContrat } from "@/server/app/contrats/UtilisateurListeGestionContrat";
+import { TerritoireAvecNombreUtilisateurs } from "@/server/gestion-utilisateur/domain/Territoire";
+import { ExportDesDonnees } from "@/components/PageAdminUtilisateurs/ExportDesDonnees/ExportDesDonnees";
 
 const PageAdminUtilisateurs: FunctionComponent<{
-  listeUtilisateurs: UtilisateurListeGestionContrat[],
-  nombreUtilisateur: number,
-  listeChantiers: ChantierSynthétisé[]
-  listePerimetresMinisteriel: PerimetreMinisteriel[]
-  listePerimetresMinisterielSelectionnable: PerimetreMinisteriel[]
-  listeProfils: Profil[]
-  listeTerritoiresSelectionnable: TerritoireAvecNombreUtilisateurs[]
+  listeUtilisateurs: UtilisateurListeGestionContrat[];
+  nombreUtilisateur: number;
+  listeChantiers: ChantierSynthétisé[];
+  listePerimetresMinisteriel: PerimetreMinisteriel[];
+  listePerimetresMinisterielSelectionnable: PerimetreMinisteriel[];
+  listeProfils: Profil[];
+  listeTerritoiresSelectionnable: TerritoireAvecNombreUtilisateurs[];
 }> = ({
   listeUtilisateurs,
   nombreUtilisateur,
@@ -44,84 +42,85 @@ const PageAdminUtilisateurs: FunctionComponent<{
 
   const donneLaRedirection = () => {
     if (!session) {
-      return '/';
+      return "/";
     }
 
-    return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session.profil) ? '/admin/utilisateur/creer' : '/admin/utilisateur/creer/aide';
+    return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(
+      session.profil,
+    )
+      ? "/admin/utilisateur/creer"
+      : "/admin/utilisateur/creer/aide";
   };
 
   useEffect(() => {
-    if (router.query['compteCréé']) {
+    if (router.query["compteCréé"]) {
       setAlerte({
-        titre: 'Bravo, le compte a bien été créé !',
-        type: 'succès',
-        message: 'Un mail lui a été envoyé pour définir son mot de passe.',
+        titre: "Bravo, le compte a bien été créé !",
+        type: "succès",
+        message: "Un mail lui a été envoyé pour définir son mot de passe.",
       });
     }
 
-    if (router.query['compteModifié']) {
+    if (router.query["compteModifié"]) {
       setAlerte({
-        titre: 'Bravo, le compte a bien été modifié !',
-        type: 'succès',
+        titre: "Bravo, le compte a bien été modifié !",
+        type: "succès",
       });
     }
 
-    if (router.query['compteRéactivé']) {
+    if (router.query["compteRéactivé"]) {
       setAlerte({
-        titre: 'Bravo, le compte a bien été réactivé !',
-        type: 'succès',
+        titre: "Bravo, le compte a bien été réactivé !",
+        type: "succès",
       });
     }
 
-    if (router.query['compteDésactivé']) {
+    if (router.query["compteDésactivé"]) {
       setAlerte({
-        titre: 'Le compte a bien été désactivé.',
-        type: 'succès',
+        titre: "Le compte a bien été désactivé.",
+        type: "succès",
       });
       window.scroll(0, 0);
     }
   }, [router]);
 
   return (
-    <div className='flex'>
+    <div className="flex">
       <AdminUtilisateursBarreLatérale
         estOuverteBarreLatérale={estOuverteBarreLatérale}
         listeChantiers={listeChantiers}
         listePerimetresMinisteriel={listePerimetresMinisteriel}
-        listePerimetresMinisterielSelectionnable={listePerimetresMinisterielSelectionnable}
+        listePerimetresMinisterielSelectionnable={
+          listePerimetresMinisterielSelectionnable
+        }
         listeProfils={listeProfils}
         listeTerritoiresSelectionnable={listeTerritoiresSelectionnable}
         setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
       />
       <main>
-        <div className='fr-mt-4w fr-mx-4w fr-mb-3w'>
-          {
-            alerte ? (
-              <div className='fr-my-4w'>
-                <Alerte
-                  message={alerte.message}
-                  titre={alerte.titre}
-                  type={alerte.type}
-                />
-              </div>
-            ) : null
-          }
-          <div className='fr-grid-row fr-grid-row--middle fr-mb-3w'>
-            <div className='fr-col-12 fr-col-md-6'>
-              <Titre
-                baliseHtml='h1'
-                className='fr-h1 fr-mb-0'
-              >
+        <div className="fr-mt-4w fr-mx-4w fr-mb-3w">
+          {alerte ? (
+            <div className="fr-my-4w">
+              <Alerte
+                message={alerte.message}
+                titre={alerte.titre}
+                type={alerte.type}
+              />
+            </div>
+          ) : null}
+          <div className="fr-grid-row fr-grid-row--middle fr-mb-3w">
+            <div className="fr-col-12 fr-col-md-6">
+              <Titre baliseHtml="h1" className="fr-h1 fr-mb-0">
                 Gestion des comptes
               </Titre>
             </div>
-            <div className='fr-col-12 fr-col-md-6'>
-              <div className='flex justify-end align-center'>
+            <div className="fr-col-12 fr-col-md-6">
+              <div className="flex justify-end align-center">
                 <ExportDesDonnees />
                 <Link
-                  className='fr-btn fr-btn--icon-left fr-icon-checkbox-circle-line fr-ml-2w'
+                  className="fr-btn fr-btn--icon-left fr-icon-checkbox-circle-line fr-ml-2w"
                   href={donneLaRedirection()}
-                  title='Créer un compte'
+                  title="Créer un compte"
                 >
                   Créer un compte
                 </Link>

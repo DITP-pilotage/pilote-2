@@ -13,14 +13,22 @@ export class Indicateur {
 
   private readonly _uniteMesure: string | null;
 
-  private constructor({ id, nom, dateValeurAvancement, objectifTauxAvancement, valeurAvancement, valeurCible, uniteMesure }: {
-    id: string,
-    nom: string,
-    dateValeurAvancement: string,
-    objectifTauxAvancement: number | null,
-    valeurAvancement: number | null,
-    valeurCible: number | null,
-    uniteMesure: string | null
+  private constructor({
+    id,
+    nom,
+    dateValeurAvancement,
+    objectifTauxAvancement,
+    valeurAvancement,
+    valeurCible,
+    uniteMesure,
+  }: {
+    id: string;
+    nom: string;
+    dateValeurAvancement: string;
+    objectifTauxAvancement: number | null;
+    valeurAvancement: number | null;
+    valeurCible: number | null;
+    uniteMesure: string | null;
   }) {
     this._id = id;
     this._nom = nom;
@@ -60,15 +68,31 @@ export class Indicateur {
     return this._uniteMesure;
   }
 
-  static creerIndicateur({ id, nom, dateValeurAvancement, objectifTauxAvancement, valeurAvancement, valeurCible, uniteMesure }: {
-    id: string,
-    nom: string,
-    dateValeurAvancement: string,
-    objectifTauxAvancement: number | null,
-    valeurAvancement: number | null,
-    valeurCible: number | null,
-    uniteMesure: string | null
+  static creerIndicateur({
+    id,
+    nom,
+    dateValeurAvancement,
+    objectifTauxAvancement,
+    valeurAvancement,
+    valeurCible,
+    uniteMesure,
+  }: {
+    id: string;
+    nom: string;
+    dateValeurAvancement: string;
+    objectifTauxAvancement: number | null;
+    valeurAvancement: number | null;
+    valeurCible: number | null;
+    uniteMesure: string | null;
   }) {
-    return new Indicateur({ id, nom, dateValeurAvancement, objectifTauxAvancement, valeurAvancement, valeurCible, uniteMesure });
+    return new Indicateur({
+      id,
+      nom,
+      dateValeurAvancement,
+      objectifTauxAvancement,
+      valeurAvancement,
+      valeurCible,
+      uniteMesure,
+    });
   }
 }

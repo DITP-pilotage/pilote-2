@@ -1,4 +1,4 @@
-import { useFormContext, UseFormWatch } from 'react-hook-form';
+import { useFormContext, UseFormWatch } from "react-hook-form";
 
 export type MetadataParametrageParametreIndicateurNationaleForm = {
   viNatFrom: string;
@@ -9,17 +9,25 @@ export type MetadataParametrageParametreIndicateurNationaleForm = {
   vcNatOp: string;
 };
 
-function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageParametreIndicateurNationaleForm>) {
-  watch('viNatFrom');
-  watch('viNatOp');
-  watch('vaNatFrom');
-  watch('vaNatOp');
-  watch('vcNatFrom');
-  watch('vcNatOp');
+function activerWatchSurSelecteur(
+  watch: UseFormWatch<MetadataParametrageParametreIndicateurNationaleForm>,
+) {
+  watch("viNatFrom");
+  watch("viNatOp");
+  watch("vaNatFrom");
+  watch("vaNatOp");
+  watch("vcNatFrom");
+  watch("vcNatOp");
 }
 
 export default function useDétailsMetadataParametreIndicateurNationaleForm() {
-  const { register, watch, getValues, setValue, formState: { errors } } = useFormContext<MetadataParametrageParametreIndicateurNationaleForm>();
+  const {
+    register,
+    watch,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = useFormContext<MetadataParametrageParametreIndicateurNationaleForm>();
 
   activerWatchSurSelecteur(watch);
 

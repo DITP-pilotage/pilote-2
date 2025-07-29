@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const PageImportIndicateurSectionRessourceStyled = styled.section`
   background: var(--background-alt-blue-france);

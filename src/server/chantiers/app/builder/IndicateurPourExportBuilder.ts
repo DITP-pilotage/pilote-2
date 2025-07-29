@@ -1,7 +1,7 @@
-import { IndicateurPourExport } from '@/server/chantiers/domain/IndicateurPourExport';
+import { IndicateurPourExport } from "@/server/chantiers/domain/IndicateurPourExport";
 
 export class IndicateurPourExportBuilder {
-  private maille = 'NAT';
+  private maille = "NAT";
 
   private régionNom = null;
 
@@ -29,11 +29,11 @@ export class IndicateurPourExportBuilder {
 
   private chantierAvancementAnnuel = null;
 
-  private périmètreIds = ['PER-001'];
+  private périmètreIds = ["PER-001"];
 
   private météo = null;
 
-  private nom: string = 'Un nom';
+  private nom: string = "Un nom";
 
   private valeurInitiale = null;
 
@@ -57,16 +57,16 @@ export class IndicateurPourExportBuilder {
 
   private estApplicable = true;
 
-  private maillesApplicables = ['NAT', 'REG', 'DEPT'];
+  private maillesApplicables = ["NAT", "REG", "DEPT"];
 
   private chantierEcart = null;
-  
+
   private chantierTendance = null;
-  
+
   private chantierCibleAttendue = true;
-  
+
   private chantierAUnTauxAvancementDepartemental = true;
-  
+
   private chantierAUnePropositionValeurAvancement = true;
 
   withNom(nom: string) {
@@ -116,8 +116,10 @@ export class IndicateurPourExportBuilder {
       estApplicable: this.estApplicable,
       maillesApplicables: this.maillesApplicables,
       chantierEcart: this.chantierEcart,
-      chantierAUnePropositionValeurAvancement: this.chantierAUnePropositionValeurAvancement,
-      chantierAUnTauxAvancementDepartemental: this.chantierAUnTauxAvancementDepartemental,
+      chantierAUnePropositionValeurAvancement:
+        this.chantierAUnePropositionValeurAvancement,
+      chantierAUnTauxAvancementDepartemental:
+        this.chantierAUnTauxAvancementDepartemental,
       chantierCibleAttendue: this.chantierCibleAttendue,
       chantierTendance: this.chantierTendance,
     };

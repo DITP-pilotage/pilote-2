@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const SélecteurIndicateurActif = styled.div`
   display: flex;
@@ -14,17 +14,17 @@ const SélecteurIndicateurActif = styled.div`
     &.sélectionné {
       color: var(--text-inverted-grey);
       background-color: var(--background-active-blue-france);
-        
+
       &:disabled {
         background-color: var(--text-disabled-grey);
       }
-      
+
       &.inactif {
         background-color: var(--background-active-red-marianne);
-          
-          &:disabled {
-              background-color: var(--text-disabled-grey);
-          }
+
+        &:disabled {
+          background-color: var(--text-disabled-grey);
+        }
       }
     }
   }

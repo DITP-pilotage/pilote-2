@@ -1,20 +1,16 @@
-
-import { FunctionComponent } from 'react';
-import UtilisateurFormulaire from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire';
-import FilAriane from '@/client/components/_commons/FilAriane/FilAriane';
-import PageCréerUtilisateurStyled from './PageCréerUtilisateur.styled';
+import { FunctionComponent } from "react";
+import UtilisateurFormulaire from "@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire";
+import FilAriane from "@/client/components/_commons/FilAriane/FilAriane";
+import PageCréerUtilisateurStyled from "./PageCréerUtilisateur.styled";
 
 const PageCréerUtilisateur: FunctionComponent<{}> = () => {
-  const chemin = [{ nom:'Gestion des comptes', lien:'/admin/utilisateurs' }];
+  const chemin = [{ nom: "Gestion des comptes", lien: "/admin/utilisateurs" }];
 
   return (
-    <PageCréerUtilisateurStyled className='fr-pt-2w' >
-      <main className='fr-container'>
-        <FilAriane
-          chemin={chemin}
-          libelléPageCourante='Ajouter un compte'
-        />
-        <div className='fr-pb-4w'>
+    <PageCréerUtilisateurStyled className="fr-pt-2w">
+      <main className="fr-container">
+        <FilAriane chemin={chemin} libelléPageCourante="Ajouter un compte" />
+        <div className="fr-pb-4w">
           <UtilisateurFormulaire />
         </div>
       </main>

@@ -1,10 +1,17 @@
-import { ministere, perimetre, Prisma } from '@prisma/client';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
-import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
-import Ministère from '@/server/domain/ministère/Ministère.interface';
-import { prisma } from '@/server/db/prisma';
+import { ministere, perimetre, Prisma } from "@prisma/client";
+import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
+import MinistèreRepository from "@/server/domain/ministère/MinistèreRepository.interface";
+import Ministère from "@/server/domain/ministère/Ministère.interface";
+import { prisma } from "@/server/db/prisma";
 
-type MinistèreQueryResult = { nom: string, id: string, acronyme: string, icone: string, perimetre_ids: string[], perimetre_noms: string[] };
+type MinistèreQueryResult = {
+  nom: string;
+  id: string;
+  acronyme: string;
+  icone: string;
+  perimetre_ids: string[];
+  perimetre_noms: string[];
+};
 
 export default class MinistèreSQLRepository implements MinistèreRepository {
   async getListe(): Promise<Ministère[]> {
@@ -20,10 +27,12 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
         group by m.nom, p.ministere_id, m.icone, m.acronyme
         order by m.nom, p.ministere_id;
     `;
-    return queryResults.map(queryResult => this.parseMinistère(queryResult));
+    return queryResults.map((queryResult) => this.parseMinistère(queryResult));
   }
 
-  private parseMinistère(ministèreQueryResult: MinistèreQueryResult): Ministère {
+  private parseMinistère(
+    ministèreQueryResult: MinistèreQueryResult,
+  ): Ministère {
     const périmètres: PérimètreMinistériel[] = [];
     for (let i = 0; i < ministèreQueryResult.perimetre_ids.length; ++i) {
       périmètres.push({
@@ -60,10 +69,12 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
         group by m.nom, p.ministere_id, m.icone, m.acronyme
         order by CASE WHEN p.ministere_id = '1009' THEN 0 ELSE 1 END, m.nom, p.ministere_id;
     `;
-    return queryResults.map(queryResult => this.parseMinistère(queryResult));
+    return queryResults.map((queryResult) => this.parseMinistère(queryResult));
   }
 
-  async récupérerToutesLesIconesAssociéesÀLeurPérimètre(): Promise<{ perimetre_id: perimetre['id'], icone: ministere['icone'] }[]> {
+  async récupérerToutesLesIconesAssociéesÀLeurPérimètre(): Promise<
+    { perimetre_id: perimetre["id"]; icone: ministere["icone"] }[]
+  > {
     return prisma.$queryRaw`
       SELECT p.id AS perimetre_id, m.icone
       FROM perimetre p
@@ -72,7 +83,9 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
 `;
   }
 
-  async récupérerLesNomsAssociésÀLeurPérimètre(périmètresIds: perimetre['id'][]): Promise<{ perimetre_id: perimetre['id'], nom: ministere['nom'] }[]> {
+  async récupérerLesNomsAssociésÀLeurPérimètre(
+    périmètresIds: perimetre["id"][],
+  ): Promise<{ perimetre_id: perimetre["id"]; nom: ministere["nom"] }[]> {
     return prisma.$queryRaw`
       SELECT p.id AS perimetre_id, m.nom
       FROM perimetre p

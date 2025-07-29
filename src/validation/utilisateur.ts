@@ -1,31 +1,42 @@
-import { z } from 'zod';
-import { ProfilCode, profilsCodes } from '@/server/domain/utilisateur/Utilisateur.interface';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { z } from "zod";
+import {
+  ProfilCode,
+  profilsCodes,
+} from "@/server/domain/utilisateur/Utilisateur.interface";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
-const customErrorMail = "Vous essayez de créer un compte pour une adresse dont le domaine n'est pas en .gouv.fr. Veuillez contacter pilote.ditp@modernisation.gouv.fr pour plus d'informations.";
+const customErrorMail =
+  "Vous essayez de créer un compte pour une adresse dont le domaine n'est pas en .gouv.fr. Veuillez contacter pilote.ditp@modernisation.gouv.fr pour plus d'informations.";
 
 const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
-  if (issue.code === z.ZodIssueCode.invalid_string && issue.validation === 'email') {
+  if (
+    issue.code === z.ZodIssueCode.invalid_string &&
+    issue.validation === "email"
+  ) {
     return { message: "L'adresse électronique saisie n'est pas valide" };
   }
-  if (issue.code === z.ZodIssueCode.too_small ) {
+  if (issue.code === z.ZodIssueCode.too_small) {
     return issue.minimum > 1
-      ? { message: `Le champ est requis (${issue.minimum} caractère(s) minimum)` }
-      : { message: 'Le champ est requis' };
+      ? {
+          message: `Le champ est requis (${issue.minimum} caractère(s) minimum)`,
+        }
+      : { message: "Le champ est requis" };
   }
-  if (issue.code === z.ZodIssueCode.too_big ) {
-    return { message: `La longueur maximale du champ est dépassée (${issue.maximum} caractères maximum)` };
+  if (issue.code === z.ZodIssueCode.too_big) {
+    return {
+      message: `La longueur maximale du champ est dépassée (${issue.maximum} caractères maximum)`,
+    };
   }
 
-  if (issue.code === z.ZodIssueCode.invalid_enum_value ) {
-    return { message: 'Veuillez choisir une option' };
+  if (issue.code === z.ZodIssueCode.invalid_enum_value) {
+    return { message: "Veuillez choisir une option" };
   }
   return { message: ctx.defaultError };
 };
 
 z.setErrorMap(customErrorMap);
 
-export const validationInfosBaseUtilisateur = z.object( {
+export const validationInfosBaseUtilisateur = z.object({
   email: z.string().email().min(1).max(100),
   nom: z.string().min(1).max(100),
   prénom: z.string().min(1).max(100),
@@ -36,15 +47,20 @@ export const validationInfosBaseUtilisateur = z.object( {
 });
 
 const adresseEstValide = (adresse: string) => {
-  return adresse.endsWith('.gouv.fr') 
-    || /^.+@ac-[\da-z\-]+\.fr$/i.test(adresse) 
-    || /^.+@region-academique-[\da-z\-]+\.fr$/i.test(adresse);
+  return (
+    adresse.endsWith(".gouv.fr") ||
+    /^.+@ac-[\da-z\-]+\.fr$/i.test(adresse) ||
+    /^.+@region-academique-[\da-z\-]+\.fr$/i.test(adresse)
+  );
 };
 
 export const validationInfosBaseUtilisateurNonAdmin = z.object({
-  email: z.string().email().min(1).max(100).refine((value) =>
-    adresseEstValide(value), { message: customErrorMail },
-  ),
+  email: z
+    .string()
+    .email()
+    .min(1)
+    .max(100)
+    .refine((value) => adresseEstValide(value), { message: customErrorMail }),
   nom: z.string().min(1).max(100),
   prénom: z.string().min(1).max(100),
   fonction: z.string().max(100).nullable(),
@@ -53,7 +69,7 @@ export const validationInfosBaseUtilisateurNonAdmin = z.object({
 });
 
 export const validationInfosHabilitationsUtilisateur = z.object({
-  habilitations : z.object({
+  habilitations: z.object({
     lecture: z.object({
       chantiers: z.string().array(),
       territoires: z.string().array(),
@@ -75,16 +91,20 @@ export const validationFiltresPourListeUtilisateurNew = z.object({
     périmètresMinistériels: z.string().array(),
     chantiersAssociésAuxPérimètres: z.string().array(),
     profils: z.enum(profilsCodes).array(),
-    typesCompte: z.enum(['actif', 'desactive']).array(),
+    typesCompte: z.enum(["actif", "desactive"]).array(),
   }),
   pagination: z.object({
     pageIndex: z.number(),
     pageSize: z.number(),
   }),
-  sorting: z.object({
-    id: z.string().regex(/email|nom|prénom|profil|fonction|Dernière modification/),
-    desc: z.boolean(),
-  }).array(),
+  sorting: z
+    .object({
+      id: z
+        .string()
+        .regex(/email|nom|prénom|profil|fonction|Dernière modification/),
+      desc: z.boolean(),
+    })
+    .array(),
   valeurDeLaRecherche: z.string(),
 });
 
@@ -105,8 +125,22 @@ export const validationEnvoyerMailInscriptionInfolettre = z.object({
   lienConfirmationInscription: z.string(),
 });
 
-export const codesTerritoiresDROM = ['NAT-FR', 'REG-01', 'REG-02', 'REG-03', 'REG-04', 'REG-06', 'DEPT-971', 'DEPT-972', 'DEPT-973', 'DEPT-974', 'DEPT-976'];
+export const codesTerritoiresDROM = [
+  "NAT-FR",
+  "REG-01",
+  "REG-02",
+  "REG-03",
+  "REG-04",
+  "REG-06",
+  "DEPT-971",
+  "DEPT-972",
+  "DEPT-973",
+  "DEPT-974",
+  "DEPT-976",
+];
 
 export const donneValidationInfosBaseUtilisateur = (profil: ProfilCode) => {
-  return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(profil) ? validationInfosBaseUtilisateur : validationInfosBaseUtilisateurNonAdmin;
+  return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(profil)
+    ? validationInfosBaseUtilisateur
+    : validationInfosBaseUtilisateurNonAdmin;
 };

@@ -1,3 +1,3 @@
 export interface UtilisateurRepository {
-  estPresent: ({ email }: { email: string }) => Promise<boolean>
+  estPresent: ({ email }: { email: string }) => Promise<boolean>;
 }

@@ -1,18 +1,18 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const BarreDeProgressionStyled = styled.div`
   max-width: 100%;
 
   .fr-btn {
-    width: var(--icon-size)!important;
-    min-width: var(--icon-size)!important;
-    height: var(--icon-size)!important;
-    min-height: var(--icon-size)!important;
-    padding: 0!important;
-    margin: 0!important;
+    width: var(--icon-size) !important;
+    min-width: var(--icon-size) !important;
+    height: var(--icon-size) !important;
+    min-height: var(--icon-size) !important;
+    padding: 0 !important;
+    margin: 0 !important;
 
     &::before {
-      margin-right: 0!important;
+      margin-right: 0 !important;
     }
   }
 
@@ -21,67 +21,67 @@ const BarreDeProgressionStyled = styled.div`
       display: block;
       width: 100%;
       border-radius: 0.375rem;
-      
+
       &.progress--xxs {
         height: 0.5rem;
       }
-      
+
       &.progress--xs {
         height: 0.625rem;
       }
-      
+
       &.progress--sm {
         height: 0.75rem;
       }
-      
+
       &.progress--md {
         height: 0.75rem;
       }
-      
+
       &.progress--lg {
         height: 2rem;
       }
-      
+
       &.progress--bleu {
         background-color: var(--blue-ecume-850-200);
-        
+
         &::-webkit-progress-bar {
-            background-color: var(--blue-ecume-850-200);
+          background-color: var(--blue-ecume-850-200);
         }
       }
-      
+
       &.progress--blanc {
         background-color: #fff;
-        
+
         &::-webkit-progress-bar {
-            background-color: #fff;
+          background-color: #fff;
         }
       }
-      
+
       &.progress--gris-moyen {
         background-color: #bababa;
-        
+
         &::-webkit-progress-bar {
-            background-color: #bababa;
+          background-color: #bababa;
         }
       }
-      
+
       &.progress--gris-clair {
-        background-color: #E5E5E5;
-        
+        background-color: #e5e5e5;
+
         &::-webkit-progress-bar {
-            background-color: #E5E5E5;
+          background-color: #e5e5e5;
         }
       }
-      
+
       &.progress--border-bleu {
-        border: 1px solid var(--blue-ecume-850-200)
+        border: 1px solid var(--blue-ecume-850-200);
       }
-      
+
       &.progress--border-gris-moyen {
-        border: 1px solid #bababa
+        border: 1px solid #bababa;
       }
-      
+
       &::-webkit-progress-bar {
         border-radius: 0.375rem;
       }
@@ -97,18 +97,18 @@ const BarreDeProgressionStyled = styled.div`
       &.progress--primaire {
         &::-moz-progress-bar {
           background-color: var(--background-action-high-blue-france);
-        } 
-        
+        }
+
         &::-webkit-progress-value {
           background-color: var(--background-action-high-blue-france);
         }
       }
 
-       &.progress--bleu-clair {
-          &::-moz-progress-bar {
+      &.progress--bleu-clair {
+        &::-moz-progress-bar {
           background-color: var(--background-flat-info);
-        } 
-        
+        }
+
         &::-webkit-progress-value {
           background-color: var(--background-flat-info);
         }
@@ -117,8 +117,8 @@ const BarreDeProgressionStyled = styled.div`
       &.progress--primaire-light {
         &::-moz-progress-bar {
           background-color: var(--blue-france-sun-113-625);
-        } 
-        
+        }
+
         &::-webkit-progress-value {
           background-color: var(--blue-france-sun-113-625);
         }
@@ -128,7 +128,7 @@ const BarreDeProgressionStyled = styled.div`
         &::-moz-progress-bar {
           background-color: #666;
         }
-        
+
         &::-webkit-progress-value {
           background-color: #666;
         }
@@ -138,7 +138,7 @@ const BarreDeProgressionStyled = styled.div`
         &::-moz-progress-bar {
           background-color: #929292;
         }
-        
+
         &::-webkit-progress-value {
           background-color: #929292;
         }
@@ -146,26 +146,26 @@ const BarreDeProgressionStyled = styled.div`
 
       &.progress--rose {
         &::-moz-progress-bar {
-            background-color: var(--background-action-high-pink-tuile);
-        }
-        
-        &::-webkit-progress-value {
-            background-color: var(--background-action-high-pink-tuile);
-        }
-      }
-      
-      &.progress--jaune-moutarde {
-        &::-moz-progress-bar {
-          background-color: var(--yellow-moutarde-main-679)!important;
+          background-color: var(--background-action-high-pink-tuile);
         }
 
         &::-webkit-progress-value {
-          background-color: var(--yellow-moutarde-main-679)!important;
+          background-color: var(--background-action-high-pink-tuile);
+        }
+      }
+
+      &.progress--jaune-moutarde {
+        &::-moz-progress-bar {
+          background-color: var(--yellow-moutarde-main-679) !important;
+        }
+
+        &::-webkit-progress-value {
+          background-color: var(--yellow-moutarde-main-679) !important;
         }
       }
     }
   }
-  
+
   .pourcentage {
     &.pourcentage--bleu {
       color: var(--blue-ecume-850-200);
@@ -184,10 +184,10 @@ const BarreDeProgressionStyled = styled.div`
     }
 
     &.pourcentage--gris-clair {
-      color: #E5E5E5;
+      color: #e5e5e5;
     }
   }
-  
+
   &.texte-côté {
     flex-direction: row;
     align-items: center;
@@ -198,25 +198,25 @@ const BarreDeProgressionStyled = styled.div`
 
     .pourcentage {
       &.pourcentage--xxs {
-        width: 2.5rem;                
+        width: 2.5rem;
       }
-      
+
       &.pourcentage--xs {
-        width: 2.5rem;                
+        width: 2.5rem;
       }
-      
+
       &.pourcentage--sm {
-        width: 2.5rem;                
+        width: 2.5rem;
       }
-      
+
       &.pourcentage--md {
-        width: 2.5rem;                
+        width: 2.5rem;
       }
-      
+
       &.pourcentage--lg {
-        width: 6.5rem;                
+        width: 6.5rem;
       }
-      
+
       p {
         padding-left: 0.5em;
         text-align: right;
@@ -225,7 +225,7 @@ const BarreDeProgressionStyled = styled.div`
       }
     }
   }
-  
+
   &.texte-dessus {
     flex-direction: column-reverse;
   }

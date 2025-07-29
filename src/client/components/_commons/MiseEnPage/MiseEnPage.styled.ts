@@ -1,38 +1,42 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
-export const breakpointL = '992px';
+export const breakpointL = "992px";
 
 const MiseEnPageStyled = styled.div`
   word-break: break-word;
 
   .fr-header {
-      z-index: 2;
-    }
+    z-index: 2;
+  }
 
   @media print {
     @page {
       margin: 1.5cm 1cm;
     }
-    
-    .barre-latérale, .fr-btn, .fr-link, .fr-header, .fr-footer {
+
+    .barre-latérale,
+    .fr-btn,
+    .fr-link,
+    .fr-header,
+    .fr-footer {
       display: none !important;
     }
 
     *::-webkit-scrollbar {
       display: none;
     }
-    
+
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
-    
+
     main {
       background: #fff !important;
     }
   }
-  
+
   main {
     flex-grow: 1;
-    background:  var(--background-alt-blue-france);
+    background: var(--background-alt-blue-france);
 
     h1 {
       color: var(--text-title-blue-france);
@@ -48,19 +52,19 @@ const MiseEnPageStyled = styled.div`
     background-color: var(--background-alt-overlap-grey);
     filter: drop-shadow(var(--overlap-shadow));
     box-shadow: inset 0 0 0 1px var(--border-default-grey);
-    
+
     .toaster-texte {
       padding: 1rem;
       margin: 0;
     }
-    
+
     .progress {
       position: relative;
       width: 100%;
       height: 0.4em;
       background-color: rgb(229 233 235);
     }
-    
+
     .progress-bar-green {
       position: relative;
       height: 100%;
@@ -71,71 +75,86 @@ const MiseEnPageStyled = styled.div`
   }
 
   @keyframes cssload-width {
-    0%, 100% {
+    0%,
+    100% {
       transition-timing-function: cubic-bezier(1, 0, 0.65, 0.85);
     }
-    
-    0% { /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
+
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
+    0% {
       width: 0;
     }
-    
-    100% { /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
+
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
+    100% {
       width: 100%;
     }
   }
 
   @keyframes cssload-width {
-    0%, 100% {
+    0%,
+    100% {
       transition-timing-function: cubic-bezier(1, 0, 0.65, 0.85);
     }
-    
-    0% { /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
+
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
+    0% {
       width: 0;
     }
-    
-    100% { /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
+
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
+    100% {
       width: 100%;
     }
   }
 
   @keyframes cssload-width {
-    0%, 100% {
+    0%,
+    100% {
       transition-timing-function: cubic-bezier(1, 0, 0.65, 0.85);
     }
-    
-    0% { /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
+
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
+    0% {
       width: 0;
     }
-    
-    100% { /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
+
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
+    100% {
       width: 100%;
     }
   }
 
   @keyframes cssload-width {
-    0%, 100% {
+    0%,
+    100% {
       transition-timing-function: cubic-bezier(1, 0, 0.65, 0.85);
     }
-    
-    0% { /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
+
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
+    0% {
       width: 0;
     }
-    
-    100% { /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
+
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
+    100% {
       width: 100%;
     }
   }
 
   @keyframes cssload-width {
-    0%, 100% {
+    0%,
+    100% {
       transition-timing-function: cubic-bezier(1, 0, 0.65, 0.85);
     }
-    
-    0% { /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
+
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
+    0% {
       width: 0;
     }
-    
-    100% { /* stylelint-disable-line keyframe-block-no-duplicate-selectors */
+
+    /* stylelint-disable-next-line keyframe-block-no-duplicate-selectors */
+    100% {
       width: 100%;
     }
   }

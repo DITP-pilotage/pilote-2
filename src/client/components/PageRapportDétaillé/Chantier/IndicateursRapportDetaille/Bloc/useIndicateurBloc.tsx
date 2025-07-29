@@ -4,22 +4,21 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table';
-import { useCallback, useEffect, useState } from 'react';
-import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
-import IndicateurBlocIndicateurTuile
-  from '@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/indicateurBlocIndicateurTuile';
-import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { formaterDate } from '@/client/utils/date/date';
-import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
-import ValeurEtDate from './ValeurEtDate/ValeurEtDate';
-import { IndicateurDétailsParTerritoire } from './IndicateurBloc.interface';
+} from "@tanstack/react-table";
+import { useCallback, useEffect, useState } from "react";
+import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
+import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
+import IndicateurBlocIndicateurTuile from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/indicateurBlocIndicateurTuile";
+import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { formaterDate } from "@/client/utils/date/date";
+import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
+import ValeurEtDate from "./ValeurEtDate/ValeurEtDate";
+import { IndicateurDétailsParTerritoire } from "./IndicateurBloc.interface";
 
 const indicateurDétailsVide: IndicateurDétailsParTerritoire = {
-  territoireNom: '',
+  territoireNom: "",
   données: {
-    codeInsee: '',
+    codeInsee: "",
     valeurInitiale: null,
     dateValeurInitiale: null,
     historiquesValeurs: [],
@@ -45,18 +44,26 @@ const indicateurDétailsVide: IndicateurDétailsParTerritoire = {
   },
 };
 
-const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
+const reactTableColonnesHelper =
+  createColumnHelper<IndicateurDétailsParTerritoire>();
 
-export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, typeDeRéforme: 'chantier', territoireSélectionné: DétailTerritoire) {
-  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
+export default function useIndicateurBloc(
+  détailsIndicateur: DétailsIndicateurTerritoire,
+  typeDeRéforme: "chantier",
+  territoireSélectionné: DétailTerritoire,
+) {
+  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue("sm");
 
-  const [indicateurDétailsParTerritoires, setIndicateurDétailsParTerritoires] = useState<IndicateurDétailsParTerritoire[]>([indicateurDétailsVide]);
+  const [indicateurDétailsParTerritoires, setIndicateurDétailsParTerritoires] =
+    useState<IndicateurDétailsParTerritoire[]>([indicateurDétailsVide]);
 
   const metÀJourDétailsParTerritoires = useCallback(() => {
-    setIndicateurDétailsParTerritoires([{
-      territoireNom: territoireSélectionné.nomAffiché,
-      données: détailsIndicateur[territoireSélectionné.code],
-    }]);
+    setIndicateurDétailsParTerritoires([
+      {
+        territoireNom: territoireSélectionné.nomAffiché,
+        données: détailsIndicateur[territoireSélectionné.code],
+      },
+    ]);
   }, [détailsIndicateur, territoireSélectionné]);
 
   useEffect(() => {
@@ -66,15 +73,15 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
   }, [détailsIndicateur, metÀJourDétailsParTerritoires, typeDeRéforme]);
 
   const colonnes = [
-    reactTableColonnesHelper.accessor('territoireNom', {
-      header: 'Territoire(s)',
-      id: 'territoire',
+    reactTableColonnesHelper.accessor("territoireNom", {
+      header: "Territoire(s)",
+      id: "territoire",
       enableSorting: false,
     }),
-    reactTableColonnesHelper.accessor('données.valeurInitiale', {
-      header: 'Valeur initiale',
-      id: 'valeurInitiale',
-      cell: valeurInitiale => (
+    reactTableColonnesHelper.accessor("données.valeurInitiale", {
+      header: "Valeur initiale",
+      id: "valeurInitiale",
+      cell: (valeurInitiale) => (
         <ValeurEtDate
           date={valeurInitiale.row.original.données.dateValeurInitiale}
           unité={valeurInitiale.row.original.données.unité}
@@ -83,10 +90,10 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       ),
       enableSorting: false,
     }),
-    reactTableColonnesHelper.accessor('données.valeurAvancement', {
-      header: 'Valeur actuelle',
-      id: 'valeurAvancement',
-      cell: valeurAvancement => (
+    reactTableColonnesHelper.accessor("données.valeurAvancement", {
+      header: "Valeur actuelle",
+      id: "valeurAvancement",
+      cell: (valeurAvancement) => (
         <ValeurEtDate
           date={valeurAvancement.row.original.données.dateValeurAvancement}
           unité={valeurAvancement.row.original.données.unité}
@@ -95,37 +102,39 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       ),
       enableSorting: false,
     }),
-    reactTableColonnesHelper.accessor('données.valeurCibleAnnuelle', {
-      header: 'Cible ' + new Date().getFullYear().toString(),
-      id: 'cibleAnnuelle',
-      cell: valeurCibleAnnuelle => (
+    reactTableColonnesHelper.accessor("données.valeurCibleAnnuelle", {
+      header: "Cible " + new Date().getFullYear().toString(),
+      id: "cibleAnnuelle",
+      cell: (valeurCibleAnnuelle) => (
         <ValeurEtDate
-          date={valeurCibleAnnuelle.row.original.données.dateValeurCibleAnnuelle}
+          date={
+            valeurCibleAnnuelle.row.original.données.dateValeurCibleAnnuelle
+          }
           unité={valeurCibleAnnuelle.row.original.données.unité}
           valeur={valeurCibleAnnuelle.getValue()}
         />
       ),
       enableSorting: false,
     }),
-    reactTableColonnesHelper.accessor('données.avancement.annuel', {
-      header: 'Avancement ' + new Date().getFullYear().toString(),
-      id: 'avancementAnnuel',
-      cell: avancementAnnuel => (
+    reactTableColonnesHelper.accessor("données.avancement.annuel", {
+      header: "Avancement " + new Date().getFullYear().toString(),
+      id: "avancementAnnuel",
+      cell: (avancementAnnuel) => (
         <BarreDeProgression
           afficherTexte
-          fond='gris-clair'
-          positionTexte='dessus'
-          taille='md'
+          fond="gris-clair"
+          positionTexte="dessus"
+          taille="md"
           valeur={avancementAnnuel.getValue()}
-          variante='secondaire'
+          variante="secondaire"
         />
       ),
       enableSorting: false,
     }),
-    reactTableColonnesHelper.accessor('données.valeurCible', {
-      header: 'Cible 2026',
-      id: 'cible',
-      cell: valeurCible => (
+    reactTableColonnesHelper.accessor("données.valeurCible", {
+      header: "Cible 2026",
+      id: "cible",
+      cell: (valeurCible) => (
         <ValeurEtDate
           date={valeurCible.row.original.données.dateValeurCible}
           unité={valeurCible.row.original.données.unité}
@@ -134,27 +143,27 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       ),
       enableSorting: false,
     }),
-    reactTableColonnesHelper.accessor('données.avancement.global', {
-      header: 'Avancement 2026',
-      id: 'avancement',
-      cell: avancementGlobal => (
+    reactTableColonnesHelper.accessor("données.avancement.global", {
+      header: "Avancement 2026",
+      id: "avancement",
+      cell: (avancementGlobal) => (
         <BarreDeProgression
           afficherTexte
-          fond='gris-clair'
-          positionTexte='dessus'
-          taille='md'
+          fond="gris-clair"
+          positionTexte="dessus"
+          taille="md"
           valeur={avancementGlobal.getValue()}
-          variante='primaire'
+          variante="primaire"
         />
       ),
       enableSorting: false,
     }),
     reactTableColonnesHelper.display({
-      id: 'indicateurTuile',
-      cell: indicateurCellContext => (
+      id: "indicateurTuile",
+      cell: (indicateurCellContext) => (
         <IndicateurBlocIndicateurTuile
           indicateurDétailsParTerritoire={indicateurCellContext.row.original}
-          typeDeRéforme='chantier'
+          typeDeRéforme="chantier"
           unité={indicateurCellContext.row.original.données.unité}
         />
       ),
@@ -167,17 +176,19 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
     data: indicateurDétailsParTerritoires,
     columns: colonnes,
     state: {
-      columnVisibility: estVueTuile ? ({
-        territoire: false,
-        valeurInitiale: false,
-        valeurAvancement: false,
-        cibleAnnuelle: false,
-        avancementAnnuel: false,
-        cible: false,
-        avancement: false,
-      }) : ({
-        indicateurTuile: false,
-      }),
+      columnVisibility: estVueTuile
+        ? {
+            territoire: false,
+            valeurInitiale: false,
+            valeurAvancement: false,
+            cibleAnnuelle: false,
+            avancementAnnuel: false,
+            cible: false,
+            avancement: false,
+          }
+        : {
+            indicateurTuile: false,
+          },
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -185,8 +196,11 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
   });
 
   const dateDeMiseAJourIndicateur = territoireSélectionné
-    ? formaterDate(détailsIndicateur[territoireSélectionné.code]?.dateImport, 'DD/MM/YYYY') ?? 'Non renseigné'
-    : 'Non renseigné';
+    ? (formaterDate(
+        détailsIndicateur[territoireSélectionné.code]?.dateImport,
+        "DD/MM/YYYY",
+      ) ?? "Non renseigné")
+    : "Non renseigné";
 
   return {
     tableau,

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const RepartitionsMeteosRapportDetailleStyled = styled.ul`
   list-style: none;
@@ -11,7 +11,7 @@ const RepartitionsMeteosRapportDetailleStyled = styled.ul`
     box-shadow: 0 2px 6px rgb(0 0 18 / 16%);
   }
 
-  button.est-active { 
+  button.est-active {
     border-color: var(--text-title-blue-france);
   }
 
@@ -29,7 +29,7 @@ const RepartitionsMeteosRapportDetailleStyled = styled.ul`
     }
 
     .label {
-      font-size: .75rem !important;
+      font-size: 0.75rem !important;
     }
   }
 `;

@@ -1,13 +1,16 @@
-import { CategoriesIndicateur, ÉlémentPageIndicateursType } from '@/client/utils/rubriques';
-import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import {
+  CategoriesIndicateur,
+  ÉlémentPageIndicateursType,
+} from "@/client/utils/rubriques";
+import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 
 export default interface RubriquesIndicateursProps {
-  détailsIndicateurs: DétailsIndicateurs
-  indicateurs: Indicateur[],
-  listeRubriquesIndicateurs: ÉlémentPageIndicateursType[],
-  territoireCode?: string
-  typeDeRéforme: 'chantier'
-  categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]>
-  sousIndicateursDisponibles: boolean
+  détailsIndicateurs: DétailsIndicateurs;
+  indicateurs: Indicateur[];
+  listeRubriquesIndicateurs: ÉlémentPageIndicateursType[];
+  territoireCode?: string;
+  typeDeRéforme: "chantier";
+  categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]>;
+  sousIndicateursDisponibles: boolean;
 }

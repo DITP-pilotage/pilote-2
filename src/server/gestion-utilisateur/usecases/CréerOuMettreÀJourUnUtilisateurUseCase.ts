@@ -3,37 +3,35 @@ import Utilisateur, {
   profilsInfolettreCoordinateur,
   profilsRégionaux,
   UtilisateurÀCréerOuMettreÀJour,
-} from '@/server/domain/utilisateur/Utilisateur.interface';
+} from "@/server/domain/utilisateur/Utilisateur.interface";
 import {
   Habilitations,
   HabilitationsÀCréerOuMettreÀJourCalculées,
-} from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import { codesTerritoiresDROM } from '@/validation/utilisateur';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { Territoire } from '@/server/domain/territoire/Territoire.interface';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
-import {
-  HistorisationModificationRepository,
-} from '@/server/domain/historisationModification/HistorisationModificationRepository';
-import { HistorisationModification } from '@/server/domain/historisationModification/HistorisationModification';
-import { Profil } from '@/server/domain/profil/Profil.interface';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { ContactInfoLettresService } from '@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService';
-import { PerimetreMinisterielRepository } from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository';
-import { TerritoireRepository } from '@/server/gestion-utilisateur/domain/ports/TerritoireRepository';
-import { ChantierRepository } from '@/server/gestion-utilisateur/domain/ports/ChantierRepository';
-import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository';
-import { InformationChantierUtilisateur } from '@/server/gestion-utilisateur/domain/InformationChantierUtilisateur';
-import { UtilisateurIAMRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository';
+} from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { codesTerritoiresDROM } from "@/validation/utilisateur";
+import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { Territoire } from "@/server/domain/territoire/Territoire.interface";
+import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
+import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
+import { HistorisationModification } from "@/server/domain/historisationModification/HistorisationModification";
+import { Profil } from "@/server/domain/profil/Profil.interface";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
+import { PerimetreMinisterielRepository } from "@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository";
+import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";
+import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
+import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
+import { InformationChantierUtilisateur } from "@/server/gestion-utilisateur/domain/InformationChantierUtilisateur";
+import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository";
 
 type Dependencies = {
-  utilisateurIAMRepository: UtilisateurIAMRepository,
-  utilisateurRepository: UtilisateurRepository,
-  territoireRepository: TerritoireRepository,
-  chantierRepository: ChantierRepository,
-  perimetreMinisterielRepository: PerimetreMinisterielRepository,
-  historisationModification: HistorisationModificationRepository,
-  contactInfoLettresService: ContactInfoLettresService,
+  utilisateurIAMRepository: UtilisateurIAMRepository;
+  utilisateurRepository: UtilisateurRepository;
+  territoireRepository: TerritoireRepository;
+  chantierRepository: ChantierRepository;
+  perimetreMinisterielRepository: PerimetreMinisterielRepository;
+  historisationModification: HistorisationModificationRepository;
+  contactInfoLettresService: ContactInfoLettresService;
 };
 
 export default class CréerOuMettreÀJourUnUtilisateurUseCase {
@@ -69,224 +67,442 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     this.contactInfoLettresService = contactInfoLettresService;
   }
 
-  async run(utilisateur: UtilisateurÀCréerOuMettreÀJour, auteurId: string, utilisateurExistant: boolean, habilitations: Habilitations, profil: Profil | null): Promise<void> {
-    const listeInformationsChantiersUtilisateurs = await this.chantierRepository.listerInformationsChantiersUtilisateurs();
-    const listeTerritoiresCodes = await this.territoireRepository.listerCodes([]);
-    const listePerimetresMinisteriels = await this.perimetreMinisterielRepository.listerIds([]);
-    
-    const habilitationsFormatées = await this._définirLesHabilitations(utilisateur, listeInformationsChantiersUtilisateurs);
+  async run(
+    utilisateur: UtilisateurÀCréerOuMettreÀJour,
+    auteurId: string,
+    utilisateurExistant: boolean,
+    habilitations: Habilitations,
+    profil: Profil | null,
+  ): Promise<void> {
+    const listeInformationsChantiersUtilisateurs =
+      await this.chantierRepository.listerInformationsChantiersUtilisateurs();
+    const listeTerritoiresCodes = await this.territoireRepository.listerCodes(
+      [],
+    );
+    const listePerimetresMinisteriels =
+      await this.perimetreMinisterielRepository.listerIds([]);
+
+    const habilitationsFormatées = await this._définirLesHabilitations(
+      utilisateur,
+      listeInformationsChantiersUtilisateurs,
+    );
     let utilisateurAvantModification: Utilisateur | null = null;
 
     const habilitation = new Habilitation(habilitations);
-    habilitation.vérifierLesHabilitationsEnCréationModificationUtilisateur(habilitationsFormatées.lecture.chantiers, habilitationsFormatées.lecture.territoires, profil);
+    habilitation.vérifierLesHabilitationsEnCréationModificationUtilisateur(
+      habilitationsFormatées.lecture.chantiers,
+      habilitationsFormatées.lecture.territoires,
+      profil,
+    );
 
-    await this._vérifierExistenceUtilisateur(utilisateur.email, utilisateurExistant);
+    await this._vérifierExistenceUtilisateur(
+      utilisateur.email,
+      utilisateurExistant,
+    );
 
     if (utilisateurExistant) {
-      utilisateurAvantModification = await this.utilisateurRepository.récupérer(
-        utilisateur.email, 
+      utilisateurAvantModification =
+        (await this.utilisateurRepository.récupérer(
+          utilisateur.email,
+          listeTerritoiresCodes,
+          listePerimetresMinisteriels,
+          listeInformationsChantiersUtilisateurs,
+        )) as Utilisateur;
+    }
+
+    await this.utilisateurRepository.créerOuMettreÀJour(
+      { ...utilisateur, habilitations: habilitationsFormatées },
+      auteurId,
+    );
+
+    const utilisateurApresExecution =
+      (await this.utilisateurRepository.récupérer(
+        utilisateur.email,
         listeTerritoiresCodes,
         listePerimetresMinisteriels,
         listeInformationsChantiersUtilisateurs,
-      ) as Utilisateur;
-    }
+      )) as Utilisateur;
 
-    await this.utilisateurRepository.créerOuMettreÀJour({ ...utilisateur, habilitations: habilitationsFormatées }, auteurId);
+    const historisationModification = utilisateurExistant
+      ? HistorisationModification.creerHistorisationModification({
+          auteurId,
+          tableModifieId: "utilisateur",
+          ancienneValeur: utilisateurAvantModification as Utilisateur,
+          nouvelleValeur: utilisateurApresExecution,
+        })
+      : HistorisationModification.creerHistorisationCreation({
+          auteurId,
+          tableModifieId: "utilisateur",
+          nouvelleValeur: utilisateurApresExecution,
+        });
 
-    const utilisateurApresExecution = await this.utilisateurRepository.récupérer(
-      utilisateur.email,
-      listeTerritoiresCodes,
-      listePerimetresMinisteriels,
-      listeInformationsChantiersUtilisateurs,      
-    ) as Utilisateur;
+    await this.historisationModification.sauvegarderModificationHistorisation(
+      historisationModification,
+    );
 
-    const historisationModification = utilisateurExistant ? HistorisationModification.creerHistorisationModification({
-      auteurId,
-      tableModifieId: 'utilisateur',
-      ancienneValeur: utilisateurAvantModification as Utilisateur,
-      nouvelleValeur: utilisateurApresExecution,
-    }) : HistorisationModification.creerHistorisationCreation({
-      auteurId,
-      tableModifieId: 'utilisateur',
-      nouvelleValeur: utilisateurApresExecution,
-    });
-
-    await this.historisationModification.sauvegarderModificationHistorisation(historisationModification);
-
-    if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === 'true') {
+    if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === "true") {
       if (utilisateurExistant && utilisateurAvantModification) {
-        const listesDiffusionAAjouter = profilsInfolettreCoordinateur.includes(utilisateur.profil) && !profilsInfolettreCoordinateur.includes(utilisateurAvantModification?.profil) ? [3] : [];
-        const listesDiffusionASupprimer = profilsInfolettreCoordinateur.includes(utilisateurAvantModification?.profil) && !profilsInfolettreCoordinateur.includes(utilisateur.profil) ? [3] : [];
-        await this.contactInfoLettresService.modifierContact(utilisateur.email, utilisateur.nom, utilisateur.prénom, listesDiffusionAAjouter, listesDiffusionASupprimer);
+        const listesDiffusionAAjouter =
+          profilsInfolettreCoordinateur.includes(utilisateur.profil) &&
+          !profilsInfolettreCoordinateur.includes(
+            utilisateurAvantModification?.profil,
+          )
+            ? [3]
+            : [];
+        const listesDiffusionASupprimer =
+          profilsInfolettreCoordinateur.includes(
+            utilisateurAvantModification?.profil,
+          ) && !profilsInfolettreCoordinateur.includes(utilisateur.profil)
+            ? [3]
+            : [];
+        await this.contactInfoLettresService.modifierContact(
+          utilisateur.email,
+          utilisateur.nom,
+          utilisateur.prénom,
+          listesDiffusionAAjouter,
+          listesDiffusionASupprimer,
+        );
       } else {
-        const listesDiffusion = profilsInfolettreCoordinateur.includes(utilisateur.profil) ? [3] : [];
-        await this.contactInfoLettresService.creerContact(utilisateur.email, utilisateur.nom, utilisateur.prénom, listesDiffusion);
+        const listesDiffusion = profilsInfolettreCoordinateur.includes(
+          utilisateur.profil,
+        )
+          ? [3]
+          : [];
+        await this.contactInfoLettresService.creerContact(
+          utilisateur.email,
+          utilisateur.nom,
+          utilisateur.prénom,
+          listesDiffusion,
+        );
       }
     }
 
     if (process.env.IMPORT_KEYCLOAK_URL && !utilisateurExistant) {
-      const utilisateursPourIAM = [{ nom: utilisateur.nom, prénom: utilisateur.prénom, email: utilisateur.email }];
-      await this.utilisateurIAMRepository.ajouteUtilisateurs(utilisateursPourIAM);
+      const utilisateursPourIAM = [
+        {
+          nom: utilisateur.nom,
+          prénom: utilisateur.prénom,
+          email: utilisateur.email,
+        },
+      ];
+      await this.utilisateurIAMRepository.ajouteUtilisateurs(
+        utilisateursPourIAM,
+      );
     }
   }
 
-  private _déterminerChantiersPasEnDoublonsAvecLesPérimètres(chantiersSélectionnés: string[], périmètreSélectionnés: string[], chantiers: InformationChantierUtilisateur[]): string[] {
-    return chantiersSélectionnés.filter(chantierId => {
-      const chantier = chantiers.find(c => c.id === chantierId);
-      return périmètreSélectionnés.every(p => !chantier?.perimetreIds.includes(p));
+  private _déterminerChantiersPasEnDoublonsAvecLesPérimètres(
+    chantiersSélectionnés: string[],
+    périmètreSélectionnés: string[],
+    chantiers: InformationChantierUtilisateur[],
+  ): string[] {
+    return chantiersSélectionnés.filter((chantierId) => {
+      const chantier = chantiers.find((c) => c.id === chantierId);
+      return périmètreSélectionnés.every(
+        (p) => !chantier?.perimetreIds.includes(p),
+      );
     });
   }
 
-  private _déterminerChantiersAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: InformationChantierUtilisateur[]): string[] {
-    const touslesChantiersIds = new Set(chantiers.map(chantier => chantier.id));
-    const touslesChantiersTerritorialisésIds = new Set(chantiers.filter(chantier => chantier.estTerritorialise).map(chantier => chantier.id));
-
-    const chantiersPasEnDoublonsAvecLesPérimètres = this._déterminerChantiersPasEnDoublonsAvecLesPérimètres(
-      utilisateur.habilitations.lecture.chantiers,
-      utilisateur.habilitations.lecture.périmètres,
-      chantiers,
+  private _déterminerChantiersAccessiblesEnLecture(
+    utilisateur: UtilisateurÀCréerOuMettreÀJour,
+    chantiers: InformationChantierUtilisateur[],
+  ): string[] {
+    const touslesChantiersIds = new Set(
+      chantiers.map((chantier) => chantier.id),
+    );
+    const touslesChantiersTerritorialisésIds = new Set(
+      chantiers
+        .filter((chantier) => chantier.estTerritorialise)
+        .map((chantier) => chantier.id),
     );
 
-    if ([ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, ProfilEnum.SERVICES_DECONCENTRES_REGION].includes(utilisateur.profil)) {
-      return chantiersPasEnDoublonsAvecLesPérimètres.filter(chantierId => touslesChantiersTerritorialisésIds.has(chantierId));
+    const chantiersPasEnDoublonsAvecLesPérimètres =
+      this._déterminerChantiersPasEnDoublonsAvecLesPérimètres(
+        utilisateur.habilitations.lecture.chantiers,
+        utilisateur.habilitations.lecture.périmètres,
+        chantiers,
+      );
+
+    if (
+      [
+        ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+        ProfilEnum.SERVICES_DECONCENTRES_REGION,
+      ].includes(utilisateur.profil)
+    ) {
+      return chantiersPasEnDoublonsAvecLesPérimètres.filter((chantierId) =>
+        touslesChantiersTerritorialisésIds.has(chantierId),
+      );
     }
 
-    if ([ProfilEnum.SECRETARIAT_GENERAL, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.DIR_PROJET].includes(utilisateur.profil))
-      return chantiersPasEnDoublonsAvecLesPérimètres.filter(chantierId => touslesChantiersIds.has(chantierId));
+    if (
+      [
+        ProfilEnum.SECRETARIAT_GENERAL,
+        ProfilEnum.EQUIPE_DIR_PROJET,
+        ProfilEnum.DIR_PROJET,
+      ].includes(utilisateur.profil)
+    )
+      return chantiersPasEnDoublonsAvecLesPérimètres.filter((chantierId) =>
+        touslesChantiersIds.has(chantierId),
+      );
 
     return chantiersPasEnDoublonsAvecLesPérimètres;
   }
 
-  private _déterminerChantiersResponsabilite(utilisateur: UtilisateurÀCréerOuMettreÀJour): string[] {
+  private _déterminerChantiersResponsabilite(
+    utilisateur: UtilisateurÀCréerOuMettreÀJour,
+  ): string[] {
     return utilisateur.habilitations.responsabilite.chantiers;
   }
 
-  private _déterminerChantiersSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour): string[] {
+  private _déterminerChantiersSaisieCommentaire(
+    utilisateur: UtilisateurÀCréerOuMettreÀJour,
+  ): string[] {
     return utilisateur.habilitations.saisieCommentaire.chantiers;
   }
 
-  private _déterminerChantiersAccessiblesEnSaisieIndicateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: InformationChantierUtilisateur[]): string[] {
+  private _déterminerChantiersAccessiblesEnSaisieIndicateur(
+    utilisateur: UtilisateurÀCréerOuMettreÀJour,
+    chantiers: InformationChantierUtilisateur[],
+  ): string[] {
     if (utilisateur.saisieIndicateur) {
-      return this._déterminerChantiersAccessiblesEnLecture(utilisateur, chantiers);
+      return this._déterminerChantiersAccessiblesEnLecture(
+        utilisateur,
+        chantiers,
+      );
     }
 
     return [];
   }
 
-  private _déterminerChantierAccessiblesEnGestionUtilisateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: InformationChantierUtilisateur[]): string[] {
+  private _déterminerChantierAccessiblesEnGestionUtilisateur(
+    utilisateur: UtilisateurÀCréerOuMettreÀJour,
+    chantiers: InformationChantierUtilisateur[],
+  ): string[] {
     if (utilisateur.gestionUtilisateur) {
-      return this._déterminerChantiersAccessiblesEnLecture(utilisateur, chantiers);
+      return this._déterminerChantiersAccessiblesEnLecture(
+        utilisateur,
+        chantiers,
+      );
     }
-    
+
     return [];
   }
 
-  private _déterminerTerritoiresAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[]): string[] {
-    if (utilisateur.profil === ProfilEnum.DROM)
-      return codesTerritoiresDROM;
+  private _déterminerTerritoiresAccessiblesEnLecture(
+    utilisateur: UtilisateurÀCréerOuMettreÀJour,
+    territoires: Territoire[],
+  ): string[] {
+    if (utilisateur.profil === ProfilEnum.DROM) return codesTerritoiresDROM;
 
     if (profilsRégionaux.includes(utilisateur.profil)) {
-      const régionsSaisies = utilisateur.habilitations.lecture.territoires.filter(territoireCode => territoireCode.startsWith('REG'));
-      const départementsEnfantsDesRégionsSaisies = régionsSaisies.flatMap(régionCode => territoires.filter(t => t.codeParent === régionCode).map(d => d.code));
+      const régionsSaisies =
+        utilisateur.habilitations.lecture.territoires.filter((territoireCode) =>
+          territoireCode.startsWith("REG"),
+        );
+      const départementsEnfantsDesRégionsSaisies = régionsSaisies.flatMap(
+        (régionCode) =>
+          territoires
+            .filter((t) => t.codeParent === régionCode)
+            .map((d) => d.code),
+      );
 
       return [...régionsSaisies, ...départementsEnfantsDesRégionsSaisies];
     }
 
     if (profilsDépartementaux.includes(utilisateur.profil))
-      return utilisateur.habilitations.lecture.territoires.filter(territoireCode => territoireCode.startsWith('DEPT'));
+      return utilisateur.habilitations.lecture.territoires.filter(
+        (territoireCode) => territoireCode.startsWith("DEPT"),
+      );
 
     return [];
   }
 
-  private _déterminerTerritoiresResponsabilite(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[], chantiersResponsabilite: string[]): string[] {
-    return chantiersResponsabilite.length > 0 ? this._déterminerTerritoiresAccessiblesEnLecture(utilisateur, territoires) : [];
+  private _déterminerTerritoiresResponsabilite(
+    utilisateur: UtilisateurÀCréerOuMettreÀJour,
+    territoires: Territoire[],
+    chantiersResponsabilite: string[],
+  ): string[] {
+    return chantiersResponsabilite.length > 0
+      ? this._déterminerTerritoiresAccessiblesEnLecture(
+          utilisateur,
+          territoires,
+        )
+      : [];
   }
 
-  private _déterminerTerritoiresAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[], chantiersSaisieCommentaire: string[]): string[] {
-    return chantiersSaisieCommentaire.length > 0 ? this._déterminerTerritoiresAccessiblesEnLecture(utilisateur, territoires) : [];
+  private _déterminerTerritoiresAccessiblesEnSaisieCommentaire(
+    utilisateur: UtilisateurÀCréerOuMettreÀJour,
+    territoires: Territoire[],
+    chantiersSaisieCommentaire: string[],
+  ): string[] {
+    return chantiersSaisieCommentaire.length > 0
+      ? this._déterminerTerritoiresAccessiblesEnLecture(
+          utilisateur,
+          territoires,
+        )
+      : [];
   }
 
-  private _déterminerTerritoiresAccessiblesEnGestionUtilisateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[]): string[] {
+  private _déterminerTerritoiresAccessiblesEnGestionUtilisateur(
+    utilisateur: UtilisateurÀCréerOuMettreÀJour,
+    territoires: Territoire[],
+  ): string[] {
     if (utilisateur.gestionUtilisateur) {
-      return utilisateur.profil === 'SECRETARIAT_GENERAL' 
-        ? territoires.filter(territoire => territoire.code !== 'NAT-FR').map(territoire => territoire.code)
-        : this._déterminerTerritoiresAccessiblesEnLecture(utilisateur, territoires);
+      return utilisateur.profil === "SECRETARIAT_GENERAL"
+        ? territoires
+            .filter((territoire) => territoire.code !== "NAT-FR")
+            .map((territoire) => territoire.code)
+        : this._déterminerTerritoiresAccessiblesEnLecture(
+            utilisateur,
+            territoires,
+          );
     }
-    
-    return [];    
-  }
-
-  private _déterminerPérimètresAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
-    const tousLesPérimètresIds = new Set(périmètres.map(p => p.id));
-
-    if (utilisateur.profil === ProfilEnum.DROM)
-      return ['PER-018'];
-    
-    if ([ProfilEnum.CABINET_MINISTERIEL, ProfilEnum.DIR_ADMIN_CENTRALE, ProfilEnum.SECRETARIAT_GENERAL, ProfilEnum.EQUIPE_DIR_PROJET, ProfilEnum.DIR_PROJET, ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT, ProfilEnum.DROM].includes(utilisateur.profil))
-      return utilisateur.habilitations.lecture.périmètres.filter(p => tousLesPérimètresIds.has(p));
 
     return [];
   }
 
-  private _déterminerPérimètresAccessiblesEnSaisieIndicateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
+  private _déterminerPérimètresAccessiblesEnLecture(
+    utilisateur: UtilisateurÀCréerOuMettreÀJour,
+    périmètres: PérimètreMinistériel[],
+  ): string[] {
+    const tousLesPérimètresIds = new Set(périmètres.map((p) => p.id));
+
+    if (utilisateur.profil === ProfilEnum.DROM) return ["PER-018"];
+
+    if (
+      [
+        ProfilEnum.CABINET_MINISTERIEL,
+        ProfilEnum.DIR_ADMIN_CENTRALE,
+        ProfilEnum.SECRETARIAT_GENERAL,
+        ProfilEnum.EQUIPE_DIR_PROJET,
+        ProfilEnum.DIR_PROJET,
+        ProfilEnum.SERVICES_DECONCENTRES_REGION,
+        ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+        ProfilEnum.DROM,
+      ].includes(utilisateur.profil)
+    )
+      return utilisateur.habilitations.lecture.périmètres.filter((p) =>
+        tousLesPérimètresIds.has(p),
+      );
+
+    return [];
+  }
+
+  private _déterminerPérimètresAccessiblesEnSaisieIndicateur(
+    utilisateur: UtilisateurÀCréerOuMettreÀJour,
+    périmètres: PérimètreMinistériel[],
+  ): string[] {
     if (utilisateur.saisieIndicateur)
-      return this._déterminerPérimètresAccessiblesEnLecture(utilisateur, périmètres);
+      return this._déterminerPérimètresAccessiblesEnLecture(
+        utilisateur,
+        périmètres,
+      );
 
     return [];
   }
 
-  private _déterminerPérimètresAccessiblesEnGestionUtilisateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
+  private _déterminerPérimètresAccessiblesEnGestionUtilisateur(
+    utilisateur: UtilisateurÀCréerOuMettreÀJour,
+    périmètres: PérimètreMinistériel[],
+  ): string[] {
     if (utilisateur.gestionUtilisateur)
-      return this._déterminerPérimètresAccessiblesEnLecture(utilisateur, périmètres);
+      return this._déterminerPérimètresAccessiblesEnLecture(
+        utilisateur,
+        périmètres,
+      );
 
     return [];
   }
 
-  private async _définirLesHabilitations(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: InformationChantierUtilisateur[]): Promise<HabilitationsÀCréerOuMettreÀJourCalculées> {
+  private async _définirLesHabilitations(
+    utilisateur: UtilisateurÀCréerOuMettreÀJour,
+    chantiers: InformationChantierUtilisateur[],
+  ): Promise<HabilitationsÀCréerOuMettreÀJourCalculées> {
     const territoires = await this.territoireRepository.lister([]);
     const périmètres = await this.perimetreMinisterielRepository.lister([]);
 
-    const chantiersResponsabilite = this._déterminerChantiersResponsabilite(utilisateur);
-    const chantiersSaisieCommentaire = this._déterminerChantiersSaisieCommentaire(utilisateur);
-      
+    const chantiersResponsabilite =
+      this._déterminerChantiersResponsabilite(utilisateur);
+    const chantiersSaisieCommentaire =
+      this._déterminerChantiersSaisieCommentaire(utilisateur);
+
     return {
       lecture: {
-        chantiers: this._déterminerChantiersAccessiblesEnLecture(utilisateur, chantiers),
-        territoires: this._déterminerTerritoiresAccessiblesEnLecture(utilisateur, territoires),
-        périmètres: this._déterminerPérimètresAccessiblesEnLecture(utilisateur, périmètres),
+        chantiers: this._déterminerChantiersAccessiblesEnLecture(
+          utilisateur,
+          chantiers,
+        ),
+        territoires: this._déterminerTerritoiresAccessiblesEnLecture(
+          utilisateur,
+          territoires,
+        ),
+        périmètres: this._déterminerPérimètresAccessiblesEnLecture(
+          utilisateur,
+          périmètres,
+        ),
       },
       saisieIndicateur: {
-        chantiers: this._déterminerChantiersAccessiblesEnSaisieIndicateur(utilisateur, chantiers),
+        chantiers: this._déterminerChantiersAccessiblesEnSaisieIndicateur(
+          utilisateur,
+          chantiers,
+        ),
         territoires: [],
-        périmètres: this._déterminerPérimètresAccessiblesEnSaisieIndicateur(utilisateur, périmètres),
+        périmètres: this._déterminerPérimètresAccessiblesEnSaisieIndicateur(
+          utilisateur,
+          périmètres,
+        ),
       },
       saisieCommentaire: {
         chantiers: chantiersSaisieCommentaire,
-        territoires: this._déterminerTerritoiresAccessiblesEnSaisieCommentaire(utilisateur, territoires, chantiersSaisieCommentaire),
+        territoires: this._déterminerTerritoiresAccessiblesEnSaisieCommentaire(
+          utilisateur,
+          territoires,
+          chantiersSaisieCommentaire,
+        ),
         périmètres: [],
       },
       gestionUtilisateur: {
-        chantiers: this._déterminerChantierAccessiblesEnGestionUtilisateur(utilisateur, chantiers),
-        territoires: this._déterminerTerritoiresAccessiblesEnGestionUtilisateur(utilisateur, territoires),
-        périmètres: this._déterminerPérimètresAccessiblesEnGestionUtilisateur(utilisateur, périmètres),
+        chantiers: this._déterminerChantierAccessiblesEnGestionUtilisateur(
+          utilisateur,
+          chantiers,
+        ),
+        territoires: this._déterminerTerritoiresAccessiblesEnGestionUtilisateur(
+          utilisateur,
+          territoires,
+        ),
+        périmètres: this._déterminerPérimètresAccessiblesEnGestionUtilisateur(
+          utilisateur,
+          périmètres,
+        ),
       },
       responsabilite: {
         chantiers: chantiersResponsabilite,
-        territoires: this._déterminerTerritoiresResponsabilite(utilisateur, territoires, chantiersResponsabilite),
+        territoires: this._déterminerTerritoiresResponsabilite(
+          utilisateur,
+          territoires,
+          chantiersResponsabilite,
+        ),
         périmètres: [],
       },
     };
   }
 
-  private async _vérifierExistenceUtilisateur(email: string, utilisateurExistant: boolean) {
-    const utilisateurExiste = await this.utilisateurRepository.verifierExistenceUtilisateur(email);
+  private async _vérifierExistenceUtilisateur(
+    email: string,
+    utilisateurExistant: boolean,
+  ) {
+    const utilisateurExiste =
+      await this.utilisateurRepository.verifierExistenceUtilisateur(email);
 
-    if (utilisateurExistant && !utilisateurExiste)  {
+    if (utilisateurExistant && !utilisateurExiste) {
       throw new Error("Le compte à modifier n'existe pas.");
     }
 
     if (!utilisateurExistant && utilisateurExiste) {
-      throw new Error('Un compte a déjà été créé avec cette adresse électronique.');
+      throw new Error(
+        "Un compte a déjà été créé avec cette adresse électronique.",
+      );
     }
   }
 }

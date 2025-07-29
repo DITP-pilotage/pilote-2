@@ -1,17 +1,16 @@
-import { Utilisateur } from '@/server/authentification/domain/Utilisateur';
-import { HabilitationAuthentitificationAPI } from '@/server/authentification/domain/HabilitationAuthentitificationAPI';
-import {
-  HabilitationAuthentitificationAPIBuilder,
-} from '@/server/authentification/app/builder/HabilitationAuthentitificationAPIBuilder';
-import { ProfilAPI } from '@/server/authentification/domain/ProfilAPI';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { Utilisateur } from "@/server/authentification/domain/Utilisateur";
+import { HabilitationAuthentitificationAPI } from "@/server/authentification/domain/HabilitationAuthentitificationAPI";
+import { HabilitationAuthentitificationAPIBuilder } from "@/server/authentification/app/builder/HabilitationAuthentitificationAPIBuilder";
+import { ProfilAPI } from "@/server/authentification/domain/ProfilAPI";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 export class UtilisateurBuilder {
-  private email: string = 'test@test.com';
+  private email: string = "test@test.com";
 
   private profil: ProfilAPI = ProfilEnum.DITP_ADMIN;
 
-  private habilitations: HabilitationAuthentitificationAPI = new HabilitationAuthentitificationAPIBuilder().build();
+  private habilitations: HabilitationAuthentitificationAPI =
+    new HabilitationAuthentitificationAPIBuilder().build();
 
   withEmail(email: string) {
     this.email = email;
@@ -23,7 +22,9 @@ export class UtilisateurBuilder {
     return this;
   }
 
-  withHabilitations(habilitations: HabilitationAuthentitificationAPI): UtilisateurBuilder {
+  withHabilitations(
+    habilitations: HabilitationAuthentitificationAPI,
+  ): UtilisateurBuilder {
     this.habilitations = habilitations;
     return this;
   }

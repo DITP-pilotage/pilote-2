@@ -31,16 +31,16 @@ export class IndicateurFicheConducteur {
     objectifValeurCible,
     objectifTauxAvancement,
   }: {
-    nom: string
-    type: string | null
-    valeurInitiale: number | null
-    valeurAvancement: number | null
-    dateValeurAvancement: string | null
-    dateValeurInitiale: string | null
-    objectifValeurCibleIntermediaire: number | null
-    objectifTauxAvancementIntermediaire: number | null
-    objectifValeurCible: number | null
-    objectifTauxAvancement: number | null
+    nom: string;
+    type: string | null;
+    valeurInitiale: number | null;
+    valeurAvancement: number | null;
+    dateValeurAvancement: string | null;
+    dateValeurInitiale: string | null;
+    objectifValeurCibleIntermediaire: number | null;
+    objectifTauxAvancementIntermediaire: number | null;
+    objectifValeurCible: number | null;
+    objectifTauxAvancement: number | null;
   }) {
     this._nom = nom;
     this._type = type;
@@ -49,7 +49,8 @@ export class IndicateurFicheConducteur {
     this._dateValeurAvancement = dateValeurAvancement;
     this._dateValeurInitiale = dateValeurInitiale;
     this._objectifValeurCibleIntermediaire = objectifValeurCibleIntermediaire;
-    this._objectifTauxAvancementIntermediaire = objectifTauxAvancementIntermediaire;
+    this._objectifTauxAvancementIntermediaire =
+      objectifTauxAvancementIntermediaire;
     this._objectifValeurCible = objectifValeurCible;
     this._objectifTauxAvancement = objectifTauxAvancement;
   }
@@ -106,16 +107,16 @@ export class IndicateurFicheConducteur {
     objectifValeurCible,
     objectifTauxAvancement,
   }: {
-    nom: string
-    type: string | null
-    valeurInitiale: number | null
-    valeurAvancement: number | null
-    dateValeurAvancement: string | null
-    dateValeurInitiale: string | null
-    objectifValeurCibleIntermediaire: number | null
-    objectifTauxAvancementIntermediaire: number | null
-    objectifValeurCible: number | null
-    objectifTauxAvancement: number | null
+    nom: string;
+    type: string | null;
+    valeurInitiale: number | null;
+    valeurAvancement: number | null;
+    dateValeurAvancement: string | null;
+    dateValeurInitiale: string | null;
+    objectifValeurCibleIntermediaire: number | null;
+    objectifTauxAvancementIntermediaire: number | null;
+    objectifValeurCible: number | null;
+    objectifTauxAvancement: number | null;
   }) {
     return new IndicateurFicheConducteur({
       nom,

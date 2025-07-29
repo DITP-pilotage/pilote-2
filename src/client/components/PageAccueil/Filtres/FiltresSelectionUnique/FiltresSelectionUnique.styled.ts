@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 export const FiltresSélectionUniqueStyled = styled.div`
   button {
@@ -33,7 +33,7 @@ export const FiltresSélectionUniqueStyled = styled.div`
     color: white;
     background-color: var(--blue-france-sun-113-625);
   }
-  
+
   .fr-tag-active:hover {
     color: white;
     cursor: not-allowed;

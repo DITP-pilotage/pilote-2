@@ -1,10 +1,10 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const TableauChantiersStyled = styled.section<{
-  chantiersArchives: boolean
+  chantiersArchives: boolean;
 }>`
   color: var(--text-title-grey);
-  
+
   .tableau-actions {
     display: flex;
     flex-wrap: wrap;
@@ -20,7 +20,7 @@ const TableauChantiersStyled = styled.section<{
       & > * {
         flex-basis: content;
       }
-      
+
       .barre-de-recherche {
         width: 100%;
         max-width: 22rem;
@@ -31,25 +31,24 @@ const TableauChantiersStyled = styled.section<{
       width: 100%;
       max-width: 22rem;
     }
-    
+
     @media screen and (max-width: 78rem) {
       .label {
         font-size: 0.875rem !important;
       }
-      
+
       .tableau-actions-droite {
         max-width: 17rem;
       }
-      
+
       .tableau-actions-gauche {
         column-gap: 1rem;
-        
+
         .barre-de-recherche {
           max-width: 13rem;
         }
       }
     }
-  
   }
 
   table.tableau {
@@ -58,14 +57,14 @@ const TableauChantiersStyled = styled.section<{
     tbody {
       tr {
         height: 4.5rem;
-        
+
         td > a {
           display: flex;
           align-items: center;
           height: 100%;
           text-decoration: none;
           background: none;
-          
+
           & > * {
             width: 100%;
           }
@@ -73,28 +72,43 @@ const TableauChantiersStyled = styled.section<{
 
         &.ligne-chantier {
           &:nth-of-type(even) {
-            background-color: ${({ chantiersArchives }) => (chantiersArchives ? 'var(--background-contrast-grey)' : 'var(--background-contrast-blue-france)')};
-            
-            --hover: ${({ chantiersArchives }) => (chantiersArchives ? 'var(--background-contrast-grey-hover)' : 'var(--background-contrast-blue-france-hover)')};
+            background-color: ${({ chantiersArchives }) =>
+              chantiersArchives
+                ? "var(--background-contrast-grey)"
+                : "var(--background-contrast-blue-france)"};
+
+            --hover: ${({ chantiersArchives }) =>
+              chantiersArchives
+                ? "var(--background-contrast-grey-hover)"
+                : "var(--background-contrast-blue-france-hover)"};
           }
 
           &:nth-of-type(odd) {
-            background-color: ${({ chantiersArchives }) => (chantiersArchives ? 'var(--background-alt-grey)' : 'var(--background-alt-blue-france)')};
-           
-            --hover: ${({ chantiersArchives }) => (chantiersArchives ? 'var(--background-alt-grey-hover)' : 'var(--background-alt-blue-france-hover)')};
+            background-color: ${({ chantiersArchives }) =>
+              chantiersArchives
+                ? "var(--background-alt-grey)"
+                : "var(--background-alt-blue-france)"};
+
+            --hover: ${({ chantiersArchives }) =>
+              chantiersArchives
+                ? "var(--background-alt-grey-hover)"
+                : "var(--background-alt-blue-france-hover)"};
           }
 
           &:hover {
             background-color: var(--hover);
           }
-
         }
 
         &.ligne-ministère,
         &.ligne-ministère:nth-of-type(2n) {
           cursor: pointer;
           background-color: var(--background-default-grey);
-          background-image: linear-gradient(0deg, var(--border-default-grey), var(--border-default-grey));
+          background-image: linear-gradient(
+            0deg,
+            var(--border-default-grey),
+            var(--border-default-grey)
+          );
           background-repeat: no-repeat;
           background-position: bottom;
           background-size: 100% 1px;
@@ -108,7 +122,10 @@ const TableauChantiersStyled = styled.section<{
       }
 
       .chevron-accordéon::before {
-        background-color: ${({ chantiersArchives }) => (chantiersArchives ? 'var(--text-disabled-grey)' : 'var(--blue-france-sun-113-625)')};
+        background-color: ${({ chantiersArchives }) =>
+          chantiersArchives
+            ? "var(--text-disabled-grey)"
+            : "var(--blue-france-sun-113-625)"};
       }
     }
   }
@@ -120,7 +137,10 @@ const TableauChantiersStyled = styled.section<{
   }
 
   .icônes {
-    color: ${({ chantiersArchives }) => (chantiersArchives ? 'var(--text-disabled-grey)' : 'var(--background-active-blue-france)')}
+    color: ${({ chantiersArchives }) =>
+      chantiersArchives
+        ? "var(--text-disabled-grey)"
+        : "var(--background-active-blue-france)"};
   }
 `;
 

@@ -1,9 +1,5 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent } from "react";
 
 export const ChampObligatoire: FunctionComponent<{}> = () => {
-  return (
-    <span className='texte-warning'>
-      *
-    </span>
-  );
+  return <span className="texte-warning">*</span>;
 };

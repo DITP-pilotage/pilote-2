@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const CartographieZoomEtDéplacementStyled = styled.div`
   position: absolute;
@@ -13,7 +13,10 @@ const CartographieZoomEtDéplacementStyled = styled.div`
     color: var(--blue-france-sun-113-625);
     background: #fff;
     border: solid 2px #cecece;
-    box-shadow: 0 1px 1px rgb(0 0 0 / 16%), 0 1px 0 -2px rgb(0 0 0 / 16%), 0 1px 4px rgb(0 0 0 / 23%);
+    box-shadow:
+      0 1px 1px rgb(0 0 0 / 16%),
+      0 1px 0 -2px rgb(0 0 0 / 16%),
+      0 1px 4px rgb(0 0 0 / 23%);
   }
 
   button:hover {

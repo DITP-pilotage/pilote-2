@@ -1,31 +1,32 @@
-import { stringify } from 'csv-stringify/sync';
-import { NextApiRequest, NextApiResponse } from 'next';
-import { File } from 'formidable';
-import { join } from 'node:path';
-import fs from 'node:fs';
-import { mkdir, stat } from 'node:fs/promises';
+import { stringify } from "csv-stringify/sync";
+import { NextApiRequest, NextApiResponse } from "next";
+import { File } from "formidable";
+import { join } from "node:path";
+import fs from "node:fs";
+import { mkdir, stat } from "node:fs/promises";
 import {
   DataImportDonneeIndicateurAPIContrat,
   ImportDonneeIndicateurAPIContrat,
-} from '@/server/import-indicateur/app/contrats/DataImportDonneeIndicateurAPIContrat';
-import { parseForm } from '@/server/import-indicateur/infrastructure/handlers/ParseForm';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { PublierFichierIndicateurImporteUseCase } from '@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase';
-import {
-  VerifierFichierIndicateurImporteUseCase,
-} from '@/server/import-indicateur/usecases/VerifierFichierIndicateurImporteUseCase';
+} from "@/server/import-indicateur/app/contrats/DataImportDonneeIndicateurAPIContrat";
+import { parseForm } from "@/server/import-indicateur/infrastructure/handlers/ParseForm";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { PublierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase";
+import { VerifierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/VerifierFichierIndicateurImporteUseCase";
 
-function convertirEnTableauPourCSV(donnees: ImportDonneeIndicateurAPIContrat[]) {
-  return donnees.map(donnee => ([
+function convertirEnTableauPourCSV(
+  donnees: ImportDonneeIndicateurAPIContrat[],
+) {
+  return donnees.map((donnee) => [
     donnee.identifiant_indic,
     donnee.zone_id,
     donnee.zone_nom,
     donnee.date_valeur,
     donnee.type_valeur,
     donnee.valeur,
-  ]));
+  ]);
 }
-const baseSchemaUrl = 'https://raw.githubusercontent.com/DITP-pilotage/pilote-2/main/public/schema/';
+const baseSchemaUrl =
+  "https://raw.githubusercontent.com/DITP-pilotage/pilote-2/main/public/schema/";
 
 export class ImportDonneeIndicateurAPIHandler {
   private publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase;
@@ -36,39 +37,58 @@ export class ImportDonneeIndicateurAPIHandler {
     publierFichierIndicateurImporteUseCase,
     verifierFichierIndicateurImporteUseCase,
   }: {
-    publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase
-    verifierFichierIndicateurImporteUseCase: VerifierFichierIndicateurImporteUseCase
+    publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase;
+    verifierFichierIndicateurImporteUseCase: VerifierFichierIndicateurImporteUseCase;
   }) {
-    this.publierFichierIndicateurImporteUseCase = publierFichierIndicateurImporteUseCase;
-    this.verifierFichierIndicateurImporteUseCase = verifierFichierIndicateurImporteUseCase;
+    this.publierFichierIndicateurImporteUseCase =
+      publierFichierIndicateurImporteUseCase;
+    this.verifierFichierIndicateurImporteUseCase =
+      verifierFichierIndicateurImporteUseCase;
   }
 
-  async handle({ request, response, email, profil }: { request: NextApiRequest, response: NextApiResponse, email: string, profil: string }) {
-    const contentType = request.headers['content-type'];
-    if (contentType?.startsWith('application/json')) {
-
+  async handle({
+    request,
+    response,
+    email,
+    profil,
+  }: {
+    request: NextApiRequest;
+    response: NextApiResponse;
+    email: string;
+    profil: string;
+  }) {
+    const contentType = request.headers["content-type"];
+    if (contentType?.startsWith("application/json")) {
       const readable = request.read();
 
       const buffer = Buffer.from(readable);
       try {
-        const data = JSON.parse(buffer.toString()) as DataImportDonneeIndicateurAPIContrat;
-        const stringifier = stringify(
-          convertirEnTableauPourCSV(data.donnees), {
-            header: true,
-            columns: ['identifiant_indic', 'zone_id', 'zone_nom', 'date_valeur', 'type_valeur', 'valeur'],
-          });
+        const data = JSON.parse(
+          buffer.toString(),
+        ) as DataImportDonneeIndicateurAPIContrat;
+        const stringifier = stringify(convertirEnTableauPourCSV(data.donnees), {
+          header: true,
+          columns: [
+            "identifiant_indic",
+            "zone_id",
+            "zone_nom",
+            "date_valeur",
+            "type_valeur",
+            "valeur",
+          ],
+        });
         const uploadDir = join(
           process.env.ROOT_DIR || process.cwd(),
-          '/uploads',
+          "/uploads",
         );
 
-        const fileName = `import-local-json-${(new Date()).toISOString()}.csv`;
+        const fileName = `import-local-json-${new Date().toISOString()}.csv`;
         const filePath = `${uploadDir}/${fileName}`;
         await new Promise<void>(async (resolve, reject) => {
           try {
             await stat(uploadDir);
           } catch (error: any) {
-            if (error.code === 'ENOENT') {
+            if (error.code === "ENOENT") {
               await mkdir(uploadDir, { recursive: true });
             } else {
               reject(error);
@@ -96,8 +116,7 @@ export class ImportDonneeIndicateurAPIHandler {
         return response.status(400).json({ message: (error as Error).message });
       }
     }
-    if (contentType?.startsWith('multipart/form-data')) {
-
+    if (contentType?.startsWith("multipart/form-data")) {
       const formData = await parseForm(request);
       const fichier = <File>formData.file![0];
       await this.importDonneeIndicateur({
@@ -119,12 +138,12 @@ export class ImportDonneeIndicateurAPIHandler {
     utilisateurAuteurDeLimportEmail,
     isAdmin,
   }: {
-    response: NextApiResponse,
-    cheminCompletDuFichier: string,
-    nomDuFichier: string,
-    indicateurId: string,
-    utilisateurAuteurDeLimportEmail: string,
-    isAdmin: boolean,
+    response: NextApiResponse;
+    cheminCompletDuFichier: string;
+    nomDuFichier: string;
+    indicateurId: string;
+    utilisateurAuteurDeLimportEmail: string;
+    isAdmin: boolean;
   }) => {
     const report = await this.verifierFichierIndicateurImporteUseCase.execute({
       cheminCompletDuFichier,
@@ -141,12 +160,12 @@ export class ImportDonneeIndicateurAPIHandler {
       });
 
       response.status(200).json({
-        message: 'Les données ont correctement été importés',
+        message: "Les données ont correctement été importés",
       });
     } else {
       response.status(400).json({
         message: "Une erreur est survenue lors de l'import des données",
-        erreurs: report.listeErreursValidation.map(erreur => ({
+        erreurs: report.listeErreursValidation.map((erreur) => ({
           cellule: erreur.cellule,
           nomDuChamp: erreur.nomDuChamp,
           message: erreur.message,

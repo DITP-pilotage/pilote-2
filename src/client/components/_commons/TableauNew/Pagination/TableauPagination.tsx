@@ -1,22 +1,29 @@
-import '@gouvfr/dsfr/dist/component/pagination/pagination.min.css';
-import { parseAsInteger, useQueryStates } from 'nuqs';
-import { Table } from '@tanstack/react-table';
-import TableauPaginationÉlément from './Élément/TableauPaginationÉlément';
+import "@gouvfr/dsfr/dist/component/pagination/pagination.min.css";
+import { parseAsInteger, useQueryStates } from "nuqs";
+import { Table } from "@tanstack/react-table";
+import TableauPaginationÉlément from "./Élément/TableauPaginationÉlément";
 
 interface TableauPaginationProps<T> {
-  nombreDePages: number,
-  tableau: Table<T>,
-  initialPageSize?: number
+  nombreDePages: number;
+  tableau: Table<T>;
+  initialPageSize?: number;
 }
 
-export default function TableauPagination<T>({ tableau, nombreDePages, initialPageSize = 20 }: TableauPaginationProps<T>) {
-  const [pagination, setPagination] = useQueryStates({
-    pageIndex: parseAsInteger.withDefault(1),
-    pageSize: parseAsInteger.withDefault(initialPageSize),
-  }, {
-    shallow: false,
-    history: 'push',
-  });
+export default function TableauPagination<T>({
+  tableau,
+  nombreDePages,
+  initialPageSize = 20,
+}: TableauPaginationProps<T>) {
+  const [pagination, setPagination] = useQueryStates(
+    {
+      pageIndex: parseAsInteger.withDefault(1),
+      pageSize: parseAsInteger.withDefault(initialPageSize),
+    },
+    {
+      shallow: false,
+      history: "push",
+    },
+  );
 
   if (nombreDePages <= 1) {
     return null;
@@ -26,159 +33,167 @@ export default function TableauPagination<T>({ tableau, nombreDePages, initialPa
   const numéroPageSuivante = pagination.pageIndex + 1;
   const numéroPagePrécédente = pagination.pageIndex - 1;
   const aLaPremièreTroncature = () => pagination.pageIndex > 3;
-  const aLaDeuxièmeTroncature = () => pagination.pageIndex <= numéroDernièrePage - 3;
+  const aLaDeuxièmeTroncature = () =>
+    pagination.pageIndex <= numéroDernièrePage - 3;
 
   return (
     <nav
-      aria-label='Pagination'
-      className='fr-pagination fr-grid-row fr-grid-row--center fr-mt-11v fr-mb-10w'
-      role='navigation'
+      aria-label="Pagination"
+      className="fr-pagination fr-grid-row fr-grid-row--center fr-mt-11v fr-mb-10w"
+      role="navigation"
     >
-      <ul className='fr-pagination__list'>
-        <li className='fr-unhidden-sm fr-hidden'>
+      <ul className="fr-pagination__list">
+        <li className="fr-unhidden-sm fr-hidden">
           <button
-            className='fr-pagination__link fr-pagination__link--first'
+            className="fr-pagination__link fr-pagination__link--first"
             disabled={pagination.pageIndex === 1}
             onClick={() => setPagination({ pageIndex: 1 })}
-            title='Première page'
-            type='button'
+            title="Première page"
+            type="button"
           >
             Première page
           </button>
         </li>
-        <li className='fr-unhidden-sm fr-hidden'>
+        <li className="fr-unhidden-sm fr-hidden">
           <button
-            className='fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label'
+            className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
             disabled={pagination.pageIndex === 1}
             onClick={() => tableau.previousPage()}
-            title='Page précédente'
-            type='button'
+            title="Page précédente"
+            type="button"
           >
             Page précédente
           </button>
         </li>
-        {
-          nombreDePages <= 5 ?
-            [...Array.from({ length: nombreDePages }).keys()].map((page) => (
+        {nombreDePages <= 5 ? (
+          [...Array.from({ length: nombreDePages }).keys()].map((page) => (
+            <TableauPaginationÉlément
+              changementDePageCallback={() =>
+                setPagination({ pageIndex: page + 1 })
+              }
+              estLaPageCourante={pagination.pageIndex === page + 1}
+              key={page}
+              numéroDePage={page + 1}
+            />
+          ))
+        ) : (
+          <>
+            <TableauPaginationÉlément
+              changementDePageCallback={() => setPagination({ pageIndex: 1 })}
+              estLaPageCourante={pagination.pageIndex === 1}
+              numéroDePage={1}
+            />
+            {!aLaPremièreTroncature() && (
               <TableauPaginationÉlément
-                changementDePageCallback={() => setPagination({ pageIndex: page + 1 })}
-                estLaPageCourante={pagination.pageIndex === page + 1}
-                key={page}
-                numéroDePage={page + 1}
+                changementDePageCallback={() => setPagination({ pageIndex: 2 })}
+                estLaPageCourante={pagination.pageIndex === 2}
+                numéroDePage={2}
               />
-            ))
-            :
-            <>
+            )}
+            {!aLaPremièreTroncature() && pagination.pageIndex >= 2 && (
               <TableauPaginationÉlément
-                changementDePageCallback={() => setPagination({ pageIndex: 1 })}
-                estLaPageCourante={pagination.pageIndex === 1}
-                numéroDePage={1}
+                changementDePageCallback={() => setPagination({ pageIndex: 3 })}
+                estLaPageCourante={pagination.pageIndex === 3}
+                numéroDePage={3}
               />
-              {
-                !aLaPremièreTroncature() &&
+            )}
+            {pagination.pageIndex === 3 && (
+              <TableauPaginationÉlément
+                changementDePageCallback={() => setPagination({ pageIndex: 4 })}
+                estLaPageCourante={false}
+                numéroDePage={4}
+              />
+            )}
+            {aLaPremièreTroncature() && (
+              <li className="fr-pagination__link">...</li>
+            )}
+            {aLaPremièreTroncature() && aLaDeuxièmeTroncature() && (
+              <>
                 <TableauPaginationÉlément
-                  changementDePageCallback={() => setPagination({ pageIndex: 2 })}
-                  estLaPageCourante={pagination.pageIndex === 2}
-                  numéroDePage={2}
-                />
-              }
-              {
-                !aLaPremièreTroncature() && pagination.pageIndex >= 2 &&
-                <TableauPaginationÉlément
-                  changementDePageCallback={() => setPagination({ pageIndex: 3 })}
-                  estLaPageCourante={pagination.pageIndex === 3}
-                  numéroDePage={3}
-                />
-              }
-              {
-                pagination.pageIndex === 3 &&
-                <TableauPaginationÉlément
-                  changementDePageCallback={() => setPagination({ pageIndex: 4 })}
+                  changementDePageCallback={() =>
+                    setPagination({ pageIndex: numéroPagePrécédente })
+                  }
                   estLaPageCourante={false}
-                  numéroDePage={4}
+                  numéroDePage={numéroPagePrécédente}
                 />
-              }
-              {
-                aLaPremièreTroncature() &&
-                <li className='fr-pagination__link'>
-                  ...
-                </li>
-              }
-              {
-                aLaPremièreTroncature() && aLaDeuxièmeTroncature() &&
-                <>
-                  <TableauPaginationÉlément
-                    changementDePageCallback={() => setPagination({ pageIndex: numéroPagePrécédente })}
-                    estLaPageCourante={false}
-                    numéroDePage={numéroPagePrécédente}
-                  />
-                  <TableauPaginationÉlément
-                    changementDePageCallback={() => setPagination({ pageIndex: pagination.pageIndex })}
-                    estLaPageCourante
-                    numéroDePage={pagination.pageIndex}
-                  />
-                  <TableauPaginationÉlément
-                    changementDePageCallback={() => setPagination({ pageIndex: numéroPageSuivante })}
-                    estLaPageCourante={false}
-                    numéroDePage={numéroPageSuivante}
-                  />
-                </>
-              }
-              {
-                aLaDeuxièmeTroncature() &&
-                <li className='fr-pagination__link'>
-                  ...
-                </li>
-              }
-              {
-                pagination.pageIndex === numéroDernièrePage - 2 &&
                 <TableauPaginationÉlément
-                  changementDePageCallback={() => setPagination({ pageIndex: numéroDernièrePage - 3 })}
+                  changementDePageCallback={() =>
+                    setPagination({ pageIndex: pagination.pageIndex })
+                  }
+                  estLaPageCourante
+                  numéroDePage={pagination.pageIndex}
+                />
+                <TableauPaginationÉlément
+                  changementDePageCallback={() =>
+                    setPagination({ pageIndex: numéroPageSuivante })
+                  }
                   estLaPageCourante={false}
-                  numéroDePage={numéroDernièrePage - 3}
+                  numéroDePage={numéroPageSuivante}
                 />
-              }
-              {
-                !aLaDeuxièmeTroncature() && pagination.pageIndex <= numéroDernièrePage - 1 &&
+              </>
+            )}
+            {aLaDeuxièmeTroncature() && (
+              <li className="fr-pagination__link">...</li>
+            )}
+            {pagination.pageIndex === numéroDernièrePage - 2 && (
+              <TableauPaginationÉlément
+                changementDePageCallback={() =>
+                  setPagination({ pageIndex: numéroDernièrePage - 3 })
+                }
+                estLaPageCourante={false}
+                numéroDePage={numéroDernièrePage - 3}
+              />
+            )}
+            {!aLaDeuxièmeTroncature() &&
+              pagination.pageIndex <= numéroDernièrePage - 1 && (
                 <TableauPaginationÉlément
-                  changementDePageCallback={() => setPagination({ pageIndex: numéroDernièrePage - 2 })}
-                  estLaPageCourante={pagination.pageIndex === numéroDernièrePage - 2}
+                  changementDePageCallback={() =>
+                    setPagination({ pageIndex: numéroDernièrePage - 2 })
+                  }
+                  estLaPageCourante={
+                    pagination.pageIndex === numéroDernièrePage - 2
+                  }
                   numéroDePage={numéroDernièrePage - 2}
                 />
-              }
-              {
-                pagination.pageIndex >= numéroDernièrePage - 2 &&
-                <TableauPaginationÉlément
-                  changementDePageCallback={() => setPagination({ pageIndex: numéroDernièrePage - 1 })}
-                  estLaPageCourante={pagination.pageIndex === numéroDernièrePage - 1}
-                  numéroDePage={numéroDernièrePage - 1}
-                />
-              }
+              )}
+            {pagination.pageIndex >= numéroDernièrePage - 2 && (
               <TableauPaginationÉlément
-                changementDePageCallback={() => setPagination({ pageIndex: numéroDernièrePage })}
-                estLaPageCourante={pagination.pageIndex === numéroDernièrePage}
-                numéroDePage={numéroDernièrePage}
+                changementDePageCallback={() =>
+                  setPagination({ pageIndex: numéroDernièrePage - 1 })
+                }
+                estLaPageCourante={
+                  pagination.pageIndex === numéroDernièrePage - 1
+                }
+                numéroDePage={numéroDernièrePage - 1}
               />
-            </>
-        }
-        <li className='fr-unhidden-sm fr-hidden'>
+            )}
+            <TableauPaginationÉlément
+              changementDePageCallback={() =>
+                setPagination({ pageIndex: numéroDernièrePage })
+              }
+              estLaPageCourante={pagination.pageIndex === numéroDernièrePage}
+              numéroDePage={numéroDernièrePage}
+            />
+          </>
+        )}
+        <li className="fr-unhidden-sm fr-hidden">
           <button
-            className='fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label'
+            className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
             disabled={pagination.pageIndex === numéroDernièrePage}
             onClick={() => tableau.nextPage()}
-            title='Page suivante'
-            type='button'
+            title="Page suivante"
+            type="button"
           >
             Page suivante
           </button>
         </li>
-        <li className='fr-unhidden-sm fr-hidden'>
+        <li className="fr-unhidden-sm fr-hidden">
           <button
-            className='fr-pagination__link fr-pagination__link--last'
+            className="fr-pagination__link fr-pagination__link--last"
             disabled={pagination.pageIndex === numéroDernièrePage}
             onClick={() => setPagination({ pageIndex: numéroDernièrePage })}
-            title='Dernière page'
-            type='button'
+            title="Dernière page"
+            type="button"
           >
             Dernière page
           </button>

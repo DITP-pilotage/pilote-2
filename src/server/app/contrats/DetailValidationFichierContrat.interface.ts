@@ -1,6 +1,6 @@
 export interface DetailValidationFichierContrat {
-  id: string
-  estValide: boolean
+  id: string;
+  estValide: boolean;
   listeErreursValidation: ErreurValidationFichierContrat[];
 }
 

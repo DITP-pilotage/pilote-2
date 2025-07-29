@@ -1,3 +1,6 @@
 export interface SyntheseDesResultatsRepository {
-  anonymiserAuteurs(auteursAAnonymiserIds: string[], emailAuteurRemplacement: string): Promise<void>
+  anonymiserAuteurs(
+    auteursAAnonymiserIds: string[],
+    emailAuteurRemplacement: string,
+  ): Promise<void>;
 }

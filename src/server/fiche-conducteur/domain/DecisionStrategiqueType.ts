@@ -1,1 +1,1 @@
-export type DecisionStrategiqueType = 'suivi_des_decisions';
+export type DecisionStrategiqueType = "suivi_des_decisions";

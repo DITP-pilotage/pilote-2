@@ -1,25 +1,26 @@
-import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
-import Head from 'next/head';
-import { GetServerSidePropsContext } from 'next';
-import { getServerSession } from 'next-auth/next';
-import { FunctionComponent } from 'react';
-import PageMessageInformation from '@/components/PageAdminGestionContenus/PageMessageInformation';
-import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
-import { estAutoriséAModifierDesIndicateurs } from '@/client/utils/indicateur/indicateur';
+import "@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css";
+import Head from "next/head";
+import { GetServerSidePropsContext } from "next";
+import { getServerSession } from "next-auth/next";
+import { FunctionComponent } from "react";
+import PageMessageInformation from "@/components/PageAdminGestionContenus/PageMessageInformation";
+import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { estAutoriséAModifierDesIndicateurs } from "@/client/utils/indicateur/indicateur";
 import {
   MessageInformationContrat,
   presenterEnMessageInformationContrat,
-} from '@/server/app/contrats/MessageInformationContrat';
-import { RécupérerMessageInformationUseCase } from '@/server/gestion-contenu/usecases/RécupérerMessageInformationUseCase';
-import { dependencies } from '@/server/infrastructure/Dependencies';
+} from "@/server/app/contrats/MessageInformationContrat";
+import { RécupérerMessageInformationUseCase } from "@/server/gestion-contenu/usecases/RécupérerMessageInformationUseCase";
+import { dependencies } from "@/server/infrastructure/Dependencies";
 
-const NextAdminMessageInformation: FunctionComponent<{ messageInformation: MessageInformationContrat, modificationReussie: boolean }> = ({ messageInformation, modificationReussie }) => {
+const NextAdminMessageInformation: FunctionComponent<{
+  messageInformation: MessageInformationContrat;
+  modificationReussie: boolean;
+}> = ({ messageInformation, modificationReussie }) => {
   return (
     <>
       <Head>
-        <title>
-          Message d'information - Pilote
-        </title>
+        <title>Message d'information - Pilote</title>
       </Head>
       <PageMessageInformation
         messageInformation={messageInformation}
@@ -30,15 +31,23 @@ const NextAdminMessageInformation: FunctionComponent<{ messageInformation: Messa
 };
 export default NextAdminMessageInformation;
 
-export async function getServerSideProps({ req, res, query }: GetServerSidePropsContext) {
+export async function getServerSideProps({
+  req,
+  res,
+  query,
+}: GetServerSidePropsContext) {
   const session = await getServerSession(req, res, authOptions);
   if (!session || !estAutoriséAModifierDesIndicateurs(session.profil)) {
-    throw new Error('Not connected or not authorized ?');
+    throw new Error("Not connected or not authorized ?");
   }
 
-  const messageInformation = presenterEnMessageInformationContrat(await new RécupérerMessageInformationUseCase({ gestionContenuRepository: dependencies.getGestionContenuRepository() }).run());
+  const messageInformation = presenterEnMessageInformationContrat(
+    await new RécupérerMessageInformationUseCase({
+      gestionContenuRepository: dependencies.getGestionContenuRepository(),
+    }).run(),
+  );
 
-  const modificationReussie = query._action === 'modification-reussie';
+  const modificationReussie = query._action === "modification-reussie";
 
   return {
     props: {

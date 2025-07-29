@@ -1,17 +1,17 @@
-import { objectif, Prisma } from '@prisma/client';
-import { faker } from '@faker-js/faker/locale/fr';
-import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
+import { objectif, Prisma } from "@prisma/client";
+import { faker } from "@faker-js/faker/locale/fr";
+import ChantierBuilder from "@/server/domain/chantier/Chantier.builder";
 
 export default class ObjectifSQLRowBuilder {
-  private _id: objectif['id'];
+  private _id: objectif["id"];
 
-  private _auteur_id: objectif['auteur_id'];
+  private _auteur_id: objectif["auteur_id"];
 
-  private _type: objectif['type'];
+  private _type: objectif["type"];
 
-  private _contenu: objectif['contenu'];
+  private _contenu: objectif["contenu"];
 
-  private _date: objectif['date'];
+  private _date: objectif["date"];
 
   private _chantierId: string;
 
@@ -20,38 +20,42 @@ export default class ObjectifSQLRowBuilder {
 
     this._id = faker.datatype.uuid();
     this._auteur_id = null;
-    this._type = faker.helpers.arrayElement(['notre_ambition', 'deja_fait', 'a_faire']);
+    this._type = faker.helpers.arrayElement([
+      "notre_ambition",
+      "deja_fait",
+      "a_faire",
+    ]);
     this._contenu = faker.lorem.paragraph();
-    this._date = faker.date.recent(60, '2023-05-01T00:00:00.000Z');
+    this._date = faker.date.recent(60, "2023-05-01T00:00:00.000Z");
     this._chantierId = chantierGénéré.id;
   }
 
-  avecId(id: objectif['id']): ObjectifSQLRowBuilder {
+  avecId(id: objectif["id"]): ObjectifSQLRowBuilder {
     this._id = id;
     return this;
   }
 
-  avecAuteurID(auteur_id: objectif['auteur_id']): ObjectifSQLRowBuilder {
+  avecAuteurID(auteur_id: objectif["auteur_id"]): ObjectifSQLRowBuilder {
     this._auteur_id = auteur_id;
     return this;
   }
 
-  avecType(type: objectif['type']): ObjectifSQLRowBuilder {
+  avecType(type: objectif["type"]): ObjectifSQLRowBuilder {
     this._type = type;
     return this;
   }
 
-  avecContenu(contenu: objectif['contenu']): ObjectifSQLRowBuilder {
+  avecContenu(contenu: objectif["contenu"]): ObjectifSQLRowBuilder {
     this._contenu = contenu;
     return this;
   }
 
-  avecDate(date: objectif['date']): ObjectifSQLRowBuilder {
+  avecDate(date: objectif["date"]): ObjectifSQLRowBuilder {
     this._date = date;
     return this;
   }
 
-  avecChantierId(chantierId: objectif['chantier_id']): ObjectifSQLRowBuilder {
+  avecChantierId(chantierId: objectif["chantier_id"]): ObjectifSQLRowBuilder {
     this._chantierId = chantierId;
     return this;
   }
@@ -59,7 +63,7 @@ export default class ObjectifSQLRowBuilder {
   shallowCopy(): ObjectifSQLRowBuilder {
     const result = new ObjectifSQLRowBuilder() as any;
     for (const attribut in this) {
-      if (attribut == '_id') {
+      if (attribut == "_id") {
         continue;
       }
       result[attribut] = this[attribut];
@@ -67,7 +71,7 @@ export default class ObjectifSQLRowBuilder {
     return result as ObjectifSQLRowBuilder;
   }
 
-  build(): Prisma.objectifCreateArgs['data'] {
+  build(): Prisma.objectifCreateArgs["data"] {
     return {
       id: this._id,
       auteur_id: this._auteur_id,

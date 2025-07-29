@@ -1,31 +1,40 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { FunctionComponent } from 'react';
-import CompteurCaractères from '@/components/_commons/CompteurCaractères/CompteurCaractères';
-import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
-import { libellésMétéos, MétéoSaisissable, météosSaisissables } from '@/server/domain/météo/Météo.interface';
-import Titre from '@/components/_commons/Titre/Titre';
-import MeteoPicto from '@/components/_commons/Meteo/Picto/MeteoPicto';
-import Alerte from '@/components/_commons/Alerte/Alerte';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { FunctionComponent } from "react";
+import CompteurCaractères from "@/components/_commons/CompteurCaractères/CompteurCaractères";
+import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
+import {
+  libellésMétéos,
+  MétéoSaisissable,
+  météosSaisissables,
+} from "@/server/domain/météo/Météo.interface";
+import Titre from "@/components/_commons/Titre/Titre";
+import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
+import Alerte from "@/components/_commons/Alerte/Alerte";
 import {
   LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS,
   validationSynthèseDesRésultatsFormulaire,
-} from 'validation/synthèseDesRésultats';
-import SynthèseDesRésultatsFormulaireStyled from './Formulaire.styled';
-import SynthèseDesRésultatsFormulaireProps, { SynthèseDesRésultatsFormulaireInputs } from './Formulaire.interface';
-import useSynthèseDesRésultatsFormulaire from './useSynthèseDesRésultatsFormulaire';
+} from "validation/synthèseDesRésultats";
+import SynthèseDesRésultatsFormulaireStyled from "./Formulaire.styled";
+import SynthèseDesRésultatsFormulaireProps, {
+  SynthèseDesRésultatsFormulaireInputs,
+} from "./Formulaire.interface";
+import useSynthèseDesRésultatsFormulaire from "./useSynthèseDesRésultatsFormulaire";
 
-const SynthèseDesRésultatsFormulaire: FunctionComponent<SynthèseDesRésultatsFormulaireProps> = ({
+const SynthèseDesRésultatsFormulaire: FunctionComponent<
+  SynthèseDesRésultatsFormulaireProps
+> = ({
   contenuInitial,
   météoInitiale,
   synthèseDesRésultatsCrééeCallback,
   annulationCallback,
   territoireCode,
 }) => {
-  const {
-    créerSynthèseDesRésultats,
-    alerte,
-  } = useSynthèseDesRésultatsFormulaire(synthèseDesRésultatsCrééeCallback, territoireCode);
+  const { créerSynthèseDesRésultats, alerte } =
+    useSynthèseDesRésultatsFormulaire(
+      synthèseDesRésultatsCrééeCallback,
+      territoireCode,
+    );
 
   const {
     register,
@@ -34,94 +43,83 @@ const SynthèseDesRésultatsFormulaire: FunctionComponent<SynthèseDesRésultats
     watch,
     getValues,
   } = useForm<SynthèseDesRésultatsFormulaireInputs>({
-    mode: 'all',
+    mode: "all",
     resolver: zodResolver(validationSynthèseDesRésultatsFormulaire),
     defaultValues: {
       contenu: contenuInitial,
-      météo: météoInitiale && météosSaisissables.includes(météoInitiale) ? météoInitiale as MétéoSaisissable : undefined,
+      météo:
+        météoInitiale && météosSaisissables.includes(météoInitiale)
+          ? (météoInitiale as MétéoSaisissable)
+          : undefined,
     },
   });
 
   return (
     <SynthèseDesRésultatsFormulaireStyled
-      method='post'
+      method="post"
       onSubmit={handleSubmit(créerSynthèseDesRésultats)}
     >
-      <Titre
-        baliseHtml='h3'
-        className='fr-h5 fr-mb-1v'
-      >
+      <Titre baliseHtml="h3" className="fr-h5 fr-mb-1v">
         Modifier la météo et la synthèse des résultats
       </Titre>
-      <p className='fr-text--xs fr-mb-1w texte-gris'>
+      <p className="fr-text--xs fr-mb-1w texte-gris">
         {`Résumez l'état d'avancement du chantier et indiquez si vous souhaitez solliciter du soutien en quelques phrases (${LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS} caractères maximum). La météo doit indiquer votre niveau de confiance dans la possibilité d'atteindre les objectifs du chantier et le niveau d'appui nécessaire.`}
       </p>
-      <div className={`fr-mb-0 fr-input-group ${errors.contenu && 'fr-input-group--error'}`}>
+      <div
+        className={`fr-mb-0 fr-input-group ${errors.contenu && "fr-input-group--error"}`}
+      >
         <textarea
-          className='fr-input fr-text--sm fr-mb-0'
+          className="fr-input fr-text--sm fr-mb-0"
           rows={6}
-          {...register('contenu')}
+          {...register("contenu")}
         />
-        <div className='flex justify-between'>
+        <div className="flex justify-between">
           <div>
-            {
-              !!errors.contenu &&
-              <p className='fr-error-text fr-mt-0 fr-mr-2w'>
+            {!!errors.contenu && (
+              <p className="fr-error-text fr-mt-0 fr-mr-2w">
                 {errors.contenu.message}
               </p>
-            }
+            )}
           </div>
           <CompteurCaractères
-            compte={watch('contenu')?.length ?? 0}
+            compte={watch("contenu")?.length ?? 0}
             limiteDeCaractères={LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS}
           />
         </div>
       </div>
-      <div className='fr-mt-1v flex partie-basse'>
+      <div className="fr-mt-1v flex partie-basse">
         <Sélecteur<MétéoSaisissable>
-          htmlName='météo'
-          libellé='Météo'
-          options={météosSaisissables.map(optionMétéo => ({
+          htmlName="météo"
+          libellé="Météo"
+          options={météosSaisissables.map((optionMétéo) => ({
             libellé: libellésMétéos[optionMétéo],
             valeur: optionMétéo,
           }))}
-          register={{ ...register('météo') }}
-          texteFantôme='Météo à renseigner'
-          valeurSélectionnée={getValues('météo')}
+          register={{ ...register("météo") }}
+          texteFantôme="Météo à renseigner"
+          valeurSélectionnée={getValues("météo")}
         />
-        <div className='fr-mx-3w météo-picto-conteneur'>
-          {
-            !!watch('météo') &&
-            <MeteoPicto meteo={watch('météo')!} />
-          }
+        <div className="fr-mx-3w météo-picto-conteneur">
+          {!!watch("météo") && <MeteoPicto meteo={watch("météo")!} />}
         </div>
-        <div className='actions'>
-          <button
-            className='fr-btn fr-mr-3w'
-            disabled={!isValid}
-            type='submit'
-          >
+        <div className="actions">
+          <button className="fr-btn fr-mr-3w" disabled={!isValid} type="submit">
             Publier
           </button>
           <button
-            className='fr-btn fr-btn--secondary'
+            className="fr-btn fr-btn--secondary"
             onClick={annulationCallback}
-            type='button'
+            type="button"
           >
             Annuler
           </button>
         </div>
       </div>
-      {
-        !!alerte && (
-          <div className='fr-mt-2w'>
-            <Alerte
-              titre={alerte.titre}
-              type={alerte.type}
-            />
-          </div>
-        )
-      }
+      {!!alerte && (
+        <div className="fr-mt-2w">
+          <Alerte titre={alerte.titre} type={alerte.type} />
+        </div>
+      )}
     </SynthèseDesRésultatsFormulaireStyled>
   );
 };

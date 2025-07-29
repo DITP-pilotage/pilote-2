@@ -1,4 +1,4 @@
-import { HabilitationAuthentitificationAPI } from '@/server/authentification/domain/HabilitationAuthentitificationAPI';
+import { HabilitationAuthentitificationAPI } from "@/server/authentification/domain/HabilitationAuthentitificationAPI";
 
 interface HabilitationDisponible {
   chantiers: string[];
@@ -37,7 +37,10 @@ export class HabilitationAuthentitificationAPIBuilder {
     périmètres: [],
   };
 
-  ajouterHabilitationLecture(categorie: 'chantiers' | 'territoires' | 'périmètres', listeHabilitations: string[]) {
+  ajouterHabilitationLecture(
+    categorie: "chantiers" | "territoires" | "périmètres",
+    listeHabilitations: string[],
+  ) {
     this.gestionUtilisateur[categorie] = listeHabilitations;
     return this;
   }

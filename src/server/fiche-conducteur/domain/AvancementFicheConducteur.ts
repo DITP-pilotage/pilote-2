@@ -9,12 +9,18 @@ export class AvancementFicheConducteur {
 
   private readonly _maximum: number | null;
 
-  private constructor({ global, annuel, minimum, mediane, maximum }: {
-    global: number | null,
-    annuel: number | null,
-    minimum: number | null,
-    mediane: number | null,
-    maximum: number | null
+  private constructor({
+    global,
+    annuel,
+    minimum,
+    mediane,
+    maximum,
+  }: {
+    global: number | null;
+    annuel: number | null;
+    minimum: number | null;
+    mediane: number | null;
+    maximum: number | null;
   }) {
     this._global = global;
     this._annuel = annuel;
@@ -43,13 +49,25 @@ export class AvancementFicheConducteur {
     return this._maximum;
   }
 
-  static creerAvancementFicheConducteur({ global, annuel, minimum, mediane, maximum }: {
-    global: number | null,
-    annuel: number | null,
-    minimum: number | null,
-    mediane: number | null,
-    maximum: number | null
+  static creerAvancementFicheConducteur({
+    global,
+    annuel,
+    minimum,
+    mediane,
+    maximum,
+  }: {
+    global: number | null;
+    annuel: number | null;
+    minimum: number | null;
+    mediane: number | null;
+    maximum: number | null;
   }): AvancementFicheConducteur {
-    return new AvancementFicheConducteur({ global, annuel, minimum, mediane, maximum });
+    return new AvancementFicheConducteur({
+      global,
+      annuel,
+      minimum,
+      mediane,
+      maximum,
+    });
   }
 }

@@ -1,7 +1,7 @@
-import { TokenAPIInformation } from '@/server/authentification/domain/TokenAPIInformation';
+import { TokenAPIInformation } from "@/server/authentification/domain/TokenAPIInformation";
 
 export class TokenAPIInformationBuilder {
-  private email: string = 'test@test.fr';
+  private email: string = "test@test.fr";
 
   private dateCreation: string = new Date().toISOString();
 

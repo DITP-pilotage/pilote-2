@@ -1,23 +1,23 @@
-import { FunctionComponent } from 'react';
-import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
-import {
-  AvancementsFicheTerritorialeStyled,
-} from '@/components/PageFicheTerritoriale/AvancementsFicheTerritoriale/AvancementsFicheTerritoriale.styled';
+import { FunctionComponent } from "react";
+import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
+import { AvancementsFicheTerritorialeStyled } from "@/components/PageFicheTerritoriale/AvancementsFicheTerritoriale/AvancementsFicheTerritoriale.styled";
 
 export type AvancementsStatistiques = number | null;
 
 export default interface AvancementsProps {
-  avancementGlobalTerritoire: AvancementsStatistiques
+  avancementGlobalTerritoire: AvancementsStatistiques;
 }
 
-export const AvancementsFicheTerritoriale: FunctionComponent<AvancementsProps> = ({ avancementGlobalTerritoire }) => {
+export const AvancementsFicheTerritoriale: FunctionComponent<
+  AvancementsProps
+> = ({ avancementGlobalTerritoire }) => {
   return (
     <AvancementsFicheTerritorialeStyled>
       <JaugeDeProgression
-        couleur='bleu'
+        couleur="bleu"
         libellé="Taux d'avancement à échéance 2026 du territoire"
         pourcentage={avancementGlobalTerritoire || null}
-        taille='lg'
+        taille="lg"
       />
     </AvancementsFicheTerritorialeStyled>
   );

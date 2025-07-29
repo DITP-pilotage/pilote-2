@@ -1,6 +1,12 @@
-import { FunctionComponent, ReactNode, useEffect, useRef, useState } from 'react';
-import styled from '@emotion/styled';
-import { createPortal } from 'react-dom';
+import {
+  FunctionComponent,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import styled from "@emotion/styled";
+import { createPortal } from "react-dom";
 
 const TooltipContent = styled.div<{ isVisible: boolean }>`
   position: fixed;
@@ -12,8 +18,8 @@ const TooltipContent = styled.div<{ isVisible: boolean }>`
   border-radius: 0.5rem;
   box-shadow: 0 4px 2px rgba(0, 0, 0, 0.1);
   padding: 0.75rem;
-  opacity: ${props => props.isVisible ? 1 : 0};
-  visibility: ${props => props.isVisible ? 'visible' : 'hidden'};
+  opacity: ${(props) => (props.isVisible ? 1 : 0)};
+  visibility: ${(props) => (props.isVisible ? "visible" : "hidden")};
   transition: opacity 0.2s ease-in-out;
   pointer-events: none;
   white-space: normal;
@@ -54,11 +60,13 @@ const SecureTooltip: FunctionComponent<SecureTooltipProps> = ({
 }) => {
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const tooltipRef = useRef<HTMLDivElement>(null);
-  const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
+  const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(
+    null,
+  );
 
   useEffect(() => {
     // Créer le conteneur pour le portail
-    const container = document.createElement('div');
+    const container = document.createElement("div");
     document.body.append(container);
     setPortalContainer(container);
 
@@ -77,18 +85,18 @@ const SecureTooltip: FunctionComponent<SecureTooltipProps> = ({
 
       // Calculer la position optimale
       let top = anchorRect.top - tooltipRect.height - 5; // Position au-dessus du bouton
-      
+
       // Calculer la position horizontale centrée par rapport au bouton
       let left = anchorRect.left + (anchorRect.width - tooltipRect.width) / 2;
 
       // Vérifier si le tooltip dépasse les bords de l'écran
       const absoluteRight = left + tooltipRect.width;
-      
+
       // Ajuster si le tooltip dépasse la fenêtre
       if (absoluteRight > window.innerWidth) {
         left = left - (absoluteRight - window.innerWidth) - 10; // 10px de marge
       }
-      
+
       if (left < 0) {
         left = 10; // 10px de marge à gauche
       }
@@ -104,13 +112,13 @@ const SecureTooltip: FunctionComponent<SecureTooltipProps> = ({
     if (isVisible) {
       // Petit délai pour s'assurer que le tooltip est rendu
       const timer = setTimeout(updatePosition, 0);
-      window.addEventListener('scroll', updatePosition);
-      window.addEventListener('resize', updatePosition);
+      window.addEventListener("scroll", updatePosition);
+      window.addEventListener("resize", updatePosition);
 
       return () => {
         clearTimeout(timer);
-        window.removeEventListener('scroll', updatePosition);
-        window.removeEventListener('resize', updatePosition);
+        window.removeEventListener("scroll", updatePosition);
+        window.removeEventListener("resize", updatePosition);
       };
     }
   }, [isVisible, anchorEl]);
@@ -134,4 +142,4 @@ const SecureTooltip: FunctionComponent<SecureTooltipProps> = ({
   );
 };
 
-export default SecureTooltip; 
+export default SecureTooltip;

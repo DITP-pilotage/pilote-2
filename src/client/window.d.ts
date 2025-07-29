@@ -1,3 +1,5 @@
 export declare global {
-  interface Window { dsfr: Function; }
+  interface Window {
+    dsfr: Function;
+  }
 }

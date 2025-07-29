@@ -1,35 +1,48 @@
-import { Territoire } from '@/server/domain/territoire/Territoire.interface';
+import { Territoire } from "@/server/domain/territoire/Territoire.interface";
 import Utilisateur, {
   ProfilCode,
   profilsDépartementaux,
   profilsRégionaux,
-} from '@/server/domain/utilisateur/Utilisateur.interface';
+} from "@/server/domain/utilisateur/Utilisateur.interface";
 
 export interface UtilisateurContrat {
-  id: string
-  nom: string
-  prénom: string
-  email: string
-  profil: ProfilCode
-  fonction: string | null
-  dateModification: string
-  auteurModification: string
-  listeNomsTerritoires: string[]
+  id: string;
+  nom: string;
+  prénom: string;
+  email: string;
+  profil: ProfilCode;
+  fonction: string | null;
+  dateModification: string;
+  auteurModification: string;
+  listeNomsTerritoires: string[];
 }
 
-const recupererLesNomsDesTerritoires = (utilisateur: Utilisateur, territoiresListe: Territoire[]): string[] => {
-  const mailleUtilisateur = profilsDépartementaux.includes(utilisateur.profil) ?
-    'departementale' :
-    profilsRégionaux.includes(utilisateur.profil) ? 'regionale' : 'nationale';
-  
-  return mailleUtilisateur === 'nationale' ? 
-    ['Tous les territoires'] : 
-    territoiresListe.
-      filter(territoire => utilisateur.habilitations.lecture.territoires.includes(territoire.code) && territoire.maille === mailleUtilisateur).
-      map(territoire => territoire.nom);
+const recupererLesNomsDesTerritoires = (
+  utilisateur: Utilisateur,
+  territoiresListe: Territoire[],
+): string[] => {
+  const mailleUtilisateur = profilsDépartementaux.includes(utilisateur.profil)
+    ? "departementale"
+    : profilsRégionaux.includes(utilisateur.profil)
+      ? "regionale"
+      : "nationale";
+
+  return mailleUtilisateur === "nationale"
+    ? ["Tous les territoires"]
+    : territoiresListe
+        .filter(
+          (territoire) =>
+            utilisateur.habilitations.lecture.territoires.includes(
+              territoire.code,
+            ) && territoire.maille === mailleUtilisateur,
+        )
+        .map((territoire) => territoire.nom);
 };
 
-export const presenterEnUtilisateurContrat = (utilisateur: Utilisateur, territoiresListe: Territoire[]): UtilisateurContrat => {
+export const presenterEnUtilisateurContrat = (
+  utilisateur: Utilisateur,
+  territoiresListe: Territoire[],
+): UtilisateurContrat => {
   return {
     id: utilisateur.id,
     nom: utilisateur.nom,
@@ -39,6 +52,9 @@ export const presenterEnUtilisateurContrat = (utilisateur: Utilisateur, territoi
     fonction: utilisateur.fonction,
     dateModification: utilisateur.dateModification,
     auteurModification: utilisateur.auteurModification,
-    listeNomsTerritoires: recupererLesNomsDesTerritoires(utilisateur, territoiresListe),
+    listeNomsTerritoires: recupererLesNomsDesTerritoires(
+      utilisateur,
+      territoiresListe,
+    ),
   };
 };

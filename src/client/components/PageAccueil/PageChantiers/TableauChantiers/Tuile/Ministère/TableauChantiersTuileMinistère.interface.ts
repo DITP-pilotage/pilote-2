@@ -4,6 +4,6 @@ export default interface TableauChantiersTuileMinistèreProps {
     icône: string | null;
     avancement: number | null;
   };
-  estDéroulé: boolean,
-  estArchive?: boolean
+  estDéroulé: boolean;
+  estArchive?: boolean;
 }

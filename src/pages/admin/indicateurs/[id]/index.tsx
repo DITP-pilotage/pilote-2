@@ -1,42 +1,44 @@
-import { GetServerSidePropsContext } from 'next/types';
-import Head from 'next/head';
-import { FunctionComponent } from 'react';
-import { getServerAuthSession } from '@/server/infrastructure/api/auth/[...nextauth]';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
+import { GetServerSidePropsContext } from "next/types";
+import Head from "next/head";
+import { FunctionComponent } from "react";
+import { getServerAuthSession } from "@/server/infrastructure/api/auth/[...nextauth]";
+import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
 import {
   MetadataParametrageIndicateurContrat,
   presenterEnMetadataParametrageIndicateurContrat,
-} from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
-import PageIndicateur from '@/components/PageIndicateur/PageIndicateur';
+} from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
+import PageIndicateur from "@/components/PageIndicateur/PageIndicateur";
 import {
   MapInformationMetadataIndicateurContrat,
   presenterEnMapInformationMetadataIndicateurContrat,
-} from '@/server/app/contrats/InformationMetadataIndicateurContrat';
-import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
-import { getContainer } from '@/server/dependances';
-import {
-  InformationHistorisationMetadataIndicateurContrat,
-} from '@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat';
-import Habilitation from '@/server/gestion-utilisateur/domain/habilitation/Habilitation';
+} from "@/server/app/contrats/InformationMetadataIndicateurContrat";
+import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
+import { getContainer } from "@/server/dependances";
+import { InformationHistorisationMetadataIndicateurContrat } from "@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat";
+import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 
 export interface NextPageAdminUtilisateurProps {
-  indicateur: MetadataParametrageIndicateurContrat,
-  informationHistorisationIndicateur: InformationHistorisationMetadataIndicateurContrat,
-  mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
-  estUneCréation: boolean
-  modificationReussie: boolean
-  creationReussie: boolean
-  chantiers: ChantierSynthétisé[]
+  indicateur: MetadataParametrageIndicateurContrat;
+  informationHistorisationIndicateur: InformationHistorisationMetadataIndicateurContrat;
+  mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat;
+  estUneCréation: boolean;
+  modificationReussie: boolean;
+  creationReussie: boolean;
+  chantiers: ChantierSynthétisé[];
 }
 
-export async function getServerSideProps({ req, res, params, query }: GetServerSidePropsContext<{
-  id: Utilisateur['id'],
-  _action?: string
+export async function getServerSideProps({
+  req,
+  res,
+  params,
+  query,
+}: GetServerSidePropsContext<{
+  id: Utilisateur["id"];
+  _action?: string;
 }>) {
-
   const redirigerVersPageAccueil = {
     redirect: {
-      destination: '/',
+      destination: "/",
       permanent: false,
     },
   };
@@ -52,25 +54,44 @@ export async function getServerSideProps({ req, res, params, query }: GetServerS
   habilitations.verifierAutorisationLectureMetadataIndicateur(session.profil);
 
   let indicateurDemandé: MetadataParametrageIndicateurContrat;
-  let creationReussie = query._action === 'creation-reussie';
-  let modificationReussie = query._action === 'modification-reussie';
-  let estUneCréation = query._action === 'creer-indicateur';
+  let creationReussie = query._action === "creation-reussie";
+  let modificationReussie = query._action === "modification-reussie";
+  let estUneCréation = query._action === "creer-indicateur";
   if (estUneCréation) {
-    indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await getContainer('parametrageIndicateur').resolve('initialiserNouvelIndicateurUseCase').run(params.id));
+    indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(
+      await getContainer("parametrageIndicateur")
+        .resolve("initialiserNouvelIndicateurUseCase")
+        .run(params.id),
+    );
   } else {
-    indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await getContainer('parametrageIndicateur').resolve('récupérerUnIndicateurUseCase').run(params.id));
+    indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(
+      await getContainer("parametrageIndicateur")
+        .resolve("récupérerUnIndicateurUseCase")
+        .run(params.id),
+    );
     if (!indicateurDemandé) {
       return redirigerVersPageAccueil;
     }
   }
 
-  const informationHistorisationIndicateur = await getContainer('parametrageIndicateur').resolve('metadataParametrageIndicateurQuery').recupererInformationHistorisation({ indicId: params.id });
+  const informationHistorisationIndicateur = await getContainer(
+    "parametrageIndicateur",
+  )
+    .resolve("metadataParametrageIndicateurQuery")
+    .recupererInformationHistorisation({ indicId: params.id });
 
-  const chantiers = await getContainer('gestionUtilisateur').resolve('recupererChantiersSynthetisesUseCase').run({
-    listeChantierIdLecture: session.habilitations.lecture.chantiers,
-  });
+  const chantiers = await getContainer("gestionUtilisateur")
+    .resolve("recupererChantiersSynthetisesUseCase")
+    .run({
+      listeChantierIdLecture: session.habilitations.lecture.chantiers,
+    });
 
-  const mapInformationMetadataIndicateur = presenterEnMapInformationMetadataIndicateurContrat(getContainer('parametrageIndicateur').resolve('récupérerInformationMetadataIndicateurUseCase').run());
+  const mapInformationMetadataIndicateur =
+    presenterEnMapInformationMetadataIndicateurContrat(
+      getContainer("parametrageIndicateur")
+        .resolve("récupérerInformationMetadataIndicateurUseCase")
+        .run(),
+    );
 
   return {
     props: {
@@ -85,7 +106,9 @@ export async function getServerSideProps({ req, res, params, query }: GetServerS
   };
 }
 
-const NextPageAdminIndicateur: FunctionComponent<NextPageAdminUtilisateurProps> = ({
+const NextPageAdminIndicateur: FunctionComponent<
+  NextPageAdminUtilisateurProps
+> = ({
   indicateur,
   informationHistorisationIndicateur,
   mapInformationMetadataIndicateur,
@@ -97,12 +120,7 @@ const NextPageAdminIndicateur: FunctionComponent<NextPageAdminUtilisateurProps> 
   return (
     <>
       <Head>
-        <title>
-          Indicateur
-          {' '}
-          {indicateur.indicId}
-          - PILOTE
-        </title>
+        <title>Indicateur {indicateur.indicId}- PILOTE</title>
       </Head>
       <PageIndicateur
         chantiers={chantiers}

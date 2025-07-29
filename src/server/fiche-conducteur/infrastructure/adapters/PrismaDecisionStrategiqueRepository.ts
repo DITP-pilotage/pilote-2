@@ -1,32 +1,44 @@
-import { decision_strategique as DecisionStrategiqueModel, PrismaClient } from '@prisma/client';
-import { DecisionStrategique } from '@/server/fiche-conducteur/domain/DecisionStrategique';
-import { DecisionStrategiqueRepository } from '@/server/fiche-conducteur/domain/ports/DecisionStrategiqueRepository';
+import {
+  decision_strategique as DecisionStrategiqueModel,
+  PrismaClient,
+} from "@prisma/client";
+import { DecisionStrategique } from "@/server/fiche-conducteur/domain/DecisionStrategique";
+import { DecisionStrategiqueRepository } from "@/server/fiche-conducteur/domain/ports/DecisionStrategiqueRepository";
 
-import { PrismaPilote } from '@/server/db/PrismaPilote';
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
-const convertifEnDecisionStrategique = (decisionStrategiqueModel: DecisionStrategiqueModel): DecisionStrategique => (DecisionStrategique.creerDecisionStrategique({
-  type: decisionStrategiqueModel.type,
-  contenu: decisionStrategiqueModel.contenu,
-  date: decisionStrategiqueModel.date.toISOString(),
-})
-);
+const convertifEnDecisionStrategique = (
+  decisionStrategiqueModel: DecisionStrategiqueModel,
+): DecisionStrategique =>
+  DecisionStrategique.creerDecisionStrategique({
+    type: decisionStrategiqueModel.type,
+    contenu: decisionStrategiqueModel.contenu,
+    date: decisionStrategiqueModel.date.toISOString(),
+  });
 
 interface Dependencies {
-  prisma: PrismaPilote
+  prisma: PrismaPilote;
 }
-export class PrismaDecisionStrategiqueRepository implements DecisionStrategiqueRepository {
+export class PrismaDecisionStrategiqueRepository
+  implements DecisionStrategiqueRepository
+{
   private prisma: PrismaClient;
 
   constructor({ prisma }: Dependencies) {
     this.prisma = prisma.getInstance();
   }
 
-  async listerDecisionStrategiqueParChantierId({ chantierId }: { chantierId: string }): Promise<DecisionStrategique[]> {
-    const decisionStrategiqueResult = await this.prisma.decision_strategique.findMany({
-      where: {
-        chantier_id: chantierId,
-      },
-    });
+  async listerDecisionStrategiqueParChantierId({
+    chantierId,
+  }: {
+    chantierId: string;
+  }): Promise<DecisionStrategique[]> {
+    const decisionStrategiqueResult =
+      await this.prisma.decision_strategique.findMany({
+        where: {
+          chantier_id: chantierId,
+        },
+      });
 
     return decisionStrategiqueResult.map(convertifEnDecisionStrategique);
   }

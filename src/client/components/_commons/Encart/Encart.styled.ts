@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const EncartStyled = styled.div`
   padding: 1rem 2rem;

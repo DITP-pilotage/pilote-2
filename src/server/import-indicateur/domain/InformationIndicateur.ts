@@ -3,7 +3,13 @@ export class InformationIndicateur {
 
   private readonly _indicSchema: string;
 
-  private constructor({ indicId, indicSchema }: { indicId: string, indicSchema: string }) {
+  private constructor({
+    indicId,
+    indicSchema,
+  }: {
+    indicId: string;
+    indicSchema: string;
+  }) {
     this._indicId = indicId;
     this._indicSchema = indicSchema;
   }
@@ -16,7 +22,13 @@ export class InformationIndicateur {
     return this._indicSchema;
   }
 
-  static creerInformationIndicateur({ indicId, indicSchema }: { indicId: string, indicSchema: string }) {
+  static creerInformationIndicateur({
+    indicId,
+    indicSchema,
+  }: {
+    indicId: string;
+    indicSchema: string;
+  }) {
     return new InformationIndicateur({ indicId, indicSchema });
   }
 }

@@ -3,8 +3,8 @@ export interface CartographieSVGContrat {
     defs: any;
     g: {
       path: {
-        'attr-d': string;
-        'attr-territoire-code': string;
+        "attr-d": string;
+        "attr-territoire-code": string;
       }[];
     };
   };

@@ -1,4 +1,4 @@
-import { useFormContext, UseFormWatch } from 'react-hook-form';
+import { useFormContext, UseFormWatch } from "react-hook-form";
 
 export type MetadataParametrageParametreCalculIndicateurForm = {
   paramVacaDecumulFrom: string;
@@ -10,18 +10,26 @@ export type MetadataParametrageParametreCalculIndicateurForm = {
   tendance: string;
 };
 
-function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageParametreCalculIndicateurForm>) {
-  watch('paramVacaDecumulFrom');
-  watch('paramVacaPartitionDate');
-  watch('paramVacaOp');
-  watch('paramVacgDecumulFrom');
-  watch('paramVacgPartitionDate');
-  watch('paramVacgOp');
-  watch('tendance');
+function activerWatchSurSelecteur(
+  watch: UseFormWatch<MetadataParametrageParametreCalculIndicateurForm>,
+) {
+  watch("paramVacaDecumulFrom");
+  watch("paramVacaPartitionDate");
+  watch("paramVacaOp");
+  watch("paramVacgDecumulFrom");
+  watch("paramVacgPartitionDate");
+  watch("paramVacgOp");
+  watch("tendance");
 }
 
 export default function useDétailsMetadataParametreCalculIndicateurForm() {
-  const { register, watch, getValues, formState: { errors }, setValue } = useFormContext<MetadataParametrageParametreCalculIndicateurForm>();
+  const {
+    register,
+    watch,
+    getValues,
+    formState: { errors },
+    setValue,
+  } = useFormContext<MetadataParametrageParametreCalculIndicateurForm>();
 
   activerWatchSurSelecteur(watch);
 

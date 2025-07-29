@@ -1,12 +1,18 @@
-import { SyntheseDesResultatsRepository } from '@/server/fiche-territoriale/domain/ports/SyntheseDesResultatsRepository';
-import { SyntheseDesResultats } from '@/server/fiche-territoriale/domain/SyntheseDesResultats';
-import { prisma } from '@/server/db/prisma';
+import { SyntheseDesResultatsRepository } from "@/server/fiche-territoriale/domain/ports/SyntheseDesResultatsRepository";
+import { SyntheseDesResultats } from "@/server/fiche-territoriale/domain/SyntheseDesResultats";
+import { prisma } from "@/server/db/prisma";
 
-export class PrismaSyntheseDesResultatsRepository implements SyntheseDesResultatsRepository {
-  async recupererMapSyntheseDesResultatsParListeChantierIdEtTerritoire({ listeChantierId, maille, codeInsee }: {
-    listeChantierId: string[],
-    maille: string,
-    codeInsee: string
+export class PrismaSyntheseDesResultatsRepository
+  implements SyntheseDesResultatsRepository
+{
+  async recupererMapSyntheseDesResultatsParListeChantierIdEtTerritoire({
+    listeChantierId,
+    maille,
+    codeInsee,
+  }: {
+    listeChantierId: string[];
+    maille: string;
+    codeInsee: string;
   }): Promise<Map<string, SyntheseDesResultats[]>> {
     const result = await prisma.synthese_des_resultats.findMany({
       where: {
@@ -19,12 +25,16 @@ export class PrismaSyntheseDesResultatsRepository implements SyntheseDesResultat
     });
 
     return result.reduce((acc, val) => {
-      const syntheseDesResultats = SyntheseDesResultats.creerSyntheseDesResultats({
-        dateMeteo: val.date_meteo?.toISOString() || '',
-        dateCommentaire: val.date_commentaire?.toISOString() || '',
-      });
+      const syntheseDesResultats =
+        SyntheseDesResultats.creerSyntheseDesResultats({
+          dateMeteo: val.date_meteo?.toISOString() || "",
+          dateCommentaire: val.date_commentaire?.toISOString() || "",
+        });
 
-      acc.set(val.chantier_id, [...(acc.get(val.chantier_id) || []), syntheseDesResultats]);
+      acc.set(val.chantier_id, [
+        ...(acc.get(val.chantier_id) || []),
+        syntheseDesResultats,
+      ]);
       return acc;
     }, new Map<string, SyntheseDesResultats[]>());
   }

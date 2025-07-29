@@ -1,13 +1,13 @@
 export interface PropositionValeurAvancementRepository {
-  modifierStatutPropositionsValeurAvancementApresImport: ({ 
+  modifierStatutPropositionsValeurAvancementApresImport: ({
     indicId,
     zoneId,
     dateValeurImportee,
     valeurImportee,
   }: {
-    indicId: string,
-    zoneId: string,
-    dateValeurImportee: Date
-    valeurImportee: number
+    indicId: string;
+    zoneId: string;
+    dateValeurImportee: Date;
+    valeurImportee: number;
   }) => Promise<void>;
 }

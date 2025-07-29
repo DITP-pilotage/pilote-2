@@ -1,5 +1,9 @@
-import { DecisionStrategique } from '@/server/fiche-conducteur/domain/DecisionStrategique';
+import { DecisionStrategique } from "@/server/fiche-conducteur/domain/DecisionStrategique";
 
 export interface DecisionStrategiqueRepository {
-  listerDecisionStrategiqueParChantierId: ({ chantierId }: { chantierId: string }) => Promise<DecisionStrategique[]>
+  listerDecisionStrategiqueParChantierId: ({
+    chantierId,
+  }: {
+    chantierId: string;
+  }) => Promise<DecisionStrategique[]>;
 }

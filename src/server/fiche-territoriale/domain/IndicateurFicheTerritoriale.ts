@@ -11,13 +11,20 @@ export class IndicateurFicheTerritoriale {
 
   private readonly _uniteMesure: string | null;
 
-  private constructor({ nom, valeurAvancement, valeurCible, tauxAvancement, tauxAvancementNational, uniteMesure }: {
-    nom: string,
-    valeurAvancement: number | null,
-    valeurCible: number | null,
-    tauxAvancement: number | null,
-    tauxAvancementNational: number | null,
-    uniteMesure: string | null
+  private constructor({
+    nom,
+    valeurAvancement,
+    valeurCible,
+    tauxAvancement,
+    tauxAvancementNational,
+    uniteMesure,
+  }: {
+    nom: string;
+    valeurAvancement: number | null;
+    valeurCible: number | null;
+    tauxAvancement: number | null;
+    tauxAvancementNational: number | null;
+    uniteMesure: string | null;
   }) {
     this._nom = nom;
     this._valeurAvancement = valeurAvancement;
@@ -59,12 +66,12 @@ export class IndicateurFicheTerritoriale {
     tauxAvancementNational,
     uniteMesure,
   }: {
-    nom: string,
-    valeurAvancement: number | null,
-    valeurCible: number | null,
-    tauxAvancement: number | null,
-    tauxAvancementNational: number | null,
-    uniteMesure: string | null
+    nom: string;
+    valeurAvancement: number | null;
+    valeurCible: number | null;
+    tauxAvancement: number | null;
+    tauxAvancementNational: number | null;
+    uniteMesure: string | null;
   }) {
     return new IndicateurFicheTerritoriale({
       nom,

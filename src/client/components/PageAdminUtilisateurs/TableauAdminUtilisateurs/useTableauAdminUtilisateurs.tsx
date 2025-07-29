@@ -6,121 +6,166 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table';
-import { ChangeEvent, useCallback } from 'react';
-import { parseAsArrayOf, parseAsInteger, parseAsJson, parseAsString, useQueryState, useQueryStates } from 'nuqs';
-import { z } from 'zod';
-import { useSession } from 'next-auth/react';
-import { formaterDate } from '@/client/utils/date/date';
-import { UtilisateurListeGestionContrat } from '@/server/app/contrats/UtilisateurListeGestionContrat';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { PAGE_INDEX_DEFAUT, TAILLE_DEFAUT_PAGINATION_UTILISATEUR } from '@/client/constants/constantes';
+} from "@tanstack/react-table";
+import { ChangeEvent, useCallback } from "react";
+import {
+  parseAsArrayOf,
+  parseAsInteger,
+  parseAsJson,
+  parseAsString,
+  useQueryState,
+  useQueryStates,
+} from "nuqs";
+import { z } from "zod";
+import { useSession } from "next-auth/react";
+import { formaterDate } from "@/client/utils/date/date";
+import { UtilisateurListeGestionContrat } from "@/server/app/contrats/UtilisateurListeGestionContrat";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import {
+  PAGE_INDEX_DEFAUT,
+  TAILLE_DEFAUT_PAGINATION_UTILISATEUR,
+} from "@/client/constants/constantes";
 
-const reactTableColonnesHelper = createColumnHelper<UtilisateurListeGestionContrat>();
+const reactTableColonnesHelper =
+  createColumnHelper<UtilisateurListeGestionContrat>();
 const colonnes = [
-  reactTableColonnesHelper.accessor('email', {
-    header: 'Adresse électronique',
-    cell: props => props.getValue(),
+  reactTableColonnesHelper.accessor("email", {
+    header: "Adresse électronique",
+    cell: (props) => props.getValue(),
   }),
-  reactTableColonnesHelper.accessor('nom', {
-    header: 'Nom',
-    cell: props => props.getValue(),
+  reactTableColonnesHelper.accessor("nom", {
+    header: "Nom",
+    cell: (props) => props.getValue(),
   }),
-  reactTableColonnesHelper.accessor('prénom', {
-    header: 'Prénom',
-    cell: props => props.getValue(),
+  reactTableColonnesHelper.accessor("prénom", {
+    header: "Prénom",
+    cell: (props) => props.getValue(),
   }),
-  reactTableColonnesHelper.accessor('profil', {
-    header: 'Profil',
-    cell: props => props.getValue(),
+  reactTableColonnesHelper.accessor("profil", {
+    header: "Profil",
+    cell: (props) => props.getValue(),
   }),
-  reactTableColonnesHelper.accessor('fonction', {
-    header: 'Fonction',
-    cell: props => props.getValue(),
+  reactTableColonnesHelper.accessor("fonction", {
+    header: "Fonction",
+    cell: (props) => props.getValue(),
   }),
-  reactTableColonnesHelper.accessor(row => `${formaterDate(row.dateModification, 'DD/MM/YYYY')} par ${row.auteurModification}`, {
-    header: 'Dernière modification',
-    cell: props => props.getValue(),
-    sortingFn: (a, b) => {
-      const dateA = new Date(a.original.dateModification);
-      const dateB = new Date(b.original.dateModification);
+  reactTableColonnesHelper.accessor(
+    (row) =>
+      `${formaterDate(row.dateModification, "DD/MM/YYYY")} par ${row.auteurModification}`,
+    {
+      header: "Dernière modification",
+      cell: (props) => props.getValue(),
+      sortingFn: (a, b) => {
+        const dateA = new Date(a.original.dateModification);
+        const dateB = new Date(b.original.dateModification);
 
-      if (dateA.getTime() > dateB.getTime()) {
-        return 1;
-      }
+        if (dateA.getTime() > dateB.getTime()) {
+          return 1;
+        }
 
-      if (dateA.getTime() < dateB.getTime()) {
-        return -1;
-      }
+        if (dateA.getTime() < dateB.getTime()) {
+          return -1;
+        }
 
-      return 0;
+        return 0;
+      },
     },
-  }),
-  reactTableColonnesHelper.accessor(row => row.listeNomsTerritoires.join(', '), {
-    id: 'territoire',
-    header: 'Territoire',
-    cell: props => props.getValue(),
-  }),
-  reactTableColonnesHelper.accessor('statut', {
-    header: 'Actif',
-    cell: props => props.getValue() === 'desactive' ? (
-      <div className='flex justify-center'>
-        <span
-          aria-hidden='true'
-          className='fr-icon-close-circle-fill fr-icon-red'
-        />
-      </div>
-    ) : (
-      <div className='flex justify-center'>
-        <span
-          aria-hidden='true'
-          className='fr-icon-checkbox-circle-fill fr-icon-green'
-        />
-      </div>
-    ),
+  ),
+  reactTableColonnesHelper.accessor(
+    (row) => row.listeNomsTerritoires.join(", "),
+    {
+      id: "territoire",
+      header: "Territoire",
+      cell: (props) => props.getValue(),
+    },
+  ),
+  reactTableColonnesHelper.accessor("statut", {
+    header: "Actif",
+    cell: (props) =>
+      props.getValue() === "desactive" ? (
+        <div className="flex justify-center">
+          <span
+            aria-hidden="true"
+            className="fr-icon-close-circle-fill fr-icon-red"
+          />
+        </div>
+      ) : (
+        <div className="flex justify-center">
+          <span
+            aria-hidden="true"
+            className="fr-icon-checkbox-circle-fill fr-icon-green"
+          />
+        </div>
+      ),
   }),
 ];
 
-export const useTableauPageAdminUtilisateurs = (utilisateurs: UtilisateurListeGestionContrat[], nombreUtilisateur: number) => {
+export const useTableauPageAdminUtilisateurs = (
+  utilisateurs: UtilisateurListeGestionContrat[],
+  nombreUtilisateur: number,
+) => {
   const { data: session } = useSession();
 
-  const estAutoriseAVoirLaColonneTerritoire = [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(session!.profil);
+  const estAutoriseAVoirLaColonneTerritoire = [
+    ProfilEnum.DITP_ADMIN,
+    ProfilEnum.DITP_PILOTAGE,
+  ].includes(session!.profil);
 
-  const [pagination, setPagination] = useQueryStates({
-    pageIndex: parseAsInteger.withDefault(PAGE_INDEX_DEFAUT),
-    pageSize: parseAsInteger.withDefault(TAILLE_DEFAUT_PAGINATION_UTILISATEUR),
-  }, {
-    history: 'push',
-    shallow: false,
-  });
+  const [pagination, setPagination] = useQueryStates(
+    {
+      pageIndex: parseAsInteger.withDefault(PAGE_INDEX_DEFAUT),
+      pageSize: parseAsInteger.withDefault(
+        TAILLE_DEFAUT_PAGINATION_UTILISATEUR,
+      ),
+    },
+    {
+      history: "push",
+      shallow: false,
+    },
+  );
 
   const ZodSchemaSorting = z.object({
-    id: z.string().regex(/email|nom|prénom|profil|fonction|Dernière modification/),
+    id: z
+      .string()
+      .regex(/email|nom|prénom|profil|fonction|Dernière modification/),
     desc: z.boolean(),
   });
 
-  const [sorting, setSorting] = useQueryState('sort', parseAsArrayOf<ColumnSort>(parseAsJson(ZodSchemaSorting.parse)).withDefault([{
-    id: 'Dernière modification',
-    desc: true,
-  }]).withOptions({
-    shallow: false,
-    clearOnDefault: true,
-    history: 'push',
-  }));
+  const [sorting, setSorting] = useQueryState(
+    "sort",
+    parseAsArrayOf<ColumnSort>(parseAsJson(ZodSchemaSorting.parse))
+      .withDefault([
+        {
+          id: "Dernière modification",
+          desc: true,
+        },
+      ])
+      .withOptions({
+        shallow: false,
+        clearOnDefault: true,
+        history: "push",
+      }),
+  );
 
-  const [valeurDeLaRecherche, setValeurDeLaRecherche] = useQueryState('q', parseAsString.withDefault('').withOptions({
-    shallow: false,
-    clearOnDefault: true,
-    history: 'push',
-    throttleMs: 400,
-  }));
+  const [valeurDeLaRecherche, setValeurDeLaRecherche] = useQueryState(
+    "q",
+    parseAsString.withDefault("").withOptions({
+      shallow: false,
+      clearOnDefault: true,
+      history: "push",
+      throttleMs: 400,
+    }),
+  );
 
-  const changementDeLaRechercheCallback = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setPagination({
-      pageIndex: 1,
-    });
-    setValeurDeLaRecherche(event.target.value);
-  }, [setPagination, setValeurDeLaRecherche]);
+  const changementDeLaRechercheCallback = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setPagination({
+        pageIndex: 1,
+      });
+      setValeurDeLaRecherche(event.target.value);
+    },
+    [setPagination, setValeurDeLaRecherche],
+  );
 
   const tableau = useReactTable({
     data: utilisateurs,

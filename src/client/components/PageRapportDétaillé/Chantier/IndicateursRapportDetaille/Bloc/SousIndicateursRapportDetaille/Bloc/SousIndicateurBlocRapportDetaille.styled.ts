@@ -1,10 +1,10 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const SousIndicateurBlocStyled = styled.div`
   &:last-of-type {
     margin-bottom: 0 !important;
   }
-  
+
   td {
     min-height: 2rem;
     vertical-align: top;

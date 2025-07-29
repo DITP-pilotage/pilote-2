@@ -1,6 +1,6 @@
-import '@gouvfr/dsfr/dist/component/toggle/toggle.min.css';
-import { ChangeEvent, FunctionComponent } from 'react';
-import { UseFormRegisterReturn } from 'react-hook-form';
+import "@gouvfr/dsfr/dist/component/toggle/toggle.min.css";
+import { ChangeEvent, FunctionComponent } from "react";
+import { UseFormRegisterReturn } from "react-hook-form";
 
 interface InterrupteurProps {
   checked: boolean;
@@ -9,8 +9,8 @@ interface InterrupteurProps {
   libellé: string;
   register?: UseFormRegisterReturn;
   messageSecondaire?: string;
-  direction?: 'initial' | 'inverse'
-  className?: string
+  direction?: "initial" | "inverse";
+  className?: string;
 }
 
 const Interrupteur: FunctionComponent<InterrupteurProps> = ({
@@ -25,32 +25,26 @@ const Interrupteur: FunctionComponent<InterrupteurProps> = ({
 }) => {
   return (
     <div
-      className={`fr-toggle${direction === 'inverse' ? ' fr-toggle--label-left' : ''}${className ? ` ${className}` : ''}`}
+      className={`fr-toggle${direction === "inverse" ? " fr-toggle--label-left" : ""}${className ? ` ${className}` : ""}`}
     >
       <input
         checked={checked}
-        className='fr-toggle__input'
+        className="fr-toggle__input"
         id={`interrupteur-${id}`}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => auChangement && auChangement(event.currentTarget.checked)}
-        type='checkbox'
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          auChangement && auChangement(event.currentTarget.checked)
+        }
+        type="checkbox"
         {...register}
       />
-      <label
-        className='fr-toggle__label'
-        htmlFor={`interrupteur-${id}`}
-      >
+      <label className="fr-toggle__label" htmlFor={`interrupteur-${id}`}>
         {libellé}
       </label>
-      {
-        messageSecondaire ? (
-          <p
-            className='fr-hint-text'
-            id='toggle-698-hint-text'
-          >
-            {messageSecondaire}
-          </p>
-        ) : null
-      }
+      {messageSecondaire ? (
+        <p className="fr-hint-text" id="toggle-698-hint-text">
+          {messageSecondaire}
+        </p>
+      ) : null}
     </div>
   );
 };

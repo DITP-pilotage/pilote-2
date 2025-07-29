@@ -1,32 +1,35 @@
-import pictoSoleil from '/public/img/météo/soleil.svg';
-import pictoCouvert from '/public/img/météo/couvert.svg';
-import pictoNuage from '/public/img/météo/nuage.svg';
-import pictoOrage from '/public/img/météo/orage.svg';
-import Image from 'next/image';
-import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
-import { FunctionComponent } from 'react';
+import pictoSoleil from "/public/img/météo/soleil.svg";
+import pictoCouvert from "/public/img/météo/couvert.svg";
+import pictoNuage from "/public/img/météo/nuage.svg";
+import pictoOrage from "/public/img/météo/orage.svg";
+import Image from "next/image";
+import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
+import { FunctionComponent } from "react";
 
 interface MeteoPictoProps {
-  meteo: Météo,
-  estVisibleParLecteurDÉcran?: boolean,
+  meteo: Météo;
+  estVisibleParLecteurDÉcran?: boolean;
 }
 
 export const meteosPictos: Record<Météo, any> = {
-  'ORAGE': pictoOrage,
-  'NUAGE': pictoNuage,
-  'COUVERT': pictoCouvert,
-  'SOLEIL': pictoSoleil,
-  'NON_RENSEIGNEE': null,
-  'NON_NECESSAIRE': null,
+  ORAGE: pictoOrage,
+  NUAGE: pictoNuage,
+  COUVERT: pictoCouvert,
+  SOLEIL: pictoSoleil,
+  NON_RENSEIGNEE: null,
+  NON_NECESSAIRE: null,
 };
 
-const MeteoPicto: FunctionComponent<MeteoPictoProps> = ({ meteo, estVisibleParLecteurDÉcran = false }) => {
+const MeteoPicto: FunctionComponent<MeteoPictoProps> = ({
+  meteo,
+  estVisibleParLecteurDÉcran = false,
+}) => {
   return meteosPictos[meteo] !== null ? (
     <Image
-      alt={estVisibleParLecteurDÉcran ? libellésMétéos[meteo] : ''}
-      aria-hidden={estVisibleParLecteurDÉcran ? undefined : 'true'}
-      className='meteo-picto'
-      src={meteosPictos[meteo]} 
+      alt={estVisibleParLecteurDÉcran ? libellésMétéos[meteo] : ""}
+      aria-hidden={estVisibleParLecteurDÉcran ? undefined : "true"}
+      className="meteo-picto"
+      src={meteosPictos[meteo]}
     />
   ) : null;
 };

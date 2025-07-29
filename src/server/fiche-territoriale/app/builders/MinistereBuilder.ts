@@ -1,9 +1,9 @@
-import { Ministere } from '@/server/fiche-territoriale/domain/Ministere';
+import { Ministere } from "@/server/fiche-territoriale/domain/Ministere";
 
 export class MinistereBuilder {
-  private icone: string = 'une-icone';
+  private icone: string = "une-icone";
 
-  private code: string = '1009';
+  private code: string = "1009";
 
   withIcone(icone: string): MinistereBuilder {
     this.icone = icone;

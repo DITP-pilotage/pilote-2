@@ -1,4 +1,4 @@
-import { useFormContext, UseFormWatch } from 'react-hook-form';
+import { useFormContext, UseFormWatch } from "react-hook-form";
 
 export type MetadataParametrageAutresIndicateurForm = {
   indicIsPerseverant: boolean;
@@ -24,15 +24,17 @@ export type MetadataParametrageAutresIndicateurForm = {
   couvertureTemporelle: string;
 };
 
-function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageAutresIndicateurForm>) {
-  watch('indicIsPerseverant');
-  watch('indicIsPhare');
-  watch('projetAnnuelPerf');
-  watch('indicTerritorialise');
-  watch('cibleAttendue');
-  watch('couvertureTemporelle');
-  watch('maillePilotage');
-  watch('donneeOuverte');
+function activerWatchSurSelecteur(
+  watch: UseFormWatch<MetadataParametrageAutresIndicateurForm>,
+) {
+  watch("indicIsPerseverant");
+  watch("indicIsPhare");
+  watch("projetAnnuelPerf");
+  watch("indicTerritorialise");
+  watch("cibleAttendue");
+  watch("couvertureTemporelle");
+  watch("maillePilotage");
+  watch("donneeOuverte");
 }
 
 export default function useSectionDétailsMetadataAutresIndicateurForm() {

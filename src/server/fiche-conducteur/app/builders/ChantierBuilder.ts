@@ -1,10 +1,10 @@
-import { Chantier } from '@/server/fiche-conducteur/domain/Chantier';
-import { Meteo } from '@/server/fiche-conducteur/domain/Meteo';
+import { Chantier } from "@/server/fiche-conducteur/domain/Chantier";
+import { Meteo } from "@/server/fiche-conducteur/domain/Meteo";
 
 export class ChantierBuilder {
-  private id: string = 'CH-007';
+  private id: string = "CH-007";
 
-  private nom: string = 'Nouveau chantier';
+  private nom: string = "Nouveau chantier";
 
   private estTerritorialise: boolean = false;
 
@@ -12,13 +12,13 @@ export class ChantierBuilder {
 
   private tauxAvancementAnnuel: number | null = 15.3;
 
-  private maille: string = 'DEPT';
+  private maille: string = "DEPT";
 
-  private codeInsee: string = '87';
+  private codeInsee: string = "87";
 
-  private territoireCode: string = 'DEPT-87';
+  private territoireCode: string = "DEPT-87";
 
-  private meteo: Meteo = 'SOLEIL';
+  private meteo: Meteo = "SOLEIL";
 
   private estApplicable: boolean = false;
 
@@ -31,17 +31,17 @@ export class ChantierBuilder {
     return this;
   }
 
-  withCodeInsee(codeInsee: string) : ChantierBuilder {
+  withCodeInsee(codeInsee: string): ChantierBuilder {
     this.codeInsee = codeInsee;
     return this;
   }
 
-  withTerritoireCode(territoireCode: string) : ChantierBuilder {
+  withTerritoireCode(territoireCode: string): ChantierBuilder {
     this.territoireCode = territoireCode;
     return this;
   }
 
-  withMeteo(meteo: Meteo) : ChantierBuilder {
+  withMeteo(meteo: Meteo): ChantierBuilder {
     this.meteo = meteo;
     return this;
   }
@@ -61,7 +61,9 @@ export class ChantierBuilder {
     return this;
   }
 
-  withTauxAvancementAnnuel(tauxAvancementAnnuel: number | null): ChantierBuilder {
+  withTauxAvancementAnnuel(
+    tauxAvancementAnnuel: number | null,
+  ): ChantierBuilder {
     this.tauxAvancementAnnuel = tauxAvancementAnnuel;
     return this;
   }
@@ -76,12 +78,17 @@ export class ChantierBuilder {
     return this;
   }
 
-  withListeDirecteursAdministrationCentrale(...listeDirecteursAdministrationCentrale: string[]): ChantierBuilder {
-    this.listeDirecteursAdministrationCentrale = listeDirecteursAdministrationCentrale;
+  withListeDirecteursAdministrationCentrale(
+    ...listeDirecteursAdministrationCentrale: string[]
+  ): ChantierBuilder {
+    this.listeDirecteursAdministrationCentrale =
+      listeDirecteursAdministrationCentrale;
     return this;
   }
 
-  withListeDirecteursProjet(...listeDirecteursProjet: string[]): ChantierBuilder {
+  withListeDirecteursProjet(
+    ...listeDirecteursProjet: string[]
+  ): ChantierBuilder {
     this.listeDirecteursProjet = listeDirecteursProjet;
     return this;
   }
@@ -98,7 +105,8 @@ export class ChantierBuilder {
       territoireCode: this.territoireCode,
       meteo: this.meteo,
       estApplicable: this.estApplicable,
-      listeDirecteursAdministrationCentrale: this.listeDirecteursAdministrationCentrale,
+      listeDirecteursAdministrationCentrale:
+        this.listeDirecteursAdministrationCentrale,
       listeDirecteursProjet: this.listeDirecteursProjet,
     });
   }
