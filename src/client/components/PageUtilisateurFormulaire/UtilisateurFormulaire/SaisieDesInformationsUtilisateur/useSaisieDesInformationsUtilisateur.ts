@@ -364,8 +364,15 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
   const chantiersAccessibleResponsabilite: ChantierSynthétisé[] =
     !afficherChampResponsabiliteChantiers ? [] : chantiersSelectionnesLecture;
   const chantiersAccessibleSaisieCommentaire: ChantierSynthétisé[] =
-    !afficherChampSaisieCommentaire ? [] : chantiersSelectionnesLecture;
-
+    !afficherChampSaisieCommentaire
+      ? []
+      : [ProfilEnum.PREFET_DEPARTEMENT, ProfilEnum.PREFET_REGION].includes(
+            profilCodeSelectionne,
+          )
+        ? chantiersSelectionnesLecture.filter(
+            (chantier) => chantier.ate === "ate",
+          )
+        : chantiersSelectionnesLecture;
   watch("profil");
 
   return {
