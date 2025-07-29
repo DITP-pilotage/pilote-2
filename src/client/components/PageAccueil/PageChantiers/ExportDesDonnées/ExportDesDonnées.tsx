@@ -8,8 +8,7 @@ import {
 } from "nuqs";
 import Modale from "@/components/_commons/Modale/Modale";
 import { horodatage } from "@/client/utils/date/date";
-import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
-import api from "@/server/infrastructure/api/trpc/api";
+import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelecteurJalon";
 
 const ressources = {
   "chantiers-sans-filtre": {
@@ -52,11 +51,7 @@ const ExportDesDonnées: FunctionComponent<{ listeChantierId: string[] }> = ({
   >();
   const [estDésactivé, setEstDésactivé] = useState(false);
 
-  const { data: dataBasculeValeurAnneePrecedente } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
-      nomVariableContenu:
-        "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE",
-    });
+  const { listeJalonAAfficher, jalonAAfficherParDefaut } = useSelecteurJalon();
 
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(""),
@@ -69,11 +64,8 @@ const ExportDesDonnées: FunctionComponent<{ listeChantierId: string[] }> = ({
       "BROUILLON_ET_PUBLIE",
       "ARCHIVE",
     ]).withDefault("PUBLIE"),
-    jalon: parseAsStringLiteral(["2024", "2025"]).withDefault(
-      getAnneeDateDeBascule(
-        new Date(),
-        dataBasculeValeurAnneePrecedente as string,
-      ).toString() as "2024" | "2025",
+    jalon: parseAsStringLiteral(listeJalonAAfficher).withDefault(
+      jalonAAfficherParDefaut,
     ),
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),

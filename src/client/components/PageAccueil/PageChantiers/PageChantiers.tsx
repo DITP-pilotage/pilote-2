@@ -30,6 +30,7 @@ import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteCh
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
+import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelecteurJalon";
 import PageChantiersStyled from "./PageChantiers.styled";
 import TableauChantiers from "./TableauChantiers/TableauChantiers";
 import usePageChantiers from "./usePageChantiers";
@@ -66,6 +67,8 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     pathname,
   );
 
+  const { listeJalonAAfficher } = useSelecteurJalon();
+
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(""),
     axes: parseAsString.withDefault(""),
@@ -79,7 +82,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
       "BROUILLON_ET_PUBLIE",
       "ARCHIVE",
     ]),
-    jalon: parseAsStringLiteral(["2024", "2025"]),
+    jalon: parseAsStringLiteral(listeJalonAAfficher),
   });
 
   const { donnéesTableauChantiers, remontéesAlertes } = usePageChantiers(

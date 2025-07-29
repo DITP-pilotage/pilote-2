@@ -10,6 +10,7 @@ import {
 import { horodatage } from "@/client/utils/date/date";
 import api from "@/server/infrastructure/api/trpc/api";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
+import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelecteurJalon";
 
 const ressources = {
   chantiers: {
@@ -85,6 +86,7 @@ export const EtapeRecapitulatif = ({
         "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE",
     });
 
+  const { listeJalonAAfficher } = useSelecteurJalon();
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(""),
     meteos: parseAsString.withDefault(""),
@@ -96,7 +98,7 @@ export const EtapeRecapitulatif = ({
       "BROUILLON_ET_PUBLIE",
       "ARCHIVE",
     ]).withDefault("PUBLIE"),
-    jalon: parseAsStringLiteral(["2024", "2025"]).withDefault(
+    jalon: parseAsStringLiteral(listeJalonAAfficher).withDefault(
       getAnneeDateDeBascule(
         new Date(),
         dataBasculeValeurAnneePrecedente as string,

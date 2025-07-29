@@ -1,0 +1,117 @@
+{{ config(materialized = 'table') }}
+
+WITH get_val_jalons AS (
+    SELECT
+        a.indic_id,
+        a.zone_id,
+        a.jalon,
+        a.vaca,
+        a.date_vaca,
+        g.vacg,
+        g.date_vacg,
+        e.vig,
+        e.vig_date,
+        f.vca,
+        f.vca_date,
+        h.vcg,
+        h.vcg_date,
+        prop.valeur_actuelle_proposee AS vacp
+    FROM {{ ref('get_last_vaca_jalon') }} AS a
+    LEFT JOIN
+        {{ ref('get_last_vacg_jalon') }} AS g
+        ON
+            a.indic_id = g.indic_id
+            AND a.zone_id = g.zone_id
+            AND a.jalon = g.jalon
+    LEFT JOIN
+        {{ ref('get_vig') }} AS e
+        ON a.indic_id = e.indic_id AND a.zone_id = e.zone_id
+    LEFT JOIN
+        {{ ref('get_vca_jalon') }} AS f
+        ON
+            a.indic_id = f.indic_id
+            AND a.zone_id = f.zone_id
+            AND a.jalon = f.jalon
+    LEFT JOIN
+        {{ ref('get_vcg') }} AS h
+        ON a.indic_id = h.indic_id AND a.zone_id = h.zone_id
+    LEFT JOIN
+        {{ ref('int_propositions_valeurs') }} AS prop
+        ON
+            a.indic_id = prop.indic_id
+            AND a.zone_id = prop.zone_id
+            AND prop.date_valeur_actuelle::date = a.date_vaca::date
+
+),
+
+get_unbounded_ta AS (
+    SELECT
+        a.*,
+        CASE
+            WHEN
+                b.tendance IN ('HAUSSE', 'STABLE')
+                THEN {{ compute_ta_hausse_macro('vig', 'vca', 'vaca') }}
+            WHEN
+                b.tendance IN ('BAISSE')
+                THEN {{ compute_ta_baisse_macro('vig', 'vca', 'vaca') }}
+        END AS unbounded_taa,
+        CASE
+            WHEN
+                b.tendance IN ('HAUSSE', 'STABLE')
+                THEN {{ compute_ta_hausse_macro('vig', 'vca', 'vacp') }}
+            WHEN
+                b.tendance IN ('BAISSE')
+                THEN {{ compute_ta_baisse_macro('vig', 'vca', 'vacp') }}
+        END AS unbounded_taa_proposition,
+        CASE
+            WHEN
+                b.tendance IN ('HAUSSE', 'STABLE')
+                THEN {{ compute_ta_hausse_macro('vig', 'vcg', 'vacg') }}
+            WHEN
+                b.tendance IN ('BAISSE')
+                THEN {{ compute_ta_baisse_macro('vig', 'vcg', 'vacg') }}
+        END AS unbounded_tag,
+        CASE
+            WHEN
+                b.tendance IN ('HAUSSE', 'STABLE')
+                THEN {{ compute_ta_hausse_macro('vig', 'vcg', 'vacp') }}
+            WHEN
+                b.tendance IN ('BAISSE')
+                THEN {{ compute_ta_baisse_macro('vig', 'vcg', 'vacp') }}
+        END AS unbounded_tag_proposition
+
+    FROM get_val_jalons AS a
+    RIGHT JOIN
+        {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} AS b
+        ON a.indic_id = b.indic_id
+),
+
+-- Compute bounded TA
+get_bounded_ta AS (
+    SELECT
+        *,
+        CASE
+            WHEN unbounded_taa IS null THEN null
+            ELSE greatest(least(unbounded_taa, 100), 0)::numeric
+        END
+        AS taa,
+        CASE
+            WHEN unbounded_taa_proposition IS null THEN null
+            ELSE greatest(least(unbounded_taa_proposition, 100), 0)::numeric
+        END
+        AS taa_proposition,
+        CASE
+            WHEN unbounded_tag IS null THEN null
+            ELSE greatest(least(unbounded_tag, 100), 0)::numeric
+        END
+        AS tag,
+        CASE
+            WHEN unbounded_tag_proposition IS null THEN null
+            ELSE greatest(least(unbounded_tag_proposition, 100), 0)::numeric
+        END
+        AS tag_proposition
+    FROM get_unbounded_ta
+)
+
+
+SELECT * FROM get_bounded_ta

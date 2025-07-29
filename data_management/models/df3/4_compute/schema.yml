@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: jalons_a_etudier
+    description: "Retourne tous les jalons, entre le premier jalon (paramètre dbt `premier_jalon_va`) et l'année en cours."
+    columns:
+      - name: jalon
+        description: "Année jalon"
+

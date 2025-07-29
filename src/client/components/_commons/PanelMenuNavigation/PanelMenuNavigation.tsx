@@ -1,9 +1,9 @@
-import { parseAsStringLiteral, useQueryState } from "nuqs";
 import SélecteursMaillesEtTerritoires from "@/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteursMaillesEtTerritoires";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import SélecteurMaille from "@/client/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import Infobulle from "@/client/components/_commons/Infobulle/Infobulle";
+import SelecteurJalon from "@/client/components/_commons/SelecteurJalon/SelecteurJalon";
 
 type PanelMenuNavigationProps = {
   pathname: string;
@@ -22,15 +22,6 @@ export const PanelMenuNavigation = ({
   setEstOuverteBarreLatérale,
   libelleMenuNavigation = "Filtrer",
 }: PanelMenuNavigationProps) => {
-  const [jalon, setJalon] = useQueryState(
-    "jalon",
-    parseAsStringLiteral(["2024", "2025"]).withDefault("2025").withOptions({
-      shallow: false,
-      clearOnDefault: true,
-      history: "push",
-    }),
-  );
-
   return (
     <>
       <div className="fr-col-12 fr-col-md-3 fr-pb-2w fr-px-2w">
@@ -45,15 +36,7 @@ export const PanelMenuNavigation = ({
           <label className="fr-label fr-mr-1w no-wrap" htmlFor="jalon">
             Jalon :
           </label>
-          <select
-            className="fr-select fr-mt-0 fr-mr-1w"
-            id="jalon"
-            onChange={(e) => setJalon(e.target.value as "2024" | "2025")}
-            value={jalon}
-          >
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-          </select>
+          <SelecteurJalon />
           <Infobulle idHtml="infobulle-selecteur-jalon">
             {INFOBULLE_CONTENUS.chantiers.jalon}
           </Infobulle>

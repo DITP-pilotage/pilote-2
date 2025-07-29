@@ -72,11 +72,11 @@ models:
     description: "Combinaision des tables d'aggrégation aux trois mailles (DEPT, REG, NAT)"
   - name: pivot_mesures
     description: "La table des mesures aggrégées (`agg_all`) est pivotée."
-  - name: get_vca
+  - name: get_vca_jalon
     description: |
         Réalise les calculs pour déterminer la *VCA* (ie *Valeur Cible annuelle*). Règles:
 
-        - Pour chaque [indicateur, zone, année] il s'agit de la VC ayant la `metric_date` la plus tardive dans l'année.
+        - Pour chaque [indicateur, zone, jalon] il s'agit de la VC ayant la `metric_date` la plus tardive dans l'année.
   - name: get_last_vaca
     description: "Pour chaque {indic_id, zone_id}, retourne la ligne avec la VACA la plus récente."
     columns:
@@ -126,10 +126,6 @@ models:
         description: Valeur Cible Annuelle (VCA) **à date**. C'est la VC annuelle dont l'année correspond à **l'année en cours**
       - name: vca_adate_date
         description: "Date de la **VCA à date**"
-      - name: vca_prev_year
-        description: "Dernière VC annuelle de l'an dernier."
-      - name: vca_prev_year_date
-        description: "Date de la dernière VC annuelle de l'an dernier."
     description: Jointure des VACA, VACG, VCA, VCG, VIG dans une table unqie avant de calculer les TA.
   - name: compute_ta_indic
     description: |
@@ -162,10 +158,6 @@ models:
           La VC prise en compte pour ce calcul est la `vca_courant`. 
 
           *Exemple d'utilisation:* Utile lorsque l'on veut mettre à jour le calcul de TA retrospectivement. Par exemple, nous sommes en 2024, et une VA de déc-2023 est mise à jour. Pour connaitre le TAA tel qu'il aurait été en déc-23, il faut regarder ce TAA (TAA *à date*).
-      - name: taa_prev_year
-        description: "TA de l'an dernier. Ex: si on est en 2025, retourne le dernier TA dispo en vigueur en 2024. Peut se faire grace à une VA de 2023 si c'est la dernière dispo."
-      - name: tap_prev_year
-        description: "Taux d'avancement proposé, pour l'année précédente. Se base sur `vca_prev_year` comme cible de l'année à considérer."
       - name: tag
         description: Taux d'Avancement Global (TAG). Indique l'avancement sur la période compète, utilise la VCG (déterminée dans `get_vcg`).
   - name: df3_indicateur
@@ -205,10 +197,8 @@ models:
         description: "**Principal**: TA chantier *global*. C'est cette valeur qui est remontée comme TA du chantier"
       - name: taa_courant_ch
         description: "TA chantier *annuel* courant"
-      - name: taa_prev_year_ch
-        description: "TA du chantier pour l'année précédente. Se base bien sur les ta indicateur de l'année précédente calculés dans `compute_ta_indic`."  
       - name: valid_on
-        description: "Prend les valeurs `[prev_year, prev_month, today]` pour indiquer s'il s'agit du TA actuel ou du mois précédent ou de l'année précédente. Par l'année précédente, on entend **l'année précédant l'année en cours**, et non pas l'année précédant l'année de la valeur actuelle."
+        description: "Prend les valeurs `[prev_month, today]` pour indiquer s'il s'agit du TA actuel ou du mois précédent."
       - name: date_ta
         description: "Il s'agit de la date du TA chantier. C'est la date la plus récente de mise à jour d'un indicateur pris en compte dans le TA du chantier."
   - name: df3_chantier
