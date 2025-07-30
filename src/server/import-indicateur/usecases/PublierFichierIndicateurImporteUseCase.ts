@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { MesureIndicateurRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface";
 
 import { RapportRepository } from "@/server/import-indicateur/domain/ports/RapportRepository";
@@ -5,6 +6,7 @@ import { MesureIndicateurTemporaireRepository } from "@/server/import-indicateur
 import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
 import { PropositionValeurAvancementRepository } from "@/server/import-indicateur/domain/ports/PropositionValeurAvancementRepository";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/import-indicateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import { ValeurIndicateurTerritoireEvenement } from "@/server/import-indicateur/domain/ValeurIndicateurTerritoireEvenement";
 
 interface Dependencies {
   mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
@@ -62,7 +64,33 @@ export class PublierFichierIndicateurImporteUseCase {
       (indicateur) => indicateur.metricType === "va",
     );
 
+    const evenements: ValeurIndicateurTerritoireEvenement[] = [];
+    for (let indicateurData of listeIndicateursData) {
+      let typeValeur = indicateurData.metricType;
+      if (typeValeur !== "va") {
+        // TODO : gérer les autres types de valeur
+        continue;
+      }
+      evenements.push(
+        ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
+          {
+            indicId: indicateurData.indicId,
+            territoireCode: indicateurData.zoneId, // TODO - recoder la transformation
+            typeEvenement: "VALEUR_CREEE",
+            typeValeur: "VALEUR_AVANCEMENT",
+            dateValeur: new Date(indicateurData.metricDate),
+            donneesComplementaires: {},
+            idAuteurModification: "system", // TODO - récupérer l'auteur depuis le rapport
+            correlationId: randomUUID(),
+          },
+        ),
+      );
+    }
     await this.mesureIndicateurRepository.sauvegarder(listeIndicateursData);
+    await this.indicateurTerritoireValeurEvenementRepository.enregistrerTous(
+      evenements,
+    );
+
     await Promise.all(
       listeValeursAvancementImportees.map((valeurAvancement) =>
         this.propositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport(
