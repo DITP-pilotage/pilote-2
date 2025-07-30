@@ -99,7 +99,6 @@ export class PublierFichierIndicateurImporteUseCase {
           ),
         ),
       );
-      throw new Error("kaboom");
       await this.mesureIndicateurTemporaireRepository.supprimerToutParRapportId(
         rapportId,
       );
