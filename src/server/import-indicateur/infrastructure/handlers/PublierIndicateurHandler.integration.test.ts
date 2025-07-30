@@ -86,11 +86,12 @@ describe("PublierFichierImportIndicateurHandler", () => {
       method: "POST",
       query: { rapportId: "6cba829c-def8-4f21-9bb0-07bd5a36bd02" },
     });
+    const userId = "8f2ebc57-dc28-4e42-b3c5-f9d865d6da9e";
 
     // WHEN
     await getContainer("importIndicateur")
       .resolve("publierFichierImportIndicateurHandler")
-      .handle(req, res);
+      .handle(req, res, userId);
     // THEN
     const listeMesuresIndicateursTemporaire =
       await prisma.mesure_indicateur_temporaire.findMany({});

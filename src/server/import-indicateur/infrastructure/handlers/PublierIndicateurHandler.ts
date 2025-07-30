@@ -13,9 +13,14 @@ export class PublierFichierImportIndicateurHandler {
       publierFichierIndicateurImporteUseCase;
   }
 
-  async handle(request: NextApiRequest, response: NextApiResponse) {
+  async handle(
+    request: NextApiRequest,
+    response: NextApiResponse,
+    utilisateurId: string,
+  ) {
     await this.publierFichierIndicateurImporteUseCase.execute({
       rapportId: request.query.rapportId as string,
+      auteurId: utilisateurId,
     });
 
     response.status(200).json({});

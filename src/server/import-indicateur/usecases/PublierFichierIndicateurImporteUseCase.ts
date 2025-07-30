@@ -41,7 +41,13 @@ export class PublierFichierIndicateurImporteUseCase {
       indicateurTerritoireValeurEvenementRepository;
   }
 
-  async execute({ rapportId }: { rapportId: string }): Promise<void> {
+  async execute({
+    rapportId,
+    auteurId,
+  }: {
+    rapportId: string;
+    auteurId: string;
+  }): Promise<void> {
     const listeMesuresIndicateurTemporaire =
       await this.mesureIndicateurTemporaireRepository.recupererToutParRapportId(
         rapportId,
@@ -83,7 +89,7 @@ export class PublierFichierIndicateurImporteUseCase {
             typeValeur: "VALEUR_AVANCEMENT",
             dateValeur: new Date(indicateurData.metricDate),
             donneesComplementaires: {},
-            idAuteurModification: "system", // TODO - récupérer l'auteur depuis le rapport
+            idAuteurModification: auteurId,
             correlationId: randomUUID(),
           },
         ),

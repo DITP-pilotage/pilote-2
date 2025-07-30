@@ -66,6 +66,7 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
         .handle({
           request,
           response,
+          utilisateurId: utilisateurAuthentifie.id,
           email: utilisateurAuthentifie.email,
           profil: utilisateurAuthentifie.profil,
         });

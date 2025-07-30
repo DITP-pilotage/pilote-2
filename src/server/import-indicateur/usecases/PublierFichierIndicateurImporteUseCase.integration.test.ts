@@ -66,6 +66,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     // WHEN
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
     // THEN
@@ -153,6 +154,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     // WHEN
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
     // THEN
@@ -211,6 +213,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     // WHEN
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
     // THEN
@@ -224,6 +227,9 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenement.typeEvenement).toEqual("VALEUR_CREEE");
     expect(evenement.typeValeur).toEqual("VALEUR_AVANCEMENT");
     expect(evenement.dateValeur).toEqual(new Date("2023-01-15"));
+    expect(evenement.idAuteurModification).toEqual(
+      "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
+    );
   });
 
   it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] avec un tuple pour une date antérieure, doit créer 2 lignes d'évènement (VALEUR_HISTORISEE + VALEUR_CREEE)", async () => {
@@ -259,6 +265,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     // WHEN
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
     // THEN
@@ -307,6 +314,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     // WHEN
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
     // THEN
@@ -345,6 +353,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     // WHEN
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
     // THEN

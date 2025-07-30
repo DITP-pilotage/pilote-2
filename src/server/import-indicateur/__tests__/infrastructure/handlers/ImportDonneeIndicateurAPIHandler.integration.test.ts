@@ -127,6 +127,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .handle({
           request,
           response,
+          utilisateurId: "3326e7bc-49d4-4ff0-90a6-a20bbc32b8eb",
           email: "ditp.admin@example.com",
           profil: ProfilEnum.DITP_ADMIN,
         });
@@ -223,6 +224,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .handle({
           request,
           response,
+          utilisateurId: "3326e7bc-49d4-4ff0-90a6-a20bbc32b8eb",
           email: "ditp.admin@example.com",
           profil: ProfilEnum.DITP_ADMIN,
         });
@@ -309,6 +311,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .handle({
           request,
           response,
+          utilisateurId: "3326e7bc-49d4-4ff0-90a6-a20bbc32b8eb",
           email: "ditp.admin@example.com",
           profil: ProfilEnum.DITP_ADMIN,
         });
@@ -403,6 +406,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .handle({
           request,
           response,
+          utilisateurId: "3326e7bc-49d4-4ff0-90a6-a20bbc32b8eb",
           email: "ditp.admin@example.com",
           profil: ProfilEnum.DITP_ADMIN,
         });
@@ -503,6 +507,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .handle({
           request,
           response,
+          utilisateurId: "3326e7bc-49d4-4ff0-90a6-a20bbc32b8eb",
           email: "ditp.admin@example.com",
           profil: ProfilEnum.DITP_ADMIN,
         });
@@ -597,6 +602,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .handle({
           request,
           response,
+          utilisateurId: "3326e7bc-49d4-4ff0-90a6-a20bbc32b8eb",
           email: "ditp.admin@example.com",
           profil: ProfilEnum.DITP_ADMIN,
         });
@@ -681,6 +687,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .handle({
           request,
           response,
+          utilisateurId: "3326e7bc-49d4-4ff0-90a6-a20bbc32b8eb",
           email: "ditp.admin@example.com",
           profil: ProfilEnum.DITP_ADMIN,
         });
@@ -771,6 +778,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .handle({
           request,
           response,
+          utilisateurId: "3326e7bc-49d4-4ff0-90a6-a20bbc32b8eb",
           email: "ditp.admin@example.com",
           profil: ProfilEnum.DITP_ADMIN,
         });

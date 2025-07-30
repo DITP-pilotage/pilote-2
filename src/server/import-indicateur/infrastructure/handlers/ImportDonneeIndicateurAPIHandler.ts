@@ -49,11 +49,13 @@ export class ImportDonneeIndicateurAPIHandler {
   async handle({
     request,
     response,
+    utilisateurId,
     email,
     profil,
   }: {
     request: NextApiRequest;
     response: NextApiResponse;
+    utilisateurId: string;
     email: string;
     profil: string;
   }) {
@@ -106,6 +108,7 @@ export class ImportDonneeIndicateurAPIHandler {
               indicateurId: request.query.indicateurId as string,
               utilisateurAuteurDeLimportEmail: email,
               isAdmin: profil === ProfilEnum.DITP_ADMIN,
+              auteurId: utilisateurId,
               response,
             });
 
@@ -125,6 +128,7 @@ export class ImportDonneeIndicateurAPIHandler {
         indicateurId: request.query.indicateurId as string,
         utilisateurAuteurDeLimportEmail: email,
         isAdmin: profil === ProfilEnum.DITP_ADMIN,
+        auteurId: utilisateurId,
         response,
       });
     }
@@ -137,6 +141,7 @@ export class ImportDonneeIndicateurAPIHandler {
     indicateurId,
     utilisateurAuteurDeLimportEmail,
     isAdmin,
+    auteurId,
   }: {
     response: NextApiResponse;
     cheminCompletDuFichier: string;
@@ -144,6 +149,7 @@ export class ImportDonneeIndicateurAPIHandler {
     indicateurId: string;
     utilisateurAuteurDeLimportEmail: string;
     isAdmin: boolean;
+    auteurId: string;
   }) => {
     const report = await this.verifierFichierIndicateurImporteUseCase.execute({
       cheminCompletDuFichier,
@@ -157,6 +163,7 @@ export class ImportDonneeIndicateurAPIHandler {
     if (report.estValide) {
       await this.publierFichierIndicateurImporteUseCase.execute({
         rapportId: report.id,
+        auteurId,
       });
 
       response.status(200).json({
