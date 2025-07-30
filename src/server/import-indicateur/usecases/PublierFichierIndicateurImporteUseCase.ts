@@ -121,12 +121,21 @@ export class PublierFichierIndicateurImporteUseCase {
         (evenement) => evenement.dateValeur.toISOString().split("T")[0],
       );
       let doitHistoriserValeurCreee = false;
+      let doitModifierValeurCreee = false;
+      let doitIgnorer = false;
 
       for (const [date, evenementsPourDate] of Object.entries(
         evenementsExistantParDate,
       )) {
-        if (date >= indicateurData.metricDate) {
+        if (date > indicateurData.metricDate) {
           doitHistoriserValeurCreee = true;
+          continue;
+        }
+        if (date === indicateurData.metricDate) {
+          doitModifierValeurCreee = true;
+          doitIgnorer =
+            Number.parseFloat(indicateurData.metricValue) ===
+            evenementsPourDate[0].valeur;
           continue;
         }
         const estHistorise = evenementsPourDate.some(
@@ -150,12 +159,15 @@ export class PublierFichierIndicateurImporteUseCase {
           );
         }
       }
+      if (doitIgnorer) continue;
       evenements.push(
         ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
           {
             indicId: indicateurData.indicId,
             territoireCode,
-            typeEvenement: "VALEUR_CREEE",
+            typeEvenement: doitModifierValeurCreee
+              ? "VALEUR_MODIFIEE"
+              : "VALEUR_CREEE",
             typeValeur: "VALEUR_AVANCEMENT",
             dateValeur: new Date(indicateurData.metricDate),
             valeur: Number.parseFloat(indicateurData.metricValue),

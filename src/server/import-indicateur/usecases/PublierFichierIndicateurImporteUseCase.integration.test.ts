@@ -351,11 +351,11 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
 
   it("quand la valeur est différente de la dernière valeur importée pour le tuple [indicateur, territoire, date, type], doit créer une ligne d'évènement (VALEUR_MODIFIEE)", async () => {
     // GIVEN
-    const evenementCaptor = captor<ValeurIndicateurTerritoireEvenement>();
+    const evenementCaptor = captor<ValeurIndicateurTerritoireEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
         .avecIndicId("IND-001")
-        .avecMetricDate("2023-01-15")
+        .avecMetricDate("2023-01-01")
         .avecMetricType("va")
         .avecMetricValue("85")
         .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
@@ -367,6 +367,19 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       listeMesuresIndicateursTemporaires,
     );
 
+    const evenementExistant = new ValeurIndicateurTerritoireEvenementBuilder()
+      .avecIndicId("IND-001")
+      .avecTerritoireCode("DEPT-01")
+      .avecTypeEvenement("VALEUR_CREEE")
+      .avecTypeValeur("VALEUR_AVANCEMENT")
+      .avecDateValeur(new Date("2023-01-01"))
+      .avecValeur(42)
+      .build();
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [evenementExistant],
+    );
+
     // WHEN
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
@@ -375,18 +388,17 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
 
     // THEN
     expect(
-      indicateurTerritoireValeurEvenementRepository.enregistrer,
-    ).toHaveBeenCalledTimes(1);
-    expect(
-      indicateurTerritoireValeurEvenementRepository.enregistrer,
+      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, evenementCaptor);
+    expect(evenementCaptor.value).toHaveLength(1);
 
-    const evenement = evenementCaptor.value;
+    const evenement = evenementCaptor.value[0];
     expect(evenement.indicId).toEqual("IND-001");
     expect(evenement.territoireCode).toEqual("DEPT-01");
     expect(evenement.typeEvenement).toEqual("VALEUR_MODIFIEE");
     expect(evenement.typeValeur).toEqual("VALEUR_AVANCEMENT");
-    expect(evenement.dateValeur).toEqual(new Date("2023-01-15"));
+    expect(evenement.dateValeur).toEqual(new Date("2023-01-01"));
+    expect(evenement.valeur).toEqual(85);
   });
 
   it("quand la valeur est identique à la dernière valeur importée pour le tuple [indicateur, territoire, date, type], ne doit pas créer de ligne d'évènement", async () => {
@@ -394,7 +406,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
         .avecIndicId("IND-001")
-        .avecMetricDate("2023-01-15")
+        .avecMetricDate("2023-01-01")
         .avecMetricType("va")
         .avecMetricValue("75")
         .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
@@ -406,6 +418,19 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       listeMesuresIndicateursTemporaires,
     );
 
+    const evenementExistant = new ValeurIndicateurTerritoireEvenementBuilder()
+      .avecIndicId("IND-001")
+      .avecTerritoireCode("DEPT-01")
+      .avecTypeEvenement("VALEUR_CREEE")
+      .avecTypeValeur("VALEUR_AVANCEMENT")
+      .avecDateValeur(new Date("2023-01-01"))
+      .avecValeur(75)
+      .build();
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [evenementExistant],
+    );
+
     // WHEN
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
@@ -414,7 +439,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
 
     // THEN
     expect(
-      indicateurTerritoireValeurEvenementRepository.enregistrer,
-    ).not.toHaveBeenCalled();
+      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
+    ).toHaveBeenNthCalledWith(1, []);
   });
 });
