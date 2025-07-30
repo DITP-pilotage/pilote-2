@@ -234,12 +234,11 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
 
   it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] avec un tuple pour une date antérieure, doit créer 2 lignes d'évènement (VALEUR_HISTORISEE + VALEUR_CREEE)", async () => {
     // GIVEN
-    const evenementCaptor1 = captor<ValeurIndicateurTerritoireEvenement>();
-    const evenementCaptor2 = captor<ValeurIndicateurTerritoireEvenement>();
+    const evenementCaptor = captor<ValeurIndicateurTerritoireEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
         .avecIndicId("IND-001")
-        .avecMetricDate("2023-01-15")
+        .avecMetricDate("2023-02-01")
         .avecMetricType("va")
         .avecMetricValue("75")
         .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
@@ -255,9 +254,9 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       .avecDateValeur(new Date("2023-01-01"))
       .build();
 
-    indicateurTerritoireValeurEvenementRepository.recuperer.mockResolvedValue([
-      evenementExistant,
-    ]);
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [evenementExistant],
+    );
     mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
       listeMesuresIndicateursTemporaires,
     );
@@ -271,26 +270,20 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     // THEN
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrer,
-    ).toHaveBeenCalledTimes(2);
-    expect(
-      indicateurTerritoireValeurEvenementRepository.enregistrer,
-    ).toHaveBeenNthCalledWith(1, evenementCaptor1);
-    expect(
-      indicateurTerritoireValeurEvenementRepository.enregistrer,
-    ).toHaveBeenNthCalledWith(2, evenementCaptor2);
+    ).toHaveBeenNthCalledWith(1, evenementCaptor);
 
-    const evenementHistorise = evenementCaptor1.value;
+    const evenementHistorise = evenementCaptor.value[0];
     expect(evenementHistorise.indicId).toEqual("IND-001");
-    expect(evenementHistorise.territoireCode).toEqual("D01");
+    expect(evenementHistorise.territoireCode).toEqual("DEPT-01");
     expect(evenementHistorise.typeEvenement).toEqual("VALEUR_HISTORISEE");
     expect(evenementHistorise.typeValeur).toEqual("VALEUR_AVANCEMENT");
 
-    const evenementCree = evenementCaptor2.value;
+    const evenementCree = evenementCaptor.value[1];
     expect(evenementCree.indicId).toEqual("IND-001");
     expect(evenementCree.territoireCode).toEqual("DEPT-01");
     expect(evenementCree.typeEvenement).toEqual("VALEUR_CREEE");
     expect(evenementCree.typeValeur).toEqual("VALEUR_AVANCEMENT");
-    expect(evenementCree.dateValeur).toEqual(new Date("2023-01-15"));
+    expect(evenementCree.dateValeur).toEqual(new Date("2023-02-01"));
   });
 
   it("quand la valeur est différente de la dernière valeur importée pour le tuple [indicateur, territoire, date, type], doit créer une ligne d'évènement (VALEUR_MODIFIEE)", async () => {
