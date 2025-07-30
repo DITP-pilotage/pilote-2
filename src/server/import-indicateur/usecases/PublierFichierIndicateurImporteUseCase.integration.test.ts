@@ -442,4 +442,62 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, []);
   });
+
+  it("quand plusieurs valeurs pour le même indicateur/territoire sont importées dans le même batch, doit tenir compte des événements créés précédemment dans le batch", async () => {
+    // GIVEN
+    const evenementCaptor = captor<ValeurIndicateurTerritoireEvenement[]>();
+    const listeMesuresIndicateursTemporaires = [
+      // Première valeur - nouvelle date, devrait créer VALEUR_CREEE
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-01-01")
+        .avecMetricType("va")
+        .avecMetricValue("75")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
+      // Deuxième valeur - date postérieure, devrait historiser la première et créer une nouvelle
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-02-01")
+        .avecMetricType("va")
+        .avecMetricValue("85")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
+    ];
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [],
+    );
+    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
+      listeMesuresIndicateursTemporaires,
+    );
+
+    await publierFichierIndicateurImporteUseCase.execute({
+      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
+    });
+
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
+    ).toHaveBeenNthCalledWith(1, evenementCaptor);
+
+    const evenements = evenementCaptor.value;
+
+    // EXPECTED: Devrait créer 3 événements:
+    // 1. VALEUR_CREEE pour 2023-01-01 (valeur: 75)
+    // 2. VALEUR_HISTORISEE pour 2023-01-01 (valeur: 75) - car la deuxième valeur a une date postérieure
+    // 3. VALEUR_CREEE pour 2023-02-01 (valeur: 85)
+    expect(evenements).toHaveLength(3);
+
+    expect(evenements[0].typeEvenement).toEqual("VALEUR_CREEE");
+    expect(evenements[0].valeur).toEqual(75);
+
+    expect(evenements[1].typeEvenement).toEqual("VALEUR_HISTORISEE");
+    expect(evenements[1].valeur).toEqual(75);
+
+    expect(evenements[2].typeEvenement).toEqual("VALEUR_CREEE");
+    expect(evenements[2]).toEqual(85);
+  });
 });
