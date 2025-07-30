@@ -483,6 +483,15 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
         .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
         .avecZoneId("D01")
         .build(),
+      // Troisième valeur - première date, devrait créer VALEUR_MODIFIEE
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-01-01")
+        .avecMetricType("va")
+        .avecMetricValue("85")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
     ];
 
     indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
@@ -507,18 +516,27 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     // 1. VALEUR_CREEE pour 2023-01-01 (valeur: 75)
     // 2. VALEUR_HISTORISEE pour 2023-01-01 (valeur: 75) - car la deuxième valeur a une date postérieure
     // 3. VALEUR_CREEE pour 2023-02-01 (valeur: 85)
-    expect(evenements).toHaveLength(3);
+    // 4. VALEUR_MODIFIEE pour 2023-01-01 (valeur: 85)
+    expect(evenements).toHaveLength(4);
 
+    expect(evenements[0].dateValeur).toEqual(new Date("2023-01-01"));
     expect(evenements[0].typeEvenement).toEqual("VALEUR_CREEE");
     expect(evenements[0].valeur).toEqual(75);
     expect(evenements[0].ordre).toEqual(1);
 
+    expect(evenements[1].dateValeur).toEqual(new Date("2023-01-01"));
     expect(evenements[1].typeEvenement).toEqual("VALEUR_HISTORISEE");
     expect(evenements[1].valeur).toEqual(75);
     expect(evenements[1].ordre).toEqual(2);
 
+    expect(evenements[2].dateValeur).toEqual(new Date("2023-02-01"));
     expect(evenements[2].typeEvenement).toEqual("VALEUR_CREEE");
     expect(evenements[2].valeur).toEqual(85);
     expect(evenements[2].ordre).toEqual(1);
+
+    expect(evenements[3].dateValeur).toEqual(new Date("2023-01-01"));
+    expect(evenements[3].typeEvenement).toEqual("VALEUR_MODIFIEE");
+    expect(evenements[3].valeur).toEqual(85);
+    expect(evenements[3].ordre).toEqual(3);
   });
 });

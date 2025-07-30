@@ -131,12 +131,7 @@ export class PublierFichierIndicateurImporteUseCase {
       // Maintenir un stream d'événements en mémoire pour ce groupe
       let evenementsEnMemoire = [...evenementsInitiaux];
 
-      // Trier les indicateurs par date pour un traitement chronologique
-      const indicateursTriesParDate = indicateurs.sort((a, b) =>
-        a.metricDate.localeCompare(b.metricDate),
-      );
-
-      for (const indicateurData of indicateursTriesParDate) {
+      for (const indicateurData of indicateurs) {
         const nouveauxEvenements = this.traiterIndicateur(
           indicateurData,
           evenementsEnMemoire,
@@ -166,7 +161,8 @@ export class PublierFichierIndicateurImporteUseCase {
     // Calculer l'ordre suivant pour cette date_valeur
     const dateValeur = indicateurData.metricDate;
     const evenementsPourCetteDate = evenementsEnMemoire.filter(
-      (e) => e.dateValeur.toISOString().split("T")[0] === dateValeur,
+      (evenement) =>
+        evenement.dateValeur.toISOString().split("T")[0] === dateValeur,
     );
     let ordreActuel = ValeurIndicateurTerritoireEvenement.prochainOrdre(
       evenementsPourCetteDate,
@@ -183,6 +179,7 @@ export class PublierFichierIndicateurImporteUseCase {
     for (const [date, evenementsPourDate] of Object.entries(
       evenementsExistantParDate,
     )) {
+      console.log("test");
       if (date > indicateurData.metricDate) {
         doitHistoriserValeurCreee = true;
         continue;
@@ -194,11 +191,14 @@ export class PublierFichierIndicateurImporteUseCase {
           evenementsPourDate[0].valeur;
         continue;
       }
+
+      console.log("evenementsPourDate", evenementsPourDate);
+
       const estHistorise = evenementsPourDate.some(
         (evenement) => evenement.typeEvenement === "VALEUR_HISTORISEE",
       );
       if (!estHistorise) {
-        nouveauxEvenements.push(
+        const evenement =
           ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
             {
               indicId: indicateurData.indicId,
@@ -215,14 +215,16 @@ export class PublierFichierIndicateurImporteUseCase {
                   evenementsPourDate,
                 ),
             },
-          ),
-        );
+          );
+
+        nouveauxEvenements.push(evenement);
+        evenementsPourDate.unshift(evenement);
       }
     }
 
     if (doitIgnorer) return nouveauxEvenements;
 
-    nouveauxEvenements.push(
+    const evenementCreationOuModification =
       ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
         {
           indicId: indicateurData.indicId,
@@ -238,11 +240,17 @@ export class PublierFichierIndicateurImporteUseCase {
           correlationId: randomUUID(),
           ordre: ordreActuel++,
         },
-      ),
+      );
+
+    evenementsExistantParDate[indicateurData.metricDate] ??= [];
+
+    nouveauxEvenements.push(evenementCreationOuModification);
+    evenementsExistantParDate[indicateurData.metricDate].unshift(
+      evenementCreationOuModification,
     );
 
     if (doitHistoriserValeurCreee) {
-      nouveauxEvenements.push(
+      const evenementHistorise =
         ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
           {
             indicId: indicateurData.indicId,
@@ -256,7 +264,13 @@ export class PublierFichierIndicateurImporteUseCase {
             correlationId: randomUUID(),
             ordre: ordreActuel++,
           },
-        ),
+        );
+      nouveauxEvenements.push(evenementHistorise);
+
+      console.log(indicateurData.metricDate);
+      console.log(evenementsExistantParDate[indicateurData.metricDate]);
+      evenementsExistantParDate[indicateurData.metricDate].unshift(
+        evenementHistorise,
       );
     }
 
