@@ -1,5 +1,4 @@
 import groupBy from "lodash.groupby";
-import { randomUUID } from "node:crypto";
 import { MesureIndicateurRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface";
 
 import { RapportRepository } from "@/server/import-indicateur/domain/ports/RapportRepository";
@@ -8,6 +7,7 @@ import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData
 import { PropositionValeurAvancementRepository } from "@/server/import-indicateur/domain/ports/PropositionValeurAvancementRepository";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/import-indicateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
+import { IndicateurTerritoireValeurEvenements } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenements";
 import { convertirZoneIdEnTerritoireCode } from "@/server/app/domain/Territoire";
 
 interface Dependencies {
@@ -111,7 +111,7 @@ export class PublierFichierIndicateurImporteUseCase {
         `${indicateur.indicId}-${convertirZoneIdEnTerritoireCode(indicateur.zoneId)}`,
     );
 
-    // Traiter chaque groupe d'indicateurs avec un stream d'événements en mémoire
+    // Traiter chaque groupe d'indicateurs avec la nouvelle classe domaine
     for (const [, indicateurs] of Object.entries(indicateursGroupes)) {
       const premierIndicateur = indicateurs[0];
       const territoireCode = convertirZoneIdEnTerritoireCode(
@@ -128,19 +128,21 @@ export class PublierFichierIndicateurImporteUseCase {
           },
         );
 
-      // Maintenir un stream d'événements en mémoire pour ce groupe
-      let evenementsEnMemoire = [...evenementsInitiaux];
-
-      for (const indicateurData of indicateurs) {
-        const nouveauxEvenements = this.traiterIndicateur(
-          indicateurData,
-          evenementsEnMemoire,
+      // Créer une instance de la classe domaine pour ce groupe
+      const indicateurTerritoireEvenements =
+        new IndicateurTerritoireValeurEvenements({
+          indicId: premierIndicateur.indicId,
           territoireCode,
-          auteurId,
-        );
+          evenementsInitiaux,
+        });
 
-        // Ajouter les nouveaux événements au stream en mémoire et à la liste finale
-        evenementsEnMemoire.unshift(...[...nouveauxEvenements].reverse());
+      // Traiter chaque indicateur avec la classe domaine
+      for (const indicateurData of indicateurs) {
+        const nouveauxEvenements =
+          indicateurTerritoireEvenements.ingererIndicateurData(
+            indicateurData,
+            auteurId,
+          );
         evenements.push(...nouveauxEvenements);
       }
     }
@@ -148,129 +150,5 @@ export class PublierFichierIndicateurImporteUseCase {
     await this.indicateurTerritoireValeurEvenementRepository.enregistrerTous(
       evenements,
     );
-  }
-
-  private traiterIndicateur(
-    indicateurData: IndicateurData,
-    evenementsEnMemoire: IndicateurTerritoireValeurEvenement[],
-    territoireCode: string,
-    auteurId: string,
-  ): IndicateurTerritoireValeurEvenement[] {
-    const nouveauxEvenements: IndicateurTerritoireValeurEvenement[] = [];
-
-    // Calculer l'ordre suivant pour cette date_valeur
-    const dateValeur = indicateurData.metricDate;
-    const evenementsPourCetteDate = evenementsEnMemoire.filter(
-      (evenement) =>
-        evenement.dateValeur.toISOString().split("T")[0] === dateValeur,
-    );
-    let ordreActuel = IndicateurTerritoireValeurEvenement.prochainOrdre(
-      evenementsPourCetteDate,
-    );
-    const evenementsExistantParDate = groupBy(
-      evenementsEnMemoire,
-      (evenement) => evenement.dateValeur.toISOString().split("T")[0],
-    );
-
-    let doitHistoriserValeurCreee = false;
-    let doitModifierValeurCreee = false;
-    let doitIgnorer = false;
-
-    for (const [date, evenementsPourDate] of Object.entries(
-      evenementsExistantParDate,
-    )) {
-      if (date > indicateurData.metricDate) {
-        doitHistoriserValeurCreee = !(
-          evenementsExistantParDate[indicateurData.metricDate] ?? []
-        ).some((evenement) => evenement.typeEvenement === "VALEUR_HISTORISEE");
-        continue;
-      }
-      if (date === indicateurData.metricDate) {
-        doitModifierValeurCreee = true;
-        doitIgnorer =
-          Number.parseFloat(indicateurData.metricValue) ===
-          evenementsPourDate[0].valeur;
-        continue;
-      }
-
-      const estHistorise = evenementsPourDate.some(
-        (evenement) => evenement.typeEvenement === "VALEUR_HISTORISEE",
-      );
-      if (!estHistorise) {
-        const evenement =
-          IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
-            {
-              indicId: indicateurData.indicId,
-              territoireCode,
-              typeEvenement: "VALEUR_HISTORISEE",
-              typeValeur: "VALEUR_AVANCEMENT",
-              dateValeur: evenementsPourDate[0].dateValeur,
-              valeur: evenementsPourDate[0].valeur,
-              donneesComplementaires: {},
-              idAuteurModification: auteurId,
-              correlationId: randomUUID(),
-              ordre:
-                IndicateurTerritoireValeurEvenement.prochainOrdre(
-                  evenementsPourDate,
-                ),
-            },
-          );
-
-        nouveauxEvenements.push(evenement);
-        evenementsPourDate.unshift(evenement);
-      }
-    }
-
-    if (doitIgnorer) return nouveauxEvenements;
-
-    const evenementCreationOuModification =
-      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
-        {
-          indicId: indicateurData.indicId,
-          territoireCode,
-          typeEvenement: doitModifierValeurCreee
-            ? "VALEUR_MODIFIEE"
-            : "VALEUR_CREEE",
-          typeValeur: "VALEUR_AVANCEMENT",
-          dateValeur: new Date(indicateurData.metricDate),
-          valeur: Number.parseFloat(indicateurData.metricValue),
-          donneesComplementaires: {},
-          idAuteurModification: auteurId,
-          correlationId: randomUUID(),
-          ordre: ordreActuel++,
-        },
-      );
-
-    evenementsExistantParDate[indicateurData.metricDate] ??= [];
-
-    nouveauxEvenements.push(evenementCreationOuModification);
-    evenementsExistantParDate[indicateurData.metricDate].unshift(
-      evenementCreationOuModification,
-    );
-
-    if (doitHistoriserValeurCreee) {
-      const evenementHistorise =
-        IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
-          {
-            indicId: indicateurData.indicId,
-            territoireCode,
-            typeEvenement: "VALEUR_HISTORISEE",
-            typeValeur: "VALEUR_AVANCEMENT",
-            dateValeur: new Date(indicateurData.metricDate),
-            valeur: Number.parseFloat(indicateurData.metricValue),
-            donneesComplementaires: {},
-            idAuteurModification: auteurId,
-            correlationId: randomUUID(),
-            ordre: ordreActuel++,
-          },
-        );
-      nouveauxEvenements.push(evenementHistorise);
-
-      evenementsExistantParDate[indicateurData.metricDate].unshift(
-        evenementHistorise,
-      );
-    }
-
-    return nouveauxEvenements;
   }
 }
