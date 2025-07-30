@@ -1,3 +1,4 @@
+import groupBy from "lodash.groupby";
 import { randomUUID } from "node:crypto";
 import { MesureIndicateurRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface";
 
@@ -70,34 +71,10 @@ export class PublierFichierIndicateurImporteUseCase {
     const listeValeursAvancementImportees = listeIndicateursData.filter(
       (indicateur) => indicateur.metricType === "va",
     );
-
-    const evenements: ValeurIndicateurTerritoireEvenement[] = [];
-    for (let indicateurData of listeIndicateursData) {
-      let typeValeur = indicateurData.metricType;
-      if (typeValeur !== "va") {
-        // TODO : gérer les autres types de valeur
-        continue;
-      }
-      evenements.push(
-        ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
-          {
-            indicId: indicateurData.indicId,
-            territoireCode: convertirZoneIdEnTerritoireCode(
-              indicateurData.zoneId,
-            ),
-            typeEvenement: "VALEUR_CREEE",
-            typeValeur: "VALEUR_AVANCEMENT",
-            dateValeur: new Date(indicateurData.metricDate),
-            donneesComplementaires: {},
-            idAuteurModification: auteurId,
-            correlationId: randomUUID(),
-          },
-        ),
-      );
-    }
     await this.mesureIndicateurRepository.sauvegarder(listeIndicateursData);
-    await this.indicateurTerritoireValeurEvenementRepository.enregistrerTous(
-      evenements,
+    await this.creerValeurIndicateurTerritoireEvenements(
+      listeIndicateursData,
+      auteurId,
     );
 
     await Promise.all(
@@ -114,6 +91,77 @@ export class PublierFichierIndicateurImporteUseCase {
     );
     await this.mesureIndicateurTemporaireRepository.supprimerToutParRapportId(
       rapportId,
+    );
+  }
+
+  private async creerValeurIndicateurTerritoireEvenements(
+    listeIndicateursData: IndicateurData[],
+    auteurId: string,
+  ) {
+    const evenements: ValeurIndicateurTerritoireEvenement[] = [];
+    for (const indicateurData of listeIndicateursData) {
+      const typeValeur = indicateurData.metricType;
+      if (typeValeur !== "va") {
+        // TODO : gérer les autres types de valeur
+        continue;
+      }
+      const territoireCode = convertirZoneIdEnTerritoireCode(
+        indicateurData.zoneId,
+      );
+      const evenementsExistant =
+        await this.indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur(
+          {
+            territoireCode,
+            indicId: indicateurData.indicId,
+            typeValeur: "VALEUR_AVANCEMENT",
+          },
+        );
+      const evenementsExistantParDate = groupBy(
+        evenementsExistant,
+        (evenement) => evenement.dateValeur.toISOString().split("T")[0],
+      );
+
+      for (const [date, evenementsPourDate] of Object.entries(
+        evenementsExistantParDate,
+      )) {
+        // TODO - PVA - gérer le cas où la date du groupe est dans le futur (>= ajd)
+        const estHistorise = evenementsPourDate.some(
+          (evenement) => evenement.typeEvenement === "VALEUR_HISTORISEE",
+        );
+        if (!estHistorise) {
+          evenements.push(
+            ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
+              {
+                indicId: indicateurData.indicId,
+                territoireCode,
+                typeEvenement: "VALEUR_HISTORISEE",
+                typeValeur: "VALEUR_AVANCEMENT",
+                dateValeur: evenementsPourDate[0].dateValeur,
+                donneesComplementaires: {},
+                idAuteurModification: auteurId,
+                correlationId: randomUUID(),
+              },
+            ),
+          );
+        }
+      }
+      evenements.push(
+        ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
+          {
+            indicId: indicateurData.indicId,
+            territoireCode,
+            typeEvenement: "VALEUR_CREEE",
+            typeValeur: "VALEUR_AVANCEMENT",
+            dateValeur: new Date(indicateurData.metricDate),
+            donneesComplementaires: {},
+            idAuteurModification: auteurId,
+            correlationId: randomUUID(),
+          },
+        ),
+      );
+    }
+    await this.indicateurTerritoireValeurEvenementRepository.enregistrerTous(
+      evenements,
     );
   }
 }

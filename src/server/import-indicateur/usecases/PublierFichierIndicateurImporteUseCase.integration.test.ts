@@ -269,7 +269,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
 
     // THEN
     expect(
-      indicateurTerritoireValeurEvenementRepository.enregistrer,
+      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, evenementCaptor);
 
     const evenementHistorise = evenementCaptor.value[0];
@@ -354,4 +354,6 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       indicateurTerritoireValeurEvenementRepository.enregistrer,
     ).not.toHaveBeenCalled();
   });
+
+  // TODO - PVA - gérer le cas où la date du groupe est dans le futur (>= ajd)
 });
