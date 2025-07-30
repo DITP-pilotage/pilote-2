@@ -6,6 +6,7 @@ import {
   InjectionMode,
   Lifetime,
 } from "awilix";
+import { PrismaTransaction } from "@/server/db/Transaction";
 import { InitialDependencies } from "./dependances";
 import { PrismaPilote } from "./db/PrismaPilote";
 
@@ -18,5 +19,6 @@ export const getInitialContainer = (): AwilixContainer<InitialDependencies> => {
 
   return initialContainer.register({
     prisma: asClass(PrismaPilote, { lifetime: Lifetime.SINGLETON }),
+    transaction: asClass(PrismaTransaction, { lifetime: Lifetime.SINGLETON }),
   });
 };

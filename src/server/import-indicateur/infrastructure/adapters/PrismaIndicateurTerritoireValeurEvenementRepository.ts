@@ -1,8 +1,8 @@
 import { Prisma } from "@prisma/client";
-import { prisma } from "@/server/db/prisma";
 import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/import-indicateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { TypeValeur } from "@/server/import-indicateur/domain/TypeValeur";
+import { getPrisma } from "@/server/db/Transaction";
 
 export class PrismaIndicateurTerritoireValeurEvenementRepository
   implements IndicateurTerritoireValeurEvenementRepository
@@ -12,16 +12,15 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
     territoireCode: string;
     typeValeur: TypeValeur;
   }): Promise<IndicateurTerritoireValeurEvenement[]> {
-    const lignes = await prisma.indicateur_territoire_valeur_evenement.findMany(
-      {
+    const lignes =
+      await getPrisma().indicateur_territoire_valeur_evenement.findMany({
         where: {
           indic_id: args.indicId,
           territoire_code: args.territoireCode,
           type_valeur: args.typeValeur,
         },
         orderBy: [{ date_valeur: "desc" }, { ordre: "desc" }],
-      },
-    );
+      });
     return lignes.map((ligne) =>
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
         {
@@ -47,7 +46,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
   async enregistrer(
     evenement: IndicateurTerritoireValeurEvenement,
   ): Promise<void> {
-    await prisma.indicateur_territoire_valeur_evenement.create({
+    await getPrisma().indicateur_territoire_valeur_evenement.create({
       data: {
         id: evenement.id,
         indic_id: evenement.indicId,
@@ -69,7 +68,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
   async enregistrerTous(
     evenements: IndicateurTerritoireValeurEvenement[],
   ): Promise<void> {
-    await prisma.indicateur_territoire_valeur_evenement.createMany({
+    await getPrisma().indicateur_territoire_valeur_evenement.createMany({
       data: evenements.map((evenement) => ({
         id: evenement.id,
         indic_id: evenement.indicId,

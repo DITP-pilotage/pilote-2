@@ -9,6 +9,7 @@ import { IndicateurTerritoireValeurEvenementRepository } from "@/server/import-i
 import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurTerritoireValeurEvenements } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenements";
 import { convertirZoneIdEnTerritoireCode } from "@/server/app/domain/Territoire";
+import { Transaction } from "@/server/db/Transaction";
 
 interface Dependencies {
   mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
@@ -16,6 +17,7 @@ interface Dependencies {
   rapportRepository: RapportRepository;
   propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
   indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+  transaction: Transaction;
 }
 
 export class PublierFichierIndicateurImporteUseCase {
@@ -27,11 +29,14 @@ export class PublierFichierIndicateurImporteUseCase {
 
   private indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
 
+  private transaction: Transaction;
+
   constructor({
     mesureIndicateurTemporaireRepository,
     mesureIndicateurRepository,
     propositionValeurAvancementRepository,
     indicateurTerritoireValeurEvenementRepository,
+    transaction,
   }: Dependencies) {
     this.mesureIndicateurTemporaireRepository =
       mesureIndicateurTemporaireRepository;
@@ -40,6 +45,7 @@ export class PublierFichierIndicateurImporteUseCase {
       propositionValeurAvancementRepository;
     this.indicateurTerritoireValeurEvenementRepository =
       indicateurTerritoireValeurEvenementRepository;
+    this.transaction = transaction;
   }
 
   async execute({
@@ -71,27 +77,33 @@ export class PublierFichierIndicateurImporteUseCase {
     const listeValeursAvancementImportees = listeIndicateursData.filter(
       (indicateur) => indicateur.metricType === "va",
     );
-    await this.mesureIndicateurRepository.sauvegarder(listeIndicateursData);
-    await this.creerValeurIndicateurTerritoireEvenements(
+    const evenements = await this.creerValeurIndicateurTerritoireEvenements(
       listeIndicateursData,
       auteurId,
     );
 
-    await Promise.all(
-      listeValeursAvancementImportees.map((valeurAvancement) =>
-        this.propositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport(
-          {
-            indicId: valeurAvancement.indicId,
-            zoneId: valeurAvancement.zoneId,
-            dateValeurImportee: new Date(valeurAvancement.metricDate),
-            valeurImportee: Number.parseFloat(valeurAvancement.metricValue),
-          },
+    await this.transaction.run(async () => {
+      await this.mesureIndicateurRepository.sauvegarder(listeIndicateursData);
+      await this.indicateurTerritoireValeurEvenementRepository.enregistrerTous(
+        evenements,
+      );
+      await Promise.all(
+        listeValeursAvancementImportees.map((valeurAvancement) =>
+          this.propositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport(
+            {
+              indicId: valeurAvancement.indicId,
+              zoneId: valeurAvancement.zoneId,
+              dateValeurImportee: new Date(valeurAvancement.metricDate),
+              valeurImportee: Number.parseFloat(valeurAvancement.metricValue),
+            },
+          ),
         ),
-      ),
-    );
-    await this.mesureIndicateurTemporaireRepository.supprimerToutParRapportId(
-      rapportId,
-    );
+      );
+      throw new Error("kaboom");
+      await this.mesureIndicateurTemporaireRepository.supprimerToutParRapportId(
+        rapportId,
+      );
+    });
   }
 
   private async creerValeurIndicateurTerritoireEvenements(
@@ -147,8 +159,6 @@ export class PublierFichierIndicateurImporteUseCase {
       }
     }
 
-    await this.indicateurTerritoireValeurEvenementRepository.enregistrerTous(
-      evenements,
-    );
+    return evenements;
   }
 }

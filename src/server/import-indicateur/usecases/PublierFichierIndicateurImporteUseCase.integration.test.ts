@@ -9,6 +9,7 @@ import { PropositionValeurAvancementRepository } from "@/server/import-indicateu
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/import-indicateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
 import { ValeurIndicateurTerritoireEvenementBuilder } from "@/server/import-indicateur/app/builder/ValeurIndicateurTerritoireEvenement.builder";
+import { InMemoryTransaction } from "@/server/db/Transaction";
 
 describe("PublierFichierIndicateurImporteUseCase", () => {
   let publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase;
@@ -34,6 +35,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
         rapportRepository,
         propositionValeurAvancementRepository,
         indicateurTerritoireValeurEvenementRepository,
+        transaction: new InMemoryTransaction(),
       });
   });
 

@@ -20,6 +20,7 @@ import {
   getFicheConducteurContainer,
 } from "@/server/fiche-conducteur/container";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { Transaction } from "@/server/db/Transaction";
 import {
   GestionUtilisateurDependencies,
   getGestionUtilisateurContainer,
@@ -32,6 +33,7 @@ import { getInitialContainer } from "./initial-container";
 
 export interface InitialDependencies {
   prisma: PrismaPilote;
+  transaction: Transaction;
 }
 
 export type ContainerDependencies = {

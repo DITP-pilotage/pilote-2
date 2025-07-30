@@ -1,6 +1,7 @@
 import { PropositionValeurAvancementRepository } from "@/server/import-indicateur/domain/ports/PropositionValeurAvancementRepository";
 import { StatutProposition } from "@/server/chantiers/domain/StatutProposition";
-import { prisma } from "@/server/db/prisma";
+
+import { getPrisma } from "@/server/db/Transaction";
 
 export class PrismaPropositionValeurAvancementRepository
   implements PropositionValeurAvancementRepository
@@ -16,19 +17,21 @@ export class PrismaPropositionValeurAvancementRepository
     dateValeurImportee: Date;
     valeurImportee: number;
   }): Promise<void> {
-    const territoire = await prisma.territoire.findFirst({
+    const territoire = await getPrisma().territoire.findFirst({
       where: {
         zone_id: zoneId,
       },
     });
 
-    const proposition = await prisma.proposition_valeur_actuelle.findFirst({
-      where: {
-        indic_id: indicId,
-        territoire_code: territoire?.code,
-        statut: StatutProposition.EN_COURS,
+    const proposition = await getPrisma().proposition_valeur_actuelle.findFirst(
+      {
+        where: {
+          indic_id: indicId,
+          territoire_code: territoire?.code,
+          statut: StatutProposition.EN_COURS,
+        },
       },
-    });
+    );
 
     const dateValeurImporteeString = dateValeurImportee.toISOString();
     if (
@@ -45,7 +48,7 @@ export class PrismaPropositionValeurAvancementRepository
             : StatutProposition.TRAITEE_VIA_IMPORT
           : StatutProposition.IGNOREE_VIA_IMPORT;
 
-      await prisma.proposition_valeur_actuelle.update({
+      await getPrisma().proposition_valeur_actuelle.update({
         where: {
           id: proposition.id,
         },
