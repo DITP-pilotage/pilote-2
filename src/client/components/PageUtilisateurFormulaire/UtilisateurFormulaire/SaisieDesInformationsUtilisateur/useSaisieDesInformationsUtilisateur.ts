@@ -366,9 +366,14 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
   const chantiersAccessibleSaisieCommentaire: ChantierSynthétisé[] =
     !afficherChampSaisieCommentaire
       ? []
-      : [ProfilEnum.PREFET_DEPARTEMENT, ProfilEnum.PREFET_REGION].includes(
-            profilCodeSelectionne,
-          )
+      : [
+            ProfilEnum.PREFET_DEPARTEMENT,
+            ProfilEnum.PREFET_REGION,
+            ProfilEnum.COORDINATEUR_DEPARTEMENT,
+            ProfilEnum.COORDINATEUR_REGION,
+            ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+            ProfilEnum.SERVICES_DECONCENTRES_REGION,
+          ].includes(profilCodeSelectionne)
         ? chantiersSelectionnesLecture.filter(
             (chantier) => chantier.ate === "ate",
           )
