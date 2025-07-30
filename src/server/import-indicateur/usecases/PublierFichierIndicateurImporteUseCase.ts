@@ -120,11 +120,15 @@ export class PublierFichierIndicateurImporteUseCase {
         evenementsExistant,
         (evenement) => evenement.dateValeur.toISOString().split("T")[0],
       );
+      let doitHistoriserValeurCreee = false;
 
       for (const [date, evenementsPourDate] of Object.entries(
         evenementsExistantParDate,
       )) {
-        // TODO - PVA - gérer le cas où la date du groupe est dans le futur (>= ajd)
+        if (date >= indicateurData.metricDate) {
+          doitHistoriserValeurCreee = true;
+          continue;
+        }
         const estHistorise = evenementsPourDate.some(
           (evenement) => evenement.typeEvenement === "VALEUR_HISTORISEE",
         );
@@ -159,6 +163,23 @@ export class PublierFichierIndicateurImporteUseCase {
           },
         ),
       );
+
+      if (doitHistoriserValeurCreee) {
+        evenements.push(
+          ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
+            {
+              indicId: indicateurData.indicId,
+              territoireCode,
+              typeEvenement: "VALEUR_HISTORISEE",
+              typeValeur: "VALEUR_AVANCEMENT",
+              dateValeur: new Date(indicateurData.metricDate),
+              donneesComplementaires: {},
+              idAuteurModification: auteurId,
+              correlationId: randomUUID(),
+            },
+          ),
+        );
+      }
     }
     await this.indicateurTerritoireValeurEvenementRepository.enregistrerTous(
       evenements,

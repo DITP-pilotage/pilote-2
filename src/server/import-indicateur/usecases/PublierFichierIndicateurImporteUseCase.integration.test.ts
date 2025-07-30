@@ -286,6 +286,62 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementCree.dateValeur).toEqual(new Date("2023-02-01"));
   });
 
+  it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] avec un tuple pour une date supérieure, doit créer 2 lignes d'évènement (VALEUR_CREEE + VALEUR_HISTORISEE)", async () => {
+    // GIVEN
+    const evenementCaptor = captor<ValeurIndicateurTerritoireEvenement[]>();
+    const listeMesuresIndicateursTemporaires = [
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-01-01")
+        .avecMetricType("va")
+        .avecMetricValue("75")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
+    ];
+
+    const evenementExistant = new ValeurIndicateurTerritoireEvenementBuilder()
+      .avecIndicId("IND-001")
+      .avecTerritoireCode("DEPT-01")
+      .avecTypeEvenement("VALEUR_CREEE")
+      .avecTypeValeur("VALEUR_AVANCEMENT")
+      .avecDateValeur(new Date("2023-02-01"))
+      .build();
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [evenementExistant],
+    );
+    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
+      listeMesuresIndicateursTemporaires,
+    );
+
+    // WHEN
+    await publierFichierIndicateurImporteUseCase.execute({
+      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
+    });
+
+    // THEN
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
+    ).toHaveBeenNthCalledWith(1, evenementCaptor);
+    expect(evenementCaptor.value).toHaveLength(2);
+
+    const evenementHistorise = evenementCaptor.value[0];
+    expect(evenementHistorise.indicId).toEqual("IND-001");
+    expect(evenementHistorise.territoireCode).toEqual("DEPT-01");
+    expect(evenementHistorise.typeEvenement).toEqual("VALEUR_CREEE");
+    expect(evenementHistorise.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementHistorise.dateValeur).toEqual(new Date("2023-01-01"));
+
+    const evenementCree = evenementCaptor.value[1];
+    expect(evenementCree.indicId).toEqual("IND-001");
+    expect(evenementCree.territoireCode).toEqual("DEPT-01");
+    expect(evenementCree.typeEvenement).toEqual("VALEUR_HISTORISEE");
+    expect(evenementCree.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementCree.dateValeur).toEqual(new Date("2023-01-01"));
+  });
+
   it("quand la valeur est différente de la dernière valeur importée pour le tuple [indicateur, territoire, date, type], doit créer une ligne d'évènement (VALEUR_MODIFIEE)", async () => {
     // GIVEN
     const evenementCaptor = captor<ValeurIndicateurTerritoireEvenement>();
@@ -354,6 +410,4 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       indicateurTerritoireValeurEvenementRepository.enregistrer,
     ).not.toHaveBeenCalled();
   });
-
-  // TODO - PVA - gérer le cas où la date du groupe est dans le futur (>= ajd)
 });
