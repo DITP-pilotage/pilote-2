@@ -12,6 +12,7 @@ CREATE TABLE "public"."indicateur_territoire_valeur_evenement" (
     "type_evenement" "public"."type_evenement" NOT NULL,
     "type_valeur" "public"."type_valeur" NOT NULL,
     "date_valeur" DATE NOT NULL,
+    "valeur" DOUBLE PRECISION NOT NULL,
     "donnees_complementaires" JSONB NOT NULL,
     "date_creation" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "date_modification" TIMESTAMP(3) NOT NULL,

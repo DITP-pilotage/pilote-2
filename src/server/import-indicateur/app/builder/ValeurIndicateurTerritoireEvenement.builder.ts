@@ -15,6 +15,8 @@ export class ValeurIndicateurTerritoireEvenementBuilder {
 
   private dateValeur: Date = new Date("2023-01-15");
 
+  private valeur: number = 75;
+
   private donneesComplementaires: Record<string, unknown> = {};
 
   private idAuteurModification: string = "default-author-id";
@@ -57,6 +59,11 @@ export class ValeurIndicateurTerritoireEvenementBuilder {
     return this;
   }
 
+  avecValeur(valeur: number): ValeurIndicateurTerritoireEvenementBuilder {
+    this.valeur = valeur;
+    return this;
+  }
+
   avecDonneesComplementaires(
     donneesComplementaires: Record<string, unknown>,
   ): ValeurIndicateurTerritoireEvenementBuilder {
@@ -87,6 +94,7 @@ export class ValeurIndicateurTerritoireEvenementBuilder {
         typeEvenement: this.typeEvenement,
         typeValeur: this.typeValeur,
         dateValeur: this.dateValeur,
+        valeur: this.valeur,
         donneesComplementaires: this.donneesComplementaires,
         idAuteurModification: this.idAuteurModification,
         correlationId: this.correlationId,

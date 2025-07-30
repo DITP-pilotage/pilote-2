@@ -15,6 +15,8 @@ export class ValeurIndicateurTerritoireEvenement {
 
   private readonly _dateValeur: Date;
 
+  private readonly _valeur: number;
+
   private readonly _donneesComplementaires: Record<string, unknown>;
 
   private readonly _idAuteurModification: string;
@@ -28,6 +30,7 @@ export class ValeurIndicateurTerritoireEvenement {
     typeEvenement,
     typeValeur,
     dateValeur,
+    valeur,
     donneesComplementaires,
     idAuteurModification,
     correlationId,
@@ -38,6 +41,7 @@ export class ValeurIndicateurTerritoireEvenement {
     typeEvenement: TypeEvenement;
     typeValeur: TypeValeur;
     dateValeur: Date;
+    valeur: number;
     donneesComplementaires: Record<string, unknown>;
     idAuteurModification: string;
     correlationId: string;
@@ -48,6 +52,7 @@ export class ValeurIndicateurTerritoireEvenement {
     this._typeEvenement = typeEvenement;
     this._typeValeur = typeValeur;
     this._dateValeur = dateValeur;
+    this._valeur = valeur;
     this._donneesComplementaires = donneesComplementaires;
     this._idAuteurModification = idAuteurModification;
     this._correlationId = correlationId;
@@ -77,6 +82,10 @@ export class ValeurIndicateurTerritoireEvenement {
     return this._dateValeur;
   }
 
+  get valeur(): number {
+    return this._valeur;
+  }
+
   get donneesComplementaires(): Record<string, unknown> {
     return this._donneesComplementaires;
   }
@@ -96,6 +105,7 @@ export class ValeurIndicateurTerritoireEvenement {
     typeEvenement,
     typeValeur,
     dateValeur,
+    valeur,
     donneesComplementaires = {},
     idAuteurModification,
     correlationId,
@@ -106,6 +116,7 @@ export class ValeurIndicateurTerritoireEvenement {
     typeEvenement: TypeEvenement;
     typeValeur: TypeValeur;
     dateValeur: Date;
+    valeur: number;
     donneesComplementaires?: Record<string, unknown>;
     idAuteurModification: string;
     correlationId: string;
@@ -117,6 +128,7 @@ export class ValeurIndicateurTerritoireEvenement {
       typeEvenement,
       typeValeur,
       dateValeur,
+      valeur,
       donneesComplementaires,
       idAuteurModification,
       correlationId,

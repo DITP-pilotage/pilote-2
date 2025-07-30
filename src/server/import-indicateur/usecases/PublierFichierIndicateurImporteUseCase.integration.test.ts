@@ -227,6 +227,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenement.typeEvenement).toEqual("VALEUR_CREEE");
     expect(evenement.typeValeur).toEqual("VALEUR_AVANCEMENT");
     expect(evenement.dateValeur).toEqual(new Date("2023-01-15"));
+    expect(evenement.valeur).toEqual(75);
     expect(evenement.idAuteurModification).toEqual(
       "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     );
@@ -252,6 +253,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       .avecTypeEvenement("VALEUR_CREEE")
       .avecTypeValeur("VALEUR_AVANCEMENT")
       .avecDateValeur(new Date("2023-01-01"))
+      .avecValeur(42)
       .build();
 
     indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
@@ -277,6 +279,8 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementHistorise.territoireCode).toEqual("DEPT-01");
     expect(evenementHistorise.typeEvenement).toEqual("VALEUR_HISTORISEE");
     expect(evenementHistorise.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementHistorise.dateValeur).toEqual(new Date("2023-01-01"));
+    expect(evenementHistorise.valeur).toEqual(42);
 
     const evenementCree = evenementCaptor.value[1];
     expect(evenementCree.indicId).toEqual("IND-001");
@@ -284,6 +288,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementCree.typeEvenement).toEqual("VALEUR_CREEE");
     expect(evenementCree.typeValeur).toEqual("VALEUR_AVANCEMENT");
     expect(evenementCree.dateValeur).toEqual(new Date("2023-02-01"));
+    expect(evenementCree.valeur).toEqual(75);
   });
 
   it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] avec un tuple pour une date supérieure, doit créer 2 lignes d'évènement (VALEUR_CREEE + VALEUR_HISTORISEE)", async () => {
@@ -333,6 +338,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementHistorise.typeEvenement).toEqual("VALEUR_CREEE");
     expect(evenementHistorise.typeValeur).toEqual("VALEUR_AVANCEMENT");
     expect(evenementHistorise.dateValeur).toEqual(new Date("2023-01-01"));
+    expect(evenementHistorise.valeur).toEqual(75);
 
     const evenementCree = evenementCaptor.value[1];
     expect(evenementCree.indicId).toEqual("IND-001");
@@ -340,6 +346,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementCree.typeEvenement).toEqual("VALEUR_HISTORISEE");
     expect(evenementCree.typeValeur).toEqual("VALEUR_AVANCEMENT");
     expect(evenementCree.dateValeur).toEqual(new Date("2023-01-01"));
+    expect(evenementCree.valeur).toEqual(75);
   });
 
   it("quand la valeur est différente de la dernière valeur importée pour le tuple [indicateur, territoire, date, type], doit créer une ligne d'évènement (VALEUR_MODIFIEE)", async () => {

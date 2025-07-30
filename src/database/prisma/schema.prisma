@@ -668,6 +668,7 @@ model indicateur_territoire_valeur_evenement {
   type_evenement          type_evenement
   type_valeur             type_valeur
   date_valeur             DateTime              @db.Date
+  valeur                  Float
   donnees_complementaires Json
   date_creation           DateTime              @default(now())
   date_modification       DateTime              @updatedAt

@@ -31,6 +31,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           typeEvenement: ligne.type_evenement,
           typeValeur: ligne.type_valeur,
           dateValeur: ligne.date_valeur,
+          valeur: ligne.valeur,
           donneesComplementaires: ligne.donnees_complementaires as Record<
             string,
             unknown
@@ -53,6 +54,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
         type_evenement: evenement.typeEvenement,
         type_valeur: evenement.typeValeur,
         date_valeur: evenement.dateValeur,
+        valeur: evenement.valeur,
         donnees_complementaires:
           (evenement.donneesComplementaires as Prisma.JsonValue) ||
           Prisma.JsonNull,
@@ -73,6 +75,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
         type_evenement: evenement.typeEvenement,
         type_valeur: evenement.typeValeur,
         date_valeur: evenement.dateValeur,
+        valeur: evenement.valeur,
         donnees_complementaires:
           (evenement.donneesComplementaires as Prisma.JsonValue) ||
           Prisma.JsonNull,
