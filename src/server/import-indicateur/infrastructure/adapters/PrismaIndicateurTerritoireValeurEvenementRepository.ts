@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/server/db/prisma";
-import { ValeurIndicateurTerritoireEvenement } from "@/server/import-indicateur/domain/ValeurIndicateurTerritoireEvenement";
+import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/import-indicateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { TypeValeur } from "@/server/import-indicateur/domain/TypeValeur";
 
@@ -11,7 +11,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
     indicId: string;
     territoireCode: string;
     typeValeur: TypeValeur;
-  }): Promise<ValeurIndicateurTerritoireEvenement[]> {
+  }): Promise<IndicateurTerritoireValeurEvenement[]> {
     const lignes = await prisma.indicateur_territoire_valeur_evenement.findMany(
       {
         where: {
@@ -23,7 +23,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
       },
     );
     return lignes.map((ligne) =>
-      ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
         {
           id: ligne.id,
           indicId: ligne.indic_id,
@@ -45,7 +45,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
   }
 
   async enregistrer(
-    evenement: ValeurIndicateurTerritoireEvenement,
+    evenement: IndicateurTerritoireValeurEvenement,
   ): Promise<void> {
     await prisma.indicateur_territoire_valeur_evenement.create({
       data: {
@@ -67,7 +67,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
   }
 
   async enregistrerTous(
-    evenements: ValeurIndicateurTerritoireEvenement[],
+    evenements: IndicateurTerritoireValeurEvenement[],
   ): Promise<void> {
     await prisma.indicateur_territoire_valeur_evenement.createMany({
       data: evenements.map((evenement) => ({

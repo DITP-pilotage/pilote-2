@@ -7,7 +7,7 @@ import { MesureIndicateurTemporaireRepository } from "@/server/import-indicateur
 import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
 import { PropositionValeurAvancementRepository } from "@/server/import-indicateur/domain/ports/PropositionValeurAvancementRepository";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/import-indicateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
-import { ValeurIndicateurTerritoireEvenement } from "@/server/import-indicateur/domain/ValeurIndicateurTerritoireEvenement";
+import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
 import { convertirZoneIdEnTerritoireCode } from "@/server/app/domain/Territoire";
 
 interface Dependencies {
@@ -98,7 +98,7 @@ export class PublierFichierIndicateurImporteUseCase {
     listeIndicateursData: IndicateurData[],
     auteurId: string,
   ) {
-    const evenements: ValeurIndicateurTerritoireEvenement[] = [];
+    const evenements: IndicateurTerritoireValeurEvenement[] = [];
 
     // Filtrer les indicateurs de type "va" et les grouper par [indicId, territoireCode]
     const indicateursVA = listeIndicateursData.filter(
@@ -152,11 +152,11 @@ export class PublierFichierIndicateurImporteUseCase {
 
   private traiterIndicateur(
     indicateurData: IndicateurData,
-    evenementsEnMemoire: ValeurIndicateurTerritoireEvenement[],
+    evenementsEnMemoire: IndicateurTerritoireValeurEvenement[],
     territoireCode: string,
     auteurId: string,
-  ): ValeurIndicateurTerritoireEvenement[] {
-    const nouveauxEvenements: ValeurIndicateurTerritoireEvenement[] = [];
+  ): IndicateurTerritoireValeurEvenement[] {
+    const nouveauxEvenements: IndicateurTerritoireValeurEvenement[] = [];
 
     // Calculer l'ordre suivant pour cette date_valeur
     const dateValeur = indicateurData.metricDate;
@@ -164,7 +164,7 @@ export class PublierFichierIndicateurImporteUseCase {
       (evenement) =>
         evenement.dateValeur.toISOString().split("T")[0] === dateValeur,
     );
-    let ordreActuel = ValeurIndicateurTerritoireEvenement.prochainOrdre(
+    let ordreActuel = IndicateurTerritoireValeurEvenement.prochainOrdre(
       evenementsPourCetteDate,
     );
     const evenementsExistantParDate = groupBy(
@@ -198,7 +198,7 @@ export class PublierFichierIndicateurImporteUseCase {
       );
       if (!estHistorise) {
         const evenement =
-          ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
+          IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
             {
               indicId: indicateurData.indicId,
               territoireCode,
@@ -210,7 +210,7 @@ export class PublierFichierIndicateurImporteUseCase {
               idAuteurModification: auteurId,
               correlationId: randomUUID(),
               ordre:
-                ValeurIndicateurTerritoireEvenement.prochainOrdre(
+                IndicateurTerritoireValeurEvenement.prochainOrdre(
                   evenementsPourDate,
                 ),
             },
@@ -224,7 +224,7 @@ export class PublierFichierIndicateurImporteUseCase {
     if (doitIgnorer) return nouveauxEvenements;
 
     const evenementCreationOuModification =
-      ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
         {
           indicId: indicateurData.indicId,
           territoireCode,
@@ -250,7 +250,7 @@ export class PublierFichierIndicateurImporteUseCase {
 
     if (doitHistoriserValeurCreee) {
       const evenementHistorise =
-        ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
+        IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
           {
             indicId: indicateurData.indicId,
             territoireCode,

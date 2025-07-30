@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { TypeEvenement } from "@/server/import-indicateur/domain/TypeEvenement";
 import { TypeValeur } from "@/server/import-indicateur/domain/TypeValeur";
 
-export class ValeurIndicateurTerritoireEvenement {
+export class IndicateurTerritoireValeurEvenement {
   private readonly _id: string;
 
   private readonly _indicId: string;
@@ -132,7 +132,7 @@ export class ValeurIndicateurTerritoireEvenement {
     correlationId: string;
     ordre: number;
   }) {
-    return new ValeurIndicateurTerritoireEvenement({
+    return new IndicateurTerritoireValeurEvenement({
       id,
       indicId,
       territoireCode,
@@ -147,7 +147,7 @@ export class ValeurIndicateurTerritoireEvenement {
     });
   }
 
-  static prochainOrdre(valeurs: ValeurIndicateurTerritoireEvenement[]) {
+  static prochainOrdre(valeurs: IndicateurTerritoireValeurEvenement[]) {
     return valeurs.length > 0
       ? Math.max(...valeurs.map((e) => e.ordre)) + 1
       : 1;

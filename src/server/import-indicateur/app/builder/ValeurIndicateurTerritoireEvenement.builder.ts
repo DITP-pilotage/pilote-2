@@ -1,4 +1,4 @@
-import { ValeurIndicateurTerritoireEvenement } from "@/server/import-indicateur/domain/ValeurIndicateurTerritoireEvenement";
+import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
 import { TypeEvenement } from "@/server/import-indicateur/domain/TypeEvenement";
 import { TypeValeur } from "@/server/import-indicateur/domain/TypeValeur";
 
@@ -92,8 +92,8 @@ export class ValeurIndicateurTerritoireEvenementBuilder {
     return this;
   }
 
-  build(): ValeurIndicateurTerritoireEvenement {
-    return ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
+  build(): IndicateurTerritoireValeurEvenement {
+    return IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
       {
         id: this.id,
         indicId: this.indicId,

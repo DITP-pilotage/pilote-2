@@ -1,4 +1,4 @@
-import { ValeurIndicateurTerritoireEvenement } from "@/server/import-indicateur/domain/ValeurIndicateurTerritoireEvenement";
+import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
 import { TypeValeur } from "@/server/import-indicateur/domain/TypeValeur";
 
 export interface IndicateurTerritoireValeurEvenementRepository {
@@ -6,9 +6,9 @@ export interface IndicateurTerritoireValeurEvenementRepository {
     indicId: string;
     territoireCode: string;
     typeValeur: TypeValeur;
-  }): Promise<ValeurIndicateurTerritoireEvenement[]>;
-  enregistrer(evenement: ValeurIndicateurTerritoireEvenement): Promise<void>;
+  }): Promise<IndicateurTerritoireValeurEvenement[]>;
+  enregistrer(evenement: IndicateurTerritoireValeurEvenement): Promise<void>;
   enregistrerTous(
-    evenements: ValeurIndicateurTerritoireEvenement[],
+    evenements: IndicateurTerritoireValeurEvenement[],
   ): Promise<void>;
 }

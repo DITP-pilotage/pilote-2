@@ -7,7 +7,7 @@ import { MesureIndicateurTemporaireBuilder } from "@/server/import-indicateur/ap
 import { MesureIndicateurRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface";
 import { PropositionValeurAvancementRepository } from "@/server/import-indicateur/domain/ports/PropositionValeurAvancementRepository";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/import-indicateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
-import { ValeurIndicateurTerritoireEvenement } from "@/server/import-indicateur/domain/ValeurIndicateurTerritoireEvenement";
+import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
 import { ValeurIndicateurTerritoireEvenementBuilder } from "@/server/import-indicateur/app/builder/ValeurIndicateurTerritoireEvenement.builder";
 
 describe("PublierFichierIndicateurImporteUseCase", () => {
@@ -201,7 +201,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
 
   it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type], doit créer une ligne d'évènement (VALEUR_CREEE)", async () => {
     // GIVEN
-    const evenementCaptor = captor<ValeurIndicateurTerritoireEvenement[]>();
+    const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
         .avecIndicId("IND-001")
@@ -246,7 +246,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
 
   it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] avec un tuple pour une date antérieure, doit créer 2 lignes d'évènement (VALEUR_HISTORISEE + VALEUR_CREEE)", async () => {
     // GIVEN
-    const evenementCaptor = captor<ValeurIndicateurTerritoireEvenement[]>();
+    const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
         .avecIndicId("IND-001")
@@ -307,7 +307,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
 
   it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] avec un tuple pour une date supérieure, doit créer 2 lignes d'évènement (VALEUR_CREEE + VALEUR_HISTORISEE)", async () => {
     // GIVEN
-    const evenementCaptor = captor<ValeurIndicateurTerritoireEvenement[]>();
+    const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
         .avecIndicId("IND-001")
@@ -367,7 +367,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
 
   it("quand la valeur est différente de la dernière valeur importée pour le tuple [indicateur, territoire, date, type], doit créer une ligne d'évènement (VALEUR_MODIFIEE)", async () => {
     // GIVEN
-    const evenementCaptor = captor<ValeurIndicateurTerritoireEvenement[]>();
+    const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
         .avecIndicId("IND-001")
@@ -463,7 +463,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
 
   it("quand plusieurs valeurs pour le même indicateur/territoire sont importées dans le même batch, doit tenir compte des événements créés précédemment dans le batch", async () => {
     // GIVEN
-    const evenementCaptor = captor<ValeurIndicateurTerritoireEvenement[]>();
+    const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       // Première valeur - nouvelle date, devrait créer VALEUR_CREEE
       new MesureIndicateurTemporaireBuilder()
