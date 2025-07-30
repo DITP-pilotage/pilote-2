@@ -48,7 +48,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
         .avecMetricType("vi")
         .avecMetricValue("12")
         .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
-        .avecZoneId("D001")
+        .avecZoneId("D01")
         .build(),
       new MesureIndicateurTemporaireBuilder()
         .avecIndicId("IND-002")
@@ -92,7 +92,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(listeMesuresIndicateurs[0].metricDate).toEqual("30/12/2022");
     expect(listeMesuresIndicateurs[0].metricType).toEqual("vi");
     expect(listeMesuresIndicateurs[0].metricValue).toEqual("12");
-    expect(listeMesuresIndicateurs[0].zoneId).toEqual("D001");
+    expect(listeMesuresIndicateurs[0].zoneId).toEqual("D01");
 
     expect(listeMesuresIndicateurs[1].id).toBeDefined();
     expect(listeMesuresIndicateurs[1].rapportId).toEqual(
@@ -200,7 +200,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
         .avecMetricType("va")
         .avecMetricValue("75")
         .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
-        .avecZoneId("D001")
+        .avecZoneId("D01")
         .build(),
     ];
 
@@ -220,7 +220,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
 
     const evenement = evenementCaptor.value[0];
     expect(evenement.indicId).toEqual("IND-001");
-    expect(evenement.territoireCode).toEqual("D001");
+    expect(evenement.territoireCode).toEqual("DEPT-01");
     expect(evenement.typeEvenement).toEqual("VALEUR_CREEE");
     expect(evenement.typeValeur).toEqual("VALEUR_AVANCEMENT");
     expect(evenement.dateValeur).toEqual(new Date("2023-01-15"));
@@ -237,13 +237,13 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
         .avecMetricType("va")
         .avecMetricValue("75")
         .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
-        .avecZoneId("D001")
+        .avecZoneId("D01")
         .build(),
     ];
 
     const evenementExistant = new ValeurIndicateurTerritoireEvenementBuilder()
       .avecIndicId("IND-001")
-      .avecTerritoireCode("D001")
+      .avecTerritoireCode("DEPT-01")
       .avecTypeEvenement("VALEUR_CREEE")
       .avecTypeValeur("VALEUR_AVANCEMENT")
       .avecDateValeur(new Date("2023-01-01"))
@@ -274,13 +274,13 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
 
     const evenementHistorise = evenementCaptor1.value;
     expect(evenementHistorise.indicId).toEqual("IND-001");
-    expect(evenementHistorise.territoireCode).toEqual("D001");
+    expect(evenementHistorise.territoireCode).toEqual("D01");
     expect(evenementHistorise.typeEvenement).toEqual("VALEUR_HISTORISEE");
     expect(evenementHistorise.typeValeur).toEqual("VALEUR_AVANCEMENT");
 
     const evenementCree = evenementCaptor2.value;
     expect(evenementCree.indicId).toEqual("IND-001");
-    expect(evenementCree.territoireCode).toEqual("D001");
+    expect(evenementCree.territoireCode).toEqual("DEPT-01");
     expect(evenementCree.typeEvenement).toEqual("VALEUR_CREEE");
     expect(evenementCree.typeValeur).toEqual("VALEUR_AVANCEMENT");
     expect(evenementCree.dateValeur).toEqual(new Date("2023-01-15"));
@@ -296,7 +296,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
         .avecMetricType("va")
         .avecMetricValue("85")
         .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
-        .avecZoneId("D001")
+        .avecZoneId("D01")
         .build(),
     ];
 
@@ -319,7 +319,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
 
     const evenement = evenementCaptor.value;
     expect(evenement.indicId).toEqual("IND-001");
-    expect(evenement.territoireCode).toEqual("D001");
+    expect(evenement.territoireCode).toEqual("DEPT-01");
     expect(evenement.typeEvenement).toEqual("VALEUR_MODIFIEE");
     expect(evenement.typeValeur).toEqual("VALEUR_AVANCEMENT");
     expect(evenement.dateValeur).toEqual(new Date("2023-01-15"));
@@ -334,7 +334,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
         .avecMetricType("va")
         .avecMetricValue("75")
         .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
-        .avecZoneId("D001")
+        .avecZoneId("D01")
         .build(),
     ];
 

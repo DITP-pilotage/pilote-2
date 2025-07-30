@@ -7,6 +7,7 @@ import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData
 import { PropositionValeurAvancementRepository } from "@/server/import-indicateur/domain/ports/PropositionValeurAvancementRepository";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/import-indicateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { ValeurIndicateurTerritoireEvenement } from "@/server/import-indicateur/domain/ValeurIndicateurTerritoireEvenement";
+import { convertirZoneIdEnTerritoireCode } from "@/server/app/domain/Territoire";
 
 interface Dependencies {
   mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
@@ -75,7 +76,9 @@ export class PublierFichierIndicateurImporteUseCase {
         ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
           {
             indicId: indicateurData.indicId,
-            territoireCode: indicateurData.zoneId, // TODO - recoder la transformation
+            territoireCode: convertirZoneIdEnTerritoireCode(
+              indicateurData.zoneId,
+            ),
             typeEvenement: "VALEUR_CREEE",
             typeValeur: "VALEUR_AVANCEMENT",
             dateValeur: new Date(indicateurData.metricDate),
