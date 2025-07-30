@@ -99,75 +99,141 @@ export class PublierFichierIndicateurImporteUseCase {
     auteurId: string,
   ) {
     const evenements: ValeurIndicateurTerritoireEvenement[] = [];
-    for (const indicateurData of listeIndicateursData) {
-      const typeValeur = indicateurData.metricType;
-      if (typeValeur !== "va") {
-        // TODO : gérer les autres types de valeur
-        continue;
-      }
+
+    // Filtrer les indicateurs de type "va" et les grouper par [indicId, territoireCode]
+    const indicateursVA = listeIndicateursData.filter(
+      (indicateur) => indicateur.metricType === "va",
+    );
+
+    const indicateursGroupes = groupBy(
+      indicateursVA,
+      (indicateur) =>
+        `${indicateur.indicId}-${convertirZoneIdEnTerritoireCode(indicateur.zoneId)}`,
+    );
+
+    // Traiter chaque groupe d'indicateurs avec un stream d'événements en mémoire
+    for (const [, indicateurs] of Object.entries(indicateursGroupes)) {
+      const premierIndicateur = indicateurs[0];
       const territoireCode = convertirZoneIdEnTerritoireCode(
-        indicateurData.zoneId,
+        premierIndicateur.zoneId,
       );
-      const evenementsExistant =
+
+      // Récupérer les événements existants une seule fois par groupe
+      const evenementsInitiaux =
         await this.indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur(
           {
             territoireCode,
-            indicId: indicateurData.indicId,
+            indicId: premierIndicateur.indicId,
             typeValeur: "VALEUR_AVANCEMENT",
           },
         );
-      const evenementsExistantParDate = groupBy(
-        evenementsExistant,
-        (evenement) => evenement.dateValeur.toISOString().split("T")[0],
-      );
-      let doitHistoriserValeurCreee = false;
-      let doitModifierValeurCreee = false;
-      let doitIgnorer = false;
 
-      for (const [date, evenementsPourDate] of Object.entries(
-        evenementsExistantParDate,
-      )) {
-        if (date > indicateurData.metricDate) {
-          doitHistoriserValeurCreee = true;
-          continue;
-        }
-        if (date === indicateurData.metricDate) {
-          doitModifierValeurCreee = true;
-          doitIgnorer =
-            Number.parseFloat(indicateurData.metricValue) ===
-            evenementsPourDate[0].valeur;
-          continue;
-        }
-        const estHistorise = evenementsPourDate.some(
-          (evenement) => evenement.typeEvenement === "VALEUR_HISTORISEE",
+      // Maintenir un stream d'événements en mémoire pour ce groupe
+      let evenementsEnMemoire = [...evenementsInitiaux];
+
+      // Trier les indicateurs par date pour un traitement chronologique
+      const indicateursTriesParDate = indicateurs.sort((a, b) =>
+        a.metricDate.localeCompare(b.metricDate),
+      );
+
+      for (const indicateurData of indicateursTriesParDate) {
+        const nouveauxEvenements = this.traiterIndicateur(
+          indicateurData,
+          evenementsEnMemoire,
+          territoireCode,
+          auteurId,
         );
-        if (!estHistorise) {
-          evenements.push(
-            ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
-              {
-                indicId: indicateurData.indicId,
-                territoireCode,
-                typeEvenement: "VALEUR_HISTORISEE",
-                typeValeur: "VALEUR_AVANCEMENT",
-                dateValeur: evenementsPourDate[0].dateValeur,
-                valeur: evenementsPourDate[0].valeur,
-                donneesComplementaires: {},
-                idAuteurModification: auteurId,
-                correlationId: randomUUID(),
-              },
-            ),
-          );
-        }
+
+        // Ajouter les nouveaux événements au stream en mémoire et à la liste finale
+        evenementsEnMemoire.unshift(...[...nouveauxEvenements].reverse());
+        evenements.push(...nouveauxEvenements);
       }
-      if (doitIgnorer) continue;
-      evenements.push(
+    }
+
+    await this.indicateurTerritoireValeurEvenementRepository.enregistrerTous(
+      evenements,
+    );
+  }
+
+  private traiterIndicateur(
+    indicateurData: IndicateurData,
+    evenementsEnMemoire: ValeurIndicateurTerritoireEvenement[],
+    territoireCode: string,
+    auteurId: string,
+  ): ValeurIndicateurTerritoireEvenement[] {
+    const nouveauxEvenements: ValeurIndicateurTerritoireEvenement[] = [];
+    const evenementsExistantParDate = groupBy(
+      evenementsEnMemoire,
+      (evenement) => evenement.dateValeur.toISOString().split("T")[0],
+    );
+
+    let doitHistoriserValeurCreee = false;
+    let doitModifierValeurCreee = false;
+    let doitIgnorer = false;
+
+    for (const [date, evenementsPourDate] of Object.entries(
+      evenementsExistantParDate,
+    )) {
+      if (date > indicateurData.metricDate) {
+        doitHistoriserValeurCreee = true;
+        continue;
+      }
+      if (date === indicateurData.metricDate) {
+        doitModifierValeurCreee = true;
+        doitIgnorer =
+          Number.parseFloat(indicateurData.metricValue) ===
+          evenementsPourDate[0].valeur;
+        continue;
+      }
+      const estHistorise = evenementsPourDate.some(
+        (evenement) => evenement.typeEvenement === "VALEUR_HISTORISEE",
+      );
+      if (!estHistorise) {
+        nouveauxEvenements.push(
+          ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
+            {
+              indicId: indicateurData.indicId,
+              territoireCode,
+              typeEvenement: "VALEUR_HISTORISEE",
+              typeValeur: "VALEUR_AVANCEMENT",
+              dateValeur: evenementsPourDate[0].dateValeur,
+              valeur: evenementsPourDate[0].valeur,
+              donneesComplementaires: {},
+              idAuteurModification: auteurId,
+              correlationId: randomUUID(),
+            },
+          ),
+        );
+      }
+    }
+
+    if (doitIgnorer) return nouveauxEvenements;
+
+    nouveauxEvenements.push(
+      ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: indicateurData.indicId,
+          territoireCode,
+          typeEvenement: doitModifierValeurCreee
+            ? "VALEUR_MODIFIEE"
+            : "VALEUR_CREEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: new Date(indicateurData.metricDate),
+          valeur: Number.parseFloat(indicateurData.metricValue),
+          donneesComplementaires: {},
+          idAuteurModification: auteurId,
+          correlationId: randomUUID(),
+        },
+      ),
+    );
+
+    if (doitHistoriserValeurCreee) {
+      nouveauxEvenements.push(
         ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
           {
             indicId: indicateurData.indicId,
             territoireCode,
-            typeEvenement: doitModifierValeurCreee
-              ? "VALEUR_MODIFIEE"
-              : "VALEUR_CREEE",
+            typeEvenement: "VALEUR_HISTORISEE",
             typeValeur: "VALEUR_AVANCEMENT",
             dateValeur: new Date(indicateurData.metricDate),
             valeur: Number.parseFloat(indicateurData.metricValue),
@@ -177,27 +243,8 @@ export class PublierFichierIndicateurImporteUseCase {
           },
         ),
       );
-
-      if (doitHistoriserValeurCreee) {
-        evenements.push(
-          ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
-            {
-              indicId: indicateurData.indicId,
-              territoireCode,
-              typeEvenement: "VALEUR_HISTORISEE",
-              typeValeur: "VALEUR_AVANCEMENT",
-              dateValeur: new Date(indicateurData.metricDate),
-              valeur: Number.parseFloat(indicateurData.metricValue),
-              donneesComplementaires: {},
-              idAuteurModification: auteurId,
-              correlationId: randomUUID(),
-            },
-          ),
-        );
-      }
     }
-    await this.indicateurTerritoireValeurEvenementRepository.enregistrerTous(
-      evenements,
-    );
+
+    return nouveauxEvenements;
   }
 }

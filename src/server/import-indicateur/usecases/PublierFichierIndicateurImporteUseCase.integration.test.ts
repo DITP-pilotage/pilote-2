@@ -63,6 +63,10 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
       listeMesuresIndicateursTemporaires,
     );
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [],
+    );
+
     // WHEN
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
@@ -151,6 +155,9 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
       listeMesuresIndicateursTemporaires,
     );
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [],
+    );
     // WHEN
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
@@ -208,6 +215,9 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
 
     mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
       listeMesuresIndicateursTemporaires,
+    );
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [],
     );
 
     // WHEN
@@ -498,6 +508,6 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenements[1].valeur).toEqual(75);
 
     expect(evenements[2].typeEvenement).toEqual("VALEUR_CREEE");
-    expect(evenements[2]).toEqual(85);
+    expect(evenements[2].valeur).toEqual(85);
   });
 });
