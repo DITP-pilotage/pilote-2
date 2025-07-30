@@ -23,6 +23,8 @@ export class ValeurIndicateurTerritoireEvenement {
 
   private readonly _correlationId: string;
 
+  private readonly _ordre: number;
+
   private constructor({
     id,
     indicId,
@@ -34,6 +36,7 @@ export class ValeurIndicateurTerritoireEvenement {
     donneesComplementaires,
     idAuteurModification,
     correlationId,
+    ordre,
   }: {
     id: string;
     indicId: string;
@@ -45,6 +48,7 @@ export class ValeurIndicateurTerritoireEvenement {
     donneesComplementaires: Record<string, unknown>;
     idAuteurModification: string;
     correlationId: string;
+    ordre: number;
   }) {
     this._id = id;
     this._indicId = indicId;
@@ -56,6 +60,7 @@ export class ValeurIndicateurTerritoireEvenement {
     this._donneesComplementaires = donneesComplementaires;
     this._idAuteurModification = idAuteurModification;
     this._correlationId = correlationId;
+    this._ordre = ordre;
   }
 
   get id(): string {
@@ -98,6 +103,10 @@ export class ValeurIndicateurTerritoireEvenement {
     return this._correlationId;
   }
 
+  get ordre(): number {
+    return this._ordre;
+  }
+
   static createValeurIndicateurTerritoireEvenement({
     id = randomUUID(),
     indicId,
@@ -109,6 +118,7 @@ export class ValeurIndicateurTerritoireEvenement {
     donneesComplementaires = {},
     idAuteurModification,
     correlationId,
+    ordre,
   }: {
     id?: string;
     indicId: string;
@@ -120,6 +130,7 @@ export class ValeurIndicateurTerritoireEvenement {
     donneesComplementaires?: Record<string, unknown>;
     idAuteurModification: string;
     correlationId: string;
+    ordre: number;
   }) {
     return new ValeurIndicateurTerritoireEvenement({
       id,
@@ -132,6 +143,7 @@ export class ValeurIndicateurTerritoireEvenement {
       donneesComplementaires,
       idAuteurModification,
       correlationId,
+      ordre,
     });
   }
 }

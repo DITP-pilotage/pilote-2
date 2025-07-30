@@ -19,7 +19,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           territoire_code: args.territoireCode,
           type_valeur: args.typeValeur,
         },
-        orderBy: [{ date_valeur: "desc" }, { date_creation: "desc" }],
+        orderBy: [{ date_valeur: "desc" }, { ordre: "desc" }],
       },
     );
     return lignes.map((ligne) =>
@@ -38,6 +38,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           >,
           idAuteurModification: ligne.id_auteur_modification,
           correlationId: ligne.correlation_id,
+          ordre: ligne.ordre,
         },
       ),
     );
@@ -60,6 +61,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           Prisma.JsonNull,
         id_auteur_modification: evenement.idAuteurModification,
         correlation_id: evenement.correlationId,
+        ordre: evenement.ordre,
       },
     });
   }
@@ -81,6 +83,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           Prisma.JsonNull,
         id_auteur_modification: evenement.idAuteurModification,
         correlation_id: evenement.correlationId,
+        ordre: evenement.ordre,
       })),
     });
   }

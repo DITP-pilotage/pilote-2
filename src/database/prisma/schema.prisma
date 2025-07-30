@@ -671,6 +671,7 @@ model indicateur_territoire_valeur_evenement {
   valeur                  Float
   donnees_complementaires Json
   date_creation           DateTime              @default(now())
+  ordre                   Int
   date_modification       DateTime              @updatedAt
   id_auteur_modification  String                @db.Uuid
   correlation_id          String                @db.Uuid

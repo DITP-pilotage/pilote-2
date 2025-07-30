@@ -23,6 +23,8 @@ export class ValeurIndicateurTerritoireEvenementBuilder {
 
   private correlationId: string = "default-correlation-id";
 
+  private ordre: number = 1;
+
   avecId(id: string): ValeurIndicateurTerritoireEvenementBuilder {
     this.id = id;
     return this;
@@ -85,6 +87,11 @@ export class ValeurIndicateurTerritoireEvenementBuilder {
     return this;
   }
 
+  avecOrdre(ordre: number): ValeurIndicateurTerritoireEvenementBuilder {
+    this.ordre = ordre;
+    return this;
+  }
+
   build(): ValeurIndicateurTerritoireEvenement {
     return ValeurIndicateurTerritoireEvenement.createValeurIndicateurTerritoireEvenement(
       {
@@ -98,6 +105,7 @@ export class ValeurIndicateurTerritoireEvenementBuilder {
         donneesComplementaires: this.donneesComplementaires,
         idAuteurModification: this.idAuteurModification,
         correlationId: this.correlationId,
+        ordre: this.ordre,
       },
     );
   }
