@@ -162,6 +162,15 @@ export class PublierFichierIndicateurImporteUseCase {
     auteurId: string,
   ): ValeurIndicateurTerritoireEvenement[] {
     const nouveauxEvenements: ValeurIndicateurTerritoireEvenement[] = [];
+
+    // Calculer l'ordre suivant pour cette date_valeur
+    const dateValeur = indicateurData.metricDate;
+    const evenementsPourCetteDate = evenementsEnMemoire.filter(
+      (e) => e.dateValeur.toISOString().split("T")[0] === dateValeur,
+    );
+    let ordreActuel = ValeurIndicateurTerritoireEvenement.prochainOrdre(
+      evenementsPourCetteDate,
+    );
     const evenementsExistantParDate = groupBy(
       evenementsEnMemoire,
       (evenement) => evenement.dateValeur.toISOString().split("T")[0],
@@ -201,6 +210,10 @@ export class PublierFichierIndicateurImporteUseCase {
               donneesComplementaires: {},
               idAuteurModification: auteurId,
               correlationId: randomUUID(),
+              ordre:
+                ValeurIndicateurTerritoireEvenement.prochainOrdre(
+                  evenementsPourDate,
+                ),
             },
           ),
         );
@@ -223,6 +236,7 @@ export class PublierFichierIndicateurImporteUseCase {
           donneesComplementaires: {},
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
+          ordre: ordreActuel++,
         },
       ),
     );
@@ -240,6 +254,7 @@ export class PublierFichierIndicateurImporteUseCase {
             donneesComplementaires: {},
             idAuteurModification: auteurId,
             correlationId: randomUUID(),
+            ordre: ordreActuel++,
           },
         ),
       );

@@ -146,4 +146,10 @@ export class ValeurIndicateurTerritoireEvenement {
       ordre,
     });
   }
+
+  static prochainOrdre(valeurs: ValeurIndicateurTerritoireEvenement[]) {
+    return valeurs.length > 0
+      ? Math.max(...valeurs.map((e) => e.ordre)) + 1
+      : 1;
+  }
 }
