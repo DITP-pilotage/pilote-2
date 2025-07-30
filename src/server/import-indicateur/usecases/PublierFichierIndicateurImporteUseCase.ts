@@ -179,9 +179,10 @@ export class PublierFichierIndicateurImporteUseCase {
     for (const [date, evenementsPourDate] of Object.entries(
       evenementsExistantParDate,
     )) {
-      console.log("test");
       if (date > indicateurData.metricDate) {
-        doitHistoriserValeurCreee = true;
+        doitHistoriserValeurCreee = !(
+          evenementsExistantParDate[indicateurData.metricDate] ?? []
+        ).some((evenement) => evenement.typeEvenement === "VALEUR_HISTORISEE");
         continue;
       }
       if (date === indicateurData.metricDate) {
@@ -191,8 +192,6 @@ export class PublierFichierIndicateurImporteUseCase {
           evenementsPourDate[0].valeur;
         continue;
       }
-
-      console.log("evenementsPourDate", evenementsPourDate);
 
       const estHistorise = evenementsPourDate.some(
         (evenement) => evenement.typeEvenement === "VALEUR_HISTORISEE",
@@ -267,8 +266,6 @@ export class PublierFichierIndicateurImporteUseCase {
         );
       nouveauxEvenements.push(evenementHistorise);
 
-      console.log(indicateurData.metricDate);
-      console.log(evenementsExistantParDate[indicateurData.metricDate]);
       evenementsExistantParDate[indicateurData.metricDate].unshift(
         evenementHistorise,
       );
