@@ -1,29 +1,34 @@
-import { FunctionComponent } from 'react';
-import Cartographie from '@/components/_commons/Cartographie/Cartographie';
-import CartographieLégendeDégradé from '@/components/_commons/Cartographie/Légende/Dégradé/CartographieLégendeDégradé';
-import CartographieLégendeListe from '@/client/components/_commons/Cartographie/Légende/Liste/CartographieLégendeListe';
-import { CartographieOptions } from '@/components/_commons/Cartographie/useCartographie.interface';
-import {
-  CartographieÉlémentsDeLégende,
-} from '@/components/_commons/Cartographie/Légende/CartographieLégende.interface';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import useCartographieValeurAvancement from './useCartographieValeurAvancement';
-import { CartographieDonnéesValeurAvancement } from './CartographieValeurAvancement.interface';
+import { FunctionComponent } from "react";
+import Cartographie from "@/components/_commons/Cartographie/Cartographie";
+import CartographieLégendeDégradé from "@/components/_commons/Cartographie/Légende/Dégradé/CartographieLégendeDégradé";
+import CartographieLégendeListe from "@/client/components/_commons/Cartographie/Légende/Liste/CartographieLégendeListe";
+import { CartographieOptions } from "@/components/_commons/Cartographie/useCartographie.interface";
+import { CartographieÉlémentsDeLégende } from "@/components/_commons/Cartographie/Légende/CartographieLégende.interface";
+import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
+import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import useCartographieValeurAvancement from "./useCartographieValeurAvancement";
+import { CartographieDonnéesValeurAvancement } from "./CartographieValeurAvancement.interface";
 
 interface CartographieValeurAvancementProps {
-  données: CartographieDonnéesValeurAvancement,
-  options?: Partial<CartographieOptions>,
-  unité?: string | null,
-  élémentsDeLégende: CartographieÉlémentsDeLégende,
-  auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void
-  territoireCode: string
-  pathname: '/accueil/chantier/[territoireCode]' | '/chantier/[id]/[territoireCode]'
-  mailleSelectionnee: MailleInterne
-  jalon: number
+  données: CartographieDonnéesValeurAvancement;
+  options?: Partial<CartographieOptions>;
+  unité?: string | null;
+  élémentsDeLégende: CartographieÉlémentsDeLégende;
+  auClicTerritoireCallback: (
+    territoireCodeInsee: CodeInsee,
+    territoireSélectionnable: boolean,
+  ) => void;
+  territoireCode: string;
+  pathname:
+    | "/accueil/chantier/[territoireCode]"
+    | "/chantier/[id]/[territoireCode]";
+  mailleSelectionnee: MailleInterne;
+  jalon: number;
 }
 
-const CartographieValeurAvancement: FunctionComponent<CartographieValeurAvancementProps> = ({
+const CartographieValeurAvancement: FunctionComponent<
+  CartographieValeurAvancementProps
+> = ({
   données,
   options,
   unité,
@@ -34,11 +39,8 @@ const CartographieValeurAvancement: FunctionComponent<CartographieValeurAvanceme
   jalon,
   pathname,
 }) => {
-  const {
-    donnéesCartographie,
-    légende,
-    légendeAdditionnelle,
-  } = useCartographieValeurAvancement(données, élémentsDeLégende, jalon, unité);
+  const { donnéesCartographie, légende, légendeAdditionnelle } =
+    useCartographieValeurAvancement(données, élémentsDeLégende, jalon, unité);
 
   return (
     <Cartographie

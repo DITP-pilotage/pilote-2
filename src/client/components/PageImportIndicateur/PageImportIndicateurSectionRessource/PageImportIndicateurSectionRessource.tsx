@@ -1,29 +1,38 @@
-import { FunctionComponent } from 'react';
-import Bloc from '@/components/_commons/Bloc/Bloc';
-import Titre from '@/components/_commons/Titre/Titre';
-import PageImportIndicateurSectionRessourceStyled
-  from '@/components/PageImportIndicateur/PageImportIndicateurSectionRessource/PageImportIndicateurSectionRessource.styled';
-import { wording } from '@/client/utils/i18n/i18n';
-import '@gouvfr/dsfr/dist/component/download/download.min.css';
+import { FunctionComponent } from "react";
+import Bloc from "@/components/_commons/Bloc/Bloc";
+import Titre from "@/components/_commons/Titre/Titre";
+import PageImportIndicateurSectionRessourceStyled from "@/components/PageImportIndicateur/PageImportIndicateurSectionRessource/PageImportIndicateurSectionRessource.styled";
+import { wording } from "@/client/utils/i18n/i18n";
+import "@gouvfr/dsfr/dist/component/download/download.min.css";
 
 const PageImportIndicateurSectionRessource: FunctionComponent<{}> = () => {
   return (
     <PageImportIndicateurSectionRessourceStyled>
-      <div className='fr-container fr-py-3w'>
-        <Titre baliseHtml='h2'>
+      <div className="fr-container fr-py-3w">
+        <Titre baliseHtml="h2">
           {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.TITRE}
         </Titre>
         <Bloc>
-          <Titre baliseHtml='h3'>
-            {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TITRE}
+          <Titre baliseHtml="h3">
+            {
+              wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                .SECTION_EXPLICATION_IMPORT.TITRE
+            }
           </Titre>
           <p>
-            {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.SOUS_TITRE}
+            {
+              wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                .SECTION_EXPLICATION_IMPORT.SOUS_TITRE
+            }
           </p>
           <ul>
             <li>
               <b>
-                {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.IDENTIFIANT_INDIC.CHAMP}
+                {
+                  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                    .SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.IDENTIFIANT_INDIC
+                    .CHAMP
+                }
               </b>
               <span>
                 {` • ${wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.IDENTIFIANT_INDIC.EXPLICATION}`}
@@ -31,7 +40,10 @@ const PageImportIndicateurSectionRessource: FunctionComponent<{}> = () => {
             </li>
             <li>
               <b>
-                {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.ZONE_ID.CHAMP}
+                {
+                  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                    .SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.ZONE_ID.CHAMP
+                }
               </b>
               <span>
                 {` • ${wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.ZONE_ID.EXPLICATION}`}
@@ -39,7 +51,10 @@ const PageImportIndicateurSectionRessource: FunctionComponent<{}> = () => {
             </li>
             <li>
               <b>
-                {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.ZONE_NOM.CHAMP}
+                {
+                  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                    .SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.ZONE_NOM.CHAMP
+                }
               </b>
               <span>
                 {` • ${wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.ZONE_NOM.EXPLICATION}`}
@@ -47,7 +62,10 @@ const PageImportIndicateurSectionRessource: FunctionComponent<{}> = () => {
             </li>
             <li>
               <b>
-                {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.DATE_VALEUR.CHAMP}
+                {
+                  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                    .SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.DATE_VALEUR.CHAMP
+                }
               </b>
               <span>
                 {` • ${wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.DATE_VALEUR.EXPLICATION}`}
@@ -55,7 +73,10 @@ const PageImportIndicateurSectionRessource: FunctionComponent<{}> = () => {
             </li>
             <li>
               <b>
-                {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.TYPE_VALEUR.CHAMP}
+                {
+                  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                    .SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.TYPE_VALEUR.CHAMP
+                }
               </b>
               <span>
                 {` • ${wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.TYPE_VALEUR.EXPLICATION}`}
@@ -63,7 +84,10 @@ const PageImportIndicateurSectionRessource: FunctionComponent<{}> = () => {
             </li>
             <li>
               <b>
-                {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.VALEUR.CHAMP}
+                {
+                  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                    .SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.VALEUR.CHAMP
+                }
               </b>
               <span>
                 {` • ${wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.VALEUR.EXPLICATION}`}
@@ -71,162 +95,307 @@ const PageImportIndicateurSectionRessource: FunctionComponent<{}> = () => {
             </li>
           </ul>
           <p>
-            {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.FORMAT_ACCEPTE}
+            {
+              wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                .SECTION_EXPLICATION_IMPORT.FORMAT_ACCEPTE
+            }
           </p>
-          <table className='fr-table fr-mb-3 fr-p-0'>
+          <table className="fr-table fr-mb-3 fr-p-0">
             <thead>
               <tr>
                 <th>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.IDENTIFIANT_INDIC}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE
+                      .IDENTIFIANT_INDIC
+                  }
                 </th>
                 <th>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.ZONE_ID}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.ZONE_ID
+                  }
                 </th>
                 <th>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.ZONE_NOM}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.ZONE_NOM
+                  }
                 </th>
                 <th>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.DATE_VALEUR}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE
+                      .DATE_VALEUR
+                  }
                 </th>
                 <th>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.TYPE_VALEUR}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE
+                      .TYPE_VALEUR
+                  }
                 </th>
                 <th>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.VALEUR}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.VALEUR
+                  }
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1.IDENTIFIANT_INDIC}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1
+                      .IDENTIFIANT_INDIC
+                  }
                 </td>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1.ZONE_ID}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1
+                      .ZONE_ID
+                  }
                 </td>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1.ZONE_NOM}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1
+                      .ZONE_NOM
+                  }
                 </td>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1.DATE_VALEUR}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1
+                      .DATE_VALEUR
+                  }
                 </td>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1.TYPE_VALEUR}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1
+                      .TYPE_VALEUR
+                  }
                 </td>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1.VALEUR}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1
+                      .VALEUR
+                  }
                 </td>
               </tr>
               <tr>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2.IDENTIFIANT_INDIC}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2
+                      .IDENTIFIANT_INDIC
+                  }
                 </td>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2.ZONE_ID}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2
+                      .ZONE_ID
+                  }
                 </td>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2.ZONE_NOM}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2
+                      .ZONE_NOM
+                  }
                 </td>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2.DATE_VALEUR}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2
+                      .DATE_VALEUR
+                  }
                 </td>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2.TYPE_VALEUR}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2
+                      .TYPE_VALEUR
+                  }
                 </td>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2.VALEUR}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2
+                      .VALEUR
+                  }
                 </td>
               </tr>
               <tr>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3.IDENTIFIANT_INDIC}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3
+                      .IDENTIFIANT_INDIC
+                  }
                 </td>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3.ZONE_ID}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3
+                      .ZONE_ID
+                  }
                 </td>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3.ZONE_NOM}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3
+                      .ZONE_NOM
+                  }
                 </td>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3.DATE_VALEUR}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3
+                      .DATE_VALEUR
+                  }
                 </td>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3.TYPE_VALEUR}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3
+                      .TYPE_VALEUR
+                  }
                 </td>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3.VALEUR}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3
+                      .VALEUR
+                  }
                 </td>
               </tr>
             </tbody>
           </table>
-          <Titre baliseHtml='h3'>
-            {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.TITRE}
+          <Titre baliseHtml="h3">
+            {
+              wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                .SECTION_REFERENTIEL.TITRE
+            }
           </Titre>
           <p>
-            {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.SOUS_TITRE}
+            {
+              wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                .SECTION_REFERENTIEL.SOUS_TITRE
+            }
           </p>
-          <div className='flex'>
-            <div className='fr-download fr-mr-3w fr-hidden'>
+          <div className="flex">
+            <div className="fr-download fr-mr-3w fr-hidden">
               <p>
                 <a
-                  className='fr-download__link'
+                  className="fr-download__link"
                   download
-                  href='/referentiel/referentiel_territoires.xlsx'
+                  href="/referentiel/referentiel_territoires.xlsx"
                 >
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.LABEL_BOUTON_TELECHARGER_REFERENTIEL_INDICATEUR}
-                  <span className='fr-download__detail'>
-                    {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.FORMAT_BOUTON_TELECHARGER_REFERENTIEL_INDICATEUR}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_REFERENTIEL
+                      .LABEL_BOUTON_TELECHARGER_REFERENTIEL_INDICATEUR
+                  }
+                  <span className="fr-download__detail">
+                    {
+                      wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                        .SECTION_REFERENTIEL
+                        .FORMAT_BOUTON_TELECHARGER_REFERENTIEL_INDICATEUR
+                    }
                   </span>
                 </a>
               </p>
             </div>
-            <div className='fr-download'>
+            <div className="fr-download">
               <p>
                 <a
-                  className='fr-download__link'
+                  className="fr-download__link"
                   download
-                  href='/referentiel/referentiel_territoires.xlsx'
+                  href="/referentiel/referentiel_territoires.xlsx"
                 >
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.LABEL_BOUTON_TELECHARGER_REFERENTIEL_TERRITOIRE}
-                  <span className='fr-download__detail'>
-                    {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.FORMAT_BOUTON_TELECHARGER_REFERENTIEL_TERRITOIRE}
+                  {
+                    wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                      .SECTION_REFERENTIEL
+                      .LABEL_BOUTON_TELECHARGER_REFERENTIEL_TERRITOIRE
+                  }
+                  <span className="fr-download__detail">
+                    {
+                      wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                        .SECTION_REFERENTIEL
+                        .FORMAT_BOUTON_TELECHARGER_REFERENTIEL_TERRITOIRE
+                    }
                   </span>
                 </a>
               </p>
             </div>
           </div>
-          <Titre baliseHtml='h3'>
-            {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_FICHIER.TITRE}
+          <Titre baliseHtml="h3">
+            {
+              wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                .SECTION_EXPLICATION_FICHIER.TITRE
+            }
           </Titre>
           <ul>
             <li>
-              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_FICHIER.EXPLICATION_FICHIER_1}
+              {
+                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                  .SECTION_EXPLICATION_FICHIER.EXPLICATION_FICHIER_1
+              }
             </li>
             <li>
-              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_FICHIER.EXPLICATION_FICHIER_2}
+              {
+                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                  .SECTION_EXPLICATION_FICHIER.EXPLICATION_FICHIER_2
+              }
             </li>
             <li>
-              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_FICHIER.EXPLICATION_FICHIER_3}
+              {
+                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                  .SECTION_EXPLICATION_FICHIER.EXPLICATION_FICHIER_3
+              }
             </li>
             <li>
-              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_FICHIER.EXPLICATION_FICHIER_4}
+              {
+                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                  .SECTION_EXPLICATION_FICHIER.EXPLICATION_FICHIER_4
+              }
             </li>
             <li>
-              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_FICHIER.EXPLICATION_FICHIER_5}
+              {
+                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                  .SECTION_EXPLICATION_FICHIER.EXPLICATION_FICHIER_5
+              }
             </li>
             <li>
-              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_FICHIER.EXPLICATION_FICHIER_6}
+              {
+                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                  .SECTION_EXPLICATION_FICHIER.EXPLICATION_FICHIER_6
+              }
             </li>
           </ul>
           <p>
             <b>
-              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_CONTACT.MESSAGE_CONTACT}
+              {
+                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                  .SECTION_CONTACT.MESSAGE_CONTACT
+              }
             </b>
             <a
-              className='fr-link'
+              className="fr-link"
               href={`mailto:${wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_CONTACT.ADRESSE_MAIL}`}
             >
-              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_CONTACT.ADRESSE_MAIL}
+              {
+                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE
+                  .SECTION_CONTACT.ADRESSE_MAIL
+              }
             </a>
           </p>
         </Bloc>

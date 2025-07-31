@@ -1,9 +1,9 @@
-import { FunctionComponent, useId, useRef } from 'react';
-import { useSession } from 'next-auth/react';
-import InputGroupeProps from '@/components/_commons/InputGroupe/InputGroupe.interface';
-import InputGroupeItem from '@/components/_commons/InputGroupe/InputGroupeItem';
-import InputGroupeStyled from './InputGroupe.styled';
-import useInputGroupe from './useInputGroupe';
+import { FunctionComponent, useId, useRef } from "react";
+import { useSession } from "next-auth/react";
+import InputGroupeProps from "@/components/_commons/InputGroupe/InputGroupe.interface";
+import InputGroupeItem from "@/components/_commons/InputGroupe/InputGroupeItem";
+import InputGroupeStyled from "./InputGroupe.styled";
+import useInputGroupe from "./useInputGroupe";
 
 const InputGroupe: FunctionComponent<InputGroupeProps> = ({
   optionsGroupées,
@@ -30,73 +30,67 @@ const InputGroupe: FunctionComponent<InputGroupeProps> = ({
     valeurSelectionneeParDefaut,
   });
 
-  const possedeLeDroitSurLaMailleNat = session!.habilitations.lecture.territoires.includes('NAT-FR');
+  const possedeLeDroitSurLaMailleNat =
+    session!.habilitations.lecture.territoires.includes("NAT-FR");
 
   return (
     <InputGroupeStyled>
-      <div className={`${direction === 'horizontal' ? ' flex align-center' : ''}`}>
+      <div
+        className={`${direction === "horizontal" ? " flex align-center" : ""}`}
+      >
         <label
-          className={`fr-label no-wrap ${direction === 'horizontal' ? 'fr-mr-1w' : ''}`}
+          className={`fr-label no-wrap ${direction === "horizontal" ? "fr-mr-1w" : ""}`}
           htmlFor={id}
         >
           {label}
-          {direction === 'horizontal' ? (
-            <span className='fr-text-title--blue-france'>
-              {' '}
-              :
-            </span>
+          {direction === "horizontal" ? (
+            <span className="fr-text-title--blue-france"> :</span>
           ) : null}
         </label>
         <button
-          className={`fr-select fr-ellipsis ${direction === 'horizontal' ? 'fr-mt-0' : ''}`}
+          className={`fr-select fr-ellipsis ${direction === "horizontal" ? "fr-mt-0" : ""}`}
           disabled={desactive}
           id={id}
           title={libelle}
-          type='button'
+          type="button"
           {...multiSelectBoutonProps}
         >
           {libelle}
         </button>
       </div>
-      <div
-        className={estOuvert ? 'visible' : ''}
-        ref={ref}
-        role='menu'
-      >
-        <div className='w-full fr-p-2w'>
+      <div className={estOuvert ? "visible" : ""} ref={ref} role="menu">
+        <div className="w-full fr-p-2w">
           <input
-            className='fr-input'
+            className="fr-input"
             onChange={(e) => setRecherche(e.target.value)}
-            placeholder='Rechercher...'
-            type='text'
+            placeholder="Rechercher..."
+            type="text"
             value={recherche}
           />
         </div>
-        {
-          possedeLeDroitSurLaMailleNat ? (
-            <button
-              className='territoire-item-nat w-full texte-gauche fr-py-1v fr-pl-2w'
-              disabled={valeurSelectionneeParDefaut === 'NAT-FR'}
-              id='NAT-FR'
-              key='NAT-FR'
-              name='NAT-FR'
-              onClick={() => changementValeurSelectionneeCallback('NAT-FR')}
-              type='button'
-            >
-              France
-            </button>
-          ) : null
-        }
-        {
-          optionsGroupéesFiltrées.map(groupe => (
-            <InputGroupeItem
-              changementÉtatCallback={valeur => changementValeurSelectionneeCallback(valeur)}
-              groupeOptions={groupe}
-              key={`${groupe.label} ${uniqueId}`}
-              valeurSelectionnee={valeurSelectionneeParDefaut}
-            />
-          ))
-        }
+        {possedeLeDroitSurLaMailleNat ? (
+          <button
+            className="territoire-item-nat w-full texte-gauche fr-py-1v fr-pl-2w"
+            disabled={valeurSelectionneeParDefaut === "NAT-FR"}
+            id="NAT-FR"
+            key="NAT-FR"
+            name="NAT-FR"
+            onClick={() => changementValeurSelectionneeCallback("NAT-FR")}
+            type="button"
+          >
+            France
+          </button>
+        ) : null}
+        {optionsGroupéesFiltrées.map((groupe) => (
+          <InputGroupeItem
+            changementÉtatCallback={(valeur) =>
+              changementValeurSelectionneeCallback(valeur)
+            }
+            groupeOptions={groupe}
+            key={`${groupe.label} ${uniqueId}`}
+            valeurSelectionnee={valeurSelectionneeParDefaut}
+          />
+        ))}
       </div>
     </InputGroupeStyled>
   );

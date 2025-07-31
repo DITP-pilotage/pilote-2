@@ -49,22 +49,22 @@ export class DonneeIndicateur {
     tauxAvancementGlobale,
     estBarometre,
   }: {
-    indicId: string,
-    zoneId: string,
-    maille: string,
-    codeInsee: string,
-    territoireCode: string,
-    valeurInitiale: number | null,
-    dateValeurInitiale: Date | null,
-    valeurAvancement: number | null,
-    dateValeurAvancement: Date | null,
-    valeurCibleAnnuelle: number | null,
-    dateValeurCibleAnnuelle: Date | null,
-    tauxAvancementAnnuel: number | null,
-    valeurCibleGlobale: number | null,
-    dateValeurCibleGlobale: Date | null,
-    tauxAvancementGlobale: number | null,
-    estBarometre: boolean,
+    indicId: string;
+    zoneId: string;
+    maille: string;
+    codeInsee: string;
+    territoireCode: string;
+    valeurInitiale: number | null;
+    dateValeurInitiale: Date | null;
+    valeurAvancement: number | null;
+    dateValeurAvancement: Date | null;
+    valeurCibleAnnuelle: number | null;
+    dateValeurCibleAnnuelle: Date | null;
+    tauxAvancementAnnuel: number | null;
+    valeurCibleGlobale: number | null;
+    dateValeurCibleGlobale: Date | null;
+    tauxAvancementGlobale: number | null;
+    estBarometre: boolean;
   }) {
     this._indicId = indicId;
     this._zoneId = zoneId;
@@ -166,22 +166,22 @@ export class DonneeIndicateur {
     tauxAvancementGlobale,
     estBarometre,
   }: {
-    indicId: string,
-    zoneId: string,
-    maille: string,
-    codeInsee: string,
-    territoireCode: string,
-    valeurInitiale: number | null,
-    dateValeurInitiale: Date | null,
-    valeurAvancement: number | null,
-    dateValeurAvancement: Date | null,
-    valeurCibleAnnuelle: number | null,
-    dateValeurCibleAnnuelle: Date | null,
-    tauxAvancementAnnuel: number | null,
-    valeurCibleGlobale: number | null,
-    dateValeurCibleGlobale: Date | null,
-    tauxAvancementGlobale: number | null,
-    estBarometre: boolean,
+    indicId: string;
+    zoneId: string;
+    maille: string;
+    codeInsee: string;
+    territoireCode: string;
+    valeurInitiale: number | null;
+    dateValeurInitiale: Date | null;
+    valeurAvancement: number | null;
+    dateValeurAvancement: Date | null;
+    valeurCibleAnnuelle: number | null;
+    dateValeurCibleAnnuelle: Date | null;
+    tauxAvancementAnnuel: number | null;
+    valeurCibleGlobale: number | null;
+    dateValeurCibleGlobale: Date | null;
+    tauxAvancementGlobale: number | null;
+    estBarometre: boolean;
   }) {
     return new DonneeIndicateur({
       indicId,
@@ -202,5 +202,4 @@ export class DonneeIndicateur {
       estBarometre,
     });
   }
-
 }

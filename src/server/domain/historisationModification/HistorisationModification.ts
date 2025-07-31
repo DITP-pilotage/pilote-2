@@ -1,24 +1,33 @@
-import { randomUUID } from 'node:crypto';
+import { randomUUID } from "node:crypto";
 import {
   HistorisationModificationDisponible,
   tableConversionModification,
   tableRecuperationId,
-} from '@/server/infrastructure/accès_données/historisationModification/HistorisationModificationDisponible';
+} from "@/server/infrastructure/accès_données/historisationModification/HistorisationModificationDisponible";
 
-export class HistorisationModification<K extends keyof HistorisationModificationDisponible> {
+export class HistorisationModification<
+  K extends keyof HistorisationModificationDisponible,
+> {
   private readonly _id: string;
 
   private readonly _idObjetModifie: string;
-  
-  private readonly _typeDeModification: 'creation' | 'modification' | 'suppression';
+
+  private readonly _typeDeModification:
+    | "creation"
+    | "modification"
+    | "suppression";
 
   private readonly _dateDeModification: string;
 
   private readonly _tableModifieId: K;
 
-  private readonly _ancienneValeur: Partial<HistorisationModificationDisponible[K]> | null;
+  private readonly _ancienneValeur: Partial<
+    HistorisationModificationDisponible[K]
+  > | null;
 
-  private readonly _nouvelleValeur: Partial<HistorisationModificationDisponible[K]> | null;
+  private readonly _nouvelleValeur: Partial<
+    HistorisationModificationDisponible[K]
+  > | null;
 
   private readonly _auteur_id: string;
 
@@ -32,14 +41,14 @@ export class HistorisationModification<K extends keyof HistorisationModification
     ancienneValeur,
     nouvelleValeur,
   }: {
-    id: string,
-    auteurId: string,
-    idObjetModifie: string,
-    typeDeModification: 'creation' | 'modification' | 'suppression',
-    dateDeModification: string,
-    tableModifieId: K,
-    ancienneValeur: Partial<HistorisationModificationDisponible[K]> | null,
-    nouvelleValeur: Partial<HistorisationModificationDisponible[K]> | null
+    id: string;
+    auteurId: string;
+    idObjetModifie: string;
+    typeDeModification: "creation" | "modification" | "suppression";
+    dateDeModification: string;
+    tableModifieId: K;
+    ancienneValeur: Partial<HistorisationModificationDisponible[K]> | null;
+    nouvelleValeur: Partial<HistorisationModificationDisponible[K]> | null;
   }) {
     this._id = id;
     this._auteur_id = auteurId;
@@ -55,7 +64,7 @@ export class HistorisationModification<K extends keyof HistorisationModification
     return this._id;
   }
 
-  get typeDeModification(): 'creation' | 'modification' | 'suppression' {
+  get typeDeModification(): "creation" | "modification" | "suppression" {
     return this._typeDeModification;
   }
 
@@ -83,22 +92,24 @@ export class HistorisationModification<K extends keyof HistorisationModification
     return this._idObjetModifie;
   }
 
-  static creerHistorisationCreation<K extends keyof HistorisationModificationDisponible>({
+  static creerHistorisationCreation<
+    K extends keyof HistorisationModificationDisponible,
+  >({
     id,
     auteurId,
     tableModifieId,
     nouvelleValeur,
   }: {
-    id?: string,
-    auteurId: string,
-    tableModifieId: K,
-    nouvelleValeur: HistorisationModificationDisponible[K]
+    id?: string;
+    auteurId: string;
+    tableModifieId: K;
+    nouvelleValeur: HistorisationModificationDisponible[K];
   }) {
     return new HistorisationModification({
       id: id || randomUUID(),
       idObjetModifie: tableRecuperationId[tableModifieId](nouvelleValeur),
       auteurId,
-      typeDeModification: 'creation',
+      typeDeModification: "creation",
       dateDeModification: new Date().toISOString(),
       tableModifieId,
       ancienneValeur: null,
@@ -106,32 +117,53 @@ export class HistorisationModification<K extends keyof HistorisationModification
     });
   }
 
-  static creerHistorisationModification<K extends keyof HistorisationModificationDisponible>({ id, auteurId, tableModifieId, nouvelleValeur, ancienneValeur }: {
-    id?: string,
-    auteurId: string,
-    tableModifieId: K,
-    ancienneValeur: HistorisationModificationDisponible[K]
-    nouvelleValeur: HistorisationModificationDisponible[K]
+  static creerHistorisationModification<
+    K extends keyof HistorisationModificationDisponible,
+  >({
+    id,
+    auteurId,
+    tableModifieId,
+    nouvelleValeur,
+    ancienneValeur,
+  }: {
+    id?: string;
+    auteurId: string;
+    tableModifieId: K;
+    ancienneValeur: HistorisationModificationDisponible[K];
+    nouvelleValeur: HistorisationModificationDisponible[K];
   }) {
-
-    const [diffAncienneValeur, diffNouvelleValeur] = Object.keys(ancienneValeur).reduce((acc, valeur) => {
-      const key = (valeur[0] === '_' ? valeur.slice(1) : valeur) as keyof HistorisationModificationDisponible[K];
-      if (ancienneValeur[key] !== nouvelleValeur[key]) {
-        acc[0][key] = ancienneValeur[key];
-        acc[1][key] = nouvelleValeur[key];
-      }
-      return acc;
-    }, [{}, {}] as [Partial<HistorisationModificationDisponible[K]>, Partial<HistorisationModificationDisponible[K]>]);
+    const [diffAncienneValeur, diffNouvelleValeur] = Object.keys(
+      ancienneValeur,
+    ).reduce(
+      (acc, valeur) => {
+        const key = (
+          valeur[0] === "_" ? valeur.slice(1) : valeur
+        ) as keyof HistorisationModificationDisponible[K];
+        if (ancienneValeur[key] !== nouvelleValeur[key]) {
+          acc[0][key] = ancienneValeur[key];
+          acc[1][key] = nouvelleValeur[key];
+        }
+        return acc;
+      },
+      [{}, {}] as [
+        Partial<HistorisationModificationDisponible[K]>,
+        Partial<HistorisationModificationDisponible[K]>,
+      ],
+    );
 
     return new HistorisationModification({
       id: id || randomUUID(),
       idObjetModifie: tableRecuperationId[tableModifieId](ancienneValeur),
-      typeDeModification: 'modification',
+      typeDeModification: "modification",
       dateDeModification: new Date().toISOString(),
       auteurId,
       tableModifieId,
-      ancienneValeur: diffAncienneValeur && tableConversionModification[tableModifieId](diffAncienneValeur),
-      nouvelleValeur: diffNouvelleValeur && tableConversionModification[tableModifieId](diffNouvelleValeur),
+      ancienneValeur:
+        diffAncienneValeur &&
+        tableConversionModification[tableModifieId](diffAncienneValeur),
+      nouvelleValeur:
+        diffNouvelleValeur &&
+        tableConversionModification[tableModifieId](diffNouvelleValeur),
     });
   }
 }

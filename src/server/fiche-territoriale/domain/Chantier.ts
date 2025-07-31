@@ -1,4 +1,4 @@
-import { MeteoDisponible } from '@/server/fiche-territoriale/domain/MeteoDisponible';
+import { MeteoDisponible } from "@/server/fiche-territoriale/domain/MeteoDisponible";
 
 export class Chantier {
   private readonly _id: string;
@@ -13,7 +13,21 @@ export class Chantier {
 
   private readonly _tauxAvancementAnnuel: number | null;
 
-  private constructor({ id, tauxAvancement, tauxAvancementAnnuel, meteo, nom, codeMinisterePorteur }: { id: string, tauxAvancement: number | null, tauxAvancementAnnuel: number | null, meteo: MeteoDisponible | null, nom: string, codeMinisterePorteur: string }) {
+  private constructor({
+    id,
+    tauxAvancement,
+    tauxAvancementAnnuel,
+    meteo,
+    nom,
+    codeMinisterePorteur,
+  }: {
+    id: string;
+    tauxAvancement: number | null;
+    tauxAvancementAnnuel: number | null;
+    meteo: MeteoDisponible | null;
+    nom: string;
+    codeMinisterePorteur: string;
+  }) {
     this._id = id;
     this._tauxAvancement = tauxAvancement;
     this._tauxAvancementAnnuel = tauxAvancementAnnuel;
@@ -46,7 +60,28 @@ export class Chantier {
     return this._codeMinisterePorteur;
   }
 
-  static creerChantier({ id, tauxAvancement, tauxAvancementAnnuel, meteo, nom, codeMinisterePorteur }: { id: string, tauxAvancement: number | null, tauxAvancementAnnuel: number | null, meteo: MeteoDisponible | null, nom: string, codeMinisterePorteur?: string }): Chantier {
-    return new Chantier({ id, tauxAvancement, tauxAvancementAnnuel, meteo, nom, codeMinisterePorteur: codeMinisterePorteur || '' });
+  static creerChantier({
+    id,
+    tauxAvancement,
+    tauxAvancementAnnuel,
+    meteo,
+    nom,
+    codeMinisterePorteur,
+  }: {
+    id: string;
+    tauxAvancement: number | null;
+    tauxAvancementAnnuel: number | null;
+    meteo: MeteoDisponible | null;
+    nom: string;
+    codeMinisterePorteur?: string;
+  }): Chantier {
+    return new Chantier({
+      id,
+      tauxAvancement,
+      tauxAvancementAnnuel,
+      meteo,
+      nom,
+      codeMinisterePorteur: codeMinisterePorteur || "",
+    });
   }
 }

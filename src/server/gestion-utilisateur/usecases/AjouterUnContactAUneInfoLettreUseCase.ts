@@ -1,8 +1,8 @@
-import { ContactInfoLettresService } from '@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService';
-import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository';
+import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
+import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 
 type Dependencies = {
-  contactInfoLettresService: ContactInfoLettresService
+  contactInfoLettresService: ContactInfoLettresService;
   utilisateurRepository: UtilisateurRepository;
 };
 
@@ -14,25 +14,32 @@ export class AjouterUnContactAUneInfoLettreUseCase {
   constructor({
     contactInfoLettresService,
     utilisateurRepository,
-  }: Dependencies)  {
+  }: Dependencies) {
     this.contactInfoLettresService = contactInfoLettresService;
     this.utilisateurRepository = utilisateurRepository;
   }
 
   async execute(utilisateurId: string, infolettreId: number): Promise<boolean> {
-    const utilisateurEmail = await this.utilisateurRepository.recupererUtilisateurEmail(utilisateurId);
+    const utilisateurEmail =
+      await this.utilisateurRepository.recupererUtilisateurEmail(utilisateurId);
 
     if (!utilisateurEmail) {
       return false;
     }
-  
+
     try {
-      await this.contactInfoLettresService.ajouterContactAUneInfoLettre(utilisateurEmail, [infolettreId]);
+      await this.contactInfoLettresService.ajouterContactAUneInfoLettre(
+        utilisateurEmail,
+        [infolettreId],
+      );
     } catch {
       return false;
     }
 
-    await this.utilisateurRepository.mettreAJourLaDateInscriptionInfolettre(utilisateurEmail, new Date());
+    await this.utilisateurRepository.mettreAJourLaDateInscriptionInfolettre(
+      utilisateurEmail,
+      new Date(),
+    );
     return true;
   }
 }

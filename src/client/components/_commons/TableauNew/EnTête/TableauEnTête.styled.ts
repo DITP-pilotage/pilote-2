@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 // postcss-styled-components-disable-next-line
 const TableauEnTêteStyled = styled.thead`

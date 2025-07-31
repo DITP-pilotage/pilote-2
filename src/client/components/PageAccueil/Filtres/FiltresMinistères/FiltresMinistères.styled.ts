@@ -1,11 +1,10 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const FiltresMinistèresStyled = styled.div`
-
   button:focus {
     outline-offset: -2px;
   }
-  
+
   button {
     width: 100%;
     text-align: left;
@@ -32,7 +31,7 @@ const FiltresMinistèresStyled = styled.div`
 
   .tuile {
     border-radius: 0.25rem;
-    
+
     .tuile-ministère-contenu {
       display: grid;
       grid-template-columns: 2rem auto;

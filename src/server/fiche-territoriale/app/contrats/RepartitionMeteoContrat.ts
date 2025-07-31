@@ -1,12 +1,14 @@
-import { RepartitionMeteo } from '@/server/fiche-territoriale/domain/RepartitionMeteo';
+import { RepartitionMeteo } from "@/server/fiche-territoriale/domain/RepartitionMeteo";
 
 export type RepartitionMeteoContrat = {
-  COUVERT: number,
-  NUAGE: number,
-  ORAGE: number,
-  SOLEIL: number,
+  COUVERT: number;
+  NUAGE: number;
+  ORAGE: number;
+  SOLEIL: number;
 };
-export const presenterEnRépartitionsMétéosContrat = (répartitionsMétéos: RepartitionMeteo): RepartitionMeteoContrat => {
+export const presenterEnRépartitionsMétéosContrat = (
+  répartitionsMétéos: RepartitionMeteo,
+): RepartitionMeteoContrat => {
   return {
     COUVERT: répartitionsMétéos.nombreCouvert,
     NUAGE: répartitionsMétéos.nombreNuage,

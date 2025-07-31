@@ -1,15 +1,20 @@
-import { useState, useEffect } from 'react';
-import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
-import SynthèseDesRésultats from '@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface';
-import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { useState, useEffect } from "react";
+import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
+import SynthèseDesRésultats from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
+import { territoireSélectionnéTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 
-export default function useSynthèseDesRésultats(synthèseDesRésultatsInitiale: SynthèseDesRésultats, rechargerChantier: () => void) {
+export default function useSynthèseDesRésultats(
+  synthèseDesRésultatsInitiale: SynthèseDesRésultats,
+  rechargerChantier: () => void,
+) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
   const [modeÉdition, setModeÉdition] = useState(false);
 
-  const [synthèseDesRésultats, setSynthèseDesRésultats] = useState(synthèseDesRésultatsInitiale);
-  const [alerte, setAlerte] = useState <AlerteProps | null>(null);
+  const [synthèseDesRésultats, setSynthèseDesRésultats] = useState(
+    synthèseDesRésultatsInitiale,
+  );
+  const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
   const désactiverLeModeÉdition = () => {
     setModeÉdition(false);
@@ -23,8 +28,8 @@ export default function useSynthèseDesRésultats(synthèseDesRésultatsInitiale
     rechargerChantier();
     setSynthèseDesRésultats(synthèse);
     setAlerte({
-      type: 'succès',
-      titre: 'Météo et synthèse des résultats publiées',
+      type: "succès",
+      titre: "Météo et synthèse des résultats publiées",
     });
     désactiverLeModeÉdition();
   };

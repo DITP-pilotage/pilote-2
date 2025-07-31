@@ -1,103 +1,119 @@
-import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import TableauRéformesAvancement from '@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement';
-import TableauRéformesMétéo from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo';
-import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
-import TypologiesPictos
-  from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
 import {
-  DonnéesTableauChantiers,
-} from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
-import TableauChantiersTendance
-  from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance';
-import TableauChantiersEcart from '@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart';
-import RapportDétailléTableauChantiersProps from './RapportDétailléTableauChantiers.interface';
+  createColumnHelper,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import TableauRéformesAvancement from "@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement";
+import TableauRéformesMétéo from "@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo";
+import IcônesMultiplesEtTexte from "@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte";
+import TypologiesPictos from "@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos";
+import { DonnéesTableauChantiers } from "@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface";
+import TableauChantiersTendance from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance";
+import TableauChantiersEcart from "@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart";
+import RapportDétailléTableauChantiersProps from "./RapportDétailléTableauChantiers.interface";
 
 const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
 
 const colonnesTableauChantiers = [
-  reactTableColonnesHelper.accessor('nom', {
-    header: 'Chantiers',
-    id: 'nom',
-    cell: cellContext => (
+  reactTableColonnesHelper.accessor("nom", {
+    header: "Chantiers",
+    id: "nom",
+    cell: (cellContext) => (
       <IcônesMultiplesEtTexte
-        icônesId={cellContext.row.original.porteur?.icône ? [cellContext.row.original.porteur.icône] : []}
+        icônesId={
+          cellContext.row.original.porteur?.icône
+            ? [cellContext.row.original.porteur.icône]
+            : []
+        }
       >
         {cellContext.getValue()}
       </IcônesMultiplesEtTexte>
     ),
     enableSorting: false,
     meta: {
-      width: 'auto',
+      width: "auto",
     },
   }),
 
-  reactTableColonnesHelper.accessor('typologie', {
-    header: 'Typologie',
-    id: 'typologie',
+  reactTableColonnesHelper.accessor("typologie", {
+    header: "Typologie",
+    id: "typologie",
     enableSorting: false,
-    cell: cellContext => <TypologiesPictos typologies={cellContext.getValue()} />,
+    cell: (cellContext) => (
+      <TypologiesPictos typologies={cellContext.getValue()} />
+    ),
     meta: {
-      width: '6.5rem',
+      width: "6.5rem",
     },
   }),
 
-  reactTableColonnesHelper.accessor('météo', {
-    header: 'Météo',
-    id: 'météo',
-    cell: cellContext => (
+  reactTableColonnesHelper.accessor("météo", {
+    header: "Météo",
+    id: "météo",
+    cell: (cellContext) => (
       <TableauRéformesMétéo
-        dateDeMàjDonnéesQualitatives={cellContext.row.original.dateDeMàjDonnéesQualitatives}
+        dateDeMàjDonnéesQualitatives={
+          cellContext.row.original.dateDeMàjDonnéesQualitatives
+        }
         météo={cellContext.getValue()}
-      />),
+      />
+    ),
     enableGlobalFilter: false,
     meta: {
-      width: '8rem',
+      width: "8rem",
     },
   }),
 
-  reactTableColonnesHelper.accessor('avancement', {
-    header: 'Avancement',
-    id: 'avancement',
-    cell: cellContext => (
+  reactTableColonnesHelper.accessor("avancement", {
+    header: "Avancement",
+    id: "avancement",
+    cell: (cellContext) => (
       <TableauRéformesAvancement
         avancement={cellContext.getValue()}
-        dateDeMàjDonnéesQuantitatives={cellContext.row.original.dateDeMàjDonnéesQuantitatives}
-      />),
+        dateDeMàjDonnéesQuantitatives={
+          cellContext.row.original.dateDeMàjDonnéesQuantitatives
+        }
+      />
+    ),
     enableGlobalFilter: false,
     meta: {
-      width: '11rem',
+      width: "11rem",
     },
   }),
-  ...(process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true' ? [
-    reactTableColonnesHelper.accessor('tendance', {
-      header: 'Tendance',
-      id: 'tendance',
-      enableSorting: false,
-      cell: cellContext => (
-        <TableauChantiersTendance tendance={cellContext.getValue()} />
-      ),
-      enableGrouping: false,
-      meta: {
-        width: '7.5rem',
-      },
-    }),
-    reactTableColonnesHelper.accessor('écart', {
-      header: 'Écart',
-      id: 'écart',
-      enableSorting: false,
-      cell: cellContext => (
-        <TableauChantiersEcart ecart={cellContext.getValue()} />
-      ),
-      enableGrouping: false,
-      meta: {
-        width: '5.5rem',
-      },
-    }),
-  ] : []),
+  ...(process.env.NEXT_PUBLIC_FF_ALERTES === "true" &&
+  process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === "true"
+    ? [
+        reactTableColonnesHelper.accessor("tendance", {
+          header: "Tendance",
+          id: "tendance",
+          enableSorting: false,
+          cell: (cellContext) => (
+            <TableauChantiersTendance tendance={cellContext.getValue()} />
+          ),
+          enableGrouping: false,
+          meta: {
+            width: "7.5rem",
+          },
+        }),
+        reactTableColonnesHelper.accessor("écart", {
+          header: "Écart",
+          id: "écart",
+          enableSorting: false,
+          cell: (cellContext) => (
+            <TableauChantiersEcart ecart={cellContext.getValue()} />
+          ),
+          enableGrouping: false,
+          meta: {
+            width: "5.5rem",
+          },
+        }),
+      ]
+    : []),
 ];
 
-export default function useRapportDétailléTableauChantiers(données: RapportDétailléTableauChantiersProps['données']) {
-
+export default function useRapportDétailléTableauChantiers(
+  données: RapportDétailléTableauChantiersProps["données"],
+) {
   const tableau = useReactTable({
     data: données,
     columns: colonnesTableauChantiers,

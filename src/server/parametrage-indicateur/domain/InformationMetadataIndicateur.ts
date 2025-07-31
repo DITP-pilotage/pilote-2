@@ -1,9 +1,9 @@
-import { AcceptedValue } from '@/server/parametrage-indicateur/domain/AcceptedValue';
+import { AcceptedValue } from "@/server/parametrage-indicateur/domain/AcceptedValue";
 
 export class InformationMetadataIndicateur {
   private readonly _name: string;
 
-  private readonly _dataType: 'text' | 'boolean';
+  private readonly _dataType: "text" | "boolean";
 
   private readonly _description: string;
 
@@ -17,8 +17,12 @@ export class InformationMetadataIndicateur {
 
   private readonly _metaPiloteEditRegexViolationMessage: string | null;
 
-  private readonly _metaPiloteEditBoxType: 'text' | 'textarea' | 'boolean' | 'multi-select';
-  
+  private readonly _metaPiloteEditBoxType:
+    | "text"
+    | "textarea"
+    | "boolean"
+    | "multi-select";
+
   private readonly _metaPiloteDefaultValue: string | number | null | boolean;
 
   private readonly _metaPiloteMandatory: boolean;
@@ -27,8 +31,35 @@ export class InformationMetadataIndicateur {
 
   private readonly _acceptedValues: AcceptedValue[];
 
-  private constructor({ name, dataType, description, metaPiloteShow, metaPiloteAlias, metaPiloteEditIsEditable, metaPiloteEditRegex, metaPiloteEditRegexViolationMessage, metaPiloteEditBoxType, metaPiloteDefaultValue, metaPiloteMandatory, metaPiloteDispDispDesc, acceptedValues }:
-  { name: string, dataType: 'text' | 'boolean', description: string, metaPiloteShow: boolean, metaPiloteAlias: string, metaPiloteEditIsEditable: boolean, metaPiloteEditRegex: string, metaPiloteEditRegexViolationMessage: string | null, metaPiloteEditBoxType: 'text' | 'textarea' | 'boolean' | 'multi-select', metaPiloteDefaultValue: string | number | null | boolean, metaPiloteMandatory: boolean, metaPiloteDispDispDesc:boolean, acceptedValues: AcceptedValue[] }) {
+  private constructor({
+    name,
+    dataType,
+    description,
+    metaPiloteShow,
+    metaPiloteAlias,
+    metaPiloteEditIsEditable,
+    metaPiloteEditRegex,
+    metaPiloteEditRegexViolationMessage,
+    metaPiloteEditBoxType,
+    metaPiloteDefaultValue,
+    metaPiloteMandatory,
+    metaPiloteDispDispDesc,
+    acceptedValues,
+  }: {
+    name: string;
+    dataType: "text" | "boolean";
+    description: string;
+    metaPiloteShow: boolean;
+    metaPiloteAlias: string;
+    metaPiloteEditIsEditable: boolean;
+    metaPiloteEditRegex: string;
+    metaPiloteEditRegexViolationMessage: string | null;
+    metaPiloteEditBoxType: "text" | "textarea" | "boolean" | "multi-select";
+    metaPiloteDefaultValue: string | number | null | boolean;
+    metaPiloteMandatory: boolean;
+    metaPiloteDispDispDesc: boolean;
+    acceptedValues: AcceptedValue[];
+  }) {
     this._name = name;
     this._dataType = dataType;
     this._description = description;
@@ -36,7 +67,8 @@ export class InformationMetadataIndicateur {
     this._metaPiloteAlias = metaPiloteAlias;
     this._metaPiloteEditIsEditable = metaPiloteEditIsEditable;
     this._metaPiloteEditRegex = metaPiloteEditRegex;
-    this._metaPiloteEditRegexViolationMessage = metaPiloteEditRegexViolationMessage;
+    this._metaPiloteEditRegexViolationMessage =
+      metaPiloteEditRegexViolationMessage;
     this._metaPiloteEditBoxType = metaPiloteEditBoxType;
     this._metaPiloteDefaultValue = metaPiloteDefaultValue;
     this._metaPiloteMandatory = metaPiloteMandatory;
@@ -48,7 +80,7 @@ export class InformationMetadataIndicateur {
     return this._name;
   }
 
-  get dataType(): 'text' | 'boolean' {
+  get dataType(): "text" | "boolean" {
     return this._dataType;
   }
 
@@ -76,7 +108,11 @@ export class InformationMetadataIndicateur {
     return this._metaPiloteEditRegexViolationMessage;
   }
 
-  get metaPiloteEditBoxType(): 'text' | 'textarea' | 'boolean' | 'multi-select' {
+  get metaPiloteEditBoxType():
+    | "text"
+    | "textarea"
+    | "boolean"
+    | "multi-select" {
     return this._metaPiloteEditBoxType;
   }
 
@@ -87,7 +123,7 @@ export class InformationMetadataIndicateur {
   get metaPiloteMandatory(): boolean {
     return this._metaPiloteMandatory;
   }
-  
+
   get metaPiloteDispDispDesc(): boolean {
     return this._metaPiloteDispDispDesc;
   }
@@ -96,8 +132,49 @@ export class InformationMetadataIndicateur {
     return this._acceptedValues;
   }
 
-  static creerInformationMetadataIndicateur({ name, dataType, description, metaPiloteShow, metaPiloteAlias, metaPiloteEditIsEditable, metaPiloteEditRegex, metaPiloteEditRegexViolationMessage, metaPiloteEditBoxType, metaPiloteDefaultValue, metaPiloteMandatory, metaPiloteDispDispDesc, acceptedValues }:
-  { name: string, dataType: 'text' | 'boolean', description: string, metaPiloteShow: boolean, metaPiloteAlias: string, metaPiloteEditIsEditable: boolean, metaPiloteEditRegex: string, metaPiloteEditRegexViolationMessage: string | null, metaPiloteEditBoxType: 'text' | 'textarea' | 'boolean' | 'multi-select', metaPiloteDefaultValue: string | number | null | boolean, metaPiloteMandatory: boolean, metaPiloteDispDispDesc: boolean, acceptedValues: AcceptedValue[]  }) {
-    return new InformationMetadataIndicateur({ name, dataType, description, metaPiloteShow, metaPiloteAlias, metaPiloteEditIsEditable, metaPiloteEditRegex, metaPiloteEditRegexViolationMessage, metaPiloteEditBoxType, metaPiloteDefaultValue, metaPiloteMandatory, metaPiloteDispDispDesc, acceptedValues });
+  static creerInformationMetadataIndicateur({
+    name,
+    dataType,
+    description,
+    metaPiloteShow,
+    metaPiloteAlias,
+    metaPiloteEditIsEditable,
+    metaPiloteEditRegex,
+    metaPiloteEditRegexViolationMessage,
+    metaPiloteEditBoxType,
+    metaPiloteDefaultValue,
+    metaPiloteMandatory,
+    metaPiloteDispDispDesc,
+    acceptedValues,
+  }: {
+    name: string;
+    dataType: "text" | "boolean";
+    description: string;
+    metaPiloteShow: boolean;
+    metaPiloteAlias: string;
+    metaPiloteEditIsEditable: boolean;
+    metaPiloteEditRegex: string;
+    metaPiloteEditRegexViolationMessage: string | null;
+    metaPiloteEditBoxType: "text" | "textarea" | "boolean" | "multi-select";
+    metaPiloteDefaultValue: string | number | null | boolean;
+    metaPiloteMandatory: boolean;
+    metaPiloteDispDispDesc: boolean;
+    acceptedValues: AcceptedValue[];
+  }) {
+    return new InformationMetadataIndicateur({
+      name,
+      dataType,
+      description,
+      metaPiloteShow,
+      metaPiloteAlias,
+      metaPiloteEditIsEditable,
+      metaPiloteEditRegex,
+      metaPiloteEditRegexViolationMessage,
+      metaPiloteEditBoxType,
+      metaPiloteDefaultValue,
+      metaPiloteMandatory,
+      metaPiloteDispDispDesc,
+      acceptedValues,
+    });
   }
 }

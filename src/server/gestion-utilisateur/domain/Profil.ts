@@ -1,4 +1,4 @@
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 export const profilsCodes = [
   ProfilEnum.DITP_ADMIN,
@@ -20,29 +20,29 @@ export const profilsCodes = [
   ProfilEnum.DROM,
 ] as const;
 
-export type ProfilCode = typeof profilsCodes[number];
+export type ProfilCode = (typeof profilsCodes)[number];
 
 export type Profil = {
-  code: ProfilCode
-  nom: string
+  code: ProfilCode;
+  nom: string;
   chantiers: {
     lecture: {
-      tous: boolean
-      tousTerritorialisés: boolean
-      tousTerritoires: boolean,
-      brouillons: boolean,
-    },
+      tous: boolean;
+      tousTerritorialisés: boolean;
+      tousTerritoires: boolean;
+      brouillons: boolean;
+    };
     saisieCommentaire: {
-      tousTerritoires: boolean
-      saisiePossible: boolean
-    },
+      tousTerritoires: boolean;
+      saisiePossible: boolean;
+    };
     saisieIndicateur: {
-      tousTerritoires: boolean
-    },
-  },
+      tousTerritoires: boolean;
+    };
+  };
   utilisateurs: {
-    modificationPossible: boolean
-    tousTerritoires:  boolean
-    tousChantiers: boolean
-  },
+    modificationPossible: boolean;
+    tousTerritoires: boolean;
+    tousChantiers: boolean;
+  };
 };

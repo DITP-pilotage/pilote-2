@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const ExplicationEtapeIndicateurStyled = styled.div`
   height: 100%;
-  background-color: #FFF;
+  background-color: #fff;
   border: 1px solid var(--border-default-grey);
 
   .explication-indicateur__numero {
@@ -14,7 +14,7 @@ const ExplicationEtapeIndicateurStyled = styled.div`
     justify-content: center;
     width: var(--diametre);
     height: var(--diametre);
-    color: #FFF;
+    color: #fff;
     background-color: var(--background-action-high-blue-france);
     border-radius: var(--diametre);
 
@@ -22,20 +22,20 @@ const ExplicationEtapeIndicateurStyled = styled.div`
     &::after {
       position: absolute;
       display: block;
-      height: .5rem;
-      content: '';
+      height: 0.5rem;
+      content: "";
       background-color: var(--background-action-high-blue-france);
       border-radius: var(--diametre);
     }
 
     &::before {
-      left: calc(var(--diametre) - .5rem);
+      left: calc(var(--diametre) - 0.5rem);
       width: var(--diametre);
     }
 
     &::after {
       left: calc(var(--diametre) * 2);
-      width: .5rem;
+      width: 0.5rem;
     }
   }
 

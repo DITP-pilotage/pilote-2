@@ -1,4 +1,4 @@
-import { Meteo } from '@/server/fiche-conducteur/domain/Meteo';
+import { Meteo } from "@/server/fiche-conducteur/domain/Meteo";
 
 export class DonnéeCartographie {
   private readonly _territoireCode: string;
@@ -9,11 +9,16 @@ export class DonnéeCartographie {
 
   private readonly _estApplicable: boolean;
 
-  constructor({ territoireCode, tauxAvancement, météo, estApplicable }: {
-    territoireCode: string,
-    tauxAvancement: number | null,
-    météo: Meteo
-    estApplicable: boolean
+  constructor({
+    territoireCode,
+    tauxAvancement,
+    météo,
+    estApplicable,
+  }: {
+    territoireCode: string;
+    tauxAvancement: number | null;
+    météo: Meteo;
+    estApplicable: boolean;
   }) {
     this._territoireCode = territoireCode;
     this._tauxAvancement = tauxAvancement;
@@ -37,12 +42,22 @@ export class DonnéeCartographie {
     return this._estApplicable;
   }
 
-  static creerDonnéeCartographie({ territoireCode, tauxAvancement, météo, estApplicable }: {
-    territoireCode: string,
-    tauxAvancement: number | null,
-    météo: Meteo
-    estApplicable: boolean
+  static creerDonnéeCartographie({
+    territoireCode,
+    tauxAvancement,
+    météo,
+    estApplicable,
+  }: {
+    territoireCode: string;
+    tauxAvancement: number | null;
+    météo: Meteo;
+    estApplicable: boolean;
   }) {
-    return new DonnéeCartographie({ territoireCode, tauxAvancement, météo, estApplicable });
+    return new DonnéeCartographie({
+      territoireCode,
+      tauxAvancement,
+      météo,
+      estApplicable,
+    });
   }
 }

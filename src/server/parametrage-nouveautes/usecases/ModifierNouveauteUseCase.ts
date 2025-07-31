@@ -1,6 +1,6 @@
-import { Nouveaute } from '@/server/parametrage-nouveautes/domain/Nouveaute';
+import { Nouveaute } from "@/server/parametrage-nouveautes/domain/Nouveaute";
 
-import { NouveauteRepository } from '@/server/parametrage-nouveautes/domain/ports/NouveauteRepository';
+import { NouveauteRepository } from "@/server/parametrage-nouveautes/domain/ports/NouveauteRepository";
 
 type Dependencies = {
   nouveauteRepository: NouveauteRepository;
@@ -13,7 +13,17 @@ export class ModifierNouveauteUseCase {
     this.nouveauteRepository = nouveauteRepository;
   }
 
-  async execute({ id, contenu, version, date }: { id: string, contenu: string, version: string, date: string }) {
+  async execute({
+    id,
+    contenu,
+    version,
+    date,
+  }: {
+    id: string;
+    contenu: string;
+    version: string;
+    date: string;
+  }) {
     const contenuSanitized = Nouveaute.sanitizeHtml(contenu);
 
     const verifiedVersion = Nouveaute.verifyVersion(version);
@@ -24,7 +34,7 @@ export class ModifierNouveauteUseCase {
       version: verifiedVersion,
       date,
     });
-    
+
     return this.nouveauteRepository.modifier(nouveaute);
   }
 }

@@ -1,5 +1,5 @@
-import { randomUUID } from 'node:crypto';
-import { StatutPropositionType } from './StatutProposition';
+import { randomUUID } from "node:crypto";
+import { StatutPropositionType } from "./StatutProposition";
 
 export class PropositionValeurAvancement {
   private readonly _id: string;
@@ -13,7 +13,7 @@ export class PropositionValeurAvancement {
   private readonly _dateValeurAvancement: Date;
 
   private readonly _idAuteurModification: string;
-  
+
   private readonly _auteurModification: string;
 
   private readonly _dateProposition: Date;
@@ -37,17 +37,17 @@ export class PropositionValeurAvancement {
     sourceDonneeEtMethodeCalcul,
     statut,
   }: {
-    id: string,
-    indicId: string,
-    valeurAvancementProposee: number,
-    territoireCode: string,
-    dateValeurAvancement: Date,
-    idAuteurModification: string,
-    auteurModification: string,
-    dateProposition: Date,
-    motifProposition: string,
-    sourceDonneeEtMethodeCalcul: string,
-    statut: StatutPropositionType
+    id: string;
+    indicId: string;
+    valeurAvancementProposee: number;
+    territoireCode: string;
+    dateValeurAvancement: Date;
+    idAuteurModification: string;
+    auteurModification: string;
+    dateProposition: Date;
+    motifProposition: string;
+    sourceDonneeEtMethodeCalcul: string;
+    statut: StatutPropositionType;
   }) {
     this._id = id;
     this._indicId = indicId;
@@ -119,17 +119,17 @@ export class PropositionValeurAvancement {
     sourceDonneeEtMethodeCalcul,
     statut,
   }: {
-    id?: string,
-    indicId: string,
-    valeurAvancementProposee: number,
-    territoireCode: string,
-    dateValeurAvancement: Date,
-    idAuteurModification: string,
-    auteurModification: string,
-    dateProposition: Date,
-    motifProposition: string,
-    sourceDonneeEtMethodeCalcul: string,
-    statut: StatutPropositionType
+    id?: string;
+    indicId: string;
+    valeurAvancementProposee: number;
+    territoireCode: string;
+    dateValeurAvancement: Date;
+    idAuteurModification: string;
+    auteurModification: string;
+    dateProposition: Date;
+    motifProposition: string;
+    sourceDonneeEtMethodeCalcul: string;
+    statut: StatutPropositionType;
   }) {
     return new PropositionValeurAvancement({
       id: id || randomUUID(),

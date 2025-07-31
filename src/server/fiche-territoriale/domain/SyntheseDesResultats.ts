@@ -3,7 +3,13 @@ export class SyntheseDesResultats {
 
   private readonly _dateCommentaire: string;
 
-  private constructor({ dateMeteo, dateCommentaire }: { dateCommentaire: string; dateMeteo: string }) {
+  private constructor({
+    dateMeteo,
+    dateCommentaire,
+  }: {
+    dateCommentaire: string;
+    dateMeteo: string;
+  }) {
     this._dateMeteo = dateMeteo;
     this._dateCommentaire = dateCommentaire;
   }
@@ -16,7 +22,13 @@ export class SyntheseDesResultats {
     return this._dateCommentaire;
   }
 
-  static creerSyntheseDesResultats({ dateMeteo, dateCommentaire }: { dateCommentaire: string; dateMeteo: string }) {
+  static creerSyntheseDesResultats({
+    dateMeteo,
+    dateCommentaire,
+  }: {
+    dateCommentaire: string;
+    dateMeteo: string;
+  }) {
     return new SyntheseDesResultats({ dateMeteo, dateCommentaire });
   }
 }

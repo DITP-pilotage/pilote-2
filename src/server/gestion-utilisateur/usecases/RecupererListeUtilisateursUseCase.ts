@@ -1,10 +1,8 @@
-import { UtilisateurListeGestion } from '@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface';
-import { UtilisateurRepository } from '@/server/gestion-utilisateur/domain/ports/UtilisateurRepository';
-import { TerritoireRepository } from '@/server/gestion-utilisateur/domain/ports/TerritoireRepository';
-import {
-  PerimetreMinisterielRepository,
-} from '@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository';
-import { ChantierRepository } from '@/server/gestion-utilisateur/domain/ports/ChantierRepository';
+import { UtilisateurListeGestion } from "@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface";
+import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
+import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";
+import { PerimetreMinisterielRepository } from "@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository";
+import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
 
 interface Dependencies {
   utilisateurRepository: UtilisateurRepository;
@@ -22,7 +20,12 @@ export class RecupererListeUtilisateursUseCase {
 
   private perimetreMinisterielRepository: PerimetreMinisterielRepository;
 
-  constructor({ utilisateurRepository, territoireRepository, perimetreMinisterielRepository, chantierRepository }: Dependencies) {
+  constructor({
+    utilisateurRepository,
+    territoireRepository,
+    perimetreMinisterielRepository,
+    chantierRepository,
+  }: Dependencies) {
     this.utilisateurRepository = utilisateurRepository;
     this.territoireRepository = territoireRepository;
     this.chantierRepository = chantierRepository;
@@ -33,12 +36,16 @@ export class RecupererListeUtilisateursUseCase {
     sorting,
     valeurDeLaRecherche,
   }: {
-    sorting: { id: string, desc: boolean }[],
-    valeurDeLaRecherche: string
+    sorting: { id: string; desc: boolean }[];
+    valeurDeLaRecherche: string;
   }): Promise<UtilisateurListeGestion[]> {
-    const listeInformationsChantiersUtilisateurs = await this.chantierRepository.listerInformationsChantiersUtilisateurs();
-    const listeTerritoiresCodes = await this.territoireRepository.listerCodes([]);
-    const listePerimetresMinisteriels = await this.perimetreMinisterielRepository.listerIds([]);
+    const listeInformationsChantiersUtilisateurs =
+      await this.chantierRepository.listerInformationsChantiersUtilisateurs();
+    const listeTerritoiresCodes = await this.territoireRepository.listerCodes(
+      [],
+    );
+    const listePerimetresMinisteriels =
+      await this.perimetreMinisterielRepository.listerIds([]);
 
     return this.utilisateurRepository.recupererTous({
       sorting,

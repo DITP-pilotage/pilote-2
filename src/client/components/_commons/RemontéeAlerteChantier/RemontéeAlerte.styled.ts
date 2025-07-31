@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const RemontéeAlerteStyled = styled.button`
   display: flex;
@@ -10,17 +10,17 @@ const RemontéeAlerteStyled = styled.button`
   border: 1px solid var(--border-default-grey);
   border-radius: 8px;
   box-shadow: 0 2px 6px 0 #00001229;
-  
+
   &.est-activée {
     border-color: var(--text-default-warning);
   }
-  
+
   .nombre {
     color: var(--text-default-warning);
   }
-  
+
   .libellé {
-    font-size: .75rem;
+    font-size: 0.75rem;
     color: var(--text-title-grey);
 
     @media (min-width: 48rem) {

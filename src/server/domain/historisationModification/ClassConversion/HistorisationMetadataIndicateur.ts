@@ -1,4 +1,4 @@
-import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur';
+import { MetadataParametrageIndicateur } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur";
 
 export interface HistorisationMetadataIndicateur {
   indic_id: string;
@@ -36,7 +36,9 @@ export interface HistorisationMetadataIndicateur {
   indic_schema: string;
 }
 
-export function convertirEnHistorisationMetadataIndicateurModel(metadataParametrageIndicateur: MetadataParametrageIndicateur): HistorisationMetadataIndicateur {
+export function convertirEnHistorisationMetadataIndicateurModel(
+  metadataParametrageIndicateur: MetadataParametrageIndicateur,
+): HistorisationMetadataIndicateur {
   return {
     indic_id: metadataParametrageIndicateur.indicId,
     indic_parent_indic: metadataParametrageIndicateur.indicParentIndic,

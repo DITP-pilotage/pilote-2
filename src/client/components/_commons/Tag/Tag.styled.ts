@@ -1,9 +1,9 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const TagStyled = styled.span`
   color: white;
 
-  &.blue-france { 
+  &.blue-france {
     background-color: var(--blue-france-sun-113-625);
   }
 
@@ -13,7 +13,7 @@ const TagStyled = styled.span`
 
   &.warning {
     background-color: var(--warning-425-625);
-    }
+  }
 
   &.yellow-moutarde {
     color: black;
@@ -26,7 +26,7 @@ const TagStyled = styled.span`
 
   &.fr-tag--fixed-width {
     max-width: 30ch;
-    
+
     & span {
       overflow: hidden;
       text-overflow: ellipsis;

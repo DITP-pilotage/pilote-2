@@ -1,5 +1,5 @@
-import { ProfilAPI } from '@/server/authentification/domain/ProfilAPI';
-import { HabilitationAuthentitificationAPI } from '@/server/authentification/domain/HabilitationAuthentitificationAPI';
+import { ProfilAPI } from "@/server/authentification/domain/ProfilAPI";
+import { HabilitationAuthentitificationAPI } from "@/server/authentification/domain/HabilitationAuthentitificationAPI";
 
 export class UtilisateurAuthentifie {
   private readonly _email: string;
@@ -10,16 +10,22 @@ export class UtilisateurAuthentifie {
 
   private readonly _profilAAccèsAuxChantiersBrouillons: boolean;
 
-  private constructor({ email, profil, habilitations, profilAAccèsAuxChantiersBrouillons }: {
-    email: string,
-    profil: ProfilAPI,
-    habilitations: HabilitationAuthentitificationAPI,
-    profilAAccèsAuxChantiersBrouillons: boolean
+  private constructor({
+    email,
+    profil,
+    habilitations,
+    profilAAccèsAuxChantiersBrouillons,
+  }: {
+    email: string;
+    profil: ProfilAPI;
+    habilitations: HabilitationAuthentitificationAPI;
+    profilAAccèsAuxChantiersBrouillons: boolean;
   }) {
     this._email = email;
     this._profil = profil;
     this._habilitations = habilitations;
-    this._profilAAccèsAuxChantiersBrouillons = profilAAccèsAuxChantiersBrouillons;
+    this._profilAAccèsAuxChantiersBrouillons =
+      profilAAccèsAuxChantiersBrouillons;
   }
 
   get email(): string {
@@ -46,12 +52,22 @@ export class UtilisateurAuthentifie {
     return this.habilitations.saisieIndicateur.chantiers.includes(chantierId);
   }
 
-  static creerUtilisateurAuthentifie({ email, profil, habilitations, profilAAccèsAuxChantiersBrouillons }: {
-    email: string,
-    profil: ProfilAPI,
-    habilitations: HabilitationAuthentitificationAPI,
-    profilAAccèsAuxChantiersBrouillons: boolean
+  static creerUtilisateurAuthentifie({
+    email,
+    profil,
+    habilitations,
+    profilAAccèsAuxChantiersBrouillons,
+  }: {
+    email: string;
+    profil: ProfilAPI;
+    habilitations: HabilitationAuthentitificationAPI;
+    profilAAccèsAuxChantiersBrouillons: boolean;
   }): UtilisateurAuthentifie {
-    return new UtilisateurAuthentifie({ email, profil, habilitations, profilAAccèsAuxChantiersBrouillons });
+    return new UtilisateurAuthentifie({
+      email,
+      profil,
+      habilitations,
+      profilAAccèsAuxChantiersBrouillons,
+    });
   }
 }

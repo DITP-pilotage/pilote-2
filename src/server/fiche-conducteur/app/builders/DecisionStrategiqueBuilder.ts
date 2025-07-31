@@ -1,12 +1,12 @@
-import { DecisionStrategique } from '@/server/fiche-conducteur/domain/DecisionStrategique';
-import { DecisionStrategiqueType } from '@/server/fiche-conducteur/domain/DecisionStrategiqueType';
+import { DecisionStrategique } from "@/server/fiche-conducteur/domain/DecisionStrategique";
+import { DecisionStrategiqueType } from "@/server/fiche-conducteur/domain/DecisionStrategiqueType";
 
 export class DecisionStrategiqueBuilder {
-  private type: DecisionStrategiqueType = 'suivi_des_decisions';
+  private type: DecisionStrategiqueType = "suivi_des_decisions";
 
-  private contenu: string = 'un contenu pour une decision strategique';
+  private contenu: string = "un contenu pour une decision strategique";
 
-  private date: string = '2022-05-01T00:00:00.000Z';
+  private date: string = "2022-05-01T00:00:00.000Z";
 
   withType(type: DecisionStrategiqueType): DecisionStrategiqueBuilder {
     this.type = type;
@@ -21,7 +21,6 @@ export class DecisionStrategiqueBuilder {
   withDate(date: string) {
     this.date = date;
     return this;
-
   }
 
   build(): DecisionStrategique {

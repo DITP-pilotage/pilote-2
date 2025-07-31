@@ -1,11 +1,11 @@
-import { erreur_validation_fichier as ErreurValidationFichierModel } from '@prisma/client';
-import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
-import {
-  ErreurValidationFichierRepository,
-} from '@/server/import-indicateur/domain/ports/ErreurValidationFichierRepository';
-import { prisma } from '@/server/db/prisma';
+import { erreur_validation_fichier as ErreurValidationFichierModel } from "@prisma/client";
+import { ErreurValidationFichier } from "@/server/import-indicateur/domain/ErreurValidationFichier";
+import { ErreurValidationFichierRepository } from "@/server/import-indicateur/domain/ports/ErreurValidationFichierRepository";
+import { prisma } from "@/server/db/prisma";
 
-const convertirEnModel = (erreurValidationFichier: ErreurValidationFichier): Omit<ErreurValidationFichierModel, 'date_import'> => {
+const convertirEnModel = (
+  erreurValidationFichier: ErreurValidationFichier,
+): Omit<ErreurValidationFichierModel, "date_import"> => {
   return {
     id: erreurValidationFichier.id,
     rapport_id: erreurValidationFichier.rapportId,
@@ -19,10 +19,17 @@ const convertirEnModel = (erreurValidationFichier: ErreurValidationFichier): Omi
   };
 };
 
-export class PrismaErreurValidationFichierRepository implements ErreurValidationFichierRepository {
-  async sauvegarder(listeErreursValidationFichier: ErreurValidationFichier[]): Promise<void> {
-    const listeErreursValidationFichierModel = listeErreursValidationFichier.map(convertirEnModel);
+export class PrismaErreurValidationFichierRepository
+  implements ErreurValidationFichierRepository
+{
+  async sauvegarder(
+    listeErreursValidationFichier: ErreurValidationFichier[],
+  ): Promise<void> {
+    const listeErreursValidationFichierModel =
+      listeErreursValidationFichier.map(convertirEnModel);
 
-    await prisma.erreur_validation_fichier.createMany({ data: listeErreursValidationFichierModel });
+    await prisma.erreur_validation_fichier.createMany({
+      data: listeErreursValidationFichierModel,
+    });
   }
 }

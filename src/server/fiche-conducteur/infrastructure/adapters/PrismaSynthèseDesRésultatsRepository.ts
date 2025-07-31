@@ -1,11 +1,16 @@
-import { PrismaClient, synthese_des_resultats as SyntheseDesResultatsModel } from '@prisma/client';
-import { SynthèseDesRésultatsRepository } from '@/server/fiche-conducteur/domain/ports/SynthèseDesRésultatsRepository';
-import { SyntheseDesResultats } from '@/server/fiche-conducteur/domain/SyntheseDesResultats';
-import { Meteo } from '@/server/fiche-conducteur/domain/Meteo';
+import {
+  PrismaClient,
+  synthese_des_resultats as SyntheseDesResultatsModel,
+} from "@prisma/client";
+import { SynthèseDesRésultatsRepository } from "@/server/fiche-conducteur/domain/ports/SynthèseDesRésultatsRepository";
+import { SyntheseDesResultats } from "@/server/fiche-conducteur/domain/SyntheseDesResultats";
+import { Meteo } from "@/server/fiche-conducteur/domain/Meteo";
 
-import { PrismaPilote } from '@/server/db/PrismaPilote';
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
-const convertirEnSyntheseDesResultats = (syntheseDesResultatsModel: SyntheseDesResultatsModel): SyntheseDesResultats => {
+const convertirEnSyntheseDesResultats = (
+  syntheseDesResultatsModel: SyntheseDesResultatsModel,
+): SyntheseDesResultats => {
   return SyntheseDesResultats.creerSyntheseDesResultats({
     meteo: syntheseDesResultatsModel.meteo as Meteo,
     commentaire: syntheseDesResultatsModel.commentaire!,
@@ -13,21 +18,25 @@ const convertirEnSyntheseDesResultats = (syntheseDesResultatsModel: SyntheseDesR
 };
 
 interface Dependencies {
-  prisma: PrismaPilote
+  prisma: PrismaPilote;
 }
 
-export class PrismaSynthèseDesRésultatsRepository implements SynthèseDesRésultatsRepository {
+export class PrismaSynthèseDesRésultatsRepository
+  implements SynthèseDesRésultatsRepository
+{
   private prisma: PrismaClient;
 
   constructor({ prisma }: Dependencies) {
     this.prisma = prisma.getInstance();
   }
 
-  async recupererLaPlusRecenteMailleNatParChantierId(chantierId: string): Promise<SyntheseDesResultats | null> {
+  async recupererLaPlusRecenteMailleNatParChantierId(
+    chantierId: string,
+  ): Promise<SyntheseDesResultats | null> {
     const result = await this.prisma.synthese_des_resultats.findFirst({
       where: {
         chantier_id: chantierId,
-        maille: 'NAT',
+        maille: "NAT",
         NOT: [
           {
             commentaire: null,
@@ -35,7 +44,7 @@ export class PrismaSynthèseDesRésultatsRepository implements SynthèseDesRésu
           },
         ],
       },
-      orderBy: { date_commentaire: 'desc' },
+      orderBy: { date_commentaire: "desc" },
     });
 
     if (result === null) {

@@ -6,38 +6,47 @@ import {
   profil,
   territoire,
   utilisateur,
-} from '@prisma/client';
+} from "@prisma/client";
 import Utilisateur, {
   ProfilCode,
   profilsDépartementaux,
   profilsRégionaux,
   UtilisateurÀCréerOuMettreÀJourSansHabilitation,
-} from '@/server/domain/utilisateur/Utilisateur.interface';
-import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
+} from "@/server/domain/utilisateur/Utilisateur.interface";
+import UtilisateurRepository from "@/server/domain/utilisateur/UtilisateurRepository.interface";
 import {
   Habilitations,
   HabilitationsÀCréerOuMettreÀJourCalculées,
   ScopeChantiers,
   ScopeUtilisateurs,
-} from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import { objectEntries } from '@/client/utils/objects/objects';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { Territoire } from '@/server/domain/territoire/Territoire.interface';
-import { ProfilEnum } from '@/server/app/enum/profil.enum';
-import { prisma } from '@/server/db/prisma';
-import { configuration } from '@/config';
+} from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { objectEntries } from "@/client/utils/objects/objects";
+import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { Territoire } from "@/server/domain/territoire/Territoire.interface";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { prisma } from "@/server/db/prisma";
+import { configuration } from "@/config";
 
 export const convertirEnModel = (utilisateurAConvertir: {
-  email: string
-  nom: string
-  prenom: string
-  profilCode: string
-  fonction: string | null
-  auteurIdModification: string
-  dateModification: Date
-  auteurIdCreation: string
-  dateCreation: Date
-}): Omit<utilisateur, 'id' | 'auteur_email_creation' | 'auteur_email_modification' | 'date_desactivation' | 'date_visualisation_video_accueil' | 'date_visualisation_popup_infolettre' | 'date_inscription_infolettre'> => {
+  email: string;
+  nom: string;
+  prenom: string;
+  profilCode: string;
+  fonction: string | null;
+  auteurIdModification: string;
+  dateModification: Date;
+  auteurIdCreation: string;
+  dateCreation: Date;
+}): Omit<
+  utilisateur,
+  | "id"
+  | "auteur_email_creation"
+  | "auteur_email_modification"
+  | "date_desactivation"
+  | "date_visualisation_video_accueil"
+  | "date_visualisation_popup_infolettre"
+  | "date_inscription_infolettre"
+> => {
   return {
     email: utilisateurAConvertir.email,
     nom: utilisateurAConvertir.nom,
@@ -52,14 +61,25 @@ export const convertirEnModel = (utilisateurAConvertir: {
 };
 
 export const convertirEnModelModification = (utilisateurAConvertir: {
-  email: string
-  nom: string
-  prenom: string
-  profilCode: string
-  fonction: string | null
-  auteurIdModification: string
-  dateModification: Date
-}): Omit<utilisateur, 'id' | 'auteur_id_creation' | 'date_creation' | 'auteur_email_creation' | 'auteur_email_modification' | 'date_desactivation' | 'date_visualisation_video_accueil' | 'date_visualisation_popup_infolettre' | 'date_inscription_infolettre'> => {
+  email: string;
+  nom: string;
+  prenom: string;
+  profilCode: string;
+  fonction: string | null;
+  auteurIdModification: string;
+  dateModification: Date;
+}): Omit<
+  utilisateur,
+  | "id"
+  | "auteur_id_creation"
+  | "date_creation"
+  | "auteur_email_creation"
+  | "auteur_email_modification"
+  | "date_desactivation"
+  | "date_visualisation_video_accueil"
+  | "date_visualisation_popup_infolettre"
+  | "date_inscription_infolettre"
+> => {
   return {
     email: utilisateurAConvertir.email,
     nom: utilisateurAConvertir.nom,
@@ -76,37 +96,43 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   private _territoires: string[] = [];
 
   private _chantiers: {
-    donnéesBrutes: PrismaChantierIdentite[]
-    groupésParId: Record<PrismaChantierIdentite['id'], PrismaChantierIdentite>
-    chantiersIdsPérimètresIds: Record<PrismaChantierIdentite['id'], perimetre['id'][]>
-    ids: PrismaChantierIdentite['id'][]
+    donnéesBrutes: PrismaChantierIdentite[];
+    groupésParId: Record<PrismaChantierIdentite["id"], PrismaChantierIdentite>;
+    chantiersIdsPérimètresIds: Record<
+      PrismaChantierIdentite["id"],
+      perimetre["id"][]
+    >;
+    ids: PrismaChantierIdentite["id"][];
   } = {
-      donnéesBrutes: [],
-      groupésParId: {},
-      chantiersIdsPérimètresIds: {},
-      ids: [],
-    };
+    donnéesBrutes: [],
+    groupésParId: {},
+    chantiersIdsPérimètresIds: {},
+    ids: [],
+  };
 
   private _chantiersTerritorialisésIds: string[] = [];
 
-  private _chantiersBrouillonsIds: string [] = [];
+  private _chantiersBrouillonsIds: string[] = [];
 
   private _périmètresMinistériels: string[] = [];
 
   async _récupérerTerritoires() {
     if (this._territoires.length === 0) {
       const tousLesTerritoires = await prisma.territoire.findMany();
-      this._territoires = tousLesTerritoires.map(c => c.code);
+      this._territoires = tousLesTerritoires.map((c) => c.code);
     }
   }
 
   async _récupérerChantiers() {
-    const whereOptions: Prisma.chantier_identiteWhereInput = configuration.featureFlip.ppgArchive ? {} : {
-      NOT: {
-        statut: 'ARCHIVE',
-      },
-    };
-    
+    const whereOptions: Prisma.chantier_identiteWhereInput = configuration
+      .featureFlip.ppgArchive
+      ? {}
+      : {
+          NOT: {
+            statut: "ARCHIVE",
+          },
+        };
+
     if (this._chantiers.donnéesBrutes.length === 0) {
       const tousLesChantiers = await prisma.chantier_identite.findMany({
         where: whereOptions,
@@ -114,16 +140,17 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
       this._chantiers.donnéesBrutes = tousLesChantiers;
 
-      tousLesChantiers.forEach(chantier => {
+      tousLesChantiers.forEach((chantier) => {
         this._chantiers.groupésParId[chantier.id] = chantier;
         this._chantiers.ids.push(chantier.id);
-        this._chantiers.chantiersIdsPérimètresIds[chantier.id] = chantier.perimetre_ids;
+        this._chantiers.chantiersIdsPérimètresIds[chantier.id] =
+          chantier.perimetre_ids;
 
         if (chantier.est_territorialise === true) {
           this._chantiersTerritorialisésIds.push(chantier.id);
         }
 
-        if (chantier.statut === 'BROUILLON') {
+        if (chantier.statut === "BROUILLON") {
           this._chantiersBrouillonsIds.push(chantier.id);
         }
       });
@@ -133,15 +160,17 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   async _récupérerPérimètresMinistériels() {
     if (this._périmètresMinistériels.length === 0) {
       const tousLesPérimètresMinistériels = await prisma.perimetre.findMany();
-      this._périmètresMinistériels = tousLesPérimètresMinistériels.map(périmètre => périmètre.id);
+      this._périmètresMinistériels = tousLesPérimètresMinistériels.map(
+        (périmètre) => périmètre.id,
+      );
     }
   }
 
   async supprimer(email: string): Promise<void> {
     await prisma.utilisateur.delete({
-      where: { email: email.toLowerCase() }, 
-      include: { 
-        habilitation: true, 
+      where: { email: email.toLowerCase() },
+      include: {
+        habilitation: true,
       },
     });
   }
@@ -152,10 +181,10 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     await this._récupérerPérimètresMinistériels();
 
     const row = await prisma.utilisateur.findUnique({
-      where: { email: email.toLowerCase() }, 
-      include: { 
-        profil: true, 
-        habilitation: true, 
+      where: { email: email.toLowerCase() },
+      include: {
+        profil: true,
+        habilitation: true,
         auteur_creation: true,
         auteur_modification: true,
       },
@@ -190,22 +219,28 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return this._mapperVersDomaine(row);
   }
 
-  async récupérerExistants(utilisateurs: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[]): Promise<Utilisateur['email'][]> {
-
+  async récupérerExistants(
+    utilisateurs: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & {
+      habilitations: HabilitationsÀCréerOuMettreÀJourCalculées;
+    })[],
+  ): Promise<Utilisateur["email"][]> {
     const utilisateursExistants = await prisma.utilisateur.findMany({
       where: {
         email: {
-          in: utilisateurs.map(u => u.email),
+          in: utilisateurs.map((u) => u.email),
         },
       },
     });
 
-    return utilisateursExistants.map(u => u.email);
+    return utilisateursExistants.map((u) => u.email);
   }
 
-  async récupérerNombreUtilisateursParTerritoires(territoires: Territoire[]): Promise<Record<string, number>> {
-
-    const territoireCodes = territoires.map(territoireElement => territoireElement.code);
+  async récupérerNombreUtilisateursParTerritoires(
+    territoires: Territoire[],
+  ): Promise<Record<string, number>> {
+    const territoireCodes = territoires.map(
+      (territoireElement) => territoireElement.code,
+    );
     const utilisateurs = await prisma.utilisateur.findMany({
       where: {
         OR: [
@@ -216,7 +251,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
             date_desactivation: null,
             habilitation: {
               some: {
-                scopeCode: 'lecture',
+                scopeCode: "lecture",
                 territoires: {
                   hasSome: territoireCodes,
                 },
@@ -230,7 +265,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
             date_desactivation: null,
             habilitation: {
               some: {
-                scopeCode: 'lecture',
+                scopeCode: "lecture",
                 territoires: {
                   hasSome: territoireCodes,
                 },
@@ -247,26 +282,37 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
             territoires: true,
           },
           where: {
-            scopeCode: 'lecture',
+            scopeCode: "lecture",
           },
         },
       },
     });
 
-    return territoires.reduce((acc: { [key: string]: number }, { code, maille }: Territoire) => {
-      const profilsCodes = maille === 'departementale' ? profilsDépartementaux : profilsRégionaux;
+    return territoires.reduce(
+      (acc: { [key: string]: number }, { code, maille }: Territoire) => {
+        const profilsCodes =
+          maille === "departementale"
+            ? profilsDépartementaux
+            : profilsRégionaux;
 
-      acc[code] = utilisateurs.filter(({ habilitation: habilitationUtilisateur, profilCode }) =>
-        habilitationUtilisateur.some(h => h.territoires.includes(code)) && profilsCodes.includes(profilCode),
-      ).length;
+        acc[code] = utilisateurs.filter(
+          ({ habilitation: habilitationUtilisateur, profilCode }) =>
+            habilitationUtilisateur.some((h) => h.territoires.includes(code)) &&
+            profilsCodes.includes(profilCode),
+        ).length;
 
-      return acc;
-    }, {});
-
+        return acc;
+      },
+      {},
+    );
   }
 
-  async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurId: string): Promise<void> {
-
+  async créerOuMettreÀJour(
+    u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & {
+      habilitations: HabilitationsÀCréerOuMettreÀJourCalculées;
+    },
+    auteurId: string,
+  ): Promise<void> {
     const utilisateurCrééOuMisÀJour = await prisma.utilisateur.upsert({
       create: convertirEnModel({
         email: u.email.toLocaleLowerCase(),
@@ -293,7 +339,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       },
     });
 
-    const habilitationsÀCréer = Object.entries(u.habilitations).map(h => ({
+    const habilitationsÀCréer = Object.entries(u.habilitations).map((h) => ({
       utilisateurId: utilisateurCrééOuMisÀJour.id,
       scopeCode: h[0],
       territoires: h[1].territoires,
@@ -312,9 +358,13 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     });
   }
 
-  private async _récupérerChantiersParDéfaut(profilUtilisateur: profil): Promise<Record<ScopeChantiers | ScopeUtilisateurs, PrismaChantierIdentite['id'][]>> {
-    let chantiersAccessibles: PrismaChantierIdentite['id'][] = [];
-    let chantiersAccessiblesEnGestionUtilisateur: PrismaChantierIdentite['id'][];
+  private async _récupérerChantiersParDéfaut(
+    profilUtilisateur: profil,
+  ): Promise<
+    Record<ScopeChantiers | ScopeUtilisateurs, PrismaChantierIdentite["id"][]>
+  > {
+    let chantiersAccessibles: PrismaChantierIdentite["id"][] = [];
+    let chantiersAccessiblesEnGestionUtilisateur: PrismaChantierIdentite["id"][];
 
     if (profilUtilisateur.a_acces_tous_chantiers) {
       chantiersAccessibles = this._chantiers.ids;
@@ -323,9 +373,21 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     }
 
     // eslint-disable-next-line unicorn/prefer-ternary
-    if ([ProfilEnum.COORDINATEUR_REGION, ProfilEnum.PREFET_REGION, ProfilEnum.COORDINATEUR_DEPARTEMENT, ProfilEnum.PREFET_DEPARTEMENT].includes(profilUtilisateur.code)) {
-      chantiersAccessiblesEnGestionUtilisateur = objectEntries(this._chantiers.groupésParId)
-        .filter(([_, chantier]) => chantier.est_territorialise && chantier.ate === 'ate')
+    if (
+      [
+        ProfilEnum.COORDINATEUR_REGION,
+        ProfilEnum.PREFET_REGION,
+        ProfilEnum.COORDINATEUR_DEPARTEMENT,
+        ProfilEnum.PREFET_DEPARTEMENT,
+      ].includes(profilUtilisateur.code)
+    ) {
+      chantiersAccessiblesEnGestionUtilisateur = objectEntries(
+        this._chantiers.groupésParId,
+      )
+        .filter(
+          ([_, chantier]) =>
+            chantier.est_territorialise && chantier.ate === "ate",
+        )
         .map(([_, chantier]) => chantier.id);
     } else {
       chantiersAccessiblesEnGestionUtilisateur = chantiersAccessibles;
@@ -337,27 +399,55 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
     return {
       lecture: chantiersAccessibles,
-      saisieCommentaire: profilUtilisateur.a_acces_tous_chantiers ? chantiersAccessibles : [],
-      saisieIndicateur: [ProfilEnum.DITP_PILOTAGE, ProfilEnum.DITP_ADMIN].includes(profilUtilisateur.code) ? chantiersAccessibles : [],
-      gestionUtilisateur: profilUtilisateur.peut_modifier_les_utilisateurs ? chantiersAccessiblesEnGestionUtilisateur : [],
+      saisieCommentaire: profilUtilisateur.a_acces_tous_chantiers
+        ? chantiersAccessibles
+        : [],
+      saisieIndicateur: [
+        ProfilEnum.DITP_PILOTAGE,
+        ProfilEnum.DITP_ADMIN,
+      ].includes(profilUtilisateur.code)
+        ? chantiersAccessibles
+        : [],
+      gestionUtilisateur: profilUtilisateur.peut_modifier_les_utilisateurs
+        ? chantiersAccessiblesEnGestionUtilisateur
+        : [],
       responsabilite: [],
     };
   }
 
-  private async _récupérerTerritoiresParDéfaut(profilUtilisateur: profil): Promise<Record<ScopeChantiers | ScopeUtilisateurs, territoire['code'][]>> {
+  private async _récupérerTerritoiresParDéfaut(
+    profilUtilisateur: profil,
+  ): Promise<Record<ScopeChantiers | ScopeUtilisateurs, territoire["code"][]>> {
     return {
-      lecture: profilUtilisateur.a_acces_tous_les_territoires_lecture ? this._territoires : [],
-      saisieCommentaire: profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire ? this._territoires : [],
-      saisieIndicateur: profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur ? this._territoires : [],
-      gestionUtilisateur: [ProfilEnum.DITP_PILOTAGE, ProfilEnum.DITP_ADMIN].includes(profilUtilisateur.code) ? this._territoires : [],
+      lecture: profilUtilisateur.a_acces_tous_les_territoires_lecture
+        ? this._territoires
+        : [],
+      saisieCommentaire:
+        profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire
+          ? this._territoires
+          : [],
+      saisieIndicateur:
+        profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur
+          ? this._territoires
+          : [],
+      gestionUtilisateur: [
+        ProfilEnum.DITP_PILOTAGE,
+        ProfilEnum.DITP_ADMIN,
+      ].includes(profilUtilisateur.code)
+        ? this._territoires
+        : [],
       responsabilite: [],
     };
   }
 
-  private async _récupérerPérimètresMinistérielsParDéfaut(profilUtilisateur: profil): Promise<Record<ScopeChantiers | ScopeUtilisateurs, perimetre['id'][]>> {
+  private async _récupérerPérimètresMinistérielsParDéfaut(
+    profilUtilisateur: profil,
+  ): Promise<Record<ScopeChantiers | ScopeUtilisateurs, perimetre["id"][]>> {
     return {
       // on dit que ceux qui ont accès à tous les chantiers ont accès à tous les périmètres ministériels
-      lecture: profilUtilisateur.a_acces_tous_chantiers ? this._périmètresMinistériels : [],
+      lecture: profilUtilisateur.a_acces_tous_chantiers
+        ? this._périmètresMinistériels
+        : [],
       saisieCommentaire: [],
       saisieIndicateur: [],
       gestionUtilisateur: [],
@@ -365,23 +455,35 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     };
   }
 
-  private _aDesDroitsdeSaisieIndicateur(habilitations: Habilitations, profilUtilisateur: profil) {
-    if (profilUtilisateur.a_acces_tous_chantiers && profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur) {
+  private _aDesDroitsdeSaisieIndicateur(
+    habilitations: Habilitations,
+    profilUtilisateur: profil,
+  ) {
+    if (
+      profilUtilisateur.a_acces_tous_chantiers &&
+      profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur
+    ) {
       return true;
     } else {
       const habilitationSaisieIndicateur = habilitations.saisieIndicateur;
       return profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur
-        ? habilitationSaisieIndicateur.périmètres.length > 0 || habilitationSaisieIndicateur.chantiers.length > 0
+        ? habilitationSaisieIndicateur.périmètres.length > 0 ||
+            habilitationSaisieIndicateur.chantiers.length > 0
         : habilitationSaisieIndicateur.territoires.length > 0;
     }
   }
 
-  private _aDesDroitsdeGestionUtilisateur(habilitations: Habilitations, profilUtilisateur: profil) {
+  private _aDesDroitsdeGestionUtilisateur(
+    habilitations: Habilitations,
+    profilUtilisateur: profil,
+  ) {
     const habilitationsFormatés = new Habilitation(habilitations);
-    if (!profilUtilisateur.peut_modifier_les_utilisateurs)
-      return false;
+    if (!profilUtilisateur.peut_modifier_les_utilisateurs) return false;
 
-    if (profilUtilisateur.a_acces_a_tous_les_chantiers_utilisateurs && profilUtilisateur.a_acces_a_tous_les_territoires_utilisateurs)
+    if (
+      profilUtilisateur.a_acces_a_tous_les_chantiers_utilisateurs &&
+      profilUtilisateur.a_acces_a_tous_les_territoires_utilisateurs
+    )
       return true;
 
     if (profilUtilisateur.a_acces_a_tous_les_chantiers_utilisateurs)
@@ -393,14 +495,21 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return false;
   }
 
-  private async _créerLesHabilitations(profilUtilisateur: profil, habilitations: PrismaHabilitation[]) {
-    const [chantiersParDéfaut, territoiresParDéfaut, périmètresMinistérielsParDéfaut] = await Promise.all([
+  private async _créerLesHabilitations(
+    profilUtilisateur: profil,
+    habilitations: PrismaHabilitation[],
+  ) {
+    const [
+      chantiersParDéfaut,
+      territoiresParDéfaut,
+      périmètresMinistérielsParDéfaut,
+    ] = await Promise.all([
       this._récupérerChantiersParDéfaut(profilUtilisateur),
       this._récupérerTerritoiresParDéfaut(profilUtilisateur),
       this._récupérerPérimètresMinistérielsParDéfaut(profilUtilisateur),
     ]);
 
-    let habilitationsGénérées: Utilisateur['habilitations'] = {
+    let habilitationsGénérées: Utilisateur["habilitations"] = {
       lecture: {
         chantiers: chantiersParDéfaut.lecture,
         territoires: territoiresParDéfaut.lecture,
@@ -429,53 +538,105 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     };
 
     for await (const h of habilitations) {
-      const scopeCode = h.scopeCode as keyof Utilisateur['habilitations'];
+      const scopeCode = h.scopeCode as keyof Utilisateur["habilitations"];
       const listeChantier =
-        scopeCode == 'saisieCommentaire' && [ProfilEnum.SERVICES_DECONCENTRES_REGION, ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT].includes(profilUtilisateur.code) ?
-          this._chantiers.donnéesBrutes.filter(c => c.ate !== 'hors_ate_centralise') :
-          this._chantiers.donnéesBrutes;
+        scopeCode == "saisieCommentaire" &&
+        [
+          ProfilEnum.SERVICES_DECONCENTRES_REGION,
+          ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+        ].includes(profilUtilisateur.code)
+          ? this._chantiers.donnéesBrutes.filter(
+              (c) => c.ate !== "hors_ate_centralise",
+            )
+          : this._chantiers.donnéesBrutes;
 
       const chantiersSupplémentaires =
-        h.chantiers.length > 0 ?
-          listeChantier.filter(c => h.chantiers.includes(c.id)).map(c => c.id) :
-          h.chantiers;
+        h.chantiers.length > 0
+          ? listeChantier
+              .filter((c) => h.chantiers.includes(c.id))
+              .map((c) => c.id)
+          : h.chantiers;
 
       const chantiersAssociésAuxPérimètresMinistériels =
-        h.perimetres.length > 0 ?
-          listeChantier
-            .filter(c => c.perimetre_ids.some(p => h.perimetres.includes(p)))
-            .map(c => c.id) :
-          [] ;
+        h.perimetres.length > 0
+          ? listeChantier
+              .filter((c) =>
+                c.perimetre_ids.some((p) => h.perimetres.includes(p)),
+              )
+              .map((c) => c.id)
+          : [];
 
-      const habilitationsChantier = [... new Set([...habilitationsGénérées[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...chantiersSupplémentaires])];
+      const habilitationsChantier = [
+        ...new Set([
+          ...habilitationsGénérées[scopeCode].chantiers,
+          ...chantiersAssociésAuxPérimètresMinistériels,
+          ...chantiersSupplémentaires,
+        ]),
+      ];
 
-      habilitationsGénérées[scopeCode].chantiers = profilUtilisateur.a_access_aux_chantiers_brouillons ? habilitationsChantier : habilitationsChantier.filter(c => !this._chantiersBrouillonsIds.includes(c));
-      habilitationsGénérées[scopeCode].territoires = [... new Set([...habilitationsGénérées[scopeCode].territoires, ...h.territoires])];
-      habilitationsGénérées[scopeCode].périmètres = [... new Set([...habilitationsGénérées[scopeCode].périmètres, ...h.perimetres])];
+      habilitationsGénérées[scopeCode].chantiers =
+        profilUtilisateur.a_access_aux_chantiers_brouillons
+          ? habilitationsChantier
+          : habilitationsChantier.filter(
+              (c) => !this._chantiersBrouillonsIds.includes(c),
+            );
+      habilitationsGénérées[scopeCode].territoires = [
+        ...new Set([
+          ...habilitationsGénérées[scopeCode].territoires,
+          ...h.territoires,
+        ]),
+      ];
+      habilitationsGénérées[scopeCode].périmètres = [
+        ...new Set([
+          ...habilitationsGénérées[scopeCode].périmètres,
+          ...h.perimetres,
+        ]),
+      ];
     }
 
     return habilitationsGénérées;
   }
 
-  private async _mapperVersDomaine(utilisateurBrut: utilisateur & { profil: profil; habilitation: PrismaHabilitation[]; auteur_creation: utilisateur | null; auteur_modification: utilisateur | null }): Promise<Utilisateur> {
-    const habilitations = await this._créerLesHabilitations(utilisateurBrut.profil, utilisateurBrut.habilitation);
+  private async _mapperVersDomaine(
+    utilisateurBrut: utilisateur & {
+      profil: profil;
+      habilitation: PrismaHabilitation[];
+      auteur_creation: utilisateur | null;
+      auteur_modification: utilisateur | null;
+    },
+  ): Promise<Utilisateur> {
+    const habilitations = await this._créerLesHabilitations(
+      utilisateurBrut.profil,
+      utilisateurBrut.habilitation,
+    );
     const auteurCreation = utilisateurBrut.auteur_creation;
     const auteurModification = utilisateurBrut.auteur_modification;
     return {
       id: utilisateurBrut.id,
-      nom: utilisateurBrut.nom || 'Inconnu',
-      prénom: utilisateurBrut.prenom || 'Inconnu',
+      nom: utilisateurBrut.nom || "Inconnu",
+      prénom: utilisateurBrut.prenom || "Inconnu",
       email: utilisateurBrut.email,
       profil: utilisateurBrut.profilCode as ProfilCode,
       dateModification: utilisateurBrut.date_modification?.toISOString(),
-      auteurModification: auteurModification ? `${auteurModification.prenom} ${auteurModification.nom}` : 'Auteur Inconnu',
+      auteurModification: auteurModification
+        ? `${auteurModification.prenom} ${auteurModification.nom}`
+        : "Auteur Inconnu",
       dateCreation: utilisateurBrut.date_creation?.toISOString() || null,
-      auteurCreation: auteurCreation ? `${auteurCreation.prenom} ${auteurCreation.nom}` : 'Auteur Inconnu',
+      auteurCreation: auteurCreation
+        ? `${auteurCreation.prenom} ${auteurCreation.nom}`
+        : "Auteur Inconnu",
       fonction: utilisateurBrut.fonction,
-      saisieIndicateur: this._aDesDroitsdeSaisieIndicateur(habilitations, utilisateurBrut.profil),
-      gestionUtilisateur: this._aDesDroitsdeGestionUtilisateur(habilitations, utilisateurBrut.profil),
+      saisieIndicateur: this._aDesDroitsdeSaisieIndicateur(
+        habilitations,
+        utilisateurBrut.profil,
+      ),
+      gestionUtilisateur: this._aDesDroitsdeGestionUtilisateur(
+        habilitations,
+        utilisateurBrut.profil,
+      ),
       habilitations: habilitations,
-      dateDesactivation: utilisateurBrut.date_desactivation?.toISOString() ?? null,
+      dateDesactivation:
+        utilisateurBrut.date_desactivation?.toISOString() ?? null,
     };
   }
 }

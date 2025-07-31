@@ -1,12 +1,12 @@
-import { ProfilCode } from '@/server/gestion-utilisateur/domain/Utilisateur.interface';
+import { ProfilCode } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 
 export type FiltreQueryParams = {
-  territoires: string[]
-  perimetresMinisteriels: string[]
-  chantiers: string[]
-  profils: ProfilCode[]
-  typeCompte: ('actif' | 'desactive')[]
-  chantiersAssociésAuxPérimètres: string[]
+  territoires: string[];
+  perimetresMinisteriels: string[];
+  chantiers: string[];
+  profils: ProfilCode[];
+  typeCompte: ("actif" | "desactive")[];
+  chantiersAssociésAuxPérimètres: string[];
 };
 
 export type SortingParams = {

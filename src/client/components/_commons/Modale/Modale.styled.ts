@@ -1,10 +1,10 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const ModaleStyled = styled.div`
   .bouton-fermer-modale {
     align-items: center;
   }
-  
+
   .arrière-plan {
     position: fixed;
     top: 0;
@@ -14,7 +14,7 @@ const ModaleStyled = styled.div`
     height: 100vh;
     cursor: pointer;
   }
-  
+
   .modale-conteneur {
     display: flex;
     flex-direction: column;

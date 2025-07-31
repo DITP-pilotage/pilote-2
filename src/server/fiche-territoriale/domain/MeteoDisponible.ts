@@ -1,1 +1,1 @@
-export type MeteoDisponible = 'ORAGE' | 'NUAGE' | 'COUVERT' | 'SOLEIL';
+export type MeteoDisponible = "ORAGE" | "NUAGE" | "COUVERT" | "SOLEIL";

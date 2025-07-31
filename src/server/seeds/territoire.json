@@ -1,1084 +1,1083 @@
 [
-    {
-      "code": "NAT-FR",
-      "nom": "France",
-      "nom_affiche": "France",
-      "maille": "nat",
-      "code_insee": "FR",
-      "code_parent": null,
-      "zone_id": "FRANCE"
-    },
-    {
-      "code": "REG-84",
-      "nom": "Auvergne-Rhône-Alpes",
-      "nom_affiche": "Auvergne-Rhône-Alpes",
-      "maille": "reg",
-      "code_insee": 84,
-      "code_parent": null,
-      "zone_id": "R84"
-    },
-    {
-      "code": "REG-27",
-      "nom": "Bourgogne-Franche-Comté",
-      "nom_affiche": "Bourgogne-Franche-Comté",
-      "maille": "reg",
-      "code_insee": 27,
-      "code_parent": null,
-      "zone_id": "R27"
-    },
-    {
-      "code": "REG-53",
-      "nom": "Bretagne",
-      "nom_affiche": "Bretagne",
-      "maille": "reg",
-      "code_insee": 53,
-      "code_parent": null,
-      "zone_id": "R53"
-    },
-    {
-      "code": "REG-24",
-      "nom": "Centre-Val de Loire",
-      "nom_affiche": "Centre-Val de Loire",
-      "maille": "reg",
-      "code_insee": 24,
-      "code_parent": null,
-      "zone_id": "R24"
-    },
-    {
-      "code": "REG-94",
-      "nom": "Corse",
-      "nom_affiche": "Corse",
-      "maille": "reg",
-      "code_insee": 94,
-      "code_parent": null,
-      "zone_id": "R94"
-    },
-    {
-      "code": "REG-44",
-      "nom": "Grand-Est",
-      "nom_affiche": "Grand-Est",
-      "maille": "reg",
-      "code_insee": 44,
-      "code_parent": null,
-      "zone_id": "R44"
-    },
-    {
-      "code": "REG-32",
-      "nom": "Hauts-de-France",
-      "nom_affiche": "Hauts-de-France",
-      "maille": "reg",
-      "code_insee": 32,
-      "code_parent": null,
-      "zone_id": "R32"
-    },
-    {
-      "code": "REG-11",
-      "nom": "Île-de-France",
-      "nom_affiche": "Île-de-France",
-      "maille": "reg",
-      "code_insee": 11,
-      "code_parent": null,
-      "zone_id": "R11"
-    },
-    {
-      "code": "REG-28",
-      "nom": "Normandie",
-      "nom_affiche": "Normandie",
-      "maille": "reg",
-      "code_insee": 28,
-      "code_parent": null,
-      "zone_id": "R28"
-    },
-    {
-      "code": "REG-75",
-      "nom": "Nouvelle Aquitaine",
-      "nom_affiche": "Nouvelle Aquitaine",
-      "maille": "reg",
-      "code_insee": 75,
-      "code_parent": null,
-      "zone_id": "R75"
-    },
-    {
-      "code": "REG-76",
-      "nom": "Occitanie",
-      "nom_affiche": "Occitanie",
-      "maille": "reg",
-      "code_insee": 76,
-      "code_parent": null,
-      "zone_id": "R76"
-    },
-    {
-      "code": "REG-52",
-      "nom": "Pays de la Loire",
-      "nom_affiche": "Pays de la Loire",
-      "maille": "reg",
-      "code_insee": 52,
-      "code_parent": null,
-      "zone_id": "R52"
-    },
-    {
-      "code": "REG-93",
-      "nom": "Provence - Alpes - Côte d'Azur",
-      "nom_affiche": "Provence - Alpes - Côte d'Azur",
-      "maille": "reg",
-      "code_insee": 93,
-      "code_parent": null,
-      "zone_id": "R93"
-    },
-    {
-      "code": "REG-01",
-      "nom": "Guadeloupe",
-      "nom_affiche": "Guadeloupe",
-      "maille": "reg",
-      "code_insee": "01",
-      "code_parent": null,
-      "zone_id": "R01"
-    },
-    {
-      "code": "REG-02",
-      "nom": "Martinique",
-      "nom_affiche": "Martinique",
-      "maille": "reg",
-      "code_insee": "02",
-      "code_parent": null,
-      "zone_id": "R02"
-    },
-    {
-      "code": "REG-03",
-      "nom": "Guyane",
-      "nom_affiche": "Guyane",
-      "maille": "reg",
-      "code_insee": "03",
-      "code_parent": null,
-      "zone_id": "R03"
-    },
-    {
-      "code": "REG-06",
-      "nom": "Mayotte",
-      "nom_affiche": "Mayotte",
-      "maille": "reg",
-      "code_insee": "06",
-      "code_parent": null,
-      "zone_id": "R06"
-    },
-    {
-      "code": "REG-04",
-      "nom": "La Réunion",
-      "nom_affiche": "La Réunion",
-      "maille": "reg",
-      "code_insee": "04",
-      "code_parent": null,
-      "zone_id": "R04"
-    },
-    {
-      "code": "DEPT-08",
-      "nom": "Ardennes",
-      "nom_affiche": "08 - Ardennes",
-      "maille": "dept",
-      "code_insee": "08",
-      "code_parent": "REG-44",
-      "zone_id": "D08"
-    },
-    {
-      "code": "DEPT-09",
-      "nom": "Ariège",
-      "nom_affiche": "09 - Ariège",
-      "maille": "dept",
-      "code_insee": "09",
-      "code_parent": "REG-76",
-      "zone_id": "D09"
-    },
-    {
-      "code": "DEPT-67",
-      "nom": "Bas-Rhin",
-      "nom_affiche": "67 - Bas-Rhin",
-      "maille": "dept",
-      "code_insee": 67,
-      "code_parent": "REG-44",
-      "zone_id": "D67"
-    },
-    {
-      "code": "DEPT-10",
-      "nom": "Aube",
-      "nom_affiche": "10 - Aube",
-      "maille": "dept",
-      "code_insee": 10,
-      "code_parent": "REG-44",
-      "zone_id": "D10"
-    },
-    {
-      "code": "DEPT-972",
-      "nom": "Martinique",
-      "nom_affiche": "972 - Martinique",
-      "maille": "dept",
-      "code_insee": 972,
-      "code_parent": "REG-02",
-      "zone_id": "D972"
-    },
-    {
-      "code": "DEPT-01",
-      "nom": "Ain",
-      "nom_affiche": "01 - Ain",
-      "maille": "dept",
-      "code_insee": "01",
-      "code_parent": "REG-84",
-      "zone_id": "D01"
-    },
-    {
-      "code": "DEPT-02",
-      "nom": "Aisne",
-      "nom_affiche": "02 - Aisne",
-      "maille": "dept",
-      "code_insee": "02",
-      "code_parent": "REG-32",
-      "zone_id": "D02"
-    },
-    {
-      "code": "DEPT-03",
-      "nom": "Allier",
-      "nom_affiche": "03 - Allier",
-      "maille": "dept",
-      "code_insee": "03",
-      "code_parent": "REG-84",
-      "zone_id": "D03"
-    },
-    {
-      "code": "DEPT-04",
-      "nom": "Alpes-de-Haute-Provence",
-      "nom_affiche": "04 - Alpes-de-Haute-Provence",
-      "maille": "dept",
-      "code_insee": "04",
-      "code_parent": "REG-93",
-      "zone_id": "D04"
-    },
-    {
-      "code": "DEPT-05",
-      "nom": "Hautes-Alpes",
-      "nom_affiche": "05 - Hautes-Alpes",
-      "maille": "dept",
-      "code_insee": "05",
-      "code_parent": "REG-93",
-      "zone_id": "D05"
-    },
-    {
-      "code": "DEPT-06",
-      "nom": "Alpes-Maritimes",
-      "nom_affiche": "06 - Alpes-Maritimes",
-      "maille": "dept",
-      "code_insee": "06",
-      "code_parent": "REG-93",
-      "zone_id": "D06"
-    },
-    {
-      "code": "DEPT-07",
-      "nom": "Ardèche",
-      "nom_affiche": "07 - Ardèche",
-      "maille": "dept",
-      "code_insee": "07",
-      "code_parent": "REG-84",
-      "zone_id": "D07"
-    },
-    {
-      "code": "DEPT-11",
-      "nom": "Aude",
-      "nom_affiche": "11 - Aude",
-      "maille": "dept",
-      "code_insee": 11,
-      "code_parent": "REG-76",
-      "zone_id": "D11"
-    },
-    {
-      "code": "DEPT-12",
-      "nom": "Aveyron",
-      "nom_affiche": "12 - Aveyron",
-      "maille": "dept",
-      "code_insee": 12,
-      "code_parent": "REG-76",
-      "zone_id": "D12"
-    },
-    {
-      "code": "DEPT-13",
-      "nom": "Bouches-du-Rhône",
-      "nom_affiche": "13 - Bouches-du-Rhône",
-      "maille": "dept",
-      "code_insee": 13,
-      "code_parent": "REG-93",
-      "zone_id": "D13"
-    },
-    {
-      "code": "DEPT-14",
-      "nom": "Calvados",
-      "nom_affiche": "14 - Calvados",
-      "maille": "dept",
-      "code_insee": 14,
-      "code_parent": "REG-28",
-      "zone_id": "D14"
-    },
-    {
-      "code": "DEPT-15",
-      "nom": "Cantal",
-      "nom_affiche": "15 - Cantal",
-      "maille": "dept",
-      "code_insee": 15,
-      "code_parent": "REG-84",
-      "zone_id": "D15"
-    },
-    {
-      "code": "DEPT-16",
-      "nom": "Charente",
-      "nom_affiche": "16 - Charente",
-      "maille": "dept",
-      "code_insee": 16,
-      "code_parent": "REG-75",
-      "zone_id": "D16"
-    },
-    {
-      "code": "DEPT-17",
-      "nom": "Charente-Maritime",
-      "nom_affiche": "17 - Charente-Maritime",
-      "maille": "dept",
-      "code_insee": 17,
-      "code_parent": "REG-75",
-      "zone_id": "D17"
-    },
-    {
-      "code": "DEPT-18",
-      "nom": "Cher",
-      "nom_affiche": "18 - Cher",
-      "maille": "dept",
-      "code_insee": 18,
-      "code_parent": "REG-24",
-      "zone_id": "D18"
-    },
-    {
-      "code": "DEPT-19",
-      "nom": "Corrèze",
-      "nom_affiche": "19 - Corrèze",
-      "maille": "dept",
-      "code_insee": 19,
-      "code_parent": "REG-75",
-      "zone_id": "D19"
-    },
-    {
-      "code": "DEPT-2A",
-      "nom": "Corse-du-Sud",
-      "nom_affiche": "2A - Corse-du-Sud",
-      "maille": "dept",
-      "code_insee": "2A",
-      "code_parent": "REG-94",
-      "zone_id": "D2A"
-    },
-    {
-      "code": "DEPT-2B",
-      "nom": "Haute-Corse",
-      "nom_affiche": "2B - Haute-Corse",
-      "maille": "dept",
-      "code_insee": "2B",
-      "code_parent": "REG-94",
-      "zone_id": "D2B"
-    },
-    {
-      "code": "DEPT-21",
-      "nom": "Côte-d'Or",
-      "nom_affiche": "21 - Côte-d'Or",
-      "maille": "dept",
-      "code_insee": 21,
-      "code_parent": "REG-27",
-      "zone_id": "D21"
-    },
-    {
-      "code": "DEPT-22",
-      "nom": "Côtes-d'Armor",
-      "nom_affiche": "22 - Côtes-d'Armor",
-      "maille": "dept",
-      "code_insee": 22,
-      "code_parent": "REG-53",
-      "zone_id": "D22"
-    },
-    {
-      "code": "DEPT-23",
-      "nom": "Creuse",
-      "nom_affiche": "23 - Creuse",
-      "maille": "dept",
-      "code_insee": 23,
-      "code_parent": "REG-75",
-      "zone_id": "D23"
-    },
-    {
-      "code": "DEPT-24",
-      "nom": "Dordogne",
-      "nom_affiche": "24 - Dordogne",
-      "maille": "dept",
-      "code_insee": 24,
-      "code_parent": "REG-75",
-      "zone_id": "D24"
-    },
-    {
-      "code": "DEPT-25",
-      "nom": "Doubs",
-      "nom_affiche": "25 - Doubs",
-      "maille": "dept",
-      "code_insee": 25,
-      "code_parent": "REG-27",
-      "zone_id": "D25"
-    },
-    {
-      "code": "DEPT-26",
-      "nom": "Drôme",
-      "nom_affiche": "26 - Drôme",
-      "maille": "dept",
-      "code_insee": 26,
-      "code_parent": "REG-84",
-      "zone_id": "D26"
-    },
-    {
-      "code": "DEPT-27",
-      "nom": "Eure",
-      "nom_affiche": "27 - Eure",
-      "maille": "dept",
-      "code_insee": 27,
-      "code_parent": "REG-28",
-      "zone_id": "D27"
-    },
-    {
-      "code": "DEPT-28",
-      "nom": "Eure-et-Loir",
-      "nom_affiche": "28 - Eure-et-Loir",
-      "maille": "dept",
-      "code_insee": 28,
-      "code_parent": "REG-24",
-      "zone_id": "D28"
-    },
-    {
-      "code": "DEPT-29",
-      "nom": "Finistère",
-      "nom_affiche": "29 - Finistère",
-      "maille": "dept",
-      "code_insee": 29,
-      "code_parent": "REG-53",
-      "zone_id": "D29"
-    },
-    {
-      "code": "DEPT-30",
-      "nom": "Gard",
-      "nom_affiche": "30 - Gard",
-      "maille": "dept",
-      "code_insee": 30,
-      "code_parent": "REG-76",
-      "zone_id": "D30"
-    },
-    {
-      "code": "DEPT-31",
-      "nom": "Haute-Garonne",
-      "nom_affiche": "31 - Haute-Garonne",
-      "maille": "dept",
-      "code_insee": 31,
-      "code_parent": "REG-76",
-      "zone_id": "D31"
-    },
-    {
-      "code": "DEPT-32",
-      "nom": "Gers",
-      "nom_affiche": "32 - Gers",
-      "maille": "dept",
-      "code_insee": 32,
-      "code_parent": "REG-76",
-      "zone_id": "D32"
-    },
-    {
-      "code": "DEPT-33",
-      "nom": "Gironde",
-      "nom_affiche": "33 - Gironde",
-      "maille": "dept",
-      "code_insee": 33,
-      "code_parent": "REG-75",
-      "zone_id": "D33"
-    },
-    {
-      "code": "DEPT-34",
-      "nom": "Hérault",
-      "nom_affiche": "34 - Hérault",
-      "maille": "dept",
-      "code_insee": 34,
-      "code_parent": "REG-76",
-      "zone_id": "D34"
-    },
-    {
-      "code": "DEPT-35",
-      "nom": "Ille-et-Vilaine",
-      "nom_affiche": "35 - Ille-et-Vilaine",
-      "maille": "dept",
-      "code_insee": 35,
-      "code_parent": "REG-53",
-      "zone_id": "D35"
-    },
-    {
-      "code": "DEPT-36",
-      "nom": "Indre",
-      "nom_affiche": "36 - Indre",
-      "maille": "dept",
-      "code_insee": 36,
-      "code_parent": "REG-24",
-      "zone_id": "D36"
-    },
-    {
-      "code": "DEPT-37",
-      "nom": "Indre-et-Loire",
-      "nom_affiche": "37 - Indre-et-Loire",
-      "maille": "dept",
-      "code_insee": 37,
-      "code_parent": "REG-24",
-      "zone_id": "D37"
-    },
-    {
-      "code": "DEPT-38",
-      "nom": "Isère",
-      "nom_affiche": "38 - Isère",
-      "maille": "dept",
-      "code_insee": 38,
-      "code_parent": "REG-84",
-      "zone_id": "D38"
-    },
-    {
-      "code": "DEPT-39",
-      "nom": "Jura",
-      "nom_affiche": "39 - Jura",
-      "maille": "dept",
-      "code_insee": 39,
-      "code_parent": "REG-27",
-      "zone_id": "D39"
-    },
-    {
-      "code": "DEPT-40",
-      "nom": "Landes",
-      "nom_affiche": "40 - Landes",
-      "maille": "dept",
-      "code_insee": 40,
-      "code_parent": "REG-75",
-      "zone_id": "D40"
-    },
-    {
-      "code": "DEPT-41",
-      "nom": "Loir-et-Cher",
-      "nom_affiche": "41 - Loir-et-Cher",
-      "maille": "dept",
-      "code_insee": 41,
-      "code_parent": "REG-24",
-      "zone_id": "D41"
-    },
-    {
-      "code": "DEPT-973",
-      "nom": "Guyane",
-      "nom_affiche": "973 - Guyane",
-      "maille": "dept",
-      "code_insee": 973,
-      "code_parent": "REG-03",
-      "zone_id": "D973"
-    },
-    {
-      "code": "DEPT-42",
-      "nom": "Loire",
-      "nom_affiche": "42 - Loire",
-      "maille": "dept",
-      "code_insee": 42,
-      "code_parent": "REG-84",
-      "zone_id": "D42"
-    },
-    {
-      "code": "DEPT-43",
-      "nom": "Haute-Loire",
-      "nom_affiche": "43 - Haute-Loire",
-      "maille": "dept",
-      "code_insee": 43,
-      "code_parent": "REG-84",
-      "zone_id": "D43"
-    },
-    {
-      "code": "DEPT-44",
-      "nom": "Loire-Atlantique",
-      "nom_affiche": "44 - Loire-Atlantique",
-      "maille": "dept",
-      "code_insee": 44,
-      "code_parent": "REG-52",
-      "zone_id": "D44"
-    },
-    {
-      "code": "DEPT-45",
-      "nom": "Loiret",
-      "nom_affiche": "45 - Loiret",
-      "maille": "dept",
-      "code_insee": 45,
-      "code_parent": "REG-24",
-      "zone_id": "D45"
-    },
-    {
-      "code": "DEPT-46",
-      "nom": "Lot",
-      "nom_affiche": "46 - Lot",
-      "maille": "dept",
-      "code_insee": 46,
-      "code_parent": "REG-76",
-      "zone_id": "D46"
-    },
-    {
-      "code": "DEPT-47",
-      "nom": "Lot-et-Garonne",
-      "nom_affiche": "47 - Lot-et-Garonne",
-      "maille": "dept",
-      "code_insee": 47,
-      "code_parent": "REG-75",
-      "zone_id": "D47"
-    },
-    {
-      "code": "DEPT-48",
-      "nom": "Lozère",
-      "nom_affiche": "48 - Lozère",
-      "maille": "dept",
-      "code_insee": 48,
-      "code_parent": "REG-76",
-      "zone_id": "D48"
-    },
-    {
-      "code": "DEPT-49",
-      "nom": "Maine-et-Loire",
-      "nom_affiche": "49 - Maine-et-Loire",
-      "maille": "dept",
-      "code_insee": 49,
-      "code_parent": "REG-52",
-      "zone_id": "D49"
-    },
-    {
-      "code": "DEPT-50",
-      "nom": "Manche",
-      "nom_affiche": "50 - Manche",
-      "maille": "dept",
-      "code_insee": 50,
-      "code_parent": "REG-28",
-      "zone_id": "D50"
-    },
-    {
-      "code": "DEPT-51",
-      "nom": "Marne",
-      "nom_affiche": "51 - Marne",
-      "maille": "dept",
-      "code_insee": 51,
-      "code_parent": "REG-44",
-      "zone_id": "D51"
-    },
-    {
-      "code": "DEPT-52",
-      "nom": "Haute-Marne",
-      "nom_affiche": "52 - Haute-Marne",
-      "maille": "dept",
-      "code_insee": 52,
-      "code_parent": "REG-44",
-      "zone_id": "D52"
-    },
-    {
-      "code": "DEPT-53",
-      "nom": "Mayenne",
-      "nom_affiche": "53 - Mayenne",
-      "maille": "dept",
-      "code_insee": 53,
-      "code_parent": "REG-52",
-      "zone_id": "D53"
-    },
-    {
-      "code": "DEPT-54",
-      "nom": "Meurthe-et-Moselle",
-      "nom_affiche": "54 - Meurthe-et-Moselle",
-      "maille": "dept",
-      "code_insee": 54,
-      "code_parent": "REG-44",
-      "zone_id": "D54"
-    },
-    {
-      "code": "DEPT-55",
-      "nom": "Meuse",
-      "nom_affiche": "55 - Meuse",
-      "maille": "dept",
-      "code_insee": 55,
-      "code_parent": "REG-44",
-      "zone_id": "D55"
-    },
-    {
-      "code": "DEPT-56",
-      "nom": "Morbihan",
-      "nom_affiche": "56 - Morbihan",
-      "maille": "dept",
-      "code_insee": 56,
-      "code_parent": "REG-53",
-      "zone_id": "D56"
-    },
-    {
-      "code": "DEPT-57",
-      "nom": "Moselle",
-      "nom_affiche": "57 - Moselle",
-      "maille": "dept",
-      "code_insee": 57,
-      "code_parent": "REG-44",
-      "zone_id": "D57"
-    },
-    {
-      "code": "DEPT-974",
-      "nom": "La Réunion",
-      "nom_affiche": "974 - La Réunion",
-      "maille": "dept",
-      "code_insee": 974,
-      "code_parent": "REG-04",
-      "zone_id": "D974"
-    },
-    {
-      "code": "DEPT-58",
-      "nom": "Nièvre",
-      "nom_affiche": "58 - Nièvre",
-      "maille": "dept",
-      "code_insee": 58,
-      "code_parent": "REG-27",
-      "zone_id": "D58"
-    },
-    {
-      "code": "DEPT-59",
-      "nom": "Nord",
-      "nom_affiche": "59 - Nord",
-      "maille": "dept",
-      "code_insee": 59,
-      "code_parent": "REG-32",
-      "zone_id": "D59"
-    },
-    {
-      "code": "DEPT-60",
-      "nom": "Oise",
-      "nom_affiche": "60 - Oise",
-      "maille": "dept",
-      "code_insee": 60,
-      "code_parent": "REG-32",
-      "zone_id": "D60"
-    },
-    {
-      "code": "DEPT-61",
-      "nom": "Orne",
-      "nom_affiche": "61 - Orne",
-      "maille": "dept",
-      "code_insee": 61,
-      "code_parent": "REG-28",
-      "zone_id": "D61"
-    },
-    {
-      "code": "DEPT-62",
-      "nom": "Pas-de-Calais",
-      "nom_affiche": "62 - Pas-de-Calais",
-      "maille": "dept",
-      "code_insee": 62,
-      "code_parent": "REG-32",
-      "zone_id": "D62"
-    },
-    {
-      "code": "DEPT-63",
-      "nom": "Puy-de-Dôme",
-      "nom_affiche": "63 - Puy-de-Dôme",
-      "maille": "dept",
-      "code_insee": 63,
-      "code_parent": "REG-84",
-      "zone_id": "D63"
-    },
-    {
-      "code": "DEPT-64",
-      "nom": "Pyrénées-Atlantiques",
-      "nom_affiche": "64 - Pyrénées-Atlantiques",
-      "maille": "dept",
-      "code_insee": 64,
-      "code_parent": "REG-75",
-      "zone_id": "D64"
-    },
-    {
-      "code": "DEPT-65",
-      "nom": "Hautes-Pyrénées",
-      "nom_affiche": "65 - Hautes-Pyrénées",
-      "maille": "dept",
-      "code_insee": 65,
-      "code_parent": "REG-76",
-      "zone_id": "D65"
-    },
-    {
-      "code": "DEPT-66",
-      "nom": "Pyrénées-Orientales",
-      "nom_affiche": "66 - Pyrénées-Orientales",
-      "maille": "dept",
-      "code_insee": 66,
-      "code_parent": "REG-76",
-      "zone_id": "D66"
-    },
-    {
-      "code": "DEPT-68",
-      "nom": "Haut-Rhin",
-      "nom_affiche": "68 - Haut-Rhin",
-      "maille": "dept",
-      "code_insee": 68,
-      "code_parent": "REG-44",
-      "zone_id": "D68"
-    },
-    {
-      "code": "DEPT-69",
-      "nom": "Rhône",
-      "nom_affiche": "69 - Rhône",
-      "maille": "dept",
-      "code_insee": 69,
-      "code_parent": "REG-84",
-      "zone_id": "D69"
-    },
-    {
-      "code": "DEPT-70",
-      "nom": "Haute-Saône",
-      "nom_affiche": "70 - Haute-Saône",
-      "maille": "dept",
-      "code_insee": 70,
-      "code_parent": "REG-27",
-      "zone_id": "D70"
-    },
-    {
-      "code": "DEPT-71",
-      "nom": "Saône-et-Loire",
-      "nom_affiche": "71 - Saône-et-Loire",
-      "maille": "dept",
-      "code_insee": 71,
-      "code_parent": "REG-27",
-      "zone_id": "D71"
-    },
-    {
-      "code": "DEPT-72",
-      "nom": "Sarthe",
-      "nom_affiche": "72 - Sarthe",
-      "maille": "dept",
-      "code_insee": 72,
-      "code_parent": "REG-52",
-      "zone_id": "D72"
-    },
-    {
-      "code": "DEPT-73",
-      "nom": "Savoie",
-      "nom_affiche": "73 - Savoie",
-      "maille": "dept",
-      "code_insee": 73,
-      "code_parent": "REG-84",
-      "zone_id": "D73"
-    },
-    {
-      "code": "DEPT-74",
-      "nom": "Haute-Savoie",
-      "nom_affiche": "74 - Haute-Savoie",
-      "maille": "dept",
-      "code_insee": 74,
-      "code_parent": "REG-84",
-      "zone_id": "D74"
-    },
-    {
-      "code": "DEPT-75",
-      "nom": "Paris",
-      "nom_affiche": "75 - Paris",
-      "maille": "dept",
-      "code_insee": 75,
-      "code_parent": "REG-11",
-      "zone_id": "D75"
-    },
-    {
-      "code": "DEPT-76",
-      "nom": "Seine-Maritime",
-      "nom_affiche": "76 - Seine-Maritime",
-      "maille": "dept",
-      "code_insee": 76,
-      "code_parent": "REG-28",
-      "zone_id": "D76"
-    },
+  {
+    "code": "NAT-FR",
+    "nom": "France",
+    "nom_affiche": "France",
+    "maille": "nat",
+    "code_insee": "FR",
+    "code_parent": null,
+    "zone_id": "FRANCE"
+  },
+  {
+    "code": "REG-84",
+    "nom": "Auvergne-Rhône-Alpes",
+    "nom_affiche": "Auvergne-Rhône-Alpes",
+    "maille": "reg",
+    "code_insee": 84,
+    "code_parent": null,
+    "zone_id": "R84"
+  },
+  {
+    "code": "REG-27",
+    "nom": "Bourgogne-Franche-Comté",
+    "nom_affiche": "Bourgogne-Franche-Comté",
+    "maille": "reg",
+    "code_insee": 27,
+    "code_parent": null,
+    "zone_id": "R27"
+  },
+  {
+    "code": "REG-53",
+    "nom": "Bretagne",
+    "nom_affiche": "Bretagne",
+    "maille": "reg",
+    "code_insee": 53,
+    "code_parent": null,
+    "zone_id": "R53"
+  },
+  {
+    "code": "REG-24",
+    "nom": "Centre-Val de Loire",
+    "nom_affiche": "Centre-Val de Loire",
+    "maille": "reg",
+    "code_insee": 24,
+    "code_parent": null,
+    "zone_id": "R24"
+  },
+  {
+    "code": "REG-94",
+    "nom": "Corse",
+    "nom_affiche": "Corse",
+    "maille": "reg",
+    "code_insee": 94,
+    "code_parent": null,
+    "zone_id": "R94"
+  },
+  {
+    "code": "REG-44",
+    "nom": "Grand-Est",
+    "nom_affiche": "Grand-Est",
+    "maille": "reg",
+    "code_insee": 44,
+    "code_parent": null,
+    "zone_id": "R44"
+  },
+  {
+    "code": "REG-32",
+    "nom": "Hauts-de-France",
+    "nom_affiche": "Hauts-de-France",
+    "maille": "reg",
+    "code_insee": 32,
+    "code_parent": null,
+    "zone_id": "R32"
+  },
+  {
+    "code": "REG-11",
+    "nom": "Île-de-France",
+    "nom_affiche": "Île-de-France",
+    "maille": "reg",
+    "code_insee": 11,
+    "code_parent": null,
+    "zone_id": "R11"
+  },
+  {
+    "code": "REG-28",
+    "nom": "Normandie",
+    "nom_affiche": "Normandie",
+    "maille": "reg",
+    "code_insee": 28,
+    "code_parent": null,
+    "zone_id": "R28"
+  },
+  {
+    "code": "REG-75",
+    "nom": "Nouvelle Aquitaine",
+    "nom_affiche": "Nouvelle Aquitaine",
+    "maille": "reg",
+    "code_insee": 75,
+    "code_parent": null,
+    "zone_id": "R75"
+  },
+  {
+    "code": "REG-76",
+    "nom": "Occitanie",
+    "nom_affiche": "Occitanie",
+    "maille": "reg",
+    "code_insee": 76,
+    "code_parent": null,
+    "zone_id": "R76"
+  },
+  {
+    "code": "REG-52",
+    "nom": "Pays de la Loire",
+    "nom_affiche": "Pays de la Loire",
+    "maille": "reg",
+    "code_insee": 52,
+    "code_parent": null,
+    "zone_id": "R52"
+  },
+  {
+    "code": "REG-93",
+    "nom": "Provence - Alpes - Côte d'Azur",
+    "nom_affiche": "Provence - Alpes - Côte d'Azur",
+    "maille": "reg",
+    "code_insee": 93,
+    "code_parent": null,
+    "zone_id": "R93"
+  },
+  {
+    "code": "REG-01",
+    "nom": "Guadeloupe",
+    "nom_affiche": "Guadeloupe",
+    "maille": "reg",
+    "code_insee": "01",
+    "code_parent": null,
+    "zone_id": "R01"
+  },
+  {
+    "code": "REG-02",
+    "nom": "Martinique",
+    "nom_affiche": "Martinique",
+    "maille": "reg",
+    "code_insee": "02",
+    "code_parent": null,
+    "zone_id": "R02"
+  },
+  {
+    "code": "REG-03",
+    "nom": "Guyane",
+    "nom_affiche": "Guyane",
+    "maille": "reg",
+    "code_insee": "03",
+    "code_parent": null,
+    "zone_id": "R03"
+  },
+  {
+    "code": "REG-06",
+    "nom": "Mayotte",
+    "nom_affiche": "Mayotte",
+    "maille": "reg",
+    "code_insee": "06",
+    "code_parent": null,
+    "zone_id": "R06"
+  },
+  {
+    "code": "REG-04",
+    "nom": "La Réunion",
+    "nom_affiche": "La Réunion",
+    "maille": "reg",
+    "code_insee": "04",
+    "code_parent": null,
+    "zone_id": "R04"
+  },
+  {
+    "code": "DEPT-08",
+    "nom": "Ardennes",
+    "nom_affiche": "08 - Ardennes",
+    "maille": "dept",
+    "code_insee": "08",
+    "code_parent": "REG-44",
+    "zone_id": "D08"
+  },
+  {
+    "code": "DEPT-09",
+    "nom": "Ariège",
+    "nom_affiche": "09 - Ariège",
+    "maille": "dept",
+    "code_insee": "09",
+    "code_parent": "REG-76",
+    "zone_id": "D09"
+  },
+  {
+    "code": "DEPT-67",
+    "nom": "Bas-Rhin",
+    "nom_affiche": "67 - Bas-Rhin",
+    "maille": "dept",
+    "code_insee": 67,
+    "code_parent": "REG-44",
+    "zone_id": "D67"
+  },
+  {
+    "code": "DEPT-10",
+    "nom": "Aube",
+    "nom_affiche": "10 - Aube",
+    "maille": "dept",
+    "code_insee": 10,
+    "code_parent": "REG-44",
+    "zone_id": "D10"
+  },
+  {
+    "code": "DEPT-972",
+    "nom": "Martinique",
+    "nom_affiche": "972 - Martinique",
+    "maille": "dept",
+    "code_insee": 972,
+    "code_parent": "REG-02",
+    "zone_id": "D972"
+  },
+  {
+    "code": "DEPT-01",
+    "nom": "Ain",
+    "nom_affiche": "01 - Ain",
+    "maille": "dept",
+    "code_insee": "01",
+    "code_parent": "REG-84",
+    "zone_id": "D01"
+  },
+  {
+    "code": "DEPT-02",
+    "nom": "Aisne",
+    "nom_affiche": "02 - Aisne",
+    "maille": "dept",
+    "code_insee": "02",
+    "code_parent": "REG-32",
+    "zone_id": "D02"
+  },
+  {
+    "code": "DEPT-03",
+    "nom": "Allier",
+    "nom_affiche": "03 - Allier",
+    "maille": "dept",
+    "code_insee": "03",
+    "code_parent": "REG-84",
+    "zone_id": "D03"
+  },
+  {
+    "code": "DEPT-04",
+    "nom": "Alpes-de-Haute-Provence",
+    "nom_affiche": "04 - Alpes-de-Haute-Provence",
+    "maille": "dept",
+    "code_insee": "04",
+    "code_parent": "REG-93",
+    "zone_id": "D04"
+  },
+  {
+    "code": "DEPT-05",
+    "nom": "Hautes-Alpes",
+    "nom_affiche": "05 - Hautes-Alpes",
+    "maille": "dept",
+    "code_insee": "05",
+    "code_parent": "REG-93",
+    "zone_id": "D05"
+  },
+  {
+    "code": "DEPT-06",
+    "nom": "Alpes-Maritimes",
+    "nom_affiche": "06 - Alpes-Maritimes",
+    "maille": "dept",
+    "code_insee": "06",
+    "code_parent": "REG-93",
+    "zone_id": "D06"
+  },
+  {
+    "code": "DEPT-07",
+    "nom": "Ardèche",
+    "nom_affiche": "07 - Ardèche",
+    "maille": "dept",
+    "code_insee": "07",
+    "code_parent": "REG-84",
+    "zone_id": "D07"
+  },
+  {
+    "code": "DEPT-11",
+    "nom": "Aude",
+    "nom_affiche": "11 - Aude",
+    "maille": "dept",
+    "code_insee": 11,
+    "code_parent": "REG-76",
+    "zone_id": "D11"
+  },
+  {
+    "code": "DEPT-12",
+    "nom": "Aveyron",
+    "nom_affiche": "12 - Aveyron",
+    "maille": "dept",
+    "code_insee": 12,
+    "code_parent": "REG-76",
+    "zone_id": "D12"
+  },
+  {
+    "code": "DEPT-13",
+    "nom": "Bouches-du-Rhône",
+    "nom_affiche": "13 - Bouches-du-Rhône",
+    "maille": "dept",
+    "code_insee": 13,
+    "code_parent": "REG-93",
+    "zone_id": "D13"
+  },
+  {
+    "code": "DEPT-14",
+    "nom": "Calvados",
+    "nom_affiche": "14 - Calvados",
+    "maille": "dept",
+    "code_insee": 14,
+    "code_parent": "REG-28",
+    "zone_id": "D14"
+  },
+  {
+    "code": "DEPT-15",
+    "nom": "Cantal",
+    "nom_affiche": "15 - Cantal",
+    "maille": "dept",
+    "code_insee": 15,
+    "code_parent": "REG-84",
+    "zone_id": "D15"
+  },
+  {
+    "code": "DEPT-16",
+    "nom": "Charente",
+    "nom_affiche": "16 - Charente",
+    "maille": "dept",
+    "code_insee": 16,
+    "code_parent": "REG-75",
+    "zone_id": "D16"
+  },
+  {
+    "code": "DEPT-17",
+    "nom": "Charente-Maritime",
+    "nom_affiche": "17 - Charente-Maritime",
+    "maille": "dept",
+    "code_insee": 17,
+    "code_parent": "REG-75",
+    "zone_id": "D17"
+  },
+  {
+    "code": "DEPT-18",
+    "nom": "Cher",
+    "nom_affiche": "18 - Cher",
+    "maille": "dept",
+    "code_insee": 18,
+    "code_parent": "REG-24",
+    "zone_id": "D18"
+  },
+  {
+    "code": "DEPT-19",
+    "nom": "Corrèze",
+    "nom_affiche": "19 - Corrèze",
+    "maille": "dept",
+    "code_insee": 19,
+    "code_parent": "REG-75",
+    "zone_id": "D19"
+  },
+  {
+    "code": "DEPT-2A",
+    "nom": "Corse-du-Sud",
+    "nom_affiche": "2A - Corse-du-Sud",
+    "maille": "dept",
+    "code_insee": "2A",
+    "code_parent": "REG-94",
+    "zone_id": "D2A"
+  },
+  {
+    "code": "DEPT-2B",
+    "nom": "Haute-Corse",
+    "nom_affiche": "2B - Haute-Corse",
+    "maille": "dept",
+    "code_insee": "2B",
+    "code_parent": "REG-94",
+    "zone_id": "D2B"
+  },
+  {
+    "code": "DEPT-21",
+    "nom": "Côte-d'Or",
+    "nom_affiche": "21 - Côte-d'Or",
+    "maille": "dept",
+    "code_insee": 21,
+    "code_parent": "REG-27",
+    "zone_id": "D21"
+  },
+  {
+    "code": "DEPT-22",
+    "nom": "Côtes-d'Armor",
+    "nom_affiche": "22 - Côtes-d'Armor",
+    "maille": "dept",
+    "code_insee": 22,
+    "code_parent": "REG-53",
+    "zone_id": "D22"
+  },
+  {
+    "code": "DEPT-23",
+    "nom": "Creuse",
+    "nom_affiche": "23 - Creuse",
+    "maille": "dept",
+    "code_insee": 23,
+    "code_parent": "REG-75",
+    "zone_id": "D23"
+  },
+  {
+    "code": "DEPT-24",
+    "nom": "Dordogne",
+    "nom_affiche": "24 - Dordogne",
+    "maille": "dept",
+    "code_insee": 24,
+    "code_parent": "REG-75",
+    "zone_id": "D24"
+  },
+  {
+    "code": "DEPT-25",
+    "nom": "Doubs",
+    "nom_affiche": "25 - Doubs",
+    "maille": "dept",
+    "code_insee": 25,
+    "code_parent": "REG-27",
+    "zone_id": "D25"
+  },
+  {
+    "code": "DEPT-26",
+    "nom": "Drôme",
+    "nom_affiche": "26 - Drôme",
+    "maille": "dept",
+    "code_insee": 26,
+    "code_parent": "REG-84",
+    "zone_id": "D26"
+  },
+  {
+    "code": "DEPT-27",
+    "nom": "Eure",
+    "nom_affiche": "27 - Eure",
+    "maille": "dept",
+    "code_insee": 27,
+    "code_parent": "REG-28",
+    "zone_id": "D27"
+  },
+  {
+    "code": "DEPT-28",
+    "nom": "Eure-et-Loir",
+    "nom_affiche": "28 - Eure-et-Loir",
+    "maille": "dept",
+    "code_insee": 28,
+    "code_parent": "REG-24",
+    "zone_id": "D28"
+  },
+  {
+    "code": "DEPT-29",
+    "nom": "Finistère",
+    "nom_affiche": "29 - Finistère",
+    "maille": "dept",
+    "code_insee": 29,
+    "code_parent": "REG-53",
+    "zone_id": "D29"
+  },
+  {
+    "code": "DEPT-30",
+    "nom": "Gard",
+    "nom_affiche": "30 - Gard",
+    "maille": "dept",
+    "code_insee": 30,
+    "code_parent": "REG-76",
+    "zone_id": "D30"
+  },
+  {
+    "code": "DEPT-31",
+    "nom": "Haute-Garonne",
+    "nom_affiche": "31 - Haute-Garonne",
+    "maille": "dept",
+    "code_insee": 31,
+    "code_parent": "REG-76",
+    "zone_id": "D31"
+  },
+  {
+    "code": "DEPT-32",
+    "nom": "Gers",
+    "nom_affiche": "32 - Gers",
+    "maille": "dept",
+    "code_insee": 32,
+    "code_parent": "REG-76",
+    "zone_id": "D32"
+  },
+  {
+    "code": "DEPT-33",
+    "nom": "Gironde",
+    "nom_affiche": "33 - Gironde",
+    "maille": "dept",
+    "code_insee": 33,
+    "code_parent": "REG-75",
+    "zone_id": "D33"
+  },
+  {
+    "code": "DEPT-34",
+    "nom": "Hérault",
+    "nom_affiche": "34 - Hérault",
+    "maille": "dept",
+    "code_insee": 34,
+    "code_parent": "REG-76",
+    "zone_id": "D34"
+  },
+  {
+    "code": "DEPT-35",
+    "nom": "Ille-et-Vilaine",
+    "nom_affiche": "35 - Ille-et-Vilaine",
+    "maille": "dept",
+    "code_insee": 35,
+    "code_parent": "REG-53",
+    "zone_id": "D35"
+  },
+  {
+    "code": "DEPT-36",
+    "nom": "Indre",
+    "nom_affiche": "36 - Indre",
+    "maille": "dept",
+    "code_insee": 36,
+    "code_parent": "REG-24",
+    "zone_id": "D36"
+  },
+  {
+    "code": "DEPT-37",
+    "nom": "Indre-et-Loire",
+    "nom_affiche": "37 - Indre-et-Loire",
+    "maille": "dept",
+    "code_insee": 37,
+    "code_parent": "REG-24",
+    "zone_id": "D37"
+  },
+  {
+    "code": "DEPT-38",
+    "nom": "Isère",
+    "nom_affiche": "38 - Isère",
+    "maille": "dept",
+    "code_insee": 38,
+    "code_parent": "REG-84",
+    "zone_id": "D38"
+  },
+  {
+    "code": "DEPT-39",
+    "nom": "Jura",
+    "nom_affiche": "39 - Jura",
+    "maille": "dept",
+    "code_insee": 39,
+    "code_parent": "REG-27",
+    "zone_id": "D39"
+  },
+  {
+    "code": "DEPT-40",
+    "nom": "Landes",
+    "nom_affiche": "40 - Landes",
+    "maille": "dept",
+    "code_insee": 40,
+    "code_parent": "REG-75",
+    "zone_id": "D40"
+  },
+  {
+    "code": "DEPT-41",
+    "nom": "Loir-et-Cher",
+    "nom_affiche": "41 - Loir-et-Cher",
+    "maille": "dept",
+    "code_insee": 41,
+    "code_parent": "REG-24",
+    "zone_id": "D41"
+  },
+  {
+    "code": "DEPT-973",
+    "nom": "Guyane",
+    "nom_affiche": "973 - Guyane",
+    "maille": "dept",
+    "code_insee": 973,
+    "code_parent": "REG-03",
+    "zone_id": "D973"
+  },
+  {
+    "code": "DEPT-42",
+    "nom": "Loire",
+    "nom_affiche": "42 - Loire",
+    "maille": "dept",
+    "code_insee": 42,
+    "code_parent": "REG-84",
+    "zone_id": "D42"
+  },
+  {
+    "code": "DEPT-43",
+    "nom": "Haute-Loire",
+    "nom_affiche": "43 - Haute-Loire",
+    "maille": "dept",
+    "code_insee": 43,
+    "code_parent": "REG-84",
+    "zone_id": "D43"
+  },
+  {
+    "code": "DEPT-44",
+    "nom": "Loire-Atlantique",
+    "nom_affiche": "44 - Loire-Atlantique",
+    "maille": "dept",
+    "code_insee": 44,
+    "code_parent": "REG-52",
+    "zone_id": "D44"
+  },
+  {
+    "code": "DEPT-45",
+    "nom": "Loiret",
+    "nom_affiche": "45 - Loiret",
+    "maille": "dept",
+    "code_insee": 45,
+    "code_parent": "REG-24",
+    "zone_id": "D45"
+  },
+  {
+    "code": "DEPT-46",
+    "nom": "Lot",
+    "nom_affiche": "46 - Lot",
+    "maille": "dept",
+    "code_insee": 46,
+    "code_parent": "REG-76",
+    "zone_id": "D46"
+  },
+  {
+    "code": "DEPT-47",
+    "nom": "Lot-et-Garonne",
+    "nom_affiche": "47 - Lot-et-Garonne",
+    "maille": "dept",
+    "code_insee": 47,
+    "code_parent": "REG-75",
+    "zone_id": "D47"
+  },
+  {
+    "code": "DEPT-48",
+    "nom": "Lozère",
+    "nom_affiche": "48 - Lozère",
+    "maille": "dept",
+    "code_insee": 48,
+    "code_parent": "REG-76",
+    "zone_id": "D48"
+  },
+  {
+    "code": "DEPT-49",
+    "nom": "Maine-et-Loire",
+    "nom_affiche": "49 - Maine-et-Loire",
+    "maille": "dept",
+    "code_insee": 49,
+    "code_parent": "REG-52",
+    "zone_id": "D49"
+  },
+  {
+    "code": "DEPT-50",
+    "nom": "Manche",
+    "nom_affiche": "50 - Manche",
+    "maille": "dept",
+    "code_insee": 50,
+    "code_parent": "REG-28",
+    "zone_id": "D50"
+  },
+  {
+    "code": "DEPT-51",
+    "nom": "Marne",
+    "nom_affiche": "51 - Marne",
+    "maille": "dept",
+    "code_insee": 51,
+    "code_parent": "REG-44",
+    "zone_id": "D51"
+  },
+  {
+    "code": "DEPT-52",
+    "nom": "Haute-Marne",
+    "nom_affiche": "52 - Haute-Marne",
+    "maille": "dept",
+    "code_insee": 52,
+    "code_parent": "REG-44",
+    "zone_id": "D52"
+  },
+  {
+    "code": "DEPT-53",
+    "nom": "Mayenne",
+    "nom_affiche": "53 - Mayenne",
+    "maille": "dept",
+    "code_insee": 53,
+    "code_parent": "REG-52",
+    "zone_id": "D53"
+  },
+  {
+    "code": "DEPT-54",
+    "nom": "Meurthe-et-Moselle",
+    "nom_affiche": "54 - Meurthe-et-Moselle",
+    "maille": "dept",
+    "code_insee": 54,
+    "code_parent": "REG-44",
+    "zone_id": "D54"
+  },
+  {
+    "code": "DEPT-55",
+    "nom": "Meuse",
+    "nom_affiche": "55 - Meuse",
+    "maille": "dept",
+    "code_insee": 55,
+    "code_parent": "REG-44",
+    "zone_id": "D55"
+  },
+  {
+    "code": "DEPT-56",
+    "nom": "Morbihan",
+    "nom_affiche": "56 - Morbihan",
+    "maille": "dept",
+    "code_insee": 56,
+    "code_parent": "REG-53",
+    "zone_id": "D56"
+  },
+  {
+    "code": "DEPT-57",
+    "nom": "Moselle",
+    "nom_affiche": "57 - Moselle",
+    "maille": "dept",
+    "code_insee": 57,
+    "code_parent": "REG-44",
+    "zone_id": "D57"
+  },
+  {
+    "code": "DEPT-974",
+    "nom": "La Réunion",
+    "nom_affiche": "974 - La Réunion",
+    "maille": "dept",
+    "code_insee": 974,
+    "code_parent": "REG-04",
+    "zone_id": "D974"
+  },
+  {
+    "code": "DEPT-58",
+    "nom": "Nièvre",
+    "nom_affiche": "58 - Nièvre",
+    "maille": "dept",
+    "code_insee": 58,
+    "code_parent": "REG-27",
+    "zone_id": "D58"
+  },
+  {
+    "code": "DEPT-59",
+    "nom": "Nord",
+    "nom_affiche": "59 - Nord",
+    "maille": "dept",
+    "code_insee": 59,
+    "code_parent": "REG-32",
+    "zone_id": "D59"
+  },
+  {
+    "code": "DEPT-60",
+    "nom": "Oise",
+    "nom_affiche": "60 - Oise",
+    "maille": "dept",
+    "code_insee": 60,
+    "code_parent": "REG-32",
+    "zone_id": "D60"
+  },
+  {
+    "code": "DEPT-61",
+    "nom": "Orne",
+    "nom_affiche": "61 - Orne",
+    "maille": "dept",
+    "code_insee": 61,
+    "code_parent": "REG-28",
+    "zone_id": "D61"
+  },
+  {
+    "code": "DEPT-62",
+    "nom": "Pas-de-Calais",
+    "nom_affiche": "62 - Pas-de-Calais",
+    "maille": "dept",
+    "code_insee": 62,
+    "code_parent": "REG-32",
+    "zone_id": "D62"
+  },
+  {
+    "code": "DEPT-63",
+    "nom": "Puy-de-Dôme",
+    "nom_affiche": "63 - Puy-de-Dôme",
+    "maille": "dept",
+    "code_insee": 63,
+    "code_parent": "REG-84",
+    "zone_id": "D63"
+  },
+  {
+    "code": "DEPT-64",
+    "nom": "Pyrénées-Atlantiques",
+    "nom_affiche": "64 - Pyrénées-Atlantiques",
+    "maille": "dept",
+    "code_insee": 64,
+    "code_parent": "REG-75",
+    "zone_id": "D64"
+  },
+  {
+    "code": "DEPT-65",
+    "nom": "Hautes-Pyrénées",
+    "nom_affiche": "65 - Hautes-Pyrénées",
+    "maille": "dept",
+    "code_insee": 65,
+    "code_parent": "REG-76",
+    "zone_id": "D65"
+  },
+  {
+    "code": "DEPT-66",
+    "nom": "Pyrénées-Orientales",
+    "nom_affiche": "66 - Pyrénées-Orientales",
+    "maille": "dept",
+    "code_insee": 66,
+    "code_parent": "REG-76",
+    "zone_id": "D66"
+  },
+  {
+    "code": "DEPT-68",
+    "nom": "Haut-Rhin",
+    "nom_affiche": "68 - Haut-Rhin",
+    "maille": "dept",
+    "code_insee": 68,
+    "code_parent": "REG-44",
+    "zone_id": "D68"
+  },
+  {
+    "code": "DEPT-69",
+    "nom": "Rhône",
+    "nom_affiche": "69 - Rhône",
+    "maille": "dept",
+    "code_insee": 69,
+    "code_parent": "REG-84",
+    "zone_id": "D69"
+  },
+  {
+    "code": "DEPT-70",
+    "nom": "Haute-Saône",
+    "nom_affiche": "70 - Haute-Saône",
+    "maille": "dept",
+    "code_insee": 70,
+    "code_parent": "REG-27",
+    "zone_id": "D70"
+  },
+  {
+    "code": "DEPT-71",
+    "nom": "Saône-et-Loire",
+    "nom_affiche": "71 - Saône-et-Loire",
+    "maille": "dept",
+    "code_insee": 71,
+    "code_parent": "REG-27",
+    "zone_id": "D71"
+  },
+  {
+    "code": "DEPT-72",
+    "nom": "Sarthe",
+    "nom_affiche": "72 - Sarthe",
+    "maille": "dept",
+    "code_insee": 72,
+    "code_parent": "REG-52",
+    "zone_id": "D72"
+  },
+  {
+    "code": "DEPT-73",
+    "nom": "Savoie",
+    "nom_affiche": "73 - Savoie",
+    "maille": "dept",
+    "code_insee": 73,
+    "code_parent": "REG-84",
+    "zone_id": "D73"
+  },
+  {
+    "code": "DEPT-74",
+    "nom": "Haute-Savoie",
+    "nom_affiche": "74 - Haute-Savoie",
+    "maille": "dept",
+    "code_insee": 74,
+    "code_parent": "REG-84",
+    "zone_id": "D74"
+  },
+  {
+    "code": "DEPT-75",
+    "nom": "Paris",
+    "nom_affiche": "75 - Paris",
+    "maille": "dept",
+    "code_insee": 75,
+    "code_parent": "REG-11",
+    "zone_id": "D75"
+  },
+  {
+    "code": "DEPT-76",
+    "nom": "Seine-Maritime",
+    "nom_affiche": "76 - Seine-Maritime",
+    "maille": "dept",
+    "code_insee": 76,
+    "code_parent": "REG-28",
+    "zone_id": "D76"
+  },
 
-    {
-      "code": "DEPT-77",
-      "nom": "Seine-et-Marne",
-      "nom_affiche": "77 - Seine-et-Marne",
-      "maille": "dept",
-      "code_insee": 77,
-      "code_parent": "REG-11",
-      "zone_id": "D77"
-    },
-    {
-      "code": "DEPT-78",
-      "nom": "Yvelines",
-      "nom_affiche": "78 - Yvelines",
-      "maille": "dept",
-      "code_insee": 78,
-      "code_parent": "REG-11",
-      "zone_id": "D78"
-    },
-    {
-      "code": "DEPT-79",
-      "nom": "Deux-Sèvres",
-      "nom_affiche": "79 - Deux-Sèvres",
-      "maille": "dept",
-      "code_insee": 79,
-      "code_parent": "REG-75",
-      "zone_id": "D79"
-    },
-    {
-      "code": "DEPT-80",
-      "nom": "Somme",
-      "nom_affiche": "80 - Somme",
-      "maille": "dept",
-      "code_insee": 80,
-      "code_parent": "REG-32",
-      "zone_id": "D80"
-    },
-    {
-      "code": "DEPT-81",
-      "nom": "Tarn",
-      "nom_affiche": "81 - Tarn",
-      "maille": "dept",
-      "code_insee": 81,
-      "code_parent": "REG-76",
-      "zone_id": "D81"
-    },
-    {
-      "code": "DEPT-82",
-      "nom": "Tarn-et-Garonne",
-      "nom_affiche": "82 - Tarn-et-Garonne",
-      "maille": "dept",
-      "code_insee": 82,
-      "code_parent": "REG-76",
-      "zone_id": "D82"
-    },
-    {
-      "code": "DEPT-83",
-      "nom": "Var",
-      "nom_affiche": "83 - Var",
-      "maille": "dept",
-      "code_insee": 83,
-      "code_parent": "REG-93",
-      "zone_id": "D83"
-    },
-    {
-      "code": "DEPT-84",
-      "nom": "Vaucluse",
-      "nom_affiche": "84 - Vaucluse",
-      "maille": "dept",
-      "code_insee": 84,
-      "code_parent": "REG-93",
-      "zone_id": "D84"
-    },
-    {
-      "code": "DEPT-85",
-      "nom": "Vendée",
-      "nom_affiche": "85 - Vendée",
-      "maille": "dept",
-      "code_insee": 85,
-      "code_parent": "REG-52",
-      "zone_id": "D85"
-    },
-    {
-      "code": "DEPT-86",
-      "nom": "Vienne",
-      "nom_affiche": "86 - Vienne",
-      "maille": "dept",
-      "code_insee": 86,
-      "code_parent": "REG-75",
-      "zone_id": "D86"
-    },
-    {
-      "code": "DEPT-87",
-      "nom": "Haute-Vienne",
-      "nom_affiche": "87 - Haute-Vienne",
-      "maille": "dept",
-      "code_insee": 87,
-      "code_parent": "REG-75",
-      "zone_id": "D87"
-    },
-    {
-      "code": "DEPT-88",
-      "nom": "Vosges",
-      "nom_affiche": "88 - Vosges",
-      "maille": "dept",
-      "code_insee": 88,
-      "code_parent": "REG-44",
-      "zone_id": "D88"
-    },
-    {
-      "code": "DEPT-89",
-      "nom": "Yonne",
-      "nom_affiche": "89 - Yonne",
-      "maille": "dept",
-      "code_insee": 89,
-      "code_parent": "REG-27",
-      "zone_id": "D89"
-    },
-    {
-      "code": "DEPT-90",
-      "nom": "Territoire de Belfort",
-      "nom_affiche": "90 - Territoire de Belfort",
-      "maille": "dept",
-      "code_insee": 90,
-      "code_parent": "REG-27",
-      "zone_id": "D90"
-    },
-    {
-      "code": "DEPT-91",
-      "nom": "Essonne",
-      "nom_affiche": "91 - Essonne",
-      "maille": "dept",
-      "code_insee": 91,
-      "code_parent": "REG-11",
-      "zone_id": "D91"
-    },
-    {
-      "code": "DEPT-92",
-      "nom": "Hauts-de-Seine",
-      "nom_affiche": "92 - Hauts-de-Seine",
-      "maille": "dept",
-      "code_insee": 92,
-      "code_parent": "REG-11",
-      "zone_id": "D92"
-    },
-    {
-      "code": "DEPT-93",
-      "nom": "Seine-Saint-Denis",
-      "nom_affiche": "93 - Seine-Saint-Denis",
-      "maille": "dept",
-      "code_insee": 93,
-      "code_parent": "REG-11",
-      "zone_id": "D93"
-    },
-    {
-      "code": "DEPT-94",
-      "nom": "Val-de-Marne",
-      "nom_affiche": "94 - Val-de-Marne",
-      "maille": "dept",
-      "code_insee": 94,
-      "code_parent": "REG-11",
-      "zone_id": "D94"
-    },
-    {
-      "code": "DEPT-95",
-      "nom": "Val-d'Oise",
-      "nom_affiche": "95 - Val-d'Oise",
-      "maille": "dept",
-      "code_insee": 95,
-      "code_parent": "REG-11",
-      "zone_id": "D95"
-    },
-    {
-      "code": "DEPT-971",
-      "nom": "Guadeloupe",
-      "nom_affiche": "971 - Guadeloupe",
-      "maille": "dept",
-      "code_insee": 971,
-      "code_parent": "REG-01",
-      "zone_id": "D971"
-    },
-    {
-      "code": "DEPT-976",
-      "nom": "Mayotte",
-      "nom_affiche": "976 - Mayotte",
-      "maille": "dept",
-      "code_insee": 976,
-      "code_parent": "REG-06",
-      "zone_id": "D976"
-    }
-
-  ]
+  {
+    "code": "DEPT-77",
+    "nom": "Seine-et-Marne",
+    "nom_affiche": "77 - Seine-et-Marne",
+    "maille": "dept",
+    "code_insee": 77,
+    "code_parent": "REG-11",
+    "zone_id": "D77"
+  },
+  {
+    "code": "DEPT-78",
+    "nom": "Yvelines",
+    "nom_affiche": "78 - Yvelines",
+    "maille": "dept",
+    "code_insee": 78,
+    "code_parent": "REG-11",
+    "zone_id": "D78"
+  },
+  {
+    "code": "DEPT-79",
+    "nom": "Deux-Sèvres",
+    "nom_affiche": "79 - Deux-Sèvres",
+    "maille": "dept",
+    "code_insee": 79,
+    "code_parent": "REG-75",
+    "zone_id": "D79"
+  },
+  {
+    "code": "DEPT-80",
+    "nom": "Somme",
+    "nom_affiche": "80 - Somme",
+    "maille": "dept",
+    "code_insee": 80,
+    "code_parent": "REG-32",
+    "zone_id": "D80"
+  },
+  {
+    "code": "DEPT-81",
+    "nom": "Tarn",
+    "nom_affiche": "81 - Tarn",
+    "maille": "dept",
+    "code_insee": 81,
+    "code_parent": "REG-76",
+    "zone_id": "D81"
+  },
+  {
+    "code": "DEPT-82",
+    "nom": "Tarn-et-Garonne",
+    "nom_affiche": "82 - Tarn-et-Garonne",
+    "maille": "dept",
+    "code_insee": 82,
+    "code_parent": "REG-76",
+    "zone_id": "D82"
+  },
+  {
+    "code": "DEPT-83",
+    "nom": "Var",
+    "nom_affiche": "83 - Var",
+    "maille": "dept",
+    "code_insee": 83,
+    "code_parent": "REG-93",
+    "zone_id": "D83"
+  },
+  {
+    "code": "DEPT-84",
+    "nom": "Vaucluse",
+    "nom_affiche": "84 - Vaucluse",
+    "maille": "dept",
+    "code_insee": 84,
+    "code_parent": "REG-93",
+    "zone_id": "D84"
+  },
+  {
+    "code": "DEPT-85",
+    "nom": "Vendée",
+    "nom_affiche": "85 - Vendée",
+    "maille": "dept",
+    "code_insee": 85,
+    "code_parent": "REG-52",
+    "zone_id": "D85"
+  },
+  {
+    "code": "DEPT-86",
+    "nom": "Vienne",
+    "nom_affiche": "86 - Vienne",
+    "maille": "dept",
+    "code_insee": 86,
+    "code_parent": "REG-75",
+    "zone_id": "D86"
+  },
+  {
+    "code": "DEPT-87",
+    "nom": "Haute-Vienne",
+    "nom_affiche": "87 - Haute-Vienne",
+    "maille": "dept",
+    "code_insee": 87,
+    "code_parent": "REG-75",
+    "zone_id": "D87"
+  },
+  {
+    "code": "DEPT-88",
+    "nom": "Vosges",
+    "nom_affiche": "88 - Vosges",
+    "maille": "dept",
+    "code_insee": 88,
+    "code_parent": "REG-44",
+    "zone_id": "D88"
+  },
+  {
+    "code": "DEPT-89",
+    "nom": "Yonne",
+    "nom_affiche": "89 - Yonne",
+    "maille": "dept",
+    "code_insee": 89,
+    "code_parent": "REG-27",
+    "zone_id": "D89"
+  },
+  {
+    "code": "DEPT-90",
+    "nom": "Territoire de Belfort",
+    "nom_affiche": "90 - Territoire de Belfort",
+    "maille": "dept",
+    "code_insee": 90,
+    "code_parent": "REG-27",
+    "zone_id": "D90"
+  },
+  {
+    "code": "DEPT-91",
+    "nom": "Essonne",
+    "nom_affiche": "91 - Essonne",
+    "maille": "dept",
+    "code_insee": 91,
+    "code_parent": "REG-11",
+    "zone_id": "D91"
+  },
+  {
+    "code": "DEPT-92",
+    "nom": "Hauts-de-Seine",
+    "nom_affiche": "92 - Hauts-de-Seine",
+    "maille": "dept",
+    "code_insee": 92,
+    "code_parent": "REG-11",
+    "zone_id": "D92"
+  },
+  {
+    "code": "DEPT-93",
+    "nom": "Seine-Saint-Denis",
+    "nom_affiche": "93 - Seine-Saint-Denis",
+    "maille": "dept",
+    "code_insee": 93,
+    "code_parent": "REG-11",
+    "zone_id": "D93"
+  },
+  {
+    "code": "DEPT-94",
+    "nom": "Val-de-Marne",
+    "nom_affiche": "94 - Val-de-Marne",
+    "maille": "dept",
+    "code_insee": 94,
+    "code_parent": "REG-11",
+    "zone_id": "D94"
+  },
+  {
+    "code": "DEPT-95",
+    "nom": "Val-d'Oise",
+    "nom_affiche": "95 - Val-d'Oise",
+    "maille": "dept",
+    "code_insee": 95,
+    "code_parent": "REG-11",
+    "zone_id": "D95"
+  },
+  {
+    "code": "DEPT-971",
+    "nom": "Guadeloupe",
+    "nom_affiche": "971 - Guadeloupe",
+    "maille": "dept",
+    "code_insee": 971,
+    "code_parent": "REG-01",
+    "zone_id": "D971"
+  },
+  {
+    "code": "DEPT-976",
+    "nom": "Mayotte",
+    "nom_affiche": "976 - Mayotte",
+    "maille": "dept",
+    "code_insee": 976,
+    "code_parent": "REG-06",
+    "zone_id": "D976"
+  }
+]

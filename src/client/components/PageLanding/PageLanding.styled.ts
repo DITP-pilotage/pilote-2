@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const PageLandingStyled = styled.main`
   h1 {
@@ -9,10 +9,10 @@ const PageLandingStyled = styled.main`
     display: flex;
     justify-content: center;
   }
-  
+
   .conteneur-pictogramme {
     position: relative;
-    height: 12.5rem; 
+    height: 12.5rem;
     background-color: var(--background-alt-grey);
   }
 
@@ -20,7 +20,8 @@ const PageLandingStyled = styled.main`
     background-color: var(--background-alt-grey);
   }
 
-  .bloc-questions, .bloc-pour-qui {
+  .bloc-questions,
+  .bloc-pour-qui {
     background-color: var(--background-default-grey);
   }
 

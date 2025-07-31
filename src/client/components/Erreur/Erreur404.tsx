@@ -1,12 +1,12 @@
-import { FunctionComponent } from 'react';
-import PageErreur from '@/components/_commons/PageErreur/PageErreur';
+import { FunctionComponent } from "react";
+import PageErreur from "@/components/_commons/PageErreur/PageErreur";
 
 const Erreur404: FunctionComponent<{}> = () => {
   return (
     <PageErreur
       message=" Si vous avez tapé l'adresse web dans le navigateur, vérifiez qu'elle est correcte. La page n'est peut-être plus disponible."
-      sousTitre='La page que vous cherchez est introuvable. Nous vous prions de bien vouloir nous excuser pour la gêne occasionnée.'
-      titre='Page non trouvée'
+      sousTitre="La page que vous cherchez est introuvable. Nous vous prions de bien vouloir nous excuser pour la gêne occasionnée."
+      titre="Page non trouvée"
     />
   );
 };

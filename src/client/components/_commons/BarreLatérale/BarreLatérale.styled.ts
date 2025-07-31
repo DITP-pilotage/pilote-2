@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import { breakpointL } from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
+import styled from "@emotion/styled";
+import { breakpointL } from "@/components/_commons/MiseEnPage/MiseEnPage.styled";
 
 type BarreLatéraleStyledProps = {
-  estOuvert: boolean
+  estOuvert: boolean;
 };
 
 const BarreLatéraleStyled = styled.div<BarreLatéraleStyledProps>`
@@ -27,11 +27,12 @@ const BarreLatéraleStyled = styled.div<BarreLatéraleStyledProps>`
       width: 90%;
       height: 95%;
       transition: 500ms;
-      transform: ${props => props.estOuvert ? 'translateX(0)' : 'translateX(-200rem)'};
+      transform: ${(props) =>
+        props.estOuvert ? "translateX(0)" : "translateX(-200rem)"};
     }
   }
 
-  .bouton-fermer{
+  .bouton-fermer {
     background-color: #f5f5fe;
   }
 

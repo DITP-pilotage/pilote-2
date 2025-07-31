@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
-import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
-import { RouterOutputs } from '@/server/infrastructure/api/trpc/trpc.interface';
-import PublicationProps from './Publication.interface';
+import { useEffect, useState } from "react";
+import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
+import { RouterOutputs } from "@/server/infrastructure/api/trpc/trpc.interface";
+import PublicationProps from "./Publication.interface";
 
-export default function usePublication(publicationInitiale: PublicationProps['publicationInitiale']) {
+export default function usePublication(
+  publicationInitiale: PublicationProps["publicationInitiale"],
+) {
   const [modeÉdition, setModeÉdition] = useState(false);
   const [publication, setPublication] = useState(publicationInitiale);
-  const [alerte, setAlerte] = useState <AlerteProps | null>(null);
+  const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
   const désactiverLeModeÉdition = () => {
     setModeÉdition(false);
@@ -18,16 +20,16 @@ export default function usePublication(publicationInitiale: PublicationProps['pu
 
   const afficherAlerteErreur = (message: string) => {
     setAlerte({
-      type: 'erreur',
+      type: "erreur",
       titre: message,
     });
   };
 
-  const publicationCréée = (p: RouterOutputs['publication']['créer']) => {
+  const publicationCréée = (p: RouterOutputs["publication"]["créer"]) => {
     setPublication(p);
     setAlerte({
-      type: 'succès',
-      titre: 'Modification effectuée',
+      type: "succès",
+      titre: "Modification effectuée",
     });
     désactiverLeModeÉdition();
   };

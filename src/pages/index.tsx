@@ -1,18 +1,31 @@
-import { getServerSession } from 'next-auth/next';
-import Head from 'next/head';
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { FunctionComponent } from 'react';
-import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
+import { getServerSession } from "next-auth/next";
+import Head from "next/head";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { FunctionComponent } from "react";
+import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
 
-export const getServerSideProps: GetServerSideProps<{}> = async ({ req, res, query }) => {
+export const getServerSideProps: GetServerSideProps<{}> = async ({
+  req,
+  res,
+  query,
+}) => {
   const session = await getServerSession(req, res, authOptions);
 
   if (session) {
-    const territoireCode = session.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : session.habilitations.lecture.territoires[0];
+    const territoireCode = session.habilitations.lecture.territoires.includes(
+      "NAT-FR",
+    )
+      ? "NAT-FR"
+      : session.habilitations.lecture.territoires[0];
 
-    const callbackUrl = query.callbackUrl ? decodeURIComponent(query.callbackUrl as string) : `/accueil/chantier/${territoireCode}`;
+    const callbackUrl = query.callbackUrl
+      ? decodeURIComponent(query.callbackUrl as string)
+      : `/accueil/chantier/${territoireCode}`;
 
-    const destination = req.url !== '/' && query.callbackUrl ? callbackUrl : `/accueil/chantier/${territoireCode}`;
+    const destination =
+      req.url !== "/" && query.callbackUrl
+        ? callbackUrl
+        : `/accueil/chantier/${territoireCode}`;
 
     return {
       redirect: {
@@ -27,12 +40,12 @@ export const getServerSideProps: GetServerSideProps<{}> = async ({ req, res, que
   };
 };
 
-const NextPageAccueil: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = () => {
+const NextPageAccueil: FunctionComponent<
+  InferGetServerSidePropsType<typeof getServerSideProps>
+> = () => {
   return (
     <Head>
-      <title>
-        PILOTE - Piloter l'action publique par les résultats
-      </title>
+      <title>PILOTE - Piloter l'action publique par les résultats</title>
     </Head>
   );
 };

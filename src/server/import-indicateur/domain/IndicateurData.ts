@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { randomUUID } from "node:crypto";
 
 export class IndicateurData {
   private readonly _id: string;
@@ -23,7 +23,15 @@ export class IndicateurData {
     metricDate,
     metricType,
     metricValue,
-  }: { id: string, rapportId: string, indicId: string; metricType: string; metricValue: string; zoneId: string; metricDate: string }) {
+  }: {
+    id: string;
+    rapportId: string;
+    indicId: string;
+    metricType: string;
+    metricValue: string;
+    zoneId: string;
+    metricDate: string;
+  }) {
     this._id = id;
     this._rapportId = rapportId;
     this._indicId = indicId;
@@ -70,13 +78,13 @@ export class IndicateurData {
     metricType,
     metricValue,
   }: {
-    id?: string,
-    rapportId: string,
-    indicId: string,
-    zoneId: string,
-    metricDate: string,
-    metricType: string,
-    metricValue: string,
+    id?: string;
+    rapportId: string;
+    indicId: string;
+    zoneId: string;
+    metricDate: string;
+    metricType: string;
+    metricValue: string;
   }) {
     return new IndicateurData({
       id: id || randomUUID(),

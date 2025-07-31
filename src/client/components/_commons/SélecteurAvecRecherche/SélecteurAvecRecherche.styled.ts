@@ -1,13 +1,13 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const SélecteurAvecRechercheStyled = styled.div`
   position: relative;
-  
-  div[role='menu'] {
+
+  div[role="menu"] {
     display: none;
   }
 
-  div[role='menu'].visible {
+  div[role="menu"].visible {
     position: absolute;
     z-index: 2;
     display: block;
@@ -30,7 +30,7 @@ const SélecteurAvecRechercheStyled = styled.div`
     font-size: 1rem;
     line-height: 1.5rem;
   }
- 
+
   .fr-option:nth-of-type(even) {
     background-color: var(--background-alt-grey);
   }

@@ -1,14 +1,14 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const SectionDétailsMetadataAutresIndicateurStyled = styled.div`
-  .fr-icon-close-line{
+  .fr-icon-close-line {
     color: var(--text-default-warning);
   }
-  
-  .fr-icon-check-line{
+
+  .fr-icon-check-line {
     color: var(--text-default-success);
   }
-  
+
   .relative {
     position: relative;
   }

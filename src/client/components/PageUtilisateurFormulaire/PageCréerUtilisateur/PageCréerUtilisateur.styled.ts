@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const PageCréerUtilisateurStyled = styled.div`
-background: var(--background-alt-blue-france);
+  background: var(--background-alt-blue-france);
 
   .bouton-retour {
     &::before {
@@ -13,7 +13,6 @@ background: var(--background-alt-blue-france);
     color: var(--text-action-high-blue-france);
     background: none;
   }
-
 `;
 
 export default PageCréerUtilisateurStyled;

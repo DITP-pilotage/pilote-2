@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const FiltresSélectionnésCatégorieStyled = styled.div`
   ul {
@@ -11,7 +11,7 @@ const FiltresSélectionnésCatégorieStyled = styled.div`
   }
 
   .fr-icon-check-line {
-    margin-right: .25rem;
+    margin-right: 0.25rem;
     color: var(--text-default-success);
   }
 `;

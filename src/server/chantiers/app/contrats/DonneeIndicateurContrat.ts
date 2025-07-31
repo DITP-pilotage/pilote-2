@@ -1,4 +1,4 @@
-import { DonneeIndicateur } from '@/server/chantiers/domain/DonneeIndicateur';
+import { DonneeIndicateur } from "@/server/chantiers/domain/DonneeIndicateur";
 
 export interface DonneeTerritoireContrat {
   valeur_cible: number | null;
@@ -16,7 +16,7 @@ export interface DonneeTerritoireContrat {
   maille: string;
   taux_avancement: number | null;
   date_valeur_cible_annuelle: Date | null;
-  taux_avancement_annuel: number | null
+  taux_avancement_annuel: number | null;
 }
 
 export interface DonneeIndicateurContrat {
@@ -26,12 +26,15 @@ export interface DonneeIndicateurContrat {
   donnees_territoires: DonneeTerritoireContrat[];
 }
 
-export const presenterEnDonneeIndicateurContrat = (chantierId: string, listeDonneesIndicateurs: DonneeIndicateur[]): DonneeIndicateurContrat => {
+export const presenterEnDonneeIndicateurContrat = (
+  chantierId: string,
+  listeDonneesIndicateurs: DonneeIndicateur[],
+): DonneeIndicateurContrat => {
   return {
     indic_id: listeDonneesIndicateurs[0].indicId,
     est_barometre: listeDonneesIndicateurs[0].estBarometre,
     chantier_id: chantierId,
-    donnees_territoires: listeDonneesIndicateurs.map(donneeIndicateur => ({
+    donnees_territoires: listeDonneesIndicateurs.map((donneeIndicateur) => ({
       maille: donneeIndicateur.maille,
       code_insee: donneeIndicateur.codeInsee,
       territoire_code: donneeIndicateur.territoireCode,

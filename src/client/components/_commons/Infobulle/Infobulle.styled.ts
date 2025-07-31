@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const InfobulleStyled = styled.span`
   position: relative;
@@ -8,9 +8,9 @@ const InfobulleStyled = styled.span`
     z-index: 10000;
     max-width: 100%;
     color: var(--text-title-grey);
-    background-color: var(--background-alt-blue-france);     
+    background-color: var(--background-alt-blue-france);
     border-radius: 0.5rem;
-    box-shadow: 0 4px 2px #0002; 
+    box-shadow: 0 4px 2px #0002;
   }
 
   .tooltip-accordeon {

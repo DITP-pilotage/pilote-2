@@ -1,31 +1,31 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent } from "react";
 import {
   JaugeDeProgressionCouleur,
   JaugeDeProgressionTaille,
-} from '@/components/_commons/JaugeDeProgression/JaugeDeProgression.interface';
-import JaugeDeProgressionSVG from '@/components/_commons/JaugeDeProgression/JaugeDeProgressionSVG';
-import JaugeDeProgressionStyled from './JaugeDeProgression.styled';
+} from "@/components/_commons/JaugeDeProgression/JaugeDeProgression.interface";
+import JaugeDeProgressionSVG from "@/components/_commons/JaugeDeProgression/JaugeDeProgressionSVG";
+import JaugeDeProgressionStyled from "./JaugeDeProgression.styled";
 
 interface JaugeDeProgressionProps {
-  couleur: JaugeDeProgressionCouleur,
-  libellé: string,
-  pourcentage: number | null | undefined,
-  taille: JaugeDeProgressionTaille,
-  noWrap?: boolean,
+  couleur: JaugeDeProgressionCouleur;
+  libellé: string;
+  pourcentage: number | null | undefined;
+  taille: JaugeDeProgressionTaille;
+  noWrap?: boolean;
 }
 
 const classesÀPartirDeTaille = {
   sm: {
-    valeur: 'jauge-valeur-dessous fr-h6',
-    libellé: '',
+    valeur: "jauge-valeur-dessous fr-h6",
+    libellé: "",
   },
   md: {
-    valeur: 'jauge-valeur-au-centre fr-h4 text-center',
-    libellé: 'text-center',
+    valeur: "jauge-valeur-au-centre fr-h4 text-center",
+    libellé: "text-center",
   },
   lg: {
-    valeur: 'jauge-valeur-au-centre fr-h1 text-center',
-    libellé: 'text-center',
+    valeur: "jauge-valeur-au-centre fr-h1 text-center",
+    libellé: "text-center",
   },
 };
 
@@ -44,12 +44,14 @@ const JaugeDeProgression: FunctionComponent<JaugeDeProgressionProps> = ({
           pourcentage={pourcentage !== undefined ? pourcentage : null}
           taille={taille}
         />
-        <p className={`jauge-valeur jauge-valeur--${couleur} text-center ${classesÀPartirDeTaille[taille].valeur}`}>
-          {`${pourcentage?.toFixed(0) ?? '- '}%`}
+        <p
+          className={`jauge-valeur jauge-valeur--${couleur} text-center ${classesÀPartirDeTaille[taille].valeur}`}
+        >
+          {`${pourcentage?.toFixed(0) ?? "- "}%`}
         </p>
       </div>
       <p
-        className={`fr-text--xs fr-mb-0 text-center ${classesÀPartirDeTaille[taille].libellé}${noWrap ? 'no-wrap' : ''}`}
+        className={`fr-text--xs fr-mb-0 text-center ${classesÀPartirDeTaille[taille].libellé}${noWrap ? "no-wrap" : ""}`}
       >
         {libellé}
       </p>

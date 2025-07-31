@@ -1,18 +1,24 @@
-import { créerRouteurTRPC, procédureProtégée } from '@/server/infrastructure/api/trpc/trpc';
-import { getContainer } from '@/server/dependances';
+import {
+  créerRouteurTRPC,
+  procédureProtégée,
+} from "@/server/infrastructure/api/trpc/trpc";
+import { getContainer } from "@/server/dependances";
 
 export const chantierRouter = créerRouteurTRPC({
-  récupérerTousSynthétisésAccessiblesEnLecture: procédureProtégée
-    .query(({ ctx }) => {
-      const récupérerChantiersSynthétisésUseCase = getContainer('gestionUtilisateur').resolve('recupererChantiersSynthetisesUseCase');
+  récupérerTousSynthétisésAccessiblesEnLecture: procédureProtégée.query(
+    ({ ctx }) => {
+      const récupérerChantiersSynthétisésUseCase = getContainer(
+        "gestionUtilisateur",
+      ).resolve("recupererChantiersSynthetisesUseCase");
       return récupérerChantiersSynthétisésUseCase.run({
         listeChantierIdLecture: ctx.session.habilitations.lecture.chantiers,
       });
-    }),
-  recupererTousLesInformationsChantiers: procédureProtégée
-    .query(() => {
-      const recupererLaListeDesInfomrationsChantiersUse = getContainer('gestionUtilisateur').resolve('recupererLaListeDesInfomrationsChantiersUse');
-      return recupererLaListeDesInfomrationsChantiersUse.run();
-    }),
+    },
+  ),
+  recupererTousLesInformationsChantiers: procédureProtégée.query(() => {
+    const recupererLaListeDesInfomrationsChantiersUse = getContainer(
+      "gestionUtilisateur",
+    ).resolve("recupererLaListeDesInfomrationsChantiersUse");
+    return recupererLaListeDesInfomrationsChantiersUse.run();
+  }),
 });
-

@@ -1,4 +1,4 @@
-import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur';
+import { MetadataParametrageIndicateur } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur";
 
 export interface HistorisationMetadataIndicateurComplementaire {
   indic_id: string;
@@ -40,12 +40,15 @@ export interface HistorisationMetadataIndicateurComplementaire {
   commentaire: string | null;
 }
 
-export function convertirEnHistorisationMetadataIndicateurComplementaireModel(metadataParametrageIndicateur: MetadataParametrageIndicateur): HistorisationMetadataIndicateurComplementaire {
+export function convertirEnHistorisationMetadataIndicateurComplementaireModel(
+  metadataParametrageIndicateur: MetadataParametrageIndicateur,
+): HistorisationMetadataIndicateurComplementaire {
   return {
     indic_id: metadataParametrageIndicateur.indicId,
     reforme_prioritaire: metadataParametrageIndicateur.reformePrioritaire,
     projet_annuel_perf: metadataParametrageIndicateur.projetAnnuelPerf,
-    detail_projet_annuel_perf: metadataParametrageIndicateur.detailProjetAnnuelPerf,
+    detail_projet_annuel_perf:
+      metadataParametrageIndicateur.detailProjetAnnuelPerf,
     periodicite: metadataParametrageIndicateur.periodicite,
     delai_disponibilite: metadataParametrageIndicateur.delaiDisponibilite,
     indic_territorialise: metadataParametrageIndicateur.indicTerritorialise,
@@ -55,11 +58,13 @@ export function convertirEnHistorisationMetadataIndicateurComplementaireModel(me
     methode_collecte: metadataParametrageIndicateur.methodeCollecte,
     si_source: metadataParametrageIndicateur.siSource,
     donnee_ouverte: metadataParametrageIndicateur.donneeOuverte,
-    modalites_donnee_ouverte: metadataParametrageIndicateur.modalitesDonneeOuverte,
+    modalites_donnee_ouverte:
+      metadataParametrageIndicateur.modalitesDonneeOuverte,
     resp_donnees: metadataParametrageIndicateur.respDonnees,
     resp_donnees_email: metadataParametrageIndicateur.respDonneesEmail,
     contact_technique: metadataParametrageIndicateur.contactTechnique,
-    contact_technique_email: metadataParametrageIndicateur.contactTechniqueEmail,
+    contact_technique_email:
+      metadataParametrageIndicateur.contactTechniqueEmail,
     commentaire: metadataParametrageIndicateur.commentaire,
   };
 }

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 export const ÉditeurRicheStyled = styled.div`
   /* stylelint-disable selector-class-pattern */
@@ -23,13 +23,12 @@ export const ÉditeurRicheStyled = styled.div`
     }
 
     h4 {
-      margin-top: .5rem!important;
-      margin-bottom: .5rem!important;
+      margin-top: 0.5rem !important;
+      margin-bottom: 0.5rem !important;
     }
 
-
     hr {
-      margin: 2rem .5rem;
+      margin: 2rem 0.5rem;
       border: none;
       border-top: 2px solid rgba(13 13 13 / 10%);
     }
@@ -84,4 +83,4 @@ export const ÉditeurRicheStyled = styled.div`
   .ProseMirror-focused {
     border-color: #0063cb;
   }
-`; 
+`;

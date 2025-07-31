@@ -1,9 +1,11 @@
-import { mesure_indicateur as MesureIndicateur } from '@prisma/client';
-import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
-import { MesureIndicateurRepository } from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface';
-import { prisma } from '@/server/db/prisma';
+import { mesure_indicateur as MesureIndicateur } from "@prisma/client";
+import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
+import { MesureIndicateurRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface";
+import { prisma } from "@/server/db/prisma";
 
-const convertirEnModel = (indicateurData: IndicateurData): Omit<MesureIndicateur, 'date_import'>  => {
+const convertirEnModel = (
+  indicateurData: IndicateurData,
+): Omit<MesureIndicateur, "date_import"> => {
   return {
     id: indicateurData.id,
     rapport_id: indicateurData.rapportId,
@@ -15,7 +17,9 @@ const convertirEnModel = (indicateurData: IndicateurData): Omit<MesureIndicateur
   };
 };
 
-const convertirEnIndicateurData = (mesureIndicateur: MesureIndicateur): IndicateurData => {
+const convertirEnIndicateurData = (
+  mesureIndicateur: MesureIndicateur,
+): IndicateurData => {
   return IndicateurData.createIndicateurData({
     id: mesureIndicateur.id,
     rapportId: mesureIndicateur.rapport_id,
@@ -27,15 +31,21 @@ const convertirEnIndicateurData = (mesureIndicateur: MesureIndicateur): Indicate
   });
 };
 
-export class PrismaMesureIndicateurRepository implements MesureIndicateurRepository {
+export class PrismaMesureIndicateurRepository
+  implements MesureIndicateurRepository
+{
   async sauvegarder(listeIndicateursData: IndicateurData[]): Promise<void> {
-    const listeMesuresIndicateursModel = listeIndicateursData.map(convertirEnModel);
+    const listeMesuresIndicateursModel =
+      listeIndicateursData.map(convertirEnModel);
 
-    await prisma.mesure_indicateur.createMany({ data: listeMesuresIndicateursModel });
+    await prisma.mesure_indicateur.createMany({
+      data: listeMesuresIndicateursModel,
+    });
   }
 
   async recupererTout(): Promise<IndicateurData[]> {
-    const listeMesuresIndicateursModel = await prisma.mesure_indicateur.findMany();
+    const listeMesuresIndicateursModel =
+      await prisma.mesure_indicateur.findMany();
 
     return listeMesuresIndicateursModel.map(convertirEnIndicateurData);
   }

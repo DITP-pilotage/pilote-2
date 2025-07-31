@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const PageUtilisateurStyled = styled.div`
   background: var(--background-alt-blue-france);
@@ -7,10 +7,10 @@ const PageUtilisateurStyled = styled.div`
     color: var(--text-active-blue-france);
   }
 
-  .prénom, .nom {
+  .prénom,
+  .nom {
     text-transform: capitalize;
   }
-  
 `;
 
 export default PageUtilisateurStyled;

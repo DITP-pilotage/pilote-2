@@ -1,12 +1,12 @@
-import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
-import { MesureIndicateurTemporaire } from '@/server/import-indicateur/domain/MesureIndicateurTemporaire';
-import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
-import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
+import { DetailValidationFichier } from "@/server/import-indicateur/domain/DetailValidationFichier";
+import { MesureIndicateurTemporaire } from "@/server/import-indicateur/domain/MesureIndicateurTemporaire";
+import { ErreurValidationFichier } from "@/server/import-indicateur/domain/ErreurValidationFichier";
+import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
 
 export class DetailValidationFichierBuilder {
-  private id: string = 'rapportId';
+  private id: string = "rapportId";
 
-  private utilisateurEmail: string = 'utilisateurEmail';
+  private utilisateurEmail: string = "utilisateurEmail";
 
   private dateCreation: Date = new Date();
 
@@ -28,7 +28,9 @@ export class DetailValidationFichierBuilder {
     return this;
   }
 
-  avecUtilisateurEmail(utilisateurEmail: string): DetailValidationFichierBuilder {
+  avecUtilisateurEmail(
+    utilisateurEmail: string,
+  ): DetailValidationFichierBuilder {
     this.utilisateurEmail = utilisateurEmail;
     return this;
   }
@@ -38,16 +40,20 @@ export class DetailValidationFichierBuilder {
     return this;
   }
 
-  avecListeErreursValidation(...listeErreursValidation: ErreurValidationFichier[]): DetailValidationFichierBuilder {
+  avecListeErreursValidation(
+    ...listeErreursValidation: ErreurValidationFichier[]
+  ): DetailValidationFichierBuilder {
     this.listeErreursValidation = listeErreursValidation;
     return this;
   }
 
-  avecListeMesuresIndicateurTemporaire(...listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[]): DetailValidationFichierBuilder {
+  avecListeMesuresIndicateurTemporaire(
+    ...listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[]
+  ): DetailValidationFichierBuilder {
     this.listeMesuresIndicateurTemporaire = listeMesuresIndicateurTemporaire;
     return this;
   }
-  
+
   build(): DetailValidationFichier {
     return DetailValidationFichier.creerDetailValidationFichier({
       id: this.id,

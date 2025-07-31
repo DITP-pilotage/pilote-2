@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const PageImportIndicateurExplicationEtapeImportStyled = styled.section`
   background-color: var(--background-alt-grey);
@@ -8,10 +8,10 @@ const PageImportIndicateurExplicationEtapeImportStyled = styled.section`
   }
 
   li::marker {
-    content: '';
+    content: "";
   }
 
-  @media(min-width: 62rem) {
+  @media (min-width: 62rem) {
     li:first-of-type {
       padding-left: 0;
     }

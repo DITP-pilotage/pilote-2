@@ -1,16 +1,20 @@
-import { Maille } from '@prisma/client';
-import { IndicateurRepository } from '@/server/fiche-territoriale/domain/ports/IndicateurRepository';
-import { Indicateur } from '@/server/fiche-territoriale/domain/Indicateur';
-import { prisma } from '@/server/db/prisma';
+import { Maille } from "@prisma/client";
+import { IndicateurRepository } from "@/server/fiche-territoriale/domain/ports/IndicateurRepository";
+import { Indicateur } from "@/server/fiche-territoriale/domain/Indicateur";
+import { prisma } from "@/server/db/prisma";
 
 export class PrismaIndicateurRepository implements IndicateurRepository {
-  async recupererMapIndicateursParListeChantierIdEtTerritoire({ listeChantierId, maille, codeInsee, jalon }: {
-    listeChantierId: string[],
-    maille: string,
-    codeInsee: string,
-    jalon: number,
+  async recupererMapIndicateursParListeChantierIdEtTerritoire({
+    listeChantierId,
+    maille,
+    codeInsee,
+    jalon,
+  }: {
+    listeChantierId: string[];
+    maille: string;
+    codeInsee: string;
+    jalon: number;
   }): Promise<Map<string, Indicateur[]>> {
-
     const result = await prisma.indicateur_identite.findMany({
       where: {
         chantier_id: {
@@ -25,7 +29,8 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
                 code_insee: codeInsee,
               },
             },
-          }, {
+          },
+          {
             est_barometre: false,
             indicateur_territoire: {
               every: {
@@ -33,10 +38,11 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
                 code_insee: codeInsee,
                 OR: [
                   {
-                    maille: 'DEPT',
+                    maille: "DEPT",
                     ponderation_zone_reel: { gt: 0 },
-                  }, {
-                    maille: 'REG',
+                  },
+                  {
+                    maille: "REG",
                     ponderation_zone_reel: { gt: 0 },
                   },
                 ],
@@ -68,20 +74,31 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       const indicateur = Indicateur.creerIndicateur({
         id: val.id,
         nom: val.nom,
-        dateValeurAvancement: val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.date_valeur_actuelle?.toISOString() || '',
-        objectifTauxAvancement: val.indicateur_territoire[0].taux_avancement_mandat,
-        valeurAvancement: val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.valeur_actuelle,
+        dateValeurAvancement:
+          val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.date_valeur_actuelle?.toISOString() ||
+          "",
+        objectifTauxAvancement:
+          val.indicateur_territoire[0].taux_avancement_mandat,
+        valeurAvancement:
+          val.indicateur_territoire[0].indicateur_territoire_jalon[0]
+            ?.valeur_actuelle,
         valeurCible: val.indicateur_territoire[0].valeur_cible_mandat,
         uniteMesure: val.unite_mesure,
       });
-      acc.set(val.chantier_id, [...(acc.get(val.chantier_id) || []), indicateur]);
+      acc.set(val.chantier_id, [
+        ...(acc.get(val.chantier_id) || []),
+        indicateur,
+      ]);
       return acc;
     }, new Map<string, Indicateur[]>());
   }
 
-  async recupererMapIndicateursNationalParListeIndicateurId({ listeIndicateurId, jalon }: {
-    listeIndicateurId: string[]
-    jalon: number
+  async recupererMapIndicateursNationalParListeIndicateurId({
+    listeIndicateurId,
+    jalon,
+  }: {
+    listeIndicateurId: string[];
+    jalon: number;
   }): Promise<Map<string, Indicateur>> {
     const result = await prisma.indicateur_identite.findMany({
       where: {
@@ -92,7 +109,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       include: {
         indicateur_territoire: {
           where: {
-            territoire_code: 'NAT-FR',
+            territoire_code: "NAT-FR",
           },
           select: {
             taux_avancement_mandat: true,
@@ -115,14 +132,19 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       const indicateur = Indicateur.creerIndicateur({
         id: val.id,
         nom: val.nom,
-        dateValeurAvancement: val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.date_valeur_actuelle?.toISOString() || '',
-        objectifTauxAvancement: val.indicateur_territoire[0].taux_avancement_mandat,
-        valeurAvancement: val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.valeur_actuelle,
+        dateValeurAvancement:
+          val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.date_valeur_actuelle?.toISOString() ||
+          "",
+        objectifTauxAvancement:
+          val.indicateur_territoire[0].taux_avancement_mandat,
+        valeurAvancement:
+          val.indicateur_territoire[0].indicateur_territoire_jalon[0]
+            ?.valeur_actuelle,
         valeurCible: val.indicateur_territoire[0].valeur_cible_mandat,
         uniteMesure: val.unite_mesure,
       });
       acc.set(val.id, indicateur);
       return acc;
-    }, new Map<string, Indicateur>()); 
+    }, new Map<string, Indicateur>());
   }
 }

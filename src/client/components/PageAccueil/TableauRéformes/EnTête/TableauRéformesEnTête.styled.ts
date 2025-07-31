@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const TableauRéformesEnTêteStyled = styled.thead`
   background-color: var(--background-action-low-blue-france) !important;
@@ -12,7 +12,7 @@ const TableauRéformesEnTêteStyled = styled.thead`
     &:last-child {
       border-radius: 0 8px 0 0;
     }
-    
+
     p {
       display: inline-block;
     }
@@ -20,10 +20,9 @@ const TableauRéformesEnTêteStyled = styled.thead`
 
   @media screen and (max-width: 78rem) {
     .title {
-      font-size: .75rem !important;
+      font-size: 0.75rem !important;
     }
   }
-
 `;
 
 export default TableauRéformesEnTêteStyled;

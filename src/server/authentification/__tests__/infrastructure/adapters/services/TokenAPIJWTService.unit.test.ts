@@ -1,37 +1,48 @@
-import { decode, encode } from 'next-auth/jwt';
-import { TokenAPIJWTService } from '@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService';
-import { TokenAPIInformationBuilder } from '@/server/authentification/app/builder/TokenAPIInformationBuilder';
-import { configuration } from '@/config';
+import { decode, encode } from "next-auth/jwt";
+import { TokenAPIJWTService } from "@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService";
+import { TokenAPIInformationBuilder } from "@/server/authentification/app/builder/TokenAPIInformationBuilder";
+import { configuration } from "@/config";
 
-describe('TokenAPIJWTService', () => {
+describe("TokenAPIJWTService", () => {
   let tokenAPIJWTService: TokenAPIJWTService;
 
   beforeEach(() => {
-    tokenAPIJWTService = new TokenAPIJWTService({ secret: configuration.tokenAPI.secret });
-  });
-
-  describe('creerTokenAPI', () => {
-    it('doit générer un token api au format JWT', async () => {
-      // Given
-      const email = 'test@example.com';
-      const tokenAPIInformation = new TokenAPIInformationBuilder().withEmail(email).build();
-      // When
-      const result = await tokenAPIJWTService.creerTokenAPI(tokenAPIInformation);
-      // Then
-      const tokenDecode = await decode({ token: result, secret: configuration.tokenAPI.secret });
-      expect(tokenDecode?.email).toEqual('test@example.com');
+    tokenAPIJWTService = new TokenAPIJWTService({
+      secret: configuration.tokenAPI.secret,
     });
   });
 
-  describe('decoderTokenAPI', () => {
-    it('doit générer un token api au format JWT', async () => {
+  describe("creerTokenAPI", () => {
+    it("doit générer un token api au format JWT", async () => {
       // Given
-      const email = 'test@example.com';
-      const token = await encode({ token: { email }, secret: configuration.tokenAPI.secret });
+      const email = "test@example.com";
+      const tokenAPIInformation = new TokenAPIInformationBuilder()
+        .withEmail(email)
+        .build();
+      // When
+      const result =
+        await tokenAPIJWTService.creerTokenAPI(tokenAPIInformation);
+      // Then
+      const tokenDecode = await decode({
+        token: result,
+        secret: configuration.tokenAPI.secret,
+      });
+      expect(tokenDecode?.email).toEqual("test@example.com");
+    });
+  });
+
+  describe("decoderTokenAPI", () => {
+    it("doit générer un token api au format JWT", async () => {
+      // Given
+      const email = "test@example.com";
+      const token = await encode({
+        token: { email },
+        secret: configuration.tokenAPI.secret,
+      });
       // When
       const result = await tokenAPIJWTService.decoderTokenAPI(token);
       // Then
-      expect(result?.email).toEqual('test@example.com');
+      expect(result?.email).toEqual("test@example.com");
     });
   });
 });

@@ -5,7 +5,15 @@ export class PiloteError extends Error {
 
   private readonly _type: string;
 
-  constructor({ message, code, type }: { message: string, code: number, type: string }) {
+  constructor({
+    message,
+    code,
+    type,
+  }: {
+    message: string;
+    code: number;
+    type: string;
+  }) {
     super(message);
     this._message = message;
     this._status = code;

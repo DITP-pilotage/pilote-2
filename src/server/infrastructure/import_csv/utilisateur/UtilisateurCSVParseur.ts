@@ -1,9 +1,15 @@
-import { Options, parse } from 'csv-parse/sync';
-import fs from 'node:fs';
-import assert from 'node:assert/strict';
-import { ProfilCode, UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@/server/domain/utilisateur/Utilisateur.interface';
-import { HabilitationsÀCréerOuMettreÀJourCalculées, ScopeChantiers } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import { CsvRecord } from './UtilisateurCSVParseur.interface';
+import { Options, parse } from "csv-parse/sync";
+import fs from "node:fs";
+import assert from "node:assert/strict";
+import {
+  ProfilCode,
+  UtilisateurÀCréerOuMettreÀJourSansHabilitation,
+} from "@/server/domain/utilisateur/Utilisateur.interface";
+import {
+  HabilitationsÀCréerOuMettreÀJourCalculées,
+  ScopeChantiers,
+} from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { CsvRecord } from "./UtilisateurCSVParseur.interface";
 
 export default class UtilisateurCSVParseur {
   private _CSV_PARSE_OPTIONS: Options = {
@@ -13,24 +19,24 @@ export default class UtilisateurCSVParseur {
   };
 
   private _colonnes = {
-    nom: 'nom',
-    prénom: 'prénom',
-    email: 'email',
-    profil: 'profil',
-    scope: 'scope',
-    territoires: 'territoires',
-    périmètreIds: 'périmètreIds',
-    chantierIds: 'chantierIds',
-    auteurEmail: 'auteurEmail',
+    nom: "nom",
+    prénom: "prénom",
+    email: "email",
+    profil: "profil",
+    scope: "scope",
+    territoires: "territoires",
+    périmètreIds: "périmètreIds",
+    chantierIds: "chantierIds",
+    auteurEmail: "auteurEmail",
   };
 
   constructor(private _filename: string) {}
 
   parseComptesASupprimer() {
-    const contents = fs.readFileSync(this._filename, 'utf8');
+    const contents = fs.readFileSync(this._filename, "utf8");
     const csvRecords: CsvRecord[] = parse(contents, this._CSV_PARSE_OPTIONS);
 
-    let emails:string[] = [];
+    let emails: string[] = [];
     for (const csvRecord of csvRecords) {
       emails = [...emails, csvRecord[this._colonnes.email].toLowerCase()];
     }
@@ -38,46 +44,79 @@ export default class UtilisateurCSVParseur {
     return emails;
   }
 
-  parse(): { csvRecords: CsvRecord[], parsedCsvRecords: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées; auteurEmail: string })[] } {
-    const contents = fs.readFileSync(this._filename, 'utf8');
+  parse(): {
+    csvRecords: CsvRecord[];
+    parsedCsvRecords: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & {
+      habilitations: HabilitationsÀCréerOuMettreÀJourCalculées;
+      auteurEmail: string;
+    })[];
+  } {
+    const contents = fs.readFileSync(this._filename, "utf8");
     const csvRecords: CsvRecord[] = parse(contents, this._CSV_PARSE_OPTIONS);
 
     const parsedCsvRecords = this._parseCsvRecords(csvRecords);
     return { csvRecords, parsedCsvRecords };
   }
 
-  _parseCsvRecords(csvRecords: CsvRecord[]): (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées; auteurEmail: string })[] {
-    assert(csvRecords, 'Erreur de parsing CSV. Pas de lignes ?');
-  
-    let utilisateurs: Record<string, (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées; auteurEmail: string })> = {};
+  _parseCsvRecords(
+    csvRecords: CsvRecord[],
+  ): (UtilisateurÀCréerOuMettreÀJourSansHabilitation & {
+    habilitations: HabilitationsÀCréerOuMettreÀJourCalculées;
+    auteurEmail: string;
+  })[] {
+    assert(csvRecords, "Erreur de parsing CSV. Pas de lignes ?");
+
+    let utilisateurs: Record<
+      string,
+      UtilisateurÀCréerOuMettreÀJourSansHabilitation & {
+        habilitations: HabilitationsÀCréerOuMettreÀJourCalculées;
+        auteurEmail: string;
+      }
+    > = {};
 
     for (const csvRecord of csvRecords) {
       const email = csvRecord[this._colonnes.email].toLowerCase();
       const scope = csvRecord[this._colonnes.scope] as ScopeChantiers;
 
       if (utilisateurs[email] === undefined) {
-        utilisateurs[email] = this._générerUtilisateurÀCréerOuMettreÀJour(csvRecord);
+        utilisateurs[email] =
+          this._générerUtilisateurÀCréerOuMettreÀJour(csvRecord);
       }
-  
-      utilisateurs[email].habilitations[scope] = this._générerUneHabilitation(csvRecord[this._colonnes.chantierIds], csvRecord[this._colonnes.territoires], csvRecord[this._colonnes.périmètreIds]);
+
+      utilisateurs[email].habilitations[scope] = this._générerUneHabilitation(
+        csvRecord[this._colonnes.chantierIds],
+        csvRecord[this._colonnes.territoires],
+        csvRecord[this._colonnes.périmètreIds],
+      );
     }
-  
+
     return Object.values(utilisateurs);
   }
 
   _splitCsvCell(cell?: string | null): string[] {
-    return (cell === undefined || cell === null || cell === '') ? [] : cell?.split(/ *\| */);
+    return cell === undefined || cell === null || cell === ""
+      ? []
+      : cell?.split(/ *\| */);
   }
-  
-  _générerUneHabilitation(chantiers?: string | null, territoires?: string | null, périmètres?: string | null) {
+
+  _générerUneHabilitation(
+    chantiers?: string | null,
+    territoires?: string | null,
+    périmètres?: string | null,
+  ) {
     return {
       chantiers: this._splitCsvCell(chantiers),
       territoires: this._splitCsvCell(territoires),
       périmètres: this._splitCsvCell(périmètres),
     };
   }
-  
-  _générerUtilisateurÀCréerOuMettreÀJour(csvRecord: CsvRecord): (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées; auteurEmail: string }) {
+
+  _générerUtilisateurÀCréerOuMettreÀJour(
+    csvRecord: CsvRecord,
+  ): UtilisateurÀCréerOuMettreÀJourSansHabilitation & {
+    habilitations: HabilitationsÀCréerOuMettreÀJourCalculées;
+    auteurEmail: string;
+  } {
     return {
       email: csvRecord[this._colonnes.email].toLowerCase(),
       nom: csvRecord[this._colonnes.nom].toLowerCase(),

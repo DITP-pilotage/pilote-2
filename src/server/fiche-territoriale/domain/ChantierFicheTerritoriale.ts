@@ -1,8 +1,8 @@
-import { MeteoDisponible } from '@/server/fiche-territoriale/domain/MeteoDisponible';
-import { Ministere } from '@/server/fiche-territoriale/domain/Ministere';
-import { SyntheseDesResultats } from '@/server/fiche-territoriale/domain/SyntheseDesResultats';
-import { Indicateur } from '@/server/fiche-territoriale/domain/Indicateur';
-import { IndicateurFicheTerritoriale } from '@/server/fiche-territoriale/domain/IndicateurFicheTerritoriale';
+import { MeteoDisponible } from "@/server/fiche-territoriale/domain/MeteoDisponible";
+import { Ministere } from "@/server/fiche-territoriale/domain/Ministere";
+import { SyntheseDesResultats } from "@/server/fiche-territoriale/domain/SyntheseDesResultats";
+import { Indicateur } from "@/server/fiche-territoriale/domain/Indicateur";
+import { IndicateurFicheTerritoriale } from "@/server/fiche-territoriale/domain/IndicateurFicheTerritoriale";
 
 export class ChantierFicheTerritoriale {
   private readonly _nom: string;
@@ -19,7 +19,23 @@ export class ChantierFicheTerritoriale {
 
   private readonly _indicateurs: IndicateurFicheTerritoriale[];
 
-  private constructor({ tauxAvancement, meteo, nom, ministerePorteur, dateQualitative, dateQuantitative, indicateurs }: { tauxAvancement: number | null, meteo: MeteoDisponible | null, nom: string, ministerePorteur: Ministere, dateQualitative: string, dateQuantitative: string, indicateurs: IndicateurFicheTerritoriale[] }) {
+  private constructor({
+    tauxAvancement,
+    meteo,
+    nom,
+    ministerePorteur,
+    dateQualitative,
+    dateQuantitative,
+    indicateurs,
+  }: {
+    tauxAvancement: number | null;
+    meteo: MeteoDisponible | null;
+    nom: string;
+    ministerePorteur: Ministere;
+    dateQualitative: string;
+    dateQuantitative: string;
+    indicateurs: IndicateurFicheTerritoriale[];
+  }) {
     this._tauxAvancement = tauxAvancement;
     this._meteo = meteo;
     this._nom = nom;
@@ -57,15 +73,52 @@ export class ChantierFicheTerritoriale {
     return this._indicateurs;
   }
 
-  static creerChantierFicheTerritoriale({ tauxAvancement, meteo, nom, ministerePorteur, dateQualitative, dateQuantitative, indicateurs }: { tauxAvancement: number | null, meteo: MeteoDisponible | null, nom: string, ministerePorteur: Ministere, dateQualitative: string, dateQuantitative: string, indicateurs: IndicateurFicheTerritoriale[] }): ChantierFicheTerritoriale {
-    return new ChantierFicheTerritoriale({ tauxAvancement, meteo, nom, ministerePorteur, dateQualitative, dateQuantitative, indicateurs });
+  static creerChantierFicheTerritoriale({
+    tauxAvancement,
+    meteo,
+    nom,
+    ministerePorteur,
+    dateQualitative,
+    dateQuantitative,
+    indicateurs,
+  }: {
+    tauxAvancement: number | null;
+    meteo: MeteoDisponible | null;
+    nom: string;
+    ministerePorteur: Ministere;
+    dateQualitative: string;
+    dateQuantitative: string;
+    indicateurs: IndicateurFicheTerritoriale[];
+  }): ChantierFicheTerritoriale {
+    return new ChantierFicheTerritoriale({
+      tauxAvancement,
+      meteo,
+      nom,
+      ministerePorteur,
+      dateQualitative,
+      dateQuantitative,
+      indicateurs,
+    });
   }
 
   static calculerDateQualitative(syntheseDesResultats: SyntheseDesResultats[]) {
-    return syntheseDesResultats.flatMap(syntheseDesResultat => [syntheseDesResultat.dateMeteo, syntheseDesResultat.dateCommentaire]).sort().reverse()[0] || '';
+    return (
+      syntheseDesResultats
+        .flatMap((syntheseDesResultat) => [
+          syntheseDesResultat.dateMeteo,
+          syntheseDesResultat.dateCommentaire,
+        ])
+        .sort()
+        .reverse()[0] || ""
+    );
   }
 
   static calculerDateQuantitative(indicateurs: Indicateur[]) {
-    return indicateurs.map(indicateur => indicateur.dateValeurAvancement).sort().reverse()[0] || '';
+    return (
+      indicateurs
+        .map((indicateur) => indicateur.dateValeurAvancement)
+        .sort()
+        .reverse()[0] || ""
+    );
   }
 }

@@ -1,9 +1,11 @@
-import { PrismaClient, nouveaute as NouveauteModel } from '@prisma/client';
-import { PrismaPilote } from '@/server/db/PrismaPilote';
-import { NouveauteRepository } from '@/server/parametrage-nouveautes/domain/ports/NouveauteRepository';
-import { Nouveaute } from '@/server/parametrage-nouveautes/domain/Nouveaute';
+import { PrismaClient, nouveaute as NouveauteModel } from "@prisma/client";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { NouveauteRepository } from "@/server/parametrage-nouveautes/domain/ports/NouveauteRepository";
+import { Nouveaute } from "@/server/parametrage-nouveautes/domain/Nouveaute";
 
-const convertirNouveauteEnNouveauteModel = (nouveaute: Nouveaute): NouveauteModel => {
+const convertirNouveauteEnNouveauteModel = (
+  nouveaute: Nouveaute,
+): NouveauteModel => {
   return {
     id: nouveaute.id,
     contenu: nouveaute.contenu,
@@ -13,7 +15,9 @@ const convertirNouveauteEnNouveauteModel = (nouveaute: Nouveaute): NouveauteMode
   };
 };
 
-const convertirNouveauteEnNouveaute = (nouveauteModel: NouveauteModel): Nouveaute => {
+const convertirNouveauteEnNouveaute = (
+  nouveauteModel: NouveauteModel,
+): Nouveaute => {
   return Nouveaute.creerNouveaute({
     id: nouveauteModel.id,
     contenu: nouveauteModel.contenu,
@@ -37,17 +41,19 @@ export class PrismaNouveauteRepository implements NouveauteRepository {
 
   async listerNouveautes(): Promise<Nouveaute[]> {
     const nouveautes = await this.prisma.nouveaute.findMany();
-    return nouveautes.sort((a, b) => {
-      const [aMajor, aMinor, aPatch] = a.version.split('.');
-      const [bMajor, bMinor, bPatch] = b.version.split('.');
-      if (+aMajor !== +bMajor) {
-        return +bMajor - +aMajor;
-      }
-      if (+aMinor !== +bMinor) {
-        return +bMinor - +aMinor;
-      }
-      return +bPatch - +aPatch;
-    }).map(convertirNouveauteEnNouveaute);
+    return nouveautes
+      .sort((a, b) => {
+        const [aMajor, aMinor, aPatch] = a.version.split(".");
+        const [bMajor, bMinor, bPatch] = b.version.split(".");
+        if (+aMajor !== +bMajor) {
+          return +bMajor - +aMajor;
+        }
+        if (+aMinor !== +bMinor) {
+          return +bMinor - +aMinor;
+        }
+        return +bPatch - +aPatch;
+      })
+      .map(convertirNouveauteEnNouveaute);
   }
 
   async modifier(nouveaute: Nouveaute): Promise<void> {

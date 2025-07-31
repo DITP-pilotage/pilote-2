@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const FiltresSélectionnésStyled = styled.div`
   .filtres-sélectionnés__conteneur {
@@ -11,12 +11,12 @@ const FiltresSélectionnésStyled = styled.div`
   .filtres-sélectionnés__titre {
     color: var(--text-title-grey);
   }
-  
+
   .filtres-sélectionnés__conteneur > * {
     display: inline-block;
     width: 100%;
   }
-  
+
   @media print {
     display: none;
   }

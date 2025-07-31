@@ -1,15 +1,15 @@
-import { territoire as TerritoirePrisma } from '@prisma/client';
-import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
-import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
-import { Territoire } from '@/server/domain/territoire/Territoire.interface';
-import { prisma } from '@/server/db/prisma';
+import { territoire as TerritoirePrisma } from "@prisma/client";
+import TerritoireRepository from "@/server/domain/territoire/TerritoireRepository.interface";
+import { NOMS_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
+import { Territoire } from "@/server/domain/territoire/Territoire.interface";
+import { prisma } from "@/server/db/prisma";
 
 class ErreurTerritoireNonTrouvé extends Error {
   constructor() {
-    super('Erreur: territoire non trouvé.');
+    super("Erreur: territoire non trouvé.");
   }
 }
-export class TerritoireSQLRepository implements TerritoireRepository { 
+export class TerritoireSQLRepository implements TerritoireRepository {
   _mapperVersLeDomaine(territoire: TerritoirePrisma): Territoire {
     return {
       code: territoire.code,
@@ -18,28 +18,30 @@ export class TerritoireSQLRepository implements TerritoireRepository {
       codeInsee: territoire.code_insee,
       codeParent: territoire.code_parent,
       maille: NOMS_MAILLES[territoire.maille],
-    }; 
+    };
   }
 
   async récupérerTous() {
     const territoires = await prisma.territoire.findMany();
-    return territoires.map(t => this._mapperVersLeDomaine(t));
+    return territoires.map((t) => this._mapperVersLeDomaine(t));
   }
 
   async récupérerTousNew() {
     const territoires = await prisma.territoire.findMany();
-    return territoires.map(t => this._mapperVersLeDomaine(t));
+    return territoires.map((t) => this._mapperVersLeDomaine(t));
   }
 
-  async récupérerListe(codes: Territoire['code'][]) {
+  async récupérerListe(codes: Territoire["code"][]) {
     const territoires = await prisma.territoire.findMany({
       where: { code: { in: codes } },
     });
 
-    return territoires.map(territoire => this._mapperVersLeDomaine(territoire));
+    return territoires.map((territoire) =>
+      this._mapperVersLeDomaine(territoire),
+    );
   }
 
-  async récupérer(code: Territoire['code']) {
+  async récupérer(code: Territoire["code"]) {
     const territoire = await prisma.territoire.findUnique({
       where: { code: code },
     });

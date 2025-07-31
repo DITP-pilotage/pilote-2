@@ -1,5 +1,5 @@
-import { Table } from '@tanstack/react-table';
+import { Table } from "@tanstack/react-table";
 
 export default interface TableauEnTêteProps<T> {
-  tableau: Table<T>
+  tableau: Table<T>;
 }

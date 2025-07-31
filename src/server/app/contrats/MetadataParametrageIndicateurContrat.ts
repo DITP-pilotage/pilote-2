@@ -1,7 +1,5 @@
-import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur';
-import {
-  InformationDerniereModificationMetadataIndicateurContrat,
-} from '@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat';
+import { MetadataParametrageIndicateur } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur";
+import { InformationDerniereModificationMetadataIndicateurContrat } from "@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat";
 
 export interface MetadataParametrageIndicateurInformationContrat {
   indicId: string;
@@ -84,7 +82,9 @@ export interface MetadataParametrageIndicateurContrat {
   couvertureTemporelle: string;
 }
 
-export const presenterEnMetadataParametrageIndicateurContrat = (metadataParametrageIndicateur: MetadataParametrageIndicateur): MetadataParametrageIndicateurContrat => ({
+export const presenterEnMetadataParametrageIndicateurContrat = (
+  metadataParametrageIndicateur: MetadataParametrageIndicateur,
+): MetadataParametrageIndicateurContrat => ({
   indicId: metadataParametrageIndicateur.indicId,
   viDeptFrom: metadataParametrageIndicateur.viDeptFrom,
   viDeptOp: metadataParametrageIndicateur.viDeptOp,
@@ -131,7 +131,8 @@ export const presenterEnMetadataParametrageIndicateurContrat = (metadataParametr
   indicHiddenPilote: metadataParametrageIndicateur.indicHiddenPilote,
   indicSchema: metadataParametrageIndicateur.indicSchema,
   zgApplicable: metadataParametrageIndicateur.zgApplicable,
-  chantierNom: metadataParametrageIndicateur.chantierNom || 'Chantier non publié',
+  chantierNom:
+    metadataParametrageIndicateur.chantierNom || "Chantier non publié",
   reformePrioritaire: metadataParametrageIndicateur.reformePrioritaire,
   projetAnnuelPerf: metadataParametrageIndicateur.projetAnnuelPerf,
   detailProjetAnnuelPerf: metadataParametrageIndicateur.detailProjetAnnuelPerf,
@@ -155,12 +156,18 @@ export const presenterEnMetadataParametrageIndicateurContrat = (metadataParametr
   couvertureTemporelle: metadataParametrageIndicateur.couvertureTemporelle,
 });
 
-export const presenterEnMetadataParametrageIndicateurInformationContrat = (metadataParametrageIndicateur: MetadataParametrageIndicateur, informationDerniereModificationMetadataIndicateurContrat: InformationDerniereModificationMetadataIndicateurContrat): MetadataParametrageIndicateurInformationContrat => ({
+export const presenterEnMetadataParametrageIndicateurInformationContrat = (
+  metadataParametrageIndicateur: MetadataParametrageIndicateur,
+  informationDerniereModificationMetadataIndicateurContrat: InformationDerniereModificationMetadataIndicateurContrat,
+): MetadataParametrageIndicateurInformationContrat => ({
   indicId: metadataParametrageIndicateur.indicId,
   indicParentCh: metadataParametrageIndicateur.indicParentCh,
   indicNom: metadataParametrageIndicateur.indicNom,
   indicHiddenPilote: metadataParametrageIndicateur.indicHiddenPilote,
-  chantierNom: metadataParametrageIndicateur.chantierNom || 'Chantier non publié',
-  auteurDerniereModification: informationDerniereModificationMetadataIndicateurContrat.auteurModification,
-  dateDerniereModification: informationDerniereModificationMetadataIndicateurContrat.dateDerniereModification,
+  chantierNom:
+    metadataParametrageIndicateur.chantierNom || "Chantier non publié",
+  auteurDerniereModification:
+    informationDerniereModificationMetadataIndicateurContrat.auteurModification,
+  dateDerniereModification:
+    informationDerniereModificationMetadataIndicateurContrat.dateDerniereModification,
 });

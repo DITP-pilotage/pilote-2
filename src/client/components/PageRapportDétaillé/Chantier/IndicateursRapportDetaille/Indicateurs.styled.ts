@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const IndicateursStyled = styled.section`
   .sous-rubrique-indicateur:last-of-type {

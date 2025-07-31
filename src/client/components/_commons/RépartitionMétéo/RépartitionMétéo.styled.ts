@@ -1,10 +1,10 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const RépartitionMétéoStyled = styled.ul`
   list-style: none;
 
   .fr-col-3 {
-    padding: .5rem;
+    padding: 0.5rem;
   }
 
   @media screen and (max-width: 80rem) {
@@ -13,12 +13,12 @@ const RépartitionMétéoStyled = styled.ul`
     }
 
     div {
-      padding-right: .25rem;
-      padding-left: .25rem;
+      padding-right: 0.25rem;
+      padding-left: 0.25rem;
     }
 
     .label {
-      font-size: .75rem !important;
+      font-size: 0.75rem !important;
     }
   }
 `;

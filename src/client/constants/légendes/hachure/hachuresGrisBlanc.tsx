@@ -1,20 +1,16 @@
-import Hachure from '@/client/constants/légendes/hachure/hachure.interface';
+import Hachure from "@/client/constants/légendes/hachure/hachure.interface";
 
 const hachuresGrisBlanc: Hachure = {
-  id: 'hachures-gris-blanc',
+  id: "hachures-gris-blanc",
   patternSVG: (
     <pattern
-      height='1'
-      id='hachures-gris-blanc'
-      patternTransform='rotate(45)'
-      patternUnits='userSpaceOnUse'
-      width='1'
+      height="1"
+      id="hachures-gris-blanc"
+      patternTransform="rotate(45)"
+      patternUnits="userSpaceOnUse"
+      width="1"
     >
-      <line
-        stroke='#666666'
-        strokeWidth='0.75'
-        y2='1'
-      />
+      <line stroke="#666666" strokeWidth="0.75" y2="1" />
     </pattern>
   ),
 };

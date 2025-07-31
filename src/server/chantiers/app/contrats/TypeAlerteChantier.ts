@@ -1,6 +1,7 @@
-export type TypeAlerteChantier = 'estEnAlerteÉcart' 
-| 'estEnAlerteBaisse' 
-| 'estEnAlerteTauxAvancementNonCalculé' 
-| 'estEnAlerteAbscenceTauxAvancementDepartemental' 
-| 'estEnAlerteMétéoNonRenseignée'
-| 'estEnAlertePossedePropositionsValeurAvancement';
+export type TypeAlerteChantier =
+  | "estEnAlerteÉcart"
+  | "estEnAlerteBaisse"
+  | "estEnAlerteTauxAvancementNonCalculé"
+  | "estEnAlerteAbscenceTauxAvancementDepartemental"
+  | "estEnAlerteMétéoNonRenseignée"
+  | "estEnAlertePossedePropositionsValeurAvancement";

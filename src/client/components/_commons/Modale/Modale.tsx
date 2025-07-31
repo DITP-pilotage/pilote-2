@@ -1,9 +1,9 @@
-import '@gouvfr/dsfr/dist/component/modal/modal.min.css';
-import { FunctionComponent } from 'react';
-import Titre from '@/components/_commons/Titre/Titre';
-import ModaleProps from './Modale.interface';
-import ModaleStyled from './Modale.styled';
-import useModale from './useModale';
+import "@gouvfr/dsfr/dist/component/modal/modal.min.css";
+import { FunctionComponent } from "react";
+import Titre from "@/components/_commons/Titre/Titre";
+import ModaleProps from "./Modale.interface";
+import ModaleStyled from "./Modale.styled";
+import useModale from "./useModale";
 
 const Modale: FunctionComponent<ModaleProps> = ({
   children,
@@ -12,53 +12,41 @@ const Modale: FunctionComponent<ModaleProps> = ({
   idHtml,
   ouvertureCallback,
   fermetureCallback,
-  tailleModale = 'md',
+  tailleModale = "md",
 }) => {
   const { modaleRef } = useModale(ouvertureCallback, fermetureCallback);
 
   const taillePossible = {
-    'md': 'fr-col-12 fr-col-md-10  fr-col-lg-9',
-    'lg': 'fr-col-12 fr-col-md-11 fr-col-lg-10',
+    md: "fr-col-12 fr-col-md-10  fr-col-lg-9",
+    lg: "fr-col-12 fr-col-md-11 fr-col-lg-10",
   };
 
   return (
     <ModaleStyled>
-      <dialog
-        className='fr-modal'
-        id={idHtml}
-        ref={modaleRef}
-      >
-        <div className='fr-container fr-container--fluid fr-container-md'>
-          <div className={`fr-modal__body ${taillePossible[tailleModale]} fr-mx-auto modale-conteneur`}>
-            <div className='fr-modal__header fr-pb-0 fr-mr-2w fr-mr-md-0'>
+      <dialog className="fr-modal" id={idHtml} ref={modaleRef}>
+        <div className="fr-container fr-container--fluid fr-container-md">
+          <div
+            className={`fr-modal__body ${taillePossible[tailleModale]} fr-mx-auto modale-conteneur`}
+          >
+            <div className="fr-modal__header fr-pb-0 fr-mr-2w fr-mr-md-0">
               <button
                 aria-controls={idHtml}
-                className='fr-link--close fr-link bouton-fermer-modale'
-                title='Fermer la fenêtre modale'
-                type='button'
+                className="fr-link--close fr-link bouton-fermer-modale"
+                title="Fermer la fenêtre modale"
+                type="button"
               >
                 Fermer
               </button>
             </div>
-            <div className='fr-mx-4w'>
-              {
-                titre ? (
-                  <Titre
-                    baliseHtml='h1'
-                    className='fr-modal__title fr-mb-1w'
-                  >
-                    {titre}
-                  </Titre>
-                ) : null
-              }
-              {
-                !!sousTitre &&
-                <p className='fr-text--lg bold'>
-                  {sousTitre}
-                </p>
-              }
+            <div className="fr-mx-4w">
+              {titre ? (
+                <Titre baliseHtml="h1" className="fr-modal__title fr-mb-1w">
+                  {titre}
+                </Titre>
+              ) : null}
+              {!!sousTitre && <p className="fr-text--lg bold">{sousTitre}</p>}
             </div>
-            <div className='fr-modal__content fr-px-4w fr-mb-4w modale-contenu'>
+            <div className="fr-modal__content fr-px-4w fr-mb-4w modale-contenu">
               {children}
             </div>
           </div>

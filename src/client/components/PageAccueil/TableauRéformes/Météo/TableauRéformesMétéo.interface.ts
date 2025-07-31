@@ -1,1 +1,1 @@
-export type TableauChantiersMétéoTaille = 'md' | 'sm';
+export type TableauChantiersMétéoTaille = "md" | "sm";

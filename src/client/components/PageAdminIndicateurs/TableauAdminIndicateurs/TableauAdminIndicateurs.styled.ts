@@ -1,7 +1,6 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const TableauAdminIndicateursStyled = styled.section`
-
   .barre-de-recherche {
     width: 100%;
     max-width: 20.5rem;
@@ -11,12 +10,12 @@ const TableauAdminIndicateursStyled = styled.section`
     display: flex;
     flex-direction: column;
     align-items: center;
-    
-    @media(min-width: 576px) {
+
+    @media (min-width: 576px) {
       align-items: flex-start;
     }
 
-    @media(min-width: 1050px) {
+    @media (min-width: 1050px) {
       flex-direction: row;
       align-items: center;
     }
@@ -26,29 +25,29 @@ const TableauAdminIndicateursStyled = styled.section`
     display: flex;
     justify-content: center;
 
-    @media(min-width: 576px) {
+    @media (min-width: 576px) {
       justify-content: flex-start;
     }
 
-    @media(min-width: 1050px) {
+    @media (min-width: 1050px) {
       justify-content: flex-end;
     }
   }
-  
+
   .fr-icon-red {
     color: red;
   }
-  
+
   .fr-icon-green {
     color: green;
   }
 
   table.tableau {
     display: table;
-    
-    tbody > tr{
+
+    tbody > tr {
       cursor: pointer;
-      
+
       &:hover:nth-of-type(even) {
         background-color: var(--background-contrast-grey-hover);
       }
@@ -57,7 +56,7 @@ const TableauAdminIndicateursStyled = styled.section`
         background-color: var(--background-alt-grey-hover);
       }
 
-      td{
+      td {
         max-width: 20px;
         overflow: hidden;
         text-overflow: ellipsis;

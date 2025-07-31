@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const PageFicheConducteurStyled = styled.div`
   .fiche-conducteur__bloc {
@@ -12,33 +12,34 @@ const PageFicheConducteurStyled = styled.div`
       padding: 0.5rem;
     }
   }
-  
+
   .grid-row--header {
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
   }
-  
+
   .only-print {
     display: none;
   }
-  
+
   @media print {
-    .fr-badge, .fr-text--xs {
-      font-size: .625rem!important;
+    .fr-badge,
+    .fr-text--xs {
+      font-size: 0.625rem !important;
       line-height: 1rem !important;
     }
-    
+
     .fr-text--sm {
-      font-size: .625rem!important;
+      font-size: 0.625rem !important;
       line-height: 1rem !important;
     }
-    
+
     .fiche-conducteur__bloc--no-border {
       .bloc-container {
         border: none;
       }
     }
-    
+
     .fiche-conducteur__bloc--border-light {
       .bloc-container {
         padding: 0;
@@ -50,11 +51,10 @@ const PageFicheConducteurStyled = styled.div`
       display: block;
     }
   }
-  
-  
+
   @page {
     margin: 0;
-    size: landscape!important;
+    size: landscape !important;
   }
 `;
 

@@ -1,8 +1,13 @@
-import { prisma } from '@/server/db/prisma';
-import { DecisionStrategiqueRepository } from '@/server/gestion-utilisateur/domain/ports/DecisionStrategiqueRepository';
+import { prisma } from "@/server/db/prisma";
+import { DecisionStrategiqueRepository } from "@/server/gestion-utilisateur/domain/ports/DecisionStrategiqueRepository";
 
-export class PrismaDecisionStrategiqueRepository implements DecisionStrategiqueRepository {
-  async anonymiserAuteurs(auteursAAnonymiserIds: string[], emailAuteurRemplacement: string): Promise<void> {
+export class PrismaDecisionStrategiqueRepository
+  implements DecisionStrategiqueRepository
+{
+  async anonymiserAuteurs(
+    auteursAAnonymiserIds: string[],
+    emailAuteurRemplacement: string,
+  ): Promise<void> {
     const auteurAnonyme = await prisma.utilisateur.findFirst({
       where: {
         email: emailAuteurRemplacement,
@@ -19,7 +24,7 @@ export class PrismaDecisionStrategiqueRepository implements DecisionStrategiqueR
         data: {
           auteur_id: auteurAnonyme.id,
         },
-      }); 
+      });
     }
   }
 }

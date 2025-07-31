@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { actionsLargeurDÉcranStore } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
+import { useEffect, useState } from "react";
+import { actionsLargeurDÉcranStore } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 
 const POINT_RUPTURE_LARGEUR_XS = 576;
 const POINT_RUPTURE_LARGEUR_SM = 768;
@@ -15,15 +15,15 @@ export default function useDétecterLargeurDÉcran() {
     if (largeurDÉcran === null) {
       modifierLargeurDÉcran(null);
     } else if (largeurDÉcran < POINT_RUPTURE_LARGEUR_XS) {
-      modifierLargeurDÉcran('xs');
+      modifierLargeurDÉcran("xs");
     } else if (largeurDÉcran < POINT_RUPTURE_LARGEUR_SM) {
-      modifierLargeurDÉcran('sm');
+      modifierLargeurDÉcran("sm");
     } else if (largeurDÉcran < POINT_RUPTURE_LARGEUR_MD) {
-      modifierLargeurDÉcran('md');
+      modifierLargeurDÉcran("md");
     } else if (largeurDÉcran < POINT_RUPTURE_LARGEUR_LG) {
-      modifierLargeurDÉcran('lg');
+      modifierLargeurDÉcran("lg");
     } else {
-      modifierLargeurDÉcran('xl');
+      modifierLargeurDÉcran("xl");
     }
   }, [largeurDÉcran, modifierLargeurDÉcran]);
 
@@ -41,13 +41,13 @@ export default function useDétecterLargeurDÉcran() {
       }, DURÉE_DEBOUNCE_MS);
     };
 
-    window.addEventListener('resize', auRedimensionnementDeLaFenêtre);
+    window.addEventListener("resize", auRedimensionnementDeLaFenêtre);
 
     return () => {
       if (timeout !== null) {
         clearTimeout(timeout);
       }
-      window.removeEventListener('resize', auRedimensionnementDeLaFenêtre);
+      window.removeEventListener("resize", auRedimensionnementDeLaFenêtre);
     };
   }, []);
 }

@@ -13,10 +13,10 @@ export class Utilisateur {
     prenom,
     listeChantiers,
   }: {
-    email: string,
-    nom: string,
-    prenom: string,
-    listeChantiers: string[]
+    email: string;
+    nom: string;
+    prenom: string;
+    listeChantiers: string[];
   }) {
     this._email = email;
     this._nom = nom;
@@ -46,10 +46,10 @@ export class Utilisateur {
     prenom,
     listeChantiers,
   }: {
-    email: string,
-    nom: string,
-    prenom: string,
-    listeChantiers: string[]
+    email: string;
+    nom: string;
+    prenom: string;
+    listeChantiers: string[];
   }) {
     return new Utilisateur({
       email: email,
