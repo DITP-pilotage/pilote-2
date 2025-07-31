@@ -461,6 +461,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   }
                                   indicateur={indicateur}
                                   territoireCode={territoireCode}
+                                  territoireCodeInsee={
+                                    détailTerritoireSélectionné.codeInsee
+                                  }
+                                  territoireNom={
+                                    détailTerritoireSélectionné.nom
+                                  }
                                 />
                               </td>
                             </tr>
@@ -638,7 +644,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                         data-fr-opened="false"
                                         type="button"
                                       >
-                                        Editer la proposition
+                                        Modifier la proposition
                                       </button>
                                       <button
                                         aria-controls={
@@ -662,6 +668,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                       }
                                       indicateur={indicateur}
                                       territoireCode={territoireCode}
+                                      territoireCodeInsee={
+                                        détailTerritoireSélectionné.codeInsee
+                                      }
+                                      territoireNom={
+                                        détailTerritoireSélectionné.nom
+                                      }
                                     />
                                     <ModaleSuppressionValeurAvancement
                                       generatedHTMLID={

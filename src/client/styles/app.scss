@@ -126,6 +126,10 @@
   font-size: x-large;
 }
 
+.text-italic {
+  font-style: italic;
+}
+
 .no-underline {
   text-decoration-line: none;
 }
@@ -305,4 +309,8 @@
 
 .fr-text-warning {
   color: var(--border-plain-warning);
+}
+
+.input--sm {
+  max-width: 100px;
 }
