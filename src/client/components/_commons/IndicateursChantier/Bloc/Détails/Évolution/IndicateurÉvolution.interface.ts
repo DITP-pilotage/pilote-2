@@ -5,4 +5,5 @@ export default interface IndicateurÉvolutionProps {
   indicateurDétailsParTerritoires: IndicateurDétailsParTerritoire[];
   dateDeMiseAJourIndicateur: string | null;
   source: Indicateur["source"];
+  nouveauxGraphiquesSontActifs: boolean;
 }

@@ -34,6 +34,7 @@ interface IndicateursProps {
   cartographieGaucheIndicateur: CartographieIndicateurType;
   categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]>;
   sousIndicateursDisponibles: boolean;
+  nouveauxGraphiquesSontActifs: boolean;
 }
 
 const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
@@ -55,6 +56,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   cartographieGaucheIndicateur,
   categoriesIndicateurRepartition,
   sousIndicateursDisponibles,
+  nouveauxGraphiquesSontActifs,
 }) => {
   if (indicateurs.length === 0) {
     return null;
@@ -136,6 +138,9 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                         mailleQuery={mailleQuery}
                         mailleSelectionnee={mailleSelectionnee}
                         mailsDirecteursProjets={mailsDirecteursProjets}
+                        nouveauxGraphiquesSontActifs={
+                          nouveauxGraphiquesSontActifs
+                        }
                         territoireCode={territoireCode}
                         territoiresCompares={territoiresCompares}
                       />

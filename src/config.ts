@@ -257,6 +257,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_VIDEO_ACCUEIL",
     },
+    nouveauxGraphiques: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_NOUVEAUX_GRAPHIQUES",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",

@@ -48,6 +48,7 @@ interface IndicateurBlocProps {
   jalon: number;
   cartographieDroiteIndicateur: CartographieIndicateurType;
   cartographieGaucheIndicateur: CartographieIndicateurType;
+  nouveauxGraphiquesSontActifs: boolean;
 }
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
@@ -67,6 +68,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   jalon,
   cartographieDroiteIndicateur,
   cartographieGaucheIndicateur,
+  nouveauxGraphiquesSontActifs,
 }) => {
   const { maille: mailleTerritoireSelectionnee } =
     territoireCodeVersMailleCodeInsee(territoireCode);
@@ -826,6 +828,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
               mailleQuery={mailleQuery}
               mailleSelectionnee={mailleSelectionnee}
               mailsDirecteursProjets={mailsDirecteursProjets}
+              nouveauxGraphiquesSontActifs={nouveauxGraphiquesSontActifs}
               territoireCode={territoireCode}
               territoiresCompares={territoiresCompares}
             />

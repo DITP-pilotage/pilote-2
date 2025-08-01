@@ -77,6 +77,7 @@ interface PageChantierProps {
   cartographieDroiteIndicateur: CartographieIndicateurType;
   cartographieGaucheIndicateur: CartographieIndicateurType;
   donneesComparaisonDuTauxDAvancement: DonneesComparaisonDuTauxDAvancementType;
+  nouveauxGraphiquesSontActifs: boolean;
 }
 
 const PageChantier: FunctionComponent<PageChantierProps> = ({
@@ -102,6 +103,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
   cartographieDroiteIndicateur,
   cartographieGaucheIndicateur,
   donneesComparaisonDuTauxDAvancement,
+  nouveauxGraphiquesSontActifs,
 }: PageChantierProps) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
@@ -427,6 +429,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   mailsDirecteursProjets={chantier.responsables.directeursProjet
                     .map((directeur) => directeur.email)
                     .filter(Boolean)}
+                  nouveauxGraphiquesSontActifs={nouveauxGraphiquesSontActifs}
                   sousIndicateursDisponibles={!!sousIndicateursDisponibles}
                   territoireCode={territoireCode}
                   territoiresCompares={territoiresCompares}

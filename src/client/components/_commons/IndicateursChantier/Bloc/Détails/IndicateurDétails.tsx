@@ -36,6 +36,7 @@ interface IndicateurDétailsProps {
   mailsDirecteursProjets: string[];
   cartographieDroiteIndicateur: CartographieIndicateurType;
   cartographieGaucheIndicateur: CartographieIndicateurType;
+  nouveauxGraphiquesSontActifs: boolean;
 }
 
 const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
@@ -59,6 +60,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   mailsDirecteursProjets,
   cartographieDroiteIndicateur,
   cartographieGaucheIndicateur,
+  nouveauxGraphiquesSontActifs,
 }) => {
   const [futOuvert, setFutOuvert] = useState(false);
 
@@ -219,6 +221,9 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       indicateurDétailsParTerritoires={
                         indicateurDétailsParTerritoires
                       }
+                      nouveauxGraphiquesSontActifs={
+                        nouveauxGraphiquesSontActifs
+                      }
                       source={indicateur.source}
                     />
                   </section>
@@ -258,6 +263,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
               mailleQuery={mailleQuery}
               mailleSelectionnee={mailleSelectionnee}
               mailsDirecteursProjets={mailsDirecteursProjets}
+              nouveauxGraphiquesSontActifs={nouveauxGraphiquesSontActifs}
               territoireCode={territoireCode}
               territoiresCompares={territoiresCompares}
             />

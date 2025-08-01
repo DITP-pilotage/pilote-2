@@ -13,6 +13,8 @@ import Titre from "@/components/_commons/Titre/Titre";
 import IndicateurÉvolutionProps from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurÉvolution.interface";
 import IndicateurÉvolutionStyled from "./IndicateurÉvolution.styled";
 import useIndicateurÉvolution from "./useIndicateurÉvolution";
+import useIndicateurEvolutionNew from "./useIndicateurEvolutionNew";
+import LineChart from "./LineChart/LineChart";
 
 ChartJS.register(
   CategoryScale,
@@ -27,8 +29,12 @@ const IndicateurÉvolution: FunctionComponent<IndicateurÉvolutionProps> = ({
   indicateurDétailsParTerritoires,
   dateDeMiseAJourIndicateur,
   source,
+  nouveauxGraphiquesSontActifs,
 }) => {
   const { options, donnéesParTerritoire } = useIndicateurÉvolution(
+    indicateurDétailsParTerritoires,
+  );
+  const { optionsNew } = useIndicateurEvolutionNew(
     indicateurDétailsParTerritoires,
   );
 
@@ -45,7 +51,11 @@ const IndicateurÉvolution: FunctionComponent<IndicateurÉvolutionProps> = ({
       ) ? (
         <div className="graphique-bloc">
           <div className="graphique-conteneur">
-            <Line data={donnéesParTerritoire} options={options} />
+            {nouveauxGraphiquesSontActifs ? (
+              <LineChart option={optionsNew} />
+            ) : (
+              <Line data={donnéesParTerritoire} options={options} />
+            )}
           </div>
         </div>
       ) : (

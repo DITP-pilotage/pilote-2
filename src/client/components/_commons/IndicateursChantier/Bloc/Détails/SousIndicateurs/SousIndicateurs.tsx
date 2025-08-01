@@ -19,6 +19,7 @@ interface SousIndicateursProps {
   jalon: number;
   cartographieDroiteIndicateur: CartographieIndicateurType;
   cartographieGaucheIndicateur: CartographieIndicateurType;
+  nouveauxGraphiquesSontActifs: boolean;
 }
 
 const SousIndicateurs: FunctionComponent<SousIndicateursProps> = ({
@@ -35,6 +36,7 @@ const SousIndicateurs: FunctionComponent<SousIndicateursProps> = ({
   mailsDirecteursProjets,
   cartographieDroiteIndicateur,
   cartographieGaucheIndicateur,
+  nouveauxGraphiquesSontActifs,
 }) => {
   const listeClassesCouleursFond = [
     "fr-background-contrast--grey",
@@ -58,6 +60,7 @@ const SousIndicateurs: FunctionComponent<SousIndicateursProps> = ({
           mailleQuery={mailleQuery}
           mailleSelectionnee={mailleSelectionnee}
           mailsDirecteursProjets={mailsDirecteursProjets}
+          nouveauxGraphiquesSontActifs={nouveauxGraphiquesSontActifs}
           territoireCode={territoireCode}
           territoiresCompares={territoiresCompares}
         />
