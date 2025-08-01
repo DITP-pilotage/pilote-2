@@ -11,6 +11,7 @@ import { PropositionValeurAvancementRepository } from "@/server/chantiers/domain
 import { PrismaPropositionValeurAvancementRepository } from "@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
 import { CreerPropositionValeurAvancementUseCase } from "@/server/chantiers/usecases/CreerPropositionValeurAvancementUseCase";
 import { ModifierPropositionValeurAvancementUseCase } from "@/server/chantiers/usecases/ModifierPropositionValeurAvancementUseCase";
+import { InitialDependencies } from "@/server/InitialDependencies";
 import { ExportCsvDesChantiersUseCaseV2 } from "./usecases/ExportCsvDesChantiersUseCaseV2";
 import { TerritoireRepository } from "./domain/ports/TerritoireRepository";
 import { PrismaTerritoireRepository } from "./infrastructure/adapters/PrismaTerritoireRepository";
@@ -37,7 +38,7 @@ export type ChantierDependencies = {
 };
 
 export const getChantiersContainer = (
-  initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
+  initialContainer: AwilixContainer<InitialDependencies>,
 ): AwilixContainer<ChantierDependencies & { prisma: PrismaPilote }> => {
   return initialContainer.createScope<ChantierDependencies>().register({
     chantierRepository: asClass(PrismaChantierRepository),

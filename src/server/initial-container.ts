@@ -7,7 +7,7 @@ import {
   Lifetime,
 } from "awilix";
 import { PrismaTransaction } from "@/server/db/Transaction";
-import { InitialDependencies } from "./dependances";
+import { InitialDependencies } from "./InitialDependencies";
 import { PrismaPilote } from "./db/PrismaPilote";
 
 export const getInitialContainer = (): AwilixContainer<InitialDependencies> => {

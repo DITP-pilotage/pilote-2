@@ -12,14 +12,14 @@ beforeEach(async () => {
 
   const tablenames = await prisma.$queryRaw<
     Array<{ tablename: string }>
-  >`SELECT tablename
-                                                                          FROM pg_tables
-                                                                          WHERE schemaname = 'public'`;
+  >`SELECT tablename 
+    FROM pg_tables
+    WHERE schemaname = 'public'`;
   const tablenamesRawData = await prisma.$queryRaw<
     Array<{ tablename: string }>
   >`SELECT tablename
-                                                                          FROM pg_tables
-                                                                          WHERE schemaname = 'raw_data'`;
+    FROM pg_tables
+    WHERE schemaname = 'raw_data'`;
 
   const tables = tablenames
     .map(({ tablename }) => tablename)

@@ -6,6 +6,8 @@ const env = process.env.NODE_ENV ? `.${process.env.NODE_ENV}` : "";
 
 const envPath = join(process.cwd(), `/.env${env}`);
 
+console.log(`Loading environment from ${envPath}`);
+
 dotenv.config({ path: envPath, override: true });
 
 const config = convict({
@@ -231,6 +233,11 @@ const config = convict({
       format: Boolean,
       default: false,
       env: "NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE",
+    },
+    propositionValeurAvancementV2: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE_V2",
     },
     sousIndicateurs: {
       format: Boolean,

@@ -26,6 +26,7 @@ import { ModaleSuppressionValeurAvancement } from "@/components/_commons/Indicat
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import useIndicateurBloc from "./useIndicateurBloc";
 import useIndicateurAlerteDateMaj from "./useIndicateurAlerteDateMaj";
+import { ModalePropositionValeurAvancementV2 } from "./ModalePropositionValeurAvancementV2/ModalePropositionValeurAvancementV2";
 
 export const ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT =
   "modale-suppression-valeur-davancement";
@@ -87,6 +88,11 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   const { data: variableContenuFFPropositionValeurAvancement } =
     api.gestionContenu.récupérerVariableContenu.useQuery({
       nomVariableContenu: "NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE",
+    });
+
+  const { data: variableContenuFFPropositionValeurAvancementV2 } =
+    api.gestionContenu.récupérerVariableContenu.useQuery({
+      nomVariableContenu: "NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE_V2",
     });
 
   const {
@@ -453,7 +459,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     Proposer une autre valeur d'avancement
                                   </button>
                                 </div>
-                                <ModalePropositionValeurAvancement
+                                {
+                                  !variableContenuFFPropositionValeurAvancementV2 ? (
+<ModalePropositionValeurAvancement
                                   detailIndicateur={
                                     informationIndicateur.données
                                   }
@@ -470,6 +478,28 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     détailTerritoireSélectionné.nom
                                   }
                                 />
+                                  ) : ( 
+                                    <ModalePropositionValeurAvancementV2
+                                      detailIndicateur={
+                                        informationIndicateur.données
+                                      }
+                                      generatedHTMLID={
+                                        ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
+                                        indicateur.id
+                                      }
+                                      indicateur={indicateur}
+                                      territoireCode={territoireCode}
+                                      territoireCodeInsee={
+                                        détailTerritoireSélectionné.codeInsee
+                                      }
+                                      territoireNom={
+                                        détailTerritoireSélectionné.nom
+                                      }
+                                    />
+                                  )
+                                }
+                                
+                                
                               </td>
                             </tr>
                           ) : informationIndicateur.données.proposition !==

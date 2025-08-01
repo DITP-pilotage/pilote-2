@@ -1,6 +1,6 @@
-import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
-import { TypeEvenement } from "@/server/import-indicateur/domain/TypeEvenement";
-import { TypeValeur } from "@/server/import-indicateur/domain/TypeValeur";
+import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
+import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
+import { TypeValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeValeur";
 
 export class ValeurIndicateurTerritoireEvenementBuilder {
   private id: string = "default-event-id";

@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { TypeEvenement } from "@/server/import-indicateur/domain/TypeEvenement";
-import { TypeValeur } from "@/server/import-indicateur/domain/TypeValeur";
+import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
+import { TypeValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeValeur";
 
 export class IndicateurTerritoireValeurEvenement {
   private readonly _id: string;

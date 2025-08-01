@@ -1,6 +1,6 @@
 import groupBy from "lodash.groupby";
 import mapValues from "lodash.mapvalues";
-import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
+import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 

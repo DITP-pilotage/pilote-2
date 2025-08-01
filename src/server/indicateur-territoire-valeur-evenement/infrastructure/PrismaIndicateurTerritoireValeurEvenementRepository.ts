@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
-import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
-import { IndicateurTerritoireValeurEvenementRepository } from "@/server/import-indicateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
-import { TypeValeur } from "@/server/import-indicateur/domain/TypeValeur";
+import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
+import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import { TypeValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeValeur";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export class PrismaIndicateurTerritoireValeurEvenementRepository
@@ -25,6 +25,45 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           indic_id: args.indicId,
           territoire_code: args.territoireCode,
           type_valeur: args.typeValeur,
+        },
+        orderBy: [{ date_valeur: "desc" }, { ordre: "desc" }],
+      });
+    return lignes.map((ligne) =>
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          id: ligne.id,
+          indicId: ligne.indic_id,
+          territoireCode: ligne.territoire_code,
+          typeEvenement: ligne.type_evenement,
+          typeValeur: ligne.type_valeur,
+          dateValeur: ligne.date_valeur,
+          valeur: ligne.valeur,
+          donneesComplementaires: ligne.donnees_complementaires as Record<
+            string,
+            unknown
+          >,
+          idAuteurModification: ligne.id_auteur_modification,
+          correlationId: ligne.correlation_id,
+          ordre: ligne.ordre,
+        },
+      ),
+    );
+  }
+
+  async recupererParIndicIdTerritoireCodeTypeValeurEtDate(args: {
+    indicId: string;
+    territoireCode: string;
+    typeValeur: TypeValeur;
+    dateValeur: Date;
+  }): Promise<IndicateurTerritoireValeurEvenement[]> {
+    const lignes = await this.prisma
+      .getInstance()
+      .indicateur_territoire_valeur_evenement.findMany({
+        where: {
+          indic_id: args.indicId,
+          territoire_code: args.territoireCode,
+          type_valeur: args.typeValeur,
+          date_valeur: args.dateValeur,
         },
         orderBy: [{ date_valeur: "desc" }, { ordre: "desc" }],
       });
