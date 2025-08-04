@@ -33,10 +33,9 @@ export class IndicateurTerritoireValeurEvenements {
     const nouveauxEvenements: IndicateurTerritoireValeurEvenement[] = [];
 
     // Calculer l'ordre suivant pour cette date_valeur
-    const dateValeur = indicateurData.metricDate;
     const evenementsPourCetteDate = EvenementsSurDate.pourDate(
       {
-        date: dateValeur,
+        date: indicateurData.metricDate,
         indicId: this._indicId,
         territoireCode: this._territoireCode,
       },
@@ -70,11 +69,8 @@ export class IndicateurTerritoireValeurEvenements {
       evenementsExistantParDate,
     )) {
       if (date > indicateurData.metricDate) {
-        const evenementsSurDateImportee =
-          evenementsExistantParDate[indicateurData.metricDate];
-        doitHistoriserValeurCreee = !evenementsSurDateImportee
-          ? true
-          : !evenementsSurDateImportee.aValeurHistorisee();
+        doitHistoriserValeurCreee =
+          !evenementsPourCetteDate.aValeurHistorisee();
         continue;
       }
       if (date === indicateurData.metricDate) {
@@ -130,27 +126,12 @@ export class IndicateurTerritoireValeurEvenements {
       ordreActuel++,
     );
 
-    evenementsExistantParDate[indicateurData.metricDate] ??=
-      new EvenementsSurDate(
-        {
-          date: indicateurData.metricDate,
-          indicId: this._indicId,
-          territoireCode: this._territoireCode,
-        },
-        [],
-        this._evenements,
-      );
-
     nouveauxEvenements.push(evenementCreationOuModification);
-    evenementsExistantParDate[indicateurData.metricDate].ajouterEvenement(
-      evenementCreationOuModification,
-    );
+    evenementsPourCetteDate.ajouterEvenement(evenementCreationOuModification);
 
     if (doitHistoriserValeurCreee) {
-      const evenementsSurDate =
-        evenementsExistantParDate[indicateurData.metricDate];
       nouveauxEvenements.push(
-        evenementsSurDate.creerEvenementHistorisationFuture(
+        evenementsPourCetteDate.creerEvenementHistorisationFuture(
           indicateurData,
           auteurId,
         ),
