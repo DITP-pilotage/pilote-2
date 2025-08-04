@@ -30,33 +30,10 @@ export class IndicateurTerritoireValeurEvenements {
     auteurId: string,
   ): IndicateurTerritoireValeurEvenement[] {
     const nouveauxEvenements: IndicateurTerritoireValeurEvenement[] = [];
-
-    const evenementsPourCetteDate = EvenementsSurDate.pourDate(
-      {
-        date: indicateurData.metricDate,
-        indicId: this._indicId,
-        territoireCode: this._territoireCode,
-      },
-      this._evenements,
-    );
-
-    const evenementsExistantParDate: Record<string, EvenementsSurDate> =
-      mapValues(
-        groupBy(
-          this._evenements,
-          (evenement) => evenement.dateValeur.toISOString().split("T")[0],
-        ),
-        (evenementsSurDate, date) =>
-          new EvenementsSurDate(
-            {
-              date,
-              indicId: this._indicId,
-              territoireCode: this._territoireCode,
-            },
-            evenementsSurDate,
-            this._evenements,
-          ),
-      );
+    const evenementsExistantParDate = this.grouperEvenementsParDate();
+    const evenementsPourCetteDate =
+      evenementsExistantParDate[indicateurData.metricDate] ??
+      this.creerEvenementsSurDateIndicateur(indicateurData);
 
     let doitHistoriserValeurCreee = false;
     let doitModifierValeurCreee = false;
@@ -72,9 +49,9 @@ export class IndicateurTerritoireValeurEvenements {
       }
       if (date === indicateurData.metricDate) {
         doitModifierValeurCreee = true;
-        doitIgnorer =
-          Number.parseFloat(indicateurData.metricValue) ===
-          evenementsPourDate.valeurEnCours();
+        doitIgnorer = evenementsPourDate.aValeurEnCours(
+          Number.parseFloat(indicateurData.metricValue),
+        );
         continue;
       }
 
@@ -113,7 +90,7 @@ export class IndicateurTerritoireValeurEvenements {
     }
 
     nouveauxEvenements.push(
-      evenementsPourCetteDate.creerEvenementPrincipal(
+      evenementsPourCetteDate.creerEvenementValeurCreeeOuModifiee(
         indicateurData,
         auteurId,
         doitModifierValeurCreee,
@@ -130,5 +107,35 @@ export class IndicateurTerritoireValeurEvenements {
     }
 
     return nouveauxEvenements;
+  }
+
+  private creerEvenementsSurDateIndicateur(indicateurData: IndicateurData) {
+    return EvenementsSurDate.pourDate(
+      {
+        date: indicateurData.metricDate,
+        indicId: this._indicId,
+        territoireCode: this._territoireCode,
+      },
+      this._evenements,
+    );
+  }
+
+  private grouperEvenementsParDate(): Record<string, EvenementsSurDate> {
+    return mapValues(
+      groupBy(
+        this._evenements,
+        (evenement) => evenement.dateValeur.toISOString().split("T")[0],
+      ),
+      (evenementsSurDate, date) =>
+        new EvenementsSurDate(
+          {
+            date,
+            indicId: this._indicId,
+            territoireCode: this._territoireCode,
+          },
+          evenementsSurDate,
+          this._evenements,
+        ),
+    );
   }
 }

@@ -52,6 +52,10 @@ export class EvenementsSurDate {
     return this.evenementsValeur()[0]?.valeur ?? null;
   }
 
+  aValeurEnCours(valeur: number): boolean {
+    return this.valeurEnCours() === valeur;
+  }
+
   aValeurHistorisee() {
     return this.evenementsValeur().some(
       (evenement) => evenement.typeEvenement === "VALEUR_HISTORISEE",
@@ -179,7 +183,7 @@ export class EvenementsSurDate {
     return evenement;
   }
 
-  creerEvenementPrincipal(
+  creerEvenementValeurCreeeOuModifiee(
     indicateurData: IndicateurData,
     auteurId: string,
     doitModifierValeurCreee: boolean,
