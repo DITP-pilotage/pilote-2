@@ -147,15 +147,13 @@ export class IndicateurTerritoireValeurEvenements {
     );
 
     if (doitHistoriserValeurCreee) {
-      const evenementHistorise = this._creerEvenementHistorisationFuture(
-        indicateurData,
-        auteurId,
-        ordreActuel++,
-      );
-      nouveauxEvenements.push(evenementHistorise);
-
-      evenementsExistantParDate[indicateurData.metricDate].ajouterEvenement(
-        evenementHistorise,
+      const evenementsSurDate =
+        evenementsExistantParDate[indicateurData.metricDate];
+      nouveauxEvenements.push(
+        evenementsSurDate.creerEvenementHistorisationFuture(
+          indicateurData,
+          auteurId,
+        ),
       );
     }
 
@@ -173,27 +171,6 @@ export class IndicateurTerritoireValeurEvenements {
         indicId: this._indicId,
         territoireCode: this._territoireCode,
         typeEvenement: doitModifier ? "VALEUR_MODIFIEE" : "VALEUR_CREEE",
-        typeValeur: "VALEUR_AVANCEMENT",
-        dateValeur: new Date(indicateurData.metricDate),
-        valeur: Number.parseFloat(indicateurData.metricValue),
-        donneesComplementaires: {},
-        idAuteurModification: auteurId,
-        correlationId: randomUUID(),
-        ordre,
-      },
-    );
-  }
-
-  private _creerEvenementHistorisationFuture(
-    indicateurData: IndicateurData,
-    auteurId: string,
-    ordre: number,
-  ): IndicateurTerritoireValeurEvenement {
-    return IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
-      {
-        indicId: this._indicId,
-        territoireCode: this._territoireCode,
-        typeEvenement: "VALEUR_HISTORISEE",
         typeValeur: "VALEUR_AVANCEMENT",
         dateValeur: new Date(indicateurData.metricDate),
         valeur: Number.parseFloat(indicateurData.metricValue),

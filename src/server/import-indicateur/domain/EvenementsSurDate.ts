@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
+import { IndicateurData } from "./IndicateurData";
 
 const estPropositionEnCours = (
   evenementsPropositionValeur: IndicateurTerritoireValeurEvenement | undefined,
@@ -143,6 +144,30 @@ export class EvenementsSurDate {
           typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: evenementExistant.dateValeur,
           valeur: evenementExistant.valeur,
+          donneesComplementaires: {},
+          idAuteurModification: auteurId,
+          correlationId: randomUUID(),
+          ordre: this.prochainOrdre(),
+        },
+      );
+
+    this.ajouterEvenement(evenement);
+    return evenement;
+  }
+
+  creerEvenementHistorisationFuture(
+    indicateurData: IndicateurData,
+    auteurId: string,
+  ) {
+    const evenement =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: this.identifiantFlux.indicId,
+          territoireCode: this.identifiantFlux.territoireCode,
+          typeEvenement: "VALEUR_HISTORISEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: new Date(indicateurData.metricDate),
+          valeur: Number.parseFloat(indicateurData.metricValue),
           donneesComplementaires: {},
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
