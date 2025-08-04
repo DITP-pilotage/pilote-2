@@ -1,7 +1,7 @@
 export class ConversionZoneIdError extends Error {
   constructor(zoneId: string) {
     super(
-      `Zone ID invalide: ${zoneId}. Les formats accept�s sont: 'France', 'D<nombre>', 'R<nombre>'`,
+      `Zone ID invalide: ${zoneId}. Les formats acceptés sont: 'France', 'D<nombre>', 'R<nombre>'`,
     );
     this.name = "ConversionZoneIdError";
   }
