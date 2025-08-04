@@ -51,6 +51,7 @@ export class UtilisateurAuthentifieJWTService {
       });
 
     return UtilisateurAuthentifie.creerUtilisateurAuthentifie({
+      id: utilisateur.id,
       email,
       profil: utilisateur.profil,
       habilitations: utilisateur.habilitations,

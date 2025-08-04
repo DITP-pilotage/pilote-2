@@ -40,6 +40,8 @@ export default defineConfig({
       video: 'retain-on-failure',
       screenshot: 'only-on-failure',
       // Timeout plus court sur Scalingo
+      actionTimeout: 10_000,
+      navigationTimeout: 30_000,
       acceptDownloads: true,  
       ignoreHTTPSErrors: true,
       waitForLoadState: 'networkidle',

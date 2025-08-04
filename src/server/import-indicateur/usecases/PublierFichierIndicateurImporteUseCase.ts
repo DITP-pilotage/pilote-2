@@ -1,15 +1,23 @@
+import groupBy from "lodash.groupby";
 import { MesureIndicateurRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface";
 
 import { RapportRepository } from "@/server/import-indicateur/domain/ports/RapportRepository";
 import { MesureIndicateurTemporaireRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface";
 import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
 import { PropositionValeurAvancementRepository } from "@/server/import-indicateur/domain/ports/PropositionValeurAvancementRepository";
+import { IndicateurTerritoireValeurEvenementRepository } from "@/server/import-indicateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
+import { IndicateurTerritoireValeurEvenements } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenements";
+import { convertirZoneIdEnTerritoireCode } from "@/server/app/domain/Territoire";
+import { Transaction } from "@/server/db/Transaction";
 
 interface Dependencies {
   mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
   mesureIndicateurRepository: MesureIndicateurRepository;
   rapportRepository: RapportRepository;
   propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
+  indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+  transaction: Transaction;
 }
 
 export class PublierFichierIndicateurImporteUseCase {
@@ -19,19 +27,34 @@ export class PublierFichierIndicateurImporteUseCase {
 
   private propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
 
+  private indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+
+  private transaction: Transaction;
+
   constructor({
     mesureIndicateurTemporaireRepository,
     mesureIndicateurRepository,
     propositionValeurAvancementRepository,
+    indicateurTerritoireValeurEvenementRepository,
+    transaction,
   }: Dependencies) {
     this.mesureIndicateurTemporaireRepository =
       mesureIndicateurTemporaireRepository;
     this.mesureIndicateurRepository = mesureIndicateurRepository;
     this.propositionValeurAvancementRepository =
       propositionValeurAvancementRepository;
+    this.indicateurTerritoireValeurEvenementRepository =
+      indicateurTerritoireValeurEvenementRepository;
+    this.transaction = transaction;
   }
 
-  async execute({ rapportId }: { rapportId: string }): Promise<void> {
+  async execute({
+    rapportId,
+    auteurId,
+  }: {
+    rapportId: string;
+    auteurId: string;
+  }): Promise<void> {
     const listeMesuresIndicateurTemporaire =
       await this.mesureIndicateurTemporaireRepository.recupererToutParRapportId(
         rapportId,
@@ -54,22 +77,87 @@ export class PublierFichierIndicateurImporteUseCase {
     const listeValeursAvancementImportees = listeIndicateursData.filter(
       (indicateur) => indicateur.metricType === "va",
     );
+    const evenements = await this.creerValeurIndicateurTerritoireEvenements(
+      listeIndicateursData,
+      auteurId,
+    );
 
-    await this.mesureIndicateurRepository.sauvegarder(listeIndicateursData);
-    await Promise.all(
-      listeValeursAvancementImportees.map((valeurAvancement) =>
-        this.propositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport(
-          {
-            indicId: valeurAvancement.indicId,
-            zoneId: valeurAvancement.zoneId,
-            dateValeurImportee: new Date(valeurAvancement.metricDate),
-            valeurImportee: Number.parseFloat(valeurAvancement.metricValue),
-          },
+    await this.transaction.run(async () => {
+      await this.mesureIndicateurRepository.sauvegarder(listeIndicateursData);
+      await this.indicateurTerritoireValeurEvenementRepository.enregistrerTous(
+        evenements,
+      );
+      await Promise.all(
+        listeValeursAvancementImportees.map((valeurAvancement) =>
+          this.propositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport(
+            {
+              indicId: valeurAvancement.indicId,
+              zoneId: valeurAvancement.zoneId,
+              dateValeurImportee: new Date(valeurAvancement.metricDate),
+              valeurImportee: Number.parseFloat(valeurAvancement.metricValue),
+            },
+          ),
         ),
-      ),
+      );
+      await this.mesureIndicateurTemporaireRepository.supprimerToutParRapportId(
+        rapportId,
+      );
+    });
+  }
+
+  private async creerValeurIndicateurTerritoireEvenements(
+    listeIndicateursData: IndicateurData[],
+    auteurId: string,
+  ) {
+    const evenements: IndicateurTerritoireValeurEvenement[] = [];
+
+    // Filtrer les indicateurs de type "va" et les grouper par [indicId, territoireCode]
+    const indicateursVA = listeIndicateursData.filter(
+      (indicateur) => indicateur.metricType === "va",
     );
-    await this.mesureIndicateurTemporaireRepository.supprimerToutParRapportId(
-      rapportId,
+
+    const indicateursGroupes = groupBy(
+      indicateursVA,
+      (indicateur) =>
+        `${indicateur.indicId}-${convertirZoneIdEnTerritoireCode(indicateur.zoneId)}`,
     );
+
+    // Traiter chaque groupe d'indicateurs avec la nouvelle classe domaine
+    for (const [, indicateurs] of Object.entries(indicateursGroupes)) {
+      const premierIndicateur = indicateurs[0];
+      const territoireCode = convertirZoneIdEnTerritoireCode(
+        premierIndicateur.zoneId,
+      );
+
+      // Récupérer les événements existants une seule fois par groupe
+      const evenementsInitiaux =
+        await this.indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur(
+          {
+            territoireCode,
+            indicId: premierIndicateur.indicId,
+            typeValeur: "VALEUR_AVANCEMENT",
+          },
+        );
+
+      // Créer une instance de la classe domaine pour ce groupe
+      const indicateurTerritoireEvenements =
+        new IndicateurTerritoireValeurEvenements({
+          indicId: premierIndicateur.indicId,
+          territoireCode,
+          evenementsInitiaux,
+        });
+
+      // Traiter chaque indicateur avec la classe domaine
+      for (const indicateurData of indicateurs) {
+        const nouveauxEvenements =
+          indicateurTerritoireEvenements.ingererIndicateurData(
+            indicateurData,
+            auteurId,
+          );
+        evenements.push(...nouveauxEvenements);
+      }
+    }
+
+    return evenements;
   }
 }

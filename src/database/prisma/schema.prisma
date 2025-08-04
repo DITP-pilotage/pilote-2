@@ -213,32 +213,33 @@ model indicateur_territoire {
   zone_id                                  String
   valeur_cible_mandat                      Float?
   taux_avancement_mandat                   Float?
-  date_valeur_actuelle_mandat              DateTime?                     @db.Date
-  date_valeur_initiale                     DateTime?                     @db.Date
+  date_valeur_actuelle_mandat              DateTime?                                @db.Date
+  date_valeur_initiale                     DateTime?                                @db.Date
   valeur_actuelle_mandat                   Float?
   valeur_initiale                          Float?
   territoire_nom                           String?
-  date_valeur_cible_mandat                 DateTime?                     @db.Date
+  date_valeur_cible_mandat                 DateTime?                                @db.Date
   est_applicable                           Boolean?
   ponderation_zone_declaree                Float?
   ponderation_zone_reel                    Float?
   est_a_jour                               Boolean?
-  prochaine_date_maj                       DateTime?                     @db.Date
+  prochaine_date_maj                       DateTime?                                @db.Date
   prochaine_date_maj_jours                 Int?
   tendance                                 String?
   valeur_actuelle_proposition              Float?
   auteur_proposition                       String?
-  date_proposition                         DateTime?                     @db.Date
+  date_proposition                         DateTime?                                @db.Date
   motif_proposition                        String?
   source_donnee_methode_calcul_proposition String?
   taux_avancement_mandat_proposition       Float?
-  prochaine_date_valeur_actuelle           DateTime?                     @db.Date
+  prochaine_date_valeur_actuelle           DateTime?                                @db.Date
   evolution_valeur_actuelle                Json?
-  territoire                               territoire                    @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  indicateur_identite                      indicateur_identite           @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  chantier_territoire                      chantier_territoire           @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
+  territoire                               territoire                               @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  indicateur_identite                      indicateur_identite                      @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  chantier_territoire                      chantier_territoire                      @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
   indicateur_territoire_jalon              indicateur_territoire_jalon[]
   proposition_valeur_actuelle              proposition_valeur_actuelle[]
+  indicateur_territoire_valeur_evenement   indicateur_territoire_valeur_evenement[]
 
   @@id([id, territoire_code])
   @@schema("public")
@@ -427,8 +428,8 @@ model metadata_indicateurs_complementaire {
   contact_technique_email   String?
   commentaire               String?
   maille_pilotage           String
-  cible_attendue            Boolean
-  couverture_temporelle       String
+  cible_attendue            Boolean  @default(true)
+  couverture_temporelle     String
 
   @@schema("raw_data")
 }
@@ -531,33 +532,34 @@ model decision_strategique {
 }
 
 model utilisateur {
-  id                                  String                             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email                               String                             @unique
-  nom                                 String
-  prenom                              String
-  fonction                            String?
-  profil                              profil                             @relation(fields: [profilCode], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  profilCode                          String                             @map("profil_code")
-  habilitation                        habilitation[]
-  rapport_import_mesure_indicateur    rapport_import_mesure_indicateur[]
-  date_modification                   DateTime                           @default(now())
-  auteur_modification                 utilisateur?                       @relation("modification", fields: [auteur_id_modification], references: [id])
-  auteur_id_modification              String?                            @db.Uuid
-  date_creation                       DateTime
-  auteur_creation                     utilisateur?                       @relation("creation", fields: [auteur_id_creation], references: [id])
-  auteur_id_creation                  String?                            @db.Uuid
-  commentaires                        commentaire[]
-  decisions_strategique               decision_strategique[]
-  objectifs                           objectif[]
-  syntheses                           synthese_des_resultats[]
-  utilisateurs_crees                  utilisateur[]                      @relation("creation")
-  utilisateur_modifies                utilisateur[]                      @relation("modification")
-  propositions_valeur_actuelle        proposition_valeur_actuelle[]
-  date_desactivation                  DateTime?
-  date_visualisation_video_accueil    DateTime?
-  date_visualisation_popup_infolettre DateTime?
-  date_inscription_infolettre         DateTime?
-  historisations_modification      historisation_modification[]
+  id                                     String                                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                                  String                                   @unique
+  nom                                    String
+  prenom                                 String
+  fonction                               String?
+  profil                                 profil                                   @relation(fields: [profilCode], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  profilCode                             String                                   @map("profil_code")
+  habilitation                           habilitation[]
+  rapport_import_mesure_indicateur       rapport_import_mesure_indicateur[]
+  date_modification                      DateTime                                 @default(now())
+  auteur_modification                    utilisateur?                             @relation("modification", fields: [auteur_id_modification], references: [id])
+  auteur_id_modification                 String?                                  @db.Uuid
+  date_creation                          DateTime
+  auteur_creation                        utilisateur?                             @relation("creation", fields: [auteur_id_creation], references: [id])
+  auteur_id_creation                     String?                                  @db.Uuid
+  commentaires                           commentaire[]
+  decisions_strategique                  decision_strategique[]
+  objectifs                              objectif[]
+  syntheses                              synthese_des_resultats[]
+  utilisateurs_crees                     utilisateur[]                            @relation("creation")
+  utilisateur_modifies                   utilisateur[]                            @relation("modification")
+  propositions_valeur_actuelle           proposition_valeur_actuelle[]
+  date_desactivation                     DateTime?
+  date_visualisation_video_accueil       DateTime?
+  date_visualisation_popup_infolettre    DateTime?
+  date_inscription_infolettre            DateTime?
+  historisations_modification            historisation_modification[]
+  indicateur_territoire_valeur_evenement indicateur_territoire_valeur_evenement[]
 
   @@schema("public")
 }
@@ -655,6 +657,51 @@ model nouveaute {
   date_creation DateTime @default(now())
   version       String
   date          String
+
+  @@schema("public")
+}
+
+model indicateur_territoire_valeur_evenement {
+  id                      String                @id @db.Uuid
+  indic_id                String
+  territoire_code         String
+  type_evenement          type_evenement
+  type_valeur             type_valeur
+  date_valeur             DateTime              @db.Date
+  valeur                  Float
+  donnees_complementaires Json
+  date_creation           DateTime              @default(now())
+  ordre                   Int
+  date_modification       DateTime              @updatedAt
+  id_auteur_modification  String                @db.Uuid
+  correlation_id          String                @db.Uuid
+  indicateur_territoire   indicateur_territoire @relation(fields: [indic_id, territoire_code], references: [id, territoire_code], onDelete: Cascade)
+  auteur                  utilisateur           @relation(fields: [id_auteur_modification], references: [id], onDelete: Cascade)
+
+  @@schema("public")
+}
+
+enum type_evenement {
+  VALEUR_CREEE
+  VALEUR_MODIFIEE
+  VALEUR_HISTORISEE
+  PROPOSITION_VALEUR_CREEE
+  PROPOSITION_VALEUR_MODIFIEE
+  PROPOSITION_VALEUR_SUPPRIMEE
+  PROPOSITION_VALEUR_REFUSEE
+  PROPOSITION_VALEUR_ACCUSEE_RECEPTION
+  PROPOSITION_VALEUR_ACCEPTEE
+  PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE
+  PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE
+  PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION
+
+  @@schema("public")
+}
+
+enum type_valeur {
+  VALEUR_AVANCEMENT
+  VALEUR_CIBLE
+  VALEUR_INITIALE
 
   @@schema("public")
 }

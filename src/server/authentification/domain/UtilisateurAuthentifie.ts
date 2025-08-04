@@ -2,6 +2,8 @@ import { ProfilAPI } from "@/server/authentification/domain/ProfilAPI";
 import { HabilitationAuthentitificationAPI } from "@/server/authentification/domain/HabilitationAuthentitificationAPI";
 
 export class UtilisateurAuthentifie {
+  private readonly _id: string;
+
   private readonly _email: string;
 
   private readonly _profil: ProfilAPI;
@@ -11,21 +13,28 @@ export class UtilisateurAuthentifie {
   private readonly _profilAAccèsAuxChantiersBrouillons: boolean;
 
   private constructor({
+    id,
     email,
     profil,
     habilitations,
     profilAAccèsAuxChantiersBrouillons,
   }: {
+    id: string;
     email: string;
     profil: ProfilAPI;
     habilitations: HabilitationAuthentitificationAPI;
     profilAAccèsAuxChantiersBrouillons: boolean;
   }) {
+    this._id = id;
     this._email = email;
     this._profil = profil;
     this._habilitations = habilitations;
     this._profilAAccèsAuxChantiersBrouillons =
       profilAAccèsAuxChantiersBrouillons;
+  }
+
+  get id(): string {
+    return this._id;
   }
 
   get email(): string {
@@ -53,17 +62,20 @@ export class UtilisateurAuthentifie {
   }
 
   static creerUtilisateurAuthentifie({
+    id,
     email,
     profil,
     habilitations,
     profilAAccèsAuxChantiersBrouillons,
   }: {
+    id: string;
     email: string;
     profil: ProfilAPI;
     habilitations: HabilitationAuthentitificationAPI;
     profilAAccèsAuxChantiersBrouillons: boolean;
   }): UtilisateurAuthentifie {
     return new UtilisateurAuthentifie({
+      id,
       email,
       profil,
       habilitations,

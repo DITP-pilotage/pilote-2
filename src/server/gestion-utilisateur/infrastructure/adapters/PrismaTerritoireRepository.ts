@@ -1,8 +1,9 @@
-import { PrismaClient, territoire as TerritoirePrisma } from "@prisma/client";
+import { territoire as TerritoirePrisma } from "@prisma/client";
 import { NOMS_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
 import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PilotePrismaClient } from "@/server/db/Transaction";
 
 const convertirEnTerritoire = (territoire: TerritoirePrisma): Territoire => {
   return {
@@ -20,7 +21,7 @@ interface Dependencies {
 }
 
 export class PrismaTerritoireRepository implements TerritoireRepository {
-  private prisma: PrismaClient;
+  private prisma: PilotePrismaClient;
 
   constructor({ prisma }: Dependencies) {
     this.prisma = prisma.getInstance();

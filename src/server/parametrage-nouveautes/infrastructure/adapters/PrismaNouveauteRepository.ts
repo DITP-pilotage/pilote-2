@@ -1,7 +1,8 @@
-import { PrismaClient, nouveaute as NouveauteModel } from "@prisma/client";
+import { nouveaute as NouveauteModel } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { NouveauteRepository } from "@/server/parametrage-nouveautes/domain/ports/NouveauteRepository";
 import { Nouveaute } from "@/server/parametrage-nouveautes/domain/Nouveaute";
+import { PilotePrismaClient } from "@/server/db/Transaction";
 
 const convertirNouveauteEnNouveauteModel = (
   nouveaute: Nouveaute,
@@ -28,7 +29,7 @@ const convertirNouveauteEnNouveaute = (
 };
 
 export class PrismaNouveauteRepository implements NouveauteRepository {
-  private prisma: PrismaClient;
+  private prisma: PilotePrismaClient;
 
   constructor({ prisma }: { prisma: PrismaPilote }) {
     this.prisma = prisma.getInstance();

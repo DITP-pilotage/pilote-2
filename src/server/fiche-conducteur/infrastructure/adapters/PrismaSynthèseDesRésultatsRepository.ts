@@ -1,12 +1,10 @@
-import {
-  PrismaClient,
-  synthese_des_resultats as SyntheseDesResultatsModel,
-} from "@prisma/client";
+import { synthese_des_resultats as SyntheseDesResultatsModel } from "@prisma/client";
 import { SynthèseDesRésultatsRepository } from "@/server/fiche-conducteur/domain/ports/SynthèseDesRésultatsRepository";
 import { SyntheseDesResultats } from "@/server/fiche-conducteur/domain/SyntheseDesResultats";
 import { Meteo } from "@/server/fiche-conducteur/domain/Meteo";
 
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PilotePrismaClient } from "@/server/db/Transaction";
 
 const convertirEnSyntheseDesResultats = (
   syntheseDesResultatsModel: SyntheseDesResultatsModel,
@@ -24,7 +22,7 @@ interface Dependencies {
 export class PrismaSynthèseDesRésultatsRepository
   implements SynthèseDesRésultatsRepository
 {
-  private prisma: PrismaClient;
+  private prisma: PilotePrismaClient;
 
   constructor({ prisma }: Dependencies) {
     this.prisma = prisma.getInstance();
