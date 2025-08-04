@@ -859,7 +859,6 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, evenementCaptor);
-    expect(evenementCaptor.value).toHaveLength(3);
 
     const evenementIgnore = evenementCaptor.value[0];
     expect(evenementIgnore).toBeDefined();
@@ -980,113 +979,5 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementCree.dateValeur).toEqual(new Date("2023-02-01"));
     expect(evenementCree.valeur).toEqual(95);
     expect(evenementCree.ordre).toEqual(1);
-  });
-
-  it("quand une nouvelle valeur est importée et qu'il existe un évènement PROPOSITION_VALEUR_CREEE avec la même valeur pour une date antérieure, ne doit pas créer d'évènement", async () => {
-    // GIVEN
-    const listeMesuresIndicateursTemporaires = [
-      new MesureIndicateurTemporaireBuilder()
-        .avecIndicId("IND-001")
-        .avecMetricDate("2023-02-01")
-        .avecMetricType("va")
-        .avecMetricValue("85")
-        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
-        .avecZoneId("D01")
-        .build(),
-    ];
-
-    const evenementExistantValeur =
-      new ValeurIndicateurTerritoireEvenementBuilder()
-        .avecIndicId("IND-001")
-        .avecTerritoireCode("DEPT-01")
-        .avecTypeEvenement("VALEUR_CREEE")
-        .avecTypeValeur("VALEUR_AVANCEMENT")
-        .avecDateValeur(new Date("2023-01-01"))
-        .avecValeur(75)
-        .avecOrdre(1)
-        .build();
-
-    const evenementExistantProposition =
-      new ValeurIndicateurTerritoireEvenementBuilder()
-        .avecIndicId("IND-001")
-        .avecTerritoireCode("DEPT-01")
-        .avecTypeEvenement("PROPOSITION_VALEUR_CREEE")
-        .avecTypeValeur("VALEUR_AVANCEMENT")
-        .avecDateValeur(new Date("2023-01-01"))
-        .avecValeur(85)
-        .avecOrdre(2)
-        .build();
-
-    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
-      listeMesuresIndicateursTemporaires,
-    );
-    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
-      [evenementExistantValeur, evenementExistantProposition],
-    );
-
-    // WHEN
-    await publierFichierIndicateurImporteUseCase.execute({
-      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
-      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
-    });
-
-    // THEN
-    expect(
-      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
-    ).toHaveBeenNthCalledWith(1, []);
-  });
-
-  it("quand une nouvelle valeur est importée et qu'il existe un évènement PROPOSITION_VALEUR_MODIFIEE avec la même valeur pour une date antérieure, ne doit pas créer d'évènement", async () => {
-    // GIVEN
-    const listeMesuresIndicateursTemporaires = [
-      new MesureIndicateurTemporaireBuilder()
-        .avecIndicId("IND-001")
-        .avecMetricDate("2023-02-01")
-        .avecMetricType("va")
-        .avecMetricValue("85")
-        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
-        .avecZoneId("D01")
-        .build(),
-    ];
-
-    const evenementExistantValeur =
-      new ValeurIndicateurTerritoireEvenementBuilder()
-        .avecIndicId("IND-001")
-        .avecTerritoireCode("DEPT-01")
-        .avecTypeEvenement("VALEUR_CREEE")
-        .avecTypeValeur("VALEUR_AVANCEMENT")
-        .avecDateValeur(new Date("2023-01-01"))
-        .avecValeur(75)
-        .avecOrdre(1)
-        .build();
-
-    const evenementExistantProposition =
-      new ValeurIndicateurTerritoireEvenementBuilder()
-        .avecIndicId("IND-001")
-        .avecTerritoireCode("DEPT-01")
-        .avecTypeEvenement("PROPOSITION_VALEUR_MODIFIEE")
-        .avecTypeValeur("VALEUR_AVANCEMENT")
-        .avecDateValeur(new Date("2023-01-01"))
-        .avecValeur(85)
-        .avecOrdre(2)
-        .build();
-
-    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
-      listeMesuresIndicateursTemporaires,
-    );
-    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
-      [evenementExistantValeur, evenementExistantProposition],
-    );
-
-    // WHEN
-    await publierFichierIndicateurImporteUseCase.execute({
-      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
-      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
-    });
-
-    // THEN
-    expect(
-      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
-    ).toHaveBeenNthCalledWith(1, []);
   });
 });

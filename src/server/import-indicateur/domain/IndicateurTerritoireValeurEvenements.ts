@@ -2,7 +2,19 @@ import groupBy from "lodash.groupby";
 import { randomUUID } from "node:crypto";
 import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
-import { ValeurIndicateurTerritoireEvenementBuilder } from "@/server/import-indicateur/app/builder/ValeurIndicateurTerritoireEvenement.builder";
+
+const estPropositionEnCours = (
+  evenementsPropositionValeur: IndicateurTerritoireValeurEvenement | undefined,
+) =>
+  evenementsPropositionValeur?.typeEvenement === "PROPOSITION_VALEUR_CREEE" ||
+  evenementsPropositionValeur?.typeEvenement === "PROPOSITION_VALEUR_MODIFIEE";
+
+const getEvenementPropositionValeurLePlusRecent = (
+  evenementsPourCetteDate: IndicateurTerritoireValeurEvenement[],
+) =>
+  evenementsPourCetteDate.find((evenement) =>
+    evenement.typeEvenement.startsWith("PROPOSITION_VALEUR_"),
+  );
 
 export class IndicateurTerritoireValeurEvenements {
   private readonly _indicId: string;
@@ -67,14 +79,36 @@ export class IndicateurTerritoireValeurEvenements {
         continue;
       }
 
+      const evenementPropositionValeur =
+        getEvenementPropositionValeurLePlusRecent(evenementsPourDate);
+      if (
+        evenementPropositionValeur &&
+        estPropositionEnCours(evenementPropositionValeur)
+      ) {
+        const evenementPropositionValeurIgnoreeValeurHistorisee =
+          this._creerEvenementPropositionValeurIgnoreeValeurHistorisee(
+            evenementPropositionValeur,
+            auteurId,
+            IndicateurTerritoireValeurEvenement.prochainOrdre(
+              evenementsExistantParDate[date],
+            ),
+          );
+        evenementsExistantParDate[date].unshift(
+          evenementPropositionValeurIgnoreeValeurHistorisee,
+        );
+        this._evenements.push(
+          evenementPropositionValeurIgnoreeValeurHistorisee,
+        );
+        nouveauxEvenements.push(
+          evenementPropositionValeurIgnoreeValeurHistorisee,
+        );
+      }
+
       const estHistorise = evenementsPourDate.some(
         (evenement) => evenement.typeEvenement === "VALEUR_HISTORISEE",
       );
       if (!estHistorise) {
-        const evenement = this._creerEvenementHistorisation(
-          evenementsPourDate[0],
-          auteurId,
-        );
+        const evenement = this._creerEvenementHistorisation(auteurId, date);
 
         nouveauxEvenements.push(evenement);
         evenementsPourDate.unshift(evenement);
@@ -87,18 +121,14 @@ export class IndicateurTerritoireValeurEvenements {
       return nouveauxEvenements;
     }
 
-    // Checker si on doit ignorer les propositions de valeur
-    // TODO - que fait-on de la vraie table proposition_valeur_actuelle ?
-    //    ici on enregistre les evenements mais d'impact sur la proposition réelle
-    const evenementsPropositionValeur = evenementsPourCetteDate.find(
-      (evenement) => evenement.typeEvenement.startsWith("PROPOSITION_VALEUR_"),
+    const evenementsPropositionValeur =
+      getEvenementPropositionValeurLePlusRecent(evenementsPourCetteDate);
+    const aPropositionEnCours = estPropositionEnCours(
+      evenementsPropositionValeur,
     );
-    if (
-      evenementsPropositionValeur?.typeEvenement ===
-        "PROPOSITION_VALEUR_CREEE" ||
-      evenementsPropositionValeur?.typeEvenement ===
-        "PROPOSITION_VALEUR_MODIFIEE"
-    ) {
+    if (evenementsPropositionValeur && aPropositionEnCours) {
+      // TODO - que fait-on de la vraie table proposition_valeur_actuelle ?
+      //    ici on enregistre les evenements mais d'impact sur la proposition réelle
       const evenementPropositionValeurIgnoreeValeurModifiee =
         this._creerEvenementPropositionValeurIgnoreeValeurModifiee(
           evenementsPropositionValeur,
@@ -165,30 +195,53 @@ export class IndicateurTerritoireValeurEvenements {
     );
   }
 
-  private _creerEvenementHistorisation(
+  private _creerEvenementPropositionValeurIgnoreeValeurHistorisee(
     evenementExistant: IndicateurTerritoireValeurEvenement,
     auteurId: string,
-  ): IndicateurTerritoireValeurEvenement {
-    const evenementsPourCetteDate = this._evenements.filter(
-      (e) =>
-        e.dateValeur.toISOString().split("T")[0] ===
-        evenementExistant.dateValeur.toISOString().split("T")[0],
-    );
-
+    ordre: number,
+  ) {
     return IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
       {
         indicId: this._indicId,
         territoireCode: this._territoireCode,
-        typeEvenement: "VALEUR_HISTORISEE",
+        typeEvenement: "PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE",
         typeValeur: "VALEUR_AVANCEMENT",
         dateValeur: evenementExistant.dateValeur,
         valeur: evenementExistant.valeur,
         donneesComplementaires: {},
         idAuteurModification: auteurId,
         correlationId: randomUUID(),
-        ordre: IndicateurTerritoireValeurEvenement.prochainOrdre(
-          evenementsPourCetteDate,
-        ),
+        ordre,
+      },
+    );
+  }
+
+  private _creerEvenementHistorisation(
+    auteurId: string,
+    date: string,
+  ): IndicateurTerritoireValeurEvenement {
+    const evenementsPourCetteDate = this._evenements.filter(
+      (evenement) => evenement.dateValeur.toISOString().split("T")[0] === date,
+    );
+    const evenementValeurPourDate = evenementsPourCetteDate.find((evenement) =>
+      evenement.typeEvenement.startsWith("VALEUR_"),
+    );
+
+    let ordre = IndicateurTerritoireValeurEvenement.prochainOrdre(
+      evenementsPourCetteDate,
+    );
+    return IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+      {
+        indicId: this._indicId,
+        territoireCode: this._territoireCode,
+        typeEvenement: "VALEUR_HISTORISEE",
+        typeValeur: "VALEUR_AVANCEMENT",
+        dateValeur: evenementValeurPourDate!.dateValeur,
+        valeur: evenementValeurPourDate!.valeur,
+        donneesComplementaires: {},
+        idAuteurModification: auteurId,
+        correlationId: randomUUID(),
+        ordre,
       },
     );
   }
