@@ -1,4 +1,5 @@
 import groupBy from "lodash.groupby";
+import mapValues from "lodash.mapvalues";
 import { randomUUID } from "node:crypto";
 import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
@@ -9,12 +10,67 @@ const estPropositionEnCours = (
   evenementsPropositionValeur?.typeEvenement === "PROPOSITION_VALEUR_CREEE" ||
   evenementsPropositionValeur?.typeEvenement === "PROPOSITION_VALEUR_MODIFIEE";
 
-const getEvenementPropositionValeurLePlusRecent = (
-  evenementsPourCetteDate: IndicateurTerritoireValeurEvenement[],
-) =>
-  evenementsPourCetteDate.find((evenement) =>
-    evenement.typeEvenement.startsWith("PROPOSITION_VALEUR_"),
-  );
+class EvenementsSurDate {
+  constructor(
+    private date: string,
+    private evenementsSurDate: IndicateurTerritoireValeurEvenement[],
+    private tousLesEvenements: IndicateurTerritoireValeurEvenement[],
+  ) {}
+
+  static pourDate(
+    date: string,
+    evenements: IndicateurTerritoireValeurEvenement[],
+  ) {
+    const evenementsSurDate = evenements.filter(
+      (evenement) => evenement.dateValeur.toISOString().split("T")[0] === date,
+    );
+    return new EvenementsSurDate(date, evenementsSurDate, evenements);
+  }
+
+  ajouterEvenement(evenement: IndicateurTerritoireValeurEvenement) {
+    this.evenementsSurDate.unshift(evenement);
+    this.tousLesEvenements.push(evenement);
+  }
+
+  prochainOrdre() {
+    return IndicateurTerritoireValeurEvenement.prochainOrdre(
+      this.evenementsSurDate,
+    );
+  }
+
+  valeurEnCours() {
+    return this.evenementsValeur()[0]?.valeur ?? null;
+  }
+
+  aValeurHistorisee() {
+    return this.evenementsValeur().some(
+      (evenement) => evenement.typeEvenement === "VALEUR_HISTORISEE",
+    );
+  }
+
+  evenementsValeur() {
+    return this.evenementsSurDate.filter((evenement) =>
+      evenement.typeEvenement.startsWith("VALEUR_"),
+    );
+  }
+
+  evenementsPropositionValeur() {
+    return this.evenementsSurDate.filter((evenement) =>
+      evenement.typeEvenement.startsWith("PROPOSITION_VALEUR_"),
+    );
+  }
+
+  evenementPropositionValeurEnCours() {
+    const evenementPropositionValeurLePlusRecent =
+      this.evenementsPropositionValeur()[0];
+
+    if (estPropositionEnCours(evenementPropositionValeurLePlusRecent)) {
+      return evenementPropositionValeurLePlusRecent;
+    }
+
+    return null;
+  }
+}
 
 export class IndicateurTerritoireValeurEvenements {
   private readonly _indicId: string;
@@ -45,18 +101,21 @@ export class IndicateurTerritoireValeurEvenements {
 
     // Calculer l'ordre suivant pour cette date_valeur
     const dateValeur = indicateurData.metricDate;
-    const evenementsPourCetteDate = this._evenements.filter(
-      (evenement) =>
-        evenement.dateValeur.toISOString().split("T")[0] === dateValeur,
-    );
-    let ordreActuel = IndicateurTerritoireValeurEvenement.prochainOrdre(
-      evenementsPourCetteDate,
-    );
-
-    const evenementsExistantParDate = groupBy(
+    const evenementsPourCetteDate = EvenementsSurDate.pourDate(
+      dateValeur,
       this._evenements,
-      (evenement) => evenement.dateValeur.toISOString().split("T")[0],
     );
+    let ordreActuel = evenementsPourCetteDate.prochainOrdre();
+
+    const evenementsExistantParDate: Record<string, EvenementsSurDate> =
+      mapValues(
+        groupBy(
+          this._evenements,
+          (evenement) => evenement.dateValeur.toISOString().split("T")[0],
+        ),
+        (evenementsSurDate, date) =>
+          new EvenementsSurDate(date, evenementsSurDate, this._evenements),
+      );
 
     let doitHistoriserValeurCreee = false;
     let doitModifierValeurCreee = false;
@@ -66,37 +125,31 @@ export class IndicateurTerritoireValeurEvenements {
       evenementsExistantParDate,
     )) {
       if (date > indicateurData.metricDate) {
-        doitHistoriserValeurCreee = !(
-          evenementsExistantParDate[indicateurData.metricDate] ?? []
-        ).some((evenement) => evenement.typeEvenement === "VALEUR_HISTORISEE");
+        const evenementsSurDateImportee =
+          evenementsExistantParDate[indicateurData.metricDate];
+        doitHistoriserValeurCreee = !evenementsSurDateImportee
+          ? true
+          : !evenementsSurDateImportee.aValeurHistorisee();
         continue;
       }
       if (date === indicateurData.metricDate) {
         doitModifierValeurCreee = true;
         doitIgnorer =
           Number.parseFloat(indicateurData.metricValue) ===
-          evenementsPourDate[0].valeur;
+          evenementsPourDate.valeurEnCours();
         continue;
       }
 
       const evenementPropositionValeur =
-        getEvenementPropositionValeurLePlusRecent(evenementsPourDate);
-      if (
-        evenementPropositionValeur &&
-        estPropositionEnCours(evenementPropositionValeur)
-      ) {
+        evenementsPourDate.evenementPropositionValeurEnCours();
+      if (evenementPropositionValeur) {
         const evenementPropositionValeurIgnoreeValeurHistorisee =
           this._creerEvenementPropositionValeurIgnoreeValeurHistorisee(
             evenementPropositionValeur,
             auteurId,
-            IndicateurTerritoireValeurEvenement.prochainOrdre(
-              evenementsExistantParDate[date],
-            ),
+            evenementsExistantParDate[date].prochainOrdre(),
           );
-        evenementsExistantParDate[date].unshift(
-          evenementPropositionValeurIgnoreeValeurHistorisee,
-        );
-        this._evenements.push(
+        evenementsExistantParDate[date].ajouterEvenement(
           evenementPropositionValeurIgnoreeValeurHistorisee,
         );
         nouveauxEvenements.push(
@@ -104,14 +157,11 @@ export class IndicateurTerritoireValeurEvenements {
         );
       }
 
-      const estHistorise = evenementsPourDate.some(
-        (evenement) => evenement.typeEvenement === "VALEUR_HISTORISEE",
-      );
+      const estHistorise = evenementsPourDate.aValeurHistorisee();
       if (!estHistorise) {
         const evenement = this._creerEvenementHistorisation(auteurId, date);
-
+        evenementsPourDate.ajouterEvenement(evenement);
         nouveauxEvenements.push(evenement);
-        evenementsPourDate.unshift(evenement);
       }
     }
 
@@ -122,11 +172,8 @@ export class IndicateurTerritoireValeurEvenements {
     }
 
     const evenementsPropositionValeur =
-      getEvenementPropositionValeurLePlusRecent(evenementsPourCetteDate);
-    const aPropositionEnCours = estPropositionEnCours(
-      evenementsPropositionValeur,
-    );
-    if (evenementsPropositionValeur && aPropositionEnCours) {
+      evenementsPourCetteDate.evenementPropositionValeurEnCours();
+    if (evenementsPropositionValeur) {
       // TODO - que fait-on de la vraie table proposition_valeur_actuelle ?
       //    ici on enregistre les evenements mais d'impact sur la proposition réelle
       const evenementPropositionValeurIgnoreeValeurModifiee =
@@ -135,7 +182,7 @@ export class IndicateurTerritoireValeurEvenements {
           auteurId,
           ordreActuel++,
         );
-      evenementsExistantParDate[indicateurData.metricDate].unshift(
+      evenementsExistantParDate[indicateurData.metricDate].ajouterEvenement(
         evenementPropositionValeurIgnoreeValeurModifiee,
       );
       nouveauxEvenements.push(evenementPropositionValeurIgnoreeValeurModifiee);
@@ -148,10 +195,11 @@ export class IndicateurTerritoireValeurEvenements {
       ordreActuel++,
     );
 
-    evenementsExistantParDate[indicateurData.metricDate] ??= [];
+    evenementsExistantParDate[indicateurData.metricDate] ??=
+      new EvenementsSurDate(indicateurData.metricDate, [], this._evenements);
 
     nouveauxEvenements.push(evenementCreationOuModification);
-    evenementsExistantParDate[indicateurData.metricDate].unshift(
+    evenementsExistantParDate[indicateurData.metricDate].ajouterEvenement(
       evenementCreationOuModification,
     );
 
@@ -163,13 +211,10 @@ export class IndicateurTerritoireValeurEvenements {
       );
       nouveauxEvenements.push(evenementHistorise);
 
-      evenementsExistantParDate[indicateurData.metricDate].unshift(
+      evenementsExistantParDate[indicateurData.metricDate].ajouterEvenement(
         evenementHistorise,
       );
     }
-
-    // Ajouter les nouveaux événements au stream en mémoire
-    this._evenements.unshift(...[...nouveauxEvenements].reverse());
 
     return nouveauxEvenements;
   }
