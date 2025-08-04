@@ -39,7 +39,6 @@ export class IndicateurTerritoireValeurEvenements {
       },
       this._evenements,
     );
-    let ordreActuel = evenementsPourCetteDate.prochainOrdre();
 
     const evenementsExistantParDate: Record<string, EvenementsSurDate> =
       mapValues(
@@ -98,16 +97,12 @@ export class IndicateurTerritoireValeurEvenements {
     }
 
     if (doitIgnorer) {
-      // Ajouter les nouveaux événements au stream en mémoire
-      this._evenements.unshift(...[...nouveauxEvenements].reverse());
       return nouveauxEvenements;
     }
 
     const aPropositionValeurEnCours =
       evenementsPourCetteDate.evenementPropositionValeurEnCours();
     if (aPropositionValeurEnCours) {
-      // TODO: à supprimer (en cours de refacto)
-      ordreActuel++;
       // TODO - que fait-on de la vraie table proposition_valeur_actuelle ?
       //    ici on enregistre les evenements mais d'impact sur la proposition réelle
       nouveauxEvenements.push(
