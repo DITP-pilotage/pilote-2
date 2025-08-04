@@ -2,6 +2,7 @@ import groupBy from "lodash.groupby";
 import { randomUUID } from "node:crypto";
 import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
+import { ValeurIndicateurTerritoireEvenementBuilder } from "@/server/import-indicateur/app/builder/ValeurIndicateurTerritoireEvenement.builder";
 
 export class IndicateurTerritoireValeurEvenements {
   private readonly _indicId: string;
@@ -86,6 +87,30 @@ export class IndicateurTerritoireValeurEvenements {
       return nouveauxEvenements;
     }
 
+    // Checker si on doit ignorer les propositions de valeur
+    // TODO - que fait-on de la vraie table proposition_valeur_actuelle ?
+    //    ici on enregistre les evenements mais d'impact sur la proposition réelle
+    const evenementsPropositionValeur = evenementsPourCetteDate.find(
+      (evenement) => evenement.typeEvenement.startsWith("PROPOSITION_VALEUR_"),
+    );
+    if (
+      evenementsPropositionValeur?.typeEvenement ===
+        "PROPOSITION_VALEUR_CREEE" ||
+      evenementsPropositionValeur?.typeEvenement ===
+        "PROPOSITION_VALEUR_MODIFIEE"
+    ) {
+      const evenementPropositionValeurIgnoreeValeurModifiee =
+        this._creerEvenementPropositionValeurIgnoreeValeurModifiee(
+          evenementsPropositionValeur,
+          auteurId,
+          ordreActuel++,
+        );
+      evenementsExistantParDate[indicateurData.metricDate].unshift(
+        evenementPropositionValeurIgnoreeValeurModifiee,
+      );
+      nouveauxEvenements.push(evenementPropositionValeurIgnoreeValeurModifiee);
+    }
+
     const evenementCreationOuModification = this._creerEvenementPrincipal(
       indicateurData,
       auteurId,
@@ -117,6 +142,27 @@ export class IndicateurTerritoireValeurEvenements {
     this._evenements.unshift(...[...nouveauxEvenements].reverse());
 
     return nouveauxEvenements;
+  }
+
+  private _creerEvenementPropositionValeurIgnoreeValeurModifiee(
+    evenementExistant: IndicateurTerritoireValeurEvenement,
+    auteurId: string,
+    ordre: number,
+  ) {
+    return IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+      {
+        indicId: this._indicId,
+        territoireCode: this._territoireCode,
+        typeEvenement: "PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE",
+        typeValeur: "VALEUR_AVANCEMENT",
+        dateValeur: evenementExistant.dateValeur,
+        valeur: evenementExistant.valeur,
+        donneesComplementaires: {},
+        idAuteurModification: auteurId,
+        correlationId: randomUUID(),
+        ordre,
+      },
+    );
   }
 
   private _creerEvenementHistorisation(
