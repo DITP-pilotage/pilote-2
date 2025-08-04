@@ -1,8 +1,9 @@
-import { objectif as ObjectifModel, PrismaClient } from "@prisma/client";
+import { objectif as ObjectifModel } from "@prisma/client";
 import { Objectif } from "@/server/fiche-conducteur/domain/Objectif";
 import { ObjectifRepository } from "@/server/fiche-conducteur/domain/ports/ObjectifRepository";
 
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PilotePrismaClient } from "@/server/db/Transaction";
 
 const convertifEnObjectif = (objectifModel: ObjectifModel): Objectif =>
   Objectif.creerObjectif({
@@ -16,7 +17,7 @@ interface Dependencies {
 }
 
 export class PrismaObjectifRepository implements ObjectifRepository {
-  private prisma: PrismaClient;
+  private prisma: PilotePrismaClient;
 
   constructor({ prisma }: Dependencies) {
     this.prisma = prisma.getInstance();

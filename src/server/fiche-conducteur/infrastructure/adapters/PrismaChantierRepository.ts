@@ -10,6 +10,7 @@ import { Meteo } from "@/server/fiche-conducteur/domain/Meteo";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PilotePrismaClient } from "@/server/db/Transaction";
 
 const convertirChantierTerritoireEnChantier = (
   chantierTerritoireModel: ChantierTerritoireModel & {
@@ -68,7 +69,7 @@ interface Dependencies {
 }
 
 export class PrismaChantierRepository implements ChantierRepository {
-  private prisma: PrismaClient;
+  private prisma: PilotePrismaClient;
 
   constructor({ prisma }: Dependencies) {
     this.prisma = prisma.getInstance();

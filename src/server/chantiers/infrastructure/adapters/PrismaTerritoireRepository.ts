@@ -1,9 +1,9 @@
-import { PrismaClient } from "@prisma/client";
 import { TerritoireRepository } from "@/server/chantiers/domain/ports/TerritoireRepository";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PilotePrismaClient } from "@/server/db/Transaction";
 
 export class PrismaTerritoireRepository implements TerritoireRepository {
-  private readonly prisma: PrismaClient;
+  private readonly prisma: PilotePrismaClient;
 
   constructor({ prisma }: { prisma: PrismaPilote }) {
     this.prisma = prisma.getInstance();

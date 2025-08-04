@@ -1,7 +1,6 @@
 import {
   habilitation as PrismaHabilitationModel,
   Prisma,
-  PrismaClient,
   profil as PrismaProfilModel,
   utilisateur as PrismaUtilisateurModel,
 } from "@prisma/client";
@@ -28,6 +27,7 @@ import {
   Utilisateur,
 } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { PilotePrismaClient } from "@/server/db/Transaction";
 
 interface Dependencies {
   prisma: PrismaPilote;
@@ -311,7 +311,7 @@ const créerLesHabilitations = (
 };
 
 export class PrismaUtilisateurRepository implements UtilisateurRepository {
-  private prisma: PrismaClient;
+  private prisma: PilotePrismaClient;
 
   constructor({ prisma }: Dependencies) {
     this.prisma = prisma.getInstance();

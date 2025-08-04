@@ -1,11 +1,9 @@
-import {
-  decision_strategique as DecisionStrategiqueModel,
-  PrismaClient,
-} from "@prisma/client";
+import { decision_strategique as DecisionStrategiqueModel } from "@prisma/client";
 import { DecisionStrategique } from "@/server/fiche-conducteur/domain/DecisionStrategique";
 import { DecisionStrategiqueRepository } from "@/server/fiche-conducteur/domain/ports/DecisionStrategiqueRepository";
 
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PilotePrismaClient } from "@/server/db/Transaction";
 
 const convertifEnDecisionStrategique = (
   decisionStrategiqueModel: DecisionStrategiqueModel,
@@ -22,7 +20,7 @@ interface Dependencies {
 export class PrismaDecisionStrategiqueRepository
   implements DecisionStrategiqueRepository
 {
-  private prisma: PrismaClient;
+  private prisma: PilotePrismaClient;
 
   constructor({ prisma }: Dependencies) {
     this.prisma = prisma.getInstance();

@@ -1,9 +1,10 @@
-import { commentaire as CommentaireModel, PrismaClient } from "@prisma/client";
+import { commentaire as CommentaireModel } from "@prisma/client";
 import { Commentaire } from "@/server/fiche-conducteur/domain/Commentaire";
 import { CommentaireRepository } from "@/server/fiche-conducteur/domain/ports/CommentaireRepository";
 import { CommentaireType } from "@/server/fiche-conducteur/domain/CommentaireType";
 
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { PilotePrismaClient } from "@/server/db/Transaction";
 
 const convertifEnCommentaire = (
   commentaireModel: CommentaireModel,
@@ -19,7 +20,7 @@ interface Dependencies {
 }
 
 export class PrismaCommentaireRepository implements CommentaireRepository {
-  private prisma: PrismaClient;
+  private prisma: PilotePrismaClient;
 
   constructor({ prisma }: Dependencies) {
     this.prisma = prisma.getInstance();
