@@ -1,0 +1,135 @@
+import { randomUUID } from "node:crypto";
+import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
+
+const estPropositionEnCours = (
+  evenementsPropositionValeur: IndicateurTerritoireValeurEvenement | undefined,
+) =>
+  evenementsPropositionValeur?.typeEvenement === "PROPOSITION_VALEUR_CREEE" ||
+  evenementsPropositionValeur?.typeEvenement === "PROPOSITION_VALEUR_MODIFIEE";
+
+type IdentifiantFlux = {
+  indicId: string;
+  territoireCode: string;
+  date: string;
+};
+
+export class EvenementsSurDate {
+  constructor(
+    private identifiantFlux: IdentifiantFlux,
+    private evenementsSurDate: IndicateurTerritoireValeurEvenement[],
+    private tousLesEvenements: IndicateurTerritoireValeurEvenement[],
+  ) {}
+
+  static pourDate(
+    identifiantFlux: IdentifiantFlux,
+    evenements: IndicateurTerritoireValeurEvenement[],
+  ) {
+    const evenementsSurDate = evenements.filter(
+      (evenement) =>
+        evenement.dateValeur.toISOString().split("T")[0] ===
+        identifiantFlux.date,
+    );
+    return new EvenementsSurDate(
+      identifiantFlux,
+      evenementsSurDate,
+      evenements,
+    );
+  }
+
+  ajouterEvenement(evenement: IndicateurTerritoireValeurEvenement) {
+    this.evenementsSurDate.unshift(evenement);
+    this.tousLesEvenements.push(evenement);
+  }
+
+  prochainOrdre() {
+    return IndicateurTerritoireValeurEvenement.prochainOrdre(
+      this.evenementsSurDate,
+    );
+  }
+
+  valeurEnCours() {
+    return this.evenementsValeur()[0]?.valeur ?? null;
+  }
+
+  aValeurHistorisee() {
+    return this.evenementsValeur().some(
+      (evenement) => evenement.typeEvenement === "VALEUR_HISTORISEE",
+    );
+  }
+
+  evenementsValeur() {
+    return this.evenementsSurDate.filter((evenement) =>
+      evenement.typeEvenement.startsWith("VALEUR_"),
+    );
+  }
+
+  evenementsPropositionValeur() {
+    return this.evenementsSurDate.filter((evenement) =>
+      evenement.typeEvenement.startsWith("PROPOSITION_VALEUR_"),
+    );
+  }
+
+  evenementPropositionValeurEnCours() {
+    const evenementPropositionValeurLePlusRecent =
+      this.evenementsPropositionValeur()[0];
+
+    if (estPropositionEnCours(evenementPropositionValeurLePlusRecent)) {
+      return evenementPropositionValeurLePlusRecent;
+    }
+
+    return null;
+  }
+
+  creerEvenementPropositionValeurIgnoreeValeurHistorisee(
+    auteurId: string,
+  ): IndicateurTerritoireValeurEvenement {
+    const evenementPropositionValeur = this.evenementPropositionValeurEnCours();
+    if (!evenementPropositionValeur)
+      throw new Error("Pas d'evenement PROPOSITION_VALEUR en cours");
+    const evenement =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: this.identifiantFlux.indicId,
+          territoireCode: this.identifiantFlux.territoireCode,
+          typeEvenement: "PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: evenementPropositionValeur.dateValeur,
+          valeur: evenementPropositionValeur.valeur,
+          donneesComplementaires: {},
+          idAuteurModification: auteurId,
+          correlationId: randomUUID(),
+          ordre: this.prochainOrdre(),
+        },
+      );
+    this.ajouterEvenement(evenement);
+    return evenement;
+  }
+
+  creerEvenementHistorisation(auteurId: string, date: string) {
+    // TODO : ???
+    const evenementsPourCetteDate = this.tousLesEvenements.filter(
+      (evenement) => evenement.dateValeur.toISOString().split("T")[0] === date,
+    );
+    const evenementValeurPourDate = evenementsPourCetteDate.find((evenement) =>
+      evenement.typeEvenement.startsWith("VALEUR_"),
+    );
+
+    const evenement =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: this.identifiantFlux.indicId,
+          territoireCode: this.identifiantFlux.territoireCode,
+          typeEvenement: "VALEUR_HISTORISEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: evenementValeurPourDate!.dateValeur,
+          valeur: evenementValeurPourDate!.valeur,
+          donneesComplementaires: {},
+          idAuteurModification: auteurId,
+          correlationId: randomUUID(),
+          ordre: this.prochainOrdre(),
+        },
+      );
+    this.ajouterEvenement(evenement);
+    return evenement;
+  }
+}
