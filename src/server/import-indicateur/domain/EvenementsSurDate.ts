@@ -178,4 +178,31 @@ export class EvenementsSurDate {
     this.ajouterEvenement(evenement);
     return evenement;
   }
+
+  creerEvenementPrincipal(
+    indicateurData: IndicateurData,
+    auteurId: string,
+    doitModifierValeurCreee: boolean,
+  ) {
+    const evenement =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: this.identifiantFlux.indicId,
+          territoireCode: this.identifiantFlux.territoireCode,
+          typeEvenement: doitModifierValeurCreee
+            ? "VALEUR_MODIFIEE"
+            : "VALEUR_CREEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: new Date(indicateurData.metricDate),
+          valeur: Number.parseFloat(indicateurData.metricValue),
+          donneesComplementaires: {},
+          idAuteurModification: auteurId,
+          correlationId: randomUUID(),
+          ordre: this.prochainOrdre(),
+        },
+      );
+
+    this.ajouterEvenement(evenement);
+    return evenement;
+  }
 }

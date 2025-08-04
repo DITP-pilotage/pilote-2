@@ -1,6 +1,5 @@
 import groupBy from "lodash.groupby";
 import mapValues from "lodash.mapvalues";
-import { randomUUID } from "node:crypto";
 import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
@@ -32,7 +31,6 @@ export class IndicateurTerritoireValeurEvenements {
   ): IndicateurTerritoireValeurEvenement[] {
     const nouveauxEvenements: IndicateurTerritoireValeurEvenement[] = [];
 
-    // Calculer l'ordre suivant pour cette date_valeur
     const evenementsPourCetteDate = EvenementsSurDate.pourDate(
       {
         date: indicateurData.metricDate,
@@ -119,15 +117,13 @@ export class IndicateurTerritoireValeurEvenements {
       );
     }
 
-    const evenementCreationOuModification = this._creerEvenementPrincipal(
-      indicateurData,
-      auteurId,
-      doitModifierValeurCreee,
-      ordreActuel++,
+    nouveauxEvenements.push(
+      evenementsPourCetteDate.creerEvenementPrincipal(
+        indicateurData,
+        auteurId,
+        doitModifierValeurCreee,
+      ),
     );
-
-    nouveauxEvenements.push(evenementCreationOuModification);
-    evenementsPourCetteDate.ajouterEvenement(evenementCreationOuModification);
 
     if (doitHistoriserValeurCreee) {
       nouveauxEvenements.push(
@@ -139,27 +135,5 @@ export class IndicateurTerritoireValeurEvenements {
     }
 
     return nouveauxEvenements;
-  }
-
-  private _creerEvenementPrincipal(
-    indicateurData: IndicateurData,
-    auteurId: string,
-    doitModifier: boolean,
-    ordre: number,
-  ): IndicateurTerritoireValeurEvenement {
-    return IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
-      {
-        indicId: this._indicId,
-        territoireCode: this._territoireCode,
-        typeEvenement: doitModifier ? "VALEUR_MODIFIEE" : "VALEUR_CREEE",
-        typeValeur: "VALEUR_AVANCEMENT",
-        dateValeur: new Date(indicateurData.metricDate),
-        valeur: Number.parseFloat(indicateurData.metricValue),
-        donneesComplementaires: {},
-        idAuteurModification: auteurId,
-        correlationId: randomUUID(),
-        ordre,
-      },
-    );
   }
 }
