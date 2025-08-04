@@ -6,8 +6,6 @@ const env = process.env.NODE_ENV ? `.${process.env.NODE_ENV}` : "";
 
 const envPath = join(process.cwd(), `/.env${env}`);
 
-console.log(`Loading environment from ${envPath}`);
-
 dotenv.config({ path: envPath, override: true });
 
 const config = convict({

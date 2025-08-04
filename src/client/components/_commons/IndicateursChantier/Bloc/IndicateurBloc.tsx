@@ -459,47 +459,43 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     Proposer une autre valeur d'avancement
                                   </button>
                                 </div>
-                                {
-                                  !variableContenuFFPropositionValeurAvancementV2 ? (
-<ModalePropositionValeurAvancement
-                                  detailIndicateur={
-                                    informationIndicateur.données
-                                  }
-                                  generatedHTMLID={
-                                    ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
-                                    indicateur.id
-                                  }
-                                  indicateur={indicateur}
-                                  territoireCode={territoireCode}
-                                  territoireCodeInsee={
-                                    détailTerritoireSélectionné.codeInsee
-                                  }
-                                  territoireNom={
-                                    détailTerritoireSélectionné.nom
-                                  }
-                                />
-                                  ) : ( 
-                                    <ModalePropositionValeurAvancementV2
-                                      detailIndicateur={
-                                        informationIndicateur.données
-                                      }
-                                      generatedHTMLID={
-                                        ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
-                                        indicateur.id
-                                      }
-                                      indicateur={indicateur}
-                                      territoireCode={territoireCode}
-                                      territoireCodeInsee={
-                                        détailTerritoireSélectionné.codeInsee
-                                      }
-                                      territoireNom={
-                                        détailTerritoireSélectionné.nom
-                                      }
-                                    />
-                                  )
-                                }
-                                
-                                
+                                {!variableContenuFFPropositionValeurAvancementV2 ? (
+                                  <ModalePropositionValeurAvancement
+                                    detailIndicateur={
+                                      informationIndicateur.données
+                                    }
+                                    generatedHTMLID={
+                                      ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
+                                      indicateur.id
+                                    }
+                                    indicateur={indicateur}
+                                    territoireCode={territoireCode}
+                                    territoireCodeInsee={
+                                      détailTerritoireSélectionné.codeInsee
+                                    }
+                                    territoireNom={
+                                      détailTerritoireSélectionné.nom
+                                    }
+                                  />
+                                ) : (
+                                  <ModalePropositionValeurAvancementV2
+                                    detailIndicateur={
+                                      informationIndicateur.données
+                                    }
+                                    generatedHTMLID={
+                                      ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
+                                      indicateur.id
+                                    }
+                                    indicateur={indicateur}
+                                    territoireCode={territoireCode}
+                                    territoireCodeInsee={
+                                      détailTerritoireSélectionné.codeInsee
+                                    }
+                                    territoireNom={
+                                      détailTerritoireSélectionné.nom
+                                    }
+                                  />
+                                )}
                               </td>
                             </tr>
                           ) : informationIndicateur.données.proposition !==

@@ -70,13 +70,15 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
         propositionValeurAvancementChantierInformation,
       );
 
-      await getContainer("indicateurTerritoireValeurEvenement").resolve("creerIndicateurTerritoireValeurEvenementUseCase").run({
-        indicId: input.indicId,
-        territoireCode: input.territoireCode,
-        valeurAvancement: +input.valeurAvancement.replace(",", "."),
-        dateValeurAvancement: new Date(input.dateValeurAvancement),
-        idAuteurModification: idAuteur,
-      });
+      await getContainer("indicateurTerritoireValeurEvenement")
+        .resolve("creerIndicateurTerritoireValeurEvenementUseCase")
+        .run({
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          valeurAvancement: +input.valeurAvancement.replace(",", "."),
+          dateValeurAvancement: new Date(input.dateValeurAvancement),
+          idAuteurModification: idAuteur,
+        });
     }),
 
   supprimer: procédureProtégée

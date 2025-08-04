@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
-import { IndicateurData } from "./IndicateurData";
+import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
+import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
 
 const estPropositionEnCours = (
   evenementsPropositionValeur: IndicateurTerritoireValeurEvenement | undefined,

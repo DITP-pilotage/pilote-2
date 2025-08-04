@@ -27,8 +27,14 @@ import {
   getParametrageNouveautesContainer,
   ParametrageNouveautesDependencies,
 } from "./parametrage-nouveautes/container";
-import { getInitialContainerWithTransversalDependencies, InitialDependencies } from "./InitialDependencies";
-import { getIndicateurTerritoireValeurEvenementContainer, IndicateurTerritoireValeurEvenementDependencies } from "./indicateur-territoire-valeur-evenement/container";
+import {
+  getInitialContainerWithTransversalDependencies,
+  InitialDependencies,
+} from "./InitialDependencies";
+import {
+  getIndicateurTerritoireValeurEvenementContainer,
+  IndicateurTerritoireValeurEvenementDependencies,
+} from "./indicateur-territoire-valeur-evenement/container";
 
 export type ContainerDependencies = {
   main: AwilixContainer<InitialDependencies>;
@@ -43,18 +49,36 @@ export type ContainerDependencies = {
 };
 
 function registerContainer(): ContainerDependencies {
-  const initialContainerWithTransversalDependencies = getInitialContainerWithTransversalDependencies();
+  const initialContainerWithTransversalDependencies =
+    getInitialContainerWithTransversalDependencies();
 
   return {
     main: initialContainerWithTransversalDependencies.createScope(),
-    authentification: getAuthentificationContainer(initialContainerWithTransversalDependencies),
-    chantiers: getChantiersContainer(initialContainerWithTransversalDependencies),
-    parametrageIndicateur: getParametrageIndicateurContainer(initialContainerWithTransversalDependencies),
-    importIndicateur: getImportIndicateurContainer(initialContainerWithTransversalDependencies),
-    gestionUtilisateur: getGestionUtilisateurContainer(initialContainerWithTransversalDependencies),
-    ficheConducteur: getFicheConducteurContainer(initialContainerWithTransversalDependencies),
-    parametrageNouveautes: getParametrageNouveautesContainer(initialContainerWithTransversalDependencies),
-    indicateurTerritoireValeurEvenement: getIndicateurTerritoireValeurEvenementContainer(initialContainerWithTransversalDependencies),
+    authentification: getAuthentificationContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    chantiers: getChantiersContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    parametrageIndicateur: getParametrageIndicateurContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    importIndicateur: getImportIndicateurContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    gestionUtilisateur: getGestionUtilisateurContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    ficheConducteur: getFicheConducteurContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    parametrageNouveautes: getParametrageNouveautesContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    indicateurTerritoireValeurEvenement:
+      getIndicateurTerritoireValeurEvenementContainer(
+        initialContainerWithTransversalDependencies,
+      ),
   };
 }
 

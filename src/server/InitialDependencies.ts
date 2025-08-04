@@ -17,7 +17,7 @@ export interface TransversalDependencies {
 
 export function getInitialContainerWithTransversalDependencies(): AwilixContainer<InitialDependencies> {
   const initialContainer = getInitialContainer();
-  
+
   return initialContainer.register({
     indicateurTerritoireValeurEvenementRepository: asClass(
       PrismaIndicateurTerritoireValeurEvenementRepository,

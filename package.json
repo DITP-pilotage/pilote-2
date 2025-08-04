@@ -30,7 +30,7 @@
     "test:server:integration": "jest src/server/.*.integration.test.* --runInBand",
     "test:server:domain:coverage": "jest --collectCoverage --collectCoverageFrom=src/server/domain/**/*.ts src/server/domain/.*.test.*",
     "test:server:infrastructure:coverage": "jest --collectCoverage --collectCoverageFrom=src/server/infrastructure/**/*.ts src/server/infrastructure/.*.test.*",
-    "test:database:init": "dotenv -e .env.test -- npm run database:init -- --force && echo $DATABASE_URL",
+    "test:database:init": "dotenv -e .env.test -- npm run database:init -- --force",
     "database:init": "prisma migrate reset",
     "database:init-force": "prisma migrate reset --force",
     "database:migration": "prisma migrate dev"

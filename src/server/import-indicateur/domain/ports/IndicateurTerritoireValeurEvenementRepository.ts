@@ -1,5 +1,5 @@
-import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
-import { TypeValeur } from "@/server/import-indicateur/domain/TypeValeur";
+import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
+import { TypeValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeValeur";
 
 export interface IndicateurTerritoireValeurEvenementRepository {
   recupererParIndicIdTerritoireCodeEtTypeValeur(args: {
