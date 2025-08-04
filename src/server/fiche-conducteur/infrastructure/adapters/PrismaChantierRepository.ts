@@ -2,7 +2,6 @@ import {
   chantier_identite as ChantierIdentiteModel,
   chantier_territoire as ChantierTerritoireModel,
   chantier_territoire_jalon as ChantierTerritoireJalonModel,
-  PrismaClient,
 } from "@prisma/client";
 import { ChantierRepository } from "@/server/fiche-conducteur/domain/ports/ChantierRepository";
 import { Chantier } from "@/server/fiche-conducteur/domain/Chantier";

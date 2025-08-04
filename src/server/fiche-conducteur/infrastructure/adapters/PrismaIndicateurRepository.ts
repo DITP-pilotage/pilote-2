@@ -2,7 +2,6 @@ import {
   indicateur_territoire as PrismaIndicateurTerritoire,
   indicateur_identite as PrismaIndicateurIdentite,
   indicateur_territoire_jalon as PrismaIndicateurTerritoireJalon,
-  PrismaClient,
 } from "@prisma/client";
 import { IndicateurRepository } from "@/server/fiche-conducteur/domain/ports/IndicateurRepository";
 import { Indicateur } from "@/server/fiche-conducteur/domain/Indicateur";
