@@ -128,4 +128,29 @@ export class EvenementsSurDate {
     this.ajouterEvenement(evenement);
     return evenement;
   }
+
+  creerEvenementPropositionValeurIgnoreeValeurModifiee(auteurId: string) {
+    const evenementExistant = this.evenementPropositionValeurEnCours();
+    if (!evenementExistant)
+      throw new Error("Pas d'evenement PROPOSITION_VALEUR en cours");
+
+    const evenement =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: this.identifiantFlux.indicId,
+          territoireCode: this.identifiantFlux.territoireCode,
+          typeEvenement: "PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: evenementExistant.dateValeur,
+          valeur: evenementExistant.valeur,
+          donneesComplementaires: {},
+          idAuteurModification: auteurId,
+          correlationId: randomUUID(),
+          ordre: this.prochainOrdre(),
+        },
+      );
+
+    this.ajouterEvenement(evenement);
+    return evenement;
+  }
 }

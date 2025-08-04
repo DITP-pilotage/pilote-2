@@ -109,21 +109,18 @@ export class IndicateurTerritoireValeurEvenements {
       return nouveauxEvenements;
     }
 
-    const evenementsPropositionValeur =
+    const aPropositionValeurEnCours =
       evenementsPourCetteDate.evenementPropositionValeurEnCours();
-    if (evenementsPropositionValeur) {
+    if (aPropositionValeurEnCours) {
+      // TODO: à supprimer (en cours de refacto)
+      ordreActuel++;
       // TODO - que fait-on de la vraie table proposition_valeur_actuelle ?
       //    ici on enregistre les evenements mais d'impact sur la proposition réelle
-      const evenementPropositionValeurIgnoreeValeurModifiee =
-        this._creerEvenementPropositionValeurIgnoreeValeurModifiee(
-          evenementsPropositionValeur,
+      nouveauxEvenements.push(
+        evenementsPourCetteDate.creerEvenementPropositionValeurIgnoreeValeurModifiee(
           auteurId,
-          ordreActuel++,
-        );
-      evenementsExistantParDate[indicateurData.metricDate].ajouterEvenement(
-        evenementPropositionValeurIgnoreeValeurModifiee,
+        ),
       );
-      nouveauxEvenements.push(evenementPropositionValeurIgnoreeValeurModifiee);
     }
 
     const evenementCreationOuModification = this._creerEvenementPrincipal(
@@ -163,27 +160,6 @@ export class IndicateurTerritoireValeurEvenements {
     }
 
     return nouveauxEvenements;
-  }
-
-  private _creerEvenementPropositionValeurIgnoreeValeurModifiee(
-    evenementExistant: IndicateurTerritoireValeurEvenement,
-    auteurId: string,
-    ordre: number,
-  ) {
-    return IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
-      {
-        indicId: this._indicId,
-        territoireCode: this._territoireCode,
-        typeEvenement: "PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE",
-        typeValeur: "VALEUR_AVANCEMENT",
-        dateValeur: evenementExistant.dateValeur,
-        valeur: evenementExistant.valeur,
-        donneesComplementaires: {},
-        idAuteurModification: auteurId,
-        correlationId: randomUUID(),
-        ordre,
-      },
-    );
   }
 
   private _creerEvenementPrincipal(
