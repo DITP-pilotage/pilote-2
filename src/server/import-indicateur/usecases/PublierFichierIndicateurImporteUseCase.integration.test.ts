@@ -601,6 +601,9 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementIgnore).toBeDefined();
     expect(evenementIgnore.indicId).toEqual("IND-001");
     expect(evenementIgnore.territoireCode).toEqual("DEPT-01");
+    expect(evenementIgnore.typeEvenement).toEqual(
+      "PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE",
+    );
     expect(evenementIgnore.typeValeur).toEqual("VALEUR_AVANCEMENT");
     expect(evenementIgnore.dateValeur).toEqual(new Date("2023-01-01"));
     expect(evenementIgnore.valeur).toEqual(90);
@@ -610,6 +613,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementModifie).toBeDefined();
     expect(evenementModifie.indicId).toEqual("IND-001");
     expect(evenementModifie.territoireCode).toEqual("DEPT-01");
+    expect(evenementModifie.typeEvenement).toEqual("VALEUR_MODIFIEE");
     expect(evenementModifie.typeValeur).toEqual("VALEUR_AVANCEMENT");
     expect(evenementModifie.dateValeur).toEqual(new Date("2023-01-01"));
     expect(evenementModifie.valeur).toEqual(85);
@@ -675,6 +679,9 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementIgnore).toBeDefined();
     expect(evenementIgnore.indicId).toEqual("IND-001");
     expect(evenementIgnore.territoireCode).toEqual("DEPT-01");
+    expect(evenementIgnore.typeEvenement).toEqual(
+      "PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE",
+    );
     expect(evenementIgnore.typeValeur).toEqual("VALEUR_AVANCEMENT");
     expect(evenementIgnore.dateValeur).toEqual(new Date("2023-01-01"));
     expect(evenementIgnore.valeur).toEqual(95);
@@ -684,6 +691,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementModifie).toBeDefined();
     expect(evenementModifie.indicId).toEqual("IND-001");
     expect(evenementModifie.territoireCode).toEqual("DEPT-01");
+    expect(evenementModifie.typeEvenement).toEqual("VALEUR_MODIFIEE");
     expect(evenementModifie.typeValeur).toEqual("VALEUR_AVANCEMENT");
     expect(evenementModifie.dateValeur).toEqual(new Date("2023-01-01"));
     expect(evenementModifie.valeur).toEqual(85);
@@ -752,6 +760,290 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
         .avecMetricDate("2023-01-01")
         .avecMetricType("va")
         .avecMetricValue("75")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
+    ];
+
+    const evenementExistantValeur =
+      new ValeurIndicateurTerritoireEvenementBuilder()
+        .avecIndicId("IND-001")
+        .avecTerritoireCode("DEPT-01")
+        .avecTypeEvenement("VALEUR_CREEE")
+        .avecTypeValeur("VALEUR_AVANCEMENT")
+        .avecDateValeur(new Date("2023-01-01"))
+        .avecValeur(75)
+        .avecOrdre(1)
+        .build();
+
+    const evenementExistantProposition =
+      new ValeurIndicateurTerritoireEvenementBuilder()
+        .avecIndicId("IND-001")
+        .avecTerritoireCode("DEPT-01")
+        .avecTypeEvenement("PROPOSITION_VALEUR_MODIFIEE")
+        .avecTypeValeur("VALEUR_AVANCEMENT")
+        .avecDateValeur(new Date("2023-01-01"))
+        .avecValeur(85)
+        .avecOrdre(2)
+        .build();
+
+    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
+      listeMesuresIndicateursTemporaires,
+    );
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [evenementExistantValeur, evenementExistantProposition],
+    );
+
+    // WHEN
+    await publierFichierIndicateurImporteUseCase.execute({
+      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
+    });
+
+    // THEN
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
+    ).toHaveBeenNthCalledWith(1, []);
+  });
+
+  it("quand une nouvelle valeur est importée et qu'il existe un évènement PROPOSITION_VALEUR_CREEE avec une valeur différente pour une date antérieure, doit créer les évènements PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE et VALEUR_CREEE", async () => {
+    // GIVEN
+    const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
+    const listeMesuresIndicateursTemporaires = [
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-02-01")
+        .avecMetricType("va")
+        .avecMetricValue("90")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
+    ];
+
+    const evenementExistantValeur =
+      new ValeurIndicateurTerritoireEvenementBuilder()
+        .avecIndicId("IND-001")
+        .avecTerritoireCode("DEPT-01")
+        .avecTypeEvenement("VALEUR_CREEE")
+        .avecTypeValeur("VALEUR_AVANCEMENT")
+        .avecDateValeur(new Date("2023-01-01"))
+        .avecValeur(75)
+        .avecOrdre(1)
+        .build();
+
+    const evenementExistantProposition =
+      new ValeurIndicateurTerritoireEvenementBuilder()
+        .avecIndicId("IND-001")
+        .avecTerritoireCode("DEPT-01")
+        .avecTypeEvenement("PROPOSITION_VALEUR_CREEE")
+        .avecTypeValeur("VALEUR_AVANCEMENT")
+        .avecDateValeur(new Date("2023-01-01"))
+        .avecValeur(80)
+        .avecOrdre(2)
+        .build();
+
+    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
+      listeMesuresIndicateursTemporaires,
+    );
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [evenementExistantValeur, evenementExistantProposition],
+    );
+
+    // WHEN
+    await publierFichierIndicateurImporteUseCase.execute({
+      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
+    });
+
+    // THEN
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
+    ).toHaveBeenNthCalledWith(1, evenementCaptor);
+    expect(evenementCaptor.value).toHaveLength(3);
+
+    const evenementIgnore = evenementCaptor.value[0];
+    expect(evenementIgnore).toBeDefined();
+    expect(evenementIgnore.indicId).toEqual("IND-001");
+    expect(evenementIgnore.territoireCode).toEqual("DEPT-01");
+    expect(evenementIgnore.typeEvenement).toEqual(
+      "PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE",
+    );
+    expect(evenementIgnore.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementIgnore.dateValeur).toEqual(new Date("2023-01-01"));
+    expect(evenementIgnore.valeur).toEqual(80);
+    expect(evenementIgnore.ordre).toEqual(3);
+
+    const evenementHistorise = evenementCaptor.value[1];
+    expect(evenementHistorise).toBeDefined();
+    expect(evenementHistorise.indicId).toEqual("IND-001");
+    expect(evenementHistorise.territoireCode).toEqual("DEPT-01");
+    expect(evenementHistorise.typeEvenement).toEqual("VALEUR_HISTORISEE");
+    expect(evenementHistorise.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementHistorise.dateValeur).toEqual(new Date("2023-01-01"));
+    expect(evenementHistorise.valeur).toEqual(75);
+    expect(evenementHistorise.ordre).toEqual(4);
+
+    const evenementCree = evenementCaptor.value[2];
+    expect(evenementCree).toBeDefined();
+    expect(evenementCree.indicId).toEqual("IND-001");
+    expect(evenementCree.territoireCode).toEqual("DEPT-01");
+    expect(evenementCree.typeEvenement).toEqual("VALEUR_CREEE");
+    expect(evenementCree.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementCree.dateValeur).toEqual(new Date("2023-02-01"));
+    expect(evenementCree.valeur).toEqual(90);
+    expect(evenementCree.ordre).toEqual(1);
+  });
+
+  it("quand une nouvelle valeur est importée et qu'il existe un évènement PROPOSITION_VALEUR_MODIFIEE avec une valeur différente pour une date antérieure, doit créer les évènements PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE et VALEUR_CREEE", async () => {
+    // GIVEN
+    const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
+    const listeMesuresIndicateursTemporaires = [
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-02-01")
+        .avecMetricType("va")
+        .avecMetricValue("95")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
+    ];
+
+    const evenementExistantValeur =
+      new ValeurIndicateurTerritoireEvenementBuilder()
+        .avecIndicId("IND-001")
+        .avecTerritoireCode("DEPT-01")
+        .avecTypeEvenement("VALEUR_CREEE")
+        .avecTypeValeur("VALEUR_AVANCEMENT")
+        .avecDateValeur(new Date("2023-01-01"))
+        .avecValeur(75)
+        .avecOrdre(1)
+        .build();
+
+    const evenementExistantProposition =
+      new ValeurIndicateurTerritoireEvenementBuilder()
+        .avecIndicId("IND-001")
+        .avecTerritoireCode("DEPT-01")
+        .avecTypeEvenement("PROPOSITION_VALEUR_MODIFIEE")
+        .avecTypeValeur("VALEUR_AVANCEMENT")
+        .avecDateValeur(new Date("2023-01-01"))
+        .avecValeur(85)
+        .avecOrdre(2)
+        .build();
+
+    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
+      listeMesuresIndicateursTemporaires,
+    );
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [evenementExistantValeur, evenementExistantProposition],
+    );
+
+    // WHEN
+    await publierFichierIndicateurImporteUseCase.execute({
+      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
+    });
+
+    // THEN
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
+    ).toHaveBeenNthCalledWith(1, evenementCaptor);
+    expect(evenementCaptor.value).toHaveLength(3);
+
+    const evenementIgnore = evenementCaptor.value[0];
+    expect(evenementIgnore).toBeDefined();
+    expect(evenementIgnore.indicId).toEqual("IND-001");
+    expect(evenementIgnore.territoireCode).toEqual("DEPT-01");
+    expect(evenementIgnore.typeEvenement).toEqual(
+      "PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE",
+    );
+    expect(evenementIgnore.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementIgnore.dateValeur).toEqual(new Date("2023-01-01"));
+    expect(evenementIgnore.valeur).toEqual(85);
+    expect(evenementIgnore.ordre).toEqual(3);
+
+    const evenementHistorise = evenementCaptor.value[1];
+    expect(evenementHistorise).toBeDefined();
+    expect(evenementHistorise.indicId).toEqual("IND-001");
+    expect(evenementHistorise.territoireCode).toEqual("DEPT-01");
+    expect(evenementHistorise.typeEvenement).toEqual("VALEUR_HISTORISEE");
+    expect(evenementHistorise.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementHistorise.dateValeur).toEqual(new Date("2023-01-01"));
+    expect(evenementHistorise.valeur).toEqual(75);
+    expect(evenementHistorise.ordre).toEqual(4);
+
+    const evenementCree = evenementCaptor.value[2];
+    expect(evenementCree).toBeDefined();
+    expect(evenementCree.indicId).toEqual("IND-001");
+    expect(evenementCree.territoireCode).toEqual("DEPT-01");
+    expect(evenementCree.typeEvenement).toEqual("VALEUR_CREEE");
+    expect(evenementCree.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementCree.dateValeur).toEqual(new Date("2023-02-01"));
+    expect(evenementCree.valeur).toEqual(95);
+    expect(evenementCree.ordre).toEqual(1);
+  });
+
+  it("quand une nouvelle valeur est importée et qu'il existe un évènement PROPOSITION_VALEUR_CREEE avec la même valeur pour une date antérieure, ne doit pas créer d'évènement", async () => {
+    // GIVEN
+    const listeMesuresIndicateursTemporaires = [
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-02-01")
+        .avecMetricType("va")
+        .avecMetricValue("85")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
+    ];
+
+    const evenementExistantValeur =
+      new ValeurIndicateurTerritoireEvenementBuilder()
+        .avecIndicId("IND-001")
+        .avecTerritoireCode("DEPT-01")
+        .avecTypeEvenement("VALEUR_CREEE")
+        .avecTypeValeur("VALEUR_AVANCEMENT")
+        .avecDateValeur(new Date("2023-01-01"))
+        .avecValeur(75)
+        .avecOrdre(1)
+        .build();
+
+    const evenementExistantProposition =
+      new ValeurIndicateurTerritoireEvenementBuilder()
+        .avecIndicId("IND-001")
+        .avecTerritoireCode("DEPT-01")
+        .avecTypeEvenement("PROPOSITION_VALEUR_CREEE")
+        .avecTypeValeur("VALEUR_AVANCEMENT")
+        .avecDateValeur(new Date("2023-01-01"))
+        .avecValeur(85)
+        .avecOrdre(2)
+        .build();
+
+    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
+      listeMesuresIndicateursTemporaires,
+    );
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [evenementExistantValeur, evenementExistantProposition],
+    );
+
+    // WHEN
+    await publierFichierIndicateurImporteUseCase.execute({
+      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
+    });
+
+    // THEN
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
+    ).toHaveBeenNthCalledWith(1, []);
+  });
+
+  it("quand une nouvelle valeur est importée et qu'il existe un évènement PROPOSITION_VALEUR_MODIFIEE avec la même valeur pour une date antérieure, ne doit pas créer d'évènement", async () => {
+    // GIVEN
+    const listeMesuresIndicateursTemporaires = [
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-02-01")
+        .avecMetricType("va")
+        .avecMetricValue("85")
         .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
         .avecZoneId("D01")
         .build(),
