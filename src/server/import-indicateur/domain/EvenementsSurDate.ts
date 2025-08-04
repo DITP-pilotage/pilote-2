@@ -105,14 +105,10 @@ export class EvenementsSurDate {
     return evenement;
   }
 
-  creerEvenementHistorisation(auteurId: string, date: string) {
-    // TODO : ???
-    const evenementsPourCetteDate = this.tousLesEvenements.filter(
-      (evenement) => evenement.dateValeur.toISOString().split("T")[0] === date,
-    );
-    const evenementValeurPourDate = evenementsPourCetteDate.find((evenement) =>
-      evenement.typeEvenement.startsWith("VALEUR_"),
-    );
+  creerEvenementHistorisation(auteurId: string) {
+    const valeurEnCours = this.valeurEnCours();
+    if (valeurEnCours == null)
+      throw new Error("Pas de valeur en cours pour l'historisation");
 
     const evenement =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
@@ -121,8 +117,8 @@ export class EvenementsSurDate {
           territoireCode: this.identifiantFlux.territoireCode,
           typeEvenement: "VALEUR_HISTORISEE",
           typeValeur: "VALEUR_AVANCEMENT",
-          dateValeur: evenementValeurPourDate!.dateValeur,
-          valeur: evenementValeurPourDate!.valeur,
+          dateValeur: new Date(this.identifiantFlux.date),
+          valeur: valeurEnCours,
           donneesComplementaires: {},
           idAuteurModification: auteurId,
           correlationId: randomUUID(),

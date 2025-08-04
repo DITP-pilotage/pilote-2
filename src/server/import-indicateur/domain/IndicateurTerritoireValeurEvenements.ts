@@ -85,9 +85,9 @@ export class IndicateurTerritoireValeurEvenements {
         continue;
       }
 
-      const evenementPropositionValeur =
+      const aPropositionValeurEnEcours =
         evenementsPourDate.evenementPropositionValeurEnCours();
-      if (evenementPropositionValeur) {
+      if (aPropositionValeurEnEcours) {
         nouveauxEvenements.push(
           evenementsPourDate.creerEvenementPropositionValeurIgnoreeValeurHistorisee(
             auteurId,
@@ -98,7 +98,7 @@ export class IndicateurTerritoireValeurEvenements {
       const estHistorise = evenementsPourDate.aValeurHistorisee();
       if (!estHistorise) {
         nouveauxEvenements.push(
-          evenementsPourDate.creerEvenementHistorisation(auteurId, date),
+          evenementsPourDate.creerEvenementHistorisation(auteurId),
         );
       }
     }
