@@ -127,7 +127,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .handle({
           request,
           response,
-          utilisateurId: "3326e7bc-49d4-4ff0-90a6-a20bbc32b8eb",
+          utilisateurId: auteurId,
           email: "ditp.admin@example.com",
           profil: ProfilEnum.DITP_ADMIN,
         });
@@ -224,7 +224,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .handle({
           request,
           response,
-          utilisateurId: "3326e7bc-49d4-4ff0-90a6-a20bbc32b8eb",
+          utilisateurId: auteurId,
           email: "ditp.admin@example.com",
           profil: ProfilEnum.DITP_ADMIN,
         });
@@ -311,7 +311,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .handle({
           request,
           response,
-          utilisateurId: "3326e7bc-49d4-4ff0-90a6-a20bbc32b8eb",
+          utilisateurId: auteurId,
           email: "ditp.admin@example.com",
           profil: ProfilEnum.DITP_ADMIN,
         });
@@ -351,6 +351,120 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
     it("quand le fichier est valide, doit importer les données", async () => {
       // Given
       const auteurId = await creeUnUtilisateurEnBase();
+
+      // Create prerequisite data for foreign key constraints
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-001",
+          nom: "Test Chantier",
+          est_territorialise: true,
+          directeurs_administration_centrale: [],
+          directeurs_projet: [],
+        },
+      });
+
+      await prisma.indicateur_identite.create({
+        data: {
+          id: "IND-001",
+          chantier_id: "CH-001",
+          nom: "Test Indicateur",
+        },
+      });
+
+      await Promise.all([
+        prisma.territoire.upsert({
+          where: { code: "DEPT-12" },
+          update: {},
+          create: {
+            code: "DEPT-12",
+            nom: "Département 12",
+            nom_affiche: "Département 12",
+            maille: "DEPT",
+            code_insee: "12",
+            zone_id: "D12",
+          },
+        }),
+        prisma.territoire.upsert({
+          where: { code: "DEPT-13" },
+          update: {},
+          create: {
+            code: "DEPT-13",
+            nom: "Département 13",
+            nom_affiche: "Département 13",
+            maille: "DEPT",
+            code_insee: "13",
+            zone_id: "D13",
+          },
+        }),
+        prisma.territoire.upsert({
+          where: { code: "DEPT-14" },
+          update: {},
+          create: {
+            code: "DEPT-14",
+            nom: "Département 14",
+            nom_affiche: "Département 14",
+            maille: "DEPT",
+            code_insee: "14",
+            zone_id: "D14",
+          },
+        }),
+      ]);
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            territoire_code: "DEPT-12",
+            code_insee: "12",
+            zone_id: "D12",
+            maille: "DEPT",
+          },
+          {
+            id: "CH-001",
+            territoire_code: "DEPT-13",
+            code_insee: "13",
+            zone_id: "D13",
+            maille: "DEPT",
+          },
+          {
+            id: "CH-001",
+            territoire_code: "DEPT-14",
+            code_insee: "14",
+            zone_id: "D14",
+            maille: "DEPT",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            territoire_code: "DEPT-12",
+            code_insee: "12",
+            zone_id: "D12",
+            maille: "DEPT",
+          },
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            territoire_code: "DEPT-13",
+            code_insee: "13",
+            zone_id: "D13",
+            maille: "DEPT",
+          },
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            territoire_code: "DEPT-14",
+            code_insee: "14",
+            zone_id: "D14",
+            maille: "DEPT",
+          },
+        ],
+      });
+
       const report = new ReportValidataWithDataBuilder()
         .avecValid(true)
         .avecResourceData(
@@ -406,7 +520,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .handle({
           request,
           response,
-          utilisateurId: "3326e7bc-49d4-4ff0-90a6-a20bbc32b8eb",
+          utilisateurId: auteurId,
           email: "ditp.admin@example.com",
           profil: ProfilEnum.DITP_ADMIN,
         });
@@ -507,7 +621,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .handle({
           request,
           response,
-          utilisateurId: "3326e7bc-49d4-4ff0-90a6-a20bbc32b8eb",
+          utilisateurId: auteurId,
           email: "ditp.admin@example.com",
           profil: ProfilEnum.DITP_ADMIN,
         });
@@ -602,7 +716,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .handle({
           request,
           response,
-          utilisateurId: "3326e7bc-49d4-4ff0-90a6-a20bbc32b8eb",
+          utilisateurId: auteurId,
           email: "ditp.admin@example.com",
           profil: ProfilEnum.DITP_ADMIN,
         });
@@ -687,7 +801,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .handle({
           request,
           response,
-          utilisateurId: "3326e7bc-49d4-4ff0-90a6-a20bbc32b8eb",
+          utilisateurId: auteurId,
           email: "ditp.admin@example.com",
           profil: ProfilEnum.DITP_ADMIN,
         });
@@ -726,6 +840,120 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
     it("quand le fichier est valide, doit importer les données", async () => {
       // Given
       const auteurId = await creeUnUtilisateurEnBase();
+
+      // Create prerequisite data for foreign key constraints
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-001",
+          nom: "Test Chantier",
+          est_territorialise: true,
+          directeurs_administration_centrale: [],
+          directeurs_projet: [],
+        },
+      });
+
+      await prisma.indicateur_identite.create({
+        data: {
+          id: "IND-001",
+          chantier_id: "CH-001",
+          nom: "Test Indicateur",
+        },
+      });
+
+      await Promise.all([
+        prisma.territoire.upsert({
+          where: { code: "DEPT-12" },
+          update: {},
+          create: {
+            code: "DEPT-12",
+            nom: "Département 12",
+            nom_affiche: "Département 12",
+            maille: "DEPT",
+            code_insee: "12",
+            zone_id: "D12",
+          },
+        }),
+        prisma.territoire.upsert({
+          where: { code: "DEPT-13" },
+          update: {},
+          create: {
+            code: "DEPT-13",
+            nom: "Département 13",
+            nom_affiche: "Département 13",
+            maille: "DEPT",
+            code_insee: "13",
+            zone_id: "D13",
+          },
+        }),
+        prisma.territoire.upsert({
+          where: { code: "DEPT-14" },
+          update: {},
+          create: {
+            code: "DEPT-14",
+            nom: "Département 14",
+            nom_affiche: "Département 14",
+            maille: "DEPT",
+            code_insee: "14",
+            zone_id: "D14",
+          },
+        }),
+      ]);
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            territoire_code: "DEPT-12",
+            code_insee: "12",
+            zone_id: "D12",
+            maille: "DEPT",
+          },
+          {
+            id: "CH-001",
+            territoire_code: "DEPT-13",
+            code_insee: "13",
+            zone_id: "D13",
+            maille: "DEPT",
+          },
+          {
+            id: "CH-001",
+            territoire_code: "DEPT-14",
+            code_insee: "14",
+            zone_id: "D14",
+            maille: "DEPT",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            territoire_code: "DEPT-12",
+            code_insee: "12",
+            zone_id: "D12",
+            maille: "DEPT",
+          },
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            territoire_code: "DEPT-13",
+            code_insee: "13",
+            zone_id: "D13",
+            maille: "DEPT",
+          },
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            territoire_code: "DEPT-14",
+            code_insee: "14",
+            zone_id: "D14",
+            maille: "DEPT",
+          },
+        ],
+      });
+
       const report = new ReportValidataWithDataBuilder()
         .avecValid(true)
         .avecResourceData(
@@ -778,7 +1006,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .handle({
           request,
           response,
-          utilisateurId: "3326e7bc-49d4-4ff0-90a6-a20bbc32b8eb",
+          utilisateurId: auteurId,
           email: "ditp.admin@example.com",
           profil: ProfilEnum.DITP_ADMIN,
         });
