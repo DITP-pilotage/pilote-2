@@ -697,7 +697,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
         .avecIndicId("IND-001")
         .avecMetricDate("2023-01-01")
         .avecMetricType("va")
-        .avecMetricValue("85")
+        .avecMetricValue("75")
         .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
         .avecZoneId("D01")
         .build(),
@@ -751,7 +751,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
         .avecIndicId("IND-001")
         .avecMetricDate("2023-01-01")
         .avecMetricType("va")
-        .avecMetricValue("85")
+        .avecMetricValue("75")
         .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
         .avecZoneId("D01")
         .build(),
