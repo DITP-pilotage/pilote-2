@@ -277,12 +277,13 @@ export class EvenementsSurDate {
   creerEvenementPropositionValeurSupprimee(auteurId: string) {
     const evenementPropositionEnCours =
       this.evenementPropositionValeurEnCours();
+
+    if (this.estEvenementPropositionValeurAccuseeReception()) {
+      throw new Error("La proposition de valeur a déjà été accusée réception");
+    }
     if (!evenementPropositionEnCours) {
-      // TODO - impossible si pas de proposition en cours
-      //  ajouter les tests
       throw new Error("Pas d'evenement PROPOSITION_VALEUR en cours");
     }
-    // TODO - vérifier que pas accusee_reception
 
     const evenement =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
