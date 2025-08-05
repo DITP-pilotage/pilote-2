@@ -68,7 +68,7 @@ export class IndicateurTerritoireValeurEvenements {
       const estHistorise = evenementsPourDate.aValeurHistorisee();
       if (!estHistorise) {
         nouveauxEvenements.push(
-          evenementsPourDate.creerEvenementHistorisation(auteurId),
+          evenementsPourDate.creerEvenementValeurHistorisee(auteurId),
         );
       }
     }
@@ -99,7 +99,7 @@ export class IndicateurTerritoireValeurEvenements {
 
     if (doitHistoriserValeurCreee) {
       nouveauxEvenements.push(
-        evenementsPourCetteDate.creerEvenementHistorisationFuture(
+        evenementsPourCetteDate.creerEvenementValeurHistoriseeACreation(
           indicateurData,
           auteurId,
         ),

@@ -85,6 +85,54 @@ export class EvenementsSurDate {
     return null;
   }
 
+  creerEvenementValeurHistorisee(auteurId: string) {
+    const valeurEnCours = this.valeurEnCours();
+    if (valeurEnCours == null)
+      throw new Error("Pas de valeur en cours pour l'historisation");
+
+    const evenement =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: this.identifiantFlux.indicId,
+          territoireCode: this.identifiantFlux.territoireCode,
+          typeEvenement: "VALEUR_HISTORISEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: new Date(this.identifiantFlux.date),
+          valeur: valeurEnCours,
+          donneesComplementaires: {},
+          idAuteurModification: auteurId,
+          correlationId: randomUUID(),
+          ordre: this.prochainOrdre(),
+        },
+      );
+    this.ajouterEvenement(evenement);
+    return evenement;
+  }
+
+  creerEvenementValeurHistoriseeACreation(
+    indicateurData: IndicateurData,
+    auteurId: string,
+  ) {
+    const evenement =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: this.identifiantFlux.indicId,
+          territoireCode: this.identifiantFlux.territoireCode,
+          typeEvenement: "VALEUR_HISTORISEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: new Date(indicateurData.metricDate),
+          valeur: Number.parseFloat(indicateurData.metricValue),
+          donneesComplementaires: {},
+          idAuteurModification: auteurId,
+          correlationId: randomUUID(),
+          ordre: this.prochainOrdre(),
+        },
+      );
+
+    this.ajouterEvenement(evenement);
+    return evenement;
+  }
+
   creerEvenementPropositionValeurIgnoreeValeurHistorisee(
     auteurId: string,
   ): IndicateurTerritoireValeurEvenement {
@@ -100,30 +148,6 @@ export class EvenementsSurDate {
           typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: evenementPropositionValeur.dateValeur,
           valeur: evenementPropositionValeur.valeur,
-          donneesComplementaires: {},
-          idAuteurModification: auteurId,
-          correlationId: randomUUID(),
-          ordre: this.prochainOrdre(),
-        },
-      );
-    this.ajouterEvenement(evenement);
-    return evenement;
-  }
-
-  creerEvenementHistorisation(auteurId: string) {
-    const valeurEnCours = this.valeurEnCours();
-    if (valeurEnCours == null)
-      throw new Error("Pas de valeur en cours pour l'historisation");
-
-    const evenement =
-      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
-        {
-          indicId: this.identifiantFlux.indicId,
-          territoireCode: this.identifiantFlux.territoireCode,
-          typeEvenement: "VALEUR_HISTORISEE",
-          typeValeur: "VALEUR_AVANCEMENT",
-          dateValeur: new Date(this.identifiantFlux.date),
-          valeur: valeurEnCours,
           donneesComplementaires: {},
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
@@ -159,43 +183,17 @@ export class EvenementsSurDate {
     return evenement;
   }
 
-  creerEvenementHistorisationFuture(
-    indicateurData: IndicateurData,
-    auteurId: string,
-  ) {
-    const evenement =
-      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
-        {
-          indicId: this.identifiantFlux.indicId,
-          territoireCode: this.identifiantFlux.territoireCode,
-          typeEvenement: "VALEUR_HISTORISEE",
-          typeValeur: "VALEUR_AVANCEMENT",
-          dateValeur: new Date(indicateurData.metricDate),
-          valeur: Number.parseFloat(indicateurData.metricValue),
-          donneesComplementaires: {},
-          idAuteurModification: auteurId,
-          correlationId: randomUUID(),
-          ordre: this.prochainOrdre(),
-        },
-      );
-
-    this.ajouterEvenement(evenement);
-    return evenement;
-  }
-
   creerEvenementValeurCreeeOuModifiee(
     indicateurData: IndicateurData,
     auteurId: string,
-    doitModifierValeurCreee: boolean,
+    estValeurModifiee: boolean,
   ) {
     const evenement =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
         {
           indicId: this.identifiantFlux.indicId,
           territoireCode: this.identifiantFlux.territoireCode,
-          typeEvenement: doitModifierValeurCreee
-            ? "VALEUR_MODIFIEE"
-            : "VALEUR_CREEE",
+          typeEvenement: estValeurModifiee ? "VALEUR_MODIFIEE" : "VALEUR_CREEE",
           typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: new Date(indicateurData.metricDate),
           valeur: Number.parseFloat(indicateurData.metricValue),
