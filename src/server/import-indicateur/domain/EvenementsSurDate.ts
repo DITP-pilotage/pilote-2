@@ -248,9 +248,12 @@ export class EvenementsSurDate {
   }
 
   creerEvenementPropositionValeurModifiee(valeur: number, auteurId: string) {
-    // TODO - impossible si pas de proposition en cours
-    //  ajouter les tests
-    // TODO - vérifier que pas accusee_reception
+    if (this.estEvenementPropositionValeurAccuseeReception()) {
+      throw new Error("La proposition de valeur a déjà été accusée réception");
+    }
+    if (!this.evenementPropositionValeurEnCours()) {
+      throw new Error("Aucune proposition de valeur n'est en cours");
+    }
     const evenement =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
         {
