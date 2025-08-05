@@ -63,15 +63,17 @@ export class EvenementsSurDate {
   }
 
   evenementsValeur() {
-    return this.evenementsSurDate.filter((evenement) =>
-      evenement.typeEvenement.startsWith("VALEUR_"),
-    );
+    return this.evenementsSurDate
+      .filter((evenement) => evenement.typeEvenement.startsWith("VALEUR_"))
+      .sort((evenement1, evenement2) => evenement2.ordre - evenement1.ordre);
   }
 
   evenementsPropositionValeur() {
-    return this.evenementsSurDate.filter((evenement) =>
-      evenement.typeEvenement.startsWith("PROPOSITION_VALEUR_"),
-    );
+    return this.evenementsSurDate
+      .filter((evenement) =>
+        evenement.typeEvenement.startsWith("PROPOSITION_VALEUR_"),
+      )
+      .sort((evenement1, evenement2) => evenement2.ordre - evenement1.ordre);
   }
 
   evenementPropositionValeurEnCours() {
@@ -83,6 +85,16 @@ export class EvenementsSurDate {
     }
 
     return null;
+  }
+
+  estEvenementPropositionValeurAccuseeReception() {
+    const evenementPropositionValeurLePlusRecent =
+      this.evenementsPropositionValeur()[0];
+
+    return (
+      evenementPropositionValeurLePlusRecent?.typeEvenement ===
+      "PROPOSITION_VALEUR_ACCUSEE_RECEPTION"
+    );
   }
 
   creerEvenementValeurHistorisee(auteurId: string) {
@@ -209,8 +221,12 @@ export class EvenementsSurDate {
   }
 
   creerEvenementPropositionValeurCreee(valeur: number, auteurId: string) {
-    // TODO - impossible si déjà une proposition en cours
-    //  ajouter les tests
+    if (this.evenementPropositionValeurEnCours()) {
+      throw new Error("Une proposition de valeur est déjà en cours");
+    }
+    if (this.estEvenementPropositionValeurAccuseeReception()) {
+      throw new Error("La proposition de valeur a déjà été accusée réception");
+    }
     const evenement =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
         {
@@ -234,6 +250,7 @@ export class EvenementsSurDate {
   creerEvenementPropositionValeurModifiee(valeur: number, auteurId: string) {
     // TODO - impossible si pas de proposition en cours
     //  ajouter les tests
+    // TODO - vérifier que pas accusee_reception
     const evenement =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
         {
@@ -262,6 +279,7 @@ export class EvenementsSurDate {
       //  ajouter les tests
       throw new Error("Pas d'evenement PROPOSITION_VALEUR en cours");
     }
+    // TODO - vérifier que pas accusee_reception
 
     const evenement =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
@@ -315,6 +333,7 @@ export class EvenementsSurDate {
   creerEvenementPropositionValeurRefusee(auteurId: string) {
     const evenementPropositionEnCours =
       this.evenementPropositionValeurEnCours();
+    // TODO - refus possible si accusee_reception
     if (!evenementPropositionEnCours) {
       // TODO - impossible si pas de proposition en cours
       //  ajouter les tests
@@ -344,6 +363,7 @@ export class EvenementsSurDate {
   creerEvenementPropositionValeurAcceptee(auteurId: string) {
     const evenementPropositionEnCours =
       this.evenementPropositionValeurEnCours();
+    // TODO - vérifier que pas accusee_reception
     if (!evenementPropositionEnCours) {
       // TODO - impossible si pas de proposition en cours
       //  ajouter les tests
