@@ -1,7 +1,8 @@
 import groupBy from "lodash.groupby";
-import { randomUUID } from "node:crypto";
+import mapValues from "lodash.mapvalues";
 import { IndicateurTerritoireValeurEvenement } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
+import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 
 export class IndicateurTerritoireValeurEvenements {
   private readonly _indicId: string;
@@ -29,21 +30,10 @@ export class IndicateurTerritoireValeurEvenements {
     auteurId: string,
   ): IndicateurTerritoireValeurEvenement[] {
     const nouveauxEvenements: IndicateurTerritoireValeurEvenement[] = [];
-
-    // Calculer l'ordre suivant pour cette date_valeur
-    const dateValeur = indicateurData.metricDate;
-    const evenementsPourCetteDate = this._evenements.filter(
-      (evenement) =>
-        evenement.dateValeur.toISOString().split("T")[0] === dateValeur,
-    );
-    let ordreActuel = IndicateurTerritoireValeurEvenement.prochainOrdre(
-      evenementsPourCetteDate,
-    );
-
-    const evenementsExistantParDate = groupBy(
-      this._evenements,
-      (evenement) => evenement.dateValeur.toISOString().split("T")[0],
-    );
+    const evenementsExistantParDate = this.grouperEvenementsParDate();
+    const evenementsPourCetteDate =
+      evenementsExistantParDate[indicateurData.metricDate] ??
+      this.creerEvenementsSurDateIndicateur(indicateurData);
 
     let doitHistoriserValeurCreee = false;
     let doitModifierValeurCreee = false;
@@ -53,140 +43,99 @@ export class IndicateurTerritoireValeurEvenements {
       evenementsExistantParDate,
     )) {
       if (date > indicateurData.metricDate) {
-        doitHistoriserValeurCreee = !(
-          evenementsExistantParDate[indicateurData.metricDate] ?? []
-        ).some((evenement) => evenement.typeEvenement === "VALEUR_HISTORISEE");
+        doitHistoriserValeurCreee =
+          !evenementsPourCetteDate.aValeurHistorisee();
         continue;
       }
       if (date === indicateurData.metricDate) {
         doitModifierValeurCreee = true;
-        doitIgnorer =
-          Number.parseFloat(indicateurData.metricValue) ===
-          evenementsPourDate[0].valeur;
+        doitIgnorer = evenementsPourDate.aValeurEnCours(
+          Number.parseFloat(indicateurData.metricValue),
+        );
         continue;
       }
 
-      const estHistorise = evenementsPourDate.some(
-        (evenement) => evenement.typeEvenement === "VALEUR_HISTORISEE",
-      );
-      if (!estHistorise) {
-        const evenement = this._creerEvenementHistorisation(
-          evenementsPourDate[0],
-          auteurId,
+      const aPropositionValeurEnEcours =
+        evenementsPourDate.evenementPropositionValeurEnCours();
+      if (aPropositionValeurEnEcours) {
+        nouveauxEvenements.push(
+          evenementsPourDate.creerEvenementPropositionValeurIgnoreeValeurHistorisee(
+            auteurId,
+          ),
         );
+      }
 
-        nouveauxEvenements.push(evenement);
-        evenementsPourDate.unshift(evenement);
+      const estHistorise = evenementsPourDate.aValeurHistorisee();
+      if (!estHistorise) {
+        nouveauxEvenements.push(
+          evenementsPourDate.creerEvenementValeurHistorisee(auteurId),
+        );
       }
     }
 
     if (doitIgnorer) {
-      // Ajouter les nouveaux événements au stream en mémoire
-      this._evenements.unshift(...[...nouveauxEvenements].reverse());
       return nouveauxEvenements;
     }
 
-    const evenementCreationOuModification = this._creerEvenementPrincipal(
-      indicateurData,
-      auteurId,
-      doitModifierValeurCreee,
-      ordreActuel++,
-    );
-
-    evenementsExistantParDate[indicateurData.metricDate] ??= [];
-
-    nouveauxEvenements.push(evenementCreationOuModification);
-    evenementsExistantParDate[indicateurData.metricDate].unshift(
-      evenementCreationOuModification,
-    );
-
-    if (doitHistoriserValeurCreee) {
-      const evenementHistorise = this._creerEvenementHistorisationFuture(
-        indicateurData,
-        auteurId,
-        ordreActuel++,
-      );
-      nouveauxEvenements.push(evenementHistorise);
-
-      evenementsExistantParDate[indicateurData.metricDate].unshift(
-        evenementHistorise,
+    const aPropositionValeurEnCours =
+      evenementsPourCetteDate.evenementPropositionValeurEnCours();
+    if (aPropositionValeurEnCours) {
+      // TODO - que fait-on de la vraie table proposition_valeur_actuelle ?
+      //    ici on enregistre les evenements mais d'impact sur la proposition réelle
+      nouveauxEvenements.push(
+        evenementsPourCetteDate.creerEvenementPropositionValeurIgnoreeValeurModifiee(
+          auteurId,
+        ),
       );
     }
 
-    // Ajouter les nouveaux événements au stream en mémoire
-    this._evenements.unshift(...[...nouveauxEvenements].reverse());
+    nouveauxEvenements.push(
+      evenementsPourCetteDate.creerEvenementValeurCreeeOuModifiee(
+        indicateurData,
+        auteurId,
+        doitModifierValeurCreee,
+      ),
+    );
+
+    if (doitHistoriserValeurCreee) {
+      nouveauxEvenements.push(
+        evenementsPourCetteDate.creerEvenementValeurHistoriseeACreation(
+          indicateurData,
+          auteurId,
+        ),
+      );
+    }
 
     return nouveauxEvenements;
   }
 
-  private _creerEvenementHistorisation(
-    evenementExistant: IndicateurTerritoireValeurEvenement,
-    auteurId: string,
-  ): IndicateurTerritoireValeurEvenement {
-    const evenementsPourCetteDate = this._evenements.filter(
-      (e) =>
-        e.dateValeur.toISOString().split("T")[0] ===
-        evenementExistant.dateValeur.toISOString().split("T")[0],
-    );
-
-    return IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+  private creerEvenementsSurDateIndicateur(indicateurData: IndicateurData) {
+    return EvenementsSurDate.pourDate(
       {
+        date: indicateurData.metricDate,
         indicId: this._indicId,
         territoireCode: this._territoireCode,
-        typeEvenement: "VALEUR_HISTORISEE",
-        typeValeur: "VALEUR_AVANCEMENT",
-        dateValeur: evenementExistant.dateValeur,
-        valeur: evenementExistant.valeur,
-        donneesComplementaires: {},
-        idAuteurModification: auteurId,
-        correlationId: randomUUID(),
-        ordre: IndicateurTerritoireValeurEvenement.prochainOrdre(
-          evenementsPourCetteDate,
+      },
+      this._evenements,
+    );
+  }
+
+  private grouperEvenementsParDate(): Record<string, EvenementsSurDate> {
+    return mapValues(
+      groupBy(
+        this._evenements,
+        (evenement) => evenement.dateValeur.toISOString().split("T")[0],
+      ),
+      (evenementsSurDate, date) =>
+        new EvenementsSurDate(
+          {
+            date,
+            indicId: this._indicId,
+            territoireCode: this._territoireCode,
+          },
+          evenementsSurDate,
+          this._evenements,
         ),
-      },
-    );
-  }
-
-  private _creerEvenementPrincipal(
-    indicateurData: IndicateurData,
-    auteurId: string,
-    doitModifier: boolean,
-    ordre: number,
-  ): IndicateurTerritoireValeurEvenement {
-    return IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
-      {
-        indicId: this._indicId,
-        territoireCode: this._territoireCode,
-        typeEvenement: doitModifier ? "VALEUR_MODIFIEE" : "VALEUR_CREEE",
-        typeValeur: "VALEUR_AVANCEMENT",
-        dateValeur: new Date(indicateurData.metricDate),
-        valeur: Number.parseFloat(indicateurData.metricValue),
-        donneesComplementaires: {},
-        idAuteurModification: auteurId,
-        correlationId: randomUUID(),
-        ordre,
-      },
-    );
-  }
-
-  private _creerEvenementHistorisationFuture(
-    indicateurData: IndicateurData,
-    auteurId: string,
-    ordre: number,
-  ): IndicateurTerritoireValeurEvenement {
-    return IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
-      {
-        indicId: this._indicId,
-        territoireCode: this._territoireCode,
-        typeEvenement: "VALEUR_HISTORISEE",
-        typeValeur: "VALEUR_AVANCEMENT",
-        dateValeur: new Date(indicateurData.metricDate),
-        valeur: Number.parseFloat(indicateurData.metricValue),
-        donneesComplementaires: {},
-        idAuteurModification: auteurId,
-        correlationId: randomUUID(),
-        ordre,
-      },
     );
   }
 }
