@@ -87,14 +87,21 @@ export class EvenementsSurDate {
     return null;
   }
 
-  estEvenementPropositionValeurAccuseeReception() {
+  evenementPropositionValeurAccuseeReception() {
     const evenementPropositionValeurLePlusRecent =
       this.evenementsPropositionValeur()[0];
 
-    return (
+    if (
       evenementPropositionValeurLePlusRecent?.typeEvenement ===
       "PROPOSITION_VALEUR_ACCUSEE_RECEPTION"
-    );
+    )
+      return evenementPropositionValeurLePlusRecent;
+
+    return null;
+  }
+
+  estEvenementPropositionValeurAccuseeReception() {
+    return this.evenementPropositionValeurAccuseeReception() !== null;
   }
 
   creerEvenementValeurHistorisee(auteurId: string) {
@@ -150,7 +157,7 @@ export class EvenementsSurDate {
   ): IndicateurTerritoireValeurEvenement {
     const evenementPropositionValeur = this.evenementPropositionValeurEnCours();
     if (!evenementPropositionValeur)
-      throw new Error("Pas d'evenement PROPOSITION_VALEUR en cours");
+      throw new Error("Aucune proposition de valeur n'est en cours");
     const evenement =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
         {
@@ -173,7 +180,7 @@ export class EvenementsSurDate {
   creerEvenementPropositionValeurIgnoreeValeurModifiee(auteurId: string) {
     const evenementExistant = this.evenementPropositionValeurEnCours();
     if (!evenementExistant)
-      throw new Error("Pas d'evenement PROPOSITION_VALEUR en cours");
+      throw new Error("Aucune proposition de valeur n'est en cours");
 
     const evenement =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
@@ -282,7 +289,7 @@ export class EvenementsSurDate {
       throw new Error("La proposition de valeur a déjà été accusée réception");
     }
     if (!evenementPropositionEnCours) {
-      throw new Error("Pas d'evenement PROPOSITION_VALEUR en cours");
+      throw new Error("Aucune proposition de valeur n'est en cours");
     }
 
     const evenement =
@@ -313,7 +320,7 @@ export class EvenementsSurDate {
       throw new Error("La proposition de valeur a déjà été accusée réception");
     }
     if (!evenementPropositionEnCours) {
-      throw new Error("Pas d'evenement PROPOSITION_VALEUR en cours");
+      throw new Error("Aucune proposition de valeur n'est en cours");
     }
 
     const evenement =
@@ -338,12 +345,11 @@ export class EvenementsSurDate {
 
   creerEvenementPropositionValeurRefusee(auteurId: string) {
     const evenementPropositionEnCours =
-      this.evenementPropositionValeurEnCours();
-    // TODO - refus possible si accusee_reception
+      this.evenementPropositionValeurEnCours() ??
+      this.evenementPropositionValeurAccuseeReception();
+
     if (!evenementPropositionEnCours) {
-      // TODO - impossible si pas de proposition en cours
-      //  ajouter les tests
-      throw new Error("Pas d'evenement PROPOSITION_VALEUR en cours");
+      throw new Error("Aucune proposition de valeur n'est en cours");
     }
 
     const evenement =
@@ -368,12 +374,11 @@ export class EvenementsSurDate {
 
   creerEvenementPropositionValeurAcceptee(auteurId: string) {
     const evenementPropositionEnCours =
-      this.evenementPropositionValeurEnCours();
-    // TODO - vérifier que pas accusee_reception
+      this.evenementPropositionValeurEnCours() ??
+      this.evenementPropositionValeurAccuseeReception();
+
     if (!evenementPropositionEnCours) {
-      // TODO - impossible si pas de proposition en cours
-      //  ajouter les tests
-      throw new Error("Pas d'evenement PROPOSITION_VALEUR en cours");
+      throw new Error("Aucune proposition de valeur n'est en cours");
     }
 
     const evenement =
@@ -401,11 +406,11 @@ export class EvenementsSurDate {
     valeur: number,
   ) {
     const evenementPropositionEnCours =
-      this.evenementPropositionValeurEnCours();
+      this.evenementPropositionValeurEnCours() ??
+      this.evenementPropositionValeurAccuseeReception();
+
     if (!evenementPropositionEnCours) {
-      // TODO - impossible si pas de proposition en cours
-      //  ajouter les tests
-      throw new Error("Pas d'evenement PROPOSITION_VALEUR en cours");
+      throw new Error("Aucune proposition de valeur n'est en cours");
     }
 
     const evenement =
