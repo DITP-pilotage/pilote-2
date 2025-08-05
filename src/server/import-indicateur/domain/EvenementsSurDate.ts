@@ -97,7 +97,7 @@ export class EvenementsSurDate {
           territoireCode: this.identifiantFlux.territoireCode,
           typeEvenement: "VALEUR_HISTORISEE",
           typeValeur: "VALEUR_AVANCEMENT",
-          dateValeur: new Date(this.identifiantFlux.date),
+          dateValeur: this.dateValeur(),
           valeur: valeurEnCours,
           donneesComplementaires: {},
           idAuteurModification: auteurId,
@@ -206,5 +206,203 @@ export class EvenementsSurDate {
 
     this.ajouterEvenement(evenement);
     return evenement;
+  }
+
+  creerEvenementPropositionValeurCreee(valeur: number, auteurId: string) {
+    // TODO - impossible si déjà une proposition en cours
+    //  ajouter les tests
+    const evenement =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: this.identifiantFlux.indicId,
+          territoireCode: this.identifiantFlux.territoireCode,
+          typeEvenement: "PROPOSITION_VALEUR_CREEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: this.dateValeur(),
+          valeur,
+          donneesComplementaires: {},
+          idAuteurModification: auteurId,
+          correlationId: randomUUID(),
+          ordre: this.prochainOrdre(),
+        },
+      );
+
+    this.ajouterEvenement(evenement);
+    return evenement;
+  }
+
+  creerEvenementPropositionValeurModifiee(valeur: number, auteurId: string) {
+    // TODO - impossible si pas de proposition en cours
+    //  ajouter les tests
+    const evenement =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: this.identifiantFlux.indicId,
+          territoireCode: this.identifiantFlux.territoireCode,
+          typeEvenement: "PROPOSITION_VALEUR_MODIFIEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: this.dateValeur(),
+          valeur,
+          donneesComplementaires: {},
+          idAuteurModification: auteurId,
+          correlationId: randomUUID(),
+          ordre: this.prochainOrdre(),
+        },
+      );
+
+    this.ajouterEvenement(evenement);
+    return evenement;
+  }
+
+  creerEvenementPropositionValeurSupprimee(auteurId: string) {
+    const evenementPropositionEnCours =
+      this.evenementPropositionValeurEnCours();
+    if (!evenementPropositionEnCours) {
+      // TODO - impossible si pas de proposition en cours
+      //  ajouter les tests
+      throw new Error("Pas d'evenement PROPOSITION_VALEUR en cours");
+    }
+
+    const evenement =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: this.identifiantFlux.indicId,
+          territoireCode: this.identifiantFlux.territoireCode,
+          typeEvenement: "PROPOSITION_VALEUR_SUPPRIMEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: this.dateValeur(),
+          valeur: evenementPropositionEnCours.valeur,
+          donneesComplementaires: {},
+          idAuteurModification: auteurId,
+          correlationId: randomUUID(),
+          ordre: this.prochainOrdre(),
+        },
+      );
+
+    this.ajouterEvenement(evenement);
+    return evenement;
+  }
+
+  creerEvenementPropositionValeurAccuseeReception(auteurId: string) {
+    const evenementPropositionEnCours =
+      this.evenementPropositionValeurEnCours();
+    if (!evenementPropositionEnCours) {
+      // TODO - impossible si pas de proposition en cours
+      //  ajouter les tests
+      throw new Error("Pas d'evenement PROPOSITION_VALEUR en cours");
+    }
+
+    const evenement =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: this.identifiantFlux.indicId,
+          territoireCode: this.identifiantFlux.territoireCode,
+          typeEvenement: "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: this.dateValeur(),
+          valeur: evenementPropositionEnCours.valeur,
+          donneesComplementaires: {},
+          idAuteurModification: auteurId,
+          correlationId: randomUUID(),
+          ordre: this.prochainOrdre(),
+        },
+      );
+
+    this.ajouterEvenement(evenement);
+    return evenement;
+  }
+
+  creerEvenementPropositionValeurRefusee(auteurId: string) {
+    const evenementPropositionEnCours =
+      this.evenementPropositionValeurEnCours();
+    if (!evenementPropositionEnCours) {
+      // TODO - impossible si pas de proposition en cours
+      //  ajouter les tests
+      throw new Error("Pas d'evenement PROPOSITION_VALEUR en cours");
+    }
+
+    const evenement =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: this.identifiantFlux.indicId,
+          territoireCode: this.identifiantFlux.territoireCode,
+          typeEvenement: "PROPOSITION_VALEUR_REFUSEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: this.dateValeur(),
+          valeur: evenementPropositionEnCours.valeur,
+          donneesComplementaires: {},
+          idAuteurModification: auteurId,
+          correlationId: randomUUID(),
+          ordre: this.prochainOrdre(),
+        },
+      );
+
+    this.ajouterEvenement(evenement);
+    return evenement;
+  }
+
+  creerEvenementPropositionValeurAcceptee(auteurId: string) {
+    const evenementPropositionEnCours =
+      this.evenementPropositionValeurEnCours();
+    if (!evenementPropositionEnCours) {
+      // TODO - impossible si pas de proposition en cours
+      //  ajouter les tests
+      throw new Error("Pas d'evenement PROPOSITION_VALEUR en cours");
+    }
+
+    const evenement =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: this.identifiantFlux.indicId,
+          territoireCode: this.identifiantFlux.territoireCode,
+          typeEvenement: "PROPOSITION_VALEUR_ACCEPTEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: this.dateValeur(),
+          valeur: evenementPropositionEnCours.valeur,
+          donneesComplementaires: {},
+          idAuteurModification: auteurId,
+          correlationId: randomUUID(),
+          ordre: this.prochainOrdre(),
+        },
+      );
+
+    this.ajouterEvenement(evenement);
+    return evenement;
+  }
+
+  creerEvenementPropositionValeurAccepteeAvecModification(
+    auteurId: string,
+    valeur: number,
+  ) {
+    const evenementPropositionEnCours =
+      this.evenementPropositionValeurEnCours();
+    if (!evenementPropositionEnCours) {
+      // TODO - impossible si pas de proposition en cours
+      //  ajouter les tests
+      throw new Error("Pas d'evenement PROPOSITION_VALEUR en cours");
+    }
+
+    const evenement =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: this.identifiantFlux.indicId,
+          territoireCode: this.identifiantFlux.territoireCode,
+          typeEvenement: "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: this.dateValeur(),
+          valeur,
+          donneesComplementaires: {},
+          idAuteurModification: auteurId,
+          correlationId: randomUUID(),
+          ordre: this.prochainOrdre(),
+        },
+      );
+
+    this.ajouterEvenement(evenement);
+    return evenement;
+  }
+
+  private dateValeur() {
+    return new Date(this.identifiantFlux.date);
   }
 }
