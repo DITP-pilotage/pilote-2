@@ -1,5 +1,6 @@
 -- Jalon le plus tardif avec une VACA disponible pour chaque {indic_id, zone_id}
 
+
 WITH tri_des_jalons AS (
     SELECT
         indic_id,
@@ -8,7 +9,7 @@ WITH tri_des_jalons AS (
         vaca,
         jalon,
         row_number()
-            OVER (PARTITION BY indic_id, zone_id ORDER BY jalon DESC)
+            OVER (PARTITION BY indic_id, zone_id, jalon ORDER BY jalon DESC)
         AS r
 
     FROM {{ ref('get_last_vaca_jalon_nofill') }}
@@ -24,4 +25,5 @@ SELECT
     vaca as derniere_vaca,
     jalon as dernier_jalon
 FROM tri_des_jalons
-WHERE r = 1
+WHERE
+    r = 1

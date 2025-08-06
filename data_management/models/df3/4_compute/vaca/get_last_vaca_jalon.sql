@@ -5,6 +5,7 @@
 }}
 -- Retourne la dernière VACA pour chaque année + fill année suivantes
 
+
 WITH tous_indicateurs_et_zones_jalons_a_etudier AS (
     SELECT
         a.indic_id,
@@ -36,7 +37,25 @@ intermediate AS (
         CASE
             WHEN b.jalon = a.jalon_a_completer THEN b.metric_date
             WHEN a.dernier_jalon < a.jalon_a_completer THEN a.derniere_date_vaca
-        END AS date_vaca_filled
+        END AS date_vaca_filled,
+        ROW_NUMBER() OVER (
+            PARTITION BY a.indic_id, a.zone_id, a.jalon_a_completer
+            ORDER BY 
+                CASE 
+                    WHEN (
+                        CASE
+                            WHEN b.jalon = a.jalon_a_completer THEN b.metric_date
+                            WHEN a.dernier_jalon < a.jalon_a_completer THEN a.derniere_date_vaca
+                        END
+                    ) IS NULL THEN 1 ELSE 0
+                END ASC,
+                (
+                    CASE
+                        WHEN b.jalon = a.jalon_a_completer THEN b.metric_date
+                        WHEN a.dernier_jalon < a.jalon_a_completer THEN a.derniere_date_vaca
+                    END
+                ) DESC
+        ) AS r
 
     FROM tous_indicateurs_et_zones_jalons_a_etudier AS a
     LEFT JOIN
@@ -54,6 +73,11 @@ SELECT
     vaca_filled AS vaca,
     date_vaca_filled AS date_vaca
 FROM intermediate
--- ne retourne pas de ligne pour des valeurs qui n'ont pas été remplies, exemple 2022 si la dernière VACA est en 2023
-WHERE vaca_filled IS NOT null
-order by indic_id, zone_id, jalon_a_completer
+    -- ne retourne pas de ligne pour des valeurs qui n'ont pas été remplies, exemple 2022 si la dernière VACA est en 2023
+WHERE
+    vaca_filled IS NOT null
+    AND r = 1
+order by
+    indic_id,
+    zone_id,
+    jalon_a_completer
