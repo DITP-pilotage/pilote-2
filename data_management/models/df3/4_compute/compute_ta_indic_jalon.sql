@@ -1,10 +1,11 @@
 {{ config(materialized = 'table') }}
 
+
 WITH get_val_jalons AS (
     SELECT
-        a.indic_id,
-        a.zone_id,
-        a.jalon,
+        meta_indic.id as indic_id,
+        zones.id as zone_id,
+        jalons.jalon,
         a.vaca,
         a.date_vaca,
         g.vacg,
@@ -16,30 +17,37 @@ WITH get_val_jalons AS (
         h.vcg,
         h.vcg_date,
         prop.valeur_actuelle_proposee AS vacp
-    FROM {{ ref('get_last_vaca_jalon') }} AS a
+    FROM {{ ref('stg_ppg_metadata__zones') }} AS zones
+    CROSS JOIN {{ ref('stg_ppg_metadata__indicateurs') }} AS meta_indic
+    CROSS JOIN {{ ref('jalons_a_etudier') }} as jalons
+    LEFT JOIN {{ ref('get_last_vaca_jalon') }} AS a
+        ON
+            meta_indic.id = a.indic_id
+            AND zones.id = a.zone_id
+            AND jalons.jalon = a.jalon
     LEFT JOIN
         {{ ref('get_last_vacg_jalon') }} AS g
         ON
-            a.indic_id = g.indic_id
-            AND a.zone_id = g.zone_id
-            AND a.jalon = g.jalon
+            meta_indic.id = g.indic_id
+            AND zones.id = g.zone_id
+            AND jalons.jalon = g.jalon
     LEFT JOIN
         {{ ref('get_vig') }} AS e
-        ON a.indic_id = e.indic_id AND a.zone_id = e.zone_id
+        ON meta_indic.id = e.indic_id AND zones.id = e.zone_id
     LEFT JOIN
         {{ ref('get_vca_jalon') }} AS f
         ON
-            a.indic_id = f.indic_id
-            AND a.zone_id = f.zone_id
-            AND a.jalon = f.jalon
+            meta_indic.id = f.indic_id
+            AND zones.id = f.zone_id
+            AND jalons.jalon = f.jalon
     LEFT JOIN
         {{ ref('get_vcg') }} AS h
-        ON a.indic_id = h.indic_id AND a.zone_id = h.zone_id
+        ON meta_indic.id = h.indic_id AND zones.id = h.zone_id
     LEFT JOIN
         {{ ref('int_propositions_valeurs') }} AS prop
         ON
-            a.indic_id = prop.indic_id
-            AND a.zone_id = prop.zone_id
+            meta_indic.id = prop.indic_id
+            AND zones.id = prop.zone_id
             AND prop.date_valeur_actuelle::date = a.date_vaca::date
 
 ),
@@ -93,25 +101,32 @@ get_bounded_ta AS (
         CASE
             WHEN unbounded_taa IS null THEN null
             ELSE greatest(least(unbounded_taa, 100), 0)::numeric
-        END
-        AS taa,
+        END AS taa,
         CASE
             WHEN unbounded_taa_proposition IS null THEN null
-            ELSE greatest(least(unbounded_taa_proposition, 100), 0)::numeric
-        END
-        AS taa_proposition,
+            ELSE greatest(
+                least(
+                    unbounded_taa_proposition,
+                    100
+                ),
+                0
+            )::numeric
+        END AS taa_proposition,
         CASE
             WHEN unbounded_tag IS null THEN null
             ELSE greatest(least(unbounded_tag, 100), 0)::numeric
-        END
-        AS tag,
+        END AS tag,
         CASE
             WHEN unbounded_tag_proposition IS null THEN null
-            ELSE greatest(least(unbounded_tag_proposition, 100), 0)::numeric
-        END
-        AS tag_proposition
+            ELSE greatest(
+                least(
+                    unbounded_tag_proposition,
+                    100
+                ),
+                0
+            )::numeric
+        END AS tag_proposition
     FROM get_unbounded_ta
 )
-
 
 SELECT * FROM get_bounded_ta

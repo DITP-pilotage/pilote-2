@@ -6,6 +6,8 @@ source .env
 echo ">> TRUNCATE content of these tables..."
 time psql -d $DATABASE_URL -c "
 TRUNCATE TABLE
+    public.proposition_valeur_actuelle,
+    public.indicateur_territoire_valeur_evenement,
     public.indicateur_territoire_jalon,
     public.indicateur_territoire,
     public.indicateur_identite,
@@ -26,8 +28,7 @@ TRUNCATE TABLE
     public.mesure_indicateur_temporaire,
     public.objectif,
     public.utilisateur,
-    public.erreur_validation_fichier,
-    public.proposition_valeur_actuelle;"
+    public.erreur_validation_fichier;"
 
 echo ">> pg_restore dumped file..."
 time pg_restore -d $DATABASE_URL --verbose \

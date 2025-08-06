@@ -19,7 +19,7 @@ SELECT
     tous_jalons.date_vaca::date AS date_valeur_actuelle,
     tous_jalons.vaca AS valeur_actuelle
 FROM {{ ref('compute_ta_indic_jalon') }} AS tous_jalons
-LEFT JOIN {{ source('db_schema_public', 'territoire') }} AS territoire
+INNER JOIN {{ source('db_schema_public', 'territoire') }} AS territoire
     ON tous_jalons.zone_id = territoire.zone_id
 RIGHT JOIN
     {{ ref('jalons_a_etudier') }} AS jalons
