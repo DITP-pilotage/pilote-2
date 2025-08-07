@@ -74,6 +74,7 @@ interface NextPageChantierProps {
   cartographieDroiteIndicateur: CartographieIndicateurType;
   cartographieGaucheIndicateur: CartographieIndicateurType;
   donneesComparaisonDuTauxDAvancement: DonneesComparaisonDuTauxDAvancementType;
+  nouveauxGraphiquesSontActifs: boolean | undefined;
 }
 
 const redirigeLaPage = (destination: string) => ({
@@ -154,6 +155,7 @@ export const getServerSideProps: GetServerSideProps<
       détailsIndicateurs,
       avancementsAgrégés,
       valeurFFPpgArchive,
+      nouveauxGraphiquesSontActifs,
     ] = await Promise.all([
       new RécupérerChantierUseCase(
         dependencies.getChantierRepository(),
@@ -185,6 +187,9 @@ export const getServerSideProps: GetServerSideProps<
         .then(presenterEnAvancementsStatistiquesAccueilContrat),
       new RécupérerVariableContenuUseCase().run({
         nomVariableContenu: "NEXT_PUBLIC_FF_PPG_ARCHIVE",
+      }),
+      new RécupérerVariableContenuUseCase().run({
+        nomVariableContenu: "NEXT_PUBLIC_FF_NOUVEAUX_GRAPHIQUES",
       }),
     ]);
 
@@ -302,6 +307,7 @@ export const getServerSideProps: GetServerSideProps<
         cartographieDroiteIndicateur,
         cartographieGaucheIndicateur,
         donneesComparaisonDuTauxDAvancement,
+        nouveauxGraphiquesSontActifs,
       },
     };
   } catch (error) {
@@ -340,6 +346,7 @@ const NextPageChantier: FunctionComponent<
   cartographieDroiteIndicateur,
   cartographieGaucheIndicateur,
   donneesComparaisonDuTauxDAvancement,
+  nouveauxGraphiquesSontActifs,
 }) => {
   const estUnProfilDROM = profil === ProfilEnum.DROM;
   const estTerritoireNational = territoireCode === "NAT-FR";
@@ -384,6 +391,7 @@ const NextPageChantier: FunctionComponent<
           listeResponsablesLocaux={listeResponsablesLocaux}
           mailleQuery={mailleQuery}
           mailleSelectionnee={mailleSelectionnee}
+          nouveauxGraphiquesSontActifs={!!nouveauxGraphiquesSontActifs}
           objectifs={objectifs}
           synthèseDesRésultats={synthèseDesRésultats}
           territoireCode={territoireCode}

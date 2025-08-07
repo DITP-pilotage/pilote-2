@@ -37,6 +37,7 @@ interface SousIndicateurBlocProps {
   jalon: number;
   cartographieDroiteIndicateur: CartographieIndicateurType;
   cartographieGaucheIndicateur: CartographieIndicateurType;
+  nouveauxGraphiquesSontActifs: boolean;
 }
 
 const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
@@ -54,6 +55,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
   jalon,
   cartographieDroiteIndicateur,
   cartographieGaucheIndicateur,
+  nouveauxGraphiquesSontActifs,
 }) => {
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
 
@@ -333,6 +335,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
             mailleQuery={mailleQuery}
             mailleSelectionnee={mailleSelectionnee}
             mailsDirecteursProjets={mailsDirecteursProjets}
+            nouveauxGraphiquesSontActifs={nouveauxGraphiquesSontActifs}
             territoireCode={territoireCode}
             territoiresCompares={territoiresCompares}
           />
