@@ -2,41 +2,41 @@ name: Tests E2E
 
 on:
   schedule:
-    - cron: '0 8,14 * * *'
+    - cron: "0 8,14 * * *"
   workflow_dispatch: # Pour déclencher manuellement
     inputs:
       environment:
-        description: 'Environnement à tester'
+        description: "Environnement à tester"
         required: true
-        default: 'tests-e2e-webapp.osc-secnum-fr1.scalingo.io'
+        default: "tests-e2e-webapp.osc-secnum-fr1.scalingo.io"
         type: choice
         options:
-        - tests-e2e-webapp.osc-secnum-fr1.scalingo.io
+          - tests-e2e-webapp.osc-secnum-fr1.scalingo.io
       browser:
-        description: 'Navigateur pour les tests'
+        description: "Navigateur pour les tests"
         required: true
-        default: 'chromium'
+        default: "chromium"
         type: choice
         options:
-        - chromium
-        - firefox
-        - webkit
+          - chromium
+          - firefox
+          - webkit
       workers:
-        description: 'Nombre de workers parallèles'
+        description: "Nombre de workers parallèles"
         required: true
-        default: '1'
+        default: "1"
         type: choice
         options:
-        - '1'
+          - "1"
       notify_tchap:
-        description: 'Envoyer notification Tchap'
+        description: "Envoyer notification Tchap"
         required: true
         default: true
         type: boolean
       test_pattern:
-        description: 'Pattern de tests à exécuter (optionnel)'
+        description: "Pattern de tests à exécuter (optionnel)"
         required: false
-        default: ''
+        default: ""
         type: string
 env:
   # Variables d'environnement pour les tests
@@ -48,7 +48,7 @@ env:
   API_DIR_PROJET_CHANTIER_ASSOCIE: ${{ secrets.API_DIR_PROJET_CHANTIER_ASSOCIE }}
   API_DIR_PROJET_INDICATEUR_ASSOCIE: ${{ secrets.API_DIR_PROJET_INDICATEUR_ASSOCIE }}
   BASE_URL: https://tests-e2e-webapp.osc-secnum-fr1.scalingo.io
-  
+
   # Notifications Tchap
   TCHAP_BASE_URL: ${{ secrets.TCHAP_BASE_URL }}
   TCHAP_ACCESS_TOKEN: ${{ secrets.TCHAP_ACCESS_TOKEN }}
@@ -58,92 +58,92 @@ jobs:
   e2e-tests:
     runs-on: ubuntu-22.04
     timeout-minutes: 30
-    
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Install Playwright browsers
-      run: npx playwright install chromium --with-deps
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
 
-    - name: Run E2E tests
-      id: playwright-tests
-      run: |
-        npx playwright test --workers=1
-      env:
-        # URL de votre app Scalingo
-        PLAYWRIGHT_BASE_URL: ${{ env.BASE_URL }}
-        CI: true
-        PLAYWRIGHT_HEADLESS: true
+      - name: Run E2E tests
+        id: playwright-tests
+        run: |
+          set -e
+          npx playwright test --workers=1
+        env:
+          # URL de votre app Scalingo
+          PLAYWRIGHT_BASE_URL: ${{ env.BASE_URL }}
+          CI: true
+          PLAYWRIGHT_HEADLESS: true
 
-    - name: Parse test results
-      id: test-results
-      if: failure()
-      run: |
-        if [ -f test-results/results.json ]; then
-          # Extraire les informations des tests
-          TOTAL_TESTS=$(jq '.stats.expected + .stats.unexpected + .stats.flaky + .stats.skipped' test-results/results.json 2>/dev/null || echo "0")
-          PASSED_TESTS=$(jq '.stats.expected' test-results/results.json 2>/dev/null || echo "0")
-          FAILED_TESTS=$(jq '.stats.unexpected' test-results/results.json 2>/dev/null || echo "0")
-          FLAKY_TESTS=$(jq '.stats.flaky' test-results/results.json 2>/dev/null || echo "0")
-          SKIPPED_TESTS=$(jq '.stats.skipped' test-results/results.json 2>/dev/null || echo "0")
-          DURATION=$(jq '.stats.duration' test-results/results.json 2>/dev/null || echo "0")
-          
-          # Extraire les tests échoués
-          FAILED_TEST_NAMES=$(jq -r '.suites[]?.specs[]? | select(.tests[]?.results[]?.status == "failed") | .title' test-results/results.json 2>/dev/null | head -5 | sed 's/^/• /' | tr '\n' '|' | sed 's/|$//')
-          
-          echo "total_tests=$TOTAL_TESTS" >> $GITHUB_OUTPUT
-          echo "passed_tests=$PASSED_TESTS" >> $GITHUB_OUTPUT
-          echo "failed_tests=$FAILED_TESTS" >> $GITHUB_OUTPUT
-          echo "flaky_tests=$FLAKY_TESTS" >> $GITHUB_OUTPUT
-          echo "skipped_tests=$SKIPPED_TESTS" >> $GITHUB_OUTPUT
-          echo "duration=$DURATION" >> $GITHUB_OUTPUT
-          echo "failed_test_names=$FAILED_TEST_NAMES" >> $GITHUB_OUTPUT
-        else
-          echo "total_tests=N/A" >> $GITHUB_OUTPUT
-          echo "passed_tests=N/A" >> $GITHUB_OUTPUT
-          echo "failed_tests=N/A" >> $GITHUB_OUTPUT
-          echo "flaky_tests=N/A" >> $GITHUB_OUTPUT
-          echo "skipped_tests=N/A" >> $GITHUB_OUTPUT
-          echo "duration=N/A" >> $GITHUB_OUTPUT
-          echo "failed_test_names=Aucun résultat disponible" >> $GITHUB_OUTPUT
-        fi
+      - name: Parse test results
+        id: test-results
+        if: failure()
+        run: |
+          if [ -f test-results/results.json ]; then
+            # Extraire les informations des tests
+            TOTAL_TESTS=$(jq '.stats.expected + .stats.unexpected + .stats.flaky + .stats.skipped' test-results/results.json 2>/dev/null || echo "0")
+            PASSED_TESTS=$(jq '.stats.expected' test-results/results.json 2>/dev/null || echo "0")
+            FAILED_TESTS=$(jq '.stats.unexpected' test-results/results.json 2>/dev/null || echo "0")
+            FLAKY_TESTS=$(jq '.stats.flaky' test-results/results.json 2>/dev/null || echo "0")
+            SKIPPED_TESTS=$(jq '.stats.skipped' test-results/results.json 2>/dev/null || echo "0")
+            DURATION=$(jq '.stats.duration' test-results/results.json 2>/dev/null || echo "0")
+            
+            # Extraire les tests échoués
+            FAILED_TEST_NAMES=$(jq -r '.suites[]?.specs[]? | select(.tests[]?.results[]?.status == "failed") | .title' test-results/results.json 2>/dev/null | head -5 | sed 's/^/• /' | tr '\n' '|' | sed 's/|$//')
+            
+            echo "total_tests=$TOTAL_TESTS" >> $GITHUB_OUTPUT
+            echo "passed_tests=$PASSED_TESTS" >> $GITHUB_OUTPUT
+            echo "failed_tests=$FAILED_TESTS" >> $GITHUB_OUTPUT
+            echo "flaky_tests=$FLAKY_TESTS" >> $GITHUB_OUTPUT
+            echo "skipped_tests=$SKIPPED_TESTS" >> $GITHUB_OUTPUT
+            echo "duration=$DURATION" >> $GITHUB_OUTPUT
+            echo "failed_test_names=$FAILED_TEST_NAMES" >> $GITHUB_OUTPUT
+          else
+            echo "total_tests=N/A" >> $GITHUB_OUTPUT
+            echo "passed_tests=N/A" >> $GITHUB_OUTPUT
+            echo "failed_tests=N/A" >> $GITHUB_OUTPUT
+            echo "flaky_tests=N/A" >> $GITHUB_OUTPUT
+            echo "skipped_tests=N/A" >> $GITHUB_OUTPUT
+            echo "duration=N/A" >> $GITHUB_OUTPUT
+            echo "failed_test_names=Aucun résultat disponible" >> $GITHUB_OUTPUT
+          fi
 
-    - name: Upload test results
-      id: upload-results
-      uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: playwright-report-${{ github.run_number }}
-        path: |
-          playwright-report/
-          test-results/
-        retention-days: 2
+      - name: Upload test results
+        id: upload-results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-${{ github.run_number }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 2
 
-    - name: Notify Tchap on failure
-      if: failure()
-      uses: indiesdev/curl@v1.1
-      with:
-        url: "https://matrix.agent.dinum.tchap.gouv.fr/_matrix/client/r0/rooms/${{ secrets.TCHAP_ROOM_ID_E2E }}/send/m.room.message"
-        method: POST
-        accept: 200,201,204
-        headers: '{ "Authorization": "Bearer ${{ secrets.TCHAP_ACCESS_TOKEN }}" }'
-        body: |
-          {
-            "body": "❌ Tests E2E ÉCHEC",
-            "format": "org.matrix.custom.html",
-            "formatted_body": "<h2>❌ Tests E2E ÉCHEC</h2><h3>📊 Résultats des tests :</h3><ul><li><strong>Total :</strong> ${{ steps.test-results.outputs.total_tests }} tests</li><li><strong>✅ Réussis :</strong> ${{ steps.test-results.outputs.passed_tests }}</li><li><strong>❌ Échoués :</strong> ${{ steps.test-results.outputs.failed_tests }}</li><li><strong>⚠️ Instables :</strong> ${{ steps.test-results.outputs.flaky_tests }}</li><li><strong>⏭️ Ignorés :</strong> ${{ steps.test-results.outputs.skipped_tests }}</li><li><strong>⏱️ Durée :</strong> ${{ steps.test-results.outputs.duration }}ms</li></ul><h3>🔍 Tests échoués :</h3><p>${{ steps.test-results.outputs.failed_test_names }}</p><h3>🔗 Liens utiles :</h3><ul><li><strong>Commit :</strong> <a href=\"${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}\">${{ github.sha }}</a></li><li><strong>Workflow :</strong> <a href=\"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\">Voir les logs</a></li><li><strong>Artefacts :</strong> <a href=\"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\">Télécharger les rapports</a></li><li><strong>Environnement :</strong> <a href=\"${{ env.BASE_URL }}\">${{ env.BASE_URL }}</a></li></ul><p><em>Branche : ${{ github.ref_name }} | Déclenché par : ${{ github.actor }}</em></p>",
-            "msgtype": "m.text"
-          }
-        timeout: 6000
-        retries: 3
-
+      - name: Notify Tchap on failure
+        if: failure()
+        uses: indiesdev/curl@v1.1
+        with:
+          url: "https://matrix.agent.dinum.tchap.gouv.fr/_matrix/client/r0/rooms/${{ secrets.TCHAP_ROOM_ID_E2E }}/send/m.room.message"
+          method: POST
+          accept: 200,201,204
+          headers: '{ "Authorization": "Bearer ${{ secrets.TCHAP_ACCESS_TOKEN }}" }'
+          body: |
+            {
+              "body": "❌ Tests E2E ÉCHEC",
+              "format": "org.matrix.custom.html",
+              "formatted_body": "<h2>❌ Tests E2E ÉCHEC</h2><h3>📊 Résultats des tests :</h3><ul><li><strong>Total :</strong> ${{ steps.test-results.outputs.total_tests }} tests</li><li><strong>✅ Réussis :</strong> ${{ steps.test-results.outputs.passed_tests }}</li><li><strong>❌ Échoués :</strong> ${{ steps.test-results.outputs.failed_tests }}</li><li><strong>⚠️ Instables :</strong> ${{ steps.test-results.outputs.flaky_tests }}</li><li><strong>⏭️ Ignorés :</strong> ${{ steps.test-results.outputs.skipped_tests }}</li><li><strong>⏱️ Durée :</strong> ${{ steps.test-results.outputs.duration }}ms</li></ul><h3>🔍 Tests échoués :</h3><p>${{ steps.test-results.outputs.failed_test_names }}</p><h3>🔗 Liens utiles :</h3><ul><li><strong>Commit :</strong> <a href=\"${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}\">${{ github.sha }}</a></li><li><strong>Workflow :</strong> <a href=\"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\">Voir les logs</a></li><li><strong>Artefacts :</strong> <a href=\"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\">Télécharger les rapports</a></li><li><strong>Environnement :</strong> <a href=\"${{ env.BASE_URL }}\">${{ env.BASE_URL }}</a></li></ul><p><em>Branche : ${{ github.ref_name }} | Déclenché par : ${{ github.actor }}</em></p>",
+              "msgtype": "m.text"
+            }
+          timeout: 6000
+          retries: 3
