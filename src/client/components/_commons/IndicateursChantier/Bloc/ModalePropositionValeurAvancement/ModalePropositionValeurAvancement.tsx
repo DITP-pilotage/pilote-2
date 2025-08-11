@@ -12,6 +12,7 @@ import Input from "@/components/_commons/Input/Input";
 import { formaterDate } from "@/client/utils/date/date";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
 import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
+import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 
 export const ModalePropositionValeurAvancement: FunctionComponent<{
   indicateur: Indicateur;
@@ -128,6 +129,34 @@ export const ModalePropositionValeurAvancement: FunctionComponent<{
                       {estUneModificationDeProposition ? (
                         <span className="fr-background-action-low-blue-france w-full flex justify-center fr-p-1w">
                           {`Valeur d'avancement proposée par ${detailIndicateur.proposition?.auteur} le ${formaterDate(detailIndicateur.proposition!.dateProposition, "DD/MM/YYYY")}`}
+                          <Infobulle
+                            classNameInfoBulle="tooltip-accordeon"
+                            idHtml={`infobulle-proposition-valeur-davancement-${indicateur.id}`}
+                          >
+                            <p className="fr-text--sm texte-proposition">
+                              Valeur d'avancement proposée le{" "}
+                              {formaterDate(
+                                detailIndicateur.proposition?.dateProposition,
+                                "DD/MM/YYYY",
+                              )}{" "}
+                              par {detailIndicateur.proposition?.auteur}
+                            </p>
+                            <p className="fr-text--sm">
+                              <b>Motif de la proposition</b>
+                            </p>
+                            <p className="fr-text--sm">
+                              {detailIndicateur.proposition?.motif}
+                            </p>
+                            <p className="fr-text--sm">
+                              <b>Source des données et méthode de calcul</b>
+                            </p>
+                            <p className="fr-text--sm fr-mb-0">
+                              {
+                                detailIndicateur.proposition
+                                  ?.sourceDonneeEtMethodeCalcul
+                              }
+                            </p>
+                          </Infobulle>
                         </span>
                       ) : (
                         <span className="fr-background-action-low-blue-france w-full flex justify-center fr-p-1w">
@@ -324,16 +353,33 @@ export const ModalePropositionValeurAvancement: FunctionComponent<{
         </>
       ) : (
         <div className="fr-alert fr-alert--success fr-mt-2w">
-          <h3 className="fr-alert__title">
-            La proposition de valeur d'avancement a correctement été prise en
-            compte
-          </h3>
-          <span>
-            La proposition de valeur d'avancement s'affichera dans le tableau
-            des indicateurs dans une heure. Veuillez noter que, dans cet
-            intervalle, il n'est pas possible de faire une autre proposition
-            pour cet indicateur.
-          </span>
+          {!estUneModificationDeProposition ? (
+            <>
+              <h3 className="fr-alert__title">
+                La proposition de valeur d'avancement a correctement été prise
+                en compte
+              </h3>
+              <span>
+                La proposition de valeur d'avancement s'affichera dans le
+                tableau des indicateurs dans une heure. Veuillez noter que, dans
+                cet intervalle, il n'est pas possible de faire une autre
+                proposition pour cet indicateur.
+              </span>
+            </>
+          ) : (
+            <>
+              <h3 className="fr-alert__title">
+                La nouvelle proposition de valeur d'avancement a correctement
+                été prise en compte
+              </h3>
+              <span>
+                La nouvelle proposition de valeur d'avancement s'affichera dans
+                le tableau des indicateurs dans une heure. Veuillez noter que,
+                dans cet intervalle, il n'est pas possible de faire une autre
+                proposition pour cet indicateur.
+              </span>
+            </>
+          )}
         </div>
       )}
     </Modale>
