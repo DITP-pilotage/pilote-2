@@ -5,7 +5,6 @@ const IndicateurÉvolutionStyled = styled.section`
     display: grid;
 
     .graphique-conteneur {
-      height: calc(25vw);
       min-height: 20rem;
       overflow: hidden;
     }

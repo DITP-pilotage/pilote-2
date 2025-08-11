@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { FunctionComponent } from "react";
+import { FunctionComponent, useMemo } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import IndicateurÉvolutionProps from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurÉvolution.interface";
 import IndicateurÉvolutionStyled from "./IndicateurÉvolution.styled";
@@ -27,16 +27,32 @@ ChartJS.register(
 
 const IndicateurÉvolution: FunctionComponent<IndicateurÉvolutionProps> = ({
   indicateurDétailsParTerritoires,
+  indicateurDétailsParTerritoiresComparés,
   dateDeMiseAJourIndicateur,
   source,
   nouveauxGraphiquesSontActifs,
 }) => {
+  const tousLesIndicateursDetails = useMemo(() => {
+    return [
+      indicateurDétailsParTerritoires[0],
+      ...indicateurDétailsParTerritoiresComparés,
+    ];
+  }, [
+    indicateurDétailsParTerritoires,
+    indicateurDétailsParTerritoiresComparés,
+  ]);
+
   const { options, donnéesParTerritoire } = useIndicateurÉvolution(
     indicateurDétailsParTerritoires,
   );
-  const { optionsNew } = useIndicateurEvolutionNew(
-    indicateurDétailsParTerritoires,
-  );
+
+  const {
+    optionsNew,
+    afficherLesCibles,
+    setAfficherLesCibles,
+    territoiresAAfficher,
+    setTerritoiresAAfficher,
+  } = useIndicateurEvolutionNew(tousLesIndicateursDetails);
 
   return (
     <IndicateurÉvolutionStyled>
@@ -52,7 +68,14 @@ const IndicateurÉvolution: FunctionComponent<IndicateurÉvolutionProps> = ({
         <div className="graphique-bloc">
           <div className="graphique-conteneur">
             {nouveauxGraphiquesSontActifs ? (
-              <LineChart option={optionsNew} />
+              <LineChart
+                afficherLesCibles={afficherLesCibles}
+                option={optionsNew}
+                setAfficherLesCibles={setAfficherLesCibles}
+                setTerritoiresAAfficher={setTerritoiresAAfficher}
+                territoiresAAfficher={territoiresAAfficher}
+                tousLesIndicateursDetails={tousLesIndicateursDetails}
+              />
             ) : (
               <Line data={donnéesParTerritoire} options={options} />
             )}

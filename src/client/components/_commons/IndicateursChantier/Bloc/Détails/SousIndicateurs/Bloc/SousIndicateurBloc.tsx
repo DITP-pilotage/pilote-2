@@ -329,6 +329,7 @@ const SousIndicateurBloc: FunctionComponent<SousIndicateurBlocProps> = ({
             estSousIndicateur
             indicateur={indicateur}
             indicateurDétailsParTerritoires={informationsIndicateurs}
+            indicateurDétailsParTerritoiresComparés={[]}
             indicateurEstAjour={!indicateurNonAJour}
             jalon={jalon}
             listeSousIndicateurs={[]}

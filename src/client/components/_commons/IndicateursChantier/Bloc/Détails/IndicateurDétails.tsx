@@ -18,6 +18,7 @@ export type CartographieIndicateurType =
 interface IndicateurDétailsProps {
   indicateur: Indicateur;
   indicateurDétailsParTerritoires: IndicateurDétailsParTerritoire[];
+  indicateurDétailsParTerritoiresComparés: IndicateurDétailsParTerritoire[];
   chantierEstTerritorialisé: boolean;
   dateDeMiseAJourIndicateur: string | null;
   listeSousIndicateurs: Indicateur[];
@@ -42,6 +43,7 @@ interface IndicateurDétailsProps {
 const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   indicateur,
   indicateurDétailsParTerritoires,
+  indicateurDétailsParTerritoiresComparés,
   chantierEstTerritorialisé,
   dateDeMiseAJourIndicateur,
   listeSousIndicateurs,
@@ -220,6 +222,9 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       }
                       indicateurDétailsParTerritoires={
                         indicateurDétailsParTerritoires
+                      }
+                      indicateurDétailsParTerritoiresComparés={
+                        indicateurDétailsParTerritoiresComparés
                       }
                       nouveauxGraphiquesSontActifs={
                         nouveauxGraphiquesSontActifs

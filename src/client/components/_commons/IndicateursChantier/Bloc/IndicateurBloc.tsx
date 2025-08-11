@@ -822,6 +822,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
               détailsIndicateurs={détailsIndicateurs}
               indicateur={indicateur}
               indicateurDétailsParTerritoires={informationsIndicateurs}
+              indicateurDétailsParTerritoiresComparés={
+                informationsIndicateursComparés
+              }
               indicateurEstAjour={!indicateurNonAJour}
               jalon={jalon}
               listeSousIndicateurs={listeSousIndicateurs}
