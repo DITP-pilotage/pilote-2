@@ -27,7 +27,7 @@ import {
   ProfilCode,
   profilsTerritoriaux,
 } from "@/server/domain/utilisateur/Utilisateur.interface";
-import { comparerDates } from "@/client/utils/date/date";
+import { comparerDates, formatDate } from "@/client/utils/date/date";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { prisma } from "@/server/db/prisma";
 
@@ -40,10 +40,6 @@ class ErreurIndicateurNonTrouvé extends Error {
   constructor(idIndicateur: string) {
     super(`Erreur: indicateur '${idIndicateur}' non trouvé.`);
   }
-}
-
-function formatDate(date: Date | null): string | null {
-  return date !== null ? date.toISOString() : null;
 }
 
 export default class IndicateurSQLRepository implements IndicateurRepository {
@@ -388,7 +384,8 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         indicateur_territoire_jalon: true,
       },
     });
-    return this._mapDétailsToDomain(indicateurs, jalon);
+
+    return this._mapDétailsToDomain(indicateurs);
   }
 
   async recupererListeIndicateursPrisEnCompteDansCalculAvancementSurAuMoinsUnTerritoire(

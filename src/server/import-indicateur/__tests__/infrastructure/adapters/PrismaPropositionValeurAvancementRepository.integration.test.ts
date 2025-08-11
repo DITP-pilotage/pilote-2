@@ -1,6 +1,6 @@
 import { prisma } from "@/server/db/prisma";
 import { StatutProposition } from "@/server/chantiers/domain/StatutProposition";
-import { PrismaPropositionValeurAvancementRepository } from "./PrismaPropositionValeurAvancementRepository";
+import { PrismaPropositionValeurAvancementRepository } from "@/server/import-indicateur/infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
 
 describe("PrismaPropositionValeurAvancement", () => {
   let prismaPropositionValeurAvancementRepository: PrismaPropositionValeurAvancementRepository;

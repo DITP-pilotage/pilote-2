@@ -20,6 +20,7 @@ import { PrismaUtilisateurRepository } from "./infrastructure/adapters/PrismaUti
 import { EnvoyerLesRapportsPropositionValeurAvancementUseCase } from "./usecases/EnvoyerLesRapportsPropositionValeurAvancementUseCase";
 import { EnvoieEmailService } from "./domain/ports/EnvoieEmailService";
 import { BrevoEnvoieEmailService } from "./infrastructure/adapters/BrevoEnvoieEmailService";
+import { RecupererDetailsIndicateursV2UseCase } from "./usecases/RecupererDetailsIndicateursV2UseCase";
 
 export type ChantierDependencies = {
   chantierRepository: ChantierRepository;
@@ -35,6 +36,7 @@ export type ChantierDependencies = {
   creerPropositionValeurAvancementUseCase: CreerPropositionValeurAvancementUseCase;
   modifierPropositionValeurAvancementUseCase: ModifierPropositionValeurAvancementUseCase;
   envoyerLesRapportsPropositionValeurAvancementUseCase: EnvoyerLesRapportsPropositionValeurAvancementUseCase;
+  recupererDetailsIndicateursV2UseCase: RecupererDetailsIndicateursV2UseCase;
 };
 
 export const getChantiersContainer = (
@@ -63,6 +65,9 @@ export const getChantiersContainer = (
     ),
     envoyerLesRapportsPropositionValeurAvancementUseCase: asClass(
       EnvoyerLesRapportsPropositionValeurAvancementUseCase,
+    ),
+    recupererDetailsIndicateursV2UseCase: asClass(
+      RecupererDetailsIndicateursV2UseCase,
     ),
   });
 };
