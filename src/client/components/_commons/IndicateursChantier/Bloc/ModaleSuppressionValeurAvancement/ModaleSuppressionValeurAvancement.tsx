@@ -4,6 +4,7 @@ import Modale from "@/components/_commons/Modale/Modale";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 
 import { useModaleSuppressionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurAvancement/useModaleSuppressionValeurAvancement";
+import Titre from "@/components/_commons/Titre/Titre";
 
 export const ModaleSuppressionValeurAvancement: FunctionComponent<{
   indicateur: Indicateur;
@@ -25,10 +26,12 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<{
       }}
       idHtml={generatedHTMLID}
       tailleModale="lg"
-      titre="Suppression de la proposition"
     >
       {!estSupprime ? (
         <>
+          <Titre baliseHtml="h1" className="fr-modal__title fr-mb-1w">
+            Suppression de la proposition
+          </Titre>
           <p>
             Vous êtes sur le point de supprimer la proposition de valeur
             d'avancement du territoire.
@@ -52,9 +55,15 @@ export const ModaleSuppressionValeurAvancement: FunctionComponent<{
           </div>
         </>
       ) : (
-        <div>
-          La proposition a été correctement supprimé, vous pouvez fermer cette
-          fenêtre.
+        <div className="fr-alert fr-alert--success fr-mt-2w">
+          <h3 className="fr-alert__title">
+            La proposition de valeur d'avancement a correctement été supprimée
+          </h3>
+          <span>
+            La suppression sera effective dans le tableau des indicateurs dans
+            une heure. Veuillez noter que, dans cet intervalle, il n'est pas
+            possible de faire une autre proposition pour cet indicateur.
+          </span>
         </div>
       )}
     </Modale>
