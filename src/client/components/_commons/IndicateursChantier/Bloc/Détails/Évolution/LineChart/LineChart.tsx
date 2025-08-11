@@ -1,13 +1,33 @@
-import { FunctionComponent, useEffect, useRef } from "react";
+import {
+  Dispatch,
+  FunctionComponent,
+  SetStateAction,
+  useEffect,
+  useRef,
+} from "react";
 import * as echarts from "echarts";
+import { IndicateurDétailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import { ECOption } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolutionNew";
-import LineChartStyledStyled from "./LineChart.styled";
+import { LineChartStyled } from "./LineChart.styled";
+import LineChartLegende from "./LineChartLegende/LineChartLegende";
 
-interface TimeSeriesChartProps {
+interface LineChartProps {
   option: ECOption;
+  tousLesIndicateursDetails: IndicateurDétailsParTerritoire[];
+  territoiresAAfficher: Record<string, boolean>;
+  setTerritoiresAAfficher: Dispatch<Record<string, boolean>>;
+  afficherLesCibles: boolean;
+  setAfficherLesCibles: Dispatch<SetStateAction<boolean>>;
 }
 
-const LineChart: FunctionComponent<TimeSeriesChartProps> = ({ option }) => {
+const LineChart: FunctionComponent<LineChartProps> = ({
+  option,
+  tousLesIndicateursDetails,
+  territoiresAAfficher,
+  setTerritoiresAAfficher,
+  afficherLesCibles,
+  setAfficherLesCibles,
+}) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const chart = useRef<echarts.EChartsType | null>(null);
 
@@ -25,7 +45,18 @@ const LineChart: FunctionComponent<TimeSeriesChartProps> = ({ option }) => {
     };
   }, [option]);
 
-  return <LineChartStyledStyled ref={ref} />;
+  return (
+    <LineChartStyled>
+      <div className="container-graphique" ref={ref} />
+      <LineChartLegende
+        afficherLesCibles={afficherLesCibles}
+        setAfficherLesCibles={setAfficherLesCibles}
+        setTerritoiresAAfficher={setTerritoiresAAfficher}
+        territoiresAAfficher={territoiresAAfficher}
+        tousLesIndicateursDetails={tousLesIndicateursDetails}
+      />
+    </LineChartStyled>
+  );
 };
 
 export default LineChart;

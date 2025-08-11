@@ -1,35 +1,66 @@
 import type { LineSeriesOption } from "echarts/charts";
 import { TopLevelFormatterParams } from "echarts/types/dist/shared";
 import { ComposeOption } from "echarts/types/dist/echarts";
+import { useEffect, useState } from "react";
 import type { IndicateurDétailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 
 export type ECOption = ComposeOption<LineSeriesOption>;
+export const PALETTE_DSFR = [
+  "#68A532",
+  "#A558A0",
+  "#417DC4",
+  "#C8AA39",
+  "#009081",
+  "#E18B76",
+  "#465F9D",
+  "#C08C65",
+  "#00A95F",
+  "#E4794A",
+  "#0078F3",
+  "#D1B781",
+  "#1F8D49",
+  "#CE614A",
+  "#009099",
+  "#AEA397",
+];
 
 export default function useIndicateurEvolutionNew(
-  indicateurDetailsParTerritoires: IndicateurDétailsParTerritoire[],
+  tousLesIndicateursDetails: IndicateurDétailsParTerritoire[],
 ) {
-  const PALETTE_DSFR = [
-    "#68A532",
-    "#A558A0",
-    "#417DC4",
-    "#C8AA39",
-    "#009081",
-    "#E18B76",
-    "#465F9D",
-    "#C08C65",
-    "#00A95F",
-    "#E4794A",
-    "#0078F3",
-    "#D1B781",
-    "#1F8D49",
-    "#CE614A",
-    "#009099",
-    "#AEA397",
-  ];
+  const [afficherLesCibles, setAfficherLesCibles] = useState<boolean>(true);
+  const [territoiresAAfficher, setTerritoiresAAfficher] = useState<
+    Record<string, boolean>
+  >(() =>
+    tousLesIndicateursDetails.reduce<Record<string, boolean>>(
+      (acc, indicateurDetail) => {
+        acc[indicateurDetail.territoireNom] = true;
+        return acc;
+      },
+      {},
+    ),
+  );
 
-  const indicateurDetailTerritoireReference =
-    indicateurDetailsParTerritoires[0];
+  useEffect(() => {
+    const territoiresManquants = tousLesIndicateursDetails.filter(
+      (indicateurDetails) =>
+        !Object.keys(territoiresAAfficher).includes(
+          indicateurDetails.territoireNom,
+        ),
+    );
 
+    if (territoiresManquants.length > 0) {
+      setTerritoiresAAfficher({
+        ...territoiresAAfficher,
+        [territoiresManquants[0].territoireNom]: true,
+      });
+    }
+  }, [
+    tousLesIndicateursDetails,
+    territoiresAAfficher,
+    setTerritoiresAAfficher,
+  ]);
+
+  const indicateurDetailTerritoireReference = tousLesIndicateursDetails[0];
   const minDate = new Date(
     indicateurDetailTerritoireReference.données.historiquesValeurs[0].date,
   );
@@ -41,13 +72,6 @@ export default function useIndicateurEvolutionNew(
   maxDate.setMonth(maxDate.getMonth() + 1);
   const minYear = new Date(minDate).getFullYear();
   const maxYear = maxDate.getFullYear();
-
-  const yMax = Math.max(
-    ...indicateurDetailTerritoireReference.données.historiquesValeurs.map(
-      (valeur) => valeur.valeur,
-    ),
-    indicateurDetailTerritoireReference.données.valeurCible ?? 0,
-  );
 
   const genererFondAnnees = (startYear: number, endYear: number) => {
     return Array.from({ length: endYear - startYear + 1 }, (_, i) => {
@@ -74,30 +98,35 @@ export default function useIndicateurEvolutionNew(
     type: "line",
     symbol: "circle",
     showSymbol: true,
-    data: indicateur.données.historiquesValeurs.map((valeur) => {
-      const date = new Date(valeur.date);
-      date.setDate(15);
-      return [date, valeur.valeur];
-    }),
-    markLine: {
-      symbol: "none",
-      lineStyle: { type: "dashed" as const, width: 2 },
-      silent: true,
-      data: [
-        [
-          {
-            coord: indicateur.données.valeurCible
-              ? [minDate, indicateur.données.valeurCible]
-              : [],
-          },
-          {
-            coord: indicateur.données.valeurCible
-              ? [maxDate, indicateur.données.valeurCible]
-              : [],
-          },
-        ],
-      ],
-    },
+    data: territoiresAAfficher[indicateur.territoireNom]
+      ? indicateur.données.historiquesValeurs.map((valeur) => {
+          const date = new Date(valeur.date);
+          date.setDate(15);
+          return [date, valeur.valeur];
+        })
+      : undefined,
+    markLine:
+      afficherLesCibles && territoiresAAfficher[indicateur.territoireNom]
+        ? {
+            symbol: "none",
+            lineStyle: { type: "dashed" as const, width: 2 },
+            silent: true,
+            data: [
+              [
+                {
+                  coord: indicateur.données.valeurCible
+                    ? [minDate, indicateur.données.valeurCible]
+                    : [],
+                },
+                {
+                  coord: indicateur.données.valeurCible
+                    ? [maxDate, indicateur.données.valeurCible]
+                    : [],
+                },
+              ],
+            ],
+          }
+        : undefined,
   });
 
   const formatterLaTooltip = (parametres: TopLevelFormatterParams): string => {
@@ -120,20 +149,44 @@ export default function useIndicateurEvolutionNew(
         parametre.value[1] !== null &&
         parametre.value[1] !== undefined
       ) {
-        return `${parametre.marker} ${parametre.seriesName}: ${parametre.value[1]}`;
+        return `${parametre.marker} ${parametre.seriesName}: ${parametre.value[1].toLocaleString("fr-FR")}`;
       }
     });
     return [`${mois}/${annee}`, ...tooltipContent].join("<br/>");
   };
 
+  const CalculerBornesAxeY = () => {
+    let minValue = Number.POSITIVE_INFINITY;
+    let maxValue = Number.NEGATIVE_INFINITY;
+
+    tousLesIndicateursDetails.forEach((indicateur) => {
+      indicateur.données.historiquesValeurs.forEach((valeur) => {
+        if (valeur.valeur != null) {
+          minValue = Math.min(minValue, valeur.valeur);
+          maxValue = Math.max(maxValue, valeur.valeur);
+        }
+      });
+      if (indicateur.données.valeurCible) {
+        minValue = Math.min(minValue, indicateur.données.valeurCible);
+        maxValue = Math.max(maxValue, indicateur.données.valeurCible);
+      }
+    });
+
+    if (minValue === Number.POSITIVE_INFINITY) minValue = 0;
+    if (maxValue === Number.NEGATIVE_INFINITY) maxValue = 100;
+
+    const margin = (maxValue - minValue) * 0.1;
+    return {
+      yMin: Math.min(0, minValue),
+      yMax: maxValue + margin,
+    };
+  };
+
+  const { yMin, yMax } = CalculerBornesAxeY();
+
   const optionsNew: ECOption = {
     tooltip: {
       formatter: formatterLaTooltip,
-    },
-    legend: {
-      data: [indicateurDetailTerritoireReference.territoireNom],
-      bottom: 50,
-      textStyle: { fontSize: 12 },
     },
     xAxis: [
       {
@@ -193,23 +246,29 @@ export default function useIndicateurEvolutionNew(
     ],
     yAxis: {
       type: "value",
-      min: 0,
-      max: Math.ceil(yMax * 1.1),
+      min: yMin,
+      max: yMax,
       splitLine: { show: true },
       axisLabel: {
         showMaxLabel: false,
+        showMinLabel: false,
+        formatter: function (value: number) {
+          return value.toLocaleString("fr-FR");
+        },
       },
     },
     grid: {
       left: 0,
       right: 30,
       top: 10,
-      bottom: 90,
+      bottom: 15,
       containLabel: true,
     },
     color: PALETTE_DSFR,
     series: [
-      creerSerie(indicateurDetailTerritoireReference),
+      ...tousLesIndicateursDetails.map((indicateurDetail) =>
+        creerSerie(indicateurDetail),
+      ),
       {
         type: "line",
         markArea: {
@@ -220,5 +279,11 @@ export default function useIndicateurEvolutionNew(
     ],
   };
 
-  return { optionsNew };
+  return {
+    afficherLesCibles,
+    setAfficherLesCibles,
+    territoiresAAfficher,
+    setTerritoiresAAfficher,
+    optionsNew,
+  };
 }

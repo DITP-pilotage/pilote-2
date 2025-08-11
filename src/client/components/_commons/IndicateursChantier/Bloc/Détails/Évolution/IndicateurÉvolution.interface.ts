@@ -3,6 +3,7 @@ import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 
 export default interface IndicateurÉvolutionProps {
   indicateurDétailsParTerritoires: IndicateurDétailsParTerritoire[];
+  indicateurDétailsParTerritoiresComparés: IndicateurDétailsParTerritoire[];
   dateDeMiseAJourIndicateur: string | null;
   source: Indicateur["source"];
   nouveauxGraphiquesSontActifs: boolean;
