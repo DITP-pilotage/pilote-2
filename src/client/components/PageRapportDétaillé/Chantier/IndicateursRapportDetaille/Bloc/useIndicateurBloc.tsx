@@ -41,6 +41,7 @@ const indicateurDétailsVide: IndicateurDétailsParTerritoire = {
     prochaineDateValeurAvancement: null,
     estAJour: null,
     tendance: null,
+    listeValeursCiblesAnnuelles: [],
   },
 };
 

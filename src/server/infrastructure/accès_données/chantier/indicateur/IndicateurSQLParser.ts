@@ -106,6 +106,13 @@ export function créerDonnéesTerritoires(
         indicateurRow?.prochaine_date_valeur_actuelle?.toLocaleString() ?? null,
       estAJour: indicateurRow?.est_a_jour ?? null,
       tendance: indicateurRow?.tendance ?? null,
+      listeValeursCiblesAnnuelles:
+        indicateurRow?.indicateur_territoire_jalon.map((indicateurJalon) => {
+          return {
+            annee: indicateurJalon.jalon,
+            valeurCible: indicateurJalon.valeur_cible,
+          };
+        }) ?? [],
     };
   });
 

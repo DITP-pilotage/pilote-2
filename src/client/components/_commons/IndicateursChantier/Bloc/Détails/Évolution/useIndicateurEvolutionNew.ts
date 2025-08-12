@@ -120,38 +120,58 @@ export default function useIndicateurEvolutionNew(
 
   const creerSerie = (
     indicateur: IndicateurDétailsParTerritoire,
+    couleur: string,
   ): LineSeriesOption => ({
     name: indicateur.territoireNom,
     type: "line",
     symbol: "circle",
     showSymbol: true,
+    color: couleur,
     data: territoiresAAfficher[indicateur.territoireNom]
-      ? [
-          ...indicateur.données.historiquesValeurs.map((valeur) => {
-            const date = new Date(valeur.date);
-            date.setDate(15);
-            return [date, valeur.valeur];
-          }),
-          [minDate, null],
-          [maxDate, null],
-        ]
+      ? indicateur.données.historiquesValeurs.map((valeur) => {
+          const date = new Date(valeur.date);
+          date.setDate(15);
+          return [date, valeur.valeur];
+        })
       : undefined,
-    markLine:
-      afficherLesCibles &&
-      territoiresAAfficher[indicateur.territoireNom] &&
-      indicateur.données.valeurCible
-        ? {
-            symbol: "none",
-            lineStyle: { type: "dashed" as const, width: 2 },
-            silent: true,
-            data: [
-              [
-                { xAxis: "min", yAxis: indicateur.données.valeurCible },
-                { xAxis: "max", yAxis: indicateur.données.valeurCible },
-              ],
-            ],
-          }
-        : undefined,
+  });
+
+  const creerSerieCibles = (
+    indicateur: IndicateurDétailsParTerritoire,
+    couleur: string,
+  ): LineSeriesOption => ({
+    name: `${indicateur.territoireNom} - Cible`,
+    type: "line",
+    symbol: "none",
+    showSymbol: false,
+    connectNulls: false,
+    color: couleur,
+    lineStyle: { type: "dashed", width: 2 },
+    silent: true,
+    data:
+      afficherLesCibles && territoiresAAfficher[indicateur.territoireNom]
+        ? indicateur.données.listeValeursCiblesAnnuelles.flatMap(
+            (cibleAnnuelle) => {
+              if (cibleAnnuelle.valeurCible === null) return [];
+
+              const debutAnnee =
+                new Date(`${cibleAnnuelle.annee}-01-01`) < minDate
+                  ? minDate
+                  : new Date(`${cibleAnnuelle.annee}-01-01`);
+
+              const finAnnee =
+                new Date(`${cibleAnnuelle.annee}-12-31`) > maxDate
+                  ? maxDate
+                  : new Date(`${cibleAnnuelle.annee}-12-31`);
+
+              return [
+                [debutAnnee, cibleAnnuelle.valeurCible],
+                [finAnnee, cibleAnnuelle.valeurCible],
+                null,
+              ];
+            },
+          )
+        : [],
   });
 
   const formatterLaTooltip = (parametres: TopLevelFormatterParams): string => {
@@ -191,10 +211,12 @@ export default function useIndicateurEvolutionNew(
           maxValue = Math.max(maxValue, valeur.valeur);
         }
       });
-      if (indicateur.données.valeurCible) {
-        minValue = Math.min(minValue, indicateur.données.valeurCible);
-        maxValue = Math.max(maxValue, indicateur.données.valeurCible);
-      }
+      indicateur.données.listeValeursCiblesAnnuelles.forEach((cible) => {
+        if (cible.valeurCible != null) {
+          minValue = Math.min(minValue, cible.valeurCible);
+          maxValue = Math.max(maxValue, cible.valeurCible);
+        }
+      });
     });
 
     if (minValue === Number.POSITIVE_INFINITY) minValue = 0;
@@ -288,7 +310,7 @@ export default function useIndicateurEvolutionNew(
         xAxisIndex: [0, 1, 2],
         height: 25,
         bottom: 10,
-        filterMode: "empty",
+        filterMode: "none",
         labelFormatter: function (value: string) {
           const date = new Date(value);
           return date.toLocaleDateString("fr-FR");
@@ -304,11 +326,14 @@ export default function useIndicateurEvolutionNew(
       bottom: 60,
       containLabel: true,
     },
-    color: PALETTE_DSFR,
     series: [
-      ...tousLesIndicateursDetails.map((indicateurDetail) =>
-        creerSerie(indicateurDetail),
-      ),
+      ...tousLesIndicateursDetails.flatMap((indicateurDetail, index) => {
+        const couleur = PALETTE_DSFR[index % PALETTE_DSFR.length];
+        return [
+          creerSerie(indicateurDetail, couleur),
+          creerSerieCibles(indicateurDetail, couleur),
+        ];
+      }),
       {
         type: "line",
         markArea: {
