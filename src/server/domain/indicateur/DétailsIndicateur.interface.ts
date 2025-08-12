@@ -28,6 +28,11 @@ interface HistoriqueValeur {
   valeur: number;
 }
 
+interface ValeurCibleAnnuelle {
+  annee: number;
+  valeurCible: number | null;
+}
+
 export type DétailsIndicateur = {
   codeInsee: string;
   valeurInitiale: number | null;
@@ -52,4 +57,5 @@ export type DétailsIndicateur = {
   prochaineDateMajJours: number | null;
   estAJour: boolean | null;
   tendance: string | null;
+  listeValeursCiblesAnnuelles: ValeurCibleAnnuelle[];
 };

@@ -76,6 +76,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       indicateur_identite: PrismaIndicateurIdentite;
       indicateur_territoire_jalon: PrismaIndicateurTerritoireJalon[];
     })[],
+    jalon: number,
   ): DétailsIndicateurs {
     const détailsIndicateurs: DétailsIndicateurs = {};
 
@@ -85,7 +86,9 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       }
 
       const indicateurTerritoireJalon =
-        indicateurRow.indicateur_territoire_jalon.at(0);
+        indicateurRow.indicateur_territoire_jalon.find(
+          (indicateurJalon) => indicateurJalon.jalon === jalon,
+        );
 
       détailsIndicateurs[indicateurRow.id][indicateurRow.territoire_code] = {
         dateValeurAvancementMandat: formatDate(
@@ -150,6 +153,13 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         prochaineDateMajJours: indicateurRow.prochaine_date_maj_jours,
         estAJour: indicateurRow.est_a_jour,
         tendance: indicateurRow.tendance,
+        listeValeursCiblesAnnuelles:
+          indicateurRow.indicateur_territoire_jalon.map((indicateurJalon) => {
+            return {
+              annee: indicateurJalon.jalon,
+              valeurCible: indicateurJalon.valeur_cible,
+            };
+          }),
       };
     }
 
@@ -308,6 +318,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
               ind.indicateur_identite.chantier_id ===
               indicateur.indicateur_identite.chantier_id,
           ),
+          jalon,
         ),
       ]),
     );
@@ -354,7 +365,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       },
     });
 
-    return this._mapDétailsToDomain(indicateurs);
+    return this._mapDétailsToDomain(indicateurs, jalon);
   }
 
   async récupererDétailsParChantierIdEtTerritoire(
@@ -374,14 +385,10 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       },
       include: {
         indicateur_identite: true,
-        indicateur_territoire_jalon: {
-          where: {
-            jalon,
-          },
-        },
+        indicateur_territoire_jalon: true,
       },
     });
-    return this._mapDétailsToDomain(indicateurs);
+    return this._mapDétailsToDomain(indicateurs, jalon);
   }
 
   async recupererListeIndicateursPrisEnCompteDansCalculAvancementSurAuMoinsUnTerritoire(
