@@ -60,22 +60,15 @@ export default function useIndicateurEvolutionNew(
     setTerritoiresAAfficher,
   ]);
 
-  const indicateurDetailTerritoireReference = tousLesIndicateursDetails[0];
-  const historiqueDesValeursTerritoireReference =
-    indicateurDetailTerritoireReference.données.historiquesValeurs;
-  const minDate =
-    historiqueDesValeursTerritoireReference.length > 0
-      ? new Date(historiqueDesValeursTerritoireReference[0].date)
-      : new Date();
-  const maxDate =
-    historiqueDesValeursTerritoireReference.length > 0
-      ? new Date(
-          indicateurDetailTerritoireReference.données.historiquesValeurs[
-            indicateurDetailTerritoireReference.données.historiquesValeurs
-              .length - 1
-          ].date,
-        )
-      : new Date();
+  let minDate = new Date();
+  let maxDate = new Date(0);
+  tousLesIndicateursDetails.forEach((indicateur) => {
+    indicateur.données.historiquesValeurs.forEach((valeur) => {
+      const date = new Date(valeur.date);
+      if (date < minDate) minDate = date;
+      if (date > maxDate) maxDate = date;
+    });
+  });
   maxDate.setMonth(maxDate.getMonth() + 1);
   const minYear = new Date(minDate).getFullYear();
   const maxYear = maxDate.getFullYear();
@@ -296,7 +289,10 @@ export default function useIndicateurEvolutionNew(
         height: 25,
         bottom: 10,
         filterMode: "empty",
-        showDetail: false,
+        labelFormatter: function (value: string) {
+          const date = new Date(value);
+          return date.toLocaleDateString("fr-FR");
+        },
         startValue: dataZoomPeriode.startValue,
         endValue: dataZoomPeriode.endValue,
       },
