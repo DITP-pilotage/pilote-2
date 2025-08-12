@@ -61,17 +61,51 @@ export default function useIndicateurEvolutionNew(
   ]);
 
   const indicateurDetailTerritoireReference = tousLesIndicateursDetails[0];
-  const minDate = new Date(
-    indicateurDetailTerritoireReference.données.historiquesValeurs[0].date,
-  );
-  const maxDate = new Date(
-    indicateurDetailTerritoireReference.données.historiquesValeurs[
-      indicateurDetailTerritoireReference.données.historiquesValeurs.length - 1
-    ].date,
-  );
+  const historiqueDesValeursTerritoireReference =
+    indicateurDetailTerritoireReference.données.historiquesValeurs;
+  const minDate =
+    historiqueDesValeursTerritoireReference.length > 0
+      ? new Date(historiqueDesValeursTerritoireReference[0].date)
+      : new Date();
+  const maxDate =
+    historiqueDesValeursTerritoireReference.length > 0
+      ? new Date(
+          indicateurDetailTerritoireReference.données.historiquesValeurs[
+            indicateurDetailTerritoireReference.données.historiquesValeurs
+              .length - 1
+          ].date,
+        )
+      : new Date();
   maxDate.setMonth(maxDate.getMonth() + 1);
   const minYear = new Date(minDate).getFullYear();
   const maxYear = maxDate.getFullYear();
+
+  const periodesSelectionnablesZoom = Array.from(
+    { length: maxYear - minYear + 1 },
+    (_, i) => (minYear + i).toString(),
+  );
+  periodesSelectionnablesZoom.unshift("Toute la période");
+  const [periodeSelectionnee, setPeriodeSelectionnee] =
+    useState<string>("Toute la période");
+  const [dataZoomPeriode, setDataZoomPeriode] = useState<{
+    startValue: Date;
+    endValue: Date;
+  }>({ startValue: minDate, endValue: maxDate });
+
+  const changerLaPeriodeSelectionnee = (periode: string) => {
+    setPeriodeSelectionnee(periode);
+    if (periode === "Toute la période") {
+      setDataZoomPeriode({
+        startValue: minDate,
+        endValue: maxDate,
+      });
+    } else {
+      setDataZoomPeriode({
+        startValue: new Date(`${periode}-01-01`),
+        endValue: new Date(`${periode}-12-31`),
+      });
+    }
+  };
 
   const genererFondAnnees = (startYear: number, endYear: number) => {
     return Array.from({ length: endYear - startYear + 1 }, (_, i) => {
@@ -99,30 +133,28 @@ export default function useIndicateurEvolutionNew(
     symbol: "circle",
     showSymbol: true,
     data: territoiresAAfficher[indicateur.territoireNom]
-      ? indicateur.données.historiquesValeurs.map((valeur) => {
-          const date = new Date(valeur.date);
-          date.setDate(15);
-          return [date, valeur.valeur];
-        })
+      ? [
+          ...indicateur.données.historiquesValeurs.map((valeur) => {
+            const date = new Date(valeur.date);
+            date.setDate(15);
+            return [date, valeur.valeur];
+          }),
+          [minDate, null],
+          [maxDate, null],
+        ]
       : undefined,
     markLine:
-      afficherLesCibles && territoiresAAfficher[indicateur.territoireNom]
+      afficherLesCibles &&
+      territoiresAAfficher[indicateur.territoireNom] &&
+      indicateur.données.valeurCible
         ? {
             symbol: "none",
             lineStyle: { type: "dashed" as const, width: 2 },
             silent: true,
             data: [
               [
-                {
-                  coord: indicateur.données.valeurCible
-                    ? [minDate, indicateur.données.valeurCible]
-                    : [],
-                },
-                {
-                  coord: indicateur.données.valeurCible
-                    ? [maxDate, indicateur.données.valeurCible]
-                    : [],
-                },
+                { xAxis: "min", yAxis: indicateur.données.valeurCible },
+                { xAxis: "max", yAxis: indicateur.données.valeurCible },
               ],
             ],
           }
@@ -257,11 +289,23 @@ export default function useIndicateurEvolutionNew(
         },
       },
     },
+    dataZoom: [
+      {
+        type: "slider",
+        xAxisIndex: [0, 1, 2],
+        height: 25,
+        bottom: 10,
+        filterMode: "empty",
+        showDetail: false,
+        startValue: dataZoomPeriode.startValue,
+        endValue: dataZoomPeriode.endValue,
+      },
+    ],
     grid: {
       left: 0,
       right: 30,
       top: 10,
-      bottom: 15,
+      bottom: 60,
       containLabel: true,
     },
     color: PALETTE_DSFR,
@@ -285,5 +329,8 @@ export default function useIndicateurEvolutionNew(
     territoiresAAfficher,
     setTerritoiresAAfficher,
     optionsNew,
+    periodesSelectionnablesZoom,
+    changerLaPeriodeSelectionnee,
+    periodeSelectionnee,
   };
 }

@@ -18,6 +18,9 @@ interface LineChartProps {
   setTerritoiresAAfficher: Dispatch<Record<string, boolean>>;
   afficherLesCibles: boolean;
   setAfficherLesCibles: Dispatch<SetStateAction<boolean>>;
+  periodeSelectionnee: string;
+  changerLaPeriodeSelectionnee: (periode: string) => void;
+  periodesSelectionnablesZoom: string[];
 }
 
 const LineChart: FunctionComponent<LineChartProps> = ({
@@ -27,6 +30,9 @@ const LineChart: FunctionComponent<LineChartProps> = ({
   setTerritoiresAAfficher,
   afficherLesCibles,
   setAfficherLesCibles,
+  periodeSelectionnee,
+  changerLaPeriodeSelectionnee,
+  periodesSelectionnablesZoom,
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const chart = useRef<echarts.EChartsType | null>(null);
@@ -50,6 +56,9 @@ const LineChart: FunctionComponent<LineChartProps> = ({
       <div className="container-graphique" ref={ref} />
       <LineChartLegende
         afficherLesCibles={afficherLesCibles}
+        changerLaPeriodeSelectionnee={changerLaPeriodeSelectionnee}
+        periodeSelectionnee={periodeSelectionnee}
+        periodesSelectionnablesZoom={periodesSelectionnablesZoom}
         setAfficherLesCibles={setAfficherLesCibles}
         setTerritoiresAAfficher={setTerritoiresAAfficher}
         territoiresAAfficher={territoiresAAfficher}

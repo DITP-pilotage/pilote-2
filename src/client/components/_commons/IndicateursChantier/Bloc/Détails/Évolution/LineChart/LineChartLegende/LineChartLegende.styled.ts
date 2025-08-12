@@ -2,6 +2,11 @@ import styled from "@emotion/styled";
 
 export const LineChartLegendeStyled = styled.div`
 
+  .tag-selectionnee {
+    color: white;
+    background-color: var(--blue-france-sun-113-625);
+  }
+    
   .legend-checkbox-container {
     display: flex;
     align-items: flex-start;

@@ -52,6 +52,9 @@ const IndicateurÉvolution: FunctionComponent<IndicateurÉvolutionProps> = ({
     setAfficherLesCibles,
     territoiresAAfficher,
     setTerritoiresAAfficher,
+    periodeSelectionnee,
+    changerLaPeriodeSelectionnee,
+    periodesSelectionnablesZoom,
   } = useIndicateurEvolutionNew(tousLesIndicateursDetails);
 
   return (
@@ -70,7 +73,10 @@ const IndicateurÉvolution: FunctionComponent<IndicateurÉvolutionProps> = ({
             {nouveauxGraphiquesSontActifs ? (
               <LineChart
                 afficherLesCibles={afficherLesCibles}
+                changerLaPeriodeSelectionnee={changerLaPeriodeSelectionnee}
                 option={optionsNew}
+                periodeSelectionnee={periodeSelectionnee}
+                periodesSelectionnablesZoom={periodesSelectionnablesZoom}
                 setAfficherLesCibles={setAfficherLesCibles}
                 setTerritoiresAAfficher={setTerritoiresAAfficher}
                 territoiresAAfficher={territoiresAAfficher}

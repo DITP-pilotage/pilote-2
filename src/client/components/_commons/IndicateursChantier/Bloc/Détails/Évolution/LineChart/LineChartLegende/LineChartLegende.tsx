@@ -13,6 +13,9 @@ interface LineChartLegendeProps {
   setTerritoiresAAfficher: Dispatch<Record<string, boolean>>;
   afficherLesCibles: boolean;
   setAfficherLesCibles: Dispatch<SetStateAction<boolean>>;
+  periodeSelectionnee: string;
+  changerLaPeriodeSelectionnee: (periode: string) => void;
+  periodesSelectionnablesZoom: string[];
 }
 
 const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
@@ -21,15 +24,33 @@ const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
   setTerritoiresAAfficher,
   afficherLesCibles,
   setAfficherLesCibles,
+  periodeSelectionnee,
+  changerLaPeriodeSelectionnee,
+  periodesSelectionnablesZoom,
 }) => {
   return (
-    <LineChartLegendeStyled className="fr-mt-1w fr-ml-4w">
-      <Interrupteur
-        auChangement={() => setAfficherLesCibles(!afficherLesCibles)}
-        checked={afficherLesCibles}
-        id="interrupteur-valeurs-cibles"
-        libellé="afficher les valeurs cibles"
-      />
+    <LineChartLegendeStyled className="fr-mt-1w fr-ml-4w fr-mr-4w">
+      <div className="flex align-center">
+        <Interrupteur
+          auChangement={() => setAfficherLesCibles(!afficherLesCibles)}
+          checked={afficherLesCibles}
+          direction="inverse"
+          id="interrupteur-valeurs-cibles"
+          libellé="afficher les valeurs cibles"
+        />
+        <span className="fr-ml-4w fr-mr-1w">zoomer sur : </span>
+        {periodesSelectionnablesZoom.map((periode) => (
+          <button
+            className={`fr-tag fr-mr-1w${periode === periodeSelectionnee ? " tag-selectionnee" : ""}`}
+            key={periode}
+            onClick={() => changerLaPeriodeSelectionnee(periode)}
+            type="button"
+          >
+            <p className="titre-ellipsis fr-text--sm">{periode}</p>
+          </button>
+        ))}
+      </div>
+
       <div className="fr-text fr-text--bold">Légende :</div>
       <div className="legend-checkbox-container">
         <div className="legend-content fr-mr-4w">
