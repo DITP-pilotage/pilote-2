@@ -2253,6 +2253,16 @@ describe("PrismaIndicateurRepository", () => {
             territoire_code: "NAT-FR",
             code_insee: "FR",
             zone_id: "FRANCE",
+            evolution_valeur_actuelle: [
+              {
+                date: new Date("2026-01-12"),
+                valeur: 100,
+              },
+              {
+                date: new Date("2026-01-14"),
+                valeur: 110,
+              },
+            ],
           },
           {
             id: "IND-001",
@@ -2347,11 +2357,11 @@ describe("PrismaIndicateurRepository", () => {
       expect(result["IND-001"]["NAT-FR"].historiquesValeurs).toEqual([
         {
           date: "2026-01-12T00:00:00.000Z",
-          valeur: 110,
+          valeur: 100,
         },
         {
-          date: "2026-01-12T00:00:00.000Z",
-          valeur: 100,
+          date: "2026-01-14T00:00:00.000Z",
+          valeur: 110,
         },
       ]);
     });
@@ -2925,7 +2935,7 @@ describe("PrismaIndicateurRepository", () => {
       },
     );
 
-    it("Quand il existe une proposition de valeur d'avancement [CREEE, MODIFIEE, SUPPRIMEE, CREEE], retourne les détails des indicateurs pour un chantier, territoire et aucune proposition", async () => {
+    it("Quand il existe une proposition de valeur d'avancement [CREEE, MODIFIEE, SUPPRIMEE, CREEE], retourne les détails des indicateurs pour un chantier, territoire et nouvelle proposition", async () => {
       // Given
       const chantierId = "CH-001";
       const territoireCodes = ["NAT-FR"];

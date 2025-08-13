@@ -21,6 +21,7 @@ export class RecupererDetailsIndicateursV2UseCase {
     jalon: number,
   ) {
     const habilitation = new Habilitation(habilitations);
+
     territoireCodes.forEach((territoireCode) => {
       habilitation.vérifierLesHabilitationsEnLecture(
         chantierId,

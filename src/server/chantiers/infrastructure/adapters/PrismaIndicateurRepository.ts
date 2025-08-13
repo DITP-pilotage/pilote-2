@@ -17,7 +17,7 @@ import {
   DetailsIndicateurs,
   DetailIndicateurPropositionValeurAvancement,
 } from "@/server/chantiers/domain/DetailsIndicateurs";
-import { formatDate } from "@/client/utils/date/date";
+import { comparerDates, formatDate } from "@/client/utils/date/date";
 import {
   EVENEMENT_VALEUR_PROPOSITION_VALEUR_TERMINEE,
   EvenementValeurEnum,
@@ -824,16 +824,12 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         codeInsee: indicateurRow.code_insee,
         valeurInitiale: indicateurRow.valeur_initiale,
         dateValeurInitiale: formatDate(indicateurRow.date_valeur_initiale),
-        historiquesValeurs: indicateurRow.indicateur_territoire_valeur_evenement
-          .filter(
-            (evenement) =>
-              evenement.type_evenement === EvenementValeurEnum.VALEUR_CREEE ||
-              evenement.type_evenement === EvenementValeurEnum.VALEUR_MODIFIEE,
-          )
-          .map((evenement) => ({
-            date: evenement.date_valeur.toISOString(),
-            valeur: evenement.valeur,
-          })),
+        historiquesValeurs: indicateurRow
+          ? (
+              (indicateurRow.evolution_valeur_actuelle as unknown as historique_valeurs[]) ||
+              []
+            ).sort((a, b) => comparerDates(a.date, b.date))
+          : [],
         valeurAvancement: verifyValeurIsNotNullOrUndefined(
           indicateurTerritoireJalon?.valeur_actuelle,
         ),
