@@ -37,8 +37,6 @@ export class RecupererDetailsIndicateursV2UseCase {
       );
 
     // TODO(PVA:JOTA:2025-08-11): Il y a du metier dans le repository à enlever et mettre dans le use case
-    // TODO(PVA:JOTA:2025-08-11): Il y a une erreur sur historique valeur quand on clique sur l'interface dans page chantier
-    // TODO(PVA:JOTA:2025-08-11): On ne sauvegarde / remonte pas le motif et methode de calcul de la proposition
     // TODO(PVA:JOTA:2025-08-11): On va pouvoir bientot commencer à accepter les propositions de valeur d'avancement
 
     return presenterEnDetailsIndicateursContrat(result);

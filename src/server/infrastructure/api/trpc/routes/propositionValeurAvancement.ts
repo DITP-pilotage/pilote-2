@@ -78,6 +78,8 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
           valeurAvancement: +input.valeurAvancement.replace(",", "."),
           dateValeurAvancement: new Date(input.dateValeurAvancement),
           idAuteurModification: idAuteur,
+          motif: input.motifProposition,
+          sourceDonneeEtMethodeCalcul: input.sourceDonneeEtMethodeCalcul,
         });
     }),
 

@@ -1,4 +1,7 @@
-import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
+import {
+  DonneesComplementaires,
+  IndicateurTerritoireValeurEvenement,
+} from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 import { TypeValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeValeur";
 
@@ -17,7 +20,8 @@ export class ValeurIndicateurTerritoireEvenementBuilder {
 
   private valeur: number = 75;
 
-  private donneesComplementaires: Record<string, unknown> = {};
+  private donneesComplementaires: DonneesComplementaires<TypeEvenement> =
+    undefined;
 
   private idAuteurModification: string = "default-author-id";
 
@@ -67,7 +71,7 @@ export class ValeurIndicateurTerritoireEvenementBuilder {
   }
 
   avecDonneesComplementaires(
-    donneesComplementaires: Record<string, unknown>,
+    donneesComplementaires: DonneesComplementaires<TypeEvenement>,
   ): ValeurIndicateurTerritoireEvenementBuilder {
     this.donneesComplementaires = donneesComplementaires;
     return this;

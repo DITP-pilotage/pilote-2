@@ -24,6 +24,8 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       valeurAvancement: 75.5,
       dateValeurAvancement: new Date("2024-01-15"),
       idAuteurModification: "user-123",
+      motif: "Motif de la proposition",
+      sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
     };
 
     indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
@@ -46,6 +48,10 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
         valeur: input.valeurAvancement,
         idAuteurModification: input.idAuteurModification,
         ordre: 1,
+        donneesComplementaires: {
+          motif: input.motif,
+          sourceDonneeEtMethodeCalcul: input.sourceDonneeEtMethodeCalcul,
+        },
       }),
     );
   });
@@ -58,6 +64,8 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       valeurAvancement: 50,
       dateValeurAvancement: new Date("2024-02-20"),
       idAuteurModification: "user-456",
+      motif: "Motif de la proposition",
+      sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
     };
 
     indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
@@ -81,6 +89,8 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       valeurAvancement: 25,
       dateValeurAvancement: new Date("2024-03-10"),
       idAuteurModification: "user-789",
+      motif: "Motif de la proposition",
+      sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
     };
 
     indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
@@ -117,6 +127,8 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       valeurAvancement: 85,
       dateValeurAvancement: new Date("2024-04-05"),
       idAuteurModification: "user-abc",
+      motif: "Motif de la proposition",
+      sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
     };
 
     indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
@@ -145,6 +157,8 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       valeurAvancement: 40,
       dateValeurAvancement: new Date("2024-05-12"),
       idAuteurModification: "user-def",
+      motif: "Motif de la proposition",
+      sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
     };
 
     indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
@@ -172,6 +186,8 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       valeurAvancement: 90,
       dateValeurAvancement: new Date("2024-06-08"),
       idAuteurModification: "user-ghi",
+      motif: "Motif de la proposition",
+      sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
     };
 
     const evenementsExistants = [
@@ -186,6 +202,10 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
           idAuteurModification: "user-1",
           correlationId: "corr-1",
           ordre: 1,
+          donneesComplementaires: {
+            motif: input.motif,
+            sourceDonneeEtMethodeCalcul: input.sourceDonneeEtMethodeCalcul,
+          },
         },
       ),
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
@@ -199,6 +219,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
           idAuteurModification: "user-2",
           correlationId: "corr-2",
           ordre: 2,
+          donneesComplementaires: undefined,
         },
       ),
     ];

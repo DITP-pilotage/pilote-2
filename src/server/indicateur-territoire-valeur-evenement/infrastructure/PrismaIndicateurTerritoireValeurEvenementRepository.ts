@@ -1,8 +1,12 @@
 import { Prisma } from "@prisma/client";
-import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
+import {
+  IndicateurTerritoireValeurEvenement,
+  DonneesComplementaires,
+} from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { TypeValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeValeur";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 
 export class PrismaIndicateurTerritoireValeurEvenementRepository
   implements IndicateurTerritoireValeurEvenementRepository
@@ -38,10 +42,10 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           typeValeur: ligne.type_valeur,
           dateValeur: ligne.date_valeur,
           valeur: ligne.valeur,
-          donneesComplementaires: ligne.donnees_complementaires as Record<
-            string,
-            unknown
-          >,
+          donneesComplementaires:
+            ligne.donnees_complementaires as DonneesComplementaires<
+              typeof ligne.type_evenement
+            >,
           idAuteurModification: ligne.id_auteur_modification,
           correlationId: ligne.correlation_id,
           ordre: ligne.ordre,
@@ -77,10 +81,10 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           typeValeur: ligne.type_valeur,
           dateValeur: ligne.date_valeur,
           valeur: ligne.valeur,
-          donneesComplementaires: ligne.donnees_complementaires as Record<
-            string,
-            unknown
-          >,
+          donneesComplementaires:
+            ligne.donnees_complementaires as DonneesComplementaires<
+              typeof ligne.type_evenement
+            >,
           idAuteurModification: ligne.id_auteur_modification,
           correlationId: ligne.correlation_id,
           ordre: ligne.ordre,
@@ -103,9 +107,10 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           type_valeur: evenement.typeValeur,
           date_valeur: evenement.dateValeur,
           valeur: evenement.valeur,
-          donnees_complementaires:
-            (evenement.donneesComplementaires as Prisma.JsonValue) ||
-            Prisma.JsonNull,
+          donnees_complementaires: this.convertirEnDonneesComplementairesModel(
+            evenement.typeEvenement,
+            evenement.donneesComplementaires,
+          ),
           id_auteur_modification: evenement.idAuteurModification,
           correlation_id: evenement.correlationId,
           ordre: evenement.ordre,
@@ -135,5 +140,26 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           ordre: evenement.ordre,
         })),
       });
+  }
+
+  private convertirEnDonneesComplementairesModel(
+    typeEvenement: TypeEvenement,
+    donneesComplementaires: DonneesComplementaires<TypeEvenement>,
+  ): Prisma.InputJsonValue | typeof Prisma.JsonNull {
+    if (donneesComplementaires === undefined) {
+      return Prisma.JsonNull;
+    }
+
+    switch (typeEvenement) {
+      case "PROPOSITION_VALEUR_CREEE":
+        return {
+          motif: donneesComplementaires.motif,
+          source_donnee_methode_calcul:
+            donneesComplementaires.sourceDonneeEtMethodeCalcul,
+        };
+      default: {
+        return Prisma.JsonNull;
+      }
+    }
   }
 }

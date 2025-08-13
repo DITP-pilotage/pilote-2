@@ -8,6 +8,8 @@ export type CreerIndicateurTerritoireValeurEvenementInput = {
   valeurAvancement: number;
   dateValeurAvancement: Date;
   idAuteurModification: string;
+  motif: string;
+  sourceDonneeEtMethodeCalcul: string;
 };
 
 interface Dependencies {
@@ -50,6 +52,10 @@ export class CreerIndicateurTerritoireValeurEvenementUseCase {
           idAuteurModification: input.idAuteurModification,
           correlationId: randomUUID(),
           ordre: prochainOrdre,
+          donneesComplementaires: {
+            motif: input.motif,
+            sourceDonneeEtMethodeCalcul: input.sourceDonneeEtMethodeCalcul,
+          },
         },
       );
 

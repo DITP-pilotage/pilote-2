@@ -2503,7 +2503,11 @@ describe("PrismaIndicateurRepository", () => {
             indic_id: "IND-001",
             territoire_code: "NAT-FR",
             type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
+            donnees_complementaires: {
+              motif: "Motif de la proposition",
+              source_donnee_methode_calcul:
+                "Source de la donnée et méthode de calcul",
+            },
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
             date_valeur: new Date("2026-01-12"),
             ordre: 3,
@@ -2535,8 +2539,8 @@ describe("PrismaIndicateurRepository", () => {
         tauxAvancementIntermediaire: null,
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
-        motif: null,
-        sourceDonneeEtMethodeCalcul: null,
+        motif: "Motif de la proposition",
+        sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
       });
     });
 
@@ -2677,7 +2681,11 @@ describe("PrismaIndicateurRepository", () => {
             indic_id: "IND-001",
             territoire_code: "NAT-FR",
             type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
+            donnees_complementaires: {
+              motif: "Motif de la proposition",
+              sourceDonneeEtMethodeCalcul:
+                "Source de la donnée et méthode de calcul",
+            },
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
             date_valeur: new Date("2026-01-12"),
             ordre: 3,
@@ -3072,7 +3080,11 @@ describe("PrismaIndicateurRepository", () => {
             indic_id: "IND-001",
             territoire_code: "NAT-FR",
             type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
+            donnees_complementaires: {
+              motif: "Motif de la proposition",
+              source_donnee_methode_calcul:
+                "Source de la donnée et méthode de calcul",
+            },
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
             date_valeur: new Date("2026-01-12"),
             ordre: 3,
@@ -3118,7 +3130,11 @@ describe("PrismaIndicateurRepository", () => {
             indic_id: "IND-001",
             territoire_code: "NAT-FR",
             type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
+            donnees_complementaires: {
+              motif: "Motif de la proposition 2",
+              source_donnee_methode_calcul:
+                "Source de la donnée et méthode de calcul 2",
+            },
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
             date_valeur: new Date("2026-01-12"),
             ordre: 6,
@@ -3150,8 +3166,9 @@ describe("PrismaIndicateurRepository", () => {
         tauxAvancementIntermediaire: null,
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
-        motif: null,
-        sourceDonneeEtMethodeCalcul: null,
+        motif: "Motif de la proposition 2",
+        sourceDonneeEtMethodeCalcul:
+          "Source de la donnée et méthode de calcul 2",
       });
     });
   });

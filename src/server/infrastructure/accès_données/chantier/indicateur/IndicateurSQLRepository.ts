@@ -385,7 +385,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       },
     });
 
-    return this._mapDétailsToDomain(indicateurs);
+    return this._mapDétailsToDomain(indicateurs, jalon);
   }
 
   async recupererListeIndicateursPrisEnCompteDansCalculAvancementSurAuMoinsUnTerritoire(

@@ -38,6 +38,8 @@ export const presenterEnDetailsIndicateursContrat = (
           prochaineDateMajJours: detailsTerritoire.prochaineDateMajJours,
           estAJour: detailsTerritoire.estAJour,
           tendance: detailsTerritoire.tendance,
+          listeValeursCiblesAnnuelles:
+            detailsTerritoire.listeValeursCiblesAnnuelles,
         };
         return accTerritoire;
       },

@@ -768,11 +768,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       },
       include: {
         indicateur_identite: true,
-        indicateur_territoire_jalon: {
-          where: {
-            jalon,
-          },
-        },
+        indicateur_territoire_jalon: true,
         indicateur_territoire_valeur_evenement: {
           include: {
             auteur: {
@@ -794,7 +790,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       },
     });
 
-    return this.convertirEnDetailsIndicateurs(indicateurs);
+    return this.convertirEnDetailsIndicateurs(indicateurs, jalon);
   }
 
   private convertirEnDetailsIndicateurs(
@@ -805,6 +801,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         auteur: Pick<PrismaUtilisateur, "nom" | "prenom">;
       })[];
     })[],
+    jalon: number,
   ): DetailsIndicateurs {
     const détailsIndicateurs: DetailsIndicateurs = {};
 
@@ -814,7 +811,9 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       }
 
       const indicateurTerritoireJalon =
-        indicateurRow.indicateur_territoire_jalon.at(0);
+        indicateurRow.indicateur_territoire_jalon.find(
+          (indicateurJalon) => indicateurJalon.jalon === jalon,
+        );
 
       détailsIndicateurs[indicateurRow.id][indicateurRow.territoire_code] = {
         dateValeurAvancementMandat: formatDate(
@@ -865,12 +864,10 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         estAJour: indicateurRow.est_a_jour,
         tendance: indicateurRow.tendance,
         listeValeursCiblesAnnuelles:
-          indicateurRow.indicateur_territoire_jalon.map((indicateurJalon) => {
-            return {
-              annee: indicateurJalon.jalon,
-              valeurCible: indicateurJalon.valeur_cible,
-            };
-          }),
+          indicateurRow.indicateur_territoire_jalon.map((indicateurJalon) => ({
+            annee: indicateurJalon.jalon,
+            valeurCible: indicateurJalon.valeur_cible,
+          })),
       };
     }
 
@@ -902,8 +899,18 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           tauxAvancementIntermediaire: null,
           auteur: `${dernierEvenementProposition.auteur.prenom} ${dernierEvenementProposition.auteur.nom}`,
           dateProposition: formatDate(dernierEvenementProposition.date_valeur),
-          motif: null,
-          sourceDonneeEtMethodeCalcul: null,
+          motif:
+            (
+              dernierEvenementProposition.donnees_complementaires as {
+                motif: string;
+              }
+            )?.motif || null,
+          sourceDonneeEtMethodeCalcul:
+            (
+              dernierEvenementProposition.donnees_complementaires as {
+                source_donnee_methode_calcul: string;
+              }
+            )?.source_donnee_methode_calcul || null,
         }
       : null;
   }
