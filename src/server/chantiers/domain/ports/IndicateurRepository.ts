@@ -1,6 +1,7 @@
 import { DonneeIndicateur } from "@/server/chantiers/domain/DonneeIndicateur";
 import { IndicateurPourExport } from "@/server/chantiers/domain/IndicateurPourExport";
 import { HistoriqueIndicateurPourExport } from "@/server/chantiers/domain/HistoriqueIndicateurPourExport";
+import { DetailsIndicateurs } from "@/server/chantiers/domain/DetailsIndicateurs";
 
 export interface IndicateurRepository {
   listerParIndicId({
@@ -30,4 +31,9 @@ export interface IndicateurRepository {
     territoireCodesLecture: string[],
     jalon: number,
   ): Promise<HistoriqueIndicateurPourExport[]>;
+  recupererDetailsParChantierIdEtTerritoire(
+    chantierId: string,
+    territoireCodes: string[],
+    jalon: number,
+  ): Promise<DetailsIndicateurs>;
 }

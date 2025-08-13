@@ -52,7 +52,7 @@ import AvancementChantier from "./AvancementChantier/AvancementChantier";
 import PageChantierEnTête from "./EnTête/EnTête";
 import Cartes, { CartographieType } from "./Cartes/Cartes";
 import PageChantierStyled from "./PageChantier.styled";
-import usePageChantier from "./usePageChantier";
+import { usePageChantier } from "./usePageChantier";
 import DécisionsStratégiques from "./DécisionsStratégiques/DécisionsStratégiques";
 interface PageChantierProps {
   indicateurs: Indicateur[];
@@ -118,6 +118,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
     estAutoriseAModifierLesObjectifs,
     estAutoriseAVoirLesAlertesMAJIndicateurs,
     estAutoriseAVoirLeSelecteurDeMaille,
+    estAutoriseAAccepterLesPropositionsDeValeurAvancement,
   } = usePageChantier(chantier, territoireSélectionné, territoireCode);
 
   const { data: alerteMiseAJourIndicateurEstDisponible } =
@@ -419,6 +420,9 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   chantierEstTerritorialisé={chantier.estTerritorialisé}
                   detailsIndicateursTerritoire={detailsIndicateursTerritoire}
                   détailsIndicateurs={détailsIndicateurs}
+                  estAutoriseAAccepterLesPropositionsDeValeurAvancement={
+                    estAutoriseAAccepterLesPropositionsDeValeurAvancement
+                  }
                   estAutoriseAProposerUneValeurAvancement={
                     estAutoriseAProposerUneValeurAvancement
                   }

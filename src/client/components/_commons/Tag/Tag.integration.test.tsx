@@ -18,5 +18,5 @@ test("le tag lance un event au clic", async () => {
 
   render(<Tag libelle="Texte du tag" suppressionCallback={auClicCallback} />);
   await userEvent.click(screen.getByRole("button"));
-  expect(auClicCallback).toBeCalledTimes(1);
+  expect(auClicCallback).toHaveBeenCalledTimes(1);
 });

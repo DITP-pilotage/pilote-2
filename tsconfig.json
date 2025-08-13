@@ -64,5 +64,5 @@
     ],
     "transpileOnly": true
   },
-  "files": ["src/server/infrastructure/test/global.d.ts", "./src/client/components/_commons/ÉditeurRiche/MenuBar.tsx"]
+  "files": ["src/server/infrastructure/test/global.d.ts"]
 }

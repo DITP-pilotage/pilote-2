@@ -48,6 +48,7 @@ import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier
 import { configuration } from "@/config";
 import { CartographieType } from "@/components/PageChantier/Cartes/Cartes";
 import { CartographieIndicateurType } from "@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails";
+import { getContainer } from "@/server/dependances";
 
 interface NextPageChantierProps {
   indicateurs: Indicateur[];
@@ -177,9 +178,13 @@ export const getServerSideProps: GetServerSideProps<
       )
         .run(chantierId, session.habilitations)
         .catch(() => null),
-      new RécupérerDétailsIndicateursUseCase(
-        dependencies.getIndicateurRepository(),
-      ).run(chantierId, territoireCodes, session.habilitations, jalon),
+      configuration.featureFlip.propositionValeurAvancementV2
+        ? getContainer("chantiers")
+            .resolve("recupererDetailsIndicateursV2UseCase")
+            .run(chantierId, territoireCodes, session.habilitations, jalon)
+        : new RécupérerDétailsIndicateursUseCase(
+            dependencies.getIndicateurRepository(),
+          ).run(chantierId, territoireCodes, session.habilitations, jalon),
       new RécupérerStatistiquesAvancementChantiersUseCase(
         dependencies.getChantierRepository(),
       )

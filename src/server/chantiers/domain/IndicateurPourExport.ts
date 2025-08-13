@@ -2,7 +2,7 @@ import Ministère from "@/server/domain/ministère/Ministère.interface";
 import Chantier, {
   ChantierTendance,
 } from "@/server/domain/chantier/Chantier.interface";
-import Avancement from "@/server/domain/chantier/avancement/Avancement.interface";
+import { Avancement } from "@/server/domain/chantier/avancement/Avancement.interface";
 import { Météo } from "@/server/domain/météo/Météo.interface";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";

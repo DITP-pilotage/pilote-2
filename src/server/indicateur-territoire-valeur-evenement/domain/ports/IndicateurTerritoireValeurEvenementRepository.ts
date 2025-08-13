@@ -6,7 +6,12 @@ export interface IndicateurTerritoireValeurEvenementRepository {
     indicId: string;
     territoireCode: string;
     typeValeur: TypeValeur;
-    // TODO - retourner directement le groupBy date avec class EvenementsSurDate
+  }): Promise<IndicateurTerritoireValeurEvenement[]>;
+  recupererParIndicIdTerritoireCodeTypeValeurEtDate(args: {
+    indicId: string;
+    territoireCode: string;
+    typeValeur: TypeValeur;
+    dateValeur: Date;
   }): Promise<IndicateurTerritoireValeurEvenement[]>;
   enregistrer(evenement: IndicateurTerritoireValeurEvenement): Promise<void>;
   enregistrerTous(

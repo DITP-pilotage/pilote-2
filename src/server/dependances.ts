@@ -19,8 +19,6 @@ import {
   FicheConducteurDependencies,
   getFicheConducteurContainer,
 } from "@/server/fiche-conducteur/container";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { Transaction } from "@/server/db/Transaction";
 import {
   GestionUtilisateurDependencies,
   getGestionUtilisateurContainer,
@@ -29,14 +27,17 @@ import {
   getParametrageNouveautesContainer,
   ParametrageNouveautesDependencies,
 } from "./parametrage-nouveautes/container";
-import { getInitialContainer } from "./initial-container";
-
-export interface InitialDependencies {
-  prisma: PrismaPilote;
-  transaction: Transaction;
-}
+import {
+  getInitialContainerWithTransversalDependencies,
+  InitialDependencies,
+} from "./InitialDependencies";
+import {
+  getIndicateurTerritoireValeurEvenementContainer,
+  IndicateurTerritoireValeurEvenementDependencies,
+} from "./indicateur-territoire-valeur-evenement/container";
 
 export type ContainerDependencies = {
+  main: AwilixContainer<InitialDependencies>;
   authentification: AwilixContainer<AuthentificationDependencies>;
   chantiers: AwilixContainer<ChantierDependencies>;
   parametrageIndicateur: AwilixContainer<ParametrageIndicateurDependencies>;
@@ -44,21 +45,40 @@ export type ContainerDependencies = {
   gestionUtilisateur: AwilixContainer<GestionUtilisateurDependencies>;
   ficheConducteur: AwilixContainer<FicheConducteurDependencies>;
   parametrageNouveautes: AwilixContainer<ParametrageNouveautesDependencies>;
-  main: AwilixContainer<InitialDependencies>;
+  indicateurTerritoireValeurEvenement: AwilixContainer<IndicateurTerritoireValeurEvenementDependencies>;
 };
 
 function registerContainer(): ContainerDependencies {
-  const initialContainer = getInitialContainer();
+  const initialContainerWithTransversalDependencies =
+    getInitialContainerWithTransversalDependencies();
 
   return {
-    main: initialContainer.createScope(),
-    authentification: getAuthentificationContainer(initialContainer),
-    chantiers: getChantiersContainer(initialContainer),
-    parametrageIndicateur: getParametrageIndicateurContainer(initialContainer),
-    importIndicateur: getImportIndicateurContainer(initialContainer),
-    gestionUtilisateur: getGestionUtilisateurContainer(initialContainer),
-    ficheConducteur: getFicheConducteurContainer(initialContainer),
-    parametrageNouveautes: getParametrageNouveautesContainer(initialContainer),
+    main: initialContainerWithTransversalDependencies.createScope(),
+    authentification: getAuthentificationContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    chantiers: getChantiersContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    parametrageIndicateur: getParametrageIndicateurContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    importIndicateur: getImportIndicateurContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    gestionUtilisateur: getGestionUtilisateurContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    ficheConducteur: getFicheConducteurContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    parametrageNouveautes: getParametrageNouveautesContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    indicateurTerritoireValeurEvenement:
+      getIndicateurTerritoireValeurEvenementContainer(
+        initialContainerWithTransversalDependencies,
+      ),
   };
 }
 

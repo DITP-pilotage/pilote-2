@@ -48,7 +48,7 @@ describe("comparerMétéo", () => {
     météos.forEach((météo) => {
       expect(() =>
         comparerMétéo(météo, météo, [{ desc: true, id: "1" }]),
-      ).not.toThrowError();
+      ).not.toThrow();
     });
   });
 });

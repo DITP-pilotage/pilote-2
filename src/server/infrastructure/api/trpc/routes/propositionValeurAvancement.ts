@@ -48,6 +48,41 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
           statut: StatutProposition.EN_COURS,
         });
     }),
+
+  creerV2: procédureProtégée
+    .input(validationPropositionValeurAvancement)
+    .mutation(async ({ input, ctx }) => {
+      const idAuteur = ctx.session.user.id ?? "";
+
+      const propositionValeurAvancementChantierInformation = await getContainer(
+        "chantiers",
+      )
+        .resolve("chantierRepository")
+        .recupererPropositionValeurAvancementChantierInformationParIndicId({
+          indicId: input.indicId,
+        });
+
+      const habilitations = new Habilitation(ctx.session.habilitations);
+
+      habilitations.verifierAutorisationModificationPropositionValeurAvancement(
+        ctx.session.profil,
+        ctx.session.habilitations.saisieCommentaire.chantiers,
+        propositionValeurAvancementChantierInformation,
+      );
+
+      await getContainer("indicateurTerritoireValeurEvenement")
+        .resolve("creerIndicateurTerritoireValeurEvenementUseCase")
+        .run({
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          valeurAvancement: +input.valeurAvancement.replace(",", "."),
+          dateValeurAvancement: new Date(input.dateValeurAvancement),
+          idAuteurModification: idAuteur,
+          motif: input.motifProposition,
+          sourceDonneeEtMethodeCalcul: input.sourceDonneeEtMethodeCalcul,
+        });
+    }),
+
   supprimer: procédureProtégée
     .input(validationSuppressionValeurAvancement)
     .mutation(async ({ input, ctx }) => {

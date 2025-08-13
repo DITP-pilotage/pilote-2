@@ -1,19 +1,15 @@
 import { Avancement } from "@/server/domain/chantier/avancement/Avancement.interface";
 import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
-import Indicateur from "./Indicateur.interface";
 
-export type DétailsIndicateurTerritoire = Record<CodeInsee, DétailsIndicateur>;
-export type DétailsIndicateurMailles = Record<
+export type DetailsIndicateurTerritoire = Record<CodeInsee, DetailsIndicateur>;
+export type DetailsIndicateurMailles = Record<
   Maille,
-  DétailsIndicateurTerritoire
+  DetailsIndicateurTerritoire
 >;
-export type DétailsIndicateurs = Record<
-  Indicateur["id"],
-  DétailsIndicateurTerritoire
->;
+export type DetailsIndicateurs = Record<string, DetailsIndicateurTerritoire>;
 
-interface DetailIndicateurPropositionValeurAvancement {
+export interface DetailIndicateurPropositionValeurAvancement {
   valeurAvancement: number;
   tauxAvancement: number | null;
   tauxAvancementIntermediaire: number | null;
@@ -33,7 +29,7 @@ interface ValeurCibleAnnuelle {
   valeurCible: number | null;
 }
 
-export type DétailsIndicateur = {
+export type DetailsIndicateur = {
   codeInsee: string;
   valeurInitiale: number | null;
   dateValeurInitiale: string | null;
@@ -48,10 +44,10 @@ export type DétailsIndicateur = {
   dateValeurCibleAnnuelle: string | null;
   avancement: Avancement;
   proposition: DetailIndicateurPropositionValeurAvancement | null;
-  unité: string | null;
-  est_applicable: boolean | null;
+  unite: string | null;
+  estApplicable: boolean | null;
   dateImport: string | null;
-  pondération: number | null;
+  ponderation: number | null;
   prochaineDateValeurAvancement: string | null;
   prochaineDateMaj: string | null;
   prochaineDateMajJours: number | null;

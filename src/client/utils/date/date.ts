@@ -46,3 +46,7 @@ export const comparerDateDeMàjDonnées = (
   if (a > b) return -1;
   return 0;
 };
+
+export function formatDate(date: Date | null): string | null {
+  return date !== null ? date.toISOString() : null;
+}

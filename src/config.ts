@@ -232,6 +232,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE",
     },
+    propositionValeurAvancementV2: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE_V2",
+    },
     sousIndicateurs: {
       format: Boolean,
       default: false,

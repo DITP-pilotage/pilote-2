@@ -11,6 +11,7 @@ import { PropositionValeurAvancementRepository } from "@/server/chantiers/domain
 import { PrismaPropositionValeurAvancementRepository } from "@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
 import { CreerPropositionValeurAvancementUseCase } from "@/server/chantiers/usecases/CreerPropositionValeurAvancementUseCase";
 import { ModifierPropositionValeurAvancementUseCase } from "@/server/chantiers/usecases/ModifierPropositionValeurAvancementUseCase";
+import { InitialDependencies } from "@/server/InitialDependencies";
 import { ExportCsvDesChantiersUseCaseV2 } from "./usecases/ExportCsvDesChantiersUseCaseV2";
 import { TerritoireRepository } from "./domain/ports/TerritoireRepository";
 import { PrismaTerritoireRepository } from "./infrastructure/adapters/PrismaTerritoireRepository";
@@ -19,6 +20,7 @@ import { PrismaUtilisateurRepository } from "./infrastructure/adapters/PrismaUti
 import { EnvoyerLesRapportsPropositionValeurAvancementUseCase } from "./usecases/EnvoyerLesRapportsPropositionValeurAvancementUseCase";
 import { EnvoieEmailService } from "./domain/ports/EnvoieEmailService";
 import { BrevoEnvoieEmailService } from "./infrastructure/adapters/BrevoEnvoieEmailService";
+import { RecupererDetailsIndicateursV2UseCase } from "./usecases/RecupererDetailsIndicateursV2UseCase";
 
 export type ChantierDependencies = {
   chantierRepository: ChantierRepository;
@@ -34,10 +36,11 @@ export type ChantierDependencies = {
   creerPropositionValeurAvancementUseCase: CreerPropositionValeurAvancementUseCase;
   modifierPropositionValeurAvancementUseCase: ModifierPropositionValeurAvancementUseCase;
   envoyerLesRapportsPropositionValeurAvancementUseCase: EnvoyerLesRapportsPropositionValeurAvancementUseCase;
+  recupererDetailsIndicateursV2UseCase: RecupererDetailsIndicateursV2UseCase;
 };
 
 export const getChantiersContainer = (
-  initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
+  initialContainer: AwilixContainer<InitialDependencies>,
 ): AwilixContainer<ChantierDependencies & { prisma: PrismaPilote }> => {
   return initialContainer.createScope<ChantierDependencies>().register({
     chantierRepository: asClass(PrismaChantierRepository),
@@ -62,6 +65,9 @@ export const getChantiersContainer = (
     ),
     envoyerLesRapportsPropositionValeurAvancementUseCase: asClass(
       EnvoyerLesRapportsPropositionValeurAvancementUseCase,
+    ),
+    recupererDetailsIndicateursV2UseCase: asClass(
+      RecupererDetailsIndicateursV2UseCase,
     ),
   });
 };

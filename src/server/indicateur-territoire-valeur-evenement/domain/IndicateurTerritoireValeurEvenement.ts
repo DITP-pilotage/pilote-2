@@ -1,15 +1,38 @@
 import { randomUUID } from "node:crypto";
-import { TypeEvenement } from "@/server/import-indicateur/domain/TypeEvenement";
-import { TypeValeur } from "@/server/import-indicateur/domain/TypeValeur";
+import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
+import { TypeValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeValeur";
 
-export class IndicateurTerritoireValeurEvenement {
+type DonneesComplementairesMap = {
+  VALEUR_CREEE: undefined;
+  VALEUR_MODIFIEE: undefined;
+  VALEUR_HISTORISEE: undefined;
+  PROPOSITION_VALEUR_CREEE: {
+    motif: string;
+    sourceDonneeEtMethodeCalcul: string;
+  };
+  PROPOSITION_VALEUR_MODIFIEE: undefined;
+  PROPOSITION_VALEUR_SUPPRIMEE: undefined;
+  PROPOSITION_VALEUR_REFUSEE: undefined;
+  PROPOSITION_VALEUR_ACCUSEE_RECEPTION: undefined;
+  PROPOSITION_VALEUR_ACCEPTEE: undefined;
+  PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE: undefined;
+  PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE: undefined;
+  PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION: undefined;
+};
+
+export type DonneesComplementaires<T extends TypeEvenement> =
+  DonneesComplementairesMap[T];
+
+export class IndicateurTerritoireValeurEvenement<
+  T extends TypeEvenement = TypeEvenement,
+> {
   private readonly _id: string;
 
   private readonly _indicId: string;
 
   private readonly _territoireCode: string;
 
-  private readonly _typeEvenement: TypeEvenement;
+  private readonly _typeEvenement: T;
 
   private readonly _typeValeur: TypeValeur;
 
@@ -17,7 +40,7 @@ export class IndicateurTerritoireValeurEvenement {
 
   private readonly _valeur: number;
 
-  private readonly _donneesComplementaires: Record<string, unknown>;
+  private readonly _donneesComplementaires: DonneesComplementaires<T>;
 
   private readonly _idAuteurModification: string;
 
@@ -41,11 +64,11 @@ export class IndicateurTerritoireValeurEvenement {
     id: string;
     indicId: string;
     territoireCode: string;
-    typeEvenement: TypeEvenement;
+    typeEvenement: T;
     typeValeur: TypeValeur;
     dateValeur: Date;
     valeur: number;
-    donneesComplementaires: Record<string, unknown>;
+    donneesComplementaires: DonneesComplementaires<T>;
     idAuteurModification: string;
     correlationId: string;
     ordre: number;
@@ -75,7 +98,7 @@ export class IndicateurTerritoireValeurEvenement {
     return this._territoireCode;
   }
 
-  get typeEvenement(): TypeEvenement {
+  get typeEvenement(): T {
     return this._typeEvenement;
   }
 
@@ -91,7 +114,7 @@ export class IndicateurTerritoireValeurEvenement {
     return this._valeur;
   }
 
-  get donneesComplementaires(): Record<string, unknown> {
+  get donneesComplementaires(): DonneesComplementaires<T> {
     return this._donneesComplementaires;
   }
 
@@ -107,7 +130,7 @@ export class IndicateurTerritoireValeurEvenement {
     return this._ordre;
   }
 
-  static createValeurIndicateurTerritoireEvenement({
+  static createValeurIndicateurTerritoireEvenement<T extends TypeEvenement>({
     id = randomUUID(),
     indicId,
     territoireCode,
@@ -115,7 +138,7 @@ export class IndicateurTerritoireValeurEvenement {
     typeValeur,
     dateValeur,
     valeur,
-    donneesComplementaires = {},
+    donneesComplementaires,
     idAuteurModification,
     correlationId,
     ordre,
@@ -123,16 +146,16 @@ export class IndicateurTerritoireValeurEvenement {
     id?: string;
     indicId: string;
     territoireCode: string;
-    typeEvenement: TypeEvenement;
+    typeEvenement: T;
     typeValeur: TypeValeur;
     dateValeur: Date;
     valeur: number;
-    donneesComplementaires?: Record<string, unknown>;
+    donneesComplementaires: DonneesComplementaires<T>;
     idAuteurModification: string;
     correlationId: string;
     ordre: number;
   }) {
-    return new IndicateurTerritoireValeurEvenement({
+    return new IndicateurTerritoireValeurEvenement<T>({
       id,
       indicId,
       territoireCode,

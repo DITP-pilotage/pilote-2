@@ -19,8 +19,6 @@ import { FetchHttpClient } from "@/server/import-indicateur/infrastructure/adapt
 import { HttpClient } from "@/server/import-indicateur/domain/ports/HttpClient.interface";
 import { ImportDonneeIndicateurAPIHandler } from "@/server/import-indicateur/infrastructure/handlers/ImportDonneeIndicateurAPIHandler";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { PrismaIndicateurTerritoireValeurEvenementRepository } from "@/server/import-indicateur/infrastructure/adapters/PrismaIndicateurTerritoireValeurEvenementRepository";
-import { IndicateurTerritoireValeurEvenementRepository } from "@/server/import-indicateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { PropositionValeurAvancementRepository } from "./domain/ports/PropositionValeurAvancementRepository";
 import { PrismaPropositionValeurAvancementRepository } from "./infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
 
@@ -38,7 +36,6 @@ export type ImportIndicateurDependencies = {
   rapportRepository: RapportRepository;
   importDonneeIndicateurAPIHandler: ImportDonneeIndicateurAPIHandler;
   propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
-  indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
 };
 export const getImportIndicateurContainer = (
   initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
@@ -72,9 +69,6 @@ export const getImportIndicateurContainer = (
     importDonneeIndicateurAPIHandler: asClass(ImportDonneeIndicateurAPIHandler),
     propositionValeurAvancementRepository: asClass(
       PrismaPropositionValeurAvancementRepository,
-    ),
-    indicateurTerritoireValeurEvenementRepository: asClass(
-      PrismaIndicateurTerritoireValeurEvenementRepository,
     ),
   });
 };
