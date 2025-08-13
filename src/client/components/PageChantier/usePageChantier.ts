@@ -8,7 +8,7 @@ import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
 import { PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS } from "@/client/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj";
 
-const PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE = new Set([
+const PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_AVANCEMENT = new Set([
   ProfilEnum.DITP_ADMIN,
   ProfilEnum.PREFET_DEPARTEMENT,
   ProfilEnum.PREFET_REGION,
@@ -16,18 +16,22 @@ const PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE = new Set([
   ProfilEnum.COORDINATEUR_DEPARTEMENT,
   ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
   ProfilEnum.SERVICES_DECONCENTRES_REGION,
+  ProfilEnum.DIR_PROJET,
 ]);
+
+const PROFIL_AUTORISE_A_ACCEPTER_LES_PROPOSITIONS_DE_VALEUR_AVANCEMENT =
+  new Set([ProfilEnum.DIR_PROJET, ProfilEnum.EQUIPE_DIR_PROJET]);
 
 const PROFIL_INTERDIT_DE_VOIR_LE_SELECTEUR_DE_MAILLE = new Set([
   ProfilEnum.COORDINATEUR_DEPARTEMENT,
   ProfilEnum.RESPONSABLE_DEPARTEMENT,
 ]);
 
-export default function usePageChantier(
+export const usePageChantier = (
   chantier: Chantier,
   territoireSélectionné: DétailTerritoire,
   territoireCode: string,
-) {
+) => {
   const { data: session } = useSession();
   const territoires = territoiresTerritoiresStore();
 
@@ -40,7 +44,15 @@ export default function usePageChantier(
 
   const estAutoriseAProposerUneValeurAvancement =
     territoireCode !== "NAT-FR" &&
-    PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_ACTUELLE.has(
+    PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_AVANCEMENT.has(
+      session!.profil,
+    ) &&
+    estAutoriseAModifierLesPublications &&
+    chantier.statut !== "ARCHIVE";
+
+  const estAutoriseAAccepterLesPropositionsDeValeurAvancement =
+    territoireCode !== "NAT-FR" &&
+    PROFIL_AUTORISE_A_ACCEPTER_LES_PROPOSITIONS_DE_VALEUR_AVANCEMENT.has(
       session!.profil,
     ) &&
     estAutoriseAModifierLesPublications &&
@@ -95,9 +107,10 @@ export default function usePageChantier(
     estAutoriseAImporterDesIndicateurs,
     estAutoriseAVoirLeBoutonFicheConducteur,
     estAutoriseAProposerUneValeurAvancement,
+    estAutoriseAAccepterLesPropositionsDeValeurAvancement,
     estAutoriseAModifierLesPublications,
     estAutoriseAModifierLesObjectifs,
     estAutoriseAVoirLesAlertesMAJIndicateurs,
     estAutoriseAVoirLeSelecteurDeMaille,
   };
-}
+};

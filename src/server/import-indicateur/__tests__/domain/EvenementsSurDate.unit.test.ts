@@ -47,7 +47,10 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(85);
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(2);
-      expect(nouveauEvenement.donneesComplementaires).toEqual({});
+      expect(nouveauEvenement.donneesComplementaires).toEqual({
+        motif: "motif de la proposition",
+        sourceDonneeEtMethodeCalcul: "source de la donnée et méthode de calcul",
+      });
 
       expect(tousLesEvenements).toHaveLength(2);
       expect(evenementsSurDate.evenementsPropositionValeur()).toHaveLength(1);
@@ -291,7 +294,7 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(85);
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(3);
-      expect(nouveauEvenement.donneesComplementaires).toEqual({});
+      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_MODIFIEE avec succès quand une PROPOSITION_VALEUR_MODIFIEE existe déjà", () => {
@@ -564,7 +567,7 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(80); // Valeur de la proposition supprimée
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(3);
-      expect(nouveauEvenement.donneesComplementaires).toEqual({});
+      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_SUPPRIMEE avec succès quand une PROPOSITION_VALEUR_MODIFIEE est en cours", () => {
@@ -824,7 +827,7 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(80); // Valeur de la proposition accusée réception
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(3);
-      expect(nouveauEvenement.donneesComplementaires).toEqual({});
+      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_ACCUSEE_RECEPTION avec succès quand une PROPOSITION_VALEUR_MODIFIEE est en cours", () => {
@@ -1092,7 +1095,7 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(80);
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(3);
-      expect(nouveauEvenement.donneesComplementaires).toEqual({});
+      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_REFUSEE avec succès quand une PROPOSITION_VALEUR_MODIFIEE est en cours", () => {
@@ -1150,7 +1153,7 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(80);
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(4);
-      expect(nouveauEvenement.donneesComplementaires).toEqual({});
+      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_REFUSEE avec succès quand une PROPOSITION_VALEUR_ACCUSEE_RECEPTION existe", () => {
@@ -1316,7 +1319,7 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(80);
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(3);
-      expect(nouveauEvenement.donneesComplementaires).toEqual({});
+      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_ACCEPTEE avec succès quand une PROPOSITION_VALEUR_MODIFIEE est en cours", () => {
@@ -1374,7 +1377,7 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(80);
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(4);
-      expect(nouveauEvenement.donneesComplementaires).toEqual({});
+      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_ACCEPTEE avec succès quand une PROPOSITION_VALEUR_ACCUSEE_RECEPTION existe", () => {
@@ -1543,7 +1546,7 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(90); // Valeur modifiée
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(3);
-      expect(nouveauEvenement.donneesComplementaires).toEqual({});
+      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION avec succès quand une PROPOSITION_VALEUR_ACCUSEE_RECEPTION existe", () => {
