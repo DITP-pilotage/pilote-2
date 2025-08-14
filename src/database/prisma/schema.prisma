@@ -232,6 +232,7 @@ model indicateur_territoire {
   motif_proposition                        String?
   source_donnee_methode_calcul_proposition String?
   taux_avancement_mandat_proposition       Float?
+  taux_avancement_mandat_proposition_v2    Float?
   prochaine_date_valeur_actuelle           DateTime?                                @db.Date
   evolution_valeur_actuelle                Json?
   territoire                               territoire                               @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
@@ -246,19 +247,20 @@ model indicateur_territoire {
 }
 
 model indicateur_territoire_jalon {
-  id                          String
-  territoire_code             String
-  code_insee                  String
-  maille                      Maille
-  jalon                       Int
-  zone_id                     String
-  date_valeur_cible           DateTime?             @db.Date
-  taux_avancement             Float?
-  valeur_cible                Float?
-  taux_avancement_proposition Float?
-  date_valeur_actuelle        DateTime?             @db.Date
-  valeur_actuelle             Float?
-  indicateur_territoire       indicateur_territoire @relation(fields: [id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
+  id                             String
+  territoire_code                String
+  code_insee                     String
+  maille                         Maille
+  jalon                          Int
+  zone_id                        String
+  date_valeur_cible              DateTime?             @db.Date
+  taux_avancement                Float?
+  valeur_cible                   Float?
+  taux_avancement_proposition    Float?
+  taux_avancement_proposition_v2 Float?
+  date_valeur_actuelle           DateTime?             @db.Date
+  valeur_actuelle                Float?
+  indicateur_territoire          indicateur_territoire @relation(fields: [id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([id, territoire_code, jalon])
   @@schema("public")
@@ -668,7 +670,7 @@ model indicateur_territoire_valeur_evenement {
   type_evenement          type_evenement
   type_valeur             type_valeur
   date_valeur             DateTime              @db.Date
-  valeur                  Float
+  valeur                  Float?
   donnees_complementaires Json
   date_creation           DateTime              @default(now())
   ordre                   Int

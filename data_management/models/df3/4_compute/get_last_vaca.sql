@@ -9,14 +9,17 @@ sort_mesures_vaca_last as (
 	select * from sort_mesures_vaca where r=1
 )
 
-SELECT 
-	indic_id,
-	zone_id, 
-	metric_date as date_valeur_actuelle,
-	vaca,
-	tag,
-	taa_courant,
-	vacp,
-	tap_global,
-	tap_courant
+SELECT
+    indic_id,
+    zone_id,
+    metric_date as date_valeur_actuelle,
+    vaca,
+    tag,
+    taa_courant,
+    vacp,
+    tap_global,
+    tap_courant,
+    vacp_v2,
+    tap_global_v2,
+    tap_courant_v2
 FROM sort_mesures_vaca_last
