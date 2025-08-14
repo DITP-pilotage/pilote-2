@@ -849,7 +849,10 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             indicateurTerritoireJalon?.taux_avancement,
           ),
         },
-        proposition: this.recupererPropositionValeurAvancement(indicateurRow),
+        proposition: this.recupererPropositionValeurAvancement(
+          indicateurRow,
+          indicateurTerritoireJalon,
+        ),
         unite: indicateurRow.indicateur_identite.unite_mesure,
         estApplicable: indicateurRow.est_applicable,
         dateImport: formatDate(
@@ -880,6 +883,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         auteur: Pick<PrismaUtilisateur, "nom" | "prenom">;
       })[];
     },
+    indicateurTerritoireJalon: PrismaIndicateurTerritoireJalon | undefined,
   ): DetailIndicateurPropositionValeurAvancement | null {
     const dernierEvenementProposition =
       indicateurRow.indicateur_territoire_valeur_evenement.find(
@@ -894,9 +898,12 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         dernierEvenementProposition.type_evenement,
       )
       ? {
-          valeurAvancement: dernierEvenementProposition.valeur,
-          tauxAvancement: null,
-          tauxAvancementIntermediaire: null,
+          valeurAvancement: dernierEvenementProposition.valeur!,
+          tauxAvancement: indicateurRow.taux_avancement_mandat_proposition_v2,
+          tauxAvancementIntermediaire:
+            indicateurTerritoireJalon !== undefined
+              ? indicateurTerritoireJalon.taux_avancement_proposition_v2
+              : null,
           auteur: `${dernierEvenementProposition.auteur.prenom} ${dernierEvenementProposition.auteur.nom}`,
           dateProposition: formatDate(dernierEvenementProposition.date_valeur),
           motif:

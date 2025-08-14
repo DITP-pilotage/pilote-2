@@ -8,7 +8,6 @@
     )
 }}
 
-
 -- Reformattage (pour chaque indicateur-zone):
 --	- Retourne au format [{date: "YYYY-MM-DD", valeur: 12.34}]
 WITH
@@ -24,6 +23,7 @@ get_evol_vaca AS (
     WHERE vaca IS NOT null
     GROUP BY indic_id, zone_id
 )
+
 
 SELECT
     meta_indic.id,
@@ -65,6 +65,7 @@ SELECT
     pva.motif_proposition AS motif_proposition,
     pva.source_donnee_methode_calcul AS source_donnee_methode_calcul_proposition,
     a.tap_global AS taux_avancement_mandat_proposition,
+    a.tap_global_v2 AS taux_avancement_mandat_proposition_v2,
     CASE
         WHEN
             coalesce(z_appl.est_applicable, true) AND maille_appl.maille_est_applicable

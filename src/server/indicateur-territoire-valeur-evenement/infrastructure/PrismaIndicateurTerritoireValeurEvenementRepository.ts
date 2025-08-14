@@ -41,7 +41,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           typeEvenement: ligne.type_evenement,
           typeValeur: ligne.type_valeur,
           dateValeur: ligne.date_valeur,
-          valeur: ligne.valeur,
+          valeur: ligne.valeur!,
           donneesComplementaires:
             ligne.donnees_complementaires as DonneesComplementaires<
               typeof ligne.type_evenement
@@ -80,7 +80,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           typeEvenement: ligne.type_evenement,
           typeValeur: ligne.type_valeur,
           dateValeur: ligne.date_valeur,
-          valeur: ligne.valeur,
+          valeur: ligne.valeur!,
           donneesComplementaires:
             ligne.donnees_complementaires as DonneesComplementaires<
               typeof ligne.type_evenement
