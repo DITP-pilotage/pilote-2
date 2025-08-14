@@ -68,6 +68,10 @@ const IndicateurBlocStyled = styled.div`
     color: var(--text-mention-grey) !important;
   }
 
+  .texte-jaune {
+    color: var(--yellow-moutarde-main-679) !important;
+  }
+
   .infobulle-date-previsionnelle {
     position: relative;
     min-height: 0;

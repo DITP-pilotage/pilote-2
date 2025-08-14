@@ -18,7 +18,7 @@ const IndicateurPonderation: FunctionComponent<IndicateurPondérationProps> = ({
   mailleSélectionnée,
 }) => {
   return (
-    <p className="fr-text--xs texte-gris">
+    <p className="fr-text--xs texte-gris fr-mb-0">
       {indicateurPondération === null ? (
         `La pondération n'est pas disponible pour le taux d'avancement ${adjectifÀPartirDeLaMaille[mailleSélectionnée]}.`
       ) : indicateurPondération === 0 ? (

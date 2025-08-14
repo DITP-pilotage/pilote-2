@@ -1,4 +1,4 @@
-import { Fragment, FunctionComponent } from "react";
+import { Fragment, FunctionComponent, useState } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import Titre from "@/components/_commons/Titre/Titre";
 import PictoBaromètre from "@/components/_commons/PictoBaromètre/PictoBaromètre";
@@ -23,6 +23,7 @@ import IndicateurTendance from "@/components/_commons/IndicateursChantier/Bloc/T
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { ModaleSuppressionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurAvancement/ModaleSuppressionValeurAvancement";
+import BoutonSousLigné from "@/client/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import useIndicateurBloc from "./useIndicateurBloc";
 import useIndicateurAlerteDateMaj from "./useIndicateurAlerteDateMaj";
@@ -74,6 +75,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   cartographieGaucheIndicateur,
   nouveauxGraphiquesSontActifs,
 }) => {
+  const [propositionEstVisible, setPropositionEstVisible] = useState(false);
   const { maille: mailleTerritoireSelectionnee } =
     territoireCodeVersMailleCodeInsee(territoireCode);
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
@@ -245,6 +247,58 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   }
                   mailleSélectionnée={mailleTerritoireSelectionnee}
                 />
+                {variableContenuFFPropositionValeurAvancementV2 ? (
+                  <div>
+                    {informationsIndicateurs[0].données.proposition === null ? (
+                      <div className="flex flex-align-center">
+                        <p className="fr-text--xs texte-gris fr-mb-0">
+                          Aucune proposition pour la valeur d'avancement de cet
+                          indicateur
+                        </p>
+                        <BoutonSousLigné
+                          ariaControls={
+                            ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
+                            indicateur.id
+                          }
+                          classNameSupplémentaires="fr-link--xs fr-link--icon-left fr-icon-edit-line fr-ml-2w texte-gris"
+                          dataFrOpened={false}
+                          type="button"
+                        >
+                          Proposer une autre valeur d'avancement
+                        </BoutonSousLigné>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="fr-text--xs texte-jaune fr-mb-0">
+                          <strong>
+                            Proposition de nouvelle valeur d'avancement en cours
+                          </strong>{" "}
+                          – présentée par le territoire le{" "}
+                          <strong>
+                            {formaterDate(
+                              informationsIndicateurs[0].données.proposition
+                                .dateProposition,
+                              "DD/MM/YYYY",
+                            )}
+                          </strong>{" "}
+                          et en attente de lecture par la direction de projet
+                        </p>
+                        <BoutonSousLigné
+                          classNameSupplémentaires={`fr-link--xs fr-link--icon-left ${propositionEstVisible ? "fr-icon-eye-off-line" : "fr-icon-eye-line"} texte-jaune `}
+                          dataFrOpened={false}
+                          onClick={() =>
+                            setPropositionEstVisible(!propositionEstVisible)
+                          }
+                          type="button"
+                        >
+                          {propositionEstVisible
+                            ? "Masquer la proposition"
+                            : "Afficher la proposition"}
+                        </BoutonSousLigné>
+                      </>
+                    )}
+                  </div>
+                ) : null}
               </div>
               {détailsIndicateur[territoireCode]?.tendance === "BAISSE" ? (
                 <IndicateurTendance />
@@ -431,37 +485,40 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           informationIndicateur.données.proposition === null ? (
                             <tr className="ligne-creation-proposition-valeur-davancement">
                               <td colSpan={8}>
-                                <div className="flex w-full justify-end">
-                                  {propositionSurMailleDesactivee ? (
-                                    <Infobulle
-                                      classNameInfoBulle="tooltip-accordeon"
-                                      idHtml={`infobulle-proposition-desactivee-${indicateur.id}`}
+                                {!variableContenuFFPropositionValeurAvancementV2 ? (
+                                  <div className="flex w-full justify-end">
+                                    {propositionSurMailleDesactivee ? (
+                                      <Infobulle
+                                        classNameInfoBulle="tooltip-accordeon"
+                                        idHtml={`infobulle-proposition-desactivee-${indicateur.id}`}
+                                      >
+                                        <p className="fr-text--sm">
+                                          Les résultats de cet indicateur sont
+                                          agrégés depuis le niveau
+                                          départemental. Il n'est donc pas
+                                          possible de proposer une valeur à une
+                                          autre maille. Vous pouvez, soit
+                                          proposer une valeur directement au
+                                          niveau d'un département ou contacter
+                                          directement le directeur de projet via
+                                          l'onglet Responsables.
+                                        </p>
+                                      </Infobulle>
+                                    ) : null}
+                                    <button
+                                      aria-controls={
+                                        ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
+                                        indicateur.id
+                                      }
+                                      className="fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-davancement"
+                                      data-fr-opened="false"
+                                      disabled={propositionSurMailleDesactivee}
+                                      type="button"
                                     >
-                                      <p className="fr-text--sm">
-                                        Les résultats de cet indicateur sont
-                                        agrégés depuis le niveau départemental.
-                                        Il n'est donc pas possible de proposer
-                                        une valeur à une autre maille. Vous
-                                        pouvez, soit proposer une valeur
-                                        directement au niveau d'un département
-                                        ou contacter directement le directeur de
-                                        projet via l'onglet Responsables.
-                                      </p>
-                                    </Infobulle>
-                                  ) : null}
-                                  <button
-                                    aria-controls={
-                                      ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
-                                      indicateur.id
-                                    }
-                                    className="fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-davancement"
-                                    data-fr-opened="false"
-                                    disabled={propositionSurMailleDesactivee}
-                                    type="button"
-                                  >
-                                    Proposer une autre valeur d'avancement
-                                  </button>
-                                </div>
+                                      Proposer une autre valeur d'avancement
+                                    </button>
+                                  </div>
+                                ) : null}
                                 {!variableContenuFFPropositionValeurAvancementV2 ? (
                                   <ModalePropositionValeurAvancement
                                     detailIndicateur={
@@ -502,7 +559,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               </td>
                             </tr>
                           ) : informationIndicateur.données.proposition !==
-                            null ? (
+                              null &&
+                            (propositionEstVisible ||
+                              !variableContenuFFPropositionValeurAvancementV2) ? (
                             <>
                               <tr
                                 className="ligne-modification-proposition-valeur-davancement"
@@ -662,7 +721,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   />
                                 </td>
                               </tr>
-                              {estAutoriseAProposerUneValeurAvancement ? (
+                              {(propositionEstVisible ||
+                                !variableContenuFFPropositionValeurAvancementV2) &&
+                              estAutoriseAProposerUneValeurAvancement ? (
                                 <tr className="ligne-modification-proposition-valeur-davancement">
                                   <td colSpan={8}>
                                     <div className="flex w-full justify-end">
@@ -716,7 +777,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     />
                                   </td>
                                 </tr>
-                              ) : estAutoriseAAccepterLesPropositionsDeValeurAvancement ? (
+                              ) : propositionEstVisible &&
+                                estAutoriseAAccepterLesPropositionsDeValeurAvancement ? (
                                 <tr className="ligne-modification-proposition-valeur-davancement">
                                   <td colSpan={8}>
                                     <div className="flex w-full justify-end">
