@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent } from "react";
 import { FormProvider } from "react-hook-form";
 import Modale from "@/components/_commons/Modale/Modale";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
@@ -28,10 +28,6 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
   territoireCodeInsee,
   territoireNom,
 }) => {
-  const [decision, setDecision] = useState<
-    "accepter" | "accepter-avec-modification" | "refuser"
-  >("accepter");
-
   const {
     reactHookForm,
     etapePropositionValeurAvancement,
@@ -43,8 +39,9 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
     indicateur,
     detailIndicateur,
     territoireCode,
-    decision,
   });
+
+  const decision = reactHookForm.watch("decision");
 
   return (
     <Modale idHtml={generatedHTMLID} tailleModale="lg">
@@ -76,6 +73,9 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
           <FormProvider {...reactHookForm}>
             <form
               method="post"
+              onChange={() => {
+                reactHookForm.trigger();
+              }}
               onSubmit={reactHookForm.handleSubmit((data) => {
                 traiterDecision(data);
               })}
@@ -152,11 +152,10 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                   <div className="fr-fieldset__element">
                     <div className="fr-radio-group">
                       <input
-                        checked={decision === "accepter"}
+                        {...reactHookForm.register("decision")}
                         id="accepter"
-                        name="decision"
-                        onChange={() => setDecision("accepter")}
                         type="radio"
+                        value="accepter"
                       />
                       <label className="fr-label" htmlFor="accepter">
                         accepter la proposition
@@ -166,14 +165,11 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                   <div className="fr-fieldset__element">
                     <div className="fr-radio-group">
                       <input
-                        checked={decision === "accepter-avec-modification"}
+                        {...reactHookForm.register("decision")}
                         disabled
                         id="accepter-avec-modification"
-                        name="decision"
-                        onChange={() =>
-                          setDecision("accepter-avec-modification")
-                        }
                         type="radio"
+                        value="accepter-avec-modification"
                       />
                       <label
                         className="fr-label"
@@ -213,11 +209,10 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                   <div className="fr-fieldset__element">
                     <div className="fr-radio-group">
                       <input
-                        checked={decision === "refuser"}
+                        {...reactHookForm.register("decision")}
                         id="refuser"
-                        name="decision"
-                        onChange={() => setDecision("refuser")}
                         type="radio"
+                        value="refuser"
                       />
                       <label className="fr-label" htmlFor="refuser">
                         refuser la proposition
@@ -238,9 +233,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                           : "Motif de la décision (Facultatif)"
                       }
                       placeholder="Indiquez ici les raisons qui motivent votre choix."
-                      register={reactHookForm.register("motif", {
-                        required: decision === "refuser",
-                      })}
+                      register={reactHookForm.register("motif")}
                     />
                   </div>
 
@@ -311,7 +304,9 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                     <p>
                       {decision === "refuser"
                         ? "La valeur d'avancement de cet indicateur ainsi que le taux d'avancement du chantier sont inchangés."
-                        : "La valeur d'avancement de cet indicateur est mise à jour à partir de la valeur proposée. Elle est prise en compte dans le calcul du taux d'avancement global du chantier."}{" "}
+                        : "La valeur d'avancement de cet indicateur est mise à jour à partir de la valeur proposée. Elle est prise en compte dans le calcul du taux d'avancement global du chantier."}
+                    </p>
+                    <p>
                       La proposition ainsi que votre décision sont archivées
                       dans l'historique de l'indicateur. Le territoire sera
                       informé de votre décision et pourra, le cas échéant, faire
