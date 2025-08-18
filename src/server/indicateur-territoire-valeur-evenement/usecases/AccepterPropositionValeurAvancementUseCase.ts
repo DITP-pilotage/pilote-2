@@ -16,13 +16,32 @@ export class AccepterPropositionValeurAvancementUseCase {
     indicId,
     territoireCode,
     dateValeurAvancement,
-    auteurAcceptation,
+    idAuteurAcceptation,
+    motif,
   }: {
     indicId: string;
     territoireCode: string;
     dateValeurAvancement: string;
-    auteurAcceptation: string;
+    idAuteurAcceptation: string;
+    motif: string;
   }) {
-    throw new Error("Not implemented");
+    const evenementsSurDate =
+      await this.indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate(
+        {
+          indicId,
+          territoireCode,
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: new Date(dateValeurAvancement),
+        },
+      );
+
+    const evenements =
+      evenementsSurDate.creerEvenementPropositionValeurAcceptee({
+        auteurId: idAuteurAcceptation,
+      });
+
+    await this.indicateurTerritoireValeurEvenementRepository.enregistrerTous(
+      evenements,
+    );
   }
 }

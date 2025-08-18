@@ -429,7 +429,7 @@ export class EvenementsSurDate {
       throw new Error("Aucune proposition de valeur n'est en cours");
     }
 
-    const evenement =
+    const evenementAcceptation =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
         {
           indicId: this.identifiantFlux.indicId,
@@ -444,9 +444,26 @@ export class EvenementsSurDate {
           ordre: this.prochainOrdre(),
         },
       );
+    this.ajouterEvenement(evenementAcceptation);
 
-    this.ajouterEvenement(evenement);
-    return evenement;
+    const evenementModification =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: this.identifiantFlux.indicId,
+          territoireCode: this.identifiantFlux.territoireCode,
+          typeEvenement: "VALEUR_MODIFIEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: this.dateValeur(),
+          valeur: evenementPropositionEnCours.valeur,
+          donneesComplementaires: undefined,
+          idAuteurModification: auteurId,
+          correlationId: randomUUID(),
+          ordre: this.prochainOrdre(),
+        },
+      );
+    this.ajouterEvenement(evenementModification);
+
+    return [evenementAcceptation, evenementModification];
   }
 
   creerEvenementPropositionValeurAccepteeAvecModification({

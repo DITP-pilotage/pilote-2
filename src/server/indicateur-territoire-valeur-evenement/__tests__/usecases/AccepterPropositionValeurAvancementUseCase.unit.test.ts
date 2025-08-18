@@ -23,8 +23,8 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
     const input = {
       indicId: "IND-006",
       territoireCode: "COM-13001",
-      dateValeurAvancement: new Date("2024-06-08"),
-      idAuteurModification: "user-ghi",
+      dateValeurAvancement: "2024-06-08",
+      idAuteurAcceptation: "user-ghi",
       motif: "Motif de la proposition",
     };
 
@@ -68,7 +68,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
         identifiantFlux: {
           indicId: input.indicId,
           territoireCode: input.territoireCode,
-          date: input.dateValeurAvancement.toISOString().split("T")[0],
+          date: input.dateValeurAvancement,
         },
         evenementsSurDate: evenementsExistants,
         tousLesEvenements: evenementsExistants,
@@ -80,22 +80,30 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
 
     // Then
     expect(
-      indicateurTerritoireValeurEvenementRepository.enregistrer,
-    ).toHaveBeenCalledWith(
+      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
+    ).toHaveBeenCalledWith([
       expect.objectContaining({
         indicId: input.indicId,
         territoireCode: input.territoireCode,
-        typeEvenement: "PROPOSITION_VALEUR_CREEE",
+        typeEvenement: "PROPOSITION_VALEUR_ACCEPTEE",
         typeValeur: "VALEUR_AVANCEMENT",
-        dateValeur: input.dateValeurAvancement,
-        valeur: input.valeurAvancement,
-        idAuteurModification: input.idAuteurModification,
-        ordre: 1,
-        donneesComplementaires: {
-          motif: input.motif,
-          sourceDonneeEtMethodeCalcul: input.sourceDonneeEtMethodeCalcul,
-        },
+        dateValeur: new Date(input.dateValeurAvancement),
+        valeur: 20,
+        idAuteurModification: input.idAuteurAcceptation,
+        ordre: 3,
+        donneesComplementaires: undefined,
       }),
-    );
+      expect.objectContaining({
+        indicId: input.indicId,
+        territoireCode: input.territoireCode,
+        typeEvenement: "VALEUR_MODIFIEE",
+        typeValeur: "VALEUR_AVANCEMENT",
+        dateValeur: new Date(input.dateValeurAvancement),
+        valeur: 20,
+        idAuteurModification: input.idAuteurAcceptation,
+        ordre: 4,
+        donneesComplementaires: undefined,
+      }),
+    ]);
   });
 });
