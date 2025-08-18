@@ -5,6 +5,7 @@ import {
   MesureIndicateurRepository,
 } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/MesureIndicateurRepository";
 import { convertirTerritoireCodeEnZoneId } from "@/server/app/domain/Territoire";
+import { toISODate } from "@/server/app/domain/Dates";
 
 export class PrismaMesureIndicateurRepository
   implements MesureIndicateurRepository
@@ -23,7 +24,7 @@ export class PrismaMesureIndicateurRepository
         zone_id: convertirTerritoireCodeEnZoneId(
           mesureIndicateur.territoireCode,
         ),
-        metric_date: mesureIndicateur.dateValeur.toISOString().split("T")[0],
+        metric_date: toISODate(mesureIndicateur.dateValeur),
         metric_value: mesureIndicateur.valeur.toString(),
         metric_type: "va",
       },

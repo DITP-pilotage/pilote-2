@@ -3,6 +3,7 @@ import { CreerIndicateurTerritoireValeurEvenementUseCase } from "@/server/indica
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
+import { toISODate } from "@/server/app/domain/Dates";
 
 describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
   let creerIndicateurTerritoireValeurEvenementUseCase: CreerIndicateurTerritoireValeurEvenementUseCase;
@@ -34,7 +35,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
         identifiantFlux: {
           indicId: input.indicId,
           territoireCode: input.territoireCode,
-          date: input.dateValeurAvancement.toISOString().split("T")[0],
+          date: toISODate(input.dateValeurAvancement),
         },
         evenementsSurDate: [],
         tousLesEvenements: [],
@@ -82,7 +83,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
         identifiantFlux: {
           indicId: input.indicId,
           territoireCode: input.territoireCode,
-          date: input.dateValeurAvancement.toISOString().split("T")[0],
+          date: toISODate(input.dateValeurAvancement),
         },
         evenementsSurDate: [],
         tousLesEvenements: [],
@@ -120,7 +121,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
         identifiantFlux: {
           indicId: input.indicId,
           territoireCode: input.territoireCode,
-          date: input.dateValeurAvancement.toISOString().split("T")[0],
+          date: toISODate(input.dateValeurAvancement),
         },
         evenementsSurDate: [],
         tousLesEvenements: [],
@@ -206,7 +207,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
         identifiantFlux: {
           indicId: input.indicId,
           territoireCode: input.territoireCode,
-          date: input.dateValeurAvancement.toISOString().split("T")[0],
+          date: toISODate(input.dateValeurAvancement),
         },
         evenementsSurDate: evenementsExistants,
         tousLesEvenements: evenementsExistants,

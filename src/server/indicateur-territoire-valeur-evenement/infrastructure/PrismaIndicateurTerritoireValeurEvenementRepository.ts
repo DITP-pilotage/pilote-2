@@ -8,6 +8,7 @@ import { TypeValeur } from "@/server/indicateur-territoire-valeur-evenement/doma
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
+import { toISODate } from "@/server/app/domain/Dates";
 
 export class PrismaIndicateurTerritoireValeurEvenementRepository
   implements IndicateurTerritoireValeurEvenementRepository
@@ -99,7 +100,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
       {
         indicId: args.indicId,
         territoireCode: args.territoireCode,
-        date: args.dateValeur.toISOString().split("T")[0],
+        date: toISODate(args.dateValeur),
       },
       evenements,
     );
