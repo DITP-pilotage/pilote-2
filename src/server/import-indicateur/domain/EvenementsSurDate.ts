@@ -1,5 +1,8 @@
 import { randomUUID } from "node:crypto";
-import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
+import {
+  DonneesComplementaires,
+  IndicateurTerritoireValeurEvenement,
+} from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
 
 const estPropositionEnCours = (
@@ -15,11 +18,25 @@ type IdentifiantFlux = {
 };
 
 export class EvenementsSurDate {
-  constructor(
-    private identifiantFlux: IdentifiantFlux,
-    private evenementsSurDate: IndicateurTerritoireValeurEvenement[],
-    private tousLesEvenements: IndicateurTerritoireValeurEvenement[],
-  ) {}
+  readonly identifiantFlux: IdentifiantFlux;
+
+  readonly evenementsSurDate: IndicateurTerritoireValeurEvenement[];
+
+  readonly tousLesEvenements: IndicateurTerritoireValeurEvenement[];
+
+  constructor({
+    identifiantFlux,
+    evenementsSurDate,
+    tousLesEvenements,
+  }: {
+    identifiantFlux: IdentifiantFlux;
+    evenementsSurDate: IndicateurTerritoireValeurEvenement[];
+    tousLesEvenements: IndicateurTerritoireValeurEvenement[];
+  }) {
+    this.identifiantFlux = identifiantFlux;
+    this.evenementsSurDate = evenementsSurDate;
+    this.tousLesEvenements = tousLesEvenements;
+  }
 
   static pourDate(
     identifiantFlux: IdentifiantFlux,
@@ -30,11 +47,11 @@ export class EvenementsSurDate {
         evenement.dateValeur.toISOString().split("T")[0] ===
         identifiantFlux.date,
     );
-    return new EvenementsSurDate(
+    return new EvenementsSurDate({
       identifiantFlux,
       evenementsSurDate,
-      evenements,
-    );
+      tousLesEvenements: evenements,
+    });
   }
 
   ajouterEvenement(evenement: IndicateurTerritoireValeurEvenement) {
@@ -104,7 +121,7 @@ export class EvenementsSurDate {
     return this.evenementPropositionValeurAccuseeReception() !== null;
   }
 
-  creerEvenementValeurHistorisee(auteurId: string) {
+  creerEvenementValeurHistorisee({ auteurId }: { auteurId: string }) {
     const valeurEnCours = this.valeurEnCours();
     if (valeurEnCours == null)
       throw new Error("Pas de valeur en cours pour l'historisation");
@@ -128,10 +145,13 @@ export class EvenementsSurDate {
     return evenement;
   }
 
-  creerEvenementValeurHistoriseeACreation(
-    indicateurData: IndicateurData,
-    auteurId: string,
-  ) {
+  creerEvenementValeurHistoriseeACreation({
+    indicateurData,
+    auteurId,
+  }: {
+    indicateurData: IndicateurData;
+    auteurId: string;
+  }) {
     const evenement =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
         {
@@ -152,9 +172,11 @@ export class EvenementsSurDate {
     return evenement;
   }
 
-  creerEvenementPropositionValeurIgnoreeValeurHistorisee(
-    auteurId: string,
-  ): IndicateurTerritoireValeurEvenement {
+  creerEvenementPropositionValeurIgnoreeValeurHistorisee({
+    auteurId,
+  }: {
+    auteurId: string;
+  }): IndicateurTerritoireValeurEvenement {
     const evenementPropositionValeur = this.evenementPropositionValeurEnCours();
     if (!evenementPropositionValeur)
       throw new Error("Aucune proposition de valeur n'est en cours");
@@ -177,7 +199,11 @@ export class EvenementsSurDate {
     return evenement;
   }
 
-  creerEvenementPropositionValeurIgnoreeValeurModifiee(auteurId: string) {
+  creerEvenementPropositionValeurIgnoreeValeurModifiee({
+    auteurId,
+  }: {
+    auteurId: string;
+  }) {
     const evenementExistant = this.evenementPropositionValeurEnCours();
     if (!evenementExistant)
       throw new Error("Aucune proposition de valeur n'est en cours");
@@ -202,11 +228,15 @@ export class EvenementsSurDate {
     return evenement;
   }
 
-  creerEvenementValeurCreeeOuModifiee(
-    indicateurData: IndicateurData,
-    auteurId: string,
-    estValeurModifiee: boolean,
-  ) {
+  creerEvenementValeurCreeeOuModifiee({
+    indicateurData,
+    auteurId,
+    estValeurModifiee,
+  }: {
+    indicateurData: IndicateurData;
+    auteurId: string;
+    estValeurModifiee: boolean;
+  }) {
     const evenement =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
         {
@@ -227,7 +257,15 @@ export class EvenementsSurDate {
     return evenement;
   }
 
-  creerEvenementPropositionValeurCreee(valeur: number, auteurId: string) {
+  creerEvenementPropositionValeurCreee({
+    valeur,
+    auteurId,
+    donneesComplementaires,
+  }: {
+    valeur: number;
+    auteurId: string;
+    donneesComplementaires: DonneesComplementaires<"PROPOSITION_VALEUR_CREEE">;
+  }) {
     if (this.evenementPropositionValeurEnCours()) {
       throw new Error("Une proposition de valeur est déjà en cours");
     }
@@ -243,11 +281,7 @@ export class EvenementsSurDate {
           typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: this.dateValeur(),
           valeur,
-          donneesComplementaires: {
-            motif: "motif de la proposition",
-            sourceDonneeEtMethodeCalcul:
-              "source de la donnée et méthode de calcul",
-          },
+          donneesComplementaires,
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
           ordre: this.prochainOrdre(),
@@ -258,7 +292,13 @@ export class EvenementsSurDate {
     return evenement;
   }
 
-  creerEvenementPropositionValeurModifiee(valeur: number, auteurId: string) {
+  creerEvenementPropositionValeurModifiee({
+    valeur,
+    auteurId,
+  }: {
+    valeur: number;
+    auteurId: string;
+  }) {
     if (this.estEvenementPropositionValeurAccuseeReception()) {
       throw new Error("La proposition de valeur a déjà été accusée réception");
     }
@@ -285,7 +325,7 @@ export class EvenementsSurDate {
     return evenement;
   }
 
-  creerEvenementPropositionValeurSupprimee(auteurId: string) {
+  creerEvenementPropositionValeurSupprimee({ auteurId }: { auteurId: string }) {
     const evenementPropositionEnCours =
       this.evenementPropositionValeurEnCours();
 
@@ -316,7 +356,11 @@ export class EvenementsSurDate {
     return evenement;
   }
 
-  creerEvenementPropositionValeurAccuseeReception(auteurId: string) {
+  creerEvenementPropositionValeurAccuseeReception({
+    auteurId,
+  }: {
+    auteurId: string;
+  }) {
     const evenementPropositionEnCours =
       this.evenementPropositionValeurEnCours();
 
@@ -347,7 +391,7 @@ export class EvenementsSurDate {
     return evenement;
   }
 
-  creerEvenementPropositionValeurRefusee(auteurId: string) {
+  creerEvenementPropositionValeurRefusee({ auteurId }: { auteurId: string }) {
     const evenementPropositionEnCours =
       this.evenementPropositionValeurEnCours() ??
       this.evenementPropositionValeurAccuseeReception();
@@ -376,7 +420,13 @@ export class EvenementsSurDate {
     return evenement;
   }
 
-  creerEvenementPropositionValeurAcceptee(auteurId: string) {
+  creerEvenementPropositionValeurAcceptee({
+    auteurId,
+    motif,
+  }: {
+    auteurId: string;
+    motif: string;
+  }) {
     const evenementPropositionEnCours =
       this.evenementPropositionValeurEnCours() ??
       this.evenementPropositionValeurAccuseeReception();
@@ -385,12 +435,29 @@ export class EvenementsSurDate {
       throw new Error("Aucune proposition de valeur n'est en cours");
     }
 
-    const evenement =
+    const evenementAcceptation =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
         {
           indicId: this.identifiantFlux.indicId,
           territoireCode: this.identifiantFlux.territoireCode,
           typeEvenement: "PROPOSITION_VALEUR_ACCEPTEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: this.dateValeur(),
+          valeur: evenementPropositionEnCours.valeur,
+          donneesComplementaires: { motif },
+          idAuteurModification: auteurId,
+          correlationId: randomUUID(),
+          ordre: this.prochainOrdre(),
+        },
+      );
+    this.ajouterEvenement(evenementAcceptation);
+
+    const evenementModification =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: this.identifiantFlux.indicId,
+          territoireCode: this.identifiantFlux.territoireCode,
+          typeEvenement: "VALEUR_MODIFIEE",
           typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: this.dateValeur(),
           valeur: evenementPropositionEnCours.valeur,
@@ -400,15 +467,18 @@ export class EvenementsSurDate {
           ordre: this.prochainOrdre(),
         },
       );
+    this.ajouterEvenement(evenementModification);
 
-    this.ajouterEvenement(evenement);
-    return evenement;
+    return [evenementAcceptation, evenementModification];
   }
 
-  creerEvenementPropositionValeurAccepteeAvecModification(
-    auteurId: string,
-    valeur: number,
-  ) {
+  creerEvenementPropositionValeurAccepteeAvecModification({
+    auteurId,
+    valeur,
+  }: {
+    auteurId: string;
+    valeur: number;
+  }) {
     const evenementPropositionEnCours =
       this.evenementPropositionValeurEnCours() ??
       this.evenementPropositionValeurAccuseeReception();

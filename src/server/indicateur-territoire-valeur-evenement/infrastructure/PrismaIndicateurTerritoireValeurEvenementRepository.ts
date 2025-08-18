@@ -6,7 +6,8 @@ import {
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { TypeValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeValeur";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
+import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
+import { toISODate } from "@/server/app/domain/Dates";
 
 export class PrismaIndicateurTerritoireValeurEvenementRepository
   implements IndicateurTerritoireValeurEvenementRepository
@@ -59,7 +60,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
     territoireCode: string;
     typeValeur: TypeValeur;
     dateValeur: Date;
-  }): Promise<IndicateurTerritoireValeurEvenement[]> {
+  }): Promise<EvenementsSurDate> {
     const lignes = await this.prisma
       .getInstance()
       .indicateur_territoire_valeur_evenement.findMany({
@@ -67,11 +68,13 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           indic_id: args.indicId,
           territoire_code: args.territoireCode,
           type_valeur: args.typeValeur,
-          date_valeur: args.dateValeur,
+          // TODO(PVA/JOTA) - Faire un filtre sur la date de valeur
+          // date_valeur: args.dateValeur,
         },
         orderBy: [{ date_valeur: "desc" }, { ordre: "desc" }],
       });
-    return lignes.map((ligne) =>
+
+    const evenements = lignes.map((ligne) =>
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
         {
           id: ligne.id,
@@ -91,6 +94,15 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
         },
       ),
     );
+
+    return EvenementsSurDate.pourDate(
+      {
+        indicId: args.indicId,
+        territoireCode: args.territoireCode,
+        date: toISODate(args.dateValeur),
+      },
+      evenements,
+    );
   }
 
   async enregistrer(
@@ -107,10 +119,8 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           type_valeur: evenement.typeValeur,
           date_valeur: evenement.dateValeur,
           valeur: evenement.valeur,
-          donnees_complementaires: this.convertirEnDonneesComplementairesModel(
-            evenement.typeEvenement,
-            evenement.donneesComplementaires,
-          ),
+          donnees_complementaires:
+            this.convertirEnDonneesComplementairesModel(evenement),
           id_auteur_modification: evenement.idAuteurModification,
           correlation_id: evenement.correlationId,
           ordre: evenement.ordre,
@@ -143,21 +153,28 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
   }
 
   private convertirEnDonneesComplementairesModel(
-    typeEvenement: TypeEvenement,
-    donneesComplementaires: DonneesComplementaires<TypeEvenement>,
+    evenement: IndicateurTerritoireValeurEvenement,
   ): Prisma.InputJsonValue | typeof Prisma.JsonNull {
-    if (donneesComplementaires === undefined) {
+    if (evenement.donneesComplementaires === undefined) {
       return Prisma.JsonNull;
     }
 
-    switch (typeEvenement) {
-      case "PROPOSITION_VALEUR_CREEE":
-        return {
-          motif: donneesComplementaires.motif,
-          source_donnee_methode_calcul:
-            donneesComplementaires.sourceDonneeEtMethodeCalcul,
-        };
-      default: {
+    if (evenement.typeEvenement === "PROPOSITION_VALEUR_CREEE") {
+      const typedEvenement =
+        evenement as IndicateurTerritoireValeurEvenement<"PROPOSITION_VALEUR_CREEE">;
+      return {
+        motif: typedEvenement.donneesComplementaires.motif,
+        source_donnee_methode_calcul:
+          typedEvenement.donneesComplementaires.sourceDonneeEtMethodeCalcul,
+      };
+    } else if (evenement.typeEvenement === "PROPOSITION_VALEUR_ACCEPTEE") {
+      const typedEvenement =
+        evenement as IndicateurTerritoireValeurEvenement<"PROPOSITION_VALEUR_ACCEPTEE">;
+      return {
+        motif: typedEvenement.donneesComplementaires.motif,
+      };
+    } else {
+      {
         return Prisma.JsonNull;
       }
     }

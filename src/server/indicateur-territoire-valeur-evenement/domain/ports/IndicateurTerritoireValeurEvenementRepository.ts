@@ -1,3 +1,4 @@
+import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { TypeValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeValeur";
 
@@ -12,7 +13,7 @@ export interface IndicateurTerritoireValeurEvenementRepository {
     territoireCode: string;
     typeValeur: TypeValeur;
     dateValeur: Date;
-  }): Promise<IndicateurTerritoireValeurEvenement[]>;
+  }): Promise<EvenementsSurDate>;
   enregistrer(evenement: IndicateurTerritoireValeurEvenement): Promise<void>;
   enregistrerTous(
     evenements: IndicateurTerritoireValeurEvenement[],

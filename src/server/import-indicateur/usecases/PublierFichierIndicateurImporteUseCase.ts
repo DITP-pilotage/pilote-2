@@ -129,6 +129,7 @@ export class PublierFichierIndicateurImporteUseCase {
         premierIndicateur.zoneId,
       );
 
+      // TODO(PVA/JOTA/2025-08-18): Pousser cette récupération dans les repositories
       // Récupérer les événements existants une seule fois par groupe
       const evenementsInitiaux =
         await this.indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur(

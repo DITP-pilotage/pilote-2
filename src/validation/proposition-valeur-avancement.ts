@@ -10,16 +10,11 @@ export const validationPropositionValeurAvancement = z.object({
   motifProposition: z
     .string()
     .refine(
-      (value) => new RegExp(/^\w.*$/).test(value),
+      (value) => value && new RegExp(/^\w.*$/).test(value),
       "Veuillez saisir un motif de proposition",
     ),
-  sourceDonneeEtMethodeCalcul: z
-    .string()
-    .refine(
-      (value) => new RegExp(/^\w.*$/).test(value),
-      "Veuillez saisir une source de donnée ainsi que la méthode de calcul",
-    ),
   dateValeurAvancement: z.string(),
+  sourceDonneeEtMethodeCalcul: z.string(),
   indicId: z.string(),
   territoireCode: z.string(),
 });
@@ -28,4 +23,11 @@ export const validationSuppressionValeurAvancement = z.object({
   auteurModification: z.string(),
   indicId: z.string(),
   territoireCode: z.string(),
+});
+
+export const validationAccepterPropositionValeurAvancement = z.object({
+  indicId: z.string(),
+  territoireCode: z.string(),
+  dateValeurAvancement: z.string(),
+  motif: z.string().trim(),
 });

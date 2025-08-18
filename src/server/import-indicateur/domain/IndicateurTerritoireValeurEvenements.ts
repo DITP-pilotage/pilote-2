@@ -60,7 +60,7 @@ export class IndicateurTerritoireValeurEvenements {
       if (aPropositionValeurEnEcours) {
         nouveauxEvenements.push(
           evenementsPourDate.creerEvenementPropositionValeurIgnoreeValeurHistorisee(
-            auteurId,
+            { auteurId },
           ),
         );
       }
@@ -68,7 +68,7 @@ export class IndicateurTerritoireValeurEvenements {
       const estHistorise = evenementsPourDate.aValeurHistorisee();
       if (!estHistorise) {
         nouveauxEvenements.push(
-          evenementsPourDate.creerEvenementValeurHistorisee(auteurId),
+          evenementsPourDate.creerEvenementValeurHistorisee({ auteurId }),
         );
       }
     }
@@ -84,25 +84,25 @@ export class IndicateurTerritoireValeurEvenements {
       //    ici on enregistre les evenements mais d'impact sur la proposition réelle
       nouveauxEvenements.push(
         evenementsPourCetteDate.creerEvenementPropositionValeurIgnoreeValeurModifiee(
-          auteurId,
+          { auteurId },
         ),
       );
     }
 
     nouveauxEvenements.push(
-      evenementsPourCetteDate.creerEvenementValeurCreeeOuModifiee(
+      evenementsPourCetteDate.creerEvenementValeurCreeeOuModifiee({
         indicateurData,
         auteurId,
-        doitModifierValeurCreee,
-      ),
+        estValeurModifiee: doitModifierValeurCreee,
+      }),
     );
 
     if (doitHistoriserValeurCreee) {
       nouveauxEvenements.push(
-        evenementsPourCetteDate.creerEvenementValeurHistoriseeACreation(
+        evenementsPourCetteDate.creerEvenementValeurHistoriseeACreation({
           indicateurData,
           auteurId,
-        ),
+        }),
       );
     }
 
@@ -127,15 +127,15 @@ export class IndicateurTerritoireValeurEvenements {
         (evenement) => evenement.dateValeur.toISOString().split("T")[0],
       ),
       (evenementsSurDate, date) =>
-        new EvenementsSurDate(
-          {
+        new EvenementsSurDate({
+          identifiantFlux: {
             date,
             indicId: this._indicId,
             territoireCode: this._territoireCode,
           },
           evenementsSurDate,
-          this._evenements,
-        ),
+          tousLesEvenements: this._evenements,
+        }),
     );
   }
 }

@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 export class IndicateurData {
   private readonly _id: string;
 
-  private readonly _rapportId: string;
+  private readonly _rapportId: string | null;
 
   private readonly _indicId: string;
 
@@ -25,7 +25,7 @@ export class IndicateurData {
     metricValue,
   }: {
     id: string;
-    rapportId: string;
+    rapportId: string | null;
     indicId: string;
     metricType: string;
     metricValue: string;
@@ -45,7 +45,7 @@ export class IndicateurData {
     return this._id;
   }
 
-  get rapportId(): string {
+  get rapportId(): string | null {
     return this._rapportId;
   }
 
@@ -79,7 +79,7 @@ export class IndicateurData {
     metricValue,
   }: {
     id?: string;
-    rapportId: string;
+    rapportId: string | null;
     indicId: string;
     zoneId: string;
     metricDate: string;

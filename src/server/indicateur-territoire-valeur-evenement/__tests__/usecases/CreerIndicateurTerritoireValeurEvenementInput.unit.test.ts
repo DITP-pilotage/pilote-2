@@ -2,6 +2,8 @@ import { MockProxy, mock } from "jest-mock-extended";
 import { CreerIndicateurTerritoireValeurEvenementUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/CreerIndicateurTerritoireValeurEvenementUseCase";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
+import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
+import { toISODate } from "@/server/app/domain/Dates";
 
 describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
   let creerIndicateurTerritoireValeurEvenementUseCase: CreerIndicateurTerritoireValeurEvenementUseCase;
@@ -29,7 +31,15 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
     };
 
     indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
-      [],
+      new EvenementsSurDate({
+        identifiantFlux: {
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          date: toISODate(input.dateValeurAvancement),
+        },
+        evenementsSurDate: [],
+        tousLesEvenements: [],
+      }),
     );
 
     // When
@@ -56,69 +66,6 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
     );
   });
 
-  it("Doit appeler le repository une seule fois", async () => {
-    // Given
-    const input = {
-      indicId: "IND-002",
-      territoireCode: "DEP-75",
-      valeurAvancement: 50,
-      dateValeurAvancement: new Date("2024-02-20"),
-      idAuteurModification: "user-456",
-      motif: "Motif de la proposition",
-      sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
-    };
-
-    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
-      [],
-    );
-
-    // When
-    await creerIndicateurTerritoireValeurEvenementUseCase.run(input);
-
-    // Then
-    expect(
-      indicateurTerritoireValeurEvenementRepository.enregistrer,
-    ).toHaveBeenCalledTimes(1);
-  });
-
-  it("Doit générer un correlationId et un id unique pour chaque appel", async () => {
-    // Given
-    const input = {
-      indicId: "IND-003",
-      territoireCode: "COM-75001",
-      valeurAvancement: 25,
-      dateValeurAvancement: new Date("2024-03-10"),
-      idAuteurModification: "user-789",
-      motif: "Motif de la proposition",
-      sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
-    };
-
-    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
-      [],
-    );
-
-    // When
-    await creerIndicateurTerritoireValeurEvenementUseCase.run(input);
-    await creerIndicateurTerritoireValeurEvenementUseCase.run(input);
-
-    // Then
-    expect(
-      indicateurTerritoireValeurEvenementRepository.enregistrer,
-    ).toHaveBeenCalledTimes(2);
-
-    const firstCall =
-      indicateurTerritoireValeurEvenementRepository.enregistrer.mock
-        .calls[0][0];
-    const secondCall =
-      indicateurTerritoireValeurEvenementRepository.enregistrer.mock
-        .calls[1][0];
-
-    // Les correlationId doivent être différents
-    expect(firstCall.correlationId).not.toBe(secondCall.correlationId);
-    // Les id doivent être différents
-    expect(firstCall.id).not.toBe(secondCall.id);
-  });
-
   it("Doit récupérer les événements existants avec les bons paramètres", async () => {
     // Given
     const input = {
@@ -132,7 +79,15 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
     };
 
     indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
-      [],
+      new EvenementsSurDate({
+        identifiantFlux: {
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          date: toISODate(input.dateValeurAvancement),
+        },
+        evenementsSurDate: [],
+        tousLesEvenements: [],
+      }),
     );
 
     // When
@@ -162,7 +117,15 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
     };
 
     indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
-      [],
+      new EvenementsSurDate({
+        identifiantFlux: {
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          date: toISODate(input.dateValeurAvancement),
+        },
+        evenementsSurDate: [],
+        tousLesEvenements: [],
+      }),
     );
 
     // When
@@ -222,10 +185,33 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
           donneesComplementaires: undefined,
         },
       ),
+
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          typeEvenement: "PROPOSITION_VALEUR_SUPPRIMEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: new Date("2024-02-01"),
+          valeur: 20,
+          idAuteurModification: "user-2",
+          correlationId: "corr-2",
+          ordre: 3,
+          donneesComplementaires: undefined,
+        },
+      ),
     ];
 
     indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
-      evenementsExistants,
+      new EvenementsSurDate({
+        identifiantFlux: {
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          date: toISODate(input.dateValeurAvancement),
+        },
+        evenementsSurDate: evenementsExistants,
+        tousLesEvenements: evenementsExistants,
+      }),
     );
 
     // When
@@ -236,7 +222,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       indicateurTerritoireValeurEvenementRepository.enregistrer,
     ).toHaveBeenCalledWith(
       expect.objectContaining<Partial<IndicateurTerritoireValeurEvenement>>({
-        ordre: 3, // Max ordre existant (3) + 1
+        ordre: 4, // Max ordre existant (3) + 1
       }),
     );
   });

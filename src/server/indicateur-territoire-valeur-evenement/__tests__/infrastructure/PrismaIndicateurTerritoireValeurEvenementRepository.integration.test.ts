@@ -595,7 +595,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId3,
           correlationId: "6ba7b817-9dad-11d1-80b4-00c04fd430c8",
           ordre: 2,
-          donneesComplementaires: undefined,
+          donneesComplementaires: { motif: "Motif d'acceptation" },
         },
       );
 
@@ -606,7 +606,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
     ]);
 
     // When
-    const evenements =
+    const evenementsSurDate =
       await prismaIndicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate(
         {
           indicId: "IND-005",
@@ -617,12 +617,12 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
       );
 
     // Then
-    expect(evenements).toHaveLength(2);
-    expect(evenements[0].dateValeur).toEqual(date1);
-    expect(evenements[1].dateValeur).toEqual(date1);
+    expect(evenementsSurDate.evenementsSurDate).toHaveLength(2);
+    expect(evenementsSurDate.evenementsSurDate[0].dateValeur).toEqual(date1);
+    expect(evenementsSurDate.evenementsSurDate[1].dateValeur).toEqual(date1);
     // Vérifier que les événements sont triés par ordre décroissant
-    expect(evenements[0].ordre).toBe(2);
-    expect(evenements[1].ordre).toBe(1);
+    expect(evenementsSurDate.evenementsSurDate[0].ordre).toBe(2);
+    expect(evenementsSurDate.evenementsSurDate[1].ordre).toBe(1);
   });
 
   it("Doit retourner un tableau vide quand aucun événement ne correspond aux critères", async () => {
@@ -710,7 +710,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
     );
 
     // When
-    const evenements =
+    const evenementsSurDate =
       await prismaIndicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate(
         {
           indicId: "IND-006",
@@ -721,7 +721,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
       );
 
     // Then
-    expect(evenements).toHaveLength(0);
+    expect(evenementsSurDate.evenementsSurDate).toHaveLength(0);
   });
 
   it("Doit trier les événements par date décroissante puis par ordre décroissant", async () => {
@@ -868,7 +868,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId3,
           correlationId: "6ba7b81b-9dad-11d1-80b4-00c04fd430c8",
           ordre: 2,
-          donneesComplementaires: undefined,
+          donneesComplementaires: { motif: "Motif de l'acceptation" },
         },
       );
 

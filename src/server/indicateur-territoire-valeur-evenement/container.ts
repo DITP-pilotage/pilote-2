@@ -1,12 +1,17 @@
 import { asClass, AwilixContainer } from "awilix";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { PrismaIndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/PrismaIndicateurTerritoireValeurEvenementRepository";
+import { PrismaMesureIndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/PrismaMesureIndicateurRepository";
+import { MesureIndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/MesureIndicateurRepository";
 import { IndicateurTerritoireValeurEvenementRepository } from "./domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { CreerIndicateurTerritoireValeurEvenementUseCase } from "./usecases/CreerIndicateurTerritoireValeurEvenementUseCase";
+import { AccepterPropositionValeurAvancementUseCase } from "./usecases/AccepterPropositionValeurAvancementUseCase";
 
 export type IndicateurTerritoireValeurEvenementDependencies = {
   indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+  mesureIndicateurRepository: MesureIndicateurRepository;
   creerIndicateurTerritoireValeurEvenementUseCase: CreerIndicateurTerritoireValeurEvenementUseCase;
+  accepterPropositionValeurAvancementUseCase: AccepterPropositionValeurAvancementUseCase;
 };
 export const getIndicateurTerritoireValeurEvenementContainer = (
   initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
@@ -19,8 +24,12 @@ export const getIndicateurTerritoireValeurEvenementContainer = (
       indicateurTerritoireValeurEvenementRepository: asClass(
         PrismaIndicateurTerritoireValeurEvenementRepository,
       ),
+      mesureIndicateurRepository: asClass(PrismaMesureIndicateurRepository),
       creerIndicateurTerritoireValeurEvenementUseCase: asClass(
         CreerIndicateurTerritoireValeurEvenementUseCase,
+      ),
+      accepterPropositionValeurAvancementUseCase: asClass(
+        AccepterPropositionValeurAvancementUseCase,
       ),
     });
 };

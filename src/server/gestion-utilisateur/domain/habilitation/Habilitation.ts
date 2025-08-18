@@ -27,7 +27,7 @@ const PROFIL_AUTORISE_A_MODIFICATION_METADATA_INDICATEUR = new Set([
 const PROFIL_AUTORISE_A_MODIFICATION_GESTION_CONTENU = new Set([
   ProfilEnum.DITP_ADMIN,
 ]);
-const PROFIL_AUTORISE_A_MODIFICATION_PROPOSITION_VALEUR_AVANCEMENT = new Set([
+const PROFIL_AUTORISE_A_MODIFIER_PROPOSITION_VALEUR_AVANCEMENT = new Set([
   ProfilEnum.DITP_ADMIN,
   ProfilEnum.PREFET_DEPARTEMENT,
   ProfilEnum.PREFET_REGION,
@@ -35,6 +35,11 @@ const PROFIL_AUTORISE_A_MODIFICATION_PROPOSITION_VALEUR_AVANCEMENT = new Set([
   ProfilEnum.COORDINATEUR_DEPARTEMENT,
   ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
   ProfilEnum.SERVICES_DECONCENTRES_REGION,
+]);
+
+const PROFIL_AUTORISE_A_ACCEPTER_PROPOSITION_VALEUR_AVANCEMENT = new Set([
+  ProfilEnum.DIR_PROJET,
+  ProfilEnum.EQUIPE_DIR_PROJET,
 ]);
 
 export default class Habilitation {
@@ -143,9 +148,26 @@ export default class Habilitation {
   ) {
     if (
       !profil ||
-      !PROFIL_AUTORISE_A_MODIFICATION_PROPOSITION_VALEUR_AVANCEMENT.has(
-        profil,
-      ) ||
+      !PROFIL_AUTORISE_A_MODIFIER_PROPOSITION_VALEUR_AVANCEMENT.has(profil) ||
+      propositionValeurAvancementChantierInformation.statut === "ARCHIVE" ||
+      !chantiersIdsAutorisés.includes(
+        propositionValeurAvancementChantierInformation.id,
+      )
+    ) {
+      throw new UnauthorizedError(
+        "Vous n'êtes pas autorisé a effectuer cette action",
+      );
+    }
+  }
+
+  verifierAutorisationAcceptationPropositionValeurAvancement(
+    profil: ProfilCode | null,
+    chantiersIdsAutorisés: string[],
+    propositionValeurAvancementChantierInformation: PropositionValeurAvancementChantierInformation,
+  ) {
+    if (
+      !profil ||
+      !PROFIL_AUTORISE_A_ACCEPTER_PROPOSITION_VALEUR_AVANCEMENT.has(profil) ||
       propositionValeurAvancementChantierInformation.statut === "ARCHIVE" ||
       !chantiersIdsAutorisés.includes(
         propositionValeurAvancementChantierInformation.id,
