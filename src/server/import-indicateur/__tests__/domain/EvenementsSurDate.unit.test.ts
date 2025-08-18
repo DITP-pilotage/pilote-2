@@ -1378,6 +1378,7 @@ describe("EvenementsSurDate", () => {
       const nouveauxEvenements =
         evenementsSurDate.creerEvenementPropositionValeurAcceptee({
           auteurId: AUTEUR_ID,
+          motif: "Motif d'acceptation",
         });
 
       // THEN
@@ -1391,7 +1392,9 @@ describe("EvenementsSurDate", () => {
       expect(nouveauxEvenements[0].valeur).toEqual(80);
       expect(nouveauxEvenements[0].idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauxEvenements[0].ordre).toEqual(3);
-      expect(nouveauxEvenements[0].donneesComplementaires).toEqual(undefined);
+      expect(nouveauxEvenements[0].donneesComplementaires).toEqual({
+        motif: "Motif d'acceptation",
+      });
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_ACCEPTEE avec succès quand une PROPOSITION_VALEUR_MODIFIEE est en cours", () => {
@@ -1438,6 +1441,7 @@ describe("EvenementsSurDate", () => {
       const nouveauxEvenements =
         evenementsSurDate.creerEvenementPropositionValeurAcceptee({
           auteurId: AUTEUR_ID,
+          motif: "Motif d'acceptation",
         });
 
       // THEN
@@ -1451,7 +1455,9 @@ describe("EvenementsSurDate", () => {
       expect(nouveauxEvenements[0].valeur).toEqual(80);
       expect(nouveauxEvenements[0].idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauxEvenements[0].ordre).toEqual(4);
-      expect(nouveauxEvenements[0].donneesComplementaires).toEqual(undefined);
+      expect(nouveauxEvenements[0].donneesComplementaires).toEqual({
+        motif: "Motif d'acceptation",
+      });
 
       expect(nouveauxEvenements[1].typeEvenement).toEqual("VALEUR_MODIFIEE");
       expect(nouveauxEvenements[1].indicId).toEqual(INDIC_ID);
@@ -1508,6 +1514,7 @@ describe("EvenementsSurDate", () => {
       const nouveauxEvenements =
         evenementsSurDate.creerEvenementPropositionValeurAcceptee({
           auteurId: AUTEUR_ID,
+          motif: "Motif d'acceptation",
         });
 
       // THEN
@@ -1538,6 +1545,7 @@ describe("EvenementsSurDate", () => {
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAcceptee({
           auteurId: AUTEUR_ID,
+          motif: "Motif d'acceptation",
         });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -1586,6 +1594,7 @@ describe("EvenementsSurDate", () => {
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAcceptee({
           auteurId: AUTEUR_ID,
+          motif: "Motif de l'acceptation",
         });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });

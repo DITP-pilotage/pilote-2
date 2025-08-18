@@ -595,7 +595,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId3,
           correlationId: "6ba7b817-9dad-11d1-80b4-00c04fd430c8",
           ordre: 2,
-          donneesComplementaires: undefined,
+          donneesComplementaires: { motif: "Motif d'acceptation" },
         },
       );
 
@@ -868,7 +868,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId3,
           correlationId: "6ba7b81b-9dad-11d1-80b4-00c04fd430c8",
           ordre: 2,
-          donneesComplementaires: undefined,
+          donneesComplementaires: { motif: "Motif de l'acceptation" },
         },
       );
 

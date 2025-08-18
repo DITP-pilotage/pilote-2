@@ -119,10 +119,8 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           type_valeur: evenement.typeValeur,
           date_valeur: evenement.dateValeur,
           valeur: evenement.valeur,
-          donnees_complementaires: this.convertirEnDonneesComplementairesModel(
-            evenement.typeEvenement,
-            evenement.donneesComplementaires,
-          ),
+          donnees_complementaires:
+            this.convertirEnDonneesComplementairesModel(evenement),
           id_auteur_modification: evenement.idAuteurModification,
           correlation_id: evenement.correlationId,
           ordre: evenement.ordre,
@@ -155,21 +153,28 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
   }
 
   private convertirEnDonneesComplementairesModel(
-    typeEvenement: TypeEvenement,
-    donneesComplementaires: DonneesComplementaires<TypeEvenement>,
+    evenement: IndicateurTerritoireValeurEvenement,
   ): Prisma.InputJsonValue | typeof Prisma.JsonNull {
-    if (donneesComplementaires === undefined) {
+    if (evenement.donneesComplementaires === undefined) {
       return Prisma.JsonNull;
     }
 
-    switch (typeEvenement) {
-      case "PROPOSITION_VALEUR_CREEE":
-        return {
-          motif: donneesComplementaires.motif,
-          source_donnee_methode_calcul:
-            donneesComplementaires.sourceDonneeEtMethodeCalcul,
-        };
-      default: {
+    if (evenement.typeEvenement === "PROPOSITION_VALEUR_CREEE") {
+      const typedEvenement =
+        evenement as IndicateurTerritoireValeurEvenement<"PROPOSITION_VALEUR_CREEE">;
+      return {
+        motif: typedEvenement.donneesComplementaires.motif,
+        source_donnee_methode_calcul:
+          typedEvenement.donneesComplementaires.sourceDonneeEtMethodeCalcul,
+      };
+    } else if (evenement.typeEvenement === "PROPOSITION_VALEUR_ACCEPTEE") {
+      const typedEvenement =
+        evenement as IndicateurTerritoireValeurEvenement<"PROPOSITION_VALEUR_ACCEPTEE">;
+      return {
+        motif: typedEvenement.donneesComplementaires.motif,
+      };
+    } else {
+      {
         return Prisma.JsonNull;
       }
     }

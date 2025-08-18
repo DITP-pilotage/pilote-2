@@ -91,7 +91,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
         valeur: 20,
         idAuteurModification: input.idAuteurAcceptation,
         ordre: 3,
-        donneesComplementaires: undefined,
+        donneesComplementaires: { motif: "Motif de la proposition" },
       }),
       expect.objectContaining({
         indicId: input.indicId,

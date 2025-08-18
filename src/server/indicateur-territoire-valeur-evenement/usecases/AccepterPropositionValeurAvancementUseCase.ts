@@ -38,6 +38,7 @@ export class AccepterPropositionValeurAvancementUseCase {
     const evenements =
       evenementsSurDate.creerEvenementPropositionValeurAcceptee({
         auteurId: idAuteurAcceptation,
+        motif,
       });
 
     await this.indicateurTerritoireValeurEvenementRepository.enregistrerTous(
