@@ -316,15 +316,15 @@ model commentaire {
 }
 
 model mesure_indicateur {
-  id           String                           @id @db.Uuid
+  id           String                            @id @db.Uuid
   indic_id     String
   zone_id      String
   metric_date  String
   metric_type  String
   metric_value String
-  rapport_id   String                           @db.Uuid
-  rapport      rapport_import_mesure_indicateur @relation(fields: [rapport_id], references: [id])
-  date_import  DateTime?                        @default(now()) @db.Timestamptz
+  rapport_id   String?                           @db.Uuid
+  rapport      rapport_import_mesure_indicateur? @relation(fields: [rapport_id], references: [id])
+  date_import  DateTime?                         @default(now()) @db.Timestamptz
 
   @@schema("raw_data")
 }
