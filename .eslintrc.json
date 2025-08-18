@@ -40,11 +40,11 @@
       "error",
       {
         "selector": "Literal[value=/’/]",
-        "message": "Utilisation interdite de l’apostrophe typographique. Utilisez ' à la place."
+        "message": "Utilisation interdite de l'apostrophe typographique. Utilisez ' à la place."
       },
       {
         "selector": "JSXText[value=/’/]",
-        "message": "Évitez d'utiliser l’apostrophe typographique dans le texte JSX. Utilisez ' à la place."
+        "message": "Évitez d'utiliser l'apostrophe typographique dans le texte JSX. Utilisez ' à la place."
       }
     ],
     "no-relative-import-paths/no-relative-import-paths": [

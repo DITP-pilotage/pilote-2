@@ -12,7 +12,6 @@ import {
 import Input from "@/components/_commons/Input/Input";
 import { formaterDate } from "@/client/utils/date/date";
 import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
-import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
 
 export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
@@ -177,6 +176,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                     <div className="fr-radio-group">
                       <input
                         checked={decision === "accepter-avec-modification"}
+                        disabled
                         id="accepter-avec-modification"
                         name="decision"
                         onChange={() =>
@@ -234,6 +234,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                     <div className="fr-radio-group">
                       <input
                         checked={decision === "refuser"}
+                        disabled
                         id="refuser"
                         name="decision"
                         onChange={() => setDecision("refuser")}
@@ -282,10 +283,8 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
               ) : (
                 <>
                   <span>
-                    Veuillez vérifier si la proposition ci-dessous est correcte
-                    et prête pour publication immédiate. Après publication, il
-                    vous sera toujours possible de modifier ou de supprimer
-                    votre proposition.
+                    Veuillez vérifier si la synthèse ci-dessous est conforme à
+                    votre décision et prête pour publication immédiate.
                   </span>
                   <div className="fr-callout fr-py-2w fr-mt-2w">
                     <h3 className="fr-callout__title fr-mb-0">
@@ -295,10 +294,12 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                       {`${territoireCodeInsee} - ${territoireNom}`}
                     </p>
                     <p className="fr-callout__text fr-text--sm">
-                      <span className="fr-text--bold">
+                      <span>
                         Valeur d'avancement proposée le{" "}
                         {`${formaterDate(new Date().toISOString(), "DD/MM/YYYY")}`}{" "}
                         par {auteurModification} :{" "}
+                      </span>
+                      <span className="fr-text--bold">
                         {reactHookForm.getValues("valeurAvancement")} (
                         {formaterDate(
                           detailIndicateur.dateValeurAvancement,
@@ -308,36 +309,32 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                       </span>
                     </p>
                     <p className="fr-callout__text fr-text--sm">
+                      Décision : la proposition est{" "}
+                      <span className="fr-text--bold">accepté</span>
+                    </p>
+                    <p className="fr-callout__text fr-text--sm">
                       <span className="fr-text--bold">
-                        Motif de la proposition :
+                        Motif de la décision :
                       </span>{" "}
                       <span className="text-italic">
                         {reactHookForm.getValues("motifProposition")}
                       </span>
                     </p>
-                    <p className="fr-callout__text fr-text--sm">
-                      <span className="fr-text--bold">
-                        Source des données et méthode de calcul :
-                      </span>{" "}
-                      <span className="text-italic">
-                        {reactHookForm.getValues("sourceDonneeEtMethodeCalcul")}
-                      </span>
-                    </p>
                   </div>
                   <div className="fr-alert fr-alert--info">
                     <h3 className="fr-alert__title">
-                      Rappel sur le statut de votre proposition
+                      Acceptation de la proposition : ce que cela implique
                     </h3>
                     <p>
-                      Nous vous rappelons que la valeur d'avancement que vous
-                      proposez ne sera pas prise en compte dans le calcul du
-                      taux d'avancement global du chantier. Cette proposition
-                      vise à engager un dialogue avec la direction de projet au
-                      niveau national, qui en sera informée. Si votre
-                      proposition n'est pas intégrée par la direction de projet,
-                      elle ne sera plus visible dans l'historique de
-                      l'indicateur à la prochaine mise à jour. Elle sera
-                      cependant conservée dans la base de données de PILOTE.
+                      La valeur d'avancement de cet indicateur est mise à jour à
+                      partir de la valeur proposée. Elle est prise en compte
+                      dans le calcul du taux d'avancement global du chantier.
+                      L'ensemble de ces informations seront visibles dans PILOTE
+                      d'ici une heure. La proposition ainsi que votre décision
+                      sont archivées dans l'historique de l'indicateur. Le
+                      territoire sera informé de votre décision et pourra, le
+                      cas échéant, faire de nouvelles propositions pour cet
+                      indicateur.
                     </p>
                   </div>
                   <div className="w-full flex justify-end fr-mt-2w">
@@ -353,7 +350,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                       Étape précédente
                     </button>
                     <button className="fr-btn" type="submit">
-                      Publier la proposition
+                      Accepter la proposition
                     </button>
                   </div>
                 </>
@@ -363,33 +360,16 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
         </>
       ) : (
         <div className="fr-alert fr-alert--success fr-mt-2w">
-          {!estUneModificationDeProposition ? (
-            <>
-              <h3 className="fr-alert__title">
-                La proposition de valeur d'avancement a correctement été prise
-                en compte
-              </h3>
-              <span>
-                La proposition de valeur d'avancement s'affichera dans le
-                tableau des indicateurs dans une heure. Veuillez noter que, dans
-                cet intervalle, il n'est pas possible de faire une autre
-                proposition pour cet indicateur.
-              </span>
-            </>
-          ) : (
-            <>
-              <h3 className="fr-alert__title">
-                La nouvelle proposition de valeur d'avancement a correctement
-                été prise en compte
-              </h3>
-              <span>
-                La nouvelle proposition de valeur d'avancement s'affichera dans
-                le tableau des indicateurs dans une heure. Veuillez noter que,
-                dans cet intervalle, il n'est pas possible de faire une autre
-                proposition pour cet indicateur.
-              </span>
-            </>
-          )}
+          <h3 className="fr-alert__title">
+            La nouvelle proposition de valeur d'avancement a correctement été
+            prise en compte
+          </h3>
+          <span>
+            La nouvelle proposition de valeur d'avancement s'affichera dans le
+            tableau des indicateurs dans une heure. Veuillez noter que, dans cet
+            intervalle, il n'est pas possible de faire une autre proposition
+            pour cet indicateur.
+          </span>
         </div>
       )}
     </Modale>

@@ -7,6 +7,7 @@ import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicate
 import { TypeValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeValeur";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
+import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 
 export class PrismaIndicateurTerritoireValeurEvenementRepository
   implements IndicateurTerritoireValeurEvenementRepository
@@ -59,7 +60,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
     territoireCode: string;
     typeValeur: TypeValeur;
     dateValeur: Date;
-  }): Promise<IndicateurTerritoireValeurEvenement[]> {
+  }): Promise<EvenementsSurDate> {
     const lignes = await this.prisma
       .getInstance()
       .indicateur_territoire_valeur_evenement.findMany({
@@ -67,11 +68,13 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           indic_id: args.indicId,
           territoire_code: args.territoireCode,
           type_valeur: args.typeValeur,
-          date_valeur: args.dateValeur,
+          // TODO(PVA/JOTA) - Faire un filtre sur la date de valeur
+          // date_valeur: args.dateValeur,
         },
         orderBy: [{ date_valeur: "desc" }, { ordre: "desc" }],
       });
-    return lignes.map((ligne) =>
+
+    const evenements = lignes.map((ligne) =>
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
         {
           id: ligne.id,
@@ -90,6 +93,15 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           ordre: ligne.ordre,
         },
       ),
+    );
+
+    return EvenementsSurDate.pourDate(
+      {
+        indicId: args.indicId,
+        territoireCode: args.territoireCode,
+        date: args.dateValeur.toISOString().split("T")[0],
+      },
+      evenements,
     );
   }
 

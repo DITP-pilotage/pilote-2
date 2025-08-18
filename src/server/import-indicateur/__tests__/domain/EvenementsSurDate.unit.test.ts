@@ -34,7 +34,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN
       const nouveauEvenement =
-        evenementsSurDate.creerEvenementPropositionValeurCreee(85, AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurCreee({ valeur: 85, auteurId: AUTEUR_ID });
 
       // THEN
       expect(nouveauEvenement.typeEvenement).toEqual(
@@ -80,7 +80,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN
       const nouvelEvenement =
-        evenementsSurDate.creerEvenementPropositionValeurCreee(85, AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurCreee({ valeur: 85, auteurId: AUTEUR_ID });
 
       // THEN
       expect(nouvelEvenement.ordre).toEqual(3);
@@ -114,7 +114,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN & THEN
       expect(() => {
-        evenementsSurDate.creerEvenementPropositionValeurCreee(85, AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurCreee({ valeur: 85, auteurId: AUTEUR_ID });
       }).toThrow("Une proposition de valeur est déjà en cours");
     });
 
@@ -146,7 +146,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN & THEN
       expect(() => {
-        evenementsSurDate.creerEvenementPropositionValeurCreee(85, AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurCreee({ valeur: 85, auteurId: AUTEUR_ID });
       }).toThrow("Une proposition de valeur est déjà en cours");
     });
 
@@ -192,7 +192,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN
       const nouveauEvenement =
-        evenementsSurDate.creerEvenementPropositionValeurCreee(85, AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurCreee({ valeur: 85, auteurId: AUTEUR_ID });
 
       // THEN
       expect(nouveauEvenement.typeEvenement).toEqual(
@@ -244,7 +244,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN & THEN
       expect(() => {
-        evenementsSurDate.creerEvenementPropositionValeurCreee(85, AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurCreee({ valeur: 85, auteurId: AUTEUR_ID });
       }).toThrow("La proposition de valeur a déjà été accusée réception");
     });
   });
@@ -279,8 +279,7 @@ describe("EvenementsSurDate", () => {
       // WHEN
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurModifiee(
-          85,
-          AUTEUR_ID,
+          { valeur: 85, auteurId: AUTEUR_ID },
         );
 
       // THEN
@@ -340,8 +339,7 @@ describe("EvenementsSurDate", () => {
       // WHEN
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurModifiee(
-          85,
-          AUTEUR_ID,
+          { valeur: 85, auteurId: AUTEUR_ID },
         );
 
       // THEN
@@ -371,8 +369,7 @@ describe("EvenementsSurDate", () => {
       // WHEN & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurModifiee(
-          85,
-          AUTEUR_ID,
+          { valeur: 85, auteurId: AUTEUR_ID },
         );
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -420,8 +417,7 @@ describe("EvenementsSurDate", () => {
       // WHEN & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurModifiee(
-          85,
-          AUTEUR_ID,
+          { valeur: 85, auteurId: AUTEUR_ID },
         );
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -469,8 +465,7 @@ describe("EvenementsSurDate", () => {
       // WHEN & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurModifiee(
-          85,
-          AUTEUR_ID,
+          { valeur: 85, auteurId: AUTEUR_ID },
         );
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -518,8 +513,7 @@ describe("EvenementsSurDate", () => {
       // WHEN & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurModifiee(
-          85,
-          AUTEUR_ID,
+          { valeur: 85, auteurId: AUTEUR_ID },
         );
       }).toThrow("La proposition de valeur a déjà été accusée réception");
     });
@@ -554,7 +548,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN
       const nouveauEvenement =
-        evenementsSurDate.creerEvenementPropositionValeurSupprimee(AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurSupprimee({ auteurId: AUTEUR_ID });
 
       // THEN
       expect(nouveauEvenement.typeEvenement).toEqual(
@@ -612,7 +606,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN
       const nouveauEvenement =
-        evenementsSurDate.creerEvenementPropositionValeurSupprimee(AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurSupprimee({ auteurId: AUTEUR_ID });
 
       // THEN
       expect(nouveauEvenement.typeEvenement).toEqual(
@@ -640,7 +634,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN & THEN
       expect(() => {
-        evenementsSurDate.creerEvenementPropositionValeurSupprimee(AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurSupprimee({ auteurId: AUTEUR_ID });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
 
@@ -686,7 +680,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN & THEN
       expect(() => {
-        evenementsSurDate.creerEvenementPropositionValeurSupprimee(AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurSupprimee({ auteurId: AUTEUR_ID });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
 
@@ -732,7 +726,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN & THEN
       expect(() => {
-        evenementsSurDate.creerEvenementPropositionValeurSupprimee(AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurSupprimee({ auteurId: AUTEUR_ID });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
 
@@ -778,7 +772,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN & THEN
       expect(() => {
-        evenementsSurDate.creerEvenementPropositionValeurSupprimee(AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurSupprimee({ auteurId: AUTEUR_ID });
       }).toThrow("La proposition de valeur a déjà été accusée réception");
     });
   });
@@ -813,7 +807,7 @@ describe("EvenementsSurDate", () => {
       // WHEN
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurAccuseeReception(
-          AUTEUR_ID,
+          { auteurId: AUTEUR_ID },
         );
 
       // THEN
@@ -873,7 +867,7 @@ describe("EvenementsSurDate", () => {
       // WHEN
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurAccuseeReception(
-          AUTEUR_ID,
+          { auteurId: AUTEUR_ID },
         );
 
       // THEN
@@ -903,7 +897,7 @@ describe("EvenementsSurDate", () => {
       // WHEN & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAccuseeReception(
-          AUTEUR_ID,
+          { auteurId: AUTEUR_ID },
         );
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -951,7 +945,7 @@ describe("EvenementsSurDate", () => {
       // WHEN & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAccuseeReception(
-          AUTEUR_ID,
+          { auteurId: AUTEUR_ID },
         );
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -999,7 +993,7 @@ describe("EvenementsSurDate", () => {
       // WHEN & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAccuseeReception(
-          AUTEUR_ID,
+          { auteurId: AUTEUR_ID },
         );
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -1047,7 +1041,7 @@ describe("EvenementsSurDate", () => {
       // WHEN & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAccuseeReception(
-          AUTEUR_ID,
+          { auteurId: AUTEUR_ID },
         );
       }).toThrow("La proposition de valeur a déjà été accusée réception");
     });
@@ -1082,7 +1076,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN
       const nouveauEvenement =
-        evenementsSurDate.creerEvenementPropositionValeurRefusee(AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurRefusee({ auteurId: AUTEUR_ID });
 
       // THEN
       expect(nouveauEvenement.typeEvenement).toEqual(
@@ -1140,7 +1134,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN
       const nouveauEvenement =
-        evenementsSurDate.creerEvenementPropositionValeurRefusee(AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurRefusee({ auteurId: AUTEUR_ID });
 
       // THEN
       expect(nouveauEvenement.typeEvenement).toEqual(
@@ -1198,7 +1192,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN
       const nouveauEvenement =
-        evenementsSurDate.creerEvenementPropositionValeurRefusee(AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurRefusee({ auteurId: AUTEUR_ID });
 
       // THEN
       expect(nouveauEvenement.typeEvenement).toEqual(
@@ -1226,7 +1220,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN & THEN
       expect(() => {
-        evenementsSurDate.creerEvenementPropositionValeurRefusee(AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurRefusee({ auteurId: AUTEUR_ID });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
 
@@ -1272,7 +1266,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN & THEN
       expect(() => {
-        evenementsSurDate.creerEvenementPropositionValeurRefusee(AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurRefusee({ auteurId: AUTEUR_ID });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
   });
@@ -1306,7 +1300,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN
       const nouveauEvenement =
-        evenementsSurDate.creerEvenementPropositionValeurAcceptee(AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurAcceptee({ auteurId: AUTEUR_ID });
 
       // THEN
       expect(nouveauEvenement.typeEvenement).toEqual(
@@ -1364,7 +1358,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN
       const nouveauEvenement =
-        evenementsSurDate.creerEvenementPropositionValeurAcceptee(AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurAcceptee({ auteurId: AUTEUR_ID });
 
       // THEN
       expect(nouveauEvenement.typeEvenement).toEqual(
@@ -1422,7 +1416,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN
       const nouveauEvenement =
-        evenementsSurDate.creerEvenementPropositionValeurAcceptee(AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurAcceptee({ auteurId: AUTEUR_ID });
 
       // THEN
       expect(nouveauEvenement.typeEvenement).toEqual(
@@ -1450,7 +1444,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN & THEN
       expect(() => {
-        evenementsSurDate.creerEvenementPropositionValeurAcceptee(AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurAcceptee({ auteurId: AUTEUR_ID });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
 
@@ -1496,7 +1490,7 @@ describe("EvenementsSurDate", () => {
 
       // WHEN & THEN
       expect(() => {
-        evenementsSurDate.creerEvenementPropositionValeurAcceptee(AUTEUR_ID);
+        evenementsSurDate.creerEvenementPropositionValeurAcceptee({ auteurId: AUTEUR_ID });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
   });
@@ -1531,8 +1525,7 @@ describe("EvenementsSurDate", () => {
       // WHEN
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurAccepteeAvecModification(
-          AUTEUR_ID,
-          90,
+          { auteurId: AUTEUR_ID, valeur: 90 },
         );
 
       // THEN
@@ -1592,8 +1585,7 @@ describe("EvenementsSurDate", () => {
       // WHEN
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurAccepteeAvecModification(
-          AUTEUR_ID,
-          95,
+          { auteurId: AUTEUR_ID, valeur: 95 },
         );
 
       // THEN
@@ -1623,8 +1615,7 @@ describe("EvenementsSurDate", () => {
       // WHEN & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAccepteeAvecModification(
-          AUTEUR_ID,
-          90,
+          { auteurId: AUTEUR_ID, valeur: 90 },
         );
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -1672,8 +1663,7 @@ describe("EvenementsSurDate", () => {
       // WHEN & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAccepteeAvecModification(
-          AUTEUR_ID,
-          90,
+          { auteurId: AUTEUR_ID, valeur: 90 },
         );
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });

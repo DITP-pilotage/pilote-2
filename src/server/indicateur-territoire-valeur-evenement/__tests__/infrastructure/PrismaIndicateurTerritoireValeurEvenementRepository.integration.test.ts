@@ -606,7 +606,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
     ]);
 
     // When
-    const evenements =
+    const evenementsSurDate =
       await prismaIndicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate(
         {
           indicId: "IND-005",
@@ -617,12 +617,12 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
       );
 
     // Then
-    expect(evenements).toHaveLength(2);
-    expect(evenements[0].dateValeur).toEqual(date1);
-    expect(evenements[1].dateValeur).toEqual(date1);
+    expect(evenementsSurDate.evenementsSurDate).toHaveLength(2);
+    expect(evenementsSurDate.evenementsSurDate[0].dateValeur).toEqual(date1);
+    expect(evenementsSurDate.evenementsSurDate[1].dateValeur).toEqual(date1);
     // Vérifier que les événements sont triés par ordre décroissant
-    expect(evenements[0].ordre).toBe(2);
-    expect(evenements[1].ordre).toBe(1);
+    expect(evenementsSurDate.evenementsSurDate[0].ordre).toBe(2);
+    expect(evenementsSurDate.evenementsSurDate[1].ordre).toBe(1);
   });
 
   it("Doit retourner un tableau vide quand aucun événement ne correspond aux critères", async () => {

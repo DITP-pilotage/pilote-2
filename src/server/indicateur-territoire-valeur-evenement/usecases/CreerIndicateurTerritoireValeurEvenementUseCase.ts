@@ -25,8 +25,8 @@ export class CreerIndicateurTerritoireValeurEvenementUseCase {
   async run(
     input: CreerIndicateurTerritoireValeurEvenementInput,
   ): Promise<void> {
-    const evenementSurDate =
-      this.indicateurTerritoireValeurEvenementRepository.recupererEvenementSurDate(
+    const evenementsSurDate =
+      await this.indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate(
         {
           indicId: input.indicId,
           territoireCode: input.territoireCode,
@@ -35,13 +35,17 @@ export class CreerIndicateurTerritoireValeurEvenementUseCase {
         },
       );
 
-    evenementSurDate.creerEvenementPropositionValeurCreee({
+    const evenement = evenementsSurDate.creerEvenementPropositionValeurCreee({
       valeur: input.valeurAvancement,
       auteurId: input.idAuteurModification,
+      donneesComplementaires: {
+        motif: input.motif,
+        sourceDonneeEtMethodeCalcul: input.sourceDonneeEtMethodeCalcul,
+      },
     });
 
     await this.indicateurTerritoireValeurEvenementRepository.enregistrer(
-      evenementSurDate,
+      evenement,
     );
   }
 }
