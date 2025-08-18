@@ -247,7 +247,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   }
                   mailleSélectionnée={mailleTerritoireSelectionnee}
                 />
-                {variableContenuFFPropositionValeurAvancementV2 ? (
+                {variableContenuFFPropositionValeurAvancementV2 &&
+                estAutoriseAProposerUneValeurAvancement ? (
                   <div>
                     {informationsIndicateurs[0].données.proposition === null ? (
                       <div className="flex flex-align-center">
@@ -570,12 +571,15 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm">
                                   <div className="flex align-center selecteur-infobulle-conteneur">
                                     <span className="texte-proposition">
-                                      Proposition du territoire
+                                      {variableContenuFFPropositionValeurAvancementV2
+                                        ? "Proposition en cours"
+                                        : "Proposition du territoire"}
                                     </span>
                                     <Infobulle
                                       classNameBouton="texte-proposition"
                                       classNameInfoBulle="tooltip-accordeon"
                                       idHtml={`infobulle-proposition-valeur-davancement-${informationIndicateur.code}`}
+                                      styleIconInfoBulle="informationProposition"
                                     >
                                       <p className="fr-text--sm texte-proposition">
                                         Valeur d'avancement proposée le{" "}
@@ -614,6 +618,27 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                       </p>
                                     </Infobulle>
                                   </div>
+                                  {variableContenuFFPropositionValeurAvancementV2 ? (
+                                    <div className="flex align-center selecteur-infobulle-conteneur">
+                                      <span className="fr-text--xs texte-gris">
+                                        En attente de lecture par la direction
+                                        de projet
+                                      </span>
+                                      <Infobulle
+                                        classNameBouton="texte-gris"
+                                        classNameInfoBulle="tooltip-accordeon"
+                                        idHtml={`infobulle-proposition-valeur-davancement-statut-${informationIndicateur.code}`}
+                                      >
+                                        <p className="fr-text--sm">
+                                          La direction de projet n'a pas encore
+                                          accusé réception de votre proposition.
+                                          Il vous est toujours possible de
+                                          modifier ou de supprimer celle-ci si
+                                          vous le souhaitez.
+                                        </p>
+                                      </Infobulle>
+                                    </div>
+                                  ) : null}
                                 </td>
                                 <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
                                   <ValeurEtDate

@@ -7,7 +7,7 @@ interface InfobulleProps {
   classNameBouton?: string;
   children: ReactNode;
   classNameInfoBulle?: string;
-  styleIconInfoBulle?: "information" | "question";
+  styleIconInfoBulle?: "information" | "question" | "informationProposition";
 }
 
 /**
@@ -24,11 +24,17 @@ const Infobulle: FunctionComponent<InfobulleProps> = ({
   const [isVisible, setIsVisible] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
+  const iconesMap = {
+    informationProposition: "ri-file-info-fill information-proposition-icone",
+    information: "fr-icon-information-fill",
+    question: "fr-icon-question-fill",
+  };
+
   return (
     <InfobulleStyled>
       <button
         aria-describedby={idHtml}
-        className={`fr-btn fr-btn--tertiary-no-outline flex justify-center align-center fr-icon-${styleIconInfoBulle}-fill${classNameBouton ? ` ${classNameBouton}` : ""}`}
+        className={`fr-btn fr-btn--tertiary-no-outline flex justify-center align-center ${iconesMap[styleIconInfoBulle]}${classNameBouton ? ` ${classNameBouton}` : ""}`}
         id={idHtml}
         onBlur={() => setIsVisible(false)}
         onClick={() => setIsVisible(!isVisible)}
