@@ -103,6 +103,28 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       const auteur = ctx.session.user.name ?? "";
 
-      console.log("toto", auteur);
+      const propositionValeurAvancementChantierInformation = await getContainer(
+        "chantiers",
+      )
+        .resolve("chantierRepository")
+        .recupererPropositionValeurAvancementChantierInformationParIndicId({
+          indicId: input.indicId,
+        });
+
+      const habilitations = new Habilitation(ctx.session.habilitations);
+
+      habilitations.verifierAutorisationAcceptationPropositionValeurAvancement(
+        ctx.session.profil,
+        ctx.session.habilitations.saisieCommentaire.chantiers,
+        propositionValeurAvancementChantierInformation,
+      );
+
+      await getContainer("indicateurTerritoireValeurEvenement")
+        .resolve("accepterPropositionValeurAvancementUseCase")
+        .run({
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          auteurModification: auteur,
+        });
     }),
 });

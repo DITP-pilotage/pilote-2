@@ -2,21 +2,16 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { z } from "zod";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import {
-  validationAccepterPropositionValeurAvancement,
-  validationPropositionValeurAvancement,
-} from "@/validation/proposition-valeur-avancement";
+import { validationAccepterPropositionValeurAvancement } from "@/validation/proposition-valeur-avancement";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 
-interface PropositionValeurAvancementForm {
-  motifProposition: string;
-  dateValeurAvancement: string;
-  indicId: string;
-  territoireCode: string;
-}
+type PropositionValeurAvancementForm = z.infer<
+  typeof validationAccepterPropositionValeurAvancement
+>;
 
 export enum EtapePropositionValeurAvancement {
   DECISION_CONCERNANT_LA_PROPOSITION = "DECISION_CONCERNANT_LA_PROPOSITION",
@@ -64,7 +59,7 @@ export const useModaleAccepterPropositionValeurAvancement = ({
     EtapePropositionValeurAvancement.DECISION_CONCERNANT_LA_PROPOSITION,
   );
 
-  const mutationCreerPropositonValeurAvancement =
+  const mutationAccepterPropositonValeurAvancement =
     api.propositionValeurAvancement.accepter.useMutation({
       onSuccess: () => {
         setEtapePropositionValeurAvancement(null);
@@ -76,20 +71,20 @@ export const useModaleAccepterPropositionValeurAvancement = ({
   > = async (data) => {
     const inputs = {
       csrf: récupérerUnCookie("csrf") ?? "",
-      motif: data.motifProposition,
+      motif: data.motif,
       dateValeurAvancement: data.dateValeurAvancement,
       indicId: indicateur.id,
       territoireCode,
     };
 
-    mutationCreerPropositonValeurAvancement.mutate(inputs);
+    mutationAccepterPropositonValeurAvancement.mutate(inputs);
   };
 
   const reactHookForm = useForm<PropositionValeurAvancementForm>({
     mode: "all",
     resolver: zodResolver(validationAccepterPropositionValeurAvancement),
     defaultValues: {
-      motifProposition: "",
+      motif: "",
       dateValeurAvancement: detailIndicateur.dateValeurAvancementMandat!,
       indicId: indicateur.id,
       territoireCode,

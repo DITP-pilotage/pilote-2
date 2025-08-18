@@ -9,12 +9,12 @@ export const validationPropositionValeurAvancement = z.object({
     ),
   motifProposition: z
     .string()
-    .optional()
     .refine(
       (value) => value && new RegExp(/^\w.*$/).test(value),
       "Veuillez saisir un motif de proposition",
     ),
   dateValeurAvancement: z.string(),
+  sourceDonneeEtMethodeCalcul: z.string(),
   indicId: z.string(),
   territoireCode: z.string(),
 });
