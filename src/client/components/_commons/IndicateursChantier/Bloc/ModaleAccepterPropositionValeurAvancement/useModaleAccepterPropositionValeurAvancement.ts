@@ -13,6 +13,10 @@ type PropositionValeurAvancementForm = z.infer<
   typeof validationAccepterPropositionValeurAvancement
 >;
 
+type RefuserPropositionValeurAvancementForm = z.infer<
+  typeof validationRefuserPropositionValeurAvancement
+>;
+
 export enum EtapePropositionValeurAvancement {
   DECISION_CONCERNANT_LA_PROPOSITION = "DECISION_CONCERNANT_LA_PROPOSITION",
   VALIDATION_DECISION = "VALIDATION_DECISION",
@@ -43,10 +47,12 @@ export const useModaleAccepterPropositionValeurAvancement = ({
   detailIndicateur,
   indicateur,
   territoireCode,
+  decision,
 }: {
   indicateur: Indicateur;
   detailIndicateur: DétailsIndicateur;
   territoireCode: string;
+  decision: "accepter" | "accepter-avec-modification" | "refuser";
 }) => {
   const { data: session } = useSession();
 
@@ -66,6 +72,13 @@ export const useModaleAccepterPropositionValeurAvancement = ({
       },
     });
 
+  const mutationRefuserPropositonValeurAvancement =
+    api.propositionValeurAvancement.refuser.useMutation({
+      onSuccess: () => {
+        setEtapePropositionValeurAvancement(null);
+      },
+    });
+
   const accepterPropositonValeurAvancement: SubmitHandler<
     PropositionValeurAvancementForm
   > = async (data) => {
@@ -80,9 +93,41 @@ export const useModaleAccepterPropositionValeurAvancement = ({
     mutationAccepterPropositonValeurAvancement.mutate(inputs);
   };
 
-  const reactHookForm = useForm<PropositionValeurAvancementForm>({
+  const refuserPropositonValeurAvancement: SubmitHandler<
+    RefuserPropositionValeurAvancementForm
+  > = async (data) => {
+    const inputs = {
+      csrf: récupérerUnCookie("csrf") ?? "",
+      motif: data.motif,
+      dateValeurAvancement: data.dateValeurAvancement,
+      indicId: indicateur.id,
+      territoireCode,
+    };
+
+    mutationRefuserPropositonValeurAvancement.mutate(inputs);
+  };
+
+  const traiterDecision: SubmitHandler<
+    PropositionValeurAvancementForm | RefuserPropositionValeurAvancementForm
+  > = async (data) => {
+    if (decision === "refuser") {
+      refuserPropositonValeurAvancement(
+        data as RefuserPropositionValeurAvancementForm,
+      );
+    } else {
+      accepterPropositonValeurAvancement(
+        data as PropositionValeurAvancementForm,
+      );
+    }
+  };
+
+  const reactHookForm = useForm({
     mode: "all",
-    resolver: zodResolver(validationAccepterPropositionValeurAvancement),
+    resolver: zodResolver(
+      decision === "refuser"
+        ? validationRefuserPropositionValeurAvancement
+        : validationAccepterPropositionValeurAvancement,
+    ),
     defaultValues: {
       motif: "",
       dateValeurAvancement: detailIndicateur.dateValeurAvancementMandat!,
@@ -91,11 +136,13 @@ export const useModaleAccepterPropositionValeurAvancement = ({
     },
   });
 
-  const etapeSuivanteEstDesactive = false;
+  const etapeSuivanteEstDesactive = !reactHookForm.formState.isValid;
 
   return {
     reactHookForm,
     accepterPropositonValeurAvancement,
+    refuserPropositonValeurAvancement,
+    traiterDecision,
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
     auteurModification,

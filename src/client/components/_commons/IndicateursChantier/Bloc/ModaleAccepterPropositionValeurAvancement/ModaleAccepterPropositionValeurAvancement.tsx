@@ -28,22 +28,23 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
   territoireCodeInsee,
   territoireNom,
 }) => {
+  const [decision, setDecision] = useState<
+    "accepter" | "accepter-avec-modification" | "refuser"
+  >("accepter");
+
   const {
     reactHookForm,
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
     auteurModification,
     etapeSuivanteEstDesactive: EtapeSuivanteEstDesactive,
-    accepterPropositonValeurAvancement,
+    traiterDecision,
   } = useModaleAccepterPropositionValeurAvancement({
     indicateur,
     detailIndicateur,
     territoireCode,
+    decision,
   });
-
-  const [decision, setDecision] = useState<
-    "accepter" | "accepter-avec-modification" | "refuser"
-  >("accepter");
 
   return (
     <Modale idHtml={generatedHTMLID} tailleModale="lg">
@@ -76,7 +77,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
             <form
               method="post"
               onSubmit={reactHookForm.handleSubmit((data) => {
-                accepterPropositonValeurAvancement(data);
+                traiterDecision(data);
               })}
             >
               {etapePropositionValeurAvancement ===
@@ -213,7 +214,6 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                     <div className="fr-radio-group">
                       <input
                         checked={decision === "refuser"}
-                        disabled
                         id="refuser"
                         name="decision"
                         onChange={() => setDecision("refuser")}
@@ -230,12 +230,12 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                       erreurMessage={
                         reactHookForm.formState.errors.motif?.message
                       }
-                      htmlName="motifProposition"
+                      htmlName="motif"
                       isRequired={decision === "refuser"}
                       libellé={
                         decision === "refuser"
-                          ? "Motif de la proposition"
-                          : "Motif de la proposition (Facultatif)"
+                          ? "Motif de la décision"
+                          : "Motif de la décision (Facultatif)"
                       }
                       placeholder="Indiquez ici les raisons qui motivent votre choix."
                       register={reactHookForm.register("motif", {
@@ -289,7 +289,9 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                     </p>
                     <p className="fr-callout__text fr-text--sm">
                       Décision : la proposition est{" "}
-                      <span className="fr-text--bold">accepté</span>
+                      <span className="fr-text--bold">
+                        {decision === "refuser" ? "refusée" : "acceptée"}
+                      </span>
                     </p>
                     <p className="fr-callout__text fr-text--sm">
                       <span className="fr-text--bold">
@@ -302,18 +304,18 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                   </div>
                   <div className="fr-alert fr-alert--info">
                     <h3 className="fr-alert__title">
-                      Acceptation de la proposition : ce que cela implique
+                      {decision === "refuser"
+                        ? "Refus de la proposition : ce que cela implique"
+                        : "Acceptation de la proposition : ce que cela implique"}
                     </h3>
                     <p>
-                      La valeur d'avancement de cet indicateur est mise à jour à
-                      partir de la valeur proposée. Elle est prise en compte
-                      dans le calcul du taux d'avancement global du chantier.
-                      L'ensemble de ces informations seront visibles dans PILOTE
-                      d'ici une heure. La proposition ainsi que votre décision
-                      sont archivées dans l'historique de l'indicateur. Le
-                      territoire sera informé de votre décision et pourra, le
-                      cas échéant, faire de nouvelles propositions pour cet
-                      indicateur.
+                      {decision === "refuser"
+                        ? "La valeur d'avancement de cet indicateur ainsi que le taux d'avancement du chantier sont inchangés."
+                        : "La valeur d'avancement de cet indicateur est mise à jour à partir de la valeur proposée. Elle est prise en compte dans le calcul du taux d'avancement global du chantier."}{" "}
+                      La proposition ainsi que votre décision sont archivées
+                      dans l'historique de l'indicateur. Le territoire sera
+                      informé de votre décision et pourra, le cas échéant, faire
+                      de nouvelles propositions pour cet indicateur.
                     </p>
                   </div>
                   <div className="w-full flex justify-end fr-mt-2w">
@@ -329,7 +331,9 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                       Étape précédente
                     </button>
                     <button className="fr-btn" type="submit">
-                      Accepter la proposition
+                      {decision === "refuser"
+                        ? "Valider la décision"
+                        : "Accepter la proposition"}
                     </button>
                   </div>
                 </>
@@ -340,14 +344,14 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
       ) : (
         <div className="fr-alert fr-alert--success fr-mt-2w">
           <h3 className="fr-alert__title">
-            La nouvelle proposition de valeur d'avancement a correctement été
-            prise en compte
+            {decision === "refuser"
+              ? "La proposition de valeur d'avancement a bien été refusée"
+              : "La nouvelle proposition de valeur d'avancement a correctement été prise en compte"}
           </h3>
           <span>
-            La nouvelle proposition de valeur d'avancement s'affichera dans le
-            tableau des indicateurs dans une heure. Veuillez noter que, dans cet
-            intervalle, il n'est pas possible de faire une autre proposition
-            pour cet indicateur.
+            {decision === "refuser"
+              ? "La valeur d'avancement de cet indicateur est inchangée."
+              : "La nouvelle proposition de valeur d'avancement s'affichera dans le tableau des indicateurs dans une heure. Veuillez noter que, dans cet intervalle, il n'est pas possible de faire une autre proposition pour cet indicateur."}
           </span>
         </div>
       )}
