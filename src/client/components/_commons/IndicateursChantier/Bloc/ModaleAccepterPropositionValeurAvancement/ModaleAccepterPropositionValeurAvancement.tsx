@@ -228,7 +228,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                   <div className="fr-mt-2w">
                     <TextAreaAvecLabel
                       erreurMessage={
-                        reactHookForm.formState.errors.motifProposition?.message
+                        reactHookForm.formState.errors.motif?.message
                       }
                       htmlName="motifProposition"
                       isRequired={decision === "refuser"}
@@ -238,7 +238,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                           : "Motif de la proposition (Facultatif)"
                       }
                       placeholder="Indiquez ici les raisons qui motivent votre choix."
-                      register={reactHookForm.register("motifProposition", {
+                      register={reactHookForm.register("motif", {
                         required: decision === "refuser",
                       })}
                     />
@@ -296,7 +296,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                         Motif de la décision :
                       </span>{" "}
                       <span className="text-italic">
-                        {reactHookForm.getValues("motifProposition")}
+                        {reactHookForm.getValues("motif")}
                       </span>
                     </p>
                   </div>
