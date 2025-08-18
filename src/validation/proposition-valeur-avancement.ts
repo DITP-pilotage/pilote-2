@@ -31,3 +31,10 @@ export const validationAccepterPropositionValeurAvancement = z.object({
   dateValeurAvancement: z.string(),
   motif: z.string().trim(),
 });
+
+export const validationRefuserPropositionValeurAvancement = z.object({
+  indicId: z.string(),
+  territoireCode: z.string(),
+  dateValeurAvancement: z.string(),
+  motif: z.string().trim().min(1, "Veuillez saisir un motif de refus"),
+});

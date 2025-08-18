@@ -40,6 +40,7 @@ const PROFIL_AUTORISE_A_MODIFIER_PROPOSITION_VALEUR_AVANCEMENT = new Set([
 const PROFIL_AUTORISE_A_ACCEPTER_PROPOSITION_VALEUR_AVANCEMENT = new Set([
   ProfilEnum.DIR_PROJET,
   ProfilEnum.EQUIPE_DIR_PROJET,
+  ProfilEnum.SECRETARIAT_GENERAL,
 ]);
 
 export default class Habilitation {
@@ -160,7 +161,7 @@ export default class Habilitation {
     }
   }
 
-  verifierAutorisationAcceptationPropositionValeurAvancement(
+  verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
     profil: ProfilCode | null,
     chantiersIdsAutorisés: string[],
     propositionValeurAvancementChantierInformation: PropositionValeurAvancementChantierInformation,

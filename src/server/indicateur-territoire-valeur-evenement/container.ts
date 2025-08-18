@@ -6,12 +6,14 @@ import { MesureIndicateurRepository } from "@/server/indicateur-territoire-valeu
 import { IndicateurTerritoireValeurEvenementRepository } from "./domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { CreerIndicateurTerritoireValeurEvenementUseCase } from "./usecases/CreerIndicateurTerritoireValeurEvenementUseCase";
 import { AccepterPropositionValeurAvancementUseCase } from "./usecases/AccepterPropositionValeurAvancementUseCase";
+import { RefuserPropositionValeurAvancementUseCase } from "./usecases/RefuserPropositionValeurAvancementUseCase";
 
 export type IndicateurTerritoireValeurEvenementDependencies = {
   indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
   mesureIndicateurRepository: MesureIndicateurRepository;
   creerIndicateurTerritoireValeurEvenementUseCase: CreerIndicateurTerritoireValeurEvenementUseCase;
   accepterPropositionValeurAvancementUseCase: AccepterPropositionValeurAvancementUseCase;
+  refuserPropositionValeurAvancementUseCase: RefuserPropositionValeurAvancementUseCase;
 };
 export const getIndicateurTerritoireValeurEvenementContainer = (
   initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
@@ -30,6 +32,9 @@ export const getIndicateurTerritoireValeurEvenementContainer = (
       ),
       accepterPropositionValeurAvancementUseCase: asClass(
         AccepterPropositionValeurAvancementUseCase,
+      ),
+      refuserPropositionValeurAvancementUseCase: asClass(
+        RefuserPropositionValeurAvancementUseCase,
       ),
     });
 };

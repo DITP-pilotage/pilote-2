@@ -5,13 +5,33 @@ import { useSession } from "next-auth/react";
 import { z } from "zod";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import { validationAccepterPropositionValeurAvancement } from "@/validation/proposition-valeur-avancement";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 
-type PropositionValeurAvancementForm = z.infer<
-  typeof validationAccepterPropositionValeurAvancement
->;
+// Form schema that includes decision with conditional motif validation
+const formSchema = z
+  .object({
+    indicId: z.string(),
+    territoireCode: z.string(),
+    dateValeurAvancement: z.string(),
+    motif: z.string().trim(),
+    decision: z.enum(["accepter", "accepter-avec-modification", "refuser"]),
+  })
+  .refine(
+    (data) => {
+      // If decision is "refuser", motif is required
+      if (data.decision === "refuser") {
+        return data.motif.length > 0;
+      }
+      return true;
+    },
+    {
+      message: "Veuillez saisir un motif de refus",
+      path: ["motif"],
+    },
+  );
+
+type FormData = z.infer<typeof formSchema>;
 
 export enum EtapePropositionValeurAvancement {
   DECISION_CONCERNANT_LA_PROPOSITION = "DECISION_CONCERNANT_LA_PROPOSITION",
@@ -66,9 +86,14 @@ export const useModaleAccepterPropositionValeurAvancement = ({
       },
     });
 
-  const accepterPropositonValeurAvancement: SubmitHandler<
-    PropositionValeurAvancementForm
-  > = async (data) => {
+  const mutationRefuserPropositonValeurAvancement =
+    api.propositionValeurAvancement.refuser.useMutation({
+      onSuccess: () => {
+        setEtapePropositionValeurAvancement(null);
+      },
+    });
+
+  const traiterDecision: SubmitHandler<FormData> = async (data) => {
     const inputs = {
       csrf: récupérerUnCookie("csrf") ?? "",
       motif: data.motif,
@@ -77,25 +102,30 @@ export const useModaleAccepterPropositionValeurAvancement = ({
       territoireCode,
     };
 
-    mutationAccepterPropositonValeurAvancement.mutate(inputs);
+    if (data.decision === "refuser") {
+      mutationRefuserPropositonValeurAvancement.mutate(inputs);
+    } else {
+      mutationAccepterPropositonValeurAvancement.mutate(inputs);
+    }
   };
 
-  const reactHookForm = useForm<PropositionValeurAvancementForm>({
+  const reactHookForm = useForm<FormData>({
     mode: "all",
-    resolver: zodResolver(validationAccepterPropositionValeurAvancement),
+    resolver: zodResolver(formSchema),
     defaultValues: {
       motif: "",
       dateValeurAvancement: detailIndicateur.dateValeurAvancementMandat!,
       indicId: indicateur.id,
       territoireCode,
+      decision: "accepter",
     },
   });
 
-  const etapeSuivanteEstDesactive = false;
+  const etapeSuivanteEstDesactive = !reactHookForm.formState.isValid;
 
   return {
     reactHookForm,
-    accepterPropositonValeurAvancement,
+    traiterDecision,
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
     auteurModification,

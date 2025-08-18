@@ -6,6 +6,7 @@ import {
   validationPropositionValeurAvancement,
   validationSuppressionValeurAvancement,
   validationAccepterPropositionValeurAvancement,
+  validationRefuserPropositionValeurAvancement,
 } from "@/validation/proposition-valeur-avancement";
 import { StatutProposition } from "@/server/chantiers/domain/StatutProposition";
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
@@ -113,7 +114,7 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
 
       const habilitations = new Habilitation(ctx.session.habilitations);
 
-      habilitations.verifierAutorisationAcceptationPropositionValeurAvancement(
+      habilitations.verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
         ctx.session.profil,
         ctx.session.habilitations.saisieCommentaire.chantiers,
         propositionValeurAvancementChantierInformation,
@@ -125,6 +126,38 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
           indicId: input.indicId,
           territoireCode: input.territoireCode,
           idAuteurAcceptation: auteur,
+          dateValeurAvancement: input.dateValeurAvancement,
+          motif: input.motif,
+        });
+    }),
+
+  refuser: procédureProtégée
+    .input(validationRefuserPropositionValeurAvancement)
+    .mutation(async ({ input, ctx }) => {
+      const auteur = ctx.session.user.id ?? "";
+
+      const propositionValeurAvancementChantierInformation = await getContainer(
+        "chantiers",
+      )
+        .resolve("chantierRepository")
+        .recupererPropositionValeurAvancementChantierInformationParIndicId({
+          indicId: input.indicId,
+        });
+
+      const habilitations = new Habilitation(ctx.session.habilitations);
+
+      habilitations.verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
+        ctx.session.profil,
+        ctx.session.habilitations.saisieCommentaire.chantiers,
+        propositionValeurAvancementChantierInformation,
+      );
+
+      await getContainer("indicateurTerritoireValeurEvenement")
+        .resolve("refuserPropositionValeurAvancementUseCase")
+        .run({
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          idAuteurRefus: auteur,
           dateValeurAvancement: input.dateValeurAvancement,
           motif: input.motif,
         });
