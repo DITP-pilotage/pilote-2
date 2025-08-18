@@ -10,7 +10,10 @@ type DonneesComplementairesMap = {
     motif: string;
     sourceDonneeEtMethodeCalcul: string;
   };
-  PROPOSITION_VALEUR_MODIFIEE: undefined;
+  PROPOSITION_VALEUR_MODIFIEE: {
+    motif: string;
+    sourceDonneeEtMethodeCalcul: string;
+  };
   PROPOSITION_VALEUR_SUPPRIMEE: undefined;
   PROPOSITION_VALEUR_REFUSEE: { motif: string };
   PROPOSITION_VALEUR_ACCUSEE_RECEPTION: undefined;

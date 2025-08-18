@@ -295,9 +295,11 @@ export class EvenementsSurDate {
   creerEvenementPropositionValeurModifiee({
     valeur,
     auteurId,
+    donneesComplementaires,
   }: {
     valeur: number;
     auteurId: string;
+    donneesComplementaires: DonneesComplementaires<"PROPOSITION_VALEUR_MODIFIEE">;
   }) {
     if (this.estEvenementPropositionValeurAccuseeReception()) {
       throw new Error("La proposition de valeur a déjà été accusée réception");
@@ -314,7 +316,7 @@ export class EvenementsSurDate {
           typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: this.dateValeur(),
           valeur,
-          donneesComplementaires: undefined,
+          donneesComplementaires,
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
           ordre: this.prochainOrdre(),

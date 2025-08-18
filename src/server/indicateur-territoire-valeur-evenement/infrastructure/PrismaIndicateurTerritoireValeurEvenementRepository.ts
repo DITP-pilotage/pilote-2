@@ -167,6 +167,14 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
         source_donnee_methode_calcul:
           typedEvenement.donneesComplementaires.sourceDonneeEtMethodeCalcul,
       };
+    } else if (evenement.typeEvenement === "PROPOSITION_VALEUR_MODIFIEE") {
+      const typedEvenement =
+        evenement as IndicateurTerritoireValeurEvenement<"PROPOSITION_VALEUR_MODIFIEE">;
+      return {
+        motif: typedEvenement.donneesComplementaires.motif,
+        source_donnee_methode_calcul:
+          typedEvenement.donneesComplementaires.sourceDonneeEtMethodeCalcul,
+      };
     } else if (evenement.typeEvenement === "PROPOSITION_VALEUR_ACCEPTEE") {
       const typedEvenement =
         evenement as IndicateurTerritoireValeurEvenement<"PROPOSITION_VALEUR_ACCEPTEE">;
