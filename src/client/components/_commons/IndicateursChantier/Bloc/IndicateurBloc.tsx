@@ -251,7 +251,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   mailleSélectionnée={mailleTerritoireSelectionnee}
                 />
                 {variableContenuFFPropositionValeurAvancementV2 &&
-                estAutoriseAProposerUneValeurAvancement ? (
+                (estAutoriseAProposerUneValeurAvancement ||
+                  estAutoriseAAccepterLesPropositionsDeValeurAvancement) ? (
                   <div>
                     {informationsIndicateurs[0].données.proposition === null ? (
                       <div className="flex flex-align-center">

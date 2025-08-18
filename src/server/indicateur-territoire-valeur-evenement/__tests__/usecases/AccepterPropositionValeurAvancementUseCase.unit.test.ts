@@ -3,18 +3,26 @@ import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicate
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 import { AccepterPropositionValeurAvancementUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/AccepterPropositionValeurAvancementUseCase";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
+import { InMemoryTransaction, Transaction } from "@/server/db/Transaction";
+import { MesureIndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/MesureIndicateurRepository";
 
 describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
   let accepterPropositionValeurAvancementUseCase: AccepterPropositionValeurAvancementUseCase;
 
   let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
+  let mesureIndicateurRepository: MockProxy<MesureIndicateurRepository>;
+  let transaction: Transaction;
 
   beforeEach(() => {
     indicateurTerritoireValeurEvenementRepository =
       mock<IndicateurTerritoireValeurEvenementRepository>();
+    mesureIndicateurRepository = mock<MesureIndicateurRepository>();
+    transaction = new InMemoryTransaction();
     accepterPropositionValeurAvancementUseCase =
       new AccepterPropositionValeurAvancementUseCase({
         indicateurTerritoireValeurEvenementRepository,
+        mesureIndicateurRepository,
+        transaction,
       });
   });
 
@@ -79,6 +87,13 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
     await accepterPropositionValeurAvancementUseCase.run(input);
 
     // Then
+    expect(mesureIndicateurRepository.enregistrer).toHaveBeenCalledWith({
+      auteurId: input.idAuteurAcceptation,
+      dateValeur: new Date("2024-06-08T00:00:00.000Z"),
+      indicId: input.indicId,
+      territoireCode: input.territoireCode,
+      valeur: 20,
+    });
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenCalledWith([

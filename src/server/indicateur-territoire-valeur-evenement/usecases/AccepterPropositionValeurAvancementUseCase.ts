@@ -1,15 +1,27 @@
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import { Transaction } from "@/server/db/Transaction";
+import { MesureIndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/MesureIndicateurRepository";
 
 export class AccepterPropositionValeurAvancementUseCase {
   private readonly indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
 
+  private mesureIndicateurRepository: MesureIndicateurRepository;
+
+  private transaction: Transaction;
+
   constructor({
     indicateurTerritoireValeurEvenementRepository,
+    mesureIndicateurRepository,
+    transaction,
   }: {
     indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+    mesureIndicateurRepository: MesureIndicateurRepository;
+    transaction: Transaction;
   }) {
     this.indicateurTerritoireValeurEvenementRepository =
       indicateurTerritoireValeurEvenementRepository;
+    this.mesureIndicateurRepository = mesureIndicateurRepository;
+    this.transaction = transaction;
   }
 
   async run({
@@ -41,8 +53,17 @@ export class AccepterPropositionValeurAvancementUseCase {
         motif,
       });
 
-    await this.indicateurTerritoireValeurEvenementRepository.enregistrerTous(
-      evenements,
-    );
+    await this.transaction.run(async () => {
+      await this.mesureIndicateurRepository.enregistrer({
+        auteurId: idAuteurAcceptation,
+        indicId,
+        territoireCode,
+        dateValeur: new Date(dateValeurAvancement),
+        valeur: evenementsSurDate.valeurEnCours(),
+      });
+      await this.indicateurTerritoireValeurEvenementRepository.enregistrerTous(
+        evenements,
+      );
+    });
   }
 }

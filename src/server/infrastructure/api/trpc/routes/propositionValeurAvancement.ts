@@ -101,7 +101,7 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
   accepter: procédureProtégée
     .input(validationAccepterPropositionValeurAvancement)
     .mutation(async ({ input, ctx }) => {
-      const auteur = ctx.session.user.name ?? "";
+      const auteur = ctx.session.user.id ?? "";
 
       const propositionValeurAvancementChantierInformation = await getContainer(
         "chantiers",
