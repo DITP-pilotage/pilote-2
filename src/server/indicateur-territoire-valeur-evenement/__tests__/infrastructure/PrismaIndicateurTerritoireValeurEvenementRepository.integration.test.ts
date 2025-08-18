@@ -710,7 +710,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
     );
 
     // When
-    const evenements =
+    const evenementsSurDate =
       await prismaIndicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate(
         {
           indicId: "IND-006",
@@ -721,7 +721,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
       );
 
     // Then
-    expect(evenements).toHaveLength(0);
+    expect(evenementsSurDate.evenementsSurDate).toHaveLength(0);
   });
 
   it("Doit trier les événements par date décroissante puis par ordre décroissant", async () => {

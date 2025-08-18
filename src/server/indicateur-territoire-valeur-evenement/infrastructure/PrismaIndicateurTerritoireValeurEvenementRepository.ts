@@ -6,7 +6,6 @@ import {
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { TypeValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeValeur";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 import { toISODate } from "@/server/app/domain/Dates";
 
