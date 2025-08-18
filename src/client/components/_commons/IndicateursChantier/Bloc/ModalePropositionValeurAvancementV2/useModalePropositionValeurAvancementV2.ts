@@ -65,7 +65,9 @@ const useModalePropositionValeurAvancementV2 = ({
 
   const mutationCreerPropositonValeurAvancement =
     api.propositionValeurAvancement.creerV2.useMutation({
-      onSuccess: () => {
+      onSuccess: async () => {
+        // TODO(PVA/CHAN/2025-08-18): rafraichir les données de la page
+        // await router.replace(router.asPath);
         setEtapePropositionValeurAvancement(null);
       },
     });
