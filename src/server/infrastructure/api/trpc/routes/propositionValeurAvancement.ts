@@ -124,7 +124,9 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
         .run({
           indicId: input.indicId,
           territoireCode: input.territoireCode,
-          auteurModification: auteur,
+          idAuteurAcceptation: auteur,
+          dateValeurAvancement: input.dateValeurAvancement,
+          motif: input.motif,
         });
     }),
 });
