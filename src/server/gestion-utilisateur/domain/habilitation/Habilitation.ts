@@ -160,7 +160,7 @@ export default class Habilitation {
     }
   }
 
-  verifierAutorisationAcceptationPropositionValeurAvancement(
+  verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
     profil: ProfilCode | null,
     chantiersIdsAutorisés: string[],
     propositionValeurAvancementChantierInformation: PropositionValeurAvancementChantierInformation,

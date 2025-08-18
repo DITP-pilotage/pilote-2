@@ -1144,6 +1144,7 @@ describe("EvenementsSurDate", () => {
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurRefusee({
           auteurId: AUTEUR_ID,
+          motif: "Motif du refus",
         });
 
       // THEN
@@ -1157,7 +1158,9 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(80);
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(3);
-      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+      expect(nouveauEvenement.donneesComplementaires).toEqual({
+        motif: "Motif du refus",
+      });
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_REFUSEE avec succès quand une PROPOSITION_VALEUR_MODIFIEE est en cours", () => {
@@ -1204,6 +1207,7 @@ describe("EvenementsSurDate", () => {
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurRefusee({
           auteurId: AUTEUR_ID,
+          motif: "Motif du refus",
         });
 
       // THEN
@@ -1217,7 +1221,9 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(80);
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(4);
-      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+      expect(nouveauEvenement.donneesComplementaires).toEqual({
+        motif: "Motif du refus",
+      });
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_REFUSEE avec succès quand une PROPOSITION_VALEUR_ACCUSEE_RECEPTION existe", () => {
@@ -1264,6 +1270,7 @@ describe("EvenementsSurDate", () => {
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurRefusee({
           auteurId: AUTEUR_ID,
+          motif: "Motif du refus",
         });
 
       // THEN
@@ -1294,6 +1301,7 @@ describe("EvenementsSurDate", () => {
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurRefusee({
           auteurId: AUTEUR_ID,
+          motif: "Motif du refus",
         });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -1342,6 +1350,7 @@ describe("EvenementsSurDate", () => {
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurRefusee({
           auteurId: AUTEUR_ID,
+          motif: "Motif du refus",
         });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
