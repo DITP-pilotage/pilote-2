@@ -28,11 +28,14 @@ import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import useIndicateurBloc from "./useIndicateurBloc";
 import useIndicateurAlerteDateMaj from "./useIndicateurAlerteDateMaj";
 import { ModalePropositionValeurAvancementV2 } from "./ModalePropositionValeurAvancementV2/ModalePropositionValeurAvancementV2";
+import { ModaleAccepterPropositionValeurAvancement } from "./ModaleAccepterPropositionValeurAvancement/ModaleAccepterPropositionValeurAvancement";
 
 export const ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT =
   "modale-suppression-valeur-davancement";
 export const ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT =
   "modale-proposition-valeur-davancement";
+export const ID_HTML_MODALE_ACCEPTER_PROPOSITION_VALEUR_DAVANCEMENT =
+  "modale-accepter-proposition-valeur-davancement";
 
 interface IndicateurBlocProps {
   indicateur: Indicateur;
@@ -808,11 +811,33 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   <td colSpan={8}>
                                     <div className="flex w-full justify-end">
                                       <button
+                                        aria-controls={
+                                          ID_HTML_MODALE_ACCEPTER_PROPOSITION_VALEUR_DAVANCEMENT +
+                                          indicateur.id
+                                        }
                                         className="fr-btn fr-btn--icon-left fr-icon-check-fill fr-btn--secondary bouton-proposition-valeur-davancement"
+                                        data-fr-opened="false"
                                         type="button"
                                       >
                                         Prendre une décision
                                       </button>
+                                      <ModaleAccepterPropositionValeurAvancement
+                                        detailIndicateur={
+                                          informationIndicateur.données
+                                        }
+                                        generatedHTMLID={
+                                          ID_HTML_MODALE_ACCEPTER_PROPOSITION_VALEUR_DAVANCEMENT +
+                                          indicateur.id
+                                        }
+                                        indicateur={indicateur}
+                                        territoireCode={territoireCode}
+                                        territoireCodeInsee={
+                                          détailTerritoireSélectionné.codeInsee
+                                        }
+                                        territoireNom={
+                                          détailTerritoireSélectionné.nom
+                                        }
+                                      />
                                     </div>
                                   </td>
                                 </tr>

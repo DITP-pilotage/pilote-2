@@ -1,5 +1,3 @@
-import { randomUUID } from "node:crypto";
-import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 
 export type CreerIndicateurTerritoireValeurEvenementInput = {
@@ -27,40 +25,23 @@ export class CreerIndicateurTerritoireValeurEvenementUseCase {
   async run(
     input: CreerIndicateurTerritoireValeurEvenementInput,
   ): Promise<void> {
-    const evenementsExistants =
-      await this.indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate(
+    const evenementSurDate =
+      this.indicateurTerritoireValeurEvenementRepository.recupererEvenementSurDate(
         {
           indicId: input.indicId,
           territoireCode: input.territoireCode,
-          typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: input.dateValeurAvancement,
+          typeValeur: "VALEUR_AVANCEMENT",
         },
       );
 
-    const prochainOrdre =
-      IndicateurTerritoireValeurEvenement.prochainOrdre(evenementsExistants);
-
-    const indicateurTerritoireValeurEvenement =
-      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
-        {
-          indicId: input.indicId,
-          territoireCode: input.territoireCode,
-          typeEvenement: "PROPOSITION_VALEUR_CREEE",
-          typeValeur: "VALEUR_AVANCEMENT",
-          dateValeur: input.dateValeurAvancement,
-          valeur: input.valeurAvancement,
-          idAuteurModification: input.idAuteurModification,
-          correlationId: randomUUID(),
-          ordre: prochainOrdre,
-          donneesComplementaires: {
-            motif: input.motif,
-            sourceDonneeEtMethodeCalcul: input.sourceDonneeEtMethodeCalcul,
-          },
-        },
-      );
+    evenementSurDate.creerEvenementPropositionValeurCreee({
+      valeur: input.valeurAvancement,
+      auteurId: input.idAuteurModification,
+    });
 
     await this.indicateurTerritoireValeurEvenementRepository.enregistrer(
-      indicateurTerritoireValeurEvenement,
+      evenementSurDate,
     );
   }
 }
