@@ -4,14 +4,15 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import { validationPropositionValeurAvancement } from "@/validation/proposition-valeur-avancement";
+import {
+  validationAccepterPropositionValeurAvancement,
+  validationPropositionValeurAvancement,
+} from "@/validation/proposition-valeur-avancement";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 
 interface PropositionValeurAvancementForm {
-  valeurAvancement: string;
   motifProposition: string;
-  sourceDonneeEtMethodeCalcul: string;
   dateValeurAvancement: string;
   indicId: string;
   territoireCode: string;
@@ -64,7 +65,7 @@ export const useModaleAccepterPropositionValeurAvancement = ({
   );
 
   const mutationCreerPropositonValeurAvancement =
-    api.propositionValeurAvancement.creer.useMutation({
+    api.propositionValeurAvancement.accepter.useMutation({
       onSuccess: () => {
         setEtapePropositionValeurAvancement(null);
       },
@@ -75,11 +76,9 @@ export const useModaleAccepterPropositionValeurAvancement = ({
   > = async (data) => {
     const inputs = {
       csrf: récupérerUnCookie("csrf") ?? "",
-      ...data,
-      valeurAvancement: data.valeurAvancement,
-      dateValeurAvancement: data.dateValeurAvancement!,
+      motif: data.motifProposition,
+      dateValeurAvancement: data.dateValeurAvancement,
       indicId: indicateur.id,
-      auteurModification,
       territoireCode,
     };
 
@@ -88,28 +87,16 @@ export const useModaleAccepterPropositionValeurAvancement = ({
 
   const reactHookForm = useForm<PropositionValeurAvancementForm>({
     mode: "all",
-    resolver: zodResolver(validationPropositionValeurAvancement),
+    resolver: zodResolver(validationAccepterPropositionValeurAvancement),
     defaultValues: {
-      valeurAvancement: `${detailIndicateur.proposition!.valeurAvancement}`,
-      motifProposition: detailIndicateur.proposition!.motif || "",
-      sourceDonneeEtMethodeCalcul:
-        detailIndicateur.proposition!.sourceDonneeEtMethodeCalcul || "",
+      motifProposition: "",
       dateValeurAvancement: detailIndicateur.dateValeurAvancementMandat!,
       indicId: indicateur.id,
       territoireCode,
     },
   });
 
-  reactHookForm.watch("motifProposition");
-  reactHookForm.watch("sourceDonneeEtMethodeCalcul");
-  reactHookForm.watch("valeurAvancement");
-
-  const EtapeSuivanteEstDesactive =
-    Object.keys(reactHookForm.formState.errors).length > 0 ||
-    reactHookForm.getValues("motifProposition").length === 0 ||
-    reactHookForm.getValues("sourceDonneeEtMethodeCalcul").length === 0 ||
-    Number.parseFloat(reactHookForm.getValues("valeurAvancement")) ===
-      detailIndicateur.valeurAvancementMandat;
+  const etapeSuivanteEstDesactive = false;
 
   return {
     reactHookForm,
@@ -117,6 +104,6 @@ export const useModaleAccepterPropositionValeurAvancement = ({
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
     auteurModification,
-    EtapeSuivanteEstDesactive,
+    etapeSuivanteEstDesactive,
   };
 };

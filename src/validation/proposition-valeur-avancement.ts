@@ -24,3 +24,10 @@ export const validationSuppressionValeurAvancement = z.object({
   indicId: z.string(),
   territoireCode: z.string(),
 });
+
+export const validationAccepterPropositionValeurAvancement = z.object({
+  indicId: z.string(),
+  territoireCode: z.string(),
+  dateValeurAvancement: z.string(),
+  motif: z.string().trim(),
+});

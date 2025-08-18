@@ -9,7 +9,6 @@ import {
   Stepper,
   useModaleAccepterPropositionValeurAvancement,
 } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccepterPropositionValeurAvancement/useModaleAccepterPropositionValeurAvancement";
-import Input from "@/components/_commons/Input/Input";
 import { formaterDate } from "@/client/utils/date/date";
 import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
@@ -34,7 +33,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
     auteurModification,
-    EtapeSuivanteEstDesactive,
+    etapeSuivanteEstDesactive: EtapeSuivanteEstDesactive,
     accepterPropositonValeurAvancement,
   } = useModaleAccepterPropositionValeurAvancement({
     indicateur,
@@ -130,18 +129,9 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                       </span>
                       <div className="w-full flex flex-column align-center fr-pt-1w">
                         <div className="w-half-full flex fr-mb-1w">
-                          <Input
-                            className="text-center"
-                            erreurMessage={
-                              reactHookForm.formState.errors.valeurAvancement
-                                ?.message
-                            }
-                            htmlName="valeurAvancement"
-                            register={reactHookForm.register(
-                              "valeurAvancement",
-                            )}
-                            type="text"
-                          />
+                          <span>
+                            {detailIndicateur.proposition?.valeurAvancement}
+                          </span>
                         </div>
                         <span className="flex justify-center texte-gris">
                           (
@@ -207,18 +197,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                       </label>
                     </div>
                     <div className="fr-mt-2w">
-                      <Input
-                        className="fr-mt-1v input--sm"
-                        classNameGroupe="fr-mb-1v"
-                        disabled={decision !== "accepter-avec-modification"}
-                        erreurMessage={
-                          reactHookForm.formState.errors.valeurAvancement
-                            ?.message
-                        }
-                        htmlName="valeurAvancementModifiee"
-                        register={reactHookForm.register("valeurAvancement")}
-                        type="text"
-                      />
+                      <span>Valeur à modifier</span>
                       <span className="flex texte-gris fr-text--xs">
                         (
                         {formaterDate(
@@ -300,7 +279,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                         par {auteurModification} :{" "}
                       </span>
                       <span className="fr-text--bold">
-                        {reactHookForm.getValues("valeurAvancement")} (
+                        {detailIndicateur.proposition?.valeurAvancement} (
                         {formaterDate(
                           detailIndicateur.dateValeurAvancement,
                           "MM/YYYY",

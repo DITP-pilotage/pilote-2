@@ -5,6 +5,7 @@ import {
 import {
   validationPropositionValeurAvancement,
   validationSuppressionValeurAvancement,
+  validationAccepterPropositionValeurAvancement,
 } from "@/validation/proposition-valeur-avancement";
 import { StatutProposition } from "@/server/chantiers/domain/StatutProposition";
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
@@ -95,5 +96,13 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
           territoireCode: input.territoireCode,
           auteurModification: auteur,
         });
+    }),
+
+  accepter: procédureProtégée
+    .input(validationAccepterPropositionValeurAvancement)
+    .mutation(async ({ input, ctx }) => {
+      const auteur = ctx.session.user.name ?? "";
+
+      console.log("toto", auteur);
     }),
 });
