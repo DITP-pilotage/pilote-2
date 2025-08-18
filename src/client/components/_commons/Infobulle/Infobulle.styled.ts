@@ -16,6 +16,10 @@ const InfobulleStyled = styled.span`
   .tooltip-accordeon {
     max-width: 50% !important;
   }
+
+  .information-proposition-icone {
+    font-size: 24px !important;
+  }
 `;
 
 export default InfobulleStyled;

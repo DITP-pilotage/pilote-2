@@ -905,7 +905,9 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
               ? indicateurTerritoireJalon.taux_avancement_proposition_v2
               : null,
           auteur: `${dernierEvenementProposition.auteur.prenom} ${dernierEvenementProposition.auteur.nom}`,
-          dateProposition: formatDate(dernierEvenementProposition.date_valeur),
+          dateProposition: formatDate(
+            dernierEvenementProposition.date_creation,
+          ),
           motif:
             (
               dernierEvenementProposition.donnees_complementaires as {
