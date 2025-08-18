@@ -13,7 +13,7 @@ describe("EvenementsSurDate", () => {
     date,
   });
 
-  describe("creerEvenementPropositionValeurCreee", () => {
+  describe("#creerEvenementPropositionValeurCreee", () => {
     it("doit créer un événement PROPOSITION_VALEUR_CREEE avec succès quand aucune proposition n'existe", () => {
       // GIVEN
       const evenementExistant = new ValeurIndicateurTerritoireEvenementBuilder()
@@ -297,7 +297,7 @@ describe("EvenementsSurDate", () => {
     });
   });
 
-  describe("creerEvenementPropositionValeurModifiee", () => {
+  describe("#creerEvenementPropositionValeurModifiee", () => {
     it("doit créer un événement PROPOSITION_VALEUR_MODIFIEE avec succès quand une PROPOSITION_VALEUR_CREEE existe", () => {
       // GIVEN
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
@@ -573,7 +573,7 @@ describe("EvenementsSurDate", () => {
     });
   });
 
-  describe("creerEvenementPropositionValeurSupprimee", () => {
+  describe("#creerEvenementPropositionValeurSupprimee", () => {
     it("doit créer un événement PROPOSITION_VALEUR_SUPPRIMEE avec succès quand une PROPOSITION_VALEUR_CREEE est en cours", () => {
       // GIVEN
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
@@ -843,7 +843,7 @@ describe("EvenementsSurDate", () => {
     });
   });
 
-  describe("creerEvenementPropositionValeurAccuseeReception", () => {
+  describe("#creerEvenementPropositionValeurAccuseeReception", () => {
     it("doit créer un événement PROPOSITION_VALEUR_ACCUSEE_RECEPTION avec succès quand une PROPOSITION_VALEUR_CREEE est en cours", () => {
       // GIVEN
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
@@ -1113,7 +1113,7 @@ describe("EvenementsSurDate", () => {
     });
   });
 
-  describe("creerEvenementPropositionValeurRefusee", () => {
+  describe("#creerEvenementPropositionValeurRefusee", () => {
     it("doit créer un événement PROPOSITION_VALEUR_REFUSEE avec succès quand une PROPOSITION_VALEUR_CREEE est en cours", () => {
       // GIVEN
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
@@ -1347,7 +1347,7 @@ describe("EvenementsSurDate", () => {
     });
   });
 
-  describe("creerEvenementPropositionValeurAcceptee", () => {
+  describe("#creerEvenementPropositionValeurAcceptee", () => {
     it("doit créer un événement PROPOSITION_VALEUR_ACCEPTEE avec succès quand une PROPOSITION_VALEUR_CREEE est en cours", () => {
       // GIVEN
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
@@ -1591,7 +1591,7 @@ describe("EvenementsSurDate", () => {
     });
   });
 
-  describe("creerEvenementPropositionValeurAccepteeAvecModification", () => {
+  describe("#creerEvenementPropositionValeurAccepteeAvecModification", () => {
     it("doit créer un événement PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION avec succès quand une PROPOSITION_VALEUR_CREEE est en cours", () => {
       // GIVEN
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()

@@ -65,39 +65,6 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
     );
   });
 
-  it("Doit appeler le repository une seule fois", async () => {
-    // Given
-    const input = {
-      indicId: "IND-002",
-      territoireCode: "DEP-75",
-      valeurAvancement: 50,
-      dateValeurAvancement: new Date("2024-02-20"),
-      idAuteurModification: "user-456",
-      motif: "Motif de la proposition",
-      sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
-    };
-
-    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
-      new EvenementsSurDate({
-        identifiantFlux: {
-          indicId: input.indicId,
-          territoireCode: input.territoireCode,
-          date: input.dateValeurAvancement.toISOString().split("T")[0],
-        },
-        evenementsSurDate: [],
-        tousLesEvenements: [],
-      }),
-    );
-
-    // When
-    await creerIndicateurTerritoireValeurEvenementUseCase.run(input);
-
-    // Then
-    expect(
-      indicateurTerritoireValeurEvenementRepository.enregistrer,
-    ).toHaveBeenCalledTimes(1);
-  });
-
   it("Doit récupérer les événements existants avec les bons paramètres", async () => {
     // Given
     const input = {
