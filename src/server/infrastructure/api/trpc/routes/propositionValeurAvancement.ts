@@ -9,7 +9,6 @@ import {
   validationRefuserPropositionValeurAvancement,
 } from "@/validation/proposition-valeur-avancement";
 import { StatutProposition } from "@/server/chantiers/domain/StatutProposition";
-import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import { getContainer } from "@/server/dependances";
 
 export const propositionValeurAvancementRouter = créerRouteurTRPC({
@@ -27,7 +26,9 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
           indicId: input.indicId,
         });
 
-      const habilitations = new Habilitation(ctx.session.habilitations);
+      const habilitations = await getContainer("gestionUtilisateur")
+        .resolve("habilitationService")
+        .recupererHabilitations(ctx.session);
 
       habilitations.verifierAutorisationModificationPropositionValeurAvancement(
         ctx.session.profil,
@@ -64,7 +65,9 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
           indicId: input.indicId,
         });
 
-      const habilitations = new Habilitation(ctx.session.habilitations);
+      const habilitations = await getContainer("gestionUtilisateur")
+        .resolve("habilitationService")
+        .recupererHabilitations(ctx.session);
 
       habilitations.verifierAutorisationModificationPropositionValeurAvancement(
         ctx.session.profil,
@@ -112,7 +115,9 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
           indicId: input.indicId,
         });
 
-      const habilitations = new Habilitation(ctx.session.habilitations);
+      const habilitations = await getContainer("gestionUtilisateur")
+        .resolve("habilitationService")
+        .recupererHabilitations(ctx.session);
 
       habilitations.verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
         ctx.session.profil,
@@ -144,11 +149,13 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
           indicId: input.indicId,
         });
 
-      const habilitations = new Habilitation(ctx.session.habilitations);
+      const habilitations = await getContainer("gestionUtilisateur")
+        .resolve("habilitationService")
+        .recupererHabilitations(ctx.session);
 
       habilitations.verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
         ctx.session.profil,
-        ctx.session.habilitations.saisieCommentaire.chantiers,
+        ctx.session.habilitations,
         propositionValeurAvancementChantierInformation,
       );
 

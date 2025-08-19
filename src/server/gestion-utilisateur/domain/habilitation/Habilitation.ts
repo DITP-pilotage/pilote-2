@@ -44,7 +44,11 @@ const PROFIL_AUTORISE_A_ACCEPTER_PROPOSITION_VALEUR_AVANCEMENT = new Set([
 ]);
 
 export default class Habilitation {
-  constructor(private _habilitations: Habilitations) {}
+  private _habilitations: Habilitations;
+
+  constructor({ habilitations }: { habilitations: Habilitations }) {
+    this._habilitations = habilitations;
+  }
 
   vérifierLesHabilitationsEnSuppressionUtilisateur(
     chantiersIds: Chantier["id"][],
@@ -163,16 +167,20 @@ export default class Habilitation {
 
   verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
     profil: ProfilCode | null,
-    chantiersIdsAutorisés: string[],
+    habilitations: Habilitations,
     propositionValeurAvancementChantierInformation: PropositionValeurAvancementChantierInformation,
   ) {
     if (
       !profil ||
       !PROFIL_AUTORISE_A_ACCEPTER_PROPOSITION_VALEUR_AVANCEMENT.has(profil) ||
       propositionValeurAvancementChantierInformation.statut === "ARCHIVE" ||
-      !chantiersIdsAutorisés.includes(
+      !habilitations.saisieCommentaire.chantiers.includes(
         propositionValeurAvancementChantierInformation.id,
-      )
+      ) ||
+      (profil === ProfilEnum.SECRETARIAT_GENERAL &&
+        !habilitations.saisieIndicateur.chantiers.includes(
+          propositionValeurAvancementChantierInformation.id,
+        ))
     ) {
       throw new UnauthorizedError(
         "Vous n'êtes pas autorisé a effectuer cette action",

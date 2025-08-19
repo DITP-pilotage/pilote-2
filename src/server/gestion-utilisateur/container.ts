@@ -48,6 +48,8 @@ import { EnvoyerMailInscriptionInfolettreUseCase } from "./usecases/EnvoyerMailI
 import { RecupererEtatModaleInscriptionUseCase } from "./usecases/RecupererEtatModaleInscriptionUseCase";
 import { DesactiverPopupInfolettreUseCase } from "./usecases/DesactiverPopupInfolettreUseCase";
 import { AjouterUnContactAUneInfoLettreUseCase } from "./usecases/AjouterUnContactAUneInfoLettreUseCase";
+import { PrismaHabilitationService } from "./infrastructure/adapters/PrismaHabilitationService";
+import { HabilitationService } from "./domain/ports/HabilitationService";
 
 export type GestionUtilisateurDependencies = {
   utilisateurRepository: UtilisateurRepository;
@@ -83,6 +85,7 @@ export type GestionUtilisateurDependencies = {
   recupererEtatModaleInscriptionUseCase: RecupererEtatModaleInscriptionUseCase;
   desactiverPopupInfolettreUseCase: DesactiverPopupInfolettreUseCase;
   ajouterUnContactAUneInfoLettreUseCase: AjouterUnContactAUneInfoLettreUseCase;
+  habilitationService: HabilitationService;
 };
 
 export const getGestionUtilisateurContainer = (
@@ -164,5 +167,6 @@ export const getGestionUtilisateurContainer = (
       ajouterUnContactAUneInfoLettreUseCase: asClass(
         AjouterUnContactAUneInfoLettreUseCase,
       ),
+      habilitationService: asClass(PrismaHabilitationService),
     });
 };

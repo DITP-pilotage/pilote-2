@@ -49,7 +49,9 @@ export async function getServerSideProps({
     return redirigerVersPageAccueil;
   }
 
-  const habilitations = new Habilitation(session.habilitations);
+  const habilitations = await getContainer("gestionUtilisateur")
+    .resolve("habilitationService")
+    .recupererHabilitations(session);
 
   habilitations.verifierAutorisationLectureMetadataIndicateur(session.profil);
 

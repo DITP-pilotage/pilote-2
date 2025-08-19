@@ -10,7 +10,7 @@ import { RécupérerMessageInformationUseCase } from "@/server/gestion-contenu/u
 import { presenterEnMessageInformationContrat } from "@/server/app/contrats/MessageInformationContrat";
 import { RécupérerVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase";
 import { VARIABLE_CONTENU_DISPONIBLE_ENV } from "@/server/gestion-contenu/domain/VariableContenuDisponible";
-import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
+import { getContainer } from "@/server/dependances";
 
 export const validationVariableContenu = z.object({
   nomVariableContenu: z.enum(VARIABLE_CONTENU_DISPONIBLE_ENV),
@@ -19,8 +19,10 @@ export const validationVariableContenu = z.object({
 export const gestionContenuRouter = créerRouteurTRPC({
   modifierBandeauIndisponibilite: procédureProtégée
     .input(validationContenu)
-    .mutation(({ input, ctx }) => {
-      const habilitations = new Habilitation(ctx.session.habilitations);
+    .mutation(async ({ input, ctx }) => {
+      const habilitations = await getContainer("gestionUtilisateur")
+        .resolve("habilitationService")
+        .recupererHabilitations(ctx.session);
       habilitations.verifierAutorisationModificationGestionContenu(
         ctx.session.profil,
       );
