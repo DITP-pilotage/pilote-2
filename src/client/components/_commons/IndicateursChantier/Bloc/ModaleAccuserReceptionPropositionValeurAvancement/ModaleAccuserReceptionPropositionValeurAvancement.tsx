@@ -11,6 +11,7 @@ import {
 } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccuserReceptionPropositionValeurAvancement/useModaleAccuserReceptionPropositionValeurAvancement";
 import { formaterDate } from "@/client/utils/date/date";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
+import { ComparaisonValeurBox } from "@/components/_commons/IndicateursChantier/Bloc/ComparaisonValeurBox";
 
 export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponent<{
   indicateur: Indicateur;
@@ -82,56 +83,23 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                     {`${territoireCodeInsee} - ${territoireNom}`}
                   </p>
 
-                  <div className="w-full flex fr-mt-2w">
-                    <div className="w-half-full fr-mr-1w border flex flex-column">
-                      <span className="fr-background-action-low-blue-france flex justify-center fr-p-1w border">
-                        Valeur d'avancement importée par la direction de projet
-                      </span>
-                      <div className="w-full flex flex-column justify-between fr-py-2w">
-                        <span className="fr-mb-2w text-center">
-                          {detailIndicateur.valeurAvancementMandat?.toLocaleString(
-                            "fr-FR",
-                          )}
-                        </span>
-                        <span className="flex justify-center align-end texte-gris">
-                          (
-                          {formaterDate(
-                            detailIndicateur.dateValeurAvancementMandat,
-                            "MM/YYYY",
-                          )}
-                          )
-                        </span>
-                      </div>
-                    </div>
-                    <div className="w-half-full fr-ml-1w border">
-                      <span className="fr-background-action-low-blue-france w-full flex justify-center fr-py-2w">
-                        Valeur d'avancement proposée par{" "}
-                        {detailIndicateur.proposition?.auteur} le{" "}
-                        {formaterDate(
-                          detailIndicateur.proposition?.dateProposition,
-                          "DD/MM/YYYY",
-                        )}
-                        <span
-                          aria-hidden="true"
-                          className="fr-icon-info-fill fr-ml-1v"
-                        />
-                      </span>
-                      <div className="w-full flex flex-column align-center fr-pt-1w">
-                        <div className="fr-mb-2w text-center">
-                          <span>
-                            {detailIndicateur.proposition?.valeurAvancement}
-                          </span>
-                        </div>
-                        <span className="flex justify-center texte-gris">
-                          (
-                          {formaterDate(
-                            detailIndicateur.dateValeurAvancementMandat,
-                            "MM/YYYY",
-                          )}
-                          )
-                        </span>
-                      </div>
-                    </div>
+                  <div className="w-full flex fr-mt-2w gap-2">
+                    <ComparaisonValeurBox
+                      date={detailIndicateur.dateValeurAvancementMandat}
+                      titre="Valeur d'avancement importée par la direction de projet"
+                      valeur={detailIndicateur.valeurAvancementMandat?.toLocaleString(
+                        "fr-FR",
+                      )}
+                    />
+
+                    <ComparaisonValeurBox
+                      date={detailIndicateur.dateValeurAvancementMandat}
+                      titre={`Valeur d'avancement proposée par ${detailIndicateur.proposition?.auteur} le ${formaterDate(
+                        detailIndicateur.proposition?.dateProposition,
+                        "DD/MM/YYYY",
+                      )}`}
+                      valeur={detailIndicateur.proposition?.valeurAvancement}
+                    />
                   </div>
 
                   <p className="fr-text--sm fr-mt-2w">
