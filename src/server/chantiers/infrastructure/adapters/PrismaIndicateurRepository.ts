@@ -889,36 +889,36 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       indicateurRow.indicateur_territoire_valeur_evenement.filter((evenement) =>
         evenement.type_evenement.startsWith("PROPOSITION_VALEUR_"),
       ) || [];
-    const [dernierEvenementProposition = null] = evenementsProposition;
+    const [evenementPropositionLePlusRecent = null] = evenementsProposition;
     let statutTerritoire = null;
     let statutDirectionProjet = null;
 
-    return dernierEvenementProposition &&
+    return evenementPropositionLePlusRecent &&
       !EVENEMENT_VALEUR_PROPOSITION_VALEUR_TERMINEE.includes(
-        dernierEvenementProposition.type_evenement,
+        evenementPropositionLePlusRecent.type_evenement,
       )
       ? {
-          valeurAvancement: dernierEvenementProposition.valeur!,
+          valeurAvancement: evenementPropositionLePlusRecent.valeur!,
           tauxAvancement: indicateurRow.taux_avancement_mandat_proposition_v2,
           tauxAvancementIntermediaire:
             indicateurTerritoireJalon !== undefined
               ? indicateurTerritoireJalon.taux_avancement_proposition_v2
               : null,
-          auteur: `${dernierEvenementProposition.auteur.prenom} ${dernierEvenementProposition.auteur.nom}`,
+          auteur: `${evenementPropositionLePlusRecent.auteur.prenom} ${evenementPropositionLePlusRecent.auteur.nom}`,
           dateProposition: formatDate(
-            dernierEvenementProposition.date_creation,
+            evenementPropositionLePlusRecent.date_creation,
           ),
           statutTerritoire,
           statutDirectionProjet,
           motif:
             (
-              dernierEvenementProposition.donnees_complementaires as {
+              evenementPropositionLePlusRecent.donnees_complementaires as {
                 motif: string;
               }
             )?.motif || null,
           sourceDonneeEtMethodeCalcul:
             (
-              dernierEvenementProposition.donnees_complementaires as {
+              evenementPropositionLePlusRecent.donnees_complementaires as {
                 source_donnee_methode_calcul: string;
               }
             )?.source_donnee_methode_calcul || null,
