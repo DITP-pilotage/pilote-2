@@ -151,7 +151,6 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                         reactHookForm.formState.errors.motif?.message
                       }
                       htmlName="motif"
-                      isRequired
                       libellé="Indiquez ici les raisons qui motivent votre choix."
                       placeholder="Indiquez ici les raisons qui motivent votre choix."
                       register={reactHookForm.register("motif")}

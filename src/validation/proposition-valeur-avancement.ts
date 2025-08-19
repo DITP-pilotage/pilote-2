@@ -50,8 +50,5 @@ export const validationAccuserReceptionPropositionValeurAvancement = z.object({
   indicId: z.string(),
   territoireCode: z.string(),
   dateValeurAvancement: z.string(),
-  motif: z
-    .string()
-    .trim()
-    .min(1, "Veuillez saisir un motif d'accusé de réception"),
+  motif: z.string().trim(),
 });
