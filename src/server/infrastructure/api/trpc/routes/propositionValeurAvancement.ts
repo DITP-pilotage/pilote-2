@@ -102,7 +102,9 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
           indicId: input.indicId,
         });
 
-      const habilitations = new Habilitation(ctx.session.habilitations);
+      const habilitations = await getContainer("gestionUtilisateur")
+        .resolve("habilitationService")
+        .recupererHabilitations(ctx.session);
 
       habilitations.verifierAutorisationModificationPropositionValeurAvancement(
         ctx.session.profil,
