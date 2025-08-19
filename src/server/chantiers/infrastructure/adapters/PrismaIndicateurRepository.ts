@@ -811,13 +811,15 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         détailsIndicateurs[indicateurRow.id] = {};
       }
 
-      let propositionStatutTerritoire: DetailsIndicateur["propositionStatutTerritoire"] =
-        null;
-      let propositionStatutDirectionProjet: DetailsIndicateur["propositionStatutDirectionProjet"] =
-        null;
       const indicateurTerritoireJalon =
         indicateurRow.indicateur_territoire_jalon.find(
           (indicateurJalon) => indicateurJalon.jalon === jalon,
+        );
+
+      const { propositionStatutTerritoire, propositionStatutDirectionProjet } =
+        this.calculerStatutsProposition(
+          indicateurRow,
+          indicateurTerritoireJalon,
         );
 
       détailsIndicateurs[indicateurRow.id][indicateurRow.territoire_code] = {
@@ -927,5 +929,96 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             )?.source_donnee_methode_calcul || null,
         }
       : null;
+  }
+
+  private calculerStatutsProposition(
+    indicateurRow: PrismaIndicateurTerritoire & {
+      indicateur_territoire_valeur_evenement: (PrismaIndicateurTerritoireValeurEvenement & {
+        auteur: Pick<PrismaUtilisateur, "nom" | "prenom">;
+      })[];
+    },
+    indicateurTerritoireJalon: PrismaIndicateurTerritoireJalon | undefined,
+  ): {
+    propositionStatutTerritoire: DetailsIndicateur["propositionStatutTerritoire"];
+    propositionStatutDirectionProjet: DetailsIndicateur["propositionStatutDirectionProjet"];
+  } {
+    let propositionStatutTerritoire: DetailsIndicateur["propositionStatutTerritoire"] =
+      null;
+    let propositionStatutDirectionProjet: DetailsIndicateur["propositionStatutDirectionProjet"] =
+      null;
+
+    const dateValeurActuelle = indicateurTerritoireJalon?.date_valeur_actuelle;
+    if (!dateValeurActuelle) {
+      return { propositionStatutTerritoire, propositionStatutDirectionProjet };
+    }
+
+    const evenementsProposition =
+      indicateurRow.indicateur_territoire_valeur_evenement
+        .filter(
+          (evenement) =>
+            evenement.type_evenement.startsWith("PROPOSITION_VALEUR_") &&
+            evenement.date_valeur.getTime() === dateValeurActuelle.getTime(),
+        )
+        .sort((a, b) => a.ordre - b.ordre);
+
+    if (evenementsProposition.length === 0) {
+      return { propositionStatutTerritoire, propositionStatutDirectionProjet };
+    }
+
+    const [premierEvenement] = evenementsProposition;
+    const evenementPropositionValeur = evenementsProposition.find(
+      (evt) =>
+        evt.type_evenement === EvenementValeurEnum.PROPOSITION_VALEUR_CREEE ||
+        evt.type_evenement === EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+    );
+
+    switch (premierEvenement.type_evenement) {
+      case EvenementValeurEnum.PROPOSITION_VALEUR_REFUSEE:
+        propositionStatutTerritoire = null;
+        propositionStatutDirectionProjet = {
+          statut: "PROPOSITION_VALEUR_REFUSEE",
+          date: formatDate(premierEvenement.date_creation),
+        };
+        break;
+
+      case EvenementValeurEnum.PROPOSITION_VALEUR_ACCUSEE_RECEPTION:
+        if (evenementPropositionValeur) {
+          propositionStatutTerritoire = {
+            statut: evenementPropositionValeur.type_evenement as
+              | "PROPOSITION_VALEUR_CREEE"
+              | "PROPOSITION_VALEUR_MODIFIEE",
+            date: formatDate(evenementPropositionValeur.date_creation),
+          };
+        }
+        propositionStatutDirectionProjet = {
+          statut: "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
+          date: formatDate(premierEvenement.date_creation),
+        };
+        break;
+
+      case EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE:
+        propositionStatutTerritoire = {
+          statut: "PROPOSITION_VALEUR_SUPPRIMEE",
+          date: formatDate(premierEvenement.date_creation),
+        };
+        propositionStatutDirectionProjet = null;
+        break;
+
+      case EvenementValeurEnum.PROPOSITION_VALEUR_CREEE:
+      case EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE:
+        propositionStatutTerritoire = {
+          statut: premierEvenement.type_evenement as
+            | "PROPOSITION_VALEUR_CREEE"
+            | "PROPOSITION_VALEUR_MODIFIEE",
+          date: formatDate(premierEvenement.date_creation),
+        };
+        propositionStatutDirectionProjet = null;
+        break;
+
+      default:
+        break;
+    }
+
+    return { propositionStatutTerritoire, propositionStatutDirectionProjet };
   }
 }
