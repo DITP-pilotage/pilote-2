@@ -9,6 +9,7 @@ import { AccepterPropositionValeurAvancementUseCase } from "./usecases/AccepterP
 import { RefuserPropositionValeurAvancementUseCase } from "./usecases/RefuserPropositionValeurAvancementUseCase";
 import { ModifierPropositionValeurAvancementUseCase } from "./usecases/ModifierPropositionValeurAvancementUseCase";
 import { SupprimerPropositionValeurAvancementUseCase } from "./usecases/SupprimerPropositionValeurAvancementUseCase";
+import { AccuserReceptionPropositionValeurUseCase } from "./usecases/AccuserReceptionPropositionValeurUseCase";
 
 export type IndicateurTerritoireValeurEvenementDependencies = {
   indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
@@ -16,6 +17,7 @@ export type IndicateurTerritoireValeurEvenementDependencies = {
   creerIndicateurTerritoireValeurEvenementUseCase: CreerIndicateurTerritoireValeurEvenementUseCase;
   accepterPropositionValeurAvancementUseCase: AccepterPropositionValeurAvancementUseCase;
   refuserPropositionValeurAvancementUseCase: RefuserPropositionValeurAvancementUseCase;
+  accuserReceptionPropositionValeurUseCase: AccuserReceptionPropositionValeurUseCase;
   modifierPropositionValeurAvancementUseCase: ModifierPropositionValeurAvancementUseCase;
   supprimerPropositionValeurAvancementUseCase: SupprimerPropositionValeurAvancementUseCase;
 };
@@ -45,6 +47,9 @@ export const getIndicateurTerritoireValeurEvenementContainer = (
       ),
       supprimerPropositionValeurAvancementUseCase: asClass(
         SupprimerPropositionValeurAvancementUseCase,
+      ),
+      accuserReceptionPropositionValeurUseCase: asClass(
+        AccuserReceptionPropositionValeurUseCase,
       ),
     });
 };

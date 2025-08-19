@@ -219,4 +219,36 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
           motif: input.motif,
         });
     }),
+
+  accuserReception: procédureProtégée
+    .input(validationAccuserReceptionPropositionValeurAvancement)
+    .mutation(async ({ input, ctx }) => {
+      const auteur = ctx.session.user.id ?? "";
+
+      const propositionValeurAvancementChantierInformation = await getContainer(
+        "chantiers",
+      )
+        .resolve("chantierRepository")
+        .recupererPropositionValeurAvancementChantierInformationParIndicId({
+          indicId: input.indicId,
+        });
+
+      const habilitations = new Habilitation(ctx.session.habilitations);
+
+      habilitations.verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
+        ctx.session.profil,
+        ctx.session.habilitations.saisieCommentaire.chantiers,
+        propositionValeurAvancementChantierInformation,
+      );
+
+      await getContainer("indicateurTerritoireValeurEvenement")
+        .resolve("accuserReceptionPropositionValeurUseCase")
+        .run({
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          idAuteurAccuseReception: auteur,
+          dateValeurAvancement: input.dateValeurAvancement,
+          motif: input.motif,
+        });
+    }),
 });

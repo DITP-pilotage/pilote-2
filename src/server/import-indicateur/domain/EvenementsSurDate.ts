@@ -360,8 +360,10 @@ export class EvenementsSurDate {
 
   creerEvenementPropositionValeurAccuseeReception({
     auteurId,
+    motif,
   }: {
     auteurId: string;
+    motif: string;
   }) {
     const evenementPropositionEnCours =
       this.evenementPropositionValeurEnCours();
@@ -382,7 +384,7 @@ export class EvenementsSurDate {
           typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: this.dateValeur(),
           valeur: evenementPropositionEnCours.valeur,
-          donneesComplementaires: undefined,
+          donneesComplementaires: { motif },
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
           ordre: this.prochainOrdre(),

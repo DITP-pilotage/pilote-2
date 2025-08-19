@@ -911,6 +911,7 @@ describe("EvenementsSurDate", () => {
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurAccuseeReception({
           auteurId: AUTEUR_ID,
+          motif: "Motif de l'accusé de réception",
         });
 
       // THEN
@@ -924,7 +925,9 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(80); // Valeur de la proposition accusée réception
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(3);
-      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+      expect(nouveauEvenement.donneesComplementaires).toEqual({
+        motif: "Motif de l'accusé de réception",
+      });
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_ACCUSEE_RECEPTION avec succès quand une PROPOSITION_VALEUR_MODIFIEE est en cours", () => {
@@ -971,6 +974,7 @@ describe("EvenementsSurDate", () => {
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurAccuseeReception({
           auteurId: AUTEUR_ID,
+          motif: "Motif de l'accusé de réception",
         });
 
       // THEN
@@ -1001,6 +1005,7 @@ describe("EvenementsSurDate", () => {
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAccuseeReception({
           auteurId: AUTEUR_ID,
+          motif: "Motif de l'accusé de réception",
         });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -1049,6 +1054,7 @@ describe("EvenementsSurDate", () => {
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAccuseeReception({
           auteurId: AUTEUR_ID,
+          motif: "Motif de l'accusé de réception",
         });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -1097,6 +1103,7 @@ describe("EvenementsSurDate", () => {
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAccuseeReception({
           auteurId: AUTEUR_ID,
+          motif: "Motif de l'accusé de réception",
         });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -1145,6 +1152,7 @@ describe("EvenementsSurDate", () => {
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAccuseeReception({
           auteurId: AUTEUR_ID,
+          motif: "Motif de l'accusé de réception",
         });
       }).toThrow("La proposition de valeur a déjà été accusée réception");
     });
