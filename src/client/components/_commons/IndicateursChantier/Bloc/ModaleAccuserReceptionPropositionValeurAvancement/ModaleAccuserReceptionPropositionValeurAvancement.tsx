@@ -31,7 +31,6 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
     reactHookForm,
     etapeAccuserReception,
     setEtapeAccuserReception,
-    auteurModification,
     etapeSuivanteEstDesactive,
     traiterAccuseReception,
   } = useModaleAccuserReceptionPropositionValeurAvancement({

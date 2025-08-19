@@ -1,7 +1,6 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 import { z } from "zod";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
@@ -55,10 +54,6 @@ export const useModaleAccuserReceptionPropositionValeurAvancement = ({
   detailIndicateur: DétailsIndicateur;
   territoireCode: string;
 }) => {
-  const { data: session } = useSession();
-
-  const auteurModification = session?.user.name;
-
   const [etapeAccuserReception, setEtapeAccuserReception] =
     useState<EtapeAccuserReception | null>(
       EtapeAccuserReception.EXAMEN_PROPOSITION,
@@ -101,7 +96,6 @@ export const useModaleAccuserReceptionPropositionValeurAvancement = ({
     traiterAccuseReception,
     etapeAccuserReception,
     setEtapeAccuserReception,
-    auteurModification,
     etapeSuivanteEstDesactive,
   };
 };

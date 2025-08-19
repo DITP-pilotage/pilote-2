@@ -814,24 +814,24 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 estAutoriseAAccepterLesPropositionsDeValeurAvancement ? (
                                 <tr className="ligne-modification-proposition-valeur-davancement">
                                   <td colSpan={8}>
-                                    <div className="flex w-full justify-end">
-                                      <button
-                                        aria-controls={
+                                    <div className="flex w-full align-center justify-end gap-4">
+                                      <BoutonSousLigné
+                                        ariaControls={
                                           ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT +
                                           indicateur.id
                                         }
-                                        className="fr-btn fr-btn--icon-left fr-icon-mail-fill fr-btn--secondary bouton-proposition-valeur-davancement fr-mr-2w"
-                                        data-fr-opened="false"
+                                        classNameSupplémentaires="fr-link--icon-left fr-icon-mail-line texte-jaune"
+                                        dataFrOpened={false}
                                         type="button"
                                       >
                                         Accuser réception
-                                      </button>
+                                      </BoutonSousLigné>
                                       <button
                                         aria-controls={
                                           ID_HTML_MODALE_ACCEPTER_PROPOSITION_VALEUR_DAVANCEMENT +
                                           indicateur.id
                                         }
-                                        className="fr-btn fr-btn--icon-left fr-icon-check-fill fr-btn--secondary bouton-proposition-valeur-davancement"
+                                        className="fr-btn fr-btn--icon-left fr-icon-scales-3-fill fr-btn--secondary bouton-proposition-valeur-davancement"
                                         data-fr-opened="false"
                                         type="button"
                                       >
