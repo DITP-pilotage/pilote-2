@@ -136,6 +136,8 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
                 dateProposition: formatDate(indicateurRow.date_proposition),
               }
             : null,
+        propositionStatutTerritoire: null,
+        propositionStatutDirectionProjet: null,
         unité: indicateurRow.indicateur_identite.unite_mesure,
         est_applicable: indicateurRow.est_applicable,
         dateImport: formatDate(

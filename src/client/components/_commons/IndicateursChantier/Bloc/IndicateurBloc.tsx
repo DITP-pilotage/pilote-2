@@ -11,7 +11,6 @@ import BadgeIcône from "@/components/_commons/BadgeIcône/BadgeIcône";
 import api from "@/server/infrastructure/api/trpc/api";
 import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 import ValeurEtDate from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
@@ -24,6 +23,7 @@ import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { ModaleSuppressionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurAvancement/ModaleSuppressionValeurAvancement";
 import BoutonSousLigné from "@/client/components/_commons/BoutonSousLigné/BoutonSousLigné";
+import { DetailsIndicateursContrat } from "@/server/chantiers/app/contrats/DetailsIndicateursContrat";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import useIndicateurBloc from "./useIndicateurBloc";
 import useIndicateurAlerteDateMaj from "./useIndicateurAlerteDateMaj";
@@ -43,8 +43,8 @@ export const ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT =
 
 interface IndicateurBlocProps {
   indicateur: Indicateur;
-  détailsIndicateurs: DétailsIndicateurs;
-  detailsIndicateursTerritoire: DétailsIndicateurs;
+  détailsIndicateurs: DetailsIndicateursContrat;
+  detailsIndicateursTerritoire: DetailsIndicateursContrat;
   estInteractif: boolean;
   chantierEstTerritorialisé: boolean;
   estAutoriseAProposerUneValeurAvancement: boolean;

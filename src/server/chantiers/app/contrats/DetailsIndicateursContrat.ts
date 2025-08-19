@@ -28,6 +28,10 @@ export const presenterEnDetailsIndicateursContrat = (
           dateValeurCibleAnnuelle: detailsTerritoire.dateValeurCibleAnnuelle,
           avancement: detailsTerritoire.avancement,
           proposition: detailsTerritoire.proposition,
+          propositionStatutTerritoire:
+            detailsTerritoire.propositionStatutTerritoire,
+          propositionStatutDirectionProjet:
+            detailsTerritoire.propositionStatutDirectionProjet,
           unité: detailsTerritoire.unite,
           est_applicable: detailsTerritoire.estApplicable,
           dateImport: detailsTerritoire.dateImport,

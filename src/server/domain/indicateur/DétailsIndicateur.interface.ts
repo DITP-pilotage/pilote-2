@@ -1,6 +1,10 @@
 import { Avancement } from "@/server/domain/chantier/avancement/Avancement.interface";
 import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
+import {
+  DetailsIndicateur,
+  DetailsIndicateurs,
+} from "@/server/chantiers/domain/DetailsIndicateurs";
 import Indicateur from "./Indicateur.interface";
 
 export type DétailsIndicateurTerritoire = Record<CodeInsee, DétailsIndicateur>;
@@ -48,6 +52,8 @@ export type DétailsIndicateur = {
   dateValeurCibleAnnuelle: string | null;
   avancement: Avancement;
   proposition: DetailIndicateurPropositionValeurAvancement | null;
+  propositionStatutTerritoire: DetailsIndicateur["propositionStatutTerritoire"];
+  propositionStatutDirectionProjet: DetailsIndicateur["propositionStatutDirectionProjet"];
   unité: string | null;
   est_applicable: boolean | null;
   dateImport: string | null;
