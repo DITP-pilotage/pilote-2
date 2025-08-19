@@ -15,7 +15,6 @@ import {
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
 import { getContainer } from "@/server/dependances";
 import { InformationHistorisationMetadataIndicateurContrat } from "@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat";
-import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 
 export interface NextPageAdminUtilisateurProps {
   indicateur: MetadataParametrageIndicateurContrat;
@@ -49,7 +48,9 @@ export async function getServerSideProps({
     return redirigerVersPageAccueil;
   }
 
-  const habilitations = new Habilitation(session.habilitations);
+  const habilitations = await getContainer("gestionUtilisateur")
+    .resolve("habilitationService")
+    .recupererHabilitations(session);
 
   habilitations.verifierAutorisationLectureMetadataIndicateur(session.profil);
 

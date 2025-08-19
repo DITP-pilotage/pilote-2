@@ -20,11 +20,7 @@ const PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_AVANCEMENT = new Set([
 ]);
 
 const PROFIL_AUTORISE_A_ACCEPTER_LES_PROPOSITIONS_DE_VALEUR_AVANCEMENT =
-  new Set([
-    ProfilEnum.DIR_PROJET,
-    ProfilEnum.EQUIPE_DIR_PROJET,
-    ProfilEnum.SECRETARIAT_GENERAL,
-  ]);
+  new Set([ProfilEnum.DIR_PROJET, ProfilEnum.EQUIPE_DIR_PROJET]);
 
 const PROFIL_INTERDIT_DE_VOIR_LE_SELECTEUR_DE_MAILLE = new Set([
   ProfilEnum.COORDINATEUR_DEPARTEMENT,
@@ -56,9 +52,13 @@ export const usePageChantier = (
 
   const estAutoriseAAccepterLesPropositionsDeValeurAvancement =
     territoireCode !== "NAT-FR" &&
-    PROFIL_AUTORISE_A_ACCEPTER_LES_PROPOSITIONS_DE_VALEUR_AVANCEMENT.has(
+    (PROFIL_AUTORISE_A_ACCEPTER_LES_PROPOSITIONS_DE_VALEUR_AVANCEMENT.has(
       session!.profil,
-    ) &&
+    ) ||
+      (session!.profil === ProfilEnum.SECRETARIAT_GENERAL &&
+        !!session?.habilitations["saisieIndicateur"].chantiers.includes(
+          chantier.id,
+        ))) &&
     estAutoriseAModifierLesPublications &&
     chantier.statut !== "ARCHIVE";
 

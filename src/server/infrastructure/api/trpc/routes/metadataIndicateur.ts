@@ -17,7 +17,6 @@ import { zodValidateurCSRF } from "@/validation/publication";
 import { MetadataParametrageIndicateurForm } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateurInputForm";
 import { getContainer } from "@/server/dependances";
 import { defaultHistoriqueInformation } from "@/server/parametrage-indicateur/domain/DefaultHistoriqueInformation";
-import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 
 const convertirEnMetadataParametrageIndicateurForm = (
   input: any,
@@ -109,7 +108,9 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
         input,
         ctx,
       }): Promise<MetadataParametrageIndicateurContrat[]> => {
-        const habilitations = new Habilitation(ctx.session.habilitations);
+        const habilitations = await getContainer("gestionUtilisateur")
+          .resolve("habilitationService")
+          .recupererHabilitations(ctx.session);
 
         habilitations.verifierAutorisationLectureMetadataIndicateur(
           ctx.session.profil,
@@ -137,7 +138,9 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
         input,
         ctx,
       }): Promise<MetadataParametrageIndicateurInformationContrat[]> => {
-        const habilitations = new Habilitation(ctx.session.habilitations);
+        const habilitations = await getContainer("gestionUtilisateur")
+          .resolve("habilitationService")
+          .recupererHabilitations(ctx.session);
 
         habilitations.verifierAutorisationLectureMetadataIndicateur(
           ctx.session.profil,
@@ -173,7 +176,9 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
     ),
   récupérerMetadataIndicateurIdentifiantGénéré: procédureProtégée.query(
     async ({ ctx }): Promise<string> => {
-      const habilitations = new Habilitation(ctx.session.habilitations);
+      const habilitations = await getContainer("gestionUtilisateur")
+        .resolve("habilitationService")
+        .recupererHabilitations(ctx.session);
       habilitations.verifierAutorisationLectureMetadataIndicateur(
         ctx.session.profil,
       );
@@ -188,7 +193,9 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
-      const habilitations = new Habilitation(ctx.session.habilitations);
+      const habilitations = await getContainer("gestionUtilisateur")
+        .resolve("habilitationService")
+        .recupererHabilitations(ctx.session);
       habilitations.verifierAutorisationModificationMetadataIndicateur(
         ctx.session.profil,
       );
@@ -205,7 +212,9 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
-      const habilitations = new Habilitation(ctx.session.habilitations);
+      const habilitations = await getContainer("gestionUtilisateur")
+        .resolve("habilitationService")
+        .recupererHabilitations(ctx.session);
       habilitations.verifierAutorisationModificationMetadataIndicateur(
         ctx.session.profil,
       );

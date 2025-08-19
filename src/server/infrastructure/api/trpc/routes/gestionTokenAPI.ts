@@ -9,13 +9,15 @@ import {
 import { CreerTokenAPIUseCase } from "@/server/authentification/usecases/CreerTokenAPIUseCase";
 import { dependencies } from "@/server/infrastructure/Dependencies";
 import { SupprimerTokenAPIUseCase } from "@/server/authentification/usecases/SupprimerTokenAPIUseCase";
-import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
+import { getContainer } from "@/server/dependances";
 
 export const gestionTokenAPIRouter = créerRouteurTRPC({
   creerTokenAPI: procédureProtégée
     .input(validationCreationTokenAPI)
     .mutation(async ({ input, ctx }) => {
-      const habilitations = new Habilitation(ctx.session.habilitations);
+      const habilitations = await getContainer("gestionUtilisateur")
+        .resolve("habilitationService")
+        .recupererHabilitations(ctx.session);
 
       habilitations.verifierAutorisationModificationTokenAPI(
         ctx.session.profil,
@@ -33,7 +35,9 @@ export const gestionTokenAPIRouter = créerRouteurTRPC({
   supprimerTokenAPI: procédureProtégée
     .input(validationSuppressionTokenAPI)
     .mutation(async ({ input, ctx }) => {
-      const habilitations = new Habilitation(ctx.session.habilitations);
+      const habilitations = await getContainer("gestionUtilisateur")
+        .resolve("habilitationService")
+        .recupererHabilitations(ctx.session);
 
       habilitations.verifierAutorisationModificationTokenAPI(
         ctx.session.profil,
