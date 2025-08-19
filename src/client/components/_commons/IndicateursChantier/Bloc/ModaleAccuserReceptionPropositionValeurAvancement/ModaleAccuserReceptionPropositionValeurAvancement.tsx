@@ -87,8 +87,8 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                       <span className="fr-background-action-low-blue-france flex justify-center fr-p-1w border">
                         Valeur d'avancement importée par la direction de projet
                       </span>
-                      <div className="w-full flex flex-column justify-between fr-pt-1w">
-                        <span className="flex justify-center fr-mb-5v">
+                      <div className="w-full flex flex-column justify-between fr-py-2w">
+                        <span className="fr-mb-2w text-center">
                           {detailIndicateur.valeurAvancementMandat?.toLocaleString(
                             "fr-FR",
                           )}
@@ -104,7 +104,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                       </div>
                     </div>
                     <div className="w-half-full fr-ml-1w border">
-                      <span className="fr-background-action-low-blue-france w-full flex justify-center fr-p-1w">
+                      <span className="fr-background-action-low-blue-france w-full flex justify-center fr-py-2w">
                         Valeur d'avancement proposée par{" "}
                         {detailIndicateur.proposition?.auteur} le{" "}
                         {formaterDate(
@@ -117,7 +117,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                         />
                       </span>
                       <div className="w-full flex flex-column align-center fr-pt-1w">
-                        <div className="w-half-full flex fr-mb-1w">
+                        <div className="fr-mb-2w text-center">
                           <span>
                             {detailIndicateur.proposition?.valeurAvancement}
                           </span>
