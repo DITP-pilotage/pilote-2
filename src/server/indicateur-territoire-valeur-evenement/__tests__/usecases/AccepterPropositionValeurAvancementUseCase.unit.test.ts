@@ -6,7 +6,7 @@ import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territo
 import { InMemoryTransaction, Transaction } from "@/server/db/Transaction";
 import { MesureIndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/MesureIndicateurRepository";
 
-describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
+describe("AccepterPropositionValeurAvancementUseCase", () => {
   let accepterPropositionValeurAvancementUseCase: AccepterPropositionValeurAvancementUseCase;
 
   let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
