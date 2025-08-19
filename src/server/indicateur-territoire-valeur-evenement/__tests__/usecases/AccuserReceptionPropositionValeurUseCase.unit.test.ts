@@ -58,7 +58,10 @@ describe("AccuserReceptionPropositionValeurUseCase", () => {
           idAuteurModification: "user-2",
           correlationId: "corr-2",
           ordre: 2,
-          donneesComplementaires: undefined,
+          donneesComplementaires: {
+            motif: "Modification de la proposition",
+            sourceDonneeEtMethodeCalcul: "La source",
+          },
         },
       ),
     ];
