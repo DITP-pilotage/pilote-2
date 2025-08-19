@@ -121,7 +121,7 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
 
       habilitations.verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
         ctx.session.profil,
-        ctx.session.habilitations.saisieCommentaire.chantiers,
+        ctx.session.habilitations,
         propositionValeurAvancementChantierInformation,
       );
 

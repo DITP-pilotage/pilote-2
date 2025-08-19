@@ -15,7 +15,6 @@ import {
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
 import { getContainer } from "@/server/dependances";
 import { InformationHistorisationMetadataIndicateurContrat } from "@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat";
-import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 
 export interface NextPageAdminUtilisateurProps {
   indicateur: MetadataParametrageIndicateurContrat;

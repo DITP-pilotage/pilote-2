@@ -10,10 +10,10 @@
 
 
 echo ">> Reset db"
-#npm run database:init
+npm run database:init
 
-#bash scripts/ddp_dump.sh
-#bash scripts/ddp_restore.sh
+bash scripts/ddp_dump.sh
+bash scripts/ddp_restore.sh
 # ou ddp via docker avec: "docker compose run --rm ddp bash docker/entrypoint.ddp.sh"
 #   pré-requis: mettre des clés ssh dans pilote-2/docker (voir pilote-2/docker/.gitignore) 
 #       pour que le tunnel vers la db soit fait dans le container (Colin)
