@@ -16,6 +16,7 @@ import { HistoriqueIndicateurPourExport } from "@/server/chantiers/domain/Histor
 import {
   DetailsIndicateurs,
   DetailIndicateurPropositionValeurAvancement,
+  DetailsIndicateur,
 } from "@/server/chantiers/domain/DetailsIndicateurs";
 import { comparerDates, formatDate } from "@/client/utils/date/date";
 import {
@@ -810,6 +811,10 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         détailsIndicateurs[indicateurRow.id] = {};
       }
 
+      let propositionStatutTerritoire: DetailsIndicateur["propositionStatutTerritoire"] =
+        null;
+      let propositionStatutDirectionProjet: DetailsIndicateur["propositionStatutDirectionProjet"] =
+        null;
       const indicateurTerritoireJalon =
         indicateurRow.indicateur_territoire_jalon.find(
           (indicateurJalon) => indicateurJalon.jalon === jalon,
@@ -853,8 +858,8 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           indicateurRow,
           indicateurTerritoireJalon,
         ),
-        propositionStatutTerritoire: null,
-        propositionStatutDirectionProjet: null,
+        propositionStatutTerritoire,
+        propositionStatutDirectionProjet,
         unite: indicateurRow.indicateur_identite.unite_mesure,
         estApplicable: indicateurRow.est_applicable,
         dateImport: formatDate(
