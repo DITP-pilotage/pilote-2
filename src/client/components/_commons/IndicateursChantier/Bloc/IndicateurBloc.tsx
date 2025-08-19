@@ -24,6 +24,7 @@ import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { ModaleSuppressionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurAvancement/ModaleSuppressionValeurAvancement";
 import BoutonSousLigné from "@/client/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { DetailsIndicateursContrat } from "@/server/chantiers/app/contrats/DetailsIndicateursContrat";
+import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import useIndicateurBloc from "./useIndicateurBloc";
 import useIndicateurAlerteDateMaj from "./useIndicateurAlerteDateMaj";
@@ -95,7 +96,13 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   const détailTerritoireSélectionné =
     récupérerDétailsSurUnTerritoire(territoireCode);
 
-  const détailsIndicateur = détailsIndicateurs[indicateur.id];
+  const detailsIndicateur = détailsIndicateurs[indicateur.id];
+  const estAccuseReception =
+    detailsIndicateur[territoireCode].propositionStatutDirectionProjet
+      ?.statut === "PROPOSITION_VALEUR_ACCUSEE_RECEPTION";
+  const estModifiee =
+    detailsIndicateur[territoireCode].propositionStatutTerritoire?.statut ===
+    "PROPOSITION_VALEUR_MODIFIEE";
 
   const { data: variableContenuFFPropositionValeurAvancement } =
     api.gestionContenu.récupérerVariableContenu.useQuery({
@@ -114,13 +121,13 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     dateValeurAvancement,
     indicateurNonAJour,
     indicateurEstApplicable,
-  } = useIndicateurBloc(détailsIndicateur, territoireCode);
+  } = useIndicateurBloc(detailsIndicateur, territoireCode);
 
   const informationsIndicateurs = [
     {
       territoireNom: détailTerritoireSélectionné.nomAffiché,
       code: détailTerritoireSélectionné.code,
-      données: détailsIndicateur[territoireCode],
+      données: detailsIndicateur[territoireCode],
     },
   ];
 
@@ -128,7 +135,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     .map((territoireCompare) => ({
       territoireNom: territoireCompare.nomAffiché,
       code: territoireCompare.code,
-      données: détailsIndicateur[territoireCompare.code],
+      données: detailsIndicateur[territoireCompare.code],
     }))
     .sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) =>
       indicateurDétailsTerritoire1.données.codeInsee.localeCompare(
@@ -142,9 +149,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   );
 
   const estPropositionSurLeBonJalon =
-    détailsIndicateur[territoireCode].dateValeurAvancementMandat !== null
+    detailsIndicateur[territoireCode].dateValeurAvancementMandat !== null
       ? new Date(
-          détailsIndicateur[territoireCode].dateValeurAvancementMandat!,
+          detailsIndicateur[territoireCode].dateValeurAvancementMandat!,
         ).getFullYear() <= jalon
       : false;
   const propositionSurMailleDesactivee =
@@ -250,7 +257,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 </div>
                 <IndicateurPonderation
                   indicateurPondération={
-                    détailsIndicateur[territoireCode]?.pondération ?? null
+                    detailsIndicateur[territoireCode]?.pondération ?? null
                   }
                   mailleSélectionnée={mailleTerritoireSelectionnee}
                 />
@@ -282,7 +289,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           <strong>
                             Proposition de nouvelle valeur d'avancement en cours
                           </strong>{" "}
-                          – présentée par le territoire le{" "}
+                          – {estModifiee ? "modifiée" : "présentée"} par le
+                          territoire le{" "}
                           <strong>
                             {formaterDate(
                               informationsIndicateurs[0].données.proposition
@@ -290,7 +298,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               "DD/MM/YYYY",
                             )}
                           </strong>{" "}
-                          et en attente de lecture par la direction de projet
+                          et{" "}
+                          {estAccuseReception ? "lue" : "en attente de lecture"}{" "}
+                          par la direction de projet
                         </p>
                         <BoutonSousLigné
                           classNameSupplémentaires={`fr-link--xs fr-link--icon-left ${propositionEstVisible ? "fr-icon-eye-off-line" : "fr-icon-eye-line"} texte-jaune `}
@@ -309,7 +319,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   </div>
                 ) : null}
               </div>
-              {détailsIndicateur[territoireCode]?.tendance === "BAISSE" ? (
+              {detailsIndicateur[territoireCode]?.tendance === "BAISSE" ? (
                 <IndicateurTendance />
               ) : null}
             </div>
