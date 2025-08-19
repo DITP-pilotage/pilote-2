@@ -885,13 +885,13 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     },
     indicateurTerritoireJalon: PrismaIndicateurTerritoireJalon | undefined,
   ): DetailIndicateurPropositionValeurAvancement | null {
-    const dernierEvenementProposition =
-      indicateurRow.indicateur_territoire_valeur_evenement.find(
-        (evenement) =>
-          evenement.type_evenement !== EvenementValeurEnum.VALEUR_CREEE &&
-          evenement.type_evenement !== EvenementValeurEnum.VALEUR_MODIFIEE &&
-          evenement.type_evenement !== EvenementValeurEnum.VALEUR_HISTORISEE,
-      ) || null;
+    const evenementsProposition =
+      indicateurRow.indicateur_territoire_valeur_evenement.filter((evenement) =>
+        evenement.type_evenement.startsWith("PROPOSITION_VALEUR_"),
+      ) || [];
+    const [dernierEvenementProposition = null] = evenementsProposition;
+    let statutTerritoire = null;
+    let statutDirectionProjet = null;
 
     return dernierEvenementProposition &&
       !EVENEMENT_VALEUR_PROPOSITION_VALEUR_TERMINEE.includes(
@@ -908,6 +908,8 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           dateProposition: formatDate(
             dernierEvenementProposition.date_creation,
           ),
+          statutTerritoire,
+          statutDirectionProjet,
           motif:
             (
               dernierEvenementProposition.donnees_complementaires as {
