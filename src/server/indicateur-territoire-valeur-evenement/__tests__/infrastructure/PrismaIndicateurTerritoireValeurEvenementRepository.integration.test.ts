@@ -214,7 +214,11 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId,
           correlationId: "6ba7b811-9dad-11d1-80b4-00c04fd430c8",
           ordre: 2,
-          donneesComplementaires: undefined,
+          donneesComplementaires: {
+            motif: "Motif de la modification",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
+          },
         },
       );
 
@@ -403,7 +407,11 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId2,
           correlationId: "6ba7b813-9dad-11d1-80b4-00c04fd430c8",
           ordre: 1,
-          donneesComplementaires: undefined,
+          donneesComplementaires: {
+            motif: "Motif de la modification",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
+          },
         },
       );
 
@@ -579,7 +587,11 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId2,
           correlationId: "6ba7b816-9dad-11d1-80b4-00c04fd430c8",
           ordre: 1,
-          donneesComplementaires: undefined,
+          donneesComplementaires: {
+            motif: "Motif de la modification",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
+          },
         },
       );
 
@@ -852,7 +864,11 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId2,
           correlationId: "6ba7b81a-9dad-11d1-80b4-00c04fd430c8",
           ordre: 1,
-          donneesComplementaires: undefined,
+          donneesComplementaires: {
+            motif: "Motif de la modification",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
+          },
         },
       );
 

@@ -76,7 +76,10 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
             <form
               method="post"
               onSubmit={reactHookForm.handleSubmit((data) => {
-                creerPropositonValeurAvancement(data);
+                creerPropositonValeurAvancement(
+                  estUneModificationDeProposition,
+                  data,
+                );
               })}
             >
               {etapePropositionValeurAvancement ===

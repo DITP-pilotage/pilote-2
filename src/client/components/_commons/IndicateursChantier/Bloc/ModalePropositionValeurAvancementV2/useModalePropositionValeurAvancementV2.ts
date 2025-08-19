@@ -1,4 +1,4 @@
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
@@ -72,9 +72,17 @@ const useModalePropositionValeurAvancementV2 = ({
       },
     });
 
-  const creerPropositonValeurAvancement: SubmitHandler<
-    PropositionValeurAvancementForm
-  > = async (data) => {
+  const mutationModifierPropositonValeurAvancement =
+    api.propositionValeurAvancement.modifier.useMutation({
+      onSuccess: () => {
+        setEtapePropositionValeurAvancement(null);
+      },
+    });
+
+  const creerPropositonValeurAvancement = async (
+    estUneModification: boolean,
+    data: PropositionValeurAvancementForm,
+  ) => {
     const inputs = {
       csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
@@ -84,7 +92,11 @@ const useModalePropositionValeurAvancementV2 = ({
       territoireCode,
     };
 
-    mutationCreerPropositonValeurAvancement.mutate(inputs);
+    if (estUneModification) {
+      mutationModifierPropositonValeurAvancement.mutate(inputs);
+    } else {
+      mutationCreerPropositonValeurAvancement.mutate(inputs);
+    }
   };
 
   const reactHookForm = useForm<PropositionValeurAvancementForm>({

@@ -7,6 +7,7 @@ import {
   validationSuppressionValeurAvancement,
   validationAccepterPropositionValeurAvancement,
   validationRefuserPropositionValeurAvancement,
+  validationSuppressionValeurAvancementV2,
 } from "@/validation/proposition-valeur-avancement";
 import { StatutProposition } from "@/server/chantiers/domain/StatutProposition";
 import { getContainer } from "@/server/dependances";
@@ -88,6 +89,40 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
         });
     }),
 
+  modifier: procédureProtégée
+    .input(validationPropositionValeurAvancement)
+    .mutation(async ({ input, ctx }) => {
+      const idAuteur = ctx.session.user.id ?? "";
+
+      const propositionValeurAvancementChantierInformation = await getContainer(
+        "chantiers",
+      )
+        .resolve("chantierRepository")
+        .recupererPropositionValeurAvancementChantierInformationParIndicId({
+          indicId: input.indicId,
+        });
+
+      const habilitations = new Habilitation(ctx.session.habilitations);
+
+      habilitations.verifierAutorisationModificationPropositionValeurAvancement(
+        ctx.session.profil,
+        ctx.session.habilitations.saisieCommentaire.chantiers,
+        propositionValeurAvancementChantierInformation,
+      );
+
+      await getContainer("indicateurTerritoireValeurEvenement")
+        .resolve("modifierPropositionValeurAvancementUseCase")
+        .run({
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          valeurAvancement: +input.valeurAvancement.replace(",", "."),
+          dateValeurAvancement: new Date(input.dateValeurAvancement),
+          idAuteurModification: idAuteur,
+          motif: input.motifProposition,
+          sourceDonneeEtMethodeCalcul: input.sourceDonneeEtMethodeCalcul,
+        });
+    }),
+
   supprimer: procédureProtégée
     .input(validationSuppressionValeurAvancement)
     .mutation(async ({ input, ctx }) => {
@@ -99,6 +134,21 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
           indicId: input.indicId,
           territoireCode: input.territoireCode,
           auteurModification: auteur,
+        });
+    }),
+
+  supprimerV2: procédureProtégée
+    .input(validationSuppressionValeurAvancementV2)
+    .mutation(async ({ input, ctx }) => {
+      const auteur = ctx.session.user.id ?? "";
+
+      await getContainer("indicateurTerritoireValeurEvenement")
+        .resolve("supprimerPropositionValeurAvancementUseCase")
+        .run({
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          dateValeurAvancement: new Date(input.dateValeurAvancement),
+          idAuteurModification: auteur,
         });
     }),
 

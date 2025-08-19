@@ -7,6 +7,8 @@ import { IndicateurTerritoireValeurEvenementRepository } from "./domain/ports/In
 import { CreerIndicateurTerritoireValeurEvenementUseCase } from "./usecases/CreerIndicateurTerritoireValeurEvenementUseCase";
 import { AccepterPropositionValeurAvancementUseCase } from "./usecases/AccepterPropositionValeurAvancementUseCase";
 import { RefuserPropositionValeurAvancementUseCase } from "./usecases/RefuserPropositionValeurAvancementUseCase";
+import { ModifierPropositionValeurAvancementUseCase } from "./usecases/ModifierPropositionValeurAvancementUseCase";
+import { SupprimerPropositionValeurAvancementUseCase } from "./usecases/SupprimerPropositionValeurAvancementUseCase";
 
 export type IndicateurTerritoireValeurEvenementDependencies = {
   indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
@@ -14,6 +16,8 @@ export type IndicateurTerritoireValeurEvenementDependencies = {
   creerIndicateurTerritoireValeurEvenementUseCase: CreerIndicateurTerritoireValeurEvenementUseCase;
   accepterPropositionValeurAvancementUseCase: AccepterPropositionValeurAvancementUseCase;
   refuserPropositionValeurAvancementUseCase: RefuserPropositionValeurAvancementUseCase;
+  modifierPropositionValeurAvancementUseCase: ModifierPropositionValeurAvancementUseCase;
+  supprimerPropositionValeurAvancementUseCase: SupprimerPropositionValeurAvancementUseCase;
 };
 export const getIndicateurTerritoireValeurEvenementContainer = (
   initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
@@ -35,6 +39,12 @@ export const getIndicateurTerritoireValeurEvenementContainer = (
       ),
       refuserPropositionValeurAvancementUseCase: asClass(
         RefuserPropositionValeurAvancementUseCase,
+      ),
+      modifierPropositionValeurAvancementUseCase: asClass(
+        ModifierPropositionValeurAvancementUseCase,
+      ),
+      supprimerPropositionValeurAvancementUseCase: asClass(
+        SupprimerPropositionValeurAvancementUseCase,
       ),
     });
 };

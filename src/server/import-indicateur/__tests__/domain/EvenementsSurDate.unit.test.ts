@@ -329,6 +329,11 @@ describe("EvenementsSurDate", () => {
         evenementsSurDate.creerEvenementPropositionValeurModifiee({
           valeur: 85,
           auteurId: AUTEUR_ID,
+          donneesComplementaires: {
+            motif: "Motif de la modification",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
+          },
         });
 
       // THEN
@@ -342,7 +347,10 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(85);
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(3);
-      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+      expect(nouveauEvenement.donneesComplementaires).toEqual({
+        motif: "Motif de la modification",
+        sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
+      });
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_MODIFIEE avec succès quand une PROPOSITION_VALEUR_MODIFIEE existe déjà", () => {
@@ -390,6 +398,11 @@ describe("EvenementsSurDate", () => {
         evenementsSurDate.creerEvenementPropositionValeurModifiee({
           valeur: 85,
           auteurId: AUTEUR_ID,
+          donneesComplementaires: {
+            motif: "Motif de la modification",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
+          },
         });
 
       // THEN
@@ -398,6 +411,10 @@ describe("EvenementsSurDate", () => {
       );
       expect(nouveauEvenement.valeur).toEqual(85);
       expect(nouveauEvenement.ordre).toEqual(4);
+      expect(nouveauEvenement.donneesComplementaires).toEqual({
+        motif: "Motif de la modification",
+        sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
+      });
     });
 
     it("doit échouer quand aucune PROPOSITION_CREEE n'existe", () => {
@@ -421,6 +438,11 @@ describe("EvenementsSurDate", () => {
         evenementsSurDate.creerEvenementPropositionValeurModifiee({
           valeur: 85,
           auteurId: AUTEUR_ID,
+          donneesComplementaires: {
+            motif: "Motif de la modification",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
+          },
         });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -470,6 +492,11 @@ describe("EvenementsSurDate", () => {
         evenementsSurDate.creerEvenementPropositionValeurModifiee({
           valeur: 85,
           auteurId: AUTEUR_ID,
+          donneesComplementaires: {
+            motif: "Motif de la modification",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
+          },
         });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -519,6 +546,11 @@ describe("EvenementsSurDate", () => {
         evenementsSurDate.creerEvenementPropositionValeurModifiee({
           valeur: 85,
           auteurId: AUTEUR_ID,
+          donneesComplementaires: {
+            motif: "Motif de la modification",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
+          },
         });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -568,6 +600,11 @@ describe("EvenementsSurDate", () => {
         evenementsSurDate.creerEvenementPropositionValeurModifiee({
           valeur: 85,
           auteurId: AUTEUR_ID,
+          donneesComplementaires: {
+            motif: "Motif de la modification",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
+          },
         });
       }).toThrow("La proposition de valeur a déjà été accusée réception");
     });

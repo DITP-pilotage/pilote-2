@@ -66,7 +66,11 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
           idAuteurModification: "user-2",
           correlationId: "corr-2",
           ordre: 2,
-          donneesComplementaires: undefined,
+          donneesComplementaires: {
+            motif: "Motif de la modification",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
+          },
         },
       ),
     ];

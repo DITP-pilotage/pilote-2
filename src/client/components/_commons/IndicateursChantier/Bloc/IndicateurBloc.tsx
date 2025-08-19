@@ -29,6 +29,7 @@ import useIndicateurBloc from "./useIndicateurBloc";
 import useIndicateurAlerteDateMaj from "./useIndicateurAlerteDateMaj";
 import { ModalePropositionValeurAvancementV2 } from "./ModalePropositionValeurAvancementV2/ModalePropositionValeurAvancementV2";
 import { ModaleAccepterPropositionValeurAvancement } from "./ModaleAccepterPropositionValeurAvancement/ModaleAccepterPropositionValeurAvancement";
+import { ModaleSuppressionValeurAvancementV2 } from "./ModaleSuppressionValeurAvancementV2/ModaleSuppressionValeurAvancementV2";
 
 export const ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT =
   "modale-suppression-valeur-davancement";
@@ -750,61 +751,61 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   />
                                 </td>
                               </tr>
-                              {(propositionEstVisible ||
-                                !variableContenuFFPropositionValeurAvancementV2) &&
-                              estAutoriseAProposerUneValeurAvancement ? (
+                              {!variableContenuFFPropositionValeurAvancementV2 ? (
                                 <tr className="ligne-modification-proposition-valeur-davancement">
-                                  <td colSpan={8}>
-                                    <div className="flex w-full justify-end">
-                                      <button
-                                        aria-controls={
+                                  {estAutoriseAProposerUneValeurAvancement ? (
+                                    <td colSpan={8}>
+                                      <div className="flex w-full justify-end">
+                                        <button
+                                          aria-controls={
+                                            ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
+                                            indicateur.id
+                                          }
+                                          className="fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-davancement fr-mr-1w"
+                                          data-fr-opened="false"
+                                          type="button"
+                                        >
+                                          Modifier la proposition
+                                        </button>
+                                        <button
+                                          aria-controls={
+                                            ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT +
+                                            indicateur.id
+                                          }
+                                          className="fr-btn fr-btn--icon-left fr-icon-delete-line fr-btn--secondary bouton-proposition-valeur-davancement"
+                                          data-fr-opened="false"
+                                          type="button"
+                                        >
+                                          Supprimer la proposition
+                                        </button>
+                                      </div>
+                                      <ModalePropositionValeurAvancement
+                                        detailIndicateur={
+                                          informationIndicateur.données
+                                        }
+                                        generatedHTMLID={
                                           ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
                                           indicateur.id
                                         }
-                                        className="fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-davancement fr-mr-1w"
-                                        data-fr-opened="false"
-                                        type="button"
-                                      >
-                                        Modifier la proposition
-                                      </button>
-                                      <button
-                                        aria-controls={
+                                        indicateur={indicateur}
+                                        territoireCode={territoireCode}
+                                        territoireCodeInsee={
+                                          détailTerritoireSélectionné.codeInsee
+                                        }
+                                        territoireNom={
+                                          détailTerritoireSélectionné.nom
+                                        }
+                                      />
+                                      <ModaleSuppressionValeurAvancement
+                                        generatedHTMLID={
                                           ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT +
                                           indicateur.id
                                         }
-                                        className="fr-btn fr-btn--icon-left fr-icon-delete-line fr-btn--secondary bouton-proposition-valeur-davancement"
-                                        data-fr-opened="false"
-                                        type="button"
-                                      >
-                                        Supprimer la proposition
-                                      </button>
-                                    </div>
-                                    <ModalePropositionValeurAvancement
-                                      detailIndicateur={
-                                        informationIndicateur.données
-                                      }
-                                      generatedHTMLID={
-                                        ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
-                                        indicateur.id
-                                      }
-                                      indicateur={indicateur}
-                                      territoireCode={territoireCode}
-                                      territoireCodeInsee={
-                                        détailTerritoireSélectionné.codeInsee
-                                      }
-                                      territoireNom={
-                                        détailTerritoireSélectionné.nom
-                                      }
-                                    />
-                                    <ModaleSuppressionValeurAvancement
-                                      generatedHTMLID={
-                                        ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT +
-                                        indicateur.id
-                                      }
-                                      indicateur={indicateur}
-                                      territoireCode={territoireCode}
-                                    />
-                                  </td>
+                                        indicateur={indicateur}
+                                        territoireCode={territoireCode}
+                                      />
+                                    </td>
+                                  ) : null}
                                 </tr>
                               ) : propositionEstVisible &&
                                 estAutoriseAAccepterLesPropositionsDeValeurAvancement ? (
@@ -840,6 +841,65 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                         }
                                       />
                                     </div>
+                                  </td>
+                                </tr>
+                              ) : propositionEstVisible &&
+                                estAutoriseAProposerUneValeurAvancement ? (
+                                <tr className="ligne-modification-proposition-valeur-davancement">
+                                  <td colSpan={8}>
+                                    <div className="flex w-full justify-end">
+                                      <button
+                                        aria-controls={
+                                          ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
+                                          indicateur.id
+                                        }
+                                        className="fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-davancement fr-mr-1w"
+                                        data-fr-opened="false"
+                                        type="button"
+                                      >
+                                        Modifier la proposition
+                                      </button>
+                                      <button
+                                        aria-controls={
+                                          ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT +
+                                          indicateur.id
+                                        }
+                                        className="fr-btn fr-btn--icon-left fr-icon-delete-line fr-btn--secondary bouton-proposition-valeur-davancement"
+                                        data-fr-opened="false"
+                                        type="button"
+                                      >
+                                        Supprimer la proposition
+                                      </button>
+                                    </div>
+                                    <ModalePropositionValeurAvancementV2
+                                      detailIndicateur={
+                                        informationIndicateur.données
+                                      }
+                                      generatedHTMLID={
+                                        ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
+                                        indicateur.id
+                                      }
+                                      indicateur={indicateur}
+                                      territoireCode={territoireCode}
+                                      territoireCodeInsee={
+                                        détailTerritoireSélectionné.codeInsee
+                                      }
+                                      territoireNom={
+                                        détailTerritoireSélectionné.nom
+                                      }
+                                    />
+                                    <ModaleSuppressionValeurAvancementV2
+                                      dateValeurAvancement={
+                                        informationIndicateur.données
+                                          .dateValeurAvancement!
+                                      }
+                                      generatedHTMLID={
+                                        ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT +
+                                        indicateur.id
+                                      }
+                                      indicateur={indicateur}
+                                      territoireCode={territoireCode}
+                                    />
                                   </td>
                                 </tr>
                               ) : null}

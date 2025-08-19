@@ -1,31 +1,31 @@
 import { MockProxy, mock } from "jest-mock-extended";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
-import { RefuserPropositionValeurAvancementUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/RefuserPropositionValeurAvancementUseCase";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
+import { toISODate } from "@/server/app/domain/Dates";
+import { SupprimerPropositionValeurAvancementUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/SupprimerPropositionValeurAvancementUseCase";
 
-describe("RefuserPropositionValeurAvancementUseCase", () => {
-  let refuserPropositionValeurAvancementUseCase: RefuserPropositionValeurAvancementUseCase;
+describe("#SupprimerPropositionValeurAvancementUseCase", () => {
+  let supprimerPropositionValeurAvancementUseCase: SupprimerPropositionValeurAvancementUseCase;
 
   let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
 
   beforeEach(() => {
     indicateurTerritoireValeurEvenementRepository =
       mock<IndicateurTerritoireValeurEvenementRepository>();
-    refuserPropositionValeurAvancementUseCase =
-      new RefuserPropositionValeurAvancementUseCase({
+    supprimerPropositionValeurAvancementUseCase =
+      new SupprimerPropositionValeurAvancementUseCase({
         indicateurTerritoireValeurEvenementRepository,
       });
   });
 
-  it("Doit refuser une proposition de valeur d'avancement", async () => {
+  it("Doit modifier une proposition de valeur d'avancement", async () => {
     // Given
     const input = {
       indicId: "IND-006",
-      territoireCode: "COM-13001",
-      dateValeurAvancement: "2024-06-08",
-      idAuteurRefus: "user-ghi",
-      motif: "Motif du refus",
+      territoireCode: "DEPT-34",
+      dateValeurAvancement: new Date("2024-06-08"),
+      idAuteurModification: "ec8f2bc3-8f6b-4de2-bbde-1ab790804d43",
     };
 
     const evenementsExistants = [
@@ -35,7 +35,7 @@ describe("RefuserPropositionValeurAvancementUseCase", () => {
           territoireCode: input.territoireCode,
           typeEvenement: "PROPOSITION_VALEUR_CREEE",
           typeValeur: "VALEUR_AVANCEMENT",
-          dateValeur: new Date("2024-01-01"),
+          dateValeur: input.dateValeurAvancement,
           valeur: 10,
           idAuteurModification: "user-1",
           correlationId: "corr-1",
@@ -53,14 +53,15 @@ describe("RefuserPropositionValeurAvancementUseCase", () => {
           territoireCode: input.territoireCode,
           typeEvenement: "PROPOSITION_VALEUR_MODIFIEE",
           typeValeur: "VALEUR_AVANCEMENT",
-          dateValeur: new Date("2024-02-01"),
+          dateValeur: input.dateValeurAvancement,
           valeur: 20,
           idAuteurModification: "user-2",
           correlationId: "corr-2",
           ordre: 2,
           donneesComplementaires: {
-            motif: "motif de la modification",
-            sourceDonneeEtMethodeCalcul: "source et methode",
+            motif: "Motif de la modification",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
           },
         },
       ),
@@ -71,7 +72,7 @@ describe("RefuserPropositionValeurAvancementUseCase", () => {
         identifiantFlux: {
           indicId: input.indicId,
           territoireCode: input.territoireCode,
-          date: input.dateValeurAvancement,
+          date: toISODate(input.dateValeurAvancement),
         },
         evenementsSurDate: evenementsExistants,
         tousLesEvenements: evenementsExistants,
@@ -79,23 +80,23 @@ describe("RefuserPropositionValeurAvancementUseCase", () => {
     );
 
     // When
-    await refuserPropositionValeurAvancementUseCase.run(input);
+    await supprimerPropositionValeurAvancementUseCase.run(input);
 
     // Then
     expect(
-      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
-    ).toHaveBeenCalledWith([
+      indicateurTerritoireValeurEvenementRepository.enregistrer,
+    ).toHaveBeenCalledWith(
       expect.objectContaining({
         indicId: input.indicId,
         territoireCode: input.territoireCode,
-        typeEvenement: "PROPOSITION_VALEUR_REFUSEE",
+        typeEvenement: "PROPOSITION_VALEUR_SUPPRIMEE",
         typeValeur: "VALEUR_AVANCEMENT",
-        dateValeur: new Date(input.dateValeurAvancement),
+        dateValeur: input.dateValeurAvancement,
         valeur: 20,
-        idAuteurModification: input.idAuteurRefus,
+        idAuteurModification: input.idAuteurModification,
         ordre: 3,
-        donneesComplementaires: { motif: "Motif du refus" },
+        donneesComplementaires: undefined,
       }),
-    ]);
+    );
   });
 });
