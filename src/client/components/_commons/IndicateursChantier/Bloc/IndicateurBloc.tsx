@@ -825,17 +825,19 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 <tr className="ligne-modification-proposition-valeur-davancement">
                                   <td colSpan={8}>
                                     <div className="flex w-full align-center justify-end gap-4">
-                                      <BoutonSousLigné
-                                        ariaControls={
-                                          ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT +
-                                          indicateur.id
-                                        }
-                                        classNameSupplémentaires="fr-link--icon-left fr-icon-mail-line texte-jaune"
-                                        dataFrOpened={false}
-                                        type="button"
-                                      >
-                                        Accuser réception
-                                      </BoutonSousLigné>
+                                      {!estAccuseReception && (
+                                        <BoutonSousLigné
+                                          ariaControls={
+                                            ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT +
+                                            indicateur.id
+                                          }
+                                          classNameSupplémentaires="fr-link--icon-left fr-icon-mail-line texte-jaune"
+                                          dataFrOpened={false}
+                                          type="button"
+                                        >
+                                          Accuser réception
+                                        </BoutonSousLigné>
+                                      )}
                                       <button
                                         aria-controls={
                                           ID_HTML_MODALE_ACCEPTER_PROPOSITION_VALEUR_DAVANCEMENT +
@@ -885,6 +887,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   </td>
                                 </tr>
                               ) : propositionEstVisible &&
+                                !estAccuseReception &&
                                 estAutoriseAProposerUneValeurAvancement ? (
                                 <tr className="ligne-modification-proposition-valeur-davancement">
                                   <td colSpan={8}>

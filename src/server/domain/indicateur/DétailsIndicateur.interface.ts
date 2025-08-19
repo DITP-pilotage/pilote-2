@@ -1,10 +1,7 @@
 import { Avancement } from "@/server/domain/chantier/avancement/Avancement.interface";
 import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
-import {
-  DetailsIndicateur,
-  DetailsIndicateurs,
-} from "@/server/chantiers/domain/DetailsIndicateurs";
+import { DetailsIndicateur } from "@/server/chantiers/domain/DetailsIndicateurs";
 import Indicateur from "./Indicateur.interface";
 
 export type DétailsIndicateurTerritoire = Record<CodeInsee, DétailsIndicateur>;
