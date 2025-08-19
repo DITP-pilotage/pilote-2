@@ -62,6 +62,7 @@ interface IndicateurBlocProps {
   nouveauxGraphiquesSontActifs: boolean;
 }
 
+// TODO(CHAN) : faire le refuser + supprimer (et cleaner le composant)
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   indicateur,
   détailsIndicateurs,
