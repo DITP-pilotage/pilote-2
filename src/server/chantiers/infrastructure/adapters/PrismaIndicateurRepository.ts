@@ -14,15 +14,16 @@ import { prisma } from "@/server/db/prisma";
 import { historique_valeurs } from "@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLRepository";
 import { HistoriqueIndicateurPourExport } from "@/server/chantiers/domain/HistoriqueIndicateurPourExport";
 import {
-  DetailsIndicateurs,
   DetailIndicateurPropositionValeurAvancement,
   DetailsIndicateur,
+  DetailsIndicateurs,
 } from "@/server/chantiers/domain/DetailsIndicateurs";
 import { comparerDates, formatDate } from "@/client/utils/date/date";
 import {
   EVENEMENT_VALEUR_PROPOSITION_VALEUR_TERMINEE,
   EvenementValeurEnum,
 } from "@/server/app/domain/EvenementValeurEnum";
+import { toISODate } from "@/server/app/domain/Dates";
 
 const convertirEnDonneeIndicateur = (
   prismaIndicateurIdentite: PrismaIndicateurIdentite & {
@@ -819,7 +820,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       const { propositionStatutTerritoire, propositionStatutDirectionProjet } =
         this.calculerStatutsProposition(
           indicateurRow,
-          indicateurTerritoireJalon,
+          indicateurTerritoireJalon?.date_valeur_actuelle,
         );
 
       détailsIndicateurs[indicateurRow.id][indicateurRow.territoire_code] = {
@@ -933,51 +934,42 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
 
   private calculerStatutsProposition(
     indicateurRow: PrismaIndicateurTerritoire & {
-      indicateur_territoire_valeur_evenement: (PrismaIndicateurTerritoireValeurEvenement & {
-        auteur: Pick<PrismaUtilisateur, "nom" | "prenom">;
-      })[];
+      indicateur_territoire_valeur_evenement: PrismaIndicateurTerritoireValeurEvenement[];
     },
-    indicateurTerritoireJalon: PrismaIndicateurTerritoireJalon | undefined,
-  ): {
-    propositionStatutTerritoire: DetailsIndicateur["propositionStatutTerritoire"];
-    propositionStatutDirectionProjet: DetailsIndicateur["propositionStatutDirectionProjet"];
-  } {
+    dateValeurActuelle: Date | null | undefined,
+  ) {
     let propositionStatutTerritoire: DetailsIndicateur["propositionStatutTerritoire"] =
       null;
     let propositionStatutDirectionProjet: DetailsIndicateur["propositionStatutDirectionProjet"] =
       null;
 
-    const dateValeurActuelle = indicateurTerritoireJalon?.date_valeur_actuelle;
     if (!dateValeurActuelle) {
       return { propositionStatutTerritoire, propositionStatutDirectionProjet };
     }
-
     const evenementsProposition =
-      indicateurRow.indicateur_territoire_valeur_evenement
-        .filter(
-          (evenement) =>
-            evenement.type_evenement.startsWith("PROPOSITION_VALEUR_") &&
-            evenement.date_valeur.getTime() === dateValeurActuelle.getTime(),
-        )
-        .sort((a, b) => a.ordre - b.ordre);
+      indicateurRow.indicateur_territoire_valeur_evenement.filter(
+        (evenement) =>
+          evenement.type_evenement.startsWith("PROPOSITION_VALEUR_") &&
+          toISODate(evenement.date_valeur) === toISODate(dateValeurActuelle),
+      );
 
     if (evenementsProposition.length === 0) {
       return { propositionStatutTerritoire, propositionStatutDirectionProjet };
     }
 
-    const [premierEvenement] = evenementsProposition;
+    const dernierEvenement = evenementsProposition[0];
     const evenementPropositionValeur = evenementsProposition.find(
       (evt) =>
         evt.type_evenement === EvenementValeurEnum.PROPOSITION_VALEUR_CREEE ||
         evt.type_evenement === EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
     );
 
-    switch (premierEvenement.type_evenement) {
+    switch (dernierEvenement.type_evenement) {
       case EvenementValeurEnum.PROPOSITION_VALEUR_REFUSEE:
         propositionStatutTerritoire = null;
         propositionStatutDirectionProjet = {
           statut: "PROPOSITION_VALEUR_REFUSEE",
-          date: formatDate(premierEvenement.date_creation),
+          date: toISODate(dernierEvenement.date_creation),
         };
         break;
 
@@ -987,30 +979,24 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             statut: evenementPropositionValeur.type_evenement as
               | "PROPOSITION_VALEUR_CREEE"
               | "PROPOSITION_VALEUR_MODIFIEE",
-            date: formatDate(evenementPropositionValeur.date_creation),
+            date: toISODate(evenementPropositionValeur.date_creation),
           };
         }
         propositionStatutDirectionProjet = {
           statut: "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
-          date: formatDate(premierEvenement.date_creation),
+          date: toISODate(dernierEvenement.date_creation),
         };
-        break;
-
-      case EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE:
-        propositionStatutTerritoire = {
-          statut: "PROPOSITION_VALEUR_SUPPRIMEE",
-          date: formatDate(premierEvenement.date_creation),
-        };
-        propositionStatutDirectionProjet = null;
         break;
 
       case EvenementValeurEnum.PROPOSITION_VALEUR_CREEE:
       case EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE:
+      case EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE:
         propositionStatutTerritoire = {
-          statut: premierEvenement.type_evenement as
+          statut: dernierEvenement.type_evenement as
             | "PROPOSITION_VALEUR_CREEE"
-            | "PROPOSITION_VALEUR_MODIFIEE",
-          date: formatDate(premierEvenement.date_creation),
+            | "PROPOSITION_VALEUR_MODIFIEE"
+            | "PROPOSITION_VALEUR_SUPPRIMEE",
+          date: toISODate(dernierEvenement.date_creation),
         };
         propositionStatutDirectionProjet = null;
         break;
