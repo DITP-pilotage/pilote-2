@@ -638,23 +638,50 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   </div>
                                   {variableContenuFFPropositionValeurAvancementV2 ? (
                                     <div className="flex align-center selecteur-infobulle-conteneur">
-                                      <span className="fr-text--xs texte-gris">
-                                        En attente de lecture par la direction
-                                        de projet
-                                      </span>
-                                      <Infobulle
-                                        classNameBouton="texte-gris"
-                                        classNameInfoBulle="tooltip-accordeon"
-                                        idHtml={`infobulle-proposition-valeur-davancement-statut-${informationIndicateur.code}`}
-                                      >
-                                        <p className="fr-text--sm">
-                                          La direction de projet n'a pas encore
-                                          accusé réception de votre proposition.
-                                          Il vous est toujours possible de
-                                          modifier ou de supprimer celle-ci si
-                                          vous le souhaitez.
-                                        </p>
-                                      </Infobulle>
+                                      {estAccuseReception ? (
+                                        <>
+                                          <span className="fr-text--xs texte-gris">
+                                            la direction de projet a accusé
+                                            réception
+                                          </span>
+                                          <Infobulle
+                                            classNameBouton="texte-gris"
+                                            classNameInfoBulle="tooltip-accordeon"
+                                            idHtml={`infobulle-proposition-valeur-davancement-accusee-reception-${informationIndicateur.code}`}
+                                          >
+                                            <p className="fr-text--sm">
+                                              Vous ne pouvez plus intervenir sur
+                                              cet indicateur tant que la
+                                              direction de projet n'aura pas
+                                              pris une décision (accepter,
+                                              accepter avec modification ou
+                                              refuser) ou procédé à un nouvel
+                                              import de données.
+                                            </p>
+                                          </Infobulle>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <span className="fr-text--xs texte-gris">
+                                            En attente de lecture par la
+                                            direction de projet
+                                          </span>
+                                          <Infobulle
+                                            classNameBouton="texte-gris"
+                                            classNameInfoBulle="tooltip-accordeon"
+                                            idHtml={`infobulle-proposition-valeur-davancement-statut-${informationIndicateur.code}`}
+                                          >
+                                            <p className="fr-text--sm">
+                                              La direction de projet n'a pas
+                                              encore accusé réception de votre
+                                              proposition. Il vous est toujours
+                                              possible de modifier ou de
+                                              supprimer celle-ci si vous le
+                                              souhaitez.
+                                            </p>
+                                          </Infobulle>
+                                        </>
+                                      )}
                                     </div>
                                   ) : null}
                                 </td>
