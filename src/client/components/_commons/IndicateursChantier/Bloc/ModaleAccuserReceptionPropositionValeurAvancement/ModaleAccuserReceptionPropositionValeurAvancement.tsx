@@ -206,18 +206,19 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                         )
                       </span>
                     </p>
-                    <p className="fr-callout__text fr-text--sm">
-                      <span className="fr-text--bold">
-                        Informations complémentaires :
-                      </span>{" "}
-                      <span className="text-italic">
-                        {reactHookForm.getValues("motif")}
-                      </span>
-                    </p>
+                    {reactHookForm.getValues("motif") && (
+                      <p className="fr-callout__text fr-text--sm">
+                        <span className="fr-text--bold">
+                          Informations complémentaires :
+                        </span>{" "}
+                        <span className="text-italic">
+                          {reactHookForm.getValues("motif")}
+                        </span>
+                      </p>
+                    )}
                   </div>
                   <div className="fr-alert fr-alert--info">
                     <h3 className="fr-alert__title">
-                      <span aria-hidden="true" className="fr-icon-info-fill" />
                       Accusé de réception : ce que cela implique
                     </h3>
                     <p>
