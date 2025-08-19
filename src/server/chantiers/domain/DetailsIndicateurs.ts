@@ -12,19 +12,6 @@ export interface DetailIndicateurPropositionValeurAvancement {
   dateProposition: string | null;
   motif: string | null;
   sourceDonneeEtMethodeCalcul: string | null;
-  statutTerritoire: {
-    statut:
-      | "PROPOSITION_VALEUR_CREEE"
-      | "PROPOSITION_VALEUR_MODIFIEE"
-      | "PROPOSITION_VALEUR_SUPPRIMEE";
-    date: string;
-  } | null;
-  statutDirectionProjet: {
-    statut:
-      | "PROPOSITION_VALEUR_REFUSEE"
-      | "PROPOSITION_VALEUR_ACCUSEE_RECEPTION";
-    date: string;
-  } | null;
 }
 
 interface HistoriqueValeur {
@@ -52,6 +39,19 @@ export type DetailsIndicateur = {
   dateValeurCibleAnnuelle: string | null;
   avancement: Avancement;
   proposition: DetailIndicateurPropositionValeurAvancement | null;
+  propositionStatutTerritoire: {
+    statut:
+      | "PROPOSITION_VALEUR_CREEE"
+      | "PROPOSITION_VALEUR_MODIFIEE"
+      | "PROPOSITION_VALEUR_SUPPRIMEE";
+    date: string;
+  } | null;
+  propositionStatutDirectionProjet: {
+    statut:
+      | "PROPOSITION_VALEUR_REFUSEE"
+      | "PROPOSITION_VALEUR_ACCUSEE_RECEPTION";
+    date: string;
+  } | null;
   unite: string | null;
   estApplicable: boolean | null;
   dateImport: string | null;

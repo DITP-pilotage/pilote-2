@@ -853,6 +853,8 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           indicateurRow,
           indicateurTerritoireJalon,
         ),
+        propositionStatutTerritoire: null,
+        propositionStatutDirectionProjet: null,
         unite: indicateurRow.indicateur_identite.unite_mesure,
         estApplicable: indicateurRow.est_applicable,
         dateImport: formatDate(
@@ -890,8 +892,6 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         evenement.type_evenement.startsWith("PROPOSITION_VALEUR_"),
       ) || [];
     const [evenementPropositionLePlusRecent = null] = evenementsProposition;
-    let statutTerritoire = null;
-    let statutDirectionProjet = null;
 
     return evenementPropositionLePlusRecent &&
       !EVENEMENT_VALEUR_PROPOSITION_VALEUR_TERMINEE.includes(
@@ -908,8 +908,6 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           dateProposition: formatDate(
             evenementPropositionLePlusRecent.date_creation,
           ),
-          statutTerritoire,
-          statutDirectionProjet,
           motif:
             (
               evenementPropositionLePlusRecent.donnees_complementaires as {

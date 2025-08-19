@@ -2539,8 +2539,6 @@ describe("PrismaIndicateurRepository", () => {
         tauxAvancementIntermediaire: null,
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
-        statutTerritoire: null,
-        statutDirectionProjet: null,
         motif: "Motif de la proposition",
         sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
       });
@@ -2735,8 +2733,6 @@ describe("PrismaIndicateurRepository", () => {
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
         motif: null,
-        statutTerritoire: null,
-        statutDirectionProjet: null,
         sourceDonneeEtMethodeCalcul: null,
       });
     });
@@ -3171,8 +3167,6 @@ describe("PrismaIndicateurRepository", () => {
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
         motif: "Motif de la proposition 2",
-        statutTerritoire: null,
-        statutDirectionProjet: null,
         sourceDonneeEtMethodeCalcul:
           "Source de la donnée et méthode de calcul 2",
       });
