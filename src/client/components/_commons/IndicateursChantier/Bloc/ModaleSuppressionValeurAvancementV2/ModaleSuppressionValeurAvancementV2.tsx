@@ -1,11 +1,12 @@
 import { FunctionComponent } from "react";
 import { FormProvider } from "react-hook-form";
-import { useRouter } from "next/router";
 import Modale from "@/components/_commons/Modale/Modale";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { formaterDate } from "@/client/utils/date/date";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
+import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import useModaleSuppressionValeurAvancementV2, {
   EtapeSuppressionPropositionValeurAvancement,
   Stepper,
@@ -32,20 +33,18 @@ export const ModaleSuppressionValeurAvancementV2: FunctionComponent<{
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
     auteurModification,
-    EtapeSuivanteEstDesactive,
+    etapeSuivanteEstDesactive,
   } = useModaleSuppressionValeurAvancementV2({
     indicateur,
     detailIndicateur,
     territoireCode,
   });
 
-  const router = useRouter();
+  const refreshRouter = useRefreshRouter();
 
   return (
     <Modale
-      fermetureCallback={() => {
-        router.replace(router.asPath, undefined, { scroll: false });
-      }}
+      fermetureCallback={refreshRouter}
       idHtml={generatedHTMLID}
       tailleModale="lg"
     >
@@ -132,6 +131,10 @@ export const ModaleSuppressionValeurAvancementV2: FunctionComponent<{
                   </div>
                   <div className="fr-mt-2w">
                     <TextAreaAvecLabel
+                      compteur={{
+                        taille: reactHookForm.watch("motifSuppression").length,
+                        limite: LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+                      }}
                       erreurMessage={
                         reactHookForm.formState.errors.motifSuppression?.message
                       }
@@ -148,7 +151,7 @@ export const ModaleSuppressionValeurAvancementV2: FunctionComponent<{
                   <div className="w-full flex justify-end fr-mt-2w">
                     <button
                       className="fr-btn"
-                      disabled={EtapeSuivanteEstDesactive}
+                      disabled={etapeSuivanteEstDesactive}
                       onClick={() =>
                         setEtapePropositionValeurAvancement(
                           EtapeSuppressionPropositionValeurAvancement.VALIDATION_SUPPRESSION_PROPOSITION,

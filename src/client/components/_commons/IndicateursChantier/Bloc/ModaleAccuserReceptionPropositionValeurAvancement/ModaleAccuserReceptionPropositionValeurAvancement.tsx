@@ -12,6 +12,8 @@ import {
 import { formaterDate } from "@/client/utils/date/date";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
 import { ComparaisonValeurBox } from "@/components/_commons/IndicateursChantier/Bloc/ComparaisonValeurBox";
+import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
 export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponent<{
   indicateur: Indicateur;
@@ -39,9 +41,14 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
     detailIndicateur,
     territoireCode,
   });
+  const refreshRouter = useRefreshRouter();
 
   return (
-    <Modale idHtml={generatedHTMLID} tailleModale="lg">
+    <Modale
+      fermetureCallback={refreshRouter}
+      idHtml={generatedHTMLID}
+      tailleModale="lg"
+    >
       {etapeAccuserReception ? (
         <>
           <div className="fr-stepper fr-mb-1w">
@@ -115,6 +122,10 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
 
                   <div className="fr-mt-2w">
                     <TextAreaAvecLabel
+                      compteur={{
+                        taille: reactHookForm.watch("motif").length,
+                        limite: LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+                      }}
                       erreurMessage={
                         reactHookForm.formState.errors.motif?.message
                       }
@@ -123,9 +134,6 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                       placeholder="Indiquez ici les raisons qui motivent votre choix."
                       register={reactHookForm.register("motif")}
                     />
-                    <p className="fr-text--xs texte-gris">
-                      (500 caractères restants)
-                    </p>
                   </div>
 
                   <div className="w-full flex justify-end fr-mt-2w">

@@ -1,14 +1,17 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
+import { validationSuppressionPropositionValeurAvancement } from "@/validation/proposition-valeur-avancement";
 
-interface SuppressionPropositionValeurAvancementForm {
-  motifSuppression: string;
-}
+type SuppressionPropositionValeurAvancementForm = z.infer<
+  typeof validationSuppressionPropositionValeurAvancement
+>;
 
 export enum EtapeSuppressionPropositionValeurAvancement {
   SAISIE_MOTIF_SUPPRESSION_PROPOSITION = "SAISIE_MOTIF_SUPPRESSION_PROPOSITION",
@@ -79,20 +82,13 @@ const useModaleSuppressionValeurAvancementV2 = ({
 
     mutationSupprimerPropositionValeurAvancement.mutate(inputs);
   };
-
   const reactHookForm = useForm<SuppressionPropositionValeurAvancementForm>({
     mode: "all",
+    resolver: zodResolver(validationSuppressionPropositionValeurAvancement),
     defaultValues: {
       motifSuppression: "",
     },
   });
-
-  const estUneModificationDeProposition = detailIndicateur.proposition !== null;
-
-  reactHookForm.watch("motifSuppression");
-
-  const EtapeSuivanteEstDesactive =
-    reactHookForm.getValues("motifSuppression").length === 0;
 
   return {
     reactHookForm,
@@ -100,8 +96,7 @@ const useModaleSuppressionValeurAvancementV2 = ({
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
     auteurModification,
-    EtapeSuivanteEstDesactive,
-    estUneModificationDeProposition,
+    etapeSuivanteEstDesactive: !reactHookForm.formState.isValid,
   };
 };
 

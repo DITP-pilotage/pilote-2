@@ -6,12 +6,14 @@ import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndi
 
 import {
   EtapePropositionValeurAvancement,
+  LIMIT_CARACTERES_MOTIF,
   Stepper,
   useModaleAccepterPropositionValeurAvancement,
 } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccepterPropositionValeurAvancement/useModaleAccepterPropositionValeurAvancement";
 import { formaterDate } from "@/client/utils/date/date";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
 import { ComparaisonValeurBox } from "@/components/_commons/IndicateursChantier/Bloc/ComparaisonValeurBox";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
 export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
   indicateur: Indicateur;
@@ -41,10 +43,15 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
     territoireCode,
   });
 
+  const refreshRouter = useRefreshRouter();
   const decision = reactHookForm.watch("decision");
 
   return (
-    <Modale idHtml={generatedHTMLID} tailleModale="lg">
+    <Modale
+      fermetureCallback={refreshRouter}
+      idHtml={generatedHTMLID}
+      tailleModale="lg"
+    >
       {etapePropositionValeurAvancement ? (
         <>
           <div className="fr-stepper fr-mb-1w">
@@ -197,6 +204,10 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
 
                   <div className="fr-mt-2w">
                     <TextAreaAvecLabel
+                      compteur={{
+                        taille: reactHookForm.watch("motif").length,
+                        limite: LIMIT_CARACTERES_MOTIF,
+                      }}
                       erreurMessage={
                         reactHookForm.formState.errors.motif?.message
                       }

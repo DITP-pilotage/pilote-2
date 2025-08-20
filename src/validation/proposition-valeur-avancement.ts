@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+export const LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION = 500;
 export const validationPropositionValeurAvancement = z.object({
   valeurAvancement: z
     .string()
@@ -9,12 +10,21 @@ export const validationPropositionValeurAvancement = z.object({
     ),
   motifProposition: z
     .string()
+    .max(
+      LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+      "La limite maximale de 500 caractères a été dépassée",
+    )
     .refine(
       (value) => value && new RegExp(/^\w.*$/).test(value),
       "Veuillez saisir un motif de proposition",
     ),
   dateValeurAvancement: z.string(),
-  sourceDonneeEtMethodeCalcul: z.string(),
+  sourceDonneeEtMethodeCalcul: z
+    .string()
+    .max(
+      LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+      "La limite maximale de 500 caractères a été dépassée",
+    ),
   indicId: z.string(),
   territoireCode: z.string(),
 });
@@ -52,4 +62,28 @@ export const validationAccuserReceptionPropositionValeurAvancement = z.object({
   territoireCode: z.string(),
   dateValeurAvancement: z.string(),
   motif: z.string().trim(),
+});
+
+export const validationSuppressionPropositionValeurAvancement = z.object({
+  motifSuppression: z
+    .string()
+    .trim()
+    .min(1, "Le motif de suppression est obligatoire")
+    .max(
+      LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+      "La limite de 500 caractères a été dépassée",
+    ),
+});
+
+export const validationAccuserReceptionPropostionValeurAvancement = z.object({
+  indicId: z.string(),
+  territoireCode: z.string(),
+  dateValeurAvancement: z.string(),
+  motif: z
+    .string()
+    .trim()
+    .max(
+      LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+      "La limite de 500 caractères a été dépassée",
+    ),
 });

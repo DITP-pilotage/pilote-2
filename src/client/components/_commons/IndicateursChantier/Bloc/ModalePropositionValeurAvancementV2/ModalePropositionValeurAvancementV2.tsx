@@ -13,6 +13,8 @@ import { formaterDate } from "@/client/utils/date/date";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
 import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
+import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
 export const ModalePropositionValeurAvancementV2: FunctionComponent<{
   indicateur: Indicateur;
@@ -42,9 +44,14 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
     detailIndicateur,
     territoireCode,
   });
+  const refreshRouter = useRefreshRouter();
 
   return (
-    <Modale idHtml={generatedHTMLID} tailleModale="lg">
+    <Modale
+      fermetureCallback={refreshRouter}
+      idHtml={generatedHTMLID}
+      tailleModale="lg"
+    >
       {etapePropositionValeurAvancement ? (
         <>
           <div className="fr-stepper fr-mb-1w">
@@ -229,6 +236,10 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                   ) : null}
                   <div className="fr-mt-2w">
                     <TextAreaAvecLabel
+                      compteur={{
+                        taille: reactHookForm.watch("motifProposition").length,
+                        limite: LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+                      }}
                       erreurMessage={
                         reactHookForm.formState.errors.motifProposition?.message
                       }
@@ -243,6 +254,12 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                   </div>
                   <div className="fr-mt-2w">
                     <TextAreaAvecLabel
+                      compteur={{
+                        taille: reactHookForm.watch(
+                          "sourceDonneeEtMethodeCalcul",
+                        ).length,
+                        limite: LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+                      }}
                       erreurMessage={
                         reactHookForm.formState.errors
                           .sourceDonneeEtMethodeCalcul?.message
