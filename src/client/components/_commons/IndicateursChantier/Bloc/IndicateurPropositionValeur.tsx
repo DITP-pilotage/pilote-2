@@ -10,6 +10,7 @@ import {
   estPropositionRefusee,
   estPropositionSupprimee,
 } from "@/components/_commons/IndicateursChantier/Bloc/utils";
+import api from "@/server/infrastructure/api/trpc/api";
 
 export const IndicateurPropositionValeur = ({
   estAutoriseAProposerUneValeurAvancement,
@@ -28,6 +29,12 @@ export const IndicateurPropositionValeur = ({
   indicateur: Indicateur;
   informationsIndicateurs: InformationsIndicateurs;
 }) => {
+  const { data: variableContenuFFPropositionValeurAvancementV2 } =
+    api.gestionContenu.récupérerVariableContenu.useQuery({
+      nomVariableContenu: "NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE_V2",
+    });
+
+  if (!variableContenuFFPropositionValeurAvancementV2) return null;
   if (
     !(
       estAutoriseAProposerUneValeurAvancement ||

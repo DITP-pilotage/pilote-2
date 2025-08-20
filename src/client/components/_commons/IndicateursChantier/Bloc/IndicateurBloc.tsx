@@ -260,21 +260,19 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   mailleSélectionnée={mailleTerritoireSelectionnee}
                 />
 
-                {variableContenuFFPropositionValeurAvancementV2 ? (
-                  <IndicateurPropositionValeur
-                    detailIndicateur={detailsIndicateur[territoireCode]}
-                    estAutoriseAProposerUneValeurAvancement={
-                      estAutoriseAProposerUneValeurAvancement
-                    }
-                    estAutoriseAVoirLesPropositionsDeValeurAvancement={
-                      estAutoriseAVoirLesPropositionsDeValeurAvancement
-                    }
-                    indicateur={indicateur}
-                    informationsIndicateurs={informationsIndicateurs}
-                    propositionEstVisible={propositionEstVisible}
-                    setPropositionEstVisible={setPropositionEstVisible}
-                  />
-                ) : null}
+                <IndicateurPropositionValeur
+                  detailIndicateur={detailsIndicateur[territoireCode]}
+                  estAutoriseAProposerUneValeurAvancement={
+                    estAutoriseAProposerUneValeurAvancement
+                  }
+                  estAutoriseAVoirLesPropositionsDeValeurAvancement={
+                    estAutoriseAVoirLesPropositionsDeValeurAvancement
+                  }
+                  indicateur={indicateur}
+                  informationsIndicateurs={informationsIndicateurs}
+                  propositionEstVisible={propositionEstVisible}
+                  setPropositionEstVisible={setPropositionEstVisible}
+                />
               </div>
               {detailsIndicateur[territoireCode]?.tendance === "BAISSE" ? (
                 <IndicateurTendance />
