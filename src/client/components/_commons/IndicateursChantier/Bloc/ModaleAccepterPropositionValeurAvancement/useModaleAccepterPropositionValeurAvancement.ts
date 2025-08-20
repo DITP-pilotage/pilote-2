@@ -171,6 +171,8 @@ export const useModaleAccepterPropositionValeurAvancement = ({
       indicId: indicateur.id,
       territoireCode,
       decision: "accepter",
+      valeurModification:
+        detailIndicateur.proposition?.valeurAvancement.toString(),
     },
   });
 
