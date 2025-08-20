@@ -24,6 +24,9 @@ import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { ModaleSuppressionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurAvancement/ModaleSuppressionValeurAvancement";
 import BoutonSousLigné from "@/client/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { DetailsIndicateursContrat } from "@/server/chantiers/app/contrats/DetailsIndicateursContrat";
+import { IndicateurPropositionValeur } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurPropositionValeur";
+import { InformationsIndicateurs } from "@/components/_commons/IndicateursChantier/Bloc/InformationsIndicateurs";
+import { estPropositionAccuseeReception } from "@/components/_commons/IndicateursChantier/Bloc/utils";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import useIndicateurBloc from "./useIndicateurBloc";
 import useIndicateurAlerteDateMaj from "./useIndicateurAlerteDateMaj";
@@ -99,19 +102,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
 
   const detailsIndicateur = détailsIndicateurs[indicateur.id];
 
-  const estPropositionSupprimee =
-    detailsIndicateur[territoireCode].propositionStatutTerritoire?.statut ===
-    "PROPOSITION_VALEUR_SUPPRIMEE";
-  const estPropositionRefusee =
-    detailsIndicateur[territoireCode].propositionStatutDirectionProjet
-      ?.statut === "PROPOSITION_VALEUR_REFUSEE";
-  const estAccuseReception =
-    detailsIndicateur[territoireCode].propositionStatutDirectionProjet
-      ?.statut === "PROPOSITION_VALEUR_ACCUSEE_RECEPTION";
-  const estPropositionModifiee =
-    detailsIndicateur[territoireCode].propositionStatutTerritoire?.statut ===
-    "PROPOSITION_VALEUR_MODIFIEE";
-
   const { data: variableContenuFFPropositionValeurAvancement } =
     api.gestionContenu.récupérerVariableContenu.useQuery({
       nomVariableContenu: "NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE",
@@ -131,7 +121,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     indicateurEstApplicable,
   } = useIndicateurBloc(detailsIndicateur, territoireCode);
 
-  const informationsIndicateurs = [
+  const informationsIndicateurs: InformationsIndicateurs = [
     {
       territoireNom: détailTerritoireSélectionné.nomAffiché,
       code: détailTerritoireSélectionné.code,
@@ -269,94 +259,21 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   }
                   mailleSélectionnée={mailleTerritoireSelectionnee}
                 />
-                {variableContenuFFPropositionValeurAvancementV2 &&
-                (estAutoriseAProposerUneValeurAvancement ||
-                  estAutoriseAVoirLesPropositionsDeValeurAvancement) ? (
-                  <div>
-                    {informationsIndicateurs[0].données.proposition === null ||
-                    estPropositionSupprimee ||
-                    estPropositionRefusee ? (
-                      <div className="">
-                        <p className="fr-text--xs texte-gris fr-mb-0">
-                          Aucune proposition pour la valeur d'avancement de cet
-                          indicateur{" "}
-                          {estPropositionSupprimee ? (
-                            <>
-                              {" "}
-                              -{" "}
-                              <strong>
-                                dernière proposition en date supprimée
-                              </strong>{" "}
-                              par le territoire le{" "}
-                              {formaterDate(
-                                detailsIndicateur[territoireCode]
-                                  .propositionStatutTerritoire?.date,
-                                "DD/MM/YYYY",
-                              )}
-                            </>
-                          ) : null}
-                          {estPropositionRefusee ? (
-                            <>
-                              {" "}
-                              -{" "}
-                              <strong>
-                                dernière proposition en date refusée
-                              </strong>{" "}
-                              par la direction de projet le{" "}
-                              {formaterDate(
-                                detailsIndicateur[territoireCode]
-                                  .propositionStatutDirectionProjet?.date,
-                                "DD/MM/YYYY",
-                              )}
-                            </>
-                          ) : null}
-                        </p>
-                        <BoutonSousLigné
-                          ariaControls={
-                            ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
-                            indicateur.id
-                          }
-                          classNameSupplémentaires="fr-link--xs fr-link--icon-left fr-icon-edit-line texte-gris"
-                          dataFrOpened={false}
-                          type="button"
-                        >
-                          Proposer une autre valeur d'avancement
-                        </BoutonSousLigné>
-                      </div>
-                    ) : (
-                      <>
-                        <p className="fr-text--xs texte-jaune fr-mb-0">
-                          <strong>
-                            Proposition de nouvelle valeur d'avancement en cours
-                          </strong>{" "}
-                          – {estPropositionModifiee ? "modifiée" : "présentée"}{" "}
-                          par le territoire le{" "}
-                          <strong>
-                            {formaterDate(
-                              informationsIndicateurs[0].données.proposition
-                                .dateProposition,
-                              "DD/MM/YYYY",
-                            )}
-                          </strong>{" "}
-                          et{" "}
-                          {estAccuseReception ? "lue" : "en attente de lecture"}{" "}
-                          par la direction de projet
-                        </p>
-                        <BoutonSousLigné
-                          classNameSupplémentaires={`fr-link--xs fr-link--icon-left ${propositionEstVisible ? "fr-icon-eye-off-line" : "fr-icon-eye-line"} texte-jaune `}
-                          dataFrOpened={false}
-                          onClick={() =>
-                            setPropositionEstVisible(!propositionEstVisible)
-                          }
-                          type="button"
-                        >
-                          {propositionEstVisible
-                            ? "Masquer la proposition"
-                            : "Afficher la proposition"}
-                        </BoutonSousLigné>
-                      </>
-                    )}
-                  </div>
+
+                {variableContenuFFPropositionValeurAvancementV2 ? (
+                  <IndicateurPropositionValeur
+                    detailIndicateur={detailsIndicateur[territoireCode]}
+                    estAutoriseAProposerUneValeurAvancement={
+                      estAutoriseAProposerUneValeurAvancement
+                    }
+                    estAutoriseAVoirLesPropositionsDeValeurAvancement={
+                      estAutoriseAVoirLesPropositionsDeValeurAvancement
+                    }
+                    indicateur={indicateur}
+                    informationsIndicateurs={informationsIndicateurs}
+                    propositionEstVisible={propositionEstVisible}
+                    setPropositionEstVisible={setPropositionEstVisible}
+                  />
                 ) : null}
               </div>
               {detailsIndicateur[territoireCode]?.tendance === "BAISSE" ? (
@@ -429,6 +346,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
               </thead>
               <tbody>
                 {informationsIndicateurs.map((informationIndicateur) => {
+                  let detailsIndicateurDuTerritoire =
+                    detailsIndicateur[territoireCode];
                   return informationIndicateur.données ? ( // TODO supprimer une fois le refacto fait ! A cause de la react query y'a quelques frames où informationIndicateur.données est undefined
                     <Fragment key={informationIndicateur.territoireNom}>
                       <tr
@@ -678,7 +597,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   </div>
                                   {variableContenuFFPropositionValeurAvancementV2 ? (
                                     <div className="flex align-center selecteur-infobulle-conteneur">
-                                      {estAccuseReception ? (
+                                      {estPropositionAccuseeReception(
+                                        detailsIndicateurDuTerritoire,
+                                      ) ? (
                                         <>
                                           <span className="fr-text--xs texte-gris">
                                             la direction de projet a accusé
@@ -892,7 +813,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 <tr className="ligne-modification-proposition-valeur-davancement">
                                   <td colSpan={8}>
                                     <div className="flex w-full align-center justify-end gap-4">
-                                      {!estAccuseReception && (
+                                      {!estPropositionAccuseeReception(
+                                        detailsIndicateurDuTerritoire,
+                                      ) && (
                                         <BoutonSousLigné
                                           ariaControls={
                                             ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT +
@@ -954,7 +877,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   </td>
                                 </tr>
                               ) : propositionEstVisible &&
-                                !estAccuseReception &&
+                                !estPropositionAccuseeReception(
+                                  detailsIndicateurDuTerritoire,
+                                ) &&
                                 estAutoriseAProposerUneValeurAvancement ? (
                                 <tr className="ligne-modification-proposition-valeur-davancement">
                                   <td colSpan={8}>
