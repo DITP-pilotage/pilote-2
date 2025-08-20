@@ -270,6 +270,18 @@
   gap: 1rem;
 }
 
+.resize-none {
+  resize: none;
+}
+
+.ml-auto {
+  margin-left: auto;
+}
+
+.\!ml-auto {
+  margin-left: auto !important;
+}
+
 @media screen and (min-width: 48rem) {
   .border-md-r {
     border-right-width: 1px;

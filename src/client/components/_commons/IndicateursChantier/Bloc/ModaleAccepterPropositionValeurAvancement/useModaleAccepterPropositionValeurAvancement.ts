@@ -8,18 +8,24 @@ import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndi
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 
-// Form schema that includes decision with conditional motif validation
+export const LIMIT_CARACTERES_MOTIF = 500;
+
 const formSchema = z
   .object({
     indicId: z.string(),
     territoireCode: z.string(),
     dateValeurAvancement: z.string(),
-    motif: z.string().trim(),
+    motif: z
+      .string()
+      .trim()
+      .max(
+        LIMIT_CARACTERES_MOTIF,
+        "La limite maximale de 500 caractères a été dépassée",
+      ),
     decision: z.enum(["accepter", "accepter-avec-modification", "refuser"]),
   })
   .refine(
     (data) => {
-      // If decision is "refuser", motif is required
       if (data.decision === "refuser") {
         return data.motif.length > 0;
       }

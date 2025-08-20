@@ -7,7 +7,9 @@ import {
   Merge,
   UseFormRegisterReturn,
 } from "react-hook-form";
+import clsx from "clsx";
 import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
+import CompteurCaractères from "@/components/_commons/CompteurCaractères/CompteurCaractères";
 
 interface TexteAreaLabelProps {
   libellé: string;
@@ -22,6 +24,10 @@ interface TexteAreaLabelProps {
   type?: HTMLInputTypeAttribute;
   placeholder?: string;
   libelleRequired?: string;
+  compteur?: {
+    taille: number;
+    limite: number;
+  };
 }
 
 const TextAreaAvecLabel: FunctionComponent<TexteAreaLabelProps> = ({
@@ -36,6 +42,7 @@ const TextAreaAvecLabel: FunctionComponent<TexteAreaLabelProps> = ({
   className,
   placeholder,
   libelleRequired,
+  compteur,
 }) => {
   return (
     <div
@@ -52,17 +59,28 @@ const TextAreaAvecLabel: FunctionComponent<TexteAreaLabelProps> = ({
         </p>
       ) : null}
       <textarea
-        className={`fr-input${erreur !== undefined || erreurMessage ? " fr-input-group--error" : ""}${className !== undefined ? " " + className : ""}`}
+        className={clsx("fr-input resize-none", className, {
+          "fr-input-group--error": erreur !== undefined || erreurMessage,
+        })}
         disabled={disabled}
         id={htmlName}
         placeholder={placeholder}
         {...register}
       />
-      {(erreur !== undefined || erreurMessage !== undefined) && (
-        <p className="fr-error-text">
-          {erreur?.message?.toString() || erreurMessage}
-        </p>
-      )}
+      <div className="flex justify-between">
+        {(erreur !== undefined || erreurMessage !== undefined) && (
+          <p className="fr-error-text fr-mt-1w">
+            {erreur?.message?.toString() || erreurMessage}
+          </p>
+        )}
+        {compteur != null && (
+          <CompteurCaractères
+            className="!ml-auto fr-mt-1w"
+            compte={compteur.taille}
+            limiteDeCaractères={compteur.limite}
+          />
+        )}
+      </div>
     </div>
   );
 };

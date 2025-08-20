@@ -6,6 +6,7 @@ import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndi
 
 import {
   EtapePropositionValeurAvancement,
+  LIMIT_CARACTERES_MOTIF,
   Stepper,
   useModaleAccepterPropositionValeurAvancement,
 } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccepterPropositionValeurAvancement/useModaleAccepterPropositionValeurAvancement";
@@ -197,6 +198,10 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
 
                   <div className="fr-mt-2w">
                     <TextAreaAvecLabel
+                      compteur={{
+                        taille: reactHookForm.watch("motif").length,
+                        limite: LIMIT_CARACTERES_MOTIF,
+                      }}
                       erreurMessage={
                         reactHookForm.formState.errors.motif?.message
                       }
