@@ -12,6 +12,7 @@ import {
 import { formaterDate } from "@/client/utils/date/date";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
 import { ComparaisonValeurBox } from "@/components/_commons/IndicateursChantier/Bloc/ComparaisonValeurBox";
+import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
 
 export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponent<{
   indicateur: Indicateur;
@@ -115,6 +116,10 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
 
                   <div className="fr-mt-2w">
                     <TextAreaAvecLabel
+                      compteur={{
+                        taille: reactHookForm.watch("motif").length,
+                        limite: LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+                      }}
                       erreurMessage={
                         reactHookForm.formState.errors.motif?.message
                       }
@@ -123,9 +128,6 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                       placeholder="Indiquez ici les raisons qui motivent votre choix."
                       register={reactHookForm.register("motif")}
                     />
-                    <p className="fr-text--xs texte-gris">
-                      (500 caractères restants)
-                    </p>
                   </div>
 
                   <div className="w-full flex justify-end fr-mt-2w">

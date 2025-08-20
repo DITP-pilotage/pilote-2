@@ -74,3 +74,16 @@ export const validationSuppressionPropositionValeurAvancement = z.object({
       "La limite de 500 caractères a été dépassée",
     ),
 });
+
+export const validationAccuserReceptionPropostionValeurAvancement = z.object({
+  indicId: z.string(),
+  territoireCode: z.string(),
+  dateValeurAvancement: z.string(),
+  motif: z
+    .string()
+    .trim()
+    .max(
+      LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+      "La limite de 500 caractères a été dépassée",
+    ),
+});

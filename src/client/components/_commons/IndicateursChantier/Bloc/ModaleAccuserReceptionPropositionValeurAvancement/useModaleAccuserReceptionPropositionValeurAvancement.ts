@@ -6,15 +6,11 @@ import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
+import { validationAccuserReceptionPropostionValeurAvancement } from "@/validation/proposition-valeur-avancement";
 
-const formSchema = z.object({
-  indicId: z.string(),
-  territoireCode: z.string(),
-  dateValeurAvancement: z.string(),
-  motif: z.string().trim(),
-});
-
-type FormData = z.infer<typeof formSchema>;
+type FormData = z.infer<
+  typeof validationAccuserReceptionPropostionValeurAvancement
+>;
 
 export enum EtapeAccuserReception {
   EXAMEN_PROPOSITION = "EXAMEN_PROPOSITION",
@@ -76,7 +72,7 @@ export const useModaleAccuserReceptionPropositionValeurAvancement = ({
 
   const reactHookForm = useForm<FormData>({
     mode: "all",
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(validationAccuserReceptionPropostionValeurAvancement),
     defaultValues: {
       motif: "",
       dateValeurAvancement: detailIndicateur.dateValeurAvancementMandat!,
