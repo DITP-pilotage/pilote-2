@@ -63,7 +63,6 @@ interface IndicateurBlocProps {
   nouveauxGraphiquesSontActifs: boolean;
 }
 
-// TODO(CHAN) : faire le refuser + supprimer (et cleaner le composant)
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   indicateur,
   détailsIndicateurs,
@@ -104,6 +103,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   const estPropositionSupprimee =
     detailsIndicateur[territoireCode].propositionStatutTerritoire?.statut ===
     "PROPOSITION_VALEUR_SUPPRIMEE";
+  const estPropositionRefusee =
+    detailsIndicateur[territoireCode].propositionStatutDirectionProjet
+      ?.statut === "PROPOSITION_VALEUR_REFUSEE";
   const estAccuseReception =
     detailsIndicateur[territoireCode].propositionStatutDirectionProjet
       ?.statut === "PROPOSITION_VALEUR_ACCUSEE_RECEPTION";
@@ -273,7 +275,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   estAutoriseAVoirLesPropositionsDeValeurAvancement) ? (
                   <div>
                     {informationsIndicateurs[0].données.proposition === null ||
-                    estPropositionSupprimee ? (
+                    estPropositionSupprimee ||
+                    estPropositionRefusee ? (
                       <div className="">
                         <p className="fr-text--xs texte-gris fr-mb-0">
                           Aucune proposition pour la valeur d'avancement de cet
@@ -289,6 +292,21 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               {formaterDate(
                                 detailsIndicateur[territoireCode]
                                   .propositionStatutTerritoire?.date,
+                                "DD/MM/YYYY",
+                              )}
+                            </>
+                          ) : null}
+                          {estPropositionRefusee ? (
+                            <>
+                              {" "}
+                              -{" "}
+                              <strong>
+                                dernière proposition en date refusée
+                              </strong>{" "}
+                              par la direction de projet le{" "}
+                              {formaterDate(
+                                detailsIndicateur[territoireCode]
+                                  .propositionStatutDirectionProjet?.date,
                                 "DD/MM/YYYY",
                               )}
                             </>
