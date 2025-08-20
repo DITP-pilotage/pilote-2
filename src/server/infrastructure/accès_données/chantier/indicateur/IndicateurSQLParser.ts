@@ -93,6 +93,8 @@ export function créerDonnéesTerritoires(
                 indicateurRow?.date_proposition?.toLocaleString() ?? null,
             }
           : null,
+      propositionStatutTerritoire: null,
+      propositionStatutDirectionProjet: null,
       unité: indicateurRow?.indicateur_identite.unite_mesure ?? null,
       est_applicable: indicateurRow?.est_applicable ?? null,
       dateImport:

@@ -1,39 +1,31 @@
 import { MockProxy, mock } from "jest-mock-extended";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
-import { AccepterPropositionValeurAvancementUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/AccepterPropositionValeurAvancementUseCase";
+import { AccuserReceptionPropositionValeurUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/AccuserReceptionPropositionValeurUseCase";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
-import { InMemoryTransaction, Transaction } from "@/server/db/Transaction";
-import { MesureIndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/MesureIndicateurRepository";
 
-describe("AccepterPropositionValeurAvancementUseCase", () => {
-  let accepterPropositionValeurAvancementUseCase: AccepterPropositionValeurAvancementUseCase;
+describe("AccuserReceptionPropositionValeurUseCase", () => {
+  let accuserReceptionPropositionValeurUseCase: AccuserReceptionPropositionValeurUseCase;
 
   let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
-  let mesureIndicateurRepository: MockProxy<MesureIndicateurRepository>;
-  let transaction: Transaction;
 
   beforeEach(() => {
     indicateurTerritoireValeurEvenementRepository =
       mock<IndicateurTerritoireValeurEvenementRepository>();
-    mesureIndicateurRepository = mock<MesureIndicateurRepository>();
-    transaction = new InMemoryTransaction();
-    accepterPropositionValeurAvancementUseCase =
-      new AccepterPropositionValeurAvancementUseCase({
+    accuserReceptionPropositionValeurUseCase =
+      new AccuserReceptionPropositionValeurUseCase({
         indicateurTerritoireValeurEvenementRepository,
-        mesureIndicateurRepository,
-        transaction,
       });
   });
 
-  it("Doit accepter une proposition de valeur d'avancement", async () => {
+  it("Doit accuser réception d'une proposition de valeur d'avancement", async () => {
     // Given
     const input = {
       indicId: "IND-006",
       territoireCode: "COM-13001",
       dateValeurAvancement: "2024-06-08",
-      idAuteurAcceptation: "user-ghi",
-      motif: "Motif de la proposition",
+      idAuteurAccuseReception: "user-ghi",
+      motif: "Motif de l'accusé de réception",
     };
 
     const evenementsExistants = [
@@ -67,9 +59,8 @@ describe("AccepterPropositionValeurAvancementUseCase", () => {
           correlationId: "corr-2",
           ordre: 2,
           donneesComplementaires: {
-            motif: "Motif de la modification",
-            sourceDonneeEtMethodeCalcul:
-              "Source de la donnée et méthode de calcul",
+            motif: "Modification de la proposition",
+            sourceDonneeEtMethodeCalcul: "La source",
           },
         },
       ),
@@ -88,40 +79,22 @@ describe("AccepterPropositionValeurAvancementUseCase", () => {
     );
 
     // When
-    await accepterPropositionValeurAvancementUseCase.run(input);
+    await accuserReceptionPropositionValeurUseCase.run(input);
 
     // Then
-    expect(mesureIndicateurRepository.enregistrer).toHaveBeenCalledWith({
-      auteurId: input.idAuteurAcceptation,
-      dateValeur: new Date("2024-06-08T00:00:00.000Z"),
-      indicId: input.indicId,
-      territoireCode: input.territoireCode,
-      valeur: 20,
-    });
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenCalledWith([
       expect.objectContaining({
         indicId: input.indicId,
         territoireCode: input.territoireCode,
-        typeEvenement: "PROPOSITION_VALEUR_ACCEPTEE",
+        typeEvenement: "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
         typeValeur: "VALEUR_AVANCEMENT",
         dateValeur: new Date(input.dateValeurAvancement),
         valeur: 20,
-        idAuteurModification: input.idAuteurAcceptation,
+        idAuteurModification: input.idAuteurAccuseReception,
         ordre: 3,
-        donneesComplementaires: { motif: "Motif de la proposition" },
-      }),
-      expect.objectContaining({
-        indicId: input.indicId,
-        territoireCode: input.territoireCode,
-        typeEvenement: "VALEUR_MODIFIEE",
-        typeValeur: "VALEUR_AVANCEMENT",
-        dateValeur: new Date(input.dateValeurAvancement),
-        valeur: 20,
-        idAuteurModification: input.idAuteurAcceptation,
-        ordre: 4,
-        donneesComplementaires: undefined,
+        donneesComplementaires: { motif: "Motif de l'accusé de réception" },
       }),
     ]);
   });

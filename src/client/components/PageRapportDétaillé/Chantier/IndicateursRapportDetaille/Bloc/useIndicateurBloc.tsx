@@ -32,6 +32,8 @@ const indicateurDétailsVide: IndicateurDétailsParTerritoire = {
     dateValeurCibleAnnuelle: null,
     avancement: { global: null, annuel: null },
     proposition: null,
+    propositionStatutTerritoire: null,
+    propositionStatutDirectionProjet: null,
     unité: null,
     est_applicable: false,
     dateImport: null,

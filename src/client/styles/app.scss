@@ -262,6 +262,14 @@
   border-spacing: 1rem 0 !important;
 }
 
+.gap-2 {
+  gap: .5rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
 @media screen and (min-width: 48rem) {
   .border-md-r {
     border-right-width: 1px;

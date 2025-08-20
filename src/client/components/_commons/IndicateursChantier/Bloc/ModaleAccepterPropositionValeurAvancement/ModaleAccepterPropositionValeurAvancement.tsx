@@ -10,8 +10,8 @@ import {
   useModaleAccepterPropositionValeurAvancement,
 } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccepterPropositionValeurAvancement/useModaleAccepterPropositionValeurAvancement";
 import { formaterDate } from "@/client/utils/date/date";
-import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
+import { ComparaisonValeurBox } from "@/components/_commons/IndicateursChantier/Bloc/ComparaisonValeurBox";
 
 export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
   indicateur: Indicateur;
@@ -103,49 +103,24 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                     </p>
                   ) : null}
                   <div className="w-full flex fr-mt-2w">
-                    <div className="w-half-full fr-mr-1w border flex flex-column">
-                      <span className="fr-background-action-low-blue-france flex justify-center fr-p-1w border">
-                        Valeur d'avancement importée par la direction de projet
-                      </span>
-                      <div className="w-full flex flex-column justify-between fr-pt-1w">
-                        <span className="flex justify-center fr-mb-5v">
-                          {detailIndicateur.valeurAvancementMandat?.toLocaleString(
-                            "fr-FR",
-                          )}
-                        </span>
-                        <span className="flex justify-center align-end texte-gris">
-                          (
-                          {formaterDate(
-                            detailIndicateur.dateValeurAvancementMandat,
-                            "MM/YYYY",
-                          )}
-                          )
-                        </span>
-                      </div>
-                    </div>
-                    <div className="w-half-full fr-ml-1w border">
-                      <span className="fr-background-action-low-blue-france w-full flex justify-center fr-p-1w">
-                        Proposition de nouvelle valeur d'avancement
-                        <ChampObligatoire />
-                      </span>
-                      <div className="w-full flex flex-column align-center fr-pt-1w">
-                        <div className="w-half-full flex fr-mb-1w">
-                          <span>
-                            {detailIndicateur.proposition?.valeurAvancement}
-                          </span>
-                        </div>
-                        <span className="flex justify-center texte-gris">
-                          (
-                          {formaterDate(
-                            detailIndicateur.dateValeurAvancementMandat,
-                            "MM/YYYY",
-                          )}
-                          )
-                        </span>
-                      </div>
-                    </div>
+                    <ComparaisonValeurBox
+                      date={detailIndicateur.dateValeurAvancementMandat}
+                      titre="Valeur d'avancement importée par la direction de projet"
+                      valeur={detailIndicateur.valeurAvancementMandat?.toLocaleString(
+                        "fr-FR",
+                      )}
+                    />
+
+                    <ComparaisonValeurBox
+                      date={detailIndicateur.dateValeurAvancementMandat}
+                      titre={`Valeur d'avancement proposée par ${detailIndicateur.proposition?.auteur} le ${formaterDate(
+                        detailIndicateur.proposition?.dateProposition,
+                        "DD/MM/YYYY",
+                      )}`}
+                      valeur={detailIndicateur.proposition?.valeurAvancement}
+                    />
                   </div>
-                  <p className="fr-text--sm fr-mt-2w">
+                  <p className="fr-text--sm fr-mt-2w fr-mb-1w">
                     Indiquez la décision que vous souhaitez prendre concernant
                     cette proposition :
                   </p>

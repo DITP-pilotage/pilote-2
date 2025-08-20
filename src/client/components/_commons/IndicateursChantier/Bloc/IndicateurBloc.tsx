@@ -11,7 +11,6 @@ import BadgeIcône from "@/components/_commons/BadgeIcône/BadgeIcône";
 import api from "@/server/infrastructure/api/trpc/api";
 import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 import ValeurEtDate from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
@@ -24,12 +23,14 @@ import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { ModaleSuppressionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurAvancement/ModaleSuppressionValeurAvancement";
 import BoutonSousLigné from "@/client/components/_commons/BoutonSousLigné/BoutonSousLigné";
+import { DetailsIndicateursContrat } from "@/server/chantiers/app/contrats/DetailsIndicateursContrat";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import useIndicateurBloc from "./useIndicateurBloc";
 import useIndicateurAlerteDateMaj from "./useIndicateurAlerteDateMaj";
 import { ModalePropositionValeurAvancementV2 } from "./ModalePropositionValeurAvancementV2/ModalePropositionValeurAvancementV2";
 import { ModaleAccepterPropositionValeurAvancement } from "./ModaleAccepterPropositionValeurAvancement/ModaleAccepterPropositionValeurAvancement";
 import { ModaleSuppressionValeurAvancementV2 } from "./ModaleSuppressionValeurAvancementV2/ModaleSuppressionValeurAvancementV2";
+import { ModaleAccuserReceptionPropositionValeurAvancement } from "./ModaleAccuserReceptionPropositionValeurAvancement/ModaleAccuserReceptionPropositionValeurAvancement";
 
 export const ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT =
   "modale-suppression-valeur-davancement";
@@ -37,15 +38,18 @@ export const ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT =
   "modale-proposition-valeur-davancement";
 export const ID_HTML_MODALE_ACCEPTER_PROPOSITION_VALEUR_DAVANCEMENT =
   "modale-accepter-proposition-valeur-davancement";
+export const ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT =
+  "modale-accuser-reception-proposition-valeur-davancement";
 
 interface IndicateurBlocProps {
   indicateur: Indicateur;
-  détailsIndicateurs: DétailsIndicateurs;
-  detailsIndicateursTerritoire: DétailsIndicateurs;
+  détailsIndicateurs: DetailsIndicateursContrat;
+  detailsIndicateursTerritoire: DetailsIndicateursContrat;
   estInteractif: boolean;
   chantierEstTerritorialisé: boolean;
   estAutoriseAProposerUneValeurAvancement: boolean;
   estAutoriseAAccepterLesPropositionsDeValeurAvancement: boolean;
+  estAutoriseAVoirLesPropositionsDeValeurAvancement: boolean;
   listeSousIndicateurs: Indicateur[];
   territoireCode: string;
   territoiresCompares: string[];
@@ -65,9 +69,10 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   estInteractif,
   chantierEstTerritorialisé,
   estAutoriseAProposerUneValeurAvancement:
-    estAutoriseAProposerUneValeurAvancement = false,
+    estAutoriseAProposerUneValeurAvancement,
+  estAutoriseAVoirLesPropositionsDeValeurAvancement,
   estAutoriseAAccepterLesPropositionsDeValeurAvancement:
-    estAutoriseAAccepterLesPropositionsDeValeurAvancement = false,
+    estAutoriseAAccepterLesPropositionsDeValeurAvancement,
   listeSousIndicateurs,
   territoireCode,
   territoiresCompares,
@@ -92,7 +97,20 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   const détailTerritoireSélectionné =
     récupérerDétailsSurUnTerritoire(territoireCode);
 
-  const détailsIndicateur = détailsIndicateurs[indicateur.id];
+  const detailsIndicateur = détailsIndicateurs[indicateur.id];
+
+  const estPropositionSupprimee =
+    detailsIndicateur[territoireCode].propositionStatutTerritoire?.statut ===
+    "PROPOSITION_VALEUR_SUPPRIMEE";
+  const estPropositionRefusee =
+    detailsIndicateur[territoireCode].propositionStatutDirectionProjet
+      ?.statut === "PROPOSITION_VALEUR_REFUSEE";
+  const estAccuseReception =
+    detailsIndicateur[territoireCode].propositionStatutDirectionProjet
+      ?.statut === "PROPOSITION_VALEUR_ACCUSEE_RECEPTION";
+  const estPropositionModifiee =
+    detailsIndicateur[territoireCode].propositionStatutTerritoire?.statut ===
+    "PROPOSITION_VALEUR_MODIFIEE";
 
   const { data: variableContenuFFPropositionValeurAvancement } =
     api.gestionContenu.récupérerVariableContenu.useQuery({
@@ -111,13 +129,13 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     dateValeurAvancement,
     indicateurNonAJour,
     indicateurEstApplicable,
-  } = useIndicateurBloc(détailsIndicateur, territoireCode);
+  } = useIndicateurBloc(detailsIndicateur, territoireCode);
 
   const informationsIndicateurs = [
     {
       territoireNom: détailTerritoireSélectionné.nomAffiché,
       code: détailTerritoireSélectionné.code,
-      données: détailsIndicateur[territoireCode],
+      données: detailsIndicateur[territoireCode],
     },
   ];
 
@@ -125,7 +143,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     .map((territoireCompare) => ({
       territoireNom: territoireCompare.nomAffiché,
       code: territoireCompare.code,
-      données: détailsIndicateur[territoireCompare.code],
+      données: detailsIndicateur[territoireCompare.code],
     }))
     .sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) =>
       indicateurDétailsTerritoire1.données.codeInsee.localeCompare(
@@ -139,9 +157,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   );
 
   const estPropositionSurLeBonJalon =
-    détailsIndicateur[territoireCode].dateValeurAvancementMandat !== null
+    detailsIndicateur[territoireCode].dateValeurAvancementMandat !== null
       ? new Date(
-          détailsIndicateur[territoireCode].dateValeurAvancementMandat!,
+          detailsIndicateur[territoireCode].dateValeurAvancementMandat!,
         ).getFullYear() <= jalon
       : false;
   const propositionSurMailleDesactivee =
@@ -247,26 +265,58 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 </div>
                 <IndicateurPonderation
                   indicateurPondération={
-                    détailsIndicateur[territoireCode]?.pondération ?? null
+                    detailsIndicateur[territoireCode]?.pondération ?? null
                   }
                   mailleSélectionnée={mailleTerritoireSelectionnee}
                 />
                 {variableContenuFFPropositionValeurAvancementV2 &&
                 (estAutoriseAProposerUneValeurAvancement ||
-                  estAutoriseAAccepterLesPropositionsDeValeurAvancement) ? (
+                  estAutoriseAVoirLesPropositionsDeValeurAvancement) ? (
                   <div>
-                    {informationsIndicateurs[0].données.proposition === null ? (
-                      <div className="flex flex-align-center">
+                    {informationsIndicateurs[0].données.proposition === null ||
+                    estPropositionSupprimee ||
+                    estPropositionRefusee ? (
+                      <div className="">
                         <p className="fr-text--xs texte-gris fr-mb-0">
                           Aucune proposition pour la valeur d'avancement de cet
-                          indicateur
+                          indicateur{" "}
+                          {estPropositionSupprimee ? (
+                            <>
+                              {" "}
+                              -{" "}
+                              <strong>
+                                dernière proposition en date supprimée
+                              </strong>{" "}
+                              par le territoire le{" "}
+                              {formaterDate(
+                                detailsIndicateur[territoireCode]
+                                  .propositionStatutTerritoire?.date,
+                                "DD/MM/YYYY",
+                              )}
+                            </>
+                          ) : null}
+                          {estPropositionRefusee ? (
+                            <>
+                              {" "}
+                              -{" "}
+                              <strong>
+                                dernière proposition en date refusée
+                              </strong>{" "}
+                              par la direction de projet le{" "}
+                              {formaterDate(
+                                detailsIndicateur[territoireCode]
+                                  .propositionStatutDirectionProjet?.date,
+                                "DD/MM/YYYY",
+                              )}
+                            </>
+                          ) : null}
                         </p>
                         <BoutonSousLigné
                           ariaControls={
                             ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
                             indicateur.id
                           }
-                          classNameSupplémentaires="fr-link--xs fr-link--icon-left fr-icon-edit-line fr-ml-2w texte-gris"
+                          classNameSupplémentaires="fr-link--xs fr-link--icon-left fr-icon-edit-line texte-gris"
                           dataFrOpened={false}
                           type="button"
                         >
@@ -279,7 +329,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           <strong>
                             Proposition de nouvelle valeur d'avancement en cours
                           </strong>{" "}
-                          – présentée par le territoire le{" "}
+                          – {estPropositionModifiee ? "modifiée" : "présentée"}{" "}
+                          par le territoire le{" "}
                           <strong>
                             {formaterDate(
                               informationsIndicateurs[0].données.proposition
@@ -287,7 +338,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               "DD/MM/YYYY",
                             )}
                           </strong>{" "}
-                          et en attente de lecture par la direction de projet
+                          et{" "}
+                          {estAccuseReception ? "lue" : "en attente de lecture"}{" "}
+                          par la direction de projet
                         </p>
                         <BoutonSousLigné
                           classNameSupplémentaires={`fr-link--xs fr-link--icon-left ${propositionEstVisible ? "fr-icon-eye-off-line" : "fr-icon-eye-line"} texte-jaune `}
@@ -306,7 +359,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   </div>
                 ) : null}
               </div>
-              {détailsIndicateur[territoireCode]?.tendance === "BAISSE" ? (
+              {detailsIndicateur[territoireCode]?.tendance === "BAISSE" ? (
                 <IndicateurTendance />
               ) : null}
             </div>
@@ -625,23 +678,50 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   </div>
                                   {variableContenuFFPropositionValeurAvancementV2 ? (
                                     <div className="flex align-center selecteur-infobulle-conteneur">
-                                      <span className="fr-text--xs texte-gris">
-                                        En attente de lecture par la direction
-                                        de projet
-                                      </span>
-                                      <Infobulle
-                                        classNameBouton="texte-gris"
-                                        classNameInfoBulle="tooltip-accordeon"
-                                        idHtml={`infobulle-proposition-valeur-davancement-statut-${informationIndicateur.code}`}
-                                      >
-                                        <p className="fr-text--sm">
-                                          La direction de projet n'a pas encore
-                                          accusé réception de votre proposition.
-                                          Il vous est toujours possible de
-                                          modifier ou de supprimer celle-ci si
-                                          vous le souhaitez.
-                                        </p>
-                                      </Infobulle>
+                                      {estAccuseReception ? (
+                                        <>
+                                          <span className="fr-text--xs texte-gris">
+                                            la direction de projet a accusé
+                                            réception
+                                          </span>
+                                          <Infobulle
+                                            classNameBouton="texte-gris"
+                                            classNameInfoBulle="tooltip-accordeon"
+                                            idHtml={`infobulle-proposition-valeur-davancement-accusee-reception-${informationIndicateur.code}`}
+                                          >
+                                            <p className="fr-text--sm">
+                                              Vous ne pouvez plus intervenir sur
+                                              cet indicateur tant que la
+                                              direction de projet n'aura pas
+                                              pris une décision (accepter,
+                                              accepter avec modification ou
+                                              refuser) ou procédé à un nouvel
+                                              import de données.
+                                            </p>
+                                          </Infobulle>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <span className="fr-text--xs texte-gris">
+                                            En attente de lecture par la
+                                            direction de projet
+                                          </span>
+                                          <Infobulle
+                                            classNameBouton="texte-gris"
+                                            classNameInfoBulle="tooltip-accordeon"
+                                            idHtml={`infobulle-proposition-valeur-davancement-statut-${informationIndicateur.code}`}
+                                          >
+                                            <p className="fr-text--sm">
+                                              La direction de projet n'a pas
+                                              encore accusé réception de votre
+                                              proposition. Il vous est toujours
+                                              possible de modifier ou de
+                                              supprimer celle-ci si vous le
+                                              souhaitez.
+                                            </p>
+                                          </Infobulle>
+                                        </>
+                                      )}
                                     </div>
                                   ) : null}
                                 </td>
@@ -811,18 +891,48 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 estAutoriseAAccepterLesPropositionsDeValeurAvancement ? (
                                 <tr className="ligne-modification-proposition-valeur-davancement">
                                   <td colSpan={8}>
-                                    <div className="flex w-full justify-end">
+                                    <div className="flex w-full align-center justify-end gap-4">
+                                      {!estAccuseReception && (
+                                        <BoutonSousLigné
+                                          ariaControls={
+                                            ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT +
+                                            indicateur.id
+                                          }
+                                          classNameSupplémentaires="fr-link--icon-left fr-icon-mail-line texte-jaune"
+                                          dataFrOpened={false}
+                                          type="button"
+                                        >
+                                          Accuser réception
+                                        </BoutonSousLigné>
+                                      )}
                                       <button
                                         aria-controls={
                                           ID_HTML_MODALE_ACCEPTER_PROPOSITION_VALEUR_DAVANCEMENT +
                                           indicateur.id
                                         }
-                                        className="fr-btn fr-btn--icon-left fr-icon-check-fill fr-btn--secondary bouton-proposition-valeur-davancement"
+                                        className="fr-btn fr-btn--icon-left fr-icon-scales-3-fill fr-btn--secondary bouton-proposition-valeur-davancement"
                                         data-fr-opened="false"
                                         type="button"
                                       >
                                         Prendre une décision
                                       </button>
+                                      <ModaleAccuserReceptionPropositionValeurAvancement
+                                        detailIndicateur={
+                                          informationIndicateur.données
+                                        }
+                                        generatedHTMLID={
+                                          ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT +
+                                          indicateur.id
+                                        }
+                                        indicateur={indicateur}
+                                        territoireCode={territoireCode}
+                                        territoireCodeInsee={
+                                          détailTerritoireSélectionné.codeInsee
+                                        }
+                                        territoireNom={
+                                          détailTerritoireSélectionné.nom
+                                        }
+                                      />
                                       <ModaleAccepterPropositionValeurAvancement
                                         detailIndicateur={
                                           informationIndicateur.données
@@ -844,6 +954,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   </td>
                                 </tr>
                               ) : propositionEstVisible &&
+                                !estAccuseReception &&
                                 estAutoriseAProposerUneValeurAvancement ? (
                                 <tr className="ligne-modification-proposition-valeur-davancement">
                                   <td colSpan={8}>

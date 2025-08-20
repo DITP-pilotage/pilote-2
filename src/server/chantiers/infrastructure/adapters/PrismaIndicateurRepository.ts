@@ -14,14 +14,16 @@ import { prisma } from "@/server/db/prisma";
 import { historique_valeurs } from "@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLRepository";
 import { HistoriqueIndicateurPourExport } from "@/server/chantiers/domain/HistoriqueIndicateurPourExport";
 import {
-  DetailsIndicateurs,
   DetailIndicateurPropositionValeurAvancement,
+  DetailsIndicateur,
+  DetailsIndicateurs,
 } from "@/server/chantiers/domain/DetailsIndicateurs";
 import { comparerDates, formatDate } from "@/client/utils/date/date";
 import {
   EVENEMENT_VALEUR_PROPOSITION_VALEUR_TERMINEE,
   EvenementValeurEnum,
 } from "@/server/app/domain/EvenementValeurEnum";
+import { toISODate } from "@/server/app/domain/Dates";
 
 const convertirEnDonneeIndicateur = (
   prismaIndicateurIdentite: PrismaIndicateurIdentite & {
@@ -815,6 +817,12 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           (indicateurJalon) => indicateurJalon.jalon === jalon,
         );
 
+      const { propositionStatutTerritoire, propositionStatutDirectionProjet } =
+        this.calculerStatutsProposition(
+          indicateurRow,
+          indicateurTerritoireJalon?.date_valeur_actuelle,
+        );
+
       détailsIndicateurs[indicateurRow.id][indicateurRow.territoire_code] = {
         dateValeurAvancementMandat: formatDate(
           indicateurRow.date_valeur_actuelle_mandat,
@@ -853,6 +861,8 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           indicateurRow,
           indicateurTerritoireJalon,
         ),
+        propositionStatutTerritoire,
+        propositionStatutDirectionProjet,
         unite: indicateurRow.indicateur_identite.unite_mesure,
         estApplicable: indicateurRow.est_applicable,
         dateImport: formatDate(
@@ -885,42 +895,116 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     },
     indicateurTerritoireJalon: PrismaIndicateurTerritoireJalon | undefined,
   ): DetailIndicateurPropositionValeurAvancement | null {
-    const dernierEvenementProposition =
-      indicateurRow.indicateur_territoire_valeur_evenement.find(
-        (evenement) =>
-          evenement.type_evenement !== EvenementValeurEnum.VALEUR_CREEE &&
-          evenement.type_evenement !== EvenementValeurEnum.VALEUR_MODIFIEE &&
-          evenement.type_evenement !== EvenementValeurEnum.VALEUR_HISTORISEE,
-      ) || null;
+    const evenementsProposition =
+      indicateurRow.indicateur_territoire_valeur_evenement.filter((evenement) =>
+        evenement.type_evenement.startsWith("PROPOSITION_VALEUR_"),
+      ) || [];
+    const [evenementPropositionLePlusRecent = null] = evenementsProposition;
 
-    return dernierEvenementProposition &&
+    return evenementPropositionLePlusRecent &&
       !EVENEMENT_VALEUR_PROPOSITION_VALEUR_TERMINEE.includes(
-        dernierEvenementProposition.type_evenement,
+        evenementPropositionLePlusRecent.type_evenement,
       )
       ? {
-          valeurAvancement: dernierEvenementProposition.valeur!,
+          valeurAvancement: evenementPropositionLePlusRecent.valeur!,
           tauxAvancement: indicateurRow.taux_avancement_mandat_proposition_v2,
           tauxAvancementIntermediaire:
             indicateurTerritoireJalon !== undefined
               ? indicateurTerritoireJalon.taux_avancement_proposition_v2
               : null,
-          auteur: `${dernierEvenementProposition.auteur.prenom} ${dernierEvenementProposition.auteur.nom}`,
+          auteur: `${evenementPropositionLePlusRecent.auteur.prenom} ${evenementPropositionLePlusRecent.auteur.nom}`,
           dateProposition: formatDate(
-            dernierEvenementProposition.date_creation,
+            evenementPropositionLePlusRecent.date_creation,
           ),
           motif:
             (
-              dernierEvenementProposition.donnees_complementaires as {
+              evenementPropositionLePlusRecent.donnees_complementaires as {
                 motif: string;
               }
             )?.motif || null,
           sourceDonneeEtMethodeCalcul:
             (
-              dernierEvenementProposition.donnees_complementaires as {
+              evenementPropositionLePlusRecent.donnees_complementaires as {
                 source_donnee_methode_calcul: string;
               }
             )?.source_donnee_methode_calcul || null,
         }
       : null;
+  }
+
+  private calculerStatutsProposition(
+    indicateurRow: PrismaIndicateurTerritoire & {
+      indicateur_territoire_valeur_evenement: PrismaIndicateurTerritoireValeurEvenement[];
+    },
+    dateValeurActuelle: Date | null | undefined,
+  ) {
+    let propositionStatutTerritoire: DetailsIndicateur["propositionStatutTerritoire"] =
+      null;
+    let propositionStatutDirectionProjet: DetailsIndicateur["propositionStatutDirectionProjet"] =
+      null;
+
+    if (!dateValeurActuelle) {
+      return { propositionStatutTerritoire, propositionStatutDirectionProjet };
+    }
+    const evenementsProposition =
+      indicateurRow.indicateur_territoire_valeur_evenement.filter(
+        (evenement) =>
+          evenement.type_evenement.startsWith("PROPOSITION_VALEUR_") &&
+          toISODate(evenement.date_valeur) === toISODate(dateValeurActuelle),
+      );
+
+    if (evenementsProposition.length === 0) {
+      return { propositionStatutTerritoire, propositionStatutDirectionProjet };
+    }
+
+    const dernierEvenement = evenementsProposition[0];
+    const evenementPropositionValeur = evenementsProposition.find(
+      (evt) =>
+        evt.type_evenement === EvenementValeurEnum.PROPOSITION_VALEUR_CREEE ||
+        evt.type_evenement === EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+    );
+
+    switch (dernierEvenement.type_evenement) {
+      case EvenementValeurEnum.PROPOSITION_VALEUR_REFUSEE:
+        propositionStatutTerritoire = null;
+        propositionStatutDirectionProjet = {
+          statut: "PROPOSITION_VALEUR_REFUSEE",
+          date: toISODate(dernierEvenement.date_creation),
+        };
+        break;
+
+      case EvenementValeurEnum.PROPOSITION_VALEUR_ACCUSEE_RECEPTION:
+        if (evenementPropositionValeur) {
+          propositionStatutTerritoire = {
+            statut: evenementPropositionValeur.type_evenement as
+              | "PROPOSITION_VALEUR_CREEE"
+              | "PROPOSITION_VALEUR_MODIFIEE",
+            date: toISODate(evenementPropositionValeur.date_creation),
+          };
+        }
+        propositionStatutDirectionProjet = {
+          statut: "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
+          date: toISODate(dernierEvenement.date_creation),
+        };
+        break;
+
+      case EvenementValeurEnum.PROPOSITION_VALEUR_CREEE:
+      case EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE:
+      case EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE:
+        propositionStatutTerritoire = {
+          statut: dernierEvenement.type_evenement as
+            | "PROPOSITION_VALEUR_CREEE"
+            | "PROPOSITION_VALEUR_MODIFIEE"
+            | "PROPOSITION_VALEUR_SUPPRIMEE",
+          date: toISODate(dernierEvenement.date_creation),
+        };
+        propositionStatutDirectionProjet = null;
+        break;
+
+      default:
+        break;
+    }
+
+    return { propositionStatutTerritoire, propositionStatutDirectionProjet };
   }
 }
