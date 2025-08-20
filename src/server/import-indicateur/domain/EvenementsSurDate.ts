@@ -9,7 +9,10 @@ const estPropositionEnCours = (
   evenementsPropositionValeur: IndicateurTerritoireValeurEvenement | undefined,
 ) =>
   evenementsPropositionValeur?.typeEvenement === "PROPOSITION_VALEUR_CREEE" ||
-  evenementsPropositionValeur?.typeEvenement === "PROPOSITION_VALEUR_MODIFIEE";
+  evenementsPropositionValeur?.typeEvenement ===
+    "PROPOSITION_VALEUR_MODIFIEE" ||
+  evenementsPropositionValeur?.typeEvenement ===
+    "PROPOSITION_VALEUR_ACCUSEE_RECEPTION";
 
 type IdentifiantFlux = {
   indicId: string;
