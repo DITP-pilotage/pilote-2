@@ -1690,23 +1690,29 @@ describe("EvenementsSurDate", () => {
       );
 
       // WHEN
-      const nouveauEvenement =
+      const nouveauxEvenements =
         evenementsSurDate.creerEvenementPropositionValeurAccepteeAvecModification(
           { auteurId: AUTEUR_ID, valeur: 90 },
         );
 
       // THEN
-      expect(nouveauEvenement.typeEvenement).toEqual(
+      const [evenementAcceptation, evenementModification] = nouveauxEvenements;
+
+      expect(evenementAcceptation.typeEvenement).toEqual(
         "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION",
       );
-      expect(nouveauEvenement.indicId).toEqual(INDIC_ID);
-      expect(nouveauEvenement.territoireCode).toEqual(TERRITOIRE_CODE);
-      expect(nouveauEvenement.typeValeur).toEqual("VALEUR_AVANCEMENT");
-      expect(nouveauEvenement.dateValeur).toEqual(new Date("2023-01-01"));
-      expect(nouveauEvenement.valeur).toEqual(90); // Valeur modifiée
-      expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
-      expect(nouveauEvenement.ordre).toEqual(3);
-      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+      expect(evenementAcceptation.indicId).toEqual(INDIC_ID);
+      expect(evenementAcceptation.territoireCode).toEqual(TERRITOIRE_CODE);
+      expect(evenementAcceptation.typeValeur).toEqual("VALEUR_AVANCEMENT");
+      expect(evenementAcceptation.dateValeur).toEqual(new Date("2023-01-01"));
+      expect(evenementAcceptation.valeur).toEqual(90); // Valeur modifiée
+      expect(evenementAcceptation.idAuteurModification).toEqual(AUTEUR_ID);
+      expect(evenementAcceptation.ordre).toEqual(3);
+      expect(evenementAcceptation.donneesComplementaires).toEqual(undefined);
+
+      expect(evenementModification.typeEvenement).toEqual("VALEUR_MODIFIEE");
+      expect(evenementModification.valeur).toEqual(90);
+      expect(evenementModification.ordre).toEqual(4);
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION avec succès quand une PROPOSITION_VALEUR_ACCUSEE_RECEPTION existe", () => {
@@ -1750,17 +1756,23 @@ describe("EvenementsSurDate", () => {
       );
 
       // WHEN
-      const nouveauEvenement =
+      const nouveauxEvenements =
         evenementsSurDate.creerEvenementPropositionValeurAccepteeAvecModification(
           { auteurId: AUTEUR_ID, valeur: 95 },
         );
 
       // THEN
-      expect(nouveauEvenement.typeEvenement).toEqual(
+      const [evenementAcceptation, evenementModification] = nouveauxEvenements;
+
+      expect(evenementAcceptation.typeEvenement).toEqual(
         "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION",
       );
-      expect(nouveauEvenement.valeur).toEqual(95); // Valeur modifiée
-      expect(nouveauEvenement.ordre).toEqual(4);
+      expect(evenementAcceptation.valeur).toEqual(95); // Valeur modifiée
+      expect(evenementAcceptation.ordre).toEqual(4);
+
+      expect(evenementModification.typeEvenement).toEqual("VALEUR_MODIFIEE");
+      expect(evenementModification.valeur).toEqual(95);
+      expect(evenementModification.ordre).toEqual(5);
     });
 
     it("doit échouer quand aucune proposition n'est en cours et aucun évènement PROPOSITION_VALEUR_ACCUSEE_RECEPTION", () => {

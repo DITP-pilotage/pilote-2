@@ -75,6 +75,14 @@ export const validationSuppressionPropositionValeurAvancement = z.object({
     ),
 });
 
+export const validationAccepterAvecModificationPropositionValeurAvancement =
+  z.object({
+    indicId: z.string(),
+    territoireCode: z.string(),
+    dateValeurAvancement: z.string(),
+    valeur: z.number(),
+  });
+
 export const validationAccuserReceptionPropostionValeurAvancement = z.object({
   indicId: z.string(),
   territoireCode: z.string(),
