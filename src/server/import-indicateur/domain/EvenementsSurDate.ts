@@ -269,11 +269,11 @@ export class EvenementsSurDate {
     auteurId: string;
     donneesComplementaires: DonneesComplementaires<"PROPOSITION_VALEUR_CREEE">;
   }) {
-    if (this.evenementPropositionValeurEnCours()) {
-      throw new Error("Une proposition de valeur est déjà en cours");
-    }
     if (this.estEvenementPropositionValeurAccuseeReception()) {
       throw new Error("La proposition de valeur a déjà été accusée réception");
+    }
+    if (this.evenementPropositionValeurEnCours()) {
+      throw new Error("Une proposition de valeur est déjà en cours");
     }
     const evenement =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
