@@ -23,6 +23,7 @@ const formSchema = z
         "La limite maximale de 500 caractères a été dépassée",
       ),
     decision: z.enum(["accepter", "accepter-avec-modification", "refuser"]),
+    valeurModification: z.string().optional(),
   })
   .refine(
     (data) => {
@@ -34,6 +35,37 @@ const formSchema = z
     {
       message: "Veuillez saisir un motif de refus",
       path: ["motif"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.decision === "accepter-avec-modification") {
+        return (
+          data.valeurModification && data.valeurModification.trim().length > 0
+        );
+      }
+      return true;
+    },
+    {
+      message: "Veuillez saisir une valeur de modification",
+      path: ["valeurModification"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (
+        data.decision === "accepter-avec-modification" &&
+        data.valeurModification
+      ) {
+        return new RegExp(/^-?\d+$|^-?\d+([,.])\d+$/).test(
+          data.valeurModification,
+        );
+      }
+      return true;
+    },
+    {
+      message: "La valeur doit être un nombre",
+      path: ["valeurModification"],
     },
   );
 
@@ -99,6 +131,13 @@ export const useModaleAccepterPropositionValeurAvancement = ({
       },
     });
 
+  const mutationAccepterAvecModificationPropositonValeurAvancement =
+    api.propositionValeurAvancement.accepterAvecModification.useMutation({
+      onSuccess: () => {
+        setEtapePropositionValeurAvancement(null);
+      },
+    });
+
   const traiterDecision: SubmitHandler<FormData> = async (data) => {
     const inputs = {
       csrf: récupérerUnCookie("csrf") ?? "",
@@ -110,6 +149,14 @@ export const useModaleAccepterPropositionValeurAvancement = ({
 
     if (data.decision === "refuser") {
       mutationRefuserPropositonValeurAvancement.mutate(inputs);
+    } else if (data.decision === "accepter-avec-modification") {
+      const valeurModification = Number.parseFloat(
+        data.valeurModification?.replace(",", ".") || "0",
+      );
+      mutationAccepterAvecModificationPropositonValeurAvancement.mutate({
+        ...inputs,
+        valeur: valeurModification,
+      });
     } else {
       mutationAccepterPropositonValeurAvancement.mutate(inputs);
     }

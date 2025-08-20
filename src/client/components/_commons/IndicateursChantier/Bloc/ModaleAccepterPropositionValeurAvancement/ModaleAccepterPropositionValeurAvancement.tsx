@@ -12,6 +12,7 @@ import {
 } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccepterPropositionValeurAvancement/useModaleAccepterPropositionValeurAvancement";
 import { formaterDate } from "@/client/utils/date/date";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
+import Input from "@/components/_commons/Input/Input";
 import { ComparaisonValeurBox } from "@/components/_commons/IndicateursChantier/Bloc/ComparaisonValeurBox";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
@@ -148,7 +149,6 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                     <div className="fr-radio-group">
                       <input
                         {...reactHookForm.register("decision")}
-                        disabled
                         id="accepter-avec-modification"
                         type="radio"
                         value="accepter-avec-modification"
@@ -176,15 +176,34 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                       </label>
                     </div>
                     <div className="fr-mt-2w">
-                      <span>Valeur à modifier</span>
-                      <span className="flex texte-gris fr-text--xs">
-                        (
-                        {formaterDate(
-                          detailIndicateur.dateValeurAvancementMandat,
-                          "MM/YYYY",
-                        )}
-                        )
-                      </span>
+                      <Input
+                        className="fr-input--sm"
+                        disabled={
+                          reactHookForm.watch("decision") !==
+                          "accepter-avec-modification"
+                        }
+                        erreur={
+                          reactHookForm.formState.errors.valeurModification
+                        }
+                        htmlName="valeurModification"
+                        register={reactHookForm.register("valeurModification")}
+                        type="number"
+                      >
+                        <label
+                          className="fr-label"
+                          htmlFor="valeurModification"
+                        >
+                          Valeur à modifier
+                          <span className="flex texte-gris fr-text--xs">
+                            (
+                            {formaterDate(
+                              detailIndicateur.dateValeurAvancementMandat,
+                              "MM/YYYY",
+                            )}
+                            )
+                          </span>
+                        </label>
+                      </Input>
                     </div>
                   </div>
 
