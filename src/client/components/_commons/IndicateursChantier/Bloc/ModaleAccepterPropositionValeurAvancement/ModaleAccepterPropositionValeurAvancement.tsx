@@ -13,6 +13,7 @@ import {
 import { formaterDate } from "@/client/utils/date/date";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
 import { ComparaisonValeurBox } from "@/components/_commons/IndicateursChantier/Bloc/ComparaisonValeurBox";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
 export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
   indicateur: Indicateur;
@@ -42,10 +43,15 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
     territoireCode,
   });
 
+  const refreshRouter = useRefreshRouter();
   const decision = reactHookForm.watch("decision");
 
   return (
-    <Modale idHtml={generatedHTMLID} tailleModale="lg">
+    <Modale
+      fermetureCallback={refreshRouter}
+      idHtml={generatedHTMLID}
+      tailleModale="lg"
+    >
       {etapePropositionValeurAvancement ? (
         <>
           <div className="fr-stepper fr-mb-1w">

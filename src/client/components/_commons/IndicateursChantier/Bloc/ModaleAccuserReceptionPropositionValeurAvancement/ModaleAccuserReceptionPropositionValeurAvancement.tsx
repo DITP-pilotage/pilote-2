@@ -13,6 +13,7 @@ import { formaterDate } from "@/client/utils/date/date";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
 import { ComparaisonValeurBox } from "@/components/_commons/IndicateursChantier/Bloc/ComparaisonValeurBox";
 import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
 export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponent<{
   indicateur: Indicateur;
@@ -40,9 +41,14 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
     detailIndicateur,
     territoireCode,
   });
+  const refreshRouter = useRefreshRouter();
 
   return (
-    <Modale idHtml={generatedHTMLID} tailleModale="lg">
+    <Modale
+      fermetureCallback={refreshRouter}
+      idHtml={generatedHTMLID}
+      tailleModale="lg"
+    >
       {etapeAccuserReception ? (
         <>
           <div className="fr-stepper fr-mb-1w">
