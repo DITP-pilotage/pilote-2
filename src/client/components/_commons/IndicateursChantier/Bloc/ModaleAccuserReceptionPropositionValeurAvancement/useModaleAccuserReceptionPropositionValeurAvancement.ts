@@ -55,7 +55,7 @@ export const useModaleAccuserReceptionPropositionValeurAvancement = ({
       EtapeAccuserReception.EXAMEN_PROPOSITION,
     );
 
-  const mutationAccuserReceptionPropositonValeurAvancement =
+  const mutationAccuserReceptionPropositionValeurAvancement =
     api.propositionValeurAvancement.accuserReception.useMutation({
       onSuccess: () => {
         setEtapeAccuserReception(null);
@@ -71,7 +71,7 @@ export const useModaleAccuserReceptionPropositionValeurAvancement = ({
       territoireCode,
     };
 
-    mutationAccuserReceptionPropositonValeurAvancement.mutate(inputs);
+    mutationAccuserReceptionPropositionValeurAvancement.mutate(inputs);
   };
 
   const reactHookForm = useForm<FormData>({
