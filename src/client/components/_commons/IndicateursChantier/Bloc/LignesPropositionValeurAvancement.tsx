@@ -49,7 +49,16 @@ export const LignesPropositionValeurAvancement = ({
       nomVariableContenu: "NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE_V2",
     });
 
+  // TODO: /!\ actionsTerritoiresStore est un hook
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+
+  if (
+    !propositionEstVisible &&
+    variableContenuFFPropositionValeurAvancementV2
+  ) {
+    return null;
+  }
+
   const détailTerritoireSélectionné =
     récupérerDétailsSurUnTerritoire(territoireCode);
   const estPropositionSurLeBonJalon =

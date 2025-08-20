@@ -522,28 +522,28 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 )}
                               </td>
                             </tr>
-                          ) : informationIndicateur.données.proposition !==
-                              null &&
-                            (propositionEstVisible ||
-                              !variableContenuFFPropositionValeurAvancementV2) ? (
-                            <LignesPropositionValeurAvancement
-                              detailIndicateur={detailsIndicateurDuTerritoire}
-                              estAutoriseAAccepterLesPropositionsDeValeurAvancement={
-                                estAutoriseAAccepterLesPropositionsDeValeurAvancement
-                              }
-                              estAutoriseAProposerUneValeurAvancement={
-                                estAutoriseAProposerUneValeurAvancement
-                              }
-                              indicateur={indicateur}
-                              informationIndicateur={informationIndicateur}
-                              jalon={jalon}
-                              proposition={
-                                informationIndicateur.données.proposition
-                              }
-                              propositionEstVisible={propositionEstVisible}
-                              territoireCode={territoireCode}
-                            />
-                          ) : null
+                          ) : (
+                            informationIndicateur.données.proposition !==
+                              null && (
+                              <LignesPropositionValeurAvancement
+                                detailIndicateur={detailsIndicateurDuTerritoire}
+                                estAutoriseAAccepterLesPropositionsDeValeurAvancement={
+                                  estAutoriseAAccepterLesPropositionsDeValeurAvancement
+                                }
+                                estAutoriseAProposerUneValeurAvancement={
+                                  estAutoriseAProposerUneValeurAvancement
+                                }
+                                indicateur={indicateur}
+                                informationIndicateur={informationIndicateur}
+                                jalon={jalon}
+                                proposition={
+                                  informationIndicateur.données.proposition
+                                }
+                                propositionEstVisible={propositionEstVisible}
+                                territoireCode={territoireCode}
+                              />
+                            )
+                          )
                         ) : null
                       ) : null}
                     </Fragment>
