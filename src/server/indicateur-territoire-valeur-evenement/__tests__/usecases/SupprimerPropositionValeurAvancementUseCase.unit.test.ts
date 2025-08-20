@@ -26,6 +26,7 @@ describe("#SupprimerPropositionValeurAvancementUseCase", () => {
       territoireCode: "DEPT-34",
       dateValeurAvancement: new Date("2024-06-08"),
       idAuteurModification: "ec8f2bc3-8f6b-4de2-bbde-1ab790804d43",
+      motif: "motif de la suppression",
     };
 
     const evenementsExistants = [
@@ -95,7 +96,7 @@ describe("#SupprimerPropositionValeurAvancementUseCase", () => {
         valeur: 20,
         idAuteurModification: input.idAuteurModification,
         ordre: 3,
-        donneesComplementaires: undefined,
+        donneesComplementaires: { motif: "motif de la suppression" },
       }),
     );
   });

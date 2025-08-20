@@ -5,6 +5,7 @@ export type SupprimerPropositionValeurAvancementInput = {
   territoireCode: string;
   dateValeurAvancement: Date;
   idAuteurModification: string;
+  motif: string;
 };
 
 interface Dependencies {
@@ -33,6 +34,9 @@ export class SupprimerPropositionValeurAvancementUseCase {
     const evenement =
       evenementsSurDate.creerEvenementPropositionValeurSupprimee({
         auteurId: input.idAuteurModification,
+        donneesComplementaires: {
+          motif: input.motif,
+        },
       });
 
     await this.indicateurTerritoireValeurEvenementRepository.enregistrer(

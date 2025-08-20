@@ -889,9 +889,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                       }
                                     />
                                     <ModaleSuppressionValeurAvancementV2
-                                      dateValeurAvancement={
+                                      detailIndicateur={
                                         informationIndicateur.données
-                                          .dateValeurAvancement!
                                       }
                                       generatedHTMLID={
                                         ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT +
@@ -899,6 +898,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                       }
                                       indicateur={indicateur}
                                       territoireCode={territoireCode}
+                                      territoireCodeInsee={
+                                        détailTerritoireSélectionné.codeInsee
+                                      }
+                                      territoireNom={
+                                        détailTerritoireSélectionné.nom
+                                      }
                                     />
                                   </td>
                                 </tr>

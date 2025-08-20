@@ -327,7 +327,13 @@ export class EvenementsSurDate {
     return evenement;
   }
 
-  creerEvenementPropositionValeurSupprimee({ auteurId }: { auteurId: string }) {
+  creerEvenementPropositionValeurSupprimee({
+    auteurId,
+    donneesComplementaires,
+  }: {
+    auteurId: string;
+    donneesComplementaires: DonneesComplementaires<"PROPOSITION_VALEUR_SUPPRIMEE">;
+  }) {
     const evenementPropositionEnCours =
       this.evenementPropositionValeurEnCours();
 
@@ -347,7 +353,7 @@ export class EvenementsSurDate {
           typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: this.dateValeur(),
           valeur: evenementPropositionEnCours.valeur,
-          donneesComplementaires: undefined,
+          donneesComplementaires: donneesComplementaires,
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
           ordre: this.prochainOrdre(),

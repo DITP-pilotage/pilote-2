@@ -201,7 +201,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
           idAuteurModification: "user-2",
           correlationId: "corr-2",
           ordre: 3,
-          donneesComplementaires: undefined,
+          donneesComplementaires: { motif: "motif de la suppression" },
         },
       ),
     ];

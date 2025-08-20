@@ -181,6 +181,12 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
       return {
         motif: typedEvenement.donneesComplementaires.motif,
       };
+    } else if (evenement.typeEvenement === "PROPOSITION_VALEUR_SUPPRIMEE") {
+      const typedEvenement =
+        evenement as IndicateurTerritoireValeurEvenement<"PROPOSITION_VALEUR_SUPPRIMEE">;
+      return {
+        motif: typedEvenement.donneesComplementaires.motif,
+      };
     } else {
       {
         return Prisma.JsonNull;

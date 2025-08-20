@@ -30,6 +30,7 @@ export const validationSuppressionValeurAvancementV2 = z.object({
   indicId: z.string(),
   territoireCode: z.string(),
   dateValeurAvancement: z.string(),
+  motif: z.string().trim().min(1, "Veuillez saisir un motif de suppression"),
 });
 
 export const validationAccepterPropositionValeurAvancement = z.object({
