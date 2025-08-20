@@ -17,6 +17,8 @@ const PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_AVANCEMENT = new Set([
   ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
   ProfilEnum.SERVICES_DECONCENTRES_REGION,
   ProfilEnum.DIR_PROJET,
+  ProfilEnum.SECRETARIAT_GENERAL,
+  ProfilEnum.EQUIPE_DIR_PROJET,
 ]);
 
 const PROFIL_AUTORISE_A_ACCEPTER_LES_PROPOSITIONS_DE_VALEUR_AVANCEMENT =
@@ -61,6 +63,10 @@ export const usePageChantier = (
         ))) &&
     estAutoriseAModifierLesPublications &&
     chantier.statut !== "ARCHIVE";
+
+  const estAutoriseAVoirLesPropositionsDeValeurAvancement =
+    estAutoriseAAccepterLesPropositionsDeValeurAvancement ||
+    session!.profil === ProfilEnum.SECRETARIAT_GENERAL;
 
   if (
     session &&
@@ -111,6 +117,7 @@ export const usePageChantier = (
     estAutoriseAImporterDesIndicateurs,
     estAutoriseAVoirLeBoutonFicheConducteur,
     estAutoriseAProposerUneValeurAvancement,
+    estAutoriseAVoirLesPropositionsDeValeurAvancement,
     estAutoriseAAccepterLesPropositionsDeValeurAvancement,
     estAutoriseAModifierLesPublications,
     estAutoriseAModifierLesObjectifs,

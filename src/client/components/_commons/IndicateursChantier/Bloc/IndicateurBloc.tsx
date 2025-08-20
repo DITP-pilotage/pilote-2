@@ -50,6 +50,7 @@ interface IndicateurBlocProps {
   chantierEstTerritorialisé: boolean;
   estAutoriseAProposerUneValeurAvancement: boolean;
   estAutoriseAAccepterLesPropositionsDeValeurAvancement: boolean;
+  estAutoriseAVoirLesPropositionsDeValeurAvancement: boolean;
   listeSousIndicateurs: Indicateur[];
   territoireCode: string;
   territoiresCompares: string[];
@@ -70,9 +71,10 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   estInteractif,
   chantierEstTerritorialisé,
   estAutoriseAProposerUneValeurAvancement:
-    estAutoriseAProposerUneValeurAvancement = false,
+    estAutoriseAProposerUneValeurAvancement,
+  estAutoriseAVoirLesPropositionsDeValeurAvancement,
   estAutoriseAAccepterLesPropositionsDeValeurAvancement:
-    estAutoriseAAccepterLesPropositionsDeValeurAvancement = false,
+    estAutoriseAAccepterLesPropositionsDeValeurAvancement,
   listeSousIndicateurs,
   territoireCode,
   territoiresCompares,
@@ -264,7 +266,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 />
                 {variableContenuFFPropositionValeurAvancementV2 &&
                 (estAutoriseAProposerUneValeurAvancement ||
-                  estAutoriseAAccepterLesPropositionsDeValeurAvancement) ? (
+                  estAutoriseAVoirLesPropositionsDeValeurAvancement) ? (
                   <div>
                     {informationsIndicateurs[0].données.proposition === null ? (
                       <div className="flex flex-align-center">
