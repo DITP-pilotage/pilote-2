@@ -100,10 +100,14 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     récupérerDétailsSurUnTerritoire(territoireCode);
 
   const detailsIndicateur = détailsIndicateurs[indicateur.id];
+
+  const estPropositionSupprimee =
+    detailsIndicateur[territoireCode].propositionStatutTerritoire?.statut ===
+    "PROPOSITION_VALEUR_SUPPRIMEE";
   const estAccuseReception =
     detailsIndicateur[territoireCode].propositionStatutDirectionProjet
       ?.statut === "PROPOSITION_VALEUR_ACCUSEE_RECEPTION";
-  const estModifiee =
+  const estPropositionModifiee =
     detailsIndicateur[territoireCode].propositionStatutTerritoire?.statut ===
     "PROPOSITION_VALEUR_MODIFIEE";
 
@@ -268,18 +272,34 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 (estAutoriseAProposerUneValeurAvancement ||
                   estAutoriseAVoirLesPropositionsDeValeurAvancement) ? (
                   <div>
-                    {informationsIndicateurs[0].données.proposition === null ? (
-                      <div className="flex flex-align-center">
+                    {informationsIndicateurs[0].données.proposition === null ||
+                    estPropositionSupprimee ? (
+                      <div className="">
                         <p className="fr-text--xs texte-gris fr-mb-0">
                           Aucune proposition pour la valeur d'avancement de cet
-                          indicateur
+                          indicateur{" "}
+                          {estPropositionSupprimee ? (
+                            <>
+                              {" "}
+                              -{" "}
+                              <strong>
+                                dernière proposition en date supprimée
+                              </strong>{" "}
+                              par le territoire le{" "}
+                              {formaterDate(
+                                detailsIndicateur[territoireCode]
+                                  .propositionStatutTerritoire?.date,
+                                "DD/MM/YYYY",
+                              )}
+                            </>
+                          ) : null}
                         </p>
                         <BoutonSousLigné
                           ariaControls={
                             ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
                             indicateur.id
                           }
-                          classNameSupplémentaires="fr-link--xs fr-link--icon-left fr-icon-edit-line fr-ml-2w texte-gris"
+                          classNameSupplémentaires="fr-link--xs fr-link--icon-left fr-icon-edit-line texte-gris"
                           dataFrOpened={false}
                           type="button"
                         >
@@ -292,8 +312,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           <strong>
                             Proposition de nouvelle valeur d'avancement en cours
                           </strong>{" "}
-                          – {estModifiee ? "modifiée" : "présentée"} par le
-                          territoire le{" "}
+                          – {estPropositionModifiee ? "modifiée" : "présentée"}{" "}
+                          par le territoire le{" "}
                           <strong>
                             {formaterDate(
                               informationsIndicateurs[0].données.proposition
