@@ -63,3 +63,14 @@ export const validationAccuserReceptionPropositionValeurAvancement = z.object({
   dateValeurAvancement: z.string(),
   motif: z.string().trim(),
 });
+
+export const validationSuppressionPropositionValeurAvancement = z.object({
+  motifSuppression: z
+    .string()
+    .trim()
+    .min(1, "Le motif de suppression est obligatoire")
+    .max(
+      LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+      "La limite de 500 caractères a été dépassée",
+    ),
+});
