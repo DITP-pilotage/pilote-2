@@ -34,6 +34,7 @@ describe("AccepterAvecModificationPropositionValeurAvancementUseCase", () => {
       dateValeurAvancement: "2024-06-08",
       idAuteurAcceptation: "user-ghi",
       valeur: 25,
+      motif: "Motif d'acceptation avec modification",
     };
 
     const evenementsExistants = [
@@ -110,7 +111,7 @@ describe("AccepterAvecModificationPropositionValeurAvancementUseCase", () => {
         valeur: input.valeur,
         idAuteurModification: input.idAuteurAcceptation,
         ordre: 3,
-        donneesComplementaires: undefined,
+        donneesComplementaires: { motif: input.motif },
       }),
       expect.objectContaining({
         indicId: input.indicId,

@@ -1692,7 +1692,7 @@ describe("EvenementsSurDate", () => {
       // WHEN
       const nouveauxEvenements =
         evenementsSurDate.creerEvenementPropositionValeurAccepteeAvecModification(
-          { auteurId: AUTEUR_ID, valeur: 90 },
+          { auteurId: AUTEUR_ID, valeur: 90, motif: "Motif de test" },
         );
 
       // THEN
@@ -1708,7 +1708,9 @@ describe("EvenementsSurDate", () => {
       expect(evenementAcceptation.valeur).toEqual(90); // Valeur modifiée
       expect(evenementAcceptation.idAuteurModification).toEqual(AUTEUR_ID);
       expect(evenementAcceptation.ordre).toEqual(3);
-      expect(evenementAcceptation.donneesComplementaires).toEqual(undefined);
+      expect(evenementAcceptation.donneesComplementaires).toEqual({
+        motif: "Motif de test",
+      });
 
       expect(evenementModification.typeEvenement).toEqual("VALEUR_MODIFIEE");
       expect(evenementModification.valeur).toEqual(90);
@@ -1758,7 +1760,7 @@ describe("EvenementsSurDate", () => {
       // WHEN
       const nouveauxEvenements =
         evenementsSurDate.creerEvenementPropositionValeurAccepteeAvecModification(
-          { auteurId: AUTEUR_ID, valeur: 95 },
+          { auteurId: AUTEUR_ID, valeur: 95, motif: "Autre motif de test" },
         );
 
       // THEN
@@ -1794,7 +1796,7 @@ describe("EvenementsSurDate", () => {
       // WHEN & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAccepteeAvecModification(
-          { auteurId: AUTEUR_ID, valeur: 90 },
+          { auteurId: AUTEUR_ID, valeur: 90, motif: "motif" },
         );
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -1842,7 +1844,7 @@ describe("EvenementsSurDate", () => {
       // WHEN & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAccepteeAvecModification(
-          { auteurId: AUTEUR_ID, valeur: 90 },
+          { auteurId: AUTEUR_ID, valeur: 90, motif: "motif" },
         );
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });

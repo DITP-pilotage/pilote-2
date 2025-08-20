@@ -30,12 +30,14 @@ export class AccepterAvecModificationPropositionValeurAvancementUseCase {
     dateValeurAvancement,
     idAuteurAcceptation,
     valeur,
+    motif,
   }: {
     indicId: string;
     territoireCode: string;
     dateValeurAvancement: string;
     idAuteurAcceptation: string;
     valeur: number;
+    motif: string;
   }) {
     const evenementsSurDate =
       await this.indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate(
@@ -52,6 +54,7 @@ export class AccepterAvecModificationPropositionValeurAvancementUseCase {
         {
           auteurId: idAuteurAcceptation,
           valeur,
+          motif,
         },
       );
 

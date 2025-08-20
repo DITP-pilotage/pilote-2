@@ -5,7 +5,7 @@ export const validationPropositionValeurAvancement = z.object({
   valeurAvancement: z
     .string()
     .refine(
-      (value) => new RegExp(/^-?\d+$|^-?\d+(,|\.)\d+$/).test(value),
+      (value) => new RegExp(/^-?\d+$|^-?\d+([,.])\d+$/).test(value),
       "Le champ doit être un nombre",
     ),
   motifProposition: z
@@ -81,6 +81,7 @@ export const validationAccepterAvecModificationPropositionValeurAvancement =
     territoireCode: z.string(),
     dateValeurAvancement: z.string(),
     valeur: z.number(),
+    motif: z.string().trim(),
   });
 
 export const validationAccuserReceptionPropostionValeurAvancement = z.object({

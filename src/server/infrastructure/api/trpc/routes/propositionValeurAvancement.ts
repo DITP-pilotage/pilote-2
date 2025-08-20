@@ -222,6 +222,7 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
           idAuteurAcceptation: auteur,
           dateValeurAvancement: input.dateValeurAvancement,
           valeur: input.valeur,
+          motif: input.motif,
         });
     }),
 
