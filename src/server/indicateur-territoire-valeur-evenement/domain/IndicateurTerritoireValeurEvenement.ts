@@ -14,7 +14,7 @@ type DonneesComplementairesMap = {
     motif: string;
     sourceDonneeEtMethodeCalcul: string;
   };
-  PROPOSITION_VALEUR_SUPPRIMEE: undefined;
+  PROPOSITION_VALEUR_SUPPRIMEE: { motif: string };
   PROPOSITION_VALEUR_REFUSEE: { motif: string };
   PROPOSITION_VALEUR_ACCUSEE_RECEPTION: undefined;
   PROPOSITION_VALEUR_ACCEPTEE: { motif: string };

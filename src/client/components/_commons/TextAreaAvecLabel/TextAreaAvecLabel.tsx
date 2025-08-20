@@ -21,6 +21,7 @@ interface TexteAreaLabelProps {
   texteAide?: string;
   type?: HTMLInputTypeAttribute;
   placeholder?: string;
+  libelleRequired?: string;
 }
 
 const TextAreaAvecLabel: FunctionComponent<TexteAreaLabelProps> = ({
@@ -34,6 +35,7 @@ const TextAreaAvecLabel: FunctionComponent<TexteAreaLabelProps> = ({
   disabled,
   className,
   placeholder,
+  libelleRequired,
 }) => {
   return (
     <div
@@ -44,6 +46,11 @@ const TextAreaAvecLabel: FunctionComponent<TexteAreaLabelProps> = ({
         {isRequired ? <ChampObligatoire /> : null}
         {!!texteAide && <span className="fr-hint-text">{texteAide}</span>}
       </label>
+      {libelleRequired ? (
+        <p className="fr-text texte-warning fr-text--xs text-italic fr-mb-2w">
+          {libelleRequired}
+        </p>
+      ) : null}
       <textarea
         className={`fr-input${erreur !== undefined || erreurMessage ? " fr-input-group--error" : ""}${className !== undefined ? " " + className : ""}`}
         disabled={disabled}

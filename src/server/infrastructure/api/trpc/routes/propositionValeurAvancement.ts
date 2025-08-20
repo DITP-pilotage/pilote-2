@@ -151,6 +151,7 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
           territoireCode: input.territoireCode,
           dateValeurAvancement: new Date(input.dateValeurAvancement),
           idAuteurModification: auteur,
+          motif: input.motif,
         });
     }),
 

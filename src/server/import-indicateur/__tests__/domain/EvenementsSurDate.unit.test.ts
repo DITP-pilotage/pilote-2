@@ -641,6 +641,7 @@ describe("EvenementsSurDate", () => {
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurSupprimee({
           auteurId: AUTEUR_ID,
+          donneesComplementaires: { motif: "motif de la suppression" },
         });
 
       // THEN
@@ -654,7 +655,9 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(80); // Valeur de la proposition supprimée
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(3);
-      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+      expect(nouveauEvenement.donneesComplementaires).toEqual({
+        motif: "motif de la suppression",
+      });
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_SUPPRIMEE avec succès quand une PROPOSITION_VALEUR_MODIFIEE est en cours", () => {
@@ -701,6 +704,7 @@ describe("EvenementsSurDate", () => {
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurSupprimee({
           auteurId: AUTEUR_ID,
+          donneesComplementaires: { motif: "motif de la suppression" },
         });
 
       // THEN
@@ -731,6 +735,7 @@ describe("EvenementsSurDate", () => {
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurSupprimee({
           auteurId: AUTEUR_ID,
+          donneesComplementaires: { motif: "motif de la suppression" },
         });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -779,6 +784,7 @@ describe("EvenementsSurDate", () => {
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurSupprimee({
           auteurId: AUTEUR_ID,
+          donneesComplementaires: { motif: "motif de la suppression" },
         });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -827,6 +833,7 @@ describe("EvenementsSurDate", () => {
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurSupprimee({
           auteurId: AUTEUR_ID,
+          donneesComplementaires: { motif: "motif de la suppression" },
         });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });
@@ -875,6 +882,7 @@ describe("EvenementsSurDate", () => {
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurSupprimee({
           auteurId: AUTEUR_ID,
+          donneesComplementaires: { motif: "motif de la suppression" },
         });
       }).toThrow("La proposition de valeur a déjà été accusée réception");
     });
