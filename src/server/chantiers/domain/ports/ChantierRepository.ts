@@ -3,6 +3,9 @@ import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { ChantierPourExport } from "@/server/chantiers/domain/ChantierPourExport";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { PropositionValeurAvancementChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
+import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
+import { PrismaChantier } from "@/server/chantiers/domain/PrismaChantier";
 
 export interface ChantierRepository {
   récupérerDonneesChantier(
@@ -35,4 +38,12 @@ export interface ChantierRepository {
   }: {
     listeChantiersIds: string[];
   }): Promise<PropositionValeurAvancementChantierInformation[]>;
+  récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+    chantiersLectureIds: string[],
+    territoiresLectureIds: string[],
+    profil: ProfilCode,
+    filtres: FiltreQueryParams,
+    territoireCode: string,
+    jalon: number,
+  ): Promise<PrismaChantier[]>;
 }

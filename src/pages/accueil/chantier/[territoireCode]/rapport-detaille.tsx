@@ -40,6 +40,7 @@ import { presenterEnRépartitionsMétéosChantiersContrat } from "@/server/chant
 import { RecupererRepartitionsMeteoChantiersUseCase } from "@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";
+import { getContainer } from "@/server/dependances";
 
 interface NextPageRapportDétailléProps {
   chantiers: ChantierRapportDetailleContrat[];
@@ -171,20 +172,36 @@ export const getServerSideProps: GetServerSideProps<
 
   const mapAxes = new Map<string, Axe>(axes.map((axe) => [axe.id, axe]));
 
-  const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
-    dependencies.getChantierRepository(),
-    dependencies.getTerritoireRepository(),
-  ).run(
-    session.habilitations,
-    session.profil,
-    territoireCode,
-    mailleChantier || "departementale",
-    ministères,
-    mapAxes,
-    filtres,
-    sorting,
-    jalon,
-  );
+  const chantiers = configuration.featureFlip.propositionValeurAvancementV2
+    ? await getContainer("chantiers")
+        .resolve(
+          "recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2",
+        )
+        .run(
+          session.habilitations,
+          session.profil,
+          territoireCode,
+          mailleChantier || "departementale",
+          ministères,
+          mapAxes,
+          filtres,
+          sorting,
+          jalon,
+        )
+    : await new RécupérerChantiersAccessiblesEnLectureUseCase(
+        dependencies.getChantierRepository(),
+        dependencies.getTerritoireRepository(),
+      ).run(
+        session.habilitations,
+        session.profil,
+        territoireCode,
+        mailleChantier || "departementale",
+        ministères,
+        mapAxes,
+        filtres,
+        sorting,
+        jalon,
+      );
 
   const repartitionMeteosChantiers =
     await new RecupererRepartitionsMeteoChantiersUseCase({

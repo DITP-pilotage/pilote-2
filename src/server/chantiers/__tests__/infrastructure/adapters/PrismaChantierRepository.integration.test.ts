@@ -1,3 +1,5 @@
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { PrismaChantierRepository } from "@/server/chantiers/infrastructure/adapters/PrismaChantierRepository";
 import { prisma } from "@/server/db/prisma";
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
@@ -2050,6 +2052,1271 @@ describe("PrismaChantierRepository", () => {
 
       // Then
       expect(result).toEqual(["CH-002", "CH-003", "CH-005"]);
+    });
+  });
+
+  describe("#récupérerLesEntréesDeTousLesChantiersHabilitésNew", () => {
+    it("quand on est profil territoriale et que les filtres sont laissés par défault, doit remonter les chantiers demandés", async () => {
+      // Given
+      const chantiersLectureIds = ["CH-001", "CH-002", "CH-004"];
+      const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
+
+      const filtres: FiltreQueryParams = {
+        perimetres: [],
+        axes: [],
+        statut: [],
+        meteos: [],
+        territorialisation: [],
+        estBarometre: false,
+        valeurDeLaRecherche: "",
+      };
+
+      const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
+
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: "CH-001",
+            nom: "Chantier 001",
+            ministeres: ["1009"],
+            ministeres_acronymes: ["MINA"],
+            est_barometre: true,
+            est_territorialise: true,
+          },
+          {
+            id: "CH-003",
+            nom: "Chantier 003",
+            ministeres: ["1009"],
+            ministeres_acronymes: ["MINA"],
+            est_barometre: false,
+            est_territorialise: true,
+          },
+          {
+            id: "CH-002",
+            nom: "Chantier 002",
+            ministeres: ["1009"],
+            ministeres_acronymes: ["MINA"],
+            est_barometre: true,
+            est_territorialise: false,
+          },
+          {
+            id: "CH-004",
+            nom: "Chantier 004",
+            ministeres: ["1009"],
+            ministeres_acronymes: ["MINA"],
+            est_barometre: false,
+            est_territorialise: false,
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            zone_id: "D87",
+            maille: "DEPT",
+            code_insee: "87",
+            meteo: "SOLEIL",
+            territoire_code: "DEPT-87",
+            est_applicable: true,
+            taux_avancement_mandat: 5,
+          },
+          {
+            id: "CH-001",
+            zone_id: "D88",
+            maille: "DEPT",
+            code_insee: "88",
+            meteo: "SOLEIL",
+            territoire_code: "DEPT-88",
+            est_applicable: true,
+            taux_avancement_mandat: 2,
+          },
+          {
+            id: "CH-002",
+            zone_id: "D88",
+            maille: "DEPT",
+            code_insee: "88",
+            meteo: "COUVERT",
+            territoire_code: "DEPT-88",
+            est_applicable: true,
+            taux_avancement_mandat: 10,
+          },
+          {
+            id: "CH-003",
+            zone_id: "FRANCE",
+            maille: "NAT",
+            code_insee: "FR",
+            meteo: "COUVERT",
+            territoire_code: "NAT-FR",
+            est_applicable: true,
+            taux_avancement_mandat: 15,
+          },
+          {
+            id: "CH-004",
+            zone_id: "D87",
+            maille: "DEPT",
+            code_insee: "87",
+            meteo: "NON_RENSEIGNEE",
+            territoire_code: "DEPT-87",
+            est_applicable: true,
+            taux_avancement_mandat: 20,
+          },
+        ],
+      });
+      const jalon = 2024;
+
+      // When
+      const result =
+        await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+          chantiersLectureIds,
+          territoiresLectureIds,
+          profil,
+          filtres,
+          "DEPT-87",
+          jalon,
+        );
+
+      // Then
+      expect(result).toMatchObject([
+        {
+          nom: "Chantier 001",
+          chantier_territoire: [
+            { territoire_code: "DEPT-87", taux_avancement_mandat: 5 },
+            { territoire_code: "DEPT-88", taux_avancement_mandat: 2 },
+          ],
+        },
+        {
+          nom: "Chantier 002",
+          chantier_territoire: [
+            { territoire_code: "DEPT-88", taux_avancement_mandat: 10 },
+          ],
+        },
+        {
+          nom: "Chantier 004",
+          chantier_territoire: [
+            { territoire_code: "DEPT-87", taux_avancement_mandat: 20 },
+          ],
+        },
+      ]);
+      expect(result).not.toMatchObject([
+        {
+          territoire_code: "NAT-FR",
+          taux_avancement_mandat: 20,
+          chantier_identite: { id: "CH-003" },
+        },
+      ]);
+    });
+
+    it("quand on n'est pas un profil territoriale et que les filtres sont laissés par défault, doit remonter les chantiers demandés avec la maille nationale en plus", async () => {
+      // Given
+      const chantiersLectureIds = ["CH-001", "CH-002", "CH-003", "CH-004"];
+      const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
+
+      const filtres: FiltreQueryParams = {
+        perimetres: [],
+        axes: [],
+        statut: [],
+        meteos: [],
+        territorialisation: [],
+        estBarometre: false,
+        valeurDeLaRecherche: "",
+      };
+
+      const profil = ProfilEnum.DITP_ADMIN;
+
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: "CH-001",
+            nom: "Chantier 001",
+            ministeres: ["1009"],
+            ministeres_acronymes: ["MINA"],
+            est_barometre: true,
+            est_territorialise: true,
+          },
+          {
+            id: "CH-002",
+            nom: "Chantier 002",
+            ministeres: ["1009"],
+            ministeres_acronymes: ["MINA"],
+            est_barometre: true,
+            est_territorialise: false,
+          },
+          {
+            id: "CH-003",
+            nom: "Chantier 003",
+            ministeres: ["1009"],
+            ministeres_acronymes: ["MINA"],
+            est_barometre: false,
+            est_territorialise: true,
+          },
+          {
+            id: "CH-004",
+            nom: "Chantier 004",
+            ministeres: ["1009"],
+            ministeres_acronymes: ["MINA"],
+            est_barometre: false,
+            est_territorialise: false,
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            zone_id: "D87",
+            maille: "DEPT",
+            code_insee: "87",
+            meteo: "SOLEIL",
+            territoire_code: "DEPT-87",
+            taux_avancement_mandat: 2,
+            est_applicable: true,
+          },
+          {
+            id: "CH-003",
+            zone_id: "FRANCE",
+            maille: "NAT",
+            code_insee: "FR",
+            meteo: "COUVERT",
+            territoire_code: "NAT-FR",
+            taux_avancement_mandat: 4,
+            est_applicable: true,
+          },
+          {
+            id: "CH-002",
+            zone_id: "D88",
+            maille: "DEPT",
+            code_insee: "88",
+            meteo: "COUVERT",
+            territoire_code: "DEPT-88",
+            taux_avancement_mandat: 3,
+            est_applicable: true,
+          },
+          {
+            id: "CH-004",
+            zone_id: "D87",
+            maille: "DEPT",
+            code_insee: "87",
+            meteo: "NON_RENSEIGNEE",
+            territoire_code: "DEPT-87",
+            taux_avancement_mandat: 5,
+            est_applicable: true,
+          },
+        ],
+      });
+
+      const jalon = 2024;
+
+      // When
+      const result =
+        await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+          chantiersLectureIds,
+          territoiresLectureIds,
+          profil,
+          filtres,
+          "DEPT-87",
+          jalon,
+        );
+
+      // Then
+      expect(result).toMatchObject([
+        {
+          nom: "Chantier 001",
+          chantier_territoire: [
+            { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
+          ],
+        },
+        {
+          nom: "Chantier 002",
+          chantier_territoire: [
+            { territoire_code: "DEPT-88", taux_avancement_mandat: 3 },
+          ],
+        },
+        {
+          nom: "Chantier 003",
+          chantier_territoire: [
+            { territoire_code: "NAT-FR", taux_avancement_mandat: 4 },
+          ],
+        },
+        {
+          nom: "Chantier 004",
+          chantier_territoire: [
+            { territoire_code: "DEPT-87", taux_avancement_mandat: 5 },
+          ],
+        },
+      ]);
+    });
+
+    describe("filtres", () => {
+      it("quand on est profil territoriale et que le filtres perimetres est defini, doit remonter les chantiers demandés", async () => {
+        // Given
+        const chantiersLectureIds = ["CH-001", "CH-002", "CH-003", "CH-004"];
+        const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
+
+        const filtres: FiltreQueryParams = {
+          perimetres: ["PER-01", "PER-02"],
+          axes: [],
+          meteos: [],
+          statut: [],
+          territorialisation: [],
+          estBarometre: false,
+          valeurDeLaRecherche: "",
+        };
+
+        const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
+
+        await prisma.chantier_identite.createMany({
+          data: [
+            {
+              id: "CH-001",
+              nom: "Chantier 001",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: true,
+              est_territorialise: true,
+              perimetre_ids: ["PER-01", "PER-02"],
+            },
+            {
+              id: "CH-002",
+              nom: "Chantier 002",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: true,
+              est_territorialise: false,
+              perimetre_ids: ["PER-03", "PER-04"],
+            },
+            {
+              id: "CH-003",
+              nom: "Chantier 003",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: false,
+              est_territorialise: true,
+              perimetre_ids: ["PER-01", "PER-03"],
+            },
+          ],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              zone_id: "D87",
+              maille: "DEPT",
+              code_insee: "87",
+              meteo: "SOLEIL",
+              territoire_code: "DEPT-87",
+              taux_avancement_mandat: 2,
+              est_applicable: true,
+            },
+            {
+              id: "CH-002",
+              zone_id: "D88",
+              maille: "DEPT",
+              code_insee: "88",
+              meteo: "COUVERT",
+              territoire_code: "DEPT-88",
+              taux_avancement_mandat: 3,
+              est_applicable: true,
+            },
+            {
+              id: "CH-003",
+              zone_id: "R01",
+              maille: "REG",
+              code_insee: "01",
+              meteo: "COUVERT",
+              territoire_code: "REG-01",
+              taux_avancement_mandat: 4,
+              est_applicable: true,
+            },
+          ],
+        });
+        const jalon = 2024;
+
+        // When
+        const result =
+          await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+            chantiersLectureIds,
+            territoiresLectureIds,
+            profil,
+            filtres,
+            "DEPT-87",
+            jalon,
+          );
+
+        // Then
+        expect(result).toMatchObject([
+          {
+            nom: "Chantier 001",
+            chantier_territoire: [
+              { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
+            ],
+          },
+          {
+            nom: "Chantier 003",
+            chantier_territoire: [
+              { territoire_code: "REG-01", taux_avancement_mandat: 4 },
+            ],
+          },
+        ]);
+      });
+
+      it("quand on est profil territoriale et que le filtres statut est defini, doit remonter les chantiers demandés", async () => {
+        // Given
+        const chantiersLectureIds = ["CH-001", "CH-002", "CH-003", "CH-004"];
+        const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
+
+        const filtres: FiltreQueryParams = {
+          perimetres: [],
+          axes: [],
+          meteos: [],
+          statut: ["PUBLIE", "BROUILLON"],
+          territorialisation: [],
+          estBarometre: false,
+          valeurDeLaRecherche: "",
+        };
+
+        const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
+
+        await prisma.chantier_identite.createMany({
+          data: [
+            {
+              id: "CH-001",
+              nom: "Chantier 001",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: true,
+              est_territorialise: true,
+              statut: "PUBLIE",
+            },
+            {
+              id: "CH-002",
+              nom: "Chantier 002",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: true,
+              est_territorialise: false,
+              statut: "BROUILLON",
+            },
+            {
+              id: "CH-003",
+              nom: "Chantier 003",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: false,
+              est_territorialise: true,
+              statut: "ARCHIVE",
+            },
+          ],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              zone_id: "D87",
+              maille: "DEPT",
+              code_insee: "87",
+              meteo: "SOLEIL",
+              territoire_code: "DEPT-87",
+              taux_avancement_mandat: 2,
+              est_applicable: true,
+            },
+            {
+              id: "CH-002",
+              zone_id: "D88",
+              maille: "DEPT",
+              code_insee: "88",
+              meteo: "COUVERT",
+              territoire_code: "DEPT-88",
+              taux_avancement_mandat: 3,
+              est_applicable: true,
+            },
+            {
+              id: "CH-003",
+              zone_id: "R01",
+              maille: "REG",
+              code_insee: "01",
+              meteo: "COUVERT",
+              territoire_code: "REG-01",
+              taux_avancement_mandat: 4,
+              est_applicable: true,
+            },
+          ],
+        });
+
+        const jalon = 2024;
+
+        // When
+        const result =
+          await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+            chantiersLectureIds,
+            territoiresLectureIds,
+            profil,
+            filtres,
+            "DEPT-87",
+            jalon,
+          );
+
+        // Then
+        expect(result).toMatchObject([
+          {
+            nom: "Chantier 001",
+            chantier_territoire: [
+              { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
+            ],
+          },
+          {
+            nom: "Chantier 002",
+            chantier_territoire: [
+              { territoire_code: "DEPT-88", taux_avancement_mandat: 3 },
+            ],
+          },
+        ]);
+      });
+
+      it("quand on est profil territoriale et que le filtres meteos est defini, doit remonter les chantiers demandés", async () => {
+        // Given
+        const chantiersLectureIds = ["CH-001", "CH-002", "CH-003", "CH-004"];
+        const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
+
+        const filtres: FiltreQueryParams = {
+          perimetres: [],
+          axes: [],
+          meteos: ["SOLEIL"],
+          statut: [],
+          territorialisation: [],
+          estBarometre: false,
+          valeurDeLaRecherche: "",
+        };
+
+        const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
+
+        await prisma.chantier_identite.createMany({
+          data: [
+            {
+              id: "CH-001",
+              nom: "Chantier 001",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+            },
+            {
+              id: "CH-002",
+              nom: "Chantier 002",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+            },
+            {
+              id: "CH-003",
+              nom: "Chantier 003",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+            },
+          ],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              zone_id: "D87",
+              maille: "DEPT",
+              code_insee: "87",
+              meteo: "SOLEIL",
+              territoire_code: "DEPT-87",
+              taux_avancement_mandat: 2,
+              est_applicable: true,
+            },
+            {
+              id: "CH-002",
+              zone_id: "D87",
+              maille: "DEPT",
+              code_insee: "87",
+              meteo: "COUVERT",
+              territoire_code: "DEPT-87",
+              taux_avancement_mandat: 3,
+              est_applicable: true,
+            },
+            {
+              id: "CH-002",
+              zone_id: "D88",
+              maille: "DEPT",
+              code_insee: "88",
+              meteo: "COUVERT",
+              territoire_code: "DEPT-88",
+              taux_avancement_mandat: 3,
+              est_applicable: true,
+            },
+            {
+              id: "CH-003",
+              zone_id: "R01",
+              maille: "REG",
+              code_insee: "01",
+              meteo: "COUVERT",
+              territoire_code: "REG-01",
+              taux_avancement_mandat: 4,
+              est_applicable: true,
+            },
+          ],
+        });
+
+        const jalon = 2024;
+
+        // When
+        const result =
+          await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+            chantiersLectureIds,
+            territoiresLectureIds,
+            profil,
+            filtres,
+            "DEPT-87",
+            jalon,
+          );
+
+        // Then
+        expect(result).toMatchObject([
+          {
+            nom: "Chantier 001",
+            chantier_territoire: [
+              { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
+            ],
+          },
+        ]);
+      });
+
+      it("quand on est profil territoriale et que le filtres axes est defini, doit remonter les chantiers demandés", async () => {
+        // Given
+        const chantiersLectureIds = ["CH-001", "CH-002", "CH-003", "CH-004"];
+        const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
+
+        const filtres: FiltreQueryParams = {
+          perimetres: [],
+          axes: ["axe 1", "axe 2"],
+          meteos: [],
+          territorialisation: [],
+          estBarometre: false,
+          valeurDeLaRecherche: "",
+          statut: [],
+        };
+
+        const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
+
+        await prisma.chantier_identite.createMany({
+          data: [
+            {
+              id: "CH-001",
+              nom: "Chantier 001",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: true,
+              est_territorialise: true,
+              axe: "axe 3",
+            },
+            {
+              id: "CH-002",
+              nom: "Chantier 002",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: true,
+              est_territorialise: false,
+              axe: "axe 2",
+            },
+            {
+              id: "CH-003",
+              nom: "Chantier 003",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: false,
+              est_territorialise: true,
+              axe: "axe 1",
+            },
+          ],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              zone_id: "D87",
+              maille: "DEPT",
+              code_insee: "87",
+              meteo: "SOLEIL",
+              territoire_code: "DEPT-87",
+              taux_avancement_mandat: 2,
+              est_applicable: true,
+            },
+            {
+              id: "CH-002",
+              zone_id: "D88",
+              maille: "DEPT",
+              code_insee: "88",
+              meteo: "COUVERT",
+              territoire_code: "DEPT-88",
+              taux_avancement_mandat: 3,
+              est_applicable: true,
+            },
+            {
+              id: "CH-003",
+              zone_id: "R01",
+              maille: "REG",
+              code_insee: "01",
+              meteo: "COUVERT",
+              territoire_code: "REG-01",
+              taux_avancement_mandat: 4,
+              est_applicable: true,
+            },
+          ],
+        });
+
+        const jalon = 2024;
+
+        // When
+        const result =
+          await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+            chantiersLectureIds,
+            territoiresLectureIds,
+            profil,
+            filtres,
+            "DEPT-87",
+            jalon,
+          );
+
+        // Then
+        expect(result).toMatchObject([
+          {
+            nom: "Chantier 002",
+            chantier_territoire: [
+              { territoire_code: "DEPT-88", taux_avancement_mandat: 3 },
+            ],
+          },
+          {
+            nom: "Chantier 003",
+            chantier_territoire: [
+              { territoire_code: "REG-01", taux_avancement_mandat: 4 },
+            ],
+          },
+        ]);
+      });
+
+      it("quand on est profil territoriale et que le filtres est barometre et territorialisation est defini en regionale et departementale, doit remonter les chantiers demandés", async () => {
+        // Given
+        const chantiersLectureIds = ["CH-001", "CH-002", "CH-003", "CH-004"];
+        const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
+
+        const filtres: FiltreQueryParams = {
+          perimetres: [],
+          axes: [],
+          meteos: [],
+          statut: [],
+          territorialisation: ["regionale", "departementale"],
+          estBarometre: true,
+          valeurDeLaRecherche: "",
+        };
+
+        const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
+
+        await prisma.chantier_identite.createMany({
+          data: [
+            {
+              id: "CH-001",
+              nom: "Chantier 001",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: true,
+              est_territorialise: true,
+              mailles_applicables: ["REG", "DEPT"],
+            },
+            {
+              id: "CH-002",
+              nom: "Chantier 002",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: true,
+              est_territorialise: false,
+              mailles_applicables: ["NAT"],
+            },
+            {
+              id: "CH-003",
+              nom: "Chantier 003",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: false,
+              est_territorialise: true,
+              mailles_applicables: ["REG", "DEPT"],
+            },
+            {
+              id: "CH-004",
+              nom: "Chantier 004",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: false,
+              est_territorialise: false,
+              mailles_applicables: ["NAT"],
+            },
+          ],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              zone_id: "D87",
+              maille: "DEPT",
+              code_insee: "87",
+              meteo: "SOLEIL",
+              territoire_code: "DEPT-87",
+              taux_avancement_mandat: 2,
+              est_applicable: true,
+            },
+            {
+              id: "CH-002",
+              zone_id: "D88",
+              maille: "DEPT",
+              code_insee: "88",
+              meteo: "COUVERT",
+              territoire_code: "DEPT-88",
+              taux_avancement_mandat: 3,
+              est_applicable: true,
+            },
+            {
+              id: "CH-003",
+              zone_id: "R01",
+              maille: "REG",
+              code_insee: "01",
+              meteo: "COUVERT",
+              territoire_code: "REG-01",
+              taux_avancement_mandat: 4,
+              est_applicable: true,
+            },
+            {
+              id: "CH-004",
+              zone_id: "R01",
+              maille: "REG",
+              code_insee: "01",
+              meteo: "COUVERT",
+              territoire_code: "REG-01",
+              taux_avancement_mandat: 5,
+              est_applicable: true,
+            },
+          ],
+        });
+
+        const jalon = 2024;
+
+        // When
+        const result =
+          await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+            chantiersLectureIds,
+            territoiresLectureIds,
+            profil,
+            filtres,
+            "DEPT-87",
+            jalon,
+          );
+
+        // Then
+        expect(result).toMatchObject([
+          {
+            nom: "Chantier 001",
+            chantier_territoire: [
+              { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
+            ],
+          },
+        ]);
+      });
+
+      it("quand on est profil territoriale et que le filtres est barometre est defini, doit remonter les chantiers demandés", async () => {
+        // Given
+        const chantiersLectureIds = ["CH-001", "CH-002", "CH-003", "CH-004"];
+        const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
+
+        const filtres: FiltreQueryParams = {
+          perimetres: [],
+          axes: [],
+          meteos: [],
+          statut: [],
+          territorialisation: [],
+          estBarometre: true,
+          valeurDeLaRecherche: "",
+        };
+
+        const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
+
+        await prisma.chantier_identite.createMany({
+          data: [
+            {
+              id: "CH-001",
+              nom: "Chantier 001",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: true,
+              est_territorialise: true,
+            },
+            {
+              id: "CH-002",
+              nom: "Chantier 002",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: true,
+              est_territorialise: false,
+            },
+            {
+              id: "CH-003",
+              nom: "Chantier 003",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: false,
+              est_territorialise: true,
+            },
+            {
+              id: "CH-004",
+              nom: "Chantier 004",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: false,
+              est_territorialise: false,
+            },
+          ],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              zone_id: "D87",
+              maille: "DEPT",
+              code_insee: "87",
+              meteo: "SOLEIL",
+              territoire_code: "DEPT-87",
+              taux_avancement_mandat: 2,
+              est_applicable: true,
+            },
+            {
+              id: "CH-002",
+              zone_id: "D88",
+              maille: "DEPT",
+              code_insee: "88",
+              meteo: "COUVERT",
+              territoire_code: "DEPT-88",
+              taux_avancement_mandat: 3,
+              est_applicable: true,
+            },
+            {
+              id: "CH-003",
+              zone_id: "R01",
+              maille: "REG",
+              code_insee: "01",
+              meteo: "COUVERT",
+              territoire_code: "REG-01",
+              taux_avancement_mandat: 4,
+              est_applicable: true,
+            },
+            {
+              id: "CH-004",
+              zone_id: "R01",
+              maille: "REG",
+              code_insee: "01",
+              meteo: "COUVERT",
+              territoire_code: "REG-01",
+              taux_avancement_mandat: 5,
+              est_applicable: true,
+            },
+          ],
+        });
+
+        const jalon = 2024;
+
+        // When
+        const result =
+          await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+            chantiersLectureIds,
+            territoiresLectureIds,
+            profil,
+            filtres,
+            "DEPT-87",
+            jalon,
+          );
+
+        // Then
+        expect(result).toMatchObject([
+          {
+            nom: "Chantier 001",
+            chantier_territoire: [
+              { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
+            ],
+          },
+          {
+            nom: "Chantier 002",
+            chantier_territoire: [
+              { territoire_code: "DEPT-88", taux_avancement_mandat: 3 },
+            ],
+          },
+        ]);
+      });
+
+      it("quand on est profil territoriale et que le filtres est territorialise est defini, doit remonter les chantiers demandés", async () => {
+        // Given
+        const chantiersLectureIds = ["CH-001", "CH-002", "CH-003", "CH-004"];
+        const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
+
+        const filtres: FiltreQueryParams = {
+          perimetres: [],
+          axes: [],
+          meteos: [],
+          statut: [],
+          territorialisation: ["regionale", "departementale"],
+          estBarometre: false,
+          valeurDeLaRecherche: "",
+        };
+
+        const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
+
+        await prisma.chantier_identite.createMany({
+          data: [
+            {
+              id: "CH-001",
+              nom: "Chantier 001",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: true,
+              est_territorialise: true,
+              mailles_applicables: ["REG", "DEPT"],
+            },
+            {
+              id: "CH-002",
+              nom: "Chantier 002",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: true,
+              est_territorialise: false,
+              mailles_applicables: ["NAT"],
+            },
+            {
+              id: "CH-003",
+              nom: "Chantier 003",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: false,
+              est_territorialise: true,
+              mailles_applicables: ["REG", "DEPT"],
+            },
+            {
+              id: "CH-004",
+              nom: "Chantier 004",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: false,
+              est_territorialise: false,
+              mailles_applicables: ["NAT"],
+            },
+          ],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              zone_id: "D87",
+              maille: "DEPT",
+              code_insee: "87",
+              meteo: "SOLEIL",
+              territoire_code: "DEPT-87",
+              taux_avancement_mandat: 2,
+              est_applicable: true,
+            },
+            {
+              id: "CH-002",
+              zone_id: "D88",
+              maille: "DEPT",
+              code_insee: "88",
+              meteo: "COUVERT",
+              territoire_code: "DEPT-88",
+              taux_avancement_mandat: 3,
+              est_applicable: true,
+            },
+            {
+              id: "CH-003",
+              zone_id: "R01",
+              maille: "REG",
+              code_insee: "01",
+              meteo: "COUVERT",
+              territoire_code: "REG-01",
+              taux_avancement_mandat: 4,
+              est_applicable: true,
+            },
+            {
+              id: "CH-004",
+              zone_id: "R01",
+              maille: "REG",
+              code_insee: "01",
+              meteo: "COUVERT",
+              territoire_code: "REG-01",
+              taux_avancement_mandat: 5,
+              est_applicable: true,
+            },
+          ],
+        });
+
+        const jalon = 2024;
+
+        // When
+        const result =
+          await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+            chantiersLectureIds,
+            territoiresLectureIds,
+            profil,
+            filtres,
+            "DEPT-87",
+            jalon,
+          );
+
+        // Then
+        expect(result).toMatchObject([
+          {
+            nom: "Chantier 001",
+            chantier_territoire: [
+              { territoire_code: "DEPT-87", taux_avancement_mandat: 2 },
+            ],
+          },
+          {
+            nom: "Chantier 003",
+            chantier_territoire: [
+              { territoire_code: "REG-01", taux_avancement_mandat: 4 },
+            ],
+          },
+        ]);
+      });
+
+      it("quand on est profil territoriale et que le filtres valeur de recherche est defini, doit remonter les chantiers demandés", async () => {
+        // Given
+        const chantiersLectureIds = ["CH-001", "CH-002", "CH-003", "CH-004"];
+        const territoiresLectureIds = ["DEPT-87", "DEPT-88", "REG-01"];
+
+        const filtres: FiltreQueryParams = {
+          perimetres: [],
+          axes: [],
+          meteos: [],
+          statut: [],
+          territorialisation: [],
+          estBarometre: false,
+          valeurDeLaRecherche: "maValeur recherche",
+        };
+
+        const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
+
+        await prisma.chantier_identite.createMany({
+          data: [
+            {
+              id: "CH-001",
+              nom: "Chantier 001 ajout texte pour valeur de recherche",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: true,
+              est_territorialise: true,
+            },
+            {
+              id: "CH-002",
+              nom: "Chantier maValeur recherche 002 ajout texte pour valeur de recherche",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: true,
+              est_territorialise: false,
+            },
+            {
+              id: "CH-003",
+              nom: "Chantier maValeur recherche 003 ajout texte pour valeur de recherche",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: false,
+              est_territorialise: true,
+            },
+            {
+              id: "CH-004",
+              nom: "Chantier 004 ajout texte pour valeur de recherche",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+              est_barometre: false,
+              est_territorialise: false,
+            },
+          ],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              zone_id: "D87",
+              maille: "DEPT",
+              code_insee: "87",
+              meteo: "SOLEIL",
+              territoire_code: "DEPT-87",
+              taux_avancement_mandat: 2,
+              est_applicable: true,
+            },
+            {
+              id: "CH-002",
+              zone_id: "D88",
+              maille: "DEPT",
+              code_insee: "88",
+              meteo: "COUVERT",
+              territoire_code: "DEPT-88",
+              taux_avancement_mandat: 3,
+              est_applicable: true,
+            },
+            {
+              id: "CH-003",
+              zone_id: "R01",
+              maille: "REG",
+              code_insee: "01",
+              meteo: "COUVERT",
+              territoire_code: "REG-01",
+              taux_avancement_mandat: 4,
+              est_applicable: true,
+            },
+            {
+              id: "CH-004",
+              zone_id: "R01",
+              maille: "REG",
+              code_insee: "01",
+              meteo: "COUVERT",
+              territoire_code: "REG-01",
+              taux_avancement_mandat: 5,
+              est_applicable: true,
+            },
+          ],
+        });
+
+        const jalon = 2024;
+
+        // When
+        const result =
+          await prismaChantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+            chantiersLectureIds,
+            territoiresLectureIds,
+            profil,
+            filtres,
+            "DEPT-87",
+            jalon,
+          );
+
+        // Then
+        expect(result).toMatchObject([
+          {
+            nom: "Chantier maValeur recherche 002 ajout texte pour valeur de recherche",
+            chantier_territoire: [
+              { territoire_code: "DEPT-88", taux_avancement_mandat: 3 },
+            ],
+          },
+          {
+            nom: "Chantier maValeur recherche 003 ajout texte pour valeur de recherche",
+            chantier_territoire: [
+              { territoire_code: "REG-01", taux_avancement_mandat: 4 },
+            ],
+          },
+        ]);
+      });
     });
   });
 });

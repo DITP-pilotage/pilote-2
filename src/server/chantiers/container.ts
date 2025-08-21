@@ -21,6 +21,8 @@ import { EnvoyerLesRapportsPropositionValeurAvancementUseCase } from "./usecases
 import { EnvoieEmailService } from "./domain/ports/EnvoieEmailService";
 import { BrevoEnvoieEmailService } from "./infrastructure/adapters/BrevoEnvoieEmailService";
 import { RecupererDetailsIndicateursV2UseCase } from "./usecases/RecupererDetailsIndicateursV2UseCase";
+import { RecupererChantiersAccessiblesEnLectureUseCaseV2 } from "./usecases/RecupererChantiersAccessiblesEnLectureUseCaseV2";
+import RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2 from "./usecases/RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2";
 
 export type ChantierDependencies = {
   chantierRepository: ChantierRepository;
@@ -37,6 +39,8 @@ export type ChantierDependencies = {
   modifierPropositionValeurAvancementUseCase: ModifierPropositionValeurAvancementUseCase;
   envoyerLesRapportsPropositionValeurAvancementUseCase: EnvoyerLesRapportsPropositionValeurAvancementUseCase;
   recupererDetailsIndicateursV2UseCase: RecupererDetailsIndicateursV2UseCase;
+  recupererChantiersAccessiblesEnLectureUseCaseV2: RecupererChantiersAccessiblesEnLectureUseCaseV2;
+  recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2: RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2;
 };
 
 export const getChantiersContainer = (
@@ -68,6 +72,12 @@ export const getChantiersContainer = (
     ),
     recupererDetailsIndicateursV2UseCase: asClass(
       RecupererDetailsIndicateursV2UseCase,
+    ),
+    recupererChantiersAccessiblesEnLectureUseCaseV2: asClass(
+      RecupererChantiersAccessiblesEnLectureUseCaseV2,
+    ),
+    recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2: asClass(
+      RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2,
     ),
   });
 };
