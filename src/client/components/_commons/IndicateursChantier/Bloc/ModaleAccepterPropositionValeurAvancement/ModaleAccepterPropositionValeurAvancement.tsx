@@ -35,7 +35,6 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
     reactHookForm,
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
-    auteurModification,
     etapeSuivanteEstDesactive: EtapeSuivanteEstDesactive,
     traiterDecision,
   } = useModaleAccepterPropositionValeurAvancement({
@@ -222,11 +221,11 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                         reactHookForm.formState.errors.motif?.message
                       }
                       htmlName="motif"
-                      isRequired={decision === "refuser"}
+                      isRequired={decision !== "accepter"}
                       libellé={
-                        decision === "refuser"
-                          ? "Motif de la décision"
-                          : "Motif de la décision (Facultatif)"
+                        decision === "accepter"
+                          ? "Motif de la décision (Facultatif)"
+                          : "Motif de la décision"
                       }
                       placeholder="Indiquez ici les raisons qui motivent votre choix."
                       register={reactHookForm.register("motif")}
@@ -264,8 +263,8 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                     <p className="fr-callout__text fr-text--sm">
                       <span>
                         Valeur d'avancement proposée le{" "}
-                        {`${formaterDate(new Date().toISOString(), "DD/MM/YYYY")}`}{" "}
-                        par {auteurModification} :{" "}
+                        {`${formaterDate(detailIndicateur.proposition?.dateProposition, "DD/MM/YYYY")}`}{" "}
+                        par {detailIndicateur.proposition?.auteur} :{" "}
                       </span>
                       <span className="fr-text--bold">
                         {detailIndicateur.proposition?.valeurAvancement} (
@@ -299,9 +298,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                       )}
                     </p>
                     <p className="fr-callout__text fr-text--sm">
-                      <span className="fr-text--bold">
-                        Motif de la décision :
-                      </span>{" "}
+                      <span>Motif de la décision :</span>{" "}
                       <span className="text-italic">
                         {reactHookForm.getValues("motif") ||
                           "Aucun motif n'a été apporté"}
