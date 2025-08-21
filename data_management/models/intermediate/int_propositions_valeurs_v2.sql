@@ -19,7 +19,8 @@ SELECT
 	indic_id,
 	date_valeur as date_valeur_avancement,
 	zone_id,
-	valeur as valeur_avancement_proposee
+	valeur as valeur_avancement_proposee,
+    territoire_code
 FROM dernier_evenement_proposition 
 LEFT JOIN {{ source('db_schema_public', 'territoire') }} territoire 
     ON territoire.code = dernier_evenement_proposition.territoire_code

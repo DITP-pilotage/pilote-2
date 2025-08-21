@@ -8,6 +8,13 @@ import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsN
 import { ChantierPourExport } from "@/server/chantiers/domain/ChantierPourExport";
 import { PropositionValeurAvancementChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
+import {
+  ProfilCode,
+  profilsTerritoriaux,
+} from "@/server/domain/utilisateur/Utilisateur.interface";
+import { removeAccents } from "@/server/utils/remove-accents";
+import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
+import { PrismaChantier } from "@/server/chantiers/domain/PrismaChantier";
 
 export class PrismaChantierRepository implements ChantierRepository {
   async récupérerDonneesChantier(
@@ -1450,5 +1457,213 @@ export class PrismaChantierRepository implements ChantierRepository {
       statut: chantierInformation.statut,
       conseillerMail: chantierInformation.conseiller_mail ?? "",
     }));
+  }
+
+  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+    chantiersLectureIds: string[],
+    territoiresLectureIds: string[],
+    profil: ProfilCode,
+    filtres: FiltreQueryParams,
+    territoireCode: string,
+    jalon: number,
+  ): Promise<PrismaChantier[]> {
+    const whereOptions: Prisma.chantier_identiteWhereInput = {};
+
+    if (filtres.perimetres?.length > 0) {
+      whereOptions.perimetre_ids = {
+        hasSome: filtres.perimetres,
+      };
+    }
+
+    if (filtres.statut?.length > 0) {
+      whereOptions.statut = {
+        in: filtres.statut as type_statut[],
+      };
+    }
+
+    if (filtres.axes?.length > 0) {
+      whereOptions.axe = {
+        in: filtres.axes,
+      };
+    }
+
+    if (filtres.estBarometre) {
+      whereOptions.est_barometre = true;
+    }
+
+    let chantierIds = chantiersLectureIds;
+
+    if (filtres.territorialisation?.length > 0) {
+      // Mise en place du bon where en fonction de la territorialisation choisie
+      if (filtres.territorialisation?.length === 1) {
+        if (filtres.territorialisation[0] === "nationale") {
+          whereOptions.mailles_applicables = {
+            equals: ["NAT"],
+          };
+        } else if (filtres.territorialisation[0] === "regionale") {
+          whereOptions.NOT = {
+            mailles_applicables: {
+              has: "DEPT",
+            },
+          };
+          whereOptions.est_territorialise = true;
+        } else if (filtres.territorialisation[0] === "departementale") {
+          whereOptions.mailles_applicables = {
+            has: "DEPT",
+          };
+          whereOptions.est_territorialise = true;
+        }
+      } else if (filtres.territorialisation?.length === 2) {
+        if (
+          filtres.territorialisation.includes("nationale") &&
+          filtres.territorialisation.includes("regionale")
+        ) {
+          whereOptions.OR = [
+            {
+              est_territorialise: null,
+            },
+            {
+              est_territorialise: true,
+              NOT: {
+                mailles_applicables: {
+                  has: "DEPT",
+                },
+              },
+            },
+          ];
+        } else if (
+          filtres.territorialisation.includes("regionale") &&
+          filtres.territorialisation.includes("departementale")
+        ) {
+          whereOptions.est_territorialise = true;
+        } else if (
+          filtres.territorialisation.includes("nationale") &&
+          filtres.territorialisation.includes("departementale")
+        ) {
+          whereOptions.OR = [
+            {
+              est_territorialise: null,
+            },
+            {
+              est_territorialise: true,
+              mailles_applicables: {
+                has: "DEPT",
+              },
+            },
+          ];
+        }
+      }
+    }
+
+    if (filtres.valeurDeLaRecherche?.length > 0) {
+      const testLower = removeAccents(
+        filtres.valeurDeLaRecherche.toLowerCase(),
+      );
+
+      chantierIds = await prisma
+        .$queryRawUnsafe<
+          { id: string }[]
+        >("SELECT distinct(id) FROM chantier_identite where (LOWER(unaccent(nom)) ILIKE $1 OR LOWER(unaccent(id)) ILIKE $1)", `%${testLower}%`)
+        .then((chantiersMatched) =>
+          chantiersMatched
+            .map((chantierMatched) => chantierMatched.id)
+            .filter((chantierId) => chantiersLectureIds.includes(chantierId)),
+        );
+    }
+
+    if (filtres.meteos?.length > 0) {
+      chantierIds = await prisma.chantier_territoire
+        .findMany({
+          where: {
+            id: { in: chantierIds },
+            meteo: {
+              in: filtres.meteos as Météo[],
+            },
+            territoire_code: territoireCode,
+          },
+        })
+        .then((chantiersMatched) =>
+          chantiersMatched
+            .map((chantierMatched) => chantierMatched.id)
+            .filter((chantierId) => chantierIds.includes(chantierId)),
+        );
+    }
+
+    return prisma.chantier_identite.findMany({
+      where: {
+        NOT: {
+          ministeres: {
+            isEmpty: true,
+          },
+        },
+        id: { in: chantierIds },
+        ...whereOptions,
+      },
+      orderBy: {
+        id: "asc",
+      },
+      select: {
+        id: true,
+        nom: true,
+        axe: true,
+        ppg: true,
+        perimetre_ids: true,
+        ate: true,
+        ministeres: true,
+        statut: true,
+        cible_attendue: true,
+        est_barometre: true,
+        est_territorialise: true,
+        possede_taux_avancement_departemental: true,
+        possede_taux_avancement_regional: true,
+        possede_meteo_departemental: true,
+        possede_meteo_regional: true,
+        directeurs_administration_centrale: true,
+        directions_administration_centrale: true,
+        directeurs_projet: true,
+        directeurs_projet_mails: true,
+        mailles_applicables: true,
+        chantier_territoire: {
+          where: {
+            territoire_code: {
+              in: profilsTerritoriaux.includes(profil)
+                ? undefined
+                : [...territoiresLectureIds, "NAT-FR"],
+            },
+            est_applicable: true,
+          },
+          select: {
+            territoire_code: true,
+            id: true,
+            code_insee: true,
+            maille: true,
+            ecart: true,
+            donnees_maille_source: true,
+            taux_avancement_mandat_valeur_precedente: true,
+            meteo: true,
+            tendance: true,
+            derniere_maj_date_qualitative: true,
+            date_taux_avancement_mandat: true,
+            est_applicable: true,
+            responsables_locaux: true,
+            responsables_locaux_mails: true,
+            coordinateurs_territoriaux: true,
+            coordinateurs_territoriaux_mails: true,
+            taux_avancement_mandat: true,
+            nombre_propositions_valeur_actuelle_v2: true,
+            nombre_propositions_valeur_actuelle_ponderee_v2: true,
+            date_taux_avancement_mandat_valeur_precedente: true,
+            chantier_territoire_jalon: {
+              select: {
+                taux_avancement: true,
+              },
+              where: {
+                jalon,
+              },
+            },
+          },
+        },
+      },
+    });
   }
 }
