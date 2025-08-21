@@ -916,4 +916,236 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
     expect(evenements[2].dateValeur).toEqual(date1);
     expect(evenements[2].ordre).toBe(1);
   });
+
+  it("Doit récupérer l'historique complet des événements par indicId et territoireCode", async () => {
+    // Given
+    const date1 = new Date("2024-07-01");
+    const date2 = new Date("2024-07-02");
+    const date3 = new Date("2024-07-03");
+
+    const userId1 = "f47ac10b-58cc-4372-a567-0e02b2c3d491";
+    const userId2 = "f47ac10b-58cc-4372-a567-0e02b2c3d492";
+    const userId3 = "f47ac10b-58cc-4372-a567-0e02b2c3d493";
+
+    await prisma.utilisateur.create({
+      data: {
+        id: userId1,
+        nom: "Nom Test 13",
+        prenom: "Prénom Test 13",
+        email: "test13@example.com",
+        profil: {
+          connect: {
+            code: "DITP_ADMIN",
+          },
+        },
+        date_creation: new Date(),
+      },
+    });
+
+    await prisma.utilisateur.create({
+      data: {
+        id: userId2,
+        nom: "Nom Test 14",
+        prenom: "Prénom Test 14",
+        email: "test14@example.com",
+        profil: {
+          connect: {
+            code: "DITP_ADMIN",
+          },
+        },
+        date_creation: new Date(),
+      },
+    });
+
+    await prisma.utilisateur.create({
+      data: {
+        id: userId3,
+        nom: "Nom Test 15",
+        prenom: "Prénom Test 15",
+        email: "test15@example.com",
+        profil: {
+          connect: {
+            code: "DITP_ADMIN",
+          },
+        },
+        date_creation: new Date(),
+      },
+    });
+
+    await prisma.chantier_identite.create({
+      data: {
+        id: "CH-008",
+        nom: "Chantier Test 8",
+      },
+    });
+
+    await prisma.chantier_territoire.create({
+      data: {
+        id: "CH-008",
+        territoire_code: "NAT-FR",
+        maille: "NAT",
+        code_insee: "FR",
+        zone_id: "FR",
+      },
+    });
+
+    await prisma.indicateur_identite.create({
+      data: {
+        id: "IND-008",
+        nom: "Indicateur Test 8",
+        est_barometre: false,
+        est_phare: false,
+        chantier_identite: {
+          connect: {
+            id: "CH-008",
+          },
+        },
+      },
+    });
+
+    await prisma.indicateur_territoire.create({
+      data: {
+        id: "IND-008",
+        chantier_id: "CH-008",
+        maille: "NAT",
+        territoire_code: "NAT-FR",
+        code_insee: "FR",
+        zone_id: "FR",
+      },
+    });
+
+    const evenement1 =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: "IND-008",
+          territoireCode: "NAT-FR",
+          typeEvenement: "VALEUR_CREEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: date1,
+          valeur: 10,
+          idAuteurModification: userId1,
+          correlationId: "6ba7b81c-9dad-11d1-80b4-00c04fd430c8",
+          ordre: 1,
+          donneesComplementaires: undefined,
+        },
+      );
+
+    const evenement2 =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: "IND-008",
+          territoireCode: "NAT-FR",
+          typeEvenement: "VALEUR_MODIFIEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: date1,
+          valeur: 15,
+          idAuteurModification: userId2,
+          correlationId: "6ba7b81d-9dad-11d1-80b4-00c04fd430c8",
+          ordre: 2,
+          donneesComplementaires: undefined,
+        },
+      );
+
+    const evenement3 =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: "IND-008",
+          territoireCode: "NAT-FR",
+          typeEvenement: "VALEUR_CREEE",
+          typeValeur: "VALEUR_CIBLE",
+          dateValeur: date2,
+          valeur: 100,
+          idAuteurModification: userId3,
+          correlationId: "6ba7b81e-9dad-11d1-80b4-00c04fd430c8",
+          ordre: 1,
+          donneesComplementaires: undefined,
+        },
+      );
+
+    const evenement4 =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: "IND-008",
+          territoireCode: "NAT-FR",
+          typeEvenement: "PROPOSITION_VALEUR_CREEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: date3,
+          valeur: 20,
+          idAuteurModification: userId1,
+          correlationId: "6ba7b81f-9dad-11d1-80b4-00c04fd430c8",
+          ordre: 1,
+          donneesComplementaires: {
+            motif: "Motif de la proposition",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
+          },
+        },
+      );
+
+    const evenement5 =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: "IND-008",
+          territoireCode: "NAT-FR",
+          typeEvenement: "PROPOSITION_VALEUR_MODIFIEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: date3,
+          valeur: 25,
+          idAuteurModification: userId2,
+          correlationId: "6ba7b820-9dad-11d1-80b4-00c04fd430c8",
+          ordre: 2,
+          donneesComplementaires: {
+            motif: "Motif de la modification",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
+          },
+        },
+      );
+
+    await prismaIndicateurTerritoireValeurEvenementRepository.enregistrerTous([
+      evenement1,
+      evenement2,
+      evenement3,
+      evenement4,
+      evenement5,
+    ]);
+
+    // When
+    const evenements =
+      await prismaIndicateurTerritoireValeurEvenementRepository.recupererHistoriqueParIndicIdEtTerritoireCode(
+        {
+          indicId: "IND-008",
+          territoireCode: "NAT-FR",
+        },
+      );
+
+    // Then
+    expect(evenements).toHaveLength(5);
+
+    // Vérifier le tri par date décroissante puis ordre décroissant
+    expect(evenements[0].dateValeur).toEqual(date3);
+    expect(evenements[0].ordre).toBe(2); // evenement5
+    expect(evenements[1].dateValeur).toEqual(date3);
+    expect(evenements[1].ordre).toBe(1); // evenement4
+    expect(evenements[2].dateValeur).toEqual(date2);
+    expect(evenements[2].ordre).toBe(1); // evenement3
+    expect(evenements[3].dateValeur).toEqual(date1);
+    expect(evenements[3].ordre).toBe(2); // evenement2
+    expect(evenements[4].dateValeur).toEqual(date1);
+    expect(evenements[4].ordre).toBe(1); // evenement1
+  });
+
+  it("Doit retourner un tableau vide pour l'historique quand aucun événement ne correspond", async () => {
+    // When
+    const evenements =
+      await prismaIndicateurTerritoireValeurEvenementRepository.recupererHistoriqueParIndicIdEtTerritoireCode(
+        {
+          indicId: "IND-INEXISTANT",
+          territoireCode: "INEXISTANT",
+        },
+      );
+
+    // Then
+    expect(evenements).toHaveLength(0);
+  });
 });

@@ -128,6 +128,42 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
       });
   }
 
+  async recupererHistoriqueParIndicIdEtTerritoireCode(args: {
+    indicId: string;
+    territoireCode: string;
+  }): Promise<IndicateurTerritoireValeurEvenement[]> {
+    const lignes = await this.prisma
+      .getInstance()
+      .indicateur_territoire_valeur_evenement.findMany({
+        where: {
+          indic_id: args.indicId,
+          territoire_code: args.territoireCode,
+        },
+        orderBy: [{ date_valeur: "desc" }, { ordre: "desc" }],
+      });
+
+    return lignes.map((ligne) =>
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          id: ligne.id,
+          indicId: ligne.indic_id,
+          territoireCode: ligne.territoire_code,
+          typeEvenement: ligne.type_evenement,
+          typeValeur: ligne.type_valeur,
+          dateValeur: ligne.date_valeur,
+          valeur: ligne.valeur!,
+          donneesComplementaires:
+            ligne.donnees_complementaires as DonneesComplementaires<
+              typeof ligne.type_evenement
+            >,
+          idAuteurModification: ligne.id_auteur_modification,
+          correlationId: ligne.correlation_id,
+          ordre: ligne.ordre,
+        },
+      ),
+    );
+  }
+
   async enregistrerTous(
     evenements: IndicateurTerritoireValeurEvenement[],
   ): Promise<void> {
