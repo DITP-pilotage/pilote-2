@@ -50,6 +50,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           idAuteurModification: ligne.id_auteur_modification,
           correlationId: ligne.correlation_id,
           ordre: ligne.ordre,
+          dateCreation: ligne.date_creation,
         },
       ),
     );
@@ -91,6 +92,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           idAuteurModification: ligne.id_auteur_modification,
           correlationId: ligne.correlation_id,
           ordre: ligne.ordre,
+          dateCreation: ligne.date_creation,
         },
       ),
     );
@@ -124,6 +126,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           id_auteur_modification: evenement.idAuteurModification,
           correlation_id: evenement.correlationId,
           ordre: evenement.ordre,
+          date_creation: evenement.dateCreation,
         },
       });
   }
@@ -159,6 +162,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           idAuteurModification: ligne.id_auteur_modification,
           correlationId: ligne.correlation_id,
           ordre: ligne.ordre,
+          dateCreation: ligne.date_creation,
         },
       ),
     );
@@ -184,6 +188,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           id_auteur_modification: evenement.idAuteurModification,
           correlation_id: evenement.correlationId,
           ordre: evenement.ordre,
+          date_creation: evenement.dateCreation,
         })),
       });
   }

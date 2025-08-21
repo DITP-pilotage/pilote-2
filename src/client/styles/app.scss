@@ -118,6 +118,27 @@
   color: var(--text-default-warning);
 }
 
+.texte-blue-france {
+  color: var(--text-title-blue-france);
+}
+
+
+.\!texte-blue-france {
+  color: var(--text-title-blue-france) !important;
+}
+
+.texte-title-grey{
+  color: var(--text-title-grey);
+}
+
+.\!texte-title-grey{
+  color: var(--text-title-grey) !important;
+}
+
+.\!texte-white{
+  color: white !important;
+}
+
 .texte-gauche {
   text-align: left;
 }
@@ -218,6 +239,14 @@
 
 .fr-background-contrast-grey {
   background-color: var(--background-contrast-grey) !important;
+}
+
+.\!background-black {
+  background-color: black !important;
+}
+
+.\!background-jaune-moutarde {
+  background-color: #fcdca3;
 }
 
 .border-t {

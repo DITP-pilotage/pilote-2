@@ -418,6 +418,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   categoriesIndicateurRepartition={
                     categoriesIndicateurRepartition
                   }
+                  chantier={chantier}
                   chantierEstTerritorialisé={chantier.estTerritorialisé}
                   detailsIndicateursTerritoire={detailsIndicateursTerritoire}
                   détailsIndicateurs={détailsIndicateurs}

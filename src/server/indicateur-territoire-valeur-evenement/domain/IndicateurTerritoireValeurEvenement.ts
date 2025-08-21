@@ -51,6 +51,8 @@ export class IndicateurTerritoireValeurEvenement<
 
   private readonly _ordre: number;
 
+  private readonly _dateCreation: Date;
+
   private constructor({
     id,
     indicId,
@@ -63,6 +65,7 @@ export class IndicateurTerritoireValeurEvenement<
     idAuteurModification,
     correlationId,
     ordre,
+    dateCreation,
   }: {
     id: string;
     indicId: string;
@@ -75,6 +78,7 @@ export class IndicateurTerritoireValeurEvenement<
     idAuteurModification: string;
     correlationId: string;
     ordre: number;
+    dateCreation: Date;
   }) {
     this._id = id;
     this._indicId = indicId;
@@ -87,6 +91,7 @@ export class IndicateurTerritoireValeurEvenement<
     this._idAuteurModification = idAuteurModification;
     this._correlationId = correlationId;
     this._ordre = ordre;
+    this._dateCreation = dateCreation;
   }
 
   get id(): string {
@@ -133,6 +138,10 @@ export class IndicateurTerritoireValeurEvenement<
     return this._ordre;
   }
 
+  get dateCreation(): Date {
+    return this._dateCreation;
+  }
+
   static createValeurIndicateurTerritoireEvenement<T extends TypeEvenement>({
     id = randomUUID(),
     indicId,
@@ -145,6 +154,7 @@ export class IndicateurTerritoireValeurEvenement<
     idAuteurModification,
     correlationId,
     ordre,
+    dateCreation,
   }: {
     id?: string;
     indicId: string;
@@ -157,6 +167,7 @@ export class IndicateurTerritoireValeurEvenement<
     idAuteurModification: string;
     correlationId: string;
     ordre: number;
+    dateCreation: Date;
   }) {
     return new IndicateurTerritoireValeurEvenement<T>({
       id,
@@ -170,6 +181,7 @@ export class IndicateurTerritoireValeurEvenement<
       idAuteurModification,
       correlationId,
       ordre,
+      dateCreation,
     });
   }
 

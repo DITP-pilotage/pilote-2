@@ -10,6 +10,7 @@ type FormatDeDate =
   | "MM/YY"
   | "DD/MM/YYYY"
   | "DD/MM/YYYY [à] H[h]mm"
+  | "DD/MM/YYYY HH[:]mm"
   | "MM-YYYY";
 
 export function formaterDate(

@@ -39,6 +39,7 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
   it("Doit grouper les événements par dateValeur et les trier correctement", async () => {
     const date1 = new Date("2024-01-01");
     const date2 = new Date("2024-02-01");
+    const fixedDateCreation = new Date("2024-03-01T10:00:00.000Z");
 
     const event1 =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
@@ -53,6 +54,7 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
           idAuteurModification: "user1",
           correlationId: "corr1",
           ordre: 1,
+          dateCreation: fixedDateCreation,
         },
       );
 
@@ -69,6 +71,7 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
           idAuteurModification: "user1",
           correlationId: "corr2",
           ordre: 2,
+          dateCreation: fixedDateCreation,
         },
       );
 
@@ -85,6 +88,7 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
           idAuteurModification: "user1",
           correlationId: "corr3",
           ordre: 1,
+          dateCreation: fixedDateCreation,
         },
       );
 
@@ -99,8 +103,49 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
     });
 
     const expectedResult = {
-      "2024-02-01T00:00:00.000Z": [event2, event1],
-      "2024-01-01T00:00:00.000Z": [event3],
+      "2024-02-01T00:00:00.000Z": [
+        {
+          id: event2.id,
+          indicId: event2.indicId,
+          territoireCode: event2.territoireCode,
+          typeEvenement: event2.typeEvenement,
+          typeValeur: event2.typeValeur,
+          dateValeur: event2.dateValeur,
+          valeur: event2.valeur,
+          donneesComplementaires: event2.donneesComplementaires,
+          idAuteurModification: event2.idAuteurModification,
+          correlationId: event2.correlationId,
+          ordre: event2.ordre,
+        },
+        {
+          id: event1.id,
+          indicId: event1.indicId,
+          territoireCode: event1.territoireCode,
+          typeEvenement: event1.typeEvenement,
+          typeValeur: event1.typeValeur,
+          dateValeur: event1.dateValeur,
+          valeur: event1.valeur,
+          donneesComplementaires: event1.donneesComplementaires,
+          idAuteurModification: event1.idAuteurModification,
+          correlationId: event1.correlationId,
+          ordre: event1.ordre,
+        },
+      ],
+      "2024-01-01T00:00:00.000Z": [
+        {
+          id: event3.id,
+          indicId: event3.indicId,
+          territoireCode: event3.territoireCode,
+          typeEvenement: event3.typeEvenement,
+          typeValeur: event3.typeValeur,
+          dateValeur: event3.dateValeur,
+          valeur: event3.valeur,
+          donneesComplementaires: event3.donneesComplementaires,
+          idAuteurModification: event3.idAuteurModification,
+          correlationId: event3.correlationId,
+          ordre: event3.ordre,
+        },
+      ],
     };
 
     expect(result).toEqual(expectedResult);
@@ -112,6 +157,7 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
 
   it("Doit gérer plusieurs événements sur la même date avec un tri correct par ordre décroissant", async () => {
     const date = new Date("2024-01-01");
+    const fixedDateCreation = new Date("2024-03-01T10:00:00.000Z");
 
     const event1 =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
@@ -126,6 +172,7 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
           idAuteurModification: "user1",
           correlationId: "corr1",
           ordre: 1,
+          dateCreation: fixedDateCreation,
         },
       );
 
@@ -142,6 +189,7 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
           idAuteurModification: "user1",
           correlationId: "corr2",
           ordre: 3,
+          dateCreation: fixedDateCreation,
         },
       );
 
@@ -158,6 +206,7 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
           idAuteurModification: "user1",
           correlationId: "corr3",
           ordre: 2,
+          dateCreation: fixedDateCreation,
         },
       );
 
@@ -172,9 +221,45 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
     });
 
     expect(result["2024-01-01T00:00:00.000Z"]).toEqual([
-      event2,
-      event3,
-      event1,
+      {
+        id: event2.id,
+        indicId: event2.indicId,
+        territoireCode: event2.territoireCode,
+        typeEvenement: event2.typeEvenement,
+        typeValeur: event2.typeValeur,
+        dateValeur: event2.dateValeur,
+        valeur: event2.valeur,
+        donneesComplementaires: event2.donneesComplementaires,
+        idAuteurModification: event2.idAuteurModification,
+        correlationId: event2.correlationId,
+        ordre: event2.ordre,
+      },
+      {
+        id: event3.id,
+        indicId: event3.indicId,
+        territoireCode: event3.territoireCode,
+        typeEvenement: event3.typeEvenement,
+        typeValeur: event3.typeValeur,
+        dateValeur: event3.dateValeur,
+        valeur: event3.valeur,
+        donneesComplementaires: event3.donneesComplementaires,
+        idAuteurModification: event3.idAuteurModification,
+        correlationId: event3.correlationId,
+        ordre: event3.ordre,
+      },
+      {
+        id: event1.id,
+        indicId: event1.indicId,
+        territoireCode: event1.territoireCode,
+        typeEvenement: event1.typeEvenement,
+        typeValeur: event1.typeValeur,
+        dateValeur: event1.dateValeur,
+        valeur: event1.valeur,
+        donneesComplementaires: event1.donneesComplementaires,
+        idAuteurModification: event1.idAuteurModification,
+        correlationId: event1.correlationId,
+        ordre: event1.ordre,
+      },
     ]);
   });
 });
