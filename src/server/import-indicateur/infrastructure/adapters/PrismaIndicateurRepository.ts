@@ -10,7 +10,7 @@ import { prisma } from "@/server/db/prisma";
 
 interface RawInformationIndicateurModel {
   indic_id: string;
-  indic_schema: string;
+  indic_schema: string | null;
 }
 
 function convertirEnInformationIndicateur(
@@ -18,7 +18,8 @@ function convertirEnInformationIndicateur(
 ): InformationIndicateur {
   return InformationIndicateur.creerInformationIndicateur({
     indicId: rawInformationIndicateur.indic_id,
-    indicSchema: rawInformationIndicateur.indic_schema,
+    indicSchema:
+      rawInformationIndicateur.indic_schema ?? "sans-contraintes.json",
   });
 }
 
@@ -27,19 +28,23 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     indicId: string,
   ): Promise<InformationIndicateur> {
     try {
-      const rawInformationIndicateur = await prisma.$queryRaw<
-        RawInformationIndicateurModel[]
-      >`SELECT indic_id, indic_schema
-                                                                                                          FROM raw_data.metadata_indicateurs_hidden
-                                                                                                          WHERE indic_id = ${indicId}`;
-      if (!rawInformationIndicateur || rawInformationIndicateur.length === 0) {
+      const metadataIndicateur =
+        await prisma.metadata_indicateurs_hidden.findUnique({
+          where: { indic_id: indicId },
+          select: {
+            indic_id: true,
+            indic_schema: true,
+          },
+        });
+
+      if (!metadataIndicateur) {
         return convertirEnInformationIndicateur({
           indic_id: indicId,
           indic_schema: "sans-contraintes.json",
         });
       }
 
-      return convertirEnInformationIndicateur(rawInformationIndicateur[0]);
+      return convertirEnInformationIndicateur(metadataIndicateur);
     } catch (error: unknown) {
       Logger.error(error);
       return convertirEnInformationIndicateur({
