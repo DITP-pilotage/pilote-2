@@ -27,4 +27,5 @@ time pg_dump -d $CONN_STR_PROD --verbose \
     --table public.erreur_validation_fichier \
     --table public.objectif \
     --table public.proposition_valeur_actuelle \
+    --table public.indicateur_territoire_valeur_evenement \
     --file=$DUMP_DEST

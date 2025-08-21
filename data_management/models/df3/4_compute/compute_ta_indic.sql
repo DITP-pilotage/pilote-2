@@ -19,14 +19,14 @@ get_unbounded_ta_baisse as
 (
 	select a.*,
 	{{ compute_ta_baisse_macro('vig', 'vca_courant', 'vaca') }} as unbounded_taa_courant,
-	{{ compute_ta_hausse_macro('vig', 'vca_adate', 'vaca') }} as unbounded_taa_adate,
+	{{ compute_ta_baisse_macro('vig', 'vca_adate', 'vaca') }} as unbounded_taa_adate,
 	{{ compute_ta_baisse_macro('vig', 'vcg', 'vacg') }} as unbounded_tag,
 	{{ compute_ta_baisse_macro('vig', 'vcg', 'vacp') }} as unbounded_tap_global,
 	{{ compute_ta_baisse_macro('vig', 'vca_courant', 'vacp') }} as unbounded_tap_courant,
 	{{ compute_ta_baisse_macro('vig', 'vca_adate', 'vacp') }} as unbounded_tap_adate,
-	{{ compute_ta_hausse_macro('vig', 'vcg', 'vacp_v2') }} as unbounded_tap_global_v2,
-	{{ compute_ta_hausse_macro('vig', 'vca_courant', 'vacp_v2') }} as unbounded_tap_courant_v2,
-	{{ compute_ta_hausse_macro('vig', 'vca_adate', 'vacp_v2') }} as unbounded_tap_adate_v2
+	{{ compute_ta_baisse_macro('vig', 'vcg', 'vacp_v2') }} as unbounded_tap_global_v2,
+	{{ compute_ta_baisse_macro('vig', 'vca_courant', 'vacp_v2') }} as unbounded_tap_courant_v2,
+	{{ compute_ta_baisse_macro('vig', 'vca_adate', 'vacp_v2') }} as unbounded_tap_adate_v2
 	from {{ ref('merge_computed_values') }} a
 	right join (select * from {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} where tendance in ('BAISSE')) b on a.indic_id=b.indic_id
 ),
