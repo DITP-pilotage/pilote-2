@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { Fragment, FunctionComponent } from "react";
 import clsx from "clsx";
 import Modale from "@/components/_commons/Modale/Modale";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
@@ -127,7 +127,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
     <Modale
       idHtml={generatedHTMLID}
       tailleModale="lg"
-      titre={`Historique de l'indicateur "${indicateur.nom}"`}
+      titre="Historique des actions sur les valeurs d'avancement"
     >
       <div className="fr-grid-row fr-mt-1w">
         <span className="fr-text--lg fr-text--bold fr-mb-0 fr-col-2 !texte-blue-france">
@@ -164,9 +164,11 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
             const dateFormatee = formaterDate(dateIso, "MM/YYYY");
 
             return (
-              <>
+              <Fragment
+                key={`accordion-rubrique-${indicateur.id}-${dateIso}-${index}`}
+              >
                 <button
-                  aria-controls={`accordion-rubrique-${indicateur.id}-${dateIso}`}
+                  aria-controls={`accordion-rubrique-${indicateur.id}-${dateIso}-${index}`}
                   aria-expanded={index === 0}
                   className="fr-accordion__btn !background-black !texte-white fr-py-0 fr-px-3v"
                   type="button"
@@ -175,7 +177,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
                 </button>
                 <div
                   className="fr-collapse"
-                  id={`accordion-rubrique-${indicateur.id}-${dateIso}`}
+                  id={`accordion-rubrique-${indicateur.id}-${dateIso}-${index}`}
                 >
                   <div className="fr-my-2w">
                     <div className="fr-grid-row fr-p-3v border-t border-b fr-background-blue-france-850">
@@ -205,7 +207,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
                     })}
                   </div>
                 </div>
-              </>
+              </Fragment>
             );
           })}
         </div>
