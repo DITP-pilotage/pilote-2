@@ -115,12 +115,21 @@ export const LignesPropositionValeurAvancement = ({
                     classNameInfoBulle="tooltip-accordeon"
                     idHtml={`infobulle-proposition-valeur-davancement-accusee-reception-${informationIndicateur.code}`}
                   >
-                    <p className="fr-text--sm">
-                      Vous ne pouvez plus intervenir sur cet indicateur tant que
-                      la direction de projet n'aura pas pris une décision
-                      (accepter, accepter avec modification ou refuser) ou
-                      procédé à un nouvel import de données.
-                    </p>
+                    {estAutoriseAProposerUneValeurAvancement ? (
+                      <p className="fr-text--sm">
+                        Vous ne pouvez plus intervenir sur cet indicateur tant
+                        que la direction de projet n'aura pas pris une décision
+                        (accepter, accepter avec modification ou refuser) ou
+                        procédé à un nouvel import de données.
+                      </p>
+                    ) : estAutoriseAAccepterLesPropositionsDeValeurAvancement ? (
+                      <p className="fr-text--sm">
+                        Le territoire ne peut plus intervenir sur cet indicateur
+                        tant que vous n'aurez pas pris une décision (accepter,
+                        accepter avec modification ou refuser) ou procédé à un
+                        nouvel import de données.
+                      </p>
+                    ) : null}
                   </Infobulle>
                 </>
               ) : (
@@ -264,17 +273,28 @@ export const LignesPropositionValeurAvancement = ({
           <td colSpan={8}>
             <div className="flex w-full align-center justify-end gap-4">
               {!estPropositionAccuseeReception(detailIndicateur) && (
-                <BoutonSousLigné
-                  ariaControls={
-                    ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT +
-                    indicateur.id
-                  }
-                  classNameSupplémentaires="fr-link--icon-left fr-icon-mail-line texte-jaune"
-                  dataFrOpened={false}
-                  type="button"
-                >
-                  Accuser réception
-                </BoutonSousLigné>
+                <div className="flex align-center">
+                  <BoutonSousLigné
+                    ariaControls={
+                      ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT +
+                      indicateur.id
+                    }
+                    classNameSupplémentaires="fr-link--icon-left fr-icon-mail-line texte-jaune"
+                    dataFrOpened={false}
+                    type="button"
+                  >
+                    Accuser réception
+                  </BoutonSousLigné>
+                  <Infobulle classNameBouton="texte-jaune" idHtml="test">
+                    <p>
+                      En accusant réception, vous informez le territoire que
+                      vous avez pris connaissance de sa proposition. Il vous est
+                      toujours possible, à tout moment, de prendre votre
+                      décision (accepter, accepter avec modification ou refuser)
+                      ou de réaliser un nouvel import de données.
+                    </p>
+                  </Infobulle>
+                </div>
               )}
               <button
                 aria-controls={
