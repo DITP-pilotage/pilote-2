@@ -5,7 +5,7 @@ export const validationPropositionValeurAvancement = z.object({
   valeurAvancement: z
     .string()
     .refine(
-      (value) => new RegExp(/^-?\d+$|^-?\d+(,|\.)\d+$/).test(value),
+      (value) => new RegExp(/^-?\d+$|^-?\d+([,.])\d+$/).test(value),
       "Le champ doit être un nombre",
     ),
   motifProposition: z
@@ -74,6 +74,15 @@ export const validationSuppressionPropositionValeurAvancement = z.object({
       "La limite de 500 caractères a été dépassée",
     ),
 });
+
+export const validationAccepterAvecModificationPropositionValeurAvancement =
+  z.object({
+    indicId: z.string(),
+    territoireCode: z.string(),
+    dateValeurAvancement: z.string(),
+    valeur: z.number(),
+    motif: z.string().trim(),
+  });
 
 export const validationAccuserReceptionPropostionValeurAvancement = z.object({
   indicId: z.string(),

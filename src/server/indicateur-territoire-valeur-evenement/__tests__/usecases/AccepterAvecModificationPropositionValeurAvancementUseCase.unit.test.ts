@@ -1,0 +1,129 @@
+import { MockProxy, mock } from "jest-mock-extended";
+import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
+import { AccepterAvecModificationPropositionValeurAvancementUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/AccepterAvecModificationPropositionValeurAvancementUseCase";
+import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
+import { InMemoryTransaction, Transaction } from "@/server/db/Transaction";
+import { MesureIndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/MesureIndicateurRepository";
+
+describe("AccepterAvecModificationPropositionValeurAvancementUseCase", () => {
+  let accepterAvecModificationPropositionValeurAvancementUseCase: AccepterAvecModificationPropositionValeurAvancementUseCase;
+
+  let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
+  let mesureIndicateurRepository: MockProxy<MesureIndicateurRepository>;
+  let transaction: Transaction;
+
+  beforeEach(() => {
+    indicateurTerritoireValeurEvenementRepository =
+      mock<IndicateurTerritoireValeurEvenementRepository>();
+    mesureIndicateurRepository = mock<MesureIndicateurRepository>();
+    transaction = new InMemoryTransaction();
+    accepterAvecModificationPropositionValeurAvancementUseCase =
+      new AccepterAvecModificationPropositionValeurAvancementUseCase({
+        indicateurTerritoireValeurEvenementRepository,
+        mesureIndicateurRepository,
+        transaction,
+      });
+  });
+
+  it("Doit accepter avec modification une proposition de valeur d'avancement", async () => {
+    // Given
+    const input = {
+      indicId: "IND-006",
+      territoireCode: "COM-13001",
+      dateValeurAvancement: "2024-06-08",
+      idAuteurAcceptation: "user-ghi",
+      valeur: 25,
+      motif: "Motif d'acceptation avec modification",
+    };
+
+    const evenementsExistants = [
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          typeEvenement: "PROPOSITION_VALEUR_CREEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: new Date("2024-01-01"),
+          valeur: 10,
+          idAuteurModification: "user-1",
+          correlationId: "corr-1",
+          ordre: 1,
+          donneesComplementaires: {
+            motif: "Motif de la proposition",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
+          },
+        },
+      ),
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          typeEvenement: "PROPOSITION_VALEUR_MODIFIEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: new Date("2024-02-01"),
+          valeur: 20,
+          idAuteurModification: "user-2",
+          correlationId: "corr-2",
+          ordre: 2,
+          donneesComplementaires: {
+            motif: "Motif de la modification",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
+          },
+        },
+      ),
+    ];
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
+      new EvenementsSurDate({
+        identifiantFlux: {
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          date: input.dateValeurAvancement,
+        },
+        evenementsSurDate: evenementsExistants,
+        tousLesEvenements: evenementsExistants,
+      }),
+    );
+
+    // When
+    await accepterAvecModificationPropositionValeurAvancementUseCase.run(input);
+
+    // Then
+    expect(mesureIndicateurRepository.enregistrer).toHaveBeenCalledWith({
+      auteurId: input.idAuteurAcceptation,
+      dateValeur: new Date("2024-06-08T00:00:00.000Z"),
+      indicId: input.indicId,
+      territoireCode: input.territoireCode,
+      valeur: input.valeur,
+    });
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
+    ).toHaveBeenCalledWith([
+      expect.objectContaining({
+        indicId: input.indicId,
+        territoireCode: input.territoireCode,
+        typeEvenement: "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION",
+        typeValeur: "VALEUR_AVANCEMENT",
+        dateValeur: new Date(input.dateValeurAvancement),
+        valeur: input.valeur,
+        idAuteurModification: input.idAuteurAcceptation,
+        ordre: 3,
+        donneesComplementaires: { motif: input.motif },
+      }),
+      expect.objectContaining({
+        indicId: input.indicId,
+        territoireCode: input.territoireCode,
+        typeEvenement: "VALEUR_MODIFIEE",
+        typeValeur: "VALEUR_AVANCEMENT",
+        dateValeur: new Date(input.dateValeurAvancement),
+        valeur: input.valeur,
+        idAuteurModification: input.idAuteurAcceptation,
+        ordre: 4,
+        donneesComplementaires: undefined,
+      }),
+    ]);
+  });
+});

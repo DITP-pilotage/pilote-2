@@ -20,7 +20,7 @@ type DonneesComplementairesMap = {
   PROPOSITION_VALEUR_ACCEPTEE: { motif: string };
   PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE: undefined;
   PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE: undefined;
-  PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION: undefined;
+  PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION: { motif: string };
 };
 
 export type DonneesComplementaires<T extends TypeEvenement> =

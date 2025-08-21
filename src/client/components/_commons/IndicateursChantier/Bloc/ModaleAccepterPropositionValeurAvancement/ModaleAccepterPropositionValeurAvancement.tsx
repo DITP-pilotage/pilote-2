@@ -12,6 +12,7 @@ import {
 } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccepterPropositionValeurAvancement/useModaleAccepterPropositionValeurAvancement";
 import { formaterDate } from "@/client/utils/date/date";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
+import Input from "@/components/_commons/Input/Input";
 import { ComparaisonValeurBox } from "@/components/_commons/IndicateursChantier/Bloc/ComparaisonValeurBox";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
@@ -148,7 +149,6 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                     <div className="fr-radio-group">
                       <input
                         {...reactHookForm.register("decision")}
-                        disabled
                         id="accepter-avec-modification"
                         type="radio"
                         value="accepter-avec-modification"
@@ -167,16 +167,26 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                         ci-dessous la valeur modifiée que vous souhaitez valider
                         pour cet indicateur* :
                       </label>
-
-                      <label
-                        className="fr-label fr-text--xs texte-gris fr-pl-4w"
-                        htmlFor="accepter-avec-modification"
-                      >
-                        *ce champ est obligatoire
-                      </label>
                     </div>
-                    <div className="fr-mt-2w">
-                      <span>Valeur à modifier</span>
+                    <div className="fr-pl-4w">
+                      <p className="fr-text texte-warning fr-text--xs text-italic">
+                        *ce champ est obligatoire
+                      </p>
+                      <Input
+                        className="fr-input--sm !w-auto"
+                        classNameGroupe="fr-mb-1v"
+                        disabled={
+                          reactHookForm.watch("decision") !==
+                          "accepter-avec-modification"
+                        }
+                        erreurMessage={
+                          reactHookForm.formState.errors.valeurModification
+                            ?.message
+                        }
+                        htmlName="valeurModification"
+                        register={reactHookForm.register("valeurModification")}
+                        type="number"
+                      />
                       <span className="flex texte-gris fr-text--xs">
                         (
                         {formaterDate(
@@ -268,16 +278,33 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                     </p>
                     <p className="fr-callout__text fr-text--sm">
                       Décision : la proposition est{" "}
-                      <span className="fr-text--bold">
-                        {decision === "refuser" ? "refusée" : "acceptée"}
-                      </span>
+                      {decision === "refuser" ? (
+                        <span className="fr-text--bold">refusée</span>
+                      ) : decision === "accepter-avec-modification" ? (
+                        <>
+                          <span>la proposition est </span>
+                          <span className="fr-text--bold">modifiée </span>
+                          <span>avec la valeur </span>
+                          <span className="fr-text--bold">
+                            {reactHookForm.getValues("valeurModification")} (
+                            {formaterDate(
+                              detailIndicateur.dateValeurAvancement,
+                              "MM/YYYY",
+                            )}
+                            )
+                          </span>
+                        </>
+                      ) : (
+                        <span className="fr-text--bold">acceptée</span>
+                      )}
                     </p>
                     <p className="fr-callout__text fr-text--sm">
                       <span className="fr-text--bold">
                         Motif de la décision :
                       </span>{" "}
                       <span className="text-italic">
-                        {reactHookForm.getValues("motif")}
+                        {reactHookForm.getValues("motif") ||
+                          "Aucun motif n'a été apporté"}
                       </span>
                     </p>
                   </div>
@@ -285,12 +312,16 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                     <h3 className="fr-alert__title">
                       {decision === "refuser"
                         ? "Refus de la proposition : ce que cela implique"
-                        : "Acceptation de la proposition : ce que cela implique"}
+                        : decision === "accepter-avec-modification"
+                          ? "Acceptation avec modification de la proposition : ce que cela implique"
+                          : "Acceptation de la proposition : ce que cela implique"}
                     </h3>
                     <p>
                       {decision === "refuser"
                         ? "La valeur d'avancement de cet indicateur ainsi que le taux d'avancement du chantier sont inchangés."
-                        : "La valeur d'avancement de cet indicateur est mise à jour à partir de la valeur proposée. Elle est prise en compte dans le calcul du taux d'avancement global du chantier."}
+                        : decision === "accepter-avec-modification"
+                          ? "La valeur d'avancement de cet indicateur est mise à jour à partir de la valeur modifiée. Elle est prise en compte dans le calcul du taux d'avancement global du chantier. L'ensemble de ces informations seront visibles dans PILOTE d'ici une heure."
+                          : "La valeur d'avancement de cet indicateur est mise à jour à partir de la valeur proposée. Elle est prise en compte dans le calcul du taux d'avancement global du chantier."}
                     </p>
                     <p>
                       La proposition ainsi que votre décision sont archivées
@@ -314,7 +345,9 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                     <button className="fr-btn" type="submit">
                       {decision === "refuser"
                         ? "Valider la décision"
-                        : "Accepter la proposition"}
+                        : decision === "accepter-avec-modification"
+                          ? "Accepter avec modification"
+                          : "Accepter la proposition"}
                     </button>
                   </div>
                 </>

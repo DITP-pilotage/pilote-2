@@ -9,6 +9,7 @@ import {
   validationRefuserPropositionValeurAvancement,
   validationSuppressionValeurAvancementV2,
   validationAccuserReceptionPropositionValeurAvancement,
+  validationAccepterAvecModificationPropositionValeurAvancement,
 } from "@/validation/proposition-valeur-avancement";
 import { StatutProposition } from "@/server/chantiers/domain/StatutProposition";
 import { getContainer } from "@/server/dependances";
@@ -186,6 +187,41 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
           territoireCode: input.territoireCode,
           idAuteurAcceptation: auteur,
           dateValeurAvancement: input.dateValeurAvancement,
+          motif: input.motif,
+        });
+    }),
+
+  accepterAvecModification: procédureProtégée
+    .input(validationAccepterAvecModificationPropositionValeurAvancement)
+    .mutation(async ({ input, ctx }) => {
+      const auteur = ctx.session.user.id ?? "";
+
+      const propositionValeurAvancementChantierInformation = await getContainer(
+        "chantiers",
+      )
+        .resolve("chantierRepository")
+        .recupererPropositionValeurAvancementChantierInformationParIndicId({
+          indicId: input.indicId,
+        });
+
+      const habilitations = await getContainer("gestionUtilisateur")
+        .resolve("habilitationService")
+        .recupererHabilitations(ctx.session);
+
+      habilitations.verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
+        ctx.session.profil,
+        ctx.session.habilitations,
+        propositionValeurAvancementChantierInformation,
+      );
+
+      await getContainer("indicateurTerritoireValeurEvenement")
+        .resolve("accepterAvecModificationPropositionValeurAvancementUseCase")
+        .run({
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          idAuteurAcceptation: auteur,
+          dateValeurAvancement: input.dateValeurAvancement,
+          valeur: input.valeur,
           motif: input.motif,
         });
     }),

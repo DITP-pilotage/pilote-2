@@ -70,6 +70,14 @@
   width: 100%;
 }
 
+.w-auto {
+  width: auto;
+}
+
+.\!w-auto {
+  width: auto!important;
+}
+
 .w-half-full {
   width: 50%;
 }
