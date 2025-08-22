@@ -145,8 +145,32 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
         orderBy: [{ date_valeur: "desc" }, { ordre: "desc" }],
       });
 
-    return lignes.map((ligne) =>
-      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+    return lignes.map((ligne) => {
+      const rawDonnesComplementaires = ligne.donnees_complementaires as
+        | { motif: string; source_donnee_methode_calcul: string }
+        | { motif: string }
+        | undefined;
+      const donneesComplementaires = rawDonnesComplementaires?.motif
+        ? (
+            rawDonnesComplementaires as {
+              motif: string;
+              source_donnee_methode_calcul: string;
+            }
+          ).source_donnee_methode_calcul
+          ? {
+              motif: rawDonnesComplementaires.motif,
+              sourceDonneeEtMethodeCalcul: (
+                rawDonnesComplementaires as {
+                  motif: string;
+                  source_donnee_methode_calcul: string;
+                }
+              ).source_donnee_methode_calcul,
+            }
+          : {
+              motif: rawDonnesComplementaires.motif,
+            }
+        : undefined;
+      return IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
         {
           id: ligne.id,
           indicId: ligne.indic_id,
@@ -155,17 +179,14 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           typeValeur: ligne.type_valeur,
           dateValeur: ligne.date_valeur,
           valeur: ligne.valeur!,
-          donneesComplementaires:
-            ligne.donnees_complementaires as DonneesComplementaires<
-              typeof ligne.type_evenement
-            >,
+          donneesComplementaires,
           idAuteurModification: ligne.id_auteur_modification,
           correlationId: ligne.correlation_id,
           ordre: ligne.ordre,
           dateCreation: ligne.date_creation,
         },
-      ),
-    );
+      );
+    });
   }
 
   async enregistrerTous(

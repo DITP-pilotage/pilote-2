@@ -5,6 +5,8 @@ import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import Loader from "@/components/_commons/Loader/Loader";
 import { formaterDate } from "@/client/utils/date/date";
+import Infobulle from "@/components/_commons/Infobulle/Infobulle";
+import { DonneesComplementaires } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { useModaleHistoriqueIndicateurTerritoireValeurEvenement } from "./useModaleHistoriqueIndicateurTerritoireValeurEvenement";
 
 export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionComponent<{
@@ -98,6 +100,22 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
             </p>
           </div>
         );
+      case "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION":
+        return (
+          <div>
+            <p className="fr-mb-0">
+              proposition
+              <span className="fr-text--bold">
+                {" "}
+                acceptée avec modification
+              </span>{" "}
+              par la direction de projet
+            </p>
+            <p className="fr-mb-0 !texte-blue-france fr-text--bold">
+              → nouvelle valeur affichée dans PILOTE : {valeur}
+            </p>
+          </div>
+        );
       default:
         return typeEvenement;
     }
@@ -170,7 +188,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
                 <button
                   aria-controls={`accordion-rubrique-${indicateur.id}-${dateIso}-${index}`}
                   aria-expanded={index === 0}
-                  className="fr-accordion__btn !background-black !texte-white fr-py-0 fr-px-3v"
+                  className="fr-accordion__btn !background-black !texte-white fr-py-0 fr-px-3v fr-mb-1v"
                   type="button"
                 >
                   Valeur d'avancement {dateFormatee}
@@ -180,7 +198,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
                   id={`accordion-rubrique-${indicateur.id}-${dateIso}-${index}`}
                 >
                   <div className="fr-my-2w">
-                    <div className="fr-grid-row fr-p-3v border-t border-b fr-background-blue-france-850">
+                    <div className="fr-grid-row fr-p-3v fr-background-blue-france-850">
                       <div className="fr-col-2 flex align-center">date</div>
                       <div className="fr-col-10">action</div>
                     </div>
@@ -188,7 +206,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
                       return (
                         <div
                           className={clsx(
-                            "fr-grid-row fr-p-3v border-t border-b",
+                            "fr-grid-row fr-p-3v border-t border-t-black",
                             backgroundEvenementValeur(evenement),
                           )}
                           key={evenement.id}
@@ -199,7 +217,46 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
                               "DD/MM/YYYY HH[:]mm",
                             )}
                           </div>
-                          <div className="fr-col-10">
+                          <div className="fr-col-10 flex align-center">
+                            {evenement.donneesComplementaires ? (
+                              <Infobulle
+                                classNameBouton="fr-p-0 fr-mr-1w"
+                                classNameInfoBulle="tooltip-accordeon"
+                                idHtml={`infobulle-proposition-valeur-davancement-${evenement.id}`}
+                                styleIconInfoBulle="informationProposition"
+                              >
+                                <p className="fr-callout__text fr-text--sm">
+                                  <span className="fr-text--bold">
+                                    Motif de la proposition :
+                                  </span>{" "}
+                                  <span className="text-italic">
+                                    {evenement.donneesComplementaires.motif}
+                                  </span>
+                                </p>
+                                {(
+                                  evenement.donneesComplementaires as DonneesComplementaires<
+                                    | "PROPOSITION_VALEUR_CREEE"
+                                    | "PROPOSITION_VALEUR_MODIFIEE"
+                                  >
+                                )?.sourceDonneeEtMethodeCalcul ? (
+                                  <p className="fr-callout__text fr-text--sm">
+                                    <span className="fr-text--bold">
+                                      Source des données et méthode de calcul :
+                                    </span>{" "}
+                                    <span className="text-italic">
+                                      {
+                                        (
+                                          evenement.donneesComplementaires as DonneesComplementaires<
+                                            | "PROPOSITION_VALEUR_CREEE"
+                                            | "PROPOSITION_VALEUR_MODIFIEE"
+                                          >
+                                        ).sourceDonneeEtMethodeCalcul
+                                      }
+                                    </span>
+                                  </p>
+                                ) : null}
+                              </Infobulle>
+                            ) : null}
                             {mapperEvenementEnLibelle(evenement)}
                           </div>
                         </div>
