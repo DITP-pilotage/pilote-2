@@ -244,6 +244,7 @@ export const ModalePropositionValeurAvancement: FunctionComponent<{
                         reactHookForm.formState.errors
                           .sourceDonneeEtMethodeCalcul?.message
                       }
+                      hauteur="90px"
                       htmlName="sourceDonneeEtMethodeCalcul"
                       isRequired
                       libellé="Sources des données et méthode de calcul"
@@ -323,9 +324,11 @@ export const ModalePropositionValeurAvancement: FunctionComponent<{
                       proposez ne sera pas prise en compte dans le calcul du
                       taux d'avancement global du chantier. Cette proposition
                       vise à engager un dialogue avec la direction de projet au
-                      niveau national, qui en sera informée. Si votre
-                      proposition n'est pas intégrée par la direction de projet,
-                      elle ne sera plus visible dans l'historique de
+                      niveau national, qui en sera informée.
+                    </p>
+                    <p>
+                      Si votre proposition n'est pas intégrée par la direction
+                      de projet, elle ne sera plus visible dans l'historique de
                       l'indicateur à la prochaine mise à jour. Elle sera
                       cependant conservée dans la base de données de PILOTE.
                     </p>

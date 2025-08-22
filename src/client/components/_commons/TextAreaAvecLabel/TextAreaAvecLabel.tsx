@@ -28,6 +28,7 @@ interface TexteAreaLabelProps {
     taille: number;
     limite: number;
   };
+  hauteur?: string;
 }
 
 const TextAreaAvecLabel: FunctionComponent<TexteAreaLabelProps> = ({
@@ -43,6 +44,7 @@ const TextAreaAvecLabel: FunctionComponent<TexteAreaLabelProps> = ({
   placeholder,
   libelleRequired,
   compteur,
+  hauteur,
 }) => {
   return (
     <div
@@ -65,6 +67,7 @@ const TextAreaAvecLabel: FunctionComponent<TexteAreaLabelProps> = ({
         disabled={disabled}
         id={htmlName}
         placeholder={placeholder}
+        style={hauteur ? { height: "90px" } : undefined}
         {...register}
       />
       <div className="flex justify-between">
