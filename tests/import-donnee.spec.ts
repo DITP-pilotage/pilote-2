@@ -38,6 +38,8 @@ test("doit pouvoir importer des données", async ({ page }) => {
       page.getByRole("heading", { name: /Sélectionnez l'indicateur/ }),
     ).toBeVisible();
     await page.getByLabel("Choix de l'indicateur").selectOption({
+      // C'est volontaire car le nom du chantier qui comporte une appostrophe typo
+      // eslint-disable-next-line no-restricted-syntax
       label: "IND-927 : Part d’entraînement de la réserve opérationnelle",
     });
   });

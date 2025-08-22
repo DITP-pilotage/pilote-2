@@ -50,6 +50,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           idAuteurModification: ligne.id_auteur_modification,
           correlationId: ligne.correlation_id,
           ordre: ligne.ordre,
+          dateCreation: ligne.date_creation,
         },
       ),
     );
@@ -91,6 +92,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           idAuteurModification: ligne.id_auteur_modification,
           correlationId: ligne.correlation_id,
           ordre: ligne.ordre,
+          dateCreation: ligne.date_creation,
         },
       ),
     );
@@ -124,8 +126,67 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           id_auteur_modification: evenement.idAuteurModification,
           correlation_id: evenement.correlationId,
           ordre: evenement.ordre,
+          date_creation: evenement.dateCreation,
         },
       });
+  }
+
+  async recupererHistoriqueParIndicIdEtTerritoireCode(args: {
+    indicId: string;
+    territoireCode: string;
+  }): Promise<IndicateurTerritoireValeurEvenement[]> {
+    const lignes = await this.prisma
+      .getInstance()
+      .indicateur_territoire_valeur_evenement.findMany({
+        where: {
+          indic_id: args.indicId,
+          territoire_code: args.territoireCode,
+        },
+        orderBy: [{ date_valeur: "desc" }, { ordre: "desc" }],
+      });
+
+    return lignes.map((ligne) => {
+      const rawDonnesComplementaires = ligne.donnees_complementaires as
+        | { motif: string; source_donnee_methode_calcul: string }
+        | { motif: string }
+        | undefined;
+      const donneesComplementaires = rawDonnesComplementaires?.motif
+        ? (
+            rawDonnesComplementaires as {
+              motif: string;
+              source_donnee_methode_calcul: string;
+            }
+          ).source_donnee_methode_calcul
+          ? {
+              motif: rawDonnesComplementaires.motif,
+              sourceDonneeEtMethodeCalcul: (
+                rawDonnesComplementaires as {
+                  motif: string;
+                  source_donnee_methode_calcul: string;
+                }
+              ).source_donnee_methode_calcul,
+            }
+          : {
+              motif: rawDonnesComplementaires.motif,
+            }
+        : undefined;
+      return IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          id: ligne.id,
+          indicId: ligne.indic_id,
+          territoireCode: ligne.territoire_code,
+          typeEvenement: ligne.type_evenement,
+          typeValeur: ligne.type_valeur,
+          dateValeur: ligne.date_valeur,
+          valeur: ligne.valeur!,
+          donneesComplementaires,
+          idAuteurModification: ligne.id_auteur_modification,
+          correlationId: ligne.correlation_id,
+          ordre: ligne.ordre,
+          dateCreation: ligne.date_creation,
+        },
+      );
+    });
   }
 
   async enregistrerTous(
@@ -148,6 +209,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           id_auteur_modification: evenement.idAuteurModification,
           correlation_id: evenement.correlationId,
           ordre: evenement.ordre,
+          date_creation: evenement.dateCreation,
         })),
       });
   }

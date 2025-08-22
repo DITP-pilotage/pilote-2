@@ -29,6 +29,8 @@ export class ValeurIndicateurTerritoireEvenementBuilder {
 
   private ordre: number = 1;
 
+  private dateCreation: Date = new Date();
+
   avecId(id: string): ValeurIndicateurTerritoireEvenementBuilder {
     this.id = id;
     return this;
@@ -96,6 +98,13 @@ export class ValeurIndicateurTerritoireEvenementBuilder {
     return this;
   }
 
+  avecDateCreation(
+    dateCreation: Date,
+  ): ValeurIndicateurTerritoireEvenementBuilder {
+    this.dateCreation = dateCreation;
+    return this;
+  }
+
   build(): IndicateurTerritoireValeurEvenement {
     return IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
       {
@@ -110,6 +119,7 @@ export class ValeurIndicateurTerritoireEvenementBuilder {
         idAuteurModification: this.idAuteurModification,
         correlationId: this.correlationId,
         ordre: this.ordre,
+        dateCreation: this.dateCreation,
       },
     );
   }

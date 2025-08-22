@@ -14,6 +14,10 @@ export interface IndicateurTerritoireValeurEvenementRepository {
     typeValeur: TypeValeur;
     dateValeur: Date;
   }): Promise<EvenementsSurDate>;
+  recupererHistoriqueParIndicIdEtTerritoireCode(args: {
+    indicId: string;
+    territoireCode: string;
+  }): Promise<IndicateurTerritoireValeurEvenement[]>;
   enregistrer(evenement: IndicateurTerritoireValeurEvenement): Promise<void>;
   enregistrerTous(
     evenements: IndicateurTerritoireValeurEvenement[],

@@ -24,6 +24,7 @@ import { DetailsIndicateursContrat } from "@/server/chantiers/app/contrats/Detai
 import { IndicateurPropositionValeur } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurPropositionValeur";
 import { InformationsIndicateurs } from "@/components/_commons/IndicateursChantier/Bloc/InformationsIndicateurs";
 import { LignesPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/LignesPropositionValeurAvancement";
+import Chantier from "@/server/domain/chantier/Chantier.interface";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import useIndicateurBloc from "./useIndicateurBloc";
 import useIndicateurAlerteDateMaj from "./useIndicateurAlerteDateMaj";
@@ -42,6 +43,7 @@ interface IndicateurBlocProps {
   indicateur: Indicateur;
   détailsIndicateurs: DetailsIndicateursContrat;
   detailsIndicateursTerritoire: DetailsIndicateursContrat;
+  chantier: Chantier;
   estInteractif: boolean;
   chantierEstTerritorialisé: boolean;
   estAutoriseAProposerUneValeurAvancement: boolean;
@@ -63,6 +65,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   indicateur,
   détailsIndicateurs,
   detailsIndicateursTerritoire,
+  chantier,
   estInteractif,
   chantierEstTerritorialisé,
   estAutoriseAProposerUneValeurAvancement:
@@ -249,6 +252,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 />
 
                 <IndicateurPropositionValeur
+                  chantier={chantier}
                   detailIndicateur={detailsIndicateur[territoireCode]}
                   estAutoriseAProposerUneValeurAvancement={
                     estAutoriseAProposerUneValeurAvancement
@@ -260,6 +264,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   informationsIndicateurs={informationsIndicateurs}
                   propositionEstVisible={propositionEstVisible}
                   setPropositionEstVisible={setPropositionEstVisible}
+                  territoireCode={territoireCode}
                 />
               </div>
               {detailsIndicateur[territoireCode]?.tendance === "BAISSE" ? (

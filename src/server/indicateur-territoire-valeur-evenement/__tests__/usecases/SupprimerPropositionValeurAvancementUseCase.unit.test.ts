@@ -41,6 +41,7 @@ describe("#SupprimerPropositionValeurAvancementUseCase", () => {
           idAuteurModification: "user-1",
           correlationId: "corr-1",
           ordre: 1,
+          dateCreation: new Date("2024-06-08"),
           donneesComplementaires: {
             motif: "Motif de la proposition",
             sourceDonneeEtMethodeCalcul:
@@ -59,6 +60,7 @@ describe("#SupprimerPropositionValeurAvancementUseCase", () => {
           idAuteurModification: "user-2",
           correlationId: "corr-2",
           ordre: 2,
+          dateCreation: new Date("2024-06-08"),
           donneesComplementaires: {
             motif: "Motif de la modification",
             sourceDonneeEtMethodeCalcul:

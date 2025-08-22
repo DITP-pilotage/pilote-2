@@ -11,6 +11,12 @@ import {
   estPropositionSupprimee,
 } from "@/components/_commons/IndicateursChantier/Bloc/utils";
 import api from "@/server/infrastructure/api/trpc/api";
+import Chantier from "@/server/domain/chantier/Chantier.interface";
+import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
+import { ModaleHistoriqueIndicateurTerritoireValeurEvenement } from "./ModaleHistoriqueIndicateurTerritoireValeurEvenement/ModaleHistoriqueIndicateurTerritoireValeurEvenement";
+
+export const ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT =
+  "modale-historique-indicateur-territoire-valeur-evenement";
 
 export const IndicateurPropositionValeur = ({
   estAutoriseAProposerUneValeurAvancement,
@@ -20,6 +26,8 @@ export const IndicateurPropositionValeur = ({
   detailIndicateur,
   indicateur,
   informationsIndicateurs,
+  chantier,
+  territoireCode,
 }: {
   estAutoriseAProposerUneValeurAvancement: boolean;
   estAutoriseAVoirLesPropositionsDeValeurAvancement: boolean;
@@ -28,7 +36,13 @@ export const IndicateurPropositionValeur = ({
   detailIndicateur: DétailsIndicateur;
   indicateur: Indicateur;
   informationsIndicateurs: InformationsIndicateurs;
+  chantier: Chantier;
+  territoireCode: string;
 }) => {
+  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+
+  const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
+
   const { data: variableContenuFFPropositionValeurAvancementV2 } =
     api.gestionContenu.récupérerVariableContenu.useQuery({
       nomVariableContenu: "NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE_V2",
@@ -79,6 +93,17 @@ export const IndicateurPropositionValeur = ({
         </p>
         <BoutonSousLigné
           ariaControls={
+            ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT +
+            indicateur.id
+          }
+          classNameSupplémentaires="fr-link--xs fr-link--icon-left fr-icon-time-line texte-gris fr-mr-2w"
+          dataFrOpened={false}
+          type="button"
+        >
+          Voir l'historique
+        </BoutonSousLigné>
+        <BoutonSousLigné
+          ariaControls={
             ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id
           }
           classNameSupplémentaires="fr-link--xs fr-link--icon-left fr-icon-edit-line texte-gris"
@@ -87,6 +112,17 @@ export const IndicateurPropositionValeur = ({
         >
           Proposer une autre valeur d'avancement
         </BoutonSousLigné>
+        <ModaleHistoriqueIndicateurTerritoireValeurEvenement
+          chantier={chantier}
+          generatedHTMLID={
+            ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT +
+            indicateur.id
+          }
+          indicateur={indicateur}
+          territoireCode={territoireCode}
+          territoireCodeInsee={territoireSélectionné?.codeInsee || ""}
+          territoireNom={territoireSélectionné?.nom || ""}
+        />
       </div>
     );
   }
@@ -110,6 +146,17 @@ export const IndicateurPropositionValeur = ({
         par la direction de projet
       </p>
       <BoutonSousLigné
+        ariaControls={
+          ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT +
+          indicateur.id
+        }
+        classNameSupplémentaires="fr-link--xs fr-link--icon-left fr-icon-time-line texte-jaune fr-mr-2w"
+        dataFrOpened={false}
+        type="button"
+      >
+        Voir l'historique
+      </BoutonSousLigné>
+      <BoutonSousLigné
         classNameSupplémentaires={`fr-link--xs fr-link--icon-left ${propositionEstVisible ? "fr-icon-eye-off-line" : "fr-icon-eye-line"} texte-jaune `}
         dataFrOpened={false}
         onClick={() => setPropositionEstVisible(!propositionEstVisible)}
@@ -119,6 +166,18 @@ export const IndicateurPropositionValeur = ({
           ? "Masquer la proposition"
           : "Afficher la proposition"}
       </BoutonSousLigné>
+
+      <ModaleHistoriqueIndicateurTerritoireValeurEvenement
+        chantier={chantier}
+        generatedHTMLID={
+          ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT +
+          indicateur.id
+        }
+        indicateur={indicateur}
+        territoireCode={territoireCode}
+        territoireCodeInsee={territoireSélectionné?.codeInsee || ""}
+        territoireNom={territoireSélectionné?.nom || ""}
+      />
     </div>
   );
 };

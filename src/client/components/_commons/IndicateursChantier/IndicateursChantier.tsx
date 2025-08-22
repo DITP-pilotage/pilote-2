@@ -13,6 +13,7 @@ import {
 } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { CartographieIndicateurType } from "./Bloc/Détails/IndicateurDétails";
 import TitreRubrique from "./Bloc/Détails/TitreRubrique/TitreRubrique";
 
@@ -20,6 +21,7 @@ interface IndicateursProps {
   indicateurs: Indicateur[];
   détailsIndicateurs: DétailsIndicateurs;
   detailsIndicateursTerritoire: Record<string, DétailsIndicateurTerritoire>;
+  chantier: Chantier;
   chantierEstTerritorialisé: boolean;
   estInteractif?: boolean;
   estAutoriseAProposerUneValeurAvancement: boolean;
@@ -43,6 +45,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   indicateurs,
   détailsIndicateurs,
   detailsIndicateursTerritoire,
+  chantier,
   chantierEstTerritorialisé,
   estInteractif = true,
   estAutoriseAProposerUneValeurAvancement:
@@ -126,6 +129,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                         cartographieGaucheIndicateur={
                           cartographieGaucheIndicateur
                         }
+                        chantier={chantier}
                         chantierEstTerritorialisé={chantierEstTerritorialisé}
                         detailsIndicateursTerritoire={
                           detailsIndicateursTerritoire

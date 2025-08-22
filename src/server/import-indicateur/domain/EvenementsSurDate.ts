@@ -142,6 +142,7 @@ export class EvenementsSurDate {
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
           ordre: this.prochainOrdre(),
+          dateCreation: new Date(),
         },
       );
     this.ajouterEvenement(evenement);
@@ -168,6 +169,7 @@ export class EvenementsSurDate {
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
           ordre: this.prochainOrdre(),
+          dateCreation: new Date(),
         },
       );
 
@@ -196,6 +198,7 @@ export class EvenementsSurDate {
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
           ordre: this.prochainOrdre(),
+          dateCreation: new Date(),
         },
       );
     this.ajouterEvenement(evenement);
@@ -224,6 +227,7 @@ export class EvenementsSurDate {
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
           ordre: this.prochainOrdre(),
+          dateCreation: new Date(),
         },
       );
 
@@ -253,6 +257,7 @@ export class EvenementsSurDate {
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
           ordre: this.prochainOrdre(),
+          dateCreation: new Date(),
         },
       );
 
@@ -288,6 +293,7 @@ export class EvenementsSurDate {
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
           ordre: this.prochainOrdre(),
+          dateCreation: new Date(),
         },
       );
 
@@ -323,6 +329,7 @@ export class EvenementsSurDate {
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
           ordre: this.prochainOrdre(),
+          dateCreation: new Date(),
         },
       );
 
@@ -360,6 +367,7 @@ export class EvenementsSurDate {
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
           ordre: this.prochainOrdre(),
+          dateCreation: new Date(),
         },
       );
 
@@ -397,6 +405,7 @@ export class EvenementsSurDate {
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
           ordre: this.prochainOrdre(),
+          dateCreation: new Date(),
         },
       );
 
@@ -432,6 +441,7 @@ export class EvenementsSurDate {
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
           ordre: this.prochainOrdre(),
+          dateCreation: new Date(),
         },
       );
 
@@ -467,6 +477,7 @@ export class EvenementsSurDate {
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
           ordre: this.prochainOrdre(),
+          dateCreation: new Date(),
         },
       );
     this.ajouterEvenement(evenementAcceptation);
@@ -484,6 +495,7 @@ export class EvenementsSurDate {
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
           ordre: this.prochainOrdre(),
+          dateCreation: new Date(),
         },
       );
     this.ajouterEvenement(evenementModification);
@@ -521,6 +533,7 @@ export class EvenementsSurDate {
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
           ordre: this.prochainOrdre(),
+          dateCreation: new Date(),
         },
       );
     this.ajouterEvenement(evenementAcceptation);
@@ -538,6 +551,7 @@ export class EvenementsSurDate {
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
           ordre: this.prochainOrdre(),
+          dateCreation: new Date(),
         },
       );
     this.ajouterEvenement(evenementModification);
