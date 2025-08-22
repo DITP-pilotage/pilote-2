@@ -86,7 +86,15 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
           </span>
         );
       case "PROPOSITION_VALEUR_REFUSEE":
-        return "proposition refusée par la direction de projet";
+        return (
+          <div>
+            <p className="fr-mb-0">
+              proposition
+              <span className="fr-text--bold"> refusée</span> par la direction
+              de projet
+            </p>
+          </div>
+        );
       case "PROPOSITION_VALEUR_ACCEPTEE":
         return (
           <div>
@@ -116,6 +124,30 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
             </p>
           </div>
         );
+      case "PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE":
+        return (
+          <div>
+            <p className="fr-mb-0">
+              proposition ignorée suite à un
+              <span className="fr-text--bold"> import de données</span>
+            </p>
+            <p className="fr-mb-0 !texte-blue-france fr-text--bold">
+              → nouvelle valeur affichée dans PILOTE : {valeur}
+            </p>
+          </div>
+        );
+      case "PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE":
+        return (
+          <div>
+            <p className="fr-mb-0">
+              proposition ignorée suite à
+              <span className="fr-text--bold">
+                {" "}
+                l'import d'une valeur d'avancement plus récente
+              </span>
+            </p>
+          </div>
+        );
       default:
         return typeEvenement;
     }
@@ -129,9 +161,12 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
     switch (typeEvenement) {
       case "PROPOSITION_VALEUR_CREEE":
       case "PROPOSITION_VALEUR_MODIFIEE":
-      case "PROPOSITION_VALEUR_REFUSEE":
       case "PROPOSITION_VALEUR_ACCUSEE_RECEPTION":
         return "!background-jaune-moutarde";
+      case "PROPOSITION_VALEUR_REFUSEE":
+      case "PROPOSITION_VALEUR_ACCEPTEE":
+      case "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION":
+        return "!background-bleu-cumulus";
       default:
         return "";
     }
