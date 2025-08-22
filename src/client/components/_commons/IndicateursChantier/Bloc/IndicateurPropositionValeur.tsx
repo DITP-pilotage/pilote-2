@@ -12,10 +12,7 @@ import {
 } from "@/components/_commons/IndicateursChantier/Bloc/utils";
 import api from "@/server/infrastructure/api/trpc/api";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
-import {
-  actionsTerritoiresStore,
-  territoireSélectionnéTerritoiresStore,
-} from "@/stores/useTerritoiresStore/useTerritoiresStore";
+import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import { ModaleHistoriqueIndicateurTerritoireValeurEvenement } from "./ModaleHistoriqueIndicateurTerritoireValeurEvenement/ModaleHistoriqueIndicateurTerritoireValeurEvenement";
 
 export const ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT =

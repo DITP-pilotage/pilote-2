@@ -165,6 +165,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
           idAuteurModification: "user-1",
           correlationId: "corr-1",
           ordre: 1,
+          dateCreation: new Date("2024-06-08"),
           donneesComplementaires: {
             motif: input.motif,
             sourceDonneeEtMethodeCalcul: input.sourceDonneeEtMethodeCalcul,
@@ -182,6 +183,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
           idAuteurModification: "user-2",
           correlationId: "corr-2",
           ordre: 2,
+          dateCreation: new Date("2024-02-01"),
           donneesComplementaires: {
             motif: "Motif de la modification",
             sourceDonneeEtMethodeCalcul:
@@ -198,6 +200,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
           typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: new Date("2024-02-01"),
           valeur: 20,
+          dateCreation: new Date("2024-02-01"),
           idAuteurModification: "user-2",
           correlationId: "corr-2",
           ordre: 3,

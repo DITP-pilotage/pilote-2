@@ -88,6 +88,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId,
           correlationId: "550e8400-e29b-41d4-a716-446655440001",
           ordre: 1,
+          dateCreation: new Date("2024-01-15"),
           donneesComplementaires: {
             motif: "Motif de la proposition",
             sourceDonneeEtMethodeCalcul:
@@ -194,6 +195,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId,
           correlationId: "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
           ordre: 1,
+          dateCreation: new Date("2024-02-01"),
           donneesComplementaires: {
             motif: "Motif de la proposition",
             sourceDonneeEtMethodeCalcul:
@@ -214,6 +216,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId,
           correlationId: "6ba7b811-9dad-11d1-80b4-00c04fd430c8",
           ordre: 2,
+          dateCreation: new Date("2024-02-01"),
           donneesComplementaires: {
             motif: "Motif de la modification",
             sourceDonneeEtMethodeCalcul:
@@ -387,6 +390,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId1,
           correlationId: "6ba7b812-9dad-11d1-80b4-00c04fd430c8",
           ordre: 1,
+          dateCreation: new Date("2024-03-01"),
           donneesComplementaires: {
             motif: "Motif de la proposition",
             sourceDonneeEtMethodeCalcul:
@@ -407,6 +411,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId2,
           correlationId: "6ba7b813-9dad-11d1-80b4-00c04fd430c8",
           ordre: 1,
+          dateCreation: new Date("2024-03-02"),
           donneesComplementaires: {
             motif: "Motif de la modification",
             sourceDonneeEtMethodeCalcul:
@@ -427,6 +432,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId3,
           correlationId: "6ba7b814-9dad-11d1-80b4-00c04fd430c8",
           ordre: 1,
+          dateCreation: new Date("2024-03-02"),
           donneesComplementaires: {
             motif: "Motif de la proposition",
             sourceDonneeEtMethodeCalcul:
@@ -567,6 +573,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId1,
           correlationId: "6ba7b815-9dad-11d1-80b4-00c04fd430c8",
           ordre: 1,
+          dateCreation: new Date(),
           donneesComplementaires: {
             motif: "Motif de la proposition",
             sourceDonneeEtMethodeCalcul:
@@ -587,6 +594,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId2,
           correlationId: "6ba7b816-9dad-11d1-80b4-00c04fd430c8",
           ordre: 1,
+          dateCreation: new Date(),
           donneesComplementaires: {
             motif: "Motif de la modification",
             sourceDonneeEtMethodeCalcul:
@@ -607,6 +615,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId3,
           correlationId: "6ba7b817-9dad-11d1-80b4-00c04fd430c8",
           ordre: 2,
+          dateCreation: new Date(),
           donneesComplementaires: { motif: "Motif d'acceptation" },
         },
       );
@@ -709,6 +718,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId,
           correlationId: "6ba7b818-9dad-11d1-80b4-00c04fd430c8",
           ordre: 1,
+          dateCreation: new Date("2024-05-01"),
           donneesComplementaires: {
             motif: "Motif de la proposition",
             sourceDonneeEtMethodeCalcul:
@@ -844,6 +854,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId1,
           correlationId: "6ba7b819-9dad-11d1-80b4-00c04fd430c8",
           ordre: 1,
+          dateCreation: new Date(),
           donneesComplementaires: {
             motif: "Motif de la proposition",
             sourceDonneeEtMethodeCalcul:
@@ -864,6 +875,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId2,
           correlationId: "6ba7b81a-9dad-11d1-80b4-00c04fd430c8",
           ordre: 1,
+          dateCreation: new Date(),
           donneesComplementaires: {
             motif: "Motif de la modification",
             sourceDonneeEtMethodeCalcul:
@@ -884,6 +896,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId3,
           correlationId: "6ba7b81b-9dad-11d1-80b4-00c04fd430c8",
           ordre: 2,
+          dateCreation: new Date(),
           donneesComplementaires: { motif: "Motif de l'acceptation" },
         },
       );
@@ -1026,6 +1039,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId1,
           correlationId: "6ba7b81c-9dad-11d1-80b4-00c04fd430c8",
           ordre: 1,
+          dateCreation: new Date(),
           donneesComplementaires: undefined,
         },
       );
@@ -1042,6 +1056,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId2,
           correlationId: "6ba7b81d-9dad-11d1-80b4-00c04fd430c8",
           ordre: 2,
+          dateCreation: new Date(),
           donneesComplementaires: undefined,
         },
       );
@@ -1058,6 +1073,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId3,
           correlationId: "6ba7b81e-9dad-11d1-80b4-00c04fd430c8",
           ordre: 1,
+          dateCreation: new Date(),
           donneesComplementaires: undefined,
         },
       );
@@ -1074,6 +1090,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId1,
           correlationId: "6ba7b81f-9dad-11d1-80b4-00c04fd430c8",
           ordre: 1,
+          dateCreation: new Date(),
           donneesComplementaires: {
             motif: "Motif de la proposition",
             sourceDonneeEtMethodeCalcul:
@@ -1094,6 +1111,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           idAuteurModification: userId2,
           correlationId: "6ba7b820-9dad-11d1-80b4-00c04fd430c8",
           ordre: 2,
+          dateCreation: new Date(),
           donneesComplementaires: {
             motif: "Motif de la modification",
             sourceDonneeEtMethodeCalcul:

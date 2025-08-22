@@ -24,11 +24,11 @@ import { DetailsIndicateursContrat } from "@/server/chantiers/app/contrats/Detai
 import { IndicateurPropositionValeur } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurPropositionValeur";
 import { InformationsIndicateurs } from "@/components/_commons/IndicateursChantier/Bloc/InformationsIndicateurs";
 import { LignesPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/LignesPropositionValeurAvancement";
+import Chantier from "@/server/domain/chantier/Chantier.interface";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import useIndicateurBloc from "./useIndicateurBloc";
 import useIndicateurAlerteDateMaj from "./useIndicateurAlerteDateMaj";
 import { ModalePropositionValeurAvancementV2 } from "./ModalePropositionValeurAvancementV2/ModalePropositionValeurAvancementV2";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
 
 export const ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT =
   "modale-suppression-valeur-davancement";

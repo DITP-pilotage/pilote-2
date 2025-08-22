@@ -48,6 +48,7 @@ describe("AccepterPropositionValeurAvancementUseCase", () => {
           idAuteurModification: "user-1",
           correlationId: "corr-1",
           ordre: 1,
+          dateCreation: new Date("2022-01-01"),
           donneesComplementaires: {
             motif: "Motif de la proposition",
             sourceDonneeEtMethodeCalcul:
@@ -66,6 +67,7 @@ describe("AccepterPropositionValeurAvancementUseCase", () => {
           idAuteurModification: "user-2",
           correlationId: "corr-2",
           ordre: 2,
+          dateCreation: new Date("2024-02-01"),
           donneesComplementaires: {
             motif: "Motif de la modification",
             sourceDonneeEtMethodeCalcul:
