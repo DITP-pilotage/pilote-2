@@ -63,6 +63,25 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
         {
           indicId: "INDIC_001",
           territoireCode: "FR",
+          typeEvenement: "PROPOSITION_VALEUR_ACCEPTEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: date2,
+          valeur: 20,
+          donneesComplementaires: {
+            motif: "Proposition valeur",
+          },
+          idAuteurModification: "user1",
+          correlationId: "corr2",
+          ordre: 2,
+          dateCreation: fixedDateCreation,
+        },
+      );
+
+    const event4 =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: "INDIC_001",
+          territoireCode: "FR",
           typeEvenement: "VALEUR_MODIFIEE",
           typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: date2,
@@ -94,7 +113,7 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
 
     // Le repository retourne les événements triés par date desc, puis ordre desc
     indicateurTerritoireValeurEvenementRepository.recupererHistoriqueParIndicIdEtTerritoireCode.mockResolvedValue(
-      [event2, event1, event3], // date2 (ordre 2), date2 (ordre 1), date1 (ordre 1)
+      [event2, event1, event3, event4], // date2 (ordre 2), date2 (ordre 1), date1 (ordre 1)
     );
 
     const result = await useCase.run({
@@ -111,6 +130,7 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
           typeEvenement: event2.typeEvenement,
           typeValeur: event2.typeValeur,
           dateValeur: event2.dateValeur,
+          dateCreation: event2.dateCreation,
           valeur: event2.valeur,
           donneesComplementaires: event2.donneesComplementaires,
           idAuteurModification: event2.idAuteurModification,
@@ -124,6 +144,7 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
           typeEvenement: event1.typeEvenement,
           typeValeur: event1.typeValeur,
           dateValeur: event1.dateValeur,
+          dateCreation: event1.dateCreation,
           valeur: event1.valeur,
           donneesComplementaires: event1.donneesComplementaires,
           idAuteurModification: event1.idAuteurModification,
@@ -139,6 +160,7 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
           typeEvenement: event3.typeEvenement,
           typeValeur: event3.typeValeur,
           dateValeur: event3.dateValeur,
+          dateCreation: event3.dateCreation,
           valeur: event3.valeur,
           donneesComplementaires: event3.donneesComplementaires,
           idAuteurModification: event3.idAuteurModification,
@@ -181,11 +203,14 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
         {
           indicId: "INDIC_001",
           territoireCode: "FR",
-          typeEvenement: "VALEUR_MODIFIEE",
+          typeEvenement: "PROPOSITION_VALEUR_CREEE",
           typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: date,
           valeur: 20,
-          donneesComplementaires: undefined,
+          donneesComplementaires: {
+            motif: "Proposition valeur cree",
+            sourceDonneeEtMethodeCalcul: "source",
+          },
           idAuteurModification: "user1",
           correlationId: "corr2",
           ordre: 3,
@@ -232,6 +257,7 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
         donneesComplementaires: event2.donneesComplementaires,
         idAuteurModification: event2.idAuteurModification,
         correlationId: event2.correlationId,
+        dateCreation: fixedDateCreation,
         ordre: event2.ordre,
       },
       {
@@ -245,6 +271,7 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
         donneesComplementaires: event3.donneesComplementaires,
         idAuteurModification: event3.idAuteurModification,
         correlationId: event3.correlationId,
+        dateCreation: fixedDateCreation,
         ordre: event3.ordre,
       },
       {
@@ -258,6 +285,7 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
         donneesComplementaires: event1.donneesComplementaires,
         idAuteurModification: event1.idAuteurModification,
         correlationId: event1.correlationId,
+        dateCreation: fixedDateCreation,
         ordre: event1.ordre,
       },
     ]);
