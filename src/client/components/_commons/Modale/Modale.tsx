@@ -1,10 +1,10 @@
 import "@gouvfr/dsfr/dist/component/modal/modal.min.css";
 import { FunctionComponent } from "react";
+import clsx from "clsx";
 import Titre from "@/components/_commons/Titre/Titre";
 import ModaleProps from "./Modale.interface";
 import ModaleStyled from "./Modale.styled";
 import useModale from "./useModale";
-import clsx from "clsx";
 
 const Modale: FunctionComponent<ModaleProps> = ({
   children,
