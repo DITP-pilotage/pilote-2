@@ -1,5 +1,6 @@
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 import { ValeurIndicateurTerritoireEvenementBuilder } from "@/server/import-indicateur/app/builder/ValeurIndicateurTerritoireEvenement.builder";
+import { IndicateurDataBuilder } from "@/server/import-indicateur/app/builder/IndicateurData.builder";
 
 describe("EvenementsSurDate", () => {
   const INDIC_ID = "IND-001";
@@ -1847,6 +1848,320 @@ describe("EvenementsSurDate", () => {
           { auteurId: AUTEUR_ID, valeur: 90, motif: "motif" },
         );
       }).toThrow("Aucune proposition de valeur n'est en cours");
+    });
+  });
+
+  describe("#creerEvenementPropositionValeurIgnoreeValeurHistorisee", () => {
+    it("doit créer un événement PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE avec succès quand une proposition est en cours", () => {
+      // GIVEN
+      const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
+        .avecIndicId(INDIC_ID)
+        .avecTerritoireCode(TERRITOIRE_CODE)
+        .avecTypeEvenement("VALEUR_CREEE")
+        .avecDateValeur(new Date("2023-01-01"))
+        .avecValeur(75)
+        .avecOrdre(1)
+        .build();
+
+      const evenementPropositionCreee =
+        new ValeurIndicateurTerritoireEvenementBuilder()
+          .avecIndicId(INDIC_ID)
+          .avecTerritoireCode(TERRITOIRE_CODE)
+          .avecTypeEvenement("PROPOSITION_VALEUR_CREEE")
+          .avecDateValeur(new Date("2023-01-01"))
+          .avecValeur(80)
+          .avecOrdre(2)
+          .build();
+
+      const evenementsSurDate = EvenementsSurDate.pourDate(
+        createIdentifiantFlux(),
+        [evenementValeur, evenementPropositionCreee],
+      );
+
+      // WHEN
+      const nouveauEvenement =
+        evenementsSurDate.creerEvenementPropositionValeurIgnoreeValeurHistorisee(
+          {
+            auteurId: AUTEUR_ID,
+          },
+        );
+
+      // THEN
+      expect(nouveauEvenement.typeEvenement).toEqual(
+        "PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE",
+      );
+      expect(nouveauEvenement.indicId).toEqual(INDIC_ID);
+      expect(nouveauEvenement.territoireCode).toEqual(TERRITOIRE_CODE);
+      expect(nouveauEvenement.typeValeur).toEqual("VALEUR_AVANCEMENT");
+      expect(nouveauEvenement.dateValeur).toEqual(new Date("2023-01-01"));
+      expect(nouveauEvenement.valeur).toEqual(80);
+      expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
+      expect(nouveauEvenement.ordre).toEqual(3);
+      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+    });
+
+    it("doit échouer quand aucune proposition n'est en cours", () => {
+      // GIVEN
+      const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
+        .avecIndicId(INDIC_ID)
+        .avecTerritoireCode(TERRITOIRE_CODE)
+        .avecTypeEvenement("VALEUR_CREEE")
+        .avecDateValeur(new Date("2023-01-01"))
+        .avecValeur(75)
+        .avecOrdre(1)
+        .build();
+
+      const evenementsSurDate = EvenementsSurDate.pourDate(
+        createIdentifiantFlux(),
+        [evenementValeur],
+      );
+
+      // WHEN & THEN
+      expect(() => {
+        evenementsSurDate.creerEvenementPropositionValeurIgnoreeValeurHistorisee(
+          {
+            auteurId: AUTEUR_ID,
+          },
+        );
+      }).toThrow("Aucune proposition de valeur n'est en cours");
+    });
+  });
+
+  describe("#creerEvenementPropositionValeurIgnoreeValeurModifiee", () => {
+    it("doit créer un événement PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE avec succès quand une proposition est en cours", () => {
+      // GIVEN
+      const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
+        .avecIndicId(INDIC_ID)
+        .avecTerritoireCode(TERRITOIRE_CODE)
+        .avecTypeEvenement("VALEUR_CREEE")
+        .avecDateValeur(new Date("2023-01-01"))
+        .avecValeur(75)
+        .avecOrdre(1)
+        .build();
+
+      const evenementPropositionCreee =
+        new ValeurIndicateurTerritoireEvenementBuilder()
+          .avecIndicId(INDIC_ID)
+          .avecTerritoireCode(TERRITOIRE_CODE)
+          .avecTypeEvenement("PROPOSITION_VALEUR_CREEE")
+          .avecDateValeur(new Date("2023-01-01"))
+          .avecValeur(80)
+          .avecOrdre(2)
+          .build();
+
+      const evenementsSurDate = EvenementsSurDate.pourDate(
+        createIdentifiantFlux(),
+        [evenementValeur, evenementPropositionCreee],
+      );
+
+      // WHEN
+      const nouveauEvenement =
+        evenementsSurDate.creerEvenementPropositionValeurIgnoreeValeurModifiee({
+          auteurId: AUTEUR_ID,
+        });
+
+      // THEN
+      expect(nouveauEvenement.typeEvenement).toEqual(
+        "PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE",
+      );
+      expect(nouveauEvenement.indicId).toEqual(INDIC_ID);
+      expect(nouveauEvenement.territoireCode).toEqual(TERRITOIRE_CODE);
+      expect(nouveauEvenement.typeValeur).toEqual("VALEUR_AVANCEMENT");
+      expect(nouveauEvenement.dateValeur).toEqual(new Date("2023-01-01"));
+      expect(nouveauEvenement.valeur).toEqual(80);
+      expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
+      expect(nouveauEvenement.ordre).toEqual(3);
+      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+    });
+
+    it("doit échouer quand aucune proposition n'est en cours", () => {
+      // GIVEN
+      const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
+        .avecIndicId(INDIC_ID)
+        .avecTerritoireCode(TERRITOIRE_CODE)
+        .avecTypeEvenement("VALEUR_CREEE")
+        .avecDateValeur(new Date("2023-01-01"))
+        .avecValeur(75)
+        .avecOrdre(1)
+        .build();
+
+      const evenementsSurDate = EvenementsSurDate.pourDate(
+        createIdentifiantFlux(),
+        [evenementValeur],
+      );
+
+      // WHEN & THEN
+      expect(() => {
+        evenementsSurDate.creerEvenementPropositionValeurIgnoreeValeurModifiee({
+          auteurId: AUTEUR_ID,
+        });
+      }).toThrow("Aucune proposition de valeur n'est en cours");
+    });
+  });
+
+  describe("#creerEvenementValeurCreeeOuModifiee", () => {
+    it("doit créer un événement VALEUR_CREEE avec succès quand estValeurModifiee est false", () => {
+      // GIVEN
+      const evenementsSurDate = EvenementsSurDate.pourDate(
+        createIdentifiantFlux(),
+        [],
+      );
+
+      const indicateurData = new IndicateurDataBuilder()
+        .avecIndicId(INDIC_ID)
+        .avecZoneId(TERRITOIRE_CODE)
+        .avecMetricDate("2023-01-01")
+        .avecMetricValue("85")
+        .build();
+
+      // WHEN
+      const nouveauEvenement =
+        evenementsSurDate.creerEvenementValeurCreeeOuModifiee({
+          indicateurData,
+          auteurId: AUTEUR_ID,
+          estValeurModifiee: false,
+        });
+
+      // THEN
+      expect(nouveauEvenement.typeEvenement).toEqual("VALEUR_CREEE");
+      expect(nouveauEvenement.indicId).toEqual(INDIC_ID);
+      expect(nouveauEvenement.territoireCode).toEqual(TERRITOIRE_CODE);
+      expect(nouveauEvenement.typeValeur).toEqual("VALEUR_AVANCEMENT");
+      expect(nouveauEvenement.dateValeur).toEqual(new Date("2023-01-01"));
+      expect(nouveauEvenement.valeur).toEqual(85);
+      expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
+      expect(nouveauEvenement.ordre).toEqual(1);
+      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+    });
+
+    it("doit créer un événement VALEUR_MODIFIEE avec succès quand estValeurModifiee est true", () => {
+      // GIVEN
+      const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
+        .avecIndicId(INDIC_ID)
+        .avecTerritoireCode(TERRITOIRE_CODE)
+        .avecTypeEvenement("VALEUR_CREEE")
+        .avecDateValeur(new Date("2023-01-01"))
+        .avecValeur(75)
+        .avecOrdre(1)
+        .build();
+
+      const evenementsSurDate = EvenementsSurDate.pourDate(
+        createIdentifiantFlux(),
+        [evenementValeur],
+      );
+
+      const indicateurData = new IndicateurDataBuilder()
+        .avecIndicId(INDIC_ID)
+        .avecZoneId(TERRITOIRE_CODE)
+        .avecMetricDate("2023-01-01")
+        .avecMetricValue("90")
+        .build();
+
+      // WHEN
+      const nouveauEvenement =
+        evenementsSurDate.creerEvenementValeurCreeeOuModifiee({
+          indicateurData,
+          auteurId: AUTEUR_ID,
+          estValeurModifiee: true,
+        });
+
+      // THEN
+      expect(nouveauEvenement.typeEvenement).toEqual("VALEUR_MODIFIEE");
+      expect(nouveauEvenement.indicId).toEqual(INDIC_ID);
+      expect(nouveauEvenement.territoireCode).toEqual(TERRITOIRE_CODE);
+      expect(nouveauEvenement.typeValeur).toEqual("VALEUR_AVANCEMENT");
+      expect(nouveauEvenement.dateValeur).toEqual(new Date("2023-01-01"));
+      expect(nouveauEvenement.valeur).toEqual(90);
+      expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
+      expect(nouveauEvenement.ordre).toEqual(2);
+      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+    });
+  });
+
+  describe("#creerEvenementValeurHistorisee", () => {
+    it("doit créer un événement VALEUR_HISTORISEE avec succès quand une valeur en cours existe", () => {
+      // GIVEN
+      const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
+        .avecIndicId(INDIC_ID)
+        .avecTerritoireCode(TERRITOIRE_CODE)
+        .avecTypeEvenement("VALEUR_CREEE")
+        .avecDateValeur(new Date("2023-01-01"))
+        .avecValeur(75)
+        .avecOrdre(1)
+        .build();
+
+      const evenementsSurDate = EvenementsSurDate.pourDate(
+        createIdentifiantFlux(),
+        [evenementValeur],
+      );
+
+      // WHEN
+      const nouveauEvenement = evenementsSurDate.creerEvenementValeurHistorisee(
+        {
+          auteurId: AUTEUR_ID,
+        },
+      );
+
+      // THEN
+      expect(nouveauEvenement.typeEvenement).toEqual("VALEUR_HISTORISEE");
+      expect(nouveauEvenement.indicId).toEqual(INDIC_ID);
+      expect(nouveauEvenement.territoireCode).toEqual(TERRITOIRE_CODE);
+      expect(nouveauEvenement.typeValeur).toEqual("VALEUR_AVANCEMENT");
+      expect(nouveauEvenement.dateValeur).toEqual(new Date("2023-01-01"));
+      expect(nouveauEvenement.valeur).toEqual(75);
+      expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
+      expect(nouveauEvenement.ordre).toEqual(2);
+      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+    });
+
+    it("doit échouer quand aucune valeur en cours n'existe", () => {
+      // GIVEN
+      const evenementsSurDate = EvenementsSurDate.pourDate(
+        createIdentifiantFlux(),
+        [],
+      );
+
+      // WHEN & THEN
+      expect(() => {
+        evenementsSurDate.creerEvenementValeurHistorisee({
+          auteurId: AUTEUR_ID,
+        });
+      }).toThrow("Pas de valeur en cours pour l'historisation");
+    });
+  });
+
+  describe("#creerEvenementValeurHistoriseeACreation", () => {
+    it("doit créer un événement VALEUR_HISTORISEE avec succès avec les données de l'indicateur", () => {
+      // GIVEN
+      const evenementsSurDate = EvenementsSurDate.pourDate(
+        createIdentifiantFlux(),
+        [],
+      );
+
+      const indicateurData = new IndicateurDataBuilder()
+        .avecIndicId(INDIC_ID)
+        .avecZoneId(TERRITOIRE_CODE)
+        .avecMetricDate("2023-01-01")
+        .avecMetricValue("85.5")
+        .build();
+
+      // WHEN
+      const nouveauEvenement =
+        evenementsSurDate.creerEvenementValeurHistoriseeACreation({
+          indicateurData,
+          auteurId: AUTEUR_ID,
+        });
+
+      // THEN
+      expect(nouveauEvenement.typeEvenement).toEqual("VALEUR_HISTORISEE");
+      expect(nouveauEvenement.indicId).toEqual(INDIC_ID);
+      expect(nouveauEvenement.territoireCode).toEqual(TERRITOIRE_CODE);
+      expect(nouveauEvenement.typeValeur).toEqual("VALEUR_AVANCEMENT");
+      expect(nouveauEvenement.dateValeur).toEqual(new Date("2023-01-01"));
+      expect(nouveauEvenement.valeur).toEqual(85.5);
+      expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
+      expect(nouveauEvenement.ordre).toEqual(1);
+      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
     });
   });
 });
