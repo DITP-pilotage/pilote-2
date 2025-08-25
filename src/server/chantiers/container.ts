@@ -12,7 +12,7 @@ import { PrismaPropositionValeurAvancementRepository } from "@/server/chantiers/
 import { CreerPropositionValeurAvancementUseCase } from "@/server/chantiers/usecases/CreerPropositionValeurAvancementUseCase";
 import { ModifierPropositionValeurAvancementUseCase } from "@/server/chantiers/usecases/ModifierPropositionValeurAvancementUseCase";
 import { InitialDependencies } from "@/server/InitialDependencies";
-import { ExportCsvDesChantiersUseCaseV2 } from "./usecases/ExportCsvDesChantiersUseCaseV2";
+import { ExportCsvDesChantiersUseCase } from "./usecases/ExportCsvDesChantiersUseCase";
 import { TerritoireRepository } from "./domain/ports/TerritoireRepository";
 import { PrismaTerritoireRepository } from "./infrastructure/adapters/PrismaTerritoireRepository";
 import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";
@@ -23,6 +23,7 @@ import { BrevoEnvoieEmailService } from "./infrastructure/adapters/BrevoEnvoieEm
 import { RecupererDetailsIndicateursV2UseCase } from "./usecases/RecupererDetailsIndicateursV2UseCase";
 import { RecupererChantiersAccessiblesEnLectureUseCaseV2 } from "./usecases/RecupererChantiersAccessiblesEnLectureUseCaseV2";
 import RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2 from "./usecases/RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2";
+import { ExportCsvDesChantiersUseCaseV2 } from "./usecases/ExportCsvDesChantiersUseCaseV2";
 
 export type ChantierDependencies = {
   chantierRepository: ChantierRepository;
@@ -32,6 +33,7 @@ export type ChantierDependencies = {
   utilisateurRepository: UtilisateurRepository;
   envoieEmailService: EnvoieEmailService;
   recupererDonneesChantierQuery: RecupererDonneesChantierQuery;
+  exportCsvDesChantiersUseCase: ExportCsvDesChantiersUseCase;
   exportCsvDesChantiersUseCaseV2: ExportCsvDesChantiersUseCaseV2;
   exportCsvDesIndicateursUseCaseV2: ExportCsvDesIndicateursUseCaseV2;
   exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase;
@@ -56,6 +58,7 @@ export const getChantiersContainer = (
     utilisateurRepository: asClass(PrismaUtilisateurRepository),
     envoieEmailService: asClass(BrevoEnvoieEmailService),
     recupererDonneesChantierQuery: asClass(RecupererDonneesChantierQuery),
+    exportCsvDesChantiersUseCase: asClass(ExportCsvDesChantiersUseCase),
     exportCsvDesChantiersUseCaseV2: asClass(ExportCsvDesChantiersUseCaseV2),
     exportCsvDesIndicateursUseCaseV2: asClass(ExportCsvDesIndicateursUseCaseV2),
     exportCsvDesHistoriquesIndicateursUseCase: asClass(
