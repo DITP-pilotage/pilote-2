@@ -4,7 +4,6 @@ import { RecupererDonneesChantierQuery } from "@/server/chantiers/infrastructure
 import { PrismaChantierRepository } from "@/server/chantiers/infrastructure/adapters/PrismaChantierRepository";
 import { PrismaIndicateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository";
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
-import { ExportCsvDesIndicateursUseCaseV2 } from "@/server/chantiers/usecases/ExportCsvDesIndicateursUseCaseV2";
 import { ExportCsvDesHistoriquesIndicateursUseCase } from "@/server/chantiers/usecases/ExportCsvDesHistoriquesIndicateursUseCase";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { PropositionValeurAvancementRepository } from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
@@ -24,6 +23,9 @@ import { RecupererDetailsIndicateursV2UseCase } from "./usecases/RecupererDetail
 import { RecupererChantiersAccessiblesEnLectureUseCaseV2 } from "./usecases/RecupererChantiersAccessiblesEnLectureUseCaseV2";
 import RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2 from "./usecases/RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2";
 import { ExportCsvDesChantiersUseCaseV2 } from "./usecases/ExportCsvDesChantiersUseCaseV2";
+import { ExportCsvDesIndicateursUseCase } from "./usecases/ExportCsvDesIndicateursUseCase";
+import { ExportCsvDesIndicateursUseCaseV2 } from "./usecases/ExportCsvDesIndicateursUseCaseV2";
+import { ExportCsvDesHistoriquesIndicateursUseCaseV2 } from "./usecases/ExportCsvDesHistoriquesIndicateursUseCaseV2";
 
 export type ChantierDependencies = {
   chantierRepository: ChantierRepository;
@@ -35,8 +37,10 @@ export type ChantierDependencies = {
   recupererDonneesChantierQuery: RecupererDonneesChantierQuery;
   exportCsvDesChantiersUseCase: ExportCsvDesChantiersUseCase;
   exportCsvDesChantiersUseCaseV2: ExportCsvDesChantiersUseCaseV2;
+  exportCsvDesIndicateursUseCase: ExportCsvDesIndicateursUseCase;
   exportCsvDesIndicateursUseCaseV2: ExportCsvDesIndicateursUseCaseV2;
   exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase;
+  exportCsvDesHistoriquesIndicateursUseCaseV2: ExportCsvDesHistoriquesIndicateursUseCaseV2;
   creerPropositionValeurAvancementUseCase: CreerPropositionValeurAvancementUseCase;
   modifierPropositionValeurAvancementUseCase: ModifierPropositionValeurAvancementUseCase;
   envoyerLesRapportsPropositionValeurAvancementUseCase: EnvoyerLesRapportsPropositionValeurAvancementUseCase;
@@ -60,9 +64,13 @@ export const getChantiersContainer = (
     recupererDonneesChantierQuery: asClass(RecupererDonneesChantierQuery),
     exportCsvDesChantiersUseCase: asClass(ExportCsvDesChantiersUseCase),
     exportCsvDesChantiersUseCaseV2: asClass(ExportCsvDesChantiersUseCaseV2),
+    exportCsvDesIndicateursUseCase: asClass(ExportCsvDesIndicateursUseCase),
     exportCsvDesIndicateursUseCaseV2: asClass(ExportCsvDesIndicateursUseCaseV2),
     exportCsvDesHistoriquesIndicateursUseCase: asClass(
       ExportCsvDesHistoriquesIndicateursUseCase,
+    ),
+    exportCsvDesHistoriquesIndicateursUseCaseV2: asClass(
+      ExportCsvDesHistoriquesIndicateursUseCaseV2,
     ),
     creerPropositionValeurAvancementUseCase: asClass(
       CreerPropositionValeurAvancementUseCase,

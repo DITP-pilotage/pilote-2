@@ -10,9 +10,9 @@ import { recupererJalon } from "@/components/_commons/IndicateursChantier/Bloc/V
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { getContainer } from "@/server/dependances";
 import { Maille } from "@/server/domain/maille/Maille.interface";
-import { ExportCsvDesIndicateursUseCase } from "@/server/chantiers/usecases/ExportCsvDesIndicateursUseCase";
+import { ExportCsvDesIndicateursUseCaseV2 } from "@/server/chantiers/usecases/ExportCsvDesIndicateursUseCaseV2";
 
-export const handleExportDesIndicateurs = async (
+export const handleExportDesIndicateursV2 = async (
   request: NextApiRequest,
   response: NextApiResponse,
 ): Promise<void> => {
@@ -69,7 +69,7 @@ export const handleExportDesIndicateurs = async (
       request.query.estEnAlertePossedePropositionsValeurAvancement === "true",
   } satisfies OptionsExport;
 
-  const headersColumns = ExportCsvDesIndicateursUseCase.NOMS_COLONNES(
+  const headersColumns = ExportCsvDesIndicateursUseCaseV2.NOMS_COLONNES(
     jalon,
     optionsExport,
     session.profil,
@@ -115,7 +115,7 @@ export const handleExportDesIndicateurs = async (
     );
 
   const exportCsvDesIndicateursUseCase = getContainer("chantiers").resolve(
-    "exportCsvDesIndicateursUseCase",
+    "exportCsvDesIndicateursUseCaseV2",
   );
 
   for await (const partialResult of exportCsvDesIndicateursUseCase.run({
