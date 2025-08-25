@@ -8,4 +8,5 @@ export default interface ModaleProps {
   ouvertureCallback?: () => void;
   fermetureCallback?: () => void;
   tailleModale?: "md" | "lg";
+  scrollable?: boolean;
 }

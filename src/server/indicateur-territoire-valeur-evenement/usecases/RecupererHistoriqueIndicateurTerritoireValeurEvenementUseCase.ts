@@ -72,11 +72,9 @@ export class RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase {
         historiqueGroupe[dateKey] = [];
       }
 
-      if (evenement.typeEvenement !== "VALEUR_MODIFIEE") {
-        historiqueGroupe[dateKey].push(
-          presenterEnIndicateurTerritoireValeurEvenement(evenement),
-        );
-      }
+      historiqueGroupe[dateKey].push(
+        presenterEnIndicateurTerritoireValeurEvenement(evenement),
+      );
     });
 
     const historiqueTrie: HistoriqueIndicateurTerritoireValeurEvenementContrat =

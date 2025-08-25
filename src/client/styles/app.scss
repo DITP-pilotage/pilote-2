@@ -205,6 +205,14 @@
   white-space: nowrap;
 }
 
+.overflow-y-auto {
+  overflow-y: auto!important;
+}
+
+.overflow-y-scroll {
+  overflow-y: scroll!important;
+}
+
 .fr-text-title--blue-france {
   color: var(--text-title-blue-france) !important;
 }

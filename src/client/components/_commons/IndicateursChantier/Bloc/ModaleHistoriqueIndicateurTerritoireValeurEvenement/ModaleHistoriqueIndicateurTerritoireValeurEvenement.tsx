@@ -44,6 +44,12 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
             → nouvelle valeur affichée dans PILOTE : {valeur}
           </p>
         );
+      case "VALEUR_MODIFIEE":
+        return (
+          <p className="fr-mb-0 !texte-blue-france fr-text--bold">
+            → La valeur a été modifiée dans PILOTE : {valeur}
+          </p>
+        );
       case "VALEUR_HISTORISEE":
         return (
           <span>
@@ -97,44 +103,29 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
         );
       case "PROPOSITION_VALEUR_ACCEPTEE":
         return (
-          <div>
-            <p className="fr-mb-0">
-              proposition
-              <span className="fr-text--bold"> acceptée</span> par la direction
-              de projet
-            </p>
-            <p className="fr-mb-0 !texte-blue-france fr-text--bold">
-              → nouvelle valeur affichée dans PILOTE : {valeur}
-            </p>
-          </div>
+          <p className="fr-mb-0">
+            proposition
+            <span className="fr-text--bold"> acceptée</span> par la direction de
+            projet
+          </p>
         );
       case "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION":
         return (
-          <div>
-            <p className="fr-mb-0">
-              proposition
-              <span className="fr-text--bold">
-                {" "}
-                acceptée avec modification
-              </span>{" "}
-              par la direction de projet
-            </p>
-            <p className="fr-mb-0 !texte-blue-france fr-text--bold">
-              → nouvelle valeur affichée dans PILOTE : {valeur}
-            </p>
-          </div>
+          <p className="fr-mb-0">
+            proposition
+            <span className="fr-text--bold">
+              {" "}
+              acceptée avec modification
+            </span>{" "}
+            par la direction de projet
+          </p>
         );
       case "PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE":
         return (
-          <div>
-            <p className="fr-mb-0">
-              proposition ignorée suite à un
-              <span className="fr-text--bold"> import de données</span>
-            </p>
-            <p className="fr-mb-0 !texte-blue-france fr-text--bold">
-              → nouvelle valeur affichée dans PILOTE : {valeur}
-            </p>
-          </div>
+          <p className="fr-mb-0">
+            proposition ignorée suite à un
+            <span className="fr-text--bold"> import de données</span>
+          </p>
         );
       case "PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE":
         return (
@@ -179,6 +170,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
   return (
     <Modale
       idHtml={generatedHTMLID}
+      scrollable
       tailleModale="lg"
       titre="Historique des actions sur les valeurs d'avancement"
     >

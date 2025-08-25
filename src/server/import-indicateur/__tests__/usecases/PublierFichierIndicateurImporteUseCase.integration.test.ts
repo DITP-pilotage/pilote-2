@@ -606,7 +606,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     );
     expect(evenementIgnore.typeValeur).toEqual("VALEUR_AVANCEMENT");
     expect(evenementIgnore.dateValeur).toEqual(new Date("2023-01-01"));
-    expect(evenementIgnore.valeur).toEqual(90);
+    expect(evenementIgnore.valeur).toEqual(85);
     expect(evenementIgnore.ordre).toEqual(3);
 
     const evenementModifie = evenementCaptor.value[1];
@@ -684,7 +684,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     );
     expect(evenementIgnore.typeValeur).toEqual("VALEUR_AVANCEMENT");
     expect(evenementIgnore.dateValeur).toEqual(new Date("2023-01-01"));
-    expect(evenementIgnore.valeur).toEqual(95);
+    expect(evenementIgnore.valeur).toEqual(85);
     expect(evenementIgnore.ordre).toEqual(3);
 
     const evenementModifie = evenementCaptor.value[1];
@@ -777,7 +777,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     );
     expect(evenementIgnore.typeValeur).toEqual("VALEUR_AVANCEMENT");
     expect(evenementIgnore.dateValeur).toEqual(new Date("2023-01-01"));
-    expect(evenementIgnore.valeur).toEqual(95);
+    expect(evenementIgnore.valeur).toEqual(85);
     expect(evenementIgnore.ordre).toEqual(4);
 
     const evenementModifie = evenementCaptor.value[1];

@@ -1,5 +1,6 @@
 import "@gouvfr/dsfr/dist/component/modal/modal.min.css";
 import { FunctionComponent } from "react";
+import clsx from "clsx";
 import Titre from "@/components/_commons/Titre/Titre";
 import ModaleProps from "./Modale.interface";
 import ModaleStyled from "./Modale.styled";
@@ -13,6 +14,7 @@ const Modale: FunctionComponent<ModaleProps> = ({
   ouvertureCallback,
   fermetureCallback,
   tailleModale = "md",
+  scrollable = false,
 }) => {
   const { modaleRef } = useModale(ouvertureCallback, fermetureCallback);
 
@@ -46,7 +48,12 @@ const Modale: FunctionComponent<ModaleProps> = ({
               ) : null}
               {!!sousTitre && <p className="fr-text--lg bold">{sousTitre}</p>}
             </div>
-            <div className="fr-modal__content fr-px-4w fr-mb-4w modale-contenu">
+            <div
+              className={clsx(
+                "fr-modal__content fr-px-4w fr-mb-4w h-full",
+                scrollable ? "overflow-y-scroll" : "overflow-y-auto",
+              )}
+            >
               {children}
             </div>
           </div>
