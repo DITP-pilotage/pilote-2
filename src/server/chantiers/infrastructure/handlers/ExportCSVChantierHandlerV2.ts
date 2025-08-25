@@ -12,7 +12,7 @@ import { getContainer } from "@/server/dependances";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { ExportCsvDesChantiersUseCase } from "@/server/chantiers/usecases/ExportCsvDesChantiersUseCase";
 
-export const handleExportDesChantiers = async (
+export const handleExportDesChantiersV2 = async (
   request: NextApiRequest,
   response: NextApiResponse,
 ): Promise<void> => {
@@ -109,7 +109,7 @@ export const handleExportDesChantiers = async (
     );
 
   const exportCsvDesChantiersUseCase = getContainer("chantiers").resolve(
-    "exportCsvDesChantiersUseCase",
+    "exportCsvDesChantiersUseCaseV2",
   );
 
   for await (const partialResult of exportCsvDesChantiersUseCase.run({
