@@ -175,7 +175,7 @@ interface Dependencies {
   indicateurRepository: IndicateurRepository;
 }
 
-export class ExportCsvDesIndicateursUseCaseV2 {
+export class ExportCsvDesIndicateursUseCase {
   public static readonly NOMS_COLONNES = (
     jalon: number,
     optionsExport: OptionsExport,
@@ -287,7 +287,7 @@ export class ExportCsvDesIndicateursUseCaseV2 {
 
       const input = partialChantierIds.map((id) =>
         this.indicateurRepository
-          .recupererPourExportsV2(id, territoireCodes, jalon, estAvecCadrage)
+          .recupererPourExports(id, territoireCodes, jalon, estAvecCadrage)
           .then((listeIndicateurTerritoireExport) =>
             (listeIndicateurTerritoireExport || []).reduce(
               (acc, indicateursPourExport) => {

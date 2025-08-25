@@ -83,12 +83,16 @@ export const EtapeRecapitulatif = ({
     indicateurs: {
       id: "indicateurs" as const,
       baseDuNomDeFichier: "PILOTE-Indicateurs",
-      url: "/api/export/indicateurs-v2",
+      url: variableContenuFFPropositionValeurAvancementV2
+        ? "/api/export/indicateurs-v2"
+        : "/api/export/indicateurs",
     },
     "historique-indicateurs": {
       id: "historique-indicateurs" as const,
       baseDuNomDeFichier: "PILOTE-Historique-Indicateurs",
-      url: "/api/export/historique-indicateurs",
+      url: variableContenuFFPropositionValeurAvancementV2
+        ? "/api/export/historique-indicateurs-v2"
+        : "/api/export/historique-indicateurs",
     },
   };
 
