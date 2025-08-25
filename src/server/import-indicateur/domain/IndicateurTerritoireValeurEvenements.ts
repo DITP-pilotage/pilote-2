@@ -84,7 +84,7 @@ export class IndicateurTerritoireValeurEvenements {
       //    ici on enregistre les evenements mais d'impact sur la proposition réelle
       nouveauxEvenements.push(
         evenementsPourCetteDate.creerEvenementPropositionValeurIgnoreeValeurModifiee(
-          { auteurId },
+          { auteurId, valeur: Number.parseFloat(indicateurData.metricValue) },
         ),
       );
     }
