@@ -1958,6 +1958,7 @@ describe("EvenementsSurDate", () => {
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurIgnoreeValeurModifiee({
           auteurId: AUTEUR_ID,
+          valeur: 90,
         });
 
       // THEN
@@ -1968,7 +1969,7 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.territoireCode).toEqual(TERRITOIRE_CODE);
       expect(nouveauEvenement.typeValeur).toEqual("VALEUR_AVANCEMENT");
       expect(nouveauEvenement.dateValeur).toEqual(new Date("2023-01-01"));
-      expect(nouveauEvenement.valeur).toEqual(80);
+      expect(nouveauEvenement.valeur).toEqual(90);
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(3);
       expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
@@ -1994,6 +1995,7 @@ describe("EvenementsSurDate", () => {
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurIgnoreeValeurModifiee({
           auteurId: AUTEUR_ID,
+          valeur: 85,
         });
       }).toThrow("Aucune proposition de valeur n'est en cours");
     });

@@ -207,8 +207,10 @@ export class EvenementsSurDate {
 
   creerEvenementPropositionValeurIgnoreeValeurModifiee({
     auteurId,
+    valeur,
   }: {
     auteurId: string;
+    valeur: number;
   }) {
     const evenementExistant = this.evenementPropositionValeurEnCours();
     if (!evenementExistant)
@@ -222,7 +224,7 @@ export class EvenementsSurDate {
           typeEvenement: "PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE",
           typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: evenementExistant.dateValeur,
-          valeur: evenementExistant.valeur,
+          valeur,
           donneesComplementaires: undefined,
           idAuteurModification: auteurId,
           correlationId: randomUUID(),
