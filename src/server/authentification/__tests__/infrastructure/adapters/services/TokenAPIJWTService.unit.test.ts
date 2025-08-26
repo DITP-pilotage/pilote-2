@@ -8,7 +8,7 @@ describe("TokenAPIJWTService", () => {
 
   beforeEach(() => {
     tokenAPIJWTService = new TokenAPIJWTService({
-      secret: configuration.tokenAPI.secret,
+      secret: configuration().tokenAPI.secret,
     });
   });
 
@@ -25,7 +25,7 @@ describe("TokenAPIJWTService", () => {
       // Then
       const tokenDecode = await decode({
         token: result,
-        secret: configuration.tokenAPI.secret,
+        secret: configuration().tokenAPI.secret,
       });
       expect(tokenDecode?.email).toEqual("test@example.com");
     });
@@ -37,7 +37,7 @@ describe("TokenAPIJWTService", () => {
       const email = "test@example.com";
       const token = await encode({
         token: { email },
-        secret: configuration.tokenAPI.secret,
+        secret: configuration().tokenAPI.secret,
       });
       // When
       const result = await tokenAPIJWTService.decoderTokenAPI(token);

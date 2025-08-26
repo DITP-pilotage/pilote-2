@@ -54,7 +54,7 @@ export async function getServerSideProps({
     Number.parseInt(query.jalon as string) ||
     getAnneeDateDeBascule(
       new Date(),
-      configuration.dateBasculeAffichageValeursAnneePrecedente,
+      configuration().dateBasculeAffichageValeursAnneePrecedente,
     );
 
   const session = await getServerSession(req, res, authOptions);

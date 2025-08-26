@@ -124,7 +124,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   }
 
   async _récupérerChantiers() {
-    const whereOptions: Prisma.chantier_identiteWhereInput = configuration
+    const whereOptions: Prisma.chantier_identiteWhereInput = configuration()
       .featureFlip.ppgArchive
       ? {}
       : {

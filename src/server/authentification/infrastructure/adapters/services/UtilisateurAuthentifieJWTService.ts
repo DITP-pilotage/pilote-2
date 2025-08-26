@@ -31,7 +31,7 @@ export class UtilisateurAuthentifieJWTService {
     tokenJWT: string,
   ): Promise<UtilisateurAuthentifie> {
     const decodedToken = await new TokenAPIJWTService({
-      secret: configuration.tokenAPI.secret,
+      secret: configuration().tokenAPI.secret,
     }).decoderTokenAPI(tokenJWT);
     const email = decodedToken?.email!;
     const utilisateur = await this.utilisateurRepository.récupérer(email);

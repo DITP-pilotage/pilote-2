@@ -84,7 +84,7 @@ export const handleExportDesIndicateurs = async (
 
   stringifier.pipe(response);
 
-  const chunkSize = configuration.export.csvIndicateursChunkSize;
+  const chunkSize = configuration().export.csvIndicateursChunkSize;
 
   const habilitation = new Habilitation(session.habilitations);
 

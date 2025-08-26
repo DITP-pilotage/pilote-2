@@ -97,7 +97,7 @@ export const getServerSideProps: GetServerSideProps<
     Number.parseInt(query.jalon as string) ||
     getAnneeDateDeBascule(
       new Date(),
-      configuration.dateBasculeAffichageValeursAnneePrecedente,
+      configuration().dateBasculeAffichageValeursAnneePrecedente,
     );
 
   const mailleSelectionnee =
@@ -172,7 +172,7 @@ export const getServerSideProps: GetServerSideProps<
 
   const mapAxes = new Map<string, Axe>(axes.map((axe) => [axe.id, axe]));
 
-  const chantiers = configuration.featureFlip.propositionValeurAvancementV2
+  const chantiers = configuration().featureFlip.propositionValeurAvancementV2
     ? await getContainer("chantiers")
         .resolve(
           "recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2",

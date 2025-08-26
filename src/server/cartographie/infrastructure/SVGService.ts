@@ -8,7 +8,7 @@ const SERVER_ROOT = "/public/img/";
 const SVG_FILEPATH = join(
   process.cwd(),
   SERVER_ROOT,
-  configuration.cartographie.svgPath,
+  configuration().cartographie.svgPath,
 );
 const PREFIX_ATTR_SVG = "attr-";
 

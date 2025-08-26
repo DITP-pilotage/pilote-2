@@ -83,7 +83,7 @@ export const handleExportDesChantiers = async (
   const habilitation = new Habilitation(session.habilitations);
   const territoireCodes =
     habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
-  const chunkSize = configuration.export.csvChantiersChunkSize;
+  const chunkSize = configuration().export.csvChantiersChunkSize;
 
   let territoireARecuperer = territoireCodes;
 

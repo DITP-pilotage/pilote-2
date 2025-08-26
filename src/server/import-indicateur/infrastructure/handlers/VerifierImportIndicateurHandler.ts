@@ -43,7 +43,7 @@ export class VerifierFichierImportIndicateurHandler {
   }
 
   async handle(request: NextApiRequest, response: NextApiResponse) {
-    const estSecuredEnv = configuration.env === "production";
+    const estSecuredEnv = configuration().env === "production";
 
     const formData = await parseForm(request);
 
@@ -57,7 +57,7 @@ export class VerifierFichierImportIndicateurHandler {
     const sessionToken = await getToken({
       req: request,
       secureCookie: estSecuredEnv,
-      secret: configuration.nextAuth.secret,
+      secret: configuration().nextAuth.secret,
     });
     const session = await getServerSession(request, response, authOptions);
 

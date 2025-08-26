@@ -8,9 +8,27 @@ import {
   useQueryStates,
 } from "nuqs";
 import { horodatage } from "@/client/utils/date/date";
+import api from "@/server/infrastructure/api/trpc/api";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelecteurJalon";
-import api from "@/server/infrastructure/api/trpc/api";
+
+const ressources = {
+  chantiers: {
+    id: "chantiers" as const,
+    baseDuNomDeFichier: "PILOTE-Chantiers",
+    url: "/api/export/chantiers-v2",
+  },
+  indicateurs: {
+    id: "indicateurs" as const,
+    baseDuNomDeFichier: "PILOTE-Indicateurs",
+    url: "/api/export/indicateurs-v2",
+  },
+  "historique-indicateurs": {
+    id: "historique-indicateurs" as const,
+    baseDuNomDeFichier: "PILOTE-Historique-Indicateurs",
+    url: "/api/export/historique-indicateurs",
+  },
+};
 
 const chantierDonneesExportable = {
   identifiant: "identifiants du chantier et du territoire",
@@ -67,34 +85,6 @@ export const EtapeRecapitulatif = ({
       nomVariableContenu:
         "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE",
     });
-  const { data: variableContenuFFPropositionValeurAvancementV2 } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE_V2",
-    });
-
-  const ressources = {
-    chantiers: {
-      id: "chantiers" as const,
-      baseDuNomDeFichier: "PILOTE-Chantiers",
-      url: variableContenuFFPropositionValeurAvancementV2
-        ? "/api/export/chantiers-v2"
-        : "/api/export/chantiers",
-    },
-    indicateurs: {
-      id: "indicateurs" as const,
-      baseDuNomDeFichier: "PILOTE-Indicateurs",
-      url: variableContenuFFPropositionValeurAvancementV2
-        ? "/api/export/indicateurs-v2"
-        : "/api/export/indicateurs",
-    },
-    "historique-indicateurs": {
-      id: "historique-indicateurs" as const,
-      baseDuNomDeFichier: "PILOTE-Historique-Indicateurs",
-      url: variableContenuFFPropositionValeurAvancementV2
-        ? "/api/export/historique-indicateurs-v2"
-        : "/api/export/historique-indicateurs",
-    },
-  };
 
   const { listeJalonAAfficher } = useSelecteurJalon();
   const [filtres] = useQueryStates({

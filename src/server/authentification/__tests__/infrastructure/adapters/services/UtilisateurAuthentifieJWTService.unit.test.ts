@@ -34,7 +34,7 @@ describe("UtilisateurAuthentifieJWTService", () => {
       .withEmail("test@example.com")
       .build();
     const tokenJWT = await new TokenAPIJWTService({
-      secret: configuration.tokenAPI.secret,
+      secret: configuration().tokenAPI.secret,
     }).creerTokenAPI(tokenAPIInformation);
     const habilitationsAPI = new HabilitationAuthentitificationAPIBuilder()
       .ajouterHabilitationLecture("chantiers", [
@@ -109,7 +109,7 @@ describe("UtilisateurAuthentifieJWTService", () => {
       .withEmail("test@example.com")
       .build();
     const tokenJWT = await new TokenAPIJWTService({
-      secret: configuration.tokenAPI.secret,
+      secret: configuration().tokenAPI.secret,
     }).creerTokenAPI(tokenAPIInformation);
     utilisateurRepository.récupérer.mockResolvedValue(null);
     expect.assertions(1);

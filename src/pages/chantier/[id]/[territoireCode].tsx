@@ -99,7 +99,7 @@ export const getServerSideProps: GetServerSideProps<
     Number.parseInt(query.jalon as string) ||
     getAnneeDateDeBascule(
       new Date(),
-      configuration.dateBasculeAffichageValeursAnneePrecedente,
+      configuration().dateBasculeAffichageValeursAnneePrecedente,
     );
   const cartographieGaucheChantier =
     (query.carteChG as CartographieType) || "avancementMandat";
@@ -158,7 +158,7 @@ export const getServerSideProps: GetServerSideProps<
       valeurFFPpgArchive,
       nouveauxGraphiquesSontActifs,
     ] = await Promise.all([
-      configuration.featureFlip.propositionValeurAvancementV2
+      configuration().featureFlip.propositionValeurAvancementV2
         ? getContainer("chantiers")
             .resolve("recupererChantierUseCaseV2")
             .run(chantierId, session.habilitations, session.profil, jalon)
@@ -182,7 +182,7 @@ export const getServerSideProps: GetServerSideProps<
       )
         .run(chantierId, session.habilitations)
         .catch(() => null),
-      configuration.featureFlip.propositionValeurAvancementV2
+      configuration().featureFlip.propositionValeurAvancementV2
         ? getContainer("chantiers")
             .resolve("recupererDetailsIndicateursV2UseCase")
             .run(chantierId, territoireCodes, session.habilitations, jalon)
@@ -278,7 +278,7 @@ export const getServerSideProps: GetServerSideProps<
     const detailsIndicateursTerritoire: Record<
       string,
       DétailsIndicateurTerritoire
-    > = configuration.featureFlip.propositionValeurAvancementV2
+    > = configuration().featureFlip.propositionValeurAvancementV2
       ? await getContainer("chantiers")
           .resolve("listerDetailsIndicateurTerritoireUseCaseV2")
           .run(

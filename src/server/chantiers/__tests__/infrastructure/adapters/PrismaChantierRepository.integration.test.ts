@@ -5,6 +5,7 @@ import { PrismaChantierRepository } from "@/server/chantiers/infrastructure/adap
 import { prisma } from "@/server/db/prisma";
 import { Utilisateur } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
+import { baseConfig } from "@/config";
 
 describe("PrismaChantierRepository", () => {
   let prismaChantierRepository: PrismaChantierRepository;
@@ -12,6 +13,863 @@ describe("PrismaChantierRepository", () => {
   beforeEach(() => {
     prismaChantierRepository = new PrismaChantierRepository();
   });
+
+  describe.each([false, true])(
+    "#récupérerPourExportsV2 - featureFlip %s - Proposition Avancement",
+    (estFeatureFlip) => {
+      beforeEach(() => {
+        baseConfig.set(
+          "featureFlip.propositionValeurAvancementV2",
+          estFeatureFlip,
+        );
+      });
+
+      it("aUnTauxAvancementDepartemental est vrai, si le chantier ne possède aucun département applicable", async () => {
+        // Given
+        const optionsPourExport: OptionsExport = {
+          estBarometre: true,
+          territorialisation: ["regionale", "departementale"],
+          perimetreIds: [],
+          listeChantierId: [],
+          listeMeteos: [],
+          listeStatuts: [],
+          listeOptionsExport: [],
+          territoireCode: undefined,
+          estEnAlerteTauxAvancementNonCalculé: false,
+          estEnAlerteÉcart: false,
+          estEnAlerteBaisse: false,
+          estEnAlerteAbscenceTauxAvancementDepartemental: false,
+          estEnAlerteMétéoNonRenseignée: false,
+          estEnAlertePossedePropositionsValeurAvancement: false,
+        };
+
+        await prisma.chantier_identite.createMany({
+          data: [
+            {
+              id: "CH-001",
+              nom: "Chantier 001",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+            },
+          ],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              maille: "NAT",
+              code_insee: "FR",
+              territoire_code: "NAT-FR",
+              zone_id: "FRANCE",
+              taux_avancement_mandat: 20,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "01",
+              territoire_code: "DEPT-01",
+              zone_id: "D01",
+              taux_avancement_mandat: null,
+              est_applicable: false,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "02",
+              territoire_code: "DEPT-02",
+              zone_id: "D02",
+              taux_avancement_mandat: null,
+              est_applicable: false,
+            },
+            {
+              id: "CH-001",
+              maille: "REG",
+              code_insee: "84",
+              territoire_code: "REG-84",
+              zone_id: "R84",
+              taux_avancement_mandat: 10,
+              est_applicable: true,
+            },
+          ],
+        });
+
+        // When
+        const result = await prismaChantierRepository.recupererPourExports(
+          "CH-001",
+          ["NAT-FR"],
+          optionsPourExport,
+          2025,
+        );
+
+        // Then
+        expect(result).toHaveLength(1);
+        expect(result![0].aUnTauxAvancementDepartemental).toBeTrue();
+      });
+      it("aUnTauxAvancementDepartemental est vrai, si le chantier possède au moins un département avec un taux d'avancement non null", async () => {
+        // Given
+        const optionsPourExport: OptionsExport = {
+          estBarometre: true,
+          territorialisation: ["regionale", "departementale"],
+          perimetreIds: [],
+          listeChantierId: [],
+          listeMeteos: [],
+          listeStatuts: [],
+          listeOptionsExport: [],
+          territoireCode: undefined,
+          estEnAlerteTauxAvancementNonCalculé: false,
+          estEnAlerteÉcart: false,
+          estEnAlerteBaisse: false,
+          estEnAlerteAbscenceTauxAvancementDepartemental: false,
+          estEnAlerteMétéoNonRenseignée: false,
+          estEnAlertePossedePropositionsValeurAvancement: false,
+        };
+
+        await prisma.chantier_identite.createMany({
+          data: [
+            {
+              id: "CH-001",
+              nom: "Chantier 001",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+            },
+            {
+              id: "CH-002",
+              nom: "Chantier 002",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+            },
+          ],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              maille: "NAT",
+              code_insee: "FR",
+              territoire_code: "NAT-FR",
+              zone_id: "FRANCE",
+              taux_avancement_mandat: 20,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "01",
+              territoire_code: "DEPT-01",
+              zone_id: "D01",
+              taux_avancement_mandat: 30,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "02",
+              territoire_code: "DEPT-02",
+              zone_id: "D02",
+              taux_avancement_mandat: null,
+              est_applicable: true,
+            },
+          ],
+        });
+
+        // When
+        const result = await prismaChantierRepository.recupererPourExports(
+          "CH-001",
+          ["NAT-FR"],
+          optionsPourExport,
+          2025,
+        );
+
+        // Then
+        expect(result).toHaveLength(1);
+        expect(result![0].aUnTauxAvancementDepartemental).toBeTrue();
+      });
+      it("aUnTauxAvancementDepartemental est faux, si le chantier ne possède aucun département avec un taux d'avancement non null", async () => {
+        // Given
+        const optionsPourExport: OptionsExport = {
+          estBarometre: true,
+          territorialisation: ["regionale", "departementale"],
+          perimetreIds: [],
+          listeChantierId: [],
+          listeMeteos: [],
+          listeStatuts: [],
+          listeOptionsExport: [],
+          territoireCode: undefined,
+          estEnAlerteTauxAvancementNonCalculé: false,
+          estEnAlerteÉcart: false,
+          estEnAlerteBaisse: false,
+          estEnAlerteAbscenceTauxAvancementDepartemental: false,
+          estEnAlerteMétéoNonRenseignée: false,
+          estEnAlertePossedePropositionsValeurAvancement: false,
+        };
+
+        await prisma.chantier_identite.createMany({
+          data: [
+            {
+              id: "CH-001",
+              nom: "Chantier 001",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+            },
+          ],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              maille: "NAT",
+              code_insee: "FR",
+              territoire_code: "NAT-FR",
+              zone_id: "FRANCE",
+              taux_avancement_mandat: 20,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "01",
+              territoire_code: "DEPT-01",
+              zone_id: "D01",
+              taux_avancement_mandat: null,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "02",
+              territoire_code: "DEPT-02",
+              zone_id: "D02",
+              taux_avancement_mandat: null,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "REG",
+              code_insee: "84",
+              territoire_code: "REG-84",
+              zone_id: "R84",
+              taux_avancement_mandat: 10,
+              est_applicable: true,
+            },
+          ],
+        });
+
+        // When
+        const result = await prismaChantierRepository.recupererPourExports(
+          "CH-001",
+          ["NAT-FR"],
+          optionsPourExport,
+          2025,
+        );
+
+        // Then
+        expect(result).toHaveLength(1);
+        expect(result![0].aUnTauxAvancementDepartemental).toBeFalse();
+      });
+      it("aUnePropositionsValeurAvancement est faux au niveau national, si le chantier ne possède aucune proposition sur aucun territoire", async () => {
+        // Given
+        const optionsPourExport: OptionsExport = {
+          estBarometre: true,
+          territorialisation: ["regionale", "departementale"],
+          perimetreIds: [],
+          listeChantierId: [],
+          listeMeteos: [],
+          listeStatuts: [],
+          listeOptionsExport: [],
+          territoireCode: undefined,
+          estEnAlerteTauxAvancementNonCalculé: false,
+          estEnAlerteÉcart: false,
+          estEnAlerteBaisse: false,
+          estEnAlerteAbscenceTauxAvancementDepartemental: false,
+          estEnAlerteMétéoNonRenseignée: false,
+          estEnAlertePossedePropositionsValeurAvancement: false,
+        };
+
+        await prisma.chantier_identite.createMany({
+          data: [
+            {
+              id: "CH-001",
+              nom: "Chantier 001",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+            },
+          ],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              maille: "NAT",
+              code_insee: "FR",
+              territoire_code: "NAT-FR",
+              zone_id: "FRANCE",
+              nombre_propositions_valeur_actuelle: 0,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "01",
+              territoire_code: "DEPT-01",
+              zone_id: "D01",
+              nombre_propositions_valeur_actuelle: 0,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "02",
+              territoire_code: "DEPT-02",
+              zone_id: "D02",
+              nombre_propositions_valeur_actuelle: 0,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "REG",
+              code_insee: "84",
+              territoire_code: "REG-84",
+              zone_id: "R84",
+              nombre_propositions_valeur_actuelle: 0,
+              est_applicable: true,
+            },
+          ],
+        });
+
+        // When
+        const result = await prismaChantierRepository.recupererPourExports(
+          "CH-001",
+          ["NAT-FR"],
+          optionsPourExport,
+          2025,
+        );
+
+        // Then
+        expect(result).toHaveLength(1);
+        expect(result![0].aUnePropositionsValeurAvancement).toBeFalse();
+      });
+      it("aUnePropositionsValeurAvancement est vrai au niveau national, si le chantier possède au moins une proposition sur un territoire", async () => {
+        // Given
+        const optionsPourExport: OptionsExport = {
+          estBarometre: true,
+          territorialisation: ["regionale", "departementale"],
+          perimetreIds: [],
+          listeChantierId: [],
+          listeMeteos: [],
+          listeStatuts: [],
+          listeOptionsExport: [],
+          territoireCode: undefined,
+          estEnAlerteTauxAvancementNonCalculé: false,
+          estEnAlerteÉcart: false,
+          estEnAlerteBaisse: false,
+          estEnAlerteAbscenceTauxAvancementDepartemental: false,
+          estEnAlerteMétéoNonRenseignée: false,
+          estEnAlertePossedePropositionsValeurAvancement: false,
+        };
+
+        await prisma.chantier_identite.createMany({
+          data: [
+            {
+              id: "CH-001",
+              nom: "Chantier 001",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+            },
+          ],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              maille: "NAT",
+              code_insee: "FR",
+              territoire_code: "NAT-FR",
+              zone_id: "FRANCE",
+              nombre_propositions_valeur_actuelle: 0,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "01",
+              territoire_code: "DEPT-01",
+              zone_id: "D01",
+              nombre_propositions_valeur_actuelle: 0,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "02",
+              territoire_code: "DEPT-02",
+              zone_id: "D02",
+              nombre_propositions_valeur_actuelle: 1,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "REG",
+              code_insee: "84",
+              territoire_code: "REG-84",
+              zone_id: "R84",
+              nombre_propositions_valeur_actuelle: 0,
+              est_applicable: true,
+            },
+          ],
+        });
+
+        // When
+        const result = await prismaChantierRepository.recupererPourExports(
+          "CH-001",
+          ["NAT-FR"],
+          optionsPourExport,
+          2025,
+        );
+
+        // Then
+        expect(result).toHaveLength(1);
+        expect(result![0].aUnePropositionsValeurAvancement).toBeTrue();
+      });
+      it("aUnePropositionsValeurAvancement est vrai au niveau regional, si le chantier possède une proposition sur la région", async () => {
+        // Given
+        const optionsPourExport: OptionsExport = {
+          estBarometre: true,
+          territorialisation: ["regionale", "departementale"],
+          perimetreIds: [],
+          listeChantierId: [],
+          listeMeteos: [],
+          listeStatuts: [],
+          listeOptionsExport: [],
+          territoireCode: undefined,
+          estEnAlerteTauxAvancementNonCalculé: false,
+          estEnAlerteÉcart: false,
+          estEnAlerteBaisse: false,
+          estEnAlerteAbscenceTauxAvancementDepartemental: false,
+          estEnAlerteMétéoNonRenseignée: false,
+          estEnAlertePossedePropositionsValeurAvancement: false,
+        };
+
+        await prisma.chantier_identite.createMany({
+          data: [
+            {
+              id: "CH-001",
+              nom: "Chantier 001",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+            },
+          ],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              maille: "NAT",
+              code_insee: "FR",
+              territoire_code: "NAT-FR",
+              zone_id: "FRANCE",
+              ...(estFeatureFlip
+                ? { nombre_propositions_valeur_actuelle_v2: 0 }
+                : { nombre_propositions_valeur_actuelle: 0 }),
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "01",
+              territoire_code: "DEPT-01",
+              zone_id: "D01",
+              nombre_propositions_valeur_actuelle: 0,
+              est_applicable: true,
+              ...(estFeatureFlip
+                ? { nombre_propositions_valeur_actuelle_v2: 0 }
+                : { nombre_propositions_valeur_actuelle: 0 }),
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "02",
+              territoire_code: "DEPT-02",
+              zone_id: "D02",
+              ...(estFeatureFlip
+                ? { nombre_propositions_valeur_actuelle_v2: 0 }
+                : { nombre_propositions_valeur_actuelle: 0 }),
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "REG",
+              code_insee: "84",
+              territoire_code: "REG-84",
+              zone_id: "R84",
+              ...(estFeatureFlip
+                ? { nombre_propositions_valeur_actuelle_v2: 1 }
+                : { nombre_propositions_valeur_actuelle: 1 }),
+              est_applicable: true,
+            },
+          ],
+        });
+
+        // When
+        const result = await prismaChantierRepository.recupererPourExports(
+          "CH-001",
+          ["REG-84"],
+          optionsPourExport,
+          2025,
+        );
+
+        // Then
+        expect(result).toHaveLength(1);
+        expect(result![0].aUnePropositionsValeurAvancement).toBeTrue();
+      });
+      it("aUnePropositionsValeurAvancement est vrai au niveau regional, si le chantier possède une proposition sur un département enfant", async () => {
+        // Given
+        const optionsPourExport: OptionsExport = {
+          estBarometre: true,
+          territorialisation: ["regionale", "departementale"],
+          perimetreIds: [],
+          listeChantierId: [],
+          listeMeteos: [],
+          listeStatuts: [],
+          listeOptionsExport: [],
+          territoireCode: undefined,
+          estEnAlerteTauxAvancementNonCalculé: false,
+          estEnAlerteÉcart: false,
+          estEnAlerteBaisse: false,
+          estEnAlerteAbscenceTauxAvancementDepartemental: false,
+          estEnAlerteMétéoNonRenseignée: false,
+          estEnAlertePossedePropositionsValeurAvancement: false,
+        };
+
+        await prisma.chantier_identite.createMany({
+          data: [
+            {
+              id: "CH-001",
+              nom: "Chantier 001",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+            },
+          ],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              maille: "NAT",
+              code_insee: "FR",
+              territoire_code: "NAT-FR",
+              zone_id: "FRANCE",
+              nombre_propositions_valeur_actuelle: 0,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "01",
+              territoire_code: "DEPT-01",
+              zone_id: "D01",
+              nombre_propositions_valeur_actuelle: 1,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "02",
+              territoire_code: "DEPT-02",
+              zone_id: "D02",
+              nombre_propositions_valeur_actuelle: 0,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "REG",
+              code_insee: "84",
+              territoire_code: "REG-84",
+              zone_id: "R84",
+              nombre_propositions_valeur_actuelle: 0,
+              est_applicable: true,
+            },
+          ],
+        });
+
+        // When
+        const result = await prismaChantierRepository.recupererPourExports(
+          "CH-001",
+          ["REG-84"],
+          optionsPourExport,
+          2025,
+        );
+
+        // Then
+        expect(result).toHaveLength(1);
+        expect(result![0].aUnePropositionsValeurAvancement).toBeTrue();
+      });
+      it("aUnePropositionsValeurAvancement est faux au niveau regional, si le chantier ne possède aucune proposition sur la région ou sur un département enfant", async () => {
+        // Given
+        const optionsPourExport: OptionsExport = {
+          estBarometre: true,
+          territorialisation: ["regionale", "departementale"],
+          perimetreIds: [],
+          listeChantierId: [],
+          listeMeteos: [],
+          listeStatuts: [],
+          listeOptionsExport: [],
+          territoireCode: undefined,
+          estEnAlerteTauxAvancementNonCalculé: false,
+          estEnAlerteÉcart: false,
+          estEnAlerteBaisse: false,
+          estEnAlerteAbscenceTauxAvancementDepartemental: false,
+          estEnAlerteMétéoNonRenseignée: false,
+          estEnAlertePossedePropositionsValeurAvancement: false,
+        };
+
+        await prisma.chantier_identite.createMany({
+          data: [
+            {
+              id: "CH-001",
+              nom: "Chantier 001",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+            },
+          ],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              maille: "NAT",
+              code_insee: "FR",
+              territoire_code: "NAT-FR",
+              zone_id: "FRANCE",
+              nombre_propositions_valeur_actuelle: 0,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "01",
+              territoire_code: "DEPT-01",
+              zone_id: "D01",
+              nombre_propositions_valeur_actuelle: 0,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "02",
+              territoire_code: "DEPT-02",
+              zone_id: "D02",
+              nombre_propositions_valeur_actuelle: 1,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "REG",
+              code_insee: "84",
+              territoire_code: "REG-84",
+              zone_id: "R84",
+              nombre_propositions_valeur_actuelle: 0,
+              est_applicable: true,
+            },
+          ],
+        });
+
+        // When
+        const result = await prismaChantierRepository.recupererPourExports(
+          "CH-001",
+          ["REG-84"],
+          optionsPourExport,
+          2025,
+        );
+
+        // Then
+        expect(result).toHaveLength(1);
+        expect(result![0].aUnePropositionsValeurAvancement).toBeFalse();
+      });
+      it("aUnePropositionsValeurAvancement est vrai au niveau departemental, si le chantier possède une proposition sur le département", async () => {
+        // Given
+        const optionsPourExport: OptionsExport = {
+          estBarometre: true,
+          territorialisation: ["regionale", "departementale"],
+          perimetreIds: [],
+          listeChantierId: [],
+          listeMeteos: [],
+          listeStatuts: [],
+          listeOptionsExport: [],
+          territoireCode: undefined,
+          estEnAlerteTauxAvancementNonCalculé: false,
+          estEnAlerteÉcart: false,
+          estEnAlerteBaisse: false,
+          estEnAlerteAbscenceTauxAvancementDepartemental: false,
+          estEnAlerteMétéoNonRenseignée: false,
+          estEnAlertePossedePropositionsValeurAvancement: false,
+        };
+
+        await prisma.chantier_identite.createMany({
+          data: [
+            {
+              id: "CH-001",
+              nom: "Chantier 001",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+            },
+          ],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              maille: "NAT",
+              code_insee: "FR",
+              territoire_code: "NAT-FR",
+              zone_id: "FRANCE",
+              ...(estFeatureFlip
+                ? { nombre_propositions_valeur_actuelle_v2: 0 }
+                : { nombre_propositions_valeur_actuelle: 0 }),
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "01",
+              territoire_code: "DEPT-01",
+              zone_id: "D01",
+              ...(estFeatureFlip
+                ? { nombre_propositions_valeur_actuelle_v2: 1 }
+                : { nombre_propositions_valeur_actuelle: 1 }),
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "02",
+              territoire_code: "DEPT-02",
+              zone_id: "D02",
+              ...(estFeatureFlip
+                ? { nombre_propositions_valeur_actuelle_v2: 0 }
+                : { nombre_propositions_valeur_actuelle: 0 }),
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "REG",
+              code_insee: "84",
+              territoire_code: "REG-84",
+              zone_id: "R84",
+              ...(estFeatureFlip
+                ? { nombre_propositions_valeur_actuelle_v2: 0 }
+                : { nombre_propositions_valeur_actuelle: 0 }),
+              est_applicable: true,
+            },
+          ],
+        });
+
+        // When
+        const result = await prismaChantierRepository.recupererPourExports(
+          "CH-001",
+          ["DEPT-01"],
+          optionsPourExport,
+          2025,
+        );
+
+        // Then
+        expect(result).toHaveLength(1);
+        expect(result![0].aUnePropositionsValeurAvancement).toBeTrue();
+      });
+      it("aUnePropositionsValeurAvancement est faux au niveau departemental, si le chantier ne possède pas de proposition sur le département", async () => {
+        // Given
+        const optionsPourExport: OptionsExport = {
+          estBarometre: true,
+          territorialisation: ["regionale", "departementale"],
+          perimetreIds: [],
+          listeChantierId: [],
+          listeMeteos: [],
+          listeStatuts: [],
+          listeOptionsExport: [],
+          territoireCode: undefined,
+          estEnAlerteTauxAvancementNonCalculé: false,
+          estEnAlerteÉcart: false,
+          estEnAlerteBaisse: false,
+          estEnAlerteAbscenceTauxAvancementDepartemental: false,
+          estEnAlerteMétéoNonRenseignée: false,
+          estEnAlertePossedePropositionsValeurAvancement: false,
+        };
+
+        await prisma.chantier_identite.createMany({
+          data: [
+            {
+              id: "CH-001",
+              nom: "Chantier 001",
+              ministeres: ["1009"],
+              ministeres_acronymes: ["MINA"],
+            },
+          ],
+        });
+
+        await prisma.chantier_territoire.createMany({
+          data: [
+            {
+              id: "CH-001",
+              maille: "NAT",
+              code_insee: "FR",
+              territoire_code: "NAT-FR",
+              zone_id: "FRANCE",
+              nombre_propositions_valeur_actuelle: 0,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "01",
+              territoire_code: "DEPT-01",
+              zone_id: "D01",
+              nombre_propositions_valeur_actuelle: 0,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "DEPT",
+              code_insee: "02",
+              territoire_code: "DEPT-02",
+              zone_id: "D02",
+              nombre_propositions_valeur_actuelle: 1,
+              est_applicable: true,
+            },
+            {
+              id: "CH-001",
+              maille: "REG",
+              code_insee: "84",
+              territoire_code: "REG-84",
+              zone_id: "R84",
+              nombre_propositions_valeur_actuelle: 0,
+              est_applicable: true,
+            },
+          ],
+        });
+
+        // When
+        const result = await prismaChantierRepository.recupererPourExports(
+          "CH-001",
+          ["DEPT-01"],
+          optionsPourExport,
+          2025,
+        );
+
+        // Then
+        expect(result).toHaveLength(1);
+        expect(result![0].aUnePropositionsValeurAvancement).toBeFalse();
+      });
+    },
+  );
 
   describe("#recupererLesEntreesDUnChantier", () => {
     test("Quand on le chantier demandé n'existe pas, doit remonter une erreur en cas de chantier non trouvé", async () => {
@@ -249,1666 +1107,6 @@ describe("PrismaChantierRepository", () => {
           taux_avancement: 10,
         },
       ]);
-    });
-  });
-
-  describe("#recupererPourExports", () => {
-    it("aUnTauxAvancementDepartemental est vrai, si le chantier ne possède aucun département applicable", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            taux_avancement_mandat: 20,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            taux_avancement_mandat: null,
-            est_applicable: false,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            taux_avancement_mandat: null,
-            est_applicable: false,
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            code_insee: "84",
-            territoire_code: "REG-84",
-            zone_id: "R84",
-            taux_avancement_mandat: 10,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExports(
-        "CH-001",
-        ["NAT-FR"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnTauxAvancementDepartemental).toBeTrue();
-    });
-    it("aUnTauxAvancementDepartemental est vrai, si le chantier possède au moins un département avec un taux d'avancement non null", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-          {
-            id: "CH-002",
-            nom: "Chantier 002",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            taux_avancement_mandat: 20,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            taux_avancement_mandat: 30,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            taux_avancement_mandat: null,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExports(
-        "CH-001",
-        ["NAT-FR"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnTauxAvancementDepartemental).toBeTrue();
-    });
-    it("aUnTauxAvancementDepartemental est faux, si le chantier ne possède aucun département avec un taux d'avancement non null", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            taux_avancement_mandat: 20,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            taux_avancement_mandat: null,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            taux_avancement_mandat: null,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            code_insee: "84",
-            territoire_code: "REG-84",
-            zone_id: "R84",
-            taux_avancement_mandat: 10,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExports(
-        "CH-001",
-        ["NAT-FR"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnTauxAvancementDepartemental).toBeFalse();
-    });
-    it("aUnePropositionsValeurAvancement est faux au niveau national, si le chantier ne possède aucune proposition sur aucun territoire", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            code_insee: "84",
-            territoire_code: "REG-84",
-            zone_id: "R84",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExports(
-        "CH-001",
-        ["NAT-FR"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurAvancement).toBeFalse();
-    });
-    it("aUnePropositionsValeurAvancement est vrai au niveau national, si le chantier possède au moins une proposition sur un territoire", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            nombre_propositions_valeur_actuelle: 1,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            code_insee: "84",
-            territoire_code: "REG-84",
-            zone_id: "R84",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExports(
-        "CH-001",
-        ["NAT-FR"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurAvancement).toBeTrue();
-    });
-    it("aUnePropositionsValeurAvancement est vrai au niveau regional, si le chantier possède une proposition sur la région", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            code_insee: "84",
-            territoire_code: "REG-84",
-            zone_id: "R84",
-            nombre_propositions_valeur_actuelle: 1,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExports(
-        "CH-001",
-        ["REG-84"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurAvancement).toBeTrue();
-    });
-    it("aUnePropositionsValeurAvancement est vrai au niveau regional, si le chantier possède une proposition sur un département enfant", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            nombre_propositions_valeur_actuelle: 1,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            code_insee: "84",
-            territoire_code: "REG-84",
-            zone_id: "R84",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExports(
-        "CH-001",
-        ["REG-84"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurAvancement).toBeTrue();
-    });
-    it("aUnePropositionsValeurAvancement est faux au niveau regional, si le chantier ne possède aucune proposition sur la région ou sur un département enfant", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            nombre_propositions_valeur_actuelle: 1,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            code_insee: "84",
-            territoire_code: "REG-84",
-            zone_id: "R84",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExports(
-        "CH-001",
-        ["REG-84"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurAvancement).toBeFalse();
-    });
-    it("aUnePropositionsValeurAvancement est vrai au niveau departemental, si le chantier possède une proposition sur le département", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            nombre_propositions_valeur_actuelle: 1,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            code_insee: "84",
-            territoire_code: "REG-84",
-            zone_id: "R84",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExports(
-        "CH-001",
-        ["DEPT-01"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurAvancement).toBeTrue();
-    });
-    it("aUnePropositionsValeurAvancement est faux au niveau departemental, si le chantier ne possède pas de proposition sur le département", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            nombre_propositions_valeur_actuelle: 1,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            code_insee: "84",
-            territoire_code: "REG-84",
-            zone_id: "R84",
-            nombre_propositions_valeur_actuelle: 0,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExports(
-        "CH-001",
-        ["DEPT-01"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurAvancement).toBeFalse();
-    });
-  });
-
-  describe("#recupererPourExportsV2", () => {
-    it("aUnTauxAvancementDepartemental est vrai, si le chantier ne possède aucun département applicable", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            taux_avancement_mandat: 20,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            taux_avancement_mandat: null,
-            est_applicable: false,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            taux_avancement_mandat: null,
-            est_applicable: false,
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            code_insee: "84",
-            territoire_code: "REG-84",
-            zone_id: "R84",
-            taux_avancement_mandat: 10,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExportsV2(
-        "CH-001",
-        ["NAT-FR"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnTauxAvancementDepartemental).toBeTrue();
-    });
-    it("aUnTauxAvancementDepartemental est vrai, si le chantier possède au moins un département avec un taux d'avancement non null", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-          {
-            id: "CH-002",
-            nom: "Chantier 002",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            taux_avancement_mandat: 20,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            taux_avancement_mandat: 30,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            taux_avancement_mandat: null,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExportsV2(
-        "CH-001",
-        ["NAT-FR"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnTauxAvancementDepartemental).toBeTrue();
-    });
-    it("aUnTauxAvancementDepartemental est faux, si le chantier ne possède aucun département avec un taux d'avancement non null", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            taux_avancement_mandat: 20,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            taux_avancement_mandat: null,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            taux_avancement_mandat: null,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            code_insee: "84",
-            territoire_code: "REG-84",
-            zone_id: "R84",
-            taux_avancement_mandat: 10,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExportsV2(
-        "CH-001",
-        ["NAT-FR"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnTauxAvancementDepartemental).toBeFalse();
-    });
-    it("aUnePropositionsValeurAvancement est faux au niveau national, si le chantier ne possède aucune proposition sur aucun territoire", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            code_insee: "84",
-            territoire_code: "REG-84",
-            zone_id: "R84",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExportsV2(
-        "CH-001",
-        ["NAT-FR"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurAvancement).toBeFalse();
-    });
-    it("aUnePropositionsValeurAvancement est vrai au niveau national, si le chantier possède au moins une proposition sur un territoire", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            nombre_propositions_valeur_actuelle_v2: 1,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            code_insee: "84",
-            territoire_code: "REG-84",
-            zone_id: "R84",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExportsV2(
-        "CH-001",
-        ["NAT-FR"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurAvancement).toBeTrue();
-    });
-    it("aUnePropositionsValeurAvancement est vrai au niveau regional, si le chantier possède une proposition sur la région", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            code_insee: "84",
-            territoire_code: "REG-84",
-            zone_id: "R84",
-            nombre_propositions_valeur_actuelle_v2: 1,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExportsV2(
-        "CH-001",
-        ["REG-84"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurAvancement).toBeTrue();
-    });
-    it("aUnePropositionsValeurAvancement est vrai au niveau regional, si le chantier possède une proposition sur un département enfant", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            nombre_propositions_valeur_actuelle_v2: 1,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            code_insee: "84",
-            territoire_code: "REG-84",
-            zone_id: "R84",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExportsV2(
-        "CH-001",
-        ["REG-84"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurAvancement).toBeTrue();
-    });
-    it("aUnePropositionsValeurAvancement est faux au niveau regional, si le chantier ne possède aucune proposition sur la région ou sur un département enfant", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            nombre_propositions_valeur_actuelle_v2: 1,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            code_insee: "84",
-            territoire_code: "REG-84",
-            zone_id: "R84",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExportsV2(
-        "CH-001",
-        ["REG-84"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurAvancement).toBeFalse();
-    });
-    it("aUnePropositionsValeurAvancement est vrai au niveau departemental, si le chantier possède une proposition sur le département", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            nombre_propositions_valeur_actuelle_v2: 1,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            code_insee: "84",
-            territoire_code: "REG-84",
-            zone_id: "R84",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExportsV2(
-        "CH-001",
-        ["DEPT-01"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurAvancement).toBeTrue();
-    });
-    it("aUnePropositionsValeurAvancement est faux au niveau departemental, si le chantier ne possède pas de proposition sur le département", async () => {
-      // Given
-      const optionsPourExport: OptionsExport = {
-        estBarometre: true,
-        territorialisation: ["regionale", "departementale"],
-        perimetreIds: [],
-        listeChantierId: [],
-        listeMeteos: [],
-        listeStatuts: [],
-        listeOptionsExport: [],
-        territoireCode: undefined,
-        estEnAlerteTauxAvancementNonCalculé: false,
-        estEnAlerteÉcart: false,
-        estEnAlerteBaisse: false,
-        estEnAlerteAbscenceTauxAvancementDepartemental: false,
-        estEnAlerteMétéoNonRenseignée: false,
-        estEnAlertePossedePropositionsValeurAvancement: false,
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            nombre_propositions_valeur_actuelle_v2: 1,
-            est_applicable: true,
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            code_insee: "84",
-            territoire_code: "REG-84",
-            zone_id: "R84",
-            nombre_propositions_valeur_actuelle_v2: 0,
-            est_applicable: true,
-          },
-        ],
-      });
-
-      // When
-      const result = await prismaChantierRepository.recupererPourExportsV2(
-        "CH-001",
-        ["DEPT-01"],
-        optionsPourExport,
-        2025,
-      );
-
-      // Then
-      expect(result).toHaveLength(1);
-      expect(result![0].aUnePropositionsValeurAvancement).toBeFalse();
     });
   });
 

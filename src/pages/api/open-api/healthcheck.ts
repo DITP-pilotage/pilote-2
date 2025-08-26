@@ -7,7 +7,7 @@ import { configuration } from "@/config";
 const handle = async (request: NextApiRequest, response: NextApiResponse) => {
   const token = request.headers["authorization"];
   const decodedToken = await new TokenAPIJWTService({
-    secret: configuration.tokenAPI.secret,
+    secret: configuration().tokenAPI.secret,
   }).decoderTokenAPI((token || "").split(" ")[1]);
   response.status(200).json({
     resultat: `Bonjour ${decodedToken?.email}, vous pouvez utiliser l'API.`,

@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps<{
     Number.parseInt(query.jalon as string) ||
     getAnneeDateDeBascule(
       new Date(),
-      configuration.dateBasculeAffichageValeursAnneePrecedente,
+      configuration().dateBasculeAffichageValeursAnneePrecedente,
     );
 
   const ficheConducteur = await getContainer("ficheConducteur")
