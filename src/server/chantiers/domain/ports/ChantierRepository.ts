@@ -12,13 +12,13 @@ export interface ChantierRepository {
     chantierId: string,
     territoireCodesLecture: string[],
   ): Promise<DonneeChantier[]>;
-  récupérerPourExports(
+  recupererPourExports(
     chantierId: string,
     territoireCodesLecture: string[],
     optionsExport: OptionsExport,
     jalon: number,
   ): Promise<ChantierPourExport[] | null>;
-  récupérerPourExportsV2(
+  recupererPourExportsV2(
     chantierId: string,
     territoireCodesLecture: string[],
     optionsExport: OptionsExport,

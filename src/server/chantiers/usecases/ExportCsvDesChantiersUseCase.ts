@@ -154,7 +154,7 @@ interface Dependencies {
   chantierRepository: ChantierRepository;
 }
 
-export class ExportCsvDesChantiersUseCaseV2 {
+export class ExportCsvDesChantiersUseCase {
   public static readonly NOMS_COLONNES = (
     jalon: number,
     optionsExport: OptionsExport,
@@ -279,7 +279,7 @@ export class ExportCsvDesChantiersUseCaseV2 {
 
       const input = partialChantierIds.map((id) =>
         this.chantierRepository
-          .recupererPourExportsV2(id, territoireCodes, optionsExport, jalon)
+          .recupererPourExports(id, territoireCodes, optionsExport, jalon)
           .then((listerChantierTerritoireExport) =>
             (listerChantierTerritoireExport || []).reduce(
               (acc, chantierTerritoireExport) => {

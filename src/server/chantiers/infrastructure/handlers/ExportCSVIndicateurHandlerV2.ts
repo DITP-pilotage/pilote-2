@@ -10,9 +10,9 @@ import { recupererJalon } from "@/components/_commons/IndicateursChantier/Bloc/V
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { getContainer } from "@/server/dependances";
 import { Maille } from "@/server/domain/maille/Maille.interface";
-import { ExportCsvDesChantiersUseCase } from "@/server/chantiers/usecases/ExportCsvDesChantiersUseCase";
+import { ExportCsvDesIndicateursUseCaseV2 } from "@/server/chantiers/usecases/ExportCsvDesIndicateursUseCaseV2";
 
-export const handleExportDesChantiers = async (
+export const handleExportDesIndicateursV2 = async (
   request: NextApiRequest,
   response: NextApiResponse,
 ): Promise<void> => {
@@ -20,8 +20,10 @@ export const handleExportDesChantiers = async (
   assert(session);
 
   response.setHeader("Content-Type", "text/csv");
+
   const jalon = recupererJalon(request.query?.jalon as string | undefined);
 
+  /* Pourra être amélioré avec nuqs server */
   const optionsExport = {
     perimetreIds: request.query.perimetreIds
       ? Array.isArray(request.query.perimetreIds)
@@ -41,7 +43,9 @@ export const handleExportDesChantiers = async (
       : session.profilAAccèsAuxChantiersBrouillons
         ? []
         : ["PUBLIE", "BROUILLON"],
-    listeChantierId: [],
+    listeChantierId: request.query.listeChantierId
+      ? (request.query.listeChantierId as string).split(",")
+      : [],
     listeMeteos: request.query.meteos
       ? Array.isArray(request.query.meteos)
         ? request.query.meteos
@@ -65,25 +69,27 @@ export const handleExportDesChantiers = async (
       request.query.estEnAlertePossedePropositionsValeurAvancement === "true",
   } satisfies OptionsExport;
 
-  const headersColumn = ExportCsvDesChantiersUseCase.NOMS_COLONNES(
+  const headersColumns = ExportCsvDesIndicateursUseCaseV2.NOMS_COLONNES(
     jalon,
     optionsExport,
     session.profil,
   );
-
   const stringifier = stringify({
     header: true,
-    columns: headersColumn,
+    columns: headersColumns,
     delimiter: ";",
     bom: true,
     quoted_string: true,
   } satisfies Options);
 
   stringifier.pipe(response);
+
+  const chunkSize = configuration.export.csvIndicateursChunkSize;
+
   const habilitation = new Habilitation(session.habilitations);
+
   const territoireCodes =
     habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
-  const chunkSize = configuration.export.csvChantiersChunkSize;
 
   let territoireARecuperer = territoireCodes;
 
@@ -108,22 +114,21 @@ export const handleExportDesChantiers = async (
       optionsExport,
     );
 
-  const exportCsvDesChantiersUseCase = getContainer("chantiers").resolve(
-    "exportCsvDesChantiersUseCase",
+  const exportCsvDesIndicateursUseCase = getContainer("chantiers").resolve(
+    "exportCsvDesIndicateursUseCaseV2",
   );
 
-  for await (const partialResult of exportCsvDesChantiersUseCase.run({
+  for await (const partialResult of exportCsvDesIndicateursUseCase.run({
     chantierIds,
     territoireCodes: territoireARecuperer,
     profil: session.profil,
-    chantierChunkSize: chunkSize,
+    indicateurChunkSize: chunkSize,
     jalon,
     optionsExport,
   })) {
-    for (const chantierPourExport of partialResult) {
-      stringifier.write(chantierPourExport);
+    for (const indicateurPourExport of partialResult) {
+      stringifier.write(indicateurPourExport);
     }
   }
-
   stringifier.end();
 };
