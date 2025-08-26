@@ -3398,7 +3398,10 @@ describe("PrismaIndicateurRepository", () => {
             indic_id: "IND-001",
             territoire_code: "NAT-FR",
             type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
+            donnees_complementaires: {
+              motif: "Un motif",
+              source_donnee_methode_calcul: "Une source",
+            },
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
             date_valeur: new Date("2026-01-12"),
             ordre: 1,
@@ -3413,7 +3416,9 @@ describe("PrismaIndicateurRepository", () => {
             indic_id: "IND-001",
             territoire_code: "NAT-FR",
             type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
+            donnees_complementaires: {
+              motif: "motif accusee reception",
+            },
             type_evenement:
               EvenementValeurEnum.PROPOSITION_VALEUR_ACCUSEE_RECEPTION,
             date_valeur: new Date("2026-01-12"),
@@ -3446,6 +3451,13 @@ describe("PrismaIndicateurRepository", () => {
         statut: "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
         date: "2026-01-12",
       });
+
+      expect(result["IND-001"]["NAT-FR"].proposition?.motif).toEqual(
+        "Un motif",
+      );
+      expect(
+        result["IND-001"]["NAT-FR"].proposition?.sourceDonneeEtMethodeCalcul,
+      ).toEqual("Une source");
     });
 
     it("lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_ACCUSEE_RECEPTION suivi de PROPOSITION_VALEUR_MODIFIEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_MODIFIEE", async () => {

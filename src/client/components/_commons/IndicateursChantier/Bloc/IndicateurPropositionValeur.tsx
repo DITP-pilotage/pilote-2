@@ -102,16 +102,18 @@ export const IndicateurPropositionValeur = ({
         >
           Voir l'historique
         </BoutonSousLigné>
-        <BoutonSousLigné
-          ariaControls={
-            ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id
-          }
-          classNameSupplémentaires="fr-link--xs fr-link--icon-left fr-icon-edit-line texte-gris"
-          dataFrOpened={false}
-          type="button"
-        >
-          Proposer une autre valeur d'avancement
-        </BoutonSousLigné>
+        {estAutoriseAProposerUneValeurAvancement ? (
+          <BoutonSousLigné
+            ariaControls={
+              ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id
+            }
+            classNameSupplémentaires="fr-link--xs fr-link--icon-left fr-icon-edit-line texte-gris"
+            dataFrOpened={false}
+            type="button"
+          >
+            Proposer une autre valeur d'avancement
+          </BoutonSousLigné>
+        ) : null}
         <ModaleHistoriqueIndicateurTerritoireValeurEvenement
           chantier={chantier}
           generatedHTMLID={
