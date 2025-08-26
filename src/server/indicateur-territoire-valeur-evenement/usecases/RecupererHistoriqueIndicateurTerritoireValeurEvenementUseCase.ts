@@ -92,13 +92,24 @@ export class RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase {
 
     Object.entries(historiqueTrie).forEach(([key, evenementsDuJour]) => {
       historiqueTrie[key] = evenementsDuJour.filter((evenement, index) => {
-        if (evenement.typeEvenement !== "VALEUR_MODIFIEE") return true;
+        const evenementSuivant = evenementsDuJour[index + 1]?.typeEvenement;
 
-        return ![
-          EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE,
-          EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION,
-          EvenementValeurEnum.PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE,
-        ].includes(evenementsDuJour[index + 1]?.typeEvenement);
+        if (evenement.typeEvenement === EvenementValeurEnum.VALEUR_MODIFIEE) {
+          return ![
+            EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE,
+            EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION,
+            EvenementValeurEnum.PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE,
+          ].includes(evenementSuivant);
+        }
+
+        if (evenement.typeEvenement === EvenementValeurEnum.VALEUR_HISTORISEE) {
+          return (
+            evenementSuivant !==
+            EvenementValeurEnum.PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE
+          );
+        }
+
+        return true;
       });
     });
 
