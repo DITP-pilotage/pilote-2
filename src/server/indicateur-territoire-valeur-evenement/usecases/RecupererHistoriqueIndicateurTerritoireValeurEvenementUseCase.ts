@@ -91,26 +91,26 @@ export class RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase {
       });
 
     Object.entries(historiqueTrie).forEach(([key, evenementsDuJour]) => {
-      historiqueTrie[key] = evenementsDuJour
-        .filter((evenement, index) => {
-          if (evenement.typeEvenement !== EvenementValeurEnum.VALEUR_MODIFIEE)
-            return true;
+      historiqueTrie[key] = evenementsDuJour.filter((evenement, index) => {
+        const evenementSuivant = evenementsDuJour[index + 1]?.typeEvenement;
 
+        if (evenement.typeEvenement === EvenementValeurEnum.VALEUR_MODIFIEE) {
           return ![
             EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE,
             EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION,
             EvenementValeurEnum.PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE,
-          ].includes(evenementsDuJour[index + 1]?.typeEvenement);
-        })
-        .filter((evenement, index) => {
-          if (evenement.typeEvenement !== EvenementValeurEnum.VALEUR_HISTORISEE)
-            return true;
+          ].includes(evenementSuivant);
+        }
 
+        if (evenement.typeEvenement === EvenementValeurEnum.VALEUR_HISTORISEE) {
           return (
-            evenementsDuJour[index + 1]?.typeEvenement !==
+            evenementSuivant !==
             EvenementValeurEnum.PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE
           );
-        });
+        }
+
+        return true;
+      });
     });
 
     return historiqueTrie;

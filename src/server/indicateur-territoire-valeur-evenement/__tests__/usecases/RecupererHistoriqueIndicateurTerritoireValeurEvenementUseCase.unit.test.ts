@@ -213,7 +213,7 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
     },
   );
 
-  it("quand pas de proposition valeur associée doit remonter les VALEUR_HISTORISEE", async () => {
+  it("Quand pas de proposition valeur associée doit remonter les VALEUR_HISTORISEE", async () => {
     const date1 = new Date("2024-02-01");
     const fixedDateCreation = new Date("2024-03-01T10:00:00.000Z");
 
@@ -298,7 +298,7 @@ describe("RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase", () => 
     expect(Object.keys(result)).toEqual(["2024-02-01"]);
   });
 
-  it("quand pas de proposition valeur associée doit remonter les VALEUR_HISTORISEE", async () => {
+  it("Quand une proposition valeur est associée doit remonter les PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE et pas les VALEUR_HISTORISEE", async () => {
     const date1 = new Date("2024-02-01");
     const fixedDateCreation = new Date("2024-03-01T10:00:00.000Z");
 
