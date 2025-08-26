@@ -1,5 +1,7 @@
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import { toISODate } from "@/server/app/domain/Dates";
+import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 
 export type HistoriqueIndicateurTerritoireValeurEvenementContrat = {
   [dateValeur: string]: IndicateurTerritoireValeurEvenementContrat[];
@@ -66,7 +68,7 @@ export class RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase {
       {};
 
     evenements.forEach((evenement) => {
-      const dateKey = evenement.dateValeur.toISOString();
+      const dateKey = toISODate(evenement.dateValeur);
 
       if (!historiqueGroupe[dateKey]) {
         historiqueGroupe[dateKey] = [];
@@ -87,6 +89,18 @@ export class RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase {
           (a, b) => b.ordre - a.ordre,
         );
       });
+
+    Object.entries(historiqueTrie).forEach(([key, evenementsDuJour]) => {
+      historiqueTrie[key] = evenementsDuJour.filter((evenement, index) => {
+        if (evenement.typeEvenement !== "VALEUR_MODIFIEE") return true;
+
+        return ![
+          EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE,
+          EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION,
+          EvenementValeurEnum.PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE,
+        ].includes(evenementsDuJour[index + 1]?.typeEvenement);
+      });
+    });
 
     return historiqueTrie;
   }
