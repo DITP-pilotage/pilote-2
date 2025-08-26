@@ -319,7 +319,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
 
         const prismaChantierTerritoire =
           indicateurPourExport.chantier_territoire;
-        let aUnePropositionsValeurAvancement = false;
+        let aUnePropositionsValeurAvancement: boolean;
         const maille = prismaChantierTerritoire.maille;
         if (maille === "DEPT") {
           aUnePropositionsValeurAvancement =
@@ -896,8 +896,11 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     indicateurTerritoireJalon: PrismaIndicateurTerritoireJalon | undefined,
   ): DetailIndicateurPropositionValeurAvancement | null {
     const evenementsProposition =
-      indicateurRow.indicateur_territoire_valeur_evenement.filter((evenement) =>
-        evenement.type_evenement.startsWith("PROPOSITION_VALEUR_"),
+      indicateurRow.indicateur_territoire_valeur_evenement.filter(
+        (evenement) =>
+          evenement.type_evenement.startsWith("PROPOSITION_VALEUR_") &&
+          evenement.type_evenement !==
+            EvenementValeurEnum.PROPOSITION_VALEUR_ACCUSEE_RECEPTION,
       ) || [];
     const [evenementPropositionLePlusRecent = null] = evenementsProposition;
 
