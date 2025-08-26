@@ -7,10 +7,10 @@ import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { configuration } from "@/config";
 import { recupererJalon } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/recupererJalon";
-import { ExportCsvDesIndicateursUseCaseV2 } from "@/server/chantiers/usecases/ExportCsvDesIndicateursUseCaseV2";
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { getContainer } from "@/server/dependances";
 import { Maille } from "@/server/domain/maille/Maille.interface";
+import { ExportCsvDesIndicateursUseCase } from "@/server/chantiers/usecases/ExportCsvDesIndicateursUseCase";
 
 export const handleExportDesIndicateurs = async (
   request: NextApiRequest,
@@ -69,7 +69,7 @@ export const handleExportDesIndicateurs = async (
       request.query.estEnAlertePossedePropositionsValeurAvancement === "true",
   } satisfies OptionsExport;
 
-  const headersColumns = ExportCsvDesIndicateursUseCaseV2.NOMS_COLONNES(
+  const headersColumns = ExportCsvDesIndicateursUseCase.NOMS_COLONNES(
     jalon,
     optionsExport,
     session.profil,
@@ -115,7 +115,7 @@ export const handleExportDesIndicateurs = async (
     );
 
   const exportCsvDesIndicateursUseCase = getContainer("chantiers").resolve(
-    "exportCsvDesIndicateursUseCaseV2",
+    "exportCsvDesIndicateursUseCase",
   );
 
   for await (const partialResult of exportCsvDesIndicateursUseCase.run({

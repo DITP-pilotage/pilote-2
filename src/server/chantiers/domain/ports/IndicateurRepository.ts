@@ -26,7 +26,18 @@ export interface IndicateurRepository {
     jalon: number,
     estAvecCadrage: boolean,
   ): Promise<IndicateurPourExport[]>;
+  recupererPourExportsV2(
+    chantierIdsLecture: string,
+    territoireCodesLecture: string[],
+    jalon: number,
+    estAvecCadrage: boolean,
+  ): Promise<IndicateurPourExport[]>;
   récupérerHistoriquePourExports(
+    chantierIdsLecture: string,
+    territoireCodesLecture: string[],
+    jalon: number,
+  ): Promise<HistoriqueIndicateurPourExport[]>;
+  récupérerHistoriquePourExportsV2(
     chantierIdsLecture: string,
     territoireCodesLecture: string[],
     jalon: number,

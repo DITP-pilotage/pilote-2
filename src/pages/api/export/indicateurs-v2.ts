@@ -1,9 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { handleExportDesIndicateurs } from "@/server/chantiers/infrastructure/handlers/ExportCSVIndicateurHandler";
+import { handleExportDesIndicateursV2 } from "@/server/chantiers/infrastructure/handlers/ExportCSVIndicateurHandlerV2";
 
 export default function handle(
   request: NextApiRequest,
   response: NextApiResponse,
 ) {
-  return handleExportDesIndicateurs(request, response);
+  return handleExportDesIndicateursV2(request, response);
 }
