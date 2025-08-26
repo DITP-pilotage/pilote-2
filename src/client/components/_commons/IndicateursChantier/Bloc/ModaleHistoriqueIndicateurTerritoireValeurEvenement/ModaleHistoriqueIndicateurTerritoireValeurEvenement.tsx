@@ -7,6 +7,7 @@ import Loader from "@/components/_commons/Loader/Loader";
 import { formaterDate } from "@/client/utils/date/date";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 import { DonneesComplementaires } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
+import { toISODateTime } from "@/server/app/domain/Dates";
 import { useModaleHistoriqueIndicateurTerritoireValeurEvenement } from "./useModaleHistoriqueIndicateurTerritoireValeurEvenement";
 
 export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionComponent<{
@@ -156,7 +157,9 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
         return "!background-jaune-moutarde";
       case "PROPOSITION_VALEUR_REFUSEE":
       case "PROPOSITION_VALEUR_ACCEPTEE":
+      case "VALEUR_MODIFIEE":
       case "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION":
+      case "PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE":
         return "!background-bleu-cumulus";
       default:
         return "";
@@ -240,7 +243,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
                         >
                           <div className="fr-col-2 flex align-center">
                             {formaterDate(
-                              evenement.dateCreation.toISOString(),
+                              toISODateTime(evenement.dateCreation),
                               "DD/MM/YYYY HH[:]mm",
                             )}
                           </div>

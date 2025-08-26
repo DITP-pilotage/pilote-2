@@ -1,5 +1,6 @@
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import { toISODate } from "@/server/app/domain/Dates";
 
 export type HistoriqueIndicateurTerritoireValeurEvenementContrat = {
   [dateValeur: string]: IndicateurTerritoireValeurEvenementContrat[];
@@ -66,7 +67,7 @@ export class RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase {
       {};
 
     evenements.forEach((evenement) => {
-      const dateKey = evenement.dateValeur.toISOString();
+      const dateKey = toISODate(evenement.dateValeur);
 
       if (!historiqueGroupe[dateKey]) {
         historiqueGroupe[dateKey] = [];
