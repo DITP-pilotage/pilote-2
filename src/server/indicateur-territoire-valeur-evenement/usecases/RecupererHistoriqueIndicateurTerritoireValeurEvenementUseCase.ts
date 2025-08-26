@@ -67,7 +67,7 @@ export class RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase {
     const historiqueGroupe: HistoriqueIndicateurTerritoireValeurEvenementContrat =
       {};
 
-    evenements.forEach((evenement, index) => {
+    evenements.forEach((evenement) => {
       const dateKey = toISODate(evenement.dateValeur);
 
       if (!historiqueGroupe[dateKey]) {
