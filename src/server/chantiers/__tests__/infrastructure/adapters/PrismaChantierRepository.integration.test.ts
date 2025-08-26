@@ -1,7 +1,9 @@
+import { chantier_territoire_jalon } from "@prisma/client";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { PrismaChantierRepository } from "@/server/chantiers/infrastructure/adapters/PrismaChantierRepository";
 import { prisma } from "@/server/db/prisma";
+import { Utilisateur } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 
 describe("PrismaChantierRepository", () => {
@@ -9,6 +11,245 @@ describe("PrismaChantierRepository", () => {
 
   beforeEach(() => {
     prismaChantierRepository = new PrismaChantierRepository();
+  });
+
+  describe("#recupererLesEntreesDUnChantier", () => {
+    test("Quand on le chantier demandé n'existe pas, doit remonter une erreur en cas de chantier non trouvé", async () => {
+      // Given
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-001",
+          nom: "Chantier 001",
+        },
+      });
+
+      await prisma.chantier_territoire.create({
+        data: {
+          id: "CH-001",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          territoire_code: "NAT-FR",
+        },
+      });
+
+      const habilitation = {
+        lecture: {
+          chantiers: ["CH-001", "CH-002"],
+          territoires: ["NAT-FR"],
+        },
+      } as unknown as Utilisateur["habilitations"];
+
+      const profil = ProfilEnum.DITP_ADMIN;
+
+      // When
+      const request = async () => {
+        await prismaChantierRepository.recupererLesEntreesDUnChantier(
+          "CH-002",
+          habilitation,
+          profil,
+          2024,
+        );
+      };
+
+      // Then
+      await expect(request).rejects.toThrow(/chantier 'CH-002' non trouvé/);
+    });
+
+    test("quand on est un profil territorial, doit renvoyer la liste des chantiers sans la maille nationale", async () => {
+      // Given
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-001",
+          nom: "Chantier 001",
+        },
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+            territoire_code: "NAT-FR",
+          },
+          {
+            id: "CH-001",
+            code_insee: "87",
+            maille: "DEPT",
+            zone_id: "D87",
+            territoire_code: "DEPT-87",
+          },
+          {
+            id: "CH-001",
+            code_insee: "87",
+            maille: "DEPT",
+            zone_id: "D87",
+            territoire_code: "DEPT-88",
+          },
+        ],
+      });
+
+      const habilitation = {
+        lecture: {
+          chantiers: ["CH-001", "CH-002"],
+          territoires: ["DEPT-87"],
+        },
+      } as unknown as Utilisateur["habilitations"];
+
+      const profil = ProfilEnum.COORDINATEUR_DEPARTEMENT;
+
+      // When
+      const listeChantier =
+        await prismaChantierRepository.recupererLesEntreesDUnChantier(
+          "CH-001",
+          habilitation,
+          profil,
+          2024,
+        );
+
+      // Then
+      expect(listeChantier.nom).toEqual("Chantier 001");
+      expect(
+        listeChantier.chantier_territoire.map(
+          (chantierTerritoire) => chantierTerritoire.territoire_code,
+        ),
+      ).toContainEqual("DEPT-87");
+    });
+
+    test("quand on n'est pas un profil territorial, doit renvoyer la liste des chantiers avec la maille nationale", async () => {
+      // Given
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-001",
+          nom: "Chantier 001",
+        },
+      });
+
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-002",
+          nom: "Chantier 002",
+        },
+      });
+
+      await prisma.chantier_territoire.create({
+        data: {
+          id: "CH-002",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          territoire_code: "NAT-FR",
+        },
+      });
+
+      await prisma.chantier_territoire.create({
+        data: {
+          id: "CH-001",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          territoire_code: "NAT-FR",
+        },
+      });
+      await prisma.chantier_territoire.create({
+        data: {
+          id: "CH-001",
+          code_insee: "87",
+          maille: "DEPT",
+          zone_id: "D87",
+          territoire_code: "DEPT-87",
+          chantier_territoire_jalon: {
+            createMany: {
+              data: [
+                {
+                  code_insee: "87",
+                  maille: "DEPT",
+                  zone_id: "D87",
+                  jalon: 2024,
+                  taux_avancement: 10,
+                },
+                {
+                  code_insee: "87",
+                  maille: "DEPT",
+                  zone_id: "D87",
+                  jalon: 2025,
+                  taux_avancement: 12,
+                },
+              ],
+            },
+          },
+        },
+      });
+
+      await prisma.chantier_territoire.create({
+        data: {
+          id: "CH-001",
+          code_insee: "88",
+          maille: "DEPT",
+          zone_id: "D88",
+          territoire_code: "DEPT-88",
+          chantier_territoire_jalon: {
+            createMany: {
+              data: [
+                {
+                  code_insee: "88",
+                  maille: "DEPT",
+                  zone_id: "D88",
+                  jalon: 2024,
+                  taux_avancement: 10,
+                },
+                {
+                  code_insee: "88",
+                  maille: "DEPT",
+                  zone_id: "D88",
+                  jalon: 2025,
+                  taux_avancement: 12,
+                },
+              ],
+            },
+          },
+        },
+      });
+
+      const habilitation = {
+        lecture: {
+          chantiers: ["CH-001", "CH-002"],
+          territoires: ["DEPT-87"],
+        },
+      } as unknown as Utilisateur["habilitations"];
+
+      const profil = ProfilEnum.DITP_ADMIN;
+
+      // When
+      const listeChantier =
+        await prismaChantierRepository.recupererLesEntreesDUnChantier(
+          "CH-001",
+          habilitation,
+          profil,
+          2024,
+        );
+
+      // Then
+      expect(listeChantier.nom).toEqual("Chantier 001");
+      expect(listeChantier.chantier_territoire).toHaveLength(2);
+      expect(
+        listeChantier.chantier_territoire.map(
+          (chantierTerritoire) => chantierTerritoire.territoire_code,
+        ),
+      ).toIncludeAllMembers(["NAT-FR", "DEPT-87"]);
+      expect(
+        listeChantier.chantier_territoire.find(
+          (chantierTerritoire) =>
+            chantierTerritoire.territoire_code === "DEPT-87",
+        )?.chantier_territoire_jalon,
+      ).toIncludeAllPartialMembers<Partial<chantier_territoire_jalon>>([
+        {
+          taux_avancement: 10,
+        },
+      ]);
+    });
   });
 
   describe("#recupererPourExports", () => {

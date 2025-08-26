@@ -15,6 +15,22 @@ import {
 import { removeAccents } from "@/server/utils/remove-accents";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { PrismaChantier } from "@/server/chantiers/domain/PrismaChantier";
+import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+
+class ErreurChantierNonTrouvé extends Error {
+  constructor(idChantier: string) {
+    super(`Erreur: chantier '${idChantier}' non trouvé.`);
+  }
+}
+
+class ErreurChantierPermission extends Error {
+  constructor(idChantier: string) {
+    super(
+      `Erreur de Permission: l'utilisateur n'a pas le droit de lecture pour le chantier '${idChantier}'.`,
+    );
+  }
+}
 
 export class PrismaChantierRepository implements ChantierRepository {
   async récupérerDonneesChantier(
@@ -374,6 +390,57 @@ export class PrismaChantierRepository implements ChantierRepository {
           return chantierB.ministèreNom.localeCompare(chantierA.ministèreNom);
         });
     });
+  }
+
+  async recupererLesEntreesDUnChantier(
+    id: string,
+    habilitations: Habilitations,
+    profil: ProfilCode,
+    jalon: number,
+  ): Promise<PrismaChantier> {
+    const habilitation = new Habilitation(habilitations);
+    const listeChantiersIdsAccessiblesEnLecture =
+      habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+
+    let listeTerritoireAccessibleEnLecture =
+      habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
+
+    const peutAccéderAuChantier =
+      listeChantiersIdsAccessiblesEnLecture.includes(id);
+
+    if (!peutAccéderAuChantier) {
+      throw new ErreurChantierPermission(id);
+    }
+
+    const chantier = await prisma.chantier_identite.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        chantier_territoire: {
+          where: {
+            territoire_code: {
+              in: profilsTerritoriaux.includes(profil)
+                ? undefined
+                : [...listeTerritoireAccessibleEnLecture, "NAT-FR"],
+            },
+          },
+          include: {
+            chantier_territoire_jalon: {
+              where: {
+                jalon,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!chantier) {
+      throw new ErreurChantierNonTrouvé(id);
+    }
+
+    return chantier;
   }
 
   async recupererPourExports(

@@ -4,6 +4,7 @@ import {
   indicateur_territoire_jalon as PrismaIndicateurTerritoireJalon,
   indicateur_territoire_valeur_evenement as PrismaIndicateurTerritoireValeurEvenement,
   utilisateur as PrismaUtilisateur,
+  territoire as PrismaTerritoire,
 } from "@prisma/client";
 import { DonneeIndicateur } from "@/server/chantiers/domain/DonneeIndicateur";
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
@@ -17,6 +18,7 @@ import {
   DetailIndicateurPropositionValeurAvancement,
   DetailsIndicateur,
   DetailsIndicateurs,
+  DetailsIndicateurTerritoire,
 } from "@/server/chantiers/domain/DetailsIndicateurs";
 import { comparerDates, formatDate } from "@/client/utils/date/date";
 import {
@@ -24,6 +26,12 @@ import {
   EvenementValeurEnum,
 } from "@/server/app/domain/EvenementValeurEnum";
 import { toISODate } from "@/server/app/domain/Dates";
+import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import {
+  ProfilCode,
+  profilsTerritoriaux,
+} from "@/server/domain/utilisateur/Utilisateur.interface";
+import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 
 const convertirEnDonneeIndicateur = (
   prismaIndicateurIdentite: PrismaIndicateurIdentite & {
@@ -67,6 +75,12 @@ const convertirEnDonneeIndicateur = (
     },
   );
 };
+
+class ErreurIndicateurNonTrouvé extends Error {
+  constructor(idIndicateur: string) {
+    super(`Erreur: indicateur '${idIndicateur}' non trouvé.`);
+  }
+}
 
 export class PrismaIndicateurRepository implements IndicateurRepository {
   async listerParIndicId({
@@ -1412,6 +1426,182 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     });
 
     return this.convertirEnDetailsIndicateurs(indicateurs, jalon);
+  }
+
+  async récupérerDétailsTerritoirePourUnIndicateur(
+    indicateurId: string,
+    habilitations: Habilitations,
+    profil: ProfilCode,
+    jalon: number,
+  ): Promise<DetailsIndicateurTerritoire> {
+    const habilitation = new Habilitation(habilitations);
+    const chantiersLecture =
+      habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const territoiresLecture =
+      habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
+
+    const listeIndicateursModel = await prisma.indicateur_territoire.findMany({
+      where: {
+        id: indicateurId,
+        indicateur_identite: {
+          chantier_id: { in: chantiersLecture },
+        },
+        territoire_code: !profilsTerritoriaux.includes(profil)
+          ? { in: territoiresLecture }
+          : undefined,
+      },
+      include: {
+        indicateur_identite: true,
+        indicateur_territoire_jalon: {
+          where: {
+            jalon,
+          },
+        },
+        indicateur_territoire_valeur_evenement: {
+          include: {
+            auteur: {
+              select: {
+                nom: true,
+                prenom: true,
+              },
+            },
+          },
+          orderBy: [
+            {
+              date_creation: "desc",
+            },
+            {
+              ordre: "desc",
+            },
+          ],
+        },
+      },
+    });
+
+    if (listeIndicateursModel.length === 0) {
+      throw new ErreurIndicateurNonTrouvé(indicateurId);
+    }
+
+    const territoires = await prisma.territoire.findMany({
+      select: {
+        code: true,
+        code_insee: true,
+      },
+    });
+
+    return this.convertirEnDetailsIndicateursTerritoires(
+      territoires,
+      listeIndicateursModel,
+    );
+  }
+
+  private convertirEnDetailsIndicateursTerritoires(
+    territoires: Pick<PrismaTerritoire, "code" | "code_insee">[],
+    indicateurRows: (PrismaIndicateurTerritoire & {
+      indicateur_identite: PrismaIndicateurIdentite;
+      indicateur_territoire_jalon: PrismaIndicateurTerritoireJalon[];
+      indicateur_territoire_valeur_evenement: (PrismaIndicateurTerritoireValeurEvenement & {
+        auteur: Pick<PrismaUtilisateur, "nom" | "prenom">;
+      })[];
+    })[],
+  ) {
+    let donnéesTerritoires: DetailsIndicateurTerritoire = {};
+
+    territoires.forEach((territoire) => {
+      const indicateurRow = indicateurRows.find(
+        (indicateur) => indicateur.territoire_code === territoire.code,
+      );
+      const indicateurTerritoireJalon =
+        indicateurRow?.indicateur_territoire_jalon.at(0);
+
+      let propositionStatutTerritoire = null;
+      let propositionStatutDirectionProjet = null;
+
+      if (indicateurRow) {
+        ({ propositionStatutTerritoire, propositionStatutDirectionProjet } =
+          this.calculerStatutsProposition(
+            indicateurRow,
+            indicateurTerritoireJalon?.date_valeur_actuelle,
+          ));
+      }
+
+      donnéesTerritoires[territoire.code] = {
+        codeInsee: territoire.code_insee,
+        dateValeurCible:
+          indicateurRow?.date_valeur_cible_mandat?.toLocaleString() ?? null,
+        dateValeurInitiale:
+          indicateurRow?.date_valeur_initiale?.toLocaleString() ?? null,
+        dateValeurAvancement:
+          indicateurTerritoireJalon?.date_valeur_actuelle?.toLocaleString() ??
+          null,
+        dateValeurAvancementMandat:
+          indicateurRow?.date_valeur_actuelle_mandat?.toLocaleString() ?? null,
+        dateValeurCibleAnnuelle:
+          indicateurTerritoireJalon?.date_valeur_cible?.toLocaleString() ??
+          null,
+        // TODO(Tristan-10/10/2024) : Trouver une moyen de se débarasser du as unknown
+        historiquesValeurs: indicateurRow
+          ? (
+              (indicateurRow.evolution_valeur_actuelle as unknown as historique_valeurs[]) ||
+              []
+            ).sort((a, b) => comparerDates(a.date, b.date))
+          : [],
+        valeurCible: verifyValeurIsNotNullOrUndefined(
+          indicateurRow?.valeur_cible_mandat,
+        ),
+        valeurInitiale: verifyValeurIsNotNullOrUndefined(
+          indicateurRow?.valeur_initiale,
+        ),
+        valeurAvancement: verifyValeurIsNotNullOrUndefined(
+          indicateurTerritoireJalon?.valeur_actuelle,
+        ),
+        valeurCibleAnnuelle: verifyValeurIsNotNullOrUndefined(
+          indicateurTerritoireJalon?.valeur_cible,
+        ),
+        valeurAvancementMandat: verifyValeurIsNotNullOrUndefined(
+          indicateurRow?.valeur_actuelle_mandat,
+        ),
+        avancement: {
+          annuel: verifyValeurIsNotNullOrUndefined(
+            indicateurTerritoireJalon?.taux_avancement,
+          ),
+          global: verifyValeurIsNotNullOrUndefined(
+            indicateurRow?.taux_avancement_mandat,
+          ),
+        },
+        proposition: indicateurRow
+          ? this.recupererPropositionValeurAvancement(
+              indicateurRow,
+              indicateurTerritoireJalon,
+            )
+          : null,
+        propositionStatutTerritoire,
+        propositionStatutDirectionProjet,
+        unite: indicateurRow?.indicateur_identite.unite_mesure ?? null,
+        estApplicable: indicateurRow?.est_applicable ?? null,
+        dateImport:
+          indicateurRow?.indicateur_identite.dernier_import_date_indic?.toLocaleString() ??
+          null,
+        ponderation: indicateurRow?.ponderation_zone_reel ?? null,
+        prochaineDateMaj:
+          indicateurRow?.prochaine_date_maj?.toLocaleString() ?? null,
+        prochaineDateMajJours: indicateurRow?.prochaine_date_maj_jours ?? null,
+        prochaineDateValeurAvancement:
+          indicateurRow?.prochaine_date_valeur_actuelle?.toLocaleString() ??
+          null,
+        estAJour: indicateurRow?.est_a_jour ?? null,
+        tendance: indicateurRow?.tendance ?? null,
+        listeValeursCiblesAnnuelles:
+          indicateurRow?.indicateur_territoire_jalon.map((indicateurJalon) => {
+            return {
+              annee: indicateurJalon.jalon,
+              valeurCible: indicateurJalon.valeur_cible,
+            };
+          }) ?? [],
+      };
+    });
+
+    return donnéesTerritoires;
   }
 
   private convertirEnDetailsIndicateurs(

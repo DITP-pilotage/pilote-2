@@ -26,11 +26,16 @@ import { ExportCsvDesChantiersUseCaseV2 } from "./usecases/ExportCsvDesChantiers
 import { ExportCsvDesIndicateursUseCase } from "./usecases/ExportCsvDesIndicateursUseCase";
 import { ExportCsvDesIndicateursUseCaseV2 } from "./usecases/ExportCsvDesIndicateursUseCaseV2";
 import { ExportCsvDesHistoriquesIndicateursUseCaseV2 } from "./usecases/ExportCsvDesHistoriquesIndicateursUseCaseV2";
+import { MinistereRepository } from "./domain/ports/MinistereRepository";
+import PrismaMinistereRepository from "./infrastructure/adapters/PrismaMinistereRepository";
+import RecupererChantierUseCaseV2 from "./usecases/RecupererChantierUseCaseV2";
+import { ListerDetailsIndicateurTerritoireUseCaseV2 } from "./usecases/ListerDetailsIndicateurTerritoireUseCaseV2";
 
 export type ChantierDependencies = {
   chantierRepository: ChantierRepository;
   indicateurRepository: IndicateurRepository;
   territoireRepository: TerritoireRepository;
+  ministereRepository: MinistereRepository;
   propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
   utilisateurRepository: UtilisateurRepository;
   envoieEmailService: EnvoieEmailService;
@@ -47,6 +52,8 @@ export type ChantierDependencies = {
   recupererDetailsIndicateursV2UseCase: RecupererDetailsIndicateursV2UseCase;
   recupererChantiersAccessiblesEnLectureUseCaseV2: RecupererChantiersAccessiblesEnLectureUseCaseV2;
   recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2: RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2;
+  recupererChantierUseCaseV2: RecupererChantierUseCaseV2;
+  listerDetailsIndicateurTerritoireUseCaseV2: ListerDetailsIndicateurTerritoireUseCaseV2;
 };
 
 export const getChantiersContainer = (
@@ -56,6 +63,7 @@ export const getChantiersContainer = (
     chantierRepository: asClass(PrismaChantierRepository),
     indicateurRepository: asClass(PrismaIndicateurRepository),
     territoireRepository: asClass(PrismaTerritoireRepository),
+    ministereRepository: asClass(PrismaMinistereRepository),
     propositionValeurAvancementRepository: asClass(
       PrismaPropositionValeurAvancementRepository,
     ),
@@ -89,6 +97,10 @@ export const getChantiersContainer = (
     ),
     recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2: asClass(
       RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2,
+    ),
+    recupererChantierUseCaseV2: asClass(RecupererChantierUseCaseV2),
+    listerDetailsIndicateurTerritoireUseCaseV2: asClass(
+      ListerDetailsIndicateurTerritoireUseCaseV2,
     ),
   });
 };

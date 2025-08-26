@@ -6,12 +6,19 @@ import { PropositionValeurAvancementChantierInformation } from "@/server/chantie
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { PrismaChantier } from "@/server/chantiers/domain/PrismaChantier";
+import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 
 export interface ChantierRepository {
   récupérerDonneesChantier(
     chantierId: string,
     territoireCodesLecture: string[],
   ): Promise<DonneeChantier[]>;
+  recupererLesEntreesDUnChantier(
+    id: string,
+    habilitations: Habilitations,
+    profil: ProfilCode,
+    jalon: number,
+  ): Promise<PrismaChantier>;
   recupererPourExports(
     chantierId: string,
     territoireCodesLecture: string[],
