@@ -7,19 +7,12 @@ import { territoiresTerritoiresStore } from "@/stores/useTerritoiresStore/useTer
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
 import { PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS } from "@/client/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj";
+import { LISTE_PROFIL_TERRITORIALISE } from "@/server/app/domain/ProfilTerritorialise";
 
 const PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_AVANCEMENT = new Set([
   ProfilEnum.DITP_ADMIN,
-  ProfilEnum.PREFET_DEPARTEMENT,
-  ProfilEnum.PREFET_REGION,
-  ProfilEnum.COORDINATEUR_REGION,
-  ProfilEnum.COORDINATEUR_DEPARTEMENT,
-  ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-  ProfilEnum.SERVICES_DECONCENTRES_REGION,
+  ...LISTE_PROFIL_TERRITORIALISE,
 ]);
-
-const PROFIL_AUTORISE_A_ACCEPTER_LES_PROPOSITIONS_DE_VALEUR_AVANCEMENT =
-  new Set([ProfilEnum.DIR_PROJET, ProfilEnum.EQUIPE_DIR_PROJET]);
 
 const PROFIL_INTERDIT_DE_VOIR_LE_SELECTEUR_DE_MAILLE = new Set([
   ProfilEnum.COORDINATEUR_DEPARTEMENT,
@@ -49,15 +42,14 @@ export const usePageChantier = (
     estAutoriseAModifierLesPublications &&
     chantier.statut !== "ARCHIVE";
 
+  const estAutoriseAImporterSurLeChantier = !!session?.habilitations[
+    "saisieIndicateur"
+  ].chantiers.includes(chantier.id);
+
   const estAutoriseAAccepterLesPropositionsDeValeurAvancement =
+    session?.profil != ProfilEnum.DITP_ADMIN &&
     territoireCode !== "NAT-FR" &&
-    (PROFIL_AUTORISE_A_ACCEPTER_LES_PROPOSITIONS_DE_VALEUR_AVANCEMENT.has(
-      session!.profil,
-    ) ||
-      (session!.profil === ProfilEnum.SECRETARIAT_GENERAL &&
-        !!session?.habilitations["saisieIndicateur"].chantiers.includes(
-          chantier.id,
-        ))) &&
+    estAutoriseAImporterSurLeChantier &&
     estAutoriseAModifierLesPublications &&
     chantier.statut !== "ARCHIVE";
 
@@ -91,9 +83,7 @@ export const usePageChantier = (
 
   const estAutoriseAImporterDesIndicateurs =
     estAutoriséAImporterDesIndicateurs(session!.profil) &&
-    !!session?.habilitations["saisieIndicateur"].chantiers.includes(
-      chantier.id,
-    ) &&
+    estAutoriseAImporterSurLeChantier &&
     chantier.statut !== "ARCHIVE";
 
   const { data: variableContenuFFFicheConducteur } =

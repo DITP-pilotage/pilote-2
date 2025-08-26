@@ -13,6 +13,7 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { ProfilCode } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
 import { PropositionValeurAvancementChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
+import { LISTE_PROFIL_TERRITORIALISE } from "@/server/app/domain/ProfilTerritorialise";
 import { Habilitations } from "./Habilitation.interface";
 
 const PROFIL_AUTORISE_A_MODIFICATION_TOKEN_API = new Set([
@@ -29,18 +30,7 @@ const PROFIL_AUTORISE_A_MODIFICATION_GESTION_CONTENU = new Set([
 ]);
 const PROFIL_AUTORISE_A_MODIFIER_PROPOSITION_VALEUR_AVANCEMENT = new Set([
   ProfilEnum.DITP_ADMIN,
-  ProfilEnum.PREFET_DEPARTEMENT,
-  ProfilEnum.PREFET_REGION,
-  ProfilEnum.COORDINATEUR_REGION,
-  ProfilEnum.COORDINATEUR_DEPARTEMENT,
-  ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-  ProfilEnum.SERVICES_DECONCENTRES_REGION,
-]);
-
-const PROFIL_AUTORISE_A_ACCEPTER_PROPOSITION_VALEUR_AVANCEMENT = new Set([
-  ProfilEnum.DIR_PROJET,
-  ProfilEnum.EQUIPE_DIR_PROJET,
-  ProfilEnum.SECRETARIAT_GENERAL,
+  ...LISTE_PROFIL_TERRITORIALISE,
 ]);
 
 export default class Habilitation {
@@ -151,13 +141,14 @@ export default class Habilitation {
     chantiersIdsAutorisés: string[],
     propositionValeurAvancementChantierInformation: PropositionValeurAvancementChantierInformation,
   ) {
+    const estAutoriseAModifierLesCommentaires = chantiersIdsAutorisés.includes(
+      propositionValeurAvancementChantierInformation.id,
+    );
     if (
       !profil ||
       !PROFIL_AUTORISE_A_MODIFIER_PROPOSITION_VALEUR_AVANCEMENT.has(profil) ||
       propositionValeurAvancementChantierInformation.statut === "ARCHIVE" ||
-      !chantiersIdsAutorisés.includes(
-        propositionValeurAvancementChantierInformation.id,
-      )
+      !estAutoriseAModifierLesCommentaires
     ) {
       throw new UnauthorizedError(
         "Vous n'êtes pas autorisé a effectuer cette action",
@@ -170,17 +161,20 @@ export default class Habilitation {
     habilitations: Habilitations,
     propositionValeurAvancementChantierInformation: PropositionValeurAvancementChantierInformation,
   ) {
+    const estAutoriseAImportSurLeChantier =
+      habilitations.saisieIndicateur.chantiers.includes(
+        propositionValeurAvancementChantierInformation.id,
+      );
+    const estAutoriseAModifierLesCommentaires =
+      habilitations.saisieCommentaire.chantiers.includes(
+        propositionValeurAvancementChantierInformation.id,
+      );
     if (
       !profil ||
-      !PROFIL_AUTORISE_A_ACCEPTER_PROPOSITION_VALEUR_AVANCEMENT.has(profil) ||
+      profil === ProfilEnum.DITP_ADMIN ||
       propositionValeurAvancementChantierInformation.statut === "ARCHIVE" ||
-      !habilitations.saisieCommentaire.chantiers.includes(
-        propositionValeurAvancementChantierInformation.id,
-      ) ||
-      (profil === ProfilEnum.SECRETARIAT_GENERAL &&
-        !habilitations.saisieIndicateur.chantiers.includes(
-          propositionValeurAvancementChantierInformation.id,
-        ))
+      !estAutoriseAModifierLesCommentaires ||
+      !estAutoriseAImportSurLeChantier
     ) {
       throw new UnauthorizedError(
         "Vous n'êtes pas autorisé a effectuer cette action",
