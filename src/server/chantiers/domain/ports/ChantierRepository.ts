@@ -3,19 +3,23 @@ import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { ChantierPourExport } from "@/server/chantiers/domain/ChantierPourExport";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { PropositionValeurAvancementChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
+import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
+import { PrismaChantier } from "@/server/chantiers/domain/PrismaChantier";
+import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 
 export interface ChantierRepository {
   récupérerDonneesChantier(
     chantierId: string,
     territoireCodesLecture: string[],
   ): Promise<DonneeChantier[]>;
-  récupérerPourExports(
-    chantierId: string,
-    territoireCodesLecture: string[],
-    optionsExport: OptionsExport,
+  recupererLesEntreesDUnChantier(
+    id: string,
+    habilitations: Habilitations,
+    profil: ProfilCode,
     jalon: number,
-  ): Promise<ChantierPourExport[] | null>;
-  récupérerPourExportsV2(
+  ): Promise<PrismaChantier>;
+  recupererPourExports(
     chantierId: string,
     territoireCodesLecture: string[],
     optionsExport: OptionsExport,
@@ -35,4 +39,12 @@ export interface ChantierRepository {
   }: {
     listeChantiersIds: string[];
   }): Promise<PropositionValeurAvancementChantierInformation[]>;
+  récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+    chantiersLectureIds: string[],
+    territoiresLectureIds: string[],
+    profil: ProfilCode,
+    filtres: FiltreQueryParams,
+    territoireCode: string,
+    jalon: number,
+  ): Promise<PrismaChantier[]>;
 }

@@ -7,9 +7,9 @@ import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { configuration } from "@/config";
 import { recupererJalon } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/recupererJalon";
-import { ExportCsvDesHistoriquesIndicateursUseCase } from "@/server/chantiers/usecases/ExportCsvDesHistoriquesIndicateursUseCase";
 import { getContainer } from "@/server/dependances";
 import { Maille } from "@/server/domain/maille/Maille.interface";
+import { ExportCsvDesHistoriquesIndicateursUseCase } from "@/server/chantiers/usecases/ExportCsvDesHistoriquesIndicateursUseCase";
 
 export const handleExportDesHistoriquesIndicateurs = async (
   request: NextApiRequest,
@@ -77,7 +77,7 @@ export const handleExportDesHistoriquesIndicateurs = async (
 
   stringifier.pipe(response);
 
-  const chunkSize = configuration.export.csvIndicateursChunkSize;
+  const chunkSize = configuration().export.csvIndicateursChunkSize;
 
   const habilitation = new Habilitation(session.habilitations);
 

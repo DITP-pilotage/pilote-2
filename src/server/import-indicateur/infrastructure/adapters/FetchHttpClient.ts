@@ -35,7 +35,7 @@ export class FetchHttpClient implements HttpClient {
       resource_data: ReportResourceData;
     }>(async (resolve) => {
       return formData.submit(
-        configuration.import.urlValidata,
+        configuration().import.urlValidata,
         (error, response) => {
           let data = "";
           response.on("data", function (chunk) {

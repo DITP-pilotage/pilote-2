@@ -9,10 +9,10 @@ import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/p
 import { configuration } from "@/config";
 
 const contactsApi = new ContactsApi();
-contactsApi.setApiKey(0, configuration.brevo.apiKey);
+contactsApi.setApiKey(0, configuration().brevo.apiKey);
 
 const emailApi = new TransactionalEmailsApi();
-emailApi.setApiKey(0, configuration.brevo.apiKey);
+emailApi.setApiKey(0, configuration().brevo.apiKey);
 
 export class BrevoContactInfoLettresService
   implements ContactInfoLettresService

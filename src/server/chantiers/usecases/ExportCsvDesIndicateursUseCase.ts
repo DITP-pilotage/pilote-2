@@ -175,7 +175,7 @@ interface Dependencies {
   indicateurRepository: IndicateurRepository;
 }
 
-export class ExportCsvDesIndicateursUseCaseV2 {
+export class ExportCsvDesIndicateursUseCase {
   public static readonly NOMS_COLONNES = (
     jalon: number,
     optionsExport: OptionsExport,

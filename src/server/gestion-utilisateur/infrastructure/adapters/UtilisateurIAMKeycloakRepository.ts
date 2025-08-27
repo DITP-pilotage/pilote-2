@@ -62,8 +62,8 @@ export class UtilisateurIAMKeycloakRepository
       logger.info(`Utilisateur ${email} réactivé.`);
       await this.kcAdminClient.users.executeActionsEmail({
         realm: KEYCLOAK_REALM,
-        clientId: configuration.import.clientId,
-        redirectUri: configuration.baseUrl,
+        clientId: configuration().import.clientId,
+        redirectUri: configuration().baseUrl,
         id: utilisateur[0].id,
         lifespan: 7 * DAY_IN_SECONDS,
         actions: ["UPDATE_PASSWORD"],
@@ -81,15 +81,15 @@ export class UtilisateurIAMKeycloakRepository
 
   private async loginKcAdminClient() {
     this.kcAdminClient = new KcAdminClient({
-      baseUrl: configuration.import.keycloakUrl,
+      baseUrl: configuration().import.keycloakUrl,
       realmName: KEYCLOAK_REALM,
       requestArgOptions: {},
     });
 
     await this.kcAdminClient.auth({
       grantType: "client_credentials",
-      clientId: configuration.import.clientId,
-      clientSecret: configuration.import.clientSecret,
+      clientId: configuration().import.clientId,
+      clientSecret: configuration().import.clientSecret,
     });
 
     return this.kcAdminClient;
@@ -114,8 +114,8 @@ export class UtilisateurIAMKeycloakRepository
       // pour le client en question (du script d'import donc).
       await this.kcAdminClient.users.executeActionsEmail({
         realm: KEYCLOAK_REALM,
-        clientId: configuration.import.clientId,
-        redirectUri: configuration.baseUrl,
+        clientId: configuration().import.clientId,
+        redirectUri: configuration().baseUrl,
         id: utilisateurIAM.id,
         lifespan: 7 * DAY_IN_SECONDS,
         actions: ["UPDATE_PASSWORD"],

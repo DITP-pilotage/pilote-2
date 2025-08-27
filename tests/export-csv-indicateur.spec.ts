@@ -187,7 +187,7 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
   await test.step("Retour à l'étape 4 - Récapitulatif et validation - partie téléchargement et vérification du fichier", async () => {
     await test.step("Téléchargement du fichier", async () => {
       await page.goto(
-        `${configuration.baseUrl}/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=indicateurs&optionsExport=identifiant,gouvernance`,
+        `${configuration().baseUrl}/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=indicateurs&optionsExport=identifiant,gouvernance`,
       );
       await page.waitForURL(
         "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=indicateurs&optionsExport=identifiant,gouvernance",
@@ -228,7 +228,7 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
   await test.step("Étape 4 - Récapitulatif et validation - partie téléchargement et vérification du fichier avec d'autres colonnes", async () => {
     await test.step("Téléchargement du fichier", async () => {
       await page.goto(
-        `${configuration.baseUrl}/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=indicateurs&optionsExport=identifiant,gouvernance,description`,
+        `${configuration().baseUrl}/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=indicateurs&optionsExport=identifiant,gouvernance,description`,
       );
 
       await page.waitForURL(

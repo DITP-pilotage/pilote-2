@@ -1,7 +1,12 @@
 import { DonneeIndicateur } from "@/server/chantiers/domain/DonneeIndicateur";
 import { IndicateurPourExport } from "@/server/chantiers/domain/IndicateurPourExport";
 import { HistoriqueIndicateurPourExport } from "@/server/chantiers/domain/HistoriqueIndicateurPourExport";
-import { DetailsIndicateurs } from "@/server/chantiers/domain/DetailsIndicateurs";
+import {
+  DetailsIndicateurs,
+  DetailsIndicateurTerritoire,
+} from "@/server/chantiers/domain/DetailsIndicateurs";
+import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 
 export interface IndicateurRepository {
   listerParIndicId({
@@ -36,4 +41,10 @@ export interface IndicateurRepository {
     territoireCodes: string[],
     jalon: number,
   ): Promise<DetailsIndicateurs>;
+  récupérerDétailsTerritoirePourUnIndicateur(
+    indicateurId: string,
+    habilitations: Habilitations,
+    profil: ProfilCode,
+    jalon: number,
+  ): Promise<DetailsIndicateurTerritoire>;
 }

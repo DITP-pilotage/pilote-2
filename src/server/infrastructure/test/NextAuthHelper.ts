@@ -8,6 +8,6 @@ export const getNextAuthSessionTokenPourUtilisateurEmail = (
     token: {
       user: { email: utilisateurEmail },
     },
-    secret: configuration.nextAuth.secret,
+    secret: configuration().nextAuth.secret,
   });
 };

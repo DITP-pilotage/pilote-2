@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth/next";
 import { stringify } from "csv-stringify";
 import { Options } from "csv-stringify/lib/sync";
 import assert from "node:assert/strict";
-import { ExportCsvDesChantiersUseCaseV2 } from "@/server/chantiers/usecases/ExportCsvDesChantiersUseCaseV2";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { configuration } from "@/config";
@@ -11,6 +10,7 @@ import { recupererJalon } from "@/components/_commons/IndicateursChantier/Bloc/V
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { getContainer } from "@/server/dependances";
 import { Maille } from "@/server/domain/maille/Maille.interface";
+import { ExportCsvDesChantiersUseCase } from "@/server/chantiers/usecases/ExportCsvDesChantiersUseCase";
 
 export const handleExportDesChantiers = async (
   request: NextApiRequest,
@@ -65,7 +65,7 @@ export const handleExportDesChantiers = async (
       request.query.estEnAlertePossedePropositionsValeurAvancement === "true",
   } satisfies OptionsExport;
 
-  const headersColumn = ExportCsvDesChantiersUseCaseV2.NOMS_COLONNES(
+  const headersColumn = ExportCsvDesChantiersUseCase.NOMS_COLONNES(
     jalon,
     optionsExport,
     session.profil,
@@ -83,7 +83,7 @@ export const handleExportDesChantiers = async (
   const habilitation = new Habilitation(session.habilitations);
   const territoireCodes =
     habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
-  const chunkSize = configuration.export.csvChantiersChunkSize;
+  const chunkSize = configuration().export.csvChantiersChunkSize;
 
   let territoireARecuperer = territoireCodes;
 
@@ -109,7 +109,7 @@ export const handleExportDesChantiers = async (
     );
 
   const exportCsvDesChantiersUseCase = getContainer("chantiers").resolve(
-    "exportCsvDesChantiersUseCaseV2",
+    "exportCsvDesChantiersUseCase",
   );
 
   for await (const partialResult of exportCsvDesChantiersUseCase.run({

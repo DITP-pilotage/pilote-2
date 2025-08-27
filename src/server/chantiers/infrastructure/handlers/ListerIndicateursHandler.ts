@@ -19,7 +19,7 @@ export const handleListerIndicateurs = async ({
       indicId: request.query.indicateurId as string,
       jalon: getAnneeDateDeBascule(
         new Date(),
-        configuration.dateBasculeAffichageValeursAnneePrecedente,
+        configuration().dateBasculeAffichageValeursAnneePrecedente,
       ),
     });
   response

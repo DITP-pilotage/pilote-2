@@ -6,5 +6,5 @@ export const recupererJalon = (jalon: string | undefined) =>
   (jalon && !Number.isNaN(jalon) && verifyValeurIsNotNullOrUndefined(+jalon)) ||
   getAnneeDateDeBascule(
     new Date(),
-    configuration.dateBasculeAffichageValeursAnneePrecedente,
+    configuration().dateBasculeAffichageValeursAnneePrecedente,
   );

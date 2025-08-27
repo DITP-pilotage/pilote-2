@@ -99,7 +99,7 @@ export const getServerSideProps: GetServerSideProps<
     Number.parseInt(query.jalon as string) ||
     getAnneeDateDeBascule(
       new Date(),
-      configuration.dateBasculeAffichageValeursAnneePrecedente,
+      configuration().dateBasculeAffichageValeursAnneePrecedente,
     );
   const cartographieGaucheChantier =
     (query.carteChG as CartographieType) || "avancementMandat";
@@ -158,11 +158,15 @@ export const getServerSideProps: GetServerSideProps<
       valeurFFPpgArchive,
       nouveauxGraphiquesSontActifs,
     ] = await Promise.all([
-      new RécupérerChantierUseCase(
-        dependencies.getChantierRepository(),
-        dependencies.getMinistèreRepository(),
-        dependencies.getTerritoireRepository(),
-      ).run(chantierId, session.habilitations, session.profil, jalon),
+      configuration().featureFlip.propositionValeurAvancementV2
+        ? getContainer("chantiers")
+            .resolve("recupererChantierUseCaseV2")
+            .run(chantierId, session.habilitations, session.profil, jalon)
+        : new RécupérerChantierUseCase(
+            dependencies.getChantierRepository(),
+            dependencies.getMinistèreRepository(),
+            dependencies.getTerritoireRepository(),
+          ).run(chantierId, session.habilitations, session.profil, jalon),
       dependencies.getIndicateurRepository().récupérerParChantierId(chantierId),
       new RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase(
         dependencies.getSynthèseDesRésultatsRepository(),
@@ -178,7 +182,7 @@ export const getServerSideProps: GetServerSideProps<
       )
         .run(chantierId, session.habilitations)
         .catch(() => null),
-      configuration.featureFlip.propositionValeurAvancementV2
+      configuration().featureFlip.propositionValeurAvancementV2
         ? getContainer("chantiers")
             .resolve("recupererDetailsIndicateursV2UseCase")
             .run(chantierId, territoireCodes, session.habilitations, jalon)
@@ -271,16 +275,28 @@ export const getServerSideProps: GetServerSideProps<
 
     const listeIndicateurId = indicateurs.map((indicateur) => indicateur.id);
 
-    const detailsIndicateursTerritoire =
-      await new ListerDétailsIndicateurTerritoireUseCase(
-        dependencies.getIndicateurRepository(),
-      ).run(
-        listeIndicateurId,
-        chantierId,
-        session.habilitations,
-        session.profil,
-        jalon,
-      );
+    const detailsIndicateursTerritoire: Record<
+      string,
+      DétailsIndicateurTerritoire
+    > = configuration().featureFlip.propositionValeurAvancementV2
+      ? await getContainer("chantiers")
+          .resolve("listerDetailsIndicateurTerritoireUseCaseV2")
+          .run(
+            listeIndicateurId,
+            chantierId,
+            session.habilitations,
+            session.profil,
+            jalon,
+          )
+      : await new ListerDétailsIndicateurTerritoireUseCase(
+          dependencies.getIndicateurRepository(),
+        ).run(
+          listeIndicateurId,
+          chantierId,
+          session.habilitations,
+          session.profil,
+          jalon,
+        );
 
     return {
       props: {

@@ -141,7 +141,7 @@ class Dependencies {
       new PrismaHistorisationModificationRepository();
     this._gestionContenuRepository = new PrismaGestionContenuRepository();
     this._tokenAPIService = new TokenAPIJWTService({
-      secret: configuration.tokenAPI.secret,
+      secret: configuration().tokenAPI.secret,
     });
     this._tokenAPIInformationRepository =
       new PrismaTokenAPIInformationRepository();

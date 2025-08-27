@@ -206,7 +206,7 @@ test("doit pouvoir exporter les données des chantiers sous format CSV", async (
   await test.step("Retour à l'étape 4 - Récapitulatif et validation - partie téléchargement et vérification du fichier", async () => {
     await test.step("Téléchargement du fichier", async () => {
       await page.goto(
-        `${configuration.baseUrl}/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=chantiers&optionsExport=identifiant,gouvernance`,
+        `${configuration().baseUrl}/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=chantiers&optionsExport=identifiant,gouvernance`,
       );
       await page.waitForURL(
         "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=chantiers&optionsExport=identifiant,gouvernance",
@@ -245,7 +245,7 @@ test("doit pouvoir exporter les données des chantiers sous format CSV", async (
   await test.step("Étape 4 - Récapitulatif et validation - partie téléchargement et vérification du fichier avec d'autres colonnes", async () => {
     await test.step("Téléchargement du fichier", async () => {
       await page.goto(
-        `${configuration.baseUrl}/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=chantiers&optionsExport=identifiant,gouvernance,responsabilite,objectif`,
+        `${configuration().baseUrl}/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=chantiers&optionsExport=identifiant,gouvernance,responsabilite,objectif`,
       );
 
       await page.waitForURL(

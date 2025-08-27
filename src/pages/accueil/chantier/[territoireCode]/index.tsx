@@ -88,7 +88,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({
     Number.parseInt(query.jalon as string) ||
     getAnneeDateDeBascule(
       new Date(),
-      configuration.dateBasculeAffichageValeursAnneePrecedente,
+      configuration().dateBasculeAffichageValeursAnneePrecedente,
     );
 
   assert(
@@ -195,20 +195,34 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({
 
   const mapAxes = new Map<string, Axe>(axes.map((axe) => [axe.id, axe]));
 
-  const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
-    dependencies.getChantierRepository(),
-    dependencies.getTerritoireRepository(),
-  ).run(
-    session.habilitations,
-    session.profil,
-    territoireCode,
-    mailleChantier || "departementale",
-    ministères,
-    mapAxes,
-    filtres,
-    sorting,
-    jalon,
-  );
+  const chantiers = configuration().featureFlip.propositionValeurAvancementV2
+    ? await getContainer("chantiers")
+        .resolve("recupererChantiersAccessiblesEnLectureUseCaseV2")
+        .run(
+          session.habilitations,
+          session.profil,
+          territoireCode,
+          mailleChantier || "departementale",
+          ministères,
+          mapAxes,
+          filtres,
+          sorting,
+          jalon,
+        )
+    : await new RécupérerChantiersAccessiblesEnLectureUseCase(
+        dependencies.getChantierRepository(),
+        dependencies.getTerritoireRepository(),
+      ).run(
+        session.habilitations,
+        session.profil,
+        territoireCode,
+        mailleChantier || "departementale",
+        ministères,
+        mapAxes,
+        filtres,
+        sorting,
+        jalon,
+      );
 
   const { filtresComptesCalculés } = Chantier.recupererStatistiqueListeChantier(
     chantiers,

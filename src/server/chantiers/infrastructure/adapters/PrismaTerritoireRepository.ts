@@ -1,12 +1,26 @@
+import { territoire as TerritoirePrisma } from "@prisma/client";
 import { TerritoireRepository } from "@/server/chantiers/domain/ports/TerritoireRepository";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { PilotePrismaClient } from "@/server/db/Transaction";
+import { Territoire } from "@/server/domain/territoire/Territoire.interface";
+import { NOMS_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 
 export class PrismaTerritoireRepository implements TerritoireRepository {
   private readonly prisma: PilotePrismaClient;
 
   constructor({ prisma }: { prisma: PrismaPilote }) {
     this.prisma = prisma.getInstance();
+  }
+
+  _mapperVersLeDomaine(territoire: TerritoirePrisma): Territoire {
+    return {
+      code: territoire.code,
+      nom: territoire.nom,
+      nomAffiché: territoire.nom_affiche,
+      codeInsee: territoire.code_insee,
+      codeParent: territoire.code_parent,
+      maille: NOMS_MAILLES[territoire.maille],
+    };
   }
 
   async recupererTerritoireCodesEtTerritoiresCodesEnfantsParTerritoireCode({
@@ -33,5 +47,10 @@ export class PrismaTerritoireRepository implements TerritoireRepository {
         (territoireEnfant) => territoireEnfant.code,
       ),
     ];
+  }
+
+  async récupérerTousNew() {
+    const territoires = await this.prisma.territoire.findMany();
+    return territoires.map((t) => this._mapperVersLeDomaine(t));
   }
 }

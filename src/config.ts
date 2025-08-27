@@ -388,4 +388,6 @@ config.set(
 
 config.validate({ allowed: "strict" });
 
-export const configuration = config.get();
+export const baseConfig = config;
+
+export const configuration = () => config.get();

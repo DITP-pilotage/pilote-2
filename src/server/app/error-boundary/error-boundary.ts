@@ -21,7 +21,7 @@ const verifierAuthentification = async (request: NextApiRequest) => {
   }
 
   await new TokenAPIJWTService({
-    secret: configuration.tokenAPI.secret,
+    secret: configuration().tokenAPI.secret,
   }).decoderTokenAPI(token.split(" ")[1]);
 };
 
