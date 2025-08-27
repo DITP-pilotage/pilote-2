@@ -19,7 +19,7 @@ const PublicationHistorique: FunctionComponent<PublicationHistoriqueProps> = ({
   return (
     <>
       <BoutonSousLigné
-        ariaControls={ID_HTML}
+        aria-controls={ID_HTML}
         className="fr-mt-1w"
         dataFrOpened={false}
         type="button"

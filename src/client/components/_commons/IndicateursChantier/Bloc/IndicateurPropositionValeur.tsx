@@ -93,7 +93,7 @@ export const IndicateurPropositionValeur = ({
           ) : null}
         </p>
         <BoutonSousLigné
-          ariaControls={
+          aria-controls={
             ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT +
             indicateur.id
           }
@@ -105,7 +105,7 @@ export const IndicateurPropositionValeur = ({
         </BoutonSousLigné>
         {estAutoriseAProposerUneValeurAvancement ? (
           <BoutonSousLigné
-            ariaControls={
+            aria-controls={
               ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id
             }
             className="fr-link--xs fr-link--icon-left fr-icon-edit-line texte-gris"
@@ -149,7 +149,7 @@ export const IndicateurPropositionValeur = ({
         par la direction de projet
       </p>
       <BoutonSousLigné
-        ariaControls={
+        aria-controls={
           ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT +
           indicateur.id
         }

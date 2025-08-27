@@ -275,7 +275,7 @@ export const LignesPropositionValeurAvancement = ({
               {!estPropositionAccuseeReception(detailIndicateur) && (
                 <div className="flex align-center">
                   <BoutonSousLigné
-                    ariaControls={
+                    aria-controls={
                       ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT +
                       indicateur.id
                     }
