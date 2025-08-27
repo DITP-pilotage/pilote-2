@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 
 const InfobulleStyled = styled.span`
   position: relative;
-  display: inline-block;
+  display: inline-flex;
 
   .tooltip-infobulle {
     z-index: 10000;

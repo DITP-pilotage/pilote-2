@@ -50,7 +50,7 @@ const BarreDeProgression: FunctionComponent<BarreDeProgressionProps> = ({
 
   return (
     <BarreDeProgressionStyled
-      className={`barre-de-progression flex texte-${positionTexte}`}
+      className={`barre-de-progression gap-2 flex texte-${positionTexte}`}
     >
       <div className="barre">
         <progress
