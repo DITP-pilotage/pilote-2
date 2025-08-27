@@ -754,7 +754,8 @@ export class PrismaChantierRepository implements ChantierRepository {
                 )
                 .some((chantierTerritoire) =>
                   featureFlipPropositionValeurAvancementV2
-                    ? chantierTerritoire.nombre_propositions_valeur_actuelle_v2 > 0
+                    ? chantierTerritoire.nombre_propositions_valeur_actuelle_v2 >
+                      0
                     : chantierTerritoire.nombre_propositions_valeur_actuelle >
                       0,
                 );
@@ -763,7 +764,8 @@ export class PrismaChantierRepository implements ChantierRepository {
               prismaChantierIdentite.chantier_territoire.some(
                 (chantierTerritoire) =>
                   featureFlipPropositionValeurAvancementV2
-                    ? chantierTerritoire.nombre_propositions_valeur_actuelle_v2 > 0
+                    ? chantierTerritoire.nombre_propositions_valeur_actuelle_v2 >
+                      0
                     : chantierTerritoire.nombre_propositions_valeur_actuelle >
                       0,
               );

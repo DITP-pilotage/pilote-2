@@ -7,6 +7,7 @@ import Loader from "@/components/_commons/Loader/Loader";
 import { formaterDate } from "@/client/utils/date/date";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 import { DonneesComplementaires } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
+import { toISODateTime } from "@/server/app/domain/Dates";
 import { useModaleHistoriqueIndicateurTerritoireValeurEvenement } from "./useModaleHistoriqueIndicateurTerritoireValeurEvenement";
 
 export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionComponent<{
@@ -68,12 +69,15 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
         );
       case "PROPOSITION_VALEUR_MODIFIEE":
         return (
-          <span>
-            <span className="fr-text--bold">
-              modification de la proposition
-            </span>{" "}
-            du territoire : {valeur ?? "N/A"}
-          </span>
+          <div>
+            <p className="fr-mb-0">
+              <span className="fr-text--bold"> import de données</span> par la
+              direction de projet
+            </p>
+            <p className="fr-mb-0 !texte-blue-france fr-text--bold">
+              → nouvelle valeur affichée dans PILOTE : {valeur}
+            </p>
+          </div>
         );
       case "PROPOSITION_VALEUR_SUPPRIMEE":
         return (
@@ -103,41 +107,53 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
         );
       case "PROPOSITION_VALEUR_ACCEPTEE":
         return (
-          <p className="fr-mb-0">
-            proposition
-            <span className="fr-text--bold"> acceptée</span> par la direction de
-            projet
-          </p>
+          <div>
+            <p className="fr-mb-0">
+              proposition
+              <span className="fr-text--bold"> acceptée</span> par la direction
+              de projet
+            </p>
+            <p className="fr-mb-0 !texte-blue-france fr-text--bold">
+              → nouvelle valeur affichée dans PILOTE : {valeur}
+            </p>
+          </div>
         );
       case "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION":
         return (
-          <p className="fr-mb-0">
-            proposition
-            <span className="fr-text--bold">
-              {" "}
-              acceptée avec modification
-            </span>{" "}
-            par la direction de projet
-          </p>
+          <div>
+            <p className="fr-mb-0">
+              proposition
+              <span className="fr-text--bold">
+                {" "}
+                acceptée avec modification
+              </span>{" "}
+              par la direction de projet
+            </p>
+            <p className="fr-mb-0 !texte-blue-france fr-text--bold">
+              → nouvelle valeur affichée dans PILOTE : {valeur}
+            </p>
+          </div>
         );
       case "PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE":
         return (
-          <p className="fr-mb-0">
-            proposition ignorée suite à un
-            <span className="fr-text--bold"> import de données</span>
-          </p>
+          <div>
+            <p className="fr-mb-0">
+              <span className="fr-text--bold"> import de données</span> par la
+              direction de projet (la proposition en cours a été ignorée)
+            </p>
+            <p className="fr-mb-0 !texte-blue-france fr-text--bold">
+              → nouvelle valeur affichée dans PILOTE : {valeur}
+            </p>
+          </div>
         );
       case "PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE":
         return (
-          <div>
-            <p className="fr-mb-0">
-              proposition ignorée suite à
-              <span className="fr-text--bold">
-                {" "}
-                l'import d'une valeur d'avancement plus récente
-              </span>
-            </p>
-          </div>
+          <span>
+            <span className="fr-text--bold">
+              import d'une valeur d'avancement plus récente
+            </span>{" "}
+            par la direction de projet (la proposition en cours a été ignorée)
+          </span>
         );
       default:
         return typeEvenement;
@@ -152,8 +168,8 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
     switch (typeEvenement) {
       case "PROPOSITION_VALEUR_CREEE":
       case "PROPOSITION_VALEUR_MODIFIEE":
-      case "PROPOSITION_VALEUR_ACCUSEE_RECEPTION":
         return "!background-jaune-moutarde";
+      case "PROPOSITION_VALEUR_ACCUSEE_RECEPTION":
       case "PROPOSITION_VALEUR_REFUSEE":
       case "PROPOSITION_VALEUR_ACCEPTEE":
       case "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION":
@@ -240,7 +256,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
                         >
                           <div className="fr-col-2 flex align-center">
                             {formaterDate(
-                              evenement.dateCreation.toISOString(),
+                              toISODateTime(evenement.dateCreation),
                               "DD/MM/YYYY HH[:]mm",
                             )}
                           </div>

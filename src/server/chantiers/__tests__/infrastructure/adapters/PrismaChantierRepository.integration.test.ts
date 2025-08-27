@@ -391,7 +391,9 @@ describe("PrismaChantierRepository", () => {
               code_insee: "FR",
               territoire_code: "NAT-FR",
               zone_id: "FRANCE",
-              nombre_propositions_valeur_actuelle: 0,
+              ...(estFeatureFlip
+                ? { nombre_propositions_valeur_actuelle_v2: 0 }
+                : { nombre_propositions_valeur_actuelle: 0 }),
               est_applicable: true,
             },
             {
@@ -400,7 +402,9 @@ describe("PrismaChantierRepository", () => {
               code_insee: "01",
               territoire_code: "DEPT-01",
               zone_id: "D01",
-              nombre_propositions_valeur_actuelle: 0,
+              ...(estFeatureFlip
+                ? { nombre_propositions_valeur_actuelle_v2: 0 }
+                : { nombre_propositions_valeur_actuelle: 0 }),
               est_applicable: true,
             },
             {
@@ -409,7 +413,9 @@ describe("PrismaChantierRepository", () => {
               code_insee: "02",
               territoire_code: "DEPT-02",
               zone_id: "D02",
-              nombre_propositions_valeur_actuelle: 1,
+              ...(estFeatureFlip
+                ? { nombre_propositions_valeur_actuelle_v2: 1 }
+                : { nombre_propositions_valeur_actuelle: 1 }),
               est_applicable: true,
             },
             {
@@ -418,7 +424,9 @@ describe("PrismaChantierRepository", () => {
               code_insee: "84",
               territoire_code: "REG-84",
               zone_id: "R84",
-              nombre_propositions_valeur_actuelle: 0,
+              ...(estFeatureFlip
+                ? { nombre_propositions_valeur_actuelle_v2: 0 }
+                : { nombre_propositions_valeur_actuelle: 0 }),
               est_applicable: true,
             },
           ],
@@ -566,7 +574,9 @@ describe("PrismaChantierRepository", () => {
               code_insee: "FR",
               territoire_code: "NAT-FR",
               zone_id: "FRANCE",
-              nombre_propositions_valeur_actuelle: 0,
+              ...(estFeatureFlip
+                ? { nombre_propositions_valeur_actuelle_v2: 0 }
+                : { nombre_propositions_valeur_actuelle: 0 }),
               est_applicable: true,
             },
             {
@@ -575,7 +585,9 @@ describe("PrismaChantierRepository", () => {
               code_insee: "01",
               territoire_code: "DEPT-01",
               zone_id: "D01",
-              nombre_propositions_valeur_actuelle: 1,
+              ...(estFeatureFlip
+                ? { nombre_propositions_valeur_actuelle_v2: 1 }
+                : { nombre_propositions_valeur_actuelle: 1 }),
               est_applicable: true,
             },
             {
@@ -584,7 +596,9 @@ describe("PrismaChantierRepository", () => {
               code_insee: "02",
               territoire_code: "DEPT-02",
               zone_id: "D02",
-              nombre_propositions_valeur_actuelle: 0,
+              ...(estFeatureFlip
+                ? { nombre_propositions_valeur_actuelle_v2: 0 }
+                : { nombre_propositions_valeur_actuelle: 0 }),
               est_applicable: true,
             },
             {
@@ -593,7 +607,9 @@ describe("PrismaChantierRepository", () => {
               code_insee: "84",
               territoire_code: "REG-84",
               zone_id: "R84",
-              nombre_propositions_valeur_actuelle: 0,
+              ...(estFeatureFlip
+                ? { nombre_propositions_valeur_actuelle_v2: 0 }
+                : { nombre_propositions_valeur_actuelle: 0 }),
               est_applicable: true,
             },
           ],
