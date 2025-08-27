@@ -28,7 +28,7 @@ const MeteoPicto: FunctionComponent<MeteoPictoProps> = ({
     <Image
       alt={estVisibleParLecteurDÉcran ? libellésMétéos[meteo] : ""}
       aria-hidden={estVisibleParLecteurDÉcran ? undefined : "true"}
-      className="meteo-picto"
+      className="meteo-picto inline"
       src={meteosPictos[meteo]}
     />
   ) : null;

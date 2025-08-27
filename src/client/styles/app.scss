@@ -398,3 +398,11 @@
 button {
   @apply px-1.5;
 }
+
+html {
+  line-height: normal;
+}
+
+[class^="fr-icon-"] {
+  line-height: 1;
+}
