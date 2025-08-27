@@ -1,3 +1,6 @@
+@import "tailwindcss";
+@config "../../../tailwind.config.js";
+
 .uppercase {
   text-transform: uppercase;
 }
@@ -390,4 +393,16 @@
 
 .input--sm {
   max-width: 100px;
+}
+
+button {
+  @apply px-1.5;
+}
+
+html {
+  line-height: normal;
+}
+
+[class^="fr-icon-"] {
+  line-height: 1;
 }
