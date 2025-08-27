@@ -39,6 +39,7 @@ export const IndicateurPropositionValeur = ({
   chantier: Chantier;
   territoireCode: string;
 }) => {
+  // TODO : attention ce truc est un hook
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
@@ -49,6 +50,7 @@ export const IndicateurPropositionValeur = ({
     });
 
   if (!variableContenuFFPropositionValeurAvancementV2) return null;
+  if (indicateur.mailleRegAgregee) return null;
   if (
     !(
       estAutoriseAProposerUneValeurAvancement ||
