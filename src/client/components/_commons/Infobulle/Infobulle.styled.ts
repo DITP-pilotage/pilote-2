@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 
-const InfobulleStyled = styled.span`
+const InfobulleStyled = styled.div`
   position: relative;
   display: inline-flex;
 

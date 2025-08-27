@@ -5,7 +5,7 @@ const BoutonSousLignéStyled = styled.button`
     height: 1.5rem;
     border-bottom: 1px solid;
 
-    :hover {
+    :hover:not(:disabled) {
       background-color: unset;
       border-bottom-width: 2px;
     }

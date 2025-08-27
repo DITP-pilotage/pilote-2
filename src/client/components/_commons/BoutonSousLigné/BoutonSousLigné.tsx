@@ -13,7 +13,9 @@ const BoutonSousLigné: FunctionComponent<BoutonSousLignéProps> = ({
 }) => {
   return (
     <BoutonSousLignéStyled
-      className={clsx("fr-link override", className)}
+      className={clsx("fr-link override", className, {
+        "!opacity-80": props.disabled,
+      })}
       data-fr-opened={dataFrOpened}
       {...props}
     />
