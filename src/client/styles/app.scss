@@ -394,3 +394,7 @@
 .input--sm {
   max-width: 100px;
 }
+
+button {
+  @apply px-1.5;
+}
