@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 
-const InfobulleStyled = styled.span`
+const InfobulleStyled = styled.div`
   position: relative;
-  display: inline-block;
+  display: inline-flex;
 
   .tooltip-infobulle {
     z-index: 10000;

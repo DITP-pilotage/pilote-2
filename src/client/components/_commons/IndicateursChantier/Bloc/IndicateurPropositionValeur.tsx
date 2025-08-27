@@ -13,6 +13,7 @@ import {
 import api from "@/server/infrastructure/api/trpc/api";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
+import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 import { ModaleHistoriqueIndicateurTerritoireValeurEvenement } from "./ModaleHistoriqueIndicateurTerritoireValeurEvenement/ModaleHistoriqueIndicateurTerritoireValeurEvenement";
 
 export const ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT =
@@ -39,6 +40,7 @@ export const IndicateurPropositionValeur = ({
   chantier: Chantier;
   territoireCode: string;
 }) => {
+  // TODO : attention ce truc est un hook
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
@@ -62,6 +64,28 @@ export const IndicateurPropositionValeur = ({
     informationsIndicateurs[0].données.proposition === null ||
     estPropositionSupprimee(detailIndicateur) ||
     estPropositionRefusee(detailIndicateur);
+
+  if (indicateur.mailleRegAgregee) {
+    return (
+      <p className="fr-text--xs texte-gris fr-mb-0 flex items-center">
+        Impossible de proposer une autre valeur d'avancement
+        <div className="-my-2">
+          <Infobulle
+            classNameInfoBulle="tooltip-accordeon"
+            idHtml={`infobulle-proposition-desactivee-${indicateur.id}`}
+          >
+            <p className="fr-text--sm">
+              Les résultats de cet indicateur sont agrégés depuis le niveau
+              départemental. Il n'est donc pas possible de proposer une valeur à
+              une autre maille. Vous pouvez, soit proposer une valeur
+              directement au niveau d'un département ou contacter directement le
+              directeur de projet via l'onglet Responsables.
+            </p>
+          </Infobulle>
+        </div>
+      </p>
+    );
+  }
 
   if (estAffichageSansProposition) {
     return (
@@ -91,29 +115,31 @@ export const IndicateurPropositionValeur = ({
             </>
           ) : null}
         </p>
-        <BoutonSousLigné
-          ariaControls={
-            ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT +
-            indicateur.id
-          }
-          classNameSupplémentaires="fr-link--xs fr-link--icon-left fr-icon-time-line texte-gris fr-mr-2w"
-          dataFrOpened={false}
-          type="button"
-        >
-          Voir l'historique
-        </BoutonSousLigné>
-        {estAutoriseAProposerUneValeurAvancement ? (
+        <div className="flex items-center gap-2">
           <BoutonSousLigné
-            ariaControls={
-              ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id
+            aria-controls={
+              ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT +
+              indicateur.id
             }
-            classNameSupplémentaires="fr-link--xs fr-link--icon-left fr-icon-edit-line texte-gris"
+            className="fr-link--xs fr-link--icon-left fr-icon-time-line texte-gris fr-mr-2w"
             dataFrOpened={false}
             type="button"
           >
-            Proposer une autre valeur d'avancement
+            Voir l'historique
           </BoutonSousLigné>
-        ) : null}
+          {estAutoriseAProposerUneValeurAvancement ? (
+            <BoutonSousLigné
+              aria-controls={
+                ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id
+              }
+              className="fr-link--xs fr-link--icon-left fr-icon-edit-line texte-gris"
+              dataFrOpened={false}
+              type="button"
+            >
+              Proposer une autre valeur d'avancement
+            </BoutonSousLigné>
+          ) : null}
+        </div>
         <ModaleHistoriqueIndicateurTerritoireValeurEvenement
           chantier={chantier}
           generatedHTMLID={
@@ -148,18 +174,18 @@ export const IndicateurPropositionValeur = ({
         par la direction de projet
       </p>
       <BoutonSousLigné
-        ariaControls={
+        aria-controls={
           ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT +
           indicateur.id
         }
-        classNameSupplémentaires="fr-link--xs fr-link--icon-left fr-icon-time-line texte-jaune fr-mr-2w"
+        className="fr-link--xs fr-link--icon-left fr-icon-time-line texte-jaune fr-mr-2w"
         dataFrOpened={false}
         type="button"
       >
         Voir l'historique
       </BoutonSousLigné>
       <BoutonSousLigné
-        classNameSupplémentaires={`fr-link--xs fr-link--icon-left ${propositionEstVisible ? "fr-icon-eye-off-line" : "fr-icon-eye-line"} texte-jaune `}
+        className={`fr-link--xs fr-link--icon-left ${propositionEstVisible ? "fr-icon-eye-off-line" : "fr-icon-eye-line"} texte-jaune `}
         dataFrOpened={false}
         onClick={() => setPropositionEstVisible(!propositionEstVisible)}
         type="button"
