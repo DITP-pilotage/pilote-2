@@ -137,11 +137,11 @@ const presenterEnIndicateurExportContrat = (
   if (optionsExport.listeOptionsExport.includes("description-chantier")) {
     donnees.push(
       formaterNumériqueOuValeurManquante(
-        indicateurPourExport.chantierAvancementGlobal,
+        indicateurPourExport.chantierAvancementAnnuel,
         indicateurPourExport.chantierEstApplicable,
       ),
       formaterNumériqueOuValeurManquante(
-        indicateurPourExport.chantierAvancementAnnuel,
+        indicateurPourExport.chantierAvancementGlobal,
         indicateurPourExport.chantierEstApplicable,
       ),
     );
