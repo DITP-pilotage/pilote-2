@@ -1,38 +1,25 @@
-import {
-  ButtonHTMLAttributes,
-  ReactNode,
-  MouseEventHandler,
-  FunctionComponent,
-} from "react";
+import { FunctionComponent, ComponentProps } from "react";
+import clsx from "clsx";
 import BoutonSousLignéStyled from "@/components/_commons/BoutonSousLigné/BoutonSousLigné.styled";
 
-interface BoutonSousLignéProps {
+type BoutonSousLignéProps = ComponentProps<"button"> & {
   ariaControls?: string;
-  children?: ReactNode;
-  classNameSupplémentaires?: string;
   dataFrOpened?: boolean;
-  onClick?: MouseEventHandler<HTMLButtonElement>;
-  type?: ButtonHTMLAttributes<never>["type"];
-}
+};
 
 const BoutonSousLigné: FunctionComponent<BoutonSousLignéProps> = ({
   ariaControls,
-  classNameSupplémentaires,
+  className,
   dataFrOpened,
-  onClick,
-  type,
-  children,
+  ...props
 }) => {
   return (
     <BoutonSousLignéStyled
       aria-controls={ariaControls}
-      className={`fr-link override ${classNameSupplémentaires ?? ""}`}
+      className={clsx("fr-link override", className)}
       data-fr-opened={dataFrOpened}
-      onClick={onClick}
-      type={type}
-    >
-      {children}
-    </BoutonSousLignéStyled>
+      {...props}
+    />
   );
 };
 

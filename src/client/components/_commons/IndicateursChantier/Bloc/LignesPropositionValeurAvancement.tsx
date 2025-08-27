@@ -279,7 +279,7 @@ export const LignesPropositionValeurAvancement = ({
                       ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT +
                       indicateur.id
                     }
-                    classNameSupplémentaires="fr-link--icon-left fr-icon-mail-line texte-jaune"
+                    className="fr-link--icon-left fr-icon-mail-line texte-jaune"
                     dataFrOpened={false}
                     type="button"
                   >

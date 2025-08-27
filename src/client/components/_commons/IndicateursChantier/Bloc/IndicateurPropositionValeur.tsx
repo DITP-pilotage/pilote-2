@@ -50,7 +50,6 @@ export const IndicateurPropositionValeur = ({
     });
 
   if (!variableContenuFFPropositionValeurAvancementV2) return null;
-  if (indicateur.mailleRegAgregee) return null;
   if (
     !(
       estAutoriseAProposerUneValeurAvancement ||
@@ -98,7 +97,7 @@ export const IndicateurPropositionValeur = ({
             ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT +
             indicateur.id
           }
-          classNameSupplémentaires="fr-link--xs fr-link--icon-left fr-icon-time-line texte-gris fr-mr-2w"
+          className="fr-link--xs fr-link--icon-left fr-icon-time-line texte-gris fr-mr-2w"
           dataFrOpened={false}
           type="button"
         >
@@ -109,7 +108,7 @@ export const IndicateurPropositionValeur = ({
             ariaControls={
               ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id
             }
-            classNameSupplémentaires="fr-link--xs fr-link--icon-left fr-icon-edit-line texte-gris"
+            className="fr-link--xs fr-link--icon-left fr-icon-edit-line texte-gris"
             dataFrOpened={false}
             type="button"
           >
@@ -154,14 +153,14 @@ export const IndicateurPropositionValeur = ({
           ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT +
           indicateur.id
         }
-        classNameSupplémentaires="fr-link--xs fr-link--icon-left fr-icon-time-line texte-jaune fr-mr-2w"
+        className="fr-link--xs fr-link--icon-left fr-icon-time-line texte-jaune fr-mr-2w"
         dataFrOpened={false}
         type="button"
       >
         Voir l'historique
       </BoutonSousLigné>
       <BoutonSousLigné
-        classNameSupplémentaires={`fr-link--xs fr-link--icon-left ${propositionEstVisible ? "fr-icon-eye-off-line" : "fr-icon-eye-line"} texte-jaune `}
+        className={`fr-link--xs fr-link--icon-left ${propositionEstVisible ? "fr-icon-eye-off-line" : "fr-icon-eye-line"} texte-jaune `}
         dataFrOpened={false}
         onClick={() => setPropositionEstVisible(!propositionEstVisible)}
         type="button"
