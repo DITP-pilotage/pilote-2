@@ -14,10 +14,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
-import {
-  MailleInterne,
-  MailleTerritoireSelectionne,
-} from "@/server/domain/maille/Maille.interface";
+import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
 import { ModaleHistoriqueIndicateurTerritoireValeurEvenement } from "./ModaleHistoriqueIndicateurTerritoireValeurEvenement/ModaleHistoriqueIndicateurTerritoireValeurEvenement";
 
 export const ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT =
