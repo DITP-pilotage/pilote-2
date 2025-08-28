@@ -54,6 +54,7 @@ export const IndicateurPropositionValeur = ({
     });
 
   if (!variableContenuFFPropositionValeurAvancementV2) return null;
+  if (detailIndicateur.valeurAvancementMandat == null) return null;
   if (
     !(
       estAutoriseAProposerUneValeurAvancement ||
