@@ -47,9 +47,15 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
         );
       case "VALEUR_MODIFIEE":
         return (
-          <p className="fr-mb-0 !texte-blue-france fr-text--bold">
-            → La valeur a été modifiée dans PILOTE : {valeur}
-          </p>
+          <div>
+            <p className="fr-mb-0">
+              <span className="fr-text--bold">import de données</span> par la
+              direction de projet
+            </p>
+            <p className="fr-mb-0 !texte-blue-france fr-text--bold">
+              → nouvelle valeur affichée dans PILOTE : {valeur}
+            </p>
+          </div>
         );
       case "VALEUR_HISTORISEE":
         return (
@@ -69,15 +75,12 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
         );
       case "PROPOSITION_VALEUR_MODIFIEE":
         return (
-          <div>
-            <p className="fr-mb-0">
-              <span className="fr-text--bold"> import de données</span> par la
-              direction de projet
-            </p>
-            <p className="fr-mb-0 !texte-blue-france fr-text--bold">
-              → nouvelle valeur affichée dans PILOTE : {valeur}
-            </p>
-          </div>
+          <span>
+            <span className="fr-text--bold">
+              modification de la proposition
+            </span>{" "}
+            du territoire : {valeur ?? "N/A"}
+          </span>
         );
       case "PROPOSITION_VALEUR_SUPPRIMEE":
         return (
