@@ -262,6 +262,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   }
                   indicateur={indicateur}
                   informationsIndicateurs={informationsIndicateurs}
+                  maille={mailleTerritoireSelectionnee}
                   propositionEstVisible={propositionEstVisible}
                   setPropositionEstVisible={setPropositionEstVisible}
                   territoireCode={territoireCode}
@@ -449,9 +450,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       {informationIndicateur.code === territoireCode ? (
                         variableContenuFFPropositionValeurAvancement ? (
                           estAutoriseAProposerUneValeurAvancement &&
-                          informationIndicateur.données.valeurAvancement !==
-                            null &&
-                          informationIndicateur.données.proposition === null ? (
+                          informationIndicateur.données
+                            .valeurAvancementMandat != null &&
+                          informationIndicateur.données.proposition == null ? (
                             <tr className="ligne-creation-proposition-valeur-davancement">
                               <td colSpan={8}>
                                 {!variableContenuFFPropositionValeurAvancementV2 ? (
