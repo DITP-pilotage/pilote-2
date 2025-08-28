@@ -262,6 +262,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   }
                   indicateur={indicateur}
                   informationsIndicateurs={informationsIndicateurs}
+                  maille={mailleTerritoireSelectionnee}
                   propositionEstVisible={propositionEstVisible}
                   setPropositionEstVisible={setPropositionEstVisible}
                   territoireCode={territoireCode}

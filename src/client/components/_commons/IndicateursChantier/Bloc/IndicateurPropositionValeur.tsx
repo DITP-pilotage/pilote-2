@@ -14,6 +14,10 @@ import api from "@/server/infrastructure/api/trpc/api";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
+import {
+  MailleInterne,
+  MailleTerritoireSelectionne,
+} from "@/server/domain/maille/Maille.interface";
 import { ModaleHistoriqueIndicateurTerritoireValeurEvenement } from "./ModaleHistoriqueIndicateurTerritoireValeurEvenement/ModaleHistoriqueIndicateurTerritoireValeurEvenement";
 
 export const ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT =
@@ -29,6 +33,7 @@ export const IndicateurPropositionValeur = ({
   informationsIndicateurs,
   chantier,
   territoireCode,
+  maille,
 }: {
   estAutoriseAProposerUneValeurAvancement: boolean;
   estAutoriseAVoirLesPropositionsDeValeurAvancement: boolean;
@@ -39,6 +44,7 @@ export const IndicateurPropositionValeur = ({
   informationsIndicateurs: InformationsIndicateurs;
   chantier: Chantier;
   territoireCode: string;
+  maille: MailleTerritoireSelectionne;
 }) => {
   // TODO : attention ce truc est un hook
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
@@ -65,7 +71,7 @@ export const IndicateurPropositionValeur = ({
     estPropositionSupprimee(detailIndicateur) ||
     estPropositionRefusee(detailIndicateur);
 
-  if (indicateur.mailleRegAgregee) {
+  if (indicateur.mailleRegAgregee && maille === "REG") {
     return (
       <p className="fr-text--xs texte-gris fr-mb-0 flex items-center">
         Impossible de proposer une autre valeur d'avancement
