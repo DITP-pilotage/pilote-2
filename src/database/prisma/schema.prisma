@@ -54,6 +54,13 @@ enum type_statut {
   @@schema("public")
 }
 
+enum type_statut_indicateur {
+  PUBLIE
+  SUPPRIME
+
+  @@schema("public")
+}
+
 enum type_tendance {
   HAUSSE
   BAISSE
@@ -199,6 +206,7 @@ model indicateur_identite {
   responsables_donnees_mails String[]
   maille_nat_agregee         Boolean                 @default(false)
   maille_reg_agregee         Boolean                 @default(false)
+  statut                     type_statut_indicateur  @default(PUBLIE)
   indicateur_territoire      indicateur_territoire[]
   mailles_applicables        Maille[]
   chantier_identite          chantier_identite       @relation(fields: [chantier_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
