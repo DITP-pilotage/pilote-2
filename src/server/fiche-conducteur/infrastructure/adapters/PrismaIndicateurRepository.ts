@@ -58,6 +58,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     const result = await this.prisma.indicateur_territoire.findMany({
       where: {
         indicateur_identite: {
+          statut: "PUBLIE",
           chantier_id: chantierId,
         },
         territoire_code: "NAT-FR",

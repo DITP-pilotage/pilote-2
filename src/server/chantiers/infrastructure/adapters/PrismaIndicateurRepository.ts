@@ -194,6 +194,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           in: territoireCodesLecture,
         },
         indicateur_identite: {
+          statut: "PUBLIE",
           chantier_id: chantierId,
           chantier_identite: {
             NOT: [
@@ -555,6 +556,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     const result = await prisma.indicateur_identite.findMany({
       where: {
         chantier_id: chantierId,
+        statut: "PUBLIE",
         chantier_identite: {
           NOT: [
             {
@@ -809,6 +811,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         territoire_code: { in: territoireCodes },
         indicateur_identite: {
           chantier_id: chantierId,
+          statut: "PUBLIE",
           NOT: {
             type_id: null,
           },
@@ -858,6 +861,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         id: indicateurId,
         indicateur_identite: {
           chantier_id: { in: chantiersLecture },
+          statut: "PUBLIE",
         },
         territoire_code: !profilsTerritoriaux.includes(profil)
           ? { in: territoiresLecture }
