@@ -17,6 +17,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
   }): Promise<Map<string, Indicateur[]>> {
     const result = await prisma.indicateur_identite.findMany({
       where: {
+        statut: "PUBLIE",
         chantier_id: {
           in: listeChantierId,
         },

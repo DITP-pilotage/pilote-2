@@ -57,6 +57,7 @@ proposition_valeur_actuelle_chantier AS (
         AND ipr.zone_id = t.zone_id
     LEFT JOIN {{ ref('stg_ppg_metadata__indicateurs') }} spmi 
         ON spmi.id = ipv.indic_id 
+    WHERE spmi.est_cache_dans_pilote IS FALSE
     GROUP BY ipv.territoire_code, spmi.chantier_id
 ),
 proposition_valeur_actuelle_chantier_v2 AS (
@@ -75,7 +76,8 @@ proposition_valeur_actuelle_chantier_v2 AS (
         ON ipr.indic_id = ipv_v2.indic_id 
         AND ipr.zone_id = t.zone_id
     LEFT JOIN {{ ref('stg_ppg_metadata__indicateurs') }} spmi 
-        ON spmi.id = ipv_v2.indic_id 
+        ON spmi.id = ipv_v2.indic_id
+    WHERE spmi.est_cache_dans_pilote IS FALSE
     GROUP BY ipv_v2.territoire_code, spmi.chantier_id
 )
 

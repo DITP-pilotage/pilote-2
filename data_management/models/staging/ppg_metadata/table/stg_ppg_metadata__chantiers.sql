@@ -49,10 +49,6 @@ renamed AS (
 
 ),
 
-chantiers_non_supprimes as (
-    SELECT * FROM renamed WHERE statut <> 'SUPPRIME'
-),
-
 -- Calcul des mailles applicables en fonction 
 --      des réplications de données configurées
 get_maille_applicable AS (
@@ -92,7 +88,7 @@ get_maille_applicable AS (
 
             ELSE maille_applicable_declaree
         END AS maille_applicable
-    FROM chantiers_non_supprimes
+    FROM renamed
 
 )
 

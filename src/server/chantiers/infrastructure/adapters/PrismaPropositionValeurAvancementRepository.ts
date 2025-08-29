@@ -87,6 +87,7 @@ export class PrismaPropositionValeurAvancementRepository
   > {
     const result = await prisma.indicateur_identite.findMany({
       where: {
+        statut: "PUBLIE",
         OR: [
           {
             maille_reg_agregee: false,
@@ -130,6 +131,9 @@ export class PrismaPropositionValeurAvancementRepository
         where: {
           statut: "EN_COURS",
           indicateur_territoire: {
+            indicateur_identite: {
+              statut: "PUBLIE",
+            },
             OR: [
               {
                 maille: "DEPT",

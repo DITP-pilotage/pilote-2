@@ -1,5 +1,6 @@
--- Objectif: retourner uniquement la valeur importée le plus récemment 
+-- Objectif: retourner uniquement la valeur importée le plus récemment
 --  pour chaque {indic_id, metric_type, metric_date, zone_id}
+
 
 with 
 -- Cette table intermédiaire créé la colonne metric_date_fixed
@@ -16,10 +17,8 @@ fix_mesure_indicateur_06_31 as (
 	INNER JOIN {{ ref('stg_ppg_metadata__indicateurs') }} b on a.indic_id=b.id 
     left join {{ ref('int_indicateurs_zones_applicables') }} c on a.indic_id=c.indic_id and a.zone_id=c.zone_id
     WHERE 
-	    -- On ne garde que les indics qui ne sont pas cachés
-    	NOT coalesce(b.est_cache_dans_pilote::text::bool, false)
 		-- On ne garde que les valeurs sur un territoire applicable  
-		AND coalesce(c.est_applicable, true)
+		coalesce(c.est_applicable, true)
 ),
 
 rank_mesures as (

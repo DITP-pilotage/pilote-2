@@ -267,6 +267,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       await prisma.indicateur_identite.findMany({
         where: {
           chantier_id: { in: chantiersIds },
+          statut: "PUBLIE",
           NOT: {
             type_id: null,
           },
@@ -292,6 +293,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         code_insee: codeInsee,
         indicateur_identite: {
           chantier_id: { in: chantiersIds },
+          statut: "PUBLIE",
           NOT: {
             type_id: null,
           },
@@ -327,6 +329,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       await prisma.indicateur_identite.findMany({
         where: {
           chantier_id: chantierId,
+          statut: "PUBLIE",
           NOT: {
             type_id: null,
           },
@@ -376,6 +379,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         territoire_code: { in: territoireCodes },
         indicateur_identite: {
           chantier_id: chantierId,
+          statut: "PUBLIE",
           NOT: {
             type_id: null,
           },
@@ -401,6 +405,9 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         ponderation_zone_reel: {
           not: null,
           gt: 0,
+        },
+        indicateur_identite: {
+          statut: "PUBLIE",
         },
       },
       select: {
