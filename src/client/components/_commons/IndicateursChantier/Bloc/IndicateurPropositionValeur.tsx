@@ -22,7 +22,6 @@ export const ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT =
 
 export const IndicateurPropositionValeur = ({
   estAutoriseAProposerUneValeurAvancement,
-  estAutoriseAVoirLesPropositionsDeValeurAvancement,
   propositionEstVisible,
   setPropositionEstVisible,
   detailIndicateur,
@@ -33,7 +32,6 @@ export const IndicateurPropositionValeur = ({
   maille,
 }: {
   estAutoriseAProposerUneValeurAvancement: boolean;
-  estAutoriseAVoirLesPropositionsDeValeurAvancement: boolean;
   propositionEstVisible: boolean;
   setPropositionEstVisible(visible: boolean): void;
   detailIndicateur: DétailsIndicateur;
@@ -55,14 +53,6 @@ export const IndicateurPropositionValeur = ({
 
   if (!variableContenuFFPropositionValeurAvancementV2) return null;
   if (detailIndicateur.valeurAvancementMandat == null) return null;
-  if (
-    !(
-      estAutoriseAProposerUneValeurAvancement ||
-      estAutoriseAVoirLesPropositionsDeValeurAvancement
-    )
-  ) {
-    return null;
-  }
 
   const estAffichageSansProposition =
     informationsIndicateurs[0].données.proposition === null ||

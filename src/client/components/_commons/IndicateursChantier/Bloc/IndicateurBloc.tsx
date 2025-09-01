@@ -48,7 +48,6 @@ interface IndicateurBlocProps {
   chantierEstTerritorialisé: boolean;
   estAutoriseAProposerUneValeurAvancement: boolean;
   estAutoriseAAccepterLesPropositionsDeValeurAvancement: boolean;
-  estAutoriseAVoirLesPropositionsDeValeurAvancement: boolean;
   listeSousIndicateurs: Indicateur[];
   territoireCode: string;
   territoiresCompares: string[];
@@ -70,7 +69,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   chantierEstTerritorialisé,
   estAutoriseAProposerUneValeurAvancement:
     estAutoriseAProposerUneValeurAvancement,
-  estAutoriseAVoirLesPropositionsDeValeurAvancement,
   estAutoriseAAccepterLesPropositionsDeValeurAvancement:
     estAutoriseAAccepterLesPropositionsDeValeurAvancement,
   listeSousIndicateurs,
@@ -256,9 +254,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   detailIndicateur={detailsIndicateur[territoireCode]}
                   estAutoriseAProposerUneValeurAvancement={
                     estAutoriseAProposerUneValeurAvancement
-                  }
-                  estAutoriseAVoirLesPropositionsDeValeurAvancement={
-                    estAutoriseAVoirLesPropositionsDeValeurAvancement
                   }
                   indicateur={indicateur}
                   informationsIndicateurs={informationsIndicateurs}

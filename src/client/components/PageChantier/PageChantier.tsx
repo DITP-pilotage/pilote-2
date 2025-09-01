@@ -119,7 +119,6 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
     estAutoriseAVoirLesAlertesMAJIndicateurs,
     estAutoriseAVoirLeSelecteurDeMaille,
     estAutoriseAAccepterLesPropositionsDeValeurAvancement,
-    estAutoriseAVoirLesPropositionsDeValeurAvancement,
   } = usePageChantier(chantier, territoireSélectionné, territoireCode);
 
   const { data: alerteMiseAJourIndicateurEstDisponible } =
@@ -427,9 +426,6 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   }
                   estAutoriseAProposerUneValeurAvancement={
                     estAutoriseAProposerUneValeurAvancement
-                  }
-                  estAutoriseAVoirLesPropositionsDeValeurAvancement={
-                    estAutoriseAVoirLesPropositionsDeValeurAvancement
                   }
                   indicateurs={indicateurs}
                   jalon={jalon}
