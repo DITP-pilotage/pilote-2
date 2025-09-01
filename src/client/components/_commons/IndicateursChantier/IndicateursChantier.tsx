@@ -14,6 +14,7 @@ import {
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
+import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
 import { CartographieIndicateurType } from "./Bloc/Détails/IndicateurDétails";
 import TitreRubrique from "./Bloc/Détails/TitreRubrique/TitreRubrique";
 
@@ -38,6 +39,7 @@ interface IndicateursProps {
   categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]>;
   sousIndicateursDisponibles: boolean;
   nouveauxGraphiquesSontActifs: boolean;
+  datajobsExecution: DatajobsExecution;
 }
 
 const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
@@ -62,6 +64,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   categoriesIndicateurRepartition,
   sousIndicateursDisponibles,
   nouveauxGraphiquesSontActifs,
+  datajobsExecution,
 }) => {
   if (indicateurs.length === 0) {
     return null;
@@ -129,6 +132,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                         }
                         chantier={chantier}
                         chantierEstTerritorialisé={chantierEstTerritorialisé}
+                        datajobsExecution={datajobsExecution}
                         detailsIndicateursTerritoire={
                           detailsIndicateursTerritoire
                         }

@@ -26,6 +26,7 @@ import { InformationsIndicateurs } from "@/components/_commons/IndicateursChanti
 import { LignesPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/LignesPropositionValeurAvancement";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { PageChantierProvider } from "@/components/PageChantier/usePageChantierContext";
+import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import useIndicateurBloc from "./useIndicateurBloc";
 import useIndicateurAlerteDateMaj from "./useIndicateurAlerteDateMaj";
@@ -59,6 +60,7 @@ interface IndicateurBlocProps {
   cartographieDroiteIndicateur: CartographieIndicateurType;
   cartographieGaucheIndicateur: CartographieIndicateurType;
   nouveauxGraphiquesSontActifs: boolean;
+  datajobsExecution: DatajobsExecution;
 }
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
@@ -82,6 +84,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   cartographieDroiteIndicateur,
   cartographieGaucheIndicateur,
   nouveauxGraphiquesSontActifs,
+  datajobsExecution,
 }) => {
   const [propositionEstVisible, setPropositionEstVisible] = useState(false);
   const { maille: mailleTerritoireSelectionnee } =
