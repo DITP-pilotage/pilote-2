@@ -15,7 +15,7 @@ import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
-import { BoutonVoirHistorique } from "@/components/_commons/IndicateursChantier/Bloc/BoutonVoirHistorique";
+import { LigneInformationPropositionValeur } from "@/components/_commons/IndicateursChantier/Bloc/LigneInformationPropositionValeur";
 
 export const ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT =
   "modale-historique-indicateur-territoire-valeur-evenement";
@@ -24,9 +24,9 @@ export const IndicateurPropositionValeur = ({
   estAutoriseAProposerUneValeurAvancement,
   propositionEstVisible,
   setPropositionEstVisible,
+  informationsIndicateurs,
   detailIndicateur,
   indicateur,
-  informationsIndicateurs,
   chantier,
   territoireCode,
   maille,
@@ -83,41 +83,9 @@ export const IndicateurPropositionValeur = ({
 
   if (estAffichageSansProposition) {
     return (
-      <div className="texte-gris">
-        <p className="fr-text--xs fr-mb-0">
-          Aucune proposition pour la valeur d'avancement de cet indicateur{" "}
-          {estPropositionSupprimee(detailIndicateur) ? (
-            <>
-              {" "}
-              - <strong>dernière proposition en date supprimée</strong> par le
-              territoire le{" "}
-              {formaterDate(
-                detailIndicateur.propositionStatutTerritoire?.date,
-                "DD/MM/YYYY",
-              )}
-            </>
-          ) : null}
-          {estPropositionRefusee(detailIndicateur) ? (
-            <>
-              {" "}
-              - <strong>dernière proposition en date refusée</strong> par la
-              direction de projet le{" "}
-              {formaterDate(
-                detailIndicateur.propositionStatutDirectionProjet?.date,
-                "DD/MM/YYYY",
-              )}
-            </>
-          ) : null}
-        </p>
-        <div className="flex items-center">
-          <BoutonVoirHistorique
-            chantier={chantier}
-            id={indicateur.id}
-            indicateur={indicateur}
-            territoireCode={territoireCode}
-            territoireSélectionné={territoireSélectionné}
-          />
-          {estAutoriseAProposerUneValeurAvancement ? (
+      <LigneInformationPropositionValeur
+        action={
+          estAutoriseAProposerUneValeurAvancement ? (
             <BoutonSousLigné
               aria-controls={
                 ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id
@@ -128,15 +96,62 @@ export const IndicateurPropositionValeur = ({
             >
               Proposer une autre valeur d'avancement
             </BoutonSousLigné>
-          ) : null}
-        </div>
-      </div>
+          ) : null
+        }
+        chantier={chantier}
+        className="texte-gris"
+        indicateur={indicateur}
+        territoireCode={territoireCode}
+        territoireSélectionné={territoireSélectionné}
+      >
+        Aucune proposition pour la valeur d'avancement de cet indicateur{" "}
+        {estPropositionSupprimee(detailIndicateur) ? (
+          <>
+            {" "}
+            - <strong>dernière proposition en date supprimée</strong> par le
+            territoire le{" "}
+            {formaterDate(
+              detailIndicateur.propositionStatutTerritoire?.date,
+              "DD/MM/YYYY",
+            )}
+          </>
+        ) : null}
+        {estPropositionRefusee(detailIndicateur) ? (
+          <>
+            {" "}
+            - <strong>dernière proposition en date refusée</strong> par la
+            direction de projet le{" "}
+            {formaterDate(
+              detailIndicateur.propositionStatutDirectionProjet?.date,
+              "DD/MM/YYYY",
+            )}
+          </>
+        ) : null}
+      </LigneInformationPropositionValeur>
     );
   }
 
-  return (
-    <div className="texte-jaune">
-      <p className="fr-text--xs fr-mb-0">
+  if (estPropositionAccuseeReception(detailIndicateur)) {
+    return (
+      <LigneInformationPropositionValeur
+        action={
+          <BoutonSousLigné
+            className={`fr-link--xs fr-link--icon-left ${propositionEstVisible ? "fr-icon-eye-off-line" : "fr-icon-eye-line"} texte-jaune `}
+            dataFrOpened={false}
+            onClick={() => setPropositionEstVisible(!propositionEstVisible)}
+            type="button"
+          >
+            {propositionEstVisible
+              ? "Masquer la proposition"
+              : "Afficher la proposition"}
+          </BoutonSousLigné>
+        }
+        chantier={chantier}
+        className="texte-bleu"
+        indicateur={indicateur}
+        territoireCode={territoireCode}
+        territoireSélectionné={territoireSélectionné}
+      >
         <strong>Proposition de nouvelle valeur d'avancement en cours</strong> –{" "}
         {estPropositionModifiee(detailIndicateur) ? "modifiée" : "présentée"}{" "}
         par le territoire le{" "}
@@ -146,20 +161,14 @@ export const IndicateurPropositionValeur = ({
             "DD/MM/YYYY",
           )}
         </strong>{" "}
-        et{" "}
-        {estPropositionAccuseeReception(detailIndicateur)
-          ? "lue"
-          : "en attente de lecture"}{" "}
-        par la direction de projet
-      </p>
-      <div className="flex items-center">
-        <BoutonVoirHistorique
-          chantier={chantier}
-          id={indicateur.id}
-          indicateur={indicateur}
-          territoireCode={territoireCode}
-          territoireSélectionné={territoireSélectionné}
-        />
+        et lue
+      </LigneInformationPropositionValeur>
+    );
+  }
+
+  return (
+    <LigneInformationPropositionValeur
+      action={
         <BoutonSousLigné
           className={`fr-link--xs fr-link--icon-left ${propositionEstVisible ? "fr-icon-eye-off-line" : "fr-icon-eye-line"} texte-jaune `}
           dataFrOpened={false}
@@ -170,7 +179,23 @@ export const IndicateurPropositionValeur = ({
             ? "Masquer la proposition"
             : "Afficher la proposition"}
         </BoutonSousLigné>
-      </div>
-    </div>
+      }
+      chantier={chantier}
+      className="texte-jaune"
+      indicateur={indicateur}
+      territoireCode={territoireCode}
+      territoireSélectionné={territoireSélectionné}
+    >
+      <strong>Proposition de nouvelle valeur d'avancement en cours</strong> –{" "}
+      {estPropositionModifiee(detailIndicateur) ? "modifiée" : "présentée"} par
+      le territoire le{" "}
+      <strong>
+        {formaterDate(
+          informationsIndicateurs[0].données.proposition?.dateProposition,
+          "DD/MM/YYYY",
+        )}
+      </strong>{" "}
+      et en attente de lecture par la direction de projet
+    </LigneInformationPropositionValeur>
   );
 };
