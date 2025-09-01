@@ -1,6 +1,8 @@
 import styled from "@emotion/styled";
 
 const ModaleStyled = styled.div`
+  color: initial !important;
+
   .bouton-fermer-modale {
     align-items: center;
   }

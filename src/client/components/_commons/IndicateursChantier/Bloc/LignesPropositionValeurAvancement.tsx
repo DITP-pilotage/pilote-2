@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 import { formaterDate } from "@/client/utils/date/date";
 import { estPropositionAccuseeReception } from "@/components/_commons/IndicateursChantier/Bloc/utils";
@@ -70,12 +71,17 @@ export const LignesPropositionValeurAvancement = ({
   return (
     <>
       <tr
-        className="ligne-modification-proposition-valeur-davancement"
+        className={clsx("ligne-modification-proposition-valeur-davancement", {
+          "!bg-dsfr-info-950 !text-dsfr-info-main-525":
+            estPropositionAccuseeReception(detailIndicateur),
+          "!bg-dsfr-moutarde-main-975 !text-dsfr-moutarde-main-679":
+            !estPropositionAccuseeReception(detailIndicateur),
+        })}
         key={informationIndicateur.territoireNom}
       >
         <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm">
           <div className="flex align-center selecteur-infobulle-conteneur">
-            <span className="texte-proposition">
+            <span className="texte-proposition font-bold">
               {variableContenuFFPropositionValeurAvancementV2
                 ? "Proposition en cours"
                 : "Proposition du territoire"}
@@ -153,7 +159,7 @@ export const LignesPropositionValeurAvancement = ({
             </div>
           ) : null}
         </td>
-        <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
+        <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200">
           <ValeurEtDate
             date={informationIndicateur.données.dateValeurInitiale}
             unité={informationIndicateur.données.unité}
@@ -170,7 +176,7 @@ export const LignesPropositionValeurAvancement = ({
                 valeur={proposition.valeurAvancement}
               />
             </td>
-            <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
+            <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200">
               <ValeurEtDate
                 date={informationIndicateur.données.dateValeurCibleAnnuelle}
                 unité={informationIndicateur.données.unité}
@@ -200,7 +206,7 @@ export const LignesPropositionValeurAvancement = ({
             valeur={proposition.valeurAvancement}
           />
         </td>
-        <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
+        <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200">
           <ValeurEtDate
             date={informationIndicateur.données.dateValeurCible}
             unité={informationIndicateur.données.unité}
@@ -220,7 +226,7 @@ export const LignesPropositionValeurAvancement = ({
         </td>
       </tr>
       {!variableContenuFFPropositionValeurAvancementV2 ? (
-        <tr className="ligne-modification-proposition-valeur-davancement">
+        <tr className="!bg-dsfr-moutarde-main-975 text-dsfr-moutarde-main-679 ligne-modification-proposition-valeur-davancement">
           {estAutoriseAProposerUneValeurAvancement ? (
             <td colSpan={8}>
               <div className="flex w-full justify-end">
@@ -269,7 +275,14 @@ export const LignesPropositionValeurAvancement = ({
         </tr>
       ) : propositionEstVisible &&
         estAutoriseAAccepterLesPropositionsDeValeurAvancement ? (
-        <tr className="ligne-modification-proposition-valeur-davancement">
+        <tr
+          className={clsx("ligne-modification-proposition-valeur-davancement", {
+            "!bg-dsfr-info-950 !text-dsfr-info-main-525":
+              estPropositionAccuseeReception(detailIndicateur),
+            "!bg-dsfr-moutarde-main-975 !text-dsfr-moutarde-main-679":
+              !estPropositionAccuseeReception(detailIndicateur),
+          })}
+        >
           <td colSpan={8}>
             <div className="flex w-full align-center justify-end gap-4">
               {!estPropositionAccuseeReception(detailIndicateur) && (
@@ -335,7 +348,7 @@ export const LignesPropositionValeurAvancement = ({
       ) : propositionEstVisible &&
         !estPropositionAccuseeReception(detailIndicateur) &&
         estAutoriseAProposerUneValeurAvancement ? (
-        <tr className="ligne-modification-proposition-valeur-davancement">
+        <tr className="ligne-modification-proposition-valeur-davancement !bg-dsfr-moutarde-main-975 !text-dsfr-moutarde-main-679">
           <td colSpan={8}>
             <div className="flex w-full justify-end">
               <button

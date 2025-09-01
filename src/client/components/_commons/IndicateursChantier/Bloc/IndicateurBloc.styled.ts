@@ -36,26 +36,24 @@ const IndicateurBlocStyled = styled.div`
   }
 
   tr.ligne-modification-proposition-valeur-davancement {
-    background-color: var(--yellow-moutarde-975-75) !important;
-
     & .infobulle-bouton {
       min-height: 2rem;
       max-height: 2rem;
       padding-top: 0;
-      color: var(--yellow-moutarde-main-679) !important;
+      color: currentColor !important;
     }
 
     & .bouton-proposition-valeur-davancement {
-      color: var(--yellow-moutarde-main-679) !important;
-      box-shadow: inset 0 0 0 1px var(--yellow-moutarde-main-679) !important;
+      color: currentColor !important;
+      box-shadow: inset 0 0 0 1px currentColor !important;
     }
 
     & .texte-proposition {
-      color: var(--yellow-moutarde-main-679) !important;
+      color: currentColor !important;
 
       & .indicateur-valeur,
       & .pourcentage {
-        color: var(--yellow-moutarde-main-679) !important;
+        color: currentColor !important;
       }
     }
   }
