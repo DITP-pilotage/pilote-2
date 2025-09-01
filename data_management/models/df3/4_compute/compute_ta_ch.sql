@@ -1,16 +1,17 @@
 {{ config(materialized='table') }}
 
+
 with 
 -- TA de chaque {indic-zone} à chaque date
 ta_zone_indic as (
 	select 
-	b.indic_parent_ch, a.zone_id, z.maille as "maille", metric_date,a.indic_id,
+	b.chantier_id, a.zone_id, z.maille as "maille", metric_date,a.indic_id,
 	vaca, vig, vca_courant, vca_adate, vca_adate_date, vcg,
 	taa_courant, taa_adate, tag
 	from {{ ref('compute_ta_indic') }} a
-	left join {{ ref('metadata_indicateurs') }} b on a.indic_id =b.indic_id
+	left join {{ ref('stg_ppg_metadata__indicateurs') }} b on a.indic_id = b.id
 	left join {{ ref('stg_ppg_metadata__zones') }} z on a.zone_id=z.id 
-	order by indic_parent_ch, zone_id, metric_date, indic_id
+	order by chantier_id, zone_id, metric_date, indic_id
 ),
 -- Calcul du TA pondéré
 --	On va pondérer chaque TA par sa pondération à cette maille
@@ -22,7 +23,7 @@ select a.*,
 	tag*0.01*b.poids_zone_reel as tag_pond
 from ta_zone_indic a
 left join {{ ref('int_ponderation_reelle') }} b on a.indic_id=b.indic_id and a.zone_id=b.zone_id
-order by indic_parent_ch, zone_id, metric_date, indic_id
+order by chantier_id, zone_id, metric_date, indic_id
 ),
 -- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente avec date<=max_date_taa_courant_today
 ta_zone_indic_pond_today as (
@@ -30,7 +31,7 @@ select * from (
 	select a.*, rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, b.max_date_taa_courant_today as max_date,
 	'today' as valid_on
 	from ta_zone_indic_pond a
-	left join {{ ref('get_max_date_vaca_ch') }} b on a.indic_parent_ch=b.chantier_id and a.zone_id=b.zone_id
+	left join {{ ref('get_max_date_vaca_ch') }} b on a.chantier_id=b.chantier_id and a.zone_id=b.zone_id
 	where vaca is not null
 	and metric_date::date<=max_date_taa_courant_today::date
 	) a
@@ -42,7 +43,7 @@ select * from (
 	select a.*, rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, b.max_date_taa_courant_previous as max_date,
 	'prev_month' as valid_on
 	from ta_zone_indic_pond a
-	left join {{ ref('get_max_date_vaca_ch') }} b on a.indic_parent_ch=b.chantier_id and a.zone_id=b.zone_id
+	left join {{ ref('get_max_date_vaca_ch') }} b on a.chantier_id=b.chantier_id and a.zone_id=b.zone_id
 	where vaca is not null
 	and metric_date::date<=max_date_taa_courant_previous::date
 	) a
@@ -51,7 +52,7 @@ where a.r=1
 -- Calcul du TA chantier intermediaire 
 --		car sans prendre en compte le nombre de TA indic remontés pour ce CH (PIL-227)
 ta_ch_int as (
-	select indic_parent_ch as chantier_id, zone_id, valid_on,
+	select chantier_id, zone_id, valid_on,
 	-- Nombre de TA indicateurs remontés pour ce {chantier-zone}
 	count(indic_id) as n_indic_in_ta,
 	array_agg(indic_id) as indic_ids,
@@ -98,7 +99,7 @@ ta_ch_int as (
 	union
 	select * from ta_zone_indic_pond_prev_month where poids_zone_reel > 0
 	) a
-	group by indic_parent_ch, a.zone_id, valid_on
+	group by chantier_id, a.zone_id, valid_on
 )
 -- Ajout du code territoire_code
 , ta_ch_int_terr_code as (

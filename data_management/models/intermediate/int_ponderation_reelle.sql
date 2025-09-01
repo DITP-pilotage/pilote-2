@@ -1,3 +1,4 @@
+
 with 
 -- la pondération définie par le paramétrage sans prendre en compte le zones applicables
 -- poids selon la pondération déclarée dans le DF
@@ -14,7 +15,7 @@ poids_pourcent_dept_declaree, poids_pourcent_reg_declaree, poids_pourcent_nat_de
 from {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} a
 cross join {{ source('db_schema_public', 'territoire') }} t
 left join {{ ref('stg_ppg_metadata__zones') }} z on t.zone_id =z.id
-left join {{ ref('stg_ppg_metadata__indicateurs') }} ind on ind.id = indic_id  
+left join {{ ref('stg_ppg_metadata__indicateurs') }} ind on ind.id = indic_id  and ind.est_cache_dans_pilote is false
 --where ind.chantier_id  ='CH-058'
 order by indic_id, t.zone_id 
 ),
@@ -40,25 +41,26 @@ from get_poids_appl
 group by chantier_id, zone_id)
 
 -- Calcul de la pondération réelle
-, get_poids_reel as (
-select 
-case 
-	when total_poids_zone_appl_ch=0 then 0
-	else 100.*poids_zone_appl/total_poids_zone_appl_ch
-end as poids_zone_reel,
-b.total_poids_zone_appl_ch,
-a.*
-from get_poids_appl a 
-left join get_total_poids_appl_ch b on a.chantier_id=b.chantier_id and a.zone_id=b.zone_id
+,
+get_poids_reel as (
+    select
+        case
+            when total_poids_zone_appl_ch = 0 then 0
+            else 100. * poids_zone_appl / total_poids_zone_appl_ch
+        end as poids_zone_reel,
+        b.total_poids_zone_appl_ch,
+        a.*
+    from
+        get_poids_appl a
+        left join get_total_poids_appl_ch b on a.chantier_id = b.chantier_id
+        and a.zone_id = b.zone_id
 )
 
 --select * from get_poids_appl where chantier_id is null -- where total_poids_zone_appl_ch>100
 
-select * from get_poids_reel
--- tests cas intéressants
---where poids_zone_reel>0 and poids_zone_reel<100 and poids_zone_reel<>poids_zone_declaree
---where total_poids_zone_appl_ch <100 and total_poids_zone_appl_ch>0 and poids_zone_appl>0 and poids_zone_appl<>total_poids_zone_appl_ch
+select *
+from get_poids_reel
+    -- tests cas intéressants
+    --where poids_zone_reel>0 and poids_zone_reel<100 and poids_zone_reel<>poids_zone_declaree
+    --where total_poids_zone_appl_ch <100 and total_poids_zone_appl_ch>0 and poids_zone_appl>0 and poids_zone_appl<>total_poids_zone_appl_ch
 order by chantier_id, zone_id
-
-
-
