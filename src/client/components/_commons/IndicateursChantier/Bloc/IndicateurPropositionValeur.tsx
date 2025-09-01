@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { formaterDate } from "@/client/utils/date/date";
 import BoutonSousLigné from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
@@ -122,7 +123,10 @@ export const IndicateurPropositionValeur = ({
       <LigneInformationPropositionValeur
         action={
           <BoutonSousLigné
-            className={`fr-link--xs fr-link--icon-left ${propositionEstVisible ? "fr-icon-eye-off-line" : "fr-icon-eye-line"} texte-jaune `}
+            className={clsx("!text-current fr-link--xs fr-link--icon-left", {
+              "fr-icon-eye-off-line": propositionEstVisible,
+              "fr-icon-eye-line": !propositionEstVisible,
+            })}
             dataFrOpened={false}
             onClick={() => setPropositionEstVisible(!propositionEstVisible)}
             type="button"
@@ -132,7 +136,7 @@ export const IndicateurPropositionValeur = ({
               : "Afficher la proposition"}
           </BoutonSousLigné>
         }
-        className="texte-bleu"
+        className="!text-dsfr-info-main-525"
       >
         <strong>Proposition de nouvelle valeur d'avancement en cours</strong> –{" "}
         {estPropositionModifiee(detailIndicateur) ? "modifiée" : "présentée"}{" "}
@@ -152,7 +156,10 @@ export const IndicateurPropositionValeur = ({
     <LigneInformationPropositionValeur
       action={
         <BoutonSousLigné
-          className={`fr-link--xs fr-link--icon-left ${propositionEstVisible ? "fr-icon-eye-off-line" : "fr-icon-eye-line"} texte-jaune `}
+          className={clsx("!text-current fr-link--xs fr-link--icon-left", {
+            "fr-icon-eye-off-line": propositionEstVisible,
+            "fr-icon-eye-line": !propositionEstVisible,
+          })}
           dataFrOpened={false}
           onClick={() => setPropositionEstVisible(!propositionEstVisible)}
           type="button"
