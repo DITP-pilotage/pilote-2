@@ -26,7 +26,6 @@ interface IndicateursProps {
   estInteractif?: boolean;
   estAutoriseAProposerUneValeurAvancement: boolean;
   estAutoriseAAccepterLesPropositionsDeValeurAvancement: boolean;
-  estAutoriseAVoirLesPropositionsDeValeurAvancement: boolean;
   territoireCode: string;
   territoiresCompares: string[];
   mailleQuery: MailleInterne;
@@ -51,7 +50,6 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   estAutoriseAProposerUneValeurAvancement:
     estAutoriseAProposerUneValeurAvancement,
   estAutoriseAAccepterLesPropositionsDeValeurAvancement,
-  estAutoriseAVoirLesPropositionsDeValeurAvancement,
   territoireCode,
   territoiresCompares,
   mailleQuery,
@@ -140,9 +138,6 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                         }
                         estAutoriseAProposerUneValeurAvancement={
                           estAutoriseAProposerUneValeurAvancement
-                        }
-                        estAutoriseAVoirLesPropositionsDeValeurAvancement={
-                          estAutoriseAVoirLesPropositionsDeValeurAvancement
                         }
                         estInteractif={estInteractif}
                         indicateur={indicateur}

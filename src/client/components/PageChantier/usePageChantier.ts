@@ -50,12 +50,7 @@ export const usePageChantier = (
     session?.profil != ProfilEnum.DITP_ADMIN &&
     territoireCode !== "NAT-FR" &&
     estAutoriseAImporterSurLeChantier &&
-    estAutoriseAModifierLesPublications &&
     chantier.statut !== "ARCHIVE";
-
-  const estAutoriseAVoirLesPropositionsDeValeurAvancement =
-    estAutoriseAAccepterLesPropositionsDeValeurAvancement ||
-    session!.profil === ProfilEnum.SECRETARIAT_GENERAL;
 
   if (
     session &&
@@ -104,7 +99,6 @@ export const usePageChantier = (
     estAutoriseAImporterDesIndicateurs,
     estAutoriseAVoirLeBoutonFicheConducteur,
     estAutoriseAProposerUneValeurAvancement,
-    estAutoriseAVoirLesPropositionsDeValeurAvancement,
     estAutoriseAAccepterLesPropositionsDeValeurAvancement,
     estAutoriseAModifierLesPublications,
     estAutoriseAModifierLesObjectifs,

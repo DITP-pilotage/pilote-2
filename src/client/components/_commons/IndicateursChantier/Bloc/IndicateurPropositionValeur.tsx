@@ -15,14 +15,13 @@ import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
-import { ModaleHistoriqueIndicateurTerritoireValeurEvenement } from "./ModaleHistoriqueIndicateurTerritoireValeurEvenement/ModaleHistoriqueIndicateurTerritoireValeurEvenement";
+import { BoutonVoirHistorique } from "@/components/_commons/IndicateursChantier/Bloc/BoutonVoirHistorique";
 
 export const ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT =
   "modale-historique-indicateur-territoire-valeur-evenement";
 
 export const IndicateurPropositionValeur = ({
   estAutoriseAProposerUneValeurAvancement,
-  estAutoriseAVoirLesPropositionsDeValeurAvancement,
   propositionEstVisible,
   setPropositionEstVisible,
   detailIndicateur,
@@ -33,7 +32,6 @@ export const IndicateurPropositionValeur = ({
   maille,
 }: {
   estAutoriseAProposerUneValeurAvancement: boolean;
-  estAutoriseAVoirLesPropositionsDeValeurAvancement: boolean;
   propositionEstVisible: boolean;
   setPropositionEstVisible(visible: boolean): void;
   detailIndicateur: DétailsIndicateur;
@@ -55,14 +53,6 @@ export const IndicateurPropositionValeur = ({
 
   if (!variableContenuFFPropositionValeurAvancementV2) return null;
   if (detailIndicateur.valeurAvancementMandat == null) return null;
-  if (
-    !(
-      estAutoriseAProposerUneValeurAvancement ||
-      estAutoriseAVoirLesPropositionsDeValeurAvancement
-    )
-  ) {
-    return null;
-  }
 
   const estAffichageSansProposition =
     informationsIndicateurs[0].données.proposition === null ||
@@ -93,8 +83,8 @@ export const IndicateurPropositionValeur = ({
 
   if (estAffichageSansProposition) {
     return (
-      <div>
-        <p className="fr-text--xs texte-gris fr-mb-0">
+      <div className="texte-gris">
+        <p className="fr-text--xs fr-mb-0">
           Aucune proposition pour la valeur d'avancement de cet indicateur{" "}
           {estPropositionSupprimee(detailIndicateur) ? (
             <>
@@ -119,18 +109,14 @@ export const IndicateurPropositionValeur = ({
             </>
           ) : null}
         </p>
-        <div className="flex items-center gap-2">
-          <BoutonSousLigné
-            aria-controls={
-              ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT +
-              indicateur.id
-            }
-            className="fr-link--xs fr-link--icon-left fr-icon-time-line texte-gris fr-mr-2w"
-            dataFrOpened={false}
-            type="button"
-          >
-            Voir l'historique
-          </BoutonSousLigné>
+        <div className="flex items-center">
+          <BoutonVoirHistorique
+            chantier={chantier}
+            id={indicateur.id}
+            indicateur={indicateur}
+            territoireCode={territoireCode}
+            territoireSélectionné={territoireSélectionné}
+          />
           {estAutoriseAProposerUneValeurAvancement ? (
             <BoutonSousLigné
               aria-controls={
@@ -144,24 +130,13 @@ export const IndicateurPropositionValeur = ({
             </BoutonSousLigné>
           ) : null}
         </div>
-        <ModaleHistoriqueIndicateurTerritoireValeurEvenement
-          chantier={chantier}
-          generatedHTMLID={
-            ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT +
-            indicateur.id
-          }
-          indicateur={indicateur}
-          territoireCode={territoireCode}
-          territoireCodeInsee={territoireSélectionné?.codeInsee || ""}
-          territoireNom={territoireSélectionné?.nom || ""}
-        />
       </div>
     );
   }
 
   return (
-    <div>
-      <p className="fr-text--xs texte-jaune fr-mb-0">
+    <div className="texte-jaune">
+      <p className="fr-text--xs fr-mb-0">
         <strong>Proposition de nouvelle valeur d'avancement en cours</strong> –{" "}
         {estPropositionModifiee(detailIndicateur) ? "modifiée" : "présentée"}{" "}
         par le territoire le{" "}
@@ -177,39 +152,25 @@ export const IndicateurPropositionValeur = ({
           : "en attente de lecture"}{" "}
         par la direction de projet
       </p>
-      <BoutonSousLigné
-        aria-controls={
-          ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT +
-          indicateur.id
-        }
-        className="fr-link--xs fr-link--icon-left fr-icon-time-line texte-jaune fr-mr-2w"
-        dataFrOpened={false}
-        type="button"
-      >
-        Voir l'historique
-      </BoutonSousLigné>
-      <BoutonSousLigné
-        className={`fr-link--xs fr-link--icon-left ${propositionEstVisible ? "fr-icon-eye-off-line" : "fr-icon-eye-line"} texte-jaune `}
-        dataFrOpened={false}
-        onClick={() => setPropositionEstVisible(!propositionEstVisible)}
-        type="button"
-      >
-        {propositionEstVisible
-          ? "Masquer la proposition"
-          : "Afficher la proposition"}
-      </BoutonSousLigné>
-
-      <ModaleHistoriqueIndicateurTerritoireValeurEvenement
-        chantier={chantier}
-        generatedHTMLID={
-          ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT +
-          indicateur.id
-        }
-        indicateur={indicateur}
-        territoireCode={territoireCode}
-        territoireCodeInsee={territoireSélectionné?.codeInsee || ""}
-        territoireNom={territoireSélectionné?.nom || ""}
-      />
+      <div className="flex items-center">
+        <BoutonVoirHistorique
+          chantier={chantier}
+          id={indicateur.id}
+          indicateur={indicateur}
+          territoireCode={territoireCode}
+          territoireSélectionné={territoireSélectionné}
+        />
+        <BoutonSousLigné
+          className={`fr-link--xs fr-link--icon-left ${propositionEstVisible ? "fr-icon-eye-off-line" : "fr-icon-eye-line"} texte-jaune `}
+          dataFrOpened={false}
+          onClick={() => setPropositionEstVisible(!propositionEstVisible)}
+          type="button"
+        >
+          {propositionEstVisible
+            ? "Masquer la proposition"
+            : "Afficher la proposition"}
+        </BoutonSousLigné>
+      </div>
     </div>
   );
 };
