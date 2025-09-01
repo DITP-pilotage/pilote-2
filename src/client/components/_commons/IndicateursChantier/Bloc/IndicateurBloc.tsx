@@ -25,6 +25,7 @@ import { IndicateurPropositionValeur } from "@/components/_commons/IndicateursCh
 import { InformationsIndicateurs } from "@/components/_commons/IndicateursChantier/Bloc/InformationsIndicateurs";
 import { LignesPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/LignesPropositionValeurAvancement";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
+import { PageChantierProvider } from "@/components/PageChantier/usePageChantierContext";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import useIndicateurBloc from "./useIndicateurBloc";
 import useIndicateurAlerteDateMaj from "./useIndicateurAlerteDateMaj";
@@ -180,451 +181,242 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   };
 
   return (
-    <IndicateurBlocStyled className="fr-mt-2w" key={indicateur.id}>
-      <Bloc>
-        <section>
-          <div className="flex justify-between">
-            <div>
-              <Titre baliseHtml="h4" className="fr-text--xl fr-mb-1w">
-                {estIndicateurEnAlerte ? (
-                  <span className="fr-mr-1v">
-                    <BadgeIcône type="warning" />
-                  </span>
-                ) : null}
-                {indicateur.estIndicateurDuBaromètre ? (
-                  <span className="fr-mr-1v">
-                    <PictoBaromètre />
-                  </span>
-                ) : null}
-                {indicateur.nom +
-                  (indicateur.unité === null || indicateur.unité === ""
-                    ? ""
-                    : ` (en ${indicateur.unité})`)}
-              </Titre>
-              <div className="fr-ml-2w fr-mb-3w">
-                <p className="fr-mb-0 fr-text--xs texte-gris">
-                  Identifiant de l'indicateur : <strong>{indicateur.id}</strong>
-                </p>
-                <p className="fr-mb-0 fr-text--xs texte-gris">
-                  Dernière mise à jour des données (de l'indicateur, toutes
-                  zones confondues) :{" "}
-                  <span className="fr-text--bold">
-                    {dateDeMiseAJourIndicateur ?? "Non renseignée"}
-                  </span>
-                </p>
-                <div
-                  className={`flex align-center w-full relative${estIndicateurEnAlerte ? " fr-text-warning" : " texte-gris"}`}
-                >
-                  <p className="fr-mb-0 fr-text--xs">
-                    Date prévisionnelle de la prochaine mise à jour des données
-                    (de l'indicateur) :{" "}
+    <PageChantierProvider
+      chantier={chantier}
+      indicateur={indicateur}
+      territoireCode={territoireCode}
+      territoireSélectionné={détailTerritoireSélectionné}
+    >
+      <IndicateurBlocStyled className="fr-mt-2w" key={indicateur.id}>
+        <Bloc>
+          <section>
+            <div className="flex justify-between">
+              <div>
+                <Titre baliseHtml="h4" className="fr-text--xl fr-mb-1w">
+                  {estIndicateurEnAlerte ? (
+                    <span className="fr-mr-1v">
+                      <BadgeIcône type="warning" />
+                    </span>
+                  ) : null}
+                  {indicateur.estIndicateurDuBaromètre ? (
+                    <span className="fr-mr-1v">
+                      <PictoBaromètre />
+                    </span>
+                  ) : null}
+                  {indicateur.nom +
+                    (indicateur.unité === null || indicateur.unité === ""
+                      ? ""
+                      : ` (en ${indicateur.unité})`)}
+                </Titre>
+                <div className="fr-ml-2w fr-mb-3w">
+                  <p className="fr-mb-0 fr-text--xs texte-gris">
+                    Identifiant de l'indicateur :{" "}
+                    <strong>{indicateur.id}</strong>
+                  </p>
+                  <p className="fr-mb-0 fr-text--xs texte-gris">
+                    Dernière mise à jour des données (de l'indicateur, toutes
+                    zones confondues) :{" "}
                     <span className="fr-text--bold">
-                      {indicateurEstApplicable
-                        ? (dateProchaineDateMaj ??
-                          "Données requises mais non renseignées par l'équipe projet")
-                        : "Non applicable"}
+                      {dateDeMiseAJourIndicateur ?? "Non renseignée"}
                     </span>
                   </p>
-                  <Infobulle
-                    classNameBouton="infobulle-date-previsionnelle"
-                    classNameInfoBulle="tooltip-accordeon"
-                    idHtml={`infobulle-date-previsionnelle-${indicateur.id}`}
+                  <div
+                    className={`flex align-center w-full relative${estIndicateurEnAlerte ? " fr-text-warning" : " texte-gris"}`}
                   >
-                    <p className="fr-text--sm fr-text-title--blue-france">
-                      Date prévisionnelle de mise à jour de l'indicateur :
-                    </p>
-                    <p className="fr-text--sm fr-mb-0">
-                      Elle est calculée à partir de la date de la valeur
-                      d'avancement, de la période de mise à jour et du délai de
-                      disponibilité des données. Plus d'informations dans
-                      l'accordéon "Description de l'indicateur et calendrier de
-                      mise à jour".
-                    </p>
-                  </Infobulle>
-                </div>
-                <IndicateurPonderation
-                  indicateurPondération={
-                    detailsIndicateur[territoireCode]?.pondération ?? null
-                  }
-                  mailleSélectionnée={mailleTerritoireSelectionnee}
-                />
-
-                <IndicateurPropositionValeur
-                  chantier={chantier}
-                  detailIndicateur={detailsIndicateur[territoireCode]}
-                  estAutoriseAProposerUneValeurAvancement={
-                    estAutoriseAProposerUneValeurAvancement
-                  }
-                  indicateur={indicateur}
-                  informationsIndicateurs={informationsIndicateurs}
-                  maille={mailleTerritoireSelectionnee}
-                  propositionEstVisible={propositionEstVisible}
-                  setPropositionEstVisible={setPropositionEstVisible}
-                  territoireCode={territoireCode}
-                />
-              </div>
-              {detailsIndicateur[territoireCode]?.tendance === "BAISSE" ? (
-                <IndicateurTendance />
-              ) : null}
-            </div>
-          </div>
-          {estVueTuile ? (
-            informationsIndicateurs.map((informationIndicateur) => (
-              <Fragment key={informationIndicateur.territoireNom}>
-                <IndicateurBlocIndicateurTuile
-                  indicateurDétailsParTerritoire={informationIndicateur}
-                  typeDeRéforme="chantier"
-                  unité={informationIndicateur.données.unité}
-                />
-              </Fragment>
-            ))
-          ) : (
-            <table className="fr-table w-full border-collapse fr-mb-0">
-              <caption className="fr-sr-only">
-                Un tableau de l'indicateur :'
-              </caption>
-              <thead className="fr-background-transparent text-center">
-                <tr>
-                  <th className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w" />
-                  <th className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm" />
-                  <th
-                    className="fr-background-contrast-grey border-b-2 border-b-high-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold"
-                    colSpan={3}
-                  >
-                    <div className="flex align-center justify-center">
-                      <span className="fr-pr-1v">
-                        DONNÉES À ÉCHÉANCE {jalon}
+                    <p className="fr-mb-0 fr-text--xs">
+                      Date prévisionnelle de la prochaine mise à jour des
+                      données (de l'indicateur) :{" "}
+                      <span className="fr-text--bold">
+                        {indicateurEstApplicable
+                          ? (dateProchaineDateMaj ??
+                            "Données requises mais non renseignées par l'équipe projet")
+                          : "Non applicable"}
                       </span>
-                    </div>
-                  </th>
-                  <th
-                    className="fr-background-action-low-blue-france border-b-2 border-b-high-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold"
-                    colSpan={3}
-                  >
-                    DONNÉES À ÉCHÉANCE 2026
-                  </th>
-                </tr>
-                <tr className="border-b-2 border-b-high-grey">
-                  <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold no-wrap">
-                    Territoire(s)
-                  </th>
-                  <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
-                    valeur initiale
-                  </th>
-                  <th className="fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
-                    valeur d'avancement
-                  </th>
-                  <th className="fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
-                    valeur cible
-                  </th>
-                  <th className="fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
-                    taux d'avancement
-                  </th>
-                  <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
-                    valeur d'avancement
-                  </th>
-                  <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
-                    valeur cible
-                  </th>
-                  <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
-                    taux d'avancement
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {informationsIndicateurs.map((informationIndicateur) => {
-                  let detailsIndicateurDuTerritoire =
-                    detailsIndicateur[territoireCode];
-                  return informationIndicateur.données ? ( // TODO supprimer une fois le refacto fait ! A cause de la react query y'a quelques frames où informationIndicateur.données est undefined
-                    <Fragment key={informationIndicateur.territoireNom}>
-                      <tr
-                        className={`${informationIndicateur.code === territoireCode ? "ligne-territoire-proposition-valeur-davancement" : null}`}
-                        key={informationIndicateur.territoireNom}
-                      >
-                        <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm fr-text--bold fr-text-title--high-blue-france">
-                          {informationIndicateur.territoireNom}
-                        </td>
-                        <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
-                          <ValeurEtDate
-                            date={
-                              informationIndicateur.données.dateValeurInitiale
-                            }
-                            unité={informationIndicateur.données.unité}
-                            valeur={
-                              informationIndicateur.données.valeurInitiale
-                            }
-                          />
-                        </td>
-                        {/* Valeur et date valeur d'avancement de indicateurTerritoireJalon en fonction du jalon */}
-                        <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
-                          <ValeurEtDate
-                            date={
-                              informationIndicateur.données.dateValeurAvancement
-                            }
-                            unité={informationIndicateur.données.unité}
-                            valeur={
-                              informationIndicateur.données.valeurAvancement
-                            }
-                          />
-                        </td>
-                        <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
-                          <ValeurEtDate
-                            date={
-                              informationIndicateur.données
-                                .dateValeurCibleAnnuelle
-                            }
-                            unité={informationIndicateur.données.unité}
-                            valeur={
-                              informationIndicateur.données.valeurCibleAnnuelle
-                            }
-                          />
-                        </td>
-                        <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm flex">
-                          <BarreDeProgression
-                            afficherTexte
-                            fond="gris-clair"
-                            infobulleId={`infobulle-taux-avancement-jalon-${informationIndicateur.code}`}
-                            positionTexte="dessus"
-                            taille="md"
-                            texteInfobulle={getCalculAvancementMessage(
-                              informationIndicateur.données.valeurInitiale,
-                              informationIndicateur.données.valeurAvancement,
-                              informationIndicateur.données.valeurCibleAnnuelle,
-                              informationIndicateur.données.avancement.annuel,
-                              jalon,
-                            )}
-                            valeur={
-                              informationIndicateur.données.avancement.annuel
-                            }
-                            variante="secondaire"
-                          />
-                        </td>
-                        {/* Valeur et date valeur d'avancement mandat de indicateurTerritoire */}
-                        <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
-                          <ValeurEtDate
-                            date={
-                              informationIndicateur.données
-                                .dateValeurAvancementMandat
-                            }
-                            unité={informationIndicateur.données.unité}
-                            valeur={
-                              informationIndicateur.données
-                                .valeurAvancementMandat
-                            }
-                          />
-                        </td>
-                        <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
-                          <ValeurEtDate
-                            date={informationIndicateur.données.dateValeurCible}
-                            unité={informationIndicateur.données.unité}
-                            valeur={informationIndicateur.données.valeurCible}
-                          />
-                        </td>
-                        <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm">
-                          <BarreDeProgression
-                            afficherTexte
-                            fond="gris-clair"
-                            infobulleId={`infobulle-taux-avancement-global-${informationIndicateur.code}`}
-                            positionTexte="dessus"
-                            taille="md"
-                            texteInfobulle={getCalculAvancementMessage(
-                              informationIndicateur.données.valeurInitiale,
-                              informationIndicateur.données
-                                .valeurAvancementMandat,
-                              informationIndicateur.données.valeurCible,
-                              informationIndicateur.données.avancement.global,
-                              2026,
-                            )}
-                            valeur={
-                              informationIndicateur.données.avancement.global
-                            }
-                            variante="primaire"
-                          />
-                        </td>
-                      </tr>
-                      {informationIndicateur.code === territoireCode ? (
-                        variableContenuFFPropositionValeurAvancement ? (
-                          estAutoriseAProposerUneValeurAvancement &&
-                          informationIndicateur.données
-                            .valeurAvancementMandat != null &&
-                          informationIndicateur.données.proposition == null ? (
-                            <tr className="ligne-creation-proposition-valeur-davancement">
-                              <td colSpan={8}>
-                                {!variableContenuFFPropositionValeurAvancementV2 ? (
-                                  <div className="flex w-full justify-end">
-                                    {propositionSurMailleDesactivee ? (
-                                      <Infobulle
-                                        classNameInfoBulle="tooltip-accordeon"
-                                        idHtml={`infobulle-proposition-desactivee-${indicateur.id}`}
-                                      >
-                                        <p className="fr-text--sm">
-                                          Les résultats de cet indicateur sont
-                                          agrégés depuis le niveau
-                                          départemental. Il n'est donc pas
-                                          possible de proposer une valeur à une
-                                          autre maille. Vous pouvez, soit
-                                          proposer une valeur directement au
-                                          niveau d'un département ou contacter
-                                          directement le directeur de projet via
-                                          l'onglet Responsables.
-                                        </p>
-                                      </Infobulle>
-                                    ) : null}
-                                    <button
-                                      aria-controls={
-                                        ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
-                                        indicateur.id
-                                      }
-                                      className="fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-davancement"
-                                      data-fr-opened="false"
-                                      disabled={propositionSurMailleDesactivee}
-                                      type="button"
-                                    >
-                                      Proposer une autre valeur d'avancement
-                                    </button>
-                                  </div>
-                                ) : null}
-                                {!variableContenuFFPropositionValeurAvancementV2 ? (
-                                  <ModalePropositionValeurAvancement
-                                    detailIndicateur={
-                                      informationIndicateur.données
-                                    }
-                                    generatedHTMLID={
-                                      ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
-                                      indicateur.id
-                                    }
-                                    indicateur={indicateur}
-                                    territoireCode={territoireCode}
-                                    territoireCodeInsee={
-                                      détailTerritoireSélectionné.codeInsee
-                                    }
-                                    territoireNom={
-                                      détailTerritoireSélectionné.nom
-                                    }
-                                  />
-                                ) : (
-                                  <ModalePropositionValeurAvancementV2
-                                    detailIndicateur={
-                                      informationIndicateur.données
-                                    }
-                                    generatedHTMLID={
-                                      ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
-                                      indicateur.id
-                                    }
-                                    indicateur={indicateur}
-                                    territoireCode={territoireCode}
-                                    territoireCodeInsee={
-                                      détailTerritoireSélectionné.codeInsee
-                                    }
-                                    territoireNom={
-                                      détailTerritoireSélectionné.nom
-                                    }
-                                  />
-                                )}
-                              </td>
-                            </tr>
-                          ) : (
-                            informationIndicateur.données.proposition !==
-                              null && (
-                              <LignesPropositionValeurAvancement
-                                detailIndicateur={detailsIndicateurDuTerritoire}
-                                estAutoriseAAccepterLesPropositionsDeValeurAvancement={
-                                  estAutoriseAAccepterLesPropositionsDeValeurAvancement
-                                }
-                                estAutoriseAProposerUneValeurAvancement={
-                                  estAutoriseAProposerUneValeurAvancement
-                                }
-                                indicateur={indicateur}
-                                informationIndicateur={informationIndicateur}
-                                jalon={jalon}
-                                proposition={
-                                  informationIndicateur.données.proposition
-                                }
-                                propositionEstVisible={propositionEstVisible}
-                                territoireCode={territoireCode}
-                              />
-                            )
-                          )
-                        ) : null
-                      ) : null}
-                    </Fragment>
-                  ) : null;
-                })}
-                {informationsIndicateursComparés.map(
-                  (informationIndicateurComparé) => {
-                    return informationIndicateurComparé.données ? ( // TODO supprimer une fois le refacto fait ! A cause de la react query y'a quelques frames où informationIndicateurComparé.données est undefined
-                      <Fragment
-                        key={informationIndicateurComparé.territoireNom}
-                      >
+                    </p>
+                    <Infobulle
+                      classNameBouton="infobulle-date-previsionnelle"
+                      classNameInfoBulle="tooltip-accordeon"
+                      idHtml={`infobulle-date-previsionnelle-${indicateur.id}`}
+                    >
+                      <p className="fr-text--sm fr-text-title--blue-france">
+                        Date prévisionnelle de mise à jour de l'indicateur :
+                      </p>
+                      <p className="fr-text--sm fr-mb-0">
+                        Elle est calculée à partir de la date de la valeur
+                        d'avancement, de la période de mise à jour et du délai
+                        de disponibilité des données. Plus d'informations dans
+                        l'accordéon "Description de l'indicateur et calendrier
+                        de mise à jour".
+                      </p>
+                    </Infobulle>
+                  </div>
+                  <IndicateurPonderation
+                    indicateurPondération={
+                      detailsIndicateur[territoireCode]?.pondération ?? null
+                    }
+                    mailleSélectionnée={mailleTerritoireSelectionnee}
+                  />
+
+                  <IndicateurPropositionValeur
+                    detailIndicateur={detailsIndicateur[territoireCode]}
+                    estAutoriseAProposerUneValeurAvancement={
+                      estAutoriseAProposerUneValeurAvancement
+                    }
+                    informationsIndicateurs={informationsIndicateurs}
+                    maille={mailleTerritoireSelectionnee}
+                    propositionEstVisible={propositionEstVisible}
+                    setPropositionEstVisible={setPropositionEstVisible}
+                  />
+                </div>
+                {detailsIndicateur[territoireCode]?.tendance === "BAISSE" ? (
+                  <IndicateurTendance />
+                ) : null}
+              </div>
+            </div>
+            {estVueTuile ? (
+              informationsIndicateurs.map((informationIndicateur) => (
+                <Fragment key={informationIndicateur.territoireNom}>
+                  <IndicateurBlocIndicateurTuile
+                    indicateurDétailsParTerritoire={informationIndicateur}
+                    typeDeRéforme="chantier"
+                    unité={informationIndicateur.données.unité}
+                  />
+                </Fragment>
+              ))
+            ) : (
+              <table className="fr-table w-full border-collapse fr-mb-0">
+                <caption className="fr-sr-only">
+                  Un tableau de l'indicateur :'
+                </caption>
+                <thead className="fr-background-transparent text-center">
+                  <tr>
+                    <th className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w" />
+                    <th className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm" />
+                    <th
+                      className="fr-background-contrast-grey border-b-2 border-b-high-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold"
+                      colSpan={3}
+                    >
+                      <div className="flex align-center justify-center">
+                        <span className="fr-pr-1v">
+                          DONNÉES À ÉCHÉANCE {jalon}
+                        </span>
+                      </div>
+                    </th>
+                    <th
+                      className="fr-background-action-low-blue-france border-b-2 border-b-high-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold"
+                      colSpan={3}
+                    >
+                      DONNÉES À ÉCHÉANCE 2026
+                    </th>
+                  </tr>
+                  <tr className="border-b-2 border-b-high-grey">
+                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold no-wrap">
+                      Territoire(s)
+                    </th>
+                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
+                      valeur initiale
+                    </th>
+                    <th className="fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
+                      valeur d'avancement
+                    </th>
+                    <th className="fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
+                      valeur cible
+                    </th>
+                    <th className="fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
+                      taux d'avancement
+                    </th>
+                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
+                      valeur d'avancement
+                    </th>
+                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
+                      valeur cible
+                    </th>
+                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
+                      taux d'avancement
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {informationsIndicateurs.map((informationIndicateur) => {
+                    let detailsIndicateurDuTerritoire =
+                      detailsIndicateur[territoireCode];
+                    return informationIndicateur.données ? ( // TODO supprimer une fois le refacto fait ! A cause de la react query y'a quelques frames où informationIndicateur.données est undefined
+                      <Fragment key={informationIndicateur.territoireNom}>
                         <tr
-                          className={`${informationIndicateurComparé.code === territoireCode ? "ligne-territoire-proposition-valeur-davancement" : "table-comparaison-border"}`}
-                          key={informationIndicateurComparé.territoireNom}
+                          className={`${informationIndicateur.code === territoireCode ? "ligne-territoire-proposition-valeur-davancement" : null}`}
+                          key={informationIndicateur.territoireNom}
                         >
-                          <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm fr-text-title--light-blue-france">
-                            {informationIndicateurComparé.territoireNom}
+                          <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm fr-text--bold fr-text-title--high-blue-france">
+                            {informationIndicateur.territoireNom}
                           </td>
                           <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
                             <ValeurEtDate
                               date={
-                                informationIndicateurComparé.données
-                                  .dateValeurInitiale
+                                informationIndicateur.données.dateValeurInitiale
                               }
-                              unité={informationIndicateurComparé.données.unité}
+                              unité={informationIndicateur.données.unité}
                               valeur={
-                                informationIndicateurComparé.données
-                                  .valeurInitiale
+                                informationIndicateur.données.valeurInitiale
                               }
                             />
                           </td>
+                          {/* Valeur et date valeur d'avancement de indicateurTerritoireJalon en fonction du jalon */}
                           <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
                             <ValeurEtDate
                               date={
-                                informationIndicateurComparé.données
+                                informationIndicateur.données
                                   .dateValeurAvancement
                               }
-                              unité={informationIndicateurComparé.données.unité}
+                              unité={informationIndicateur.données.unité}
                               valeur={
-                                informationIndicateurComparé.données
-                                  .valeurAvancement
+                                informationIndicateur.données.valeurAvancement
                               }
                             />
                           </td>
                           <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
                             <ValeurEtDate
                               date={
-                                informationIndicateurComparé.données
+                                informationIndicateur.données
                                   .dateValeurCibleAnnuelle
                               }
-                              unité={informationIndicateurComparé.données.unité}
+                              unité={informationIndicateur.données.unité}
                               valeur={
-                                informationIndicateurComparé.données
+                                informationIndicateur.données
                                   .valeurCibleAnnuelle
                               }
                             />
                           </td>
-                          <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm">
+                          <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm flex">
                             <BarreDeProgression
                               afficherTexte
                               fond="gris-clair"
+                              infobulleId={`infobulle-taux-avancement-jalon-${informationIndicateur.code}`}
                               positionTexte="dessus"
                               taille="md"
+                              texteInfobulle={getCalculAvancementMessage(
+                                informationIndicateur.données.valeurInitiale,
+                                informationIndicateur.données.valeurAvancement,
+                                informationIndicateur.données
+                                  .valeurCibleAnnuelle,
+                                informationIndicateur.données.avancement.annuel,
+                                jalon,
+                              )}
                               valeur={
-                                informationIndicateurComparé.données.avancement
-                                  .annuel
+                                informationIndicateur.données.avancement.annuel
                               }
-                              variante="secondaire-light"
+                              variante="secondaire"
                             />
                           </td>
                           {/* Valeur et date valeur d'avancement mandat de indicateurTerritoire */}
                           <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
                             <ValeurEtDate
                               date={
-                                informationIndicateurComparé.données
+                                informationIndicateur.données
                                   .dateValeurAvancementMandat
                               }
-                              unité={informationIndicateurComparé.données.unité}
+                              unité={informationIndicateur.données.unité}
                               valeur={
-                                informationIndicateurComparé.données
+                                informationIndicateur.données
                                   .valeurAvancementMandat
                               }
                             />
@@ -632,68 +424,303 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
                             <ValeurEtDate
                               date={
-                                informationIndicateurComparé.données
-                                  .dateValeurCible
+                                informationIndicateur.données.dateValeurCible
                               }
-                              unité={informationIndicateurComparé.données.unité}
-                              valeur={
-                                informationIndicateurComparé.données.valeurCible
-                              }
+                              unité={informationIndicateur.données.unité}
+                              valeur={informationIndicateur.données.valeurCible}
                             />
                           </td>
                           <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm">
                             <BarreDeProgression
                               afficherTexte
                               fond="gris-clair"
+                              infobulleId={`infobulle-taux-avancement-global-${informationIndicateur.code}`}
                               positionTexte="dessus"
                               taille="md"
+                              texteInfobulle={getCalculAvancementMessage(
+                                informationIndicateur.données.valeurInitiale,
+                                informationIndicateur.données
+                                  .valeurAvancementMandat,
+                                informationIndicateur.données.valeurCible,
+                                informationIndicateur.données.avancement.global,
+                                2026,
+                              )}
                               valeur={
-                                informationIndicateurComparé.données.avancement
-                                  .global
+                                informationIndicateur.données.avancement.global
                               }
-                              variante="bleu-clair"
+                              variante="primaire"
                             />
                           </td>
                         </tr>
+                        {informationIndicateur.code === territoireCode ? (
+                          variableContenuFFPropositionValeurAvancement ? (
+                            estAutoriseAProposerUneValeurAvancement &&
+                            informationIndicateur.données
+                              .valeurAvancementMandat != null &&
+                            informationIndicateur.données.proposition ==
+                              null ? (
+                              <tr className="ligne-creation-proposition-valeur-davancement">
+                                <td colSpan={8}>
+                                  {!variableContenuFFPropositionValeurAvancementV2 ? (
+                                    <div className="flex w-full justify-end">
+                                      {propositionSurMailleDesactivee ? (
+                                        <Infobulle
+                                          classNameInfoBulle="tooltip-accordeon"
+                                          idHtml={`infobulle-proposition-desactivee-${indicateur.id}`}
+                                        >
+                                          <p className="fr-text--sm">
+                                            Les résultats de cet indicateur sont
+                                            agrégés depuis le niveau
+                                            départemental. Il n'est donc pas
+                                            possible de proposer une valeur à
+                                            une autre maille. Vous pouvez, soit
+                                            proposer une valeur directement au
+                                            niveau d'un département ou contacter
+                                            directement le directeur de projet
+                                            via l'onglet Responsables.
+                                          </p>
+                                        </Infobulle>
+                                      ) : null}
+                                      <button
+                                        aria-controls={
+                                          ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
+                                          indicateur.id
+                                        }
+                                        className="fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-davancement"
+                                        data-fr-opened="false"
+                                        disabled={
+                                          propositionSurMailleDesactivee
+                                        }
+                                        type="button"
+                                      >
+                                        Proposer une autre valeur d'avancement
+                                      </button>
+                                    </div>
+                                  ) : null}
+                                  {!variableContenuFFPropositionValeurAvancementV2 ? (
+                                    <ModalePropositionValeurAvancement
+                                      detailIndicateur={
+                                        informationIndicateur.données
+                                      }
+                                      generatedHTMLID={
+                                        ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
+                                        indicateur.id
+                                      }
+                                      indicateur={indicateur}
+                                      territoireCode={territoireCode}
+                                      territoireCodeInsee={
+                                        détailTerritoireSélectionné.codeInsee
+                                      }
+                                      territoireNom={
+                                        détailTerritoireSélectionné.nom
+                                      }
+                                    />
+                                  ) : (
+                                    <ModalePropositionValeurAvancementV2
+                                      detailIndicateur={
+                                        informationIndicateur.données
+                                      }
+                                      generatedHTMLID={
+                                        ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
+                                        indicateur.id
+                                      }
+                                      indicateur={indicateur}
+                                      territoireCode={territoireCode}
+                                      territoireCodeInsee={
+                                        détailTerritoireSélectionné.codeInsee
+                                      }
+                                      territoireNom={
+                                        détailTerritoireSélectionné.nom
+                                      }
+                                    />
+                                  )}
+                                </td>
+                              </tr>
+                            ) : (
+                              informationIndicateur.données.proposition !==
+                                null && (
+                                <LignesPropositionValeurAvancement
+                                  detailIndicateur={
+                                    detailsIndicateurDuTerritoire
+                                  }
+                                  estAutoriseAAccepterLesPropositionsDeValeurAvancement={
+                                    estAutoriseAAccepterLesPropositionsDeValeurAvancement
+                                  }
+                                  estAutoriseAProposerUneValeurAvancement={
+                                    estAutoriseAProposerUneValeurAvancement
+                                  }
+                                  indicateur={indicateur}
+                                  informationIndicateur={informationIndicateur}
+                                  jalon={jalon}
+                                  proposition={
+                                    informationIndicateur.données.proposition
+                                  }
+                                  propositionEstVisible={propositionEstVisible}
+                                  territoireCode={territoireCode}
+                                />
+                              )
+                            )
+                          ) : null
+                        ) : null}
                       </Fragment>
                     ) : null;
-                  },
-                )}
-              </tbody>
-            </table>
-          )}
-          {estInteractif ? (
-            <IndicateurDétails
-              cartographieDroiteIndicateur={cartographieDroiteIndicateur}
-              cartographieGaucheIndicateur={cartographieGaucheIndicateur}
-              chantierEstTerritorialisé={chantierEstTerritorialisé}
-              dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
-              dateProchaineDateMaj={dateProchaineDateMaj}
-              dateProchaineDateValeurAvancement={
-                dateProchaineDateValeurAvancement
-              }
-              dateValeurAvancement={dateValeurAvancement}
-              detailsIndicateursTerritoire={detailsIndicateursTerritoire}
-              détailsIndicateurs={détailsIndicateurs}
-              indicateur={indicateur}
-              indicateurDétailsParTerritoires={informationsIndicateurs}
-              indicateurDétailsParTerritoiresComparés={
-                informationsIndicateursComparés
-              }
-              indicateurEstAjour={!indicateurNonAJour}
-              jalon={jalon}
-              listeSousIndicateurs={listeSousIndicateurs}
-              mailleQuery={mailleQuery}
-              mailleSelectionnee={mailleSelectionnee}
-              mailsDirecteursProjets={mailsDirecteursProjets}
-              nouveauxGraphiquesSontActifs={nouveauxGraphiquesSontActifs}
-              territoireCode={territoireCode}
-              territoiresCompares={territoiresCompares}
-            />
-          ) : null}
-        </section>
-      </Bloc>
-    </IndicateurBlocStyled>
+                  })}
+                  {informationsIndicateursComparés.map(
+                    (informationIndicateurComparé) => {
+                      return informationIndicateurComparé.données ? ( // TODO supprimer une fois le refacto fait ! A cause de la react query y'a quelques frames où informationIndicateurComparé.données est undefined
+                        <Fragment
+                          key={informationIndicateurComparé.territoireNom}
+                        >
+                          <tr
+                            className={`${informationIndicateurComparé.code === territoireCode ? "ligne-territoire-proposition-valeur-davancement" : "table-comparaison-border"}`}
+                            key={informationIndicateurComparé.territoireNom}
+                          >
+                            <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm fr-text-title--light-blue-france">
+                              {informationIndicateurComparé.territoireNom}
+                            </td>
+                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
+                              <ValeurEtDate
+                                date={
+                                  informationIndicateurComparé.données
+                                    .dateValeurInitiale
+                                }
+                                unité={
+                                  informationIndicateurComparé.données.unité
+                                }
+                                valeur={
+                                  informationIndicateurComparé.données
+                                    .valeurInitiale
+                                }
+                              />
+                            </td>
+                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
+                              <ValeurEtDate
+                                date={
+                                  informationIndicateurComparé.données
+                                    .dateValeurAvancement
+                                }
+                                unité={
+                                  informationIndicateurComparé.données.unité
+                                }
+                                valeur={
+                                  informationIndicateurComparé.données
+                                    .valeurAvancement
+                                }
+                              />
+                            </td>
+                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
+                              <ValeurEtDate
+                                date={
+                                  informationIndicateurComparé.données
+                                    .dateValeurCibleAnnuelle
+                                }
+                                unité={
+                                  informationIndicateurComparé.données.unité
+                                }
+                                valeur={
+                                  informationIndicateurComparé.données
+                                    .valeurCibleAnnuelle
+                                }
+                              />
+                            </td>
+                            <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm">
+                              <BarreDeProgression
+                                afficherTexte
+                                fond="gris-clair"
+                                positionTexte="dessus"
+                                taille="md"
+                                valeur={
+                                  informationIndicateurComparé.données
+                                    .avancement.annuel
+                                }
+                                variante="secondaire-light"
+                              />
+                            </td>
+                            {/* Valeur et date valeur d'avancement mandat de indicateurTerritoire */}
+                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
+                              <ValeurEtDate
+                                date={
+                                  informationIndicateurComparé.données
+                                    .dateValeurAvancementMandat
+                                }
+                                unité={
+                                  informationIndicateurComparé.données.unité
+                                }
+                                valeur={
+                                  informationIndicateurComparé.données
+                                    .valeurAvancementMandat
+                                }
+                              />
+                            </td>
+                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
+                              <ValeurEtDate
+                                date={
+                                  informationIndicateurComparé.données
+                                    .dateValeurCible
+                                }
+                                unité={
+                                  informationIndicateurComparé.données.unité
+                                }
+                                valeur={
+                                  informationIndicateurComparé.données
+                                    .valeurCible
+                                }
+                              />
+                            </td>
+                            <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm">
+                              <BarreDeProgression
+                                afficherTexte
+                                fond="gris-clair"
+                                positionTexte="dessus"
+                                taille="md"
+                                valeur={
+                                  informationIndicateurComparé.données
+                                    .avancement.global
+                                }
+                                variante="bleu-clair"
+                              />
+                            </td>
+                          </tr>
+                        </Fragment>
+                      ) : null;
+                    },
+                  )}
+                </tbody>
+              </table>
+            )}
+            {estInteractif ? (
+              <IndicateurDétails
+                cartographieDroiteIndicateur={cartographieDroiteIndicateur}
+                cartographieGaucheIndicateur={cartographieGaucheIndicateur}
+                chantierEstTerritorialisé={chantierEstTerritorialisé}
+                dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
+                dateProchaineDateMaj={dateProchaineDateMaj}
+                dateProchaineDateValeurAvancement={
+                  dateProchaineDateValeurAvancement
+                }
+                dateValeurAvancement={dateValeurAvancement}
+                detailsIndicateursTerritoire={detailsIndicateursTerritoire}
+                détailsIndicateurs={détailsIndicateurs}
+                indicateur={indicateur}
+                indicateurDétailsParTerritoires={informationsIndicateurs}
+                indicateurDétailsParTerritoiresComparés={
+                  informationsIndicateursComparés
+                }
+                indicateurEstAjour={!indicateurNonAJour}
+                jalon={jalon}
+                listeSousIndicateurs={listeSousIndicateurs}
+                mailleQuery={mailleQuery}
+                mailleSelectionnee={mailleSelectionnee}
+                mailsDirecteursProjets={mailsDirecteursProjets}
+                nouveauxGraphiquesSontActifs={nouveauxGraphiquesSontActifs}
+                territoireCode={territoireCode}
+                territoiresCompares={territoiresCompares}
+              />
+            ) : null}
+          </section>
+        </Bloc>
+      </IndicateurBlocStyled>
+    </PageChantierProvider>
   );
 };
 

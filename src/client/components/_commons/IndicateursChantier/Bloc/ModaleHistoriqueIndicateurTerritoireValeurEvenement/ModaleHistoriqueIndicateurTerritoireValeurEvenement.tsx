@@ -1,30 +1,20 @@
 import { Fragment, FunctionComponent } from "react";
 import clsx from "clsx";
 import Modale from "@/components/_commons/Modale/Modale";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
 import Loader from "@/components/_commons/Loader/Loader";
 import { formaterDate } from "@/client/utils/date/date";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 import { DonneesComplementaires } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { toISODateTime } from "@/server/app/domain/Dates";
+import { usePageChantierContext } from "@/components/PageChantier/usePageChantierContext";
 import { useModaleHistoriqueIndicateurTerritoireValeurEvenement } from "./useModaleHistoriqueIndicateurTerritoireValeurEvenement";
 
 export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionComponent<{
-  indicateur: Indicateur;
-  chantier: Chantier;
   generatedHTMLID: string;
-  territoireCode: string;
-  territoireNom: string;
-  territoireCodeInsee: string;
-}> = ({
-  indicateur,
-  chantier,
-  generatedHTMLID,
-  territoireCode,
-  territoireNom,
-  territoireCodeInsee,
-}) => {
+}> = ({ generatedHTMLID }) => {
+  const { indicateur, territoireCode, chantier, territoireSélectionné } =
+    usePageChantierContext();
+
   const { historique, isLoading } =
     useModaleHistoriqueIndicateurTerritoireValeurEvenement({
       indicateurId: indicateur.id,
@@ -212,7 +202,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
       <div className="fr-grid-row !texte-title-grey">
         <span className="fr-text--lg fr-mb-0 fr-col-2">Territoire</span>
         <span className="fr-text--lg fr-mb-0 fr-col-10">
-          {territoireCodeInsee} - {territoireNom}
+          {territoireSélectionné.codeInsee} - {territoireSélectionné.nom}
         </span>
       </div>
       {isLoading ? (

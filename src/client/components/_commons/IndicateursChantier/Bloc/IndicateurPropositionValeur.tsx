@@ -1,5 +1,4 @@
 import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { formaterDate } from "@/client/utils/date/date";
 import BoutonSousLigné from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc";
@@ -11,11 +10,10 @@ import {
   estPropositionSupprimee,
 } from "@/components/_commons/IndicateursChantier/Bloc/utils";
 import api from "@/server/infrastructure/api/trpc/api";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
 import { LigneInformationPropositionValeur } from "@/components/_commons/IndicateursChantier/Bloc/LigneInformationPropositionValeur";
+import { usePageChantierContext } from "@/components/PageChantier/usePageChantierContext";
 
 export const ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT =
   "modale-historique-indicateur-territoire-valeur-evenement";
@@ -26,25 +24,17 @@ export const IndicateurPropositionValeur = ({
   setPropositionEstVisible,
   informationsIndicateurs,
   detailIndicateur,
-  indicateur,
-  chantier,
-  territoireCode,
   maille,
 }: {
   estAutoriseAProposerUneValeurAvancement: boolean;
   propositionEstVisible: boolean;
   setPropositionEstVisible(visible: boolean): void;
   detailIndicateur: DétailsIndicateur;
-  indicateur: Indicateur;
+
   informationsIndicateurs: InformationsIndicateurs;
-  chantier: Chantier;
-  territoireCode: string;
   maille: MailleTerritoireSelectionne;
 }) => {
-  // TODO : attention ce truc est un hook
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
-
-  const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
+  const { indicateur } = usePageChantierContext();
 
   const { data: variableContenuFFPropositionValeurAvancementV2 } =
     api.gestionContenu.récupérerVariableContenu.useQuery({
@@ -98,11 +88,7 @@ export const IndicateurPropositionValeur = ({
             </BoutonSousLigné>
           ) : null
         }
-        chantier={chantier}
         className="texte-gris"
-        indicateur={indicateur}
-        territoireCode={territoireCode}
-        territoireSélectionné={territoireSélectionné}
       >
         Aucune proposition pour la valeur d'avancement de cet indicateur{" "}
         {estPropositionSupprimee(detailIndicateur) ? (
@@ -146,11 +132,7 @@ export const IndicateurPropositionValeur = ({
               : "Afficher la proposition"}
           </BoutonSousLigné>
         }
-        chantier={chantier}
         className="texte-bleu"
-        indicateur={indicateur}
-        territoireCode={territoireCode}
-        territoireSélectionné={territoireSélectionné}
       >
         <strong>Proposition de nouvelle valeur d'avancement en cours</strong> –{" "}
         {estPropositionModifiee(detailIndicateur) ? "modifiée" : "présentée"}{" "}
@@ -180,11 +162,7 @@ export const IndicateurPropositionValeur = ({
             : "Afficher la proposition"}
         </BoutonSousLigné>
       }
-      chantier={chantier}
       className="texte-jaune"
-      indicateur={indicateur}
-      territoireCode={territoireCode}
-      territoireSélectionné={territoireSélectionné}
     >
       <strong>Proposition de nouvelle valeur d'avancement en cours</strong> –{" "}
       {estPropositionModifiee(detailIndicateur) ? "modifiée" : "présentée"} par
