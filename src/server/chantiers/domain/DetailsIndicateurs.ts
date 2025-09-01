@@ -1,5 +1,6 @@
 import { Avancement } from "@/server/domain/chantier/avancement/Avancement.interface";
 import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
+import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 
 export type DetailsIndicateurTerritoire = Record<CodeInsee, DetailsIndicateur>;
 export type DetailsIndicateurs = Record<string, DetailsIndicateurTerritoire>;
@@ -41,15 +42,17 @@ export type DetailsIndicateur = {
   proposition: DetailIndicateurPropositionValeurAvancement | null;
   propositionStatutTerritoire: {
     statut:
-      | "PROPOSITION_VALEUR_CREEE"
-      | "PROPOSITION_VALEUR_MODIFIEE"
-      | "PROPOSITION_VALEUR_SUPPRIMEE";
+      | EvenementValeurEnum.PROPOSITION_VALEUR_CREEE
+      | EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE
+      | EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE;
     date: string;
   } | null;
   propositionStatutDirectionProjet: {
     statut:
-      | "PROPOSITION_VALEUR_REFUSEE"
-      | "PROPOSITION_VALEUR_ACCUSEE_RECEPTION";
+      | EvenementValeurEnum.PROPOSITION_VALEUR_REFUSEE
+      | EvenementValeurEnum.PROPOSITION_VALEUR_ACCUSEE_RECEPTION
+      | EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE
+      | EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION;
     date: string;
   } | null;
   unite: string | null;

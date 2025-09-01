@@ -3,8 +3,8 @@ import {
   indicateur_territoire as PrismaIndicateurTerritoire,
   indicateur_territoire_jalon as PrismaIndicateurTerritoireJalon,
   indicateur_territoire_valeur_evenement as PrismaIndicateurTerritoireValeurEvenement,
-  utilisateur as PrismaUtilisateur,
   territoire as PrismaTerritoire,
+  utilisateur as PrismaUtilisateur,
 } from "@prisma/client";
 import { DonneeIndicateur } from "@/server/chantiers/domain/DonneeIndicateur";
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
@@ -1197,7 +1197,24 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       case EvenementValeurEnum.PROPOSITION_VALEUR_REFUSEE:
         propositionStatutTerritoire = null;
         propositionStatutDirectionProjet = {
-          statut: "PROPOSITION_VALEUR_REFUSEE",
+          statut: EvenementValeurEnum.PROPOSITION_VALEUR_REFUSEE,
+          date: toISODate(dernierEvenement.date_creation),
+        };
+        break;
+
+      case EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE:
+        propositionStatutTerritoire = null;
+        propositionStatutDirectionProjet = {
+          statut: EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE,
+          date: toISODate(dernierEvenement.date_creation),
+        };
+        break;
+
+      case EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION:
+        propositionStatutTerritoire = null;
+        propositionStatutDirectionProjet = {
+          statut:
+            EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION,
           date: toISODate(dernierEvenement.date_creation),
         };
         break;
@@ -1206,13 +1223,13 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         if (evenementPropositionValeur) {
           propositionStatutTerritoire = {
             statut: evenementPropositionValeur.type_evenement as
-              | "PROPOSITION_VALEUR_CREEE"
-              | "PROPOSITION_VALEUR_MODIFIEE",
+              | EvenementValeurEnum.PROPOSITION_VALEUR_CREEE
+              | EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
             date: toISODate(evenementPropositionValeur.date_creation),
           };
         }
         propositionStatutDirectionProjet = {
-          statut: "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
+          statut: EvenementValeurEnum.PROPOSITION_VALEUR_ACCUSEE_RECEPTION,
           date: toISODate(dernierEvenement.date_creation),
         };
         break;
@@ -1222,9 +1239,9 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       case EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE:
         propositionStatutTerritoire = {
           statut: dernierEvenement.type_evenement as
-            | "PROPOSITION_VALEUR_CREEE"
-            | "PROPOSITION_VALEUR_MODIFIEE"
-            | "PROPOSITION_VALEUR_SUPPRIMEE",
+            | EvenementValeurEnum.PROPOSITION_VALEUR_CREEE
+            | EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE
+            | EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE,
           date: toISODate(dernierEvenement.date_creation),
         };
         propositionStatutDirectionProjet = null;
@@ -1234,6 +1251,10 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         break;
     }
 
-    return { propositionStatutTerritoire, propositionStatutDirectionProjet };
+    return {
+      propositionStatutTerritoire,
+      propositionStatutDirectionProjet,
+      propositionStatut: dernierEvenement.type_evenement,
+    };
   }
 }
