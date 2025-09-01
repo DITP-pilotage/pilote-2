@@ -136,7 +136,7 @@ export const IndicateurPropositionValeur = ({
               : "Afficher la proposition"}
           </BoutonSousLigné>
         }
-        className="!text-dsfr-info-main-525"
+        className="text-dsfr-info-main-525"
       >
         <strong>Proposition de nouvelle valeur d'avancement en cours</strong> –{" "}
         {estPropositionModifiee(detailIndicateur) ? "modifiée" : "présentée"}{" "}
