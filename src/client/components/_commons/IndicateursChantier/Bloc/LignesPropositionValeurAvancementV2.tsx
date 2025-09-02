@@ -15,13 +15,12 @@ import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDe
 import {
   ID_HTML_MODALE_ACCEPTER_PROPOSITION_VALEUR_DAVANCEMENT,
   ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT,
-  ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT,
 } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc";
 import BoutonSousLigné from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { ModaleAccuserReceptionPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccuserReceptionPropositionValeurAvancement/ModaleAccuserReceptionPropositionValeurAvancement";
 import { ModaleAccepterPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccepterPropositionValeurAvancement/ModaleAccepterPropositionValeurAvancement";
-import { ModalePropositionValeurAvancementV2 } from "@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurAvancementV2/ModalePropositionValeurAvancementV2";
 import { BoutonSupprimerProposition } from "@/components/_commons/IndicateursChantier/Bloc/BoutonSupprimerProposition";
+import { BoutonModifierProposition } from "@/components/_commons/IndicateursChantier/Bloc/BoutonModifierProposition";
 
 export const BaseLignesPropositionValeurAvancement = ({
   detailIndicateur,
@@ -344,16 +343,13 @@ export const LignesPropositionValeurAvancementV2 = ({
         <tr className="ligne-modification-proposition-valeur-davancement !bg-dsfr-moutarde-main-975 !text-dsfr-moutarde-main-679">
           <td colSpan={8}>
             <div className="flex w-full justify-end">
-              <button
-                aria-controls={
-                  ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id
-                }
-                className="fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-davancement fr-mr-1w"
-                data-fr-opened="false"
-                type="button"
-              >
-                Modifier la proposition
-              </button>
+              <BoutonModifierProposition
+                detailIndicateur={informationIndicateur.données}
+                détailTerritoireSélectionné={détailTerritoireSélectionné}
+                id={indicateur.id}
+                indicateur={indicateur}
+                territoireCode={territoireCode}
+              />
               <BoutonSupprimerProposition
                 detailIndicateur={informationIndicateur.données}
                 détailTerritoireSélectionné={détailTerritoireSélectionné}
@@ -362,16 +358,6 @@ export const LignesPropositionValeurAvancementV2 = ({
                 territoireCode={territoireCode}
               />
             </div>
-            <ModalePropositionValeurAvancementV2
-              detailIndicateur={informationIndicateur.données}
-              generatedHTMLID={
-                ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id
-              }
-              indicateur={indicateur}
-              territoireCode={territoireCode}
-              territoireCodeInsee={détailTerritoireSélectionné.codeInsee}
-              territoireNom={détailTerritoireSélectionné.nom}
-            />
           </td>
         </tr>
       ) : afficherPropositionAcceptee ? (
