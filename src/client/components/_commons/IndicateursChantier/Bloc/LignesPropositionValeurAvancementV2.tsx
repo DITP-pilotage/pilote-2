@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { PropsWithChildren } from "react";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { InformationsIndicateurs } from "@/components/_commons/IndicateursChantier/Bloc/InformationsIndicateurs";
@@ -23,65 +24,37 @@ import { ModaleAccepterPropositionValeurAvancement } from "@/components/_commons
 import { ModalePropositionValeurAvancementV2 } from "@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurAvancementV2/ModalePropositionValeurAvancementV2";
 import { ModaleSuppressionValeurAvancementV2 } from "@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurAvancementV2/ModaleSuppressionValeurAvancementV2";
 
-export const LignesPropositionValeurAvancementV2 = ({
-  indicateur,
+export const BaseLignesPropositionValeurAvancement = ({
   detailIndicateur,
-  territoireCode,
   informationIndicateur,
   proposition,
   jalon,
-  propositionEstVisible,
   estAutoriseAAccepterLesPropositionsDeValeurAvancement,
   estAutoriseAProposerUneValeurAvancement,
-}: {
-  indicateur: Indicateur;
+  children,
+  className,
+}: PropsWithChildren<{
   jalon: number;
-  territoireCode: string;
   detailIndicateur: DétailsIndicateur;
   informationIndicateur: InformationsIndicateurs[number];
   proposition: DetailIndicateurPropositionValeurAvancement;
-  propositionEstVisible: boolean;
   estAutoriseAAccepterLesPropositionsDeValeurAvancement: boolean;
   estAutoriseAProposerUneValeurAvancement: boolean;
-}) => {
-  const { datajobsExecution } = usePageChantierContext();
-
-  // TODO: /!\ actionsTerritoiresStore est un hook
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
-
-  if (!propositionEstVisible) {
-    return null;
-  }
-
-  const détailTerritoireSélectionné =
-    récupérerDétailsSurUnTerritoire(territoireCode);
+  className: string;
+}>) => {
   const estPropositionSurLeBonJalon =
     detailIndicateur.dateValeurAvancementMandat !== null
       ? new Date(detailIndicateur.dateValeurAvancementMandat!).getFullYear() <=
         jalon
       : false;
 
-  const estPropositionAcceptee = [
-    EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE,
-    EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION,
-  ].includes(detailIndicateur.propositionStatutDirectionProjet?.statut ?? "");
-  const afficherPropositionAcceptee =
-    estPropositionAcceptee &&
-    detailIndicateur.propositionStatutDirectionProjet != null &&
-    datajobsExecution.derniereDateExecution <
-      detailIndicateur.propositionStatutDirectionProjet.dateTime;
-
-  if (afficherPropositionAcceptee) return <div>coucou</div>;
-
   return (
     <>
       <tr
-        className={clsx("ligne-modification-proposition-valeur-davancement", {
-          "!bg-dsfr-info-950 !text-dsfr-info-main-525":
-            estPropositionAccuseeReception(detailIndicateur),
-          "!bg-dsfr-moutarde-main-975 !text-dsfr-moutarde-main-679":
-            !estPropositionAccuseeReception(detailIndicateur),
-        })}
+        className={clsx(
+          "ligne-modification-proposition-valeur-davancement",
+          className,
+        )}
         key={informationIndicateur.territoireNom}
       >
         <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm">
@@ -226,6 +199,75 @@ export const LignesPropositionValeurAvancementV2 = ({
           />
         </td>
       </tr>
+      {children}
+    </>
+  );
+};
+
+export const LignesPropositionValeurAvancementV2 = ({
+  indicateur,
+  detailIndicateur,
+  territoireCode,
+  informationIndicateur,
+  proposition,
+  jalon,
+  propositionEstVisible,
+  estAutoriseAAccepterLesPropositionsDeValeurAvancement,
+  estAutoriseAProposerUneValeurAvancement,
+}: {
+  indicateur: Indicateur;
+  jalon: number;
+  territoireCode: string;
+  detailIndicateur: DétailsIndicateur;
+  informationIndicateur: InformationsIndicateurs[number];
+  proposition: DetailIndicateurPropositionValeurAvancement;
+  propositionEstVisible: boolean;
+  estAutoriseAAccepterLesPropositionsDeValeurAvancement: boolean;
+  estAutoriseAProposerUneValeurAvancement: boolean;
+}) => {
+  const { datajobsExecution } = usePageChantierContext();
+
+  // TODO: /!\ actionsTerritoiresStore est un hook
+  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+
+  if (!propositionEstVisible) {
+    return null;
+  }
+
+  const détailTerritoireSélectionné =
+    récupérerDétailsSurUnTerritoire(territoireCode);
+
+  const estPropositionAcceptee = [
+    EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE,
+    EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION,
+  ].includes(detailIndicateur.propositionStatutDirectionProjet?.statut ?? "");
+  const afficherPropositionAcceptee =
+    estPropositionAcceptee &&
+    detailIndicateur.propositionStatutDirectionProjet != null &&
+    datajobsExecution.derniereDateExecution <
+      detailIndicateur.propositionStatutDirectionProjet.dateTime;
+
+  return (
+    <BaseLignesPropositionValeurAvancement
+      className={clsx({
+        "!bg-dsfr-info-950 !text-dsfr-info-main-525":
+          estPropositionAccuseeReception(detailIndicateur) ||
+          afficherPropositionAcceptee,
+        "!bg-dsfr-moutarde-main-975 !text-dsfr-moutarde-main-679":
+          !estPropositionAccuseeReception(detailIndicateur) &&
+          !estPropositionAcceptee,
+      })}
+      detailIndicateur={detailIndicateur}
+      estAutoriseAAccepterLesPropositionsDeValeurAvancement={
+        estAutoriseAAccepterLesPropositionsDeValeurAvancement
+      }
+      estAutoriseAProposerUneValeurAvancement={
+        estAutoriseAProposerUneValeurAvancement
+      }
+      informationIndicateur={informationIndicateur}
+      jalon={jalon}
+      proposition={proposition}
+    >
       {estAutoriseAAccepterLesPropositionsDeValeurAvancement ? (
         <tr
           className={clsx("ligne-modification-proposition-valeur-davancement", {
@@ -348,6 +390,6 @@ export const LignesPropositionValeurAvancementV2 = ({
       ) : afficherPropositionAcceptee ? (
         <div>coucou</div>
       ) : null}
-    </>
+    </BaseLignesPropositionValeurAvancement>
   );
 };
