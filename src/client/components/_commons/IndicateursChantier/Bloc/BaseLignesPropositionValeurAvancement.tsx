@@ -60,6 +60,7 @@ export const BaseLignesPropositionValeurAvancement = ({
     estPropositionAccuseeReception(detailIndicateur)
       ? "bleu-dsfr-info"
       : "jaune-moutarde";
+
   return (
     <>
       <tr

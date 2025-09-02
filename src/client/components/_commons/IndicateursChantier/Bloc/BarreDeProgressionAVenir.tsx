@@ -6,7 +6,6 @@ export const BarreDeProgressionAVenir = ({
 }: {
   variante: BarreDeProgressionVariante;
 }) => {
-  console.log(variante);
   return (
     <div className="flex flex-col gap-1 text-current">
       <div className="font-bold">à venir</div>
