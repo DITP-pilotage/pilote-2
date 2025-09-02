@@ -1517,6 +1517,7 @@ describe("PrismaIndicateurRepository", () => {
         ).toEqual({
           statut: evenement,
           date: "2026-01-12",
+          dateTime: "2026-01-12T00:00:00.000Z",
         });
       },
     );
@@ -1656,12 +1657,14 @@ describe("PrismaIndicateurRepository", () => {
       expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual({
         statut: "PROPOSITION_VALEUR_CREEE",
         date: "2026-01-12",
+        dateTime: "2026-01-12T00:00:00.000Z",
       });
       expect(
         result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
       ).toEqual({
         statut: "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
         date: "2026-01-12",
+        dateTime: "2026-01-12T00:00:00.000Z",
       });
 
       expect(result["IND-001"]["NAT-FR"].proposition?.motif).toEqual(
@@ -1817,12 +1820,14 @@ describe("PrismaIndicateurRepository", () => {
       expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual({
         statut: "PROPOSITION_VALEUR_MODIFIEE",
         date: "2026-01-12",
+        dateTime: "2026-01-12T00:00:00.000Z",
       });
       expect(
         result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
       ).toEqual({
         statut: "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
         date: "2026-01-12",
+        dateTime: "2026-01-12T00:00:00.000Z",
       });
     });
 
@@ -1955,6 +1960,7 @@ describe("PrismaIndicateurRepository", () => {
       expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual({
         statut: "PROPOSITION_VALEUR_SUPPRIMEE",
         date: "2026-01-12",
+        dateTime: "2026-01-12T00:00:00.000Z",
       });
       expect(
         result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
@@ -2075,6 +2081,7 @@ describe("PrismaIndicateurRepository", () => {
       expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual({
         statut: "PROPOSITION_VALEUR_CREEE",
         date: "2026-01-12",
+        dateTime: "2026-01-12T00:00:00.000Z",
       });
       expect(
         result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
@@ -2225,6 +2232,7 @@ describe("PrismaIndicateurRepository", () => {
       expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual({
         statut: "PROPOSITION_VALEUR_MODIFIEE",
         date: "2026-01-12",
+        dateTime: "2026-01-12T00:00:00.000Z",
       });
       expect(
         result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
@@ -2364,6 +2372,7 @@ describe("PrismaIndicateurRepository", () => {
       expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual({
         statut: "PROPOSITION_VALEUR_CREEE",
         date: "2026-01-15",
+        dateTime: "2026-01-15T00:00:00.000Z",
       });
       expect(
         result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
@@ -3705,6 +3714,7 @@ describe("PrismaIndicateurRepository", () => {
       expect(result["DEPT-02"].propositionStatutDirectionProjet).toEqual({
         statut: "PROPOSITION_VALEUR_REFUSEE",
         date: "2026-01-12",
+        dateTime: "2026-01-12T00:00:00.000Z",
       });
     });
 
@@ -3897,10 +3907,12 @@ describe("PrismaIndicateurRepository", () => {
       expect(result["DEPT-02"].propositionStatutTerritoire).toEqual({
         statut: "PROPOSITION_VALEUR_CREEE",
         date: "2026-01-12",
+        dateTime: "2026-01-12T00:00:00.000Z",
       });
       expect(result["DEPT-02"].propositionStatutDirectionProjet).toEqual({
         statut: "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
         date: "2026-01-12",
+        dateTime: "2026-01-12T00:00:00.000Z",
       });
     });
 
@@ -4108,10 +4120,12 @@ describe("PrismaIndicateurRepository", () => {
       expect(result["DEPT-02"].propositionStatutTerritoire).toEqual({
         statut: "PROPOSITION_VALEUR_MODIFIEE",
         date: "2026-01-12",
+        dateTime: "2026-01-12T00:00:00.000Z",
       });
       expect(result["DEPT-02"].propositionStatutDirectionProjet).toEqual({
         statut: "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
         date: "2026-01-12",
+        dateTime: "2026-01-12T00:00:00.000Z",
       });
     });
 
@@ -4303,6 +4317,7 @@ describe("PrismaIndicateurRepository", () => {
       expect(result["DEPT-02"].propositionStatutTerritoire).toEqual({
         statut: "PROPOSITION_VALEUR_SUPPRIMEE",
         date: "2026-01-12",
+        dateTime: "2026-01-12T00:00:00.000Z",
       });
       expect(result["DEPT-02"].propositionStatutDirectionProjet).toBeNull();
     });
@@ -4480,6 +4495,7 @@ describe("PrismaIndicateurRepository", () => {
       expect(result["DEPT-02"].propositionStatutTerritoire).toEqual({
         statut: "PROPOSITION_VALEUR_CREEE",
         date: "2026-01-12",
+        dateTime: "2026-01-12T00:00:00.000Z",
       });
       expect(result["DEPT-02"].propositionStatutDirectionProjet).toBeNull();
     });
@@ -4687,6 +4703,7 @@ describe("PrismaIndicateurRepository", () => {
       expect(result["DEPT-02"].propositionStatutTerritoire).toEqual({
         statut: "PROPOSITION_VALEUR_MODIFIEE",
         date: "2026-01-12",
+        dateTime: "2026-01-12T00:00:00.000Z",
       });
       expect(result["DEPT-02"].propositionStatutDirectionProjet).toBeNull();
     });
@@ -4883,6 +4900,7 @@ describe("PrismaIndicateurRepository", () => {
       expect(result["DEPT-02"].propositionStatutTerritoire).toEqual({
         statut: "PROPOSITION_VALEUR_CREEE",
         date: "2026-01-12",
+        dateTime: "2026-01-12T00:00:00.000Z",
       });
       expect(result["DEPT-02"].propositionStatutDirectionProjet).toBeNull();
     });
