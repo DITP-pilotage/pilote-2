@@ -4,22 +4,29 @@ import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsS
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { toISODate } from "@/server/app/domain/Dates";
 import { SupprimerPropositionValeurAvancementUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/SupprimerPropositionValeurAvancementUseCase";
+import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
+import { InMemoryTransaction, Transaction } from "@/server/db/Transaction";
 
 describe("#SupprimerPropositionValeurAvancementUseCase", () => {
   let supprimerPropositionValeurAvancementUseCase: SupprimerPropositionValeurAvancementUseCase;
-
   let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
+  let indicateurRepository: MockProxy<IndicateurRepository>;
+  let transaction: Transaction;
 
   beforeEach(() => {
     indicateurTerritoireValeurEvenementRepository =
       mock<IndicateurTerritoireValeurEvenementRepository>();
+    indicateurRepository = mock<IndicateurRepository>();
+    transaction = new InMemoryTransaction();
     supprimerPropositionValeurAvancementUseCase =
       new SupprimerPropositionValeurAvancementUseCase({
         indicateurTerritoireValeurEvenementRepository,
+        indicateurRepository,
+        transaction,
       });
   });
 
-  it("Doit modifier une proposition de valeur d'avancement", async () => {
+  it("Doit supprimer une proposition de valeur d'avancement", async () => {
     // Given
     const input = {
       indicId: "IND-006",
@@ -101,5 +108,11 @@ describe("#SupprimerPropositionValeurAvancementUseCase", () => {
         donneesComplementaires: { motif: "motif de la suppression" },
       }),
     );
+    expect(
+      indicateurRepository.supprimerTauxAvancementProposition,
+    ).toHaveBeenCalledWith({
+      indicId: input.indicId,
+      territoireCode: input.territoireCode,
+    });
   });
 });

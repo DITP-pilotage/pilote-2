@@ -4,18 +4,25 @@ import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsS
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { toISODate } from "@/server/app/domain/Dates";
 import { ModifierPropositionValeurAvancementUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/ModifierPropositionValeurAvancementUseCase";
+import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
+import { InMemoryTransaction, Transaction } from "@/server/db/Transaction";
 
 describe("#ModifierPropositionValeurAvancementUseCase", () => {
   let modifierPropositionValeurAvancementUseCase: ModifierPropositionValeurAvancementUseCase;
-
   let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
+  let indicateurRepository: MockProxy<IndicateurRepository>;
+  let transaction: Transaction;
 
   beforeEach(() => {
     indicateurTerritoireValeurEvenementRepository =
       mock<IndicateurTerritoireValeurEvenementRepository>();
+    indicateurRepository = mock<IndicateurRepository>();
+    transaction = new InMemoryTransaction();
     modifierPropositionValeurAvancementUseCase =
       new ModifierPropositionValeurAvancementUseCase({
         indicateurTerritoireValeurEvenementRepository,
+        indicateurRepository,
+        transaction,
       });
   });
 
@@ -87,5 +94,11 @@ describe("#ModifierPropositionValeurAvancementUseCase", () => {
         },
       }),
     );
+    expect(
+      indicateurRepository.supprimerTauxAvancementProposition,
+    ).toHaveBeenCalledWith({
+      indicId: input.indicId,
+      territoireCode: input.territoireCode,
+    });
   });
 });

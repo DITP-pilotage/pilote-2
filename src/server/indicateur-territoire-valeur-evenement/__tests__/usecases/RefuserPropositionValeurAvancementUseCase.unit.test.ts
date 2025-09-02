@@ -3,18 +3,25 @@ import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicate
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 import { RefuserPropositionValeurAvancementUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/RefuserPropositionValeurAvancementUseCase";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
+import { InMemoryTransaction, Transaction } from "@/server/db/Transaction";
+import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
 
 describe("RefuserPropositionValeurAvancementUseCase", () => {
   let refuserPropositionValeurAvancementUseCase: RefuserPropositionValeurAvancementUseCase;
-
   let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
+  let indicateurRepository: MockProxy<IndicateurRepository>;
+  let transaction: Transaction;
 
   beforeEach(() => {
     indicateurTerritoireValeurEvenementRepository =
       mock<IndicateurTerritoireValeurEvenementRepository>();
+    indicateurRepository = mock<IndicateurRepository>();
+    transaction = new InMemoryTransaction();
     refuserPropositionValeurAvancementUseCase =
       new RefuserPropositionValeurAvancementUseCase({
         indicateurTerritoireValeurEvenementRepository,
+        indicateurRepository,
+        transaction,
       });
   });
 
@@ -99,5 +106,11 @@ describe("RefuserPropositionValeurAvancementUseCase", () => {
         donneesComplementaires: { motif: "Motif du refus" },
       }),
     ]);
+    expect(
+      indicateurRepository.supprimerTauxAvancementProposition,
+    ).toHaveBeenCalledWith({
+      indicId: input.indicId,
+      territoireCode: input.territoireCode,
+    });
   });
 });
