@@ -165,15 +165,10 @@ export default class Habilitation {
       habilitations.saisieIndicateur.chantiers.includes(
         propositionValeurAvancementChantierInformation.id,
       );
-    const estAutoriseAModifierLesCommentaires =
-      habilitations.saisieCommentaire.chantiers.includes(
-        propositionValeurAvancementChantierInformation.id,
-      );
     if (
       !profil ||
       profil === ProfilEnum.DITP_ADMIN ||
       propositionValeurAvancementChantierInformation.statut === "ARCHIVE" ||
-      !estAutoriseAModifierLesCommentaires ||
       !estAutoriseAImportSurLeChantier
     ) {
       throw new UnauthorizedError(
