@@ -186,6 +186,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   return (
     <PageChantierProvider
       chantier={chantier}
+      datajobsExecution={datajobsExecution}
       indicateur={indicateur}
       territoireCode={territoireCode}
       territoireSélectionné={détailTerritoireSélectionné}
