@@ -56,7 +56,7 @@ export const BaseLignesPropositionValeurAvancement = ({
       : false;
 
   const varianteBarreProgression =
-    estPropositionAcceptee(detailIndicateur) ||
+    estPropositionAccepteeOuAccepteeAvecModification(detailIndicateur) ||
     estPropositionAccuseeReception(detailIndicateur)
       ? "bleu-dsfr-info"
       : "jaune-moutarde";
