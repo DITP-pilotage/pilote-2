@@ -42,7 +42,7 @@ export const BaseLignesPropositionValeurAvancement = ({
   estAutoriseAAccepterLesPropositionsDeValeurAvancement: boolean;
   estAutoriseAProposerUneValeurAvancement: boolean;
 }>) => {
-  const { datajobsExecution } = usePageChantierContext();
+  const { indicateur, datajobsExecution } = usePageChantierContext();
 
   const afficherPropositionAcceptee = doitAfficherPropositionAcceptee(
     detailIndicateur,

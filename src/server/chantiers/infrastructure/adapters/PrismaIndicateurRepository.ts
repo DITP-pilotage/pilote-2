@@ -1151,20 +1151,26 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         ].includes(evenement.type_evenement),
     );
 
-    return evenementPropositionLePlusRecent &&
-      !EVENEMENT_VALEUR_PROPOSITION_VALEUR_TERMINEE.includes(
+    const statutTauxAvancement =
+      dernierEvenementImpactantLeTaux != null
+        ? dernierEvenementImpactantLeTaux.date_creation >
+          dateDerniereExecutionDatajobs
+          ? "EN_COURS"
+          : "CALCULE"
+        : "CALCULE";
+
+    const doitRetournerProposition =
+      evenementPropositionLePlusRecent &&
+      (!EVENEMENT_VALEUR_PROPOSITION_VALEUR_TERMINEE.includes(
         evenementPropositionLePlusRecent.type_evenement,
-      )
+      ) ||
+        statutTauxAvancement === "EN_COURS");
+
+    return doitRetournerProposition
       ? {
           valeurAvancement: evenementPropositionLePlusRecent.valeur!,
           tauxAvancement: indicateurRow.taux_avancement_mandat_proposition_v2,
-          statutTauxAvancement:
-            dernierEvenementImpactantLeTaux != null
-              ? dernierEvenementImpactantLeTaux.date_creation >
-                dateDerniereExecutionDatajobs
-                ? "EN_COURS"
-                : "CALCULE"
-              : "CALCULE",
+          statutTauxAvancement: statutTauxAvancement,
           tauxAvancementIntermediaire:
             indicateurTerritoireJalon !== undefined
               ? indicateurTerritoireJalon.taux_avancement_proposition_v2
