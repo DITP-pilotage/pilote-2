@@ -1158,7 +1158,13 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       ? {
           valeurAvancement: evenementPropositionLePlusRecent.valeur!,
           tauxAvancement: indicateurRow.taux_avancement_mandat_proposition_v2,
-          statutTauxAvancement: "TODO",
+          statutTauxAvancement:
+            dernierEvenementImpactantLeTaux != null
+              ? dernierEvenementImpactantLeTaux.date_creation >
+                dateDerniereExecutionDatajobs
+                ? "EN_COURS"
+                : "CALCULE"
+              : "CALCULE",
           tauxAvancementIntermediaire:
             indicateurTerritoireJalon !== undefined
               ? indicateurTerritoireJalon.taux_avancement_proposition_v2

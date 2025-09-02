@@ -5,7 +5,7 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 
 describe("PrismaIndicateurRepository", () => {
-  const dateDerniereExecutionDatajobs = new Date("2025-08-30T00:00:00.000Z");
+  const dateDerniereExecutionDatajobs = new Date("2026-02-12T00:00:00.000Z");
   let prismaIndicateurRepository: PrismaIndicateurRepository;
 
   beforeEach(() => {
@@ -745,6 +745,7 @@ describe("PrismaIndicateurRepository", () => {
         valeurAvancement: 120,
         tauxAvancement: null,
         tauxAvancementIntermediaire: null,
+        statutTauxAvancement: "CALCULE",
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
         motif: "Motif de la proposition",
@@ -939,6 +940,7 @@ describe("PrismaIndicateurRepository", () => {
         valeurAvancement: 140,
         tauxAvancement: null,
         tauxAvancementIntermediaire: null,
+        statutTauxAvancement: "CALCULE",
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
         motif: null,
@@ -1359,6 +1361,7 @@ describe("PrismaIndicateurRepository", () => {
           sourceDonneeEtMethodeCalcul: null,
           tauxAvancement: null,
           tauxAvancementIntermediaire: null,
+          statutTauxAvancement: "CALCULE",
           valeurAvancement: 140,
         });
       },
@@ -1586,6 +1589,7 @@ describe("PrismaIndicateurRepository", () => {
         valeurAvancement: 150,
         tauxAvancement: null,
         tauxAvancementIntermediaire: null,
+        statutTauxAvancement: "CALCULE",
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
         motif: "Motif de la proposition 2",
@@ -2684,8 +2688,8 @@ describe("PrismaIndicateurRepository", () => {
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
             date_valeur: new Date("2026-01-12"),
             ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"), // Postérieure à la dernière exécution des datajobs
+            date_modification: new Date("2026-02-13"),
+            date_creation: new Date("2026-02-13"),
             id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
             correlation_id: "550e8400-e29b-41d4-a716-446655440002",
             valeur: 100,
@@ -2703,9 +2707,9 @@ describe("PrismaIndicateurRepository", () => {
         );
 
       // Then
-      expect(result["IND-001"]["NAT-FR"].statutTauxAvancement).toEqual(
-        "EN_COURS",
-      );
+      expect(
+        result["IND-001"]["NAT-FR"].proposition?.statutTauxAvancement,
+      ).toEqual("EN_COURS");
     });
 
     it("calcule le statutTauxAvancement CALCULE quand la date de création de la proposition est antérieure à la dernière exécution des datajobs", async () => {
@@ -2808,9 +2812,9 @@ describe("PrismaIndicateurRepository", () => {
         );
 
       // Then
-      expect(result["IND-001"]["NAT-FR"].statutTauxAvancement).toEqual(
-        "CALCULE",
-      );
+      expect(
+        result["IND-001"]["NAT-FR"].proposition?.statutTauxAvancement,
+      ).toEqual("CALCULE");
     });
   });
 
@@ -3203,6 +3207,7 @@ describe("PrismaIndicateurRepository", () => {
         valeurAvancement: 120,
         tauxAvancement: null,
         tauxAvancementIntermediaire: null,
+        statutTauxAvancement: "CALCULE",
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
         motif: "Motif de la proposition",
@@ -3438,6 +3443,7 @@ describe("PrismaIndicateurRepository", () => {
         valeurAvancement: 140,
         tauxAvancement: null,
         tauxAvancementIntermediaire: null,
+        statutTauxAvancement: "CALCULE",
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
         motif: null,
@@ -3940,6 +3946,7 @@ describe("PrismaIndicateurRepository", () => {
           sourceDonneeEtMethodeCalcul: null,
           tauxAvancement: null,
           tauxAvancementIntermediaire: null,
+          statutTauxAvancement: "CALCULE",
           valeurAvancement: 140,
         });
       },
@@ -4208,6 +4215,7 @@ describe("PrismaIndicateurRepository", () => {
         valeurAvancement: 150,
         tauxAvancement: null,
         tauxAvancementIntermediaire: null,
+        statutTauxAvancement: "CALCULE",
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
         motif: "Motif de la proposition 2",
@@ -5714,22 +5722,11 @@ describe("PrismaIndicateurRepository", () => {
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
             date_valeur: new Date("2026-01-12"),
             ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"), // Postérieure à la dernière exécution des datajobs
+            date_modification: new Date("2026-02-13"),
+            date_creation: new Date("2026-02-13"), // Postérieure à la dernière exécution des datajobs
             id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
             correlation_id: "550e8400-e29b-41d4-a716-446655440002",
             valeur: 100,
-          },
-        ],
-      });
-
-      await prisma.territoire.createMany({
-        data: [
-          {
-            code: "DEPT-02",
-            nom: "Aisne",
-            code_insee: "02",
-            maille: "DEPT",
           },
         ],
       });
@@ -5741,10 +5738,13 @@ describe("PrismaIndicateurRepository", () => {
           habilitations,
           ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
-      expect(result["DEPT-02"].statutTauxAvancement).toEqual("EN_COURS");
+      expect(result["DEPT-02"].proposition?.statutTauxAvancement).toEqual(
+        "EN_COURS",
+      );
     });
 
     it("calcule le statutTauxAvancement CALCULE quand la date de création de la proposition est antérieure à la dernière exécution des datajobs", async () => {
@@ -5858,21 +5858,10 @@ describe("PrismaIndicateurRepository", () => {
             date_valeur: new Date("2026-01-12"),
             ordre: 1,
             date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"), // Antérieure à la dernière exécution des datajobs
+            date_creation: new Date("2026-01-12"),
             id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
             correlation_id: "550e8400-e29b-41d4-a716-446655440002",
             valeur: 100,
-          },
-        ],
-      });
-
-      await prisma.territoire.createMany({
-        data: [
-          {
-            code: "DEPT-02",
-            nom: "Aisne",
-            code_insee: "02",
-            maille: "DEPT",
           },
         ],
       });
@@ -5884,10 +5873,13 @@ describe("PrismaIndicateurRepository", () => {
           habilitations,
           ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
-      expect(result["DEPT-02"].statutTauxAvancement).toEqual("CALCULE");
+      expect(result["DEPT-02"].proposition?.statutTauxAvancement).toEqual(
+        "CALCULE",
+      );
     });
   });
 });
