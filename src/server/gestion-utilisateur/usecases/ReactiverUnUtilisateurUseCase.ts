@@ -99,6 +99,7 @@ export default class ReactiverUnUtilisateurUseCase {
         utilisateurAReactiver.email,
         utilisateurAReactiver.nom,
         utilisateurAReactiver.prénom,
+        utilisateurAReactiver.profil,
         listesDiffusion,
       );
     }

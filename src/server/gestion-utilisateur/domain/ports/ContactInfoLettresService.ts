@@ -1,8 +1,11 @@
+import { ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
+
 export interface ContactInfoLettresService {
   creerContact(
     email: string,
     nom: string,
     prenom: string,
+    profil: ProfilCode,
     listesDiffusionIds: number[],
   ): Promise<void>;
   supprimerContact(email: string): Promise<void>;
@@ -10,6 +13,7 @@ export interface ContactInfoLettresService {
     email: string,
     nom: string,
     prenom: string,
+    profil: ProfilCode,
     listesDiffusionAAjouterIds: number[],
     listesDiffusionASupprimerIds: number[],
   ): Promise<void>;

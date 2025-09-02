@@ -159,6 +159,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
           utilisateur.email,
           utilisateur.nom,
           utilisateur.prénom,
+          utilisateur.profil,
           listesDiffusionAAjouter,
           listesDiffusionASupprimer,
         );
@@ -172,6 +173,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
           utilisateur.email,
           utilisateur.nom,
           utilisateur.prénom,
+          utilisateur.profil,
           listesDiffusion,
         );
       }
