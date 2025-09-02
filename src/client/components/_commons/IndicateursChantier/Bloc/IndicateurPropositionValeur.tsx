@@ -173,7 +173,7 @@ export const IndicateurPropositionValeur = ({
             "DD/MM/YYYY",
           )}
         </strong>{" "}
-        et lue
+        et lue par la direction de projet
       </LigneInformationPropositionValeur>
     );
   }

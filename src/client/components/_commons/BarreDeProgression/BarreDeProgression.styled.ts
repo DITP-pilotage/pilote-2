@@ -114,6 +114,16 @@ const BarreDeProgressionStyled = styled.div`
         }
       }
 
+      &.progress--bleu-dsfr-info {
+        &::-moz-progress-bar {
+          background-color: #0078f3;
+        }
+
+        &::-webkit-progress-value {
+          background-color: #0078f3;
+        }
+      }
+
       &.progress--primaire-light {
         &::-moz-progress-bar {
           background-color: var(--blue-france-sun-113-625);
