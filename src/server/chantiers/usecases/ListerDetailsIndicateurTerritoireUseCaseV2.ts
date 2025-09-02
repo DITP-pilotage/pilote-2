@@ -6,16 +6,22 @@ import {
   DetailsIndicateursTerritoireContrat,
   presenterEnDetailsIndicateursTerritoireContrat,
 } from "@/server/chantiers/app/contrats/DetailsIndicateursTerritoireContrat";
+import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
 
 export class ListerDetailsIndicateurTerritoireUseCaseV2 {
   private readonly indicateurRepository: IndicateurRepository;
 
+  private readonly datajobsExecutionQueries: DatajobsExecutionQueries;
+
   constructor({
     indicateurRepository,
+    datajobsExecutionQueries,
   }: {
     indicateurRepository: IndicateurRepository;
+    datajobsExecutionQueries: DatajobsExecutionQueries;
   }) {
     this.indicateurRepository = indicateurRepository;
+    this.datajobsExecutionQueries = datajobsExecutionQueries;
   }
 
   async run(
@@ -25,6 +31,8 @@ export class ListerDetailsIndicateurTerritoireUseCaseV2 {
     profil: ProfilCode,
     jalon: number,
   ) {
+    const datajobsExecution =
+      await this.datajobsExecutionQueries.recupererEtatCourant();
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnLecture(chantierId, null);
 
@@ -36,6 +44,7 @@ export class ListerDetailsIndicateurTerritoireUseCaseV2 {
             habilitations,
             profil,
             jalon,
+            new Date(datajobsExecution.derniereDateExecution),
           )
           .then((detailsTerritoire) => ({
             id: indicateurId,

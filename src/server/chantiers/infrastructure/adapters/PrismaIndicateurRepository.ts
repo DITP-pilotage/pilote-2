@@ -805,6 +805,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     chantierId: string,
     territoireCodes: string[],
     jalon: number,
+    dateDerniereExecutionDatajobs: Date,
   ): Promise<DetailsIndicateurs> {
     const indicateurs = await prisma.indicateur_territoire.findMany({
       where: {
@@ -841,7 +842,11 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       },
     });
 
-    return this.convertirEnDetailsIndicateurs(indicateurs, jalon);
+    return this.convertirEnDetailsIndicateurs(
+      indicateurs,
+      jalon,
+      dateDerniereExecutionDatajobs,
+    );
   }
 
   async récupérerDétailsTerritoirePourUnIndicateur(
@@ -849,6 +854,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     habilitations: Habilitations,
     profil: ProfilCode,
     jalon: number,
+    dateDerniereExecutionDatajobs: Date,
   ): Promise<DetailsIndicateurTerritoire> {
     const habilitation = new Habilitation(habilitations);
     const chantiersLecture =
@@ -909,6 +915,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     return this.convertirEnDetailsIndicateursTerritoires(
       territoires,
       listeIndicateursModel,
+      dateDerniereExecutionDatajobs,
     );
   }
 
@@ -921,6 +928,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         auteur: Pick<PrismaUtilisateur, "nom" | "prenom">;
       })[];
     })[],
+    dateDerniereExecutionDatajobs: Date,
   ) {
     let donnéesTerritoires: DetailsIndicateurTerritoire = {};
 
@@ -990,6 +998,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           ? this.recupererPropositionValeurAvancement(
               indicateurRow,
               indicateurTerritoireJalon,
+              dateDerniereExecutionDatajobs,
             )
           : null,
         propositionStatutTerritoire,
@@ -1030,6 +1039,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       })[];
     })[],
     jalon: number,
+    dateDerniereExecutionDatajobs: Date,
   ): DetailsIndicateurs {
     const détailsIndicateurs: DetailsIndicateurs = {};
 
@@ -1086,6 +1096,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         proposition: this.recupererPropositionValeurAvancement(
           indicateurRow,
           indicateurTerritoireJalon,
+          dateDerniereExecutionDatajobs,
         ),
         propositionStatutTerritoire,
         propositionStatutDirectionProjet,
@@ -1120,6 +1131,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       })[];
     },
     indicateurTerritoireJalon: PrismaIndicateurTerritoireJalon | undefined,
+    dateDerniereExecutionDatajobs: Date,
   ): DetailIndicateurPropositionValeurAvancement | null {
     const evenementsProposition =
       indicateurRow.indicateur_territoire_valeur_evenement.filter(
@@ -1129,14 +1141,36 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             EvenementValeurEnum.PROPOSITION_VALEUR_ACCUSEE_RECEPTION,
       ) || [];
     const [evenementPropositionLePlusRecent = null] = evenementsProposition;
+    const dernierEvenementImpactantLeTaux = evenementsProposition.find(
+      (evenement) =>
+        [
+          EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+          EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE,
+          EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION,
+        ].includes(evenement.type_evenement),
+    );
 
-    return evenementPropositionLePlusRecent &&
-      !EVENEMENT_VALEUR_PROPOSITION_VALEUR_TERMINEE.includes(
+    const statutTauxAvancement =
+      dernierEvenementImpactantLeTaux != null
+        ? dernierEvenementImpactantLeTaux.date_creation >
+          dateDerniereExecutionDatajobs
+          ? "EN_COURS"
+          : "CALCULE"
+        : "CALCULE";
+
+    const doitRetournerProposition =
+      evenementPropositionLePlusRecent &&
+      (!EVENEMENT_VALEUR_PROPOSITION_VALEUR_TERMINEE.includes(
         evenementPropositionLePlusRecent.type_evenement,
-      )
+      ) ||
+        statutTauxAvancement === "EN_COURS");
+
+    return doitRetournerProposition
       ? {
           valeurAvancement: evenementPropositionLePlusRecent.valeur!,
           tauxAvancement: indicateurRow.taux_avancement_mandat_proposition_v2,
+          statutTauxAvancement: statutTauxAvancement,
           tauxAvancementIntermediaire:
             indicateurTerritoireJalon !== undefined
               ? indicateurTerritoireJalon.taux_avancement_proposition_v2

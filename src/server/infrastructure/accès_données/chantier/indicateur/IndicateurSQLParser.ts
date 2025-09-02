@@ -78,6 +78,7 @@ export function créerDonnéesTerritoires(
               // Pour autoriser une valeur actuelle proposé à 0
               valeurAvancement: indicateurRow?.valeur_actuelle_proposition,
               tauxAvancement: indicateurRow?.taux_avancement_mandat_proposition,
+              statutTauxAvancement: "CALCULE",
               tauxAvancementIntermediaire:
                 indicateurTerritoireJalon?.taux_avancement_proposition !==
                   null &&

@@ -5,6 +5,7 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 
 describe("PrismaIndicateurRepository", () => {
+  const dateDerniereExecutionDatajobs = new Date("2026-02-12T00:00:00.000Z");
   let prismaIndicateurRepository: PrismaIndicateurRepository;
 
   beforeEach(() => {
@@ -551,6 +552,7 @@ describe("PrismaIndicateurRepository", () => {
           chantierId,
           territoireCodes,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -731,6 +733,7 @@ describe("PrismaIndicateurRepository", () => {
           chantierId,
           territoireCodes,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -742,6 +745,7 @@ describe("PrismaIndicateurRepository", () => {
         valeurAvancement: 120,
         tauxAvancement: null,
         tauxAvancementIntermediaire: null,
+        statutTauxAvancement: "CALCULE",
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
         motif: "Motif de la proposition",
@@ -924,6 +928,7 @@ describe("PrismaIndicateurRepository", () => {
           chantierId,
           territoireCodes,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -935,6 +940,7 @@ describe("PrismaIndicateurRepository", () => {
         valeurAvancement: 140,
         tauxAvancement: null,
         tauxAvancementIntermediaire: null,
+        statutTauxAvancement: "CALCULE",
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
         motif: null,
@@ -1136,6 +1142,7 @@ describe("PrismaIndicateurRepository", () => {
             chantierId,
             territoireCodes,
             jalon,
+            dateDerniereExecutionDatajobs,
           );
 
         // Then
@@ -1339,6 +1346,7 @@ describe("PrismaIndicateurRepository", () => {
             chantierId,
             territoireCodes,
             jalon,
+            dateDerniereExecutionDatajobs,
           );
 
         // Then
@@ -1346,15 +1354,7 @@ describe("PrismaIndicateurRepository", () => {
         expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
           "2026-01-12T00:00:00.000Z",
         );
-        expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
-          auteur: "Jane Doe",
-          dateProposition: "2026-01-14T00:00:00.000Z",
-          motif: null,
-          sourceDonneeEtMethodeCalcul: null,
-          tauxAvancement: null,
-          tauxAvancementIntermediaire: null,
-          valeurAvancement: 140,
-        });
+        expect(result["IND-001"]["NAT-FR"].proposition).toBeNull();
       },
     );
 
@@ -1568,6 +1568,7 @@ describe("PrismaIndicateurRepository", () => {
           chantierId,
           territoireCodes,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -1579,6 +1580,7 @@ describe("PrismaIndicateurRepository", () => {
         valeurAvancement: 150,
         tauxAvancement: null,
         tauxAvancementIntermediaire: null,
+        statutTauxAvancement: "CALCULE",
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
         motif: "Motif de la proposition 2",
@@ -1716,6 +1718,7 @@ describe("PrismaIndicateurRepository", () => {
             chantierId,
             territoireCodes,
             jalon,
+            dateDerniereExecutionDatajobs,
           );
 
         // Then
@@ -1861,6 +1864,7 @@ describe("PrismaIndicateurRepository", () => {
           chantierId,
           territoireCodes,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -2024,6 +2028,7 @@ describe("PrismaIndicateurRepository", () => {
           chantierId,
           territoireCodes,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -2164,6 +2169,7 @@ describe("PrismaIndicateurRepository", () => {
           chantierId,
           territoireCodes,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -2285,6 +2291,7 @@ describe("PrismaIndicateurRepository", () => {
           chantierId,
           territoireCodes,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -2436,6 +2443,7 @@ describe("PrismaIndicateurRepository", () => {
           chantierId,
           territoireCodes,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -2575,6 +2583,7 @@ describe("PrismaIndicateurRepository", () => {
           chantierId,
           territoireCodes,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -2587,6 +2596,216 @@ describe("PrismaIndicateurRepository", () => {
       expect(
         result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
       ).toBeNull();
+    });
+
+    it("calcule le statutTauxAvancement EN_COURS quand la date de création de la proposition est postérieure à la dernière exécution des datajobs", async () => {
+      // Given
+      const chantierId = "CH-001";
+      const territoireCodes = ["NAT-FR"];
+      const jalon = 2025;
+
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: chantierId,
+            nom: "Chantier 001",
+            ministeres: ["1009"],
+            ministeres_acronymes: ["MINA"],
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            maille: "NAT",
+            code_insee: "FR",
+            territoire_code: "NAT-FR",
+            zone_id: "FRANCE",
+          },
+        ],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [
+          {
+            id: "IND-001",
+            nom: "Indicateur 001",
+            chantier_id: chantierId,
+            type_id: "IMPACT",
+            unite_mesure: "kg",
+            statut: "PUBLIE",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: chantierId,
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "FRANCE",
+          },
+        ],
+      });
+
+      await prisma.utilisateur.create({
+        data: {
+          email: "jane.doe@test.com",
+          nom: "Doe",
+          prenom: "Jane",
+          id: "550e8400-e29b-41d4-a716-446655440001",
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
+
+      await prisma.indicateur_territoire_valeur_evenement.createMany({
+        data: [
+          {
+            id: "550e8400-e29b-41d4-a716-446655440000",
+            indic_id: "IND-001",
+            territoire_code: "NAT-FR",
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+            date_valeur: new Date("2026-01-12"),
+            ordre: 1,
+            date_modification: new Date("2026-02-13"),
+            date_creation: new Date("2026-02-13"),
+            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
+            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
+            valeur: 100,
+          },
+        ],
+      });
+
+      // When
+      const result =
+        await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+          chantierId,
+          territoireCodes,
+          jalon,
+          dateDerniereExecutionDatajobs,
+        );
+
+      // Then
+      expect(
+        result["IND-001"]["NAT-FR"].proposition?.statutTauxAvancement,
+      ).toEqual("EN_COURS");
+    });
+
+    it("calcule le statutTauxAvancement CALCULE quand la date de création de la proposition est antérieure à la dernière exécution des datajobs", async () => {
+      // Given
+      const chantierId = "CH-001";
+      const territoireCodes = ["NAT-FR"];
+      const jalon = 2025;
+
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: chantierId,
+            nom: "Chantier 001",
+            ministeres: ["1009"],
+            ministeres_acronymes: ["MINA"],
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            maille: "NAT",
+            code_insee: "FR",
+            territoire_code: "NAT-FR",
+            zone_id: "FRANCE",
+          },
+        ],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [
+          {
+            id: "IND-001",
+            nom: "Indicateur 001",
+            chantier_id: chantierId,
+            type_id: "IMPACT",
+            unite_mesure: "kg",
+            statut: "PUBLIE",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: chantierId,
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "FRANCE",
+          },
+        ],
+      });
+
+      await prisma.utilisateur.create({
+        data: {
+          email: "jane.doe@test.com",
+          nom: "Doe",
+          prenom: "Jane",
+          id: "550e8400-e29b-41d4-a716-446655440001",
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
+
+      await prisma.indicateur_territoire_valeur_evenement.createMany({
+        data: [
+          {
+            id: "550e8400-e29b-41d4-a716-446655440000",
+            indic_id: "IND-001",
+            territoire_code: "NAT-FR",
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+            date_valeur: new Date("2026-01-12"),
+            ordre: 1,
+            date_modification: new Date("2026-01-12"),
+            date_creation: new Date("2026-01-12"), // Antérieure à la dernière exécution des datajobs
+            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
+            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
+            valeur: 100,
+          },
+        ],
+      });
+
+      // When
+      const result =
+        await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+          chantierId,
+          territoireCodes,
+          jalon,
+          dateDerniereExecutionDatajobs,
+        );
+
+      // Then
+      expect(
+        result["IND-001"]["NAT-FR"].proposition?.statutTauxAvancement,
+      ).toEqual("CALCULE");
     });
   });
 
@@ -2738,6 +2957,7 @@ describe("PrismaIndicateurRepository", () => {
           habilitations,
           ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -2966,6 +3186,7 @@ describe("PrismaIndicateurRepository", () => {
           habilitations,
           ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -2977,6 +3198,7 @@ describe("PrismaIndicateurRepository", () => {
         valeurAvancement: 120,
         tauxAvancement: null,
         tauxAvancementIntermediaire: null,
+        statutTauxAvancement: "CALCULE",
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
         motif: "Motif de la proposition",
@@ -3200,6 +3422,7 @@ describe("PrismaIndicateurRepository", () => {
           habilitations,
           ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -3211,6 +3434,7 @@ describe("PrismaIndicateurRepository", () => {
         valeurAvancement: 140,
         tauxAvancement: null,
         tauxAvancementIntermediaire: null,
+        statutTauxAvancement: "CALCULE",
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
         motif: null,
@@ -3453,6 +3677,7 @@ describe("PrismaIndicateurRepository", () => {
             habilitations,
             ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
             jalon,
+            dateDerniereExecutionDatajobs,
           );
 
         // Then
@@ -3697,6 +3922,7 @@ describe("PrismaIndicateurRepository", () => {
             habilitations,
             ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
             jalon,
+            dateDerniereExecutionDatajobs,
           );
 
         // Then
@@ -3704,15 +3930,7 @@ describe("PrismaIndicateurRepository", () => {
         expect(result["DEPT-02"].dateValeurAvancement).toEqual(
           new Date("2026-01-12").toLocaleString(),
         );
-        expect(result["DEPT-02"].proposition).toEqual({
-          auteur: "Jane Doe",
-          dateProposition: "2026-01-14T00:00:00.000Z",
-          motif: null,
-          sourceDonneeEtMethodeCalcul: null,
-          tauxAvancement: null,
-          tauxAvancementIntermediaire: null,
-          valeurAvancement: 140,
-        });
+        expect(result["DEPT-02"].proposition).toBeNull();
       },
     );
 
@@ -3967,6 +4185,7 @@ describe("PrismaIndicateurRepository", () => {
           habilitations,
           ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -3978,6 +4197,7 @@ describe("PrismaIndicateurRepository", () => {
         valeurAvancement: 150,
         tauxAvancement: null,
         tauxAvancementIntermediaire: null,
+        statutTauxAvancement: "CALCULE",
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
         motif: "Motif de la proposition 2",
@@ -4168,9 +4388,11 @@ describe("PrismaIndicateurRepository", () => {
           habilitations,
           ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
+
       expect(result["DEPT-02"].propositionStatutTerritoire).toBeNull();
       expect(result["DEPT-02"].propositionStatutDirectionProjet).toEqual({
         statut: "PROPOSITION_VALEUR_REFUSEE",
@@ -4362,6 +4584,7 @@ describe("PrismaIndicateurRepository", () => {
           habilitations,
           ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -4575,6 +4798,7 @@ describe("PrismaIndicateurRepository", () => {
           habilitations,
           ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -4772,6 +4996,7 @@ describe("PrismaIndicateurRepository", () => {
           habilitations,
           ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -4950,6 +5175,7 @@ describe("PrismaIndicateurRepository", () => {
           habilitations,
           ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -5158,6 +5384,7 @@ describe("PrismaIndicateurRepository", () => {
           habilitations,
           ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -5354,6 +5581,7 @@ describe("PrismaIndicateurRepository", () => {
           habilitations,
           ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
           jalon,
+          dateDerniereExecutionDatajobs,
         );
 
       // Then
@@ -5364,6 +5592,276 @@ describe("PrismaIndicateurRepository", () => {
         dateTime: "2026-01-12T00:00:00.000Z",
       });
       expect(result["DEPT-02"].propositionStatutDirectionProjet).toBeNull();
+    });
+
+    it("calcule le statutTauxAvancement EN_COURS quand la date de création de la proposition est postérieure à la dernière exécution des datajobs", async () => {
+      // Given
+      const chantiersIds = ["CH-001"];
+      const indicateurId = "IND-001";
+      const territoireCodes = ["DEPT-02"];
+      const jalon = 2025;
+      const habilitations: Habilitations = {
+        gestionUtilisateur: {
+          chantiers: chantiersIds,
+          territoires: territoireCodes,
+          périmètres: [],
+        },
+        lecture: {
+          chantiers: chantiersIds,
+          territoires: territoireCodes,
+          périmètres: [],
+        },
+        saisieCommentaire: {
+          chantiers: chantiersIds,
+          territoires: territoireCodes,
+          périmètres: [],
+        },
+        saisieIndicateur: {
+          chantiers: chantiersIds,
+          territoires: territoireCodes,
+          périmètres: [],
+        },
+        responsabilite: {
+          chantiers: chantiersIds,
+          territoires: territoireCodes,
+          périmètres: [],
+        },
+      };
+
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: "CH-001",
+            nom: "Chantier 001",
+            ministeres: ["1009"],
+            ministeres_acronymes: ["MINA"],
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            maille: "DEPT",
+            code_insee: "02",
+            territoire_code: "DEPT-02",
+            zone_id: "FRANCE",
+          },
+        ],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [
+          {
+            id: "IND-001",
+            nom: "Indicateur 001",
+            chantier_id: "CH-001",
+            dernier_import_date_indic: new Date("2026-01-12"),
+            type_id: "IMPACT",
+            unite_mesure: "kg",
+            statut: "PUBLIE",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            maille: "DEPT",
+            code_insee: "02",
+            territoire_code: "DEPT-02",
+            zone_id: "D02",
+          },
+        ],
+      });
+
+      await prisma.utilisateur.create({
+        data: {
+          email: "jane.doe@test.com",
+          nom: "Jane",
+          prenom: "Doe",
+          id: "550e8400-e29b-41d4-a716-446655440001",
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
+
+      await prisma.indicateur_territoire_valeur_evenement.createMany({
+        data: [
+          {
+            id: "550e8400-e29b-41d4-a716-446655440000",
+            indic_id: "IND-001",
+            territoire_code: "DEPT-02",
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+            date_valeur: new Date("2026-01-12"),
+            ordre: 1,
+            date_modification: new Date("2026-02-13"),
+            date_creation: new Date("2026-02-13"), // Postérieure à la dernière exécution des datajobs
+            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
+            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
+            valeur: 100,
+          },
+        ],
+      });
+
+      // When
+      const result =
+        await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
+          indicateurId,
+          habilitations,
+          ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+          jalon,
+          dateDerniereExecutionDatajobs,
+        );
+
+      // Then
+      expect(result["DEPT-02"].proposition?.statutTauxAvancement).toEqual(
+        "EN_COURS",
+      );
+    });
+
+    it("calcule le statutTauxAvancement CALCULE quand la date de création de la proposition est antérieure à la dernière exécution des datajobs", async () => {
+      // Given
+      const chantiersIds = ["CH-001"];
+      const indicateurId = "IND-001";
+      const territoireCodes = ["DEPT-02"];
+      const jalon = 2025;
+      const habilitations: Habilitations = {
+        gestionUtilisateur: {
+          chantiers: chantiersIds,
+          territoires: territoireCodes,
+          périmètres: [],
+        },
+        lecture: {
+          chantiers: chantiersIds,
+          territoires: territoireCodes,
+          périmètres: [],
+        },
+        saisieCommentaire: {
+          chantiers: chantiersIds,
+          territoires: territoireCodes,
+          périmètres: [],
+        },
+        saisieIndicateur: {
+          chantiers: chantiersIds,
+          territoires: territoireCodes,
+          périmètres: [],
+        },
+        responsabilite: {
+          chantiers: chantiersIds,
+          territoires: territoireCodes,
+          périmètres: [],
+        },
+      };
+
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: "CH-001",
+            nom: "Chantier 001",
+            ministeres: ["1009"],
+            ministeres_acronymes: ["MINA"],
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            maille: "DEPT",
+            code_insee: "02",
+            territoire_code: "DEPT-02",
+            zone_id: "FRANCE",
+          },
+        ],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [
+          {
+            id: "IND-001",
+            nom: "Indicateur 001",
+            chantier_id: "CH-001",
+            dernier_import_date_indic: new Date("2026-01-12"),
+            type_id: "IMPACT",
+            unite_mesure: "kg",
+            statut: "PUBLIE",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            maille: "DEPT",
+            code_insee: "02",
+            territoire_code: "DEPT-02",
+            zone_id: "D02",
+          },
+        ],
+      });
+
+      await prisma.utilisateur.create({
+        data: {
+          email: "jane.doe@test.com",
+          nom: "Jane",
+          prenom: "Doe",
+          id: "550e8400-e29b-41d4-a716-446655440001",
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
+
+      await prisma.indicateur_territoire_valeur_evenement.createMany({
+        data: [
+          {
+            id: "550e8400-e29b-41d4-a716-446655440000",
+            indic_id: "IND-001",
+            territoire_code: "DEPT-02",
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+            date_valeur: new Date("2026-01-12"),
+            ordre: 1,
+            date_modification: new Date("2026-01-12"),
+            date_creation: new Date("2026-01-12"),
+            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
+            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
+            valeur: 100,
+          },
+        ],
+      });
+
+      // When
+      const result =
+        await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
+          indicateurId,
+          habilitations,
+          ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+          jalon,
+          dateDerniereExecutionDatajobs,
+        );
+
+      // Then
+      expect(result["DEPT-02"].proposition?.statutTauxAvancement).toEqual(
+        "CALCULE",
+      );
     });
   });
 });

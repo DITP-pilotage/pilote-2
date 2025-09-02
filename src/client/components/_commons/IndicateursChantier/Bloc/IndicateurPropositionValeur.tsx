@@ -2,7 +2,6 @@ import clsx from "clsx";
 import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { formaterDate } from "@/client/utils/date/date";
 import BoutonSousLigné from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
-import { ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc";
 import { InformationsIndicateurs } from "@/components/_commons/IndicateursChantier/Bloc/InformationsIndicateurs";
 import {
   estPropositionAcceptee,
@@ -18,6 +17,7 @@ import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.inter
 import { LigneInformationPropositionValeur } from "@/components/_commons/IndicateursChantier/Bloc/LigneInformationPropositionValeur";
 import { usePageChantierContext } from "@/components/PageChantier/usePageChantierContext";
 import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
+import { BoutonProposerValeur } from "@/components/_commons/IndicateursChantier/Bloc/BoutonProposerValeur";
 
 export const ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT =
   "modale-historique-indicateur-territoire-valeur-evenement";
@@ -89,16 +89,7 @@ export const IndicateurPropositionValeur = ({
       <LigneInformationPropositionValeur
         action={
           estAutoriseAProposerUneValeurAvancement ? (
-            <BoutonSousLigné
-              aria-controls={
-                ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id
-              }
-              className="fr-link--xs fr-link--icon-left fr-icon-edit-line texte-gris"
-              dataFrOpened={false}
-              type="button"
-            >
-              Proposer une autre valeur d'avancement
-            </BoutonSousLigné>
+            <BoutonProposerValeur detailIndicateur={detailIndicateur} />
           ) : null
         }
         className="texte-gris"
@@ -119,16 +110,7 @@ export const IndicateurPropositionValeur = ({
       <LigneInformationPropositionValeur
         action={
           estAutoriseAProposerUneValeurAvancement ? (
-            <BoutonSousLigné
-              aria-controls={
-                ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id
-              }
-              className="fr-link--xs fr-link--icon-left fr-icon-edit-line texte-gris"
-              dataFrOpened={false}
-              type="button"
-            >
-              Proposer une autre valeur d'avancement
-            </BoutonSousLigné>
+            <BoutonProposerValeur detailIndicateur={detailIndicateur} />
           ) : null
         }
         className="texte-gris"
@@ -231,16 +213,7 @@ export const IndicateurPropositionValeur = ({
       <LigneInformationPropositionValeur
         action={
           estAutoriseAProposerUneValeurAvancement ? (
-            <BoutonSousLigné
-              aria-controls={
-                ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id
-              }
-              className="fr-link--xs fr-link--icon-left fr-icon-edit-line texte-gris"
-              dataFrOpened={false}
-              type="button"
-            >
-              Proposer une autre valeur d'avancement
-            </BoutonSousLigné>
+            <BoutonProposerValeur detailIndicateur={detailIndicateur} />
           ) : null
         }
         className="texte-gris"

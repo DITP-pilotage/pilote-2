@@ -126,6 +126,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
                 valeurAvancement: indicateurRow.valeur_actuelle_proposition,
                 tauxAvancement:
                   indicateurRow.taux_avancement_mandat_proposition,
+                statutTauxAvancement: "CALCULE",
                 tauxAvancementIntermediaire: verifyValeurIsNotNullOrUndefined(
                   indicateurTerritoireJalon?.taux_avancement_proposition,
                 ),
