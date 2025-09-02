@@ -40,11 +40,13 @@ export interface IndicateurRepository {
     chantierId: string,
     territoireCodes: string[],
     jalon: number,
+    dateDerniereExecutionDatajobs: Date,
   ): Promise<DetailsIndicateurs>;
   récupérerDétailsTerritoirePourUnIndicateur(
     indicateurId: string,
     habilitations: Habilitations,
     profil: ProfilCode,
     jalon: number,
+    dateDerniereExecutionDatajobs: Date,
   ): Promise<DetailsIndicateurTerritoire>;
 }
