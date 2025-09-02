@@ -12,12 +12,10 @@ import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 import { formaterDate } from "@/client/utils/date/date";
 import ValeurEtDate from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
-import { ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc";
-import BoutonSousLigné from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
-import { ModaleAccuserReceptionPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccuserReceptionPropositionValeurAvancement/ModaleAccuserReceptionPropositionValeurAvancement";
 import { BoutonSupprimerProposition } from "@/components/_commons/IndicateursChantier/Bloc/BoutonSupprimerProposition";
 import { BoutonModifierProposition } from "@/components/_commons/IndicateursChantier/Bloc/BoutonModifierProposition";
 import { BoutonPrendreDecisionProposition } from "@/components/_commons/IndicateursChantier/Bloc/BoutonPrendreDecisionProposition";
+import { BoutonAccuserReceptionProposition } from "@/components/_commons/IndicateursChantier/Bloc/BoutonAccuserReceptionProposition";
 
 export const BaseLignesPropositionValeurAvancement = ({
   detailIndicateur,
@@ -276,17 +274,13 @@ export const LignesPropositionValeurAvancementV2 = ({
             <div className="flex w-full align-center justify-end gap-4">
               {!estPropositionAccuseeReception(detailIndicateur) && (
                 <div className="flex align-center">
-                  <BoutonSousLigné
-                    aria-controls={
-                      ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT +
-                      indicateur.id
-                    }
-                    className="fr-link--icon-left fr-icon-mail-line texte-jaune"
-                    dataFrOpened={false}
-                    type="button"
-                  >
-                    Accuser réception
-                  </BoutonSousLigné>
+                  <BoutonAccuserReceptionProposition
+                    detailIndicateur={informationIndicateur.données}
+                    détailTerritoireSélectionné={détailTerritoireSélectionné}
+                    id={indicateur.id}
+                    indicateur={indicateur}
+                    territoireCode={territoireCode}
+                  />
                   <Infobulle classNameBouton="texte-jaune" idHtml="test">
                     <p>
                       En accusant réception, vous informez le territoire que
@@ -298,17 +292,6 @@ export const LignesPropositionValeurAvancementV2 = ({
                   </Infobulle>
                 </div>
               )}
-              <ModaleAccuserReceptionPropositionValeurAvancement
-                detailIndicateur={informationIndicateur.données}
-                generatedHTMLID={
-                  ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT +
-                  indicateur.id
-                }
-                indicateur={indicateur}
-                territoireCode={territoireCode}
-                territoireCodeInsee={détailTerritoireSélectionné.codeInsee}
-                territoireNom={détailTerritoireSélectionné.nom}
-              />
               <BoutonPrendreDecisionProposition
                 detailIndicateur={informationIndicateur.données}
                 détailTerritoireSélectionné={détailTerritoireSélectionné}
