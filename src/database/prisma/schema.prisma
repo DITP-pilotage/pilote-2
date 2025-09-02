@@ -703,7 +703,7 @@ model indicateur_territoire_valeur_evenement {
 
 model datajobs_execution {
   id                      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  derniere_date_execution DateTime @db.Time()
+  derniere_date_execution DateTime
 
   @@schema("public")
 }
