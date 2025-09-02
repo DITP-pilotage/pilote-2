@@ -1229,7 +1229,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
               | EvenementValeurEnum.PROPOSITION_VALEUR_CREEE
               | EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
             date: toISODate(evenementPropositionValeur.date_creation),
-            dateTime: toISODateTime(dernierEvenement.date_creation),
+            dateTime: toISODateTime(evenementPropositionValeur.date_creation),
           };
         }
         propositionStatutDirectionProjet = {
