@@ -1354,16 +1354,7 @@ describe("PrismaIndicateurRepository", () => {
         expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
           "2026-01-12T00:00:00.000Z",
         );
-        expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
-          auteur: "Jane Doe",
-          dateProposition: "2026-01-14T00:00:00.000Z",
-          motif: null,
-          sourceDonneeEtMethodeCalcul: null,
-          tauxAvancement: null,
-          tauxAvancementIntermediaire: null,
-          statutTauxAvancement: "CALCULE",
-          valeurAvancement: 140,
-        });
+        expect(result["IND-001"]["NAT-FR"].proposition).toBeNull();
       },
     );
 
@@ -3939,16 +3930,7 @@ describe("PrismaIndicateurRepository", () => {
         expect(result["DEPT-02"].dateValeurAvancement).toEqual(
           new Date("2026-01-12").toLocaleString(),
         );
-        expect(result["DEPT-02"].proposition).toEqual({
-          auteur: "Jane Doe",
-          dateProposition: "2026-01-14T00:00:00.000Z",
-          motif: null,
-          sourceDonneeEtMethodeCalcul: null,
-          tauxAvancement: null,
-          tauxAvancementIntermediaire: null,
-          statutTauxAvancement: "CALCULE",
-          valeurAvancement: 140,
-        });
+        expect(result["DEPT-02"].proposition).toBeNull();
       },
     );
 
