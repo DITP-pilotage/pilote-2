@@ -27,6 +27,7 @@ import { LignesPropositionValeurAvancement } from "@/components/_commons/Indicat
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { PageChantierProvider } from "@/components/PageChantier/usePageChantierContext";
 import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
+import { LignesPropositionValeurAvancementV2 } from "@/components/_commons/IndicateursChantier/Bloc/LignesPropositionValeurAvancementV2";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import useIndicateurBloc from "./useIndicateurBloc";
 import useIndicateurAlerteDateMaj from "./useIndicateurAlerteDateMaj";
@@ -542,8 +543,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               </tr>
                             ) : (
                               informationIndicateur.données.proposition !==
-                                null && (
-                                <LignesPropositionValeurAvancement
+                                null &&
+                              (variableContenuFFPropositionValeurAvancementV2 ? (
+                                <LignesPropositionValeurAvancementV2
                                   detailIndicateur={
                                     detailsIndicateurDuTerritoire
                                   }
@@ -562,7 +564,23 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   propositionEstVisible={propositionEstVisible}
                                   territoireCode={territoireCode}
                                 />
-                              )
+                              ) : (
+                                <LignesPropositionValeurAvancement
+                                  detailIndicateur={
+                                    detailsIndicateurDuTerritoire
+                                  }
+                                  estAutoriseAProposerUneValeurAvancement={
+                                    estAutoriseAProposerUneValeurAvancement
+                                  }
+                                  indicateur={indicateur}
+                                  informationIndicateur={informationIndicateur}
+                                  jalon={jalon}
+                                  proposition={
+                                    informationIndicateur.données.proposition
+                                  }
+                                  territoireCode={territoireCode}
+                                />
+                              ))
                             )
                           ) : null
                         ) : null}
