@@ -701,6 +701,13 @@ model indicateur_territoire_valeur_evenement {
   @@schema("public")
 }
 
+model datajobs_execution {
+  id                      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  derniere_date_execution DateTime
+
+  @@schema("public")
+}
+
 enum type_evenement {
   VALEUR_CREEE
   VALEUR_MODIFIEE

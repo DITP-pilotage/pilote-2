@@ -26,6 +26,8 @@ import { InformationsIndicateurs } from "@/components/_commons/IndicateursChanti
 import { LignesPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/LignesPropositionValeurAvancement";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { PageChantierProvider } from "@/components/PageChantier/usePageChantierContext";
+import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
+import { LignesPropositionValeurAvancementV2 } from "@/components/_commons/IndicateursChantier/Bloc/LignesPropositionValeurAvancementV2";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import useIndicateurBloc from "./useIndicateurBloc";
 import useIndicateurAlerteDateMaj from "./useIndicateurAlerteDateMaj";
@@ -59,6 +61,7 @@ interface IndicateurBlocProps {
   cartographieDroiteIndicateur: CartographieIndicateurType;
   cartographieGaucheIndicateur: CartographieIndicateurType;
   nouveauxGraphiquesSontActifs: boolean;
+  datajobsExecution: DatajobsExecution;
 }
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
@@ -82,6 +85,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   cartographieDroiteIndicateur,
   cartographieGaucheIndicateur,
   nouveauxGraphiquesSontActifs,
+  datajobsExecution,
 }) => {
   const [propositionEstVisible, setPropositionEstVisible] = useState(false);
   const { maille: mailleTerritoireSelectionnee } =
@@ -183,6 +187,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   return (
     <PageChantierProvider
       chantier={chantier}
+      datajobsExecution={datajobsExecution}
       indicateur={indicateur}
       territoireCode={territoireCode}
       territoireSélectionné={détailTerritoireSélectionné}
@@ -538,8 +543,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               </tr>
                             ) : (
                               informationIndicateur.données.proposition !==
-                                null && (
-                                <LignesPropositionValeurAvancement
+                                null &&
+                              (variableContenuFFPropositionValeurAvancementV2 ? (
+                                <LignesPropositionValeurAvancementV2
                                   detailIndicateur={
                                     detailsIndicateurDuTerritoire
                                   }
@@ -558,7 +564,23 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                   propositionEstVisible={propositionEstVisible}
                                   territoireCode={territoireCode}
                                 />
-                              )
+                              ) : (
+                                <LignesPropositionValeurAvancement
+                                  detailIndicateur={
+                                    detailsIndicateurDuTerritoire
+                                  }
+                                  estAutoriseAProposerUneValeurAvancement={
+                                    estAutoriseAProposerUneValeurAvancement
+                                  }
+                                  indicateur={indicateur}
+                                  informationIndicateur={informationIndicateur}
+                                  jalon={jalon}
+                                  proposition={
+                                    informationIndicateur.données.proposition
+                                  }
+                                  territoireCode={territoireCode}
+                                />
+                              ))
                             )
                           ) : null
                         ) : null}

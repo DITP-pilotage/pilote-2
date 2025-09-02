@@ -49,6 +49,7 @@ import { configuration } from "@/config";
 import { CartographieType } from "@/components/PageChantier/Cartes/Cartes";
 import { CartographieIndicateurType } from "@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails";
 import { getContainer } from "@/server/dependances";
+import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
 
 interface NextPageChantierProps {
   indicateurs: Indicateur[];
@@ -76,6 +77,7 @@ interface NextPageChantierProps {
   cartographieGaucheIndicateur: CartographieIndicateurType;
   donneesComparaisonDuTauxDAvancement: DonneesComparaisonDuTauxDAvancementType;
   nouveauxGraphiquesSontActifs: boolean | undefined;
+  datajobsExecution: DatajobsExecution;
 }
 
 const redirigeLaPage = (destination: string) => ({
@@ -298,6 +300,10 @@ export const getServerSideProps: GetServerSideProps<
           jalon,
         );
 
+    const datajobsExecution = await getContainer("main")
+      .resolve("datajobsExecutionQueries")
+      .recupererEtatCourant();
+
     return {
       props: {
         indicateurs,
@@ -329,6 +335,7 @@ export const getServerSideProps: GetServerSideProps<
         cartographieGaucheIndicateur,
         donneesComparaisonDuTauxDAvancement,
         nouveauxGraphiquesSontActifs,
+        datajobsExecution,
       },
     };
   } catch (error) {
@@ -368,6 +375,7 @@ const NextPageChantier: FunctionComponent<
   cartographieGaucheIndicateur,
   donneesComparaisonDuTauxDAvancement,
   nouveauxGraphiquesSontActifs,
+  datajobsExecution,
 }) => {
   const estUnProfilDROM = profil === ProfilEnum.DROM;
   const estTerritoireNational = territoireCode === "NAT-FR";
@@ -397,6 +405,7 @@ const NextPageChantier: FunctionComponent<
           cartographieGaucheIndicateur={cartographieGaucheIndicateur}
           chantier={chantier}
           commentaires={commentaires}
+          datajobsExecution={datajobsExecution}
           detailsIndicateursTerritoire={detailsIndicateursTerritoire}
           donneesComparaisonDuTauxDAvancement={
             donneesComparaisonDuTauxDAvancement

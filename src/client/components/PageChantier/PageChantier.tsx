@@ -48,6 +48,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import BandeauInformation from "@/client/components/_commons/BandeauInformation/BandeauInformation";
 import { CartographieIndicateurType } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails";
 import { PanelMenuNavigation } from "@/components/_commons/PanelMenuNavigation/PanelMenuNavigation";
+import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
 import AvancementChantier from "./AvancementChantier/AvancementChantier";
 import PageChantierEnTête from "./EnTête/EnTête";
 import Cartes, { CartographieType } from "./Cartes/Cartes";
@@ -78,6 +79,7 @@ interface PageChantierProps {
   cartographieGaucheIndicateur: CartographieIndicateurType;
   donneesComparaisonDuTauxDAvancement: DonneesComparaisonDuTauxDAvancementType;
   nouveauxGraphiquesSontActifs: boolean;
+  datajobsExecution: DatajobsExecution;
 }
 
 const PageChantier: FunctionComponent<PageChantierProps> = ({
@@ -104,6 +106,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
   cartographieGaucheIndicateur,
   donneesComparaisonDuTauxDAvancement,
   nouveauxGraphiquesSontActifs,
+  datajobsExecution,
 }: PageChantierProps) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
@@ -419,6 +422,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   }
                   chantier={chantier}
                   chantierEstTerritorialisé={chantier.estTerritorialisé}
+                  datajobsExecution={datajobsExecution}
                   detailsIndicateursTerritoire={detailsIndicateursTerritoire}
                   détailsIndicateurs={détailsIndicateurs}
                   estAutoriseAAccepterLesPropositionsDeValeurAvancement={
