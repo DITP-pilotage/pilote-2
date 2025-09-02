@@ -4,7 +4,6 @@ import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateu
 import { InformationsIndicateurs } from "@/components/_commons/IndicateursChantier/Bloc/InformationsIndicateurs";
 import { DetailIndicateurPropositionValeurAvancement } from "@/server/chantiers/domain/DetailsIndicateurs";
 import { usePageChantierContext } from "@/components/PageChantier/usePageChantierContext";
-import api from "@/server/infrastructure/api/trpc/api";
 import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 import { estPropositionAccuseeReception } from "@/components/_commons/IndicateursChantier/Bloc/utils";
@@ -18,8 +17,6 @@ import {
   ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT,
   ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT,
 } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc";
-import { ModalePropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurAvancement/ModalePropositionValeurAvancement";
-import { ModaleSuppressionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurAvancement/ModaleSuppressionValeurAvancement";
 import BoutonSousLigné from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { ModaleAccuserReceptionPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccuserReceptionPropositionValeurAvancement/ModaleAccuserReceptionPropositionValeurAvancement";
 import { ModaleAccepterPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccepterPropositionValeurAvancement/ModaleAccepterPropositionValeurAvancement";
@@ -48,18 +45,11 @@ export const LignesPropositionValeurAvancementV2 = ({
   estAutoriseAProposerUneValeurAvancement: boolean;
 }) => {
   const { datajobsExecution } = usePageChantierContext();
-  const { data: variableContenuFFPropositionValeurAvancementV2 } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE_V2",
-    });
 
   // TODO: /!\ actionsTerritoiresStore est un hook
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
-  if (
-    !propositionEstVisible &&
-    variableContenuFFPropositionValeurAvancementV2
-  ) {
+  if (!propositionEstVisible) {
     return null;
   }
 
@@ -97,9 +87,7 @@ export const LignesPropositionValeurAvancementV2 = ({
         <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm">
           <div className="flex align-center selecteur-infobulle-conteneur">
             <span className="texte-proposition font-bold">
-              {variableContenuFFPropositionValeurAvancementV2
-                ? "Proposition en cours"
-                : "Proposition du territoire"}
+              Proposition en cours
             </span>
             <Infobulle
               classNameBouton="texte-proposition"
@@ -124,55 +112,53 @@ export const LignesPropositionValeurAvancementV2 = ({
               </p>
             </Infobulle>
           </div>
-          {variableContenuFFPropositionValeurAvancementV2 ? (
-            <div className="flex align-center selecteur-infobulle-conteneur">
-              {estPropositionAccuseeReception(detailIndicateur) ? (
-                <>
-                  <span className="fr-text--xs texte-gris">
-                    la direction de projet a accusé réception
-                  </span>
-                  <Infobulle
-                    classNameBouton="texte-gris"
-                    classNameInfoBulle="tooltip-accordeon"
-                    idHtml={`infobulle-proposition-valeur-davancement-accusee-reception-${informationIndicateur.code}`}
-                  >
-                    {estAutoriseAProposerUneValeurAvancement ? (
-                      <p className="fr-text--sm">
-                        Vous ne pouvez plus intervenir sur cet indicateur tant
-                        que la direction de projet n'aura pas pris une décision
-                        (accepter, accepter avec modification ou refuser) ou
-                        procédé à un nouvel import de données.
-                      </p>
-                    ) : estAutoriseAAccepterLesPropositionsDeValeurAvancement ? (
-                      <p className="fr-text--sm">
-                        Le territoire ne peut plus intervenir sur cet indicateur
-                        tant que vous n'aurez pas pris une décision (accepter,
-                        accepter avec modification ou refuser) ou procédé à un
-                        nouvel import de données.
-                      </p>
-                    ) : null}
-                  </Infobulle>
-                </>
-              ) : (
-                <>
-                  <span className="fr-text--xs texte-gris">
-                    En attente de lecture par la direction de projet
-                  </span>
-                  <Infobulle
-                    classNameBouton="texte-gris"
-                    classNameInfoBulle="tooltip-accordeon"
-                    idHtml={`infobulle-proposition-valeur-davancement-statut-${informationIndicateur.code}`}
-                  >
+          <div className="flex align-center selecteur-infobulle-conteneur">
+            {estPropositionAccuseeReception(detailIndicateur) ? (
+              <>
+                <span className="fr-text--xs texte-gris">
+                  la direction de projet a accusé réception
+                </span>
+                <Infobulle
+                  classNameBouton="texte-gris"
+                  classNameInfoBulle="tooltip-accordeon"
+                  idHtml={`infobulle-proposition-valeur-davancement-accusee-reception-${informationIndicateur.code}`}
+                >
+                  {estAutoriseAProposerUneValeurAvancement ? (
                     <p className="fr-text--sm">
-                      La direction de projet n'a pas encore accusé réception de
-                      votre proposition. Il vous est toujours possible de
-                      modifier ou de supprimer celle-ci si vous le souhaitez.
+                      Vous ne pouvez plus intervenir sur cet indicateur tant que
+                      la direction de projet n'aura pas pris une décision
+                      (accepter, accepter avec modification ou refuser) ou
+                      procédé à un nouvel import de données.
                     </p>
-                  </Infobulle>
-                </>
-              )}
-            </div>
-          ) : null}
+                  ) : estAutoriseAAccepterLesPropositionsDeValeurAvancement ? (
+                    <p className="fr-text--sm">
+                      Le territoire ne peut plus intervenir sur cet indicateur
+                      tant que vous n'aurez pas pris une décision (accepter,
+                      accepter avec modification ou refuser) ou procédé à un
+                      nouvel import de données.
+                    </p>
+                  ) : null}
+                </Infobulle>
+              </>
+            ) : (
+              <>
+                <span className="fr-text--xs texte-gris">
+                  En attente de lecture par la direction de projet
+                </span>
+                <Infobulle
+                  classNameBouton="texte-gris"
+                  classNameInfoBulle="tooltip-accordeon"
+                  idHtml={`infobulle-proposition-valeur-davancement-statut-${informationIndicateur.code}`}
+                >
+                  <p className="fr-text--sm">
+                    La direction de projet n'a pas encore accusé réception de
+                    votre proposition. Il vous est toujours possible de modifier
+                    ou de supprimer celle-ci si vous le souhaitez.
+                  </p>
+                </Infobulle>
+              </>
+            )}
+          </div>
         </td>
         <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200">
           <ValeurEtDate
@@ -240,56 +226,7 @@ export const LignesPropositionValeurAvancementV2 = ({
           />
         </td>
       </tr>
-      {!variableContenuFFPropositionValeurAvancementV2 ? (
-        <tr className="!bg-dsfr-moutarde-main-975 text-dsfr-moutarde-main-679 ligne-modification-proposition-valeur-davancement">
-          {estAutoriseAProposerUneValeurAvancement ? (
-            <td colSpan={8}>
-              <div className="flex w-full justify-end">
-                <button
-                  aria-controls={
-                    ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
-                    indicateur.id
-                  }
-                  className="fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-davancement fr-mr-1w"
-                  data-fr-opened="false"
-                  type="button"
-                >
-                  Modifier la proposition
-                </button>
-                <button
-                  aria-controls={
-                    ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT +
-                    indicateur.id
-                  }
-                  className="fr-btn fr-btn--icon-left fr-icon-delete-line fr-btn--secondary bouton-proposition-valeur-davancement"
-                  data-fr-opened="false"
-                  type="button"
-                >
-                  Supprimer la proposition
-                </button>
-              </div>
-              <ModalePropositionValeurAvancement
-                detailIndicateur={informationIndicateur.données}
-                generatedHTMLID={
-                  ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id
-                }
-                indicateur={indicateur}
-                territoireCode={territoireCode}
-                territoireCodeInsee={détailTerritoireSélectionné.codeInsee}
-                territoireNom={détailTerritoireSélectionné.nom}
-              />
-              <ModaleSuppressionValeurAvancement
-                generatedHTMLID={
-                  ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT + indicateur.id
-                }
-                indicateur={indicateur}
-                territoireCode={territoireCode}
-              />
-            </td>
-          ) : null}
-        </tr>
-      ) : propositionEstVisible &&
-        estAutoriseAAccepterLesPropositionsDeValeurAvancement ? (
+      {estAutoriseAAccepterLesPropositionsDeValeurAvancement ? (
         <tr
           className={clsx("ligne-modification-proposition-valeur-davancement", {
             "!bg-dsfr-info-950 !text-dsfr-info-main-525":
@@ -360,8 +297,7 @@ export const LignesPropositionValeurAvancementV2 = ({
             </div>
           </td>
         </tr>
-      ) : propositionEstVisible &&
-        !estPropositionAccuseeReception(detailIndicateur) &&
+      ) : !estPropositionAccuseeReception(detailIndicateur) &&
         estAutoriseAProposerUneValeurAvancement ? (
         <tr className="ligne-modification-proposition-valeur-davancement !bg-dsfr-moutarde-main-975 !text-dsfr-moutarde-main-679">
           <td colSpan={8}>
@@ -409,7 +345,7 @@ export const LignesPropositionValeurAvancementV2 = ({
             />
           </td>
         </tr>
-      ) : propositionEstVisible && afficherPropositionAcceptee ? (
+      ) : afficherPropositionAcceptee ? (
         <div>coucou</div>
       ) : null}
     </>
