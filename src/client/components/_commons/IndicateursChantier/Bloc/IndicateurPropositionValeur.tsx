@@ -210,7 +210,14 @@ export const IndicateurPropositionValeur = ({
             "DD/MM/YYYY",
           )}
         </strong>{" "}
-        et <strong>acceptée</strong> par la direction de projet le{" "}
+        et{" "}
+        <strong>
+          acceptée
+          {estPropositionAccepteeAvecModification(detailIndicateur)
+            ? " avec modification"
+            : ""}
+        </strong>{" "}
+        par la direction de projet le{" "}
         {formaterDate(
           detailIndicateur.propositionStatutDirectionProjet?.date,
           "DD/MM/YYYY",
