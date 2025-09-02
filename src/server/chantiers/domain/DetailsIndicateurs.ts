@@ -46,6 +46,7 @@ export type DetailsIndicateur = {
       | EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE
       | EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE;
     date: string;
+    dateTime: string;
   } | null;
   propositionStatutDirectionProjet: {
     statut:
@@ -54,6 +55,7 @@ export type DetailsIndicateur = {
       | EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE
       | EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION;
     date: string;
+    dateTime: string;
   } | null;
   unite: string | null;
   estApplicable: boolean | null;
