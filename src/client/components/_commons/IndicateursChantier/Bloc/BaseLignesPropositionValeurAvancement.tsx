@@ -4,6 +4,7 @@ import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateu
 import { InformationsIndicateurs } from "@/components/_commons/IndicateursChantier/Bloc/InformationsIndicateurs";
 import { DetailIndicateurPropositionValeurAvancement } from "@/server/chantiers/domain/DetailsIndicateurs";
 import {
+  estPropositionAcceptee,
   estPropositionAccepteeOuAccepteeAvecModification,
   estPropositionAccuseeReception,
 } from "@/components/_commons/IndicateursChantier/Bloc/utils";
@@ -54,6 +55,11 @@ export const BaseLignesPropositionValeurAvancement = ({
         jalon
       : false;
 
+  const varianteBarreProgression =
+    estPropositionAcceptee(detailIndicateur) ||
+    estPropositionAccuseeReception(detailIndicateur)
+      ? "bleu-dsfr-info"
+      : "jaune-moutarde";
   return (
     <>
       <tr
@@ -110,7 +116,7 @@ export const BaseLignesPropositionValeurAvancement = ({
                 positionTexte="dessus"
                 taille="md"
                 valeur={proposition.tauxAvancementIntermediaire}
-                variante="jaune-moutarde"
+                variante={varianteBarreProgression}
               />
             </td>
           </>
@@ -140,7 +146,7 @@ export const BaseLignesPropositionValeurAvancement = ({
             positionTexte="dessus"
             taille="md"
             valeur={proposition.tauxAvancement}
-            variante="jaune-moutarde"
+            variante={varianteBarreProgression}
           />
         </td>
       </tr>

@@ -9,7 +9,8 @@ export type BarreDeProgressionVariante =
   | "secondaire-light"
   | "rose"
   | "jaune-moutarde"
-  | "bleu-clair";
+  | "bleu-clair"
+  | "bleu-dsfr-info";
 type BarreDeProgressionTaille = "xxs" | "xs" | "sm" | "md" | "lg";
 type BarreDeProgressionFond = "bleu" | "blanc" | "gris-moyen" | "gris-clair";
 type BarreDeProgressionBordure = "bleu" | "gris-moyen" | null;
