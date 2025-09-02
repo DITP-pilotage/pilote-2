@@ -9,6 +9,7 @@ export interface DetailIndicateurPropositionValeurAvancement {
   valeurAvancement: number;
   tauxAvancement: number | null;
   tauxAvancementIntermediaire: number | null;
+  statutTauxAvancement: "CALCULE" | "EN_COURS" | "NON_CALCULE";
   auteur: string | null;
   dateProposition: string | null;
   motif: string | null;

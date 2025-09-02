@@ -17,6 +17,7 @@ export type DétailsIndicateurs = Record<
 interface DetailIndicateurPropositionValeurAvancement {
   valeurAvancement: number;
   tauxAvancement: number | null;
+  statutTauxAvancement: "CALCULE" | "EN_COURS" | "NON_CALCULE";
   tauxAvancementIntermediaire: number | null;
   auteur: string | null;
   dateProposition: string | null;
