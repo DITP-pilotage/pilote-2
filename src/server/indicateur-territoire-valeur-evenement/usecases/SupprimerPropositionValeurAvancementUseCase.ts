@@ -1,4 +1,6 @@
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import { Transaction } from "@/server/db/Transaction";
+import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
 
 export type SupprimerPropositionValeurAvancementInput = {
   indicId: string;
@@ -10,14 +12,26 @@ export type SupprimerPropositionValeurAvancementInput = {
 
 interface Dependencies {
   indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+  indicateurRepository: IndicateurRepository;
+  transaction: Transaction;
 }
 
 export class SupprimerPropositionValeurAvancementUseCase {
   private readonly indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
 
-  constructor({ indicateurTerritoireValeurEvenementRepository }: Dependencies) {
+  private readonly indicateurRepository: IndicateurRepository;
+
+  private readonly transaction: Transaction;
+
+  constructor({
+    indicateurTerritoireValeurEvenementRepository,
+    indicateurRepository,
+    transaction,
+  }: Dependencies) {
     this.indicateurTerritoireValeurEvenementRepository =
       indicateurTerritoireValeurEvenementRepository;
+    this.indicateurRepository = indicateurRepository;
+    this.transaction = transaction;
   }
 
   async run(input: SupprimerPropositionValeurAvancementInput): Promise<void> {
@@ -39,8 +53,14 @@ export class SupprimerPropositionValeurAvancementUseCase {
         },
       });
 
-    await this.indicateurTerritoireValeurEvenementRepository.enregistrer(
-      evenement,
-    );
+    await this.transaction.run(async () => {
+      await this.indicateurRepository.supprimerTauxAvancementProposition({
+        indicId: input.indicId,
+        territoireCode: input.territoireCode,
+      });
+      await this.indicateurTerritoireValeurEvenementRepository.enregistrer(
+        evenement,
+      );
+    });
   }
 }

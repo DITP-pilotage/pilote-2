@@ -1,4 +1,6 @@
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
+import { Transaction } from "@/server/db/Transaction";
 
 export type ModifierPropositionValeurAvancementInput = {
   indicId: string;
@@ -12,14 +14,26 @@ export type ModifierPropositionValeurAvancementInput = {
 
 interface Dependencies {
   indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+  indicateurRepository: IndicateurRepository;
+  transaction: Transaction;
 }
 
 export class ModifierPropositionValeurAvancementUseCase {
   private readonly indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
 
-  constructor({ indicateurTerritoireValeurEvenementRepository }: Dependencies) {
+  private readonly indicateurRepository: IndicateurRepository;
+
+  private readonly transaction: Transaction;
+
+  constructor({
+    indicateurTerritoireValeurEvenementRepository,
+    indicateurRepository,
+    transaction,
+  }: Dependencies) {
     this.indicateurTerritoireValeurEvenementRepository =
       indicateurTerritoireValeurEvenementRepository;
+    this.indicateurRepository = indicateurRepository;
+    this.transaction = transaction;
   }
 
   async run(input: ModifierPropositionValeurAvancementInput): Promise<void> {
@@ -44,8 +58,14 @@ export class ModifierPropositionValeurAvancementUseCase {
       },
     );
 
-    await this.indicateurTerritoireValeurEvenementRepository.enregistrer(
-      evenement,
-    );
+    await this.transaction.run(async () => {
+      await this.indicateurRepository.supprimerTauxAvancementProposition({
+        indicId: input.indicId,
+        territoireCode: input.territoireCode,
+      });
+      await this.indicateurTerritoireValeurEvenementRepository.enregistrer(
+        evenement,
+      );
+    });
   }
 }

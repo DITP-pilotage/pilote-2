@@ -12,10 +12,13 @@ import { SupprimerPropositionValeurAvancementUseCase } from "./usecases/Supprime
 import { AccuserReceptionPropositionValeurUseCase } from "./usecases/AccuserReceptionPropositionValeurUseCase";
 import { AccepterAvecModificationPropositionValeurAvancementUseCase } from "./usecases/AccepterAvecModificationPropositionValeurAvancementUseCase";
 import { RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase } from "./usecases/RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase";
+import { IndicateurRepository } from "./domain/ports/IndicateurRepository";
+import { PrismaIndicateurRepository } from "./infrastructure/PrismaIndicateurRepository";
 
 export type IndicateurTerritoireValeurEvenementDependencies = {
   indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
   mesureIndicateurRepository: MesureIndicateurRepository;
+  indicateurRepository: IndicateurRepository;
   creerIndicateurTerritoireValeurEvenementUseCase: CreerIndicateurTerritoireValeurEvenementUseCase;
   accepterPropositionValeurAvancementUseCase: AccepterPropositionValeurAvancementUseCase;
   refuserPropositionValeurAvancementUseCase: RefuserPropositionValeurAvancementUseCase;
@@ -37,6 +40,7 @@ export const getIndicateurTerritoireValeurEvenementContainer = (
         PrismaIndicateurTerritoireValeurEvenementRepository,
       ),
       mesureIndicateurRepository: asClass(PrismaMesureIndicateurRepository),
+      indicateurRepository: asClass(PrismaIndicateurRepository),
       creerIndicateurTerritoireValeurEvenementUseCase: asClass(
         CreerIndicateurTerritoireValeurEvenementUseCase,
       ),
