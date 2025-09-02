@@ -12,15 +12,12 @@ import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 import { formaterDate } from "@/client/utils/date/date";
 import ValeurEtDate from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
-import {
-  ID_HTML_MODALE_ACCEPTER_PROPOSITION_VALEUR_DAVANCEMENT,
-  ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT,
-} from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc";
+import { ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc";
 import BoutonSousLigné from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { ModaleAccuserReceptionPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccuserReceptionPropositionValeurAvancement/ModaleAccuserReceptionPropositionValeurAvancement";
-import { ModaleAccepterPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccepterPropositionValeurAvancement/ModaleAccepterPropositionValeurAvancement";
 import { BoutonSupprimerProposition } from "@/components/_commons/IndicateursChantier/Bloc/BoutonSupprimerProposition";
 import { BoutonModifierProposition } from "@/components/_commons/IndicateursChantier/Bloc/BoutonModifierProposition";
+import { BoutonPrendreDecisionProposition } from "@/components/_commons/IndicateursChantier/Bloc/BoutonPrendreDecisionProposition";
 
 export const BaseLignesPropositionValeurAvancement = ({
   detailIndicateur,
@@ -301,17 +298,6 @@ export const LignesPropositionValeurAvancementV2 = ({
                   </Infobulle>
                 </div>
               )}
-              <button
-                aria-controls={
-                  ID_HTML_MODALE_ACCEPTER_PROPOSITION_VALEUR_DAVANCEMENT +
-                  indicateur.id
-                }
-                className="fr-btn fr-btn--icon-left fr-icon-scales-3-fill fr-btn--secondary bouton-proposition-valeur-davancement"
-                data-fr-opened="false"
-                type="button"
-              >
-                Prendre une décision
-              </button>
               <ModaleAccuserReceptionPropositionValeurAvancement
                 detailIndicateur={informationIndicateur.données}
                 generatedHTMLID={
@@ -323,16 +309,12 @@ export const LignesPropositionValeurAvancementV2 = ({
                 territoireCodeInsee={détailTerritoireSélectionné.codeInsee}
                 territoireNom={détailTerritoireSélectionné.nom}
               />
-              <ModaleAccepterPropositionValeurAvancement
+              <BoutonPrendreDecisionProposition
                 detailIndicateur={informationIndicateur.données}
-                generatedHTMLID={
-                  ID_HTML_MODALE_ACCEPTER_PROPOSITION_VALEUR_DAVANCEMENT +
-                  indicateur.id
-                }
+                détailTerritoireSélectionné={détailTerritoireSélectionné}
+                id={indicateur.id}
                 indicateur={indicateur}
                 territoireCode={territoireCode}
-                territoireCodeInsee={détailTerritoireSélectionné.codeInsee}
-                territoireNom={détailTerritoireSélectionné.nom}
               />
             </div>
           </td>
