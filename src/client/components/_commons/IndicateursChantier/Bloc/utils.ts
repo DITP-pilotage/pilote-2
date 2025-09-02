@@ -14,6 +14,12 @@ export const estPropositionAccepteeAvecModification = (
   detailIndicateur.propositionStatutDirectionProjet?.statut ===
   "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION";
 
+export const estPropositionAccepteeOuAccepteeAvecModification = (
+  detailIndicateur: DétailsIndicateur,
+) =>
+  estPropositionAcceptee(detailIndicateur) ||
+  estPropositionAccepteeAvecModification(detailIndicateur);
+
 export const estPropositionRefusee = (detailIndicateur: DétailsIndicateur) =>
   detailIndicateur.propositionStatutDirectionProjet?.statut ===
   "PROPOSITION_VALEUR_REFUSEE";
