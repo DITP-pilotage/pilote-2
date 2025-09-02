@@ -4,7 +4,6 @@ import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateu
 import { InformationsIndicateurs } from "@/components/_commons/IndicateursChantier/Bloc/InformationsIndicateurs";
 import { DetailIndicateurPropositionValeurAvancement } from "@/server/chantiers/domain/DetailsIndicateurs";
 import {
-  estPropositionAcceptee,
   estPropositionAccepteeOuAccepteeAvecModification,
   estPropositionAccuseeReception,
 } from "@/components/_commons/IndicateursChantier/Bloc/utils";
@@ -13,6 +12,7 @@ import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDe
 import { usePageChantierContext } from "@/components/PageChantier/usePageChantierContext";
 import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
 import { CelluleStatutProposition } from "@/components/_commons/IndicateursChantier/Bloc/CelluleStatutProposition";
+import { BarreDeProgressionAVenir } from "@/components/_commons/IndicateursChantier/Bloc/BarreDeProgressionAVenir";
 
 export const doitAfficherPropositionAcceptee = (
   detailIndicateur: DétailsIndicateur,
@@ -109,15 +109,19 @@ export const BaseLignesPropositionValeurAvancement = ({
               />
             </td>
             <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm texte-proposition">
-              <BarreDeProgression
-                afficherTexte
-                fond="gris-clair"
-                infobulleId={`infobulle-taux-avancement-proposition-jalon-${informationIndicateur.code}`}
-                positionTexte="dessus"
-                taille="md"
-                valeur={proposition.tauxAvancementIntermediaire}
-                variante={varianteBarreProgression}
-              />
+              {proposition.statutTauxAvancement === "EN_COURS" ? (
+                <BarreDeProgressionAVenir variante={varianteBarreProgression} />
+              ) : (
+                <BarreDeProgression
+                  afficherTexte
+                  fond="gris-clair"
+                  infobulleId={`infobulle-taux-avancement-proposition-jalon-${informationIndicateur.code}`}
+                  positionTexte="dessus"
+                  taille="md"
+                  valeur={proposition.tauxAvancementIntermediaire}
+                  variante={varianteBarreProgression}
+                />
+              )}
             </td>
           </>
         ) : (
@@ -139,15 +143,19 @@ export const BaseLignesPropositionValeurAvancement = ({
           />
         </td>
         <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm texte-proposition">
-          <BarreDeProgression
-            afficherTexte
-            fond="gris-clair"
-            infobulleId={`infobulle-taux-avancement-proposition-global-${informationIndicateur.code}`}
-            positionTexte="dessus"
-            taille="md"
-            valeur={proposition.tauxAvancement}
-            variante={varianteBarreProgression}
-          />
+          {proposition.statutTauxAvancement === "EN_COURS" ? (
+            <BarreDeProgressionAVenir variante={varianteBarreProgression} />
+          ) : (
+            <BarreDeProgression
+              afficherTexte
+              fond="gris-clair"
+              infobulleId={`infobulle-taux-avancement-proposition-global-${informationIndicateur.code}`}
+              positionTexte="dessus"
+              taille="md"
+              valeur={proposition.tauxAvancement}
+              variante={varianteBarreProgression}
+            />
+          )}
         </td>
       </tr>
       {children}
