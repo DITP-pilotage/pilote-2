@@ -14,25 +14,29 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 import {
   LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS,
   validationSynthèseDesRésultatsFormulaire,
-} from "validation/synthèseDesRésultats";
-import SynthèseDesRésultatsFormulaireStyled from "./Formulaire.styled";
-import SynthèseDesRésultatsFormulaireProps, {
-  SynthèseDesRésultatsFormulaireInputs,
-} from "./Formulaire.interface";
+} from "@/validation/synthèseDesRésultats";
+import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import SynthèseDesRésultats from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
+import SyntheseDesResultatsFormulaireStyled from "./SyntheseDesResultatsFormulaire.styled";
+import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
 import useSynthèseDesRésultatsFormulaire from "./useSynthèseDesRésultatsFormulaire";
 
-const SynthèseDesRésultatsFormulaire: FunctionComponent<
-  SynthèseDesRésultatsFormulaireProps
-> = ({
-  contenuInitial,
-  météoInitiale,
-  synthèseDesRésultatsCrééeCallback,
-  annulationCallback,
-  territoireCode,
-}) => {
+interface SyntheseDesResultatsFormulaireProps {
+  syntheseDesResultatsCreeeCallback: (
+    syntheseDesResultatsCreee: SynthèseDesRésultats,
+  ) => void;
+  annulationCallback?: () => void;
+}
+
+const SyntheseDesResultatsFormulaire: FunctionComponent<
+  SyntheseDesResultatsFormulaireProps
+> = ({ syntheseDesResultatsCreeeCallback, annulationCallback }) => {
+  const { synthèseDesRésultats, territoireCode } =
+    pageChantier.useServerSidePropsContext();
+
   const { créerSynthèseDesRésultats, alerte } =
     useSynthèseDesRésultatsFormulaire(
-      synthèseDesRésultatsCrééeCallback,
+      syntheseDesResultatsCreeeCallback,
       territoireCode,
     );
 
@@ -42,20 +46,21 @@ const SynthèseDesRésultatsFormulaire: FunctionComponent<
     formState: { errors, isValid },
     watch,
     getValues,
-  } = useForm<SynthèseDesRésultatsFormulaireInputs>({
+  } = useForm<SyntheseDesResultatsFormulaireInputs>({
     mode: "all",
     resolver: zodResolver(validationSynthèseDesRésultatsFormulaire),
     defaultValues: {
-      contenu: contenuInitial,
+      contenu: synthèseDesRésultats?.contenu,
       météo:
-        météoInitiale && météosSaisissables.includes(météoInitiale)
-          ? (météoInitiale as MétéoSaisissable)
+        synthèseDesRésultats?.météo &&
+        météosSaisissables.includes(synthèseDesRésultats.météo)
+          ? (synthèseDesRésultats.météo as MétéoSaisissable)
           : undefined,
     },
   });
 
   return (
-    <SynthèseDesRésultatsFormulaireStyled
+    <SyntheseDesResultatsFormulaireStyled
       method="post"
       onSubmit={handleSubmit(créerSynthèseDesRésultats)}
     >
@@ -120,8 +125,8 @@ const SynthèseDesRésultatsFormulaire: FunctionComponent<
           <Alerte titre={alerte.titre} type={alerte.type} />
         </div>
       )}
-    </SynthèseDesRésultatsFormulaireStyled>
+    </SyntheseDesResultatsFormulaireStyled>
   );
 };
 
-export default SynthèseDesRésultatsFormulaire;
+export default SyntheseDesResultatsFormulaire;

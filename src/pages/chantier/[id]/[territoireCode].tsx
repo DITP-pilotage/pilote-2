@@ -1,45 +1,29 @@
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import { getServerSession } from "next-auth/next";
 import { FunctionComponent } from "react";
 import assert from "node:assert/strict";
 import PageChantier from "@/components/PageChantier/PageChantier";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { dependencies } from "@/server/infrastructure/Dependencies";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { ChantierInformations } from "@/components/PageImportIndicateur/ChantierInformation.interface";
 import RécupérerChantierUseCase from "@/server/usecase/chantier/RécupérerChantierUseCase";
 import { NonAutorisé } from "@/server/utils/errors";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 import ChoixTerritoire from "@/components/PageChantier/ChoixTerritoire/ChoixTerritoire";
 import calculerChantierAvancements from "@/client/utils/chantier/avancement/calculerChantierAvancementsNew";
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
 import { comparerIndicateur } from "@/client/utils/indicateur/indicateur";
 import { convertitEnPondération } from "@/client/utils/ponderation/ponderation";
 import { IndicateurPondération } from "@/components/PageChantier/PageChantier.interface";
-import { CommentaireChantierContrat } from "@/server/chantiers/app/contrats/CommentaireChantierContrat";
-import { DecisionStrategiqueChantierContrat } from "@/server/chantiers/app/contrats/DecisionStrategiqueChantierContrat";
-import { ObjectifChantierContrat } from "@/server/chantiers/app/contrats/ObjectifChantierContrat";
 import RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase from "@/server/usecase/chantier/synthèse/RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase";
-import { SynthèseDesRésultatsContrat } from "@/server/chantiers/app/contrats/SynthèseDesRésultatsContrat";
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
 import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase";
 import RécupérerDécisionStratégiqueLaPlusRécenteUseCase from "@/server/usecase/chantier/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase";
 import RécupérerDétailsIndicateursUseCase from "@/server/usecase/chantier/indicateur/RécupérerDétailsIndicateursUseCase";
-import {
-  DétailsIndicateurs,
-  DétailsIndicateurTerritoire,
-} from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import RécupérerStatistiquesAvancementChantiersUseCase from "@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase";
 import { presenterEnAvancementsStatistiquesAccueilContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
-import { AvancementChantierContrat } from "@/components/PageChantier/AvancementChantier";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
-import {
-  CoordinateurTerritorial,
-  DonneesComparaisonDuTauxDAvancementType,
-  ResponsableLocal,
-} from "@/server/domain/territoire/Territoire.interface";
+import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { ListerDétailsIndicateurTerritoireUseCase } from "@/server/usecase/chantier/indicateur/ListerDétailsIndicateurTerritoireUseCase";
 import { RécupérerVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase";
@@ -49,36 +33,7 @@ import { configuration } from "@/config";
 import { CartographieType } from "@/components/PageChantier/Cartes/Cartes";
 import { CartographieIndicateurType } from "@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails";
 import { getContainer } from "@/server/dependances";
-import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
-
-interface NextPageChantierProps {
-  indicateurs: Indicateur[];
-  chantierInformations: ChantierInformations;
-  mailleQuery: MailleInterne;
-  mailleSelectionnee: MailleInterne;
-  territoireCode: string;
-  territoiresCompares: string[];
-  profil: ProfilCode;
-  synthèseDesRésultats: SynthèseDesRésultatsContrat;
-  commentaires: CommentaireChantierContrat;
-  objectifs: ObjectifChantierContrat;
-  décisionStratégique: DecisionStrategiqueChantierContrat;
-  détailsIndicateurs: DétailsIndicateurs;
-  detailsIndicateursTerritoire: Record<string, DétailsIndicateurTerritoire>;
-  avancements: AvancementChantierContrat;
-  indicateurPondérations: IndicateurPondération[];
-  chantier: Chantier;
-  listeResponsablesLocaux: ResponsableLocal[];
-  listeCoordinateursTerritorials: CoordinateurTerritorial[];
-  jalon: number;
-  cartographieGaucheChantier: CartographieType;
-  cartographieDroiteChantier: CartographieType;
-  cartographieDroiteIndicateur: CartographieIndicateurType;
-  cartographieGaucheIndicateur: CartographieIndicateurType;
-  donneesComparaisonDuTauxDAvancement: DonneesComparaisonDuTauxDAvancementType;
-  nouveauxGraphiquesSontActifs: boolean | undefined;
-  datajobsExecution: DatajobsExecution;
-}
+import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 
 const redirigeLaPage = (destination: string) => ({
   redirect: {
@@ -87,9 +42,11 @@ const redirigeLaPage = (destination: string) => ({
   },
 });
 
-export const getServerSideProps: GetServerSideProps<
-  NextPageChantierProps
-> = async ({ req, res, query }) => {
+export const getServerSideProps = async ({
+  req,
+  res,
+  query,
+}: GetServerSidePropsContext) => {
   if (!query?.id) {
     return {
       notFound: true,
@@ -349,39 +306,14 @@ export const getServerSideProps: GetServerSideProps<
 
 const NextPageChantier: FunctionComponent<
   InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({
-  indicateurs,
-  chantierInformations,
-  territoireCode,
-  territoiresCompares,
-  profil,
-  mailleSelectionnee,
-  mailleQuery,
-  synthèseDesRésultats,
-  commentaires,
-  objectifs,
-  décisionStratégique,
-  détailsIndicateurs,
-  detailsIndicateursTerritoire,
-  avancements,
-  indicateurPondérations,
-  chantier,
-  listeResponsablesLocaux,
-  listeCoordinateursTerritorials,
-  jalon,
-  cartographieDroiteChantier,
-  cartographieGaucheChantier,
-  cartographieDroiteIndicateur,
-  cartographieGaucheIndicateur,
-  donneesComparaisonDuTauxDAvancement,
-  nouveauxGraphiquesSontActifs,
-  datajobsExecution,
-}) => {
+> = (props) => {
+  const { chantierInformations, territoireCode, profil } = props;
+
   const estUnProfilDROM = profil === ProfilEnum.DROM;
   const estTerritoireNational = territoireCode === "NAT-FR";
 
   return (
-    <>
+    <pageChantier.ServerSidePropsProvider value={props}>
       <Head>
         <title>
           {`Chantier ${chantierInformations.id.replace("CH-", "")} - ${chantierInformations.nom} - PILOTE`}
@@ -390,45 +322,11 @@ const NextPageChantier: FunctionComponent<
       {estTerritoireNational &&
       estUnProfilDROM &&
       !chantierInformations.estUnChantierDROM ? (
-        <ChoixTerritoire
-          chantier={chantier}
-          mailleQuery={mailleQuery}
-          mailleSelectionnee={mailleSelectionnee}
-          territoireCode={territoireCode}
-        />
+        <ChoixTerritoire />
       ) : (
-        <PageChantier
-          avancements={avancements}
-          cartographieDroiteChantier={cartographieDroiteChantier}
-          cartographieDroiteIndicateur={cartographieDroiteIndicateur}
-          cartographieGaucheChantier={cartographieGaucheChantier}
-          cartographieGaucheIndicateur={cartographieGaucheIndicateur}
-          chantier={chantier}
-          commentaires={commentaires}
-          datajobsExecution={datajobsExecution}
-          detailsIndicateursTerritoire={detailsIndicateursTerritoire}
-          donneesComparaisonDuTauxDAvancement={
-            donneesComparaisonDuTauxDAvancement
-          }
-          décisionStratégique={
-            décisionStratégique as DecisionStrategiqueChantierContrat
-          }
-          détailsIndicateurs={détailsIndicateurs}
-          indicateurPondérations={indicateurPondérations}
-          indicateurs={indicateurs}
-          jalon={jalon}
-          listeCoordinateursTerritorials={listeCoordinateursTerritorials}
-          listeResponsablesLocaux={listeResponsablesLocaux}
-          mailleQuery={mailleQuery}
-          mailleSelectionnee={mailleSelectionnee}
-          nouveauxGraphiquesSontActifs={!!nouveauxGraphiquesSontActifs}
-          objectifs={objectifs}
-          synthèseDesRésultats={synthèseDesRésultats}
-          territoireCode={territoireCode}
-          territoiresCompares={territoiresCompares}
-        />
+        <PageChantier />
       )}
-    </>
+    </pageChantier.ServerSidePropsProvider>
   );
 };
 

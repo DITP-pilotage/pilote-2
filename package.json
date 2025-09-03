@@ -129,8 +129,6 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-private-methods": "^7.25.9",
-    "@commitlint/cli": "^17.5.1",
-    "@commitlint/config-conventional": "^17.4.4",
     "@hookform/devtools": "^4.3.1",
     "@playwright/test": "^1.42.1",
     "@tailwindcss/postcss": "4.1.12",

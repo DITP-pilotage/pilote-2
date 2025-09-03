@@ -1,15 +1,14 @@
 import "@gouvfr/dsfr/dist/component/form/form.min.css";
 import "@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css";
 import "@gouvfr/dsfr/dist/utility/icons/icons-media/icons-media.min.css";
-import { FunctionComponent, useState } from "react";
+import { useState } from "react";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import Commentaires from "@/components/_commons/CommentairesNew/Commentaires";
-import SynthèseDesRésultats from "@/components/_commons/SynthèseDesRésultatsChantier/SynthèseDesRésultats";
+import SyntheseDesResultats from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultats";
 import Sommaire from "@/client/components/_commons/Sommaire/Sommaire";
 import Titre from "@/components/_commons/Titre/Titre";
-import Objectifs from "@/components/_commons/ObjectifsNew/Objectifs";
-import { typesObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
+import { ObjectifsChantier } from "@/components/PageChantier/ObjectifsChantier";
 import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
@@ -25,93 +24,47 @@ import {
 import Alerte from "@/client/components/_commons/Alerte/Alerte";
 import ResponsablesPageChantier from "@/components/PageChantier/ResponsablesChantier/ResponsablesChantier";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { MailleInterne } from "@/server/domain/maille/Maille.interface";
-import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
-import { IndicateurPondération } from "@/components/PageChantier/PageChantier.interface";
-import { SynthèseDesRésultatsContrat } from "@/server/chantiers/app/contrats/SynthèseDesRésultatsContrat";
-import { CommentaireChantierContrat } from "@/server/chantiers/app/contrats/CommentaireChantierContrat";
-import { ObjectifChantierContrat } from "@/server/chantiers/app/contrats/ObjectifChantierContrat";
-import { DecisionStrategiqueChantierContrat } from "@/server/chantiers/app/contrats/DecisionStrategiqueChantierContrat";
-import {
-  DétailsIndicateurs,
-  DétailsIndicateurTerritoire,
-} from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import { AvancementChantierContrat } from "@/components/PageChantier/AvancementChantier";
-import {
-  CoordinateurTerritorial,
-  DonneesComparaisonDuTauxDAvancementType,
-  ResponsableLocal,
-} from "@/server/domain/territoire/Territoire.interface";
 import BandeauInformationMajDonnees from "@/components/PageChantier/BandeauInformationMajDonnees/BandeauInformationMajDonnees";
 import api from "@/server/infrastructure/api/trpc/api";
 import BandeauInformation from "@/client/components/_commons/BandeauInformation/BandeauInformation";
-import { CartographieIndicateurType } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails";
 import { PanelMenuNavigation } from "@/components/_commons/PanelMenuNavigation/PanelMenuNavigation";
-import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
+import {
+  pageChantier,
+  useTerritoireSelectionne,
+} from "@/components/PageChantier/PageChantierServerSideContext";
 import AvancementChantier from "./AvancementChantier/AvancementChantier";
 import PageChantierEnTête from "./EnTête/EnTête";
-import Cartes, { CartographieType } from "./Cartes/Cartes";
+import Cartes from "./Cartes/Cartes";
 import PageChantierStyled from "./PageChantier.styled";
 import { usePageChantier } from "./usePageChantier";
 import DécisionsStratégiques from "./DécisionsStratégiques/DécisionsStratégiques";
-interface PageChantierProps {
-  indicateurs: Indicateur[];
-  chantier: Chantier;
-  territoireCode: string;
-  territoiresCompares: string[];
-  mailleSelectionnee: MailleInterne;
-  mailleQuery: MailleInterne;
-  synthèseDesRésultats: SynthèseDesRésultatsContrat;
-  commentaires: CommentaireChantierContrat;
-  objectifs: ObjectifChantierContrat;
-  décisionStratégique: DecisionStrategiqueChantierContrat;
-  détailsIndicateurs: DétailsIndicateurs;
-  detailsIndicateursTerritoire: Record<string, DétailsIndicateurTerritoire>;
-  avancements: AvancementChantierContrat;
-  indicateurPondérations: IndicateurPondération[];
-  listeResponsablesLocaux: ResponsableLocal[];
-  listeCoordinateursTerritorials: CoordinateurTerritorial[];
-  jalon: number;
-  cartographieGaucheChantier: CartographieType;
-  cartographieDroiteChantier: CartographieType;
-  cartographieDroiteIndicateur: CartographieIndicateurType;
-  cartographieGaucheIndicateur: CartographieIndicateurType;
-  donneesComparaisonDuTauxDAvancement: DonneesComparaisonDuTauxDAvancementType;
-  nouveauxGraphiquesSontActifs: boolean;
-  datajobsExecution: DatajobsExecution;
-}
 
-const PageChantier: FunctionComponent<PageChantierProps> = ({
-  indicateurs,
-  chantier,
-  territoireCode,
-  territoiresCompares,
-  mailleSelectionnee,
-  mailleQuery,
-  synthèseDesRésultats,
-  commentaires,
-  détailsIndicateurs,
-  detailsIndicateursTerritoire,
-  objectifs,
-  décisionStratégique,
-  avancements,
-  indicateurPondérations,
-  listeResponsablesLocaux,
-  listeCoordinateursTerritorials,
-  jalon,
-  cartographieDroiteChantier,
-  cartographieGaucheChantier,
-  cartographieDroiteIndicateur,
-  cartographieGaucheIndicateur,
-  donneesComparaisonDuTauxDAvancement,
-  nouveauxGraphiquesSontActifs,
-  datajobsExecution,
-}: PageChantierProps) => {
+const PageChantier = () => {
+  const {
+    indicateurs,
+    chantier,
+    territoireCode,
+    territoiresCompares,
+    mailleSelectionnee,
+    mailleQuery,
+    commentaires,
+    détailsIndicateurs,
+    detailsIndicateursTerritoire,
+    décisionStratégique,
+    avancements,
+    indicateurPondérations,
+    listeResponsablesLocaux,
+    listeCoordinateursTerritorials,
+    jalon,
+    cartographieDroiteIndicateur,
+    cartographieGaucheIndicateur,
+    donneesComparaisonDuTauxDAvancement,
+    nouveauxGraphiquesSontActifs,
+    datajobsExecution,
+  } = pageChantier.useServerSidePropsContext();
+
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
-
-  const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
+  const territoireSélectionné = useTerritoireSelectionne();
 
   const {
     estAutoriseAImporterDesIndicateurs,
@@ -122,7 +75,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
     estAutoriseAVoirLesAlertesMAJIndicateurs,
     estAutoriseAVoirLeSelecteurDeMaille,
     estAutoriseAAccepterLesPropositionsDeValeurAvancement,
-  } = usePageChantier(chantier, territoireSélectionné, territoireCode);
+  } = usePageChantier();
 
   const { data: alerteMiseAJourIndicateurEstDisponible } =
     api.gestionContenu.récupérerVariableContenu.useQuery({
@@ -210,9 +163,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
             }
             afficheLeBoutonImpression
             afficheLeBoutonMiseAJourDonnee={estAutoriseAImporterDesIndicateurs}
-            chantier={chantier}
             responsables={chantier.responsables}
-            territoireCode={territoireCode}
           />
         </BarreLatéraleEncart>
         <Sommaire
@@ -245,12 +196,12 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
             titre="Mise à jour des données requises : "
           />
         ) : null}
-        {mailleSourceDonnees === "regionale" && (
+        {mailleSourceDonnees === "regionale" ? (
           <BandeauInformation bandeauType="INFO" fermable={false}>
             En l'absence de données départementales, les valeurs des indicateurs
             régionaux sont reportées pour le département.
           </BandeauInformation>
-        )}
+        ) : null}
         <div className="fr-container--fluid fr-py-2w fr-px-md-2w">
           <div
             className={`grid-template ${territoireSélectionné.maille === "nationale" ? "layout--nat" : "layout--dept-reg"}`}
@@ -311,12 +262,9 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   {INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats}
                 </Infobulle>
               </TitreInfobulleConteneur>
-              <SynthèseDesRésultats
-                modeÉcriture={estAutoriseAModifierLesPublications}
+              <SyntheseDesResultats
+                modeEcriture={estAutoriseAModifierLesPublications}
                 nomTerritoire={territoireSélectionné.nomAffiché}
-                réformeId={chantier.id}
-                synthèseDesRésultatsInitiale={synthèseDesRésultats ?? null}
-                territoireCode={territoireCode}
               />
             </section>
             <section className="rubrique" id="responsables">
@@ -349,24 +297,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                 >
                   Répartition géographique
                 </Titre>
-                <Cartes
-                  afficheCarteAvancement={
-                    !!chantier.tauxAvancementDonnéeTerritorialisée[
-                      mailleSelectionnee
-                    ] || chantier.estTerritorialisé
-                  }
-                  afficheCarteMétéo={
-                    !!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] ||
-                    chantier.estTerritorialisé
-                  }
-                  cartographieDroiteChantier={cartographieDroiteChantier}
-                  cartographieGaucheChantier={cartographieGaucheChantier}
-                  chantierMailles={chantier.mailles}
-                  jalon={jalon}
-                  mailleQuery={mailleQuery}
-                  mailleSourceDonnees={mailleSourceDonnees}
-                  territoireCode={territoireCode}
-                />
+                <Cartes mailleSourceDonnees={mailleSourceDonnees} />
               </section>
             </div>
           ) : null}
@@ -384,15 +315,8 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   {INFOBULLE_CONTENUS.chantier.objectifs}
                 </Infobulle>
               </TitreInfobulleConteneur>
-              <Objectifs
-                estEtendu={false}
-                maille="nationale"
+              <ObjectifsChantier
                 modeÉcriture={estAutoriseAModifierLesObjectifs}
-                nomTerritoire="National"
-                objectifs={objectifs[chantier.id]}
-                réformeId={chantier.id}
-                territoireCode={territoireCode}
-                tousLesTypesDObjectif={typesObjectif}
               />
             </section>
           </div>
@@ -438,7 +362,7 @@ const PageChantier: FunctionComponent<PageChantierProps> = ({
                   mailsDirecteursProjets={chantier.responsables.directeursProjet
                     .map((directeur) => directeur.email)
                     .filter(Boolean)}
-                  nouveauxGraphiquesSontActifs={nouveauxGraphiquesSontActifs}
+                  nouveauxGraphiquesSontActifs={!!nouveauxGraphiquesSontActifs}
                   sousIndicateursDisponibles={!!sousIndicateursDisponibles}
                   territoireCode={territoireCode}
                   territoiresCompares={territoiresCompares}

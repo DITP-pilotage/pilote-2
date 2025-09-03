@@ -1,6 +1,6 @@
 import { parseAsBoolean, parseAsStringLiteral, useQueryState } from "nuqs";
 
-export const useSynthèseDesRésultats = () => {
+export const useSyntheseDesResultats = () => {
   const [, setAction] = useQueryState(
     "_action",
     parseAsStringLiteral(["creation-reussie", ""]).withDefault("").withOptions({

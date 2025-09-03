@@ -2,10 +2,10 @@ import { FunctionComponent } from "react";
 import { parseAsString, useQueryState } from "nuqs";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import CartesStyled from "@/components/PageChantier/Cartes/Cartes.styled";
-import { Maille, MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { Maille } from "@/server/domain/maille/Maille.interface";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import CartographieAvecSelecteur from "@/components/_commons/Cartographie/CartographieAvecSelecteur/CartographieAvecSelecteur";
-import { TerritoiresDonnées } from "@/server/domain/territoire/Territoire.interface";
+import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 
 export type CartographieType =
   | "avancementMandat"
@@ -13,30 +13,31 @@ export type CartographieType =
   | "meteo"
   | "propositionValeur";
 interface CartesProps {
-  chantierMailles: Record<Maille, TerritoiresDonnées>;
-  afficheCarteAvancement: boolean;
-  afficheCarteMétéo: boolean;
   estInteractif?: boolean;
-  territoireCode: string;
-  jalon: number;
-  mailleQuery: MailleInterne;
   mailleSourceDonnees?: Maille | null;
-  cartographieGaucheChantier: CartographieType;
-  cartographieDroiteChantier: CartographieType;
 }
 
 const Cartes: FunctionComponent<CartesProps> = ({
-  chantierMailles,
-  afficheCarteAvancement,
-  afficheCarteMétéo,
   estInteractif = true,
-  territoireCode,
-  jalon,
-  mailleQuery,
   mailleSourceDonnees,
-  cartographieGaucheChantier,
-  cartographieDroiteChantier,
 }) => {
+  const {
+    chantier,
+    jalon,
+    mailleQuery,
+    mailleSelectionnee,
+    territoireCode,
+    cartographieGaucheChantier,
+    cartographieDroiteChantier,
+  } = pageChantier.useServerSidePropsContext();
+
+  const afficheCarteAvancement =
+    !!chantier.tauxAvancementDonnéeTerritorialisée[mailleSelectionnee] ||
+    chantier.estTerritorialisé;
+  const afficheCarteMétéo =
+    !!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] ||
+    chantier.estTerritorialisé;
+
   const [, setCartographieGaucheSelection] = useQueryState(
     "carteChG",
     parseAsString.withDefault("avancementMandat").withOptions({
@@ -66,7 +67,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
                   setCartographieGaucheSelection(valeur)
                 }
                 cartographieSelectionnee={cartographieGaucheChantier}
-                chantierMailles={chantierMailles}
+                chantierMailles={chantier.mailles}
                 estInteractif={estInteractif}
                 jalon={jalon}
                 listeCartographiesDesactives={[cartographieDroiteChantier]}
@@ -93,7 +94,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
                   setCartographieDroiteSelection(valeur)
                 }
                 cartographieSelectionnee={cartographieDroiteChantier}
-                chantierMailles={chantierMailles}
+                chantierMailles={chantier.mailles}
                 estInteractif={estInteractif}
                 jalon={jalon}
                 listeCartographiesDesactives={[cartographieGaucheChantier]}
