@@ -2,11 +2,9 @@ module.exports = {
   extends: ['@commitlint/config-conventional'],
   parserPreset: {
     parserOpts: {
-      headerPattern: /^(\w*)(?:\((.*)\))?!?: (.*) \((PIL-\d*)\)$/,
-      breakingHeaderPattern: /^(\w*)(?:\((.*)\))?!: (.*) \((PIL-\d*)\)$/,
+      headerPattern: /^(.+) \((PIL-\d+)\)$/u,
+      breakingHeaderPattern: /^(.+) \((PIL-\d+)\)$/u,
       headerCorrespondence: [
-        'type',
-        'scope',
         'subject',
         'ticket'
       ],
