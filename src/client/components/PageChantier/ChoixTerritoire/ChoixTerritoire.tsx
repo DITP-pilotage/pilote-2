@@ -60,10 +60,7 @@ const ChoixTerritoire = () => {
               Filtrer
             </button>
           </div>
-          <PageChantierEnTête
-            chantier={chantier}
-            territoireCode={territoireCode}
-          />
+          <PageChantierEnTête />
           <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mt-5w fr-mx-1w">
             <div className="fr-col-12 fr-col-xl-6">
               <Bloc>

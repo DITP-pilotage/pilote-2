@@ -80,7 +80,7 @@ const PageChantier = () => {
     estAutoriseAVoirLesAlertesMAJIndicateurs,
     estAutoriseAVoirLeSelecteurDeMaille,
     estAutoriseAAccepterLesPropositionsDeValeurAvancement,
-  } = usePageChantier(chantier, territoireSélectionné, territoireCode);
+  } = usePageChantier();
 
   const { data: alerteMiseAJourIndicateurEstDisponible } =
     api.gestionContenu.récupérerVariableContenu.useQuery({
@@ -168,9 +168,7 @@ const PageChantier = () => {
             }
             afficheLeBoutonImpression
             afficheLeBoutonMiseAJourDonnee={estAutoriseAImporterDesIndicateurs}
-            chantier={chantier}
             responsables={chantier.responsables}
-            territoireCode={territoireCode}
           />
         </BarreLatéraleEncart>
         <Sommaire
@@ -203,12 +201,12 @@ const PageChantier = () => {
             titre="Mise à jour des données requises : "
           />
         ) : null}
-        {mailleSourceDonnees === "regionale" && (
+        {mailleSourceDonnees === "regionale" ? (
           <BandeauInformation bandeauType="INFO" fermable={false}>
             En l'absence de données départementales, les valeurs des indicateurs
             régionaux sont reportées pour le département.
           </BandeauInformation>
-        )}
+        ) : null}
         <div className="fr-container--fluid fr-py-2w fr-px-md-2w">
           <div
             className={`grid-template ${territoireSélectionné.maille === "nationale" ? "layout--nat" : "layout--dept-reg"}`}
@@ -270,10 +268,10 @@ const PageChantier = () => {
                 </Infobulle>
               </TitreInfobulleConteneur>
               <SynthèseDesRésultats
+                chantierId={chantier.id}
                 modeÉcriture={estAutoriseAModifierLesPublications}
                 nomTerritoire={territoireSélectionné.nomAffiché}
-                réformeId={chantier.id}
-                synthèseDesRésultatsInitiale={synthèseDesRésultats ?? null}
+                synthèseDesRésultats={synthèseDesRésultats ?? null}
                 territoireCode={territoireCode}
               />
             </section>

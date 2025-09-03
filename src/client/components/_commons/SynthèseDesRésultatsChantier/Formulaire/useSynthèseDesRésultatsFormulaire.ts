@@ -4,12 +4,13 @@ import { SubmitHandler } from "react-hook-form";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import api from "@/server/infrastructure/api/trpc/api";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
-import SynthèseDesRésultatsFormulaireProps, {
-  SynthèseDesRésultatsFormulaireInputs,
-} from "./Formulaire.interface";
+import SynthèseDesRésultats from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
+import { SynthèseDesRésultatsFormulaireInputs } from "./Formulaire.interface";
 
 export default function useSynthèseDesRésultatsFormulaire(
-  synthèseDesRésultatsCrééeCallback: SynthèseDesRésultatsFormulaireProps["synthèseDesRésultatsCrééeCallback"],
+  synthèseDesRésultatsCrééeCallback: (
+    synthèseDesRésultatsCréée: SynthèseDesRésultats,
+  ) => void,
   territoireCode: string,
 ) {
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);

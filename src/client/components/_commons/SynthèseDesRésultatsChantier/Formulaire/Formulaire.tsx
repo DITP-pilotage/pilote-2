@@ -15,21 +15,25 @@ import {
   LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS,
   validationSynthèseDesRésultatsFormulaire,
 } from "validation/synthèseDesRésultats";
+import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import SynthèseDesRésultats from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import SynthèseDesRésultatsFormulaireStyled from "./Formulaire.styled";
-import SynthèseDesRésultatsFormulaireProps, {
-  SynthèseDesRésultatsFormulaireInputs,
-} from "./Formulaire.interface";
+import { SynthèseDesRésultatsFormulaireInputs } from "./Formulaire.interface";
 import useSynthèseDesRésultatsFormulaire from "./useSynthèseDesRésultatsFormulaire";
+
+interface SynthèseDesRésultatsFormulaireProps {
+  synthèseDesRésultatsCrééeCallback: (
+    synthèseDesRésultatsCréée: SynthèseDesRésultats,
+  ) => void;
+  annulationCallback?: () => void;
+}
 
 const SynthèseDesRésultatsFormulaire: FunctionComponent<
   SynthèseDesRésultatsFormulaireProps
-> = ({
-  contenuInitial,
-  météoInitiale,
-  synthèseDesRésultatsCrééeCallback,
-  annulationCallback,
-  territoireCode,
-}) => {
+> = ({ synthèseDesRésultatsCrééeCallback, annulationCallback }) => {
+  const { synthèseDesRésultats, territoireCode } =
+    pageChantier.useServerSidePropsContext();
+
   const { créerSynthèseDesRésultats, alerte } =
     useSynthèseDesRésultatsFormulaire(
       synthèseDesRésultatsCrééeCallback,
@@ -46,10 +50,11 @@ const SynthèseDesRésultatsFormulaire: FunctionComponent<
     mode: "all",
     resolver: zodResolver(validationSynthèseDesRésultatsFormulaire),
     defaultValues: {
-      contenu: contenuInitial,
+      contenu: synthèseDesRésultats?.contenu,
       météo:
-        météoInitiale && météosSaisissables.includes(météoInitiale)
-          ? (météoInitiale as MétéoSaisissable)
+        synthèseDesRésultats?.météo &&
+        météosSaisissables.includes(synthèseDesRésultats.météo)
+          ? (synthèseDesRésultats.météo as MétéoSaisissable)
           : undefined,
     },
   });

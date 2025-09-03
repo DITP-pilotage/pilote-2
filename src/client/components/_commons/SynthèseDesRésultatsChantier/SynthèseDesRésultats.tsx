@@ -1,7 +1,6 @@
 import { parseAsBoolean, parseAsStringLiteral, useQueryState } from "nuqs";
 import { FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import { SynthèseDesRésultatsProps } from "@/components/_commons/SynthèseDesRésultatsChantier/SynthèseDesRésultats.interface";
 import SynthèseDesRésultatsStyled from "@/components/_commons/SynthèseDesRésultatsChantier/SynthèseDesRésultats.styled";
 import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
@@ -9,16 +8,23 @@ import SynthèseDesRésultatsHistorique from "@/components/_commons/SynthèseDes
 import { useSynthèseDesRésultats } from "@/components/_commons/SynthèseDesRésultatsChantier/useSynthèseDesRésultats";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import SynthèseDesRésultatsAffichage from "@/components/_commons/SynthèseDesRésultatsChantier/Affichage/Affichage";
+import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import SynthèseDesRésultatsFormulaire from "./Formulaire/Formulaire";
 
+export interface SynthèseDesRésultatsProps {
+  nomTerritoire: string;
+  modeÉcriture?: boolean;
+  estInteractif?: boolean;
+}
+
 const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = ({
-  synthèseDesRésultatsInitiale,
-  réformeId,
   nomTerritoire,
   modeÉcriture = false,
   estInteractif = true,
-  territoireCode,
 }) => {
+  const { chantier, territoireCode, synthèseDesRésultats } =
+    pageChantier.useServerSidePropsContext();
+
   const [action] = useQueryState(
     "_action",
     parseAsStringLiteral(["creation-reussie", ""]),
@@ -41,10 +47,7 @@ const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = (
           {modeÉdition && modeÉcriture ? (
             <SynthèseDesRésultatsFormulaire
               annulationCallback={() => setModeÉdition(false)}
-              contenuInitial={synthèseDesRésultatsInitiale?.contenu}
-              météoInitiale={synthèseDesRésultatsInitiale?.météo}
               synthèseDesRésultatsCrééeCallback={synthèseDesRésultatsCréée}
-              territoireCode={territoireCode}
             />
           ) : (
             <>
@@ -60,29 +63,27 @@ const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = (
                 <div className="fr-mx-1w fr-mb-2w fr-mb-md-0 météo-affichage">
                   <div className="fr-mb-2w">
                     <MétéoBadge
-                      météo={
-                        synthèseDesRésultatsInitiale?.météo ?? "NON_RENSEIGNEE"
-                      }
+                      météo={synthèseDesRésultats?.météo ?? "NON_RENSEIGNEE"}
                     />
                   </div>
-                  {!!synthèseDesRésultatsInitiale && (
+                  {!!synthèseDesRésultats && (
                     <div>
-                      <MeteoPicto meteo={synthèseDesRésultatsInitiale.météo} />
+                      <MeteoPicto meteo={synthèseDesRésultats.météo} />
                     </div>
                   )}
                 </div>
                 <div className="synthèse-affichage">
                   <SynthèseDesRésultatsAffichage
-                    synthèseDesRésultats={synthèseDesRésultatsInitiale}
+                    synthèseDesRésultats={synthèseDesRésultats}
                   />
                 </div>
               </div>
               {estInteractif ? (
                 <div className="fr-grid-row fr-grid-row--right">
                   <div className="fr-col-12 actions fr-mt-1w">
-                    {!!synthèseDesRésultatsInitiale ? (
+                    {!!synthèseDesRésultats ? (
                       <SynthèseDesRésultatsHistorique
-                        réformeId={réformeId}
+                        réformeId={chantier.id}
                         territoireCode={territoireCode}
                       />
                     ) : null}

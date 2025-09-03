@@ -3,11 +3,13 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { estAutoriséAImporterDesIndicateurs } from "@/client/utils/indicateur/indicateur";
 import { estAutoriséAConsulterLaFicheConducteur } from "@/client/utils/fiche-conducteur/fiche-conducteur";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { territoiresTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
+import {
+  actionsTerritoiresStore,
+  territoiresTerritoiresStore,
+} from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import { PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS } from "@/client/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj";
 import { LISTE_PROFIL_TERRITORIALISE } from "@/server/app/domain/ProfilTerritorialise";
+import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 
 const PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_AVANCEMENT = new Set([
   ProfilEnum.DITP_ADMIN,
@@ -19,12 +21,14 @@ const PROFIL_INTERDIT_DE_VOIR_LE_SELECTEUR_DE_MAILLE = new Set([
   ProfilEnum.RESPONSABLE_DEPARTEMENT,
 ]);
 
-export const usePageChantier = (
-  chantier: Chantier,
-  territoireSélectionné: DétailTerritoire,
-  territoireCode: string,
-) => {
+export const usePageChantier = () => {
   const { data: session } = useSession();
+  const { chantier, territoireCode } = pageChantier.useServerSidePropsContext();
+
+  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+
+  const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
+
   const territoires = territoiresTerritoiresStore();
 
   let estAutoriseAModifierLesPublications =
