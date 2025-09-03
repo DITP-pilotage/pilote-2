@@ -25,12 +25,14 @@ import {
 import Alerte from "@/client/components/_commons/Alerte/Alerte";
 import ResponsablesPageChantier from "@/components/PageChantier/ResponsablesChantier/ResponsablesChantier";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import BandeauInformationMajDonnees from "@/components/PageChantier/BandeauInformationMajDonnees/BandeauInformationMajDonnees";
 import api from "@/server/infrastructure/api/trpc/api";
 import BandeauInformation from "@/client/components/_commons/BandeauInformation/BandeauInformation";
 import { PanelMenuNavigation } from "@/components/_commons/PanelMenuNavigation/PanelMenuNavigation";
-import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import {
+  pageChantier,
+  useTerritoireSelectionne,
+} from "@/components/PageChantier/PageChantierServerSideContext";
 import AvancementChantier from "./AvancementChantier/AvancementChantier";
 import PageChantierEnTête from "./EnTête/EnTête";
 import Cartes from "./Cartes/Cartes";
@@ -46,7 +48,6 @@ const PageChantier = () => {
     territoiresCompares,
     mailleSelectionnee,
     mailleQuery,
-    synthèseDesRésultats,
     commentaires,
     détailsIndicateurs,
     detailsIndicateursTerritoire,
@@ -57,8 +58,6 @@ const PageChantier = () => {
     listeResponsablesLocaux,
     listeCoordinateursTerritorials,
     jalon,
-    cartographieDroiteChantier,
-    cartographieGaucheChantier,
     cartographieDroiteIndicateur,
     cartographieGaucheIndicateur,
     donneesComparaisonDuTauxDAvancement,
@@ -67,9 +66,7 @@ const PageChantier = () => {
   } = pageChantier.useServerSidePropsContext();
 
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
-
-  const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
+  const territoireSélectionné = useTerritoireSelectionne();
 
   const {
     estAutoriseAImporterDesIndicateurs,
@@ -312,13 +309,7 @@ const PageChantier = () => {
                     !!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] ||
                     chantier.estTerritorialisé
                   }
-                  cartographieDroiteChantier={cartographieDroiteChantier}
-                  cartographieGaucheChantier={cartographieGaucheChantier}
-                  chantierMailles={chantier.mailles}
-                  jalon={jalon}
-                  mailleQuery={mailleQuery}
                   mailleSourceDonnees={mailleSourceDonnees}
-                  territoireCode={territoireCode}
                 />
               </section>
             </div>
