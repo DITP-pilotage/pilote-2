@@ -6,43 +6,33 @@ import {
 } from "@/client/constants/libellésObjectif";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import Publication from "@/components/_commons/PublicationChantier/Publication";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { Maille } from "@/server/domain/maille/Maille.interface";
-import Objectif, {
-  typesObjectif,
-} from "@/server/domain/chantier/objectif/Objectif.interface";
+import { typesObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
+import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 
 export interface ObjectifsProps {
-  objectifs: Objectif[] | null;
-  réformeId: Chantier["id"];
-  maille: Maille;
-  nomTerritoire: string;
-  tousLesTypesDObjectif: typeof typesObjectif;
-  estEtendu: boolean;
   modeÉcriture?: boolean;
   estInteractif?: boolean;
-  territoireCode: string;
 }
 
-const Objectifs: FunctionComponent<ObjectifsProps> = ({
-  objectifs,
-  réformeId,
-  maille,
-  nomTerritoire,
-  tousLesTypesDObjectif,
-  estEtendu = true,
+export const Objectifs: FunctionComponent<ObjectifsProps> = ({
   modeÉcriture = false,
   estInteractif = true,
-  territoireCode,
 }) => {
+  const {
+    objectifs: tousLesObjectifs,
+    chantier,
+    territoireCode,
+  } = pageChantier.useServerSidePropsContext();
+  const objectifs = tousLesObjectifs[chantier.id];
+
   return (
-    <Bloc contenuClassesSupplémentaires="" titre={nomTerritoire}>
-      {tousLesTypesDObjectif.map((type) => (
+    <Bloc contenuClassesSupplémentaires="" titre="National">
+      {typesObjectif.map((type) => (
         <section className="fr-accordion" key={type}>
           <h3 className="fr-accordion__title">
             <button
               aria-controls={`accordion-${type}`}
-              aria-expanded={estEtendu}
+              aria-expanded={false}
               className="fr-accordion__btn"
               title={libellésTypesObjectif[type as TypeObjectif]}
               type="button"
@@ -60,12 +50,12 @@ const Objectifs: FunctionComponent<ObjectifsProps> = ({
                   consignesDÉcritureObjectif[type as TypeObjectif],
               }}
               estInteractif={estInteractif}
-              maille={maille}
+              maille="nationale"
               modeÉcriture={modeÉcriture}
               publicationInitiale={
                 objectifs?.find((objectif) => objectif?.type === type) || null
               }
-              réformeId={réformeId}
+              réformeId={chantier.id}
               territoireCode={territoireCode}
             />
           </div>
@@ -74,5 +64,3 @@ const Objectifs: FunctionComponent<ObjectifsProps> = ({
     </Bloc>
   );
 };
-
-export default Objectifs;

@@ -8,7 +8,7 @@ import Commentaires from "@/components/_commons/CommentairesNew/Commentaires";
 import SynthèseDesRésultats from "@/components/_commons/SynthèseDesRésultatsChantier/SynthèseDesRésultats";
 import Sommaire from "@/client/components/_commons/Sommaire/Sommaire";
 import Titre from "@/components/_commons/Titre/Titre";
-import Objectifs from "@/components/_commons/ObjectifsNew/Objectifs";
+import { Objectifs } from "@/components/_commons/ObjectifsNew/Objectifs";
 import { typesObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
 import {
   typesCommentaireMailleNationale,
@@ -317,16 +317,7 @@ const PageChantier = () => {
                   {INFOBULLE_CONTENUS.chantier.objectifs}
                 </Infobulle>
               </TitreInfobulleConteneur>
-              <Objectifs
-                estEtendu={false}
-                maille="nationale"
-                modeÉcriture={estAutoriseAModifierLesObjectifs}
-                nomTerritoire="National"
-                objectifs={objectifs[chantier.id]}
-                réformeId={chantier.id}
-                territoireCode={territoireCode}
-                tousLesTypesDObjectif={typesObjectif}
-              />
+              <Objectifs modeÉcriture={estAutoriseAModifierLesObjectifs} />
             </section>
           </div>
           {indicateurs.length > 0 ? (
