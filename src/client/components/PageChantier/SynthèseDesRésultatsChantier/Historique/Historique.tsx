@@ -2,11 +2,11 @@ import { Fragment, FunctionComponent } from "react";
 import Modale from "@/components/_commons/Modale/Modale";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
 import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
-import SynthèseDesRésultatsAffichage from "@/components/_commons/SynthèseDesRésultatsChantier/Affichage/Affichage";
+import SynthèseDesRésultatsAffichage from "@/components/PageChantier/SynthèseDesRésultatsChantier/Affichage/Affichage";
 import BoutonSousLigné from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import SynthèseDesRésultatsHistoriqueStyled from "./Historique.styled";
-import useHistoriqueDeLaSynthèseDesRésultats from "./useHistoriqueDeLaSynthèseDesRésultats";
+import useHistoriqueDeLaSyntheseDesResultats from "./useHistoriqueDeLaSyntheseDesResultats";
 
 interface SynthèseDesRésultatsHistoriqueProps {
   réformeId: string;
@@ -21,7 +21,7 @@ const SynthèseDesRésultatsHistorique: FunctionComponent<
   const {
     historiqueDeLaSynthèseDesRésultats,
     récupérerHistoriqueSynthèseDesRésultats,
-  } = useHistoriqueDeLaSynthèseDesRésultats(réformeId, territoireCode);
+  } = useHistoriqueDeLaSyntheseDesResultats(réformeId, territoireCode);
 
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 

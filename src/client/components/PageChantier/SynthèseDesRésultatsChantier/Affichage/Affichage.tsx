@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import { formaterDate } from "@/client/utils/date/date";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
-import BoutonsAffichage from "@/components/_commons/SynthèseDesRésultatsChantier/BoutonsAffichage/BoutonsAffichage";
+import BoutonsAffichage from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonsAffichage/BoutonsAffichage";
 import { RouterOutputs } from "@/server/infrastructure/api/trpc/trpc.interface";
 import useAffichage from "./useAffichage";
 

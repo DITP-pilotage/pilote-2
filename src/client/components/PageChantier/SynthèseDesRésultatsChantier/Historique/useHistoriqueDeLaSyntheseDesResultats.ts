@@ -2,7 +2,7 @@ import { useState } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
 import { RouterOutputs } from "@/server/infrastructure/api/trpc/trpc.interface";
 
-export default function useHistoriqueDeLaSynthèseDesRésultats(
+export default function useHistoriqueDeLaSyntheseDesResultats(
   chantierId: string,
   territoireCode: string,
 ) {

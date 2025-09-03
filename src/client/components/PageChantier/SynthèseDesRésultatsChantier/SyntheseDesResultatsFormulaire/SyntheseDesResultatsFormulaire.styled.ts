@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 
-const SynthèseDesRésultatsFormulaireStyled = styled.form`
+const SyntheseDesResultatsFormulaireStyled = styled.form`
   textarea {
     max-height: 85vh;
     resize: vertical;
@@ -37,4 +37,4 @@ const SynthèseDesRésultatsFormulaireStyled = styled.form`
   }
 `;
 
-export default SynthèseDesRésultatsFormulaireStyled;
+export default SyntheseDesResultatsFormulaireStyled;

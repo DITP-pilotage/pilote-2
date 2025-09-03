@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 
-const SynthèseDesRésultatsStyled = styled.div`
+const SyntheseDesResultatsStyled = styled.div`
   .contenu {
     display: flex;
     flex-wrap: wrap;
@@ -38,4 +38,4 @@ const SynthèseDesRésultatsStyled = styled.div`
   }
 `;
 
-export default SynthèseDesRésultatsStyled;
+export default SyntheseDesResultatsStyled;

@@ -1,25 +1,25 @@
 import { parseAsBoolean, parseAsStringLiteral, useQueryState } from "nuqs";
 import { FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import SynthèseDesRésultatsStyled from "@/components/_commons/SynthèseDesRésultatsChantier/SynthèseDesRésultats.styled";
+import SyntheseDesResultatsStyled from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultats.styled";
 import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
-import SynthèseDesRésultatsHistorique from "@/components/_commons/SynthèseDesRésultatsChantier/Historique/Historique";
-import { useSynthèseDesRésultats } from "@/components/_commons/SynthèseDesRésultatsChantier/useSynthèseDesRésultats";
+import SynthèseDesRésultatsHistorique from "@/components/PageChantier/SynthèseDesRésultatsChantier/Historique/Historique";
+import { useSyntheseDesResultats } from "@/components/PageChantier/SynthèseDesRésultatsChantier/useSyntheseDesResultats";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import SynthèseDesRésultatsAffichage from "@/components/_commons/SynthèseDesRésultatsChantier/Affichage/Affichage";
+import SynthèseDesRésultatsAffichage from "@/components/PageChantier/SynthèseDesRésultatsChantier/Affichage/Affichage";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
-import SynthèseDesRésultatsFormulaire from "./Formulaire/Formulaire";
+import SyntheseDesResultatsFormulaire from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultatsFormulaire/SyntheseDesResultatsFormulaire";
 
-export interface SynthèseDesRésultatsProps {
+export interface SyntheseDesResultatsProps {
   nomTerritoire: string;
-  modeÉcriture?: boolean;
+  modeEcriture?: boolean;
   estInteractif?: boolean;
 }
 
-const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = ({
+const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
   nomTerritoire,
-  modeÉcriture = false,
+  modeEcriture = false,
   estInteractif = true,
 }) => {
   const { chantier, territoireCode, synthèseDesRésultats } =
@@ -38,16 +38,16 @@ const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = (
     }),
   );
 
-  const { synthèseDesRésultatsCréée } = useSynthèseDesRésultats();
+  const { synthèseDesRésultatsCréée } = useSyntheseDesResultats();
 
   return (
-    <SynthèseDesRésultatsStyled>
+    <SyntheseDesResultatsStyled>
       <Bloc className="h-full" titre={nomTerritoire}>
         <div className="fr-py-1w">
-          {modeÉdition && modeÉcriture ? (
-            <SynthèseDesRésultatsFormulaire
+          {modeÉdition && modeEcriture ? (
+            <SyntheseDesResultatsFormulaire
               annulationCallback={() => setModeÉdition(false)}
-              synthèseDesRésultatsCrééeCallback={synthèseDesRésultatsCréée}
+              syntheseDesResultatsCreeeCallback={synthèseDesRésultatsCréée}
             />
           ) : (
             <>
@@ -87,7 +87,7 @@ const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = (
                         territoireCode={territoireCode}
                       />
                     ) : null}
-                    {modeÉcriture ? (
+                    {modeEcriture ? (
                       <button
                         className="fr-btn fr-btn--secondary fr-ml-3w bouton-modifier"
                         onClick={() => setModeÉdition(true)}
@@ -108,8 +108,8 @@ const SynthèseDesRésultats: FunctionComponent<SynthèseDesRésultatsProps> = (
           )}
         </div>
       </Bloc>
-    </SynthèseDesRésultatsStyled>
+    </SyntheseDesResultatsStyled>
   );
 };
 
-export default SynthèseDesRésultats;
+export default SyntheseDesResultats;

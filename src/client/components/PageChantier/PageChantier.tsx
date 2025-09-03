@@ -5,7 +5,7 @@ import { useState } from "react";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import Commentaires from "@/components/_commons/CommentairesNew/Commentaires";
-import SynthèseDesRésultats from "@/components/_commons/SynthèseDesRésultatsChantier/SynthèseDesRésultats";
+import SyntheseDesResultats from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultats";
 import Sommaire from "@/client/components/_commons/Sommaire/Sommaire";
 import Titre from "@/components/_commons/Titre/Titre";
 import { ObjectifsChantier } from "@/components/PageChantier/ObjectifsChantier";
@@ -263,8 +263,8 @@ const PageChantier = () => {
                   {INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats}
                 </Infobulle>
               </TitreInfobulleConteneur>
-              <SynthèseDesRésultats
-                modeÉcriture={estAutoriseAModifierLesPublications}
+              <SyntheseDesResultats
+                modeEcriture={estAutoriseAModifierLesPublications}
                 nomTerritoire={territoireSélectionné.nomAffiché}
               />
             </section>

@@ -14,29 +14,29 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 import {
   LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS,
   validationSynthèseDesRésultatsFormulaire,
-} from "validation/synthèseDesRésultats";
+} from "@/validation/synthèseDesRésultats";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import SynthèseDesRésultats from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
-import SynthèseDesRésultatsFormulaireStyled from "./Formulaire.styled";
-import { SynthèseDesRésultatsFormulaireInputs } from "./Formulaire.interface";
+import SyntheseDesResultatsFormulaireStyled from "./SyntheseDesResultatsFormulaire.styled";
+import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
 import useSynthèseDesRésultatsFormulaire from "./useSynthèseDesRésultatsFormulaire";
 
-interface SynthèseDesRésultatsFormulaireProps {
-  synthèseDesRésultatsCrééeCallback: (
-    synthèseDesRésultatsCréée: SynthèseDesRésultats,
+interface SyntheseDesResultatsFormulaireProps {
+  syntheseDesResultatsCreeeCallback: (
+    syntheseDesResultatsCreee: SynthèseDesRésultats,
   ) => void;
   annulationCallback?: () => void;
 }
 
-const SynthèseDesRésultatsFormulaire: FunctionComponent<
-  SynthèseDesRésultatsFormulaireProps
-> = ({ synthèseDesRésultatsCrééeCallback, annulationCallback }) => {
+const SyntheseDesResultatsFormulaire: FunctionComponent<
+  SyntheseDesResultatsFormulaireProps
+> = ({ syntheseDesResultatsCreeeCallback, annulationCallback }) => {
   const { synthèseDesRésultats, territoireCode } =
     pageChantier.useServerSidePropsContext();
 
   const { créerSynthèseDesRésultats, alerte } =
     useSynthèseDesRésultatsFormulaire(
-      synthèseDesRésultatsCrééeCallback,
+      syntheseDesResultatsCreeeCallback,
       territoireCode,
     );
 
@@ -46,7 +46,7 @@ const SynthèseDesRésultatsFormulaire: FunctionComponent<
     formState: { errors, isValid },
     watch,
     getValues,
-  } = useForm<SynthèseDesRésultatsFormulaireInputs>({
+  } = useForm<SyntheseDesResultatsFormulaireInputs>({
     mode: "all",
     resolver: zodResolver(validationSynthèseDesRésultatsFormulaire),
     defaultValues: {
@@ -60,7 +60,7 @@ const SynthèseDesRésultatsFormulaire: FunctionComponent<
   });
 
   return (
-    <SynthèseDesRésultatsFormulaireStyled
+    <SyntheseDesResultatsFormulaireStyled
       method="post"
       onSubmit={handleSubmit(créerSynthèseDesRésultats)}
     >
@@ -125,8 +125,8 @@ const SynthèseDesRésultatsFormulaire: FunctionComponent<
           <Alerte titre={alerte.titre} type={alerte.type} />
         </div>
       )}
-    </SynthèseDesRésultatsFormulaireStyled>
+    </SyntheseDesResultatsFormulaireStyled>
   );
 };
 
-export default SynthèseDesRésultatsFormulaire;
+export default SyntheseDesResultatsFormulaire;

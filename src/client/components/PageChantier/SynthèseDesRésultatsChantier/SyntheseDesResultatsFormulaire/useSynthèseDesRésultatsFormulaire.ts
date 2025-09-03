@@ -5,7 +5,7 @@ import { récupérerUnCookie } from "@/client/utils/cookies";
 import api from "@/server/infrastructure/api/trpc/api";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import SynthèseDesRésultats from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
-import { SynthèseDesRésultatsFormulaireInputs } from "./Formulaire.interface";
+import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
 
 export default function useSynthèseDesRésultatsFormulaire(
   synthèseDesRésultatsCrééeCallback: (
@@ -32,7 +32,7 @@ export default function useSynthèseDesRésultatsFormulaire(
     });
 
   const créerSynthèseDesRésultats: SubmitHandler<
-    SynthèseDesRésultatsFormulaireInputs
+    SyntheseDesResultatsFormulaireInputs
   > = (data) => {
     mutationCréerSynthèseDesRésultats.mutate({
       contenu: data.contenu,
