@@ -8,8 +8,7 @@ import Commentaires from "@/components/_commons/CommentairesNew/Commentaires";
 import SynthèseDesRésultats from "@/components/_commons/SynthèseDesRésultatsChantier/SynthèseDesRésultats";
 import Sommaire from "@/client/components/_commons/Sommaire/Sommaire";
 import Titre from "@/components/_commons/Titre/Titre";
-import { Objectifs } from "@/components/_commons/ObjectifsNew/Objectifs";
-import { typesObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
+import { ObjectifsChantier } from "@/components/PageChantier/ObjectifsChantier";
 import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
@@ -317,7 +316,9 @@ const PageChantier = () => {
                   {INFOBULLE_CONTENUS.chantier.objectifs}
                 </Infobulle>
               </TitreInfobulleConteneur>
-              <Objectifs modeÉcriture={estAutoriseAModifierLesObjectifs} />
+              <ObjectifsChantier
+                modeÉcriture={estAutoriseAModifierLesObjectifs}
+              />
             </section>
           </div>
           {indicateurs.length > 0 ? (

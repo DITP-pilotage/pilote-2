@@ -9,12 +9,12 @@ import Publication from "@/components/_commons/PublicationChantier/Publication";
 import { typesObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 
-export interface ObjectifsProps {
+export interface ObjectifsChantierProps {
   modeÉcriture?: boolean;
   estInteractif?: boolean;
 }
 
-export const Objectifs: FunctionComponent<ObjectifsProps> = ({
+export const ObjectifsChantier: FunctionComponent<ObjectifsChantierProps> = ({
   modeÉcriture = false,
   estInteractif = true,
 }) => {
