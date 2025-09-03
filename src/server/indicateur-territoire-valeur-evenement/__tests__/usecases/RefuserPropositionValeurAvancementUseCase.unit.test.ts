@@ -3,8 +3,9 @@ import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicate
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 import { RefuserPropositionValeurAvancementUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/RefuserPropositionValeurAvancementUseCase";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
-import { InMemoryTransaction, Transaction } from "@/server/db/Transaction";
+import { Transaction } from "@/server/db/Transaction";
 import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
+import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
 
 describe("RefuserPropositionValeurAvancementUseCase", () => {
   let refuserPropositionValeurAvancementUseCase: RefuserPropositionValeurAvancementUseCase;

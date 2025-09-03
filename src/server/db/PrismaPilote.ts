@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { getPrisma } from "@/server/db/Transaction";
+
+import { getPrisma } from "@/server/db/PrismaTransaction";
 
 export class PrismaPilote {
   instance: PrismaClient | null;

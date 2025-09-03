@@ -9,7 +9,8 @@ import { Meteo } from "@/server/fiche-conducteur/domain/Meteo";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { PilotePrismaClient } from "@/server/db/Transaction";
+
+import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 
 const convertirChantierTerritoireEnChantier = (
   chantierTerritoireModel: ChantierTerritoireModel & {

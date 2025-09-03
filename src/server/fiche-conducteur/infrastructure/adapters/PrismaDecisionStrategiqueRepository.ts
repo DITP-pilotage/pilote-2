@@ -3,7 +3,8 @@ import { DecisionStrategique } from "@/server/fiche-conducteur/domain/DecisionSt
 import { DecisionStrategiqueRepository } from "@/server/fiche-conducteur/domain/ports/DecisionStrategiqueRepository";
 
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { PilotePrismaClient } from "@/server/db/Transaction";
+
+import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 
 const convertifEnDecisionStrategique = (
   decisionStrategiqueModel: DecisionStrategiqueModel,

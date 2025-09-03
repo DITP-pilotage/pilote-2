@@ -1,7 +1,7 @@
 import { PropositionValeurAvancementRepository } from "@/server/import-indicateur/domain/ports/PropositionValeurAvancementRepository";
 import { StatutProposition } from "@/server/chantiers/domain/StatutProposition";
 
-import { getPrisma } from "@/server/db/Transaction";
+import { getPrisma } from "@/server/db/PrismaTransaction";
 
 export class PrismaPropositionValeurAvancementRepository
   implements PropositionValeurAvancementRepository

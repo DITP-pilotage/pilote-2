@@ -4,7 +4,8 @@ import { SyntheseDesResultats } from "@/server/fiche-conducteur/domain/SyntheseD
 import { Meteo } from "@/server/fiche-conducteur/domain/Meteo";
 
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { PilotePrismaClient } from "@/server/db/Transaction";
+
+import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 
 const convertirEnSyntheseDesResultats = (
   syntheseDesResultatsModel: SyntheseDesResultatsModel,

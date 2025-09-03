@@ -3,7 +3,8 @@ import { NOMS_MAILLES } from "@/server/infrastructure/accès_données/maille/mai
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
 import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { PilotePrismaClient } from "@/server/db/Transaction";
+
+import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 
 const convertirEnTerritoire = (territoire: TerritoirePrisma): Territoire => {
   return {

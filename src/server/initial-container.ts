@@ -6,7 +6,7 @@ import {
   InjectionMode,
   Lifetime,
 } from "awilix";
-import { PrismaTransaction } from "@/server/db/Transaction";
+import { PrismaTransaction } from "@/server/db/PrismaTransaction";
 import { InitialDependencies } from "./InitialDependencies";
 import { PrismaPilote } from "./db/PrismaPilote";
 

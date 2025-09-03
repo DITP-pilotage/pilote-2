@@ -4,7 +4,8 @@ import { CommentaireRepository } from "@/server/fiche-conducteur/domain/ports/Co
 import { CommentaireType } from "@/server/fiche-conducteur/domain/CommentaireType";
 
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { PilotePrismaClient } from "@/server/db/Transaction";
+
+import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 
 const convertifEnCommentaire = (
   commentaireModel: CommentaireModel,

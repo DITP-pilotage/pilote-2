@@ -1,7 +1,8 @@
 import { mesure_indicateur_temporaire as MesureIndicateurTemporaireModel } from "@prisma/client";
 import { MesureIndicateurTemporaireRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface";
 import { MesureIndicateurTemporaire } from "@/server/import-indicateur/domain/MesureIndicateurTemporaire";
-import { getPrisma } from "@/server/db/Transaction";
+
+import { getPrisma } from "@/server/db/PrismaTransaction";
 
 const convertirEnModel = (
   mesureIndicateurTemporaire: MesureIndicateurTemporaire,
