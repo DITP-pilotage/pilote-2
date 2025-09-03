@@ -299,18 +299,7 @@ const PageChantier = () => {
                 >
                   Répartition géographique
                 </Titre>
-                <Cartes
-                  afficheCarteAvancement={
-                    !!chantier.tauxAvancementDonnéeTerritorialisée[
-                      mailleSelectionnee
-                    ] || chantier.estTerritorialisé
-                  }
-                  afficheCarteMétéo={
-                    !!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] ||
-                    chantier.estTerritorialisé
-                  }
-                  mailleSourceDonnees={mailleSourceDonnees}
-                />
+                <Cartes mailleSourceDonnees={mailleSourceDonnees} />
               </section>
             </div>
           ) : null}

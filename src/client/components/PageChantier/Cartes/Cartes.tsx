@@ -13,15 +13,11 @@ export type CartographieType =
   | "meteo"
   | "propositionValeur";
 interface CartesProps {
-  afficheCarteAvancement: boolean;
-  afficheCarteMétéo: boolean;
   estInteractif?: boolean;
   mailleSourceDonnees?: Maille | null;
 }
 
 const Cartes: FunctionComponent<CartesProps> = ({
-  afficheCarteAvancement,
-  afficheCarteMétéo,
   estInteractif = true,
   mailleSourceDonnees,
 }) => {
@@ -29,10 +25,19 @@ const Cartes: FunctionComponent<CartesProps> = ({
     chantier,
     jalon,
     mailleQuery,
+    mailleSelectionnee,
     territoireCode,
     cartographieGaucheChantier,
     cartographieDroiteChantier,
   } = pageChantier.useServerSidePropsContext();
+
+  const afficheCarteAvancement =
+    !!chantier.tauxAvancementDonnéeTerritorialisée[mailleSelectionnee] ||
+    chantier.estTerritorialisé;
+  const afficheCarteMétéo =
+    !!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] ||
+    chantier.estTerritorialisé;
+
   const [, setCartographieGaucheSelection] = useQueryState(
     "carteChG",
     parseAsString.withDefault("avancementMandat").withOptions({
