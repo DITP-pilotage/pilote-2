@@ -268,11 +268,8 @@ const PageChantier = () => {
                 </Infobulle>
               </TitreInfobulleConteneur>
               <SynthèseDesRésultats
-                chantierId={chantier.id}
                 modeÉcriture={estAutoriseAModifierLesPublications}
                 nomTerritoire={territoireSélectionné.nomAffiché}
-                synthèseDesRésultats={synthèseDesRésultats ?? null}
-                territoireCode={territoireCode}
               />
             </section>
             <section className="rubrique" id="responsables">
