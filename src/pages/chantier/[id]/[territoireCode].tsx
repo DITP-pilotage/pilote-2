@@ -50,6 +50,7 @@ import { CartographieType } from "@/components/PageChantier/Cartes/Cartes";
 import { CartographieIndicateurType } from "@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails";
 import { getContainer } from "@/server/dependances";
 import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
+import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 
 interface NextPageChantierProps {
   indicateurs: Indicateur[];
@@ -349,39 +350,14 @@ export const getServerSideProps: GetServerSideProps<
 
 const NextPageChantier: FunctionComponent<
   InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({
-  indicateurs,
-  chantierInformations,
-  territoireCode,
-  territoiresCompares,
-  profil,
-  mailleSelectionnee,
-  mailleQuery,
-  synthèseDesRésultats,
-  commentaires,
-  objectifs,
-  décisionStratégique,
-  détailsIndicateurs,
-  detailsIndicateursTerritoire,
-  avancements,
-  indicateurPondérations,
-  chantier,
-  listeResponsablesLocaux,
-  listeCoordinateursTerritorials,
-  jalon,
-  cartographieDroiteChantier,
-  cartographieGaucheChantier,
-  cartographieDroiteIndicateur,
-  cartographieGaucheIndicateur,
-  donneesComparaisonDuTauxDAvancement,
-  nouveauxGraphiquesSontActifs,
-  datajobsExecution,
-}) => {
+> = (props) => {
+  const { chantierInformations, territoireCode, profil } = props;
+
   const estUnProfilDROM = profil === ProfilEnum.DROM;
   const estTerritoireNational = territoireCode === "NAT-FR";
 
   return (
-    <>
+    <pageChantier.ServerSidePropsProvider value={props}>
       <Head>
         <title>
           {`Chantier ${chantierInformations.id.replace("CH-", "")} - ${chantierInformations.nom} - PILOTE`}
@@ -390,45 +366,11 @@ const NextPageChantier: FunctionComponent<
       {estTerritoireNational &&
       estUnProfilDROM &&
       !chantierInformations.estUnChantierDROM ? (
-        <ChoixTerritoire
-          chantier={chantier}
-          mailleQuery={mailleQuery}
-          mailleSelectionnee={mailleSelectionnee}
-          territoireCode={territoireCode}
-        />
+        <ChoixTerritoire />
       ) : (
-        <PageChantier
-          avancements={avancements}
-          cartographieDroiteChantier={cartographieDroiteChantier}
-          cartographieDroiteIndicateur={cartographieDroiteIndicateur}
-          cartographieGaucheChantier={cartographieGaucheChantier}
-          cartographieGaucheIndicateur={cartographieGaucheIndicateur}
-          chantier={chantier}
-          commentaires={commentaires}
-          datajobsExecution={datajobsExecution}
-          detailsIndicateursTerritoire={detailsIndicateursTerritoire}
-          donneesComparaisonDuTauxDAvancement={
-            donneesComparaisonDuTauxDAvancement
-          }
-          décisionStratégique={
-            décisionStratégique as DecisionStrategiqueChantierContrat
-          }
-          détailsIndicateurs={détailsIndicateurs}
-          indicateurPondérations={indicateurPondérations}
-          indicateurs={indicateurs}
-          jalon={jalon}
-          listeCoordinateursTerritorials={listeCoordinateursTerritorials}
-          listeResponsablesLocaux={listeResponsablesLocaux}
-          mailleQuery={mailleQuery}
-          mailleSelectionnee={mailleSelectionnee}
-          nouveauxGraphiquesSontActifs={!!nouveauxGraphiquesSontActifs}
-          objectifs={objectifs}
-          synthèseDesRésultats={synthèseDesRésultats}
-          territoireCode={territoireCode}
-          territoiresCompares={territoiresCompares}
-        />
+        <PageChantier />
       )}
-    </>
+    </pageChantier.ServerSidePropsProvider>
   );
 };
 
