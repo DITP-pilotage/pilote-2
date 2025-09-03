@@ -37,7 +37,6 @@ interface IndicateursProps {
   cartographieDroiteIndicateur: CartographieIndicateurType;
   cartographieGaucheIndicateur: CartographieIndicateurType;
   categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]>;
-  sousIndicateursDisponibles: boolean;
   nouveauxGraphiquesSontActifs: boolean;
   datajobsExecution: DatajobsExecution;
 }
@@ -62,7 +61,6 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   cartographieDroiteIndicateur,
   cartographieGaucheIndicateur,
   categoriesIndicateurRepartition,
-  sousIndicateursDisponibles,
   nouveauxGraphiquesSontActifs,
   datajobsExecution,
 }) => {
@@ -117,11 +115,6 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                     ),
                   )
                   .map((indicateur) => {
-                    const listeSousIndicateurs = !!sousIndicateursDisponibles
-                      ? indicateurs.filter(
-                          (ind) => ind.parentId === indicateur.id,
-                        )
-                      : [];
                     return (
                       <IndicateurBloc
                         cartographieDroiteIndicateur={
@@ -147,7 +140,6 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                         indicateur={indicateur}
                         jalon={jalon}
                         key={indicateur.id}
-                        listeSousIndicateurs={listeSousIndicateurs}
                         mailleQuery={mailleQuery}
                         mailleSelectionnee={mailleSelectionnee}
                         mailsDirecteursProjets={mailsDirecteursProjets}

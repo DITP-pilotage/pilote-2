@@ -11,14 +11,12 @@ import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicate
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import useIndicateurBloc from "./useIndicateurBloc";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
-import SousIndicateursRapportDetaille from "./SousIndicateursRapportDetaille/SousIndicateursRapportDetaille";
 
 interface IndicateurBlocProps {
   indicateur: Indicateur;
   détailsIndicateurs: DétailsIndicateurs;
   territoireCode: string;
   typeDeRéforme: "chantier";
-  listeSousIndicateurs: Indicateur[];
 }
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
@@ -26,7 +24,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   détailsIndicateurs,
   territoireCode,
   typeDeRéforme,
-  listeSousIndicateurs,
 }) => {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
@@ -81,11 +78,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
           <Tableau<IndicateurDétailsParTerritoire>
             tableau={tableau}
             titre={`Tableau de l'indicateur : ${indicateur.nom}`}
-          />
-          <SousIndicateursRapportDetaille
-            détailsIndicateurs={détailsIndicateurs}
-            listeSousIndicateurs={listeSousIndicateurs}
-            territoireCode={territoireCode}
           />
         </section>
       </Bloc>

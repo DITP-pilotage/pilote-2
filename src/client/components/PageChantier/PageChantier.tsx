@@ -96,19 +96,10 @@ const PageChantier = () => {
     chantier.mailles[territoireSélectionné.maille][territoireCode]
       .mailleSourceDonnees;
 
-  const { data: sousIndicateursDisponibles } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_SOUS_INDICATEURS",
-    });
-
-  const listeIndicateursParent = !!sousIndicateursDisponibles
-    ? indicateurs.filter((indicateur) => !indicateur.parentId)
-    : indicateurs;
-
   const categoriesIndicateurRepartition: Record<
     CategoriesIndicateur,
     Indicateur[]
-  > = listeIndicateursParent.reduce(
+  > = indicateurs.reduce(
     (acc, indicateur) => {
       if (
         (détailsIndicateurs[indicateur.id][territoireCode]?.pondération ?? 0) >
@@ -363,7 +354,6 @@ const PageChantier = () => {
                     .map((directeur) => directeur.email)
                     .filter(Boolean)}
                   nouveauxGraphiquesSontActifs={!!nouveauxGraphiquesSontActifs}
-                  sousIndicateursDisponibles={!!sousIndicateursDisponibles}
                   territoireCode={territoireCode}
                   territoiresCompares={territoiresCompares}
                 />
