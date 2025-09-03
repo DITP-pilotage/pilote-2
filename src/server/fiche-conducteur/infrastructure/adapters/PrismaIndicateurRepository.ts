@@ -8,7 +8,8 @@ import { Indicateur } from "@/server/fiche-conducteur/domain/Indicateur";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { PilotePrismaClient } from "@/server/db/Transaction";
+
+import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 
 const convertirEnIndicateur = (
   prismaIndicateurTerritoire: PrismaIndicateurTerritoire & {

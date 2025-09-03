@@ -3,7 +3,8 @@ import { Objectif } from "@/server/fiche-conducteur/domain/Objectif";
 import { ObjectifRepository } from "@/server/fiche-conducteur/domain/ports/ObjectifRepository";
 
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { PilotePrismaClient } from "@/server/db/Transaction";
+
+import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 
 const convertifEnObjectif = (objectifModel: ObjectifModel): Objectif =>
   Objectif.creerObjectif({

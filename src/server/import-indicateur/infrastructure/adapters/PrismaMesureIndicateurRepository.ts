@@ -2,7 +2,7 @@ import { mesure_indicateur as MesureIndicateur } from "@prisma/client";
 import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
 import { MesureIndicateurRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface";
 
-import { getPrisma } from "@/server/db/Transaction";
+import { getPrisma } from "@/server/db/PrismaTransaction";
 
 const convertirEnModel = (
   indicateurData: IndicateurData,

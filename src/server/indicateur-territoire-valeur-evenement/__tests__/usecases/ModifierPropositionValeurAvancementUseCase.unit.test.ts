@@ -5,7 +5,8 @@ import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territo
 import { toISODate } from "@/server/app/domain/Dates";
 import { ModifierPropositionValeurAvancementUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/ModifierPropositionValeurAvancementUseCase";
 import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
-import { InMemoryTransaction, Transaction } from "@/server/db/Transaction";
+import { Transaction } from "@/server/db/Transaction";
+import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
 
 describe("#ModifierPropositionValeurAvancementUseCase", () => {
   let modifierPropositionValeurAvancementUseCase: ModifierPropositionValeurAvancementUseCase;

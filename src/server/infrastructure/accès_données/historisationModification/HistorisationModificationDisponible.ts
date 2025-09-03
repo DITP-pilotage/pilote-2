@@ -1,10 +1,10 @@
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
-import { convertirEnModel as convertirEnUtilisateurModel } from "@/server/infrastructure/accès_données/utilisateur/UtilisateurSQLRepository";
 import { convertirEnHistorisationMetadataParametrageIndicateurModel } from "@/server/domain/historisationModification/ClassConversion/HistorisationMetadataParametrageIndicateur";
 import { convertirEnHistorisationMetadataIndicateurModel } from "@/server/domain/historisationModification/ClassConversion/HistorisationMetadataIndicateur";
 import { MetadataParametrageIndicateur } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur";
 import { convertirEnHistorisationMetadataIndicateurComplementaireModel } from "@/server/domain/historisationModification/ClassConversion/HistorisationMetadataIndicateurComplementaire";
+import { convertirEnModel as convertirEnUtilisateurModel } from "@/server/infrastructure/accès_données/utilisateur/ConvertirUtilisateurEnUtilisateurModel";
 
 export type HistorisationModificationDisponible = {
   metadata_indicateurs: MetadataParametrageIndicateur;

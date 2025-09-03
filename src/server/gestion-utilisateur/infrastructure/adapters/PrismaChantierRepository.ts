@@ -6,7 +6,8 @@ import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/Ch
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
 import { InformationChantierUtilisateur } from "@/server/gestion-utilisateur/domain/InformationChantierUtilisateur";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { PilotePrismaClient } from "@/server/db/Transaction";
+
+import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 
 interface Dependencies {
   prisma: PrismaPilote;

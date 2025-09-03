@@ -1,7 +1,8 @@
 import { PrismaNouveauteRepository } from "@/server/parametrage-nouveautes/infrastructure/adapters/PrismaNouveauteRepository";
 import { Nouveaute } from "@/server/parametrage-nouveautes/domain/Nouveaute";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { PilotePrismaClient } from "@/server/db/Transaction";
+
+import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 
 describe("PrismaNouveauteRepository", () => {
   let prismaNouveauteRepository: PrismaNouveauteRepository;
