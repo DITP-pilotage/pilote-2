@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { LIMITE_CARACTÈRES_AFFICHAGE_SYNTHÈSE_DES_RÉSULTATS } from "@/validation/synthèseDesRésultats";
-import { RouterOutputs } from "@/server/infrastructure/api/trpc/trpc.interface";
+import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 
-export default function useAffichage(
-  synthèseDesRésultats: RouterOutputs["synthèseDesRésultats"]["récupérerLaPlusRécente"],
-) {
+export default function useAffichage() {
+  const { synthèseDesRésultats } = pageChantier.useServerSidePropsContext();
   const [afficherContenuComplet, setAfficherContenuComplet] = useState(false);
   const [afficherBoutonsAffichage, setAfficherBoutonsAffichage] =
     useState(false);
@@ -42,6 +41,7 @@ export default function useAffichage(
   }, [synthèseDesRésultats, afficherContenuComplet]);
 
   return {
+    synthèseDesRésultats,
     contenuAAfficher,
     afficherBoutonsAffichage,
     afficherContenuComplet,

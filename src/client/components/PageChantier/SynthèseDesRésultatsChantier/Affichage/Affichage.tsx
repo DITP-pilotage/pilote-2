@@ -1,24 +1,17 @@
-import { FunctionComponent } from "react";
 import { formaterDate } from "@/client/utils/date/date";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import BoutonsAffichage from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonsAffichage/BoutonsAffichage";
-import { RouterOutputs } from "@/server/infrastructure/api/trpc/trpc.interface";
 import useAffichage from "./useAffichage";
 
-interface SynthèseDesRésultatsAffichageProps {
-  synthèseDesRésultats: RouterOutputs["synthèseDesRésultats"]["récupérerLaPlusRécente"];
-}
-
-const SynthèseDesRésultatsAffichage: FunctionComponent<
-  SynthèseDesRésultatsAffichageProps
-> = ({ synthèseDesRésultats }) => {
+const SynthèseDesRésultatsAffichage = () => {
   const {
+    synthèseDesRésultats,
     contenuAAfficher,
     afficherBoutonsAffichage,
     afficherContenuComplet,
     déplierLeContenu,
     replierLeContenu,
-  } = useAffichage(synthèseDesRésultats);
+  } = useAffichage();
 
   if (!synthèseDesRésultats) {
     return (

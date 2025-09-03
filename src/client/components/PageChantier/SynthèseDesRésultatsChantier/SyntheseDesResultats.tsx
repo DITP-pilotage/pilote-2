@@ -22,8 +22,7 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
   modeEcriture = false,
   estInteractif = true,
 }) => {
-  const { chantier, territoireCode, synthèseDesRésultats } =
-    pageChantier.useServerSidePropsContext();
+  const { synthèseDesRésultats } = pageChantier.useServerSidePropsContext();
 
   const [action] = useQueryState(
     "_action",
@@ -73,9 +72,7 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
                   )}
                 </div>
                 <div className="synthèse-affichage">
-                  <SynthèseDesRésultatsAffichage
-                    synthèseDesRésultats={synthèseDesRésultats}
-                  />
+                  <SynthèseDesRésultatsAffichage />
                 </div>
               </div>
               {estInteractif ? (

@@ -50,7 +50,6 @@ const PageChantier = () => {
     commentaires,
     détailsIndicateurs,
     detailsIndicateursTerritoire,
-    objectifs,
     décisionStratégique,
     avancements,
     indicateurPondérations,
