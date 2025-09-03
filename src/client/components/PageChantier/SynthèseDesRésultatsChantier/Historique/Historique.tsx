@@ -1,31 +1,21 @@
-import { Fragment, FunctionComponent } from "react";
+import { Fragment } from "react";
 import Modale from "@/components/_commons/Modale/Modale";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
 import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import SynthèseDesRésultatsAffichage from "@/components/PageChantier/SynthèseDesRésultatsChantier/Affichage/Affichage";
 import BoutonSousLigné from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
-import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
+import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 import SynthèseDesRésultatsHistoriqueStyled from "./Historique.styled";
 import useHistoriqueDeLaSyntheseDesResultats from "./useHistoriqueDeLaSyntheseDesResultats";
 
-interface SynthèseDesRésultatsHistoriqueProps {
-  réformeId: string;
-  territoireCode: string;
-}
-
 const ID_HTML = "historique-synthèse-des-résultats";
 
-const SynthèseDesRésultatsHistorique: FunctionComponent<
-  SynthèseDesRésultatsHistoriqueProps
-> = ({ réformeId, territoireCode }) => {
+const SynthèseDesRésultatsHistorique = () => {
   const {
     historiqueDeLaSynthèseDesRésultats,
     récupérerHistoriqueSynthèseDesRésultats,
-  } = useHistoriqueDeLaSyntheseDesResultats(réformeId, territoireCode);
-
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
-
-  const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
+  } = useHistoriqueDeLaSyntheseDesResultats();
+  const territoireSélectionné = useTerritoireSelectionne();
 
   return (
     <>

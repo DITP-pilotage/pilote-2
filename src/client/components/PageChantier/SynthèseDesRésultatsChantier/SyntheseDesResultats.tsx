@@ -82,10 +82,7 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
                 <div className="fr-grid-row fr-grid-row--right">
                   <div className="fr-col-12 actions fr-mt-1w">
                     {!!synthèseDesRésultats ? (
-                      <SynthèseDesRésultatsHistorique
-                        réformeId={chantier.id}
-                        territoireCode={territoireCode}
-                      />
+                      <SynthèseDesRésultatsHistorique />
                     ) : null}
                     {modeEcriture ? (
                       <button
