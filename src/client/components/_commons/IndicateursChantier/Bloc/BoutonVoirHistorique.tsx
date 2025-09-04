@@ -1,10 +1,10 @@
 import BoutonSousLigné from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { ModaleHistoriqueIndicateurTerritoireValeurEvenement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleHistoriqueIndicateurTerritoireValeurEvenement/ModaleHistoriqueIndicateurTerritoireValeurEvenement";
 import { ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurPropositionValeur";
-import { usePageChantierContext } from "@/components/PageChantier/usePageChantierContext";
+import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 
 export const BoutonVoirHistorique = () => {
-  const { indicateur } = usePageChantierContext();
+  const { indicateur } = useBlocIndicateurContext();
   return (
     <>
       <BoutonSousLigné

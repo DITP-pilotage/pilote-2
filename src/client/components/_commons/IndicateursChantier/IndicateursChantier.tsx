@@ -7,63 +7,26 @@ import {
   CategoriesIndicateur,
   listeRubriquesIndicateursChantier,
 } from "@/client/utils/rubriques";
-import {
-  DétailsIndicateurs,
-  DétailsIndicateurTerritoire,
-} from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import { MailleInterne } from "@/server/domain/maille/Maille.interface";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
-import { CartographieIndicateurType } from "./Bloc/Détails/IndicateurDétails";
+import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import TitreRubrique from "./Bloc/Détails/TitreRubrique/TitreRubrique";
 
 interface IndicateursProps {
-  indicateurs: Indicateur[];
-  détailsIndicateurs: DétailsIndicateurs;
-  detailsIndicateursTerritoire: Record<string, DétailsIndicateurTerritoire>;
-  chantier: Chantier;
-  chantierEstTerritorialisé: boolean;
-  estInteractif?: boolean;
   estAutoriseAProposerUneValeurAvancement: boolean;
   estAutoriseAAccepterLesPropositionsDeValeurAvancement: boolean;
-  territoireCode: string;
-  territoiresCompares: string[];
-  mailleQuery: MailleInterne;
-  mailleSelectionnee: MailleInterne;
   alerteMiseAJourIndicateur: boolean;
-  mailsDirecteursProjets: string[];
-  jalon: number;
-  cartographieDroiteIndicateur: CartographieIndicateurType;
-  cartographieGaucheIndicateur: CartographieIndicateurType;
   categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]>;
-  nouveauxGraphiquesSontActifs: boolean;
-  datajobsExecution: DatajobsExecution;
 }
 
 const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
-  indicateurs,
-  détailsIndicateurs,
-  detailsIndicateursTerritoire,
-  chantier,
-  chantierEstTerritorialisé,
-  estInteractif = true,
-  estAutoriseAProposerUneValeurAvancement:
-    estAutoriseAProposerUneValeurAvancement,
+  estAutoriseAProposerUneValeurAvancement,
   estAutoriseAAccepterLesPropositionsDeValeurAvancement,
-  territoireCode,
-  territoiresCompares,
-  mailleQuery,
-  mailleSelectionnee,
   alerteMiseAJourIndicateur,
-  mailsDirecteursProjets,
-  jalon,
-  cartographieDroiteIndicateur,
-  cartographieGaucheIndicateur,
   categoriesIndicateurRepartition,
-  nouveauxGraphiquesSontActifs,
-  datajobsExecution,
 }) => {
+  const { territoireCode, indicateurs, détailsIndicateurs } =
+    pageChantier.useServerSidePropsContext();
+
   if (indicateurs.length === 0) {
     return null;
   }
@@ -117,37 +80,14 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                   .map((indicateur) => {
                     return (
                       <IndicateurBloc
-                        cartographieDroiteIndicateur={
-                          cartographieDroiteIndicateur
-                        }
-                        cartographieGaucheIndicateur={
-                          cartographieGaucheIndicateur
-                        }
-                        chantier={chantier}
-                        chantierEstTerritorialisé={chantierEstTerritorialisé}
-                        datajobsExecution={datajobsExecution}
-                        detailsIndicateursTerritoire={
-                          detailsIndicateursTerritoire
-                        }
-                        détailsIndicateurs={détailsIndicateurs}
                         estAutoriseAAccepterLesPropositionsDeValeurAvancement={
                           estAutoriseAAccepterLesPropositionsDeValeurAvancement
                         }
                         estAutoriseAProposerUneValeurAvancement={
                           estAutoriseAProposerUneValeurAvancement
                         }
-                        estInteractif={estInteractif}
                         indicateur={indicateur}
-                        jalon={jalon}
                         key={indicateur.id}
-                        mailleQuery={mailleQuery}
-                        mailleSelectionnee={mailleSelectionnee}
-                        mailsDirecteursProjets={mailsDirecteursProjets}
-                        nouveauxGraphiquesSontActifs={
-                          nouveauxGraphiquesSontActifs
-                        }
-                        territoireCode={territoireCode}
-                        territoiresCompares={territoiresCompares}
                       />
                     );
                   })}

@@ -3,7 +3,7 @@ import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { InformationsIndicateurs } from "@/components/_commons/IndicateursChantier/Bloc/InformationsIndicateurs";
 import { DetailIndicateurPropositionValeurAvancement } from "@/server/chantiers/domain/DetailsIndicateurs";
-import { usePageChantierContext } from "@/components/PageChantier/usePageChantierContext";
+import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import { estPropositionAccuseeReception } from "@/components/_commons/IndicateursChantier/Bloc/utils";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
@@ -37,7 +37,7 @@ export const LignesPropositionValeurAvancementV2 = ({
   estAutoriseAAccepterLesPropositionsDeValeurAvancement: boolean;
   estAutoriseAProposerUneValeurAvancement: boolean;
 }) => {
-  const { datajobsExecution } = usePageChantierContext();
+  const { datajobsExecution } = useBlocIndicateurContext();
   // TODO: /!\ actionsTerritoiresStore est un hook
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
@@ -82,9 +82,6 @@ export const LignesPropositionValeurAvancementV2 = ({
                     <BoutonAccuserReceptionProposition
                       detailIndicateur={informationIndicateur.données}
                       détailTerritoireSélectionné={détailTerritoireSélectionné}
-                      id={indicateur.id}
-                      indicateur={indicateur}
-                      territoireCode={territoireCode}
                     />
                     <Infobulle classNameBouton="texte-jaune" idHtml="test">
                       <p>

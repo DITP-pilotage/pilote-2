@@ -293,6 +293,7 @@ export const getServerSideProps = async ({
         donneesComparaisonDuTauxDAvancement,
         nouveauxGraphiquesSontActifs,
         datajobsExecution,
+        configurationFeatureFlipping: configuration().featureFlip,
       },
     };
   } catch (error) {

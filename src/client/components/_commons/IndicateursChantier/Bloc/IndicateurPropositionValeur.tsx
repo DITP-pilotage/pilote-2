@@ -15,7 +15,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
 import { LigneInformationPropositionValeur } from "@/components/_commons/IndicateursChantier/Bloc/LigneInformationPropositionValeur";
-import { usePageChantierContext } from "@/components/PageChantier/usePageChantierContext";
+import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
 import { BoutonProposerValeur } from "@/components/_commons/IndicateursChantier/Bloc/BoutonProposerValeur";
 
@@ -49,7 +49,7 @@ export const IndicateurPropositionValeur = ({
   informationsIndicateurs: InformationsIndicateurs;
   maille: MailleTerritoireSelectionne;
 }) => {
-  const { indicateur, datajobsExecution } = usePageChantierContext();
+  const { indicateur, datajobsExecution } = useBlocIndicateurContext();
 
   const { data: variableContenuFFPropositionValeurAvancementV2 } =
     api.gestionContenu.récupérerVariableContenu.useQuery({

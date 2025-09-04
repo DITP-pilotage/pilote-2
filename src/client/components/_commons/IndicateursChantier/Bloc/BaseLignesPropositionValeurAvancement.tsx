@@ -9,7 +9,7 @@ import {
 } from "@/components/_commons/IndicateursChantier/Bloc/utils";
 import ValeurEtDate from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
-import { usePageChantierContext } from "@/components/PageChantier/usePageChantierContext";
+import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
 import { CelluleStatutProposition } from "@/components/_commons/IndicateursChantier/Bloc/CelluleStatutProposition";
 import { BarreDeProgressionAVenir } from "@/components/_commons/IndicateursChantier/Bloc/BarreDeProgressionAVenir";
@@ -42,7 +42,7 @@ export const BaseLignesPropositionValeurAvancement = ({
   estAutoriseAAccepterLesPropositionsDeValeurAvancement: boolean;
   estAutoriseAProposerUneValeurAvancement: boolean;
 }>) => {
-  const { datajobsExecution } = usePageChantierContext();
+  const { datajobsExecution } = useBlocIndicateurContext();
 
   const afficherPropositionAcceptee = doitAfficherPropositionAcceptee(
     detailIndicateur,

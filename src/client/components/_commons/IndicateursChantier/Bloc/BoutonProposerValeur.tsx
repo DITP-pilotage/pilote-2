@@ -1,5 +1,5 @@
 import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import { usePageChantierContext } from "@/components/PageChantier/usePageChantierContext";
+import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import BoutonSousLigné from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc";
 import { ModalePropositionValeurAvancementV2 } from "@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurAvancementV2/ModalePropositionValeurAvancementV2";
@@ -10,7 +10,7 @@ export const BoutonProposerValeur = ({
   detailIndicateur: DétailsIndicateur;
 }) => {
   const { indicateur, territoireCode, territoireSélectionné } =
-    usePageChantierContext();
+    useBlocIndicateurContext();
   return (
     <>
       <BoutonSousLigné

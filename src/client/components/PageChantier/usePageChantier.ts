@@ -1,5 +1,4 @@
 import { useSession } from "next-auth/react";
-import api from "@/server/infrastructure/api/trpc/api";
 import { estAutoriséAImporterDesIndicateurs } from "@/client/utils/indicateur/indicateur";
 import { estAutoriséAConsulterLaFicheConducteur } from "@/client/utils/fiche-conducteur/fiche-conducteur";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
@@ -23,7 +22,8 @@ const PROFIL_INTERDIT_DE_VOIR_LE_SELECTEUR_DE_MAILLE = new Set([
 
 export const usePageChantier = () => {
   const { data: session } = useSession();
-  const { chantier, territoireCode } = pageChantier.useServerSidePropsContext();
+  const { chantier, territoireCode, configurationFeatureFlipping } =
+    pageChantier.useServerSidePropsContext();
 
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
@@ -85,12 +85,8 @@ export const usePageChantier = () => {
     estAutoriseAImporterSurLeChantier &&
     chantier.statut !== "ARCHIVE";
 
-  const { data: variableContenuFFFicheConducteur } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_FICHE_CONDUCTEUR",
-    });
   const estAutoriseAVoirLeBoutonFicheConducteur =
-    !!variableContenuFFFicheConducteur &&
+    !!configurationFeatureFlipping.ficheConducteur &&
     estAutoriséAConsulterLaFicheConducteur(session!.profil);
 
   const estAutoriseAVoirLesAlertesMAJIndicateurs =
