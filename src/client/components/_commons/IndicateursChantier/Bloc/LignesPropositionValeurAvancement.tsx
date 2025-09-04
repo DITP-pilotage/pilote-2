@@ -10,38 +10,26 @@ import {
   ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT,
   ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT,
 } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc";
-import { InformationsIndicateurs } from "@/components/_commons/IndicateursChantier/Bloc/InformationsIndicateurs";
-import { DetailIndicateurPropositionValeurAvancement } from "@/server/chantiers/domain/DetailsIndicateurs";
-import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
+import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
+import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 
 export const LignesPropositionValeurAvancement = ({
-  indicateur,
-  detailIndicateur,
-  territoireCode,
-  informationIndicateur,
-  proposition,
-  jalon,
   estAutoriseAProposerUneValeurAvancement,
 }: {
-  indicateur: Indicateur;
-  jalon: number;
-  territoireCode: string;
-  detailIndicateur: DétailsIndicateur;
-  informationIndicateur: InformationsIndicateurs[number];
-  proposition: DetailIndicateurPropositionValeurAvancement;
   estAutoriseAProposerUneValeurAvancement: boolean;
 }) => {
-  // TODO: /!\ actionsTerritoiresStore est un hook
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+  const détailTerritoireSélectionné = useTerritoireSelectionne();
 
-  const détailTerritoireSélectionné =
-    récupérerDétailsSurUnTerritoire(territoireCode);
+  const { indicateur, detailIndicateurDuTerritoire, territoireCode, jalon } =
+    useBlocIndicateurContext();
+
+  if (detailIndicateurDuTerritoire.proposition === null) return null;
+
   const estPropositionSurLeBonJalon =
-    detailIndicateur.dateValeurAvancementMandat !== null
-      ? new Date(detailIndicateur.dateValeurAvancementMandat!).getFullYear() <=
-        jalon
+    detailIndicateurDuTerritoire.dateValeurAvancementMandat !== null
+      ? new Date(
+          detailIndicateurDuTerritoire.dateValeurAvancementMandat!,
+        ).getFullYear() <= jalon
       : false;
 
   return (
@@ -49,11 +37,11 @@ export const LignesPropositionValeurAvancement = ({
       <tr
         className={clsx("ligne-modification-proposition-valeur-davancement", {
           "!bg-dsfr-info-950 !text-dsfr-info-main-525":
-            estPropositionAccuseeReception(detailIndicateur),
+            estPropositionAccuseeReception(detailIndicateurDuTerritoire),
           "!bg-dsfr-moutarde-main-975 !text-dsfr-moutarde-main-679":
-            !estPropositionAccuseeReception(detailIndicateur),
+            !estPropositionAccuseeReception(detailIndicateurDuTerritoire),
         })}
-        key={informationIndicateur.territoireNom}
+        key={détailTerritoireSélectionné.nom}
       >
         <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm">
           <div className="flex align-center selecteur-infobulle-conteneur">
@@ -63,32 +51,40 @@ export const LignesPropositionValeurAvancement = ({
             <Infobulle
               classNameBouton="texte-proposition"
               classNameInfoBulle="tooltip-accordeon"
-              idHtml={`infobulle-proposition-valeur-davancement-${informationIndicateur.code}`}
+              idHtml={`infobulle-proposition-valeur-davancement-${détailTerritoireSélectionné.code}`}
               styleIconInfoBulle="informationProposition"
             >
               <p className="fr-text--sm texte-proposition">
                 Valeur d'avancement proposée le{" "}
-                {formaterDate(proposition.dateProposition, "DD/MM/YYYY")} par{" "}
-                {proposition.auteur}
+                {formaterDate(
+                  detailIndicateurDuTerritoire.proposition.dateProposition,
+                  "DD/MM/YYYY",
+                )}{" "}
+                par {detailIndicateurDuTerritoire.proposition.auteur}
               </p>
               <p className="fr-text--sm">
                 <b>Motif de la proposition</b>
               </p>
-              <p className="fr-text--sm">{proposition.motif}</p>
+              <p className="fr-text--sm">
+                {detailIndicateurDuTerritoire.proposition.motif}
+              </p>
               <p className="fr-text--sm">
                 <b>Source des données et méthode de calcul</b>
               </p>
               <p className="fr-text--sm fr-mb-0">
-                {proposition.sourceDonneeEtMethodeCalcul}
+                {
+                  detailIndicateurDuTerritoire.proposition
+                    .sourceDonneeEtMethodeCalcul
+                }
               </p>
             </Infobulle>
           </div>
         </td>
         <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200">
           <ValeurEtDate
-            date={informationIndicateur.données.dateValeurInitiale}
-            unité={informationIndicateur.données.unité}
-            valeur={informationIndicateur.données.valeurInitiale}
+            date={detailIndicateurDuTerritoire.dateValeurInitiale}
+            unité={detailIndicateurDuTerritoire.unité}
+            valeur={detailIndicateurDuTerritoire.valeurInitiale}
           />
         </td>
         {estPropositionSurLeBonJalon ? (
@@ -96,26 +92,30 @@ export const LignesPropositionValeurAvancement = ({
             {/* Valeur d'avancement en fonction de la proposition du jalon et date valeur d'avancement en fonction du mandat */}
             <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center">
               <ValeurEtDate
-                date={informationIndicateur.données.dateValeurAvancementMandat}
-                unité={informationIndicateur.données.unité}
-                valeur={proposition.valeurAvancement}
+                date={detailIndicateurDuTerritoire.dateValeurAvancementMandat}
+                unité={detailIndicateurDuTerritoire.unité}
+                valeur={
+                  detailIndicateurDuTerritoire.proposition.valeurAvancement
+                }
               />
             </td>
             <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200">
               <ValeurEtDate
-                date={informationIndicateur.données.dateValeurCibleAnnuelle}
-                unité={informationIndicateur.données.unité}
-                valeur={informationIndicateur.données.valeurCibleAnnuelle}
+                date={detailIndicateurDuTerritoire.dateValeurCibleAnnuelle}
+                unité={detailIndicateurDuTerritoire.unité}
+                valeur={detailIndicateurDuTerritoire.valeurCibleAnnuelle}
               />
             </td>
             <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm texte-proposition">
               <BarreDeProgression
                 afficherTexte
                 fond="gris-clair"
-                infobulleId={`infobulle-taux-avancement-proposition-jalon-${informationIndicateur.code}`}
                 positionTexte="dessus"
                 taille="md"
-                valeur={proposition.tauxAvancementIntermediaire}
+                valeur={
+                  detailIndicateurDuTerritoire.proposition
+                    .tauxAvancementIntermediaire
+                }
                 variante="jaune-moutarde"
               />
             </td>
@@ -126,26 +126,25 @@ export const LignesPropositionValeurAvancement = ({
         {/* Valeur d'avancement en fonction de la proposition du jalon et date valeur d'avancement en fonction du mandat */}
         <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center">
           <ValeurEtDate
-            date={informationIndicateur.données.dateValeurAvancementMandat}
-            unité={informationIndicateur.données.unité}
-            valeur={proposition.valeurAvancement}
+            date={detailIndicateurDuTerritoire.dateValeurAvancementMandat}
+            unité={detailIndicateurDuTerritoire.unité}
+            valeur={detailIndicateurDuTerritoire.proposition.valeurAvancement}
           />
         </td>
         <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200">
           <ValeurEtDate
-            date={informationIndicateur.données.dateValeurCible}
-            unité={informationIndicateur.données.unité}
-            valeur={informationIndicateur.données.valeurCible}
+            date={detailIndicateurDuTerritoire.dateValeurCible}
+            unité={detailIndicateurDuTerritoire.unité}
+            valeur={detailIndicateurDuTerritoire.valeurCible}
           />
         </td>
         <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm texte-proposition">
           <BarreDeProgression
             afficherTexte
             fond="gris-clair"
-            infobulleId={`infobulle-taux-avancement-proposition-global-${informationIndicateur.code}`}
             positionTexte="dessus"
             taille="md"
-            valeur={proposition.tauxAvancement}
+            valeur={detailIndicateurDuTerritoire.proposition.tauxAvancement}
             variante="jaune-moutarde"
           />
         </td>
@@ -176,7 +175,7 @@ export const LignesPropositionValeurAvancement = ({
               </button>
             </div>
             <ModalePropositionValeurAvancement
-              detailIndicateur={informationIndicateur.données}
+              detailIndicateur={detailIndicateurDuTerritoire}
               generatedHTMLID={
                 ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT + indicateur.id
               }

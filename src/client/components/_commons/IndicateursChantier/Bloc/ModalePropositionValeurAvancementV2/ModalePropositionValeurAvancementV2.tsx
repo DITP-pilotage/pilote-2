@@ -1,8 +1,6 @@
 import { FunctionComponent } from "react";
 import { FormProvider } from "react-hook-form";
 import Modale from "@/components/_commons/Modale/Modale";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 
 import useModalePropositionValeurAvancementV2, {
   EtapePropositionValeurAvancement,
@@ -15,22 +13,11 @@ import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
+import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 
 export const ModalePropositionValeurAvancementV2: FunctionComponent<{
-  indicateur: Indicateur;
-  detailIndicateur: DétailsIndicateur;
   generatedHTMLID: string;
-  territoireCode: string;
-  territoireCodeInsee: string;
-  territoireNom: string;
-}> = ({
-  indicateur,
-  detailIndicateur,
-  generatedHTMLID,
-  territoireCode,
-  territoireCodeInsee,
-  territoireNom,
-}) => {
+}> = ({ generatedHTMLID }) => {
   const {
     reactHookForm,
     creerPropositonValeurAvancement,
@@ -39,12 +26,18 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
     auteurModification,
     EtapeSuivanteEstDesactive,
     estUneModificationDeProposition,
-  } = useModalePropositionValeurAvancementV2({
-    indicateur,
-    detailIndicateur,
-    territoireCode,
-  });
+  } = useModalePropositionValeurAvancementV2();
+
   const refreshRouter = useRefreshRouter();
+
+  const {
+    indicateur,
+    detailIndicateurDuTerritoire,
+    territoireSélectionné: {
+      codeInsee: territoireCodeInsee,
+      nom: territoireNom,
+    },
+  } = useBlocIndicateurContext();
 
   return (
     <Modale
@@ -101,13 +94,14 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                   <p className="fr-text texte-warning fr-text--xs text-italic fr-mb-2w">
                     *tous les champs sont obligatoires
                   </p>
-                  {detailIndicateur.proposition !== null ? (
+                  {detailIndicateurDuTerritoire.proposition !== null ? (
                     <p className="fr-text--sm fr-mt-1v">
                       La proposition de nouvelle valeur d'avancement que vous
                       modifiez a été faite par{" "}
-                      {detailIndicateur.proposition.auteur} le{" "}
+                      {detailIndicateurDuTerritoire.proposition.auteur} le{" "}
                       {formaterDate(
-                        detailIndicateur.proposition.dateProposition,
+                        detailIndicateurDuTerritoire.proposition
+                          .dateProposition,
                         "DD/MM/YYYY",
                       )}
                       . Toute modification apportée à cette proposition écrasera
@@ -121,14 +115,14 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                       </span>
                       <div className="w-full flex flex-column justify-between fr-pt-1w">
                         <span className="flex justify-center fr-mb-5v">
-                          {detailIndicateur.valeurAvancementMandat?.toLocaleString(
+                          {detailIndicateurDuTerritoire.valeurAvancementMandat?.toLocaleString(
                             "fr-FR",
                           )}
                         </span>
                         <span className="flex justify-center align-end texte-gris">
                           (
                           {formaterDate(
-                            detailIndicateur.dateValeurAvancementMandat,
+                            detailIndicateurDuTerritoire.dateValeurAvancementMandat,
                             "MM/YYYY",
                           )}
                           )
@@ -138,7 +132,7 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                     <div className="w-half-full fr-ml-1w border">
                       {estUneModificationDeProposition ? (
                         <span className="fr-background-action-low-blue-france w-full flex justify-center fr-p-1w">
-                          {`Valeur d'avancement proposée par ${detailIndicateur.proposition?.auteur} le ${formaterDate(detailIndicateur.proposition!.dateProposition, "DD/MM/YYYY")}`}
+                          {`Valeur d'avancement proposée par ${detailIndicateurDuTerritoire.proposition?.auteur} le ${formaterDate(detailIndicateurDuTerritoire.proposition!.dateProposition, "DD/MM/YYYY")}`}
                           <Infobulle
                             classNameInfoBulle="tooltip-accordeon"
                             idHtml={`infobulle-proposition-valeur-davancement-${indicateur.id}`}
@@ -146,23 +140,25 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                             <p className="fr-text--sm texte-proposition">
                               Valeur d'avancement proposée le{" "}
                               {formaterDate(
-                                detailIndicateur.proposition?.dateProposition,
+                                detailIndicateurDuTerritoire.proposition
+                                  ?.dateProposition,
                                 "DD/MM/YYYY",
                               )}{" "}
-                              par {detailIndicateur.proposition?.auteur}
+                              par{" "}
+                              {detailIndicateurDuTerritoire.proposition?.auteur}
                             </p>
                             <p className="fr-text--sm">
                               <b>Motif de la proposition</b>
                             </p>
                             <p className="fr-text--sm">
-                              {detailIndicateur.proposition?.motif}
+                              {detailIndicateurDuTerritoire.proposition?.motif}
                             </p>
                             <p className="fr-text--sm">
                               <b>Source des données et méthode de calcul</b>
                             </p>
                             <p className="fr-text--sm fr-mb-0">
                               {
-                                detailIndicateur.proposition
+                                detailIndicateurDuTerritoire.proposition
                                   ?.sourceDonneeEtMethodeCalcul
                               }
                             </p>
@@ -177,7 +173,10 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                       <div className="w-full flex flex-column align-center fr-pt-1w">
                         {estUneModificationDeProposition ? (
                           <span className="flex justify-center fr-mb-5v">
-                            {detailIndicateur.proposition?.valeurAvancement}
+                            {
+                              detailIndicateurDuTerritoire.proposition
+                                ?.valeurAvancement
+                            }
                           </span>
                         ) : (
                           <div className="w-half-full flex fr-mb-1w">
@@ -199,7 +198,7 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                         <span className="flex justify-center texte-gris">
                           (
                           {formaterDate(
-                            detailIndicateur.dateValeurAvancementMandat,
+                            detailIndicateurDuTerritoire.dateValeurAvancementMandat,
                             "MM/YYYY",
                           )}
                           )
@@ -227,7 +226,7 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                       <span className="flex texte-gris fr-text--xs">
                         (
                         {formaterDate(
-                          detailIndicateur.dateValeurAvancementMandat,
+                          detailIndicateurDuTerritoire.dateValeurAvancementMandat,
                           "MM/YYYY",
                         )}
                         )
@@ -312,7 +311,7 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                         par {auteurModification} :{" "}
                         {reactHookForm.getValues("valeurAvancement")} (
                         {formaterDate(
-                          detailIndicateur.dateValeurAvancement,
+                          detailIndicateurDuTerritoire.dateValeurAvancement,
                           "MM/YYYY",
                         )}
                         )

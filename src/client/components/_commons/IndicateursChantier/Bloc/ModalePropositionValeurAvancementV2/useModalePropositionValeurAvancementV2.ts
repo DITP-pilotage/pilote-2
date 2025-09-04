@@ -2,11 +2,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { validationPropositionValeurAvancement } from "@/validation/proposition-valeur-avancement";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
+import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
+import {
+  estPropositionCreee,
+  estPropositionModifiee,
+} from "@/components/_commons/IndicateursChantier/Bloc/utils";
 
 interface PropositionValeurAvancementForm {
   valeurAvancement: string;
@@ -43,18 +46,13 @@ export const Stepper: Record<
   },
 };
 
-const useModalePropositionValeurAvancementV2 = ({
-  detailIndicateur,
-  indicateur,
-  territoireCode,
-}: {
-  indicateur: Indicateur;
-  detailIndicateur: DétailsIndicateur;
-  territoireCode: string;
-}) => {
+const useModalePropositionValeurAvancementV2 = () => {
   const { data: session } = useSession();
 
   const auteurModification = session?.user.name;
+
+  const { indicateur, detailIndicateurDuTerritoire, territoireCode } =
+    useBlocIndicateurContext();
 
   const [
     etapePropositionValeurAvancement,
@@ -99,31 +97,38 @@ const useModalePropositionValeurAvancementV2 = ({
     }
   };
 
+  const estUneModificationDeProposition =
+    estPropositionCreee(detailIndicateurDuTerritoire) ||
+    estPropositionModifiee(detailIndicateurDuTerritoire);
+
   const reactHookForm = useForm<PropositionValeurAvancementForm>({
     mode: "all",
     resolver: zodResolver(validationPropositionValeurAvancement),
     defaultValues:
-      detailIndicateur.proposition === null
+      detailIndicateurDuTerritoire.proposition &&
+      estUneModificationDeProposition
         ? {
-            valeurAvancement: `${detailIndicateur.valeurAvancementMandat}`,
-            motifProposition: "",
-            sourceDonneeEtMethodeCalcul: "",
-            dateValeurAvancement: detailIndicateur.dateValeurAvancementMandat!,
+            valeurAvancement: `${detailIndicateurDuTerritoire.proposition.valeurAvancement}`,
+            motifProposition:
+              detailIndicateurDuTerritoire.proposition.motif || "",
+            sourceDonneeEtMethodeCalcul:
+              detailIndicateurDuTerritoire.proposition
+                .sourceDonneeEtMethodeCalcul || "",
+            dateValeurAvancement:
+              detailIndicateurDuTerritoire.dateValeurAvancementMandat!,
             indicId: indicateur.id,
             territoireCode,
           }
         : {
-            valeurAvancement: `${detailIndicateur.proposition.valeurAvancement}`,
-            motifProposition: detailIndicateur.proposition.motif || "",
-            sourceDonneeEtMethodeCalcul:
-              detailIndicateur.proposition.sourceDonneeEtMethodeCalcul || "",
-            dateValeurAvancement: detailIndicateur.dateValeurAvancementMandat!,
+            valeurAvancement: `${detailIndicateurDuTerritoire.valeurAvancementMandat}`,
+            motifProposition: "",
+            sourceDonneeEtMethodeCalcul: "",
+            dateValeurAvancement:
+              detailIndicateurDuTerritoire.dateValeurAvancementMandat!,
             indicId: indicateur.id,
             territoireCode,
           },
   });
-
-  const estUneModificationDeProposition = detailIndicateur.proposition !== null;
 
   reactHookForm.watch("motifProposition");
   reactHookForm.watch("sourceDonneeEtMethodeCalcul");
@@ -134,7 +139,7 @@ const useModalePropositionValeurAvancementV2 = ({
     reactHookForm.getValues("motifProposition").length === 0 ||
     reactHookForm.getValues("sourceDonneeEtMethodeCalcul").length === 0 ||
     Number.parseFloat(reactHookForm.getValues("valeurAvancement")) ===
-      detailIndicateur.valeurAvancementMandat;
+      detailIndicateurDuTerritoire.valeurAvancementMandat;
 
   return {
     reactHookForm,

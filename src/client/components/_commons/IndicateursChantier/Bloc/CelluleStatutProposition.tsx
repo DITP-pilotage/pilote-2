@@ -1,7 +1,4 @@
 import { ReactNode } from "react";
-import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import { InformationsIndicateurs } from "@/components/_commons/IndicateursChantier/Bloc/InformationsIndicateurs";
-import { DetailIndicateurPropositionValeurAvancement } from "@/server/chantiers/domain/DetailsIndicateurs";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 import { formaterDate } from "@/client/utils/date/date";
 import {
@@ -10,43 +7,46 @@ import {
   estPropositionAccepteeOuAccepteeAvecModification,
   estPropositionAccuseeReception,
 } from "@/components/_commons/IndicateursChantier/Bloc/utils";
+import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 
 export const CelluleStatutProposition = ({
-  detailIndicateur,
-  informationIndicateur,
-  proposition,
   estAutoriseAProposerUneValeurAvancement,
   estAutoriseAAccepterLesPropositionsDeValeurAvancement,
 }: {
-  detailIndicateur: DétailsIndicateur;
-  informationIndicateur: InformationsIndicateurs[number];
-  proposition: DetailIndicateurPropositionValeurAvancement;
   estAutoriseAAccepterLesPropositionsDeValeurAvancement: boolean;
   estAutoriseAProposerUneValeurAvancement: boolean;
 }) => {
+  const { detailIndicateurDuTerritoire } = useBlocIndicateurContext();
+
+  const proposition = detailIndicateurDuTerritoire.proposition;
+
+  if (proposition === null) return null;
+
   let labelStatutProposition = "Proposition en cours";
   let infoBulle: ReactNode;
 
-  if (estPropositionAcceptee(detailIndicateur)) {
+  if (estPropositionAcceptee(detailIndicateurDuTerritoire)) {
     labelStatutProposition = "Proposition acceptée";
-  } else if (estPropositionAccepteeAvecModification(detailIndicateur)) {
+  } else if (
+    estPropositionAccepteeAvecModification(detailIndicateurDuTerritoire)
+  ) {
     labelStatutProposition = "Proposition acceptée avec modification";
   }
-
   if (
-    estPropositionAccepteeOuAccepteeAvecModification(detailIndicateur) &&
+    estPropositionAccepteeOuAccepteeAvecModification(
+      detailIndicateurDuTerritoire,
+    ) &&
     estAutoriseAProposerUneValeurAvancement
   ) {
     infoBulle = (
       <Infobulle
         classNameBouton="texte-proposition"
         classNameInfoBulle="tooltip-accordeon"
-        idHtml={`infobulle-proposition-valeur-davancement-${informationIndicateur.code}`}
         styleIconInfoBulle="informationProposition"
       >
         <p className="fr-text--sm texte-proposition">
           La proposition de valeur d'avancement a bien été acceptée
-          {estPropositionAccepteeAvecModification(detailIndicateur)
+          {estPropositionAccepteeAvecModification(detailIndicateurDuTerritoire)
             ? " avec modification"
             : ""}{" "}
           par la direction de projet et est visible par tous les utilisateurs.
@@ -59,19 +59,20 @@ export const CelluleStatutProposition = ({
       </Infobulle>
     );
   } else if (
-    estPropositionAccepteeOuAccepteeAvecModification(detailIndicateur) &&
+    estPropositionAccepteeOuAccepteeAvecModification(
+      detailIndicateurDuTerritoire,
+    ) &&
     estAutoriseAAccepterLesPropositionsDeValeurAvancement
   ) {
     infoBulle = (
       <Infobulle
         classNameBouton="texte-proposition"
         classNameInfoBulle="tooltip-accordeon"
-        idHtml={`infobulle-proposition-valeur-davancement-${informationIndicateur.code}`}
         styleIconInfoBulle="informationProposition"
       >
         <p className="fr-text--sm texte-proposition">
           La proposition de valeur d'avancement a bien été acceptée
-          {estPropositionAccepteeAvecModification(detailIndicateur)
+          {estPropositionAccepteeAvecModification(detailIndicateurDuTerritoire)
             ? " avec modification"
             : ""}{" "}
           par la direction de projet et est visible par tous les utilisateurs.
@@ -86,7 +87,6 @@ export const CelluleStatutProposition = ({
       <Infobulle
         classNameBouton="texte-proposition"
         classNameInfoBulle="tooltip-accordeon"
-        idHtml={`infobulle-proposition-valeur-davancement-${informationIndicateur.code}`}
         styleIconInfoBulle="informationProposition"
       >
         <p className="fr-text--sm texte-proposition">
@@ -116,9 +116,11 @@ export const CelluleStatutProposition = ({
         </span>
         {infoBulle}
       </div>
-      {!estPropositionAccepteeOuAccepteeAvecModification(detailIndicateur) && (
+      {!estPropositionAccepteeOuAccepteeAvecModification(
+        detailIndicateurDuTerritoire,
+      ) && (
         <div className="flex align-center selecteur-infobulle-conteneur">
-          {estPropositionAccuseeReception(detailIndicateur) ? (
+          {estPropositionAccuseeReception(detailIndicateurDuTerritoire) ? (
             <>
               <span className="fr-text--xs texte-gris">
                 la direction de projet a accusé réception
@@ -126,7 +128,6 @@ export const CelluleStatutProposition = ({
               <Infobulle
                 classNameBouton="texte-gris"
                 classNameInfoBulle="tooltip-accordeon"
-                idHtml={`infobulle-proposition-valeur-davancement-accusee-reception-${informationIndicateur.code}`}
               >
                 {estAutoriseAProposerUneValeurAvancement ? (
                   <p className="fr-text--sm">
@@ -153,7 +154,6 @@ export const CelluleStatutProposition = ({
               <Infobulle
                 classNameBouton="texte-gris"
                 classNameInfoBulle="tooltip-accordeon"
-                idHtml={`infobulle-proposition-valeur-davancement-statut-${informationIndicateur.code}`}
               >
                 <p className="fr-text--sm">
                   La direction de projet n'a pas encore accusé réception de

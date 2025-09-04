@@ -24,7 +24,6 @@ interface BarreDeProgressionProps {
   valeur: number | null;
   positionTexte?: BarreDeProgressionPositionTexte;
   afficherTexte?: boolean;
-  infobulleId?: string;
   texteInfobulle?: ReactNode;
 }
 
@@ -45,7 +44,6 @@ const BarreDeProgression: FunctionComponent<BarreDeProgressionProps> = ({
   valeur,
   afficherTexte = true,
   texteInfobulle,
-  infobulleId,
 }) => {
   const pourcentageAffiché = valeur === null ? "- %" : `${valeur.toFixed(0)} %`;
 
@@ -62,7 +60,7 @@ const BarreDeProgression: FunctionComponent<BarreDeProgressionProps> = ({
           {pourcentageAffiché}
         </progress>
       </div>
-      {!!afficherTexte && (
+      {afficherTexte ? (
         <div className={`flex pourcentage texte-${positionTexte}`}>
           <p
             className={`${dimensions[taille].classNameDsfr} pourcentage--${fond} pourcentage--${taille} fr-mb-0 bold fr-mr-1w`}
@@ -72,7 +70,6 @@ const BarreDeProgression: FunctionComponent<BarreDeProgressionProps> = ({
           {texteInfobulle ? (
             <Infobulle
               classNameBouton="infobulle-taux-avancement"
-              idHtml={`infobulle-taux-avancement-${infobulleId}`}
               styleIconInfoBulle="question"
             >
               <p className="fr-text--sm fr-text-title--blue-france">
@@ -82,7 +79,7 @@ const BarreDeProgression: FunctionComponent<BarreDeProgressionProps> = ({
             </Infobulle>
           ) : null}
         </div>
-      )}
+      ) : null}
     </BarreDeProgressionStyled>
   );
 };

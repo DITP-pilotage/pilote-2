@@ -10,9 +10,11 @@ import {
 import { Line } from "react-chartjs-2";
 import { FunctionComponent, useMemo } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
-import IndicateurÉvolutionProps from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurÉvolution.interface";
+import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
+import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
+import { IndicateurDétailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import IndicateurÉvolutionStyled from "./IndicateurÉvolution.styled";
-import useIndicateurÉvolution from "./useIndicateurÉvolution";
+import { useIndicateurÉvolution } from "./useIndicateurÉvolution";
 import useIndicateurEvolutionNew from "./useIndicateurEvolutionNew";
 import LineChart from "./LineChart/LineChart";
 
@@ -25,26 +27,41 @@ ChartJS.register(
   Legend,
 );
 
-const IndicateurÉvolution: FunctionComponent<IndicateurÉvolutionProps> = ({
-  indicateurDétailsParTerritoires,
+type IndicateurÉvolutionProps = {
+  indicateurDétailsParTerritoiresComparés: IndicateurDétailsParTerritoire[];
+  dateDeMiseAJourIndicateur: string | null;
+  nouveauxGraphiquesSontActifs: boolean;
+};
+
+export const IndicateurÉvolution: FunctionComponent<
+  IndicateurÉvolutionProps
+> = ({
   indicateurDétailsParTerritoiresComparés,
   dateDeMiseAJourIndicateur,
-  source,
   nouveauxGraphiquesSontActifs,
 }) => {
+  const {
+    detailIndicateurDuTerritoire,
+    indicateur: { source },
+  } = useBlocIndicateurContext();
+  const detailTerritoireSelectionne = useTerritoireSelectionne();
+
   const tousLesIndicateursDetails = useMemo(() => {
     return [
-      indicateurDétailsParTerritoires[0],
+      {
+        données: detailIndicateurDuTerritoire,
+        territoireNom: detailTerritoireSelectionne.nom,
+        territoireCode: detailTerritoireSelectionne.code,
+      },
       ...indicateurDétailsParTerritoiresComparés,
     ];
   }, [
-    indicateurDétailsParTerritoires,
+    detailIndicateurDuTerritoire,
+    detailTerritoireSelectionne,
     indicateurDétailsParTerritoiresComparés,
   ]);
 
-  const { options, donnéesParTerritoire } = useIndicateurÉvolution(
-    indicateurDétailsParTerritoires,
-  );
+  const { options, donnéesParTerritoire } = useIndicateurÉvolution();
 
   const {
     optionsNew,
@@ -93,5 +110,3 @@ const IndicateurÉvolution: FunctionComponent<IndicateurÉvolutionProps> = ({
     </IndicateurÉvolutionStyled>
   );
 };
-
-export default IndicateurÉvolution;

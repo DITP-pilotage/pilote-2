@@ -1,19 +1,21 @@
-import { ReactNode, FunctionComponent, useRef, useState } from "react";
+import {
+  FunctionComponent,
+  useRef,
+  useState,
+  useId,
+  PropsWithChildren,
+} from "react";
+import clsx from "clsx";
 import SecureTooltip from "@/client/components/_commons/SecureTooltip/SecureTooltip";
 import InfobulleStyled from "./Infobulle.styled";
 
-interface InfobulleProps {
-  idHtml: string;
+type InfobulleProps = PropsWithChildren<{
+  idHtml?: string;
   classNameBouton?: string;
-  children: ReactNode;
   classNameInfoBulle?: string;
   styleIconInfoBulle?: "information" | "question" | "informationProposition";
-}
+}>;
 
-/**
- * Infobulle sécurisée compatible avec CSP qui utilise Emotion pour les styles
- * Elle assure que les styles sont générés avec le nonce approprié
- */
 const Infobulle: FunctionComponent<InfobulleProps> = ({
   idHtml,
   children,
@@ -21,6 +23,8 @@ const Infobulle: FunctionComponent<InfobulleProps> = ({
   classNameInfoBulle,
   styleIconInfoBulle = "information",
 }) => {
+  const randomId = useId();
+
   const [isVisible, setIsVisible] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -33,9 +37,13 @@ const Infobulle: FunctionComponent<InfobulleProps> = ({
   return (
     <InfobulleStyled>
       <button
-        aria-describedby={idHtml}
-        className={`fr-btn fr-btn--tertiary-no-outline flex justify-center align-center ${iconesMap[styleIconInfoBulle]}${classNameBouton ? ` ${classNameBouton}` : ""}`}
-        id={idHtml}
+        aria-describedby={idHtml || randomId}
+        className={clsx(
+          `fr-btn fr-btn--tertiary-no-outline flex justify-center align-center`,
+          iconesMap[styleIconInfoBulle],
+          classNameBouton,
+        )}
+        id={idHtml || randomId}
         onBlur={() => setIsVisible(false)}
         onClick={() => setIsVisible(!isVisible)}
         onFocus={() => setIsVisible(true)}

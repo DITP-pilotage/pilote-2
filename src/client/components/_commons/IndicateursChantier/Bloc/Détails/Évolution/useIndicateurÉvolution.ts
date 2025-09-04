@@ -1,19 +1,18 @@
 import { ChartData, ChartDataset, ChartOptions } from "chart.js";
 import { comparerDates, formaterDate } from "@/client/utils/date/date";
 import { générerCouleursAléatoiresEntreDeuxCouleurs } from "@/client/utils/couleur/couleur";
-import IndicateurÉvolutionProps from "./IndicateurÉvolution.interface";
+import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
+import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 
-export default function useIndicateurÉvolution(
-  indicateurDétailsParTerritoires: IndicateurÉvolutionProps["indicateurDétailsParTerritoires"],
-) {
+export const useIndicateurÉvolution = () => {
+  const { detailIndicateurDuTerritoire } = useBlocIndicateurContext();
+  const detailTerritoireSelectionne = useTerritoireSelectionne();
   let donnéesParTerritoire: ChartData<"line">;
-  const estEnSélectionMultiple = () =>
-    indicateurDétailsParTerritoires.length > 1;
-  const indicateurDétailsPourUnTerritoire = indicateurDétailsParTerritoires[0];
+
   const couleurs = générerCouleursAléatoiresEntreDeuxCouleurs(
     "#8bcdb1",
     "#083a25",
-    indicateurDétailsParTerritoires.length,
+    1,
   );
 
   const options: ChartOptions<"line"> = {
@@ -31,10 +30,9 @@ export default function useIndicateurÉvolution(
     },
   };
 
-  const datesDeTousLesIndicateurs = indicateurDétailsParTerritoires.flatMap(
-    (detailIndicateur) =>
-      detailIndicateur.données.historiquesValeurs.map((h) => h.date),
-  );
+  const datesDeTousLesIndicateurs =
+    detailIndicateurDuTerritoire.historiquesValeurs.map((h) => h.date);
+
   const listeDesDateOrdonnees = [...new Set(datesDeTousLesIndicateurs)].sort(
     (a, b) => comparerDates(a, b),
   );
@@ -46,53 +44,47 @@ export default function useIndicateurÉvolution(
     valeursAxeX.push("");
   }
 
-  const évolutions: ChartDataset<"line">[] =
-    indicateurDétailsParTerritoires.map((détailsParTerritoire, index) => ({
-      label: détailsParTerritoire.territoireNom,
+  const évolutions: ChartDataset<"line">[] = [
+    {
+      label: detailTerritoireSelectionne.nom,
       data: listeDesDateOrdonnees.map(
         (date) =>
-          détailsParTerritoire.données.historiquesValeurs.find(
+          detailIndicateurDuTerritoire.historiquesValeurs.find(
             (valeurHistorique) => valeurHistorique.date === date,
           )?.valeur ?? null,
       ),
       pointStyle: "rect",
       pointRadius: 5,
-      borderColor: couleurs[index],
-      backgroundColor: couleurs[index],
-    }));
+      borderColor: couleurs[0],
+      backgroundColor: couleurs[0],
+    },
+  ];
 
-  if (estEnSélectionMultiple()) {
-    donnéesParTerritoire = {
-      labels: valeursAxeX,
-      datasets: évolutions,
-    };
-  } else {
-    const listeValeurCible = Array.from({ length: valeursAxeX.length }).map(
-      () => indicateurDétailsPourUnTerritoire.données.valeurCible,
-    );
+  const listeValeurCible = Array.from({ length: valeursAxeX.length }).map(
+    () => detailIndicateurDuTerritoire.valeurCible,
+  );
 
-    const valeurCible: ChartDataset<"line"> = {
-      label: "Cible",
-      data: listeValeurCible,
-      borderColor: "#FC5D00",
-      backgroundColor: "transparent",
-      borderDash: [10, 12],
-      pointStyle: false,
-      pointHitRadius: 0,
-      pointRadius: 0,
-    };
+  const valeurCible: ChartDataset<"line"> = {
+    label: "Cible",
+    data: listeValeurCible,
+    borderColor: "#FC5D00",
+    backgroundColor: "transparent",
+    borderDash: [10, 12],
+    pointStyle: false,
+    pointHitRadius: 0,
+    pointRadius: 0,
+  };
 
-    donnéesParTerritoire = {
-      labels: valeursAxeX,
-      datasets:
-        indicateurDétailsPourUnTerritoire.données.valeurCible !== null
-          ? [évolutions[0], valeurCible]
-          : [évolutions[0]],
-    };
-  }
+  donnéesParTerritoire = {
+    labels: valeursAxeX,
+    datasets:
+      detailIndicateurDuTerritoire.valeurCible !== null
+        ? [évolutions[0], valeurCible]
+        : [évolutions[0]],
+  };
 
   return {
     donnéesParTerritoire,
     options,
   };
-}
+};

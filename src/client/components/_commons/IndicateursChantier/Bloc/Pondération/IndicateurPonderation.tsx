@@ -1,10 +1,11 @@
 import { FunctionComponent } from "react";
 import { convertitEnPondération } from "@/client/utils/ponderation/ponderation";
 import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
+import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
+import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 
 interface IndicateurPondérationProps {
   indicateurPondération: number | null;
-  mailleSélectionnée: "NAT" | "REG" | "DEPT";
 }
 
 const adjectifÀPartirDeLaMaille: Record<MailleTerritoireSelectionne, string> = {
@@ -15,22 +16,27 @@ const adjectifÀPartirDeLaMaille: Record<MailleTerritoireSelectionne, string> = 
 
 const IndicateurPonderation: FunctionComponent<IndicateurPondérationProps> = ({
   indicateurPondération,
-  mailleSélectionnée,
 }) => {
+  const { territoireCode } = useBlocIndicateurContext();
+
+  const { maille: mailleDuTerritoireSelectionnee } =
+    territoireCodeVersMailleCodeInsee(territoireCode);
+
   return (
     <p className="fr-text--xs texte-gris fr-mb-0">
       {indicateurPondération === null ? (
-        `La pondération n'est pas disponible pour le taux d'avancement ${adjectifÀPartirDeLaMaille[mailleSélectionnée]}.`
+        `La pondération n'est pas disponible pour le taux d'avancement ${adjectifÀPartirDeLaMaille[mailleDuTerritoireSelectionnee]}.`
       ) : indicateurPondération === 0 ? (
-        `Cet indicateur n'est pas pris en compte dans le taux d'avancement ${adjectifÀPartirDeLaMaille[mailleSélectionnée]} du chantier.`
+        `Cet indicateur n'est pas pris en compte dans le taux d'avancement ${adjectifÀPartirDeLaMaille[mailleDuTerritoireSelectionnee]} du chantier.`
       ) : (
         <>
           Cet indicateur représente{" "}
           <span className="fr-text--bold">
             {convertitEnPondération(indicateurPondération)}%
           </span>{" "}
-          du taux d'avancement {adjectifÀPartirDeLaMaille[mailleSélectionnée]}{" "}
-          du chantier.
+          du taux d'avancement{" "}
+          {adjectifÀPartirDeLaMaille[mailleDuTerritoireSelectionnee]} du
+          chantier.
         </>
       )}
     </p>

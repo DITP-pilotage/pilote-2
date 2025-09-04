@@ -3,15 +3,22 @@ import Chantier from "@/server/domain/chantier/Chantier.interface";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
 import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
-import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import {
+  DétailsIndicateur,
+  DétailsIndicateurs,
+} from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { configurationFeatureFlip } from "@/config";
 
 type UseBlocIndicateurContext = {
   chantier: Chantier;
   indicateur: Indicateur;
   territoireCode: string;
+  jalon: number;
   territoireSélectionné: DétailTerritoire;
   datajobsExecution: DatajobsExecution;
   détailsIndicateurs: DétailsIndicateurs;
+  detailIndicateurDuTerritoire: DétailsIndicateur;
+  configurationFeatureFlipping: ReturnType<typeof configurationFeatureFlip>;
 };
 
 const context = createContext<UseBlocIndicateurContext | null>(null);
