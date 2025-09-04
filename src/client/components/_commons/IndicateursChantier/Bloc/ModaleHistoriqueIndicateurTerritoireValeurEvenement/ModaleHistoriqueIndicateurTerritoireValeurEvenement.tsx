@@ -6,14 +6,14 @@ import { formaterDate } from "@/client/utils/date/date";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 import { DonneesComplementaires } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { toISODateTime } from "@/server/app/domain/Dates";
-import { usePageChantierContext } from "@/components/PageChantier/usePageChantierContext";
+import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { useModaleHistoriqueIndicateurTerritoireValeurEvenement } from "./useModaleHistoriqueIndicateurTerritoireValeurEvenement";
 
 export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionComponent<{
   generatedHTMLID: string;
 }> = ({ generatedHTMLID }) => {
   const { indicateur, territoireCode, chantier, territoireSélectionné } =
-    usePageChantierContext();
+    useBlocIndicateurContext();
 
   const { historique, isLoading } =
     useModaleHistoriqueIndicateurTerritoireValeurEvenement({

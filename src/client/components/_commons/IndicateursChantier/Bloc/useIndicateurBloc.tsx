@@ -1,10 +1,10 @@
 import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { formaterDate } from "@/client/utils/date/date";
 
-export default function useIndicateurBloc(
+export const useIndicateurBloc = (
   détailsIndicateur: DétailsIndicateurTerritoire,
   territoireCode: string,
-) {
+) => {
   const dateDeMiseAJourIndicateur =
     formaterDate(détailsIndicateur[territoireCode]?.dateImport, "DD/MM/YYYY") ??
     null;
@@ -40,4 +40,4 @@ export default function useIndicateurBloc(
     indicateurNonAJour,
     indicateurEstApplicable,
   };
-}
+};

@@ -1,14 +1,9 @@
 import { Fragment, FunctionComponent, useState } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import Titre from "@/components/_commons/Titre/Titre";
-import PictoBaromètre from "@/components/_commons/PictoBaromètre/PictoBaromètre";
-import IndicateurDétails, {
-  CartographieIndicateurType,
-} from "@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails";
+import IndicateurDétails from "@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails";
 import { actionsTerritoiresStore } from "@/client/stores/useTerritoiresStore/useTerritoiresStore";
 import IndicateurPonderation from "@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation";
-import BadgeIcône from "@/components/_commons/BadgeIcône/BadgeIcône";
-import api from "@/server/infrastructure/api/trpc/api";
 import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
@@ -19,18 +14,17 @@ import { ModalePropositionValeurAvancement } from "@/components/_commons/Indicat
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 import IndicateurTendance from "@/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
-import { MailleInterne } from "@/server/domain/maille/Maille.interface";
-import { DetailsIndicateursContrat } from "@/server/chantiers/app/contrats/DetailsIndicateursContrat";
 import { IndicateurPropositionValeur } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurPropositionValeur";
 import { InformationsIndicateurs } from "@/components/_commons/IndicateursChantier/Bloc/InformationsIndicateurs";
 import { LignesPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/LignesPropositionValeurAvancement";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { PageChantierProvider } from "@/components/PageChantier/usePageChantierContext";
-import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
+import { BlocIndicateurProvider } from "@/components/PageChantier/useBlocIndicateurContext";
 import { LignesPropositionValeurAvancementV2 } from "@/components/_commons/IndicateursChantier/Bloc/LignesPropositionValeurAvancementV2";
+import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import { BadgeIndicateurEnAlerte } from "@/components/_commons/IndicateursChantier/Bloc/BadgeIndicateurEnAlerte";
+import useIndicateurAlerteDateMaj from "@/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj";
+import { BadgeIndicateurBarometre } from "@/components/_commons/IndicateursChantier/Bloc/BadgeIndicateurBarometre";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
-import useIndicateurBloc from "./useIndicateurBloc";
-import useIndicateurAlerteDateMaj from "./useIndicateurAlerteDateMaj";
+import { useIndicateurBloc } from "./useIndicateurBloc";
 import { ModalePropositionValeurAvancementV2 } from "./ModalePropositionValeurAvancementV2/ModalePropositionValeurAvancementV2";
 
 export const ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT =
@@ -39,58 +33,46 @@ export const ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT =
   "modale-proposition-valeur-davancement";
 export const ID_HTML_MODALE_ACCEPTER_PROPOSITION_VALEUR_DAVANCEMENT =
   "modale-accepter-proposition-valeur-davancement";
-export const ID_HTML_MODALE_ACCUSER_RECEPTION_PROPOSITION_VALEUR_DAVANCEMENT =
-  "modale-accuser-reception-proposition-valeur-davancement";
 
 interface IndicateurBlocProps {
   indicateur: Indicateur;
-  détailsIndicateurs: DetailsIndicateursContrat;
-  detailsIndicateursTerritoire: DetailsIndicateursContrat;
-  chantier: Chantier;
-  estInteractif: boolean;
-  chantierEstTerritorialisé: boolean;
   estAutoriseAProposerUneValeurAvancement: boolean;
   estAutoriseAAccepterLesPropositionsDeValeurAvancement: boolean;
-  territoireCode: string;
-  territoiresCompares: string[];
-  mailleSelectionnee: MailleInterne;
-  mailleQuery: MailleInterne;
-  mailsDirecteursProjets: string[];
-  jalon: number;
-  cartographieDroiteIndicateur: CartographieIndicateurType;
-  cartographieGaucheIndicateur: CartographieIndicateurType;
-  nouveauxGraphiquesSontActifs: boolean;
-  datajobsExecution: DatajobsExecution;
 }
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   indicateur,
-  détailsIndicateurs,
-  detailsIndicateursTerritoire,
-  chantier,
-  estInteractif,
-  chantierEstTerritorialisé,
-  estAutoriseAProposerUneValeurAvancement:
-    estAutoriseAProposerUneValeurAvancement,
-  estAutoriseAAccepterLesPropositionsDeValeurAvancement:
-    estAutoriseAAccepterLesPropositionsDeValeurAvancement,
-  territoireCode,
-  territoiresCompares,
-  mailleSelectionnee,
-  mailleQuery,
-  mailsDirecteursProjets,
-  jalon,
-  cartographieDroiteIndicateur,
-  cartographieGaucheIndicateur,
-  nouveauxGraphiquesSontActifs,
-  datajobsExecution,
+  estAutoriseAProposerUneValeurAvancement,
+  estAutoriseAAccepterLesPropositionsDeValeurAvancement,
 }) => {
+  const {
+    détailsIndicateurs,
+    detailsIndicateursTerritoire,
+    chantier,
+    territoireCode,
+    territoiresCompares,
+    mailleQuery,
+    mailleSelectionnee,
+    jalon,
+    cartographieDroiteIndicateur,
+    cartographieGaucheIndicateur,
+    datajobsExecution,
+    nouveauxGraphiquesSontActifs,
+    configurationFeatureFlipping,
+  } = pageChantier.useServerSidePropsContext();
+
+  const chantierEstTerritorialisé = chantier.estTerritorialisé;
+
+  const mailsDirecteursProjets = chantier.responsables.directeursProjet
+    .map((directeur) => directeur.email)
+    .filter(Boolean);
   const [propositionEstVisible, setPropositionEstVisible] = useState(false);
   const { maille: mailleTerritoireSelectionnee } =
     territoireCodeVersMailleCodeInsee(territoireCode);
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
+  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue("sm");
+
   const detailTerritoiresCompares = territoiresCompares.map(
     récupérerDétailsSurUnTerritoire,
   );
@@ -100,15 +82,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
 
   const detailsIndicateur = détailsIndicateurs[indicateur.id];
 
-  const { data: variableContenuFFPropositionValeurAvancement } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE",
-    });
-
-  const { data: variableContenuFFPropositionValeurAvancementV2 } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE_V2",
-    });
+  const variableContenuFFPropositionValeurAvancementV2 =
+    configurationFeatureFlipping.propositionValeurAvancementV2;
 
   const {
     dateDeMiseAJourIndicateur,
@@ -182,10 +157,17 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     );
   };
 
+  let indicateurNomAvecUnite = `${indicateur.nom}${
+    indicateur.unité === null || indicateur.unité === ""
+      ? ""
+      : ` (en ${indicateur.unité})`
+  }`;
+
   return (
-    <PageChantierProvider
+    <BlocIndicateurProvider
       chantier={chantier}
       datajobsExecution={datajobsExecution}
+      détailsIndicateurs={détailsIndicateurs}
       indicateur={indicateur}
       territoireCode={territoireCode}
       territoireSélectionné={détailTerritoireSélectionné}
@@ -196,20 +178,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
             <div className="flex justify-between">
               <div>
                 <Titre baliseHtml="h4" className="fr-text--xl fr-mb-1w">
-                  {estIndicateurEnAlerte ? (
-                    <span className="fr-mr-1v">
-                      <BadgeIcône type="warning" />
-                    </span>
-                  ) : null}
-                  {indicateur.estIndicateurDuBaromètre ? (
-                    <span className="fr-mr-1v">
-                      <PictoBaromètre />
-                    </span>
-                  ) : null}
-                  {indicateur.nom +
-                    (indicateur.unité === null || indicateur.unité === ""
-                      ? ""
-                      : ` (en ${indicateur.unité})`)}
+                  <BadgeIndicateurEnAlerte
+                    indicateurEstApplicable={indicateurEstApplicable}
+                    indicateurNonAJour={indicateurNonAJour}
+                  />
+                  <BadgeIndicateurBarometre />
+                  {indicateurNomAvecUnite}
                 </Titre>
                 <div className="fr-ml-2w fr-mb-3w">
                   <p className="fr-mb-0 fr-text--xs texte-gris">
@@ -456,7 +430,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           </td>
                         </tr>
                         {informationIndicateur.code === territoireCode ? (
-                          variableContenuFFPropositionValeurAvancement ? (
+                          configurationFeatureFlipping.propositionValeurAvancement ? (
                             estAutoriseAProposerUneValeurAvancement &&
                             informationIndicateur.données
                               .valeurAvancementMandat != null &&
@@ -708,36 +682,34 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 </tbody>
               </table>
             )}
-            {estInteractif ? (
-              <IndicateurDétails
-                cartographieDroiteIndicateur={cartographieDroiteIndicateur}
-                cartographieGaucheIndicateur={cartographieGaucheIndicateur}
-                chantierEstTerritorialisé={chantierEstTerritorialisé}
-                dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
-                dateProchaineDateMaj={dateProchaineDateMaj}
-                dateProchaineDateValeurAvancement={
-                  dateProchaineDateValeurAvancement
-                }
-                dateValeurAvancement={dateValeurAvancement}
-                detailsIndicateursTerritoire={detailsIndicateursTerritoire}
-                détailsIndicateurs={détailsIndicateurs}
-                indicateur={indicateur}
-                indicateurDétailsParTerritoires={informationsIndicateurs}
-                indicateurDétailsParTerritoiresComparés={
-                  informationsIndicateursComparés
-                }
-                indicateurEstAjour={!indicateurNonAJour}
-                jalon={jalon}
-                mailleQuery={mailleQuery}
-                mailsDirecteursProjets={mailsDirecteursProjets}
-                nouveauxGraphiquesSontActifs={nouveauxGraphiquesSontActifs}
-                territoireCode={territoireCode}
-              />
-            ) : null}
+            <IndicateurDétails
+              cartographieDroiteIndicateur={cartographieDroiteIndicateur}
+              cartographieGaucheIndicateur={cartographieGaucheIndicateur}
+              chantierEstTerritorialisé={chantierEstTerritorialisé}
+              dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
+              dateProchaineDateMaj={dateProchaineDateMaj}
+              dateProchaineDateValeurAvancement={
+                dateProchaineDateValeurAvancement
+              }
+              dateValeurAvancement={dateValeurAvancement}
+              detailsIndicateursTerritoire={detailsIndicateursTerritoire}
+              détailsIndicateurs={détailsIndicateurs}
+              indicateur={indicateur}
+              indicateurDétailsParTerritoires={informationsIndicateurs}
+              indicateurDétailsParTerritoiresComparés={
+                informationsIndicateursComparés
+              }
+              indicateurEstAjour={!indicateurNonAJour}
+              jalon={jalon}
+              mailleQuery={mailleQuery}
+              mailsDirecteursProjets={mailsDirecteursProjets}
+              nouveauxGraphiquesSontActifs={!!nouveauxGraphiquesSontActifs}
+              territoireCode={territoireCode}
+            />
           </section>
         </Bloc>
       </IndicateurBlocStyled>
-    </PageChantierProvider>
+    </BlocIndicateurProvider>
   );
 };
 

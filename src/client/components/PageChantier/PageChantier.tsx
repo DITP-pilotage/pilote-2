@@ -25,7 +25,6 @@ import Alerte from "@/client/components/_commons/Alerte/Alerte";
 import ResponsablesPageChantier from "@/components/PageChantier/ResponsablesChantier/ResponsablesChantier";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import BandeauInformationMajDonnees from "@/components/PageChantier/BandeauInformationMajDonnees/BandeauInformationMajDonnees";
-import api from "@/server/infrastructure/api/trpc/api";
 import BandeauInformation from "@/client/components/_commons/BandeauInformation/BandeauInformation";
 import { PanelMenuNavigation } from "@/components/_commons/PanelMenuNavigation/PanelMenuNavigation";
 import {
@@ -44,7 +43,6 @@ const PageChantier = () => {
     indicateurs,
     chantier,
     territoireCode,
-    territoiresCompares,
     mailleSelectionnee,
     mailleQuery,
     commentaires,
@@ -56,14 +54,12 @@ const PageChantier = () => {
     listeResponsablesLocaux,
     listeCoordinateursTerritorials,
     jalon,
-    cartographieDroiteIndicateur,
-    cartographieGaucheIndicateur,
     donneesComparaisonDuTauxDAvancement,
-    nouveauxGraphiquesSontActifs,
-    datajobsExecution,
+    configurationFeatureFlipping,
   } = pageChantier.useServerSidePropsContext();
 
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
+
   const territoireSélectionné = useTerritoireSelectionne();
 
   const {
@@ -77,13 +73,9 @@ const PageChantier = () => {
     estAutoriseAAccepterLesPropositionsDeValeurAvancement,
   } = usePageChantier();
 
-  const { data: alerteMiseAJourIndicateurEstDisponible } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR",
-    });
   const alerteMiseAJourIndicateur =
     estAutoriseAVoirLesAlertesMAJIndicateurs &&
-    !!alerteMiseAJourIndicateurEstDisponible &&
+    !!configurationFeatureFlipping.alerteMAJIndicateur &&
     Object.values(détailsIndicateurs)
       .flatMap((values) => Object.values(values))
       .reduce((acc, val) => {
@@ -206,8 +198,8 @@ const PageChantier = () => {
                 >
                   Avancement du chantier
                 </Titre>
-                {process.env.NEXT_PUBLIC_FF_INFOBULLE_PONDERATION === "true" &&
-                  (indicateurPondérations.length === 0 ? (
+                {configurationFeatureFlipping.infobullePonderation ? (
+                  indicateurPondérations.length === 0 ? (
                     <Infobulle idHtml="infobulle-chantier-météoEtSynthèseDesRésultats-aucun-indicateur">
                       {INFOBULLE_CONTENUS.chantier.avancement.aucunIndicateur(
                         territoireSélectionné.maille,
@@ -227,7 +219,8 @@ const PageChantier = () => {
                         indicateurPondérations,
                       )}
                     </Infobulle>
-                  ))}
+                  )
+                ) : null}
               </TitreInfobulleConteneur>
               <AvancementChantier
                 avancements={avancements}
@@ -330,32 +323,15 @@ const PageChantier = () => {
                 )}
                 <IndicateursChantier
                   alerteMiseAJourIndicateur={alerteMiseAJourIndicateur}
-                  cartographieDroiteIndicateur={cartographieDroiteIndicateur}
-                  cartographieGaucheIndicateur={cartographieGaucheIndicateur}
                   categoriesIndicateurRepartition={
                     categoriesIndicateurRepartition
                   }
-                  chantier={chantier}
-                  chantierEstTerritorialisé={chantier.estTerritorialisé}
-                  datajobsExecution={datajobsExecution}
-                  detailsIndicateursTerritoire={detailsIndicateursTerritoire}
-                  détailsIndicateurs={détailsIndicateurs}
                   estAutoriseAAccepterLesPropositionsDeValeurAvancement={
                     estAutoriseAAccepterLesPropositionsDeValeurAvancement
                   }
                   estAutoriseAProposerUneValeurAvancement={
                     estAutoriseAProposerUneValeurAvancement
                   }
-                  indicateurs={indicateurs}
-                  jalon={jalon}
-                  mailleQuery={mailleQuery}
-                  mailleSelectionnee={mailleSelectionnee}
-                  mailsDirecteursProjets={chantier.responsables.directeursProjet
-                    .map((directeur) => directeur.email)
-                    .filter(Boolean)}
-                  nouveauxGraphiquesSontActifs={!!nouveauxGraphiquesSontActifs}
-                  territoireCode={territoireCode}
-                  territoiresCompares={territoiresCompares}
                 />
               </section>
             </div>
