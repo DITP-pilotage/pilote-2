@@ -30,17 +30,15 @@ export const FiltresSelectionUnique: FunctionComponent<
   const profilPeutAccederAuxBrouillons =
     !!session?.profilAAccèsAuxChantiersBrouillons;
 
+  const statutsDisponibles = profilPeutAccederAuxBrouillons
+    ? [statutPublie, statutBrouillon, statutBrouillonEtPublie]
+    : [statutPublie];
+  if (variableContenuFFPpgArchive) {
+    statutsDisponibles.push(statutArchive);
+  }
   const valuesFiltres = {
     statut: {
-      valeurDisponible:
-        variableContenuFFPpgArchive && profilPeutAccederAuxBrouillons
-          ? [
-              statutPublie,
-              statutBrouillon,
-              statutBrouillonEtPublie,
-              statutArchive,
-            ]
-          : [statutPublie, statutBrouillon, statutBrouillonEtPublie],
+      valeurDisponible: statutsDisponibles,
       valeurParDéfaut: "PUBLIE",
     },
   };
