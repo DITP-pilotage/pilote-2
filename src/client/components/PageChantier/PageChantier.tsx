@@ -200,20 +200,20 @@ const PageChantier = () => {
                 </Titre>
                 {configurationFeatureFlipping.infobullePonderation ? (
                   indicateurPondérations.length === 0 ? (
-                    <Infobulle idHtml="infobulle-chantier-météoEtSynthèseDesRésultats-aucun-indicateur">
+                    <Infobulle>
                       {INFOBULLE_CONTENUS.chantier.avancement.aucunIndicateur(
                         territoireSélectionné.maille,
                       )}
                     </Infobulle>
                   ) : indicateurPondérations.length === 1 ? (
-                    <Infobulle idHtml="infobulle-chantier-météoEtSynthèseDesRésultats-un-seul-indicateur">
+                    <Infobulle>
                       {INFOBULLE_CONTENUS.chantier.avancement.unSeulIndicateur(
                         territoireSélectionné.maille,
                         indicateurPondérations[0],
                       )}
                     </Infobulle>
                   ) : (
-                    <Infobulle idHtml="infobulle-chantier-météoEtSynthèseDesRésultats-plusieurs-indicateurs">
+                    <Infobulle>
                       {INFOBULLE_CONTENUS.chantier.avancement.plusieursIndicateurs(
                         territoireSélectionné.maille,
                         indicateurPondérations,
@@ -242,7 +242,7 @@ const PageChantier = () => {
                 >
                   Météo et synthèse des résultats
                 </Titre>
-                <Infobulle idHtml="infobulle-chantier-météoEtSynthèseDesRésultats">
+                <Infobulle>
                   {INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats}
                 </Infobulle>
               </TitreInfobulleConteneur>
@@ -295,9 +295,7 @@ const PageChantier = () => {
                 >
                   Objectifs
                 </Titre>
-                <Infobulle idHtml="infobulle-chantier-objectifs">
-                  {INFOBULLE_CONTENUS.chantier.objectifs}
-                </Infobulle>
+                <Infobulle>{INFOBULLE_CONTENUS.chantier.objectifs}</Infobulle>
               </TitreInfobulleConteneur>
               <ObjectifsChantier
                 modeÉcriture={estAutoriseAModifierLesObjectifs}
@@ -343,7 +341,7 @@ const PageChantier = () => {
                   <Titre baliseHtml="h2" className="fr-h4" estInline>
                     Décisions stratégiques
                   </Titre>
-                  <Infobulle idHtml="infobulle-chantier-décisionsStratégiques">
+                  <Infobulle>
                     {INFOBULLE_CONTENUS.chantier.décisionsStratégiques}
                   </Infobulle>
                 </TitreInfobulleConteneur>
@@ -366,7 +364,7 @@ const PageChantier = () => {
                 >
                   Commentaires du chantier
                 </Titre>
-                <Infobulle idHtml="infobulle-chantier-décisionsStratégiques">
+                <Infobulle>
                   {territoireSélectionné.maille === "nationale"
                     ? INFOBULLE_CONTENUS.chantier.commentaires
                         .territoireNational

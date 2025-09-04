@@ -46,7 +46,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
                 >
                   Taux d'avancement 2026
                 </Titre>
-                <Infobulle idHtml="infobulle-chantier-répartitionGéographiqueTauxAvancement">
+                <Infobulle>
                   {
                     INFOBULLE_CONTENUS.chantier
                       .répartitionGéographiqueTauxAvancement
@@ -79,7 +79,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
                 >
                   Niveau de confiance
                 </Titre>
-                <Infobulle idHtml="infobulle-chantier-répartitionGéographiqueNiveauDeConfiance">
+                <Infobulle>
                   {
                     INFOBULLE_CONTENUS.chantier
                       .répartitionGéographiqueNiveauDeConfiance

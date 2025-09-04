@@ -20,10 +20,7 @@ export const ComparaisonValeurBox = ({
       <span className="bold fr-background-action-low-blue-france flex justify-center fr-p-1w">
         {titre}
         {indicateurId && proposition ? (
-          <Infobulle
-            classNameInfoBulle="tooltip-accordeon"
-            idHtml={`infobulle-proposition-valeur-davancement-${indicateurId}`}
-          >
+          <Infobulle classNameInfoBulle="tooltip-accordeon">
             <p className="fr-text--sm texte-proposition">
               Valeur d'avancement proposée le{" "}
               {formaterDate(proposition.dateProposition, "DD/MM/YYYY")} par{" "}

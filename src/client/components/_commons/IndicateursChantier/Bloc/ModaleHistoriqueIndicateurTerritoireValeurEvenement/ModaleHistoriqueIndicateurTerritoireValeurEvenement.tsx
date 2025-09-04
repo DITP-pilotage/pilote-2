@@ -258,7 +258,6 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
                               <Infobulle
                                 classNameBouton="fr-p-0 fr-mr-1w"
                                 classNameInfoBulle="tooltip-accordeon"
-                                idHtml={`infobulle-proposition-valeur-davancement-${evenement.id}`}
                                 styleIconInfoBulle="informationProposition"
                               >
                                 <p className="fr-callout__text fr-text--sm">

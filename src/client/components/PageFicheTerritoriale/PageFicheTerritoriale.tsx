@@ -68,7 +68,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                       >
                         Taux d'avancement moyen
                       </Titre>
-                      <Infobulle idHtml="infobulle-chantiers-jauges">
+                      <Infobulle>
                         {INFOBULLE_CONTENUS.chantiers.jauges}
                       </Infobulle>
                     </TitreInfobulleConteneur>
@@ -119,9 +119,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                     >
                       Répartition des météos renseignées
                     </Titre>
-                    <Infobulle idHtml="infobulle-chantiers-météos">
-                      {INFOBULLE_CONTENUS.chantiers.météos}
-                    </Infobulle>
+                    <Infobulle>{INFOBULLE_CONTENUS.chantiers.météos}</Infobulle>
                   </TitreInfobulleConteneur>
                   <ul className="fr-raw-list">
                     <li className="fr-mb-1w">

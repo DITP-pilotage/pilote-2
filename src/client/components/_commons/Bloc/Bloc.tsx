@@ -8,7 +8,6 @@ interface BlocProps {
   className?: string;
   titre?: string;
   contenuInfobulle?: React.ReactNode;
-  idhtml?: string;
 }
 
 const Bloc: FunctionComponent<BlocProps> = ({
@@ -17,7 +16,6 @@ const Bloc: FunctionComponent<BlocProps> = ({
   titre,
   contenuInfobulle,
   className = "",
-  idhtml,
 }) => {
   return (
     <BlocStyled className={`bloc-container${className ? ` ${className}` : ""}`}>
@@ -25,11 +23,8 @@ const Bloc: FunctionComponent<BlocProps> = ({
         <div className="titre fr-mb-0 fr-p-2w fr-text--sm fr-text--bold flex align-center justify-start relative w-full">
           <div className="titre-ellipsis">{titre}</div>
           <div>
-            {titre && contenuInfobulle && idhtml ? (
-              <Infobulle
-                classNameBouton="fr-pl-2w"
-                idHtml={`infobulle-chantiers-${idhtml}`}
-              >
+            {titre && contenuInfobulle ? (
+              <Infobulle classNameBouton="fr-pl-2w">
                 {contenuInfobulle}
               </Infobulle>
             ) : null}

@@ -72,9 +72,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
               >
                 Taux d'avancement moyen
               </Titre>
-              <Infobulle idHtml="infobulle-chantiers-jauges">
-                {INFOBULLE_CONTENUS.chantiers.jauges}
-              </Infobulle>
+              <Infobulle>{INFOBULLE_CONTENUS.chantiers.jauges}</Infobulle>
             </TitreInfobulleConteneur>
             <Avancements avancements={avancementsAgrégés} jalon={jalon} />
           </section>
@@ -88,9 +86,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
               >
                 Répartition des météos renseignées
               </Titre>
-              <Infobulle idHtml="infobulle-chantiers-météos">
-                {INFOBULLE_CONTENUS.chantiers.météos}
-              </Infobulle>
+              <Infobulle>{INFOBULLE_CONTENUS.chantiers.météos}</Infobulle>
             </TitreInfobulleConteneur>
             <RepartitionsMeteosRapportDetaille
               repartitionMeteos={repartitionMeteosChantiers}
@@ -127,9 +123,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
               >
                 Chantiers signalés
               </Titre>
-              <Infobulle idHtml="infobulle-chantiers-alertes">
-                {INFOBULLE_CONTENUS.chantiers.alertes}
-              </Infobulle>
+              <Infobulle>{INFOBULLE_CONTENUS.chantiers.alertes}</Infobulle>
             </TitreInfobulleConteneur>
           </div>
           <div className="fr-grid-row fr-grid-row--gutters">

@@ -27,11 +27,7 @@ export const MetadataIndicateurChamp: FunctionComponent<
           <>
             {estMandatory ? <ChampObligatoire /> : null}
             {informationMetadataIndicateur.metaPiloteDispDispDesc ? (
-              <Infobulle
-                idHtml={`indicParentCh-${informationMetadataIndicateur.name}`}
-              >
-                {informationMetadataIndicateur.description}
-              </Infobulle>
+              <Infobulle>{informationMetadataIndicateur.description}</Infobulle>
             ) : null}
           </>
         ) : null}

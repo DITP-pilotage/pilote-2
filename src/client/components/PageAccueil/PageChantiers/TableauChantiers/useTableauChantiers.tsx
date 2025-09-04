@@ -128,10 +128,7 @@ export const useTableauChantiers = (
       header: () => (
         <div className="flex align-center no-wrap">
           <span>Typologie</span>
-          <Infobulle
-            classNameBouton="infobulle-header-typologie"
-            idHtml="infobulle-header-typologie"
-          >
+          <Infobulle classNameBouton="infobulle-header-typologie">
             {infobulles.chantiers.listeDesChantiersHeaderTypologie}
           </Infobulle>
         </div>
@@ -151,10 +148,7 @@ export const useTableauChantiers = (
       header: () => (
         <div className="flex align-center no-wrap">
           <span>Météo</span>
-          <Infobulle
-            classNameBouton="infobulle-header-meteo"
-            idHtml="infobulle-header-meteo"
-          >
+          <Infobulle classNameBouton="infobulle-header-meteo">
             {infobulles.chantiers.listeDesChantiersHeaderMeteo}
           </Infobulle>
         </div>
@@ -187,10 +181,7 @@ export const useTableauChantiers = (
           <span className="whitespace-normal break-normal">
             Avancement 2026
           </span>
-          <Infobulle
-            classNameBouton="infobulle-header-taux-avancement"
-            idHtml="infobulle-header-taux-avancement"
-          >
+          <Infobulle classNameBouton="infobulle-header-taux-avancement">
             {infobulles.chantiers.listeDesChantiersHeaderTauxAvancement}
           </Infobulle>
         </div>
@@ -237,10 +228,7 @@ export const useTableauChantiers = (
             header: () => (
               <div className="flex align-center no-wrap">
                 <span>Tendance</span>
-                <Infobulle
-                  classNameBouton="infobulle-header-tendance"
-                  idHtml="infobulle-header-tendance"
-                >
+                <Infobulle classNameBouton="infobulle-header-tendance">
                   {infobulles.chantiers.listeDesChantiersHeaderTendance}
                 </Infobulle>
               </div>
@@ -262,10 +250,7 @@ export const useTableauChantiers = (
             header: () => (
               <div className="flex align-center no-wrap">
                 <span>Écart</span>
-                <Infobulle
-                  classNameBouton="infobulle-header-écart"
-                  idHtml="infobulle-header-écart"
-                >
+                <Infobulle classNameBouton="infobulle-header-écart">
                   {infobulles.chantiers.listeDesChantiersHeaderEcart}
                 </Infobulle>
               </div>
